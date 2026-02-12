@@ -1,0 +1,172 @@
+#!/bin/bash
+
+echo "🚀 Initializing DreamCo Production Build..."
+
+# 1️⃣ Create Project Structure
+mkdir -p dreamco
+cd dreamco
+
+mkdir -p server
+mkdir -p client/src/components
+mkdir -p client/src/routes
+mkdir -p client/src/onboarding
+mkdir -p client/src/lib
+mkdir -p stripe
+mkdir -p database
+
+# 2️⃣ Initialize Backend (Node + Express)
+cd server
+npm init -y
+
+npm install express cors dotenv stripe jsonwebtoken bcryptjs uuid
+npm install prisma @prisma/client
+npm install --save-dev nodemon
+
+cat > index.js << 'EOF'
+require("dotenv").config();
+const express = require("express");
+const cors = require("cors");
+
+const app = express();
+app.use(cors());
+app.use(express.json());
+
+app.get("/api/health", (req, res) => {
+  res.json({ status: "DreamCo backend running" });
+});
+
+const PORT = process.env.PORT || 5000;
+app.listen(PORT, () => {
+  console.log("Server running on port", PORT);
+});
+EOF
+
+cat > nodemon.json << 'EOF'
+{
+  "watch": ["index.js"],
+  "ext": "js",
+  "exec": "node index.js"
+}
+EOF
+
+cd ..
+
+# 3️⃣ Initialize Frontend (Vite + React)
+cd client
+npm create vite@latest . -- --template react
+npm install
+npm install react-router-dom axios
+
+# Clean default
+rm -rf src/*
+
+# App.tsx
+cat > src/App.jsx << 'EOF'
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import Landing from "./routes/Landing";
+import Dashboard from "./routes/Dashboard";
+
+export default function App() {
+  return (
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<Landing />} />
+        <Route path="/dashboard" element={<Dashboard />} />
+      </Routes>
+    </BrowserRouter>
+  );
+}
+EOF
+
+# Landing
+mkdir -p src/routes
+cat > src/routes/Landing.jsx << 'EOF'
+import { useNavigate } from "react-router-dom";
+
+export default function Landing() {
+  const navigate = useNavigate();
+  return (
+    <div>
+      <h1>DreamCo</h1>
+      <p>Build smarter systems. Human‑directed AI.</p>
+      <button onClick={() => navigate("/dashboard")}>
+        Enter Dashboard
+      </button>
+    </div>
+  );
+}
+EOF
+
+# Dashboard
+cat > src/routes/Dashboard.jsx << 'EOF'
+export default function Dashboard() {
+  return (
+    <div>
+      <h2>DreamCo Dashboard</h2>
+      <p>System operational.</p>
+    </div>
+  );
+}
+EOF
+
+cd ..
+
+# 4️⃣ Stripe Configuration Template
+cat > stripe/stripe_config.js << 'EOF'
+const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
+
+async function createCheckoutSession(priceId) {
+  return await stripe.checkout.sessions.create({
+    payment_method_types: ["card"],
+    line_items: [{ price: priceId, quantity: 1 }],
+    mode: "subscription",
+    success_url: "http://localhost:5173/dashboard",
+    cancel_url: "http://localhost:5173/"
+  });
+}
+
+module.exports = { createCheckoutSession };
+EOF
+
+# 5️⃣ Prisma Schema
+cat > database/schema.prisma << 'EOF'
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+model User {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  password  String
+  plan      String   @default("free")
+  createdAt DateTime @default(now())
+}
+EOF
+
+# 6️⃣ Root README
+cat > README.md << 'EOF'
+# DreamCo
+
+AI planning SaaS platform.
+Backend: Express
+Frontend: React (Vite)
+Database: Prisma + SQLite
+Payments: Stripe
+
+Run backend:
+cd server && npm run dev
+
+Run frontend:
+cd client && npm run dev
+EOF
+
+echo "✅ DreamCo scaffold complete."
+echo "Next:"
+echo "1. Add Stripe keys to .env"
+echo "2. Run Prisma migrate"
+echo "3. Deploy"
