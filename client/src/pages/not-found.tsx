@@ -1,21 +1,36 @@
-import { Card, CardContent } from "@/components/ui/card";
-import { AlertCircle } from "lucide-react";
+import { Link } from "wouter";
+import Seo from "@/components/Seo";
+import { Button } from "@/components/ui/button";
+import { Compass } from "lucide-react";
 
 export default function NotFound() {
   return (
-    <div className="min-h-screen w-full flex items-center justify-center bg-gray-50">
-      <Card className="w-full max-w-md mx-4">
-        <CardContent className="pt-6">
-          <div className="flex mb-4 gap-2">
-            <AlertCircle className="h-8 w-8 text-red-500" />
-            <h1 className="text-2xl font-bold text-gray-900">404 Page Not Found</h1>
+    <div className="min-h-screen buddy-glow">
+      <Seo title="Buddy — Not Found" description="The page you requested could not be found." />
+      <div className="buddy-container py-10 md:py-16">
+        <div className="buddy-card buddy-noise rounded-3xl border-border/60 p-10 md:p-12 text-center max-w-2xl mx-auto">
+          <div className="mx-auto h-12 w-12 rounded-2xl bg-gradient-to-br from-primary/18 via-accent/10 to-transparent border border-border/60 shadow-sm flex items-center justify-center text-primary">
+            <Compass className="h-6 w-6" />
           </div>
-
-          <p className="mt-4 text-sm text-gray-600">
-            Did you forget to add the page to the router?
+          <h1 className="mt-5 text-3xl md:text-4xl">Page not found</h1>
+          <p className="mt-3 text-muted-foreground">
+            The route doesn’t exist — but Buddy’s still here. Head back to chat.
           </p>
-        </CardContent>
-      </Card>
+
+          <div className="mt-7 flex items-center justify-center gap-3 flex-col sm:flex-row">
+            <Link href="/" className="w-full sm:w-auto" data-testid="notfound-home-link">
+              <Button className="w-full sm:w-auto rounded-xl bg-gradient-to-r from-primary to-accent text-primary-foreground shadow-md shadow-primary/20 hover:shadow-lg hover:shadow-primary/25 hover:-translate-y-0.5 active:translate-y-0 transition-all">
+                Go to Chat
+              </Button>
+            </Link>
+            <Link href="/dashboard" className="w-full sm:w-auto" data-testid="notfound-dashboard-link">
+              <Button variant="outline" className="w-full sm:w-auto rounded-xl border-border/70 bg-card/60 hover:bg-card shadow-sm hover:shadow-md transition-all">
+                Dashboard
+              </Button>
+            </Link>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
