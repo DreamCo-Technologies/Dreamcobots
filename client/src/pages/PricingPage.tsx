@@ -1,15 +1,19 @@
 import Seo from "@/components/Seo";
 import AppShell from "@/components/AppShell";
 import { useState } from "react";
+import { useQuery, useMutation } from "@tanstack/react-query";
+import { apiRequest } from "@/lib/queryClient";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { TIER_PRICING, TIER_AUTONOMY_LIMITS, DIVISION_API_REGISTRIES, getTotalApiCount } from "@shared/api-registry";
+import { useToast } from "@/hooks/use-toast";
 import {
   Check,
   Crown,
   Layers,
+  Loader2,
   Lock,
   Network,
   Rocket,
@@ -33,11 +37,82 @@ const AUTONOMY_DESCRIPTIONS: Record<string, string> = {
   "full-autonomy": "Full auto-execution with reporting only",
 };
 
+interface StripeProduct {
+  id: string;
+  name: string;
+  description: string;
+  metadata: Record<string, string>;
+  prices: Array<{
+    id: string;
+    unit_amount: number;
+    currency: string;
+    recurring: { interval: string } | null;
+  }>;
+}
+
+function getTierFromProduct(product: StripeProduct): string {
+  return product.metadata?.tier || "free";
+}
+
+function getMonthlyPrice(product: StripeProduct): { id: string; amount: number } | null {
+  const monthly = product.prices.find(p => p.recurring?.interval === "month");
+  return monthly ? { id: monthly.id, amount: monthly.unit_amount } : null;
+}
+
+function getYearlyPrice(product: StripeProduct): { id: string; amount: number } | null {
+  const yearly = product.prices.find(p => p.recurring?.interval === "year");
+  return yearly ? { id: yearly.id, amount: yearly.unit_amount } : null;
+}
+
 export default function PricingPage() {
   const [botSlug, setBotSlug] = useState<string | undefined>(undefined);
   const [annual, setAnnual] = useState(false);
+  const { toast } = useToast();
 
   const totalApis = getTotalApiCount();
+
+  const { data: productsData } = useQuery<{ products: StripeProduct[] }>({
+    queryKey: ["/api/stripe/products"],
+  });
+
+  const checkoutMutation = useMutation({
+    mutationFn: async (priceId: string) => {
+      const res = await apiRequest("POST", "/api/stripe/checkout", { priceId });
+      return await res.json();
+    },
+    onSuccess: (data: { url: string }) => {
+      if (data.url) {
+        window.location.href = data.url;
+      }
+    },
+    onError: (error: Error) => {
+      toast({
+        title: "Checkout Error",
+        description: error.message,
+        variant: "destructive",
+      });
+    },
+  });
+
+  const stripeProducts = productsData?.products || [];
+
+  const getProductForTier = (tier: string) => {
+    return stripeProducts.find(p => getTierFromProduct(p) === tier);
+  };
+
+  const handleSubscribe = (tier: string) => {
+    const product = getProductForTier(tier);
+    if (!product) return;
+
+    const price = annual ? getYearlyPrice(product) : getMonthlyPrice(product);
+    if (!price || price.amount === 0) return;
+
+    checkoutMutation.mutate(price.id);
+  };
+
+  const urlParams = new URLSearchParams(window.location.search);
+  const checkoutSuccess = urlParams.get("success") === "true";
+  const checkoutCanceled = urlParams.get("canceled") === "true";
 
   return (
     <AppShell selectedBotSlug={botSlug} onBotChange={setBotSlug}>
@@ -46,6 +121,16 @@ export default function PricingPage() {
       <div className="buddy-card buddy-noise buddy-appear overflow-hidden">
         <div className="px-5 pt-6 pb-5 md:px-8 md:pt-8 md:pb-6 border-b border-border/60">
           <div className="text-center max-w-2xl mx-auto">
+            {checkoutSuccess && (
+              <div className="mb-4 p-3 rounded-xl bg-green-500/10 border border-green-500/30 text-green-600 dark:text-green-400 text-sm" data-testid="checkout-success">
+                Payment successful! Your Empire tier has been upgraded.
+              </div>
+            )}
+            {checkoutCanceled && (
+              <div className="mb-4 p-3 rounded-xl bg-yellow-500/10 border border-yellow-500/30 text-yellow-600 dark:text-yellow-400 text-sm" data-testid="checkout-canceled">
+                Checkout was canceled. You can try again anytime.
+              </div>
+            )}
             <h1 className="text-2xl md:text-3xl" data-testid="text-pricing-title">Choose Your Empire Tier</h1>
             <p className="text-sm text-muted-foreground mt-2">
               Scale your autonomous AI workforce from a single bot to a full 251-bot empire
@@ -82,9 +167,21 @@ export default function PricingPage() {
               const info = TIER_PRICING[tier];
               const style = TIER_STYLES[tier];
               const TierIcon = style.icon;
-              const price = annual ? Math.round(info.price * 0.8) : info.price;
               const autonomyLevels = TIER_AUTONOMY_LIMITS[tier];
               const isPopular = tier === "enterprise";
+
+              const stripeProduct = getProductForTier(tier);
+              const monthlyPrice = stripeProduct ? getMonthlyPrice(stripeProduct) : null;
+              const yearlyPrice = stripeProduct ? getYearlyPrice(stripeProduct) : null;
+
+              const displayPrice = annual && yearlyPrice
+                ? Math.round(yearlyPrice.amount / 12 / 100)
+                : monthlyPrice
+                  ? monthlyPrice.amount / 100
+                  : info.price;
+
+              const hasStripePrice = stripeProduct && (annual ? yearlyPrice : monthlyPrice);
+              const isFree = tier === "free";
 
               return (
                 <Card
@@ -110,18 +207,24 @@ export default function PricingPage() {
                     </div>
 
                     <div className="mb-6">
-                      {price === 0 ? (
+                      {displayPrice === 0 ? (
                         <p className="text-3xl font-bold">Free</p>
                       ) : (
                         <div className="flex items-baseline gap-1">
-                          <p className="text-3xl font-bold">${price.toLocaleString()}</p>
+                          <p className="text-3xl font-bold">${displayPrice.toLocaleString()}</p>
                           <span className="text-sm text-muted-foreground">/mo</span>
                         </div>
                       )}
-                      {annual && price > 0 && (
+                      {annual && yearlyPrice && yearlyPrice.amount > 0 && (
                         <p className="text-xs text-green-600 dark:text-green-400 mt-1">
-                          ${(price * 12).toLocaleString()}/year (save ${(info.price * 12 * 0.2).toLocaleString()})
+                          ${(yearlyPrice.amount / 100).toLocaleString()}/year
                         </p>
+                      )}
+                      {stripeProduct && (
+                        <Badge variant="secondary" className="rounded-full text-[9px] mt-2">
+                          <Sparkles className="h-2.5 w-2.5 mr-1" />
+                          Live Stripe
+                        </Badge>
                       )}
                     </div>
 
@@ -156,14 +259,18 @@ export default function PricingPage() {
                     <Button
                       className={cn(
                         "w-full rounded-xl",
-                        tier === "free" && "variant-outline",
                         tier === "enterprise" && "bg-[rgb(168_85_247)] text-white border-[rgb(168_85_247)]",
                         tier === "elite" && "bg-[rgb(245_158_11)] text-white border-[rgb(245_158_11)]",
                       )}
                       variant={tier === "free" ? "outline" : "default"}
+                      disabled={checkoutMutation.isPending}
+                      onClick={() => !isFree && handleSubscribe(tier)}
                       data-testid={`btn-select-${tier}`}
                     >
-                      {tier === "free" ? "Get Started" : tier === "elite" ? "Contact Sales" : "Upgrade Now"}
+                      {checkoutMutation.isPending ? (
+                        <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                      ) : null}
+                      {isFree ? "Get Started Free" : tier === "elite" ? "Subscribe Elite" : "Subscribe Now"}
                     </Button>
                   </CardContent>
                 </Card>
