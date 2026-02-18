@@ -46,6 +46,7 @@ DreamFinance (25), DreamRealEstate (25), DreamSalesPro (25), DreamAIInfra (25), 
 
 ## API Endpoints
 - `/api/bots` - Bot CRUD
+- `/api/bots/:id` - Get single bot by ID
 - `/api/bots/division/:division` - Bots by division
 - `/api/conversations` - Conversation CRUD
 - `/api/tasks` - Task CRUD with run execution
@@ -59,6 +60,9 @@ DreamFinance (25), DreamRealEstate (25), DreamSalesPro (25), DreamAIInfra (25), 
 - `/api/alerts` - Alert rules management
 
 ## Recent Changes
+- Feb 18, 2026: Added individual Bot Detail Pages at /bot/:id with dashboard metrics, capabilities, division features, investment prospectus, system prompt, and traits
+- Feb 18, 2026: Enhanced all 251 bots with 18-36 capabilities each (tier-specific + universal features)
+- Feb 18, 2026: Made bot cards clickable in DivisionsPage and BotsPage with navigation to detail pages
 - Feb 18, 2026: Added bot data tracking architecture (bot_metrics, bot_errors, bot_interactions, bot_financials, alert_rules tables)
 - Feb 18, 2026: Built Empire Command Center dashboard with system health, autonomy mode selector, alert rules, division overview
 - Feb 18, 2026: Built Division Explorer page with filtering by division/tier/category/search
