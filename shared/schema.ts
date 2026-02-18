@@ -28,6 +28,14 @@ export const DIVISIONS = [
   "DreamMarket",
   "CommandCore",
   "GameTitan",
+  "DreamInfluence",
+  "DreamDecision",
+  "DreamOps",
+  "DreamPlanetary",
+  "DreamEntFinance",
+  "DreamCustIntel",
+  "DreamLegal",
+  "DreamCyber",
 ] as const;
 
 export type Division = (typeof DIVISIONS)[number];
