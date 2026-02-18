@@ -5,24 +5,27 @@ import {
   messages,
   autonomousTasks,
   taskRuns,
+  empireSettings,
   type BotProfile,
   type InsertBotProfile,
   type AutonomousTask,
   type InsertAutonomousTask,
   type TaskRun,
+  type EmpireSetting,
+  type InsertEmpireSetting,
 } from "@shared/schema";
-import { and, desc, eq, ne, sql } from "drizzle-orm";
+import { and, desc, eq, ne, sql, count, inArray } from "drizzle-orm";
 
 export interface IStorage {
-  // Bots
   listBotProfiles(): Promise<BotProfile[]>;
+  listBotsByDivision(division: string): Promise<BotProfile[]>;
   createBotProfile(input: InsertBotProfile): Promise<BotProfile>;
   updateBotProfile(id: number, updates: Partial<InsertBotProfile>): Promise<BotProfile | undefined>;
   setDefaultBotProfile(id: number): Promise<BotProfile | undefined>;
   getDefaultBotProfile(): Promise<BotProfile | undefined>;
   getBotProfileBySlug(slug: string): Promise<BotProfile | undefined>;
+  getBotCountByDivision(): Promise<{ division: string; count: number }[]>;
 
-  // Conversations
   listConversations(): Promise<(typeof conversations.$inferSelect)[]>;
   getConversation(id: number): Promise<(typeof conversations.$inferSelect) | undefined>;
   createConversation(title: string): Promise<(typeof conversations.$inferSelect)>;
@@ -30,18 +33,25 @@ export interface IStorage {
   getMessages(conversationId: number): Promise<(typeof messages.$inferSelect)[]>;
   createMessage(conversationId: number, role: "user" | "assistant", content: string): Promise<(typeof messages.$inferSelect)>;
 
-  // Tasks
   listTasks(): Promise<AutonomousTask[]>;
-  createTask(input: InsertAutonomousTask & { status?: string; priority?: number }): Promise<AutonomousTask>;
-  updateTask(id: number, updates: Partial<InsertAutonomousTask> & { status?: string; priority?: number }): Promise<AutonomousTask | undefined>;
+  listTasksByDivision(division: string): Promise<AutonomousTask[]>;
+  createTask(input: InsertAutonomousTask & { status?: string; priority?: number; autonomyMode?: string; division?: string; assignedBotId?: number }): Promise<AutonomousTask>;
+  updateTask(id: number, updates: Partial<InsertAutonomousTask> & { status?: string; priority?: number; autonomyMode?: string }): Promise<AutonomousTask | undefined>;
   deleteTask(id: number): Promise<void>;
   createTaskRun(taskId: number, status: string, summary: string, output: unknown): Promise<TaskRun>;
   listTaskRuns(taskId: number): Promise<TaskRun[]>;
+
+  getSetting(key: string): Promise<EmpireSetting | undefined>;
+  upsertSetting(key: string, value: unknown): Promise<EmpireSetting>;
 }
 
 export class DatabaseStorage implements IStorage {
   async listBotProfiles(): Promise<BotProfile[]> {
     return await db.select().from(botProfiles).orderBy(botProfiles.id);
+  }
+
+  async listBotsByDivision(division: string): Promise<BotProfile[]> {
+    return await db.select().from(botProfiles).where(eq(botProfiles.division, division)).orderBy(botProfiles.id);
   }
 
   async createBotProfile(input: InsertBotProfile): Promise<BotProfile> {
@@ -76,6 +86,15 @@ export class DatabaseStorage implements IStorage {
   async getBotProfileBySlug(slug: string): Promise<BotProfile | undefined> {
     const [profile] = await db.select().from(botProfiles).where(eq(botProfiles.slug, slug));
     return profile;
+  }
+
+  async getBotCountByDivision(): Promise<{ division: string; count: number }[]> {
+    const result = await db
+      .select({ division: botProfiles.division, count: count() })
+      .from(botProfiles)
+      .groupBy(botProfiles.division)
+      .orderBy(botProfiles.division);
+    return result.map(r => ({ division: r.division, count: Number(r.count) }));
   }
 
   async listConversations() {
@@ -124,25 +143,30 @@ export class DatabaseStorage implements IStorage {
     return await db.select().from(autonomousTasks).orderBy(desc(autonomousTasks.createdAt));
   }
 
-  async createTask(input: InsertAutonomousTask & { status?: string; priority?: number }): Promise<AutonomousTask> {
+  async listTasksByDivision(division: string): Promise<AutonomousTask[]> {
+    return await db.select().from(autonomousTasks).where(eq(autonomousTasks.division, division)).orderBy(desc(autonomousTasks.createdAt));
+  }
+
+  async createTask(input: InsertAutonomousTask & { status?: string; priority?: number; autonomyMode?: string; division?: string; assignedBotId?: number }): Promise<AutonomousTask> {
     const [task] = await db
       .insert(autonomousTasks)
       .values({
         title: input.title,
         objective: input.objective,
-        status: input.status ?? input.status ?? "pending",
-        priority: input.priority ?? input.priority ?? 3,
+        status: input.status ?? "pending",
+        priority: input.priority ?? 3,
+        autonomyMode: input.autonomyMode ?? "guided",
+        division: input.division ?? "CommandCore",
+        assignedBotId: input.assignedBotId ?? null,
       })
       .returning();
     return task;
   }
 
-  async updateTask(id: number, updates: Partial<InsertAutonomousTask> & { status?: string; priority?: number }): Promise<AutonomousTask | undefined> {
+  async updateTask(id: number, updates: Partial<InsertAutonomousTask> & { status?: string; priority?: number; autonomyMode?: string }): Promise<AutonomousTask | undefined> {
     const [task] = await db
       .update(autonomousTasks)
-      .set({
-        ...updates,
-      })
+      .set(updates)
       .where(eq(autonomousTasks.id, id))
       .returning();
     return task;
@@ -163,6 +187,28 @@ export class DatabaseStorage implements IStorage {
 
   async listTaskRuns(taskId: number): Promise<TaskRun[]> {
     return await db.select().from(taskRuns).where(eq(taskRuns.taskId, taskId)).orderBy(desc(taskRuns.createdAt));
+  }
+
+  async getSetting(key: string): Promise<EmpireSetting | undefined> {
+    const [setting] = await db.select().from(empireSettings).where(eq(empireSettings.key, key));
+    return setting;
+  }
+
+  async upsertSetting(key: string, value: unknown): Promise<EmpireSetting> {
+    const existing = await this.getSetting(key);
+    if (existing) {
+      const [updated] = await db
+        .update(empireSettings)
+        .set({ value, updatedAt: new Date() })
+        .where(eq(empireSettings.key, key))
+        .returning();
+      return updated;
+    }
+    const [created] = await db
+      .insert(empireSettings)
+      .values({ key, value })
+      .returning();
+    return created;
   }
 }
 

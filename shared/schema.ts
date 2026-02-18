@@ -11,6 +11,44 @@ import {
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 
+export const DIVISIONS = [
+  "DreamFinance",
+  "DreamRealEstate",
+  "DreamSalesPro",
+  "DreamAIInfra",
+  "DreamRetail",
+  "DreamProServices",
+  "DreamData",
+  "DreamGlobal",
+  "DreamAutomation",
+  "DreamEmpire",
+  "DreamContent",
+  "DreamTrade",
+  "DreamFlow",
+  "DreamMarket",
+  "CommandCore",
+  "GameTitan",
+] as const;
+
+export type Division = (typeof DIVISIONS)[number];
+
+export const AUTONOMY_MODES = [
+  "guided",
+  "semi-autonomous",
+  "full-autonomy",
+] as const;
+
+export type AutonomyMode = (typeof AUTONOMY_MODES)[number];
+
+export const BOT_TIERS = [
+  "free",
+  "pro",
+  "enterprise",
+  "elite",
+] as const;
+
+export type BotTier = (typeof BOT_TIERS)[number];
+
 export const conversations = pgTable("conversations", {
   id: serial("id").primaryKey(),
   title: text("title").notNull(),
@@ -34,6 +72,15 @@ export const botProfiles = pgTable("bot_profiles", {
   systemPrompt: text("system_prompt").notNull(),
   traits: jsonb("traits").notNull().default(sql`'{}'::jsonb`),
   isDefault: boolean("is_default").notNull().default(false),
+  division: text("division").notNull().default("CommandCore"),
+  category: text("category").notNull().default("general"),
+  tier: text("tier").notNull().default("free"),
+  description: text("description").notNull().default(""),
+  capabilities: jsonb("capabilities").notNull().default(sql`'[]'::jsonb`),
+  revenueModel: text("revenue_model").notNull().default(""),
+  targetUsers: text("target_users").notNull().default(""),
+  status: text("bot_status").notNull().default("active"),
+  priceRange: text("price_range").notNull().default(""),
 });
 
 export const autonomousTasks = pgTable("autonomous_tasks", {
@@ -42,6 +89,9 @@ export const autonomousTasks = pgTable("autonomous_tasks", {
   objective: text("objective").notNull(),
   status: text("status").notNull().default("pending"),
   priority: integer("priority").notNull().default(3),
+  autonomyMode: text("autonomy_mode").notNull().default("guided"),
+  division: text("division").notNull().default("CommandCore"),
+  assignedBotId: integer("assigned_bot_id"),
   lastRunAt: timestamp("last_run_at"),
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
@@ -55,6 +105,13 @@ export const taskRuns = pgTable("task_runs", {
   summary: text("summary").notNull().default(""),
   output: jsonb("output").notNull().default(sql`'{}'::jsonb`),
   createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
+export const empireSettings = pgTable("empire_settings", {
+  id: serial("id").primaryKey(),
+  key: text("key").notNull().unique(),
+  value: jsonb("value").notNull().default(sql`'{}'::jsonb`),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
 
 export const insertConversationSchema = createInsertSchema(conversations).omit({
@@ -82,6 +139,11 @@ export const insertTaskRunSchema = createInsertSchema(taskRuns).omit({
   createdAt: true,
 });
 
+export const insertEmpireSettingSchema = createInsertSchema(empireSettings).omit({
+  id: true,
+  updatedAt: true,
+});
+
 export type Conversation = typeof conversations.$inferSelect;
 export type InsertConversation = z.infer<typeof insertConversationSchema>;
 
@@ -96,6 +158,9 @@ export type InsertAutonomousTask = z.infer<typeof insertAutonomousTaskSchema>;
 
 export type TaskRun = typeof taskRuns.$inferSelect;
 export type InsertTaskRun = z.infer<typeof insertTaskRunSchema>;
+
+export type EmpireSetting = typeof empireSettings.$inferSelect;
+export type InsertEmpireSetting = z.infer<typeof insertEmpireSettingSchema>;
 
 export type CreateConversationRequest = InsertConversation;
 export type CreateMessageRequest = { content: string; botSlug?: string };
@@ -124,3 +189,20 @@ export const TASK_STATUSES = [
 ] as const;
 
 export type TaskStatus = (typeof TASK_STATUSES)[number];
+
+export interface DivisionStats {
+  division: Division;
+  botCount: number;
+  activeTasks: number;
+  completedTasks: number;
+  revenue: string;
+}
+
+export interface EmpireOverview {
+  totalBots: number;
+  totalDivisions: number;
+  activeTasks: number;
+  completedTasks: number;
+  autonomyMode: AutonomyMode;
+  divisions: DivisionStats[];
+}

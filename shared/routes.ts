@@ -7,6 +7,8 @@ import {
   type BotProfile,
   type AutonomousTask,
   type TaskRun,
+  type EmpireSetting,
+  type EmpireOverview,
 } from "./schema";
 
 export const errorSchemas = {
@@ -27,6 +29,13 @@ export const api = {
     list: {
       method: "GET" as const,
       path: "/api/bots" as const,
+      responses: {
+        200: z.array(z.custom<BotProfile>()),
+      },
+    },
+    byDivision: {
+      method: "GET" as const,
+      path: "/api/bots/division/:division" as const,
       responses: {
         200: z.array(z.custom<BotProfile>()),
       },
@@ -143,6 +152,9 @@ export const api = {
       input: insertAutonomousTaskSchema.extend({
         status: z.string().optional(),
         priority: z.coerce.number().int().min(1).max(5).optional(),
+        autonomyMode: z.string().optional(),
+        division: z.string().optional(),
+        assignedBotId: z.coerce.number().int().optional(),
       }),
       responses: {
         201: z.custom<AutonomousTask>(),
@@ -157,6 +169,7 @@ export const api = {
         .extend({
           status: z.string().optional(),
           priority: z.coerce.number().int().min(1).max(5).optional(),
+          autonomyMode: z.string().optional(),
         }),
       responses: {
         200: z.custom<AutonomousTask>(),
@@ -191,6 +204,43 @@ export const api = {
       responses: {
         200: z.array(z.custom<TaskRun>()),
         404: errorSchemas.notFound,
+      },
+    },
+  },
+  empire: {
+    overview: {
+      method: "GET" as const,
+      path: "/api/empire/overview" as const,
+      responses: {
+        200: z.custom<EmpireOverview>(),
+      },
+    },
+    settings: {
+      get: {
+        method: "GET" as const,
+        path: "/api/empire/settings/:key" as const,
+        responses: {
+          200: z.custom<EmpireSetting>(),
+          404: errorSchemas.notFound,
+        },
+      },
+      set: {
+        method: "PUT" as const,
+        path: "/api/empire/settings/:key" as const,
+        input: z.object({ value: z.unknown() }),
+        responses: {
+          200: z.custom<EmpireSetting>(),
+        },
+      },
+    },
+    divisions: {
+      method: "GET" as const,
+      path: "/api/empire/divisions" as const,
+      responses: {
+        200: z.array(z.object({
+          division: z.string(),
+          count: z.number(),
+        })),
       },
     },
   },
