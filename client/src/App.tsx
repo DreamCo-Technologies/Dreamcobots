@@ -14,6 +14,7 @@ import DivisionsPage from "@/pages/DivisionsPage";
 import BotDetailPage from "@/pages/BotDetailPage";
 import RevenuePage from "@/pages/RevenuePage";
 import PricingPage from "@/pages/PricingPage";
+import DealsPage from "@/pages/DealsPage";
 
 function Router() {
   return (
@@ -27,6 +28,7 @@ function Router() {
       <Route path="/divisions" component={DivisionsPage} />
       <Route path="/revenue" component={RevenuePage} />
       <Route path="/pricing" component={PricingPage} />
+      <Route path="/deals" component={DealsPage} />
 
       {/* Legacy / convenience */}
       <Route path="/chat">

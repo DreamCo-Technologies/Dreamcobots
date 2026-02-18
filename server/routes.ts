@@ -6,7 +6,8 @@ import { sql } from "drizzle-orm";
 import { storage } from "./storage";
 import { api } from "@shared/routes";
 import { ALL_BOTS } from "./seed-bots";
-import { DIVISIONS, insertBotMetricSchema, insertBotErrorSchema, insertBotFinancialSchema, insertAlertRuleSchema } from "@shared/schema";
+import { DIVISIONS, insertBotMetricSchema, insertBotErrorSchema, insertBotFinancialSchema, insertAlertRuleSchema, insertDealSchema } from "@shared/schema";
+import { calculateRealEstate, calculateCarFlip, type RealEstateInputs, type CarFlipInputs } from "@shared/deal-calculations";
 import { getUncachableStripeClient, getStripePublishableKey } from "./stripeClient";
 import { db } from "./db";
 
@@ -588,6 +589,88 @@ export async function registerRoutes(
       await storage.createAlertRule(alert);
     }
   }
+
+  // ─── Deal Analyzer Routes ──────────────────────────────────────────
+
+  app.get("/api/deals", async (_req, res) => {
+    const allDeals = await storage.listDeals();
+    res.json(allDeals);
+  });
+
+  app.get("/api/deals/kpis", async (_req, res) => {
+    const kpis = await storage.getDealKpis();
+    res.json(kpis);
+  });
+
+  app.get("/api/deals/:id", async (req, res) => {
+    const id = Number(req.params.id);
+    if (isNaN(id)) return res.status(400).json({ message: "Invalid deal ID" });
+    const deal = await storage.getDeal(id);
+    if (!deal) return res.status(404).json({ message: "Deal not found" });
+    res.json(deal);
+  });
+
+  app.post("/api/deals", async (req, res) => {
+    try {
+      const { name, dealType, inputs: rawInputs } = req.body;
+      if (!name || !dealType || !rawInputs) {
+        return res.status(400).json({ message: "name, dealType, and inputs are required" });
+      }
+
+      let results: any;
+      let status: string;
+      let netProfit = 0;
+      let roi = 0;
+      let capitalEfficiency = 0;
+      let daysHeld = 0;
+      let cashInvested = 0;
+
+      if (dealType === "real_estate") {
+        const calc = calculateRealEstate(rawInputs as RealEstateInputs);
+        results = calc;
+        status = calc.status;
+        netProfit = calc.netProfit;
+        roi = Math.round(calc.roi);
+        capitalEfficiency = Math.round(calc.capitalEfficiency * 10000);
+        daysHeld = rawInputs.daysHeld || 0;
+        cashInvested = rawInputs.cashInvested || 0;
+      } else {
+        const calc = calculateCarFlip(rawInputs as CarFlipInputs);
+        results = calc;
+        status = calc.status;
+        netProfit = calc.netProfit;
+        roi = Math.round(calc.roi);
+        capitalEfficiency = Math.round(calc.capitalEfficiency * 10000);
+        daysHeld = rawInputs.daysHeld || 0;
+        cashInvested = rawInputs.cashInvested || 0;
+      }
+
+      const deal = await storage.createDeal({
+        name,
+        dealType,
+        status,
+        inputs: rawInputs,
+        results,
+        netProfit,
+        roi,
+        capitalEfficiency,
+        daysHeld,
+        cashInvested,
+      });
+      res.status(201).json(deal);
+    } catch (err: any) {
+      res.status(400).json({ message: err.message || "Invalid deal data" });
+    }
+  });
+
+  app.delete("/api/deals/:id", async (req, res) => {
+    const id = Number(req.params.id);
+    if (isNaN(id)) return res.status(400).json({ message: "Invalid deal ID" });
+    const deal = await storage.getDeal(id);
+    if (!deal) return res.status(404).json({ message: "Deal not found" });
+    await storage.deleteDeal(id);
+    res.status(204).send();
+  });
 
   // ─── Stripe Payment Routes ───────────────────────────────────────────
 

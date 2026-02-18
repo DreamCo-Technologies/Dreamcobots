@@ -77,7 +77,18 @@ Each bot has per-bot controls:
 - DreamSalesPro has 100+ APIs across 12 categories (CRM, Lead Databases, Email, SMS, Payments, AI, etc.)
 - TIER_PRICING and TIER_AUTONOMY_LIMITS exported from api-registry.ts for consistent tier enforcement
 
+## Deal Analyzer System
+- `shared/deal-calculations.ts` - All flipping formulas (MAO, Net Profit, ROI, Safety Score, Capital Efficiency, Leverage ROI, Cash-on-Cash for RE; Max Purchase, Daily Profit, Capital Turn, Annual Return for cars)
+- `client/src/pages/DealsPage.tsx` - Deal Analyzer page at /deals with 3 tabs (Property Flip, Car Flip, Portfolio)
+- Database: deals table with jsonb inputs/results, color-coded status (green/yellow/red), KPI aggregation
+- API: GET/POST/DELETE /api/deals, GET /api/deals/kpis
+- Real Estate scoring: Green = ROI>=20%, profit>0, purchase<=MAO, safety>=15; Red = ROI<5% or profit<0; Yellow = between
+- Car scoring: Green = ROI>=20%, margin>=15%; Red = ROI<5% or margin<5%; Yellow = between
+- Capital Efficiency Comparison: daily profit / cash invested / days held, ranks Property vs Car vs Hold
+- Formulas: MAO = (ARV * 0.70) - Repairs; Car Max Purchase = Sale * 0.75 - Repairs
+
 ## Recent Changes
+- Feb 18, 2026: Built Deal Analyzer with RE/Car calculators, color-coded scoring, portfolio KPIs, capital efficiency comparison
 - Feb 18, 2026: Built Revenue Dashboard page at /revenue with division revenue, top bots, API summary
 - Feb 18, 2026: Built SaaS Pricing page at /pricing with tier comparison, autonomy access, annual discount
 - Feb 18, 2026: Added tier-based autonomy gating - locked controls show "Pro+" or "Enterprise+" badges

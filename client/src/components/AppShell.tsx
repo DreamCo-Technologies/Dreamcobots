@@ -3,6 +3,7 @@ import { Link, useLocation } from "wouter";
 import {
   Bot,
   Building2,
+  Calculator,
   ChevronDown,
   CircleDollarSign,
   Globe,
@@ -62,6 +63,7 @@ export default function AppShell(props: {
     { href: "/dashboard", label: "Empire HQ", icon: LayoutDashboard },
     { href: "/divisions", label: "Divisions", icon: Building2 },
     { href: "/bots", label: "Bot Fleet", icon: Bot },
+    { href: "/deals", label: "Deal Analyzer", icon: Calculator },
     { href: "/revenue", label: "Revenue", icon: CircleDollarSign },
     { href: "/pricing", label: "Pricing", icon: Tag },
     { href: "/autonomy", label: "Autonomy", icon: Workflow },

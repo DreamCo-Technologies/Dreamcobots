@@ -318,6 +318,31 @@ export interface DivisionMetrics {
   activeBots: number;
 }
 
+export const DEAL_TYPES = ["real_estate", "car"] as const;
+export type DealType = (typeof DEAL_TYPES)[number];
+
+export const DEAL_STATUSES = ["green", "yellow", "red"] as const;
+export type DealStatus = (typeof DEAL_STATUSES)[number];
+
+export const deals = pgTable("deals", {
+  id: serial("id").primaryKey(),
+  name: text("name").notNull(),
+  dealType: text("deal_type").notNull().default("real_estate"),
+  status: text("status").notNull().default("red"),
+  inputs: jsonb("inputs").notNull().default(sql`'{}'::jsonb`),
+  results: jsonb("results").notNull().default(sql`'{}'::jsonb`),
+  netProfit: integer("net_profit").notNull().default(0),
+  roi: integer("roi").notNull().default(0),
+  capitalEfficiency: integer("capital_efficiency").notNull().default(0),
+  daysHeld: integer("days_held").notNull().default(0),
+  cashInvested: integer("cash_invested").notNull().default(0),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
+export const insertDealSchema = createInsertSchema(deals).omit({ id: true, createdAt: true });
+export type Deal = typeof deals.$inferSelect;
+export type InsertDeal = z.infer<typeof insertDealSchema>;
+
 export const ALERT_TRIGGERS = [
   "task_fail_consecutive",
   "cpu_high",

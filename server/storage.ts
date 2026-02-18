@@ -11,6 +11,7 @@ import {
   botInteractions,
   botFinancials,
   alertRules,
+  deals,
   type BotProfile,
   type InsertBotProfile,
   type AutonomousTask,
@@ -29,6 +30,8 @@ import {
   type AlertRule,
   type InsertAlertRule,
   type BotHealthSummary,
+  type Deal,
+  type InsertDeal,
 } from "@shared/schema";
 import { and, desc, eq, ne, sql, count, inArray, sum, avg } from "drizzle-orm";
 
@@ -79,6 +82,21 @@ export interface IStorage {
   listAlertRules(): Promise<AlertRule[]>;
   createAlertRule(input: InsertAlertRule): Promise<AlertRule>;
   toggleAlertRule(id: number, enabled: boolean): Promise<AlertRule | undefined>;
+
+  listDeals(): Promise<Deal[]>;
+  getDeal(id: number): Promise<Deal | undefined>;
+  createDeal(input: InsertDeal): Promise<Deal>;
+  updateDeal(id: number, updates: Partial<InsertDeal>): Promise<Deal | undefined>;
+  deleteDeal(id: number): Promise<void>;
+  getDealKpis(): Promise<{
+    totalDeals: number;
+    totalNetProfit: number;
+    avgRoi: number;
+    avgCapitalEfficiency: number;
+    greenDeals: number;
+    yellowDeals: number;
+    redDeals: number;
+  }>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -351,6 +369,41 @@ export class DatabaseStorage implements IStorage {
   async toggleAlertRule(id: number, enabled: boolean): Promise<AlertRule | undefined> {
     const [updated] = await db.update(alertRules).set({ enabled }).where(eq(alertRules.id, id)).returning();
     return updated;
+  }
+
+  async listDeals(): Promise<Deal[]> {
+    return await db.select().from(deals).orderBy(desc(deals.createdAt));
+  }
+
+  async getDeal(id: number): Promise<Deal | undefined> {
+    const [deal] = await db.select().from(deals).where(eq(deals.id, id));
+    return deal;
+  }
+
+  async createDeal(input: InsertDeal): Promise<Deal> {
+    const [created] = await db.insert(deals).values(input).returning();
+    return created;
+  }
+
+  async updateDeal(id: number, updates: Partial<InsertDeal>): Promise<Deal | undefined> {
+    const [updated] = await db.update(deals).set(updates).where(eq(deals.id, id)).returning();
+    return updated;
+  }
+
+  async deleteDeal(id: number): Promise<void> {
+    await db.delete(deals).where(eq(deals.id, id));
+  }
+
+  async getDealKpis() {
+    const allDeals = await this.listDeals();
+    const totalDeals = allDeals.length;
+    const totalNetProfit = allDeals.reduce((s, d) => s + d.netProfit, 0);
+    const avgRoi = totalDeals > 0 ? Math.round(allDeals.reduce((s, d) => s + d.roi, 0) / totalDeals) : 0;
+    const avgCapitalEfficiency = totalDeals > 0 ? Math.round(allDeals.reduce((s, d) => s + d.capitalEfficiency, 0) / totalDeals) : 0;
+    const greenDeals = allDeals.filter(d => d.status === "green").length;
+    const yellowDeals = allDeals.filter(d => d.status === "yellow").length;
+    const redDeals = allDeals.filter(d => d.status === "red").length;
+    return { totalDeals, totalNetProfit, avgRoi, avgCapitalEfficiency, greenDeals, yellowDeals, redDeals };
   }
 }
 
