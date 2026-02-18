@@ -10,7 +10,7 @@ import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { useSearch } from "wouter";
+import { Link, useSearch } from "wouter";
 import {
   Bot,
   Building2,
@@ -187,49 +187,52 @@ export default function DivisionsPage() {
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               {botsToShow.map((bot: any) => (
-                <Card key={bot.id} className="hover-elevate" data-testid={`bot-card-${bot.id}`}>
-                  <CardContent className="p-4">
-                    <div className="flex items-start justify-between gap-3">
-                      <div className="min-w-0 flex-1">
-                        <div className="flex items-center gap-2 flex-wrap">
-                          <h3 className="text-sm font-semibold truncate">{bot.displayName}</h3>
-                          <span className={cn("h-2 w-2 rounded-full flex-shrink-0", STATUS_COLORS[bot.status] ?? STATUS_COLORS.active)} />
+                <Link key={bot.id} href={`/bot/${bot.id}`}>
+                  <Card className="hover-elevate cursor-pointer" data-testid={`bot-card-${bot.id}`}>
+                    <CardContent className="p-4">
+                      <div className="flex items-start justify-between gap-3">
+                        <div className="min-w-0 flex-1">
+                          <div className="flex items-center gap-2 flex-wrap">
+                            <h3 className="text-sm font-semibold truncate">{bot.displayName}</h3>
+                            <span className={cn("h-2 w-2 rounded-full flex-shrink-0", STATUS_COLORS[bot.status] ?? STATUS_COLORS.active)} />
+                          </div>
+                          <p className="text-[11px] font-mono text-muted-foreground mt-0.5">{bot.slug}</p>
                         </div>
-                        <p className="text-[11px] font-mono text-muted-foreground mt-0.5">{bot.slug}</p>
+                        <div className="flex items-center gap-1.5 flex-shrink-0">
+                          <Badge variant="outline" className={cn("rounded-full text-[10px] capitalize", TIER_COLORS[bot.tier])}>
+                            {bot.tier}
+                          </Badge>
+                          <ChevronRight className="h-3.5 w-3.5 text-muted-foreground" />
+                        </div>
                       </div>
-                      <div className="flex gap-1.5 flex-shrink-0">
-                        <Badge variant="outline" className={cn("rounded-full text-[10px] capitalize", TIER_COLORS[bot.tier])}>
-                          {bot.tier}
-                        </Badge>
-                      </div>
-                    </div>
 
-                    {bot.description && (
-                      <p className="text-xs text-muted-foreground mt-2 line-clamp-2">{bot.description}</p>
-                    )}
-
-                    <div className="mt-3 flex flex-wrap items-center gap-1.5">
-                      <Badge variant="secondary" className="rounded-full text-[10px]">{bot.division}</Badge>
-                      <Badge variant="outline" className="rounded-full text-[10px] capitalize">{bot.category}</Badge>
-                      {bot.priceRange && (
-                        <Badge variant="outline" className="rounded-full text-[10px] text-green-600 dark:text-green-400 border-green-500/20">
-                          {bot.priceRange}
-                        </Badge>
+                      {bot.description && (
+                        <p className="text-xs text-muted-foreground mt-2 line-clamp-2">{bot.description}</p>
                       )}
-                    </div>
 
-                    {Array.isArray(bot.capabilities) && bot.capabilities.length > 0 && (
-                      <div className="mt-2 flex flex-wrap gap-1">
-                        {bot.capabilities.slice(0, 3).map((cap: string, i: number) => (
-                          <span key={i} className="text-[10px] px-1.5 py-0.5 rounded bg-muted text-muted-foreground">{cap}</span>
-                        ))}
-                        {bot.capabilities.length > 3 && (
-                          <span className="text-[10px] text-muted-foreground">+{bot.capabilities.length - 3}</span>
+                      <div className="mt-3 flex flex-wrap items-center gap-1.5">
+                        <Badge variant="secondary" className="rounded-full text-[10px]">{bot.division}</Badge>
+                        <Badge variant="outline" className="rounded-full text-[10px] capitalize">{bot.category}</Badge>
+                        {bot.priceRange && (
+                          <Badge variant="outline" className="rounded-full text-[10px] text-green-600 dark:text-green-400 border-green-500/20">
+                            {bot.priceRange}
+                          </Badge>
                         )}
                       </div>
-                    )}
-                  </CardContent>
-                </Card>
+
+                      {Array.isArray(bot.capabilities) && bot.capabilities.length > 0 && (
+                        <div className="mt-2 flex flex-wrap gap-1">
+                          {bot.capabilities.slice(0, 3).map((cap: string, i: number) => (
+                            <span key={i} className="text-[10px] px-1.5 py-0.5 rounded bg-muted text-muted-foreground">{cap}</span>
+                          ))}
+                          {bot.capabilities.length > 3 && (
+                            <span className="text-[10px] text-muted-foreground">+{bot.capabilities.length - 3}</span>
+                          )}
+                        </div>
+                      )}
+                    </CardContent>
+                  </Card>
+                </Link>
               ))}
             </div>
           )}

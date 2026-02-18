@@ -132,6 +132,14 @@ export async function registerRoutes(
     res.json(bots);
   });
 
+  app.get("/api/bots/:id", async (req, res) => {
+    const id = Number(req.params.id);
+    if (isNaN(id)) return res.status(400).json({ message: "Invalid bot ID" });
+    const bot = await storage.getBotProfileById(id);
+    if (!bot) return res.status(404).json({ message: "Bot not found" });
+    res.json(bot);
+  });
+
   app.post(api.bots.create.path, async (req, res) => {
     try {
       const input = api.bots.create.input.parse(req.body);

@@ -34,6 +34,7 @@ import { and, desc, eq, ne, sql, count, inArray, sum, avg } from "drizzle-orm";
 
 export interface IStorage {
   listBotProfiles(): Promise<BotProfile[]>;
+  getBotProfileById(id: number): Promise<BotProfile | undefined>;
   listBotsByDivision(division: string): Promise<BotProfile[]>;
   createBotProfile(input: InsertBotProfile): Promise<BotProfile>;
   updateBotProfile(id: number, updates: Partial<InsertBotProfile>): Promise<BotProfile | undefined>;
@@ -83,6 +84,11 @@ export interface IStorage {
 export class DatabaseStorage implements IStorage {
   async listBotProfiles(): Promise<BotProfile[]> {
     return await db.select().from(botProfiles).orderBy(botProfiles.id);
+  }
+
+  async getBotProfileById(id: number): Promise<BotProfile | undefined> {
+    const [profile] = await db.select().from(botProfiles).where(eq(botProfiles.id, id));
+    return profile;
   }
 
   async listBotsByDivision(division: string): Promise<BotProfile[]> {

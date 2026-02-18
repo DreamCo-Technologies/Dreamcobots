@@ -11,6 +11,7 @@ import AutonomyPage from "@/pages/AutonomyPage";
 import BotsPage from "@/pages/BotsPage";
 import DashboardPage from "@/pages/DashboardPage";
 import DivisionsPage from "@/pages/DivisionsPage";
+import BotDetailPage from "@/pages/BotDetailPage";
 
 function Router() {
   return (
@@ -19,6 +20,7 @@ function Router() {
       <Route path="/c/:id" component={ConversationPage} />
       <Route path="/autonomy" component={AutonomyPage} />
       <Route path="/bots" component={BotsPage} />
+      <Route path="/bot/:id" component={BotDetailPage} />
       <Route path="/dashboard" component={DashboardPage} />
       <Route path="/divisions" component={DivisionsPage} />
 

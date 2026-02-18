@@ -33,6 +33,14 @@ export const api = {
         200: z.array(z.custom<BotProfile>()),
       },
     },
+    get: {
+      method: "GET" as const,
+      path: "/api/bots/:id" as const,
+      responses: {
+        200: z.custom<BotProfile>(),
+        404: errorSchemas.notFound,
+      },
+    },
     byDivision: {
       method: "GET" as const,
       path: "/api/bots/division/:division" as const,

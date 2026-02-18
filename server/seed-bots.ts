@@ -1,5 +1,19 @@
 import type { InsertBotProfile } from "@shared/schema";
 
+const TIER_FEATURES: Record<string, string[]> = {
+  free: ["Basic analytics", "Email support", "Community access"],
+  pro: ["Advanced analytics dashboard", "Priority email support", "API access", "Custom integrations", "Webhook notifications", "Data export (CSV/JSON)", "Scheduled automations", "Multi-user access"],
+  enterprise: ["Advanced analytics dashboard", "Priority email support", "API access", "Custom integrations", "Webhook notifications", "Data export (CSV/JSON)", "Scheduled automations", "Multi-user access", "Dedicated account manager", "SLA guarantee (99.9%)", "Custom model fine-tuning", "SSO/SAML authentication", "Audit logging", "Role-based access control", "White-label options", "On-premise deployment option"],
+  elite: ["Advanced analytics dashboard", "Priority email support", "API access", "Custom integrations", "Webhook notifications", "Data export (CSV/JSON)", "Scheduled automations", "Multi-user access", "Dedicated account manager", "SLA guarantee (99.99%)", "Custom model fine-tuning", "SSO/SAML authentication", "Audit logging", "Role-based access control", "White-label options", "On-premise deployment option", "24/7 phone support", "Custom AI model training", "Unlimited API calls", "Dedicated infrastructure", "Quarterly business reviews", "Early access to features"],
+};
+
+const UNIVERSAL_FEATURES = [
+  "Real-time monitoring dashboard", "Automated error recovery", "Cross-bot data sharing",
+  "Version history tracking", "Performance benchmarking", "Compliance reporting",
+  "Multi-region deployment", "Auto-scaling resources", "Encrypted data at rest",
+  "SOC 2 Type II compliant",
+];
+
 function bot(
   slug: string,
   displayName: string,
@@ -12,17 +26,24 @@ function bot(
   targetUsers: string,
   priceRange: string,
 ): InsertBotProfile {
+  const tierFeats = TIER_FEATURES[tier] ?? TIER_FEATURES.pro;
+  const allCapabilities = [
+    ...capabilities,
+    ...tierFeats.filter(f => !capabilities.includes(f)),
+    ...UNIVERSAL_FEATURES.filter(f => !capabilities.includes(f) && !tierFeats.includes(f)),
+  ];
+
   return {
     slug,
     displayName,
     systemPrompt: `You are ${displayName}, a specialized AI bot in the DreamCo Empire OS ${division} division. ${description} You operate with precision, provide actionable intelligence, and generate measurable results. Be concise, data-driven, and focused on ROI.`,
-    traits: { division, category, tier },
+    traits: { division, category, tier, version: "2.0", engine: "GPT-4.1", autonomy: "full" },
     isDefault: false,
     division,
     category,
     tier,
     description,
-    capabilities,
+    capabilities: allCapabilities,
     revenueModel,
     targetUsers,
     status: "active",
@@ -36,13 +57,13 @@ export const ALL_BOTS: InsertBotProfile[] = [
     slug: "dreambot",
     displayName: "DreamBot",
     systemPrompt: "You are DreamBot, the central AI brain of DreamCo Empire OS. You coordinate all divisions, monitor performance, reallocate resources, and help users build autonomous wealth-generation systems. Be concise, practical, and honest about limitations. You ask one clarifying question when needed, otherwise propose a concrete next step and execute.",
-    traits: { vibe: "calm", style: "practical", focus: "autonomy", role: "central-brain" },
+    traits: { vibe: "calm", style: "practical", focus: "autonomy", role: "central-brain", version: "2.0", engine: "GPT-4.1", autonomy: "full" },
     isDefault: true,
     division: "CommandCore",
     category: "system",
     tier: "free",
     description: "Central AI brain that coordinates all bots, monitors performance, and reallocates resources across the DreamCo Empire.",
-    capabilities: ["Multi-bot coordination", "Performance monitoring", "Resource allocation", "Task scheduling", "System analytics"],
+    capabilities: ["Multi-bot coordination", "Performance monitoring", "Resource allocation", "Task scheduling", "System analytics", ...UNIVERSAL_FEATURES, ...TIER_FEATURES.free],
     revenueModel: "Included with all tiers",
     targetUsers: "All DreamCo users",
     status: "active",
@@ -52,13 +73,13 @@ export const ALL_BOTS: InsertBotProfile[] = [
     slug: "research-bot",
     displayName: "Research Bot",
     systemPrompt: "You are Research Bot, an analytical AI that generates structured research plans, checklists, and summaries with sources. Keep output organized and actionable. Focus on market intelligence, competitor analysis, and emerging opportunities.",
-    traits: { vibe: "analytical", output: "structured", role: "research" },
+    traits: { vibe: "analytical", output: "structured", role: "research", version: "2.0", engine: "GPT-4.1", autonomy: "full" },
     isDefault: false,
     division: "CommandCore",
     category: "system",
     tier: "free",
     description: "Deep research and analysis engine for market intelligence and competitive positioning.",
-    capabilities: ["Market research", "Competitor analysis", "Trend detection", "Data synthesis", "Report generation"],
+    capabilities: ["Market research", "Competitor analysis", "Trend detection", "Data synthesis", "Report generation", ...UNIVERSAL_FEATURES, ...TIER_FEATURES.free],
     revenueModel: "Included with all tiers",
     targetUsers: "Researchers, analysts, strategists",
     status: "active",
