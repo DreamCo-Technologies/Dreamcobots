@@ -47,6 +47,7 @@ DreamFinance (25), DreamRealEstate (25), DreamSalesPro (25), DreamAIInfra (25), 
 ## API Endpoints
 - `/api/bots` - Bot CRUD
 - `/api/bots/:id` - Get single bot by ID
+- `/api/bots/:id/controls` - PATCH to update bot autonomy level and operational mode
 - `/api/bots/division/:division` - Bots by division
 - `/api/conversations` - Conversation CRUD
 - `/api/tasks` - Task CRUD with run execution
@@ -59,7 +60,16 @@ DreamFinance (25), DreamRealEstate (25), DreamSalesPro (25), DreamAIInfra (25), 
 - `/api/financials` - Financial tracking
 - `/api/alerts` - Alert rules management
 
+## Bot Control System
+Each bot has per-bot controls:
+- **Autonomy Level**: guided | semi-autonomous | full-autonomy
+- **Operational Mode**: sandbox | live | offline
+- Controls are managed via PATCH /api/bots/:id/controls
+- Bot Detail Page (/bot/:id) has a Control Panel with buttons for each setting
+- Schema fields: autonomyLevel (default: "guided"), operationalMode (default: "sandbox")
+
 ## Recent Changes
+- Feb 18, 2026: Added per-bot Control Panel with autonomy level (Guided/Semi-Autonomous/Full Autonomy) and operational mode (Sandbox/Live/Offline) buttons
 - Feb 18, 2026: Added individual Bot Detail Pages at /bot/:id with dashboard metrics, capabilities, division features, investment prospectus, system prompt, and traits
 - Feb 18, 2026: Enhanced all 251 bots with 18-36 capabilities each (tier-specific + universal features)
 - Feb 18, 2026: Made bot cards clickable in DivisionsPage and BotsPage with navigation to detail pages

@@ -140,6 +140,28 @@ export async function registerRoutes(
     res.json(bot);
   });
 
+  const botControlsSchema = z.object({
+    autonomyLevel: z.enum(["guided", "semi-autonomous", "full-autonomy"]).optional(),
+    operationalMode: z.enum(["sandbox", "live", "offline"]).optional(),
+  }).refine(d => d.autonomyLevel || d.operationalMode, { message: "At least one field required" });
+
+  app.patch("/api/bots/:id/controls", async (req, res) => {
+    const id = Number(req.params.id);
+    if (isNaN(id)) return res.status(400).json({ message: "Invalid bot ID" });
+    try {
+      const parsed = botControlsSchema.parse(req.body);
+      const updates: Record<string, string> = {};
+      if (parsed.autonomyLevel) updates.autonomyLevel = parsed.autonomyLevel;
+      if (parsed.operationalMode) updates.operationalMode = parsed.operationalMode;
+      const updated = await storage.updateBotProfile(id, updates);
+      if (!updated) return res.status(404).json({ message: "Bot not found" });
+      res.json(updated);
+    } catch (err) {
+      if (err instanceof z.ZodError) return res.status(400).json(zodValidationError(err));
+      throw err;
+    }
+  });
+
   app.post(api.bots.create.path, async (req, res) => {
     try {
       const input = api.bots.create.input.parse(req.body);

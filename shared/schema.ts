@@ -65,6 +65,14 @@ export const messages = pgTable("messages", {
   createdAt: timestamp("created_at").default(sql`CURRENT_TIMESTAMP`).notNull(),
 });
 
+export const BOT_OPERATIONAL_MODES = [
+  "sandbox",
+  "live",
+  "offline",
+] as const;
+
+export type BotOperationalMode = (typeof BOT_OPERATIONAL_MODES)[number];
+
 export const botProfiles = pgTable("bot_profiles", {
   id: serial("id").primaryKey(),
   slug: text("slug").notNull().unique(),
@@ -81,6 +89,8 @@ export const botProfiles = pgTable("bot_profiles", {
   targetUsers: text("target_users").notNull().default(""),
   status: text("bot_status").notNull().default("active"),
   priceRange: text("price_range").notNull().default(""),
+  autonomyLevel: text("autonomy_level").notNull().default("guided"),
+  operationalMode: text("operational_mode").notNull().default("sandbox"),
 });
 
 export const autonomousTasks = pgTable("autonomous_tasks", {

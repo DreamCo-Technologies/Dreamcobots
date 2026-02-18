@@ -1,5 +1,5 @@
 import { useParams } from "wouter";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation } from "@tanstack/react-query";
 import { Link } from "wouter";
 import Seo from "@/components/Seo";
 import AppShell from "@/components/AppShell";
@@ -10,6 +10,8 @@ import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Progress } from "@/components/ui/progress";
 import { cn } from "@/lib/utils";
+import { useToast } from "@/hooks/use-toast";
+import { apiRequest, queryClient } from "@/lib/queryClient";
 import type { BotProfile, BotMetric, BotError, BotFinancial } from "@shared/schema";
 import {
   ArrowLeft,
@@ -23,6 +25,7 @@ import {
   Clock,
   Cpu,
   Database,
+  FlaskConical,
   Globe,
   HardDrive,
   Layers,
@@ -31,6 +34,8 @@ import {
   MessageSquare,
   Monitor,
   Network,
+  Play,
+  Power,
   Rocket,
   Server,
   Shield,
@@ -254,6 +259,23 @@ export default function BotDetailPage() {
     queryKey: ["/api/financials"],
   });
 
+  const { toast } = useToast();
+
+  const controlsMutation = useMutation({
+    mutationFn: async (body: { autonomyLevel?: string; operationalMode?: string }) => {
+      const res = await apiRequest("PATCH", `/api/bots/${botId}/controls`, body);
+      return res.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/bots", botId] });
+      queryClient.invalidateQueries({ queryKey: ["/api/bots"] });
+      toast({ title: "Bot updated", description: "Control settings saved successfully." });
+    },
+    onError: (err: any) => {
+      toast({ title: "Update failed", description: err?.message ?? "Unknown error", variant: "destructive" });
+    },
+  });
+
   const bot = botQuery.data;
   const metrics = useMemo(() => generateMetrics(botId), [botId]);
   const divisionFeatures = bot ? (DIVISION_FEATURES[bot.division] ?? DIVISION_FEATURES.CommandCore) : [];
@@ -348,6 +370,154 @@ export default function BotDetailPage() {
                 <div className="text-right">
                   <p className="text-xs text-muted-foreground">Target Users</p>
                   <p className="text-sm font-medium" data-testid="bot-detail-target-users">{bot.targetUsers || "N/A"}</p>
+                </div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card data-testid="bot-control-panel">
+          <CardHeader className="flex flex-row items-center justify-between gap-2 space-y-0 pb-4">
+            <CardTitle className="text-lg flex items-center gap-2">
+              <Monitor className="h-5 w-5 text-primary" />
+              Bot Control Panel
+            </CardTitle>
+            <Badge
+              variant="outline"
+              className={cn(
+                "rounded-full capitalize",
+                bot.operationalMode === "live" && "bg-[rgb(34_197_94)]/10 text-[rgb(34_197_94)] border-[rgb(34_197_94)]/20",
+                bot.operationalMode === "sandbox" && "bg-[rgb(245_158_11)]/10 text-[rgb(245_158_11)] border-[rgb(245_158_11)]/20",
+                bot.operationalMode === "offline" && "bg-[rgb(239_68_68)]/10 text-[rgb(239_68_68)] border-[rgb(239_68_68)]/20",
+              )}
+              data-testid="bot-mode-badge"
+            >
+              {bot.operationalMode === "live" ? "LIVE" : bot.operationalMode === "sandbox" ? "SANDBOX" : "OFFLINE"}
+            </Badge>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div>
+                <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">Autonomy Level</p>
+                <div className="flex flex-col gap-2">
+                  <Button
+                    variant={bot.autonomyLevel === "guided" ? "default" : "outline"}
+                    className={cn("justify-start rounded-xl", bot.autonomyLevel === "guided" && "bg-primary text-primary-foreground")}
+                    disabled={controlsMutation.isPending}
+                    onClick={() => controlsMutation.mutate({ autonomyLevel: "guided" })}
+                    data-testid="btn-autonomy-guided"
+                  >
+                    <Shield className="h-4 w-4 mr-2" />
+                    Guided
+                  </Button>
+                  <Button
+                    variant={bot.autonomyLevel === "semi-autonomous" ? "default" : "outline"}
+                    className={cn("justify-start rounded-xl", bot.autonomyLevel === "semi-autonomous" && "bg-[rgb(245_158_11)] text-white border-[rgb(245_158_11)]")}
+                    disabled={controlsMutation.isPending}
+                    onClick={() => controlsMutation.mutate({ autonomyLevel: "semi-autonomous" })}
+                    data-testid="btn-autonomy-semi"
+                  >
+                    <Activity className="h-4 w-4 mr-2" />
+                    Semi-Autonomous
+                  </Button>
+                  <Button
+                    variant={bot.autonomyLevel === "full-autonomy" ? "default" : "outline"}
+                    className={cn("justify-start rounded-xl", bot.autonomyLevel === "full-autonomy" && "bg-[rgb(34_197_94)] text-white border-[rgb(34_197_94)]")}
+                    disabled={controlsMutation.isPending}
+                    onClick={() => controlsMutation.mutate({ autonomyLevel: "full-autonomy" })}
+                    data-testid="btn-autonomy-full"
+                  >
+                    <Rocket className="h-4 w-4 mr-2" />
+                    Full Autonomy
+                  </Button>
+                </div>
+                <p className="text-[10px] text-muted-foreground mt-2">
+                  {bot.autonomyLevel === "guided" && "You approve all actions before execution."}
+                  {bot.autonomyLevel === "semi-autonomous" && "Low-risk actions auto-execute. High-risk flagged for approval."}
+                  {bot.autonomyLevel === "full-autonomy" && "All actions auto-execute. Reporting only."}
+                </p>
+              </div>
+
+              <div>
+                <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">Operational Mode</p>
+                <div className="flex flex-col gap-2">
+                  <Button
+                    variant={bot.operationalMode === "sandbox" ? "default" : "outline"}
+                    className={cn("justify-start rounded-xl", bot.operationalMode === "sandbox" && "bg-[rgb(245_158_11)] text-white border-[rgb(245_158_11)]")}
+                    disabled={controlsMutation.isPending}
+                    onClick={() => controlsMutation.mutate({ operationalMode: "sandbox" })}
+                    data-testid="btn-mode-sandbox"
+                  >
+                    <FlaskConical className="h-4 w-4 mr-2" />
+                    Sandbox Testing
+                  </Button>
+                  <Button
+                    variant={bot.operationalMode === "live" ? "default" : "outline"}
+                    className={cn("justify-start rounded-xl", bot.operationalMode === "live" && "bg-[rgb(34_197_94)] text-white border-[rgb(34_197_94)]")}
+                    disabled={controlsMutation.isPending}
+                    onClick={() => controlsMutation.mutate({ operationalMode: "live" })}
+                    data-testid="btn-mode-live"
+                  >
+                    <Play className="h-4 w-4 mr-2" />
+                    Live Mode
+                  </Button>
+                  <Button
+                    variant={bot.operationalMode === "offline" ? "default" : "outline"}
+                    className={cn("justify-start rounded-xl", bot.operationalMode === "offline" && "bg-[rgb(239_68_68)] text-white border-[rgb(239_68_68)]")}
+                    disabled={controlsMutation.isPending}
+                    onClick={() => controlsMutation.mutate({ operationalMode: "offline" })}
+                    data-testid="btn-mode-offline"
+                  >
+                    <Power className="h-4 w-4 mr-2" />
+                    Offline
+                  </Button>
+                </div>
+                <p className="text-[10px] text-muted-foreground mt-2">
+                  {bot.operationalMode === "sandbox" && "Testing mode: no real transactions. Safe to experiment."}
+                  {bot.operationalMode === "live" && "Live mode: real transactions and revenue generation active."}
+                  {bot.operationalMode === "offline" && "Bot is powered down. No activity."}
+                </p>
+              </div>
+
+              <div>
+                <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">Quick Status</p>
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between p-3 rounded-xl border border-border/40">
+                    <span className="text-sm text-muted-foreground">Autonomy</span>
+                    <Badge variant="secondary" className="rounded-full capitalize" data-testid="status-autonomy">{bot.autonomyLevel}</Badge>
+                  </div>
+                  <div className="flex items-center justify-between p-3 rounded-xl border border-border/40">
+                    <span className="text-sm text-muted-foreground">Mode</span>
+                    <Badge
+                      variant="secondary"
+                      className={cn(
+                        "rounded-full capitalize",
+                        bot.operationalMode === "live" && "bg-[rgb(34_197_94)]/15 text-[rgb(34_197_94)]",
+                        bot.operationalMode === "sandbox" && "bg-[rgb(245_158_11)]/15 text-[rgb(245_158_11)]",
+                        bot.operationalMode === "offline" && "bg-[rgb(239_68_68)]/15 text-[rgb(239_68_68)]",
+                      )}
+                      data-testid="status-mode"
+                    >
+                      {bot.operationalMode}
+                    </Badge>
+                  </div>
+                  <div className="flex items-center justify-between p-3 rounded-xl border border-border/40">
+                    <span className="text-sm text-muted-foreground">Status</span>
+                    <Badge
+                      variant="secondary"
+                      className={cn(
+                        "rounded-full capitalize",
+                        bot.status === "active" && "bg-[rgb(34_197_94)]/15 text-[rgb(34_197_94)]",
+                      )}
+                      data-testid="status-bot"
+                    >
+                      {bot.status}
+                    </Badge>
+                  </div>
+                  <div className="flex items-center justify-between p-3 rounded-xl border border-border/40">
+                    <span className="text-sm text-muted-foreground">Tier</span>
+                    <Badge variant="outline" className={cn("rounded-full capitalize", TIER_COLORS[bot.tier])} data-testid="status-tier">{bot.tier}</Badge>
+                  </div>
                 </div>
               </div>
             </div>
