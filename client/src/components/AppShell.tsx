@@ -4,11 +4,13 @@ import {
   Bot,
   Building2,
   ChevronDown,
+  CircleDollarSign,
   Globe,
   LayoutDashboard,
   MessageSquareText,
   Shield,
   Sparkles,
+  Tag,
   Workflow,
   Zap,
 } from "lucide-react";
@@ -60,6 +62,8 @@ export default function AppShell(props: {
     { href: "/dashboard", label: "Empire HQ", icon: LayoutDashboard },
     { href: "/divisions", label: "Divisions", icon: Building2 },
     { href: "/bots", label: "Bot Fleet", icon: Bot },
+    { href: "/revenue", label: "Revenue", icon: CircleDollarSign },
+    { href: "/pricing", label: "Pricing", icon: Tag },
     { href: "/autonomy", label: "Autonomy", icon: Workflow },
   ] as const;
 

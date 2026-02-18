@@ -13,6 +13,7 @@ import { cn } from "@/lib/utils";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import type { BotProfile, BotMetric, BotError, BotFinancial } from "@shared/schema";
+import { TIER_AUTONOMY_LIMITS, DIVISION_API_REGISTRIES } from "@shared/api-registry";
 import {
   ArrowLeft,
   Activity,
@@ -35,6 +36,7 @@ import {
   Monitor,
   Network,
   Play,
+  Plug,
   Power,
   Rocket,
   Server,
@@ -399,38 +401,47 @@ export default function BotDetailPage() {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               <div>
                 <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">Autonomy Level</p>
-                <div className="flex flex-col gap-2">
-                  <Button
-                    variant={bot.autonomyLevel === "guided" ? "default" : "outline"}
-                    className={cn("justify-start rounded-xl", bot.autonomyLevel === "guided" && "bg-primary text-primary-foreground")}
-                    disabled={controlsMutation.isPending}
-                    onClick={() => controlsMutation.mutate({ autonomyLevel: "guided" })}
-                    data-testid="btn-autonomy-guided"
-                  >
-                    <Shield className="h-4 w-4 mr-2" />
-                    Guided
-                  </Button>
-                  <Button
-                    variant={bot.autonomyLevel === "semi-autonomous" ? "default" : "outline"}
-                    className={cn("justify-start rounded-xl", bot.autonomyLevel === "semi-autonomous" && "bg-[rgb(245_158_11)] text-white border-[rgb(245_158_11)]")}
-                    disabled={controlsMutation.isPending}
-                    onClick={() => controlsMutation.mutate({ autonomyLevel: "semi-autonomous" })}
-                    data-testid="btn-autonomy-semi"
-                  >
-                    <Activity className="h-4 w-4 mr-2" />
-                    Semi-Autonomous
-                  </Button>
-                  <Button
-                    variant={bot.autonomyLevel === "full-autonomy" ? "default" : "outline"}
-                    className={cn("justify-start rounded-xl", bot.autonomyLevel === "full-autonomy" && "bg-[rgb(34_197_94)] text-white border-[rgb(34_197_94)]")}
-                    disabled={controlsMutation.isPending}
-                    onClick={() => controlsMutation.mutate({ autonomyLevel: "full-autonomy" })}
-                    data-testid="btn-autonomy-full"
-                  >
-                    <Rocket className="h-4 w-4 mr-2" />
-                    Full Autonomy
-                  </Button>
-                </div>
+                {(() => {
+                  const allowed = TIER_AUTONOMY_LIMITS[bot.tier] ?? ["guided"];
+                  const canSemi = allowed.includes("semi-autonomous");
+                  const canFull = allowed.includes("full-autonomy");
+                  return (
+                    <div className="flex flex-col gap-2">
+                      <Button
+                        variant={bot.autonomyLevel === "guided" ? "default" : "outline"}
+                        className={cn("justify-start rounded-xl", bot.autonomyLevel === "guided" && "bg-primary text-primary-foreground")}
+                        disabled={controlsMutation.isPending}
+                        onClick={() => controlsMutation.mutate({ autonomyLevel: "guided" })}
+                        data-testid="btn-autonomy-guided"
+                      >
+                        <Shield className="h-4 w-4 mr-2" />
+                        Guided
+                      </Button>
+                      <Button
+                        variant={bot.autonomyLevel === "semi-autonomous" ? "default" : "outline"}
+                        className={cn("justify-start rounded-xl", bot.autonomyLevel === "semi-autonomous" && "bg-[rgb(245_158_11)] text-white border-[rgb(245_158_11)]", !canSemi && "opacity-50")}
+                        disabled={controlsMutation.isPending || !canSemi}
+                        onClick={() => canSemi && controlsMutation.mutate({ autonomyLevel: "semi-autonomous" })}
+                        data-testid="btn-autonomy-semi"
+                      >
+                        {canSemi ? <Activity className="h-4 w-4 mr-2" /> : <Lock className="h-4 w-4 mr-2" />}
+                        Semi-Autonomous
+                        {!canSemi && <Badge variant="outline" className="ml-auto rounded-full text-[9px]">Pro+</Badge>}
+                      </Button>
+                      <Button
+                        variant={bot.autonomyLevel === "full-autonomy" ? "default" : "outline"}
+                        className={cn("justify-start rounded-xl", bot.autonomyLevel === "full-autonomy" && "bg-[rgb(34_197_94)] text-white border-[rgb(34_197_94)]", !canFull && "opacity-50")}
+                        disabled={controlsMutation.isPending || !canFull}
+                        onClick={() => canFull && controlsMutation.mutate({ autonomyLevel: "full-autonomy" })}
+                        data-testid="btn-autonomy-full"
+                      >
+                        {canFull ? <Rocket className="h-4 w-4 mr-2" /> : <Lock className="h-4 w-4 mr-2" />}
+                        Full Autonomy
+                        {!canFull && <Badge variant="outline" className="ml-auto rounded-full text-[9px]">Enterprise+</Badge>}
+                      </Button>
+                    </div>
+                  );
+                })()}
                 <p className="text-[10px] text-muted-foreground mt-2">
                   {bot.autonomyLevel === "guided" && "You approve all actions before execution."}
                   {bot.autonomyLevel === "semi-autonomous" && "Low-risk actions auto-execute. High-risk flagged for approval."}
@@ -658,6 +669,67 @@ export default function BotDetailPage() {
             </CardContent>
           </Card>
         </div>
+
+        {(() => {
+          const registry = DIVISION_API_REGISTRIES[bot.division];
+          if (!registry) return null;
+          const totalApis = registry.categories.reduce((s, c) => s + c.apis.length, 0);
+          return (
+            <Card data-testid="bot-api-integrations">
+              <CardHeader className="flex flex-row items-center justify-between gap-2 space-y-0 pb-4">
+                <CardTitle className="text-lg flex items-center gap-2">
+                  <Plug className="h-5 w-5 text-primary" />
+                  API Integrations
+                </CardTitle>
+                <Badge variant="secondary" className="rounded-full">{totalApis} connected</Badge>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  {registry.categories.map(cat => (
+                    <div key={cat.name}>
+                      <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2">{cat.name}</p>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                        {cat.apis.map(api => {
+                          const TIER_ORDER: Record<string, number> = { free: 0, pro: 1, enterprise: 2, elite: 3 };
+                          const botTierLevel = TIER_ORDER[bot.tier] ?? 0;
+                          const apiTierLevel = TIER_ORDER[api.tier] ?? 0;
+                          const tierAllowed = botTierLevel >= apiTierLevel;
+                          return (
+                            <div
+                              key={api.name}
+                              className={cn("flex items-center gap-3 p-2.5 rounded-xl border border-border/40", !tierAllowed && "opacity-40")}
+                              data-testid={`api-${api.name.toLowerCase().replace(/\s/g, "-")}`}
+                            >
+                              <div className={cn(
+                                "h-8 w-8 rounded-lg flex items-center justify-center flex-shrink-0",
+                                tierAllowed ? "bg-green-500/10" : "bg-muted/50"
+                              )}>
+                                {tierAllowed ? (
+                                  <Zap className="h-3.5 w-3.5 text-green-500" />
+                                ) : (
+                                  <Lock className="h-3.5 w-3.5 text-muted-foreground" />
+                                )}
+                              </div>
+                              <div className="min-w-0 flex-1">
+                                <div className="flex items-center gap-2 flex-wrap">
+                                  <p className="text-sm font-medium">{api.name}</p>
+                                  {!tierAllowed && (
+                                    <Badge variant="outline" className="rounded-full text-[9px] capitalize">{api.tier}+</Badge>
+                                  )}
+                                </div>
+                                <p className="text-[10px] text-muted-foreground truncate">{api.description}</p>
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+          );
+        })()}
 
         <Card data-testid="bot-prospectus">
           <CardHeader className="pb-4">

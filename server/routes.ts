@@ -145,11 +145,28 @@ export async function registerRoutes(
     operationalMode: z.enum(["sandbox", "live", "offline"]).optional(),
   }).refine(d => d.autonomyLevel || d.operationalMode, { message: "At least one field required" });
 
+  const TIER_AUTONOMY_MAP: Record<string, string[]> = {
+    free: ["guided"],
+    pro: ["guided", "semi-autonomous"],
+    enterprise: ["guided", "semi-autonomous", "full-autonomy"],
+    elite: ["guided", "semi-autonomous", "full-autonomy"],
+  };
+
   app.patch("/api/bots/:id/controls", async (req, res) => {
     const id = Number(req.params.id);
     if (isNaN(id)) return res.status(400).json({ message: "Invalid bot ID" });
     try {
       const parsed = botControlsSchema.parse(req.body);
+      if (parsed.autonomyLevel) {
+        const bot = await storage.getBotProfile(id);
+        if (!bot) return res.status(404).json({ message: "Bot not found" });
+        const allowed = TIER_AUTONOMY_MAP[bot.tier] ?? ["guided"];
+        if (!allowed.includes(parsed.autonomyLevel)) {
+          return res.status(403).json({
+            message: `Autonomy level "${parsed.autonomyLevel}" requires a higher tier. Current tier: ${bot.tier}`,
+          });
+        }
+      }
       const updates: Record<string, string> = {};
       if (parsed.autonomyLevel) updates.autonomyLevel = parsed.autonomyLevel;
       if (parsed.operationalMode) updates.operationalMode = parsed.operationalMode;

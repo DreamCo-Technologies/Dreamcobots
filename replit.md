@@ -68,7 +68,21 @@ Each bot has per-bot controls:
 - Bot Detail Page (/bot/:id) has a Control Panel with buttons for each setting
 - Schema fields: autonomyLevel (default: "guided"), operationalMode (default: "sandbox")
 
+## Revenue Architecture
+- `shared/api-registry.ts` - API Integration Registry with 200+ APIs across all divisions
+- `client/src/pages/RevenuePage.tsx` - Revenue Dashboard with per-bot/division revenue tracking
+- `client/src/pages/PricingPage.tsx` - SaaS Pricing page with tier comparison (Free/Pro/Enterprise/Elite)
+- Tier-based autonomy gating: Free=Guided only, Pro=Semi-autonomous, Enterprise/Elite=Full autonomy
+- API integrations panel on BotDetailPage showing connected services per bot with tier requirements
+- DreamSalesPro has 100+ APIs across 12 categories (CRM, Lead Databases, Email, SMS, Payments, AI, etc.)
+- TIER_PRICING and TIER_AUTONOMY_LIMITS exported from api-registry.ts for consistent tier enforcement
+
 ## Recent Changes
+- Feb 18, 2026: Built Revenue Dashboard page at /revenue with division revenue, top bots, API summary
+- Feb 18, 2026: Built SaaS Pricing page at /pricing with tier comparison, autonomy access, annual discount
+- Feb 18, 2026: Added tier-based autonomy gating - locked controls show "Pro+" or "Enterprise+" badges
+- Feb 18, 2026: Added API Integrations panel to BotDetailPage with per-API tier requirements
+- Feb 18, 2026: Created API Integration Registry (shared/api-registry.ts) with 200+ APIs across all divisions
 - Feb 18, 2026: Added per-bot Control Panel with autonomy level (Guided/Semi-Autonomous/Full Autonomy) and operational mode (Sandbox/Live/Offline) buttons
 - Feb 18, 2026: Added individual Bot Detail Pages at /bot/:id with dashboard metrics, capabilities, division features, investment prospectus, system prompt, and traits
 - Feb 18, 2026: Enhanced all 251 bots with 18-36 capabilities each (tier-specific + universal features)
