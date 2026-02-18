@@ -1,132 +1,316 @@
 import Seo from "@/components/Seo";
 import AppShell from "@/components/AppShell";
-import { useMemo, useState } from "react";
+import { useState } from "react";
+import { useEmpireOverview, useAutonomyMode, useSetAutonomyMode } from "@/hooks/use-empire";
 import { useBots } from "@/hooks/use-bots";
-import { useConversations } from "@/hooks/use-conversations";
 import { useTasks } from "@/hooks/use-tasks";
+import { useQuery } from "@tanstack/react-query";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Card } from "@/components/ui/card";
-import { cn } from "@/lib/utils";
-import { Activity, Bot, MessageSquareText, Workflow } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Progress } from "@/components/ui/progress";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Link } from "wouter";
+import {
+  Activity,
+  AlertTriangle,
+  ArrowRight,
+  Bot,
+  Building2,
+  DollarSign,
+  Globe,
+  Shield,
+  ShieldCheck,
+  Sparkles,
+  TrendingUp,
+  Zap,
+  Cpu,
+  BarChart3,
+  Bell,
+} from "lucide-react";
+import { cn } from "@/lib/utils";
+import type { AutonomyMode, BotHealthSummary } from "@shared/schema";
 
-function StatCard(props: {
-  icon: React.ReactNode;
-  label: string;
-  value: string;
-  hint?: string;
-  accent?: "primary" | "accent" | "muted";
-}) {
-  const ring =
-    props.accent === "accent"
-      ? "from-accent/18 via-primary/10"
-      : props.accent === "primary"
-        ? "from-primary/18 via-accent/10"
-        : "from-muted/80 via-muted/50";
+const DIVISION_COLORS: Record<string, string> = {
+  DreamFinance: "from-emerald-500/15 to-emerald-500/5",
+  DreamRealEstate: "from-blue-500/15 to-blue-500/5",
+  DreamSalesPro: "from-orange-500/15 to-orange-500/5",
+  DreamAIInfra: "from-violet-500/15 to-violet-500/5",
+  DreamRetail: "from-pink-500/15 to-pink-500/5",
+  DreamProServices: "from-cyan-500/15 to-cyan-500/5",
+  DreamData: "from-indigo-500/15 to-indigo-500/5",
+  DreamGlobal: "from-teal-500/15 to-teal-500/5",
+  DreamAutomation: "from-yellow-500/15 to-yellow-500/5",
+  DreamContent: "from-rose-500/15 to-rose-500/5",
+  DreamTrade: "from-lime-500/15 to-lime-500/5",
+  DreamFlow: "from-sky-500/15 to-sky-500/5",
+  DreamMarket: "from-fuchsia-500/15 to-fuchsia-500/5",
+  DreamEmpire: "from-amber-500/15 to-amber-500/5",
+  CommandCore: "from-slate-500/15 to-slate-500/5",
+  GameTitan: "from-red-500/15 to-red-500/5",
+};
 
-  return (
-    <Card className={cn("buddy-card buddy-card-hover rounded-3xl p-6 md:p-7 border-border/60")}>
-      <div className={cn("h-11 w-11 rounded-2xl bg-gradient-to-br border border-border/60 shadow-sm flex items-center justify-center", ring)}>
-        {props.icon}
-      </div>
-      <p className="mt-4 text-xs font-medium text-muted-foreground">{props.label}</p>
-      <p className="mt-1 text-3xl md:text-4xl tracking-tight">{props.value}</p>
-      {props.hint ? <p className="mt-2 text-sm text-muted-foreground">{props.hint}</p> : null}
-    </Card>
-  );
-}
+const AUTONOMY_MODES: { value: AutonomyMode; label: string; desc: string; color: string }[] = [
+  { value: "guided", label: "Guided", desc: "User approval on all actions", color: "bg-[rgb(59_130_246)]" },
+  { value: "semi-autonomous", label: "Semi-Auto", desc: "Low-risk auto-execution", color: "bg-[rgb(245_158_11)]" },
+  { value: "full-autonomy", label: "Full Auto", desc: "Reporting only", color: "bg-[rgb(34_197_94)]" },
+];
 
 export default function DashboardPage() {
   const [botSlug, setBotSlug] = useState<string | undefined>(undefined);
-  const bots = useBots();
-  const conversations = useConversations();
+  const empire = useEmpireOverview();
+  const autonomyQuery = useAutonomyMode();
+  const setMode = useSetAutonomyMode();
   const tasks = useTasks();
+  const healthQuery = useQuery<BotHealthSummary>({ queryKey: ["/api/metrics/health"] });
+  const alertsQuery = useQuery({ queryKey: ["/api/alerts"] });
 
-  const activeTaskCounts = useMemo(() => {
-    const list = tasks.data ?? [];
-    const byStatus = new Map<string, number>();
-    for (const t of list) byStatus.set(t.status, (byStatus.get(t.status) ?? 0) + 1);
-    return byStatus;
-  }, [tasks.data]);
+  const currentMode = (autonomyQuery.data as any)?.mode ?? "guided";
+  const data = empire.data;
+  const health = healthQuery.data;
+  const alerts = (alertsQuery.data ?? []) as any[];
+
+  const taskCounts = new Map<string, number>();
+  (tasks.data ?? []).forEach(t => taskCounts.set(t.status, (taskCounts.get(t.status) ?? 0) + 1));
 
   return (
     <AppShell selectedBotSlug={botSlug} onBotChange={setBotSlug}>
-      <Seo
-        title="Buddy — Dashboard"
-        description="Overview of conversations, bots, and autonomous tasks."
-      />
+      <Seo title="DreamCo Empire OS - Command Center" description="Real-time overview of all DreamCo divisions, bots, and metrics." />
 
-      <div className="buddy-appear">
-        <div className="flex items-end justify-between gap-4 flex-col sm:flex-row">
-          <div>
-            <h2 className="text-3xl md:text-4xl">Dashboard</h2>
-            <p className="mt-2 text-muted-foreground">
-              A calm snapshot of what’s happening across chat + autonomy.
-            </p>
-          </div>
-          <div className="flex items-center gap-2">
-            <Badge variant="secondary" className="rounded-full px-3 py-1">
-              <Activity className="h-3.5 w-3.5 mr-1" />
-              Live
-            </Badge>
+      <div className="buddy-card buddy-noise buddy-appear overflow-hidden">
+        <div className="px-5 pt-6 pb-5 md:px-8 md:pt-8 md:pb-6 border-b border-border/60">
+          <div className="flex flex-wrap items-center justify-between gap-4">
+            <div>
+              <h1 className="text-2xl md:text-3xl" data-testid="text-dashboard-title">Empire Command Center</h1>
+              <p className="text-sm text-muted-foreground mt-1">Real-time overview of all DreamCo divisions</p>
+            </div>
+            <div className="flex items-center gap-3">
+              <Badge variant="secondary" className="rounded-full">
+                <Activity className="h-3 w-3 mr-1.5 text-green-500" />
+                Systems Online
+              </Badge>
+            </div>
           </div>
         </div>
 
-        <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 md:gap-5">
-          <StatCard
-            icon={<MessageSquareText className="h-5 w-5 text-primary" />}
-            label="Conversations"
-            value={conversations.isLoading ? "—" : String((conversations.data ?? []).length)}
-            hint="Chats you’ve started with Buddy."
-            accent="primary"
-          />
-          <StatCard
-            icon={<Bot className="h-5 w-5 text-accent" />}
-            label="Bot profiles"
-            value={bots.isLoading ? "—" : String((bots.data ?? []).length)}
-            hint="Personalities and system prompts."
-            accent="accent"
-          />
-          <StatCard
-            icon={<Workflow className="h-5 w-5 text-primary" />}
-            label="Tasks"
-            value={tasks.isLoading ? "—" : String((tasks.data ?? []).length)}
-            hint="Objectives you can run repeatedly."
-            accent="primary"
-          />
-          <StatCard
-            icon={<Activity className="h-5 w-5 text-accent" />}
-            label="Running / pending"
-            value={
-              tasks.isLoading
-                ? "—"
-                : String((activeTaskCounts.get("running") ?? 0) + (activeTaskCounts.get("pending") ?? 0))
-            }
-            hint="What’s queued or in progress."
-            accent="accent"
-          />
-        </div>
+        {empire.isLoading ? (
+          <div className="p-5 md:p-8 space-y-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
+              {Array.from({ length: 4 }).map((_, i) => <Skeleton key={i} className="h-28 rounded-2xl" />)}
+            </div>
+            <Skeleton className="h-48 rounded-2xl" />
+          </div>
+        ) : (
+          <div className="p-5 md:p-8 space-y-8 buddy-stagger">
+            {/* Key Stats */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
+              <Card data-testid="stat-total-bots">
+                <CardHeader className="flex flex-row items-center justify-between gap-1 space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium text-muted-foreground">Total Bots</CardTitle>
+                  <Bot className="h-4 w-4 text-primary" />
+                </CardHeader>
+                <CardContent>
+                  <p className="text-3xl font-bold tracking-tight">{data?.totalBots ?? 0}</p>
+                  <p className="text-xs text-muted-foreground mt-1">Across {data?.totalDivisions ?? 0} divisions</p>
+                </CardContent>
+              </Card>
 
-        <div className="mt-6 grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-5">
-          <Card className="buddy-card rounded-3xl border-border/60 p-6 md:p-7">
-            <h3 className="text-xl md:text-2xl">Task status</h3>
-            <p className="mt-1 text-sm text-muted-foreground">
-              A simple breakdown to help you focus.
-            </p>
+              <Card data-testid="stat-active-bots">
+                <CardHeader className="flex flex-row items-center justify-between gap-1 space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium text-muted-foreground">Active Bots</CardTitle>
+                  <Zap className="h-4 w-4 text-green-500" />
+                </CardHeader>
+                <CardContent>
+                  <p className="text-3xl font-bold tracking-tight">{health?.activeBots ?? data?.totalBots ?? 0}</p>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    {health?.avgUptime ?? 100}% avg uptime
+                  </p>
+                </CardContent>
+              </Card>
 
-            <div className="mt-5 space-y-3">
-              {tasks.isLoading ? (
-                <div className="space-y-2">
-                  <Skeleton className="h-10 rounded-xl" />
-                  <Skeleton className="h-10 rounded-xl" />
-                  <Skeleton className="h-10 rounded-xl" />
+              <Card data-testid="stat-autonomy">
+                <CardHeader className="flex flex-row items-center justify-between gap-1 space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium text-muted-foreground">Autonomy Mode</CardTitle>
+                  <ShieldCheck className="h-4 w-4 text-yellow-500" />
+                </CardHeader>
+                <CardContent>
+                  <div className="flex items-center gap-2">
+                    <span className={cn("h-2.5 w-2.5 rounded-full", AUTONOMY_MODES.find(m => m.value === currentMode)?.color)} />
+                    <p className="text-xl font-bold tracking-tight">{AUTONOMY_MODES.find(m => m.value === currentMode)?.label}</p>
+                  </div>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    {AUTONOMY_MODES.find(m => m.value === currentMode)?.desc}
+                  </p>
+                </CardContent>
+              </Card>
+
+              <Card data-testid="stat-tasks">
+                <CardHeader className="flex flex-row items-center justify-between gap-1 space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium text-muted-foreground">Tasks</CardTitle>
+                  <BarChart3 className="h-4 w-4 text-accent" />
+                </CardHeader>
+                <CardContent>
+                  <p className="text-3xl font-bold tracking-tight">{(tasks.data ?? []).length}</p>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    {taskCounts.get("running") ?? 0} running, {taskCounts.get("pending") ?? 0} pending
+                  </p>
+                </CardContent>
+              </Card>
+            </div>
+
+            {/* System Health + Autonomy Mode */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+              {/* System Health */}
+              <Card>
+                <CardHeader className="flex flex-row items-center justify-between gap-1 space-y-0">
+                  <CardTitle className="text-lg">System Health</CardTitle>
+                  <Cpu className="h-4 w-4 text-muted-foreground" />
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-muted-foreground">Fleet Uptime</span>
+                    <div className="flex items-center gap-2">
+                      <Progress value={health?.avgUptime ?? 100} className="w-20 h-2" />
+                      <span className="text-sm font-mono">{health?.avgUptime ?? 100}%</span>
+                    </div>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-muted-foreground">Open Errors</span>
+                    <Badge variant={health?.totalErrors ? "destructive" : "secondary"} className="rounded-full">
+                      {health?.totalErrors ?? 0}
+                    </Badge>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-muted-foreground">API Calls (total)</span>
+                    <span className="text-sm font-mono">{(health?.totalApiCalls ?? 0).toLocaleString()}</span>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-muted-foreground">Tasks Completed</span>
+                    <span className="text-sm font-mono">{health?.totalTasksCompleted ?? 0}</span>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-muted-foreground">Revenue Tracked</span>
+                    <span className="text-sm font-semibold text-green-600 dark:text-green-400">${((health?.totalRevenue ?? 0) / 100).toLocaleString()}</span>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Autonomy Mode Selector */}
+              <Card>
+                <CardHeader className="flex flex-row items-center justify-between gap-1 space-y-0">
+                  <CardTitle className="text-lg">Autonomy Mode</CardTitle>
+                  <Link href="/autonomy" className="text-xs text-primary hover:underline underline-offset-4" data-testid="link-autonomy-settings">
+                    Settings
+                  </Link>
+                </CardHeader>
+                <CardContent className="space-y-3">
+                  {AUTONOMY_MODES.map(m => (
+                    <button
+                      key={m.value}
+                      className={cn(
+                        "w-full rounded-xl border p-3 text-left transition-all",
+                        currentMode === m.value
+                          ? "border-primary/40 bg-gradient-to-br from-primary/8 to-transparent shadow-sm"
+                          : "border-border/60 bg-card/40 hover-elevate"
+                      )}
+                      onClick={() => setMode.mutate(m.value)}
+                      disabled={setMode.isPending}
+                      data-testid={`mode-${m.value}`}
+                    >
+                      <div className="flex items-center gap-2">
+                        <span className={cn("h-2 w-2 rounded-full", m.color)} />
+                        <span className="text-sm font-semibold">{m.label}</span>
+                        {currentMode === m.value && <Badge variant="secondary" className="ml-auto rounded-full text-[10px]">Active</Badge>}
+                      </div>
+                      <p className="text-xs text-muted-foreground mt-1">{m.desc}</p>
+                    </button>
+                  ))}
+                </CardContent>
+              </Card>
+            </div>
+
+            {/* Alert Rules */}
+            <Card>
+              <CardHeader className="flex flex-row items-center justify-between gap-1 space-y-0">
+                <CardTitle className="text-lg">Auto-Remediation Rules</CardTitle>
+                <Bell className="h-4 w-4 text-muted-foreground" />
+              </CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  {alerts.map((rule: any) => (
+                    <div key={rule.id} className="rounded-xl border border-border/60 p-3" data-testid={`alert-rule-${rule.id}`}>
+                      <div className="flex items-center justify-between gap-2">
+                        <div className="flex items-center gap-2 min-w-0">
+                          <AlertTriangle className="h-3.5 w-3.5 text-yellow-500 flex-shrink-0" />
+                          <span className="text-sm font-medium truncate">{rule.name}</span>
+                        </div>
+                        <Badge variant={rule.enabled ? "secondary" : "outline"} className="rounded-full text-[10px] flex-shrink-0">
+                          {rule.enabled ? "ON" : "OFF"}
+                        </Badge>
+                      </div>
+                      <p className="text-xs text-muted-foreground mt-1.5">{rule.action}</p>
+                      <p className="text-[10px] text-muted-foreground/70 mt-1 font-mono">Threshold: {rule.threshold}</p>
+                    </div>
+                  ))}
                 </div>
-              ) : (
-                ["pending", "running", "paused", "complete", "failed"].map((s) => (
-                  <div
-                    key={s}
-                    className="flex items-center justify-between rounded-2xl border border-border/60 bg-card/60 px-4 py-3 shadow-sm"
-                  >
+              </CardContent>
+            </Card>
+
+            {/* Division Overview */}
+            <div>
+              <div className="flex items-center justify-between gap-3 mb-4">
+                <h2 className="text-lg">Division Overview</h2>
+                <Link href="/divisions" className="text-xs text-primary hover:underline underline-offset-4" data-testid="link-all-divisions">
+                  View all
+                </Link>
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                {(data?.divisions ?? [])
+                  .filter(d => d.botCount > 0)
+                  .sort((a, b) => b.botCount - a.botCount)
+                  .map(div => {
+                    const gradient = DIVISION_COLORS[div.division] ?? "from-muted/50 to-muted/20";
+                    const pct = Math.round((div.botCount / (data?.totalBots || 1)) * 100);
+                    return (
+                      <Link
+                        key={div.division}
+                        href={`/divisions?d=${encodeURIComponent(div.division)}`}
+                        className="group relative block rounded-xl border border-border/60 p-4 hover-elevate overflow-visible"
+                        data-testid={`division-${div.division}`}
+                      >
+                        <div className={cn("absolute inset-0 rounded-xl bg-gradient-to-br pointer-events-none opacity-60", gradient)} />
+                        <div className="relative flex items-center justify-between gap-3">
+                          <div className="flex items-center gap-3 min-w-0">
+                            <span className="inline-flex h-8 w-8 items-center justify-center rounded-xl bg-card/80 border border-border/60 shadow-sm flex-shrink-0">
+                              <Building2 className="h-4 w-4 text-foreground/70" />
+                            </span>
+                            <div className="min-w-0">
+                              <p className="text-sm font-semibold truncate">{div.division}</p>
+                              <p className="text-xs text-muted-foreground">{div.botCount} bots</p>
+                            </div>
+                          </div>
+                          <div className="flex items-center gap-2 flex-shrink-0">
+                            <div className="w-16">
+                              <Progress value={pct} className="h-1.5 rounded-full" />
+                            </div>
+                            <span className="text-xs text-muted-foreground">{pct}%</span>
+                            <ArrowRight className="h-3.5 w-3.5 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity" />
+                          </div>
+                        </div>
+                      </Link>
+                    );
+                  })}
+              </div>
+            </div>
+
+            {/* Task Status */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-lg">Task Status</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-2">
+                {["pending", "running", "paused", "complete", "failed"].map(s => (
+                  <div key={s} className="flex items-center justify-between rounded-xl border border-border/60 bg-card/60 px-4 py-2.5">
                     <div className="flex items-center gap-3">
                       <span className={cn("h-2.5 w-2.5 rounded-full",
                         s === "running" ? "bg-[rgb(34_197_94)]" :
@@ -137,46 +321,13 @@ export default function DashboardPage() {
                       )} />
                       <p className="text-sm font-medium capitalize">{s}</p>
                     </div>
-                    <p className="text-sm text-muted-foreground font-mono">
-                      {String(activeTaskCounts.get(s) ?? 0)}
-                    </p>
+                    <p className="text-sm text-muted-foreground font-mono">{taskCounts.get(s) ?? 0}</p>
                   </div>
-                ))
-              )}
-            </div>
-          </Card>
-
-          <Card className="buddy-card rounded-3xl border-border/60 p-6 md:p-7">
-            <h3 className="text-xl md:text-2xl">How to use Buddy</h3>
-            <p className="mt-1 text-sm text-muted-foreground">
-              A lightweight workflow that keeps you moving.
-            </p>
-
-            <ol className="mt-5 space-y-3 text-sm">
-              {[
-                { t: "Start a chat", d: "Describe your income idea or automation you want." },
-                { t: "Pick a bot", d: "Switch profiles for different styles and constraints." },
-                { t: "Turn it into a task", d: "Capture the objective in Autonomy and run it." },
-                { t: "Review runs", d: "Keep the summaries; iterate the prompt." },
-              ].map((step, i) => (
-                <li
-                  key={step.t}
-                  className="rounded-2xl border border-border/60 bg-card/60 px-4 py-3 shadow-sm"
-                >
-                  <div className="flex items-start gap-3">
-                    <span className="mt-0.5 inline-flex h-6 w-6 items-center justify-center rounded-full bg-primary/12 text-primary border border-primary/20 font-mono text-xs">
-                      {i + 1}
-                    </span>
-                    <div>
-                      <p className="font-semibold">{step.t}</p>
-                      <p className="text-muted-foreground mt-1">{step.d}</p>
-                    </div>
-                  </div>
-                </li>
-              ))}
-            </ol>
-          </Card>
-        </div>
+                ))}
+              </CardContent>
+            </Card>
+          </div>
+        )}
       </div>
     </AppShell>
   );

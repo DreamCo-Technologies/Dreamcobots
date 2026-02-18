@@ -6,6 +6,11 @@ import {
   autonomousTasks,
   taskRuns,
   empireSettings,
+  botMetrics,
+  botErrors,
+  botInteractions,
+  botFinancials,
+  alertRules,
   type BotProfile,
   type InsertBotProfile,
   type AutonomousTask,
@@ -13,8 +18,19 @@ import {
   type TaskRun,
   type EmpireSetting,
   type InsertEmpireSetting,
+  type BotMetric,
+  type InsertBotMetric,
+  type BotError,
+  type InsertBotError,
+  type BotInteraction,
+  type InsertBotInteraction,
+  type BotFinancial,
+  type InsertBotFinancial,
+  type AlertRule,
+  type InsertAlertRule,
+  type BotHealthSummary,
 } from "@shared/schema";
-import { and, desc, eq, ne, sql, count, inArray } from "drizzle-orm";
+import { and, desc, eq, ne, sql, count, inArray, sum, avg } from "drizzle-orm";
 
 export interface IStorage {
   listBotProfiles(): Promise<BotProfile[]>;
@@ -43,6 +59,25 @@ export interface IStorage {
 
   getSetting(key: string): Promise<EmpireSetting | undefined>;
   upsertSetting(key: string, value: unknown): Promise<EmpireSetting>;
+
+  createBotMetric(input: InsertBotMetric): Promise<BotMetric>;
+  listBotMetrics(botId: number): Promise<BotMetric[]>;
+  getLatestBotMetrics(): Promise<BotMetric[]>;
+  getBotHealthSummary(): Promise<BotHealthSummary>;
+
+  createBotError(input: InsertBotError): Promise<BotError>;
+  listBotErrors(botId?: number): Promise<BotError[]>;
+  resolveError(id: number): Promise<BotError | undefined>;
+
+  createBotInteraction(input: InsertBotInteraction): Promise<BotInteraction>;
+  listBotInteractions(botId?: number, limit?: number): Promise<BotInteraction[]>;
+
+  createBotFinancial(input: InsertBotFinancial): Promise<BotFinancial>;
+  listBotFinancials(botId?: number): Promise<BotFinancial[]>;
+
+  listAlertRules(): Promise<AlertRule[]>;
+  createAlertRule(input: InsertAlertRule): Promise<AlertRule>;
+  toggleAlertRule(id: number, enabled: boolean): Promise<AlertRule | undefined>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -209,6 +244,107 @@ export class DatabaseStorage implements IStorage {
       .values({ key, value })
       .returning();
     return created;
+  }
+
+  async createBotMetric(input: InsertBotMetric): Promise<BotMetric> {
+    const [created] = await db.insert(botMetrics).values(input).returning();
+    return created;
+  }
+
+  async listBotMetrics(botId: number): Promise<BotMetric[]> {
+    return await db.select().from(botMetrics).where(eq(botMetrics.botId, botId)).orderBy(desc(botMetrics.createdAt));
+  }
+
+  async getLatestBotMetrics(): Promise<BotMetric[]> {
+    return await db.select().from(botMetrics).orderBy(desc(botMetrics.createdAt)).limit(100);
+  }
+
+  async getBotHealthSummary(): Promise<BotHealthSummary> {
+    const bots = await this.listBotProfiles();
+    const metrics = await this.getLatestBotMetrics();
+    const errors = await db.select({ count: count() }).from(botErrors).where(eq(botErrors.resolved, false));
+    const totalErrors = Number(errors[0]?.count ?? 0);
+
+    const activeBots = bots.filter(b => b.status === "active").length;
+    const pausedBots = bots.filter(b => b.status === "paused").length;
+
+    let avgUptime = 100;
+    let totalRevenue = 0;
+    let totalApiCalls = 0;
+    let totalTasksCompleted = 0;
+
+    if (metrics.length > 0) {
+      avgUptime = Math.round(metrics.reduce((s, m) => s + m.uptime, 0) / metrics.length);
+      totalRevenue = metrics.reduce((s, m) => s + m.revenue, 0);
+      totalApiCalls = metrics.reduce((s, m) => s + m.apiCalls, 0);
+      totalTasksCompleted = metrics.reduce((s, m) => s + m.tasksCompleted, 0);
+    }
+
+    return {
+      totalBots: bots.length,
+      activeBots,
+      pausedBots,
+      totalErrors,
+      avgUptime,
+      totalRevenue,
+      totalApiCalls,
+      totalTasksCompleted,
+    };
+  }
+
+  async createBotError(input: InsertBotError): Promise<BotError> {
+    const [created] = await db.insert(botErrors).values(input).returning();
+    return created;
+  }
+
+  async listBotErrors(botId?: number): Promise<BotError[]> {
+    if (botId) {
+      return await db.select().from(botErrors).where(eq(botErrors.botId, botId)).orderBy(desc(botErrors.createdAt)).limit(100);
+    }
+    return await db.select().from(botErrors).orderBy(desc(botErrors.createdAt)).limit(100);
+  }
+
+  async resolveError(id: number): Promise<BotError | undefined> {
+    const [updated] = await db.update(botErrors).set({ resolved: true }).where(eq(botErrors.id, id)).returning();
+    return updated;
+  }
+
+  async createBotInteraction(input: InsertBotInteraction): Promise<BotInteraction> {
+    const [created] = await db.insert(botInteractions).values(input).returning();
+    return created;
+  }
+
+  async listBotInteractions(botId?: number, limit = 50): Promise<BotInteraction[]> {
+    if (botId) {
+      return await db.select().from(botInteractions).where(eq(botInteractions.botId, botId)).orderBy(desc(botInteractions.createdAt)).limit(limit);
+    }
+    return await db.select().from(botInteractions).orderBy(desc(botInteractions.createdAt)).limit(limit);
+  }
+
+  async createBotFinancial(input: InsertBotFinancial): Promise<BotFinancial> {
+    const [created] = await db.insert(botFinancials).values(input).returning();
+    return created;
+  }
+
+  async listBotFinancials(botId?: number): Promise<BotFinancial[]> {
+    if (botId) {
+      return await db.select().from(botFinancials).where(eq(botFinancials.botId, botId)).orderBy(desc(botFinancials.createdAt)).limit(100);
+    }
+    return await db.select().from(botFinancials).orderBy(desc(botFinancials.createdAt)).limit(100);
+  }
+
+  async listAlertRules(): Promise<AlertRule[]> {
+    return await db.select().from(alertRules).orderBy(alertRules.id);
+  }
+
+  async createAlertRule(input: InsertAlertRule): Promise<AlertRule> {
+    const [created] = await db.insert(alertRules).values(input).returning();
+    return created;
+  }
+
+  async toggleAlertRule(id: number, enabled: boolean): Promise<AlertRule | undefined> {
+    const [updated] = await db.update(alertRules).set({ enabled }).where(eq(alertRules.id, id)).returning();
+    return updated;
   }
 }
 

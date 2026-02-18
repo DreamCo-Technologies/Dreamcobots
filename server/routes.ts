@@ -4,6 +4,8 @@ import OpenAI from "openai";
 import { z } from "zod";
 import { storage } from "./storage";
 import { api } from "@shared/routes";
+import { ALL_BOTS } from "./seed-bots";
+import { DIVISIONS, insertBotMetricSchema, insertBotErrorSchema, insertBotFinancialSchema, insertAlertRuleSchema } from "@shared/schema";
 
 const openai = new OpenAI({
   apiKey: process.env.AI_INTEGRATIONS_OPENAI_API_KEY,
@@ -19,51 +21,40 @@ function zodValidationError(err: z.ZodError) {
 
 async function ensureSeeded() {
   const bots = await storage.listBotProfiles();
-  if (bots.length === 0) {
-    await storage.createBotProfile({
-      slug: "buddy",
-      displayName: "Buddy",
-      isDefault: true,
-      systemPrompt:
-        "You are Buddy, a realistic, grounded assistant. You ask one clarifying question when needed, otherwise you propose a concrete next step and execute. You help the user build autonomous systems responsibly. Be concise, practical, and honest about limitations.",
-      traits: {
-        vibe: "calm",
-        style: "practical",
-        focus: "autonomy",
-      },
-    });
-
-    await storage.createBotProfile({
-      slug: "research",
-      displayName: "Research Buddy",
-      isDefault: false,
-      systemPrompt:
-        "You are Research Buddy. You generate structured research plans, checklists, and summaries with sources when provided. Keep output organized and actionable.",
-      traits: {
-        vibe: "analytical",
-        output: "structured",
-      },
-    });
+  if (bots.length < 10) {
+    if (bots.length > 0) {
+      // don't double-seed
+    } else {
+      for (const botData of ALL_BOTS) {
+        try {
+          await storage.createBotProfile(botData);
+        } catch (e: any) {
+          if (e?.code === "23505") continue; // unique violation, skip
+          console.error(`Seed bot ${botData.slug} failed:`, e?.message);
+        }
+      }
+    }
   }
 
   const convs = await storage.listConversations();
   if (convs.length === 0) {
-    const conv = await storage.createConversation("Welcome to Buddy");
+    const conv = await storage.createConversation("Welcome to DreamCo Empire OS");
     await storage.createMessage(
       conv.id,
       "assistant",
-      "Tell me what you want to automate first. We can start with one small loop: pick a goal, break it into tasks, and schedule runs.",
+      "Welcome to DreamCo Empire OS. I'm Buddy, your central AI brain. I coordinate 250+ specialized bots across 16 divisions to build autonomous wealth-generation systems. Tell me what you want to automate first, and I'll route you to the right division and bots.",
     );
   }
 
   const tasks = await storage.listTasks();
   if (tasks.length === 0) {
     await storage.createTask({
-      title: "Daily autonomy check-in",
-      objective:
-        "Review current project goal, propose the next 3 actions, and draft a message for me to approve.",
-      status: "paused",
-      priority: 3,
+      title: "Empire startup diagnostic",
+      objective: "Scan all divisions, verify bot readiness, and generate an empire health report with recommended first actions.",
+      status: "pending",
+      priority: 1,
+      autonomyMode: "guided",
+      division: "CommandCore",
     });
   }
 }
@@ -73,13 +64,22 @@ async function runAutonomousTask(taskId: number, dryRun: boolean) {
   const task = tasks.find((t) => t.id === taskId);
   if (!task) return undefined;
 
-  const bot = (await storage.getDefaultBotProfile()) ?? (await storage.getBotProfileBySlug("buddy"));
-  const system = bot?.systemPrompt ?? "You are a helpful assistant.";
+  const bot = task.assignedBotId
+    ? (await storage.listBotProfiles()).find(b => b.id === task.assignedBotId)
+    : (await storage.getDefaultBotProfile()) ?? (await storage.getBotProfileBySlug("buddy"));
 
-  const prompt = `Task title: ${task.title}\nObjective: ${task.objective}\n\nReturn JSON with keys: steps (array of {title, description}), risks (array of strings), and a short "messageToUser" string. Keep it practical.`;
+  const system = bot?.systemPrompt ?? "You are Buddy, the central AI brain of DreamCo Empire OS.";
+
+  const modeInstructions = task.autonomyMode === "full-autonomy"
+    ? "Execute fully. Report results only."
+    : task.autonomyMode === "semi-autonomous"
+      ? "Execute low-risk steps automatically. Flag high-risk decisions for approval."
+      : "Propose a plan. Wait for user approval before any execution.";
+
+  const prompt = `Division: ${task.division}\nAutonomy Mode: ${task.autonomyMode} - ${modeInstructions}\nTask: ${task.title}\nObjective: ${task.objective}\n\nReturn JSON with keys: steps (array of {title, description, risk: "low"|"medium"|"high"}), risks (array of strings), estimatedRevenue (string), and "messageToUser" string. Be practical and revenue-focused.`;
 
   const response = await openai.chat.completions.create({
-    model: "gpt-5.2",
+    model: "gpt-4.1-mini",
     messages: [
       { role: "system", content: system },
       { role: "user", content: prompt },
@@ -105,10 +105,7 @@ async function runAutonomousTask(taskId: number, dryRun: boolean) {
     return await storage.createTaskRun(taskId, "dry_run", summary, parsed);
   }
 
-  await storage.updateTask(taskId, {
-    status: "complete",
-  } as any);
-
+  await storage.updateTask(taskId, { status: "complete" } as any);
   return await storage.createTaskRun(taskId, "complete", summary, parsed);
 }
 
@@ -120,7 +117,18 @@ export async function registerRoutes(
 
   // Bots
   app.get(api.bots.list.path, async (req, res) => {
+    const division = req.query.division as string | undefined;
+    if (division) {
+      const bots = await storage.listBotsByDivision(division);
+      return res.json(bots);
+    }
     const bots = await storage.listBotProfiles();
+    res.json(bots);
+  });
+
+  app.get(api.bots.byDivision.path, async (req, res) => {
+    const division = req.params.division;
+    const bots = await storage.listBotsByDivision(division);
     res.json(bots);
   });
 
@@ -206,15 +214,9 @@ export async function registerRoutes(
         ? await storage.getBotProfileBySlug(input.botSlug)
         : await storage.getDefaultBotProfile();
 
-      const system =
-        bot?.systemPrompt ??
-        "You are Buddy, a helpful assistant that is realistic and practical.";
+      const system = bot?.systemPrompt ?? "You are Buddy, the central AI brain of DreamCo Empire OS.";
 
-      const userMsg = await storage.createMessage(
-        conversationId,
-        "user",
-        input.content,
-      );
+      const userMsg = await storage.createMessage(conversationId, "user", input.content);
 
       const history = await storage.getMessages(conversationId);
       const messagesForModel = [
@@ -226,17 +228,13 @@ export async function registerRoutes(
       ];
 
       const completion = await openai.chat.completions.create({
-        model: "gpt-5.2",
+        model: "gpt-4.1-mini",
         messages: messagesForModel,
         max_completion_tokens: 1800,
       });
 
       const assistantText = completion.choices[0]?.message?.content ?? "";
-      const assistantMsg = await storage.createMessage(
-        conversationId,
-        "assistant",
-        assistantText,
-      );
+      const assistantMsg = await storage.createMessage(conversationId, "assistant", assistantText);
 
       res.status(201).json({ message: userMsg, assistantMessage: assistantMsg });
     } catch (err) {
@@ -267,14 +265,9 @@ export async function registerRoutes(
       ? await storage.getBotProfileBySlug(input.botSlug)
       : await storage.getDefaultBotProfile();
 
-    const system =
-      bot?.systemPrompt ?? "You are Buddy, a helpful assistant.";
+    const system = bot?.systemPrompt ?? "You are Buddy, the central AI brain of DreamCo Empire OS.";
 
-    const userMsg = await storage.createMessage(
-      conversationId,
-      "user",
-      input.content,
-    );
+    const userMsg = await storage.createMessage(conversationId, "user", input.content);
 
     const history = await storage.getMessages(conversationId);
     const messagesForModel = [
@@ -290,7 +283,7 @@ export async function registerRoutes(
     res.setHeader("Connection", "keep-alive");
 
     const stream = await openai.chat.completions.create({
-      model: "gpt-5.2",
+      model: "gpt-4.1-mini",
       messages: messagesForModel,
       stream: true,
       max_completion_tokens: 1800,
@@ -305,12 +298,7 @@ export async function registerRoutes(
         res.write(`data: ${JSON.stringify({ type: "delta", content: delta, messageId: userMsg.id, conversationId })}\n\n`);
       }
 
-      const assistantMsg = await storage.createMessage(
-        conversationId,
-        "assistant",
-        assistantText,
-      );
-
+      const assistantMsg = await storage.createMessage(conversationId, "assistant", assistantText);
       res.write(`data: ${JSON.stringify({ type: "done", conversationId, messageId: assistantMsg.id })}\n\n`);
       res.end();
     } catch (e) {
@@ -321,6 +309,11 @@ export async function registerRoutes(
 
   // Tasks
   app.get(api.tasks.list.path, async (req, res) => {
+    const division = req.query.division as string | undefined;
+    if (division) {
+      const tasks = await storage.listTasksByDivision(division);
+      return res.json(tasks);
+    }
     const tasks = await storage.listTasks();
     res.json(tasks);
   });
@@ -384,6 +377,167 @@ export async function registerRoutes(
     const runs = await storage.listTaskRuns(id);
     res.json(runs);
   });
+
+  // Empire
+  app.get(api.empire.overview.path, async (req, res) => {
+    const bots = await storage.listBotProfiles();
+    const tasks = await storage.listTasks();
+    const divCounts = await storage.getBotCountByDivision();
+    const autonomySetting = await storage.getSetting("autonomy_mode");
+    const autonomyMode = (autonomySetting?.value as any)?.mode ?? "guided";
+
+    const divisions = DIVISIONS.map(d => {
+      const divBots = bots.filter(b => b.division === d);
+      const divTasks = tasks.filter(t => t.division === d);
+      return {
+        division: d,
+        botCount: divBots.length,
+        activeTasks: divTasks.filter(t => t.status === "running" || t.status === "pending").length,
+        completedTasks: divTasks.filter(t => t.status === "complete").length,
+        revenue: divBots.length > 0 ? `$${(divBots.length * 199).toLocaleString()}/mo potential` : "$0",
+      };
+    });
+
+    res.json({
+      totalBots: bots.length,
+      totalDivisions: DIVISIONS.length,
+      activeTasks: tasks.filter(t => t.status === "running" || t.status === "pending").length,
+      completedTasks: tasks.filter(t => t.status === "complete").length,
+      autonomyMode,
+      divisions,
+    });
+  });
+
+  app.get(api.empire.divisions.path, async (req, res) => {
+    const counts = await storage.getBotCountByDivision();
+    res.json(counts);
+  });
+
+  app.get(api.empire.settings.get.path, async (req, res) => {
+    const key = req.params.key;
+    const setting = await storage.getSetting(key);
+    if (!setting) return res.status(404).json({ message: "Setting not found" });
+    res.json(setting);
+  });
+
+  app.put(api.empire.settings.set.path, async (req, res) => {
+    const key = req.params.key;
+    const { value } = req.body;
+    const setting = await storage.upsertSetting(key, value);
+    res.json(setting);
+  });
+
+  // Bot Metrics & Tracking
+  app.get("/api/metrics/health", async (_req, res) => {
+    const summary = await storage.getBotHealthSummary();
+    res.json(summary);
+  });
+
+  app.get("/api/metrics/bot/:botId", async (req, res) => {
+    const botId = Number(req.params.botId);
+    const metrics = await storage.listBotMetrics(botId);
+    res.json(metrics);
+  });
+
+  app.post("/api/metrics", async (req, res) => {
+    try {
+      const input = insertBotMetricSchema.parse(req.body);
+      const metric = await storage.createBotMetric(input);
+      res.status(201).json(metric);
+    } catch (err) {
+      if (err instanceof z.ZodError) return res.status(400).json(zodValidationError(err));
+      res.status(400).json({ message: "Invalid metric data" });
+    }
+  });
+
+  app.get("/api/errors", async (req, res) => {
+    const botId = req.query.botId ? Number(req.query.botId) : undefined;
+    const errors = await storage.listBotErrors(botId);
+    res.json(errors);
+  });
+
+  app.post("/api/errors", async (req, res) => {
+    try {
+      const input = insertBotErrorSchema.parse(req.body);
+      const error = await storage.createBotError(input);
+      res.status(201).json(error);
+    } catch (err) {
+      if (err instanceof z.ZodError) return res.status(400).json(zodValidationError(err));
+      res.status(400).json({ message: "Invalid error data" });
+    }
+  });
+
+  app.put("/api/errors/:id/resolve", async (req, res) => {
+    const id = Number(req.params.id);
+    const resolved = await storage.resolveError(id);
+    if (!resolved) return res.status(404).json({ message: "Error not found" });
+    res.json(resolved);
+  });
+
+  app.get("/api/interactions", async (req, res) => {
+    const botId = req.query.botId ? Number(req.query.botId) : undefined;
+    const limit = req.query.limit ? Number(req.query.limit) : 50;
+    const interactions = await storage.listBotInteractions(botId, limit);
+    res.json(interactions);
+  });
+
+  app.get("/api/financials", async (req, res) => {
+    const botId = req.query.botId ? Number(req.query.botId) : undefined;
+    const financials = await storage.listBotFinancials(botId);
+    res.json(financials);
+  });
+
+  app.post("/api/financials", async (req, res) => {
+    try {
+      const input = insertBotFinancialSchema.parse(req.body);
+      const financial = await storage.createBotFinancial(input);
+      res.status(201).json(financial);
+    } catch (err) {
+      if (err instanceof z.ZodError) return res.status(400).json(zodValidationError(err));
+      res.status(400).json({ message: "Invalid financial data" });
+    }
+  });
+
+  app.get("/api/alerts", async (_req, res) => {
+    const rules = await storage.listAlertRules();
+    res.json(rules);
+  });
+
+  app.post("/api/alerts", async (req, res) => {
+    try {
+      const input = insertAlertRuleSchema.parse(req.body);
+      const rule = await storage.createAlertRule(input);
+      res.status(201).json(rule);
+    } catch (err) {
+      if (err instanceof z.ZodError) return res.status(400).json(zodValidationError(err));
+      res.status(400).json({ message: "Invalid alert rule data" });
+    }
+  });
+
+  app.put("/api/alerts/:id/toggle", async (req, res) => {
+    const id = Number(req.params.id);
+    const { enabled } = req.body;
+    const rule = await storage.toggleAlertRule(id, enabled);
+    if (!rule) return res.status(404).json({ message: "Alert rule not found" });
+    res.json(rule);
+  });
+
+  // Seed default alert rules if none exist
+  const existingAlerts = await storage.listAlertRules();
+  if (existingAlerts.length === 0) {
+    const defaultAlerts = [
+      { name: "Task Failure Cascade", trigger: "task_fail_consecutive", action: "Restart bot / rollback config", threshold: 5 },
+      { name: "CPU Overload", trigger: "cpu_high", action: "Scale resources / notify engineer", threshold: 85 },
+      { name: "Unauthorized Access", trigger: "unauthorized_access", action: "Lock bot / send security alert", threshold: 1 },
+      { name: "Model Drift", trigger: "model_drift", action: "Queue bot for retraining", threshold: 10 },
+      { name: "High Error Rate", trigger: "high_error_rate", action: "Pause bot / notify for review", threshold: 10 },
+      { name: "Revenue Drop", trigger: "revenue_drop", action: "Alert finance team / investigate", threshold: 20 },
+      { name: "Bot Offline", trigger: "bot_offline", action: "Auto-restart / escalate", threshold: 1 },
+    ];
+    for (const alert of defaultAlerts) {
+      await storage.createAlertRule(alert);
+    }
+  }
 
   return httpServer;
 }

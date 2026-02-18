@@ -2,22 +2,34 @@ import { ReactNode, useMemo, useState } from "react";
 import { Link, useLocation } from "wouter";
 import {
   Bot,
-  ChevronsUpDown,
+  Building2,
+  ChevronDown,
+  Globe,
   LayoutDashboard,
   MessageSquareText,
+  Shield,
   Sparkles,
   Workflow,
+  Zap,
 } from "lucide-react";
 import ThemeToggle from "@/components/ThemeToggle";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import { useBots } from "@/hooks/use-bots";
 import { useConversations, useCreateConversation } from "@/hooks/use-conversations";
+import { useEmpireOverview, useAutonomyMode } from "@/hooks/use-empire";
 import { useToast } from "@/hooks/use-toast";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+
+const AUTONOMY_LABELS: Record<string, { label: string; color: string }> = {
+  guided: { label: "Guided", color: "bg-[rgb(59_130_246)]" },
+  "semi-autonomous": { label: "Semi-Auto", color: "bg-[rgb(245_158_11)]" },
+  "full-autonomy": { label: "Full Auto", color: "bg-[rgb(34_197_94)]" },
+};
 
 export default function AppShell(props: {
   children: ReactNode;
@@ -30,6 +42,11 @@ export default function AppShell(props: {
   const bots = useBots();
   const conversations = useConversations();
   const createConversation = useCreateConversation();
+  const empire = useEmpireOverview();
+  const autonomyQuery = useAutonomyMode();
+
+  const autonomyMode = (autonomyQuery.data as any)?.mode ?? "guided";
+  const modeInfo = AUTONOMY_LABELS[autonomyMode] ?? AUTONOMY_LABELS.guided;
 
   const defaultBotSlug = useMemo(() => {
     const list = bots.data ?? [];
@@ -40,49 +57,51 @@ export default function AppShell(props: {
 
   const nav = [
     { href: "/", label: "Chat", icon: MessageSquareText },
+    { href: "/dashboard", label: "Empire HQ", icon: LayoutDashboard },
+    { href: "/divisions", label: "Divisions", icon: Building2 },
+    { href: "/bots", label: "Bot Fleet", icon: Bot },
     { href: "/autonomy", label: "Autonomy", icon: Workflow },
-    { href: "/bots", label: "Bots", icon: Bot },
-    { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
   ] as const;
 
   const activeHref = (href: string) => (href === "/" ? location === "/" : location.startsWith(href));
+
+  const totalBots = empire.data?.totalBots ?? 0;
 
   return (
     <div className="min-h-screen buddy-glow">
       <div className="buddy-container py-6 md:py-8">
         <div className="grid grid-cols-1 lg:grid-cols-[340px_1fr] gap-6 lg:gap-8">
-          {/* Sidebar */}
           <aside className="buddy-card buddy-noise buddy-gradient-border overflow-hidden">
             <div className="p-5 md:p-6">
               <div className="flex items-start justify-between gap-3">
                 <div className="min-w-0">
                   <div className="flex items-center gap-2">
                     <span className="inline-flex h-9 w-9 items-center justify-center rounded-2xl bg-gradient-to-br from-primary/18 via-accent/12 to-transparent border border-border/60 shadow-sm">
-                      <Sparkles className="h-4 w-4 text-primary" />
+                      <Zap className="h-4 w-4 text-primary" />
                     </span>
                     <div className="min-w-0">
-                      <p className="text-sm text-muted-foreground leading-none">Buddy</p>
+                      <p className="text-sm text-muted-foreground leading-none">DreamCo</p>
                       <h1 className="text-xl md:text-2xl leading-tight">
-                        Calm autonomy studio
+                        Empire OS
                       </h1>
                     </div>
                   </div>
-                  <p className="mt-3 text-sm text-muted-foreground max-w-[34ch]">
-                    Talk with a realistic assistant and turn ideas into autonomous runs.
-                  </p>
+                  <div className="mt-3 flex flex-wrap items-center gap-2">
+                    <Badge variant="secondary" className="rounded-full">
+                      <span className={cn("h-2 w-2 rounded-full mr-1.5", modeInfo.color)} />
+                      {modeInfo.label}
+                    </Badge>
+                    <Badge variant="outline" className="rounded-full border-border/70">
+                      {totalBots} bots
+                    </Badge>
+                  </div>
                 </div>
-
                 <ThemeToggle />
               </div>
 
               <div className="mt-5">
                 <div className="flex items-center justify-between mb-2">
                   <p className="text-xs font-medium text-muted-foreground">Active bot</p>
-                  <button
-                    onClick={() => setBotSelectOpen((v) => !v)}
-                    className="hidden"
-                    aria-hidden="true"
-                  />
                 </div>
 
                 <Select
@@ -92,14 +111,13 @@ export default function AppShell(props: {
                   onValueChange={(v) => props.onBotChange?.(v || undefined)}
                 >
                   <SelectTrigger
-                    className="w-full rounded-xl border-border/70 bg-card/60 backdrop-blur hover:bg-card transition-all shadow-sm focus:ring-4 focus:ring-ring/15"
+                    className="w-full rounded-xl border-border/70 bg-card/60 backdrop-blur shadow-sm focus:ring-4 focus:ring-ring/15"
                     data-testid="bot-selector"
                   >
                     <SelectValue placeholder={bots.isLoading ? "Loading bots..." : "Select a bot"} />
-                    <ChevronsUpDown className="h-4 w-4 opacity-60" />
                   </SelectTrigger>
-                  <SelectContent className="rounded-xl">
-                    {(bots.data ?? []).map((b) => (
+                  <SelectContent className="rounded-xl max-h-[300px]">
+                    {(bots.data ?? []).slice(0, 50).map((b) => (
                       <SelectItem key={b.id} value={b.slug} className="rounded-lg">
                         <div className="flex items-center justify-between gap-3">
                           <span className="font-medium">{b.displayName}</span>
@@ -120,32 +138,16 @@ export default function AppShell(props: {
                   onClick={async () => {
                     try {
                       const created = await createConversation.mutateAsync({ title: "New chat" } as any);
-                      // navigation handled by page via Link list; we just toast
                       toast({ title: "New chat created", description: `#${created.id} ready.` });
                     } catch (e: any) {
                       toast({ title: "Couldn't create chat", description: e?.message ?? "Unknown error", variant: "destructive" });
                     }
                   }}
-                  className="flex-1 rounded-xl bg-gradient-to-r from-primary to-accent text-primary-foreground shadow-md shadow-primary/20 hover:shadow-lg hover:shadow-primary/25 hover:-translate-y-0.5 active:translate-y-0 transition-all"
+                  className="flex-1 rounded-xl bg-gradient-to-r from-primary to-accent text-primary-foreground shadow-md shadow-primary/20"
                   data-testid="new-chat"
                   disabled={createConversation.isPending}
                 >
-                  {createConversation.isPending ? "Creating…" : "New chat"}
-                </Button>
-
-                <Button
-                  variant="outline"
-                  onClick={() => {
-                    toast({
-                      title: "Quick tip",
-                      description:
-                        "Use Autonomy to create tasks. Use Bots to tune Buddy’s tone and system prompt.",
-                    });
-                  }}
-                  className="rounded-xl border-border/70 bg-card/60 hover:bg-card shadow-sm hover:shadow-md transition-all"
-                  data-testid="quick-tip"
-                >
-                  <Sparkles className="h-4 w-4" />
+                  {createConversation.isPending ? "Creating..." : "New chat"}
                 </Button>
               </div>
 
@@ -161,18 +163,17 @@ export default function AppShell(props: {
                       href={item.href}
                       className={cn(
                         "group flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-all",
-                        "border border-transparent hover:border-border/70 hover:bg-card/60",
+                        "border border-transparent",
                         active
                           ? "bg-gradient-to-r from-primary/14 via-accent/10 to-transparent border-border/70 shadow-sm"
-                          : "text-foreground/90"
+                          : "text-foreground/90 hover-elevate"
                       )}
-                      data-testid={`nav-${item.label.toLowerCase()}`}
+                      data-testid={`nav-${item.label.toLowerCase().replace(/\s/g, "-")}`}
                     >
                       <Icon
                         className={cn(
                           "h-4 w-4 transition-transform duration-300",
                           active ? "text-primary" : "text-muted-foreground group-hover:text-foreground",
-                          "group-hover:translate-x-0.5"
                         )}
                       />
                       <span className="truncate">{item.label}</span>
@@ -195,7 +196,7 @@ export default function AppShell(props: {
               </div>
             </div>
 
-            <ScrollArea className="h-[280px] border-t border-border/60">
+            <ScrollArea className="h-[220px] border-t border-border/60">
               <div className="p-4 md:p-5 space-y-2">
                 {conversations.isLoading ? (
                   <div className="space-y-2">
@@ -205,10 +206,7 @@ export default function AppShell(props: {
                   </div>
                 ) : conversations.isError ? (
                   <div className="buddy-card p-4 rounded-2xl border border-destructive/30 bg-destructive/5">
-                    <p className="text-sm font-medium">Couldn’t load chats</p>
-                    <p className="text-sm text-muted-foreground mt-1">
-                      {(conversations.error as any)?.message ?? "Unknown error"}
-                    </p>
+                    <p className="text-sm font-medium">Couldn't load chats</p>
                     <Button
                       variant="outline"
                       className="mt-3 rounded-xl"
@@ -223,13 +221,13 @@ export default function AppShell(props: {
                     No conversations yet. Create one to start.
                   </div>
                 ) : (
-                  (conversations.data ?? []).slice(0, 30).map((c) => (
+                  (conversations.data ?? []).slice(0, 20).map((c) => (
                     <Link
                       key={c.id}
                       href={`/c/${c.id}`}
                       className={cn(
                         "block rounded-xl border border-border/60 bg-card/40 backdrop-blur px-3 py-2.5",
-                        "shadow-sm hover:shadow-md hover:bg-card transition-all",
+                        "shadow-sm hover-elevate",
                         location === `/c/${c.id}` && "ring-2 ring-ring/20 border-border"
                       )}
                       data-testid={`conversation-${c.id}`}
@@ -240,9 +238,6 @@ export default function AppShell(props: {
                           #{c.id}
                         </span>
                       </div>
-                      <p className="text-xs text-muted-foreground mt-1">
-                        Created {new Date(c.createdAt as any).toLocaleDateString()}
-                      </p>
                     </Link>
                   ))
                 )}
@@ -250,7 +245,6 @@ export default function AppShell(props: {
             </ScrollArea>
           </aside>
 
-          {/* Main content */}
           <main className="min-w-0">{props.children}</main>
         </div>
       </div>

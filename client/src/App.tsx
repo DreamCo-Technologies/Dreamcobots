@@ -10,6 +10,7 @@ import ConversationPage from "@/pages/ConversationPage";
 import AutonomyPage from "@/pages/AutonomyPage";
 import BotsPage from "@/pages/BotsPage";
 import DashboardPage from "@/pages/DashboardPage";
+import DivisionsPage from "@/pages/DivisionsPage";
 
 function Router() {
   return (
@@ -19,6 +20,7 @@ function Router() {
       <Route path="/autonomy" component={AutonomyPage} />
       <Route path="/bots" component={BotsPage} />
       <Route path="/dashboard" component={DashboardPage} />
+      <Route path="/divisions" component={DivisionsPage} />
 
       {/* Legacy / convenience */}
       <Route path="/chat">
