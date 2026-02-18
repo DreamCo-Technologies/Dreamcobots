@@ -87,7 +87,19 @@ Each bot has per-bot controls:
 - Capital Efficiency Comparison: daily profit / cash invested / days held, ranks Property vs Car vs Hold
 - Formulas: MAO = (ARV * 0.70) - Repairs; Car Max Purchase = Sale * 0.75 - Repairs
 
+## Debug Intelligence System (DIS)
+- `shared/schema.ts` - 4 DIS tables: debug_events, auto_fixes, revenue_leaks, security_scans + DebugOverview interface
+- `client/src/pages/DebugPage.tsx` - Debug Intelligence Dashboard at /debug with 8 tabs
+- 12 Error Categories: syntax_error, runtime_crash, api_failure, auth_error, logic_bug, performance_issue, ux_friction, revenue_leak, security_risk, infinite_loop, model_drift, cost_explosion
+- Auto-Fix Engine: Confidence >=90% auto-deploys, <90% queued for manual approval
+- Revenue Leak Detector: Tracks failed_checkout, broken_funnel, pricing_error, cart_abandonment, api_overuse, subscription_churn
+- Security Scanner: dependency_audit, code_scan, config_review, penetration_test, compliance_check
+- Global Health Score: resolution rate minus penalties (critical x5, leaks x2, security x3)
+- Dashboard Tabs: Overview, Active Issues, Auto-Fixes, Revenue Impact, Security, Bot Health, Patch History, Learning Log
+- API: GET/POST /api/debug/events, PATCH /api/debug/events/:id/resolve, GET/POST /api/debug/auto-fixes, PATCH apply/reject, GET/POST /api/debug/revenue-leaks, PATCH resolve, GET/POST /api/debug/security-scans, PATCH remediate, GET /api/debug/overview, POST /api/debug/seed
+
 ## Recent Changes
+- Feb 18, 2026: Built Debug Intelligence System (DIS) with 4 tables, 12 error categories, auto-fix engine, revenue leak detector, security scanner, 8-tab dashboard at /debug
 - Feb 18, 2026: Built Deal Analyzer with RE/Car calculators, color-coded scoring, portfolio KPIs, capital efficiency comparison
 - Feb 18, 2026: Built Revenue Dashboard page at /revenue with division revenue, top bots, API summary
 - Feb 18, 2026: Built SaaS Pricing page at /pricing with tier comparison, autonomy access, annual discount

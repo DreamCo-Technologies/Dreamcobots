@@ -2,6 +2,7 @@ import { ReactNode, useMemo, useState } from "react";
 import { Link, useLocation } from "wouter";
 import {
   Bot,
+  Bug,
   Building2,
   Calculator,
   ChevronDown,
@@ -64,6 +65,7 @@ export default function AppShell(props: {
     { href: "/divisions", label: "Divisions", icon: Building2 },
     { href: "/bots", label: "Bot Fleet", icon: Bot },
     { href: "/deals", label: "Deal Analyzer", icon: Calculator },
+    { href: "/debug", label: "Debug Intel", icon: Bug },
     { href: "/revenue", label: "Revenue", icon: CircleDollarSign },
     { href: "/pricing", label: "Pricing", icon: Tag },
     { href: "/autonomy", label: "Autonomy", icon: Workflow },

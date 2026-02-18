@@ -343,6 +343,103 @@ export const insertDealSchema = createInsertSchema(deals).omit({ id: true, creat
 export type Deal = typeof deals.$inferSelect;
 export type InsertDeal = z.infer<typeof insertDealSchema>;
 
+export const DEBUG_EVENT_CATEGORIES = [
+  "syntax_error", "runtime_crash", "api_failure", "auth_error",
+  "logic_bug", "performance_issue", "ux_friction", "revenue_leak",
+  "security_risk", "infinite_loop", "model_drift", "cost_explosion",
+] as const;
+export type DebugEventCategory = (typeof DEBUG_EVENT_CATEGORIES)[number];
+
+export const DEBUG_EVENT_STATUSES = ["open", "investigating", "resolved", "ignored"] as const;
+export type DebugEventStatus = (typeof DEBUG_EVENT_STATUSES)[number];
+
+export const AUTO_FIX_STATUSES = ["queued", "applied", "rejected"] as const;
+export type AutoFixStatus = (typeof AUTO_FIX_STATUSES)[number];
+
+export const debugEvents = pgTable("debug_events", {
+  id: serial("id").primaryKey(),
+  botId: integer("bot_id").references(() => botProfiles.id, { onDelete: "cascade" }),
+  taskId: integer("task_id"),
+  category: text("category").notNull().default("runtime_crash"),
+  severity: integer("severity").notNull().default(5),
+  revenueImpact: integer("revenue_impact").notNull().default(0),
+  fixPriority: integer("fix_priority").notNull().default(5),
+  status: text("status").notNull().default("open"),
+  summary: text("summary").notNull(),
+  details: jsonb("details").notNull().default(sql`'{}'::jsonb`),
+  resolution: text("resolution"),
+  resolvedAt: timestamp("resolved_at"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
+export const autoFixes = pgTable("auto_fixes", {
+  id: serial("id").primaryKey(),
+  debugEventId: integer("debug_event_id").references(() => debugEvents.id, { onDelete: "cascade" }),
+  botId: integer("bot_id").references(() => botProfiles.id, { onDelete: "cascade" }),
+  confidence: integer("confidence").notNull().default(0),
+  status: text("status").notNull().default("queued"),
+  patchSummary: text("patch_summary").notNull(),
+  codeBefore: text("code_before").notNull().default(""),
+  codeAfter: text("code_after").notNull().default(""),
+  appliedAt: timestamp("applied_at"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
+export const revenueLeaks = pgTable("revenue_leaks", {
+  id: serial("id").primaryKey(),
+  botId: integer("bot_id").references(() => botProfiles.id, { onDelete: "cascade" }),
+  debugEventId: integer("debug_event_id").references(() => debugEvents.id, { onDelete: "cascade" }),
+  leakType: text("leak_type").notNull(),
+  impactEstimate: integer("impact_estimate").notNull().default(0),
+  status: text("status").notNull().default("open"),
+  notes: text("notes").notNull().default(""),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
+export const securityScans = pgTable("security_scans", {
+  id: serial("id").primaryKey(),
+  botId: integer("bot_id").references(() => botProfiles.id, { onDelete: "cascade" }),
+  debugEventId: integer("debug_event_id").references(() => debugEvents.id, { onDelete: "cascade" }),
+  scanType: text("scan_type").notNull(),
+  severity: integer("severity").notNull().default(5),
+  status: text("status").notNull().default("open"),
+  finding: text("finding").notNull(),
+  mitigation: text("mitigation").notNull().default(""),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
+export const insertDebugEventSchema = createInsertSchema(debugEvents).omit({ id: true, createdAt: true, resolvedAt: true });
+export const insertAutoFixSchema = createInsertSchema(autoFixes).omit({ id: true, createdAt: true, appliedAt: true });
+export const insertRevenueLeakSchema = createInsertSchema(revenueLeaks).omit({ id: true, createdAt: true });
+export const insertSecurityScanSchema = createInsertSchema(securityScans).omit({ id: true, createdAt: true });
+
+export type DebugEvent = typeof debugEvents.$inferSelect;
+export type InsertDebugEvent = z.infer<typeof insertDebugEventSchema>;
+export type AutoFix = typeof autoFixes.$inferSelect;
+export type InsertAutoFix = z.infer<typeof insertAutoFixSchema>;
+export type RevenueLeak = typeof revenueLeaks.$inferSelect;
+export type InsertRevenueLeak = z.infer<typeof insertRevenueLeakSchema>;
+export type SecurityScan = typeof securityScans.$inferSelect;
+export type InsertSecurityScan = z.infer<typeof insertSecurityScanSchema>;
+
+export interface DebugOverview {
+  globalHealthScore: number;
+  openEvents: number;
+  criticalEvents: number;
+  totalAutoFixes: number;
+  appliedFixes: number;
+  queuedFixes: number;
+  rejectedFixes: number;
+  totalRevenueLeaks: number;
+  openRevenueLeaks: number;
+  revenueAtRisk: number;
+  totalSecurityIssues: number;
+  openSecurityIssues: number;
+  avgSeverity: number;
+  eventsToday: number;
+  fixSuccessRate: number;
+}
+
 export const ALERT_TRIGGERS = [
   "task_fail_consecutive",
   "cpu_high",

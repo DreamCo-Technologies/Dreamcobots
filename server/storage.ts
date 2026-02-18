@@ -12,6 +12,10 @@ import {
   botFinancials,
   alertRules,
   deals,
+  debugEvents,
+  autoFixes,
+  revenueLeaks,
+  securityScans,
   type BotProfile,
   type InsertBotProfile,
   type AutonomousTask,
@@ -32,6 +36,15 @@ import {
   type BotHealthSummary,
   type Deal,
   type InsertDeal,
+  type DebugEvent,
+  type InsertDebugEvent,
+  type AutoFix,
+  type InsertAutoFix,
+  type RevenueLeak,
+  type InsertRevenueLeak,
+  type SecurityScan,
+  type InsertSecurityScan,
+  type DebugOverview,
 } from "@shared/schema";
 import { and, desc, eq, ne, sql, count, inArray, sum, avg } from "drizzle-orm";
 
@@ -97,6 +110,28 @@ export interface IStorage {
     yellowDeals: number;
     redDeals: number;
   }>;
+
+  getBotProfile(id: number): Promise<BotProfile | undefined>;
+
+  createDebugEvent(input: InsertDebugEvent): Promise<DebugEvent>;
+  listDebugEvents(status?: string, botId?: number): Promise<DebugEvent[]>;
+  resolveDebugEvent(id: number, resolution: string): Promise<DebugEvent | undefined>;
+  getDebugEvent(id: number): Promise<DebugEvent | undefined>;
+
+  createAutoFix(input: InsertAutoFix): Promise<AutoFix>;
+  listAutoFixes(status?: string): Promise<AutoFix[]>;
+  applyAutoFix(id: number): Promise<AutoFix | undefined>;
+  rejectAutoFix(id: number): Promise<AutoFix | undefined>;
+
+  createRevenueLeak(input: InsertRevenueLeak): Promise<RevenueLeak>;
+  listRevenueLeaks(status?: string): Promise<RevenueLeak[]>;
+  resolveRevenueLeak(id: number, notes: string): Promise<RevenueLeak | undefined>;
+
+  createSecurityScan(input: InsertSecurityScan): Promise<SecurityScan>;
+  listSecurityScans(status?: string): Promise<SecurityScan[]>;
+  remediateSecurityScan(id: number, mitigation: string): Promise<SecurityScan | undefined>;
+
+  getDebugOverview(): Promise<DebugOverview>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -404,6 +439,162 @@ export class DatabaseStorage implements IStorage {
     const yellowDeals = allDeals.filter(d => d.status === "yellow").length;
     const redDeals = allDeals.filter(d => d.status === "red").length;
     return { totalDeals, totalNetProfit, avgRoi, avgCapitalEfficiency, greenDeals, yellowDeals, redDeals };
+  }
+
+  async getBotProfile(id: number): Promise<BotProfile | undefined> {
+    return this.getBotProfileById(id);
+  }
+
+  async createDebugEvent(input: InsertDebugEvent): Promise<DebugEvent> {
+    const [created] = await db.insert(debugEvents).values(input).returning();
+    return created;
+  }
+
+  async listDebugEvents(status?: string, botId?: number): Promise<DebugEvent[]> {
+    const conditions = [];
+    if (status) conditions.push(eq(debugEvents.status, status));
+    if (botId) conditions.push(eq(debugEvents.botId, botId));
+    if (conditions.length > 0) {
+      return await db.select().from(debugEvents).where(and(...conditions)).orderBy(desc(debugEvents.createdAt)).limit(200);
+    }
+    return await db.select().from(debugEvents).orderBy(desc(debugEvents.createdAt)).limit(200);
+  }
+
+  async getDebugEvent(id: number): Promise<DebugEvent | undefined> {
+    const [event] = await db.select().from(debugEvents).where(eq(debugEvents.id, id));
+    return event;
+  }
+
+  async resolveDebugEvent(id: number, resolution: string): Promise<DebugEvent | undefined> {
+    const [updated] = await db.update(debugEvents)
+      .set({ status: "resolved", resolution, resolvedAt: new Date() })
+      .where(eq(debugEvents.id, id))
+      .returning();
+    return updated;
+  }
+
+  async createAutoFix(input: InsertAutoFix): Promise<AutoFix> {
+    const [created] = await db.insert(autoFixes).values(input).returning();
+    return created;
+  }
+
+  async listAutoFixes(status?: string): Promise<AutoFix[]> {
+    if (status) {
+      return await db.select().from(autoFixes).where(eq(autoFixes.status, status)).orderBy(desc(autoFixes.createdAt)).limit(200);
+    }
+    return await db.select().from(autoFixes).orderBy(desc(autoFixes.createdAt)).limit(200);
+  }
+
+  async applyAutoFix(id: number): Promise<AutoFix | undefined> {
+    const [updated] = await db.update(autoFixes)
+      .set({ status: "applied", appliedAt: new Date() })
+      .where(eq(autoFixes.id, id))
+      .returning();
+    if (updated?.debugEventId) {
+      await db.update(debugEvents)
+        .set({ status: "resolved", resolution: `Auto-fix #${id} applied`, resolvedAt: new Date() })
+        .where(eq(debugEvents.id, updated.debugEventId));
+    }
+    return updated;
+  }
+
+  async rejectAutoFix(id: number): Promise<AutoFix | undefined> {
+    const [updated] = await db.update(autoFixes)
+      .set({ status: "rejected" })
+      .where(eq(autoFixes.id, id))
+      .returning();
+    return updated;
+  }
+
+  async createRevenueLeak(input: InsertRevenueLeak): Promise<RevenueLeak> {
+    const [created] = await db.insert(revenueLeaks).values(input).returning();
+    return created;
+  }
+
+  async listRevenueLeaks(status?: string): Promise<RevenueLeak[]> {
+    if (status) {
+      return await db.select().from(revenueLeaks).where(eq(revenueLeaks.status, status)).orderBy(desc(revenueLeaks.createdAt)).limit(200);
+    }
+    return await db.select().from(revenueLeaks).orderBy(desc(revenueLeaks.createdAt)).limit(200);
+  }
+
+  async resolveRevenueLeak(id: number, notes: string): Promise<RevenueLeak | undefined> {
+    const [updated] = await db.update(revenueLeaks)
+      .set({ status: "resolved", notes })
+      .where(eq(revenueLeaks.id, id))
+      .returning();
+    return updated;
+  }
+
+  async createSecurityScan(input: InsertSecurityScan): Promise<SecurityScan> {
+    const [created] = await db.insert(securityScans).values(input).returning();
+    return created;
+  }
+
+  async listSecurityScans(status?: string): Promise<SecurityScan[]> {
+    if (status) {
+      return await db.select().from(securityScans).where(eq(securityScans.status, status)).orderBy(desc(securityScans.createdAt)).limit(200);
+    }
+    return await db.select().from(securityScans).orderBy(desc(securityScans.createdAt)).limit(200);
+  }
+
+  async remediateSecurityScan(id: number, mitigation: string): Promise<SecurityScan | undefined> {
+    const [updated] = await db.update(securityScans)
+      .set({ status: "remediated", mitigation })
+      .where(eq(securityScans.id, id))
+      .returning();
+    return updated;
+  }
+
+  async getDebugOverview(): Promise<DebugOverview> {
+    const allEvents = await db.select().from(debugEvents);
+    const allFixes = await db.select().from(autoFixes);
+    const allLeaks = await db.select().from(revenueLeaks);
+    const allScans = await db.select().from(securityScans);
+
+    const openEvents = allEvents.filter(e => e.status === "open" || e.status === "investigating").length;
+    const criticalEvents = allEvents.filter(e => e.severity >= 8 && e.status !== "resolved").length;
+    const totalAutoFixes = allFixes.length;
+    const appliedFixes = allFixes.filter(f => f.status === "applied").length;
+    const queuedFixes = allFixes.filter(f => f.status === "queued").length;
+    const rejectedFixes = allFixes.filter(f => f.status === "rejected").length;
+    const totalRevenueLeaks = allLeaks.length;
+    const openRevenueLeaks = allLeaks.filter(l => l.status === "open").length;
+    const revenueAtRisk = allLeaks.filter(l => l.status === "open").reduce((s, l) => s + l.impactEstimate, 0);
+    const totalSecurityIssues = allScans.length;
+    const openSecurityIssues = allScans.filter(s => s.status === "open").length;
+    const avgSeverity = allEvents.length > 0 ? Math.round(allEvents.reduce((s, e) => s + e.severity, 0) / allEvents.length * 10) / 10 : 0;
+
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const eventsToday = allEvents.filter(e => new Date(e.createdAt) >= today).length;
+    const fixSuccessRate = totalAutoFixes > 0 ? Math.round((appliedFixes / totalAutoFixes) * 100) : 100;
+
+    const resolvedEvents = allEvents.filter(e => e.status === "resolved").length;
+    const totalEvents = allEvents.length;
+    const healthBase = totalEvents > 0 ? Math.round((resolvedEvents / totalEvents) * 100) : 100;
+    const severityPenalty = criticalEvents * 5;
+    const leakPenalty = openRevenueLeaks * 2;
+    const secPenalty = openSecurityIssues * 3;
+    const globalHealthScore = Math.max(0, Math.min(100, healthBase - severityPenalty - leakPenalty - secPenalty));
+
+    return {
+      globalHealthScore,
+      openEvents,
+      criticalEvents,
+      totalAutoFixes,
+      appliedFixes,
+      queuedFixes,
+      rejectedFixes,
+      totalRevenueLeaks,
+      openRevenueLeaks,
+      revenueAtRisk,
+      totalSecurityIssues,
+      openSecurityIssues,
+      avgSeverity,
+      eventsToday,
+      fixSuccessRate,
+    };
   }
 }
 

@@ -6,7 +6,7 @@ import { sql } from "drizzle-orm";
 import { storage } from "./storage";
 import { api } from "@shared/routes";
 import { ALL_BOTS } from "./seed-bots";
-import { DIVISIONS, insertBotMetricSchema, insertBotErrorSchema, insertBotFinancialSchema, insertAlertRuleSchema, insertDealSchema } from "@shared/schema";
+import { DIVISIONS, insertBotMetricSchema, insertBotErrorSchema, insertBotFinancialSchema, insertAlertRuleSchema, insertDealSchema, insertDebugEventSchema, insertAutoFixSchema, insertRevenueLeakSchema, insertSecurityScanSchema } from "@shared/schema";
 import { calculateRealEstate, calculateCarFlip, type RealEstateInputs, type CarFlipInputs } from "@shared/deal-calculations";
 import { getUncachableStripeClient, getStripePublishableKey } from "./stripeClient";
 import { db } from "./db";
@@ -670,6 +670,226 @@ export async function registerRoutes(
     if (!deal) return res.status(404).json({ message: "Deal not found" });
     await storage.deleteDeal(id);
     res.status(204).send();
+  });
+
+  // ─── Debug Intelligence System Routes ──────────────────────────────────
+
+  app.get("/api/debug/overview", async (_req, res) => {
+    const overview = await storage.getDebugOverview();
+    res.json(overview);
+  });
+
+  app.get("/api/debug/events", async (req, res) => {
+    const status = req.query.status as string | undefined;
+    const botId = req.query.botId ? Number(req.query.botId) : undefined;
+    const events = await storage.listDebugEvents(status, botId);
+    res.json(events);
+  });
+
+  app.post("/api/debug/events", async (req, res) => {
+    try {
+      const input = insertDebugEventSchema.parse(req.body);
+      const event = await storage.createDebugEvent(input);
+      res.status(201).json(event);
+    } catch (err) {
+      if (err instanceof z.ZodError) return res.status(400).json(zodValidationError(err));
+      throw err;
+    }
+  });
+
+  app.patch("/api/debug/events/:id/resolve", async (req, res) => {
+    const id = Number(req.params.id);
+    const { resolution } = req.body;
+    const updated = await storage.resolveDebugEvent(id, resolution || "Resolved");
+    if (!updated) return res.status(404).json({ message: "Event not found" });
+    res.json(updated);
+  });
+
+  app.get("/api/debug/auto-fixes", async (req, res) => {
+    const status = req.query.status as string | undefined;
+    const fixes = await storage.listAutoFixes(status);
+    res.json(fixes);
+  });
+
+  app.post("/api/debug/auto-fixes", async (req, res) => {
+    try {
+      const input = insertAutoFixSchema.parse(req.body);
+      const fix = await storage.createAutoFix(input);
+      if (fix.confidence >= 90) {
+        const applied = await storage.applyAutoFix(fix.id);
+        return res.status(201).json(applied);
+      }
+      res.status(201).json(fix);
+    } catch (err) {
+      if (err instanceof z.ZodError) return res.status(400).json(zodValidationError(err));
+      throw err;
+    }
+  });
+
+  app.patch("/api/debug/auto-fixes/:id/apply", async (req, res) => {
+    const id = Number(req.params.id);
+    const applied = await storage.applyAutoFix(id);
+    if (!applied) return res.status(404).json({ message: "Fix not found" });
+    res.json(applied);
+  });
+
+  app.patch("/api/debug/auto-fixes/:id/reject", async (req, res) => {
+    const id = Number(req.params.id);
+    const rejected = await storage.rejectAutoFix(id);
+    if (!rejected) return res.status(404).json({ message: "Fix not found" });
+    res.json(rejected);
+  });
+
+  app.get("/api/debug/revenue-leaks", async (req, res) => {
+    const status = req.query.status as string | undefined;
+    const leaks = await storage.listRevenueLeaks(status);
+    res.json(leaks);
+  });
+
+  app.post("/api/debug/revenue-leaks", async (req, res) => {
+    try {
+      const input = insertRevenueLeakSchema.parse(req.body);
+      const leak = await storage.createRevenueLeak(input);
+      res.status(201).json(leak);
+    } catch (err) {
+      if (err instanceof z.ZodError) return res.status(400).json(zodValidationError(err));
+      throw err;
+    }
+  });
+
+  app.patch("/api/debug/revenue-leaks/:id/resolve", async (req, res) => {
+    const id = Number(req.params.id);
+    const { notes } = req.body;
+    const resolved = await storage.resolveRevenueLeak(id, notes || "Resolved");
+    if (!resolved) return res.status(404).json({ message: "Revenue leak not found" });
+    res.json(resolved);
+  });
+
+  app.get("/api/debug/security-scans", async (req, res) => {
+    const status = req.query.status as string | undefined;
+    const scans = await storage.listSecurityScans(status);
+    res.json(scans);
+  });
+
+  app.post("/api/debug/security-scans", async (req, res) => {
+    try {
+      const input = insertSecurityScanSchema.parse(req.body);
+      const scan = await storage.createSecurityScan(input);
+      res.status(201).json(scan);
+    } catch (err) {
+      if (err instanceof z.ZodError) return res.status(400).json(zodValidationError(err));
+      throw err;
+    }
+  });
+
+  app.patch("/api/debug/security-scans/:id/remediate", async (req, res) => {
+    const id = Number(req.params.id);
+    const { mitigation } = req.body;
+    const remediated = await storage.remediateSecurityScan(id, mitigation || "Remediated");
+    if (!remediated) return res.status(404).json({ message: "Scan not found" });
+    res.json(remediated);
+  });
+
+  app.post("/api/debug/seed", async (_req, res) => {
+    const existing = await storage.listDebugEvents();
+    if (existing.length > 0) {
+      return res.json({ message: "Demo data already seeded", count: existing.length });
+    }
+
+    const categories = ["syntax_error", "runtime_crash", "api_failure", "auth_error", "logic_bug", "performance_issue", "ux_friction", "revenue_leak", "security_risk", "infinite_loop", "model_drift", "cost_explosion"];
+    const allBots = await storage.listBotProfiles();
+    const botIds = allBots.slice(0, 15).map(b => b.id);
+    const summaries: Record<string, string[]> = {
+      syntax_error: ["Unexpected token in response parser", "Missing semicolon in payment handler", "Invalid JSON template in email bot"],
+      runtime_crash: ["Null reference in customer lookup", "Stack overflow in recursive task planner", "Out of memory during batch processing"],
+      api_failure: ["Stripe webhook timeout after 30s", "OpenAI rate limit exceeded", "CRM sync returning 503"],
+      auth_error: ["JWT expired for service account", "OAuth token refresh loop detected", "API key rotation missed for bot #42"],
+      logic_bug: ["Commission calculator using wrong tier", "Lead scoring inverted priority weights", "Duplicate invoice generation on retry"],
+      performance_issue: ["Response time >5s for search queries", "Database connection pool exhausted", "Memory leak in WebSocket handler"],
+      ux_friction: ["Checkout button unresponsive on mobile", "Search results pagination broken", "Form validation error messages not visible"],
+      revenue_leak: ["Failed checkout not triggering cart recovery", "Pricing page showing wrong tier features", "Abandoned cart emails not sending"],
+      security_risk: ["SQL injection vector in search endpoint", "CORS misconfiguration allowing wildcard", "Unencrypted PII in log output"],
+      infinite_loop: ["Task retry loop with no backoff", "Webhook echo causing infinite callbacks", "State machine stuck in processing state"],
+      model_drift: ["Sentiment analysis accuracy dropped 15%", "Lead quality predictions diverging from actuals", "Price optimization suggesting below-cost items"],
+      cost_explosion: ["API call volume 300% above forecast", "Cloud storage growing 50GB/day unexpectedly", "LLM token usage 5x projected budget"],
+    };
+
+    const events = [];
+    for (let i = 0; i < 24; i++) {
+      const cat = categories[i % categories.length];
+      const sums = summaries[cat];
+      const severity = cat === "security_risk" || cat === "cost_explosion" ? 8 + Math.floor(Math.random() * 3) :
+                        cat === "syntax_error" || cat === "ux_friction" ? 2 + Math.floor(Math.random() * 4) :
+                        4 + Math.floor(Math.random() * 5);
+      const status = i < 8 ? "open" : i < 12 ? "investigating" : "resolved";
+      const revenueImpact = ["revenue_leak", "cost_explosion", "api_failure"].includes(cat) ? 500 + Math.floor(Math.random() * 4500) : 0;
+      events.push(await storage.createDebugEvent({
+        category: cat,
+        severity,
+        summary: sums[i % sums.length],
+        stackTrace: `Error at ${cat}.handler:${10 + i}\n  at processQueue (worker.ts:${44 + i})`,
+        botId: botIds[i % botIds.length],
+        status,
+        resolution: status === "resolved" ? "Patched and deployed" : undefined,
+        revenueImpact,
+        fixPriority: severity,
+      }));
+    }
+
+    const fixPatches = [
+      { summary: "Fix null reference in customer lookup", before: "const name = customer.name;", after: "const name = customer?.name ?? 'Unknown';", confidence: 95 },
+      { summary: "Add rate limit retry with exponential backoff", before: "await openai.chat(prompt);", after: "await retryWithBackoff(() => openai.chat(prompt), 3);", confidence: 92 },
+      { summary: "Fix SQL injection in search endpoint", before: "WHERE name LIKE '%${query}%'", after: "WHERE name LIKE $1", confidence: 97 },
+      { summary: "Fix commission calculation tier lookup", before: "const rate = tiers[tier - 1];", after: "const rate = tiers[Math.min(tier, tiers.length) - 1];", confidence: 78 },
+      { summary: "Add connection pool limit increase", before: "pool: { max: 5 }", after: "pool: { max: 20, idleTimeoutMillis: 30000 }", confidence: 85 },
+      { summary: "Fix JWT refresh token handling", before: "if (token.expired) throw new Error();", after: "if (token.expired) { token = await refreshToken(); }", confidence: 91 },
+      { summary: "Add task retry backoff strategy", before: "while (!done) { retry(); }", after: "for (let i=0; i<maxRetries; i++) { await delay(2**i * 1000); retry(); }", confidence: 88 },
+      { summary: "Fix CORS configuration", before: "origin: '*'", after: "origin: ALLOWED_ORIGINS", confidence: 94 },
+    ];
+
+    for (const p of fixPatches) {
+      await storage.createAutoFix({
+        debugEventId: events[fixPatches.indexOf(p) % events.length].id,
+        botId: botIds[fixPatches.indexOf(p) % botIds.length],
+        patchSummary: p.summary,
+        codeBefore: p.before,
+        codeAfter: p.after,
+        confidence: p.confidence,
+        status: p.confidence >= 90 ? "applied" : "queued",
+      });
+    }
+
+    const leakTypes = ["failed_checkout", "broken_funnel", "pricing_error", "cart_abandonment", "api_overuse", "subscription_churn"];
+    for (let i = 0; i < 6; i++) {
+      await storage.createRevenueLeak({
+        botId: botIds[i % botIds.length],
+        leakType: leakTypes[i],
+        impactEstimate: 1000 + Math.floor(Math.random() * 9000),
+        status: i < 4 ? "open" : "resolved",
+        notes: i >= 4 ? "Patched and verified" : undefined,
+      });
+    }
+
+    const scanTypes = ["dependency_audit", "code_scan", "config_review", "penetration_test", "compliance_check"];
+    const findings = [
+      "Outdated dependency with known CVE-2025-1234",
+      "Hardcoded credentials in config file",
+      "Missing rate limiting on public endpoints",
+      "XSS vulnerability in user input display",
+      "Insecure deserialization in webhook handler",
+    ];
+    for (let i = 0; i < 5; i++) {
+      await storage.createSecurityScan({
+        botId: botIds[i % botIds.length],
+        scanType: scanTypes[i],
+        finding: findings[i],
+        severity: 6 + Math.floor(Math.random() * 4),
+        status: i < 3 ? "open" : "remediated",
+        mitigation: i >= 3 ? "Patched and deployed" : undefined,
+      });
+    }
+
+    res.json({ message: "Demo data seeded", events: events.length, fixes: fixPatches.length, leaks: 6, scans: 5 });
   });
 
   // ─── Stripe Payment Routes ───────────────────────────────────────────
