@@ -26,8 +26,8 @@ DreamCo Empire OS is a 6-layer autonomous wealth-generation system with 251 coor
 - `client/src/hooks/use-bots.ts` - Bot CRUD hooks
 - `client/src/hooks/use-tasks.ts` - Task CRUD hooks
 
-## 16 Divisions
-DreamFinance (25), DreamRealEstate (25), DreamSalesPro (25), DreamAIInfra (25), DreamRetail (25), DreamProServices (25), DreamData (15), DreamGlobal (15), DreamAutomation (20), DreamContent (15), DreamTrade (10), DreamFlow (5), DreamMarket (5), DreamEmpire (5), CommandCore (8), GameTitan (3)
+## 24 Divisions (451 bots)
+DreamFinance (25), DreamRealEstate (25), DreamSalesPro (25), DreamAIInfra (25), DreamRetail (25), DreamProServices (25), DreamData (15), DreamGlobal (15), DreamAutomation (20), DreamContent (15), DreamTrade (10), DreamFlow (5), DreamMarket (5), DreamEmpire (5), CommandCore (8), GameTitan (3), DreamInfluence (25), DreamDecision (25), DreamOps (25), DreamPlanetary (25), DreamEntFinance (25), DreamCustIntel (25), DreamLegal (25), DreamCyber (25)
 
 ## Autonomy Modes
 - **Guided**: User approval on all actions
@@ -99,6 +99,7 @@ Each bot has per-bot controls:
 - API: GET/POST /api/debug/events, PATCH /api/debug/events/:id/resolve, GET/POST /api/debug/auto-fixes, PATCH apply/reject, GET/POST /api/debug/revenue-leaks, PATCH resolve, GET/POST /api/debug/security-scans, PATCH remediate, GET /api/debug/overview, POST /api/debug/seed
 
 ## Recent Changes
+- Feb 18, 2026: Added 8 new divisions (DreamInfluence, DreamDecision, DreamOps, DreamPlanetary, DreamEntFinance, DreamCustIntel, DreamLegal, DreamCyber) with 200 new bots, bringing total to 451 bots across 24 divisions
 - Feb 18, 2026: Built Debug Intelligence System (DIS) with 4 tables, 12 error categories, auto-fix engine, revenue leak detector, security scanner, 8-tab dashboard at /debug
 - Feb 18, 2026: Built Deal Analyzer with RE/Car calculators, color-coded scoring, portfolio KPIs, capital efficiency comparison
 - Feb 18, 2026: Built Revenue Dashboard page at /revenue with division revenue, top bots, API summary

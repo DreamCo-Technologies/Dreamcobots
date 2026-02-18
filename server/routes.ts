@@ -25,19 +25,18 @@ function zodValidationError(err: z.ZodError) {
 
 async function ensureSeeded() {
   const bots = await storage.listBotProfiles();
-  if (bots.length < 10) {
-    if (bots.length > 0) {
-      // don't double-seed
-    } else {
-      for (const botData of ALL_BOTS) {
-        try {
-          await storage.createBotProfile(botData);
-        } catch (e: any) {
-          if (e?.code === "23505") continue; // unique violation, skip
-          console.error(`Seed bot ${botData.slug} failed:`, e?.message);
-        }
+  const existingSlugs = new Set(bots.map(b => b.slug));
+  const missingBots = ALL_BOTS.filter(b => !existingSlugs.has(b.slug));
+  if (missingBots.length > 0) {
+    for (const botData of missingBots) {
+      try {
+        await storage.createBotProfile(botData);
+      } catch (e: any) {
+        if (e?.code === "23505") continue;
+        console.error(`Seed bot ${botData.slug} failed:`, e?.message);
       }
     }
+    console.log(`Seeded ${missingBots.length} new bots`);
   }
 
   const convs = await storage.listConversations();
