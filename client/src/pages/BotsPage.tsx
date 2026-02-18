@@ -42,9 +42,9 @@ export default function BotsPage() {
   const editingBot = useMemo(() => (bots.data ?? []).find((b) => b.id === editId) ?? null, [bots.data, editId]);
 
   const [createForm, setCreateForm] = useState<CreateBotProfileRequest>({
-    slug: "buddy",
-    displayName: "Buddy",
-    systemPrompt: defaultSystemPrompt("Buddy"),
+    slug: "dream-bot",
+    displayName: "DreamBot",
+    systemPrompt: defaultSystemPrompt("DreamBot"),
     traits: {},
     isDefault: false as any,
   });
@@ -53,7 +53,7 @@ export default function BotsPage() {
 
   return (
     <AppShell selectedBotSlug={activeBotSlug} onBotChange={setActiveBotSlug}>
-      <Seo title="Buddy — Bots" description="Manage bot profiles: system prompts, traits, and default bot." />
+      <Seo title="DreamCo Empire OS — Bot Fleet" description="Manage bot profiles: system prompts, traits, and default bot." />
 
       <ConfirmDialog
         open={confirmDefaultOpen}
@@ -90,9 +90,9 @@ export default function BotsPage() {
                 data-testid="open-create-bot"
                 onClick={() => {
                   setCreateForm({
-                    slug: "buddy-" + Math.random().toString(16).slice(2, 6),
-                    displayName: "Buddy Variant",
-                    systemPrompt: defaultSystemPrompt("Buddy"),
+                    slug: "dream-" + Math.random().toString(16).slice(2, 6),
+                    displayName: "DreamBot Variant",
+                    systemPrompt: defaultSystemPrompt("DreamBot"),
                     traits: { tone: "calm", style: "practical" } as any,
                     isDefault: false as any,
                   });
@@ -115,7 +115,7 @@ export default function BotsPage() {
                     value={(createForm as any).slug ?? ""}
                     onChange={(e) => setCreateForm((p) => ({ ...(p as any), slug: e.target.value }))}
                     className="rounded-xl"
-                    placeholder="buddy"
+                    placeholder="dream-bot"
                     data-testid="create-bot-slug"
                   />
                   <p className="text-xs text-muted-foreground">Used as botSlug when chatting.</p>
@@ -127,7 +127,7 @@ export default function BotsPage() {
                     value={(createForm as any).displayName ?? ""}
                     onChange={(e) => setCreateForm((p) => ({ ...(p as any), displayName: e.target.value }))}
                     className="rounded-xl"
-                    placeholder="Buddy"
+                    placeholder="DreamBot"
                     data-testid="create-bot-displayName"
                   />
                 </div>

@@ -164,7 +164,7 @@ export default function ConversationPage() {
 
   return (
     <AppShell selectedBotSlug={botSlug} onBotChange={setBotSlug}>
-      <Seo title={`Buddy — ${title}`} description="Chat thread with Buddy, streaming responses in real time." />
+      <Seo title={`DreamCo Empire OS — ${title}`} description="Chat thread with AI bot, streaming responses in real time." />
 
       <ConfirmDialog
         open={confirmDeleteOpen}
@@ -197,7 +197,7 @@ export default function ConversationPage() {
             <div className="mt-2 flex flex-wrap items-center gap-2 text-sm text-muted-foreground">
               <span className="inline-flex items-center gap-2">
                 <span className="h-2 w-2 rounded-full bg-[rgb(34_197_94)]" />
-                {streaming ? "Buddy is responding…" : "Ready"}
+                {streaming ? "Bot is responding..." : "Ready"}
               </span>
               <Separator orientation="vertical" className="h-4" />
               <span className="font-mono">#{id}</span>
@@ -283,12 +283,12 @@ export default function ConversationPage() {
                   />
                 </div>
               ) : (
-                <ScrollArea className="h-[46vh] md:h-[56vh]" viewportRef={scrollRef}>
-                  <div className="p-4 md:p-6 space-y-4">
+                <ScrollArea className="h-[46vh] md:h-[56vh]">
+                  <div ref={scrollRef} className="p-4 md:p-6 space-y-4">
                     {messages.length === 0 ? (
                       <EmptyState
                         icon={<Bot className="h-6 w-6" />}
-                        title="Say hello to Buddy"
+                        title="Start your conversation"
                         description="Ask for an automation plan, a system design, or a focused next action."
                         data-testid="thread-empty"
                       />
@@ -312,7 +312,7 @@ export default function ConversationPage() {
                         <span className="inline-flex h-8 w-8 items-center justify-center rounded-2xl border border-border/60 bg-card/70">
                           <Loader2 className="h-4 w-4 animate-spin text-primary" />
                         </span>
-                        Buddy is typing…
+                        Bot is typing...
                       </div>
                     ) : null}
                   </div>

@@ -42,7 +42,7 @@ async function ensureSeeded() {
     await storage.createMessage(
       conv.id,
       "assistant",
-      "Welcome to DreamCo Empire OS. I'm Buddy, your central AI brain. I coordinate 250+ specialized bots across 16 divisions to build autonomous wealth-generation systems. Tell me what you want to automate first, and I'll route you to the right division and bots.",
+      "Welcome to DreamCo Empire OS. I'm your central AI brain, coordinating 250+ specialized bots across 16 divisions to build autonomous wealth-generation systems. Tell me what you want to automate first, and I'll route you to the right division and bots.",
     );
   }
 
@@ -66,9 +66,9 @@ async function runAutonomousTask(taskId: number, dryRun: boolean) {
 
   const bot = task.assignedBotId
     ? (await storage.listBotProfiles()).find(b => b.id === task.assignedBotId)
-    : (await storage.getDefaultBotProfile()) ?? (await storage.getBotProfileBySlug("buddy"));
+    : (await storage.getDefaultBotProfile()) ?? (await storage.getBotProfileBySlug("dreambot"));
 
-  const system = bot?.systemPrompt ?? "You are Buddy, the central AI brain of DreamCo Empire OS.";
+  const system = bot?.systemPrompt ?? "You are the central AI brain of DreamCo Empire OS.";
 
   const modeInstructions = task.autonomyMode === "full-autonomy"
     ? "Execute fully. Report results only."
@@ -214,7 +214,7 @@ export async function registerRoutes(
         ? await storage.getBotProfileBySlug(input.botSlug)
         : await storage.getDefaultBotProfile();
 
-      const system = bot?.systemPrompt ?? "You are Buddy, the central AI brain of DreamCo Empire OS.";
+      const system = bot?.systemPrompt ?? "You are the central AI brain of DreamCo Empire OS.";
 
       const userMsg = await storage.createMessage(conversationId, "user", input.content);
 
@@ -265,7 +265,7 @@ export async function registerRoutes(
       ? await storage.getBotProfileBySlug(input.botSlug)
       : await storage.getDefaultBotProfile();
 
-    const system = bot?.systemPrompt ?? "You are Buddy, the central AI brain of DreamCo Empire OS.";
+    const system = bot?.systemPrompt ?? "You are the central AI brain of DreamCo Empire OS.";
 
     const userMsg = await storage.createMessage(conversationId, "user", input.content);
 

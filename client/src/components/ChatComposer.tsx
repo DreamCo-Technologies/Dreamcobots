@@ -24,7 +24,7 @@ export default function ChatComposer(props: {
     <div className="buddy-card buddy-noise rounded-3xl border-border/60 overflow-hidden">
       <div className="p-4 md:p-5">
         <div className="flex items-center justify-between gap-4">
-          <p className="text-xs font-medium text-muted-foreground">Message Buddy</p>
+          <p className="text-xs font-medium text-muted-foreground">Message your bot</p>
           <p className="text-xs text-muted-foreground">
             <span className="inline-flex items-center gap-1">
               <CornerDownLeft className="h-3.5 w-3.5" />

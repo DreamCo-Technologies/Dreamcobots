@@ -42,7 +42,7 @@ export default function ChatMessageBubble(props: {
       >
         <div className="flex items-center justify-between gap-3 mb-1">
           <p className={cn("text-xs font-medium", isUser ? "text-primary" : "text-muted-foreground")}>
-            {isUser ? "You" : "Buddy"}
+            {isUser ? "You" : "Bot"}
           </p>
           <p className="text-[11px] text-muted-foreground font-mono">
             {formatTime(props.message.createdAt as any)}

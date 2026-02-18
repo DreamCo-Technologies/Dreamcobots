@@ -3,7 +3,7 @@ import { useEffect } from "react";
 export default function Seo(props: { title: string; description?: string }) {
   useEffect(() => {
     document.title = props.title;
-    const desc = props.description ?? "Buddy — a realistic assistant for building autonomous systems.";
+    const desc = props.description ?? "DreamCo Empire OS — AI-powered autonomous wealth-generation system.";
 
     let meta = document.querySelector('meta[name="description"]') as HTMLMetaElement | null;
     if (!meta) {

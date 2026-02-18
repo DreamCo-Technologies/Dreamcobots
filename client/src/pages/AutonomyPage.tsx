@@ -71,7 +71,7 @@ export default function AutonomyPage() {
 
   return (
     <AppShell selectedBotSlug={activeBotSlug} onBotChange={setActiveBotSlug}>
-      <Seo title="Buddy — Autonomy" description="Create autonomous tasks, run them, and review recent runs." />
+      <Seo title="DreamCo Empire OS — Autonomy" description="Create autonomous tasks, run them, and review recent runs." />
 
       <ConfirmDialog
         open={deleteOpen}

@@ -22,15 +22,15 @@ export default function ChatIndexPage() {
   return (
     <AppShell selectedBotSlug={botSlug} onBotChange={setBotSlug}>
       <Seo
-        title="Buddy — Chat"
-        description="Chat with Buddy: a realistic, practical assistant for building autonomous income systems."
+        title="DreamCo Empire OS — Chat"
+        description="Chat with DreamCo Empire OS: your AI-powered autonomous wealth-generation system."
       />
 
       <div className="buddy-appear">
         <EmptyState
           icon={<MessageSquarePlus className="h-6 w-6" />}
           title="Start a conversation"
-          description="Create a new chat, describe your goal, and Buddy will help you turn it into an autonomous plan."
+          description="Create a new chat, describe your goal, and your AI bots will help turn it into an autonomous plan."
           action={
             <Button
               onClick={async () => {

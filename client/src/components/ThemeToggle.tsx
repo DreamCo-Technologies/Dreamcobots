@@ -7,8 +7,7 @@ type Theme = "light" | "dark";
 function getInitialTheme(): Theme {
   const saved = localStorage.getItem("buddy.theme");
   if (saved === "light" || saved === "dark") return saved;
-  const prefersDark = window.matchMedia?.("(prefers-color-scheme: dark)")?.matches;
-  return prefersDark ? "dark" : "light";
+  return "dark";
 }
 
 export default function ThemeToggle() {

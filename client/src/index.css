@@ -4,68 +4,57 @@
 @tailwind components;
 @tailwind utilities;
 
-/* =========================================================
-   Buddy UI — calm, modern SaaS dashboard with depth
-   Typography:
-   - Display: Fraunces (editorial warmth, premium)
-   - Body: Manrope (crisp, modern)
-   - Mono: JetBrains Mono (for IDs/debug)
-   ========================================================= */
-
 :root {
   --font-sans: "Manrope", ui-sans-serif, system-ui, -apple-system, Segoe UI, sans-serif;
   --font-serif: "Fraunces", ui-serif, Georgia, serif;
   --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
 
-  /* Light */
-  --background: 210 25% 98%;
-  --foreground: 222 47% 11%;
+  --background: 220 30% 96%;
+  --foreground: 222 60% 10%;
 
-  --card: 0 0% 100%;
-  --card-foreground: 222 47% 11%;
-  --card-border: 220 20% 92%;
+  --card: 220 25% 99%;
+  --card-foreground: 222 60% 10%;
+  --card-border: 220 24% 90%;
 
-  --popover: 0 0% 100%;
-  --popover-foreground: 222 47% 11%;
-  --popover-border: 220 18% 90%;
+  --popover: 220 25% 99%;
+  --popover-foreground: 222 60% 10%;
+  --popover-border: 220 24% 88%;
 
-  --border: 220 18% 90%;
-  --input: 220 18% 86%;
-  --ring: 198 89% 48%;
+  --border: 220 24% 88%;
+  --input: 220 24% 84%;
+  --ring: 217 91% 60%;
 
-  --muted: 210 22% 95%;
-  --muted-foreground: 215 18% 40%;
+  --muted: 220 25% 93%;
+  --muted-foreground: 215 20% 42%;
 
-  --secondary: 215 26% 94%;
-  --secondary-foreground: 222 47% 11%;
+  --secondary: 220 28% 92%;
+  --secondary-foreground: 222 60% 10%;
 
-  /* Calm teal + electric sky accent */
-  --primary: 196 84% 41%;
-  --primary-foreground: 210 40% 98%;
-  --accent: 205 92% 57%;
-  --accent-foreground: 210 40% 98%;
+  --primary: 217 91% 60%;
+  --primary-foreground: 220 60% 98%;
+  --accent: 210 100% 52%;
+  --accent-foreground: 220 60% 98%;
 
   --destructive: 0 84% 56%;
   --destructive-foreground: 210 40% 98%;
 
-  --sidebar: 210 25% 98%;
-  --sidebar-foreground: 222 47% 11%;
-  --sidebar-border: 220 18% 90%;
-  --sidebar-primary: 196 84% 41%;
-  --sidebar-primary-foreground: 210 40% 98%;
-  --sidebar-accent: 210 22% 95%;
-  --sidebar-accent-foreground: 222 47% 11%;
-  --sidebar-ring: 196 84% 41%;
+  --sidebar: 222 50% 12%;
+  --sidebar-foreground: 213 31% 91%;
+  --sidebar-border: 220 40% 18%;
+  --sidebar-primary: 217 91% 60%;
+  --sidebar-primary-foreground: 220 60% 98%;
+  --sidebar-accent: 222 40% 16%;
+  --sidebar-accent-foreground: 213 31% 91%;
+  --sidebar-ring: 217 91% 60%;
 
-  --chart-1: 196 84% 41%;
-  --chart-2: 205 92% 57%;
-  --chart-3: 168 60% 38%;
+  --chart-1: 217 91% 60%;
+  --chart-2: 210 100% 52%;
+  --chart-3: 190 80% 42%;
   --chart-4: 32 92% 56%;
   --chart-5: 0 84% 56%;
 
   --radius: 0.9rem;
 
-  /* A tiny bit of “material” */
   --shadow-ambient: 0 1px 0 hsl(0 0% 0% / 0.03);
   --shadow-soft: 0 12px 30px hsl(222 47% 11% / 0.06);
   --shadow-lift: 0 18px 55px hsl(222 47% 11% / 0.10);
@@ -77,7 +66,6 @@
   --button-outline: rgba(0, 0, 0, 0.10);
   --badge-outline: rgba(0, 0, 0, 0.05);
 
-  /* Computed borders (tailwind config expects these vars) */
   --sidebar-primary-border: hsl(var(--sidebar-primary));
   --sidebar-primary-border: hsl(from hsl(var(--sidebar-primary)) h s calc(l + var(--opaque-button-border-intensity)) / alpha);
   --sidebar-accent-border: hsl(var(--sidebar-accent));
@@ -95,51 +83,51 @@
 }
 
 .dark {
-  --background: 222 47% 8%;
-  --foreground: 210 40% 98%;
+  --background: 225 55% 6%;
+  --foreground: 213 31% 91%;
 
-  --card: 222 47% 10%;
-  --card-foreground: 210 40% 98%;
-  --card-border: 220 24% 18%;
+  --card: 224 50% 9%;
+  --card-foreground: 213 31% 91%;
+  --card-border: 222 40% 15%;
 
-  --popover: 222 47% 10%;
-  --popover-foreground: 210 40% 98%;
-  --popover-border: 220 24% 18%;
+  --popover: 224 50% 9%;
+  --popover-foreground: 213 31% 91%;
+  --popover-border: 222 40% 15%;
 
-  --border: 220 24% 18%;
-  --input: 220 24% 22%;
-  --ring: 196 84% 48%;
+  --border: 222 40% 15%;
+  --input: 222 40% 18%;
+  --ring: 217 91% 60%;
 
-  --muted: 222 35% 12%;
-  --muted-foreground: 215 20% 70%;
+  --muted: 224 45% 11%;
+  --muted-foreground: 215 20% 60%;
 
-  --secondary: 222 35% 12%;
-  --secondary-foreground: 210 40% 98%;
+  --secondary: 224 45% 11%;
+  --secondary-foreground: 213 31% 91%;
 
-  --primary: 196 84% 48%;
-  --primary-foreground: 222 47% 10%;
+  --primary: 217 91% 60%;
+  --primary-foreground: 222 50% 8%;
 
-  --accent: 205 92% 62%;
-  --accent-foreground: 222 47% 10%;
+  --accent: 210 100% 56%;
+  --accent-foreground: 222 50% 8%;
 
   --destructive: 0 84% 60%;
   --destructive-foreground: 210 40% 98%;
 
-  --sidebar: 222 47% 8%;
-  --sidebar-foreground: 210 40% 98%;
-  --sidebar-border: 220 24% 18%;
-  --sidebar-primary: 196 84% 48%;
-  --sidebar-primary-foreground: 222 47% 10%;
-  --sidebar-accent: 222 35% 12%;
-  --sidebar-accent-foreground: 210 40% 98%;
-  --sidebar-ring: 196 84% 48%;
+  --sidebar: 225 55% 6%;
+  --sidebar-foreground: 213 31% 91%;
+  --sidebar-border: 222 40% 15%;
+  --sidebar-primary: 217 91% 60%;
+  --sidebar-primary-foreground: 222 50% 8%;
+  --sidebar-accent: 224 45% 11%;
+  --sidebar-accent-foreground: 213 31% 91%;
+  --sidebar-ring: 217 91% 60%;
 
-  --shadow-ambient: 0 1px 0 hsl(0 0% 100% / 0.03);
-  --shadow-soft: 0 16px 50px hsl(0 0% 0% / 0.45);
-  --shadow-lift: 0 24px 80px hsl(0 0% 0% / 0.55);
+  --shadow-ambient: 0 1px 0 hsl(0 0% 100% / 0.02);
+  --shadow-soft: 0 16px 50px hsl(0 0% 0% / 0.50);
+  --shadow-lift: 0 24px 80px hsl(0 0% 0% / 0.60);
 
   --elevate-1: rgba(255, 255, 255, 0.04);
-  --elevate-2: rgba(255, 255, 255, 0.09);
+  --elevate-2: rgba(255, 255, 255, 0.08);
 
   --opaque-button-border-intensity: 9;
   --button-outline: rgba(255, 255, 255, 0.10);
@@ -192,9 +180,9 @@
 
   .buddy-glow {
     background:
-      radial-gradient(600px 300px at 20% 10%, hsl(var(--accent) / 0.20), transparent 55%),
-      radial-gradient(540px 340px at 85% 10%, hsl(var(--primary) / 0.20), transparent 55%),
-      radial-gradient(760px 520px at 50% 95%, hsl(168 60% 50% / 0.10), transparent 60%);
+      radial-gradient(600px 300px at 20% 10%, hsl(var(--primary) / 0.12), transparent 55%),
+      radial-gradient(540px 340px at 85% 10%, hsl(var(--accent) / 0.10), transparent 55%),
+      radial-gradient(760px 520px at 50% 95%, hsl(217 91% 60% / 0.06), transparent 60%);
   }
 
   .buddy-card {
@@ -224,9 +212,9 @@
     inset: -1px;
     border-radius: inherit;
     background: linear-gradient(135deg,
-      hsl(var(--accent) / 0.55),
-      hsl(var(--primary) / 0.35),
-      hsl(168 60% 50% / 0.30)
+      hsl(217 91% 60% / 0.50),
+      hsl(210 100% 52% / 0.30),
+      hsl(190 80% 50% / 0.20)
     );
     filter: blur(0px);
     z-index: -1;
@@ -266,7 +254,6 @@
   to { opacity: 1; transform: translateY(0); }
 }
 
-/* Utilities from template kept */
 @layer utilities {
   input[type="search"]::-webkit-search-cancel-button {
     @apply hidden;
