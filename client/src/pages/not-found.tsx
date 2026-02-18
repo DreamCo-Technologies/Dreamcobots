@@ -19,12 +19,12 @@ export default function NotFound() {
 
           <div className="mt-7 flex items-center justify-center gap-3 flex-col sm:flex-row">
             <Link href="/" className="w-full sm:w-auto" data-testid="notfound-home-link">
-              <Button className="w-full sm:w-auto rounded-xl bg-gradient-to-r from-primary to-accent text-primary-foreground shadow-md shadow-primary/20 hover:shadow-lg hover:shadow-primary/25 hover:-translate-y-0.5 active:translate-y-0 transition-all">
+              <Button className="w-full sm:w-auto rounded-xl">
                 Go to Chat
               </Button>
             </Link>
             <Link href="/dashboard" className="w-full sm:w-auto" data-testid="notfound-dashboard-link">
-              <Button variant="outline" className="w-full sm:w-auto rounded-xl border-border/70 bg-card/60 hover:bg-card shadow-sm hover:shadow-md transition-all">
+              <Button variant="outline" className="w-full sm:w-auto rounded-xl">
                 Dashboard
               </Button>
             </Link>

@@ -307,9 +307,11 @@ export default function BotDetailPage() {
         <div className="text-center py-20">
           <Bot className="h-16 w-16 mx-auto text-muted-foreground/40" />
           <h2 className="mt-4 text-xl font-semibold">Bot not found</h2>
-          <Link href="/divisions">
-            <Button variant="outline" className="mt-4 rounded-xl" data-testid="back-to-divisions">
-              <ArrowLeft className="h-4 w-4 mr-2" /> Back to Divisions
+          <Link href="/divisions" className="inline-block mt-4">
+            <Button variant="outline" className="rounded-xl" data-testid="back-to-divisions" asChild>
+              <span>
+                <ArrowLeft className="h-4 w-4 mr-2" /> Back to Divisions
+              </span>
             </Button>
           </Link>
         </div>
@@ -325,9 +327,9 @@ export default function BotDetailPage() {
 
       <div className="space-y-6">
         <div className="flex items-center gap-2">
-          <Link href="/divisions">
-            <Button variant="ghost" size="icon" data-testid="back-to-divisions">
-              <ArrowLeft className="h-4 w-4" />
+          <Link href="/divisions" data-testid="back-to-divisions">
+            <Button variant="ghost" size="icon" asChild>
+              <span><ArrowLeft className="h-4 w-4" /></span>
             </Button>
           </Link>
           <span className="text-sm text-muted-foreground">Divisions</span>

@@ -513,10 +513,10 @@ export default function BotsPage() {
                       </Dialog>
 
                       <Link href={`/bot/${b.id}`}>
-                        <a className="inline-flex items-center justify-center gap-1 rounded-xl border border-border/70 bg-background px-4 min-h-9 text-sm font-medium hover-elevate active-elevate-2" data-testid={`view-bot-${b.id}`}>
+                        <Button variant="outline" className="rounded-xl border-border/70" data-testid={`view-bot-${b.id}`}>
                           Details
-                          <ChevronRight className="h-4 w-4" />
-                        </a>
+                          <ChevronRight className="h-4 w-4 ml-1" />
+                        </Button>
                       </Link>
 
                       <Button
