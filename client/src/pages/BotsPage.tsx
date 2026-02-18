@@ -12,10 +12,19 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { cn } from "@/lib/utils";
-import { Bot, ChevronRight, Crown, Pencil, Plus, Save } from "lucide-react";
+import { Bot, ChevronRight, Crown, Pencil, Plus, Save, Search, Filter, Building2 } from "lucide-react";
 import { Link } from "wouter";
 import type { CreateBotProfileRequest, UpdateBotProfileRequest } from "@shared/schema";
+import { DIVISIONS, BOT_TIERS } from "@shared/schema";
+
+const TIER_COLORS: Record<string, string> = {
+  free: "bg-muted text-muted-foreground",
+  pro: "bg-[rgb(59_130_246)]/15 text-[rgb(59_130_246)] border border-[rgb(59_130_246)]/20",
+  enterprise: "bg-[rgb(168_85_247)]/15 text-[rgb(168_85_247)] border border-[rgb(168_85_247)]/20",
+  elite: "bg-[rgb(245_158_11)]/15 text-[rgb(245_158_11)] border border-[rgb(245_158_11)]/20",
+};
 
 function defaultSystemPrompt(name: string) {
   return `You are ${name}, a realistic, practical assistant. 
@@ -40,7 +49,54 @@ export default function BotsPage() {
   const [confirmDefaultOpen, setConfirmDefaultOpen] = useState(false);
   const [defaultTargetId, setDefaultTargetId] = useState<number | null>(null);
 
+  const [searchQuery, setSearchQuery] = useState("");
+  const [divisionFilter, setDivisionFilter] = useState<string>("all");
+  const [tierFilter, setTierFilter] = useState<string>("all");
+  const [categoryFilter, setCategoryFilter] = useState<string>("all");
+
   const editingBot = useMemo(() => (bots.data ?? []).find((b) => b.id === editId) ?? null, [bots.data, editId]);
+
+  const filteredBots = useMemo(() => {
+    let list = bots.data ?? [];
+
+    if (searchQuery) {
+      const q = searchQuery.toLowerCase();
+      list = list.filter((b) =>
+        b.displayName.toLowerCase().includes(q) ||
+        b.slug.toLowerCase().includes(q) ||
+        b.description?.toLowerCase().includes(q) ||
+        b.division?.toLowerCase().includes(q)
+      );
+    }
+
+    if (divisionFilter !== "all") {
+      list = list.filter((b) => b.division === divisionFilter);
+    }
+
+    if (tierFilter !== "all") {
+      list = list.filter((b) => b.tier === tierFilter);
+    }
+
+    if (categoryFilter !== "all") {
+      list = list.filter((b) => b.category === categoryFilter);
+    }
+
+    return list;
+  }, [bots.data, searchQuery, divisionFilter, tierFilter, categoryFilter]);
+
+  const availableCategories = useMemo(() => {
+    const cats = new Set(filteredBots.map((b) => b.category));
+    return Array.from(cats).sort();
+  }, [filteredBots]);
+
+  const isFilterActive = searchQuery || divisionFilter !== "all" || tierFilter !== "all" || categoryFilter !== "all";
+
+  const clearFilters = () => {
+    setSearchQuery("");
+    setDivisionFilter("all");
+    setTierFilter("all");
+    setCategoryFilter("all");
+  };
 
   const [createForm, setCreateForm] = useState<CreateBotProfileRequest>({
     slug: "dream-bot",
@@ -181,16 +237,98 @@ export default function BotsPage() {
           </Dialog>
         </div>
 
-        <div className="mt-6">
-          {bots.isLoading ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-5">
-              <Skeleton className="h-52 rounded-3xl" />
-              <Skeleton className="h-52 rounded-3xl" />
-              <Skeleton className="h-52 rounded-3xl" />
-              <Skeleton className="h-52 rounded-3xl" />
+        <div className="mt-6 space-y-4">
+          <div className="flex flex-col gap-4">
+            <div className="flex flex-col sm:flex-row gap-3 items-start sm:items-end flex-wrap">
+              <div className="flex-1 min-w-[200px]">
+                <div className="relative">
+                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                  <Input
+                    type="text"
+                    placeholder="Search bots..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className="pl-9 rounded-xl"
+                    data-testid="search-bots-input"
+                  />
+                </div>
+              </div>
+
+              <Select value={divisionFilter} onValueChange={setDivisionFilter}>
+                <SelectTrigger className="w-full sm:w-[180px] rounded-xl" data-testid="filter-division-select">
+                  <Building2 className="h-4 w-4 mr-2" />
+                  <SelectValue placeholder="Division" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Divisions</SelectItem>
+                  {DIVISIONS.map((div) => (
+                    <SelectItem key={div} value={div}>
+                      {div}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+
+              <Select value={tierFilter} onValueChange={setTierFilter}>
+                <SelectTrigger className="w-full sm:w-[140px] rounded-xl" data-testid="filter-tier-select">
+                  <SelectValue placeholder="Tier" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Tiers</SelectItem>
+                  {BOT_TIERS.map((tier) => (
+                    <SelectItem key={tier} value={tier}>
+                      {tier.charAt(0).toUpperCase() + tier.slice(1)}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+
+              <Select value={categoryFilter} onValueChange={setCategoryFilter}>
+                <SelectTrigger className="w-full sm:w-[160px] rounded-xl" data-testid="filter-category-select">
+                  <SelectValue placeholder="Category" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Categories</SelectItem>
+                  {availableCategories.map((cat) => (
+                    <SelectItem key={cat} value={cat}>
+                      {cat.charAt(0).toUpperCase() + cat.slice(1)}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+
+              {isFilterActive && (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={clearFilters}
+                  className="rounded-xl border-border/70"
+                  data-testid="clear-filters-button"
+                >
+                  <Filter className="h-4 w-4 mr-2" />
+                  Clear filters
+                </Button>
+              )}
             </div>
-          ) : bots.isError ? (
-            <EmptyState
+
+            {isFilterActive && (
+              <div className="flex items-center gap-2">
+                <Badge variant="secondary" className="rounded-full" data-testid="result-count-badge">
+                  {filteredBots.length} result{filteredBots.length !== 1 ? "s" : ""}
+                </Badge>
+              </div>
+            )}
+          </div>
+
+            {bots.isLoading ? (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-5">
+                <Skeleton className="h-52 rounded-3xl" />
+                <Skeleton className="h-52 rounded-3xl" />
+                <Skeleton className="h-52 rounded-3xl" />
+                <Skeleton className="h-52 rounded-3xl" />
+              </div>
+            ) : bots.isError ? (
+              <EmptyState
               icon={<Bot className="h-6 w-6" />}
               title="Couldn’t load bots"
               description={(bots.error as any)?.message ?? "Unknown error"}
@@ -211,9 +349,20 @@ export default function BotsPage() {
                 </Button>
               }
             />
+          ) : filteredBots.length === 0 ? (
+            <EmptyState
+              icon={<Bot className="h-6 w-6" />}
+              title="No bots match your filters"
+              description="Try adjusting your search or filter criteria."
+              action={
+                <Button onClick={clearFilters} className="rounded-xl" data-testid="clear-all-filters">
+                  Clear all filters
+                </Button>
+              }
+            />
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-5 buddy-stagger">
-              {(bots.data ?? []).map((b) => (
+              {filteredBots.map((b) => (
                 <Card key={b.id} className="buddy-card buddy-card-hover rounded-3xl border-border/60 p-6 md:p-7">
                   <div className="flex items-start justify-between gap-4">
                     <div className="min-w-0">
@@ -230,24 +379,40 @@ export default function BotsPage() {
                       </div>
 
                       <div className="mt-4 flex flex-wrap gap-2">
-                        {b.isDefault ? (
-                          <Badge className="rounded-full bg-primary/12 text-primary border border-primary/20">
+                        {b.isDefault && (
+                          <Badge className="rounded-full bg-primary/12 text-primary border border-primary/20" data-testid={`badge-default-${b.id}`}>
                             <Crown className="h-3.5 w-3.5 mr-1" />
                             Default
                           </Badge>
-                        ) : (
-                          <Badge variant="secondary" className="rounded-full">
-                            Profile
+                        )}
+                        {b.division && (
+                          <Badge variant="secondary" className="rounded-full" data-testid={`badge-division-${b.id}`}>
+                            <Building2 className="h-3 w-3 mr-1" />
+                            {b.division}
                           </Badge>
                         )}
-                        <Badge variant="outline" className="rounded-full border-border/70">
-                          id: {b.id}
-                        </Badge>
+                        {b.tier && (
+                          <Badge className={cn("rounded-full", TIER_COLORS[b.tier] || "")} data-testid={`badge-tier-${b.id}`}>
+                            {b.tier.charAt(0).toUpperCase() + b.tier.slice(1)}
+                          </Badge>
+                        )}
+                        {b.category && (
+                          <Badge variant="outline" className="rounded-full border-border/70" data-testid={`badge-category-${b.id}`}>
+                            {b.category}
+                          </Badge>
+                        )}
+                        {b.priceRange && (
+                          <Badge variant="outline" className="rounded-full border-border/70" data-testid={`badge-price-${b.id}`}>
+                            {b.priceRange}
+                          </Badge>
+                        )}
                       </div>
 
-                      <p className={cn("mt-4 text-sm text-muted-foreground line-clamp-4")}>
-                        {b.systemPrompt}
-                      </p>
+                      {b.description && (
+                        <p className={cn("mt-3 text-sm text-muted-foreground line-clamp-2")}>
+                          {b.description}
+                        </p>
+                      )}
                     </div>
 
                     <div className="flex flex-col gap-2 shrink-0">

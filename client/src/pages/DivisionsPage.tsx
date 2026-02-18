@@ -15,9 +15,11 @@ import {
   Bot,
   Building2,
   ChevronRight,
+  CircleDollarSign,
   Filter,
   Search,
   Sparkles,
+  Users,
   Zap,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -79,6 +81,42 @@ export default function DivisionsPage() {
   }, [selectedDivision, divisionBots.data, allBots.data]);
 
   const isLoading = selectedDivision ? divisionBots.isLoading : allBots.isLoading;
+
+  // Get top 3 categories for a given division from allBots
+  const getTopCategoriesForDivision = (division: string) => {
+    const divBots = (allBots.data ?? []).filter((b: any) => b.division === division);
+    const categoryCounts = new Map<string, number>();
+    
+    divBots.forEach((b: any) => {
+      const cat = b.category || "Uncategorized";
+      categoryCounts.set(cat, (categoryCounts.get(cat) || 0) + 1);
+    });
+    
+    return Array.from(categoryCounts.entries())
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 3)
+      .map(([cat]) => cat);
+  };
+
+  // Group bots by category when division is selected
+  const groupedBots = useMemo(() => {
+    if (!selectedDivision || botsToShow.length === 0) {
+      return [];
+    }
+    
+    const groups = new Map<string, any[]>();
+    botsToShow.forEach((bot: any) => {
+      const cat = bot.category || "Uncategorized";
+      if (!groups.has(cat)) {
+        groups.set(cat, []);
+      }
+      groups.get(cat)!.push(bot);
+    });
+    
+    return Array.from(groups.entries())
+      .sort((a, b) => a[0].localeCompare(b[0]))
+      .map(([category, bots]) => ({ category, bots }));
+  }, [selectedDivision, botsToShow]);
 
   return (
     <AppShell selectedBotSlug={botSlug} onBotChange={setBotSlug}>
@@ -157,17 +195,29 @@ export default function DivisionsPage() {
               {(empire.data?.divisions ?? [])
                 .filter(d => d.botCount > 0)
                 .sort((a, b) => b.botCount - a.botCount)
-                .map(div => (
-                  <button
-                    key={div.division}
-                    className="rounded-xl border border-border/60 p-3 text-left hover-elevate transition-all"
-                    onClick={() => setSelectedDivision(div.division)}
-                    data-testid={`quick-div-${div.division}`}
-                  >
-                    <p className="text-xs font-semibold truncate">{div.division}</p>
-                    <p className="text-[10px] text-muted-foreground">{div.botCount} bots</p>
-                  </button>
-                ))}
+                .map(div => {
+                  const topCategories = getTopCategoriesForDivision(div.division);
+                  return (
+                    <button
+                      key={div.division}
+                      className="rounded-xl border border-border/60 p-3 text-left hover-elevate transition-all"
+                      onClick={() => setSelectedDivision(div.division)}
+                      data-testid={`quick-div-${div.division}`}
+                    >
+                      <p className="text-xs font-semibold truncate">{div.division}</p>
+                      <p className="text-[10px] text-muted-foreground">{div.botCount} bots</p>
+                      {topCategories.length > 0 && (
+                        <div className="mt-2 space-y-0.5">
+                          {topCategories.map((cat, idx) => (
+                            <p key={idx} className="text-[9px] text-muted-foreground/70 capitalize line-clamp-1" data-testid={`div-category-${div.division}-${idx}`}>
+                              {cat}
+                            </p>
+                          ))}
+                        </div>
+                      )}
+                    </button>
+                  );
+                })}
             </div>
           )}
 
@@ -184,7 +234,83 @@ export default function DivisionsPage() {
                 Clear filters
               </Button>
             </div>
+          ) : selectedDivision && groupedBots.length > 0 ? (
+            // Grouped view by category
+            <div className="space-y-6">
+              {groupedBots.map(({ category, bots }) => (
+                <div key={category}>
+                  <div className="flex items-center gap-3 mb-3 pb-3 border-b border-border/40">
+                    <h2 className="text-sm font-semibold capitalize" data-testid={`category-header-${category.toLowerCase().replace(/[^a-z0-9]+/g, "-")}`}>{category}</h2>
+                    <Badge variant="outline" className="text-[10px]" data-testid={`category-count-${category.toLowerCase().replace(/[^a-z0-9]+/g, "-")}`}>{bots.length}</Badge>
+                  </div>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    {bots.map((bot: any) => (
+                      <Link key={bot.id} href={`/bot/${bot.id}`}>
+                        <Card className="hover-elevate cursor-pointer" data-testid={`bot-card-${bot.id}`}>
+                          <CardContent className="p-4">
+                            <div className="flex items-start justify-between gap-3">
+                              <div className="min-w-0 flex-1">
+                                <div className="flex items-center gap-2 flex-wrap">
+                                  <h3 className="text-sm font-semibold truncate">{bot.displayName}</h3>
+                                  <span className={cn("h-2 w-2 rounded-full flex-shrink-0", STATUS_COLORS[bot.status] ?? STATUS_COLORS.active)} />
+                                </div>
+                                <p className="text-[11px] font-mono text-muted-foreground mt-0.5">{bot.slug}</p>
+                              </div>
+                              <div className="flex items-center gap-1.5 flex-shrink-0">
+                                <Badge variant="outline" className={cn("rounded-full text-[10px] capitalize", TIER_COLORS[bot.tier])}>
+                                  {bot.tier}
+                                </Badge>
+                                <ChevronRight className="h-3.5 w-3.5 text-muted-foreground" />
+                              </div>
+                            </div>
+
+                            {bot.description && (
+                              <p className="text-xs text-muted-foreground mt-2 line-clamp-2">{bot.description}</p>
+                            )}
+
+                            {bot.revenueModel && (
+                              <div className="mt-2 flex items-center gap-1.5">
+                                <CircleDollarSign className="h-3 w-3 text-muted-foreground/60 flex-shrink-0" />
+                                <p className="text-[10px] text-muted-foreground/80">{bot.revenueModel}</p>
+                              </div>
+                            )}
+
+                            {bot.targetUsers && (
+                              <div className="mt-1.5 flex items-center gap-1.5">
+                                <Users className="h-3 w-3 text-muted-foreground/60 flex-shrink-0" />
+                                <p className="text-[10px] text-muted-foreground/80">{bot.targetUsers}</p>
+                              </div>
+                            )}
+
+                            <div className="mt-3 flex flex-wrap items-center gap-1.5">
+                              <Badge variant="secondary" className="rounded-full text-[10px]">{bot.division}</Badge>
+                              {bot.priceRange && (
+                                <Badge variant="outline" className="rounded-full text-[10px] text-green-600 dark:text-green-400 border-green-500/20">
+                                  {bot.priceRange}
+                                </Badge>
+                              )}
+                            </div>
+
+                            {Array.isArray(bot.capabilities) && bot.capabilities.length > 0 && (
+                              <div className="mt-2 flex flex-wrap gap-1">
+                                {bot.capabilities.slice(0, 3).map((cap: string, i: number) => (
+                                  <span key={i} className="text-[10px] px-1.5 py-0.5 rounded bg-muted text-muted-foreground">{cap}</span>
+                                ))}
+                                {bot.capabilities.length > 3 && (
+                                  <span className="text-[10px] text-muted-foreground">+{bot.capabilities.length - 3}</span>
+                                )}
+                              </div>
+                            )}
+                          </CardContent>
+                        </Card>
+                      </Link>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
           ) : (
+            // Standard grid view
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               {botsToShow.map((bot: any) => (
                 <Link key={bot.id} href={`/bot/${bot.id}`}>
@@ -208,6 +334,20 @@ export default function DivisionsPage() {
 
                       {bot.description && (
                         <p className="text-xs text-muted-foreground mt-2 line-clamp-2">{bot.description}</p>
+                      )}
+
+                      {bot.revenueModel && (
+                        <div className="mt-2 flex items-center gap-1.5">
+                          <CircleDollarSign className="h-3 w-3 text-muted-foreground/60 flex-shrink-0" />
+                          <p className="text-[10px] text-muted-foreground/80">{bot.revenueModel}</p>
+                        </div>
+                      )}
+
+                      {bot.targetUsers && (
+                        <div className="mt-1.5 flex items-center gap-1.5">
+                          <Users className="h-3 w-3 text-muted-foreground/60 flex-shrink-0" />
+                          <p className="text-[10px] text-muted-foreground/80">{bot.targetUsers}</p>
+                        </div>
                       )}
 
                       <div className="mt-3 flex flex-wrap items-center gap-1.5">

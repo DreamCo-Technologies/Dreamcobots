@@ -283,6 +283,10 @@ export default function BotDetailPage() {
   const divisionFeatures = bot ? (DIVISION_FEATURES[bot.division] ?? DIVISION_FEATURES.CommandCore) : [];
   const capabilities = bot ? (Array.isArray(bot.capabilities) ? bot.capabilities as string[] : []) : [];
 
+  const nicheCount = Math.min(Math.ceil(capabilities.length * 0.4), capabilities.length);
+  const nicheCapabilities = capabilities.slice(0, nicheCount);
+  const platformCapabilities = capabilities.slice(nicheCount);
+
   if (botQuery.isLoading) {
     return (
       <AppShell selectedBotSlug={botSlug} onBotChange={setBotSlug}>
@@ -628,24 +632,37 @@ export default function BotDetailPage() {
             <CardHeader className="flex flex-row items-center justify-between gap-2 space-y-0 pb-4">
               <CardTitle className="text-lg flex items-center gap-2">
                 <Sparkles className="h-5 w-5 text-primary" />
-                Core Capabilities
+                Niche Specialization
               </CardTitle>
-              <Badge variant="secondary" className="rounded-full">{capabilities.length} features</Badge>
+              <Badge variant="secondary" className="rounded-full">{nicheCapabilities.length} niche features</Badge>
             </CardHeader>
-            <CardContent>
+            <CardContent className="space-y-4">
               <div className="grid grid-cols-1 gap-2">
-                {capabilities.map((cap, i) => (
+                {nicheCapabilities.map((cap, i) => (
                   <div key={i} className="flex items-center gap-3 p-3 rounded-xl border border-border/40 hover-elevate" data-testid={`capability-${i}`}>
                     <div className="h-8 w-8 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
-                      <CheckCircle2 className="h-4 w-4 text-primary" />
+                      <Target className="h-4 w-4 text-primary" />
                     </div>
                     <div>
                       <p className="text-sm font-medium">{cap}</p>
-                      <p className="text-[10px] text-muted-foreground">Production ready</p>
+                      <p className="text-[10px] text-muted-foreground">Niche-specific</p>
                     </div>
                   </div>
                 ))}
               </div>
+              {platformCapabilities.length > 0 && (
+                <div>
+                  <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2">Platform Features ({platformCapabilities.length})</p>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-1.5">
+                    {platformCapabilities.map((cap, i) => (
+                      <div key={i} className="flex items-center gap-2 p-2 rounded-lg text-sm" data-testid={`platform-cap-${i}`}>
+                        <CheckCircle2 className="h-3 w-3 text-muted-foreground flex-shrink-0" />
+                        <span className="text-muted-foreground text-xs">{cap}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
             </CardContent>
           </Card>
 
