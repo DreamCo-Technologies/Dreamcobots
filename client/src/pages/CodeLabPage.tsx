@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef, useCallback, useEffect } from "react";
 import Seo from "@/components/Seo";
 import AppShell from "@/components/AppShell";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -6,6 +6,14 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Progress } from "@/components/ui/progress";
+import { Textarea } from "@/components/ui/textarea";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import {
   Activity,
   AlertTriangle,
@@ -15,12 +23,19 @@ import {
   CheckCircle2,
   Clock,
   Code2,
+  Copy,
+  Database,
+  Eye,
   FileCode2,
   FileSearch,
+  CalendarClock,
   GitBranch,
   Key,
+  KeyRound,
+  Loader2,
   Lock,
   Package,
+  Play,
   RefreshCw,
   Rocket,
   RotateCcw,
@@ -28,43 +43,424 @@ import {
   Shield,
   ShieldCheck,
   Sparkles,
+  Square,
   Terminal,
+  Trash2,
   TrendingUp,
+  Wand2,
   XCircle,
   Zap,
-  Database,
-  KeyRound,
-  Eye,
-  CalendarClock,
 } from "lucide-react";
 
-const HEADER_STATS = [
-  { label: "Projects Active", value: "47", icon: Code2, color: "text-primary" },
-  { label: "Lines Analyzed", value: "2.4M", icon: FileSearch, color: "text-violet-500" },
-  { label: "Deployments Today", value: "18", icon: Rocket, color: "text-green-500" },
-  { label: "AI Assists", value: "1,293", icon: Sparkles, color: "text-yellow-500" },
+const LANGUAGES = [
+  { value: "typescript", label: "TypeScript" },
+  { value: "javascript", label: "JavaScript" },
+  { value: "python", label: "Python" },
+  { value: "go", label: "Go" },
+  { value: "rust", label: "Rust" },
+  { value: "java", label: "Java" },
+  { value: "c++", label: "C++" },
+  { value: "c#", label: "C#" },
+  { value: "ruby", label: "Ruby" },
+  { value: "php", label: "PHP" },
+  { value: "swift", label: "Swift" },
+  { value: "kotlin", label: "Kotlin" },
+  { value: "sql", label: "SQL" },
+  { value: "html", label: "HTML" },
+  { value: "css", label: "CSS" },
+  { value: "solidity", label: "Solidity" },
 ];
 
-const ACTIVE_SESSIONS = [
-  { id: 1, name: "dreamco-dashboard", language: "TypeScript", status: "active", lastEdit: "2 min ago", lines: 1240 },
-  { id: 2, name: "api-gateway-v3", language: "Go", status: "active", lastEdit: "5 min ago", lines: 890 },
-  { id: 3, name: "ml-pipeline", language: "Python", status: "paused", lastEdit: "18 min ago", lines: 3200 },
-  { id: 4, name: "mobile-auth-sdk", language: "Kotlin", status: "active", lastEdit: "1 min ago", lines: 560 },
-  { id: 5, name: "data-viz-lib", language: "Rust", status: "idle", lastEdit: "45 min ago", lines: 2100 },
-];
+const CODE_TEMPLATES: Record<string, string> = {
+  typescript: `function fibonacci(n: number): number {
+  if (n <= 1) return n;
+  return fibonacci(n - 1) + fibonacci(n - 2);
+}
 
-const SUPPORTED_LANGUAGES = [
-  "TypeScript", "JavaScript", "Python", "Go", "Rust", "Java", "Kotlin", "Swift",
-  "C++", "C#", "Ruby", "PHP", "Dart", "Scala", "Elixir", "Haskell",
-  "Lua", "R", "Julia", "Zig", "SQL", "GraphQL", "Solidity", "YAML",
-];
+for (let i = 0; i < 10; i++) {
+  console.log(\`fib(\${i}) = \${fibonacci(i)}\`);
+}`,
+  javascript: `const greet = (name) => {
+  return \`Hello, \${name}! Welcome to DreamCodeLab.\`;
+};
 
-const CODE_QUALITY_METRICS = [
-  { label: "Syntax Accuracy", value: 98.2 },
-  { label: "Logic Correctness", value: 94.7 },
-  { label: "Style Compliance", value: 97.1 },
-  { label: "Test Coverage", value: 89.3 },
-];
+console.log(greet("World"));
+console.log(greet("DreamCo Empire"));`,
+  python: `def factorial(n):
+    if n <= 1:
+        return 1
+    return n * factorial(n - 1)
+
+for i in range(1, 11):
+    print(f"{i}! = {factorial(i)}")`,
+  go: `package main
+
+import "fmt"
+
+func main() {
+    for i := 1; i <= 10; i++ {
+        fmt.Printf("%d squared = %d\\n", i, i*i)
+    }
+}`,
+  rust: `fn main() {
+    let numbers: Vec<i32> = (1..=10).collect();
+    let sum: i32 = numbers.iter().sum();
+    println!("Numbers: {:?}", numbers);
+    println!("Sum: {}", sum);
+}`,
+};
+
+interface OutputLine {
+  type: "info" | "output" | "error" | "success";
+  text: string;
+  timestamp: string;
+}
+
+function VibeCodeEditor() {
+  const [language, setLanguage] = useState("typescript");
+  const [code, setCode] = useState(CODE_TEMPLATES["typescript"] || "");
+  const [vibePrompt, setVibePrompt] = useState("");
+  const [output, setOutput] = useState<OutputLine[]>([]);
+  const [isRunning, setIsRunning] = useState(false);
+  const [isGenerating, setIsGenerating] = useState(false);
+  const [streamText, setStreamText] = useState("");
+  const outputRef = useRef<HTMLDivElement>(null);
+  const abortRef = useRef<AbortController | null>(null);
+
+  const now = () => new Date().toLocaleTimeString();
+
+  const scrollToBottom = useCallback(() => {
+    if (outputRef.current) {
+      outputRef.current.scrollTop = outputRef.current.scrollHeight;
+    }
+  }, []);
+
+  useEffect(() => { scrollToBottom(); }, [output, streamText, scrollToBottom]);
+
+  const handleLanguageChange = (val: string) => {
+    setLanguage(val);
+    if (CODE_TEMPLATES[val]) {
+      setCode(CODE_TEMPLATES[val]);
+    }
+  };
+
+  const addOutput = useCallback((type: OutputLine["type"], text: string) => {
+    setOutput(prev => [...prev, { type, text, timestamp: now() }]);
+  }, []);
+
+  const handleRun = useCallback(async () => {
+    if (!code.trim()) return;
+    setIsRunning(true);
+    setStreamText("");
+    addOutput("info", `Running ${language} code...`);
+
+    abortRef.current = new AbortController();
+
+    try {
+      const response = await fetch("/api/code/run", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ code, language }),
+        signal: abortRef.current.signal,
+      });
+
+      if (!response.ok) {
+        throw new Error("Execution failed");
+      }
+
+      const reader = response.body?.getReader();
+      const decoder = new TextDecoder();
+      let fullText = "";
+
+      if (reader) {
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
+
+          const chunk = decoder.decode(value, { stream: true });
+          const lines = chunk.split("\n");
+
+          for (const line of lines) {
+            if (line.startsWith("data: ")) {
+              try {
+                const data = JSON.parse(line.slice(6));
+                if (data.content) {
+                  fullText += data.content;
+                  setStreamText(fullText);
+                }
+                if (data.done) {
+                  const sections = fullText.split(/---(?:OUTPUT|ANALYSIS|SUGGESTIONS)---/);
+                  for (const section of sections) {
+                    const trimmed = section.trim();
+                    if (trimmed) {
+                      addOutput("output", trimmed);
+                    }
+                  }
+                  addOutput("success", "Execution completed");
+                  setStreamText("");
+                }
+                if (data.error) {
+                  addOutput("error", data.error);
+                  setStreamText("");
+                }
+              } catch {}
+            }
+          }
+        }
+      }
+    } catch (err: any) {
+      if (err.name !== "AbortError") {
+        addOutput("error", err.message || "Execution failed");
+      }
+    } finally {
+      setIsRunning(false);
+      abortRef.current = null;
+    }
+  }, [code, language, addOutput]);
+
+  const handleGenerate = useCallback(async () => {
+    if (!vibePrompt.trim()) return;
+    setIsGenerating(true);
+    setStreamText("");
+    addOutput("info", `Generating ${language} code: "${vibePrompt}"`);
+
+    abortRef.current = new AbortController();
+
+    try {
+      const response = await fetch("/api/code/run", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ prompt: vibePrompt, language }),
+        signal: abortRef.current.signal,
+      });
+
+      if (!response.ok) throw new Error("Generation failed");
+
+      const reader = response.body?.getReader();
+      const decoder = new TextDecoder();
+      let fullText = "";
+
+      if (reader) {
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
+
+          const chunk = decoder.decode(value, { stream: true });
+          const lines = chunk.split("\n");
+
+          for (const line of lines) {
+            if (line.startsWith("data: ")) {
+              try {
+                const data = JSON.parse(line.slice(6));
+                if (data.content) {
+                  fullText += data.content;
+                  setStreamText(fullText);
+                }
+                if (data.done) {
+                  const codeMatch = fullText.match(/```[\w]*\n([\s\S]*?)```/);
+                  if (codeMatch) {
+                    setCode(codeMatch[1].trim());
+                    addOutput("success", "Code generated and loaded into editor");
+                  } else {
+                    const outputSplit = fullText.split("---OUTPUT---");
+                    if (outputSplit[0]) {
+                      setCode(outputSplit[0].trim());
+                      addOutput("success", "Code generated and loaded into editor");
+                    }
+                  }
+                  setStreamText("");
+                  setVibePrompt("");
+                }
+                if (data.error) {
+                  addOutput("error", data.error);
+                  setStreamText("");
+                }
+              } catch {}
+            }
+          }
+        }
+      }
+    } catch (err: any) {
+      if (err.name !== "AbortError") {
+        addOutput("error", err.message || "Generation failed");
+      }
+    } finally {
+      setIsGenerating(false);
+      abortRef.current = null;
+    }
+  }, [vibePrompt, language, addOutput]);
+
+  const handleStop = () => {
+    abortRef.current?.abort();
+    addOutput("info", "Stopped");
+    setIsRunning(false);
+    setIsGenerating(false);
+    setStreamText("");
+  };
+
+  const handleCopy = () => {
+    navigator.clipboard.writeText(code);
+    addOutput("info", "Code copied to clipboard");
+  };
+
+  const handleClear = () => {
+    setOutput([]);
+    setStreamText("");
+  };
+
+  const getOutputColor = (type: OutputLine["type"]) => {
+    switch (type) {
+      case "info": return "text-blue-400";
+      case "output": return "text-green-300";
+      case "error": return "text-red-400";
+      case "success": return "text-emerald-400";
+    }
+  };
+
+  const getOutputPrefix = (type: OutputLine["type"]) => {
+    switch (type) {
+      case "info": return "[info]";
+      case "output": return "[out]";
+      case "error": return "[err]";
+      case "success": return "[ok]";
+    }
+  };
+
+  return (
+    <div className="space-y-4">
+      <Card data-testid="card-vibe-prompt">
+        <CardContent className="p-4">
+          <div className="flex items-center gap-2 mb-3">
+            <Wand2 className="h-4 w-4 text-primary" />
+            <span className="text-sm font-semibold">Vibe Prompt</span>
+            <Badge variant="secondary" className="rounded-full text-[10px]">AI-Powered</Badge>
+          </div>
+          <div className="flex gap-2">
+            <Textarea
+              placeholder="Describe what you want to build... e.g. 'a REST API with CRUD operations for a todo list' or 'a sorting algorithm comparison'"
+              value={vibePrompt}
+              onChange={(e) => setVibePrompt(e.target.value)}
+              className="resize-none text-sm min-h-[60px]"
+              data-testid="input-vibe-prompt"
+              onKeyDown={(e) => {
+                if (e.key === "Enter" && !e.shiftKey) {
+                  e.preventDefault();
+                  handleGenerate();
+                }
+              }}
+            />
+            <div className="flex flex-col gap-1">
+              <Button
+                onClick={handleGenerate}
+                disabled={isGenerating || !vibePrompt.trim()}
+                data-testid="button-generate"
+              >
+                {isGenerating ? (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                ) : (
+                  <Sparkles className="h-4 w-4" />
+                )}
+              </Button>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        <Card data-testid="card-code-editor">
+          <CardHeader className="flex flex-row items-center justify-between gap-2 space-y-0 pb-3">
+            <div className="flex items-center gap-2 flex-wrap">
+              <CardTitle className="text-sm font-semibold">Editor</CardTitle>
+              <Select value={language} onValueChange={handleLanguageChange}>
+                <SelectTrigger className="w-[140px]" data-testid="select-language">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {LANGUAGES.map((lang) => (
+                    <SelectItem key={lang.value} value={lang.value} data-testid={`lang-option-${lang.value}`}>
+                      {lang.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="flex items-center gap-1 flex-wrap">
+              <Button size="icon" variant="ghost" onClick={handleCopy} data-testid="button-copy-code">
+                <Copy className="h-4 w-4" />
+              </Button>
+              {isRunning ? (
+                <Button size="sm" variant="destructive" onClick={handleStop} data-testid="button-stop">
+                  <Square className="h-3 w-3 mr-1.5" />Stop
+                </Button>
+              ) : (
+                <Button size="sm" onClick={handleRun} disabled={!code.trim()} data-testid="button-run-code">
+                  <Play className="h-3 w-3 mr-1.5" />Run
+                </Button>
+              )}
+            </div>
+          </CardHeader>
+          <CardContent className="pb-4">
+            <div className="relative">
+              <Textarea
+                value={code}
+                onChange={(e) => setCode(e.target.value)}
+                className="font-mono text-sm min-h-[350px] resize-none leading-relaxed"
+                placeholder="Write your code here..."
+                spellCheck={false}
+                data-testid="textarea-code-editor"
+              />
+              <div className="absolute bottom-2 right-2 text-[10px] text-muted-foreground">
+                {code.split("\n").length} lines
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card data-testid="card-output-panel">
+          <CardHeader className="flex flex-row items-center justify-between gap-2 space-y-0 pb-3">
+            <CardTitle className="text-sm font-semibold flex items-center gap-2">
+              <Terminal className="h-4 w-4" />
+              Output
+              {isRunning && <Badge variant="secondary" className="rounded-full text-[10px]"><Loader2 className="h-2.5 w-2.5 mr-1 animate-spin" />Running</Badge>}
+              {isGenerating && <Badge variant="secondary" className="rounded-full text-[10px]"><Loader2 className="h-2.5 w-2.5 mr-1 animate-spin" />Generating</Badge>}
+            </CardTitle>
+            <Button size="icon" variant="ghost" onClick={handleClear} data-testid="button-clear-output">
+              <Trash2 className="h-4 w-4" />
+            </Button>
+          </CardHeader>
+          <CardContent className="pb-4">
+            <div
+              ref={outputRef}
+              className="bg-zinc-950 dark:bg-zinc-950 rounded-md p-3 font-mono text-xs min-h-[350px] max-h-[350px] overflow-y-auto space-y-1"
+              data-testid="output-console"
+            >
+              {output.length === 0 && !streamText && (
+                <div className="text-zinc-500 flex items-center gap-2 py-2">
+                  <Terminal className="h-3 w-3" />
+                  <span>Ready. Press Run or enter a Vibe Prompt to start.</span>
+                </div>
+              )}
+              {output.map((line, i) => (
+                <div key={i} className="flex gap-2 leading-relaxed">
+                  <span className="text-zinc-600 flex-shrink-0 w-[50px] text-right">{line.timestamp.split(" ")[0]}</span>
+                  <span className={`flex-shrink-0 w-[36px] ${getOutputColor(line.type)}`}>{getOutputPrefix(line.type)}</span>
+                  <span className={`${getOutputColor(line.type)} whitespace-pre-wrap break-all`}>{line.text}</span>
+                </div>
+              ))}
+              {streamText && (
+                <div className="flex gap-2 leading-relaxed">
+                  <span className="text-zinc-600 flex-shrink-0 w-[50px] text-right">{now().split(" ")[0]}</span>
+                  <span className="flex-shrink-0 w-[36px] text-yellow-400">[...]</span>
+                  <span className="text-yellow-300 whitespace-pre-wrap break-all">{streamText}</span>
+                </div>
+              )}
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    </div>
+  );
+}
 
 const SCAN_ISSUES = [
   { severity: "critical", count: 3, color: "text-red-500" },
@@ -123,7 +519,6 @@ function getStatusBadge(status: string) {
 
 export default function CodeLabPage() {
   const [botSlug, setBotSlug] = useState<string | undefined>(undefined);
-
   const totalSecrets = SECRET_TYPES.reduce((s, t) => s + t.count, 0);
 
   return (
@@ -151,20 +546,6 @@ export default function CodeLabPage() {
         </div>
 
         <div className="p-5 md:p-8 space-y-8 buddy-stagger">
-          <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
-            {HEADER_STATS.map((stat) => (
-              <Card key={stat.label} data-testid={`stat-${stat.label.toLowerCase().replace(/\s+/g, "-")}`}>
-                <CardHeader className="flex flex-row items-center justify-between gap-1 space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium text-muted-foreground">{stat.label}</CardTitle>
-                  <stat.icon className={`h-4 w-4 ${stat.color}`} />
-                </CardHeader>
-                <CardContent>
-                  <p className="text-3xl font-bold tracking-tight">{stat.value}</p>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-
           <Tabs defaultValue="vibe-code" data-testid="tabs-codelab">
             <TabsList className="flex flex-wrap gap-1" data-testid="tabslist-codelab">
               <TabsTrigger value="vibe-code" data-testid="tab-vibe-code">
@@ -181,95 +562,8 @@ export default function CodeLabPage() {
               </TabsTrigger>
             </TabsList>
 
-            <TabsContent value="vibe-code" className="space-y-6 mt-6">
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                <Card data-testid="stat-code-generated">
-                  <CardHeader className="flex flex-row items-center justify-between gap-1 space-y-0 pb-2">
-                    <CardTitle className="text-sm font-medium text-muted-foreground">Code Generated Today</CardTitle>
-                    <Braces className="h-4 w-4 text-primary" />
-                  </CardHeader>
-                  <CardContent>
-                    <p className="text-2xl font-bold">12,847</p>
-                    <p className="text-xs text-muted-foreground mt-1">lines across 47 projects</p>
-                  </CardContent>
-                </Card>
-                <Card data-testid="stat-ai-completions">
-                  <CardHeader className="flex flex-row items-center justify-between gap-1 space-y-0 pb-2">
-                    <CardTitle className="text-sm font-medium text-muted-foreground">AI Completions</CardTitle>
-                    <Zap className="h-4 w-4 text-yellow-500" />
-                  </CardHeader>
-                  <CardContent>
-                    <p className="text-2xl font-bold">3,412</p>
-                    <p className="text-xs text-green-600 dark:text-green-400 mt-1 flex items-center gap-1">
-                      <TrendingUp className="h-3 w-3" /> 94.2% acceptance rate
-                    </p>
-                  </CardContent>
-                </Card>
-                <Card data-testid="stat-pair-sessions">
-                  <CardHeader className="flex flex-row items-center justify-between gap-1 space-y-0 pb-2">
-                    <CardTitle className="text-sm font-medium text-muted-foreground">Pair Sessions</CardTitle>
-                    <Terminal className="h-4 w-4 text-violet-500" />
-                  </CardHeader>
-                  <CardContent>
-                    <p className="text-2xl font-bold">23</p>
-                    <p className="text-xs text-muted-foreground mt-1">5 currently active</p>
-                  </CardContent>
-                </Card>
-              </div>
-
-              <div>
-                <h3 className="text-base font-semibold mb-3" data-testid="text-active-sessions">Active Sessions</h3>
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-                  {ACTIVE_SESSIONS.map((session) => (
-                    <Card key={session.id} data-testid={`session-card-${session.id}`}>
-                      <CardContent className="p-4">
-                        <div className="flex items-start justify-between gap-3">
-                          <div className="min-w-0">
-                            <p className="text-sm font-semibold truncate">{session.name}</p>
-                            <div className="flex items-center gap-2 mt-1 flex-wrap">
-                              <Badge variant="outline" className="rounded-full text-[10px]">{session.language}</Badge>
-                              {getStatusBadge(session.status)}
-                            </div>
-                          </div>
-                          <FileCode2 className="h-4 w-4 text-muted-foreground flex-shrink-0 mt-0.5" />
-                        </div>
-                        <div className="mt-3 flex items-center justify-between gap-2 text-xs text-muted-foreground">
-                          <span>{session.lines.toLocaleString()} lines</span>
-                          <span>{session.lastEdit}</span>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  ))}
-                </div>
-              </div>
-
-              <div>
-                <h3 className="text-base font-semibold mb-3" data-testid="text-supported-languages">Supported Languages</h3>
-                <div className="flex flex-wrap gap-2">
-                  {SUPPORTED_LANGUAGES.map((lang) => (
-                    <Badge key={lang} variant="outline" className="rounded-full" data-testid={`lang-badge-${lang.toLowerCase()}`}>
-                      {lang}
-                    </Badge>
-                  ))}
-                </div>
-              </div>
-
-              <div>
-                <h3 className="text-base font-semibold mb-3" data-testid="text-quality-metrics">Code Generation Quality</h3>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  {CODE_QUALITY_METRICS.map((metric) => (
-                    <Card key={metric.label} data-testid={`metric-${metric.label.toLowerCase().replace(/\s+/g, "-")}`}>
-                      <CardContent className="p-4">
-                        <div className="flex items-center justify-between gap-2 mb-2">
-                          <p className="text-sm font-medium">{metric.label}</p>
-                          <p className="text-sm font-bold">{metric.value}%</p>
-                        </div>
-                        <Progress value={metric.value} className="h-2" />
-                      </CardContent>
-                    </Card>
-                  ))}
-                </div>
-              </div>
+            <TabsContent value="vibe-code" className="space-y-4 mt-6">
+              <VibeCodeEditor />
             </TabsContent>
 
             <TabsContent value="code-reader" className="space-y-6 mt-6">

@@ -1065,5 +1065,78 @@ export async function registerRoutes(
     }
   });
 
+  const codeRunLimiter = new Map<string, number>();
+  const CODE_MAX_LENGTH = 10000;
+  const PROMPT_MAX_LENGTH = 1000;
+  const RATE_LIMIT_MS = 3000;
+
+  app.post("/api/code/run", async (req, res) => {
+    try {
+      const { code, language, prompt } = req.body;
+      if (!code && !prompt) {
+        return res.status(400).json({ error: "code or prompt is required" });
+      }
+
+      if (code && typeof code === "string" && code.length > CODE_MAX_LENGTH) {
+        return res.status(400).json({ error: `Code must be under ${CODE_MAX_LENGTH} characters` });
+      }
+      if (prompt && typeof prompt === "string" && prompt.length > PROMPT_MAX_LENGTH) {
+        return res.status(400).json({ error: `Prompt must be under ${PROMPT_MAX_LENGTH} characters` });
+      }
+
+      const clientIp = req.ip || "unknown";
+      const lastCall = codeRunLimiter.get(clientIp) || 0;
+      if (Date.now() - lastCall < RATE_LIMIT_MS) {
+        return res.status(429).json({ error: "Please wait a moment before running again" });
+      }
+      codeRunLimiter.set(clientIp, Date.now());
+
+      res.setHeader("Content-Type", "text/event-stream");
+      res.setHeader("Cache-Control", "no-cache");
+      res.setHeader("Connection", "keep-alive");
+
+      const systemPrompt = prompt && !code
+        ? `You are DreamCodeLab's AI coding assistant. The user wants you to generate code. Generate clean, production-ready code in ${language || "TypeScript"}. Respond with ONLY the code, no explanations. After the code block, add a separator "---OUTPUT---" followed by what the expected output would be if this code were run.`
+        : `You are DreamCodeLab's AI code execution engine. The user has written code in ${language || "TypeScript"}. Analyze and simulate running this code. First, check for any syntax errors or issues. Then simulate the execution and provide the output. Format your response as:
+---ANALYSIS---
+Brief analysis of the code (1-2 sentences)
+---OUTPUT---
+The simulated output of running this code (show exactly what would print/return)
+---SUGGESTIONS---
+Any improvements or fixes (optional, 1-2 bullet points max)`;
+
+      const userMessage = prompt && !code
+        ? `Generate ${language || "TypeScript"} code for: ${prompt}`
+        : `Run this ${language || "TypeScript"} code:\n\`\`\`\n${code}\n\`\`\``;
+
+      const stream = await openai.chat.completions.create({
+        model: "gpt-4.1-mini",
+        messages: [
+          { role: "system", content: systemPrompt },
+          { role: "user", content: userMessage },
+        ],
+        stream: true,
+        max_completion_tokens: 8192,
+      });
+
+      for await (const chunk of stream) {
+        const content = chunk.choices[0]?.delta?.content;
+        if (content) {
+          res.write(`data: ${JSON.stringify({ content })}\n\n`);
+        }
+      }
+      res.write(`data: ${JSON.stringify({ done: true })}\n\n`);
+      res.end();
+    } catch (error: any) {
+      console.error("Code run error:", error.message);
+      if (!res.headersSent) {
+        res.status(500).json({ error: "Code execution failed" });
+      } else {
+        res.write(`data: ${JSON.stringify({ error: error.message })}\n\n`);
+        res.end();
+      }
+    }
+  });
+
   return httpServer;
 }
