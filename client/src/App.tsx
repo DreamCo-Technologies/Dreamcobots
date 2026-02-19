@@ -21,6 +21,11 @@ import OrchestrationPage from "@/pages/OrchestrationPage";
 import MarketplacePage from "@/pages/MarketplacePage";
 import FormulasPage from "@/pages/FormulasPage";
 import LearningMatrixPage from "@/pages/LearningMatrixPage";
+import BusinessPage from "@/pages/BusinessPage";
+import CodeLabPage from "@/pages/CodeLabPage";
+import CryptoPage from "@/pages/CryptoPage";
+import PaymentsPage from "@/pages/PaymentsPage";
+import LoansPage from "@/pages/LoansPage";
 
 function Router() {
   return (
@@ -41,6 +46,11 @@ function Router() {
       <Route path="/marketplace" component={MarketplacePage} />
       <Route path="/formulas" component={FormulasPage} />
       <Route path="/learning-matrix" component={LearningMatrixPage} />
+      <Route path="/business" component={BusinessPage} />
+      <Route path="/code-lab" component={CodeLabPage} />
+      <Route path="/crypto" component={CryptoPage} />
+      <Route path="/payments" component={PaymentsPage} />
+      <Route path="/loans" component={LoansPage} />
 
       {/* Legacy / convenience */}
       <Route path="/chat">
