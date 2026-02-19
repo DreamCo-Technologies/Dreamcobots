@@ -16,6 +16,10 @@ import RevenuePage from "@/pages/RevenuePage";
 import PricingPage from "@/pages/PricingPage";
 import DealsPage from "@/pages/DealsPage";
 import DebugPage from "@/pages/DebugPage";
+import EcosystemPage from "@/pages/EcosystemPage";
+import OrchestrationPage from "@/pages/OrchestrationPage";
+import MarketplacePage from "@/pages/MarketplacePage";
+import FormulasPage from "@/pages/FormulasPage";
 
 function Router() {
   return (
@@ -31,6 +35,10 @@ function Router() {
       <Route path="/pricing" component={PricingPage} />
       <Route path="/deals" component={DealsPage} />
       <Route path="/debug" component={DebugPage} />
+      <Route path="/ecosystem" component={EcosystemPage} />
+      <Route path="/orchestration" component={OrchestrationPage} />
+      <Route path="/marketplace" component={MarketplacePage} />
+      <Route path="/formulas" component={FormulasPage} />
 
       {/* Legacy / convenience */}
       <Route path="/chat">

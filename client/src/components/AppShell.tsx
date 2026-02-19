@@ -10,11 +10,14 @@ import {
   Globe,
   LayoutDashboard,
   MessageSquareText,
+  Network,
   Shield,
   Sparkles,
+  Store,
   Tag,
   Workflow,
   Zap,
+  FlaskConical,
 } from "lucide-react";
 import ThemeToggle from "@/components/ThemeToggle";
 import { Button } from "@/components/ui/button";
@@ -65,6 +68,10 @@ export default function AppShell(props: {
     { href: "/divisions", label: "Divisions", icon: Building2 },
     { href: "/bots", label: "Bot Fleet", icon: Bot },
     { href: "/deals", label: "Deal Analyzer", icon: Calculator },
+    { href: "/formulas", label: "Formula Vault", icon: FlaskConical },
+    { href: "/ecosystem", label: "AI Ecosystem", icon: Globe },
+    { href: "/orchestration", label: "Orchestration", icon: Network },
+    { href: "/marketplace", label: "Marketplace", icon: Store },
     { href: "/debug", label: "Debug Intel", icon: Bug },
     { href: "/revenue", label: "Revenue", icon: CircleDollarSign },
     { href: "/pricing", label: "Pricing", icon: Tag },
