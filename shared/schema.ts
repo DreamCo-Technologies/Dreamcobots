@@ -459,3 +459,19 @@ export const ALERT_TRIGGERS = [
 ] as const;
 
 export type AlertTrigger = (typeof ALERT_TRIGGERS)[number];
+
+export const formulas = pgTable("formulas", {
+  id: serial("id").primaryKey(),
+  name: text("name").notNull(),
+  category: text("category").notNull(),
+  description: text("description").notNull(),
+  formula: text("formula").notNull(),
+  variables: jsonb("variables").notNull().default(sql`'[]'::jsonb`),
+  target: text("target").notNull().default(""),
+  tags: jsonb("tags").notNull().default(sql`'[]'::jsonb`),
+  isSystem: boolean("is_system").notNull().default(false),
+});
+
+export const insertFormulaSchema = createInsertSchema(formulas).omit({ id: true });
+export type Formula = typeof formulas.$inferSelect;
+export type InsertFormula = z.infer<typeof insertFormulaSchema>;

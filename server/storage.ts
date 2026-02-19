@@ -16,6 +16,7 @@ import {
   autoFixes,
   revenueLeaks,
   securityScans,
+  formulas,
   type BotProfile,
   type InsertBotProfile,
   type AutonomousTask,
@@ -45,6 +46,8 @@ import {
   type SecurityScan,
   type InsertSecurityScan,
   type DebugOverview,
+  type Formula,
+  type InsertFormula,
 } from "@shared/schema";
 import { and, desc, eq, ne, sql, count, inArray, sum, avg } from "drizzle-orm";
 
@@ -132,6 +135,12 @@ export interface IStorage {
   remediateSecurityScan(id: number, mitigation: string): Promise<SecurityScan | undefined>;
 
   getDebugOverview(): Promise<DebugOverview>;
+
+  listFormulas(): Promise<Formula[]>;
+  getFormula(id: number): Promise<Formula | undefined>;
+  createFormula(input: InsertFormula): Promise<Formula>;
+  updateFormula(id: number, updates: Partial<InsertFormula>): Promise<Formula | undefined>;
+  deleteFormula(id: number): Promise<void>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -595,6 +604,28 @@ export class DatabaseStorage implements IStorage {
       eventsToday,
       fixSuccessRate,
     };
+  }
+  async listFormulas(): Promise<Formula[]> {
+    return await db.select().from(formulas).orderBy(formulas.category, formulas.name);
+  }
+
+  async getFormula(id: number): Promise<Formula | undefined> {
+    const [row] = await db.select().from(formulas).where(eq(formulas.id, id));
+    return row;
+  }
+
+  async createFormula(input: InsertFormula): Promise<Formula> {
+    const [row] = await db.insert(formulas).values(input).returning();
+    return row;
+  }
+
+  async updateFormula(id: number, updates: Partial<InsertFormula>): Promise<Formula | undefined> {
+    const [row] = await db.update(formulas).set(updates).where(eq(formulas.id, id)).returning();
+    return row;
+  }
+
+  async deleteFormula(id: number): Promise<void> {
+    await db.delete(formulas).where(eq(formulas.id, id));
   }
 }
 

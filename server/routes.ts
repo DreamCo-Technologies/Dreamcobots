@@ -6,8 +6,9 @@ import { sql } from "drizzle-orm";
 import { storage } from "./storage";
 import { api } from "@shared/routes";
 import { ALL_BOTS } from "./seed-bots";
-import { DIVISIONS, insertBotMetricSchema, insertBotErrorSchema, insertBotFinancialSchema, insertAlertRuleSchema, insertDealSchema, insertDebugEventSchema, insertAutoFixSchema, insertRevenueLeakSchema, insertSecurityScanSchema } from "@shared/schema";
+import { DIVISIONS, insertBotMetricSchema, insertBotErrorSchema, insertBotFinancialSchema, insertAlertRuleSchema, insertDealSchema, insertDebugEventSchema, insertAutoFixSchema, insertRevenueLeakSchema, insertSecurityScanSchema, insertFormulaSchema } from "@shared/schema";
 import { calculateRealEstate, calculateCarFlip, type RealEstateInputs, type CarFlipInputs } from "@shared/deal-calculations";
+import { FORMULA_LIBRARY } from "@shared/formula-library";
 import { getUncachableStripeClient, getStripePublishableKey } from "./stripeClient";
 import { db } from "./db";
 
@@ -59,6 +60,27 @@ async function ensureSeeded() {
       autonomyMode: "guided",
       division: "CommandCore",
     });
+  }
+
+  const existingFormulas = await storage.listFormulas();
+  if (existingFormulas.length === 0) {
+    for (const f of FORMULA_LIBRARY) {
+      try {
+        await storage.createFormula({
+          name: f.name,
+          category: f.category,
+          description: f.description,
+          formula: f.formula,
+          variables: f.variables,
+          target: f.target,
+          tags: f.tags,
+          isSystem: true,
+        });
+      } catch (e: any) {
+        console.error(`Seed formula ${f.name} failed:`, e?.message);
+      }
+    }
+    console.log(`Seeded ${FORMULA_LIBRARY.length} system formulas`);
   }
 }
 
@@ -889,6 +911,50 @@ export async function registerRoutes(
     }
 
     res.json({ message: "Demo data seeded", events: events.length, fixes: fixPatches.length, leaks: 6, scans: 5 });
+  });
+
+  // ─── Formula Vault Routes ────────────────────────────────────────────
+
+  app.get("/api/formulas", async (_req, res) => {
+    const list = await storage.listFormulas();
+    res.json(list);
+  });
+
+  app.get("/api/formulas/:id", async (req, res) => {
+    const id = Number(req.params.id);
+    if (isNaN(id)) return res.status(400).json({ message: "Invalid formula ID" });
+    const formula = await storage.getFormula(id);
+    if (!formula) return res.status(404).json({ message: "Formula not found" });
+    res.json(formula);
+  });
+
+  app.post("/api/formulas", async (req, res) => {
+    try {
+      const input = insertFormulaSchema.parse(req.body);
+      const formula = await storage.createFormula(input);
+      res.status(201).json(formula);
+    } catch (err) {
+      if (err instanceof z.ZodError) return res.status(400).json(zodValidationError(err));
+      throw err;
+    }
+  });
+
+  app.patch("/api/formulas/:id", async (req, res) => {
+    const id = Number(req.params.id);
+    if (isNaN(id)) return res.status(400).json({ message: "Invalid formula ID" });
+    const existing = await storage.getFormula(id);
+    if (!existing) return res.status(404).json({ message: "Formula not found" });
+    const updated = await storage.updateFormula(id, req.body);
+    res.json(updated);
+  });
+
+  app.delete("/api/formulas/:id", async (req, res) => {
+    const id = Number(req.params.id);
+    if (isNaN(id)) return res.status(400).json({ message: "Invalid formula ID" });
+    const existing = await storage.getFormula(id);
+    if (!existing) return res.status(404).json({ message: "Formula not found" });
+    await storage.deleteFormula(id);
+    res.status(204).send();
   });
 
   // ─── Stripe Payment Routes ───────────────────────────────────────────
