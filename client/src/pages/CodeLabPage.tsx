@@ -14,6 +14,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Input } from "@/components/ui/input";
 import {
   Activity,
   AlertTriangle,
@@ -29,9 +30,11 @@ import {
   FileCode2,
   FileSearch,
   CalendarClock,
+  FolderUp,
   GitBranch,
   Key,
   KeyRound,
+  Layers,
   Loader2,
   Lock,
   Package,
@@ -47,6 +50,7 @@ import {
   Terminal,
   Trash2,
   TrendingUp,
+  Upload,
   Wand2,
   XCircle,
   Zap,
@@ -462,6 +466,344 @@ function VibeCodeEditor() {
   );
 }
 
+interface BatchItem {
+  id: string;
+  name: string;
+  status: "pending" | "processing" | "done" | "error";
+  result?: string;
+  error?: string;
+}
+
+function BatchProcessor() {
+  const [files, setFiles] = useState<File[]>([]);
+  const [instruction, setInstruction] = useState("");
+  const [language, setLanguage] = useState("typescript");
+  const [batchItems, setBatchItems] = useState<BatchItem[]>([]);
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [totalProcessed, setTotalProcessed] = useState(0);
+  const [totalItems, setTotalItems] = useState(0);
+  const [expandedItem, setExpandedItem] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files) {
+      const selected = Array.from(e.target.files).slice(0, 20);
+      setFiles(prev => [...prev, ...selected].slice(0, 20));
+    }
+  };
+
+  const removeFile = (index: number) => {
+    setFiles(prev => prev.filter((_, i) => i !== index));
+  };
+
+  const handleProcess = async () => {
+    if (!instruction.trim() && files.length === 0) return;
+    setIsProcessing(true);
+    setTotalProcessed(0);
+    setBatchItems([]);
+    setExpandedItem(null);
+
+    const formData = new FormData();
+    if (instruction.trim()) formData.append("instruction", instruction);
+    formData.append("language", language);
+
+    files.forEach((file) => {
+      formData.append("files", file);
+    });
+
+    try {
+      const response = await fetch("/api/batch/process", {
+        method: "POST",
+        body: formData,
+      });
+
+      if (!response.ok) {
+        const err = await response.json();
+        throw new Error(err.error || "Batch processing failed");
+      }
+
+      const reader = response.body?.getReader();
+      const decoder = new TextDecoder();
+
+      if (reader) {
+        let buffer = "";
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
+
+          buffer += decoder.decode(value, { stream: true });
+          const lines = buffer.split("\n");
+          buffer = lines.pop() || "";
+
+          for (const line of lines) {
+            if (line.startsWith("data: ")) {
+              try {
+                const event = JSON.parse(line.slice(6));
+
+                if (event.type === "started") {
+                  setTotalItems(event.total);
+                  setBatchItems(
+                    Array.from({ length: event.total }, (_, i) => ({
+                      id: `item-${i}`,
+                      name: `Item ${i + 1}`,
+                      status: "pending" as const,
+                    }))
+                  );
+                }
+
+                if (event.type === "processing") {
+                  const itemName = event.item?.name || `Item ${(event.index ?? 0) + 1}`;
+                  setBatchItems(prev => prev.map((item, i) =>
+                    i === event.index ? { ...item, name: itemName, status: "processing" } : item
+                  ));
+                }
+
+                if (event.type === "progress") {
+                  setTotalProcessed(prev => prev + 1);
+                  setBatchItems(prev => prev.map((item, i) =>
+                    i === event.index
+                      ? {
+                          ...item,
+                          status: event.error ? "error" : "done",
+                          result: event.result || undefined,
+                          error: event.error || undefined,
+                        }
+                      : item
+                  ));
+                }
+
+                if (event.type === "complete") {
+                  setIsProcessing(false);
+                }
+
+                if (event.type === "error") {
+                  setIsProcessing(false);
+                }
+              } catch {}
+            }
+          }
+        }
+      }
+    } catch (err: any) {
+      setBatchItems(prev => prev.length > 0
+        ? prev
+        : [{ id: "error", name: "Error", status: "error", error: err.message }]
+      );
+    } finally {
+      setIsProcessing(false);
+    }
+  };
+
+  const handleClearAll = () => {
+    setFiles([]);
+    setInstruction("");
+    setBatchItems([]);
+    setTotalProcessed(0);
+    setTotalItems(0);
+    setExpandedItem(null);
+  };
+
+  const progressPercent = totalItems > 0 ? (totalProcessed / totalItems) * 100 : 0;
+
+  return (
+    <div className="space-y-4">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <Card data-testid="stat-batch-mode">
+          <CardHeader className="flex flex-row items-center justify-between gap-1 space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium text-muted-foreground">Mode</CardTitle>
+            <Layers className="h-4 w-4 text-primary" />
+          </CardHeader>
+          <CardContent>
+            <p className="text-2xl font-bold">{files.length > 0 ? "File Upload" : instruction ? "Long Request" : "Ready"}</p>
+            <p className="text-xs text-muted-foreground mt-1">
+              {files.length > 0 ? `${files.length} file(s) queued` : "Upload files or enter a long request"}
+            </p>
+          </CardContent>
+        </Card>
+        <Card data-testid="stat-batch-queue">
+          <CardHeader className="flex flex-row items-center justify-between gap-1 space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium text-muted-foreground">Queue</CardTitle>
+            <FolderUp className="h-4 w-4 text-violet-500" />
+          </CardHeader>
+          <CardContent>
+            <p className="text-2xl font-bold">{totalItems > 0 ? `${totalProcessed}/${totalItems}` : "0"}</p>
+            <p className="text-xs text-muted-foreground mt-1">
+              {isProcessing ? "Processing..." : totalItems > 0 ? "Completed" : "No items in queue"}
+            </p>
+          </CardContent>
+        </Card>
+        <Card data-testid="stat-batch-success">
+          <CardHeader className="flex flex-row items-center justify-between gap-1 space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium text-muted-foreground">Success Rate</CardTitle>
+            <CheckCircle2 className="h-4 w-4 text-green-500" />
+          </CardHeader>
+          <CardContent>
+            <p className="text-2xl font-bold">
+              {totalProcessed > 0
+                ? `${Math.round((batchItems.filter(i => i.status === "done").length / totalProcessed) * 100)}%`
+                : "--"}
+            </p>
+            <p className="text-xs text-muted-foreground mt-1">
+              {batchItems.filter(i => i.status === "error").length > 0
+                ? `${batchItems.filter(i => i.status === "error").length} failed`
+                : "No errors"}
+            </p>
+          </CardContent>
+        </Card>
+      </div>
+
+      <Card data-testid="card-batch-upload">
+        <CardContent className="p-4 space-y-4">
+          <div className="flex items-center gap-2 mb-1">
+            <Upload className="h-4 w-4 text-primary" />
+            <span className="text-sm font-semibold">Upload Files</span>
+            <Badge variant="secondary" className="rounded-full text-[10px]">Up to 20 files</Badge>
+          </div>
+
+          <div
+            className="border-2 border-dashed border-border/60 rounded-md p-6 text-center cursor-pointer hover-elevate"
+            onClick={() => fileInputRef.current?.click()}
+            data-testid="dropzone-files"
+          >
+            <input
+              ref={fileInputRef}
+              type="file"
+              multiple
+              className="hidden"
+              onChange={handleFileSelect}
+              accept=".ts,.tsx,.js,.jsx,.py,.go,.rs,.java,.kt,.swift,.cpp,.cs,.rb,.php,.sol,.sql,.json,.csv,.tsv,.yaml,.toml,.md,.html,.css,.txt"
+              data-testid="input-file-upload"
+            />
+            <FolderUp className="h-8 w-8 text-muted-foreground mx-auto mb-2" />
+            <p className="text-sm text-muted-foreground">Click to select files - code, CSV, JSON, text, and more</p>
+            <p className="text-xs text-muted-foreground mt-1">Max 500KB per file, 20 files total</p>
+          </div>
+
+          {files.length > 0 && (
+            <div className="space-y-1">
+              {files.map((file, i) => (
+                <div key={i} className="flex items-center justify-between gap-2 p-2 rounded-md border border-border/40" data-testid={`file-item-${i}`}>
+                  <div className="flex items-center gap-2 min-w-0">
+                    <FileCode2 className="h-4 w-4 text-muted-foreground flex-shrink-0" />
+                    <span className="text-sm truncate">{file.name}</span>
+                    <span className="text-xs text-muted-foreground flex-shrink-0">
+                      {(file.size / 1024).toFixed(1)}KB
+                    </span>
+                  </div>
+                  <Button size="icon" variant="ghost" onClick={() => removeFile(i)} data-testid={`button-remove-file-${i}`}>
+                    <XCircle className="h-3 w-3" />
+                  </Button>
+                </div>
+              ))}
+            </div>
+          )}
+        </CardContent>
+      </Card>
+
+      <Card data-testid="card-batch-instruction">
+        <CardContent className="p-4 space-y-3">
+          <div className="flex items-center gap-2">
+            <Wand2 className="h-4 w-4 text-primary" />
+            <span className="text-sm font-semibold">Instruction / Long Request</span>
+          </div>
+          <Textarea
+            placeholder="Enter your instruction for processing files, or paste a long coding request here. Long requests are automatically split into manageable chunks and processed in sequence..."
+            value={instruction}
+            onChange={(e) => setInstruction(e.target.value)}
+            className="resize-none text-sm min-h-[120px]"
+            data-testid="textarea-batch-instruction"
+          />
+          <div className="flex items-center gap-2 flex-wrap">
+            <Select value={language} onValueChange={setLanguage}>
+              <SelectTrigger className="w-[140px]" data-testid="select-batch-language">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {LANGUAGES.map((lang) => (
+                  <SelectItem key={lang.value} value={lang.value}>{lang.label}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <div className="flex-1" />
+            <Button variant="outline" onClick={handleClearAll} disabled={isProcessing} data-testid="button-batch-clear">
+              <Trash2 className="h-4 w-4 mr-1.5" />Clear All
+            </Button>
+            <Button onClick={handleProcess} disabled={isProcessing || (!instruction.trim() && files.length === 0)} data-testid="button-batch-process">
+              {isProcessing ? (
+                <Loader2 className="h-4 w-4 mr-1.5 animate-spin" />
+              ) : (
+                <Play className="h-4 w-4 mr-1.5" />
+              )}
+              {isProcessing ? "Processing..." : "Process Batch"}
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
+
+      {batchItems.length > 0 && (
+        <Card data-testid="card-batch-results">
+          <CardHeader className="flex flex-row items-center justify-between gap-2 space-y-0">
+            <CardTitle className="text-sm font-semibold flex items-center gap-2">
+              <Terminal className="h-4 w-4" />
+              Batch Results
+              {isProcessing && <Badge variant="secondary" className="rounded-full text-[10px]"><Loader2 className="h-2.5 w-2.5 mr-1 animate-spin" />Processing</Badge>}
+            </CardTitle>
+            <span className="text-xs text-muted-foreground">{totalProcessed}/{totalItems} completed</span>
+          </CardHeader>
+          <CardContent className="space-y-2">
+            {totalItems > 0 && (
+              <Progress value={progressPercent} className="h-2 mb-3" data-testid="progress-batch" />
+            )}
+            <div className="space-y-2 max-h-[500px] overflow-y-auto">
+              {batchItems.map((item) => (
+                <div key={item.id} className="rounded-md border border-border/40" data-testid={`batch-result-${item.id}`}>
+                  <div
+                    className="flex items-center justify-between gap-2 p-3 cursor-pointer hover-elevate"
+                    onClick={() => setExpandedItem(expandedItem === item.id ? null : item.id)}
+                    data-testid={`batch-result-toggle-${item.id}`}
+                  >
+                    <div className="flex items-center gap-2 min-w-0">
+                      {item.status === "pending" && <Clock className="h-4 w-4 text-muted-foreground flex-shrink-0" />}
+                      {item.status === "processing" && <Loader2 className="h-4 w-4 text-yellow-500 animate-spin flex-shrink-0" />}
+                      {item.status === "done" && <CheckCircle2 className="h-4 w-4 text-green-500 flex-shrink-0" />}
+                      {item.status === "error" && <XCircle className="h-4 w-4 text-red-500 flex-shrink-0" />}
+                      <span className="text-sm font-medium truncate">{item.name}</span>
+                    </div>
+                    <Badge
+                      variant={item.status === "done" ? "default" : item.status === "error" ? "destructive" : "secondary"}
+                      className="rounded-full text-[10px] flex-shrink-0"
+                    >
+                      {item.status === "processing" ? "Running" : item.status}
+                    </Badge>
+                  </div>
+                  {expandedItem === item.id && (item.result || item.error) && (
+                    <div className="border-t border-border/40 p-3">
+                      <div className="bg-zinc-950 rounded-md p-3 font-mono text-xs max-h-[300px] overflow-y-auto whitespace-pre-wrap text-zinc-300">
+                        {item.result || item.error}
+                      </div>
+                      {item.result && (
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          className="mt-2"
+                          onClick={() => navigator.clipboard.writeText(item.result || "")}
+                          data-testid={`button-copy-result-${item.id}`}
+                        >
+                          <Copy className="h-3 w-3 mr-1.5" />Copy Result
+                        </Button>
+                      )}
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+      )}
+    </div>
+  );
+}
+
 const SCAN_ISSUES = [
   { severity: "critical", count: 3, color: "text-red-500" },
   { severity: "warning", count: 12, color: "text-yellow-500" },
@@ -559,6 +901,9 @@ export default function CodeLabPage() {
               </TabsTrigger>
               <TabsTrigger value="secrets" data-testid="tab-secrets">
                 <Shield className="h-4 w-4 mr-1.5" />Secrets
+              </TabsTrigger>
+              <TabsTrigger value="batch" data-testid="tab-batch">
+                <Layers className="h-4 w-4 mr-1.5" />Batch
               </TabsTrigger>
             </TabsList>
 
@@ -835,6 +1180,10 @@ export default function CodeLabPage() {
                   </div>
                 </CardContent>
               </Card>
+            </TabsContent>
+
+            <TabsContent value="batch" className="space-y-4 mt-6">
+              <BatchProcessor />
             </TabsContent>
           </Tabs>
 

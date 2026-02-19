@@ -3,6 +3,7 @@ import type { Server } from "http";
 import OpenAI from "openai";
 import { z } from "zod";
 import { sql } from "drizzle-orm";
+import multer from "multer";
 import { storage } from "./storage";
 import { api } from "@shared/routes";
 import { ALL_BOTS } from "./seed-bots";
@@ -11,6 +12,7 @@ import { calculateRealEstate, calculateCarFlip, type RealEstateInputs, type CarF
 import { FORMULA_LIBRARY } from "@shared/formula-library";
 import { getUncachableStripeClient, getStripePublishableKey } from "./stripeClient";
 import { db } from "./db";
+import { batchProcessWithSSE } from "./replit_integrations/batch";
 
 const openai = new OpenAI({
   apiKey: process.env.AI_INTEGRATIONS_OPENAI_API_KEY,
@@ -1064,6 +1066,115 @@ export async function registerRoutes(
       res.status(500).json({ error: "Failed to create portal session" });
     }
   });
+
+  const upload = multer({
+    storage: multer.memoryStorage(),
+    limits: { fileSize: 500 * 1024, files: 20 },
+  });
+
+  app.post("/api/batch/process", upload.array("files", 20), async (req, res) => {
+    try {
+      const files = req.files as Express.Multer.File[] | undefined;
+      const { instruction, language, mode } = req.body;
+
+      if (!instruction && (!files || files.length === 0)) {
+        return res.status(400).json({ error: "Provide files or an instruction" });
+      }
+
+      res.setHeader("Content-Type", "text/event-stream");
+      res.setHeader("Cache-Control", "no-cache");
+      res.setHeader("Connection", "keep-alive");
+
+      const sendEvent = (event: { type: string; [key: string]: unknown }) => {
+        res.write(`data: ${JSON.stringify(event)}\n\n`);
+      };
+
+      let items: Array<{ name: string; content: string; type: string }> = [];
+
+      if (files && files.length > 0) {
+        items = files.map((f) => ({
+          name: f.originalname,
+          content: f.buffer.toString("utf-8").slice(0, 8000),
+          type: f.mimetype || "text/plain",
+        }));
+      } else if (instruction) {
+        const chunks = splitLongRequest(instruction, 2000);
+        items = chunks.map((chunk, i) => ({
+          name: `Part ${i + 1} of ${chunks.length}`,
+          content: chunk,
+          type: "text/request",
+        }));
+      }
+
+      const batchInstruction = instruction || "Analyze and process this file. Provide a summary, key findings, and any suggestions for improvement.";
+
+      await batchProcessWithSSE(
+        items,
+        async (item) => {
+          const isDataFile = item.name.endsWith(".csv") || item.name.endsWith(".json") || item.name.endsWith(".tsv");
+          const isCodeFile = /\.(ts|tsx|js|jsx|py|go|rs|java|kt|swift|cpp|cs|rb|php|sol|sql)$/i.test(item.name);
+
+          let systemMsg = "";
+          if (isDataFile) {
+            systemMsg = `You are a data analyst AI. Process this ${item.name} data file. ${batchInstruction}. Be concise and actionable.`;
+          } else if (isCodeFile) {
+            systemMsg = `You are a senior code reviewer AI. Review this ${language || "code"} file named "${item.name}". ${batchInstruction}. Be concise.`;
+          } else if (item.type === "text/request") {
+            systemMsg = `You are DreamCodeLab's AI assistant. Complete this part of a larger request in ${language || "TypeScript"}. Be thorough and provide complete code/output.`;
+          } else {
+            systemMsg = `You are DreamCodeLab's AI assistant. Process this content from "${item.name}". ${batchInstruction}. Be concise.`;
+          }
+
+          const response = await openai.chat.completions.create({
+            model: "gpt-4.1-mini",
+            messages: [
+              { role: "system", content: systemMsg },
+              { role: "user", content: item.content },
+            ],
+            max_completion_tokens: 8192,
+          });
+
+          return response.choices[0]?.message?.content || "No output";
+        },
+        sendEvent,
+        { retries: 3, minTimeout: 2000 }
+      );
+
+      res.end();
+    } catch (error: any) {
+      console.error("Batch process error:", error.message);
+      if (!res.headersSent) {
+        res.status(500).json({ error: "Batch processing failed" });
+      } else {
+        res.write(`data: ${JSON.stringify({ type: "error", message: error.message })}\n\n`);
+        res.end();
+      }
+    }
+  });
+
+  function splitLongRequest(text: string, maxChunkSize: number): string[] {
+    if (text.length <= maxChunkSize) return [text];
+    const chunks: string[] = [];
+    const paragraphs = text.split(/\n\n+/);
+    let current = "";
+
+    for (const para of paragraphs) {
+      if (current.length + para.length + 2 > maxChunkSize && current.length > 0) {
+        chunks.push(current.trim());
+        current = "";
+      }
+      if (para.length > maxChunkSize) {
+        if (current) { chunks.push(current.trim()); current = ""; }
+        for (let i = 0; i < para.length; i += maxChunkSize) {
+          chunks.push(para.slice(i, i + maxChunkSize));
+        }
+      } else {
+        current += (current ? "\n\n" : "") + para;
+      }
+    }
+    if (current.trim()) chunks.push(current.trim());
+    return chunks.length > 0 ? chunks : [text];
+  }
 
   const codeRunLimiter = new Map<string, number>();
   const CODE_MAX_LENGTH = 10000;
