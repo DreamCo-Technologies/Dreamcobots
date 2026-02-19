@@ -20,6 +20,7 @@ import EcosystemPage from "@/pages/EcosystemPage";
 import OrchestrationPage from "@/pages/OrchestrationPage";
 import MarketplacePage from "@/pages/MarketplacePage";
 import FormulasPage from "@/pages/FormulasPage";
+import LearningMatrixPage from "@/pages/LearningMatrixPage";
 
 function Router() {
   return (
@@ -39,6 +40,7 @@ function Router() {
       <Route path="/orchestration" component={OrchestrationPage} />
       <Route path="/marketplace" component={MarketplacePage} />
       <Route path="/formulas" component={FormulasPage} />
+      <Route path="/learning-matrix" component={LearningMatrixPage} />
 
       {/* Legacy / convenience */}
       <Route path="/chat">

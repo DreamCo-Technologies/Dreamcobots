@@ -18,6 +18,7 @@ import {
   Workflow,
   Zap,
   FlaskConical,
+  Brain,
 } from "lucide-react";
 import ThemeToggle from "@/components/ThemeToggle";
 import { Button } from "@/components/ui/button";
@@ -69,6 +70,7 @@ export default function AppShell(props: {
     { href: "/bots", label: "Bot Fleet", icon: Bot },
     { href: "/deals", label: "Deal Analyzer", icon: Calculator },
     { href: "/formulas", label: "Formula Vault", icon: FlaskConical },
+    { href: "/learning-matrix", label: "Learning Matrix", icon: Brain },
     { href: "/ecosystem", label: "AI Ecosystem", icon: Globe },
     { href: "/orchestration", label: "Orchestration", icon: Network },
     { href: "/marketplace", label: "Marketplace", icon: Store },

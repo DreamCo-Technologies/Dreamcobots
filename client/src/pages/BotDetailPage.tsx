@@ -14,6 +14,13 @@ import { useToast } from "@/hooks/use-toast";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import type { BotProfile, BotMetric, BotError, BotFinancial } from "@shared/schema";
 import { TIER_AUTONOMY_LIMITS, DIVISION_API_REGISTRIES } from "@shared/api-registry";
+import { DIVISION_FORMULAS, type DivisionFormula } from "@shared/division-formulas";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import {
   ArrowLeft,
   Activity,
@@ -47,6 +54,7 @@ import {
   TrendingUp,
   Users,
   Zap,
+  Calculator,
 } from "lucide-react";
 
 const TIER_COLORS: Record<string, string> = {
@@ -242,6 +250,7 @@ export default function BotDetailPage() {
   const params = useParams<{ id: string }>();
   const botId = Number(params.id);
   const [botSlug, setBotSlug] = useState<string | undefined>(undefined);
+  const [selectedFormula, setSelectedFormula] = useState<DivisionFormula | null>(null);
 
   const botQuery = useQuery<BotProfile>({
     queryKey: ["/api/bots", botId],
@@ -688,6 +697,68 @@ export default function BotDetailPage() {
             </CardContent>
           </Card>
         </div>
+
+        {(() => {
+          const formulas = DIVISION_FORMULAS[bot.division];
+          if (!formulas || formulas.length === 0) return null;
+          return (
+            <Card data-testid="bot-formula-toolkit">
+              <CardHeader className="flex flex-row items-center justify-between gap-2 space-y-0 pb-4">
+                <CardTitle className="text-lg flex items-center gap-2">
+                  <Calculator className="h-5 w-5 text-primary" />
+                  High-Profit Formula Toolkit
+                </CardTitle>
+                <Badge variant="secondary" className="rounded-full">{formulas.length} formulas</Badge>
+              </CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2">
+                  {formulas.map((f) => (
+                    <Button
+                      key={f.id}
+                      variant="outline"
+                      size="sm"
+                      className="justify-start text-left"
+                      onClick={() => setSelectedFormula(f)}
+                      data-testid={`formula-btn-${f.id}`}
+                    >
+                      <FlaskConical className="h-3.5 w-3.5 flex-shrink-0 text-primary" />
+                      <span className="text-xs truncate">{f.name}</span>
+                    </Button>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+          );
+        })()}
+
+        <Dialog open={!!selectedFormula} onOpenChange={(open) => !open && setSelectedFormula(null)}>
+          <DialogContent className="max-w-lg">
+            <DialogHeader>
+              <DialogTitle className="flex items-center gap-2">
+                <Calculator className="h-5 w-5 text-primary" />
+                {selectedFormula?.name}
+              </DialogTitle>
+            </DialogHeader>
+            {selectedFormula && (
+              <div className="space-y-4">
+                <div>
+                  <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-1">Description</p>
+                  <p className="text-sm">{selectedFormula.description}</p>
+                </div>
+                <div>
+                  <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-1">Formula</p>
+                  <div className="p-3 rounded-lg bg-muted/50 border border-border/40 font-mono text-sm break-all">
+                    {selectedFormula.formula}
+                  </div>
+                </div>
+                <div className="flex items-center justify-between text-xs text-muted-foreground">
+                  <span>Formula #{selectedFormula.id}</span>
+                  <Badge variant="outline" className="rounded-full text-[10px]">{bot.division}</Badge>
+                </div>
+              </div>
+            )}
+          </DialogContent>
+        </Dialog>
 
         {(() => {
           const registry = DIVISION_API_REGISTRIES[bot.division];
