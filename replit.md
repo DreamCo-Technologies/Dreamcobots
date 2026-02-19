@@ -10,10 +10,13 @@ DreamCo Empire OS is a 6-layer autonomous wealth-generation system with 251 coor
 - **AI**: OpenAI GPT-4.1-mini via Replit AI integrations
 
 ## Key Files
-- `shared/schema.ts` - Database schema with 11 tables (conversations, messages, bot_profiles, autonomous_tasks, task_runs, empire_settings, bot_metrics, bot_errors, bot_interactions, bot_financials, alert_rules)
+- `shared/schema.ts` - Database schema with 12 tables (conversations, messages, bot_profiles, autonomous_tasks, task_runs, empire_settings, bot_metrics, bot_errors, bot_interactions, bot_financials, alert_rules, formulas)
+- `shared/ai-ecosystem.ts` - AI Ecosystem Registry with 200+ providers across 20 categories
+- `shared/bundles.ts` - Subscription tiers, 10 skill packs, 9 industry verticals, 20 MOE routing rules
+- `shared/formula-library.ts` - 40+ system formulas across 6 categories
 - `server/routes.ts` - All API endpoints
 - `server/storage.ts` - Database operations (IStorage interface + DatabaseStorage)
-- `server/seed-bots.ts` - 251 bot definitions across 16 divisions
+- `server/seed-bots.ts` - 451 bot definitions across 24 divisions
 - `client/src/App.tsx` - Frontend routing
 - `client/src/components/AppShell.tsx` - Main layout shell with sidebar navigation
 - `client/src/pages/DashboardPage.tsx` - Empire Command Center dashboard
@@ -22,6 +25,10 @@ DreamCo Empire OS is a 6-layer autonomous wealth-generation system with 251 coor
 - `client/src/pages/BotsPage.tsx` - Bot profile management
 - `client/src/pages/ChatIndexPage.tsx` - Chat interface
 - `client/src/pages/ConversationPage.tsx` - Individual conversation view
+- `client/src/pages/EcosystemPage.tsx` - AI Provider Registry at /ecosystem
+- `client/src/pages/OrchestrationPage.tsx` - Model Orchestration Engine at /orchestration
+- `client/src/pages/MarketplacePage.tsx` - AI Marketplace at /marketplace
+- `client/src/pages/FormulasPage.tsx` - Formula Vault with CRUD at /formulas
 - `client/src/hooks/use-empire.ts` - Empire/division/autonomy hooks
 - `client/src/hooks/use-bots.ts` - Bot CRUD hooks
 - `client/src/hooks/use-tasks.ts` - Task CRUD hooks
@@ -59,6 +66,8 @@ DreamFinance (25), DreamRealEstate (25), DreamSalesPro (25), DreamAIInfra (25), 
 - `/api/errors` - Error logs
 - `/api/financials` - Financial tracking
 - `/api/alerts` - Alert rules management
+- `/api/formulas` - Formula CRUD (GET/POST)
+- `/api/formulas/:id` - Formula by ID (GET/PATCH/DELETE)
 
 ## Bot Control System
 Each bot has per-bot controls:
@@ -98,7 +107,27 @@ Each bot has per-bot controls:
 - Dashboard Tabs: Overview, Active Issues, Auto-Fixes, Revenue Impact, Security, Bot Health, Patch History, Learning Log
 - API: GET/POST /api/debug/events, PATCH /api/debug/events/:id/resolve, GET/POST /api/debug/auto-fixes, PATCH apply/reject, GET/POST /api/debug/revenue-leaks, PATCH resolve, GET/POST /api/debug/security-scans, PATCH remediate, GET /api/debug/overview, POST /api/debug/seed
 
+## AI Ecosystem & Orchestration (Phase 1: MOE)
+- `shared/ai-ecosystem.ts` - 200+ AI providers across 20 categories (Foundation Models, Cloud, Hardware, Enterprise, Healthcare, FinTech, Legal, Security, etc.)
+- `shared/bundles.ts` - 3 bundle systems: 4 Subscription Tiers (Free/Pro/Elite/Enterprise), 10 Skill Packs, 9 Industry Verticals, 20 MOE Routing Rules
+- `shared/formula-library.ts` - 40+ formulas across 6 categories (Real Estate, Car Flipping, Sales, Capital Deployment, Risk Management, Revenue Intelligence)
+- `client/src/pages/EcosystemPage.tsx` - AI Provider Registry at /ecosystem with search, category/pricing filters, provider cards
+- `client/src/pages/OrchestrationPage.tsx` - Model Orchestration Engine at /orchestration with routing rules, priority/cost filters, architecture diagram
+- `client/src/pages/MarketplacePage.tsx` - AI Marketplace at /marketplace with 3 tabs (Tiers, Skill Packs, Industry Verticals)
+- `client/src/pages/FormulasPage.tsx` - Formula Vault at /formulas with full CRUD, category tabs, search, system formula protection
+- Database: formulas table with name, category, description, formula, variables (jsonb), target, tags (jsonb), isSystem flag
+- 40+ system formulas auto-seeded on startup from formula-library.ts
+- MOE routes tasks to best providers based on priority (accuracy/speed/quality/safety/scale/compliance) and cost tier (standard/premium)
+
 ## Recent Changes
+- Feb 19, 2026: Built AI Ecosystem page at /ecosystem with 200+ providers, search, category/pricing filters
+- Feb 19, 2026: Built Model Orchestration Engine page at /orchestration with 20 routing rules, architecture flow diagram
+- Feb 19, 2026: Built AI Marketplace page at /marketplace with subscription tiers, skill packs, industry verticals
+- Feb 19, 2026: Built Formula Vault page at /formulas with full CRUD, 40+ system formulas, category filtering
+- Feb 19, 2026: Added formulas table to database schema with auto-seeding of system formulas
+- Feb 19, 2026: Created AI Ecosystem Registry (shared/ai-ecosystem.ts) with 200+ providers across 20 categories
+- Feb 19, 2026: Created Bundle definitions (shared/bundles.ts) with tiers, skill packs, verticals, MOE routing rules
+- Feb 19, 2026: Created Formula Library (shared/formula-library.ts) with 40+ formulas across 6 categories
 - Feb 18, 2026: Added 8 new divisions (DreamInfluence, DreamDecision, DreamOps, DreamPlanetary, DreamEntFinance, DreamCustIntel, DreamLegal, DreamCyber) with 200 new bots, bringing total to 451 bots across 24 divisions
 - Feb 18, 2026: Built Debug Intelligence System (DIS) with 4 tables, 12 error categories, auto-fix engine, revenue leak detector, security scanner, 8-tab dashboard at /debug
 - Feb 18, 2026: Built Deal Analyzer with RE/Car calculators, color-coded scoring, portfolio KPIs, capital efficiency comparison
