@@ -81,7 +81,7 @@ export default function BotsPage() {
       list = list.filter((b) => b.category === categoryFilter);
     }
 
-    return list;
+    return list.sort((a, b) => a.displayName.localeCompare(b.displayName));
   }, [bots.data, searchQuery, divisionFilter, tierFilter, categoryFilter]);
 
   const availableCategories = useMemo(() => {

@@ -1,7 +1,7 @@
 # DreamCo Empire OS
 
 ## Overview
-DreamCo Empire OS is a 6-layer autonomous wealth-generation system orchestrating over 843 AI bots across 44 divisions. Its primary purpose is revenue generation through a SaaS model, covering a vast array of job categories, including specialized areas like crypto, payments, coding, business launch, and loan services. The system features three autonomy modes (Guided, Semi-Autonomous, Full Autonomy) and provides comprehensive bot tracking and metrics. The vision is to offer a powerful, adaptive, and revenue-focused AI ecosystem.
+DreamCo Empire OS is a 6-layer autonomous wealth-generation system orchestrating over 857 AI bots across 44 divisions. Its primary purpose is revenue generation through a SaaS model, covering a vast array of job categories, including specialized areas like crypto, payments, coding, business launch, and loan services. The system features three autonomy modes (Guided, Semi-Autonomous, Full Autonomy) and provides comprehensive bot tracking and metrics. The vision is to offer a powerful, adaptive, and revenue-focused AI ecosystem.
 
 ## User Preferences
 I prefer detailed explanations.
@@ -18,7 +18,7 @@ The system employs a modern web stack:
 **Core Architectural Decisions & Design Patterns:**
 - **Modular Design**: The system is structured into 44 divisions, each comprising multiple specialized AI bots, allowing for scalability and clear separation of concerns.
 - **Autonomy Modes**: Three distinct operational modes (Guided, Semi-Autonomous, Full Autonomy) offer flexibility in bot control and user intervention, with tier-based access.
-- **Data Schemas**: A centralized `shared/schema.ts` defines 12 core database tables for managing conversations, bots, tasks, metrics, financials, and system settings.
+- **Data Schemas**: A centralized `shared/schema.ts` defines 17 core database tables for managing conversations, bots, tasks, metrics, financials, system settings, platform connections, plugins, bot memory, system snapshots, and cost events.
 - **API-Driven Control**: All bot and system controls, including autonomy levels and operational modes (sandbox/live/offline), are managed via a comprehensive RESTful API.
 - **Revenue Architecture**: Built-in SaaS pricing tiers (Free, Pro, Enterprise, Elite) gate access to features and higher autonomy levels. A dedicated API Integration Registry supports diverse service connections.
 - **Debug Intelligence System (DIS)**: A robust error handling and monitoring system with 12 error categories, an auto-fix engine, revenue leak detection, and security scanning, all presented through an 8-tab dashboard.
@@ -28,7 +28,7 @@ The system employs a modern web stack:
 
 **UI/UX Decisions:**
 - A consistent `AppShell` with sidebar navigation ensures easy access to all system modules.
-- Dedicated pages for Dashboard, Divisions, Bots, Autonomy, Chat, Ecosystem, Orchestration, Marketplace, Formulas, Deals, Debug, and Learning Matrix provide specialized views and controls.
+- Dedicated pages for Dashboard, Divisions, Bots, Autonomy, Chat, Ecosystem, Orchestration, Marketplace (with Plugins tab), Formulas, Deals, Debug, Learning Matrix, Connections (multi-platform access + kill switch), Time Capsule (system snapshots), and Cost Tracking provide specialized views and controls.
 - Bot cards are interactive, leading to detailed profile pages with control panels, metrics, and capabilities.
 - Color-coded status indicators are used in the Deal Analyzer for quick assessment of deal viability.
 

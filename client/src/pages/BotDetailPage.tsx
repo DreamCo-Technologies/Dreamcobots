@@ -12,7 +12,9 @@ import { Progress } from "@/components/ui/progress";
 import { cn } from "@/lib/utils";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest, queryClient } from "@/lib/queryClient";
-import type { BotProfile, BotMetric, BotError, BotFinancial } from "@shared/schema";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import type { BotProfile, BotMetric, BotError, BotFinancial, BotMemory } from "@shared/schema";
 import { TIER_AUTONOMY_LIMITS, DIVISION_API_REGISTRIES } from "@shared/api-registry";
 import { DIVISION_FORMULAS, type DivisionFormula } from "@shared/division-formulas";
 import {
@@ -55,6 +57,10 @@ import {
   Users,
   Zap,
   Calculator,
+  BookOpen,
+  Plus,
+  Send,
+  Trash2,
 } from "lucide-react";
 
 const TIER_COLORS: Record<string, string> = {
@@ -244,6 +250,110 @@ function generateMetrics(botId: number) {
     activeUsers: 50 + (seed % 450),
     satisfaction: 92 + ((seed % 80) / 10),
   };
+}
+
+function BotMemorySection({ botId }: { botId: number }) {
+  const { toast } = useToast();
+  const [newKey, setNewKey] = useState("");
+  const [newValue, setNewValue] = useState("");
+
+  const memoryQuery = useQuery<BotMemory[]>({
+    queryKey: ["/api/bots", botId, "memory"],
+    queryFn: async () => {
+      const res = await fetch(`/api/bots/${botId}/memory`);
+      return res.json();
+    },
+    enabled: !isNaN(botId),
+  });
+
+  const saveMutation = useMutation({
+    mutationFn: async (data: { key: string; value: string }) => {
+      const res = await apiRequest("POST", `/api/bots/${botId}/memory`, data);
+      return res.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/bots", botId, "memory"] });
+      setNewKey("");
+      setNewValue("");
+      toast({ title: "Memory saved" });
+    },
+  });
+
+  const deleteMutation = useMutation({
+    mutationFn: async (id: number) => {
+      await apiRequest("DELETE", `/api/bots/${botId}/memory/${id}`);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/bots", botId, "memory"] });
+      toast({ title: "Memory deleted" });
+    },
+  });
+
+  const memories = memoryQuery.data ?? [];
+
+  return (
+    <Card data-testid="bot-memory-section">
+      <CardHeader className="flex flex-row items-center justify-between gap-2 space-y-0 pb-4">
+        <CardTitle className="text-lg flex items-center gap-2">
+          <BookOpen className="h-5 w-5 text-primary" />
+          Bot Memory
+        </CardTitle>
+        <Badge variant="secondary" className="rounded-full">{memories.length} entries</Badge>
+      </CardHeader>
+      <CardContent className="space-y-4">
+        <div className="flex flex-col sm:flex-row gap-2">
+          <Input
+            placeholder="Key (e.g. preference)"
+            value={newKey}
+            onChange={(e) => setNewKey(e.target.value)}
+            className="sm:w-40"
+            data-testid="input-memory-key"
+          />
+          <Input
+            placeholder="Value"
+            value={newValue}
+            onChange={(e) => setNewValue(e.target.value)}
+            className="flex-1"
+            data-testid="input-memory-value"
+          />
+          <Button
+            size="sm"
+            onClick={() => saveMutation.mutate({ key: newKey, value: newValue })}
+            disabled={!newKey || !newValue || saveMutation.isPending}
+            data-testid="button-save-memory"
+          >
+            <Plus className="h-4 w-4 mr-1" /> Save
+          </Button>
+        </div>
+        {memories.length === 0 ? (
+          <p className="text-sm text-muted-foreground text-center py-4">No memories stored yet. Add a key-value pair above.</p>
+        ) : (
+          <div className="space-y-2">
+            {memories.map((mem) => (
+              <div key={mem.id} className="flex items-center gap-3 p-3 rounded-xl border border-border/40 hover-elevate" data-testid={`memory-entry-${mem.id}`}>
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2">
+                    <Badge variant="outline" className="text-xs">{mem.key}</Badge>
+                    {mem.category && <Badge variant="secondary" className="text-xs">{mem.category}</Badge>}
+                  </div>
+                  <p className="text-sm mt-1 truncate">{typeof mem.value === 'string' ? mem.value : JSON.stringify(mem.value)}</p>
+                </div>
+                <Button
+                  size="icon"
+                  variant="ghost"
+                  className="h-7 w-7 flex-shrink-0"
+                  onClick={() => deleteMutation.mutate(mem.id)}
+                  data-testid={`button-delete-memory-${mem.id}`}
+                >
+                  <Trash2 className="h-3.5 w-3.5" />
+                </Button>
+              </div>
+            ))}
+          </div>
+        )}
+      </CardContent>
+    </Card>
+  );
 }
 
 export default function BotDetailPage() {
@@ -820,6 +930,8 @@ export default function BotDetailPage() {
             </Card>
           );
         })()}
+
+        <BotMemorySection botId={botId} />
 
         <Card data-testid="bot-prospectus">
           <CardHeader className="pb-4">

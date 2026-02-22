@@ -48,6 +48,21 @@ import {
   type DebugOverview,
   type Formula,
   type InsertFormula,
+  platformConnections,
+  plugins,
+  botMemory,
+  systemSnapshots,
+  costEvents,
+  type PlatformConnection,
+  type InsertPlatformConnection,
+  type Plugin,
+  type InsertPlugin,
+  type BotMemory,
+  type InsertBotMemory,
+  type SystemSnapshot,
+  type InsertSystemSnapshot,
+  type CostEvent,
+  type InsertCostEvent,
 } from "@shared/schema";
 import { and, desc, eq, ne, sql, count, inArray, sum, avg } from "drizzle-orm";
 
@@ -141,6 +156,31 @@ export interface IStorage {
   createFormula(input: InsertFormula): Promise<Formula>;
   updateFormula(id: number, updates: Partial<InsertFormula>): Promise<Formula | undefined>;
   deleteFormula(id: number): Promise<void>;
+
+  listPlatformConnections(): Promise<PlatformConnection[]>;
+  createPlatformConnection(input: InsertPlatformConnection): Promise<PlatformConnection>;
+  updatePlatformConnection(id: number, updates: Partial<InsertPlatformConnection>): Promise<PlatformConnection | undefined>;
+  deletePlatformConnection(id: number): Promise<void>;
+
+  listPlugins(): Promise<Plugin[]>;
+  getPlugin(id: number): Promise<Plugin | undefined>;
+  createPlugin(input: InsertPlugin): Promise<Plugin>;
+  updatePlugin(id: number, updates: Partial<InsertPlugin>): Promise<Plugin | undefined>;
+  deletePlugin(id: number): Promise<void>;
+  incrementPluginDownloads(id: number): Promise<Plugin | undefined>;
+
+  listBotMemory(botId: number): Promise<BotMemory[]>;
+  createBotMemory(input: InsertBotMemory): Promise<BotMemory>;
+  deleteBotMemory(id: number): Promise<void>;
+
+  listSystemSnapshots(): Promise<SystemSnapshot[]>;
+  createSystemSnapshot(input: InsertSystemSnapshot): Promise<SystemSnapshot>;
+  getSystemSnapshot(id: number): Promise<SystemSnapshot | undefined>;
+  deleteSystemSnapshot(id: number): Promise<void>;
+
+  createCostEvent(input: InsertCostEvent): Promise<CostEvent>;
+  listCostEvents(limit?: number): Promise<CostEvent[]>;
+  getCostSummary(): Promise<{ totalTokens: number; totalCost: number; eventCount: number }>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -626,6 +666,99 @@ export class DatabaseStorage implements IStorage {
 
   async deleteFormula(id: number): Promise<void> {
     await db.delete(formulas).where(eq(formulas.id, id));
+  }
+
+  async listPlatformConnections(): Promise<PlatformConnection[]> {
+    return await db.select().from(platformConnections).orderBy(platformConnections.platform);
+  }
+
+  async createPlatformConnection(input: InsertPlatformConnection): Promise<PlatformConnection> {
+    const [row] = await db.insert(platformConnections).values(input).returning();
+    return row;
+  }
+
+  async updatePlatformConnection(id: number, updates: Partial<InsertPlatformConnection>): Promise<PlatformConnection | undefined> {
+    const [row] = await db.update(platformConnections).set(updates).where(eq(platformConnections.id, id)).returning();
+    return row;
+  }
+
+  async deletePlatformConnection(id: number): Promise<void> {
+    await db.delete(platformConnections).where(eq(platformConnections.id, id));
+  }
+
+  async listPlugins(): Promise<Plugin[]> {
+    return await db.select().from(plugins).orderBy(plugins.name);
+  }
+
+  async getPlugin(id: number): Promise<Plugin | undefined> {
+    const [row] = await db.select().from(plugins).where(eq(plugins.id, id));
+    return row;
+  }
+
+  async createPlugin(input: InsertPlugin): Promise<Plugin> {
+    const [row] = await db.insert(plugins).values(input).returning();
+    return row;
+  }
+
+  async updatePlugin(id: number, updates: Partial<InsertPlugin>): Promise<Plugin | undefined> {
+    const [row] = await db.update(plugins).set(updates).where(eq(plugins.id, id)).returning();
+    return row;
+  }
+
+  async deletePlugin(id: number): Promise<void> {
+    await db.delete(plugins).where(eq(plugins.id, id));
+  }
+
+  async incrementPluginDownloads(id: number): Promise<Plugin | undefined> {
+    const [row] = await db.update(plugins).set({ downloads: sql`${plugins.downloads} + 1` }).where(eq(plugins.id, id)).returning();
+    return row;
+  }
+
+  async listBotMemory(botId: number): Promise<BotMemory[]> {
+    return await db.select().from(botMemory).where(eq(botMemory.botId, botId)).orderBy(desc(botMemory.createdAt));
+  }
+
+  async createBotMemory(input: InsertBotMemory): Promise<BotMemory> {
+    const [row] = await db.insert(botMemory).values(input).returning();
+    return row;
+  }
+
+  async deleteBotMemory(id: number): Promise<void> {
+    await db.delete(botMemory).where(eq(botMemory.id, id));
+  }
+
+  async listSystemSnapshots(): Promise<SystemSnapshot[]> {
+    return await db.select().from(systemSnapshots).orderBy(desc(systemSnapshots.createdAt));
+  }
+
+  async createSystemSnapshot(input: InsertSystemSnapshot): Promise<SystemSnapshot> {
+    const [row] = await db.insert(systemSnapshots).values(input).returning();
+    return row;
+  }
+
+  async getSystemSnapshot(id: number): Promise<SystemSnapshot | undefined> {
+    const [row] = await db.select().from(systemSnapshots).where(eq(systemSnapshots.id, id));
+    return row;
+  }
+
+  async deleteSystemSnapshot(id: number): Promise<void> {
+    await db.delete(systemSnapshots).where(eq(systemSnapshots.id, id));
+  }
+
+  async createCostEvent(input: InsertCostEvent): Promise<CostEvent> {
+    const [row] = await db.insert(costEvents).values(input).returning();
+    return row;
+  }
+
+  async listCostEvents(limit = 100): Promise<CostEvent[]> {
+    return await db.select().from(costEvents).orderBy(desc(costEvents.createdAt)).limit(limit);
+  }
+
+  async getCostSummary(): Promise<{ totalTokens: number; totalCost: number; eventCount: number }> {
+    const events = await db.select().from(costEvents);
+    const totalTokens = events.reduce((s, e) => s + (e.tokens ?? 0), 0);
+    const totalCost = events.reduce((s, e) => s + (e.cost ?? 0), 0);
+    return { totalTokens, totalCost, eventCount: events.length };
   }
 }
 

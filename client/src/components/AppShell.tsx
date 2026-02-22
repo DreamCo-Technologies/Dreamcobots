@@ -14,6 +14,7 @@ import {
   LayoutDashboard,
   MessageSquareText,
   Network,
+  Plug,
   Rocket,
   Shield,
   Sparkles,
@@ -24,6 +25,8 @@ import {
   Zap,
   FlaskConical,
   Brain,
+  Clock,
+  DollarSign,
 } from "lucide-react";
 import ThemeToggle from "@/components/ThemeToggle";
 import { Button } from "@/components/ui/button";
@@ -87,6 +90,9 @@ export default function AppShell(props: {
     { href: "/debug", label: "Debug Intel", icon: Bug },
     { href: "/revenue", label: "Revenue", icon: CircleDollarSign },
     { href: "/pricing", label: "Pricing", icon: Tag },
+    { href: "/connections", label: "Connections", icon: Plug },
+    { href: "/time-capsule", label: "Time Capsule", icon: Clock },
+    { href: "/costs", label: "Cost Tracking", icon: DollarSign },
     { href: "/autonomy", label: "Autonomy", icon: Workflow },
   ] as const;
 

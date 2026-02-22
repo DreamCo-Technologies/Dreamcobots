@@ -26,6 +26,9 @@ import CodeLabPage from "@/pages/CodeLabPage";
 import CryptoPage from "@/pages/CryptoPage";
 import PaymentsPage from "@/pages/PaymentsPage";
 import LoansPage from "@/pages/LoansPage";
+import ConnectionsPage from "@/pages/ConnectionsPage";
+import TimeCapsulePage from "@/pages/TimeCapsulePage";
+import CostTrackingPage from "@/pages/CostTrackingPage";
 
 function Router() {
   return (
@@ -51,6 +54,9 @@ function Router() {
       <Route path="/crypto" component={CryptoPage} />
       <Route path="/payments" component={PaymentsPage} />
       <Route path="/loans" component={LoansPage} />
+      <Route path="/connections" component={ConnectionsPage} />
+      <Route path="/time-capsule" component={TimeCapsulePage} />
+      <Route path="/costs" component={CostTrackingPage} />
 
       {/* Legacy / convenience */}
       <Route path="/chat">

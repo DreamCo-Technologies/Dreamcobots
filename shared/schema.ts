@@ -495,3 +495,87 @@ export const formulas = pgTable("formulas", {
 export const insertFormulaSchema = createInsertSchema(formulas).omit({ id: true });
 export type Formula = typeof formulas.$inferSelect;
 export type InsertFormula = z.infer<typeof insertFormulaSchema>;
+
+export const PLATFORM_TYPES = [
+  "telegram", "slack", "sms", "webhook", "api", "discord", "zoom", "roku", "mobile", "gaming",
+] as const;
+export type PlatformType = (typeof PLATFORM_TYPES)[number];
+
+export const platformConnections = pgTable("platform_connections", {
+  id: serial("id").primaryKey(),
+  platform: text("platform").notNull(),
+  name: text("name").notNull(),
+  webhookUrl: text("webhook_url").notNull().default(""),
+  apiKey: text("api_key").notNull().default(""),
+  status: text("status").notNull().default("disconnected"),
+  config: jsonb("config").notNull().default(sql`'{}'::jsonb`),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
+export const insertPlatformConnectionSchema = createInsertSchema(platformConnections).omit({ id: true, createdAt: true });
+export type PlatformConnection = typeof platformConnections.$inferSelect;
+export type InsertPlatformConnection = z.infer<typeof insertPlatformConnectionSchema>;
+
+export const plugins = pgTable("plugins", {
+  id: serial("id").primaryKey(),
+  name: text("name").notNull(),
+  slug: text("slug").notNull().unique(),
+  description: text("description").notNull(),
+  category: text("category").notNull().default("general"),
+  author: text("author").notNull().default("DreamCo"),
+  version: text("version").notNull().default("1.0.0"),
+  downloads: integer("downloads").notNull().default(0),
+  rating: integer("rating").notNull().default(0),
+  status: text("status").notNull().default("published"),
+  config: jsonb("config").notNull().default(sql`'{}'::jsonb`),
+  capabilities: jsonb("capabilities").notNull().default(sql`'[]'::jsonb`),
+  installed: boolean("installed").notNull().default(false),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
+export const insertPluginSchema = createInsertSchema(plugins).omit({ id: true, createdAt: true });
+export type Plugin = typeof plugins.$inferSelect;
+export type InsertPlugin = z.infer<typeof insertPluginSchema>;
+
+export const botMemory = pgTable("bot_memory", {
+  id: serial("id").primaryKey(),
+  botId: integer("bot_id").references(() => botProfiles.id, { onDelete: "cascade" }),
+  key: text("key").notNull(),
+  value: text("value").notNull(),
+  category: text("category").notNull().default("general"),
+  pinned: boolean("pinned").notNull().default(false),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
+export const insertBotMemorySchema = createInsertSchema(botMemory).omit({ id: true, createdAt: true });
+export type BotMemory = typeof botMemory.$inferSelect;
+export type InsertBotMemory = z.infer<typeof insertBotMemorySchema>;
+
+export const systemSnapshots = pgTable("system_snapshots", {
+  id: serial("id").primaryKey(),
+  name: text("name").notNull(),
+  description: text("description").notNull().default(""),
+  snapshotData: jsonb("snapshot_data").notNull().default(sql`'{}'::jsonb`),
+  botCount: integer("bot_count").notNull().default(0),
+  taskCount: integer("task_count").notNull().default(0),
+  settingsCount: integer("settings_count").notNull().default(0),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
+export const insertSystemSnapshotSchema = createInsertSchema(systemSnapshots).omit({ id: true, createdAt: true });
+export type SystemSnapshot = typeof systemSnapshots.$inferSelect;
+export type InsertSystemSnapshot = z.infer<typeof insertSystemSnapshotSchema>;
+
+export const costEvents = pgTable("cost_events", {
+  id: serial("id").primaryKey(),
+  botId: integer("bot_id").references(() => botProfiles.id, { onDelete: "cascade" }),
+  service: text("service").notNull().default("openai"),
+  tokens: integer("tokens").notNull().default(0),
+  cost: integer("cost").notNull().default(0),
+  endpoint: text("endpoint").notNull().default(""),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
+export const insertCostEventSchema = createInsertSchema(costEvents).omit({ id: true, createdAt: true });
+export type CostEvent = typeof costEvents.$inferSelect;
+export type InsertCostEvent = z.infer<typeof insertCostEventSchema>;

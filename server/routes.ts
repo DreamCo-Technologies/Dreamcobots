@@ -7,7 +7,7 @@ import multer from "multer";
 import { storage } from "./storage";
 import { api } from "@shared/routes";
 import { ALL_BOTS } from "./seed-bots";
-import { DIVISIONS, insertBotMetricSchema, insertBotErrorSchema, insertBotFinancialSchema, insertAlertRuleSchema, insertDealSchema, insertDebugEventSchema, insertAutoFixSchema, insertRevenueLeakSchema, insertSecurityScanSchema, insertFormulaSchema } from "@shared/schema";
+import { DIVISIONS, insertBotMetricSchema, insertBotErrorSchema, insertBotFinancialSchema, insertAlertRuleSchema, insertDealSchema, insertDebugEventSchema, insertAutoFixSchema, insertRevenueLeakSchema, insertSecurityScanSchema, insertFormulaSchema, insertPlatformConnectionSchema, insertPluginSchema, insertBotMemorySchema, insertSystemSnapshotSchema, insertCostEventSchema } from "@shared/schema";
 import { calculateRealEstate, calculateCarFlip, type RealEstateInputs, type CarFlipInputs } from "@shared/deal-calculations";
 import { FORMULA_LIBRARY } from "@shared/formula-library";
 import { getUncachableStripeClient, getStripePublishableKey } from "./stripeClient";
@@ -83,6 +83,34 @@ async function ensureSeeded() {
       }
     }
     console.log(`Seeded ${FORMULA_LIBRARY.length} system formulas`);
+  }
+
+  // Seed default plugins
+  const existingPlugins = await storage.listPlugins();
+  if (existingPlugins.length === 0) {
+    const defaultPlugins = [
+      { name: "Deal Alert Pro", slug: "deal-alert-pro", description: "Real-time deal alerts via push notifications, email, SMS, and webhooks. Monitors price drops across all major retailers.", category: "alerts", author: "DreamCo", version: "2.1.0", rating: 5, status: "published", capabilities: ["Push notifications", "Email alerts", "SMS alerts", "Webhook integration", "Price monitoring"] },
+      { name: "Coupon Stacker", slug: "coupon-stacker", description: "Automatically finds and stacks coupons, cashback offers, and loyalty rewards for maximum savings.", category: "savings", author: "DreamCo", version: "1.8.0", rating: 5, status: "published", capabilities: ["Coupon detection", "Stack optimization", "Cashback tracking", "Loyalty rewards"] },
+      { name: "Flip Profit Calculator", slug: "flip-profit-calc", description: "Advanced ROI calculator for resale arbitrage. Accounts for fees, shipping, taxes, and time costs.", category: "finance", author: "DreamCo", version: "1.5.0", rating: 4, status: "published", capabilities: ["ROI calculation", "Fee estimation", "Shipping costs", "Tax tracking"] },
+      { name: "Telegram Bot Connector", slug: "telegram-connector", description: "Connect your DreamCo Empire to Telegram for text-based control. Send commands, receive alerts, and manage bots from Telegram.", category: "integration", author: "DreamCo", version: "1.2.0", rating: 4, status: "published", capabilities: ["Telegram webhook", "Command interface", "Alert forwarding", "Bot control"] },
+      { name: "Slack Workspace Plugin", slug: "slack-workspace", description: "Full Slack integration for team collaboration. Create channels per division, receive bot alerts, and manage workflows from Slack.", category: "integration", author: "DreamCo", version: "1.3.0", rating: 4, status: "published", capabilities: ["Slack webhooks", "Channel management", "Alert routing", "Workflow triggers"] },
+      { name: "Discord Server Bot", slug: "discord-server", description: "Discord bot integration for community management and real-time bot control. Perfect for gaming and social divisions.", category: "integration", author: "DreamCo", version: "1.1.0", rating: 4, status: "published", capabilities: ["Discord webhooks", "Server management", "Real-time alerts", "Community tools"] },
+      { name: "Receipt Scanner Pro", slug: "receipt-scanner", description: "OCR-powered receipt scanning for automatic cashback matching, expense tracking, and deal verification.", category: "tools", author: "DreamCo", version: "2.0.0", rating: 5, status: "published", capabilities: ["OCR scanning", "Cashback matching", "Expense categorization", "Deal verification"] },
+      { name: "AI Model Router", slug: "ai-model-router", description: "Intelligent routing between 100+ AI models based on task requirements. Minimizes costs while maximizing quality.", category: "ai", author: "DreamCo", version: "1.4.0", rating: 5, status: "published", capabilities: ["Model selection", "Cost optimization", "Quality scoring", "Fallback routing"] },
+      { name: "Crypto Price Tracker", slug: "crypto-tracker", description: "Real-time cryptocurrency price monitoring with alert triggers, portfolio tracking, and arbitrage detection.", category: "finance", author: "DreamCo", version: "1.6.0", rating: 4, status: "published", capabilities: ["Price monitoring", "Portfolio tracking", "Arbitrage detection", "Alert triggers"] },
+      { name: "SEO Optimizer", slug: "seo-optimizer", description: "AI-powered SEO analysis and optimization for websites. Keyword research, content scoring, and competitor analysis.", category: "marketing", author: "DreamCo", version: "1.2.0", rating: 4, status: "published", capabilities: ["Keyword research", "Content scoring", "Competitor analysis", "Rank tracking"] },
+      { name: "Inventory Manager", slug: "inventory-manager", description: "Track inventory across multiple locations and platforms. Sync with eBay, Amazon, and Facebook Marketplace listings.", category: "tools", author: "DreamCo", version: "1.3.0", rating: 4, status: "published", capabilities: ["Multi-platform sync", "Stock tracking", "Low stock alerts", "Listing management"] },
+      { name: "Route Optimizer", slug: "route-optimizer", description: "Plan optimal clearance shopping routes. Calculates fuel costs, time estimates, and ROI per stop.", category: "tools", author: "DreamCo", version: "1.1.0", rating: 4, status: "published", capabilities: ["Route planning", "Fuel estimation", "ROI per stop", "Time optimization"] },
+    ];
+    for (const p of defaultPlugins) {
+      try {
+        await storage.createPlugin(p as any);
+      } catch (e: any) {
+        if (e?.code === "23505") continue;
+        console.error(`Seed plugin ${p.slug} failed:`, e?.message);
+      }
+    }
+    console.log(`Seeded ${defaultPlugins.length} default plugins`);
   }
 }
 
@@ -1247,6 +1275,192 @@ Any improvements or fixes (optional, 1-2 bullet points max)`;
         res.end();
       }
     }
+  });
+
+  // ===== PLATFORM CONNECTIONS =====
+  app.get("/api/platform-connections", async (_req, res) => {
+    const connections = await storage.listPlatformConnections();
+    res.json(connections);
+  });
+
+  app.post("/api/platform-connections", async (req, res) => {
+    const parsed = insertPlatformConnectionSchema.safeParse(req.body);
+    if (!parsed.success) return res.status(400).json(zodValidationError(parsed.error));
+    const conn = await storage.createPlatformConnection(parsed.data);
+    res.json(conn);
+  });
+
+  app.patch("/api/platform-connections/:id", async (req, res) => {
+    const id = parseInt(req.params.id);
+    const conn = await storage.updatePlatformConnection(id, req.body);
+    if (!conn) return res.status(404).json({ error: "Connection not found" });
+    res.json(conn);
+  });
+
+  app.delete("/api/platform-connections/:id", async (req, res) => {
+    const id = parseInt(req.params.id);
+    await storage.deletePlatformConnection(id);
+    res.json({ success: true });
+  });
+
+  // ===== KILL SWITCH =====
+  app.get("/api/kill-switch", async (_req, res) => {
+    const setting = await storage.getSetting("kill_switch");
+    res.json({ enabled: (setting?.value as any)?.enabled ?? false, updatedAt: setting?.updatedAt });
+  });
+
+  app.post("/api/kill-switch", async (req, res) => {
+    const { enabled } = req.body;
+    const setting = await storage.upsertSetting("kill_switch", { enabled: !!enabled, triggeredAt: new Date().toISOString() });
+    res.json({ enabled: (setting.value as any)?.enabled ?? false, updatedAt: setting.updatedAt });
+  });
+
+  // ===== PLUGINS =====
+  app.get("/api/plugins", async (req, res) => {
+    const allPlugins = await storage.listPlugins();
+    const search = (req.query.search as string)?.toLowerCase();
+    const category = req.query.category as string;
+    let filtered = allPlugins;
+    if (search) filtered = filtered.filter(p => p.name.toLowerCase().includes(search) || p.description.toLowerCase().includes(search));
+    if (category && category !== "all") filtered = filtered.filter(p => p.category === category);
+    res.json(filtered);
+  });
+
+  app.post("/api/plugins", async (req, res) => {
+    const parsed = insertPluginSchema.safeParse(req.body);
+    if (!parsed.success) return res.status(400).json(zodValidationError(parsed.error));
+    const plugin = await storage.createPlugin(parsed.data);
+    res.json(plugin);
+  });
+
+  app.patch("/api/plugins/:id", async (req, res) => {
+    const id = parseInt(req.params.id);
+    const plugin = await storage.updatePlugin(id, req.body);
+    if (!plugin) return res.status(404).json({ error: "Plugin not found" });
+    res.json(plugin);
+  });
+
+  app.post("/api/plugins/:id/download", async (req, res) => {
+    const id = parseInt(req.params.id);
+    const plugin = await storage.incrementPluginDownloads(id);
+    if (!plugin) return res.status(404).json({ error: "Plugin not found" });
+    res.json(plugin);
+  });
+
+  app.post("/api/plugins/:id/install", async (req, res) => {
+    const id = parseInt(req.params.id);
+    const plugin = await storage.updatePlugin(id, { installed: true });
+    if (!plugin) return res.status(404).json({ error: "Plugin not found" });
+    res.json(plugin);
+  });
+
+  app.post("/api/plugins/:id/uninstall", async (req, res) => {
+    const id = parseInt(req.params.id);
+    const plugin = await storage.updatePlugin(id, { installed: false });
+    if (!plugin) return res.status(404).json({ error: "Plugin not found" });
+    res.json(plugin);
+  });
+
+  app.delete("/api/plugins/:id", async (req, res) => {
+    const id = parseInt(req.params.id);
+    await storage.deletePlugin(id);
+    res.json({ success: true });
+  });
+
+  // ===== BOT MEMORY =====
+  app.get("/api/bots/:botId/memory", async (req, res) => {
+    const botId = parseInt(req.params.botId);
+    const memories = await storage.listBotMemory(botId);
+    res.json(memories);
+  });
+
+  app.post("/api/bots/:botId/memory", async (req, res) => {
+    const botId = parseInt(req.params.botId);
+    const parsed = insertBotMemorySchema.safeParse({ ...req.body, botId });
+    if (!parsed.success) return res.status(400).json(zodValidationError(parsed.error));
+    const mem = await storage.createBotMemory(parsed.data);
+    res.json(mem);
+  });
+
+  app.delete("/api/bots/:botId/memory/:memId", async (req, res) => {
+    const memId = parseInt(req.params.memId);
+    await storage.deleteBotMemory(memId);
+    res.json({ success: true });
+  });
+
+  // ===== SYSTEM SNAPSHOTS (TIME CAPSULE) =====
+  app.get("/api/snapshots", async (_req, res) => {
+    const snapshots = await storage.listSystemSnapshots();
+    res.json(snapshots);
+  });
+
+  app.post("/api/snapshots", async (req, res) => {
+    try {
+      const bots = await storage.listBotProfiles();
+      const tasks = await storage.listTasks();
+      const settings: any[] = [];
+      for (const key of ["autonomy_mode", "kill_switch"]) {
+        const s = await storage.getSetting(key);
+        if (s) settings.push(s);
+      }
+      const snapshot = await storage.createSystemSnapshot({
+        name: req.body.name || `Snapshot ${new Date().toLocaleString()}`,
+        description: req.body.description || "",
+        snapshotData: { botCount: bots.length, taskCount: tasks.length, settings, timestamp: new Date().toISOString() },
+        botCount: bots.length,
+        taskCount: tasks.length,
+        settingsCount: settings.length,
+      });
+      res.json(snapshot);
+    } catch (err: any) {
+      res.status(500).json({ error: err.message });
+    }
+  });
+
+  app.delete("/api/snapshots/:id", async (req, res) => {
+    const id = parseInt(req.params.id);
+    await storage.deleteSystemSnapshot(id);
+    res.json({ success: true });
+  });
+
+  // ===== COST TRACKING =====
+  app.get("/api/costs", async (_req, res) => {
+    const events = await storage.listCostEvents(100);
+    res.json(events);
+  });
+
+  app.get("/api/costs/summary", async (_req, res) => {
+    const summary = await storage.getCostSummary();
+    res.json(summary);
+  });
+
+  // ===== BOT RECOMMENDATIONS =====
+  app.get("/api/bots/recommend", async (req, res) => {
+    const context = (req.query.context as string)?.toLowerCase() || "";
+    const bots = await storage.listBotProfiles();
+    const keywords: Record<string, string[]> = {
+      finance: ["finance", "money", "invest", "loan", "bank", "payment", "crypto", "trade"],
+      sales: ["sales", "lead", "crm", "email", "marketing", "outreach", "pipeline"],
+      "real-estate": ["real estate", "property", "house", "flip", "renovation", "mortgage"],
+      gaming: ["game", "gaming", "play", "simulator", "build game"],
+      coding: ["code", "develop", "build", "software", "website", "app", "program"],
+      travel: ["travel", "trip", "flight", "hotel", "vacation", "booking"],
+      production: ["produce", "production", "media", "video", "content", "film"],
+      trade: ["trade", "import", "export", "supply chain", "logistics"],
+      security: ["security", "protect", "hack", "cyber", "compliance"],
+      data: ["data", "analytics", "report", "insight", "research"],
+    };
+    let bestCategory = "general";
+    let bestScore = 0;
+    for (const [cat, words] of Object.entries(keywords)) {
+      const score = words.filter(w => context.includes(w)).length;
+      if (score > bestScore) { bestCategory = cat; bestScore = score; }
+    }
+    const recommended = bots
+      .filter(b => bestScore > 0 ? b.category === bestCategory || b.division.toLowerCase().includes(bestCategory) : true)
+      .slice(0, 5)
+      .map(b => ({ id: b.id, slug: b.slug, displayName: b.displayName, division: b.division, category: b.category, description: b.description, tier: b.tier }));
+    res.json({ context, matchedCategory: bestCategory, recommendations: recommended });
   });
 
   return httpServer;
