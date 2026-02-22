@@ -138,6 +138,7 @@ export const api = {
       input: z.object({
         content: z.string().min(1).max(8000),
         botSlug: z.string().optional(),
+        mode: z.enum(["plan", "build", "execute", "teach"]).optional(),
       }),
       responses: {
         200: z.unknown(),

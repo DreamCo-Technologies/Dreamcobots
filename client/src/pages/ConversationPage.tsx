@@ -11,6 +11,7 @@ import { Card } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
 import {
   streamAssistantReply,
@@ -21,15 +22,63 @@ import { useBots } from "@/hooks/use-bots";
 import { cn } from "@/lib/utils";
 import type { Message } from "@shared/schema";
 import { api } from "@shared/routes";
-import { Bot, Loader2, Trash2, Wand2 } from "lucide-react";
+import { Bot, Loader2, Trash2, Wand2, Map, Hammer, Zap, GraduationCap, Sparkles } from "lucide-react";
 
-function buildSuggestedPrompt() {
-  const suggestions = [
-    "Help me design an autonomous bot to generate recurring income. Ask me 5 questions first, then propose a 7-day execution plan.",
-    "I want to automate YouTube content. Give me a realistic pipeline: scripts, voice, thumbnails, upload schedule, and risk checks.",
-    "Turn my idea into a task list with priorities and a minimal MVP I can ship this week.",
-    "Act as a pragmatic operator. Challenge my assumptions, estimate effort, and propose the simplest profitable experiment.",
-  ];
+type ChatMode = "plan" | "build" | "execute" | "teach";
+
+const MODE_CONFIG: Record<ChatMode, { label: string; icon: typeof Map; color: string; description: string; suggestions: string[] }> = {
+  plan: {
+    label: "Plan",
+    icon: Map,
+    color: "text-blue-500",
+    description: "Strategic thinking & roadmaps",
+    suggestions: [
+      "Map out a 90-day revenue plan for my AI-powered SaaS business.",
+      "Design the architecture for an autonomous content empire.",
+      "Break down my business idea into phases with revenue milestones.",
+      "Create a competitive analysis of the top 10 players in my niche.",
+    ],
+  },
+  build: {
+    label: "Build",
+    icon: Hammer,
+    color: "text-amber-500",
+    description: "Create & implement solutions",
+    suggestions: [
+      "Build me an automation pipeline that generates passive income.",
+      "Help me create a full landing page for my AI product launch.",
+      "Set up an automated lead generation system for my business.",
+      "Design a bot workflow that handles customer onboarding end-to-end.",
+    ],
+  },
+  execute: {
+    label: "Execute",
+    icon: Zap,
+    color: "text-green-500",
+    description: "Take action & get results",
+    suggestions: [
+      "Write 5 high-converting email sequences for my product launch.",
+      "Generate a week of social media content for my AI startup.",
+      "Create a pitch deck outline that closes investors.",
+      "Draft a partnership proposal for a strategic alliance.",
+    ],
+  },
+  teach: {
+    label: "Teach",
+    icon: GraduationCap,
+    color: "text-purple-500",
+    description: "Learn & master new skills",
+    suggestions: [
+      "Teach me how to use AI to automate my entire business workflow.",
+      "Explain prompt engineering like I'm a beginner entrepreneur.",
+      "Walk me through building my first revenue-generating bot.",
+      "Show me the top money-making strategies using AI tools today.",
+    ],
+  },
+};
+
+function buildSuggestedPrompt(mode: ChatMode) {
+  const suggestions = MODE_CONFIG[mode].suggestions;
   return suggestions[Math.floor(Math.random() * suggestions.length)];
 }
 
@@ -42,6 +91,7 @@ export default function ConversationPage() {
 
   const bots = useBots();
   const [botSlug, setBotSlug] = useState<string | undefined>(undefined);
+  const [mode, setMode] = useState<ChatMode>("build");
 
   const convo = useConversation(Number.isFinite(id) ? id : undefined);
   const del = useDeleteConversation();
@@ -52,7 +102,6 @@ export default function ConversationPage() {
 
   const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
 
-  // Local optimistic message list for streaming
   const [localMessages, setLocalMessages] = useState<Message[] | null>(null);
   const messages = localMessages ?? convo.data?.messages ?? [];
 
@@ -66,7 +115,6 @@ export default function ConversationPage() {
   }, [id]);
 
   useEffect(() => {
-    // autoscroll when new messages arrive
     const el = scrollRef.current;
     if (!el) return;
     el.scrollTo({ top: el.scrollHeight, behavior: "smooth" });
@@ -85,12 +133,10 @@ export default function ConversationPage() {
     setStreamError(null);
     setStreaming(true);
 
-    // Cancel any previous stream
     abortRef.current?.abort();
     const controller = new AbortController();
     abortRef.current = controller;
 
-    // Seed local messages from server messages to ensure smooth append
     const base = convo.data?.messages ?? [];
     const now = new Date().toISOString();
     const tempUserId = -Math.floor(Math.random() * 1000000);
@@ -119,6 +165,7 @@ export default function ConversationPage() {
       const input = api.conversations.stream.input.parse({
         content,
         botSlug: effectiveBotSlug,
+        mode,
       });
 
       await streamAssistantReply({
@@ -131,7 +178,6 @@ export default function ConversationPage() {
             setLocalMessages((prev) => {
               const list = prev ?? [...base, userMsg, assistantMsg];
               const next = [...list];
-              // last assistant message is the last item
               const lastIdx = [...next].reverse().findIndex((m) => m.role === "assistant");
               const idx = lastIdx === -1 ? -1 : next.length - 1 - lastIdx;
               if (idx >= 0) {
@@ -142,7 +188,6 @@ export default function ConversationPage() {
           } else if (evt.type === "error") {
             setStreamError(evt.error ?? "Stream error");
           } else if (evt.type === "done") {
-            // Done - refetch canonical messages
           }
         },
       });
@@ -161,6 +206,8 @@ export default function ConversationPage() {
       setStreaming(false);
     }
   }
+
+  const currentModeConfig = MODE_CONFIG[mode];
 
   return (
     <AppShell selectedBotSlug={botSlug} onBotChange={setBotSlug}>
@@ -193,10 +240,10 @@ export default function ConversationPage() {
       <div className="buddy-appear">
         <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4">
           <div className="min-w-0">
-            <h2 className="text-3xl md:text-4xl truncate">{title}</h2>
+            <h2 className="text-3xl md:text-4xl truncate" data-testid="conversation-title">{title}</h2>
             <div className="mt-2 flex flex-wrap items-center gap-2 text-sm text-muted-foreground">
               <span className="inline-flex items-center gap-2">
-                <span className="h-2 w-2 rounded-full bg-[rgb(34_197_94)]" />
+                <span className={cn("h-2 w-2 rounded-full", streaming ? "bg-amber-400 animate-pulse" : "bg-[rgb(34_197_94)]")} />
                 {streaming ? "Bot is responding..." : "Ready"}
               </span>
               <Separator orientation="vertical" className="h-4" />
@@ -214,7 +261,7 @@ export default function ConversationPage() {
               variant="outline"
               className="rounded-xl border-border/70 bg-card/60 hover:bg-card shadow-sm hover:shadow-md transition-all"
               onClick={() => {
-                setComposer(buildSuggestedPrompt());
+                setComposer(buildSuggestedPrompt(mode));
                 toast({ title: "Suggestion inserted", description: "Tweak it, then send." });
               }}
               data-testid="insert-suggestion"
@@ -235,10 +282,41 @@ export default function ConversationPage() {
           </div>
         </div>
 
-        <div className="mt-6 grid grid-cols-1 gap-4 md:gap-5">
+        <div className="mt-4 flex items-center gap-2" data-testid="mode-selector">
+          {(Object.keys(MODE_CONFIG) as ChatMode[]).map((m) => {
+            const cfg = MODE_CONFIG[m];
+            const Icon = cfg.icon;
+            const isActive = mode === m;
+            return (
+              <button
+                key={m}
+                onClick={() => setMode(m)}
+                className={cn(
+                  "inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-sm font-medium transition-all",
+                  isActive
+                    ? "bg-primary text-primary-foreground shadow-md"
+                    : "bg-card/60 border border-border/60 text-muted-foreground hover:text-foreground hover:bg-card hover:shadow-sm"
+                )}
+                data-testid={`mode-${m}`}
+              >
+                <Icon className={cn("h-3.5 w-3.5", isActive ? "text-primary-foreground" : cfg.color)} />
+                {cfg.label}
+              </button>
+            );
+          })}
+          <span className="text-xs text-muted-foreground ml-2 hidden md:inline" data-testid="mode-description">
+            {currentModeConfig.description}
+          </span>
+        </div>
+
+        <div className="mt-4 grid grid-cols-1 gap-4 md:gap-5">
           <Card className="buddy-card rounded-3xl border-border/60 overflow-hidden">
-            <div className="p-4 md:p-5 border-b border-border/60">
+            <div className="p-4 md:p-5 border-b border-border/60 flex items-center justify-between">
               <p className="text-xs font-medium text-muted-foreground">Thread</p>
+              <Badge variant="outline" className="text-xs rounded-lg">
+                <Sparkles className={cn("h-3 w-3 mr-1", currentModeConfig.color)} />
+                {currentModeConfig.label} Mode
+              </Badge>
             </div>
 
             <div className="relative">
@@ -252,7 +330,7 @@ export default function ConversationPage() {
                 <div className="p-5">
                   <EmptyState
                     icon={<Loader2 className="h-6 w-6" />}
-                    title="Couldn’t load this conversation"
+                    title="Couldn't load this conversation"
                     description={(convo.error as any)?.message ?? "Unknown error"}
                     action={
                       <Button
@@ -286,12 +364,25 @@ export default function ConversationPage() {
                 <ScrollArea className="h-[46vh] md:h-[56vh]">
                   <div ref={scrollRef} className="p-4 md:p-6 space-y-4">
                     {messages.length === 0 ? (
-                      <EmptyState
-                        icon={<Bot className="h-6 w-6" />}
-                        title="Start your conversation"
-                        description="Ask for an automation plan, a system design, or a focused next action."
-                        data-testid="thread-empty"
-                      />
+                      <div className="space-y-6" data-testid="thread-empty">
+                        <EmptyState
+                          icon={<Bot className="h-6 w-6" />}
+                          title={`${currentModeConfig.label} Mode Active`}
+                          description={currentModeConfig.description + " — pick a suggestion below or type your own."}
+                        />
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                          {currentModeConfig.suggestions.map((s, i) => (
+                            <button
+                              key={i}
+                              onClick={() => setComposer(s)}
+                              className="text-left text-sm p-3 rounded-xl border border-border/60 bg-card/40 hover:bg-card hover:shadow-sm transition-all text-muted-foreground hover:text-foreground"
+                              data-testid={`suggestion-${i}`}
+                            >
+                              {s}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
                     ) : (
                       <div className="space-y-4">
                         {messages.map((m, idx) => (
@@ -325,7 +416,7 @@ export default function ConversationPage() {
             value={composer}
             onChange={setComposer}
             onSend={handleSend}
-            onSuggest={() => setComposer(buildSuggestedPrompt())}
+            onSuggest={() => setComposer(buildSuggestedPrompt(mode))}
             disabled={convo.isLoading || convo.data === null}
             sending={streaming}
           />

@@ -29,6 +29,7 @@ import LoansPage from "@/pages/LoansPage";
 import ConnectionsPage from "@/pages/ConnectionsPage";
 import TimeCapsulePage from "@/pages/TimeCapsulePage";
 import CostTrackingPage from "@/pages/CostTrackingPage";
+import AILeadersPage from "@/pages/AILeadersPage";
 
 function Router() {
   return (
@@ -57,6 +58,7 @@ function Router() {
       <Route path="/connections" component={ConnectionsPage} />
       <Route path="/time-capsule" component={TimeCapsulePage} />
       <Route path="/costs" component={CostTrackingPage} />
+      <Route path="/ai-leaders" component={AILeadersPage} />
 
       {/* Legacy / convenience */}
       <Route path="/chat">

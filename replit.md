@@ -28,7 +28,10 @@ The system employs a modern web stack:
 
 **UI/UX Decisions:**
 - A consistent `AppShell` with sidebar navigation ensures easy access to all system modules.
-- Dedicated pages for Dashboard, Divisions, Bots, Autonomy, Chat, Ecosystem, Orchestration, Marketplace (with Plugins tab), Formulas, Deals, Debug, Learning Matrix, Connections (multi-platform access + kill switch), Time Capsule (system snapshots), and Cost Tracking provide specialized views and controls.
+- Dedicated pages for Dashboard, Divisions, Bots, Autonomy, Chat (with Plan/Build/Execute/Teach mode selector), Ecosystem, Orchestration, Marketplace (with Plugins tab), Formulas, Deals, Debug, Learning Matrix, AI Leaders (Top 100 AI companies), Connections (multi-platform access + kill switch), Time Capsule (system snapshots), and Cost Tracking provide specialized views and controls.
+- **Universal Tool Belt** (`shared/tool-belt.ts`): Runtime-injected system prompt enhancement giving all 857 bots entrepreneurship tools, AI safety principles, mode-specific instructions, and Top 100 AI companies context. Uses `buildEnhancedSystemPrompt()` to compose final prompts.
+- **Chat Mode Selector**: Plan/Build/Execute/Teach modes shape bot behavior and suggested prompts. Mode is passed in streaming requests and injected into system prompts at runtime.
+- **Bot Normalization Endpoint**: POST `/api/bots/normalize` validates and fills missing fields across all bot profiles.
 - Bot cards are interactive, leading to detailed profile pages with control panels, metrics, and capabilities.
 - Color-coded status indicators are used in the Deal Analyzer for quick assessment of deal viability.
 

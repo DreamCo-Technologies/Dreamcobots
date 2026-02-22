@@ -10,6 +10,7 @@ import { ALL_BOTS } from "./seed-bots";
 import { DIVISIONS, insertBotMetricSchema, insertBotErrorSchema, insertBotFinancialSchema, insertAlertRuleSchema, insertDealSchema, insertDebugEventSchema, insertAutoFixSchema, insertRevenueLeakSchema, insertSecurityScanSchema, insertFormulaSchema, insertPlatformConnectionSchema, insertPluginSchema, insertBotMemorySchema, insertSystemSnapshotSchema, insertCostEventSchema } from "@shared/schema";
 import { calculateRealEstate, calculateCarFlip, type RealEstateInputs, type CarFlipInputs } from "@shared/deal-calculations";
 import { FORMULA_LIBRARY } from "@shared/formula-library";
+import { buildEnhancedSystemPrompt } from "@shared/tool-belt";
 import { getUncachableStripeClient, getStripePublishableKey } from "./stripeClient";
 import { db } from "./db";
 import { batchProcessWithSSE } from "./replit_integrations/batch";
@@ -269,6 +270,58 @@ export async function registerRoutes(
     res.json(updated);
   });
 
+  app.post("/api/bots/normalize", async (req, res) => {
+    const allBots = await storage.listBotProfiles();
+    let fixed = 0;
+    const issues: string[] = [];
+
+    for (const bot of allBots) {
+      const updates: Record<string, any> = {};
+
+      if (!bot.systemPrompt || bot.systemPrompt.trim().length < 10) {
+        updates.systemPrompt = `You are ${bot.displayName}, a specialized AI bot in the ${bot.division} division of DreamCo Empire OS. Help the user with tasks related to your expertise.`;
+        issues.push(`${bot.slug}: missing/short systemPrompt`);
+      }
+
+      if (!bot.description || bot.description.trim().length < 5) {
+        updates.description = `${bot.displayName} - ${bot.division} division bot`;
+        issues.push(`${bot.slug}: missing description`);
+      }
+
+      if (!Array.isArray(bot.capabilities) || (bot.capabilities as any[]).length === 0) {
+        updates.capabilities = ["general-assistance", "task-execution"];
+        issues.push(`${bot.slug}: empty capabilities`);
+      }
+
+      if (!Array.isArray(bot.traits) || (bot.traits as any[]).length === 0) {
+        updates.traits = ["reliable", "efficient"];
+        issues.push(`${bot.slug}: empty traits`);
+      }
+
+      if (!bot.revenueModel) {
+        updates.revenueModel = "subscription";
+        issues.push(`${bot.slug}: missing revenueModel`);
+      }
+
+      if (!bot.category) {
+        updates.category = "general";
+        issues.push(`${bot.slug}: missing category`);
+      }
+
+      if (Object.keys(updates).length > 0) {
+        await storage.updateBotProfile(bot.id, updates);
+        fixed++;
+      }
+    }
+
+    res.json({
+      total: allBots.length,
+      fixed,
+      issues,
+      message: fixed > 0 ? `Normalized ${fixed} bots` : "All bots already normalized",
+    });
+  });
+
   // Conversations
   app.get(api.conversations.list.path, async (req, res) => {
     const convs = await storage.listConversations();
@@ -353,7 +406,7 @@ export async function registerRoutes(
     const conv = await storage.getConversation(conversationId);
     if (!conv) return res.status(404).json({ message: "Conversation not found" });
 
-    let input: { content: string; botSlug?: string };
+    let input: { content: string; botSlug?: string; mode?: string };
     try {
       input = api.conversations.stream.input.parse(req.body);
     } catch (err) {
@@ -367,7 +420,12 @@ export async function registerRoutes(
       ? await storage.getBotProfileBySlug(input.botSlug)
       : await storage.getDefaultBotProfile();
 
-    const system = bot?.systemPrompt ?? "You are the central AI brain of DreamCo Empire OS.";
+    const mode = (input as any).mode ?? "build";
+    const basePrompt = bot?.systemPrompt ?? "You are the central AI brain of DreamCo Empire OS.";
+    const botName = bot?.displayName ?? "Empire AI";
+    const division = bot?.division ?? "CommandCore";
+    const capabilities = Array.isArray(bot?.capabilities) ? (bot.capabilities as string[]) : [];
+    const system = buildEnhancedSystemPrompt(basePrompt, botName, division, capabilities, mode);
 
     const userMsg = await storage.createMessage(conversationId, "user", input.content);
 
@@ -388,7 +446,7 @@ export async function registerRoutes(
       model: "gpt-4.1-mini",
       messages: messagesForModel,
       stream: true,
-      max_completion_tokens: 1800,
+      max_completion_tokens: 4000,
     });
 
     let assistantText = "";
@@ -878,7 +936,7 @@ export async function registerRoutes(
         category: cat,
         severity,
         summary: sums[i % sums.length],
-        stackTrace: `Error at ${cat}.handler:${10 + i}\n  at processQueue (worker.ts:${44 + i})`,
+        details: { stackTrace: `Error at ${cat}.handler:${10 + i}\n  at processQueue (worker.ts:${44 + i})` },
         botId: botIds[i % botIds.length],
         status,
         resolution: status === "resolved" ? "Patched and deployed" : undefined,
