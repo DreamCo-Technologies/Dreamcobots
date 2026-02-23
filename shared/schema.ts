@@ -56,6 +56,7 @@ export const DIVISIONS = [
   "DreamLoans",
   "DreamPersonalCare",
   "DreamMilitary",
+  "DreamAgents",
 ] as const;
 
 export type Division = (typeof DIVISIONS)[number];

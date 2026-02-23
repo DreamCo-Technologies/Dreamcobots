@@ -28,6 +28,7 @@ import {
   Clock,
   DollarSign,
   Trophy,
+  Cpu,
 } from "lucide-react";
 import ThemeToggle from "@/components/ThemeToggle";
 import { Button } from "@/components/ui/button";
@@ -81,6 +82,7 @@ export default function AppShell(props: {
     { href: "/formulas", label: "Formula Vault", icon: FlaskConical },
     { href: "/learning-matrix", label: "Learning Matrix", icon: Brain },
     { href: "/ai-leaders", label: "AI Leaders", icon: Trophy },
+    { href: "/ai-models", label: "AI Models Hub", icon: Cpu },
     { href: "/ecosystem", label: "AI Ecosystem", icon: Globe },
     { href: "/orchestration", label: "Orchestration", icon: Network },
     { href: "/marketplace", label: "Marketplace", icon: Store },

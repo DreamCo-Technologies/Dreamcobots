@@ -1,7 +1,7 @@
 # DreamCo Empire OS
 
 ## Overview
-DreamCo Empire OS is a 6-layer autonomous wealth-generation system orchestrating over 857 AI bots across 44 divisions. Its primary purpose is revenue generation through a SaaS model, covering a vast array of job categories, including specialized areas like crypto, payments, coding, business launch, and loan services. The system features three autonomy modes (Guided, Semi-Autonomous, Full Autonomy) and provides comprehensive bot tracking and metrics. The vision is to offer a powerful, adaptive, and revenue-focused AI ecosystem.
+DreamCo Empire OS is a 6-layer autonomous wealth-generation system orchestrating over 875+ AI bots across 45 divisions (including the new DreamAgents autonomous agent division). Its primary purpose is revenue generation through a SaaS model, covering a vast array of job categories, including specialized areas like crypto, payments, coding, business launch, and loan services. The system features three autonomy modes (Guided, Semi-Autonomous, Full Autonomy) and provides comprehensive bot tracking and metrics. The vision is to offer a powerful, adaptive, and revenue-focused AI ecosystem.
 
 ## User Preferences
 I prefer detailed explanations.
@@ -16,7 +16,7 @@ The system employs a modern web stack:
 - **AI**: Integrates OpenAI GPT-4.1-mini capabilities through Replit AI.
 
 **Core Architectural Decisions & Design Patterns:**
-- **Modular Design**: The system is structured into 44 divisions, each comprising multiple specialized AI bots, allowing for scalability and clear separation of concerns.
+- **Modular Design**: The system is structured into 45 divisions, each comprising multiple specialized AI bots, allowing for scalability and clear separation of concerns.
 - **Autonomy Modes**: Three distinct operational modes (Guided, Semi-Autonomous, Full Autonomy) offer flexibility in bot control and user intervention, with tier-based access.
 - **Data Schemas**: A centralized `shared/schema.ts` defines 17 core database tables for managing conversations, bots, tasks, metrics, financials, system settings, platform connections, plugins, bot memory, system snapshots, and cost events.
 - **API-Driven Control**: All bot and system controls, including autonomy levels and operational modes (sandbox/live/offline), are managed via a comprehensive RESTful API.
@@ -28,7 +28,7 @@ The system employs a modern web stack:
 
 **UI/UX Decisions:**
 - A consistent `AppShell` with sidebar navigation ensures easy access to all system modules.
-- Dedicated pages for Dashboard, Divisions, Bots, Autonomy, Chat (with Plan/Build/Execute/Teach mode selector), Ecosystem, Orchestration, Marketplace (with Plugins tab), Formulas, Deals, Debug, Learning Matrix, AI Leaders (Top 100 AI companies), Connections (multi-platform access + kill switch), Time Capsule (system snapshots), and Cost Tracking provide specialized views and controls.
+- Dedicated pages for Dashboard, Divisions, Bots, Autonomy, Chat (with Plan/Build/Execute/Teach mode selector), Ecosystem, Orchestration, Marketplace (with Plugins tab), Formulas, Deals, Debug, Learning Matrix, AI Leaders (Top 100 AI companies), AI Models Hub (100 models with free/paid tiers, package deals, Stripe checkout), Connections (multi-platform access + kill switch), Time Capsule (system snapshots), and Cost Tracking provide specialized views and controls.
 - **Universal Tool Belt** (`shared/tool-belt.ts`): Runtime-injected system prompt enhancement giving all 857 bots entrepreneurship tools, AI safety principles, mode-specific instructions, and Top 100 AI companies context. Uses `buildEnhancedSystemPrompt()` to compose final prompts.
 - **Chat Mode Selector**: Plan/Build/Execute/Teach modes shape bot behavior and suggested prompts. Mode is passed in streaming requests and injected into system prompts at runtime.
 - **Bot Normalization Endpoint**: POST `/api/bots/normalize` validates and fills missing fields across all bot profiles.

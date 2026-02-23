@@ -30,6 +30,7 @@ import ConnectionsPage from "@/pages/ConnectionsPage";
 import TimeCapsulePage from "@/pages/TimeCapsulePage";
 import CostTrackingPage from "@/pages/CostTrackingPage";
 import AILeadersPage from "@/pages/AILeadersPage";
+import AIModelsPage from "@/pages/AIModelsPage";
 
 function Router() {
   return (
@@ -59,6 +60,7 @@ function Router() {
       <Route path="/time-capsule" component={TimeCapsulePage} />
       <Route path="/costs" component={CostTrackingPage} />
       <Route path="/ai-leaders" component={AILeadersPage} />
+      <Route path="/ai-models" component={AIModelsPage} />
 
       {/* Legacy / convenience */}
       <Route path="/chat">
