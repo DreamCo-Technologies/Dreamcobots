@@ -27,7 +27,7 @@ jobs:
           echo "::add-mask::${{ secrets.API_KEY }}"
 
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       # ── Step 9: Pre-Check Validation ──────────────────────────────────────
       - name: Validate Environment
@@ -115,7 +115,7 @@ jobs:
           echo "Actor: ${{ github.actor }}"
 
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       # ── Step 2: continue-on-error for controlled failures ─────────────────
       - name: Deploy to Production
@@ -221,7 +221,7 @@ jobs:
           fi
 
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       # ── Step 6: Upload Logs on Failure ────────────────────────────────────
       - name: Upload Error Logs
