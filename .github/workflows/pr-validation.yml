@@ -32,7 +32,7 @@ jobs:
       has_js: ${{ steps.detect.outputs.has_js }}
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           fetch-depth: 0
 
@@ -73,7 +73,7 @@ jobs:
     if: needs.detect-languages.outputs.has_js == 'true'
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -105,7 +105,7 @@ jobs:
     if: needs.detect-languages.outputs.has_js == 'true'
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -140,7 +140,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -171,7 +171,7 @@ jobs:
     if: needs.detect-languages.outputs.has_python == 'true'
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -220,7 +220,7 @@ jobs:
         python-version: ['3.11', '3.12']
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v5
@@ -266,7 +266,7 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Set up Java
         uses: actions/setup-java@v4
@@ -349,7 +349,7 @@ jobs:
       !contains(needs.*.result, 'cancelled')
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
