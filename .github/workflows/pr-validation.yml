@@ -91,7 +91,7 @@ jobs:
 
       - name: Upload ESLint results
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: eslint-results
           path: /tmp/eslint-output.txt
@@ -128,7 +128,7 @@ jobs:
 
       - name: Upload Prettier results
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: prettier-results
           path: /tmp/prettier-output.txt
@@ -157,7 +157,7 @@ jobs:
 
       - name: Upload Jest results
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: jest-results
           path: /tmp/jest-output.txt
@@ -205,7 +205,7 @@ jobs:
 
       - name: Upload Python lint results
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: python-lint-results
           path: /tmp/flake8-output.txt
@@ -247,7 +247,7 @@ jobs:
 
       - name: Upload pytest results
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: pytest-results-${{ matrix.python-version }}
           path: /tmp/pytest-output.txt
@@ -332,7 +332,7 @@ jobs:
 
       - name: Upload Java lint results
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: java-lint-results
           path: /tmp/checkstyle-output.txt
