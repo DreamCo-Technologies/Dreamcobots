@@ -84,7 +84,7 @@ def start() -> dict:
     # ------------------------------------------------------------------
     # 5. AI Learning Loop — analyse and evolve
     # ------------------------------------------------------------------
-    learning_loop = LearningLoop(controller=None, generator=generator)
+    learning_loop = LearningLoop(generator=generator)
     # Feed this cycle's results into the learning loop
     learning_loop.ingest_cycle_results(loop_results)
     learning_cycle = learning_loop.analyse()
