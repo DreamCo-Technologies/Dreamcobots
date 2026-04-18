@@ -841,4 +841,40 @@ _DREAMCO_BOTS: list[BotEntry] = [
             "god_mode",
         ],
     ),
+    BotEntry(
+        bot_id="model_router_bot",
+        display_name="DreamCo Model Router Bot",
+        description=(
+            "DreamCo's AI routing brain. Automatically selects the best AI model "
+            "for every task using a real enterprise routing system — coding to "
+            "Anthropic, general to OpenAI, vision to Google, cheap scale to "
+            "Mistral/Meta, search to Cohere, real-time to xAI. Features a "
+            "TaskClassifier, RouterAgent, ResourceManager (email, CRM, payments, "
+            "data), and PerformanceTracker with cost optimisation. Supports "
+            "multi-agent broadcasting on ENTERPRISE tier."
+        ),
+        category=BotCategory.AI,
+        module_path="bots.model_router_bot.model_router_bot",
+        class_name="ModelRouterBot",
+        capabilities=[
+            "model_routing",
+            "task_classification",
+            "router_agent",
+            "resource_manager",
+            "performance_tracking",
+            "cost_optimization",
+            "multi_agent_communication",
+            "provider_mapping",
+            "email_tool",
+            "crm_tool",
+            "payment_tool",
+            "data_fetch_tool",
+            "anthropic_routing",
+            "openai_routing",
+            "google_routing",
+            "mistral_routing",
+            "cohere_routing",
+            "xai_routing",
+        ],
+    ),
 ]
