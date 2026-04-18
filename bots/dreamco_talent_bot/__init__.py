@@ -1,0 +1,73 @@
+"""
+DreamCo Talent Bot — Package Initializer
+
+Exports all public classes and helpers for the DreamCo Talent Bot.
+"""
+
+from bots.dreamco_talent_bot.dreamco_talent_bot import (
+    DreamCoTalentBot,
+    DreamCoTalentBotError,
+    DreamCoTalentBotTierError,
+    MusicProductionEngine,
+    VoiceCloneEngine,
+    RightsEngine,
+    TalentAgencyEngine,
+    FinancialEngine,
+    ContentCreatorEngine,
+    MarketplaceEngine,
+    SelfHealEngine,
+    BeatTrack,
+    VoiceProfile,
+    RightsRecord,
+    ArtistProfile,
+    ShowBooking,
+    GrantOpportunity,
+    MarketplaceListing,
+    SUPPORTED_GENRES,
+    SUPPORTED_PLATFORMS,
+    SUPPORTED_CONTENT_TYPES,
+    SUPPORTED_RIGHT_TYPES,
+    SUPPORTED_GRANT_CATEGORIES,
+)
+from bots.dreamco_talent_bot.tiers import (
+    Tier,
+    TierConfig,
+    get_tier_config,
+    get_upgrade_path,
+    list_tiers,
+    BOT_FEATURES,
+    get_bot_tier_info,
+)
+
+__all__ = [
+    "DreamCoTalentBot",
+    "DreamCoTalentBotError",
+    "DreamCoTalentBotTierError",
+    "MusicProductionEngine",
+    "VoiceCloneEngine",
+    "RightsEngine",
+    "TalentAgencyEngine",
+    "FinancialEngine",
+    "ContentCreatorEngine",
+    "MarketplaceEngine",
+    "SelfHealEngine",
+    "BeatTrack",
+    "VoiceProfile",
+    "RightsRecord",
+    "ArtistProfile",
+    "ShowBooking",
+    "GrantOpportunity",
+    "MarketplaceListing",
+    "SUPPORTED_GENRES",
+    "SUPPORTED_PLATFORMS",
+    "SUPPORTED_CONTENT_TYPES",
+    "SUPPORTED_RIGHT_TYPES",
+    "SUPPORTED_GRANT_CATEGORIES",
+    "Tier",
+    "TierConfig",
+    "get_tier_config",
+    "get_upgrade_path",
+    "list_tiers",
+    "BOT_FEATURES",
+    "get_bot_tier_info",
+]

@@ -46,6 +46,7 @@ class BotCategory(Enum):
     APP = "app"
     OCCUPATIONAL = "occupational"
     SYSTEM = "system"
+    ENTERTAINMENT = "entertainment"
     OTHER = "other"
 
 
@@ -839,6 +840,46 @@ _DREAMCO_BOTS: list[BotEntry] = [
             "multi_path_tracker",
             "self_improving_ai",
             "god_mode",
+        ],
+    ),
+    BotEntry(
+        bot_id="dreamco_talent_bot",
+        display_name="DreamCo Talent Bot",
+        description=(
+            "AI-powered music producer and worldwide talent agency bot. "
+            "Generates copyright-safe beats, songs, commercials, podcasts, and "
+            "social media content (Reels, TikTok, YouTube). Clones voices, "
+            "manages artist bookings and show outlets, files copyrights, "
+            "trademarks, and patents, sources grants and loans, tracks royalties, "
+            "and runs a beat/song marketplace with white-label storefront support. "
+            "Covers music, podcasters, inventors, and all creative talent industries."
+        ),
+        category=BotCategory.ENTERTAINMENT,
+        module_path="bots.dreamco_talent_bot.dreamco_talent_bot",
+        class_name="DreamCoTalentBot",
+        capabilities=[
+            "beat_generation",
+            "song_creation",
+            "voice_cloning",
+            "voiceover_generation",
+            "music_mastering",
+            "commercial_production",
+            "podcast_creation",
+            "reel_tiktok_content",
+            "onlyfans_content_tools",
+            "copyright_registration",
+            "trademark_registration",
+            "patent_search_and_filing",
+            "ip_portfolio_management",
+            "show_booking",
+            "talent_management",
+            "show_outlet_creation",
+            "grant_loan_sourcing",
+            "royalty_tracking",
+            "cross_platform_distribution",
+            "beat_song_marketplace",
+            "white_label_storefront",
+            "self_healing",
         ],
     ),
 ]
