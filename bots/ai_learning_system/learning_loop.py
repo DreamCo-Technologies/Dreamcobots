@@ -130,18 +130,23 @@ class LearningLoop:
         underperform_threshold: int = DEFAULT_UNDERPERFORM_THRESHOLD,
         kpis: Optional[Dict[str, float]] = None,
         control_center: Any = None,
+        controller: Any = None,
     ) -> None:
         import random as _rand_ll
         self._rand_ll = _rand_ll
         # Resolve positional ambiguity: if first arg is a dict, treat as kpis (legacy)
         if isinstance(control_center_or_kpis, dict):
             _kpis = control_center_or_kpis
-            self.control_center = control_center
+            self.control_center = control_center or controller
             self.generator = generator
         else:
-            self.control_center = control_center_or_kpis or control_center
+            self.control_center = control_center_or_kpis or control_center or controller
             self.generator = generator
             _kpis = kpis
+        # ``controller`` is kept as a dedicated attribute for architectural
+        # flexibility; it also acts as a fallback when no ``control_center`` is
+        # supplied (see resolution logic above).
+        self.controller = controller
         self.kpis: Dict[str, float] = {**DEFAULT_KPIS, **(_kpis or {})}
         self._performance: Dict[str, BotPerformanceRecord] = {}
         self._refactor_log: List[Dict[str, Any]] = []
