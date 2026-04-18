@@ -48,6 +48,7 @@ BOT_DIRS: tuple[str, ...] = (
     "analytics-elites",
     "real-estate-tools",
     "compliance-tools",
+    "DreamFinance",
 )
 
 # Files that are not bot implementations and should be skipped.
