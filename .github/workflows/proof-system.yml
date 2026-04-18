@@ -1,0 +1,27 @@
+name: DreamCo Proof System
+
+on:
+  workflow_dispatch:
+  push:
+
+jobs:
+  proof:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v4
+
+      - name: System Running Proof
+        run: |
+          echo "🚀 DREAMCO SYSTEM IS LIVE" > proof.txt
+          echo "Timestamp: $(date)" >> proof.txt
+          cat proof.txt
+
+      - name: Upload Proof Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: dreamco-proof
+          path: proof.txt
