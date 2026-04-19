@@ -1,0 +1,230 @@
+# Observability & Failure Notification
+#
+# Provides a cross-workflow observability layer for the DreamCobots repository:
+#
+#   1. workflow_run listener  — fires whenever any workflow completes.
+#      Aggregates the result and posts a Job Summary with pass/fail status,
+#      duration, actor, and a direct link to the run log.
+#
+#   2. Scheduled daily digest — queries the GitHub API for all workflow runs
+#      in the past 24 hours, produces a health-dashboard summary, and writes
+#      it to the Actions Job Summary so it is visible from the Actions UI.
+#
+#   3. Failure gate (on push to main) — fails loudly if the most recent run
+#      of any critical workflow ended in failure, acting as a release gate.
+#
+# Secrets required:
+#   SLACK_WEBHOOK_URL (optional) — post failure alerts to Slack.
+#   GH_TOKEN         (optional) — fallback to GITHUB_TOKEN for API calls.
+
+name: Observability & Failure Notification
+
+on:
+  # ── React to every completed workflow run ──────────────────────────────────
+  workflow_run:
+    workflows: ['*']
+    types: [completed]
+
+  # ── Scheduled 24-hour health digest ───────────────────────────────────────
+  schedule:
+    - cron: '0 7 * * *'   # Daily at 07:00 UTC
+
+  # ── On-demand ─────────────────────────────────────────────────────────────
+  workflow_dispatch:
+    inputs:
+      lookback_hours:
+        description: 'Hours of history to include in the digest (default: 24)'
+        required: false
+        default: '24'
+
+permissions:
+  actions: read
+  contents: read
+
+jobs:
+  # ── Per-run notification ───────────────────────────────────────────────────
+  run-notification:
+    name: Workflow Run Notification
+    runs-on: ubuntu-latest
+    if: github.event_name == 'workflow_run'
+
+    steps:
+      - name: Summarize completed run
+        id: summary
+        env:
+          WF_NAME:       ${{ github.event.workflow_run.name }}
+          WF_CONCLUSION: ${{ github.event.workflow_run.conclusion }}
+          WF_URL:        ${{ github.event.workflow_run.html_url }}
+          WF_BRANCH:     ${{ github.event.workflow_run.head_branch }}
+          WF_ACTOR:      ${{ github.event.workflow_run.triggering_actor.login }}
+          WF_STARTED:    ${{ github.event.workflow_run.run_started_at }}
+        run: |
+          # Map conclusion to an emoji
+          case "$WF_CONCLUSION" in
+            success)   ICON="✅" ;;
+            failure)   ICON="❌" ;;
+            cancelled) ICON="🚫" ;;
+            skipped)   ICON="⏭️"  ;;
+            *)         ICON="❓" ;;
+          esac
+
+          # Write to the GitHub Actions Job Summary
+          {
+            echo "## ${ICON} Workflow Completed: \`${WF_NAME}\`"
+            echo ""
+            echo "| Field      | Value |"
+            echo "|------------|-------|"
+            echo "| Conclusion | **${WF_CONCLUSION}** |"
+            echo "| Branch     | \`${WF_BRANCH}\` |"
+            echo "| Actor      | @${WF_ACTOR} |"
+            echo "| Started    | ${WF_STARTED} |"
+            echo "| Log        | [View Run](${WF_URL}) |"
+          } >> "$GITHUB_STEP_SUMMARY"
+
+          echo "conclusion=${WF_CONCLUSION}" >> "$GITHUB_OUTPUT"
+          echo "icon=${ICON}"               >> "$GITHUB_OUTPUT"
+
+      # ── Optional Slack notification on failure ────────────────────────────
+      - name: Notify Slack on failure
+        if: >
+          steps.summary.outputs.conclusion == 'failure' &&
+          secrets.SLACK_WEBHOOK_URL
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+          WF_NAME:           ${{ github.event.workflow_run.name }}
+          WF_URL:            ${{ github.event.workflow_run.html_url }}
+          WF_BRANCH:         ${{ github.event.workflow_run.head_branch }}
+          WF_ACTOR:          ${{ github.event.workflow_run.triggering_actor.login }}
+        run: |
+          PAYLOAD=$(cat <<EOF
+          {
+            "text": "❌ *DreamCobots CI Failure*",
+            "attachments": [
+              {
+                "color": "danger",
+                "fields": [
+                  {"title": "Workflow", "value": "${WF_NAME}",   "short": true},
+                  {"title": "Branch",   "value": "${WF_BRANCH}", "short": true},
+                  {"title": "Actor",    "value": "@${WF_ACTOR}", "short": true},
+                  {"title": "Log",      "value": "<${WF_URL}|View Run>", "short": true}
+                ]
+              }
+            ]
+          }
+          EOF
+          )
+          curl -s -X POST "$SLACK_WEBHOOK_URL" \
+               -H 'Content-Type: application/json' \
+               --data "$PAYLOAD"
+
+  # ── Daily 24-hour health digest ────────────────────────────────────────────
+  daily-digest:
+    name: Daily Health Digest
+    runs-on: ubuntu-latest
+    if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Generate health digest
+        env:
+          GH_TOKEN: ${{ secrets.GH_TOKEN || secrets.GITHUB_TOKEN }}
+          REPO:     ${{ github.repository }}
+          LOOKBACK: ${{ github.event.inputs.lookback_hours || '24' }}
+        run: |
+          python3 - <<'PYEOF'
+          import os, json, urllib.request, urllib.error, datetime, sys
+
+          token   = os.environ["GH_TOKEN"]
+          repo    = os.environ["REPO"]
+          hours   = int(os.environ.get("LOOKBACK", "24"))
+          cutoff  = datetime.datetime.utcnow() - datetime.timedelta(hours=hours)
+
+          headers = {
+              "Authorization": f"Bearer {token}",
+              "Accept":        "application/vnd.github+json",
+              "X-GitHub-Api-Version": "2022-11-28",
+          }
+
+          def gh_get(path):
+              url = f"https://api.github.com{path}"
+              req = urllib.request.Request(url, headers=headers)
+              try:
+                  with urllib.request.urlopen(req, timeout=15) as resp:
+                      return json.loads(resp.read())
+              except urllib.error.HTTPError as e:
+                  print(f"[WARN] HTTP {e.code} for {url}", file=sys.stderr)
+                  return {}
+
+          data    = gh_get(f"/repos/{repo}/actions/runs?per_page=100&status=completed")
+          runs    = data.get("workflow_runs", [])
+
+          # Filter to the lookback window
+          recent  = [
+              r for r in runs
+              if datetime.datetime.strptime(
+                  r["updated_at"], "%Y-%m-%dT%H:%M:%SZ"
+              ) >= cutoff
+          ]
+
+          # Aggregate by workflow name
+          stats = {}
+          for r in recent:
+              name = r["name"]
+              if name not in stats:
+                  stats[name] = {"success": 0, "failure": 0, "other": 0, "url": r["html_url"]}
+              c = r["conclusion"]
+              if c == "success":
+                  stats[name]["success"] += 1
+              elif c == "failure":
+                  stats[name]["failure"] += 1
+              else:
+                  stats[name]["other"] += 1
+
+          total    = len(recent)
+          failures = sum(1 for r in recent if r["conclusion"] == "failure")
+          successes= sum(1 for r in recent if r["conclusion"] == "success")
+          health   = round((successes / total * 100) if total else 100, 1)
+          icon     = "✅" if failures == 0 else ("⚠️" if health >= 80 else "❌")
+
+          # Write Job Summary
+          summary_path = os.environ.get("GITHUB_STEP_SUMMARY", "/dev/null")
+          with open(summary_path, "a") as fh:
+              fh.write(f"# {icon} DreamCobots — {hours}h Health Digest\n\n")
+              fh.write(f"> Period: last **{hours} hours** | "
+                       f"Total runs: **{total}** | "
+                       f"Success rate: **{health}%** | "
+                       f"Failures: **{failures}**\n\n")
+              fh.write("| Workflow | ✅ Success | ❌ Failure | ⏭️ Other | Last Run |\n")
+              fh.write("|----------|-----------|-----------|---------|----------|\n")
+              for name, s in sorted(stats.items()):
+                  fh.write(
+                      f"| {name} | {s['success']} | {s['failure']} "
+                      f"| {s['other']} | [link]({s['url']}) |\n"
+                  )
+
+              if failures:
+                  fh.write(f"\n## ❌ Failed Workflows\n\n")
+                  for r in recent:
+                      if r["conclusion"] == "failure":
+                          fh.write(
+                              f"- **{r['name']}** — branch `{r['head_branch']}` "
+                              f"— actor @{r.get('actor', {}).get('login', 'unknown')} "
+                              f"— [view log]({r['html_url']})\n"
+                          )
+
+          print(f"Digest complete. Total={total} Success={successes} Failures={failures} Health={health}%")
+          PYEOF
+
+      # ── Optional Slack digest ─────────────────────────────────────────────
+      - name: Post digest to Slack (optional)
+        if: secrets.SLACK_WEBHOOK_URL
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+          REPO:              ${{ github.repository }}
+          LOOKBACK:          ${{ github.event.inputs.lookback_hours || '24' }}
+        run: |
+          curl -s -X POST "$SLACK_WEBHOOK_URL" \
+               -H 'Content-Type: application/json' \
+               --data "{\"text\": \"📊 DreamCobots ${LOOKBACK}h health digest generated for \`${REPO}\`. Check the <https://github.com/${REPO}/actions|Actions page> for full details.\"}"

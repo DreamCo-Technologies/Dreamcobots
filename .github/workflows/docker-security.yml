@@ -1,0 +1,157 @@
+# Docker / Container Security Scan
+#
+# Scans the repository's Dockerfile and any built container image for OS and
+# application-level CVEs using Aqua Security's Trivy scanner.
+#
+# Runs on:
+#   • Every push / PR to main (Dockerfile path filter).
+#   • A weekly schedule (catches newly-published CVEs).
+#   • On-demand via workflow_dispatch.
+#
+# Reports:
+#   • SARIF file uploaded to GitHub Security → Code-scanning alerts.
+#   • Table summary in the Actions run log.
+#
+# Secrets required: none — uses the built-in GITHUB_TOKEN.
+
+name: Docker Security Scan
+
+on:
+  push:
+    branches: [main, master]
+    paths:
+      - 'Dockerfile'
+      - 'docker-compose*.yml'
+      - '.dockerignore'
+      - 'requirements.txt'
+      - 'package.json'
+      - 'package-lock.json'
+  pull_request:
+    branches: [main, master]
+    paths:
+      - 'Dockerfile'
+      - 'docker-compose*.yml'
+      - '.dockerignore'
+      - 'requirements.txt'
+      - 'package.json'
+      - 'package-lock.json'
+  schedule:
+    - cron: '0 4 * * 2'   # Weekly — Tuesdays at 04:00 UTC
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  security-events: write
+
+jobs:
+  # ── Scan the Dockerfile for misconfigurations ─────────────────────────────
+  trivy-config:
+    name: Trivy — Dockerfile Config Scan
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Run Trivy config scan (Dockerfile)
+        uses: aquasecurity/trivy-action@0.28.0
+        with:
+          scan-type: 'config'
+          scan-ref: '.'
+          format: 'sarif'
+          output: 'trivy-config.sarif'
+          exit-code: '0'           # Report only; do not hard-fail on misconfigs
+          severity: 'CRITICAL,HIGH,MEDIUM'
+
+      - name: Upload config-scan SARIF to GitHub Security
+        uses: github/codeql-action/upload-sarif@v3
+        if: always()
+        with:
+          sarif_file: 'trivy-config.sarif'
+          category: 'trivy-config'
+
+  # ── Build the image and scan it for CVEs ──────────────────────────────────
+  trivy-image:
+    name: Trivy — Container Image CVE Scan
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Check if Dockerfile exists
+        id: dockerfile_check
+        run: |
+          if [ -f Dockerfile ]; then
+            echo "exists=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "exists=false" >> "$GITHUB_OUTPUT"
+            echo "No Dockerfile found — skipping image build."
+          fi
+
+      - name: Build Docker image
+        if: steps.dockerfile_check.outputs.exists == 'true'
+        run: |
+          docker build -t dreamcobots:scan-${{ github.sha }} . \
+            --build-arg BUILDKIT_INLINE_CACHE=1 \
+            --label "git.sha=${{ github.sha }}"
+        continue-on-error: true
+
+      - name: Run Trivy image scan
+        if: steps.dockerfile_check.outputs.exists == 'true'
+        uses: aquasecurity/trivy-action@0.28.0
+        with:
+          image-ref: 'dreamcobots:scan-${{ github.sha }}'
+          format: 'sarif'
+          output: 'trivy-image.sarif'
+          exit-code: '0'           # Upload results; do not block CI on CVEs
+          ignore-unfixed: true
+          vuln-type: 'os,library'
+          severity: 'CRITICAL,HIGH'
+
+      - name: Upload image-scan SARIF to GitHub Security
+        uses: github/codeql-action/upload-sarif@v3
+        if: steps.dockerfile_check.outputs.exists == 'true' && always()
+        with:
+          sarif_file: 'trivy-image.sarif'
+          category: 'trivy-image'
+
+      - name: Print image scan summary (table)
+        if: steps.dockerfile_check.outputs.exists == 'true'
+        uses: aquasecurity/trivy-action@0.28.0
+        with:
+          image-ref: 'dreamcobots:scan-${{ github.sha }}'
+          format: 'table'
+          exit-code: '0'
+          ignore-unfixed: true
+          vuln-type: 'os,library'
+          severity: 'CRITICAL,HIGH'
+        continue-on-error: true
+
+  # ── Scan repo filesystem for vulnerable packages ──────────────────────────
+  trivy-fs:
+    name: Trivy — Filesystem Vulnerability Scan
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Run Trivy filesystem scan
+        uses: aquasecurity/trivy-action@0.28.0
+        with:
+          scan-type: 'fs'
+          scan-ref: '.'
+          format: 'sarif'
+          output: 'trivy-fs.sarif'
+          exit-code: '0'
+          ignore-unfixed: true
+          vuln-type: 'os,library'
+          severity: 'CRITICAL,HIGH'
+
+      - name: Upload filesystem-scan SARIF to GitHub Security
+        uses: github/codeql-action/upload-sarif@v3
+        if: always()
+        with:
+          sarif_file: 'trivy-fs.sarif'
+          category: 'trivy-fs'

@@ -1,0 +1,39 @@
+# Dependency Review
+#
+# Blocks pull requests that introduce dependencies with known vulnerabilities
+# by leveraging GitHub's native Dependency Review Action.
+#
+# The action compares the dependency graph of the PR head with the base branch
+# and fails if any newly added package has a vulnerability of the configured
+# minimum severity.
+#
+# Secrets required: none — uses the built-in GITHUB_TOKEN.
+
+name: Dependency Review
+
+on:
+  pull_request:
+    branches: [main, master]
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  dependency-review:
+    name: Review New Dependencies for Vulnerabilities
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Dependency Review
+        uses: actions/dependency-review-action@v4
+        with:
+          # Fail on vulnerabilities rated at or above this severity.
+          fail-on-severity: moderate
+          # Leave a comment on the PR with the scan summary.
+          comment-summary-in-pr: always
+          # Deny packages with these licenses to protect against copyleft risk.
+          deny-licenses: GPL-2.0, GPL-3.0, AGPL-3.0

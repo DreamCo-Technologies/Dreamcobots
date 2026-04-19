@@ -1,0 +1,54 @@
+# CodeQL Security Analysis
+#
+# Runs GitHub's CodeQL static analysis engine on every push/PR to main and on
+# a weekly schedule to surface potential security vulnerabilities in Python and
+# JavaScript/TypeScript sources.
+#
+# Supported languages: python, javascript
+#
+# Secrets required: none — uses the built-in GITHUB_TOKEN.
+
+name: CodeQL Security Analysis
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+    branches: [main, master]
+  schedule:
+    - cron: '0 3 * * 1'   # Weekly — Mondays at 03:00 UTC
+
+permissions:
+  actions: read
+  contents: read
+  security-events: write
+
+jobs:
+  analyze:
+    name: Analyze (${{ matrix.language }})
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        language: [python, javascript]
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v3
+        with:
+          languages: ${{ matrix.language }}
+          # Use the security-extended query suite for a deeper scan.
+          queries: security-extended
+
+      # ── Auto-build (compiled languages — no-op for Python/JS) ─────────────
+      - name: Autobuild
+        uses: github/codeql-action/autobuild@v3
+
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v3
+        with:
+          category: "/language:${{ matrix.language }}"

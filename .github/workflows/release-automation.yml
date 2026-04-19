@@ -1,0 +1,175 @@
+# Release Automation
+#
+# Triggered when a version tag (v*.*.*) is pushed.
+# Steps:
+#   1. Generate a changelog from commits since the previous tag.
+#   2. Create a GitHub Release with that changelog.
+#   3. Build the Node.js project (if applicable) and attach the dist artifact.
+#
+# Secrets required:
+#   GH_TOKEN (optional) — PAT with write:packages scope; falls back to GITHUB_TOKEN.
+
+name: Release Automation
+
+on:
+  push:
+    tags:
+      - 'v[0-9]+.[0-9]+.[0-9]+'   # e.g. v1.2.3
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Existing tag to release (e.g. v1.2.3)'
+        required: true
+
+permissions:
+  contents: write
+
+jobs:
+  # ── Generate changelog & create GitHub Release ───────────────────────────
+  release:
+    name: Create GitHub Release
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository (full history for changelog)
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Determine release tag
+        id: tag
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "tag=${{ github.event.inputs.tag }}" >> "$GITHUB_OUTPUT"
+          else
+            echo "tag=${GITHUB_REF##*/}" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Find previous tag
+        id: prev_tag
+        run: |
+          CURRENT="${{ steps.tag.outputs.tag }}"
+          PREV=$(git tag --sort=-version:refname | grep -v "^${CURRENT}$" | head -n 1 || echo "")
+          echo "prev_tag=${PREV}" >> "$GITHUB_OUTPUT"
+          echo "Previous tag: ${PREV:-'(none — first release)'}"
+
+      - name: Generate changelog
+        id: changelog
+        run: |
+          CURRENT="${{ steps.tag.outputs.tag }}"
+          PREV="${{ steps.prev_tag.outputs.prev_tag }}"
+
+          if [ -n "$PREV" ]; then
+            RANGE="${PREV}..${CURRENT}"
+          else
+            RANGE="${CURRENT}"
+          fi
+
+          echo "Building changelog for range: ${RANGE}"
+
+          # Build a categorised changelog from conventional-commit prefixes.
+          python3 - <<'PYEOF'
+          import subprocess, sys, os
+
+          range_arg = os.environ.get("RANGE", "HEAD")
+          result = subprocess.run(
+              ["git", "log", range_arg, "--pretty=format:%h %s", "--no-merges"],
+              capture_output=True, text=True,
+          )
+          commits = result.stdout.strip().splitlines()
+
+          sections = {
+              "feat":     ("✨ Features",       []),
+              "fix":      ("🐛 Bug Fixes",      []),
+              "perf":     ("⚡ Performance",     []),
+              "refactor": ("♻️  Refactoring",    []),
+              "docs":     ("📝 Documentation",  []),
+              "test":     ("🧪 Tests",           []),
+              "ci":       ("🔧 CI / Tooling",   []),
+              "chore":    ("🧹 Chores",          []),
+              "other":    ("📦 Other",           []),
+          }
+
+          for line in commits:
+              parts = line.split(" ", 1)
+              if len(parts) < 2:
+                  continue
+              sha, msg = parts[0], parts[1]
+              matched = False
+              for prefix in sections:
+                  if prefix == "other":
+                      continue
+                  if msg.lower().startswith(prefix + ":") or msg.lower().startswith(prefix + "("):
+                      sections[prefix][1].append(f"- {msg} ({sha})")
+                      matched = True
+                      break
+              if not matched:
+                  sections["other"][1].append(f"- {msg} ({sha})")
+
+          lines = []
+          for key, (title, entries) in sections.items():
+              if entries:
+                  lines.append(f"## {title}\n")
+                  lines.extend(entries)
+                  lines.append("")
+
+          if not lines:
+              lines = ["No notable changes in this release."]
+
+          changelog = "\n".join(lines)
+          print(changelog)
+
+          with open(os.environ["GITHUB_OUTPUT"], "a") as fh:
+              # Use a heredoc delimiter to handle multi-line output.
+              fh.write(f"changelog<<CHANGELOG_EOF\n{changelog}\nCHANGELOG_EOF\n")
+          PYEOF
+        env:
+          RANGE: ${{ steps.prev_tag.outputs.prev_tag != '' && format('{0}..{1}', steps.prev_tag.outputs.prev_tag, steps.tag.outputs.tag) || steps.tag.outputs.tag }}
+
+      # ── Build Node project (attach dist if present) ───────────────────────
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install Node dependencies
+        run: |
+          if [ -f package.json ]; then
+            npm install --legacy-peer-deps
+          else
+            echo "No package.json — skipping Node build."
+          fi
+
+      - name: Build project
+        id: build
+        run: |
+          if [ -f package.json ] && node -e "const p=require('./package.json'); process.exit(p.scripts&&p.scripts.build?0:1)"; then
+            npm run build
+            echo "has_dist=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "No build script found — skipping."
+            echo "has_dist=false" >> "$GITHUB_OUTPUT"
+          fi
+        continue-on-error: true
+
+      - name: Archive dist artifact
+        if: steps.build.outputs.has_dist == 'true'
+        run: |
+          TAG="${{ steps.tag.outputs.tag }}"
+          zip -r "dreamcobots-${TAG}-dist.zip" dist/ 2>/dev/null \
+            || echo "No dist/ directory to archive."
+
+      # ── Create GitHub Release ─────────────────────────────────────────────
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.tag.outputs.tag }}
+          name: "DreamCobots ${{ steps.tag.outputs.tag }}"
+          body: ${{ steps.changelog.outputs.changelog }}
+          draft: false
+          prerelease: ${{ contains(steps.tag.outputs.tag, '-') }}
+          files: |
+            dreamcobots-${{ steps.tag.outputs.tag }}-dist.zip
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN || secrets.GITHUB_TOKEN }}

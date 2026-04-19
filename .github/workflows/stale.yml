@@ -1,0 +1,80 @@
+# Stale Issue & PR Manager
+#
+# Runs daily to:
+#   • Label issues and PRs that have been inactive for 30 days as "stale".
+#   • Close issues and PRs that remain stale for a further 7 days with no activity.
+#   • Leave a friendly comment explaining why the item was marked or closed.
+#
+# Secrets required: none — uses the built-in GITHUB_TOKEN.
+
+name: Stale Issue & PR Manager
+
+on:
+  schedule:
+    - cron: '0 5 * * *'   # Daily at 05:00 UTC
+  workflow_dispatch:       # Allow on-demand runs
+
+permissions:
+  issues: write
+  pull-requests: write
+
+jobs:
+  stale:
+    name: Mark & Close Stale Issues and PRs
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Stale action
+        uses: actions/stale@v9
+        with:
+          # ── Timing ──────────────────────────────────────────────────────────
+          days-before-stale: 30          # Mark stale after 30 days of inactivity
+          days-before-close: 7           # Close 7 days after being marked stale
+          days-before-pr-stale: 45       # PRs get a longer grace period
+          days-before-pr-close: 14
+
+          # ── Labels ──────────────────────────────────────────────────────────
+          stale-issue-label: 'stale'
+          stale-pr-label: 'stale'
+          close-issue-label: 'auto-closed: stale'
+          close-pr-label: 'auto-closed: stale'
+
+          # ── Labels that exempt an item from stale management ────────────────
+          exempt-issue-labels: 'pinned,security,do-not-close,in-progress,blocked'
+          exempt-pr-labels: 'pinned,security,do-not-close,in-progress,blocked,do not merge'
+          exempt-draft-pr: true
+
+          # ── Messages ────────────────────────────────────────────────────────
+          stale-issue-message: >
+            👋 This issue has been automatically marked as **stale** because it has
+            had no activity in the last 30 days.
+
+            If this issue is still relevant, please leave a comment or remove the
+            `stale` label to keep it open. It will be automatically closed in
+            **7 days** if no further activity occurs.
+
+            Thank you for contributing to DreamCobots! 🤖
+          stale-pr-message: >
+            👋 This pull request has been automatically marked as **stale** because
+            it has had no activity in the last 45 days.
+
+            If this PR is still in progress, please leave a comment, push a new
+            commit, or remove the `stale` label. It will be automatically closed
+            in **14 days** if no further activity occurs.
+
+            Thank you for your contribution to DreamCobots! 🤖
+          close-issue-message: >
+            🔒 This issue has been **automatically closed** due to inactivity.
+
+            If you believe this issue is still relevant, please reopen it with
+            additional context or open a new issue.
+          close-pr-message: >
+            🔒 This pull request has been **automatically closed** due to inactivity.
+
+            If this PR should still be merged, please reopen it or open a new PR
+            with a summary of the changes.
+
+          # ── Operational settings ────────────────────────────────────────────
+          operations-per-run: 100          # API rate-limit guard
+          remove-stale-when-updated: true  # Un-stale on new activity
+          delete-branch: false             # Do not auto-delete branches on close
