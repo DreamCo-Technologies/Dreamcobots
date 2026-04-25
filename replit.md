@@ -35,6 +35,13 @@ The system employs a modern web stack:
 - Bot cards are interactive, leading to detailed profile pages with control panels, metrics, and capabilities.
 - Color-coded status indicators are used in the Deal Analyzer for quick assessment of deal viability.
 
+## PWA (Progressive Web App)
+- `client/public/manifest.json` — Full PWA manifest with shortcuts to Dashboard, Bots, Divisions, Chat
+- `client/public/sw.js` — Service worker for offline caching (skips /api/ routes)
+- `client/index.html` — Updated with PWA meta tags for iOS, Android, Windows, Open Graph, Twitter Card
+- `client/src/main.tsx` — Registers service worker on load
+- **ConnectionsPage** — New "Install App" tab with step-by-step install guides for: Android, iPhone/iPad, Windows, Mac, Smart TV (Samsung/LG/Fire TV), Gaming Consoles (Xbox/PS5/Switch), Chromebook, Roku/Apple TV/Streaming Sticks. Includes a live "Install Now" button that triggers the browser's native PWA install prompt when available.
+
 ## External Dependencies
 - **OpenAI GPT-4.1-mini**: Utilized for core AI functionalities and integrations.
 - **PostgreSQL (Neon-backed)**: The primary database solution, offering scalable and managed data storage.

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Seo from "@/components/Seo";
 import AppShell from "@/components/AppShell";
 import { useQuery, useMutation } from "@tanstack/react-query";
@@ -17,6 +17,7 @@ import {
   AlertTriangle,
   Check,
   Copy,
+  Download,
   Globe,
   Key,
   Link2,
@@ -37,6 +38,7 @@ import {
   Webhook,
   Wifi,
   Zap,
+  Star,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { PlatformConnection } from "@shared/schema";
@@ -64,10 +66,151 @@ function generateWebhookUrl(platform: string) {
   return `${host}/api/webhooks/${platform}/${crypto.randomUUID().slice(0, 8)}`;
 }
 
+const INSTALL_DEVICES = [
+  {
+    id: "android",
+    label: "Android Phone / Tablet",
+    icon: Smartphone,
+    color: "text-green-400",
+    steps: [
+      "Open the DreamCo app URL in Chrome on your Android device",
+      'Tap the 3-dot menu (⋮) in the top-right corner',
+      'Select "Add to Home screen" or "Install app"',
+      'Tap "Add" — DreamCo will appear as an app icon',
+      "Launch from your home screen — it runs like a native app, no app store needed",
+    ],
+    tip: "Works on Android 5+ with Chrome, Edge, or Samsung Internet.",
+  },
+  {
+    id: "iphone",
+    label: "iPhone / iPad (iOS)",
+    icon: Smartphone,
+    color: "text-gray-300",
+    steps: [
+      "Open the DreamCo app URL in Safari on your iPhone or iPad",
+      "Tap the Share button (square with arrow pointing up) at the bottom",
+      'Scroll down and tap "Add to Home Screen"',
+      'Tap "Add" in the top-right — the DreamCo icon appears on your home screen',
+      "Launch from your home screen for a full-screen experience",
+    ],
+    tip: "Must use Safari on iOS. Works on iOS 11.3+. iPadOS also supported.",
+  },
+  {
+    id: "windows",
+    label: "Windows PC / Laptop",
+    icon: Monitor,
+    color: "text-blue-400",
+    steps: [
+      "Open the DreamCo app in Chrome or Microsoft Edge on Windows",
+      "Look for the install icon (computer with down arrow) in the address bar",
+      'Click it and select "Install"',
+      "DreamCo will open in its own window, pinned to your taskbar",
+      "You can also go to Chrome menu → 'Save and share' → 'Install page as app'",
+    ],
+    tip: "Works on Windows 10 and 11 with Chrome, Edge, or any Chromium browser.",
+  },
+  {
+    id: "mac",
+    label: "Mac (macOS)",
+    icon: Monitor,
+    color: "text-gray-400",
+    steps: [
+      "Open the DreamCo app in Chrome or Edge on your Mac",
+      "Click the install icon in the address bar, or go to Chrome Menu → 'Cast, save, and share' → 'Install page as app'",
+      "Click 'Install' in the prompt",
+      "DreamCo will open as a standalone app in your Dock",
+      "Find it in Launchpad or Applications folder too",
+    ],
+    tip: "Safari on Mac does not fully support PWA install. Use Chrome or Edge for best experience.",
+  },
+  {
+    id: "smarttv",
+    label: "Smart TV (Samsung, LG, Fire TV)",
+    icon: Tv,
+    color: "text-purple-400",
+    steps: [
+      "On Samsung Smart TV: Open the built-in browser, navigate to your DreamCo URL",
+      "On LG WebOS: Use the LG browser app and navigate to the URL",
+      "On Amazon Fire TV: Install the Silk Browser or Firefox from the app store, then navigate to the URL",
+      "Bookmark the page for quick access",
+      "For the best TV experience, use a Bluetooth keyboard/mouse or your phone as a remote",
+    ],
+    tip: "Most Smart TVs have a built-in browser. Fire TV Stick works great with the Silk browser.",
+  },
+  {
+    id: "gaming",
+    label: "Gaming Console",
+    icon: Gamepad2,
+    color: "text-red-400",
+    steps: [
+      "Xbox: Open Microsoft Edge (pre-installed), navigate to your DreamCo URL, and pin to home",
+      "PlayStation 5: Open the built-in browser, navigate to the URL, and add a bookmark",
+      "PlayStation 4: Use the built-in browser in the Library section",
+      "Nintendo Switch: Open the browser (via some workarounds or games with browser access), navigate to the URL",
+      "Use a USB keyboard for easier typing on consoles",
+    ],
+    tip: "Xbox Series X/S has full Edge browser support with PWA install capability.",
+  },
+  {
+    id: "chromebook",
+    label: "Chromebook",
+    icon: Monitor,
+    color: "text-yellow-400",
+    steps: [
+      "Open the DreamCo app in Chrome on your Chromebook",
+      "Click the install icon in the address bar (looks like a computer with a down arrow)",
+      "Click 'Install' — DreamCo appears in your app launcher",
+      "Pin it to the shelf for quick access",
+      "Works offline too for cached pages",
+    ],
+    tip: "Chromebooks have first-class PWA support — DreamCo runs like a native app.",
+  },
+  {
+    id: "roku",
+    label: "Roku / Apple TV / Streaming Sticks",
+    icon: Tv,
+    color: "text-orange-400",
+    steps: [
+      "Roku: Install 'Web Browser X' from the Roku Channel Store, open it, and navigate to your DreamCo URL",
+      "Apple TV: Use the built-in Safari browser in tvOS 17+ or install the Chrome app",
+      "Chromecast with Google TV: Use the Chrome browser, navigate to the URL",
+      "Bookmark the page for easy return access",
+      "Pair a Bluetooth keyboard for full control",
+    ],
+    tip: "Streaming devices with browser support can access the full DreamCo dashboard.",
+  },
+];
+
 export default function ConnectionsPage() {
   const { toast } = useToast();
   const [connectDialogOpen, setConnectDialogOpen] = useState(false);
   const [selectedPlatform, setSelectedPlatform] = useState<typeof PLATFORMS[0] | null>(null);
+  const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
+  const [pwaInstalled, setPwaInstalled] = useState(false);
+
+  useEffect(() => {
+    const handler = (e: any) => {
+      e.preventDefault();
+      setDeferredPrompt(e);
+    };
+    window.addEventListener("beforeinstallprompt", handler);
+    window.addEventListener("appinstalled", () => setPwaInstalled(true));
+    if (window.matchMedia("(display-mode: standalone)").matches) {
+      setPwaInstalled(true);
+    }
+    return () => window.removeEventListener("beforeinstallprompt", handler);
+  }, []);
+
+  const handleInstallNow = async () => {
+    if (!deferredPrompt) return;
+    deferredPrompt.prompt();
+    const { outcome } = await deferredPrompt.userChoice;
+    if (outcome === "accepted") {
+      setPwaInstalled(true);
+      toast({ title: "DreamCo Installed!", description: "The app is now on your device." });
+    }
+    setDeferredPrompt(null);
+  };
 
   const connectionsQuery = useQuery<PlatformConnection[]>({
     queryKey: ["/api/platform-connections"],
@@ -182,6 +325,7 @@ export default function ConnectionsPage() {
         <Tabs defaultValue="platforms">
           <TabsList>
             <TabsTrigger value="platforms" data-testid="tab-platforms">Platforms</TabsTrigger>
+            <TabsTrigger value="install" data-testid="tab-install">Install App</TabsTrigger>
             <TabsTrigger value="kill-switch" data-testid="tab-kill-switch">Kill Switch</TabsTrigger>
             <TabsTrigger value="api-keys" data-testid="tab-api-keys">API Keys</TabsTrigger>
           </TabsList>
@@ -253,6 +397,95 @@ export default function ConnectionsPage() {
                 );
               })}
             </div>
+          </TabsContent>
+
+          <TabsContent value="install" className="space-y-6 mt-6">
+            <Card>
+              <CardContent className="p-6">
+                <div className="flex flex-col md:flex-row items-start md:items-center gap-4 justify-between">
+                  <div className="flex items-start gap-4">
+                    <div className="p-3 rounded-xl bg-primary/10">
+                      <Download className="h-8 w-8 text-primary" />
+                    </div>
+                    <div>
+                      <h2 className="text-xl font-bold" data-testid="text-install-title">DreamCo Empire OS — Install on Any Device</h2>
+                      <p className="text-muted-foreground mt-1">
+                        No app store required. Works on phones, tablets, PCs, Macs, Smart TVs, and gaming consoles.
+                        Installs as a native-feeling app in seconds.
+                      </p>
+                    </div>
+                  </div>
+                  {deferredPrompt && !pwaInstalled && (
+                    <Button size="lg" onClick={handleInstallNow} data-testid="button-install-now" className="shrink-0">
+                      <Download className="h-4 w-4 mr-2" /> Install Now
+                    </Button>
+                  )}
+                  {pwaInstalled && (
+                    <Badge className="bg-green-500/15 text-green-500 border-green-500/20 shrink-0">
+                      <Check className="h-3 w-3 mr-1" /> Already Installed
+                    </Badge>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {INSTALL_DEVICES.map((device) => {
+                const Icon = device.icon;
+                return (
+                  <Card key={device.id} data-testid={`card-install-${device.id}`}>
+                    <CardHeader className="pb-3">
+                      <CardTitle className="flex items-center gap-3 text-base">
+                        <div className={cn("p-2 rounded-lg bg-muted", device.color)}>
+                          <Icon className="h-4 w-4" />
+                        </div>
+                        {device.label}
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent className="space-y-3">
+                      <ol className="space-y-2">
+                        {device.steps.map((step, i) => (
+                          <li key={i} className="flex gap-3 text-sm">
+                            <span className="flex-shrink-0 w-5 h-5 rounded-full bg-primary/20 text-primary text-xs font-bold flex items-center justify-center mt-0.5">
+                              {i + 1}
+                            </span>
+                            <span className="text-muted-foreground">{step}</span>
+                          </li>
+                        ))}
+                      </ol>
+                      <div className="flex items-start gap-2 p-3 rounded-lg bg-muted/50 mt-2">
+                        <Star className="h-3 w-3 text-yellow-500 flex-shrink-0 mt-0.5" />
+                        <p className="text-xs text-muted-foreground">{device.tip}</p>
+                      </div>
+                    </CardContent>
+                  </Card>
+                );
+              })}
+            </div>
+
+            <Card>
+              <CardContent className="p-4 flex items-start gap-3">
+                <Globe className="h-4 w-4 text-primary flex-shrink-0 mt-0.5" />
+                <div>
+                  <p className="text-sm font-medium">Share Your App URL</p>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    Copy the URL from your browser's address bar and send it to any device. Anyone with the link can access and install DreamCo Empire OS instantly — no downloads, no sign-ups.
+                  </p>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    className="mt-3"
+                    onClick={() => {
+                      navigator.clipboard.writeText(window.location.origin);
+                      toast({ title: "URL Copied", description: "Share this link to install on any device." });
+                    }}
+                    data-testid="button-copy-app-url"
+                  >
+                    <Copy className="h-3 w-3 mr-1" /> Copy App URL
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
           </TabsContent>
 
           <TabsContent value="kill-switch" className="space-y-4 mt-6">
