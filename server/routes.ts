@@ -433,7 +433,19 @@ export async function registerRoutes(
     const botName = bot?.displayName ?? "Empire AI";
     const division = bot?.division ?? "CommandCore";
     const capabilities = Array.isArray(bot?.capabilities) ? (bot.capabilities as string[]) : [];
-    const system = buildEnhancedSystemPrompt(basePrompt, botName, division, capabilities, mode);
+
+    // Load bot's learned memories for self-learning context injection
+    const memories: string[] = [];
+    if (bot?.id) {
+      try {
+        const memRecords = await storage.listBotMemory(bot.id);
+        memRecords.slice(0, 15).forEach((m: any) => {
+          if (m.content) memories.push(m.content);
+        });
+      } catch (_) {}
+    }
+
+    const system = buildEnhancedSystemPrompt(basePrompt, botName, division, capabilities, mode, memories);
 
     const userMsg = await storage.createMessage(conversationId, "user", input.content);
 
@@ -469,6 +481,16 @@ export async function registerRoutes(
       const assistantMsg = await storage.createMessage(conversationId, "assistant", assistantText);
       res.write(`data: ${JSON.stringify({ type: "done", conversationId, messageId: assistantMsg.id })}\n\n`);
       res.end();
+
+      // Extract and persist learning log entries from the response (self-learning memory)
+      if (bot?.id) {
+        const learningMatch = assistantText.match(/🧠\s*LEARNING\s*LOG:\s*(.+?)(?:\n|$)/i);
+        if (learningMatch && learningMatch[1]?.trim()) {
+          try {
+            await storage.createBotMemory({ botId: bot.id, content: learningMatch[1].trim() });
+          } catch (_) {}
+        }
+      }
     } catch (e) {
       res.write(`data: ${JSON.stringify({ type: "error", error: "Stream failed" })}\n\n`);
       res.end();
