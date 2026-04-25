@@ -6,7 +6,9 @@ import { sql } from "drizzle-orm";
 import multer from "multer";
 import { storage } from "./storage";
 import { api } from "@shared/routes";
-import { ALL_BOTS } from "./seed-bots";
+import { ALL_BOTS as CORE_BOTS } from "./seed-bots";
+import { GITHUB_BOTS } from "./seed-github-bots";
+import { CODELAB_BOTS } from "./seed-codelabs";
 import { DIVISIONS, insertBotMetricSchema, insertBotErrorSchema, insertBotFinancialSchema, insertAlertRuleSchema, insertDealSchema, insertDebugEventSchema, insertAutoFixSchema, insertRevenueLeakSchema, insertSecurityScanSchema, insertFormulaSchema, insertPlatformConnectionSchema, insertPluginSchema, insertBotMemorySchema, insertSystemSnapshotSchema, insertCostEventSchema } from "@shared/schema";
 import { calculateRealEstate, calculateCarFlip, type RealEstateInputs, type CarFlipInputs } from "@shared/deal-calculations";
 import { FORMULA_LIBRARY } from "@shared/formula-library";
@@ -14,6 +16,12 @@ import { buildEnhancedSystemPrompt } from "@shared/tool-belt";
 import { getUncachableStripeClient, getStripePublishableKey } from "./stripeClient";
 import { db } from "./db";
 import { batchProcessWithSSE } from "./replit_integrations/batch";
+
+const CORE_SLUGS = new Set(CORE_BOTS.map(b => b.slug));
+const GITHUB_SLUGS = new Set(GITHUB_BOTS.map(b => b.slug));
+const DEDUPED_GITHUB = GITHUB_BOTS.filter(b => !CORE_SLUGS.has(b.slug));
+const DEDUPED_CODELAB = CODELAB_BOTS.filter(b => !CORE_SLUGS.has(b.slug) && !GITHUB_SLUGS.has(b.slug));
+const ALL_BOTS = [...CORE_BOTS, ...DEDUPED_GITHUB, ...DEDUPED_CODELAB];
 
 const openai = new OpenAI({
   apiKey: process.env.AI_INTEGRATIONS_OPENAI_API_KEY,

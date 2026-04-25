@@ -35,6 +35,17 @@ The system employs a modern web stack:
 - Bot cards are interactive, leading to detailed profile pages with control panels, metrics, and capabilities.
 - Color-coded status indicators are used in the Deal Analyzer for quick assessment of deal viability.
 
+## Bot Sources (1,051+ Total Bots)
+- `server/seed-bots.ts` — 884 original DreamCo bots across all 45 divisions
+- `server/seed-github-bots.ts` — 67 bots merged from github.com/DreamCo-Technologies/Dreamcobots (App_bots + specialty bots from bots/ directory)
+- `server/seed-codelabs.ts` — 100+ coding library bots in DreamCodeLab division, one bot per major library/framework/tool
+- Deduplication logic in `server/routes.ts` merges all three sources and removes slugs already present
+- **Buddy Bot** (`slug: buddy-bot`) — elite CommandCore bot that can use any app's features and master any coding library
+- **Buddy Tool Builder** — self-creates SDKs and tool libraries
+- **Buddy App Feature Replicator** — if an app can do it, Buddy can build it
+- **Buddy Library Indexer** — tracks every library in existence
+- **Buddy Self-Teaching Bot** — continuously learns from documentation
+
 ## PWA (Progressive Web App)
 - `client/public/manifest.json` — Full PWA manifest with shortcuts to Dashboard, Bots, Divisions, Chat
 - `client/public/sw.js` — Service worker for offline caching (skips /api/ routes)
