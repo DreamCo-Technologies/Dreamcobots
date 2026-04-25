@@ -29,6 +29,7 @@ import {
   DollarSign,
   Trophy,
   Cpu,
+  BrainCircuit,
 } from "lucide-react";
 import ThemeToggle from "@/components/ThemeToggle";
 import { Button } from "@/components/ui/button";
@@ -187,6 +188,22 @@ export default function AppShell(props: {
                   {createConversation.isPending ? "Creating..." : "New chat"}
                 </Button>
               </div>
+
+              {/* Buddy Bot quick-switch */}
+              <button
+                onClick={() => props.onBotChange?.("buddy-bot")}
+                className="mt-3 w-full flex items-center gap-2.5 rounded-xl border border-primary/30 bg-primary/8 hover:bg-primary/14 px-3 py-2.5 text-sm font-medium text-primary transition-all hover:shadow-sm"
+                data-testid="buddy-shortcut"
+              >
+                <span className="inline-flex h-6 w-6 items-center justify-center rounded-lg bg-primary/15 flex-shrink-0">
+                  <BrainCircuit className="h-3.5 w-3.5 text-primary" />
+                </span>
+                <div className="min-w-0 text-left">
+                  <div className="leading-none">Buddy Bot</div>
+                  <div className="text-[10px] text-primary/70 mt-0.5 font-normal">Master coder · All 500+ libraries</div>
+                </div>
+                <span className="ml-auto text-[10px] px-1.5 py-0.5 rounded-md bg-primary/15 text-primary/80 font-mono">ELITE</span>
+              </button>
 
               <Separator className="my-5" />
 

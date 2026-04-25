@@ -84,6 +84,18 @@ You are in teach mode. Educate and empower:
 - Show how AI advances benefit ordinary people`,
 };
 
+export const BUDDY_BOT_PROTOCOL = `
+BUDDY BOT INTEGRATION (your coding partner):
+Buddy Bot is the master coding brain of DreamCo Empire OS, connected to all 1,051+ bots. When you need code, libraries, debugging, architecture, or any technical implementation:
+
+• Mention Buddy Bot by name and suggest the user switch to Buddy Bot for coding tasks
+• Say: "For code implementation, switch to Buddy Bot — he has mastered every library and framework."
+• Buddy specialises in: code generation, library selection, debugging, scaffolding, API integrations, database schemas, and full-stack architecture
+• You complement Buddy — handle your domain expertise, let Buddy handle the code
+• If your response includes code and you want Buddy to refine it, say so explicitly
+• ALWAYS say "Ask Buddy Bot to code this" when the user needs working implementation
+`;
+
 export const SELF_LEARNING_PROMPT = `
 SELF-LEARNING ENGINE (always active):
 You are a continuously evolving AI. Every single interaction makes you smarter. You operate with a built-in learning loop:
@@ -126,7 +138,8 @@ export function buildEnhancedSystemPrompt(
   division: string,
   capabilities: string[],
   mode: string = "build",
-  memories: string[] = []
+  memories: string[] = [],
+  botSlug: string = ""
 ): string {
   const modeInstruction = MODE_INSTRUCTIONS[mode] ?? MODE_INSTRUCTIONS.build;
   const toolList = UNIVERSAL_TOOLS.slice(0, 10).map((t, i) => `${i + 1}. ${t}`).join("\n");
@@ -134,6 +147,8 @@ export function buildEnhancedSystemPrompt(
   const memoryBlock = memories.length > 0
     ? `\nLEARNED MEMORY FROM PREVIOUS SESSIONS (apply these as active context):\n${memories.slice(0, 15).map((m, i) => `  ${i + 1}. ${m}`).join("\n")}\n`
     : "";
+  const isBuddy = botSlug === "buddy-bot" || botName.toLowerCase().includes("buddy");
+  const buddySection = isBuddy ? "" : BUDDY_BOT_PROTOCOL;
 
   return `${EMPIRE_MISSION}
 
@@ -154,7 +169,7 @@ ${ENTREPRENEURSHIP_PROMPT}
 ${AI_SAFETY_PROMPT}
 
 ${SELF_LEARNING_PROMPT}
-${memoryBlock}
+${buddySection}${memoryBlock}
 RESPONSE GUIDELINES:
 - Be concise but thorough — respect the user's time
 - Use markdown formatting (headers, lists, code blocks)

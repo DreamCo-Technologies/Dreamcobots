@@ -9,6 +9,7 @@ import { api } from "@shared/routes";
 import { ALL_BOTS as CORE_BOTS } from "./seed-bots";
 import { GITHUB_BOTS } from "./seed-github-bots";
 import { CODELAB_BOTS } from "./seed-codelabs";
+import { BUDDY_BOT } from "./seed-buddy-bot";
 import { DIVISIONS, insertBotMetricSchema, insertBotErrorSchema, insertBotFinancialSchema, insertAlertRuleSchema, insertDealSchema, insertDebugEventSchema, insertAutoFixSchema, insertRevenueLeakSchema, insertSecurityScanSchema, insertFormulaSchema, insertPlatformConnectionSchema, insertPluginSchema, insertBotMemorySchema, insertSystemSnapshotSchema, insertCostEventSchema } from "@shared/schema";
 import { calculateRealEstate, calculateCarFlip, type RealEstateInputs, type CarFlipInputs } from "@shared/deal-calculations";
 import { FORMULA_LIBRARY } from "@shared/formula-library";
@@ -49,6 +50,26 @@ async function ensureSeeded() {
       }
     }
     console.log(`Seeded ${missingBots.length} new bots`);
+  }
+
+  // Always upsert Buddy Bot with his full library curriculum so updates apply immediately
+  try {
+    const existingBuddy = bots.find(b => b.slug === "buddy-bot");
+    if (existingBuddy) {
+      await storage.updateBotProfile(existingBuddy.id, {
+        systemPrompt: BUDDY_BOT.systemPrompt,
+        capabilities: BUDDY_BOT.capabilities,
+        description: BUDDY_BOT.description,
+        traits: BUDDY_BOT.traits,
+        tier: BUDDY_BOT.tier,
+      });
+      console.log("Buddy Bot updated with full library curriculum");
+    } else {
+      await storage.createBotProfile(BUDDY_BOT);
+      console.log("Buddy Bot created with full library curriculum");
+    }
+  } catch (e: any) {
+    console.error("Buddy Bot upsert failed:", e?.message);
   }
 
   const convs = await storage.listConversations();
@@ -445,7 +466,7 @@ export async function registerRoutes(
       } catch (_) {}
     }
 
-    const system = buildEnhancedSystemPrompt(basePrompt, botName, division, capabilities, mode, memories);
+    const system = buildEnhancedSystemPrompt(basePrompt, botName, division, capabilities, mode, memories, bot?.slug ?? "");
 
     const userMsg = await storage.createMessage(conversationId, "user", input.content);
 

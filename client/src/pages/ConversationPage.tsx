@@ -22,7 +22,7 @@ import { useBots } from "@/hooks/use-bots";
 import { cn } from "@/lib/utils";
 import type { Message } from "@shared/schema";
 import { api } from "@shared/routes";
-import { Bot, Loader2, Trash2, Wand2, Map, Hammer, Zap, GraduationCap, Sparkles } from "lucide-react";
+import { Bot, Loader2, Trash2, Wand2, Map, Hammer, Zap, GraduationCap, Sparkles, BrainCircuit } from "lucide-react";
 
 type ChatMode = "plan" | "build" | "execute" | "teach";
 
@@ -268,6 +268,24 @@ export default function ConversationPage() {
             >
               <Wand2 className="h-4 w-4 mr-2" />
               Suggest
+            </Button>
+
+            <Button
+              variant="outline"
+              className="rounded-xl border-primary/40 bg-primary/8 hover:bg-primary/14 text-primary shadow-sm hover:shadow-md transition-all font-medium"
+              onClick={() => {
+                const buddySlug = (bots.data ?? []).find(b => b.slug === "buddy-bot")?.slug;
+                if (buddySlug) {
+                  setBotSlug(buddySlug);
+                  toast({ title: "🧠 Buddy Bot activated", description: "Buddy has mastered every coding library. Ask him anything." });
+                } else {
+                  toast({ title: "Buddy Bot not found", description: "Try selecting him from the bot dropdown.", variant: "destructive" });
+                }
+              }}
+              data-testid="call-buddy-bot"
+            >
+              <BrainCircuit className="h-4 w-4 mr-2" />
+              Call Buddy
             </Button>
 
             <Button

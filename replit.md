@@ -40,11 +40,9 @@ The system employs a modern web stack:
 - `server/seed-github-bots.ts` — 67 bots merged from github.com/DreamCo-Technologies/Dreamcobots (App_bots + specialty bots from bots/ directory)
 - `server/seed-codelabs.ts` — 100+ coding library bots in DreamCodeLab division, one bot per major library/framework/tool
 - Deduplication logic in `server/routes.ts` merges all three sources and removes slugs already present
-- **Buddy Bot** (`slug: buddy-bot`) — elite CommandCore bot that can use any app's features and master any coding library
-- **Buddy Tool Builder** — self-creates SDKs and tool libraries
-- **Buddy App Feature Replicator** — if an app can do it, Buddy can build it
-- **Buddy Library Indexer** — tracks every library in existence
-- **Buddy Self-Teaching Bot** — continuously learns from documentation
+- **Buddy Bot** (`slug: buddy-bot`, `server/seed-buddy-bot.ts`) — Elite CommandCore master coding brain. System prompt covers 500+ libraries across every language, framework, and tool in existence. All 1,051 bots are wired to route coding tasks through Buddy. Always upserted on startup so curriculum stays current.
+- Every non-Buddy bot's system prompt now contains `BUDDY_BOT_PROTOCOL` (from `shared/tool-belt.ts`) instructing them to route coding tasks to Buddy Bot
+- Frontend: "Call Buddy" button on every ConversationPage toolbar; "Buddy Bot" quick-switch shortcut in AppShell sidebar
 
 ## PWA (Progressive Web App)
 - `client/public/manifest.json` — Full PWA manifest with shortcuts to Dashboard, Bots, Divisions, Chat
@@ -52,6 +50,10 @@ The system employs a modern web stack:
 - `client/index.html` — Updated with PWA meta tags for iOS, Android, Windows, Open Graph, Twitter Card
 - `client/src/main.tsx` — Registers service worker on load
 - **ConnectionsPage** — New "Install App" tab with step-by-step install guides for: Android, iPhone/iPad, Windows, Mac, Smart TV (Samsung/LG/Fire TV), Gaming Consoles (Xbox/PS5/Switch), Chromebook, Roku/Apple TV/Streaming Sticks. Includes a live "Install Now" button that triggers the browser's native PWA install prompt when available.
+
+## GitHub Integration
+- GitHub OAuth integration (`connector:ccfg_github_01K4B9XD3VRVD2F99YM91YTCAF`) was proposed but dismissed by the user.
+- To push codebase to GitHub in the future, either: (1) re-authorize the GitHub integration via Replit, or (2) provide a GitHub Personal Access Token to store as a secret (`GITHUB_TOKEN`) and use the GitHub REST API to create/push the repo.
 
 ## External Dependencies
 - **OpenAI GPT-4.1-mini**: Utilized for core AI functionalities and integrations.
