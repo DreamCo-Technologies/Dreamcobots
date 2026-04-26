@@ -1543,6 +1543,105 @@ Any improvements or fixes (optional, 1-2 bullet points max)`;
     res.json(summary);
   });
 
+  // ===== GITHUB SYNC =====
+  app.get("/api/github/status", async (_req, res) => {
+    try {
+      const { getRepoInfo, getPullRequests } = await import("./github-sync");
+      const [repo, prs] = await Promise.all([getRepoInfo(), getPullRequests()]);
+      res.json({ connected: true, repo: { name: repo.full_name, stars: repo.stargazers_count, forks: repo.forks_count, description: repo.description, url: repo.html_url, defaultBranch: repo.default_branch }, pullRequests: prs.map((pr: any) => ({ id: pr.number, title: pr.title, state: pr.state, url: pr.html_url, createdAt: pr.created_at, author: pr.user?.login })) });
+    } catch (e: any) {
+      res.status(500).json({ connected: false, error: e.message });
+    }
+  });
+
+  app.post("/api/github/push-all", async (_req, res) => {
+    try {
+      const { pushAllBotsToGitHub } = await import("./github-sync");
+      const bots = await storage.listBotProfiles();
+      const result = await pushAllBotsToGitHub(bots);
+      res.json({ success: true, pushed: result.pushed, errors: result.errors, total: bots.length });
+    } catch (e: any) {
+      res.status(500).json({ success: false, error: e.message });
+    }
+  });
+
+  app.get("/api/github/contents", async (req, res) => {
+    try {
+      const { getRepoContents } = await import("./github-sync");
+      const path = (req.query.path as string) ?? "";
+      const contents = await getRepoContents(path);
+      res.json(contents);
+    } catch (e: any) {
+      res.status(500).json({ error: e.message });
+    }
+  });
+
+  app.get("/api/github/classify", async (_req, res) => {
+    const { classifyBotLanguage } = await import("./github-sync");
+    const bots = await storage.listBotProfiles();
+    const classified = bots.map(b => ({ id: b.id, slug: b.slug, displayName: b.displayName, division: b.division, language: classifyBotLanguage(b) }));
+    const summary = { python: classified.filter(b => b.language === "python").length, java: classified.filter(b => b.language === "java").length, typescript: classified.filter(b => b.language === "typescript").length, general: classified.filter(b => b.language === "general").length, total: classified.length };
+    res.json({ summary, bots: classified });
+  });
+
+  // ===== BOT BUILDER =====
+  app.post("/api/bot-builder/generate", async (req, res) => {
+    const { libraries = [], name, division = "DreamCodeLab", description = "" } = req.body;
+    if (!name) return res.status(400).json({ error: "name is required" });
+    try {
+      const prompt = `You are a DreamCo Empire OS bot architect. Generate a complete bot profile as JSON for a bot named "${name}" that specializes in: ${libraries.join(", ")}. Division: ${division}. Additional context: ${description}
+
+Return ONLY valid JSON with this exact shape:
+{
+  "slug": "kebab-case-unique-slug",
+  "displayName": "${name}",
+  "division": "${division}",
+  "category": "coding-library",
+  "tier": "pro",
+  "description": "2-3 sentence specialist description",
+  "capabilities": ["10 specific capabilities as strings"],
+  "systemPrompt": "Detailed system prompt paragraph for this specialist bot",
+  "revenueModel": "SaaS subscription",
+  "targetUsers": "target user description",
+  "priceRange": "$99/mo"
+}`;
+      const completion = await openai.chat.completions.create({ model: "gpt-4.1-mini", messages: [{ role: "user", content: prompt }], response_format: { type: "json_object" }, max_completion_tokens: 1500 });
+      const botData = JSON.parse(completion.choices[0].message.content ?? "{}");
+      botData.status = "active";
+      botData.traits = { division, category: "coding-library", tier: "pro", version: "1.0", engine: "GPT-4.1", autonomy: "full", libraries: libraries.join(",") };
+      res.json({ success: true, bot: botData });
+    } catch (e: any) {
+      res.status(500).json({ error: e.message });
+    }
+  });
+
+  app.post("/api/bot-builder/save", async (req, res) => {
+    const { bot } = req.body;
+    if (!bot?.slug) return res.status(400).json({ error: "bot with slug required" });
+    try {
+      const existing = await storage.getBotProfileBySlug(bot.slug);
+      if (existing) {
+        const updated = await storage.updateBotProfile(existing.id, bot);
+        return res.json({ success: true, bot: updated, action: "updated" });
+      }
+      const created = await storage.createBotProfile(bot);
+      res.json({ success: true, bot: created, action: "created" });
+    } catch (e: any) {
+      res.status(500).json({ error: e.message });
+    }
+  });
+
+  // ===== BOT ACTIVITY =====
+  app.get("/api/bot-activity", async (_req, res) => {
+    const bots = await storage.listBotProfiles();
+    const convs = await storage.listConversations();
+    const activity = await Promise.all(bots.slice(0, 100).map(async (bot) => {
+      const memories = await storage.listBotMemory(bot.id).catch(() => []);
+      return { id: bot.id, slug: bot.slug, displayName: bot.displayName, division: bot.division, tier: bot.tier, status: bot.status, memoryCount: memories.length, lastLearning: memories[0]?.content ?? null, lastActive: memories[0]?.createdAt ?? null };
+    }));
+    res.json({ bots: activity, totalConversations: convs.length, totalBots: bots.length });
+  });
+
   // ===== BOT RECOMMENDATIONS =====
   app.get("/api/bots/recommend", async (req, res) => {
     const context = (req.query.context as string)?.toLowerCase() || "";
