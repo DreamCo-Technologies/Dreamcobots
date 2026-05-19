@@ -159,6 +159,28 @@ class TestBotRegistryEntry:
         assert HealthStatus.HEALTHY.value == "healthy"
         assert HealthStatus.DEGRADED.value == "degraded"
 
+    def test_invalid_bot_id_raises(self):
+        with pytest.raises(ValueError, match="Invalid bot_id"):
+            BotRegistryEntry(bot_id="BadName", display_name="x")
+
+    def test_invalid_bot_id_with_spaces(self):
+        with pytest.raises(ValueError):
+            BotRegistryEntry(bot_id="bad id", display_name="x")
+
+    def test_invalid_bot_id_leading_digit(self):
+        with pytest.raises(ValueError):
+            BotRegistryEntry(bot_id="1bot", display_name="x")
+
+    def test_to_dict_contains_schema_version(self):
+        entry = BotRegistryEntry(bot_id="my_bot", display_name="My Bot")
+        d = entry.to_dict()
+        assert d["schema"] == "bot_registry_entry.v1"
+
+    def test_frozen_entry_is_immutable(self):
+        entry = BotRegistryEntry(bot_id="my_bot", display_name="My Bot")
+        with pytest.raises((AttributeError, TypeError)):
+            entry.display_name = "Mutated"  # type: ignore[misc]
+
 
 class TestBotRegistry:
     def _make_registry(self) -> BotRegistry:

@@ -33,7 +33,8 @@ Usage
 
 from __future__ import annotations
 
-from dataclasses import dataclass, field
+import re
+from dataclasses import asdict, dataclass, field, replace
 from enum import Enum
 from typing import Any, Dict, List, Optional
 
@@ -53,7 +54,7 @@ class HealthStatus(str, Enum):
 # Registry entry
 # ---------------------------------------------------------------------------
 
-@dataclass
+@dataclass(frozen=True)
 class BotRegistryEntry:
     """
     Unified metadata record for a single DreamCo bot or capability bundle.
@@ -110,9 +111,21 @@ class BotRegistryEntry:
     tags: List[str] = field(default_factory=list)
     metadata: Dict[str, Any] = field(default_factory=dict)
 
+    # ------------------------------------------------------------------
+    # Validation
+    # ------------------------------------------------------------------
+
+    def __post_init__(self) -> None:
+        if not re.match(r"^[a-z][a-z0-9_]*$", self.bot_id):
+            raise ValueError(
+                f"Invalid bot_id {self.bot_id!r}: must start with a lowercase letter "
+                "and contain only lowercase letters, digits, and underscores."
+            )
+
     def to_dict(self) -> Dict[str, Any]:
         """Serialise to a plain dict."""
         return {
+            "schema": "bot_registry_entry.v1",
             "bot_id": self.bot_id,
             "display_name": self.display_name,
             "capabilities": list(self.capabilities),
@@ -184,7 +197,7 @@ class BotRegistry:
     def update_health(self, bot_id: str, status: HealthStatus) -> None:
         """Update the health status of the bot identified by *bot_id*."""
         entry = self._require(bot_id)
-        entry.health = status
+        self._store[bot_id] = replace(entry, health=status)
 
     def remove(self, bot_id: str) -> Optional[BotRegistryEntry]:
         """Remove and return the entry for *bot_id*, or ``None`` if absent."""
