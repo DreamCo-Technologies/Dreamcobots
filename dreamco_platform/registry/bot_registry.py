@@ -242,6 +242,14 @@ class BotRegistry:
     # Introspection
     # ------------------------------------------------------------------
 
+    def all_manifests(self) -> List[BotRegistryEntry]:
+        """Alias for :meth:`list_all` — returns all registered entries."""
+        return self.list_all()
+
+    def count(self) -> int:
+        """Return the number of registered bot entries."""
+        return len(self._store)
+
     def __len__(self) -> int:
         return len(self._store)
 
