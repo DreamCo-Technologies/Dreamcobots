@@ -23,7 +23,8 @@ dreamco-control-tower/
 │   │       ├── BotOverview.jsx            # Live bot status + heartbeat
 │   │       ├── RepoActivity.jsx           # GitHub PRs, commits, workflow status
 │   │       ├── BotDeployment.jsx          # Deploy new bots from templates
-│   │       └── Analytics.jsx             # Uptime, PR trends, status charts
+│   │       ├── Analytics.jsx              # Uptime, PR trends, status charts
+│   │       └── CommandCenter.jsx          # Max-parallel lane board + June 22 plan
 │   ├── index.html
 │   ├── vite.config.js
 │   ├── tailwind.config.js
@@ -34,6 +35,7 @@ dreamco-control-tower/
 │   └── heartbeat-check.js     # CLI report of all bot heartbeat ages
 ├── config/
 │   ├── bots.json              # Bot registry (name, repo, status, heartbeat)
+│   ├── command_center.json    # Must-ship scope, lane ownership, and timeline
 │   ├── users.json             # Access control records
 │   └── payments.json          # Stripe/PayPal key placeholders
 └── package.json               # Backend dependencies
@@ -67,6 +69,7 @@ Every bot POSTs to `/api/bot-heartbeat` to signal it is alive. The Control Tower
 | **Repo Activity** | GitHub commits, PR merges, open PRs, workflow results |
 | **Bot Deployment** | Create and deploy bots from templates with one click |
 | **Analytics** | Uptime charts, PR success rates, status distribution |
+| **Command Center** | Must-ship scope, lane owners, blockers, validation, ship decisions |
 
 ---
 
