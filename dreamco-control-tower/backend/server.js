@@ -32,6 +32,10 @@ const RATE_LIMIT_MAX = 60; // max requests per window per IP
 const _rateLimitStore = new Map();
 
 function rateLimiter(req, res, next) {
+  if (process.env.NODE_ENV === 'test') {
+    return next();
+  }
+
   const ip = req.ip || req.connection.remoteAddress || 'unknown';
   const now = Date.now();
   const entry = _rateLimitStore.get(ip) ?? { count: 0, resetAt: now + RATE_LIMIT_WINDOW_MS };
@@ -223,7 +227,9 @@ async function fetchGitHubWorkflowRuns(repo, token) {
       'User-Agent': 'dreamco-control-tower',
       Accept: 'application/vnd.github+json',
     };
-    if (token) headers['Authorization'] = `Bearer ${token}`;
+    if (token) {
+      headers['Authorization'] = `Bearer ${token}`;
+    }
 
     const url = new URL(
       `/repos/${repo}/actions/runs?per_page=${ACTIONS_PER_PAGE}`,

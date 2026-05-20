@@ -251,7 +251,9 @@ describe('GET /api/actions', () => {
     delete process.env.GITHUB_TOKEN;
     const res = await request(app).get('/api/actions');
     expect(res.status).toBe(200);
-    if (orig !== undefined) process.env.GITHUB_TOKEN = orig;
+    if (orig !== undefined) {
+      process.env.GITHUB_TOKEN = orig;
+    }
   });
 
   test('returns content-type json', async () => {
