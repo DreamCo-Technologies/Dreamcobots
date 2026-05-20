@@ -5,6 +5,7 @@ import BotDeployment from './components/BotDeployment.jsx';
 import Analytics from './components/Analytics.jsx';
 import ActionsMonitor from './components/ActionsMonitor.jsx';
 import BotMarketplace from './components/BotMarketplace.jsx';
+import CommandCenter from './components/CommandCenter.jsx';
 
 const NAV_ITEMS = [
   { id: 'overview', label: '🤖 Bot Overview' },
@@ -13,6 +14,7 @@ const NAV_ITEMS = [
   { id: 'analytics', label: '📊 Analytics' },
   { id: 'actions', label: '⚡ Actions' },
   { id: 'marketplace', label: '🛒 Marketplace' },
+  { id: 'command-center', label: '🧭 Command Center' },
 ];
 
 export default function App() {
@@ -55,6 +57,7 @@ export default function App() {
           {activeTab === 'analytics' && <Analytics />}
           {activeTab === 'actions' && <ActionsMonitor />}
           {activeTab === 'marketplace' && <BotMarketplace />}
+          {activeTab === 'command-center' && <CommandCenter />}
         </main>
       </div>
     </div>

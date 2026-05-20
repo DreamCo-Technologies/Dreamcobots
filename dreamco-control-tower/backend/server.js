@@ -16,6 +16,7 @@ import { fileURLToPath } from 'url';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const BOTS_FILE = path.join(__dirname, '../config/bots.json');
+const COMMAND_CENTER_FILE = path.join(__dirname, '../config/command_center.json');
 
 const app = express();
 app.use(express.json());
@@ -31,6 +32,10 @@ const RATE_LIMIT_MAX = 60; // max requests per window per IP
 const _rateLimitStore = new Map();
 
 function rateLimiter(req, res, next) {
+  if (process.env.NODE_ENV === 'test') {
+    return next();
+  }
+
   const ip = req.ip || req.connection.remoteAddress || 'unknown';
   const now = Date.now();
   const entry = _rateLimitStore.get(ip) ?? { count: 0, resetAt: now + RATE_LIMIT_WINDOW_MS };
@@ -60,6 +65,13 @@ function readBots() {
 
 function writeBots(bots) {
   fs.writeFileSync(BOTS_FILE, JSON.stringify(bots, null, 2));
+}
+
+function readCommandCenter() {
+  if (!fs.existsSync(COMMAND_CENTER_FILE)) {
+    return null;
+  }
+  return JSON.parse(fs.readFileSync(COMMAND_CENTER_FILE, 'utf8'));
 }
 
 // ---------------------------------------------------------------------------
@@ -215,7 +227,9 @@ async function fetchGitHubWorkflowRuns(repo, token) {
       'User-Agent': 'dreamco-control-tower',
       Accept: 'application/vnd.github+json',
     };
-    if (token) headers['Authorization'] = `Bearer ${token}`;
+    if (token) {
+      headers['Authorization'] = `Bearer ${token}`;
+    }
 
     const url = new URL(
       `/repos/${repo}/actions/runs?per_page=${ACTIONS_PER_PAGE}`,
@@ -315,6 +329,47 @@ app.get('/api/orchestrator', rateLimiter, (_req, res) => {
     scrape_deadline: deadline,
     days_until_deadline: daysRemaining,
     timestamp: new Date().toISOString(),
+  });
+});
+
+// ---------------------------------------------------------------------------
+// GET /api/command-center — max-parallel execution board
+//
+// Returns must-ship scope, lane ownership and status, cadence, and timeline
+// together with computed deadline telemetry for June 22 delivery.
+// ---------------------------------------------------------------------------
+
+app.get('/api/command-center', rateLimiter, (_req, res) => {
+  const board = readCommandCenter();
+  if (!board) {
+    return res.status(503).json({
+      error: 'command_center.json not found',
+    });
+  }
+
+  const today = new Date();
+  const targetDate = new Date(board.target_deadline);
+  const daysRemaining = Math.max(
+    0,
+    Math.ceil((targetDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24)),
+  );
+  const overdue = today > targetDate;
+  const lanes = Array.isArray(board.parallel_lanes) ? board.parallel_lanes : [];
+  const blockedCount = lanes.filter((lane) => Array.isArray(lane.blockers) && lane.blockers.length > 0).length;
+  const failingValidationCount = lanes.filter((lane) => lane.validation_state !== 'green').length;
+  const shippableCount = lanes.filter((lane) => lane.ship_decision === 'ship').length;
+
+  return res.json({
+    ...board,
+    computed: {
+      days_remaining: daysRemaining,
+      overdue,
+      blocked_lanes: blockedCount,
+      failing_validation_lanes: failingValidationCount,
+      shippable_lanes: shippableCount,
+      total_lanes: lanes.length,
+      fetched_at: new Date().toISOString(),
+    },
   });
 });
 

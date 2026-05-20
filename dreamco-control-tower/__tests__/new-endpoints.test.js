@@ -251,11 +251,53 @@ describe('GET /api/actions', () => {
     delete process.env.GITHUB_TOKEN;
     const res = await request(app).get('/api/actions');
     expect(res.status).toBe(200);
-    if (orig !== undefined) process.env.GITHUB_TOKEN = orig;
+    if (orig !== undefined) {
+      process.env.GITHUB_TOKEN = orig;
+    }
   });
 
   test('returns content-type json', async () => {
     const res = await request(app).get('/api/actions');
     expect(res.headers['content-type']).toMatch(/application\/json/);
+  });
+});
+
+// ---------------------------------------------------------------------------
+// GET /api/command-center
+// ---------------------------------------------------------------------------
+
+describe('GET /api/command-center', () => {
+  test('returns 200', async () => {
+    const res = await request(app).get('/api/command-center');
+    expect(res.status).toBe(200);
+  });
+
+  test('returns target deadline', async () => {
+    const res = await request(app).get('/api/command-center');
+    expect(res.body).toHaveProperty('target_deadline', '2026-06-22');
+  });
+
+  test('returns must_ship list', async () => {
+    const res = await request(app).get('/api/command-center');
+    expect(Array.isArray(res.body.must_ship)).toBe(true);
+    expect(res.body.must_ship.length).toBeGreaterThan(0);
+  });
+
+  test('returns parallel_lanes list with owner/status fields', async () => {
+    const res = await request(app).get('/api/command-center');
+    expect(Array.isArray(res.body.parallel_lanes)).toBe(true);
+    res.body.parallel_lanes.forEach((lane) => {
+      expect(lane).toHaveProperty('owner');
+      expect(lane).toHaveProperty('status');
+      expect(lane).toHaveProperty('validation_state');
+      expect(lane).toHaveProperty('ship_decision');
+    });
+  });
+
+  test('returns computed telemetry', async () => {
+    const res = await request(app).get('/api/command-center');
+    expect(res.body).toHaveProperty('computed');
+    expect(typeof res.body.computed.days_remaining).toBe('number');
+    expect(typeof res.body.computed.total_lanes).toBe('number');
   });
 });
