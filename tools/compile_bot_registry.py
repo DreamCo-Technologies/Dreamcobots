@@ -358,7 +358,10 @@ def main(argv: list[str] | None = None) -> int:
     updated  = _splice_catalogue(original, catalogue)
 
     if args.check:
-        if updated == original:
+        # Strip the timestamp line before comparing so CI checks are stable
+        def _strip_ts(text: str) -> str:
+            return re.sub(r"^# Generated at .*$", "# Generated at <TIMESTAMP>", text, flags=re.MULTILINE)
+        if _strip_ts(updated) == _strip_ts(original):
             print("bot_library.py is up to date.")
             return 0
         print(
