@@ -18,6 +18,7 @@ on:
 jobs:
   integration_lookup:
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     permissions:
       contents: write
       actions: write
@@ -25,6 +26,49 @@ jobs:
     steps:
     - name: Checkout Repository
       uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: "3.11"
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install jsonschema
+
+    - name: Validate integration_lookup.json schema
+      run: |
+        python - <<'PY'
+        import json, sys, os
+        from jsonschema import validate, ValidationError
+
+        schema = {
+            "type": "object",
+            "required": ["last_updated", "total_queries", "queries"],
+            "properties": {
+                "last_updated": {"type": ["string", "null"]},
+                "total_queries": {"type": "integer"},
+                "queries": {"type": "object"},
+            },
+            "additionalProperties": False,
+        }
+
+        path = "data/integration_lookup.json"
+        if not os.path.exists(path):
+            print(f"WARNING: {path} not found — will be created by lookup script.")
+            sys.exit(0)
+
+        with open(path) as fh:
+            data = json.load(fh)
+
+        try:
+            validate(instance=data, schema=schema)
+            print(f"Schema validation passed for {path}")
+        except ValidationError as exc:
+            print(f"Schema validation FAILED: {exc.message}", file=sys.stderr)
+            sys.exit(1)
+        PY
 
     - name: Run Integration Lookup Script
       run: |

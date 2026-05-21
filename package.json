@@ -6,7 +6,7 @@
   "scripts": {
     "start": "node index.js",
     "build": "mkdir -p dist && cp -r public/* dist/",
-    "test": "node --experimental-vm-modules node_modules/.bin/jest --passWithNoTests",
+    "test": "node --experimental-vm-modules node_modules/.bin/jest --runInBand --passWithNoTests",
     "lint": "eslint . --ext .js --max-warnings=0",
     "lint:fix": "eslint . --ext .js --fix",
     "format": "prettier --check .",

@@ -1,13 +1,21 @@
-"""
-Bot Library — DreamCo Global Bot Communication Network.
-
-Catalogs and registers all preexisting DreamCo bots so they can be
-discovered, configured, and operated through the GBN.
-
-Each entry in the library describes a bot's identity, capabilities,
-category, tier support, and how to instantiate it.  The library acts
-as the single source of truth for "which bots exist in DreamCo."
-"""
+# AUTO-GENERATED FILE — DO NOT EDIT MANUALLY
+# Regenerate with: python3 tools/compile_bot_registry.py
+#
+# Bot Library — DreamCo Global Bot Communication Network.
+#
+# Catalogs and registers all DreamCo bots so they can be discovered,
+# configured, and operated through the GBN.  Each entry derives from a
+# namespace + source path, which eliminates duplicate IDs, naming drift,
+# and manual sync errors between directories and the registry.
+#
+# Namespace map:
+#   core     → bots/          (trusted core bots — no prefix)
+#   app      → App_bots/
+#   biz      → Business_bots/
+#   fvr      → Fiverr_bots/
+#   mkt      → Marketing_bots/
+#   occ      → Occupational_bots/
+#   re       → Real_Estate_bots/
 
 from __future__ import annotations
 
@@ -111,6 +119,9 @@ class BotEntry:
     registered_at: str = field(
         default_factory=lambda: datetime.now(timezone.utc).isoformat()
     )
+    # Registry compiler fields — set automatically; do not write by hand
+    namespace: str = ""       # e.g. "core", "app", "biz", "fvr", "mkt", "occ", "re"
+    source_path: str = ""     # e.g. "Real_Estate_bots/foreclosure_finder_bot.py"
 
     def to_dict(self) -> dict:
         return {
@@ -126,6 +137,8 @@ class BotEntry:
             "capabilities": list(self.capabilities),
             "owner_id": self.owner_id,
             "registered_at": self.registered_at,
+            "namespace": self.namespace,
+            "source_path": self.source_path,
         }
 
 
@@ -997,2514 +1010,3230 @@ _DREAMCO_BOTS: list[BotEntry] = [
         ],
     ),
 
-    # -- Category Bots: App / Business / Fiverr / Marketing / Occupational / Real Estate --
+
+    # <<< BEGIN GENERATED CATALOGUE >>>
+# Generated at 2026-05-21T17:32:05Z by tools/compile_bot_registry.py
+# Total bots: 230
 
     BotEntry(
-        bot_id="app_ab_testing_bot",
-        display_name="App Ab Testing Bot",
+        bot_id="pr_learning_bot",
+        display_name="Pr Learning Bot",
         description=(
-            "Manages A/B test experiments for mobile apps, tracks variants, measures conversions, and surfaces winning configurations."
+            "Pr Learning Bot — core DreamCo automation system."
+        ),
+        category=BotCategory.SYSTEM,
+        module_path="bots.pr_learning_bot",
+        class_name="PullRequestLearningBot",
+        version="1.0.0",
+        capabilities=[],
+        namespace="core",
+        source_path="bots/pr_learning_bot.py",
+    ),
+    BotEntry(
+        bot_id="app_ab_testing_bot",
+        display_name="Ab Testing Bot",
+        description=(
+            "Ab Testing Bot — mobile app automation bot."
         ),
         category=BotCategory.APP,
         module_path="App_bots.ab_testing_bot",
         class_name="ABTestingBot",
-        capabilities=["ab_testing", "experiment_management", "split_testing", "analytics"],
+        version="1.0.0",
+        capabilities=[],
+        namespace="app",
+        source_path="App_bots/ab_testing_bot.py",
     ),
     BotEntry(
-        bot_id="accessibility_bot",
+        bot_id="app_accessibility_bot",
         display_name="Accessibility Bot",
         description=(
-            "Audits mobile apps for WCAG accessibility compliance, flags issues, and generates remediation recommendations."
+            "Accessibility Bot — mobile app automation bot."
         ),
         category=BotCategory.APP,
         module_path="App_bots.accessibility_bot",
         class_name="AccessibilityBot",
-        capabilities=["accessibility_audit", "wcag_compliance", "a11y"],
+        version="1.0.0",
+        capabilities=[],
+        namespace="app",
+        source_path="App_bots/accessibility_bot.py",
     ),
     BotEntry(
-        bot_id="analytics_bot",
+        bot_id="app_analytics_bot",
         display_name="Analytics Bot",
         description=(
-            "Aggregates in-app analytics events, builds usage dashboards, and surfaces actionable growth insights."
+            "Analytics Bot — mobile app automation bot."
         ),
         category=BotCategory.APP,
         module_path="App_bots.analytics_bot",
         class_name="AnalyticsBot",
-        capabilities=["analytics", "metrics", "reporting", "data_insights"],
+        version="1.0.0",
+        capabilities=[],
+        namespace="app",
+        source_path="App_bots/analytics_bot.py",
     ),
     BotEntry(
-        bot_id="api_rate_limiter_bot",
+        bot_id="app_api_rate_limiter_bot",
         display_name="Api Rate Limiter Bot",
         description=(
-            "Monitors and enforces API rate limits, queues requests intelligently, and alerts on quota exhaustion."
+            "Api Rate Limiter Bot — mobile app automation bot."
         ),
         category=BotCategory.APP,
         module_path="App_bots.api_rate_limiter_bot",
         class_name="APIRateLimiterBot",
-        capabilities=["rate_limiting", "api_management", "throttling"],
+        version="1.0.0",
+        capabilities=[],
+        namespace="app",
+        source_path="App_bots/api_rate_limiter_bot.py",
     ),
     BotEntry(
-        bot_id="app_store_optimizer_bot",
+        bot_id="app_app_store_optimizer_bot",
         display_name="App Store Optimizer Bot",
         description=(
-            "Optimizes App Store listings with keyword research, metadata suggestions, and rating improvement strategies."
+            "App Store Optimizer Bot — mobile app automation bot."
         ),
         category=BotCategory.APP,
         module_path="App_bots.app_store_optimizer_bot",
         class_name="AppStoreOptimizerBot",
-        capabilities=["aso", "keyword_optimization", "app_store", "ratings"],
+        version="1.0.0",
+        capabilities=[],
+        namespace="app",
+        source_path="App_bots/app_store_optimizer_bot.py",
     ),
     BotEntry(
-        bot_id="beta_tester_bot",
+        bot_id="app_beta_tester_bot",
         display_name="Beta Tester Bot",
         description=(
-            "Manages beta testing programs, collects structured feedback, triages bugs, and tracks issue resolution."
+            "Beta Tester Bot — mobile app automation bot."
         ),
         category=BotCategory.APP,
         module_path="App_bots.beta_tester_bot",
         class_name="BetaTesterBot",
-        capabilities=["beta_testing", "qa", "feedback_collection", "bug_reporting"],
+        version="1.0.0",
+        capabilities=[],
+        namespace="app",
+        source_path="App_bots/beta_tester_bot.py",
     ),
     BotEntry(
-        bot_id="books_app_bot",
+        bot_id="app_books_app_bot",
         display_name="Books App Bot",
         description=(
-            "Powers book discovery, reading progress tracking, library organisation, and personalised reading recommendations."
+            "Books App Bot — mobile app automation bot."
         ),
         category=BotCategory.APP,
         module_path="App_bots.books_app_bot",
         class_name="BooksAppBot",
-        capabilities=["books", "reading", "library", "content_discovery"],
+        version="1.0.0",
+        capabilities=[],
+        namespace="app",
+        source_path="App_bots/books_app_bot.py",
     ),
     BotEntry(
-        bot_id="business_app_bot",
+        bot_id="app_business_app_bot",
         display_name="Business App Bot",
         description=(
-            "Automates business productivity workflows, document handling, and enterprise team collaboration tools."
+            "Business App Bot — mobile app automation bot."
         ),
         category=BotCategory.APP,
         module_path="App_bots.business_app_bot",
         class_name="BusinessAppBot",
-        capabilities=["business_tools", "productivity", "enterprise"],
+        version="1.0.0",
+        capabilities=[],
+        namespace="app",
+        source_path="App_bots/business_app_bot.py",
     ),
     BotEntry(
-        bot_id="churn_predictor_bot",
+        bot_id="app_churn_predictor_bot",
         display_name="Churn Predictor Bot",
         description=(
-            "Uses ML signals to predict users at risk of churning and triggers targeted retention campaigns."
+            "Churn Predictor Bot — mobile app automation bot."
         ),
         category=BotCategory.APP,
         module_path="App_bots.churn_predictor_bot",
         class_name="ChurnPredictorBot",
-        capabilities=["churn_prediction", "retention", "ml", "analytics"],
+        version="1.0.0",
+        capabilities=[],
+        namespace="app",
+        source_path="App_bots/churn_predictor_bot.py",
     ),
     BotEntry(
-        bot_id="crash_reporter_bot",
+        bot_id="app_crash_reporter_bot",
         display_name="Crash Reporter Bot",
         description=(
-            "Captures, groups, and prioritises crash reports with stack traces and device context."
+            "Crash Reporter Bot — mobile app automation bot."
         ),
         category=BotCategory.APP,
         module_path="App_bots.crash_reporter_bot",
         class_name="CrashReporterBot",
-        capabilities=["crash_reporting", "error_tracking", "monitoring"],
+        version="1.0.0",
+        capabilities=[],
+        namespace="app",
+        source_path="App_bots/crash_reporter_bot.py",
     ),
     BotEntry(
-        bot_id="deep_link_bot",
+        bot_id="app_deep_link_bot",
         display_name="Deep Link Bot",
         description=(
-            "Generates and validates deep links for seamless in-app navigation and deferred user routing."
+            "Deep Link Bot — mobile app automation bot."
         ),
         category=BotCategory.APP,
         module_path="App_bots.deep_link_bot",
         class_name="DeepLinkBot",
-        capabilities=["deep_linking", "navigation", "user_routing"],
+        version="1.0.0",
+        capabilities=[],
+        namespace="app",
+        source_path="App_bots/deep_link_bot.py",
     ),
     BotEntry(
-        bot_id="education_app_bot",
+        bot_id="app_education_app_bot",
         display_name="Education App Bot",
         description=(
-            "Manages course content, quizzes, progress tracking, and adaptive learning paths for education apps."
+            "Education App Bot — mobile app automation bot."
         ),
         category=BotCategory.APP,
         module_path="App_bots.education_app_bot",
         class_name="EducationAppBot",
-        capabilities=["education", "learning", "courses", "quizzes"],
+        version="1.0.0",
+        capabilities=[],
+        namespace="app",
+        source_path="App_bots/education_app_bot.py",
     ),
     BotEntry(
-        bot_id="entertainment_app_bot",
+        bot_id="app_entertainment_app_bot",
         display_name="Entertainment App Bot",
         description=(
-            "Curates and serves entertainment content including video, audio, and interactive media experiences."
+            "Entertainment App Bot — mobile app automation bot."
         ),
         category=BotCategory.APP,
         module_path="App_bots.entertainment_app_bot",
         class_name="EntertainmentAppBot",
-        capabilities=["entertainment", "media", "content"],
+        version="1.0.0",
+        capabilities=[],
+        namespace="app",
+        source_path="App_bots/entertainment_app_bot.py",
     ),
     BotEntry(
-        bot_id="finance_app_bot",
+        bot_id="app_feature_flag_bot",
+        display_name="Feature Flag Bot",
+        description=(
+            "Feature Flag Bot — mobile app automation bot."
+        ),
+        category=BotCategory.APP,
+        module_path="App_bots.feature_flag_bot",
+        class_name="FeatureFlagBot",
+        version="1.0.0",
+        capabilities=[],
+        namespace="app",
+        source_path="App_bots/feature_flag_bot.py",
+    ),
+    BotEntry(
+        bot_id="app_finance_app_bot",
         display_name="Finance App Bot",
         description=(
-            "Handles personal finance features including budgeting, spend tracking, and payment integrations."
+            "Finance App Bot — mobile app automation bot."
         ),
         category=BotCategory.APP,
         module_path="App_bots.finance_app_bot",
         class_name="FinanceAppBot",
-        capabilities=["finance", "budgeting", "payments", "banking"],
+        version="1.0.0",
+        capabilities=[],
+        namespace="app",
+        source_path="App_bots/finance_app_bot.py",
     ),
     BotEntry(
-        bot_id="food_drink_app_bot",
+        bot_id="app_food_drink_app_bot",
         display_name="Food Drink App Bot",
         description=(
-            "Manages restaurant discovery, menu browsing, order placement, and food delivery workflows."
+            "Food Drink App Bot — mobile app automation bot."
         ),
         category=BotCategory.APP,
         module_path="App_bots.food_drink_app_bot",
         class_name="FoodDrinkAppBot",
-        capabilities=["food", "restaurants", "ordering", "delivery"],
+        version="1.0.0",
+        capabilities=[],
+        namespace="app",
+        source_path="App_bots/food_drink_app_bot.py",
     ),
     BotEntry(
-        bot_id="games_app_bot",
+        bot_id="app_games_app_bot",
         display_name="Games App Bot",
         description=(
-            "Implements gaming features including leaderboards, achievements, in-game events, and social play."
+            "Games App Bot — mobile app automation bot."
         ),
         category=BotCategory.APP,
         module_path="App_bots.games_app_bot",
         class_name="GamesAppBot",
-        capabilities=["games", "gaming", "leaderboards", "achievements"],
+        version="1.0.0",
+        capabilities=[],
+        namespace="app",
+        source_path="App_bots/games_app_bot.py",
     ),
     BotEntry(
-        bot_id="gamification_bot",
+        bot_id="app_gamification_bot",
         display_name="Gamification Bot",
         description=(
-            "Adds points, badges, streaks, and reward systems to drive user engagement and retention."
+            "Gamification Bot — mobile app automation bot."
         ),
         category=BotCategory.APP,
         module_path="App_bots.gamification_bot",
         class_name="GamificationBot",
-        capabilities=["gamification", "rewards", "engagement", "points"],
+        version="1.0.0",
+        capabilities=[],
+        namespace="app",
+        source_path="App_bots/gamification_bot.py",
     ),
     BotEntry(
-        bot_id="health_fitness_app_bot",
+        bot_id="app_health_fitness_app_bot",
         display_name="Health Fitness App Bot",
         description=(
-            "Tracks workouts, nutrition, health metrics, and personalised fitness goal progress."
+            "Health Fitness App Bot — mobile app automation bot."
         ),
         category=BotCategory.APP,
         module_path="App_bots.health_fitness_app_bot",
         class_name="HealthFitnessAppBot",
-        capabilities=["health", "fitness", "workout", "nutrition"],
+        version="1.0.0",
+        capabilities=[],
+        namespace="app",
+        source_path="App_bots/health_fitness_app_bot.py",
     ),
     BotEntry(
-        bot_id="in_app_purchase_bot",
+        bot_id="app_in_app_purchase_bot",
         display_name="In App Purchase Bot",
         description=(
-            "Manages in-app purchase flows, product catalogues, receipt validation, and subscription state."
+            "In App Purchase Bot — mobile app automation bot."
         ),
         category=BotCategory.APP,
         module_path="App_bots.in_app_purchase_bot",
         class_name="InAppPurchaseBot",
-        capabilities=["iap", "monetization", "purchases", "subscriptions"],
+        version="1.0.0",
+        capabilities=[],
+        namespace="app",
+        source_path="App_bots/in_app_purchase_bot.py",
     ),
     BotEntry(
-        bot_id="kids_family_app_bot",
+        bot_id="app_kids_family_app_bot",
         display_name="Kids Family App Bot",
         description=(
-            "Provides family-friendly features including parental controls, educational content, and safe experiences."
+            "Kids Family App Bot — mobile app automation bot."
         ),
         category=BotCategory.APP,
         module_path="App_bots.kids_family_app_bot",
         class_name="KidsFamilyAppBot",
-        capabilities=["kids", "family", "parental_controls", "education"],
+        version="1.0.0",
+        capabilities=[],
+        namespace="app",
+        source_path="App_bots/kids_family_app_bot.py",
     ),
     BotEntry(
-        bot_id="lifestyle_app_bot",
+        bot_id="app_lifestyle_app_bot",
         display_name="Lifestyle App Bot",
         description=(
-            "Supports lifestyle tracking including habits, wellness routines, and daily goal completion."
+            "Lifestyle App Bot — mobile app automation bot."
         ),
         category=BotCategory.APP,
         module_path="App_bots.lifestyle_app_bot",
         class_name="LifestyleAppBot",
-        capabilities=["lifestyle", "wellness", "habits"],
+        version="1.0.0",
+        capabilities=[],
+        namespace="app",
+        source_path="App_bots/lifestyle_app_bot.py",
     ),
     BotEntry(
-        bot_id="localization_bot",
+        bot_id="app_localization_bot",
         display_name="Localization Bot",
         description=(
-            "Automates app localisation with string extraction, translation management, and locale testing."
+            "Localization Bot — mobile app automation bot."
         ),
         category=BotCategory.APP,
         module_path="App_bots.localization_bot",
         class_name="LocalizationBot",
-        capabilities=["localization", "i18n", "translation", "multi_language"],
+        version="1.0.0",
+        capabilities=[],
+        namespace="app",
+        source_path="App_bots/localization_bot.py",
     ),
     BotEntry(
-        bot_id="medical_app_bot",
+        bot_id="app_medical_app_bot",
         display_name="Medical App Bot",
         description=(
-            "Supports medical app workflows including patient data, appointment scheduling, and telemedicine features."
+            "Medical App Bot — mobile app automation bot."
         ),
         category=BotCategory.APP,
         module_path="App_bots.medical_app_bot",
         class_name="MedicalAppBot",
-        capabilities=["medical", "healthcare", "telemedicine"],
+        version="1.0.0",
+        capabilities=[],
+        namespace="app",
+        source_path="App_bots/medical_app_bot.py",
     ),
     BotEntry(
-        bot_id="monetization_bot",
+        bot_id="app_monetization_bot",
         display_name="Monetization Bot",
         description=(
-            "Implements and optimises multiple monetisation strategies including ads, subscriptions, and IAPs."
+            "Monetization Bot — mobile app automation bot."
         ),
         category=BotCategory.APP,
         module_path="App_bots.monetization_bot",
         class_name="MonetizationBot",
-        capabilities=["monetization", "revenue", "ads", "subscriptions"],
+        version="1.0.0",
+        capabilities=[],
+        namespace="app",
+        source_path="App_bots/monetization_bot.py",
     ),
     BotEntry(
-        bot_id="music_app_bot",
+        bot_id="app_music_app_bot",
         display_name="Music App Bot",
         description=(
-            "Powers music streaming, playlist management, social listening, and personalised audio recommendations."
+            "Music App Bot — mobile app automation bot."
         ),
         category=BotCategory.APP,
         module_path="App_bots.music_app_bot",
         class_name="MusicAppBot",
-        capabilities=["music", "streaming", "playlists", "audio"],
+        version="1.0.0",
+        capabilities=[],
+        namespace="app",
+        source_path="App_bots/music_app_bot.py",
     ),
     BotEntry(
-        bot_id="navigation_app_bot",
+        bot_id="app_navigation_app_bot",
         display_name="Navigation App Bot",
         description=(
-            "Provides turn-by-turn navigation, route optimisation, real-time traffic, and location services."
+            "Navigation App Bot — mobile app automation bot."
         ),
         category=BotCategory.APP,
         module_path="App_bots.navigation_app_bot",
         class_name="NavigationAppBot",
-        capabilities=["navigation", "maps", "gps", "routing"],
+        version="1.0.0",
+        capabilities=[],
+        namespace="app",
+        source_path="App_bots/navigation_app_bot.py",
     ),
     BotEntry(
-        bot_id="news_app_bot",
+        bot_id="app_news_app_bot",
         display_name="News App Bot",
         description=(
-            "Aggregates and personalises news feeds, manages subscriptions, and drives content engagement."
+            "News App Bot — mobile app automation bot."
         ),
         category=BotCategory.APP,
         module_path="App_bots.news_app_bot",
         class_name="NewsAppBot",
-        capabilities=["news", "articles", "feed", "content"],
+        version="1.0.0",
+        capabilities=[],
+        namespace="app",
+        source_path="App_bots/news_app_bot.py",
     ),
     BotEntry(
-        bot_id="onboarding_funnel_bot",
+        bot_id="app_onboarding_funnel_bot",
         display_name="Onboarding Funnel Bot",
         description=(
-            "Designs and optimises user onboarding flows to maximise activation and reduce time-to-value."
+            "Onboarding Funnel Bot — mobile app automation bot."
         ),
         category=BotCategory.APP,
         module_path="App_bots.onboarding_funnel_bot",
         class_name="OnboardingFunnelBot",
-        capabilities=["onboarding", "user_flow", "conversion", "tutorial"],
+        version="1.0.0",
+        capabilities=[],
+        namespace="app",
+        source_path="App_bots/onboarding_funnel_bot.py",
     ),
     BotEntry(
-        bot_id="payment_gateway_bot",
+        bot_id="app_payment_gateway_bot",
         display_name="Payment Gateway Bot",
         description=(
-            "Integrates and manages payment gateway connections, checkout flows, and transaction processing."
+            "Payment Gateway Bot — mobile app automation bot."
         ),
         category=BotCategory.APP,
         module_path="App_bots.payment_gateway_bot",
         class_name="PaymentGatewayBot",
-        capabilities=["payments", "gateway", "checkout", "transactions"],
+        version="1.0.0",
+        capabilities=[],
+        namespace="app",
+        source_path="App_bots/payment_gateway_bot.py",
     ),
     BotEntry(
-        bot_id="performance_monitor_bot",
+        bot_id="app_performance_monitor_bot",
         display_name="Performance Monitor Bot",
         description=(
-            "Monitors app performance metrics including load times, frame rates, and resource usage."
+            "Performance Monitor Bot — mobile app automation bot."
         ),
         category=BotCategory.APP,
         module_path="App_bots.performance_monitor_bot",
         class_name="PerformanceMonitorBot",
-        capabilities=["performance", "monitoring", "apm", "metrics"],
+        version="1.0.0",
+        capabilities=[],
+        namespace="app",
+        source_path="App_bots/performance_monitor_bot.py",
     ),
     BotEntry(
-        bot_id="personalization_bot",
+        bot_id="app_personalization_bot",
         display_name="Personalization Bot",
         description=(
-            "Delivers ML-powered personalisation for content recommendations and tailored user experiences."
+            "Personalization Bot — mobile app automation bot."
         ),
         category=BotCategory.APP,
         module_path="App_bots.personalization_bot",
         class_name="PersonalizationBot",
-        capabilities=["personalization", "recommendations", "ml", "user_profiles"],
+        version="1.0.0",
+        capabilities=[],
+        namespace="app",
+        source_path="App_bots/personalization_bot.py",
     ),
     BotEntry(
-        bot_id="photo_video_app_bot",
+        bot_id="app_photo_video_app_bot",
         display_name="Photo Video App Bot",
         description=(
-            "Handles photo and video capture, editing, storage, and sharing features for media apps."
+            "Photo Video App Bot — mobile app automation bot."
         ),
         category=BotCategory.APP,
         module_path="App_bots.photo_video_app_bot",
         class_name="PhotoVideoAppBot",
-        capabilities=["photos", "video", "editing", "media"],
+        version="1.0.0",
+        capabilities=[],
+        namespace="app",
+        source_path="App_bots/photo_video_app_bot.py",
     ),
     BotEntry(
-        bot_id="productivity_app_bot",
+        bot_id="app_productivity_app_bot",
         display_name="Productivity App Bot",
         description=(
-            "Powers task management, note-taking, calendar integration, and team productivity workflows."
+            "Productivity App Bot — mobile app automation bot."
         ),
         category=BotCategory.APP,
         module_path="App_bots.productivity_app_bot",
         class_name="ProductivityAppBot",
-        capabilities=["productivity", "tasks", "notes", "calendar"],
+        version="1.0.0",
+        capabilities=[],
+        namespace="app",
+        source_path="App_bots/productivity_app_bot.py",
     ),
     BotEntry(
-        bot_id="push_notification_bot",
+        bot_id="app_push_notification_bot",
         display_name="Push Notification Bot",
         description=(
-            "Manages push notification campaigns, segmentation, scheduling, and delivery analytics."
+            "Push Notification Bot — mobile app automation bot."
         ),
         category=BotCategory.APP,
         module_path="App_bots.push_notification_bot",
         class_name="PushNotificationBot",
-        capabilities=["push_notifications", "alerts", "messaging"],
+        version="1.0.0",
+        capabilities=[],
+        namespace="app",
+        source_path="App_bots/push_notification_bot.py",
     ),
     BotEntry(
-        bot_id="reference_app_bot",
+        bot_id="app_reference_app_bot",
         display_name="Reference App Bot",
         description=(
-            "Provides reference content management including dictionaries, encyclopaedias, and knowledge bases."
+            "Reference App Bot — mobile app automation bot."
         ),
         category=BotCategory.APP,
         module_path="App_bots.reference_app_bot",
         class_name="ReferenceAppBot",
-        capabilities=["reference", "dictionary", "knowledge_base"],
+        version="1.0.0",
+        capabilities=[],
+        namespace="app",
+        source_path="App_bots/reference_app_bot.py",
     ),
     BotEntry(
-        bot_id="referral_program_bot",
+        bot_id="app_referral_program_bot",
         display_name="Referral Program Bot",
         description=(
-            "Automates referral program mechanics including invite generation, tracking, and reward fulfilment."
+            "Referral Program Bot — mobile app automation bot."
         ),
         category=BotCategory.APP,
         module_path="App_bots.referral_program_bot",
         class_name="ReferralProgramBot",
-        capabilities=["referrals", "growth", "viral", "rewards"],
+        version="1.0.0",
+        capabilities=[],
+        namespace="app",
+        source_path="App_bots/referral_program_bot.py",
     ),
     BotEntry(
-        bot_id="review_collector_bot",
+        bot_id="app_review_collector_bot",
         display_name="Review Collector Bot",
         description=(
-            "Prompts users for reviews at optimal moments, analyses feedback, and manages app store ratings."
+            "Review Collector Bot — mobile app automation bot."
         ),
         category=BotCategory.APP,
         module_path="App_bots.review_collector_bot",
         class_name="ReviewCollectorBot",
-        capabilities=["reviews", "ratings", "feedback", "nps"],
+        version="1.0.0",
+        capabilities=[],
+        namespace="app",
+        source_path="App_bots/review_collector_bot.py",
     ),
     BotEntry(
-        bot_id="session_tracker_bot",
+        bot_id="app_session_tracker_bot",
         display_name="Session Tracker Bot",
         description=(
-            "Tracks user session data including duration, screens visited, events, and engagement depth."
+            "Session Tracker Bot — mobile app automation bot."
         ),
         category=BotCategory.APP,
         module_path="App_bots.session_tracker_bot",
         class_name="SessionTrackerBot",
-        capabilities=["sessions", "analytics", "user_behavior"],
+        version="1.0.0",
+        capabilities=[],
+        namespace="app",
+        source_path="App_bots/session_tracker_bot.py",
     ),
     BotEntry(
-        bot_id="shopping_app_bot",
+        bot_id="app_shopping_app_bot",
         display_name="Shopping App Bot",
         description=(
-            "Manages shopping experiences including product discovery, cart management, and checkout optimisation."
+            "Shopping App Bot — mobile app automation bot."
         ),
         category=BotCategory.APP,
         module_path="App_bots.shopping_app_bot",
         class_name="ShoppingAppBot",
-        capabilities=["shopping", "ecommerce", "cart", "checkout"],
+        version="1.0.0",
+        capabilities=[],
+        namespace="app",
+        source_path="App_bots/shopping_app_bot.py",
     ),
     BotEntry(
-        bot_id="social_networking_app_bot",
+        bot_id="app_social_networking_app_bot",
         display_name="Social Networking App Bot",
         description=(
-            "Powers social networking features including feeds, profiles, connections, and community tools."
+            "Social Networking App Bot — mobile app automation bot."
         ),
         category=BotCategory.APP,
         module_path="App_bots.social_networking_app_bot",
         class_name="SocialNetworkingAppBot",
-        capabilities=["social", "networking", "community", "feed"],
+        version="1.0.0",
+        capabilities=[],
+        namespace="app",
+        source_path="App_bots/social_networking_app_bot.py",
     ),
     BotEntry(
-        bot_id="social_sharing_bot",
+        bot_id="app_social_sharing_bot",
         display_name="Social Sharing Bot",
         description=(
-            "Enables viral sharing mechanics, generates shareable content, and tracks social growth metrics."
+            "Social Sharing Bot — mobile app automation bot."
         ),
         category=BotCategory.APP,
         module_path="App_bots.social_sharing_bot",
         class_name="SocialSharingBot",
-        capabilities=["social_sharing", "viral", "sharing", "growth"],
+        version="1.0.0",
+        capabilities=[],
+        namespace="app",
+        source_path="App_bots/social_sharing_bot.py",
     ),
     BotEntry(
-        bot_id="sports_app_bot",
+        bot_id="app_sports_app_bot",
         display_name="Sports App Bot",
         description=(
-            "Delivers live sports scores, team stats, player profiles, and personalised sports content."
+            "Sports App Bot — mobile app automation bot."
         ),
         category=BotCategory.APP,
         module_path="App_bots.sports_app_bot",
         class_name="SportsAppBot",
-        capabilities=["sports", "scores", "teams", "stats"],
+        version="1.0.0",
+        capabilities=[],
+        namespace="app",
+        source_path="App_bots/sports_app_bot.py",
     ),
     BotEntry(
-        bot_id="subscription_manager_bot",
+        bot_id="app_subscription_manager_bot",
         display_name="Subscription Manager Bot",
         description=(
-            "Manages subscription plans, billing cycles, upgrades, downgrades, and renewal reminders."
+            "Subscription Manager Bot — mobile app automation bot."
         ),
         category=BotCategory.APP,
         module_path="App_bots.subscription_manager_bot",
         class_name="SubscriptionManagerBot",
-        capabilities=["subscriptions", "billing", "plans", "renewals"],
+        version="1.0.0",
+        capabilities=[],
+        namespace="app",
+        source_path="App_bots/subscription_manager_bot.py",
     ),
     BotEntry(
-        bot_id="travel_app_bot",
+        bot_id="app_travel_app_bot",
         display_name="Travel App Bot",
         description=(
-            "Powers travel booking including flights, hotels, itinerary planning, and trip management."
+            "Travel App Bot — mobile app automation bot."
         ),
         category=BotCategory.APP,
         module_path="App_bots.travel_app_bot",
         class_name="TravelAppBot",
-        capabilities=["travel", "booking", "flights", "hotels"],
+        version="1.0.0",
+        capabilities=[],
+        namespace="app",
+        source_path="App_bots/travel_app_bot.py",
     ),
     BotEntry(
-        bot_id="user_feedback_bot",
+        bot_id="app_user_feedback_bot",
         display_name="User Feedback Bot",
         description=(
-            "Collects structured user feedback via surveys, NPS, and in-app prompts with actionable reporting."
+            "User Feedback Bot — mobile app automation bot."
         ),
         category=BotCategory.APP,
         module_path="App_bots.user_feedback_bot",
         class_name="UserFeedbackBot",
-        capabilities=["user_feedback", "surveys", "nps", "insights"],
+        version="1.0.0",
+        capabilities=[],
+        namespace="app",
+        source_path="App_bots/user_feedback_bot.py",
     ),
     BotEntry(
-        bot_id="user_retention_bot",
+        bot_id="app_user_retention_bot",
         display_name="User Retention Bot",
         description=(
-            "Implements lifecycle re-engagement strategies to bring back lapsed users with personalised campaigns."
+            "User Retention Bot — mobile app automation bot."
         ),
         category=BotCategory.APP,
         module_path="App_bots.user_retention_bot",
         class_name="UserRetentionBot",
-        capabilities=["retention", "engagement", "re_engagement", "lifecycle"],
+        version="1.0.0",
+        capabilities=[],
+        namespace="app",
+        source_path="App_bots/user_retention_bot.py",
     ),
     BotEntry(
-        bot_id="user_segmentation_bot",
+        bot_id="app_user_segmentation_bot",
         display_name="User Segmentation Bot",
         description=(
-            "Segments users into cohorts based on behaviour, demographics, and value for targeted campaigns."
+            "User Segmentation Bot — mobile app automation bot."
         ),
         category=BotCategory.APP,
         module_path="App_bots.user_segmentation_bot",
         class_name="UserSegmentationBot",
-        capabilities=["segmentation", "cohorts", "analytics", "targeting"],
+        version="1.0.0",
+        capabilities=[],
+        namespace="app",
+        source_path="App_bots/user_segmentation_bot.py",
     ),
     BotEntry(
-        bot_id="utilities_app_bot",
+        bot_id="app_utilities_app_bot",
         display_name="Utilities App Bot",
         description=(
-            "Provides utility app features including calculators, converters, system tools, and file managers."
+            "Utilities App Bot — mobile app automation bot."
         ),
         category=BotCategory.APP,
         module_path="App_bots.utilities_app_bot",
         class_name="UtilitiesAppBot",
-        capabilities=["utilities", "tools", "system"],
+        version="1.0.0",
+        capabilities=[],
+        namespace="app",
+        source_path="App_bots/utilities_app_bot.py",
     ),
     BotEntry(
-        bot_id="weather_app_bot",
+        bot_id="app_weather_app_bot",
         display_name="Weather App Bot",
         description=(
-            "Delivers accurate weather forecasts, alerts, and location-based climate information."
+            "Weather App Bot — mobile app automation bot."
         ),
         category=BotCategory.APP,
         module_path="App_bots.weather_app_bot",
         class_name="WeatherAppBot",
-        capabilities=["weather", "forecast", "location"],
+        version="1.0.0",
+        capabilities=[],
+        namespace="app",
+        source_path="App_bots/weather_app_bot.py",
     ),
     BotEntry(
-        bot_id="accommodation_food_bot",
+        bot_id="biz_accommodation_food_bot",
         display_name="Accommodation Food Bot",
         description=(
-            "Manages hospitality and food service operations including bookings, menus, and staff scheduling."
+            "Accommodation Food Bot — business operations automation bot."
         ),
         category=BotCategory.BUSINESS,
         module_path="Business_bots.accommodation_food_bot",
         class_name="AccommodationFoodBot",
-        capabilities=["hospitality", "food_service", "accommodation"],
+        version="1.0.0",
+        capabilities=[],
+        namespace="biz",
+        source_path="Business_bots/accommodation_food_bot.py",
     ),
     BotEntry(
-        bot_id="administrative_support_industry_bot",
+        bot_id="biz_administrative_support_industry_bot",
         display_name="Administrative Support Industry Bot",
         description=(
-            "Automates administrative support tasks including scheduling, correspondence, and office management."
+            "Administrative Support Industry Bot — business operations automation bot."
         ),
         category=BotCategory.BUSINESS,
         module_path="Business_bots.administrative_support_industry_bot",
         class_name="AdministrativeSupportIndustryBot",
-        capabilities=["admin", "support", "operations"],
+        version="1.0.0",
+        capabilities=[],
+        namespace="biz",
+        source_path="Business_bots/administrative_support_industry_bot.py",
     ),
     BotEntry(
-        bot_id="agriculture_bot",
+        bot_id="biz_agriculture_bot",
         display_name="Agriculture Bot",
         description=(
-            "Optimises agricultural operations with crop planning, yield forecasting, and precision farming tools."
+            "Agriculture Bot — business operations automation bot."
         ),
         category=BotCategory.BUSINESS,
         module_path="Business_bots.agriculture_bot",
         class_name="AgricultureBot",
-        capabilities=["agriculture", "farming", "crops", "yield"],
+        version="1.0.0",
+        capabilities=[],
+        namespace="biz",
+        source_path="Business_bots/agriculture_bot.py",
     ),
     BotEntry(
-        bot_id="arts_entertainment_bot",
+        bot_id="biz_arts_entertainment_bot",
         display_name="Arts Entertainment Bot",
         description=(
-            "Supports arts and entertainment industry workflows including booking, rights management, and promotion."
+            "Arts Entertainment Bot — business operations automation bot."
         ),
         category=BotCategory.BUSINESS,
         module_path="Business_bots.arts_entertainment_bot",
         class_name="ArtsEntertainmentBot",
-        capabilities=["arts", "entertainment", "media"],
+        version="1.0.0",
+        capabilities=[],
+        namespace="biz",
+        source_path="Business_bots/arts_entertainment_bot.py",
     ),
     BotEntry(
-        bot_id="brand_monitor_bot",
+        bot_id="biz_brand_monitor_bot",
         display_name="Brand Monitor Bot",
         description=(
-            "Monitors brand mentions across the web and social media, tracks sentiment, and alerts on reputation risks."
+            "Brand Monitor Bot — business operations automation bot."
         ),
         category=BotCategory.BUSINESS,
         module_path="Business_bots.brand_monitor_bot",
         class_name="BrandMonitorBot",
-        capabilities=["brand_monitoring", "sentiment", "mentions", "alerts"],
+        version="1.0.0",
+        capabilities=[],
+        namespace="biz",
+        source_path="Business_bots/brand_monitor_bot.py",
     ),
     BotEntry(
-        bot_id="business_plan_bot",
+        bot_id="biz_business_plan_bot",
         display_name="Business Plan Bot",
         description=(
-            "Generates comprehensive AI-powered business plans with market analysis, financials, and growth strategies."
+            "Business Plan Bot — business operations automation bot."
         ),
         category=BotCategory.BUSINESS,
         module_path="Business_bots.business_plan_bot",
         class_name="BusinessPlanBot",
-        capabilities=["business_plan", "strategy", "planning", "financials"],
+        version="1.0.0",
+        capabilities=[],
+        namespace="biz",
+        source_path="Business_bots/business_plan_bot.py",
     ),
     BotEntry(
-        bot_id="competitor_analyzer_bot",
+        bot_id="biz_competitor_analyzer_bot",
         display_name="Competitor Analyzer Bot",
         description=(
-            "Researches and benchmarks competitors on pricing, features, marketing, and market positioning."
+            "Competitor Analyzer Bot — business operations automation bot."
         ),
         category=BotCategory.BUSINESS,
         module_path="Business_bots.competitor_analyzer_bot",
         class_name="CompetitorAnalyzerBot",
-        capabilities=["competitor_analysis", "market_intel", "benchmarking"],
+        version="1.0.0",
+        capabilities=[],
+        namespace="biz",
+        source_path="Business_bots/competitor_analyzer_bot.py",
     ),
     BotEntry(
-        bot_id="compliance_checker_bot",
+        bot_id="biz_compliance_checker_bot",
         display_name="Compliance Checker Bot",
         description=(
-            "Audits business processes for regulatory compliance across industry standards and legal requirements."
+            "Compliance Checker Bot — business operations automation bot."
         ),
         category=BotCategory.BUSINESS,
         module_path="Business_bots.compliance_checker_bot",
         class_name="ComplianceCheckerBot",
-        capabilities=["compliance", "regulatory", "audit", "legal"],
+        version="1.0.0",
+        capabilities=[],
+        namespace="biz",
+        source_path="Business_bots/compliance_checker_bot.py",
     ),
     BotEntry(
-        bot_id="construction_bot",
+        bot_id="biz_construction_bot",
         display_name="Construction Bot",
         description=(
-            "Manages construction project timelines, contractor coordination, materials tracking, and budget oversight."
+            "Construction Bot — business operations automation bot."
         ),
         category=BotCategory.BUSINESS,
         module_path="Business_bots.construction_bot",
         class_name="ConstructionBot",
-        capabilities=["construction", "project_management", "contracts"],
+        version="1.0.0",
+        capabilities=[],
+        namespace="biz",
+        source_path="Business_bots/construction_bot.py",
     ),
     BotEntry(
-        bot_id="contract_generator_bot",
+        bot_id="biz_contract_generator_bot",
         display_name="Contract Generator Bot",
         description=(
-            "Generates legally-sound contract templates tailored to specific business scenarios and jurisdictions."
+            "Contract Generator Bot — business operations automation bot."
         ),
         category=BotCategory.BUSINESS,
         module_path="Business_bots.contract_generator_bot",
         class_name="ContractGeneratorBot",
-        capabilities=["contracts", "legal", "templates", "automation"],
+        version="1.0.0",
+        capabilities=[],
+        namespace="biz",
+        source_path="Business_bots/contract_generator_bot.py",
     ),
     BotEntry(
-        bot_id="customer_support_bot",
+        bot_id="biz_customer_support_bot",
         display_name="Customer Support Bot",
         description=(
-            "Automates customer support with intelligent ticket routing, knowledge base lookup, and escalation workflows."
+            "Customer Support Bot — business operations automation bot."
         ),
         category=BotCategory.BUSINESS,
         module_path="Business_bots.customer_support_bot",
         class_name="CustomerSupportBot",
-        capabilities=["customer_support", "helpdesk", "tickets", "chat"],
+        version="1.0.0",
+        capabilities=[],
+        namespace="biz",
+        source_path="Business_bots/customer_support_bot.py",
     ),
     BotEntry(
-        bot_id="document_manager_bot",
+        bot_id="biz_document_manager_bot",
         display_name="Document Manager Bot",
         description=(
-            "Organises, indexes, and retrieves business documents with intelligent categorisation and search."
+            "Document Manager Bot — business operations automation bot."
         ),
         category=BotCategory.BUSINESS,
         module_path="Business_bots.document_manager_bot",
         class_name="DocumentManagerBot",
-        capabilities=["documents", "storage", "organization", "search"],
+        version="1.0.0",
+        capabilities=[],
+        namespace="biz",
+        source_path="Business_bots/document_manager_bot.py",
     ),
     BotEntry(
-        bot_id="ecommerce_optimizer_bot",
+        bot_id="biz_ecommerce_optimizer_bot",
         display_name="Ecommerce Optimizer Bot",
         description=(
-            "Optimises e-commerce store performance through conversion analysis, product page improvements, and UX fixes."
+            "Ecommerce Optimizer Bot — business operations automation bot."
         ),
         category=BotCategory.BUSINESS,
         module_path="Business_bots.ecommerce_optimizer_bot",
         class_name="EcommerceOptimizerBot",
-        capabilities=["ecommerce", "conversion", "optimization", "sales"],
+        version="1.0.0",
+        capabilities=[],
+        namespace="biz",
+        source_path="Business_bots/ecommerce_optimizer_bot.py",
     ),
     BotEntry(
-        bot_id="educational_services_bot",
+        bot_id="biz_educational_services_bot",
         display_name="Educational Services Bot",
         description=(
-            "Manages educational service delivery including course scheduling, student tracking, and certification."
+            "Educational Services Bot — business operations automation bot."
         ),
         category=BotCategory.BUSINESS,
         module_path="Business_bots.educational_services_bot",
         class_name="EducationalServicesBot",
-        capabilities=["education", "courses", "certification", "training"],
+        version="1.0.0",
+        capabilities=[],
+        namespace="biz",
+        source_path="Business_bots/educational_services_bot.py",
     ),
     BotEntry(
-        bot_id="employee_onboarding_bot",
+        bot_id="biz_employee_onboarding_bot",
         display_name="Employee Onboarding Bot",
         description=(
-            "Automates employee onboarding with checklists, document collection, training assignment, and HR workflows."
+            "Employee Onboarding Bot — business operations automation bot."
         ),
         category=BotCategory.BUSINESS,
         module_path="Business_bots.employee_onboarding_bot",
         class_name="EmployeeOnboardingBot",
-        capabilities=["onboarding", "hr", "training", "workflows"],
+        version="1.0.0",
+        capabilities=[],
+        namespace="biz",
+        source_path="Business_bots/employee_onboarding_bot.py",
     ),
     BotEntry(
-        bot_id="expense_tracker_bot",
+        bot_id="biz_expense_tracker_bot",
         display_name="Expense Tracker Bot",
         description=(
-            "Tracks business expenses, categorises spend, enforces budgets, and generates financial reports."
+            "Expense Tracker Bot — business operations automation bot."
         ),
         category=BotCategory.BUSINESS,
         module_path="Business_bots.expense_tracker_bot",
         class_name="ExpenseTrackerBot",
-        capabilities=["expenses", "budgeting", "finance", "reporting"],
+        version="1.0.0",
+        capabilities=[],
+        namespace="biz",
+        source_path="Business_bots/expense_tracker_bot.py",
     ),
     BotEntry(
-        bot_id="finance_insurance_bot",
+        bot_id="biz_finance_insurance_bot",
         display_name="Finance Insurance Bot",
         description=(
-            "Handles finance and insurance industry operations including policy management and risk assessment."
+            "Finance Insurance Bot — business operations automation bot."
         ),
         category=BotCategory.BUSINESS,
         module_path="Business_bots.finance_insurance_bot",
         class_name="FinanceInsuranceBot",
-        capabilities=["finance", "insurance", "risk", "coverage"],
+        version="1.0.0",
+        capabilities=[],
+        namespace="biz",
+        source_path="Business_bots/finance_insurance_bot.py",
     ),
     BotEntry(
-        bot_id="financial_forecaster_bot",
+        bot_id="biz_financial_forecaster_bot",
         display_name="Financial Forecaster Bot",
         description=(
-            "Builds financial forecasts with revenue projections, scenario modelling, and cash flow analysis."
+            "Financial Forecaster Bot — business operations automation bot."
         ),
         category=BotCategory.BUSINESS,
         module_path="Business_bots.financial_forecaster_bot",
         class_name="FinancialForecasterBot",
-        capabilities=["forecasting", "finance", "projections", "modeling"],
+        version="1.0.0",
+        capabilities=[],
+        namespace="biz",
+        source_path="Business_bots/financial_forecaster_bot.py",
     ),
     BotEntry(
-        bot_id="franchise_analyzer_bot",
+        bot_id="biz_franchise_analyzer_bot",
         display_name="Franchise Analyzer Bot",
         description=(
-            "Analyses franchise opportunities for ROI potential, market fit, and operational feasibility."
+            "Franchise Analyzer Bot — business operations automation bot."
         ),
         category=BotCategory.BUSINESS,
         module_path="Business_bots.franchise_analyzer_bot",
         class_name="FranchiseAnalyzerBot",
-        capabilities=["franchise", "opportunity_analysis", "roi", "business"],
+        version="1.0.0",
+        capabilities=[],
+        namespace="biz",
+        source_path="Business_bots/franchise_analyzer_bot.py",
     ),
     BotEntry(
-        bot_id="grant_finder_bot",
+        bot_id="biz_grant_finder_bot",
         display_name="Grant Finder Bot",
         description=(
-            "Discovers and matches business grant opportunities from government and private funding sources."
+            "Grant Finder Bot — business operations automation bot."
         ),
         category=BotCategory.BUSINESS,
         module_path="Business_bots.grant_finder_bot",
         class_name="GrantFinderBot",
-        capabilities=["grants", "funding", "government", "applications"],
+        version="1.0.0",
+        capabilities=[],
+        namespace="biz",
+        source_path="Business_bots/grant_finder_bot.py",
     ),
     BotEntry(
-        bot_id="health_care_bot",
+        bot_id="biz_health_care_bot",
         display_name="Health Care Bot",
         description=(
-            "Manages healthcare business operations including patient scheduling, billing, and compliance workflows."
+            "Health Care Bot — business operations automation bot."
         ),
         category=BotCategory.BUSINESS,
         module_path="Business_bots.health_care_bot",
         class_name="HealthCareBot",
-        capabilities=["healthcare", "medical", "patients", "billing"],
+        version="1.0.0",
+        capabilities=[],
+        namespace="biz",
+        source_path="Business_bots/health_care_bot.py",
     ),
     BotEntry(
-        bot_id="information_bot",
+        bot_id="biz_information_bot",
         display_name="Information Bot",
         description=(
-            "Aggregates and delivers structured business information from internal and external knowledge sources."
+            "Information Bot — business operations automation bot."
         ),
         category=BotCategory.BUSINESS,
         module_path="Business_bots.information_bot",
         class_name="InformationBot",
-        capabilities=["information", "knowledge_base", "research"],
+        version="1.0.0",
+        capabilities=[],
+        namespace="biz",
+        source_path="Business_bots/information_bot.py",
     ),
     BotEntry(
-        bot_id="insurance_advisor_bot",
+        bot_id="biz_insurance_advisor_bot",
         display_name="Insurance Advisor Bot",
         description=(
-            "Analyses insurance needs, compares policy options, and advises on coverage gaps and risk exposure."
+            "Insurance Advisor Bot — business operations automation bot."
         ),
         category=BotCategory.BUSINESS,
         module_path="Business_bots.insurance_advisor_bot",
         class_name="InsuranceAdvisorBot",
-        capabilities=["insurance", "coverage", "risk_assessment", "claims"],
+        version="1.0.0",
+        capabilities=[],
+        namespace="biz",
+        source_path="Business_bots/insurance_advisor_bot.py",
     ),
     BotEntry(
-        bot_id="inventory_manager_bot",
+        bot_id="biz_inventory_manager_bot",
         display_name="Inventory Manager Bot",
         description=(
-            "Tracks inventory levels, automates reorder triggers, and optimises stock across locations."
+            "Inventory Manager Bot — business operations automation bot."
         ),
         category=BotCategory.BUSINESS,
         module_path="Business_bots.inventory_manager_bot",
         class_name="InventoryManagerBot",
-        capabilities=["inventory", "stock", "supply_chain", "tracking"],
+        version="1.0.0",
+        capabilities=[],
+        namespace="biz",
+        source_path="Business_bots/inventory_manager_bot.py",
     ),
     BotEntry(
-        bot_id="kpi_tracker_bot",
+        bot_id="biz_kpi_tracker_bot",
         display_name="Kpi Tracker Bot",
         description=(
-            "Monitors key performance indicators, builds real-time dashboards, and generates executive KPI reports."
+            "Kpi Tracker Bot — business operations automation bot."
         ),
         category=BotCategory.BUSINESS,
         module_path="Business_bots.kpi_tracker_bot",
         class_name="KPITrackerBot",
-        capabilities=["kpis", "metrics", "dashboards", "reporting"],
+        version="1.0.0",
+        capabilities=[],
+        namespace="biz",
+        source_path="Business_bots/kpi_tracker_bot.py",
     ),
     BotEntry(
-        bot_id="llc_formation_bot",
+        bot_id="biz_llc_formation_bot",
         display_name="Llc Formation Bot",
         description=(
-            "Guides business owners through LLC formation with document preparation, filings, and compliance checklists."
+            "Llc Formation Bot — business operations automation bot."
         ),
         category=BotCategory.BUSINESS,
         module_path="Business_bots.llc_formation_bot",
         class_name="LLCFormationBot",
-        capabilities=["llc", "business_formation", "legal", "compliance"],
+        version="1.0.0",
+        capabilities=[],
+        namespace="biz",
+        source_path="Business_bots/llc_formation_bot.py",
     ),
     BotEntry(
-        bot_id="management_companies_bot",
+        bot_id="biz_management_companies_bot",
         display_name="Management Companies Bot",
         description=(
-            "Supports management company operations with portfolio oversight, reporting, and operational tools."
+            "Management Companies Bot — business operations automation bot."
         ),
         category=BotCategory.BUSINESS,
         module_path="Business_bots.management_companies_bot",
         class_name="ManagementCompaniesBot",
-        capabilities=["management", "companies", "portfolio", "oversight"],
+        version="1.0.0",
+        capabilities=[],
+        namespace="biz",
+        source_path="Business_bots/management_companies_bot.py",
     ),
     BotEntry(
-        bot_id="manufacturing_bot",
+        bot_id="biz_manufacturing_bot",
         display_name="Manufacturing Bot",
         description=(
-            "Optimises manufacturing operations with production scheduling, quality control, and supply chain management."
+            "Manufacturing Bot — business operations automation bot."
         ),
         category=BotCategory.BUSINESS,
         module_path="Business_bots.manufacturing_bot",
         class_name="ManufacturingBot",
-        capabilities=["manufacturing", "production", "quality_control", "supply_chain"],
+        version="1.0.0",
+        capabilities=[],
+        namespace="biz",
+        source_path="Business_bots/manufacturing_bot.py",
     ),
     BotEntry(
-        bot_id="market_research_bot",
+        bot_id="biz_market_research_bot",
         display_name="Market Research Bot",
         description=(
-            "Conducts comprehensive market research with surveys, competitive analysis, and consumer insights."
+            "Market Research Bot — business operations automation bot."
         ),
         category=BotCategory.BUSINESS,
         module_path="Business_bots.market_research_bot",
         class_name="MarketResearchBot",
-        capabilities=["market_research", "surveys", "analysis", "insights"],
+        version="1.0.0",
+        capabilities=[],
+        namespace="biz",
+        source_path="Business_bots/market_research_bot.py",
     ),
     BotEntry(
-        bot_id="meeting_scheduler_bot",
+        bot_id="biz_meeting_scheduler_bot",
         display_name="Meeting Scheduler Bot",
         description=(
-            "Automates meeting scheduling with calendar integration, availability matching, and reminder workflows."
+            "Meeting Scheduler Bot — business operations automation bot."
         ),
         category=BotCategory.BUSINESS,
         module_path="Business_bots.meeting_scheduler_bot",
         class_name="MeetingSchedulerBot",
-        capabilities=["scheduling", "calendar", "meetings", "automation"],
+        version="1.0.0",
+        capabilities=[],
+        namespace="biz",
+        source_path="Business_bots/meeting_scheduler_bot.py",
     ),
     BotEntry(
         bot_id="biz_mining_bot",
-        display_name="Biz Mining Bot",
+        display_name="Mining Bot",
         description=(
-            "Manages mining and resource extraction operations with production monitoring and compliance tracking."
+            "Mining Bot — business operations automation bot."
         ),
         category=BotCategory.BUSINESS,
         module_path="Business_bots.mining_bot",
         class_name="MiningBot",
-        capabilities=["mining", "extraction", "resources", "operations"],
+        version="1.0.0",
+        capabilities=[],
+        namespace="biz",
+        source_path="Business_bots/mining_bot.py",
     ),
     BotEntry(
-        bot_id="other_services_bot",
+        bot_id="biz_other_services_bot",
         display_name="Other Services Bot",
         description=(
-            "Provides support for miscellaneous service industry operations and business automation tasks."
+            "Other Services Bot — business operations automation bot."
         ),
         category=BotCategory.BUSINESS,
         module_path="Business_bots.other_services_bot",
         class_name="OtherServicesBot",
-        capabilities=["services", "general", "consulting"],
+        version="1.0.0",
+        capabilities=[],
+        namespace="biz",
+        source_path="Business_bots/other_services_bot.py",
     ),
     BotEntry(
-        bot_id="partnership_finder_bot",
+        bot_id="biz_partnership_finder_bot",
         display_name="Partnership Finder Bot",
         description=(
-            "Identifies and facilitates strategic partnership opportunities with matching and outreach automation."
+            "Partnership Finder Bot — business operations automation bot."
         ),
         category=BotCategory.BUSINESS,
         module_path="Business_bots.partnership_finder_bot",
         class_name="PartnershipFinderBot",
-        capabilities=["partnerships", "networking", "business_dev", "outreach"],
+        version="1.0.0",
+        capabilities=[],
+        namespace="biz",
+        source_path="Business_bots/partnership_finder_bot.py",
     ),
     BotEntry(
-        bot_id="payroll_bot",
+        bot_id="biz_payroll_bot",
         display_name="Payroll Bot",
         description=(
-            "Processes payroll calculations, tax deductions, direct deposit, and compliance reporting automation."
+            "Payroll Bot — business operations automation bot."
         ),
         category=BotCategory.BUSINESS,
         module_path="Business_bots.payroll_bot",
         class_name="PayrollBot",
-        capabilities=["payroll", "hr", "compensation", "tax_filing"],
+        version="1.0.0",
+        capabilities=[],
+        namespace="biz",
+        source_path="Business_bots/payroll_bot.py",
     ),
     BotEntry(
-        bot_id="pitch_deck_bot",
+        bot_id="biz_pitch_deck_bot",
         display_name="Pitch Deck Bot",
         description=(
-            "Creates investor-ready pitch decks with AI-generated content, financial models, and visual storytelling."
+            "Pitch Deck Bot — business operations automation bot."
         ),
         category=BotCategory.BUSINESS,
         module_path="Business_bots.pitch_deck_bot",
         class_name="PitchDeckBot",
-        capabilities=["pitch_deck", "presentations", "investor_relations", "fundraising"],
+        version="1.0.0",
+        capabilities=[],
+        namespace="biz",
+        source_path="Business_bots/pitch_deck_bot.py",
     ),
     BotEntry(
-        bot_id="pricing_strategy_bot",
+        bot_id="biz_pricing_strategy_bot",
         display_name="Pricing Strategy Bot",
         description=(
-            "Analyses markets and competition to recommend optimal pricing strategies and dynamic pricing models."
+            "Pricing Strategy Bot — business operations automation bot."
         ),
         category=BotCategory.BUSINESS,
         module_path="Business_bots.pricing_strategy_bot",
         class_name="PricingStrategyBot",
-        capabilities=["pricing", "strategy", "optimization", "competitive"],
+        version="1.0.0",
+        capabilities=[],
+        namespace="biz",
+        source_path="Business_bots/pricing_strategy_bot.py",
     ),
     BotEntry(
-        bot_id="professional_services_bot",
+        bot_id="biz_professional_services_bot",
         display_name="Professional Services Bot",
         description=(
-            "Automates professional services firm operations including client management, billing, and delivery tracking."
+            "Professional Services Bot — business operations automation bot."
         ),
         category=BotCategory.BUSINESS,
         module_path="Business_bots.professional_services_bot",
         class_name="ProfessionalServicesBot",
-        capabilities=["professional_services", "consulting", "legal", "finance"],
+        version="1.0.0",
+        capabilities=[],
+        namespace="biz",
+        source_path="Business_bots/professional_services_bot.py",
     ),
     BotEntry(
-        bot_id="public_administration_bot",
+        bot_id="biz_public_administration_bot",
         display_name="Public Administration Bot",
         description=(
-            "Supports public administration workflows including citizen services, compliance, and government reporting."
+            "Public Administration Bot — business operations automation bot."
         ),
         category=BotCategory.BUSINESS,
         module_path="Business_bots.public_administration_bot",
         class_name="PublicAdministrationBot",
-        capabilities=["public_sector", "government", "administration"],
+        version="1.0.0",
+        capabilities=[],
+        namespace="biz",
+        source_path="Business_bots/public_administration_bot.py",
     ),
     BotEntry(
-        bot_id="real_estate_leasing_bot",
+        bot_id="biz_real_estate_leasing_bot",
         display_name="Real Estate Leasing Bot",
         description=(
-            "Manages commercial and residential leasing workflows including listings, applications, and lease generation."
+            "Real Estate Leasing Bot — business operations automation bot."
         ),
         category=BotCategory.BUSINESS,
         module_path="Business_bots.real_estate_leasing_bot",
         class_name="RealEstateLeasingBot",
-        capabilities=["leasing", "real_estate", "contracts", "tenants"],
+        version="1.0.0",
+        capabilities=[],
+        namespace="biz",
+        source_path="Business_bots/real_estate_leasing_bot.py",
     ),
     BotEntry(
-        bot_id="retail_trade_bot",
+        bot_id="biz_retail_trade_bot",
         display_name="Retail Trade Bot",
         description=(
-            "Optimises retail operations with inventory management, sales analytics, and customer experience tools."
+            "Retail Trade Bot — business operations automation bot."
         ),
         category=BotCategory.BUSINESS,
         module_path="Business_bots.retail_trade_bot",
         class_name="RetailTradeBot",
-        capabilities=["retail", "sales", "inventory", "pos"],
+        version="1.0.0",
+        capabilities=[],
+        namespace="biz",
+        source_path="Business_bots/retail_trade_bot.py",
     ),
     BotEntry(
-        bot_id="sales_pipeline_bot",
+        bot_id="biz_sales_pipeline_bot",
         display_name="Sales Pipeline Bot",
         description=(
-            "Manages sales pipeline stages, forecasts revenue, and automates CRM updates and follow-up sequences."
+            "Sales Pipeline Bot — business operations automation bot."
         ),
         category=BotCategory.BUSINESS,
         module_path="Business_bots.sales_pipeline_bot",
         class_name="SalesPipelineBot",
-        capabilities=["sales_pipeline", "crm", "leads", "forecasting"],
+        version="1.0.0",
+        capabilities=[],
+        namespace="biz",
+        source_path="Business_bots/sales_pipeline_bot.py",
     ),
     BotEntry(
-        bot_id="supply_chain_bot",
+        bot_id="biz_supply_chain_bot",
         display_name="Supply Chain Bot",
         description=(
-            "Optimises supply chain operations with vendor management, logistics tracking, and demand forecasting."
+            "Supply Chain Bot — business operations automation bot."
         ),
         category=BotCategory.BUSINESS,
         module_path="Business_bots.supply_chain_bot",
         class_name="SupplyChainBot",
-        capabilities=["supply_chain", "logistics", "procurement", "tracking"],
+        version="1.0.0",
+        capabilities=[],
+        namespace="biz",
+        source_path="Business_bots/supply_chain_bot.py",
     ),
     BotEntry(
-        bot_id="tax_preparer_bot",
+        bot_id="biz_tax_preparer_bot",
         display_name="Tax Preparer Bot",
         description=(
-            "Automates tax preparation with income analysis, deduction identification, and filing deadline management."
+            "Tax Preparer Bot — business operations automation bot."
         ),
         category=BotCategory.BUSINESS,
         module_path="Business_bots.tax_preparer_bot",
         class_name="TaxPreparerBot",
-        capabilities=["taxes", "filing", "deductions", "compliance"],
+        version="1.0.0",
+        capabilities=[],
+        namespace="biz",
+        source_path="Business_bots/tax_preparer_bot.py",
     ),
     BotEntry(
-        bot_id="transportation_warehousing_bot",
+        bot_id="biz_transportation_warehousing_bot",
         display_name="Transportation Warehousing Bot",
         description=(
-            "Manages transportation and warehousing operations including fleet tracking and inventory logistics."
+            "Transportation Warehousing Bot — business operations automation bot."
         ),
         category=BotCategory.BUSINESS,
         module_path="Business_bots.transportation_warehousing_bot",
         class_name="TransportationWarehousingBot",
-        capabilities=["transportation", "warehousing", "logistics"],
+        version="1.0.0",
+        capabilities=[],
+        namespace="biz",
+        source_path="Business_bots/transportation_warehousing_bot.py",
     ),
     BotEntry(
-        bot_id="utilities_bot",
+        bot_id="biz_utilities_bot",
         display_name="Utilities Bot",
         description=(
-            "Handles utilities industry operations including service delivery, billing, and infrastructure management."
+            "Utilities Bot — business operations automation bot."
         ),
         category=BotCategory.BUSINESS,
         module_path="Business_bots.utilities_bot",
         class_name="UtilitiesBot",
-        capabilities=["utilities", "energy", "billing", "infrastructure"],
+        version="1.0.0",
+        capabilities=[],
+        namespace="biz",
+        source_path="Business_bots/utilities_bot.py",
     ),
     BotEntry(
-        bot_id="vendor_manager_bot",
+        bot_id="biz_vendor_manager_bot",
         display_name="Vendor Manager Bot",
         description=(
-            "Manages vendor relationships, procurement workflows, contract compliance, and performance evaluation."
+            "Vendor Manager Bot — business operations automation bot."
         ),
         category=BotCategory.BUSINESS,
         module_path="Business_bots.vendor_manager_bot",
         class_name="VendorManagerBot",
-        capabilities=["vendors", "procurement", "contracts", "evaluation"],
+        version="1.0.0",
+        capabilities=[],
+        namespace="biz",
+        source_path="Business_bots/vendor_manager_bot.py",
     ),
     BotEntry(
-        bot_id="wholesale_trade_bot",
+        bot_id="biz_wholesale_trade_bot",
         display_name="Wholesale Trade Bot",
         description=(
-            "Optimises wholesale trade operations with bulk order management, pricing tiers, and distribution."
+            "Wholesale Trade Bot — business operations automation bot."
         ),
         category=BotCategory.BUSINESS,
         module_path="Business_bots.wholesale_trade_bot",
         class_name="WholesaleTradeBot",
-        capabilities=["wholesale", "distribution", "bulk_orders", "b2b"],
+        version="1.0.0",
+        capabilities=[],
+        namespace="biz",
+        source_path="Business_bots/wholesale_trade_bot.py",
     ),
     BotEntry(
-        bot_id="buyer_persona_bot",
+        bot_id="fvr_buyer_persona_bot",
         display_name="Buyer Persona Bot",
         description=(
-            "Builds detailed buyer personas for freelance service targeting and proposal personalisation."
+            "Buyer Persona Bot — Fiverr platform automation bot."
         ),
         category=BotCategory.FREELANCE,
         module_path="Fiverr_bots.buyer_persona_bot",
         class_name="BuyerPersonaBot",
-        capabilities=["buyer_personas", "targeting", "market_research"],
+        version="1.0.0",
+        capabilities=[],
+        namespace="fvr",
+        source_path="Fiverr_bots/buyer_persona_bot.py",
     ),
     BotEntry(
-        bot_id="client_finder_bot",
+        bot_id="fvr_client_finder_bot",
         display_name="Client Finder Bot",
         description=(
-            "Discovers and qualifies potential freelance clients through platform and social media prospecting."
+            "Client Finder Bot — Fiverr platform automation bot."
         ),
         category=BotCategory.FREELANCE,
         module_path="Fiverr_bots.client_finder_bot",
         class_name="ClientFinderBot",
-        capabilities=["client_discovery", "lead_gen", "freelance", "prospecting"],
+        version="1.0.0",
+        capabilities=[],
+        namespace="fvr",
+        source_path="Fiverr_bots/client_finder_bot.py",
     ),
     BotEntry(
-        bot_id="client_retention_bot",
+        bot_id="fvr_client_retention_bot",
         display_name="Client Retention Bot",
         description=(
-            "Implements client retention strategies with follow-up automation and loyalty incentives."
+            "Client Retention Bot — Fiverr platform automation bot."
         ),
         category=BotCategory.FREELANCE,
         module_path="Fiverr_bots.client_retention_bot",
         class_name="ClientRetentionBot",
-        capabilities=["client_retention", "loyalty", "follow_up"],
+        version="1.0.0",
+        capabilities=[],
+        namespace="fvr",
+        source_path="Fiverr_bots/client_retention_bot.py",
     ),
     BotEntry(
-        bot_id="fiverr_competitor_spy_bot",
-        display_name="Fiverr Competitor Spy Bot",
+        bot_id="fvr_competitor_spy_bot",
+        display_name="Competitor Spy Bot",
         description=(
-            "Monitors competitor gigs and campaigns, analyses pricing and positioning to sharpen competitive advantage."
+            "Competitor Spy Bot — Fiverr platform automation bot."
         ),
         category=BotCategory.FREELANCE,
         module_path="Fiverr_bots.competitor_spy_bot",
         class_name="CompetitorSpyBot",
-        capabilities=["competitor_analysis", "market_intel", "pricing"],
+        version="1.0.0",
+        capabilities=[],
+        namespace="fvr",
+        source_path="Fiverr_bots/competitor_spy_bot.py",
     ),
     BotEntry(
-        bot_id="cross_sell_bot",
+        bot_id="fvr_cross_sell_bot",
         display_name="Cross Sell Bot",
         description=(
-            "Identifies and executes cross-selling opportunities to increase order value from existing clients."
+            "Cross Sell Bot — Fiverr platform automation bot."
         ),
         category=BotCategory.FREELANCE,
         module_path="Fiverr_bots.cross_sell_bot",
         class_name="CrossSellBot",
-        capabilities=["cross_selling", "upsell", "revenue", "packages"],
+        version="1.0.0",
+        capabilities=[],
+        namespace="fvr",
+        source_path="Fiverr_bots/cross_sell_bot.py",
     ),
     BotEntry(
-        bot_id="deadline_tracker_bot",
+        bot_id="fvr_deadline_tracker_bot",
         display_name="Deadline Tracker Bot",
         description=(
-            "Tracks project deadlines, sends proactive reminders, and escalates at-risk deliveries."
+            "Deadline Tracker Bot — Fiverr platform automation bot."
         ),
         category=BotCategory.FREELANCE,
         module_path="Fiverr_bots.deadline_tracker_bot",
         class_name="DeadlineTrackerBot",
-        capabilities=["deadlines", "project_management", "reminders"],
+        version="1.0.0",
+        capabilities=[],
+        namespace="fvr",
+        source_path="Fiverr_bots/deadline_tracker_bot.py",
     ),
     BotEntry(
-        bot_id="dispute_resolver_bot",
+        bot_id="fvr_dispute_resolver_bot",
         display_name="Dispute Resolver Bot",
         description=(
-            "Assists with freelance dispute resolution by documenting cases and generating resolution strategies."
+            "Dispute Resolver Bot — Fiverr platform automation bot."
         ),
         category=BotCategory.FREELANCE,
         module_path="Fiverr_bots.dispute_resolver_bot",
         class_name="DisputeResolverBot",
-        capabilities=["disputes", "resolution", "mediation", "support"],
+        version="1.0.0",
+        capabilities=[],
+        namespace="fvr",
+        source_path="Fiverr_bots/dispute_resolver_bot.py",
     ),
     BotEntry(
-        bot_id="earnings_tracker_bot",
+        bot_id="fvr_earnings_tracker_bot",
         display_name="Earnings Tracker Bot",
         description=(
-            "Tracks freelance earnings, categorises income streams, and projects monthly revenue targets."
+            "Earnings Tracker Bot — Fiverr platform automation bot."
         ),
         category=BotCategory.FREELANCE,
         module_path="Fiverr_bots.earnings_tracker_bot",
         class_name="EarningsTrackerBot",
-        capabilities=["earnings", "income", "analytics", "reporting"],
+        version="1.0.0",
+        capabilities=[],
+        namespace="fvr",
+        source_path="Fiverr_bots/earnings_tracker_bot.py",
     ),
     BotEntry(
-        bot_id="feedback_analyzer_bot",
+        bot_id="fvr_feedback_analyzer_bot",
         display_name="Feedback Analyzer Bot",
         description=(
-            "AI-powered feedback analyzer bot for DreamCo automation and intelligence."
+            "Feedback Analyzer Bot — Fiverr platform automation bot."
         ),
         category=BotCategory.FREELANCE,
         module_path="Fiverr_bots.feedback_analyzer_bot",
         class_name="FeedbackAnalyzerBot",
-        capabilities=["feedback_analyzer"],
+        version="1.0.0",
+        capabilities=[],
+        namespace="fvr",
+        source_path="Fiverr_bots/feedback_analyzer_bot.py",
     ),
     BotEntry(
-        bot_id="fiverr_fiverr_bot",
-        display_name="Fiverr Fiverr Bot",
+        bot_id="fvr_fiverr_bot",
+        display_name="Fiverr Bot",
         description=(
-            "Core Fiverr platform automation bot for gig management, order tracking, and platform optimisation."
+            "Fiverr Bot — Fiverr platform automation bot."
         ),
         category=BotCategory.FREELANCE,
         module_path="Fiverr_bots.fiverr_bot",
         class_name="FiverrBot",
-        capabilities=["fiverr", "gig_management", "freelance", "automation"],
+        version="1.0.0",
+        capabilities=[],
+        namespace="fvr",
+        source_path="Fiverr_bots/fiverr_bot.py",
     ),
     BotEntry(
-        bot_id="gig_description_optimizer_bot",
+        bot_id="fvr_gig_description_optimizer_bot",
         display_name="Gig Description Optimizer Bot",
         description=(
-            "Optimises Fiverr gig descriptions with SEO-tuned copy, keywords, and conversion-focused writing."
+            "Gig Description Optimizer Bot — Fiverr platform automation bot."
         ),
         category=BotCategory.FREELANCE,
         module_path="Fiverr_bots.gig_description_optimizer_bot",
         class_name="GigDescriptionOptimizerBot",
-        capabilities=["gig_optimization", "seo", "copywriting"],
+        version="1.0.0",
+        capabilities=[],
+        namespace="fvr",
+        source_path="Fiverr_bots/gig_description_optimizer_bot.py",
     ),
     BotEntry(
-        bot_id="gig_image_optimizer_bot",
+        bot_id="fvr_gig_image_optimizer_bot",
         display_name="Gig Image Optimizer Bot",
         description=(
-            "Enhances Fiverr gig thumbnails and images for maximum click-through rate and visual appeal."
+            "Gig Image Optimizer Bot — Fiverr platform automation bot."
         ),
         category=BotCategory.FREELANCE,
         module_path="Fiverr_bots.gig_image_optimizer_bot",
         class_name="GigImageOptimizerBot",
-        capabilities=["image_optimization", "thumbnails", "design"],
+        version="1.0.0",
+        capabilities=[],
+        namespace="fvr",
+        source_path="Fiverr_bots/gig_image_optimizer_bot.py",
     ),
     BotEntry(
-        bot_id="gig_ranking_bot",
+        bot_id="fvr_gig_ranking_bot",
         display_name="Gig Ranking Bot",
         description=(
-            "Analyses and improves Fiverr gig search rankings through SEO, metadata, and engagement optimisation."
+            "Gig Ranking Bot — Fiverr platform automation bot."
         ),
         category=BotCategory.FREELANCE,
         module_path="Fiverr_bots.gig_ranking_bot",
         class_name="GigRankingBot",
-        capabilities=["gig_ranking", "seo", "visibility", "fiverr"],
+        version="1.0.0",
+        capabilities=[],
+        namespace="fvr",
+        source_path="Fiverr_bots/gig_ranking_bot.py",
     ),
     BotEntry(
-        bot_id="inbox_automation_bot",
+        bot_id="fvr_inbox_automation_bot",
         display_name="Inbox Automation Bot",
         description=(
-            "Automates Fiverr inbox responses with templates, quick replies, and enquiry qualification flows."
+            "Inbox Automation Bot — Fiverr platform automation bot."
         ),
         category=BotCategory.FREELANCE,
         module_path="Fiverr_bots.inbox_automation_bot",
         class_name="InboxAutomationBot",
-        capabilities=["inbox", "messaging", "automation", "responses"],
+        version="1.0.0",
+        capabilities=[],
+        namespace="fvr",
+        source_path="Fiverr_bots/inbox_automation_bot.py",
     ),
     BotEntry(
-        bot_id="level_up_bot",
+        bot_id="fvr_level_up_bot",
         display_name="Level Up Bot",
         description=(
-            "Provides strategies and action plans to advance through Fiverr seller levels and earn Top Rated status."
+            "Level Up Bot — Fiverr platform automation bot."
         ),
         category=BotCategory.FREELANCE,
         module_path="Fiverr_bots.level_up_bot",
         class_name="LevelUpBot",
-        capabilities=["leveling", "seller_progression", "fiverr", "skills"],
+        version="1.0.0",
+        capabilities=[],
+        namespace="fvr",
+        source_path="Fiverr_bots/level_up_bot.py",
     ),
     BotEntry(
-        bot_id="milestone_tracker_bot",
+        bot_id="fvr_milestone_tracker_bot",
         display_name="Milestone Tracker Bot",
         description=(
-            "Tracks freelance project milestones, monitors deliverables, and notifies stakeholders on completion."
+            "Milestone Tracker Bot — Fiverr platform automation bot."
         ),
         category=BotCategory.FREELANCE,
         module_path="Fiverr_bots.milestone_tracker_bot",
         class_name="MilestoneTrackerBot",
-        capabilities=["milestones", "project_management", "delivery"],
+        version="1.0.0",
+        capabilities=[],
+        namespace="fvr",
+        source_path="Fiverr_bots/milestone_tracker_bot.py",
     ),
     BotEntry(
-        bot_id="niche_analyzer_bot",
+        bot_id="fvr_niche_analyzer_bot",
         display_name="Niche Analyzer Bot",
         description=(
-            "Analyses freelance market niches for demand, competition, and earning potential."
+            "Niche Analyzer Bot — Fiverr platform automation bot."
         ),
         category=BotCategory.FREELANCE,
         module_path="Fiverr_bots.niche_analyzer_bot",
         class_name="NicheAnalyzerBot",
-        capabilities=["niche_analysis", "market_research", "opportunities"],
+        version="1.0.0",
+        capabilities=[],
+        namespace="fvr",
+        source_path="Fiverr_bots/niche_analyzer_bot.py",
     ),
     BotEntry(
-        bot_id="order_completion_bot",
+        bot_id="fvr_order_completion_bot",
         display_name="Order Completion Bot",
         description=(
-            "Manages order completion workflows including delivery checklists, client review requests, and archive."
+            "Order Completion Bot — Fiverr platform automation bot."
         ),
         category=BotCategory.FREELANCE,
         module_path="Fiverr_bots.order_completion_bot",
         class_name="OrderCompletionBot",
-        capabilities=["order_completion", "delivery", "quality"],
+        version="1.0.0",
+        capabilities=[],
+        namespace="fvr",
+        source_path="Fiverr_bots/order_completion_bot.py",
     ),
     BotEntry(
-        bot_id="package_optimizer_bot",
+        bot_id="fvr_package_optimizer_bot",
         display_name="Package Optimizer Bot",
         description=(
-            "Optimises freelance service packages for maximum perceived value and conversion."
+            "Package Optimizer Bot — Fiverr platform automation bot."
         ),
         category=BotCategory.FREELANCE,
         module_path="Fiverr_bots.package_optimizer_bot",
         class_name="PackageOptimizerBot",
-        capabilities=["packages", "pricing", "optimization", "services"],
+        version="1.0.0",
+        capabilities=[],
+        namespace="fvr",
+        source_path="Fiverr_bots/package_optimizer_bot.py",
     ),
     BotEntry(
-        bot_id="fiverr_portfolio_builder_bot",
-        display_name="Fiverr Portfolio Builder Bot",
+        bot_id="fvr_portfolio_builder_bot",
+        display_name="Portfolio Builder Bot",
         description=(
-            "Builds and curates a compelling portfolio with case studies, samples, and testimonials."
+            "Portfolio Builder Bot — Fiverr platform automation bot."
         ),
         category=BotCategory.FREELANCE,
         module_path="Fiverr_bots.portfolio_builder_bot",
         class_name="PortfolioBuilderBot",
-        capabilities=["portfolio", "showcase", "branding", "samples"],
+        version="1.0.0",
+        capabilities=[],
+        namespace="fvr",
+        source_path="Fiverr_bots/portfolio_builder_bot.py",
     ),
     BotEntry(
-        bot_id="pricing_optimizer_bot",
+        bot_id="fvr_pricing_optimizer_bot",
         display_name="Pricing Optimizer Bot",
         description=(
-            "Analyses market rates and demand signals to recommend optimal freelance service pricing."
+            "Pricing Optimizer Bot — Fiverr platform automation bot."
         ),
         category=BotCategory.FREELANCE,
         module_path="Fiverr_bots.pricing_optimizer_bot",
         class_name="PricingOptimizerBot",
-        capabilities=["pricing", "optimization", "competitive", "revenue"],
+        version="1.0.0",
+        capabilities=[],
+        namespace="fvr",
+        source_path="Fiverr_bots/pricing_optimizer_bot.py",
     ),
     BotEntry(
-        bot_id="proposal_writer_bot",
+        bot_id="fvr_proposal_writer_bot",
         display_name="Proposal Writer Bot",
         description=(
-            "Writes persuasive, personalised freelance proposals that win high-value client projects."
+            "Proposal Writer Bot — Fiverr platform automation bot."
         ),
         category=BotCategory.FREELANCE,
         module_path="Fiverr_bots.proposal_writer_bot",
         class_name="ProposalWriterBot",
-        capabilities=["proposals", "copywriting", "pitching", "winning"],
+        version="1.0.0",
+        capabilities=[],
+        namespace="fvr",
+        source_path="Fiverr_bots/proposal_writer_bot.py",
     ),
     BotEntry(
-        bot_id="response_time_bot",
+        bot_id="fvr_response_time_bot",
         display_name="Response Time Bot",
         description=(
-            "Monitors and optimises response time metrics to maintain high platform ratings and conversion."
+            "Response Time Bot — Fiverr platform automation bot."
         ),
         category=BotCategory.FREELANCE,
         module_path="Fiverr_bots.response_time_bot",
         class_name="ResponseTimeBot",
-        capabilities=["response_time", "automation", "messaging", "alerts"],
+        version="1.0.0",
+        capabilities=[],
+        namespace="fvr",
+        source_path="Fiverr_bots/response_time_bot.py",
     ),
     BotEntry(
-        bot_id="revision_manager_bot",
+        bot_id="fvr_revision_manager_bot",
         display_name="Revision Manager Bot",
         description=(
-            "Manages client revision requests with structured workflows, scope tracking, and change documentation."
+            "Revision Manager Bot — Fiverr platform automation bot."
         ),
         category=BotCategory.FREELANCE,
         module_path="Fiverr_bots.revision_manager_bot",
         class_name="RevisionManagerBot",
-        capabilities=["revisions", "change_management", "client_relations"],
+        version="1.0.0",
+        capabilities=[],
+        namespace="fvr",
+        source_path="Fiverr_bots/revision_manager_bot.py",
     ),
     BotEntry(
-        bot_id="seasonal_pricing_bot",
+        bot_id="fvr_seasonal_pricing_bot",
         display_name="Seasonal Pricing Bot",
         description=(
-            "Adjusts freelance pricing dynamically based on seasonal demand, platform trends, and competition."
+            "Seasonal Pricing Bot — Fiverr platform automation bot."
         ),
         category=BotCategory.FREELANCE,
         module_path="Fiverr_bots.seasonal_pricing_bot",
         class_name="SeasonalPricingBot",
-        capabilities=["seasonal", "pricing", "demand", "optimization"],
+        version="1.0.0",
+        capabilities=[],
+        namespace="fvr",
+        source_path="Fiverr_bots/seasonal_pricing_bot.py",
     ),
     BotEntry(
-        bot_id="service_expansion_bot",
+        bot_id="fvr_service_expansion_bot",
         display_name="Service Expansion Bot",
         description=(
-            "Identifies opportunities to expand freelance service offerings into adjacent high-demand niches."
+            "Service Expansion Bot — Fiverr platform automation bot."
         ),
         category=BotCategory.FREELANCE,
         module_path="Fiverr_bots.service_expansion_bot",
         class_name="ServiceExpansionBot",
-        capabilities=["service_expansion", "upsell", "new_offerings"],
+        version="1.0.0",
+        capabilities=[],
+        namespace="fvr",
+        source_path="Fiverr_bots/service_expansion_bot.py",
     ),
     BotEntry(
-        bot_id="skill_tagger_bot",
+        bot_id="fvr_skill_tagger_bot",
         display_name="Skill Tagger Bot",
         description=(
-            "Optimises skill tags and service categories for maximum discoverability on freelance platforms."
+            "Skill Tagger Bot — Fiverr platform automation bot."
         ),
         category=BotCategory.FREELANCE,
         module_path="Fiverr_bots.skill_tagger_bot",
         class_name="SkillTaggerBot",
-        capabilities=["skills", "tagging", "seo", "discoverability"],
+        version="1.0.0",
+        capabilities=[],
+        namespace="fvr",
+        source_path="Fiverr_bots/skill_tagger_bot.py",
     ),
     BotEntry(
-        bot_id="upsell_bot",
+        bot_id="fvr_upsell_bot",
         display_name="Upsell Bot",
         description=(
-            "Generates targeted upsell offers and add-on recommendations to increase average order value."
+            "Upsell Bot — Fiverr platform automation bot."
         ),
         category=BotCategory.FREELANCE,
         module_path="Fiverr_bots.upsell_bot",
         class_name="UpsellBot",
-        capabilities=["upselling", "revenue", "packages", "add_ons"],
+        version="1.0.0",
+        capabilities=[],
+        namespace="fvr",
+        source_path="Fiverr_bots/upsell_bot.py",
     ),
     BotEntry(
         bot_id="mkt_ab_testing_bot",
-        display_name="Mkt Ab Testing Bot",
+        display_name="Ab Testing Bot",
         description=(
-            "Manages A/B test experiments for mobile apps, tracks variants, measures conversions, and surfaces winning configurations."
+            "Ab Testing Bot — marketing automation bot."
         ),
         category=BotCategory.MARKETING,
         module_path="Marketing_bots.ab_testing_bot",
         class_name="ABTestingBot",
-        capabilities=["ab_testing", "experiment_management", "split_testing", "analytics"],
+        version="1.0.0",
+        capabilities=[],
+        namespace="mkt",
+        source_path="Marketing_bots/ab_testing_bot.py",
     ),
     BotEntry(
-        bot_id="ad_campaign_bot",
+        bot_id="mkt_ad_campaign_bot",
         display_name="Ad Campaign Bot",
         description=(
-            "Plans, launches, and optimises paid advertising campaigns across Google, Facebook, and other platforms."
+            "Ad Campaign Bot — marketing automation bot."
         ),
         category=BotCategory.MARKETING,
         module_path="Marketing_bots.ad_campaign_bot",
         class_name="AdCampaignBot",
-        capabilities=["ad_campaigns", "ppc", "targeting", "optimization"],
+        version="1.0.0",
+        capabilities=[],
+        namespace="mkt",
+        source_path="Marketing_bots/ad_campaign_bot.py",
     ),
     BotEntry(
-        bot_id="affiliate_marketer_bot",
+        bot_id="mkt_affiliate_marketer_bot",
         display_name="Affiliate Marketer Bot",
         description=(
-            "Manages affiliate marketing programs with partner recruitment, tracking, and commission automation."
+            "Affiliate Marketer Bot — marketing automation bot."
         ),
         category=BotCategory.MARKETING,
         module_path="Marketing_bots.affiliate_marketer_bot",
         class_name="AffiliateMarketerBot",
-        capabilities=["affiliate_marketing", "commissions", "tracking"],
+        version="1.0.0",
+        capabilities=[],
+        namespace="mkt",
+        source_path="Marketing_bots/affiliate_marketer_bot.py",
     ),
     BotEntry(
-        bot_id="analytics_reporter_bot",
+        bot_id="mkt_analytics_reporter_bot",
         display_name="Analytics Reporter Bot",
         description=(
-            "Aggregates marketing analytics from multiple platforms into unified reports and dashboards."
+            "Analytics Reporter Bot — marketing automation bot."
         ),
         category=BotCategory.MARKETING,
         module_path="Marketing_bots.analytics_reporter_bot",
         class_name="AnalyticsReporterBot",
-        capabilities=["analytics", "reporting", "dashboards", "kpis"],
+        version="1.0.0",
+        capabilities=[],
+        namespace="mkt",
+        source_path="Marketing_bots/analytics_reporter_bot.py",
     ),
     BotEntry(
-        bot_id="brand_story_bot",
+        bot_id="mkt_brand_story_bot",
         display_name="Brand Story Bot",
         description=(
-            "Crafts compelling brand narratives, messaging frameworks, and content pillars aligned to target audiences."
+            "Brand Story Bot — marketing automation bot."
         ),
         category=BotCategory.MARKETING,
         module_path="Marketing_bots.brand_story_bot",
         class_name="BrandStoryBot",
-        capabilities=["brand_story", "copywriting", "content", "identity"],
+        version="1.0.0",
+        capabilities=[],
+        namespace="mkt",
+        source_path="Marketing_bots/brand_story_bot.py",
     ),
     BotEntry(
-        bot_id="chatbot_builder_bot",
+        bot_id="mkt_chatbot_builder_bot",
         display_name="Chatbot Builder Bot",
         description=(
-            "Builds and deploys AI-powered chatbots for marketing automation, lead capture, and customer service."
+            "Chatbot Builder Bot — marketing automation bot."
         ),
         category=BotCategory.MARKETING,
         module_path="Marketing_bots.chatbot_builder_bot",
         class_name="ChatbotBuilderBot",
-        capabilities=["chatbot", "automation", "customer_service", "ai"],
+        version="1.0.0",
+        capabilities=[],
+        namespace="mkt",
+        source_path="Marketing_bots/chatbot_builder_bot.py",
     ),
     BotEntry(
         bot_id="mkt_competitor_spy_bot",
-        display_name="Mkt Competitor Spy Bot",
+        display_name="Competitor Spy Bot",
         description=(
-            "Monitors competitor gigs and campaigns, analyses pricing and positioning to sharpen competitive advantage."
+            "Competitor Spy Bot — marketing automation bot."
         ),
         category=BotCategory.MARKETING,
         module_path="Marketing_bots.competitor_spy_bot",
         class_name="CompetitorSpyBot",
-        capabilities=["competitor_analysis", "market_intel", "pricing"],
+        version="1.0.0",
+        capabilities=[],
+        namespace="mkt",
+        source_path="Marketing_bots/competitor_spy_bot.py",
     ),
     BotEntry(
-        bot_id="conversion_optimizer_bot",
+        bot_id="mkt_conversion_optimizer_bot",
         display_name="Conversion Optimizer Bot",
         description=(
-            "Analyses conversion funnels, runs CRO experiments, and implements improvements to lift conversion rates."
+            "Conversion Optimizer Bot — marketing automation bot."
         ),
         category=BotCategory.MARKETING,
         module_path="Marketing_bots.conversion_optimizer_bot",
         class_name="ConversionOptimizerBot",
-        capabilities=["conversion", "cro", "a_b_testing", "funnels"],
+        version="1.0.0",
+        capabilities=[],
+        namespace="mkt",
+        source_path="Marketing_bots/conversion_optimizer_bot.py",
     ),
     BotEntry(
-        bot_id="customer_review_bot",
+        bot_id="mkt_customer_review_bot",
         display_name="Customer Review Bot",
         description=(
-            "Automates review collection, monitors reputation, and responds to customer feedback across platforms."
+            "Customer Review Bot — marketing automation bot."
         ),
         category=BotCategory.MARKETING,
         module_path="Marketing_bots.customer_review_bot",
         class_name="CustomerReviewBot",
-        capabilities=["reviews", "reputation", "testimonials", "nps"],
+        version="1.0.0",
+        capabilities=[],
+        namespace="mkt",
+        source_path="Marketing_bots/customer_review_bot.py",
     ),
     BotEntry(
-        bot_id="event_promoter_bot",
+        bot_id="mkt_event_promoter_bot",
         display_name="Event Promoter Bot",
         description=(
-            "Plans and executes event marketing campaigns across email, social media, and paid channels."
+            "Event Promoter Bot — marketing automation bot."
         ),
         category=BotCategory.MARKETING,
         module_path="Marketing_bots.event_promoter_bot",
         class_name="EventPromoterBot",
-        capabilities=["event_promotion", "marketing", "social_media", "email"],
+        version="1.0.0",
+        capabilities=[],
+        namespace="mkt",
+        source_path="Marketing_bots/event_promoter_bot.py",
     ),
     BotEntry(
-        bot_id="google_ads_bot",
+        bot_id="mkt_google_ads_bot",
         display_name="Google Ads Bot",
         description=(
-            "Manages Google Ads campaigns with keyword research, bid optimisation, ad copy, and performance reporting."
+            "Google Ads Bot — marketing automation bot."
         ),
         category=BotCategory.MARKETING,
         module_path="Marketing_bots.google_ads_bot",
         class_name="GoogleAdsBot",
-        capabilities=["google_ads", "ppc", "sem", "keywords"],
+        version="1.0.0",
+        capabilities=[],
+        namespace="mkt",
+        source_path="Marketing_bots/google_ads_bot.py",
     ),
     BotEntry(
-        bot_id="hashtag_analyzer_bot",
+        bot_id="mkt_hashtag_analyzer_bot",
         display_name="Hashtag Analyzer Bot",
         description=(
-            "Researches trending hashtags, analyses reach and engagement, and recommends optimal hashtag strategies."
+            "Hashtag Analyzer Bot — marketing automation bot."
         ),
         category=BotCategory.MARKETING,
         module_path="Marketing_bots.hashtag_analyzer_bot",
         class_name="HashtagAnalyzerBot",
-        capabilities=["hashtags", "social_media", "trending", "reach"],
+        version="1.0.0",
+        capabilities=[],
+        namespace="mkt",
+        source_path="Marketing_bots/hashtag_analyzer_bot.py",
     ),
     BotEntry(
-        bot_id="influencer_finder_bot",
+        bot_id="mkt_influencer_finder_bot",
         display_name="Influencer Finder Bot",
         description=(
-            "Discovers and evaluates influencers for brand partnerships based on audience fit and engagement."
+            "Influencer Finder Bot — marketing automation bot."
         ),
         category=BotCategory.MARKETING,
         module_path="Marketing_bots.influencer_finder_bot",
         class_name="InfluencerFinderBot",
-        capabilities=["influencer_marketing", "discovery", "outreach"],
+        version="1.0.0",
+        capabilities=[],
+        namespace="mkt",
+        source_path="Marketing_bots/influencer_finder_bot.py",
     ),
     BotEntry(
-        bot_id="landing_page_bot",
+        bot_id="mkt_landing_page_bot",
         display_name="Landing Page Bot",
         description=(
-            "Designs and optimises landing pages for maximum conversion with A/B testing and CRO best practices."
+            "Landing Page Bot — marketing automation bot."
         ),
         category=BotCategory.MARKETING,
         module_path="Marketing_bots.landing_page_bot",
         class_name="LandingPageBot",
-        capabilities=["landing_pages", "conversion", "cro", "design"],
+        version="1.0.0",
+        capabilities=[],
+        namespace="mkt",
+        source_path="Marketing_bots/landing_page_bot.py",
     ),
     BotEntry(
-        bot_id="lead_magnet_bot",
+        bot_id="mkt_lead_magnet_bot",
         display_name="Lead Magnet Bot",
         description=(
-            "Creates compelling lead magnets to grow email lists and generate qualified leads at scale."
+            "Lead Magnet Bot — marketing automation bot."
         ),
         category=BotCategory.MARKETING,
         module_path="Marketing_bots.lead_magnet_bot",
         class_name="LeadMagnetBot",
-        capabilities=["lead_magnets", "list_building", "content_marketing"],
+        version="1.0.0",
+        capabilities=[],
+        namespace="mkt",
+        source_path="Marketing_bots/lead_magnet_bot.py",
     ),
     BotEntry(
-        bot_id="loyalty_program_bot",
+        bot_id="mkt_loyalty_program_bot",
         display_name="Loyalty Program Bot",
         description=(
-            "Designs and manages customer loyalty programs with rewards, tiers, and engagement mechanics."
+            "Loyalty Program Bot — marketing automation bot."
         ),
         category=BotCategory.MARKETING,
         module_path="Marketing_bots.loyalty_program_bot",
         class_name="LoyaltyProgramBot",
-        capabilities=["loyalty", "rewards", "retention", "gamification"],
+        version="1.0.0",
+        capabilities=[],
+        namespace="mkt",
+        source_path="Marketing_bots/loyalty_program_bot.py",
     ),
     BotEntry(
-        bot_id="newsletter_bot",
+        bot_id="mkt_newsletter_bot",
         display_name="Newsletter Bot",
         description=(
-            "Automates email newsletter creation, list management, segmentation, and performance analytics."
+            "Newsletter Bot — marketing automation bot."
         ),
         category=BotCategory.MARKETING,
         module_path="Marketing_bots.newsletter_bot",
         class_name="NewsletterBot",
-        capabilities=["newsletter", "email_marketing", "subscribers", "automation"],
+        version="1.0.0",
+        capabilities=[],
+        namespace="mkt",
+        source_path="Marketing_bots/newsletter_bot.py",
     ),
     BotEntry(
-        bot_id="podcast_promoter_bot",
+        bot_id="mkt_podcast_promoter_bot",
         display_name="Podcast Promoter Bot",
         description=(
-            "Promotes podcasts across platforms, manages episode distribution, and grows audience reach."
+            "Podcast Promoter Bot — marketing automation bot."
         ),
         category=BotCategory.MARKETING,
         module_path="Marketing_bots.podcast_promoter_bot",
         class_name="PodcastPromoterBot",
-        capabilities=["podcasts", "promotion", "distribution", "growth"],
+        version="1.0.0",
+        capabilities=[],
+        namespace="mkt",
+        source_path="Marketing_bots/podcast_promoter_bot.py",
     ),
     BotEntry(
-        bot_id="press_release_bot",
+        bot_id="mkt_press_release_bot",
         display_name="Press Release Bot",
         description=(
-            "Writes and distributes press releases to media outlets and news wires for brand coverage."
+            "Press Release Bot — marketing automation bot."
         ),
         category=BotCategory.MARKETING,
         module_path="Marketing_bots.press_release_bot",
         class_name="PressReleaseBot",
-        capabilities=["press_releases", "pr", "media", "announcements"],
+        version="1.0.0",
+        capabilities=[],
+        namespace="mkt",
+        source_path="Marketing_bots/press_release_bot.py",
     ),
     BotEntry(
-        bot_id="referral_marketing_bot",
+        bot_id="mkt_referral_marketing_bot",
         display_name="Referral Marketing Bot",
         description=(
-            "Builds and manages referral marketing campaigns that drive viral customer acquisition."
+            "Referral Marketing Bot — marketing automation bot."
         ),
         category=BotCategory.MARKETING,
         module_path="Marketing_bots.referral_marketing_bot",
         class_name="ReferralMarketingBot",
-        capabilities=["referrals", "viral_growth", "word_of_mouth"],
+        version="1.0.0",
+        capabilities=[],
+        namespace="mkt",
+        source_path="Marketing_bots/referral_marketing_bot.py",
     ),
     BotEntry(
-        bot_id="retargeting_bot",
+        bot_id="mkt_retargeting_bot",
         display_name="Retargeting Bot",
         description=(
-            "Creates and manages retargeting ad campaigns to re-engage website visitors and cart abandoners."
+            "Retargeting Bot — marketing automation bot."
         ),
         category=BotCategory.MARKETING,
         module_path="Marketing_bots.retargeting_bot",
         class_name="RetargetingBot",
-        capabilities=["retargeting", "ads", "remarketing", "conversion"],
+        version="1.0.0",
+        capabilities=[],
+        namespace="mkt",
+        source_path="Marketing_bots/retargeting_bot.py",
     ),
     BotEntry(
-        bot_id="sales_funnel_bot",
+        bot_id="mkt_sales_funnel_bot",
         display_name="Sales Funnel Bot",
         description=(
-            "Builds and optimises sales funnels with lead capture, nurturing sequences, and conversion touchpoints."
+            "Sales Funnel Bot — marketing automation bot."
         ),
         category=BotCategory.MARKETING,
         module_path="Marketing_bots.sales_funnel_bot",
         class_name="SalesFunnelBot",
-        capabilities=["sales_funnel", "conversion", "leads", "nurturing"],
+        version="1.0.0",
+        capabilities=[],
+        namespace="mkt",
+        source_path="Marketing_bots/sales_funnel_bot.py",
     ),
     BotEntry(
-        bot_id="seo_optimizer_bot",
+        bot_id="mkt_seo_optimizer_bot",
         display_name="Seo Optimizer Bot",
         description=(
-            "Performs technical and content SEO audits, keyword research, and optimisation to improve organic rankings."
+            "Seo Optimizer Bot — marketing automation bot."
         ),
         category=BotCategory.MARKETING,
         module_path="Marketing_bots.seo_optimizer_bot",
         class_name="SEOOptimizerBot",
-        capabilities=["seo", "keywords", "ranking", "organic_traffic"],
+        version="1.0.0",
+        capabilities=[],
+        namespace="mkt",
+        source_path="Marketing_bots/seo_optimizer_bot.py",
     ),
     BotEntry(
-        bot_id="social_proof_bot",
+        bot_id="mkt_social_proof_bot",
         display_name="Social Proof Bot",
         description=(
-            "Collects and displays social proof including testimonials, case studies, and trust signals."
+            "Social Proof Bot — marketing automation bot."
         ),
         category=BotCategory.MARKETING,
         module_path="Marketing_bots.social_proof_bot",
         class_name="SocialProofBot",
-        capabilities=["social_proof", "testimonials", "trust", "conversion"],
+        version="1.0.0",
+        capabilities=[],
+        namespace="mkt",
+        source_path="Marketing_bots/social_proof_bot.py",
     ),
     BotEntry(
-        bot_id="video_marketing_bot",
+        bot_id="mkt_video_marketing_bot",
         display_name="Video Marketing Bot",
         description=(
-            "Plans, produces, and distributes video marketing content to drive engagement and brand awareness."
+            "Video Marketing Bot — marketing automation bot."
         ),
         category=BotCategory.MARKETING,
         module_path="Marketing_bots.video_marketing_bot",
         class_name="VideoMarketingBot",
-        capabilities=["video_marketing", "youtube", "engagement", "content"],
+        version="1.0.0",
+        capabilities=[],
+        namespace="mkt",
+        source_path="Marketing_bots/video_marketing_bot.py",
     ),
     BotEntry(
-        bot_id="viral_content_bot",
+        bot_id="mkt_viral_content_bot",
         display_name="Viral Content Bot",
         description=(
-            "Creates share-worthy content designed to go viral through emotional triggers and social mechanics."
+            "Viral Content Bot — marketing automation bot."
         ),
         category=BotCategory.MARKETING,
         module_path="Marketing_bots.viral_content_bot",
         class_name="ViralContentBot",
-        capabilities=["viral_content", "engagement", "shares", "growth"],
+        version="1.0.0",
+        capabilities=[],
+        namespace="mkt",
+        source_path="Marketing_bots/viral_content_bot.py",
     ),
     BotEntry(
-        bot_id="webinar_bot",
+        bot_id="mkt_webinar_bot",
         display_name="Webinar Bot",
         description=(
-            "Manages webinar logistics including registration, reminder sequences, follow-up, and attendee nurturing."
+            "Webinar Bot — marketing automation bot."
         ),
         category=BotCategory.MARKETING,
         module_path="Marketing_bots.webinar_bot",
         class_name="WebinarBot",
-        capabilities=["webinars", "events", "registration", "follow_up"],
+        version="1.0.0",
+        capabilities=[],
+        namespace="mkt",
+        source_path="Marketing_bots/webinar_bot.py",
     ),
     BotEntry(
-        bot_id="administrative_support_bot",
+        bot_id="occ_administrative_support_bot",
         display_name="Administrative Support Bot",
         description=(
-            "Automates clerical and administrative support tasks including scheduling, correspondence, and filing."
+            "Administrative Support Bot — occupational intelligence bot."
         ),
         category=BotCategory.OCCUPATIONAL,
         module_path="Occupational_bots.administrative_support_bot",
         class_name="AdministrativeSupportBot",
-        capabilities=["admin_support", "clerical", "office_management"],
+        version="1.0.0",
+        capabilities=[],
+        namespace="occ",
+        source_path="Occupational_bots/administrative_support_bot.py",
     ),
     BotEntry(
-        bot_id="architecture_engineering_bot",
+        bot_id="occ_architecture_engineering_bot",
         display_name="Architecture Engineering Bot",
         description=(
-            "Supports architecture and engineering workflows with project management and compliance checks."
+            "Architecture Engineering Bot — occupational intelligence bot."
         ),
         category=BotCategory.OCCUPATIONAL,
         module_path="Occupational_bots.architecture_engineering_bot",
         class_name="ArchitectureEngineeringBot",
-        capabilities=["architecture", "engineering", "design", "cad"],
+        version="1.0.0",
+        capabilities=[],
+        namespace="occ",
+        source_path="Occupational_bots/architecture_engineering_bot.py",
     ),
     BotEntry(
-        bot_id="arts_media_bot",
+        bot_id="occ_arts_media_bot",
         display_name="Arts Media Bot",
         description=(
-            "Assists arts and media professionals with portfolio management, client work, and project tracking."
+            "Arts Media Bot — occupational intelligence bot."
         ),
         category=BotCategory.OCCUPATIONAL,
         module_path="Occupational_bots.arts_media_bot",
         class_name="ArtsMediaBot",
-        capabilities=["arts", "media", "creative", "publishing"],
+        version="1.0.0",
+        capabilities=[],
+        namespace="occ",
+        source_path="Occupational_bots/arts_media_bot.py",
     ),
     BotEntry(
-        bot_id="benefits_analyzer_bot",
+        bot_id="occ_benefits_analyzer_bot",
         display_name="Benefits Analyzer Bot",
         description=(
-            "Analyses employee benefits packages, identifies gaps, and recommends improvements for HR teams."
+            "Benefits Analyzer Bot — occupational intelligence bot."
         ),
         category=BotCategory.OCCUPATIONAL,
         module_path="Occupational_bots.benefits_analyzer_bot",
         class_name="BenefitsAnalyzerBot",
-        capabilities=["benefits", "hr", "compensation", "analysis"],
+        version="1.0.0",
+        capabilities=[],
+        namespace="occ",
+        source_path="Occupational_bots/benefits_analyzer_bot.py",
     ),
     BotEntry(
-        bot_id="building_maintenance_bot",
+        bot_id="occ_building_maintenance_bot",
         display_name="Building Maintenance Bot",
         description=(
-            "Manages building maintenance schedules, work orders, vendor coordination, and facility compliance."
+            "Building Maintenance Bot — occupational intelligence bot."
         ),
         category=BotCategory.OCCUPATIONAL,
         module_path="Occupational_bots.building_maintenance_bot",
         class_name="BuildingMaintenanceBot",
-        capabilities=["building_maintenance", "facilities", "repairs"],
+        version="1.0.0",
+        capabilities=[],
+        namespace="occ",
+        source_path="Occupational_bots/building_maintenance_bot.py",
     ),
     BotEntry(
-        bot_id="business_financial_bot",
+        bot_id="occ_business_financial_bot",
         display_name="Business Financial Bot",
         description=(
-            "Provides business financial analysis including P&L tracking, budgeting, and investment evaluation."
+            "Business Financial Bot — occupational intelligence bot."
         ),
         category=BotCategory.OCCUPATIONAL,
         module_path="Occupational_bots.business_financial_bot",
         class_name="BusinessFinancialBot",
-        capabilities=["business_finance", "accounting", "analysis"],
+        version="1.0.0",
+        capabilities=[],
+        namespace="occ",
+        source_path="Occupational_bots/business_financial_bot.py",
     ),
     BotEntry(
-        bot_id="career_path_bot",
+        bot_id="occ_career_path_bot",
         display_name="Career Path Bot",
         description=(
-            "Maps personalised career development paths with milestones, skill requirements, and actionable steps."
+            "Career Path Bot — occupational intelligence bot."
         ),
         category=BotCategory.OCCUPATIONAL,
         module_path="Occupational_bots.career_path_bot",
         class_name="CareerPathBot",
-        capabilities=["career_path", "planning", "development", "roadmap"],
+        version="1.0.0",
+        capabilities=[],
+        namespace="occ",
+        source_path="Occupational_bots/career_path_bot.py",
     ),
     BotEntry(
-        bot_id="certification_advisor_bot",
+        bot_id="occ_certification_advisor_bot",
         display_name="Certification Advisor Bot",
         description=(
-            "Recommends professional certifications aligned to career goals and tracks certification progress."
+            "Certification Advisor Bot — occupational intelligence bot."
         ),
         category=BotCategory.OCCUPATIONAL,
         module_path="Occupational_bots.certification_advisor_bot",
         class_name="CertificationAdvisorBot",
-        capabilities=["certifications", "credentials", "learning"],
+        version="1.0.0",
+        capabilities=[],
+        namespace="occ",
+        source_path="Occupational_bots/certification_advisor_bot.py",
     ),
     BotEntry(
-        bot_id="community_service_bot",
+        bot_id="occ_community_service_bot",
         display_name="Community Service Bot",
         description=(
-            "Coordinates community service programs, volunteer management, and social impact tracking."
+            "Community Service Bot — occupational intelligence bot."
         ),
         category=BotCategory.OCCUPATIONAL,
         module_path="Occupational_bots.community_service_bot",
         class_name="CommunityServiceBot",
-        capabilities=["community_service", "volunteering", "social_impact"],
+        version="1.0.0",
+        capabilities=[],
+        namespace="occ",
+        source_path="Occupational_bots/community_service_bot.py",
     ),
     BotEntry(
-        bot_id="company_culture_bot",
+        bot_id="occ_company_culture_bot",
         display_name="Company Culture Bot",
         description=(
-            "Assesses and improves company culture through engagement surveys, insights, and action planning."
+            "Company Culture Bot — occupational intelligence bot."
         ),
         category=BotCategory.OCCUPATIONAL,
         module_path="Occupational_bots.company_culture_bot",
         class_name="CompanyCultureBot",
-        capabilities=["culture", "engagement", "hr", "values"],
+        version="1.0.0",
+        capabilities=[],
+        namespace="occ",
+        source_path="Occupational_bots/company_culture_bot.py",
     ),
     BotEntry(
-        bot_id="computer_math_bot",
+        bot_id="occ_computer_math_bot",
         display_name="Computer Math Bot",
         description=(
-            "Assists with computational and mathematical problem-solving for STEM professionals and analysts."
+            "Computer Math Bot — occupational intelligence bot."
         ),
         category=BotCategory.OCCUPATIONAL,
         module_path="Occupational_bots.computer_math_bot",
         class_name="ComputerMathBot",
-        capabilities=["computing", "mathematics", "stem", "analysis"],
+        version="1.0.0",
+        capabilities=[],
+        namespace="occ",
+        source_path="Occupational_bots/computer_math_bot.py",
     ),
     BotEntry(
-        bot_id="construction_extraction_bot",
+        bot_id="occ_construction_extraction_bot",
         display_name="Construction Extraction Bot",
         description=(
-            "Manages construction and extraction industry operations including safety and compliance."
+            "Construction Extraction Bot — occupational intelligence bot."
         ),
         category=BotCategory.OCCUPATIONAL,
         module_path="Occupational_bots.construction_extraction_bot",
         class_name="ConstructionExtractionBot",
-        capabilities=["construction", "extraction", "mining", "trades"],
+        version="1.0.0",
+        capabilities=[],
+        namespace="occ",
+        source_path="Occupational_bots/construction_extraction_bot.py",
     ),
     BotEntry(
-        bot_id="contractor_rate_bot",
+        bot_id="occ_contractor_rate_bot",
         display_name="Contractor Rate Bot",
         description=(
-            "Provides market-informed contractor rate benchmarks and pricing recommendations by skill and region."
+            "Contractor Rate Bot — occupational intelligence bot."
         ),
         category=BotCategory.OCCUPATIONAL,
         module_path="Occupational_bots.contractor_rate_bot",
         class_name="ContractorRateBot",
-        capabilities=["contractor_rates", "pricing", "freelance", "market"],
+        version="1.0.0",
+        capabilities=[],
+        namespace="occ",
+        source_path="Occupational_bots/contractor_rate_bot.py",
     ),
     BotEntry(
-        bot_id="cover_letter_bot",
+        bot_id="occ_cover_letter_bot",
         display_name="Cover Letter Bot",
         description=(
-            "Generates tailored, compelling cover letters optimised for specific roles and employers."
+            "Cover Letter Bot — occupational intelligence bot."
         ),
         category=BotCategory.OCCUPATIONAL,
         module_path="Occupational_bots.cover_letter_bot",
         class_name="CoverLetterBot",
-        capabilities=["cover_letters", "writing", "job_applications", "career"],
+        version="1.0.0",
+        capabilities=[],
+        namespace="occ",
+        source_path="Occupational_bots/cover_letter_bot.py",
     ),
     BotEntry(
-        bot_id="diversity_inclusion_bot",
+        bot_id="occ_diversity_inclusion_bot",
         display_name="Diversity Inclusion Bot",
         description=(
-            "Supports DEI initiatives with assessment tools, benchmarking, and actionable inclusion strategies."
+            "Diversity Inclusion Bot — occupational intelligence bot."
         ),
         category=BotCategory.OCCUPATIONAL,
         module_path="Occupational_bots.diversity_inclusion_bot",
         class_name="DiversityInclusionBot",
-        capabilities=["diversity", "inclusion", "equity", "hr"],
+        version="1.0.0",
+        capabilities=[],
+        namespace="occ",
+        source_path="Occupational_bots/diversity_inclusion_bot.py",
     ),
     BotEntry(
-        bot_id="education_library_bot",
+        bot_id="occ_education_library_bot",
         display_name="Education Library Bot",
         description=(
-            "Manages educational resource libraries with cataloguing, search, and personalised learning pathways."
+            "Education Library Bot — occupational intelligence bot."
         ),
         category=BotCategory.OCCUPATIONAL,
         module_path="Occupational_bots.education_library_bot",
         class_name="EducationLibraryBot",
-        capabilities=["education", "library", "research", "knowledge"],
+        version="1.0.0",
+        capabilities=[],
+        namespace="occ",
+        source_path="Occupational_bots/education_library_bot.py",
     ),
     BotEntry(
-        bot_id="farming_fishing_forestry_bot",
+        bot_id="occ_farming_fishing_forestry_bot",
         display_name="Farming Fishing Forestry Bot",
         description=(
-            "Supports agricultural, fishing, and forestry operations with planning, compliance, and market tools."
+            "Farming Fishing Forestry Bot — occupational intelligence bot."
         ),
         category=BotCategory.OCCUPATIONAL,
         module_path="Occupational_bots.farming_fishing_forestry_bot",
         class_name="FarmingFishingForestryBot",
-        capabilities=["farming", "fishing", "forestry", "agriculture"],
+        version="1.0.0",
+        capabilities=[],
+        namespace="occ",
+        source_path="Occupational_bots/farming_fishing_forestry_bot.py",
     ),
     BotEntry(
-        bot_id="food_service_bot",
+        bot_id="occ_food_service_bot",
         display_name="Food Service Bot",
         description=(
-            "Manages food service operations including menu planning, staff scheduling, and compliance tracking."
+            "Food Service Bot — occupational intelligence bot."
         ),
         category=BotCategory.OCCUPATIONAL,
         module_path="Occupational_bots.food_service_bot",
         class_name="FoodServiceBot",
-        capabilities=["food_service", "hospitality", "restaurant", "catering"],
+        version="1.0.0",
+        capabilities=[],
+        namespace="occ",
+        source_path="Occupational_bots/food_service_bot.py",
     ),
     BotEntry(
-        bot_id="freelance_rate_bot",
+        bot_id="occ_freelance_rate_bot",
         display_name="Freelance Rate Bot",
         description=(
-            "Benchmarks freelance market rates by skill, experience, and geography to inform competitive pricing."
+            "Freelance Rate Bot — occupational intelligence bot."
         ),
         category=BotCategory.OCCUPATIONAL,
         module_path="Occupational_bots.freelance_rate_bot",
         class_name="FreelanceRateBot",
-        capabilities=["freelance_rates", "pricing", "market_rates", "consulting"],
+        version="1.0.0",
+        capabilities=[],
+        namespace="occ",
+        source_path="Occupational_bots/freelance_rate_bot.py",
     ),
     BotEntry(
-        bot_id="gig_economy_bot",
+        bot_id="occ_gig_economy_bot",
         display_name="Gig Economy Bot",
         description=(
-            "Helps workers navigate gig economy platforms, optimise profiles, and maximise multi-platform income."
+            "Gig Economy Bot — occupational intelligence bot."
         ),
         category=BotCategory.OCCUPATIONAL,
         module_path="Occupational_bots.gig_economy_bot",
         class_name="GigEconomyBot",
-        capabilities=["gig_economy", "freelance", "platforms", "income"],
+        version="1.0.0",
+        capabilities=[],
+        namespace="occ",
+        source_path="Occupational_bots/gig_economy_bot.py",
     ),
     BotEntry(
-        bot_id="headhunter_bot",
+        bot_id="occ_headhunter_bot",
         display_name="Headhunter Bot",
         description=(
-            "Assists executive recruiters with candidate sourcing, outreach, and talent pipeline management."
+            "Headhunter Bot — occupational intelligence bot."
         ),
         category=BotCategory.OCCUPATIONAL,
         module_path="Occupational_bots.headhunter_bot",
         class_name="HeadhunterBot",
-        capabilities=["headhunting", "recruiting", "talent", "executive_search"],
+        version="1.0.0",
+        capabilities=[],
+        namespace="occ",
+        source_path="Occupational_bots/headhunter_bot.py",
     ),
     BotEntry(
-        bot_id="healthcare_practitioner_bot",
+        bot_id="occ_healthcare_practitioner_bot",
         display_name="Healthcare Practitioner Bot",
         description=(
-            "Supports healthcare practitioners with scheduling, patient management, and clinical documentation."
+            "Healthcare Practitioner Bot — occupational intelligence bot."
         ),
         category=BotCategory.OCCUPATIONAL,
         module_path="Occupational_bots.healthcare_practitioner_bot",
         class_name="HealthcarePractitionerBot",
-        capabilities=["healthcare", "practitioners", "medical", "clinical"],
+        version="1.0.0",
+        capabilities=[],
+        namespace="occ",
+        source_path="Occupational_bots/healthcare_practitioner_bot.py",
     ),
     BotEntry(
-        bot_id="healthcare_support_bot",
+        bot_id="occ_healthcare_support_bot",
         display_name="Healthcare Support Bot",
         description=(
-            "Automates healthcare support operations including billing, insurance claims, and appointment management."
+            "Healthcare Support Bot — occupational intelligence bot."
         ),
         category=BotCategory.OCCUPATIONAL,
         module_path="Occupational_bots.healthcare_support_bot",
         class_name="HealthcareSupportBot",
-        capabilities=["healthcare_support", "medical_admin", "billing"],
+        version="1.0.0",
+        capabilities=[],
+        namespace="occ",
+        source_path="Occupational_bots/healthcare_support_bot.py",
     ),
     BotEntry(
-        bot_id="industry_trend_bot",
+        bot_id="occ_industry_trend_bot",
         display_name="Industry Trend Bot",
         description=(
-            "Tracks and analyses industry trends to surface emerging opportunities and threats for professionals."
+            "Industry Trend Bot — occupational intelligence bot."
         ),
         category=BotCategory.OCCUPATIONAL,
         module_path="Occupational_bots.industry_trend_bot",
         class_name="IndustryTrendBot",
-        capabilities=["industry_trends", "market_intel", "forecasting"],
+        version="1.0.0",
+        capabilities=[],
+        namespace="occ",
+        source_path="Occupational_bots/industry_trend_bot.py",
     ),
     BotEntry(
-        bot_id="installation_maintenance_bot",
+        bot_id="occ_installation_maintenance_bot",
         display_name="Installation Maintenance Bot",
         description=(
-            "Coordinates installation and maintenance operations with scheduling, parts tracking, and service records."
+            "Installation Maintenance Bot — occupational intelligence bot."
         ),
         category=BotCategory.OCCUPATIONAL,
         module_path="Occupational_bots.installation_maintenance_bot",
         class_name="InstallationMaintenanceBot",
-        capabilities=["installation", "maintenance", "repairs", "service"],
+        version="1.0.0",
+        capabilities=[],
+        namespace="occ",
+        source_path="Occupational_bots/installation_maintenance_bot.py",
     ),
     BotEntry(
-        bot_id="job_application_tracker_bot",
+        bot_id="occ_job_application_tracker_bot",
         display_name="Job Application Tracker Bot",
         description=(
-            "Tracks job applications across platforms, manages follow-up reminders, and monitors pipeline status."
+            "Job Application Tracker Bot — occupational intelligence bot."
         ),
         category=BotCategory.OCCUPATIONAL,
         module_path="Occupational_bots.job_application_tracker_bot",
         class_name="JobApplicationTrackerBot",
-        capabilities=["job_applications", "tracking", "career", "pipeline"],
+        version="1.0.0",
+        capabilities=[],
+        namespace="occ",
+        source_path="Occupational_bots/job_application_tracker_bot.py",
     ),
     BotEntry(
-        bot_id="job_board_aggregator_bot",
+        bot_id="occ_job_board_aggregator_bot",
         display_name="Job Board Aggregator Bot",
         description=(
-            "Aggregates job listings from multiple boards and filters opportunities by skills and preferences."
+            "Job Board Aggregator Bot — occupational intelligence bot."
         ),
         category=BotCategory.OCCUPATIONAL,
         module_path="Occupational_bots.job_board_aggregator_bot",
         class_name="JobBoardAggregatorBot",
-        capabilities=["job_boards", "aggregation", "job_search", "listings"],
+        version="1.0.0",
+        capabilities=[],
+        namespace="occ",
+        source_path="Occupational_bots/job_board_aggregator_bot.py",
     ),
     BotEntry(
-        bot_id="legal_bot",
+        bot_id="occ_legal_bot",
         display_name="Legal Bot",
         description=(
-            "Assists legal professionals with research, contract review, compliance monitoring, and case management."
+            "Legal Bot — occupational intelligence bot."
         ),
         category=BotCategory.OCCUPATIONAL,
         module_path="Occupational_bots.legal_bot",
         class_name="LegalBot",
-        capabilities=["legal", "law", "contracts", "compliance"],
+        version="1.0.0",
+        capabilities=[],
+        namespace="occ",
+        source_path="Occupational_bots/legal_bot.py",
     ),
     BotEntry(
-        bot_id="linkedin_optimizer_bot",
+        bot_id="occ_linkedin_optimizer_bot",
         display_name="Linkedin Optimizer Bot",
         description=(
-            "Optimises LinkedIn profiles for search visibility, connection growth, and professional branding."
+            "Linkedin Optimizer Bot — occupational intelligence bot."
         ),
         category=BotCategory.OCCUPATIONAL,
         module_path="Occupational_bots.linkedin_optimizer_bot",
         class_name="LinkedInOptimizerBot",
-        capabilities=["linkedin", "profile_optimization", "networking", "job_search"],
+        version="1.0.0",
+        capabilities=[],
+        namespace="occ",
+        source_path="Occupational_bots/linkedin_optimizer_bot.py",
     ),
     BotEntry(
-        bot_id="management_bot",
+        bot_id="occ_management_bot",
         display_name="Management Bot",
         description=(
-            "Supports managers with team coordination, performance tracking, goal setting, and reporting automation."
+            "Management Bot — occupational intelligence bot."
         ),
         category=BotCategory.OCCUPATIONAL,
         module_path="Occupational_bots.management_bot",
         class_name="ManagementBot",
-        capabilities=["management", "leadership", "operations", "strategy"],
+        version="1.0.0",
+        capabilities=[],
+        namespace="occ",
+        source_path="Occupational_bots/management_bot.py",
     ),
     BotEntry(
-        bot_id="mentor_finder_bot",
+        bot_id="occ_mentor_finder_bot",
         display_name="Mentor Finder Bot",
         description=(
-            "Connects professionals with suitable mentors based on industry, goals, and experience level."
+            "Mentor Finder Bot — occupational intelligence bot."
         ),
         category=BotCategory.OCCUPATIONAL,
         module_path="Occupational_bots.mentor_finder_bot",
         class_name="MentorFinderBot",
-        capabilities=["mentors", "mentorship", "networking", "career"],
+        version="1.0.0",
+        capabilities=[],
+        namespace="occ",
+        source_path="Occupational_bots/mentor_finder_bot.py",
     ),
     BotEntry(
-        bot_id="military_bot",
+        bot_id="occ_military_bot",
         display_name="Military Bot",
         description=(
-            "Supports military personnel and veterans with career transition, benefits navigation, and skills translation."
+            "Military Bot — occupational intelligence bot."
         ),
         category=BotCategory.OCCUPATIONAL,
         module_path="Occupational_bots.military_bot",
         class_name="MilitaryBot",
-        capabilities=["military", "veterans", "defense", "transition"],
+        version="1.0.0",
+        capabilities=[],
+        namespace="occ",
+        source_path="Occupational_bots/military_bot.py",
     ),
     BotEntry(
-        bot_id="networking_bot",
+        bot_id="occ_networking_bot",
         display_name="Networking Bot",
         description=(
-            "Automates professional networking outreach, manages connections, and tracks relationship building progress."
+            "Networking Bot — occupational intelligence bot."
         ),
         category=BotCategory.OCCUPATIONAL,
         module_path="Occupational_bots.networking_bot",
         class_name="NetworkingBot",
-        capabilities=["networking", "professional_connections", "outreach"],
+        version="1.0.0",
+        capabilities=[],
+        namespace="occ",
+        source_path="Occupational_bots/networking_bot.py",
     ),
     BotEntry(
-        bot_id="performance_review_bot",
+        bot_id="occ_performance_review_bot",
         display_name="Performance Review Bot",
         description=(
-            "Facilitates structured performance reviews with goal tracking, 360 feedback, and development planning."
+            "Performance Review Bot — occupational intelligence bot."
         ),
         category=BotCategory.OCCUPATIONAL,
         module_path="Occupational_bots.performance_review_bot",
         class_name="PerformanceReviewBot",
-        capabilities=["performance_reviews", "hr", "feedback", "goals"],
+        version="1.0.0",
+        capabilities=[],
+        namespace="occ",
+        source_path="Occupational_bots/performance_review_bot.py",
     ),
     BotEntry(
-        bot_id="personal_care_bot",
+        bot_id="occ_personal_care_bot",
         display_name="Personal Care Bot",
         description=(
-            "Manages personal care services including client scheduling, service menus, and loyalty programs."
+            "Personal Care Bot — occupational intelligence bot."
         ),
         category=BotCategory.OCCUPATIONAL,
         module_path="Occupational_bots.personal_care_bot",
         class_name="PersonalCareBot",
-        capabilities=["personal_care", "wellness", "grooming", "services"],
+        version="1.0.0",
+        capabilities=[],
+        namespace="occ",
+        source_path="Occupational_bots/personal_care_bot.py",
     ),
     BotEntry(
         bot_id="occ_portfolio_builder_bot",
-        display_name="Occ Portfolio Builder Bot",
+        display_name="Portfolio Builder Bot",
         description=(
-            "Builds and curates a compelling portfolio with case studies, samples, and testimonials."
+            "Portfolio Builder Bot — occupational intelligence bot."
         ),
         category=BotCategory.OCCUPATIONAL,
         module_path="Occupational_bots.portfolio_builder_bot",
         class_name="PortfolioBuilderBot",
-        capabilities=["portfolio", "showcase", "branding", "samples"],
+        version="1.0.0",
+        capabilities=[],
+        namespace="occ",
+        source_path="Occupational_bots/portfolio_builder_bot.py",
     ),
     BotEntry(
-        bot_id="production_bot",
+        bot_id="occ_production_bot",
         display_name="Production Bot",
         description=(
-            "Optimises production operations with scheduling, quality control, and efficiency tracking tools."
+            "Production Bot — occupational intelligence bot."
         ),
         category=BotCategory.OCCUPATIONAL,
         module_path="Occupational_bots.production_bot",
         class_name="ProductionBot",
-        capabilities=["production", "manufacturing", "operations", "efficiency"],
+        version="1.0.0",
+        capabilities=[],
+        namespace="occ",
+        source_path="Occupational_bots/production_bot.py",
     ),
     BotEntry(
-        bot_id="promotion_readiness_bot",
+        bot_id="occ_promotion_readiness_bot",
         display_name="Promotion Readiness Bot",
         description=(
-            "Assesses promotion readiness with competency gap analysis, achievement tracking, and positioning advice."
+            "Promotion Readiness Bot — occupational intelligence bot."
         ),
         category=BotCategory.OCCUPATIONAL,
         module_path="Occupational_bots.promotion_readiness_bot",
         class_name="PromotionReadinessBot",
-        capabilities=["promotion_readiness", "career_growth", "assessment"],
+        version="1.0.0",
+        capabilities=[],
+        namespace="occ",
+        source_path="Occupational_bots/promotion_readiness_bot.py",
     ),
     BotEntry(
-        bot_id="protective_service_bot",
+        bot_id="occ_protective_service_bot",
         display_name="Protective Service Bot",
         description=(
-            "Supports protective services professionals with incident tracking, compliance, and operational tools."
+            "Protective Service Bot — occupational intelligence bot."
         ),
         category=BotCategory.OCCUPATIONAL,
         module_path="Occupational_bots.protective_service_bot",
         class_name="ProtectiveServiceBot",
-        capabilities=["protective_services", "security", "law_enforcement"],
+        version="1.0.0",
+        capabilities=[],
+        namespace="occ",
+        source_path="Occupational_bots/protective_service_bot.py",
     ),
     BotEntry(
-        bot_id="reference_checker_bot",
+        bot_id="occ_reference_checker_bot",
         display_name="Reference Checker Bot",
         description=(
-            "Automates professional reference checks with structured questionnaires and verification workflows."
+            "Reference Checker Bot — occupational intelligence bot."
         ),
         category=BotCategory.OCCUPATIONAL,
         module_path="Occupational_bots.reference_checker_bot",
         class_name="ReferenceCheckerBot",
-        capabilities=["references", "background_checks", "verification"],
+        version="1.0.0",
+        capabilities=[],
+        namespace="occ",
+        source_path="Occupational_bots/reference_checker_bot.py",
     ),
     BotEntry(
-        bot_id="relocation_advisor_bot",
+        bot_id="occ_relocation_advisor_bot",
         display_name="Relocation Advisor Bot",
         description=(
-            "Assists with job-related relocation including cost analysis, housing search, and transition planning."
+            "Relocation Advisor Bot — occupational intelligence bot."
         ),
         category=BotCategory.OCCUPATIONAL,
         module_path="Occupational_bots.relocation_advisor_bot",
         class_name="RelocationAdvisorBot",
-        capabilities=["relocation", "moving", "career", "housing"],
+        version="1.0.0",
+        capabilities=[],
+        namespace="occ",
+        source_path="Occupational_bots/relocation_advisor_bot.py",
     ),
     BotEntry(
-        bot_id="remote_job_finder_bot",
+        bot_id="occ_remote_job_finder_bot",
         display_name="Remote Job Finder Bot",
         description=(
-            "Discovers and filters remote job opportunities aligned to skills, preferences, and compensation goals."
+            "Remote Job Finder Bot — occupational intelligence bot."
         ),
         category=BotCategory.OCCUPATIONAL,
         module_path="Occupational_bots.remote_job_finder_bot",
         class_name="RemoteJobFinderBot",
-        capabilities=["remote_jobs", "work_from_home", "job_search"],
+        version="1.0.0",
+        capabilities=[],
+        namespace="occ",
+        source_path="Occupational_bots/remote_job_finder_bot.py",
     ),
     BotEntry(
-        bot_id="salary_negotiator_bot",
+        bot_id="occ_salary_negotiator_bot",
         display_name="Salary Negotiator Bot",
         description=(
-            "Provides data-driven salary negotiation strategies with market benchmarks and scripted talking points."
+            "Salary Negotiator Bot — occupational intelligence bot."
         ),
         category=BotCategory.OCCUPATIONAL,
         module_path="Occupational_bots.salary_negotiator_bot",
         class_name="SalaryNegotiatorBot",
-        capabilities=["salary_negotiation", "compensation", "career", "offers"],
+        version="1.0.0",
+        capabilities=[],
+        namespace="occ",
+        source_path="Occupational_bots/salary_negotiator_bot.py",
     ),
     BotEntry(
-        bot_id="sales_bot",
+        bot_id="occ_sales_bot",
         display_name="Sales Bot",
         description=(
-            "Manages sales activities including lead management, CRM updates, follow-ups, and revenue forecasting."
+            "Sales Bot — occupational intelligence bot."
         ),
         category=BotCategory.OCCUPATIONAL,
         module_path="Occupational_bots.sales_bot",
         class_name="SalesBot",
-        capabilities=["sales", "crm", "leads", "revenue"],
+        version="1.0.0",
+        capabilities=[],
+        namespace="occ",
+        source_path="Occupational_bots/sales_bot.py",
     ),
     BotEntry(
-        bot_id="science_bot",
+        bot_id="occ_science_bot",
         display_name="Science Bot",
         description=(
-            "Assists science professionals with research literature, data analysis, and experimental design tools."
+            "Science Bot — occupational intelligence bot."
         ),
         category=BotCategory.OCCUPATIONAL,
         module_path="Occupational_bots.science_bot",
         class_name="ScienceBot",
-        capabilities=["science", "research", "stem", "analysis"],
+        version="1.0.0",
+        capabilities=[],
+        namespace="occ",
+        source_path="Occupational_bots/science_bot.py",
     ),
     BotEntry(
-        bot_id="side_hustle_finder_bot",
+        bot_id="occ_side_hustle_finder_bot",
         display_name="Side Hustle Finder Bot",
         description=(
-            "Identifies side hustle opportunities aligned to skills and time availability with income projections."
+            "Side Hustle Finder Bot — occupational intelligence bot."
         ),
         category=BotCategory.OCCUPATIONAL,
         module_path="Occupational_bots.side_hustle_finder_bot",
         class_name="SideHustleFinderBot",
-        capabilities=["side_hustles", "extra_income", "opportunities"],
+        version="1.0.0",
+        capabilities=[],
+        namespace="occ",
+        source_path="Occupational_bots/side_hustle_finder_bot.py",
     ),
     BotEntry(
-        bot_id="skills_gap_bot",
+        bot_id="occ_skills_gap_bot",
         display_name="Skills Gap Bot",
         description=(
-            "Identifies skill gaps relative to target roles and recommends learning paths to close them."
+            "Skills Gap Bot — occupational intelligence bot."
         ),
         category=BotCategory.OCCUPATIONAL,
         module_path="Occupational_bots.skills_gap_bot",
         class_name="SkillsGapBot",
-        capabilities=["skills_gap", "upskilling", "learning", "career"],
+        version="1.0.0",
+        capabilities=[],
+        namespace="occ",
+        source_path="Occupational_bots/skills_gap_bot.py",
     ),
     BotEntry(
-        bot_id="transportation_bot",
+        bot_id="occ_transportation_bot",
         display_name="Transportation Bot",
         description=(
-            "Supports transportation industry workers with route planning, fleet management, and logistics tools."
+            "Transportation Bot — occupational intelligence bot."
         ),
         category=BotCategory.OCCUPATIONAL,
         module_path="Occupational_bots.transportation_bot",
         class_name="TransportationBot",
-        capabilities=["transportation", "logistics", "route_planning", "fleet_management"],
+        version="1.0.0",
+        capabilities=[],
+        namespace="occ",
+        source_path="Occupational_bots/transportation_bot.py",
     ),
     BotEntry(
-        bot_id="upskill_recommender_bot",
+        bot_id="occ_upskill_recommender_bot",
         display_name="Upskill Recommender Bot",
         description=(
-            "Recommends upskilling resources and courses tailored to career goals and market demand signals."
+            "Upskill Recommender Bot — occupational intelligence bot."
         ),
         category=BotCategory.OCCUPATIONAL,
         module_path="Occupational_bots.upskill_recommender_bot",
         class_name="UpskillRecommenderBot",
-        capabilities=["upskilling", "learning", "courses", "career"],
+        version="1.0.0",
+        capabilities=[],
+        namespace="occ",
+        source_path="Occupational_bots/upskill_recommender_bot.py",
     ),
     BotEntry(
-        bot_id="work_life_balance_bot",
+        bot_id="occ_work_life_balance_bot",
         display_name="Work Life Balance Bot",
         description=(
-            "Tracks work patterns, suggests boundaries, and provides strategies for sustainable work-life balance."
+            "Work Life Balance Bot — occupational intelligence bot."
         ),
         category=BotCategory.OCCUPATIONAL,
         module_path="Occupational_bots.work_life_balance_bot",
         class_name="WorkLifeBalanceBot",
-        capabilities=["work_life_balance", "wellness", "productivity"],
+        version="1.0.0",
+        capabilities=[],
+        namespace="occ",
+        source_path="Occupational_bots/work_life_balance_bot.py",
     ),
     BotEntry(
-        bot_id="auction_finder_bot",
+        bot_id="re_auction_finder_bot",
         display_name="Auction Finder Bot",
         description=(
-            "Discovers real estate auction opportunities, analyses bidding history, and estimates winning bids."
+            "Auction Finder Bot — real estate analysis bot."
         ),
         category=BotCategory.REAL_ESTATE,
         module_path="Real_Estate_bots.auction_finder_bot",
         class_name="AuctionFinderBot",
-        capabilities=["auctions", "real_estate", "bidding", "deals"],
+        version="1.0.0",
+        capabilities=[],
+        namespace="re",
+        source_path="Real_Estate_bots/auction_finder_bot.py",
     ),
     BotEntry(
-        bot_id="cash_flow_bot",
+        bot_id="re_cash_flow_bot",
         display_name="Cash Flow Bot",
         description=(
-            "Calculates rental property cash flow with detailed income, expense, and ROI breakdowns."
+            "Cash Flow Bot — real estate analysis bot."
         ),
         category=BotCategory.REAL_ESTATE,
         module_path="Real_Estate_bots.cash_flow_bot",
         class_name="CashFlowBot",
-        capabilities=["cash_flow", "rental", "roi", "real_estate"],
+        version="1.0.0",
+        capabilities=[],
+        namespace="re",
+        source_path="Real_Estate_bots/cash_flow_bot.py",
     ),
     BotEntry(
-        bot_id="commercial_analyzer_bot",
+        bot_id="re_commercial_analyzer_bot",
         display_name="Commercial Analyzer Bot",
         description=(
-            "Analyses commercial real estate investments including cap rates, NOI, and market comparables."
+            "Commercial Analyzer Bot — real estate analysis bot."
         ),
         category=BotCategory.REAL_ESTATE,
         module_path="Real_Estate_bots.commercial_analyzer_bot",
         class_name="CommercialAnalyzerBot",
-        capabilities=["commercial_real_estate", "analysis", "investment"],
+        version="1.0.0",
+        capabilities=[],
+        namespace="re",
+        source_path="Real_Estate_bots/commercial_analyzer_bot.py",
     ),
     BotEntry(
-        bot_id="comparable_sales_bot",
+        bot_id="re_comparable_sales_bot",
         display_name="Comparable Sales Bot",
         description=(
-            "Pulls and analyses comparable sales data to support accurate property valuations."
+            "Comparable Sales Bot — real estate analysis bot."
         ),
         category=BotCategory.REAL_ESTATE,
         module_path="Real_Estate_bots.comparable_sales_bot",
         class_name="ComparableSalesBot",
-        capabilities=["comps", "comparable_sales", "valuation", "market"],
+        version="1.0.0",
+        capabilities=[],
+        namespace="re",
+        source_path="Real_Estate_bots/comparable_sales_bot.py",
     ),
     BotEntry(
-        bot_id="deal_analyzer_bot",
+        bot_id="re_deal_analyzer_bot",
         display_name="Deal Analyzer Bot",
         description=(
-            "Evaluates real estate deals with comprehensive ROI, cash flow, and risk analysis."
+            "Deal Analyzer Bot — real estate analysis bot."
         ),
         category=BotCategory.REAL_ESTATE,
         module_path="Real_Estate_bots.deal_analyzer_bot",
         class_name="DealAnalyzerBot",
-        capabilities=["deal_analysis", "roi", "real_estate", "investment"],
+        version="1.0.0",
+        capabilities=[],
+        namespace="re",
+        source_path="Real_Estate_bots/deal_analyzer_bot.py",
     ),
     BotEntry(
-        bot_id="fix_and_flip_bot",
+        bot_id="re_fix_and_flip_bot",
         display_name="Fix And Flip Bot",
         description=(
-            "Analyses fix-and-flip opportunities with renovation cost estimates, ARV calculations, and profit projections."
+            "Fix And Flip Bot — real estate analysis bot."
         ),
         category=BotCategory.REAL_ESTATE,
         module_path="Real_Estate_bots.fix_and_flip_bot",
         class_name="FixAndFlipBot",
-        capabilities=["fix_and_flip", "renovation", "profit", "real_estate"],
+        version="1.0.0",
+        capabilities=[],
+        namespace="re",
+        source_path="Real_Estate_bots/fix_and_flip_bot.py",
     ),
     BotEntry(
-        bot_id="flip_profit_calculator_bot",
+        bot_id="re_flip_profit_calculator_bot",
         display_name="Flip Profit Calculator Bot",
         description=(
-            "Calculates expected profit on house flips including purchase, renovation, carrying, and sale costs."
+            "Flip Profit Calculator Bot — real estate analysis bot."
         ),
         category=BotCategory.REAL_ESTATE,
         module_path="Real_Estate_bots.flip_profit_calculator_bot",
         class_name="FlipProfitCalculatorBot",
-        capabilities=["flip_profit", "calculator", "roi", "renovation"],
+        version="1.0.0",
+        capabilities=[],
+        namespace="re",
+        source_path="Real_Estate_bots/flip_profit_calculator_bot.py",
     ),
     BotEntry(
-        bot_id="foreclosure_finder_bot",
+        bot_id="re_foreclosure_finder_bot",
         display_name="Foreclosure Finder Bot",
         description=(
-            "Discovers pre-foreclosure and bank-owned properties with automated alerts and deal scoring."
+            "Foreclosure Finder Bot — real estate analysis bot."
         ),
         category=BotCategory.REAL_ESTATE,
         module_path="Real_Estate_bots.foreclosure_finder_bot",
         class_name="ForeclosureFinderBot",
-        capabilities=["foreclosures", "distressed_properties", "deals"],
+        version="1.0.0",
+        capabilities=[],
+        namespace="re",
+        source_path="Real_Estate_bots/foreclosure_finder_bot.py",
     ),
     BotEntry(
-        bot_id="insurance_estimator_bot",
+        bot_id="re_insurance_estimator_bot",
         display_name="Insurance Estimator Bot",
         description=(
-            "Estimates property insurance costs and recommends coverage options for real estate investors."
+            "Insurance Estimator Bot — real estate analysis bot."
         ),
         category=BotCategory.REAL_ESTATE,
         module_path="Real_Estate_bots.insurance_estimator_bot",
         class_name="InsuranceEstimatorBot",
-        capabilities=["insurance", "estimates", "property", "coverage"],
+        version="1.0.0",
+        capabilities=[],
+        namespace="re",
+        source_path="Real_Estate_bots/insurance_estimator_bot.py",
     ),
     BotEntry(
-        bot_id="investor_matchmaker_bot",
+        bot_id="re_investor_matchmaker_bot",
         display_name="Investor Matchmaker Bot",
         description=(
-            "Connects real estate investors with deal partners, private lenders, and joint venture opportunities."
+            "Investor Matchmaker Bot — real estate analysis bot."
         ),
         category=BotCategory.REAL_ESTATE,
         module_path="Real_Estate_bots.investor_matchmaker_bot",
         class_name="InvestorMatchmakerBot",
-        capabilities=["investor_matching", "capital", "deals", "networking"],
+        version="1.0.0",
+        capabilities=[],
+        namespace="re",
+        source_path="Real_Estate_bots/investor_matchmaker_bot.py",
     ),
     BotEntry(
-        bot_id="land_analyzer_bot",
+        bot_id="re_land_analyzer_bot",
         display_name="Land Analyzer Bot",
         description=(
-            "Analyses raw land parcels for development potential, zoning compliance, and investment value."
+            "Land Analyzer Bot — real estate analysis bot."
         ),
         category=BotCategory.REAL_ESTATE,
         module_path="Real_Estate_bots.land_analyzer_bot",
         class_name="LandAnalyzerBot",
-        capabilities=["land_analysis", "zoning", "development", "real_estate"],
+        version="1.0.0",
+        capabilities=[],
+        namespace="re",
+        source_path="Real_Estate_bots/land_analyzer_bot.py",
     ),
     BotEntry(
-        bot_id="lease_generator_bot",
+        bot_id="re_lease_generator_bot",
         display_name="Lease Generator Bot",
         description=(
-            "Generates legally-sound residential and commercial lease agreements with customisable terms."
+            "Lease Generator Bot — real estate analysis bot."
         ),
         category=BotCategory.REAL_ESTATE,
         module_path="Real_Estate_bots.lease_generator_bot",
         class_name="LeaseGeneratorBot",
-        capabilities=["leases", "contracts", "rental", "legal"],
+        version="1.0.0",
+        capabilities=[],
+        namespace="re",
+        source_path="Real_Estate_bots/lease_generator_bot.py",
     ),
     BotEntry(
-        bot_id="mortgage_calculator_bot",
+        bot_id="re_mortgage_calculator_bot",
         display_name="Mortgage Calculator Bot",
         description=(
-            "Calculates mortgage payments, amortisation schedules, and financing scenarios for property purchases."
+            "Mortgage Calculator Bot — real estate analysis bot."
         ),
         category=BotCategory.REAL_ESTATE,
         module_path="Real_Estate_bots.mortgage_calculator_bot",
         class_name="MortgageCalculatorBot",
-        capabilities=["mortgage", "calculations", "financing", "loans"],
+        version="1.0.0",
+        capabilities=[],
+        namespace="re",
+        source_path="Real_Estate_bots/mortgage_calculator_bot.py",
     ),
     BotEntry(
-        bot_id="multifamily_analyzer_bot",
+        bot_id="re_multifamily_analyzer_bot",
         display_name="Multifamily Analyzer Bot",
         description=(
-            "Evaluates multifamily property investments with unit-level analysis, cap rate, and cash flow modelling."
+            "Multifamily Analyzer Bot — real estate analysis bot."
         ),
         category=BotCategory.REAL_ESTATE,
         module_path="Real_Estate_bots.multifamily_analyzer_bot",
         class_name="MultifamilyAnalyzerBot",
-        capabilities=["multifamily", "apartments", "cap_rate", "cashflow"],
+        version="1.0.0",
+        capabilities=[],
+        namespace="re",
+        source_path="Real_Estate_bots/multifamily_analyzer_bot.py",
     ),
     BotEntry(
-        bot_id="neighborhood_scorer_bot",
+        bot_id="re_neighborhood_scorer_bot",
         display_name="Neighborhood Scorer Bot",
         description=(
-            "Scores neighbourhoods on safety, schools, amenities, and appreciation potential for investment decisions."
+            "Neighborhood Scorer Bot — real estate analysis bot."
         ),
         category=BotCategory.REAL_ESTATE,
         module_path="Real_Estate_bots.neighborhood_scorer_bot",
         class_name="NeighborhoodScorerBot",
-        capabilities=["neighborhood_scoring", "location", "amenities", "safety"],
+        version="1.0.0",
+        capabilities=[],
+        namespace="re",
+        source_path="Real_Estate_bots/neighborhood_scorer_bot.py",
     ),
     BotEntry(
-        bot_id="off_market_finder_bot",
+        bot_id="re_off_market_finder_bot",
         display_name="Off Market Finder Bot",
         description=(
-            "Sources off-market property deals through skip tracing, direct mail, and motivated seller outreach."
+            "Off Market Finder Bot — real estate analysis bot."
         ),
         category=BotCategory.REAL_ESTATE,
         module_path="Real_Estate_bots.off_market_finder_bot",
         class_name="OffMarketFinderBot",
-        capabilities=["off_market", "deals", "sourcing", "leads"],
+        version="1.0.0",
+        capabilities=[],
+        namespace="re",
+        source_path="Real_Estate_bots/off_market_finder_bot.py",
     ),
     BotEntry(
-        bot_id="property_alert_bot",
+        bot_id="re_property_alert_bot",
         display_name="Property Alert Bot",
         description=(
-            "Monitors MLS and public records to alert investors when matching properties come to market."
+            "Property Alert Bot — real estate analysis bot."
         ),
         category=BotCategory.REAL_ESTATE,
         module_path="Real_Estate_bots.property_alert_bot",
         class_name="PropertyAlertBot",
-        capabilities=["property_alerts", "notifications", "market", "watchlist"],
+        version="1.0.0",
+        capabilities=[],
+        namespace="re",
+        source_path="Real_Estate_bots/property_alert_bot.py",
     ),
     BotEntry(
-        bot_id="property_management_bot",
+        bot_id="re_property_management_bot",
         display_name="Property Management Bot",
         description=(
-            "Automates property management tasks including tenant communication, rent collection, and maintenance."
+            "Property Management Bot — real estate analysis bot."
         ),
         category=BotCategory.REAL_ESTATE,
         module_path="Real_Estate_bots.property_management_bot",
         class_name="PropertyManagementBot",
-        capabilities=["property_management", "tenants", "maintenance", "rent"],
+        version="1.0.0",
+        capabilities=[],
+        namespace="re",
+        source_path="Real_Estate_bots/property_management_bot.py",
     ),
     BotEntry(
-        bot_id="property_valuation_bot",
+        bot_id="re_property_valuation_bot",
         display_name="Property Valuation Bot",
         description=(
-            "Estimates property values using comparable sales, income approach, and automated valuation models."
+            "Property Valuation Bot — real estate analysis bot."
         ),
         category=BotCategory.REAL_ESTATE,
         module_path="Real_Estate_bots.property_valuation_bot",
         class_name="PropertyValuationBot",
-        capabilities=["property_valuation", "appraisal", "arv", "market"],
+        version="1.0.0",
+        capabilities=[],
+        namespace="re",
+        source_path="Real_Estate_bots/property_valuation_bot.py",
     ),
     BotEntry(
-        bot_id="renovation_cost_bot",
+        bot_id="re_renovation_cost_bot",
         display_name="Renovation Cost Bot",
         description=(
-            "Estimates renovation costs by scope, material, and region to plan fix-and-flip and BRRRR projects."
+            "Renovation Cost Bot — real estate analysis bot."
         ),
         category=BotCategory.REAL_ESTATE,
         module_path="Real_Estate_bots.renovation_cost_bot",
         class_name="RenovationCostBot",
-        capabilities=["renovation_costs", "estimates", "contractors", "budgeting"],
+        version="1.0.0",
+        capabilities=[],
+        namespace="re",
+        source_path="Real_Estate_bots/renovation_cost_bot.py",
     ),
     BotEntry(
-        bot_id="rental_income_bot",
+        bot_id="re_rental_income_bot",
         display_name="Rental Income Bot",
         description=(
-            "Projects rental income potential with market rate analysis, occupancy modelling, and cash flow forecasting."
+            "Rental Income Bot — real estate analysis bot."
         ),
         category=BotCategory.REAL_ESTATE,
         module_path="Real_Estate_bots.rental_income_bot",
         class_name="RentalIncomeBot",
-        capabilities=["rental_income", "cash_flow", "roi", "analysis"],
+        version="1.0.0",
+        capabilities=[],
+        namespace="re",
+        source_path="Real_Estate_bots/rental_income_bot.py",
     ),
     BotEntry(
-        bot_id="roi_tracker_bot",
+        bot_id="re_roi_tracker_bot",
         display_name="Roi Tracker Bot",
         description=(
-            "Tracks ROI across a real estate portfolio with performance dashboards and investment benchmarks."
+            "Roi Tracker Bot — real estate analysis bot."
         ),
         category=BotCategory.REAL_ESTATE,
         module_path="Real_Estate_bots.roi_tracker_bot",
         class_name="ROITrackerBot",
-        capabilities=["roi_tracking", "investment", "performance", "reporting"],
+        version="1.0.0",
+        capabilities=[],
+        namespace="re",
+        source_path="Real_Estate_bots/roi_tracker_bot.py",
     ),
     BotEntry(
-        bot_id="short_sale_finder_bot",
+        bot_id="re_short_sale_finder_bot",
         display_name="Short Sale Finder Bot",
         description=(
-            "Identifies short sale opportunities and guides investors through negotiation and approval processes."
+            "Short Sale Finder Bot — real estate analysis bot."
         ),
         category=BotCategory.REAL_ESTATE,
         module_path="Real_Estate_bots.short_sale_finder_bot",
         class_name="ShortSaleFinderBot",
-        capabilities=["short_sales", "distressed", "negotiation", "deals"],
+        version="1.0.0",
+        capabilities=[],
+        namespace="re",
+        source_path="Real_Estate_bots/short_sale_finder_bot.py",
     ),
     BotEntry(
-        bot_id="tax_lien_bot",
+        bot_id="re_tax_lien_bot",
         display_name="Tax Lien Bot",
         description=(
-            "Researches tax lien certificates and deeds for high-yield investment opportunities across jurisdictions."
+            "Tax Lien Bot — real estate analysis bot."
         ),
         category=BotCategory.REAL_ESTATE,
         module_path="Real_Estate_bots.tax_lien_bot",
         class_name="TaxLienBot",
-        capabilities=["tax_liens", "certificates", "investing", "returns"],
+        version="1.0.0",
+        capabilities=[],
+        namespace="re",
+        source_path="Real_Estate_bots/tax_lien_bot.py",
     ),
     BotEntry(
-        bot_id="tenant_screening_bot",
+        bot_id="re_tenant_screening_bot",
         display_name="Tenant Screening Bot",
         description=(
-            "Automates tenant screening with background checks, credit analysis, and income verification."
+            "Tenant Screening Bot — real estate analysis bot."
         ),
         category=BotCategory.REAL_ESTATE,
         module_path="Real_Estate_bots.tenant_screening_bot",
         class_name="TenantScreeningBot",
-        capabilities=["tenant_screening", "background_checks", "applications"],
+        version="1.0.0",
+        capabilities=[],
+        namespace="re",
+        source_path="Real_Estate_bots/tenant_screening_bot.py",
     ),
     BotEntry(
-        bot_id="wholesaler_bot",
+        bot_id="re_wholesaler_bot",
         display_name="Wholesaler Bot",
         description=(
-            "Supports real estate wholesalers with deal sourcing, contract assignment, and buyer list management."
+            "Wholesaler Bot — real estate analysis bot."
         ),
         category=BotCategory.REAL_ESTATE,
         module_path="Real_Estate_bots.wholesaler_bot",
         class_name="WholesalerBot",
-        capabilities=["wholesale", "real_estate", "deals", "contracts", "assignment"],
+        version="1.0.0",
+        capabilities=[],
+        namespace="re",
+        source_path="Real_Estate_bots/wholesaler_bot.py",
     ),
     BotEntry(
-        bot_id="zoning_research_bot",
+        bot_id="re_zoning_research_bot",
         display_name="Zoning Research Bot",
         description=(
-            "Researches zoning regulations, permit requirements, and land use restrictions for real estate projects."
+            "Zoning Research Bot — real estate analysis bot."
         ),
         category=BotCategory.REAL_ESTATE,
         module_path="Real_Estate_bots.zoning_research_bot",
         class_name="ZoningResearchBot",
-        capabilities=["zoning", "permits", "land_use", "development"],
+        version="1.0.0",
+        capabilities=[],
+        namespace="re",
+        source_path="Real_Estate_bots/zoning_research_bot.py",
     ),
+# <<< END GENERATED CATALOGUE >>>
 ]

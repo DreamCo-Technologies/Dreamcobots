@@ -28,6 +28,7 @@ import sqlite3
 from datetime import datetime, timezone
 from typing import Any, Dict, List, Optional
 
+from framework import GlobalAISourcesFlow
 
 class BotLibraryManager:
     """Manages per-bot library registrations, mastery levels, and learning notes.
@@ -43,6 +44,7 @@ class BotLibraryManager:
         self.db_path = db_path
         self._conn: sqlite3.Connection = sqlite3.connect(db_path)
         self._conn.row_factory = sqlite3.Row
+        self.flow = GlobalAISourcesFlow(bot_name="BotLibraryManager")
         self._init_schema()
 
     # ------------------------------------------------------------------
@@ -110,6 +112,10 @@ class BotLibraryManager:
             (bot_id, library, category, now),
         )
         self._conn.commit()
+        self._run_framework_validation(
+            action="register_library",
+            payload={"bot_id": bot_id, "library": library, "category": category},
+        )
 
     def update_mastery(self, bot_id: str, library: str, mastery: float) -> None:
         """Update the mastery score for a ``(bot_id, library)`` pair.
@@ -131,6 +137,10 @@ class BotLibraryManager:
             (mastery, bot_id, library),
         )
         self._conn.commit()
+        self._run_framework_validation(
+            action="update_mastery",
+            payload={"bot_id": bot_id, "library": library, "mastery": mastery},
+        )
 
     def store_learning(
         self,
@@ -166,6 +176,15 @@ class BotLibraryManager:
             (bot_id, topic, content, source, relevance_score, now),
         )
         self._conn.commit()
+        self._run_framework_validation(
+            action="store_learning",
+            payload={
+                "bot_id": bot_id,
+                "topic": topic,
+                "source": source,
+                "relevance_score": relevance_score,
+            },
+        )
 
     def get_library_summary(self, bot_id: str) -> Dict[str, Any]:
         """Return a summary dict for all libraries registered to *bot_id*.
@@ -220,8 +239,24 @@ class BotLibraryManager:
             for row in cursor.fetchall()
         ]
 
-        return {"bot_id": bot_id, "libraries": libraries, "learnings": learnings}
+        summary = {"bot_id": bot_id, "libraries": libraries, "learnings": learnings}
+        self._run_framework_validation(
+            action="get_library_summary",
+            payload={"bot_id": bot_id, "library_count": len(libraries), "learning_count": len(learnings)},
+        )
+        return summary
 
     def close(self) -> None:
         """Close the underlying database connection."""
         self._conn.close()
+
+    def _run_framework_validation(self, *, action: str, payload: Dict[str, Any]) -> None:
+        """Run the mandatory GlobalAISourcesFlow pipeline after each public operation."""
+        self.flow.run_pipeline(
+            raw_data={
+                "domain": "bot_library_management",
+                "action": action,
+                "payload": payload,
+            },
+            learning_method="supervised",
+        )

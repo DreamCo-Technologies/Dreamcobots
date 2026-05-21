@@ -63,6 +63,7 @@ jobs:
   integration-feedback:
     name: Log Integration Feedback
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     permissions:
       contents: write
       actions: read
@@ -95,7 +96,14 @@ jobs:
           GITHUB_REF_NAME: ${{ github.ref_name }}
         run: |
           python - <<'EOF'
-          import sys, os
+          import sys, os, time, json, logging
+
+          logging.basicConfig(
+              level=logging.INFO,
+              format="%(asctime)s [%(levelname)s] %(message)s",
+          )
+          logger = logging.getLogger("integration_feedback_bot")
+
           sys.path.insert(0, ".")
 
           from bots.integration_feedback_bot.integration_feedback_bot import IntegrationFeedbackBot
@@ -104,16 +112,57 @@ jobs:
           tier_map = {"free": Tier.FREE, "pro": Tier.PRO, "enterprise": Tier.ENTERPRISE}
           tier = tier_map.get(os.getenv("INTEGRATION_TIER", "pro").lower(), Tier.PRO)
 
-          bot = IntegrationFeedbackBot(tier=tier)
-          result = bot.log_integration(
-              platform=os.getenv("INTEGRATION_PLATFORM", "GitHub Actions"),
-              status=os.getenv("INTEGRATION_STATUS", "success"),
-              details=os.getenv("INTEGRATION_DETAILS", ""),
-              version=os.getenv("INTEGRATION_VERSION") or None,
-              triggered_by=f"GitHub Actions run #{os.getenv('GITHUB_RUN_NUMBER', '?')}",
-          )
+          platform  = os.getenv("INTEGRATION_PLATFORM", "GitHub Actions")
+          status    = os.getenv("INTEGRATION_STATUS", "success")
+          details   = os.getenv("INTEGRATION_DETAILS", "")
+          version   = os.getenv("INTEGRATION_VERSION") or None
+          triggered = f"GitHub Actions run #{os.getenv('GITHUB_RUN_NUMBER', '?')}"
+
+          # Retry logic: 3 attempts with exponential backoff
+          MAX_ATTEMPTS = 3
+          result = None
+          last_exc = None
+          for attempt in range(1, MAX_ATTEMPTS + 1):
+              try:
+                  bot = IntegrationFeedbackBot(tier=tier)
+                  result = bot.log_integration(
+                      platform=platform,
+                      status=status,
+                      details=details,
+                      version=version,
+                      triggered_by=triggered,
+                  )
+                  break
+              except Exception as exc:
+                  last_exc = exc
+                  log_entry = {
+                      "workflow": "integration_feedback_bot",
+                      "attempt": attempt,
+                      "max_attempts": MAX_ATTEMPTS,
+                      "error": str(exc),
+                      "platform": platform,
+                      "run_number": os.getenv("GITHUB_RUN_NUMBER", "?"),
+                  }
+                  if attempt < MAX_ATTEMPTS:
+                      wait = 5 * (2 ** (attempt - 1))
+                      log_entry["retry_in_seconds"] = wait
+                      logger.warning(json.dumps(log_entry))
+                      time.sleep(wait)
+                  else:
+                      logger.error(json.dumps(log_entry))
+                      raise
 
           entry = result["entry"]
+          logger.info(json.dumps({
+              "workflow": "integration_feedback_bot",
+              "platform": entry["platform"],
+              "status": entry["status"],
+              "details": entry["details"],
+              "slack_sent": result["slack_sent"],
+              "discord_sent": result["discord_sent"],
+              "suggestions_count": len(result.get("suggestions", [])),
+          }))
+
           print(f"  Platform : {entry['platform']}")
           print(f"  Status   : {entry['status'].upper()}")
           print(f"  Details  : {entry['details']}")
