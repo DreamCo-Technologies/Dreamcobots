@@ -1,0 +1,483 @@
+---
+name: xlsx
+description: Create, read, and manipulate Excel spreadsheets (.xlsx, .xls, .csv) using the xlsx (SheetJS) and ExcelJS npm packages. Covers cells, formulas, charts, formatting, multiple sheets, data import/export, and pivot tables.
+user-invocable: false
+---
+
+# xlsx Skill — Excel Spreadsheet Creation & Manipulation
+
+This skill covers two complementary libraries for working with Excel files in Node.js:
+
+1. **SheetJS (`xlsx`)** — fastest reader/writer, broad format support (xlsx, xls, csv, ods, etc.)
+2. **ExcelJS (`exceljs`)** — rich formatting, charts, images, streaming
+
+## Installation
+
+```bash
+npm install xlsx            # SheetJS
+npm install exceljs         # ExcelJS (richer formatting/charts)
+```
+
+---
+
+## SheetJS — Quick Start
+
+```js
+const XLSX = require('xlsx');
+
+// --- READING ---
+const workbook = XLSX.readFile('data.xlsx');
+const sheetName = workbook.SheetNames[0];
+const sheet = workbook.Sheets[sheetName];
+
+// To array of arrays
+const aoa = XLSX.utils.sheet_to_aoa(sheet);
+
+// To array of objects (row 1 = headers)
+const json = XLSX.utils.sheet_to_json(sheet);
+
+// --- WRITING ---
+const wb = XLSX.utils.book_new();
+const data = [
+  ['Name', 'Age', 'Score'],
+  ['Alice', 30, 95],
+  ['Bob',   25, 87],
+];
+const ws = XLSX.utils.aoa_to_sheet(data);
+XLSX.utils.book_append_sheet(wb, ws, 'Results');
+XLSX.writeFile(wb, 'output.xlsx');
+```
+
+---
+
+## SheetJS — Detailed API
+
+### Reading Files
+
+```js
+// From file path
+const wb = XLSX.readFile('file.xlsx');
+
+// From Buffer
+const buf = fs.readFileSync('file.xlsx');
+const wb = XLSX.read(buf, { type: 'buffer' });
+
+// From base64 string
+const wb = XLSX.read(b64string, { type: 'base64' });
+
+// From URL (with node-fetch)
+const resp = await fetch(url);
+const ab = await resp.arrayBuffer();
+const wb = XLSX.read(ab, { type: 'array' });
+
+// Options
+XLSX.readFile('file.xlsx', {
+  cellDates: true,   // parse dates as Date objects
+  cellNF: true,      // include number format strings
+  sheetRows: 100,    // only read first 100 rows
+  password: 'abc',   // password-protected files
+});
+```
+
+### Sheet Ranges & Cells
+
+```js
+const ws = wb.Sheets['Sheet1'];
+
+// Get sheet range
+const range = XLSX.utils.decode_range(ws['!ref']);
+// range = { s: {r:0, c:0}, e: {r:99, c:9} }
+
+// Access a cell directly
+const cellA1 = ws['A1'];
+console.log(cellA1.v);  // raw value
+console.log(cellA1.t);  // type: 'n'=number, 's'=string, 'b'=boolean, 'd'=date
+
+// Iterate all cells
+for (let row = range.s.r; row <= range.e.r; row++) {
+  for (let col = range.s.c; col <= range.e.c; col++) {
+    const addr = XLSX.utils.encode_cell({ r: row, c: col });
+    const cell = ws[addr];
+    if (cell) console.log(addr, cell.v);
+  }
+}
+
+// Set a cell value
+ws['B2'] = { t: 'n', v: 42 };
+ws['C2'] = { t: 's', v: 'Hello' };
+ws['D2'] = { t: 'f', f: 'A2+B2' };  // formula
+```
+
+### JSON <-> Sheet Conversion
+
+```js
+// Array-of-arrays to sheet
+const ws = XLSX.utils.aoa_to_sheet([
+  ['ID', 'Name', 'Value'],
+  [1, 'Alpha', 100],
+  [2, 'Beta',  200],
+]);
+
+// JSON (array of objects) to sheet
+const ws = XLSX.utils.json_to_sheet([
+  { ID: 1, Name: 'Alpha', Value: 100 },
+  { ID: 2, Name: 'Beta',  Value: 200 },
+]);
+
+// Sheet to JSON
+const rows = XLSX.utils.sheet_to_json(ws);
+// [{ ID:1, Name:'Alpha', Value:100 }, ...]
+
+// Sheet to CSV
+const csv = XLSX.utils.sheet_to_csv(ws);
+
+// Sheet to HTML table
+const html = XLSX.utils.sheet_to_html(ws);
+```
+
+### Column Widths
+
+```js
+ws['!cols'] = [
+  { wch: 10 },   // col A width 10 chars
+  { wch: 25 },   // col B width 25 chars
+  { wch: 15 },
+];
+```
+
+### Row Heights
+
+```js
+ws['!rows'] = [
+  { hpx: 30 },  // row 1 height in pixels
+  { hpx: 20 },
+];
+```
+
+### Merging Cells
+
+```js
+ws['!merges'] = [
+  { s: { r: 0, c: 0 }, e: { r: 0, c: 3 } },  // A1:D1
+  { s: { r: 5, c: 0 }, e: { r: 7, c: 0 } },  // A6:A8
+];
+```
+
+### Writing Options
+
+```js
+XLSX.writeFile(wb, 'output.xlsx');
+XLSX.writeFile(wb, 'output.xlsb', { bookType: 'xlsb', compression: true });
+XLSX.writeFile(wb, 'output.csv',  { bookType: 'csv' });
+XLSX.writeFile(wb, 'output.ods',  { bookType: 'ods' });
+
+// To buffer
+const buf = XLSX.write(wb, { type: 'buffer', bookType: 'xlsx' });
+
+// To base64
+const b64 = XLSX.write(wb, { type: 'base64', bookType: 'xlsx' });
+```
+
+---
+
+## ExcelJS — Rich Formatting
+
+```js
+const ExcelJS = require('exceljs');
+
+const workbook = new ExcelJS.Workbook();
+workbook.creator = 'Dreamcobots';
+workbook.created = new Date();
+
+const sheet = workbook.addWorksheet('Sales', {
+  pageSetup: { paperSize: 9, orientation: 'landscape' },
+  views: [{ state: 'frozen', ySplit: 1 }],  // freeze header row
+});
+```
+
+### Column Definitions
+
+```js
+sheet.columns = [
+  { header: 'ID',     key: 'id',    width: 8 },
+  { header: 'Name',   key: 'name',  width: 25 },
+  { header: 'Amount', key: 'amount', width: 14, style: { numFmt: '$#,##0.00' } },
+  { header: 'Date',   key: 'date',  width: 14, style: { numFmt: 'yyyy-mm-dd' } },
+];
+```
+
+### Adding Rows
+
+```js
+// Add a single row by key
+sheet.addRow({ id: 1, name: 'Alice', amount: 5000, date: new Date() });
+
+// Add multiple rows
+sheet.addRows([
+  { id: 2, name: 'Bob',   amount: 3200, date: new Date() },
+  { id: 3, name: 'Carol', amount: 4800, date: new Date() },
+]);
+
+// Add formula row
+sheet.addRow({ id: '', name: 'Total', amount: { formula: 'SUM(C2:C100)' } });
+```
+
+### Cell Styling
+
+```js
+const cell = sheet.getCell('A1');
+
+// Font
+cell.font = {
+  name: 'Calibri',
+  size: 12,
+  bold: true,
+  italic: false,
+  underline: 'single',
+  color: { argb: 'FF1F4E79' },  // ARGB (FF = fully opaque)
+};
+
+// Fill
+cell.fill = {
+  type: 'pattern',
+  pattern: 'solid',
+  fgColor: { argb: 'FFDEEAF1' },
+};
+
+// Border
+cell.border = {
+  top:    { style: 'thin',   color: { argb: 'FF000000' } },
+  left:   { style: 'thin',   color: { argb: 'FF000000' } },
+  bottom: { style: 'medium', color: { argb: 'FF1F4E79' } },
+  right:  { style: 'thin',   color: { argb: 'FF000000' } },
+};
+
+// Alignment
+cell.alignment = {
+  horizontal: 'center',
+  vertical: 'middle',
+  wrapText: true,
+};
+
+// Number format
+cell.numFmt = '$#,##0.00';
+cell.numFmt = '0.00%';
+cell.numFmt = 'yyyy-mm-dd hh:mm';
+```
+
+### Styling a Range via Row/Column Access
+
+```js
+// Style header row (row 1)
+sheet.getRow(1).eachCell((cell) => {
+  cell.font = { bold: true, color: { argb: 'FFFFFFFF' } };
+  cell.fill  = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF1F4E79' } };
+  cell.alignment = { horizontal: 'center', vertical: 'middle' };
+});
+sheet.getRow(1).height = 25;
+
+// Style a column
+sheet.getColumn('amount').numFmt = '$#,##0.00';
+sheet.getColumn('amount').alignment = { horizontal: 'right' };
+```
+
+### Merged Cells
+
+```js
+sheet.mergeCells('A1:D1');
+sheet.getCell('A1').value = 'Report Title';
+sheet.getCell('A1').alignment = { horizontal: 'center' };
+```
+
+### Formulas
+
+```js
+sheet.getCell('C10').value = { formula: 'SUM(C2:C9)', result: 0 };
+sheet.getCell('D10').value = { formula: 'AVERAGE(D2:D9)' };
+sheet.getCell('E10').value = { formula: 'IF(C10>10000,"Above Target","Below Target")' };
+sheet.getCell('F10').value = { sharedFormula: 'C10*1.1', result: 0 };
+```
+
+### Conditional Formatting
+
+```js
+sheet.addConditionalFormatting({
+  ref: 'C2:C50',
+  rules: [
+    {
+      type: 'colorScale',
+      colorScale: {
+        cfvo: [{ type: 'min' }, { type: 'max' }],
+        color: [{ argb: 'FFF8696B' }, { argb: 'FF63BE7B' }],  // red to green
+      },
+    },
+    {
+      type: 'cellIs',
+      operator: 'lessThan',
+      formulae: [1000],
+      style: {
+        font: { color: { argb: 'FFFF0000' }, bold: true },
+        fill: { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFFFCCCC' } },
+      },
+    },
+  ],
+});
+```
+
+### Data Validation
+
+```js
+sheet.dataValidations.add('D2:D100', {
+  type: 'list',
+  allowBlank: true,
+  formulae: ['"North,South,East,West"'],
+  showErrorMessage: true,
+  errorTitle: 'Invalid Region',
+  error: 'Please select from the dropdown',
+});
+
+sheet.dataValidations.add('E2:E100', {
+  type: 'whole',
+  operator: 'between',
+  formulae: [0, 100],
+  showErrorMessage: true,
+  error: 'Value must be 0–100',
+});
+```
+
+### Images
+
+```js
+const imageId = workbook.addImage({
+  filename: 'logo.png',
+  extension: 'png',
+});
+
+sheet.addImage(imageId, {
+  tl: { col: 0, row: 0 },
+  ext: { width: 150, height: 60 },
+});
+```
+
+### Charts
+
+```js
+// Note: ExcelJS chart support is limited; use xlsx-chart or
+// embed chart definitions manually for complex charts.
+
+// For basic charts with exceljs:
+const chart = workbook.addChart({
+  type: 'bar',
+  title: 'Sales by Region',
+  series: [
+    {
+      name: sheet.getCell('B1'),
+      xValues: sheet.getColumn('A'),
+      yValues: sheet.getColumn('B'),
+    },
+  ],
+});
+sheet.addChart(chart, 'F2:L20');
+```
+
+### Multiple Sheets
+
+```js
+const sheet1 = workbook.addWorksheet('Summary');
+const sheet2 = workbook.addWorksheet('Data');
+const sheet3 = workbook.addWorksheet('Charts');
+
+// Cross-sheet formula
+sheet1.getCell('B2').value = { formula: 'Data!C2' };
+```
+
+### Saving
+
+```js
+// To file
+await workbook.xlsx.writeFile('output.xlsx');
+
+// To buffer
+const buffer = await workbook.xlsx.writeBuffer();
+
+// To stream
+const stream = fs.createWriteStream('output.xlsx');
+await workbook.xlsx.write(stream);
+
+// As CSV
+await workbook.csv.writeFile('output.csv');
+```
+
+### Reading with ExcelJS
+
+```js
+const workbook = new ExcelJS.Workbook();
+await workbook.xlsx.readFile('input.xlsx');
+
+workbook.eachSheet((sheet, id) => {
+  console.log(`Sheet: ${sheet.name}`);
+  sheet.eachRow({ includeEmpty: false }, (row, rowNum) => {
+    console.log(`Row ${rowNum}:`, row.values);
+  });
+});
+```
+
+---
+
+## CSV Handling
+
+```js
+const XLSX = require('xlsx');
+
+// CSV to workbook
+const wb = XLSX.readFile('data.csv');
+
+// Workbook to CSV
+const csv = XLSX.utils.sheet_to_csv(wb.Sheets[wb.SheetNames[0]]);
+
+// ExcelJS CSV
+const workbook = new ExcelJS.Workbook();
+await workbook.csv.readFile('data.csv', {
+  parserOptions: {
+    headers: true,
+    delimiter: ',',
+  },
+});
+await workbook.csv.writeFile('output.csv');
+```
+
+---
+
+## Pivot-style Summaries (SheetJS)
+
+```js
+function pivot(data, rowKey, colKey, valKey) {
+  const cols = [...new Set(data.map((r) => r[colKey]))].sort();
+  const rows = [...new Set(data.map((r) => r[rowKey]))].sort();
+  const aoa = [['', ...cols]];
+  for (const row of rows) {
+    const line = [row];
+    for (const col of cols) {
+      const match = data.find((r) => r[rowKey] === row && r[colKey] === col);
+      line.push(match ? match[valKey] : 0);
+    }
+    aoa.push(line);
+  }
+  return XLSX.utils.aoa_to_sheet(aoa);
+}
+```
+
+---
+
+## Tips & Best Practices
+
+1. **SheetJS** is best for fast read/write without rich formatting.
+2. **ExcelJS** is best when you need cell styles, conditional formatting, images.
+3. Always use `{ cellDates: true }` in SheetJS when dates matter.
+4. ExcelJS colors use ARGB (8-char hex) — prefix with `FF` for fully opaque.
+5. Freeze panes with `views: [{ state: 'frozen', ySplit: 1 }]` to lock header row.
+6. Use `sheet.getRow(n).commit()` in ExcelJS streaming mode to free memory.
+7. For very large files (>100k rows) use ExcelJS streaming writer:
+   ```js
+   const stream = workbook.xlsx.createInputStream();
+   ```
