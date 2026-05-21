@@ -200,6 +200,13 @@ import random as _random_tier
 from enum import Enum as _TierEnum
 
 
+
+class _TierString(str):
+    """String subclass that also exposes a .value attribute (lowercase)."""
+    @property
+    def value(self) -> str:
+        return self.lower()
+
 class Tier(_TierEnum):
     FREE = "free"
     PRO = "pro"
@@ -219,7 +226,7 @@ _orig_emailcampaign_bot_init = EmailCampaignBot.__init__
 def _emailcampaign_bot_new_init(self, tier=Tier.FREE):
     tier_val = tier.value if hasattr(tier, "value") else str(tier).lower()
     _orig_emailcampaign_bot_init(self, tier_val.upper())
-    self.tier = tier if isinstance(tier, Tier) else Tier(tier_val)
+    self.tier = _TierString(self.tier)
 
 
 EmailCampaignBot.__init__ = _emailcampaign_bot_new_init
@@ -227,38 +234,38 @@ EmailCampaignBot.RESULT_LIMITS = {"free": 5, "pro": 25, "enterprise": 100}
 
 
 def _emailcampaign_bot_monthly_price(self):
-    return _TIER_MONTHLY_PRICE[self.tier.value]
+    return _TIER_MONTHLY_PRICE[self.tier.lower()]
 
 
 def _emailcampaign_bot_get_tier_info(self):
     return {
-        "tier": self.tier.value,
+        "tier": self.tier.lower(),
         "monthly_price_usd": self.monthly_price(),
-        "result_limit": self.RESULT_LIMITS[self.tier.value],
+        "result_limit": self.RESULT_LIMITS[self.tier.lower()],
     }
 
 
 def _emailcampaign_bot_enforce_tier(self, required_value):
     order = ["free", "pro", "enterprise"]
-    if order.index(self.tier.value) < order.index(required_value):
+    if order.index(self.tier.lower()) < order.index(required_value):
         raise EmailCampaignBotTierError(
-            f"{required_value.upper()} tier required. Current: {self.tier.value}"
+            f"{required_value.upper()} tier required. Current: {self.tier.lower()}"
         )
 
 
 def _emailcampaign_bot_list_items(self, limit=None):
-    cap = limit if limit else self.RESULT_LIMITS[self.tier.value]
+    cap = limit if limit else self.RESULT_LIMITS[self.tier.lower()]
     return _random_tier.sample(EXAMPLES, min(cap, len(EXAMPLES)))
 
 
 def _emailcampaign_bot_analyze(self):
     self._enforce_tier("pro")
-    return {"bot": "EmailCampaignBot", "tier": self.tier.value, "count": len(EXAMPLES)}
+    return {"bot": "EmailCampaignBot", "tier": self.tier.lower(), "count": len(EXAMPLES)}
 
 
 def _emailcampaign_bot_export_report(self):
     self._enforce_tier("enterprise")
-    return {"bot": "EmailCampaignBot", "tier": self.tier.value, "total_items": len(EXAMPLES), "items": EXAMPLES}
+    return {"bot": "EmailCampaignBot", "tier": self.tier.lower(), "total_items": len(EXAMPLES), "items": EXAMPLES}
 
 
 EmailCampaignBot.monthly_price = _emailcampaign_bot_monthly_price

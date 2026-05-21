@@ -304,14 +304,14 @@ class DecisionEngine:
             else:
                 key = DECISION_OPTIMIZE
             self._decision_history.append({"decision": key, "revenue": revenue, "leads": leads})
-            return f"Decision: {key}"
+            return key
         result = self.make_decision(
             revenue_data=m.get("revenue", {}),
             crm_data=m.get("crm", {}),
             workflow_data=m.get("workflow", {}),
         )
         key = result["decision"]["key"]
-        return f"Decision: {key}"
+        return key
 
     def get_latest_decision(self) -> Optional[Dict[str, Any]]:
         """Return the most recent decision log entry, or None if empty."""

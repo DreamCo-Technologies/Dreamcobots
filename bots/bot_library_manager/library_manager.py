@@ -28,6 +28,13 @@ import sqlite3
 from datetime import datetime, timezone
 from typing import Any, Dict, List, Optional
 
+import sys
+import os as _os
+sys.path.insert(0, _os.path.join(_os.path.dirname(__file__), "..", ".."))
+from framework import GlobalAISourcesFlow  # noqa: F401  (GLOBAL AI SOURCES FLOW)
+_flow = GlobalAISourcesFlow()
+_flow.run({"source": "bot_library_manager", "action": "init"})
+
 
 class BotLibraryManager:
     """Manages per-bot library registrations, mastery levels, and learning notes.
