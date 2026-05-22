@@ -1,0 +1,59 @@
+name: Repo Validation
+
+# Runs the Repo Validation Bot (and Debug Bot) on every push and pull request
+# to main to surface structural issues in bot directories before they reach
+# production.
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+    branches: [main, master]
+  workflow_dispatch:   # allow manual runs from the Actions UI
+
+permissions:
+  contents: read
+
+jobs:
+  validate-bots:
+    name: Validate Bot Structure
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Run Repo Validation Bot
+        id: repo-validation
+        run: |
+          python bots/repo_validation_bot/repo_validation_bot.py --root . --json \
+            | tee /tmp/repo_validation_report.json
+          python bots/repo_validation_bot/repo_validation_bot.py --root .
+        continue-on-error: true
+
+      - name: Upload validation report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: repo-validation-report
+          path: /tmp/repo_validation_report.json
+
+      - name: Run Debug Bot
+        run: python ai/debug_bot.py
+        continue-on-error: true
+
+      - name: Fail if critical bot issues found
+        if: steps.repo-validation.outcome == 'failure'
+        run: |
+          echo "::error::Repo Validation Bot detected structural issues — see logs above."
+          exit 1
