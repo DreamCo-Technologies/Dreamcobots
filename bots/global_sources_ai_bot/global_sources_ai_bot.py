@@ -128,7 +128,7 @@ class GlobalSourcesAIBot:
     ENTERPRISE ($199) All features, multi-agent workforce, custom API keys
     """
 
-    def __init__(self, tier: Tier = Tier.FREE) -> None:
+    def __init__(self, tier: Tier = Tier.FREE, source_refresh_interval_seconds: int = 21600) -> None:
         self._tier = tier
         self._tier_config: TierConfig = get_tier_config(tier)
 
@@ -152,6 +152,14 @@ class GlobalSourcesAIBot:
 
         # Discovered models awaiting sandbox testing (Layer 7)
         self._pending_discovery: list[dict[str, Any]] = []
+        self._source_refresh_interval_seconds = max(60, int(source_refresh_interval_seconds))
+        self._last_source_refresh_at = datetime.now(timezone.utc).isoformat()
+        self._last_source_refresh_summary: dict[str, Any] = {
+            "refreshed": False,
+            "trigger": "startup",
+            "models_updated": 0,
+        }
+        self._information_updates: list[dict[str, Any]] = []
 
     # ── Tier gate ─────────────────────────────────────────────────────────
 
@@ -184,6 +192,8 @@ class GlobalSourcesAIBot:
             primary_model, ranked_models, use_cases, reasoning,
             pipeline_trace (the full 8-stage flow result)
         """
+        source_freshness = self.refresh_global_sources(trigger="route_task")
+
         # Sync router with latest benchmark scores
         self._router = TaskRouter(
             config=RoutingConfig(top_k=top_k or self._tier_config.max_models_per_task),
@@ -203,6 +213,8 @@ class GlobalSourcesAIBot:
                 "task": task,
                 "primary_model": result.primary_model.model_id if result.primary_model else None,
                 "tags": result.tags_used,
+                "source_freshness": source_freshness,
+                "latest_information_updates": self._information_updates[-5:],
             },
             learning_method="supervised",
         )
@@ -232,11 +244,66 @@ class GlobalSourcesAIBot:
             ],
             "reasoning": result.reasoning,
             "pipeline_trace": pipeline_trace,
+            "source_freshness": source_freshness,
+            "latest_information_updates": self._information_updates[-5:],
         }
 
     def route_batch(self, tasks: list[str]) -> list[dict[str, Any]]:
         """Route a list of tasks, returning one result dict per task."""
         return [self.route_task(t) for t in tasks]
+
+    def refresh_global_sources(self, *, force: bool = False, trigger: str = "manual") -> dict[str, Any]:
+        """Refresh benchmark-backed source intelligence when stale or forced."""
+        now = datetime.now(timezone.utc)
+        last_refresh_dt = datetime.fromisoformat(self._last_source_refresh_at)
+        elapsed_seconds = (now - last_refresh_dt).total_seconds()
+        if not force and elapsed_seconds < self._source_refresh_interval_seconds:
+            return {
+                "refreshed": False,
+                "trigger": trigger,
+                "last_refresh_at": self._last_source_refresh_at,
+                "seconds_until_next_refresh": int(self._source_refresh_interval_seconds - elapsed_seconds),
+                "models_updated": self._last_source_refresh_summary.get("models_updated", 0),
+            }
+
+        cycle = self._benchmark.run_daily_cycle()
+        self._last_source_refresh_at = cycle["cycle_timestamp"]
+        self._last_source_refresh_summary = {
+            "refreshed": True,
+            "trigger": trigger,
+            "models_updated": cycle["models_updated"],
+        }
+        return {
+            "refreshed": True,
+            "trigger": trigger,
+            "last_refresh_at": self._last_source_refresh_at,
+            "seconds_until_next_refresh": self._source_refresh_interval_seconds,
+            "models_updated": cycle["models_updated"],
+        }
+
+    def ingest_information_update(
+        self,
+        information: str,
+        *,
+        source: str = "manual",
+        metadata: Optional[dict[str, Any]] = None,
+    ) -> dict[str, Any]:
+        """Store a fresh information update and trigger an immediate refresh."""
+        entry = {
+            "information": information,
+            "source": source,
+            "metadata": metadata or {},
+            "recorded_at": datetime.now(timezone.utc).isoformat(),
+        }
+        self._information_updates.append(entry)
+        self._information_updates = self._information_updates[-200:]
+        refresh = self.refresh_global_sources(force=True, trigger="information_update")
+        return {
+            "stored": True,
+            "entry": entry,
+            "source_freshness": refresh,
+            "total_updates": len(self._information_updates),
+        }
 
     # =========================================================================
     # Layer 3 — Buddy Intelligence Memory
@@ -575,6 +642,9 @@ class GlobalSourcesAIBot:
             "use_cases": len(TOP_100_USE_CASES),
             "routing_memory_size": len(self._memory),
             "pending_discoveries": len(self._pending_discovery),
+            "last_source_refresh_at": self._last_source_refresh_at,
+            "source_refresh_interval_seconds": self._source_refresh_interval_seconds,
+            "information_updates": len(self._information_updates),
             "pipeline": "GlobalAISourcesFlow v1.0.0 — 8 stages active",
             "strategic_rules": [
                 "Never rely on one AI provider",

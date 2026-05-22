@@ -444,6 +444,9 @@ class TestGlobalSourcesAIBotCore:
         assert s["tier"] == "free"
         assert s["registered_models"] >= 100
         assert s["use_cases"] == 100
+        assert "last_source_refresh_at" in s
+        assert "source_refresh_interval_seconds" in s
+        assert "information_updates" in s
 
     def test_status_has_strategic_rules(self):
         s = self.bot_free.status()
@@ -481,6 +484,26 @@ class TestGlobalSourcesAIBotCore:
         bot.route_task("code a function")
         s = bot.memory_summary()
         assert len(s["model_frequency"]) > 0
+
+    def test_route_task_includes_source_freshness(self):
+        result = self.bot_free.route_task("summarize this market report")
+        assert "source_freshness" in result
+        assert "last_refresh_at" in result["source_freshness"]
+        assert "models_updated" in result["source_freshness"]
+
+    def test_ingest_information_update_forces_refresh(self):
+        bot = GlobalSourcesAIBot(tier=Tier.FREE, source_refresh_interval_seconds=999999)
+        update = bot.ingest_information_update(
+            "new ai release and benchmark data",
+            source="user",
+            metadata={"region": "global"},
+        )
+        assert update["stored"] is True
+        assert update["source_freshness"]["refreshed"] is True
+        assert update["total_updates"] == 1
+
+        status = bot.status()
+        assert status["information_updates"] == 1
 
 
 # ===========================================================================
