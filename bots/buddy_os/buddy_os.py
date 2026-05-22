@@ -72,6 +72,12 @@ from bots.buddy_os.tiers import (
     FEATURE_NVIDIA_TOOLS,
     FEATURE_WHITE_LABEL,
     FEATURE_ENTERPRISE_MDM,
+    FEATURE_WIFI,
+    FEATURE_HARDWARE_PROTOCOLS,
+    FEATURE_SECURITY_MANAGER,
+    FEATURE_DEPLOYMENT_MANAGER,
+    FEATURE_CLOUD_SYNC,
+    FEATURE_FLASH_BOOT,
 )
 from bots.buddy_os.device_manager import (
     DeviceManager,
@@ -104,6 +110,44 @@ from bots.buddy_os.app_framework import (
     AppCategory,
     AppPlatform,
     SmartDeviceProtocol,
+)
+from bots.buddy_os.wifi_engine import (
+    WiFiEngine,
+    WiFiNetwork,
+    WiFiConnection,
+    WiFiHotspot,
+    WiFiSecurity,
+    WiFiBand,
+    WiFiConnectionState,
+    IoTWiFiDevice,
+)
+from bots.buddy_os.hardware_protocols import (
+    HardwareProtocolsHub,
+    UARTManager,
+    I2CManager,
+    SPIManager,
+    OBD2Manager,
+    ProtocolType,
+    ChannelState,
+)
+from bots.buddy_os.security_manager import (
+    SecurityManager,
+    SyncMode,
+    DeviceToken,
+    EncryptionKey,
+    PairingSession,
+    AuditEvent,
+    AuthStatus,
+    EncryptionAlgorithm,
+)
+from bots.buddy_os.deployment_manager import (
+    DeploymentManager,
+    BotPackage,
+    BootConfig,
+    InstallRecord,
+    PackageFormat,
+    PackageStatus,
+    InstallMethod,
 )
 
 
@@ -149,6 +193,12 @@ class BuddyOS:
         self.nvidia = NvidiaToolsHub()
         self.starlink = StarlinkManager()
 
+        # New subsystems
+        self.wifi = WiFiEngine()
+        self.hardware = HardwareProtocolsHub()
+        self.security = SecurityManager()
+        self.deployment = DeploymentManager()
+
         # Boot the OS kernel
         self._boot_log: list[str] = []
         self._boot()
@@ -173,6 +223,10 @@ class BuddyOS:
         )
 
         self._boot_log.append("Default browser tools loaded.")
+        self._boot_log.append("WiFi engine ready.")
+        self._boot_log.append("Security manager ready.")
+        self._boot_log.append("Hardware protocols hub ready.")
+        self._boot_log.append("Deployment manager ready.")
         self._boot_log.append("Buddy OS ready.")
 
     def get_boot_log(self) -> list[str]:
@@ -259,6 +313,17 @@ class BuddyOS:
             "starlink_subscriptions": len(
                 self.starlink.list_subscriptions(active_only=True)
             ),
+            "wifi": self.wifi.status(),
+            "hardware_protocols": self.hardware.status(),
+            "security": {
+                "sync_mode": self.security.sync_mode.value,
+                "active_tokens": len(self.security.list_tokens(active_only=True)),
+                "active_keys": len(self.security.list_keys(active_only=True)),
+            },
+            "deployment": {
+                "packages": len(self.deployment.list_packages()),
+                "installed_bots": len(self.deployment.list_installed_bots()),
+            },
             "features": self.config.features,
         }
 
@@ -358,11 +423,66 @@ class BuddyOS:
                 "data": {},
             }
 
+        if "wifi" in msg or "wireless" in msg or "network" in msg:
+            status = self.wifi.status()
+            return {
+                "response": "buddy_os",
+                "message": (
+                    f"WiFi: {'scanning' if status['scanning'] else 'idle'}. "
+                    f"{status['known_networks']} network(s) known. "
+                    f"Active SSID: {status['active_ssid'] or 'none'}."
+                ),
+                "data": {"wifi": status},
+            }
+
+        if "hardware" in msg or "uart" in msg or "i2c" in msg or "spi" in msg or "obd" in msg:
+            hw = self.hardware.status()
+            return {
+                "response": "buddy_os",
+                "message": (
+                    f"Hardware protocols: {hw['uart_channels']} UART, "
+                    f"{hw['i2c_devices']} I2C, {hw['spi_devices']} SPI, "
+                    f"{hw['obd2_sessions']} OBD-II session(s)."
+                ),
+                "data": {"hardware": hw},
+            }
+
+        if "security" in msg or "encrypt" in msg or "auth" in msg or "token" in msg:
+            sec = {
+                "sync_mode": self.security.sync_mode.value,
+                "active_tokens": len(self.security.list_tokens(active_only=True)),
+                "active_keys": len(self.security.list_keys(active_only=True)),
+            }
+            return {
+                "response": "buddy_os",
+                "message": (
+                    f"Security: {sec['sync_mode']} mode. "
+                    f"{sec['active_tokens']} token(s), {sec['active_keys']} key(s) active."
+                ),
+                "data": {"security": sec},
+            }
+
+        if "deploy" in msg or "install" in msg or "package" in msg or "flash" in msg or "zip" in msg or "usb" in msg:
+            dep = {
+                "packages": len(self.deployment.list_packages()),
+                "installed_bots": len(self.deployment.list_installed_bots()),
+                "boot_configs": len(self.deployment.list_boot_configs()),
+            }
+            return {
+                "response": "buddy_os",
+                "message": (
+                    f"Deployment: {dep['packages']} package(s), "
+                    f"{dep['installed_bots']} bot(s) installed, "
+                    f"{dep['boot_configs']} boot config(s)."
+                ),
+                "data": {"deployment": dep},
+            }
+
         return {
             "response": "buddy_os",
             "message": (
                 "Buddy OS is running. Ask about devices, Bluetooth, cast, apps, "
-                "Starlink, or NVIDIA tools."
+                "Starlink, NVIDIA tools, WiFi, hardware protocols, security, or deployment."
             ),
             "data": {},
         }

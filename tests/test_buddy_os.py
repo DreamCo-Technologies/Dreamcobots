@@ -9,6 +9,10 @@ Covers:
   5. App Framework (AppRegistry, BrowserToolkit, SmartDeviceHub,
                     NvidiaToolsHub, StarlinkManager)
   6. BuddyOS main class (integration + chat)
+  7. WiFi Engine
+  8. Hardware Protocols (UART, I2C, SPI, OBD-II)
+  9. Security Manager
+  10. Deployment Manager
 """
 
 import sys
@@ -37,6 +41,12 @@ from bots.buddy_os.tiers import (
     FEATURE_STARLINK,
     FEATURE_NVIDIA_TOOLS,
     FEATURE_WHITE_LABEL,
+    FEATURE_WIFI,
+    FEATURE_HARDWARE_PROTOCOLS,
+    FEATURE_SECURITY_MANAGER,
+    FEATURE_DEPLOYMENT_MANAGER,
+    FEATURE_CLOUD_SYNC,
+    FEATURE_FLASH_BOOT,
 )
 from bots.buddy_os.device_manager import (
     DeviceManager,
@@ -74,6 +84,47 @@ from bots.buddy_os.app_framework import (
     STARLINK_MARKUP_PCT,
     NVIDIA_TOOLS,
     STARLINK_PLANS,
+)
+from bots.buddy_os.wifi_engine import (
+    WiFiEngine,
+    WiFiNetwork,
+    WiFiConnection,
+    WiFiHotspot,
+    WiFiSecurity,
+    WiFiBand,
+    WiFiConnectionState,
+    IoTWiFiDevice,
+)
+from bots.buddy_os.hardware_protocols import (
+    HardwareProtocolsHub,
+    UARTManager,
+    I2CManager,
+    SPIManager,
+    OBD2Manager,
+    ProtocolType,
+    ChannelState,
+    UARTParity,
+    SPIMode,
+    OBD2_PIDS,
+)
+from bots.buddy_os.security_manager import (
+    SecurityManager,
+    SyncMode,
+    DeviceToken,
+    EncryptionKey,
+    PairingSession,
+    AuditEvent,
+    AuthStatus,
+    EncryptionAlgorithm,
+)
+from bots.buddy_os.deployment_manager import (
+    DeploymentManager,
+    BotPackage,
+    BootConfig,
+    InstallRecord,
+    PackageFormat,
+    PackageStatus,
+    InstallMethod,
 )
 from bots.buddy_os.buddy_os import BuddyOS, BuddyOSError, BuddyOSTierError
 
@@ -727,3 +778,871 @@ class TestBuddyOS:
         buddy = BuddyOS()
         tools = buddy.browser.list_tools()
         assert len(tools) >= 2
+
+
+# ===========================================================================
+# 7. WiFi Engine
+# ===========================================================================
+
+class TestWiFiEngine:
+    def test_start_scan(self):
+        wifi = WiFiEngine()
+        result = wifi.start_scan()
+        assert result["scanning"] is True
+
+    def test_stop_scan(self):
+        wifi = WiFiEngine()
+        wifi.start_scan()
+        result = wifi.stop_scan()
+        assert result["scanning"] is False
+
+    def test_add_discovered_network(self):
+        wifi = WiFiEngine()
+        net = wifi.add_discovered_network("HomeNet", "AA:BB:CC:DD:EE:01")
+        assert net.ssid == "HomeNet"
+        assert net.bssid == "AA:BB:CC:DD:EE:01"
+
+    def test_list_networks(self):
+        wifi = WiFiEngine()
+        wifi.add_discovered_network("Net1", "AA:BB:CC:DD:EE:01", signal_dbm=-60)
+        wifi.add_discovered_network("Net2", "AA:BB:CC:DD:EE:02", signal_dbm=-80)
+        all_nets = wifi.list_networks()
+        assert len(all_nets) == 2
+
+    def test_filter_networks_by_signal(self):
+        wifi = WiFiEngine()
+        wifi.add_discovered_network("Strong", "AA:BB:CC:DD:EE:01", signal_dbm=-50)
+        wifi.add_discovered_network("Weak", "AA:BB:CC:DD:EE:02", signal_dbm=-90)
+        strong = wifi.list_networks(min_signal_dbm=-60)
+        assert len(strong) == 1
+        assert strong[0].ssid == "Strong"
+
+    def test_filter_networks_by_security(self):
+        wifi = WiFiEngine()
+        wifi.add_discovered_network("WPA3Net", "AA:BB:CC:DD:EE:01",
+                                    security=WiFiSecurity.WPA3)
+        wifi.add_discovered_network("OpenNet", "AA:BB:CC:DD:EE:02",
+                                    security=WiFiSecurity.OPEN)
+        wpa3 = wifi.list_networks(security=WiFiSecurity.WPA3)
+        assert len(wpa3) == 1
+
+    def test_connect_to_network(self):
+        wifi = WiFiEngine()
+        wifi.add_discovered_network("Home", "AA:BB:CC:DD:EE:01",
+                                    security=WiFiSecurity.WPA2)
+        conn = wifi.connect("Home", password="password123")
+        assert conn.is_connected()
+        assert conn.ssid == "Home"
+
+    def test_connect_open_network_no_password(self):
+        wifi = WiFiEngine()
+        wifi.add_discovered_network("CafeWiFi", "AA:BB:CC:DD:EE:02",
+                                    security=WiFiSecurity.OPEN)
+        conn = wifi.connect("CafeWiFi")
+        assert conn.is_connected()
+
+    def test_connect_missing_password_raises(self):
+        wifi = WiFiEngine()
+        wifi.add_discovered_network("Secured", "AA:BB:CC:DD:EE:03",
+                                    security=WiFiSecurity.WPA2)
+        with pytest.raises(ValueError, match="Password"):
+            wifi.connect("Secured")
+
+    def test_disconnect(self):
+        wifi = WiFiEngine()
+        wifi.add_discovered_network("Home", "AA:BB:CC:DD:EE:01",
+                                    security=WiFiSecurity.WPA2)
+        conn = wifi.connect("Home", password="pass1234")
+        wifi.disconnect(conn.connection_id)
+        assert not conn.is_connected()
+
+    def test_get_active_connection(self):
+        wifi = WiFiEngine()
+        wifi.add_discovered_network("Home", "AA:BB:CC:DD:EE:01",
+                                    security=WiFiSecurity.WPA2)
+        conn = wifi.connect("Home", password="pass1234")
+        active = wifi.get_active_connection()
+        assert active is not None
+        assert active.ssid == "Home"
+
+    def test_no_active_connection_initially(self):
+        wifi = WiFiEngine()
+        assert wifi.get_active_connection() is None
+
+    def test_forget_network(self):
+        wifi = WiFiEngine()
+        wifi.add_discovered_network("Home", "AA:BB:CC:DD:EE:01",
+                                    security=WiFiSecurity.WPA2)
+        conn = wifi.connect("Home", password="pass1234")
+        wifi.forget_network(conn.connection_id)
+        assert len(wifi.list_connections()) == 0
+
+    def test_create_hotspot(self):
+        wifi = WiFiEngine()
+        hotspot = wifi.create_hotspot("BuddyAP", "securepass")
+        assert hotspot.ssid == "BuddyAP"
+        assert hotspot.state.value == "active"
+
+    def test_hotspot_short_password_raises(self):
+        wifi = WiFiEngine()
+        with pytest.raises(ValueError, match="8 characters"):
+            wifi.create_hotspot("AP", "short")
+
+    def test_stop_hotspot(self):
+        wifi = WiFiEngine()
+        wifi.create_hotspot("BuddyAP", "securepass")
+        hotspot = wifi.stop_hotspot()
+        assert hotspot.state.value == "inactive"
+
+    def test_add_hotspot_client(self):
+        wifi = WiFiEngine()
+        wifi.create_hotspot("BuddyAP", "securepass")
+        wifi.add_hotspot_client("11:22:33:44:55:66")
+        assert "11:22:33:44:55:66" in wifi.get_hotspot().connected_clients
+
+    def test_hotspot_client_limit(self):
+        wifi = WiFiEngine()
+        wifi.create_hotspot("BuddyAP", "securepass", max_clients=1)
+        wifi.add_hotspot_client("11:22:33:44:55:01")
+        with pytest.raises(RuntimeError, match="limit"):
+            wifi.add_hotspot_client("11:22:33:44:55:02")
+
+    def test_pair_iot_device(self):
+        wifi = WiFiEngine()
+        dev = wifi.pair_iot_device("Smart Bulb", "AA:BB:CC:00:00:01",
+                                   ip_address="192.168.1.10",
+                                   device_type="light")
+        assert dev.online is True
+        assert dev.device_type == "light"
+
+    def test_set_iot_device_online(self):
+        wifi = WiFiEngine()
+        dev = wifi.pair_iot_device("Thermostat", "AA:BB:CC:00:00:02")
+        wifi.set_iot_device_online(dev.device_id, False)
+        assert not wifi.get_iot_device(dev.device_id).online
+
+    def test_update_iot_state(self):
+        wifi = WiFiEngine()
+        dev = wifi.pair_iot_device("Smart Light", "AA:BB:CC:00:00:03")
+        wifi.update_iot_state(dev.device_id, {"on": True, "brightness": 75})
+        assert wifi.get_iot_device(dev.device_id).state["on"] is True
+
+    def test_remove_iot_device(self):
+        wifi = WiFiEngine()
+        dev = wifi.pair_iot_device("Sensor", "AA:BB:CC:00:00:04")
+        wifi.remove_iot_device(dev.device_id)
+        assert len(wifi.list_iot_devices()) == 0
+
+    def test_iot_device_not_found_raises(self):
+        wifi = WiFiEngine()
+        with pytest.raises(KeyError):
+            wifi.get_iot_device("iot_9999")
+
+    def test_wifi_status(self):
+        wifi = WiFiEngine()
+        status = wifi.status()
+        assert "scanning" in status
+        assert "active_ssid" in status
+        assert "iot_devices" in status
+
+    def test_network_to_dict(self):
+        wifi = WiFiEngine()
+        net = wifi.add_discovered_network("TestNet", "AA:BB:CC:DD:EE:FF")
+        d = net.to_dict()
+        assert d["ssid"] == "TestNet"
+        assert "security" in d
+
+
+# ===========================================================================
+# 8. Hardware Protocols
+# ===========================================================================
+
+class TestUARTManager:
+    def test_open_channel(self):
+        uart = UARTManager()
+        ch = uart.open_channel("/dev/ttyUSB0", baud_rate=115200)
+        assert ch.state == ChannelState.OPEN
+        assert ch.baud_rate == 115200
+
+    def test_close_channel(self):
+        uart = UARTManager()
+        ch = uart.open_channel("/dev/ttyUSB0")
+        uart.close_channel(ch.channel_id)
+        assert uart.get_channel(ch.channel_id).state == ChannelState.CLOSED
+
+    def test_write_and_read(self):
+        uart = UARTManager()
+        ch = uart.open_channel("/dev/ttyUSB0")
+        uart.inject_rx(ch.channel_id, b"hello")
+        data = uart.read(ch.channel_id, 64)
+        assert data == b"hello"
+
+    def test_write_returns_byte_count(self):
+        uart = UARTManager()
+        ch = uart.open_channel("/dev/ttyUSB0")
+        n = uart.write(ch.channel_id, b"test")
+        assert n == 4
+
+    def test_read_empty_buffer(self):
+        uart = UARTManager()
+        ch = uart.open_channel("/dev/ttyUSB0")
+        assert uart.read(ch.channel_id) == b""
+
+    def test_write_to_closed_channel_raises(self):
+        uart = UARTManager()
+        ch = uart.open_channel("/dev/ttyUSB0")
+        uart.close_channel(ch.channel_id)
+        with pytest.raises(RuntimeError, match="not open"):
+            uart.write(ch.channel_id, b"data")
+
+    def test_channel_not_found_raises(self):
+        uart = UARTManager()
+        with pytest.raises(KeyError):
+            uart.get_channel("uart_9999")
+
+    def test_to_dict(self):
+        uart = UARTManager()
+        ch = uart.open_channel("/dev/ttyUSB0")
+        d = ch.to_dict()
+        assert d["protocol"] == ProtocolType.UART.value
+        assert d["port"] == "/dev/ttyUSB0"
+
+
+class TestI2CManager:
+    def test_add_device(self):
+        i2c = I2CManager()
+        dev = i2c.add_device(0x48, "Temperature Sensor")
+        assert dev.address == 0x48
+        assert dev.name == "Temperature Sensor"
+
+    def test_open_device(self):
+        i2c = I2CManager()
+        dev = i2c.add_device(0x48, "Sensor")
+        i2c.open_device(dev.device_id)
+        assert i2c.get_device(dev.device_id).state == ChannelState.OPEN
+
+    def test_close_device(self):
+        i2c = I2CManager()
+        dev = i2c.add_device(0x48, "Sensor")
+        i2c.open_device(dev.device_id)
+        i2c.close_device(dev.device_id)
+        assert i2c.get_device(dev.device_id).state == ChannelState.CLOSED
+
+    def test_write_and_read_register(self):
+        i2c = I2CManager()
+        dev = i2c.add_device(0x48, "Sensor")
+        i2c.open_device(dev.device_id)
+        i2c.write_register(dev.device_id, 0x01, 42)
+        val = i2c.read_register(dev.device_id, 0x01)
+        assert val == 42
+
+    def test_read_unset_register_returns_zero(self):
+        i2c = I2CManager()
+        dev = i2c.add_device(0x48, "Sensor")
+        i2c.open_device(dev.device_id)
+        assert i2c.read_register(dev.device_id, 0xFF) == 0
+
+    def test_invalid_address_raises(self):
+        i2c = I2CManager()
+        with pytest.raises(ValueError, match="range"):
+            i2c.add_device(0xFF, "BadDevice")
+
+    def test_write_to_closed_raises(self):
+        i2c = I2CManager()
+        dev = i2c.add_device(0x48, "Sensor")
+        with pytest.raises(RuntimeError, match="not open"):
+            i2c.write_register(dev.device_id, 0x01, 1)
+
+    def test_scan_bus(self):
+        i2c = I2CManager()
+        i2c.add_device(0x48, "Sensor1", bus=1)
+        i2c.add_device(0x50, "EEPROM", bus=1)
+        i2c.add_device(0x20, "GPIO", bus=2)
+        bus1 = i2c.scan_bus(bus=1)
+        assert len(bus1) == 2
+
+    def test_device_not_found_raises(self):
+        i2c = I2CManager()
+        with pytest.raises(KeyError):
+            i2c.get_device("i2c_9999")
+
+    def test_to_dict(self):
+        i2c = I2CManager()
+        dev = i2c.add_device(0x48, "Sensor")
+        d = dev.to_dict()
+        assert d["protocol"] == ProtocolType.I2C.value
+        assert d["address"] == "0x48"
+
+
+class TestSPIManager:
+    def test_add_device(self):
+        spi = SPIManager()
+        dev = spi.add_device(0, 0, "ADC")
+        assert dev.name == "ADC"
+
+    def test_open_and_close(self):
+        spi = SPIManager()
+        dev = spi.add_device(0, 0, "ADC")
+        spi.open_device(dev.device_id)
+        assert spi.get_device(dev.device_id).state == ChannelState.OPEN
+        spi.close_device(dev.device_id)
+        assert spi.get_device(dev.device_id).state == ChannelState.CLOSED
+
+    def test_transfer(self):
+        spi = SPIManager()
+        dev = spi.add_device(0, 0, "ADC")
+        spi.open_device(dev.device_id)
+        rx = spi.transfer(dev.device_id, b"\x00\xFF")
+        assert rx == bytes([0xFF, 0x00])
+
+    def test_transfer_on_closed_raises(self):
+        spi = SPIManager()
+        dev = spi.add_device(0, 0, "ADC")
+        with pytest.raises(RuntimeError, match="not open"):
+            spi.transfer(dev.device_id, b"\x01")
+
+    def test_device_not_found_raises(self):
+        spi = SPIManager()
+        with pytest.raises(KeyError):
+            spi.get_device("spi_9999")
+
+    def test_to_dict(self):
+        spi = SPIManager()
+        dev = spi.add_device(0, 0, "ADC", clock_hz=500_000)
+        d = dev.to_dict()
+        assert d["protocol"] == ProtocolType.SPI.value
+        assert d["clock_hz"] == 500_000
+
+
+class TestOBD2Manager:
+    def test_open_session(self):
+        obd = OBD2Manager()
+        session = obd.open_session("/dev/ttyUSB0", vehicle_vin="1HGCM82633A123456")
+        assert session.state == ChannelState.OPEN
+        assert session.vehicle_vin == "1HGCM82633A123456"
+
+    def test_close_session(self):
+        obd = OBD2Manager()
+        session = obd.open_session("/dev/ttyUSB0")
+        obd.close_session(session.session_id)
+        assert obd.get_session(session.session_id).state == ChannelState.CLOSED
+
+    def test_read_standard_pid(self):
+        obd = OBD2Manager()
+        session = obd.open_session("/dev/ttyUSB0")
+        result = obd.read_pid(session.session_id, "0C")
+        assert result["name"] == "engine_rpm"
+
+    def test_read_unknown_pid_raises(self):
+        obd = OBD2Manager()
+        session = obd.open_session("/dev/ttyUSB0")
+        with pytest.raises(KeyError):
+            obd.read_pid(session.session_id, "ZZ")
+
+    def test_inject_and_read_live_data(self):
+        obd = OBD2Manager()
+        session = obd.open_session("/dev/ttyUSB0")
+        obd.inject_live_data(session.session_id, "vehicle_speed", {"value": 90, "unit": "km/h"})
+        data = obd.get_live_data(session.session_id)
+        assert data["vehicle_speed"]["value"] == 90
+
+    def test_inject_and_read_dtc(self):
+        obd = OBD2Manager()
+        session = obd.open_session("/dev/ttyUSB0")
+        obd.inject_dtc(session.session_id, "P0300")
+        codes = obd.read_dtc(session.session_id)
+        assert "P0300" in codes
+
+    def test_clear_dtc(self):
+        obd = OBD2Manager()
+        session = obd.open_session("/dev/ttyUSB0")
+        obd.inject_dtc(session.session_id, "P0300")
+        obd.inject_dtc(session.session_id, "P0420")
+        cleared = obd.clear_dtc(session.session_id)
+        assert cleared == 2
+        assert obd.read_dtc(session.session_id) == []
+
+    def test_list_standard_pids(self):
+        obd = OBD2Manager()
+        pids = obd.list_standard_pids()
+        assert len(pids) == len(OBD2_PIDS)
+
+    def test_read_on_closed_session_raises(self):
+        obd = OBD2Manager()
+        session = obd.open_session("/dev/ttyUSB0")
+        obd.close_session(session.session_id)
+        with pytest.raises(RuntimeError, match="not open"):
+            obd.read_pid(session.session_id, "0C")
+
+    def test_session_not_found_raises(self):
+        obd = OBD2Manager()
+        with pytest.raises(KeyError):
+            obd.get_session("obd_9999")
+
+    def test_to_dict(self):
+        obd = OBD2Manager()
+        session = obd.open_session("/dev/ttyUSB0")
+        d = session.to_dict()
+        assert d["protocol"] == ProtocolType.OBD2.value
+
+
+class TestHardwareProtocolsHub:
+    def test_instantiation(self):
+        hub = HardwareProtocolsHub()
+        assert isinstance(hub.uart, UARTManager)
+        assert isinstance(hub.i2c, I2CManager)
+        assert isinstance(hub.spi, SPIManager)
+        assert isinstance(hub.obd2, OBD2Manager)
+
+    def test_status_empty(self):
+        hub = HardwareProtocolsHub()
+        status = hub.status()
+        assert status["uart_channels"] == 0
+        assert status["i2c_devices"] == 0
+
+    def test_status_after_adding(self):
+        hub = HardwareProtocolsHub()
+        hub.uart.open_channel("/dev/ttyUSB0")
+        hub.i2c.add_device(0x48, "Sensor")
+        status = hub.status()
+        assert status["uart_channels"] == 1
+        assert status["i2c_devices"] == 1
+
+
+# ===========================================================================
+# 9. Security Manager
+# ===========================================================================
+
+class TestSecurityManager:
+    def test_default_sync_mode_local(self):
+        sec = SecurityManager()
+        assert sec.sync_mode == SyncMode.LOCAL
+        assert sec.is_local_mode()
+
+    def test_set_sync_mode_cloud(self):
+        sec = SecurityManager()
+        sec.set_sync_mode(SyncMode.CLOUD)
+        assert sec.is_cloud_mode()
+
+    def test_issue_token(self):
+        sec = SecurityManager()
+        raw_token, dt = sec.issue_token("MyPhone", scopes=["read", "write"])
+        assert dt.is_valid()
+        assert dt.status == AuthStatus.APPROVED
+        assert "read" in dt.scopes
+
+    def test_verify_token_valid(self):
+        sec = SecurityManager()
+        raw_token, dt = sec.issue_token("MyPhone")
+        assert sec.verify_token(dt.token_id, raw_token) is True
+
+    def test_verify_token_wrong_token(self):
+        sec = SecurityManager()
+        _raw, dt = sec.issue_token("MyPhone")
+        assert sec.verify_token(dt.token_id, "wrongtoken") is False
+
+    def test_verify_token_not_found(self):
+        sec = SecurityManager()
+        assert sec.verify_token("tok_9999", "any") is False
+
+    def test_revoke_token(self):
+        sec = SecurityManager()
+        _raw, dt = sec.issue_token("MyPhone")
+        sec.revoke_token(dt.token_id)
+        assert sec.get_token(dt.token_id).status == AuthStatus.REVOKED
+        assert not sec.get_token(dt.token_id).is_valid()
+
+    def test_verify_revoked_token_fails(self):
+        sec = SecurityManager()
+        raw_token, dt = sec.issue_token("MyPhone")
+        sec.revoke_token(dt.token_id)
+        assert sec.verify_token(dt.token_id, raw_token) is False
+
+    def test_list_active_tokens(self):
+        sec = SecurityManager()
+        _, dt1 = sec.issue_token("Phone1")
+        _, dt2 = sec.issue_token("Phone2")
+        sec.revoke_token(dt2.token_id)
+        active = sec.list_tokens(active_only=True)
+        assert len(active) == 1
+
+    def test_generate_key(self):
+        sec = SecurityManager()
+        key = sec.generate_key(EncryptionAlgorithm.AES_256_GCM)
+        assert key.active is True
+        assert key.algorithm == EncryptionAlgorithm.AES_256_GCM
+        assert len(key.key_bytes) == 32
+
+    def test_rotate_key(self):
+        sec = SecurityManager()
+        old_key = sec.generate_key()
+        new_key = sec.rotate_key(old_key.key_id)
+        assert not sec.get_key(old_key.key_id).active
+        assert new_key.active is True
+
+    def test_revoke_key(self):
+        sec = SecurityManager()
+        key = sec.generate_key()
+        sec.revoke_key(key.key_id)
+        assert not sec.get_key(key.key_id).active
+
+    def test_encrypt_decrypt(self):
+        sec = SecurityManager()
+        key = sec.generate_key()
+        plaintext = b"Hello, Buddy OS!"
+        ciphertext = sec.encrypt(key.key_id, plaintext)
+        assert ciphertext != plaintext
+        decrypted = sec.decrypt(key.key_id, ciphertext)
+        assert decrypted == plaintext
+
+    def test_encrypt_inactive_key_raises(self):
+        sec = SecurityManager()
+        key = sec.generate_key()
+        sec.revoke_key(key.key_id)
+        with pytest.raises(RuntimeError, match="inactive"):
+            sec.encrypt(key.key_id, b"data")
+
+    def test_key_not_found_raises(self):
+        sec = SecurityManager()
+        with pytest.raises(KeyError):
+            sec.get_key("key_9999")
+
+    def test_initiate_pairing(self):
+        sec = SecurityManager()
+        session = sec.initiate_pairing("Laptop")
+        assert session.device_name == "Laptop"
+        assert len(session.pin) == 6
+        assert not session.confirmed
+
+    def test_confirm_pairing(self):
+        sec = SecurityManager()
+        session = sec.initiate_pairing("Laptop")
+        token = sec.confirm_pairing(session.session_id, session.pin)
+        assert token.is_valid()
+        assert sec.get_pairing_session(session.session_id).confirmed
+
+    def test_confirm_pairing_wrong_pin(self):
+        sec = SecurityManager()
+        session = sec.initiate_pairing("Laptop")
+        with pytest.raises(ValueError, match="Incorrect PIN"):
+            sec.confirm_pairing(session.session_id, "000000")
+
+    def test_confirm_pairing_twice_raises(self):
+        sec = SecurityManager()
+        session = sec.initiate_pairing("Laptop")
+        sec.confirm_pairing(session.session_id, session.pin)
+        with pytest.raises(RuntimeError, match="already confirmed"):
+            sec.confirm_pairing(session.session_id, session.pin)
+
+    def test_audit_log_populated(self):
+        sec = SecurityManager()
+        sec.issue_token("Phone")
+        log = sec.get_audit_log()
+        assert len(log) > 0
+
+    def test_audit_log_integrity(self):
+        sec = SecurityManager()
+        sec.issue_token("Phone")
+        sec.generate_key()
+        assert sec.verify_audit_log() is True
+
+    def test_audit_event_to_dict(self):
+        sec = SecurityManager()
+        sec.issue_token("Phone")
+        event = sec.get_audit_log()[0]
+        d = event.to_dict()
+        assert "event_type" in d
+        assert "actor" in d
+
+
+# ===========================================================================
+# 10. Deployment Manager
+# ===========================================================================
+
+class TestDeploymentManager:
+    def test_create_zip_package(self):
+        dm = DeploymentManager()
+        pkg = dm.create_zip_package(
+            "TestBot", "1.0.0",
+            files={"main.py": b"print('hello')", "README.md": b"# TestBot"},
+        )
+        assert pkg.fmt == PackageFormat.ZIP
+        assert pkg.status == PackageStatus.READY
+        assert pkg.checksum != ""
+        assert pkg.size_bytes > 0
+
+    def test_zip_package_contains_manifest(self):
+        import zipfile
+        from io import BytesIO
+        dm = DeploymentManager()
+        pkg = dm.create_zip_package("TestBot", "1.0.0", files={"main.py": b"pass"})
+        zb = dm.get_zip_bytes(pkg.package_id)
+        with zipfile.ZipFile(BytesIO(zb)) as zf:
+            names = zf.namelist()
+        assert "install.json" in names
+        assert "main.py" in names
+
+    def test_get_zip_bytes(self):
+        dm = DeploymentManager()
+        pkg = dm.create_zip_package("Bot", "0.1", files={"f.py": b"x=1"})
+        zb = dm.get_zip_bytes(pkg.package_id)
+        assert isinstance(zb, bytes)
+        assert len(zb) > 0
+
+    def test_checksum_validation_passes(self):
+        dm = DeploymentManager()
+        pkg = dm.create_zip_package("Bot", "1.0", files={"f.py": b"x=1"})
+        assert dm.validate_package(pkg.package_id, pkg.checksum) is True
+
+    def test_checksum_validation_fails(self):
+        dm = DeploymentManager()
+        pkg = dm.create_zip_package("Bot", "1.0", files={"f.py": b"x=1"})
+        assert dm.validate_package(pkg.package_id, "deadbeef") is False
+
+    def test_create_boot_config(self):
+        dm = DeploymentManager()
+        config = dm.create_boot_config(label="Buddy OS v1", timeout_seconds=15)
+        assert config.label == "Buddy OS v1"
+        assert config.timeout_seconds == 15
+        assert "buddy_os" in config.entries
+
+    def test_add_boot_entry(self):
+        dm = DeploymentManager()
+        config = dm.create_boot_config()
+        dm.add_boot_entry(config.config_id, "recovery", "/boot/recovery.img", args="rescue")
+        assert "recovery" in dm.get_boot_config(config.config_id).entries
+
+    def test_set_default_boot_entry(self):
+        dm = DeploymentManager()
+        config = dm.create_boot_config()
+        dm.add_boot_entry(config.config_id, "safe_mode", "/boot/safe.img")
+        dm.set_default_boot_entry(config.config_id, "safe_mode")
+        assert dm.get_boot_config(config.config_id).default_entry == "safe_mode"
+
+    def test_set_nonexistent_default_raises(self):
+        dm = DeploymentManager()
+        config = dm.create_boot_config()
+        with pytest.raises(KeyError):
+            dm.set_default_boot_entry(config.config_id, "nonexistent")
+
+    def test_generate_iso_manifest(self):
+        dm = DeploymentManager()
+        config = dm.create_boot_config()
+        manifest = dm.generate_iso_manifest(config.config_id)
+        assert manifest["format"] == PackageFormat.ISO.value
+        assert "filesystem_layout" in manifest
+        assert "instructions" in manifest
+
+    def test_install_bot_usb(self):
+        dm = DeploymentManager()
+        pkg = dm.create_zip_package("Bot", "1.0", files={"main.py": b"pass"})
+        record = dm.install_bot(pkg.package_id, method=InstallMethod.USB)
+        assert record.method == InstallMethod.USB
+        assert record.active is True
+        assert dm.get_package(pkg.package_id).status == PackageStatus.INSTALLED
+
+    def test_install_bot_wifi(self):
+        dm = DeploymentManager()
+        pkg = dm.create_zip_package("Bot", "1.0", files={"main.py": b"pass"})
+        record = dm.install_bot(pkg.package_id, method=InstallMethod.WIFI)
+        assert record.method == InstallMethod.WIFI
+
+    def test_uninstall_bot(self):
+        dm = DeploymentManager()
+        pkg = dm.create_zip_package("Bot", "1.0", files={"main.py": b"pass"})
+        record = dm.install_bot(pkg.package_id)
+        dm.uninstall_bot(record.record_id)
+        assert not dm.get_install_record(record.record_id).active
+
+    def test_install_not_ready_package_raises(self):
+        import uuid as _uuid
+        dm = DeploymentManager()
+        pkg_id = f"pkg_{_uuid.uuid4().hex[:8]}"
+        dm._packages[pkg_id] = BotPackage(
+            package_id=pkg_id,
+            bot_name="Pending",
+            version="1.0",
+            fmt=PackageFormat.ZIP,
+            status=PackageStatus.PENDING,
+        )
+        with pytest.raises(RuntimeError, match="not ready"):
+            dm.install_bot(pkg_id)
+
+    def test_list_installed_bots(self):
+        dm = DeploymentManager()
+        pkg1 = dm.create_zip_package("BotA", "1.0", files={"f.py": b"x"})
+        pkg2 = dm.create_zip_package("BotB", "2.0", files={"f.py": b"y"})
+        r1 = dm.install_bot(pkg1.package_id)
+        r2 = dm.install_bot(pkg2.package_id)
+        dm.uninstall_bot(r2.record_id)
+        active = dm.list_installed_bots(active_only=True)
+        assert len(active) == 1
+        assert active[0].bot_name == "BotA"
+
+    def test_package_not_found_raises(self):
+        dm = DeploymentManager()
+        with pytest.raises(KeyError):
+            dm.get_package("pkg_9999")
+
+    def test_boot_config_not_found_raises(self):
+        dm = DeploymentManager()
+        with pytest.raises(KeyError):
+            dm.get_boot_config("boot_9999")
+
+    def test_install_record_not_found_raises(self):
+        dm = DeploymentManager()
+        with pytest.raises(KeyError):
+            dm.get_install_record("inst_9999")
+
+    def test_package_to_dict(self):
+        dm = DeploymentManager()
+        pkg = dm.create_zip_package("Bot", "1.0", files={"f.py": b"x"})
+        d = pkg.to_dict()
+        assert d["bot_name"] == "Bot"
+        assert d["format"] == PackageFormat.ZIP.value
+
+
+# ===========================================================================
+# New tier feature-flag tests
+# ===========================================================================
+
+
+class TestNewTierFeatures:
+    def test_free_has_wifi(self):
+        assert FEATURE_WIFI in get_tier_config(Tier.FREE).features
+
+    def test_free_has_security_manager(self):
+        assert FEATURE_SECURITY_MANAGER in get_tier_config(Tier.FREE).features
+
+    def test_pro_has_hardware_protocols(self):
+        assert FEATURE_HARDWARE_PROTOCOLS in get_tier_config(Tier.PRO).features
+
+    def test_pro_has_deployment_manager(self):
+        assert FEATURE_DEPLOYMENT_MANAGER in get_tier_config(Tier.PRO).features
+
+    def test_pro_has_flash_boot(self):
+        assert FEATURE_FLASH_BOOT in get_tier_config(Tier.PRO).features
+
+    def test_enterprise_has_cloud_sync(self):
+        assert FEATURE_CLOUD_SYNC in get_tier_config(Tier.ENTERPRISE).features
+
+    def test_free_lacks_cloud_sync(self):
+        assert FEATURE_CLOUD_SYNC not in get_tier_config(Tier.FREE).features
+
+
+# ===========================================================================
+# BuddyOS integration tests for new subsystems
+# ===========================================================================
+
+class TestBuddyOSNewSubsystems:
+    def test_has_wifi_engine(self):
+        buddy = BuddyOS()
+        assert isinstance(buddy.wifi, WiFiEngine)
+
+    def test_has_hardware_hub(self):
+        buddy = BuddyOS()
+        assert isinstance(buddy.hardware, HardwareProtocolsHub)
+
+    def test_has_security_manager(self):
+        buddy = BuddyOS()
+        assert isinstance(buddy.security, SecurityManager)
+
+    def test_has_deployment_manager(self):
+        buddy = BuddyOS()
+        assert isinstance(buddy.deployment, DeploymentManager)
+
+    def test_system_status_includes_wifi(self):
+        buddy = BuddyOS()
+        status = buddy.system_status()
+        assert "wifi" in status
+
+    def test_system_status_includes_hardware(self):
+        buddy = BuddyOS()
+        status = buddy.system_status()
+        assert "hardware_protocols" in status
+
+    def test_system_status_includes_security(self):
+        buddy = BuddyOS()
+        status = buddy.system_status()
+        assert "security" in status
+
+    def test_system_status_includes_deployment(self):
+        buddy = BuddyOS()
+        status = buddy.system_status()
+        assert "deployment" in status
+
+    def test_chat_wifi(self):
+        buddy = BuddyOS()
+        resp = buddy.chat("wifi status")
+        assert resp["response"] == "buddy_os"
+        assert "wifi" in resp["data"]
+
+    def test_chat_wireless(self):
+        buddy = BuddyOS()
+        resp = buddy.chat("wireless network status")
+        assert "wifi" in resp["data"]
+
+    def test_chat_hardware(self):
+        buddy = BuddyOS()
+        resp = buddy.chat("hardware protocols")
+        assert "hardware" in resp["data"]
+
+    def test_chat_uart(self):
+        buddy = BuddyOS()
+        resp = buddy.chat("uart protocol info")
+        assert "hardware" in resp["data"]
+
+    def test_chat_i2c(self):
+        buddy = BuddyOS()
+        resp = buddy.chat("i2c bus scan")
+        assert "hardware" in resp["data"]
+
+    def test_chat_obd(self):
+        buddy = BuddyOS()
+        resp = buddy.chat("obd diagnostics")
+        assert "hardware" in resp["data"]
+
+    def test_chat_security(self):
+        buddy = BuddyOS()
+        resp = buddy.chat("security status")
+        assert "security" in resp["data"]
+
+    def test_chat_auth(self):
+        buddy = BuddyOS()
+        resp = buddy.chat("auth tokens")
+        assert "security" in resp["data"]
+
+    def test_chat_deploy(self):
+        buddy = BuddyOS()
+        resp = buddy.chat("deploy bot")
+        assert "deployment" in resp["data"]
+
+    def test_chat_flash(self):
+        buddy = BuddyOS()
+        resp = buddy.chat("flash drive boot")
+        assert "deployment" in resp["data"]
+
+    def test_chat_zip(self):
+        buddy = BuddyOS()
+        resp = buddy.chat("create zip package")
+        assert "deployment" in resp["data"]
+
+    def test_chat_install(self):
+        buddy = BuddyOS()
+        resp = buddy.chat("install bot")
+        assert "deployment" in resp["data"]
+
+    def test_boot_log_mentions_new_subsystems(self):
+        buddy = BuddyOS()
+        log = buddy.get_boot_log()
+        log_str = " ".join(log).lower()
+        assert "wifi" in log_str
+        assert "security" in log_str
+        assert "hardware" in log_str
+        assert "deployment" in log_str
+
+    def test_default_chat_mentions_new_features(self):
+        buddy = BuddyOS()
+        resp = buddy.chat("hello there")
+        msg = resp["message"].lower()
+        assert "wifi" in msg or "hardware" in msg or "security" in msg
