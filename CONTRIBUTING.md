@@ -1,231 +1,234 @@
 # Contributing to DreamCObots
 
-Thank you for your interest in contributing to the DreamCObots project! To
-keep the codebase consistent and production-ready, all contributors — human or
-automated — **must** follow the guidelines below.
+Thank you for contributing to the DreamCObots project. This repository operates as a production-grade AI orchestration system. All contributions — human or automated — must strictly follow the framework below.
 
 ---
 
 ## Table of Contents
-
-1. [Code of Conduct](#code-of-conduct)
-2. [GLOBAL AI SOURCES FLOW — Mandatory Architecture](#global-ai-sources-flow--mandatory-architecture)
-3. [How to Add a New Bot](#how-to-add-a-new-bot)
-4. [Required Framework Integration Checklist](#required-framework-integration-checklist)
-5. [Testing Requirements](#testing-requirements)
-6. [Static Analysis](#static-analysis)
-7. [Pull Request Process](#pull-request-process)
+* Code of Conduct
+* GLOBAL AI SOURCES FLOW (Mandatory Architecture)
+* How to Add a New Bot
+* Required Framework Integration Checklist
+* Testing Requirements
+* Static Analysis
+* Pull Request Process
 
 ---
 
 ## Code of Conduct
 
-All participants are expected to be respectful and constructive. Harassment or
-exclusionary behaviour will not be tolerated.
+All contributors are expected to act respectfully and constructively.
+
+* No harassment, discrimination, or exclusionary behavior
+* Maintain professional, technical communication
+* Focus on system stability, correctness, and improvement
+* All contributions must align with the platform architecture
+
+Violations may result in rejection of contributions or access restrictions.
 
 ---
 
-## GLOBAL AI SOURCES FLOW — Mandatory Architecture
+## GLOBAL AI SOURCES FLOW (Mandatory Architecture)
 
-Every bot added to this repository **must** follow the eight-stage
-**GLOBAL AI SOURCES FLOW** pipeline.  The pipeline is implemented in
-`framework/global_ai_sources_flow.py` and must be imported and used by every
-bot.
+Every bot in the repository must implement the GLOBAL AI SOURCES FLOW pipeline located in:
+
+`framework/global_ai_sources_flow.py`
+
+This pipeline is not optional. It is required for all bots.
+
+### GLOBAL AI SOURCES FLOW Architecture
 
 ```
 GLOBAL AI SOURCES
 ┌─────────────────────────────────────────────┐
 │ Research Papers │ GitHub │ Kaggle │ AI Labs │
-│ US │ China │ India │ EU │ Global Labs        │
+│ US │ China │ India │ EU │ Global Labs       │
 └─────────────────────────────────────────────┘
-                      │
-                      ▼
-          ┌─────────────────────────┐
-          │ DATA INGESTION LAYER    │
-          │ Scrapers + Parsers      │
-          │ Dataset normalization   │
-          │ Language translation    │
-          └────────────┬────────────┘
-                       │
-                       ▼
-        ┌─────────────────────────────┐
-        │ LEARNING METHOD CLASSIFIER  │
-        │ Supervised                  │
-        │ Unsupervised                │
-        │ Reinforcement               │
-        │ Self-Supervised             │
-        │ Multi-Modal                 │
-        │ Transfer Learning           │
-        │ Federated Learning          │
-        └────────────┬────────────────┘
-                     │
-                     ▼
-         ┌──────────────────────────┐
-         │ SANDBOX TEST LAB         │
-         │ Containerized AI tests   │
-         │ Model vs model battles   │
-         │ A/B experiments          │
-         │ Stress & adversarial     │
-         └────────────┬─────────────┘
-                      │
-                      ▼
-       ┌─────────────────────────────┐
-       │ PERFORMANCE ANALYTICS       │
-       │ Accuracy metrics            │
-       │ Cost metrics                │
-       │ Convergence speed           │
-       │ Global Learning Matrix      │
-       └────────────┬────────────────┘
-                    │
-                    ▼
-      ┌──────────────────────────────┐
-      │ HYBRID EVOLUTION ENGINE      │
-      │ Genetic algorithms           │
-      │ Reinforcement optimization   │
-      │ Hybrid model creation        │
-      └────────────┬─────────────────┘
-                   │
-                   ▼
-      ┌──────────────────────────────┐
-      │ DEPLOYMENT ENGINE            │
-      │ Updates DreamCo bots         │
-      │ Pushes best strategies       │
-      │ Continuous retraining        │
-      └────────────┬─────────────────┘
-                   │
-                   ▼
-      ┌──────────────────────────────┐
-      │ PROFIT & MARKET INTELLIGENCE │
-      │ Real estate bots             │
-      │ Car flipping bots            │
-      │ Trading bots                 │
-      │ Lead generation bots         │
-      └────────────┬─────────────────┘
-                   │
-                   ▼
-      ┌──────────────────────────────┐
-      │ GOVERNANCE + SECURITY        │
-      │ Encryption                   │
-      │ Audit logs                   │
-      │ Compliance checks            │
-      │ AI safety controls           │
-      └──────────────────────────────┘
+                      ↓
+        DATA INGESTION LAYER
+        - Scrapers + Parsers
+        - Dataset normalization
+        - Language translation
+                      ↓
+        LEARNING METHOD CLASSIFIER
+        - Supervised / Unsupervised
+        - Reinforcement / Self-supervised
+        - Multi-modal / Transfer / Federated
+                      ↓
+        SANDBOX TEST LAB
+        - Containerized testing
+        - Model vs model evaluation
+        - A/B + adversarial testing
+                      ↓
+        PERFORMANCE ANALYTICS
+        - Accuracy / cost / speed metrics
+        - Global learning matrix
+                      ↓
+        HYBRID EVOLUTION ENGINE
+        - Genetic algorithms
+        - Reinforcement optimization
+        - Hybrid model generation
+                      ↓
+        DEPLOYMENT ENGINE
+        - Push validated improvements
+        - Continuous retraining
+                      ↓
+        PROFIT & MARKET INTELLIGENCE
+        - Real estate, trading, lead gen
+        - Commercial optimization systems
+                      ↓
+        GOVERNANCE + SECURITY
+        - Encryption
+        - Audit logging
+        - Compliance + AI safety controls
 ```
 
-### Why this matters
+#### Why This Matters
 
-The pipeline ensures that:
+This pipeline ensures:
 
-- All data is sourced from traceable global AI inputs.
-- Learning methods are explicitly classified.
-- Every model is battle-tested in a sandbox before deployment.
-- Performance is measured consistently across all bots.
-- Models evolve using hybrid genetic and reinforcement-learning techniques.
-- Deployment is always accompanied by continuous retraining.
-- All activity feeds into profit-generating market verticals.
-- Governance and security controls are never bypassed.
+* All data sources are globally traceable
+* Learning methods are explicitly classified
+* Every model is sandbox-tested before deployment
+* Performance is consistently measurable
+* Models evolve through hybrid optimization (genetic + RL)
+* Continuous retraining is enforced
+* Outputs feed directly into monetization systems
+* Governance and safety are always active
 
 ---
 
 ## How to Add a New Bot
 
-1. **Create a directory** under `bots/<your-bot-name>/`.
-2. **Add the main bot module** `bots/<your-bot-name>/<your_bot_name>.py`.
-3. **Import and instantiate `GlobalAISourcesFlow`** in your bot's `__init__`:
+1. **Create Bot Directory**
+   ```
+   bots/<your-bot-name>/
+   ```
 
+2. **Import Framework**
    ```python
    from framework import GlobalAISourcesFlow
+   ```
 
+3. **Initialize Flow in Bot**
+   ```python
    class MyBot:
        def __init__(self):
            self.flow = GlobalAISourcesFlow(bot_name="MyBot")
    ```
 
-4. **Call `run_pipeline()`** when your bot processes a request, passing the
-   domain-specific payload as `raw_data`:
-
+4. **Run Pipeline During Execution**
    ```python
    result = self.flow.run_pipeline(
-       raw_data={"domain": "my_domain", "input": payload},
-       learning_method="supervised",   # or another supported method
+       raw_data={
+           "domain": "my_domain",
+           "input": payload
+       },
+       learning_method="supervised"
    )
    ```
 
-5. **Add a `README.md`** inside your bot directory documenting:
-   - Purpose and use cases
-   - How to run the bot
-   - Which `learning_method` the bot uses
+5. **Add Documentation**
+   Include a `README.md` in the bot directory:
+   * Purpose of the bot
+   * Input/output behavior
+   * Learning method used
+   * Execution instructions
 
-6. **Add unit tests** in `tests/test_<your_bot_name>.py` (see
-   [Testing Requirements](#testing-requirements)).
-
-7. **Run the static analysis checker** before opening a PR:
-
-   ```bash
-   python tools/check_bot_framework.py
+6. **Add Tests**
+   Create:
+   ```
+   tests/test_<your_bot_name>.py
    ```
 
 ---
 
 ## Required Framework Integration Checklist
 
-Before submitting a PR for a new or modified bot, verify all of the following:
+Before submitting a PR:
 
-- [ ] `from framework import GlobalAISourcesFlow` is present in the bot's main
-  module.
-- [ ] `self.flow = GlobalAISourcesFlow(bot_name="<YourBotName>")` is
-  instantiated in `__init__`.
-- [ ] `self.flow.run_pipeline(...)` is called during bot operation.
-- [ ] `self.flow.validate()` passes without raising `FrameworkViolationError`.
-- [ ] All eight `REQUIRED_STAGES` are present (verified automatically by
-  `validate()`).
-- [ ] `GovernanceSecurityLayer` has `encryption_enabled=True`,
-  `audit_logs_enabled=True`, and `ai_safety_controls_enabled=True` (these are
-  the defaults and must not be overridden to `False`).
+* `from framework import GlobalAISourcesFlow` is present
+* `self.flow = GlobalAISourcesFlow(...)` is initialized in `__init__`
+* `self.flow.run_pipeline(...)` is executed in runtime logic
+* `self.flow.validate()` passes successfully
+* All 8 REQUIRED_STAGES exist in pipeline validation
+* Governance security settings remain enabled:
+  * `encryption_enabled = True`
+  * `audit_logs_enabled = True`
+  * `ai_safety_controls_enabled = True`
 
 ---
 
 ## Testing Requirements
 
-- All new bots **must** include a test file at `tests/test_<bot_name>.py`.
-- Tests must cover at minimum:
-  - Bot instantiation creates a `GlobalAISourcesFlow` attribute (`self.flow`).
-  - `self.flow.validate()` returns `True` without errors.
-  - `self.flow.run_pipeline()` completes and returns
-    `{"pipeline_complete": True, ...}`.
-- Run the full test suite before opening a PR:
+All bots must include tests:
 
-  ```bash
-  python -m pytest tests/ -v
+**Minimum requirements:**
+
+* Bot initializes successfully
+* `self.flow` exists on instantiation
+* `self.flow.validate()` returns `True`
+* `self.flow.run_pipeline()` returns:
+  ```json
+  {"pipeline_complete": true}
   ```
+
+Run tests:
+```bash
+python -m pytest tests/ -v
+```
 
 ---
 
 ## Static Analysis
 
-A static analysis script is provided to catch bots that do not reference the
-framework:
-
+All bots are validated using:
 ```bash
 python tools/check_bot_framework.py
 ```
 
-The checker will scan all Python files under `bots/`, `Business_bots/`,
-`App_bots/`, `Marketing_bots/`, `Occupational_bots/`, `Real_Estate_bots/`,
-and `Fiverr_bots/` and report any file that lacks a reference to
-`GlobalAISourcesFlow` or the framework adherence comment.
+### This tool enforces:
+* Presence of `GlobalAISourcesFlow` usage
+* Framework compliance across all bot directories
+* Detection of non-compliant bot implementations
 
-> **PRs that introduce new bot files failing the static analysis check will
-> not be merged.**
+### Scanned Directories
+* `bots/`
+* `Business_bots/`
+* `App_bots/`
+* `Marketing_bots/`
+* `Occupational_bots/`
+* `Real_Estate_bots/`
+* `Fiverr_bots/`
 
 ---
 
 ## Pull Request Process
 
-1. Fork the repository and create a feature branch.
-2. Follow the [How to Add a New Bot](#how-to-add-a-new-bot) steps.
-3. Ensure the static analysis checker passes: `python tools/check_bot_framework.py`
-4. Ensure all tests pass: `python -m pytest tests/ -v`
-5. Open a PR against the `main` branch with a clear description of the bot's
-   purpose and how it implements the GLOBAL AI SOURCES FLOW.
-6. A maintainer will review the PR for framework compliance before merging.
+1. Fork repository
+2. Create feature branch
+3. Add or modify bot following framework rules
+4. **Run static analysis:**
+   ```bash
+   python tools/check_bot_framework.py
+   ```
+
+5. **Run tests:**
+   ```bash
+   python -m pytest tests/ -v
+   ```
+
+6. Open PR with:
+   * Bot purpose
+   * Architecture explanation
+   * Learning method used
+   * Any performance considerations
+
+---
+
+## Final Rule
+
+No bot will be merged unless it fully implements the `GLOBAL AI SOURCES FLOW` pipeline and passes both:
+
+* Static analysis
+* Full test suite
