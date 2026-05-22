@@ -1,0 +1,20 @@
+{
+  "manifestVersion": "1",
+  "name": "elite_scraper",
+  "displayName": "Elite Scraper",
+  "description": "High-throughput, residential-proxied scraper that pulls structured B2B contact data from public web sources.",
+  "division": "DreamSalesPro",
+  "tier": "PRO",
+  "category": "Lead Generation",
+  "capabilities": ["scrape_web", "extract_contacts", "rotate_proxies", "respect_robots"],
+  "entrypoint": {
+    "runtime": "python",
+    "command": "python -m elite_scraper.worker",
+    "workdir": "src"
+  },
+  "revenueModel": { "type": "subscription", "targetMrr": 8000, "currency": "USD" },
+  "dependencies": ["playwright", "httpx", "lxml", "pydantic"],
+  "owner": { "team": "DreamSalesPro", "githubHandles": [] },
+  "status": "draft",
+  "tags": ["scraping", "leads", "revived-pr-303"]
+}
