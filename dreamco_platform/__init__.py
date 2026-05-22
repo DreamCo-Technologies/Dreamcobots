@@ -14,6 +14,7 @@ orchestration — BaseOrchestrator interface for all orchestrators
 memory        — Dream Memory Layer (operational graph data store)
 observability — Structured telemetry for every capability execution
 governance    — Policy-as-Code engine and RBAC / workspace isolation
+control_plane — Unified Command Center: DashboardAggregator + 7 gateways
 """
 
 PLATFORM_VERSION: str = "2.0.0"

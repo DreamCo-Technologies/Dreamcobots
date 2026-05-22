@@ -50,6 +50,32 @@ class HealthStatus(str, Enum):
     UNKNOWN = "unknown"
 
 
+class BotLifecycleState(str, Enum):
+    """
+    Autonomous deployment safety states for DreamCo bots.
+
+    ACTIVE            — fully deployed and serving traffic
+    BETA              — deployed to a subset of users for evaluation
+    DEPRECATED        — sunset; no new workloads routed here
+    MAINTENANCE       — temporarily offline for scheduled maintenance
+    TRAINING          — model is being retrained; not serving live traffic
+    QUARANTINED       — isolated after policy violation or anomaly detection
+    SANDBOXED         — running in an isolated evaluation environment
+    ROLLING_BACK      — in the process of reverting to a prior stable version
+    FAILED_VALIDATION — rejected by the validation / compliance gate
+    """
+
+    ACTIVE = "active"
+    BETA = "beta"
+    DEPRECATED = "deprecated"
+    MAINTENANCE = "maintenance"
+    TRAINING = "training"
+    QUARANTINED = "quarantined"
+    SANDBOXED = "sandboxed"
+    ROLLING_BACK = "rolling_back"
+    FAILED_VALIDATION = "failed_validation"
+
+
 # ---------------------------------------------------------------------------
 # Registry entry
 # ---------------------------------------------------------------------------
@@ -104,6 +130,7 @@ class BotRegistryEntry:
     runtime_requirements: Dict[str, Any] = field(default_factory=dict)
     dependencies: List[str] = field(default_factory=list)
     health: HealthStatus = HealthStatus.UNKNOWN
+    lifecycle_state: BotLifecycleState = BotLifecycleState.ACTIVE
     learning_enabled: bool = False
     description: str = ""
     version: str = "1.0.0"
@@ -135,6 +162,7 @@ class BotRegistryEntry:
             "runtime_requirements": dict(self.runtime_requirements),
             "dependencies": list(self.dependencies),
             "health": self.health.value,
+            "lifecycle_state": self.lifecycle_state.value,
             "learning_enabled": self.learning_enabled,
             "description": self.description,
             "version": self.version,
@@ -151,6 +179,11 @@ class BotRegistryEntry:
             health = HealthStatus(health_raw)
         except ValueError:
             health = HealthStatus.UNKNOWN
+        lifecycle_raw = data.get("lifecycle_state", BotLifecycleState.ACTIVE.value)
+        try:
+            lifecycle_state = BotLifecycleState(lifecycle_raw)
+        except ValueError:
+            lifecycle_state = BotLifecycleState.ACTIVE
         return cls(
             bot_id=data["bot_id"],
             display_name=data.get("display_name", data["bot_id"]),
@@ -161,6 +194,7 @@ class BotRegistryEntry:
             runtime_requirements=data.get("runtime_requirements", {}),
             dependencies=data.get("dependencies", []),
             health=health,
+            lifecycle_state=lifecycle_state,
             learning_enabled=data.get("learning_enabled", False),
             description=data.get("description", ""),
             version=data.get("version", "1.0.0"),
@@ -198,6 +232,11 @@ class BotRegistry:
         """Update the health status of the bot identified by *bot_id*."""
         entry = self._require(bot_id)
         self._store[bot_id] = replace(entry, health=status)
+
+    def update_lifecycle_state(self, bot_id: str, state: BotLifecycleState) -> None:
+        """Transition the lifecycle state of *bot_id* to *state*."""
+        entry = self._require(bot_id)
+        self._store[bot_id] = replace(entry, lifecycle_state=state)
 
     def remove(self, bot_id: str) -> Optional[BotRegistryEntry]:
         """Remove and return the entry for *bot_id*, or ``None`` if absent."""
@@ -242,6 +281,10 @@ class BotRegistry:
     def find_by_category(self, category: str) -> List[BotRegistryEntry]:
         """Return every bot in *category*."""
         return [e for e in self._store.values() if e.category == category]
+
+    def find_by_lifecycle(self, state: BotLifecycleState) -> List[BotRegistryEntry]:
+        """Return every bot in *state*."""
+        return [e for e in self._store.values() if e.lifecycle_state == state]
 
     # ------------------------------------------------------------------
     # Serialisation

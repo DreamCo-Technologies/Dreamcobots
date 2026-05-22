@@ -947,6 +947,81 @@ try:
 
         return jsonify(_domain_manager.portfolio_summary(user.user_id))
 
+    # ------------------------------------------------------------------ #
+    #  Unified Command Center Dashboard                                    #
+    # ------------------------------------------------------------------ #
+
+    from dreamco_platform.control_plane.aggregator import DashboardAggregator as _DashboardAggregator
+
+    _dashboard_agg = _DashboardAggregator()
+
+    @app.route("/api/dashboard/summary", methods=["GET"])
+    def dashboard_summary() -> Any:
+        """Top-level aggregation of all dashboard sections."""
+        user, err = _middleware.authenticate(request.headers.get("Authorization"))
+        if err:
+            return jsonify({"error": "Unauthorized"}), 401
+        return jsonify(_dashboard_agg.summary())
+
+    @app.route("/api/dashboard/health", methods=["GET"])
+    def dashboard_health() -> Any:
+        """System health: bot uptime, heartbeat, CI status."""
+        user, err = _middleware.authenticate(request.headers.get("Authorization"))
+        if err:
+            return jsonify({"error": "Unauthorized"}), 401
+        return jsonify(_dashboard_agg.health_snapshot())
+
+    @app.route("/api/dashboard/revenue", methods=["GET"])
+    def dashboard_revenue() -> Any:
+        """Revenue operations: ARR/MRR, datasets, sales."""
+        user, err = _middleware.authenticate(request.headers.get("Authorization"))
+        if err:
+            return jsonify({"error": "Unauthorized"}), 401
+        tier_err = _middleware.require_tier(user, SubscriptionTier.PRO)
+        if tier_err:
+            return jsonify({"error": tier_err}), 403
+        return jsonify(_dashboard_agg.revenue_snapshot())
+
+    @app.route("/api/dashboard/workflows", methods=["GET"])
+    def dashboard_workflows() -> Any:
+        """Workflow operations: pipeline health, active orchestrators."""
+        user, err = _middleware.authenticate(request.headers.get("Authorization"))
+        if err:
+            return jsonify({"error": "Unauthorized"}), 401
+        return jsonify(_dashboard_agg.workflows_snapshot())
+
+    @app.route("/api/dashboard/learning", methods=["GET"])
+    def dashboard_learning() -> Any:
+        """Learning intelligence: rewards, drift, retraining."""
+        user, err = _middleware.authenticate(request.headers.get("Authorization"))
+        if err:
+            return jsonify({"error": "Unauthorized"}), 401
+        return jsonify(_dashboard_agg.learning_snapshot())
+
+    @app.route("/api/dashboard/marketplace", methods=["GET"])
+    def dashboard_marketplace() -> Any:
+        """Bot catalog: category health, active bots, lifecycle states."""
+        user, err = _middleware.authenticate(request.headers.get("Authorization"))
+        if err:
+            return jsonify({"error": "Unauthorized"}), 401
+        return jsonify(_dashboard_agg.marketplace_snapshot())
+
+    @app.route("/api/dashboard/observability", methods=["GET"])
+    def dashboard_observability() -> Any:
+        """Observability: telemetry summary, metrics snapshot."""
+        user, err = _middleware.authenticate(request.headers.get("Authorization"))
+        if err:
+            return jsonify({"error": "Unauthorized"}), 401
+        return jsonify(_dashboard_agg.observability_snapshot())
+
+    @app.route("/api/dashboard/security", methods=["GET"])
+    def dashboard_security() -> Any:
+        """Security / Governance: RBAC, audit events, policy violations."""
+        user, err = _middleware.authenticate(request.headers.get("Authorization"))
+        if err:
+            return jsonify({"error": "Unauthorized"}), 401
+        return jsonify(_dashboard_agg.security_snapshot())
+
     FLASK_AVAILABLE = True
 
 except ImportError:  # pragma: no cover — Flask not installed
