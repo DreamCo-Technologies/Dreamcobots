@@ -143,6 +143,11 @@ class DataIngestionLayer:
         "github",
         "kaggle",
         "ai_labs",
+        "us",
+        "china",
+        "india",
+        "eu",
+        "global_labs",
     ])
     normalization_enabled: bool = True
     translation_enabled: bool = True

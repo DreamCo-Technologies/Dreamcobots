@@ -83,6 +83,11 @@ class TestDataIngestionLayer:
         layer = DataIngestionLayer()
         assert "github" in layer.sources
 
+    def test_default_sources_include_global_regions(self):
+        layer = DataIngestionLayer()
+        for region in ("us", "china", "india", "eu", "global_labs"):
+            assert region in layer.sources
+
     def test_normalization_enabled_by_default(self):
         assert DataIngestionLayer().normalization_enabled is True
 

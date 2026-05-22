@@ -508,6 +508,13 @@ class TestGlobalAISourcesFlowIntegration:
         assert result["pipeline_trace"]["pipeline_complete"] is True
         assert len(REQUIRED_STAGES) == 8
 
+    def test_flow_trace_includes_all_global_source_regions(self):
+        bot = GlobalSourcesAIBot(tier=Tier.FREE)
+        result = bot.route_task("answer a general business question")
+        sources = result["pipeline_trace"]["result"]["upstream"]["upstream"]["upstream"]["upstream"]["upstream"]["upstream"]["upstream"]["sources_used"]
+        for source in ("research_papers", "github", "kaggle", "ai_labs", "us", "china", "india", "eu", "global_labs"):
+            assert source in sources
+
 
 # ===========================================================================
 # 8. Tier gates
