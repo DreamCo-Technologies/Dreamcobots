@@ -1,0 +1,20 @@
+{
+  "manifestVersion": "1",
+  "name": "company_lookup",
+  "displayName": "Company Lookup",
+  "description": "Enrich a domain or company name into a full firmographic + technographic profile (size, industry, stack, decision makers).",
+  "division": "DreamSalesPro",
+  "tier": "PRO",
+  "category": "Lead Generation",
+  "capabilities": ["enrich_company", "detect_tech_stack", "find_decision_makers"],
+  "entrypoint": {
+    "runtime": "node",
+    "command": "node dist/index.js",
+    "workdir": "src"
+  },
+  "revenueModel": { "type": "usage", "targetMrr": 5000, "currency": "USD" },
+  "dependencies": ["axios", "cheerio", "zod"],
+  "owner": { "team": "DreamSalesPro", "githubHandles": [] },
+  "status": "draft",
+  "tags": ["enrichment", "b2b", "revived-pr-341"]
+}
