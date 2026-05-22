@@ -1,0 +1,25 @@
+{
+  "manifestVersion": "1",
+  "name": "god_mode_autocloser",
+  "displayName": "God Mode AutoCloser",
+  "description": "Autonomous sales closer — picks up qualified leads, runs the full nurture-to-checkout sequence, and books revenue without human touch.",
+  "division": "DreamSalesPro",
+  "tier": "ENTERPRISE",
+  "category": "Sales",
+  "capabilities": [
+    "qualify_lead",
+    "send_outreach",
+    "negotiate",
+    "checkout_handoff"
+  ],
+  "entrypoint": {
+    "runtime": "python",
+    "command": "python -m god_mode_autocloser.main",
+    "workdir": "src"
+  },
+  "revenueModel": { "type": "commission", "targetMrr": 25000, "currency": "USD" },
+  "dependencies": ["openai", "stripe", "fastapi"],
+  "owner": { "team": "DreamSalesPro", "githubHandles": [] },
+  "status": "draft",
+  "tags": ["sales", "autonomous", "revived-pr-234"]
+}
