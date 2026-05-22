@@ -131,6 +131,10 @@ automatically reflected in your Replit project.
 4. Select the `DreamCo-Technologies/Dreamcobots` repository.
 5. Choose whether Replit should pull from `main` automatically or on demand.
 
+If the repository is blocked by org policy, ask a DreamCo-Technologies admin to
+approve Replit GitHub access for the org repository and then reconnect from the
+Replit Version control panel.
+
 ### Add secrets to Replit
 Replit projects use **Secrets** (environment variables) instead of `.env`
 files for security.

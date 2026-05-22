@@ -9,7 +9,7 @@ inside a [Replit](https://replit.com) environment.
 
 1. **Fork / import the repository**
    - Open Replit and choose **Create Repl → Import from GitHub**.
-   - Paste `https://github.com/ireanjordan24/Dreamcobots` and click **Import**.
+   - Paste `https://github.com/DreamCo-Technologies/Dreamcobots` and click **Import**.
 
 2. **Install dependencies**
 
@@ -84,6 +84,22 @@ Dreamcobots/
 | **Scheduled runs** | Use [Replit Deployments](https://docs.replit.com/hosting/deployments/about-deployments) or an external cron service to trigger bots on a schedule. |
 | **Packages** | Add new Python packages with `pip install <pkg>` in the Shell; Replit persists the environment between sessions. |
 | **`.replit` file** | Create a `.replit` file in the repo root to customise the Run button: `run = "python debug.py"` |
+
+---
+
+## If Replit says an admin blocked DreamCo access
+
+If Replit cannot access `DreamCo-Technologies/Dreamcobots` because an admin
+restriction is enabled:
+
+1. Ask a **DreamCo-Technologies org admin** to approve Replit's GitHub
+   authorization/app access for the organization repository.
+2. Confirm your GitHub account has at least **Read** access to the repository.
+3. Reconnect GitHub from Replit Version Control after approval.
+4. If approval is delayed, use a temporary fallback:
+   - Fork `DreamCo-Technologies/Dreamcobots` to your personal GitHub account.
+   - Import the fork into Replit.
+   - Open pull requests from the fork back to `DreamCo-Technologies/Dreamcobots`.
 
 ---
 
