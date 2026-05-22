@@ -1,0 +1,75 @@
+name: validate-bot-pr
+
+on:
+  pull_request:
+    branches: [main]
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Detect changed files
+        id: changes
+        run: |
+          BASE_SHA="${{ github.event.pull_request.base.sha }}"
+          HEAD_SHA="${{ github.event.pull_request.head.sha }}"
+          git diff --name-only "$BASE_SHA" "$HEAD_SHA" > /tmp/changed.txt
+          echo "Changed files:"
+          cat /tmp/changed.txt
+
+      - name: Enforce one-folder rule
+        if: ${{ !contains(github.event.pull_request.labels.*.name, 'infra') }}
+        run: |
+          set -e
+          NON_BOT=$(grep -v '^bots/' /tmp/changed.txt || true)
+          if [ -n "$NON_BOT" ]; then
+            echo "::error::PR touches shared files. Label 'infra' is required for non-bot changes."
+            echo "$NON_BOT"
+            exit 1
+          fi
+          DIRS=$(awk -F/ '/^bots\//{print $2}' /tmp/changed.txt | sort -u)
+          COUNT=$(echo "$DIRS" | grep -c . || true)
+          if [ "$COUNT" -ne 1 ]; then
+            echo "::error::PR must touch exactly one bots/<name>/ directory (touched: $COUNT)"
+            echo "$DIRS"
+            exit 1
+          fi
+          echo "BOT_DIR=$DIRS" >> "$GITHUB_ENV"
+
+      - name: Setup Node
+        if: ${{ !contains(github.event.pull_request.labels.*.name, 'infra') }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Validate manifest
+        if: ${{ !contains(github.event.pull_request.labels.*.name, 'infra') }}
+        run: |
+          set -e
+          MANIFEST="bots/$BOT_DIR/bot.manifest.json"
+          if [ ! -f "$MANIFEST" ]; then
+            echo "::error::Missing $MANIFEST"
+            exit 1
+          fi
+          npm install --no-save ajv@8 ajv-formats@3
+          node -e "
+            const Ajv = require('ajv').default;
+            const addFormats = require('ajv-formats').default;
+            const fs = require('fs');
+            const schema = JSON.parse(fs.readFileSync('bot.manifest.schema.json','utf8'));
+            const data = JSON.parse(fs.readFileSync(process.env.MANIFEST,'utf8'));
+            const ajv = new Ajv({allErrors:true, strict:false});
+            addFormats(ajv);
+            const validate = ajv.compile(schema);
+            if (!validate(data)) {
+              console.error('Manifest invalid:', JSON.stringify(validate.errors, null, 2));
+              process.exit(1);
+            }
+            console.log('Manifest OK:', data.name);
+          "
+        env:
+          MANIFEST: bots/${{ env.BOT_DIR }}/bot.manifest.json
