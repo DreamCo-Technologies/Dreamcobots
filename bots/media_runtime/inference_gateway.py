@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from framework import GlobalAISourcesFlow  # noqa: F401
+
 import hashlib
 from dataclasses import dataclass
 from typing import Any, Callable
