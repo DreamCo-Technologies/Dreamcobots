@@ -12,6 +12,8 @@
  */
 
 import { useEffect, useRef, useState } from 'react';
+import CommandCenter from './CommandCenter.jsx';
+import Analytics from './Analytics.jsx';
 
 const REFRESH_INTERVAL_MS = 60_000;
 
@@ -189,6 +191,16 @@ export default function ActionsMonitor() {
           </table>
         </div>
       )}
+
+      <div className="mt-8 pt-6 border-t border-slate-700">
+        <h3 className="text-base font-semibold text-white mb-4">🧭 Command Center</h3>
+        <CommandCenter />
+      </div>
+
+      <div className="mt-8 pt-6 border-t border-slate-700">
+        <h3 className="text-base font-semibold text-white mb-4">📊 Dashboard</h3>
+        <Analytics />
+      </div>
     </div>
   );
 }
