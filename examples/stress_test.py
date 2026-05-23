@@ -5,9 +5,74 @@ import importlib.util
 
 _ROOT = os.path.join(os.path.dirname(__file__), "..")
 sys.path.insert(0, _ROOT)
+sys.path.insert(0, os.path.join(_ROOT, "stress_test"))
 
-from stress_test.ai_stress_test import AIStressTest
-from stress_test.computer_stress_test import HardwareStressTest
+import ai_stress_test as ai_stress_test_module
+from computer_stress_test import HardwareStressTest
+
+
+if hasattr(ai_stress_test_module, "AIStressTest"):
+    AIStressTest = ai_stress_test_module.AIStressTest
+else:
+    class AIStressTest:
+        """Backward-compatible adapter around stress_test.ai_stress_test module APIs."""
+
+        def __init__(self):
+            self._results = []
+
+        def run_bot_stress_test(self, bots, duration_seconds=5):
+            iterations = max(10, duration_seconds * 10)
+            total_invocations = 0
+            per_bot = {}
+            for bot in bots:
+                workload = lambda _i: bot._run_task({"type": "generic"})  # noqa: E731
+                metrics = ai_stress_test_module.stress_test(
+                    workload,
+                    bot.__class__.__name__,
+                    iterations=iterations,
+                    concurrency=2,
+                )
+                per_bot[bot.__class__.__name__] = metrics
+                total_invocations += metrics["iterations"]
+                self._results.append(metrics)
+            return {
+                "bots_tested": len(bots),
+                "total_invocations": total_invocations,
+                "invocations_per_second": round(
+                    total_invocations / max(duration_seconds, 1),
+                    2,
+                ),
+                "status": "completed",
+                "metrics": per_bot,
+            }
+
+        def test_response_time(self, bot, num_requests=50):
+            workload = lambda _i: bot._run_task({"type": "generic"})  # noqa: E731
+            metrics = ai_stress_test_module.stress_test(
+                workload,
+                bot.__class__.__name__,
+                iterations=max(1, num_requests),
+                concurrency=2,
+            )
+            self._results.append(metrics)
+            return {
+                "bot": bot.__class__.__name__,
+                "avg_ms": metrics["latency_avg_ms"],
+                "p95_ms": metrics["latency_p95_ms"],
+                "status": "completed",
+            }
+
+        def test_memory_usage(self, bot):
+            workload = lambda _i: bot._run_task({"type": "generic"})  # noqa: E731
+            metrics = ai_stress_test_module.memory_profile(workload, bot.__class__.__name__)
+            return {
+                "bot": bot.__class__.__name__,
+                "memory_delta_mb": round(metrics["peak_memory_kb"] / 1024, 3),
+                "status": "completed",
+            }
+
+        def generate_report(self):
+            return {"runs": len(self._results), "results": self._results}
 
 
 def _load_bot(bot_dir, module_file, class_name):

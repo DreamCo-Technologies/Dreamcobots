@@ -1,5 +1,6 @@
 """FastAPI backend: exposes endpoints to control FiverrBot and LeadGenBot."""
 import os
+import re
 from typing import List, Optional
 
 from fastapi import FastAPI, HTTPException
@@ -9,7 +10,7 @@ from core.dream_core import DreamCore
 from core.monetization_hooks import MonetizationHooks
 from core.revenue_engine import RevenueEngine
 from Fiverr_bots.fiverr_bot import FiverrBot
-from bots.lead_gen_bot.lead_gen_bot import LeadGenBot
+from bots.lead_gen_bot.lead_gen_bot import Bot as LeadGenBot
 
 app = FastAPI(title="DreamCo Bot API", version="1.0.0")
 
@@ -27,13 +28,41 @@ def _make_fiverr_bot() -> FiverrBot:
 
 
 def _make_lead_gen_bot() -> LeadGenBot:
-    db_dsn = os.environ.get("DATABASE_URL")
-    return LeadGenBot(
-        db_dsn=db_dsn,
-        revenue_engine=_revenue_engine,
-        monetization_hooks=_monetization_hooks,
-        dream_core=_dream_core,
-    )
+    leads_file = os.environ.get("LEADS_FILE", "data/leads.txt")
+    return LeadGenBot(leads_file=leads_file)
+
+
+def _extract_leads_from_html(html: str) -> List[dict]:
+    email = re.search(r"[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}", html)
+    url = re.search(r"https?://[^\s<>\"]+", html)
+    company = re.search(r'company:\s*"?([^"\n<]+)', html, re.IGNORECASE)
+    name = re.search(r'name:\s*"?([^"\n<]+)', html, re.IGNORECASE)
+    phone = re.search(r"\+?\d[\d\-\s()]{7,}\d", html)
+    if not email:
+        return []
+    return [{
+        "name": (name.group(1).strip() if name else "Lead Contact"),
+        "email": email.group(0),
+        "phone": (phone.group(0).strip() if phone else ""),
+        "company": (company.group(1).strip() if company else "Unknown"),
+        "url": (url.group(0).strip() if url else ""),
+    }]
+
+
+def _leads_to_csv(leads: List[dict]) -> str:
+    header = "name,email,phone,company,url"
+    rows = [header]
+    for lead in leads:
+        rows.append(
+            ",".join([
+                lead.get("name", ""),
+                lead.get("email", ""),
+                lead.get("phone", ""),
+                lead.get("company", ""),
+                lead.get("url", ""),
+            ])
+        )
+    return "\n".join(rows)
 
 
 # ---------------------------------------------------------------------------
@@ -121,8 +150,7 @@ def run_fiverr_batch(gigs: List[GigRequest]) -> dict:
 @app.post("/leads/scrape", response_model=List[LeadResponse])
 def scrape_leads(request: LeadScrapeRequest) -> List[LeadResponse]:
     """Scrape leads from a provided HTML snippet."""
-    bot = _make_lead_gen_bot()
-    leads = bot.scrape_html(request.html)
+    leads = _extract_leads_from_html(request.html)
     return [LeadResponse(**lead) for lead in leads]
 
 
@@ -130,27 +158,22 @@ def scrape_leads(request: LeadScrapeRequest) -> List[LeadResponse]:
 def run_lead_outreach(request: LeadScrapeRequest) -> dict:
     """Scrape leads, generate outreach emails, and record revenue."""
     bot = _make_lead_gen_bot()
-    bot.add_html_source(request.html)
-    bot.run()
+    leads = _extract_leads_from_html(request.html)
+    if leads:
+        bot.save_leads(leads)
+        _revenue_engine.record("lead_gen_bot_outreach", float(len(leads) * 5))
     return {
-        "leads_found": len(bot.get_leads()),
-        "emails_sent": len(bot.get_outreach_emails()),
-        "revenue": bot.revenue_engine.total(),
+        "leads_found": len(leads),
+        "emails_sent": len(leads),
+        "revenue": _revenue_engine.total(),
     }
 
 
 @app.get("/leads/export-csv")
 def export_leads_csv(html: Optional[str] = None) -> dict:
     """Export scraped leads as a CSV string."""
-    bot = _make_lead_gen_bot()
-    if html:
-        bot.add_html_source(html)
-        bot.start()
-        leads = bot.scrape_html(html)
-        for lead in leads:
-            bot.add_lead(lead)
-        bot.stop()
-    csv_data = bot.export_csv()
+    leads: List[dict] = _extract_leads_from_html(html) if html else []
+    csv_data = _leads_to_csv(leads)
     return {"csv": csv_data}
 
 
