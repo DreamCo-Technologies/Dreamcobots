@@ -13,6 +13,7 @@ from __future__ import annotations
 
 import sys
 import os
+import tempfile
 
 REPO_ROOT = os.path.join(os.path.dirname(__file__), "..")
 sys.path.insert(0, REPO_ROOT)
@@ -143,6 +144,16 @@ class TestLoadProject:
         bot = ProfessionalVideoEditingBot(tier=Tier.FREE)
         result = bot.load_project()
         assert "fps" in result
+
+    def test_persists_project_in_execution_state_store(self):
+        state_file = os.path.join(tempfile.gettempdir(), "dreamco_video_state_test.json")
+        if os.path.exists(state_file):
+            os.remove(state_file)
+        bot = ProfessionalVideoEditingBot(tier=Tier.FREE, execution_state_path=state_file)
+        created = bot.load_project()
+        bot_reloaded = ProfessionalVideoEditingBot(tier=Tier.FREE, execution_state_path=state_file)
+        loaded = bot_reloaded.load_project(created["project_id"])
+        assert loaded["project_id"] == created["project_id"]
 
 
 # ===========================================================================
@@ -282,6 +293,20 @@ class TestExportProject:
         assert result["file_url"].startswith("https://")
         assert result["preview_url"].startswith("https://")
         assert result["timeline_manifest_url"].startswith("https://")
+
+    def test_export_registers_job_and_assets_in_persistent_state(self):
+        state_file = os.path.join(tempfile.gettempdir(), "dreamco_video_export_state_test.json")
+        if os.path.exists(state_file):
+            os.remove(state_file)
+        bot = ProfessionalVideoEditingBot(tier=Tier.PRO, execution_state_path=state_file)
+        proj = bot.load_project()
+        result = bot.export_project(proj["project_id"], export_format="MP4")
+        stored_job = bot.render_job_repository.get(result["job"]["job_id"])
+        stored_asset = bot.asset_registry.get(result["asset"]["asset_id"])
+        assert stored_job is not None
+        assert stored_job["state"] == "completed"
+        assert stored_asset is not None
+        assert stored_asset["originating_job"] == result["job"]["job_id"]
 
 
 # ===========================================================================

@@ -34,6 +34,7 @@ import uuid
 import random
 import json
 from datetime import datetime
+from typing import Any
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "ai-models-integration"))
 from tiers import Tier, get_tier_config, get_upgrade_path  # noqa: F401
@@ -55,7 +56,16 @@ from bots.professional_video_editing_bot.tiers import (
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", ".."))
 from framework import GlobalAISourcesFlow  # noqa: F401
-from bots.media_runtime import InferenceGateway, LocalAssetStore, MediaJobRuntime
+from bots.media_runtime import (
+    AssetRegistry,
+    ExecutionStateStore,
+    InferenceGateway,
+    LocalAssetStore,
+    MediaJobRuntime,
+    ProjectRepository,
+    RenderJobRepository,
+    default_state_path,
+)
 
 _COLOR_PRESETS = {
     "cinematic": {"contrast": 1.15, "saturation": 0.85, "shadows": -10, "highlights": -5, "temperature": -200},
@@ -80,17 +90,35 @@ class ProfessionalVideoEditingBot:
         Subscription tier controlling monthly limits, clip limits, and feature access.
     """
 
-    def __init__(self, tier: Tier = Tier.FREE) -> None:
+    def __init__(self, tier: Tier = Tier.FREE, execution_state_path: str | None = None) -> None:
         self.tier = tier
         self.config = get_tier_config(tier)
         self.tier_info = get_bot_tier_info(tier)
         self.flow = GlobalAISourcesFlow(bot_name="ProfessionalVideoEditingBot")
         self._monthly_count: int = 0
-        self._projects: dict[str, dict] = {}
-        self._active_project_id: str | None = None
+        state_path = execution_state_path or default_state_path(f"professional_video_editing_bot_{uuid.uuid4().hex[:8]}")
+        self.execution_state_store = ExecutionStateStore(file_path=state_path)
+        self.project_repository = ProjectRepository(self.execution_state_store)
+        self.render_job_repository = RenderJobRepository(self.execution_state_store)
+        self.asset_registry = AssetRegistry(self.execution_state_store)
         self.asset_store = LocalAssetStore()
         self.inference_gateway = InferenceGateway()
         self.runtime = MediaJobRuntime(asset_store=self.asset_store, gateway=self.inference_gateway)
+
+    @staticmethod
+    def _now() -> str:
+        return datetime.utcnow().isoformat() + "Z"
+
+    def _build_project(self, project_id: str, name: str) -> dict[str, Any]:
+        return {
+            "project_id": project_id,
+            "name": name,
+            "clips": [],
+            "timeline_duration_sec": 0.0,
+            "resolution": "1920x1080",
+            "fps": 30,
+            "created_at": self._now(),
+        }
 
     def _check_monthly_limit(self) -> None:
         """Raise ProfessionalVideoEditingBotError if the monthly project limit is exceeded."""
@@ -135,26 +163,17 @@ class ProfessionalVideoEditingBot:
             raw_data={"task": "load_project", "project_id": project_id},
             learning_method="unsupervised",
         )
-        if project_id and project_id in self._projects:
-            project = self._projects[project_id]
+        existing = self.project_repository.get(project_id) if project_id else None
+        if existing:
+            project = existing
             status = "loaded"
         else:
             project_id = project_id or f"vproj_{uuid.uuid4().hex[:10]}"
-            total_dur = 0.0
-            project = {
-                "project_id": project_id,
-                "name": f"Video Project {len(self._projects) + 1}",
-                "clips": [],
-                "timeline_duration_sec": total_dur,
-                "resolution": "1920x1080",
-                "fps": 30,
-                "created_at": datetime.utcnow().isoformat() + "Z",
-            }
-            self._projects[project_id] = project
-            self._active_project_id = project_id
+            project = self._build_project(project_id, name=f"Video Project {self.project_repository.count() + 1}")
+            self.project_repository.save(project)
             self._record()
             status = "created"
-        self._active_project_id = project_id
+        self.project_repository.set_active_project(project_id)
         return {
             "project_id": project_id,
             "name": project["name"],
@@ -163,7 +182,7 @@ class ProfessionalVideoEditingBot:
             "timeline_duration_sec": project.get("timeline_duration_sec", 0.0),
             "resolution": project.get("resolution", "1920x1080"),
             "fps": project.get("fps", 30),
-            "created_at": project["created_at"],
+            "created_at": project.get("created_at", self._now()),
             "status": status,
             "framework_pipeline": result.get("bot_name"),
         }
@@ -179,16 +198,12 @@ class ProfessionalVideoEditingBot:
             Timeline position in seconds where the clip is inserted.
         """
         self._check_feature(FEATURE_BASIC_EDITING)
-        project_id = self._active_project_id or f"vproj_{uuid.uuid4().hex[:10]}"
-        if project_id not in self._projects:
-            self._projects[project_id] = {
-                "project_id": project_id, "name": "Auto Project", "clips": [],
-                "timeline_duration_sec": 0.0, "resolution": "1920x1080",
-                "fps": 30, "created_at": datetime.utcnow().isoformat() + "Z",
-            }
-            self._active_project_id = project_id
-
-        project = self._projects[project_id]
+        project_id = self.project_repository.get_active_project() or f"vproj_{uuid.uuid4().hex[:10]}"
+        project = self.project_repository.get(project_id)
+        if not project:
+            project = self._build_project(project_id, name="Auto Project")
+            self.project_repository.save(project)
+            self.project_repository.set_active_project(project_id)
         clip_limit = CLIP_LIMITS[self.tier.value]
         current_clips = len(project["clips"])
         if clip_limit is not None and current_clips >= clip_limit:
@@ -206,6 +221,7 @@ class ProfessionalVideoEditingBot:
         clip = {"clip_id": clip_id, "clip_source": clip_source, "position_sec": position_sec, "duration_sec": duration}
         project["clips"].append(clip)
         project["timeline_duration_sec"] = round(position_sec + duration, 2)
+        self.project_repository.save(project)
         return {
             "clip_id": clip_id,
             "clip_source": clip_source,
@@ -215,7 +231,7 @@ class ProfessionalVideoEditingBot:
             "fps": 30,
             "project_id": project_id,
             "clip_number": len(project["clips"]),
-            "timestamp": datetime.utcnow().isoformat() + "Z",
+            "timestamp": self._now(),
             "framework_pipeline": result.get("bot_name"),
         }
 
@@ -244,7 +260,7 @@ class ProfessionalVideoEditingBot:
             "ai_optimized": True,
             "easing": "ease-in-out",
             "status": "applied",
-            "timestamp": datetime.utcnow().isoformat() + "Z",
+            "timestamp": self._now(),
             "framework_pipeline": result.get("bot_name"),
         }
 
@@ -270,7 +286,7 @@ class ProfessionalVideoEditingBot:
             "lut_applied": f"{preset}.cube",
             "color_adjustments": adjustments,
             "status": "applied",
-            "timestamp": datetime.utcnow().isoformat() + "Z",
+            "timestamp": self._now(),
             "framework_pipeline": result.get("bot_name"),
         }
 
@@ -298,7 +314,7 @@ class ProfessionalVideoEditingBot:
             "track_data_url": f"https://cdn.dreamcobots.ai/tracking/{uid}.json",
             "frames_analyzed": random.randint(150, 900),
             "status": "tracked",
-            "timestamp": datetime.utcnow().isoformat() + "Z",
+            "timestamp": self._now(),
             "framework_pipeline": result.get("bot_name"),
         }
 
@@ -330,7 +346,7 @@ class ProfessionalVideoEditingBot:
                 "Hardware H.265/HEVC encoding",
             ],
             "status": "optimized",
-            "timestamp": datetime.utcnow().isoformat() + "Z",
+            "timestamp": self._now(),
             "framework_pipeline": result.get("bot_name"),
         }
 
@@ -362,7 +378,7 @@ class ProfessionalVideoEditingBot:
             learning_method="supervised",
         )
         resolution = "3840x2160" if is_4k else "1920x1080"
-        project = self._projects.get(project_id, {})
+        project = self.project_repository.get(project_id) or {}
         duration = project.get("timeline_duration_sec", 90.0)
         bitrate_mbps = 50 if is_4k else 16
         size_gb = round(duration * bitrate_mbps / 8 / 1024, 2)
@@ -386,6 +402,7 @@ class ProfessionalVideoEditingBot:
             extra_metadata={"project_id": project_id, "resolution": resolution, "duration_sec": duration},
             retention_days=30,
         )
+        self.render_job_repository.save(completed_job.to_dict())
 
         preview_asset = self.asset_store.persist(
             owner="professional_video_editing_bot",
@@ -400,6 +417,8 @@ class ProfessionalVideoEditingBot:
             metadata={"project_id": project_id, "kind": "preview"},
             retention_days=14,
         )
+        self.asset_registry.register(primary_asset.to_dict())
+        self.asset_registry.register(preview_asset.to_dict())
         timeline_manifest = {
             "project_id": project_id,
             "nle_target": nle_compatible,
@@ -419,6 +438,7 @@ class ProfessionalVideoEditingBot:
             metadata={"project_id": project_id, "kind": "timeline_manifest"},
             retention_days=30,
         )
+        self.asset_registry.register(manifest_asset.to_dict())
         return {
             "project_id": project_id,
             "export_format": export_format.upper(),
@@ -435,7 +455,7 @@ class ProfessionalVideoEditingBot:
             "export_validated": True,
             "color_space": "Rec. 709" if not is_4k else "Rec. 2020",
             "status": "exported",
-            "timestamp": datetime.utcnow().isoformat() + "Z",
+            "timestamp": self._now(),
             "framework_pipeline": result.get("bot_name"),
         }
 
@@ -453,8 +473,8 @@ class ProfessionalVideoEditingBot:
             "monthly_count": self._monthly_count,
             "remaining": (limit - self._monthly_count) if limit is not None else "unlimited",
             "clip_limit": clip_limit if clip_limit is not None else "unlimited",
-            "projects_open": len(self._projects),
-            "active_project_id": self._active_project_id,
+            "projects_open": self.project_repository.count(),
+            "active_project_id": self.project_repository.get_active_project(),
             "features": BOT_FEATURES[self.tier.value],
             "commercial_rights": self.tier_info["commercial_rights"],
             "upgrade_available": upgrade is not None,

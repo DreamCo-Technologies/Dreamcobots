@@ -3,6 +3,13 @@
 from bots.media_runtime.assets import AssetRecord, LocalAssetStore
 from bots.media_runtime.inference_gateway import InferenceGateway, ProviderFailure
 from bots.media_runtime.runtime import JobState, MediaJobRuntime, RenderJob
+from bots.media_runtime.state import (
+    AssetRegistry,
+    ExecutionStateStore,
+    ProjectRepository,
+    RenderJobRepository,
+    default_state_path,
+)
 
 __all__ = [
     "AssetRecord",
@@ -12,4 +19,9 @@ __all__ = [
     "JobState",
     "MediaJobRuntime",
     "RenderJob",
+    "AssetRegistry",
+    "ExecutionStateStore",
+    "ProjectRepository",
+    "RenderJobRepository",
+    "default_state_path",
 ]
