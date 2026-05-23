@@ -49,7 +49,7 @@ from bots.buddy_media_transformation_bot.tiers import (
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", ".."))
 from framework import GlobalAISourcesFlow  # noqa: F401
-from bots.media_runtime import InferenceGateway, LocalAssetStore, MediaJobRuntime
+from bots.media_runtime import InferenceGateway, LocalAssetStore, MediaEngine, MediaJobRuntime
 
 _MUSICAL_KEYS = ["C major", "G major", "D major", "A minor", "E minor", "F major", "B♭ major"]
 _INSTRUMENTS = [
@@ -83,6 +83,11 @@ class BuddyMediaTransformationBot:
         self.asset_store = LocalAssetStore()
         self.inference_gateway = InferenceGateway()
         self.runtime = MediaJobRuntime(asset_store=self.asset_store, gateway=self.inference_gateway)
+        self.media_engine = MediaEngine(
+            owner="buddy_media_transformation_bot",
+            runtime=self.runtime,
+            asset_store=self.asset_store,
+        )
 
     def _check_daily_limit(self) -> None:
         """Raise BuddyMediaTransformationBotError if the daily limit is exceeded."""
@@ -126,23 +131,19 @@ class BuddyMediaTransformationBot:
         content_type: str,
         lineage: list[str] | None = None,
     ) -> tuple[dict, dict]:
-        job = self.runtime.create_job(
-            owner="buddy_media_transformation_bot",
-            media_type=media_type,
+        return self.media_engine.execute_render(
             operation=operation,
+            media_type=media_type,
             payload=payload,
+            output_format=media_format,
+            output_content_type=content_type,
             provider_chain=["openai", "elevenlabs", "ffmpeg-local"],
             estimated_duration_sec=max(10, len(str(payload)) // 4),
-            max_retries=2,
-        )
-        completed_job, asset = self.runtime.process_next(
-            media_format=media_format,
-            content_type=content_type,
             lineage=lineage,
             extra_metadata={"tier": self.tier.value},
             retention_days=30,
+            max_retries=2,
         )
-        return completed_job.to_dict(), asset.to_dict()
 
     def text_to_music(self, text: str, style: str = "auto") -> dict:
         """Convert text or song lyrics into an original music track.

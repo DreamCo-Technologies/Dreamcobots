@@ -1,6 +1,7 @@
 """Shared media execution runtime primitives for production media bots."""
 
 from bots.media_runtime.assets import AssetRecord, LocalAssetStore
+from bots.media_runtime.engine import MediaEngine
 from bots.media_runtime.inference_gateway import InferenceGateway, ProviderFailure
 from bots.media_runtime.runtime import JobState, MediaJobRuntime, RenderJob
 from bots.media_runtime.state import (
@@ -14,6 +15,7 @@ from bots.media_runtime.state import (
 __all__ = [
     "AssetRecord",
     "LocalAssetStore",
+    "MediaEngine",
     "InferenceGateway",
     "ProviderFailure",
     "JobState",

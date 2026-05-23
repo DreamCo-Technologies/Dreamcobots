@@ -61,6 +61,7 @@ from bots.media_runtime import (
     ExecutionStateStore,
     InferenceGateway,
     LocalAssetStore,
+    MediaEngine,
     MediaJobRuntime,
     ProjectRepository,
     RenderJobRepository,
@@ -104,6 +105,13 @@ class ProfessionalVideoEditingBot:
         self.asset_store = LocalAssetStore()
         self.inference_gateway = InferenceGateway()
         self.runtime = MediaJobRuntime(asset_store=self.asset_store, gateway=self.inference_gateway)
+        self.media_engine = MediaEngine(
+            owner="professional_video_editing_bot",
+            runtime=self.runtime,
+            asset_store=self.asset_store,
+            job_repository=self.render_job_repository,
+            asset_registry=self.asset_registry,
+        )
 
     @staticmethod
     def _now() -> str:
@@ -382,10 +390,9 @@ class ProfessionalVideoEditingBot:
         duration = project.get("timeline_duration_sec", 90.0)
         bitrate_mbps = 50 if is_4k else 16
         size_gb = round(duration * bitrate_mbps / 8 / 1024, 2)
-        self.runtime.create_job(
-            owner="professional_video_editing_bot",
-            media_type="video",
+        completed_job, primary_asset = self.media_engine.execute_render(
             operation="export_project",
+            media_type="video",
             payload={
                 "project_id": project_id,
                 "format": export_format.upper(),
@@ -394,64 +401,56 @@ class ProfessionalVideoEditingBot:
             },
             provider_chain=["ffmpeg-local", "openai"],
             estimated_duration_sec=max(20, int(duration / 2)),
-            max_retries=2,
-        )
-        completed_job, primary_asset = self.runtime.process_next(
-            media_format=export_format.lower(),
-            content_type=f"video/{export_format.lower()}",
+            output_format=export_format.lower(),
+            output_content_type=f"video/{export_format.lower()}",
             extra_metadata={"project_id": project_id, "resolution": resolution, "duration_sec": duration},
             retention_days=30,
+            max_retries=2,
         )
-        self.render_job_repository.save(completed_job.to_dict())
 
-        preview_asset = self.asset_store.persist(
-            owner="professional_video_editing_bot",
-            originating_job=completed_job.job_id,
+        preview_asset = self.media_engine.persist_artifact(
+            originating_job=completed_job["job_id"],
             provider="ffmpeg-local",
             media_format="mp4",
             content_type="video/mp4",
             content_bytes=f"PREVIEW|project={project_id}|resolution=640x360|duration={round(min(duration, 30), 1)}".encode(
                 "utf-8"
             ),
-            lineage=[primary_asset.asset_id],
+            lineage=[primary_asset["asset_id"]],
             metadata={"project_id": project_id, "kind": "preview"},
             retention_days=14,
         )
-        self.asset_registry.register(primary_asset.to_dict())
-        self.asset_registry.register(preview_asset.to_dict())
         timeline_manifest = {
             "project_id": project_id,
             "nle_target": nle_compatible,
             "resolution": resolution,
             "duration_sec": round(duration, 1),
-            "assets": [primary_asset.asset_id, preview_asset.asset_id],
+            "assets": [primary_asset["asset_id"], preview_asset["asset_id"]],
             "validation": {"timeline_structure_valid": True, "asset_relinking_valid": True},
         }
-        manifest_asset = self.asset_store.persist(
-            owner="professional_video_editing_bot",
-            originating_job=completed_job.job_id,
+        manifest_asset = self.media_engine.persist_artifact(
+            originating_job=completed_job["job_id"],
             provider="ffmpeg-local",
             media_format="json",
             content_type="application/json",
             content_bytes=json.dumps(timeline_manifest, sort_keys=True).encode("utf-8"),
-            lineage=[primary_asset.asset_id],
+            lineage=[primary_asset["asset_id"]],
             metadata={"project_id": project_id, "kind": "timeline_manifest"},
             retention_days=30,
         )
-        self.asset_registry.register(manifest_asset.to_dict())
         return {
             "project_id": project_id,
             "export_format": export_format.upper(),
             "resolution": resolution,
             "fps": 30,
             "duration_sec": round(duration, 1),
-            "file_url": primary_asset.delivery_url,
+            "file_url": primary_asset["delivery_url"],
             "file_size_gb": size_gb,
             "nle_compatible": nle_compatible,
-            "timeline_manifest_url": manifest_asset.delivery_url,
-            "preview_url": preview_asset.delivery_url,
-            "job": completed_job.to_dict(),
-            "asset": primary_asset.to_dict(),
+            "timeline_manifest_url": manifest_asset["delivery_url"],
+            "preview_url": preview_asset["delivery_url"],
+            "job": completed_job,
+            "asset": primary_asset,
             "export_validated": True,
             "color_space": "Rec. 709" if not is_4k else "Rec. 2020",
             "status": "exported",

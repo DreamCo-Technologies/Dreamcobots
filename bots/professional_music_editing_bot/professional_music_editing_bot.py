@@ -55,7 +55,7 @@ from bots.professional_music_editing_bot.tiers import (
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", ".."))
 from framework import GlobalAISourcesFlow  # noqa: F401
-from bots.media_runtime import InferenceGateway, LocalAssetStore, MediaJobRuntime
+from bots.media_runtime import InferenceGateway, LocalAssetStore, MediaEngine, MediaJobRuntime
 
 _EFFECTS_DEFAULTS = {
     "eq": {"low_hz": 80, "mid_hz": 1000, "high_hz": 8000, "low_gain_db": 2, "high_gain_db": -1},
@@ -91,6 +91,11 @@ class ProfessionalMusicEditingBot:
         self.asset_store = LocalAssetStore()
         self.inference_gateway = InferenceGateway()
         self.runtime = MediaJobRuntime(asset_store=self.asset_store, gateway=self.inference_gateway)
+        self.media_engine = MediaEngine(
+            owner="professional_music_editing_bot",
+            runtime=self.runtime,
+            asset_store=self.asset_store,
+        )
 
     def _check_monthly_limit(self) -> None:
         """Raise ProfessionalMusicEditingBotError if the monthly project limit is exceeded."""
@@ -382,20 +387,17 @@ class ProfessionalMusicEditingBot:
         )
         project = self._projects.get(project_id, {})
         track_count = max(1, len(project.get("tracks", [])))
-        self.runtime.create_job(
-            owner="professional_music_editing_bot",
-            media_type="audio",
+        completed_job, primary_asset = self.media_engine.execute_render(
             operation="export_project",
+            media_type="audio",
             payload={"project_id": project_id, "format": format_upper, "track_count": track_count},
+            output_format=format_upper.lower(),
+            output_content_type=f"audio/{format_upper.lower()}",
             provider_chain=["ffmpeg-local", "openai"],
             estimated_duration_sec=max(20, track_count * 3),
-            max_retries=2,
-        )
-        completed_job, primary_asset = self.runtime.process_next(
-            media_format=format_upper.lower(),
-            content_type=f"audio/{format_upper.lower()}",
             extra_metadata={"project_id": project_id, "track_count": track_count},
             retention_days=30,
+            max_retries=2,
         )
 
         interchange_manifest = {
@@ -405,55 +407,52 @@ class ProfessionalMusicEditingBot:
             "daw_target": daw_compatible,
             "validation": {"schema_valid": True, "deterministic_export": True, "import_safe": True},
         }
-        manifest_asset = self.asset_store.persist(
-            owner="professional_music_editing_bot",
-            originating_job=completed_job.job_id,
+        manifest_asset = self.media_engine.persist_artifact(
+            originating_job=completed_job["job_id"],
             provider="ffmpeg-local",
             media_format="json",
             content_type="application/json",
             content_bytes=json.dumps(interchange_manifest, sort_keys=True).encode("utf-8"),
-            lineage=[primary_asset.asset_id],
+            lineage=[primary_asset["asset_id"]],
             metadata={"project_id": project_id, "manifest_type": "music_interchange"},
             retention_days=30,
         )
 
         derivative_assets: list[str] = []
         if daw_compatible:
-            midi_asset = self.asset_store.persist(
-                owner="professional_music_editing_bot",
-                originating_job=completed_job.job_id,
+            midi_asset = self.media_engine.persist_artifact(
+                originating_job=completed_job["job_id"],
                 provider="ffmpeg-local",
                 media_format="mid",
                 content_type="audio/midi",
                 content_bytes=f"MIDI|project={project_id}|tracks={track_count}|daw={daw_compatible}".encode("utf-8"),
-                lineage=[primary_asset.asset_id],
+                lineage=[primary_asset["asset_id"]],
                 metadata={"project_id": project_id, "kind": "midi"},
                 retention_days=30,
             )
-            stems_asset = self.asset_store.persist(
-                owner="professional_music_editing_bot",
-                originating_job=completed_job.job_id,
+            stems_asset = self.media_engine.persist_artifact(
+                originating_job=completed_job["job_id"],
                 provider="ffmpeg-local",
                 media_format="zip",
                 content_type="application/zip",
                 content_bytes=f"STEMS|project={project_id}|tracks={track_count}|daw={daw_compatible}".encode("utf-8"),
-                lineage=[primary_asset.asset_id],
+                lineage=[primary_asset["asset_id"]],
                 metadata={"project_id": project_id, "kind": "stems_bundle"},
                 retention_days=30,
             )
-            derivative_assets.extend([midi_asset.delivery_url, stems_asset.delivery_url])
+            derivative_assets.extend([midi_asset["delivery_url"], stems_asset["delivery_url"]])
 
-        size_mb = round(primary_asset.bytes_size / (1024 * 1024), 3)
+        size_mb = round(primary_asset["bytes_size"] / (1024 * 1024), 3)
         return {
             "project_id": project_id,
             "export_format": format_upper,
-            "file_url": primary_asset.delivery_url,
+            "file_url": primary_asset["delivery_url"],
             "file_size_mb": size_mb,
             "daw_compatible": daw_compatible,
             "stems_included": daw_compatible is not None,
-            "job": completed_job.to_dict(),
-            "asset": primary_asset.to_dict(),
-            "interchange_manifest_url": manifest_asset.delivery_url,
+            "job": completed_job,
+            "asset": primary_asset,
+            "interchange_manifest_url": manifest_asset["delivery_url"],
             "interchange_derivatives": derivative_assets,
             "export_validated": True,
             "status": "exported",
