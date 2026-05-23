@@ -265,18 +265,23 @@ class TestExportProject:
         result = bot.export_project(proj["project_id"])
         assert isinstance(result, dict)
         assert "file_url" in result
+        assert result["job"]["state"] == "completed"
+        assert result["asset"]["status"] == "active"
 
     def test_enterprise_export_with_nle(self):
         bot = ProfessionalVideoEditingBot(tier=Tier.ENTERPRISE)
         proj = bot.load_project()
         result = bot.export_project(proj["project_id"], nle_compatible="Adobe Premiere")
         assert result["nle_compatible"] == "Adobe Premiere"
+        assert result["export_validated"] is True
 
     def test_has_file_url(self):
         bot = ProfessionalVideoEditingBot(tier=Tier.PRO)
         proj = bot.load_project()
         result = bot.export_project(proj["project_id"], export_format="MP4")
         assert result["file_url"].startswith("https://")
+        assert result["preview_url"].startswith("https://")
+        assert result["timeline_manifest_url"].startswith("https://")
 
 
 # ===========================================================================

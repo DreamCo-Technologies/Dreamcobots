@@ -1,69 +1,138 @@
 {
-  "program": "DreamCo Max Parallel Delivery",
+  "program": "DreamCo Production Execution Transition",
   "target_deadline": "2026-06-22",
-  "must_ship": [
-    "Core architecture and stability blockers cleared",
-    "AI intelligence pipeline in continuous execution mode",
-    "Monetization lane shipping validated revenue-critical changes",
-    "Security and reliability hardening complete",
-    "Command center board tracking all lane ship decisions"
-  ],
+  "source_of_truth": {
+    "canonical_registry": "dreamco-control-tower/config/command_center.json",
+    "parallel_status_systems_allowed": false
+  },
+  "scope_freeze": {
+    "effective": true,
+    "freeze_speculative_features": true,
+    "freeze_experimental_bot_proliferation": true,
+    "freeze_cosmetic_expansion": true,
+    "allowed_priority_only": [
+      "runtime_execution",
+      "rendering_infrastructure",
+      "asset_persistence",
+      "orchestration_stability",
+      "reliability",
+      "security",
+      "monetization_readiness"
+    ]
+  },
+  "completion_definition": {
+    "fully_coded_requires": [
+      "no_simulated_production_media_outputs",
+      "real_artifact_persistence",
+      "queue_backed_real_execution",
+      "verified_interchange_exports",
+      "all_required_validation_gates_green",
+      "release_ready_stable_baseline"
+    ]
+  },
   "parallel_lanes": [
     {
       "lane_id": "core_architecture_stability",
       "name": "Core architecture/stability",
-      "owner": "Builder Core Bot Squad",
       "status": "in_progress",
-      "blockers": [],
-      "validation_state": "green",
-      "ship_decision": "pending"
+      "validation_state": "in_progress",
+      "ship_decision": "pending",
+      "focus": [
+        "shared_engine_abstractions",
+        "async_orchestration",
+        "queue_lifecycle",
+        "worker_management",
+        "retry_systems",
+        "state_consistency"
+      ]
     },
     {
       "lane_id": "ai_intelligence",
       "name": "AI/intelligence",
-      "owner": "Copilot Intelligence Bot Squad",
       "status": "in_progress",
-      "blockers": [],
-      "validation_state": "green",
-      "ship_decision": "pending"
+      "validation_state": "in_progress",
+      "ship_decision": "pending",
+      "focus": [
+        "unified_model_gateway",
+        "provider_failover",
+        "inference_telemetry",
+        "multimodal_orchestration"
+      ]
     },
     {
       "lane_id": "monetization",
       "name": "Monetization",
-      "owner": "Builder Monetization Bot Squad",
       "status": "in_progress",
-      "blockers": [],
-      "validation_state": "green",
-      "ship_decision": "pending"
+      "validation_state": "in_progress",
+      "ship_decision": "pending",
+      "focus": [
+        "metered_media_generation",
+        "usage_accounting",
+        "provider_cost_attribution",
+        "retention_billing_logic"
+      ]
     },
     {
       "lane_id": "product_ux",
       "name": "Product/UX",
-      "owner": "Copilot Product Bot Squad",
       "status": "in_progress",
-      "blockers": [],
-      "validation_state": "green",
-      "ship_decision": "pending"
+      "validation_state": "in_progress",
+      "ship_decision": "pending",
+      "focus": [
+        "render_progress_visibility",
+        "artifact_state_visualization",
+        "queue_status_surfaces",
+        "failure_transparency"
+      ]
     },
     {
       "lane_id": "security_reliability",
       "name": "Security/reliability",
-      "owner": "Builder Security Bot Squad",
       "status": "in_progress",
-      "blockers": [],
-      "validation_state": "green",
-      "ship_decision": "pending"
+      "validation_state": "in_progress",
+      "ship_decision": "pending",
+      "focus": [
+        "signed_asset_delivery",
+        "artifact_integrity_checks",
+        "provider_timeout_hardening",
+        "mandatory_pre_merge_validation"
+      ]
     },
     {
       "lane_id": "growth_community",
       "name": "Growth/community",
-      "owner": "Copilot Growth Bot Squad",
       "status": "in_progress",
-      "blockers": [],
-      "validation_state": "green",
-      "ship_decision": "pending"
+      "validation_state": "in_progress",
+      "ship_decision": "pending",
+      "focus": [
+        "documentation_accuracy",
+        "verified_integrations_only",
+        "engine_roadmap_publication",
+        "contributor_execution_guides"
+      ]
     }
   ],
+  "priority_order": {
+    "p0": [
+      "runtime",
+      "asset_pipeline",
+      "real_rendering",
+      "queue_infrastructure",
+      "validation_gates"
+    ],
+    "p1": [
+      "unified_engines",
+      "model_gateway",
+      "daw_nle_interchange",
+      "telemetry"
+    ],
+    "p2": [
+      "consolidation",
+      "ux_refinement",
+      "ecosystem_hardening",
+      "growth_tooling"
+    ]
+  },
   "cadence": {
     "daily_cycle": [
       "plan",
@@ -72,24 +141,21 @@
       "merge"
     ],
     "every_change_policy": "Run validations immediately and fix failures before merge",
-    "weekly_policy": "Milestone checkpoint and scope rebalance"
+    "final_week_policy": [
+      "hardening",
+      "regression_elimination",
+      "rollout_readiness",
+      "reliability_stabilization"
+    ]
   },
-  "timeline": [
-    {
-      "phase": "Week 1",
-      "goal": "Final prioritization and architecture blockers cleared"
-    },
-    {
-      "phase": "Weeks 2-4",
-      "goal": "Parallel execution across all lanes"
-    },
-    {
-      "phase": "Week 5",
-      "goal": "Hardening, regressions, and release preparation"
-    },
-    {
-      "phase": "By June 22",
-      "goal": "Stabilization complete and rollout-ready baseline"
-    }
-  ]
+  "regression_tracking": {
+    "required": [
+      "flaky_tests",
+      "render_failures",
+      "queue_stalls",
+      "provider_instability",
+      "asset_corruption",
+      "latency_regressions"
+    ]
+  }
 }

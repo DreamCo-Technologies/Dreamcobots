@@ -28,7 +28,7 @@ from __future__ import annotations
 import sys
 import os
 import uuid
-import random
+import hashlib
 from datetime import datetime
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "ai-models-integration"))
@@ -49,6 +49,7 @@ from bots.buddy_media_transformation_bot.tiers import (
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", ".."))
 from framework import GlobalAISourcesFlow  # noqa: F401
+from bots.media_runtime import InferenceGateway, LocalAssetStore, MediaJobRuntime
 
 _MUSICAL_KEYS = ["C major", "G major", "D major", "A minor", "E minor", "F major", "B♭ major"]
 _INSTRUMENTS = [
@@ -79,6 +80,9 @@ class BuddyMediaTransformationBot:
         self.tier_info = get_bot_tier_info(tier)
         self.flow = GlobalAISourcesFlow(bot_name="BuddyMediaTransformationBot")
         self._daily_count: int = 0
+        self.asset_store = LocalAssetStore()
+        self.inference_gateway = InferenceGateway()
+        self.runtime = MediaJobRuntime(asset_store=self.asset_store, gateway=self.inference_gateway)
 
     def _check_daily_limit(self) -> None:
         """Raise BuddyMediaTransformationBotError if the daily limit is exceeded."""
@@ -107,6 +111,39 @@ class BuddyMediaTransformationBot:
     def _record(self) -> None:
         self._daily_count += 1
 
+    @staticmethod
+    def _deterministic_seed(*parts: str) -> int:
+        digest = hashlib.sha256("|".join(parts).encode("utf-8")).hexdigest()
+        return int(digest[:8], 16)
+
+    def _run_media_job(
+        self,
+        *,
+        operation: str,
+        media_type: str,
+        payload: dict,
+        media_format: str,
+        content_type: str,
+        lineage: list[str] | None = None,
+    ) -> tuple[dict, dict]:
+        job = self.runtime.create_job(
+            owner="buddy_media_transformation_bot",
+            media_type=media_type,
+            operation=operation,
+            payload=payload,
+            provider_chain=["openai", "elevenlabs", "ffmpeg-local"],
+            estimated_duration_sec=max(10, len(str(payload)) // 4),
+            max_retries=2,
+        )
+        completed_job, asset = self.runtime.process_next(
+            media_format=media_format,
+            content_type=content_type,
+            lineage=lineage,
+            extra_metadata={"tier": self.tier.value},
+            retention_days=30,
+        )
+        return completed_job.to_dict(), asset.to_dict()
+
     def text_to_music(self, text: str, style: str = "auto") -> dict:
         """Convert text or song lyrics into an original music track.
 
@@ -127,18 +164,30 @@ class BuddyMediaTransformationBot:
             raw_data={"task": "text_to_music", "text": text, "style": style, "advanced": is_advanced},
             learning_method="self_supervised",
         )
-        uid = uuid.uuid4().hex[:12]
+        style_value = style if style != "auto" else ["pop", "electronic", "cinematic", "ambient"][
+            self._deterministic_seed(text, self.tier.value) % 4
+        ]
+        seed = self._deterministic_seed(text, style_value, self.tier.value)
+        job, asset = self._run_media_job(
+            operation="text_to_music",
+            media_type="audio",
+            payload={"text": text, "style": style_value, "advanced": is_advanced},
+            media_format="mp3",
+            content_type="audio/mpeg",
+        )
         self._record()
         return {
             "text": text,
-            "style": style if style != "auto" else random.choice(["pop", "electronic", "cinematic", "ambient"]),
-            "audio_url": f"https://cdn.dreamcobots.ai/music/{uid}.mp3",
-            "duration_secs": random.randint(30, 180),
-            "bpm": random.randint(80, 160),
-            "key": random.choice(_MUSICAL_KEYS),
-            "instruments": random.choice(_INSTRUMENTS),
+            "style": style_value,
+            "audio_url": asset["delivery_url"],
+            "duration_secs": max(30, min(180, len(text.split()) * 5)),
+            "bpm": 80 + (seed % 81),
+            "key": _MUSICAL_KEYS[seed % len(_MUSICAL_KEYS)],
+            "instruments": _INSTRUMENTS[seed % len(_INSTRUMENTS)],
             "quality": "Advanced AI" if is_advanced else "Standard",
             "watermarked": is_watermarked,
+            "job": job,
+            "asset": asset,
             "timestamp": datetime.utcnow().isoformat() + "Z",
             "framework_pipeline": result.get("bot_name"),
         }
@@ -168,17 +217,37 @@ class BuddyMediaTransformationBot:
             },
             learning_method="supervised",
         )
-        uid = uuid.uuid4().hex[:12]
+        seed = self._deterministic_seed(script, str(voice_sample), str(image_sample), self.tier.value)
+        job, asset = self._run_media_job(
+            operation="create_video",
+            media_type="video",
+            payload={"script": script, "voice_sample": voice_sample, "image_sample": image_sample},
+            media_format="mp4",
+            content_type="video/mp4",
+        )
+        thumb_job, thumb_asset = self._run_media_job(
+            operation="create_video_thumbnail",
+            media_type="image",
+            payload={"script": script, "source_asset_id": asset["asset_id"]},
+            media_format="jpg",
+            content_type="image/jpeg",
+            lineage=[asset["asset_id"]],
+        )
         self._record()
         return {
             "script": script[:100] + "..." if len(script) > 100 else script,
-            "video_url": f"https://cdn.dreamcobots.ai/video/{uid}.mp4",
-            "thumbnail_url": f"https://cdn.dreamcobots.ai/thumbnails/{uid}.jpg",
-            "duration_secs": random.randint(30, 300),
+            "video_url": asset["delivery_url"],
+            "thumbnail_url": thumb_asset["delivery_url"],
+            "duration_secs": max(30, min(300, len(script.split()) * 3)),
             "resolution": "1920x1080",
             "fps": 30,
             "voice_used": voice_sample or "default_narrator_v2",
             "image_style_applied": image_sample is not None,
+            "job": job,
+            "asset": asset,
+            "thumbnail_job": thumb_job,
+            "thumbnail_asset": thumb_asset,
+            "render_checksum": hashlib.sha256(f"{script}|{seed}".encode("utf-8")).hexdigest(),
             "timestamp": datetime.utcnow().isoformat() + "Z",
             "framework_pipeline": result.get("bot_name"),
         }
@@ -201,17 +270,26 @@ class BuddyMediaTransformationBot:
             raw_data={"task": "create_personalized_song", "lyrics": lyrics, "voice_id": user_voice_id, "genre": genre},
             learning_method="supervised",
         )
-        uid = uuid.uuid4().hex[:12]
+        seed = self._deterministic_seed(lyrics, user_voice_id, genre, self.tier.value)
+        job, asset = self._run_media_job(
+            operation="create_personalized_song",
+            media_type="audio",
+            payload={"lyrics": lyrics, "voice_id": user_voice_id, "genre": genre},
+            media_format="wav",
+            content_type="audio/wav",
+        )
         self._record()
         return {
             "lyrics": lyrics[:100] + "..." if len(lyrics) > 100 else lyrics,
             "genre": genre,
             "voice_id": user_voice_id,
-            "audio_url": f"https://cdn.dreamcobots.ai/songs/{uid}.wav",
-            "duration_secs": random.randint(120, 300),
-            "bpm": random.randint(70, 140),
-            "key": random.choice(_MUSICAL_KEYS),
-            "vocal_quality_score": round(random.uniform(0.88, 0.97), 2),
+            "audio_url": asset["delivery_url"],
+            "duration_secs": max(120, min(300, len(lyrics.split()) * 4)),
+            "bpm": 70 + (seed % 71),
+            "key": _MUSICAL_KEYS[seed % len(_MUSICAL_KEYS)],
+            "vocal_quality_score": round(0.88 + ((seed % 10) / 100), 2),
+            "job": job,
+            "asset": asset,
             "timestamp": datetime.utcnow().isoformat() + "Z",
             "framework_pipeline": result.get("bot_name"),
         }
@@ -232,17 +310,25 @@ class BuddyMediaTransformationBot:
             raw_data={"task": "create_avatar_video", "script": script, "user_image": user_image},
             learning_method="supervised",
         )
-        uid = uuid.uuid4().hex[:12]
+        job, asset = self._run_media_job(
+            operation="create_avatar_video",
+            media_type="video",
+            payload={"script": script, "user_image": user_image},
+            media_format="mp4",
+            content_type="video/mp4",
+        )
         self._record()
         return {
             "script": script[:100] + "..." if len(script) > 100 else script,
             "user_image": user_image,
-            "avatar_video_url": f"https://cdn.dreamcobots.ai/avatars/{uid}.mp4",
+            "avatar_video_url": asset["delivery_url"],
             "resolution": "1920x1080",
             "fps": 30,
             "duration_secs": round(len(script.split()) / 2.5, 1),
             "lip_sync_quality": "excellent",
             "facial_expression_mapping": True,
+            "job": job,
+            "asset": asset,
             "timestamp": datetime.utcnow().isoformat() + "Z",
             "framework_pipeline": result.get("bot_name"),
         }

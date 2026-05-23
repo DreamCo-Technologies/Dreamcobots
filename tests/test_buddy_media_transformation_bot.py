@@ -129,6 +129,8 @@ class TestTextToMusic:
         bot = BuddyMediaTransformationBot(tier=Tier.PRO)
         result = bot.text_to_music("Walking on sunshine", "pop")
         assert result["audio_url"].startswith("https://")
+        assert result["job"]["state"] == "completed"
+        assert result["asset"]["status"] == "active"
 
     def test_has_bpm(self):
         bot = BuddyMediaTransformationBot(tier=Tier.PRO)
@@ -167,11 +169,13 @@ class TestCreateVideo:
         bot = BuddyMediaTransformationBot(tier=Tier.PRO)
         result = bot.create_video("Short story")
         assert "duration_secs" in result
+        assert result["job"]["state"] == "completed"
 
     def test_has_resolution(self):
         bot = BuddyMediaTransformationBot(tier=Tier.PRO)
         result = bot.create_video("Test script")
         assert "resolution" in result
+        assert result["thumbnail_asset"]["status"] == "active"
 
     def test_free_cannot_create_video(self):
         bot = BuddyMediaTransformationBot(tier=Tier.FREE)
@@ -194,6 +198,7 @@ class TestCreatePersonalizedSong:
         bot = BuddyMediaTransformationBot(tier=Tier.ENTERPRISE)
         result = bot.create_personalized_song("lyrics", "voice_001", "jazz")
         assert result["genre"] == "jazz"
+        assert result["asset"]["media_format"] == "wav"
 
     def test_free_cannot_create_personalized_song(self):
         bot = BuddyMediaTransformationBot(tier=Tier.FREE)
@@ -216,6 +221,7 @@ class TestCreateAvatarVideo:
         bot = BuddyMediaTransformationBot(tier=Tier.ENTERPRISE)
         result = bot.create_avatar_video("Test script", "face.png")
         assert "lip_sync_quality" in result or "lip_sync_accuracy" in result
+        assert result["job"]["state"] == "completed"
 
     def test_pro_cannot_create_avatar_video(self):
         bot = BuddyMediaTransformationBot(tier=Tier.PRO)
