@@ -8,6 +8,7 @@ Engines:
   4. Outreach Engine             — send_outreach()
 """
 import sys, os
+from typing import Any, Callable
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'ai-models-integration'))
 from tiers import Tier, get_tier_config, get_upgrade_path
 from .tiers import BOT_FEATURES, get_bot_tier_info
@@ -337,6 +338,487 @@ class RealEstateBot:
             "Best regards,\nDreamCo Housing Partners"
         ),
     }
+
+    CALCULATORS = [
+        {
+            "id": "capital_deployment_efficiency",
+            "name": "Capital Deployment Efficiency",
+            "domain": "All",
+            "system": "Capital Deployment",
+            "description": "Measures how efficiently deployed capital generates returns",
+            "formula": "Efficiency = Annual Returns / Total Capital Deployed * 100",
+            "variables": ["annual_returns", "total_capital_deployed"],
+            "target": "15%+ annual return on deployed capital",
+            "tags": ["efficiency", "returns", "deployment"],
+        },
+        {
+            "id": "debt_to_equity_ratio",
+            "name": "Debt-to-Equity Ratio",
+            "domain": "All",
+            "system": "Capital Deployment",
+            "description": "Monitors leverage levels across the portfolio",
+            "formula": "D/E = Total Liabilities / Total Equity",
+            "variables": ["total_liabilities", "total_equity"],
+            "target": "D/E < 2.0 for conservative leverage",
+            "tags": ["leverage", "debt", "equity"],
+        },
+        {
+            "id": "liquidity_ratio",
+            "name": "Liquidity Ratio",
+            "domain": "All",
+            "system": "Capital Deployment",
+            "description": "Ensures adequate operating reserves relative to monthly burn rate",
+            "formula": "Ratio = Operating Reserves / Monthly Burn Rate",
+            "variables": ["operating_reserves", "monthly_burn_rate"],
+            "target": ">= 6 months of reserves for safety",
+            "tags": ["liquidity", "reserves", "safety"],
+        },
+        {
+            "id": "reinvestment_multiplier",
+            "name": "Reinvestment Multiplier",
+            "domain": "All",
+            "system": "Capital Deployment",
+            "description": "Calculates the optimal profit reinvestment percentage for growth",
+            "formula": "Reinvest Amount = Net Profit * 0.60",
+            "variables": ["net_profit"],
+            "target": "60% reinvest, 30% reserve, 10% expansion",
+            "tags": ["reinvestment", "growth", "allocation"],
+        },
+        {
+            "id": "capital_turn_rate",
+            "name": "Capital Turn Rate",
+            "domain": "Car Flipping",
+            "system": "System",
+            "description": "Measures how many times capital is recycled per year",
+            "formula": "Turn Rate = 365 / Average Hold Period",
+            "variables": ["average_hold_period_days"],
+            "target": "12+ turns per year for maximum capital efficiency",
+            "tags": ["capital", "turnover", "efficiency"],
+        },
+        {
+            "id": "car_spread_formula",
+            "name": "Car Spread Formula",
+            "domain": "Car Flipping",
+            "system": "System",
+            "description": "Calculates the profit spread between market value and total costs",
+            "formula": "Spread = Market Value - (Purchase + Repairs + Fees)",
+            "variables": ["market_value", "purchase_price", "repair_cost", "fees"],
+            "target": "Minimum 15-20% spread for viable deals",
+            "tags": ["spread", "profit", "acquisition"],
+        },
+        {
+            "id": "daily_profit_rate",
+            "name": "Daily Profit Rate",
+            "domain": "Car Flipping",
+            "system": "System",
+            "description": "Calculates profit per day held to compare deal efficiency",
+            "formula": "Daily Profit = Net Profit / Days Held",
+            "variables": ["net_profit", "days_held"],
+            "target": "Higher daily profit = better capital deployment",
+            "tags": ["profit", "daily", "efficiency"],
+        },
+        {
+            "id": "demand_velocity_score",
+            "name": "Demand Velocity Score",
+            "domain": "Car Flipping",
+            "system": "System",
+            "description": "Measures how quickly a vehicle model sells in a given market",
+            "formula": "Velocity = Listings Sold Last 30 Days / Active Listings",
+            "variables": ["listings_sold_30_days", "active_listings"],
+            "target": "Above 1.0 = high demand vehicle",
+            "tags": ["demand", "velocity", "market"],
+        },
+        {
+            "id": "max_purchase_price",
+            "name": "Max Purchase Price",
+            "domain": "Car Flipping",
+            "system": "System",
+            "description": "Calculates the maximum purchase price for profitable car flips",
+            "formula": "Max Purchase = (Expected Sale * 0.75) - Repair Costs",
+            "variables": ["expected_sale_price", "repair_costs"],
+            "target": "Never exceed max purchase for profitability",
+            "tags": ["acquisition", "max-price", "limit"],
+        },
+        {
+            "id": "repair_risk_multiplier",
+            "name": "Repair Risk Multiplier",
+            "domain": "Car Flipping",
+            "system": "System",
+            "description": "Adjusts profit for repair cost uncertainty with a safety buffer",
+            "formula": "Adjusted Profit = Spread - (Repair Estimate * 1.3)",
+            "variables": ["spread", "repair_estimate"],
+            "target": "Must remain positive after 30% buffer",
+            "tags": ["repair", "risk", "buffer"],
+        },
+        {
+            "id": "time_to_liquidation",
+            "name": "Time-to-Liquidation",
+            "domain": "Car Flipping",
+            "system": "System",
+            "description": "Predicts average days to sell based on model and zip code data",
+            "formula": "TTL = Average Days on Market (Model + Zip Code)",
+            "variables": ["avg_market_days"],
+            "target": "Target under 21 days for rapid turn",
+            "tags": ["liquidation", "speed", "turnover"],
+        },
+        {
+            "id": "brrrr_recycle",
+            "name": "BRRRR Recycle",
+            "domain": "Real Estate",
+            "system": "System",
+            "description": "Validates if a BRRRR deal returns all invested capital through refinance",
+            "formula": "Refi Amount >= Total Investment (Purchase + Repairs + Holding Costs)",
+            "variables": ["arv", "ltv_ratio", "purchase_price", "repairs", "holding_costs"],
+            "target": "Refi Amount >= Total Investment",
+            "tags": ["brrrr", "refinance", "recycle"],
+        },
+        {
+            "id": "core_flip_spread",
+            "name": "Core Flip Spread",
+            "domain": "Real Estate",
+            "system": "System",
+            "description": "Determines if a property is a strong flip candidate by calculating the spread between ARV and total costs",
+            "formula": "Deal Score = (ARV * 0.70) - (Purchase Price + Repairs)",
+            "variables": ["arv", "purchase_price", "repairs"],
+            "target": "Deal Score > $25,000 = Strong Flip Candidate",
+            "tags": ["flip", "spread", "acquisition"],
+        },
+        {
+            "id": "debt_service_coverage",
+            "name": "Debt Service Coverage",
+            "domain": "Real Estate",
+            "system": "System",
+            "description": "Measures ability to cover debt payments from rental income",
+            "formula": "DSCR = Net Operating Income / Annual Debt Service",
+            "variables": ["net_operating_income", "annual_debt_service"],
+            "target": "DSCR >= 1.25 for safe leverage",
+            "tags": ["leverage", "debt", "risk"],
+        },
+        {
+            "id": "equity_capture",
+            "name": "Equity Capture",
+            "domain": "Real Estate",
+            "system": "System",
+            "description": "Measures instant equity gained at purchase to ensure built-in profit margin",
+            "formula": "Instant Equity % = (ARV - Purchase Price) / ARV * 100",
+            "variables": ["arv", "purchase_price"],
+            "target": "15%+ minimum instant equity",
+            "tags": ["equity", "acquisition", "leverage"],
+        },
+        {
+            "id": "maximum_allowable_offer",
+            "name": "Maximum Allowable Offer",
+            "domain": "Real Estate",
+            "system": "System",
+            "description": "Calculates the maximum price to offer on a flip deal using the 70% rule",
+            "formula": "MAO = (ARV * 0.70) - Repair Costs",
+            "variables": ["arv", "repair_costs"],
+            "target": "Never exceed MAO for profitable flips",
+            "tags": ["flip", "offer", "acquisition"],
+        },
+        {
+            "id": "motivation_score",
+            "name": "Motivation Score",
+            "domain": "Real Estate",
+            "system": "System",
+            "description": "Scores seller motivation level to determine negotiation leverage",
+            "formula": "Score = (Days on Market * 0.2) + (Price Drops * 5) + (Vacant Flag * 10)",
+            "variables": ["days_on_market", "price_drops", "vacant_flag"],
+            "target": "Higher score = higher negotiation leverage",
+            "tags": ["negotiation", "seller", "acquisition"],
+        },
+        {
+            "id": "rental_cashflow",
+            "name": "Rental Cashflow",
+            "domain": "Real Estate",
+            "system": "System",
+            "description": "Calculates cash-on-cash return for rental properties to ensure minimum profitability",
+            "formula": "Cash-on-Cash Return = (Annual Net Income / Total Cash Invested) * 100",
+            "variables": ["monthly_rent", "monthly_expenses", "total_cash_invested"],
+            "target": "Minimum 8-12% Cash-on-Cash Return",
+            "tags": ["rental", "cashflow", "hold"],
+        },
+        {
+            "id": "rental_yield",
+            "name": "Rental Yield",
+            "domain": "Real Estate",
+            "system": "System",
+            "description": "Calculates annual rental yield as a percentage of property value",
+            "formula": "Yield = (Annual Rent / Property Value) * 100",
+            "variables": ["monthly_rent", "property_value"],
+            "target": "5%+ gross yield for rental properties",
+            "tags": ["rental", "yield", "analysis"],
+        },
+        {
+            "id": "section_8_premium",
+            "name": "Section 8 Premium",
+            "domain": "Real Estate",
+            "system": "System",
+            "description": "Compares Section 8 voucher rates vs market rent for premium analysis",
+            "formula": "Premium = (Section 8 Rate - Market Rent) / Market Rent * 100",
+            "variables": ["section_8_rate", "market_rent"],
+            "target": "Positive premium indicates above-market returns",
+            "tags": ["section8", "rental", "government"],
+        },
+        {
+            "id": "wholesale_assignment_fee",
+            "name": "Wholesale Assignment Fee",
+            "domain": "Real Estate",
+            "system": "System",
+            "description": "Calculates the assignment fee potential in a wholesale deal",
+            "formula": "Fee = End Buyer Price - Contract Price",
+            "variables": ["end_buyer_price", "contract_price"],
+            "target": "Minimum $5,000 assignment fee",
+            "tags": ["wholesale", "assignment", "quick-profit"],
+        },
+        {
+            "id": "churn_prediction_score",
+            "name": "Churn Prediction Score",
+            "domain": "Revenue Intelligence",
+            "system": "System",
+            "description": "Predicts customer churn likelihood based on usage patterns",
+            "formula": "Score = (Login Frequency * 0.3) + (Feature Usage * 0.4) + (Support Tickets * -0.3)",
+            "variables": ["login_frequency", "feature_usage", "support_tickets"],
+            "target": "Score < 40 = high churn risk, intervene immediately",
+            "tags": ["churn", "prediction", "retention"],
+        },
+        {
+            "id": "dynamic_pricing_optimizer",
+            "name": "Dynamic Pricing Optimizer",
+            "domain": "Revenue Intelligence",
+            "system": "System",
+            "description": "Adjusts pricing based on demand, competition, and capacity",
+            "formula": "Optimal Price = Base Price * (1 + Demand Factor) * (1 - Competition Pressure)",
+            "variables": ["base_price", "demand_factor", "competition_pressure"],
+            "target": "Maximize revenue while maintaining conversion",
+            "tags": ["pricing", "dynamic", "optimization"],
+        },
+        {
+            "id": "revenue_leak_score",
+            "name": "Revenue Leak Score",
+            "domain": "Revenue Intelligence",
+            "system": "System",
+            "description": "Identifies and quantifies revenue losses across the system",
+            "formula": "Leak Score = (Failed Transactions + Cart Abandonment + Pricing Errors) * Avg Order Value",
+            "variables": ["failed_transactions", "cart_abandonment_rate", "pricing_errors", "avg_order_value"],
+            "target": "Minimize leak score to zero",
+            "tags": ["leak", "revenue", "detection"],
+        },
+        {
+            "id": "revenue_per_bot",
+            "name": "Revenue Per Bot",
+            "domain": "Revenue Intelligence",
+            "system": "System",
+            "description": "Tracks revenue generation efficiency per AI agent",
+            "formula": "RPB = Total Revenue / Active Bots",
+            "variables": ["total_revenue", "active_bot_count"],
+            "target": "Increasing RPB indicates platform efficiency",
+            "tags": ["revenue", "bots", "efficiency"],
+        },
+        {
+            "id": "drawdown_recovery",
+            "name": "Drawdown Recovery",
+            "domain": "Risk Management",
+            "system": "System",
+            "description": "Calculates time to recover from a portfolio drawdown",
+            "formula": "Recovery Time = Loss Amount / Monthly Net Income",
+            "variables": ["loss_amount", "monthly_net_income"],
+            "target": "Recovery within 6 months for acceptable risk",
+            "tags": ["drawdown", "recovery", "risk"],
+        },
+        {
+            "id": "portfolio_concentration",
+            "name": "Portfolio Concentration",
+            "domain": "Risk Management",
+            "system": "System",
+            "description": "Measures exposure to any single asset type or market",
+            "formula": "Concentration = Single Asset Value / Total Portfolio Value * 100",
+            "variables": ["single_asset_value", "total_portfolio_value"],
+            "target": "No single asset > 25% of total portfolio",
+            "tags": ["diversification", "concentration", "portfolio"],
+        },
+        {
+            "id": "risk_adjusted_return",
+            "name": "Risk-Adjusted Return",
+            "domain": "Risk Management",
+            "system": "System",
+            "description": "Adjusts returns for risk level to compare deals fairly",
+            "formula": "RAR = Expected Return / Risk Score",
+            "variables": ["expected_return", "risk_score"],
+            "target": "Higher RAR = better risk-adjusted opportunity",
+            "tags": ["risk", "return", "comparison"],
+        },
+        {
+            "id": "cac_efficiency",
+            "name": "CAC Efficiency",
+            "domain": "Sales",
+            "system": "System",
+            "description": "Measures customer acquisition efficiency by comparing lifetime value to cost",
+            "formula": "LTV/CAC Ratio = Customer Lifetime Value / Customer Acquisition Cost",
+            "variables": ["customer_lifetime_value", "customer_acquisition_cost"],
+            "target": "LTV/CAC >= 3 for healthy unit economics",
+            "tags": ["cac", "ltv", "efficiency"],
+        },
+        {
+            "id": "closing_probability",
+            "name": "Closing Probability",
+            "domain": "Sales",
+            "system": "System",
+            "description": "Predicts deal closing likelihood based on engagement signals",
+            "formula": "Probability = (Meetings * 0.3) + (Proposal Sent * 0.4) + (Champion Score * 0.3)",
+            "variables": ["meetings_held", "proposal_sent", "champion_score"],
+            "target": "Above 70% = high-confidence close",
+            "tags": ["closing", "probability", "prediction"],
+        },
+        {
+            "id": "commission_roi",
+            "name": "Commission ROI",
+            "domain": "Sales",
+            "system": "System",
+            "description": "Calculates return on investment for commission-based sales teams",
+            "formula": "ROI = (Revenue Generated - Total Commission Paid) / Total Commission Paid * 100",
+            "variables": ["revenue_generated", "total_commission_paid"],
+            "target": "Minimum 300% ROI on commission spend",
+            "tags": ["commission", "roi", "team"],
+        },
+        {
+            "id": "funnel_leak_detection",
+            "name": "Funnel Leak Detection",
+            "domain": "Sales",
+            "system": "System",
+            "description": "Identifies conversion drop-offs between sales funnel stages",
+            "formula": "Drop-Off % = (Stage N Count - Stage N+1 Count) / Stage N Count * 100",
+            "variables": ["stage_n_count", "stage_n1_count"],
+            "target": "Identify stages with > 40% drop-off for optimization",
+            "tags": ["funnel", "conversion", "optimization"],
+        },
+        {
+            "id": "lead_value_formula",
+            "name": "Lead Value Formula",
+            "domain": "Sales",
+            "system": "System",
+            "description": "Calculates the expected value of each lead based on conversion probability",
+            "formula": "Expected Value = Close Rate * Average Deal Size",
+            "variables": ["close_rate", "average_deal_size"],
+            "target": "Prioritize leads with highest expected value",
+            "tags": ["leads", "value", "conversion"],
+        },
+        {
+            "id": "pipeline_velocity",
+            "name": "Pipeline Velocity",
+            "domain": "Sales",
+            "system": "System",
+            "description": "Measures the speed of revenue flowing through the sales pipeline",
+            "formula": "Velocity = (Opportunities * Win Rate * Deal Size) / Sales Cycle Days",
+            "variables": ["opportunities", "win_rate", "average_deal_size", "sales_cycle_days"],
+            "target": "Increasing velocity indicates improving sales efficiency",
+            "tags": ["pipeline", "velocity", "revenue"],
+        },
+    ]
+
+    def _safe_divide(self, numerator: float, denominator: float, calculator_id: str) -> float:
+        if denominator == 0:
+            raise ValueError(f"'{calculator_id}' denominator cannot be zero.")
+        return numerator / denominator
+
+    def _brrrr_recycle(self, inputs: dict[str, float]) -> dict:
+        refi_amount = inputs["arv"] * inputs["ltv_ratio"]
+        total_investment = inputs["purchase_price"] + inputs["repairs"] + inputs["holding_costs"]
+        return {
+            "refi_amount": round(refi_amount, 4),
+            "total_investment": round(total_investment, 4),
+            "recycled_capital": round(refi_amount - total_investment, 4),
+            "qualifies": refi_amount >= total_investment,
+        }
+
+    @property
+    def _calculator_functions(self) -> dict[str, Callable[[dict[str, float]], Any]]:
+        return {
+            "capital_deployment_efficiency": lambda i: self._safe_divide(i["annual_returns"], i["total_capital_deployed"], "capital_deployment_efficiency") * 100,
+            "debt_to_equity_ratio": lambda i: self._safe_divide(i["total_liabilities"], i["total_equity"], "debt_to_equity_ratio"),
+            "liquidity_ratio": lambda i: self._safe_divide(i["operating_reserves"], i["monthly_burn_rate"], "liquidity_ratio"),
+            "reinvestment_multiplier": lambda i: i["net_profit"] * 0.60,
+            "capital_turn_rate": lambda i: self._safe_divide(365, i["average_hold_period_days"], "capital_turn_rate"),
+            "car_spread_formula": lambda i: i["market_value"] - (i["purchase_price"] + i["repair_cost"] + i["fees"]),
+            "daily_profit_rate": lambda i: self._safe_divide(i["net_profit"], i["days_held"], "daily_profit_rate"),
+            "demand_velocity_score": lambda i: self._safe_divide(i["listings_sold_30_days"], i["active_listings"], "demand_velocity_score"),
+            "max_purchase_price": lambda i: (i["expected_sale_price"] * 0.75) - i["repair_costs"],
+            "repair_risk_multiplier": lambda i: i["spread"] - (i["repair_estimate"] * 1.3),
+            "time_to_liquidation": lambda i: i["avg_market_days"],
+            "brrrr_recycle": self._brrrr_recycle,
+            "core_flip_spread": lambda i: (i["arv"] * 0.70) - (i["purchase_price"] + i["repairs"]),
+            "debt_service_coverage": lambda i: self._safe_divide(i["net_operating_income"], i["annual_debt_service"], "debt_service_coverage"),
+            "equity_capture": lambda i: self._safe_divide(i["arv"] - i["purchase_price"], i["arv"], "equity_capture") * 100,
+            "maximum_allowable_offer": lambda i: (i["arv"] * 0.70) - i["repair_costs"],
+            "motivation_score": lambda i: (i["days_on_market"] * 0.2) + (i["price_drops"] * 5) + (i["vacant_flag"] * 10),
+            "rental_cashflow": lambda i: self._safe_divide(((i["monthly_rent"] - i["monthly_expenses"]) * 12), i["total_cash_invested"], "rental_cashflow") * 100,
+            "rental_yield": lambda i: self._safe_divide((i["monthly_rent"] * 12), i["property_value"], "rental_yield") * 100,
+            "section_8_premium": lambda i: self._safe_divide(i["section_8_rate"] - i["market_rent"], i["market_rent"], "section_8_premium") * 100,
+            "wholesale_assignment_fee": lambda i: i["end_buyer_price"] - i["contract_price"],
+            "churn_prediction_score": lambda i: (i["login_frequency"] * 0.3) + (i["feature_usage"] * 0.4) + (i["support_tickets"] * -0.3),
+            "dynamic_pricing_optimizer": lambda i: i["base_price"] * (1 + i["demand_factor"]) * (1 - i["competition_pressure"]),
+            "revenue_leak_score": lambda i: (i["failed_transactions"] + i["cart_abandonment_rate"] + i["pricing_errors"]) * i["avg_order_value"],
+            "revenue_per_bot": lambda i: self._safe_divide(i["total_revenue"], i["active_bot_count"], "revenue_per_bot"),
+            "drawdown_recovery": lambda i: self._safe_divide(i["loss_amount"], i["monthly_net_income"], "drawdown_recovery"),
+            "portfolio_concentration": lambda i: self._safe_divide(i["single_asset_value"], i["total_portfolio_value"], "portfolio_concentration") * 100,
+            "risk_adjusted_return": lambda i: self._safe_divide(i["expected_return"], i["risk_score"], "risk_adjusted_return"),
+            "cac_efficiency": lambda i: self._safe_divide(i["customer_lifetime_value"], i["customer_acquisition_cost"], "cac_efficiency"),
+            "closing_probability": lambda i: (i["meetings_held"] * 0.3) + (i["proposal_sent"] * 0.4) + (i["champion_score"] * 0.3),
+            "commission_roi": lambda i: self._safe_divide(i["revenue_generated"] - i["total_commission_paid"], i["total_commission_paid"], "commission_roi") * 100,
+            "funnel_leak_detection": lambda i: self._safe_divide(i["stage_n_count"] - i["stage_n1_count"], i["stage_n_count"], "funnel_leak_detection") * 100,
+            "lead_value_formula": lambda i: i["close_rate"] * i["average_deal_size"],
+            "pipeline_velocity": lambda i: self._safe_divide((i["opportunities"] * i["win_rate"] * i["average_deal_size"]), i["sales_cycle_days"], "pipeline_velocity"),
+        }
+
+    def list_calculators(self, domain: str = None, system: str = None, tag: str = None) -> list[dict]:
+        """List calculator definitions with optional domain/system/tag filters."""
+        results = list(self.CALCULATORS)
+        if domain:
+            results = [c for c in results if c["domain"].lower() == domain.lower()]
+        if system:
+            results = [c for c in results if c["system"].lower() == system.lower()]
+        if tag:
+            tag_l = tag.lower()
+            results = [c for c in results if any(t.lower() == tag_l for t in c["tags"])]
+        return results
+
+    def get_calculator(self, calculator_id: str) -> dict:
+        """Get one calculator definition by id or name."""
+        candidate = calculator_id.strip().lower().replace("-", "_").replace(" ", "_")
+        for calc in self.CALCULATORS:
+            if calc["id"] == candidate:
+                return calc
+            calc_name = calc["name"].lower().replace("-", "_").replace(" ", "_")
+            if calc_name == candidate:
+                return calc
+        raise ValueError(f"Calculator '{calculator_id}' not found.")
+
+    def run_calculator(self, calculator_id: str, **inputs: float) -> dict:
+        """Execute one calculator by id or name using keyword numeric inputs."""
+        calc = self.get_calculator(calculator_id)
+        required = calc["variables"]
+        missing = [v for v in required if v not in inputs]
+        if missing:
+            raise ValueError(f"Missing variables for '{calc['id']}': {missing}")
+        numeric_inputs = {}
+        for var in required:
+            val = inputs[var]
+            if not isinstance(val, (int, float)):
+                raise TypeError(f"Variable '{var}' must be numeric, got {type(val).__name__}.")
+            numeric_inputs[var] = float(val)
+        result = self._calculator_functions[calc["id"]](numeric_inputs)
+        if isinstance(result, (int, float)):
+            result = round(float(result), 4)
+        return {
+            "calculator_id": calc["id"],
+            "name": calc["name"],
+            "domain": calc["domain"],
+            "system": calc["system"],
+            "inputs": numeric_inputs,
+            "result": result,
+            "target": calc["target"],
+            "tags": calc["tags"],
+        }
 
     def __init__(self, tier: Tier = Tier.FREE):
         self.tier = tier

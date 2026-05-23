@@ -327,3 +327,47 @@ class TestSendOutreach:
         bot = RealEstateBot(tier=Tier.PRO)
         with pytest.raises(ValueError):
             bot.send_outreach("unknown_type", "789 Elm St")
+
+
+class TestStrategicCalculators:
+    def test_catalog_includes_all_requested_calculators(self):
+        bot = RealEstateBot(tier=Tier.FREE)
+        calculators = bot.list_calculators()
+        assert len(calculators) == 34
+
+    def test_real_estate_calculator_filter(self):
+        bot = RealEstateBot(tier=Tier.FREE)
+        calculators = bot.list_calculators(domain="Real Estate")
+        assert len(calculators) == 10
+
+    def test_get_calculator_by_human_name(self):
+        bot = RealEstateBot(tier=Tier.FREE)
+        calc = bot.get_calculator("Debt-to-Equity Ratio")
+        assert calc["id"] == "debt_to_equity_ratio"
+
+    def test_capital_deployment_efficiency_calculation(self):
+        bot = RealEstateBot(tier=Tier.FREE)
+        result = bot.run_calculator(
+            "capital_deployment_efficiency",
+            annual_returns=30000,
+            total_capital_deployed=150000,
+        )
+        assert result["result"] == 20.0
+
+    def test_maximum_allowable_offer_calculation(self):
+        bot = RealEstateBot(tier=Tier.FREE)
+        result = bot.run_calculator("maximum_allowable_offer", arv=250000, repair_costs=35000)
+        assert result["result"] == 140000.0
+
+    def test_brrrr_recycle_returns_qualification_payload(self):
+        bot = RealEstateBot(tier=Tier.FREE)
+        result = bot.run_calculator(
+            "brrrr_recycle",
+            arv=200000,
+            ltv_ratio=0.75,
+            purchase_price=90000,
+            repairs=25000,
+            holding_costs=5000,
+        )
+        assert isinstance(result["result"], dict)
+        assert result["result"]["qualifies"] is True

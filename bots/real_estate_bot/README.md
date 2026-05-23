@@ -63,6 +63,11 @@ outreach = bot.send_outreach(
     unit_count=3,
     beds=3,
 )
+
+# 6. Discover and run calculators
+all_calculators = bot.list_calculators()
+real_estate_calculators = bot.list_calculators(domain="Real Estate")
+mao = bot.run_calculator("maximum_allowable_offer", arv=250000, repair_costs=35000)
 ```
 
 ## Revenue Model Example
@@ -86,6 +91,9 @@ outreach = bot.send_outreach(
 - `calculate_housing_revenue(beds, program_id)` — projected monthly government-paid income
 - `match_property_to_program(property_id)` — best-program match with payback projection (PRO+)
 - `send_outreach(contact_type, address, ...)` — outreach messages for owners and agencies (PRO+)
+- `list_calculators(domain, system, tag)` — list all built-in strategy calculators (34 total)
+- `get_calculator(calculator_id)` — get one calculator definition by id or name
+- `run_calculator(calculator_id, **inputs)` — execute a calculator and return result + target guidance
 
 ## Directory Structure
 
@@ -96,4 +104,3 @@ bots/real_estate_bot/
 ├── __init__.py
 └── README.md
 ```
-
