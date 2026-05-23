@@ -303,4 +303,11 @@ describe('GET /api/command-center', () => {
     expect(res.body.computed).toHaveProperty('provider_intelligence_health');
     expect(res.body.computed).toHaveProperty('asset_graph_health');
   });
+
+  test('includes hard CI blockers as merge gates', async () => {
+    const res = await request(app).get('/api/command-center');
+    expect(res.body).toHaveProperty('hard_ci_blockers');
+    expect(Array.isArray(res.body.hard_ci_blockers.required)).toBe(true);
+    expect(res.body.hard_ci_blockers.required).toContain('lifecycle_contract_validation');
+  });
 });

@@ -77,7 +77,7 @@ class MediaEngine:
         duration = estimated_duration_sec if estimated_duration_sec is not None else max(10, int(math.ceil(len(str(payload)) / 4)))
         queue_depth_before = self.runtime.queue_size()
         try:
-            self.runtime.create_job(
+            self.runtime.enqueue_job(
                 owner=self.owner,
                 media_type=media_type,
                 operation=operation,
@@ -88,7 +88,7 @@ class MediaEngine:
                 tier=tier,
                 priority=priority,
             )
-            completed_job, primary_asset = self.runtime.process_next(
+            completed_job, primary_asset = self.runtime.execute_next(
                 media_format=output_format,
                 content_type=output_content_type,
                 lineage=lineage,

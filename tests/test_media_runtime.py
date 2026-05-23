@@ -5,6 +5,7 @@ import time
 from bots.media_runtime import (
     DurableMediaQueue,
     InferenceGateway,
+    MEDIA_LIFECYCLE_STATES,
     LocalAssetStore,
     MediaEngine,
     MediaJobRuntime,
@@ -172,6 +173,71 @@ def test_provider_governance_scorecards_include_latency_reliability_and_cost():
     assert snapshot["scorecards"]["openai"]["avg_latency_ms"] >= 0
     assert snapshot["scorecards"]["openai"]["reliability"] >= 0
     assert snapshot["scorecards"]["openai"]["avg_cost"] >= 0
+
+
+def test_provider_governance_fallback_and_policy_routing_for_video():
+    gateway = InferenceGateway()
+
+    def _always_fail(_request):
+        raise RuntimeError("provider_outage")
+
+    gateway.register_provider("broken", _always_fail, initial_health=1.0)
+    fallback_result = gateway.run(
+        {"media_type": "video", "operation": "render", "script": "demo"},
+        ["broken", "openai"],
+    )
+    assert fallback_result.provider == "openai"
+    assert gateway.telemetry["fallbacks"] >= 1
+
+    result = gateway.run(
+        {"media_type": "video", "operation": "render", "script": "demo"},
+        ["broken", "openai", "ffmpeg-local"],
+        policy_context={"media_type": "video", "tier": "enterprise", "latency_target_ms": 1200},
+    )
+
+    assert result.provider in {"openai", "ffmpeg-local"}
+    assert gateway.provider_health["broken"] < 1.0
+
+
+def test_runtime_transitions_to_dead_lettered_after_retry_exhaustion(tmp_path):
+    gateway = InferenceGateway()
+    store = LocalAssetStore(root_dir=str(tmp_path / "assets"))
+    runtime = MediaJobRuntime(asset_store=store, gateway=gateway)
+
+    def _fail(_request):
+        raise RuntimeError("provider hard fail")
+
+    gateway.register_provider("always_fail", _fail, initial_health=1.0)
+    job = runtime.create_job(
+        owner="test",
+        media_type="audio",
+        operation="text_to_music",
+        payload={"text": "hard fail"},
+        provider_chain=["always_fail"],
+        max_retries=1,
+    )
+
+    try:
+        runtime.process_next(media_format="mp3", content_type="audio/mpeg")
+    except Exception:
+        pass
+
+    assert runtime.get_job(job.job_id).state.value == "dead_lettered"
+    assert runtime.queue_snapshot()["dead_letter_count"] >= 1
+
+
+def test_runtime_state_set_matches_global_contract():
+    observed_states = {
+        "queued",
+        "running",
+        "completed",
+        "failed",
+        "canceled",
+        "retrying",
+        "dead_lettered",
+        "stalled",
+    }
+    assert observed_states == set(MEDIA_LIFECYCLE_STATES)
 
 
 def test_asset_graph_tracks_lineage_and_consistency(tmp_path):

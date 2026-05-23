@@ -169,7 +169,25 @@
       "provider_instability",
       "asset_corruption",
       "latency_regressions"
-    ]
+    ],
+    "trend_reporting": {
+      "status": "enabled",
+      "signals": [
+        "flaky_test_rate",
+        "full_suite_failure_trend",
+        "runtime_instability_trend",
+        "merge_regression_count"
+      ]
+    }
+  },
+  "hard_ci_blockers": {
+    "required": [
+      "framework_compliance",
+      "lifecycle_contract_validation",
+      "runtime_integrity_checks",
+      "provider_governance_tests"
+    ],
+    "status": "enforced"
   },
   "execution_telemetry": {
     "source": "bots/media_runtime/engine.py",

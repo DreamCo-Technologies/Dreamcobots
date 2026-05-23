@@ -11,6 +11,7 @@ from typing import Any, Callable
 
 from bots.media_runtime.assets import AssetRecord, LocalAssetStore
 from bots.media_runtime.inference_gateway import InferenceGateway, ProviderFailure
+from bots.media_runtime.queue_backend import QueueBackend
 from bots.media_runtime.queue import DurableMediaQueue, QueuePriority
 
 
@@ -25,8 +26,8 @@ class JobState(str, Enum):
     FAILED = "failed"
     CANCELED = "canceled"
     RETRYING = "retrying"
-    VALIDATING = "validating"
-    TRANSCODING = "transcoding"
+    DEAD_LETTERED = "dead_lettered"
+    STALLED = "stalled"
 
 
 @dataclass
@@ -94,7 +95,7 @@ class MediaJobRuntime:
         self,
         asset_store: LocalAssetStore | None = None,
         gateway: InferenceGateway | None = None,
-        queue: DurableMediaQueue | None = None,
+        queue: QueueBackend | None = None,
         *,
         max_queue_depth: int = 500,
         max_concurrency: int = 4,
@@ -145,6 +146,31 @@ class MediaJobRuntime:
         self._queue.enqueue(job.job_id, priority=priority, tier=tier)
         self._metrics["jobs_created"] += 1
         return job
+
+    def enqueue_job(
+        self,
+        *,
+        owner: str,
+        media_type: str,
+        operation: str,
+        payload: dict[str, Any],
+        provider_chain: list[str],
+        estimated_duration_sec: int = 60,
+        max_retries: int = 2,
+        priority: QueuePriority = QueuePriority.NORMAL,
+        tier: str = "free",
+    ) -> RenderJob:
+        return self.create_job(
+            owner=owner,
+            media_type=media_type,
+            operation=operation,
+            payload=payload,
+            provider_chain=provider_chain,
+            estimated_duration_sec=estimated_duration_sec,
+            max_retries=max_retries,
+            priority=priority,
+            tier=tier,
+        )
 
     def process_next(
         self,
@@ -226,7 +252,7 @@ class MediaJobRuntime:
                     )
 
                     job.current_stage = "validating"
-                    job.state = JobState.VALIDATING
+                    job.state = JobState.RUNNING
                     job.progress_percent = 90
                     job.updated_at = _utc_now()
 
@@ -263,11 +289,36 @@ class MediaJobRuntime:
                     job.completed_at = _utc_now()
                     job.updated_at = _utc_now()
                     self._queue.dead_letter(job.job_id, reason=str(exc))
+                    job.state = JobState.DEAD_LETTERED
+                    job.current_stage = "dead_lettered"
                     self._metrics["jobs_failed"] += 1
                     raise
         finally:
             self._active_executions = max(0, self._active_executions - 1)
             job.estimated_duration_sec = max(1, int(time.perf_counter() - started_at))
+
+    def execute_next(
+        self,
+        *,
+        media_format: str,
+        content_type: str,
+        lineage: list[str] | None = None,
+        extra_metadata: dict[str, Any] | None = None,
+        retention_days: int = 30,
+        worker_id: str = "worker_default",
+        policy_context: dict[str, Any] | None = None,
+        allow_degraded: bool = False,
+    ) -> tuple[RenderJob, AssetRecord]:
+        return self.process_next(
+            media_format=media_format,
+            content_type=content_type,
+            lineage=lineage,
+            extra_metadata=extra_metadata,
+            retention_days=retention_days,
+            worker_id=worker_id,
+            policy_context=policy_context,
+            allow_degraded=allow_degraded,
+        )
 
     def queue_size(self) -> int:
         return self._queue.snapshot()["depth"]
@@ -291,7 +342,17 @@ class MediaJobRuntime:
         return canceled
 
     def recover_stalled_jobs(self, *, stall_after_seconds: int = 120) -> int:
-        return self._queue.recover_stalled(stall_after_seconds=stall_after_seconds)
+        now = time.time()
+        queue_items = getattr(self._queue, "_items", {})
+        for item in queue_items.values():
+            if item.leased_by and item.lease_until and (now - item.lease_until) > stall_after_seconds:
+                job = self.jobs.get(item.job_id)
+                if job and job.state not in {JobState.COMPLETED, JobState.CANCELED, JobState.DEAD_LETTERED}:
+                    job.state = JobState.STALLED
+                    job.current_stage = "stalled"
+                    job.updated_at = _utc_now()
+        recovered = self._queue.recover_stalled(stall_after_seconds=stall_after_seconds)
+        return recovered
 
     def queue_snapshot(self) -> dict[str, Any]:
         return self._queue.snapshot()

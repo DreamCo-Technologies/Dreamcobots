@@ -17,6 +17,17 @@ MEDIA_LIFECYCLE_REQUIRED_FIELDS = (
     "created_at",
 )
 
+MEDIA_LIFECYCLE_STATES = (
+    "queued",
+    "running",
+    "completed",
+    "failed",
+    "canceled",
+    "retrying",
+    "dead_lettered",
+    "stalled",
+)
+
 
 def _utc_now() -> str:
     return datetime.utcnow().isoformat() + "Z"
@@ -60,5 +71,23 @@ def validate_media_lifecycle_contract(payload: dict[str, Any]) -> tuple[bool, li
         type_errors.append("lineage")
     if not isinstance(payload["signed_urls"], list):
         type_errors.append("signed_urls")
+    if payload.get("status") not in MEDIA_LIFECYCLE_STATES:
+        type_errors.append("status")
+    if not payload.get("job_id"):
+        type_errors.append("job_id")
+    if not payload.get("project_id"):
+        type_errors.append("project_id")
+    if not payload.get("provider"):
+        type_errors.append("provider")
+    signed_urls = payload.get("signed_urls", [])
+    if any(not str(url).startswith("https://") for url in signed_urls):
+        type_errors.append("signed_urls")
+    for url in signed_urls:
+        string_url = str(url)
+        has_expiry = ("exp=" in string_url) or ("expires=" in string_url)
+        has_signature = ("sig=" in string_url) or ("signature=" in string_url)
+        if not has_expiry or not has_signature:
+            type_errors.append("signed_urls")
+            break
 
     return len(type_errors) == 0, type_errors

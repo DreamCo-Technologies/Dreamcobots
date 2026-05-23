@@ -476,7 +476,7 @@ class ProfessionalMusicEditingBot:
             "interchange_manifest_url": manifest_asset["delivery_url"],
             "interchange_derivatives": derivative_assets,
             "export_validated": True,
-            "status": "exported",
+            "operation_status": "exported",
             "timestamp": datetime.utcnow().isoformat() + "Z",
             "framework_pipeline": result.get("bot_name"),
         }

@@ -8,6 +8,7 @@ from enum import IntEnum
 from typing import Any
 
 from framework import GlobalAISourcesFlow  # noqa: F401
+from bots.media_runtime.queue_backend import QueueBackend
 
 
 class QueuePriority(IntEnum):
@@ -30,7 +31,7 @@ class QueueItem:
     last_error: str | None = None
 
 
-class DurableMediaQueue:
+class DurableMediaQueue(QueueBackend):
     """Priority queue with lease/retry/dead-letter semantics for runtime workers."""
 
     def __init__(self, *, max_depth: int = 500) -> None:

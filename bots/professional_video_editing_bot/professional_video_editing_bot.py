@@ -469,7 +469,7 @@ class ProfessionalVideoEditingBot:
             "asset": primary_asset,
             "export_validated": True,
             "color_space": "Rec. 709" if not is_4k else "Rec. 2020",
-            "status": "exported",
+            "operation_status": "exported",
             "timestamp": self._now(),
             "framework_pipeline": result.get("bot_name"),
         }
