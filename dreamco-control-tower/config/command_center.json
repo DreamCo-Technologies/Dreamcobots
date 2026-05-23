@@ -180,8 +180,42 @@
       "queue_depth_max",
       "artifact_size_bytes_total",
       "retry_attempts_total",
-      "failure_count"
+      "failure_count",
+      "queue_dead_letter_count",
+      "queue_canceled_count",
+      "runtime_slo.status",
+      "provider_governance.scorecards",
+      "asset_graph.consistency_valid"
     ],
-    "status": "enabled_for_shared_media_engine"
+    "status": "enabled_for_shared_media_engine",
+    "health_summaries": {
+      "runtime_durability": {
+        "status": "in_progress",
+        "signals": [
+          "queue_backpressure_enabled",
+          "dead_letter_tracking_enabled",
+          "stalled_job_recovery_enabled",
+          "retry_orchestration_enabled"
+        ]
+      },
+      "provider_intelligence": {
+        "status": "in_progress",
+        "signals": [
+          "provider_scorecards_enabled",
+          "policy_routing_enabled",
+          "fallback_chains_enabled",
+          "degraded_path_supported"
+        ]
+      },
+      "asset_graph_integrity": {
+        "status": "in_progress",
+        "signals": [
+          "lineage_relationship_graph_enabled",
+          "workflow_provenance_enabled",
+          "usage_relationship_tracking_enabled",
+          "graph_consistency_validation_enabled"
+        ]
+      }
+    }
   }
 }

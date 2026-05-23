@@ -49,7 +49,14 @@ from bots.buddy_media_transformation_bot.tiers import (
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", ".."))
 from framework import GlobalAISourcesFlow  # noqa: F401
-from bots.media_runtime import InferenceGateway, LocalAssetStore, MediaEngine, MediaJobRuntime
+from bots.media_runtime import (
+    InferenceGateway,
+    LocalAssetStore,
+    MediaEngine,
+    MediaJobRuntime,
+    QueuePriority,
+    build_media_lifecycle_contract,
+)
 
 _MUSICAL_KEYS = ["C major", "G major", "D major", "A minor", "E minor", "F major", "B♭ major"]
 _INSTRUMENTS = [
@@ -143,6 +150,8 @@ class BuddyMediaTransformationBot:
             extra_metadata={"tier": self.tier.value},
             retention_days=30,
             max_retries=2,
+            tier=self.tier.value,
+            priority=QueuePriority.HIGH if self.tier.value == "enterprise" else QueuePriority.NORMAL,
         )
 
     def text_to_music(self, text: str, style: str = "auto") -> dict:
@@ -177,7 +186,14 @@ class BuddyMediaTransformationBot:
             content_type="audio/mpeg",
         )
         self._record()
+        lifecycle = build_media_lifecycle_contract(
+            job=job,
+            primary_asset=asset,
+            lineage={"operation": "text_to_music", "text_prompt": text},
+            project_id=f"buddy_music_{job['job_id']}",
+        )
         return {
+            **lifecycle,
             "text": text,
             "style": style_value,
             "audio_url": asset["delivery_url"],
@@ -235,7 +251,15 @@ class BuddyMediaTransformationBot:
             lineage=[asset["asset_id"]],
         )
         self._record()
+        lifecycle = build_media_lifecycle_contract(
+            job=job,
+            primary_asset=asset,
+            preview_assets=[thumb_asset],
+            lineage={"operation": "create_video", "thumbnail_asset_id": thumb_asset["asset_id"]},
+            project_id=f"buddy_video_{job['job_id']}",
+        )
         return {
+            **lifecycle,
             "script": script[:100] + "..." if len(script) > 100 else script,
             "video_url": asset["delivery_url"],
             "thumbnail_url": thumb_asset["delivery_url"],
@@ -280,7 +304,14 @@ class BuddyMediaTransformationBot:
             content_type="audio/wav",
         )
         self._record()
+        lifecycle = build_media_lifecycle_contract(
+            job=job,
+            primary_asset=asset,
+            lineage={"operation": "create_personalized_song", "voice_id": user_voice_id},
+            project_id=f"buddy_voice_{job['job_id']}",
+        )
         return {
+            **lifecycle,
             "lyrics": lyrics[:100] + "..." if len(lyrics) > 100 else lyrics,
             "genre": genre,
             "voice_id": user_voice_id,
@@ -319,7 +350,14 @@ class BuddyMediaTransformationBot:
             content_type="video/mp4",
         )
         self._record()
+        lifecycle = build_media_lifecycle_contract(
+            job=job,
+            primary_asset=asset,
+            lineage={"operation": "create_avatar_video", "source_image": user_image},
+            project_id=f"buddy_avatar_{job['job_id']}",
+        )
         return {
+            **lifecycle,
             "script": script[:100] + "..." if len(script) > 100 else script,
             "user_image": user_image,
             "avatar_video_url": asset["delivery_url"],

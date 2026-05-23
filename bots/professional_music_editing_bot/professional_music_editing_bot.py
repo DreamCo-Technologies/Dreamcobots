@@ -55,7 +55,14 @@ from bots.professional_music_editing_bot.tiers import (
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", ".."))
 from framework import GlobalAISourcesFlow  # noqa: F401
-from bots.media_runtime import InferenceGateway, LocalAssetStore, MediaEngine, MediaJobRuntime
+from bots.media_runtime import (
+    InferenceGateway,
+    LocalAssetStore,
+    MediaEngine,
+    MediaJobRuntime,
+    QueuePriority,
+    build_media_lifecycle_contract,
+)
 
 _EFFECTS_DEFAULTS = {
     "eq": {"low_hz": 80, "mid_hz": 1000, "high_hz": 8000, "low_gain_db": 2, "high_gain_db": -1},
@@ -398,6 +405,8 @@ class ProfessionalMusicEditingBot:
             extra_metadata={"project_id": project_id, "track_count": track_count},
             retention_days=30,
             max_retries=2,
+            tier=self.tier.value,
+            priority=QueuePriority.HIGH if self.tier.value == "enterprise" else QueuePriority.NORMAL,
         )
 
         interchange_manifest = {
@@ -443,7 +452,19 @@ class ProfessionalMusicEditingBot:
             derivative_assets.extend([midi_asset["delivery_url"], stems_asset["delivery_url"]])
 
         size_mb = round(primary_asset["bytes_size"] / (1024 * 1024), 3)
+        lifecycle = build_media_lifecycle_contract(
+            job=completed_job,
+            primary_asset=primary_asset,
+            preview_assets=[manifest_asset],
+            lineage={
+                "project_id": project_id,
+                "manifest_asset_id": manifest_asset["asset_id"],
+                "interchange_derivatives": derivative_assets,
+            },
+            project_id=project_id,
+        )
         return {
+            **lifecycle,
             "project_id": project_id,
             "export_format": format_upper,
             "file_url": primary_asset["delivery_url"],

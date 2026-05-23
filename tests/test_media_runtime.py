@@ -1,10 +1,14 @@
 from __future__ import annotations
 
+import time
+
 from bots.media_runtime import (
+    DurableMediaQueue,
     InferenceGateway,
     LocalAssetStore,
     MediaEngine,
     MediaJobRuntime,
+    QueuePriority,
 )
 from bots.media_runtime.state import AssetRegistry, ExecutionStateStore, RenderJobRepository
 
@@ -123,3 +127,72 @@ def test_media_engine_telemetry_snapshot_tracks_runtime_metrics(tmp_path):
     assert snapshot["queue_depth_max"] >= 0
     assert snapshot["artifact_size_bytes_total"] > 0
     assert snapshot["provider_avg_latency_ms"]
+    assert "runtime_slo" in snapshot
+    assert "provider_governance" in snapshot
+    assert "asset_graph" in snapshot
+
+
+def test_runtime_queue_supports_cancel_dead_letter_and_stall_recovery(tmp_path):
+    gateway = InferenceGateway()
+    store = LocalAssetStore(root_dir=str(tmp_path / "assets"))
+    runtime = MediaJobRuntime(asset_store=store, gateway=gateway, queue=DurableMediaQueue(max_depth=5))
+
+    job = runtime.create_job(
+        owner="test",
+        media_type="audio",
+        operation="text_to_music",
+        payload={"text": "hello world"},
+        provider_chain=["openai"],
+        estimated_duration_sec=10,
+        max_retries=1,
+        priority=QueuePriority.HIGH,
+    )
+    assert runtime.cancel_job(job.job_id) is True
+    assert runtime.get_job(job.job_id).state.value == "canceled"
+    assert runtime.queue_snapshot()["canceled_count"] >= 1
+
+    job_2 = runtime.create_job(
+        owner="test",
+        media_type="audio",
+        operation="text_to_music",
+        payload={"text": "queued"},
+        provider_chain=["openai"],
+        estimated_duration_sec=10,
+        max_retries=1,
+    )
+    runtime._queue._items[job_2.job_id].leased_by = "worker"
+    runtime._queue._items[job_2.job_id].lease_until = time.time() - 5
+    assert runtime.recover_stalled_jobs(stall_after_seconds=0) >= 1
+
+
+def test_provider_governance_scorecards_include_latency_reliability_and_cost():
+    gateway = InferenceGateway()
+    _ = gateway.run({"media_type": "audio", "operation": "render", "text": "hello"}, ["openai"])
+    snapshot = gateway.provider_governance_snapshot()
+    assert snapshot["scorecards"]["openai"]["avg_latency_ms"] >= 0
+    assert snapshot["scorecards"]["openai"]["reliability"] >= 0
+    assert snapshot["scorecards"]["openai"]["avg_cost"] >= 0
+
+
+def test_asset_graph_tracks_lineage_and_consistency(tmp_path):
+    store = LocalAssetStore(root_dir=str(tmp_path / "assets"))
+    root = store.persist(
+        owner="test",
+        originating_job="job_1",
+        provider="openai",
+        media_format="png",
+        content_type="image/png",
+        content_bytes=b"root",
+    )
+    child = store.persist(
+        owner="test",
+        originating_job="job_2",
+        provider="openai",
+        media_format="png",
+        content_type="image/png",
+        content_bytes=b"child",
+        lineage=[root.asset_id],
+    )
+    context = store.graph_context(child.asset_id)
+    assert root.asset_id in context["ancestors"]
+    assert store.graph_snapshot()["consistency_valid"] is True

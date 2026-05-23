@@ -358,6 +358,9 @@ app.get('/api/command-center', rateLimiter, (_req, res) => {
   const blockedCount = lanes.filter((lane) => Array.isArray(lane.blockers) && lane.blockers.length > 0).length;
   const failingValidationCount = lanes.filter((lane) => lane.validation_state !== 'green').length;
   const shippableCount = lanes.filter((lane) => lane.ship_decision === 'ship').length;
+  const runtimeHealth = board.execution_telemetry?.health_summaries?.runtime_durability?.status || 'unknown';
+  const providerHealth = board.execution_telemetry?.health_summaries?.provider_intelligence?.status || 'unknown';
+  const assetGraphHealth = board.execution_telemetry?.health_summaries?.asset_graph_integrity?.status || 'unknown';
 
   return res.json({
     ...board,
@@ -368,6 +371,9 @@ app.get('/api/command-center', rateLimiter, (_req, res) => {
       failing_validation_lanes: failingValidationCount,
       shippable_lanes: shippableCount,
       total_lanes: lanes.length,
+      runtime_durability_health: runtimeHealth,
+      provider_intelligence_health: providerHealth,
+      asset_graph_health: assetGraphHealth,
       fetched_at: new Date().toISOString(),
     },
   });

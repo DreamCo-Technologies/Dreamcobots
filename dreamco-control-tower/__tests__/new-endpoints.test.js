@@ -299,5 +299,8 @@ describe('GET /api/command-center', () => {
     expect(res.body).toHaveProperty('computed');
     expect(typeof res.body.computed.days_remaining).toBe('number');
     expect(typeof res.body.computed.total_lanes).toBe('number');
+    expect(res.body.computed).toHaveProperty('runtime_durability_health');
+    expect(res.body.computed).toHaveProperty('provider_intelligence_health');
+    expect(res.body.computed).toHaveProperty('asset_graph_health');
   });
 });

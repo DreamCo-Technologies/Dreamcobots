@@ -56,7 +56,14 @@ from bots.photo_editing_bot.tiers import (
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", ".."))
 from framework import GlobalAISourcesFlow  # noqa: F401
-from bots.media_runtime import InferenceGateway, LocalAssetStore, MediaEngine, MediaJobRuntime
+from bots.media_runtime import (
+    InferenceGateway,
+    LocalAssetStore,
+    MediaEngine,
+    MediaJobRuntime,
+    QueuePriority,
+    build_media_lifecycle_contract,
+)
 
 _AVAILABLE_FILTERS = ["vintage", "sepia", "noir", "vivid", "faded", "chrome", "fade", "dramatic"]
 _CARTOON_STYLES = ["cartoon", "anime", "sketch", "comic", "watercolor"]
@@ -142,6 +149,8 @@ class PhotoEditingBot:
             extra_metadata={"tier": self.tier.value},
             retention_days=30,
             max_retries=2,
+            tier=self.tier.value,
+            priority=QueuePriority.HIGH if self.tier.value == "enterprise" else QueuePriority.NORMAL,
         )
 
     @staticmethod
@@ -157,22 +166,17 @@ class PhotoEditingBot:
         lineage: dict[str, Any] | None = None,
         project_id: str | None = None,
     ) -> dict[str, Any]:
-        preview_assets = preview_assets or []
-        all_assets = [primary_asset, *preview_assets]
-        return {
-            "job_id": job["job_id"],
-            "status": job.get("state", "queued"),
-            "project_id": project_id or f"photo_project_{job['job_id']}",
-            "asset_ids": [asset["asset_id"] for asset in all_assets],
-            "preview_assets": [asset["asset_id"] for asset in preview_assets],
-            "lineage": lineage or {
-                "source": primary_asset["originating_job"],
-                "derivatives": [asset["asset_id"] for asset in preview_assets],
-            },
-            "signed_urls": [asset["delivery_url"] for asset in all_assets],
-            "provider": primary_asset["provider"],
-            "created_at": job.get("created_at", datetime.utcnow().isoformat() + "Z"),
+        resolved_lineage = lineage or {
+            "source": primary_asset["originating_job"],
+            "derivatives": [asset["asset_id"] for asset in (preview_assets or [])],
         }
+        return build_media_lifecycle_contract(
+            job=job,
+            primary_asset=primary_asset,
+            preview_assets=preview_assets,
+            lineage=resolved_lineage,
+            project_id=project_id or f"photo_project_{job['job_id']}",
+        )
 
     def edit_photo(self, image_source: str, adjustments: dict | None = None) -> dict:
         """Apply editing adjustments to a photo (FREE+).

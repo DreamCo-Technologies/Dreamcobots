@@ -8,6 +8,7 @@ from datetime import datetime
 from typing import Any
 
 from bots.media_runtime.assets import AssetRecord, LocalAssetStore
+from bots.media_runtime.queue import QueuePriority
 from bots.media_runtime.runtime import MediaJobRuntime, RenderJob
 from bots.media_runtime.state import AssetRegistry, RenderJobRepository
 
@@ -67,6 +68,9 @@ class MediaEngine:
         retention_days: int = 30,
         estimated_duration_sec: int | None = None,
         max_retries: int = 2,
+        tier: str = "free",
+        priority: QueuePriority = QueuePriority.NORMAL,
+        latency_target_ms: int = 1500,
     ) -> tuple[dict[str, Any], dict[str, Any]]:
         start = time.perf_counter()
         resolved_provider_chain = self._provider_chain_for(media_type, provider_chain)
@@ -81,6 +85,8 @@ class MediaEngine:
                 provider_chain=resolved_provider_chain,
                 estimated_duration_sec=duration,
                 max_retries=max_retries,
+                tier=tier,
+                priority=priority,
             )
             completed_job, primary_asset = self.runtime.process_next(
                 media_format=output_format,
@@ -88,6 +94,12 @@ class MediaEngine:
                 lineage=lineage,
                 extra_metadata=extra_metadata,
                 retention_days=retention_days,
+                policy_context={
+                    "tier": tier,
+                    "media_type": media_type,
+                    "latency_target_ms": latency_target_ms,
+                },
+                allow_degraded=tier in {"pro", "enterprise"},
             )
         except Exception:
             self._telemetry["failure_count"] += 1
@@ -100,6 +112,7 @@ class MediaEngine:
             artifact_size=primary_asset.bytes_size,
             attempts=completed_job.attempts,
             queue_depth=max(queue_depth_before, self.runtime.queue_size()),
+            queue_snapshot=self.runtime.queue_snapshot(),
         )
         self._record_job(completed_job)
         self._record_asset(primary_asset)
@@ -147,11 +160,14 @@ class MediaEngine:
         artifact_size: int,
         attempts: int,
         queue_depth: int,
+        queue_snapshot: dict[str, Any],
     ) -> None:
         self._telemetry["execution_count"] += 1
         self._telemetry["total_execution_ms"] += elapsed_ms
         self._telemetry["artifact_size_bytes_total"] += artifact_size
         self._telemetry["queue_depth_max"] = max(self._telemetry["queue_depth_max"], queue_depth)
+        self._telemetry["queue_dead_letter_count"] = queue_snapshot.get("dead_letter_count", 0)
+        self._telemetry["queue_canceled_count"] = queue_snapshot.get("canceled_count", 0)
         self._telemetry["retry_attempts_total"] += max(0, attempts - 1)
         provider_latency = self._telemetry["provider_latency_ms"]
         provider_latency[provider] = provider_latency.get(provider, 0.0) + elapsed_ms
@@ -169,4 +185,8 @@ class MediaEngine:
             **self._telemetry,
             "avg_execution_ms": round(avg_ms, 3),
             "provider_avg_latency_ms": provider_avg_latency,
+            "provider_governance": self.runtime.gateway.provider_governance_snapshot(),
+            "queue_snapshot": self.runtime.queue_snapshot(),
+            "runtime_slo": self.runtime.slo_snapshot(),
+            "asset_graph": self.asset_store.graph_snapshot(),
         }

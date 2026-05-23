@@ -64,7 +64,9 @@ from bots.media_runtime import (
     MediaEngine,
     MediaJobRuntime,
     ProjectRepository,
+    QueuePriority,
     RenderJobRepository,
+    build_media_lifecycle_contract,
     default_state_path,
 )
 
@@ -406,6 +408,8 @@ class ProfessionalVideoEditingBot:
             extra_metadata={"project_id": project_id, "resolution": resolution, "duration_sec": duration},
             retention_days=30,
             max_retries=2,
+            tier=self.tier.value,
+            priority=QueuePriority.HIGH if self.tier.value == "enterprise" else QueuePriority.NORMAL,
         )
 
         preview_asset = self.media_engine.persist_artifact(
@@ -438,7 +442,19 @@ class ProfessionalVideoEditingBot:
             metadata={"project_id": project_id, "kind": "timeline_manifest"},
             retention_days=30,
         )
+        lifecycle = build_media_lifecycle_contract(
+            job=completed_job,
+            primary_asset=primary_asset,
+            preview_assets=[preview_asset, manifest_asset],
+            lineage={
+                "project_id": project_id,
+                "preview_asset_id": preview_asset["asset_id"],
+                "manifest_asset_id": manifest_asset["asset_id"],
+            },
+            project_id=project_id,
+        )
         return {
+            **lifecycle,
             "project_id": project_id,
             "export_format": export_format.upper(),
             "resolution": resolution,
