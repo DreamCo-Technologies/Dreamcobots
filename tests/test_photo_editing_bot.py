@@ -160,6 +160,10 @@ class TestEditPhoto:
         result = bot.edit_photo("photo.jpg")
         assert result["job"]["state"] == "completed"
         assert result["asset"]["status"] == "active"
+        assert result["job_id"] == result["job"]["job_id"]
+        assert result["status"] == "completed"
+        assert result["asset_ids"] == [result["asset"]["asset_id"]]
+        assert result["provider"] == result["asset"]["provider"]
 
 
 # ===========================================================================
@@ -195,6 +199,7 @@ class TestRemoveBackground:
         assert isinstance(result, dict)
         assert "output_url" in result
         assert result["mask_asset"]["metadata"]["kind"] == "segmentation_mask"
+        assert result["preview_assets"] == [result["mask_asset"]["asset_id"]]
 
 
 # ===========================================================================
@@ -231,11 +236,18 @@ class TestBatchEdit:
         assert result["processed"] == 2
         assert len(result["jobs"]) == 2
         assert len(result["assets"]) == 2
+        assert len(result["asset_ids"]) == 2
+        assert result["project_id"].startswith("photo_batch_")
 
     def test_free_cannot_batch_edit(self):
         bot = PhotoEditingBot(tier=Tier.FREE)
         with pytest.raises(PhotoEditingBotError):
             bot.batch_edit(["a.jpg", "b.jpg"], {})
+
+    def test_empty_batch_rejected(self):
+        bot = PhotoEditingBot(tier=Tier.PRO)
+        with pytest.raises(PhotoEditingBotError):
+            bot.batch_edit([], {"contrast": 1.2})
 
 
 # ===========================================================================

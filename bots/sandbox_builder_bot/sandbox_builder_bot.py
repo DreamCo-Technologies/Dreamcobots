@@ -32,6 +32,7 @@ from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple, Type
 
 from core.bot_base import BotBase
+from framework import GlobalAISourcesFlow  # noqa: F401
 from sandbox.performance_rating import (
     COMPLEXITY_WEIGHTS,
     PerformanceRatingSystem,
@@ -124,6 +125,7 @@ class SandboxBuilderBot(BotBase):
         self.report_dir: Path = Path(report_dir) if report_dir else repo_root / "logs"
         self.extra_scenarios: List[Scenario] = extra_scenarios or []
         self._all_scenarios: List[Scenario] = _DEFAULT_SCENARIOS + self.extra_scenarios
+        self.flow = GlobalAISourcesFlow(bot_name="SandboxBuilderBot")
 
     # ------------------------------------------------------------------
     # BotBase task dispatch
@@ -139,6 +141,10 @@ class SandboxBuilderBot(BotBase):
         """
         action = task.get("action", "run_all")
         name_filter: Optional[str] = task.get("bot_name_filter")
+        self.flow.run_pipeline(
+            raw_data={"task": "sandbox_builder_dispatch", "action": action, "bot_name_filter": name_filter},
+            learning_method="unsupervised",
+        )
 
         if action == "discover":
             discovered = self._discover_bot_classes()

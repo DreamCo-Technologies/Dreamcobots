@@ -35,6 +35,7 @@ import uuid
 import random
 import hashlib
 from datetime import datetime
+from typing import Any
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "ai-models-integration"))
 from tiers import Tier, get_tier_config, get_upgrade_path  # noqa: F401
@@ -143,6 +144,36 @@ class PhotoEditingBot:
             max_retries=2,
         )
 
+    @staticmethod
+    def _preview_assets(*assets: dict[str, Any] | None) -> list[dict[str, Any]]:
+        return [asset for asset in assets if asset is not None]
+
+    def _lifecycle_contract(
+        self,
+        *,
+        job: dict[str, Any],
+        primary_asset: dict[str, Any],
+        preview_assets: list[dict[str, Any]] | None = None,
+        lineage: dict[str, Any] | None = None,
+        project_id: str | None = None,
+    ) -> dict[str, Any]:
+        preview_assets = preview_assets or []
+        all_assets = [primary_asset, *preview_assets]
+        return {
+            "job_id": job["job_id"],
+            "status": job.get("state", "queued"),
+            "project_id": project_id or f"photo_project_{job['job_id']}",
+            "asset_ids": [asset["asset_id"] for asset in all_assets],
+            "preview_assets": [asset["asset_id"] for asset in preview_assets],
+            "lineage": lineage or {
+                "source": primary_asset["originating_job"],
+                "derivatives": [asset["asset_id"] for asset in preview_assets],
+            },
+            "signed_urls": [asset["delivery_url"] for asset in all_assets],
+            "provider": primary_asset["provider"],
+            "created_at": job.get("created_at", datetime.utcnow().isoformat() + "Z"),
+        }
+
     def edit_photo(self, image_source: str, adjustments: dict | None = None) -> dict:
         """Apply editing adjustments to a photo (FREE+).
 
@@ -167,8 +198,14 @@ class PhotoEditingBot:
             media_format="png",
             content_type="image/png",
         )
+        lifecycle = self._lifecycle_contract(
+            job=job,
+            primary_asset=asset,
+            lineage={"source_image": image_source, "operation": "edit_photo"},
+        )
         self._record()
         return {
+            **lifecycle,
             "image_source": image_source,
             "adjustments_applied": adjustments,
             "output_url": asset["delivery_url"],
@@ -201,8 +238,14 @@ class PhotoEditingBot:
             media_format="png",
             content_type="image/png",
         )
+        lifecycle = self._lifecycle_contract(
+            job=job,
+            primary_asset=asset,
+            lineage={"source_image": image_source, "operation": "remove_noise"},
+        )
         self._record()
         return {
+            **lifecycle,
             "image_source": image_source,
             "noise_level_before": random.choice(["moderate", "high", "severe"]),
             "noise_level_after": "minimal",
@@ -246,8 +289,19 @@ class PhotoEditingBot:
             metadata={"kind": "segmentation_mask", "source": image_source},
             retention_days=14,
         )
+        lifecycle = self._lifecycle_contract(
+            job=job,
+            primary_asset=asset,
+            preview_assets=self._preview_assets(mask_asset),
+            lineage={
+                "source_image": image_source,
+                "primary_asset_id": asset["asset_id"],
+                "mask_asset_id": mask_asset["asset_id"],
+            },
+        )
         self._record()
         return {
+            **lifecycle,
             "image_source": image_source,
             "background_detected": random.choice(_BACKGROUND_TYPES),
             "removal_confidence": round(random.uniform(0.90, 0.99), 2),
@@ -286,8 +340,14 @@ class PhotoEditingBot:
             media_format="jpg",
             content_type="image/jpeg",
         )
+        lifecycle = self._lifecycle_contract(
+            job=job,
+            primary_asset=asset,
+            lineage={"source_image": image_source, "operation": "apply_filter", "filter": filter_name},
+        )
         self._record()
         return {
+            **lifecycle,
             "image_source": image_source,
             "filter_name": filter_name,
             "intensity": round(random.uniform(0.75, 0.95), 2),
@@ -311,6 +371,8 @@ class PhotoEditingBot:
         """
         self._check_feature(FEATURE_BATCH_EDITING)
         self._check_daily_limit()
+        if not image_sources:
+            raise PhotoEditingBotError("At least one image source is required for batch editing.")
         result = self.flow.run_pipeline(
             raw_data={"task": "batch_edit", "count": len(image_sources), "adjustments": adjustments},
             learning_method="supervised",
@@ -327,8 +389,22 @@ class PhotoEditingBot:
             )
             lineage.append(asset["asset_id"])
             batch_assets.append({"job": job, "asset": asset})
+        primary_job = batch_assets[0]["job"]
+        primary_asset = batch_assets[0]["asset"]
+        preview_assets = [item["asset"] for item in batch_assets[1:]]
+        lifecycle = self._lifecycle_contract(
+            job=primary_job,
+            primary_asset=primary_asset,
+            preview_assets=preview_assets,
+            project_id=f"photo_batch_{primary_job['job_id']}",
+            lineage={
+                "source_images": image_sources,
+                "derivative_assets": [item["asset"]["asset_id"] for item in batch_assets],
+            },
+        )
         self._record()
         return {
+            **lifecycle,
             "total_images": len(image_sources),
             "processed": len(image_sources),
             "adjustments": adjustments,
@@ -365,8 +441,14 @@ class PhotoEditingBot:
             media_format="png",
             content_type="image/png",
         )
+        lifecycle = self._lifecycle_contract(
+            job=job,
+            primary_asset=asset,
+            lineage={"source_image": image_source, "operation": "cartoonify", "style": style},
+        )
         self._record()
         return {
+            **lifecycle,
             "image_source": image_source,
             "style": style,
             "output_url": asset["delivery_url"],
@@ -400,8 +482,14 @@ class PhotoEditingBot:
             media_format="png",
             content_type="image/png",
         )
+        lifecycle = self._lifecycle_contract(
+            job=job,
+            primary_asset=asset,
+            lineage={"source_image": image_source, "operation": "create_caricature"},
+        )
         self._record()
         return {
+            **lifecycle,
             "image_source": image_source,
             "exaggeration_level": random.choice(["mild", "medium", "strong"]),
             "features_enhanced": random.sample(["eyes", "nose", "smile", "ears", "chin", "forehead"], 3),
@@ -452,9 +540,20 @@ class PhotoEditingBot:
             metadata={"kind": "animation_preview_gif"},
             retention_days=14,
         )
+        lifecycle = self._lifecycle_contract(
+            job=job,
+            primary_asset=asset,
+            preview_assets=self._preview_assets(gif_asset),
+            lineage={
+                "source_frames": image_sources,
+                "video_asset_id": asset["asset_id"],
+                "preview_asset_id": gif_asset["asset_id"],
+            },
+        )
         duration_sec = len(image_sources)
         self._record()
         return {
+            **lifecycle,
             "image_sources": image_sources,
             "frame_count": len(image_sources),
             "style": style,
@@ -496,9 +595,15 @@ class PhotoEditingBot:
             media_format="png",
             content_type="image/png",
         )
+        lifecycle = self._lifecycle_contract(
+            job=job,
+            primary_asset=asset,
+            lineage={"prompt": description, "operation": "generate_cartoon_frame", "style": style},
+        )
         deterministic_seed = int(hashlib.sha256(f"{description}|{style}".encode("utf-8")).hexdigest()[:8], 16) % 9000 + 1000
         self._record()
         return {
+            **lifecycle,
             "description": description,
             "style": style,
             "output_url": asset["delivery_url"],

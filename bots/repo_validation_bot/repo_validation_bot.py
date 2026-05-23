@@ -29,6 +29,8 @@ import sys
 from dataclasses import dataclass, field
 from typing import Dict, List, Optional
 
+from framework import GlobalAISourcesFlow  # noqa: F401
+
 # ---------------------------------------------------------------------------
 # Constants
 # ---------------------------------------------------------------------------
@@ -334,9 +336,14 @@ class RepoValidationBot:
 
     def __init__(self, repo_root: str = ".") -> None:
         self.repo_root = os.path.abspath(repo_root)
+        self.flow = GlobalAISourcesFlow(bot_name="RepoValidationBot")
 
     def run(self) -> ValidationReport:
         """Scan the repository and return a ValidationReport."""
+        self.flow.run_pipeline(
+            raw_data={"task": "repo_validation_scan", "repo_root": self.repo_root},
+            learning_method="unsupervised",
+        )
         print("=== Repo Validation Bot — scanning repository ===")
         report = scan_repo(self.repo_root)
         print(report.to_text())
