@@ -431,3 +431,80 @@ def get_clusters_for_provider(provider_id: str) -> list[AICluster]:
 
 def list_clusters() -> list[AICluster]:
     return list(AI_CLUSTERS.values())
+
+
+# ---------------------------------------------------------------------------
+# Pricing tier definitions (used by CostOptimizerEngine)
+# ---------------------------------------------------------------------------
+@dataclass
+class PricingTier:
+    id: str
+    label: str
+    priority: int   # lower = cheaper
+    is_free: bool = False
+    is_open_source: bool = False
+
+
+PRICING_TIERS: dict[str, PricingTier] = {
+    "free":         PricingTier("free",       "Free",         0, is_free=True),
+    "open_source":  PricingTier("open_source","Open-Source",  1, is_open_source=True),
+    "freemium":     PricingTier("freemium",   "Freemium",     2),
+    "paid":         PricingTier("paid",       "Paid",         3),
+    "enterprise":   PricingTier("enterprise", "Enterprise",   4),
+}
+
+
+# ---------------------------------------------------------------------------
+# Category taxonomy (flat dict for router lookups)
+# ---------------------------------------------------------------------------
+@dataclass
+class CategoryMeta:
+    id: str
+    label: str
+    layer: str
+    sub_layer: str = ""
+
+
+CATEGORY_TAXONOMY: dict[str, CategoryMeta] = {
+    # Intelligence Layer
+    "foundation_models":    CategoryMeta("foundation_models",    "Foundation Models",    LAYER_INTELLIGENCE, SUB_FOUNDATION_MODELS),
+    "conversational_ai":    CategoryMeta("conversational_ai",    "Conversational AI",    LAYER_INTELLIGENCE, SUB_CONVERSATIONAL_AI),
+    "search_retrieval":     CategoryMeta("search_retrieval",     "Search & Retrieval",   LAYER_INTELLIGENCE, SUB_SEARCH_RETRIEVAL),
+    # Execution Layer
+    "developer_tools":      CategoryMeta("developer_tools",      "Developer Tools",      LAYER_EXECUTION, SUB_DEVELOPER_TOOLS),
+    "automation":           CategoryMeta("automation",           "Automation",           LAYER_EXECUTION, SUB_AUTOMATION),
+    "ai_agents":            CategoryMeta("ai_agents",            "AI Agents",            LAYER_EXECUTION, SUB_AI_AGENTS),
+    # Infrastructure Layer
+    "cloud_infrastructure": CategoryMeta("cloud_infrastructure", "Cloud & Infrastructure", LAYER_INFRASTRUCTURE, SUB_CLOUD_INFRA),
+    "hardware_compute":     CategoryMeta("hardware_compute",     "Hardware & Compute",   LAYER_INFRASTRUCTURE, SUB_HARDWARE_COMPUTE),
+    "data_platforms":       CategoryMeta("data_platforms",       "Data Platforms",       LAYER_INFRASTRUCTURE, SUB_DATA_PLATFORMS),
+    # Industry Layer
+    "healthcare":           CategoryMeta("healthcare",           "Healthcare",           LAYER_INDUSTRY, SUB_HEALTHCARE),
+    "finance":              CategoryMeta("finance",              "Finance",              LAYER_INDUSTRY, SUB_FINANCE),
+    "legal":                CategoryMeta("legal",                "Legal",                LAYER_INDUSTRY, SUB_LEGAL),
+    "security":             CategoryMeta("security",             "Security",             LAYER_INDUSTRY, SUB_SECURITY),
+    "education":            CategoryMeta("education",            "Education",            LAYER_INDUSTRY, SUB_EDUCATION),
+    # Creative Layer
+    "vision_image_video":   CategoryMeta("vision_image_video",   "Vision / Image / Video", LAYER_CREATIVE, SUB_VISION_IMAGE_VIDEO),
+    "music_voice_media":    CategoryMeta("music_voice_media",    "Music / Voice / Media",  LAYER_CREATIVE, SUB_MUSIC_VOICE_MEDIA),
+    # Physical Layer
+    "robotics":             CategoryMeta("robotics",             "Robotics",             LAYER_PHYSICAL, SUB_ROBOTICS),
+    "autonomous_vehicles":  CategoryMeta("autonomous_vehicles",  "Autonomous Vehicles",  LAYER_PHYSICAL, SUB_AUTONOMOUS_VEHICLES),
+    "defense_ai":           CategoryMeta("defense_ai",           "Defense AI",           LAYER_PHYSICAL, SUB_DEFENSE_AI),
+    # Extended categories (from user's 22-category taxonomy)
+    "analytics_automation": CategoryMeta("analytics_automation", "Analytics & Automation", LAYER_EXECUTION),
+    "data_search":          CategoryMeta("data_search",          "Data & Search",        LAYER_INFRASTRUCTURE),
+    "enterprise_platforms": CategoryMeta("enterprise_platforms", "Enterprise Platforms", LAYER_INDUSTRY),
+    "healthcare_bio":       CategoryMeta("healthcare_bio",       "Healthcare & Bio",     LAYER_INDUSTRY),
+    "fintech_risk":         CategoryMeta("fintech_risk",         "FinTech & Risk",       LAYER_INDUSTRY),
+    "legal_contracts":      CategoryMeta("legal_contracts",      "Legal & Contracts",    LAYER_INDUSTRY),
+    "education_training":   CategoryMeta("education_training",   "Education & Training", LAYER_INDUSTRY),
+    "sales_marketing":      CategoryMeta("sales_marketing",      "Sales & Marketing",    LAYER_EXECUTION),
+    "gaming_simulation":    CategoryMeta("gaming_simulation",    "Gaming & Simulation",  LAYER_CREATIVE),
+    "web3_blockchain":      CategoryMeta("web3_blockchain",      "Web3 & Blockchain",    LAYER_INDUSTRY),
+    "hr_workforce":         CategoryMeta("hr_workforce",         "HR & Workforce",       LAYER_INDUSTRY),
+    "regional_emerging":    CategoryMeta("regional_emerging",    "Regional & Emerging",  LAYER_INTELLIGENCE),
+    "vision_speech_media":  CategoryMeta("vision_speech_media",  "Vision, Speech & Media", LAYER_CREATIVE),
+    "security_compliance":  CategoryMeta("security_compliance",  "Security & Compliance",  LAYER_INDUSTRY),
+    "robotics_physical_ai": CategoryMeta("robotics_physical_ai", "Robotics & Physical AI", LAYER_PHYSICAL),
+}
