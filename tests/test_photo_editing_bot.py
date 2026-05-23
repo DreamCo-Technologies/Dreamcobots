@@ -155,6 +155,12 @@ class TestEditPhoto:
         bot.edit_photo("photo.jpg")
         assert bot._daily_count == 1
 
+    def test_returns_lifecycle_job_and_asset(self):
+        bot = PhotoEditingBot(tier=Tier.FREE)
+        result = bot.edit_photo("photo.jpg")
+        assert result["job"]["state"] == "completed"
+        assert result["asset"]["status"] == "active"
+
 
 # ===========================================================================
 # remove_noise
@@ -188,6 +194,7 @@ class TestRemoveBackground:
         result = bot.remove_background("photo.jpg")
         assert isinstance(result, dict)
         assert "output_url" in result
+        assert result["mask_asset"]["metadata"]["kind"] == "segmentation_mask"
 
 
 # ===========================================================================
@@ -222,6 +229,8 @@ class TestBatchEdit:
         bot = PhotoEditingBot(tier=Tier.PRO)
         result = bot.batch_edit(["a.jpg", "b.jpg"], {"contrast": 1.2})
         assert result["processed"] == 2
+        assert len(result["jobs"]) == 2
+        assert len(result["assets"]) == 2
 
     def test_free_cannot_batch_edit(self):
         bot = PhotoEditingBot(tier=Tier.FREE)

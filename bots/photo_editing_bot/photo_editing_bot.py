@@ -33,6 +33,7 @@ import sys
 import os
 import uuid
 import random
+import hashlib
 from datetime import datetime
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "ai-models-integration"))
@@ -54,6 +55,7 @@ from bots.photo_editing_bot.tiers import (
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", ".."))
 from framework import GlobalAISourcesFlow  # noqa: F401
+from bots.media_runtime import InferenceGateway, LocalAssetStore, MediaEngine, MediaJobRuntime
 
 _AVAILABLE_FILTERS = ["vintage", "sepia", "noir", "vivid", "faded", "chrome", "fade", "dramatic"]
 _CARTOON_STYLES = ["cartoon", "anime", "sketch", "comic", "watercolor"]
@@ -83,6 +85,14 @@ class PhotoEditingBot:
         self.tier_info = get_bot_tier_info(tier)
         self.flow = GlobalAISourcesFlow(bot_name="PhotoEditingBot")
         self._daily_count: int = 0
+        self.asset_store = LocalAssetStore()
+        self.inference_gateway = InferenceGateway()
+        self.runtime = MediaJobRuntime(asset_store=self.asset_store, gateway=self.inference_gateway)
+        self.media_engine = MediaEngine(
+            owner="photo_editing_bot",
+            runtime=self.runtime,
+            asset_store=self.asset_store,
+        )
 
     def _check_daily_limit(self) -> None:
         """Raise PhotoEditingBotError if the daily limit is exceeded."""
@@ -111,6 +121,28 @@ class PhotoEditingBot:
     def _record(self) -> None:
         self._daily_count += 1
 
+    def _run_media_job(
+        self,
+        *,
+        operation: str,
+        payload: dict,
+        media_format: str,
+        content_type: str,
+        lineage: list[str] | None = None,
+        media_type: str = "image",
+    ) -> tuple[dict, dict]:
+        return self.media_engine.execute_render(
+            operation=operation,
+            media_type=media_type,
+            payload=payload,
+            output_format=media_format,
+            output_content_type=content_type,
+            lineage=lineage,
+            extra_metadata={"tier": self.tier.value},
+            retention_days=30,
+            max_retries=2,
+        )
+
     def edit_photo(self, image_source: str, adjustments: dict | None = None) -> dict:
         """Apply editing adjustments to a photo (FREE+).
 
@@ -129,15 +161,22 @@ class PhotoEditingBot:
             raw_data={"task": "edit_photo", "image_source": image_source, "adjustments": adjustments},
             learning_method="supervised",
         )
-        uid = uuid.uuid4().hex[:12]
+        job, asset = self._run_media_job(
+            operation="edit_photo",
+            payload={"image_source": image_source, "adjustments": adjustments},
+            media_format="png",
+            content_type="image/png",
+        )
         self._record()
         return {
             "image_source": image_source,
             "adjustments_applied": adjustments,
-            "output_url": f"https://cdn.dreamcobots.ai/photos/edited_{uid}.png",
+            "output_url": asset["delivery_url"],
             "resolution": "2048x2048",
             "format": "PNG",
             "file_size_kb": random.randint(400, 2000),
+            "job": job,
+            "asset": asset,
             "timestamp": datetime.utcnow().isoformat() + "Z",
             "framework_pipeline": result.get("bot_name"),
         }
@@ -156,16 +195,23 @@ class PhotoEditingBot:
             raw_data={"task": "remove_noise", "image_source": image_source},
             learning_method="supervised",
         )
-        uid = uuid.uuid4().hex[:12]
+        job, asset = self._run_media_job(
+            operation="remove_noise",
+            payload={"image_source": image_source},
+            media_format="png",
+            content_type="image/png",
+        )
         self._record()
         return {
             "image_source": image_source,
             "noise_level_before": random.choice(["moderate", "high", "severe"]),
             "noise_level_after": "minimal",
             "psnr_improvement_db": round(random.uniform(5.0, 12.0), 1),
-            "output_url": f"https://cdn.dreamcobots.ai/photos/denoised_{uid}.png",
+            "output_url": asset["delivery_url"],
             "algorithm": "DnCNN-v3",
             "status": "denoised",
+            "job": job,
+            "asset": asset,
             "timestamp": datetime.utcnow().isoformat() + "Z",
             "framework_pipeline": result.get("bot_name"),
         }
@@ -184,16 +230,34 @@ class PhotoEditingBot:
             raw_data={"task": "remove_background", "image_source": image_source},
             learning_method="supervised",
         )
-        uid = uuid.uuid4().hex[:12]
+        job, asset = self._run_media_job(
+            operation="remove_background",
+            payload={"image_source": image_source},
+            media_format="png",
+            content_type="image/png",
+        )
+        mask_asset = self.media_engine.persist_artifact(
+            originating_job=job["job_id"],
+            provider=asset["provider"],
+            media_format="png",
+            content_type="image/png",
+            content_bytes=f"MASK|{image_source}".encode("utf-8"),
+            lineage=[asset["asset_id"]],
+            metadata={"kind": "segmentation_mask", "source": image_source},
+            retention_days=14,
+        )
         self._record()
         return {
             "image_source": image_source,
             "background_detected": random.choice(_BACKGROUND_TYPES),
             "removal_confidence": round(random.uniform(0.90, 0.99), 2),
-            "output_url": f"https://cdn.dreamcobots.ai/photos/nobg_{uid}.png",
-            "mask_url": f"https://cdn.dreamcobots.ai/masks/mask_{uid}.png",
+            "output_url": asset["delivery_url"],
+            "mask_url": mask_asset["delivery_url"],
             "edge_quality": "high",
             "status": "background_removed",
+            "job": job,
+            "asset": asset,
+            "mask_asset": mask_asset,
             "timestamp": datetime.utcnow().isoformat() + "Z",
             "framework_pipeline": result.get("bot_name"),
         }
@@ -216,14 +280,21 @@ class PhotoEditingBot:
             raw_data={"task": "apply_filter", "image_source": image_source, "filter_name": filter_name},
             learning_method="supervised",
         )
-        uid = uuid.uuid4().hex[:12]
+        job, asset = self._run_media_job(
+            operation="apply_filter",
+            payload={"image_source": image_source, "filter_name": filter_name},
+            media_format="jpg",
+            content_type="image/jpeg",
+        )
         self._record()
         return {
             "image_source": image_source,
             "filter_name": filter_name,
             "intensity": round(random.uniform(0.75, 0.95), 2),
-            "output_url": f"https://cdn.dreamcobots.ai/photos/filtered_{uid}.jpg",
+            "output_url": asset["delivery_url"],
             "status": "filter_applied",
+            "job": job,
+            "asset": asset,
             "timestamp": datetime.utcnow().isoformat() + "Z",
             "framework_pipeline": result.get("bot_name"),
         }
@@ -244,18 +315,28 @@ class PhotoEditingBot:
             raw_data={"task": "batch_edit", "count": len(image_sources), "adjustments": adjustments},
             learning_method="supervised",
         )
-        output_urls = [
-            f"https://cdn.dreamcobots.ai/photos/batch_{uuid.uuid4().hex[:8]}.png"
-            for _ in image_sources
-        ]
+        batch_assets: list[dict] = []
+        lineage: list[str] = []
+        for index, source in enumerate(image_sources):
+            job, asset = self._run_media_job(
+                operation="batch_edit",
+                payload={"index": index, "image_source": source, "adjustments": adjustments},
+                media_format="png",
+                content_type="image/png",
+                lineage=lineage or None,
+            )
+            lineage.append(asset["asset_id"])
+            batch_assets.append({"job": job, "asset": asset})
         self._record()
         return {
             "total_images": len(image_sources),
             "processed": len(image_sources),
             "adjustments": adjustments,
-            "output_urls": output_urls,
+            "output_urls": [item["asset"]["delivery_url"] for item in batch_assets],
             "processing_time_sec": round(len(image_sources) * random.uniform(0.8, 2.5), 1),
             "status": "completed",
+            "jobs": [item["job"] for item in batch_assets],
+            "assets": [item["asset"] for item in batch_assets],
             "timestamp": datetime.utcnow().isoformat() + "Z",
             "framework_pipeline": result.get("bot_name"),
         }
@@ -278,16 +359,23 @@ class PhotoEditingBot:
             raw_data={"task": "cartoonify", "image_source": image_source, "style": style},
             learning_method="self_supervised",
         )
-        uid = uuid.uuid4().hex[:12]
+        job, asset = self._run_media_job(
+            operation="cartoonify",
+            payload={"image_source": image_source, "style": style},
+            media_format="png",
+            content_type="image/png",
+        )
         self._record()
         return {
             "image_source": image_source,
             "style": style,
-            "output_url": f"https://cdn.dreamcobots.ai/photos/cartoon_{uid}.png",
+            "output_url": asset["delivery_url"],
             "processing_model": "CartoonGAN-v2",
             "style_strength": round(random.uniform(0.80, 0.95), 2),
             "resolution": "2048x2048",
             "status": "completed",
+            "job": job,
+            "asset": asset,
             "timestamp": datetime.utcnow().isoformat() + "Z",
             "framework_pipeline": result.get("bot_name"),
         }
@@ -306,16 +394,23 @@ class PhotoEditingBot:
             raw_data={"task": "create_caricature", "image_source": image_source},
             learning_method="self_supervised",
         )
-        uid = uuid.uuid4().hex[:12]
+        job, asset = self._run_media_job(
+            operation="create_caricature",
+            payload={"image_source": image_source},
+            media_format="png",
+            content_type="image/png",
+        )
         self._record()
         return {
             "image_source": image_source,
             "exaggeration_level": random.choice(["mild", "medium", "strong"]),
             "features_enhanced": random.sample(["eyes", "nose", "smile", "ears", "chin", "forehead"], 3),
-            "output_url": f"https://cdn.dreamcobots.ai/photos/caricature_{uid}.png",
+            "output_url": asset["delivery_url"],
             "processing_model": "CariGAN-v1",
             "face_detected": True,
             "status": "completed",
+            "job": job,
+            "asset": asset,
             "timestamp": datetime.utcnow().isoformat() + "Z",
             "framework_pipeline": result.get("bot_name"),
         }
@@ -340,7 +435,23 @@ class PhotoEditingBot:
             raw_data={"task": "generate_animation", "frame_count": len(image_sources), "style": style, "fps": fps},
             learning_method="self_supervised",
         )
-        uid = uuid.uuid4().hex[:12]
+        job, asset = self._run_media_job(
+            operation="generate_animation",
+            payload={"image_sources": image_sources, "style": style, "fps": fps},
+            media_format="mp4",
+            content_type="video/mp4",
+            media_type="video",
+        )
+        gif_asset = self.media_engine.persist_artifact(
+            originating_job=job["job_id"],
+            provider=asset["provider"],
+            media_format="gif",
+            content_type="image/gif",
+            content_bytes=f"GIF_PREVIEW|style={style}|fps={fps}".encode("utf-8"),
+            lineage=[asset["asset_id"]],
+            metadata={"kind": "animation_preview_gif"},
+            retention_days=14,
+        )
         duration_sec = len(image_sources)
         self._record()
         return {
@@ -348,12 +459,15 @@ class PhotoEditingBot:
             "frame_count": len(image_sources),
             "style": style,
             "fps": fps,
-            "output_url": f"https://cdn.dreamcobots.ai/animations/{uid}.mp4",
-            "gif_url": f"https://cdn.dreamcobots.ai/animations/{uid}.gif",
+            "output_url": asset["delivery_url"],
+            "gif_url": gif_asset["delivery_url"],
             "duration_sec": duration_sec,
             "format": "MP4 + GIF",
             "resolution": "1280x720",
             "status": "completed",
+            "job": job,
+            "asset": asset,
+            "gif_asset": gif_asset,
             "timestamp": datetime.utcnow().isoformat() + "Z",
             "framework_pipeline": result.get("bot_name"),
         }
@@ -376,17 +490,25 @@ class PhotoEditingBot:
             raw_data={"task": "generate_cartoon_frame", "description": description, "style": style},
             learning_method="self_supervised",
         )
-        uid = uuid.uuid4().hex[:12]
+        job, asset = self._run_media_job(
+            operation="generate_cartoon_frame",
+            payload={"description": description, "style": style},
+            media_format="png",
+            content_type="image/png",
+        )
+        deterministic_seed = int(hashlib.sha256(f"{description}|{style}".encode("utf-8")).hexdigest()[:8], 16) % 9000 + 1000
         self._record()
         return {
             "description": description,
             "style": style,
-            "output_url": f"https://cdn.dreamcobots.ai/frames/frame_{uid}.png",
+            "output_url": asset["delivery_url"],
             "resolution": "1920x1080",
             "model": "CartoonDiffusion-v3",
             "generation_steps": 50,
-            "seed": random.randint(1000, 9999),
+            "seed": deterministic_seed,
             "status": "completed",
+            "job": job,
+            "asset": asset,
             "timestamp": datetime.utcnow().isoformat() + "Z",
             "framework_pipeline": result.get("bot_name"),
         }

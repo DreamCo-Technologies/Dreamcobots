@@ -101,3 +101,25 @@ def test_media_engine_persists_job_and_asset_with_repositories(tmp_path):
     assert job_repo.get(job["job_id"])["state"] == "completed"
     assert asset_registry.get(asset["asset_id"])["originating_job"] == job["job_id"]
     assert asset_registry.get(persisted["asset_id"])["metadata"]["kind"] == "manifest"
+
+
+def test_media_engine_telemetry_snapshot_tracks_runtime_metrics(tmp_path):
+    gateway = InferenceGateway()
+    store = LocalAssetStore(root_dir=str(tmp_path / "assets"))
+    runtime = MediaJobRuntime(asset_store=store, gateway=gateway)
+    engine = MediaEngine(owner="test_media_engine", runtime=runtime, asset_store=store)
+
+    engine.execute_render(
+        operation="render_image",
+        media_type="image",
+        payload={"prompt": "hello"},
+        output_format="png",
+        output_content_type="image/png",
+    )
+    snapshot = engine.telemetry_snapshot()
+
+    assert snapshot["execution_count"] == 1
+    assert snapshot["avg_execution_ms"] >= 0
+    assert snapshot["queue_depth_max"] >= 0
+    assert snapshot["artifact_size_bytes_total"] > 0
+    assert snapshot["provider_avg_latency_ms"]

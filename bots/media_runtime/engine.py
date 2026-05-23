@@ -3,6 +3,8 @@ from __future__ import annotations
 from framework import GlobalAISourcesFlow  # noqa: F401
 
 import math
+import time
+from datetime import datetime
 from typing import Any
 
 from bots.media_runtime.assets import AssetRecord, LocalAssetStore
@@ -35,6 +37,16 @@ class MediaEngine:
         self.job_repository = job_repository
         self.asset_registry = asset_registry
         self.provider_routes = provider_routes or self._DEFAULT_PROVIDER_ROUTES
+        self._telemetry: dict[str, Any] = {
+            "execution_count": 0,
+            "failure_count": 0,
+            "total_execution_ms": 0.0,
+            "provider_latency_ms": {},
+            "queue_depth_max": 0,
+            "artifact_size_bytes_total": 0,
+            "retry_attempts_total": 0,
+            "updated_at": None,
+        }
 
     def _provider_chain_for(self, media_type: str, provider_chain: list[str] | None) -> list[str]:
         if provider_chain:
@@ -56,23 +68,38 @@ class MediaEngine:
         estimated_duration_sec: int | None = None,
         max_retries: int = 2,
     ) -> tuple[dict[str, Any], dict[str, Any]]:
+        start = time.perf_counter()
         resolved_provider_chain = self._provider_chain_for(media_type, provider_chain)
         duration = estimated_duration_sec if estimated_duration_sec is not None else max(10, int(math.ceil(len(str(payload)) / 4)))
-        self.runtime.create_job(
-            owner=self.owner,
-            media_type=media_type,
-            operation=operation,
-            payload=payload,
-            provider_chain=resolved_provider_chain,
-            estimated_duration_sec=duration,
-            max_retries=max_retries,
-        )
-        completed_job, primary_asset = self.runtime.process_next(
-            media_format=output_format,
-            content_type=output_content_type,
-            lineage=lineage,
-            extra_metadata=extra_metadata,
-            retention_days=retention_days,
+        queue_depth_before = self.runtime.queue_size()
+        try:
+            self.runtime.create_job(
+                owner=self.owner,
+                media_type=media_type,
+                operation=operation,
+                payload=payload,
+                provider_chain=resolved_provider_chain,
+                estimated_duration_sec=duration,
+                max_retries=max_retries,
+            )
+            completed_job, primary_asset = self.runtime.process_next(
+                media_format=output_format,
+                content_type=output_content_type,
+                lineage=lineage,
+                extra_metadata=extra_metadata,
+                retention_days=retention_days,
+            )
+        except Exception:
+            self._telemetry["failure_count"] += 1
+            self._telemetry["updated_at"] = datetime.utcnow().isoformat() + "Z"
+            raise
+        elapsed_ms = (time.perf_counter() - start) * 1000
+        self._update_telemetry(
+            elapsed_ms=elapsed_ms,
+            provider=primary_asset.provider,
+            artifact_size=primary_asset.bytes_size,
+            attempts=completed_job.attempts,
+            queue_depth=max(queue_depth_before, self.runtime.queue_size()),
         )
         self._record_job(completed_job)
         self._record_asset(primary_asset)
@@ -111,3 +138,35 @@ class MediaEngine:
     def _record_asset(self, asset: AssetRecord) -> None:
         if self.asset_registry:
             self.asset_registry.register(asset.to_dict())
+
+    def _update_telemetry(
+        self,
+        *,
+        elapsed_ms: float,
+        provider: str,
+        artifact_size: int,
+        attempts: int,
+        queue_depth: int,
+    ) -> None:
+        self._telemetry["execution_count"] += 1
+        self._telemetry["total_execution_ms"] += elapsed_ms
+        self._telemetry["artifact_size_bytes_total"] += artifact_size
+        self._telemetry["queue_depth_max"] = max(self._telemetry["queue_depth_max"], queue_depth)
+        self._telemetry["retry_attempts_total"] += max(0, attempts - 1)
+        provider_latency = self._telemetry["provider_latency_ms"]
+        provider_latency[provider] = provider_latency.get(provider, 0.0) + elapsed_ms
+        self._telemetry["updated_at"] = datetime.utcnow().isoformat() + "Z"
+
+    def telemetry_snapshot(self) -> dict[str, Any]:
+        executions = self._telemetry["execution_count"]
+        provider_latency = self._telemetry["provider_latency_ms"]
+        provider_avg_latency = {
+            provider: round(total / executions, 3) if executions else 0.0
+            for provider, total in provider_latency.items()
+        }
+        avg_ms = self._telemetry["total_execution_ms"] / executions if executions else 0.0
+        return {
+            **self._telemetry,
+            "avg_execution_ms": round(avg_ms, 3),
+            "provider_avg_latency_ms": provider_avg_latency,
+        }

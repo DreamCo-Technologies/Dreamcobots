@@ -7,6 +7,7 @@ from bots.buddy_media_transformation_bot.buddy_media_transformation_bot import (
     BuddyMediaTransformationBot,
     BuddyMediaTransformationBotError,
 )
+from bots.buddy_media_transformation_bot.creative_studio import BuddyCreativeStudio
 from bots.buddy_media_transformation_bot.tiers import (
     Tier,
     TierConfig,
@@ -20,6 +21,7 @@ from bots.buddy_media_transformation_bot.tiers import (
 __all__ = [
     "BuddyMediaTransformationBot",
     "BuddyMediaTransformationBotError",
+    "BuddyCreativeStudio",
     "Tier",
     "TierConfig",
     "get_tier_config",
