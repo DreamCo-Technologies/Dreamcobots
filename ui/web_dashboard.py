@@ -23,6 +23,7 @@ Usage
 Endpoints
 ---------
   GET  /                              — Dashboard HTML landing page
+  GET  /dashboard/chooser             — Dashboard chooser and side-by-side comparison
   GET  /bots/<name>                   — Per-bot HTML dashboard page
   GET  /api/status                    — System-wide status JSON
   GET  /api/bots                      — Registered bot list with KPI scores
@@ -1200,6 +1201,24 @@ def create_app(
     @app.route("/")
     def index() -> Response:
         return Response(_DASHBOARD_HTML, mimetype="text/html")
+
+    @app.route("/dashboard/chooser")
+    def dashboard_chooser() -> Response:
+        from ui.dashboard_chooser import (
+            load_dashboard_entries,
+            parse_filter_args,
+            render_dashboard_chooser_html,
+        )
+
+        filter_args = parse_filter_args(request.args)
+        html = render_dashboard_chooser_html(
+            entries=load_dashboard_entries(catalog=_BOT_CATALOG),
+            categories=filter_args["categories"],
+            production_ready=filter_args["production_ready"],
+            governance_compatible=filter_args["governance_compatible"],
+            migration_candidate=filter_args["migration_candidate"],
+        )
+        return Response(html, mimetype="text/html")
 
     # ---------------------------------------------------------------
     # Status
