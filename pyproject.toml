@@ -1,0 +1,93 @@
+[build-system]
+requires = ["setuptools>=68.0", "wheel"]
+build-backend = "setuptools.backends.legacy:build"
+
+[project]
+name = "dreamco-os"
+version = "2.0.0"
+description = "The governed operating system for autonomous AI agents"
+readme = "README.md"
+license = { file = "LICENSE" }
+requires-python = ">=3.10"
+keywords = ["ai", "agents", "orchestration", "bots", "automation", "mcp"]
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Software Development :: Libraries :: Application Frameworks",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+]
+dependencies = [
+    "fastapi==0.136.1",
+    "uvicorn==0.34.3",
+    "pydantic==2.11.5",
+    "httpx==0.28.1",
+    "redis==5.2.1",
+    "chromadb==0.5.23",
+    "sqlalchemy==2.0.41",
+    "opentelemetry-api==1.34.0",
+    "opentelemetry-sdk==1.34.0",
+    "structlog==24.4.0",
+    "prometheus-client==0.21.1",
+    "python-dotenv==1.2.2",
+    "stripe==15.1.0",
+    "openai==2.37.0",
+    "aiohttp==3.11.18",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest==9.0.3",
+    "pytest-asyncio==0.25.3",
+    "pytest-cov==7.1.0",
+    "flake8",
+    "black",
+    "isort",
+    "pip-audit",
+]
+browser = [
+    "selenium==4.44.0",
+    "playwright",
+]
+full = [
+    "dreamco-os[dev,browser]",
+    "psycopg2-binary==2.9.10",
+]
+
+[project.urls]
+Homepage = "https://github.com/DreamCo-Technologies/Dreamcobots"
+Documentation = "https://github.com/DreamCo-Technologies/Dreamcobots/blob/main/ARCHITECTURE.md"
+Repository = "https://github.com/DreamCo-Technologies/Dreamcobots"
+Changelog = "https://github.com/DreamCo-Technologies/Dreamcobots/blob/main/CHANGELOG.md"
+"Bug Tracker" = "https://github.com/DreamCo-Technologies/Dreamcobots/issues"
+
+[project.scripts]
+dreamco-mcp = "dreamco_mcp_server:main"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["python_bots*", "dreamco_sdk*", "dreamco_platform*"]
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
+addopts = "-q --tb=short"
+
+[tool.black]
+line-length = 100
+target-version = ["py310", "py311", "py312"]
+
+[tool.isort]
+profile = "black"
+line_length = 100
+
+[tool.coverage.run]
+source = ["python_bots", "dreamco_sdk", "dreamco_mcp_server"]
+omit = ["tests/*", "demo/*"]

@@ -1,0 +1,34 @@
+# DreamCo Technologies — Code Owners
+# Every file and directory must have at least one owner.
+# Owners are automatically requested as reviewers on pull requests.
+
+# Global fallback — DreamCo core team owns everything by default
+*                           @DreamCo-Technologies/core-team
+
+# Core OS infrastructure
+python_bots/core/           @DreamCo-Technologies/core-team
+python_bots/orchestrator.py @DreamCo-Technologies/core-team
+python_bots/governance/     @DreamCo-Technologies/core-team
+
+# Platform layer
+dreamco_platform/           @DreamCo-Technologies/core-team
+dreamco_mcp_server.py       @DreamCo-Technologies/core-team
+dreamco_sdk/                @DreamCo-Technologies/core-team
+
+# CI/CD — must be reviewed by infrastructure team
+.github/workflows/          @DreamCo-Technologies/core-team
+.github/dependabot.yml      @DreamCo-Technologies/core-team
+
+# Security-sensitive files
+requirements.txt            @DreamCo-Technologies/core-team
+SECURITY.md                 @DreamCo-Technologies/core-team
+
+# Bots — coding agents reviewed by core team
+bots/coding/                @DreamCo-Technologies/core-team
+
+# Tests — everyone can submit tests, core team reviews
+tests/                      @DreamCo-Technologies/core-team
+
+# Documentation — open to all contributors
+*.md                        @DreamCo-Technologies/core-team
+docs/                       @DreamCo-Technologies/core-team

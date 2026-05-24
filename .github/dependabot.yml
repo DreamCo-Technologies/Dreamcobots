@@ -4,13 +4,55 @@ updates:
     directory: "/"
     schedule:
       interval: "weekly"
+      day: "monday"
+      time: "06:00"
     labels:
       - "dependencies"
-    open-pull-requests-limit: 10
+      - "security"
+    open-pull-requests-limit: 5
+    groups:
+      security-patches:
+        applies-to: security-updates
+        patterns: ["*"]
+      minor-patch-updates:
+        applies-to: version-updates
+        update-types: ["minor", "patch"]
+    ignore:
+      - dependency-name: "selenium"
+        update-types: ["version-update:semver-major"]
+    commit-message:
+      prefix: "chore(deps)"
+      include: "scope"
 
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
       interval: "weekly"
+      day: "monday"
+      time: "06:00"
     labels:
       - "dependencies"
+      - "ci"
+    open-pull-requests-limit: 3
+    groups:
+      github-actions:
+        patterns: ["*"]
+    commit-message:
+      prefix: "chore(ci)"
+      include: "scope"
+
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "06:00"
+    labels:
+      - "dependencies"
+    open-pull-requests-limit: 3
+    groups:
+      npm-all:
+        patterns: ["*"]
+    commit-message:
+      prefix: "chore(deps)"
+      include: "scope"
