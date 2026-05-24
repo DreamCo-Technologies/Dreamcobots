@@ -1,0 +1,36 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "DreamCo MCP Server",
+    "version": "1.0.0"
+  },
+  "paths": {
+    "/health": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "Service health"
+          }
+        }
+      }
+    },
+    "/bots": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "Registered bots"
+          }
+        }
+      }
+    },
+    "/run": {
+      "post": {
+        "responses": {
+          "200": {
+            "description": "Task accepted"
+          }
+        }
+      }
+    }
+  }
+}

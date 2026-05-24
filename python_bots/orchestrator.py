@@ -26,9 +26,11 @@ Usage
 
 from __future__ import annotations
 
+import asyncio
 import sys
 import os
 from datetime import datetime, timezone
+from dataclasses import dataclass, field
 from typing import Any, Dict, List
 
 # ---------------------------------------------------------------------------
@@ -225,3 +227,56 @@ class PythonBotOrchestrator:
             "total_succeeded": succeeded,
             "total_failed": total - succeeded,
         }
+
+
+@dataclass
+class DurableWorkflowRecord:
+    workflow_id: str
+    events: List[Dict[str, Any]] = field(default_factory=list)
+
+
+class DreamCoOrchestrator:
+    """Async-first orchestrator with durable event history and replay support."""
+
+    def __init__(self) -> None:
+        self._queue: asyncio.Queue[Dict[str, Any]] = asyncio.Queue()
+        self._bots: Dict[str, Any] = {}
+        self._history: Dict[str, DurableWorkflowRecord] = {}
+        self._event_stream: List[Dict[str, Any]] = []
+
+    def register(self, bot: Any) -> None:
+        self._bots[getattr(bot, "bot_id", getattr(bot, "name", bot.__class__.__name__))] = bot
+
+    async def dispatch(self, workflow_id: str, bot_id: str, payload: Dict[str, Any]) -> Dict[str, Any]:
+        event = {
+            "workflow_id": workflow_id,
+            "bot_id": bot_id,
+            "payload": payload,
+            "at": datetime.now(tz=timezone.utc).isoformat(),
+        }
+        await self._queue.put(event)
+        self._history.setdefault(workflow_id, DurableWorkflowRecord(workflow_id=workflow_id)).events.append(event)
+        self._event_stream.append({"type": "queued", **event})
+        return event
+
+    async def run_once(self) -> Dict[str, Any]:
+        event = await self._queue.get()
+        bot = self._bots[event["bot_id"]]
+        result = await bot.execute(event["payload"])
+        finished = {"type": "completed", "event": event, "result": result}
+        self._event_stream.append(finished)
+        self._history[event["workflow_id"]].events.append(finished)
+        return finished
+
+    async def run_all(self) -> List[Dict[str, Any]]:
+        results: List[Dict[str, Any]] = []
+        while not self._queue.empty():
+            results.append(await self.run_once())
+        return results
+
+    def replay(self, workflow_id: str) -> List[Dict[str, Any]]:
+        record = self._history.get(workflow_id)
+        return [] if record is None else list(record.events)
+
+    def event_stream(self) -> List[Dict[str, Any]]:
+        return list(self._event_stream)
