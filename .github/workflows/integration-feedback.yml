@@ -59,6 +59,10 @@ on:
     # Run daily at 08:00 UTC to log a scheduled health-check entry for GitHub Actions
     - cron: "0 8 * * *"
 
+concurrency:
+  group: bot-data-updates-main
+  cancel-in-progress: false
+
 jobs:
   integration-feedback:
     name: Log Integration Feedback
@@ -179,6 +183,7 @@ jobs:
 
       - name: Commit updated integration_log.json
         run: |
+          BRANCH="${GITHUB_REF_NAME:-main}"
           git config user.name  "dreamco-bot[bot]"
           git config user.email "dreamco-bot@users.noreply.github.com"
           git add data/integration_log.json
@@ -186,7 +191,19 @@ jobs:
             echo "No changes to commit."
           else
             git commit -m "chore(data): update integration_log.json via Integration Feedback Bot [skip ci]"
-            git push
+            for attempt in 1 2 3; do
+              git pull --rebase origin "${BRANCH}" || { git rebase --abort || true; }
+              if git push origin "HEAD:${BRANCH}"; then
+                echo "Push succeeded on attempt ${attempt}."
+                break
+              fi
+              if [ "${attempt}" -eq 3 ]; then
+                echo "Push failed after 3 attempts."
+                exit 1
+              fi
+              echo "Push rejected, retrying..."
+              sleep $((attempt * 2))
+            done
           fi
 
       - name: Notify Slack on job failure
