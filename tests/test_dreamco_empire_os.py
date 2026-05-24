@@ -344,27 +344,42 @@ class TestFormulaVault:
 
     def test_builtins_loaded(self):
         formulas = self.vault.list_formulas()
-        assert len(formulas) >= 7
+        assert len(formulas) == 34
+        assert "capital_deployment_efficiency" in {f["formula_id"] for f in formulas}
 
-    def test_execute_roi_monthly(self):
-        result = self.vault.execute("roi_monthly", {"revenue": 1500.0, "cost": 1000.0})
-        assert result["result"] == 50.0
+    def test_execute_capital_deployment_efficiency(self):
+        result = self.vault.execute(
+            "capital_deployment_efficiency",
+            {"annual_returns": 1500.0, "total_capital_deployed": 1000.0},
+        )
+        assert result["result"] == 150.0
 
-    def test_execute_profit_margin(self):
-        result = self.vault.execute("profit_margin", {"revenue": 5000.0, "expenses": 3500.0})
-        assert result["result"] == 30.0
+    def test_execute_debt_to_equity_ratio(self):
+        result = self.vault.execute(
+            "debt_to_equity_ratio",
+            {"total_liabilities": 5000.0, "total_equity": 2500.0},
+        )
+        assert result["result"] == 2.0
 
-    def test_execute_compound_growth(self):
-        result = self.vault.execute("compound_growth", {"principal": 1000.0, "rate": 0.0, "periods": 12})
-        assert result["result"] == 1000.0
+    def test_execute_pipeline_velocity(self):
+        result = self.vault.execute("pipeline_velocity", {
+            "opportunities": 40.0,
+            "win_rate": 0.25,
+            "average_deal_size": 12000.0,
+            "sales_cycle_days": 30.0,
+        })
+        assert result["result"] == 4000.0
 
     def test_execute_missing_variable_raises(self):
         with pytest.raises(ValueError):
-            self.vault.execute("roi_monthly", {"revenue": 1000.0})
+            self.vault.execute("capital_deployment_efficiency", {"annual_returns": 1000.0})
 
     def test_execute_nonnumeric_raises(self):
         with pytest.raises(TypeError):
-            self.vault.execute("roi_monthly", {"revenue": "big", "cost": 1000.0})
+            self.vault.execute(
+                "capital_deployment_efficiency",
+                {"annual_returns": "big", "total_capital_deployed": 1000.0},
+            )
 
     def test_add_custom_formula(self):
         self.vault.add_formula(
@@ -379,13 +394,32 @@ class TestFormulaVault:
         assert result["result"] == 10.0
 
     def test_use_count_increments(self):
-        self.vault.execute("roi_monthly", {"revenue": 500.0, "cost": 250.0})
-        formula = self.vault.get_formula("roi_monthly")
+        self.vault.execute(
+            "capital_deployment_efficiency",
+            {"annual_returns": 500.0, "total_capital_deployed": 250.0},
+        )
+        formula = self.vault.get_formula("capital_deployment_efficiency")
         assert formula["use_count"] == 1
 
     def test_search_formulas(self):
-        results = self.vault.search("roi")
+        results = self.vault.search("deployment")
         assert len(results) >= 1
+
+    def test_auto_create_formula(self):
+        generated = self.vault.auto_create_formula(
+            name="Retention Risk Score",
+            category=FormulaCategory.REVENUE_INTELLIGENCE,
+            description="Predict churn risk score from engagement signals.",
+            variables=["login_rate", "usage_depth", "ticket_volume"],
+            tags=["score", "prediction"],
+        )
+        assert generated["auto_generated"] is True
+        assert generated["generation_strategy"] == "weighted_score"
+        result = self.vault.execute(
+            generated["formula_id"],
+            {"login_rate": 60.0, "usage_depth": 75.0, "ticket_volume": 15.0},
+        )
+        assert result["result"] == 50.0
 
     def test_delete_formula(self):
         self.vault.add_formula("del_me", "Temp", FormulaCategory.CUSTOM, "", "x", ["x"])
