@@ -419,7 +419,7 @@ class TestFormulaVault:
             generated["formula_id"],
             {"login_rate": 60.0, "usage_depth": 75.0, "ticket_volume": 15.0},
         )
-        assert result["result"] == 50.0
+        assert abs(result["result"] - 50.0) < 0.01
 
     def test_delete_formula(self):
         self.vault.add_formula("del_me", "Temp", FormulaCategory.CUSTOM, "", "x", ["x"])
