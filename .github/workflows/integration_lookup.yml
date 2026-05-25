@@ -15,6 +15,10 @@ on:
         type: string
         default: "default integration query"
 
+concurrency:
+  group: bot-data-updates-main
+  cancel-in-progress: false
+
 jobs:
   integration_lookup:
     runs-on: ubuntu-latest
@@ -73,6 +77,7 @@ jobs:
     - name: Run Integration Lookup Script
       run: |
         QUERY="${{ inputs.query || github.event.inputs.query || 'default integration query' }}"
+        BRANCH="${GITHUB_REF_NAME:-main}"
         echo "Looking up integration opportunities for: ${QUERY}"
         python scripts/integration_lookup.py "${QUERY}"
         git config user.name "GitHub Bot"
@@ -82,7 +87,19 @@ jobs:
           echo "No integration lookup changes to commit."
         else
           git commit -m "chore(data): update integration lookup"
-          git push
+          for attempt in 1 2 3; do
+            git pull --rebase origin "${BRANCH}" || { git rebase --abort || true; }
+            if git push origin "HEAD:${BRANCH}"; then
+              echo "Push succeeded on attempt ${attempt}."
+              break
+            fi
+            if [ "${attempt}" -eq 3 ]; then
+              echo "Push failed after 3 attempts."
+              exit 1
+            fi
+            echo "Push rejected, retrying..."
+            sleep $((attempt * 2))
+          done
         fi
 
     - name: Confirm Success
