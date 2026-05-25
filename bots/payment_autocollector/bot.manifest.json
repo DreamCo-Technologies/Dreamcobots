@@ -1,0 +1,20 @@
+{
+  "manifestVersion": "1",
+  "name": "payment_autocollector",
+  "displayName": "Payment AutoCollector",
+  "description": "Detects failed or delinquent invoices and auto-runs the dunning sequence (retry, email, alt-payment, recovery) end to end.",
+  "division": "DreamFinance",
+  "tier": "PRO",
+  "category": "Payments",
+  "capabilities": ["dunning", "card_retry", "alt_payment_route", "ledger_reconcile"],
+  "entrypoint": {
+    "runtime": "node",
+    "command": "node dist/worker.js",
+    "workdir": "src"
+  },
+  "revenueModel": { "type": "commission", "targetMrr": 9000, "currency": "USD" },
+  "dependencies": ["stripe", "drizzle-orm", "pino"],
+  "owner": { "team": "DreamFinance", "githubHandles": [] },
+  "status": "draft",
+  "tags": ["payments", "recovery", "revived-pr-234"]
+}
