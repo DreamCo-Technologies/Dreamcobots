@@ -26,7 +26,6 @@ module.exports = {
     'dist/',
     'bots/',
     '*.py',
-    'public/**/scripts/**',
   ],
   overrides: [
     // ES module files (import/export syntax) — applies to src/, dreamco-control-tower/
@@ -61,6 +60,22 @@ module.exports = {
       env: {
         browser: true,
         node: false,
+      },
+    },
+    // Public package scripts are runnable Node examples shipped with assets
+    {
+      files: ['public/**/scripts/**/*.js'],
+      env: {
+        browser: false,
+        node: true,
+      },
+      rules: {
+        curly: 'off',
+        eqeqeq: 'off',
+        quotes: 'off',
+        'no-redeclare': 'off',
+        'no-unused-vars': 'off',
+        'no-useless-escape': 'off',
       },
     },
   ],
