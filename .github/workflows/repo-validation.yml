@@ -23,6 +23,100 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Discover dashboards and build comparison summary
+        run: |
+          python - <<'PY'
+          import datetime as dt
+          import json
+          import os
+          import re
+          import subprocess
+          from pathlib import Path
+
+          def infer_dashboard_name(path: Path) -> str:
+              if path.as_posix() == "replit.md":
+                  return "Replit Dashboard"
+              return path.stem.replace("_", " ").replace("-", " ").title()
+
+          tracked_files = subprocess.check_output(
+              ["git", "ls-files"], text=True
+          ).splitlines()
+          dashboard_pattern = re.compile(r"dashboard", re.IGNORECASE)
+          dashboards = []
+
+          for rel_path in tracked_files:
+              path = Path(rel_path)
+              if any(part in {"node_modules", ".git", "__pycache__"} for part in path.parts):
+                  continue
+              if dashboard_pattern.search(path.as_posix()):
+                  dashboards.append(
+                      {
+                          "name": infer_dashboard_name(path),
+                          "path": path.as_posix(),
+                          "type": path.suffix.lower().lstrip(".") or "none",
+                          "size_bytes": path.stat().st_size if path.exists() else 0,
+                      }
+                  )
+
+          replit_path = Path("replit.md")
+          if replit_path.exists() and not any(d["path"] == "replit.md" for d in dashboards):
+              dashboards.append(
+                  {
+                      "name": "Replit Dashboard",
+                      "path": "replit.md",
+                      "type": "md",
+                      "size_bytes": replit_path.stat().st_size,
+                  }
+              )
+
+          dashboards.sort(key=lambda item: item["path"].lower())
+
+          payload = {
+              "generated_at_utc": dt.datetime.now(dt.timezone.utc).isoformat(),
+              "dashboard_count": len(dashboards),
+              "dashboards": dashboards,
+          }
+
+          with open("/tmp/dashboard-comparison.json", "w", encoding="utf-8") as f:
+              json.dump(payload, f, indent=2)
+
+          lines = [
+              "## 📊 Dashboard Comparison",
+              "",
+              f"Discovered **{len(dashboards)}** dashboard entries (including Replit dashboard when present).",
+              "",
+              "| Dashboard | Path | Type | Size (bytes) |",
+              "|---|---|---:|---:|",
+          ]
+
+          for dashboard in dashboards:
+              safe_name = dashboard["name"].replace("|", "\\|")
+              safe_path = dashboard["path"].replace("|", "\\|")
+              lines.append(
+                  f"| {safe_name} | `{safe_path}` | {dashboard['type']} | {dashboard['size_bytes']} |"
+              )
+
+          if not dashboards:
+              lines.append("| _None found_ | - | - | - |")
+
+          with open("/tmp/dashboard-comparison-summary.md", "w", encoding="utf-8") as f:
+              f.write("\n".join(lines) + "\n")
+
+          summary_file = os.environ.get("GITHUB_STEP_SUMMARY")
+          if summary_file:
+              with open(summary_file, "a", encoding="utf-8") as f:
+                  f.write("\n".join(lines) + "\n")
+          PY
+
+      - name: Upload dashboard comparison artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: dashboard-comparison
+          path: |
+            /tmp/dashboard-comparison.json
+            /tmp/dashboard-comparison-summary.md
+
       - name: Set up Python 3.11
         uses: actions/setup-python@v5
         with:
