@@ -118,6 +118,14 @@ class TestLandingPage:
         resp = client.get("/")
         assert b"Dashboard" in resp.data
 
+    def test_dashboard_chooser_returns_200(self, client):
+        resp = client.get("/dashboard/chooser")
+        assert resp.status_code == 200
+
+    def test_dashboard_chooser_contains_title(self, client):
+        resp = client.get("/dashboard/chooser")
+        assert b"Dashboard Chooser" in resp.data
+
 
 # ===========================================================================
 # 3. /api/status
@@ -1280,4 +1288,3 @@ class TestGovernanceHelpers:
         from ui.web_dashboard import _get_bot_config, _set_bot_config
         _set_bot_config("custom_check_bot", retry_policy="once")
         assert _get_bot_config("custom_check_bot")["custom"] is True
-
