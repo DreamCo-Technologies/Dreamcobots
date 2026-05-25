@@ -2,7 +2,7 @@
 # Multi-stage build for minimal image size
 
 # ── Stage 1: Build / dependency install ──────────────────────────────────────
-FROM python:3.11-slim AS builder
+FROM python:3.11.9-slim AS builder
 
 WORKDIR /build
 
@@ -16,7 +16,7 @@ RUN pip install --upgrade pip && \
     pip install --no-cache-dir --prefix=/install -r requirements.txt
 
 # ── Stage 2: Runtime image ────────────────────────────────────────────────────
-FROM python:3.11-slim AS runtime
+FROM python:3.11.9-slim AS runtime
 
 # Security: run as non-root
 RUN addgroup --gid 1001 dreamco && \

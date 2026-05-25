@@ -83,6 +83,25 @@ python tools/check_bot_framework.py
    ```bash
    npm run deps:all
    ```
+4. For profile-targeted bootstrap:
+   ```bash
+   npm run deps:profile:minimal
+   npm run deps:profile:core-ai
+   npm run deps:profile:frontend
+   npm run deps:profile:trading
+   npm run deps:profile:full-empire
+   ```
+5. Validate dependency governance and hermetic environment:
+   ```bash
+   npm run deps:graph
+   npm run deps:policy
+   npm run deps:repro-check
+   ```
+
+### Hermetic environment pins
+- Node: `.nvmrc` (`20`)
+- Python: `.python-version` (`3.11`)
+- Python lock strategy: `uv.lock` from `pyproject.toml`
 
 ---
 ## Deployment Steps

@@ -16,7 +16,17 @@
     "deploy": "node deploy.js",
     "deps:all": "python3 tools/install_repo_dependencies.py",
     "deps:python": "python3 tools/install_repo_dependencies.py --python-only",
-    "deps:node": "python3 tools/install_repo_dependencies.py --node-only"
+    "deps:node": "python3 tools/install_repo_dependencies.py --node-only",
+    "deps:profile:minimal": "python3 tools/install_repo_dependencies.py --profile minimal",
+    "deps:profile:core-ai": "python3 tools/install_repo_dependencies.py --profile core-ai",
+    "deps:profile:frontend": "python3 tools/install_repo_dependencies.py --profile frontend",
+    "deps:profile:trading": "python3 tools/install_repo_dependencies.py --profile trading",
+    "deps:profile:full-empire": "python3 tools/install_repo_dependencies.py --profile full-empire",
+    "deps:profiles": "python3 tools/install_repo_dependencies.py --list-profiles",
+    "deps:diagnose": "python3 tools/install_repo_dependencies.py --diagnose --dry-run",
+    "deps:policy": "python3 tools/check_dependency_policy.py",
+    "deps:graph": "python3 tools/dependency_graph.py",
+    "deps:repro-check": "python3 tools/check_env_lock_consistency.py"
   },
   "repository": {
     "type": "git",
@@ -36,7 +46,7 @@
     "supertest": "^7.2.2"
   },
   "engines": {
-    "node": ">=20"
+    "node": "20.x"
   },
   "jest": {
     "testEnvironment": "node",

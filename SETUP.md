@@ -10,9 +10,9 @@ This guide covers everything you need to get the DreamCo Money Operating System 
 
 | Tool | Version | Purpose |
 |------|---------|---------|
-| Node.js | 20+ | Runs the API, dashboard, and bot scheduler |
+| Node.js | 20.x | Runs the API, dashboard, and bot scheduler |
 | npm | 9+ | Dependency management |
-| Python | 3.9+ | Runs the Python-based bots |
+| Python | 3.11.x | Runs the Python-based bots |
 | Docker | 20+ | Optional containerized deployment |
 | Docker Compose | 2+ | Optional multi-service orchestration |
 | Git | Any | Clone the repository |
@@ -50,6 +50,11 @@ Run one command to install Node + Python dependencies across all included bots a
 npm run deps:all
 ```
 
+Hermetic version pin files in the repository root:
+- `.nvmrc` → `20`
+- `.python-version` → `3.11`
+- `uv.lock` (generated from root `pyproject.toml`)
+
 This command installs:
 - all discovered `package.json` dependencies across the repository
 - all discovered `requirements*.txt` Python dependencies across the repository
@@ -59,6 +64,25 @@ If you need a scoped install:
 ```bash
 npm run deps:node      # Node only
 npm run deps:python    # Python only
+```
+
+If you need profile-based bootstrap (recommended for targeted work):
+
+```bash
+npm run deps:profile:minimal
+npm run deps:profile:core-ai
+npm run deps:profile:frontend
+npm run deps:profile:trading
+npm run deps:profile:full-empire
+```
+
+Dependency intelligence and governance utilities:
+
+```bash
+npm run deps:graph       # JSON + Markdown + DOT architecture map
+npm run deps:policy      # canonical dependency policy checks
+npm run deps:repro-check # hermetic env + lockfile consistency check
+npm run deps:diagnose    # missing-module diagnostics (non-destructive)
 ```
 
 ---

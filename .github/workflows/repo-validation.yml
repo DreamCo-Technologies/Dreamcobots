@@ -33,6 +33,27 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
+      - name: Hermetic consistency check
+        run: python tools/check_env_lock_consistency.py
+
+      - name: Dependency policy gate
+        run: python tools/check_dependency_policy.py
+
+      - name: Generate dependency intelligence artifacts
+        run: |
+          python tools/dependency_graph.py \
+            --json-out /tmp/dependency_graph.json \
+            --markdown-out /tmp/dependency_graph.md \
+            --graph-out /tmp/dependency_graph.dot
+
+      - name: Validate bootstrap profiles (dry-run)
+        run: |
+          python tools/install_repo_dependencies.py --profile minimal --dry-run --validate-checksums --telemetry-path /tmp/deps_minimal.json
+          python tools/install_repo_dependencies.py --profile core-ai --dry-run --validate-checksums --telemetry-path /tmp/deps_core_ai.json
+          python tools/install_repo_dependencies.py --profile frontend --dry-run --validate-checksums --telemetry-path /tmp/deps_frontend.json
+          python tools/install_repo_dependencies.py --profile trading --dry-run --validate-checksums --telemetry-path /tmp/deps_trading.json
+          python tools/install_repo_dependencies.py --profile full-empire --dry-run --validate-checksums --telemetry-path /tmp/deps_full_empire.json
+
       - name: Run Repo Validation Bot
         id: repo-validation
         run: |
@@ -46,7 +67,16 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: repo-validation-report
-          path: /tmp/repo_validation_report.json
+          path: |
+            /tmp/repo_validation_report.json
+            /tmp/dependency_graph.json
+            /tmp/dependency_graph.md
+            /tmp/dependency_graph.dot
+            /tmp/deps_minimal.json
+            /tmp/deps_core_ai.json
+            /tmp/deps_frontend.json
+            /tmp/deps_trading.json
+            /tmp/deps_full_empire.json
 
       - name: Run Debug Bot
         run: python ai/debug_bot.py

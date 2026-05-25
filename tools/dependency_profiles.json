@@ -1,0 +1,38 @@
+{
+  "profiles": {
+    "minimal": {
+      "description": "Root platform bootstrap only.",
+      "package_json": ["package.json"],
+      "requirements": ["requirements.txt"]
+    },
+    "core-ai": {
+      "description": "Core AI orchestration and platform services.",
+      "package_json": ["package.json", "dreamco/package.json", "DreamCo/package.json"],
+      "requirements": [
+        "requirements.txt",
+        "bots/ai-side-hustle-bots/requirements.txt",
+        "dashboards/web_control/requirements.txt"
+      ]
+    },
+    "frontend": {
+      "description": "Frontend and control tower surfaces.",
+      "package_json": [
+        "package.json",
+        "dreamco-control-tower/package.json",
+        "dreamco-control-tower/frontend/package.json",
+        "dreamco-control-tower/backend/package.json"
+      ],
+      "requirements": ["requirements.txt", "dashboard/requirements.txt"]
+    },
+    "trading": {
+      "description": "Trading-focused stack and shared backend.",
+      "package_json": ["package.json", "dreamco/package.json", "DreamCo/package.json"],
+      "requirements": ["requirements.txt", "stripe/python/requirements.txt"]
+    },
+    "full-empire": {
+      "description": "All discovered manifests in the repository.",
+      "package_json": ["**/package.json"],
+      "requirements": ["**/requirements*.txt"]
+    }
+  }
+}
