@@ -81,7 +81,7 @@ python tools/check_bot_framework.py
    ```
 3. Install dependencies (if any bot scripts depend on a specific package manager, such as `pip` for Python):
    ```bash
-   pip install -r requirements.txt
+   npm run deps:all
    ```
 
 ---

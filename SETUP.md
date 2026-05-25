@@ -42,7 +42,28 @@ cd Dreamcobots
 
 ---
 
-## 2. Install Node.js Dependencies
+## 2. Install Repository Dependencies (Recommended)
+
+Run one command to install Node + Python dependencies across all included bots and systems:
+
+```bash
+npm run deps:all
+```
+
+This command installs:
+- all discovered `package.json` dependencies across the repository
+- all discovered `requirements*.txt` Python dependencies across the repository
+
+If you need a scoped install:
+
+```bash
+npm run deps:node      # Node only
+npm run deps:python    # Python only
+```
+
+---
+
+## 3. Install Node.js Dependencies (Manual Path)
 
 ```bash
 npm install
@@ -56,7 +77,7 @@ Dev dependencies (ESLint, Jest, Prettier) are also installed automatically.
 
 ---
 
-## 3. Install Python Dependencies
+## 4. Install Python Dependencies (Manual Path)
 
 ```bash
 pip install -r requirements.txt
@@ -73,7 +94,7 @@ pip install -r requirements.txt
 
 ---
 
-## 4. Environment Configuration
+## 5. Environment Configuration
 
 Copy the example environment file:
 
@@ -133,7 +154,7 @@ EMAIL_SEND_INTERVAL_MS=86400000      # Daily
 
 ---
 
-## 5. Database Setup
+## 6. Database Setup
 
 ### Option A: Skip (Development / In-Memory)
 
@@ -167,7 +188,7 @@ No setup required. The system automatically uses an in-memory store for developm
 
 ---
 
-## 6. Running Locally
+## 7. Running Locally
 
 ### Start the Main Server
 
@@ -207,7 +228,7 @@ python bots/lead_scraper/multi_source_lead_scraper.py
 
 ---
 
-## 7. Running with Docker
+## 8. Running with Docker
 
 ### Build and Start All Services
 
@@ -241,7 +262,7 @@ docker build -t dreamcobots:latest .
 
 ---
 
-## 8. Verifying the Setup
+## 9. Verifying the Setup
 
 ### Check Server Health
 
