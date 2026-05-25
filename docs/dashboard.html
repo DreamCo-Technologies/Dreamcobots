@@ -1,0 +1,884 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="DreamCo Live Dashboard — Real-time revenue, bot performance, and operational metrics for the DreamCo AI platform." />
+  <title>DreamCo Dashboard — Live Command Center</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #080c18;
+      --surface: #0d1220;
+      --card: #111827;
+      --card2: #131e30;
+      --border: #1e293b;
+      --accent: #00d4ff;
+      --green: #10b981;
+      --red: #ef4444;
+      --yellow: #f59e0b;
+      --purple: #8b5cf6;
+      --text: #e2e8f0;
+      --muted: #64748b;
+      --radius: 12px;
+    }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Inter", sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    /* ── TOPBAR ── */
+    .topbar {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding: 0 1.5rem;
+      height: 56px;
+      position: sticky;
+      top: 0;
+      z-index: 200;
+    }
+    .topbar-brand { font-weight: 800; color: #fff; font-size: 1rem; display: flex; align-items: center; gap: 0.5rem; }
+    .topbar-subtitle { font-size: 0.8rem; color: var(--muted); }
+    .topbar-spacer { flex: 1; }
+    .topbar-status {
+      display: flex; align-items: center; gap: 0.4rem;
+      font-size: 0.8rem; color: var(--green); font-weight: 600;
+    }
+    .pulse {
+      width: 8px; height: 8px; border-radius: 50%; background: var(--green);
+      animation: pulse 2s infinite;
+    }
+    @keyframes pulse {
+      0%,100% { opacity: 1; box-shadow: 0 0 0 0 rgba(16,185,129,.4); }
+      50% { opacity: .7; box-shadow: 0 0 0 4px rgba(16,185,129,0); }
+    }
+    .topbar-time { font-size: 0.8rem; color: var(--muted); font-variant-numeric: tabular-nums; }
+    .topbar-nav { display: flex; gap: 1rem; margin-left: 1rem; }
+    .topbar-nav a { color: var(--muted); text-decoration: none; font-size: 0.82rem; transition: color .15s; }
+    .topbar-nav a:hover { color: var(--accent); }
+    .topbar-nav a.active { color: var(--accent); font-weight: 600; }
+
+    /* ── LAYOUT ── */
+    .dash-layout {
+      display: flex;
+      min-height: calc(100vh - 56px);
+    }
+
+    /* ── SIDEBAR ── */
+    .sidebar {
+      width: 220px;
+      background: var(--surface);
+      border-right: 1px solid var(--border);
+      padding: 1.25rem 0.75rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.2rem;
+      flex-shrink: 0;
+    }
+    .sidebar-section {
+      font-size: 0.7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .1em;
+      color: var(--muted);
+      padding: 0.8rem 0.75rem 0.3rem;
+    }
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      padding: 0.55rem 0.75rem;
+      border-radius: 8px;
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 0.88rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all .15s;
+      border: none;
+      background: none;
+      width: 100%;
+      text-align: left;
+    }
+    .nav-item:hover { background: rgba(255,255,255,.04); color: var(--text); }
+    .nav-item.active { background: rgba(0,212,255,.1); color: var(--accent); }
+    .nav-item .badge-count {
+      margin-left: auto;
+      background: var(--accent);
+      color: #000;
+      font-size: 0.65rem;
+      font-weight: 700;
+      padding: 0.1em 0.5em;
+      border-radius: 10px;
+    }
+
+    /* ── MAIN ── */
+    .dash-main {
+      flex: 1;
+      padding: 1.5rem;
+      overflow: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    /* ── PAGE HEADER ── */
+    .page-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+    .page-title { font-size: 1.3rem; font-weight: 700; color: #fff; }
+    .page-sub   { font-size: 0.85rem; color: var(--muted); margin-top: 0.2rem; }
+    .header-actions { display: flex; gap: 0.6rem; }
+    .btn {
+      padding: 0.45rem 1rem;
+      border-radius: 7px;
+      font-size: 0.82rem;
+      font-weight: 600;
+      border: none;
+      cursor: pointer;
+      transition: opacity .15s;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+    }
+    .btn:hover { opacity: .85; }
+    .btn-primary { background: var(--accent); color: #000; }
+    .btn-ghost   { background: rgba(255,255,255,.06); color: var(--text); border: 1px solid var(--border); }
+
+    /* ── GRID LAYOUTS ── */
+    .grid-4 { display: grid; grid-template-columns: repeat(4,1fr); gap: 1rem; }
+    .grid-3 { display: grid; grid-template-columns: repeat(3,1fr); gap: 1rem; }
+    .grid-2 { display: grid; grid-template-columns: repeat(2,1fr); gap: 1rem; }
+    .grid-2-1 { display: grid; grid-template-columns: 2fr 1fr; gap: 1rem; }
+    .grid-3-1 { display: grid; grid-template-columns: 3fr 1fr; gap: 1rem; }
+
+    @media (max-width: 1100px) { .grid-4 { grid-template-columns: repeat(2,1fr); } }
+    @media (max-width: 900px)  { .grid-2-1, .grid-3-1 { grid-template-columns: 1fr; } .sidebar { display: none; } }
+    @media (max-width: 600px)  { .grid-3, .grid-4 { grid-template-columns: 1fr; } }
+
+    /* ── KPI CARDS ── */
+    .kpi {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.25rem 1.4rem;
+      position: relative;
+      overflow: hidden;
+    }
+    .kpi::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+    }
+    .kpi.accent::before  { background: var(--accent); }
+    .kpi.green::before   { background: var(--green); }
+    .kpi.yellow::before  { background: var(--yellow); }
+    .kpi.purple::before  { background: var(--purple); }
+    .kpi-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem; }
+    .kpi-label  { font-size: 0.8rem; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing:.04em; }
+    .kpi-icon   { font-size: 1.1rem; }
+    .kpi-value  { font-size: 1.85rem; font-weight: 800; color: #fff; line-height: 1; }
+    .kpi-delta  { font-size: 0.78rem; font-weight: 600; margin-top: 0.35rem; }
+    .up   { color: var(--green); }
+    .down { color: var(--red); }
+    .flat { color: var(--muted); }
+
+    /* ── CHART CARD ── */
+    .chart-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.25rem 1.5rem;
+    }
+    .chart-card__header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1rem;
+    }
+    .chart-card__title { font-size: 0.95rem; font-weight: 700; color: #fff; }
+    .chart-card__sub   { font-size: 0.78rem; color: var(--muted); margin-top: 0.1rem; }
+    .chart-pills { display: flex; gap: 0.4rem; }
+    .pill {
+      padding: 0.2em 0.7em;
+      border-radius: 20px;
+      font-size: 0.72rem;
+      font-weight: 600;
+      cursor: pointer;
+      border: 1px solid var(--border);
+      background: none;
+      color: var(--muted);
+      transition: all .15s;
+    }
+    .pill.active { background: var(--accent); border-color: var(--accent); color: #000; }
+
+    /* ── BAR CHART (CSS) ── */
+    .bar-chart { display: flex; align-items: flex-end; gap: 6px; height: 120px; }
+    .bar-wrap  { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px; }
+    .bar {
+      width: 100%;
+      border-radius: 4px 4px 0 0;
+      transition: height .4s ease, opacity .2s;
+      min-height: 2px;
+    }
+    .bar:hover { opacity: .8; }
+    .bar-label { font-size: 0.65rem; color: var(--muted); }
+    .bar-val   { font-size: 0.65rem; color: var(--text); font-weight: 600; }
+
+    /* ── LINE CHART (SVG) ── */
+    .line-chart-wrap { width: 100%; overflow: hidden; }
+    .line-chart-wrap svg { width: 100%; height: 140px; }
+    .line-chart-wrap .axis-label { font-size: 10px; fill: #64748b; }
+
+    /* ── TABLE ── */
+    .data-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+    .data-table th, .data-table td { padding: 0.65rem 0.85rem; text-align: left; border-bottom: 1px solid var(--border); }
+    .data-table th { color: var(--muted); font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: .05em; }
+    .data-table td { color: var(--text); }
+    .data-table tbody tr:hover { background: rgba(255,255,255,.025); }
+    .status-dot { display: inline-block; width: 7px; height: 7px; border-radius: 50%; margin-right: 5px; vertical-align: middle; }
+    .dot-green  { background: var(--green); box-shadow: 0 0 4px var(--green); }
+    .dot-yellow { background: var(--yellow); }
+    .dot-red    { background: var(--red); }
+
+    /* ── BOT STATUS LIST ── */
+    .bot-list { display: flex; flex-direction: column; gap: 0.6rem; }
+    .bot-row {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.65rem 0.85rem;
+      background: var(--card2);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-size: 0.85rem;
+    }
+    .bot-row__name { font-weight: 600; color: #fff; flex: 1; }
+    .bot-row__team { font-size: 0.72rem; color: var(--muted); }
+    .bot-row__stat { font-size: 0.78rem; color: var(--muted); text-align: right; white-space: nowrap; }
+    .bot-row__stat strong { color: var(--text); }
+
+    /* ── ACTIVITY FEED ── */
+    .activity-feed { display: flex; flex-direction: column; gap: 0.75rem; max-height: 380px; overflow-y: auto; }
+    .activity-feed::-webkit-scrollbar { width: 4px; }
+    .activity-feed::-webkit-scrollbar-track { background: var(--border); border-radius: 2px; }
+    .activity-feed::-webkit-scrollbar-thumb { background: var(--muted); border-radius: 2px; }
+    .activity-item { display: flex; gap: 0.75rem; align-items: flex-start; }
+    .activity-icon { width: 28px; height: 28px; border-radius: 50%; background: rgba(0,212,255,.1); border: 1px solid rgba(0,212,255,.2); display: flex; align-items: center; justify-content: center; font-size: 0.75rem; flex-shrink: 0; }
+    .activity-body { flex: 1; }
+    .activity-msg  { font-size: 0.83rem; color: var(--text); line-height: 1.4; }
+    .activity-time { font-size: 0.73rem; color: var(--muted); margin-top: 0.15rem; }
+
+    /* ── PROGRESS BAR ── */
+    .progress-row { display: flex; flex-direction: column; gap: 0.35rem; }
+    .progress-meta { display: flex; justify-content: space-between; font-size: 0.8rem; }
+    .progress-label { color: var(--text); font-weight: 500; }
+    .progress-val   { color: var(--muted); }
+    .progress-track { background: var(--border); border-radius: 3px; height: 6px; overflow: hidden; }
+    .progress-fill  { height: 100%; border-radius: 3px; transition: width .6s ease; }
+
+    /* ── DONUT CHART ── */
+    .donut-wrap { display: flex; align-items: center; gap: 1.5rem; }
+    .donut-svg  { flex-shrink: 0; }
+    .donut-legend { display: flex; flex-direction: column; gap: 0.6rem; }
+    .legend-item { display: flex; align-items: center; gap: 0.5rem; font-size: 0.82rem; }
+    .legend-dot  { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+    .legend-name { color: var(--text); flex: 1; }
+    .legend-pct  { color: var(--muted); font-weight: 600; }
+
+    /* ── DEADLINE CARD ── */
+    .deadline-card {
+      background: linear-gradient(135deg, rgba(0,212,255,.05) 0%, rgba(139,92,246,.05) 100%);
+      border: 1px solid rgba(0,212,255,.2);
+      border-radius: var(--radius);
+      padding: 1.25rem 1.5rem;
+    }
+    .deadline-title { font-size: 0.9rem; font-weight: 700; color: var(--accent); margin-bottom: 0.75rem; }
+    .deadline-date  { font-size: 1.8rem; font-weight: 800; color: #fff; }
+    .deadline-sub   { font-size: 0.8rem; color: var(--muted); margin-top: 0.2rem; }
+    .deadline-progress { margin-top: 1rem; }
+
+    /* ── TOKEN USAGE ── */
+    .token-ring {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .token-ring__num { font-size: 1.6rem; font-weight: 800; color: var(--accent); }
+    .token-ring__sub { font-size: 0.78rem; color: var(--muted); text-align: center; }
+
+    /* scrollbar for activity */
+    .activity-feed { scrollbar-width: thin; scrollbar-color: var(--muted) var(--border); }
+  </style>
+</head>
+<body>
+
+<!-- TOPBAR -->
+<header class="topbar">
+  <div class="topbar-brand">🏰 DreamCo</div>
+  <div class="topbar-subtitle">Command Center</div>
+  <div class="topbar-nav">
+    <a href="index.html">Home</a>
+    <a href="agents.html">Agents</a>
+    <a href="dashboard.html" class="active">Dashboard</a>
+    <a href="buddy-chat.html">Buddy Chat</a>
+  </div>
+  <div class="topbar-spacer"></div>
+  <div class="topbar-status"><span class="pulse"></span>All Systems Operational</div>
+  <div class="topbar-time" id="clock">—</div>
+</header>
+
+<div class="dash-layout">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-section">Overview</div>
+    <button class="nav-item active" onclick="showView('overview')">📊 Dashboard</button>
+    <button class="nav-item" onclick="showView('bots')">🤖 Bot Overview</button>
+    <button class="nav-item" onclick="showView('revenue')">💰 Revenue</button>
+
+    <div class="sidebar-section">Operations</div>
+    <button class="nav-item" onclick="showView('agents')">🧠 Agents <span class="badge-count">150</span></button>
+    <button class="nav-item" onclick="showView('marketplace')">🛒 Marketplace</button>
+    <button class="nav-item" onclick="showView('deployments')">🚀 Deployments</button>
+
+    <div class="sidebar-section">Intelligence</div>
+    <button class="nav-item" onclick="showView('analytics')">📈 Analytics</button>
+    <button class="nav-item" onclick="showView('buddy')">💬 Buddy Chat</button>
+    <button class="nav-item" onclick="window.open('https://github.com/DreamCo-Technologies/Dreamcobots','_blank')">⚡ GitHub ↗</button>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <main class="dash-main" id="dash-main">
+
+    <!-- ── VIEW: OVERVIEW ── -->
+    <div id="view-overview">
+
+      <!-- Page header -->
+      <div class="page-header">
+        <div>
+          <div class="page-title">DreamCo Command Center</div>
+          <div class="page-sub">Platform overview · updated every 30 seconds</div>
+        </div>
+        <div class="header-actions">
+          <a href="buddy-chat.html" class="btn btn-primary">💬 Open Buddy Chat</a>
+          <button class="btn btn-ghost" onclick="refreshDash()">↺ Refresh</button>
+        </div>
+      </div>
+
+      <!-- KPI row -->
+      <div class="grid-4">
+        <div class="kpi accent">
+          <div class="kpi-header">
+            <span class="kpi-label">Total Revenue (30d)</span>
+            <span class="kpi-icon">💰</span>
+          </div>
+          <div class="kpi-value" id="kpi-revenue">$128,450</div>
+          <div class="kpi-delta up">↑ +18.3% vs last month</div>
+        </div>
+        <div class="kpi green">
+          <div class="kpi-header">
+            <span class="kpi-label">Active Bots</span>
+            <span class="kpi-icon">🤖</span>
+          </div>
+          <div class="kpi-value" id="kpi-bots">142</div>
+          <div class="kpi-delta up">↑ +8 this week</div>
+        </div>
+        <div class="kpi yellow">
+          <div class="kpi-header">
+            <span class="kpi-label">API Requests (24h)</span>
+            <span class="kpi-icon">⚡</span>
+          </div>
+          <div class="kpi-value" id="kpi-requests">48,210</div>
+          <div class="kpi-delta up">↑ +12% week-over-week</div>
+        </div>
+        <div class="kpi purple">
+          <div class="kpi-header">
+            <span class="kpi-label">Platform Uptime</span>
+            <span class="kpi-icon">🟢</span>
+          </div>
+          <div class="kpi-value">99.9%</div>
+          <div class="kpi-delta flat">30-day rolling avg</div>
+        </div>
+      </div>
+
+      <!-- Revenue chart + Activity -->
+      <div class="grid-2-1">
+
+        <div class="chart-card">
+          <div class="chart-card__header">
+            <div>
+              <div class="chart-card__title">Revenue Over Time</div>
+              <div class="chart-card__sub">Monthly recurring revenue — DreamCo ecosystem</div>
+            </div>
+            <div class="chart-pills">
+              <button class="pill active" onclick="setPeriod(this,'7d')">7D</button>
+              <button class="pill" onclick="setPeriod(this,'30d')">30D</button>
+              <button class="pill" onclick="setPeriod(this,'90d')">90D</button>
+            </div>
+          </div>
+          <!-- Bar chart -->
+          <div class="bar-chart" id="revenue-chart"></div>
+          <div style="display:flex;justify-content:space-between;margin-top:.5rem;">
+            <span style="font-size:.72rem;color:var(--muted)">← older</span>
+            <span style="font-size:.72rem;color:var(--muted)">recent →</span>
+          </div>
+        </div>
+
+        <!-- Activity feed -->
+        <div class="chart-card">
+          <div class="chart-card__header">
+            <div>
+              <div class="chart-card__title">Live Activity</div>
+              <div class="chart-card__sub">Real-time bot & API events</div>
+            </div>
+            <span style="font-size:.72rem;color:var(--green);font-weight:600;">● LIVE</span>
+          </div>
+          <div class="activity-feed" id="activity-feed"></div>
+        </div>
+
+      </div>
+
+      <!-- Bot status + Donut + Deadline -->
+      <div class="grid-3">
+
+        <!-- Top bots -->
+        <div class="chart-card">
+          <div class="chart-card__header">
+            <div>
+              <div class="chart-card__title">Top Performing Bots</div>
+              <div class="chart-card__sub">By requests in last 24h</div>
+            </div>
+          </div>
+          <div class="bot-list" id="top-bots"></div>
+        </div>
+
+        <!-- Division revenue donut -->
+        <div class="chart-card">
+          <div class="chart-card__header">
+            <div>
+              <div class="chart-card__title">Revenue by Division</div>
+              <div class="chart-card__sub">Share of total MRR</div>
+            </div>
+          </div>
+          <div class="donut-wrap">
+            <svg class="donut-svg" width="100" height="100" viewBox="0 0 100 100">
+              <!-- Donut segments drawn by JS -->
+              <g id="donut-segments" transform="rotate(-90 50 50)"></g>
+              <text x="50" y="53" text-anchor="middle" fill="#fff" font-size="11" font-weight="700" id="donut-center">—</text>
+            </svg>
+            <div class="donut-legend" id="donut-legend"></div>
+          </div>
+        </div>
+
+        <!-- Deadline / Command Center -->
+        <div class="deadline-card">
+          <div class="deadline-title">🎯 June 22 Delivery Target</div>
+          <div class="deadline-date" id="days-left">—</div>
+          <div class="deadline-sub">days remaining to full launch</div>
+          <div class="deadline-progress" id="launch-progress"></div>
+          <div style="margin-top:1rem;display:flex;flex-direction:column;gap:.5rem;">
+            <div class="progress-row">
+              <div class="progress-meta">
+                <span class="progress-label">Core Agents</span>
+                <span class="progress-val">142 / 150</span>
+              </div>
+              <div class="progress-track"><div class="progress-fill" style="width:94.7%;background:var(--green)"></div></div>
+            </div>
+            <div class="progress-row">
+              <div class="progress-meta">
+                <span class="progress-label">Test Coverage</span>
+                <span class="progress-val">87%</span>
+              </div>
+              <div class="progress-track"><div class="progress-fill" style="width:87%;background:var(--accent)"></div></div>
+            </div>
+            <div class="progress-row">
+              <div class="progress-meta">
+                <span class="progress-label">Documentation</span>
+                <span class="progress-val">71%</span>
+              </div>
+              <div class="progress-track"><div class="progress-fill" style="width:71%;background:var(--yellow)"></div></div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Division performance table -->
+      <div class="chart-card">
+        <div class="chart-card__header">
+          <div>
+            <div class="chart-card__title">Division Performance</div>
+            <div class="chart-card__sub">Revenue, requests, and uptime by business division</div>
+          </div>
+          <a href="agents.html" class="btn btn-ghost" style="font-size:.78rem;">View All Agents →</a>
+        </div>
+        <div style="overflow-x:auto;">
+          <table class="data-table" id="division-table"></table>
+        </div>
+      </div>
+
+      <!-- Token usage + API health -->
+      <div class="grid-2">
+
+        <div class="chart-card">
+          <div class="chart-card__header">
+            <div>
+              <div class="chart-card__title">Token Usage (24h)</div>
+              <div class="chart-card__sub">By AI model provider</div>
+            </div>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:.75rem;" id="token-bars"></div>
+        </div>
+
+        <div class="chart-card">
+          <div class="chart-card__header">
+            <div>
+              <div class="chart-card__title">API Health</div>
+              <div class="chart-card__sub">Endpoint status — last 5 minutes</div>
+            </div>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:.6rem;" id="api-health"></div>
+        </div>
+
+      </div>
+
+    </div><!-- /view-overview -->
+
+    <!-- ── PLACEHOLDER VIEWS ── -->
+    <div id="view-bots" style="display:none;">
+      <div class="page-header">
+        <div class="page-title">🤖 Bot Overview</div>
+      </div>
+      <p style="color:var(--muted);margin-top:1rem;">Full bot management interface available in the DreamCo Control Tower. <a href="https://github.com/DreamCo-Technologies/Dreamcobots/tree/main/dreamco-control-tower" target="_blank" rel="noopener" style="color:var(--accent);">View source →</a></p>
+    </div>
+    <div id="view-revenue"       style="display:none;"><div class="page-header"><div class="page-title">💰 Revenue</div></div><p style="color:var(--muted);margin-top:1rem;">Revenue details panel — coming soon.</p></div>
+    <div id="view-agents"        style="display:none;"><div class="page-header"><div class="page-title">🧠 Agents</div></div><p style="color:var(--muted);margin-top:1rem;"><a href="agents.html" style="color:var(--accent);">View full agent catalog →</a></p></div>
+    <div id="view-marketplace"   style="display:none;"><div class="page-header"><div class="page-title">🛒 Marketplace</div></div><p style="color:var(--muted);margin-top:1rem;"><a href="agents.html#catalog" style="color:var(--accent);">Browse agent catalog →</a></p></div>
+    <div id="view-deployments"   style="display:none;"><div class="page-header"><div class="page-title">🚀 Deployments</div></div><p style="color:var(--muted);margin-top:1rem;">Deployment history panel — coming soon.</p></div>
+    <div id="view-analytics"     style="display:none;"><div class="page-header"><div class="page-title">📈 Analytics</div></div><p style="color:var(--muted);margin-top:1rem;"><a href="dashboards.html" style="color:var(--accent);">View all dashboards →</a></p></div>
+    <div id="view-buddy"         style="display:none;"><div class="page-header"><div class="page-title">💬 Buddy Chat</div></div><p style="color:var(--muted);margin-top:1rem;"><a href="buddy-chat.html" style="color:var(--accent);">Open Buddy Chat →</a></p></div>
+
+  </main>
+</div>
+
+<script>
+/* ══════════════════════════════════════════════════════════
+   CLOCK
+   ══════════════════════════════════════════════════════════ */
+function updateClock() {
+  const now = new Date();
+  document.getElementById('clock').textContent = now.toLocaleTimeString('en-US', { hour12: false });
+}
+setInterval(updateClock, 1000);
+updateClock();
+
+/* ══════════════════════════════════════════════════════════
+   REVENUE CHART
+   ══════════════════════════════════════════════════════════ */
+const REVENUE_DATA = {
+  '7d': [
+    { label:'Mon', val: 3800 }, { label:'Tue', val: 5200 }, { label:'Wed', val: 4600 },
+    { label:'Thu', val: 6100 }, { label:'Fri', val: 7400 }, { label:'Sat', val: 5900 },
+    { label:'Sun', val: 6800 },
+  ],
+  '30d': [
+    { label:'Wk1', val: 18400 }, { label:'Wk2', val: 22600 }, { label:'Wk3', val: 31200 }, { label:'Wk4', val: 38100 },
+  ],
+  '90d': [
+    { label:'Jan', val: 68400 }, { label:'Feb', val: 82600 }, { label:'Mar', val: 101200 }, { label:'Apr', val: 118100 },
+    { label:'May', val: 128450 },
+  ],
+};
+const CHART_COLORS = ['#00d4ff','#10b981','#8b5cf6','#f59e0b','#ef4444','#06b6d4','#84cc16'];
+
+function renderRevenueChart(period) {
+  const data = REVENUE_DATA[period] || REVENUE_DATA['7d'];
+  const max  = Math.max(...data.map(d => d.val));
+  const c = document.getElementById('revenue-chart');
+  c.innerHTML = '';
+  data.forEach((d, i) => {
+    const pct = Math.round((d.val / max) * 100);
+    const color = CHART_COLORS[i % CHART_COLORS.length];
+    const wrap = document.createElement('div');
+    wrap.className = 'bar-wrap';
+    wrap.title = `${d.label}: $${d.val.toLocaleString()}`;
+    wrap.innerHTML = `
+      <div class="bar-val">$${d.val >= 1000 ? (d.val/1000).toFixed(0)+'k' : d.val}</div>
+      <div class="bar" style="height:${Math.max(pct,4)}%;background:${color};opacity:.85;"></div>
+      <div class="bar-label">${d.label}</div>
+    `;
+    c.appendChild(wrap);
+  });
+}
+
+function setPeriod(btn, period) {
+  document.querySelectorAll('.pill').forEach(p => p.classList.remove('active'));
+  btn.classList.add('active');
+  renderRevenueChart(period);
+}
+renderRevenueChart('7d');
+
+/* ══════════════════════════════════════════════════════════
+   ACTIVITY FEED
+   ══════════════════════════════════════════════════════════ */
+const ACTIVITY_EVENTS = [
+  { icon:'🤖', msg:'BuddyBot processed <strong>247 requests</strong> in the last 5 minutes.', t:'Just now' },
+  { icon:'💰', msg:'New Pro subscription — <strong>$49/mo</strong> from user@example.com', t:'2 min ago' },
+  { icon:'📈', msg:'DreamRealEstate division hit <strong>1,000 daily requests</strong> milestone.', t:'8 min ago' },
+  { icon:'🚀', msg:'Deployment <strong>v2.4.1</strong> completed — 142 agents updated.', t:'14 min ago' },
+  { icon:'✅', msg:'All 53 API endpoints passing health checks.', t:'18 min ago' },
+  { icon:'🔑', msg:'New API key issued — <strong>bot_runner</strong> tier, Analytics division.', t:'22 min ago' },
+  { icon:'⚡', msg:'Commercial Property Scanner processed <strong>89 deals</strong> this morning.', t:'31 min ago' },
+  { icon:'💬', msg:'Buddy Chat: <strong>318 conversations</strong> started today.', t:'45 min ago' },
+  { icon:'📊', msg:'Division Performance Dashboard weekly report generated.', t:'1 h ago' },
+  { icon:'🛡️', msg:'Security scan completed — <strong>0 vulnerabilities</strong> found.', t:'2 h ago' },
+];
+
+function renderActivity() {
+  const feed = document.getElementById('activity-feed');
+  ACTIVITY_EVENTS.forEach(e => {
+    const item = document.createElement('div');
+    item.className = 'activity-item';
+    item.innerHTML = `
+      <div class="activity-icon">${e.icon}</div>
+      <div class="activity-body">
+        <div class="activity-msg">${e.msg}</div>
+        <div class="activity-time">${e.t}</div>
+      </div>
+    `;
+    feed.appendChild(item);
+  });
+}
+renderActivity();
+
+/* ══════════════════════════════════════════════════════════
+   TOP BOTS
+   ══════════════════════════════════════════════════════════ */
+const TOP_BOTS = [
+  { name:'BuddyBot Orchestrator', team:'Core',        reqs:4821, uptime:'99.9%', status:'active' },
+  { name:'Token Billing System',  team:'Finance',     reqs:3102, uptime:'99.7%', status:'active' },
+  { name:'Big Bro AI',            team:'DreamAI',     reqs:2401, uptime:'99.3%', status:'active' },
+  { name:'Mental Health Bot',     team:'Healthcare',  reqs:1543, uptime:'99.5%', status:'active' },
+  { name:'DreamCo Empire OS',     team:'Core',        reqs:1240, uptime:'98.5%', status:'active' },
+];
+const STATUS_DOT = { active:'dot-green', idle:'dot-yellow', error:'dot-red' };
+
+function renderTopBots() {
+  const list = document.getElementById('top-bots');
+  TOP_BOTS.forEach(b => {
+    const row = document.createElement('div');
+    row.className = 'bot-row';
+    row.innerHTML = `
+      <span class="status-dot ${STATUS_DOT[b.status] || 'dot-yellow'}"></span>
+      <div class="flex-col" style="flex:1;">
+        <div class="bot-row__name">${b.name}</div>
+        <div class="bot-row__team">${b.team}</div>
+      </div>
+      <div class="bot-row__stat"><strong>${b.reqs.toLocaleString()}</strong> req/24h</div>
+      <div class="bot-row__stat" style="color:var(--green)">${b.uptime}</div>
+    `;
+    list.appendChild(row);
+  });
+}
+renderTopBots();
+
+/* ══════════════════════════════════════════════════════════
+   DONUT CHART
+   ══════════════════════════════════════════════════════════ */
+const DONUT_DATA = [
+  { name:'DreamAI',       pct:28, color:'#00d4ff' },
+  { name:'DreamSalesPro', pct:21, color:'#10b981' },
+  { name:'DreamFinance',  pct:17, color:'#8b5cf6' },
+  { name:'DreamRealEst.', pct:14, color:'#f59e0b' },
+  { name:'DreamMedia',    pct:11, color:'#06b6d4' },
+  { name:'Other',         pct:9,  color:'#64748b' },
+];
+
+function renderDonut() {
+  const g = document.getElementById('donut-segments');
+  let cumulative = 0;
+  const r = 35; const cx = 50; const cy = 50;
+  const circumference = 2 * Math.PI * r;
+  DONUT_DATA.forEach(d => {
+    const dash   = (d.pct / 100) * circumference;
+    const offset = -(cumulative / 100) * circumference;
+    const circle = document.createElementNS('http://www.w3.org/2000/svg','circle');
+    circle.setAttribute('cx', cx);
+    circle.setAttribute('cy', cy);
+    circle.setAttribute('r', r);
+    circle.setAttribute('fill', 'none');
+    circle.setAttribute('stroke', d.color);
+    circle.setAttribute('stroke-width', '14');
+    circle.setAttribute('stroke-dasharray', `${dash} ${circumference - dash}`);
+    circle.setAttribute('stroke-dashoffset', offset);
+    g.appendChild(circle);
+    cumulative += d.pct;
+  });
+  document.getElementById('donut-center').textContent = '100%';
+
+  const legend = document.getElementById('donut-legend');
+  DONUT_DATA.forEach(d => {
+    const item = document.createElement('div');
+    item.className = 'legend-item';
+    item.innerHTML = `<div class="legend-dot" style="background:${d.color}"></div>
+                      <span class="legend-name">${d.name}</span>
+                      <span class="legend-pct">${d.pct}%</span>`;
+    legend.appendChild(item);
+  });
+}
+renderDonut();
+
+/* ══════════════════════════════════════════════════════════
+   DAYS TO DEADLINE
+   ══════════════════════════════════════════════════════════ */
+function computeDays() {
+  const target = new Date('2026-06-22T00:00:00Z');
+  const now    = new Date();
+  const diff   = Math.ceil((target - now) / 86400000);
+  document.getElementById('days-left').textContent = diff > 0 ? diff : 0;
+  // progress since Jan 1 2026
+  const start = new Date('2026-01-01T00:00:00Z');
+  const total = target - start;
+  const elapsed = now - start;
+  const pct = Math.min(100, Math.max(0, Math.round((elapsed / total) * 100)));
+  document.getElementById('launch-progress').innerHTML = `
+    <div class="progress-row" style="margin-top:.75rem;">
+      <div class="progress-meta">
+        <span class="progress-label">Launch Progress</span>
+        <span class="progress-val">${pct}%</span>
+      </div>
+      <div class="progress-track"><div class="progress-fill" style="width:${pct}%;background:var(--accent)"></div></div>
+    </div>`;
+}
+computeDays();
+
+/* ══════════════════════════════════════════════════════════
+   DIVISION TABLE
+   ══════════════════════════════════════════════════════════ */
+const DIVISION_ROWS = [
+  { div:'DreamAI',          agents:22, reqs:'12,401', mrr:'$36,100', uptime:'99.9%', status:'active' },
+  { div:'DreamSalesPro',    agents:12, reqs:'9,820',  mrr:'$27,200', uptime:'99.7%', status:'active' },
+  { div:'DreamFinance',     agents:16, reqs:'8,650',  mrr:'$21,900', uptime:'99.5%', status:'active' },
+  { div:'DreamRealEstate',  agents:18, reqs:'7,100',  mrr:'$18,050', uptime:'99.1%', status:'active' },
+  { div:'DreamMedia',       agents:9,  reqs:'5,340',  mrr:'$14,200', uptime:'98.8%', status:'active' },
+  { div:'DreamMarketing',   agents:10, reqs:'4,800',  mrr:'$11,000', uptime:'99.0%', status:'idle'   },
+  { div:'DreamAnalytics',   agents:8,  reqs:'3,920',  mrr:' $8,100', uptime:'99.3%', status:'active' },
+  { div:'DreamHealthcare',  agents:8,  reqs:'3,400',  mrr:' $7,500', uptime:'99.6%', status:'active' },
+  { div:'DreamGovt',        agents:5,  reqs:'2,200',  mrr:' $4,800', uptime:'98.2%', status:'active' },
+  { div:'DreamEducation',   agents:6,  reqs:'1,810',  mrr:' $3,900', uptime:'97.9%', status:'idle'   },
+];
+
+function renderDivisionTable() {
+  const tbl = document.getElementById('division-table');
+  tbl.innerHTML = `
+    <thead><tr>
+      <th>Division</th><th>Agents</th><th>Requests (24h)</th>
+      <th>MRR</th><th>Uptime</th><th>Status</th>
+    </tr></thead>
+    <tbody>
+      ${DIVISION_ROWS.map(r => `<tr>
+        <td style="font-weight:600;color:#fff;">${r.div}</td>
+        <td>${r.agents}</td>
+        <td>${r.reqs}</td>
+        <td style="color:var(--green);font-weight:600;">${r.mrr.trim()}</td>
+        <td>${r.uptime}</td>
+        <td><span class="status-dot ${r.status==='active'?'dot-green':'dot-yellow'}"></span>${r.status}</td>
+      </tr>`).join('')}
+    </tbody>`;
+}
+renderDivisionTable();
+
+/* ══════════════════════════════════════════════════════════
+   TOKEN USAGE BARS
+   ══════════════════════════════════════════════════════════ */
+const TOKEN_DATA = [
+  { provider:'OpenAI GPT-4o',      tokens:18400, pct:38, color:'#10a37f' },
+  { provider:'Claude 3.5 Sonnet',  tokens:12200, pct:25, color:'#cc785c' },
+  { provider:'Gemini 1.5 Pro',     tokens:8700,  pct:18, color:'#4285f4' },
+  { provider:'Mistral Large',      tokens:4900,  pct:10, color:'#7c3aed' },
+  { provider:'Other providers',    tokens:4300,  pct:9,  color:'#64748b' },
+];
+function renderTokenBars() {
+  const c = document.getElementById('token-bars');
+  TOKEN_DATA.forEach(d => {
+    const row = document.createElement('div');
+    row.className = 'progress-row';
+    row.innerHTML = `
+      <div class="progress-meta">
+        <span class="progress-label">${d.provider}</span>
+        <span class="progress-val">${d.tokens.toLocaleString()} tokens (${d.pct}%)</span>
+      </div>
+      <div class="progress-track" style="height:8px;">
+        <div class="progress-fill" style="width:${d.pct}%;background:${d.color}"></div>
+      </div>`;
+    c.appendChild(row);
+  });
+}
+renderTokenBars();
+
+/* ══════════════════════════════════════════════════════════
+   API HEALTH
+   ══════════════════════════════════════════════════════════ */
+const API_ENDPOINTS = [
+  { ep:'/api/bots',          status:'200 OK',  latency:'42ms',  ok:true  },
+  { ep:'/api/tokens',        status:'200 OK',  latency:'38ms',  ok:true  },
+  { ep:'/api/command-center',status:'200 OK',  latency:'55ms',  ok:true  },
+  { ep:'/auth/oauth/google', status:'200 OK',  latency:'91ms',  ok:true  },
+  { ep:'/api/tokens/usage',  status:'200 OK',  latency:'47ms',  ok:true  },
+  { ep:'/api/marketplace',   status:'200 OK',  latency:'63ms',  ok:true  },
+];
+function renderApiHealth() {
+  const c = document.getElementById('api-health');
+  API_ENDPOINTS.forEach(e => {
+    const row = document.createElement('div');
+    row.style.cssText = 'display:flex;justify-content:space-between;align-items:center;padding:.5rem .75rem;background:var(--card2);border:1px solid var(--border);border-radius:6px;font-size:.8rem;';
+    row.innerHTML = `
+      <div style="display:flex;align-items:center;gap:.5rem;">
+        <span class="status-dot ${e.ok?'dot-green':'dot-red'}"></span>
+        <code style="color:var(--accent);font-size:.78rem;">${e.ep}</code>
+      </div>
+      <div style="display:flex;gap:1rem;">
+        <span style="color:var(--green);">${e.status}</span>
+        <span style="color:var(--muted);">${e.latency}</span>
+      </div>`;
+    c.appendChild(row);
+  });
+}
+renderApiHealth();
+
+/* ══════════════════════════════════════════════════════════
+   VIEW SWITCHER
+   ══════════════════════════════════════════════════════════ */
+const VIEWS = ['overview','bots','revenue','agents','marketplace','deployments','analytics','buddy'];
+function showView(name) {
+  VIEWS.forEach(v => {
+    const el = document.getElementById(`view-${v}`);
+    if (el) el.style.display = v === name ? '' : 'none';
+  });
+  document.querySelectorAll('.nav-item').forEach(btn => {
+    btn.classList.toggle('active', btn.getAttribute('onclick')?.includes(`'${name}'`));
+  });
+}
+
+function refreshDash() {
+  const btn = document.querySelector('.btn-ghost');
+  btn.textContent = '↺ Refreshing…';
+  setTimeout(() => { btn.textContent = '↺ Refresh'; }, 1200);
+}
+</script>
+</body>
+</html>
