@@ -1,0 +1,921 @@
+{
+  "summary": {
+    "project_node_count": 16,
+    "package_json_count": 7,
+    "requirements_count": 10,
+    "duplicate_dependency_count": 13,
+    "version_conflict_count": 13,
+    "likely_unused_entries": 13,
+    "internal_relationship_count": 0
+  },
+  "projects": [
+    ".",
+    "DreamCo",
+    "bots/211-resource-eligibility-bot",
+    "bots/ai-side-hustle-bots",
+    "bots/government-contract-grant-bot",
+    "bots/job-application-bot",
+    "bots/saas-selling-bot",
+    "bots/selenium-job-application-bot",
+    "dashboard",
+    "dashboards/web_control",
+    "dreamco",
+    "dreamco-control-tower",
+    "dreamco-control-tower/backend",
+    "dreamco-control-tower/frontend",
+    "stripe/node",
+    "stripe/python"
+  ],
+  "package_manifests": [
+    {
+      "manifest": "DreamCo/package.json",
+      "project": "DreamCo",
+      "dependencies": {}
+    },
+    {
+      "manifest": "dreamco/package.json",
+      "project": "dreamco",
+      "dependencies": {
+        "cheerio": "^1.0.0-rc.12",
+        "cors": "^2.8.5",
+        "dotenv": "^16.3.1",
+        "express": "^4.18.2",
+        "express-rate-limit": "^8.3.2",
+        "json2csv": "^6.0.0-alpha.2",
+        "node-fetch": "^3.3.2",
+        "stripe": "^14.21.0",
+        "uuid": "^9.0.0",
+        "nodemon": "^3.0.2"
+      }
+    },
+    {
+      "manifest": "dreamco-control-tower/backend/package.json",
+      "project": "dreamco-control-tower/backend",
+      "dependencies": {
+        "@octokit/rest": "^20.0.2",
+        "express": "^4.18.2"
+      }
+    },
+    {
+      "manifest": "dreamco-control-tower/frontend/package.json",
+      "project": "dreamco-control-tower/frontend",
+      "dependencies": {
+        "react": "^18.2.0",
+        "react-dom": "^18.2.0",
+        "recharts": "^2.10.1",
+        "@vitejs/plugin-react": "^4.2.1",
+        "autoprefixer": "^10.4.16",
+        "postcss": "^8.4.32",
+        "tailwindcss": "^3.4.0",
+        "vite": "^5.0.8"
+      }
+    },
+    {
+      "manifest": "dreamco-control-tower/package.json",
+      "project": "dreamco-control-tower",
+      "dependencies": {
+        "@octokit/rest": "^20.1.1",
+        "express": "^4.18.2"
+      }
+    },
+    {
+      "manifest": "package.json",
+      "project": ".",
+      "dependencies": {
+        "docx": "^9.6.1",
+        "dotenv": "^17.4.1",
+        "express": "^4.17.1",
+        "eslint": "^8.57.1",
+        "jest": "^29.0.0",
+        "prettier": "^3.3.3",
+        "supertest": "^7.2.2"
+      }
+    },
+    {
+      "manifest": "stripe/node/package.json",
+      "project": "stripe/node",
+      "dependencies": {
+        "stripe": "^14.0.0",
+        "express": "^4.18.2",
+        "dotenv": "^16.3.1"
+      }
+    }
+  ],
+  "requirements_manifests": [
+    {
+      "manifest": "bots/211-resource-eligibility-bot/requirements.txt",
+      "project": "bots/211-resource-eligibility-bot",
+      "dependencies": {
+        "requests": "requests>=2.28.0",
+        "python-dotenv": "python-dotenv>=1.0.0"
+      }
+    },
+    {
+      "manifest": "bots/ai-side-hustle-bots/requirements.txt",
+      "project": "bots/ai-side-hustle-bots",
+      "dependencies": {
+        "requests": "requests>=2.28.0",
+        "python-dotenv": "python-dotenv>=1.0.0",
+        "openai": "openai>=1.0.0"
+      }
+    },
+    {
+      "manifest": "bots/government-contract-grant-bot/requirements.txt",
+      "project": "bots/government-contract-grant-bot",
+      "dependencies": {
+        "requests": "requests>=2.28.0",
+        "python-dotenv": "python-dotenv>=1.0.0",
+        "schedule": "schedule>=1.2.0",
+        "jinja2": "jinja2>=3.1.0"
+      }
+    },
+    {
+      "manifest": "bots/job-application-bot/requirements.txt",
+      "project": "bots/job-application-bot",
+      "dependencies": {
+        "selenium": "selenium>=4.0.0",
+        "pdfminer-six": "pdfminer.six>=20221105",
+        "python-docx": "python-docx>=0.8.11",
+        "webdriver-manager": "webdriver-manager>=4.0.0"
+      }
+    },
+    {
+      "manifest": "bots/saas-selling-bot/requirements.txt",
+      "project": "bots/saas-selling-bot",
+      "dependencies": {
+        "flask": "flask>=3.0.0",
+        "flask-cors": "flask-cors>=4.0.0",
+        "openai": "openai>=1.0.0",
+        "stripe": "stripe>=7.0.0"
+      }
+    },
+    {
+      "manifest": "bots/selenium-job-application-bot/requirements.txt",
+      "project": "bots/selenium-job-application-bot",
+      "dependencies": {
+        "selenium": "selenium>=4.10.0",
+        "python-dotenv": "python-dotenv>=1.0.0",
+        "requests": "requests>=2.28.0",
+        "webdriver-manager": "webdriver-manager>=4.0.0"
+      }
+    },
+    {
+      "manifest": "dashboard/requirements.txt",
+      "project": "dashboard",
+      "dependencies": {
+        "flask": "flask>=3.1.3",
+        "flask-cors": "flask-cors>=6.0.2"
+      }
+    },
+    {
+      "manifest": "dashboards/web_control/requirements.txt",
+      "project": "dashboards/web_control",
+      "dependencies": {
+        "flask": "flask>=2.0.0",
+        "flask-cors": "flask-cors>=4.0.0"
+      }
+    },
+    {
+      "manifest": "requirements.txt",
+      "project": ".",
+      "dependencies": {
+        "pytest": "pytest>=9.0.3",
+        "pytest-benchmark": "pytest-benchmark>=5.2.3",
+        "pytest-cov": "pytest-cov>=7.1.0",
+        "requests": "requests>=2.34.2",
+        "python-dotenv": "python-dotenv>=1.2.2",
+        "schedule": "schedule>=1.2.2",
+        "jinja2": "jinja2>=3.1.6",
+        "selenium": "selenium>=4.44.0",
+        "webdriver-manager": "webdriver-manager>=4.1.1",
+        "openai": "openai>=2.37.0",
+        "fastapi": "fastapi>=0.136.1",
+        "httpx": "httpx>=0.28.1",
+        "flask": "flask>=3.1.3",
+        "flask-cors": "flask-cors>=6.0.2",
+        "stripe": "stripe>=15.1.0"
+      }
+    },
+    {
+      "manifest": "stripe/python/requirements.txt",
+      "project": "stripe/python",
+      "dependencies": {
+        "stripe": "stripe>=5.0.0",
+        "python-dotenv": "python-dotenv>=1.0.0"
+      }
+    }
+  ],
+  "internal_relationships": [],
+  "duplicate_dependencies": [
+    {
+      "dependency": "@octokit/rest",
+      "manifest_count": 2,
+      "manifests": [
+        "dreamco-control-tower/backend/package.json",
+        "dreamco-control-tower/package.json"
+      ]
+    },
+    {
+      "dependency": "dotenv",
+      "manifest_count": 3,
+      "manifests": [
+        "dreamco/package.json",
+        "package.json",
+        "stripe/node/package.json"
+      ]
+    },
+    {
+      "dependency": "express",
+      "manifest_count": 5,
+      "manifests": [
+        "dreamco-control-tower/backend/package.json",
+        "dreamco-control-tower/package.json",
+        "dreamco/package.json",
+        "package.json",
+        "stripe/node/package.json"
+      ]
+    },
+    {
+      "dependency": "flask",
+      "manifest_count": 4,
+      "manifests": [
+        "bots/saas-selling-bot/requirements.txt",
+        "dashboard/requirements.txt",
+        "dashboards/web_control/requirements.txt",
+        "requirements.txt"
+      ]
+    },
+    {
+      "dependency": "flask-cors",
+      "manifest_count": 4,
+      "manifests": [
+        "bots/saas-selling-bot/requirements.txt",
+        "dashboard/requirements.txt",
+        "dashboards/web_control/requirements.txt",
+        "requirements.txt"
+      ]
+    },
+    {
+      "dependency": "jinja2",
+      "manifest_count": 2,
+      "manifests": [
+        "bots/government-contract-grant-bot/requirements.txt",
+        "requirements.txt"
+      ]
+    },
+    {
+      "dependency": "openai",
+      "manifest_count": 3,
+      "manifests": [
+        "bots/ai-side-hustle-bots/requirements.txt",
+        "bots/saas-selling-bot/requirements.txt",
+        "requirements.txt"
+      ]
+    },
+    {
+      "dependency": "python-dotenv",
+      "manifest_count": 6,
+      "manifests": [
+        "bots/211-resource-eligibility-bot/requirements.txt",
+        "bots/ai-side-hustle-bots/requirements.txt",
+        "bots/government-contract-grant-bot/requirements.txt",
+        "bots/selenium-job-application-bot/requirements.txt",
+        "requirements.txt",
+        "stripe/python/requirements.txt"
+      ]
+    },
+    {
+      "dependency": "requests",
+      "manifest_count": 5,
+      "manifests": [
+        "bots/211-resource-eligibility-bot/requirements.txt",
+        "bots/ai-side-hustle-bots/requirements.txt",
+        "bots/government-contract-grant-bot/requirements.txt",
+        "bots/selenium-job-application-bot/requirements.txt",
+        "requirements.txt"
+      ]
+    },
+    {
+      "dependency": "schedule",
+      "manifest_count": 2,
+      "manifests": [
+        "bots/government-contract-grant-bot/requirements.txt",
+        "requirements.txt"
+      ]
+    },
+    {
+      "dependency": "selenium",
+      "manifest_count": 3,
+      "manifests": [
+        "bots/job-application-bot/requirements.txt",
+        "bots/selenium-job-application-bot/requirements.txt",
+        "requirements.txt"
+      ]
+    },
+    {
+      "dependency": "stripe",
+      "manifest_count": 5,
+      "manifests": [
+        "bots/saas-selling-bot/requirements.txt",
+        "dreamco/package.json",
+        "requirements.txt",
+        "stripe/node/package.json",
+        "stripe/python/requirements.txt"
+      ]
+    },
+    {
+      "dependency": "webdriver-manager",
+      "manifest_count": 3,
+      "manifests": [
+        "bots/job-application-bot/requirements.txt",
+        "bots/selenium-job-application-bot/requirements.txt",
+        "requirements.txt"
+      ]
+    }
+  ],
+  "version_conflicts": [
+    {
+      "dependency": "@octokit/rest",
+      "versions": [
+        "^20.0.2",
+        "^20.1.1"
+      ],
+      "occurrences": [
+        {
+          "manifest": "dreamco-control-tower/backend/package.json",
+          "version": "^20.0.2",
+          "type": "node"
+        },
+        {
+          "manifest": "dreamco-control-tower/package.json",
+          "version": "^20.1.1",
+          "type": "node"
+        }
+      ]
+    },
+    {
+      "dependency": "dotenv",
+      "versions": [
+        "^16.3.1",
+        "^17.4.1"
+      ],
+      "occurrences": [
+        {
+          "manifest": "dreamco/package.json",
+          "version": "^16.3.1",
+          "type": "node"
+        },
+        {
+          "manifest": "package.json",
+          "version": "^17.4.1",
+          "type": "node"
+        },
+        {
+          "manifest": "stripe/node/package.json",
+          "version": "^16.3.1",
+          "type": "node"
+        }
+      ]
+    },
+    {
+      "dependency": "express",
+      "versions": [
+        "^4.17.1",
+        "^4.18.2"
+      ],
+      "occurrences": [
+        {
+          "manifest": "dreamco/package.json",
+          "version": "^4.18.2",
+          "type": "node"
+        },
+        {
+          "manifest": "dreamco-control-tower/backend/package.json",
+          "version": "^4.18.2",
+          "type": "node"
+        },
+        {
+          "manifest": "dreamco-control-tower/package.json",
+          "version": "^4.18.2",
+          "type": "node"
+        },
+        {
+          "manifest": "package.json",
+          "version": "^4.17.1",
+          "type": "node"
+        },
+        {
+          "manifest": "stripe/node/package.json",
+          "version": "^4.18.2",
+          "type": "node"
+        }
+      ]
+    },
+    {
+      "dependency": "flask",
+      "versions": [
+        "flask>=2.0.0",
+        "flask>=3.0.0",
+        "flask>=3.1.3"
+      ],
+      "occurrences": [
+        {
+          "manifest": "bots/saas-selling-bot/requirements.txt",
+          "version": "flask>=3.0.0",
+          "type": "python"
+        },
+        {
+          "manifest": "dashboard/requirements.txt",
+          "version": "flask>=3.1.3",
+          "type": "python"
+        },
+        {
+          "manifest": "dashboards/web_control/requirements.txt",
+          "version": "flask>=2.0.0",
+          "type": "python"
+        },
+        {
+          "manifest": "requirements.txt",
+          "version": "flask>=3.1.3",
+          "type": "python"
+        }
+      ]
+    },
+    {
+      "dependency": "flask-cors",
+      "versions": [
+        "flask-cors>=4.0.0",
+        "flask-cors>=6.0.2"
+      ],
+      "occurrences": [
+        {
+          "manifest": "bots/saas-selling-bot/requirements.txt",
+          "version": "flask-cors>=4.0.0",
+          "type": "python"
+        },
+        {
+          "manifest": "dashboard/requirements.txt",
+          "version": "flask-cors>=6.0.2",
+          "type": "python"
+        },
+        {
+          "manifest": "dashboards/web_control/requirements.txt",
+          "version": "flask-cors>=4.0.0",
+          "type": "python"
+        },
+        {
+          "manifest": "requirements.txt",
+          "version": "flask-cors>=6.0.2",
+          "type": "python"
+        }
+      ]
+    },
+    {
+      "dependency": "jinja2",
+      "versions": [
+        "jinja2>=3.1.0",
+        "jinja2>=3.1.6"
+      ],
+      "occurrences": [
+        {
+          "manifest": "bots/government-contract-grant-bot/requirements.txt",
+          "version": "jinja2>=3.1.0",
+          "type": "python"
+        },
+        {
+          "manifest": "requirements.txt",
+          "version": "jinja2>=3.1.6",
+          "type": "python"
+        }
+      ]
+    },
+    {
+      "dependency": "openai",
+      "versions": [
+        "openai>=1.0.0",
+        "openai>=2.37.0"
+      ],
+      "occurrences": [
+        {
+          "manifest": "bots/ai-side-hustle-bots/requirements.txt",
+          "version": "openai>=1.0.0",
+          "type": "python"
+        },
+        {
+          "manifest": "bots/saas-selling-bot/requirements.txt",
+          "version": "openai>=1.0.0",
+          "type": "python"
+        },
+        {
+          "manifest": "requirements.txt",
+          "version": "openai>=2.37.0",
+          "type": "python"
+        }
+      ]
+    },
+    {
+      "dependency": "python-dotenv",
+      "versions": [
+        "python-dotenv>=1.0.0",
+        "python-dotenv>=1.2.2"
+      ],
+      "occurrences": [
+        {
+          "manifest": "bots/211-resource-eligibility-bot/requirements.txt",
+          "version": "python-dotenv>=1.0.0",
+          "type": "python"
+        },
+        {
+          "manifest": "bots/ai-side-hustle-bots/requirements.txt",
+          "version": "python-dotenv>=1.0.0",
+          "type": "python"
+        },
+        {
+          "manifest": "bots/government-contract-grant-bot/requirements.txt",
+          "version": "python-dotenv>=1.0.0",
+          "type": "python"
+        },
+        {
+          "manifest": "bots/selenium-job-application-bot/requirements.txt",
+          "version": "python-dotenv>=1.0.0",
+          "type": "python"
+        },
+        {
+          "manifest": "requirements.txt",
+          "version": "python-dotenv>=1.2.2",
+          "type": "python"
+        },
+        {
+          "manifest": "stripe/python/requirements.txt",
+          "version": "python-dotenv>=1.0.0",
+          "type": "python"
+        }
+      ]
+    },
+    {
+      "dependency": "requests",
+      "versions": [
+        "requests>=2.28.0",
+        "requests>=2.34.2"
+      ],
+      "occurrences": [
+        {
+          "manifest": "bots/211-resource-eligibility-bot/requirements.txt",
+          "version": "requests>=2.28.0",
+          "type": "python"
+        },
+        {
+          "manifest": "bots/ai-side-hustle-bots/requirements.txt",
+          "version": "requests>=2.28.0",
+          "type": "python"
+        },
+        {
+          "manifest": "bots/government-contract-grant-bot/requirements.txt",
+          "version": "requests>=2.28.0",
+          "type": "python"
+        },
+        {
+          "manifest": "bots/selenium-job-application-bot/requirements.txt",
+          "version": "requests>=2.28.0",
+          "type": "python"
+        },
+        {
+          "manifest": "requirements.txt",
+          "version": "requests>=2.34.2",
+          "type": "python"
+        }
+      ]
+    },
+    {
+      "dependency": "schedule",
+      "versions": [
+        "schedule>=1.2.0",
+        "schedule>=1.2.2"
+      ],
+      "occurrences": [
+        {
+          "manifest": "bots/government-contract-grant-bot/requirements.txt",
+          "version": "schedule>=1.2.0",
+          "type": "python"
+        },
+        {
+          "manifest": "requirements.txt",
+          "version": "schedule>=1.2.2",
+          "type": "python"
+        }
+      ]
+    },
+    {
+      "dependency": "selenium",
+      "versions": [
+        "selenium>=4.0.0",
+        "selenium>=4.10.0",
+        "selenium>=4.44.0"
+      ],
+      "occurrences": [
+        {
+          "manifest": "bots/job-application-bot/requirements.txt",
+          "version": "selenium>=4.0.0",
+          "type": "python"
+        },
+        {
+          "manifest": "bots/selenium-job-application-bot/requirements.txt",
+          "version": "selenium>=4.10.0",
+          "type": "python"
+        },
+        {
+          "manifest": "requirements.txt",
+          "version": "selenium>=4.44.0",
+          "type": "python"
+        }
+      ]
+    },
+    {
+      "dependency": "stripe",
+      "versions": [
+        "^14.0.0",
+        "^14.21.0",
+        "stripe>=15.1.0",
+        "stripe>=5.0.0",
+        "stripe>=7.0.0"
+      ],
+      "occurrences": [
+        {
+          "manifest": "dreamco/package.json",
+          "version": "^14.21.0",
+          "type": "node"
+        },
+        {
+          "manifest": "stripe/node/package.json",
+          "version": "^14.0.0",
+          "type": "node"
+        },
+        {
+          "manifest": "bots/saas-selling-bot/requirements.txt",
+          "version": "stripe>=7.0.0",
+          "type": "python"
+        },
+        {
+          "manifest": "requirements.txt",
+          "version": "stripe>=15.1.0",
+          "type": "python"
+        },
+        {
+          "manifest": "stripe/python/requirements.txt",
+          "version": "stripe>=5.0.0",
+          "type": "python"
+        }
+      ]
+    },
+    {
+      "dependency": "webdriver-manager",
+      "versions": [
+        "webdriver-manager>=4.0.0",
+        "webdriver-manager>=4.1.1"
+      ],
+      "occurrences": [
+        {
+          "manifest": "bots/job-application-bot/requirements.txt",
+          "version": "webdriver-manager>=4.0.0",
+          "type": "python"
+        },
+        {
+          "manifest": "bots/selenium-job-application-bot/requirements.txt",
+          "version": "webdriver-manager>=4.0.0",
+          "type": "python"
+        },
+        {
+          "manifest": "requirements.txt",
+          "version": "webdriver-manager>=4.1.1",
+          "type": "python"
+        }
+      ]
+    }
+  ],
+  "likely_unused_dependencies": [
+    {
+      "manifest": "dreamco/package.json",
+      "type": "node",
+      "dependencies": [
+        "cheerio",
+        "json2csv",
+        "node-fetch",
+        "nodemon",
+        "uuid"
+      ]
+    },
+    {
+      "manifest": "dreamco-control-tower/frontend/package.json",
+      "type": "node",
+      "dependencies": [
+        "autoprefixer",
+        "postcss",
+        "react",
+        "react-dom",
+        "recharts",
+        "tailwindcss"
+      ]
+    },
+    {
+      "manifest": "dreamco-control-tower/package.json",
+      "type": "node",
+      "dependencies": [
+        "express"
+      ]
+    },
+    {
+      "manifest": "package.json",
+      "type": "node",
+      "dependencies": [
+        "eslint",
+        "jest",
+        "prettier",
+        "supertest"
+      ]
+    },
+    {
+      "manifest": "bots/211-resource-eligibility-bot/requirements.txt",
+      "type": "python",
+      "dependencies": [
+        "python-dotenv",
+        "requests"
+      ]
+    },
+    {
+      "manifest": "bots/ai-side-hustle-bots/requirements.txt",
+      "type": "python",
+      "dependencies": [
+        "openai",
+        "python-dotenv",
+        "requests"
+      ]
+    },
+    {
+      "manifest": "bots/government-contract-grant-bot/requirements.txt",
+      "type": "python",
+      "dependencies": [
+        "jinja2",
+        "python-dotenv",
+        "requests",
+        "schedule"
+      ]
+    },
+    {
+      "manifest": "bots/job-application-bot/requirements.txt",
+      "type": "python",
+      "dependencies": [
+        "pdfminer-six",
+        "python-docx",
+        "webdriver-manager"
+      ]
+    },
+    {
+      "manifest": "bots/selenium-job-application-bot/requirements.txt",
+      "type": "python",
+      "dependencies": [
+        "python-dotenv",
+        "requests"
+      ]
+    },
+    {
+      "manifest": "dashboard/requirements.txt",
+      "type": "python",
+      "dependencies": [
+        "flask-cors"
+      ]
+    },
+    {
+      "manifest": "dashboards/web_control/requirements.txt",
+      "type": "python",
+      "dependencies": [
+        "flask",
+        "flask-cors"
+      ]
+    },
+    {
+      "manifest": "requirements.txt",
+      "type": "python",
+      "dependencies": [
+        "flask-cors",
+        "httpx",
+        "jinja2",
+        "openai",
+        "pytest-benchmark",
+        "pytest-cov",
+        "python-dotenv",
+        "schedule",
+        "selenium",
+        "webdriver-manager"
+      ]
+    },
+    {
+      "manifest": "stripe/python/requirements.txt",
+      "type": "python",
+      "dependencies": [
+        "python-dotenv"
+      ]
+    }
+  ],
+  "ranked_critical_packages": [
+    {
+      "dependency": "express",
+      "score": 10
+    },
+    {
+      "dependency": "requests",
+      "score": 10
+    },
+    {
+      "dependency": "stripe",
+      "score": 10
+    },
+    {
+      "dependency": "flask",
+      "score": 9
+    },
+    {
+      "dependency": "dotenv",
+      "score": 8
+    },
+    {
+      "dependency": "openai",
+      "score": 8
+    },
+    {
+      "dependency": "selenium",
+      "score": 8
+    },
+    {
+      "dependency": "fastapi",
+      "score": 6
+    },
+    {
+      "dependency": "httpx",
+      "score": 6
+    },
+    {
+      "dependency": "pytest",
+      "score": 6
+    },
+    {
+      "dependency": "python-dotenv",
+      "score": 6
+    },
+    {
+      "dependency": "flask-cors",
+      "score": 4
+    },
+    {
+      "dependency": "webdriver-manager",
+      "score": 3
+    },
+    {
+      "dependency": "@octokit/rest",
+      "score": 2
+    },
+    {
+      "dependency": "jinja2",
+      "score": 2
+    },
+    {
+      "dependency": "schedule",
+      "score": 2
+    },
+    {
+      "dependency": "@vitejs/plugin-react",
+      "score": 1
+    },
+    {
+      "dependency": "autoprefixer",
+      "score": 1
+    },
+    {
+      "dependency": "cheerio",
+      "score": 1
+    },
+    {
+      "dependency": "cors",
+      "score": 1
+    },
+    {
+      "dependency": "docx",
+      "score": 1
+    },
+    {
+      "dependency": "eslint",
+      "score": 1
+    },
+    {
+      "dependency": "express-rate-limit",
+      "score": 1
+    },
+    {
+      "dependency": "jest",
+      "score": 1
+    },
+    {
+      "dependency": "json2csv",
+      "score": 1
+    }
+  ]
+}
