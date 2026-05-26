@@ -50,6 +50,7 @@ The static GitHub Pages site lives in [`docs/`](../docs/). It includes:
 
 - [`docs/index.html`](../docs/index.html) — DreamCobots ecosystem overview
 - [`docs/dashboards.html`](../docs/dashboards.html) — Dashboard portal
+- [`docs/buddyai-command-center.html`](../docs/buddyai-command-center.html) — BuddyAI GitHub Pages command center with live Actions visibility
 
 Enable GitHub Pages in **Repository Settings → Pages → Source: `main` / `docs/`**.
 

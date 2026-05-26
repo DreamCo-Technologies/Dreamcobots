@@ -37,6 +37,8 @@ from ui.web_dashboard import (
     _fetch_github_workflows,
     _fetch_github_artifacts,
     _check_quantum_bot_status,
+    _build_command_center_payload,
+    _build_bot_prospectus,
     _get_governance,
     _update_governance,
     _get_bot_config,
@@ -44,13 +46,26 @@ from ui.web_dashboard import (
     _append_failure,
     _get_failures,
     _detect_uncoded_bots,
+    _reset_dashboard_state,
 )
 from bots.ai_learning_system.database import BotPerformanceDB
 from bots.control_center.control_center import ControlCenter
 
 
 @pytest.fixture
-def client():
+def isolated_dashboard_state(tmp_path, monkeypatch):
+    """Isolate persisted dashboard state for every test."""
+    monkeypatch.setenv(
+        "DREAMCO_COMMAND_CENTER_STATE_FILE",
+        str(tmp_path / "buddy-command-center-state.json"),
+    )
+    _reset_dashboard_state()
+    yield
+    _reset_dashboard_state()
+
+
+@pytest.fixture
+def client(isolated_dashboard_state):
     """Return a Flask test client backed by fresh in-memory components."""
     cc = ControlCenter()
     db = BotPerformanceDB()          # in-memory
@@ -62,7 +77,7 @@ def client():
 
 
 @pytest.fixture
-def client_with_data():
+def client_with_data(isolated_dashboard_state):
     """Test client pre-populated with a registered bot and recorded runs."""
     cc = ControlCenter()
     db = BotPerformanceDB()
@@ -160,6 +175,37 @@ class TestApiStatus:
         resp = client_with_data.get("/api/status")
         data = json.loads(resp.data)
         assert data["registered_bots"] >= 1
+
+
+# ===========================================================================
+# 3b. /api/command-center
+# ===========================================================================
+
+class TestCommandCenterApi:
+    def test_command_center_returns_200(self, client):
+        resp = client.get("/api/command-center")
+        assert resp.status_code == 200
+
+    def test_command_center_has_priority_programs(self, client):
+        data = json.loads(client.get("/api/command-center").data)
+        titles = [item["title"] for item in data["roadmap"]["priority_programs"]]
+        assert "Multi-Agent Coordination Graphs" in titles
+        assert "Event-Sourced Autonomous Runtime" in titles
+
+    def test_command_center_reports_persistent_state(self, client):
+        data = json.loads(client.get("/api/command-center").data)
+        assert data["state_persistence"]["mode"] == "file-backed"
+        assert data["state_persistence"]["state_file"].endswith(".json")
+
+    def test_command_center_helper_returns_dict(self):
+        cc = ControlCenter()
+        db = BotPerformanceDB()
+        try:
+            payload = _build_command_center_payload(cc, db)
+            assert isinstance(payload, dict)
+            assert payload["roadmap"]["top_100_ideas_tracked"] == 100
+        finally:
+            db.close()
 
 
 # ===========================================================================
@@ -355,6 +401,58 @@ class TestApiHistory:
 
 
 # ===========================================================================
+# 10b. /api/bots/<name>/prospectus and /api/bots/<name>/operate
+# ===========================================================================
+
+class TestBotProspectusAndOperateApi:
+    def test_bot_prospectus_returns_200(self, client):
+        resp = client.get("/api/bots/multi_source_lead_scraper/prospectus")
+        assert resp.status_code == 200
+
+    def test_bot_prospectus_contains_testing_interface(self, client):
+        data = json.loads(client.get("/api/bots/multi_source_lead_scraper/prospectus").data)
+        assert "testing_interface" in data
+        assert data["testing_interface"]["configure"].endswith("/config")
+
+    def test_bot_prospectus_helper_contains_investor_highlights(self):
+        prospectus = _build_bot_prospectus(
+            bot_name="demo_bot",
+            catalog_entry={"display_name": "Demo Bot", "description": "Demo", "category": "Testing", "revenue_model": "$9/mo"},
+            score={"composite_score": 88, "total_runs": 3},
+            history=[],
+            cfg={"aggressiveness": "balanced"},
+            failures=[],
+            is_live=False,
+        )
+        assert len(prospectus["investor_highlights"]) >= 3
+
+    def test_operate_test_mode_returns_201(self, client):
+        resp = client.post(
+            "/api/bots/multi_source_lead_scraper/operate",
+            data=json.dumps({"mode": "test"}),
+            content_type="application/json",
+        )
+        assert resp.status_code == 201
+
+    def test_operate_train_mode_records_history(self, client):
+        client.post(
+            "/api/bots/multi_source_lead_scraper/operate",
+            data=json.dumps({"mode": "train"}),
+            content_type="application/json",
+        )
+        history = json.loads(client.get("/api/history/multi_source_lead_scraper").data)
+        assert any(item["status"] == "training" for item in history["history"])
+
+    def test_operate_invalid_mode_returns_400(self, client):
+        resp = client.post(
+            "/api/bots/multi_source_lead_scraper/operate",
+            data=json.dumps({"mode": "launch_everything"}),
+            content_type="application/json",
+        )
+        assert resp.status_code == 400
+
+
+# ===========================================================================
 # 11. /api/bots/catalog
 # ===========================================================================
 
@@ -537,6 +635,10 @@ class TestGoLive:
     def test_dashboard_html_contains_quantum_section(self, client):
         resp = client.get("/")
         assert b"quantum" in resp.data.lower() or b"Quantum" in resp.data
+
+    def test_dashboard_html_contains_buddy_command_center(self, client):
+        resp = client.get("/")
+        assert b"BuddyAI" in resp.data and b"Command Center" in resp.data
 
 
 # ===========================================================================
@@ -959,6 +1061,18 @@ class TestGovernanceApi:
         data = json.loads(client.get("/api/governance").data)
         assert data["updated_at"] is not None
 
+    def test_governance_update_persists_to_state_file(self, client):
+        import os
+        client.post(
+            "/api/governance/settings",
+            data=json.dumps({"aggressiveness": "max"}),
+            content_type="application/json",
+        )
+        state_path = os.environ["DREAMCO_COMMAND_CENTER_STATE_FILE"]
+        with open(state_path, encoding="utf-8") as fh:
+            payload = json.load(fh)
+        assert payload["governance"]["aggressiveness"] == "max"
+
 
 # ===========================================================================
 # 16. Per-bot configuration (/api/bots/<name>/configure, /api/bots/<name>/config)
@@ -1035,6 +1149,18 @@ class TestBotConfigureApi:
         )
         data = json.loads(client.get("/api/bots/clamp_bot/config").data)
         assert data["max_execution_seconds"] >= 30
+
+    def test_configure_persists_bot_config_to_state_file(self, client):
+        import os
+        client.post(
+            "/api/bots/persisted_bot/configure",
+            data=json.dumps({"retry_policy": "once"}),
+            content_type="application/json",
+        )
+        state_path = os.environ["DREAMCO_COMMAND_CENTER_STATE_FILE"]
+        with open(state_path, encoding="utf-8") as fh:
+            payload = json.load(fh)
+        assert payload["bot_configs"]["persisted_bot"]["retry_policy"] == "once"
 
 
 # ===========================================================================
@@ -1210,6 +1336,14 @@ class TestBotDashboardPage:
     def test_bot_page_contains_runtime_parameters(self, client):
         resp = client.get("/bots/crypto_bot")
         assert b"Runtime Parameters" in resp.data or b"Aggressiveness" in resp.data
+
+    def test_bot_page_contains_prospectus(self, client):
+        resp = client.get("/bots/crypto_bot")
+        assert b"Prospectus" in resp.data
+
+    def test_bot_page_contains_testing_interface(self, client):
+        resp = client.get("/bots/crypto_bot")
+        assert b"Testing & Training Interface" in resp.data or b"operateBot" in resp.data
 
     def test_bot_page_contains_back_link(self, client):
         resp = client.get("/bots/fiverr_bot")

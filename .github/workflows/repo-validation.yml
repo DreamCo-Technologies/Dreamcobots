@@ -85,6 +85,12 @@ jobs:
               "",
               f"Discovered **{len(dashboards)}** dashboard entries (including Replit dashboard when present).",
               "",
+              "## 🧠 BuddyAI Command Center",
+              "",
+              "- GitHub Pages dashboard: https://dreamco-technologies.github.io/Dreamcobots/buddyai-command-center.html",
+              "- Flask command center JSON: `ui/web_dashboard.py` → `/api/command-center`",
+              "- Per-bot prospectus/testing UI: `ui/web_dashboard.py` → `/bots/<bot_name>`",
+              "",
               "| Dashboard | Path | Type | Size (bytes) |",
               "|---|---|---:|---:|",
           ]
@@ -180,6 +186,10 @@ jobs:
                   fh.write("## Dashboard Discovery\n\n")
                   fh.write(f"- Dashboards found: **{len(dashboard_files)}**\n")
                   fh.write(f"- Dashboard tests found: **{len(dashboard_tests)}**\n\n")
+                  fh.write("## BuddyAI Command Center\n\n")
+                  fh.write("- GitHub Pages dashboard: https://dreamco-technologies.github.io/Dreamcobots/buddyai-command-center.html\n")
+                  fh.write("- Flask command center endpoint: `/api/command-center`\n")
+                  fh.write("- Per-bot dashboard endpoint: `/bots/<bot_name>`\n\n")
                   fh.write("| Type | Path |\n|---|---|\n")
                   for item in dashboard_files:
                       fh.write(f"| dashboard | `{item}` |\n")

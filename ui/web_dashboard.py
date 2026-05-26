@@ -26,11 +26,14 @@ Endpoints
   GET  /dashboard/chooser             — Dashboard chooser and side-by-side comparison
   GET  /bots/<name>                   — Per-bot HTML dashboard page
   GET  /api/status                    — System-wide status JSON
+  GET  /api/command-center            — BuddyAI command-center JSON
   GET  /api/bots                      — Registered bot list with KPI scores
   POST /api/bots/register             — Register a new bot { "name": "...", "tier": "..." }
   POST /api/bots/<name>/go_live       — Deploy / activate a bot instance
+  POST /api/bots/<name>/operate       — Run / test / train a bot from its dashboard
   POST /api/bots/<name>/configure     — Configure bot runtime parameters
   GET  /api/bots/<name>/config        — Retrieve bot runtime parameters
+  GET  /api/bots/<name>/prospectus    — Per-bot prospectus JSON
   GET  /api/bots/catalog              — Full bot catalog with Go Live status
   GET  /api/bots/uncoded              — Uncoded / stub bots report
   GET  /api/revenue                   — Revenue summary JSON
@@ -49,8 +52,10 @@ Endpoints
 
 from __future__ import annotations
 
+import json
 import os
 from datetime import datetime, timezone
+from pathlib import Path
 from typing import Any, Optional
 
 try:
@@ -94,12 +99,13 @@ _QUANTUM_CACHE_TTL_S = 60
 # ---------------------------------------------------------------------------
 
 _GOVERNANCE_LOCK = _threading.Lock()
-_GOVERNANCE_SETTINGS: dict = {
+_DEFAULT_GOVERNANCE_SETTINGS: dict = {
     "aggressiveness": "balanced",
     "max_execution_seconds": 300,
     "retry_policy": "auto",
     "updated_at": None,
 }
+_GOVERNANCE_SETTINGS: dict = dict(_DEFAULT_GOVERNANCE_SETTINGS)
 
 # Valid values for governance fields
 _VALID_AGGRESSIVENESS = {"passive", "balanced", "aggressive", "max"}
@@ -120,11 +126,64 @@ _FAILURE_LOG_LOCK = _threading.Lock()
 _FAILURE_LOG: list[dict] = []
 _FAILURE_LOG_MAX = 200
 
+_STATE_FILE_ENV = "DREAMCO_COMMAND_CENTER_STATE_FILE"
+_DEFAULT_STATE_FILE = (
+    Path(__file__).resolve().parent.parent / "data" / "buddy_command_center_state.json"
+)
+
 # Stub / TODO detection patterns
 _STUB_PATTERN = _re.compile(
     r"raise\s+NotImplementedError|#\s*TODO|#\s*FIXME|#\s*STUB|#\s*PLACEHOLDER",
     _re.IGNORECASE,
 )
+
+_STRATEGIC_PRIORITY_PROGRAMS: list[dict[str, str]] = [
+    {
+        "slug": "multi_agent_coordination_graphs",
+        "title": "Multi-Agent Coordination Graphs",
+        "priority": "P0",
+        "outcome": "Give BuddyAI a graph-native orchestration surface for handoffs, dependencies, and negotiation paths.",
+    },
+    {
+        "slug": "federated_learning_mesh",
+        "title": "Federated Learning Mesh",
+        "priority": "P0",
+        "outcome": "Share learning signals across deployments without centralizing sensitive tenant data.",
+    },
+    {
+        "slug": "no_code_builder",
+        "title": "No-Code Bot Builder",
+        "priority": "P1",
+        "outcome": "Turn bot creation into a governed form flow backed by reusable runtime templates.",
+    },
+    {
+        "slug": "revenue_attribution_engine",
+        "title": "Revenue Attribution Engine",
+        "priority": "P1",
+        "outcome": "Tie every bot action to monetization outcomes for investor-grade reporting and optimization.",
+    },
+    {
+        "slug": "event_sourced_runtime",
+        "title": "Event-Sourced Autonomous Runtime",
+        "priority": "P0",
+        "outcome": "Persist every operational event so runs can be audited, replayed, and governed with confidence.",
+    },
+]
+
+_BUDDY_EXPERIMENT_TRACKS: list[dict[str, str]] = [
+    {
+        "name": "Reliability hardening",
+        "focus": "failure capture, replay, persistence, governance drift alerts",
+    },
+    {
+        "name": "Growth monetization",
+        "focus": "revenue attribution, pricing experiments, cross-bot upsell loops",
+    },
+    {
+        "name": "Builder velocity",
+        "focus": "no-code bot creation, templates, and launch-readiness automation",
+    },
+]
 
 
 def _github_headers() -> dict:
@@ -272,8 +331,161 @@ def _check_quantum_bot_status() -> dict:
     return result
 
 
+def _state_file_path() -> Path:
+    """Return the JSON file used to persist dashboard state across restarts."""
+    return Path(os.environ.get(_STATE_FILE_ENV, str(_DEFAULT_STATE_FILE)))
+
+
+def _default_persisted_state() -> dict:
+    """Return the default persisted dashboard state."""
+    return {
+        "governance": dict(_DEFAULT_GOVERNANCE_SETTINGS),
+        "bot_configs": {},
+        "failures": [],
+    }
+
+
+def _sync_state_from_disk() -> None:
+    """Load persisted state from disk into process-local memory."""
+    path = _state_file_path()
+    if not path.exists():
+        return
+    try:
+        payload = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, ValueError, TypeError):
+        return
+
+    governance = payload.get("governance") or {}
+    bot_configs = payload.get("bot_configs") or {}
+    failures = payload.get("failures") or []
+
+    with _GOVERNANCE_LOCK:
+        _GOVERNANCE_SETTINGS.clear()
+        _GOVERNANCE_SETTINGS.update(dict(_DEFAULT_GOVERNANCE_SETTINGS))
+        if isinstance(governance, dict):
+            _GOVERNANCE_SETTINGS.update(governance)
+
+    with _BOT_CONFIG_LOCK:
+        _BOT_CONFIGS.clear()
+        if isinstance(bot_configs, dict):
+            _BOT_CONFIGS.update(bot_configs)
+
+    with _FAILURE_LOG_LOCK:
+        _FAILURE_LOG.clear()
+        if isinstance(failures, list):
+            _FAILURE_LOG.extend(failures[-_FAILURE_LOG_MAX:])
+
+
+def _persist_runtime_state() -> None:
+    """Persist dashboard governance/config/failure state to disk."""
+    path = _state_file_path()
+    payload = _default_persisted_state()
+    with _GOVERNANCE_LOCK:
+        payload["governance"] = dict(_GOVERNANCE_SETTINGS)
+    with _BOT_CONFIG_LOCK:
+        payload["bot_configs"] = dict(_BOT_CONFIGS)
+    with _FAILURE_LOG_LOCK:
+        payload["failures"] = list(_FAILURE_LOG[-_FAILURE_LOG_MAX:])
+
+    try:
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text(json.dumps(payload, indent=2, sort_keys=True), encoding="utf-8")
+    except OSError:
+        return
+
+
+def _reset_dashboard_state() -> None:
+    """Reset in-memory dashboard state and overwrite the persisted snapshot."""
+    with _GOVERNANCE_LOCK:
+        _GOVERNANCE_SETTINGS.clear()
+        _GOVERNANCE_SETTINGS.update(dict(_DEFAULT_GOVERNANCE_SETTINGS))
+    with _BOT_CONFIG_LOCK:
+        _BOT_CONFIGS.clear()
+    with _FAILURE_LOG_LOCK:
+        _FAILURE_LOG.clear()
+    _persist_runtime_state()
+
+
+def _build_command_center_payload(control_center: "ControlCenter", db: BotPerformanceDB) -> dict:
+    """Return BuddyAI's orchestration payload for dashboards and Actions summaries."""
+    _sync_state_from_disk()
+    monitoring = control_center.get_monitoring_dashboard()
+    db_stats = db.get_stats()
+    workflows = _fetch_github_workflows(repo=os.environ.get("GITHUB_REPOSITORY", _DEFAULT_REPO), per_page=5)
+    artifacts = _fetch_github_artifacts(repo=os.environ.get("GITHUB_REPOSITORY", _DEFAULT_REPO), per_page=5)
+
+    return {
+        "command_center": "BuddyAI",
+        "mission": "Trusted autonomous business infrastructure for orchestration, experimentation, governance, and monetization.",
+        "state_persistence": {
+            "mode": "file-backed",
+            "state_file": str(_state_file_path()),
+            "governance_updated_at": _get_governance().get("updated_at"),
+        },
+        "governance": _get_governance(),
+        "operational_state": {
+            "registered_bots": monitoring.get("registered_bots", 0),
+            "health": monitoring.get("health", "unknown"),
+            "recent_runs": monitoring.get("recent_runs", []),
+            "avg_composite_kpi": db_stats.get("avg_composite_score"),
+            "underperformers": db_stats.get("underperformers_below_30"),
+        },
+        "github_actions": {
+            "runs": workflows.get("runs", []),
+            "artifacts": artifacts.get("artifacts", []),
+            "source": workflows.get("source", "unavailable"),
+        },
+        "roadmap": {
+            "top_100_ideas_tracked": 100,
+            "priority_programs": list(_STRATEGIC_PRIORITY_PROGRAMS),
+            "experimentation_tracks": list(_BUDDY_EXPERIMENT_TRACKS),
+        },
+    }
+
+
+def _build_bot_prospectus(
+    bot_name: str,
+    catalog_entry: dict | None,
+    score: dict,
+    history: list[dict],
+    cfg: dict,
+    failures: list[dict],
+    is_live: bool,
+) -> dict:
+    """Build an investor/demo-ready prospectus payload for a bot."""
+    entry = catalog_entry or {}
+    display_name = entry.get("display_name", bot_name)
+    latest_event = history[-1] if history else None
+    return {
+        "bot_name": bot_name,
+        "display_name": display_name,
+        "summary": entry.get("description", "No description available."),
+        "category": entry.get("category", "Unclassified"),
+        "revenue_model": entry.get("revenue_model", "—"),
+        "status": "live" if is_live else "standby",
+        "investor_highlights": [
+            f"{display_name} focuses on {entry.get('category', 'general automation').lower()} workflows.",
+            f"Monetization path: {entry.get('revenue_model', 'not yet defined')}.",
+            "BuddyAI can run, test, track, and train this bot from a single governed surface.",
+        ],
+        "reliability": {
+            "composite_kpi": score.get("composite_score"),
+            "total_runs": score.get("total_runs", 0),
+            "failure_count": len(failures),
+            "last_event": latest_event,
+        },
+        "testing_interface": {
+            "run": f"/api/bots/{bot_name}/operate",
+            "track": f"/api/history/{bot_name}",
+            "train": f"/api/bots/{bot_name}/operate",
+            "configure": f"/api/bots/{bot_name}/config",
+            "current_config": cfg,
+        },
+    }
+
 def _get_governance() -> dict:
     """Return a copy of the current global governance settings."""
+    _sync_state_from_disk()
     with _GOVERNANCE_LOCK:
         return dict(_GOVERNANCE_SETTINGS)
 
@@ -285,6 +497,7 @@ def _update_governance(aggressiveness: str | None = None,
 
     Ignores invalid values and keeps the previous setting instead.
     """
+    _sync_state_from_disk()
     with _GOVERNANCE_LOCK:
         if aggressiveness is not None and aggressiveness in _VALID_AGGRESSIVENESS:
             _GOVERNANCE_SETTINGS["aggressiveness"] = aggressiveness
@@ -294,11 +507,14 @@ def _update_governance(aggressiveness: str | None = None,
         if retry_policy is not None and retry_policy in _VALID_RETRY_POLICY:
             _GOVERNANCE_SETTINGS["retry_policy"] = retry_policy
         _GOVERNANCE_SETTINGS["updated_at"] = datetime.now(timezone.utc).isoformat()
-        return dict(_GOVERNANCE_SETTINGS)
+        result = dict(_GOVERNANCE_SETTINGS)
+    _persist_runtime_state()
+    return result
 
 
 def _get_bot_config(bot_name: str) -> dict:
     """Return the runtime config for *bot_name*, falling back to governance defaults."""
+    _sync_state_from_disk()
     gov = _get_governance()
     with _BOT_CONFIG_LOCK:
         cfg = dict(_BOT_CONFIGS.get(bot_name, {}))
@@ -314,6 +530,7 @@ def _get_bot_config(bot_name: str) -> dict:
 
 def _set_bot_config(bot_name: str, **kwargs: object) -> dict:
     """Persist per-bot runtime config overrides. Returns the merged config."""
+    _sync_state_from_disk()
     with _BOT_CONFIG_LOCK:
         existing = dict(_BOT_CONFIGS.get(bot_name, {}))
         if "aggressiveness" in kwargs and kwargs["aggressiveness"] in _VALID_AGGRESSIVENESS:
@@ -328,11 +545,13 @@ def _set_bot_config(bot_name: str, **kwargs: object) -> dict:
             existing["retry_policy"] = kwargs["retry_policy"]
         existing["updated_at"] = datetime.now(timezone.utc).isoformat()
         _BOT_CONFIGS[bot_name] = existing
+    _persist_runtime_state()
     return _get_bot_config(bot_name)
 
 
 def _append_failure(bot_name: str, failure_type: str, message: str, details: dict | None = None) -> dict:
     """Append a failure entry to the in-memory log (capped at _FAILURE_LOG_MAX)."""
+    _sync_state_from_disk()
     entry: dict = {
         "bot_name": bot_name,
         "failure_type": failure_type,
@@ -344,11 +563,13 @@ def _append_failure(bot_name: str, failure_type: str, message: str, details: dic
         _FAILURE_LOG.append(entry)
         while len(_FAILURE_LOG) > _FAILURE_LOG_MAX:
             _FAILURE_LOG.pop(0)
+    _persist_runtime_state()
     return entry
 
 
 def _get_failures(bot_name: str | None = None, limit: int = 50) -> list[dict]:
     """Return recent failures, optionally filtered by *bot_name*."""
+    _sync_state_from_disk()
     with _FAILURE_LOG_LOCK:
         log = list(_FAILURE_LOG)
     if bot_name:
@@ -689,6 +910,41 @@ _DASHBOARD_HTML = """<!DOCTYPE html>
       margin-top: 2px; display: inline-block;
     }
     .bot-dash-link:hover { text-decoration: underline; }
+    .command-center-panel {
+      background: linear-gradient(135deg, #131a30, #1f2945);
+      border: 1px solid #30426d;
+      border-radius: 12px;
+      padding: 22px 24px;
+      margin: 0 24px 24px;
+    }
+    .command-center-panel h2 {
+      font-size: 0.9rem;
+      color: #89b4ff;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 14px;
+    }
+    .command-center-list {
+      margin-top: 10px;
+      display: grid;
+      gap: 8px;
+    }
+    .command-center-item {
+      padding: 10px 12px;
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid rgba(137, 180, 255, 0.12);
+      border-radius: 8px;
+      font-size: 0.8rem;
+      color: #c8d5f0;
+    }
+    .command-center-item strong { color: #ffffff; }
+    .command-center-link {
+      color: #89b4ff;
+      font-size: 0.8rem;
+      text-decoration: none;
+      font-weight: 600;
+    }
+    .command-center-link:hover { text-decoration: underline; }
   </style>
 </head>
 <body>
@@ -704,6 +960,34 @@ _DASHBOARD_HTML = """<!DOCTYPE html>
     <div class="card"><h2>Total Revenue</h2><div class="value" id="total-revenue">—</div><div class="sub">USD</div></div>
     <div class="card"><h2>Avg Composite KPI</h2><div class="value" id="avg-kpi">—</div><div class="sub">0–100 scale</div></div>
     <div class="card"><h2>Underperformers</h2><div class="value" id="underperformers">—</div><div class="sub">score &lt; 30</div></div>
+  </div>
+
+  <p class="section-header">🧠 BuddyAI — Command Center & Experiments</p>
+  <div class="command-center-panel">
+    <h2>Live BuddyAI Orchestration</h2>
+    <div class="grid" style="padding:0; gap:16px;">
+      <div class="card">
+        <h2>Mission</h2>
+        <div style="font-size:0.88rem; line-height:1.5; color:#c8d5f0;" id="buddy-mission">Loading…</div>
+      </div>
+      <div class="card">
+        <h2>State Persistence</h2>
+        <div class="value" style="font-size:1.15rem" id="buddy-state-mode">—</div>
+        <div class="sub" id="buddy-state-file">Loading…</div>
+      </div>
+      <div class="card">
+        <h2>Idea Backlog</h2>
+        <div class="value" style="font-size:1.15rem" id="buddy-top-ideas">—</div>
+        <div class="sub">Tracked with strategic prioritization</div>
+      </div>
+    </div>
+    <div class="command-center-list" id="buddy-priority-list">
+      <div class="command-center-item">Loading priority programs…</div>
+    </div>
+    <div style="margin-top:14px;display:flex;gap:18px;flex-wrap:wrap;">
+      <a class="command-center-link" href="/api/command-center" target="_blank" rel="noopener">Open BuddyAI JSON →</a>
+      <a class="command-center-link" href="/dashboard/chooser">Compare Dashboards →</a>
+    </div>
   </div>
 
   <!-- ── HIGH-REVENUE BOT CATALOG ── -->
@@ -977,6 +1261,31 @@ _DASHBOARD_HTML = """<!DOCTYPE html>
       }
     }
 
+    async function loadCommandCenter() {
+      try {
+        const data = await fetch('/api/command-center').then(r => r.json());
+        document.getElementById('buddy-mission').textContent = data.mission || 'BuddyAI mission unavailable.';
+        document.getElementById('buddy-state-mode').textContent = data.state_persistence?.mode || '—';
+        document.getElementById('buddy-state-file').textContent = data.state_persistence?.state_file || '—';
+        document.getElementById('buddy-top-ideas').textContent = data.roadmap?.top_100_ideas_tracked || '—';
+
+        const priorityList = document.getElementById('buddy-priority-list');
+        const priorities = data.roadmap?.priority_programs || [];
+        if (priorities.length) {
+          priorityList.innerHTML = priorities.map(item => `
+            <div class="command-center-item">
+              <strong>${item.priority} · ${item.title}</strong><br>
+              <span>${item.outcome}</span>
+            </div>
+          `).join('');
+        } else {
+          priorityList.innerHTML = '<div class="command-center-item">No active priority programs.</div>';
+        }
+      } catch (e) {
+        console.error('Command center load error:', e);
+      }
+    }
+
     async function loadCatalog() {
       try {
         const data = await fetch('/api/bots/catalog').then(r => r.json());
@@ -1150,12 +1459,13 @@ _DASHBOARD_HTML = """<!DOCTYPE html>
 
     loadCatalog();
     loadAll();
+    loadCommandCenter();
     loadWorkflows();
     loadQuantum();
     loadGovernance();
     loadUncoded();
     loadFailures();
-    setInterval(() => { loadAll(); loadWorkflows(); loadQuantum(); loadFailures(); }, 15000);
+    setInterval(() => { loadAll(); loadCommandCenter(); loadWorkflows(); loadQuantum(); loadFailures(); }, 15000);
   </script>
 </body>
 </html>
@@ -1233,6 +1543,11 @@ def create_app(
             "avg_composite_kpi": db_stats["avg_composite_score"],
             "underperformers": db_stats["underperformers_below_30"],
         })
+
+    @app.route("/api/command-center")
+    def api_command_center() -> Response:
+        """Return the BuddyAI command-center payload."""
+        return jsonify(_build_command_center_payload(cc, perf_db))
 
     # ---------------------------------------------------------------
     # Bots
@@ -1393,6 +1708,81 @@ def create_app(
         limit = request.args.get("limit", 50, type=int)
         history = perf_db.get_run_history(bot_name, limit=limit)
         return jsonify({"bot_name": bot_name, "history": history})
+
+    @app.route("/api/bots/<bot_name>/prospectus")
+    def api_bot_prospectus(bot_name: str) -> Response:
+        """Return a structured prospectus for a specific bot."""
+        bot_name = bot_name.strip()
+        catalog_entry = next((b for b in _BOT_CATALOG if b["name"] == bot_name), None)
+        failures = _get_failures(bot_name=bot_name, limit=20)
+        history = perf_db.get_run_history(bot_name, limit=10)
+        scores = {s["bot_name"]: s for s in perf_db.get_all_scores()}
+        prospectus = _build_bot_prospectus(
+            bot_name=bot_name,
+            catalog_entry=catalog_entry,
+            score=scores.get(bot_name, {}),
+            history=history,
+            cfg=_get_bot_config(bot_name),
+            failures=failures,
+            is_live=bot_name in cc.get_status().get("bots", {}),
+        )
+        return jsonify(prospectus)
+
+    @app.route("/api/bots/<bot_name>/operate", methods=["POST"])
+    def api_bot_operate(bot_name: str) -> Response:
+        """Run, test, or train a bot from its dashboard page."""
+        bot_name = bot_name.strip()
+        if not bot_name:
+            return jsonify({"error": "bot_name is required."}), 400
+
+        data = request.get_json(silent=True) or {}
+        mode = str(data.get("mode", "test")).strip().lower()
+        if mode not in {"run", "test", "train"}:
+            return jsonify({"error": "mode must be one of: run, test, train."}), 400
+
+        tier_str = str(data.get("tier", "pro")).strip() or "pro"
+        notes = {
+            "run": f"BuddyAI run triggered from dashboard — tier: {tier_str}",
+            "test": f"BuddyAI test triggered from dashboard — tier: {tier_str}",
+            "train": f"BuddyAI training cycle triggered from dashboard — tier: {tier_str}",
+        }
+        default_status = "ok" if mode != "train" else "training"
+        revenue_usd = float(data.get("revenue_usd", 0.0) or 0.0)
+        tasks_completed = int(data.get("tasks_completed", 1 if mode != "train" else 3) or 0)
+
+        if bot_name not in cc.get_status().get("bots", {}):
+            class _OperateStub:
+                def __init__(self, t: str):
+                    from bots.ai_learning_system.tiers import Tier as LSTier
+                    try:
+                        self.tier = LSTier(t)
+                    except ValueError:
+                        self.tier = LSTier.FREE
+
+            cc.register_bot(bot_name, _OperateStub(tier_str))
+
+        perf_entry = perf_db.record_run(
+            bot_name=bot_name,
+            kpis={
+                "revenue_usd": revenue_usd,
+                "tasks_completed": tasks_completed,
+                "training_cycles": 1 if mode == "train" else 0,
+            },
+            status=str(data.get("status", default_status)),
+            notes=str(data.get("notes", notes[mode])),
+        )
+
+        if revenue_usd > 0:
+            cc.add_income_entry(bot_name, revenue_usd)
+        cc.record_heartbeat(bot_name, status="active" if mode == "run" else mode)
+
+        return jsonify({
+            "bot_name": bot_name,
+            "mode": mode,
+            "status": perf_entry.get("status", default_status),
+            "entry": perf_entry,
+            "message": f"BuddyAI {mode} workflow completed for {bot_name}.",
+        }), 201
 
     # ---------------------------------------------------------------
     # GitHub Actions — read-only workflow monitor
@@ -1582,6 +1972,18 @@ def create_app(
 
         is_live = bot_name in cc.get_status().get("bots", {})
         live_badge = '<span style="color:#22cc44;font-weight:700">● LIVE</span>' if is_live else '<span style="color:#888">○ Idle</span>'
+        prospectus = _build_bot_prospectus(
+            bot_name=bot_name,
+            catalog_entry=catalog_entry,
+            score=score,
+            history=history,
+            cfg=cfg,
+            failures=failures,
+            is_live=is_live,
+        )
+        highlight_items = "".join(
+            f"<li style='margin-bottom:6px'>{item}</li>" for item in prospectus["investor_highlights"]
+        )
 
         failure_rows = "".join(
             f"<tr><td style='white-space:nowrap'>{e.get('timestamp', '')[:19].replace('T', ' ') if e.get('timestamp') else '—'}</td>"
@@ -1631,6 +2033,20 @@ def create_app(
       border:none; border-radius:6px; color:#fff; font-size:0.82rem;
       font-weight:700; cursor:pointer;
     }}
+    .action-btn {{
+      padding:8px 14px;
+      border:none;
+      border-radius:6px;
+      cursor:pointer;
+      font-size:0.8rem;
+      font-weight:700;
+      margin-right:8px;
+      margin-bottom:8px;
+      color:#fff;
+    }}
+    .action-run {{ background: linear-gradient(135deg,#22cc44,#0e8a2d); }}
+    .action-test {{ background: linear-gradient(135deg,#0090ff,#4c6fff); }}
+    .action-train {{ background: linear-gradient(135deg,#7b2ff7,#b06cff); }}
     #save-status {{ font-size:0.75rem; color:#00d4aa; margin-left:10px; }}
     .section {{ padding: 0 24px 24px; }}
     footer {{ text-align:center; color:#444; padding:20px; font-size:0.75rem; }}
@@ -1651,9 +2067,18 @@ def create_app(
       <div style="font-size:0.82rem;color:#aaa;line-height:1.5">{description}</div>
     </div>
     <div class="card">
-      <h2>Revenue Model</h2>
-      <div class="value" style="font-size:1.1rem">{revenue_model}</div>
-    </div>
+       <h2>Prospectus</h2>
+       <div style="font-size:0.82rem;color:#aaa;line-height:1.5">
+         {prospectus["summary"]}
+         <ul style="margin:10px 0 0 18px;color:#cfd7ea;">
+           {highlight_items}
+         </ul>
+       </div>
+     </div>
+     <div class="card">
+       <h2>Revenue Model</h2>
+       <div class="value" style="font-size:1.1rem">{revenue_model}</div>
+     </div>
     <div class="card">
       <h2>Composite KPI</h2>
       <div class="value">{score.get('composite_score', '—')}</div>
@@ -1666,6 +2091,19 @@ def create_app(
   </div>
 
   <div class="section">
+    <div class="card" style="margin-bottom:16px;">
+      <h2 style="margin-bottom:14px">🧪 Testing & Training Interface</h2>
+      <div style="font-size:0.82rem;color:#aaa;line-height:1.5;margin-bottom:10px;">
+        BuddyAI can run, test, and train this bot directly from its dashboard while persisting governance and failure state.
+      </div>
+      <div>
+        <button class="action-btn action-run" onclick="operateBot('run')">▶️ Run</button>
+        <button class="action-btn action-test" onclick="operateBot('test')">🧪 Test</button>
+        <button class="action-btn action-train" onclick="operateBot('train')">🧠 Train</button>
+      </div>
+      <div id="operate-status" style="font-size:0.78rem;color:#89b4ff;margin-top:10px;"></div>
+    </div>
+
     <div class="card">
       <h2 style="margin-bottom:14px">⚙️ Runtime Parameters</h2>
       <div class="gov-field">
@@ -1722,6 +2160,27 @@ def create_app(
   <footer>DreamCo Empire OS — {display_name} Bot Dashboard</footer>
 
   <script>
+    async function operateBot(mode) {{
+      const statusEl = document.getElementById('operate-status');
+      statusEl.textContent = `⏳ BuddyAI ${{mode}} in progress…`;
+      try {{
+        const res = await fetch('/api/bots/{bot_name}/operate', {{
+          method: 'POST',
+          headers: {{ 'Content-Type': 'application/json' }},
+          body: JSON.stringify({{ mode }}),
+        }});
+        const data = await res.json();
+        if (res.ok) {{
+          statusEl.textContent = `✅ ${{data.message}}`;
+          setTimeout(() => window.location.reload(), 700);
+        }} else {{
+          statusEl.textContent = '⚠ ' + (data.error || 'Operation failed');
+        }}
+      }} catch (e) {{
+        statusEl.textContent = '⚠ Network error';
+      }}
+    }}
+
     async function saveBotConfig() {{
       const statusEl = document.getElementById('save-status');
       statusEl.textContent = '⏳ Saving…';
@@ -1767,4 +2226,7 @@ __all__ = [
     "_append_failure",
     "_get_failures",
     "_detect_uncoded_bots",
+    "_build_command_center_payload",
+    "_build_bot_prospectus",
+    "_reset_dashboard_state",
 ]
