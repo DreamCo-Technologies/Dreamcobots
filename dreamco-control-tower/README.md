@@ -69,7 +69,7 @@ Every bot POSTs to `/api/bot-heartbeat` to signal it is alive. The Control Tower
 | **Repo Activity** | GitHub commits, PR merges, open PRs, workflow results |
 | **Bot Deployment** | Create and deploy bots from templates with one click |
 | **Analytics** | Uptime charts, PR success rates, status distribution |
-| **Command Center** | Must-ship scope, lane owners, blockers, validation, ship decisions |
+| **Command Center** | Must-ship scope, lane owners, blockers, validation, ship decisions, and swarm/MARL benchmark telemetry |
 
 ---
 

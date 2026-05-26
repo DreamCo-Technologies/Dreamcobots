@@ -58,6 +58,74 @@ except ImportError:  # pragma: no cover
     _FLOW_AVAILABLE = False
 
 
+SWARM_ARCHITECTURE_BENCHMARKS = [
+    {
+        "architecture_id": "pso",
+        "name": "Particle Swarm Optimization",
+        "origin": "United States",
+        "discipline": "computational intelligence",
+        "coordination_mode": "decentralized",
+        "communication_pattern": "velocity and best-position sharing",
+        "marl_ready": False,
+        "stigmergic": False,
+        "benchmark": {
+            "adaptation": 8.8,
+            "scalability": 9.2,
+            "resilience": 8.4,
+            "monetization": 8.1,
+        },
+    },
+    {
+        "architecture_id": "aco",
+        "name": "Ant Colony Optimization",
+        "origin": "Italy",
+        "discipline": "bio-inspired optimization",
+        "coordination_mode": "stigmergic",
+        "communication_pattern": "pheromone trail reinforcement",
+        "marl_ready": False,
+        "stigmergic": True,
+        "benchmark": {
+            "adaptation": 8.5,
+            "scalability": 8.7,
+            "resilience": 9.0,
+            "monetization": 7.9,
+        },
+    },
+    {
+        "architecture_id": "abc",
+        "name": "Artificial Bee Colony",
+        "origin": "Turkey",
+        "discipline": "swarm intelligence",
+        "coordination_mode": "decentralized",
+        "communication_pattern": "waggle-dance neighborhood signaling",
+        "marl_ready": False,
+        "stigmergic": False,
+        "benchmark": {
+            "adaptation": 8.3,
+            "scalability": 8.6,
+            "resilience": 8.7,
+            "monetization": 8.0,
+        },
+    },
+    {
+        "architecture_id": "hybrid_llm_marl",
+        "name": "Hybrid LLM + MARL",
+        "origin": "Global",
+        "discipline": "multi-agent reinforcement learning",
+        "coordination_mode": "hybrid",
+        "communication_pattern": "policy sharing, critics, and tool-mediated messaging",
+        "marl_ready": True,
+        "stigmergic": False,
+        "benchmark": {
+            "adaptation": 9.5,
+            "scalability": 8.8,
+            "resilience": 9.1,
+            "monetization": 9.3,
+        },
+    },
+]
+
+
 # ---------------------------------------------------------------------------
 # Bot specification descriptor (lightweight, no heavy imports)
 # ---------------------------------------------------------------------------
@@ -79,6 +147,12 @@ class BotSpec:
     features: list[str] = field(default_factory=list)
     module_path: str = ""
     is_live: bool = False
+    coordination_mode: str = "centralized"
+    optimization_strategy: str = "rule_based"
+    marl_enabled: bool = False
+    neighbors: list[str] = field(default_factory=list)
+    stigmergic_channels: list[str] = field(default_factory=list)
+    local_rules: list[str] = field(default_factory=list)
 
 
 # ---------------------------------------------------------------------------
@@ -260,6 +334,12 @@ class BuddyOrchestrator:
         price_usd: float = 0.0,
         features: Optional[list[str]] = None,
         module_path: str = "",
+        coordination_mode: str = "centralized",
+        optimization_strategy: str = "rule_based",
+        marl_enabled: bool = False,
+        neighbors: Optional[list[str]] = None,
+        stigmergic_channels: Optional[list[str]] = None,
+        local_rules: Optional[list[str]] = None,
     ) -> BotSpec:
         """
         Register a bot in the centralized catalog.
@@ -279,6 +359,12 @@ class BuddyOrchestrator:
             price_usd=price_usd,
             features=features or [],
             module_path=module_path,
+            coordination_mode=coordination_mode,
+            optimization_strategy=optimization_strategy,
+            marl_enabled=marl_enabled,
+            neighbors=neighbors or [],
+            stigmergic_channels=stigmergic_channels or [],
+            local_rules=local_rules or [],
         )
         self._catalog[bot_id] = spec
         self.scrape_lifecycle.register_bot(bot_id)
@@ -313,6 +399,17 @@ class BuddyOrchestrator:
                 "features": spec.features,
                 "is_live": spec.is_live,
                 "module_path": spec.module_path,
+                "coordination_mode": spec.coordination_mode,
+                "optimization_strategy": spec.optimization_strategy,
+                "marl_enabled": spec.marl_enabled,
+                "neighbors": spec.neighbors,
+                "stigmergic_channels": spec.stigmergic_channels,
+                "local_rules": spec.local_rules,
+                "swarm_enabled": (
+                    spec.coordination_mode != "centralized"
+                    or spec.marl_enabled
+                    or bool(spec.stigmergic_channels)
+                ),
             }
             for spec in self._catalog.values()
         ]
@@ -412,6 +509,24 @@ class BuddyOrchestrator:
         successful_runs = sum(1 for r in self._run_history if r.success)
         total_revenue = sum(self._revenue.values())
         live_bots = sum(1 for s in self._catalog.values() if s.is_live)
+        coordination_modes: dict[str, int] = {}
+        marl_enabled_bots = 0
+        stigmergic_bots = 0
+        swarm_enabled_bots = 0
+        for spec in self._catalog.values():
+            coordination_modes[spec.coordination_mode] = (
+                coordination_modes.get(spec.coordination_mode, 0) + 1
+            )
+            if spec.marl_enabled:
+                marl_enabled_bots += 1
+            if spec.stigmergic_channels:
+                stigmergic_bots += 1
+            if (
+                spec.coordination_mode != "centralized"
+                or spec.marl_enabled
+                or spec.stigmergic_channels
+            ):
+                swarm_enabled_bots += 1
 
         return {
             "timestamp": datetime.now(tz=timezone.utc).isoformat(),
@@ -429,7 +544,44 @@ class BuddyOrchestrator:
                 "by_bot": {k: round(v, 2) for k, v in self._revenue.items()},
             },
             "scraping": self.scrape_lifecycle.summary(),
+            "swarm": {
+                "governance_model": "BuddyAI command center with decentralized execution",
+                "coordination_modes": coordination_modes,
+                "swarm_enabled_bots": swarm_enabled_bots,
+                "marl_enabled_bots": marl_enabled_bots,
+                "stigmergic_bots": stigmergic_bots,
+                "benchmark_report": self.swarm_benchmark_report(),
+            },
             "data_store": dict(self._data_store),
+        }
+
+    def swarm_benchmark_report(self) -> dict:
+        """Return benchmark metadata for the supported swarm architectures."""
+        ranked = []
+        for architecture in SWARM_ARCHITECTURE_BENCHMARKS:
+            benchmark = architecture.get("benchmark", {})
+            values = [value for value in benchmark.values() if isinstance(value, (int, float))]
+            overall_score = round(sum(values) / len(values), 2) if values else 0.0
+            ranked.append({
+                **architecture,
+                "overall_score": overall_score,
+            })
+        ranked.sort(key=lambda item: item["overall_score"], reverse=True)
+        return {
+            "architectures": ranked,
+            "best_overall": ranked[0]["architecture_id"] if ranked else None,
+            "marl_ready_architectures": [
+                item["architecture_id"] for item in ranked if item["marl_ready"]
+            ],
+            "stigmergic_architectures": [
+                item["architecture_id"] for item in ranked if item["stigmergic"]
+            ],
+            "evaluation_dimensions": [
+                "adaptation",
+                "scalability",
+                "resilience",
+                "monetization",
+            ],
         }
 
     # ------------------------------------------------------------------
@@ -619,6 +771,15 @@ class BuddyOrchestrator:
 
     def status(self) -> dict:
         """Return a high-level orchestrator health snapshot."""
+        swarm_enabled_bots = sum(
+            1
+            for spec in self._catalog.values()
+            if (
+                spec.coordination_mode != "centralized"
+                or spec.marl_enabled
+                or spec.stigmergic_channels
+            )
+        )
         return {
             "orchestrator": "BuddyOrchestrator",
             "github_repo": self.github_repo,
@@ -628,4 +789,6 @@ class BuddyOrchestrator:
             "days_until_deadline": self.scrape_lifecycle.days_remaining(),
             "total_runs": len(self._run_history),
             "total_revenue_usd": round(sum(self._revenue.values()), 2),
+            "swarm_enabled_bots": swarm_enabled_bots,
+            "best_swarm_architecture": self.swarm_benchmark_report()["best_overall"],
         }

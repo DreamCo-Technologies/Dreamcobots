@@ -74,6 +74,16 @@ function readCommandCenter() {
   return JSON.parse(fs.readFileSync(COMMAND_CENTER_FILE, 'utf8'));
 }
 
+function computeOverallBenchmarkScore(architecture) {
+  const benchmark = architecture?.benchmark ?? {};
+  const values = Object.values(benchmark).filter((value) => typeof value === 'number');
+  if (values.length === 0) {
+    return null;
+  }
+  const average = values.reduce((sum, value) => sum + value, 0) / values.length;
+  return Math.round(average * 100) / 100;
+}
+
 // ---------------------------------------------------------------------------
 // Heartbeat endpoint
 // Bots POST here to signal they are online and operational.
@@ -355,12 +365,24 @@ app.get('/api/command-center', rateLimiter, (_req, res) => {
   );
   const overdue = today > targetDate;
   const lanes = Array.isArray(board.parallel_lanes) ? board.parallel_lanes : [];
+  const architectures = Array.isArray(board.swarm_architectures) ? board.swarm_architectures : [];
+  const rankedArchitectures = architectures
+    .map((architecture) => ({
+      ...architecture,
+      overall_score: computeOverallBenchmarkScore(architecture),
+    }))
+    .sort((a, b) => (b.overall_score ?? -1) - (a.overall_score ?? -1));
+  const coordinationLayer = board.coordination_layer ?? {};
   const blockedCount = lanes.filter((lane) => Array.isArray(lane.blockers) && lane.blockers.length > 0).length;
   const failingValidationCount = lanes.filter((lane) => lane.validation_state !== 'green').length;
   const shippableCount = lanes.filter((lane) => lane.ship_decision === 'ship').length;
+  const marlReadyCount = rankedArchitectures.filter((architecture) => architecture.marl_ready).length;
+  const stigmergicCount = rankedArchitectures.filter((architecture) => architecture.stigmergic).length;
 
   return res.json({
     ...board,
+    coordination_layer: coordinationLayer,
+    swarm_architectures: rankedArchitectures,
     computed: {
       days_remaining: daysRemaining,
       overdue,
@@ -368,6 +390,11 @@ app.get('/api/command-center', rateLimiter, (_req, res) => {
       failing_validation_lanes: failingValidationCount,
       shippable_lanes: shippableCount,
       total_lanes: lanes.length,
+      swarm_architecture_count: rankedArchitectures.length,
+      marl_ready_architectures: marlReadyCount,
+      stigmergic_architectures: stigmergicCount,
+      best_swarm_architecture: rankedArchitectures[0]?.architecture_id ?? null,
+      coordination_layers: (coordinationLayer.communication_layers ?? []).length,
       fetched_at: new Date().toISOString(),
     },
   });

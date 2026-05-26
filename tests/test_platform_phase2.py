@@ -274,6 +274,39 @@ class TestBotRegistry:
         results = reg.find_by_category("finance")
         assert len(results) == 1
 
+    def test_find_by_coordination_mode(self):
+        reg = self._make_registry()
+        reg.register(BotRegistryEntry(
+            bot_id="swarm_bot",
+            display_name="Swarm Bot",
+            metadata={"coordination_mode": "decentralized", "marl_enabled": True},
+        ))
+        results = reg.find_by_coordination_mode("decentralized")
+        assert [entry.bot_id for entry in results] == ["swarm_bot"]
+
+    def test_find_swarm_enabled(self):
+        reg = self._make_registry()
+        reg.register(BotRegistryEntry(
+            bot_id="stigmergy_bot",
+            display_name="Stigmergy Bot",
+            metadata={"stigmergic_channels": ["shared_board"]},
+        ))
+        results = reg.find_swarm_enabled()
+        assert [entry.bot_id for entry in results] == ["stigmergy_bot"]
+
+    def test_swarm_summary(self):
+        reg = self._make_registry()
+        reg.register(BotRegistryEntry(
+            bot_id="marl_bot",
+            display_name="MARL Bot",
+            metadata={"coordination_mode": "hybrid", "marl_enabled": True},
+        ))
+        summary = reg.swarm_summary()
+        assert summary["total_bots"] == 3
+        assert summary["swarm_enabled"] == 1
+        assert summary["marl_enabled"] == 1
+        assert summary["coordination_modes"]["hybrid"] == 1
+
 
 # ---------------------------------------------------------------------------
 # 3. CapabilityNode + WorkflowGraph

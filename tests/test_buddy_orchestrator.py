@@ -240,6 +240,18 @@ class TestBuddyOrchestratorCatalog:
         item = orch.list_catalog()[0]
         assert item["features"] == ["a", "b", "c"]
 
+    def test_catalog_exposes_swarm_metadata(self, orch):
+        orch.register_bot(
+            "swarm_bot",
+            coordination_mode="stigmergic",
+            marl_enabled=True,
+            stigmergic_channels=["shared_board"],
+        )
+        item = orch.list_catalog()[0]
+        assert item["coordination_mode"] == "stigmergic"
+        assert item["marl_enabled"] is True
+        assert item["swarm_enabled"] is True
+
 
 class TestBuddyOrchestratorRunBot:
     def test_run_unregistered_raises(self, orch):
@@ -317,6 +329,25 @@ class TestBuddyOrchestratorDataAggregation:
         orch.run_bot("r2", revenue_usd=20.0)
         data = orch.aggregate_data()
         assert data["revenue"]["total_usd"] == 30.0
+
+    def test_aggregate_includes_swarm_summary(self, orch):
+        orch.register_bot(
+            "swarm_bot",
+            coordination_mode="decentralized",
+            marl_enabled=True,
+            stigmergic_channels=["shared_reward_map"],
+        )
+        data = orch.aggregate_data()
+        assert data["swarm"]["swarm_enabled_bots"] == 1
+        assert data["swarm"]["marl_enabled_bots"] == 1
+        assert data["swarm"]["coordination_modes"]["decentralized"] == 1
+
+
+class TestBuddyOrchestratorSwarmBenchmarks:
+    def test_swarm_benchmark_report_is_ranked(self, orch):
+        report = orch.swarm_benchmark_report()
+        assert report["best_overall"] == "hybrid_llm_marl"
+        assert report["architectures"][0]["overall_score"] >= report["architectures"][-1]["overall_score"]
 
 
 class TestBuddyOrchestratorRevenueOptimisation:
@@ -431,6 +462,12 @@ class TestBuddyOrchestratorStatus:
 
     def test_status_scrape_deadline(self, orch):
         assert orch.status()["scrape_deadline"] == "2026-06-22"
+
+    def test_status_reports_swarm_overview(self, orch):
+        orch.register_bot("swarm_bot", coordination_mode="decentralized")
+        status = orch.status()
+        assert status["swarm_enabled_bots"] == 1
+        assert status["best_swarm_architecture"] == "hybrid_llm_marl"
 
 
 class TestBuddyOrchestratorIntegration:
