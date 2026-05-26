@@ -44,6 +44,8 @@ from ui.web_dashboard import (
     _append_failure,
     _get_failures,
     _detect_uncoded_bots,
+    _build_runtime_registry,
+    _build_runtime_overview,
 )
 from bots.ai_learning_system.database import BotPerformanceDB
 from bots.control_center.control_center import ControlCenter
@@ -182,6 +184,43 @@ class TestApiBots:
     def test_bots_shows_registered_bots(self, client_with_data):
         data = json.loads(client_with_data.get("/api/bots").data)
         assert data["total"] >= 1
+
+
+# ===========================================================================
+# 4b. Runtime manifest APIs
+# ===========================================================================
+
+class TestRuntimeManifestApis:
+    def test_runtime_manifests_returns_200(self, client):
+        resp = client.get("/api/runtime/manifests")
+        assert resp.status_code == 200
+
+    def test_runtime_manifests_include_buddy_ai(self, client):
+        data = json.loads(client.get("/api/runtime/manifests").data)
+        ids = {manifest["bot_id"] for manifest in data["manifests"]}
+        assert "buddy_ai" in ids
+
+    def test_runtime_manifest_exposes_autonomous_metadata(self, client_with_data):
+        data = json.loads(client_with_data.get("/api/runtime/manifests").data)
+        affiliate = next(manifest for manifest in data["manifests"] if manifest["bot_id"] == "affiliate_bot")
+        for key in ("lifecycle_state", "swarm_role", "memory_nodes", "revenue_attribution", "permissions", "trust_score"):
+            assert key in affiliate
+        assert affiliate["lifecycle_state"] == "active"
+
+    def test_runtime_overview_returns_layered_architecture(self, client):
+        data = json.loads(client.get("/api/runtime/overview").data)
+        assert data["schema"] == "dreamco_runtime_overview.v1"
+        assert len(data["runtime_layers"]) == 4
+        assert "coordination_efficiency" in data["metrics"]
+
+    def test_runtime_helpers_return_registry_and_overview(self):
+        cc = ControlCenter()
+        db = BotPerformanceDB()
+        registry = _build_runtime_registry(cc, db)
+        overview = _build_runtime_overview(cc, db)
+        assert registry.get("buddy_ai") is not None
+        assert overview["buddy_ai"]["bot_id"] == "buddy_ai"
+        db.close()
 
 
 # ===========================================================================
@@ -1235,6 +1274,10 @@ class TestBotDashboardPage:
         resp = client.get("/")
         assert b"Governance" in resp.data or b"governance" in resp.data.lower()
 
+    def test_dashboard_html_contains_runtime_core_section(self, client):
+        resp = client.get("/")
+        assert b"Autonomous Runtime Core" in resp.data or b"Runtime Layers" in resp.data
+
     def test_dashboard_html_contains_uncoded_monitor(self, client):
         resp = client.get("/")
         assert b"Uncoded" in resp.data or b"uncoded" in resp.data.lower()
@@ -1242,6 +1285,10 @@ class TestBotDashboardPage:
     def test_dashboard_html_contains_failure_section(self, client):
         resp = client.get("/")
         assert b"Failures" in resp.data or b"failure" in resp.data.lower()
+
+    def test_bot_page_contains_prospectus_manifest_section(self, client):
+        resp = client.get("/bots/affiliate_bot")
+        assert b"Prospectus" in resp.data or b"Runtime Manifest" in resp.data
 
 
 # ===========================================================================

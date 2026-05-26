@@ -91,6 +91,22 @@ class BotRegistryEntry:
         Broad category (e.g. ``"lead_gen"``, ``"finance"``, ``"real_estate"``).
     tags : list[str]
         Arbitrary searchable tags.
+    lifecycle_state : str
+        Current lifecycle phase (e.g. ``"draft"``, ``"idle"``, ``"active"``).
+    swarm_role : str
+        Coordination role inside the swarm (e.g. ``"specialist"``, ``"observer"``).
+    memory_nodes : list[str]
+        Persistent memory fabrics or nodes the bot reads/writes.
+    revenue_attribution : dict
+        Revenue / ROI metadata used by economic monitoring surfaces.
+    permissions : list[str]
+        Runtime permissions exposed for governance and audit layers.
+    trust_score : float
+        Normalised trust / reliability score in the range ``0.0`` – ``1.0``.
+    specialization : str
+        Primary specialisation or working identity for the bot.
+    identity : dict
+        Persistent identity metadata such as cohort, lineage, or progression.
     metadata : dict
         Catch-all for extra structured metadata.
     """
@@ -109,6 +125,14 @@ class BotRegistryEntry:
     version: str = "1.0.0"
     category: str = ""
     tags: List[str] = field(default_factory=list)
+    lifecycle_state: str = "draft"
+    swarm_role: str = "specialist"
+    memory_nodes: List[str] = field(default_factory=list)
+    revenue_attribution: Dict[str, Any] = field(default_factory=dict)
+    permissions: List[str] = field(default_factory=list)
+    trust_score: float = 0.5
+    specialization: str = ""
+    identity: Dict[str, Any] = field(default_factory=dict)
     metadata: Dict[str, Any] = field(default_factory=dict)
 
     # ------------------------------------------------------------------
@@ -121,6 +145,7 @@ class BotRegistryEntry:
                 f"Invalid bot_id {self.bot_id!r}: must start with a lowercase letter "
                 "and contain only lowercase letters, digits, and underscores."
             )
+        object.__setattr__(self, "trust_score", max(0.0, min(1.0, float(self.trust_score))))
 
     def to_dict(self) -> Dict[str, Any]:
         """Serialise to a plain dict."""
@@ -140,6 +165,14 @@ class BotRegistryEntry:
             "version": self.version,
             "category": self.category,
             "tags": list(self.tags),
+            "lifecycle_state": self.lifecycle_state,
+            "swarm_role": self.swarm_role,
+            "memory_nodes": list(self.memory_nodes),
+            "revenue_attribution": dict(self.revenue_attribution),
+            "permissions": list(self.permissions),
+            "trust_score": self.trust_score,
+            "specialization": self.specialization,
+            "identity": dict(self.identity),
             "metadata": dict(self.metadata),
         }
 
@@ -166,6 +199,14 @@ class BotRegistryEntry:
             version=data.get("version", "1.0.0"),
             category=data.get("category", ""),
             tags=data.get("tags", []),
+            lifecycle_state=data.get("lifecycle_state", "draft"),
+            swarm_role=data.get("swarm_role", "specialist"),
+            memory_nodes=data.get("memory_nodes", []),
+            revenue_attribution=data.get("revenue_attribution", {}),
+            permissions=data.get("permissions", []),
+            trust_score=data.get("trust_score", 0.5),
+            specialization=data.get("specialization", ""),
+            identity=data.get("identity", {}),
             metadata=data.get("metadata", {}),
         )
 
@@ -250,6 +291,62 @@ class BotRegistry:
     def to_dict(self) -> Dict[str, Any]:
         """Serialise the full registry to a plain dict."""
         return {bot_id: entry.to_dict() for bot_id, entry in self._store.items()}
+
+    def lifecycle_counts(self) -> Dict[str, int]:
+        counts: Dict[str, int] = {}
+        for entry in self._store.values():
+            counts[entry.lifecycle_state] = counts.get(entry.lifecycle_state, 0) + 1
+        return counts
+
+    def swarm_role_counts(self) -> Dict[str, int]:
+        counts: Dict[str, int] = {}
+        for entry in self._store.values():
+            counts[entry.swarm_role] = counts.get(entry.swarm_role, 0) + 1
+        return counts
+
+    def average_trust_score(self) -> float:
+        if not self._store:
+            return 0.0
+        total = sum(entry.trust_score for entry in self._store.values())
+        return round(total / len(self._store), 4)
+
+    def permission_index(self) -> List[str]:
+        permissions = {
+            permission
+            for entry in self._store.values()
+            for permission in entry.permissions
+        }
+        return sorted(permissions)
+
+    def memory_node_index(self) -> List[str]:
+        memory_nodes = {
+            node
+            for entry in self._store.values()
+            for node in entry.memory_nodes
+        }
+        return sorted(memory_nodes)
+
+    def revenue_summary(self) -> Dict[str, float]:
+        estimated = 0.0
+        realized = 0.0
+        for entry in self._store.values():
+            estimated += float(entry.revenue_attribution.get("estimated_monthly_usd", 0.0) or 0.0)
+            realized += float(entry.revenue_attribution.get("realized_usd", 0.0) or 0.0)
+        return {
+            "estimated_monthly_usd": round(estimated, 2),
+            "realized_usd": round(realized, 2),
+        }
+
+    def manifest_summary(self) -> Dict[str, Any]:
+        return {
+            "total_bots": self.count(),
+            "lifecycle_states": self.lifecycle_counts(),
+            "swarm_roles": self.swarm_role_counts(),
+            "avg_trust_score": self.average_trust_score(),
+            "permissions": self.permission_index(),
+            "memory_nodes": self.memory_node_index(),
+            "revenue": self.revenue_summary(),
+        }
 
     # ------------------------------------------------------------------
     # Introspection

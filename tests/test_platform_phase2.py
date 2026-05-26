@@ -139,6 +139,10 @@ class TestBotRegistryEntry:
         assert entry.health == HealthStatus.UNKNOWN
         assert not entry.learning_enabled
         assert entry.capabilities == []
+        assert entry.lifecycle_state == "draft"
+        assert entry.swarm_role == "specialist"
+        assert entry.memory_nodes == []
+        assert entry.permissions == []
 
     def test_to_dict_roundtrip(self):
         entry = BotRegistryEntry(
@@ -148,12 +152,24 @@ class TestBotRegistryEntry:
             events_emitted=["bot.started"],
             pricing_tier="pro",
             learning_enabled=True,
+            lifecycle_state="active",
+            swarm_role="negotiator",
+            memory_nodes=["identity.lead_gen_bot"],
+            permissions=["observe:runtime"],
+            revenue_attribution={"estimated_monthly_usd": 199.0},
+            trust_score=0.84,
         )
         d = entry.to_dict()
         restored = BotRegistryEntry.from_dict(d)
         assert restored.bot_id == "lead_gen_bot"
         assert restored.capabilities == ["lead.scrape", "lead.enrich"]
         assert restored.learning_enabled is True
+        assert restored.lifecycle_state == "active"
+        assert restored.swarm_role == "negotiator"
+        assert restored.memory_nodes == ["identity.lead_gen_bot"]
+        assert restored.permissions == ["observe:runtime"]
+        assert restored.revenue_attribution["estimated_monthly_usd"] == pytest.approx(199.0)
+        assert restored.trust_score == pytest.approx(0.84)
 
     def test_health_status_enum(self):
         assert HealthStatus.HEALTHY.value == "healthy"
@@ -257,6 +273,27 @@ class TestBotRegistry:
         removed = reg.remove("finance_bot")
         assert removed is not None
         assert "finance_bot" not in reg
+
+    def test_manifest_summary_includes_runtime_dimensions(self):
+        reg = self._make_registry()
+        reg.register(BotRegistryEntry(
+            bot_id="swarm_bot",
+            display_name="Swarm Bot",
+            lifecycle_state="active",
+            swarm_role="observer_modulator",
+            memory_nodes=["identity.swarm_bot", "trust.swarm_bot"],
+            permissions=["observe:runtime", "write:memory"],
+            revenue_attribution={"estimated_monthly_usd": 50.0, "realized_usd": 25.0},
+            trust_score=0.9,
+        ))
+        summary = reg.manifest_summary()
+        assert summary["total_bots"] == 3
+        assert summary["lifecycle_states"]["draft"] >= 2
+        assert summary["lifecycle_states"]["active"] == 1
+        assert "observer_modulator" in summary["swarm_roles"]
+        assert "observe:runtime" in summary["permissions"]
+        assert "identity.swarm_bot" in summary["memory_nodes"]
+        assert summary["revenue"]["estimated_monthly_usd"] == pytest.approx(50.0)
 
     def test_to_dict(self):
         reg = self._make_registry()
