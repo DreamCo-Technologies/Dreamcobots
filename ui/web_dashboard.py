@@ -71,6 +71,12 @@ import threading as _threading
 
 from bots.ai_learning_system.database import BotPerformanceDB
 from bots.control_center.control_center import ControlCenter
+from dreamco_platform import PLATFORM_VERSION
+from dreamco_platform.registry.bot_registry import (
+    BotRegistry,
+    BotRegistryEntry,
+    HealthStatus,
+)
 
 
 # ---------------------------------------------------------------------------
@@ -505,6 +511,291 @@ _BOT_CATALOG: list[dict] = [
 
 
 # ---------------------------------------------------------------------------
+# Runtime intelligence manifest helpers
+# ---------------------------------------------------------------------------
+
+def _estimate_monthly_revenue(revenue_model: str) -> float:
+    matches = [float(value) for value in _re.findall(r"\$([0-9]+(?:\.[0-9]+)?)", revenue_model)]
+    if not matches:
+        return 0.0
+    if len(matches) == 1:
+        return round(matches[0], 2)
+    return round(sum(matches) / len(matches), 2)
+
+
+def _derive_capabilities(bot_name: str, category: str) -> list[str]:
+    tokens = [part for part in bot_name.split("_") if part and part != "bot"]
+    capabilities = [f"{category.lower().replace(' & ', '_').replace(' ', '_')}.{token}" for token in tokens[:3]]
+    capabilities.extend(
+        capability
+        for capability in (
+            "runtime.observe",
+            "memory.recall",
+            "economics.attribute_revenue",
+        )
+        if capability not in capabilities
+    )
+    return capabilities
+
+
+def _normalize_bot_id(bot_name: str) -> str:
+    normalized = _re.sub(r"[^a-z0-9_]+", "_", bot_name.lower()).strip("_")
+    if not normalized or not normalized[0].isalpha():
+        normalized = f"bot_{normalized or 'worker'}"
+    return normalized
+
+
+def _infer_swarm_role(category: str, bot_name: str) -> str:
+    normalized = f"{category} {bot_name}".lower()
+    if "buddy" in normalized:
+        return "observer_modulator"
+    if any(token in normalized for token in ("sales", "marketing", "lead", "client")):
+        return "negotiator"
+    if any(token in normalized for token in ("finance", "payment", "revenue", "crypto")):
+        return "economic_optimizer"
+    if any(token in normalized for token in ("support", "service", "chat")):
+        return "coordinator"
+    return "specialist"
+
+
+def _infer_memory_nodes(bot_name: str, category: str, is_live: bool) -> list[str]:
+    prefix = bot_name.replace("-", "_")
+    nodes = [
+        f"identity.{prefix}",
+        f"trust.{prefix}",
+        f"specialization.{category.lower().replace(' ', '_')}",
+    ]
+    if is_live:
+        nodes.append(f"runtime.{prefix}.active")
+    return nodes
+
+
+def _infer_permissions(bot_name: str, is_live: bool) -> list[str]:
+    permissions = ["observe:runtime", "read:memory", f"claim:{bot_name}"]
+    if is_live:
+        permissions.extend(["emit:events", "write:memory"])
+    return permissions
+
+
+def _build_runtime_manifest_entry(
+    *,
+    bot_name: str,
+    display_name: str,
+    category: str,
+    description: str,
+    revenue_model: str,
+    is_live: bool,
+    realized_revenue: float = 0.0,
+    composite_score: float = 0.0,
+    total_runs: int = 0,
+) -> BotRegistryEntry:
+    trust_score = min(1.0, max(0.05, composite_score / 100 if composite_score else (0.82 if is_live else 0.58)))
+    return BotRegistryEntry(
+        bot_id=_normalize_bot_id(bot_name),
+        display_name=display_name,
+        capabilities=_derive_capabilities(bot_name, category),
+        events_emitted=["bot.started", "bot.completed", "governance.reviewed"],
+        events_consumed=["workflow.started", "runtime.directive", "swarm.negotiation"],
+        pricing_tier="pro" if is_live else "free",
+        runtime_requirements={"runtime": "persistent", "control_surface": "dashboard"},
+        dependencies=["dreamco_platform.events.EventBus", "dreamco_platform.memory.WorkflowMemory"],
+        health=HealthStatus.HEALTHY if is_live else HealthStatus.UNKNOWN,
+        learning_enabled=True,
+        description=description,
+        version="2.0.0",
+        category=category,
+        tags=["runtime-intelligence", "autonomous-economy", "swarm-ready"],
+        lifecycle_state="active" if is_live else "idle",
+        swarm_role=_infer_swarm_role(category, bot_name),
+        memory_nodes=_infer_memory_nodes(bot_name, category, is_live),
+        revenue_attribution={
+            "mode": revenue_model or "simulation",
+            "estimated_monthly_usd": _estimate_monthly_revenue(revenue_model),
+            "realized_usd": round(realized_revenue, 2),
+            "roi_score": round(composite_score, 2),
+            "runs": total_runs,
+        },
+        permissions=_infer_permissions(bot_name, is_live),
+        trust_score=trust_score,
+        specialization=category,
+        identity={
+            "bot_name": display_name,
+            "lineage": "dreamco_runtime",
+            "progression": "live" if is_live else "catalogued",
+        },
+        metadata={
+            "governance_mode": "bounded-autonomy",
+            "sandbox": "standard",
+            "dashboard_generated": True,
+        },
+    )
+
+
+def _build_runtime_registry(cc: "ControlCenter", perf_db: BotPerformanceDB) -> BotRegistry:
+    registry = BotRegistry()
+    status = cc.get_status().get("bots", {})
+    scores = {entry["bot_name"]: entry for entry in perf_db.get_all_scores()}
+    income = cc.get_income_summary().get("by_source", {})
+
+    registry.register(
+        BotRegistryEntry(
+            bot_id="buddy_ai",
+            display_name="BuddyAI Runtime Governance Engine",
+            capabilities=[
+                "governance.observe",
+                "governance.modulate",
+                "runtime.synthesize",
+                "swarm.coordinate",
+            ],
+            events_emitted=["governance.reviewed", "runtime.directive", "swarm.feedback"],
+            events_consumed=["bot.started", "bot.completed", "workflow.started", "workflow.failed"],
+            pricing_tier="enterprise",
+            runtime_requirements={"runtime": "persistent", "mode": "decentralized"},
+            dependencies=[
+                "dreamco_platform.events.EventBus",
+                "dreamco_platform.orchestration.ExecutionRuntime",
+                "dreamco_platform.governance.PolicyEvaluator",
+            ],
+            health=HealthStatus.HEALTHY,
+            learning_enabled=True,
+            description="Observer, modulator, and runtime synthesizer for bounded distributed autonomy.",
+            version="2.0.0",
+            category="Governance",
+            tags=["buddy", "governance", "runtime-intelligence"],
+            lifecycle_state="active",
+            swarm_role="observer_modulator",
+            memory_nodes=["runtime.audit_fabric", "runtime.shared_memory", "identity.buddy_ai"],
+            revenue_attribution={
+                "mode": "platform-governance",
+                "estimated_monthly_usd": 0.0,
+                "realized_usd": round(sum(income.values()), 2),
+                "roi_score": 100.0,
+                "runs": sum(meta.get("run_count", 0) for meta in status.values()),
+            },
+            permissions=["observe:all", "modulate:governance", "synthesize:runtime", "quarantine:bot"],
+            trust_score=0.99,
+            specialization="Distributed governance",
+            identity={"lineage": "dreamco_runtime", "progression": "persistent"},
+            metadata={
+                "decentralized": True,
+                "bounded_governance": True,
+                "shared_intelligence": True,
+            },
+        )
+    )
+
+    catalog_names = set()
+    for bot in _BOT_CATALOG:
+        catalog_names.add(bot["name"])
+        score = scores.get(bot["name"], {})
+        registry.register(
+            _build_runtime_manifest_entry(
+                bot_name=bot["name"],
+                display_name=bot["display_name"],
+                category=bot["category"],
+                description=bot["description"],
+                revenue_model=bot["revenue_model"],
+                is_live=bot["name"] in status,
+                realized_revenue=float(income.get(bot["name"], 0.0) or 0.0),
+                composite_score=float(score.get("composite_score", 0.0) or 0.0),
+                total_runs=int(score.get("total_runs", 0) or 0),
+            )
+        )
+
+    for bot_name, meta in status.items():
+        if bot_name in catalog_names:
+            continue
+        tier = meta.get("tier", "free")
+        score = scores.get(bot_name, {})
+        registry.register(
+            _build_runtime_manifest_entry(
+                bot_name=bot_name,
+                display_name=bot_name.replace("_", " ").title(),
+                category="Runtime Worker",
+                description=f"Autonomous runtime worker on tier '{tier}'.",
+                revenue_model="simulation",
+                is_live=True,
+                realized_revenue=float(income.get(bot_name, 0.0) or 0.0),
+                composite_score=float(score.get("composite_score", 0.0) or 0.0),
+                total_runs=int(meta.get("run_count", 0) or 0),
+            )
+        )
+
+    return registry
+
+
+def _build_runtime_overview(cc: "ControlCenter", perf_db: BotPerformanceDB) -> dict:
+    registry = _build_runtime_registry(cc, perf_db)
+    status = cc.get_monitoring_dashboard()
+    stats = perf_db.get_stats()
+    manifests = registry.all_manifests()
+    realized_revenue = registry.revenue_summary()["realized_usd"]
+    avg_trust = registry.average_trust_score()
+    coordination_efficiency = round(min(100.0, max(0.0, stats["avg_composite_score"] or (avg_trust * 100))), 2)
+
+    return {
+        "schema": "dreamco_runtime_overview.v1",
+        "platform_version": PLATFORM_VERSION,
+        "summary": registry.manifest_summary(),
+        "runtime_layers": [
+            {
+                "layer": "autonomous_runtime_core",
+                "title": "Autonomous Runtime Core",
+                "components": [
+                    "persistent state layers",
+                    "event buses",
+                    "swarm coordination engines",
+                    "memory fabrics",
+                    "execution engines",
+                    "lifecycle managers",
+                ],
+            },
+            {
+                "layer": "swarm_intelligence",
+                "title": "Swarm Intelligence",
+                "components": [
+                    "task claiming",
+                    "fitness propagation",
+                    "negotiation loops",
+                    "PSO / ACO / MARL strategy hooks",
+                ],
+            },
+            {
+                "layer": "governance_safety",
+                "title": "Governance & Safety",
+                "components": [
+                    "policy enforcement",
+                    "sandboxing",
+                    "quarantining",
+                    "trust scoring",
+                    "anomaly review",
+                ],
+            },
+            {
+                "layer": "interface_layer",
+                "title": "Interface Layer",
+                "components": [
+                    "mission control dashboards",
+                    "runtime prospectus pages",
+                    "governance controls",
+                    "economic monitoring",
+                ],
+            },
+        ],
+        "buddy_ai": registry.get("buddy_ai").to_dict() if registry.get("buddy_ai") else None,
+        "metrics": {
+            "manifested_bots": len(manifests),
+            "registered_bots": status["registered_bots"],
+            "coordination_efficiency": coordination_efficiency,
+            "avg_trust_score": round(avg_trust, 4),
+            "estimated_monthly_revenue_usd": registry.revenue_summary()["estimated_monthly_usd"],
+            "realized_revenue_usd": realized_revenue,
+            "roi_attribution": round(realized_revenue / max(1, len(manifests)), 2),
+        },
+    }
+
+
+# ---------------------------------------------------------------------------
 # HTML landing page (self-contained, no external CDN needed)
 # ---------------------------------------------------------------------------
 
@@ -704,6 +995,22 @@ _DASHBOARD_HTML = """<!DOCTYPE html>
     <div class="card"><h2>Total Revenue</h2><div class="value" id="total-revenue">—</div><div class="sub">USD</div></div>
     <div class="card"><h2>Avg Composite KPI</h2><div class="value" id="avg-kpi">—</div><div class="sub">0–100 scale</div></div>
     <div class="card"><h2>Underperformers</h2><div class="value" id="underperformers">—</div><div class="sub">score &lt; 30</div></div>
+  </div>
+
+  <p class="section-header">🧠 Autonomous Runtime Core</p>
+  <div class="grid" id="runtime-kpi-cards" style="padding-top:0">
+    <div class="card"><h2>Manifest Coverage</h2><div class="value" id="runtime-manifests">—</div><div class="sub">metadata-driven bot manifests</div></div>
+    <div class="card"><h2>Coordination Efficiency</h2><div class="value" id="runtime-coordination">—</div><div class="sub">swarm negotiation + task claiming</div></div>
+    <div class="card"><h2>Avg Trust Score</h2><div class="value" id="runtime-trust">—</div><div class="sub">bounded governance confidence</div></div>
+    <div class="card"><h2>ROI Attribution</h2><div class="value" id="runtime-roi">—</div><div class="sub">realized revenue per manifested worker</div></div>
+  </div>
+
+  <div style="padding: 0 24px 24px;">
+    <div class="card">
+      <h2 style="margin-bottom:12px;">Runtime Layers &amp; BuddyAI Governance</h2>
+      <div id="runtime-layers" style="font-size:0.8rem;color:#aaa;line-height:1.6">Loading runtime topology…</div>
+      <div id="runtime-buddy" class="sub" style="margin-top:10px;color:#00d4aa"></div>
+    </div>
   </div>
 
   <!-- ── HIGH-REVENUE BOT CATALOG ── -->
@@ -1098,6 +1405,37 @@ _DASHBOARD_HTML = """<!DOCTYPE html>
       }
     }
 
+    async function loadRuntime() {
+      try {
+        const overview = await fetch('/api/runtime/overview').then(r => r.json());
+        const metrics = overview.metrics || {};
+        document.getElementById('runtime-manifests').textContent = metrics.manifested_bots ?? '—';
+        document.getElementById('runtime-coordination').textContent =
+          metrics.coordination_efficiency != null ? metrics.coordination_efficiency.toFixed(1) + '%' : '—';
+        document.getElementById('runtime-trust').textContent =
+          metrics.avg_trust_score != null ? metrics.avg_trust_score.toFixed(2) : '—';
+        document.getElementById('runtime-roi').textContent =
+          metrics.roi_attribution != null ? '$' + metrics.roi_attribution.toFixed(2) : '—';
+
+        const layers = overview.runtime_layers || [];
+        const layersEl = document.getElementById('runtime-layers');
+        layersEl.innerHTML = layers.map(layer => `
+          <div style="margin-bottom:10px">
+            <strong style="color:#e0e0e0">${layer.title}</strong>
+            <div>${(layer.components || []).join(' • ')}</div>
+          </div>
+        `).join('');
+
+        const buddy = overview.buddy_ai || {};
+        document.getElementById('runtime-buddy').textContent =
+          buddy.display_name
+            ? `${buddy.display_name} — ${buddy.swarm_role} | lifecycle: ${buddy.lifecycle_state} | trust: ${buddy.trust_score}`
+            : '';
+      } catch (e) {
+        console.error('Runtime overview load error:', e);
+      }
+    }
+
     async function loadAll() {
       try {
         const [status, leader, revenue] = await Promise.all([
@@ -1155,7 +1493,8 @@ _DASHBOARD_HTML = """<!DOCTYPE html>
     loadGovernance();
     loadUncoded();
     loadFailures();
-    setInterval(() => { loadAll(); loadWorkflows(); loadQuantum(); loadFailures(); }, 15000);
+    loadRuntime();
+    setInterval(() => { loadAll(); loadWorkflows(); loadQuantum(); loadFailures(); loadRuntime(); }, 15000);
   </script>
 </body>
 </html>
@@ -1249,6 +1588,20 @@ def create_app(
             entry.update(scores.get(name, {}))
             bots.append(entry)
         return jsonify({"bots": bots, "total": len(bots)})
+
+    @app.route("/api/runtime/manifests")
+    def api_runtime_manifests() -> Response:
+        registry = _build_runtime_registry(cc, perf_db)
+        return jsonify({
+            "schema": "dreamco_runtime_manifest.v1",
+            "platform_version": PLATFORM_VERSION,
+            "summary": registry.manifest_summary(),
+            "manifests": [entry.to_dict() for entry in registry.all_manifests()],
+        })
+
+    @app.route("/api/runtime/overview")
+    def api_runtime_overview() -> Response:
+        return jsonify(_build_runtime_overview(cc, perf_db))
 
     @app.route("/api/bots/catalog")
     def api_bots_catalog() -> Response:
@@ -1573,6 +1926,7 @@ def create_app(
         history = perf_db.get_run_history(bot_name, limit=10)
         scores = {s["bot_name"]: s for s in perf_db.get_all_scores()}
         score = scores.get(bot_name, {})
+        runtime_registry = _build_runtime_registry(cc, perf_db)
 
         display_name = (catalog_entry or {}).get("display_name", bot_name)
         emoji = (catalog_entry or {}).get("emoji", "🤖")
@@ -1582,6 +1936,20 @@ def create_app(
 
         is_live = bot_name in cc.get_status().get("bots", {})
         live_badge = '<span style="color:#22cc44;font-weight:700">● LIVE</span>' if is_live else '<span style="color:#888">○ Idle</span>'
+        manifest = runtime_registry.get(_normalize_bot_id(bot_name)) or _build_runtime_manifest_entry(
+            bot_name=bot_name or "unknown_bot",
+            display_name=display_name,
+            category=category,
+            description=description,
+            revenue_model=revenue_model,
+            is_live=is_live,
+            realized_revenue=0.0,
+            composite_score=float(score.get("composite_score", 0.0) or 0.0),
+            total_runs=int(score.get("total_runs", 0) or 0),
+        )
+        manifest_permissions = ", ".join(manifest.permissions) or "—"
+        manifest_memory = ", ".join(manifest.memory_nodes) or "—"
+        manifest_revenue = manifest.revenue_attribution
 
         failure_rows = "".join(
             f"<tr><td style='white-space:nowrap'>{e.get('timestamp', '')[:19].replace('T', ' ') if e.get('timestamp') else '—'}</td>"
@@ -1662,6 +2030,22 @@ def create_app(
     <div class="card">
       <h2>Total Runs</h2>
       <div class="value">{score.get('total_runs', 0)}</div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="card">
+      <h2 style="margin-bottom:14px">📘 Prospectus &amp; Runtime Manifest</h2>
+      <table>
+        <tbody>
+          <tr><th>Lifecycle State</th><td>{manifest.lifecycle_state}</td><th>Swarm Role</th><td>{manifest.swarm_role}</td></tr>
+          <tr><th>Specialization</th><td>{manifest.specialization or category}</td><th>Trust Score</th><td>{manifest.trust_score:.2f}</td></tr>
+          <tr><th>Capabilities</th><td colspan="3">{", ".join(manifest.capabilities) or "—"}</td></tr>
+          <tr><th>Permissions</th><td colspan="3">{manifest_permissions}</td></tr>
+          <tr><th>Memory Nodes</th><td colspan="3">{manifest_memory}</td></tr>
+          <tr><th>Revenue Attribution</th><td colspan="3">Estimated monthly: ${manifest_revenue.get("estimated_monthly_usd", 0.0):.2f} | Realized: ${manifest_revenue.get("realized_usd", 0.0):.2f} | ROI score: {manifest_revenue.get("roi_score", 0.0)}</td></tr>
+        </tbody>
+      </table>
     </div>
   </div>
 
@@ -1767,4 +2151,6 @@ __all__ = [
     "_append_failure",
     "_get_failures",
     "_detect_uncoded_bots",
+    "_build_runtime_registry",
+    "_build_runtime_overview",
 ]
