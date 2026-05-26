@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 
-function Badge({ value }) {
+function renderBadge(value) {
   const normalized = String(value || 'unknown').toLowerCase();
   const cls =
     normalized === 'green' || normalized === 'ship' || normalized === 'in_progress'
@@ -21,7 +21,9 @@ export default function CommandCenter() {
     fetch('/api/command-center')
       .then((r) => r.json())
       .then((data) => {
-        if (data.error) throw new Error(data.error);
+        if (data.error) {
+          throw new Error(data.error);
+        }
         setBoard(data);
         setLoading(false);
       })
@@ -31,8 +33,12 @@ export default function CommandCenter() {
       });
   }, []);
 
-  if (loading) return <p className="text-slate-400">Loading command center…</p>;
-  if (error) return <p className="text-dreamco-red">Error: {error}</p>;
+  if (loading) {
+    return <p className="text-slate-400">Loading command center…</p>;
+  }
+  if (error) {
+    return <p className="text-dreamco-red">Error: {error}</p>;
+  }
 
   return (
     <div>
@@ -55,6 +61,18 @@ export default function CommandCenter() {
           <p className="text-xs text-slate-400">Failing validations</p>
           <p className="text-white font-semibold mt-1">
             {board.computed?.failing_validation_lanes ?? 0}
+          </p>
+        </div>
+        <div className="bg-dreamco-card rounded-xl p-4 border border-slate-700">
+          <p className="text-xs text-slate-400">Swarm architectures</p>
+          <p className="text-white font-semibold mt-1">
+            {board.computed?.swarm_architecture_count ?? 0}
+          </p>
+        </div>
+        <div className="bg-dreamco-card rounded-xl p-4 border border-slate-700">
+          <p className="text-xs text-slate-400">MARL-ready models</p>
+          <p className="text-white font-semibold mt-1">
+            {board.computed?.marl_ready_architectures ?? 0}
           </p>
         </div>
       </div>
@@ -87,14 +105,14 @@ export default function CommandCenter() {
                 <td className="py-3 pr-4 text-white">{lane.name}</td>
                 <td className="py-3 pr-4 text-slate-300">{lane.owner}</td>
                 <td className="py-3 pr-4">
-                  <Badge value={lane.status} />
+                  {renderBadge(lane.status)}
                 </td>
                 <td className="py-3 pr-4 text-slate-300">{lane.blockers?.length || 0}</td>
                 <td className="py-3 pr-4">
-                  <Badge value={lane.validation_state} />
+                  {renderBadge(lane.validation_state)}
                 </td>
                 <td className="py-3 pr-4">
-                  <Badge value={lane.ship_decision} />
+                  {renderBadge(lane.ship_decision)}
                 </td>
               </tr>
             ))}
@@ -123,6 +141,84 @@ export default function CommandCenter() {
               </li>
             ))}
           </ul>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 mt-6">
+        <div className="bg-dreamco-card rounded-xl p-5 border border-slate-700 overflow-x-auto">
+          <h3 className="text-sm font-semibold text-slate-200 mb-3">
+            Swarm Architecture Benchmark
+          </h3>
+          <table className="w-full text-sm text-left">
+            <thead className="text-xs uppercase text-slate-400">
+              <tr>
+                <th className="py-2 pr-4">Architecture</th>
+                <th className="py-2 pr-4">Origin</th>
+                <th className="py-2 pr-4">Mode</th>
+                <th className="py-2 pr-4">MARL</th>
+                <th className="py-2 pr-4">Score</th>
+              </tr>
+            </thead>
+            <tbody>
+              {(board.swarm_architectures || []).map((architecture) => (
+                <tr key={architecture.architecture_id} className="border-t border-slate-700">
+                  <td className="py-3 pr-4 text-white">{architecture.name}</td>
+                  <td className="py-3 pr-4 text-slate-300">{architecture.origin}</td>
+                  <td className="py-3 pr-4">
+                    {renderBadge(architecture.coordination_mode)}
+                  </td>
+                  <td className="py-3 pr-4">
+                    {renderBadge(architecture.marl_ready ? 'ready' : 'planned')}
+                  </td>
+                  <td className="py-3 pr-4 text-slate-300">
+                    {architecture.overall_score ?? '—'}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+
+        <div className="bg-dreamco-card rounded-xl p-5 border border-slate-700">
+          <h3 className="text-sm font-semibold text-slate-200 mb-3">Coordination Layer</h3>
+          <p className="text-sm text-slate-300 mb-3">
+            <span className="text-white font-semibold">
+              {board.coordination_layer?.governor ?? 'BuddyAI'}
+            </span>{' '}
+            — {board.coordination_layer?.control_model}
+          </p>
+          <div className="space-y-4">
+            <div>
+              <p className="text-xs uppercase tracking-wide text-slate-400 mb-2">
+                Communication Layers
+              </p>
+              <ul className="list-disc ml-5 text-sm text-slate-300 space-y-1">
+                {(board.coordination_layer?.communication_layers || []).map((layer) => (
+                  <li key={layer}>{layer}</li>
+                ))}
+              </ul>
+            </div>
+            <div>
+              <p className="text-xs uppercase tracking-wide text-slate-400 mb-2">
+                Resilience Features
+              </p>
+              <ul className="list-disc ml-5 text-sm text-slate-300 space-y-1">
+                {(board.coordination_layer?.resilience_features || []).map((feature) => (
+                  <li key={feature}>{feature}</li>
+                ))}
+              </ul>
+            </div>
+            <div>
+              <p className="text-xs uppercase tracking-wide text-slate-400 mb-2">
+                Monetization Modes
+              </p>
+              <ul className="list-disc ml-5 text-sm text-slate-300 space-y-1">
+                {(board.coordination_layer?.monetization_modes || []).map((mode) => (
+                  <li key={mode}>{mode}</li>
+                ))}
+              </ul>
+            </div>
+          </div>
         </div>
       </div>
     </div>

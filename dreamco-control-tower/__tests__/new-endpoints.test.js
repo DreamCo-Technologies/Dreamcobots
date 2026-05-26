@@ -300,4 +300,23 @@ describe('GET /api/command-center', () => {
     expect(typeof res.body.computed.days_remaining).toBe('number');
     expect(typeof res.body.computed.total_lanes).toBe('number');
   });
+
+  test('returns swarm architecture benchmarks', async () => {
+    const res = await request(app).get('/api/command-center');
+    expect(Array.isArray(res.body.swarm_architectures)).toBe(true);
+    expect(res.body.swarm_architectures.length).toBeGreaterThan(0);
+    expect(res.body.swarm_architectures[0]).toHaveProperty('overall_score');
+  });
+
+  test('returns coordination layer governance metadata', async () => {
+    const res = await request(app).get('/api/command-center');
+    expect(res.body.coordination_layer).toHaveProperty('governor', 'BuddyAI');
+    expect(Array.isArray(res.body.coordination_layer.communication_layers)).toBe(true);
+  });
+
+  test('computes best swarm architecture', async () => {
+    const res = await request(app).get('/api/command-center');
+    expect(res.body.computed.best_swarm_architecture).toBe('hybrid_llm_marl');
+    expect(typeof res.body.computed.marl_ready_architectures).toBe('number');
+  });
 });

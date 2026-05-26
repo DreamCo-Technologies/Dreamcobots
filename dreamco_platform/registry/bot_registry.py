@@ -284,6 +284,41 @@ class BotRegistry:
         """Return every bot in *category*."""
         return [e for e in self._store.values() if e.category == category]
 
+    def find_by_coordination_mode(self, coordination_mode: str) -> List[BotRegistryEntry]:
+        """Return every bot using the given coordination mode."""
+        return [
+            e for e in self._store.values()
+            if e.metadata.get("coordination_mode", "centralized") == coordination_mode
+        ]
+
+    def find_swarm_enabled(self) -> List[BotRegistryEntry]:
+        """Return every bot participating in swarm or MARL coordination."""
+        return [e for e in self._store.values() if self._is_swarm_enabled(e)]
+
+    def swarm_summary(self) -> Dict[str, Any]:
+        """Summarise coordination modes and swarm participation across the registry."""
+        coordination_modes: Dict[str, int] = {}
+        marl_enabled = 0
+        stigmergic = 0
+        swarm_enabled = 0
+        for entry in self._store.values():
+            metadata = entry.metadata or {}
+            coordination_mode = metadata.get("coordination_mode", "centralized")
+            coordination_modes[coordination_mode] = coordination_modes.get(coordination_mode, 0) + 1
+            if metadata.get("marl_enabled"):
+                marl_enabled += 1
+            if metadata.get("stigmergic_channels"):
+                stigmergic += 1
+            if self._is_swarm_enabled(entry):
+                swarm_enabled += 1
+        return {
+            "total_bots": len(self._store),
+            "swarm_enabled": swarm_enabled,
+            "marl_enabled": marl_enabled,
+            "stigmergic": stigmergic,
+            "coordination_modes": coordination_modes,
+        }
+
     # ------------------------------------------------------------------
     # Serialisation
     # ------------------------------------------------------------------
@@ -378,3 +413,14 @@ class BotRegistry:
         if entry is None:
             raise KeyError(f"No registry entry for bot_id={bot_id!r}")
         return entry
+
+    @staticmethod
+    def _is_swarm_enabled(entry: BotRegistryEntry) -> bool:
+        metadata = entry.metadata or {}
+        coordination_mode = metadata.get("coordination_mode", "centralized")
+        return bool(
+            metadata.get("swarm_enabled")
+            or metadata.get("marl_enabled")
+            or metadata.get("stigmergic_channels")
+            or coordination_mode != "centralized"
+        )
