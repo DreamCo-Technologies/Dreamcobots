@@ -10,6 +10,7 @@ from core.monetization_hooks import MonetizationHooks
 from core.revenue_engine import RevenueEngine
 from Fiverr_bots.fiverr_bot import FiverrBot
 from bots.lead_gen_bot.lead_gen_bot import LeadGenBot
+from dreamco_platform.swarm.stigmergy import PersistentStigmergyEnvironment
 
 app = FastAPI(title="DreamCo Bot API", version="1.0.0")
 
@@ -17,6 +18,7 @@ app = FastAPI(title="DreamCo Bot API", version="1.0.0")
 _revenue_engine = RevenueEngine()
 _monetization_hooks = MonetizationHooks()
 _dream_core = DreamCore()
+_stigmergy_environment = PersistentStigmergyEnvironment()
 
 # Bot instances (created on-demand per request for statelessness)
 def _make_fiverr_bot() -> FiverrBot:
@@ -165,3 +167,16 @@ def get_revenue() -> RevenueResponse:
         total_usd=_revenue_engine.total(),
         entries=_revenue_engine.report(),
     )
+
+
+@app.get("/swarm/stigmergy/metrics")
+def stigmergy_metrics() -> dict:
+    """Return real-time stigmergy metrics and trace snapshots."""
+    metrics = _stigmergy_environment.metrics()
+    return {
+        "active_trace_count": metrics["active_trace_count"],
+        "total_strength": metrics["total_strength"],
+        "heatmap": metrics["heatmap"],
+        "prometheus": metrics["prometheus"],
+        "traces": metrics["traces"],
+    }

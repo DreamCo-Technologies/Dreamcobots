@@ -14,6 +14,7 @@ orchestration — BaseOrchestrator interface for all orchestrators
 memory        — Dream Memory Layer (operational graph data store)
 observability — Structured telemetry for every capability execution
 governance    — Policy-as-Code engine and RBAC / workspace isolation
+swarm         — Governed stigmergy primitives for autonomous coordination
 """
 
 PLATFORM_VERSION: str = "2.0.0"
