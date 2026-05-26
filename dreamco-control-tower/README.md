@@ -24,6 +24,8 @@ dreamco-control-tower/
 │   │       ├── RepoActivity.jsx           # GitHub PRs, commits, workflow status
 │   │       ├── BotDeployment.jsx          # Deploy new bots from templates
 │   │       ├── Analytics.jsx              # Uptime, PR trends, status charts
+│   │       ├── ActionsPage.jsx            # Actions monitor + Buddy launcher modal
+│   │       ├── BuddyCommandCenter.jsx     # Full Buddy command center modal content
 │   │       └── CommandCenter.jsx          # Max-parallel lane board + June 22 plan
 │   ├── index.html
 │   ├── vite.config.js
@@ -92,6 +94,7 @@ npm start
 cd dreamco-control-tower/frontend
 npm install
 npm run dev   # Opens on http://localhost:5173
+npm run test  # Runs Actions/Buddy UI tests (modal + Enter key flows)
 ```
 
 ### Heartbeat Check (CLI)
