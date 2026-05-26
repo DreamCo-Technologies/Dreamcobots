@@ -8,6 +8,10 @@ const PANELS = ['Swarm Status', 'HotStuff Consensus', 'Economic Feedback Loops']
  */
 export default function BuddyCommandCenter({ onClose, onCommandSubmit = () => {} }) {
   const [command, setCommand] = useState('');
+  const [terminalLines, setTerminalLines] = useState([
+    '[Buddy] Terminal initialized in autonomous mode.',
+    '[Buddy] Type a command and press Enter.',
+  ]);
 
   function handleKeyDown(event) {
     if (event.key !== 'Enter') return;
@@ -16,6 +20,11 @@ export default function BuddyCommandCenter({ onClose, onCommandSubmit = () => {}
     if (!nextCommand) return;
 
     onCommandSubmit(nextCommand);
+    setTerminalLines((lines) => [
+      ...lines,
+      `$ ${nextCommand}`,
+      `[Buddy] Command queued: ${nextCommand}`,
+    ]);
     setCommand('');
   }
 
@@ -30,14 +39,35 @@ export default function BuddyCommandCenter({ onClose, onCommandSubmit = () => {}
         <h3 id="buddy-command-center-title" className="text-lg font-semibold text-white">
           🤖 Buddy Command Center
         </h3>
-        <button
-          type="button"
-          aria-label="Close Buddy Command Center"
-          onClick={onClose}
-          className="rounded-lg border border-slate-600 px-3 py-1.5 text-xs font-medium text-slate-300 transition-colors hover:bg-slate-700 hover:text-white"
-        >
-          Close
-        </button>
+        <div className="flex items-center gap-2">
+          <span className="rounded-full bg-green-900 px-2 py-0.5 text-xs font-medium text-green-300">
+            Autonomous
+          </span>
+          <button
+            type="button"
+            aria-label="Close Buddy Command Center"
+            onClick={onClose}
+            className="rounded-lg border border-slate-600 px-3 py-1.5 text-xs font-medium text-slate-300 transition-colors hover:bg-slate-700 hover:text-white"
+          >
+            Close
+          </button>
+        </div>
+      </div>
+
+      {/*
+       * Keep this output region stable for UI tests and future command-render updates.
+       * New command handlers should append summary lines instead of replacing this log.
+       */}
+      <div
+        role="log"
+        aria-label="Buddy terminal output"
+        className="mb-4 max-h-48 overflow-y-auto rounded-lg border border-slate-700 bg-slate-950 p-3 font-mono text-xs text-green-300"
+      >
+        {terminalLines.map((line, index) => (
+          <p key={`${line}-${index}`} className="leading-5">
+            {line}
+          </p>
+        ))}
       </div>
 
       <input

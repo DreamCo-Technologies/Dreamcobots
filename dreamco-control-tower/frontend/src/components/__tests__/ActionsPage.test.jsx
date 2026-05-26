@@ -45,6 +45,9 @@ describe('ActionsPage', () => {
     fireEvent.keyDown(input, { key: 'Enter', code: 'Enter' });
 
     expect(onBuddyCommandSubmit).toHaveBeenCalledWith('deploy bot fleet');
+    expect(screen.getByRole('log', { name: 'Buddy terminal output' })).toBeInTheDocument();
+    expect(screen.getByText('$ deploy bot fleet')).toBeInTheDocument();
+    expect(screen.getByText('[Buddy] Command queued: deploy bot fleet')).toBeInTheDocument();
   });
 
   it('renders core buddy command center panels', () => {
