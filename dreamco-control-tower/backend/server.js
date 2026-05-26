@@ -84,6 +84,23 @@ function computeOverallBenchmarkScore(architecture) {
   return Math.round(average * 100) / 100;
 }
 
+async function fetchStigmergyMetrics() {
+  const url = process.env.STIGMERGY_METRICS_URL;
+  if (!url) {
+    return null;
+  }
+  try {
+    const response = await fetch(url);
+    if (!response.ok) {
+      return null;
+    }
+    const payload = await response.json();
+    return payload && typeof payload === 'object' ? payload : null;
+  } catch (_err) {
+    return null;
+  }
+}
+
 // ---------------------------------------------------------------------------
 // Heartbeat endpoint
 // Bots POST here to signal they are online and operational.
@@ -349,7 +366,7 @@ app.get('/api/orchestrator', rateLimiter, (_req, res) => {
 // together with computed deadline telemetry for June 22 delivery.
 // ---------------------------------------------------------------------------
 
-app.get('/api/command-center', rateLimiter, (_req, res) => {
+app.get('/api/command-center', rateLimiter, async (_req, res) => {
   const board = readCommandCenter();
   if (!board) {
     return res.status(503).json({
@@ -378,11 +395,13 @@ app.get('/api/command-center', rateLimiter, (_req, res) => {
   const shippableCount = lanes.filter((lane) => lane.ship_decision === 'ship').length;
   const marlReadyCount = rankedArchitectures.filter((architecture) => architecture.marl_ready).length;
   const stigmergicCount = rankedArchitectures.filter((architecture) => architecture.stigmergic).length;
+  const liveStigmergyMetrics = await fetchStigmergyMetrics();
 
   return res.json({
     ...board,
     coordination_layer: coordinationLayer,
     swarm_architectures: rankedArchitectures,
+    stigmergy_metrics: liveStigmergyMetrics,
     computed: {
       days_remaining: daysRemaining,
       overdue,
@@ -395,6 +414,7 @@ app.get('/api/command-center', rateLimiter, (_req, res) => {
       stigmergic_architectures: stigmergicCount,
       best_swarm_architecture: rankedArchitectures[0]?.architecture_id ?? null,
       coordination_layers: (coordinationLayer.communication_layers ?? []).length,
+      live_stigmergy_traces: liveStigmergyMetrics?.active_trace_count ?? null,
       fetched_at: new Date().toISOString(),
     },
   });

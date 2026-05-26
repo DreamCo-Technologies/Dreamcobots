@@ -70,6 +70,32 @@ python tools/check_bot_framework.py
 ```
 
 ---
+## Swarm Stigmergy Runtime
+
+DreamCo ships a governed stigmergy runtime at:
+- `dreamco_platform/swarm/stigmergy/*` (primary modules)
+- `swarm/stigmergy/*` (compatibility import path)
+
+Core components:
+- `pheromone.py` — trace model (`PheromoneTrace`)
+- `governance.py` — policy enforcement (`max_strength`, `max_risk`, allowed types, approval gates)
+- `environment.py` — deposit/read loop plus persistence adapters
+- `replay.py` — append-only event stores (in-memory and file-backed) + replay
+- `observer.py` — metrics/tracing snapshots (Prometheus text + optional OpenTelemetry signals)
+
+Configuration:
+- Governance defaults can be externalized in `config/stigmergy_governance.yaml`
+- Runtime can read:
+  - `STIGMERGY_GOVERNANCE_PATH`
+  - `STIGMERGY_EVENT_LOG_PATH`
+
+Backend endpoints:
+- `GET /swarm/stigmergy/metrics`
+- `POST /swarm/stigmergy/deposit`
+- `GET /swarm/stigmergy/replay`
+- `POST /swarm/stigmergy/replay/prune`
+
+---
 ## Installation Instructions
 1. Clone this repository to your local machine:
    ```bash

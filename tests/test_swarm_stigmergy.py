@@ -3,6 +3,7 @@ import time
 import pytest
 
 from dreamco_platform.swarm.stigmergy import (
+    FileDurableEventStore,
     GovernancePolicy,
     PersistentStigmergyEnvironment,
     PheromoneTrace,
@@ -127,3 +128,25 @@ def test_safety_controls_support_kill_switch_and_rate_limit():
         assert False
     except Exception as exc:  # noqa: BLE001
         assert "kill switch" in str(exc)
+
+
+def test_governance_policy_loads_from_yaml():
+    governance = StigmergyGovernance.from_yaml("config/stigmergy_governance.yaml")
+    assert governance.policy.max_strength == pytest.approx(1.0)
+    assert "high_value_trade" in governance.policy.require_approval
+    assert "pricing" in governance.policy.bot_role_permissions["trader"]
+
+
+def test_file_durable_event_store_replays_and_prunes(tmp_path):
+    event_log = tmp_path / "stigmergy_events.jsonl"
+    durable_store = FileDurableEventStore(str(event_log))
+    env = PersistentStigmergyEnvironment(durable_store=durable_store)
+    trace = PheromoneTrace("search", 0.3, (2, 2), "bot_file")
+    env.deposit(trace, approval=True)
+
+    loaded = durable_store.load_active_traces()
+    assert loaded == [trace]
+
+    removed = durable_store.prune_before(time.time() + 1.0)
+    assert removed >= 1
+    assert durable_store.load_active_traces() == []

@@ -1,13 +1,14 @@
 from __future__ import annotations
 
 from dataclasses import asdict
+import os
 import time
 from typing import Protocol
 
 from dreamco_platform.swarm.stigmergy.governance import GovernanceDecision, StigmergyGovernance
 from dreamco_platform.swarm.stigmergy.observer import StigmergyObserver
 from dreamco_platform.swarm.stigmergy.pheromone import PheromoneTrace
-from dreamco_platform.swarm.stigmergy.replay import InMemoryEventStore, StigmergyEvent
+from dreamco_platform.swarm.stigmergy.replay import FileDurableEventStore, InMemoryEventStore, StigmergyEvent
 from dreamco_platform.swarm.stigmergy.safety import SwarmSafetyControls
 
 
@@ -84,8 +85,16 @@ class PersistentStigmergyEnvironment(StigmergyEnvironment):
         redis_store: RedisStore | None = None,
         durable_store: DurableStore | None = None,
         archive_store: ArchiveStore | None = None,
+        durable_event_log_path: str | None = None,
+        governance_policy_path: str | None = None,
         **kwargs,
     ) -> None:
+        governance_path = governance_policy_path or os.environ.get("STIGMERGY_GOVERNANCE_PATH")
+        if governance_path and "governance" not in kwargs:
+            kwargs["governance"] = StigmergyGovernance.from_yaml(governance_path)
+        event_log_path = durable_event_log_path or os.environ.get("STIGMERGY_EVENT_LOG_PATH")
+        if event_log_path and durable_store is None:
+            durable_store = FileDurableEventStore(event_log_path)
         super().__init__(**kwargs)
         self.redis_store = redis_store
         self.durable_store = durable_store

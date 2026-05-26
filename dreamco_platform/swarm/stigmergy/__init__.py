@@ -12,6 +12,7 @@ from dreamco_platform.swarm.stigmergy.governance import (
 from dreamco_platform.swarm.stigmergy.observer import StigmergyObserver
 from dreamco_platform.swarm.stigmergy.pheromone import PheromoneTrace
 from dreamco_platform.swarm.stigmergy.replay import (
+    FileDurableEventStore,
     InMemoryEventStore,
     StigmergyEvent,
     StigmergyReplayer,
@@ -27,6 +28,7 @@ __all__ = [
     "StigmergyGovernance",
     "StigmergyEvent",
     "InMemoryEventStore",
+    "FileDurableEventStore",
     "StigmergyReplayer",
     "SafetyViolation",
     "SwarmSafetyControls",

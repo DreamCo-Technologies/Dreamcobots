@@ -193,7 +193,7 @@ def _fetch_workflow_runs(
 
     headers = {"Accept": "application/vnd.github+json"}
     if token:
-        headers["Authorization"] = f"Bearer {token}"
+        headers["Authorization"] = "Bearer " + token
 
     try:
         resp = _req.get(
@@ -220,6 +220,24 @@ def _fetch_workflow_runs(
         pass
     return []
 
+
+def _fetch_stigmergy_metrics(metrics_url: str | None, timeout_seconds: int = 3) -> dict | None:
+    """Fetch live stigmergy metrics when endpoint is configured/reachable."""
+    if not metrics_url:
+        return None
+    try:
+        import requests as _req
+    except ImportError:
+        return None
+    try:
+        response = _req.get(metrics_url, timeout=timeout_seconds)
+        if response.status_code == 200:
+            payload = response.json()
+            if isinstance(payload, dict):
+                return payload
+    except Exception:  # noqa: BLE001
+        return None
+    return None
 
 def _rerun_workflow_run(
     repo: str,
@@ -297,9 +315,15 @@ class BuddyOrchestrator:
         github_repo: str = "DreamCo-Technologies/Dreamcobots",
         github_token: Optional[str] = None,
         scrape_deadline=None,
+        stigmergy_metrics_url: Optional[str] = None,
     ) -> None:
         self.github_repo = github_repo
         self._github_token = github_token or os.environ.get("GITHUB_TOKEN")
+        self._stigmergy_metrics_url = (
+            stigmergy_metrics_url
+            or os.environ.get("STIGMERGY_METRICS_URL")
+            or "http://localhost:8000/swarm/stigmergy/metrics"
+        )
 
         # Registered bot catalog
         self._catalog: dict[str, BotSpec] = {}
@@ -527,6 +551,7 @@ class BuddyOrchestrator:
                 or spec.stigmergic_channels
             ):
                 swarm_enabled_bots += 1
+        live_stigmergy_metrics = _fetch_stigmergy_metrics(self._stigmergy_metrics_url)
 
         return {
             "timestamp": datetime.now(tz=timezone.utc).isoformat(),
@@ -551,6 +576,7 @@ class BuddyOrchestrator:
                 "marl_enabled_bots": marl_enabled_bots,
                 "stigmergic_bots": stigmergic_bots,
                 "benchmark_report": self.swarm_benchmark_report(),
+                "stigmergy_metrics": live_stigmergy_metrics,
             },
             "data_store": dict(self._data_store),
         }
@@ -791,4 +817,6 @@ class BuddyOrchestrator:
             "total_revenue_usd": round(sum(self._revenue.values()), 2),
             "swarm_enabled_bots": swarm_enabled_bots,
             "best_swarm_architecture": self.swarm_benchmark_report()["best_overall"],
+            "stigmergy_metrics_url": self._stigmergy_metrics_url,
+            "stigmergy_metrics": _fetch_stigmergy_metrics(self._stigmergy_metrics_url),
         }

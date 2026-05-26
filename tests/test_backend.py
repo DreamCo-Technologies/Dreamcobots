@@ -1,4 +1,6 @@
 """Tests for FastAPI backend endpoints."""
+import time
+
 import pytest
 from fastapi.testclient import TestClient
 
@@ -92,3 +94,35 @@ class TestRevenueEndpoint:
         assert "total_usd" in data
         assert "entries" in data
         assert isinstance(data["total_usd"], float)
+
+
+class TestStigmergyEndpoints:
+    def test_stigmergy_metrics_endpoint_returns_structure(self):
+        response = client.get("/swarm/stigmergy/metrics")
+        assert response.status_code == 200
+        data = response.json()
+        for key in ("active_trace_count", "total_strength", "heatmap", "prometheus", "traces"):
+            assert key in data
+
+    def test_stigmergy_replay_flow(self):
+        payload = {
+            "trace_type": "search",
+            "strength": 0.4,
+            "x": 4,
+            "y": 5,
+            "bot_id": "backend_test_bot",
+            "approval": True,
+        }
+        deposit = client.post("/swarm/stigmergy/deposit", json=payload)
+        assert deposit.status_code == 200
+        assert deposit.json()["allowed"] is True
+
+        replay = client.get("/swarm/stigmergy/replay", params={"since": 0, "trace_type": "search"})
+        assert replay.status_code == 200
+        assert replay.json()["events_replayed"] >= 1
+        assert any(trace["bot_id"] == "backend_test_bot" for trace in replay.json()["active_traces"])
+
+    def test_stigmergy_replay_prune_endpoint(self):
+        response = client.post("/swarm/stigmergy/replay/prune", params={"before": time.time() + 1})
+        assert response.status_code == 200
+        assert "pruned_events" in response.json()

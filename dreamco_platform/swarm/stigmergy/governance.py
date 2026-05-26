@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, field
+import os
 from typing import Callable
 
 from dreamco_platform.swarm.stigmergy.pheromone import PheromoneTrace
@@ -17,6 +18,34 @@ class GovernancePolicy:
     require_approval: set[str] = field(default_factory=set)
     bot_role_permissions: dict[str, set[str]] = field(default_factory=dict)
 
+    @classmethod
+    def from_dict(cls, data: dict) -> "GovernancePolicy":
+        role_permissions = {
+            str(role): set(types or [])
+            for role, types in (data.get("bot_role_permissions") or {}).items()
+        }
+        return cls(
+            max_strength=float(data.get("max_strength", 1.0)),
+            max_risk=float(data.get("max_risk", 1.0)),
+            allowed_trace_types=set(data.get("allowed_trace_types", []) or []),
+            require_approval=set(data.get("require_approval", []) or []),
+            bot_role_permissions=role_permissions,
+        )
+
+    @classmethod
+    def from_yaml(cls, path: str) -> "GovernancePolicy":
+        if not os.path.exists(path):
+            raise FileNotFoundError(path)
+        try:
+            import yaml
+        except ImportError as exc:  # pragma: no cover
+            raise RuntimeError("PyYAML is required to load governance YAML policies") from exc
+        with open(path, encoding="utf-8") as handle:
+            raw = yaml.safe_load(handle) or {}
+        if not isinstance(raw, dict):
+            raise ValueError("Governance policy file must contain a mapping/object")
+        return cls.from_dict(raw)
+
 
 @dataclass
 class GovernanceDecision:
@@ -29,6 +58,10 @@ class StigmergyGovernance:
     def __init__(self, policy: GovernancePolicy | None = None, *, approval_fn: ApprovalFn | None = None) -> None:
         self.policy = policy or GovernancePolicy()
         self._approval_fn = approval_fn
+
+    @classmethod
+    def from_yaml(cls, path: str, *, approval_fn: ApprovalFn | None = None) -> "StigmergyGovernance":
+        return cls(policy=GovernancePolicy.from_yaml(path), approval_fn=approval_fn)
 
     def validate_deposit(self, pheromone: PheromoneTrace, *, bot_role: str = "worker") -> GovernanceDecision:
         if pheromone.strength > self.policy.max_strength:

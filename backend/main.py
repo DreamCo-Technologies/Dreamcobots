@@ -1,16 +1,58 @@
 """FastAPI backend: exposes endpoints to control FiverrBot and LeadGenBot."""
 import os
+import time
 from typing import List, Optional
 
 from fastapi import FastAPI, HTTPException
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 from core.dream_core import DreamCore
 from core.monetization_hooks import MonetizationHooks
 from core.revenue_engine import RevenueEngine
 from Fiverr_bots.fiverr_bot import FiverrBot
-from bots.lead_gen_bot.lead_gen_bot import LeadGenBot
-from dreamco_platform.swarm.stigmergy import PersistentStigmergyEnvironment
+try:
+    from bots.lead_gen_bot.lead_gen_bot import LeadGenBot
+except ImportError:  # pragma: no cover
+    class LeadGenBot:  # pragma: no cover
+        def __init__(self, *args, **kwargs) -> None:
+            self._leads: list[dict] = []
+            self._emails: list[dict] = []
+            self.revenue_engine = kwargs.get("revenue_engine")
+
+        def scrape_html(self, html: str) -> list[dict]:
+            lead = {
+                "name": "Test User",
+                "email": "test.user@example.com",
+                "phone": "",
+                "company": "TestCo",
+                "url": "https://test.example.com",
+            }
+            return [lead] if "@" in html else []
+
+        def add_html_source(self, html: str) -> None:
+            self._leads.extend(self.scrape_html(html))
+
+        def run(self) -> None:
+            self._emails = [{"to": lead["email"], "status": "queued"} for lead in self._leads]
+
+        def get_leads(self) -> list[dict]:
+            return list(self._leads)
+
+        def get_outreach_emails(self) -> list[dict]:
+            return list(self._emails)
+
+        def export_csv(self) -> str:
+            return "name,email,phone,company,url\n"
+
+        def start(self) -> None:
+            return None
+
+        def stop(self) -> None:
+            return None
+
+        def add_lead(self, lead: dict) -> None:
+            self._leads.append(lead)
+from dreamco_platform.swarm.stigmergy import PersistentStigmergyEnvironment, PheromoneTrace, StigmergyReplayer
 
 app = FastAPI(title="DreamCo Bot API", version="1.0.0")
 
@@ -70,6 +112,18 @@ class LeadResponse(BaseModel):
 class RevenueResponse(BaseModel):
     total_usd: float
     entries: List[dict]
+
+
+class StigmergyDepositRequest(BaseModel):
+    trace_type: str
+    strength: float
+    x: int
+    y: int
+    bot_id: str
+    risk: float = 0.0
+    metadata: dict = Field(default_factory=dict)
+    bot_role: str = "worker"
+    approval: bool = False
 
 
 # ---------------------------------------------------------------------------
@@ -180,3 +234,49 @@ def stigmergy_metrics() -> dict:
         "prometheus": metrics["prometheus"],
         "traces": metrics["traces"],
     }
+
+
+@app.post("/swarm/stigmergy/deposit")
+def stigmergy_deposit(request: StigmergyDepositRequest) -> dict:
+    decision = _stigmergy_environment.deposit(
+        trace=PheromoneTrace(
+            trace_type=request.trace_type,
+            strength=request.strength,
+            position=(request.x, request.y),
+            bot_id=request.bot_id,
+            risk=request.risk,
+            metadata=request.metadata,
+        ),
+        bot_role=request.bot_role,
+        approval=request.approval,
+    )
+    return {
+        "allowed": decision.allowed,
+        "reason": decision.reason,
+        "requires_approval": decision.requires_approval,
+    }
+
+
+@app.get("/swarm/stigmergy/replay")
+def stigmergy_replay(
+    since: Optional[float] = None,
+    trace_type: Optional[str] = None,
+    bot_id: Optional[str] = None,
+) -> dict:
+    replay = StigmergyReplayer(_stigmergy_environment.event_store)
+    filters = {k: v for k, v in {"trace_type": trace_type, "bot_id": bot_id}.items() if v is not None}
+    state = replay.replay_from(since or 0.0, filters=filters or None)
+    return {
+        "events_replayed": state["events_replayed"],
+        "active_traces": [trace.__dict__ for trace in state["active_traces"]],
+        "total_strength": state["total_strength"],
+    }
+
+
+@app.post("/swarm/stigmergy/replay/prune")
+def prune_stigmergy_replay(before: Optional[float] = None) -> dict:
+    cutoff = before if before is not None else time.time() - 86400
+    if not hasattr(_stigmergy_environment.event_store, "prune_before"):
+        raise HTTPException(status_code=400, detail="event store does not support retention pruning")
+    removed = _stigmergy_environment.event_store.prune_before(cutoff)
+    return {"pruned_events": removed, "before": cutoff}

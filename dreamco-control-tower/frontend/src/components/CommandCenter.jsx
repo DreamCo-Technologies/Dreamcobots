@@ -75,6 +75,12 @@ export default function CommandCenter() {
             {board.computed?.marl_ready_architectures ?? 0}
           </p>
         </div>
+        <div className="bg-dreamco-card rounded-xl p-4 border border-slate-700">
+          <p className="text-xs text-slate-400">Live stigmergy traces</p>
+          <p className="text-white font-semibold mt-1">
+            {board.computed?.live_stigmergy_traces ?? '—'}
+          </p>
+        </div>
       </div>
 
       <div className="bg-dreamco-card rounded-xl p-5 border border-slate-700 mb-6">
@@ -188,6 +194,15 @@ export default function CommandCenter() {
             — {board.coordination_layer?.control_model}
           </p>
           <div className="space-y-4">
+            <div>
+              <p className="text-xs uppercase tracking-wide text-slate-400 mb-2">
+                Live Stigmergy Metrics
+              </p>
+              <p className="text-sm text-slate-300">
+                Active traces: {board.stigmergy_metrics?.active_trace_count ?? '—'} · Total strength:{' '}
+                {board.stigmergy_metrics?.total_strength ?? '—'}
+              </p>
+            </div>
             <div>
               <p className="text-xs uppercase tracking-wide text-slate-400 mb-2">
                 Communication Layers

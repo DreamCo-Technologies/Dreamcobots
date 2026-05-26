@@ -14,6 +14,24 @@ Every bot in DreamCo follows a three-tier capability model:
 | **PRO** | $49/mo | Full automation, unlimited requests, priority queue, analytics |
 | **ENTERPRISE** | $199/mo | Custom integrations, dedicated scheduler, SLA, white-label |
 
+### Swarm / Stigmergy Coordination
+
+DreamCo also includes swarm coordination primitives for governed multi-bot behavior:
+
+- Primary package: `dreamco_platform/swarm/stigmergy/`
+- Compatibility package: `swarm/stigmergy/`
+- Governance policy file: `config/stigmergy_governance.yaml`
+- Metrics/replay API:
+  - `GET /swarm/stigmergy/metrics`
+  - `POST /swarm/stigmergy/deposit`
+  - `GET /swarm/stigmergy/replay`
+  - `POST /swarm/stigmergy/replay/prune`
+
+Environment variables:
+- `STIGMERGY_GOVERNANCE_PATH` — override governance config path
+- `STIGMERGY_EVENT_LOG_PATH` — durable append-only event log path
+- `STIGMERGY_METRICS_URL` — URL used by orchestrator/control tower to ingest live stigmergy metrics
+
 ### Directory Structure
 
 ```

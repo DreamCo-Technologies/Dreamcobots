@@ -319,4 +319,10 @@ describe('GET /api/command-center', () => {
     expect(res.body.computed.best_swarm_architecture).toBe('hybrid_llm_marl');
     expect(typeof res.body.computed.marl_ready_architectures).toBe('number');
   });
+
+  test('returns live stigmergy telemetry fields', async () => {
+    const res = await request(app).get('/api/command-center');
+    expect(res.body).toHaveProperty('stigmergy_metrics');
+    expect(res.body.computed).toHaveProperty('live_stigmergy_traces');
+  });
 });
