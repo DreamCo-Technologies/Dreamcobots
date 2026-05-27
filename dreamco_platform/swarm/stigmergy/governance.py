@@ -17,6 +17,7 @@ class GovernancePolicy:
     allowed_trace_types: set[str] = field(default_factory=set)
     require_approval: set[str] = field(default_factory=set)
     bot_role_permissions: dict[str, set[str]] = field(default_factory=dict)
+    min_approvals_by_trace_type: dict[str, int] = field(default_factory=dict)
 
     @classmethod
     def from_dict(cls, data: dict) -> "GovernancePolicy":
@@ -24,12 +25,17 @@ class GovernancePolicy:
             str(role): set(types or [])
             for role, types in (data.get("bot_role_permissions") or {}).items()
         }
+        min_approvals_by_trace_type = {
+            str(trace_type): max(0, int(required))
+            for trace_type, required in (data.get("min_approvals_by_trace_type") or {}).items()
+        }
         return cls(
             max_strength=float(data.get("max_strength", 1.0)),
             max_risk=float(data.get("max_risk", 1.0)),
             allowed_trace_types=set(data.get("allowed_trace_types", []) or []),
             require_approval=set(data.get("require_approval", []) or []),
             bot_role_permissions=role_permissions,
+            min_approvals_by_trace_type=min_approvals_by_trace_type,
         )
 
     @classmethod
@@ -78,3 +84,11 @@ class StigmergyGovernance:
             if not approved:
                 return GovernanceDecision(False, "trace requires BuddyAI/human approval", requires_approval=True)
         return GovernanceDecision(True, "trace accepted")
+
+    def required_approvals_for(self, trace_type: str) -> int:
+        explicit = self.policy.min_approvals_by_trace_type.get(trace_type)
+        if explicit is not None:
+            return explicit
+        if trace_type in self.policy.require_approval:
+            return 1
+        return 0

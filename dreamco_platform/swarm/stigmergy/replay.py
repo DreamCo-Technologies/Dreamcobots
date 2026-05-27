@@ -7,6 +7,7 @@ import threading
 import time
 import uuid
 from typing import Any
+from typing import Protocol
 
 from dreamco_platform.swarm.stigmergy.pheromone import PheromoneTrace
 
@@ -130,19 +131,33 @@ class FileDurableEventStore:
 
 
 class StigmergyReplayer:
-    def __init__(self, event_store: InMemoryEventStore) -> None:
+    def __init__(self, event_store: "ReplayEventStore") -> None:
         self.event_store = event_store
 
     def replay_from(self, timestamp: float, filters: dict[str, Any] | None = None) -> dict[str, Any]:
         filters = filters or {}
         traces: list[PheromoneTrace] = []
+        rejected_events = 0
+        seen_event_ids: set[str] = set()
+        replayed_events = 0
         for event in self.event_store.query_since(timestamp):
+            if event.event_id in seen_event_ids:
+                continue
+            seen_event_ids.add(event.event_id)
+            replayed_events += 1
             if filters and any(event.payload.get(k) != v for k, v in filters.items()):
                 continue
             if event.event_type == "stigmergy.deposit":
                 traces.append(PheromoneTrace(**event.payload))
+            if event.event_type in {"stigmergy.rejected", "stigmergy.persistence_failure"}:
+                rejected_events += 1
         return {
-            "events_replayed": len(self.event_store.query_since(timestamp)),
+            "events_replayed": replayed_events,
             "active_traces": traces,
             "total_strength": sum(t.strength for t in traces),
+            "rejected_events": rejected_events,
         }
+
+
+class ReplayEventStore(Protocol):
+    def query_since(self, timestamp: float, *, event_type_prefix: str = "stigmergy.") -> list[StigmergyEvent]: ...

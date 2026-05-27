@@ -122,6 +122,8 @@ class StigmergyDepositRequest(BaseModel):
     bot_id: str
     risk: float = 0.0
     metadata: dict = Field(default_factory=dict)
+    approval_count: int = 0
+    approved_by: List[str] = Field(default_factory=list)
     bot_role: str = "worker"
     approval: bool = False
 
@@ -230,7 +232,10 @@ def stigmergy_metrics() -> dict:
     return {
         "active_trace_count": metrics["active_trace_count"],
         "total_strength": metrics["total_strength"],
+        "total_risk": metrics["total_risk"],
+        "volatility": metrics["volatility"],
         "heatmap": metrics["heatmap"],
+        "anomalies": metrics["anomalies"],
         "prometheus": metrics["prometheus"],
         "traces": metrics["traces"],
     }
@@ -245,7 +250,11 @@ def stigmergy_deposit(request: StigmergyDepositRequest) -> dict:
             position=(request.x, request.y),
             bot_id=request.bot_id,
             risk=request.risk,
-            metadata=request.metadata,
+            metadata={
+                **request.metadata,
+                "approval_count": request.approval_count,
+                "approved_by": request.approved_by,
+            },
         ),
         bot_role=request.bot_role,
         approval=request.approval,

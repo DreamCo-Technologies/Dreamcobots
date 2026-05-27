@@ -46,6 +46,14 @@ class _ArchiveStore:
         self.snapshots.append(list(traces))
 
 
+class _FailingDurableStore:
+    def append_trace_event(self, event):
+        raise RuntimeError("durable-store-down")
+
+    def load_active_traces(self):
+        return []
+
+
 def test_observer_and_metrics_capture_deposit():
     env = PersistentStigmergyEnvironment()
     decision = env.deposit(PheromoneTrace("routing", 0.5, (1, 2), "bot_1"))
@@ -53,6 +61,7 @@ def test_observer_and_metrics_capture_deposit():
     metrics = env.metrics()
     assert metrics["active_trace_count"] == 1
     assert metrics["heatmap"]["1:2"] == 0.5
+    assert "anomalies" in metrics
     assert "stigmergy_deposits_total" in metrics["prometheus"]
 
 
@@ -82,6 +91,7 @@ def test_replay_reconstructs_trace_state():
     replay = StigmergyReplayer(env.event_store)
     replay_state = replay.replay_from(t0, filters={"trace_type": "search"})
     assert replay_state["events_replayed"] >= 2
+    assert replay_state["rejected_events"] == 0
     assert len(replay_state["active_traces"]) == 2
     assert replay_state["total_strength"] == pytest.approx(0.6)
 
@@ -135,6 +145,7 @@ def test_governance_policy_loads_from_yaml():
     assert governance.policy.max_strength == pytest.approx(1.0)
     assert "high_value_trade" in governance.policy.require_approval
     assert "pricing" in governance.policy.bot_role_permissions["trader"]
+    assert governance.required_approvals_for("high_value_trade") == 2
 
 
 def test_file_durable_event_store_replays_and_prunes(tmp_path):
@@ -150,3 +161,40 @@ def test_file_durable_event_store_replays_and_prunes(tmp_path):
     removed = durable_store.prune_before(time.time() + 1.0)
     assert removed >= 1
     assert durable_store.load_active_traces() == []
+
+
+def test_distributed_safety_allows_threshold_approvals_without_boolean_override():
+    policy = GovernancePolicy(
+        allowed_trace_types={"high_value_trade"},
+        bot_role_permissions={"trader": {"high_value_trade"}},
+        min_approvals_by_trace_type={"high_value_trade": 2},
+    )
+    env = PersistentStigmergyEnvironment(governance=StigmergyGovernance(policy))
+    trace = PheromoneTrace(
+        "high_value_trade",
+        0.95,
+        (9, 9),
+        "bot_trader",
+        metadata={"approved_by": ["buddy", "safetybot"]},
+    )
+    decision = env.deposit(trace, bot_role="trader", approval=False)
+    assert decision.allowed is True
+
+
+def test_persistence_failure_rolls_back_active_trace_and_replays_failure():
+    env = PersistentStigmergyEnvironment(durable_store=_FailingDurableStore())
+    trace = PheromoneTrace("search", 0.4, (7, 7), "bot_failure")
+    decision = env.deposit(trace, approval=True)
+    assert decision.allowed is False
+    assert env.active_traces() == []
+    replay = StigmergyReplayer(env.event_store).replay_from(0.0)
+    assert replay["rejected_events"] >= 1
+
+
+def test_economic_guardrail_blocks_high_volatility_spikes():
+    env = PersistentStigmergyEnvironment(max_strength_volatility=0.2)
+    assert env.deposit(PheromoneTrace("search", 0.2, (1, 1), "bot_a"), approval=True).allowed
+    assert env.deposit(PheromoneTrace("search", 0.22, (1, 1), "bot_b"), approval=True).allowed
+    blocked = env.deposit(PheromoneTrace("search", 1.0, (1, 1), "bot_c"), approval=True)
+    assert blocked.allowed is False
+    assert "volatility" in blocked.reason

@@ -105,6 +105,24 @@ class StigmergyObserver:
         if self._otel_action_counter:
             self._otel_action_counter.add(1, attributes=labels)
 
+    def observe_rejection(self, *, reason: str, source: str = "swarm") -> None:
+        labels = {"reason": reason, "source": source}
+        with self.tracer.span("stigmergy.reject", trace_id=f"{source}:{reason}") as span:
+            span.set_tag("reason", reason)
+            self.metrics.increment("stigmergy.rejections_total", labels=labels)
+        if self._otel_tracer:
+            with self._otel_tracer.start_as_current_span("stigmergy.reject") as span:
+                span.set_attribute("reason", reason)
+                span.set_attribute("source", source)
+        self.logger.warning("stigmergy_rejection", extra={"reason": reason})
+
+    def observe_stability(self, *, volatility: float, risk_total: float, source: str = "swarm") -> None:
+        labels = {"source": source}
+        self.metrics.set_gauge("stigmergy.strength_volatility", volatility, labels=labels)
+        self.metrics.set_gauge("stigmergy.risk_total", risk_total, labels=labels)
+        if self._otel_strength_histogram:
+            self._otel_strength_histogram.record(volatility, attributes={"metric": "volatility", **labels})
+
     def heatmap(self, traces: list[PheromoneTrace]) -> dict[str, float]:
         heat: dict[str, float] = {}
         for trace in traces:
@@ -125,3 +143,8 @@ class StigmergyObserver:
 
     def trace_snapshot(self, n: int = 50) -> list[dict[str, Any]]:
         return [s.to_dict() for s in self.tracer.recent_spans(n)]
+
+    def anomaly_flags(self, traces: list[PheromoneTrace]) -> dict[str, int]:
+        high_strength = sum(1 for trace in traces if trace.strength >= 0.9)
+        high_risk = sum(1 for trace in traces if trace.risk >= 0.7)
+        return {"high_strength_traces": high_strength, "high_risk_traces": high_risk}
