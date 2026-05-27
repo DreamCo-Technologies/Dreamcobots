@@ -27,6 +27,12 @@ DreamCo also includes swarm coordination primitives for governed multi-bot behav
   - `GET /swarm/stigmergy/replay`
   - `POST /swarm/stigmergy/replay/prune`
 
+Hardening defaults now include:
+- Volatility/risk guardrails with automatic circuit opening on risk budget violations
+- Replay visibility for rejected/persistence-failure events
+- Distributed approvals via `approval_count` or `approved_by` metadata for sensitive traces
+- Metrics payload now includes `total_risk`, `volatility`, and `anomalies`
+
 Environment variables:
 - `STIGMERGY_GOVERNANCE_PATH` — override governance config path
 - `STIGMERGY_EVENT_LOG_PATH` — durable append-only event log path
