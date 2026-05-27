@@ -3,7 +3,7 @@ import BotOverview from './components/BotOverview.jsx';
 import RepoActivity from './components/RepoActivity.jsx';
 import BotDeployment from './components/BotDeployment.jsx';
 import Analytics from './components/Analytics.jsx';
-import ActionsMonitor from './components/ActionsMonitor.jsx';
+import ActionsPage from './components/ActionsPage.jsx';
 import BotMarketplace from './components/BotMarketplace.jsx';
 import CommandCenter from './components/CommandCenter.jsx';
 
@@ -55,7 +55,7 @@ export default function App() {
           {activeTab === 'activity' && <RepoActivity />}
           {activeTab === 'deploy' && <BotDeployment />}
           {activeTab === 'analytics' && <Analytics />}
-          {activeTab === 'actions' && <ActionsMonitor />}
+          {activeTab === 'actions' && <ActionsPage />}
           {activeTab === 'marketplace' && <BotMarketplace />}
           {activeTab === 'command-center' && <CommandCenter />}
         </main>
