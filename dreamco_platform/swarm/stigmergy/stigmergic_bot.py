@@ -34,7 +34,7 @@ class StigmergicBot:
         volatility = abs(float(outcome.get("volatility", trace.volatility_signal)))
         net = profit - loss
         economic_term = net / 10_000.0
-        role = outcome.get("foraging_role") or trace.foraging_role or self.assign_foraging_role(outcome)
+        role = outcome.get("foraging_role") or self.assign_foraging_role(outcome) or trace.foraging_role
         role_factor = self.FORAGING_ROLE_FACTORS.get(role, 1.0)
         factor = (1.0 + (economic_term * self.profit_weight) - (risk * self.risk_weight)) * role_factor
         if net < 0:

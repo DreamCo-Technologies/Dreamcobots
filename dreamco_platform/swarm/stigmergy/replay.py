@@ -109,6 +109,10 @@ class FileDurableEventStore:
                 payload = dict(event.payload)
                 if isinstance(payload.get("position"), list):
                     payload["position"] = tuple(payload["position"])
+                if isinstance(payload.get("embedding"), list):
+                    payload["embedding"] = tuple(payload["embedding"])
+                if isinstance(payload.get("origin_lineage"), list):
+                    payload["origin_lineage"] = tuple(payload["origin_lineage"])
                 traces.append(PheromoneTrace(**payload))
             except TypeError:
                 continue
@@ -148,7 +152,14 @@ class StigmergyReplayer:
             if filters and any(event.payload.get(k) != v for k, v in filters.items()):
                 continue
             if event.event_type == "stigmergy.deposit":
-                traces.append(PheromoneTrace(**event.payload))
+                payload = dict(event.payload)
+                if isinstance(payload.get("position"), list):
+                    payload["position"] = tuple(payload["position"])
+                if isinstance(payload.get("embedding"), list):
+                    payload["embedding"] = tuple(payload["embedding"])
+                if isinstance(payload.get("origin_lineage"), list):
+                    payload["origin_lineage"] = tuple(payload["origin_lineage"])
+                traces.append(PheromoneTrace(**payload))
             if event.event_type in {"stigmergy.rejected", "stigmergy.persistence_failure"}:
                 rejected_events += 1
         return {
