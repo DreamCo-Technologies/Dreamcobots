@@ -24,6 +24,8 @@ dreamco-control-tower/
 │   │       ├── RepoActivity.jsx           # GitHub PRs, commits, workflow status
 │   │       ├── BotDeployment.jsx          # Deploy new bots from templates
 │   │       ├── Analytics.jsx              # Uptime, PR trends, status charts
+│   │       ├── ActionsPage.jsx            # Actions monitor + Buddy launcher modal
+│   │       ├── BuddyCommandCenter.jsx     # Full Buddy command center modal content
 │   │       └── CommandCenter.jsx          # Max-parallel lane board + June 22 plan
 │   ├── index.html
 │   ├── vite.config.js
@@ -69,6 +71,7 @@ Every bot POSTs to `/api/bot-heartbeat` to signal it is alive. The Control Tower
 | **Repo Activity** | GitHub commits, PR merges, open PRs, workflow results |
 | **Bot Deployment** | Create and deploy bots from templates with one click |
 | **Analytics** | Uptime charts, PR success rates, status distribution |
+| **Actions** | GitHub Actions monitor plus a launchable Buddy terminal modal for autonomous command dispatch |
 | **Command Center** | Must-ship scope, lane owners, blockers, validation, ship decisions, and swarm/MARL benchmark telemetry |
 
 ---
@@ -92,6 +95,7 @@ npm start
 cd dreamco-control-tower/frontend
 npm install
 npm run dev   # Opens on http://localhost:5173
+npm run test  # Runs Actions/Buddy UI tests (modal + Enter key flows)
 ```
 
 ### Heartbeat Check (CLI)
