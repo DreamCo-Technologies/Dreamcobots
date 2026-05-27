@@ -2,10 +2,10 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { motion } from 'framer-motion';
 import { gsap } from 'gsap';
 import BuddyTester from './BuddyTester.jsx';
+import BuddyCommandCenter from './BuddyCommandCenter.jsx';
 import EmbeddedDashboard from './EmbeddedDashboard.jsx';
 import ActionsMonitor from './ActionsMonitor.jsx';
 import BotMarketplace from './BotMarketplace.jsx';
-import CommandCenter from './CommandCenter.jsx';
 
 const TABS = [
   { id: 'buddy-tester', label: 'Live Buddy Tester' },
@@ -138,7 +138,7 @@ export default function ActionsPage() {
             onClick={() => setShowBuddyCenter(true)}
             className="px-4 py-2 rounded-lg bg-dreamco-accent text-white text-sm font-semibold"
           >
-            Test Buddy Live — Full Repo Command Center
+            Launch Full Buddy Command Center
           </motion.button>
         </div>
       </div>
@@ -168,7 +168,7 @@ export default function ActionsPage() {
                 Close
               </button>
             </div>
-            <CommandCenter />
+            <BuddyCommandCenter />
           </div>
         </div>
       )}

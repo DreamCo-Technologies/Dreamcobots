@@ -3,7 +3,7 @@ import BotOverview from './components/BotOverview.jsx';
 import RepoActivity from './components/RepoActivity.jsx';
 import BotDeployment from './components/BotDeployment.jsx';
 import Analytics from './components/Analytics.jsx';
-import ActionsPage from './components/ActionsPage.jsx';
+import ActionsPage from './pages/ActionsPage.tsx';
 import BotMarketplace from './components/BotMarketplace.jsx';
 import CommandCenter from './components/CommandCenter.jsx';
 

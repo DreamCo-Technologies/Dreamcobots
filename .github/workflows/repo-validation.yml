@@ -112,10 +112,11 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: dashboard-comparison
+          name: dashboard-comparison-summary-${{ github.run_id }}
           path: |
             /tmp/dashboard-comparison.json
             /tmp/dashboard-comparison-summary.md
+          overwrite: true
 
       - name: Set up Python 3.11
         uses: actions/setup-python@v5
@@ -194,8 +195,9 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: dashboard-comparison
+          name: dashboard-comparison-tests-${{ github.run_id }}
           path: /tmp/dashboard-comparison.json
+          overwrite: true
 
       - name: Run dashboard tests
         run: |
