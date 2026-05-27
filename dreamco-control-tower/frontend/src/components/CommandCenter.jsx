@@ -16,6 +16,10 @@ export default function CommandCenter() {
   const [board, setBoard] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [prospectusList, setProspectusList] = useState([]);
+  const [selectedBot, setSelectedBot] = useState('');
+  const [botDetails, setBotDetails] = useState(null);
+  const [actionStatus, setActionStatus] = useState(null);
 
   useEffect(() => {
     fetch('/api/command-center')
@@ -31,7 +35,41 @@ export default function CommandCenter() {
         setError(err.message);
         setLoading(false);
       });
+
+    fetch('/api/command-center/prospectus')
+      .then((r) => r.json())
+      .then((data) => {
+        const bots = Array.isArray(data?.bots) ? data.bots : [];
+        setProspectusList(bots);
+        if (bots.length > 0) {
+          setSelectedBot(bots[0].bot_id);
+        }
+      })
+      .catch(() => setProspectusList([]));
   }, []);
+
+  useEffect(() => {
+    if (!selectedBot) {
+      setBotDetails(null);
+      return;
+    }
+    fetch(`/api/command-center/prospectus/${selectedBot}`)
+      .then((r) => r.json())
+      .then((data) => setBotDetails(data))
+      .catch(() => setBotDetails(null));
+  }, [selectedBot]);
+
+  function runBotAction(action) {
+    if (!selectedBot) return;
+    fetch(`/api/command-center/bots/${selectedBot}/${action}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ initiated_from: 'command_center_ui' }),
+    })
+      .then((r) => r.json())
+      .then((data) => setActionStatus(data))
+      .catch((err) => setActionStatus({ error: err.message }));
+  }
 
   if (loading) {
     return <p className="text-slate-400">Loading command center…</p>;
@@ -234,6 +272,75 @@ export default function CommandCenter() {
               </ul>
             </div>
           </div>
+        </div>
+      </div>
+
+      <div className="bg-dreamco-card rounded-xl p-5 border border-slate-700 mt-6">
+        <h3 className="text-sm font-semibold text-slate-200 mb-3">Per-Bot Prospectus & Operator Surfaces</h3>
+        <div className="grid grid-cols-1 lg:grid-cols-[280px_1fr] gap-4">
+          <aside className="space-y-2">
+            {prospectusList.map((item) => (
+              <button
+                key={item.bot_id}
+                onClick={() => setSelectedBot(item.bot_id)}
+                className={`w-full text-left rounded-lg px-3 py-2 text-sm border ${
+                  selectedBot === item.bot_id
+                    ? 'border-dreamco-accent text-white bg-slate-800'
+                    : 'border-slate-700 text-slate-300 bg-slate-900/40'
+                }`}
+              >
+                <p className="font-medium">{item.display_name}</p>
+                <p className="text-xs text-slate-400 mt-1">{item.tier}</p>
+              </button>
+            ))}
+          </aside>
+          <section className="space-y-3">
+            {!botDetails && <p className="text-sm text-slate-400">Select a bot to load runtime prospectus.</p>}
+            {botDetails && (
+              <>
+                <div className="border border-slate-700 rounded-lg p-3 bg-slate-900/30">
+                  <p className="text-white font-medium">{botDetails.display_name}</p>
+                  <p className="text-xs text-slate-400 mt-1">{botDetails.description || 'No description'}</p>
+                  <p className="text-xs text-slate-300 mt-2">
+                    Runtime: {botDetails.runtime_manifest?.swarm_runtime} · Semantic stigmergy:{' '}
+                    {botDetails.runtime_manifest?.semantic_stigmergy ? 'enabled' : 'disabled'}
+                  </p>
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  <button
+                    onClick={() => runBotAction('test')}
+                    className="px-3 py-1.5 rounded-lg text-xs bg-indigo-700 text-white"
+                  >
+                    Run Test Surface
+                  </button>
+                  <button
+                    onClick={() => runBotAction('train')}
+                    className="px-3 py-1.5 rounded-lg text-xs bg-purple-700 text-white"
+                  >
+                    Run Train Surface
+                  </button>
+                  <button
+                    onClick={() => runBotAction('run')}
+                    className="px-3 py-1.5 rounded-lg text-xs bg-dreamco-accent text-white"
+                  >
+                    Run Live Surface
+                  </button>
+                </div>
+                {actionStatus && (
+                  <div className="border border-slate-700 rounded-lg p-3 bg-slate-900/30 text-xs text-slate-300">
+                    {actionStatus.error ? (
+                      <span className="text-dreamco-red">{actionStatus.error}</span>
+                    ) : (
+                      <span>
+                        {actionStatus.action} queued · queue id {actionStatus.queue_id} · ETA{' '}
+                        {actionStatus.estimated_completion_seconds}s
+                      </span>
+                    )}
+                  </div>
+                )}
+              </>
+            )}
+          </section>
         </div>
       </div>
     </div>

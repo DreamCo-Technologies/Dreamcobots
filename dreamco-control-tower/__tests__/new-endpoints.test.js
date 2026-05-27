@@ -294,6 +294,41 @@ describe('GET /api/command-center', () => {
     });
   });
 
+  describe('Command center bot prospectus and surfaces', () => {
+    test('GET /api/command-center/prospectus returns bot list', async () => {
+      const res = await request(app).get('/api/command-center/prospectus');
+      expect(res.status).toBe(200);
+      expect(Array.isArray(res.body.bots)).toBe(true);
+      expect(res.body.bots.length).toBeGreaterThan(0);
+    });
+
+    test('GET /api/command-center/prospectus/:botId returns bot manifest', async () => {
+      const res = await request(app).get('/api/command-center/prospectus/buddy_bot');
+      expect(res.status).toBe(200);
+      expect(res.body).toHaveProperty('runtime_manifest');
+      expect(res.body.runtime_manifest).toHaveProperty('semantic_stigmergy', true);
+    });
+
+    test('POST /api/command-center/bots/:botId/test queues action', async () => {
+      const res = await request(app).post('/api/command-center/bots/buddy_bot/test').send({});
+      expect(res.status).toBe(200);
+      expect(res.body).toHaveProperty('action', 'test');
+      expect(res.body).toHaveProperty('status', 'queued');
+    });
+
+    test('POST /api/command-center/bots/:botId/train queues action', async () => {
+      const res = await request(app).post('/api/command-center/bots/buddy_bot/train').send({});
+      expect(res.status).toBe(200);
+      expect(res.body).toHaveProperty('action', 'train');
+    });
+
+    test('POST /api/command-center/bots/:botId/run queues action', async () => {
+      const res = await request(app).post('/api/command-center/bots/buddy_bot/run').send({});
+      expect(res.status).toBe(200);
+      expect(res.body).toHaveProperty('action', 'run');
+    });
+  });
+
   test('returns computed telemetry', async () => {
     const res = await request(app).get('/api/command-center');
     expect(res.body).toHaveProperty('computed');

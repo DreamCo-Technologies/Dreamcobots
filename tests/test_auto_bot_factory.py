@@ -29,6 +29,7 @@ from bots.auto_bot_factory.tiers import (
     FEATURE_USAGE_BILLING,
     FEATURE_FULL_AUTONOMY,
     FEATURE_GITHUB_DEPLOY,
+    FEATURE_BATCH_ORCHESTRATION,
 )
 from bots.auto_bot_factory.competitor_analyzer import (
     CompetitorAnalyzer,
@@ -145,6 +146,10 @@ class TestAutoBotFactoryTiers:
         for tier in Tier:
             config = get_tier_config(tier)
             assert config.has_feature(FEATURE_GITHUB_DEPLOY)
+
+    def test_advanced_has_batch_orchestration(self):
+        config = get_tier_config(Tier.ADVANCED)
+        assert config.has_feature(FEATURE_BATCH_ORCHESTRATION)
 
     def test_upgrade_path_basic_to_advanced(self):
         upgrade = get_upgrade_path(Tier.BASIC)
@@ -597,3 +602,28 @@ class TestAutoBotFactory:
             result = factory.create_bot(category="sales", purpose="test")
             ids.add(result["bot_id"])
         assert len(ids) == 5
+
+    def test_plan_batch_generation(self):
+        factory = AutoBotFactory(tier=Tier.ADVANCED)
+        plan = factory.plan_batch_generation(
+            prompt="trading empire with browser integration",
+            count=15,
+            parallel_workers=5,
+        )
+        assert plan["requested_count"] == 15
+        assert plan["parallel_workers"] == 5
+        assert plan["estimated_minutes"] > 0
+
+    def test_run_batch_generation(self):
+        factory = AutoBotFactory(tier=Tier.ADVANCED)
+        result = factory.run_batch_generation(
+            [
+                {"category": "sales", "purpose": "close deals"},
+                {"category": "automation", "purpose": "optimize operations"},
+            ],
+            deterministic_validation=True,
+        )
+        assert result["requested"] == 2
+        assert result["created"] == 2
+        assert result["failed"] == 0
+        assert result["deterministic_validation"] is True

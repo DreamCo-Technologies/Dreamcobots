@@ -198,3 +198,22 @@ def test_economic_guardrail_blocks_high_volatility_spikes():
     blocked = env.deposit(PheromoneTrace("search", 1.0, (1, 1), "bot_c"), approval=True)
     assert blocked.allowed is False
     assert "volatility" in blocked.reason
+
+
+def test_semantic_pheromone_feedback_and_adaptive_decay():
+    trace = PheromoneTrace(
+        "semantic_search",
+        0.8,
+        (4, 4),
+        "bot_semantic",
+        semantic_category="lead_generation",
+        trust_score=0.7,
+        profitability_signal=3_000,
+        volatility_signal=0.1,
+    )
+    updated = trace.with_semantic_feedback(trust_score=0.9, economic_score=1200.0)
+    assert updated.semantic_category == "lead_generation"
+    assert updated.trust_score == pytest.approx(0.9)
+    assert updated.economic_score == pytest.approx(1200.0)
+    decayed = updated.adaptive_decay(base_decay_rate=0.05)
+    assert decayed.strength > 0.0

@@ -27,6 +27,8 @@ from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from typing import Optional
 
+from global_ai_sources import choose_source_for_task
+
 from bots.auto_bot_factory.tiers import (
     Tier,
     TierConfig,
@@ -44,6 +46,7 @@ from bots.auto_bot_factory.tiers import (
     FEATURE_USAGE_BILLING,
     FEATURE_FULL_AUTONOMY,
     FEATURE_GITHUB_DEPLOY,
+    FEATURE_BATCH_ORCHESTRATION,
 )
 from bots.auto_bot_factory.competitor_analyzer import CompetitorAnalyzer, AnalysisReport
 from bots.auto_bot_factory.strategy_framework import StrategyFramework, StrategyCategory
@@ -119,6 +122,26 @@ class DeploymentRecord:
             "deployment_target": self.deployment_target,
             "deployed_at": self.deployed_at,
             "metrics": self.metrics,
+        }
+
+
+@dataclass
+class BatchGenerationPlan:
+    prompt: str
+    requested_count: int
+    parallel_workers: int
+    estimated_minutes: int
+    target_weekly_capacity: int
+    deterministic_validation: bool = True
+
+    def to_dict(self) -> dict:
+        return {
+            "prompt": self.prompt,
+            "requested_count": self.requested_count,
+            "parallel_workers": self.parallel_workers,
+            "estimated_minutes": self.estimated_minutes,
+            "target_weekly_capacity": self.target_weekly_capacity,
+            "deterministic_validation": self.deterministic_validation,
         }
 
 
@@ -368,3 +391,82 @@ class AutoBotFactory:
         purpose = payload.get("purpose", "automate tasks")
         features = payload.get("features", [])
         return self.create_bot(category=category, purpose=purpose, features=features)
+
+    def estimate_weekly_capacity(self, parallel_workers: int = 8) -> int:
+        workers = max(1, parallel_workers)
+        tier_multiplier = {
+            Tier.BASIC: 10,
+            Tier.ADVANCED: 40,
+            Tier.ENTERPRISE: 100,
+        }.get(self.tier, 10)
+        return max(5, int(tier_multiplier * min(3.0, workers / 8)))
+
+    def plan_batch_generation(
+        self,
+        *,
+        prompt: str,
+        count: int,
+        parallel_workers: int = 8,
+    ) -> dict:
+        self._require(FEATURE_BATCH_ORCHESTRATION)
+        safe_count = max(1, int(count))
+        workers = max(1, int(parallel_workers))
+        cycles = (safe_count + workers - 1) // workers
+        plan = BatchGenerationPlan(
+            prompt=prompt,
+            requested_count=safe_count,
+            parallel_workers=workers,
+            estimated_minutes=cycles * 8,
+            target_weekly_capacity=self.estimate_weekly_capacity(workers),
+            deterministic_validation=True,
+        )
+        return plan.to_dict()
+
+    def run_batch_generation(
+        self,
+        requests: list[dict],
+        *,
+        deploy: bool = False,
+        deterministic_validation: bool = True,
+    ) -> dict:
+        self._require(FEATURE_BATCH_ORCHESTRATION)
+        outputs: list[dict] = []
+        failed: list[dict] = []
+        for req in requests:
+            category = req.get("category", "general")
+            purpose = req.get("purpose", "automate tasks")
+            features = req.get("features", [])
+            try:
+                result = self.create_bot(
+                    category=category,
+                    purpose=purpose,
+                    features=features,
+                    deploy=deploy,
+                )
+                decision = choose_source_for_task(
+                    task=purpose,
+                    domain=category,
+                    modality="code",
+                )
+                result["global_source_plan"] = {
+                    "source_id": decision.source_id,
+                    "fallback_chain": list(decision.fallback_chain),
+                }
+                outputs.append(result)
+            except Exception as exc:  # noqa: BLE001
+                failed.append(
+                    {
+                        "category": category,
+                        "purpose": purpose,
+                        "error": str(exc),
+                    }
+                )
+        return {
+            "requested": len(requests),
+            "created": len(outputs),
+            "failed": len(failed),
+            "deterministic_validation": deterministic_validation,
+            "target_weekly_capacity": self.estimate_weekly_capacity(),
+            "results": outputs,
+            "failures": failed,
+        }

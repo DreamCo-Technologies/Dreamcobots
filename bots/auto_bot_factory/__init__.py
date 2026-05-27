@@ -4,6 +4,7 @@ from bots.auto_bot_factory.auto_bot_factory import (
     AutoBotFactory,
     AutoBotFactoryError,
     AutoBotFactoryTierError,
+    BatchGenerationPlan,
     BotBlueprint,
     DeploymentRecord,
 )
@@ -30,6 +31,7 @@ __all__ = [
     "AutoBotFactory",
     "AutoBotFactoryError",
     "AutoBotFactoryTierError",
+    "BatchGenerationPlan",
     "BotBlueprint",
     "DeploymentRecord",
     "Tier",

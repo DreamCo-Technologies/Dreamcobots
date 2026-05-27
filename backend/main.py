@@ -52,6 +52,7 @@ except ImportError:  # pragma: no cover
 
         def add_lead(self, lead: dict) -> None:
             self._leads.append(lead)
+from dreamco_platform.swarm.runtime import DreamCoRuntime
 from dreamco_platform.swarm.stigmergy import PersistentStigmergyEnvironment, PheromoneTrace, StigmergyReplayer
 
 app = FastAPI(title="DreamCo Bot API", version="1.0.0")
@@ -61,6 +62,7 @@ _revenue_engine = RevenueEngine()
 _monetization_hooks = MonetizationHooks()
 _dream_core = DreamCore()
 _stigmergy_environment = PersistentStigmergyEnvironment()
+_swarm_runtime = DreamCoRuntime(environment=_stigmergy_environment)
 
 # Bot instances (created on-demand per request for statelessness)
 def _make_fiverr_bot() -> FiverrBot:
@@ -122,6 +124,14 @@ class StigmergyDepositRequest(BaseModel):
     bot_id: str
     risk: float = 0.0
     metadata: dict = Field(default_factory=dict)
+    semantic_category: str = "general"
+    embedding: List[float] = Field(default_factory=list)
+    trust_score: float = 0.5
+    economic_score: float = 0.0
+    origin_lineage: List[str] = Field(default_factory=list)
+    foraging_role: str = "scout"
+    profitability_signal: float = 0.0
+    volatility_signal: float = 0.0
     approval_count: int = 0
     approved_by: List[str] = Field(default_factory=list)
     bot_role: str = "worker"
@@ -243,7 +253,7 @@ def stigmergy_metrics() -> dict:
 
 @app.post("/swarm/stigmergy/deposit")
 def stigmergy_deposit(request: StigmergyDepositRequest) -> dict:
-    decision = _stigmergy_environment.deposit(
+    decision = _swarm_runtime.deposit_trace(
         trace=PheromoneTrace(
             trace_type=request.trace_type,
             strength=request.strength,
@@ -255,15 +265,19 @@ def stigmergy_deposit(request: StigmergyDepositRequest) -> dict:
                 "approval_count": request.approval_count,
                 "approved_by": request.approved_by,
             },
+            semantic_category=request.semantic_category,
+            embedding=tuple(float(value) for value in request.embedding),
+            trust_score=request.trust_score,
+            economic_score=request.economic_score,
+            origin_lineage=tuple(request.origin_lineage),
+            foraging_role=request.foraging_role,
+            profitability_signal=request.profitability_signal,
+            volatility_signal=request.volatility_signal,
         ),
         bot_role=request.bot_role,
         approval=request.approval,
     )
-    return {
-        "allowed": decision.allowed,
-        "reason": decision.reason,
-        "requires_approval": decision.requires_approval,
-    }
+    return decision
 
 
 @app.get("/swarm/stigmergy/replay")
@@ -289,3 +303,12 @@ def prune_stigmergy_replay(before: Optional[float] = None) -> dict:
         raise HTTPException(status_code=400, detail="event store does not support retention pruning")
     removed = _stigmergy_environment.event_store.prune_before(cutoff)
     return {"pruned_events": removed, "before": cutoff}
+
+
+@app.post("/swarm/stigmergy/decay")
+def decay_stigmergy_traces() -> dict:
+    traces = _swarm_runtime.apply_adaptive_decay()
+    return {
+        "active_trace_count": len(traces),
+        "traces": [trace.__dict__ for trace in traces],
+    }

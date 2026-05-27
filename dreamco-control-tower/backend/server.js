@@ -67,6 +67,21 @@ function writeBots(bots) {
   fs.writeFileSync(BOTS_FILE, JSON.stringify(bots, null, 2));
 }
 
+function normalizeBotId(input) {
+  return String(input || '')
+    .trim()
+    .toLowerCase()
+    .replace(/[^a-z0-9_-]/g, '')
+    .replace(/-/g, '_');
+}
+
+function findBotById(botId) {
+  const normalized = normalizeBotId(botId);
+  const bots = readBots();
+  const bot = bots.find((candidate) => normalizeBotId(candidate.name) === normalized);
+  return { bot, bots, normalized };
+}
+
 function readCommandCenter() {
   if (!fs.existsSync(COMMAND_CENTER_FILE)) {
     return null;
@@ -418,6 +433,127 @@ app.get('/api/command-center', rateLimiter, async (_req, res) => {
       fetched_at: new Date().toISOString(),
     },
   });
+});
+
+app.get('/api/command-center/prospectus', rateLimiter, (_req, res) => {
+  const bots = readBots();
+  const items = bots.map((bot) => {
+    const botId = normalizeBotId(bot.name);
+    const tier = bot.tier || 'FREE';
+    const status = bot.status || 'idle';
+    const monthlyValue = Number(bot.price_usd ?? 0);
+    return {
+      bot_id: botId,
+      display_name: bot.name,
+      tier,
+      status,
+      category: bot.category || 'General',
+      headline: `${bot.name} operator prospectus`,
+      value_projection_monthly_usd: monthlyValue,
+      runtime_manifest: {
+        governance_mode: status === 'active' ? 'live' : 'simulation',
+        deterministic: true,
+        consensus: 'HotStuff + Raft',
+        safety: 'approval-gated high-impact actions',
+      },
+      test_surface: {
+        endpoint: `/api/command-center/bots/${botId}/test`,
+        last_status: status === 'active' ? 'ready' : 'standby',
+      },
+      train_surface: {
+        endpoint: `/api/command-center/bots/${botId}/train`,
+        strategy: 'semantic-stigmergy fine-tune',
+      },
+      run_surface: {
+        endpoint: `/api/command-center/bots/${botId}/run`,
+        mode: status === 'active' ? 'live' : 'sandbox',
+      },
+    };
+  });
+  return res.json({
+    count: items.length,
+    bots: items,
+    fetched_at: new Date().toISOString(),
+  });
+});
+
+app.get('/api/command-center/prospectus/:botId', rateLimiter, (req, res) => {
+  const { bot, normalized } = findBotById(req.params.botId);
+  if (!bot) {
+    return res.status(404).json({ error: `bot '${req.params.botId}' not found` });
+  }
+  const payload = {
+    bot_id: normalized,
+    display_name: bot.name,
+    category: bot.category || 'General',
+    tier: bot.tier || 'FREE',
+    status: bot.status || 'idle',
+    description: bot.description || '',
+    features: bot.features || [],
+    owner_lane: bot.status === 'active' ? 'ai_intelligence' : 'core_architecture_stability',
+    projected_revenue_monthly_usd: Number(bot.price_usd ?? 0),
+    runtime_manifest: {
+      deterministic_mode: true,
+      command_center_governor: 'BuddyAI',
+      swarm_runtime: 'DreamCoRuntime',
+      semantic_stigmergy: true,
+      redis_trace_fabric: true,
+      created_at: new Date().toISOString(),
+    },
+    test_surface: {
+      endpoint: `/api/command-center/bots/${normalized}/test`,
+      supports: ['smoke', 'integration', 'governance'],
+    },
+    train_surface: {
+      endpoint: `/api/command-center/bots/${normalized}/train`,
+      supports: ['semantic', 'economic', 'foraging'],
+    },
+    run_surface: {
+      endpoint: `/api/command-center/bots/${normalized}/run`,
+      supports: ['sandbox', 'live'],
+    },
+  };
+  return res.json(payload);
+});
+
+function botActionResponse(botId, action) {
+  return {
+    bot_id: botId,
+    action,
+    status: 'queued',
+    queue_id: `${action}_${Date.now()}`,
+    governance: {
+      deterministic_mode: true,
+      requires_approval: action === 'run',
+      command_center: 'BuddyAI',
+    },
+    estimated_completion_seconds: action === 'train' ? 120 : 30,
+    requested_at: new Date().toISOString(),
+  };
+}
+
+app.post('/api/command-center/bots/:botId/test', rateLimiter, (req, res) => {
+  const { bot } = findBotById(req.params.botId);
+  if (!bot) {
+    return res.status(404).json({ error: `bot '${req.params.botId}' not found` });
+  }
+  return res.json(botActionResponse(normalizeBotId(req.params.botId), 'test'));
+});
+
+app.post('/api/command-center/bots/:botId/train', rateLimiter, (req, res) => {
+  const { bot } = findBotById(req.params.botId);
+  if (!bot) {
+    return res.status(404).json({ error: `bot '${req.params.botId}' not found` });
+  }
+  return res.json(botActionResponse(normalizeBotId(req.params.botId), 'train'));
+});
+
+app.post('/api/command-center/bots/:botId/run', rateLimiter, (req, res) => {
+  const { bot } = findBotById(req.params.botId);
+  if (!bot) {
+    return res.status(404).json({ error: `bot '${req.params.botId}' not found` });
+  }
+  return res.json(botActionResponse(normalizeBotId(req.params.botId), 'run'));
 });
 
 // ---------------------------------------------------------------------------
