@@ -84,6 +84,80 @@ function computeOverallBenchmarkScore(architecture) {
   return Math.round(average * 100) / 100;
 }
 
+function heartbeatAgeMinutes(lastHeartbeat) {
+  if (!lastHeartbeat) {
+    return null;
+  }
+  const timestamp = new Date(lastHeartbeat).getTime();
+  if (Number.isNaN(timestamp)) {
+    return null;
+  }
+  const diffMs = Date.now() - timestamp;
+  return Math.max(0, Math.round(diffMs / (1000 * 60)));
+}
+
+function botHealthScore(bot) {
+  const status = String(bot.status || '').toLowerCase();
+  const ageMinutes = heartbeatAgeMinutes(bot.lastHeartbeat);
+  if (status === 'active') {
+    if (ageMinutes === null) {
+      return 80;
+    }
+    if (ageMinutes <= 5) {
+      return 95;
+    }
+    if (ageMinutes <= 30) {
+      return 88;
+    }
+    return 72;
+  }
+  if (status === 'idle') {
+    return 70;
+  }
+  if (status === 'failed') {
+    return 30;
+  }
+  return 60;
+}
+
+function botAutonomyScore(bot) {
+  const features = Array.isArray(bot.features) ? bot.features.length : 0;
+  const status = String(bot.status || '').toLowerCase();
+  const bonus = status === 'active' ? 15 : 0;
+  return Math.min(100, 30 + features * 10 + bonus);
+}
+
+function botRevenueImpactScore(bot) {
+  const tier = String(bot.tier || '').toUpperCase();
+  const base = bot.price_usd ?? 0;
+  if (tier === 'ENTERPRISE') {
+    return 95;
+  }
+  if (tier === 'PRO') {
+    return Math.min(90, 65 + Math.round(base / 2));
+  }
+  if (tier === 'STARTER') {
+    return Math.min(70, 40 + Math.round(base / 4));
+  }
+  return Math.min(55, 20 + Math.round(base / 5));
+}
+
+function duplicationScoreMap(bots) {
+  const categoryCount = new Map();
+  bots.forEach((bot) => {
+    const category = String(bot.category || 'General');
+    categoryCount.set(category, (categoryCount.get(category) ?? 0) + 1);
+  });
+  const scores = new Map();
+  bots.forEach((bot) => {
+    const category = String(bot.category || 'General');
+    const duplicates = categoryCount.get(category) ?? 1;
+    const score = duplicates >= 4 ? 85 : duplicates >= 3 ? 70 : duplicates === 2 ? 45 : 20;
+    scores.set(bot.name, score);
+  });
+  return scores;
+}
+
 // ---------------------------------------------------------------------------
 // Heartbeat endpoint
 // Bots POST here to signal they are online and operational.
@@ -395,6 +469,181 @@ app.get('/api/command-center', rateLimiter, (_req, res) => {
       stigmergic_architectures: stigmergicCount,
       best_swarm_architecture: rankedArchitectures[0]?.architecture_id ?? null,
       coordination_layers: (coordinationLayer.communication_layers ?? []).length,
+      fetched_at: new Date().toISOString(),
+    },
+  });
+});
+
+// ---------------------------------------------------------------------------
+// GET /api/operations-platform — AI operations mission control payload
+//
+// Exposes the event-driven operating model and critical sections:
+// runtime matrix, workflow graph, intelligence layers, and autonomous queue.
+// ---------------------------------------------------------------------------
+
+app.get('/api/operations-platform', rateLimiter, (_req, res) => {
+  const board = readCommandCenter();
+  if (!board) {
+    return res.status(503).json({ error: 'command_center.json not found' });
+  }
+
+  const bots = readBots();
+  const duplicationScores = duplicationScoreMap(bots);
+  const lanes = Array.isArray(board.parallel_lanes) ? board.parallel_lanes : [];
+
+  const agentRuntimeMatrix = bots.map((bot) => {
+    const features = Array.isArray(bot.features) ? bot.features : [];
+    const workflows = Math.max(features.length, bot.pendingPRs ?? 0);
+    const status = bot.status || 'unknown';
+    return {
+      bot_id: bot.name,
+      status,
+      workflows_active: workflows,
+      token_burn_today_usd: Number((Math.max(0.25, workflows * 0.9)).toFixed(2)),
+      avg_response_time_ms: status === 'active' ? 2100 : 2900,
+      memory_load_pct: Math.min(95, 45 + features.length * 12),
+      failures_24h: status === 'active' ? 0 : 1,
+      retries_24h: status === 'active' ? 1 : 2,
+      hallucination_risk: status === 'active' ? 'low' : 'moderate',
+      event_throughput_per_min: status === 'active' ? Math.max(2, workflows * 3) : 1,
+    };
+  });
+
+  const liveWorkflowGraph = {
+    mode: 'event_driven',
+    flow: ['event', 'workflow', 'agents', 'memory', 'actions'],
+    event_origins: [
+      'bot.started',
+      'workflow.failed',
+      'lead.created',
+      'memory.updated',
+      'repo.scanned',
+      'deployment.failed',
+      'payment.received',
+    ],
+    nodes: lanes.map((lane) => ({
+      node_id: lane.lane_id,
+      label: lane.name,
+      owner: lane.owner,
+      status: lane.status,
+      validation_state: lane.validation_state,
+    })),
+    edges: lanes.map((lane) => ({
+      from: 'event_bus',
+      to: lane.lane_id,
+      trigger: 'event.received',
+    })),
+    approvals_enabled: true,
+    retries_visible: true,
+    failures_visible: true,
+  };
+
+  const botIntelligenceLayer = bots.map((bot) => ({
+    bot_id: bot.name,
+    autonomy_score: botAutonomyScore(bot),
+    revenue_impact_score: botRevenueImpactScore(bot),
+    health_score: botHealthScore(bot),
+    duplication_score: duplicationScores.get(bot.name) ?? 20,
+    dependency_count: Array.isArray(bot.features) ? bot.features.length : 0,
+    orphan_detected: bot.status !== 'active' && !bot.lastHeartbeat,
+  }));
+
+  const activeBots = bots.filter((bot) => bot.status === 'active').length;
+  const paidBots = bots.filter((bot) => (bot.price_usd ?? 0) > 0);
+  const monthlyRecurringRevenue = paidBots.reduce((sum, bot) => sum + (bot.price_usd ?? 0), 0);
+
+  const repoIntelligence = {
+    architecture_drift_risk: lanes.some((lane) => lane.validation_state !== 'green') ? 'high' : 'low',
+    failing_contracts: lanes.filter((lane) => lane.validation_state !== 'green').length,
+    unstable_modules: lanes.filter((lane) => lane.status !== 'in_progress').length,
+    dead_bots: bots.filter((bot) => bot.status !== 'active' && !bot.lastHeartbeat).length,
+    duplicate_system_clusters: [...duplicationScores.values()].filter((score) => score >= 70).length,
+    conflicting_pr_risk: lanes.filter((lane) => lane.ship_decision === 'pending').length,
+    unreferenced_file_risk: 'monitoring',
+    ci_instability: lanes.some((lane) => lane.validation_state === 'red') ? 'high' : 'moderate',
+  };
+
+  const autonomousOperationsQueue = [
+    {
+      action: 'Merge dependency updates',
+      priority: 'medium',
+      source: 'repo_intelligence',
+    },
+    {
+      action: 'Archive inactive bots',
+      priority: bots.length - activeBots >= 5 ? 'high' : 'medium',
+      source: 'bot_intelligence_layer',
+    },
+    {
+      action: 'Refactor duplicate orchestration logic',
+      priority: repoIntelligence.duplicate_system_clusters > 0 ? 'high' : 'medium',
+      source: 'repo_intelligence',
+    },
+    {
+      action: 'Restart failed workflow',
+      priority: repoIntelligence.failing_contracts > 0 ? 'high' : 'low',
+      source: 'live_workflow_graph',
+    },
+    {
+      action: 'Optimize model routing for token burn',
+      priority: 'medium',
+      source: 'agent_runtime_matrix',
+    },
+    {
+      action: 'Consolidate memory adapters',
+      priority: 'medium',
+      source: 'buddy_control_panel',
+    },
+  ];
+
+  return res.json({
+    platform: 'DreamCo OS',
+    architecture_mode: 'event_driven',
+    core_flow: 'Event -> Workflow -> Agents -> Memory -> Actions',
+    pivot_timeline: board.pivot_timeline ?? [],
+    delivery_estimates: board.delivery_estimates ?? {},
+    fastest_enterprise_impact_path: board.fastest_enterprise_impact_path ?? [],
+    central_event_bus: {
+      recommended_backends: ['NATS', 'Kafka'],
+      contract_model: 'canonical_event_envelope',
+      producers: ['bots', 'workflows', 'repo_intelligence', 'revenue_ops'],
+      consumers: ['buddy_kernel', 'workflow_engine', 'dashboard_telemetry'],
+    },
+    agent_runtime_matrix: agentRuntimeMatrix,
+    live_workflow_graph: liveWorkflowGraph,
+    bot_intelligence_layer: botIntelligenceLayer,
+    buddy_control_panel: {
+      systems: [
+        'Planner',
+        'Memory',
+        'Routing',
+        'Runtime',
+        'Knowledge',
+        'Event Bus',
+        'Revenue Ops',
+        'Autonomous Workflows',
+      ],
+      healthy_system_count: 8,
+      exposed_views: ['goals', 'plans', 'task_trees', 'memory_inspection', 'reasoning_traces'],
+    },
+    revenue_intelligence: {
+      leads: activeBots * 4,
+      conversion_rate_pct: 18,
+      outreach_sequences: bots.length * 2,
+      proposals_open: Math.max(1, paidBots.length),
+      close_rate_pct: 11,
+      mrr_usd: monthlyRecurringRevenue,
+      automation_savings_usd: activeBots * 120,
+      ai_roi_ratio: Number((1 + activeBots / Math.max(1, bots.length)).toFixed(2)),
+    },
+    repo_intelligence: repoIntelligence,
+    autonomous_operations_queue: autonomousOperationsQueue,
+    computed: {
+      total_bots: bots.length,
+      active_bots: activeBots,
+      automation_ratio_pct: bots.length === 0 ? 0 : Math.round((activeBots / bots.length) * 100),
+      workflow_nodes: liveWorkflowGraph.nodes.length,
+      recommended_actions: autonomousOperationsQueue.length,
       fetched_at: new Date().toISOString(),
     },
   });

@@ -319,4 +319,75 @@ describe('GET /api/command-center', () => {
     expect(res.body.computed.best_swarm_architecture).toBe('hybrid_llm_marl');
     expect(typeof res.body.computed.marl_ready_architectures).toBe('number');
   });
+
+  test('returns pivot timeline and delivery estimates', async () => {
+    const res = await request(app).get('/api/command-center');
+    expect(Array.isArray(res.body.pivot_timeline)).toBe(true);
+    expect(res.body.pivot_timeline.length).toBeGreaterThanOrEqual(9);
+    expect(res.body.delivery_estimates).toMatchObject({
+      aggressive_weeks: '12-14',
+      realistic_weeks: '18-24',
+      conservative_weeks: '26-32',
+    });
+    expect(res.body.fastest_enterprise_impact_path).toEqual([
+      'event_bus',
+      'runtime_matrix',
+      'workflow_graph',
+      'autonomous_ops_queue',
+    ]);
+  });
+});
+
+// ---------------------------------------------------------------------------
+// GET /api/operations-platform
+// ---------------------------------------------------------------------------
+
+describe('GET /api/operations-platform', () => {
+  test('returns 200', async () => {
+    const res = await request(app).get('/api/operations-platform');
+    expect(res.status).toBe(200);
+  });
+
+  test('returns event-driven architecture metadata', async () => {
+    const res = await request(app).get('/api/operations-platform');
+    expect(res.body).toHaveProperty('architecture_mode', 'event_driven');
+    expect(res.body).toHaveProperty('core_flow', 'Event -> Workflow -> Agents -> Memory -> Actions');
+    expect(res.body.central_event_bus.recommended_backends).toEqual(['NATS', 'Kafka']);
+  });
+
+  test('returns runtime matrix entries for each bot', async () => {
+    const res = await request(app).get('/api/operations-platform');
+    expect(Array.isArray(res.body.agent_runtime_matrix)).toBe(true);
+    expect(res.body.agent_runtime_matrix).toHaveLength(SAMPLE_BOTS.length);
+    res.body.agent_runtime_matrix.forEach((entry) => {
+      expect(entry).toHaveProperty('bot_id');
+      expect(entry).toHaveProperty('workflows_active');
+      expect(entry).toHaveProperty('token_burn_today_usd');
+    });
+  });
+
+  test('returns workflow graph, intelligence layers, and operations queue', async () => {
+    const res = await request(app).get('/api/operations-platform');
+    expect(res.body.live_workflow_graph).toHaveProperty('mode', 'event_driven');
+    expect(Array.isArray(res.body.bot_intelligence_layer)).toBe(true);
+    expect(res.body.bot_intelligence_layer).toHaveLength(SAMPLE_BOTS.length);
+    expect(Array.isArray(res.body.autonomous_operations_queue)).toBe(true);
+    expect(res.body.autonomous_operations_queue.length).toBeGreaterThan(0);
+  });
+
+  test('includes pivot timeline and fastest path from command center plan', async () => {
+    const res = await request(app).get('/api/operations-platform');
+    expect(Array.isArray(res.body.pivot_timeline)).toBe(true);
+    expect(res.body.delivery_estimates).toMatchObject({
+      aggressive_weeks: '12-14',
+      realistic_weeks: '18-24',
+      conservative_weeks: '26-32',
+    });
+    expect(res.body.fastest_enterprise_impact_path).toEqual([
+      'event_bus',
+      'runtime_matrix',
+      'workflow_graph',
+      'autonomous_ops_queue',
+    ]);
+  });
 });
