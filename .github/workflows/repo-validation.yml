@@ -113,6 +113,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: dashboard-comparison
+          overwrite: true
           path: |
             /tmp/dashboard-comparison.json
             /tmp/dashboard-comparison-summary.md
@@ -191,11 +192,6 @@ jobs:
           PY
 
       - name: Upload dashboard comparison artifact
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: dashboard-comparison
-          path: /tmp/dashboard-comparison.json
 
       - name: Run dashboard tests
         run: |
@@ -231,6 +227,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: repo-validation-report
+          overwrite: true
           path: /tmp/repo_validation_report.json
 
       - name: Run Debug Bot
