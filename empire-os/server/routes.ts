@@ -1571,92 +1571,9 @@ Any improvements or fixes (optional, 1-2 bullet points max)`;
 
   app.post("/api/github/push-source", async (_req, res) => {
     try {
-      const { pushFile } = await import("./github-sync");
-      const fs = await import("fs");
-      const path = await import("path");
-
-      const filesToPush: Array<{ local: string; remote: string }> = [
-        { local: "shared/schema.ts", remote: "empire-os/shared/schema.ts" },
-        { local: "shared/tool-belt.ts", remote: "empire-os/shared/tool-belt.ts" },
-        { local: "shared/ai-models.ts", remote: "empire-os/shared/ai-models.ts" },
-        { local: "shared/ai-ecosystem.ts", remote: "empire-os/shared/ai-ecosystem.ts" },
-        { local: "server/seed-bots.ts", remote: "empire-os/server/seed-bots.ts" },
-        { local: "server/seed-buddy-bot.ts", remote: "empire-os/server/seed-buddy-bot.ts" },
-        { local: "server/seed-codelabs.ts", remote: "empire-os/server/seed-codelabs.ts" },
-        { local: "server/seed-github-bots.ts", remote: "empire-os/server/seed-github-bots.ts" },
-        { local: "server/routes.ts", remote: "empire-os/server/routes.ts" },
-        { local: "server/storage.ts", remote: "empire-os/server/storage.ts" },
-        { local: "server/github-sync.ts", remote: "empire-os/server/github-sync.ts" },
-        { local: "server/index.ts", remote: "empire-os/server/index.ts" },
-        { local: ".env.example", remote: "empire-os/.env.example" },
-        { local: "package.json", remote: "empire-os/package.json" },
-        { local: "drizzle.config.ts", remote: "empire-os/drizzle.config.ts" },
-        { local: "tailwind.config.ts", remote: "empire-os/tailwind.config.ts" },
-        { local: "vite.config.ts", remote: "empire-os/vite.config.ts" },
-      ];
-
-      // Add all pages
-      const pagesDir = "client/src/pages";
-      const pages = fs.readdirSync(pagesDir).filter((f: string) => f.endsWith(".tsx"));
-      for (const p of pages) {
-        filesToPush.push({ local: `${pagesDir}/${p}`, remote: `empire-os/client/src/pages/${p}` });
-      }
-
-      // Add key components
-      const compFiles = ["AppShell.tsx", "ThemeToggle.tsx", "Seo.tsx"];
-      for (const c of compFiles) {
-        const loc = `client/src/components/${c}`;
-        if (fs.existsSync(loc)) filesToPush.push({ local: loc, remote: `empire-os/client/src/components/${c}` });
-      }
-
-      const pushed: string[] = [];
-      const errors: string[] = [];
-
-      for (const { local, remote } of filesToPush) {
-        try {
-          if (!fs.existsSync(local)) continue;
-          const content = fs.readFileSync(local, "utf-8");
-          await pushFile(remote, content, `feat: sync ${path.basename(local)} from Replit Empire OS`);
-          pushed.push(remote);
-        } catch (e: any) {
-          errors.push(`${local}: ${e.message?.slice(0, 60)}`);
-        }
-      }
-
-      // Push empire-os README
-      const empireReadme = `# Empire OS — Full Stack Source Code
-
-This folder contains the complete DreamCo Empire OS web application source code, synced from Replit.
-
-## Stack
-- **Frontend**: React 19 + Vite + TailwindCSS + shadcn/ui (29 pages)
-- **Backend**: Express.js API server
-- **Database**: PostgreSQL (Neon) with Drizzle ORM
-- **AI**: OpenAI GPT-4.1-mini powering all 1,051 bots
-
-## Run Locally
-\`\`\`bash
-cp .env.example .env  # fill in your secrets
-npm install
-npm run dev
-\`\`\`
-
-## Pages (29 total)
-${pages.map((p: string) => `- \`${p.replace(".tsx", "")}\``).join("\n")}
-
-## Key Files
-- \`shared/schema.ts\` — database schema for all 17 tables
-- \`shared/tool-belt.ts\` — self-learning + Buddy Bot protocols injected into all bots
-- \`server/seed-bots.ts\` — 884 core bot definitions
-- \`server/seed-buddy-bot.ts\` — Buddy Bot with 500+ library curriculum
-- \`server/routes.ts\` — all API endpoints
-- \`server/github-sync.ts\` — GitHub push engine
-`;
-      try {
-        await pushFile("empire-os/README.md", empireReadme, "docs: add Empire OS README");
-      } catch {}
-
-      res.json({ success: true, pushed: pushed.length, errors: errors.slice(0, 10), files: pushed });
+      const { pushSourceCode } = await import("./github-sync");
+      const result = await pushSourceCode();
+      res.json({ success: true, pushed: result.pushed, sha: result.sha, errors: result.errors.slice(0, 10) });
     } catch (e: any) {
       res.status(500).json({ success: false, error: e.message });
     }
