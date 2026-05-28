@@ -657,106 +657,91 @@ jobs:
           for iss in buddy.get("issues",[]):
               issues_html += f'<li style="color:#fbbf24;font-size:12px">{iss}</li>'
 
-          html = f"""<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>DreamCo Empire OS - Live Dashboard</title>
-<style>
-*{{box-sizing:border-box;margin:0;padding:0}}
-body{{background:#0f172a;color:#e2e8f0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif}}
-.header{{background:linear-gradient(135deg,#1e1b4b,#1e3a5f,#0f172a);padding:32px 24px;text-align:center;border-bottom:1px solid #334155}}
-h1{{font-size:28px;font-weight:800;background:linear-gradient(90deg,#60a5fa,#a78bfa,#34d399);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:8px}}
-.subtitle{{color:#94a3b8;font-size:13px}}
-.badge{{display:inline-block;padding:4px 14px;border-radius:20px;font-size:12px;font-weight:700;color:white;background:{health_color};margin-top:8px}}
-.grid{{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:16px;padding:24px;max-width:1200px;margin:0 auto}}
-.card{{background:#1e293b;border-radius:12px;padding:20px;border:1px solid #334155}}
-.label{{font-size:11px;color:#64748b;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px}}
-.value{{font-size:36px;font-weight:800;line-height:1}}
-.sub{{font-size:11px;color:#64748b;margin-top:4px}}
-.section{{padding:0 24px 24px;max-width:1200px;margin:0 auto}}
-.stitle{{font-size:12px;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:1px;margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid #334155}}
-table{{width:100%;border-collapse:collapse}}
-td,th{{padding:8px 12px;border-bottom:1px solid #1e293b;font-size:13px}}
-th{{color:#64748b;font-size:11px;text-transform:uppercase;letter-spacing:0.5px;font-weight:600}}
-.two-col{{display:grid;grid-template-columns:1fr 1fr;gap:16px}}
-.buddy-box{{padding:12px 16px;background:#0f2940;border-radius:8px;border-left:3px solid #3b82f6;font-size:13px;margin-bottom:16px}}
-.footer{{text-align:center;padding:16px;color:#334155;font-size:11px}}
-@media(max-width:640px){{.two-col{{grid-template-columns:1fr}}}}
-</style>
-</head>
-<body>
-<div class="header">
-  <h1>DreamCo Empire OS &mdash; Live Dashboard</h1>
-  <div class="subtitle">Generated {now} | GitHub Actions CI</div>
-  <div class="badge">{health_label} &mdash; {overall}%</div>
-</div>
-<div class="grid">
-  <div class="card">
-    <div class="label">Total Bots</div>
-    <div class="value" style="color:#60a5fa">{total_bots:,}</div>
-    <div class="sub">45 divisions</div>
-  </div>
-  <div class="card">
-    <div class="label">Buddy Bot</div>
-    <div class="value" style="color:{'#22c55e' if buddy_present else '#ef4444'}">{'OK' if buddy_present else 'MISS'}</div>
-    <div class="sub">Protocol: {buddy_score}% [{buddy_status}]</div>
-  </div>
-  <div class="card">
-    <div class="label">AI Providers</div>
-    <div class="value" style="color:#a78bfa">{len(providers)}</div>
-    <div class="sub">Global sources</div>
-  </div>
-  <div class="card">
-    <div class="label">Tests Passed</div>
-    <div class="value" style="color:#34d399">{tests_passed}</div>
-    <div class="sub">Failed: {tests_failed}</div>
-  </div>
-  <div class="card">
-    <div class="label">Era Score</div>
-    <div class="value" style="color:#f59e0b">{era_score}%</div>
-    <div class="sub">{eras_passed}/3 eras passing</div>
-  </div>
-  <div class="card">
-    <div class="label">Overall Health</div>
-    <div class="value" style="color:{health_color}">{overall}%</div>
-    <div class="sub">{health_label}</div>
-  </div>
-</div>
-<div class="section">
-  <div class="stitle">Buddy Bot &mdash; CommandCore Protocol</div>
-  <div class="buddy-box">
-    <strong>Status:</strong> {'ACTIVE - routing all coding tasks through Buddy' if buddy_present else 'MISSING - Buddy Bot not detected in fleet'}
-    &nbsp;|&nbsp; <strong>Score:</strong> {buddy_score}%
-    &nbsp;|&nbsp; <strong>Languages:</strong> {', '.join(buddy.get('coding_languages',[])[:8]) or 'n/a'}
-    {'<ul style="margin-top:8px;padding-left:16px">'+issues_html+'</ul>' if issues_html else ''}
-  </div>
-</div>
-<div class="section">
-  <div class="two-col">
-    <div class="card">
-      <div class="stitle">Top 20 Divisions</div>
-      <table>
-        <thead><tr><th>#</th><th>Division</th><th>Bots</th><th>Share</th></tr></thead>
-        <tbody>{div_rows or '<tr><td colspan="4" style="color:#64748b;text-align:center">No data</td></tr>'}</tbody>
-      </table>
-    </div>
-    <div class="card">
-      <div class="stitle">Era Testing</div>
-      <table>
-        <thead><tr><th>Era</th><th>Score</th><th>Checks</th></tr></thead>
-        <tbody>{era_rows or '<tr><td colspan="3" style="color:#64748b">No era data</td></tr>'}</tbody>
-      </table>
-      <br>
-      <div class="stitle">AI Providers Detected</div>
-      <div style="margin-top:8px">{provider_tags or '<span style="color:#64748b;font-size:12px">No providers detected</span>'}</div>
-    </div>
-  </div>
-</div>
-<div class="footer">DreamCo Empire OS | Autonomous Wealth Generation | 45 Divisions | {now}</div>
-</body>
-</html>"""
+          # Build CSS as regular string (no f-string needed - avoids YAML brace issues)
+          badge_css = ".badge{display:inline-block;padding:4px 14px;border-radius:20px;font-size:12px;font-weight:700;color:white;background:" + health_color + ";margin-top:8px}"
+          css = (
+              "*{box-sizing:border-box;margin:0;padding:0}"
+              "body{background:#0f172a;color:#e2e8f0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif}"
+              ".header{background:linear-gradient(135deg,#1e1b4b,#1e3a5f,#0f172a);padding:32px 24px;text-align:center;border-bottom:1px solid #334155}"
+              "h1{font-size:28px;font-weight:800;background:linear-gradient(90deg,#60a5fa,#a78bfa,#34d399);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:8px}"
+              ".subtitle{color:#94a3b8;font-size:13px}"
+              ".grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:16px;padding:24px;max-width:1200px;margin:0 auto}"
+              ".card{background:#1e293b;border-radius:12px;padding:20px;border:1px solid #334155}"
+              ".label{font-size:11px;color:#64748b;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px}"
+              ".value{font-size:36px;font-weight:800;line-height:1}"
+              ".sub{font-size:11px;color:#64748b;margin-top:4px}"
+              ".section{padding:0 24px 24px;max-width:1200px;margin:0 auto}"
+              ".stitle{font-size:12px;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:1px;margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid #334155}"
+              "table{width:100%;border-collapse:collapse}"
+              "td,th{padding:8px 12px;border-bottom:1px solid #1e293b;font-size:13px}"
+              "th{color:#64748b;font-size:11px;text-transform:uppercase;letter-spacing:0.5px;font-weight:600}"
+              ".two-col{display:grid;grid-template-columns:1fr 1fr;gap:16px}"
+              ".buddy-box{padding:12px 16px;background:#0f2940;border-radius:8px;border-left:3px solid #3b82f6;font-size:13px;margin-bottom:16px}"
+              ".footer{text-align:center;padding:16px;color:#334155;font-size:11px}"
+              "@media(max-width:640px){.two-col{grid-template-columns:1fr}}"
+          ) + badge_css
+
+          # Pre-compute dynamic bits
+          buddy_val   = "OK" if buddy_present else "MISS"
+          buddy_col   = "#22c55e" if buddy_present else "#ef4444"
+          buddy_txt   = "ACTIVE - routing all coding tasks through Buddy" if buddy_present else "MISSING - Buddy Bot not in fleet"
+          lang_list   = ", ".join(buddy.get("coding_languages", [])[:8]) or "n/a"
+          issues_li   = "".join(['<li style="color:#fbbf24;font-size:12px">' + i + "</li>" for i in buddy.get("issues", [])])
+          issues_block = '<ul style="margin-top:8px;padding-left:16px">' + issues_li + "</ul>" if issues_li else ""
+          no_div      = "<tr><td colspan='4' style='color:#64748b;text-align:center'>No data</td></tr>"
+          no_era      = "<tr><td colspan='3' style='color:#64748b'>No era data</td></tr>"
+          no_prov     = "<span style='color:#64748b;font-size:12px'>No providers detected</span>"
+
+          # Build full HTML by string concatenation — every line is properly indented in YAML
+          html = (
+              "<!DOCTYPE html><html lang='en'><head>"
+              "<meta charset='UTF-8'>"
+              "<meta name='viewport' content='width=device-width,initial-scale=1'>"
+              "<title>DreamCo Empire OS - Live Dashboard</title>"
+              "<style>" + css + "</style></head><body>"
+              "<div class='header'>"
+              "<h1>DreamCo Empire OS &mdash; Live Dashboard</h1>"
+              "<div class='subtitle'>Generated " + now + " | GitHub Actions CI</div>"
+              "<div class='badge'>" + health_label + " &mdash; " + str(overall) + "%</div>"
+              "</div>"
+              "<div class='grid'>"
+              "<div class='card'><div class='label'>Total Bots</div>"
+              "<div class='value' style='color:#60a5fa'>" + str(total_bots) + "</div>"
+              "<div class='sub'>45 divisions</div></div>"
+              "<div class='card'><div class='label'>Buddy Bot</div>"
+              "<div class='value' style='color:" + buddy_col + "'>" + buddy_val + "</div>"
+              "<div class='sub'>Protocol: " + str(buddy_score) + "% [" + buddy_status + "]</div></div>"
+              "<div class='card'><div class='label'>AI Providers</div>"
+              "<div class='value' style='color:#a78bfa'>" + str(len(providers)) + "</div>"
+              "<div class='sub'>Global sources</div></div>"
+              "<div class='card'><div class='label'>Tests Passed</div>"
+              "<div class='value' style='color:#34d399'>" + str(tests_passed) + "</div>"
+              "<div class='sub'>Failed: " + str(tests_failed) + "</div></div>"
+              "<div class='card'><div class='label'>Era Score</div>"
+              "<div class='value' style='color:#f59e0b'>" + str(era_score) + "%</div>"
+              "<div class='sub'>" + str(eras_passed) + "/3 eras passing</div></div>"
+              "<div class='card'><div class='label'>Overall Health</div>"
+              "<div class='value' style='color:" + health_color + "'>" + str(overall) + "%</div>"
+              "<div class='sub'>" + health_label + "</div></div>"
+              "</div>"
+              "<div class='section'><div class='stitle'>Buddy Bot &mdash; CommandCore Protocol</div>"
+              "<div class='buddy-box'><strong>Status:</strong> " + buddy_txt
+              + " &nbsp;|&nbsp; <strong>Score:</strong> " + str(buddy_score)
+              + "% &nbsp;|&nbsp; <strong>Languages:</strong> " + lang_list
+              + issues_block + "</div></div>"
+              "<div class='section'><div class='two-col'>"
+              "<div class='card'><div class='stitle'>Top 20 Divisions</div>"
+              "<table><thead><tr><th>#</th><th>Division</th><th>Bots</th><th>Share</th></tr></thead>"
+              "<tbody>" + (div_rows or no_div) + "</tbody></table></div>"
+              "<div class='card'><div class='stitle'>Era Testing</div>"
+              "<table><thead><tr><th>Era</th><th>Score</th><th>Checks</th></tr></thead>"
+              "<tbody>" + (era_rows or no_era) + "</tbody></table><br>"
+              "<div class='stitle'>AI Providers Detected</div>"
+              "<div style='margin-top:8px'>" + (provider_tags or no_prov) + "</div>"
+              "</div></div></div>"
+              "<div class='footer'>DreamCo Empire OS | 45 Divisions | " + now + "</div>"
+              "</body></html>"
+          )
 
           Path("/tmp/dreamco-live-dashboard.html").write_text(html)
           print(f"HTML dashboard generated | Health: {overall}% ({health_label})")
