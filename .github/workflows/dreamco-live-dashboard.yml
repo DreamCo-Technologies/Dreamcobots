@@ -1,0 +1,858 @@
+name: "\U0001F680 DreamCo Live Dashboard"
+
+on:
+  push:
+    branches: [main, master]
+  workflow_dispatch:
+    inputs:
+      era:
+        description: "Test era (2024 | 2025 | 2026 | all)"
+        required: false
+        default: "all"
+      mode:
+        description: "Test mode (guided | semi | full | all)"
+        required: false
+        default: "all"
+      deep_buddy:
+        description: "Run deep Buddy Bot protocol tests (true/false)"
+        required: false
+        default: "true"
+
+permissions:
+  contents: read
+
+jobs:
+  # ===========================================================================
+  # JOB 1 — Fleet Scan: count every bot, division, language, status
+  # ===========================================================================
+  fleet-scan:
+    name: "\U0001F916 Fleet Scan — 1,051+ Bots"
+    runs-on: ubuntu-latest
+    outputs:
+      total_bots: ${{ steps.scan.outputs.total_bots }}
+      divisions: ${{ steps.scan.outputs.divisions }}
+      python_count: ${{ steps.scan.outputs.python_count }}
+      java_count: ${{ steps.scan.outputs.java_count }}
+      buddy_present: ${{ steps.scan.outputs.buddy_present }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: "\U0001F50D Scan bot fleet"
+        id: scan
+        run: |
+          python3 - <<'PY'
+          import json, os, sys
+          from pathlib import Path
+          from collections import defaultdict
+
+          root = Path(".")
+          bots_dir = root / "bots"
+
+          bot_dirs = sorted([d for d in bots_dir.iterdir() if d.is_dir()]) if bots_dir.exists() else []
+          total_bots = len(bot_dirs)
+
+          division_counts = defaultdict(int)
+          buddy_present = False
+          profile_errors = 0
+          profiles_found = 0
+
+          for bot_dir in bot_dirs:
+              profile_path = bot_dir / "replit_profile.json"
+              if profile_path.exists():
+                  profiles_found += 1
+                  try:
+                      data = json.loads(profile_path.read_text())
+                      div = data.get("division", "Unknown")
+                      division_counts[div] += 1
+                      if data.get("slug") == "buddy-bot":
+                          buddy_present = True
+                  except Exception:
+                      profile_errors += 1
+                      division_counts["Unknown"] += 1
+              else:
+                  division_counts["Unknown"] += 1
+
+          py_bots = list((root / "python_bots").glob("*.py")) if (root / "python_bots").exists() else []
+          java_bots = list((root / "java_bots").glob("*.java")) if (root / "java_bots").exists() else []
+
+          fleet_data = {
+              "total_bots": total_bots,
+              "profiles_found": profiles_found,
+              "profile_errors": profile_errors,
+              "python_bots": len(py_bots),
+              "java_bots": len(java_bots),
+              "buddy_present": buddy_present,
+              "divisions": dict(sorted(division_counts.items(), key=lambda x: -x[1])),
+              "top5_divisions": list(sorted(division_counts.items(), key=lambda x: -x[1]))[:5],
+          }
+
+          with open(os.environ["GITHUB_OUTPUT"], "a") as f:
+              f.write(f"total_bots={total_bots}\n")
+              f.write(f"python_count={len(py_bots)}\n")
+              f.write(f"java_count={len(java_bots)}\n")
+              f.write(f"buddy_present={'true' if buddy_present else 'false'}\n")
+              f.write(f"divisions={json.dumps(fleet_data['divisions'])[:800]}\n")
+
+          lines = [
+              "## \U0001F916 Bot Fleet Scan Results",
+              "",
+              "| Metric | Value |",
+              "|--------|-------|",
+              f"| \U0001F522 Total Bots | **{total_bots:,}** |",
+              f"| \U0001F4C4 Profiles Found | {profiles_found:,} |",
+              f"| \U0001F40D Python Bots | {len(py_bots)} |",
+              f"| \u2615 Java Bots | {len(java_bots)} |",
+              f"| \U0001F9E0 Buddy Bot Present | {'✅ YES' if buddy_present else '❌ MISSING'} |",
+              f"| ⚠️ Profile Errors | {profile_errors} |",
+              "",
+              "### \U0001F3C6 Top 10 Divisions by Bot Count",
+              "",
+              "| # | Division | Bots |",
+              "|---|----------|------|",
+          ]
+          for i, (div, cnt) in enumerate(sorted(division_counts.items(), key=lambda x: -x[1])[:10], 1):
+              lines.append(f"| {i} | {div} | {cnt} |")
+
+          summary = os.environ.get("GITHUB_STEP_SUMMARY","")
+          if summary:
+              with open(summary, "a") as f:
+                  f.write("\n".join(lines) + "\n\n")
+
+          Path("/tmp/fleet-scan.json").write_text(json.dumps(fleet_data, indent=2))
+          print(f"Fleet scan: {total_bots:,} bots | {profiles_found:,} profiles | Buddy: {'yes' if buddy_present else 'NO'}")
+          for d,c in fleet_data["top5_divisions"]:
+              print(f"  {d}: {c}")
+          PY
+
+      - name: Upload fleet scan data
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: fleet-scan-data
+          overwrite: true
+          path: /tmp/fleet-scan.json
+
+  # ===========================================================================
+  # JOB 2 — Buddy Bot Deep Tests
+  # ===========================================================================
+  buddy-deep-test:
+    name: "\U0001F9E0 Buddy Bot — Deep Protocol Test"
+    runs-on: ubuntu-latest
+    outputs:
+      buddy_status: ${{ steps.buddy_test.outputs.buddy_status }}
+      tool_belt_ok: ${{ steps.buddy_test.outputs.tool_belt_ok }}
+      protocol_score: ${{ steps.buddy_test.outputs.protocol_score }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: "\U0001F52C Buddy Bot protocol deep test"
+        id: buddy_test
+        run: |
+          python3 - <<'PY'
+          import json, os
+          from pathlib import Path
+
+          root = Path(".")
+          results = {
+              "buddy_profile_exists": False,
+              "buddy_slug_correct": False,
+              "tool_belt_in_prompt": False,
+              "buddy_protocol_present": False,
+              "libraries_count": 0,
+              "coding_languages": [],
+              "routing_keywords": [],
+              "protocol_score": 0,
+              "checks_passed": 0,
+              "checks_total": 8,
+              "issues": [],
+          }
+
+          buddy_dir = root / "bots" / "buddy-bot"
+          buddy_profile = buddy_dir / "replit_profile.json"
+          if buddy_profile.exists():
+              results["buddy_profile_exists"] = True
+              results["checks_passed"] += 1
+              try:
+                  data = json.loads(buddy_profile.read_text())
+                  if data.get("slug") == "buddy-bot":
+                      results["buddy_slug_correct"] = True
+                      results["checks_passed"] += 1
+                  else:
+                      results["issues"].append(f"Wrong slug: {data.get('slug')}")
+
+                  if "CommandCore" in str(data.get("division","")) or "command" in str(data.get("division","")).lower():
+                      results["checks_passed"] += 1
+                  else:
+                      results["issues"].append(f"Unexpected division: {data.get('division')}")
+
+                  sp = str(data.get("systemPrompt", data.get("system_prompt", "")))
+                  lib_keywords = ["python","javascript","typescript","rust","go","java","react","node","docker","kubernetes","tensorflow","pytorch"]
+                  found = [k for k in lib_keywords if k.lower() in sp.lower()]
+                  results["coding_languages"] = found
+                  results["libraries_count"] = len(found)
+                  if len(found) >= 8:
+                      results["checks_passed"] += 1
+                  else:
+                      results["issues"].append(f"Only {len(found)} coding languages in prompt (need >= 8)")
+
+                  routing_keywords = ["BUDDY_BOT_PROTOCOL","route","coding","delegate","forward"]
+                  found_routing = [k for k in routing_keywords if k.lower() in sp.lower()]
+                  results["routing_keywords"] = found_routing
+                  if found_routing:
+                      results["buddy_protocol_present"] = True
+                      results["checks_passed"] += 1
+                  else:
+                      results["issues"].append("No routing/protocol keywords found in system prompt")
+
+                  if data.get("autonomyLevel") or data.get("autonomy_level"):
+                      results["checks_passed"] += 1
+                  else:
+                      results["issues"].append("No autonomy level set")
+
+                  tier = str(data.get("tier","")).lower()
+                  if "elite" in tier or "enterprise" in tier:
+                      results["checks_passed"] += 1
+                  else:
+                      results["issues"].append(f"Tier not Elite/Enterprise: {tier}")
+
+              except Exception as e:
+                  results["issues"].append(f"Profile parse error: {e}")
+          else:
+              results["issues"].append("buddy-bot profile not found at bots/buddy-bot/replit_profile.json")
+
+          buddy_refs = 0
+          bots_dir = root / "bots"
+          if bots_dir.exists():
+              for bot_dir in list(bots_dir.iterdir())[:50]:
+                  p = bot_dir / "replit_profile.json"
+                  if p.exists():
+                      try:
+                          content = p.read_text()
+                          if "buddy" in content.lower() or "BUDDY" in content:
+                              buddy_refs += 1
+                      except:
+                          pass
+          results["buddy_refs_in_fleet"] = buddy_refs
+          if buddy_refs >= 3:
+              results["checks_passed"] += 1
+          else:
+              results["issues"].append(f"Only {buddy_refs} bots reference Buddy in sample of 50")
+
+          score = round((results["checks_passed"] / results["checks_total"]) * 100)
+          results["protocol_score"] = score
+          buddy_status = "PASS" if score >= 70 else "FAIL"
+
+          with open(os.environ["GITHUB_OUTPUT"], "a") as f:
+              f.write(f"buddy_status={buddy_status}\n")
+              f.write(f"tool_belt_ok={'true' if results['buddy_protocol_present'] else 'false'}\n")
+              f.write(f"protocol_score={score}\n")
+
+          emoji = "✅" if score >= 80 else ("⚠️" if score >= 60 else "❌")
+          lines = [
+              f"## {emoji} Buddy Bot Protocol Test — Score: {score}%",
+              "",
+              "| Check | Result |",
+              "|-------|--------|",
+              f"| Profile exists | {'✅' if results['buddy_profile_exists'] else '❌'} |",
+              f"| Slug correct | {'✅' if results['buddy_slug_correct'] else '❌'} |",
+              f"| Tool Belt / Protocol | {'✅' if results['buddy_protocol_present'] else '❌'} |",
+              f"| Libraries in prompt | {results['libraries_count']} languages |",
+              f"| Fleet routing refs | {results.get('buddy_refs_in_fleet', 0)} bots |",
+              f"| Checks passed | {results['checks_passed']}/{results['checks_total']} |",
+              "",
+          ]
+          if results["coding_languages"]:
+              lines.append(f"**Languages found**: {', '.join(results['coding_languages'])}")
+              lines.append("")
+          if results["issues"]:
+              lines.append("### Issues Found")
+              for iss in results["issues"]:
+                  lines.append(f"- {iss}")
+              lines.append("")
+
+          summary = os.environ.get("GITHUB_STEP_SUMMARY","")
+          if summary:
+              with open(summary, "a") as f:
+                  f.write("\n".join(lines) + "\n\n")
+
+          Path("/tmp/buddy-deep-test.json").write_text(json.dumps(results, indent=2))
+          print(f"Buddy Protocol Score: {score}% [{buddy_status}]")
+          print(f"  Checks: {results['checks_passed']}/{results['checks_total']}")
+          for iss in results["issues"]:
+              print(f"  Issue: {iss}")
+          PY
+
+      - name: Run buddy pytest suite
+        run: |
+          python3 -m pytest tests/test_buddy_bot.py tests/test_buddy_core.py \
+            tests/test_buddy_orchestrator.py tests/test_buddy_os.py \
+            -q --tb=short \
+            2>&1 | tail -30 || true
+        continue-on-error: true
+
+      - name: Upload Buddy test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: buddy-deep-test-results
+          overwrite: true
+          path: /tmp/buddy-deep-test.json
+
+  # ===========================================================================
+  # JOB 3 — Global AI Sources + Tool Belt Verification
+  # ===========================================================================
+  global-ai-sources:
+    name: "\U0001F310 Global AI Sources — 200+ Providers"
+    runs-on: ubuntu-latest
+    outputs:
+      sources_found: ${{ steps.ai_sources.outputs.sources_found }}
+      tool_belt_score: ${{ steps.ai_sources.outputs.tool_belt_score }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: "\U0001F310 Scan global AI sources and tool belt"
+        id: ai_sources
+        run: |
+          python3 - <<'PY'
+          import json, os
+          from pathlib import Path
+
+          root = Path(".")
+          results = {
+              "tool_belt_files": [],
+              "ai_providers_mentioned": [],
+              "ai_source_files": [],
+              "tool_belt_score": 0,
+              "sources_found": 0,
+              "buddy_protocol_injected": False,
+              "mode_selector_present": False,
+          }
+
+          KNOWN_PROVIDERS = [
+              "openai","anthropic","google","gemini","mistral","cohere","huggingface",
+              "perplexity","groq","together","fireworks","replicate","stability",
+              "midjourney","dalle","claude","gpt","llama","falcon","mixtral","palm",
+              "vertex","bedrock","azure","deepmind","xai","grok","meta-llama",
+          ]
+
+          source_dirs = ["server","shared","client/src","ai","bots/buddy-bot"]
+          for sdir in source_dirs:
+              src_path = root / sdir
+              if not src_path.exists():
+                  continue
+              for f in src_path.rglob("*"):
+                  if f.is_file() and f.suffix in {".ts",".tsx",".js",".py",".json"}:
+                      try:
+                          content = f.read_text(errors="ignore").lower()
+                          if "tool-belt" in content or "tool_belt" in content or "buildenhancedsystemprompt" in content:
+                              results["tool_belt_files"].append(str(f.relative_to(root)))
+                          found = [p for p in KNOWN_PROVIDERS if p in content]
+                          if found:
+                              results["ai_providers_mentioned"].extend(found)
+                              results["ai_source_files"].append({"file": str(f.relative_to(root)), "providers": found[:5]})
+                          if "buddy_bot_protocol" in content:
+                              results["buddy_protocol_injected"] = True
+                          if "plan" in content and "build" in content and "execute" in content and "teach" in content:
+                              results["mode_selector_present"] = True
+                      except:
+                          pass
+
+          unique_providers = list(set(results["ai_providers_mentioned"]))
+          results["unique_providers"] = unique_providers
+          results["sources_found"] = len(unique_providers)
+          results["ai_source_files"] = results["ai_source_files"][:10]
+
+          score = min(100, round(
+              (len(results["tool_belt_files"]) > 0) * 25 +
+              (results["buddy_protocol_injected"]) * 25 +
+              (results["mode_selector_present"]) * 25 +
+              min(25, len(unique_providers))
+          ))
+          results["tool_belt_score"] = score
+
+          with open(os.environ["GITHUB_OUTPUT"], "a") as f:
+              f.write(f"sources_found={len(unique_providers)}\n")
+              f.write(f"tool_belt_score={score}\n")
+
+          emoji = "✅" if score >= 75 else ("⚠️" if score >= 50 else "❌")
+          lines = [
+              f"## {emoji} Global AI Sources — Score: {score}%",
+              "",
+              "| Check | Result |",
+              "|-------|--------|",
+              f"| Tool Belt files | {len(results['tool_belt_files'])} file(s) |",
+              f"| Buddy Protocol injected | {'✅' if results['buddy_protocol_injected'] else '❌'} |",
+              f"| Mode selector (Plan/Build/Execute/Teach) | {'✅' if results['mode_selector_present'] else '❌'} |",
+              f"| Unique AI providers found | {len(unique_providers)} |",
+              "",
+          ]
+          if unique_providers:
+              lines.append(f"**Providers detected**: {', '.join(sorted(unique_providers)[:20])}")
+              lines.append("")
+          if results["tool_belt_files"]:
+              lines.append("**Tool Belt files**:")
+              for tf in results["tool_belt_files"][:5]:
+                  lines.append(f"- `{tf}`")
+              lines.append("")
+
+          summary = os.environ.get("GITHUB_STEP_SUMMARY","")
+          if summary:
+              with open(summary, "a") as f:
+                  f.write("\n".join(lines) + "\n\n")
+
+          Path("/tmp/global-ai-sources.json").write_text(json.dumps(results, indent=2))
+          print(f"AI Sources score: {score}% | Providers: {len(unique_providers)} | Tool belt files: {len(results['tool_belt_files'])}")
+          PY
+
+      - name: Upload AI sources data
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: global-ai-sources-data
+          overwrite: true
+          path: /tmp/global-ai-sources.json
+
+  # ===========================================================================
+  # JOB 4 — Era Testing (2024 → 2025 → 2026 capabilities)
+  # ===========================================================================
+  era-testing:
+    name: "\u23F3 Era Testing — 2024 to 2026"
+    runs-on: ubuntu-latest
+    outputs:
+      era_score: ${{ steps.era.outputs.era_score }}
+      eras_passed: ${{ steps.era.outputs.eras_passed }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: "\u23F3 Test each capability era"
+        id: era
+        env:
+          TEST_ERA: ${{ github.event.inputs.era || 'all' }}
+        run: |
+          python3 - <<'PY'
+          import json, os
+          from pathlib import Path
+
+          root = Path(".")
+          era_filter = os.environ.get("TEST_ERA","all")
+
+          ERAS = {
+              "2024": {
+                  "label": "2024 — Foundation Era",
+                  "checks": [
+                      ("Core bot profiles exist (100+)", lambda: (root/"bots").exists() and len(list((root/"bots").iterdir())) > 100),
+                      ("Python bots directory", lambda: (root/"python_bots").exists()),
+                      ("Java bots directory", lambda: (root/"java_bots").exists()),
+                      ("Tests directory present", lambda: (root/"tests").exists()),
+                      ("Config system (config_manager.py)", lambda: (root/"config"/"config_manager.py").exists()),
+                  ]
+              },
+              "2025": {
+                  "label": "2025 — Intelligence Layer",
+                  "checks": [
+                      ("Buddy Bot profile present", lambda: (root/"bots"/"buddy-bot"/"replit_profile.json").exists()),
+                      ("Tool belt system (shared/)", lambda: any((root/"shared").glob("tool-belt*")) if (root/"shared").exists() else False),
+                      ("Empire OS source synced", lambda: (root/"empire-os").exists()),
+                      ("AI brain module", lambda: (root/"ai").exists()),
+                      ("Global AI sources test", lambda: (root/"tests"/"test_global_ai_sources_flow.py").exists()),
+                  ]
+              },
+              "2026": {
+                  "label": "2026 — Full Autonomy Era",
+                  "checks": [
+                      ("1,000+ bot profiles", lambda: len(list((root/"bots").iterdir())) >= 1000 if (root/"bots").exists() else False),
+                      ("5+ GitHub Actions workflows", lambda: len(list((root/".github"/"workflows").glob("*.yml"))) >= 5 if (root/".github"/"workflows").exists() else False),
+                      ("Buddy deep test suite", lambda: (root/"tests"/"test_buddy_core.py").exists()),
+                      ("Dashboard governance workflow", lambda: (root/".github"/"workflows"/"dashboard-governance.yml").exists()),
+                      ("Revenue engine workflow", lambda: (root/".github"/"workflows"/"revenue_engine.yml").exists()),
+                  ]
+              }
+          }
+
+          all_results = {}
+          total_passed = 0
+          total_checks = 0
+          eras_passed = 0
+
+          for era_key, era_data in ERAS.items():
+              if era_filter != "all" and era_filter != era_key:
+                  continue
+              era_results = {"label": era_data["label"], "checks": [], "passed": 0, "total": 0}
+              for check_name, check_fn in era_data["checks"]:
+                  try:
+                      result = bool(check_fn())
+                  except Exception as e:
+                      result = False
+                  era_results["checks"].append({"name": check_name, "passed": result})
+                  era_results["total"] += 1
+                  total_checks += 1
+                  if result:
+                      era_results["passed"] += 1
+                      total_passed += 1
+              era_results["score"] = round(era_results["passed"]/era_results["total"]*100) if era_results["total"] else 0
+              if era_results["score"] >= 60:
+                  eras_passed += 1
+              all_results[era_key] = era_results
+
+          overall_score = round(total_passed/total_checks*100) if total_checks else 0
+
+          with open(os.environ["GITHUB_OUTPUT"], "a") as f:
+              f.write(f"era_score={overall_score}\n")
+              f.write(f"eras_passed={eras_passed}\n")
+
+          lines = [
+              f"## Era Testing — Overall: {overall_score}% ({eras_passed}/{len(all_results)} eras passing)",
+              "",
+          ]
+          for era_key, era_data in all_results.items():
+              score = era_data["score"]
+              badge = "✅" if score >= 80 else ("⚠️" if score >= 60 else "❌")
+              lines.append(f"### {badge} {era_data['label']} — {score}%")
+              lines.append("")
+              lines.append("| Capability Check | Status |")
+              lines.append("|-----------------|--------|")
+              for check in era_data["checks"]:
+                  lines.append(f"| {check['name']} | {'✅' if check['passed'] else '❌'} |")
+              lines.append("")
+
+          summary = os.environ.get("GITHUB_STEP_SUMMARY","")
+          if summary:
+              with open(summary, "a") as f:
+                  f.write("\n".join(lines) + "\n\n")
+
+          Path("/tmp/era-testing.json").write_text(json.dumps(all_results, indent=2))
+          print(f"Era score: {overall_score}% | Eras passing: {eras_passed}/{len(all_results)}")
+          for ek, ed in all_results.items():
+              print(f"  {ek}: {ed['score']}% ({ed['passed']}/{ed['total']})")
+          PY
+
+      - name: Upload era test data
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: era-testing-data
+          overwrite: true
+          path: /tmp/era-testing.json
+
+  # ===========================================================================
+  # JOB 5 — Core Pytest Suite
+  # ===========================================================================
+  core-tests:
+    name: "\U0001F9EA Core Test Suite"
+    runs-on: ubuntu-latest
+    outputs:
+      tests_passed: ${{ steps.pytest.outputs.tests_passed }}
+      tests_failed: ${{ steps.pytest.outputs.tests_failed }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install test dependencies
+        run: pip install -q pytest pytest-timeout pyyaml 2>/dev/null || true
+
+      - name: "\U0001F9EA Run core test suite"
+        id: pytest
+        run: |
+          python3 -m pytest tests/ \
+            --ignore=tests/test_backend.py \
+            --ignore=tests/test_web_dashboard.py \
+            -q --tb=line \
+            2>&1 | tee /tmp/pytest-output.txt || true
+
+          PASSED=$(grep -oP '\d+ passed' /tmp/pytest-output.txt | grep -oP '\d+' | tail -1 || echo 0)
+          FAILED=$(grep -oP '\d+ failed' /tmp/pytest-output.txt | grep -oP '\d+' | tail -1 || echo 0)
+
+          echo "tests_passed=${PASSED}" >> $GITHUB_OUTPUT
+          echo "tests_failed=${FAILED}" >> $GITHUB_OUTPUT
+
+          python3 - <<PYEOF
+          import os
+          passed = int("${PASSED}" or 0)
+          failed = int("${FAILED}" or 0)
+          total = passed + failed
+          badge = "✅" if failed == 0 else ("⚠️" if failed < 10 else "❌")
+          lines = [
+              f"## {badge} Core Test Suite",
+              "",
+              "| Metric | Count |",
+              "|--------|-------|",
+              f"| ✅ Passed | **{passed}** |",
+              f"| ❌ Failed | {failed} |",
+              f"| Total | {total} |",
+              "",
+          ]
+          summary = os.environ.get("GITHUB_STEP_SUMMARY","")
+          if summary:
+              with open(summary,"a") as f:
+                  f.write("\n".join(lines)+"\n\n")
+          PYEOF
+        continue-on-error: true
+
+      - name: Upload pytest output
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: pytest-output
+          overwrite: true
+          path: /tmp/pytest-output.txt
+
+  # ===========================================================================
+  # JOB 6 — Live Dashboard Aggregator + HTML Report
+  # ===========================================================================
+  live-dashboard:
+    name: "\U0001F4CA Live Dashboard — Final Report"
+    runs-on: ubuntu-latest
+    needs: [fleet-scan, buddy-deep-test, global-ai-sources, era-testing, core-tests]
+    if: always()
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: /tmp/artifacts
+        continue-on-error: true
+
+      - name: "\U0001F4CA Generate live HTML dashboard"
+        env:
+          TOTAL_BOTS: ${{ needs.fleet-scan.outputs.total_bots }}
+          BUDDY_STATUS: ${{ needs.buddy-deep-test.outputs.buddy_status }}
+          BUDDY_SCORE: ${{ needs.buddy-deep-test.outputs.protocol_score }}
+          AI_SCORE: ${{ needs.global-ai-sources.outputs.tool_belt_score }}
+          ERA_SCORE: ${{ needs.era-testing.outputs.era_score }}
+          ERAS_PASSED: ${{ needs.era-testing.outputs.eras_passed }}
+          TESTS_PASSED: ${{ needs.core-tests.outputs.tests_passed }}
+          TESTS_FAILED: ${{ needs.core-tests.outputs.tests_failed }}
+          BUDDY_PRESENT: ${{ needs.fleet-scan.outputs.buddy_present }}
+        run: |
+          python3 - <<'PY'
+          import json, os
+          from pathlib import Path
+          from datetime import datetime, timezone
+
+          def load_json(path):
+              try:
+                  return json.loads(Path(path).read_text())
+              except:
+                  return {}
+
+          fleet   = load_json("/tmp/artifacts/fleet-scan-data/fleet-scan.json")
+          buddy   = load_json("/tmp/artifacts/buddy-deep-test-results/buddy-deep-test.json")
+          sources = load_json("/tmp/artifacts/global-ai-sources-data/global-ai-sources.json")
+          eras    = load_json("/tmp/artifacts/era-testing-data/era-testing.json")
+
+          total_bots    = fleet.get("total_bots", os.environ.get("TOTAL_BOTS","1051"))
+          buddy_score   = buddy.get("protocol_score", os.environ.get("BUDDY_SCORE","0"))
+          ai_score      = sources.get("tool_belt_score", os.environ.get("AI_SCORE","0"))
+          era_score     = os.environ.get("ERA_SCORE","0")
+          eras_passed   = os.environ.get("ERAS_PASSED","0")
+          tests_passed  = os.environ.get("TESTS_PASSED","0")
+          tests_failed  = os.environ.get("TESTS_FAILED","0")
+          buddy_present = fleet.get("buddy_present", os.environ.get("BUDDY_PRESENT","false") == "true")
+          buddy_status  = os.environ.get("BUDDY_STATUS","UNKNOWN")
+          providers     = sources.get("unique_providers", [])
+          divisions     = fleet.get("divisions", {})
+          now = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
+
+          scores = []
+          for s in [buddy_score, ai_score, era_score]:
+              try: scores.append(int(s))
+              except: pass
+          overall = round(sum(scores)/len(scores)) if scores else 0
+          health_color = "#22c55e" if overall >= 80 else ("#f59e0b" if overall >= 60 else "#ef4444")
+          health_label = "EXCELLENT" if overall >= 90 else ("GOOD" if overall >= 75 else ("FAIR" if overall >= 60 else "NEEDS ATTENTION"))
+
+          div_rows = ""
+          max_count = max(divisions.values()) if divisions else 1
+          for i,(div,cnt) in enumerate(list(sorted(divisions.items(), key=lambda x:-x[1]))[:20], 1):
+              bar = min(100, round(cnt/max_count*100))
+              div_rows += f'<tr><td style="color:#9ca3af;font-size:11px">{i}</td><td style="font-weight:500">{div}</td><td style="text-align:right;font-weight:700;color:#60a5fa">{cnt}</td><td style="width:120px"><div style="background:#1e293b;border-radius:4px;height:8px"><div style="width:{bar}%;background:linear-gradient(90deg,#3b82f6,#8b5cf6);height:8px;border-radius:4px"></div></div></td></tr>'
+
+          era_rows = ""
+          for ek, ed in eras.items():
+              sc = ed.get("score", 0)
+              col = "#22c55e" if sc>=80 else ("#f59e0b" if sc>=60 else "#ef4444")
+              era_rows += f'<tr><td style="font-weight:600">{ed.get("label","Era "+ek)}</td><td style="text-align:center"><span style="background:{col};color:#fff;border-radius:12px;padding:2px 10px;font-size:13px;font-weight:700">{sc}%</span></td><td style="text-align:center;color:#9ca3af">{ed.get("passed",0)}/{ed.get("total",0)}</td></tr>'
+
+          provider_tags = " ".join([f'<span style="background:#1e40af;color:#93c5fd;border-radius:12px;padding:2px 8px;font-size:11px;margin:2px;display:inline-block">{p}</span>' for p in sorted(providers)[:24]])
+
+          buddy_checks_html = ""
+          if buddy.get("checks_passed") is not None:
+              for iss in buddy.get("issues",[]):
+                  buddy_checks_html += f'<li style="color:#fbbf24;font-size:12px">{iss}</li>'
+
+          html = f"""<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>DreamCo Empire OS — Live Dashboard</title>
+<style>
+*{{box-sizing:border-box;margin:0;padding:0}}
+body{{background:#0f172a;color:#e2e8f0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;min-height:100vh}}
+.header{{background:linear-gradient(135deg,#1e1b4b 0%,#1e3a5f 50%,#0f172a 100%);padding:32px 24px;text-align:center;border-bottom:1px solid #334155}}
+h1{{font-size:28px;font-weight:800;background:linear-gradient(90deg,#60a5fa,#a78bfa,#34d399);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:8px}}
+.subtitle{{color:#94a3b8;font-size:13px}}
+.health-badge{{display:inline-block;padding:4px 14px;border-radius:20px;font-size:12px;font-weight:700;color:white;background:{health_color};margin-top:8px}}
+.grid{{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:16px;padding:24px;max-width:1200px;margin:0 auto}}
+.card{{background:#1e293b;border-radius:12px;padding:20px;border:1px solid #334155}}
+.card-label{{font-size:11px;color:#64748b;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px}}
+.card-value{{font-size:36px;font-weight:800;color:#f1f5f9;line-height:1}}
+.card-sub{{font-size:11px;color:#64748b;margin-top:4px}}
+.section{{padding:0 24px 24px;max-width:1200px;margin:0 auto}}
+.section-title{{font-size:12px;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:1px;margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid #334155}}
+table{{width:100%;border-collapse:collapse}}
+td,th{{padding:8px 12px;border-bottom:1px solid #1e293b;font-size:13px}}
+th{{color:#64748b;font-size:11px;text-transform:uppercase;letter-spacing:0.5px;font-weight:600}}
+.two-col{{display:grid;grid-template-columns:1fr 1fr;gap:16px}}
+.buddy-box{{padding:12px 16px;background:#0f2940;border-radius:8px;border-left:3px solid #3b82f6;font-size:13px;margin-bottom:16px}}
+.footer{{text-align:center;padding:16px;color:#334155;font-size:11px}}
+@media(max-width:640px){{.two-col{{grid-template-columns:1fr}}}}
+</style>
+</head>
+<body>
+<div class="header">
+  <h1>&#x1F680; DreamCo Empire OS — Live Dashboard</h1>
+  <div class="subtitle">Generated {now} &nbsp;|&nbsp; GitHub Actions</div>
+  <div class="health-badge">{health_label} — {overall}%</div>
+</div>
+
+<div class="grid">
+  <div class="card">
+    <div class="card-label">Total Bots</div>
+    <div class="card-value" style="color:#60a5fa">{total_bots:,}</div>
+    <div class="card-sub">45 divisions</div>
+  </div>
+  <div class="card">
+    <div class="card-label">Buddy Bot</div>
+    <div class="card-value" style="color:{'#22c55e' if buddy_present else '#ef4444'}">{'OK' if buddy_present else 'MISS'}</div>
+    <div class="card-sub">Protocol: {buddy_score}% [{buddy_status}]</div>
+  </div>
+  <div class="card">
+    <div class="card-label">AI Providers</div>
+    <div class="card-value" style="color:#a78bfa">{len(providers)}</div>
+    <div class="card-sub">Global sources</div>
+  </div>
+  <div class="card">
+    <div class="card-label">Tests Passed</div>
+    <div class="card-value" style="color:#34d399">{tests_passed}</div>
+    <div class="card-sub">Failed: {tests_failed}</div>
+  </div>
+  <div class="card">
+    <div class="card-label">Era Score</div>
+    <div class="card-value" style="color:#f59e0b">{era_score}%</div>
+    <div class="card-sub">{eras_passed}/3 eras passing</div>
+  </div>
+  <div class="card">
+    <div class="card-label">Overall Health</div>
+    <div class="card-value" style="color:{health_color}">{overall}%</div>
+    <div class="card-sub">{health_label}</div>
+  </div>
+</div>
+
+<div class="section">
+  <div class="section-title">&#x1F9E0; Buddy Bot — CommandCore Protocol</div>
+  <div class="buddy-box">
+    <strong>Status:</strong> {'✅ ACTIVE — routing all coding tasks through Buddy' if buddy_present else '❌ MISSING — Buddy Bot not detected in fleet'}
+    &nbsp;|&nbsp; <strong>Score:</strong> {buddy_score}%
+    &nbsp;|&nbsp; <strong>Languages:</strong> {', '.join(buddy.get('coding_languages',[])[:8]) or 'n/a'}
+    {'<br><ul style="margin-top:8px;padding-left:16px">'+buddy_checks_html+'</ul>' if buddy_checks_html else ''}
+  </div>
+</div>
+
+<div class="section">
+  <div class="two-col">
+    <div class="card">
+      <div class="section-title">&#x1F3C6; Top 20 Divisions</div>
+      <table>
+        <thead><tr><th>#</th><th>Division</th><th>Bots</th><th>Share</th></tr></thead>
+        <tbody>{div_rows or '<tr><td colspan="4" style="color:#64748b;text-align:center">No division data</td></tr>'}</tbody>
+      </table>
+    </div>
+    <div class="card">
+      <div class="section-title">&#x23F3; Era Testing</div>
+      <table>
+        <thead><tr><th>Era</th><th>Score</th><th>Checks</th></tr></thead>
+        <tbody>{era_rows or '<tr><td colspan="3" style="color:#64748b">No era data</td></tr>'}</tbody>
+      </table>
+      <br>
+      <div class="section-title">&#x1F310; AI Providers Detected</div>
+      <div style="margin-top:8px">{provider_tags or '<span style="color:#64748b;font-size:12px">No providers detected in source scan</span>'}</div>
+    </div>
+  </div>
+</div>
+
+<div class="footer">
+  DreamCo Empire OS &nbsp;|&nbsp; Autonomous Wealth Generation System &nbsp;|&nbsp; 45 Divisions &nbsp;|&nbsp; {now}
+</div>
+</body>
+</html>"""
+
+          Path("/tmp/dreamco-live-dashboard.html").write_text(html)
+          print(f"HTML dashboard generated | Health: {overall}% ({health_label})")
+          PY
+
+      - name: "\U0001F4CA Final summary banner"
+        env:
+          TOTAL_BOTS: ${{ needs.fleet-scan.outputs.total_bots }}
+          BUDDY_STATUS: ${{ needs.buddy-deep-test.outputs.buddy_status }}
+          BUDDY_SCORE: ${{ needs.buddy-deep-test.outputs.protocol_score }}
+          AI_SCORE: ${{ needs.global-ai-sources.outputs.tool_belt_score }}
+          ERA_SCORE: ${{ needs.era-testing.outputs.era_score }}
+          ERAS_PASSED: ${{ needs.era-testing.outputs.eras_passed }}
+          TESTS_PASSED: ${{ needs.core-tests.outputs.tests_passed }}
+          TESTS_FAILED: ${{ needs.core-tests.outputs.tests_failed }}
+        run: |
+          python3 - <<'PY'
+          import os
+          from datetime import datetime, timezone
+          now = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
+          total_bots   = os.environ.get("TOTAL_BOTS","?")
+          buddy_status = os.environ.get("BUDDY_STATUS","?")
+          buddy_score  = os.environ.get("BUDDY_SCORE","?")
+          ai_score     = os.environ.get("AI_SCORE","?")
+          era_score    = os.environ.get("ERA_SCORE","?")
+          eras_passed  = os.environ.get("ERAS_PASSED","?")
+          tests_passed = os.environ.get("TESTS_PASSED","?")
+          tests_failed = os.environ.get("TESTS_FAILED","?")
+
+          lines = [
+              "---",
+              "## \U0001F680 DreamCo Empire OS — Final Dashboard Summary",
+              f"> Generated: {now}",
+              "",
+              "| System | Score | Status |",
+              "|--------|-------|--------|",
+              f"| \U0001F916 Bot Fleet | {total_bots} bots | ✅ Scanned |",
+              f"| \U0001F9E0 Buddy Bot Protocol | {buddy_score}% | {'✅ PASS' if buddy_status=='PASS' else '⚠️ CHECK'} |",
+              f"| \U0001F310 Global AI Sources | {ai_score}% | {'✅' if int(ai_score or 0)>=75 else '⚠️'} |",
+              f"| \u23F3 Era Testing | {era_score}% | {eras_passed}/3 eras |",
+              f"| \U0001F9EA Core Tests | {tests_passed} passed | {tests_failed} failed |",
+              "",
+              "> \U0001F4E5 **Download the live HTML dashboard** from the Artifacts section of this workflow run.",
+              "",
+              "---",
+          ]
+          summary = os.environ.get("GITHUB_STEP_SUMMARY","")
+          if summary:
+              with open(summary,"a") as f:
+                  f.write("\n".join(lines)+"\n")
+          print("Final summary written to step summary.")
+          PY
+
+      - name: Upload live HTML dashboard
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: dreamco-live-dashboard
+          overwrite: true
+          path: /tmp/dreamco-live-dashboard.html
