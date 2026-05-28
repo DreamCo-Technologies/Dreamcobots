@@ -5,7 +5,7 @@ const REPO_NAME  = "Dreamcobots";
 const GITHUB_API = "https://api.github.com";
 
 // ─── auth ────────────────────────────────────────────────────────────────────
-function getToken(): string {
+export function getToken(): string {
   const t = process.env.GITHUB_PERSONAL_ACCESS_TOKEN || process.env.GITHUB_TOKEN || "";
   if (t.length < 10) throw new Error("GitHub token not set. Add GITHUB_PERSONAL_ACCESS_TOKEN in Replit Secrets.");
   return t;

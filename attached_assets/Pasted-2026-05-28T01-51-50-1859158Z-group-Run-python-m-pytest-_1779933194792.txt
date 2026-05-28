@@ -1,0 +1,44 @@
+2026-05-28T01:51:50.1859158Z ##[group]Run python -m pytest tests/ \
+2026-05-28T01:51:50.1859505Z [36;1mpython -m pytest tests/ \[0m
+2026-05-28T01:51:50.1859781Z [36;1m  --ignore=tests/test_backend.py \[0m
+2026-05-28T01:51:50.1860091Z [36;1m  --ignore=tests/test_web_dashboard.py \[0m
+2026-05-28T01:51:50.1860391Z [36;1m  -q --tb=short[0m
+2026-05-28T01:51:50.1888487Z shell: /usr/bin/bash -e {0}
+2026-05-28T01:51:50.1888710Z env:
+2026-05-28T01:51:50.1888894Z   PYTHONDONTWRITEBYTECODE: 1
+2026-05-28T01:51:50.1889120Z   PYTHONUNBUFFERED: 1
+2026-05-28T01:51:50.1889390Z   pythonLocation: /opt/hostedtoolcache/Python/3.11.15/x64
+2026-05-28T01:51:50.1889787Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.11.15/x64/lib/pkgconfig
+2026-05-28T01:51:50.1890186Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.15/x64
+2026-05-28T01:51:50.1890542Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.15/x64
+2026-05-28T01:51:50.1890893Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.15/x64
+2026-05-28T01:51:50.1891251Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.11.15/x64/lib
+2026-05-28T01:51:50.1891581Z   STRIPE_API_KEY: 
+2026-05-28T01:51:50.1891772Z   STRIPE_PUBLISHABLE_KEY: 
+2026-05-28T01:51:50.1892017Z   STRIPE_WEBHOOK_SECRET: 
+2026-05-28T01:51:50.1892231Z   STRIPE_PRICE_PRO: 
+2026-05-28T01:51:50.1892587Z   STRIPE_PRICE_ENTERPRISE: 
+2026-05-28T01:51:50.1892792Z ##[endgroup]
+2026-05-28T01:52:10.7246010Z 
+2026-05-28T01:52:10.7246773Z ==================================== ERRORS ====================================
+2026-05-28T01:52:10.7247810Z _________________ ERROR collecting tests/test_master_config.py _________________
+2026-05-28T01:52:10.7249819Z ImportError while importing test module '/home/runner/work/Dreamcobots/Dreamcobots/tests/test_master_config.py'.
+2026-05-28T01:52:10.7250947Z Hint: make sure your test modules/packages have valid Python names.
+2026-05-28T01:52:10.7251479Z Traceback:
+2026-05-28T01:52:10.7252068Z /opt/hostedtoolcache/Python/3.11.15/x64/lib/python3.11/importlib/__init__.py:126: in import_module
+2026-05-28T01:52:10.7252943Z     return _bootstrap._gcd_import(name[level:], package, level)
+2026-05-28T01:52:10.7254058Z            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-05-28T01:52:10.7254524Z tests/test_master_config.py:15: in <module>
+2026-05-28T01:52:10.7255118Z     from config.config_manager import MasterConfigManager, BotPriority
+2026-05-28T01:52:10.7255950Z E   ModuleNotFoundError: No module named 'config.config_manager'; 'config' is not a package
+2026-05-28T01:52:10.7256733Z =============================== warnings summary ===============================
+2026-05-28T01:52:10.7257152Z tools/bot_test_validator.py:55
+2026-05-28T01:52:10.7258284Z   /home/runner/work/Dreamcobots/Dreamcobots/tools/bot_test_validator.py:55: PytestCollectionWarning: cannot collect test class 'TestResult' because it has a __init__ constructor (from: tests/test_bot_test_validator.py)
+2026-05-28T01:52:10.7259436Z     class TestResult:
+2026-05-28T01:52:10.7259591Z 
+2026-05-28T01:52:10.7259854Z -- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+2026-05-28T01:52:10.7260545Z =========================== short test summary info ============================
+2026-05-28T01:52:10.7261031Z ERROR tests/test_master_config.py
+2026-05-28T01:52:10.7261480Z !!!!!!!!!!!!!!!!!!!! Interrupted: 1 error during collection !!!!!!!!!!!!!!!!!!!!
+2026-05-28T01:52:10.7261996Z 1 warning, 1 error in 19.70s
+2026-05-28T01:52:12.4417779Z ##[error]Process completed with exit code 2.

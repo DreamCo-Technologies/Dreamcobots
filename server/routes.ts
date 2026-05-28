@@ -1598,6 +1598,83 @@ Any improvements or fixes (optional, 1-2 bullet points max)`;
     res.json({ summary, bots: classified });
   });
 
+  // List workflows + recent runs for Live Dashboard tab
+  app.get("/api/github/workflows", async (_req, res) => {
+    try {
+      const { getToken } = await import("./github-sync");
+      const token = getToken();
+      const REPO = "DreamCo-Technologies/Dreamcobots";
+      const headers = { Authorization: `Bearer ${token}`, Accept: "application/vnd.github+json", "X-GitHub-Api-Version": "2022-11-28", "User-Agent": "DreamCo-Empire-OS" };
+      const [wfRes, runsRes] = await Promise.all([
+        fetch(`https://api.github.com/repos/${REPO}/actions/workflows?per_page=50`, { headers }),
+        fetch(`https://api.github.com/repos/${REPO}/actions/runs?per_page=20`, { headers }),
+      ]);
+      const [wfData, runsData] = await Promise.all([wfRes.json() as any, runsRes.json() as any]);
+      res.json({
+        workflows: (wfData.workflows ?? []).map((w: any) => ({ id: w.id, name: w.name, path: w.path, state: w.state, html_url: w.html_url })),
+        runs: (runsData.workflow_runs ?? []).map((r: any) => ({ id: r.id, name: r.name, status: r.status, conclusion: r.conclusion, created_at: r.created_at, html_url: r.html_url, workflow_id: r.workflow_id })),
+      });
+    } catch (e: any) {
+      res.status(500).json({ error: e.message });
+    }
+  });
+
+  // Get last completed Live Dashboard run with job results
+  app.get("/api/github/last-dashboard-run", async (_req, res) => {
+    try {
+      const { getToken } = await import("./github-sync");
+      const token = getToken();
+      const REPO = "DreamCo-Technologies/Dreamcobots";
+      const DASHBOARD_WF_ID = 284581909;
+      const headers = { Authorization: `Bearer ${token}`, Accept: "application/vnd.github+json", "X-GitHub-Api-Version": "2022-11-28", "User-Agent": "DreamCo-Empire-OS" };
+      // Get last 5 runs of the dashboard workflow
+      const runsRes = await fetch(`https://api.github.com/repos/${REPO}/actions/workflows/${DASHBOARD_WF_ID}/runs?per_page=5&status=completed`, { headers });
+      const runsData = await runsRes.json() as any;
+      const runs = runsData.workflow_runs ?? [];
+      if (runs.length === 0) return res.json({ run: null, jobs: [] });
+      const lastRun = runs[0];
+      // Get jobs for the last run
+      const jobsRes = await fetch(`https://api.github.com/repos/${REPO}/actions/runs/${lastRun.id}/jobs?filter=all`, { headers });
+      const jobsData = await jobsRes.json() as any;
+      // Get artifacts for the last run
+      const artRes = await fetch(`https://api.github.com/repos/${REPO}/actions/runs/${lastRun.id}/artifacts`, { headers });
+      const artData = await artRes.json() as any;
+      res.json({
+        run: { id: lastRun.id, conclusion: lastRun.conclusion, created_at: lastRun.created_at, html_url: lastRun.html_url },
+        jobs: (jobsData.jobs ?? []).map((j: any) => ({ id: j.id, name: j.name, conclusion: j.conclusion, status: j.status, started_at: j.started_at, completed_at: j.completed_at })),
+        artifacts: (artData.artifacts ?? []).map((a: any) => ({ id: a.id, name: a.name, size_in_bytes: a.size_in_bytes, url: `https://github.com/${REPO}/actions/runs/${lastRun.id}/artifacts/${a.id}` })),
+      });
+    } catch (e: any) {
+      res.status(500).json({ error: e.message });
+    }
+  });
+
+  // Trigger a workflow dispatch (Live Dashboard) — uses numeric ID for reliability
+  app.post("/api/github/trigger-workflow", async (req, res) => {
+    try {
+      const { getToken } = await import("./github-sync");
+      const token = getToken();
+      const REPO = "DreamCo-Technologies/Dreamcobots";
+      const DASHBOARD_WF_ID = 284581909;
+      const { workflow } = req.body;
+      // Use numeric workflow ID for dreamco-live-dashboard, filename for others
+      const wfRef = (!workflow || workflow === "dreamco-live-dashboard.yml") ? String(DASHBOARD_WF_ID) : workflow;
+      const r = await fetch(`https://api.github.com/repos/${REPO}/actions/workflows/${wfRef}/dispatches`, {
+        method: "POST",
+        headers: { Authorization: `Bearer ${token}`, Accept: "application/vnd.github+json", "Content-Type": "application/json", "X-GitHub-Api-Version": "2022-11-28", "User-Agent": "DreamCo-Empire-OS" },
+        body: JSON.stringify({ ref: "main", inputs: { era: "all", mode: "all", deep_buddy: "true" } }),
+      });
+      if (r.status === 204) {
+        res.json({ success: true, message: "Workflow triggered — check GitHub Actions in ~2 minutes" });
+      } else {
+        const body = await r.json() as any;
+        res.status(r.status).json({ success: false, error: body.message ?? "Unknown error" });
+      }
+    } catch (e: any) {
+      res.status(500).json({ success: false, error: e.message });
+    }
+  });
+
   // ===== BOT BUILDER =====
   app.post("/api/bot-builder/generate", async (req, res) => {
     const { libraries = [], name, division = "DreamCodeLab", description = "" } = req.body;
