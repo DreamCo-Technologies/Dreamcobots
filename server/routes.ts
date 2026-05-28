@@ -1556,10 +1556,24 @@ Any improvements or fixes (optional, 1-2 bullet points max)`;
 
   app.post("/api/github/push-all", async (_req, res) => {
     try {
-      const { pushAllBotsToGitHub } = await import("./github-sync");
+      const { pushAllBotsToGitHub, pushFile, buildMasterReadme } = await import("./github-sync");
       const bots = await storage.listBotProfiles();
       const result = await pushAllBotsToGitHub(bots);
-      res.json({ success: true, pushed: result.pushed, errors: result.errors, total: bots.length });
+      // push master README after all bots
+      try {
+        await pushFile("README.md", buildMasterReadme(bots, result.byLang), "docs: update master README from Empire OS");
+      } catch {}
+      res.json({ success: true, pushed: result.pushed, errors: result.errors.slice(0, 20), byLang: result.byLang, total: bots.length });
+    } catch (e: any) {
+      res.status(500).json({ success: false, error: e.message });
+    }
+  });
+
+  app.post("/api/github/push-source", async (_req, res) => {
+    try {
+      const { pushSourceCode } = await import("./github-sync");
+      const result = await pushSourceCode();
+      res.json({ success: true, pushed: result.pushed, sha: result.sha, errors: result.errors.slice(0, 10) });
     } catch (e: any) {
       res.status(500).json({ success: false, error: e.message });
     }

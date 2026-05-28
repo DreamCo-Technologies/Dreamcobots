@@ -37,9 +37,17 @@ export default function BotActivityPage() {
   const pushAll = useMutation({
     mutationFn: () => apiRequest("POST", "/api/github/push-all", {}),
     onSuccess: (data: any) => {
-      toast({ title: `Pushed ${data.pushed} bots to GitHub!`, description: `${data.errors?.length ?? 0} errors. Repo: DreamCo-Technologies/Dreamcobots` });
+      toast({ title: `✅ Pushed ${data.pushed} bots to GitHub!`, description: `Python: ${data.byLang?.python ?? 0} | Java: ${data.byLang?.java ?? 0} | TS: ${data.byLang?.typescript ?? 0} | ${data.errors?.length ?? 0} errors` });
     },
     onError: (e: any) => toast({ title: "Push failed", description: e.message, variant: "destructive" }),
+  });
+
+  const pushSource = useMutation({
+    mutationFn: () => apiRequest("POST", "/api/github/push-source", {}),
+    onSuccess: (data: any) => {
+      toast({ title: `✅ Source code pushed!`, description: `${data.pushed} files synced to empire-os/ on GitHub` });
+    },
+    onError: (e: any) => toast({ title: "Source push failed", description: e.message, variant: "destructive" }),
   });
 
   const tabs = [
@@ -164,20 +172,55 @@ export default function BotActivityPage() {
                   </a>
                 </Card>
 
-                <Card className="buddy-card rounded-2xl border-border/60 p-5">
-                  <div className="flex items-center gap-2 mb-4">
+                {/* Merge summary */}
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                  {[
+                    { label: "Python Bots", value: (classify.data as any)?.summary?.python ?? 0, sub: "→ python_bots/", color: "text-blue-400" },
+                    { label: "Java Bots", value: (classify.data as any)?.summary?.java ?? 0, sub: "→ java_bots/", color: "text-amber-400" },
+                    { label: "TS Bots", value: (classify.data as any)?.summary?.typescript ?? 0, sub: "→ empire-os/", color: "text-cyan-400" },
+                    { label: "General Bots", value: (classify.data as any)?.summary?.general ?? 0, sub: "→ bots/{slug}/", color: "text-purple-400" },
+                  ].map(s => (
+                    <Card key={s.label} className="buddy-card rounded-2xl border-border/60 p-4">
+                      <p className={cn("text-2xl font-bold", s.color)}>{s.value}</p>
+                      <p className="text-xs font-medium mt-0.5">{s.label}</p>
+                      <p className="text-[10px] text-muted-foreground font-mono mt-1">{s.sub}</p>
+                    </Card>
+                  ))}
+                </div>
+
+                <Card className="buddy-card rounded-2xl border-border/60 p-5 space-y-4">
+                  <div className="flex items-center gap-2">
                     <UploadCloud className="h-4 w-4 text-primary" />
-                    <span className="font-semibold text-sm">Push All Bots</span>
+                    <span className="font-semibold text-sm">Full Merge — Best of Both Worlds</span>
                   </div>
-                  <p className="text-sm text-muted-foreground mb-4">Organizes all {activity.data?.totalBots ?? "1,051"} bots into language folders and pushes to your repo:<br /><code className="text-xs bg-muted px-1.5 py-0.5 rounded">bots/python/</code> <code className="text-xs bg-muted px-1.5 py-0.5 rounded">bots/java/</code> <code className="text-xs bg-muted px-1.5 py-0.5 rounded">bots/typescript/</code> <code className="text-xs bg-muted px-1.5 py-0.5 rounded">bots/general/</code></p>
-                  <Button onClick={() => pushAll.mutate()} disabled={pushAll.isPending} className="rounded-xl bg-gradient-to-r from-primary to-accent text-primary-foreground shadow-md" data-testid="push-all-btn-2">
-                    {pushAll.isPending ? <><Loader2 className="h-4 w-4 mr-2 animate-spin" />Pushing {activity.data?.totalBots ?? "1,051"} bots...</> : <><UploadCloud className="h-4 w-4 mr-2" />Push All {activity.data?.totalBots ?? "1,051"} Bots to GitHub</>}
-                  </Button>
-                  {pushAll.isSuccess && (
-                    <div className="mt-3 p-3 rounded-xl bg-green-500/10 border border-green-500/20 text-sm text-green-400">
-                      ✓ {(pushAll.data as any)?.pushed} bots pushed · {(pushAll.data as any)?.errors?.length ?? 0} errors
-                    </div>
-                  )}
+
+                  {/* Push all bots */}
+                  <div className="p-4 rounded-xl bg-muted/30 border border-border/50 space-y-2">
+                    <p className="text-sm font-medium">Step 1 — Push All {activity.data?.totalBots ?? 1051} Bot Profiles</p>
+                    <p className="text-xs text-muted-foreground">Pushes every bot as <code className="bg-muted px-1 rounded">bots/slug/replit_profile.json</code> + Python bots to <code className="bg-muted px-1 rounded">python_bots/</code> + Java bots to <code className="bg-muted px-1 rounded">java_bots/</code> + updates README</p>
+                    <Button onClick={() => pushAll.mutate()} disabled={pushAll.isPending || pushSource.isPending} className="rounded-xl w-full" data-testid="push-all-btn-2">
+                      {pushAll.isPending ? <><Loader2 className="h-4 w-4 mr-2 animate-spin" />Pushing bots... (this takes a few minutes)</> : <><UploadCloud className="h-4 w-4 mr-2" />Push All {activity.data?.totalBots ?? 1051} Bots</>}
+                    </Button>
+                    {pushAll.isSuccess && (
+                      <div className="p-3 rounded-xl bg-green-500/10 border border-green-500/20 text-sm text-green-400">
+                        ✅ {(pushAll.data as any)?.pushed} bots pushed · Python: {(pushAll.data as any)?.byLang?.python} · Java: {(pushAll.data as any)?.byLang?.java} · {(pushAll.data as any)?.errors?.length ?? 0} errors
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Push source code */}
+                  <div className="p-4 rounded-xl bg-muted/30 border border-border/50 space-y-2">
+                    <p className="text-sm font-medium">Step 2 — Push Full Source Code</p>
+                    <p className="text-xs text-muted-foreground">Pushes all 29 pages, server files, shared schema, and config to <code className="bg-muted px-1 rounded">empire-os/</code> folder on GitHub</p>
+                    <Button onClick={() => pushSource.mutate()} disabled={pushSource.isPending || pushAll.isPending} variant="outline" className="rounded-xl w-full" data-testid="push-source-btn">
+                      {pushSource.isPending ? <><Loader2 className="h-4 w-4 mr-2 animate-spin" />Pushing source files...</> : <><Github className="h-4 w-4 mr-2" />Push Full Source Code (empire-os/)</>}
+                    </Button>
+                    {pushSource.isSuccess && (
+                      <div className="p-3 rounded-xl bg-green-500/10 border border-green-500/20 text-sm text-green-400">
+                        ✅ {(pushSource.data as any)?.pushed} source files pushed to empire-os/
+                      </div>
+                    )}
+                  </div>
                 </Card>
 
                 {/* Pull Requests */}
