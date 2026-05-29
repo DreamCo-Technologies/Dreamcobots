@@ -1,0 +1,101 @@
+name: "💫 Dream Mode — Experimental Features Toggle"
+
+on:
+  workflow_dispatch:
+    inputs:
+      enable:
+        description: "Enable (true) or disable (false) Dream Mode"
+        required: true
+        default: "true"
+        type: choice
+        options: ["true", "false"]
+      scope:
+        description: "Scope: all | free | pro | enterprise | elite"
+        required: false
+        default: "all"
+      feature_flags:
+        description: "Comma-separated flags to activate (e.g. federated_learning,multi_modal,chaos_mode)"
+        required: false
+        default: ""
+
+concurrency:
+  group: dream-mode
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  toggle-dream-mode:
+    name: "💫 Toggle Dream Mode (${{ inputs.enable == 'true' && 'ENABLE' || 'DISABLE' }})"
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Apply Dream Mode toggle
+        shell: python
+        env:
+          DREAM_MODE_ENABLE: ${{ inputs.enable }}
+          DREAM_MODE_SCOPE: ${{ inputs.scope }}
+          DREAM_MODE_FLAGS: ${{ inputs.feature_flags }}
+        run: |
+          import os, json, pathlib, datetime
+
+          enable  = os.environ["DREAM_MODE_ENABLE"].lower() == "true"
+          scope   = os.environ.get("DREAM_MODE_SCOPE", "all")
+          flags_raw = os.environ.get("DREAM_MODE_FLAGS", "")
+          flags   = [f.strip() for f in flags_raw.split(",") if f.strip()]
+
+          config_path = pathlib.Path("config/dream_mode.json")
+          config_path.parent.mkdir(parents=True, exist_ok=True)
+
+          existing = {}
+          if config_path.exists():
+              try:
+                  existing = json.loads(config_path.read_text())
+              except Exception:
+                  pass
+
+          existing.update({
+              "dream_mode_active": enable,
+              "scope": scope,
+              "feature_flags": flags or existing.get("feature_flags", []),
+              "last_toggled": datetime.datetime.utcnow().isoformat() + "Z",
+              "toggled_by": "github-actions",
+          })
+
+          config_path.write_text(json.dumps(existing, indent=2))
+
+          status_word = "ENABLED" if enable else "DISABLED"
+          print(f"💫 Dream Mode {status_word}")
+          print(f"   scope={scope}  flags={flags or 'unchanged'}")
+
+          # Write GITHUB_STEP_SUMMARY
+          with open(os.environ.get("GITHUB_STEP_SUMMARY", "/dev/null"), "a") as fh:
+              fh.write(f"## 💫 Dream Mode {status_word}\n\n")
+              fh.write(f"| Setting | Value |\n|---|---|\n")
+              fh.write(f"| Status | **{status_word}** |\n")
+              fh.write(f"| Scope | `{scope}` |\n")
+              fh.write(f"| Feature Flags | `{', '.join(flags) if flags else 'unchanged'}` |\n")
+              fh.write(f"| Timestamp | {existing['last_toggled']} |\n")
+
+      - name: Commit Dream Mode config
+        run: |
+          git config user.name  "dreamco-bot"
+          git config user.email "bot@dreamco.io"
+          git add config/dream_mode.json
+          git diff --cached --quiet || git commit -m "chore: dream-mode ${{ inputs.enable == 'true' && 'enabled' || 'disabled' }} scope=${{ inputs.scope }} [skip ci]"
+          git push

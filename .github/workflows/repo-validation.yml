@@ -122,6 +122,7 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: "3.11"
+          cache: pip
 
       - name: Install dependencies
         run: |
@@ -192,6 +193,12 @@ jobs:
           PY
 
       - name: Upload dashboard comparison artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: dashboard-comparison-discovery
+          overwrite: true
+          path: /tmp/dashboard-comparison.json
 
       - name: Run dashboard tests
         run: |

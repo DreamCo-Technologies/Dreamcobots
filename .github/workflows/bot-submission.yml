@@ -1,0 +1,114 @@
+name: "🤝 Bot Submission CI"
+description: "Community bot contribution CI: framework compliance, tier enforcement, tests, and onboarding welcome"
+
+on:
+  pull_request:
+    paths:
+      - "bots/**"
+      - "BuddyAI/**"
+    types: [opened, synchronize, reopened]
+  workflow_dispatch:
+    inputs:
+      pr_number:
+        description: "PR number to validate"
+        required: false
+
+concurrency:
+  group: bot-submission-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  compliance-and-tier:
+    name: "🛡️ Compliance & Tier Validation"
+    runs-on: ubuntu-latest
+    outputs:
+      violations: ${{ steps.tier.outputs.violations_found }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup DreamCo Environment
+        uses: ./.github/actions/setup-dreamco
+
+      - name: Framework Compliance Gate
+        run: python tools/check_bot_framework.py
+
+      - name: Get changed bot files
+        id: changed
+        run: |
+          FILES=$(git diff --name-only origin/${{ github.base_ref }}...HEAD -- 'bots/**/*.py' | tr '\n' ' ')
+          echo "files=$FILES" >> $GITHUB_OUTPUT
+
+      - name: Tier Enforcement
+        id: tier
+        uses: ./.github/actions/tier-enforcement
+        with:
+          changed-files: ${{ steps.changed.outputs.files }}
+          fail-on-violation: "true"
+
+  unit-tests:
+    name: "🧪 Unit & Integration Tests"
+    runs-on: ubuntu-latest
+    needs: compliance-and-tier
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup DreamCo Environment
+        uses: ./.github/actions/setup-dreamco
+
+      - name: Run tests
+        run: |
+          python -m pytest tests/unit/ tests/integration/ -q --tb=short \
+            || python -m pytest tests/ -q --tb=short --ignore=tests/e2e
+
+      - name: Record submission outcome in learning loop
+        uses: ./.github/actions/learning-loop
+        with:
+          event-type: bot_update
+          outcome: ${{ job.status == 'success' && 'success' || 'failure' }}
+          strategy-tags: community_submission
+
+  welcome-comment:
+    name: "👋 Welcome Contributor"
+    runs-on: ubuntu-latest
+    needs: [compliance-and-tier, unit-tests]
+    if: github.event_name == 'pull_request' && github.event.action == 'opened'
+
+    steps:
+      - name: Post welcome message
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const violations = '${{ needs.compliance-and-tier.outputs.violations }}' === 'true';
+            const passEmoji = violations ? '⚠️' : '✅';
+            const passMsg = violations
+              ? 'Some tier enforcement checks need attention — see the **Compliance & Tier Validation** job for details.'
+              : 'All compliance and tier checks passed!';
+
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              body: [
+                '## 🤖 DreamCoBots Bot Submission Review',
+                '',
+                `${passEmoji} ${passMsg}`,
+                '',
+                '**Checklist for contributors:**',
+                '- [ ] Bot file includes `GlobalAISourcesFlow` import/reference',
+                '- [ ] Tier tag is set (`free` / `pro` / `enterprise` / `elite`)',
+                '- [ ] Unit tests added or updated in `tests/`',
+                '- [ ] Bot is registered via `BotRegistry` or has a manifest',
+                '',
+                'Thank you for contributing to the DreamCo Empire! 🚀',
+              ].join('\n'),
+            });

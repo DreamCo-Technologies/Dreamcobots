@@ -1,0 +1,224 @@
+name: "🪐 Command Tower — Empire Dashboard"
+
+on:
+  workflow_run:
+    workflows:
+      - "Revenue Engine"
+      - "Buddy System"
+      - "24 Hour Builder"
+      - "Timed Monitoring System"
+      - "Framework Compliance"
+      - "Repo Validation"
+      - "Max Parallel Delivery"
+      - "Dashboard Governance"
+    types: [completed]
+  schedule:
+    # Full rebuild every hour for the live metrics page
+    - cron: "0 * * * *"
+  workflow_dispatch:
+    inputs:
+      force_rebuild:
+        description: "Force full dashboard rebuild"
+        required: false
+        default: "false"
+
+concurrency:
+  group: command-tower-deploy
+  cancel-in-progress: true
+
+permissions:
+  contents: write
+  actions: read
+  pages: write
+  id-token: write
+
+jobs:
+  build-dashboard:
+    name: "📊 Aggregate & Build Empire Dashboard"
+    runs-on: ubuntu-latest
+    outputs:
+      dashboard_url: ${{ steps.deploy-pages.outputs.page_url }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Collect workflow run metrics
+        id: metrics
+        shell: python
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPO: ${{ github.repository }}
+        run: |
+          import os, json, subprocess, datetime
+
+          token = os.environ["GH_TOKEN"]
+          repo  = os.environ["REPO"]
+
+          cmd = [
+              "gh", "api",
+              f"/repos/{repo}/actions/runs",
+              "--paginate",
+              "--jq",
+              '[.workflow_runs[] | {name:.name, status:.status, conclusion:.conclusion, '
+              'created_at:.created_at, updated_at:.updated_at, id:.id}] | .[:50]'
+          ]
+          result = subprocess.run(cmd, capture_output=True, text=True,
+                                  env={**os.environ, "GITHUB_TOKEN": token})
+
+          runs = json.loads(result.stdout) if result.returncode == 0 else []
+
+          # Bot registry stats
+          try:
+              import sys
+              sys.path.insert(0, ".")
+              from dreamco_platform.registry.bot_registry import BotRegistry
+              reg = BotRegistry()
+              bot_count = len(reg._bots) if hasattr(reg, "_bots") else "n/a"
+          except Exception:
+              bot_count = "n/a"
+
+          summary = {
+              "generated_at": datetime.datetime.utcnow().isoformat() + "Z",
+              "repository": repo,
+              "workflow_runs": runs,
+              "active_bot_count": bot_count,
+          }
+          with open("/tmp/empire_metrics.json", "w") as fh:
+              json.dump(summary, fh, indent=2)
+          print(f"Collected {len(runs)} workflow runs")
+
+      - name: Generate Mermaid workflow map
+        shell: python
+        run: |
+          import pathlib, json, re
+
+          workflows_dir = pathlib.Path(".github/workflows")
+          nodes, edges = [], []
+          dispatch_re = re.compile(r"workflow:\s*['\"]?([a-zA-Z0-9_-]+)['\"]?")
+
+          for wf_file in sorted(workflows_dir.glob("*.yml")):
+              name = wf_file.stem
+              nodes.append(f'  {name}["{name}"]')
+              text = wf_file.read_text(errors="replace")
+              for target in dispatch_re.findall(text):
+                  target_stem = target.replace(".yml", "")
+                  edges.append(f"  {name} --> {target_stem}")
+
+          mermaid = "flowchart TD\n" + "\n".join(nodes) + "\n" + "\n".join(edges)
+
+          out_dir = pathlib.Path("public/workflow-map")
+          out_dir.mkdir(parents=True, exist_ok=True)
+          (out_dir / "map.mmd").write_text(mermaid)
+          print("Workflow map generated.")
+
+      - name: Build GitHub Pages dashboard
+        shell: python
+        run: |
+          import json, pathlib, datetime
+
+          metrics = json.loads(pathlib.Path("/tmp/empire_metrics.json").read_text())
+          bot_count = metrics.get("active_bot_count", "n/a")
+          generated = metrics["generated_at"]
+
+          runs = metrics.get("workflow_runs", [])
+          run_rows = ""
+          for r in runs[:20]:
+              status_emoji = {"success": "✅", "failure": "❌", "cancelled": "⚠️"}.get(r.get("conclusion",""), "🔄")
+              run_rows += (
+                  f"<tr><td>{status_emoji} {r['name']}</td>"
+                  f"<td>{r.get('conclusion','running')}</td>"
+                  f"<td>{r['created_at'][:16]}</td>"
+                  f"<td><a href='https://github.com/{metrics['repository']}/actions/runs/{r['id']}'>🔗</a></td></tr>\n"
+              )
+
+          mermaid_src = ""
+          mmd_path = pathlib.Path("public/workflow-map/map.mmd")
+          if mmd_path.exists():
+              mermaid_src = mmd_path.read_text()
+
+          html = f"""<!DOCTYPE html>
+          <html lang="en">
+          <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>🪐 DreamCo Command Tower</title>
+            <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+            <style>
+              body {{ font-family: 'Segoe UI', sans-serif; background: #0d1117; color: #e6edf3; margin: 0; padding: 2rem; }}
+              h1 {{ color: #f78166; }} h2 {{ color: #79c0ff; border-bottom: 1px solid #30363d; padding-bottom: .5rem; }}
+              .badge {{ display: inline-block; background: #21262d; border: 1px solid #30363d; border-radius: 6px; padding: .4rem 1rem; margin: .25rem; font-size: .9rem; }}
+              .badge span {{ color: #58a6ff; font-weight: bold; }}
+              table {{ width: 100%; border-collapse: collapse; margin-top: 1rem; }}
+              th {{ background: #161b22; color: #8b949e; text-align: left; padding: .6rem; }}
+              td {{ padding: .5rem; border-top: 1px solid #21262d; }}
+              tr:hover {{ background: #161b22; }}
+              .mermaid {{ background: #161b22; padding: 1rem; border-radius: 8px; margin-top: 1rem; }}
+              footer {{ margin-top: 2rem; color: #8b949e; font-size: .8rem; }}
+            </style>
+          </head>
+          <body>
+            <h1>🪐 DreamCo Command Tower</h1>
+            <p>Empire-wide automation dashboard · Last updated: <strong>{generated}</strong></p>
+
+            <h2>📊 Empire Metrics</h2>
+            <div>
+              <div class="badge">🤖 Active Bots <span>{bot_count}</span></div>
+              <div class="badge">⚙️ Workflows <span>{len(runs)}</span></div>
+            </div>
+
+            <h2>⚡ Recent Workflow Runs</h2>
+            <table>
+              <tr><th>Workflow</th><th>Status</th><th>Started</th><th>Link</th></tr>
+              {run_rows}
+            </table>
+
+            <h2>🗺️ Workflow Map</h2>
+            <div class="mermaid">
+          {mermaid_src}
+            </div>
+
+            <footer>DreamCo Technologies · Autonomous Wealth Generation at Scale</footer>
+            <script>mermaid.initialize({{startOnLoad:true, theme:'dark'}});</script>
+          </body>
+          </html>
+          """
+
+          out = pathlib.Path("public")
+          out.mkdir(exist_ok=True)
+          (out / "index.html").write_text(html)
+          print("Dashboard HTML built → public/index.html")
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: public
+
+  deploy:
+    name: "🚀 Deploy to GitHub Pages"
+    needs: build-dashboard
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy-pages.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deploy-pages
+        uses: actions/deploy-pages@v4
+
+      - name: Post summary
+        run: |
+          echo "## 🪐 Command Tower Dashboard Deployed" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "Live at: ${{ steps.deploy-pages.outputs.page_url }}" >> $GITHUB_STEP_SUMMARY

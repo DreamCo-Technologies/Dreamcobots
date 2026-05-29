@@ -1,0 +1,84 @@
+name: "🧠 Learning Loop Trigger"
+description: "Records workflow outcomes into GlobalLearningLoop and extracts top strategies for FormulaVault feedback"
+
+inputs:
+  event-type:
+    description: "Type of event: deploy | revenue_cycle | bot_update | experiment"
+    required: true
+  bot-id:
+    description: "Bot identifier (snake_case). Blank for system-level events."
+    required: false
+    default: ""
+  outcome:
+    description: "Outcome label: success | failure | partial"
+    required: false
+    default: "success"
+  revenue-delta:
+    description: "Revenue change in USD (positive or negative float as string)"
+    required: false
+    default: "0"
+  strategy-tags:
+    description: "Comma-separated strategy tags (e.g. 'tier_upgrade,cross_sell')"
+    required: false
+    default: ""
+
+outputs:
+  top-strategy:
+    description: "Highest-scoring strategy extracted from the learning loop"
+    value: ${{ steps.record.outputs.top_strategy }}
+  total-records:
+    description: "Total number of learning records in the store"
+    value: ${{ steps.record.outputs.total_records }}
+
+runs:
+  using: "composite"
+  steps:
+    - name: Record outcome and extract strategies
+      id: record
+      shell: python
+      run: |
+        import os, sys, importlib, pathlib, json
+
+        # Add repo root to path so we can import global_learning_system
+        sys.path.insert(0, os.getcwd())
+
+        event_type    = os.environ.get("INPUT_EVENT_TYPE", "unknown")
+        bot_id        = os.environ.get("INPUT_BOT_ID", "")
+        outcome       = os.environ.get("INPUT_OUTCOME", "success")
+        revenue_delta = float(os.environ.get("INPUT_REVENUE_DELTA", "0") or 0)
+        tags          = [t.strip() for t in os.environ.get("INPUT_STRATEGY_TAGS", "").split(",") if t.strip()]
+
+        top_strategy  = "n/a"
+        total_records = 0
+
+        try:
+            from global_learning_system.learning_loop import GlobalLearningLoop
+            loop = GlobalLearningLoop()
+            loop.record_outcome(
+                event_type=event_type,
+                bot_id=bot_id or None,
+                outcome=outcome,
+                revenue_delta=revenue_delta,
+                tags=tags,
+            )
+            strategies = loop.extract_successful_strategies(limit=1)
+            if strategies:
+                top_strategy = strategies[0].get("strategy") or strategies[0].get("name", "n/a")
+            total_records = loop.total_records() if hasattr(loop, "total_records") else -1
+        except Exception as exc:
+            print(f"::warning::LearningLoop skipped: {exc}")
+
+        output_path = os.environ.get("GITHUB_OUTPUT", "")
+        if output_path:
+            with open(output_path, "a") as fh:
+                fh.write(f"top_strategy={top_strategy}\n")
+                fh.write(f"total_records={total_records}\n")
+
+        print(f"🧠 Recorded: event={event_type} bot={bot_id or 'system'} outcome={outcome} revenue_delta={revenue_delta}")
+        print(f"   top_strategy → {top_strategy}  (total_records={total_records})")
+      env:
+        INPUT_EVENT_TYPE: ${{ inputs.event-type }}
+        INPUT_BOT_ID: ${{ inputs.bot-id }}
+        INPUT_OUTCOME: ${{ inputs.outcome }}
+        INPUT_REVENUE_DELTA: ${{ inputs.revenue-delta }}
+        INPUT_STRATEGY_TAGS: ${{ inputs.strategy-tags }}
