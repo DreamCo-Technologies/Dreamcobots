@@ -1,0 +1,91 @@
+name: "🗺️ Workflow Map Generator"
+
+on:
+  push:
+    paths:
+      - ".github/workflows/**"
+  workflow_dispatch:
+
+concurrency:
+  group: workflow-map
+  cancel-in-progress: true
+
+permissions:
+  contents: write
+
+jobs:
+  generate-map:
+    name: "🗺️ Generate Mermaid Workflow Map"
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+
+      - name: Generate Mermaid workflow map
+        shell: python
+        run: |
+          import pathlib, re, json, datetime
+
+          workflows_dir = pathlib.Path(".github/workflows")
+          on_re  = re.compile(r"^on:", re.MULTILINE)
+          name_re = re.compile(r"^name:\s*['\"]?(.+?)['\"]?\s*$", re.MULTILINE)
+          dispatch_re = re.compile(r"workflow:\s*['\"]?([a-zA-Z0-9_\-]+)['\"]?")
+
+          nodes, edges, meta = [], [], []
+
+          for wf_file in sorted(workflows_dir.glob("*.yml")):
+              text = wf_file.read_text(errors="replace")
+              stem = wf_file.stem
+              display_name_m = name_re.search(text)
+              display = display_name_m.group(1).strip() if display_name_m else stem
+              # strip emoji prefix for mermaid node id (keep for label)
+              node_id = re.sub(r"[^a-zA-Z0-9_]", "_", stem)
+              nodes.append(f'  {node_id}["{display}"]')
+              for target in dispatch_re.findall(text):
+                  target_id = re.sub(r"[^a-zA-Z0-9_]", "_", target.replace(".yml",""))
+                  edges.append(f"  {node_id} --> {target_id}")
+              meta.append({"id": node_id, "stem": stem, "name": display})
+
+          mermaid = "flowchart TD\n" + "\n".join(nodes)
+          if edges:
+              mermaid += "\n" + "\n".join(edges)
+
+          out_dir = pathlib.Path("docs")
+          out_dir.mkdir(exist_ok=True)
+
+          (out_dir / "workflow_map.mmd").write_text(mermaid)
+
+          # Also write a markdown file with the embedded diagram
+          md = f"""# 🗺️ DreamCoBots Workflow Map
+
+> Auto-generated on {datetime.datetime.utcnow().strftime('%Y-%m-%d %H:%M UTC')} from `.github/workflows/`
+
+```mermaid
+{mermaid}
+```
+
+## Workflows ({len(meta)} total)
+
+| ID | File | Display Name |
+|---|---|---|
+""" + "\n".join(f"| `{m['id']}` | `{m['stem']}.yml` | {m['name']} |" for m in meta) + "\n"
+
+          (out_dir / "workflow_map.md").write_text(md)
+          print(f"Generated workflow map: {len(meta)} workflows, {len(edges)} dispatch edges")
+
+      - name: Commit workflow map
+        run: |
+          git config user.name  "dreamco-bot"
+          git config user.email "bot@dreamco.io"
+          git add docs/workflow_map.mmd docs/workflow_map.md
+          git diff --cached --quiet || git commit -m "chore: auto-update workflow map [skip ci]"
+          git push

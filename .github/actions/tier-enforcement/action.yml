@@ -1,0 +1,76 @@
+name: "🔐 Tier Enforcement"
+description: "Validates that every bot touched in this PR carries the correct tier tag and GlobalAISourcesFlow compliance marker"
+
+inputs:
+  fail-on-violation:
+    description: "Exit non-zero when tier violations are found"
+    required: false
+    default: "true"
+  changed-files:
+    description: "Space-separated list of changed bot files (leave blank to auto-detect)"
+    required: false
+    default: ""
+
+outputs:
+  violations-found:
+    description: "'true' if any tier violations were detected"
+    value: ${{ steps.tier-check.outputs.violations_found }}
+  violation-count:
+    description: "Number of bots with tier violations"
+    value: ${{ steps.tier-check.outputs.violation_count }}
+
+runs:
+  using: "composite"
+  steps:
+    - name: Run tier enforcement check
+      id: tier-check
+      shell: python
+      run: |
+        import os, re, sys, pathlib, json
+
+        TIERS = {"free", "pro", "enterprise", "elite"}
+        COMPLIANCE_MARKER = "GlobalAISourcesFlow"
+
+        changed = os.environ.get("INPUT_CHANGED_FILES", "").split()
+        if not changed:
+            root = pathlib.Path("bots")
+            changed = list(root.rglob("*.py")) if root.exists() else []
+
+        violations = []
+        for path_str in changed:
+            p = pathlib.Path(path_str)
+            if not p.exists() or p.suffix != ".py":
+                continue
+            text = p.read_text(errors="replace")
+            has_marker = COMPLIANCE_MARKER in text
+            tier_match = re.search(r"tier\s*[:=]\s*['\"](\w+)['\"]", text, re.IGNORECASE)
+            tier = tier_match.group(1).lower() if tier_match else None
+            tier_ok = tier in TIERS if tier else True  # only fail if explicitly wrong
+            if not has_marker or not tier_ok:
+                violations.append({
+                    "file": str(p),
+                    "has_marker": has_marker,
+                    "tier": tier,
+                    "tier_valid": tier_ok,
+                })
+
+        found = len(violations) > 0
+        print(f"violations_found={str(found).lower()}", file=open(os.environ["GITHUB_OUTPUT"], "a"))
+        print(f"violation_count={len(violations)}", file=open(os.environ["GITHUB_OUTPUT"], "a"))
+
+        if violations:
+            print("::group::Tier Enforcement Violations")
+            for v in violations:
+                marker_status = "✅" if v["has_marker"] else "❌ Missing GlobalAISourcesFlow"
+                tier_status = f"✅ {v['tier']}" if v["tier_valid"] else f"❌ invalid tier '{v['tier']}'"
+                print(f"  {v['file']}: compliance={marker_status}  tier={tier_status}")
+            print("::endgroup::")
+
+            fail = os.environ.get("INPUT_FAIL_ON_VIOLATION", "true").lower() == "true"
+            if fail:
+                sys.exit(1)
+        else:
+            print("✅ All checked files pass tier enforcement.")
+      env:
+        INPUT_CHANGED_FILES: ${{ inputs.changed-files }}
+        INPUT_FAIL_ON_VIOLATION: ${{ inputs.fail-on-violation }}

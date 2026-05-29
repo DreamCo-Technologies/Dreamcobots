@@ -31,6 +31,11 @@ import time
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple, Type
 
+_REPO_ROOT = str(Path(__file__).resolve().parents[2])
+if _REPO_ROOT not in sys.path:
+    sys.path.insert(0, _REPO_ROOT)
+from framework import GlobalAISourcesFlow  # noqa: F401 — GLOBAL AI SOURCES FLOW
+
 from core.bot_base import BotBase
 from sandbox.performance_rating import (
     COMPLEXITY_WEIGHTS,

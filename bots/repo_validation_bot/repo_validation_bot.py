@@ -22,6 +22,13 @@ Exit code 0 if all bots pass, 1 if any validation issue is found.
 from __future__ import annotations
 
 import argparse
+import sys
+import os
+
+_REPO_ROOT = os.path.normpath(os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..'))
+if _REPO_ROOT not in sys.path:
+    sys.path.insert(0, _REPO_ROOT)
+from framework import GlobalAISourcesFlow  # noqa: F401 — GLOBAL AI SOURCES FLOW
 import ast
 import json
 import os

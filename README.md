@@ -2,6 +2,17 @@
 
 > **1051 AI bots · 45 divisions · Self-learning · Revenue-generating · Fully deployed on Replit**
 
+[![🪐 Command Tower](https://github.com/DreamCo-Technologies/Dreamcobots/actions/workflows/command-tower.yml/badge.svg)](https://github.com/DreamCo-Technologies/Dreamcobots/actions/workflows/command-tower.yml)
+[![💰 Revenue Engine](https://github.com/DreamCo-Technologies/Dreamcobots/actions/workflows/revenue_engine.yml/badge.svg)](https://github.com/DreamCo-Technologies/Dreamcobots/actions/workflows/revenue_engine.yml)
+[![🛡️ Framework Compliance](https://github.com/DreamCo-Technologies/Dreamcobots/actions/workflows/framework-compliance.yml/badge.svg)](https://github.com/DreamCo-Technologies/Dreamcobots/actions/workflows/framework-compliance.yml)
+[![🧠 Auto-Retrain](https://github.com/DreamCo-Technologies/Dreamcobots/actions/workflows/auto-retrain.yml/badge.svg)](https://github.com/DreamCo-Technologies/Dreamcobots/actions/workflows/auto-retrain.yml)
+[![🔥 Chaos Testing](https://github.com/DreamCo-Technologies/Dreamcobots/actions/workflows/chaos-testing.yml/badge.svg)](https://github.com/DreamCo-Technologies/Dreamcobots/actions/workflows/chaos-testing.yml)
+[![🤝 Bot Submission CI](https://github.com/DreamCo-Technologies/Dreamcobots/actions/workflows/bot-submission.yml/badge.svg)](https://github.com/DreamCo-Technologies/Dreamcobots/actions/workflows/bot-submission.yml)
+![Active Bots](https://img.shields.io/badge/Active%20Bots-1051-blue?logo=robot&logoColor=white)
+![Divisions](https://img.shields.io/badge/Divisions-45-purple?logo=building&logoColor=white)
+![Tiers](https://img.shields.io/badge/Tiers-free%20%7C%20pro%20%7C%20enterprise%20%7C%20elite-gold)
+![Revenue Target](https://img.shields.io/badge/Revenue%20Target-%24500%2Fday-green?logo=stripe&logoColor=white)
+
 ## 📁 Repository Structure
 
 | Folder | Files | Description |
