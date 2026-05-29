@@ -42,12 +42,14 @@ const SAMPLE_BOTS = [
 ];
 
 let app;
+let resetAgentDispatchState;
 let originalBotsContent;
 
 beforeAll(async () => {
   originalBotsContent = fs.readFileSync(BOTS_FILE, 'utf8');
   const module = await import('../backend/server.js');
   app = module.default;
+  resetAgentDispatchState = module.resetAgentDispatchState;
 });
 
 afterAll(() => {
@@ -56,6 +58,7 @@ afterAll(() => {
 
 beforeEach(() => {
   fs.writeFileSync(BOTS_FILE, JSON.stringify(SAMPLE_BOTS, null, 2));
+  resetAgentDispatchState?.();
 });
 
 // ---------------------------------------------------------------------------
@@ -291,6 +294,64 @@ describe('GET /api/command-center', () => {
       expect(lane).toHaveProperty('status');
       expect(lane).toHaveProperty('validation_state');
       expect(lane).toHaveProperty('ship_decision');
+    });
+  });
+
+  // ---------------------------------------------------------------------------
+  // GET /api/agents
+  // ---------------------------------------------------------------------------
+
+  describe('GET /api/agents', () => {
+    test('returns available agents', async () => {
+      const res = await request(app).get('/api/agents');
+      expect(res.status).toBe(200);
+      expect(Array.isArray(res.body.agents)).toBe(true);
+      expect(res.body.agents[0]).toHaveProperty('agent_id');
+    });
+  });
+
+  // ---------------------------------------------------------------------------
+  // POST /api/agents/dispatch and GET /api/agents/commands
+  // ---------------------------------------------------------------------------
+
+  describe('Agents command dispatch', () => {
+    test('dispatches a command and selects best agent', async () => {
+      const res = await request(app).post('/api/agents/dispatch').send({ command: 'emotion companion support' });
+      expect(res.status).toBe(201);
+      expect(res.body.dispatched).toBe(true);
+      expect(res.body.selected_agent).toBeTruthy();
+      expect(res.body.command).toHaveProperty('ranked_candidates');
+    });
+
+    test('duplicate-safe behavior returns existing command', async () => {
+      await request(app).post('/api/agents/dispatch').send({ command: 'deploy bot fleet' });
+      const duplicate = await request(app).post('/api/agents/dispatch').send({ command: 'deploy    bot   fleet' });
+      expect(duplicate.status).toBe(200);
+      expect(duplicate.body.duplicate).toBe(true);
+      expect(duplicate.body.dispatched).toBe(false);
+    });
+
+    test('returns command queue entries', async () => {
+      await request(app).post('/api/agents/dispatch').send({ command: 'route legal review' });
+      const res = await request(app).get('/api/agents/commands');
+      expect(res.status).toBe(200);
+      expect(Array.isArray(res.body.commands)).toBe(true);
+      expect(res.body.commands.length).toBe(1);
+    });
+  });
+
+  // ---------------------------------------------------------------------------
+  // GET /api/global-sources/connectivity
+  // ---------------------------------------------------------------------------
+
+  describe('GET /api/global-sources/connectivity', () => {
+    test('returns buddy connectivity checklist', async () => {
+      const res = await request(app).get('/api/global-sources/connectivity');
+      expect(res.status).toBe(200);
+      expect(res.body).toHaveProperty('buddy_channel', 'buddy_global_sources');
+      expect(Array.isArray(res.body.modules)).toBe(true);
+      expect(res.body.total_modules).toBeGreaterThan(0);
+      expect(res.body.connected_modules).toBe(res.body.total_modules);
     });
   });
 

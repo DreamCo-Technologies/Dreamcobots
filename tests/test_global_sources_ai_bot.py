@@ -50,6 +50,7 @@ from bots.global_sources_ai_bot.tiers import (
     FEATURE_COLLABORATION_ENGINE,
 )
 from bots.global_sources_ai_bot.benchmarks import BENCHMARK_DIMENSIONS, ModelBenchmark
+from bots.global_sources_ai_bot.buddy_connection_registry import buddy_connection_checklist
 
 
 # ===========================================================================
@@ -449,6 +450,11 @@ class TestGlobalSourcesAIBotCore:
         s = self.bot_free.status()
         assert len(s["strategic_rules"]) == 7
 
+    def test_status_has_buddy_connectivity(self):
+        s = self.bot_free.status()
+        assert "buddy_global_sources_connectivity" in s
+        assert s["buddy_global_sources_connectivity"]["all_connected"] is True
+
     def test_repr(self):
         r = repr(self.bot_pro)
         assert "GlobalSourcesAIBot" in r
@@ -678,3 +684,23 @@ class TestSelfImprovementEngine:
         processed = self.bot.sandbox_test_pending()
         # The framework sandbox always returns passed=True in default config
         assert isinstance(processed, list)
+
+
+class TestBuddyConnectivityChecklist:
+
+    def test_global_sources_modules_registered(self):
+        checklist = buddy_connection_checklist()
+        modules = {entry["module"] for entry in checklist["modules"]}
+        expected = {
+            "global_sources_ai_bot.py",
+            "benchmarks.py",
+            "task_router.py",
+            "model_registry.py",
+            "tiers.py",
+            "framework/global_ai_sources_flow.py",
+        }
+        assert expected.issubset(modules)
+
+    def test_all_registered_modules_connected(self):
+        checklist = buddy_connection_checklist()
+        assert checklist["all_connected"] is True

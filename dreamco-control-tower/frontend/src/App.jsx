@@ -4,6 +4,7 @@ import RepoActivity from './components/RepoActivity.jsx';
 import BotDeployment from './components/BotDeployment.jsx';
 import Analytics from './components/Analytics.jsx';
 import ActionsPage from './components/ActionsPage.jsx';
+import AgentsPage from './components/AgentsPage.jsx';
 import BotMarketplace from './components/BotMarketplace.jsx';
 import CommandCenter from './components/CommandCenter.jsx';
 
@@ -13,12 +14,35 @@ const NAV_ITEMS = [
   { id: 'deploy', label: '🚀 Bot Deployment' },
   { id: 'analytics', label: '📊 Analytics' },
   { id: 'actions', label: '⚡ Actions' },
+  { id: 'agents', label: '🤝 Agents' },
   { id: 'marketplace', label: '🛒 Marketplace' },
   { id: 'command-center', label: '🧭 Command Center' },
 ];
 
 export default function App() {
   const [activeTab, setActiveTab] = useState('overview');
+  const [lastDispatch, setLastDispatch] = useState(null);
+  const [agentsRefreshKey, setAgentsRefreshKey] = useState(0);
+
+  async function handleBuddyCommandSubmit(command) {
+    try {
+      const response = await fetch('/api/agents/dispatch', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ command }),
+      });
+      const payload = await response.json();
+      setLastDispatch(payload);
+      setAgentsRefreshKey((value) => value + 1);
+    } catch (error) {
+      setLastDispatch({
+        duplicate: false,
+        command: { command },
+        selected_agent: null,
+        error: error.message,
+      });
+    }
+  }
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -55,7 +79,14 @@ export default function App() {
           {activeTab === 'activity' && <RepoActivity />}
           {activeTab === 'deploy' && <BotDeployment />}
           {activeTab === 'analytics' && <Analytics />}
-          {activeTab === 'actions' && <ActionsPage />}
+          {activeTab === 'actions' && (
+            <ActionsPage
+              onBuddyCommandSubmit={handleBuddyCommandSubmit}
+              lastDispatch={lastDispatch}
+              onOpenAgentsPage={() => setActiveTab('agents')}
+            />
+          )}
+          {activeTab === 'agents' && <AgentsPage refreshKey={agentsRefreshKey} />}
           {activeTab === 'marketplace' && <BotMarketplace />}
           {activeTab === 'command-center' && <CommandCenter />}
         </main>

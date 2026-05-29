@@ -25,7 +25,10 @@ from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from typing import Optional
 
+from bots.global_sources_ai_bot.buddy_connection_registry import register_buddy_connection
 from bots.global_sources_ai_bot.model_registry import TOP_100_AI_MODELS
+
+register_buddy_connection("benchmarks.py")
 
 
 # ---------------------------------------------------------------------------

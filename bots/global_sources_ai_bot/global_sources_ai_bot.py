@@ -45,6 +45,10 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", ".."))
 # ── CRITICAL: existing framework import (must not be removed) ────────────────
 from framework import GlobalAISourcesFlow  # GLOBAL AI SOURCES FLOW
 
+from bots.global_sources_ai_bot.buddy_connection_registry import (
+    buddy_connection_checklist,
+    register_buddy_connection,
+)
 from bots.global_sources_ai_bot.tiers import (
     Tier,
     TierConfig,
@@ -67,6 +71,8 @@ from bots.global_sources_ai_bot.model_registry import (
 )
 from bots.global_sources_ai_bot.task_router import TaskRouter, RoutingConfig, RoutingResult
 from bots.global_sources_ai_bot.benchmarks import BenchmarkEngine
+
+register_buddy_connection("global_sources_ai_bot.py")
 
 
 # ---------------------------------------------------------------------------
@@ -576,6 +582,7 @@ class GlobalSourcesAIBot:
             "routing_memory_size": len(self._memory),
             "pending_discoveries": len(self._pending_discovery),
             "pipeline": "GlobalAISourcesFlow v1.0.0 — 8 stages active",
+            "buddy_global_sources_connectivity": buddy_connection_checklist(),
             "strategic_rules": [
                 "Never rely on one AI provider",
                 "Always benchmark",

@@ -93,6 +93,14 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from typing import Any
 
+try:
+    from bots.global_sources_ai_bot.buddy_connection_registry import register_buddy_connection
+except ModuleNotFoundError:  # pragma: no cover - allows framework-only usage
+    register_buddy_connection = None
+
+if register_buddy_connection is not None:
+    register_buddy_connection("framework/global_ai_sources_flow.py")
+
 # ---------------------------------------------------------------------------
 # Framework version & required stage identifiers
 # ---------------------------------------------------------------------------

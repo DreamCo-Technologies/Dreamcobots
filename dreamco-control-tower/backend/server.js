@@ -17,6 +17,7 @@ import { fileURLToPath } from 'url';
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const BOTS_FILE = path.join(__dirname, '../config/bots.json');
 const COMMAND_CENTER_FILE = path.join(__dirname, '../config/command_center.json');
+const MAX_COMMAND_LOG = 200;
 
 const app = express();
 app.use(express.json());
@@ -82,6 +83,71 @@ function computeOverallBenchmarkScore(architecture) {
   }
   const average = values.reduce((sum, value) => sum + value, 0) / values.length;
   return Math.round(average * 100) / 100;
+}
+
+const agentCommandLog = [];
+
+const GLOBAL_SOURCES_CONNECTIVITY_CHECKLIST = [
+  { module: 'bots/global_sources_ai_bot/global_sources_ai_bot.py', status: 'connected' },
+  { module: 'bots/global_sources_ai_bot/benchmarks.py', status: 'connected' },
+  { module: 'bots/global_sources_ai_bot/task_router.py', status: 'connected' },
+  { module: 'bots/global_sources_ai_bot/model_registry.py', status: 'connected' },
+  { module: 'bots/global_sources_ai_bot/tiers.py', status: 'connected' },
+  { module: 'framework/global_ai_sources_flow.py', status: 'connected' },
+];
+
+function normaliseCommand(command) {
+  return command.toLowerCase().replace(/\s+/g, ' ').trim();
+}
+
+function tokenizeCommand(command) {
+  return new Set(normaliseCommand(command).split(' ').filter((token) => token.length > 2));
+}
+
+function scoreAgentForCommand(agent, tokens) {
+  const haystack = [
+    agent.name,
+    agent.category,
+    agent.description,
+    ...(Array.isArray(agent.features) ? agent.features : []),
+  ]
+    .join(' ')
+    .toLowerCase();
+
+  let score = 0;
+  for (const token of tokens) {
+    if (haystack.includes(token)) {
+      score += 2;
+    }
+  }
+
+  if (agent.status === 'active') {
+    score += 1.5;
+  }
+  if (String(agent.name || '').toLowerCase().includes('buddy')) {
+    score += 1;
+  }
+  return score;
+}
+
+function rankAgentsForCommand(command, agents) {
+  const tokens = tokenizeCommand(command);
+  return [...agents]
+    .map((agent) => ({
+      ...agent,
+      orchestration_score: Math.round(scoreAgentForCommand(agent, tokens) * 100) / 100,
+    }))
+    .sort((a, b) => b.orchestration_score - a.orchestration_score);
+}
+
+function trimCommandLog() {
+  if (agentCommandLog.length > MAX_COMMAND_LOG) {
+    agentCommandLog.splice(MAX_COMMAND_LOG);
+  }
+}
+
+export function resetAgentDispatchState() {
+  agentCommandLog.length = 0;
 }
 
 // ---------------------------------------------------------------------------
@@ -284,6 +350,123 @@ app.get('/api/actions', rateLimiter, async (req, res) => {
   return res.json({
     repo: DEFAULT_REPO,
     ...result,
+    fetched_at: new Date().toISOString(),
+  });
+});
+
+// ---------------------------------------------------------------------------
+// GET /api/agents — list agents that can receive Actions commands
+// ---------------------------------------------------------------------------
+
+app.get('/api/agents', rateLimiter, (_req, res) => {
+  const agents = readBots().map((bot) => ({
+    agent_id: bot.name.replace(/-/g, '_'),
+    name: bot.name,
+    category: bot.category || 'General',
+    status: bot.status || 'idle',
+    tier: bot.tier || 'FREE',
+    description: bot.description || '',
+    features: bot.features || [],
+  }));
+  return res.json({
+    count: agents.length,
+    agents,
+    fetched_at: new Date().toISOString(),
+  });
+});
+
+// ---------------------------------------------------------------------------
+// GET /api/agents/commands — command dispatch history
+// ---------------------------------------------------------------------------
+
+app.get('/api/agents/commands', rateLimiter, (_req, res) => {
+  return res.json({
+    count: agentCommandLog.length,
+    commands: agentCommandLog,
+    fetched_at: new Date().toISOString(),
+  });
+});
+
+// ---------------------------------------------------------------------------
+// POST /api/agents/dispatch — duplicate-safe command dispatch
+// ---------------------------------------------------------------------------
+
+app.post('/api/agents/dispatch', (req, res) => {
+  const command = String(req.body?.command || '').trim();
+  if (!command) {
+    return res.status(400).json({ error: 'command is required' });
+  }
+
+  const normalized = normaliseCommand(command);
+  const duplicate = agentCommandLog.find((entry) => entry.normalized_command === normalized);
+  const bots = readBots();
+  const rankedCandidates = rankAgentsForCommand(command, bots).slice(0, 5);
+  const selected = rankedCandidates[0];
+
+  if (duplicate) {
+    return res.json({
+      dispatched: false,
+      duplicate: true,
+      duplicate_of: duplicate.command_id,
+      command: duplicate,
+      selected_agent: duplicate.selected_agent,
+      ranked_candidates: rankedCandidates.map((agent) => ({
+        agent_id: agent.name.replace(/-/g, '_'),
+        name: agent.name,
+        score: agent.orchestration_score,
+      })),
+    });
+  }
+
+  const commandEntry = {
+    command_id: `cmd_${Date.now()}`,
+    command,
+    normalized_command: normalized,
+    status: 'queued',
+    selected_agent: selected
+      ? {
+          agent_id: selected.name.replace(/-/g, '_'),
+          name: selected.name,
+          status: selected.status,
+          tier: selected.tier,
+        }
+      : null,
+    ranked_candidates: rankedCandidates.map((agent) => ({
+      agent_id: agent.name.replace(/-/g, '_'),
+      name: agent.name,
+      score: agent.orchestration_score,
+    })),
+    dispatched_at: new Date().toISOString(),
+  };
+
+  agentCommandLog.unshift(commandEntry);
+  trimCommandLog();
+
+  return res.status(201).json({
+    dispatched: true,
+    duplicate: false,
+    command: commandEntry,
+    selected_agent: commandEntry.selected_agent,
+  });
+});
+
+// ---------------------------------------------------------------------------
+// GET /api/global-sources/connectivity — Buddy module connectivity checklist
+// ---------------------------------------------------------------------------
+
+app.get('/api/global-sources/connectivity', rateLimiter, (_req, res) => {
+  const modules = GLOBAL_SOURCES_CONNECTIVITY_CHECKLIST.map((item) => ({
+    ...item,
+    buddy_channel: 'buddy_global_sources',
+  }));
+  const connectedModules = modules.filter((module) => module.status === 'connected').length;
+
+  return res.json({
+    buddy_channel: 'buddy_global_sources',
+    total_modules: modules.length,
+    connected_modules: connectedModules,
+    all_connected: connectedModules === modules.length,
+    modules,
     fetched_at: new Date().toISOString(),
   });
 });

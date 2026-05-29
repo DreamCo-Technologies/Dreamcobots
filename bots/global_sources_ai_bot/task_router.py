@@ -18,12 +18,15 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from typing import Optional
 
+from bots.global_sources_ai_bot.buddy_connection_registry import register_buddy_connection
 from bots.global_sources_ai_bot.model_registry import (
     AIModel,
     UseCase,
     TOP_100_AI_MODELS,
     TOP_100_USE_CASES,
 )
+
+register_buddy_connection("task_router.py")
 
 
 # ---------------------------------------------------------------------------

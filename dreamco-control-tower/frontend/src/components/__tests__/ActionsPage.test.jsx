@@ -16,6 +16,7 @@ describe('ActionsPage', () => {
 
     expect(screen.getByText('⚡ Actions')).toBeInTheDocument();
     expect(screen.getByText('Actions monitor panel')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Open Agents Coordination' })).toBeInTheDocument();
   });
 
   it('opens and closes buddy command center modal', () => {
@@ -57,5 +58,35 @@ describe('ActionsPage', () => {
     expect(screen.getByText('Swarm Status')).toBeInTheDocument();
     expect(screen.getByText('HotStuff Consensus')).toBeInTheDocument();
     expect(screen.getByText('Economic Feedback Loops')).toBeInTheDocument();
+  });
+
+  it('renders latest dispatch summary with duplicate notice', () => {
+    render(
+      <ActionsPage
+        ActionsMonitorComponent={StubActionsMonitor}
+        lastDispatch={{
+          duplicate: true,
+          duplicate_of: 'cmd_123',
+          command: { command: 'deploy bot fleet' },
+          selected_agent: { name: 'buddy-bot' },
+        }}
+      />,
+    );
+
+    expect(screen.getByText('Latest command arbitration')).toBeInTheDocument();
+    expect(screen.getByText('deploy bot fleet')).toBeInTheDocument();
+    expect(screen.getByText('Duplicate detected — linked to cmd_123')).toBeInTheDocument();
+  });
+
+  it('navigates to agents page callback', () => {
+    const onOpenAgentsPage = vi.fn();
+    render(
+      <ActionsPage
+        ActionsMonitorComponent={StubActionsMonitor}
+        onOpenAgentsPage={onOpenAgentsPage}
+      />,
+    );
+    fireEvent.click(screen.getByRole('button', { name: 'Open Agents Coordination' }));
+    expect(onOpenAgentsPage).toHaveBeenCalledTimes(1);
   });
 });
