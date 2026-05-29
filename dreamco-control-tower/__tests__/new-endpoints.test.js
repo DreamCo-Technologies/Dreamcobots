@@ -294,6 +294,42 @@ describe('GET /api/command-center', () => {
     });
   });
 
+  // ---------------------------------------------------------------------------
+  // GET /api/production-media-roadmap
+  // ---------------------------------------------------------------------------
+
+  describe('GET /api/production-media-roadmap', () => {
+    test('returns 200', async () => {
+      const res = await request(app).get('/api/production-media-roadmap');
+      expect(res.status).toBe(200);
+    });
+
+    test('returns roadmap metadata', async () => {
+      const res = await request(app).get('/api/production-media-roadmap');
+      expect(res.body).toHaveProperty('program', 'Buddy Production Media Roadmap');
+      expect(res.body).toHaveProperty('estimated_total');
+      expect(res.body.estimated_total).toHaveProperty('strong_mvp', '2-3 months');
+    });
+
+    test('returns six phases with computed order and duration days', async () => {
+      const res = await request(app).get('/api/production-media-roadmap');
+      expect(Array.isArray(res.body.phases)).toBe(true);
+      expect(res.body.phases).toHaveLength(6);
+      expect(res.body.phases[0]).toHaveProperty('order', 1);
+      expect(res.body.phases[0]).toHaveProperty('duration_days');
+      expect(res.body.phases[0].duration_days).toEqual({ minDays: 14, maxDays: 28 });
+    });
+
+    test('returns computed totals', async () => {
+      const res = await request(app).get('/api/production-media-roadmap');
+      expect(res.body).toHaveProperty('computed');
+      expect(res.body.computed).toHaveProperty('phase_count', 6);
+      expect(res.body.computed).toHaveProperty('total_duration_days');
+      expect(res.body.computed.total_duration_days).toEqual({ minDays: 274, maxDays: 520 });
+      expect(res.body.computed.total_duration_months).toEqual({ minMonths: 9.1, maxMonths: 17.3 });
+    });
+  });
+
   test('returns computed telemetry', async () => {
     const res = await request(app).get('/api/command-center');
     expect(res.body).toHaveProperty('computed');
