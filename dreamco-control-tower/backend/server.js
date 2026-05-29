@@ -17,6 +17,10 @@ import { fileURLToPath } from 'url';
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const BOTS_FILE = path.join(__dirname, '../config/bots.json');
 const COMMAND_CENTER_FILE = path.join(__dirname, '../config/command_center.json');
+const PRODUCTION_MEDIA_ROADMAP_FILE = path.join(
+  __dirname,
+  '../config/production_media_roadmap.json',
+);
 
 const app = express();
 app.use(express.json());
@@ -72,6 +76,29 @@ function readCommandCenter() {
     return null;
   }
   return JSON.parse(fs.readFileSync(COMMAND_CENTER_FILE, 'utf8'));
+}
+
+function readProductionMediaRoadmap() {
+  if (!fs.existsSync(PRODUCTION_MEDIA_ROADMAP_FILE)) {
+    return null;
+  }
+  return JSON.parse(fs.readFileSync(PRODUCTION_MEDIA_ROADMAP_FILE, 'utf8'));
+}
+
+function parseDurationToDays(duration) {
+  if (typeof duration !== 'string') {
+    return null;
+  }
+  const normalized = duration.replace(/\s+/g, '').toLowerCase();
+  const match = normalized.match(/^(\d+)-(\d+\+?)(weeks?|months?)$/);
+  if (!match) {
+    return null;
+  }
+  const [, startRaw, endRaw, unitRaw] = match;
+  const start = Number.parseInt(startRaw, 10);
+  const end = Number.parseInt(endRaw.replace('+', ''), 10);
+  const multiplier = unitRaw.startsWith('month') ? 30 : 7;
+  return { minDays: start * multiplier, maxDays: end * multiplier };
 }
 
 function computeOverallBenchmarkScore(architecture) {
@@ -395,6 +422,58 @@ app.get('/api/command-center', rateLimiter, (_req, res) => {
       stigmergic_architectures: stigmergicCount,
       best_swarm_architecture: rankedArchitectures[0]?.architecture_id ?? null,
       coordination_layers: (coordinationLayer.communication_layers ?? []).length,
+      fetched_at: new Date().toISOString(),
+    },
+  });
+});
+
+// ---------------------------------------------------------------------------
+// GET /api/production-media-roadmap — phased implementation timeline
+//
+// Serves the approved roadmap for voice/image cloning and production media
+// features together with computed duration telemetry.
+// ---------------------------------------------------------------------------
+app.get('/api/production-media-roadmap', rateLimiter, (_req, res) => {
+  const roadmap = readProductionMediaRoadmap();
+  if (!roadmap) {
+    return res.status(503).json({
+      error: 'production_media_roadmap.json not found',
+    });
+  }
+
+  const phases = Array.isArray(roadmap.phases) ? roadmap.phases : [];
+  const enrichedPhases = phases.map((phase, index) => {
+    const durationDays = parseDurationToDays(phase.duration);
+    return {
+      ...phase,
+      order: index + 1,
+      duration_days: durationDays,
+    };
+  });
+
+  const totals = enrichedPhases.reduce(
+    (acc, phase) => {
+      if (!phase.duration_days) {
+        return acc;
+      }
+      return {
+        minDays: acc.minDays + phase.duration_days.minDays,
+        maxDays: acc.maxDays + phase.duration_days.maxDays,
+      };
+    },
+    { minDays: 0, maxDays: 0 },
+  );
+
+  return res.json({
+    ...roadmap,
+    phases: enrichedPhases,
+    computed: {
+      phase_count: enrichedPhases.length,
+      total_duration_days: totals,
+      total_duration_months: {
+        minMonths: Number((totals.minDays / 30).toFixed(1)),
+        maxMonths: Number((totals.maxDays / 30).toFixed(1)),
+      },
       fetched_at: new Date().toISOString(),
     },
   });
