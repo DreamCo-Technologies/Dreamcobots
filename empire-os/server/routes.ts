@@ -461,7 +461,7 @@ export async function registerRoutes(
       try {
         const memRecords = await storage.listBotMemory(bot.id);
         memRecords.slice(0, 15).forEach((m: any) => {
-          if (m.content) memories.push(m.content);
+          if (m.value) memories.push(m.value);
         });
       } catch (_) {}
     }
@@ -508,7 +508,7 @@ export async function registerRoutes(
         const learningMatch = assistantText.match(/🧠\s*LEARNING\s*LOG:\s*(.+?)(?:\n|$)/i);
         if (learningMatch && learningMatch[1]?.trim()) {
           try {
-            await storage.createBotMemory({ botId: bot.id, content: learningMatch[1].trim() });
+            await storage.createBotMemory({ botId: bot.id, key: "learning_log", value: learningMatch[1].trim() });
           } catch (_) {}
         }
       }
@@ -1651,7 +1651,7 @@ Return ONLY valid JSON with this exact shape:
     const convs = await storage.listConversations();
     const activity = await Promise.all(bots.slice(0, 100).map(async (bot) => {
       const memories = await storage.listBotMemory(bot.id).catch(() => []);
-      return { id: bot.id, slug: bot.slug, displayName: bot.displayName, division: bot.division, tier: bot.tier, status: bot.status, memoryCount: memories.length, lastLearning: memories[0]?.content ?? null, lastActive: memories[0]?.createdAt ?? null };
+      return { id: bot.id, slug: bot.slug, displayName: bot.displayName, division: bot.division, tier: bot.tier, status: bot.status, memoryCount: memories.length, lastLearning: memories[0]?.value ?? null, lastActive: memories[0]?.createdAt ?? null };
     }));
     res.json({ bots: activity, totalConversations: convs.length, totalBots: bots.length });
   });
