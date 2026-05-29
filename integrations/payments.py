@@ -239,17 +239,20 @@ class PaymentsClient:
 
         stripe.api_key = self._api_key
         customer = stripe.Customer.create(email=email)
-        charge = stripe.Charge.create(
+        # Use PaymentIntents (the current Stripe API) instead of the
+        # deprecated Charges API, which is unavailable on new Stripe accounts.
+        intent = stripe.PaymentIntent.create(
             amount=amount_cents,
             currency=currency,
             customer=customer.id,
             description=description,
+            automatic_payment_methods={"enabled": True},
         )
         return PaymentRecord(
-            record_id=charge.id,
+            record_id=intent.id,
             email=email,
             amount_cents=amount_cents,
             currency=currency,
             description=description,
-            status="succeeded",
+            status=intent.status,
         )

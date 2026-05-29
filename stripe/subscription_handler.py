@@ -93,6 +93,9 @@ TIER_CAPABILITIES: Dict[str, Dict[str, Any]] = {
         "requests_per_month": 10_000,
         "models": ["gpt-4", "dalle-3"],
         "concurrent_bots": 10,
+        # NOTE: Pricing differs from saas/stripe_billing.py (pro=$29) and
+        # bots/stripe_integration/stripe_client.py (pro=$29). Align these with
+        # your Stripe Dashboard price IDs before going live.
         "price_monthly": 49.0,
     },
     "enterprise": {

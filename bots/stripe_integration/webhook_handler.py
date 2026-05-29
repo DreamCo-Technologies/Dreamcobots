@@ -82,6 +82,7 @@ class StripeWebhookHandler:
             or os.environ.get("STRIPE_WEBHOOK_SECRET", "")
         )
         self._tolerance = tolerance_seconds
+        self._verify_signatures = verify_signatures  # Fix Issue 5: store and honour the flag
         self._handlers: Dict[str, List[Callable[[WebhookEvent], None]]] = {}
         self._event_log: List[WebhookEvent] = []
         self._mock = not self._secret or self._secret == self._PLACEHOLDER
@@ -121,15 +122,20 @@ class StripeWebhookHandler:
 
         Raises WebhookSignatureError on failure.
         """
-        parts: dict = {}
+        # Fix Issue 6: collect ALL v1 values (Stripe sends multiple during
+        # secret rotation; only the last value was previously stored).
+        timestamp: Optional[str] = None
+        v1_signatures: List[str] = []
         for part in sig_header.split(","):
             if "=" in part:
                 k, v = part.split("=", 1)
-                parts[k.strip()] = v.strip()
+                k, v = k.strip(), v.strip()
+                if k == "t":
+                    timestamp = v
+                elif k == "v1":
+                    v1_signatures.append(v)
 
-        timestamp = parts.get("t")
-        signature = parts.get("v1")
-        if not timestamp or not signature:
+        if not timestamp or not v1_signatures:
             raise WebhookSignatureError(
                 "Invalid Stripe-Signature header: missing 't' or 'v1'."
             )
@@ -148,7 +154,9 @@ class StripeWebhookHandler:
             hashlib.sha256,
         ).hexdigest()
 
-        if not hmac.compare_digest(expected, signature):
+        # Accept the payload if ANY provided v1 signature matches (supports
+        # secret rotation where Stripe temporarily sends two v1= values).
+        if not any(hmac.compare_digest(expected, sig) for sig in v1_signatures):
             raise WebhookSignatureError(
                 "Stripe-Signature verification failed. Possible replay attack."
             )
@@ -180,7 +188,7 @@ class StripeWebhookHandler:
         WebhookSignatureError  If signature verification fails.
         ValueError             If the payload is not valid JSON.
         """
-        if not self._mock and sig_header:
+        if self._verify_signatures and not self._mock and sig_header:
             self._verify_signature(payload, sig_header)
 
         try:

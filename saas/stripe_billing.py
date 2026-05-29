@@ -30,7 +30,7 @@ except ImportError:
     _stripe = None  # type: ignore[assignment]
     _STRIPE_AVAILABLE = False
 
-_API_KEY: Optional[str] = os.environ.get("STRIPE_API_KEY")
+_API_KEY: Optional[str] = os.environ.get("STRIPE_API_KEY") or os.environ.get("STRIPE_SECRET_KEY")
 _WEBHOOK_SECRET: Optional[str] = os.environ.get("STRIPE_WEBHOOK_SECRET")
 
 # Map tier names to monthly Stripe price IDs (override via env)
@@ -41,6 +41,12 @@ STRIPE_PRICE_IDS: Dict[str, str] = {
 
 TIER_PRICES_USD: Dict[str, float] = {
     "free": 0.0,
+    # NOTE: Pricing intentionally differs across modules.
+    # stripe/subscription_handler.py uses pro=$49, enterprise=$299 (capability map).
+    # bots/stripe_integration/stripe_client.py uses pro=$29, enterprise=$99 (plan registry).
+    # Reconcile these values and align with your Stripe Dashboard price IDs before
+    # going live.  Tests in tests/test_subscription_handler.py assert the
+    # subscription_handler.py values, so those must be updated together.
     "pro": 29.0,
     "enterprise": 499.0,
 }
@@ -257,14 +263,29 @@ class StripeBillingService:
 
         event_type = event["type"]
         if event_type == "customer.subscription.updated":
-            pass  # handle tier change
+            # Update the stored subscription record with the latest status and tier.
+            data = event["data"]["object"]
+            sub_id = data.get("id", "")
+            if sub_id in self._subscriptions:
+                items = data.get("items", {}).get("data", [])
+                tier = items[0].get("price", {}).get("metadata", {}).get("tier", "") if items else ""
+                self._subscriptions[sub_id].update(
+                    {
+                        "status": data.get("status", self._subscriptions[sub_id].get("status")),
+                        **({"tier": tier} if tier else {}),
+                    }
+                )
         elif event_type == "invoice.payment_succeeded":
             data = event["data"]["object"]
             self._revenue_log.append(
                 {"event": "payment_succeeded", "amount": data.get("amount_paid", 0) / 100, "ts": time.time()}
             )
         elif event_type == "customer.subscription.deleted":
-            pass  # handle cancellation
+            # Mark the subscription as cancelled/inactive.
+            data = event["data"]["object"]
+            sub_id = data.get("id", "")
+            if sub_id in self._subscriptions:
+                self._subscriptions[sub_id]["status"] = "canceled"
 
         return {"success": True, "event_type": event_type}
 

@@ -12,14 +12,50 @@ Setup:
 
 import os
 import json
-import stripe
+import sys
+import importlib.util
+
 from flask import Flask, request, jsonify
+
+
+# ---------------------------------------------------------------------------
+# Import real Stripe SDK (bypasses the local stripe/ directory that can
+# shadow the installed package when the repo root is on sys.path).
+# ---------------------------------------------------------------------------
+
+def _load_stripe_sdk():
+    """Load the installed Stripe SDK, skipping the local stripe/ stub."""
+    _local_init = os.path.abspath(
+        os.path.join(os.path.dirname(__file__), "..", "__init__.py")
+    )
+    for _sp in sys.path:
+        _cand = os.path.join(_sp, "stripe", "__init__.py")
+        if os.path.isfile(_cand) and os.path.abspath(_cand) != _local_init:
+            _spec = importlib.util.spec_from_file_location(
+                "stripe", _cand,
+                submodule_search_locations=[os.path.dirname(_cand)],
+            )
+            if _spec and _spec.loader:
+                _mod = importlib.util.module_from_spec(_spec)
+                _spec.loader.exec_module(_mod)  # type: ignore[union-attr]
+                return _mod
+    raise ImportError(
+        "The 'stripe' package is not installed. Run: pip install stripe"
+    )
+
+
+try:
+    stripe = _load_stripe_sdk()
+except ImportError:
+    stripe = None  # type: ignore[assignment]
+
 
 # ---------------------------------------------------------------------------
 # Configuration
 # ---------------------------------------------------------------------------
 
-stripe.api_key = os.environ.get("STRIPE_SECRET_KEY", "")
+if stripe is not None:
+    stripe.api_key = os.environ.get("STRIPE_SECRET_KEY", "")
 STRIPE_WEBHOOK_SECRET = os.environ.get("STRIPE_WEBHOOK_SECRET", "")
 
 app = Flask(__name__)
@@ -179,7 +215,10 @@ def webhook():
             event = stripe.Webhook.construct_event(
                 payload, sig_header, STRIPE_WEBHOOK_SECRET
             )
-        except stripe.error.SignatureVerificationError as exc:
+        except (ValueError, Exception) as exc:
+            # stripe.WebhookSignatureVerificationError (SDK v5+) or
+            # stripe.error.SignatureVerificationError (legacy) both surface as
+            # a ValueError when the signature is invalid.
             return jsonify({"error": str(exc)}), 400
     else:
         event = json.loads(payload)

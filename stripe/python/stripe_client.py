@@ -11,13 +11,44 @@ Configure .env (see ../../.env.example):
 """
 
 import os
+import sys
+import importlib.util
+
 from dotenv import load_dotenv
 
 load_dotenv()
 
+
+def _load_stripe_sdk():
+    """Load the installed Stripe SDK, skipping the local stripe/ stub."""
+    _local_init = os.path.abspath(
+        os.path.join(os.path.dirname(__file__), "..", "__init__.py")
+    )
+    for _sp in sys.path:
+        _cand = os.path.join(_sp, "stripe", "__init__.py")
+        if os.path.isfile(_cand) and os.path.abspath(_cand) != _local_init:
+            _spec = importlib.util.spec_from_file_location(
+                "stripe", _cand,
+                submodule_search_locations=[os.path.dirname(_cand)],
+            )
+            if _spec and _spec.loader:
+                _mod = importlib.util.module_from_spec(_spec)
+                _spec.loader.exec_module(_mod)  # type: ignore[union-attr]
+                return _mod
+    raise ImportError(
+        "The 'stripe' package is not installed. Run: pip install stripe"
+    )
+
+
+_LIVE = False
+stripe = None  # type: ignore[assignment]
+
 try:
-    import stripe
-    stripe.api_key = os.environ["STRIPE_SECRET_KEY"]
+    stripe = _load_stripe_sdk()
+    _key = os.environ.get("STRIPE_SECRET_KEY") or os.environ.get("STRIPE_API_KEY", "")
+    if not _key:
+        raise KeyError("STRIPE_SECRET_KEY")
+    stripe.api_key = _key
     _LIVE = True
 except (ImportError, KeyError):
     _LIVE = False
