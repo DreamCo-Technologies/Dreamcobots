@@ -2,13 +2,21 @@
 # All category bots inherit from this class to ensure a consistent interface
 # with the Buddy central AI system and the Government Contract & Grant Bot format.
 
+from BuddyAI.navigation import NavigationMixin
+from BuddyAI.settings import BotSettings
 
-class BaseBot:
+
+class BaseBot(NavigationMixin):
     """Base class for all Dreamcobots category bots.
 
     Every concrete bot must inherit from this class so that Buddy can manage
     them uniformly regardless of category (OOH Occupational, Mobile App,
     Business / Industry Classification).
+
+    All bots automatically receive the full set of 25 universal navigation
+    buttons (via :class:`~BuddyAI.navigation.NavigationMixin`) and a per-bot
+    settings store with custom-button support (via
+    :class:`~BuddyAI.settings.BotSettings`).
 
     Subclasses should override :meth:`start` and :meth:`run` and are
     expected to provide 100 features, 100 functions, and 100 tools as
@@ -20,6 +28,7 @@ class BaseBot:
         self.name = self.__class__.__name__
         self.description = ""
         self.buddy = None
+        self.settings = BotSettings(bot_name=self.name)
 
     # ------------------------------------------------------------------
     # Buddy integration
@@ -70,4 +79,6 @@ class BaseBot:
             "features": len(self.list_features()),
             "functions": len(self.list_functions()),
             "tools": len(self.list_tools()),
+            "nav_buttons": len(self.nav_buttons()),
+            "custom_buttons": len(self.settings.list_custom_buttons()),
         }
