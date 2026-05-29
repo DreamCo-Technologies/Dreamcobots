@@ -2,10 +2,19 @@ import path from "path";
 import { type Express } from "express";
 import fs from "fs";
 import express from "express";
+import rateLimit from "express-rate-limit";
 
 // ---------------------------------------------------------------------------
 // Production static file server
 // ---------------------------------------------------------------------------
+
+const staticLimiter = rateLimit({
+  windowMs: 60_000,
+  max: 200,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { error: "Too many requests" },
+});
 
 export function serveStatic(app: Express): void {
   const distPath = path.resolve(process.cwd(), "dist", "public");
@@ -18,10 +27,11 @@ export function serveStatic(app: Express): void {
     return;
   }
 
+  app.use(staticLimiter);
   app.use(express.static(distPath));
 
   // SPA fallback: serve index.html for any non-API route
-  app.get("*", (req, res) => {
+  app.get("*", staticLimiter, (req, res) => {
     if (req.path.startsWith("/api")) return res.status(404).json({ message: "Not found" });
     res.sendFile(path.join(distPath, "index.html"));
   });
