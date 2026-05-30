@@ -101,64 +101,64 @@ function computeOverallBenchmarkScore(architecture) {
   if (values.length === 0) {
     return null;
   }
-
-  function normaliseStatus(status) {
-    const value = String(status || '').toLowerCase();
-    if (value === 'active' || value === 'idle') {
-      return value;
-    }
-    if (value === 'inactive' || value === 'paused') {
-      return 'idle';
-    }
-    return 'active';
-  }
-
-  function readReplitProfileBots() {
-    if (!fs.existsSync(REPLIT_BOTS_DIR)) {
-      return [];
-    }
-
-    const bots = [];
-    let directories = [];
-    try {
-      directories = fs.readdirSync(REPLIT_BOTS_DIR, { withFileTypes: true });
-    } catch {
-      return [];
-    }
-
-    for (const entry of directories) {
-      if (!entry.isDirectory()) {
-        continue;
-      }
-      const profilePath = path.join(REPLIT_BOTS_DIR, entry.name, 'replit_profile.json');
-      if (!fs.existsSync(profilePath)) {
-        continue;
-      }
-      try {
-        const profile = JSON.parse(fs.readFileSync(profilePath, 'utf8'));
-        const slug = String(profile.slug || entry.name);
-        bots.push({
-          name: slug,
-          repoName: 'Dreamcobots',
-          repoPath: `./bots/${slug}`,
-          status: normaliseStatus(profile.status),
-          tier: String(profile.tier || 'FREE').toUpperCase(),
-          category: profile.category || 'General',
-          description: profile.description || '',
-          price_usd: 0,
-          features: Array.isArray(profile.capabilities) ? profile.capabilities : [],
-          lastHeartbeat: null,
-          lastUpdate: null,
-          pendingPRs: 0,
-        });
-      } catch {
-        continue;
-      }
-    }
-    return bots;
-  }
   const average = values.reduce((sum, value) => sum + value, 0) / values.length;
   return Math.round(average * 100) / 100;
+}
+
+function normaliseStatus(status) {
+  const value = String(status || '').toLowerCase();
+  if (value === 'active' || value === 'idle') {
+    return value;
+  }
+  if (value === 'inactive' || value === 'paused') {
+    return 'idle';
+  }
+  return 'active';
+}
+
+function readReplitProfileBots() {
+  if (!fs.existsSync(REPLIT_BOTS_DIR)) {
+    return [];
+  }
+
+  const bots = [];
+  let directories = [];
+  try {
+    directories = fs.readdirSync(REPLIT_BOTS_DIR, { withFileTypes: true });
+  } catch {
+    return [];
+  }
+
+  for (const entry of directories) {
+    if (!entry.isDirectory()) {
+      continue;
+    }
+    const profilePath = path.join(REPLIT_BOTS_DIR, entry.name, 'replit_profile.json');
+    if (!fs.existsSync(profilePath)) {
+      continue;
+    }
+    try {
+      const profile = JSON.parse(fs.readFileSync(profilePath, 'utf8'));
+      const slug = String(profile.slug || entry.name);
+      bots.push({
+        name: slug,
+        repoName: 'Dreamcobots',
+        repoPath: `./bots/${slug}`,
+        status: normaliseStatus(profile.status),
+        tier: String(profile.tier || 'FREE').toUpperCase(),
+        category: profile.category || 'General',
+        description: profile.description || '',
+        price_usd: 0,
+        features: Array.isArray(profile.capabilities) ? profile.capabilities : [],
+        lastHeartbeat: null,
+        lastUpdate: null,
+        pendingPRs: 0,
+      });
+    } catch {
+      continue;
+    }
+  }
+  return bots;
 }
 
 const agentCommandLog = [];
