@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import ActionsMonitor from './ActionsMonitor.jsx';
 import BuddyCommandCenter from './BuddyCommandCenter.jsx';
+import BuddyCommandSections from './BuddyCommandSections.jsx';
 
 /**
  * ActionsPage keeps Actions monitoring and command-center launch together.
@@ -13,6 +14,10 @@ export default function ActionsPage({
   onOpenAgentsPage = () => {},
 }) {
   const [showBuddyCenter, setShowBuddyCenter] = useState(false);
+
+  function handleRunCommand(command) {
+    onBuddyCommandSubmit(command);
+  }
 
   return (
     <section>
@@ -51,6 +56,7 @@ export default function ActionsPage({
       )}
 
       <ActionsMonitorComponent />
+      <BuddyCommandSections onRunCommand={handleRunCommand} />
 
       {showBuddyCenter && (
         <div

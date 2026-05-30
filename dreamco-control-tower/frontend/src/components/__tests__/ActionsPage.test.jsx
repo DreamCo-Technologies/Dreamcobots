@@ -17,6 +17,9 @@ describe('ActionsPage', () => {
     expect(screen.getByText('⚡ Actions')).toBeInTheDocument();
     expect(screen.getByText('Actions monitor panel')).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Open Agents Coordination' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Deploy All Bots' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Launch Everything' })).toBeInTheDocument();
+    expect(screen.getByText('🧭 Command Center Sidebar Draft')).toBeInTheDocument();
   });
 
   it('opens and closes buddy command center modal', () => {
@@ -51,6 +54,19 @@ describe('ActionsPage', () => {
     expect(screen.getByText('[Buddy] Command queued: deploy bot fleet')).toBeInTheDocument();
   });
 
+  it('dispatches command from command catalog button', () => {
+    const onBuddyCommandSubmit = vi.fn();
+    render(
+      <ActionsPage
+        ActionsMonitorComponent={StubActionsMonitor}
+        onBuddyCommandSubmit={onBuddyCommandSubmit}
+      />,
+    );
+
+    fireEvent.click(screen.getByRole('button', { name: 'Deploy All Bots' }));
+    expect(onBuddyCommandSubmit).toHaveBeenCalledWith('Deploy All Bots');
+  });
+
   it('renders core buddy command center panels', () => {
     render(<ActionsPage ActionsMonitorComponent={StubActionsMonitor} />);
     fireEvent.click(screen.getByRole('button', { name: 'Launch Full Buddy Command Center' }));
@@ -58,6 +74,8 @@ describe('ActionsPage', () => {
     expect(screen.getByText('Swarm Status')).toBeInTheDocument();
     expect(screen.getByText('HotStuff Consensus')).toBeInTheDocument();
     expect(screen.getByText('Economic Feedback Loops')).toBeInTheDocument();
+    expect(screen.getByText('Pinned Mission Controls')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Mission Control' })).toBeInTheDocument();
   });
 
   it('renders latest dispatch summary with duplicate notice', () => {

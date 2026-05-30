@@ -1,6 +1,8 @@
 import { useState } from 'react';
+import { PINNED_TOP_ACTIONS } from './buddyCommandCatalog.js';
 
 const PANELS = ['Swarm Status', 'HotStuff Consensus', 'Economic Feedback Loops'];
+const SWARM_SHORTCUTS = ['Start Agent Swarm', 'Stop Agent Swarm', 'Memory Sync', 'Agent Diagnostics'];
 
 /**
  * Full-size Buddy command center modal content used by ActionsPage.
@@ -26,6 +28,15 @@ export default function BuddyCommandCenter({ onClose, onCommandSubmit = () => {}
       `[Buddy] Command queued: ${nextCommand}`,
     ]);
     setCommand('');
+  }
+
+  function runQuickAction(nextCommand) {
+    onCommandSubmit(nextCommand);
+    setTerminalLines((lines) => [
+      ...lines,
+      `$ ${nextCommand}`,
+      `[Buddy] Quick action executed: ${nextCommand}`,
+    ]);
   }
 
   return (
@@ -54,6 +65,24 @@ export default function BuddyCommandCenter({ onClose, onCommandSubmit = () => {}
         </div>
       </div>
 
+      <section className="mb-4 rounded-lg border border-slate-700 bg-slate-900/50 p-3">
+        <h4 className="text-xs font-semibold uppercase tracking-wide text-slate-300">
+          Pinned Mission Controls
+        </h4>
+        <div className="mt-2 grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-4">
+          {PINNED_TOP_ACTIONS.map((action) => (
+            <button
+              key={action}
+              type="button"
+              onClick={() => runQuickAction(action)}
+              className="rounded-lg border border-slate-600 px-3 py-2 text-left text-xs text-slate-200 transition-colors hover:border-dreamco-accent hover:text-white"
+            >
+              {action}
+            </button>
+          ))}
+        </div>
+      </section>
+
       {/*
        * Keep this output region stable for UI tests and future command-render updates.
        * New command handlers should append summary lines instead of replacing this log.
@@ -79,6 +108,22 @@ export default function BuddyCommandCenter({ onClose, onCommandSubmit = () => {}
         placeholder="Type a command and press Enter…"
         className="mb-5 w-full rounded-lg border border-slate-600 bg-slate-800 px-3 py-2 text-sm text-white outline-none transition-colors focus:border-dreamco-accent"
       />
+
+      <section className="mb-5 rounded-lg border border-slate-700 bg-slate-900/50 p-3">
+        <h4 className="text-xs font-semibold uppercase tracking-wide text-slate-300">Swarm Shortcuts</h4>
+        <div className="mt-2 flex flex-wrap gap-2">
+          {SWARM_SHORTCUTS.map((action) => (
+            <button
+              key={action}
+              type="button"
+              onClick={() => runQuickAction(action)}
+              className="rounded-full border border-slate-600 px-3 py-1.5 text-xs text-slate-200 transition-colors hover:border-dreamco-accent hover:text-white"
+            >
+              {action}
+            </button>
+          ))}
+        </div>
+      </section>
 
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
         {PANELS.map((title) => (
