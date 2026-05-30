@@ -35,7 +35,7 @@ async function initStripe() {
       const result = await stripeSync.findOrCreateManagedWebhook(
         `${webhookBaseUrl}/api/stripe/webhook`
       );
-      console.log(`Webhook configured: ${result?.webhook?.url ?? 'managed'}`);
+      console.log(`Webhook configured: ${result?.url ?? 'managed'}`);
     } catch (webhookErr: any) {
       console.warn('Webhook setup skipped (will work in production):', webhookErr.message);
     }
