@@ -236,6 +236,40 @@ const COMPETITIVE_ADVANTAGES = [
   "Comprehensive audit trail and compliance logging",
 ];
 
+type BotMissionWorkflow = {
+  label: string;
+  href: string;
+  goal: string;
+  workflow: string;
+};
+
+const BOT_MISSION_WORKFLOWS: BotMissionWorkflow[] = [
+  { label: "Chat", href: "/", goal: "Coordinate tasks and approvals with operators", workflow: "Create or continue a conversation, assign intent, and dispatch bot actions" },
+  { label: "Empire HQ", href: "/dashboard", goal: "Monitor fleet-wide health and throughput", workflow: "Review KPIs, autonomy mode, and active alerts before execution" },
+  { label: "Divisions", href: "/divisions", goal: "Align each bot with division priorities", workflow: "Open a division, review coverage gaps, and route work to the right bots" },
+  { label: "Bot Fleet", href: "/bots", goal: "Maintain bot profiles and defaults", workflow: "Filter bots, update traits/prompts, and set the operational default" },
+  { label: "Deal Analyzer", href: "/deals", goal: "Score opportunities before spending effort", workflow: "Load pipeline deals, calculate quality, and prioritize highest ROI actions" },
+  { label: "Formula Vault", href: "/formulas", goal: "Apply reusable profit and risk formulas", workflow: "Select a formula, tune values, and export a production-ready decision" },
+  { label: "Learning Matrix", href: "/learning-matrix", goal: "Continuously improve model behavior", workflow: "Review signals, promote validated patterns, and retire weak strategies" },
+  { label: "AI Leaders", href: "/ai-leaders", goal: "Track best-performing operators", workflow: "Compare leadership metrics and promote top strategic playbooks" },
+  { label: "AI Models Hub", href: "/ai-models", goal: "Manage model quality and routing", workflow: "Audit model performance and choose the best model per workload" },
+  { label: "AI Ecosystem", href: "/ecosystem", goal: "Coordinate external AI integrations", workflow: "Inspect dependencies, verify health, and resolve ecosystem bottlenecks" },
+  { label: "Orchestration", href: "/orchestration", goal: "Sequence cross-bot operations safely", workflow: "Plan multi-step automations and enforce ordering and guardrails" },
+  { label: "Marketplace", href: "/marketplace", goal: "Publish and monetize bot capabilities", workflow: "Package offers, validate readiness, and release to active channels" },
+  { label: "Crypto", href: "/crypto", goal: "Track digital asset strategies and risk", workflow: "Inspect positions, evaluate strategy signals, and rebalance when needed" },
+  { label: "Payments", href: "/payments", goal: "Keep billing and settlement reliable", workflow: "Review payment health, retry failures, and confirm reconciliation" },
+  { label: "Biz Launch", href: "/business", goal: "Stand up new revenue projects quickly", workflow: "Select launch templates, assign owners, and track go-live checklists" },
+  { label: "Code Lab", href: "/code-lab", goal: "Ship bot enhancements and fixes", workflow: "Prototype, validate behavior, and promote stable changes to production" },
+  { label: "Loans & Deals", href: "/loans", goal: "Evaluate capital and financing options", workflow: "Compare terms, score lender fit, and route qualified packages forward" },
+  { label: "Debug Intel", href: "/debug", goal: "Resolve incidents and regressions fast", workflow: "Triage errors, inspect traces, and assign remediations to bot owners" },
+  { label: "Revenue", href: "/revenue", goal: "Grow income with measurable execution", workflow: "Review revenue streams, identify leaks, and trigger optimization actions" },
+  { label: "Pricing", href: "/pricing", goal: "Optimize margins and competitiveness", workflow: "Test pricing scenarios, validate impact, and publish approved tiers" },
+  { label: "Connections", href: "/connections", goal: "Keep third-party links operational", workflow: "Audit connector status, rotate credentials, and re-sync failed channels" },
+  { label: "Time Capsule", href: "/time-capsule", goal: "Preserve operational history and context", workflow: "Snapshot key states, store decisions, and replay prior execution paths" },
+  { label: "Cost Tracking", href: "/costs", goal: "Control spend without blocking growth", workflow: "Monitor cost centers, detect overrun trends, and apply budget controls" },
+  { label: "Autonomy", href: "/autonomy", goal: "Set risk posture and execution freedom", workflow: "Adjust autonomy policy, approve limits, and enforce governance rules" },
+];
+
 function generateMetrics(botId: number) {
   const seed = botId * 137;
   return {
@@ -656,6 +690,40 @@ export default function BotDetailPage() {
                   </div>
                 </div>
               </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card data-testid="bot-mission-workflows">
+          <CardHeader className="pb-4">
+            <CardTitle className="text-lg flex items-center gap-2">
+              <Target className="h-5 w-5 text-primary" />
+              Goals & Planned Workflows
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <p className="text-sm text-muted-foreground">
+              These mission actions are operational for every bot profile and link directly to the live command surfaces.
+            </p>
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
+              {BOT_MISSION_WORKFLOWS.map((item) => (
+                <div key={item.href} className="rounded-xl border border-border/50 p-3 space-y-2">
+                  <div className="flex items-center justify-between gap-2">
+                    <p className="text-sm font-semibold">{item.label}</p>
+                    <Link href={item.href}>
+                      <Button size="sm" variant="outline" className="rounded-lg" data-testid={`bot-mission-btn-${item.label.toLowerCase().replace(/\s|&/g, "-")}`}>
+                        Open
+                      </Button>
+                    </Link>
+                  </div>
+                  <p className="text-xs text-muted-foreground">
+                    <span className="font-medium text-foreground">Goal:</span> {item.goal}
+                  </p>
+                  <p className="text-xs text-muted-foreground">
+                    <span className="font-medium text-foreground">Workflow:</span> {item.workflow}
+                  </p>
+                </div>
+              ))}
             </div>
           </CardContent>
         </Card>
