@@ -381,3 +381,23 @@ describe('GET /api/command-center', () => {
     expect(typeof res.body.computed.marl_ready_architectures).toBe('number');
   });
 });
+
+describe('Replit profile sync', () => {
+  test('includes Replit profile bots when sync is enabled', async () => {
+    process.env.INCLUDE_REPLIT_PROFILE_SYNC = '1';
+    try {
+      const res = await request(app).get('/api/bots');
+
+      expect(res.status).toBe(200);
+      expect(Array.isArray(res.body)).toBe(true);
+      expect(res.body.length).toBeGreaterThan(SAMPLE_BOTS.length);
+      const replitBot = res.body.find((bot) => bot.name === 'outreach-coordinator');
+      expect(replitBot).toBeTruthy();
+      expect(replitBot).toHaveProperty('repoPath', './bots/outreach-coordinator');
+      expect(replitBot).toHaveProperty('pendingPRs', 0);
+      expect(replitBot).toHaveProperty('tier', 'PRO');
+    } finally {
+      delete process.env.INCLUDE_REPLIT_PROFILE_SYNC;
+    }
+  });
+});

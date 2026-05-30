@@ -17,6 +17,7 @@ import { fileURLToPath } from 'url';
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const BOTS_FILE = path.join(__dirname, '../config/bots.json');
 const COMMAND_CENTER_FILE = path.join(__dirname, '../config/command_center.json');
+const REPLIT_BOTS_DIR = path.join(__dirname, '../../bots');
 const MAX_COMMAND_LOG = 200;
 
 const app = express();
@@ -61,7 +62,26 @@ function rateLimiter(req, res, next) {
 // ---------------------------------------------------------------------------
 
 function readBots() {
-  return JSON.parse(fs.readFileSync(BOTS_FILE, 'utf8'));
+  const botsFromConfig = JSON.parse(fs.readFileSync(BOTS_FILE, 'utf8'));
+  const forceSync = process.env.INCLUDE_REPLIT_PROFILE_SYNC === '1';
+  if ((!forceSync && process.env.NODE_ENV === 'test') || process.env.INCLUDE_REPLIT_PROFILE_SYNC === '0') {
+    return botsFromConfig;
+  }
+
+  const mergedBots = new Map();
+  for (const bot of botsFromConfig) {
+    if (bot?.name) {
+      mergedBots.set(String(bot.name).toLowerCase(), bot);
+    }
+  }
+  for (const bot of readReplitProfileBots()) {
+    const key = String(bot.name).toLowerCase();
+    if (!mergedBots.has(key)) {
+      mergedBots.set(key, bot);
+    }
+  }
+
+  return [...mergedBots.values()];
 }
 
 function writeBots(bots) {
@@ -80,6 +100,62 @@ function computeOverallBenchmarkScore(architecture) {
   const values = Object.values(benchmark).filter((value) => typeof value === 'number');
   if (values.length === 0) {
     return null;
+  }
+
+  function normaliseStatus(status) {
+    const value = String(status || '').toLowerCase();
+    if (value === 'active' || value === 'idle') {
+      return value;
+    }
+    if (value === 'inactive' || value === 'paused') {
+      return 'idle';
+    }
+    return 'active';
+  }
+
+  function readReplitProfileBots() {
+    if (!fs.existsSync(REPLIT_BOTS_DIR)) {
+      return [];
+    }
+
+    const bots = [];
+    let directories = [];
+    try {
+      directories = fs.readdirSync(REPLIT_BOTS_DIR, { withFileTypes: true });
+    } catch {
+      return [];
+    }
+
+    for (const entry of directories) {
+      if (!entry.isDirectory()) {
+        continue;
+      }
+      const profilePath = path.join(REPLIT_BOTS_DIR, entry.name, 'replit_profile.json');
+      if (!fs.existsSync(profilePath)) {
+        continue;
+      }
+      try {
+        const profile = JSON.parse(fs.readFileSync(profilePath, 'utf8'));
+        const slug = String(profile.slug || entry.name);
+        bots.push({
+          name: slug,
+          repoName: 'Dreamcobots',
+          repoPath: `./bots/${slug}`,
+          status: normaliseStatus(profile.status),
+          tier: String(profile.tier || 'FREE').toUpperCase(),
+          category: profile.category || 'General',
+          description: profile.description || '',
+          price_usd: 0,
+          features: Array.isArray(profile.capabilities) ? profile.capabilities : [],
+          lastHeartbeat: null,
+          lastUpdate: null,
+          pendingPRs: 0,
+        });
+      } catch {
+        continue;
+      }
+    }
+    return bots;
   }
   const average = values.reduce((sum, value) => sum + value, 0) / values.length;
   return Math.round(average * 100) / 100;
