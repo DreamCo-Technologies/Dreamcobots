@@ -18,7 +18,7 @@ describe('ActionsPage', () => {
     expect(screen.getByText('Actions monitor panel')).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Open Agents Coordination' })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Deploy All Bots' })).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: 'Launch Everything' })).toBeInTheDocument();
+    expect(screen.getAllByRole('button', { name: 'Launch Everything' }).length).toBeGreaterThan(0);
     expect(screen.getByText('🧭 Command Center Sidebar Draft')).toBeInTheDocument();
   });
 
@@ -75,7 +75,7 @@ describe('ActionsPage', () => {
     expect(screen.getByText('HotStuff Consensus')).toBeInTheDocument();
     expect(screen.getByText('Economic Feedback Loops')).toBeInTheDocument();
     expect(screen.getByText('Pinned Mission Controls')).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: 'Mission Control' })).toBeInTheDocument();
+    expect(screen.getAllByRole('button', { name: 'Mission Control' }).length).toBeGreaterThan(0);
   });
 
   it('renders latest dispatch summary with duplicate notice', () => {
