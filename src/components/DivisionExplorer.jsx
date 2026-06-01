@@ -8,8 +8,8 @@
  *   import DivisionExplorer from './DivisionExplorer';
  *   <DivisionExplorer />
  *
- * To add a new division, drop a `bots.json` file into
- * `divisions/<DivisionName>/bots.json` and add the import below.
+ * Division data is generated from config/master_bot_registry.json into
+ * divisions/generated/catalog_index.json.
  *
  * Developer notes:
  * - All filter state is lifted here and passed down as props.
@@ -23,20 +23,19 @@ import FilterPanel from './FilterPanel';
 import BotCard from './BotCard';
 
 // ---------------------------------------------------------------------------
-// Static bot data — import each division's JSON directly so the bundle is
-// self-contained and works without a backend API.
+// Static bot data — generated from master registry so the bundle is
+// self-contained and aligned with governance metadata.
 // ---------------------------------------------------------------------------
-import dreamRealEstateBots from '../../divisions/DreamRealEstate/bots.json';
-import dreamSalesProBots from '../../divisions/DreamSalesPro/bots.json';
+import divisionCatalogIndex from '../../divisions/generated/catalog_index.json';
 
 /** All bots across every division, merged into a single flat array. */
-const ALL_BOTS = [...dreamRealEstateBots, ...dreamSalesProBots];
+const ALL_BOTS = divisionCatalogIndex.all_bots || [];
 
 /** Derive unique division names from the data (order-preserving). */
 const DIVISIONS = [...new Set(ALL_BOTS.map((b) => b.division))];
 
 /** Tier ordering for display. */
-const TIER_ORDER = ['Pro', 'Enterprise', 'Elite'];
+const TIER_ORDER = ['Free', 'Pro', 'Enterprise', 'Elite'];
 
 // ---------------------------------------------------------------------------
 // Helpers

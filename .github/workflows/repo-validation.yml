@@ -129,6 +129,9 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
+      - name: Validate generated bot registry outputs
+        run: python3 tools/generate_master_registry_outputs.py --check
+
       - name: Discover dashboards and dashboard tests
         run: |
           python - <<'PY'
