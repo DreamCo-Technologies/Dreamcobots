@@ -1,0 +1,24 @@
+{
+  "schema": "dreamco_event_envelope.v1",
+  "description": "Shared cross-language event envelope contract for Python and Node services.",
+  "required_fields": [
+    "event_type",
+    "bot_id",
+    "intent",
+    "timestamp",
+    "status",
+    "correlation_id"
+  ],
+  "optional_fields": [
+    "causation_id",
+    "metadata",
+    "payload"
+  ],
+  "status_values": [
+    "queued",
+    "running",
+    "success",
+    "failed",
+    "cancelled"
+  ]
+}

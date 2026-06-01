@@ -15,7 +15,8 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const BOTS_FILE = path.join(__dirname, '../config/bots.json');
+const LEGACY_BOTS_FILE = path.join(__dirname, '../config/bots.json');
+const GENERATED_BOTS_FILE = path.join(__dirname, '../config/generated/bots.catalog.json');
 const COMMAND_CENTER_FILE = path.join(__dirname, '../config/command_center.json');
 const PRODUCTION_MEDIA_ROADMAP_FILE = path.join(
   __dirname,
@@ -64,11 +65,26 @@ function rateLimiter(req, res, next) {
 // ---------------------------------------------------------------------------
 
 function readBots() {
-  return JSON.parse(fs.readFileSync(BOTS_FILE, 'utf8'));
+  if (process.env.NODE_ENV === 'test') {
+    return JSON.parse(fs.readFileSync(LEGACY_BOTS_FILE, 'utf8'));
+  }
+
+  if (fs.existsSync(GENERATED_BOTS_FILE)) {
+    const generated = JSON.parse(fs.readFileSync(GENERATED_BOTS_FILE, 'utf8'));
+    const generatedBots = Array.isArray(generated) ? generated : generated.bots ?? [];
+    if (!fs.existsSync(LEGACY_BOTS_FILE)) {
+      return generatedBots;
+    }
+    const runtimeBots = JSON.parse(fs.readFileSync(LEGACY_BOTS_FILE, 'utf8'));
+    const runtimeByName = new Map(runtimeBots.map((bot) => [bot.name, bot]));
+    return generatedBots.map((bot) => ({ ...bot, ...(runtimeByName.get(bot.name) ?? {}) }));
+  }
+
+  return JSON.parse(fs.readFileSync(LEGACY_BOTS_FILE, 'utf8'));
 }
 
 function writeBots(bots) {
-  fs.writeFileSync(BOTS_FILE, JSON.stringify(bots, null, 2));
+  fs.writeFileSync(LEGACY_BOTS_FILE, JSON.stringify(bots, null, 2));
 }
 
 function readCommandCenter() {
@@ -205,13 +221,13 @@ app.get('/api/bots', rateLimiter, (_req, res) => {
 // GET /api/get-bots — list bots with enriched metadata envelope
 // ---------------------------------------------------------------------------
 app.get('/api/get-bots', rateLimiter, (_req, res) => {
-  if (!fs.existsSync(BOTS_FILE)) {
-    return res.status(503).json({ success: false, error: 'bots.json not found' });
-  }
   let bots;
   try {
-    bots = JSON.parse(fs.readFileSync(BOTS_FILE, 'utf8'));
+    bots = readBots();
   } catch (err) {
+    if (err.code === 'ENOENT') {
+      return res.status(503).json({ success: false, error: 'bot registry not found' });
+    }
     return res.status(500).json({ success: false, error: err.message });
   }
   return res.json({

@@ -1,8 +1,7 @@
 /**
  * DreamCo Control Tower — Bot Manager
  *
- * Handles the bot registry: reading, updating, and querying bot records
- * stored in config/bots.json.
+ * Handles the bot registry: reading generated catalog data and runtime updates.
  */
 
 import fs from 'fs';
@@ -10,18 +9,34 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const BOTS_FILE = path.join(__dirname, '../../config/bots.json');
+const LEGACY_BOTS_FILE = path.join(__dirname, '../../config/bots.json');
+const GENERATED_BOTS_FILE = path.join(__dirname, '../../config/generated/bots.catalog.json');
 
 // ---------------------------------------------------------------------------
 // Read / write helpers
 // ---------------------------------------------------------------------------
 
 export function readBots() {
-  return JSON.parse(fs.readFileSync(BOTS_FILE, 'utf8'));
+  if (process.env.NODE_ENV === 'test') {
+    return JSON.parse(fs.readFileSync(LEGACY_BOTS_FILE, 'utf8'));
+  }
+  if (fs.existsSync(GENERATED_BOTS_FILE)) {
+    const generatedPayload = JSON.parse(fs.readFileSync(GENERATED_BOTS_FILE, 'utf8'));
+    const generatedBots = Array.isArray(generatedPayload)
+      ? generatedPayload
+      : generatedPayload.bots ?? [];
+    if (!fs.existsSync(LEGACY_BOTS_FILE)) {
+      return generatedBots;
+    }
+    const runtimeBots = JSON.parse(fs.readFileSync(LEGACY_BOTS_FILE, 'utf8'));
+    const runtimeByName = new Map(runtimeBots.map((bot) => [bot.name, bot]));
+    return generatedBots.map((bot) => ({ ...bot, ...(runtimeByName.get(bot.name) ?? {}) }));
+  }
+  return JSON.parse(fs.readFileSync(LEGACY_BOTS_FILE, 'utf8'));
 }
 
 export function writeBots(bots) {
-  fs.writeFileSync(BOTS_FILE, JSON.stringify(bots, null, 2));
+  fs.writeFileSync(LEGACY_BOTS_FILE, JSON.stringify(bots, null, 2));
 }
 
 // ---------------------------------------------------------------------------

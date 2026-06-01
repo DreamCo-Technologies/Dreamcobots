@@ -129,6 +129,39 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
+      - name: Validate Bot Registry
+        run: python tools/validate_bot_registry.py
+
+      - name: Audit Capabilities
+        run: python tools/audit_capabilities.py
+
+      - name: DreamCo AI Debate Council
+        env:
+          COUNCIL_TITLE: ${{ github.event.pull_request.title || github.event.head_commit.message || github.workflow }}
+          COUNCIL_BODY: ${{ github.event.pull_request.body || github.event.pull_request.html_url || github.server_url }}
+        run: |
+          python tools/dreamco_council.py \
+            --title "$COUNCIL_TITLE" \
+            --body "$COUNCIL_BODY" \
+            --output /tmp/dreamco_council_vote.json
+
+      - name: Security Scan
+        run: |
+          pip install bandit
+          bandit -r . -x "./node_modules,./dist,./.venv,./venv"
+
+      - name: Auto Fix
+        run: |
+          python tools/self_repair.py \
+            --detect-cmd "python3 tools/validate_bot_registry.py" \
+            --test-cmd "npm run test -- --passWithNoTests" \
+            --dry-run \
+            --output /tmp/self_repair_report.json
+        continue-on-error: true
+
+      - name: Validate generated bot registry outputs
+        run: python3 tools/generate_master_registry_outputs.py --check
+
       - name: Discover dashboards and dashboard tests
         run: |
           python - <<'PY'
@@ -199,6 +232,16 @@ jobs:
           name: dashboard-comparison-discovery
           overwrite: true
           path: /tmp/dashboard-comparison.json
+
+      - name: Upload council and self-repair artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: governance-audit-reports
+          overwrite: true
+          path: |
+            /tmp/dreamco_council_vote.json
+            /tmp/self_repair_report.json
 
       - name: Run dashboard tests
         run: |
