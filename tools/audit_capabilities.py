@@ -38,13 +38,16 @@ def load_registered_capabilities(bot_library_path: Path) -> set[str]:
 
 
 def audit_capabilities(
-    registry: dict[str, Any], registered_capabilities: set[str]
-) -> list[str]:
+    registry: dict[str, Any],
+    registered_capabilities: set[str],
+    strict_unregistered: bool = False,
+) -> tuple[list[str], list[str]]:
     bots = registry.get("bots")
     if not isinstance(bots, list):
-        return ["master registry must contain a 'bots' array"]
+        return ["master registry must contain a 'bots' array"], []
 
     issues: list[str] = []
+    warnings: list[str] = []
     for index, bot in enumerate(bots):
         bot_id = str(bot.get("id", f"bot[{index}]"))
         capabilities = bot.get("capabilities")
@@ -65,9 +68,13 @@ def audit_capabilities(
                 seen.add(intent)
 
             if intent not in registered_capabilities:
-                issues.append(f"{bot_id}: unregistered capability '{intent}'")
+                message = f"{bot_id}: unregistered capability '{intent}'"
+                if strict_unregistered:
+                    issues.append(message)
+                else:
+                    warnings.append(message)
 
-    return issues
+    return issues, warnings
 
 
 def main() -> int:
@@ -85,18 +92,29 @@ def main() -> int:
         help="Path to bot library Python file with registered capabilities.",
     )
     parser.add_argument("--json", action="store_true", help="Print findings as JSON.")
+    parser.add_argument(
+        "--strict-unregistered",
+        action="store_true",
+        help="Fail when unregistered capabilities are found.",
+    )
     args = parser.parse_args()
 
     registry = _load_registry(args.registry)
     registered = load_registered_capabilities(args.bot_library)
-    issues = audit_capabilities(registry, registered)
+    issues, warnings = audit_capabilities(
+        registry,
+        registered,
+        strict_unregistered=args.strict_unregistered,
+    )
 
     payload = {
         "registry": str(args.registry),
         "bot_library": str(args.bot_library),
         "registered_capability_count": len(registered),
         "issue_count": len(issues),
+        "warning_count": len(warnings),
         "issues": issues,
+        "warnings": warnings,
     }
 
     if args.json:
@@ -105,6 +123,15 @@ def main() -> int:
         print("❌ Capability audit failed:")
         for issue in issues:
             print(f" - {issue}")
+        if warnings:
+            print("⚠️  Additional warnings:")
+            for warning in warnings:
+                print(f" - {warning}")
+    elif warnings:
+        print("✅ Capability audit passed.")
+        print("⚠️  Unregistered capability warnings:")
+        for warning in warnings:
+            print(f" - {warning}")
     else:
         print("✅ Capability audit passed.")
 

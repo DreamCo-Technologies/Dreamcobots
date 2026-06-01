@@ -8,6 +8,9 @@ from dataclasses import asdict, dataclass
 from pathlib import Path
 from typing import Any
 
+REPO_ROOT = Path(__file__).resolve().parent.parent
+sys.path.insert(0, str(REPO_ROOT))
+
 from bots.global_sources_ai_bot.model_registry import TOP_100_AI_MODELS
 
 

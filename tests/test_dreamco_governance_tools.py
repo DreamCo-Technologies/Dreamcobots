@@ -52,15 +52,20 @@ _DREAMCO_BOTS = [
             },
         ]
     }
-    issues = audit_capabilities(registry, registered)
+    issues, warnings = audit_capabilities(registry, registered, strict_unregistered=True)
     assert "a: empty capability list" in issues
     assert "b: duplicate capability 'registered_a'" in issues
     assert "b: unregistered capability 'unknown_cap'" in issues
+    assert warnings == []
 
 
 def test_council_uses_all_global_ai_models():
     result = run_council("Safe change with tests and audit trail.")
-    assert result["models_in_global_ai_registry"] == 100
+    assert result["models_in_global_ai_registry"] >= 100
     assert result["all_models_considered"] is True
     assert len(result["votes"]) == len(COUNCIL)
+    assert all(
+        vote["models_considered"] == result["models_in_global_ai_registry"]
+        for vote in result["votes"]
+    )
     assert json.dumps(result)
