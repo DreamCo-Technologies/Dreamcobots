@@ -221,13 +221,13 @@ app.get('/api/bots', rateLimiter, (_req, res) => {
 // GET /api/get-bots — list bots with enriched metadata envelope
 // ---------------------------------------------------------------------------
 app.get('/api/get-bots', rateLimiter, (_req, res) => {
-  if (!fs.existsSync(LEGACY_BOTS_FILE) && !fs.existsSync(GENERATED_BOTS_FILE)) {
-    return res.status(503).json({ success: false, error: 'bot registry not found' });
-  }
   let bots;
   try {
     bots = readBots();
   } catch (err) {
+    if (err.code === 'ENOENT') {
+      return res.status(503).json({ success: false, error: 'bot registry not found' });
+    }
     return res.status(500).json({ success: false, error: err.message });
   }
   return res.json({
