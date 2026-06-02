@@ -1,0 +1,39 @@
+name: Production Deploy Approval
+
+on:
+  workflow_run:
+    workflows:
+      - Deduplication Scanner
+      - Performance Regression Gate
+      - Semgrep Security Scan
+    types:
+      - completed
+
+jobs:
+  approve-production:
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    runs-on: ubuntu-latest
+    environment:
+      name: production
+      url: https://dreamco.ai/production
+    permissions:
+      contents: read
+      deployments: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Require maintainer review
+        run: |
+          echo "Production deployments for enterprise and elite bots require repo maintainer approval."
+      - name: Verify target bots
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          tiers = []
+          for path in Path('bots').glob('*/replit_profile.json'):
+              data = json.loads(path.read_text())
+              if data.get('tier') in {'enterprise', 'elite'}:
+                  tiers.append(data.get('slug', path.parent.name))
+          print('\n'.join(tiers))
+          PY

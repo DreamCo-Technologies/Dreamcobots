@@ -1,60 +1,48 @@
-"""Patent monitoring and novelty scoring utilities."""
+"""Autonomous patent landscape monitor."""
 from __future__ import annotations
 
-from dataclasses import dataclass, field
-from typing import Dict, Iterable, List, Set
-import re
+from dataclasses import dataclass
+from datetime import date
+from typing import List, Sequence
 
 
 @dataclass
-class PatentFiling:
-    filing_id: str
-    title: str
-    abstract: str
+class PatentAlert:
+    patent_id: str
     assignee: str
-    cited_terms: Set[str] = field(default_factory=set)
+    relevance_score: float
+    filing_date: date
+    claims: List[str]
 
 
 class PatentMonitor:
-    STOPWORDS = {"the", "and", "for", "with", "from", "into", "that", "this", "using"}
+    def __init__(self) -> None:
+        self.catalog = [
+            PatentAlert("US-1001", "Acme AI", 0.0, date(2023, 5, 1), ["autonomous agent orchestration", "adaptive pricing"]),
+            PatentAlert("US-1002", "Nova Systems", 0.0, date(2024, 2, 20), ["social graph clustering", "behavior-based trust scoring"]),
+            PatentAlert("US-1003", "Orbit Labs", 0.0, date(2022, 11, 15), ["distributed fine-tuning across workers", "gradient aggregation"]),
+        ]
 
-    def keywords(self, text: str) -> Set[str]:
-        return {token for token in re.findall(r"[a-zA-Z]{4,}", text.lower()) if token not in self.STOPWORDS}
+    def scan(self, technology_keywords: Sequence[str]) -> List[PatentAlert]:
+        keywords = {keyword.lower() for keyword in technology_keywords}
+        alerts: List[PatentAlert] = []
+        for alert in self.catalog:
+            overlap = sum(any(keyword in claim.lower() for keyword in keywords) for claim in alert.claims)
+            if overlap:
+                alerts.append(PatentAlert(alert.patent_id, alert.assignee, overlap / len(alert.claims), alert.filing_date, alert.claims))
+        return sorted(alerts, key=lambda item: item.relevance_score, reverse=True)
 
-    def enrich(self, filing: PatentFiling) -> PatentFiling:
-        combined = f"{filing.title} {filing.abstract}"
-        filing.cited_terms = self.keywords(combined)
-        return filing
-
-    def overlap_score(self, left: PatentFiling, right: PatentFiling) -> float:
-        left_terms = left.cited_terms or self.keywords(left.title + " " + left.abstract)
-        right_terms = right.cited_terms or self.keywords(right.title + " " + right.abstract)
-        union = left_terms | right_terms
-        return round(len(left_terms & right_terms) / max(len(union), 1), 3)
-
-    def novelty_report(self, candidate: PatentFiling, corpus: Iterable[PatentFiling]) -> Dict[str, object]:
-        candidate = self.enrich(candidate)
-        scored = []
-        for filing in corpus:
-            filing = self.enrich(filing)
-            score = self.overlap_score(candidate, filing)
-            scored.append({"filing_id": filing.filing_id, "assignee": filing.assignee, "overlap": score})
-        scored.sort(key=lambda item: item["overlap"], reverse=True)
-        novelty = round(1.0 - (scored[0]["overlap"] if scored else 0.0), 3)
+    def freedom_to_operate(self, technology_keywords: Sequence[str]) -> dict:
+        alerts = self.scan(technology_keywords)
+        blocked_claims = sum(len(alert.claims) for alert in alerts)
         return {
-            "candidate": candidate.filing_id,
-            "novelty": novelty,
-            "closest_matches": scored[:5],
+            "alerts": alerts,
+            "freedom_to_operate": max(0.0, 1.0 - blocked_claims / 10.0),
+            "summary": "Lower scores imply more overlapping claims to review with counsel.",
         }
 
-    def assignee_landscape(self, corpus: Iterable[PatentFiling]) -> Dict[str, int]:
-        counts: Dict[str, int] = {}
-        for filing in corpus:
-            counts[filing.assignee] = counts.get(filing.assignee, 0) + 1
-        return dict(sorted(counts.items(), key=lambda item: item[1], reverse=True))
-
-
-def compare_candidates(candidates: Iterable[PatentFiling], corpus: Iterable[PatentFiling]) -> List[Dict[str, object]]:
-    monitor = PatentMonitor()
-    reference = list(corpus)
-    return [monitor.novelty_report(candidate, reference) for candidate in candidates]
+    def ip_risk_score(self, new_capabilities: Sequence[str]) -> float:
+        alerts = self.scan(new_capabilities)
+        novelty_penalty = min(0.4, len(new_capabilities) * 0.03)
+        overlap_penalty = sum(alert.relevance_score for alert in alerts) * 0.2
+        return round(min(1.0, novelty_penalty + overlap_penalty), 3)

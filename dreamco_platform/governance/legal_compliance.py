@@ -1,89 +1,81 @@
-"""Lightweight legal compliance checks for operational policies."""
+"""Autonomous legal compliance checker."""
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from datetime import date, timedelta
-from typing import Dict, Iterable, List
+from typing import Callable, Dict, List
+from datetime import datetime
+
+
+REGULATIONS = ["GDPR Article 6", "CCPA Section 1798", "SOX", "HIPAA", "PCI-DSS"]
 
 
 @dataclass
 class ComplianceRule:
-    name: str
-    jurisdiction: str
-    renewal_days: int
-    required_controls: List[str] = field(default_factory=list)
+    regulation: str
+    requirement: str
+    test_fn: Callable[[Dict[str, object]], bool]
+    remediation: str
 
 
 @dataclass
-class ComplianceRecord:
-    rule_name: str
-    owner: str
-    last_reviewed: date
-    controls_present: List[str] = field(default_factory=list)
+class ComplianceFinding:
+    regulation: str
+    requirement: str
+    passed: bool
+    remediation: str
 
 
-class LegalComplianceMonitor:
-    def evaluate(self, rules: Iterable[ComplianceRule], records: Iterable[ComplianceRecord], today: date | None = None) -> List[Dict[str, object]]:
-        today = today or date.today()
-        record_map = {record.rule_name: record for record in records}
-        results: List[Dict[str, object]] = []
-        for rule in rules:
-            record = record_map.get(rule.name)
-            if record is None:
-                results.append({
-                    "rule": rule.name,
-                    "jurisdiction": rule.jurisdiction,
-                    "status": "missing",
-                    "days_until_due": -1,
-                    "missing_controls": rule.required_controls,
-                })
-                continue
-            next_due = record.last_reviewed + timedelta(days=rule.renewal_days)
-            days_until_due = (next_due - today).days
-            missing_controls = [c for c in rule.required_controls if c not in record.controls_present]
-            status = "compliant"
-            if days_until_due < 0 or missing_controls:
-                status = "action_required"
-            elif days_until_due <= 14:
-                status = "expiring"
-            results.append({
-                "rule": rule.name,
-                "jurisdiction": rule.jurisdiction,
-                "status": status,
-                "days_until_due": days_until_due,
-                "missing_controls": missing_controls,
-                "owner": record.owner,
-            })
-        return results
+@dataclass
+class ComplianceAuditReport:
+    bot_id: str
+    generated_at: datetime
+    findings: List[ComplianceFinding]
+    evidence: List[str] = field(default_factory=list)
+    soc2_type_ii_evidence: List[str] = field(default_factory=list)
 
-    def score(self, evaluations: Iterable[Dict[str, object]]) -> float:
-        rows = list(evaluations)
-        if not rows:
-            return 1.0
-        penalty = 0.0
-        for row in rows:
-            if row["status"] == "missing":
-                penalty += 0.5
-            elif row["status"] == "action_required":
-                penalty += 0.25
-            elif row["status"] == "expiring":
-                penalty += 0.1
-        return round(max(0.0, 1.0 - penalty / len(rows)), 3)
-
-    def remediation_plan(self, evaluations: Iterable[Dict[str, object]]) -> List[str]:
-        actions: List[str] = []
-        for row in evaluations:
-            if row["status"] == "missing":
-                actions.append(f"Create compliance record for {row['rule']} in {row['jurisdiction']}.")
-            elif row["missing_controls"]:
-                controls = ", ".join(row["missing_controls"])
-                actions.append(f"Add controls for {row['rule']}: {controls}.")
-            elif row["status"] == "expiring":
-                actions.append(f"Schedule review for {row['rule']} within two weeks.")
-        return actions
+    @property
+    def compliant(self) -> bool:
+        return all(item.passed for item in self.findings)
 
 
-def portfolio_summary(rules: Iterable[ComplianceRule], records: Iterable[ComplianceRecord]) -> Dict[str, object]:
-    monitor = LegalComplianceMonitor()
-    evaluations = monitor.evaluate(rules, records)
-    return {"score": monitor.score(evaluations), "issues": monitor.remediation_plan(evaluations)}
+class LegalCompliance:
+    def __init__(self, bot_registry: Dict[str, Dict[str, object]] | None = None) -> None:
+        self.bot_registry = bot_registry or {}
+        self.rules = [
+            ComplianceRule("GDPR Article 6", "Lawful basis documented", lambda d: bool(d.get("lawful_basis")), "Document lawful basis for processing."),
+            ComplianceRule("CCPA Section 1798", "Consumer delete/export workflow", lambda d: bool(d.get("ccpa_workflow")), "Implement delete and access request workflow."),
+            ComplianceRule("SOX", "Material financial changes logged", lambda d: bool(d.get("audit_log")), "Enable immutable audit logs for financial events."),
+            ComplianceRule("HIPAA", "Protected health information encrypted", lambda d: not d.get("handles_phi") or bool(d.get("phi_encryption")), "Encrypt PHI at rest and in transit."),
+            ComplianceRule("PCI-DSS", "Card data tokenized", lambda d: not d.get("handles_card") or bool(d.get("card_tokenization")), "Use tokenization for payment data."),
+        ]
+
+    def _collect_evidence(self, bot_id: str, profile: Dict[str, object]) -> List[str]:
+        evidence = [
+            f"bot:{bot_id}",
+            f"owner:{profile.get('owner', 'unknown')}",
+            f"logging:{profile.get('audit_log', False)}",
+            f"data_map:{profile.get('data_inventory', 'not supplied')}",
+        ]
+        return evidence
+
+    def _collect_soc2_evidence(self, profile: Dict[str, object]) -> List[str]:
+        return [
+            f"control-monitoring={bool(profile.get('continuous_monitoring'))}",
+            f"incident-response={bool(profile.get('incident_response_plan'))}",
+            f"access-review={bool(profile.get('access_review'))}",
+            "evidence-ready-for-soc2-type-ii",
+        ]
+
+    def audit(self, bot_id: str) -> ComplianceAuditReport:
+        profile = dict(self.bot_registry.get(bot_id, {}))
+        findings = [
+            ComplianceFinding(rule.regulation, rule.requirement, rule.test_fn(profile), rule.remediation)
+            for rule in self.rules
+        ]
+        return ComplianceAuditReport(
+            bot_id=bot_id,
+            generated_at=datetime.utcnow(),
+            findings=findings,
+            evidence=self._collect_evidence(bot_id, profile),
+            soc2_type_ii_evidence=self._collect_soc2_evidence(profile),
+        )

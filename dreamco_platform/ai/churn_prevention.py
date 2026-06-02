@@ -44,3 +44,18 @@ class ChurnPrevention:
                 play = 'success_manager_call' if probability > 0.6 else 'feature_highlight'
                 at_risk.append(AtRiskUser(signal, self.PLAYBOOK[play]))
         return at_risk
+
+def intervention_queue(self, users: Iterable[dict]) -> List[str]:
+    return [
+        f"{item.signal.user_id}:{item.intervention}"
+        for item in self.scan_users(users)
+    ]
+
+
+def highest_risk(self, users: Iterable[dict]) -> AtRiskUser | None:
+    results = self.scan_users(users)
+    return max(results, key=lambda item: item.signal.churn_probability) if results else None
+
+
+ChurnPrevention.intervention_queue = intervention_queue
+ChurnPrevention.highest_risk = highest_risk

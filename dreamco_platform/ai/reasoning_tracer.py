@@ -1,70 +1,61 @@
-"""Reasoning trace capture with scoreable decision steps."""
-from __future__ import annotations
+"""Bot reasoning trace recorder."""
+    from __future__ import annotations
 
-from dataclasses import dataclass, field
-from typing import Dict, Iterable, List
-
-
-@dataclass
-class TraceStep:
-    name: str
-    evidence: str
-    confidence: float
-    outcome: str
-    tags: List[str] = field(default_factory=list)
+    from dataclasses import dataclass, field
+    from typing import Dict, List
+    import uuid
 
 
-class ReasoningTracer:
-    def __init__(self) -> None:
-        self._steps: List[TraceStep] = []
+    @dataclass
+    class ReasoningTrace:
+        step_id: str
+        thought: str
+        action: str
+        observation: str
+        confidence: float
 
-    def add_step(self, name: str, evidence: str, confidence: float, outcome: str, tags: Iterable[str] = ()) -> TraceStep:
-        step = TraceStep(name=name, evidence=evidence, confidence=max(0.0, min(1.0, confidence)), outcome=outcome, tags=list(tags))
-        self._steps.append(step)
-        return step
 
-    def steps(self) -> List[TraceStep]:
-        return list(self._steps)
+    @dataclass
+    class TraceContext:
+        bot_id: str
+        task: str
+        trace_id: str = field(default_factory=lambda: str(uuid.uuid4()))
+        steps: List[ReasoningTrace] = field(default_factory=list)
 
-    def trace_score(self) -> float:
-        if not self._steps:
-            return 0.0
-        weighted = sum(step.confidence * (1.1 if "verified" in step.tags else 1.0) for step in self._steps)
-        return round(weighted / len(self._steps), 3)
+        def add_step(self, thought: str, action: str, observation: str, confidence: float) -> ReasoningTrace:
+            step = ReasoningTrace(f"step-{len(self.steps) + 1}", thought, action, observation, round(confidence, 3))
+            self.steps.append(step)
+            return step
 
-    def failure_points(self) -> List[TraceStep]:
-        return [step for step in self._steps if step.confidence < 0.5 or "risk" in step.tags]
+        def replay(self) -> List[str]:
+            return [f"{step.step_id}: {step.thought} -> {step.action} => {step.observation}" for step in self.steps]
 
-    def summarize(self) -> Dict[str, object]:
-        return {
-            "step_count": len(self._steps),
-            "score": self.trace_score(),
-            "risks": [step.name for step in self.failure_points()],
-            "final_outcome": self._steps[-1].outcome if self._steps else None,
-        }
+        def as_directed_graph(self) -> Dict[str, List[str]]:
+            graph: Dict[str, List[str]] = {}
+            for index, step in enumerate(self.steps):
+                next_step = self.steps[index + 1].step_id if index + 1 < len(self.steps) else "END"
+                graph[step.step_id] = [next_step]
+            return graph
 
-    def export_markdown(self) -> str:
-        lines = ["# Reasoning Trace", ""]
-        for index, step in enumerate(self._steps, start=1):
-            lines.append(f"## {index}. {step.name}")
-            lines.append(f"- Evidence: {step.evidence}")
-            lines.append(f"- Confidence: {step.confidence:.2f}")
-            lines.append(f"- Outcome: {step.outcome}")
-            if step.tags:
-                lines.append(f"- Tags: {', '.join(step.tags)}")
-            lines.append("")
-        return "
+
+    class ReasoningTracer:
+        def __init__(self) -> None:
+            self.active: Dict[str, TraceContext] = {}
+
+        def start_trace(self, bot_id: str, task: str) -> TraceContext:
+            context = TraceContext(bot_id=bot_id, task=task)
+            self.active[context.trace_id] = context
+            return context
+
+        def visualize(self, trace: TraceContext) -> str:
+            lines = ["digraph reasoning {"]
+            for source, targets in trace.as_directed_graph().items():
+                for target in targets:
+                    lines.append(f'  "{source}" -> "{target}";')
+            lines.append("}")
+            return "
 ".join(lines)
 
-
-def build_trace(records: Iterable[Dict[str, object]]) -> ReasoningTracer:
-    tracer = ReasoningTracer()
-    for record in records:
-        tracer.add_step(
-            str(record.get("name", "step")),
-            str(record.get("evidence", "")),
-            float(record.get("confidence", 0.5)),
-            str(record.get("outcome", "pending")),
-            record.get("tags", ()),
-        )
-    return tracer
+        def replay(self, trace_id: str) -> List[str]:
+            trace = self.active[trace_id]
+            return trace.replay()

@@ -33,3 +33,32 @@ class ROICalculator:
             derivative = sum(-index * flow / ((1 + rate) ** (index + 1)) for index, flow in enumerate(cash_flows[1:], start=1)) or 1.0
             rate -= npv / derivative
         return rate
+
+def investment_type(self, cost_events: Iterable[dict]) -> str:
+    categories = {event.get('type', 'custom') for event in cost_events}
+    if 'purchase' in categories:
+        return 'bot purchase ROI'
+    if 'subscription' in categories:
+        return 'subscription ROI'
+    return 'custom workflow ROI'
+
+
+def cash_flow_table(self, cost_events: Iterable[dict], revenue_events: Iterable[dict]) -> List[tuple[str, float]]:
+    rows = [('cost', -event['amount']) for event in cost_events]
+    rows.extend(('revenue', event['amount']) for event in revenue_events)
+    return rows
+
+
+ROICalculator.investment_type = investment_type
+ROICalculator.cash_flow_table = cash_flow_table
+
+def break_even_revenue(self, cost_events: Iterable[dict]) -> float:
+    return round(sum(event['amount'] for event in cost_events), 2)
+
+
+def roi_ratio(self, calculation: ROICalculation) -> float:
+    return round(calculation.return_usd / max(calculation.investment_usd, 1e-9), 4)
+
+
+ROICalculator.break_even_revenue = break_even_revenue
+ROICalculator.roi_ratio = roi_ratio

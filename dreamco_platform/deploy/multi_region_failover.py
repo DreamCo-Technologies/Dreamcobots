@@ -50,3 +50,21 @@ class MultiRegionFailover:
 
     def _sync_data(self, source_region: str, target_region: str) -> str:
         return f'{source_region}->{target_region}@{datetime.utcnow().isoformat()}'
+
+def healthiest_region(self) -> str:
+    for region in self.REGIONS:
+        if self.monitor.is_healthy(region):
+            return region
+    return self.active_region
+
+
+def status_snapshot(self) -> dict:
+    return {
+        'active_region': self.active_region,
+        'health': {region: self.monitor.is_healthy(region) for region in self.REGIONS},
+        'history_size': len(self.history),
+    }
+
+
+MultiRegionFailover.healthiest_region = healthiest_region
+MultiRegionFailover.status_snapshot = status_snapshot

@@ -41,3 +41,24 @@ class InfiniteContext:
 
     def _active_tokens(self) -> int:
         return sum(len(message.split()) for message in self.window.active_messages)
+
+def context_health(self) -> dict:
+    return {
+        'active_messages': len(self.window.active_messages),
+        'compressed_messages': len(self.window.compressed_history),
+        'tokens_managed': self.window.total_tokens_managed,
+    }
+
+
+def restore_recent_summary(self) -> str | None:
+    return self.window.compressed_history[-1] if self.window.compressed_history else None
+
+
+InfiniteContext.context_health = context_health
+InfiniteContext.restore_recent_summary = restore_recent_summary
+
+def all_messages(self) -> List[str]:
+    return list(self.window.compressed_history + self.window.active_messages)
+
+
+InfiniteContext.all_messages = all_messages

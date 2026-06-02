@@ -42,3 +42,23 @@ class RevenueForecaster:
         last = history[-1]
         tier_bonus = sum(last.get('tier_distribution', {}).values()) * 25
         return last['historical_revenue'] + last.get('active_bots', 0) * 20 + tier_bonus - last.get('churn_rate', 0) * 1000 + horizon_days * 10
+
+def project_30_60_90(self, records: Iterable[dict]) -> dict:
+    return {
+        30: self.forecast(records, 30),
+        60: self.forecast(records, 60),
+        90: self.forecast(records, 90),
+    }
+
+
+def ensemble_breakdown(self, records: Iterable[dict], horizon_days: int = 30) -> dict:
+    history = list(records)
+    return {
+        'arima': round(self._arima(history), 2),
+        'prophet_like': round(self._prophet_like(history, horizon_days), 2),
+        'linear_regression': round(self._linear_regression(history, horizon_days), 2),
+    }
+
+
+RevenueForecaster.project_30_60_90 = project_30_60_90
+RevenueForecaster.ensemble_breakdown = ensemble_breakdown

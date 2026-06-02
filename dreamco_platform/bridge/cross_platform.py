@@ -38,3 +38,26 @@ class BotBridge:
 
     def _inject_secrets(self, secrets: Dict[str, str]) -> Dict[str, str]:
         return {key: f'injected::{value}' for key, value in secrets.items()}
+
+def deployment_matrix(self) -> Dict[str, str]:
+    return {key: handle.runtime_target for key, handle in self.deployments.items()}
+
+
+def redeploy(self, bot_id: str, platform: Platform, config: Dict[str, str]) -> DeploymentHandle:
+    return self.deploy(bot_id, platform, config)
+
+
+def secrets_for(self, bot_id: str, platform: Platform) -> Dict[str, str]:
+    handle = self.deployments[f'{bot_id}:{platform.value}']
+    return dict(handle.injected_secrets)
+
+
+BotBridge.deployment_matrix = deployment_matrix
+BotBridge.redeploy = redeploy
+BotBridge.secrets_for = secrets_for
+
+def target_for(self, bot_id: str, platform: Platform) -> str:
+    return self.deployments[f'{bot_id}:{platform.value}'].runtime_target
+
+
+BotBridge.target_for = target_for

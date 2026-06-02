@@ -47,3 +47,23 @@ Examples: {examples}'
                 if 'step-by-step' in template:
                     return ['Input: analyze churn -> Output: identify drivers, quantify impact, recommend action']
                 return ['Input: summarize market -> Output: concise summary with three takeaways']
+
+def compare_variants(self, base_prompt: str, test_cases: Iterable[dict]) -> List[dict]:
+    variants = self._generate_variants(base_prompt, list(test_cases))
+    return [
+        {
+            'template': variant.template,
+            'score': round(self._score(variant), 4),
+            'tokens': variant.token_count,
+            'quality': round(variant.avg_quality_score, 4),
+        }
+        for variant in variants
+    ]
+
+
+def token_budget(self, prompt: str, budget: int = 250) -> bool:
+    return len(prompt.split()) <= budget
+
+
+Optimizer.compare_variants = compare_variants
+Optimizer.token_budget = token_budget

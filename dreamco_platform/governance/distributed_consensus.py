@@ -51,3 +51,19 @@ class ConsensusNode:
 
     def quorum(self) -> int:
         return len(self.active_nodes) // 2 + 1
+
+def audit_snapshot(self) -> dict:
+    return {
+        'node_id': self.node_id,
+        'quorum': self.quorum(),
+        'committed_ids': [proposal.proposal_id for proposal in self.committed],
+        'entry_count': len(self.log.entries),
+    }
+
+
+def active_members(self) -> List[str]:
+    return list(self.active_nodes)
+
+
+ConsensusNode.audit_snapshot = audit_snapshot
+ConsensusNode.active_members = active_members

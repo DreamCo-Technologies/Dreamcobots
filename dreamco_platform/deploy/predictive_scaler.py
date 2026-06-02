@@ -42,3 +42,21 @@ class PredictiveScaler:
         replicas = max(1, int(predicted / self.requests_per_replica) + 1)
         confidence = min(0.95, 0.55 + predicted / max(self.requests_per_replica * 10, 1))
         return ScalingRecommendation(replicas, at_time, round(confidence, 3))
+
+def predict_series(self, start: datetime, periods: int = 4, interval_minutes: int = 15) -> List[float]:
+    return [
+        round(self.model.forecast(start + timedelta(minutes=interval_minutes * index)), 2)
+        for index in range(periods)
+    ]
+
+
+def scale_plan_for_day(self, start: datetime) -> List[ScalingRecommendation]:
+    recommendations = []
+    for hour in range(0, 24, 6):
+        moment = start + timedelta(hours=hour)
+        recommendations.append(self.recommend(moment))
+    return recommendations
+
+
+PredictiveScaler.predict_series = predict_series
+PredictiveScaler.scale_plan_for_day = scale_plan_for_day

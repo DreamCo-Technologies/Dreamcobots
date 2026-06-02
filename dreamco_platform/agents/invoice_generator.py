@@ -40,8 +40,7 @@ class InvoiceGenerator:
         for line in invoice.lines:
             body.append(f"- {line.description}: {line.quantity} x {line.unit_price:.2f} = {line.line_total:.2f}")
         body.extend(["", f"Subtotal: {totals['subtotal']:.2f}", f"Tax: {totals['tax']:.2f}", f"Total: {totals['total']:.2f}"])
-        return "
-".join(body)
+        return "\n".join(body)
 
     def generate_invoice(self, invoice: Invoice, output_path: str | None = None) -> Dict[str, object]:
         text = self.to_text(invoice)

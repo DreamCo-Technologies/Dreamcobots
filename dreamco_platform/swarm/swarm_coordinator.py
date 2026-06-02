@@ -44,3 +44,21 @@ class SwarmCoordinator:
 
     def _vote(self, bot_id: str, objective: str) -> bool:
         return (sum(map(ord, bot_id + objective)) % 2) == 0
+
+def pheromone_level(self, tag: str) -> float:
+    return round(self.pheromones.get(tag, 0.0), 3)
+
+
+def decay_pheromones(self, factor: float = 0.9) -> Dict[str, float]:
+    for key in list(self.pheromones):
+        self.pheromones[key] = round(self.pheromones[key] * factor, 3)
+    return dict(self.pheromones)
+
+
+def last_execution(self) -> dict | None:
+    return self.history[-1] if self.history else None
+
+
+SwarmCoordinator.pheromone_level = pheromone_level
+SwarmCoordinator.decay_pheromones = decay_pheromones
+SwarmCoordinator.last_execution = last_execution

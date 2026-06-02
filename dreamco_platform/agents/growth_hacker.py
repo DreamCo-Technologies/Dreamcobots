@@ -27,3 +27,38 @@ class GrowthHacker:
             GrowthExperiment(f'{division}: activate creator incentives', 'Reward user-generated tutorials and templates', 0.18),
         ]
         return sorted(experiments, key=lambda item: item.ice_score, reverse=True)
+
+def rank_by_ice(self, experiments: Iterable[GrowthExperiment]) -> List[GrowthExperiment]:
+    return sorted(list(experiments), key=lambda item: item.ice_score, reverse=True)
+
+
+def record_result(self, experiment: GrowthExperiment, actual_lift: float) -> GrowthExperiment:
+    experiment.actual_lift = actual_lift
+    return experiment
+
+
+def summary(self, division: str) -> List[dict]:
+    return [
+        {
+            'hypothesis': item.hypothesis,
+            'ice_score': item.ice_score,
+            'implementation': item.implementation,
+        }
+        for item in self.generate_experiments(division)
+    ]
+
+
+GrowthHacker.rank_by_ice = rank_by_ice
+GrowthHacker.record_result = record_result
+GrowthHacker.summary = summary
+
+def best_experiment(self, division: str) -> GrowthExperiment:
+    return self.generate_experiments(division)[0]
+
+
+def total_expected_lift(self, division: str) -> float:
+    return round(sum(item.expected_lift for item in self.generate_experiments(division)), 3)
+
+
+GrowthHacker.best_experiment = best_experiment
+GrowthHacker.total_expected_lift = total_expected_lift

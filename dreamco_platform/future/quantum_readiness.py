@@ -1,57 +1,56 @@
-"""Quantum readiness scoring for cryptography and optimization portfolios."""
-from __future__ import annotations
+"""Quantum computing readiness assessment layer."""
+    from __future__ import annotations
 
-from dataclasses import dataclass
-from typing import Dict, Iterable, List
-
-
-@dataclass
-class Workload:
-    name: str
-    classical_cost: float
-    quantum_advantage_potential: float
-    cryptography_exposure: float
+    from dataclasses import dataclass
+    from pathlib import Path
+    from typing import Dict, List
 
 
-class QuantumReadinessAdvisor:
-    def readiness_score(self, workloads: Iterable[Workload]) -> Dict[str, float]:
-        entries = list(workloads)
-        if not entries:
-            return {"migration_readiness": 0.0, "pq_risk": 0.0, "opportunity": 0.0}
-        opportunity = sum(w.quantum_advantage_potential * w.classical_cost for w in entries) / max(sum(w.classical_cost for w in entries), 1)
-        pq_risk = sum(w.cryptography_exposure for w in entries) / len(entries)
-        migration = max(0.0, min(1.0, opportunity * 0.6 + (1 - pq_risk) * 0.4))
-        return {
-            "migration_readiness": round(migration, 3),
-            "pq_risk": round(pq_risk, 3),
-            "opportunity": round(opportunity, 3),
-        }
-
-    def prioritize(self, workloads: Iterable[Workload]) -> List[Dict[str, float | str]]:
-        ranked = []
-        for workload in workloads:
-            score = workload.quantum_advantage_potential * 0.7 + workload.cryptography_exposure * 0.3
-            ranked.append({
-                "name": workload.name,
-                "priority_score": round(score, 3),
-                "recommended_track": "post_quantum" if workload.cryptography_exposure > 0.5 else "research",
-            })
-        return sorted(ranked, key=lambda item: item["priority_score"], reverse=True)
-
-    def roadmap(self, workloads: Iterable[Workload]) -> List[str]:
-        items = self.prioritize(workloads)
-        steps: List[str] = []
-        for item in items:
-            if item["recommended_track"] == "post_quantum":
-                steps.append(f"Inventory cryptographic dependencies for {item['name']} and plan PQC migration.")
-            else:
-                steps.append(f"Prototype hybrid optimization workflow for {item['name']}.")
-        return steps
+    @dataclass
+    class QuantumVulnerability:
+        algorithm: str
+        qubit_threat_threshold: int
+        migration_path: str
 
 
-def sample_portfolio() -> List[Workload]:
-    return [
-        Workload("fraud-scoring", 0.7, 0.3, 0.6),
-        Workload("route-optimization", 0.9, 0.8, 0.2),
-        Workload("simulation", 0.8, 0.7, 0.1),
-    ]
+    @dataclass
+    class ReadinessReport:
+        vulnerabilities: List[QuantumVulnerability]
+        readiness_score: float
+        migration_timeline: Dict[str, str]
+        hybrid_algorithms: List[str]
+
+
+    class QuantumReadiness:
+        def __init__(self, root: str | Path = ".") -> None:
+            self.root = Path(root)
+            self.known_vulnerabilities = [
+                QuantumVulnerability("RSA-2048", 4096, "Migrate to CRYSTALS-Kyber for key exchange."),
+                QuantumVulnerability("ECDSA", 2500, "Adopt Dilithium or Falcon signatures."),
+                QuantumVulnerability("SHA-1", 1, "Replace with SHA-256 or SHA-3."),
+            ]
+
+        def hybrid_search_stub(self, classical_score: float, quantum_hint: float) -> float:
+            return round(0.7 * classical_score + 0.3 * quantum_hint, 4)
+
+        def hybrid_optimizer_stub(self, workload_size: int, annealing_factor: float) -> float:
+            return round(workload_size / max(1.0, annealing_factor + 1.0), 3)
+
+        def assess_codebase(self) -> ReadinessReport:
+            text = "
+".join(path.read_text(encoding="utf-8", errors="ignore") for path in self.root.rglob("*.py"))
+            matched = [v for v in self.known_vulnerabilities if v.algorithm.split("-")[0] in text or v.algorithm in text]
+            score = max(0.0, 1.0 - 0.2 * len(matched))
+            timeline = {
+                "2025": "Inventory cryptographic dependencies and vendor attestations.",
+                "2026": "Pilot hybrid TLS and post-quantum signing for internal services.",
+                "2027": "Dual-stack certificate and key exchange rollout.",
+                "2028": "Migrate customer-facing control planes to PQ-safe defaults.",
+                "2029": "Retire legacy RSA/ECC dependencies where feasible.",
+                "2030": "Complete cryptographic transition and third-party certification refresh.",
+            }
+            hybrid = [
+                f"search-score:{self.hybrid_search_stub(0.8, 0.6)}",
+                f"optimizer-load:{self.hybrid_optimizer_stub(100, 4.0)}",
+            ]
+            return ReadinessReport(matched, round(score, 3), timeline, hybrid)

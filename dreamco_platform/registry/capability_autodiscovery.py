@@ -54,3 +54,25 @@ class CapabilityDiscovery:
         profile['capabilities'] = [cap.name for cap in capabilities]
         profile['capability_details'] = [cap.__dict__ for cap in capabilities]
         profile_path.write_text(json.dumps(profile, indent=2), encoding='utf-8')
+
+def capability_matrix(self, capabilities: List[DiscoveredCapability]) -> dict:
+    return {
+        capability.name: {
+            'signature': capability.signature,
+            'keywords': capability.keywords,
+            'summary': capability.summary,
+        }
+        for capability in capabilities
+    }
+
+
+def describe_capabilities(self, capabilities: List[DiscoveredCapability]) -> str:
+    parts = []
+    for capability in capabilities:
+        parts.append(f"{capability.name}: {capability.summary}")
+    return '
+'.join(parts)
+
+
+CapabilityDiscovery.capability_matrix = capability_matrix
+CapabilityDiscovery.describe_capabilities = describe_capabilities

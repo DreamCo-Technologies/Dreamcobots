@@ -19,7 +19,8 @@ class LoyaltyProgram:
 
 class LoyaltyOptimizer:
     def design(self, customer_data: Iterable[Mapping[str, float]]) -> LoyaltyProgram:
-        avg_spend = sum(float(c.get('monthly_spend', 0)) for c in customer_data) / max(len(list(customer_data)) if not isinstance(customer_data, list) else len(customer_data), 1)
+        customers = list(customer_data)
+        avg_spend = sum(float(c.get('monthly_spend', 0)) for c in customers) / max(len(customers), 1)
         tiers = [
             LoyaltyTier('Bronze', 'Starter activity', ['badge'], 4.0),
             LoyaltyTier('Silver', '3 referrals or $500 MRR', ['badge', 'priority support'], 8.0),

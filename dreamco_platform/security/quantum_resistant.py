@@ -55,3 +55,18 @@ class QuantumResistantEncryptor:
                 return self.key_generate()
             version = self.current_version
         return self.key_store[version]
+
+def list_versions(self) -> list[int]:
+    return sorted(self.key_store)
+
+
+def retire_old_versions(self, keep_latest: int = 2) -> list[int]:
+    retired = []
+    for version in self.list_versions()[:-keep_latest]:
+        retired.append(version)
+        self.key_store.pop(version, None)
+    return retired
+
+
+QuantumResistantEncryptor.list_versions = list_versions
+QuantumResistantEncryptor.retire_old_versions = retire_old_versions

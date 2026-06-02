@@ -15,7 +15,7 @@ class CurrencyRevenue:
 
 
 class ExchangeRateCache:
-    DEFAULT_RATES = {'USD': 1.0, 'EUR': 1.08, 'GBP': 1.25, 'JPY': 0.0067, 'CAD': 0.74, 'AUD': 0.66}
+    DEFAULT_RATES = {'USD': 1.0, 'EUR': 1.08, 'GBP': 1.25, 'JPY': 0.0067, 'CAD': 0.74, 'AUD': 0.66, 'CHF': 1.11, 'CNY': 0.14, 'SEK': 0.094, 'NOK': 0.093, 'DKK': 0.145, 'NZD': 0.61, 'SGD': 0.74, 'HKD': 0.128, 'INR': 0.012, 'BRL': 0.19, 'MXN': 0.059, 'ZAR': 0.053, 'AED': 0.272, 'SAR': 0.267, 'KRW': 0.00074, 'PLN': 0.25, 'TRY': 0.031, 'ILS': 0.27, 'CZK': 0.043}
 
     def __init__(self) -> None:
         self.rates = dict(self.DEFAULT_RATES)
@@ -56,3 +56,15 @@ class MultiCurrencyLedger:
         for entry in self.entries:
             totals[entry.exchange_rate_date.strftime(fmt)] += entry.usd_equivalent
         return dict(totals)
+
+def supported_currencies(self) -> List[str]:
+    return sorted(self.rates.rates)
+
+
+def convert(self, amount: float, from_currency: str, to_currency: str) -> float:
+    usd = amount * self.rates.get_rate(from_currency)
+    return round(usd / max(self.rates.get_rate(to_currency), 1e-9), 2)
+
+
+MultiCurrencyLedger.supported_currencies = supported_currencies
+MultiCurrencyLedger.convert = convert

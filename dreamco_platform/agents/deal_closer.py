@@ -41,3 +41,23 @@ class DealCloser:
             confidence = min(0.95, 0.45 + stalled_days / 40 + value / 50000)
             recommendations.append(ClosingRecommendation(deal['deal_id'], strategy, round(confidence, 3), action))
         return recommendations
+
+def execute_with_closerbot(self, recommendations: Iterable[ClosingRecommendation]) -> List[str]:
+    return [
+        f"CloserBot scheduled {item.strategy.value} for {item.deal_id}: {item.next_action}"
+        for item in recommendations
+    ]
+
+
+def stalled_deals(self, deals: Iterable[dict], days: int = 14) -> List[dict]:
+    return [deal for deal in deals if deal.get('stalled_days', 0) >= days]
+
+
+DealCloser.execute_with_closerbot = execute_with_closerbot
+DealCloser.stalled_deals = stalled_deals
+
+def summary_table(self, deals: Iterable[dict]) -> List[dict]:
+    return [{'deal_id': deal['deal_id'], 'stalled_days': deal.get('stalled_days', 0)} for deal in deals]
+
+
+DealCloser.summary_table = summary_table

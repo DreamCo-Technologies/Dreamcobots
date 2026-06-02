@@ -45,3 +45,22 @@ class AutoCompliance:
 
     def _signal(self, regulation: str, requirement: str, ok: bool) -> ComplianceSignal:
         return ComplianceSignal(regulation, requirement, 'pass' if ok else 'fail', 'auto-collected configuration evidence')
+
+def compliance_score(self, report: ComplianceReport) -> float:
+    passed = sum(1 for signal in report.signals if signal.status == 'pass')
+    return round(passed / max(len(report.signals), 1), 3)
+
+
+def baseline_snapshot(self) -> Dict[str, str]:
+    return dict(self.baseline)
+
+
+def drift_summary(self, report: ComplianceReport) -> str:
+    if not report.drift_detected:
+        return 'No compliance drift detected.'
+    return 'Compliance drift detected; compare baseline to current signal states.'
+
+
+AutoCompliance.compliance_score = compliance_score
+AutoCompliance.baseline_snapshot = baseline_snapshot
+AutoCompliance.drift_summary = drift_summary

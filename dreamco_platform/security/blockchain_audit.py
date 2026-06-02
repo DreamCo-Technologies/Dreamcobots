@@ -55,3 +55,14 @@ class AuditChain:
 
     def export_json(self) -> str:
         return json.dumps(self.get_history(), indent=2)
+
+def latest_block(self) -> dict:
+    return asdict(self.blocks[-1])
+
+
+def authority_chain_id(self) -> str:
+    return hashlib.sha256(f'{self.authority}:{len(self.blocks)}'.encode('utf-8')).hexdigest()
+
+
+AuditChain.latest_block = latest_block
+AuditChain.authority_chain_id = authority_chain_id

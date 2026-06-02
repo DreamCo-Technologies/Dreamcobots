@@ -30,3 +30,38 @@ class PredictiveProvisioner:
             cost = quantity * (0.12 if stable else 0.28) * min(forecast['hours_ahead'], 24)
             plans.append(ProvisioningPlan(resource_type, quantity, forecast.get('region', self.baseline_region), scheduled, round(cost, 2)))
         return plans
+
+def total_cost(self, plans: Iterable[ProvisioningPlan]) -> float:
+    return round(sum(plan.cost_estimate for plan in plans), 2)
+
+
+def by_region(self, plans: Iterable[ProvisioningPlan]) -> dict:
+    summary = {}
+    for plan in plans:
+        summary[plan.region] = summary.get(plan.region, 0) + plan.quantity
+    return summary
+
+
+def stable_mix(self, plans: Iterable[ProvisioningPlan]) -> dict:
+    plans = list(plans)
+    return {
+        'spot': sum(1 for plan in plans if 'spot' in plan.resource_type),
+        'on_demand': sum(1 for plan in plans if 'on-demand' in plan.resource_type),
+    }
+
+
+PredictiveProvisioner.total_cost = total_cost
+PredictiveProvisioner.by_region = by_region
+PredictiveProvisioner.stable_mix = stable_mix
+
+def next_window(self, forecast_hours: int = 24) -> tuple[int, int]:
+    return (24, forecast_hours)
+
+
+def resource_mix(self, plans: Iterable[ProvisioningPlan]) -> dict:
+    plans = list(plans)
+    return {'total_quantity': sum(plan.quantity for plan in plans), 'plan_count': len(plans)}
+
+
+PredictiveProvisioner.next_window = next_window
+PredictiveProvisioner.resource_mix = resource_mix

@@ -40,3 +40,22 @@ class LoadBalancer:
     def estimate_completion_time(self, instance_id: str) -> float:
         instance = next(instance for instance in self.instances if instance.instance_id == instance_id)
         return round(instance.queued_complexity / max(instance.max_complexity, 1) * 60, 2)
+
+def queue_snapshot(self) -> list[dict]:
+    return [
+        {
+            'instance_id': instance.instance_id,
+            'queued_complexity': round(instance.queued_complexity, 3),
+            'estimated_minutes': self.estimate_completion_time(instance.instance_id),
+        }
+        for instance in self.instances
+    ]
+
+
+def release(self, instance_id: str, complexity: float) -> None:
+    instance = next(instance for instance in self.instances if instance.instance_id == instance_id)
+    instance.queued_complexity = max(0.0, instance.queued_complexity - complexity)
+
+
+LoadBalancer.queue_snapshot = queue_snapshot
+LoadBalancer.release = release

@@ -34,3 +34,27 @@ class WorkflowSynthesizer:
                 best_bot = bot_id
                 best_score = score
         return best_bot
+
+def validate(self, workflow: WorkflowDefinition) -> bool:
+    return all(step['validated'] for step in workflow.steps)
+
+
+def explain(self, workflow: WorkflowDefinition) -> str:
+    return ' -> '.join(f"{step['bot']}:{step['task']}" for step in workflow.steps)
+
+
+def estimate_parallel_speedup(self, workflow: WorkflowDefinition) -> float:
+    if len(workflow.steps) <= 1:
+        return 1.0
+    return round(min(len(workflow.steps), 3) * 0.75, 2)
+
+
+WorkflowSynthesizer.validate = validate
+WorkflowSynthesizer.explain = explain
+WorkflowSynthesizer.estimate_parallel_speedup = estimate_parallel_speedup
+
+def cost_breakdown(self, workflow: WorkflowDefinition) -> List[float]:
+    return [round(0.03 * len(step['task'].split()), 2) for step in workflow.steps]
+
+
+WorkflowSynthesizer.cost_breakdown = cost_breakdown

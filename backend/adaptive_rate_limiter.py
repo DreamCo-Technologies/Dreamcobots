@@ -57,3 +57,22 @@ class AdaptiveRateLimiter:
             return self.base_limit_per_minute
         burst_headroom = int((expected_per_minute - self.base_limit_per_minute) * 0.5)
         return min(self.base_limit_per_minute * 3, self.base_limit_per_minute + burst_headroom)
+
+def summarize_api_key(self, api_key: str) -> dict:
+    log = self.request_log.get(api_key, [])
+    window = self.windows.get(api_key)
+    return {
+        'api_key': api_key,
+        'requests_last_minute': len(log),
+        'ema_rate': round(window.ema_rate, 4) if window else 0.0,
+        'flagged': any(flag['api_key'] == api_key for flag in self.security_flags),
+    }
+
+
+def reset_api_key(self, api_key: str) -> None:
+    self.request_log.pop(api_key, None)
+    self.windows.pop(api_key, None)
+
+
+AdaptiveRateLimiter.summarize_api_key = summarize_api_key
+AdaptiveRateLimiter.reset_api_key = reset_api_key

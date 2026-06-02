@@ -51,3 +51,15 @@ from __future__ import annotations
                 lines.append('}')
                 return '
 '.join(lines)
+
+def dependency_map(self) -> Dict[str, List[str]]:
+    return {bot_id: list(entry.dependencies) for bot_id, entry in self.entries.items()}
+
+
+def missing_for(self, bot_id: str) -> List[str]:
+    entry = self.entries[bot_id]
+    return [dependency for dependency in entry.dependencies if dependency not in self.entries]
+
+
+DependencyResolver.dependency_map = dependency_map
+DependencyResolver.missing_for = missing_for

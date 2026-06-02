@@ -25,6 +25,8 @@ class FraudDetector:
             score += 0.2
         if 'new_country' in event.tags:
             score += 0.15
+        if 'vpn' in event.tags:
+            score += 0.1
         return round(min(score, 1.0), 3)
 
     def explain(self, event: TransactionEvent) -> List[str]:
@@ -35,8 +37,14 @@ class FraudDetector:
             reasons.append('high_ip_velocity')
         if event.device_changes > 1:
             reasons.append('device_churn')
-        reasons.extend(tag for tag in event.tags if tag in {'chargeback_history', 'new_country'})
+        reasons.extend(tag for tag in event.tags if tag in {'chargeback_history', 'new_country', 'vpn'})
         return reasons
+
+    def account_risk(self, events: Iterable[TransactionEvent]) -> Dict[str, float]:
+        grouped: Dict[str, List[float]] = {}
+        for event in events:
+            grouped.setdefault(event.account_id, []).append(self.score_event(event))
+        return {account_id: round(sum(scores) / len(scores), 3) for account_id, scores in grouped.items()}
 
     def flag_batch(self, events: Iterable[TransactionEvent], threshold: float = 0.65) -> List[Dict[str, object]]:
         flagged = []
@@ -52,5 +60,10 @@ class FraudDetector:
 
 
 def batch_score(events: Iterable[TransactionEvent]) -> List[Dict[str, object]]:
+    events = list(events)
     detector = FraudDetector()
-    return [{'account_id': event.account_id, 'score': detector.score_event(event)} for event in events]
+    account_risk = detector.account_risk(events)
+    return [
+        {'account_id': event.account_id, 'score': detector.score_event(event), 'account_risk': account_risk[event.account_id]}
+        for event in events
+    ]

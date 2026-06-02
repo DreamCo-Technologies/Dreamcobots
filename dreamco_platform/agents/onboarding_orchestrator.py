@@ -36,3 +36,26 @@ class OnboardingOrchestrator:
     def nudges_for_incomplete(self, user_id: str) -> List[str]:
         plan = self.plans[user_id]
         return [f'Nudge user to complete {stage}' for stage in plan.stages if stage not in plan.completed]
+
+def progress(self, user_id: str) -> float:
+    plan = self.plans[user_id]
+    return round(len(plan.completed) / max(len(plan.stages), 1), 3)
+
+
+def next_stage(self, user_id: str) -> str | None:
+    plan = self.plans[user_id]
+    for stage in plan.stages:
+        if stage not in plan.completed:
+            return stage
+    return None
+
+
+def celebrate(self, user_id: str) -> str:
+    if self.progress(user_id) >= 1.0:
+        return f'User {user_id} completed onboarding and reached revenue celebration.'
+    return f'User {user_id} is still onboarding.'
+
+
+OnboardingOrchestrator.progress = progress
+OnboardingOrchestrator.next_stage = next_stage
+OnboardingOrchestrator.celebrate = celebrate

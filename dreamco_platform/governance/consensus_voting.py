@@ -26,7 +26,7 @@ class ConsensusVoting:
     def quorum_status(self, eligible_weight: float) -> Dict[str, float | bool]:
         cast_weight = sum(vote.weight for vote in self._votes)
         ratio = cast_weight / max(eligible_weight, 0.0001)
-        return {"cast_weight": round(cast_weight, 3), "quorum_ratio": round(ratio, 3), "met": ratio >= self.quorum}
+        return {'cast_weight': round(cast_weight, 3), 'quorum_ratio': round(ratio, 3), 'met': ratio >= self.quorum}
 
     def result(self) -> Dict[str, object]:
         tallies: Dict[str, float] = {}
@@ -34,17 +34,32 @@ class ConsensusVoting:
             tallies[vote.choice] = tallies.get(vote.choice, 0.0) + vote.weight
         ordered = sorted(tallies.items(), key=lambda item: item[1], reverse=True)
         return {
-            "winner": ordered[0][0] if ordered else None,
-            "tallies": {key: round(value, 3) for key, value in ordered},
-            "vote_count": len(self._votes),
+            'winner': ordered[0][0] if ordered else None,
+            'tallies': {key: round(value, 3) for key, value in ordered},
+            'vote_count': len(self._votes),
         }
 
+    def support_margin(self) -> float:
+        ordered = sorted(self.result()['tallies'].values(), reverse=True)
+        if len(ordered) < 2:
+            return round(ordered[0], 3) if ordered else 0.0
+        return round(ordered[0] - ordered[1], 3)
+
     def snapshot(self, eligible_weight: float) -> Dict[str, object]:
-        return {"quorum": self.quorum_status(eligible_weight), "result": self.result()}
+        return {
+            'quorum': self.quorum_status(eligible_weight),
+            'result': self.result(),
+            'support_margin': self.support_margin(),
+        }
+
+    def voters(self) -> List[str]:
+        return sorted(vote.voter for vote in self._votes)
 
 
 def run_ballot(votes: Iterable[Dict[str, object]], eligible_weight: float) -> Dict[str, object]:
     ballot = ConsensusVoting()
     for vote in votes:
         ballot.cast_vote(str(vote['voter']), str(vote['choice']), float(vote.get('weight', 1.0)))
-    return ballot.snapshot(eligible_weight)
+    result = ballot.snapshot(eligible_weight)
+    result['voters'] = ballot.voters()
+    return result

@@ -38,3 +38,24 @@ class CompetitorAnalyzer:
             if 'funding' in update:
                 alerts.append(CompetitorAlert('funding', min(1.0, update['funding'] / 100_000_000), f"{profile.name} raised {update['funding']:,}"))
         return sorted(alerts, key=lambda item: item.impact_score, reverse=True)
+
+def compare_positioning(self, profile: CompetitorProfile) -> dict:
+    dreamco_features = set(self.dreamco_positioning['features'])
+    competitor_features = set(profile.key_features)
+    return {
+        'feature_gap': sorted(competitor_features - dreamco_features),
+        'feature_advantage': sorted(dreamco_features - competitor_features),
+        'pricing_model': profile.pricing_model,
+        'weaknesses': list(profile.weaknesses),
+    }
+
+
+def watchlist_summary(self, profiles: Iterable[CompetitorProfile]) -> List[dict]:
+    return [
+        {'name': profile.name, 'gap_count': len(self.compare_positioning(profile)['feature_gap'])}
+        for profile in profiles
+    ]
+
+
+CompetitorAnalyzer.compare_positioning = compare_positioning
+CompetitorAnalyzer.watchlist_summary = watchlist_summary

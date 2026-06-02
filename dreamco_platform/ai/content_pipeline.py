@@ -55,3 +55,20 @@ class ContentPipeline:
 
     def _publish(self, request: ContentRequest, optimized: str) -> str:
         return f'PUBLISHED[{request.type.upper()}]: {optimized[:request.length]}'
+
+def asset_plan(self, request: ContentRequest) -> List[str]:
+    if request.type == 'image_prompt':
+        return ['hero visual', 'thumbnail', 'social crop']
+    if request.type == 'video_script':
+        return ['hook scene', 'demo scene', 'CTA scene']
+    return ['headline', 'body copy', 'cta']
+
+
+def keyword_density(self, content: str, keywords: List[str]) -> dict:
+    lowered = content.lower()
+    words = max(len(content.split()), 1)
+    return {keyword: round(lowered.count(keyword.lower()) / words, 4) for keyword in keywords}
+
+
+ContentPipeline.asset_plan = asset_plan
+ContentPipeline.keyword_density = keyword_density

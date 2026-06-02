@@ -39,3 +39,24 @@ class Delegation:
         confidence = max(scores[selected], 0.0) / total
         duration = max(5.0, 60.0 / max(scores[selected], 0.5))
         return DelegationDecision(selected, f'Best semantic and historical fit for: {task_description}', round(confidence, 3), round(duration, 2))
+
+def explain_scores(self, task_description: str) -> Dict[str, float]:
+    tokens = [token.lower() for token in task_description.split()]
+    return {bot: round(self.matrix.score(bot, tokens), 4) for bot in self.matrix.capability_vectors}
+
+
+def learn_from_outcome(self, bot_id: str, success: bool, duration_minutes: float) -> None:
+    outcome_score = 1.1 if success else 0.5
+    if duration_minutes > 60:
+        outcome_score *= 0.9
+    self.matrix.update(bot_id, outcome_score)
+
+
+Delegation.explain_scores = explain_scores
+Delegation.learn_from_outcome = learn_from_outcome
+
+def candidate_bots(self) -> List[str]:
+    return sorted(self.matrix.capability_vectors)
+
+
+Delegation.candidate_bots = candidate_bots

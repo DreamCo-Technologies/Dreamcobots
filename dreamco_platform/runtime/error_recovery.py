@@ -47,3 +47,15 @@ class ErrorRecovery:
             'self_repair': ['Restart worker', 'Refresh cache', 'Retry validation'],
         }
         return mapping.get(strategy, mapping['escalate'])
+
+def catalog(self) -> Dict[str, str]:
+    return {pattern.signature: pattern.recovery_strategy for pattern in self.patterns}
+
+
+def best_strategy(self, error: str) -> str:
+    plan = self.handle('preview', error)
+    return plan.selected_strategy
+
+
+ErrorRecovery.catalog = catalog
+ErrorRecovery.best_strategy = best_strategy

@@ -46,3 +46,29 @@ class Dispatcher:
         selected.active_bots += 1
         self.routes.append({'bot_id': bot_id, 'region': selected.region, 'reason': 'edge-optimal'})
         return selected
+
+def release(self, region: str, count: int = 1) -> None:
+    if region in self.nodes:
+        self.nodes[region].active_bots = max(0, self.nodes[region].active_bots - count)
+
+
+def regional_status(self) -> dict:
+    return {
+        region: {
+            'healthy': node.healthy,
+            'load_factor': round(node.load_factor, 3),
+            'latency_ms': node.latency_ms,
+            'active_bots': node.active_bots,
+        }
+        for region, node in self.nodes.items()
+    }
+
+
+def set_health(self, region: str, healthy: bool) -> None:
+    if region in self.nodes:
+        self.nodes[region].healthy = healthy
+
+
+Dispatcher.release = release
+Dispatcher.regional_status = regional_status
+Dispatcher.set_health = set_health

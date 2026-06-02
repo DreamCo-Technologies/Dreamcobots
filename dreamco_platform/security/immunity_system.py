@@ -39,3 +39,23 @@ class ImmunitySystem:
         if matched:
             self.learned_patterns.append(AbusePattern('adaptive', payload[:40], 'medium', 'feedback'))
         return ImmunityVerdict(outcome, matched, adaptive)
+
+def known_signatures(self) -> List[str]:
+    return [pattern.signature for pattern in self.patterns + self.learned_patterns]
+
+
+def layer_summary(self) -> Dict[str, int]:
+    summary: Dict[str, int] = {}
+    for pattern in self.patterns + self.learned_patterns:
+        summary[pattern.type] = summary.get(pattern.type, 0) + 1
+    return summary
+
+
+ImmunitySystem.known_signatures = known_signatures
+ImmunitySystem.layer_summary = layer_summary
+
+def relearn(self, signature: str, severity: str = 'medium') -> None:
+    self.learned_patterns.append(AbusePattern('adaptive', signature, severity, 'manual-feedback'))
+
+
+ImmunitySystem.relearn = relearn

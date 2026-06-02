@@ -54,3 +54,14 @@ class MemoryConsolidator:
             summary = ' '.join(unique_sentences[:3])
             consolidated.append(ConsolidatedMemory(key, summary, round(total_weight, 3), len(group)))
         return consolidated
+
+def total_weight(self, entries: Iterable[MemoryEntry]) -> float:
+    return round(sum(entry.importance for entry in entries), 3)
+
+
+def consolidate_by_topic(self, entries: Iterable[MemoryEntry]) -> List[ConsolidatedMemory]:
+    return self.consolidate(entries, ConsolidationStrategy.BY_TOPIC)
+
+
+MemoryConsolidator.total_weight = total_weight
+MemoryConsolidator.consolidate_by_topic = consolidate_by_topic

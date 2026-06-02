@@ -1,0 +1,40 @@
+name: Sandbox Cleanup
+
+on:
+  workflow_run:
+    workflows: ["sandbox-24h-test"]
+    types: [completed]
+
+jobs:
+  cleanup:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Cleanup sandbox containers
+        run: |
+          docker ps -aq --filter "label=dreamco-sandbox" | xargs -r docker rm -f
+      - name: Purge simulation memory
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          memory_path = Path('reports/dream_memory.json')
+          if memory_path.exists():
+              data = json.loads(memory_path.read_text())
+              data = [item for item in data if item.get('mode') != 'SIMULATION']
+              memory_path.write_text(json.dumps(data, indent=2) + '\n')
+          PY
+      - name: Reset failed promotions
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          status_file = Path('reports/sandbox_metrics.json')
+          if status_file.exists():
+              data = json.loads(status_file.read_text())
+              for item in data.values():
+                  if not item.get('promotion_approved', False):
+                      item['status'] = 'sandbox'
+              status_file.write_text(json.dumps(data, indent=2) + '\n')
+          PY

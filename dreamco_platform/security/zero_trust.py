@@ -54,3 +54,18 @@ class PolicyEnforcer:
                         return PolicyDecision('AUDIT', f'condition failed: {key}', True)
                 return PolicyDecision('ALLOW', 'request satisfied zero-trust policy', False)
         return PolicyDecision('DENY', 'no matching policy', True)
+
+def bootstrap_certificates(self, bots: List[str]) -> None:
+    for bot_id in bots:
+        self.ca.issue(bot_id)
+
+
+def policy_matrix(self) -> dict:
+    return {
+        f'{policy.source_bot}->{policy.target_bot}': list(policy.allowed_capabilities)
+        for policy in self.policies
+    }
+
+
+PolicyEnforcer.bootstrap_certificates = bootstrap_certificates
+PolicyEnforcer.policy_matrix = policy_matrix

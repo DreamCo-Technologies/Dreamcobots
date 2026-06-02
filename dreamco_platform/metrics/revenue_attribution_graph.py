@@ -41,3 +41,25 @@ class RevenueAttributionGraph:
                 for index in range(len(nodes) - 1)
             ],
         }
+
+def summarize_by_bot(self, nodes: List[AttributionNode]) -> Dict[str, float]:
+    return {node.bot_id: node.revenue_usd for node in nodes}
+
+
+def compare_models(self, bot_chain: List[str], revenue_usd: float) -> Dict[str, List[AttributionNode]]:
+    return {
+        'first-touch': self.attribute(bot_chain, revenue_usd, 'first-touch'),
+        'last-touch': self.attribute(bot_chain, revenue_usd, 'last-touch'),
+        'linear': self.attribute(bot_chain, revenue_usd, 'linear'),
+        'time-decay': self.attribute(bot_chain, revenue_usd, 'time-decay'),
+    }
+
+
+RevenueAttributionGraph.summarize_by_bot = summarize_by_bot
+RevenueAttributionGraph.compare_models = compare_models
+
+def total_revenue(self, nodes: List[AttributionNode]) -> float:
+    return round(sum(node.revenue_usd for node in nodes), 2)
+
+
+RevenueAttributionGraph.total_revenue = total_revenue

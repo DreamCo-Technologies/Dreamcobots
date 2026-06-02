@@ -40,3 +40,26 @@ class HyperPersonalizer:
         persona.preferences.update({key: value for key, value in signals.items() if key.startswith('pref_')})
         self.personas[user_id] = persona
         return persona
+
+def persona_snapshot(self, user_id: str) -> dict:
+    persona = self.personas[user_id]
+    return {
+        'communication_style': persona.communication_style,
+        'expertise_level': persona.expertise_level,
+        'goal_count': len(persona.goals),
+        'preferences': dict(persona.preferences),
+    }
+
+
+def on_device_persona(self, user_id: str) -> PersonalizedConfig:
+    return self.adapt_bot('local-personalizer', user_id, on_device=True)
+
+
+HyperPersonalizer.persona_snapshot = persona_snapshot
+HyperPersonalizer.on_device_persona = on_device_persona
+
+def has_persona(self, user_id: str) -> bool:
+    return user_id in self.personas
+
+
+HyperPersonalizer.has_persona = has_persona

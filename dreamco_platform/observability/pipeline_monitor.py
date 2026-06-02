@@ -31,6 +31,19 @@ class PipelineMonitor:
         overall = success_rate * 0.7 + latency_score * 0.3
         return {'success_rate': round(success_rate, 3), 'latency_score': round(latency_score, 3), 'overall': round(overall, 3)}
 
+    def per_pipeline(self) -> Dict[str, Dict[str, float]]:
+        grouped: Dict[str, List[PipelineRun]] = {}
+        for run in self.runs:
+            grouped.setdefault(run.pipeline, []).append(run)
+        summary: Dict[str, Dict[str, float]] = {}
+        for name, runs in grouped.items():
+            summary[name] = {
+                'count': float(len(runs)),
+                'success_rate': round(sum(run.succeeded for run in runs) / len(runs), 3),
+                'avg_total_seconds': round(sum(run.duration_seconds + run.queue_seconds for run in runs) / len(runs), 3),
+            }
+        return summary
+
     def incident_candidates(self) -> List[Dict[str, object]]:
         incidents = []
         for run in self.runs:
@@ -48,4 +61,4 @@ def monitor_snapshot(runs: Iterable[Dict[str, object]]) -> Dict[str, object]:
     monitor = PipelineMonitor()
     for run in runs:
         monitor.record_run(str(run['pipeline']), float(run['duration_seconds']), bool(run['succeeded']), float(run.get('queue_seconds', 0.0)))
-    return {'health': monitor.health_score(), 'incidents': monitor.incident_candidates()}
+    return {'health': monitor.health_score(), 'by_pipeline': monitor.per_pipeline(), 'incidents': monitor.incident_candidates()}

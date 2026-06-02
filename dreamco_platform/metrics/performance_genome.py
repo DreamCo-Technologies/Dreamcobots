@@ -40,3 +40,25 @@ class GenomeLibrary:
         if len(genomes) < 2:
             return None
         return PerformanceGenome.diff(genomes[-2], genomes[-1])
+
+def regression_score(diff: GenomeDiff) -> float:
+    latency_penalty = sum(max(value, 0.0) for value in diff.latency_delta)
+    throughput_penalty = sum(max(-value, 0.0) for value in diff.throughput_delta)
+    error_penalty = sum(max(value, 0.0) for value in diff.error_delta.values())
+    cost_penalty = sum(max(value, 0.0) for value in diff.cost_delta)
+    return round(latency_penalty + throughput_penalty + error_penalty + cost_penalty, 4)
+
+
+def latest(self, deployment_id: str) -> PerformanceGenome | None:
+    genomes = self.history.get(deployment_id, [])
+    return genomes[-1] if genomes else None
+
+
+GenomeLibrary.latest = latest
+GenomeLibrary.regression_score = staticmethod(regression_score)
+
+def compare_latest(self, deployment_id: str) -> GenomeDiff | None:
+    return self.detect_regression(deployment_id)
+
+
+GenomeLibrary.compare_latest = compare_latest
