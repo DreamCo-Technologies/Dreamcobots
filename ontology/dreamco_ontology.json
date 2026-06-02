@@ -1,0 +1,42 @@
+{
+  "@context": {
+    "@vocab": "dreamco:",
+    "dreamco": "https://dreamco.ai/ontology#",
+    "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+    "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
+    "owl": "http://www.w3.org/2002/07/owl#",
+    "label": "rdfs:label",
+    "comment": "rdfs:comment",
+    "domain": {"@id": "rdfs:domain", "@type": "@id"},
+    "range": {"@id": "rdfs:range", "@type": "@id"}
+  },
+  "@graph": [
+    {"@id": "Ontology", "@type": "owl:Ontology", "label": "DreamCo Empire Ontology", "comment": "Canonical ontology for DreamCo entities and workflows."},
+    {"@id": "Bot", "@type": "owl:Class", "label": "Bot", "comment": "A monetizable autonomous bot in the DreamCo fleet."},
+    {"@id": "Division", "@type": "owl:Class", "label": "Division", "comment": "An organizational division that governs bots."},
+    {"@id": "Capability", "@type": "owl:Class", "label": "Capability", "comment": "A specific service or function exposed by a bot."},
+    {"@id": "RevenueModel", "@type": "owl:Class", "label": "Revenue Model", "comment": "Commercial model used to generate revenue."},
+    {"@id": "Tier", "@type": "owl:Class", "label": "Tier", "comment": "Commercial tier such as free, pro, enterprise, or elite."},
+    {"@id": "Workflow", "@type": "owl:Class", "label": "Workflow", "comment": "A multi-step orchestration executed by bots."},
+    {"@id": "RevenueEvent", "@type": "owl:Class", "label": "Revenue Event", "comment": "A recorded economic outcome attributed to a bot or workflow."},
+    {"@id": "hasCapability", "@type": "owl:ObjectProperty", "label": "has capability", "domain": "Bot", "range": "Capability"},
+    {"@id": "belongsToDivision", "@type": "owl:ObjectProperty", "label": "belongs to division", "domain": "Bot", "range": "Division"},
+    {"@id": "hasRevenueModel", "@type": "owl:ObjectProperty", "label": "has revenue model", "domain": "Bot", "range": "RevenueModel"},
+    {"@id": "dependsOn", "@type": "owl:ObjectProperty", "label": "depends on", "domain": "Bot", "range": "Bot"},
+    {"@id": "generates", "@type": "owl:ObjectProperty", "label": "generates", "domain": "Workflow", "range": "RevenueModel"},
+    {"@id": "recordsRevenueEvent", "@type": "owl:ObjectProperty", "label": "records revenue event", "domain": "Bot", "range": "RevenueEvent"},
+    {"@id": "Bot.slug", "@type": "owl:DatatypeProperty", "label": "bot slug", "domain": "Bot", "range": "rdf:langString"},
+    {"@id": "Bot.pricingTier", "@type": "owl:DatatypeProperty", "label": "pricing tier", "domain": "Bot", "range": "rdf:langString"},
+    {"@id": "Bot.targetUsers", "@type": "owl:DatatypeProperty", "label": "target users", "domain": "Bot", "range": "rdf:langString"},
+    {"@id": "Bot.status", "@type": "owl:DatatypeProperty", "label": "bot status", "domain": "Bot", "range": "rdf:langString"},
+    {"@id": "Workflow.trigger", "@type": "owl:DatatypeProperty", "label": "workflow trigger", "domain": "Workflow", "range": "rdf:langString"},
+    {"@id": "RevenueEvent.amountUsd", "@type": "owl:DatatypeProperty", "label": "amount usd", "domain": "RevenueEvent", "range": "rdf:langString"},
+    {"@id": "Tier.free", "@type": "Tier", "label": "Free Tier", "comment": "Entry tier with limited capacity."},
+    {"@id": "Tier.pro", "@type": "Tier", "label": "Pro Tier", "comment": "Professional tier with higher throughput."},
+    {"@id": "Tier.enterprise", "@type": "Tier", "label": "Enterprise Tier", "comment": "Enterprise grade tier with governance controls."},
+    {"@id": "Tier.elite", "@type": "Tier", "label": "Elite Tier", "comment": "Premium tier with dedicated infrastructure and support."},
+    {"@id": "RevenueModel.subscription", "@type": "RevenueModel", "label": "Subscription", "comment": "Recurring SaaS subscription model."},
+    {"@id": "RevenueModel.usage", "@type": "RevenueModel", "label": "Usage Based", "comment": "Usage-priced revenue model."},
+    {"@id": "RevenueModel.license", "@type": "RevenueModel", "label": "License", "comment": "Enterprise license revenue model."}
+  ]
+}
