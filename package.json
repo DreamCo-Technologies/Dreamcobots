@@ -8,6 +8,8 @@
     "build": "mkdir -p dist && cp -r public/* dist/",
     "test": "node --experimental-vm-modules node_modules/.bin/jest --runInBand --passWithNoTests",
     "check:bot-framework": "python3 tools/check_bot_framework.py",
+    "scan:missing": "node automation-tools/agents/dreamco-missing-files-scan.js",
+    "scan:missing:strict": "node automation-tools/agents/dreamco-missing-files-scan.js --strict",
     "audit:agents": "node automation-tools/agents/agent-audit.js",
     "lint": "eslint . --ext .js --max-warnings=0",
     "lint:fix": "eslint . --ext .js --fix",
