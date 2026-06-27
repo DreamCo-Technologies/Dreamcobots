@@ -13,6 +13,14 @@
 ![Tiers](https://img.shields.io/badge/Tiers-free%20%7C%20pro%20%7C%20enterprise%20%7C%20elite-gold)
 ![Revenue Target](https://img.shields.io/badge/Revenue%20Target-%24500%2Fday-green?logo=stripe&logoColor=white)
 
+## DreamCo Command Center Merge
+
+The Replit-built `DreamCo-Technologies/DreamCo-Command-Center` app is now being merged into this main Dreamcobots repository in stages.
+
+- Stage 1 integration scaffold: `integrations/dreamco-command-center/README.md`
+- Source/system inventory: `integrations/dreamco-command-center/SYSTEM_INVENTORY.md`
+- Merge goal: preserve the command-center dashboard, API server, bot contract system, database schemas, attached Replit directives, and helper libraries without breaking the existing bot repository.
+
 ## 📁 Repository Structure
 
 | Folder | Files | Description |
@@ -21,6 +29,7 @@
 | `python_bots/` | 16 | Python bots (FastAPI, PyTorch, LangChain, etc.) |
 | `java_bots/` | 31 | Java/Kotlin bots (Spring Boot, Android, etc.) |
 | `empire-os/` | 80+ | Full React + Express source code |
+| `integrations/dreamco-command-center/` | staged | Command Center merge plan and imported Replit systems |
 | `workflows.json` | 1 | Automated revenue workflows |
 
 ## 🏢 Divisions (3)
