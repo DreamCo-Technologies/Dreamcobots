@@ -74,4 +74,27 @@ describe('DreamCobots API', () => {
     expect(categories).toContain('automation');
     expect(categories).toContain('ai');
   });
+
+  test('GET /api/webhook-library returns shared webhook button catalog', async () => {
+    const { status, body } = await get('/api/webhook-library');
+    expect(status).toBe(200);
+    expect(Array.isArray(body.buttons)).toBe(true);
+    expect(Array.isArray(body.requiredWebhookIds)).toBe(true);
+    expect(Array.isArray(body.mcpConnectors)).toBe(true);
+  });
+
+  test('GET /api/webhook-library/:botSlug returns bot scoped webhook mappings', async () => {
+    const { status, body } = await get('/api/webhook-library/buddy-bot');
+    expect(status).toBe(200);
+    expect(body.slug).toBe('buddy-bot');
+    expect(Array.isArray(body.requiredWebhookIds)).toBe(true);
+    expect(Array.isArray(body.specializedWebhookIds)).toBe(true);
+  });
+
+  test('GET /api/mcp-connectors returns MCP connector mappings', async () => {
+    const { status, body } = await get('/api/mcp-connectors');
+    expect(status).toBe(200);
+    expect(Array.isArray(body.connectors)).toBe(true);
+    expect(Array.isArray(body.apiCatalog)).toBe(true);
+  });
 });
