@@ -795,6 +795,27 @@ def _build_runtime_overview(cc: "ControlCenter", perf_db: BotPerformanceDB) -> d
     }
 
 
+def super_dashboard_runtime_snapshot(
+    control_center: Optional["ControlCenter"] = None,
+    db: Optional[BotPerformanceDB] = None,
+) -> dict:
+    """Return compact runtime metrics for dashboards.super_dashboard."""
+    cc = control_center or ControlCenter()
+    perf_db = db or BotPerformanceDB()
+    overview = _build_runtime_overview(cc, perf_db)
+    summary = overview.get("summary", {})
+    metrics = overview.get("metrics", {})
+    governance = _get_governance()
+    return {
+        "catalog_total": int(summary.get("total", 0)),
+        "live_bots": int(summary.get("live", 0)),
+        "degraded_bots": int(summary.get("degraded", 0)),
+        "coordination_efficiency": float(metrics.get("coordination_efficiency", 0.0)),
+        "realized_revenue_usd": float(metrics.get("realized_revenue_usd", 0.0)),
+        "governance_mode": governance.get("aggressiveness", "balanced"),
+    }
+
+
 # ---------------------------------------------------------------------------
 # HTML landing page (self-contained, no external CDN needed)
 # ---------------------------------------------------------------------------
