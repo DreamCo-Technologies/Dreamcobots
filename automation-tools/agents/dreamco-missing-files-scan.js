@@ -46,9 +46,9 @@ function readJson(filePath) {
 }
 
 function walk(dir, files = []) {
-  if (!isDirectory(dir)) return files;
+  if (!isDirectory(dir)) {return files;}
   for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
-    if (IGNORE_DIRS.has(entry.name)) continue;
+    if (IGNORE_DIRS.has(entry.name)) {continue;}
     const fullPath = path.join(dir, entry.name);
     if (entry.isDirectory()) {
       walk(fullPath, files);
@@ -64,7 +64,7 @@ function findBotCandidates() {
 
   for (const rootName of BOT_ROOTS) {
     const rootPath = path.join(ROOT, rootName);
-    if (!isDirectory(rootPath)) continue;
+    if (!isDirectory(rootPath)) {continue;}
 
     if (rootName === 'python_bots' || rootName === 'java_bots') {
       for (const filePath of walk(rootPath)) {
@@ -77,7 +77,7 @@ function findBotCandidates() {
     }
 
     for (const entry of fs.readdirSync(rootPath, { withFileTypes: true })) {
-      if (!entry.isDirectory() || IGNORE_DIRS.has(entry.name)) continue;
+      if (!entry.isDirectory() || IGNORE_DIRS.has(entry.name)) {continue;}
       const botPath = path.join(rootPath, entry.name);
       const files = walk(botPath);
       const hasBotSignal = files.some((filePath) => {
@@ -99,7 +99,7 @@ function findBotCandidates() {
 }
 
 function resolveRelativeImport(fromFile, request) {
-  if (!request.startsWith('.')) return true;
+  if (!request.startsWith('.')) {return true;}
   const base = path.resolve(path.dirname(fromFile), request);
   const candidates = [
     base,
@@ -119,7 +119,7 @@ function resolveRelativeImport(fromFile, request) {
 
 function scanImports(filePath) {
   const ext = path.extname(filePath);
-  if (!['.js', '.cjs', '.mjs', '.ts', '.tsx'].includes(ext)) return [];
+  if (!['.js', '.cjs', '.mjs', '.ts', '.tsx'].includes(ext)) {return [];}
 
   const text = fs.readFileSync(filePath, 'utf8');
   const missing = [];
@@ -148,7 +148,7 @@ function scanBot(candidate) {
   const bases = new Set(files.map((filePath) => path.basename(filePath).toLowerCase()));
 
   if (candidate.kind === 'folder-bot') {
-    if (!bases.has('readme.md')) issues.push('Missing README.md');
+    if (!bases.has('readme.md')) {issues.push('Missing README.md');}
     if (!bases.has('bot.manifest.json') && !bases.has('replit_profile.json') && !bases.has('package.json')) {
       issues.push('Missing bot manifest/profile/package metadata');
     }
@@ -163,8 +163,8 @@ function scanBot(candidate) {
   const packagePath = path.join(candidate.path, 'package.json');
   if (candidate.kind === 'folder-bot' && exists(packagePath)) {
     const pkg = readJson(packagePath);
-    if (!pkg) issues.push('package.json is invalid JSON');
-    if (pkg && !pkg.scripts) issues.push('package.json has no scripts block');
+    if (!pkg) {issues.push('package.json is invalid JSON');}
+    if (pkg && !pkg.scripts) {issues.push('package.json has no scripts block');}
   }
 
   return {
@@ -208,7 +208,7 @@ function writeReports(results) {
     lines.push(`- Root: \`${result.root}\``);
     lines.push(`- Issues: ${result.issueCount}`);
     if (result.issues.length) {
-      for (const issue of result.issues) lines.push(`- ${issue}`);
+      for (const issue of result.issues) {lines.push(`- ${issue}`);}
     } else {
       lines.push('- No missing-file issues detected by this scanner.');
     }

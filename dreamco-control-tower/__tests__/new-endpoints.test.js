@@ -208,10 +208,10 @@ describe('GET /api/orchestrator', () => {
     expect(() => new Date(res.body.timestamp)).not.toThrow();
   });
 
-  test('scraping_active is true before June 22 2026', async () => {
-    // Current date (2026-05-02) is before deadline
+  test('scraping_active matches current date against deadline', async () => {
     const res = await request(app).get('/api/orchestrator');
-    expect(res.body.scraping_active).toBe(true);
+    const expected = new Date() <= new Date(res.body.scrape_deadline);
+    expect(res.body.scraping_active).toBe(expected);
   });
 });
 

@@ -13,7 +13,10 @@ from __future__ import annotations
 
 import os
 import random
+import re
 import sys
+import io
+import csv
 from datetime import datetime, timezone
 from typing import List, Dict
 
@@ -112,3 +115,78 @@ class Bot:
             "leads_file": self.leads_file,
             "status": "active",
         }
+
+
+class LeadGenBot:
+    """Compatibility adapter used by backend FastAPI endpoints."""
+
+    def __init__(
+        self,
+        db_dsn: str | None = None,
+        revenue_engine=None,
+        monetization_hooks=None,
+        dream_core=None,
+    ) -> None:
+        self.db_dsn = db_dsn
+        self.revenue_engine = revenue_engine
+        self.monetization_hooks = monetization_hooks
+        self.dream_core = dream_core
+        self._html_sources: list[str] = []
+        self._leads: list[dict] = []
+        self._outreach_emails: list[str] = []
+
+    def add_html_source(self, html: str) -> None:
+        if html:
+            self._html_sources.append(html)
+
+    def start(self) -> None:
+        return None
+
+    def stop(self) -> None:
+        return None
+
+    def scrape_html(self, html: str) -> list[dict]:
+        email_match = re.search(r"[\w\.-]+@[\w\.-]+\.\w+", html or "")
+        url_match = re.search(r"https?://[^\s\"']+", html or "")
+        name_match = re.search(r'name:\s*"([^"]+)"', html or "", re.IGNORECASE)
+        company_match = re.search(r"company:\s*([^\n<]+)", html or "", re.IGNORECASE)
+
+        lead = {
+            "name": (name_match.group(1).strip() if name_match else "Unknown Lead"),
+            "email": (email_match.group(0).strip() if email_match else ""),
+            "phone": "",
+            "company": (company_match.group(1).strip() if company_match else ""),
+            "url": (url_match.group(0).strip() if url_match else ""),
+        }
+        return [lead]
+
+    def add_lead(self, lead: dict) -> None:
+        if lead:
+            self._leads.append(lead)
+
+    def run(self) -> None:
+        for html in self._html_sources:
+            leads = self.scrape_html(html)
+            for lead in leads:
+                self.add_lead(lead)
+                email = lead.get("email")
+                if email:
+                    self._outreach_emails.append(f"Hello {lead.get('name', '')} <{email}>")
+        if self.revenue_engine and hasattr(self.revenue_engine, "record"):
+            self.revenue_engine.record("lead_gen_bot", max(len(self._leads), 1) * 5.0)
+
+    def get_leads(self) -> list[dict]:
+        return list(self._leads)
+
+    def get_outreach_emails(self) -> list[str]:
+        return list(self._outreach_emails)
+
+    def export_csv(self) -> str:
+        rows = self._leads or []
+        fields = ["name", "email", "phone", "company", "url"]
+        output = io.StringIO()
+        writer = csv.DictWriter(output, fieldnames=fields)
+        writer.writeheader()
+        for row in rows:
+            writer.writerow({k: row.get(k, "") for k in fields})
+        return output.getvalue()

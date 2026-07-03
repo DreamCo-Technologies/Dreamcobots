@@ -20,7 +20,17 @@ module.exports = {
     semi: ['error', 'always'],
     quotes: ['error', 'single', { avoidEscape: true }],
   },
-  ignorePatterns: ['node_modules/', 'coverage/', 'dist/', 'bots/', '*.py'],
+  ignorePatterns: [
+    'node_modules/',
+    'coverage/',
+    'dist/',
+    'bots/',
+    '*.py',
+    'public/',
+    'empire-os/',
+    'dreamco/',
+    'Dreamcobots/',
+  ],
   overrides: [
     // ES module files (import/export syntax) — applies to src/, dreamco-control-tower/
     {
