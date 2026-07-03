@@ -1,1 +1,5 @@
-"""DreamCobots config package."""\nfrom .config_manager import MasterConfigManager, BotPriority, config\n\n__all__ = ["MasterConfigManager", "BotPriority", "config"]\n
+"""DreamCobots config package."""
+
+from .config_manager import BotPriority, MasterConfigManager, config
+
+__all__ = ["MasterConfigManager", "BotPriority", "config"]
