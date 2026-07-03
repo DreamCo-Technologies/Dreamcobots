@@ -190,6 +190,13 @@ def _write(path: Path, text: str) -> None:
     path.write_text(text, encoding="utf-8")
 
 
+def _normalize_for_check(text: str) -> str:
+    payload = json.loads(text)
+    if isinstance(payload, dict) and "generated_at" in payload:
+        payload["generated_at"] = "<GENERATED_AT>"
+    return json.dumps(payload, sort_keys=True)
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(
         description="Generate tracked per-bot webhook/tool/API specialization contracts."
@@ -201,9 +208,13 @@ def main() -> int:
 
     if args.check:
         stale: list[str] = []
-        if not OUTPUT_PATH.exists() or OUTPUT_PATH.read_text(encoding="utf-8") != specializations_text:
+        if not OUTPUT_PATH.exists() or _normalize_for_check(
+            OUTPUT_PATH.read_text(encoding="utf-8")
+        ) != _normalize_for_check(specializations_text):
             stale.append(str(OUTPUT_PATH.relative_to(REPO_ROOT)))
-        if not TRACKING_PATH.exists() or TRACKING_PATH.read_text(encoding="utf-8") != tracking_text:
+        if not TRACKING_PATH.exists() or _normalize_for_check(
+            TRACKING_PATH.read_text(encoding="utf-8")
+        ) != _normalize_for_check(tracking_text):
             stale.append(str(TRACKING_PATH.relative_to(REPO_ROOT)))
         if stale:
             print("Specialization outputs are stale. Re-run:")
