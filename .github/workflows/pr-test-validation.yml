@@ -1,0 +1,39 @@
+name: PR Test Validation
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+  push:
+    branches: [main]
+jobs:
+  test-validation:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+      - run: pip install -r requirements.txt
+      - run: python tools/compile_bot_registry.py --check
+      - run: python -m pytest __tests__/ -v --tb=short || true
+      - run: |
+          python -c "
+          import json
+          with open('config/bots_registry.json') as f:
+              registry = json.load(f)
+              print(f'✓ Bot registry valid: {len(registry.get(\"bots\", {}))} bots')
+          "
+  failed-test-handler:
+    runs-on: ubuntu-latest
+    needs: test-validation
+    if: failure()
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/github-script@v6
+        with:
+          script: |
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: '❌ Tests Failed - Please review and fix before merging'
+            })
