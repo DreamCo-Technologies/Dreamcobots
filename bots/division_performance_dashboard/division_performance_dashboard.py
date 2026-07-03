@@ -115,3 +115,18 @@ class DivisionPerformanceDashboard:
             bot_report = self._bots.get_performance_report()
             lines.append(f"Bots: {bot_report['total_bots']}, Avg Success: {bot_report['avg_success_rate']*100:.1f}%")
         return "\n".join(lines)
+
+    def super_dashboard_snapshot(self) -> dict:
+        """Return normalized metrics for the unified Super Dashboard."""
+        api_report = self._api.get_utilization_report()
+        bot_report = self._bots.get_performance_report()
+        return {
+            "division_count": len(self._revenue.list_divisions()),
+            "total_revenue": float(self._revenue.get_total_revenue()),
+            "profit": float(self._revenue.get_profit()),
+            "api_calls": int(api_report.get("total_calls", 0)),
+            "avg_response_ms": float(api_report.get("avg_response_time_ms", 0.0)),
+            "api_error_rate": float(api_report.get("error_rate", 0.0)),
+            "total_bots": int(bot_report.get("total_bots", 0)),
+            "avg_bot_success_rate": float(bot_report.get("avg_success_rate", 0.0)),
+        }

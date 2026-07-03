@@ -1,6 +1,7 @@
 import Seo from "@/components/Seo";
 import AppShell from "@/components/AppShell";
 import { useState } from "react";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useEmpireOverview, useAutonomyMode, useSetAutonomyMode } from "@/hooks/use-empire";
 import { useBots } from "@/hooks/use-bots";
 import { useTasks } from "@/hooks/use-tasks";
@@ -27,9 +28,14 @@ import {
   Cpu,
   BarChart3,
   Bell,
+  BookOpen,
+  PlayCircle,
+  Store,
+  Workflow,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import type { AutonomyMode, BotHealthSummary } from "@shared/schema";
+import { apiRequest } from "@/lib/queryClient";
+import type { AutonomyMode, BotHealthSummary, DivisionStats } from "@shared/schema";
 
 const DIVISION_COLORS: Record<string, string> = {
   DreamFinance: "from-emerald-500/15 to-emerald-500/5",
@@ -58,6 +64,7 @@ const AUTONOMY_MODES: { value: AutonomyMode; label: string; desc: string; color:
 
 export default function DashboardPage() {
   const [botSlug, setBotSlug] = useState<string | undefined>(undefined);
+  const queryClient = useQueryClient();
   const empire = useEmpireOverview();
   const autonomyQuery = useAutonomyMode();
   const setMode = useSetAutonomyMode();
@@ -72,6 +79,41 @@ export default function DashboardPage() {
 
   const taskCounts = new Map<string, number>();
   (tasks.data ?? []).forEach(t => taskCounts.set(t.status, (taskCounts.get(t.status) ?? 0) + 1));
+
+  const runDivisionWorkflow = useMutation({
+    mutationFn: async (division: string) => {
+      const res = await apiRequest("POST", `/api/divisions/${encodeURIComponent(division)}/workflows/run`, {
+        title: `${division} quick workflow`,
+      });
+      return res.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/tasks"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/empire/overview"] });
+    },
+  });
+
+  const requestCrossDivisionHelp = useMutation({
+    mutationFn: async (division: string) => {
+      const fallbackTargets: Record<string, string[]> = {
+        DreamRealEstate: ["DreamFinance", "DreamLegal", "DreamMarket", "DreamConstruction", "DreamDecision", "CommandCore"],
+      };
+      const targets = fallbackTargets[division] ?? ["CommandCore", "DreamDecision", "DreamFinance"];
+      const res = await apiRequest("POST", "/api/orchestration/delegations", {
+        sourceDivision: division,
+        sourceWorkflow: `${division} cross-division escalation`,
+        objective: `Request support from ${targets.join(", ")} for critical ${division} workflow`,
+        targetDivisions: targets,
+        riskLevel: "high",
+        requestedBy: "dashboard-quick-action",
+      });
+      return res.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/empire/overview"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/orchestration/delegations"] });
+    },
+  });
 
   return (
     <AppShell selectedBotSlug={botSlug} onBotChange={setBotSlug}>
@@ -268,36 +310,106 @@ export default function DashboardPage() {
                 {(data?.divisions ?? [])
                   .filter(d => d.botCount > 0)
                   .sort((a, b) => b.botCount - a.botCount)
-                  .map(div => {
+                  .map((div: DivisionStats) => {
                     const gradient = DIVISION_COLORS[div.division] ?? "from-muted/50 to-muted/20";
                     const pct = Math.round((div.botCount / (data?.totalBots || 1)) * 100);
+                    const runtime = div.runtime;
                     return (
-                      <Link
+                      <div
                         key={div.division}
-                        href={`/divisions?d=${encodeURIComponent(div.division)}`}
-                        className="group relative block rounded-xl border border-border/60 p-4 hover-elevate overflow-visible"
+                        className="group relative rounded-xl border border-border/60 p-4 overflow-visible"
                         data-testid={`division-${div.division}`}
                       >
                         <div className={cn("absolute inset-0 rounded-xl bg-gradient-to-br pointer-events-none opacity-60", gradient)} />
-                        <div className="relative flex items-center justify-between gap-3">
-                          <div className="flex items-center gap-3 min-w-0">
-                            <span className="inline-flex h-8 w-8 items-center justify-center rounded-xl bg-card/80 border border-border/60 shadow-sm flex-shrink-0">
-                              <Building2 className="h-4 w-4 text-foreground/70" />
-                            </span>
-                            <div className="min-w-0">
-                              <p className="text-sm font-semibold truncate">{div.division}</p>
-                              <p className="text-xs text-muted-foreground">{div.botCount} bots</p>
+                        <div className="relative space-y-3">
+                          <div className="flex items-center justify-between gap-3">
+                            <div className="flex items-center gap-3 min-w-0">
+                              <span className="inline-flex h-8 w-8 items-center justify-center rounded-xl bg-card/80 border border-border/60 shadow-sm flex-shrink-0">
+                                <Building2 className="h-4 w-4 text-foreground/70" />
+                              </span>
+                              <div className="min-w-0">
+                                <p className="text-sm font-semibold truncate">{div.division}</p>
+                                <p className="text-xs text-muted-foreground">{div.botCount} bots • CEO {runtime?.ceoAgent?.displayName ?? "Unassigned"}</p>
+                              </div>
+                            </div>
+                            <Badge
+                              variant="outline"
+                              className={cn(
+                                "rounded-full text-[10px]",
+                                runtime?.health === "healthy" && "text-green-500 border-green-500/30",
+                                runtime?.health === "warning" && "text-yellow-500 border-yellow-500/30",
+                                runtime?.health === "critical" && "text-red-500 border-red-500/30",
+                              )}
+                            >
+                              {runtime?.health ?? "unknown"}
+                            </Badge>
+                          </div>
+                          <div className="grid grid-cols-3 gap-2 text-[10px] text-muted-foreground">
+                            <div className="rounded-lg border border-border/40 px-2 py-1.5">
+                              <p className="font-semibold text-foreground">{runtime?.kpis.activeWorkflows ?? 0}</p>
+                              <p>workflows</p>
+                            </div>
+                            <div className="rounded-lg border border-border/40 px-2 py-1.5">
+                              <p className="font-semibold text-foreground">${(((runtime?.kpis.revenueCents ?? 0) / 100) || 0).toLocaleString()}</p>
+                              <p>revenue</p>
+                            </div>
+                            <div className="rounded-lg border border-border/40 px-2 py-1.5">
+                              <p className="font-semibold text-foreground">{runtime?.kpis.openAlerts ?? 0}</p>
+                              <p>alerts</p>
                             </div>
                           </div>
-                          <div className="flex items-center gap-2 flex-shrink-0">
-                            <div className="w-16">
-                              <Progress value={pct} className="h-1.5 rounded-full" />
+                          <div className="flex items-center gap-2">
+                            <div className="w-24">
+                              <Progress value={runtime?.kpis.uptimePct ?? pct} className="h-1.5 rounded-full" />
                             </div>
-                            <span className="text-xs text-muted-foreground">{pct}%</span>
-                            <ArrowRight className="h-3.5 w-3.5 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity" />
+                            <span className="text-xs text-muted-foreground">{runtime?.kpis.uptimePct ?? pct}% uptime</span>
+                            <span className="text-xs text-muted-foreground">{runtime?.workflowEngine.active ?? 0} active / {runtime?.workflowEngine.queued ?? 0} queued</span>
                           </div>
+                          <div className="grid grid-cols-2 gap-2">
+                            <Button
+                              size="sm"
+                              variant="secondary"
+                              className="rounded-lg h-8 text-[11px]"
+                              onClick={() => runDivisionWorkflow.mutate(div.division)}
+                              disabled={runDivisionWorkflow.isPending}
+                              data-testid={`quick-run-${div.division}`}
+                            >
+                              <PlayCircle className="h-3.5 w-3.5 mr-1" />
+                              Run workflow
+                            </Button>
+                            <Link href="/marketplace">
+                              <Button size="sm" variant="outline" className="w-full rounded-lg h-8 text-[11px]" data-testid={`quick-market-${div.division}`}>
+                                <Store className="h-3.5 w-3.5 mr-1" />
+                                Marketplace
+                              </Button>
+                            </Link>
+                            <Link href="/learning-matrix">
+                              <Button size="sm" variant="outline" className="w-full rounded-lg h-8 text-[11px]" data-testid={`quick-knowledge-${div.division}`}>
+                                <BookOpen className="h-3.5 w-3.5 mr-1" />
+                                Knowledge base
+                              </Button>
+                            </Link>
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              className="rounded-lg h-8 text-[11px]"
+                              onClick={() => requestCrossDivisionHelp.mutate(div.division)}
+                              disabled={requestCrossDivisionHelp.isPending}
+                              data-testid={`quick-help-${div.division}`}
+                            >
+                              <Workflow className="h-3.5 w-3.5 mr-1" />
+                              Cross-division help
+                            </Button>
+                          </div>
+                          <Link
+                            href={`/divisions?d=${encodeURIComponent(div.division)}`}
+                            className="inline-flex items-center text-xs text-primary hover:underline underline-offset-4"
+                          >
+                            Open division
+                            <ArrowRight className="h-3.5 w-3.5 ml-1 text-muted-foreground" />
+                          </Link>
                         </div>
-                      </Link>
+                      </div>
                     );
                   })}
               </div>

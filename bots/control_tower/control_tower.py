@@ -231,6 +231,20 @@ class GitHubRepoManager:
             "timestamp": datetime.now(timezone.utc).isoformat(),
         }
 
+    def super_dashboard_snapshot(self, owner: str, repo: str) -> dict[str, Any]:
+        """Return compact workflow and repository metrics for the Super Dashboard."""
+        status = self.get_repo_status(owner, repo)
+        summary = status.get("summary", {})
+        workflow_runs = status.get("workflow_runs", [])
+        latest_run = workflow_runs[0] if workflow_runs else {}
+        return {
+            "open_pr_count": int(summary.get("open_pr_count", 0)),
+            "open_issue_count": int(summary.get("open_issue_count", 0)),
+            "last_workflow_status": summary.get("last_workflow_status", "unknown"),
+            "latest_workflow_name": latest_run.get("name", "n/a"),
+            "latest_workflow_conclusion": latest_run.get("conclusion", "unknown"),
+        }
+
     # ------------------------------------------------------------------
     # Write operations
     # ------------------------------------------------------------------

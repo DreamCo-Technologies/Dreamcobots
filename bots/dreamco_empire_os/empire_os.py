@@ -206,6 +206,21 @@ class DreamCoEmpireOS:
             "upgrade_available": get_upgrade_path(self.tier) is not None,
         }
 
+    def super_dashboard_snapshot(self) -> dict[str, float | int | str]:
+        """Return a compact metrics payload consumed by dashboards.super_dashboard."""
+        data = self.dashboard()
+        fleet = data.get("bot_fleet", {})
+        revenue = data.get("revenue", {})
+        return {
+            "active_bots": int(fleet.get("running", 0)),
+            "healthy_bots": int(fleet.get("running", 0)),
+            "unhealthy_bots": int(fleet.get("stopped", 0)),
+            "fleet_total": int(fleet.get("total", 0)),
+            "revenue_24h": float(revenue.get("today_revenue", 0.0) or 0.0),
+            "revenue_total": float(revenue.get("total_revenue", 0.0) or 0.0),
+            "tier": str(data.get("tier", self.tier.value)),
+        }
+
     # ------------------------------------------------------------------
     # Bot Fleet helpers
     # ------------------------------------------------------------------

@@ -21,6 +21,20 @@ Each bot reads settings from its own `config.json` or environment variables. The
 }
 ```
 
+## Specialization contracts and tracking
+
+Generated specialization contracts for every bot profile are tracked in:
+
+- `/home/runner/work/Dreamcobots/Dreamcobots/config/generated/bot_specializations.json`
+- `/home/runner/work/Dreamcobots/Dreamcobots/config/generated/bot_specialization_tracking.json`
+
+Regenerate or validate with:
+
+```bash
+python3 /home/runner/work/Dreamcobots/Dreamcobots/tools/generate_bot_specializations.py
+python3 /home/runner/work/Dreamcobots/Dreamcobots/tools/generate_bot_specializations.py --check
+```
+
 ## Adding a New Bot
 
 1. Create a new directory under `bots/` using kebab-case naming.

@@ -316,6 +316,7 @@ export interface DivisionStats {
   activeTasks: number;
   completedTasks: number;
   revenue: string;
+  runtime: DivisionRuntime;
 }
 
 export interface EmpireOverview {
@@ -325,6 +326,140 @@ export interface EmpireOverview {
   completedTasks: number;
   autonomyMode: AutonomyMode;
   divisions: DivisionStats[];
+}
+
+export const DIVISION_RUNTIME_HEALTH = ["healthy", "warning", "critical"] as const;
+export type DivisionRuntimeHealth = (typeof DIVISION_RUNTIME_HEALTH)[number];
+
+export const DIVISION_LEARNING_STATUS = ["warming", "learning", "optimized"] as const;
+export type DivisionLearningStatus = (typeof DIVISION_LEARNING_STATUS)[number];
+
+export interface DivisionCeoAgentRuntime {
+  slug: string;
+  displayName: string;
+  status: "active" | "degraded" | "offline";
+  autonomyMode: AutonomyMode;
+  openDecisions: number;
+  lastDecisionAt: string | null;
+}
+
+export interface DivisionSpecialistRuntime {
+  slug: string;
+  displayName: string;
+  status: "active" | "paused" | "inactive";
+  tier: BotTier;
+  workload: number;
+}
+
+export interface DivisionWorkflowEngineRuntime {
+  active: number;
+  queued: number;
+  blocked: number;
+  completed: number;
+  health: DivisionRuntimeHealth;
+}
+
+export interface DivisionLearningEngineRuntime {
+  status: DivisionLearningStatus;
+  signalsLearned: number;
+  knowledgeCoverage: number;
+  lastSyncAt: string | null;
+}
+
+export interface DivisionToolMarketplaceRuntime {
+  availableTools: number;
+  enabledTools: number;
+  topTools: string[];
+}
+
+export interface DivisionKnowledgeBaseRuntime {
+  formulas: number;
+  snippets: number;
+  docs: number;
+  lastUpdatedAt: string | null;
+}
+
+export interface DivisionRuntimeKpis {
+  activeWorkflows: number;
+  revenueCents: number;
+  uptimePct: number;
+  openAlerts: number;
+  failedRuns: number;
+}
+
+export interface DivisionRuntime {
+  division: Division;
+  ceoAgent: DivisionCeoAgentRuntime | null;
+  specialists: DivisionSpecialistRuntime[];
+  workflowEngine: DivisionWorkflowEngineRuntime;
+  learningEngine: DivisionLearningEngineRuntime;
+  toolMarketplace: DivisionToolMarketplaceRuntime;
+  knowledgeBase: DivisionKnowledgeBaseRuntime;
+  kpis: DivisionRuntimeKpis;
+  health: DivisionRuntimeHealth;
+  activeAlerts: string[];
+}
+
+export const DELEGATION_RISK_LEVELS = ["low", "medium", "high"] as const;
+export type DelegationRiskLevel = (typeof DELEGATION_RISK_LEVELS)[number];
+
+export const DELEGATION_STATUSES = ["draft", "pending", "in_progress", "awaiting_approval", "approved", "rejected", "complete"] as const;
+export type DelegationStatus = (typeof DELEGATION_STATUSES)[number];
+
+export interface DelegationDependency {
+  id: string;
+  division: Division;
+  title: string;
+  status: "pending" | "in_progress" | "complete" | "blocked";
+}
+
+export interface DelegationApprovalGate {
+  id: string;
+  gate: "command_core";
+  required: boolean;
+  status: "pending" | "approved" | "rejected";
+  approverDivision: Division;
+  approvedAt: string | null;
+}
+
+export interface CrossDivisionDelegation {
+  id: string;
+  sourceDivision: Division;
+  sourceWorkflow: string;
+  targetDivisions: Division[];
+  objective: string;
+  riskLevel: DelegationRiskLevel;
+  status: DelegationStatus;
+  dependencies: DelegationDependency[];
+  approvalGates: DelegationApprovalGate[];
+  requestedBy: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface ReplitMigrationManifestEntry {
+  slug: string;
+  filePath: string;
+  division: string;
+  source: "replit_profile";
+}
+
+export interface ReplitMigrationManifest {
+  generatedAt: string;
+  expectedTotal: number;
+  discoveredAssets: number;
+  entries: ReplitMigrationManifestEntry[];
+}
+
+export interface ReplitMigrationValidationReport {
+  expectedTotal: number;
+  discoveredAssets: number;
+  imported: number;
+  deduped: number;
+  failed: number;
+  unmapped: number;
+  unaccounted: number;
+  complete: boolean;
 }
 
 export interface BotHealthSummary {

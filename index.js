@@ -13,6 +13,8 @@
 'use strict';
 
 const express = require('express');
+const fs = require('fs');
+const path = require('path');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
@@ -35,6 +37,39 @@ try {
 }
 
 app.use(express.json());
+
+const BOT_SPECIALIZATIONS_PATH = path.join(
+  __dirname,
+  'config',
+  'generated',
+  'bot_specializations.json'
+);
+
+const FALLBACK_SHARED_CAPABILITY_LIBRARY = {
+  webhook_library: {
+    required_for_every_bot: [],
+    buttons: [],
+  },
+  api_library: {
+    required_for_every_bot: [],
+    catalog: [],
+  },
+  mcp_connectors: [],
+};
+
+function loadSpecializationsPayload() {
+  try {
+    const text = fs.readFileSync(BOT_SPECIALIZATIONS_PATH, 'utf8');
+    return JSON.parse(text);
+  } catch (_err) {
+    return { bots: [], shared_capability_library: FALLBACK_SHARED_CAPABILITY_LIBRARY };
+  }
+}
+
+function getSharedCapabilityLibrary() {
+  const payload = loadSpecializationsPayload();
+  return payload.shared_capability_library || FALLBACK_SHARED_CAPABILITY_LIBRARY;
+}
 
 // ---------------------------------------------------------------------------
 // Routes
@@ -75,6 +110,42 @@ app.get('/bots', (_req, res) => {
     },
   ];
   res.json({ bots, total: bots.length });
+});
+
+app.get('/api/webhook-library', (_req, res) => {
+  const library = getSharedCapabilityLibrary();
+  res.json({
+    buttons: library.webhook_library?.buttons || [],
+    requiredWebhookIds: library.webhook_library?.required_for_every_bot || [],
+    mcpConnectors: library.mcp_connectors || [],
+  });
+});
+
+app.get('/api/mcp-connectors', (_req, res) => {
+  const library = getSharedCapabilityLibrary();
+  res.json({
+    connectors: library.mcp_connectors || [],
+    apiCatalog: library.api_library?.catalog || [],
+  });
+});
+
+app.get('/api/webhook-library/:botSlug', (req, res) => {
+  const payload = loadSpecializationsPayload();
+  const library = payload.shared_capability_library || FALLBACK_SHARED_CAPABILITY_LIBRARY;
+  const bot = (payload.bots || []).find((entry) => entry.slug === req.params.botSlug);
+  if (!bot) {
+    return res.status(404).json({ error: `Bot '${req.params.botSlug}' not found` });
+  }
+
+  return res.json({
+    slug: bot.slug,
+    requiredWebhookIds: library.webhook_library?.required_for_every_bot || [],
+    specializedWebhookIds: bot.production_contract?.shared_webhook_coverage?.specialized_ids || [],
+    buttonLibraryEnabled: Boolean(
+      bot.production_contract?.shared_webhook_coverage?.button_library_enabled
+    ),
+    mcpConnectorQuickAdd: library.mcp_connectors || [],
+  });
 });
 
 // ---------------------------------------------------------------------------

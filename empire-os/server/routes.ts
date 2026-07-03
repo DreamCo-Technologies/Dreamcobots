@@ -1,5 +1,6 @@
 import type { Express } from "express";
 import type { Server } from "http";
+import path from "node:path";
 import OpenAI from "openai";
 import { z } from "zod";
 import { sql } from "drizzle-orm";
@@ -10,19 +11,24 @@ import { ALL_BOTS as CORE_BOTS } from "./seed-bots";
 import { GITHUB_BOTS } from "./seed-github-bots";
 import { CODELAB_BOTS } from "./seed-codelabs";
 import { BUDDY_BOT } from "./seed-buddy-bot";
-import { DIVISIONS, insertBotMetricSchema, insertBotErrorSchema, insertBotFinancialSchema, insertAlertRuleSchema, insertDealSchema, insertDebugEventSchema, insertAutoFixSchema, insertRevenueLeakSchema, insertSecurityScanSchema, insertFormulaSchema, insertPlatformConnectionSchema, insertPluginSchema, insertBotMemorySchema, insertSystemSnapshotSchema, insertCostEventSchema } from "@shared/schema";
+import { DIVISIONS, insertBotMetricSchema, insertBotErrorSchema, insertBotFinancialSchema, insertAlertRuleSchema, insertDealSchema, insertDebugEventSchema, insertAutoFixSchema, insertRevenueLeakSchema, insertSecurityScanSchema, insertFormulaSchema, insertPlatformConnectionSchema, insertPluginSchema, insertBotMemorySchema, insertSystemSnapshotSchema, insertCostEventSchema, type CrossDivisionDelegation, type Division, type ReplitMigrationValidationReport } from "@shared/schema";
 import { calculateRealEstate, calculateCarFlip, type RealEstateInputs, type CarFlipInputs } from "@shared/deal-calculations";
 import { FORMULA_LIBRARY } from "@shared/formula-library";
 import { buildEnhancedSystemPrompt } from "@shared/tool-belt";
 import { getUncachableStripeClient, getStripePublishableKey } from "./stripeClient";
 import { db } from "./db";
 import { batchProcessWithSSE } from "./replit_integrations/batch";
+import { buildDivisionRuntime } from "./division-runtime";
+import { createDelegation, decideApprovalGate, updateDependencyStatus } from "./division-orchestration";
+import { buildReplitMigrationManifest, ingestReplitManifest } from "./replit_integrations/migration";
 
 const CORE_SLUGS = new Set(CORE_BOTS.map(b => b.slug));
 const GITHUB_SLUGS = new Set(GITHUB_BOTS.map(b => b.slug));
 const DEDUPED_GITHUB = GITHUB_BOTS.filter(b => !CORE_SLUGS.has(b.slug));
 const DEDUPED_CODELAB = CODELAB_BOTS.filter(b => !CORE_SLUGS.has(b.slug) && !GITHUB_SLUGS.has(b.slug));
 const ALL_BOTS = [...CORE_BOTS, ...DEDUPED_GITHUB, ...DEDUPED_CODELAB];
+const DELEGATION_KEY = "cross_division_delegations";
+const REPLIT_MIGRATION_REPORT_KEY = "replit_migration_report";
 
 const openai = new OpenAI({
   apiKey: process.env.AI_INTEGRATIONS_OPENAI_API_KEY,
@@ -34,6 +40,15 @@ function zodValidationError(err: z.ZodError) {
     message: err.errors[0]?.message ?? "Invalid request",
     field: err.errors[0]?.path?.join("."),
   };
+}
+
+function isDivision(value: string): value is Division {
+  return (DIVISIONS as readonly string[]).includes(value);
+}
+
+function normalizeDelegationList(value: unknown): CrossDivisionDelegation[] {
+  if (!Array.isArray(value)) return [];
+  return value.filter((item) => item && typeof item === "object" && typeof (item as any).id === "string") as CrossDivisionDelegation[];
 }
 
 async function ensureSeeded() {
@@ -591,21 +606,49 @@ export async function registerRoutes(
 
   // Empire
   app.get(api.empire.overview.path, async (req, res) => {
-    const bots = await storage.listBotProfiles();
-    const tasks = await storage.listTasks();
-    const divCounts = await storage.getBotCountByDivision();
-    const autonomySetting = await storage.getSetting("autonomy_mode");
+    const [bots, tasks, autonomySetting, latestMetrics, errors, financials, alertRules, plugins, formulas, delegationSetting] = await Promise.all([
+      storage.listBotProfiles(),
+      storage.listTasks(),
+      storage.getSetting("autonomy_mode"),
+      storage.getLatestBotMetrics(),
+      storage.listBotErrors(),
+      storage.listBotFinancials(),
+      storage.listAlertRules(),
+      storage.listPlugins(),
+      storage.listFormulas(),
+      storage.getSetting(DELEGATION_KEY),
+    ]);
     const autonomyMode = (autonomySetting?.value as any)?.mode ?? "guided";
+    const delegations = normalizeDelegationList(delegationSetting?.value);
 
     const divisions = DIVISIONS.map(d => {
       const divBots = bots.filter(b => b.division === d);
       const divTasks = tasks.filter(t => t.division === d);
+      const activeDelegations = delegations.filter((del) =>
+        del.status !== "complete" &&
+        del.status !== "rejected" &&
+        (del.sourceDivision === d || del.targetDivisions.includes(d)),
+      ).length;
+      const runtime = buildDivisionRuntime({
+        division: d,
+        autonomyMode,
+        bots: divBots,
+        tasks: divTasks,
+        latestMetrics,
+        errors,
+        financials,
+        alertRules,
+        plugins,
+        formulas,
+        activeDelegations,
+      });
       return {
         division: d,
         botCount: divBots.length,
         activeTasks: divTasks.filter(t => t.status === "running" || t.status === "pending").length,
         completedTasks: divTasks.filter(t => t.status === "complete").length,
         revenue: divBots.length > 0 ? `$${(divBots.length * 199).toLocaleString()}/mo potential` : "$0",
+        runtime,
       };
     });
 
@@ -620,8 +663,42 @@ export async function registerRoutes(
   });
 
   app.get(api.empire.divisions.path, async (req, res) => {
-    const counts = await storage.getBotCountByDivision();
-    res.json(counts);
+    const [bots, tasks, delegationSetting, autonomySetting, latestMetrics, errors, financials, alertRules, plugins, formulas] = await Promise.all([
+      storage.listBotProfiles(),
+      storage.listTasks(),
+      storage.getSetting(DELEGATION_KEY),
+      storage.getSetting("autonomy_mode"),
+      storage.getLatestBotMetrics(),
+      storage.listBotErrors(),
+      storage.listBotFinancials(),
+      storage.listAlertRules(),
+      storage.listPlugins(),
+      storage.listFormulas(),
+    ]);
+    const autonomyMode = (autonomySetting?.value as any)?.mode ?? "guided";
+    const delegations = normalizeDelegationList(delegationSetting?.value);
+    const rows = DIVISIONS.map((division) => {
+      const count = bots.filter((b) => b.division === division).length;
+      const runtime = buildDivisionRuntime({
+        division,
+        autonomyMode,
+        bots: bots.filter((b) => b.division === division),
+        tasks: tasks.filter((t) => t.division === division),
+        latestMetrics,
+        errors,
+        financials,
+        alertRules,
+        plugins,
+        formulas,
+        activeDelegations: delegations.filter((del) =>
+          del.status !== "complete" &&
+          del.status !== "rejected" &&
+          (del.sourceDivision === division || del.targetDivisions.includes(division)),
+        ).length,
+      });
+      return { division, count, health: runtime.health, activeWorkflows: runtime.kpis.activeWorkflows };
+    });
+    res.json(rows);
   });
 
   app.get(api.empire.settings.get.path, async (req, res) => {
@@ -636,6 +713,143 @@ export async function registerRoutes(
     const { value } = req.body;
     const setting = await storage.upsertSetting(key, value);
     res.json(setting);
+  });
+
+  app.post("/api/divisions/:division/workflows/run", async (req, res) => {
+    const division = req.params.division;
+    if (!isDivision(division)) return res.status(400).json({ message: "Invalid division" });
+    const title = typeof req.body?.title === "string" && req.body.title.trim().length > 0
+      ? req.body.title.trim()
+      : `${division} quick workflow`;
+    const objective = typeof req.body?.objective === "string" && req.body.objective.trim().length > 0
+      ? req.body.objective.trim()
+      : `Execute highest-priority workflow for ${division}`;
+    const task = await storage.createTask({
+      title,
+      objective,
+      status: "running",
+      priority: 2,
+      autonomyMode: "semi-autonomous",
+      division,
+    });
+    res.status(201).json(task);
+  });
+
+  app.get("/api/orchestration/delegations", async (_req, res) => {
+    const setting = await storage.getSetting(DELEGATION_KEY);
+    res.json(normalizeDelegationList(setting?.value));
+  });
+
+  app.post("/api/orchestration/delegations", async (req, res) => {
+    const schema = z.object({
+      sourceDivision: z.string(),
+      sourceWorkflow: z.string().min(3),
+      objective: z.string().min(5),
+      targetDivisions: z.array(z.string()).min(1),
+      riskLevel: z.enum(["low", "medium", "high"]).default("medium"),
+      requestedBy: z.string().default("system"),
+    });
+    try {
+      const parsed = schema.parse(req.body);
+      if (!isDivision(parsed.sourceDivision)) return res.status(400).json({ message: "Invalid source division" });
+      const targets = parsed.targetDivisions.filter(isDivision);
+      if (targets.length === 0) return res.status(400).json({ message: "No valid target divisions provided" });
+
+      const setting = await storage.getSetting(DELEGATION_KEY);
+      const delegations = normalizeDelegationList(setting?.value);
+      const created = createDelegation({
+        sourceDivision: parsed.sourceDivision,
+        sourceWorkflow: parsed.sourceWorkflow,
+        objective: parsed.objective,
+        targetDivisions: targets,
+        riskLevel: parsed.riskLevel,
+        requestedBy: parsed.requestedBy,
+      });
+      const next = [created, ...delegations];
+      await storage.upsertSetting(DELEGATION_KEY, next);
+      res.status(201).json(created);
+    } catch (err) {
+      if (err instanceof z.ZodError) return res.status(400).json(zodValidationError(err));
+      throw err;
+    }
+  });
+
+  app.patch("/api/orchestration/delegations/:id/dependencies/:dependencyId", async (req, res) => {
+    const schema = z.object({ status: z.enum(["pending", "in_progress", "complete", "blocked"]) });
+    try {
+      const parsed = schema.parse(req.body);
+      const setting = await storage.getSetting(DELEGATION_KEY);
+      const delegations = normalizeDelegationList(setting?.value);
+      const delegation = delegations.find((d) => d.id === req.params.id);
+      if (!delegation) return res.status(404).json({ message: "Delegation not found" });
+      const updated = updateDependencyStatus(delegation, req.params.dependencyId, parsed.status);
+      const next = delegations.map((d) => (d.id === updated.id ? updated : d));
+      await storage.upsertSetting(DELEGATION_KEY, next);
+      res.json(updated);
+    } catch (err) {
+      if (err instanceof z.ZodError) return res.status(400).json(zodValidationError(err));
+      throw err;
+    }
+  });
+
+  app.patch("/api/orchestration/delegations/:id/approval/:gateId", async (req, res) => {
+    const schema = z.object({
+      decision: z.enum(["approved", "rejected"]),
+      approverDivision: z.string().default("CommandCore"),
+    });
+    try {
+      const parsed = schema.parse(req.body);
+      if (!isDivision(parsed.approverDivision)) return res.status(400).json({ message: "Invalid approver division" });
+      const setting = await storage.getSetting(DELEGATION_KEY);
+      const delegations = normalizeDelegationList(setting?.value);
+      const delegation = delegations.find((d) => d.id === req.params.id);
+      if (!delegation) return res.status(404).json({ message: "Delegation not found" });
+      const updated = decideApprovalGate(delegation, req.params.gateId, parsed.decision, parsed.approverDivision);
+      const next = delegations.map((d) => (d.id === updated.id ? updated : d));
+      await storage.upsertSetting(DELEGATION_KEY, next);
+      res.json(updated);
+    } catch (err) {
+      if (err instanceof z.ZodError) return res.status(400).json(zodValidationError(err));
+      throw err;
+    }
+  });
+
+  app.get("/api/migration/replit/manifest", async (req, res) => {
+    const expected = Number(req.query.expectedTotal ?? 1200);
+    const repositoryRoot = path.resolve(process.cwd(), "..");
+    const manifest = await buildReplitMigrationManifest(repositoryRoot, Number.isFinite(expected) ? expected : 1200);
+    res.json(manifest);
+  });
+
+  app.post("/api/migration/replit/ingest", async (req, res) => {
+    const expected = Number(req.body?.expectedTotal ?? 1200);
+    const repositoryRoot = path.resolve(process.cwd(), "..");
+    const result = await ingestReplitManifest(repositoryRoot, storage, Number.isFinite(expected) ? expected : 1200);
+    await storage.upsertSetting(REPLIT_MIGRATION_REPORT_KEY, result.report);
+    res.json(result);
+  });
+
+  app.get("/api/migration/replit/report", async (req, res) => {
+    const expected = Number(req.query.expectedTotal ?? 1200);
+    const setting = await storage.getSetting(REPLIT_MIGRATION_REPORT_KEY);
+    const report = setting?.value as ReplitMigrationValidationReport | undefined;
+    if (report) {
+      const complete = report.unaccounted === 0 && report.expectedTotal >= expected;
+      return res.json({ ...report, complete });
+    }
+    const repositoryRoot = path.resolve(process.cwd(), "..");
+    const manifest = await buildReplitMigrationManifest(repositoryRoot, Number.isFinite(expected) ? expected : 1200);
+    const unaccounted = Math.max(0, manifest.expectedTotal - manifest.discoveredAssets);
+    res.json({
+      expectedTotal: manifest.expectedTotal,
+      discoveredAssets: manifest.discoveredAssets,
+      imported: 0,
+      deduped: 0,
+      failed: 0,
+      unmapped: 0,
+      unaccounted,
+      complete: unaccounted === 0,
+    } satisfies ReplitMigrationValidationReport);
   });
 
   // Bot Metrics & Tracking

@@ -150,3 +150,16 @@ class Dashboard:
             json.dump(summary, fh, indent=2)
         logger.info("Summary report saved to %s", path)
         return path
+
+    def super_dashboard_snapshot(self, summary: dict[str, Any]) -> dict[str, Any]:
+        """Return a normalized snapshot for the unified Super Dashboard."""
+        by_source = summary.get("by_source", {})
+        engagements = [float(item.get("engagement", 0.0)) for item in by_source.values()]
+        avg_engagement = sum(engagements) / len(engagements) if engagements else 0.0
+        return {
+            "revenue_24h": float(summary.get("total_revenue", 0.0)),
+            "traffic_24h": float(summary.get("total_traffic", 0.0)),
+            "engagement": round(avg_engagement, 2),
+            "source_count": int(summary.get("source_count", 0)),
+            "top_source": summary.get("top_source", "N/A"),
+        }

@@ -162,6 +162,12 @@ jobs:
       - name: Validate generated bot registry outputs
         run: python3 tools/generate_master_registry_outputs.py --check
 
+      - name: Validate bot specialization outputs
+        run: python3 tools/generate_bot_specializations.py --check
+
+      - name: Validate bot production contracts
+        run: python3 tools/validate_bot_production_contracts.py
+
       - name: Discover dashboards and dashboard tests
         run: |
           python - <<'PY'
