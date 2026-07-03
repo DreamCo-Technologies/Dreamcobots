@@ -26,7 +26,7 @@ module.exports = {
     'dist/',
     'bots/',
     '*.py',
-    'public/docx/',
+    'public/',
     'empire-os/',
     'dreamco/',
     'Dreamcobots/',
