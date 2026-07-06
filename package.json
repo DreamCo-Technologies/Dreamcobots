@@ -16,6 +16,7 @@
     "scan:dependencies:strict": "node automation-tools/agents/dependency-audit.js --strict",
     "repair:bot-metadata": "node automation-tools/agents/repair-bot-metadata.js",
     "repair:bot-metadata:apply": "node automation-tools/agents/repair-bot-metadata.js --apply",
+    "debug:all": "npm run scan:dependencies && npm run repair:bot-metadata && npm run scan:missing",
     "audit:agents": "node automation-tools/agents/agent-audit.js",
     "lint": "eslint . --ext .js --max-warnings=0",
     "lint:fix": "eslint . --ext .js --fix",
