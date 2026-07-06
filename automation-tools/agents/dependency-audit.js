@@ -34,8 +34,10 @@ function readJson(filePath) {
   }
 }
 
-function nearest(files, dir, names) {
-  return names.filter((name) => files.includes(path.join(dir, name))).map((name) => path.join(dir, name));
+function nearest(fileSet, dir, names) {
+  return names
+    .filter((name) => fileSet.has(path.join(dir, name)))
+    .map((name) => path.join(dir, name));
 }
 
 function audit() {
