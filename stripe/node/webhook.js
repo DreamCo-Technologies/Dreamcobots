@@ -8,9 +8,18 @@
 require('dotenv').config();
 const express = require('express');
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
+const { RevenueLedger } = require('./revenue-ledger');
 
 const app = express();
 const PORT = process.env.PORT || 4242;
+const ledger = new RevenueLedger();
+
+function record(event) {
+  const tracked = ledger.recordEvent(event);
+  ledger.writeMarkdownReport();
+  console.log(`Tracked Stripe event ${tracked.type} for bot=${tracked.botId} amount=${tracked.amountCents} ${tracked.currency}`);
+  return tracked;
+}
 
 // Use raw body for webhook verification
 app.post('/webhook', express.raw({ type: 'application/json' }), (req, res) => {
@@ -26,31 +35,25 @@ app.post('/webhook', express.raw({ type: 'application/json' }), (req, res) => {
 
   switch (event.type) {
     case 'payment_intent.succeeded':
-      console.log('PaymentIntent succeeded:', event.data.object.id);
-      break;
     case 'payment_intent.payment_failed':
-      console.log('PaymentIntent failed:', event.data.object.id);
-      break;
     case 'checkout.session.completed':
-      console.log('Checkout session completed:', event.data.object.id);
-      break;
     case 'customer.subscription.created':
-      console.log('Subscription created:', event.data.object.id);
-      break;
     case 'customer.subscription.deleted':
-      console.log('Subscription cancelled:', event.data.object.id);
-      break;
     case 'invoice.paid':
-      console.log('Invoice paid:', event.data.object.id);
-      break;
     case 'invoice.payment_failed':
-      console.log('Invoice payment failed:', event.data.object.id);
+    case 'payout.paid':
+      record(event);
       break;
     default:
       console.log(`Unhandled event type: ${event.type}`);
   }
 
   res.json({ received: true });
+});
+
+app.get('/revenue/summary', (_req, res) => {
+  const summary = ledger.writeSummaries().summary;
+  res.json(summary);
 });
 
 app.listen(PORT, () => console.log(`Dreamcobots webhook server running on port ${PORT}`));
