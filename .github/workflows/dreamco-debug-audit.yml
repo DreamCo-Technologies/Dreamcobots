@@ -1,0 +1,38 @@
+name: DreamCo Debug Audit
+
+on:
+  workflow_dispatch:
+  pull_request:
+  push:
+    branches:
+      - main
+
+jobs:
+  debug-audit:
+    name: Dependency and bot metadata audit
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Run dependency audit
+        run: npm run scan:dependencies
+
+      - name: Plan bot metadata repairs
+        run: npm run repair:bot-metadata
+
+      - name: Run missing file scan
+        run: npm run scan:missing
+
+      - name: Upload debug reports
+        uses: actions/upload-artifact@v4
+        with:
+          name: dreamco-debug-reports
+          path: reports/
