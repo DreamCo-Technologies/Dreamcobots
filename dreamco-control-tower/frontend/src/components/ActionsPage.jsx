@@ -1,6 +1,38 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import ActionsMonitor from './ActionsMonitor.jsx';
 import BuddyCommandCenter from './BuddyCommandCenter.jsx';
+import githubActionsButtonCatalog, { actionCategories } from '../data/githubActionsButtonCatalog.js';
+
+const fleetFacts = [
+  { label: 'Bot candidates scanned', value: '1,308', tone: 'text-dreamco-accent' },
+  { label: 'Known open issues', value: '1,349', tone: 'text-dreamco-yellow' },
+  { label: 'Metadata files planned', value: '3,638', tone: 'text-dreamco-yellow' },
+  { label: 'Buddy checks passing', value: '20/20', tone: 'text-green-300' },
+];
+
+const statusPanels = [
+  {
+    title: 'Bot Fleet Truth',
+    status: 'Not fully green',
+    copy: 'The fleet is discoverable, but thousands of bot metadata and readiness gaps still need repair before we can claim everything is running cleanly.',
+  },
+  {
+    title: 'Buddy Connection',
+    status: 'Switchboard passing',
+    copy: 'Buddy has a tested registry, model router, and tool switchboard. Full live wiring still depends on each bot adopting control files and approved tool permissions.',
+  },
+  {
+    title: 'GitHub Actions',
+    status: '500 controls staged',
+    copy: 'Buttons are categorized, risk-tagged, and approval-aware. Backend dispatch should only activate approved workflows.',
+  },
+];
+
+function riskClass(risk) {
+  if (risk === 'low') return 'bg-green-950 text-green-300 border-green-800';
+  if (risk === 'medium') return 'bg-yellow-950 text-yellow-300 border-yellow-800';
+  return 'bg-red-950 text-red-300 border-red-800';
+}
 
 /**
  * ActionsPage keeps Actions monitoring and command-center launch together.
@@ -11,18 +43,161 @@ export default function ActionsPage({
   onBuddyCommandSubmit = () => {},
 }) {
   const [showBuddyCenter, setShowBuddyCenter] = useState(false);
+  const [category, setCategory] = useState('All');
+  const [showEnabledOnly, setShowEnabledOnly] = useState(true);
+  const [selectedAction, setSelectedAction] = useState(null);
+
+  const filteredActions = useMemo(() => {
+    return githubActionsButtonCatalog.filter((action) => {
+      const categoryMatch = category === 'All' || action.category === category;
+      const enabledMatch = !showEnabledOnly || action.enabled;
+      return categoryMatch && enabledMatch;
+    });
+  }, [category, showEnabledOnly]);
+
+  const enabledCount = githubActionsButtonCatalog.filter((action) => action.enabled).length;
+  const highRiskCount = githubActionsButtonCatalog.filter((action) => action.risk === 'high').length;
+
+  function handleActionClick(action) {
+    setSelectedAction(action);
+  }
 
   return (
-    <section>
-      <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
-        <h2 className="text-lg font-semibold text-white">⚡ Actions</h2>
-        <button
-          type="button"
-          onClick={() => setShowBuddyCenter(true)}
-          className="rounded-lg bg-dreamco-accent px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-dreamco-accent/80"
-        >
-          Launch Full Buddy Command Center
-        </button>
+    <section className="space-y-6">
+      <div className="rounded-2xl border border-slate-700 bg-slate-950/80 p-5 shadow-2xl shadow-black/20">
+        <div className="mb-5 flex flex-wrap items-start justify-between gap-3">
+          <div>
+            <p className="text-xs font-bold uppercase tracking-wide text-dreamco-accent">
+              DreamCo Operator Layer
+            </p>
+            <h2 className="text-lg font-semibold text-white">⚡ Actions</h2>
+            <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-400">
+              Command Center controls for bot repair, Buddy wiring, GitHub workflows,
+              revenue tracking, sales operations, MCP tools, and model routing.
+            </p>
+          </div>
+          <button
+            type="button"
+            onClick={() => setShowBuddyCenter(true)}
+            className="rounded-lg bg-dreamco-accent px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-dreamco-accent/80"
+          >
+            Launch Full Buddy Command Center
+          </button>
+        </div>
+
+        <div className="grid gap-3 md:grid-cols-4">
+          {fleetFacts.map((fact) => (
+            <div key={fact.label} className="rounded-xl border border-slate-800 bg-slate-900/80 p-4">
+              <p className={`text-2xl font-black ${fact.tone}`}>{fact.value}</p>
+              <p className="mt-1 text-xs font-medium uppercase text-slate-500">{fact.label}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div className="grid gap-4 lg:grid-cols-3">
+        {statusPanels.map((panel) => (
+          <article key={panel.title} className="rounded-xl border border-slate-800 bg-dreamco-card p-4">
+            <div className="mb-3 flex items-center justify-between gap-3">
+              <h3 className="font-semibold text-white">{panel.title}</h3>
+              <span className="rounded-full border border-slate-700 px-2 py-1 text-xs font-semibold text-slate-300">
+                {panel.status}
+              </span>
+            </div>
+            <p className="text-sm leading-6 text-slate-400">{panel.copy}</p>
+          </article>
+        ))}
+      </div>
+
+      <div className="rounded-2xl border border-slate-700 bg-slate-950/80 p-5">
+        <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
+          <div>
+            <h3 className="text-base font-semibold text-white">GitHub Action Button Grid</h3>
+            <p className="mt-1 text-sm text-slate-400">
+              {githubActionsButtonCatalog.length} total controls, {enabledCount} enabled now,
+              {highRiskCount} high-risk controls gated for approval.
+            </p>
+          </div>
+          <label className="flex items-center gap-2 text-sm text-slate-300">
+            <input
+              type="checkbox"
+              checked={showEnabledOnly}
+              onChange={(event) => setShowEnabledOnly(event.target.checked)}
+              className="h-4 w-4 accent-dreamco-accent"
+            />
+            Enabled only
+          </label>
+        </div>
+
+        <div className="mb-4 flex gap-2 overflow-x-auto pb-2">
+          {['All', ...actionCategories].map((item) => (
+            <button
+              key={item}
+              type="button"
+              onClick={() => setCategory(item)}
+              className={`whitespace-nowrap rounded-lg border px-3 py-2 text-xs font-semibold transition-colors ${
+                category === item
+                  ? 'border-dreamco-accent bg-dreamco-accent text-white'
+                  : 'border-slate-700 bg-slate-900 text-slate-300 hover:text-white'
+              }`}
+            >
+              {item}
+            </button>
+          ))}
+        </div>
+
+        <div className="grid max-h-[520px] gap-2 overflow-y-auto pr-1 sm:grid-cols-2 xl:grid-cols-4">
+          {filteredActions.map((action) => (
+            <button
+              key={action.id}
+              type="button"
+              onClick={() => handleActionClick(action)}
+              className={`min-h-28 rounded-xl border p-3 text-left transition-colors ${
+                action.enabled
+                  ? 'border-slate-700 bg-slate-900 hover:border-dreamco-accent hover:bg-slate-800'
+                  : 'border-slate-800 bg-slate-950/70 opacity-60 hover:opacity-90'
+              }`}
+            >
+              <div className="mb-2 flex items-start justify-between gap-2">
+                <span className="text-xs font-mono text-slate-500">#{action.number}</span>
+                <span className={`rounded-full border px-2 py-0.5 text-[10px] font-bold uppercase ${riskClass(action.risk)}`}>
+                  {action.risk}
+                </span>
+              </div>
+              <p className="text-sm font-bold text-white">{action.label}</p>
+              <p className="mt-1 text-xs leading-5 text-slate-400">{action.workflow}</p>
+              <div className="mt-3 flex flex-wrap gap-1">
+                <span className="rounded bg-slate-800 px-2 py-0.5 text-[10px] uppercase text-slate-300">
+                  {action.mode}
+                </span>
+                {action.requiresApproval && (
+                  <span className="rounded bg-yellow-950 px-2 py-0.5 text-[10px] uppercase text-yellow-300">
+                    approval
+                  </span>
+                )}
+              </div>
+            </button>
+          ))}
+        </div>
+
+        {selectedAction && (
+          <div className="mt-4 rounded-xl border border-dreamco-accent/40 bg-slate-900 p-4">
+            <div className="flex flex-wrap items-start justify-between gap-3">
+              <div>
+                <p className="text-xs font-mono text-slate-500">{selectedAction.id}</p>
+                <h4 className="text-base font-bold text-white">{selectedAction.label}</h4>
+                <p className="mt-1 text-sm text-slate-400">{selectedAction.description}</p>
+              </div>
+              <span className="rounded-full bg-slate-800 px-3 py-1 text-xs font-semibold text-slate-300">
+                Dispatch wiring pending
+              </span>
+            </div>
+            <p className="mt-3 text-xs leading-5 text-slate-500">
+              This button is staged for `{selectedAction.workflow}`. Real workflow dispatch should be
+              connected through the backend with approval checks and audit logging.
+            </p>
+          </div>
+        )}
       </div>
 
       <ActionsMonitorComponent />
