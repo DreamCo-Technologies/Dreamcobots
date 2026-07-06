@@ -1,0 +1,33 @@
+name: Buddy Connectivity
+
+on:
+  workflow_dispatch:
+  pull_request:
+  push:
+    branches:
+      - main
+
+jobs:
+  buddy-connectivity:
+    name: Validate Buddy switchboards
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Run Buddy connectivity test
+        run: npm run test:buddy
+
+      - name: Upload Buddy report
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: buddy-connectivity-report
+          path: reports/buddy-connectivity-report.*
