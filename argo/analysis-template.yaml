@@ -1,0 +1,22 @@
+apiVersion: argoproj.io/v1alpha1
+kind: AnalysisTemplate
+metadata:
+  name: dreamco-control-tower-analysis
+spec:
+  metrics:
+    - name: health-check
+      interval: 30s
+      count: 3
+      successCondition: result == 'ok'
+      provider:
+        web:
+          url: http://dreamco-control-tower/health
+          jsonPath: '{.status}'
+    - name: issue-goal-coverage
+      interval: 60s
+      count: 1
+      successCondition: result == 'covered'
+      provider:
+        web:
+          url: http://dreamco-control-tower/api/audits/issue-goal-coverage/status
+          jsonPath: '{.status}'
