@@ -9,7 +9,7 @@ on:
 
 jobs:
   debug-audit:
-    name: Dependency, issue, bot, and sandbox audit
+    name: Dependency, issue, autonomous, bot, and sandbox audit
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -27,6 +27,9 @@ jobs:
 
       - name: Run issue goal coverage audit
         run: npm run scan:issues
+
+      - name: Run autonomous readiness audit
+        run: npm run autonomous:readiness
 
       - name: Plan bot metadata repairs
         run: npm run repair:bot-metadata
