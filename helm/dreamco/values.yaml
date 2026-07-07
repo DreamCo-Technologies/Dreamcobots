@@ -1,0 +1,26 @@
+replicaCount: 2
+image:
+  repository: ghcr.io/dreamco-technologies/dreamcobots/control-tower
+  tag: latest
+  pullPolicy: IfNotPresent
+service:
+  type: ClusterIP
+  port: 80
+resources:
+  requests:
+    cpu: 250m
+    memory: 256Mi
+  limits:
+    cpu: "1"
+    memory: 1Gi
+autoscaling:
+  enabled: true
+  minReplicas: 2
+  maxReplicas: 20
+  targetCPUUtilizationPercentage: 65
+  targetMemoryUtilizationPercentage: 75
+selfBuild:
+  enabled: true
+  schedule: "0 */6 * * *"
+  requireIssueGoalCoverage: true
+  requireSandboxNoHallucinations: true
