@@ -1,0 +1,22 @@
+schemaVersion: 2026-07-06
+queues:
+  botRepair:
+    priority: high
+    deadLetterQueue: botRepair.dead
+    maxAttempts: 3
+  issueGoalCoverage:
+    priority: high
+    deadLetterQueue: issueGoalCoverage.dead
+    maxAttempts: 2
+  revenueTracking:
+    priority: high
+    deadLetterQueue: revenueTracking.dead
+    maxAttempts: 5
+  leadDiscovery:
+    priority: medium
+    deadLetterQueue: leadDiscovery.dead
+    maxAttempts: 3
+  learningLoop:
+    priority: medium
+    deadLetterQueue: learningLoop.dead
+    maxAttempts: 2
