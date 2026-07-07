@@ -1,0 +1,19 @@
+{
+  "schemaVersion": "2026-07-06",
+  "purpose": "Template for connecting Buddy and DreamCo teams to social platforms safely. Copy to a secrets-backed runtime config; do not commit tokens.",
+  "defaultPostingMode": "draft_only",
+  "platforms": [
+    { "id": "x", "name": "X / Twitter", "enabled": false, "capabilities": ["draft_posts", "schedule_after_approval", "read_public_profile_metrics"], "requiresSecrets": ["X_API_KEY", "X_API_SECRET", "X_ACCESS_TOKEN"] },
+    { "id": "linkedin", "name": "LinkedIn", "enabled": false, "capabilities": ["draft_posts", "company_page_review", "lead_research"], "requiresSecrets": ["LINKEDIN_CLIENT_ID", "LINKEDIN_CLIENT_SECRET"] },
+    { "id": "facebook", "name": "Facebook", "enabled": false, "capabilities": ["draft_page_posts", "campaign_briefing", "page_metrics"], "requiresSecrets": ["META_APP_ID", "META_APP_SECRET"] },
+    { "id": "instagram", "name": "Instagram", "enabled": false, "capabilities": ["draft_captions", "content_calendar", "asset_briefs"], "requiresSecrets": ["META_APP_ID", "META_APP_SECRET"] },
+    { "id": "tiktok", "name": "TikTok", "enabled": false, "capabilities": ["video_idea_research", "caption_drafts", "trend_notes"], "requiresSecrets": ["TIKTOK_CLIENT_KEY", "TIKTOK_CLIENT_SECRET"] },
+    { "id": "youtube", "name": "YouTube", "enabled": false, "capabilities": ["video_topic_research", "title_description_drafts", "analytics_review"], "requiresSecrets": ["GOOGLE_CLIENT_ID", "GOOGLE_CLIENT_SECRET"] }
+  ],
+  "approvalRules": [
+    "Default mode is draft-only.",
+    "Human approval is required before posting, commenting, messaging, or spending ad budget.",
+    "Every post must store platform, draft, source, reviewer, approval time, and outcome metrics.",
+    "Do not store access tokens in this repository."
+  ]
+}
