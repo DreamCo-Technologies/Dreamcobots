@@ -51,6 +51,13 @@ const agentSections = [
     action: 'Run dreamco-debug-audit.yml',
   },
   {
+    name: 'Sandbox No-Hallucination Audit',
+    status: 'Ready',
+    owner: 'automation-tools/agents/sandbox-hallucination-audit.js',
+    signal: 'Runs sandbox-safe evidence checks and reports unsupported absolute success claims before bots say work is complete.',
+    action: 'Run sandbox:no-hallucinations',
+  },
+  {
     name: 'Buddy Connectivity Tester',
     status: 'Passing',
     owner: 'automation-tools/agents/buddy-connectivity-test.js',
