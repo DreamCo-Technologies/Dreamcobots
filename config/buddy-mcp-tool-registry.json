@@ -1,6 +1,6 @@
 {
-  "version": "1.0.0",
-  "purpose": "Central on/off switchboard for Buddy tools, MCP connectors, GitHub capabilities, web search, sales workflows, and command permissions.",
+  "version": "1.1.0",
+  "purpose": "Central on/off switchboard for Buddy tools, MCP connectors, GitHub capabilities, web search, social drafts, occupational bots, sales workflows, and command permissions.",
   "defaultMode": "supervised",
   "tools": [
     {
@@ -60,12 +60,51 @@
       "policy": "Human approval required before contacting prospects."
     },
     {
+      "id": "social_media_draft_studio",
+      "name": "Social Media Draft Studio",
+      "category": "marketing",
+      "enabled": true,
+      "risk": "medium",
+      "capabilities": ["draft_posts", "content_calendar", "campaign_briefs", "social_metrics_review"],
+      "requiresApproval": true,
+      "policy": "Draft-only by default. Posting, commenting, messaging, and ad spend require approval and platform secrets."
+    },
+    {
+      "id": "occupational_worker_registry",
+      "name": "Occupational Worker Registry",
+      "category": "occupational_bots",
+      "enabled": true,
+      "risk": "low",
+      "capabilities": ["map_job_families", "identify_efficiency_workflows", "assign_worker_bots", "generate_training_paths"],
+      "requiresApproval": false
+    },
+    {
+      "id": "tool_finder_bot",
+      "name": "Tool Finder Bot",
+      "category": "tool_discovery",
+      "enabled": true,
+      "risk": "medium",
+      "capabilities": ["search_github", "search_official_docs", "search_package_registries", "score_tools", "write_tool_reports"],
+      "requiresApproval": false,
+      "policy": "May research public sources. Installing dependencies, cloning private repos, or publishing tools requires approval."
+    },
+    {
+      "id": "skill_finder_bot",
+      "name": "Skill Finder Bot",
+      "category": "learning",
+      "enabled": true,
+      "risk": "medium",
+      "capabilities": ["search_wikipedia", "search_official_docs", "build_playbooks", "write_memory_records", "design_practice_tasks"],
+      "requiresApproval": false,
+      "policy": "Every learned skill must include a source, confidence score, usable summary, and next experiment."
+    },
+    {
       "id": "local_command_check",
       "name": "Local Check Commands",
       "category": "commands",
       "enabled": true,
       "risk": "low",
-      "capabilities": ["scan_missing_files", "dependency_audit", "generate_reports"],
+      "capabilities": ["scan_missing_files", "dependency_audit", "issue_goal_coverage", "autonomous_readiness", "generate_reports"],
       "requiresApproval": false
     },
     {
@@ -91,8 +130,9 @@
   ],
   "modeToggles": ["observe", "diagnose", "draft", "build", "test", "command", "autopilot", "locked"],
   "approvalRules": [
-    "Money movement, Stripe writes, prospect outreach, deploys, and mass file generation require owner approval.",
-    "Read-only research and report generation may run automatically.",
-    "Every tool run must write an event to the dashboard tracking layer."
+    "Money movement, Stripe writes, prospect outreach, deploys, social posting, ad spend, and mass file generation require owner approval.",
+    "Read-only research, draft creation, memory curation, and report generation may run automatically.",
+    "Every tool run must write an event to the dashboard tracking layer.",
+    "Every learning or tool recommendation must include source, confidence, and next experiment."
   ]
 }
