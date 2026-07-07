@@ -9,7 +9,7 @@ on:
 
 jobs:
   debug-audit:
-    name: Dependency and bot metadata audit
+    name: Dependency, bot, and sandbox audit
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -30,6 +30,9 @@ jobs:
 
       - name: Run missing file scan
         run: npm run scan:missing
+
+      - name: Run sandbox hallucination audit
+        run: npm run sandbox:no-hallucinations
 
       - name: Upload debug reports
         uses: actions/upload-artifact@v4
