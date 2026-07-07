@@ -1,6 +1,7 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { cleanup, fireEvent, render, screen } from '@testing-library/react';
 import ActionsPage from '../ActionsPage.jsx';
+import githubActionsButtonCatalog from '../../data/githubActionsButtonCatalog.js';
 
 function StubActionsMonitor() {
   return <div>Actions monitor panel</div>;
@@ -15,7 +16,39 @@ describe('ActionsPage', () => {
     render(<ActionsPage ActionsMonitorComponent={StubActionsMonitor} />);
 
     expect(screen.getByText('⚡ Actions')).toBeInTheDocument();
+    expect(screen.getByText('GitHub Action Button Grid')).toBeInTheDocument();
+    expect(screen.getByText('Agents Section')).toBeInTheDocument();
+    expect(screen.getByText('Issues Section')).toBeInTheDocument();
     expect(screen.getByText('Actions monitor panel')).toBeInTheDocument();
+  });
+
+  it('loads the full 500-control actions catalog', () => {
+    render(<ActionsPage ActionsMonitorComponent={StubActionsMonitor} />);
+
+    expect(githubActionsButtonCatalog).toHaveLength(500);
+    expect(screen.getByText(/500 total controls/)).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Action 1: Scan Bot Health' })).toBeInTheDocument();
+  });
+
+  it('renders selected action workflow without a literal template expression', () => {
+    render(<ActionsPage ActionsMonitorComponent={StubActionsMonitor} />);
+
+    fireEvent.click(screen.getByRole('button', { name: 'Action 1: Scan Bot Health' }));
+
+    expect(screen.getByText('Dispatch wiring pending')).toBeInTheDocument();
+    expect(screen.getAllByText('dreamco-debug-audit.yml').length).toBeGreaterThan(1);
+    expect(screen.queryByText('`{selectedAction.workflow}`')).not.toBeInTheDocument();
+  });
+
+  it('tracks agent and issue cleanup state', () => {
+    render(<ActionsPage ActionsMonitorComponent={StubActionsMonitor} />);
+
+    expect(screen.getByText('Missing Files Scanner')).toBeInTheDocument();
+    expect(screen.getByText('Buddy Connectivity Tester')).toBeInTheDocument();
+    expect(screen.getByText('Actions detail rendering')).toBeInTheDocument();
+    expect(screen.getByText('Workflow dispatch backend')).toBeInTheDocument();
+    expect(screen.getByText('2 completed')).toBeInTheDocument();
+    expect(screen.getByText('3 open')).toBeInTheDocument();
   });
 
   it('opens and closes buddy command center modal', () => {
