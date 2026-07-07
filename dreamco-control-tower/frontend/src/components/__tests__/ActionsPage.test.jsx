@@ -81,15 +81,27 @@ describe('ActionsPage', () => {
     expect(onBuddyCommandSubmit).toHaveBeenCalledWith('deploy bot fleet');
     expect(screen.getByRole('log', { name: 'Buddy terminal output' })).toBeInTheDocument();
     expect(screen.getByText('$ deploy bot fleet')).toBeInTheDocument();
-    expect(screen.getByText('[Buddy] Command queued: deploy bot fleet')).toBeInTheDocument();
+    expect(screen.getByText('[Buddy] Command queued with evidence policy: deploy bot fleet')).toBeInTheDocument();
   });
 
-  it('renders core buddy command center panels', () => {
-    render(<ActionsPage ActionsMonitorComponent={StubActionsMonitor} />);
+  it('renders expanded buddy autonomous operations panels and quick commands', () => {
+    const onBuddyCommandSubmit = vi.fn();
+    render(
+      <ActionsPage
+        ActionsMonitorComponent={StubActionsMonitor}
+        onBuddyCommandSubmit={onBuddyCommandSubmit}
+      />,
+    );
     fireEvent.click(screen.getByRole('button', { name: 'Launch Full Buddy Command Center' }));
 
-    expect(screen.getByText('Swarm Status')).toBeInTheDocument();
-    expect(screen.getByText('HotStuff Consensus')).toBeInTheDocument();
-    expect(screen.getByText('Economic Feedback Loops')).toBeInTheDocument();
+    expect(screen.getByText('Bot Test Lab')).toBeInTheDocument();
+    expect(screen.getByText('Customer Discovery')).toBeInTheDocument();
+    expect(screen.getByText('Tool & Skill Finder')).toBeInTheDocument();
+    expect(screen.getByText('Social Draft Studio')).toBeInTheDocument();
+    expect(screen.getByText('Cash Loop Tracker')).toBeInTheDocument();
+    expect(screen.getByText('Memory & Learning')).toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole('button', { name: 'npm run autonomous:readiness' }));
+    expect(onBuddyCommandSubmit).toHaveBeenCalledWith('npm run autonomous:readiness');
   });
 });
