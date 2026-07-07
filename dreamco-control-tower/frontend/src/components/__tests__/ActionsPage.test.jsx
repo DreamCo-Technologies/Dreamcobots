@@ -44,6 +44,7 @@ describe('ActionsPage', () => {
     render(<ActionsPage ActionsMonitorComponent={StubActionsMonitor} />);
 
     expect(screen.getByText('Missing Files Scanner')).toBeInTheDocument();
+    expect(screen.getByText('Sandbox No-Hallucination Audit')).toBeInTheDocument();
     expect(screen.getByText('Buddy Connectivity Tester')).toBeInTheDocument();
     expect(screen.getByText('Actions detail rendering')).toBeInTheDocument();
     expect(screen.getByText('Workflow dispatch backend')).toBeInTheDocument();
