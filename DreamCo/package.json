@@ -1,23 +1,36 @@
 {
-  "name": "dreamco",
+  "name": "dreamco-leadgenbot",
   "version": "1.0.0",
-  "description": "DreamCo Money Operating System — self-scaling AI bot network for real estate, contracts, and jobs.",
-  "main": "orchestrator/index.js",
+  "description": "DreamCo LeadGenBot — AI-powered lead generation and monetization platform",
+  "main": "backend/server.js",
   "scripts": {
-    "start": "node orchestrator/index.js",
-    "start:api": "node api/index.js",
-    "start:dashboard": "node dashboard/index.js",
-    "test": "jest --passWithNoTests"
+    "start": "node backend/server.js",
+    "dev": "nodemon backend/server.js"
   },
-  "jest": {
-    "testEnvironment": "node",
-    "testMatch": [
-      "**/__tests__/**/*.js",
-      "**/*.test.js"
-    ]
+  "dependencies": {
+    "cheerio": "^1.0.0-rc.12",
+    "cors": "^2.8.5",
+    "dotenv": "^16.3.1",
+    "express": "^4.18.2",
+    "express-rate-limit": "^8.3.2",
+    "json2csv": "^6.0.0-alpha.2",
+    "node-fetch": "^3.3.2",
+    "stripe": "^14.21.0",
+    "uuid": "^9.0.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.2"
   },
   "engines": {
-    "node": ">=20"
+    "node": ">=18.0.0"
   },
-  "license": "ISC"
+  "keywords": [
+    "lead-generation",
+    "ai",
+    "dreamco",
+    "saas",
+    "automation"
+  ],
+  "author": "DreamCo",
+  "license": "MIT"
 }
