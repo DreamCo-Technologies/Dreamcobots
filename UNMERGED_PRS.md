@@ -6554,7 +6554,7 @@ bots/ai-models-integration/
 ├── nlp/nlp_models_bot.py         # GPT-4, PaLM 2, Claude, LLaMA 3, HuggingFace
 ├── computer_vision/cv_models_bot.py  # GPT-4 Vision, Google Vision, Rekognition, DINO/SAM, Azure CV
 ├── generative_ai/generative_ai_bot.py  # DALL-E 3, Stable Diffusion, Gemini, Midjourney, Runway ML
-└── data_analytics/data_analytics_bot.py  # Vertex AI AutoML, SageMaker, Azure ML, Databricks, Watson
+└── data_analytics/data_analytics_bot.py  # Vertex AI AutoML, SageMaker, Azure ML, Databricks, Enterprise AI
 ```
 
 ## Key design points

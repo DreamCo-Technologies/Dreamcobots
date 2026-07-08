@@ -114,7 +114,7 @@ class TestProviderCatalogue:
 
     def test_big_tech_ai_providers_present(self):
         ids = {p.provider_id for p in _PROVIDERS}
-        for pid in ("google_cloud_ai", "ibm_watson", "microsoft_azure_ai",
+        for pid in ("google_cloud_ai", "enterprise_ai", "microsoft_azure_ai",
                     "nvidia_ai", "aws_ai"):
             assert pid in ids
 
@@ -206,10 +206,10 @@ class TestCallProvider:
         assert result["provider"] == "google_cloud_ai"
         assert result["status"] == "ok"
 
-    def test_call_ibm_watson_free(self):
+    def test_call_enterprise_ai_free(self):
         bot = EnterpriseIntegrationsBot(tier=Tier.FREE)
-        result = bot.call_provider("ibm_watson", "chat", {})
-        assert result["provider"] == "ibm_watson"
+        result = bot.call_provider("enterprise_ai", "chat", {})
+        assert result["provider"] == "enterprise_ai"
         assert result["status"] == "ok"
 
     def test_call_azure_ai_requires_pro(self):
@@ -269,10 +269,10 @@ class TestConvenienceWrappers:
         result = bot.google_ai("chat")
         assert result["provider"] == "google_cloud_ai"
 
-    def test_ibm_watson_wrapper(self):
+    def test_enterprise_ai_wrapper(self):
         bot = EnterpriseIntegrationsBot(tier=Tier.FREE)
-        result = bot.ibm_watson("nlu")
-        assert result["provider"] == "ibm_watson"
+        result = bot.enterprise_ai("nlu")
+        assert result["provider"] == "enterprise_ai"
 
     def test_azure_ai_wrapper_pro(self):
         bot = EnterpriseIntegrationsBot(tier=Tier.PRO)
@@ -547,7 +547,7 @@ class TestUsageStats:
     def test_stats_after_calls(self):
         bot = EnterpriseIntegrationsBot(tier=Tier.FREE)
         bot.google_ai("chat")
-        bot.ibm_watson("nlu")
+        bot.enterprise_ai("nlu")
         stats = bot.get_usage_stats()
         assert stats["total_calls"] == 2
 
@@ -555,10 +555,10 @@ class TestUsageStats:
         bot = EnterpriseIntegrationsBot(tier=Tier.FREE)
         bot.google_ai("chat")
         bot.google_ai("vision")
-        bot.ibm_watson("nlu")
+        bot.enterprise_ai("nlu")
         stats = bot.get_usage_stats()
         assert stats["provider_breakdown"]["google_cloud_ai"] == 2
-        assert stats["provider_breakdown"]["ibm_watson"] == 1
+        assert stats["provider_breakdown"]["enterprise_ai"] == 1
 
     def test_stats_call_limit_reported(self):
         bot = EnterpriseIntegrationsBot(tier=Tier.FREE)
@@ -621,10 +621,10 @@ class TestChatInterface:
         result = bot.chat("use google gemini to help me")
         assert result["data"]["provider"] == "google_cloud_ai"
 
-    def test_chat_ibm(self):
+    def test_chat_enterprise_ai(self):
         bot = EnterpriseIntegrationsBot(tier=Tier.FREE)
-        result = bot.chat("call ibm watson")
-        assert result["data"]["provider"] == "ibm_watson"
+        result = bot.chat("call enterprise_ai enterprise_ai")
+        assert result["data"]["provider"] == "enterprise_ai"
 
     def test_chat_azure_free_upgrade_message(self):
         bot = EnterpriseIntegrationsBot(tier=Tier.FREE)

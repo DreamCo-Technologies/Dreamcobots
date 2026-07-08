@@ -71,7 +71,7 @@ VOICE_BACKENDS: list[str] = [
     "OpenAI TTS",
     "Google Cloud Text-to-Speech",
     "Amazon Polly",
-    "IBM Watson Text to Speech",
+    "Enterprise AI Text to Speech",
     "DreamCo Voice Engine (proprietary)",
 ]
 

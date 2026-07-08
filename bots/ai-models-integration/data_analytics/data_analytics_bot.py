@@ -5,7 +5,7 @@
 #   - AWS SageMaker (managed ML training and inference)
 #   - Microsoft Azure Machine Learning (enterprise MLOps)
 #   - Databricks (collaborative data + AI platform)
-#   - IBM Watson Studio (AI-powered data analytics)
+#   - Enterprise AI Studio (AI-powered data analytics)
 
 
 class DataAnalyticsModelsBot:
@@ -22,8 +22,8 @@ class DataAnalyticsModelsBot:
           AZURE_ML_WORKSPACE     : Azure ML (https://azure.microsoft.com/en-us/products/machine-learning)
         - DATABRICKS_HOST /
           DATABRICKS_TOKEN       : Databricks (https://docs.databricks.com/api)
-        - IBM_WATSON_APIKEY /
-          IBM_WATSON_URL         : IBM Watson Studio (https://www.ibm.com/products/watson-studio)
+        - ENTERPRISE_AI_APIKEY /
+          ENTERPRISE_AI_URL         : Enterprise AI Studio (https://www.enterprise_ai.com/products/enterprise_ai-studio)
     """
 
     SUPPORTED_PLATFORMS = [
@@ -31,7 +31,7 @@ class DataAnalyticsModelsBot:
         "aws-sagemaker",
         "azure-ml",
         "databricks",
-        "ibm-watson-studio",
+        "enterprise-ai-studio",
     ]
 
     def __init__(self, config=None):
@@ -201,15 +201,15 @@ class DataAnalyticsModelsBot:
         return f"[Databricks Response] Job '{job_name}' submitted for notebook '{notebook_path}'"
 
     # ------------------------------------------------------------------
-    # IBM Watson Studio
+    # Enterprise AI Studio
     # ------------------------------------------------------------------
-    def run_ibm_watson_studio(self, project_id, asset_id, runtime="default_py3.9",
+    def run_enterprise_ai_studio(self, project_id, asset_id, runtime="default_py3.9",
                                task="auto-ai"):
         """
-        Run a Watson Studio experiment or AutoAI pipeline.
+        Run a Enterprise AI Studio experiment or AutoAI pipeline.
 
         Args:
-            project_id (str): IBM Cloud Watson Studio project ID.
+            project_id (str): Enterprise Cloud Enterprise AI Studio project ID.
             asset_id (str): Data asset or experiment ID.
             runtime (str): Runtime environment, e.g. 'default_py3.9'.
             task (str): One of 'auto-ai', 'notebook', or 'model-deploy'.
@@ -218,24 +218,24 @@ class DataAnalyticsModelsBot:
             str: Experiment run ID (simulated).
 
         Sample Usage:
-            bot.run_ibm_watson_studio(
+            bot.run_enterprise_ai_studio(
                 project_id="abc-123",
                 asset_id="dataset-456",
                 task="auto-ai"
             )
 
         API Endpoint:
-            POST https://us-south.ml.cloud.ibm.com/ml/v4/trainings
-            Headers: Authorization: Bearer <IBM_WATSON_APIKEY>
+            POST https://us-south.ml.cloud.enterprise_ai.com/ml/v4/trainings
+            Headers: Authorization: Bearer <ENTERPRISE_AI_APIKEY>
             Body: {"training_data_references": [...], "results_reference": {...},
                    "pipeline": {"id": "<pipeline_id>"}}
         """
         print(
-            f"[IBM Watson Studio] Project: {project_id} | Task: {task} "
+            f"[Enterprise AI Studio] Project: {project_id} | Task: {task} "
             f"| Asset: {asset_id} | Runtime: {runtime}"
         )
         return (
-            f"[IBM Watson Studio Response] '{task}' experiment started "
+            f"[Enterprise AI Studio Response] '{task}' experiment started "
             f"in project '{project_id}'"
         )
 
@@ -264,7 +264,7 @@ class DataAnalyticsModelsBot:
             parameters={"start_date": "2024-01-01", "end_date": "2024-12-31"},
             job_name="dreamcobots-annual-revenue"
         )
-        self.run_ibm_watson_studio(
+        self.run_enterprise_ai_studio(
             project_id="abc-123",
             asset_id="dataset-456",
             task="auto-ai"

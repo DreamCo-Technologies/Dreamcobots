@@ -19,7 +19,7 @@ PROBLEM_TYPES = [
 ]
 
 PROVIDERS = [
-    "IBM_Quantum",
+    "Enterprise AI_Quantum",
     "Google_Quantum_AI",
     "IonQ",
     "Rigetti",
@@ -30,7 +30,7 @@ PROVIDERS = [
 # Tier access rules
 _FREE_PROBLEMS = {"traveling_salesman", "portfolio_optimization"}
 _PRO_PROBLEMS = _FREE_PROBLEMS | {"logistics_routing", "molecular_simulation"}
-_FREE_PROVIDERS = {"IBM_Quantum"}
+_FREE_PROVIDERS = {"Enterprise AI_Quantum"}
 _PRO_PROVIDERS = _FREE_PROVIDERS | {"IonQ", "Rigetti"}
 
 
@@ -203,8 +203,8 @@ class QuantumPartnershipManager:
     """Manages connections to real quantum hardware providers."""
 
     _BACKEND_INFO = {
-        "IBM_Quantum": {
-            "backends": ["ibmq_qasm_simulator", "ibmq_manila", "ibmq_quito"],
+        "Enterprise AI_Quantum": {
+            "backends": ["enterprise_aiq_qasm_simulator", "enterprise_aiq_manila", "enterprise_aiq_quito"],
             "max_qubits": 27,
             "gate_fidelity": 0.9985,
         },

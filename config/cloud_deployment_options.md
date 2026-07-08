@@ -15,7 +15,7 @@ You are self-hosting **Kubernetes on-premises** and want cloud providers for **s
 | **7** | **Railway** | Full-stack devs | Usage-based | Managed |
 | **8** | **Fly.io** | Edge computing | Per-region pricing | Managed |
 | **9** | **Heroku** | Legacy projects | Dyno hours | N/A (proprietary) |
-| **10** | **IBM Cloud IKS** | Regulated industries | Free cluster + worker nodes | Native |
+| **10** | **Managed Kubernetes** | Regulated industries | Free cluster + worker nodes | Native |
 
 ## Recommended Approach
 

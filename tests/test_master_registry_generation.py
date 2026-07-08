@@ -34,7 +34,7 @@ def test_every_bot_has_blueprint_and_cash_safety_gates():
         assert blueprint["governance"]["approval_required_for_revenue"] is True
         assert blueprint["governance"]["approval_required_for_spend"] is True
         assert bot["safety"]["autonomous_cash_enabled"] is False
-        assert bot["safety"]["ibm_approval_claim"] is False
+        assert bot["safety"]["enterprise_ai_approval_claim"] is False
 
 
 def test_control_tower_catalog_matches_master_registry():

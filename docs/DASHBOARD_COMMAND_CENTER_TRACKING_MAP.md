@@ -11,7 +11,7 @@ DreamCo should have two polished control surfaces:
 | --- | --- | --- |
 | Actions | tasks, blockers, owners, approvals, evidence | GitHub Issues, Actions, `reports/*.md` |
 | Agents | bot modes, permissions, abilities, memory policy | `bot.control.json`, `config/buddy-mcp-tool-registry.json` |
-| MCP Tools | GitHub, web research, Stripe, IBM Bob, local commands | `config/buddy-mcp-tool-registry.json` |
+| MCP Tools | GitHub, web research, Stripe, External Builder, local commands | `config/buddy-mcp-tool-registry.json` |
 | Model Router | provider toggles, task routes, cost/quality mode | `config/buddy-model-router.json` |
 | Commands | scan, build, test, repair, revenue report | `package.json`, GitHub Actions |
 | Missing Files | broken imports, missing metadata, dependency gaps | `reports/bot-health-report.md`, `reports/dependency-audit-report.md` |
@@ -38,7 +38,7 @@ DreamCo should have two polished control surfaces:
 - Current user request.
 - Active bot/agent.
 - Mode toggle: Observe, Diagnose, Draft, Build, Test, Command, Autopilot, Locked.
-- Tool toggles: GitHub, web research, Stripe, model router, local command, IBM Bob if verified.
+- Tool toggles: GitHub, web research, Stripe, model router, local command, External Builder if verified.
 - Context panel: selected repo files, reports, customer/offer, current workflow stage.
 - Output panel: answer, files changed, tests run, revenue impact, next action.
 - Safety panel: approval required, risk level, command permission, privacy note.

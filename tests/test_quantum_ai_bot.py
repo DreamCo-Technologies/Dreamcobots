@@ -344,11 +344,11 @@ class TestQuantumPartnershipManager:
         pm = QuantumPartnershipManager()
         assert pm.tier == Tier.FREE
 
-    def test_free_connect_ibm_quantum(self):
+    def test_free_connect_enterprise_ai_quantum(self):
         pm = QuantumPartnershipManager(tier=Tier.FREE)
-        result = pm.connect_quantum_provider("IBM_Quantum")
+        result = pm.connect_quantum_provider("Enterprise AI_Quantum")
         assert result["status"] == "connected"
-        assert result["provider"] == "IBM_Quantum"
+        assert result["provider"] == "Enterprise AI_Quantum"
 
     def test_free_connect_google_raises(self):
         pm = QuantumPartnershipManager(tier=Tier.FREE)
@@ -395,19 +395,19 @@ class TestQuantumPartnershipManager:
     def test_free_resource_estimate_raises(self):
         pm = QuantumPartnershipManager(tier=Tier.FREE)
         with pytest.raises(QuantumPartnershipManagerError):
-            pm.get_quantum_resource_estimate({"qubits": 4, "gates": 10, "shots": 100}, "ibmq_manila")
+            pm.get_quantum_resource_estimate({"qubits": 4, "gates": 10, "shots": 100}, "enterprise_aiq_manila")
 
     def test_pro_resource_estimate_returns_dict(self):
         pm = QuantumPartnershipManager(tier=Tier.PRO)
-        result = pm.get_quantum_resource_estimate({"qubits": 8, "gates": 20, "shots": 500}, "ibmq_manila")
+        result = pm.get_quantum_resource_estimate({"qubits": 8, "gates": 20, "shots": 500}, "enterprise_aiq_manila")
         assert isinstance(result, dict)
         for key in ("estimated_cost_usd", "qubit_fidelity", "recommended_shots"):
             assert key in result
 
     def test_connection_stored(self):
         pm = QuantumPartnershipManager(tier=Tier.FREE)
-        pm.connect_quantum_provider("IBM_Quantum")
-        assert "IBM_Quantum" in pm._connected_providers
+        pm.connect_quantum_provider("Enterprise AI_Quantum")
+        assert "Enterprise AI_Quantum" in pm._connected_providers
 
 
 # ===========================================================================
@@ -480,7 +480,7 @@ class TestQuantumAIBotOptimization:
 class TestQuantumAIBotPartnership:
     def test_connect_quantum_partner_free(self):
         bot = QuantumAIBot(tier=Tier.FREE)
-        result = bot.connect_quantum_partner("IBM_Quantum")
+        result = bot.connect_quantum_partner("Enterprise AI_Quantum")
         assert result["status"] == "connected"
 
     def test_connect_quantum_partner_tier_violation(self):
