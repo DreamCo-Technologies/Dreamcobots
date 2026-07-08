@@ -107,7 +107,7 @@ def load_divisions() -> list[dict[str, Any]]:
 
 def load_profiles() -> list[dict[str, Any]]:
     profiles: list[dict[str, Any]] = []
-    for profile_path in sorted(BOTS_DIR.glob("*/replit_profile.json")):
+    for profile_path in sorted(BOTS_DIR.glob("*/bot_profile.json")):
         profile = load_json(profile_path)
         slug = str(profile.get("slug") or profile_path.parent.name).strip()
         profile["slug"] = slug
@@ -247,7 +247,7 @@ def build_blueprint_schema(generated_at: str) -> dict[str, Any]:
                     "slug": {"type": "string", "minLength": 1},
                     "displayName": {"type": "string", "minLength": 1},
                     "division": {"type": "string", "minLength": 1},
-                    "profile_path": {"type": "string", "pattern": "^bots/.+/replit_profile\\.json$"},
+                    "profile_path": {"type": "string", "pattern": "^bots/.+/bot_profile\\.json$"},
                 },
             },
             "runtime": {
@@ -402,7 +402,7 @@ def build_registry(generated_at: str) -> tuple[dict[str, Any], dict[str, Any]]:
     registry = {
         "schema": "master_bot_registry.v2",
         "updated_at": generated_at,
-        "generated_from": ["config/divisions.json", "bots/*/replit_profile.json"],
+        "generated_from": ["config/divisions.json", "bots/*/bot_profile.json"],
         "repository": "DreamCo-Technologies/Dreamcobots",
         "summary": {
             "division_count": len(divisions),

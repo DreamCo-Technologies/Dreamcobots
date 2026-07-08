@@ -8,7 +8,7 @@ Every bot must be configurable, measurable, and paced. No bot learns randomly. E
 
 ## Bot control profile
 
-Each bot should have a `bot.control.json` file next to its manifest or Replit profile.
+Each bot should have a `bot.control.json` file next to its manifest or DreamCo profile.
 
 ```json
 {

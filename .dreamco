@@ -3,20 +3,20 @@ language = "python3"
 
 # ── Resource target: 2 vCPUs / 4 GiB RAM ──────────────────────────────────
 # These values are informational hints; actual allocation is controlled by
-# your Replit plan.  The project is designed to run comfortably within
-# Replit's 2 vCPU / 4 GiB Boost configuration.
+# your DreamCo plan.  The project is designed to run comfortably within
+# DreamCo's 2 vCPU / 4 GiB Boost configuration.
 
 [nix]
 channel = "stable-22_11"
 
 # ── Environment variables injected into every run ─────────────────────────
-# Non-sensitive defaults only.  Set REAL secrets in Replit Secrets (the 🔒
+# Non-sensitive defaults only.  Set REAL secrets in DreamCo Secrets (the 🔒
 # icon in the sidebar) — never put actual credentials here.
 [env]
 PYTHONPATH = "/home/runner/${REPL_SLUG}"
 SIMULATION_MODE = "true"
 LOG_LEVEL = "INFO"
-# Required secrets (add values in Replit Secrets, NOT here):
+# Required secrets (add values in DreamCo Secrets, NOT here):
 #   AI_INTEGRATIONS_OPENAI_API_KEY  — OpenAI key for the AI-integrations bot
 #   OPENAI_API_KEY                  — General OpenAI API key
 #   OPENAI_ENDPOINT                 — Custom OpenAI-compatible endpoint URL (optional)
@@ -56,8 +56,8 @@ support = true
 
       [debugger.interactive.initializeMessage.arguments]
       adapterID = "debugpy"
-      clientID = "replit"
-      clientName = "replit.com"
+      clientID = "dreamco"
+      clientName = "dreamco.local"
       columnsStartAt1 = true
       linesStartAt1 = true
       locale = "en-us"

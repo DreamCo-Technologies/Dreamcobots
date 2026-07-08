@@ -20,7 +20,7 @@ TTL_SECONDS = 3600
 
 def _load_profiles() -> list[dict[str, Any]]:
     profiles = []
-    for profile_path in sorted((ROOT / "bots").glob("*/replit_profile.json")):
+    for profile_path in sorted((ROOT / "bots").glob("*/bot_profile.json")):
         profiles.append(json.loads(profile_path.read_text()))
     return profiles
 

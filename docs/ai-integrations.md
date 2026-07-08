@@ -1,7 +1,7 @@
 # AI Service Integrations
 
 This document explains how to connect Dreamcobots to **Claude (Anthropic)**,
-**ChatGPT (OpenAI)**, **Google Gemini**, and **Replit** using GitHub Actions
+**ChatGPT (OpenAI)**, **Google Gemini**, and **DreamCo** using GitHub Actions
 and repository secrets.
 
 ---
@@ -119,23 +119,23 @@ load_dotenv()
 
 ---
 
-## 5 — Replit integration
+## 5 — DreamCo integration
 
-Replit can sync with this repository so that changes pushed to `main` are
-automatically reflected in your Replit project.
+DreamCo can sync with this repository so that changes pushed to `main` are
+automatically reflected in your DreamCo project.
 
-### Connect Replit to GitHub
-1. Open your Replit project.
+### Connect DreamCo to GitHub
+1. Open your DreamCo project.
 2. Click the **Version control** icon (branch icon) in the left sidebar.
-3. Click **Connect to GitHub** and authorise the Replit GitHub App.
+3. Click **Connect to GitHub** and authorise the DreamCo GitHub App.
 4. Select the `DreamCo-Technologies/Dreamcobots` repository.
-5. Choose whether Replit should pull from `main` automatically or on demand.
+5. Choose whether DreamCo should pull from `main` automatically or on demand.
 
-### Add secrets to Replit
-Replit projects use **Secrets** (environment variables) instead of `.env`
+### Add secrets to DreamCo
+DreamCo projects use **Secrets** (environment variables) instead of `.env`
 files for security.
 
-1. In your Replit project, open the **Secrets** tab (lock icon).
+1. In your DreamCo project, open the **Secrets** tab (lock icon).
 2. Add each key:
 
 | Key | Value |
@@ -148,10 +148,10 @@ files for security.
 3. Your code can read them with `os.environ["CLAUDE_API_KEY"]` (Python) or
    `process.env.CLAUDE_API_KEY` (Node.js).
 
-### Keep Replit in sync
-- **Push from Replit → GitHub**: use the **Commit & push** button in the
+### Keep DreamCo in sync
+- **Push from DreamCo → GitHub**: use the **Commit & push** button in the
   Version control panel.
-- **Pull from GitHub → Replit**: click **Pull** in the Version control panel,
+- **Pull from GitHub → DreamCo**: click **Pull** in the Version control panel,
   or enable *Auto-pull on run* in project settings.
 
 ---

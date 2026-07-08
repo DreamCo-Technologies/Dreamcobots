@@ -6,7 +6,7 @@ const root = path.resolve(process.cwd(), '..', '..', '..');
 const botsDir = path.join(root, 'bots');
 
 function readProfile(slug: string) {
-  const profilePath = path.join(botsDir, slug, 'replit_profile.json');
+  const profilePath = path.join(botsDir, slug, 'bot_profile.json');
   if (!fs.existsSync(profilePath)) return null;
   return JSON.parse(fs.readFileSync(profilePath, 'utf8')) as Record<string, any>;
 }

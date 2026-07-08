@@ -140,7 +140,7 @@ def _slug(value: str) -> str:
 
 def _load_profiles() -> list[dict[str, Any]]:
     profiles: list[dict[str, Any]] = []
-    for profile_path in sorted(BOTS_DIR.glob("*/replit_profile.json")):
+    for profile_path in sorted(BOTS_DIR.glob("*/bot_profile.json")):
         payload = json.loads(profile_path.read_text(encoding="utf-8"))
         payload["slug"] = payload.get("slug") or profile_path.parent.name
         payload["displayName"] = payload.get("displayName") or payload["slug"].replace("-", " ").title()
@@ -366,7 +366,7 @@ def _build_specializations(profiles: list[dict[str, Any]]) -> dict[str, Any]:
     return {
         "schema": "dreamco.bot_specializations.v3",
         "generated_at": generated_at,
-        "source": "bots/*/replit_profile.json",
+        "source": "bots/*/bot_profile.json",
         "constraints": {
             "per_bot_webhooks": WEBHOOK_COUNT,
             "per_bot_tools": TOOL_COUNT,

@@ -1,6 +1,6 @@
 # Empire OS — Full Stack Source Code
 
-This folder contains the complete DreamCo Empire OS web application source code, synced from Replit.
+This folder contains the complete DreamCo Empire OS web application source code, synced from DreamCo.
 
 ## Stack
 - **Frontend**: React 19 + Vite + TailwindCSS + shadcn/ui (29 pages)

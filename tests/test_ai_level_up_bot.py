@@ -188,7 +188,7 @@ class TestAICompaniesDatabase:
         companies = self.db.get_by_category("AI Coding Platforms")
         names = [c.company_name for c in companies]
         assert "GitHub" in names
-        assert "Replit" in names
+        assert "DreamCo" in names
 
     def test_get_by_category_image_generation(self):
         companies = self.db.get_by_category("AI Image Generation")

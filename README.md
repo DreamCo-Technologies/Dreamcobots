@@ -1,6 +1,6 @@
 # 🤖 DreamCo Empire OS — Bot Repository
 
-> **1 AI bots · 3 divisions · Self-learning · Revenue-generating · Fully deployed on Replit**
+> **1 AI bots · 3 divisions · Self-learning · Revenue-generating · Fully deployed on DreamCo**
 
 [![🪐 Command Tower](https://github.com/DreamCo-Technologies/Dreamcobots/actions/workflows/command-tower.yml/badge.svg)](https://github.com/DreamCo-Technologies/Dreamcobots/actions/workflows/command-tower.yml)
 [![💰 Revenue Engine](https://github.com/DreamCo-Technologies/Dreamcobots/actions/workflows/revenue_engine.yml/badge.svg)](https://github.com/DreamCo-Technologies/Dreamcobots/actions/workflows/revenue_engine.yml)
@@ -15,21 +15,21 @@
 
 ## DreamCo Command Center Merge
 
-The Replit-built `DreamCo-Technologies/DreamCo-Command-Center` app is now being merged into this main Dreamcobots repository in stages.
+The DreamCo-built `DreamCo-Technologies/DreamCo-Command-Center` app is now being merged into this main Dreamcobots repository in stages.
 
 - Stage 1 integration scaffold: `integrations/dreamco-command-center/README.md`
 - Source/system inventory: `integrations/dreamco-command-center/SYSTEM_INVENTORY.md`
-- Merge goal: preserve the command-center dashboard, API server, bot contract system, database schemas, attached Replit directives, and helper libraries without breaking the existing bot repository.
+- Merge goal: preserve the command-center dashboard, API server, bot contract system, database schemas, attached DreamCo directives, and helper libraries without breaking the existing bot repository.
 
 ## 📁 Repository Structure
 
 | Folder | Files | Description |
 |--------|-------|-------------|
-| `bots/{slug}/replit_profile.json` | 1051 | Every bot profile synced from Empire OS |
+| `bots/{slug}/bot_profile.json` | 1051 | Every bot profile synced from Empire OS |
 | `python_bots/` | 16 | Python bots (FastAPI, PyTorch, LangChain, etc.) |
 | `java_bots/` | 31 | Java/Kotlin bots (Spring Boot, Android, etc.) |
 | `empire-os/` | 80+ | Full React + Express source code |
-| `integrations/dreamco-command-center/` | staged | Command Center merge plan and imported Replit systems |
+| `integrations/dreamco-command-center/` | staged | Command Center merge plan and imported DreamCo systems |
 | `workflows.json` | 1 | Automated revenue workflows |
 
 ## 🏢 Divisions (3)
@@ -114,4 +114,4 @@ Every bot logs learnings after each conversation using the `SELF_LEARNING_PROMPT
 The master coding brain covering 500+ libraries. Every other bot routes coding tasks through Buddy Bot automatically.
 
 ---
-*Synced from DreamCo Empire OS on Replit — Autonomous wealth generation at scale*
+*Synced from DreamCo Empire OS on DreamCo — Autonomous wealth generation at scale*

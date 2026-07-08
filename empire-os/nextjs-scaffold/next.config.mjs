@@ -10,7 +10,7 @@ function readBotSlugs() {
     .readdirSync(botsDir, { withFileTypes: true })
     .filter((entry) => entry.isDirectory())
     .map((entry) => entry.name)
-    .filter((slug) => fs.existsSync(path.join(botsDir, slug, 'replit_profile.json')));
+    .filter((slug) => fs.existsSync(path.join(botsDir, slug, 'bot_profile.json')));
 }
 
 const nextConfig = {

@@ -82,11 +82,11 @@ FAQ_KB = [
         ),
     },
     {
-        "keywords": ["deploy", "hosting", "cloud", "server", "heroku", "replit"],
+        "keywords": ["deploy", "hosting", "cloud", "server", "heroku", "dreamco"],
         "answer": (
             "All bots are deployed on cloud infrastructure. "
             "We offer managed hosting on free-tier-compatible platforms "
-            "(Heroku, Railway, Replit) and can also deploy to your own servers."
+            "(Heroku, Railway, DreamCo) and can also deploy to your own servers."
         ),
     },
     {

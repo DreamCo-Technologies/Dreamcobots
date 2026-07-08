@@ -606,7 +606,7 @@ export default function ConnectionsPage() {
               <CardContent className="p-4 flex items-center gap-3">
                 <Shield className="h-4 w-4 text-primary flex-shrink-0" />
                 <p className="text-sm text-muted-foreground">
-                  All API keys are encrypted. Low to zero API costs - you'll be notified before any charges apply. Same pricing as Replit.
+                  All API keys are encrypted. Low to zero API costs - you'll be notified before any charges apply. DreamCo transparent pricing.
                 </p>
               </CardContent>
             </Card>

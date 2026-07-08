@@ -34,8 +34,8 @@ jobs:
           from pathlib import Path
 
           def infer_dashboard_name(path: Path) -> str:
-              if path.as_posix() == "replit.md":
-                  return "Replit Dashboard"
+              if path.as_posix() == "dreamco.md":
+                  return "DreamCo Dashboard"
               return path.stem.replace("_", " ").replace("-", " ").title()
 
           tracked_files = subprocess.check_output(
@@ -58,14 +58,14 @@ jobs:
                       }
                   )
 
-          replit_path = Path("replit.md")
-          if replit_path.exists() and not any(d["path"] == "replit.md" for d in dashboards):
+          dreamco_path = Path("dreamco.md")
+          if dreamco_path.exists() and not any(d["path"] == "dreamco.md" for d in dashboards):
               dashboards.append(
                   {
-                      "name": "Replit Dashboard",
-                      "path": "replit.md",
+                      "name": "DreamCo Dashboard",
+                      "path": "dreamco.md",
                       "type": "md",
-                      "size_bytes": replit_path.stat().st_size,
+                      "size_bytes": dreamco_path.stat().st_size,
                   }
               )
 
@@ -83,7 +83,7 @@ jobs:
           lines = [
               "## 📊 Dashboard Comparison",
               "",
-              f"Discovered **{len(dashboards)}** dashboard entries (including Replit dashboard when present).",
+              f"Discovered **{len(dashboards)}** dashboard entries (including DreamCo dashboard when present).",
               "",
               "| Dashboard | Path | Type | Size (bytes) |",
               "|---|---|---:|---:|",

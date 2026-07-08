@@ -11,16 +11,16 @@ import { ALL_BOTS as CORE_BOTS } from "./seed-bots";
 import { GITHUB_BOTS } from "./seed-github-bots";
 import { CODELAB_BOTS } from "./seed-codelabs";
 import { BUDDY_BOT } from "./seed-buddy-bot";
-import { DIVISIONS, insertBotMetricSchema, insertBotErrorSchema, insertBotFinancialSchema, insertAlertRuleSchema, insertDealSchema, insertDebugEventSchema, insertAutoFixSchema, insertRevenueLeakSchema, insertSecurityScanSchema, insertFormulaSchema, insertPlatformConnectionSchema, insertPluginSchema, insertBotMemorySchema, insertSystemSnapshotSchema, insertCostEventSchema, type CrossDivisionDelegation, type Division, type ReplitMigrationValidationReport } from "@shared/schema";
+import { DIVISIONS, insertBotMetricSchema, insertBotErrorSchema, insertBotFinancialSchema, insertAlertRuleSchema, insertDealSchema, insertDebugEventSchema, insertAutoFixSchema, insertRevenueLeakSchema, insertSecurityScanSchema, insertFormulaSchema, insertPlatformConnectionSchema, insertPluginSchema, insertBotMemorySchema, insertSystemSnapshotSchema, insertCostEventSchema, type CrossDivisionDelegation, type Division, type DreamCoMigrationValidationReport } from "@shared/schema";
 import { calculateRealEstate, calculateCarFlip, type RealEstateInputs, type CarFlipInputs } from "@shared/deal-calculations";
 import { FORMULA_LIBRARY } from "@shared/formula-library";
 import { buildEnhancedSystemPrompt } from "@shared/tool-belt";
 import { getUncachableStripeClient, getStripePublishableKey } from "./stripeClient";
 import { db } from "./db";
-import { batchProcessWithSSE } from "./replit_integrations/batch";
+import { batchProcessWithSSE } from "./dreamco_integrations/batch";
 import { buildDivisionRuntime } from "./division-runtime";
 import { createDelegation, decideApprovalGate, updateDependencyStatus } from "./division-orchestration";
-import { buildReplitMigrationManifest, ingestReplitManifest } from "./replit_integrations/migration";
+import { buildDreamCoMigrationManifest, ingestDreamCoManifest } from "./dreamco_integrations/migration";
 
 const CORE_SLUGS = new Set(CORE_BOTS.map(b => b.slug));
 const GITHUB_SLUGS = new Set(GITHUB_BOTS.map(b => b.slug));
@@ -28,7 +28,7 @@ const DEDUPED_GITHUB = GITHUB_BOTS.filter(b => !CORE_SLUGS.has(b.slug));
 const DEDUPED_CODELAB = CODELAB_BOTS.filter(b => !CORE_SLUGS.has(b.slug) && !GITHUB_SLUGS.has(b.slug));
 const ALL_BOTS = [...CORE_BOTS, ...DEDUPED_GITHUB, ...DEDUPED_CODELAB];
 const DELEGATION_KEY = "cross_division_delegations";
-const REPLIT_MIGRATION_REPORT_KEY = "replit_migration_report";
+const DREAMCO_MIGRATION_REPORT_KEY = "dreamco_migration_report";
 
 const openai = new OpenAI({
   apiKey: process.env.AI_INTEGRATIONS_OPENAI_API_KEY,
@@ -814,31 +814,31 @@ export async function registerRoutes(
     }
   });
 
-  app.get("/api/migration/replit/manifest", async (req, res) => {
+  app.get("/api/migration/dreamco/manifest", async (req, res) => {
     const expected = Number(req.query.expectedTotal ?? 1200);
     const repositoryRoot = path.resolve(process.cwd(), "..");
-    const manifest = await buildReplitMigrationManifest(repositoryRoot, Number.isFinite(expected) ? expected : 1200);
+    const manifest = await buildDreamCoMigrationManifest(repositoryRoot, Number.isFinite(expected) ? expected : 1200);
     res.json(manifest);
   });
 
-  app.post("/api/migration/replit/ingest", async (req, res) => {
+  app.post("/api/migration/dreamco/ingest", async (req, res) => {
     const expected = Number(req.body?.expectedTotal ?? 1200);
     const repositoryRoot = path.resolve(process.cwd(), "..");
-    const result = await ingestReplitManifest(repositoryRoot, storage, Number.isFinite(expected) ? expected : 1200);
-    await storage.upsertSetting(REPLIT_MIGRATION_REPORT_KEY, result.report);
+    const result = await ingestDreamCoManifest(repositoryRoot, storage, Number.isFinite(expected) ? expected : 1200);
+    await storage.upsertSetting(DREAMCO_MIGRATION_REPORT_KEY, result.report);
     res.json(result);
   });
 
-  app.get("/api/migration/replit/report", async (req, res) => {
+  app.get("/api/migration/dreamco/report", async (req, res) => {
     const expected = Number(req.query.expectedTotal ?? 1200);
-    const setting = await storage.getSetting(REPLIT_MIGRATION_REPORT_KEY);
-    const report = setting?.value as ReplitMigrationValidationReport | undefined;
+    const setting = await storage.getSetting(DREAMCO_MIGRATION_REPORT_KEY);
+    const report = setting?.value as DreamCoMigrationValidationReport | undefined;
     if (report) {
       const complete = report.unaccounted === 0 && report.expectedTotal >= expected;
       return res.json({ ...report, complete });
     }
     const repositoryRoot = path.resolve(process.cwd(), "..");
-    const manifest = await buildReplitMigrationManifest(repositoryRoot, Number.isFinite(expected) ? expected : 1200);
+    const manifest = await buildDreamCoMigrationManifest(repositoryRoot, Number.isFinite(expected) ? expected : 1200);
     const unaccounted = Math.max(0, manifest.expectedTotal - manifest.discoveredAssets);
     res.json({
       expectedTotal: manifest.expectedTotal,
@@ -849,7 +849,7 @@ export async function registerRoutes(
       unmapped: 0,
       unaccounted,
       complete: unaccounted === 0,
-    } satisfies ReplitMigrationValidationReport);
+    } satisfies DreamCoMigrationValidationReport);
   });
 
   // Bot Metrics & Tracking

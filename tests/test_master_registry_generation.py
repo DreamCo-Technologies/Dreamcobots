@@ -14,7 +14,7 @@ def load_json(relative_path: str):
 def test_master_registry_covers_all_divisions_and_bot_profiles():
     divisions = load_json("config/divisions.json")["divisions"]
     registry = load_json("config/master_bot_registry.json")
-    profile_count = len(list((ROOT / "bots").glob("*/replit_profile.json")))
+    profile_count = len(list((ROOT / "bots").glob("*/bot_profile.json")))
 
     assert registry["summary"]["division_count"] == 45
     assert len(registry["divisions"]) == len(divisions) == 45

@@ -43,7 +43,7 @@ def render(profile: dict) -> str:
 def main() -> None:
     OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
     count = 0
-    for path in sorted((ROOT / "bots").glob("*/replit_profile.json")):
+    for path in sorted((ROOT / "bots").glob("*/bot_profile.json")):
         profile = json.loads(path.read_text())
         slug = profile.get("slug", path.parent.name)
         (OUTPUT_DIR / f"{slug}.md").write_text(render(profile))

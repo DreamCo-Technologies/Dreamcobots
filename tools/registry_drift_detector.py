@@ -17,7 +17,7 @@ def parse_seed_bots() -> set[str]:
 
 
 def parse_profiles() -> set[str]:
-    return {path.parent.name for path in (ROOT / "bots").glob("*/replit_profile.json")}
+    return {path.parent.name for path in (ROOT / "bots").glob("*/bot_profile.json")}
 
 
 def main() -> None:

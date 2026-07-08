@@ -131,7 +131,7 @@ KNOWN_API_PATTERNS = {
     "upwork": {"base_url": "https://api.upwork.com/api", "auth": "oauth1", "rate_limit_rpm": 120},
     "twilio": {"base_url": "https://api.twilio.com/2010-04-01", "auth": "basic", "rate_limit_rpm": 300},
     "sendgrid": {"base_url": "https://api.sendgrid.com/v3", "auth": "bearer", "rate_limit_rpm": 600},
-    "replit": {"base_url": "https://replit.com/api/v1", "auth": "bearer", "rate_limit_rpm": 60},
+    "dreamco": {"base_url": "https://dreamco.local/api/v1", "auth": "bearer", "rate_limit_rpm": 60},
     "neon": {"base_url": "https://console.neon.tech/api/v2", "auth": "bearer", "rate_limit_rpm": 200},
     "pinecone": {"base_url": "https://api.pinecone.io", "auth": "apikey", "rate_limit_rpm": 100},
 }

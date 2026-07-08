@@ -83,7 +83,7 @@ function findBotCandidates() {
       const hasBotSignal = files.some((filePath) => {
         const base = path.basename(filePath).toLowerCase();
         return base === 'bot.manifest.json'
-          || base === 'replit_profile.json'
+          || base === 'bot_profile.json'
           || base === 'package.json'
           || base === 'readme.md'
           || /bot|agent|workflow|orchestrator/i.test(filePath);
@@ -149,7 +149,7 @@ function scanBot(candidate) {
 
   if (candidate.kind === 'folder-bot') {
     if (!bases.has('readme.md')) {issues.push('Missing README.md');}
-    if (!bases.has('bot.manifest.json') && !bases.has('replit_profile.json') && !bases.has('package.json')) {
+    if (!bases.has('bot.manifest.json') && !bases.has('bot_profile.json') && !bases.has('package.json')) {
       issues.push('Missing bot manifest/profile/package metadata');
     }
   }

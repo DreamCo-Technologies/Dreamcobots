@@ -42,7 +42,7 @@ class KnowledgeIngestionPipeline:
     def ingest(self) -> dict[str, int]:
         indexed = 0
         skipped = 0
-        for profile_path in sorted((ROOT / "bots").glob("*/replit_profile.json")):
+        for profile_path in sorted((ROOT / "bots").glob("*/bot_profile.json")):
             payload = json.loads(profile_path.read_text())
             slug = payload.get("slug", profile_path.parent.name)
             digest = self._hash_profile(payload)

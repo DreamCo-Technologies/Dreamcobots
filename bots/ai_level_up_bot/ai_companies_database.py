@@ -171,9 +171,9 @@ _COMPANIES: List[AICompany] = [
         description="Microsoft-owned platform offering AI-powered coding assistant.",
     ),
     AICompany(
-        company_name="Replit",
+        company_name="DreamCo",
         category="AI Coding Platforms",
-        tools=["Replit AI", "Ghostwriter", "Replit Deployments"],
+        tools=["DreamCo AI", "Ghostwriter", "DreamCo Deployments"],
         pricing="freemium",
         region="USA",
         api_available=True,

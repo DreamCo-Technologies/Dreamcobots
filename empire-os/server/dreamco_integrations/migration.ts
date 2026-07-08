@@ -1,6 +1,6 @@
 import fs from "node:fs/promises";
 import path from "node:path";
-import { DIVISIONS, type Division, type InsertBotProfile, type ReplitMigrationManifest, type ReplitMigrationManifestEntry, type ReplitMigrationValidationReport } from "@shared/schema";
+import { DIVISIONS, type Division, type InsertBotProfile, type DreamCoMigrationManifest, type DreamCoMigrationManifestEntry, type DreamCoMigrationValidationReport } from "@shared/schema";
 
 const DIVISION_SET = new Set(DIVISIONS);
 
@@ -12,13 +12,13 @@ function toSlug(value: string): string {
     .replace(/(^-|-$)/g, "");
 }
 
-async function collectManifestEntries(dir: string, rootDir: string): Promise<ReplitMigrationManifestEntry[]> {
+async function collectManifestEntries(dir: string, rootDir: string): Promise<DreamCoMigrationManifestEntry[]> {
   const children = await fs.readdir(dir, { withFileTypes: true });
   const nestedEntries = await Promise.all(
     children.map(async (child) => {
       const fullPath = path.join(dir, child.name);
       if (child.isDirectory()) return collectManifestEntries(fullPath, rootDir);
-      if (!child.isFile() || child.name !== "replit_profile.json") return [];
+      if (!child.isFile() || child.name !== "bot_profile.json") return [];
       try {
         const raw = await fs.readFile(fullPath, "utf-8");
         const parsed = JSON.parse(raw) as Record<string, unknown>;
@@ -27,7 +27,7 @@ async function collectManifestEntries(dir: string, rootDir: string): Promise<Rep
         return [{
           slug,
           division,
-          source: "replit_profile" as const,
+          source: "bot_profile" as const,
           filePath: path.relative(rootDir, fullPath),
         }];
       } catch {
@@ -38,7 +38,7 @@ async function collectManifestEntries(dir: string, rootDir: string): Promise<Rep
   return nestedEntries.flat();
 }
 
-export async function buildReplitMigrationManifest(repositoryRoot: string, expectedTotal = 1200): Promise<ReplitMigrationManifest> {
+export async function buildDreamCoMigrationManifest(repositoryRoot: string, expectedTotal = 1200): Promise<DreamCoMigrationManifest> {
   const botsDir = path.join(repositoryRoot, "bots");
   const entries = await collectManifestEntries(botsDir, repositoryRoot);
   entries.sort((a, b) => a.slug.localeCompare(b.slug));
@@ -57,11 +57,11 @@ export interface IngestedRecord {
 }
 
 export interface MigrationIngestResult {
-  report: ReplitMigrationValidationReport;
+  report: DreamCoMigrationValidationReport;
   processed: IngestedRecord[];
 }
 
-export interface ReplitMigrationStorage {
+export interface DreamCoMigrationStorage {
   listBotProfiles(): Promise<Array<{ slug: string }>>;
   createBotProfile(input: InsertBotProfile): Promise<unknown>;
 }
@@ -74,7 +74,7 @@ function normalizeProfile(profile: Record<string, unknown>): InsertBotProfile | 
   const division = typeof profile.division === "string" && DIVISION_SET.has(profile.division as Division) ? profile.division : "CommandCore";
   const category = typeof profile.category === "string" ? profile.category : "general";
   const tier = typeof profile.tier === "string" ? profile.tier : "free";
-  const description = typeof profile.description === "string" ? profile.description : `${displayName} imported from Replit`;
+  const description = typeof profile.description === "string" ? profile.description : `${displayName} imported from DreamCo`;
   const capabilities = Array.isArray(profile.capabilities) ? profile.capabilities.filter((x) => typeof x === "string") : [];
   return {
     slug,
@@ -84,13 +84,13 @@ function normalizeProfile(profile: Record<string, unknown>): InsertBotProfile | 
     tier,
     description,
     capabilities,
-    revenueModel: typeof profile.revenueModel === "string" ? profile.revenueModel : "Replit migration",
+    revenueModel: typeof profile.revenueModel === "string" ? profile.revenueModel : "DreamCo migration",
     targetUsers: typeof profile.targetUsers === "string" ? profile.targetUsers : "DreamCo operators",
     status: typeof profile.status === "string" ? profile.status : "active",
     priceRange: typeof profile.priceRange === "string" ? profile.priceRange : "",
-    systemPrompt: `You are ${displayName}, imported from Replit into DreamCo Empire OS ${division}. Execute tasks safely and escalate high-risk decisions.`,
+    systemPrompt: `You are ${displayName}, imported from DreamCo into DreamCo Empire OS ${division}. Execute tasks safely and escalate high-risk decisions.`,
     traits: {
-      source: "replit_migration",
+      source: "dreamco_migration",
       version: typeof profile.version === "string" ? profile.version : "1.0",
       importedAt: new Date().toISOString(),
     },
@@ -100,12 +100,12 @@ function normalizeProfile(profile: Record<string, unknown>): InsertBotProfile | 
   } as InsertBotProfile;
 }
 
-export async function ingestReplitManifest(
+export async function ingestDreamCoManifest(
   repositoryRoot: string,
-  storage: ReplitMigrationStorage,
+  storage: DreamCoMigrationStorage,
   expectedTotal = 1200,
 ): Promise<MigrationIngestResult> {
-  const manifest = await buildReplitMigrationManifest(repositoryRoot, expectedTotal);
+  const manifest = await buildDreamCoMigrationManifest(repositoryRoot, expectedTotal);
   const existing = new Set((await storage.listBotProfiles()).map((b) => b.slug));
   const processed: IngestedRecord[] = [];
   let imported = 0;

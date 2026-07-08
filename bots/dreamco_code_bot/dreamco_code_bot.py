@@ -1,4 +1,4 @@
-"""DreamCo Code Bot — Replit competitor for code building and execution."""
+"""DreamCo Code Bot — cloud code platform for code building and execution."""
 import sys
 import os
 import uuid
@@ -65,7 +65,7 @@ class ExecutionResult:
 
 class DreamCoCodeBot:
     """
-    DreamCo Code Bot — autonomous code execution platform competing with Replit.
+    DreamCo Code Bot — autonomous code execution platform for DreamCo-owned cloud code execution.
 
     Provides cloud-based code building, execution, and collaboration with
     multi-language support, persistent sessions, and AI-powered suggestions.

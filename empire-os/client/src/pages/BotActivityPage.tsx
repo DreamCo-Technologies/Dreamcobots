@@ -197,7 +197,7 @@ export default function BotActivityPage() {
                   {/* Push all bots */}
                   <div className="p-4 rounded-xl bg-muted/30 border border-border/50 space-y-2">
                     <p className="text-sm font-medium">Step 1 — Push All {activity.data?.totalBots ?? 1051} Bot Profiles</p>
-                    <p className="text-xs text-muted-foreground">Pushes every bot as <code className="bg-muted px-1 rounded">bots/slug/replit_profile.json</code> + Python bots to <code className="bg-muted px-1 rounded">python_bots/</code> + Java bots to <code className="bg-muted px-1 rounded">java_bots/</code> + updates README</p>
+                    <p className="text-xs text-muted-foreground">Pushes every bot as <code className="bg-muted px-1 rounded">bots/slug/bot_profile.json</code> + Python bots to <code className="bg-muted px-1 rounded">python_bots/</code> + Java bots to <code className="bg-muted px-1 rounded">java_bots/</code> + updates README</p>
                     <Button onClick={() => pushAll.mutate()} disabled={pushAll.isPending || pushSource.isPending} className="rounded-xl w-full" data-testid="push-all-btn-2">
                       {pushAll.isPending ? <><Loader2 className="h-4 w-4 mr-2 animate-spin" />Pushing bots... (this takes a few minutes)</> : <><UploadCloud className="h-4 w-4 mr-2" />Push All {activity.data?.totalBots ?? 1051} Bots</>}
                     </Button>

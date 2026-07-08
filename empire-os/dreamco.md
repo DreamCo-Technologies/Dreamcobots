@@ -13,7 +13,7 @@ The system employs a modern web stack:
 - **Frontend**: React, Vite, TailwindCSS, and shadcn/ui for a responsive and consistent user experience.
 - **Backend**: An Express.js API server handles all business logic and data interactions.
 - **Database**: PostgreSQL, specifically Neon-backed, managed with Drizzle ORM.
-- **AI**: Integrates OpenAI GPT-4.1-mini capabilities through Replit AI.
+- **AI**: Integrates OpenAI GPT-4.1-mini capabilities through DreamCo AI.
 
 **Core Architectural Decisions & Design Patterns:**
 - **Modular Design**: The system is structured into 45 divisions, each comprising multiple specialized AI bots, allowing for scalability and clear separation of concerns.
@@ -53,7 +53,7 @@ The system employs a modern web stack:
 
 ## GitHub Integration
 - GitHub OAuth integration (`connector:ccfg_github_01K4B9XD3VRVD2F99YM91YTCAF`) was proposed but dismissed by the user.
-- To push codebase to GitHub in the future, either: (1) re-authorize the GitHub integration via Replit, or (2) provide a GitHub Personal Access Token to store as a secret (`GITHUB_TOKEN`) and use the GitHub REST API to create/push the repo.
+- To push codebase to GitHub in the future, either: (1) re-authorize the GitHub integration via DreamCo, or (2) provide a GitHub Personal Access Token to store as a secret (`GITHUB_TOKEN`) and use the GitHub REST API to create/push the repo.
 
 ## External Dependencies
 - **OpenAI GPT-4.1-mini**: Utilized for core AI functionalities and integrations.

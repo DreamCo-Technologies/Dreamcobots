@@ -1,19 +1,19 @@
-# DreamCobots — Replit Guide
+# DreamCobots — DreamCo Guide
 
 This guide explains how to run, configure, and extend the DreamCobots project
-inside a [Replit](https://replit.com) environment.
+inside a [DreamCo](https://dreamco.local) environment.
 
 ---
 
-## Quick-Start on Replit
+## Quick-Start on DreamCo
 
 1. **Fork / import the repository**
-   - Open Replit and choose **Create Repl → Import from GitHub**.
+   - Open DreamCo and choose **Create Repl → Import from GitHub**.
    - Paste `https://github.com/ireanjordan24/Dreamcobots` and click **Import**.
 
 2. **Install dependencies**
 
-   Replit automatically installs packages listed in `requirements.txt`.
+   DreamCo automatically installs packages listed in `requirements.txt`.
    If that file is absent, open the *Shell* tab and run:
 
    ```bash
@@ -32,7 +32,7 @@ inside a [Replit](https://replit.com) environment.
    }
    ```
 
-   > **Never commit real API keys.** Use Replit *Secrets* (the 🔒 tab in the
+   > **Never commit real API keys.** Use DreamCo *Secrets* (the 🔒 tab in the
    > sidebar) to store sensitive values and load them via `os.environ`.
 
 4. **Run a bot**
@@ -43,7 +43,7 @@ inside a [Replit](https://replit.com) environment.
    python bots/government-contract-grant-bot/government_contract_grant_bot.py
    ```
 
-   Or set the **Run** button command in `.replit` to the script you want.
+   Or set the **Run** button command in `.dreamco` to the script you want.
 
 5. **Run the debug utility**
 
@@ -69,28 +69,28 @@ Dreamcobots/
 │   ├── README.md                            # Use-case examples
 │   └── stress_test.py                       # Stress / load tests
 ├── debug.py                                 # Debugging & diagnostic utility
-├── replit.md                                # This file
+├── dreamco.md                                # This file
 └── README.md                                # Main project documentation
 ```
 
 ---
 
-## Replit-Specific Tips
+## DreamCo-Specific Tips
 
 | Tip | Detail |
 |-----|--------|
-| **Secrets** | Store `API_KEY` and other credentials in Replit Secrets, not in source files. |
+| **Secrets** | Store `API_KEY` and other credentials in DreamCo Secrets, not in source files. |
 | **Always-On** | Enable *Always On* (Hacker plan+) if bots need to run 24/7. |
-| **Scheduled runs** | Use [Replit Deployments](https://docs.replit.com/hosting/deployments/about-deployments) or an external cron service to trigger bots on a schedule. |
-| **Packages** | Add new Python packages with `pip install <pkg>` in the Shell; Replit persists the environment between sessions. |
-| **`.replit` file** | Create a `.replit` file in the repo root to customise the Run button: `run = "python debug.py"` |
+| **Scheduled runs** | Use [DreamCo Deployments](https://docs.dreamco.local/hosting/deployments/about-deployments) or an external cron service to trigger bots on a schedule. |
+| **Packages** | Add new Python packages with `pip install <pkg>` in the Shell; DreamCo persists the environment between sessions. |
+| **`.dreamco` file** | Create a `.dreamco` file in the repo root to customise the Run button: `run = "python debug.py"` |
 
 ---
 
 ## Running the DreamSite Launcher
 
 The `DreamSite_Launcher` script bootstraps the full DreamCo site stack.
-After importing the repository on Replit:
+After importing the repository on DreamCo:
 
 ```bash
 python bots/dreamsite_launcher.py

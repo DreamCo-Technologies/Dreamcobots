@@ -1,4 +1,4 @@
-"""Tests for bots/dreamco_code_bot — DreamCo Replit competitor."""
+"""Tests for bots/dreamco_code_bot — DreamCo cloud code platform."""
 import sys
 import os
 

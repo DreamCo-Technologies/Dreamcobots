@@ -47,7 +47,7 @@ class CapabilityDiscovery:
         return seen[:8]
 
     def _update_profile(self, root: Path, capabilities: List[DiscoveredCapability]) -> None:
-        profile_path = root / 'replit_profile.json'
+        profile_path = root / 'bot_profile.json'
         profile = {}
         if profile_path.exists():
             profile = json.loads(profile_path.read_text(encoding='utf-8'))
@@ -70,8 +70,7 @@ def describe_capabilities(self, capabilities: List[DiscoveredCapability]) -> str
     parts = []
     for capability in capabilities:
         parts.append(f"{capability.name}: {capability.summary}")
-    return '
-'.join(parts)
+    return "\n".join(parts)
 
 
 CapabilityDiscovery.capability_matrix = capability_matrix

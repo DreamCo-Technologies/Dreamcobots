@@ -31,10 +31,10 @@
 | # | Idea | Status | File / Notes |
 |---|------|--------|--------------|
 | 16 | Full CI for all 1051 bots with language-specific matrices | 🔄 In Progress | `framework-compliance.yml` now 4-shard matrix; Java/TS TBD |
-| 17 | Automated sync from Replit → GitHub for Empire OS | 📋 Planned | Add `replit-sync.yml` with Replit deploy webhook |
+| 17 | Automated sync from DreamCo → GitHub for Empire OS | 📋 Planned | Add `dreamco-sync.yml` with DreamCo deploy webhook |
 | 18 | Blue-green deployment for live bot services | 📋 Planned | Use GitHub Environments with approval gate |
 | 19 | Containerization (Docker) for all production bots | 📋 Planned | Add `Dockerfile` template to `.github/bot-template/` |
-| 20 | Auto-deploy to Replit/Vercel/AWS | 📋 Planned | Add deploy jobs to `command-tower.yml` post-build |
+| 20 | Auto-deploy to DreamCo/Vercel/AWS | 📋 Planned | Add deploy jobs to `command-tower.yml` post-build |
 | 21 | Semantic release + changelog with bot-specific notes | 📋 Planned | `semantic-release` npm package + `CHANGELOG.md` auto-update |
 | 22 | Rollback on anomaly detection in revenue/learning metrics | 📋 Planned | Add rollback step to `auto-retrain.yml` on learning regression |
 | 23 | Zero-downtime updates for Pro/Enterprise/Elite bots | 📋 Planned | Canary deployment pattern in blue-green deploy |

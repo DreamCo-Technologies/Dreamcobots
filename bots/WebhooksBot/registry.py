@@ -1,7 +1,7 @@
 """
 WebhookBotRegistry — auto-discovers all DreamCo bots and registers webhooks.
 
-Scans the bots/ directory, reads each bot's config.json / replit_profile.json,
+Scans the bots/ directory, reads each bot's config.json / bot_profile.json,
 and calls WebhooksBot.register() for every discovered bot.
 
 GLOBAL AI SOURCES FLOW
@@ -49,8 +49,8 @@ class WebhookBotRegistry:
             bot_id = bot_dir.name.lower().replace("-", "_")
             meta = {"bot_id": bot_id, "path": str(bot_dir)}
 
-            # Try config.json first, then replit_profile.json
-            for cfg_name in ("config.json", "replit_profile.json"):
+            # Try config.json first, then bot_profile.json
+            for cfg_name in ("config.json", "bot_profile.json"):
                 cfg_path = bot_dir / cfg_name
                 if cfg_path.exists():
                     try:

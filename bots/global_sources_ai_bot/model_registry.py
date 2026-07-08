@@ -234,7 +234,7 @@ TOP_100_USE_CASES: list[UseCase] = [
             ["figma_ai", "v0", "galileo_ai", "uizard", "framer_ai"]),
     UseCase(60, "App Development",      "Frontend, backend, debugging, deployment, testing",
             ["app_development", "coding", "deployment"],
-            ["replit_ai", "bolt_new", "lovable", "cursor", "v0"]),
+            ["dreamco_ai", "bolt_new", "lovable", "cursor", "v0"]),
     UseCase(61, "Website Building",     "Templates, SEO, chatbots, ecommerce, optimization",
             ["website", "coding", "seo"],
             ["wix_ai", "framer_ai", "v0", "bolt_new", "lovable"]),
@@ -394,9 +394,9 @@ TOP_100_AI_MODELS: dict[str, AIModel] = {
     "gemini_code": AIModel("gemini_code", "Gemini Code Assist", "Google", "code",
         ["coding", "debugging", "app_development"],
         "https://generativelanguage.googleapis.com/v1beta/models", "low", 1000),
-    "replit_ai": AIModel("replit_ai", "Replit AI", "Replit", "code",
+    "dreamco_ai": AIModel("dreamco_ai", "DreamCo AI", "DreamCo", "code",
         ["coding", "app_development", "deployment"],
-        "https://replit.com/api", "low", 32),
+        "https://dreamco.local/api", "low", 32),
 
     # ── Open-source LLMs ─────────────────────────────────────────────────
     "llama": AIModel("llama", "Llama 3.3", "Meta", "llm",
