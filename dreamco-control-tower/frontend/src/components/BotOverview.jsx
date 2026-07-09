@@ -132,6 +132,7 @@ export default function BotOverview() {
             {/* Bot name + status dot */}
             <div className="flex items-center justify-between mb-3">
               <div>
+                <span className="mr-2 text-xl" aria-hidden="true">{bot.emoji ?? '🤖'}</span>
                 <span className="font-semibold text-white">{bot.name}</span>
                 {bot.team && (
                   <span className="ml-2 text-xs px-1.5 py-0.5 bg-slate-700 text-slate-400 rounded">
@@ -186,6 +187,21 @@ export default function BotOverview() {
                   <span className="text-dreamco-yellow font-semibold">{bot.pendingPRs}</span>
                 </div>
               )}
+
+              <div className="flex gap-3 pt-2">
+                <a
+                  href={`/${bot.dashboardUrl ?? `docs/bots/index.html?bot=${encodeURIComponent(bot.slug ?? bot.bot_id)}`}`}
+                  className="text-dreamco-accent underline"
+                >
+                  Dashboard
+                </a>
+                <a
+                  href={`/${bot.prospectusUrl ?? `docs/bots/index.html?bot=${encodeURIComponent(bot.slug ?? bot.bot_id)}#prospectus`}`}
+                  className="text-dreamco-accent underline"
+                >
+                  Prospectus
+                </a>
+              </div>
 
               {/* Last PR */}
               {bot.lastPR && (

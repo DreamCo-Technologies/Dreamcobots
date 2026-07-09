@@ -28,11 +28,15 @@ def test_every_bot_has_blueprint_and_cash_safety_gates():
     assert registry["autonomy_policy"]["human_approval_required_for_money_movement"] is True
 
     for bot in registry["bots"]:
+        assert bot["emoji"].strip()
+        assert bot["dashboard_url"] == f"docs/bots/index.html?bot={bot['slug']}"
+        assert bot["prospectus_url"].endswith(f"?bot={bot['slug']}#prospectus")
         blueprint = bot["blueprint"]
         assert blueprint["schema"] == "bot_blueprint.v1"
         assert blueprint["storage"]["mode"] == "local-first"
         assert blueprint["governance"]["approval_required_for_revenue"] is True
         assert blueprint["governance"]["approval_required_for_spend"] is True
+        assert blueprint["identity"]["emoji"] == bot["emoji"]
         assert bot["safety"]["autonomous_cash_enabled"] is False
         assert bot["safety"]["enterprise_ai_approval_claim"] is False
 
@@ -46,6 +50,20 @@ def test_control_tower_catalog_matches_master_registry():
     assert len(catalog["bots"]) == len(registry["bots"])
     assert len(catalog["divisions"]) == len(registry["divisions"])
     assert all(bot["governance"]["autonomous_cash_enabled"] is False for bot in catalog["bots"])
+    assert all(bot["emoji"].strip() for bot in catalog["bots"])
+    assert all(bot["dashboardUrl"] and bot["prospectusUrl"] for bot in catalog["bots"])
+
+
+def test_generated_bot_experience_covers_every_registered_bot():
+    registry = load_json("config/master_bot_registry.json")
+    experience = load_json("docs/bots/bots.json")
+
+    assert experience["bot_count"] == registry["summary"]["bot_count"]
+    assert len(experience["bots"]) == len(registry["bots"])
+    assert {bot["slug"] for bot in experience["bots"]} == {
+        bot["slug"] for bot in registry["bots"]
+    }
+    assert (ROOT / "docs/bots/index.html").exists()
 
 
 def test_local_first_storage_policy_defines_approval_gates():

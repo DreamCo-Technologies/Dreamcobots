@@ -1,55 +1,254 @@
-"""Generate investor prospectus markdown pages for every DreamCo bot."""
+"""Generate a searchable dashboard and prospectus page for every DreamCo bot."""
 
 from __future__ import annotations
 
+import argparse
 import json
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-OUTPUT_DIR = ROOT / "docs" / "prospectus"
+REGISTRY_PATH = ROOT / "config" / "master_bot_registry.json"
+OUTPUT_DIR = ROOT / "docs" / "bots"
+DATA_PATH = OUTPUT_DIR / "bots.json"
+INDEX_PATH = OUTPUT_DIR / "index.html"
 
+HTML = """<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="DreamCobots bot dashboards and prospectuses.">
+  <title>Bot Dashboard | DreamCobots</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E🤖%3C/text%3E%3C/svg%3E">
+  <style>
+    :root { color-scheme: dark; --bg:#0b0d10; --panel:#151a20; --line:#303943; --text:#f5f7fa; --muted:#a8b1bb; --accent:#45d483; --link:#76b9ff; }
+    * { box-sizing:border-box; }
+    body { margin:0; background:var(--bg); color:var(--text); font-family:Inter,ui-sans-serif,system-ui,sans-serif; line-height:1.55; }
+    a { color:var(--link); }
+    button,input { font:inherit; }
+    .shell { width:min(1180px,calc(100% - 2rem)); margin:auto; }
+    header { border-bottom:1px solid var(--line); padding:1rem 0; }
+    .header-row,.title-row,.status-row { display:flex; align-items:center; justify-content:space-between; gap:1rem; }
+    .brand { color:var(--text); font-weight:800; text-decoration:none; }
+    main { padding:2rem 0 4rem; }
+    .finder { display:grid; grid-template-columns:minmax(220px,1fr) auto; gap:.75rem; margin-bottom:2rem; }
+    input { min-height:44px; border:1px solid var(--line); border-radius:6px; background:var(--panel); color:var(--text); padding:.65rem .8rem; }
+    button { min-height:44px; border:0; border-radius:6px; background:var(--accent); color:#06160d; font-weight:800; padding:.65rem 1rem; cursor:pointer; }
+    .suggestions { grid-column:1/-1; max-height:260px; overflow:auto; border:1px solid var(--line); background:var(--panel); }
+    .suggestions[hidden] { display:none; }
+    .suggestion { display:block; width:100%; border-radius:0; border-bottom:1px solid var(--line); background:transparent; color:var(--text); text-align:left; }
+    .hero { padding:2rem 0; border-bottom:1px solid var(--line); }
+    .emoji { font-size:3rem; }
+    h1 { margin:.25rem 0 .5rem; font-size:clamp(2rem,6vw,4.5rem); line-height:1; letter-spacing:0; }
+    h2 { margin:0 0 1rem; font-size:1.45rem; letter-spacing:0; }
+    p { color:var(--muted); }
+    .badge { display:inline-flex; border:1px solid var(--line); border-radius:999px; padding:.25rem .6rem; color:var(--muted); font-size:.78rem; }
+    .grid { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); border-top:1px solid var(--line); border-left:1px solid var(--line); margin:2rem 0; }
+    .metric { min-height:112px; border-right:1px solid var(--line); border-bottom:1px solid var(--line); padding:1rem; background:var(--panel); }
+    .metric span { display:block; color:var(--muted); font-size:.78rem; margin-bottom:.4rem; }
+    .metric strong { overflow-wrap:anywhere; }
+    section { padding:2rem 0; border-bottom:1px solid var(--line); }
+    .columns { display:grid; grid-template-columns:1fr 1fr; gap:2rem; }
+    ul { padding-left:1.2rem; }
+    li + li { margin-top:.45rem; }
+    .empty { padding:3rem 0; text-align:center; }
+    @media (max-width:760px) { .grid,.columns { grid-template-columns:1fr; } .header-row,.title-row { align-items:flex-start; flex-direction:column; } }
+  </style>
+</head>
+<body>
+  <header><div class="shell header-row"><a class="brand" href="../index.html">DreamCobots</a><span id="fleet-count" class="badge">Loading fleet</span></div></header>
+  <main class="shell">
+    <div class="finder">
+      <input id="bot-search" type="search" placeholder="Find a bot by name, division, or capability" autocomplete="off">
+      <button id="search-button" type="button">Open bot</button>
+      <div id="suggestions" class="suggestions" hidden></div>
+    </div>
+    <div id="app" class="empty"><p>Loading bot dashboard...</p></div>
+  </main>
+  <script>
+    const app = document.getElementById('app');
+    const search = document.getElementById('bot-search');
+    const suggestions = document.getElementById('suggestions');
+    let bots = [];
 
-TEMPLATE = """# {display_name}
+    const escapeHtml = (value) => String(value ?? '').replace(/[&<>"']/g, (char) => ({
+      '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
+    }[char]));
 
-## Capabilities
-{capabilities}
+    function botUrl(bot) {
+      return `${location.pathname}?bot=${encodeURIComponent(bot.slug)}`;
+    }
 
-## Revenue Model
-- {revenue_model}
+    function openBot(bot) {
+      history.pushState({}, '', botUrl(bot));
+      search.value = `${bot.emoji} ${bot.name}`;
+      suggestions.hidden = true;
+      render(bot);
+    }
 
-## Target Users
-- {target_users}
+    function render(bot) {
+      if (!bot) {
+        app.innerHTML = '<div class="empty"><h1>Bot not found</h1><p>Use the fleet search to open a registered bot.</p></div>';
+        return;
+      }
+      document.title = `${bot.emoji} ${bot.name} | DreamCobots`;
+      const capabilities = bot.capabilities.map((item) => `<li>${escapeHtml(item.label)}</li>`).join('');
+      app.className = '';
+      app.innerHTML = `
+        <div class="hero">
+          <div class="title-row"><div><div class="emoji" aria-hidden="true">${bot.emoji}</div><h1>${escapeHtml(bot.name)}</h1><p>${escapeHtml(bot.description)}</p></div><span class="badge">${escapeHtml(bot.division)}</span></div>
+        </div>
+        <div class="grid" aria-label="Bot dashboard">
+          <div class="metric"><span>Status</span><strong>${escapeHtml(bot.status)}</strong></div>
+          <div class="metric"><span>Tier</span><strong>${escapeHtml(bot.tier)}</strong></div>
+          <div class="metric"><span>Risk</span><strong>${escapeHtml(bot.safety.risk_level)}</strong></div>
+          <div class="metric"><span>Heartbeat</span><strong>Not reported</strong></div>
+          <div class="metric"><span>Version</span><strong>${escapeHtml(bot.version)}</strong></div>
+          <div class="metric"><span>Revenue activation</span><strong>Owner approval required</strong></div>
+          <div class="metric"><span>Money movement</span><strong>Disabled</strong></div>
+          <div class="metric"><span>Storage</span><strong>Local-first</strong></div>
+        </div>
+        <section id="prospectus">
+          <h2>Prospectus</h2>
+          <div class="columns">
+            <div><h3>Capabilities</h3><ul>${capabilities}</ul></div>
+            <div>
+              <h3>Commercial profile</h3>
+              <p><strong>Revenue model:</strong> ${escapeHtml(bot.monetization.revenue_model || 'Not specified')}</p>
+              <p><strong>Price range:</strong> ${escapeHtml(bot.monetization.price_range || 'Not specified')}</p>
+              <p><strong>Activation:</strong> Review and owner approval are required before revenue actions.</p>
+            </div>
+          </div>
+        </section>
+        <section>
+          <h2>Governance</h2>
+          <ul>
+            <li>External outreach requires human approval.</li>
+            <li>Spending, payments, purchases, and transfers require human approval.</li>
+            <li>Production deployment requires human review.</li>
+            <li>Operational status is not shown as live unless a heartbeat has been reported.</li>
+          </ul>
+          <p><a href="../../${escapeHtml(bot.profile_path)}">Open source profile</a></p>
+        </section>`;
+    }
 
-## Pricing
-- {pricing}
+    function matches(bot, query) {
+      const text = [bot.name, bot.slug, bot.division, bot.category, ...bot.capabilities.map((item) => item.label)].join(' ').toLowerCase();
+      return text.includes(query.toLowerCase());
+    }
 
-## Purchase CTA
-- Contact DreamCo sales to activate `{slug}` in Empire OS.
+    function updateSuggestions() {
+      const query = search.value.trim();
+      const visible = (query ? bots.filter((bot) => matches(bot, query)) : bots).slice(0, 30);
+      suggestions.innerHTML = visible.map((bot) =>
+        `<button class="suggestion" type="button" data-slug="${escapeHtml(bot.slug)}">${bot.emoji} ${escapeHtml(bot.name)} · ${escapeHtml(bot.division)}</button>`
+      ).join('');
+      suggestions.hidden = visible.length === 0;
+    }
+
+    search.addEventListener('input', updateSuggestions);
+    search.addEventListener('focus', updateSuggestions);
+    suggestions.addEventListener('click', (event) => {
+      const button = event.target.closest('[data-slug]');
+      if (button) openBot(bots.find((bot) => bot.slug === button.dataset.slug));
+    });
+    document.getElementById('search-button').addEventListener('click', () => {
+      const found = bots.find((bot) => matches(bot, search.value.trim()));
+      if (found) openBot(found);
+    });
+    window.addEventListener('popstate', () => render(bots.find((bot) => bot.slug === new URLSearchParams(location.search).get('bot')) || bots[0]));
+
+    fetch('bots.json')
+      .then((response) => {
+        if (!response.ok) throw new Error(`Bot data failed to load (${response.status})`);
+        return response.json();
+      })
+      .then((payload) => {
+        bots = payload.bots;
+        document.getElementById('fleet-count').textContent = `${bots.length} bot dashboards`;
+        const slug = new URLSearchParams(location.search).get('bot');
+        const selected = bots.find((bot) => bot.slug === slug) || bots[0];
+        if (selected) {
+          search.value = `${selected.emoji} ${selected.name}`;
+          render(selected);
+        } else {
+          render(null);
+        }
+      })
+      .catch((error) => {
+        app.innerHTML = `<div class="empty"><h1>Dashboard unavailable</h1><p>${escapeHtml(error.message)}</p></div>`;
+      });
+  </script>
+</body>
+</html>
 """
 
 
-def render(profile: dict) -> str:
-    capabilities = "\n".join(f"- {item}" for item in profile.get("capabilities", [])) or "- Capability data unavailable"
-    return TEMPLATE.format(
-        display_name=profile.get("displayName", profile.get("slug", "Unknown Bot")),
-        capabilities=capabilities,
-        revenue_model=profile.get("revenueModel", "Unspecified"),
-        target_users=profile.get("targetUsers", "Unspecified"),
-        pricing=profile.get("priceRange", "Unspecified"),
-        slug=profile.get("slug", "unknown"),
-    )
+def build_data(registry: dict) -> dict:
+    bots = []
+    for bot in registry["bots"]:
+        bots.append(
+            {
+                "slug": bot["slug"],
+                "name": bot["name"],
+                "emoji": bot["emoji"],
+                "division": bot["division"],
+                "category": bot["category"],
+                "status": bot["status"],
+                "version": bot["version"],
+                "tier": bot["tier"],
+                "description": bot["description"],
+                "profile_path": bot["profile_path"],
+                "monetization": {
+                    "revenue_model": bot["monetization"]["revenue_model"],
+                    "price_range": bot["monetization"]["price_range"],
+                },
+                "safety": {
+                    "risk_level": bot["safety"]["risk_level"],
+                },
+                "capabilities": [
+                    {"label": capability["label"]}
+                    for capability in bot["capabilities"]
+                ],
+            }
+        )
+    return {
+        "schema": "generated.bot_experience.v1",
+        "generated_from": str(REGISTRY_PATH.relative_to(ROOT)),
+        "generated_at": registry["updated_at"],
+        "bot_count": len(bots),
+        "bots": bots,
+    }
 
 
-def main() -> None:
+def main() -> int:
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--check", action="store_true")
+    args = parser.parse_args()
+    registry = json.loads(REGISTRY_PATH.read_text(encoding="utf-8"))
+    data = json.dumps(build_data(registry), indent=2, ensure_ascii=False) + "\n"
+    outputs = {INDEX_PATH: HTML, DATA_PATH: data}
+
+    if args.check:
+        stale = [
+            str(path.relative_to(ROOT))
+            for path, expected in outputs.items()
+            if not path.exists() or path.read_text(encoding="utf-8") != expected
+        ]
+        if stale:
+            print("Generated bot pages are stale:")
+            for path in stale:
+                print(f" - {path}")
+            return 1
+        print(f"All {len(registry['bots'])} bot dashboard/prospectus routes are current.")
+        return 0
+
     OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
-    count = 0
-    for path in sorted((ROOT / "bots").glob("*/bot_profile.json")):
-        profile = json.loads(path.read_text())
-        slug = profile.get("slug", path.parent.name)
-        (OUTPUT_DIR / f"{slug}.md").write_text(render(profile))
-        count += 1
-    print(count)
+    for path, content in outputs.items():
+        path.write_text(content, encoding="utf-8")
+    print(f"Generated dashboard and prospectus routes for {len(registry['bots'])} bots.")
+    return 0
 
 
 if __name__ == "__main__":
-    main()
+    raise SystemExit(main())

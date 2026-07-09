@@ -83,6 +83,24 @@ MONEY_TERMS = {
 
 OUTREACH_TERMS = {"email", "sms", "outreach", "lead", "crm", "campaign", "social", "ad"}
 
+EMOJI_RULES = (
+    (("finance", "payment", "billing", "revenue", "loan", "credit"), "💵"),
+    (("crypto", "trading", "market"), "📈"),
+    (("health", "medical", "clinical", "wellness"), "🩺"),
+    (("security", "cyber", "protection", "defense"), "🛡️"),
+    (("legal", "compliance", "policy", "audit"), "⚖️"),
+    (("education", "learning", "training", "school"), "🎓"),
+    (("sales", "lead", "crm", "outreach"), "🎯"),
+    (("marketing", "content", "social", "campaign"), "📣"),
+    (("real estate", "property", "housing"), "🏠"),
+    (("developer", "software", "code", "technology"), "💻"),
+    (("analytics", "data", "research", "intelligence"), "🔎"),
+    (("automation", "operations", "workflow"), "⚙️"),
+    (("creative", "design", "media", "music"), "🎨"),
+    (("travel", "transport", "logistics"), "🧭"),
+    (("government", "civic", "public"), "🏛️"),
+)
+
 
 def slugify(value: str) -> str:
     return re.sub(r"[^a-z0-9]+", "-", value.lower().strip()).strip("-")
@@ -90,6 +108,18 @@ def slugify(value: str) -> str:
 
 def snake(value: str) -> str:
     return slugify(value).replace("-", "_")
+
+
+def emoji_for(profile: dict[str, Any]) -> str:
+    """Return a stable, meaningful emoji for a bot's domain."""
+    text = " ".join(
+        str(profile.get(field) or "")
+        for field in ("division", "category", "displayName", "slug", "description")
+    ).lower()
+    for terms, emoji in EMOJI_RULES:
+        if any(term in text for term in terms):
+            return emoji
+    return "🤖"
 
 
 def load_json(path: Path) -> Any:
@@ -166,6 +196,7 @@ def bot_blueprint(profile: dict[str, Any], risk: str) -> dict[str, Any]:
             "id": profile["id"],
             "slug": profile["slug"],
             "displayName": profile["displayName"],
+            "emoji": emoji_for(profile),
             "division": profile.get("division"),
             "profile_path": profile["profile_path"],
         },
@@ -241,11 +272,12 @@ def build_blueprint_schema(generated_at: str) -> dict[str, Any]:
             "schema_ref": {"type": "string"},
             "identity": {
                 "type": "object",
-                "required": ["id", "slug", "displayName", "division", "profile_path"],
+                "required": ["id", "slug", "displayName", "emoji", "division", "profile_path"],
                 "properties": {
                     "id": {"type": "string", "minLength": 1},
                     "slug": {"type": "string", "minLength": 1},
                     "displayName": {"type": "string", "minLength": 1},
+                    "emoji": {"type": "string", "minLength": 1},
                     "division": {"type": "string", "minLength": 1},
                     "profile_path": {"type": "string", "pattern": "^bots/.+/bot_profile\\.json$"},
                 },
@@ -313,6 +345,7 @@ def build_registry(generated_at: str) -> tuple[dict[str, Any], dict[str, Any]]:
 
     for profile in profiles:
         risk = risk_for(profile)
+        emoji = emoji_for(profile)
         risk_counts[risk] += 1
         raw_caps = [str(cap) for cap in profile.get("capabilities") or [] if str(cap).strip()]
         if not raw_caps:
@@ -325,6 +358,7 @@ def build_registry(generated_at: str) -> tuple[dict[str, Any], dict[str, Any]]:
             "id": profile["id"],
             "slug": profile["slug"],
             "name": profile["displayName"],
+            "emoji": emoji,
             "division": profile.get("division"),
             "category": profile.get("category") or profile.get("division"),
             "status": profile.get("status") or "active",
@@ -333,6 +367,8 @@ def build_registry(generated_at: str) -> tuple[dict[str, Any], dict[str, Any]]:
             "description": profile.get("description") or f"{profile['displayName']} ({profile.get('division')})",
             "repoPath": profile["repo_path"],
             "profile_path": profile["profile_path"],
+            "dashboard_url": f"docs/bots/index.html?bot={profile['slug']}",
+            "prospectus_url": f"docs/bots/index.html?bot={profile['slug']}#prospectus",
             "monetization": {
                 "enabled": monetization_enabled,
                 "revenue_model": profile.get("revenueModel"),
@@ -358,9 +394,12 @@ def build_registry(generated_at: str) -> tuple[dict[str, Any], dict[str, Any]]:
                 "bot_id": bot["id"],
                 "slug": bot["slug"],
                 "name": bot["name"],
+                "emoji": emoji,
                 "repoName": "Dreamcobots",
                 "repoPath": bot["repoPath"],
                 "profilePath": bot["profile_path"],
+                "dashboardUrl": bot["dashboard_url"],
+                "prospectusUrl": bot["prospectus_url"],
                 "status": bot["status"],
                 "tier": bot["tier"],
                 "category": bot["division"],
