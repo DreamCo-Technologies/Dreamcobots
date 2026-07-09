@@ -72,6 +72,7 @@ jobs:
   orchestrator:
     name: Revenue Orchestrator Cycle
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     needs: pre-flight
     permissions:
       contents: read
@@ -82,6 +83,7 @@ jobs:
       GITHUB_TOKEN:    ${{ secrets.GITHUB_TOKEN }}
       DREAMCO_ENV:     production
       SIMULATION_MODE: ${{ vars.SIMULATION_MODE || 'true' }}
+      DREAMCO_LEARNING_DB: database/learning.db
 
     steps:
       - name: Checkout repository
@@ -97,6 +99,14 @@ jobs:
         run: |
           pip install --quiet -r requirements.txt
           pip install --quiet pyyaml stripe scikit-learn
+
+      - name: Restore learning history
+        uses: actions/cache/restore@v4
+        with:
+          path: database/learning.db
+          key: dreamco-learning-${{ github.ref_name }}-${{ github.run_id }}
+          restore-keys: |
+            dreamco-learning-${{ github.ref_name }}-
 
       - name: Run one orchestrator cycle
         run: |
@@ -116,6 +126,21 @@ jobs:
                 f"${total_rev:.2f} revenue")
           EOF
 
+      - name: Save learning history
+        if: always()
+        uses: actions/cache/save@v4
+        with:
+          path: database/learning.db
+          key: dreamco-learning-${{ github.ref_name }}-${{ github.run_id }}
+
+      - name: Upload learning handoff
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: learning-db-${{ github.run_id }}
+          path: database/learning.db
+          retention-days: 7
+
   # -------------------------------------------------------------------------
   # 3. Learning cycle — extract strategies, gate retraining
   # -------------------------------------------------------------------------
@@ -125,6 +150,8 @@ jobs:
     needs: orchestrator
     permissions:
       contents: read
+    env:
+      DREAMCO_LEARNING_DB: database/learning.db
 
     steps:
       - name: Checkout repository
@@ -141,15 +168,20 @@ jobs:
           pip install --quiet -r requirements.txt
           pip install --quiet pyyaml
 
+      - name: Download learning handoff
+        uses: actions/download-artifact@v4
+        with:
+          name: learning-db-${{ github.run_id }}
+          path: database
+
       - name: Extract successful strategies
         run: |
           python - <<'EOF'
           from global_learning_system.learning_loop import GlobalLearningLoop
-          import tempfile, pathlib
 
-          tmp = pathlib.Path(tempfile.mkdtemp()) / 'learning.db'
-          ll  = GlobalLearningLoop(db_path=tmp)
+          ll = GlobalLearningLoop()
           strategies = ll.extract_successful_strategies()
+          print(f"Evaluated {ll.count_decisions()} persistent decisions")
           print(f"Extracted {len(strategies)} learned strategies")
           for s in strategies:
               print(f"  [{s.bot_name}] {s.action_type}: avg_reward={s.avg_reward:.2f}, count={s.success_count}")
@@ -161,6 +193,7 @@ jobs:
   payment-processing:
     name: Payment Processing Health Check
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     needs: orchestrator
     permissions:
       contents: read

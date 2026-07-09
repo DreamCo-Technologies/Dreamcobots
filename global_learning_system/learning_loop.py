@@ -26,6 +26,7 @@ from __future__ import annotations
 import hashlib
 import json
 import logging
+import os
 import pickle
 import sqlite3
 from dataclasses import asdict, dataclass
@@ -109,7 +110,8 @@ class GlobalLearningLoop:
         db_path: Optional[Path] = None,
         model_registry_path: Optional[Path] = None,
     ) -> None:
-        self.db_path = db_path or Path("database/learning.db")
+        configured_db = os.environ.get("DREAMCO_LEARNING_DB", "database/learning.db")
+        self.db_path = db_path or Path(configured_db)
         self.db_path.parent.mkdir(parents=True, exist_ok=True)
         self._init_db()
 
@@ -287,6 +289,31 @@ class GlobalLearningLoop:
         with sqlite3.connect(self.db_path) as conn:
             (count,) = conn.execute(query, params).fetchone()
         return count
+
+    def get_recent_outcomes(self, n: int = 50) -> List[Dict[str, Any]]:
+        """Return the newest completed decisions in a workflow-friendly shape."""
+        if n < 1:
+            return []
+        with sqlite3.connect(self.db_path) as conn:
+            conn.row_factory = sqlite3.Row
+            rows = conn.execute(
+                """
+                SELECT decision_id, bot_name, action_type, actual_outcome,
+                       reward, timestamp
+                FROM decisions
+                WHERE actual_outcome IS NOT NULL
+                ORDER BY timestamp DESC
+                LIMIT ?
+                """,
+                (n,),
+            ).fetchall()
+
+        outcomes = []
+        for row in rows:
+            item = dict(row)
+            item["outcome"] = "success" if float(item["actual_outcome"]) > 0 else "failure"
+            outcomes.append(item)
+        return outcomes
 
     # ------------------------------------------------------------------
     # Model persistence

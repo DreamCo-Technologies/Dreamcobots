@@ -1,0 +1,63 @@
+name: Opportunity Learning
+
+on:
+  schedule:
+    - cron: "37 * * * *"
+  workflow_dispatch:
+
+concurrency:
+  group: opportunity-learning
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  score-experiments:
+    name: Score supervised opportunity experiments
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Build opportunity queue
+        run: python -m core.opportunity_learning
+
+      - name: Verify external actions remain gated
+        shell: python
+        run: |
+          import json
+          from pathlib import Path
+
+          report = json.loads(Path("reports/opportunity_queue.json").read_text())
+          assert report["external_actions_executed"] is False
+          print(f"Queued {len(report['opportunities'])} supervised experiments")
+
+      - name: Publish run summary
+        shell: python
+        run: |
+          import json
+          import os
+          from pathlib import Path
+
+          report = json.loads(Path("reports/opportunity_queue.json").read_text())
+          with open(os.environ["GITHUB_STEP_SUMMARY"], "a") as summary:
+              summary.write("## Opportunity experiment queue\n\n")
+              summary.write("| Opportunity | Score | Status |\n|---|---:|---|\n")
+              for item in report["opportunities"]:
+                  summary.write(
+                      f"| {item['title']} | {item['score']:.3f} | {item['status']} |\n"
+                  )
+
+      - name: Upload review packet
+        uses: actions/upload-artifact@v4
+        with:
+          name: opportunity-queue-${{ github.run_id }}
+          path: reports/opportunity_queue.json
+          retention-days: 30
