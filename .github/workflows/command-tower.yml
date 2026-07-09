@@ -1,6 +1,13 @@
 name: "🪐 Command Tower — Empire Dashboard"
 
 on:
+  push:
+    branches: [main]
+    paths:
+      - "docs/**"
+      - "config/master_bot_registry.json"
+      - "dreamco-control-tower/config/generated/bots.catalog.json"
+      - ".github/workflows/command-tower.yml"
   workflow_run:
     workflows:
       - "Revenue Engine"
@@ -199,6 +206,19 @@ jobs:
           out.mkdir(exist_ok=True)
           (out / "index.html").write_text(html)
           print("Dashboard HTML built → public/index.html")
+
+      - name: Add documentation portal to Pages
+        run: |
+          mkdir -p public/docs
+          mkdir -p public/config
+          mkdir -p public/dreamco-control-tower/config/generated
+          cp docs/index.html public/docs/index.html
+          cp docs/dashboards.html public/docs/dashboards.html
+          cp docs/*.md public/docs/
+          cp README.md public/README.md
+          cp config/master_bot_registry.json public/config/master_bot_registry.json
+          cp dreamco-control-tower/config/generated/bots.catalog.json public/dreamco-control-tower/config/generated/bots.catalog.json
+          touch public/.nojekyll
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
