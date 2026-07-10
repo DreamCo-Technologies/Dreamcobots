@@ -1,0 +1,41 @@
+name: Hostinger Buddy Build
+
+on:
+  push:
+    branches:
+      - buddy
+  workflow_dispatch:
+
+jobs:
+  build-buddy-control-tower:
+    name: Build Buddy starter frontend
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+          cache-dependency-path: dreamco-control-tower/frontend/package-lock.json
+
+      - name: Install frontend dependencies
+        working-directory: dreamco-control-tower/frontend
+        run: npm ci
+
+      - name: Build Hostinger Buddy frontend
+        working-directory: dreamco-control-tower/frontend
+        env:
+          VITE_START_TAB: command-center
+        run: npm run build
+
+      - name: Upload Hostinger public_html artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: hostinger-buddy-public-html
+          path: dreamco-control-tower/frontend/dist/

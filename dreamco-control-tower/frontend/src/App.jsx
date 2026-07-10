@@ -18,7 +18,11 @@ const NAV_ITEMS = [
 ];
 
 export default function App() {
-  const [activeTab, setActiveTab] = useState('overview');
+  const configuredStartTab = import.meta.env.VITE_START_TAB;
+  const defaultTab = NAV_ITEMS.some((item) => item.id === configuredStartTab)
+    ? configuredStartTab
+    : 'overview';
+  const [activeTab, setActiveTab] = useState(defaultTab);
 
   return (
     <div className="min-h-screen flex flex-col">
