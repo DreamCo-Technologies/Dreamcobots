@@ -1,0 +1,48 @@
+name: GitHub Pattern Intelligence
+
+on:
+  schedule:
+    - cron: "23 5 * * *"
+  workflow_dispatch:
+
+concurrency:
+  group: github-pattern-intelligence
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  scan-public-patterns:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Collect public repository signals
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: python3 tools/github_pattern_scanner.py
+
+      - name: Verify metadata-only policy
+        shell: python
+        run: |
+          import json
+          from pathlib import Path
+
+          report = json.loads(Path("reports/github_pattern_intelligence.json").read_text())
+          assert report["automatic_code_import"] is False
+          assert all("code" not in repo for group in report["findings"] for repo in group["repositories"])
+
+      - name: Upload intelligence report
+        uses: actions/upload-artifact@v4
+        with:
+          name: github-pattern-intelligence-${{ github.run_id }}
+          path: reports/github_pattern_intelligence.json
+          retention-days: 30

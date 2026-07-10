@@ -262,6 +262,28 @@ describe('GET /api/actions', () => {
   });
 });
 
+describe('GET /api/system-libraries', () => {
+  test('returns complete per-bot library coverage', async () => {
+    const res = await request(app).get('/api/system-libraries');
+
+    expect(res.status).toBe(200);
+    expect(res.body.bot_count).toBe(1247);
+    expect(res.body.builders).toHaveLength(7);
+    expect(res.body.libraries).toHaveLength(6);
+    Object.values(res.body.coverage).forEach((count) => expect(count).toBe(1247));
+  });
+
+  test('returns the security baseline', async () => {
+    const res = await request(app).get('/api/system-libraries');
+
+    expect(res.body.security_baseline.webhooks).toContain('hmac_sha256');
+    expect(res.body.security_baseline.apis).toContain('rate_limit_backoff');
+    expect(res.body.security_baseline.github_actions).toContain(
+      'least_privilege_permissions',
+    );
+  });
+});
+
 // ---------------------------------------------------------------------------
 // GET /api/command-center
 // ---------------------------------------------------------------------------

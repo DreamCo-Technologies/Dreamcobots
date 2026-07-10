@@ -17,6 +17,10 @@ import { fileURLToPath } from 'url';
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const LEGACY_BOTS_FILE = path.join(__dirname, '../config/bots.json');
 const GENERATED_BOTS_FILE = path.join(__dirname, '../config/generated/bots.catalog.json');
+const SYSTEM_LIBRARY_INDEX_FILE = path.join(
+  __dirname,
+  '../../config/generated/system_libraries/index.json',
+);
 const COMMAND_CENTER_FILE = path.join(__dirname, '../config/command_center.json');
 const PRODUCTION_MEDIA_ROADMAP_FILE = path.join(
   __dirname,
@@ -99,6 +103,13 @@ function readProductionMediaRoadmap() {
     return null;
   }
   return JSON.parse(fs.readFileSync(PRODUCTION_MEDIA_ROADMAP_FILE, 'utf8'));
+}
+
+function readSystemLibraryIndex() {
+  if (!fs.existsSync(SYSTEM_LIBRARY_INDEX_FILE)) {
+    return null;
+  }
+  return JSON.parse(fs.readFileSync(SYSTEM_LIBRARY_INDEX_FILE, 'utf8'));
 }
 
 function parseDurationToDays(duration) {
@@ -329,6 +340,17 @@ app.get('/api/actions', rateLimiter, async (req, res) => {
     ...result,
     fetched_at: new Date().toISOString(),
   });
+});
+
+// ---------------------------------------------------------------------------
+// GET /api/system-libraries — generated builder and library coverage
+// ---------------------------------------------------------------------------
+app.get('/api/system-libraries', rateLimiter, (_req, res) => {
+  const index = readSystemLibraryIndex();
+  if (!index) {
+    return res.status(503).json({ error: 'system library index not found' });
+  }
+  return res.json(index);
 });
 
 // ---------------------------------------------------------------------------

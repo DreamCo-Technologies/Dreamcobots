@@ -1,0 +1,173 @@
+{
+  "schema": "dreamco.system_library_index.v1",
+  "generated_at": "2026-06-01T00:00:00Z",
+  "bot_count": 1247,
+  "builders": [
+    {
+      "id": "full-bot-system",
+      "name": "Full Bot System Builder",
+      "icon": "🤖",
+      "outputs": [
+        "profile",
+        "blueprint",
+        "tool",
+        "api",
+        "webhook",
+        "workflow",
+        "skill",
+        "sandbox",
+        "tests"
+      ],
+      "approval": "pull_request_required"
+    },
+    {
+      "id": "tools-builder",
+      "name": "Tool Builder",
+      "icon": "🔧",
+      "outputs": [
+        "tool",
+        "schema",
+        "tests",
+        "documentation"
+      ],
+      "approval": "pull_request_required"
+    },
+    {
+      "id": "apis-builder",
+      "name": "API Builder",
+      "icon": "🔌",
+      "outputs": [
+        "api",
+        "schema",
+        "tests",
+        "documentation"
+      ],
+      "approval": "pull_request_required"
+    },
+    {
+      "id": "webhooks-builder",
+      "name": "Webhook Builder",
+      "icon": "🪝",
+      "outputs": [
+        "webhook",
+        "schema",
+        "tests",
+        "documentation"
+      ],
+      "approval": "pull_request_required"
+    },
+    {
+      "id": "workflows-builder",
+      "name": "Workflow Builder",
+      "icon": "🔁",
+      "outputs": [
+        "workflow",
+        "schema",
+        "tests",
+        "documentation"
+      ],
+      "approval": "pull_request_required"
+    },
+    {
+      "id": "skills-builder",
+      "name": "Skill Builder",
+      "icon": "🧠",
+      "outputs": [
+        "skill",
+        "schema",
+        "tests",
+        "documentation"
+      ],
+      "approval": "pull_request_required"
+    },
+    {
+      "id": "sandboxes-builder",
+      "name": "Sandbox Builder",
+      "icon": "🧪",
+      "outputs": [
+        "sandboxe",
+        "schema",
+        "tests",
+        "documentation"
+      ],
+      "approval": "pull_request_required"
+    }
+  ],
+  "libraries": [
+    {
+      "id": "tools",
+      "name": "Tools Library",
+      "icon": "🔧",
+      "count": 1247,
+      "description": "Typed, permission-aware tools with tests and audit metadata.",
+      "path": "config/generated/system_libraries/tools.json"
+    },
+    {
+      "id": "apis",
+      "name": "Apis Library",
+      "icon": "🔌",
+      "count": 1247,
+      "description": "Versioned per-bot APIs with schemas, rate limits, and approval gates.",
+      "path": "config/generated/system_libraries/apis.json"
+    },
+    {
+      "id": "webhooks",
+      "name": "Webhooks Library",
+      "icon": "🪝",
+      "count": 1247,
+      "description": "Signed, idempotent per-bot event contracts with queued processing.",
+      "path": "config/generated/system_libraries/webhooks.json"
+    },
+    {
+      "id": "workflows",
+      "name": "Workflows Library",
+      "icon": "🔁",
+      "count": 1247,
+      "description": "Reusable validation and delivery workflows with least privilege.",
+      "path": "config/generated/system_libraries/workflows.json"
+    },
+    {
+      "id": "skills",
+      "name": "Skills Library",
+      "icon": "🧠",
+      "count": 1247,
+      "description": "Versioned multi-step skills with inputs, outputs, evidence, and tests.",
+      "path": "config/generated/system_libraries/skills.json"
+    },
+    {
+      "id": "sandboxes",
+      "name": "Sandboxes Library",
+      "icon": "🧪",
+      "count": 1247,
+      "description": "Isolated test environments with fixtures, limits, and no live money movement.",
+      "path": "config/generated/system_libraries/sandboxes.json"
+    }
+  ],
+  "coverage": {
+    "bots_with_tools": 1247,
+    "bots_with_apis": 1247,
+    "bots_with_webhooks": 1247,
+    "bots_with_workflows": 1247,
+    "bots_with_skills": 1247,
+    "bots_with_sandboxes": 1247
+  },
+  "security_baseline": {
+    "github_actions": [
+      "least_privilege_permissions",
+      "immutable_action_references_recommended",
+      "untrusted_input_isolated"
+    ],
+    "apis": [
+      "authenticated_requests",
+      "conditional_gets",
+      "serial_mutations",
+      "rate_limit_backoff"
+    ],
+    "webhooks": [
+      "hmac_sha256",
+      "delivery_id_deduplication",
+      "event_allowlist",
+      "fast_ack_then_queue"
+    ]
+  }
+}
