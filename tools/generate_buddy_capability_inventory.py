@@ -16,6 +16,11 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 REPORT_DIR = ROOT / "reports"
+APPROVAL_REGISTRY_FILE = ROOT / "config" / "production_approvals" / "high_risk_bot_approvals.json"
+REQUIRED_BUDDY_MONEY_REQUEST = (
+    "Buddy, help me make money with this bot. "
+    "I approve the listed live actions and understand the risks."
+)
 LIBRARY_NAMES = ("tools", "apis", "webhooks", "workflows", "skills", "sandboxes")
 IMPLEMENTATION_EXTENSIONS = {".py", ".js", ".ts", ".jsx", ".tsx"}
 SKIP_IMPLEMENTATION_NAMES = {
@@ -176,6 +181,59 @@ def risk_hint(slug: str, name: str, description: str) -> str:
     return "high" if any(term in searchable for term in high_risk_terms) else "standard"
 
 
+def load_approval_registry() -> dict:
+    if not APPROVAL_REGISTRY_FILE.exists():
+        return {"approvals": []}
+    data = load_json(APPROVAL_REGISTRY_FILE)
+    if not isinstance(data.get("approvals"), list):
+        data["approvals"] = []
+    return data
+
+
+def approvals_by_slug(registry: dict) -> dict[str, dict]:
+    return {
+        str(entry.get("slug")): entry
+        for entry in registry.get("approvals", [])
+        if entry.get("slug")
+    }
+
+
+def buddy_money_approval_for_bot(slug: str, approvals: dict[str, dict]) -> dict:
+    approval = approvals.get(str(slug), {})
+    checklist = approval.get("checklist", {})
+    allowed_live_actions = approval.get("allowed_live_actions") or []
+    required_request = approval.get("required_buddy_money_request")
+    valid = all(
+        [
+            approval.get("approved") is True,
+            approval.get("approved_by"),
+            approval.get("approved_at"),
+            approval.get("user_asked_buddy_to_help_make_money") is True,
+            required_request == REQUIRED_BUDDY_MONEY_REQUEST,
+            approval.get("risk_acknowledged") is True,
+            bool(allowed_live_actions),
+            checklist.get("sandbox_smoke_test_passed") is True,
+            checklist.get("no_unapproved_live_money_movement") is True,
+            checklist.get("secrets_are_environment_only") is True,
+            checklist.get("audit_logging_enabled") is True,
+            checklist.get("human_review_before_external_action") is True,
+        ]
+    )
+    return {
+        "approved": valid,
+        "registry_entry_found": bool(approval),
+        "approved_by": approval.get("approved_by"),
+        "approved_at": approval.get("approved_at"),
+        "required_buddy_money_request": REQUIRED_BUDDY_MONEY_REQUEST,
+        "allowed_live_actions": allowed_live_actions,
+        "risk_acknowledged": approval.get("risk_acknowledged") is True,
+        "user_asked_buddy_to_help_make_money": approval.get(
+            "user_asked_buddy_to_help_make_money"
+        )
+        is True,
+    }
+
+
 def coding_path_for_bot(
     *,
     build_state: str,
@@ -254,6 +312,7 @@ def production_readiness_for_bot(
     has_all_libraries: bool,
     test_state: str,
     risk: str,
+    buddy_money_approval: dict,
 ) -> dict:
     blockers: list[str] = []
     if implementation_count == 0:
@@ -264,8 +323,8 @@ def production_readiness_for_bot(
         blockers.append("missing_generated_contracts")
     if test_state != "ready_for_test_run":
         blockers.append("direct_test_coverage_required")
-    if risk == "high":
-        blockers.append("human_approval_required_for_high_risk_domain")
+    if risk == "high" and not buddy_money_approval["approved"]:
+        blockers.append("buddy_money_help_user_approval_required")
 
     fully_coded = not any(
         blocker
@@ -280,9 +339,12 @@ def production_readiness_for_bot(
     if not blockers:
         status = "production_ready"
         next_step = "Keep tests green and monitor production telemetry."
-    elif fully_coded and blockers == ["human_approval_required_for_high_risk_domain"]:
+    elif fully_coded and blockers == ["buddy_money_help_user_approval_required"]:
         status = "production_candidate_approval_required"
-        next_step = "Run approval review for high-risk behavior before production release."
+        next_step = (
+            "User must ask Buddy to help make money, acknowledge the risk, "
+            "and approve allowed live actions before production release."
+        )
     elif "missing_core_implementation" in blockers:
         status = "not_ready_missing_implementation"
         next_step = "Build or map core implementation files, then regenerate readiness reports."
@@ -302,6 +364,7 @@ def production_readiness_for_bot(
         "production_ready": status == "production_ready",
         "blockers": blockers,
         "next_step": next_step,
+        "buddy_money_approval": buddy_money_approval,
     }
 
 
@@ -310,6 +373,7 @@ def classify_bot(
     profile: dict,
     library_by_slug: dict[str, set[str]],
     tests: list[Path],
+    approvals: dict[str, dict],
 ) -> dict:
     slug = profile.get("slug") or profile_path.parent.name
     name = (
@@ -353,6 +417,7 @@ def classify_bot(
         capabilities = [capabilities]
 
     risk = risk_hint(str(slug), str(name), profile.get("description", ""))
+    buddy_money_approval = buddy_money_approval_for_bot(str(slug), approvals)
     coding_path = coding_path_for_bot(
         build_state=build_state,
         test_state=test_state,
@@ -366,6 +431,7 @@ def classify_bot(
         has_all_libraries=has_all_libraries,
         test_state=test_state,
         risk=risk,
+        buddy_money_approval=buddy_money_approval,
     )
 
     return {
@@ -391,6 +457,7 @@ def classify_bot(
         "build_state": build_state,
         "test_state": test_state,
         "risk_hint": risk,
+        "buddy_money_approval": buddy_money_approval,
         "coding_path": coding_path,
         "coding_path_status": coding_path["status"],
         "next_coding_step": coding_path["next_step"],
@@ -425,11 +492,13 @@ def workflow_summary() -> list[dict]:
 def build_inventory() -> dict:
     registry_path = ROOT / "config" / "master_bot_registry.json"
     registry = load_json(registry_path) if registry_path.exists() else {}
+    approval_registry = load_approval_registry()
+    approvals = approvals_by_slug(approval_registry)
     library_counts, library_by_slug = library_coverage()
     tests = test_files()
     profiles = sorted((ROOT / "bots").glob("*/bot_profile.json"))
     bots = [
-        classify_bot(profile_path, load_json(profile_path), library_by_slug, tests)
+        classify_bot(profile_path, load_json(profile_path), library_by_slug, tests, approvals)
         for profile_path in profiles
     ]
 
@@ -491,6 +560,24 @@ def build_inventory() -> dict:
                 bot["executable_runtime_ready"] for bot in bots
             ),
             "placeholder_marker_bots": len(placeholder_bots),
+            "buddy_money_approval_required_bots": sum(
+                1
+                for bot in bots
+                if bot["risk_hint"] == "high" and not bot["buddy_money_approval"]["approved"]
+            ),
+            "buddy_money_approved_high_risk_bots": sum(
+                1
+                for bot in bots
+                if bot["risk_hint"] == "high" and bot["buddy_money_approval"]["approved"]
+            ),
+        },
+        "approval_policy": {
+            "registry_file": str(APPROVAL_REGISTRY_FILE.relative_to(ROOT)),
+            "required_buddy_money_request": REQUIRED_BUDDY_MONEY_REQUEST,
+            "rule": (
+                "High-risk bots require a user request to Buddy for money help, "
+                "risk acknowledgement, approved live actions, and checklist evidence."
+            ),
         },
         "top_divisions": division_counter.most_common(),
         "top_categories": category_counter.most_common(),
