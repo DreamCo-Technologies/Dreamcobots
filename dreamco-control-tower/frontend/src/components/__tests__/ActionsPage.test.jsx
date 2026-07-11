@@ -45,6 +45,17 @@ const buddyCapabilityPayload = {
     },
     bots_with_full_coding_path: 1247,
     all_bots_have_full_coding_path: true,
+    production_readiness_states: {
+      not_ready_placeholder_review: 1109,
+      not_ready_needs_tests: 22,
+      production_ready: 101,
+      not_ready_missing_implementation: 7,
+      production_candidate_approval_required: 8,
+    },
+    fully_coded_bots: 109,
+    production_ready_bots: 101,
+    all_bots_fully_coded: false,
+    all_bots_production_ready: false,
     placeholder_marker_bots: 1109,
   },
   buddy_bots: [
@@ -111,6 +122,10 @@ describe('ActionsPage', () => {
     expect(screen.getByText('All bots have a path')).toBeInTheDocument();
     expect(screen.getByText('Review placeholders')).toBeInTheDocument();
     expect(screen.getByText('Add direct tests')).toBeInTheDocument();
+    expect(screen.getByText('Production readiness')).toBeInTheDocument();
+    expect(screen.getByText('Production blockers remain')).toBeInTheDocument();
+    expect(screen.getByText('Production ready')).toBeInTheDocument();
+    expect(screen.getByText('Approval needed')).toBeInTheDocument();
     expect(screen.getByText('Payment AutoCollector')).toBeInTheDocument();
     expect(screen.getByText('Buddy Core')).toBeInTheDocument();
   });

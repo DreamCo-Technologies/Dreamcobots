@@ -49,6 +49,17 @@ const FALLBACK_BUDDY_INVENTORY = {
     },
     bots_with_full_coding_path: 1247,
     all_bots_have_full_coding_path: true,
+    production_readiness_states: {
+      not_ready_placeholder_review: 1109,
+      not_ready_needs_tests: 22,
+      production_ready: 101,
+      not_ready_missing_implementation: 7,
+      production_candidate_approval_required: 8,
+    },
+    fully_coded_bots: 109,
+    production_ready_bots: 101,
+    all_bots_fully_coded: false,
+    all_bots_production_ready: false,
     placeholder_marker_bots: 1109,
   },
   buddy_bots: [
@@ -160,6 +171,7 @@ export default function ActionsPage({
   const buildStates = inventorySummary.build_states ?? {};
   const testStates = inventorySummary.test_states ?? {};
   const codingPathStates = inventorySummary.coding_path_states ?? {};
+  const productionStates = inventorySummary.production_readiness_states ?? {};
   const needsImplementation = inventory.attention?.needs_implementation ?? [];
   const needsDirectTests = inventory.attention?.needs_direct_test_coverage ?? [];
   const needsSystemMapping = inventory.attention?.needs_existing_system_mapping ?? [];
@@ -284,6 +296,33 @@ export default function ActionsPage({
                   ['Add direct tests', codingPathStates.needs_direct_test_coverage],
                   ['Build core files', codingPathStates.needs_core_implementation],
                   ['Map systems', codingPathStates.needs_existing_system_mapping],
+                ].map(([label, value]) => (
+                  <div key={label} className="border border-slate-800 bg-slate-900 p-3">
+                    <p className="text-lg font-black text-white">{formatNumber(value)}</p>
+                    <p className="mt-1 text-xs uppercase text-slate-500">{label}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="mt-5">
+              <div className="flex flex-wrap items-center justify-between gap-2">
+                <h4 className="text-sm font-semibold text-white">Production readiness</h4>
+                <span className={`rounded-full border px-3 py-1 text-xs font-semibold ${
+                  inventorySummary.all_bots_production_ready
+                    ? 'border-green-800 bg-green-950/30 text-green-300'
+                    : 'border-yellow-800 bg-yellow-950/30 text-yellow-300'
+                }`}>
+                  {inventorySummary.all_bots_production_ready ? 'All bots production-ready' : 'Production blockers remain'}
+                </span>
+              </div>
+              <div className="mt-3 grid gap-2 sm:grid-cols-2 xl:grid-cols-5">
+                {[
+                  ['Production ready', inventorySummary.production_ready_bots],
+                  ['Fully coded', inventorySummary.fully_coded_bots],
+                  ['Approval needed', productionStates.production_candidate_approval_required],
+                  ['Needs tests', productionStates.not_ready_needs_tests],
+                  ['Needs implementation', productionStates.not_ready_missing_implementation],
                 ].map(([label, value]) => (
                   <div key={label} className="border border-slate-800 bg-slate-900 p-3">
                     <p className="text-lg font-black text-white">{formatNumber(value)}</p>

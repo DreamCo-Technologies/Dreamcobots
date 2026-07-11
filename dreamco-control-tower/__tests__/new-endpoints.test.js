@@ -295,6 +295,8 @@ describe('GET /api/buddy-capabilities', () => {
     expect(res.body.summary.test_states.ready_for_test_run).toBeGreaterThan(0);
     expect(res.body.summary.bots_with_full_coding_path).toBe(1247);
     expect(res.body.summary.all_bots_have_full_coding_path).toBe(true);
+    expect(res.body.summary.production_ready_bots).toBeGreaterThan(0);
+    expect(res.body.summary.all_bots_production_ready).toBe(false);
   });
 
   test('returns attention list and direct Buddy systems', async () => {

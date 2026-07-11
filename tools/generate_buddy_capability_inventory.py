@@ -7,6 +7,7 @@ import csv
 import json
 import re
 import subprocess
+import sys
 from collections import Counter
 from datetime import datetime, timezone
 from pathlib import Path
@@ -201,6 +202,64 @@ def coding_path_for_bot(
     }
 
 
+def production_readiness_for_bot(
+    *,
+    implementation_count: int,
+    marker_hits: list[str],
+    has_all_libraries: bool,
+    test_state: str,
+    risk: str,
+) -> dict:
+    blockers: list[str] = []
+    if implementation_count == 0:
+        blockers.append("missing_core_implementation")
+    if marker_hits:
+        blockers.append("placeholder_review_required")
+    if not has_all_libraries:
+        blockers.append("missing_generated_contracts")
+    if test_state != "ready_for_test_run":
+        blockers.append("direct_test_coverage_required")
+    if risk == "high":
+        blockers.append("human_approval_required_for_high_risk_domain")
+
+    fully_coded = not any(
+        blocker
+        in {
+            "missing_core_implementation",
+            "placeholder_review_required",
+            "direct_test_coverage_required",
+        }
+        for blocker in blockers
+    )
+
+    if not blockers:
+        status = "production_ready"
+        next_step = "Keep tests green and monitor production telemetry."
+    elif fully_coded and blockers == ["human_approval_required_for_high_risk_domain"]:
+        status = "production_candidate_approval_required"
+        next_step = "Run approval review for high-risk behavior before production release."
+    elif "missing_core_implementation" in blockers:
+        status = "not_ready_missing_implementation"
+        next_step = "Build or map core implementation files, then regenerate readiness reports."
+    elif "placeholder_review_required" in blockers:
+        status = "not_ready_placeholder_review"
+        next_step = "Replace placeholder-like code paths with real behavior and focused tests."
+    elif "direct_test_coverage_required" in blockers:
+        status = "not_ready_needs_tests"
+        next_step = "Add direct unit or integration tests and run the production readiness gate."
+    else:
+        status = "not_ready_contract_or_review_gap"
+        next_step = "Complete generated contracts, review evidence, and production safety checks."
+
+    return {
+        "status": status,
+        "fully_coded": fully_coded,
+        "production_ready": status == "production_ready",
+        "blockers": blockers,
+        "next_step": next_step,
+    }
+
+
 def classify_bot(
     profile_path: Path,
     profile: dict,
@@ -250,6 +309,13 @@ def classify_bot(
         marker_hits=marker_hits,
         risk=risk,
     )
+    production_readiness = production_readiness_for_bot(
+        implementation_count=len(impl_files),
+        marker_hits=marker_hits,
+        has_all_libraries=has_all_libraries,
+        test_state=test_state,
+        risk=risk,
+    )
 
     return {
         "slug": slug,
@@ -274,6 +340,10 @@ def classify_bot(
         "coding_path_status": coding_path["status"],
         "next_coding_step": coding_path["next_step"],
         "target_workflow": coding_path["target_workflow"],
+        "production_readiness": production_readiness,
+        "production_readiness_status": production_readiness["status"],
+        "fully_coded": production_readiness["fully_coded"],
+        "production_ready": production_readiness["production_ready"],
         "path": str(profile_path.parent.relative_to(ROOT)),
     }
 
@@ -319,6 +389,7 @@ def build_inventory() -> dict:
     build_counter = Counter(bot["build_state"] for bot in bots)
     test_counter = Counter(bot["test_state"] for bot in bots)
     coding_path_counter = Counter(bot["coding_path_status"] for bot in bots)
+    production_counter = Counter(bot["production_readiness_status"] for bot in bots)
     buddy_bots = [
         bot
         for bot in bots
@@ -353,6 +424,11 @@ def build_inventory() -> dict:
             "all_bots_have_full_coding_path": all(
                 bot["coding_path"]["has_full_coding_path"] for bot in bots
             ),
+            "production_readiness_states": dict(production_counter),
+            "fully_coded_bots": sum(1 for bot in bots if bot["fully_coded"]),
+            "production_ready_bots": sum(1 for bot in bots if bot["production_ready"]),
+            "all_bots_fully_coded": all(bot["fully_coded"] for bot in bots),
+            "all_bots_production_ready": all(bot["production_ready"] for bot in bots),
             "placeholder_marker_bots": len(placeholder_bots),
         },
         "top_divisions": division_counter.most_common(),
@@ -373,6 +449,9 @@ def build_inventory() -> dict:
             ],
             "needs_placeholder_review": [
                 bot for bot in bots if bot["coding_path_status"] == "needs_placeholder_review"
+            ],
+            "production_blockers": [
+                bot for bot in bots if not bot["production_ready"]
             ],
             "placeholder_marker_bots": placeholder_bots,
         },
@@ -398,6 +477,7 @@ def write_markdown(inventory: dict, path: Path) -> None:
     build_states = summary["build_states"]
     test_states = summary["test_states"]
     coding_path_states = summary["coding_path_states"]
+    production_readiness_states = summary["production_readiness_states"]
     lines = [
         "# Buddy Capability Inventory",
         "",
@@ -466,6 +546,21 @@ def write_markdown(inventory: dict, path: Path) -> None:
     for key, value in sorted(coding_path_states.items()):
         lines.append(f"| {key} | {value} |")
 
+    lines += [
+        "",
+        "## Production Readiness",
+        "",
+        f"- Fully coded bots: {summary['fully_coded_bots']}",
+        f"- Production-ready bots: {summary['production_ready_bots']}",
+        f"- All bots fully coded: {summary['all_bots_fully_coded']}",
+        f"- All bots production ready: {summary['all_bots_production_ready']}",
+        "",
+        "| Production Readiness State | Count |",
+        "| --- | ---: |",
+    ]
+    for key, value in sorted(production_readiness_states.items()):
+        lines.append(f"| {key} | {value} |")
+
     lines += ["", "## Needs Implementation", ""]
     needs = inventory["attention"]["needs_implementation"]
     for bot in needs:
@@ -493,6 +588,9 @@ def write_csv(inventory: dict, path: Path) -> None:
         "coding_path_status",
         "next_coding_step",
         "target_workflow",
+        "production_readiness_status",
+        "fully_coded",
+        "production_ready",
         "path",
     ]
     with path.open("w", newline="", encoding="utf-8") as handle:
@@ -512,6 +610,12 @@ def main() -> None:
     write_markdown(inventory, REPORT_DIR / "BUDDY_CAPABILITY_INVENTORY.md")
     write_csv(inventory, REPORT_DIR / "buddy_bot_readiness.csv")
     print(json.dumps(inventory["summary"], indent=2))
+    if "--strict-production-ready" in sys.argv and not inventory["summary"]["all_bots_production_ready"]:
+        print(
+            "Production readiness gate failed: not all bots are production-ready.",
+            file=sys.stderr,
+        )
+        sys.exit(1)
 
 
 if __name__ == "__main__":

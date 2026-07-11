@@ -35,6 +35,12 @@ jobs:
       - name: Generate inventory
         run: python3 tools/generate_buddy_capability_inventory.py
 
+      - name: Report production readiness gate
+        run: |
+          python3 tools/generate_buddy_capability_inventory.py --strict-production-ready || {
+            echo "::warning::Not all bots are production-ready yet. See reports/buddy_capability_inventory.json for blockers."
+          }
+
       - name: Commit refreshed inventory
         run: |
           git config user.name "github-actions[bot]"
