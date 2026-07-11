@@ -7,7 +7,7 @@ Use the `buddy` branch as the first Hostinger deployment branch for the DreamCo 
 - Repository: `DreamCo-Technologies/Dreamcobots`
 - Branch: `buddy`
 - App root: `dreamco-control-tower/frontend`
-- Build command: `npm ci && npm run build`
+- Build command: `npm ci && VITE_START_TAB=command-center npm run build`
 - Publish directory: `dreamco-control-tower/frontend/dist`
 - Hostinger target directory: `public_html`
 - Start page: Buddy command center, through `VITE_START_TAB=command-center`
@@ -20,7 +20,7 @@ Use the `buddy` branch as the first Hostinger deployment branch for the DreamCo 
 3. Select the `buddy` branch.
 4. Set the deploy target to `public_html`.
 5. Build from `dreamco-control-tower/frontend`.
-6. Use Node 20 and run `npm ci && npm run build`.
+6. Use Node 20 and run `npm ci && VITE_START_TAB=command-center npm run build`.
 7. Publish the generated `dreamco-control-tower/frontend/dist` contents.
 
 ## Environment
