@@ -1,0 +1,47 @@
+name: GitHub PR Issue Comment Scan
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "23 */4 * * *"
+
+jobs:
+  github-triage:
+    name: Scan PRs, issues, comments, and workflow runs
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      actions: read
+      issues: read
+      pull-requests: read
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Generate GitHub triage report
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_REPO: ${{ github.repository }}
+        run: python3 tools/generate_github_triage_report.py
+
+      - name: Commit refreshed triage report
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add reports/GITHUB_TRIAGE_REPORT.md reports/github_triage_report.json
+          git diff --cached --quiet || git commit -m "Refresh GitHub triage report"
+          git push
+
+      - name: Upload triage artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: github-triage-report
+          path: |
+            reports/GITHUB_TRIAGE_REPORT.md
+            reports/github_triage_report.json

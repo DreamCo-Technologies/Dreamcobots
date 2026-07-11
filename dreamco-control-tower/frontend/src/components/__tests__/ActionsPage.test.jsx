@@ -76,15 +76,50 @@ const buddyCapabilityPayload = {
   },
 };
 
+const githubTriagePayload = {
+  generated_at: '2026-07-11T11:30:00+00:00',
+  repo: 'DreamCo-Technologies/Dreamcobots',
+  summary: {
+    open_prs: 56,
+    open_issues: 17,
+    issue_comments_scanned: 100,
+    pr_review_comments_scanned: 4,
+    workflow_runs_scanned: 50,
+    failed_workflow_runs: 6,
+    active_workflow_runs: 2,
+    pr_restart_queue: 12,
+  },
+  pr_restart_queue: [
+    {
+      number: 410,
+      title: 'Finish Buddy readiness tracker',
+      url: 'https://github.com/DreamCo-Technologies/Dreamcobots/pull/410',
+      head_branch: 'buddy-readiness',
+      age_days: 34,
+      restart_reasons: ['stale_pr_needs_rebase_or_retest'],
+    },
+  ],
+  failed_workflow_runs: [
+    {
+      id: 9001,
+      name: 'System and Bot Builds Monitoring',
+      branch: 'main',
+      conclusion: 'failure',
+      updated_at: '2026-07-11T11:10:00Z',
+      url: 'https://github.com/DreamCo-Technologies/Dreamcobots/actions/runs/9001',
+    },
+  ],
+};
+
 function StubActionsMonitor() {
   return <div>Actions monitor panel</div>;
 }
 
 beforeEach(() => {
   global.fetch = vi.fn((url) => {
-    const payload = url === '/api/buddy-capabilities'
-      ? buddyCapabilityPayload
-      : libraryPayload;
+    let payload = libraryPayload;
+    if (url === '/api/buddy-capabilities') payload = buddyCapabilityPayload;
+    if (url === '/api/github-triage') payload = githubTriagePayload;
     return Promise.resolve({
       ok: true,
       json: async () => payload,
@@ -104,6 +139,7 @@ describe('ActionsPage', () => {
     expect(screen.getByText('🛠️ System Builder Hub')).toBeInTheDocument();
     expect(screen.getByText('Builder lanes')).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: '🤝 Buddy capability tracker' })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: '🔎 GitHub PR, issue, and comment triage' })).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: 'Generated libraries' })).toBeInTheDocument();
     expect(screen.getByText('Actions monitor panel')).toBeInTheDocument();
     await waitFor(() => expect(screen.getByText('Source: live')).toBeInTheDocument());
@@ -114,7 +150,7 @@ describe('ActionsPage', () => {
   it('shows Buddy capability readiness and implementation blockers', async () => {
     render(<ActionsPage ActionsMonitorComponent={StubActionsMonitor} />);
 
-    await waitFor(() => expect(screen.getByText(/live ·/)).toBeInTheDocument());
+    await waitFor(() => expect(screen.getAllByText(/live ·/).length).toBeGreaterThanOrEqual(2));
     expect(screen.getByText('Built + test-covered')).toBeInTheDocument();
     expect(screen.getByText('Contract-ready')).toBeInTheDocument();
     expect(screen.getByText('Needs implementation before testing')).toBeInTheDocument();
@@ -128,6 +164,20 @@ describe('ActionsPage', () => {
     expect(screen.getByText('Approval needed')).toBeInTheDocument();
     expect(screen.getByText('Payment AutoCollector')).toBeInTheDocument();
     expect(screen.getByText('Buddy Core')).toBeInTheDocument();
+  });
+
+  it('shows GitHub PR, issue, comment, and workflow triage', async () => {
+    render(<ActionsPage ActionsMonitorComponent={StubActionsMonitor} />);
+
+    await waitFor(() => expect(screen.getByText('Open PRs')).toBeInTheDocument());
+    expect(screen.getByText('Issue comments')).toBeInTheDocument();
+    expect(screen.getByText('Review comments')).toBeInTheDocument();
+    expect(screen.getByText('Restart queue')).toBeInTheDocument();
+    expect(screen.getByText('PR restart and retest queue')).toBeInTheDocument();
+    expect(screen.getByText(/Finish Buddy readiness tracker/)).toBeInTheDocument();
+    expect(screen.getByText('Workflow failures to retest')).toBeInTheDocument();
+    expect(screen.getByText('System and Bot Builds Monitoring')).toBeInTheDocument();
+    expect(screen.getByText(/Workflow reruns require authenticated GitHub Actions permission/)).toBeInTheDocument();
   });
 
   it('prepares a sandboxed pull-request build packet', () => {

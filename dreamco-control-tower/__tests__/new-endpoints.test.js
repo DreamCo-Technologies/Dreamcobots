@@ -315,6 +315,23 @@ describe('GET /api/buddy-capabilities', () => {
   });
 });
 
+describe('GET /api/github-triage', () => {
+  test('returns generated GitHub triage report', async () => {
+    const res = await request(app).get('/api/github-triage');
+
+    expect(res.status).toBe(200);
+    expect(res.body.schema).toBe('dreamco.github_triage.v1');
+    expect(res.body.repo).toBe('DreamCo-Technologies/Dreamcobots');
+    expect(res.body.summary).toHaveProperty('open_prs');
+    expect(res.body.summary).toHaveProperty('open_issues');
+    expect(res.body.summary).toHaveProperty('issue_comments_scanned');
+    expect(res.body.summary).toHaveProperty('pr_review_comments_scanned');
+    expect(res.body.summary).toHaveProperty('failed_workflow_runs');
+    expect(Array.isArray(res.body.pr_restart_queue)).toBe(true);
+    expect(Array.isArray(res.body.failed_workflow_runs)).toBe(true);
+  });
+});
+
 // ---------------------------------------------------------------------------
 // GET /api/command-center
 // ---------------------------------------------------------------------------

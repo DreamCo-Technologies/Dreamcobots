@@ -25,6 +25,10 @@ const BUDDY_CAPABILITY_INVENTORY_FILE = path.join(
   __dirname,
   '../../reports/buddy_capability_inventory.json',
 );
+const GITHUB_TRIAGE_REPORT_FILE = path.join(
+  __dirname,
+  '../../reports/github_triage_report.json',
+);
 const COMMAND_CENTER_FILE = path.join(__dirname, '../config/command_center.json');
 const PRODUCTION_MEDIA_ROADMAP_FILE = path.join(
   __dirname,
@@ -121,6 +125,13 @@ function readBuddyCapabilityInventory() {
     return null;
   }
   return JSON.parse(fs.readFileSync(BUDDY_CAPABILITY_INVENTORY_FILE, 'utf8'));
+}
+
+function readGitHubTriageReport() {
+  if (!fs.existsSync(GITHUB_TRIAGE_REPORT_FILE)) {
+    return null;
+  }
+  return JSON.parse(fs.readFileSync(GITHUB_TRIAGE_REPORT_FILE, 'utf8'));
 }
 
 function parseDurationToDays(duration) {
@@ -373,6 +384,17 @@ app.get('/api/buddy-capabilities', rateLimiter, (_req, res) => {
     return res.status(503).json({ error: 'buddy capability inventory not found' });
   }
   return res.json(inventory);
+});
+
+// ---------------------------------------------------------------------------
+// GET /api/github-triage — PR, issue, comment, and workflow scan snapshot
+// ---------------------------------------------------------------------------
+app.get('/api/github-triage', rateLimiter, (_req, res) => {
+  const report = readGitHubTriageReport();
+  if (!report) {
+    return res.status(503).json({ error: 'github triage report not found' });
+  }
+  return res.json(report);
 });
 
 // ---------------------------------------------------------------------------

@@ -78,6 +78,24 @@ const FALLBACK_BUDDY_INVENTORY = {
   },
 };
 
+const FALLBACK_GITHUB_TRIAGE = {
+  generated_at: null,
+  repo: 'DreamCo-Technologies/Dreamcobots',
+  summary: {
+    open_prs: 0,
+    open_issues: 0,
+    issue_comments_scanned: 0,
+    pr_review_comments_scanned: 0,
+    workflow_runs_scanned: 0,
+    failed_workflow_runs: 0,
+    active_workflow_runs: 0,
+    pr_restart_queue: 0,
+  },
+  pr_restart_queue: [],
+  failed_workflow_runs: [],
+  notes: ['Run the GitHub triage scan to populate live repository data.'],
+};
+
 const BUILD_STAGES = [
   ['01', 'Specify', 'Identity, goal, inputs, outputs, limits, owner'],
   ['02', 'Compose', 'Tools, API, webhook, workflow, skills'],
@@ -135,6 +153,8 @@ export default function ActionsPage({
   const [libraryStatus, setLibraryStatus] = useState('loading');
   const [buddyInventory, setBuddyInventory] = useState(null);
   const [buddyInventoryStatus, setBuddyInventoryStatus] = useState('loading');
+  const [githubTriage, setGithubTriage] = useState(null);
+  const [githubTriageStatus, setGithubTriageStatus] = useState('loading');
   const [buildPacket, setBuildPacket] = useState(null);
 
   useEffect(() => {
@@ -163,11 +183,26 @@ export default function ActionsPage({
       .catch(() => setBuddyInventoryStatus('generated fallback'));
   }, []);
 
+  useEffect(() => {
+    fetch('/api/github-triage')
+      .then((response) => {
+        if (!response.ok) throw new Error(`GitHub triage API returned ${response.status}`);
+        return response.json();
+      })
+      .then((data) => {
+        setGithubTriage(data);
+        setGithubTriageStatus('live');
+      })
+      .catch(() => setGithubTriageStatus('generated fallback'));
+  }, []);
+
   const builders = libraryData?.builders ?? FALLBACK_BUILDERS;
   const libraries = libraryData?.libraries ?? FALLBACK_LIBRARIES;
   const botCount = libraryData?.bot_count ?? 1247;
   const inventory = buddyInventory ?? FALLBACK_BUDDY_INVENTORY;
+  const triage = githubTriage ?? FALLBACK_GITHUB_TRIAGE;
   const inventorySummary = inventory.summary ?? FALLBACK_BUDDY_INVENTORY.summary;
+  const triageSummary = triage.summary ?? FALLBACK_GITHUB_TRIAGE.summary;
   const buildStates = inventorySummary.build_states ?? {};
   const testStates = inventorySummary.test_states ?? {};
   const codingPathStates = inventorySummary.coding_path_states ?? {};
@@ -364,6 +399,86 @@ export default function ActionsPage({
               Review markers are conservative: they flag placeholder-like text for human review, not automatic failure.
             </p>
           </aside>
+        </div>
+      </section>
+
+      <section aria-labelledby="github-triage-heading" className="border border-slate-700 bg-slate-950 p-5">
+        <div className="flex flex-wrap items-start justify-between gap-3">
+          <div>
+            <p className="text-xs font-bold uppercase text-dreamco-accent">Repository retest scan</p>
+            <h3 id="github-triage-heading" className="mt-1 text-lg font-semibold text-white">🔎 GitHub PR, issue, and comment triage</h3>
+            <p className="mt-1 max-w-3xl text-sm leading-6 text-slate-400">
+              Scans pull requests, issues, conversation comments, review comments, workflow runs, and the PR restart queue.
+            </p>
+          </div>
+          <span className="rounded-full border border-slate-700 px-3 py-1 text-xs font-semibold text-slate-400">
+            {githubTriageStatus} · {formatDateTime(triage.generated_at)}
+          </span>
+        </div>
+
+        <div className="mt-5 grid grid-cols-2 gap-px overflow-hidden border border-slate-800 bg-slate-800 lg:grid-cols-4 xl:grid-cols-8">
+          {[
+            ['Open PRs', triageSummary.open_prs],
+            ['Open issues', triageSummary.open_issues],
+            ['Issue comments', triageSummary.issue_comments_scanned],
+            ['Review comments', triageSummary.pr_review_comments_scanned],
+            ['Workflow runs', triageSummary.workflow_runs_scanned],
+            ['Failed runs', triageSummary.failed_workflow_runs],
+            ['Active runs', triageSummary.active_workflow_runs],
+            ['Restart queue', triageSummary.pr_restart_queue],
+          ].map(([label, value]) => (
+            <div key={label} className="bg-slate-900 p-4">
+              <p className="text-xl font-black text-white">{formatNumber(value)}</p>
+              <p className="mt-1 text-xs uppercase text-slate-500">{label}</p>
+            </div>
+          ))}
+        </div>
+
+        <div className="mt-5 grid gap-5 lg:grid-cols-2">
+          <div className="border border-slate-800 bg-slate-900 p-4">
+            <h4 className="text-sm font-semibold text-white">PR restart and retest queue</h4>
+            <div className="mt-3 space-y-2">
+              {(triage.pr_restart_queue ?? []).slice(0, 6).map((pr) => (
+                <a
+                  key={pr.number}
+                  href={pr.url}
+                  className="block border-l-2 border-dreamco-accent pl-3 text-sm text-slate-300 hover:text-white"
+                >
+                  <span className="font-semibold text-white">#{pr.number}</span> {pr.title}
+                  <span className="block text-xs text-slate-500">
+                    {pr.head_branch} · {formatNumber(pr.age_days)} days · {(pr.restart_reasons ?? []).map(formatLabel).join(', ')}
+                  </span>
+                </a>
+              ))}
+              {(triage.pr_restart_queue ?? []).length === 0 && (
+                <p className="text-sm text-green-300">No restart queue items found in the latest scan.</p>
+              )}
+            </div>
+          </div>
+
+          <div className="border border-slate-800 bg-slate-900 p-4">
+            <h4 className="text-sm font-semibold text-white">Workflow failures to retest</h4>
+            <div className="mt-3 space-y-2">
+              {(triage.failed_workflow_runs ?? []).slice(0, 6).map((run) => (
+                <a
+                  key={run.id}
+                  href={run.url}
+                  className="block border-l-2 border-yellow-500 pl-3 text-sm text-slate-300 hover:text-white"
+                >
+                  <span className="font-semibold text-white">{run.name}</span>
+                  <span className="block text-xs text-slate-500">
+                    {run.branch} · {formatLabel(run.conclusion)} · {formatDateTime(run.updated_at)}
+                  </span>
+                </a>
+              ))}
+              {(triage.failed_workflow_runs ?? []).length === 0 && (
+                <p className="text-sm text-green-300">No failed workflow runs in the scanned window.</p>
+              )}
+            </div>
+            <p className="mt-4 text-xs leading-5 text-slate-500">
+              Workflow reruns require authenticated GitHub Actions permission; this page keeps the retest queue visible.
+            </p>
+          </div>
         </div>
       </section>
 
