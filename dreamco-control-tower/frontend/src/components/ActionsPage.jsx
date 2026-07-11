@@ -40,6 +40,15 @@ const FALLBACK_BUDDY_INVENTORY = {
       ready_for_test_run: 368,
       needs_implementation_before_testing: 5,
     },
+    coding_path_states: {
+      needs_placeholder_review: 1109,
+      needs_direct_test_coverage: 22,
+      on_full_code_path: 109,
+      needs_core_implementation: 5,
+      needs_existing_system_mapping: 2,
+    },
+    bots_with_full_coding_path: 1247,
+    all_bots_have_full_coding_path: true,
     placeholder_marker_bots: 1109,
   },
   buddy_bots: [
@@ -150,7 +159,10 @@ export default function ActionsPage({
   const inventorySummary = inventory.summary ?? FALLBACK_BUDDY_INVENTORY.summary;
   const buildStates = inventorySummary.build_states ?? {};
   const testStates = inventorySummary.test_states ?? {};
+  const codingPathStates = inventorySummary.coding_path_states ?? {};
   const needsImplementation = inventory.attention?.needs_implementation ?? [];
+  const needsDirectTests = inventory.attention?.needs_direct_test_coverage ?? [];
+  const needsSystemMapping = inventory.attention?.needs_existing_system_mapping ?? [];
   const directBuddyBots = inventory.buddy_bots ?? [];
   const selectedBuilder = builders.find((builder) => builder.id === selectedBuilderId) ?? builders[0];
   const selectedLibrary = libraries.find((library) => library.id === activeLibrary) ?? libraries[0];
@@ -227,7 +239,7 @@ export default function ActionsPage({
             ['Workflows', inventorySummary.workflows],
             ['Buddy systems', inventorySummary.buddy_related_bots],
             ['Ready test runs', testStates.ready_for_test_run],
-            ['Needs build', testStates.needs_implementation_before_testing],
+            ['Coding paths', inventorySummary.bots_with_full_coding_path],
           ].map(([label, value]) => (
             <div key={label} className="bg-slate-900 p-4">
               <p className="text-xl font-black text-white">{formatNumber(value)}</p>
@@ -251,6 +263,33 @@ export default function ActionsPage({
               <div className="border border-yellow-800 bg-yellow-950/20 p-4">
                 <p className="text-2xl font-black text-yellow-300">{formatNumber(inventorySummary.placeholder_marker_bots)}</p>
                 <p className="mt-1 text-xs uppercase text-yellow-100">Review markers</p>
+              </div>
+            </div>
+
+            <div className="mt-5">
+              <div className="flex flex-wrap items-center justify-between gap-2">
+                <h4 className="text-sm font-semibold text-white">Path to fully coded</h4>
+                <span className={`rounded-full border px-3 py-1 text-xs font-semibold ${
+                  inventorySummary.all_bots_have_full_coding_path
+                    ? 'border-green-800 bg-green-950/30 text-green-300'
+                    : 'border-yellow-800 bg-yellow-950/30 text-yellow-300'
+                }`}>
+                  {inventorySummary.all_bots_have_full_coding_path ? 'All bots have a path' : 'Path gaps found'}
+                </span>
+              </div>
+              <div className="mt-3 grid gap-2 sm:grid-cols-2 xl:grid-cols-5">
+                {[
+                  ['On full path', codingPathStates.on_full_code_path],
+                  ['Review placeholders', codingPathStates.needs_placeholder_review],
+                  ['Add direct tests', codingPathStates.needs_direct_test_coverage],
+                  ['Build core files', codingPathStates.needs_core_implementation],
+                  ['Map systems', codingPathStates.needs_existing_system_mapping],
+                ].map(([label, value]) => (
+                  <div key={label} className="border border-slate-800 bg-slate-900 p-3">
+                    <p className="text-lg font-black text-white">{formatNumber(value)}</p>
+                    <p className="mt-1 text-xs uppercase text-slate-500">{label}</p>
+                  </div>
+                ))}
               </div>
             </div>
 
@@ -282,6 +321,7 @@ export default function ActionsPage({
               )}
             </div>
             <p className="mt-4 text-xs leading-5 text-slate-500">
+              Next queues: {formatNumber(needsDirectTests.length)} need direct test promotion and {formatNumber(needsSystemMapping.length)} need system mapping.
               Review markers are conservative: they flag placeholder-like text for human review, not automatic failure.
             </p>
           </aside>

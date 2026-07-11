@@ -1,6 +1,6 @@
 # Buddy Capability Inventory
 
-Generated: 2026-07-11T10:07:44.911726+00:00
+Generated: 2026-07-11T10:16:15.906732+00:00
 Branch scanned: `buddy-hostinger-starter`
 
 ## Executive Summary
@@ -16,6 +16,9 @@ Branch scanned: `buddy-hostinger-starter`
 - **All System Libraries Cover Profiled Bots**: True
 - **Build States**: {'built_contract_ready': 874, 'built_and_test_covered': 366, 'profiled_from_existing_system_needs_direct_impl_check': 7}
 - **Test States**: {'ready_for_contract_testing': 874, 'ready_for_test_run': 368, 'needs_implementation_before_testing': 5}
+- **Coding Path States**: {'needs_placeholder_review': 1109, 'needs_direct_test_coverage': 22, 'on_full_code_path': 109, 'needs_core_implementation': 5, 'needs_existing_system_mapping': 2}
+- **Bots With Full Coding Path**: 1247
+- **All Bots Have Full Coding Path**: True
 - **Placeholder Marker Bots**: 1109
 
 ## Direct Buddy Systems Found
@@ -51,6 +54,19 @@ Branch scanned: `buddy-hostinger-starter`
 | needs_implementation_before_testing | 5 |
 | ready_for_contract_testing | 874 |
 | ready_for_test_run | 368 |
+
+## Full Coding Path Coverage
+
+- Bots with a tracked coding path: 1247
+- All bots have a tracked coding path: True
+
+| Coding Path State | Count |
+| --- | ---: |
+| needs_core_implementation | 5 |
+| needs_direct_test_coverage | 22 |
+| needs_existing_system_mapping | 2 |
+| needs_placeholder_review | 1109 |
+| on_full_code_path | 109 |
 
 ## Needs Implementation
 

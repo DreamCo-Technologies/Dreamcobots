@@ -293,6 +293,8 @@ describe('GET /api/buddy-capabilities', () => {
     expect(res.body.summary.bot_profiles_scanned).toBe(1247);
     expect(res.body.summary.buddy_related_bots).toBeGreaterThanOrEqual(10);
     expect(res.body.summary.test_states.ready_for_test_run).toBeGreaterThan(0);
+    expect(res.body.summary.bots_with_full_coding_path).toBe(1247);
+    expect(res.body.summary.all_bots_have_full_coding_path).toBe(true);
   });
 
   test('returns attention list and direct Buddy systems', async () => {
@@ -306,6 +308,8 @@ describe('GET /api/buddy-capabilities', () => {
         (bot) => bot.slug === 'payment_autocollector',
       ),
     ).toBe(true);
+    expect(Array.isArray(res.body.attention.needs_direct_test_coverage)).toBe(true);
+    expect(Array.isArray(res.body.attention.needs_existing_system_mapping)).toBe(true);
   });
 });
 

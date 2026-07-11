@@ -36,6 +36,15 @@ const buddyCapabilityPayload = {
       ready_for_test_run: 368,
       needs_implementation_before_testing: 5,
     },
+    coding_path_states: {
+      needs_placeholder_review: 1109,
+      needs_direct_test_coverage: 22,
+      on_full_code_path: 109,
+      needs_core_implementation: 5,
+      needs_existing_system_mapping: 2,
+    },
+    bots_with_full_coding_path: 1247,
+    all_bots_have_full_coding_path: true,
     placeholder_marker_bots: 1109,
   },
   buddy_bots: [
@@ -45,6 +54,13 @@ const buddyCapabilityPayload = {
   attention: {
     needs_implementation: [
       { slug: 'payment_autocollector', name: 'Payment AutoCollector', division: 'DreamFinance' },
+    ],
+    needs_direct_test_coverage: [
+      { slug: 'buddy-tool-builder', name: 'Buddy Tool Library Builder Bot', division: 'DreamCodeLab' },
+    ],
+    needs_existing_system_mapping: [
+      { slug: 'ai_enablement_hub', name: 'AI Enablement Hub', division: 'DreamAIInfra' },
+      { slug: 'elite_scraper', name: 'Elite Scraper', division: 'DreamSalesPro' },
     ],
   },
 };
@@ -91,6 +107,10 @@ describe('ActionsPage', () => {
     expect(screen.getByText('Built + test-covered')).toBeInTheDocument();
     expect(screen.getByText('Contract-ready')).toBeInTheDocument();
     expect(screen.getByText('Needs implementation before testing')).toBeInTheDocument();
+    expect(screen.getByText('Path to fully coded')).toBeInTheDocument();
+    expect(screen.getByText('All bots have a path')).toBeInTheDocument();
+    expect(screen.getByText('Review placeholders')).toBeInTheDocument();
+    expect(screen.getByText('Add direct tests')).toBeInTheDocument();
     expect(screen.getByText('Payment AutoCollector')).toBeInTheDocument();
     expect(screen.getByText('Buddy Core')).toBeInTheDocument();
   });
