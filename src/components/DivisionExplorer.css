@@ -80,7 +80,8 @@
   display: flex;
   font: inherit;
   justify-content: space-between;
-  min-height: 42px;
+  gap: 12px;
+  min-height: 58px;
   padding: 9px 10px;
   text-align: left;
   width: 100%;
@@ -96,10 +97,27 @@
 }
 
 .division-name {
+  display: block;
+  font-weight: 700;
   overflow-wrap: anywhere;
 }
 
+.division-prospectus-mini {
+  color: #94a3b8;
+  display: block;
+  font-size: 12px;
+  line-height: 1.35;
+  margin-top: 3px;
+}
+
+.division-btn:hover .division-prospectus-mini,
+.division-btn:focus-visible .division-prospectus-mini,
+.division-btn.active .division-prospectus-mini {
+  color: #dbeafe;
+}
+
 .division-count {
+  flex: 0 0 auto;
   color: #93c5fd;
   font-size: 12px;
   min-width: 30px;
@@ -192,6 +210,61 @@
   margin-left: 4px;
 }
 
+.division-prospectus-card {
+  border: 1px solid #1e293b;
+  background: #0f172a;
+  display: grid;
+  gap: 16px;
+  padding: 16px;
+}
+
+.division-prospectus-card h3 {
+  color: #ffffff;
+  font-size: 20px;
+  margin: 4px 0 8px;
+}
+
+.division-prospectus-card p {
+  color: #cbd5e1;
+  line-height: 1.6;
+  margin: 0;
+}
+
+.prospectus-grid {
+  display: grid;
+  gap: 12px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.prospectus-grid > div {
+  border: 1px solid #334155;
+  background: #020617;
+  min-height: 120px;
+  padding: 12px;
+}
+
+.prospectus-label {
+  color: #38bdf8;
+  display: block;
+  font-size: 12px;
+  font-weight: 700;
+  margin-bottom: 8px;
+  text-transform: uppercase;
+}
+
+.prospectus-grid ul {
+  color: #cbd5e1;
+  line-height: 1.6;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.prospectus-grid li::before {
+  color: #22c55e;
+  content: "✓ ";
+}
+
 @media (max-width: 860px) {
   .division-explorer {
     padding: 14px;
@@ -203,5 +276,9 @@
 
   .division-list {
     max-height: 320px;
+  }
+
+  .prospectus-grid {
+    grid-template-columns: 1fr;
   }
 }
