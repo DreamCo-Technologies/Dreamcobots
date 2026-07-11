@@ -47,6 +47,11 @@ jobs:
           VITE_START_TAB: actions
         run: npm run build
 
+      - name: Add bot inventory data
+        run: |
+          mkdir -p dreamco-control-tower/frontend/dist/data
+          cp reports/buddy_capability_inventory.json dreamco-control-tower/frontend/dist/data/buddy_capability_inventory.json
+
       - name: Add static hosting files
         working-directory: dreamco-control-tower/frontend/dist
         run: |
