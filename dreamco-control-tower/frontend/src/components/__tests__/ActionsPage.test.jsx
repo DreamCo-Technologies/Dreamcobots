@@ -59,8 +59,13 @@ const buddyCapabilityPayload = {
     placeholder_marker_bots: 1109,
   },
   buddy_bots: [
-    { slug: 'buddy_core', name: 'Buddy Core', build_state: 'built_and_test_covered', test_state: 'ready_for_test_run' },
-    { slug: 'buddy_orchestrator', name: 'Buddy Orchestrator', build_state: 'built_and_test_covered', test_state: 'ready_for_test_run' },
+    { slug: 'buddy-bot', name: 'Buddy Bot', division: 'CommandCore', description: 'Routes coding and testing across the fleet.', capabilities: ['Code generation', 'Cross-bot orchestration', 'Sandbox testing'], tests: ['tests/test_buddy_bot.py'], test_count: 1, build_state: 'built_and_test_covered', test_state: 'ready_for_test_run', production_readiness_status: 'production_ready', production_ready: true },
+    { slug: 'buddy_core', name: 'Buddy Core', division: 'CommandCore', build_state: 'built_and_test_covered', test_state: 'ready_for_test_run' },
+    { slug: 'buddy_orchestrator', name: 'Buddy Orchestrator', division: 'CommandCore', build_state: 'built_and_test_covered', test_state: 'ready_for_test_run' },
+  ],
+  bots: [
+    { slug: 'buddy-bot', name: 'Buddy Bot', division: 'CommandCore', description: 'Routes coding and testing across the fleet.', capabilities: ['Code generation', 'Cross-bot orchestration', 'Sandbox testing'], tests: ['tests/test_buddy_bot.py'], test_count: 1, build_state: 'built_and_test_covered', test_state: 'ready_for_test_run', production_readiness_status: 'production_ready', production_ready: true, risk_hint: 'standard' },
+    { slug: 'lead-gen-bot', name: 'Lead Generation Bot', division: 'DreamSalesPro', description: 'Finds and qualifies leads for sales workflows.', capabilities: ['Lead discovery', 'Prospect scoring', 'CRM enrichment'], tests: ['tests/generated_bot_smoke/test_lead_gen_bot_runtime.py'], test_count: 1, build_state: 'built_and_test_covered', test_state: 'ready_for_test_run', production_readiness_status: 'production_candidate_approval_required', production_ready: false, risk_hint: 'high' },
   ],
   attention: {
     needs_implementation: [
@@ -139,6 +144,7 @@ describe('ActionsPage', () => {
     expect(screen.getByText('🛠️ System Builder Hub')).toBeInTheDocument();
     expect(screen.getByText('Builder lanes')).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: '🤝 Buddy capability tracker' })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: '🧪 Buddy and bot test catalog' })).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: '🔎 GitHub PR, issue, and comment triage' })).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: 'Generated libraries' })).toBeInTheDocument();
     expect(screen.getByText('Actions monitor panel')).toBeInTheDocument();
@@ -160,10 +166,42 @@ describe('ActionsPage', () => {
     expect(screen.getByText('Add direct tests')).toBeInTheDocument();
     expect(screen.getByText('Production readiness')).toBeInTheDocument();
     expect(screen.getByText('Production blockers remain')).toBeInTheDocument();
-    expect(screen.getByText('Production ready')).toBeInTheDocument();
+    expect(screen.getAllByText('Production ready').length).toBeGreaterThan(0);
     expect(screen.getByText('Approval needed')).toBeInTheDocument();
     expect(screen.getByText('Payment AutoCollector')).toBeInTheDocument();
     expect(screen.getByText('Buddy Core')).toBeInTheDocument();
+  });
+
+  it('shows bot capabilities and prepares sandbox test packets', async () => {
+    const onBotTestRequest = vi.fn();
+    render(
+      <ActionsPage
+        ActionsMonitorComponent={StubActionsMonitor}
+        onBotTestRequest={onBotTestRequest}
+      />,
+    );
+
+    await waitFor(() => expect(screen.getByText('Buddy Bot')).toBeInTheDocument());
+    expect(screen.getByText('For you')).toBeInTheDocument();
+    expect(screen.getByText('For your users')).toBeInTheDocument();
+    expect(screen.getByText('For Buddy')).toBeInTheDocument();
+    expect(screen.getByText('Code generation')).toBeInTheDocument();
+
+    fireEvent.change(screen.getByLabelText('Find a bot'), { target: { value: 'lead' } });
+    fireEvent.click(screen.getByRole('button', { name: /Lead Generation Bot/ }));
+    expect(screen.getByRole('heading', { name: '🤖 Lead Generation Bot' })).toBeInTheDocument();
+    expect(screen.getByText('Prospect scoring')).toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole('button', { name: 'Test selected bot' }));
+    expect(onBotTestRequest).toHaveBeenCalledWith(
+      expect.objectContaining({
+        slug: 'lead-gen-bot',
+        mode: 'sandbox_only',
+        approval: 'buddy_money_help_approval_required_before_live_actions',
+      }),
+    );
+    expect(screen.getByRole('status')).toHaveTextContent('Sandbox test packet prepared for Lead Generation Bot');
+    expect(screen.getByText(/Live money, outreach, and production actions stay blocked/)).toBeInTheDocument();
   });
 
   it('shows GitHub PR, issue, comment, and workflow triage', async () => {

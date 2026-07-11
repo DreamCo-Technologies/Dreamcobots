@@ -63,10 +63,43 @@ const FALLBACK_BUDDY_INVENTORY = {
     placeholder_marker_bots: 1109,
   },
   buddy_bots: [
-    { slug: 'buddy_core', name: 'Buddy Core', build_state: 'built_and_test_covered', test_state: 'ready_for_test_run' },
-    { slug: 'buddy_orchestrator', name: 'Buddy Orchestrator', build_state: 'built_and_test_covered', test_state: 'ready_for_test_run' },
-    { slug: 'buddy-tool-builder', name: 'Buddy Tool Library Builder Bot', build_state: 'built_contract_ready', test_state: 'ready_for_contract_testing' },
+    {
+      slug: 'buddy-bot',
+      name: 'Buddy Bot',
+      division: 'CommandCore',
+      description: 'Buddy routes coding, debugging, tool-building, orchestration, and safe sandbox testing across the bot fleet.',
+      capabilities: ['Code generation', 'Cross-bot orchestration', 'Tool-building', 'Debugging', 'API integration builder', 'Sandbox testing'],
+      tests: ['tests/test_buddy_bot.py'],
+      test_count: 1,
+      build_state: 'built_and_test_covered',
+      test_state: 'ready_for_test_run',
+      production_readiness_status: 'production_ready',
+      risk_hint: 'standard',
+    },
+    {
+      slug: 'buddy_core',
+      name: 'Buddy Core',
+      division: 'CommandCore',
+      description: 'Core Buddy runtime for command routing, repository awareness, and supervised automation.',
+      capabilities: ['Command routing', 'Repository scans', 'Build packet planning', 'Safety gates'],
+      tests: [],
+      test_count: 0,
+      build_state: 'built_and_test_covered',
+      test_state: 'ready_for_test_run',
+    },
+    {
+      slug: 'buddy-tool-builder',
+      name: 'Buddy Tool Library Builder Bot',
+      division: 'DreamCodeLab',
+      description: 'Builds reusable tool libraries, SDKs, APIs, and test scaffolds for Buddy and the fleet.',
+      capabilities: ['SDK scaffolding', 'Tool library creation', 'API client generation', 'Documentation generation'],
+      tests: [],
+      test_count: 0,
+      build_state: 'built_contract_ready',
+      test_state: 'ready_for_contract_testing',
+    },
   ],
+  bots: [],
   attention: {
     needs_implementation: [
       { slug: 'ai_enablement_hub', name: 'AI Enablement Hub', division: 'DreamAIInfra' },
@@ -141,14 +174,83 @@ function formatDateTime(value) {
   });
 }
 
+async function fetchFirstJson(paths) {
+  let lastError;
+  for (const path of paths) {
+    try {
+      const response = await fetch(path);
+      if (!response.ok) throw new Error(`${path} returned ${response.status}`);
+      return await response.json();
+    } catch (error) {
+      lastError = error;
+    }
+  }
+  throw lastError;
+}
+
+function getCapabilityLabels(bot, limit = 6) {
+  return (bot?.capabilities ?? [])
+    .map((capability) => {
+      if (typeof capability === 'string') return capability;
+      return capability.label ?? formatLabel(capability.intent);
+    })
+    .filter(Boolean)
+    .slice(0, limit);
+}
+
+function buildBotCatalog(inventory) {
+  const source = inventory?.bots?.length
+    ? inventory.bots
+    : [
+        ...(inventory?.buddy_bots ?? []),
+        ...(inventory?.attention?.production_blockers ?? []),
+        ...FALLBACK_BUDDY_INVENTORY.buddy_bots,
+      ];
+  const bySlug = new Map();
+  source.forEach((bot) => {
+    if (bot?.slug) bySlug.set(bot.slug, bot);
+  });
+  return [...bySlug.values()].sort((a, b) => {
+    const aBuddy = String(a.slug).includes('buddy') ? 0 : 1;
+    const bBuddy = String(b.slug).includes('buddy') ? 0 : 1;
+    return aBuddy - bBuddy || String(a.name).localeCompare(String(b.name));
+  });
+}
+
+function buildBotTestPacket(bot, scope = 'selected') {
+  const capabilities = getCapabilityLabels(bot, 8);
+  return {
+    scope,
+    slug: bot.slug,
+    name: bot.name,
+    command: 'python3 tools/run_generated_bot_smoke.py',
+    mode: 'sandbox_only',
+    tests: bot.tests ?? [],
+    approval: bot.risk_hint === 'high' || bot.production_readiness_status === 'production_candidate_approval_required'
+      ? 'buddy_money_help_approval_required_before_live_actions'
+      : 'safe_for_sandbox_testing',
+    canDo: {
+      forYou: bot.description || `${bot.name} helps operate ${bot.division || 'its division'} workflows.`,
+      forUsers: capabilities.length
+        ? `Users can get ${capabilities.slice(0, 3).join(', ')}.`
+        : 'Users can get governed bot assistance once its capabilities are expanded.',
+      forBuddy: `Buddy can route this bot through sandbox tests, inspect ${formatNumber(bot.test_count)} test file(s), and keep its ${formatLabel(bot.test_state)} state visible.`,
+    },
+  };
+}
+
 export default function ActionsPage({
   ActionsMonitorComponent = ActionsMonitor,
   onBuddyCommandSubmit = () => {},
   onBuildRequest = () => {},
+  onBotTestRequest = () => {},
 }) {
   const [showBuddyCenter, setShowBuddyCenter] = useState(false);
   const [selectedBuilderId, setSelectedBuilderId] = useState('full-bot-system');
   const [activeLibrary, setActiveLibrary] = useState('tools');
+  const [botSearch, setBotSearch] = useState('');
+  const [selectedBotSlug, setSelectedBotSlug] = useState('buddy-bot');
+  const [botTestPacket, setBotTestPacket] = useState(null);
   const [libraryData, setLibraryData] = useState(null);
   const [libraryStatus, setLibraryStatus] = useState('loading');
   const [buddyInventory, setBuddyInventory] = useState(null);
@@ -158,11 +260,7 @@ export default function ActionsPage({
   const [buildPacket, setBuildPacket] = useState(null);
 
   useEffect(() => {
-    fetch('/api/system-libraries')
-      .then((response) => {
-        if (!response.ok) throw new Error(`Library API returned ${response.status}`);
-        return response.json();
-      })
+    fetchFirstJson(['/api/system-libraries'])
       .then((data) => {
         setLibraryData(data);
         setLibraryStatus('live');
@@ -171,24 +269,16 @@ export default function ActionsPage({
   }, []);
 
   useEffect(() => {
-    fetch('/api/buddy-capabilities')
-      .then((response) => {
-        if (!response.ok) throw new Error(`Buddy capability API returned ${response.status}`);
-        return response.json();
-      })
+    fetchFirstJson(['/api/buddy-capabilities', './data/buddy_capability_inventory.json'])
       .then((data) => {
         setBuddyInventory(data);
-        setBuddyInventoryStatus('live');
+        setBuddyInventoryStatus(data?.branch ? 'static inventory' : 'live');
       })
       .catch(() => setBuddyInventoryStatus('generated fallback'));
   }, []);
 
   useEffect(() => {
-    fetch('/api/github-triage')
-      .then((response) => {
-        if (!response.ok) throw new Error(`GitHub triage API returned ${response.status}`);
-        return response.json();
-      })
+    fetchFirstJson(['/api/github-triage'])
       .then((data) => {
         setGithubTriage(data);
         setGithubTriageStatus('live');
@@ -211,6 +301,26 @@ export default function ActionsPage({
   const needsDirectTests = inventory.attention?.needs_direct_test_coverage ?? [];
   const needsSystemMapping = inventory.attention?.needs_existing_system_mapping ?? [];
   const directBuddyBots = inventory.buddy_bots ?? [];
+  const botCatalog = useMemo(() => buildBotCatalog(inventory), [inventory]);
+  const selectedBot = botCatalog.find((bot) => bot.slug === selectedBotSlug) ?? botCatalog[0] ?? FALLBACK_BUDDY_INVENTORY.buddy_bots[0];
+  const selectedBotCapabilities = getCapabilityLabels(selectedBot, 8);
+  const visibleBots = useMemo(() => {
+    const query = botSearch.trim().toLowerCase();
+    return botCatalog
+      .filter((bot) => {
+        if (!query) return true;
+        const haystack = [
+          bot.slug,
+          bot.name,
+          bot.division,
+          bot.category,
+          bot.description,
+          ...getCapabilityLabels(bot, 12),
+        ].join(' ').toLowerCase();
+        return haystack.includes(query);
+      })
+      .slice(0, 12);
+  }, [botCatalog, botSearch]);
   const selectedBuilder = builders.find((builder) => builder.id === selectedBuilderId) ?? builders[0];
   const selectedLibrary = libraries.find((library) => library.id === activeLibrary) ?? libraries[0];
   const contractCount = useMemo(
@@ -227,6 +337,13 @@ export default function ActionsPage({
     };
     setBuildPacket(packet);
     onBuildRequest(packet);
+  }
+
+  function prepareBotTest(bot, scope = 'selected') {
+    const packet = buildBotTestPacket(bot, scope);
+    setSelectedBotSlug(bot.slug);
+    setBotTestPacket(packet);
+    onBotTestRequest(packet);
   }
 
   return (
@@ -399,6 +516,177 @@ export default function ActionsPage({
               Review markers are conservative: they flag placeholder-like text for human review, not automatic failure.
             </p>
           </aside>
+        </div>
+      </section>
+
+      <section aria-labelledby="bot-test-heading" className="border border-slate-700 bg-slate-950 p-5">
+        <div className="flex flex-wrap items-start justify-between gap-3">
+          <div>
+            <p className="text-xs font-bold uppercase text-dreamco-accent">Sandbox bot testing</p>
+            <h3 id="bot-test-heading" className="mt-1 text-lg font-semibold text-white">🧪 Buddy and bot test catalog</h3>
+            <p className="mt-1 max-w-3xl text-sm leading-6 text-slate-400">
+              Search every registered bot, see what it can do for you, your users, and Buddy, then prepare a safe sandbox test packet.
+            </p>
+          </div>
+          <div className="flex flex-wrap gap-2">
+            <button
+              type="button"
+              onClick={() => prepareBotTest(botCatalog.find((bot) => bot.slug === 'buddy-bot') ?? selectedBot, 'buddy')}
+              className="rounded-md bg-dreamco-accent px-3 py-2 text-sm font-semibold text-white hover:bg-dreamco-accent/80"
+            >
+              Test Buddy
+            </button>
+            <button
+              type="button"
+              onClick={() => prepareBotTest(selectedBot)}
+              className="rounded-md border border-slate-600 px-3 py-2 text-sm font-semibold text-slate-200 hover:border-slate-400"
+            >
+              Test selected bot
+            </button>
+          </div>
+        </div>
+
+        <div className="mt-5 grid grid-cols-2 gap-px overflow-hidden border border-slate-800 bg-slate-800 lg:grid-cols-5">
+          {[
+            ['Catalog bots', botCatalog.length],
+            ['Executable runtimes', inventorySummary.executable_runtime_ready_bots],
+            ['Sandbox ready', testStates.ready_for_test_run],
+            ['Production ready', inventorySummary.production_ready_bots],
+            ['Approval gated', inventorySummary.buddy_money_approval_required_bots ?? productionStates.production_candidate_approval_required],
+          ].map(([label, value]) => (
+            <div key={label} className="bg-slate-900 p-4">
+              <p className="text-xl font-black text-white">{formatNumber(value)}</p>
+              <p className="mt-1 text-xs uppercase text-slate-500">{label}</p>
+            </div>
+          ))}
+        </div>
+
+        <div className="mt-5 grid gap-5 xl:grid-cols-[20rem_minmax(0,1fr)]">
+          <div className="border border-slate-800 bg-slate-900 p-4">
+            <label htmlFor="bot-search" className="text-sm font-semibold text-white">Find a bot</label>
+            <input
+              id="bot-search"
+              value={botSearch}
+              onChange={(event) => setBotSearch(event.target.value)}
+              placeholder="Search name, division, capability"
+              className="mt-3 w-full rounded-md border border-slate-700 bg-slate-950 px-3 py-2 text-sm text-white placeholder:text-slate-500 focus:border-dreamco-accent focus:outline-none"
+            />
+            <div className="mt-3 max-h-96 space-y-2 overflow-y-auto pr-1">
+              {visibleBots.map((bot) => (
+                <button
+                  key={bot.slug}
+                  type="button"
+                  onClick={() => {
+                    setSelectedBotSlug(bot.slug);
+                    setBotTestPacket(null);
+                  }}
+                  className={`w-full border px-3 py-3 text-left ${
+                    selectedBot.slug === bot.slug
+                      ? 'border-dreamco-accent bg-dreamco-accent/15'
+                      : 'border-slate-800 bg-slate-950 hover:border-slate-600'
+                  }`}
+                >
+                  <span className="block truncate text-sm font-semibold text-white">
+                    {String(bot.slug).includes('buddy') ? '🤝 ' : '🤖 '}
+                    {bot.name}
+                  </span>
+                  <span className="mt-1 block text-xs text-slate-500">
+                    {bot.division ?? 'DreamCo'} · {formatLabel(bot.test_state)}
+                  </span>
+                </button>
+              ))}
+              {visibleBots.length === 0 && (
+                <p className="border border-slate-800 bg-slate-950 p-3 text-sm text-slate-400">No bots matched that search.</p>
+              )}
+            </div>
+          </div>
+
+          <div className="border border-slate-800 bg-slate-900 p-5">
+            <div className="flex flex-wrap items-start justify-between gap-4">
+              <div>
+                <p className="text-xs uppercase text-slate-500">{selectedBot.division ?? 'DreamCo'} · {selectedBot.slug}</p>
+                <h4 className="mt-1 text-xl font-bold text-white">
+                  {String(selectedBot.slug).includes('buddy') ? '🤝 ' : '🤖 '}
+                  {selectedBot.name}
+                </h4>
+                <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-400">
+                  {selectedBot.description || 'This bot is registered in the DreamCo fleet and ready for governed sandbox testing.'}
+                </p>
+              </div>
+              <span className={`rounded-full border px-3 py-1 text-xs font-semibold ${
+                selectedBot.production_ready
+                  ? 'border-green-800 bg-green-950/30 text-green-300'
+                  : selectedBot.production_readiness_status === 'production_candidate_approval_required'
+                    ? 'border-yellow-800 bg-yellow-950/30 text-yellow-300'
+                    : 'border-slate-700 bg-slate-950 text-slate-300'
+              }`}>
+                {formatLabel(selectedBot.production_readiness_status ?? selectedBot.test_state)}
+              </span>
+            </div>
+
+            <div className="mt-5 grid gap-3 md:grid-cols-3">
+              <div className="border border-slate-700 bg-slate-950 p-4">
+                <p className="text-xs font-semibold uppercase text-dreamco-accent">For you</p>
+                <p className="mt-2 text-sm leading-6 text-slate-300">
+                  {selectedBot.description || `${selectedBot.name} helps operate ${selectedBot.division ?? 'DreamCo'} workflows.`}
+                </p>
+              </div>
+              <div className="border border-slate-700 bg-slate-950 p-4">
+                <p className="text-xs font-semibold uppercase text-dreamco-accent">For your users</p>
+                <p className="mt-2 text-sm leading-6 text-slate-300">
+                  {selectedBotCapabilities.length
+                    ? `Users can get ${selectedBotCapabilities.slice(0, 3).join(', ')}.`
+                    : 'Users can get governed assistance once this bot has richer capability labels.'}
+                </p>
+              </div>
+              <div className="border border-slate-700 bg-slate-950 p-4">
+                <p className="text-xs font-semibold uppercase text-dreamco-accent">For Buddy</p>
+                <p className="mt-2 text-sm leading-6 text-slate-300">
+                  Buddy can route this bot through sandbox tests, inspect {formatNumber(selectedBot.test_count)} test file(s), and keep its {formatLabel(selectedBot.test_state)} state visible.
+                </p>
+              </div>
+            </div>
+
+            <div className="mt-5">
+              <h5 className="text-sm font-semibold text-white">Capabilities</h5>
+              <div className="mt-3 flex flex-wrap gap-2">
+                {selectedBotCapabilities.map((capability) => (
+                  <span key={capability} className="rounded-full border border-slate-700 bg-slate-950 px-3 py-1 text-xs text-slate-300">
+                    {capability}
+                  </span>
+                ))}
+                {selectedBotCapabilities.length === 0 && (
+                  <span className="text-sm text-slate-400">No capability labels found yet.</span>
+                )}
+              </div>
+            </div>
+
+            <div className="mt-5 grid gap-3 sm:grid-cols-3">
+              <div className="border border-slate-700 p-3"><p className="text-xs text-slate-500">Build state</p><p className="mt-1 text-sm text-white">{formatLabel(selectedBot.build_state)}</p></div>
+              <div className="border border-slate-700 p-3"><p className="text-xs text-slate-500">Test state</p><p className="mt-1 text-sm text-white">{formatLabel(selectedBot.test_state)}</p></div>
+              <div className="border border-slate-700 p-3"><p className="text-xs text-slate-500">Risk gate</p><p className="mt-1 text-sm text-white">{formatLabel(selectedBot.risk_hint ?? 'standard')}</p></div>
+            </div>
+
+            {(selectedBot.tests ?? []).length > 0 && (
+              <div className="mt-5">
+                <h5 className="text-sm font-semibold text-white">Test files</h5>
+                <ul className="mt-2 space-y-1 text-xs text-slate-400">
+                  {(selectedBot.tests ?? []).slice(0, 5).map((testPath) => (
+                    <li key={testPath} className="font-mono">{testPath}</li>
+                  ))}
+                </ul>
+              </div>
+            )}
+
+            {botTestPacket && (
+              <div role="status" className="mt-5 border border-green-800 bg-green-950/30 p-4 text-sm text-green-300">
+                Sandbox test packet prepared for {botTestPacket.name}. Run command: <span className="font-mono">{botTestPacket.command}</span>.
+                <span className="mt-1 block text-xs text-green-200">
+                  Approval state: {formatLabel(botTestPacket.approval)}. Live money, outreach, and production actions stay blocked from this dashboard.
+                </span>
+              </div>
+            )}
+          </div>
         </div>
       </section>
 

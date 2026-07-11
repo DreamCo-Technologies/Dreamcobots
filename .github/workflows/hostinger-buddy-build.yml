@@ -35,6 +35,11 @@ jobs:
           VITE_START_TAB: command-center
         run: npm run build
 
+      - name: Add bot inventory data
+        run: |
+          mkdir -p dreamco-control-tower/frontend/dist/data
+          cp reports/buddy_capability_inventory.json dreamco-control-tower/frontend/dist/data/buddy_capability_inventory.json
+
       - name: Upload Hostinger public_html artifact
         uses: actions/upload-artifact@v4
         with:
