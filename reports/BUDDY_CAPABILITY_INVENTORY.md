@@ -1,6 +1,6 @@
 # Buddy Capability Inventory
 
-Generated: 2026-07-11T16:15:00.168073+00:00
+Generated: 2026-07-11T17:06:06.314362+00:00
 Branch scanned: `buddy-hostinger-starter`
 
 ## Executive Summary
@@ -8,7 +8,7 @@ Branch scanned: `buddy-hostinger-starter`
 - **Bot Profiles Scanned**: 1247
 - **Registry Bot Count**: 1247
 - **Registry Division Count**: 45
-- **Workflows**: 41
+- **Workflows**: 42
 - **Test Files**: 1489
 - **Buddy Related Files**: 207
 - **Buddy Related Bots**: 14
