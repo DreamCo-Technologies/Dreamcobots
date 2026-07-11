@@ -1,6 +1,6 @@
 # Buddy Capability Inventory
 
-Generated: 2026-07-11T17:06:06.314362+00:00
+Generated: 2026-07-11T17:11:54.124714+00:00
 Branch scanned: `buddy-hostinger-starter`
 
 ## Executive Summary
