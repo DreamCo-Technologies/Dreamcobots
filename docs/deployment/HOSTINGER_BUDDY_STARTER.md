@@ -12,6 +12,7 @@ Use the `buddy` branch as the first Hostinger deployment branch for the DreamCo 
 - Hostinger target directory: `public_html`
 - Start page: Buddy command center, through `VITE_START_TAB=command-center`
 - Health check: `/hostinger-health.html`
+- Free Actions dashboard hosting: GitHub Pages workflow `Actions Page - GitHub Pages`
 
 ## Hostinger Git Deployment Path
 
@@ -32,6 +33,17 @@ VITE_START_TAB=command-center
 ```
 
 If Hostinger only pulls files and does not run builds, build locally or in GitHub Actions, then upload the `dist` folder contents into `public_html`.
+
+## GitHub Pages Starter
+
+The free starter deployment for the Actions dashboard is handled by `.github/workflows/actions-page-pages.yml`.
+It builds from `dreamco-control-tower/frontend` with:
+
+```bash
+npm ci && VITE_START_TAB=actions npm run build
+```
+
+The workflow publishes `dreamco-control-tower/frontend/dist` to GitHub Pages and includes a `404.html` fallback so dashboard refreshes route back into the React app.
 
 ## Security Rules
 
