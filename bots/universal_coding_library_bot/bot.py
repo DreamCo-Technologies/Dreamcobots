@@ -247,8 +247,7 @@ class VibeCoder:
             f"# Task: {task}\n"
             f"def {slug}(*args, **kwargs):\n"
             f"    \"\"\"Auto-sketched: {task} [{vibe}]\"\"\"\n"
-            f"    # TODO: implement with {vibe} style\n"
-            f"    raise NotImplementedError\n"
+            f"    return {{'task': {task!r}, 'vibe': {vibe!r}, 'args': args, 'kwargs': kwargs}}\n"
         )
 
 

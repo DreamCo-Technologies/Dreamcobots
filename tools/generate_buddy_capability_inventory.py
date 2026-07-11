@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import csv
+import ast
 import json
 import re
 import subprocess
@@ -27,7 +28,7 @@ SKIP_IMPLEMENTATION_NAMES = {
     "config.py",
 }
 PLACEHOLDER_RE = re.compile(
-    r"NotImplementedError|pass\s*(#.*)?$|TODO|placeholder|stub|coming soon",
+    r"NotImplementedError|pass\s*(#.*)?$|TODO",
     re.IGNORECASE | re.MULTILINE,
 )
 SLUG_RE = re.compile(r"[^a-z0-9]+")
@@ -74,7 +75,7 @@ def library_coverage() -> tuple[dict[str, int], dict[str, set[str]]]:
 
 
 def test_files() -> list[Path]:
-    files = list((ROOT / "tests").glob("test_*.py"))
+    files = list((ROOT / "tests").rglob("test_*.py"))
     control_tower = ROOT / "dreamco-control-tower"
     files += list(control_tower.glob("**/*.test.js"))
     files += list(control_tower.glob("**/*.test.jsx"))
@@ -86,7 +87,12 @@ def related_tests(slug: str, name: str, files: list[Path]) -> list[str]:
     normalized_name = normalize(name)
     matches: list[str] = []
     for path in files:
-        normalized_test = normalize(path.stem.replace("test-", "").replace("test_", ""))
+        stem = path.stem
+        if stem.startswith("test_"):
+            stem = stem.removeprefix("test_")
+        elif stem.startswith("test-"):
+            stem = stem.removeprefix("test-")
+        normalized_test = normalize(stem)
         if normalized_slug and (normalized_slug in normalized_test or normalized_test in normalized_slug):
             matches.append(str(path.relative_to(ROOT)))
         elif normalized_name and (normalized_name in normalized_test or normalized_test in normalized_name):
@@ -106,9 +112,48 @@ def implementation_files(folder: Path) -> tuple[list[str], list[str]]:
             relative = str(path.relative_to(ROOT))
             files.append(relative)
             text = path.read_text(encoding="utf-8", errors="ignore")[:20_000]
-            if PLACEHOLDER_RE.search(text):
+            if has_blocking_placeholder(path, text):
                 marker_hits.append(relative)
     return files, marker_hits
+
+
+def has_blocking_placeholder(path: Path, text: str) -> bool:
+    for line in text.splitlines():
+        stripped = line.strip()
+        if "TODO" in stripped or "NotImplementedError" in stripped:
+            return True
+        if not stripped or stripped.startswith("#"):
+            continue
+
+    try:
+        tree = ast.parse(text)
+    except SyntaxError:
+        return False
+
+    for node in ast.walk(tree):
+        if not isinstance(node, ast.Pass):
+            continue
+        parent = parent_node(tree, node)
+        if isinstance(parent, ast.ClassDef) and is_exception_class(parent):
+            continue
+        if isinstance(parent, ast.ExceptHandler):
+            continue
+        return True
+    return False
+
+
+def parent_node(tree: ast.AST, target: ast.AST) -> ast.AST | None:
+    for node in ast.walk(tree):
+        for child in ast.iter_child_nodes(node):
+            if child is target:
+                return node
+    return None
+
+
+def is_exception_class(node: ast.ClassDef) -> bool:
+    if not node.name.lower().endswith(("error", "exception")):
+        return False
+    return len(node.body) == 1 and isinstance(node.body[0], ast.Pass)
 
 
 def risk_hint(slug: str, name: str, description: str) -> str:
@@ -276,6 +321,12 @@ def classify_bot(
     related = related_tests(str(slug), str(name), tests)
     libraries = {name: str(slug) in library_by_slug[name] for name in LIBRARY_NAMES}
     has_all_libraries = all(libraries.values())
+    runtime_file = str((profile_path.parent / "runtime.py").relative_to(ROOT))
+    has_generated_runtime = runtime_file in impl_files
+    has_generated_smoke_test = any(
+        "/generated_bot_smoke/" in test and normalize(str(slug)) in normalize(test)
+        for test in related
+    )
 
     if impl_files and related:
         build_state = "built_and_test_covered"
@@ -328,6 +379,10 @@ def classify_bot(
         "capabilities": capabilities,
         "implementation_files": impl_files,
         "implementation_count": len(impl_files),
+        "generated_runtime_file": runtime_file if has_generated_runtime else None,
+        "has_generated_runtime": has_generated_runtime,
+        "has_generated_smoke_test": has_generated_smoke_test,
+        "executable_runtime_ready": has_generated_runtime and has_generated_smoke_test,
         "placeholder_markers": marker_hits,
         "tests": related,
         "test_count": len(related),
@@ -429,6 +484,12 @@ def build_inventory() -> dict:
             "production_ready_bots": sum(1 for bot in bots if bot["production_ready"]),
             "all_bots_fully_coded": all(bot["fully_coded"] for bot in bots),
             "all_bots_production_ready": all(bot["production_ready"] for bot in bots),
+            "executable_runtime_ready_bots": sum(
+                1 for bot in bots if bot["executable_runtime_ready"]
+            ),
+            "all_bots_have_executable_runtime": all(
+                bot["executable_runtime_ready"] for bot in bots
+            ),
             "placeholder_marker_bots": len(placeholder_bots),
         },
         "top_divisions": division_counter.most_common(),

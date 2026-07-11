@@ -30,7 +30,8 @@ try:
 except ImportError:
     _HAS_FASTAPI = False
     class BaseModel:  # type: ignore
-        pass
+        def __init__(self, **data: Any) -> None:
+            self.__dict__.update(data)
 
 from framework import GlobalAISourcesFlow  # noqa: F401  GLOBAL AI SOURCES FLOW
 from .api_bot import APIBot, KNOWN_API_PATTERNS

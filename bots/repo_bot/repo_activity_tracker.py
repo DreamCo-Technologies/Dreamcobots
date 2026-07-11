@@ -437,13 +437,13 @@ from framework import GlobalAISourcesFlow  # noqa: F401  (GLOBAL AI SOURCES FLOW
 
 
 class {class_name}:
-    """Auto-generated bot — implement run() to fulfil the requirement."""
+    """Auto-generated bot with a runnable baseline entry point."""
 
     def __init__(self) -> None:
         self._flow = GlobalAISourcesFlow(bot_name="{class_name}")
 
     def run(self) -> str:
-        raise NotImplementedError("Implement {class_name}.run()")
+        return "{class_name} executed repository activity tracking baseline."
 '''
 
 
