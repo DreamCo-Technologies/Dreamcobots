@@ -284,6 +284,31 @@ describe('GET /api/system-libraries', () => {
   });
 });
 
+describe('GET /api/buddy-capabilities', () => {
+  test('returns generated Buddy capability inventory', async () => {
+    const res = await request(app).get('/api/buddy-capabilities');
+
+    expect(res.status).toBe(200);
+    expect(res.body.schema).toBe('dreamco.buddy_capability_inventory.v1');
+    expect(res.body.summary.bot_profiles_scanned).toBe(1247);
+    expect(res.body.summary.buddy_related_bots).toBeGreaterThanOrEqual(10);
+    expect(res.body.summary.test_states.ready_for_test_run).toBeGreaterThan(0);
+  });
+
+  test('returns attention list and direct Buddy systems', async () => {
+    const res = await request(app).get('/api/buddy-capabilities');
+
+    expect(Array.isArray(res.body.buddy_bots)).toBe(true);
+    expect(res.body.buddy_bots.some((bot) => bot.slug === 'buddy_core')).toBe(true);
+    expect(Array.isArray(res.body.attention.needs_implementation)).toBe(true);
+    expect(
+      res.body.attention.needs_implementation.some(
+        (bot) => bot.slug === 'payment_autocollector',
+      ),
+    ).toBe(true);
+  });
+});
+
 // ---------------------------------------------------------------------------
 // GET /api/command-center
 // ---------------------------------------------------------------------------

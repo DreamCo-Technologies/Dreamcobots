@@ -21,6 +21,43 @@ const FALLBACK_LIBRARIES = [
   { id: 'sandboxes', name: 'Sandboxes Library', icon: '🧪', count: 1247, description: 'Isolated test environments with fixtures, limits, and no live money movement.' },
 ];
 
+const FALLBACK_BUDDY_INVENTORY = {
+  generated_at: null,
+  summary: {
+    bot_profiles_scanned: 1247,
+    registry_division_count: 45,
+    workflows: 40,
+    test_files: 244,
+    buddy_related_files: 179,
+    buddy_related_bots: 14,
+    build_states: {
+      built_and_test_covered: 366,
+      built_contract_ready: 874,
+      profiled_from_existing_system_needs_direct_impl_check: 7,
+    },
+    test_states: {
+      ready_for_contract_testing: 874,
+      ready_for_test_run: 368,
+      needs_implementation_before_testing: 5,
+    },
+    placeholder_marker_bots: 1109,
+  },
+  buddy_bots: [
+    { slug: 'buddy_core', name: 'Buddy Core', build_state: 'built_and_test_covered', test_state: 'ready_for_test_run' },
+    { slug: 'buddy_orchestrator', name: 'Buddy Orchestrator', build_state: 'built_and_test_covered', test_state: 'ready_for_test_run' },
+    { slug: 'buddy-tool-builder', name: 'Buddy Tool Library Builder Bot', build_state: 'built_contract_ready', test_state: 'ready_for_contract_testing' },
+  ],
+  attention: {
+    needs_implementation: [
+      { slug: 'ai_enablement_hub', name: 'AI Enablement Hub', division: 'DreamAIInfra' },
+      { slug: 'auto_client_hunter', name: 'Auto Client Hunter', division: 'DreamSalesPro' },
+      { slug: 'elite_scraper', name: 'Elite Scraper', division: 'DreamSalesPro' },
+      { slug: 'god_mode_autocloser', name: 'God Mode AutoCloser', division: 'DreamSalesPro' },
+      { slug: 'payment_autocollector', name: 'Payment AutoCollector', division: 'DreamFinance' },
+    ],
+  },
+};
+
 const BUILD_STAGES = [
   ['01', 'Specify', 'Identity, goal, inputs, outputs, limits, owner'],
   ['02', 'Compose', 'Tools, API, webhook, workflow, skills'],
@@ -52,6 +89,20 @@ function formatLabel(value) {
   return String(value || '').replaceAll('_', ' ').replace(/\b\w/g, (letter) => letter.toUpperCase());
 }
 
+function formatNumber(value) {
+  return Number(value || 0).toLocaleString();
+}
+
+function formatDateTime(value) {
+  if (!value) return 'generated fallback';
+  return new Date(value).toLocaleString(undefined, {
+    month: 'short',
+    day: 'numeric',
+    hour: 'numeric',
+    minute: '2-digit',
+  });
+}
+
 export default function ActionsPage({
   ActionsMonitorComponent = ActionsMonitor,
   onBuddyCommandSubmit = () => {},
@@ -62,6 +113,8 @@ export default function ActionsPage({
   const [activeLibrary, setActiveLibrary] = useState('tools');
   const [libraryData, setLibraryData] = useState(null);
   const [libraryStatus, setLibraryStatus] = useState('loading');
+  const [buddyInventory, setBuddyInventory] = useState(null);
+  const [buddyInventoryStatus, setBuddyInventoryStatus] = useState('loading');
   const [buildPacket, setBuildPacket] = useState(null);
 
   useEffect(() => {
@@ -77,9 +130,28 @@ export default function ActionsPage({
       .catch(() => setLibraryStatus('generated fallback'));
   }, []);
 
+  useEffect(() => {
+    fetch('/api/buddy-capabilities')
+      .then((response) => {
+        if (!response.ok) throw new Error(`Buddy capability API returned ${response.status}`);
+        return response.json();
+      })
+      .then((data) => {
+        setBuddyInventory(data);
+        setBuddyInventoryStatus('live');
+      })
+      .catch(() => setBuddyInventoryStatus('generated fallback'));
+  }, []);
+
   const builders = libraryData?.builders ?? FALLBACK_BUILDERS;
   const libraries = libraryData?.libraries ?? FALLBACK_LIBRARIES;
   const botCount = libraryData?.bot_count ?? 1247;
+  const inventory = buddyInventory ?? FALLBACK_BUDDY_INVENTORY;
+  const inventorySummary = inventory.summary ?? FALLBACK_BUDDY_INVENTORY.summary;
+  const buildStates = inventorySummary.build_states ?? {};
+  const testStates = inventorySummary.test_states ?? {};
+  const needsImplementation = inventory.attention?.needs_implementation ?? [];
+  const directBuddyBots = inventory.buddy_bots ?? [];
   const selectedBuilder = builders.find((builder) => builder.id === selectedBuilderId) ?? builders[0];
   const selectedLibrary = libraries.find((library) => library.id === activeLibrary) ?? libraries[0];
   const contractCount = useMemo(
@@ -133,6 +205,88 @@ export default function ActionsPage({
           ))}
         </div>
       </header>
+
+      <section aria-labelledby="buddy-tracker-heading" className="border border-slate-700 bg-slate-950 p-5">
+        <div className="flex flex-wrap items-start justify-between gap-3">
+          <div>
+            <p className="text-xs font-bold uppercase text-dreamco-accent">Always-on repository scan</p>
+            <h3 id="buddy-tracker-heading" className="mt-1 text-lg font-semibold text-white">🤝 Buddy capability tracker</h3>
+            <p className="mt-1 max-w-3xl text-sm leading-6 text-slate-400">
+              Tracks what Buddy can do, what is built, what is ready for testing, and what still needs implementation.
+            </p>
+          </div>
+          <span className="rounded-full border border-slate-700 px-3 py-1 text-xs font-semibold text-slate-400">
+            {buddyInventoryStatus} · {formatDateTime(inventory.generated_at)}
+          </span>
+        </div>
+
+        <div className="mt-5 grid grid-cols-2 gap-px overflow-hidden border border-slate-800 bg-slate-800 lg:grid-cols-6">
+          {[
+            ['Bot profiles', inventorySummary.bot_profiles_scanned],
+            ['Test files', inventorySummary.test_files],
+            ['Workflows', inventorySummary.workflows],
+            ['Buddy systems', inventorySummary.buddy_related_bots],
+            ['Ready test runs', testStates.ready_for_test_run],
+            ['Needs build', testStates.needs_implementation_before_testing],
+          ].map(([label, value]) => (
+            <div key={label} className="bg-slate-900 p-4">
+              <p className="text-xl font-black text-white">{formatNumber(value)}</p>
+              <p className="mt-1 text-xs uppercase text-slate-500">{label}</p>
+            </div>
+          ))}
+        </div>
+
+        <div className="mt-5 grid gap-5 xl:grid-cols-[minmax(0,1fr)_22rem]">
+          <div>
+            <h4 className="text-sm font-semibold text-white">Build and test states</h4>
+            <div className="mt-3 grid gap-3 md:grid-cols-3">
+              <div className="border border-green-800 bg-green-950/20 p-4">
+                <p className="text-2xl font-black text-green-300">{formatNumber(buildStates.built_and_test_covered)}</p>
+                <p className="mt-1 text-xs uppercase text-green-200">Built + test-covered</p>
+              </div>
+              <div className="border border-dreamco-accent/50 bg-dreamco-accent/10 p-4">
+                <p className="text-2xl font-black text-dreamco-accent">{formatNumber(buildStates.built_contract_ready)}</p>
+                <p className="mt-1 text-xs uppercase text-slate-300">Contract-ready</p>
+              </div>
+              <div className="border border-yellow-800 bg-yellow-950/20 p-4">
+                <p className="text-2xl font-black text-yellow-300">{formatNumber(inventorySummary.placeholder_marker_bots)}</p>
+                <p className="mt-1 text-xs uppercase text-yellow-100">Review markers</p>
+              </div>
+            </div>
+
+            <div className="mt-5">
+              <h4 className="text-sm font-semibold text-white">Direct Buddy systems</h4>
+              <div className="mt-3 grid gap-2 sm:grid-cols-2 xl:grid-cols-3">
+                {directBuddyBots.slice(0, 9).map((bot) => (
+                  <div key={bot.slug} className="border border-slate-800 bg-slate-900 p-3">
+                    <p className="truncate text-sm font-semibold text-white">{bot.name}</p>
+                    <p className="mt-1 text-xs text-slate-500">{formatLabel(bot.test_state)}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          <aside className="border border-slate-800 bg-slate-900 p-4">
+            <h4 className="text-sm font-semibold text-white">Needs implementation before testing</h4>
+            <div className="mt-3 space-y-2">
+              {needsImplementation.length > 0 ? (
+                needsImplementation.slice(0, 8).map((bot) => (
+                  <div key={bot.slug} className="border-l-2 border-yellow-500 pl-3">
+                    <p className="text-sm font-semibold text-white">{bot.name}</p>
+                    <p className="text-xs text-slate-500">{bot.division} · {bot.slug}</p>
+                  </div>
+                ))
+              ) : (
+                <p className="text-sm text-green-300">No implementation blockers found.</p>
+              )}
+            </div>
+            <p className="mt-4 text-xs leading-5 text-slate-500">
+              Review markers are conservative: they flag placeholder-like text for human review, not automatic failure.
+            </p>
+          </aside>
+        </div>
+      </section>
 
       <section aria-labelledby="builders-heading">
         <div className="mb-4 flex items-end justify-between gap-3">

@@ -21,6 +21,10 @@ const SYSTEM_LIBRARY_INDEX_FILE = path.join(
   __dirname,
   '../../config/generated/system_libraries/index.json',
 );
+const BUDDY_CAPABILITY_INVENTORY_FILE = path.join(
+  __dirname,
+  '../../reports/buddy_capability_inventory.json',
+);
 const COMMAND_CENTER_FILE = path.join(__dirname, '../config/command_center.json');
 const PRODUCTION_MEDIA_ROADMAP_FILE = path.join(
   __dirname,
@@ -110,6 +114,13 @@ function readSystemLibraryIndex() {
     return null;
   }
   return JSON.parse(fs.readFileSync(SYSTEM_LIBRARY_INDEX_FILE, 'utf8'));
+}
+
+function readBuddyCapabilityInventory() {
+  if (!fs.existsSync(BUDDY_CAPABILITY_INVENTORY_FILE)) {
+    return null;
+  }
+  return JSON.parse(fs.readFileSync(BUDDY_CAPABILITY_INVENTORY_FILE, 'utf8'));
 }
 
 function parseDurationToDays(duration) {
@@ -351,6 +362,17 @@ app.get('/api/system-libraries', rateLimiter, (_req, res) => {
     return res.status(503).json({ error: 'system library index not found' });
   }
   return res.json(index);
+});
+
+// ---------------------------------------------------------------------------
+// GET /api/buddy-capabilities — latest generated Buddy capability inventory
+// ---------------------------------------------------------------------------
+app.get('/api/buddy-capabilities', rateLimiter, (_req, res) => {
+  const inventory = readBuddyCapabilityInventory();
+  if (!inventory) {
+    return res.status(503).json({ error: 'buddy capability inventory not found' });
+  }
+  return res.json(inventory);
 });
 
 // ---------------------------------------------------------------------------

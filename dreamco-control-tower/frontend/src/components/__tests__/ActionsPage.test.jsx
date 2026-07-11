@@ -18,14 +18,50 @@ const libraryPayload = {
   ],
 };
 
+const buddyCapabilityPayload = {
+  generated_at: '2026-07-11T10:04:34.383589+00:00',
+  summary: {
+    bot_profiles_scanned: 1247,
+    registry_division_count: 45,
+    workflows: 40,
+    test_files: 244,
+    buddy_related_files: 179,
+    buddy_related_bots: 14,
+    build_states: {
+      built_and_test_covered: 366,
+      built_contract_ready: 874,
+    },
+    test_states: {
+      ready_for_contract_testing: 874,
+      ready_for_test_run: 368,
+      needs_implementation_before_testing: 5,
+    },
+    placeholder_marker_bots: 1109,
+  },
+  buddy_bots: [
+    { slug: 'buddy_core', name: 'Buddy Core', build_state: 'built_and_test_covered', test_state: 'ready_for_test_run' },
+    { slug: 'buddy_orchestrator', name: 'Buddy Orchestrator', build_state: 'built_and_test_covered', test_state: 'ready_for_test_run' },
+  ],
+  attention: {
+    needs_implementation: [
+      { slug: 'payment_autocollector', name: 'Payment AutoCollector', division: 'DreamFinance' },
+    ],
+  },
+};
+
 function StubActionsMonitor() {
   return <div>Actions monitor panel</div>;
 }
 
 beforeEach(() => {
-  global.fetch = vi.fn().mockResolvedValue({
-    ok: true,
-    json: async () => libraryPayload,
+  global.fetch = vi.fn((url) => {
+    const payload = url === '/api/buddy-capabilities'
+      ? buddyCapabilityPayload
+      : libraryPayload;
+    return Promise.resolve({
+      ok: true,
+      json: async () => payload,
+    });
   });
 });
 
@@ -40,11 +76,23 @@ describe('ActionsPage', () => {
 
     expect(screen.getByText('🛠️ System Builder Hub')).toBeInTheDocument();
     expect(screen.getByText('Builder lanes')).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: '🤝 Buddy capability tracker' })).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: 'Generated libraries' })).toBeInTheDocument();
     expect(screen.getByText('Actions monitor panel')).toBeInTheDocument();
     await waitFor(() => expect(screen.getByText('Source: live')).toBeInTheDocument());
-    expect(screen.getByText('1,247')).toBeInTheDocument();
+    expect(screen.getAllByText('1,247').length).toBeGreaterThan(0);
     expect(screen.getByText('7,482')).toBeInTheDocument();
+  });
+
+  it('shows Buddy capability readiness and implementation blockers', async () => {
+    render(<ActionsPage ActionsMonitorComponent={StubActionsMonitor} />);
+
+    await waitFor(() => expect(screen.getByText(/live ·/)).toBeInTheDocument());
+    expect(screen.getByText('Built + test-covered')).toBeInTheDocument();
+    expect(screen.getByText('Contract-ready')).toBeInTheDocument();
+    expect(screen.getByText('Needs implementation before testing')).toBeInTheDocument();
+    expect(screen.getByText('Payment AutoCollector')).toBeInTheDocument();
+    expect(screen.getByText('Buddy Core')).toBeInTheDocument();
   });
 
   it('prepares a sandboxed pull-request build packet', () => {
