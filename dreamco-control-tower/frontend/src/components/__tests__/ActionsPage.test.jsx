@@ -141,7 +141,9 @@ describe('ActionsPage', () => {
   it('renders the system builder hub and live coverage', async () => {
     render(<ActionsPage ActionsMonitorComponent={StubActionsMonitor} />);
 
-    expect(screen.getByText('🛠️ System Builder Hub')).toBeInTheDocument();
+    expect(screen.getByText('Buddy Command Tower for building, testing, and presenting bot systems')).toBeInTheDocument();
+    expect(screen.getByText('Operational status')).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'Professional delivery pipeline' })).toBeInTheDocument();
     expect(screen.getByText('Builder lanes')).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: '🤝 Buddy capability tracker' })).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: '🧪 Buddy and bot test catalog' })).toBeInTheDocument();
@@ -165,7 +167,7 @@ describe('ActionsPage', () => {
     expect(screen.getByText('Review placeholders')).toBeInTheDocument();
     expect(screen.getByText('Add direct tests')).toBeInTheDocument();
     expect(screen.getByText('Production readiness')).toBeInTheDocument();
-    expect(screen.getByText('Production blockers remain')).toBeInTheDocument();
+    expect(screen.getByText('Review gates active')).toBeInTheDocument();
     expect(screen.getAllByText('Production ready').length).toBeGreaterThan(0);
     expect(screen.getByText('Approval needed')).toBeInTheDocument();
     expect(screen.getByText('Payment AutoCollector')).toBeInTheDocument();
@@ -262,7 +264,7 @@ describe('ActionsPage', () => {
   it('opens and closes the Buddy build console', () => {
     render(<ActionsPage ActionsMonitorComponent={StubActionsMonitor} />);
 
-    fireEvent.click(screen.getByRole('button', { name: 'Open Buddy Build Console' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Open Buddy Live Console' }));
     expect(screen.getByRole('dialog')).toBeInTheDocument();
     fireEvent.click(screen.getByRole('button', { name: 'Close Buddy Command Center' }));
     expect(screen.queryByRole('dialog')).not.toBeInTheDocument();

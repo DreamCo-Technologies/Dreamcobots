@@ -156,6 +156,20 @@ const SAFETY_GATES = [
   'Pull request and human review before deployment',
 ];
 
+const BUDDY_LIVE_SYSTEMS = [
+  { label: 'Client showcase', status: 'online', detail: 'Actions page is ready for guided demos and project walkthroughs.' },
+  { label: 'Buddy console', status: 'supervised', detail: 'Commands queue locally with evidence, test, and approval policies visible.' },
+  { label: 'Bot catalog', status: 'synced', detail: 'Inventory data powers search, capabilities, risk gates, and sandbox packets.' },
+  { label: 'GitHub Pages', status: 'configured', detail: 'Static dashboard build includes the bot inventory for hosted previews.' },
+];
+
+const CLIENT_WORKFLOWS = [
+  ['Discover', 'Show prospects what the bot fleet can build, test, and operate.'],
+  ['Prototype', 'Prepare tools, APIs, webhooks, workflows, skills, and sandbox checks.'],
+  ['Validate', 'Use test files, readiness states, and repository evidence before client handoff.'],
+  ['Launch', 'Move approved work through pull requests, Pages previews, and deployment gates.'],
+];
+
 function formatLabel(value) {
   return String(value || '').replaceAll('_', ' ').replace(/\b\w/g, (letter) => letter.toUpperCase());
 }
@@ -348,26 +362,61 @@ export default function ActionsPage({
 
   return (
     <section className="space-y-6">
-      <header className="border-b border-slate-700 pb-5">
-        <div className="flex flex-wrap items-start justify-between gap-4">
+      <header className="overflow-hidden border border-slate-700 bg-slate-950">
+        <div className="grid gap-6 p-5 xl:grid-cols-[minmax(0,1fr)_24rem]">
           <div>
-            <p className="text-xs font-bold uppercase text-dreamco-accent">DreamCo Build Operations</p>
-            <h2 className="mt-1 text-2xl font-bold text-white">🛠️ System Builder Hub</h2>
-            <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-400">
-              Build complete bots and their tools, APIs, webhooks, workflows, skills,
-              and isolated test environments from governed contracts.
+            <div className="flex flex-wrap items-center gap-2">
+              <p className="text-xs font-bold uppercase text-dreamco-accent">Client Operations Preview</p>
+              <span className="rounded-full border border-green-800 bg-green-950/40 px-3 py-1 text-xs font-semibold text-green-300">
+                Live dashboard
+              </span>
+              <span className="rounded-full border border-yellow-800 bg-yellow-950/30 px-3 py-1 text-xs font-semibold text-yellow-300">
+                Supervised autonomy
+              </span>
+            </div>
+            <h2 className="mt-3 max-w-4xl text-3xl font-black tracking-normal text-white md:text-4xl">
+              Buddy Command Tower for building, testing, and presenting bot systems
+            </h2>
+            <p className="mt-3 max-w-3xl text-sm leading-6 text-slate-300">
+              A client-ready view of what is built, what Buddy can operate, which bots are testable,
+              and which workflows are ready for safe review, demo, and deployment.
             </p>
+            <div className="mt-5 flex flex-wrap gap-2">
+              <button
+                type="button"
+                onClick={() => setShowBuddyCenter(true)}
+                className="rounded-md bg-dreamco-accent px-4 py-2 text-sm font-semibold text-white hover:bg-dreamco-accent/80"
+              >
+                Open Buddy Live Console
+              </button>
+              <button
+                type="button"
+                onClick={() => prepareBotTest(botCatalog.find((bot) => bot.slug === 'buddy-bot') ?? selectedBot, 'buddy')}
+                className="rounded-md border border-slate-600 px-4 py-2 text-sm font-semibold text-slate-200 hover:border-slate-400"
+              >
+                Prepare Buddy Test
+              </button>
+            </div>
           </div>
-          <button
-            type="button"
-            onClick={() => setShowBuddyCenter(true)}
-            className="rounded-md bg-dreamco-accent px-4 py-2 text-sm font-semibold text-white hover:bg-dreamco-accent/80"
-          >
-            Open Buddy Build Console
-          </button>
+          <aside className="border border-slate-800 bg-slate-900 p-4">
+            <h3 className="text-sm font-semibold text-white">Operational status</h3>
+            <div className="mt-3 space-y-3">
+              {BUDDY_LIVE_SYSTEMS.map((system) => (
+                <div key={system.label} className="border-l-2 border-dreamco-accent pl-3">
+                  <div className="flex items-center justify-between gap-3">
+                    <p className="text-sm font-semibold text-white">{system.label}</p>
+                    <span className="rounded-full border border-slate-700 px-2 py-0.5 text-[11px] font-semibold uppercase text-slate-300">
+                      {system.status}
+                    </span>
+                  </div>
+                  <p className="mt-1 text-xs leading-5 text-slate-500">{system.detail}</p>
+                </div>
+              ))}
+            </div>
+          </aside>
         </div>
 
-        <div className="mt-5 grid grid-cols-2 gap-px overflow-hidden rounded-md border border-slate-700 bg-slate-700 lg:grid-cols-4">
+        <div className="grid grid-cols-2 gap-px border-t border-slate-800 bg-slate-800 lg:grid-cols-4">
           {[
             ['Registered bots', botCount.toLocaleString()],
             ['Per-bot contracts', contractCount.toLocaleString()],
@@ -381,6 +430,27 @@ export default function ActionsPage({
           ))}
         </div>
       </header>
+
+      <section aria-labelledby="client-flow-heading" className="border border-slate-700 bg-slate-950 p-5">
+        <div className="flex flex-wrap items-start justify-between gap-3">
+          <div>
+            <p className="text-xs font-bold uppercase text-dreamco-accent">Client presentation flow</p>
+            <h3 id="client-flow-heading" className="mt-1 text-lg font-semibold text-white">Professional delivery pipeline</h3>
+          </div>
+          <span className="rounded-full border border-slate-700 px-3 py-1 text-xs font-semibold text-slate-400">
+            GitHub Pages ready
+          </span>
+        </div>
+        <div className="mt-4 grid gap-px overflow-hidden border border-slate-800 bg-slate-800 md:grid-cols-4">
+          {CLIENT_WORKFLOWS.map(([title, detail], index) => (
+            <div key={title} className="min-h-32 bg-slate-900 p-4">
+              <p className="font-mono text-xs text-dreamco-accent">0{index + 1}</p>
+              <h4 className="mt-2 text-sm font-semibold text-white">{title}</h4>
+              <p className="mt-2 text-xs leading-5 text-slate-400">{detail}</p>
+            </div>
+          ))}
+        </div>
+      </section>
 
       <section aria-labelledby="buddy-tracker-heading" className="border border-slate-700 bg-slate-950 p-5">
         <div className="flex flex-wrap items-start justify-between gap-3">
@@ -465,7 +535,7 @@ export default function ActionsPage({
                     ? 'border-green-800 bg-green-950/30 text-green-300'
                     : 'border-yellow-800 bg-yellow-950/30 text-yellow-300'
                 }`}>
-                  {inventorySummary.all_bots_production_ready ? 'All bots production-ready' : 'Production blockers remain'}
+                  {inventorySummary.all_bots_production_ready ? 'All bots production-ready' : 'Review gates active'}
                 </span>
               </div>
               <div className="mt-3 grid gap-2 sm:grid-cols-2 xl:grid-cols-5">
