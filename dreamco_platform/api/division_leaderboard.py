@@ -13,7 +13,7 @@ ROOT = Path(__file__).resolve().parents[2]
 
 
 def _profiles() -> list[dict[str, Any]]:
-    return [json.loads(path.read_text()) for path in sorted((ROOT / "bots").glob("*/replit_profile.json"))]
+    return [json.loads(path.read_text()) for path in sorted((ROOT / "bots").glob("*/bot_profile.json"))]
 
 
 def _leaderboard() -> list[dict[str, Any]]:

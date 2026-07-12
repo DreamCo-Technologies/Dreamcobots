@@ -262,6 +262,76 @@ describe('GET /api/actions', () => {
   });
 });
 
+describe('GET /api/system-libraries', () => {
+  test('returns complete per-bot library coverage', async () => {
+    const res = await request(app).get('/api/system-libraries');
+
+    expect(res.status).toBe(200);
+    expect(res.body.bot_count).toBe(1247);
+    expect(res.body.builders).toHaveLength(7);
+    expect(res.body.libraries).toHaveLength(6);
+    Object.values(res.body.coverage).forEach((count) => expect(count).toBe(1247));
+  });
+
+  test('returns the security baseline', async () => {
+    const res = await request(app).get('/api/system-libraries');
+
+    expect(res.body.security_baseline.webhooks).toContain('hmac_sha256');
+    expect(res.body.security_baseline.apis).toContain('rate_limit_backoff');
+    expect(res.body.security_baseline.github_actions).toContain(
+      'least_privilege_permissions',
+    );
+  });
+});
+
+describe('GET /api/buddy-capabilities', () => {
+  test('returns generated Buddy capability inventory', async () => {
+    const res = await request(app).get('/api/buddy-capabilities');
+
+    expect(res.status).toBe(200);
+    expect(res.body.schema).toBe('dreamco.buddy_capability_inventory.v1');
+    expect(res.body.summary.bot_profiles_scanned).toBe(1247);
+    expect(res.body.summary.buddy_related_bots).toBeGreaterThanOrEqual(10);
+    expect(res.body.summary.test_states.ready_for_test_run).toBeGreaterThan(0);
+    expect(res.body.summary.bots_with_full_coding_path).toBe(1247);
+    expect(res.body.summary.all_bots_have_full_coding_path).toBe(true);
+    expect(res.body.summary.production_ready_bots).toBeGreaterThan(0);
+    expect(res.body.summary.all_bots_production_ready).toBe(false);
+  });
+
+  test('returns attention list and direct Buddy systems', async () => {
+    const res = await request(app).get('/api/buddy-capabilities');
+
+    expect(Array.isArray(res.body.buddy_bots)).toBe(true);
+    expect(res.body.buddy_bots.some((bot) => bot.slug === 'buddy_core')).toBe(true);
+    expect(Array.isArray(res.body.attention.needs_implementation)).toBe(true);
+    expect(
+      res.body.attention.needs_implementation.some(
+        (bot) => bot.slug === 'payment_autocollector',
+      ),
+    ).toBe(true);
+    expect(Array.isArray(res.body.attention.needs_direct_test_coverage)).toBe(true);
+    expect(Array.isArray(res.body.attention.needs_existing_system_mapping)).toBe(true);
+  });
+});
+
+describe('GET /api/github-triage', () => {
+  test('returns generated GitHub triage report', async () => {
+    const res = await request(app).get('/api/github-triage');
+
+    expect(res.status).toBe(200);
+    expect(res.body.schema).toBe('dreamco.github_triage.v1');
+    expect(res.body.repo).toBe('DreamCo-Technologies/Dreamcobots');
+    expect(res.body.summary).toHaveProperty('open_prs');
+    expect(res.body.summary).toHaveProperty('open_issues');
+    expect(res.body.summary).toHaveProperty('issue_comments_scanned');
+    expect(res.body.summary).toHaveProperty('pr_review_comments_scanned');
+    expect(res.body.summary).toHaveProperty('failed_workflow_runs');
+    expect(Array.isArray(res.body.pr_restart_queue)).toBe(true);
+    expect(Array.isArray(res.body.failed_workflow_runs)).toBe(true);
+  });
+});
+
 // ---------------------------------------------------------------------------
 // GET /api/command-center
 // ---------------------------------------------------------------------------

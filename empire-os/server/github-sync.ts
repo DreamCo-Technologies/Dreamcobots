@@ -7,7 +7,7 @@ const GITHUB_API = "https://api.github.com";
 // ─── auth ────────────────────────────────────────────────────────────────────
 function getToken(): string {
   const t = process.env.GITHUB_PERSONAL_ACCESS_TOKEN || process.env.GITHUB_TOKEN || "";
-  if (t.length < 10) throw new Error("GitHub token not set. Add GITHUB_PERSONAL_ACCESS_TOKEN in Replit Secrets.");
+  if (t.length < 10) throw new Error("GitHub token not set. Add GITHUB_PERSONAL_ACCESS_TOKEN in DreamCo Secrets.");
   return t;
 }
 
@@ -149,7 +149,7 @@ export async function pushAllBotsToGitHub(
       const lang = classifyBotLanguage(bot);
       const slug = bot.slug.replace(/[^a-z0-9-]/g, "-");
       // JSON profile for every bot
-      files.push({ path: `bots/${slug}/replit_profile.json`, content: botJson(bot) });
+      files.push({ path: `bots/${slug}/bot_profile.json`, content: botJson(bot) });
       // language-specific file
       if (lang === "python")     files.push({ path: `python_bots/${slug}.py`,   content: botPy(bot) });
       else if (lang === "java")  files.push({ path: `java_bots/${slug}.java`,   content: botJava(bot) });
@@ -163,7 +163,7 @@ export async function pushAllBotsToGitHub(
   return { pushed: committed, sha, byLang, errors };
 }
 
-// ─── source-code push: all Replit files in ONE commit ───────────────────────
+// ─── source-code push: all DreamCo files in ONE commit ───────────────────────
 export async function pushSourceCode(): Promise<{ pushed: number; sha: string; errors: string[] }> {
   const files: Array<{ path: string; content: string }> = [];
   const errors: string[] = [];
@@ -191,7 +191,7 @@ export async function pushSourceCode(): Promise<{ pushed: number; sha: string; e
     { local: "vite.config.ts",             remote: "empire-os/vite.config.ts" },
     { local: "tsconfig.json",              remote: "empire-os/tsconfig.json" },
     { local: "postcss.config.js",          remote: "empire-os/postcss.config.js" },
-    { local: "replit.md",                  remote: "empire-os/replit.md" },
+    { local: "dreamco.md",                  remote: "empire-os/dreamco.md" },
     { local: "client/src/App.tsx",         remote: "empire-os/client/src/App.tsx" },
     { local: "client/index.html",          remote: "empire-os/client/index.html" },
   ];
@@ -229,7 +229,7 @@ export async function pushSourceCode(): Promise<{ pushed: number; sha: string; e
     }
   }
 
-  const { committed, sha } = await batchPush(files, `feat: sync full Empire OS source (${files.length} files) from Replit`);
+  const { committed, sha } = await batchPush(files, `feat: sync full Empire OS source (${files.length} files) from DreamCo`);
   return { pushed: committed, sha, errors };
 }
 
@@ -255,13 +255,13 @@ export function buildMasterReadme(bots: any[], byLang: Record<string, number>): 
   const tiers = bots.reduce((a: any, b) => { a[b.tier] = (a[b.tier] ?? 0) + 1; return a; }, {} as any);
   return `# 🤖 DreamCo Empire OS — Bot Repository
 
-> **${bots.length} AI bots · 45 divisions · Self-learning · Revenue-generating · Fully deployed on Replit**
+> **${bots.length} AI bots · 45 divisions · Self-learning · Revenue-generating · Fully deployed on DreamCo**
 
 ## 📁 Repository Structure
 
 | Folder | Files | Description |
 |--------|-------|-------------|
-| \`bots/{slug}/replit_profile.json\` | ${bots.length} | Every bot profile synced from Empire OS |
+| \`bots/{slug}/bot_profile.json\` | ${bots.length} | Every bot profile synced from Empire OS |
 | \`python_bots/\` | ${byLang.python ?? 0} | Python bots (FastAPI, PyTorch, LangChain, etc.) |
 | \`java_bots/\` | ${byLang.java ?? 0} | Java/Kotlin bots (Spring Boot, Android, etc.) |
 | \`empire-os/\` | 80+ | Full React + Express source code |
@@ -302,6 +302,6 @@ Every bot logs learnings after each conversation using the \`SELF_LEARNING_PROMP
 The master coding brain covering 500+ libraries. Every other bot routes coding tasks through Buddy Bot automatically.
 
 ---
-*Synced from DreamCo Empire OS on Replit — Autonomous wealth generation at scale*
+*Synced from DreamCo Empire OS on DreamCo — Autonomous wealth generation at scale*
 `;
 }

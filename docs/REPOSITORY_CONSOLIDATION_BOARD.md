@@ -9,7 +9,7 @@ The goal is to make `Dreamcobots` the only active source of truth. Other reposit
 | Repository | Role | Status | Import plan |
 | --- | --- | --- | --- |
 | `DreamCo-Technologies/Dreamcobots` | Main destination | Active | Keep root stable; add integrations, scans, dashboards, CI |
-| `DreamCo-Technologies/DreamCo-Command-Center` | Replit command center source | Stage 1 inventoried | Import dashboard, API, DB, contracts, assets, scripts in chunks |
+| `DreamCo-Technologies/DreamCo-Command-Center` | DreamCo command center source | Stage 1 inventoried | Import dashboard, API, DB, contracts, assets, scripts in chunks |
 | `DreamCo-Technologies/Dreamco` | Small side repo | Pending inventory | Inspect, preserve useful files, then retire if duplicate |
 | `ireanjordan24/Dreamcobots-Grok-Revolutionary` | Personal prototype source | Pending import | Bring Stage 1 Actions page concepts and docs into main repo |
 

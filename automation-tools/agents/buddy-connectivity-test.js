@@ -38,7 +38,7 @@ function validateToolRegistry() {
   addCheck('GitHub read enabled', tools.some((tool) => tool.id === 'github_repository_read' && tool.enabled), 'github_repository_read');
   addCheck('GitHub write gated', tools.some((tool) => tool.id === 'github_repository_write' && tool.requiresApproval), 'github_repository_write requires approval');
   addCheck('Stripe tracking available', tools.some((tool) => tool.id === 'stripe_revenue_tracking'), 'stripe_revenue_tracking');
-  addCheck('IBM Bob explicitly represented', tools.some((tool) => tool.id === 'ibm_bob_external'), 'ibm_bob_external slot');
+  addCheck('External Builder explicitly represented', tools.some((tool) => tool.id === 'external_builder'), 'external_builder slot');
   addCheck('High-risk write commands disabled by default', tools.some((tool) => tool.id === 'local_command_write' && !tool.enabled), 'local_command_write disabled');
 }
 

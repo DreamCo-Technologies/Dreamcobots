@@ -1,0 +1,162 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dreamco.local/schemas/bot_blueprint.v1.json",
+  "title": "DreamCo Bot Blueprint",
+  "description": "Governed bot blueprint required for every DreamCo bot before autonomous or revenue workflows can run.",
+  "type": "object",
+  "additionalProperties": true,
+  "required": [
+    "schema",
+    "identity",
+    "runtime",
+    "governance",
+    "storage"
+  ],
+  "properties": {
+    "schema": {
+      "const": "bot_blueprint.v1"
+    },
+    "schema_ref": {
+      "type": "string"
+    },
+    "identity": {
+      "type": "object",
+      "required": [
+        "id",
+        "slug",
+        "displayName",
+        "emoji",
+        "division",
+        "profile_path"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "slug": {
+          "type": "string",
+          "minLength": 1
+        },
+        "displayName": {
+          "type": "string",
+          "minLength": 1
+        },
+        "emoji": {
+          "type": "string",
+          "minLength": 1
+        },
+        "division": {
+          "type": "string",
+          "minLength": 1
+        },
+        "profile_path": {
+          "type": "string",
+          "pattern": "^bots/.+/bot_profile\\.json$"
+        }
+      }
+    },
+    "runtime": {
+      "type": "object",
+      "required": [
+        "heartbeat_required",
+        "default_mode",
+        "max_autonomy_mode"
+      ],
+      "properties": {
+        "entrypoints": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "heartbeat_required": {
+          "type": "boolean"
+        },
+        "default_mode": {
+          "enum": [
+            "manual",
+            "assist",
+            "semi-autonomous",
+            "autonomous"
+          ]
+        },
+        "max_autonomy_mode": {
+          "enum": [
+            "manual",
+            "assist",
+            "semi-autonomous",
+            "autonomous"
+          ]
+        }
+      }
+    },
+    "governance": {
+      "type": "object",
+      "required": [
+        "risk_level",
+        "approval_required_for_revenue",
+        "approval_required_for_spend",
+        "approval_required_for_external_outreach",
+        "requires_human_review_before_deployment",
+        "enterprise_ai_review_status",
+        "enterprise_ai_approval_claim"
+      ],
+      "properties": {
+        "risk_level": {
+          "enum": [
+            "low",
+            "medium",
+            "high"
+          ]
+        },
+        "approval_required_for_revenue": {
+          "type": "boolean"
+        },
+        "approval_required_for_spend": {
+          "type": "boolean"
+        },
+        "approval_required_for_external_outreach": {
+          "type": "boolean"
+        },
+        "requires_human_review_before_deployment": {
+          "type": "boolean"
+        },
+        "enterprise_ai_review_status": {
+          "type": "string"
+        },
+        "enterprise_ai_approval_claim": {
+          "type": "boolean"
+        }
+      }
+    },
+    "storage": {
+      "type": "object",
+      "required": [
+        "policy_ref",
+        "mode",
+        "default_store",
+        "cloud_sync",
+        "secret_storage"
+      ],
+      "properties": {
+        "policy_ref": {
+          "type": "string"
+        },
+        "mode": {
+          "const": "local-first"
+        },
+        "default_store": {
+          "type": "string"
+        },
+        "cloud_sync": {
+          "type": "string"
+        },
+        "secret_storage": {
+          "type": "string"
+        }
+      }
+    }
+  },
+  "generated_at": "2026-06-01T00:00:00Z"
+}

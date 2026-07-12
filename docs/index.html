@@ -1,413 +1,395 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>DreamCobots — AI Bot Ecosystem</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="DreamCobots documentation, architecture, operations, and governance resources.">
+  <title>Documentation | DreamCobots</title>
   <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #0d1117; color: #c9d1d9; line-height: 1.6; }
-    header { background: linear-gradient(135deg, #1f6feb 0%, #388bfd 100%); padding: 3rem 2rem; text-align: center; }
-    header h1 { font-size: 2.8rem; color: #fff; margin-bottom: 0.5rem; }
-    header p  { font-size: 1.2rem; color: #cae3ff; }
-    header .stats { display: flex; justify-content: center; gap: 2rem; margin-top: 1.5rem; flex-wrap: wrap; }
-    header .stat { background: rgba(255,255,255,0.15); border-radius: 8px; padding: 0.5rem 1.2rem; color: #fff; font-weight: 600; }
-    nav { background: #161b22; border-bottom: 1px solid #30363d; padding: 0.75rem 2rem; display: flex; gap: 1.5rem; flex-wrap: wrap; position: sticky; top: 0; z-index: 100; }
-    nav a { color: #58a6ff; text-decoration: none; font-weight: 500; }
-    nav a:hover { text-decoration: underline; }
-    main { max-width: 1100px; margin: 2rem auto; padding: 0 2rem; }
-    section { margin-bottom: 3rem; }
-    h2 { color: #f0f6fc; font-size: 1.6rem; margin-bottom: 1rem; border-bottom: 1px solid #30363d; padding-bottom: 0.5rem; }
-    h3 { color: #e6edf3; font-size: 1.15rem; margin: 1.2rem 0 0.5rem; }
-    p  { margin-bottom: 0.8rem; color: #8b949e; }
-    code { background: #161b22; border: 1px solid #30363d; border-radius: 4px; padding: 0.15em 0.4em; font-family: "SFMono-Regular", Consolas, monospace; font-size: 0.88em; color: #79c0ff; }
-    pre  { background: #161b22; border: 1px solid #30363d; border-radius: 6px; padding: 1rem; overflow-x: auto; margin-bottom: 1rem; }
-    pre code { background: none; border: none; padding: 0; color: #e6edf3; font-size: 0.9rem; }
-    table { width: 100%; border-collapse: collapse; margin-bottom: 1.5rem; }
-    th, td { border: 1px solid #30363d; padding: 0.6rem 1rem; text-align: left; }
-    th { background: #161b22; color: #f0f6fc; }
-    td { color: #8b949e; }
-    .badge { display: inline-block; padding: 0.2em 0.6em; border-radius: 12px; font-size: 0.78rem; font-weight: 700; text-transform: uppercase; }
-    .free  { background: #1a4f1a; color: #56d364; }
-    .pro   { background: #1a3a6b; color: #58a6ff; }
-    .ent   { background: #4b1a6b; color: #d2a8ff; }
-    .elite { background: #5a1a1a; color: #ff7b72; }
-    footer { text-align: center; padding: 2rem; color: #6e7681; border-top: 1px solid #30363d; margin-top: 2rem; }
-    a { color: #58a6ff; }
+    :root {
+      color-scheme: dark;
+      --background: #0b0d10;
+      --surface: #14181d;
+      --surface-strong: #1b2128;
+      --border: #303842;
+      --text: #f4f7fa;
+      --muted: #a7b0ba;
+      --accent: #45d483;
+      --accent-dark: #072c19;
+      --link: #73b7ff;
+      --warning: #f0c15a;
+      --max-width: 1120px;
+    }
 
-    /* ── Tool Search & Filter Bar ── */
-    .search-bar { display: flex; gap: 0.75rem; margin-bottom: 1.5rem; flex-wrap: wrap; align-items: center; }
-    .search-bar input { flex: 1; min-width: 220px; background: #161b22; border: 1px solid #30363d; border-radius: 6px; padding: 0.5rem 0.9rem; color: #c9d1d9; font-size: 1rem; outline: none; }
-    .search-bar input:focus { border-color: #58a6ff; }
-    .search-bar select { background: #161b22; border: 1px solid #30363d; border-radius: 6px; padding: 0.5rem 0.75rem; color: #c9d1d9; font-size: 0.9rem; cursor: pointer; }
-    .search-bar button { background: #1f6feb; color: #fff; border: none; border-radius: 6px; padding: 0.5rem 1rem; cursor: pointer; font-weight: 600; }
-    .search-bar button:hover { background: #388bfd; }
-    #tool-count { color: #6e7681; font-size: 0.9rem; margin-bottom: 0.75rem; }
+    * {
+      box-sizing: border-box;
+    }
 
-    /* ── Tool Cards Grid ── */
-    .tool-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1rem; }
-    .tool-card { background: #161b22; border: 1px solid #30363d; border-radius: 8px; padding: 1.1rem 1.2rem; display: flex; flex-direction: column; gap: 0.5rem; transition: border-color 0.2s; }
-    .tool-card:hover { border-color: #58a6ff; }
-    .tool-card .card-header { display: flex; justify-content: space-between; align-items: flex-start; }
-    .tool-card .card-name { font-weight: 700; color: #f0f6fc; font-size: 1rem; }
-    .tool-card .card-desc { color: #8b949e; font-size: 0.88rem; flex: 1; }
-    .tool-card .card-footer { display: flex; justify-content: space-between; align-items: center; margin-top: 0.5rem; }
-    .tool-card .card-cat { color: #6e7681; font-size: 0.8rem; background: #0d1117; border: 1px solid #21262d; border-radius: 4px; padding: 0.15em 0.5em; }
-    .tool-card .card-link { font-size: 0.82rem; color: #58a6ff; text-decoration: none; }
-    .tool-card .card-link:hover { text-decoration: underline; }
-    .tool-card.hidden { display: none; }
+    html {
+      scroll-behavior: smooth;
+    }
 
-    /* ── Admin Panel ── */
-    .admin-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 1rem; }
-    .admin-card { background: #161b22; border: 1px solid #30363d; border-radius: 8px; padding: 1rem 1.2rem; }
-    .admin-card h4 { color: #f0f6fc; margin-bottom: 0.4rem; font-size: 0.95rem; }
-    .status-dot { display: inline-block; width: 9px; height: 9px; border-radius: 50%; margin-right: 6px; }
-    .status-online  { background: #56d364; }
-    .status-idle    { background: #e3b341; }
-    .status-offline { background: #f85149; }
-    .admin-metric { font-size: 0.82rem; color: #6e7681; margin-top: 0.25rem; }
-    .admin-metric span { color: #c9d1d9; font-weight: 600; }
+    body {
+      margin: 0;
+      background: var(--background);
+      color: var(--text);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.6;
+    }
+
+    a {
+      color: var(--link);
+    }
+
+    a:focus-visible,
+    button:focus-visible {
+      outline: 3px solid var(--warning);
+      outline-offset: 3px;
+    }
+
+    .container {
+      width: min(calc(100% - 2rem), var(--max-width));
+      margin-inline: auto;
+    }
+
+    .navbar {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      border-bottom: 1px solid var(--border);
+      background: rgba(11, 13, 16, 0.96);
+      backdrop-filter: blur(12px);
+    }
+
+    .nav-inner {
+      min-height: 64px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1.5rem;
+    }
+
+    .brand {
+      color: var(--text);
+      font-size: 1.05rem;
+      font-weight: 800;
+      text-decoration: none;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .nav-links a {
+      color: var(--muted);
+      font-weight: 650;
+      text-decoration: none;
+    }
+
+    .nav-links a:hover,
+    .nav-links a[aria-current="page"] {
+      color: var(--text);
+    }
+
+    .hero {
+      padding: clamp(4rem, 10vw, 7rem) 0 3.5rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .eyebrow {
+      margin: 0 0 0.75rem;
+      color: var(--accent);
+      font-size: 0.78rem;
+      font-weight: 800;
+      letter-spacing: 0;
+      text-transform: uppercase;
+    }
+
+    h1,
+    h2,
+    h3,
+    p {
+      margin-top: 0;
+    }
+
+    h1 {
+      max-width: 760px;
+      margin-bottom: 1rem;
+      font-size: clamp(2.4rem, 7vw, 5.4rem);
+      line-height: 1;
+      letter-spacing: 0;
+    }
+
+    .hero-copy {
+      max-width: 720px;
+      margin-bottom: 1.5rem;
+      color: var(--muted);
+      font-size: 1.1rem;
+    }
+
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+    }
+
+    .button {
+      display: inline-flex;
+      min-height: 44px;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 0.6rem 1rem;
+      color: var(--text);
+      background: var(--surface);
+      font-weight: 750;
+      text-decoration: none;
+    }
+
+    .button-primary {
+      border-color: var(--accent);
+      color: #05170d;
+      background: var(--accent);
+    }
+
+    main section {
+      padding: 3.5rem 0;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .section-heading {
+      max-width: 720px;
+      margin-bottom: 2rem;
+    }
+
+    h2 {
+      margin-bottom: 0.65rem;
+      font-size: clamp(1.7rem, 4vw, 2.5rem);
+      line-height: 1.15;
+      letter-spacing: 0;
+    }
+
+    .section-heading p,
+    .resource p,
+    .policy-copy {
+      color: var(--muted);
+    }
+
+    .resource-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      border-top: 1px solid var(--border);
+      border-left: 1px solid var(--border);
+    }
+
+    .resource {
+      min-height: 210px;
+      padding: 1.4rem;
+      border-right: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      background: var(--surface);
+    }
+
+    .resource h3 {
+      margin-bottom: 0.5rem;
+      font-size: 1.05rem;
+      letter-spacing: 0;
+    }
+
+    .resource a {
+      font-weight: 750;
+    }
+
+    .policy {
+      display: grid;
+      grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
+      gap: 2rem;
+      align-items: start;
+    }
+
+    .policy-list {
+      margin: 0;
+      padding: 1.25rem 1.25rem 1.25rem 2.5rem;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      background: var(--surface-strong);
+    }
+
+    .policy-list li + li {
+      margin-top: 0.65rem;
+    }
+
+    footer {
+      padding: 2rem 0;
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+
+    @media (max-width: 760px) {
+      .nav-inner {
+        align-items: flex-start;
+        flex-direction: column;
+        padding: 0.85rem 0;
+      }
+
+      .nav-links {
+        width: 100%;
+        gap: 0.85rem;
+        overflow-x: auto;
+      }
+
+      .resource-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .policy {
+        grid-template-columns: 1fr;
+      }
+    }
   </style>
 </head>
 <body>
-
-<header>
-  <h1>🤖 DreamCobots</h1>
-  <p>AI Bot Ecosystem · 109 Models · Token-Based Billing · Self-Sustaining Automation</p>
-  <div class="stats">
-    <div class="stat">🤖 34+ Tools &amp; Bots</div>
-    <div class="stat">📂 6 Categories</div>
-    <div class="stat">🆓 Free Tier Available</div>
-    <div class="stat">⚡ Pro &amp; Elite Plans</div>
-  </div>
-</header>
-
-<nav>
-  <a href="#overview">Overview</a>
-  <a href="#tools">🔍 Tool Search</a>
-  <a href="#categories">Categories</a>
-  <a href="#pricing">Pricing</a>
-  <a href="#installation">Installation</a>
-  <a href="#api">API Reference</a>
-  <a href="#admin">⚙️ Admin Panel</a>
-  <a href="#contributing">Contributing</a>
-  <a href="dashboards.html">🚀 Live Dashboards</a>
-</nav>
-
-<main>
-
-  <!-- OVERVIEW -->
-  <section id="overview">
-    <h2>Overview</h2>
-    <p>
-      DreamCobots is an open-source, self-sustaining AI bot ecosystem that gives
-      every user access to <strong>109 top AI models</strong> — free or via
-      tokens and subscriptions. The platform automates testing, deployment,
-      dependency management, and cost attribution so it runs without a dedicated
-      operations team.
-    </p>
-    <ul style="margin-left:1.5rem;color:#8b949e;">
-      <li>🆓 Free tier — access all 109 models with daily token allowance</li>
-      <li>💳 Token credits — pay-as-you-go for advanced usage</li>
-      <li>📅 Monthly &amp; annual subscriptions with volume discounts</li>
-      <li>🤖 BuddyBot orchestrates all bots, tracks consumption, manages subs</li>
-      <li>🔄 GitHub Actions CI/CD + Dependabot keep everything up-to-date</li>
-      <li>🛡️ MIT licensed &amp; community-governed</li>
-    </ul>
-  </section>
-
-  <!-- TOOL SEARCH & DATABASE -->
-  <section id="tools">
-    <h2>🔍 Tool &amp; Bot Database</h2>
-    <p>Search and filter all tools, bots, and agents in the DreamCo ecosystem.</p>
-
-    <div class="search-bar">
-      <input type="text" id="tool-search" placeholder="Search tools by name or description…" oninput="filterTools()" />
-      <select id="tier-filter" onchange="filterTools()">
-        <option value="">All Tiers</option>
-        <option value="free">Free</option>
-        <option value="pro">Pro</option>
-        <option value="elite">Elite / Enterprise</option>
-      </select>
-      <select id="cat-filter" onchange="filterTools()">
-        <option value="">All Categories</option>
-        <option value="automation">Automation</option>
-        <option value="analytics">Analytics</option>
-        <option value="education">Education</option>
-        <option value="healthcare">Healthcare</option>
-        <option value="real-estate">Real Estate</option>
-        <option value="compliance">Compliance</option>
-        <option value="finance">Finance</option>
-        <option value="ai">AI / ML</option>
-        <option value="social-services">Social Services</option>
-        <option value="ecommerce">E-Commerce</option>
-      </select>
-      <button onclick="clearFilters()">Clear</button>
+  <nav class="navbar" aria-label="Primary navigation">
+    <div class="container nav-inner">
+      <a class="brand" href="../README.md">DreamCobots</a>
+      <ul class="nav-links">
+        <li><a href="#start">Start</a></li>
+        <li><a href="#architecture">Architecture</a></li>
+        <li><a href="#operations">Operations</a></li>
+        <li><a href="#governance">Governance</a></li>
+        <li><a href="dashboards.html">Dashboards</a></li>
+      </ul>
     </div>
+  </nav>
 
-    <div id="tool-count"></div>
-    <div class="tool-grid" id="tool-grid"></div>
-  </section>
-
-  <!-- CATEGORIES -->
-  <section id="categories">
-    <h2>📂 Tool Categories</h2>
-    <table>
-      <thead><tr><th>Directory</th><th>Description</th><th>Tool Count</th><th>Tiers</th></tr></thead>
-      <tbody>
-        <tr><td><code>bots/</code></td><td>Core bots: AI, real estate, finance, automation, social services</td><td>24+</td><td><span class="badge free">Free</span> <span class="badge pro">Pro</span> <span class="badge ent">Enterprise</span></td></tr>
-        <tr><td><code>automation-tools/</code></td><td>Workplace audits, scheduling, color &amp; design tools</td><td>3</td><td><span class="badge free">Free</span> <span class="badge pro">Pro</span></td></tr>
-        <tr><td><code>education-tools/</code></td><td>Recipe scaling, learning, curriculum tools</td><td>1</td><td><span class="badge free">Free</span> <span class="badge pro">Pro</span></td></tr>
-        <tr><td><code>healthcare-tools/</code></td><td>Mental health screening, drug discovery pipeline</td><td>2</td><td><span class="badge free">Free</span> <span class="badge elite">Elite</span></td></tr>
-        <tr><td><code>analytics-elites/</code></td><td>Loyalty analytics, predictive engagement, algorithmic trading</td><td>3</td><td><span class="badge pro">Pro</span> <span class="badge elite">Elite</span></td></tr>
-        <tr><td><code>real-estate-tools/</code></td><td>Multi-entity cashflow simulation, property analysis</td><td>1</td><td><span class="badge pro">Pro</span> <span class="badge elite">Elite</span></td></tr>
-        <tr><td><code>compliance-tools/</code></td><td>Regulatory compliance, audit automation (coming soon)</td><td>0</td><td>—</td></tr>
-      </tbody>
-    </table>
-  </section>
-
-  <!-- PRICING -->
-  <section id="pricing">
-    <h2>Pricing</h2>
-    <table>
-      <thead>
-        <tr><th>Plan</th><th>Price</th><th>Daily Tokens</th><th>Models</th><th>Support</th></tr>
-      </thead>
-      <tbody>
-        <tr><td><span class="badge free">FREE</span></td><td>$0 / month</td><td>100 tokens/day</td><td>All 109 (limited)</td><td>Community</td></tr>
-        <tr><td><span class="badge pro">PRO MONTHLY</span></td><td>$49 / month</td><td>10,000 tokens/day</td><td>All 109 (full)</td><td>Email 48 h SLA</td></tr>
-        <tr><td><span class="badge pro">PRO ANNUAL</span></td><td>$490 / year</td><td>10,000 tokens/day</td><td>All 109 (full)</td><td>Email 48 h SLA</td></tr>
-        <tr><td><span class="badge ent">ENTERPRISE MONTHLY</span></td><td>$299 / month</td><td>Unlimited</td><td>All 109 + custom</td><td>Dedicated 24/7</td></tr>
-        <tr><td><span class="badge ent">ENTERPRISE ANNUAL</span></td><td>$2,990 / year</td><td>Unlimited</td><td>All 109 + custom</td><td>Dedicated 24/7</td></tr>
-      </tbody>
-    </table>
-    <h3>Token Credits (Pay-as-you-go)</h3>
-    <table>
-      <thead><tr><th>Pack</th><th>Tokens</th><th>Price</th></tr></thead>
-      <tbody>
-        <tr><td>Starter Pack</td><td>500 tokens</td><td>$5</td></tr>
-        <tr><td>Standard Pack</td><td>2,500 tokens</td><td>$20</td></tr>
-        <tr><td>Power Pack</td><td>10,000 tokens</td><td>$70</td></tr>
-        <tr><td>Mega Pack</td><td>50,000 tokens</td><td>$300</td></tr>
-      </tbody>
-    </table>
-  </section>
-
-  <!-- INSTALLATION -->
-  <section id="installation">
-    <h2>Installation</h2>
-    <pre><code># 1. Clone the repository
-git clone https://github.com/ireanjordan24/Dreamcobots.git
-cd Dreamcobots
-
-# 2. Install Python dependencies
-pip install -r requirements.txt
-
-# 3. Verify all bots comply with the framework
-python tools/check_bot_framework.py
-
-# 4. Run the full test suite
-python -m pytest tests/ -q</code></pre>
-    <p>Python 3.8+ · pytest ≥ 7.0 · See <code>requirements.txt</code> for the full list.</p>
-  </section>
-
-  <!-- API REFERENCE -->
-  <section id="api">
-    <h2>API Reference</h2>
-    <h3>BillingSystem</h3>
-    <table>
-      <thead><tr><th>Method</th><th>Description</th></tr></thead>
-      <tbody>
-        <tr><td><code>create_account(user_id, tier)</code></td><td>Create a new billing account</td></tr>
-        <tr><td><code>purchase_tokens(user_id, amount)</code></td><td>Add token credits</td></tr>
-        <tr><td><code>deduct_tokens(user_id, cost, description)</code></td><td>Charge tokens for usage</td></tr>
-        <tr><td><code>get_balance(user_id)</code></td><td>Return current token balance</td></tr>
-        <tr><td><code>create_subscription(user_id, tier)</code></td><td>Create or upgrade a subscription</td></tr>
-        <tr><td><code>get_usage_report(user_id)</code></td><td>Return usage summary for billing</td></tr>
-      </tbody>
-    </table>
-    <h3>BuddyBot</h3>
-    <table>
-      <thead><tr><th>Method</th><th>Description</th></tr></thead>
-      <tbody>
-        <tr><td><code>register_bot(name, bot_instance)</code></td><td>Register a bot under a unique name</td></tr>
-        <tr><td><code>route_message(bot_name, message)</code></td><td>Send a message to a specific bot</td></tr>
-        <tr><td><code>broadcast(message)</code></td><td>Send a message to all registered bots</td></tr>
-        <tr><td><code>list_bots()</code></td><td>Return all registered bot names</td></tr>
-        <tr><td><code>track_usage(user_id, bot_name, tokens_used)</code></td><td>Record token consumption</td></tr>
-      </tbody>
-    </table>
-  </section>
-
-  <!-- ADMIN PANEL -->
-  <section id="admin">
-    <h2>⚙️ Admin Panel — Bot Monitoring</h2>
-    <p>Real-time status dashboard for all deployed bots and agents in the DreamCo ecosystem.</p>
-    <div class="admin-grid" id="admin-grid"></div>
-  </section>
-
-  <!-- CONTRIBUTING -->
-  <section id="contributing">
-    <h2>Contributing</h2>
-    <p>
-      We welcome pull requests! Read
-      <a href="https://github.com/ireanjordan24/Dreamcobots/blob/main/CONTRIBUTING.md">CONTRIBUTING.md</a>
-      before submitting.
-    </p>
-    <ul style="margin-left:1.5rem;color:#8b949e;">
-      <li>All bots must implement the <strong>GLOBAL AI SOURCES FLOW</strong> pipeline</li>
-      <li>Add tests in <code>tests/test_&lt;bot_name&gt;.py</code></li>
-      <li>Run <code>python tools/check_bot_framework.py</code> before opening a PR</li>
-      <li>Run <code>python -m pytest tests/ -q</code> — all tests must pass</li>
-    </ul>
-  </section>
-
-</main>
-
-<footer>
-  <p>© 2024 DreamCobots · <a href="https://github.com/ireanjordan24/Dreamcobots">GitHub</a> · MIT License</p>
-</footer>
-
-<script>
-/* ─────────────────────────────────────────────────────────────────────
-   Tool Database
-───────────────────────────────────────────────────────────────────── */
-const TOOLS = [
-  // ── Core bots ──
-  { name: "Government Contract &amp; Grant Bot", desc: "Automates SAM.gov contract searches and proposal generation.", tier: "pro", cat: "compliance", link: "https://github.com/ireanjordan24/Dreamcobots/tree/main/bots/government-contract-grant-bot" },
-  { name: "211 Resource Eligibility Bot", desc: "Helps users find local social services and check eligibility.", tier: "free", cat: "social-services", link: "https://github.com/ireanjordan24/Dreamcobots/tree/main/bots/211-resource-eligibility-bot" },
-  { name: "Selenium Job Application Bot", desc: "Automates job searching and applications across Indeed, LinkedIn, Glassdoor.", tier: "free", cat: "automation", link: "https://github.com/ireanjordan24/Dreamcobots/tree/main/bots/selenium-job-application-bot" },
-  { name: "AI Side Hustle Bots", desc: "AI-powered tools to identify, launch, and monetize side hustles.", tier: "free", cat: "ecommerce", link: "https://github.com/ireanjordan24/Dreamcobots/tree/main/bots/ai-side-hustle-bots" },
-  { name: "Affiliate Bot", desc: "Automates affiliate link generation, tracking, and commission reporting.", tier: "pro", cat: "ecommerce", link: "https://github.com/ireanjordan24/Dreamcobots/tree/main/bots/affiliate_bot" },
-  { name: "AI Models Integration", desc: "Tiered integration layer for 109+ AI models with token billing.", tier: "free", cat: "ai", link: "https://github.com/ireanjordan24/Dreamcobots/tree/main/bots/ai-models-integration" },
-  { name: "AI Chatbot", desc: "Tier-aware AI chatbot built on top of the model integration layer.", tier: "free", cat: "ai", link: "https://github.com/ireanjordan24/Dreamcobots/tree/main/bots/ai_chatbot" },
-  { name: "AI Learning System", desc: "Autonomous learning pipeline with ingestion, classification, and deployment.", tier: "pro", cat: "ai", link: "https://github.com/ireanjordan24/Dreamcobots/tree/main/bots/ai_learning_system" },
-  { name: "AI Level-Up Bot", desc: "AI skill tree and course engine with token marketplace and agent generation.", tier: "pro", cat: "education", link: "https://github.com/ireanjordan24/Dreamcobots/tree/main/bots/ai_level_up_bot" },
-  { name: "App Builder Bot", desc: "Generates full-stack application boilerplates from natural language specs.", tier: "pro", cat: "automation", link: "https://github.com/ireanjordan24/Dreamcobots/tree/main/bots/app_builder_bot" },
-  { name: "Big Bro AI", desc: "Mentor AI with bot factory, memory system, and franchise catalog.", tier: "elite", cat: "ai", link: "https://github.com/ireanjordan24/Dreamcobots/tree/main/bots/big_bro_ai" },
-  { name: "Car Flipping Bot", desc: "Finds undervalued vehicles and calculates flip profitability.", tier: "pro", cat: "finance", link: "https://github.com/ireanjordan24/Dreamcobots/tree/main/bots/car_flipping_bot" },
-  { name: "Control Center", desc: "Central dashboard for managing and monitoring all DreamCo bots.", tier: "elite", cat: "automation", link: "https://github.com/ireanjordan24/Dreamcobots/tree/main/bots/control_center" },
-  { name: "Deal Finder Bot", desc: "Scans marketplaces to surface arbitrage and deal opportunities.", tier: "free", cat: "finance", link: "https://github.com/ireanjordan24/Dreamcobots/tree/main/bots/deal_finder_bot" },
-  { name: "DreamCo Empire OS", desc: "Full operating system for managing a multi-bot empire: HQ, fleet, deals, revenue.", tier: "elite", cat: "automation", link: "https://github.com/ireanjordan24/Dreamcobots/tree/main/bots/dreamco_empire_os" },
-  { name: "DreamCo Payments", desc: "Payment processing, account management, and reporting dashboard.", tier: "pro", cat: "finance", link: "https://github.com/ireanjordan24/Dreamcobots/tree/main/bots/dreamco_payments" },
-  { name: "Job Titles Bot", desc: "Generates job descriptions, role titles, and career pathway maps for 25+ industries.", tier: "free", cat: "education", link: "https://github.com/ireanjordan24/Dreamcobots/tree/main/bots/job_titles_bot" },
-  { name: "Mining Bot", desc: "Cryptocurrency mining optimizer with 17 hardware profiles.", tier: "pro", cat: "finance", link: "https://github.com/ireanjordan24/Dreamcobots/tree/main/bots/mining_bot" },
-  { name: "Money Finder Bot", desc: "Identifies unclaimed funds, grants, and income opportunities.", tier: "free", cat: "finance", link: "https://github.com/ireanjordan24/Dreamcobots/tree/main/bots/money_finder_bot" },
-  { name: "Multi-Source Lead Scraper", desc: "Scrapes leads from Google, LinkedIn, Twitter, Reddit, Yelp.", tier: "pro", cat: "ecommerce", link: "https://github.com/ireanjordan24/Dreamcobots/tree/main/bots/multi_source_lead_scraper" },
-  { name: "Real Estate Bot", desc: "Property analysis, market comps, and investment scoring.", tier: "pro", cat: "real-estate", link: "https://github.com/ireanjordan24/Dreamcobots/tree/main/bots/real_estate_bot" },
-  { name: "Software Bot", desc: "Automated code review, bug detection, and refactoring suggestions.", tier: "pro", cat: "automation", link: "https://github.com/ireanjordan24/Dreamcobots/tree/main/bots/software_bot" },
-  { name: "Token Billing", desc: "Token credit system with subscriptions, pay-as-you-go, and usage reports.", tier: "free", cat: "finance", link: "https://github.com/ireanjordan24/Dreamcobots/tree/main/bots/token_billing" },
-  { name: "Crypto Bot", desc: "66+ coin database, portfolio tracking, trading signals, and mining profiles.", tier: "pro", cat: "finance", link: "https://github.com/ireanjordan24/Dreamcobots/tree/main/bots" },
-
-  // ── Automation Tools ──
-  { name: "5S Workplace Audit Tool", desc: "5S methodology audit: Sort, Set in Order, Shine, Standardize, Sustain.", tier: "free", cat: "automation", link: "https://github.com/ireanjordan24/Dreamcobots/tree/main/automation-tools/workplace_audit_tool" },
-  { name: "Color Palette Generator", desc: "Generates complementary, analogous, triadic, and monochromatic color palettes.", tier: "free", cat: "automation", link: "https://github.com/ireanjordan24/Dreamcobots/tree/main/automation-tools/color_palette_generator" },
-  { name: "Smart Meeting Scheduler", desc: "Finds optimal meeting slots across participants with preference-aware scheduling.", tier: "pro", cat: "automation", link: "https://github.com/ireanjordan24/Dreamcobots/tree/main/automation-tools/smart_meeting_scheduler" },
-
-  // ── Education Tools ──
-  { name: "Recipe Scaling Tool", desc: "Scales recipes, converts units, and calculates nutritional information.", tier: "free", cat: "education", link: "https://github.com/ireanjordan24/Dreamcobots/tree/main/education-tools/recipe_scaling_tool" },
-
-  // ── Healthcare Tools ──
-  { name: "Mental Health Screening Bot", desc: "PHQ-9, GAD-7, and PCL-5 screenings with resource referrals.", tier: "free", cat: "healthcare", link: "https://github.com/ireanjordan24/Dreamcobots/tree/main/healthcare-tools/mental_health_screening_bot" },
-  { name: "Drug Discovery Pipeline AI", desc: "Compound screening, efficacy prediction, ADMET analysis for research &amp; pharma.", tier: "elite", cat: "healthcare", link: "https://github.com/ireanjordan24/Dreamcobots/tree/main/healthcare-tools/drug_discovery_pipeline_ai" },
-
-  // ── Analytics Elites ──
-  { name: "Loyalty Program Impact Simulator", desc: "Simulates loyalty program ROI, CLV impact, and redemption scenarios.", tier: "pro", cat: "analytics", link: "https://github.com/ireanjordan24/Dreamcobots/tree/main/analytics-elites/loyalty_program_impact_simulator" },
-  { name: "Predictive Engagement Tool", desc: "Predicts audience engagement, optimizes send timing, and generates campaign insights.", tier: "pro", cat: "analytics", link: "https://github.com/ireanjordan24/Dreamcobots/tree/main/analytics-elites/predictive_engagement_tool" },
-  { name: "Algorithmic Trading Bot", desc: "Momentum, mean-reversion, and ML trading strategies with backtesting.", tier: "elite", cat: "analytics", link: "https://github.com/ireanjordan24/Dreamcobots/tree/main/analytics-elites/algorithmic_trading_bot" },
-
-  // ── Real Estate Tools ──
-  { name: "Real Estate Multi-Entity Cashflow Simulator", desc: "NOI calculation, scenario analysis, and waterfall distributions for property portfolios.", tier: "elite", cat: "real-estate", link: "https://github.com/ireanjordan24/Dreamcobots/tree/main/real-estate-tools/real_estate_cashflow_simulator" },
-];
-
-/* ─────────────────────────────────────────────────────────────────────
-   Render Tool Cards
-───────────────────────────────────────────────────────────────────── */
-const TIER_LABEL = { free: "Free", pro: "Pro", elite: "Elite" };
-const TIER_CLASS = { free: "free", pro: "pro", elite: "elite" };
-const CAT_LABEL  = {
-  automation: "Automation", analytics: "Analytics", education: "Education",
-  healthcare: "Healthcare", "real-estate": "Real Estate", compliance: "Compliance",
-  finance: "Finance", ai: "AI / ML", "social-services": "Social Services", ecommerce: "E-Commerce"
-};
-
-function renderTools(list) {
-  const grid = document.getElementById("tool-grid");
-  grid.innerHTML = "";
-  list.forEach(t => {
-    const card = document.createElement("div");
-    card.className = "tool-card";
-    card.innerHTML = `
-      <div class="card-header">
-        <span class="card-name">${t.name}</span>
-        <span class="badge ${TIER_CLASS[t.tier]}">${TIER_LABEL[t.tier]}</span>
+  <header class="hero">
+    <div class="container">
+      <p class="eyebrow">DreamCo Technologies</p>
+      <h1>DreamCobots documentation</h1>
+      <p class="hero-copy">
+        The operating guides, generated catalogs, architecture notes, and safety policies
+        for building and running the DreamCobots system.
+      </p>
+      <div class="actions">
+        <a class="button button-primary" href="#start">Get started</a>
+        <a class="button" href="../dreamco-control-tower/config/generated/bots.catalog.json">Open bot catalog</a>
       </div>
-      <p class="card-desc">${t.desc}</p>
-      <div class="card-footer">
-        <span class="card-cat">${CAT_LABEL[t.cat] || t.cat}</span>
-        <a class="card-link" href="${t.link}" target="_blank" rel="noopener">View Docs →</a>
-      </div>`;
-    grid.appendChild(card);
-  });
-  document.getElementById("tool-count").textContent =
-    `Showing ${list.length} of ${TOOLS.length} tools`;
-}
+    </div>
+  </header>
 
-function filterTools() {
-  const q   = document.getElementById("tool-search").value.toLowerCase();
-  const tier = document.getElementById("tier-filter").value;
-  const cat  = document.getElementById("cat-filter").value;
-  const res  = TOOLS.filter(t => {
-    const matchQ   = !q   || t.name.toLowerCase().includes(q) || t.desc.toLowerCase().includes(q);
-    const matchT   = !tier || t.tier === tier || (tier === "elite" && t.tier === "elite");
-    const matchC   = !cat  || t.cat  === cat;
-    return matchQ && matchT && matchC;
-  });
-  renderTools(res);
-}
+  <main>
+    <section id="start">
+      <div class="container">
+        <div class="section-heading">
+          <p class="eyebrow">Start here</p>
+          <h2>Build from the source of truth</h2>
+          <p>Use generated system data and maintained project guides instead of hard-coded bot counts or simulated status.</p>
+        </div>
+        <div class="resource-grid">
+          <article class="resource">
+            <h3>Repository guide</h3>
+            <p>Installation, project structure, core workflows, and the current development entry points.</p>
+            <a href="../README.md">Read the README</a>
+          </article>
+          <article class="resource">
+            <h3>Bot catalog</h3>
+            <p>The generated inventory of registered bots and their governed metadata.</p>
+            <a href="../dreamco-control-tower/config/generated/bots.catalog.json">Browse the catalog</a>
+          </article>
+          <article class="resource">
+            <h3>Blueprint template</h3>
+            <p>The required structure for adding a bot with explicit capabilities, controls, and ownership.</p>
+            <a href="BOT_TEMPLATE.md">Open the template</a>
+          </article>
+        </div>
+      </div>
+    </section>
 
-function clearFilters() {
-  document.getElementById("tool-search").value = "";
-  document.getElementById("tier-filter").value = "";
-  document.getElementById("cat-filter").value  = "";
-  renderTools(TOOLS);
-}
+    <section id="architecture">
+      <div class="container">
+        <div class="section-heading">
+          <p class="eyebrow">Architecture</p>
+          <h2>Understand the control plane</h2>
+          <p>Follow the registry, orchestration, authentication, and dashboard paths that connect the system.</p>
+        </div>
+        <div class="resource-grid">
+          <article class="resource">
+            <h3>Master registry</h3>
+            <p>The canonical division and bot registration data used to generate downstream artifacts.</p>
+            <a href="../config/master_bot_registry.json">Open the registry</a>
+          </article>
+          <article class="resource">
+            <h3>Authentication architecture</h3>
+            <p>Identity boundaries, access controls, and authentication responsibilities.</p>
+            <a href="authentication_architecture.md">Review authentication</a>
+          </article>
+          <article class="resource">
+            <h3>Resource map</h3>
+            <p>A maintained map of AI resources and their roles within the broader system.</p>
+            <a href="AI_RESOURCE_MAP_100.md">Open the resource map</a>
+          </article>
+        </div>
+      </div>
+    </section>
 
-/* ─────────────────────────────────────────────────────────────────────
-   Admin Panel
-───────────────────────────────────────────────────────────────────── */
-const ADMIN_BOTS = [
-  { name: "BuddyBot Orchestrator", status: "online",  requests: 4821, uptime: "99.9%" },
-  { name: "Token Billing System",  status: "online",  requests: 3102, uptime: "99.7%" },
-  { name: "DreamCo Empire OS",     status: "online",  requests: 1240, uptime: "98.5%" },
-  { name: "Control Center",        status: "online",  requests: 987,  uptime: "99.1%" },
-  { name: "Crypto Bot",            status: "idle",    requests: 310,  uptime: "97.8%" },
-  { name: "Algorithmic Trading Bot",status:"idle",    requests: 88,   uptime: "96.2%" },
-  { name: "Drug Discovery Pipeline",status:"offline", requests: 0,    uptime: "—"    },
-  { name: "Big Bro AI",            status: "online",  requests: 2401, uptime: "99.3%" },
-  { name: "Multi-Source Lead Scraper",status:"online",requests: 560,  uptime: "98.9%" },
-  { name: "Real Estate Bot",       status: "online",  requests: 731,  uptime: "99.0%" },
-  { name: "Mental Health Screening",status:"online",  requests: 1543, uptime: "99.5%" },
-  { name: "Smart Meeting Scheduler",status:"idle",    requests: 204,  uptime: "98.1%" },
-];
+    <section id="operations">
+      <div class="container">
+        <div class="section-heading">
+          <p class="eyebrow">Operations</p>
+          <h2>Operate with observable state</h2>
+          <p>Use real system outputs, local-first storage, and explicit deployment checks before enabling external actions.</p>
+        </div>
+        <div class="resource-grid">
+          <article class="resource">
+            <h3>Production readiness</h3>
+            <p>Readiness requirements and validation steps for production-facing deployments.</p>
+            <a href="production-readiness.md">Review readiness</a>
+          </article>
+          <article class="resource">
+            <h3>Control center tracking</h3>
+            <p>The dashboard and command-center tracking map for system visibility.</p>
+            <a href="DASHBOARD_COMMAND_CENTER_TRACKING_MAP.md">Open the tracking map</a>
+          </article>
+          <article class="resource">
+            <h3>Local operations</h3>
+            <p>Guidance for local chat, controlled automation, and operator-supervised workflows.</p>
+            <a href="BUDDY_LOCAL_CHAT_AND_AUTONOMOUS_OPS.md">Read the operations guide</a>
+          </article>
+        </div>
+      </div>
+    </section>
 
-function renderAdmin() {
-  const grid = document.getElementById("admin-grid");
-  ADMIN_BOTS.forEach(b => {
-    const card = document.createElement("div");
-    card.className = "admin-card";
-    card.innerHTML = `
-      <h4><span class="status-dot status-${b.status}"></span>${b.name}</h4>
-      <div class="admin-metric">Status: <span>${b.status.charAt(0).toUpperCase()+b.status.slice(1)}</span></div>
-      <div class="admin-metric">Requests (24 h): <span>${b.requests.toLocaleString()}</span></div>
-      <div class="admin-metric">Uptime: <span>${b.uptime}</span></div>`;
-    grid.appendChild(card);
-  });
-}
+    <section id="governance">
+      <div class="container policy">
+        <div>
+          <p class="eyebrow">Governance</p>
+          <h2>Automation stays accountable</h2>
+          <p class="policy-copy">
+            DreamCobots can prepare and coordinate work, but financial, legal, account,
+            and production actions remain subject to configured policy and human approval.
+          </p>
+        </div>
+        <ul class="policy-list">
+          <li>Keep credentials and personal data out of source control.</li>
+          <li>Store operational data locally by default unless an approved integration requires otherwise.</li>
+          <li>Require explicit authorization for payments, transfers, purchases, contracts, and account changes.</li>
+          <li>Validate generated registry and catalog files before deployment.</li>
+          <li>Use logs and reviewable state for consequential automated actions.</li>
+        </ul>
+      </div>
+    </section>
+  </main>
 
-/* ─── Init ─── */
-renderTools(TOOLS);
-renderAdmin();
-</script>
+  <footer>
+    <div class="container">
+      <p>Copyright 2026 DreamCo Technologies. DreamCobots documentation.</p>
+    </div>
+  </footer>
 </body>
 </html>

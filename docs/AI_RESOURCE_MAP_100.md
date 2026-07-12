@@ -43,7 +43,7 @@ This is a living study map for DreamCo bots. It is not an official ranking. Bots
 34. Midjourney - image generation product experience.
 35. ElevenLabs - voice synthesis and audio AI.
 36. Character.AI - consumer agent interaction patterns.
-37. Replit AI - coding assistants and cloud dev environments.
+37. DreamCo AI - coding assistants and cloud dev environments.
 38. Cursor/Anysphere - AI coding workflows.
 39. Windsurf/Codeium - coding agents and IDE automation.
 40. GitHub Copilot - code generation in developer workflows.

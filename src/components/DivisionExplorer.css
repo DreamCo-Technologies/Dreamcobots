@@ -1,0 +1,284 @@
+.division-explorer {
+  color: #e5e7eb;
+  background: #0f172a;
+  min-height: 100vh;
+  padding: 24px;
+}
+
+.explorer-header {
+  border-bottom: 1px solid #334155;
+  margin-bottom: 20px;
+  padding-bottom: 16px;
+}
+
+.explorer-header h1 {
+  margin: 0;
+  font-size: 28px;
+}
+
+.explorer-subtitle {
+  color: #94a3b8;
+  margin: 8px 0 0;
+}
+
+.explorer-stats,
+.system-metrics,
+.system-actions,
+.system-tier-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.stat,
+.system-action,
+.tier-chip,
+.division-count {
+  border: 1px solid #334155;
+  border-radius: 8px;
+  background: #111827;
+}
+
+.stat {
+  color: #cbd5e1;
+  display: inline-flex;
+  margin-top: 14px;
+  padding: 8px 10px;
+}
+
+.explorer-body {
+  display: grid;
+  gap: 20px;
+  grid-template-columns: minmax(220px, 280px) minmax(0, 1fr);
+}
+
+.division-sidebar {
+  border: 1px solid #334155;
+  background: #020617;
+  padding: 14px;
+}
+
+.division-sidebar h2 {
+  font-size: 16px;
+  margin: 0 0 12px;
+}
+
+.division-list {
+  display: grid;
+  gap: 8px;
+  max-height: 72vh;
+  overflow: auto;
+  padding-right: 4px;
+}
+
+.division-btn {
+  align-items: center;
+  background: #0f172a;
+  border: 1px solid #334155;
+  color: #dbeafe;
+  cursor: pointer;
+  display: flex;
+  font: inherit;
+  justify-content: space-between;
+  gap: 12px;
+  min-height: 58px;
+  padding: 9px 10px;
+  text-align: left;
+  width: 100%;
+}
+
+.division-btn:hover,
+.division-btn:focus-visible,
+.division-btn.active {
+  border-color: #38bdf8;
+  background: #082f49;
+  color: #ffffff;
+  outline: none;
+}
+
+.division-name {
+  display: block;
+  font-weight: 700;
+  overflow-wrap: anywhere;
+}
+
+.division-prospectus-mini {
+  color: #94a3b8;
+  display: block;
+  font-size: 12px;
+  line-height: 1.35;
+  margin-top: 3px;
+}
+
+.division-btn:hover .division-prospectus-mini,
+.division-btn:focus-visible .division-prospectus-mini,
+.division-btn.active .division-prospectus-mini {
+  color: #dbeafe;
+}
+
+.division-count {
+  flex: 0 0 auto;
+  color: #93c5fd;
+  font-size: 12px;
+  min-width: 30px;
+  padding: 3px 7px;
+  text-align: center;
+}
+
+.explorer-main {
+  display: grid;
+  gap: 18px;
+}
+
+.division-system-panel {
+  border: 1px solid #334155;
+  background: #020617;
+  display: grid;
+  gap: 16px;
+  padding: 18px;
+}
+
+.division-system-panel h2 {
+  font-size: 24px;
+  margin: 4px 0 0;
+}
+
+.system-kicker {
+  color: #38bdf8;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  margin: 0;
+  text-transform: uppercase;
+}
+
+.system-summary {
+  color: #94a3b8;
+  margin: 8px 0 0;
+}
+
+.system-action,
+.tier-chip {
+  color: #dbeafe;
+  cursor: pointer;
+  font: inherit;
+  padding: 8px 10px;
+  text-decoration: none;
+}
+
+.system-action:hover,
+.system-action:focus-visible,
+.tier-chip:hover,
+.tier-chip:focus-visible,
+.tier-chip.active {
+  border-color: #22c55e;
+  background: #052e16;
+  color: #ffffff;
+  outline: none;
+}
+
+.system-metrics > div {
+  border: 1px solid #1e293b;
+  background: #0f172a;
+  min-width: 120px;
+  padding: 12px;
+}
+
+.metric-value,
+.metric-label {
+  display: block;
+}
+
+.metric-value {
+  color: #ffffff;
+  font-weight: 800;
+}
+
+.metric-label {
+  color: #64748b;
+  font-size: 12px;
+  margin-top: 4px;
+  text-transform: uppercase;
+}
+
+.system-tier-row {
+  align-items: center;
+}
+
+.tier-chip span {
+  color: #93c5fd;
+  margin-left: 4px;
+}
+
+.division-prospectus-card {
+  border: 1px solid #1e293b;
+  background: #0f172a;
+  display: grid;
+  gap: 16px;
+  padding: 16px;
+}
+
+.division-prospectus-card h3 {
+  color: #ffffff;
+  font-size: 20px;
+  margin: 4px 0 8px;
+}
+
+.division-prospectus-card p {
+  color: #cbd5e1;
+  line-height: 1.6;
+  margin: 0;
+}
+
+.prospectus-grid {
+  display: grid;
+  gap: 12px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.prospectus-grid > div {
+  border: 1px solid #334155;
+  background: #020617;
+  min-height: 120px;
+  padding: 12px;
+}
+
+.prospectus-label {
+  color: #38bdf8;
+  display: block;
+  font-size: 12px;
+  font-weight: 700;
+  margin-bottom: 8px;
+  text-transform: uppercase;
+}
+
+.prospectus-grid ul {
+  color: #cbd5e1;
+  line-height: 1.6;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.prospectus-grid li::before {
+  color: #22c55e;
+  content: "✓ ";
+}
+
+@media (max-width: 860px) {
+  .division-explorer {
+    padding: 14px;
+  }
+
+  .explorer-body {
+    grid-template-columns: 1fr;
+  }
+
+  .division-list {
+    max-height: 320px;
+  }
+
+  .prospectus-grid {
+    grid-template-columns: 1fr;
+  }
+}

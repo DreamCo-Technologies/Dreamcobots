@@ -143,7 +143,7 @@ _DEFAULTS: dict[str, dict[str, float]] = {
                           "creativity": 0.65, "reliability": 0.90, "context_score": 0.75, "safety": 0.88},
     "crowdstrike_ai":    {"accuracy": 0.90, "speed": 0.85, "cost_score": 0.40,
                           "creativity": 0.50, "reliability": 0.93, "context_score": 0.60, "safety": 0.95},
-    "ibm_watson":        {"accuracy": 0.85, "speed": 0.75, "cost_score": 0.45,
+    "enterprise_ai":        {"accuracy": 0.85, "speed": 0.75, "cost_score": 0.45,
                           "creativity": 0.60, "reliability": 0.90, "context_score": 0.70, "safety": 0.90},
     "nvidia_isaac":      {"accuracy": 0.90, "speed": 0.80, "cost_score": 0.30,
                           "creativity": 0.55, "reliability": 0.90, "context_score": 0.50, "safety": 0.90},

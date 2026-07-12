@@ -18,7 +18,7 @@ BOT_FEATURES = {
         "hybrid quantum-AI model training",
         "quantum optimization (TSP, portfolio)",
         "physics simulations",
-        "IBM Quantum & IonQ backend access",
+        "Quantum cloud & IonQ backend access",
         "quantum advantage evaluation",
     ],
     Tier.ENTERPRISE.value: [

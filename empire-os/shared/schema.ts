@@ -437,21 +437,21 @@ export interface CrossDivisionDelegation {
   updatedAt: string;
 }
 
-export interface ReplitMigrationManifestEntry {
+export interface DreamCoMigrationManifestEntry {
   slug: string;
   filePath: string;
   division: string;
-  source: "replit_profile";
+  source: "bot_profile";
 }
 
-export interface ReplitMigrationManifest {
+export interface DreamCoMigrationManifest {
   generatedAt: string;
   expectedTotal: number;
   discoveredAssets: number;
-  entries: ReplitMigrationManifestEntry[];
+  entries: DreamCoMigrationManifestEntry[];
 }
 
-export interface ReplitMigrationValidationReport {
+export interface DreamCoMigrationValidationReport {
   expectedTotal: number;
   discoveredAssets: number;
   imported: number;

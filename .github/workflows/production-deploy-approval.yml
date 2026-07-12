@@ -31,7 +31,7 @@ jobs:
           import json
           from pathlib import Path
           tiers = []
-          for path in Path('bots').glob('*/replit_profile.json'):
+          for path in Path('bots').glob('*/bot_profile.json'):
               data = json.loads(path.read_text())
               if data.get('tier') in {'enterprise', 'elite'}:
                   tiers.append(data.get('slug', path.parent.name))

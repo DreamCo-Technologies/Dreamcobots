@@ -22,8 +22,8 @@ intact across the unified codebase.
 | `copilot/add-autonomous-financial-system` | BuddyAI/dashboard package, financial system (7 files) |
 | `copilot/finish-dreamco-bots` | Fiverr_bots, Dockerfile, backend/main.py (17 files) |
 | `copilot/develop-multipurpose-bot-framework` | Side_Hustle_bots features, BuddyAI/buddy_ai.py (10 files) |
-| `copilot/review-and-complete-issues` | debug.py, examples/stress_test.py, replit.md (3 files) |
-| `copilot/integrate-replit-files` | .replit, ai-image.html, government-contract-grant-bot/bot.py (4 files) |
+| `copilot/review-and-complete-issues` | debug.py, examples/stress_test.py, dreamco.md (3 files) |
+| `copilot/integrate-dreamco-files` | .dreamco, ai-image.html, government-contract-grant-bot/bot.py (4 files) |
 | `copilot/finish-pending-tasks` | hustle-bot, referral-bot, stress_test (6 files) |
 | `copilot/fix-bot-files-issue` | bots/debug.py (1 file) |
 | `copilot/create-government-contract-bot` | Government_Contract_bots features, gov-bot config (4 files) |

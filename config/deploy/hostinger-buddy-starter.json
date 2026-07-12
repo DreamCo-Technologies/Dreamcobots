@@ -1,0 +1,30 @@
+{
+  "provider": "hostinger",
+  "starter_branch": "buddy",
+  "repository": "DreamCo-Technologies/Dreamcobots",
+  "application": "dreamco-control-tower/frontend",
+  "runtime": {
+    "node": "20",
+    "package_manager": "npm"
+  },
+  "build": {
+    "working_directory": "dreamco-control-tower/frontend",
+    "install_command": "npm ci",
+    "build_command": "npm run build",
+    "output_directory": "dreamco-control-tower/frontend/dist"
+  },
+  "hostinger": {
+    "target_directory": "public_html",
+    "start_tab": "command-center",
+    "health_check": "/hostinger-health.html",
+    "spa_rewrite_file": "dreamco-control-tower/frontend/public/.htaccess"
+  },
+  "environment": {
+    "VITE_START_TAB": "command-center"
+  },
+  "notes": [
+    "Do not commit Hostinger usernames, passwords, API tokens, SSH keys, or FTP credentials.",
+    "Use Hostinger hPanel Git deployment with branch buddy, or use repository secrets for an upload workflow.",
+    "The static Hostinger build can display fallback data when the local API service is not deployed beside it."
+  ]
+}

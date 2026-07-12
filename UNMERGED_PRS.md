@@ -750,7 +750,7 @@ Two bugs were breaking CI on `main`, and the repo lacked any guard against missi
 
 ## Coding-bots registry
 
-- **`coding-bots.json`** — single source of truth for supported coding systems (Codex, Lovable, Replit, Claude Code, ChatGPT, GitHub Copilot, Cursor, Windsurf). Add an entry here to register a new system.
+- **`coding-bots.json`** — single source of truth for supported coding systems (Codex, Lovable, DreamCo, Claude Code, ChatGPT, GitHub Copilot, Cursor, Windsurf). Add an entry here to register a new system.
 - **`scripts/render_coding_bots.py`** — reads the registry, regenerates the `README.md` table between `<!-- CODING-BOTS:START -->` / `<!-- CODING-BOTS:END -->` markers.
 
 ```bash
@@ -1126,7 +1126,7 @@ print(bot.generate_response(pr_data))
 
 ### Original intent / description
 
-Implements the full suite of systems requested: cross-device monitoring (Android ADB + iOS Core APIs + Bluetooth/WiFi), a parallel sub-bot builder framework, a Replit-style live coding platform, Buddy-generated simulation games, a business onboarding wizard, and a 24/7 isolated container sandbox with automated PR conflict resolution.
+Implements the full suite of systems requested: cross-device monitoring (Android ADB + iOS Core APIs + Bluetooth/WiFi), a parallel sub-bot builder framework, a DreamCo-style live coding platform, Buddy-generated simulation games, a business onboarding wizard, and a 24/7 isolated container sandbox with automated PR conflict resolution.
 
 ## New modules
 
@@ -3884,10 +3884,10 @@ User: [warn] Code style issues found in 5 files. Run Prettier with --write to fi
 
 ---
 
-## #11 — Integrate Replit-specific files and fix local bot execution
+## #11 — Integrate DreamCo-specific files and fix local bot execution
 
 - **Author:** @Copilot
-- **Branch:** `copilot/integrate-replit-files`
+- **Branch:** `copilot/integrate-dreamco-files`
 - **URL:** https://github.com/DreamCo-Technologies/Dreamcobots/pull/11
 - **Reason:** MERGE_FAILED: Pull Request has merge conflicts
 - **State:** unknown
@@ -3896,12 +3896,12 @@ User: [warn] Code style issues found in 5 files. Run Prettier with --write to fi
 
 ### Original intent / description
 
-The repository referenced `requirements.txt` and `python bot.py` in its README but neither existed, and no Replit configuration was present despite the project targeting Replit deployment.
+The repository referenced `requirements.txt` and `python bot.py` in its README but neither existed, and no DreamCo configuration was present despite the project targeting DreamCo deployment.
 
 ## Added files
-- **`replit.md`** — DreamCo Empire OS system architecture doc (tech stack, autonomy modes, data schemas, UI/UX decisions)
+- **`dreamco.md`** — DreamCo Empire OS system architecture doc (tech stack, autonomy modes, data schemas, UI/UX decisions)
 - **`ai-image.html`** — AI Image Generator frontend page from Issue #6
-- **`.replit`** — Replit run/deployment config pointing to the bot entry point
+- **`.dreamco`** — DreamCo run/deployment config pointing to the bot entry point
 - **`requirements.txt`** — Python deps stub (`requests>=2.28.0`)
 - **`.gitignore`** — Excludes `__pycache__`, `.pyc`, `.env`, build artifacts
 
@@ -3920,7 +3920,7 @@ XSS in `ai-image.html` fixed — replaced `innerHTML` string concatenation with 
 
 <summary>Original prompt</summary>
 
-> Integrate and test Replit-specific files for the Dreamcobots repository. Include the resources listed in issue `Replit files (Issue #6)` such as `DreamCo_Master_MultiPlatform.zip`, `ai-image.html`, and other files. Ensure compatibility with existing codebase and workflows. Ensu
+> Integrate and test DreamCo-specific files for the Dreamcobots repository. Include the resources listed in issue `DreamCo files (Issue #6)` such as `DreamCo_Master_MultiPlatform.zip`, `ai-image.html`, and other files. Ensure compatibility with existing codebase and workflows. Ensu
 
 ---
 
@@ -6066,7 +6066,7 @@ DISTUTILS_DEBUG=1 python bots/government-contract-grant-bot/government_contract_
 > [debug.py](https://github.com/user-attachments/files/25622219/debug.py)
 > 
 > 
-> [ReplitExport-ireanjordan28.tar.gz](https://github.com/user-attachments/files/25622220/ReplitExport-ireanjordan28.tar.gz)
+> [DreamCoExport-ireanjordan28.tar.gz](https://github.com/user-attachments/files/25622220/DreamCoExport-ireanjordan28.tar.gz)
 > 
 > 
 > 
@@ -6405,7 +6405,7 @@ All inherit `BaseBot`. Each returns structured, realistic mock data — no stubs
 
 ---
 
-## #12 — Add debug utility, replit guide, stress tests, and complete bot documentation
+## #12 — Add debug utility, dreamco guide, stress tests, and complete bot documentation
 
 - **Author:** @Copilot
 - **Branch:** `copilot/review-and-complete-issues`
@@ -6417,12 +6417,12 @@ All inherit `BaseBot`. Each returns structured, realistic mock data — no stubs
 
 ### Original intent / description
 
-Open issues requested `debug.py`, `replit.md`, and stress testing infrastructure that were referenced but missing from the repo. Bot configuration was an empty `{}` and documentation was sparse.
+Open issues requested `debug.py`, `dreamco.md`, and stress testing infrastructure that were referenced but missing from the repo. Bot configuration was an empty `{}` and documentation was sparse.
 
 ## Changes
 
 - **`debug.py`** — top-level diagnostic utility: validates environment, loads `config.json`, checks bot interface (`start`/`run`), runs a 10-iteration stress test
-- **`replit.md`** — Replit setup guide covering import, secrets, config, running bots, and deployment options
+- **`dreamco.md`** — DreamCo setup guide covering import, secrets, config, running bots, and deployment options
 - **`examples/stress_test.py`** — standalone stress runner, 50 iterations per bot, pass/fail summary with timing
 - **`bots/config.json`** — expanded from `{}` to structured config with contract/grant search keywords, result limits, and notification settings
 - **`bots/README.md`** — rewritten to document directory layout, all config fields, bot API surface, and debugging workflow
@@ -6554,7 +6554,7 @@ bots/ai-models-integration/
 ├── nlp/nlp_models_bot.py         # GPT-4, PaLM 2, Claude, LLaMA 3, HuggingFace
 ├── computer_vision/cv_models_bot.py  # GPT-4 Vision, Google Vision, Rekognition, DINO/SAM, Azure CV
 ├── generative_ai/generative_ai_bot.py  # DALL-E 3, Stable Diffusion, Gemini, Midjourney, Runway ML
-└── data_analytics/data_analytics_bot.py  # Vertex AI AutoML, SageMaker, Azure ML, Databricks, Watson
+└── data_analytics/data_analytics_bot.py  # Vertex AI AutoML, SageMaker, Azure ML, Databricks, Enterprise AI
 ```
 
 ## Key design points

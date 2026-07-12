@@ -63,7 +63,7 @@ class APIStudier:
     API_URL_MARKERS = [
         "openai.com", "stripe.com", "github.com/api", "zillow", "scraperapi",
         "linkedin.com", "googleapis.com", "apollo.io", "fiverr.com",
-        "upwork.com", "twilio.com", "sendgrid.com", "replit.com", "neon.tech",
+        "upwork.com", "twilio.com", "sendgrid.com", "dreamco.local", "neon.tech",
         "pinecone.io", "anthropic.com", "cohere.com", "huggingface.co",
     ]
 

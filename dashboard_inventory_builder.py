@@ -13,16 +13,16 @@ from dashboard_capability_adapter import normalize_dashboard_schema
 
 REPO_ROOT = Path(__file__).resolve().parent
 INVENTORY_DIR = REPO_ROOT / "dashboard_inventory"
-REPLIT_LEGACY_DIR = INVENTORY_DIR / "replit_legacy_assets"
+DREAMCO_LEGACY_DIR = INVENTORY_DIR / "dreamco_legacy_assets"
 
 SOURCE_HINTS = [
     "docs/dashboards.html",
     "ui/web_dashboard.py",
     "dashboard/static/dashboard.js",
     "dreamco/frontend/dashboard.js",
-    ".replit",
-    "replit.nix",
-    "replit.md",
+    ".dreamco",
+    "dreamco.nix",
+    "dreamco.md",
 ]
 
 DISCOVERY_GLOBS = [
@@ -346,8 +346,8 @@ def _dead_dashboards(entries: list[dict[str, Any]]) -> dict[str, Any]:
     }
 
 
-def _replit_assets(entries: list[dict[str, Any]]) -> dict[str, Any]:
-    replit_entries = [entry for entry in entries if "replit" in entry["path"].lower() or entry["path"].endswith(".replit")]
+def _dreamco_assets(entries: list[dict[str, Any]]) -> dict[str, Any]:
+    dreamco_entries = [entry for entry in entries if "dreamco" in entry["path"].lower() or entry["path"].endswith(".dreamco")]
     archive_entries = [
         entry
         for entry in entries
@@ -355,7 +355,7 @@ def _replit_assets(entries: list[dict[str, Any]]) -> dict[str, Any]:
     ]
     return {
         "generated_at": datetime.now(timezone.utc).isoformat(),
-        "replit_assets": replit_entries,
+        "dreamco_assets": dreamco_entries,
         "archived_assets": archive_entries,
     }
 
@@ -380,7 +380,7 @@ def build_inventory() -> dict[str, Any]:
     _write_json(INVENTORY_DIR / "dashboard_capability_graph.json", _capability_graph(entries))
     _write_json(INVENTORY_DIR / "migration_candidates.json", _migration_candidates(entries))
     _write_json(INVENTORY_DIR / "dead_dashboards.json", _dead_dashboards(entries))
-    _write_json(REPLIT_LEGACY_DIR / "assets_inventory.json", _replit_assets(entries))
+    _write_json(DREAMCO_LEGACY_DIR / "assets_inventory.json", _dreamco_assets(entries))
 
     return {
         "inventory_dir": str(INVENTORY_DIR),

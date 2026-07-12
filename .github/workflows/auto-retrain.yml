@@ -29,6 +29,7 @@ jobs:
   detect-drift:
     name: "📡 Drift Detection"
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     outputs:
       drift_detected: ${{ steps.drift.outputs.drift_detected }}
       top_strategy: ${{ steps.drift.outputs.top_strategy }}
@@ -46,6 +47,14 @@ jobs:
 
       - name: Install dependencies
         run: pip install -r requirements.txt
+
+      - name: Restore learning history
+        uses: actions/cache/restore@v4
+        with:
+          path: database/learning.db
+          key: dreamco-retrain-${{ github.ref_name }}-${{ github.run_id }}
+          restore-keys: |
+            dreamco-learning-${{ github.ref_name }}-
 
       - name: Run drift detection
         id: drift
@@ -67,10 +76,12 @@ jobs:
           try:
               from global_learning_system.learning_loop import GlobalLearningLoop
               loop = GlobalLearningLoop()
-              strategies = loop.extract_successful_strategies(limit=5)
+              strategies = loop.extract_successful_strategies()[:5]
               candidate_count = len(strategies)
               if strategies:
-                  top_strategy = strategies[0].get("strategy") or strategies[0].get("name","n/a")
+                  top_strategy = (
+                      f"{strategies[0].bot_name}:{strategies[0].action_type}"
+                  )
 
               # Drift heuristic: retrain if < 30% recent outcomes are successes
               recent = loop.get_recent_outcomes(n=50) if hasattr(loop, "get_recent_outcomes") else []
@@ -94,8 +105,9 @@ jobs:
           print(f"drift_detected={drift_detected}  top_strategy={top_strategy}  candidates={candidate_count}")
 
   retrain:
-    name: "🔁 Retrain & Update FormulaVault"
+    name: "🔁 Build FormulaVault Candidates"
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     needs: detect-drift
     if: needs.detect-drift.outputs.drift_detected == 'true'
 
@@ -114,6 +126,14 @@ jobs:
       - name: Install dependencies
         run: pip install -r requirements.txt
 
+      - name: Restore learning history
+        uses: actions/cache/restore@v4
+        with:
+          path: database/learning.db
+          key: dreamco-retrain-${{ github.ref_name }}-${{ github.run_id }}
+          restore-keys: |
+            dreamco-learning-${{ github.ref_name }}-
+
       - name: Run retraining and FormulaVault sync
         id: retrain-step
         shell: python
@@ -126,44 +146,50 @@ jobs:
           target_bot = os.environ.get("TARGET_BOT","").strip()
           report = {"timestamp": datetime.datetime.utcnow().isoformat()+"Z", "updates": []}
 
-          # GlobalLearningLoop → FormulaVault closed loop
+          # Learned strategies become review candidates. A strategy does not
+          # contain a validated mathematical expression, so it must never be
+          # promoted directly into the executable FormulaVault.
           try:
               from global_learning_system.learning_loop import GlobalLearningLoop
-              from bots.dreamco_empire_os.formula_vault import FormulaVault
               loop = GlobalLearningLoop()
-              vault = FormulaVault()
-              strategies = loop.extract_successful_strategies(limit=10)
+              strategies = loop.extract_successful_strategies()[:10]
               for s in strategies:
-                  name = s.get("strategy") or s.get("name","unnamed")
-                  try:
-                      vault.auto_create_formula(strategy=s)
-                      report["updates"].append({"formula": name, "status": "created"})
-                  except Exception as fe:
-                      report["updates"].append({"formula": name, "status": f"skipped: {fe}"})
+                  name = f"{s.bot_name}:{s.action_type}"
+                  report["updates"].append({
+                      "formula": name,
+                      "status": "candidate_for_review",
+                      "strategy": {
+                          "strategy_id": s.strategy_id,
+                          "bot_name": s.bot_name,
+                          "action_type": s.action_type,
+                          "avg_reward": s.avg_reward,
+                          "success_count": s.success_count,
+                          "conditions": s.conditions,
+                      },
+                  })
           except Exception as exc:
-              print(f"::warning::FormulaVault sync skipped: {exc}")
+              print(f"::warning::Candidate generation skipped: {exc}")
               report["error"] = str(exc)
 
           out_dir = pathlib.Path("reports")
           out_dir.mkdir(exist_ok=True)
           report_path = out_dir / "last_retrain.json"
           report_path.write_text(json.dumps(report, indent=2))
-          print(f"Retraining complete. Updates: {len(report['updates'])}")
+          print(f"Candidate generation complete. Updates: {len(report['updates'])}")
 
           # Write summary
           with open(os.environ.get("GITHUB_STEP_SUMMARY","/dev/null"),"a") as fh:
-              fh.write("## 🧠 Autonomous Retraining Report\n\n")
+              fh.write("## Learning Candidate Report\n\n")
               fh.write(f"| Formula | Status |\n|---|---|\n")
               for u in report["updates"]:
                   fh.write(f"| `{u['formula']}` | {u['status']} |\n")
 
-      - name: Commit retrain report
-        run: |
-          git config user.name  "dreamco-bot"
-          git config user.email "bot@dreamco.io"
-          git add reports/last_retrain.json
-          git diff --cached --quiet || git commit -m "chore: auto-retrain — FormulaVault sync $(date -u +%Y-%m-%d) [skip ci]"
-          git push
+      - name: Upload candidate review packet
+        uses: actions/upload-artifact@v4
+        with:
+          name: learning-candidates-${{ github.run_id }}
+          path: reports/last_retrain.json
+          retention-days: 30
 
       - name: Record in learning loop
         uses: ./.github/actions/learning-loop

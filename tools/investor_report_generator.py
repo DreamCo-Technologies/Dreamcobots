@@ -40,7 +40,7 @@ def main() -> None:
 - Report generated from bot profiles and financial event history.
 
 ## Bot Fleet Stats
-- Bot profiles indexed: {len(list((ROOT / 'bots').glob('*/replit_profile.json')))}
+- Bot profiles indexed: {len(list((ROOT / 'bots').glob('*/bot_profile.json')))}
 - Prospectus pages available in `docs/prospectus/`
 - Platform workflows include compliance, performance, and sandbox governance.
 

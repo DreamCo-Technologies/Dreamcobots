@@ -1,0 +1,30 @@
+{
+  "schema": "local_first_storage_policy.v1",
+  "updated_at": "2026-06-01T00:00:00Z",
+  "purpose": "Default persistence policy for DreamCo bots before any cloud or paid automation is enabled.",
+  "defaults": {
+    "storage_mode": "local-first",
+    "cloud_sync": "disabled_by_default",
+    "secrets": "never_commit_tokens_or_api_keys; use environment variables or OS keychain",
+    "pii": "minimize_collection; encrypt_at_rest; redact_from_logs",
+    "financial_data": "read_only_until_human_approval; no autonomous transfers or purchases",
+    "audit_logs": "append_only_local_log_with_timestamp_actor_action_result",
+    "retention": "keep only what the bot needs; user-controlled deletion required"
+  },
+  "approval_gates": [
+    "external_outreach",
+    "paid_campaigns",
+    "billing_changes",
+    "payouts_or_transfers",
+    "credential_changes",
+    "cloud_sync_enablement",
+    "production_deployment"
+  ],
+  "required_controls": [
+    "human_review_before_money_movement",
+    "human_review_before_external_messages",
+    "rate_limits_for_all_network_calls",
+    "denylist_for_secrets_in_logs",
+    "rollback_plan_for_generated_changes"
+  ]
+}

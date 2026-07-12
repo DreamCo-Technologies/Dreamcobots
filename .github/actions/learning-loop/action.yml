@@ -37,7 +37,8 @@ runs:
       id: record
       shell: python
       run: |
-        import os, sys, importlib, pathlib, json
+        import hashlib, os, sys
+        from datetime import datetime, timezone
 
         # Add repo root to path so we can import global_learning_system
         sys.path.insert(0, os.getcwd())
@@ -52,19 +53,32 @@ runs:
         total_records = 0
 
         try:
-            from global_learning_system.learning_loop import GlobalLearningLoop
+            from global_learning_system.learning_loop import BotDecision, GlobalLearningLoop
             loop = GlobalLearningLoop()
-            loop.record_outcome(
-                event_type=event_type,
-                bot_id=bot_id or None,
-                outcome=outcome,
-                revenue_delta=revenue_delta,
-                tags=tags,
+            timestamp = datetime.now(timezone.utc).isoformat()
+            decision_id = hashlib.sha256(
+                f"{event_type}:{bot_id}:{timestamp}".encode()
+            ).hexdigest()
+            loop.record_decision(
+                BotDecision(
+                    decision_id=decision_id,
+                    bot_name=bot_id or "system",
+                    action_type=event_type,
+                    action_params={"strategy_tags": tags},
+                    context={"source": "github_actions"},
+                    prediction=1.0 if outcome == "success" else 0.5,
+                    timestamp=timestamp,
+                )
             )
-            strategies = loop.extract_successful_strategies(limit=1)
+            loop.record_outcome(
+                decision_id,
+                actual_outcome=1.0 if outcome == "success" else 0.0,
+                reward=revenue_delta,
+            )
+            strategies = loop.extract_successful_strategies()[:1]
             if strategies:
-                top_strategy = strategies[0].get("strategy") or strategies[0].get("name", "n/a")
-            total_records = loop.total_records() if hasattr(loop, "total_records") else -1
+                top_strategy = f"{strategies[0].bot_name}:{strategies[0].action_type}"
+            total_records = loop.count_decisions()
         except Exception as exc:
             print(f"::warning::LearningLoop skipped: {exc}")
 

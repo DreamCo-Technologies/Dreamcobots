@@ -105,13 +105,13 @@ _COMPANIES: List[AICompany] = [
         description="Social media giant releasing open-source Llama models.",
     ),
     AICompany(
-        company_name="IBM",
+        company_name="Enterprise AI",
         category="Core AI Models",
-        tools=["Watson", "watsonx.ai", "Granite", "Watson Assistant"],
+        tools=["Enterprise AI", "enterprise AI", "Granite", "Enterprise Assistant"],
         pricing="subscription",
         region="USA",
         api_available=True,
-        description="Enterprise AI pioneer with Watson and watsonx platforms.",
+        description="Enterprise AI pioneer with Enterprise AI and enterprise AI platforms.",
     ),
     AICompany(
         company_name="Amazon",
@@ -171,9 +171,9 @@ _COMPANIES: List[AICompany] = [
         description="Microsoft-owned platform offering AI-powered coding assistant.",
     ),
     AICompany(
-        company_name="Replit",
+        company_name="DreamCo",
         category="AI Coding Platforms",
-        tools=["Replit AI", "Ghostwriter", "Replit Deployments"],
+        tools=["DreamCo AI", "Ghostwriter", "DreamCo Deployments"],
         pricing="freemium",
         region="USA",
         api_available=True,

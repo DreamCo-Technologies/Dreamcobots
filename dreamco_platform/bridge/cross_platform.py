@@ -6,7 +6,7 @@ from typing import Dict
 
 
 class Platform(Enum):
-    REPLIT = 'replit'
+    DREAMCO = 'dreamco'
     GITHUB_ACTIONS = 'github_actions'
     DOCKER = 'docker'
     K8S = 'k8s'

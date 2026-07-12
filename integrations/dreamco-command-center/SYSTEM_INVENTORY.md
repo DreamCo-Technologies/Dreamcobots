@@ -15,14 +15,14 @@ Generated from `DreamCo-Technologies/DreamCo-Command-Center` on main.
 | --- | --- |
 | `artifacts/api-server/` | TypeScript API server for command-center systems |
 | `artifacts/dreamco-dashboard/` | Main React/Vite Command Center dashboard app |
-| `artifacts/mockup-sandbox/` | Replit mockup preview sandbox |
-| `attached_assets/` | Replit prompt/build directive assets |
+| `artifacts/mockup-sandbox/` | DreamCo mockup preview sandbox |
+| `attached_assets/` | DreamCo prompt/build directive assets |
 | `dreamcobots-contract/` | Bot manifest schema, validation workflows, and starter bot contracts |
 | `lib/api-client-react/` | Generated React API client |
 | `lib/api-spec/` | OpenAPI contract and Orval config |
 | `lib/api-zod/` | Generated Zod/API types |
 | `lib/db/` | Drizzle database package and schemas |
-| `lib/replit-auth-web/` | Replit auth web helper |
+| `lib/dreamco-auth-web/` | DreamCo auth web helper |
 | `scripts/` | Sync and post-merge scripts |
 
 ## API systems to import

@@ -20,11 +20,11 @@ class ExtendedComplianceChecker:
         return False
 
     def _check_bot(self, bot_dir: Path) -> dict[str, Any]:
-        profile = bot_dir / "replit_profile.json"
+        profile = bot_dir / "bot_profile.json"
         tiers = bot_dir / "tiers.py"
         init_file = bot_dir / "__init__.py"
         report = {"bot": bot_dir.name, "checks": {}, "passed": True}
-        report["checks"]["replit_profile.json"] = profile.exists()
+        report["checks"]["bot_profile.json"] = profile.exists()
         report["checks"]["tiers.py"] = tiers.exists()
         report["checks"]["__init__.py"] = init_file.exists()
         report["checks"]["health_endpoint"] = self._has_health_endpoint(bot_dir)

@@ -1,107 +1,232 @@
-import { afterEach, describe, expect, it, vi } from 'vitest';
-import { cleanup, fireEvent, render, screen } from '@testing-library/react';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import ActionsPage from '../ActionsPage.jsx';
-import githubActionsButtonCatalog from '../../data/githubActionsButtonCatalog.js';
+
+const libraryPayload = {
+  bot_count: 1247,
+  builders: [
+    { id: 'full-bot-system', name: 'Full Bot System Builder', icon: '🤖', outputs: ['profile', 'api', 'webhook', 'sandbox'], approval: 'pull_request_required' },
+    { id: 'apis-builder', name: 'API Builder', icon: '🔌', outputs: ['api', 'tests'], approval: 'pull_request_required' },
+  ],
+  libraries: [
+    { id: 'tools', name: 'Tools Library', icon: '🔧', count: 1247, description: 'Typed tools.' },
+    { id: 'apis', name: 'Apis Library', icon: '🔌', count: 1247, description: 'Versioned APIs.' },
+    { id: 'webhooks', name: 'Webhooks Library', icon: '🪝', count: 1247, description: 'Signed webhooks.' },
+    { id: 'workflows', name: 'Workflows Library', icon: '🔁', count: 1247, description: 'Reusable workflows.' },
+    { id: 'skills', name: 'Skills Library', icon: '🧠', count: 1247, description: 'Versioned skills.' },
+    { id: 'sandboxes', name: 'Sandboxes Library', icon: '🧪', count: 1247, description: 'Isolated tests.' },
+  ],
+};
+
+const buddyCapabilityPayload = {
+  generated_at: '2026-07-11T10:04:34.383589+00:00',
+  summary: {
+    bot_profiles_scanned: 1247,
+    registry_division_count: 45,
+    workflows: 40,
+    test_files: 244,
+    buddy_related_files: 179,
+    buddy_related_bots: 14,
+    build_states: {
+      built_and_test_covered: 366,
+      built_contract_ready: 874,
+    },
+    test_states: {
+      ready_for_contract_testing: 874,
+      ready_for_test_run: 368,
+      needs_implementation_before_testing: 5,
+    },
+    coding_path_states: {
+      needs_placeholder_review: 1109,
+      needs_direct_test_coverage: 22,
+      on_full_code_path: 109,
+      needs_core_implementation: 5,
+      needs_existing_system_mapping: 2,
+    },
+    bots_with_full_coding_path: 1247,
+    all_bots_have_full_coding_path: true,
+    production_readiness_states: {
+      not_ready_placeholder_review: 1109,
+      not_ready_needs_tests: 22,
+      production_ready: 101,
+      not_ready_missing_implementation: 7,
+      production_candidate_approval_required: 8,
+    },
+    fully_coded_bots: 109,
+    production_ready_bots: 101,
+    all_bots_fully_coded: false,
+    all_bots_production_ready: false,
+    placeholder_marker_bots: 1109,
+  },
+  buddy_bots: [
+    { slug: 'buddy_core', name: 'Buddy Core', build_state: 'built_and_test_covered', test_state: 'ready_for_test_run' },
+    { slug: 'buddy_orchestrator', name: 'Buddy Orchestrator', build_state: 'built_and_test_covered', test_state: 'ready_for_test_run' },
+  ],
+  attention: {
+    needs_implementation: [
+      { slug: 'payment_autocollector', name: 'Payment AutoCollector', division: 'DreamFinance' },
+    ],
+    needs_direct_test_coverage: [
+      { slug: 'buddy-tool-builder', name: 'Buddy Tool Library Builder Bot', division: 'DreamCodeLab' },
+    ],
+    needs_existing_system_mapping: [
+      { slug: 'ai_enablement_hub', name: 'AI Enablement Hub', division: 'DreamAIInfra' },
+      { slug: 'elite_scraper', name: 'Elite Scraper', division: 'DreamSalesPro' },
+    ],
+  },
+};
+
+const githubTriagePayload = {
+  generated_at: '2026-07-11T11:30:00+00:00',
+  repo: 'DreamCo-Technologies/Dreamcobots',
+  summary: {
+    open_prs: 56,
+    open_issues: 17,
+    issue_comments_scanned: 100,
+    pr_review_comments_scanned: 4,
+    workflow_runs_scanned: 50,
+    failed_workflow_runs: 6,
+    active_workflow_runs: 2,
+    pr_restart_queue: 12,
+  },
+  pr_restart_queue: [
+    {
+      number: 410,
+      title: 'Finish Buddy readiness tracker',
+      url: 'https://github.com/DreamCo-Technologies/Dreamcobots/pull/410',
+      head_branch: 'buddy-readiness',
+      age_days: 34,
+      restart_reasons: ['stale_pr_needs_rebase_or_retest'],
+    },
+  ],
+  failed_workflow_runs: [
+    {
+      id: 9001,
+      name: 'System and Bot Builds Monitoring',
+      branch: 'main',
+      conclusion: 'failure',
+      updated_at: '2026-07-11T11:10:00Z',
+      url: 'https://github.com/DreamCo-Technologies/Dreamcobots/actions/runs/9001',
+    },
+  ],
+};
 
 function StubActionsMonitor() {
   return <div>Actions monitor panel</div>;
 }
 
+beforeEach(() => {
+  global.fetch = vi.fn((url) => {
+    let payload = libraryPayload;
+    if (url === '/api/buddy-capabilities') payload = buddyCapabilityPayload;
+    if (url === '/api/github-triage') payload = githubTriagePayload;
+    return Promise.resolve({
+      ok: true,
+      json: async () => payload,
+    });
+  });
+});
+
 afterEach(() => {
   cleanup();
+  vi.restoreAllMocks();
 });
 
 describe('ActionsPage', () => {
-  it('renders actions page and monitor panel', () => {
+  it('renders the system builder hub and live coverage', async () => {
     render(<ActionsPage ActionsMonitorComponent={StubActionsMonitor} />);
 
-    expect(screen.getByText('⚡ Actions')).toBeInTheDocument();
-    expect(screen.getByText('GitHub Action Button Grid')).toBeInTheDocument();
-    expect(screen.getByText('Agents Section')).toBeInTheDocument();
-    expect(screen.getByText('Issues Section')).toBeInTheDocument();
+    expect(screen.getByText('🛠️ System Builder Hub')).toBeInTheDocument();
+    expect(screen.getByText('Builder lanes')).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: '🤝 Buddy capability tracker' })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: '🔎 GitHub PR, issue, and comment triage' })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'Generated libraries' })).toBeInTheDocument();
     expect(screen.getByText('Actions monitor panel')).toBeInTheDocument();
+    await waitFor(() => expect(screen.getByText('Source: live')).toBeInTheDocument());
+    expect(screen.getAllByText('1,247').length).toBeGreaterThan(0);
+    expect(screen.getByText('7,482')).toBeInTheDocument();
   });
 
-  it('loads the full 500-control actions catalog', () => {
+  it('shows Buddy capability readiness and implementation blockers', async () => {
     render(<ActionsPage ActionsMonitorComponent={StubActionsMonitor} />);
 
-    expect(githubActionsButtonCatalog).toHaveLength(500);
-    expect(screen.getByText(/500 total controls/)).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: 'Action 1: Scan Bot Health' })).toBeInTheDocument();
+    await waitFor(() => expect(screen.getAllByText(/live ·/).length).toBeGreaterThanOrEqual(2));
+    expect(screen.getByText('Built + test-covered')).toBeInTheDocument();
+    expect(screen.getByText('Contract-ready')).toBeInTheDocument();
+    expect(screen.getByText('Needs implementation before testing')).toBeInTheDocument();
+    expect(screen.getByText('Path to fully coded')).toBeInTheDocument();
+    expect(screen.getByText('All bots have a path')).toBeInTheDocument();
+    expect(screen.getByText('Review placeholders')).toBeInTheDocument();
+    expect(screen.getByText('Add direct tests')).toBeInTheDocument();
+    expect(screen.getByText('Production readiness')).toBeInTheDocument();
+    expect(screen.getByText('Production blockers remain')).toBeInTheDocument();
+    expect(screen.getByText('Production ready')).toBeInTheDocument();
+    expect(screen.getByText('Approval needed')).toBeInTheDocument();
+    expect(screen.getByText('Payment AutoCollector')).toBeInTheDocument();
+    expect(screen.getByText('Buddy Core')).toBeInTheDocument();
   });
 
-  it('renders selected action workflow without a literal template expression', () => {
+  it('shows GitHub PR, issue, comment, and workflow triage', async () => {
     render(<ActionsPage ActionsMonitorComponent={StubActionsMonitor} />);
 
-    fireEvent.click(screen.getByRole('button', { name: 'Action 1: Scan Bot Health' }));
-
-    expect(screen.getByText('Dispatch wiring pending')).toBeInTheDocument();
-    expect(screen.getAllByText('dreamco-debug-audit.yml').length).toBeGreaterThan(1);
-    expect(screen.queryByText('`{selectedAction.workflow}`')).not.toBeInTheDocument();
+    await waitFor(() => expect(screen.getByText('Open PRs')).toBeInTheDocument());
+    expect(screen.getByText('Issue comments')).toBeInTheDocument();
+    expect(screen.getByText('Review comments')).toBeInTheDocument();
+    expect(screen.getByText('Restart queue')).toBeInTheDocument();
+    expect(screen.getByText('PR restart and retest queue')).toBeInTheDocument();
+    expect(screen.getByText(/Finish Buddy readiness tracker/)).toBeInTheDocument();
+    expect(screen.getByText('Workflow failures to retest')).toBeInTheDocument();
+    expect(screen.getByText('System and Bot Builds Monitoring')).toBeInTheDocument();
+    expect(screen.getByText(/Workflow reruns require authenticated GitHub Actions permission/)).toBeInTheDocument();
   });
 
-  it('tracks agent and issue cleanup state', () => {
-    render(<ActionsPage ActionsMonitorComponent={StubActionsMonitor} />);
+  it('prepares a sandboxed pull-request build packet', () => {
+    const onBuildRequest = vi.fn();
+    render(
+      <ActionsPage
+        ActionsMonitorComponent={StubActionsMonitor}
+        onBuildRequest={onBuildRequest}
+      />,
+    );
 
-    expect(screen.getByText('Missing Files Scanner')).toBeInTheDocument();
-    expect(screen.getByText('Sandbox No-Hallucination Audit')).toBeInTheDocument();
-    expect(screen.getByText('Buddy Connectivity Tester')).toBeInTheDocument();
-    expect(screen.getByText('Actions detail rendering')).toBeInTheDocument();
-    expect(screen.getByText('Workflow dispatch backend')).toBeInTheDocument();
-    expect(screen.getByText('2 completed')).toBeInTheDocument();
-    expect(screen.getByText('3 open')).toBeInTheDocument();
+    fireEvent.click(screen.getByRole('button', { name: 'Prepare build packet' }));
+
+    expect(onBuildRequest).toHaveBeenCalledWith(
+      expect.objectContaining({
+        builder: 'Full Bot System Builder',
+        mode: 'sandbox_and_pull_request',
+        approval: 'pull_request_required',
+      }),
+    );
+    expect(screen.getByRole('status')).toHaveTextContent('sandbox-only');
   });
 
-  it('opens and closes buddy command center modal', () => {
+  it('switches builder and library lanes', async () => {
+    render(<ActionsPage ActionsMonitorComponent={StubActionsMonitor} />);
+    await waitFor(() => expect(screen.getByRole('tab', { name: 'API Builder' })).toBeInTheDocument());
+
+    fireEvent.click(screen.getByRole('tab', { name: 'API Builder' }));
+    expect(screen.getByRole('heading', { name: '🔌 API Builder' })).toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole('tab', { name: /Webhooks Library/ }));
+    expect(screen.getByText('Signed webhooks.')).toBeInTheDocument();
+  });
+
+  it('keeps security and sandbox controls visible', () => {
     render(<ActionsPage ActionsMonitorComponent={StubActionsMonitor} />);
 
-    fireEvent.click(screen.getByRole('button', { name: 'Launch Full Buddy Command Center' }));
+    expect(screen.getByText('Webhook integrity')).toBeInTheDocument();
+    expect(screen.getByText('Least privilege')).toBeInTheDocument();
+    expect(screen.getByText('No payments, purchases, transfers, or ad spend')).toBeInTheDocument();
+    expect(screen.getByText('Pull request and human review before deployment')).toBeInTheDocument();
+  });
+
+  it('opens and closes the Buddy build console', () => {
+    render(<ActionsPage ActionsMonitorComponent={StubActionsMonitor} />);
+
+    fireEvent.click(screen.getByRole('button', { name: 'Open Buddy Build Console' }));
     expect(screen.getByRole('dialog')).toBeInTheDocument();
-
     fireEvent.click(screen.getByRole('button', { name: 'Close Buddy Command Center' }));
     expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
-  });
-
-  it('submits command when Enter is pressed in input', () => {
-    const onBuddyCommandSubmit = vi.fn();
-
-    render(
-      <ActionsPage
-        ActionsMonitorComponent={StubActionsMonitor}
-        onBuddyCommandSubmit={onBuddyCommandSubmit}
-      />,
-    );
-
-    fireEvent.click(screen.getByRole('button', { name: 'Launch Full Buddy Command Center' }));
-
-    const input = screen.getByRole('textbox', { name: 'Buddy command input' });
-    fireEvent.change(input, { target: { value: 'deploy bot fleet' } });
-    fireEvent.keyDown(input, { key: 'Enter', code: 'Enter' });
-
-    expect(onBuddyCommandSubmit).toHaveBeenCalledWith('deploy bot fleet');
-    expect(screen.getByRole('log', { name: 'Buddy terminal output' })).toBeInTheDocument();
-    expect(screen.getByText('$ deploy bot fleet')).toBeInTheDocument();
-    expect(screen.getByText('[Buddy] Command queued with evidence policy: deploy bot fleet')).toBeInTheDocument();
-  });
-
-  it('renders expanded buddy autonomous operations panels and quick commands', () => {
-    const onBuddyCommandSubmit = vi.fn();
-    render(
-      <ActionsPage
-        ActionsMonitorComponent={StubActionsMonitor}
-        onBuddyCommandSubmit={onBuddyCommandSubmit}
-      />,
-    );
-    fireEvent.click(screen.getByRole('button', { name: 'Launch Full Buddy Command Center' }));
-
-    expect(screen.getByText('Bot Test Lab')).toBeInTheDocument();
-    expect(screen.getByText('Customer Discovery')).toBeInTheDocument();
-    expect(screen.getByText('Tool & Skill Finder')).toBeInTheDocument();
-    expect(screen.getByText('Social Draft Studio')).toBeInTheDocument();
-    expect(screen.getByText('Cash Loop Tracker')).toBeInTheDocument();
-    expect(screen.getByText('Memory & Learning')).toBeInTheDocument();
-
-    fireEvent.click(screen.getByRole('button', { name: 'npm run autonomous:readiness' }));
-    expect(onBuddyCommandSubmit).toHaveBeenCalledWith('npm run autonomous:readiness');
   });
 });

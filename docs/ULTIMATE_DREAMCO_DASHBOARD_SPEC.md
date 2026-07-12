@@ -18,7 +18,7 @@ Goal: make GitHub the control room while the DreamCo dashboard becomes the visua
 | Debate Room | Multi-agent prompt debate and decision review |
 | Production | CI checks, deployment readiness, secrets, dependencies, incidents |
 
-## Replit-to-GitHub processing layers
+## DreamCo-to-GitHub processing layers
 
 | Layer | Required fields |
 | --- | --- |

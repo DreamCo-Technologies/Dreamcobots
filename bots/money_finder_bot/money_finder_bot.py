@@ -74,7 +74,7 @@ class MoneyFinderBot:
                     "Upgrade to PRO to search all US states."
                 )
         elif self.tier not in (Tier.PRO, Tier.ENTERPRISE):
-            pass
+            raise MoneyFinderBotTierError(f"Unsupported tier: {self.tier}")
 
         if state_upper in self.INTERNATIONAL_SOURCES and self.tier != Tier.ENTERPRISE:
             raise MoneyFinderBotTierError("International search requires ENTERPRISE tier.")

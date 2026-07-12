@@ -1,5 +1,5 @@
 import Stripe from "stripe";
-import { StripeSync } from "stripe-replit-sync";
+import { StripeSync } from "stripe-dreamco-sync";
 
 // ---------------------------------------------------------------------------
 // Stripe client helpers

@@ -22,7 +22,7 @@ CMD [\"uvicorn\", \"main:app\", \"--host\", \"0.0.0.0\", \"--port\", \"8000\"]
 
 def load_profiles() -> list[tuple[str, Path, dict[str, Any]]]:
     profiles = []
-    for profile_path in sorted(BOTS_DIR.glob("*/replit_profile.json")):
+    for profile_path in sorted(BOTS_DIR.glob("*/bot_profile.json")):
         data = json.loads(profile_path.read_text())
         slug = data.get("slug") or profile_path.parent.name
         profiles.append((slug, profile_path.parent, data))

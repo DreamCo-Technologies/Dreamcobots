@@ -42,7 +42,7 @@ class EventContractValidator:
 
     def validate_all(self) -> list[ValidationResult]:
         results = []
-        for path in sorted((ROOT / "bots").glob("*/replit_profile.json")):
+        for path in sorted((ROOT / "bots").glob("*/bot_profile.json")):
             try:
                 results.append(self.validate_profile(path))
             except ContractViolation as exc:

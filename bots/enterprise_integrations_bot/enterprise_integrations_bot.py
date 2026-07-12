@@ -4,9 +4,9 @@ Enterprise Integrations Bot — DreamCo hub for Big Tech & AI services.
 Provides a unified gateway covering the major service categories offered by
 leading global tech and AI companies, including:
 
-  * **Big Tech & AI APIs**: Google Cloud AI, IBM Watson, Microsoft Azure AI,
+  * **Big Tech & AI APIs**: Google Cloud AI, Enterprise AI, Microsoft Azure AI,
     Nvidia AI, AWS AI services.
-  * **Cloud / Compute**: Amazon Web Services, IBM Cloud, Oracle Cloud,
+  * **Cloud / Compute**: Amazon Web Services, Enterprise Cloud, Oracle Cloud,
     Google Cloud.
   * **Big Data AI & Analytics**: Databricks, Palantir, Snowflake, Tableau.
   * **Communication & Collaboration**: Slack, Microsoft Teams, Zoom.
@@ -116,12 +116,12 @@ def _google_adapter(action: str, payload: dict) -> dict:
     }
 
 
-def _ibm_adapter(action: str, payload: dict) -> dict:
+def _enterprise_ai_adapter(action: str, payload: dict) -> dict:
     return {
-        "provider": "ibm_watson",
+        "provider": "enterprise_ai",
         "action": action,
         "status": "ok",
-        "result": f"[IBM Watson mock] {action} completed",
+        "result": f"[Enterprise AI mock] {action} completed",
         "model": payload.get("model", "granite-13b"),
         "confidence": 0.94,
         "latency_ms": 280,
@@ -304,14 +304,14 @@ _PROVIDERS: List[Provider] = [
         adapter=_google_adapter,
     ),
     Provider(
-        provider_id="ibm_watson",
-        name="IBM Watson / watsonx.ai",
+        provider_id="enterprise_ai",
+        name="Enterprise AI Platform",
         category=ProviderCategory.BIG_TECH_AI,
-        description="IBM's enterprise AI platform — Watson Assistant, Discovery, NLU, watsonx.",
-        services=["watson_assistant", "watson_discovery", "nlu",
-                  "watson_speech", "watsonx_ai", "granite_models"],
+        description="Enterprise AI's enterprise AI platform — Enterprise Assistant, Discovery, NLU, enterprise AI.",
+        services=["enterprise_ai_assistant", "enterprise_ai_discovery", "nlu",
+                  "enterprise_ai_speech", "enterprise_ai", "granite_models"],
         min_tier=Tier.FREE,
-        adapter=_ibm_adapter,
+        adapter=_enterprise_ai_adapter,
     ),
     Provider(
         provider_id="microsoft_azure_ai",
@@ -357,14 +357,14 @@ _PROVIDERS: List[Provider] = [
         adapter=_aws_adapter,
     ),
     Provider(
-        provider_id="ibm_cloud",
-        name="IBM Cloud",
+        provider_id="enterprise_ai_cloud",
+        name="Enterprise Cloud",
         category=ProviderCategory.CLOUD_COMPUTE,
-        description="IBM's hybrid cloud platform with AI-optimised workloads.",
+        description="Enterprise AI's hybrid cloud platform with AI-optimised workloads.",
         services=["virtual_servers", "code_engine", "cloud_databases",
                   "cloud_object_storage", "openshift"],
         min_tier=Tier.PRO,
-        adapter=_ibm_adapter,
+        adapter=_enterprise_ai_adapter,
     ),
     Provider(
         provider_id="google_cloud",
@@ -797,9 +797,9 @@ class EnterpriseIntegrationsBot:
         """Call Google Cloud AI."""
         return self.call_provider("google_cloud_ai", action, payload)
 
-    def ibm_watson(self, action: str, payload: Optional[dict] = None) -> dict:
-        """Call IBM Watson / watsonx.ai."""
-        return self.call_provider("ibm_watson", action, payload)
+    def enterprise_ai(self, action: str, payload: Optional[dict] = None) -> dict:
+        """Call Enterprise AI Platform."""
+        return self.call_provider("enterprise_ai", action, payload)
 
     def azure_ai(self, action: str, payload: Optional[dict] = None) -> dict:
         """Call Microsoft Azure AI (PRO+)."""
@@ -1055,8 +1055,8 @@ class EnterpriseIntegrationsBot:
             result = self.google_ai("chat", {"prompt": message})
             return {"message": result["result"], "data": result}
 
-        if any(kw in msg for kw in ("ibm", "watson", "watsonx")):
-            result = self.ibm_watson("chat", {"prompt": message})
+        if any(kw in msg for kw in ("enterprise_ai", "enterprise_ai", "enterprise AI")):
+            result = self.enterprise_ai("chat", {"prompt": message})
             return {"message": result["result"], "data": result}
 
         if any(kw in msg for kw in ("azure", "microsoft ai", "copilot")):

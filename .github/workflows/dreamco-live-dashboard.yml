@@ -52,7 +52,7 @@ jobs:
           profile_errors = 0
 
           for bot_dir in bot_dirs:
-              profile_path = bot_dir / "replit_profile.json"
+              profile_path = bot_dir / "bot_profile.json"
               if profile_path.exists():
                   profiles_found += 1
                   try:
@@ -162,7 +162,7 @@ jobs:
               "issues": [],
           }
 
-          buddy_profile = root / "bots" / "buddy-bot" / "replit_profile.json"
+          buddy_profile = root / "bots" / "buddy-bot" / "bot_profile.json"
           if buddy_profile.exists():
               results["buddy_profile_exists"] = True
               results["checks_passed"] += 1
@@ -217,7 +217,7 @@ jobs:
           bots_dir = root / "bots"
           if bots_dir.exists():
               for bot_dir in list(bots_dir.iterdir())[:50]:
-                  p = bot_dir / "replit_profile.json"
+                  p = bot_dir / "bot_profile.json"
                   if p.exists():
                       try:
                           if "buddy" in p.read_text().lower():
@@ -430,7 +430,7 @@ jobs:
               "2025": {
                   "label": "2025 - Intelligence Layer",
                   "checks": [
-                      ("Buddy Bot profile present", lambda: (root/"bots"/"buddy-bot"/"replit_profile.json").exists()),
+                      ("Buddy Bot profile present", lambda: (root/"bots"/"buddy-bot"/"bot_profile.json").exists()),
                       ("Tool belt system (shared/)", lambda: any((root/"shared").glob("tool-belt*")) if (root/"shared").exists() else False),
                       ("Empire OS source synced", lambda: (root/"empire-os").exists()),
                       ("AI brain module", lambda: (root/"ai").exists()),

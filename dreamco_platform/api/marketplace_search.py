@@ -30,7 +30,7 @@ def _score(query: str, profile: dict[str, Any]) -> float:
 @router.get("/api/marketplace/search")
 async def marketplace_search(q: str, tier: str | None = Query(None), division: str | None = Query(None)) -> list[dict[str, Any]]:
     results = []
-    for path in sorted((ROOT / "bots").glob("*/replit_profile.json")):
+    for path in sorted((ROOT / "bots").glob("*/bot_profile.json")):
         profile = json.loads(path.read_text())
         if tier and profile.get("tier") != tier:
             continue

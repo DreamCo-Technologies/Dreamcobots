@@ -113,7 +113,7 @@ class TaskRouter:
         "design":      ["midjourney", "canva_ai", "figma_ai", "firefly"],
         "uiux":        ["figma_ai", "v0", "framer_ai"],
         "website":     ["v0", "framer_ai", "chatgpt"],
-        "app":         ["replit_ai", "cursor", "v0", "bolt_new"],
+        "app":         ["dreamco_ai", "cursor", "v0", "bolt_new"],
         "agent":       ["crewai", "autogen", "langgraph", "openai_operator"],
         "robot":       ["nvidia_isaac", "figure_ai", "tesla_optimus"],
         "security":    ["crowdstrike_ai", "darktrace", "ms_copilot"],

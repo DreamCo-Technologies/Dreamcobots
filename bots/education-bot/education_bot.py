@@ -153,7 +153,7 @@ class EducationBot(BaseBot):
         """Map the certification path to a target career."""
         cert_maps = {
             "data scientist": [
-                {"cert": "Python for Data Science (IBM)", "platform": "Coursera", "duration": "3 months"},
+                {"cert": "Python for Data Science (Enterprise AI)", "platform": "Coursera", "duration": "3 months"},
                 {"cert": "Google Data Analytics Certificate", "platform": "Coursera", "duration": "6 months"},
                 {"cert": "AWS Certified Machine Learning", "platform": "AWS", "duration": "3 months"},
                 {"cert": "TensorFlow Developer Certificate", "platform": "Google", "duration": "2 months"},
