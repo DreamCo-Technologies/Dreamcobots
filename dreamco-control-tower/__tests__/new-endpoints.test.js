@@ -372,6 +372,20 @@ describe('GET /api/storage-guard', () => {
   });
 });
 
+describe('GET /api/stripe-revenue-rescue', () => {
+  test('returns Stripe no-money diagnosis and priority fixes', async () => {
+    const res = await request(app).get('/api/stripe-revenue-rescue');
+
+    expect(res.status).toBe(200);
+    expect(res.body.schema).toBe('dreamco.stripe_revenue_rescue.v1');
+    expect(res.body.summary).toHaveProperty('checkout_ready_offers');
+    expect(res.body.summary).toHaveProperty('tracked_events');
+    expect(Array.isArray(res.body.revenue_blockers)).toBe(true);
+    expect(Array.isArray(res.body.priority_fixes)).toBe(true);
+    expect(res.body.safety_note).toMatch(/never prints secret values/i);
+  });
+});
+
 // ---------------------------------------------------------------------------
 // GET /api/command-center
 // ---------------------------------------------------------------------------

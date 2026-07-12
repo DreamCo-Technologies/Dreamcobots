@@ -41,6 +41,10 @@ const STORAGE_GUARD_REPORT_FILE = path.join(
   __dirname,
   '../../reports/storage_guard_report.json',
 );
+const STRIPE_REVENUE_RESCUE_REPORT_FILE = path.join(
+  __dirname,
+  '../../reports/stripe_revenue_rescue_report.json',
+);
 const COMMAND_CENTER_FILE = path.join(__dirname, '../config/command_center.json');
 const PRODUCTION_MEDIA_ROADMAP_FILE = path.join(
   __dirname,
@@ -165,6 +169,13 @@ function readStorageGuardReport() {
     return null;
   }
   return JSON.parse(fs.readFileSync(STORAGE_GUARD_REPORT_FILE, 'utf8'));
+}
+
+function readStripeRevenueRescueReport() {
+  if (!fs.existsSync(STRIPE_REVENUE_RESCUE_REPORT_FILE)) {
+    return null;
+  }
+  return JSON.parse(fs.readFileSync(STRIPE_REVENUE_RESCUE_REPORT_FILE, 'utf8'));
 }
 
 function parseDurationToDays(duration) {
@@ -459,6 +470,17 @@ app.get('/api/storage-guard', rateLimiter, (_req, res) => {
   const report = readStorageGuardReport();
   if (!report) {
     return res.status(503).json({ error: 'storage guard report not found' });
+  }
+  return res.json(report);
+});
+
+// ---------------------------------------------------------------------------
+// GET /api/stripe-revenue-rescue — Stripe no-money diagnosis and fix queue
+// ---------------------------------------------------------------------------
+app.get('/api/stripe-revenue-rescue', rateLimiter, (_req, res) => {
+  const report = readStripeRevenueRescueReport();
+  if (!report) {
+    return res.status(503).json({ error: 'stripe revenue rescue report not found' });
   }
   return res.json(report);
 });

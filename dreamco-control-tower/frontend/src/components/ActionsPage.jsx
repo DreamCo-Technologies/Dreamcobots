@@ -244,6 +244,29 @@ const FALLBACK_STORAGE_GUARD = {
   warnings: [],
 };
 
+const FALLBACK_STRIPE_REVENUE_RESCUE = {
+  generated_at: null,
+  summary: {
+    revenue_rescue_ready: false,
+    checkout_ready_offers: 0,
+    offers_checked: 0,
+    tracked_events: 0,
+    gross_revenue_cents: 0,
+    checkout_completed: 0,
+    payment_succeeded: 0,
+    invoice_paid: 0,
+    blocker_count: 0,
+  },
+  revenue_blockers: [
+    'Run the Stripe revenue rescue report to find checkout, webhook, offer, and payout blockers.',
+  ],
+  priority_fixes: [
+    'Create live Stripe offers, connect customer buttons to live payment links, and confirm webhook events are arriving.',
+  ],
+  offers: [],
+  safety_note: 'Secrets stay in environment variables or secure host secrets, never in the repository.',
+};
+
 const BUILD_STAGES = [
   ['01', 'Specify', 'Identity, goal, inputs, outputs, limits, owner'],
   ['02', 'Compose', 'Tools, API, webhook, workflow, skills'],
@@ -560,6 +583,8 @@ export default function ActionsPage({
   const [buddyProductivityStatus, setBuddyProductivityStatus] = useState('loading');
   const [storageGuard, setStorageGuard] = useState(null);
   const [storageGuardStatus, setStorageGuardStatus] = useState('loading');
+  const [stripeRevenueRescue, setStripeRevenueRescue] = useState(null);
+  const [stripeRevenueRescueStatus, setStripeRevenueRescueStatus] = useState('loading');
   const [buildPacket, setBuildPacket] = useState(null);
 
   useEffect(() => {
@@ -616,6 +641,15 @@ export default function ActionsPage({
       .catch(() => setStorageGuardStatus('generated fallback'));
   }, []);
 
+  useEffect(() => {
+    fetchFirstJson(['/api/stripe-revenue-rescue'])
+      .then((data) => {
+        setStripeRevenueRescue(data);
+        setStripeRevenueRescueStatus('live');
+      })
+      .catch(() => setStripeRevenueRescueStatus('generated fallback'));
+  }, []);
+
   const builders = libraryData?.builders ?? FALLBACK_BUILDERS;
   const libraries = libraryData?.libraries ?? FALLBACK_LIBRARIES;
   const botCount = libraryData?.bot_count ?? 1247;
@@ -624,11 +658,13 @@ export default function ActionsPage({
   const stewardship = repositoryStewardship ?? FALLBACK_REPOSITORY_STEWARDSHIP;
   const productivity = buddyProductivity ?? FALLBACK_BUDDY_PRODUCTIVITY;
   const storage = storageGuard ?? FALLBACK_STORAGE_GUARD;
+  const stripeRescue = stripeRevenueRescue ?? FALLBACK_STRIPE_REVENUE_RESCUE;
   const inventorySummary = inventory.summary ?? FALLBACK_BUDDY_INVENTORY.summary;
   const triageSummary = triage.summary ?? FALLBACK_GITHUB_TRIAGE.summary;
   const stewardshipSummary = stewardship.summary ?? FALLBACK_REPOSITORY_STEWARDSHIP.summary;
   const productivitySummary = productivity.summary ?? FALLBACK_BUDDY_PRODUCTIVITY.summary;
   const storageSummary = storage.summary ?? FALLBACK_STORAGE_GUARD.summary;
+  const stripeRescueSummary = stripeRescue.summary ?? FALLBACK_STRIPE_REVENUE_RESCUE.summary;
   const buildStates = inventorySummary.build_states ?? {};
   const testStates = inventorySummary.test_states ?? {};
   const codingPathStates = inventorySummary.coding_path_states ?? {};
@@ -1444,6 +1480,72 @@ export default function ActionsPage({
                 </div>
               ))}
             </div>
+          </aside>
+        </div>
+      </section>
+
+      <section aria-labelledby="stripe-rescue-heading" className="border border-slate-700 bg-slate-950 p-5">
+        <div className="flex flex-wrap items-start justify-between gap-3">
+          <div>
+            <p className="text-xs font-bold uppercase text-dreamco-accent">Stripe revenue rescue</p>
+            <h3 id="stripe-rescue-heading" className="mt-1 text-lg font-semibold text-white">
+              Fix why connected Stripe is making no money
+            </h3>
+            <p className="mt-1 max-w-3xl text-sm leading-6 text-slate-400">
+              Checks whether offers are live, customer buttons reach verified payment links, webhook events are arriving,
+              and successful payments or invoices are actually tracked.
+            </p>
+          </div>
+          <span className={`rounded-full border px-3 py-1 text-xs font-semibold ${
+            stripeRescueSummary.revenue_rescue_ready
+              ? 'border-green-800 bg-green-950/40 text-green-300'
+              : 'border-yellow-800 bg-yellow-950/40 text-yellow-300'
+          }`}>
+            {stripeRevenueRescueStatus} · {stripeRescueSummary.revenue_rescue_ready ? 'ready' : 'blocked'} · {formatDateTime(stripeRescue.generated_at)}
+          </span>
+        </div>
+
+        <div className="mt-5 grid grid-cols-2 gap-px overflow-hidden border border-slate-800 bg-slate-800 lg:grid-cols-4 xl:grid-cols-8">
+          {[
+            ['Checkout-ready offers', stripeRescueSummary.checkout_ready_offers],
+            ['Offers checked', stripeRescueSummary.offers_checked],
+            ['Tracked events', stripeRescueSummary.tracked_events],
+            ['Checkout completed', stripeRescueSummary.checkout_completed],
+            ['Payments won', stripeRescueSummary.payment_succeeded],
+            ['Paid invoices', stripeRescueSummary.invoice_paid],
+            ['Gross revenue', `$${((stripeRescueSummary.gross_revenue_cents ?? 0) / 100).toFixed(2)}`],
+            ['Blockers', stripeRescueSummary.blocker_count],
+          ].map(([label, value]) => (
+            <div key={label} className="bg-slate-900 p-4">
+              <p className="text-xl font-black text-white">{typeof value === 'number' ? formatNumber(value) : value}</p>
+              <p className="mt-1 text-xs uppercase text-slate-500">{label}</p>
+            </div>
+          ))}
+        </div>
+
+        <div className="mt-5 grid gap-5 lg:grid-cols-[1fr_1fr]">
+          <div className="border border-slate-800 bg-slate-900 p-4">
+            <h4 className="text-sm font-semibold text-white">Revenue blockers</h4>
+            <div className="mt-3 space-y-2">
+              {(stripeRescue.revenue_blockers ?? []).slice(0, 6).map((blocker) => (
+                <div key={blocker} className="border-l-2 border-yellow-500 pl-3 text-xs leading-5 text-yellow-100">
+                  {blocker}
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <aside className="border border-slate-800 bg-slate-900 p-4">
+            <h4 className="text-sm font-semibold text-white">Next fixes</h4>
+            <div className="mt-3 space-y-2">
+              {(stripeRescue.priority_fixes ?? []).slice(0, 6).map((fix, index) => (
+                <div key={fix} className="grid grid-cols-[1.5rem_1fr] gap-2 text-xs leading-5 text-slate-300">
+                  <span className="font-mono text-dreamco-accent">{index + 1}</span>
+                  <span>{fix}</span>
+                </div>
+              ))}
+            </div>
+            <p className="mt-4 text-xs leading-5 text-slate-500">{stripeRescue.safety_note}</p>
           </aside>
         </div>
       </section>

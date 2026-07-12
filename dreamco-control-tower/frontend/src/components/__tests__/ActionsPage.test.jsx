@@ -240,6 +240,26 @@ const storageGuardPayload = {
   warnings: [],
 };
 
+const stripeRevenueRescuePayload = {
+  schema: 'dreamco.stripe_revenue_rescue.v1',
+  generated_at: '2026-07-12T00:00:00Z',
+  summary: {
+    revenue_rescue_ready: false,
+    checkout_ready_offers: 0,
+    offers_checked: 2,
+    tracked_events: 0,
+    gross_revenue_cents: 0,
+    checkout_completed: 0,
+    payment_succeeded: 0,
+    invoice_paid: 0,
+    blocker_count: 6,
+  },
+  revenue_blockers: ['No checkout-ready live Stripe offers with price and payment link IDs.'],
+  priority_fixes: ['Create or confirm two live Stripe Payment Links for the starter audit and monthly command center offers.'],
+  offers: [],
+  safety_note: 'This report never prints secret values.',
+};
+
 function StubActionsMonitor() {
   return <div>Actions monitor panel</div>;
 }
@@ -252,6 +272,7 @@ beforeEach(() => {
     if (url === '/api/repository-stewardship') payload = repositoryStewardshipPayload;
     if (url === '/api/buddy-productivity') payload = buddyProductivityPayload;
     if (url === '/api/storage-guard') payload = storageGuardPayload;
+    if (url === '/api/stripe-revenue-rescue') payload = stripeRevenueRescuePayload;
     return Promise.resolve({
       ok: true,
       json: async () => payload,
@@ -297,6 +318,7 @@ describe('ActionsPage', () => {
     expect(screen.getByRole('heading', { name: '🤝 Buddy capability tracker' })).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: '🧪 Buddy and bot test catalog' })).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: 'Always-clean PR, issue, and code-quality steward' })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'Fix why connected Stripe is making no money' })).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: '💾 Future-proof bot memory' })).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: '🔎 GitHub PR, issue, and comment triage' })).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: 'Generated libraries' })).toBeInTheDocument();
@@ -389,6 +411,8 @@ describe('ActionsPage', () => {
     expect(screen.getByText('PR restart and retest queue')).toBeInTheDocument();
     expect(screen.getByText(/Finish Buddy readiness tracker/)).toBeInTheDocument();
     expect(screen.getByText('Workflow failures to retest')).toBeInTheDocument();
+    expect(screen.getByText('Revenue blockers')).toBeInTheDocument();
+    expect(screen.getByText(/No checkout-ready live Stripe offers/)).toBeInTheDocument();
     expect(screen.getByText('Rollover tiers')).toBeInTheDocument();
     expect(screen.getByText('Never one giant memory file')).toBeInTheDocument();
     expect(screen.getByText('System and Bot Builds Monitoring')).toBeInTheDocument();
