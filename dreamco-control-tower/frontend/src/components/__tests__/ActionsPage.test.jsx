@@ -271,10 +271,18 @@ describe('ActionsPage', () => {
     expect(screen.getByText('Buddy Command Tower for building, testing, and presenting bot systems')).toBeInTheDocument();
     expect(screen.getByText('Operational status')).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: 'Professional delivery pipeline' })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'Client vibe building for apps, videos, courses, games, and simulations' })).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: 'AI company builder with human trust built in' })).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: 'Tracks what helps you, clients, and bots improve' })).toBeInTheDocument();
     expect(screen.getByText('AI companies')).toBeInTheDocument();
     expect(screen.getByText('Human trust')).toBeInTheDocument();
+    expect(screen.getByText('Music video')).toBeInTheDocument();
+    expect(screen.getByText('Kids learning video')).toBeInTheDocument();
+    expect(screen.getByText('College course')).toBeInTheDocument();
+    expect(screen.getByText('Video game')).toBeInTheDocument();
+    expect(screen.getByText('Simulation')).toBeInTheDocument();
+    expect(screen.getByText('Voice and image consent rules')).toBeInTheDocument();
+    expect(screen.getByText(/No fake testimonials/)).toBeInTheDocument();
     expect(screen.getByText('Builder lanes')).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: '🤝 Buddy capability tracker' })).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: '🧪 Buddy and bot test catalog' })).toBeInTheDocument();

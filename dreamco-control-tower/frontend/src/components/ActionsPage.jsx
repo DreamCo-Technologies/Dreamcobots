@@ -304,6 +304,62 @@ const COMPANY_BUILDER_PILLARS = [
   },
 ];
 
+const VIBE_STUDIO_LANES = [
+  {
+    title: 'App or bot',
+    icon: '🤖',
+    prompt: 'Build a client-ready bot, app, dashboard, API, webhook, and sandbox test packet.',
+    outputs: ['working prototype', 'bot prospectus', 'API/webhook plan', 'test loop'],
+  },
+  {
+    title: 'Music video',
+    icon: '🎬',
+    prompt: 'Create an original music video plan with storyboard, shot list, visual prompts, timeline, and rights checks.',
+    outputs: ['concept', 'storyboard', 'scene prompts', 'edit timeline'],
+  },
+  {
+    title: 'Kids learning video',
+    icon: '🧒',
+    prompt: 'Create age-safe lessons with story, narration, visuals, quiz, captions, and parent or teacher notes.',
+    outputs: ['lesson script', 'visual plan', 'quiz', 'safety notes'],
+  },
+  {
+    title: 'College course',
+    icon: '🎓',
+    prompt: 'Build a course with modules, lessons, assignments, rubrics, labs, slides, and outcomes.',
+    outputs: ['syllabus', 'modules', 'assessments', 'instructor pack'],
+  },
+  {
+    title: 'Video game',
+    icon: '🎮',
+    prompt: 'Design and prototype rules, levels, characters, scoring, save state, tests, and deployment path.',
+    outputs: ['game design doc', 'playable prototype', 'level plan', 'QA checklist'],
+  },
+  {
+    title: 'Simulation',
+    icon: '🧪',
+    prompt: 'Build business, science, training, finance, real estate, operations, or emergency simulation scenarios.',
+    outputs: ['scenario model', 'controls', 'metrics', 'sandbox runbook'],
+  },
+];
+
+const VIBE_STUDIO_GATES = [
+  'Written consent before cloning a real person voice, face, likeness, or image',
+  'AI-generated and AI-edited media labels stay visible in the asset record',
+  'No political, legal, medical, financial, emergency, or public-safety impersonation',
+  'No cloning minors or creating sexual/degrading fake media of real people',
+  'No fake testimonials, founders, employees, endorsements, or authority figures',
+  'Every asset stores consent proof, source, creator, timestamp, and usage rights',
+];
+
+const VIBE_BUILD_FLOW = [
+  ['Prompt', 'Client describes the outcome, audience, style, budget, and safety limits.'],
+  ['Packet', 'Buddy creates the script, design doc, asset plan, build steps, and test checklist.'],
+  ['Prototype', 'Buddy builds the first app, course, game, video plan, or simulation in sandbox mode.'],
+  ['Review', 'Client approves rights, safety, factual claims, age fit, brand fit, and deployment path.'],
+  ['Ship', 'Buddy exports files, opens a pull request, or prepares a client demo page.'],
+];
+
 function formatLabel(value) {
   return String(value || '').replaceAll('_', ' ').replace(/\b\w/g, (letter) => letter.toUpperCase());
 }
@@ -622,6 +678,76 @@ export default function ActionsPage({
               <p className="mt-2 text-xs leading-5 text-slate-400">{detail}</p>
             </div>
           ))}
+        </div>
+      </section>
+
+      <section aria-labelledby="vibe-studio-heading" className="border border-slate-700 bg-slate-950 p-5">
+        <div className="flex flex-wrap items-start justify-between gap-3">
+          <div>
+            <p className="text-xs font-bold uppercase text-dreamco-accent">Buddy Vibe Studio</p>
+            <h3 id="vibe-studio-heading" className="mt-1 text-lg font-semibold text-white">
+              Client vibe building for apps, videos, courses, games, and simulations
+            </h3>
+            <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-400">
+              Clients can describe what they want in plain language. Buddy turns it into a production packet, sandbox prototype,
+              safety review, and client-ready handoff.
+            </p>
+          </div>
+          <span className="rounded-full border border-green-800 bg-green-950/30 px-3 py-1 text-xs font-semibold text-green-300">
+            sandbox first · rights review required
+          </span>
+        </div>
+
+        <div className="mt-5 grid gap-px overflow-hidden border border-slate-800 bg-slate-800 md:grid-cols-2 xl:grid-cols-3">
+          {VIBE_STUDIO_LANES.map((lane) => (
+            <article key={lane.title} className="min-h-56 bg-slate-900 p-4">
+              <div className="flex items-start justify-between gap-3">
+                <div>
+                  <p className="text-2xl">{lane.icon}</p>
+                  <h4 className="mt-2 text-sm font-semibold text-white">{lane.title}</h4>
+                </div>
+                <span className="rounded-full border border-slate-700 px-2 py-0.5 text-[11px] font-semibold uppercase text-slate-400">
+                  vibe build
+                </span>
+              </div>
+              <p className="mt-3 text-xs leading-5 text-slate-400">{lane.prompt}</p>
+              <div className="mt-4 flex flex-wrap gap-2">
+                {lane.outputs.map((output) => (
+                  <span key={output} className="rounded-full border border-slate-700 px-2 py-1 text-[11px] text-slate-300">
+                    {output}
+                  </span>
+                ))}
+              </div>
+            </article>
+          ))}
+        </div>
+
+        <div className="mt-5 grid gap-5 lg:grid-cols-[0.9fr_1.1fr]">
+          <div className="border border-slate-800 bg-slate-900 p-4">
+            <h4 className="text-sm font-semibold text-white">One-prompt build flow</h4>
+            <div className="mt-3 space-y-3">
+              {VIBE_BUILD_FLOW.map(([title, detail], index) => (
+                <div key={title} className="grid grid-cols-[2rem_1fr] gap-3">
+                  <span className="font-mono text-xs text-dreamco-accent">0{index + 1}</span>
+                  <div>
+                    <p className="text-sm font-semibold text-white">{title}</p>
+                    <p className="mt-1 text-xs leading-5 text-slate-400">{detail}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <aside className="border border-slate-800 bg-slate-900 p-4">
+            <h4 className="text-sm font-semibold text-white">Voice and image consent rules</h4>
+            <div className="mt-3 grid gap-2 md:grid-cols-2">
+              {VIBE_STUDIO_GATES.map((gate) => (
+                <div key={gate} className="border-l-2 border-dreamco-accent pl-3 text-xs leading-5 text-slate-300">
+                  {gate}
+                </div>
+              ))}
+            </div>
+          </aside>
         </div>
       </section>
 
