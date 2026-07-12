@@ -252,9 +252,18 @@ const stripeRevenueRescuePayload = {
     checkout_completed: 0,
     payment_succeeded: 0,
     invoice_paid: 0,
+    payment_email_recipients: 0,
+    payment_email_notices: 0,
+    payment_email_sent: 0,
+    github_payment_notifications_enabled: false,
+    github_payment_issues_created: 0,
     blocker_count: 6,
   },
-  revenue_blockers: ['No checkout-ready live Stripe offers with price and payment link IDs.'],
+  revenue_blockers: [
+    'No checkout-ready live Stripe offers with price and payment link IDs.',
+    'Payment alert email recipients are not configured.',
+    'GitHub payment notifications are not enabled.',
+  ],
   priority_fixes: ['Create or confirm two live Stripe Payment Links for the starter audit and monthly command center offers.'],
   offers: [],
   safety_note: 'This report never prints secret values.',
@@ -413,6 +422,8 @@ describe('ActionsPage', () => {
     expect(screen.getByText('Workflow failures to retest')).toBeInTheDocument();
     expect(screen.getByText('Revenue blockers')).toBeInTheDocument();
     expect(screen.getByText(/No checkout-ready live Stripe offers/)).toBeInTheDocument();
+    expect(screen.getByText(/Payment alert email recipients/)).toBeInTheDocument();
+    expect(screen.getByText(/GitHub payment notifications/)).toBeInTheDocument();
     expect(screen.getByText('Rollover tiers')).toBeInTheDocument();
     expect(screen.getByText('Never one giant memory file')).toBeInTheDocument();
     expect(screen.getByText('System and Bot Builds Monitoring')).toBeInTheDocument();

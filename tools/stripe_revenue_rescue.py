@@ -15,6 +15,7 @@ ROOT = Path(__file__).resolve().parents[1]
 OFFERS_FILE = ROOT / "data/stripe/offers.template.json"
 EVENTS_FILE = ROOT / "data/stripe/events.json"
 SUMMARY_FILE = ROOT / "data/stripe/summary.json"
+PAYMENT_EMAIL_OUTBOX_FILE = ROOT / "data/stripe/payment-email-outbox.json"
 MONETIZATION_LINKS_FILE = ROOT / "src/components/MonetizationLinks.jsx"
 REPORT_JSON = ROOT / "reports/stripe_revenue_rescue_report.json"
 REPORT_MD = ROOT / "reports/STRIPE_REVENUE_RESCUE_REPORT.md"
@@ -100,6 +101,37 @@ def check_events() -> dict[str, Any]:
     }
 
 
+def check_payment_email_notifications() -> dict[str, Any]:
+    outbox = read_json(PAYMENT_EMAIL_OUTBOX_FILE, [])
+    if not isinstance(outbox, list):
+        outbox = []
+    recipients = os.environ.get("STRIPE_PAYMENT_ALERT_EMAILS") or os.environ.get("PAYMENT_ALERT_EMAILS") or ""
+    recipient_count = len([item.strip() for item in recipients.split(",") if item.strip()])
+    provider = os.environ.get("PAYMENT_EMAIL_PROVIDER") or ("resend" if os.environ.get("RESEND_API_KEY") else "missing")
+    sent = sum(1 for item in outbox if item.get("status") == "sent")
+    blocked = sum(1 for item in outbox if str(item.get("status", "")).startswith("blocked"))
+    queued = sum(1 for item in outbox if str(item.get("status", "")).startswith("queued"))
+    github_created = sum(1 for item in outbox if item.get("githubStatus") == "github_issue_created")
+    github_enabled = str(os.environ.get("PAYMENT_GITHUB_NOTIFICATIONS", "")).lower() in {"1", "true", "yes"}
+    github_repo = os.environ.get("PAYMENT_GITHUB_REPOSITORY") or os.environ.get("GITHUB_REPOSITORY") or ""
+    github_token_configured = bool(os.environ.get("PAYMENT_GITHUB_TOKEN") or os.environ.get("GITHUB_TOKEN"))
+    return {
+        "outboxFileExists": PAYMENT_EMAIL_OUTBOX_FILE.exists(),
+        "outboxNotices": len(outbox),
+        "sentNotices": sent,
+        "queuedNotices": queued,
+        "blockedNotices": blocked,
+        "recipientCount": recipient_count,
+        "provider": provider,
+        "resendConfigured": bool(os.environ.get("RESEND_API_KEY")),
+        "fromConfigured": bool(os.environ.get("PAYMENT_EMAIL_FROM")),
+        "githubNotificationsEnabled": github_enabled,
+        "githubRepositoryConfigured": bool(github_repo),
+        "githubTokenConfigured": github_token_configured,
+        "githubIssuesCreated": github_created,
+    }
+
+
 def check_customer_links() -> dict[str, Any]:
     content = MONETIZATION_LINKS_FILE.read_text(encoding="utf-8") if MONETIZATION_LINKS_FILE.exists() else ""
     default_match = re.search(r"https://[^'\"`]+", content)
@@ -118,6 +150,7 @@ def check_customer_links() -> dict[str, Any]:
 def build_report() -> dict[str, Any]:
     offers, offer_issues = check_offers()
     events = check_events()
+    email_notifications = check_payment_email_notifications()
     link_check = check_customer_links()
     secrets = [
         secret_state("STRIPE_SECRET_KEY"),
@@ -142,8 +175,21 @@ def build_report() -> dict[str, Any]:
         revenue_blockers.append("STRIPE_SECRET_KEY is not configured in this runtime.")
     if not any(item["name"] == "STRIPE_WEBHOOK_SECRET" and item["configured"] for item in secrets):
         revenue_blockers.append("STRIPE_WEBHOOK_SECRET is not configured in this runtime.")
+    if email_notifications["recipientCount"] == 0:
+        revenue_blockers.append("Payment alert email recipients are not configured.")
+    if email_notifications["provider"] == "missing":
+        revenue_blockers.append("Payment email provider is not configured.")
+    if not email_notifications["githubNotificationsEnabled"]:
+        revenue_blockers.append("GitHub payment notifications are not enabled.")
+    elif not email_notifications["githubRepositoryConfigured"]:
+        revenue_blockers.append("GitHub payment notification repository is not configured.")
+    elif not email_notifications["githubTokenConfigured"]:
+        revenue_blockers.append("GitHub payment notification token is not configured.")
 
     priority_fixes = [
+        "Set STRIPE_PAYMENT_ALERT_EMAILS or PAYMENT_ALERT_EMAILS to the owner email list that should receive every payment notice.",
+        "Configure PAYMENT_EMAIL_PROVIDER=resend plus RESEND_API_KEY and PAYMENT_EMAIL_FROM, or connect another production email provider.",
+        "For GitHub payment alerts, set PAYMENT_GITHUB_NOTIFICATIONS=true, PAYMENT_GITHUB_REPOSITORY=DreamCo-Technologies/Dreamcobots, and PAYMENT_GITHUB_TOKEN or GITHUB_TOKEN with issue-write access.",
         "Create or confirm two live Stripe Payment Links for the starter audit and monthly command center offers.",
         "Put the live Stripe price/payment link IDs in a private production offer catalog or environment-backed config.",
         "Update customer-facing CTA buttons to use verified live Stripe Payment Links, not generic placeholder checkout routes.",
@@ -164,6 +210,11 @@ def build_report() -> dict[str, Any]:
             "checkout_completed": events["checkoutCompleted"],
             "payment_succeeded": events["paymentSucceeded"],
             "invoice_paid": events["invoicePaid"],
+            "payment_email_recipients": email_notifications["recipientCount"],
+            "payment_email_notices": email_notifications["outboxNotices"],
+            "payment_email_sent": email_notifications["sentNotices"],
+            "github_payment_notifications_enabled": email_notifications["githubNotificationsEnabled"],
+            "github_payment_issues_created": email_notifications["githubIssuesCreated"],
             "blocker_count": len(revenue_blockers),
         },
         "revenue_blockers": revenue_blockers,
@@ -171,6 +222,7 @@ def build_report() -> dict[str, Any]:
         "offers": offers,
         "offer_issues": offer_issues,
         "events": events,
+        "payment_email_notifications": email_notifications,
         "customer_links": link_check,
         "runtime_secret_state": secrets,
         "safety_note": "This report never prints secret values. Configure Stripe keys only in environment variables or a secure host secret store.",
@@ -188,7 +240,11 @@ def write_reports(report: dict[str, Any]) -> None:
         f"- Checkout-ready offers: {report['summary']['checkout_ready_offers']}/{report['summary']['offers_checked']}",
         f"- Tracked Stripe events: {report['summary']['tracked_events']}",
         f"- Gross tracked revenue: ${report['summary']['gross_revenue_cents'] / 100:.2f}",
-        f"- Blockers: {report['summary']['blocker_count']}",
+            f"- Payment email recipients configured: {report['summary']['payment_email_recipients']}",
+            f"- Payment email notices tracked: {report['summary']['payment_email_notices']}",
+            f"- GitHub payment notifications enabled: {report['summary']['github_payment_notifications_enabled']}",
+            f"- GitHub payment issues created: {report['summary']['github_payment_issues_created']}",
+            f"- Blockers: {report['summary']['blocker_count']}",
         "",
         "## Revenue Blockers",
         "",
@@ -210,6 +266,22 @@ def write_reports(report: dict[str, Any]) -> None:
                 ready=offer["checkoutReady"],
             )
         )
+    lines.extend(["", "## Payment Email Notifications", ""])
+    email = report["payment_email_notifications"]
+    lines.extend(
+        [
+            f"- Provider: {email['provider']}",
+            f"- Recipients configured: {email['recipientCount']}",
+            f"- Outbox notices: {email['outboxNotices']}",
+            f"- Sent notices: {email['sentNotices']}",
+            f"- Queued notices: {email['queuedNotices']}",
+            f"- Blocked notices: {email['blockedNotices']}",
+            f"- GitHub notifications enabled: {email['githubNotificationsEnabled']}",
+            f"- GitHub repository configured: {email['githubRepositoryConfigured']}",
+            f"- GitHub token configured: {email['githubTokenConfigured']}",
+            f"- GitHub issues created: {email['githubIssuesCreated']}",
+        ]
+    )
     REPORT_MD.write_text("\n".join(lines) + "\n", encoding="utf-8")
 
 
@@ -217,11 +289,13 @@ def main() -> int:
     report = build_report()
     write_reports(report)
     print(
-        "revenue_rescue_ready={ready} blockers={blockers} checkout_ready_offers={offers} tracked_events={events} gross=${gross:.2f}".format(
+        "revenue_rescue_ready={ready} blockers={blockers} checkout_ready_offers={offers} tracked_events={events} payment_email_recipients={recipients} github_notifications={github} gross=${gross:.2f}".format(
             ready=report["summary"]["revenue_rescue_ready"],
             blockers=report["summary"]["blocker_count"],
             offers=report["summary"]["checkout_ready_offers"],
             events=report["summary"]["tracked_events"],
+            recipients=report["summary"]["payment_email_recipients"],
+            github=report["summary"]["github_payment_notifications_enabled"],
             gross=report["summary"]["gross_revenue_cents"] / 100,
         )
     )

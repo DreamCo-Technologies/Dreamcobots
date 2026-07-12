@@ -106,6 +106,44 @@ The rescue report checks:
 
 The report never prints secret values. Keep Stripe keys in environment variables, GitHub secrets, Hostinger secrets, or the hosting provider's secure secret store.
 
+## Payment email notices
+
+Every important Stripe money event should notify the owner by email:
+
+- `checkout.session.completed`
+- `payment_intent.succeeded`
+- `payment_intent.payment_failed`
+- `invoice.paid`
+- `invoice.payment_failed`
+- `customer.subscription.created`
+- `customer.subscription.deleted`
+- `payout.paid`
+
+Configure these environment variables in your production host:
+
+```bash
+STRIPE_PAYMENT_ALERT_EMAILS="you@example.com"
+PAYMENT_EMAIL_PROVIDER="resend"
+PAYMENT_EMAIL_FROM="DreamCo Payments <payments@yourdomain.com>"
+RESEND_API_KEY="re_..."
+```
+
+You can also use `PAYMENT_ALERT_EMAILS` instead of `STRIPE_PAYMENT_ALERT_EMAILS`.
+
+The webhook writes every notice into `data/stripe/payment-email-outbox.json`. If the email provider is not configured, notices are marked as queued or blocked so the Actions page and rescue report show the problem. Do not commit provider keys or Stripe keys.
+
+## GitHub payment notifications
+
+If you prefer GitHub notifications, enable issue creation for every tracked payment event:
+
+```bash
+PAYMENT_GITHUB_NOTIFICATIONS="true"
+PAYMENT_GITHUB_REPOSITORY="DreamCo-Technologies/Dreamcobots"
+PAYMENT_GITHUB_TOKEN="ghp_or_fine_grained_token_with_issue_write_access"
+```
+
+The webhook creates a GitHub issue labeled `payment-alert` and `stripe` with the event type, bot, offer, workflow, amount, customer reference, and Stripe object ID. You can use this instead of email, or run both email and GitHub alerts together.
+
 ## Current likely blocker pattern
 
 If `checkout_ready_offers` is `0`, customers do not have a verified live Stripe offer to buy through this system. Fix that before changing prices or adding more bots:

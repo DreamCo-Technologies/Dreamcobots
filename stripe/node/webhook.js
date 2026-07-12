@@ -9,20 +9,25 @@ require('dotenv').config();
 const express = require('express');
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 const { RevenueLedger } = require('./revenue-ledger');
+const { recordPaymentEmailNotice } = require('./payment-email-notifier');
 
 const app = express();
 const PORT = process.env.PORT || 4242;
 const ledger = new RevenueLedger();
 
-function record(event) {
+async function record(event) {
   const tracked = ledger.recordEvent(event);
+  const emailNotice = await recordPaymentEmailNotice(tracked);
   ledger.writeMarkdownReport();
   console.log(`Tracked Stripe event ${tracked.type} for bot=${tracked.botId} amount=${tracked.amountCents} ${tracked.currency}`);
+  if (emailNotice) {
+    console.log(`Payment email notice ${emailNotice.status} for event=${tracked.id} recipients=${emailNotice.recipientCount}`);
+  }
   return tracked;
 }
 
 // Use raw body for webhook verification
-app.post('/webhook', express.raw({ type: 'application/json' }), (req, res) => {
+app.post('/webhook', express.raw({ type: 'application/json' }), async (req, res) => {
   const sig = req.headers['stripe-signature'];
   let event;
 
@@ -42,7 +47,7 @@ app.post('/webhook', express.raw({ type: 'application/json' }), (req, res) => {
     case 'invoice.paid':
     case 'invoice.payment_failed':
     case 'payout.paid':
-      record(event);
+      await record(event);
       break;
     default:
       console.log(`Unhandled event type: ${event.type}`);

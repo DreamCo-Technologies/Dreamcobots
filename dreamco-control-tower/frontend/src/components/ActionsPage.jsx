@@ -255,6 +255,11 @@ const FALLBACK_STRIPE_REVENUE_RESCUE = {
     checkout_completed: 0,
     payment_succeeded: 0,
     invoice_paid: 0,
+    payment_email_recipients: 0,
+    payment_email_notices: 0,
+    payment_email_sent: 0,
+    github_payment_notifications_enabled: false,
+    github_payment_issues_created: 0,
     blocker_count: 0,
   },
   revenue_blockers: [
@@ -1513,6 +1518,10 @@ export default function ActionsPage({
             ['Checkout completed', stripeRescueSummary.checkout_completed],
             ['Payments won', stripeRescueSummary.payment_succeeded],
             ['Paid invoices', stripeRescueSummary.invoice_paid],
+            ['Email recipients', stripeRescueSummary.payment_email_recipients],
+            ['Email notices', stripeRescueSummary.payment_email_notices],
+            ['GitHub alerts', stripeRescueSummary.github_payment_notifications_enabled ? 'On' : 'Off'],
+            ['GitHub issues', stripeRescueSummary.github_payment_issues_created],
             ['Gross revenue', `$${((stripeRescueSummary.gross_revenue_cents ?? 0) / 100).toFixed(2)}`],
             ['Blockers', stripeRescueSummary.blocker_count],
           ].map(([label, value]) => (
