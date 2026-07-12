@@ -283,6 +283,11 @@ describe('ActionsPage', () => {
     expect(screen.getByText('Simulation')).toBeInTheDocument();
     expect(screen.getByText('Voice and image consent rules')).toBeInTheDocument();
     expect(screen.getByText(/No fake testimonials/)).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'What Buddy needs to beat ordinary vibe coding' })).toBeInTheDocument();
+    expect(screen.getByText('Live preview while building')).toBeInTheDocument();
+    expect(screen.getByText('One-click deploy')).toBeInTheDocument();
+    expect(screen.getByText('Image-to-app and screenshot-to-dashboard')).toBeInTheDocument();
+    expect(screen.getByText('Eval/test loop after every generated change')).toBeInTheDocument();
     expect(screen.getByText('Builder lanes')).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: '🤝 Buddy capability tracker' })).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: '🧪 Buddy and bot test catalog' })).toBeInTheDocument();

@@ -360,6 +360,54 @@ const VIBE_BUILD_FLOW = [
   ['Ship', 'Buddy exports files, opens a pull request, or prepares a client demo page.'],
 ];
 
+const COMPETITIVE_BUILD_ROADMAP = [
+  {
+    capability: 'One-prompt app and bot flow',
+    status: 'building',
+    proof: 'Turn a client prompt into plan, files, tests, dashboard, and pull request packet.',
+  },
+  {
+    capability: 'Live preview while building',
+    status: 'planned',
+    proof: 'Stream generated UI, routes, logs, screenshots, and test status into the dashboard.',
+  },
+  {
+    capability: 'One-click deploy',
+    status: 'planned',
+    proof: 'Package approved builds for GitHub Pages, static hosting, and production deployment gates.',
+  },
+  {
+    capability: 'Built-in auth, database, storage, payments, email, and webhooks',
+    status: 'building',
+    proof: 'Use per-bot API, webhook, sandbox, storage, and approval policies before live credentials.',
+  },
+  {
+    capability: 'Rollback and checkpoints',
+    status: 'building',
+    proof: 'Create build packets with diff summary, rollback plan, branch, commit, and test evidence.',
+  },
+  {
+    capability: 'Visual editing',
+    status: 'planned',
+    proof: 'Let clients revise layout, copy, assets, scenes, lessons, and game screens from preview feedback.',
+  },
+  {
+    capability: 'Voice input',
+    status: 'planned',
+    proof: 'Capture spoken build requests while keeping consent, identity, and media rights checks active.',
+  },
+  {
+    capability: 'Image-to-app and screenshot-to-dashboard',
+    status: 'planned',
+    proof: 'Convert uploaded screenshots or sketches into UI structure, components, tests, and demo pages.',
+  },
+  {
+    capability: 'Eval/test loop after every generated change',
+    status: 'building',
+    proof: 'Run schema, syntax, sandbox, storage, readiness, and dashboard checks before client handoff.',
+  },
+];
+
 function formatLabel(value) {
   return String(value || '').replaceAll('_', ' ').replace(/\b\w/g, (letter) => letter.toUpperCase());
 }
@@ -748,6 +796,42 @@ export default function ActionsPage({
               ))}
             </div>
           </aside>
+        </div>
+      </section>
+
+      <section aria-labelledby="competitive-roadmap-heading" className="border border-slate-700 bg-slate-950 p-5">
+        <div className="flex flex-wrap items-start justify-between gap-3">
+          <div>
+            <p className="text-xs font-bold uppercase text-dreamco-accent">Competitive build roadmap</p>
+            <h3 id="competitive-roadmap-heading" className="mt-1 text-lg font-semibold text-white">
+              What Buddy needs to beat ordinary vibe coding
+            </h3>
+            <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-400">
+              These are the product capabilities Buddy tracks so every client build can move toward live preview,
+              deployment, rollback, media input, and a test loop after every generated change.
+            </p>
+          </div>
+          <span className="rounded-full border border-slate-700 px-3 py-1 text-xs font-semibold text-slate-400">
+            {COMPETITIVE_BUILD_ROADMAP.length} capabilities tracked
+          </span>
+        </div>
+
+        <div className="mt-5 grid gap-px overflow-hidden border border-slate-800 bg-slate-800 md:grid-cols-2 xl:grid-cols-3">
+          {COMPETITIVE_BUILD_ROADMAP.map((item) => (
+            <article key={item.capability} className="min-h-44 bg-slate-900 p-4">
+              <div className="flex items-start justify-between gap-3">
+                <h4 className="text-sm font-semibold text-white">{item.capability}</h4>
+                <span className={`rounded-full border px-2 py-0.5 text-[11px] font-semibold uppercase ${
+                  item.status === 'building'
+                    ? 'border-green-800 bg-green-950/30 text-green-300'
+                    : 'border-slate-700 bg-slate-950 text-slate-300'
+                }`}>
+                  {item.status}
+                </span>
+              </div>
+              <p className="mt-3 text-xs leading-5 text-slate-400">{item.proof}</p>
+            </article>
+          ))}
         </div>
       </section>
 
