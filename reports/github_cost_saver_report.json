@@ -1,0 +1,434 @@
+{
+  "bot": "github-cost-saver",
+  "repo_path": "/Users/mamas/Documents/GitHub/Dreamcobots",
+  "scanned_at": "2026-07-12T08:06:14.129624+00:00",
+  "workflow_count": 42,
+  "findings": [
+    {
+      "category": "actions_minutes",
+      "severity": "medium",
+      "path": ".github/workflows/24hour-button.yml",
+      "title": "Scheduled workflow consumes recurring minutes",
+      "why_it_costs": "Scheduled runs execute whether or not client-facing work changed.",
+      "safe_replacement": "Gate schedules with path checks, reduce frequency, or run local nightly scans.",
+      "estimated_monthly_savings_usd": 6.0,
+      "requires_approval": false
+    },
+    {
+      "category": "actions_minutes",
+      "severity": "medium",
+      "path": ".github/workflows/auto-merge-prs.yml",
+      "title": "Scheduled workflow consumes recurring minutes",
+      "why_it_costs": "Scheduled runs execute whether or not client-facing work changed.",
+      "safe_replacement": "Gate schedules with path checks, reduce frequency, or run local nightly scans.",
+      "estimated_monthly_savings_usd": 6.0,
+      "requires_approval": false
+    },
+    {
+      "category": "actions_minutes",
+      "severity": "medium",
+      "path": ".github/workflows/auto-retrain.yml",
+      "title": "Scheduled workflow consumes recurring minutes",
+      "why_it_costs": "Scheduled runs execute whether or not client-facing work changed.",
+      "safe_replacement": "Gate schedules with path checks, reduce frequency, or run local nightly scans.",
+      "estimated_monthly_savings_usd": 6.0,
+      "requires_approval": false
+    },
+    {
+      "category": "actions_cache",
+      "severity": "low",
+      "path": ".github/workflows/auto-retrain.yml",
+      "title": "Broad cache restore keys can grow cache usage",
+      "why_it_costs": "Cache storage above included per-repository allowance can become billable.",
+      "safe_replacement": "Use narrow cache keys, dependency lockfile hashes, and periodic cache cleanup.",
+      "estimated_monthly_savings_usd": 1.5,
+      "requires_approval": false
+    },
+    {
+      "category": "actions_storage",
+      "severity": "high",
+      "path": ".github/workflows/bot-health-scan.yml",
+      "title": "Artifact upload without retention-days",
+      "why_it_costs": "Artifacts accrue storage charges until they expire or are deleted.",
+      "safe_replacement": "Set retention-days to 1-7 for diagnostics and 14-30 only for release evidence.",
+      "estimated_monthly_savings_usd": 5.0,
+      "requires_approval": false
+    },
+    {
+      "category": "actions_minutes",
+      "severity": "medium",
+      "path": ".github/workflows/buddy-capability-inventory.yml",
+      "title": "Scheduled workflow consumes recurring minutes",
+      "why_it_costs": "Scheduled runs execute whether or not client-facing work changed.",
+      "safe_replacement": "Gate schedules with path checks, reduce frequency, or run local nightly scans.",
+      "estimated_monthly_savings_usd": 6.0,
+      "requires_approval": false
+    },
+    {
+      "category": "actions_storage",
+      "severity": "high",
+      "path": ".github/workflows/buddy-capability-inventory.yml",
+      "title": "Artifact upload without retention-days",
+      "why_it_costs": "Artifacts accrue storage charges until they expire or are deleted.",
+      "safe_replacement": "Set retention-days to 1-7 for diagnostics and 14-30 only for release evidence.",
+      "estimated_monthly_savings_usd": 5.0,
+      "requires_approval": false
+    },
+    {
+      "category": "actions_storage",
+      "severity": "high",
+      "path": ".github/workflows/buddy-connectivity.yml",
+      "title": "Artifact upload without retention-days",
+      "why_it_costs": "Artifacts accrue storage charges until they expire or are deleted.",
+      "safe_replacement": "Set retention-days to 1-7 for diagnostics and 14-30 only for release evidence.",
+      "estimated_monthly_savings_usd": 5.0,
+      "requires_approval": false
+    },
+    {
+      "category": "actions_storage",
+      "severity": "high",
+      "path": ".github/workflows/buddy-system.yml",
+      "title": "Artifact upload without retention-days",
+      "why_it_costs": "Artifacts accrue storage charges until they expire or are deleted.",
+      "safe_replacement": "Set retention-days to 1-7 for diagnostics and 14-30 only for release evidence.",
+      "estimated_monthly_savings_usd": 5.0,
+      "requires_approval": false
+    },
+    {
+      "category": "actions_minutes",
+      "severity": "medium",
+      "path": ".github/workflows/chaos-testing.yml",
+      "title": "Scheduled workflow consumes recurring minutes",
+      "why_it_costs": "Scheduled runs execute whether or not client-facing work changed.",
+      "safe_replacement": "Gate schedules with path checks, reduce frequency, or run local nightly scans.",
+      "estimated_monthly_savings_usd": 6.0,
+      "requires_approval": false
+    },
+    {
+      "category": "actions_minutes",
+      "severity": "medium",
+      "path": ".github/workflows/command-tower.yml",
+      "title": "Scheduled workflow consumes recurring minutes",
+      "why_it_costs": "Scheduled runs execute whether or not client-facing work changed.",
+      "safe_replacement": "Gate schedules with path checks, reduce frequency, or run local nightly scans.",
+      "estimated_monthly_savings_usd": 6.0,
+      "requires_approval": false
+    },
+    {
+      "category": "actions_storage",
+      "severity": "high",
+      "path": ".github/workflows/dashboard-governance.yml",
+      "title": "Artifact upload without retention-days",
+      "why_it_costs": "Artifacts accrue storage charges until they expire or are deleted.",
+      "safe_replacement": "Set retention-days to 1-7 for diagnostics and 14-30 only for release evidence.",
+      "estimated_monthly_savings_usd": 5.0,
+      "requires_approval": false
+    },
+    {
+      "category": "actions_storage",
+      "severity": "high",
+      "path": ".github/workflows/dedup-scan.yml",
+      "title": "Artifact upload without retention-days",
+      "why_it_costs": "Artifacts accrue storage charges until they expire or are deleted.",
+      "safe_replacement": "Set retention-days to 1-7 for diagnostics and 14-30 only for release evidence.",
+      "estimated_monthly_savings_usd": 5.0,
+      "requires_approval": false
+    },
+    {
+      "category": "actions_minutes",
+      "severity": "medium",
+      "path": ".github/workflows/dreamco-continuous-self-build.yml",
+      "title": "Scheduled workflow consumes recurring minutes",
+      "why_it_costs": "Scheduled runs execute whether or not client-facing work changed.",
+      "safe_replacement": "Gate schedules with path checks, reduce frequency, or run local nightly scans.",
+      "estimated_monthly_savings_usd": 6.0,
+      "requires_approval": false
+    },
+    {
+      "category": "actions_storage",
+      "severity": "high",
+      "path": ".github/workflows/dreamco-continuous-self-build.yml",
+      "title": "Artifact upload without retention-days",
+      "why_it_costs": "Artifacts accrue storage charges until they expire or are deleted.",
+      "safe_replacement": "Set retention-days to 1-7 for diagnostics and 14-30 only for release evidence.",
+      "estimated_monthly_savings_usd": 5.0,
+      "requires_approval": false
+    },
+    {
+      "category": "actions_storage",
+      "severity": "high",
+      "path": ".github/workflows/dreamco-debug-audit.yml",
+      "title": "Artifact upload without retention-days",
+      "why_it_costs": "Artifacts accrue storage charges until they expire or are deleted.",
+      "safe_replacement": "Set retention-days to 1-7 for diagnostics and 14-30 only for release evidence.",
+      "estimated_monthly_savings_usd": 5.0,
+      "requires_approval": false
+    },
+    {
+      "category": "actions_storage",
+      "severity": "high",
+      "path": ".github/workflows/dreamco-live-dashboard.yml",
+      "title": "Artifact upload without retention-days",
+      "why_it_costs": "Artifacts accrue storage charges until they expire or are deleted.",
+      "safe_replacement": "Set retention-days to 1-7 for diagnostics and 14-30 only for release evidence.",
+      "estimated_monthly_savings_usd": 5.0,
+      "requires_approval": false
+    },
+    {
+      "category": "actions_minutes",
+      "severity": "medium",
+      "path": ".github/workflows/github-pattern-intelligence.yml",
+      "title": "Scheduled workflow consumes recurring minutes",
+      "why_it_costs": "Scheduled runs execute whether or not client-facing work changed.",
+      "safe_replacement": "Gate schedules with path checks, reduce frequency, or run local nightly scans.",
+      "estimated_monthly_savings_usd": 6.0,
+      "requires_approval": false
+    },
+    {
+      "category": "actions_minutes",
+      "severity": "medium",
+      "path": ".github/workflows/github-triage-scan.yml",
+      "title": "Scheduled workflow consumes recurring minutes",
+      "why_it_costs": "Scheduled runs execute whether or not client-facing work changed.",
+      "safe_replacement": "Gate schedules with path checks, reduce frequency, or run local nightly scans.",
+      "estimated_monthly_savings_usd": 6.0,
+      "requires_approval": false
+    },
+    {
+      "category": "actions_storage",
+      "severity": "high",
+      "path": ".github/workflows/github-triage-scan.yml",
+      "title": "Artifact upload without retention-days",
+      "why_it_costs": "Artifacts accrue storage charges until they expire or are deleted.",
+      "safe_replacement": "Set retention-days to 1-7 for diagnostics and 14-30 only for release evidence.",
+      "estimated_monthly_savings_usd": 5.0,
+      "requires_approval": false
+    },
+    {
+      "category": "actions_storage",
+      "severity": "high",
+      "path": ".github/workflows/hostinger-buddy-build.yml",
+      "title": "Artifact upload without retention-days",
+      "why_it_costs": "Artifacts accrue storage charges until they expire or are deleted.",
+      "safe_replacement": "Set retention-days to 1-7 for diagnostics and 14-30 only for release evidence.",
+      "estimated_monthly_savings_usd": 5.0,
+      "requires_approval": false
+    },
+    {
+      "category": "actions_minutes",
+      "severity": "medium",
+      "path": ".github/workflows/integration-feedback.yml",
+      "title": "Scheduled workflow consumes recurring minutes",
+      "why_it_costs": "Scheduled runs execute whether or not client-facing work changed.",
+      "safe_replacement": "Gate schedules with path checks, reduce frequency, or run local nightly scans.",
+      "estimated_monthly_savings_usd": 6.0,
+      "requires_approval": false
+    },
+    {
+      "category": "actions_minutes",
+      "severity": "medium",
+      "path": ".github/workflows/max-parallel-delivery.yml",
+      "title": "Scheduled workflow consumes recurring minutes",
+      "why_it_costs": "Scheduled runs execute whether or not client-facing work changed.",
+      "safe_replacement": "Gate schedules with path checks, reduce frequency, or run local nightly scans.",
+      "estimated_monthly_savings_usd": 12.0,
+      "requires_approval": false
+    },
+    {
+      "category": "actions_storage",
+      "severity": "high",
+      "path": ".github/workflows/max-parallel-delivery.yml",
+      "title": "Artifact upload without retention-days",
+      "why_it_costs": "Artifacts accrue storage charges until they expire or are deleted.",
+      "safe_replacement": "Set retention-days to 1-7 for diagnostics and 14-30 only for release evidence.",
+      "estimated_monthly_savings_usd": 5.0,
+      "requires_approval": false
+    },
+    {
+      "category": "actions_minutes",
+      "severity": "medium",
+      "path": ".github/workflows/opportunity-learning.yml",
+      "title": "Scheduled workflow consumes recurring minutes",
+      "why_it_costs": "Scheduled runs execute whether or not client-facing work changed.",
+      "safe_replacement": "Gate schedules with path checks, reduce frequency, or run local nightly scans.",
+      "estimated_monthly_savings_usd": 6.0,
+      "requires_approval": false
+    },
+    {
+      "category": "actions_storage",
+      "severity": "high",
+      "path": ".github/workflows/perf-regression.yml",
+      "title": "Artifact upload without retention-days",
+      "why_it_costs": "Artifacts accrue storage charges until they expire or are deleted.",
+      "safe_replacement": "Set retention-days to 1-7 for diagnostics and 14-30 only for release evidence.",
+      "estimated_monthly_savings_usd": 5.0,
+      "requires_approval": false
+    },
+    {
+      "category": "actions_storage",
+      "severity": "high",
+      "path": ".github/workflows/repo-validation.yml",
+      "title": "Artifact upload without retention-days",
+      "why_it_costs": "Artifacts accrue storage charges until they expire or are deleted.",
+      "safe_replacement": "Set retention-days to 1-7 for diagnostics and 14-30 only for release evidence.",
+      "estimated_monthly_savings_usd": 5.0,
+      "requires_approval": false
+    },
+    {
+      "category": "actions_minutes",
+      "severity": "medium",
+      "path": ".github/workflows/revenue_engine.yml",
+      "title": "Scheduled workflow consumes recurring minutes",
+      "why_it_costs": "Scheduled runs execute whether or not client-facing work changed.",
+      "safe_replacement": "Gate schedules with path checks, reduce frequency, or run local nightly scans.",
+      "estimated_monthly_savings_usd": 6.0,
+      "requires_approval": false
+    },
+    {
+      "category": "actions_cache",
+      "severity": "low",
+      "path": ".github/workflows/revenue_engine.yml",
+      "title": "Broad cache restore keys can grow cache usage",
+      "why_it_costs": "Cache storage above included per-repository allowance can become billable.",
+      "safe_replacement": "Use narrow cache keys, dependency lockfile hashes, and periodic cache cleanup.",
+      "estimated_monthly_savings_usd": 1.5,
+      "requires_approval": false
+    },
+    {
+      "category": "actions_minutes",
+      "severity": "medium",
+      "path": ".github/workflows/stripe-revenue-tracking.yml",
+      "title": "Scheduled workflow consumes recurring minutes",
+      "why_it_costs": "Scheduled runs execute whether or not client-facing work changed.",
+      "safe_replacement": "Gate schedules with path checks, reduce frequency, or run local nightly scans.",
+      "estimated_monthly_savings_usd": 6.0,
+      "requires_approval": false
+    },
+    {
+      "category": "actions_storage",
+      "severity": "high",
+      "path": ".github/workflows/stripe-revenue-tracking.yml",
+      "title": "Artifact upload without retention-days",
+      "why_it_costs": "Artifacts accrue storage charges until they expire or are deleted.",
+      "safe_replacement": "Set retention-days to 1-7 for diagnostics and 14-30 only for release evidence.",
+      "estimated_monthly_savings_usd": 5.0,
+      "requires_approval": false
+    },
+    {
+      "category": "actions_minutes",
+      "severity": "medium",
+      "path": ".github/workflows/system-bot-monitor.yml",
+      "title": "Scheduled workflow consumes recurring minutes",
+      "why_it_costs": "Scheduled runs execute whether or not client-facing work changed.",
+      "safe_replacement": "Gate schedules with path checks, reduce frequency, or run local nightly scans.",
+      "estimated_monthly_savings_usd": 6.0,
+      "requires_approval": false
+    },
+    {
+      "category": "actions_storage",
+      "severity": "high",
+      "path": ".github/workflows/system-bot-monitor.yml",
+      "title": "Artifact upload without retention-days",
+      "why_it_costs": "Artifacts accrue storage charges until they expire or are deleted.",
+      "safe_replacement": "Set retention-days to 1-7 for diagnostics and 14-30 only for release evidence.",
+      "estimated_monthly_savings_usd": 5.0,
+      "requires_approval": false
+    },
+    {
+      "category": "actions_minutes",
+      "severity": "medium",
+      "path": ".github/workflows/timed-monitoring-system.yml",
+      "title": "Scheduled workflow consumes recurring minutes",
+      "why_it_costs": "Scheduled runs execute whether or not client-facing work changed.",
+      "safe_replacement": "Gate schedules with path checks, reduce frequency, or run local nightly scans.",
+      "estimated_monthly_savings_usd": 6.0,
+      "requires_approval": false
+    },
+    {
+      "category": "actions_storage",
+      "severity": "high",
+      "path": ".github/workflows/timed-monitoring-system.yml",
+      "title": "Artifact upload without retention-days",
+      "why_it_costs": "Artifacts accrue storage charges until they expire or are deleted.",
+      "safe_replacement": "Set retention-days to 1-7 for diagnostics and 14-30 only for release evidence.",
+      "estimated_monthly_savings_usd": 5.0,
+      "requires_approval": false
+    },
+    {
+      "category": "codespaces",
+      "severity": "medium",
+      "path": ".devcontainer",
+      "title": "Codespaces/devcontainer config present",
+      "why_it_costs": "Cloud dev environments can accrue compute and storage while active or retained.",
+      "safe_replacement": "Prefer local VS Code/devcontainer runs for daily work; keep Codespaces for client demos only.",
+      "estimated_monthly_savings_usd": 15.0,
+      "requires_approval": false
+    },
+    {
+      "category": "packages",
+      "severity": "low",
+      "path": "repository",
+      "title": "Container image publishing may create package storage",
+      "why_it_costs": "GitHub Packages shares storage allowance with Actions artifacts.",
+      "safe_replacement": "Use local image builds by default, prune old package versions, and publish only release images.",
+      "estimated_monthly_savings_usd": 3.0,
+      "requires_approval": false
+    },
+    {
+      "category": "budgets",
+      "severity": "high",
+      "path": "GitHub billing settings",
+      "title": "Set budget alerts before enabling metered products",
+      "why_it_costs": "Actions, storage, Codespaces, and AI usage can continue until a budget or payment block stops it.",
+      "safe_replacement": "Set soft budgets and email alerts at 50%, 75%, 90%, and 100% for the account or organization.",
+      "estimated_monthly_savings_usd": 25.0,
+      "requires_approval": true
+    }
+  ],
+  "summary": {
+    "finding_count": 38,
+    "high_severity": 18,
+    "estimated_monthly_savings_usd": 233.0,
+    "by_category": {
+      "actions_minutes": 16,
+      "actions_cache": 2,
+      "actions_storage": 17,
+      "codespaces": 1,
+      "packages": 1,
+      "budgets": 1
+    }
+  },
+  "recommendations": [
+    {
+      "priority": 1,
+      "action": "Use GitHub Pages for static client previews before paid hosting.",
+      "owner": "Buddy",
+      "approval_required": false
+    },
+    {
+      "priority": 2,
+      "action": "Run heavy test suites locally or on self-hosted runners before GitHub-hosted CI.",
+      "owner": "Buddy",
+      "approval_required": false
+    },
+    {
+      "priority": 3,
+      "action": "Set artifact retention-days on every upload-artifact step.",
+      "owner": "Buddy",
+      "approval_required": true
+    },
+    {
+      "priority": 4,
+      "action": "Turn off paid AI/code review automation except on final PR review passes.",
+      "owner": "Owner",
+      "approval_required": true
+    },
+    {
+      "priority": 5,
+      "action": "Use laptop-local dev servers for everyday work and reserve cloud dev environments for demos.",
+      "owner": "Buddy",
+      "approval_required": false
+    }
+  ],
+  "live_external_action_taken": false
+}
