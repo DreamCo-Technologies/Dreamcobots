@@ -5,7 +5,7 @@
   "library": "apis",
   "factory": "API Builder",
   "description": "Versioned per-bot APIs with schemas, rate limits, and approval gates.",
-  "count": 1247,
+  "count": 1248,
   "entries": [
     {
       "id": "211-resource-eligibility-bot:apis",
@@ -18075,6 +18075,43 @@
       "status": "generated",
       "owner": "DreamCo Technologies",
       "base_path": "/api/v1/bots/git-workflow",
+      "operations": [
+        {
+          "method": "GET",
+          "path": "/status",
+          "approval_required": false
+        },
+        {
+          "method": "GET",
+          "path": "/capabilities",
+          "approval_required": false
+        },
+        {
+          "method": "POST",
+          "path": "/execute",
+          "approval_required": true
+        }
+      ],
+      "controls": [
+        "authenticated",
+        "schema_validated",
+        "rate_limited",
+        "retry_after_aware",
+        "audited"
+      ]
+    },
+    {
+      "id": "github-cost-saver:apis",
+      "bot_id": "github-cost-saver",
+      "legacy_registry_id": "github_cost_saver",
+      "bot_slug": "github-cost-saver",
+      "bot_name": "GitHub Cost Saver Bot",
+      "emoji": "💵",
+      "division": "DreamFinance",
+      "version": "1.0.0",
+      "status": "generated",
+      "owner": "DreamCo Technologies",
+      "base_path": "/api/v1/bots/github-cost-saver",
       "operations": [
         {
           "method": "GET",

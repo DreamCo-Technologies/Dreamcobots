@@ -170,6 +170,25 @@ const CLIENT_WORKFLOWS = [
   ['Launch', 'Move approved work through pull requests, Pages previews, and deployment gates.'],
 ];
 
+const COMPANY_BUILDER_PILLARS = [
+  {
+    title: 'AI companies',
+    detail: 'Package bots as sellable business units with offer, website, workflows, dashboard, and client delivery plan.',
+  },
+  {
+    title: 'AI departments',
+    detail: 'Launch division-level teams with manager agents, specialist bots, task queues, KPIs, and shared memory.',
+  },
+  {
+    title: 'AI employees',
+    detail: 'Treat every bot as a supervised worker with job description, tools, permissions, tests, learning, and audit trail.',
+  },
+  {
+    title: 'Human trust',
+    detail: 'Buddy explains evidence, asks for approval, blocks risky live actions, and keeps ownership with the operator.',
+  },
+];
+
 function formatLabel(value) {
   return String(value || '').replaceAll('_', ' ').replace(/\b\w/g, (letter) => letter.toUpperCase());
 }
@@ -449,6 +468,48 @@ export default function ActionsPage({
               <p className="mt-2 text-xs leading-5 text-slate-400">{detail}</p>
             </div>
           ))}
+        </div>
+      </section>
+
+      <section aria-labelledby="trust-layer-heading" className="border border-slate-700 bg-slate-950 p-5">
+        <div className="grid gap-5 xl:grid-cols-[minmax(0,1fr)_24rem]">
+          <div>
+            <p className="text-xs font-bold uppercase text-dreamco-accent">Buddy Trust Layer</p>
+            <h3 id="trust-layer-heading" className="mt-1 text-lg font-semibold text-white">
+              AI company builder with human trust built in
+            </h3>
+            <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-400">
+              DreamCo can present every bot as an AI company, department, or employee.
+              Buddy is the face of trust: evidence first, approvals visible, and risky live actions blocked until the owner authorizes them.
+            </p>
+            <div className="mt-4 grid gap-px overflow-hidden border border-slate-800 bg-slate-800 md:grid-cols-4">
+              {COMPANY_BUILDER_PILLARS.map((pillar) => (
+                <div key={pillar.title} className="min-h-36 bg-slate-900 p-4">
+                  <h4 className="text-sm font-semibold text-white">{pillar.title}</h4>
+                  <p className="mt-2 text-xs leading-5 text-slate-400">{pillar.detail}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+          <aside className="border border-slate-800 bg-slate-900 p-4">
+            <h4 className="text-sm font-semibold text-white">Trust scorecard</h4>
+            <div className="mt-3 space-y-3">
+              {[
+                ['Runtime coverage', inventorySummary.all_bots_have_executable_runtime ? 'Complete' : 'In progress'],
+                ['System libraries', inventorySummary.all_system_libraries_cover_profiled_bots ? 'Complete' : 'In progress'],
+                ['Production-ready', `${formatNumber(inventorySummary.production_ready_bots)} bots`],
+                ['Approval-gated', `${formatNumber(inventorySummary.buddy_money_approval_required_bots ?? productionStates.production_candidate_approval_required)} bots`],
+              ].map(([label, value]) => (
+                <div key={label} className="flex items-center justify-between gap-3 border-b border-slate-800 pb-2">
+                  <span className="text-xs uppercase text-slate-500">{label}</span>
+                  <span className="text-sm font-semibold text-white">{value}</span>
+                </div>
+              ))}
+            </div>
+            <p className="mt-4 text-xs leading-5 text-slate-500">
+              Buddy can keep building and learning continuously through reports, pull requests, sandbox tests, and approval workflows.
+            </p>
+          </aside>
         </div>
       </section>
 

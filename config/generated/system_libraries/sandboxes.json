@@ -5,7 +5,7 @@
   "library": "sandboxes",
   "factory": "Sandbox Builder",
   "description": "Isolated test environments with fixtures, limits, and no live money movement.",
-  "count": 1247,
+  "count": 1248,
   "entries": [
     {
       "id": "211-resource-eligibility-bot:sandboxes",
@@ -11243,6 +11243,29 @@
       "status": "generated",
       "owner": "DreamCo Technologies",
       "sandbox": "git-workflow-sandbox",
+      "network": "deny_by_default",
+      "secrets": "test_values_only",
+      "money_movement": "disabled",
+      "checks": [
+        "deterministic_fixtures",
+        "resource_limits",
+        "timeout",
+        "output_validation",
+        "cleanup"
+      ]
+    },
+    {
+      "id": "github-cost-saver:sandboxes",
+      "bot_id": "github-cost-saver",
+      "legacy_registry_id": "github_cost_saver",
+      "bot_slug": "github-cost-saver",
+      "bot_name": "GitHub Cost Saver Bot",
+      "emoji": "💵",
+      "division": "DreamFinance",
+      "version": "1.0.0",
+      "status": "generated",
+      "owner": "DreamCo Technologies",
+      "sandbox": "github-cost-saver-sandbox",
       "network": "deny_by_default",
       "secrets": "test_values_only",
       "money_movement": "disabled",

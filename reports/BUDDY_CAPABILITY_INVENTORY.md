@@ -1,30 +1,30 @@
 # Buddy Capability Inventory
 
-Generated: 2026-07-12T04:02:40.670154+00:00
-Branch scanned: `main`
+Generated: 2026-07-12T08:18:39.408967+00:00
+Branch scanned: `codex/bot-test-dashboard`
 
 ## Executive Summary
 
-- **Bot Profiles Scanned**: 1247
-- **Registry Bot Count**: 1247
+- **Bot Profiles Scanned**: 1248
+- **Registry Bot Count**: 1248
 - **Registry Division Count**: 45
 - **Workflows**: 42
-- **Test Files**: 1489
+- **Test Files**: 1493
 - **Buddy Related Files**: 207
 - **Buddy Related Bots**: 14
-- **System Library Counts**: {'tools': 1247, 'apis': 1247, 'webhooks': 1247, 'workflows': 1247, 'skills': 1247, 'sandboxes': 1247}
+- **System Library Counts**: {'tools': 1248, 'apis': 1248, 'webhooks': 1248, 'workflows': 1248, 'skills': 1248, 'sandboxes': 1248}
 - **All System Libraries Cover Profiled Bots**: True
-- **Build States**: {'built_and_test_covered': 1247}
-- **Test States**: {'ready_for_test_run': 1247}
-- **Coding Path States**: {'on_full_code_path': 1247}
-- **Bots With Full Coding Path**: 1247
+- **Build States**: {'built_and_test_covered': 1248}
+- **Test States**: {'ready_for_test_run': 1248}
+- **Coding Path States**: {'on_full_code_path': 1248}
+- **Bots With Full Coding Path**: 1248
 - **All Bots Have Full Coding Path**: True
-- **Production Readiness States**: {'production_ready': 1127, 'production_candidate_approval_required': 120}
-- **Fully Coded Bots**: 1247
-- **Production Ready Bots**: 1127
+- **Production Readiness States**: {'production_ready': 1128, 'production_candidate_approval_required': 120}
+- **Fully Coded Bots**: 1248
+- **Production Ready Bots**: 1128
 - **All Bots Fully Coded**: True
 - **All Bots Production Ready**: False
-- **Executable Runtime Ready Bots**: 1247
+- **Executable Runtime Ready Bots**: 1248
 - **All Bots Have Executable Runtime**: True
 - **Placeholder Marker Bots**: 0
 - **Buddy Money Approval Required Bots**: 120
@@ -51,7 +51,7 @@ Branch scanned: `main`
 
 | Group | Count | Meaning |
 | --- | ---: | --- |
-| Built and test-covered | 1247 | Implementation files plus matching tests were found. |
+| Built and test-covered | 1248 | Implementation files plus matching tests were found. |
 | Built and contract-ready | 0 | Implementation files plus generated contracts were found. |
 | Profiled from existing system | 0 | Existing-system profiles that need direct mapping review. |
 | Profile-only / being built | 0 | Profile exists but direct implementation was not found. |
@@ -60,28 +60,28 @@ Branch scanned: `main`
 
 | Test State | Count |
 | --- | ---: |
-| ready_for_test_run | 1247 |
+| ready_for_test_run | 1248 |
 
 ## Full Coding Path Coverage
 
-- Bots with a tracked coding path: 1247
+- Bots with a tracked coding path: 1248
 - All bots have a tracked coding path: True
 
 | Coding Path State | Count |
 | --- | ---: |
-| on_full_code_path | 1247 |
+| on_full_code_path | 1248 |
 
 ## Production Readiness
 
-- Fully coded bots: 1247
-- Production-ready bots: 1127
+- Fully coded bots: 1248
+- Production-ready bots: 1128
 - All bots fully coded: True
 - All bots production ready: False
 
 | Production Readiness State | Count |
 | --- | ---: |
 | production_candidate_approval_required | 120 |
-| production_ready | 1127 |
+| production_ready | 1128 |
 
 ## Needs Implementation
 

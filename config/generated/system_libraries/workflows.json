@@ -5,7 +5,7 @@
   "library": "workflows",
   "factory": "Workflow Builder",
   "description": "Reusable validation and delivery workflows with least privilege.",
-  "count": 1247,
+  "count": 1248,
   "entries": [
     {
       "id": "211-resource-eligibility-bot:workflows",
@@ -11731,6 +11731,30 @@
       "status": "generated",
       "owner": "DreamCo Technologies",
       "workflow": "validate-git-workflow",
+      "trigger": "workflow_call",
+      "permissions": {
+        "contents": "read"
+      },
+      "stages": [
+        "validate_profile",
+        "unit_test",
+        "sandbox_test",
+        "security_scan",
+        "review_packet"
+      ]
+    },
+    {
+      "id": "github-cost-saver:workflows",
+      "bot_id": "github-cost-saver",
+      "legacy_registry_id": "github_cost_saver",
+      "bot_slug": "github-cost-saver",
+      "bot_name": "GitHub Cost Saver Bot",
+      "emoji": "💵",
+      "division": "DreamFinance",
+      "version": "1.0.0",
+      "status": "generated",
+      "owner": "DreamCo Technologies",
+      "workflow": "validate-github-cost-saver",
       "trigger": "workflow_call",
       "permissions": {
         "contents": "read"

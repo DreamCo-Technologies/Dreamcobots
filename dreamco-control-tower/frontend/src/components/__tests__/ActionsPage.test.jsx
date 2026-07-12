@@ -144,6 +144,9 @@ describe('ActionsPage', () => {
     expect(screen.getByText('Buddy Command Tower for building, testing, and presenting bot systems')).toBeInTheDocument();
     expect(screen.getByText('Operational status')).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: 'Professional delivery pipeline' })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'AI company builder with human trust built in' })).toBeInTheDocument();
+    expect(screen.getByText('AI companies')).toBeInTheDocument();
+    expect(screen.getByText('Human trust')).toBeInTheDocument();
     expect(screen.getByText('Builder lanes')).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: '🤝 Buddy capability tracker' })).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: '🧪 Buddy and bot test catalog' })).toBeInTheDocument();
