@@ -310,6 +310,21 @@ describe('GET /api/buddy-capabilities', () => {
   });
 });
 
+describe('GET /api/buddy-productivity', () => {
+  test('returns productivity tracking for owner, clients, and bots', async () => {
+    const res = await request(app).get('/api/buddy-productivity');
+
+    expect(res.status).toBe(200);
+    expect(res.body.schema).toBe('dreamco.buddy_productivity_tracker.v1');
+    expect(res.body.summary).toHaveProperty('productivity_score');
+    expect(res.body.summary.bot_count).toBeGreaterThanOrEqual(1248);
+    expect(res.body.owner_productivity.tracks).toContain('next best build task');
+    expect(res.body.client_productivity.tracks).toContain('demo-ready bots');
+    expect(res.body.bot_productivity.tracks).toContain('runtime readiness');
+    expect(Array.isArray(res.body.learning_loops)).toBe(true);
+  });
+});
+
 describe('GET /api/github-triage', () => {
   test('returns generated GitHub triage report', async () => {
     const res = await request(app).get('/api/github-triage');

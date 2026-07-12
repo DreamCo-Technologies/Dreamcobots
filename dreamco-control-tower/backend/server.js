@@ -25,6 +25,10 @@ const BUDDY_CAPABILITY_INVENTORY_FILE = path.join(
   __dirname,
   '../../reports/buddy_capability_inventory.json',
 );
+const BUDDY_PRODUCTIVITY_TRACKER_FILE = path.join(
+  __dirname,
+  '../../reports/buddy_productivity_tracker.json',
+);
 const GITHUB_TRIAGE_REPORT_FILE = path.join(
   __dirname,
   '../../reports/github_triage_report.json',
@@ -129,6 +133,13 @@ function readBuddyCapabilityInventory() {
     return null;
   }
   return JSON.parse(fs.readFileSync(BUDDY_CAPABILITY_INVENTORY_FILE, 'utf8'));
+}
+
+function readBuddyProductivityTracker() {
+  if (!fs.existsSync(BUDDY_PRODUCTIVITY_TRACKER_FILE)) {
+    return null;
+  }
+  return JSON.parse(fs.readFileSync(BUDDY_PRODUCTIVITY_TRACKER_FILE, 'utf8'));
 }
 
 function readGitHubTriageReport() {
@@ -395,6 +406,17 @@ app.get('/api/buddy-capabilities', rateLimiter, (_req, res) => {
     return res.status(503).json({ error: 'buddy capability inventory not found' });
   }
   return res.json(inventory);
+});
+
+// ---------------------------------------------------------------------------
+// GET /api/buddy-productivity — owner, client, and bot productivity tracking
+// ---------------------------------------------------------------------------
+app.get('/api/buddy-productivity', rateLimiter, (_req, res) => {
+  const tracker = readBuddyProductivityTracker();
+  if (!tracker) {
+    return res.status(503).json({ error: 'buddy productivity tracker not found' });
+  }
+  return res.json(tracker);
 });
 
 // ---------------------------------------------------------------------------

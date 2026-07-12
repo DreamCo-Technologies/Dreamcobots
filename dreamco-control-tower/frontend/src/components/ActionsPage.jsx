@@ -178,6 +178,28 @@ const FALLBACK_REPOSITORY_STEWARDSHIP = {
   },
 };
 
+const FALLBACK_BUDDY_PRODUCTIVITY = {
+  generated_at: null,
+  summary: {
+    productivity_score: 0,
+    bot_count: 0,
+    runtime_ready_bots: 0,
+    production_ready_bots: 0,
+    approval_gated_bots: 0,
+    open_prs: 0,
+    open_issues: 0,
+    failed_workflow_runs: 0,
+    failed_quality_checks: 0,
+    estimated_monthly_savings_usd: 0,
+    tracked_learning_loops: 0,
+  },
+  owner_productivity: { tracks: [], current_focus: [] },
+  client_productivity: { tracks: [], ready_to_show: [] },
+  bot_productivity: { tracks: [], coverage: {} },
+  learning_loops: [],
+  next_actions: [],
+};
+
 const BUILD_STAGES = [
   ['01', 'Specify', 'Identity, goal, inputs, outputs, limits, owner'],
   ['02', 'Compose', 'Tools, API, webhook, workflow, skills'],
@@ -341,6 +363,8 @@ export default function ActionsPage({
   const [githubTriageStatus, setGithubTriageStatus] = useState('loading');
   const [repositoryStewardship, setRepositoryStewardship] = useState(null);
   const [repositoryStewardshipStatus, setRepositoryStewardshipStatus] = useState('loading');
+  const [buddyProductivity, setBuddyProductivity] = useState(null);
+  const [buddyProductivityStatus, setBuddyProductivityStatus] = useState('loading');
   const [buildPacket, setBuildPacket] = useState(null);
 
   useEffect(() => {
@@ -379,15 +403,26 @@ export default function ActionsPage({
       .catch(() => setRepositoryStewardshipStatus('generated fallback'));
   }, []);
 
+  useEffect(() => {
+    fetchFirstJson(['/api/buddy-productivity'])
+      .then((data) => {
+        setBuddyProductivity(data);
+        setBuddyProductivityStatus('live');
+      })
+      .catch(() => setBuddyProductivityStatus('generated fallback'));
+  }, []);
+
   const builders = libraryData?.builders ?? FALLBACK_BUILDERS;
   const libraries = libraryData?.libraries ?? FALLBACK_LIBRARIES;
   const botCount = libraryData?.bot_count ?? 1247;
   const inventory = buddyInventory ?? FALLBACK_BUDDY_INVENTORY;
   const triage = githubTriage ?? FALLBACK_GITHUB_TRIAGE;
   const stewardship = repositoryStewardship ?? FALLBACK_REPOSITORY_STEWARDSHIP;
+  const productivity = buddyProductivity ?? FALLBACK_BUDDY_PRODUCTIVITY;
   const inventorySummary = inventory.summary ?? FALLBACK_BUDDY_INVENTORY.summary;
   const triageSummary = triage.summary ?? FALLBACK_GITHUB_TRIAGE.summary;
   const stewardshipSummary = stewardship.summary ?? FALLBACK_REPOSITORY_STEWARDSHIP.summary;
+  const productivitySummary = productivity.summary ?? FALLBACK_BUDDY_PRODUCTIVITY.summary;
   const buildStates = inventorySummary.build_states ?? {};
   const testStates = inventorySummary.test_states ?? {};
   const codingPathStates = inventorySummary.coding_path_states ?? {};
@@ -571,6 +606,97 @@ export default function ActionsPage({
             <p className="mt-4 text-xs leading-5 text-slate-500">
               Buddy can keep building and learning continuously through reports, pull requests, sandbox tests, and approval workflows.
             </p>
+          </aside>
+        </div>
+      </section>
+
+      <section aria-labelledby="productivity-tracker-heading" className="border border-slate-700 bg-slate-950 p-5">
+        <div className="flex flex-wrap items-start justify-between gap-3">
+          <div>
+            <p className="text-xs font-bold uppercase text-dreamco-accent">Buddy Productivity Tracker</p>
+            <h3 id="productivity-tracker-heading" className="mt-1 text-lg font-semibold text-white">
+              Tracks what helps you, clients, and bots improve
+            </h3>
+            <p className="mt-1 max-w-3xl text-sm leading-6 text-slate-400">
+              Buddy combines bot readiness, repository cleanup, workflow health, cost savings, and client demo readiness
+              into one productivity map with next actions.
+            </p>
+          </div>
+          <span className="rounded-full border border-slate-700 px-3 py-1 text-xs font-semibold text-slate-400">
+            {buddyProductivityStatus} · {formatDateTime(productivity.generated_at)}
+          </span>
+        </div>
+
+        <div className="mt-5 grid grid-cols-2 gap-px overflow-hidden border border-slate-800 bg-slate-800 lg:grid-cols-4 xl:grid-cols-8">
+          {[
+            ['Score', productivitySummary.productivity_score],
+            ['Bots tracked', productivitySummary.bot_count],
+            ['Runtime ready', productivitySummary.runtime_ready_bots],
+            ['Production ready', productivitySummary.production_ready_bots],
+            ['Approval gated', productivitySummary.approval_gated_bots],
+            ['Open PRs', productivitySummary.open_prs],
+            ['Open issues', productivitySummary.open_issues],
+            ['Monthly savings', `$${formatNumber(productivitySummary.estimated_monthly_savings_usd)}`],
+          ].map(([label, value]) => (
+            <div key={label} className="bg-slate-900 p-4">
+              <p className="text-xl font-black text-white">{typeof value === 'number' ? formatNumber(value) : value}</p>
+              <p className="mt-1 text-xs uppercase text-slate-500">{label}</p>
+            </div>
+          ))}
+        </div>
+
+        <div className="mt-5 grid gap-5 xl:grid-cols-3">
+          {[
+            ['For you', productivity.owner_productivity?.tracks ?? [], productivity.owner_productivity?.current_focus ?? []],
+            ['For clients', productivity.client_productivity?.tracks ?? [], productivity.client_productivity?.ready_to_show ?? []],
+            ['For bots', productivity.bot_productivity?.tracks ?? [], productivity.next_actions ?? []],
+          ].map(([title, tracks, focus]) => (
+            <div key={title} className="border border-slate-800 bg-slate-900 p-4">
+              <h4 className="text-sm font-semibold text-white">{title}</h4>
+              <div className="mt-3 flex flex-wrap gap-2">
+                {tracks.slice(0, 6).map((item) => (
+                  <span key={item} className="rounded-full border border-slate-700 bg-slate-950 px-3 py-1 text-xs text-slate-300">
+                    {formatLabel(item)}
+                  </span>
+                ))}
+              </div>
+              <div className="mt-4 space-y-2">
+                {focus.slice(0, 3).map((item) => (
+                  <p key={item} className="border-l-2 border-dreamco-accent pl-3 text-xs leading-5 text-slate-400">
+                    {item}
+                  </p>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+
+        <div className="mt-5 grid gap-5 lg:grid-cols-[minmax(0,1fr)_22rem]">
+          <div className="border border-slate-800 bg-slate-900 p-4">
+            <h4 className="text-sm font-semibold text-white">Learning loops Buddy watches</h4>
+            <div className="mt-3 grid gap-3 md:grid-cols-2">
+              {(productivity.learning_loops ?? []).slice(0, 4).map((loop) => (
+                <div key={loop.name} className="border border-slate-800 bg-slate-950 p-3">
+                  <p className="text-sm font-semibold text-white">{loop.name}</p>
+                  <p className="mt-2 text-xs leading-5 text-slate-400">{loop.helps}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+          <aside className="border border-slate-800 bg-slate-900 p-4">
+            <h4 className="text-sm font-semibold text-white">Bot learning coverage</h4>
+            <div className="mt-3 space-y-3">
+              {[
+                ['Runtime ready', productivity.bot_productivity?.coverage?.runtime_ready_percent],
+                ['Production ready', productivity.bot_productivity?.coverage?.production_ready_percent],
+                ['Approval gated', productivity.bot_productivity?.coverage?.approval_gated_percent],
+              ].map(([label, value]) => (
+                <div key={label} className="flex items-center justify-between gap-3 border-b border-slate-800 pb-2">
+                  <span className="text-xs uppercase text-slate-500">{label}</span>
+                  <span className="text-sm font-semibold text-white">{formatNumber(value)}%</span>
+                </div>
+              ))}
+            </div>
           </aside>
         </div>
       </section>

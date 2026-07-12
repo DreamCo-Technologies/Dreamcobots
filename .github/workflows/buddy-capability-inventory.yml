@@ -33,7 +33,9 @@ jobs:
           python-version: "3.11"
 
       - name: Generate inventory
-        run: python3 tools/generate_buddy_capability_inventory.py
+        run: |
+          python3 tools/generate_buddy_capability_inventory.py
+          python3 tools/generate_buddy_productivity_tracker.py
 
       - name: Report production readiness gate
         run: |
@@ -45,7 +47,7 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add reports/BUDDY_CAPABILITY_INVENTORY.md reports/buddy_capability_inventory.json reports/buddy_bot_readiness.csv
+          git add reports/BUDDY_CAPABILITY_INVENTORY.md reports/buddy_capability_inventory.json reports/buddy_bot_readiness.csv reports/BUDDY_PRODUCTIVITY_TRACKER.md reports/buddy_productivity_tracker.json
           git diff --cached --quiet || git commit -m "Refresh Buddy capability inventory"
           git push
 
@@ -57,3 +59,5 @@ jobs:
             reports/BUDDY_CAPABILITY_INVENTORY.md
             reports/buddy_capability_inventory.json
             reports/buddy_bot_readiness.csv
+            reports/BUDDY_PRODUCTIVITY_TRACKER.md
+            reports/buddy_productivity_tracker.json

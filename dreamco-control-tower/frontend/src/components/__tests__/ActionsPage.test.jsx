@@ -165,6 +165,46 @@ const repositoryStewardshipPayload = {
   },
 };
 
+const buddyProductivityPayload = {
+  generated_at: '2026-07-11T12:30:00+00:00',
+  summary: {
+    productivity_score: 82.5,
+    bot_count: 1248,
+    runtime_ready_bots: 1248,
+    production_ready_bots: 1128,
+    approval_gated_bots: 120,
+    open_prs: 56,
+    open_issues: 17,
+    failed_workflow_runs: 24,
+    failed_quality_checks: 0,
+    estimated_monthly_savings_usd: 233,
+    tracked_learning_loops: 4,
+  },
+  owner_productivity: {
+    tracks: ['next best build task', 'repo cleanup burden', 'money-saving opportunities'],
+    current_focus: ['Retest workflow blockers.', 'Review cost-saver findings.'],
+  },
+  client_productivity: {
+    tracks: ['demo-ready bots', 'client-facing prospectus pages', 'safe sandbox test packets'],
+    ready_to_show: ['Buddy Trust Layer', 'Actions dashboard', 'Repository cleanroom'],
+  },
+  bot_productivity: {
+    tracks: ['runtime readiness', 'test readiness', 'learning-loop evidence'],
+    coverage: {
+      runtime_ready_percent: 100,
+      production_ready_percent: 90.38,
+      approval_gated_percent: 9.62,
+    },
+  },
+  learning_loops: [
+    { name: 'Capability inventory loop', helps: 'Buddy knows which bots are demo-ready, test-ready, and blocked.' },
+    { name: 'Repository cleanroom loop', helps: 'Buddy keeps work queues organized before merge or client demo.' },
+    { name: 'Cost saver loop', helps: 'Buddy points to lower-cost ways to keep the system running.' },
+    { name: 'Platform audit loop', helps: 'Buddy packages bots as client-facing companies.' },
+  ],
+  next_actions: ['Prioritize workflow failures.', 'Turn top capabilities into client packages.'],
+};
+
 function StubActionsMonitor() {
   return <div>Actions monitor panel</div>;
 }
@@ -175,6 +215,7 @@ beforeEach(() => {
     if (url === '/api/buddy-capabilities') payload = buddyCapabilityPayload;
     if (url === '/api/github-triage') payload = githubTriagePayload;
     if (url === '/api/repository-stewardship') payload = repositoryStewardshipPayload;
+    if (url === '/api/buddy-productivity') payload = buddyProductivityPayload;
     return Promise.resolve({
       ok: true,
       json: async () => payload,
@@ -195,6 +236,7 @@ describe('ActionsPage', () => {
     expect(screen.getByText('Operational status')).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: 'Professional delivery pipeline' })).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: 'AI company builder with human trust built in' })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'Tracks what helps you, clients, and bots improve' })).toBeInTheDocument();
     expect(screen.getByText('AI companies')).toBeInTheDocument();
     expect(screen.getByText('Human trust')).toBeInTheDocument();
     expect(screen.getByText('Builder lanes')).toBeInTheDocument();
@@ -207,6 +249,19 @@ describe('ActionsPage', () => {
     await waitFor(() => expect(screen.getByText('Source: live')).toBeInTheDocument());
     expect(screen.getAllByText('1,247').length).toBeGreaterThan(0);
     expect(screen.getByText('7,482')).toBeInTheDocument();
+  });
+
+  it('shows Buddy productivity tracking for owner, clients, and bots', async () => {
+    render(<ActionsPage ActionsMonitorComponent={StubActionsMonitor} />);
+
+    await waitFor(() => expect(screen.getByText('Buddy Productivity Tracker')).toBeInTheDocument());
+    expect(screen.getAllByText('For you').length).toBeGreaterThan(0);
+    expect(screen.getByText('For clients')).toBeInTheDocument();
+    expect(screen.getByText('For bots')).toBeInTheDocument();
+    expect(screen.getByText('Learning loops Buddy watches')).toBeInTheDocument();
+    expect(screen.getByText('Capability inventory loop')).toBeInTheDocument();
+    expect(screen.getByText('Bot learning coverage')).toBeInTheDocument();
+    expect(screen.getByText('$233')).toBeInTheDocument();
   });
 
   it('shows Buddy capability readiness and implementation blockers', async () => {
@@ -238,7 +293,7 @@ describe('ActionsPage', () => {
     );
 
     await waitFor(() => expect(screen.getByText('Buddy Bot')).toBeInTheDocument());
-    expect(screen.getByText('For you')).toBeInTheDocument();
+    expect(screen.getAllByText('For you').length).toBeGreaterThan(0);
     expect(screen.getByText('For your users')).toBeInTheDocument();
     expect(screen.getByText('For Buddy')).toBeInTheDocument();
     expect(screen.getByText('Code generation')).toBeInTheDocument();
@@ -272,7 +327,7 @@ describe('ActionsPage', () => {
     expect(screen.getAllByText('Python Syntax').length).toBeGreaterThan(0);
     expect(screen.getAllByText('Javascript Syntax').length).toBeGreaterThan(0);
     expect(screen.getByText('Owner Approval For Close Or Merge')).toBeInTheDocument();
-    await waitFor(() => expect(screen.getByText('Open PRs')).toBeInTheDocument());
+    await waitFor(() => expect(screen.getAllByText('Open PRs').length).toBeGreaterThan(0));
     expect(screen.getByText('Issue comments')).toBeInTheDocument();
     expect(screen.getByText('Review comments')).toBeInTheDocument();
     expect(screen.getByText('Restart queue')).toBeInTheDocument();
