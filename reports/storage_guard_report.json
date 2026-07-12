@@ -1,0 +1,544 @@
+{
+  "schema": "dreamco.storage_guard.v1",
+  "generated_at": "2026-07-12T19:39:50Z",
+  "policy_file": "config/local_first_storage_policy.json",
+  "summary": {
+    "storage_ready": true,
+    "checks": 55,
+    "failed_checks": 0,
+    "warnings": 0,
+    "memory_tiers": 4,
+    "partitioning_rules": 7,
+    "compaction_rules": 6,
+    "approval_gates": 11,
+    "largest_resource_shard_mb": 10.517,
+    "largest_resource_shard": "config/generated/system_libraries/resources/dreamcodelab.json",
+    "resource_shard_count": 45,
+    "bot_resource_entries_checked": 1248
+  },
+  "budgets": {
+    "generated_index_max_mb": 10,
+    "generated_library_max_mb": 25,
+    "generated_resource_shard_max_mb": 25,
+    "single_memory_record_max_kb": 256,
+    "single_bot_hot_partition_max_mb": 128,
+    "single_bot_warm_partition_max_mb": 256,
+    "single_archive_max_mb": 512,
+    "dashboard_report_max_mb": 5
+  },
+  "memory_tiers": [
+    {
+      "tier": "hot",
+      "purpose": "Active task memory, live state, recent failures, and short-term bot context.",
+      "storage": "sqlite_or_jsonl_partition",
+      "retention_days": 30,
+      "rollover_at_mb": 128,
+      "required_action_at_rollover": "summarize_to_warm_and_start_new_partition"
+    },
+    {
+      "tier": "warm",
+      "purpose": "Useful lessons, approved source notes, completed task summaries, and reusable skill memory.",
+      "storage": "division_bot_month_jsonl_or_sqlite_partition",
+      "retention_days": 365,
+      "rollover_at_mb": 256,
+      "required_action_at_rollover": "dedupe_compress_and_move_old_slices_to_cold"
+    },
+    {
+      "tier": "cold",
+      "purpose": "Compressed audit archives, long-term evidence, historical source snapshots, and legal hold exports.",
+      "storage": "compressed_content_addressed_archive",
+      "retention_days": "operator_defined",
+      "rollover_at_mb": 512,
+      "required_action_at_rollover": "split_archive_and_update_manifest"
+    },
+    {
+      "tier": "vector",
+      "purpose": "Searchable memory references for retrieval without storing a giant monolithic embedding file.",
+      "storage": "metadata_manifest_plus_externalizable_vector_partitions",
+      "retention_days": "matches_source_record",
+      "rollover_at_mb": 256,
+      "required_action_at_rollover": "create_new_vector_partition_and_rebuild_pointer_manifest"
+    }
+  ],
+  "partitioning_rules": [
+    "Never store all bot resources, memories, events, vectors, or source snapshots in one monolithic file.",
+    "Every large collection must have a small manifest index and independently loadable shards.",
+    "Shard generated libraries by division first, then by bot or month when a division shard reaches its budget.",
+    "Shard runtime memory by tenant, division, bot, memory type, and month.",
+    "Store binary artifacts, screenshots, documents, and large transcripts as content-addressed files referenced from metadata.",
+    "Use append-only event logs for audit evidence, then compact into approved summaries on schedule.",
+    "Keep dashboards on summaries and manifests so the UI can load without reading the full memory corpus."
+  ],
+  "compaction_rules": [
+    "Summarize old hot memory into warm memory before deleting any task-level detail.",
+    "Deduplicate identical source references and keep the best-scored copy.",
+    "Compress cold archives and keep checksum, byte size, source, created_at, and retention metadata in the manifest.",
+    "Delete or redact expired personal data when retention ends unless legal hold is active.",
+    "Keep failure and decision summaries even when raw task scratchpads expire.",
+    "Run storage guard checks before merging generated library or dashboard changes."
+  ],
+  "checks": [
+    {
+      "name": "system_library_index_budget",
+      "path": "config/generated/system_libraries/index.json",
+      "status": "pass",
+      "actual_mb": 0.005,
+      "max_mb": 10,
+      "message": "within budget"
+    },
+    {
+      "name": "resource_manifest_budget",
+      "path": "config/generated/system_libraries/resources.json",
+      "status": "pass",
+      "actual_mb": 5.157,
+      "max_mb": 10,
+      "message": "within budget"
+    },
+    {
+      "name": "apis_library_budget",
+      "path": "config/generated/system_libraries/apis.json",
+      "status": "pass",
+      "actual_mb": 2.225,
+      "max_mb": 25,
+      "message": "within budget"
+    },
+    {
+      "name": "resources_library_budget",
+      "path": "config/generated/system_libraries/resources.json",
+      "status": "pass",
+      "actual_mb": 5.157,
+      "max_mb": 25,
+      "message": "within budget"
+    },
+    {
+      "name": "sandboxes_library_budget",
+      "path": "config/generated/system_libraries/sandboxes.json",
+      "status": "pass",
+      "actual_mb": 0.895,
+      "max_mb": 25,
+      "message": "within budget"
+    },
+    {
+      "name": "skills_library_budget",
+      "path": "config/generated/system_libraries/skills.json",
+      "status": "pass",
+      "actual_mb": 0.874,
+      "max_mb": 25,
+      "message": "within budget"
+    },
+    {
+      "name": "tools_library_budget",
+      "path": "config/generated/system_libraries/tools.json",
+      "status": "pass",
+      "actual_mb": 1.646,
+      "max_mb": 25,
+      "message": "within budget"
+    },
+    {
+      "name": "webhooks_library_budget",
+      "path": "config/generated/system_libraries/webhooks.json",
+      "status": "pass",
+      "actual_mb": 0.929,
+      "max_mb": 25,
+      "message": "within budget"
+    },
+    {
+      "name": "workflows_library_budget",
+      "path": "config/generated/system_libraries/workflows.json",
+      "status": "pass",
+      "actual_mb": 0.789,
+      "max_mb": 25,
+      "message": "within budget"
+    },
+    {
+      "name": "resource_shard_budget:commandcore",
+      "path": "config/generated/system_libraries/resources/commandcore.json",
+      "status": "pass",
+      "actual_mb": 0.885,
+      "max_mb": 25,
+      "message": "within budget"
+    },
+    {
+      "name": "resource_shard_budget:dreamaiinfra",
+      "path": "config/generated/system_libraries/resources/dreamaiinfra.json",
+      "status": "pass",
+      "actual_mb": 1.818,
+      "max_mb": 25,
+      "message": "within budget"
+    },
+    {
+      "name": "resource_shard_budget:dreamadmin",
+      "path": "config/generated/system_libraries/resources/dreamadmin.json",
+      "status": "pass",
+      "actual_mb": 1.617,
+      "max_mb": 25,
+      "message": "within budget"
+    },
+    {
+      "name": "resource_shard_budget:dreamagents",
+      "path": "config/generated/system_libraries/resources/dreamagents.json",
+      "status": "pass",
+      "actual_mb": 2.205,
+      "max_mb": 25,
+      "message": "within budget"
+    },
+    {
+      "name": "resource_shard_budget:dreamagriculture",
+      "path": "config/generated/system_libraries/resources/dreamagriculture.json",
+      "status": "pass",
+      "actual_mb": 1.42,
+      "max_mb": 25,
+      "message": "within budget"
+    },
+    {
+      "name": "resource_shard_budget:dreamarts",
+      "path": "config/generated/system_libraries/resources/dreamarts.json",
+      "status": "pass",
+      "actual_mb": 1.264,
+      "max_mb": 25,
+      "message": "within budget"
+    },
+    {
+      "name": "resource_shard_budget:dreamautomation",
+      "path": "config/generated/system_libraries/resources/dreamautomation.json",
+      "status": "pass",
+      "actual_mb": 1.68,
+      "max_mb": 25,
+      "message": "within budget"
+    },
+    {
+      "name": "resource_shard_budget:dreambizlaunch",
+      "path": "config/generated/system_libraries/resources/dreambizlaunch.json",
+      "status": "pass",
+      "actual_mb": 1.555,
+      "max_mb": 25,
+      "message": "within budget"
+    },
+    {
+      "name": "resource_shard_budget:dreamcodelab",
+      "path": "config/generated/system_libraries/resources/dreamcodelab.json",
+      "status": "pass",
+      "actual_mb": 10.517,
+      "max_mb": 25,
+      "message": "within budget"
+    },
+    {
+      "name": "resource_shard_budget:dreamconstruction",
+      "path": "config/generated/system_libraries/resources/dreamconstruction.json",
+      "status": "pass",
+      "actual_mb": 1.348,
+      "max_mb": 25,
+      "message": "within budget"
+    },
+    {
+      "name": "resource_shard_budget:dreamcontent",
+      "path": "config/generated/system_libraries/resources/dreamcontent.json",
+      "status": "pass",
+      "actual_mb": 1.114,
+      "max_mb": 25,
+      "message": "within budget"
+    },
+    {
+      "name": "resource_shard_budget:dreamcrypto",
+      "path": "config/generated/system_libraries/resources/dreamcrypto.json",
+      "status": "pass",
+      "actual_mb": 1.391,
+      "max_mb": 25,
+      "message": "within budget"
+    },
+    {
+      "name": "resource_shard_budget:dreamcustintel",
+      "path": "config/generated/system_libraries/resources/dreamcustintel.json",
+      "status": "pass",
+      "actual_mb": 1.818,
+      "max_mb": 25,
+      "message": "within budget"
+    },
+    {
+      "name": "resource_shard_budget:dreamcyber",
+      "path": "config/generated/system_libraries/resources/dreamcyber.json",
+      "status": "pass",
+      "actual_mb": 1.858,
+      "max_mb": 25,
+      "message": "within budget"
+    },
+    {
+      "name": "resource_shard_budget:dreamdata",
+      "path": "config/generated/system_libraries/resources/dreamdata.json",
+      "status": "pass",
+      "actual_mb": 1.103,
+      "max_mb": 25,
+      "message": "within budget"
+    },
+    {
+      "name": "resource_shard_budget:dreamdecision",
+      "path": "config/generated/system_libraries/resources/dreamdecision.json",
+      "status": "pass",
+      "actual_mb": 1.813,
+      "max_mb": 25,
+      "message": "within budget"
+    },
+    {
+      "name": "resource_shard_budget:dreameducation",
+      "path": "config/generated/system_libraries/resources/dreameducation.json",
+      "status": "pass",
+      "actual_mb": 1.551,
+      "max_mb": 25,
+      "message": "within budget"
+    },
+    {
+      "name": "resource_shard_budget:dreamempire",
+      "path": "config/generated/system_libraries/resources/dreamempire.json",
+      "status": "pass",
+      "actual_mb": 0.351,
+      "max_mb": 25,
+      "message": "within budget"
+    },
+    {
+      "name": "resource_shard_budget:dreamentfinance",
+      "path": "config/generated/system_libraries/resources/dreamentfinance.json",
+      "status": "pass",
+      "actual_mb": 1.824,
+      "max_mb": 25,
+      "message": "within budget"
+    },
+    {
+      "name": "resource_shard_budget:dreamfinance",
+      "path": "config/generated/system_libraries/resources/dreamfinance.json",
+      "status": "pass",
+      "actual_mb": 4.906,
+      "max_mb": 25,
+      "message": "within budget"
+    },
+    {
+      "name": "resource_shard_budget:dreamflow",
+      "path": "config/generated/system_libraries/resources/dreamflow.json",
+      "status": "pass",
+      "actual_mb": 0.342,
+      "max_mb": 25,
+      "message": "within budget"
+    },
+    {
+      "name": "resource_shard_budget:dreamfood",
+      "path": "config/generated/system_libraries/resources/dreamfood.json",
+      "status": "pass",
+      "actual_mb": 1.4,
+      "max_mb": 25,
+      "message": "within budget"
+    },
+    {
+      "name": "resource_shard_budget:dreamglobal",
+      "path": "config/generated/system_libraries/resources/dreamglobal.json",
+      "status": "pass",
+      "actual_mb": 1.115,
+      "max_mb": 25,
+      "message": "within budget"
+    },
+    {
+      "name": "resource_shard_budget:dreamhealth",
+      "path": "config/generated/system_libraries/resources/dreamhealth.json",
+      "status": "pass",
+      "actual_mb": 1.478,
+      "max_mb": 25,
+      "message": "within budget"
+    },
+    {
+      "name": "resource_shard_budget:dreaminfluence",
+      "path": "config/generated/system_libraries/resources/dreaminfluence.json",
+      "status": "pass",
+      "actual_mb": 1.815,
+      "max_mb": 25,
+      "message": "within budget"
+    },
+    {
+      "name": "resource_shard_budget:dreamlegal",
+      "path": "config/generated/system_libraries/resources/dreamlegal.json",
+      "status": "pass",
+      "actual_mb": 1.796,
+      "max_mb": 25,
+      "message": "within budget"
+    },
+    {
+      "name": "resource_shard_budget:dreamloans",
+      "path": "config/generated/system_libraries/resources/dreamloans.json",
+      "status": "pass",
+      "actual_mb": 1.607,
+      "max_mb": 25,
+      "message": "within budget"
+    },
+    {
+      "name": "resource_shard_budget:dreammaintenance",
+      "path": "config/generated/system_libraries/resources/dreammaintenance.json",
+      "status": "pass",
+      "actual_mb": 1.492,
+      "max_mb": 25,
+      "message": "within budget"
+    },
+    {
+      "name": "resource_shard_budget:dreammarket",
+      "path": "config/generated/system_libraries/resources/dreammarket.json",
+      "status": "pass",
+      "actual_mb": 4.886,
+      "max_mb": 25,
+      "message": "within budget"
+    },
+    {
+      "name": "resource_shard_budget:dreammilitary",
+      "path": "config/generated/system_libraries/resources/dreammilitary.json",
+      "status": "pass",
+      "actual_mb": 1.434,
+      "max_mb": 25,
+      "message": "within budget"
+    },
+    {
+      "name": "resource_shard_budget:dreamops",
+      "path": "config/generated/system_libraries/resources/dreamops.json",
+      "status": "pass",
+      "actual_mb": 1.873,
+      "max_mb": 25,
+      "message": "within budget"
+    },
+    {
+      "name": "resource_shard_budget:dreampayments",
+      "path": "config/generated/system_libraries/resources/dreampayments.json",
+      "status": "pass",
+      "actual_mb": 3.963,
+      "max_mb": 25,
+      "message": "within budget"
+    },
+    {
+      "name": "resource_shard_budget:dreampersonalcare",
+      "path": "config/generated/system_libraries/resources/dreampersonalcare.json",
+      "status": "pass",
+      "actual_mb": 2.133,
+      "max_mb": 25,
+      "message": "within budget"
+    },
+    {
+      "name": "resource_shard_budget:dreamplanetary",
+      "path": "config/generated/system_libraries/resources/dreamplanetary.json",
+      "status": "pass",
+      "actual_mb": 1.827,
+      "max_mb": 25,
+      "message": "within budget"
+    },
+    {
+      "name": "resource_shard_budget:dreamproservices",
+      "path": "config/generated/system_libraries/resources/dreamproservices.json",
+      "status": "pass",
+      "actual_mb": 1.754,
+      "max_mb": 25,
+      "message": "within budget"
+    },
+    {
+      "name": "resource_shard_budget:dreamproduction",
+      "path": "config/generated/system_libraries/resources/dreamproduction.json",
+      "status": "pass",
+      "actual_mb": 1.42,
+      "max_mb": 25,
+      "message": "within budget"
+    },
+    {
+      "name": "resource_shard_budget:dreamprotection",
+      "path": "config/generated/system_libraries/resources/dreamprotection.json",
+      "status": "pass",
+      "actual_mb": 1.425,
+      "max_mb": 25,
+      "message": "within budget"
+    },
+    {
+      "name": "resource_shard_budget:dreamrealestate",
+      "path": "config/generated/system_libraries/resources/dreamrealestate.json",
+      "status": "pass",
+      "actual_mb": 1.92,
+      "max_mb": 25,
+      "message": "within budget"
+    },
+    {
+      "name": "resource_shard_budget:dreamretail",
+      "path": "config/generated/system_libraries/resources/dreamretail.json",
+      "status": "pass",
+      "actual_mb": 1.824,
+      "max_mb": 25,
+      "message": "within budget"
+    },
+    {
+      "name": "resource_shard_budget:dreamsalespro",
+      "path": "config/generated/system_libraries/resources/dreamsalespro.json",
+      "status": "pass",
+      "actual_mb": 3.926,
+      "max_mb": 25,
+      "message": "within budget"
+    },
+    {
+      "name": "resource_shard_budget:dreamscience",
+      "path": "config/generated/system_libraries/resources/dreamscience.json",
+      "status": "pass",
+      "actual_mb": 1.478,
+      "max_mb": 25,
+      "message": "within budget"
+    },
+    {
+      "name": "resource_shard_budget:dreamsocial",
+      "path": "config/generated/system_libraries/resources/dreamsocial.json",
+      "status": "pass",
+      "actual_mb": 2.315,
+      "max_mb": 25,
+      "message": "within budget"
+    },
+    {
+      "name": "resource_shard_budget:dreamtrade",
+      "path": "config/generated/system_libraries/resources/dreamtrade.json",
+      "status": "pass",
+      "actual_mb": 0.84,
+      "max_mb": 25,
+      "message": "within budget"
+    },
+    {
+      "name": "resource_shard_budget:dreamtransport",
+      "path": "config/generated/system_libraries/resources/dreamtransport.json",
+      "status": "pass",
+      "actual_mb": 1.34,
+      "max_mb": 25,
+      "message": "within budget"
+    },
+    {
+      "name": "resource_shard_budget:gametitan",
+      "path": "config/generated/system_libraries/resources/gametitan.json",
+      "status": "pass",
+      "actual_mb": 0.272,
+      "max_mb": 25,
+      "message": "within budget"
+    },
+    {
+      "name": "resource_sharding_integrity",
+      "path": "config/generated/system_libraries/resources.json",
+      "status": "pass",
+      "actual": {
+        "sharded": true,
+        "resource_index_entries": 1248,
+        "shard_count": 45,
+        "resources_per_bot_expected": 100,
+        "largest_shard_mb": 10.517,
+        "largest_shard": "config/generated/system_libraries/resources/dreamcodelab.json",
+        "bot_entries_checked": 1248
+      },
+      "max_failures_reported": 10,
+      "failures": [],
+      "failure_count": 0,
+      "message": "resources are sharded and count-safe"
+    }
+  ],
+  "warnings": [],
+  "required_controls": [
+    "human_review_before_money_movement",
+    "human_review_before_external_messages",
+    "rate_limits_for_all_network_calls",
+    "denylist_for_secrets_in_logs",
+    "rollback_plan_for_generated_changes",
+    "storage_guard_report_before_pull_request",
+    "manifest_first_loading_for_large_collections",
+    "memory_rollover_before_size_budget_failure",
+    "operator_export_and_delete_controls"
+  ]
+}

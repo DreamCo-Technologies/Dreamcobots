@@ -202,6 +202,48 @@ const FALLBACK_BUDDY_PRODUCTIVITY = {
   next_actions: [],
 };
 
+const FALLBACK_STORAGE_GUARD = {
+  generated_at: null,
+  summary: {
+    storage_ready: true,
+    checks: 0,
+    failed_checks: 0,
+    warnings: 0,
+    memory_tiers: 4,
+    partitioning_rules: 7,
+    compaction_rules: 6,
+    approval_gates: 11,
+    largest_resource_shard_mb: 0,
+    largest_resource_shard: 'generated fallback',
+    resource_shard_count: 45,
+    bot_resource_entries_checked: 0,
+  },
+  budgets: {
+    generated_index_max_mb: 10,
+    generated_library_max_mb: 25,
+    generated_resource_shard_max_mb: 25,
+    single_memory_record_max_kb: 256,
+    single_bot_hot_partition_max_mb: 128,
+    single_bot_warm_partition_max_mb: 256,
+    single_archive_max_mb: 512,
+    dashboard_report_max_mb: 5,
+  },
+  memory_tiers: [
+    { tier: 'hot', purpose: 'Active task memory and recent bot context.', rollover_at_mb: 128 },
+    { tier: 'warm', purpose: 'Approved lessons, summaries, and reusable skill memory.', rollover_at_mb: 256 },
+    { tier: 'cold', purpose: 'Compressed audit archives and long-term evidence.', rollover_at_mb: 512 },
+    { tier: 'vector', purpose: 'Searchable memory references with partitioned vectors.', rollover_at_mb: 256 },
+  ],
+  partitioning_rules: [
+    'Never store all bot resources, memories, events, vectors, or source snapshots in one monolithic file.',
+    'Every large collection must have a small manifest index and independently loadable shards.',
+    'Keep dashboards on summaries and manifests so the UI can load without reading the full memory corpus.',
+  ],
+  compaction_rules: [],
+  checks: [],
+  warnings: [],
+};
+
 const BUILD_STAGES = [
   ['01', 'Specify', 'Identity, goal, inputs, outputs, limits, owner'],
   ['02', 'Compose', 'Tools, API, webhook, workflow, skills'],
@@ -367,6 +409,8 @@ export default function ActionsPage({
   const [repositoryStewardshipStatus, setRepositoryStewardshipStatus] = useState('loading');
   const [buddyProductivity, setBuddyProductivity] = useState(null);
   const [buddyProductivityStatus, setBuddyProductivityStatus] = useState('loading');
+  const [storageGuard, setStorageGuard] = useState(null);
+  const [storageGuardStatus, setStorageGuardStatus] = useState('loading');
   const [buildPacket, setBuildPacket] = useState(null);
 
   useEffect(() => {
@@ -414,6 +458,15 @@ export default function ActionsPage({
       .catch(() => setBuddyProductivityStatus('generated fallback'));
   }, []);
 
+  useEffect(() => {
+    fetchFirstJson(['/api/storage-guard'])
+      .then((data) => {
+        setStorageGuard(data);
+        setStorageGuardStatus('live');
+      })
+      .catch(() => setStorageGuardStatus('generated fallback'));
+  }, []);
+
   const builders = libraryData?.builders ?? FALLBACK_BUILDERS;
   const libraries = libraryData?.libraries ?? FALLBACK_LIBRARIES;
   const botCount = libraryData?.bot_count ?? 1247;
@@ -421,10 +474,12 @@ export default function ActionsPage({
   const triage = githubTriage ?? FALLBACK_GITHUB_TRIAGE;
   const stewardship = repositoryStewardship ?? FALLBACK_REPOSITORY_STEWARDSHIP;
   const productivity = buddyProductivity ?? FALLBACK_BUDDY_PRODUCTIVITY;
+  const storage = storageGuard ?? FALLBACK_STORAGE_GUARD;
   const inventorySummary = inventory.summary ?? FALLBACK_BUDDY_INVENTORY.summary;
   const triageSummary = triage.summary ?? FALLBACK_GITHUB_TRIAGE.summary;
   const stewardshipSummary = stewardship.summary ?? FALLBACK_REPOSITORY_STEWARDSHIP.summary;
   const productivitySummary = productivity.summary ?? FALLBACK_BUDDY_PRODUCTIVITY.summary;
+  const storageSummary = storage.summary ?? FALLBACK_STORAGE_GUARD.summary;
   const buildStates = inventorySummary.build_states ?? {};
   const testStates = inventorySummary.test_states ?? {};
   const codingPathStates = inventorySummary.coding_path_states ?? {};
@@ -1094,6 +1149,78 @@ export default function ActionsPage({
                 </div>
               ))}
             </div>
+          </aside>
+        </div>
+      </section>
+
+      <section aria-labelledby="storage-guard-heading" className="border border-slate-700 bg-slate-950 p-5">
+        <div className="flex flex-wrap items-start justify-between gap-3">
+          <div>
+            <p className="text-xs font-bold uppercase text-dreamco-accent">Memory storage guard</p>
+            <h3 id="storage-guard-heading" className="mt-1 text-lg font-semibold text-white">💾 Future-proof bot memory</h3>
+            <p className="mt-1 max-w-3xl text-sm leading-6 text-slate-400">
+              Enforces local-first storage budgets, generated library sharding, memory rollover, compaction, and manifest-first loading.
+            </p>
+          </div>
+          <span className={`rounded-full border px-3 py-1 text-xs font-semibold ${
+            storageSummary.storage_ready
+              ? 'border-green-800 bg-green-950/40 text-green-300'
+              : 'border-yellow-800 bg-yellow-950/40 text-yellow-300'
+          }`}>
+            {storageGuardStatus} · {storageSummary.storage_ready ? 'ready' : 'needs attention'} · {formatDateTime(storage.generated_at)}
+          </span>
+        </div>
+
+        <div className="mt-5 grid grid-cols-2 gap-px overflow-hidden border border-slate-800 bg-slate-800 lg:grid-cols-4 xl:grid-cols-8">
+          {[
+            ['Checks', storageSummary.checks],
+            ['Failed', storageSummary.failed_checks],
+            ['Warnings', storageSummary.warnings],
+            ['Memory tiers', storageSummary.memory_tiers],
+            ['Resource shards', storageSummary.resource_shard_count],
+            ['Bot entries', storageSummary.bot_resource_entries_checked],
+            ['Largest shard MB', storageSummary.largest_resource_shard_mb],
+            ['Shard cap MB', storage.budgets?.generated_resource_shard_max_mb],
+          ].map(([label, value]) => (
+            <div key={label} className="bg-slate-900 p-4">
+              <p className="text-xl font-black text-white">{formatNumber(value)}</p>
+              <p className="mt-1 text-xs uppercase text-slate-500">{label}</p>
+            </div>
+          ))}
+        </div>
+
+        <div className="mt-5 grid gap-5 lg:grid-cols-[1.2fr_0.8fr]">
+          <div className="border border-slate-800 bg-slate-900 p-4">
+            <h4 className="text-sm font-semibold text-white">Rollover tiers</h4>
+            <div className="mt-3 grid gap-3 md:grid-cols-2">
+              {(storage.memory_tiers ?? []).map((tier) => (
+                <div key={tier.tier} className="border border-slate-800 bg-slate-950 p-3">
+                  <div className="flex items-center justify-between gap-2">
+                    <p className="text-sm font-semibold text-white">{formatLabel(tier.tier)}</p>
+                    <span className="rounded-full border border-slate-700 px-2 py-0.5 text-[11px] text-slate-300">
+                      {tier.rollover_at_mb} MB
+                    </span>
+                  </div>
+                  <p className="mt-2 text-xs leading-5 text-slate-400">{tier.purpose}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <aside className="border border-slate-800 bg-slate-900 p-4">
+            <h4 className="text-sm font-semibold text-white">Never one giant memory file</h4>
+            <div className="mt-3 space-y-2">
+              {(storage.partitioning_rules ?? []).slice(0, 5).map((rule) => (
+                <div key={rule} className="border-l-2 border-dreamco-accent pl-3 text-xs leading-5 text-slate-300">
+                  {rule}
+                </div>
+              ))}
+            </div>
+            {(storage.warnings ?? []).length > 0 && (
+              <div className="mt-4 border border-yellow-800 bg-yellow-950/20 p-3 text-xs leading-5 text-yellow-200">
+                {(storage.warnings ?? []).join(' · ')}
+              </div>
+            )}
           </aside>
         </div>
       </section>

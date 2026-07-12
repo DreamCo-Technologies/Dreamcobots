@@ -358,6 +358,20 @@ describe('GET /api/repository-stewardship', () => {
   });
 });
 
+describe('GET /api/storage-guard', () => {
+  test('returns storage budgets and sharding health', async () => {
+    const res = await request(app).get('/api/storage-guard');
+
+    expect(res.status).toBe(200);
+    expect(res.body.schema).toBe('dreamco.storage_guard.v1');
+    expect(res.body.summary).toHaveProperty('storage_ready', true);
+    expect(res.body.summary.failed_checks).toBe(0);
+    expect(res.body.summary.resource_shard_count).toBeGreaterThanOrEqual(45);
+    expect(res.body.budgets).toHaveProperty('generated_resource_shard_max_mb');
+    expect(res.body.checks.map((check) => check.name)).toContain('resource_sharding_integrity');
+  });
+});
+
 // ---------------------------------------------------------------------------
 // GET /api/command-center
 // ---------------------------------------------------------------------------

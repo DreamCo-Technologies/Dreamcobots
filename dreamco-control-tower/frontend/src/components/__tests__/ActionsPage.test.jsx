@@ -207,6 +207,39 @@ const buddyProductivityPayload = {
   next_actions: ['Prioritize workflow failures.', 'Turn top capabilities into client packages.'],
 };
 
+const storageGuardPayload = {
+  schema: 'dreamco.storage_guard.v1',
+  generated_at: '2026-07-12T00:00:00Z',
+  summary: {
+    storage_ready: true,
+    checks: 55,
+    failed_checks: 0,
+    warnings: 0,
+    memory_tiers: 4,
+    partitioning_rules: 7,
+    compaction_rules: 6,
+    approval_gates: 11,
+    largest_resource_shard_mb: 10.517,
+    largest_resource_shard: 'config/generated/system_libraries/resources/dreamcodelab.json',
+    resource_shard_count: 45,
+    bot_resource_entries_checked: 1248,
+  },
+  budgets: {
+    generated_resource_shard_max_mb: 25,
+  },
+  memory_tiers: [
+    { tier: 'hot', purpose: 'Active task memory and recent bot context.', rollover_at_mb: 128 },
+    { tier: 'warm', purpose: 'Approved lessons and reusable skill memory.', rollover_at_mb: 256 },
+    { tier: 'cold', purpose: 'Compressed audit archives and long-term evidence.', rollover_at_mb: 512 },
+    { tier: 'vector', purpose: 'Searchable memory references with partitioned vectors.', rollover_at_mb: 256 },
+  ],
+  partitioning_rules: [
+    'Never store all bot resources, memories, events, vectors, or source snapshots in one monolithic file.',
+  ],
+  checks: [{ name: 'resource_sharding_integrity', status: 'pass', message: 'resources are sharded and count-safe' }],
+  warnings: [],
+};
+
 function StubActionsMonitor() {
   return <div>Actions monitor panel</div>;
 }
@@ -218,6 +251,7 @@ beforeEach(() => {
     if (url === '/api/github-triage') payload = githubTriagePayload;
     if (url === '/api/repository-stewardship') payload = repositoryStewardshipPayload;
     if (url === '/api/buddy-productivity') payload = buddyProductivityPayload;
+    if (url === '/api/storage-guard') payload = storageGuardPayload;
     return Promise.resolve({
       ok: true,
       json: async () => payload,
@@ -245,6 +279,7 @@ describe('ActionsPage', () => {
     expect(screen.getByRole('heading', { name: '🤝 Buddy capability tracker' })).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: '🧪 Buddy and bot test catalog' })).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: 'Always-clean PR, issue, and code-quality steward' })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: '💾 Future-proof bot memory' })).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: '🔎 GitHub PR, issue, and comment triage' })).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: 'Generated libraries' })).toBeInTheDocument();
     expect(screen.getByText('Actions monitor panel')).toBeInTheDocument();
@@ -336,6 +371,8 @@ describe('ActionsPage', () => {
     expect(screen.getByText('PR restart and retest queue')).toBeInTheDocument();
     expect(screen.getByText(/Finish Buddy readiness tracker/)).toBeInTheDocument();
     expect(screen.getByText('Workflow failures to retest')).toBeInTheDocument();
+    expect(screen.getByText('Rollover tiers')).toBeInTheDocument();
+    expect(screen.getByText('Never one giant memory file')).toBeInTheDocument();
     expect(screen.getByText('System and Bot Builds Monitoring')).toBeInTheDocument();
     expect(screen.getByText(/Workflow reruns require authenticated GitHub Actions permission/)).toBeInTheDocument();
   });

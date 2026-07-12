@@ -37,6 +37,10 @@ const REPOSITORY_STEWARDSHIP_REPORT_FILE = path.join(
   __dirname,
   '../../reports/repository_stewardship_report.json',
 );
+const STORAGE_GUARD_REPORT_FILE = path.join(
+  __dirname,
+  '../../reports/storage_guard_report.json',
+);
 const COMMAND_CENTER_FILE = path.join(__dirname, '../config/command_center.json');
 const PRODUCTION_MEDIA_ROADMAP_FILE = path.join(
   __dirname,
@@ -154,6 +158,13 @@ function readRepositoryStewardshipReport() {
     return null;
   }
   return JSON.parse(fs.readFileSync(REPOSITORY_STEWARDSHIP_REPORT_FILE, 'utf8'));
+}
+
+function readStorageGuardReport() {
+  if (!fs.existsSync(STORAGE_GUARD_REPORT_FILE)) {
+    return null;
+  }
+  return JSON.parse(fs.readFileSync(STORAGE_GUARD_REPORT_FILE, 'utf8'));
 }
 
 function parseDurationToDays(duration) {
@@ -437,6 +448,17 @@ app.get('/api/repository-stewardship', rateLimiter, (_req, res) => {
   const report = readRepositoryStewardshipReport();
   if (!report) {
     return res.status(503).json({ error: 'repository stewardship report not found' });
+  }
+  return res.json(report);
+});
+
+// ---------------------------------------------------------------------------
+// GET /api/storage-guard — local-first memory and generated-library budgets
+// ---------------------------------------------------------------------------
+app.get('/api/storage-guard', rateLimiter, (_req, res) => {
+  const report = readStorageGuardReport();
+  if (!report) {
+    return res.status(503).json({ error: 'storage guard report not found' });
   }
   return res.json(report);
 });

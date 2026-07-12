@@ -67,6 +67,18 @@ Use multiple memory styles, not one giant memory bucket.
 - Failure memory: missing files, broken commands, bad outputs, blocked actions.
 - Decision memory: why a route, model, or workflow was chosen.
 
+## Memory storage guardrails
+
+Memory should scale by design, not by hope. The repo uses `config/local_first_storage_policy.json` and `tools/storage_guard.py` to keep bot memory and generated libraries from becoming one huge file that breaks dashboards, reviews, or future deploys.
+
+- Hot memory keeps active task state and recent bot context, then rolls over at the configured local budget.
+- Warm memory keeps approved lessons, source notes, completed task summaries, and reusable skill memory.
+- Cold memory keeps compressed audit archives and long-term evidence through content-addressed files.
+- Vector memory stores searchable references in partitioned indexes, not one giant embedding file.
+- Generated libraries must load from lightweight manifests and independently readable shards.
+- Dashboards must read summaries and manifests first, then load detail only when a user opens it.
+- Pull requests that change generated libraries or memory policy should run `npm run check:storage`.
+
 ## Agent modes
 
 Every bot dashboard should expose mode toggles.

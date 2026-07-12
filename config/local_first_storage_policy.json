@@ -1,7 +1,7 @@
 {
-  "schema": "local_first_storage_policy.v1",
-  "updated_at": "2026-06-01T00:00:00Z",
-  "purpose": "Default persistence policy for DreamCo bots before any cloud or paid automation is enabled.",
+  "schema": "dreamco.local_first_storage_policy.v2",
+  "updated_at": "2026-07-12T00:00:00Z",
+  "purpose": "Default persistence, memory, and storage growth policy for DreamCo bots before any cloud or paid automation is enabled.",
   "defaults": {
     "storage_mode": "local-first",
     "cloud_sync": "disabled_by_default",
@@ -9,7 +9,85 @@
     "pii": "minimize_collection; encrypt_at_rest; redact_from_logs",
     "financial_data": "read_only_until_human_approval; no autonomous transfers or purchases",
     "audit_logs": "append_only_local_log_with_timestamp_actor_action_result",
-    "retention": "keep only what the bot needs; user-controlled deletion required"
+    "retention": "keep only what the bot needs; user-controlled deletion required",
+    "index_strategy": "indexes_store_manifests_and_pointers_only",
+    "large_data_strategy": "partition_by_division_bot_memory_type_and_month",
+    "compaction_strategy": "summarize_dedupe_and_archive_before_growth_impacts_runtime"
+  },
+  "memory_tiers": [
+    {
+      "tier": "hot",
+      "purpose": "Active task memory, live state, recent failures, and short-term bot context.",
+      "storage": "sqlite_or_jsonl_partition",
+      "retention_days": 30,
+      "rollover_at_mb": 128,
+      "required_action_at_rollover": "summarize_to_warm_and_start_new_partition"
+    },
+    {
+      "tier": "warm",
+      "purpose": "Useful lessons, approved source notes, completed task summaries, and reusable skill memory.",
+      "storage": "division_bot_month_jsonl_or_sqlite_partition",
+      "retention_days": 365,
+      "rollover_at_mb": 256,
+      "required_action_at_rollover": "dedupe_compress_and_move_old_slices_to_cold"
+    },
+    {
+      "tier": "cold",
+      "purpose": "Compressed audit archives, long-term evidence, historical source snapshots, and legal hold exports.",
+      "storage": "compressed_content_addressed_archive",
+      "retention_days": "operator_defined",
+      "rollover_at_mb": 512,
+      "required_action_at_rollover": "split_archive_and_update_manifest"
+    },
+    {
+      "tier": "vector",
+      "purpose": "Searchable memory references for retrieval without storing a giant monolithic embedding file.",
+      "storage": "metadata_manifest_plus_externalizable_vector_partitions",
+      "retention_days": "matches_source_record",
+      "rollover_at_mb": 256,
+      "required_action_at_rollover": "create_new_vector_partition_and_rebuild_pointer_manifest"
+    }
+  ],
+  "size_budgets": {
+    "generated_index_max_mb": 10,
+    "generated_library_max_mb": 25,
+    "generated_resource_shard_max_mb": 25,
+    "single_memory_record_max_kb": 256,
+    "single_bot_hot_partition_max_mb": 128,
+    "single_bot_warm_partition_max_mb": 256,
+    "single_archive_max_mb": 512,
+    "dashboard_report_max_mb": 5
+  },
+  "partitioning_rules": [
+    "Never store all bot resources, memories, events, vectors, or source snapshots in one monolithic file.",
+    "Every large collection must have a small manifest index and independently loadable shards.",
+    "Shard generated libraries by division first, then by bot or month when a division shard reaches its budget.",
+    "Shard runtime memory by tenant, division, bot, memory type, and month.",
+    "Store binary artifacts, screenshots, documents, and large transcripts as content-addressed files referenced from metadata.",
+    "Use append-only event logs for audit evidence, then compact into approved summaries on schedule.",
+    "Keep dashboards on summaries and manifests so the UI can load without reading the full memory corpus."
+  ],
+  "compaction_rules": [
+    "Summarize old hot memory into warm memory before deleting any task-level detail.",
+    "Deduplicate identical source references and keep the best-scored copy.",
+    "Compress cold archives and keep checksum, byte size, source, created_at, and retention metadata in the manifest.",
+    "Delete or redact expired personal data when retention ends unless legal hold is active.",
+    "Keep failure and decision summaries even when raw task scratchpads expire.",
+    "Run storage guard checks before merging generated library or dashboard changes."
+  ],
+  "generated_library_paths": {
+    "index": "config/generated/system_libraries/index.json",
+    "resources_index": "config/generated/system_libraries/resources.json",
+    "resources_shards_dir": "config/generated/system_libraries/resources",
+    "libraries": [
+      "config/generated/system_libraries/apis.json",
+      "config/generated/system_libraries/resources.json",
+      "config/generated/system_libraries/sandboxes.json",
+      "config/generated/system_libraries/skills.json",
+      "config/generated/system_libraries/tools.json",
+      "config/generated/system_libraries/webhooks.json",
+      "config/generated/system_libraries/workflows.json"
+    ]
   },
   "approval_gates": [
     "external_outreach",
@@ -18,13 +96,21 @@
     "payouts_or_transfers",
     "credential_changes",
     "cloud_sync_enablement",
-    "production_deployment"
+    "production_deployment",
+    "retention_policy_change",
+    "memory_export",
+    "archive_deletion",
+    "vector_store_provider_change"
   ],
   "required_controls": [
     "human_review_before_money_movement",
     "human_review_before_external_messages",
     "rate_limits_for_all_network_calls",
     "denylist_for_secrets_in_logs",
-    "rollback_plan_for_generated_changes"
+    "rollback_plan_for_generated_changes",
+    "storage_guard_report_before_pull_request",
+    "manifest_first_loading_for_large_collections",
+    "memory_rollover_before_size_budget_failure",
+    "operator_export_and_delete_controls"
   ]
 }
