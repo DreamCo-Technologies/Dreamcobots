@@ -129,6 +129,55 @@ const FALLBACK_GITHUB_TRIAGE = {
   notes: ['Run the GitHub triage scan to populate live repository data.'],
 };
 
+const FALLBACK_REPOSITORY_STEWARDSHIP = {
+  generated_at: null,
+  repo: 'DreamCo-Technologies/Dreamcobots',
+  summary: {
+    open_prs: 0,
+    open_issues: 0,
+    ready_prs: 0,
+    stale_prs: 0,
+    stale_issues: 0,
+    failed_workflow_runs: 0,
+    restart_queue: 0,
+    planned_close_prs: 0,
+    planned_close_issues: 0,
+    quality_checks: 3,
+    failed_quality_checks: 0,
+    skipped_quality_checks: 0,
+    cleanroom_ready: false,
+  },
+  quality_checks: [
+    { name: 'json_parse', status: 'pending', scanned: 0, failures: [] },
+    { name: 'python_syntax', status: 'pending', scanned: 0, failures: [] },
+    { name: 'javascript_syntax', status: 'pending', scanned: 0, failures: [] },
+  ],
+  queues: {
+    ready_prs: [],
+    stale_prs: [],
+    stale_issues: [],
+    failed_workflow_runs: [],
+    restart_queue: [],
+  },
+  cleanup_plan: {
+    keep_prs: [],
+    close_pr_candidates: [],
+    keep_issues: [],
+    close_issue_candidates: [],
+  },
+  policy: {
+    auto_close_without_owner_approval: false,
+    auto_merge_without_green_checks: false,
+    required_before_ready: [
+      'json_parse',
+      'python_syntax',
+      'javascript_syntax',
+      'workflow_failures_resolved_or_retested',
+      'owner_approval_for_close_or_merge',
+    ],
+  },
+};
+
 const BUILD_STAGES = [
   ['01', 'Specify', 'Identity, goal, inputs, outputs, limits, owner'],
   ['02', 'Compose', 'Tools, API, webhook, workflow, skills'],
@@ -290,6 +339,8 @@ export default function ActionsPage({
   const [buddyInventoryStatus, setBuddyInventoryStatus] = useState('loading');
   const [githubTriage, setGithubTriage] = useState(null);
   const [githubTriageStatus, setGithubTriageStatus] = useState('loading');
+  const [repositoryStewardship, setRepositoryStewardship] = useState(null);
+  const [repositoryStewardshipStatus, setRepositoryStewardshipStatus] = useState('loading');
   const [buildPacket, setBuildPacket] = useState(null);
 
   useEffect(() => {
@@ -319,13 +370,24 @@ export default function ActionsPage({
       .catch(() => setGithubTriageStatus('generated fallback'));
   }, []);
 
+  useEffect(() => {
+    fetchFirstJson(['/api/repository-stewardship'])
+      .then((data) => {
+        setRepositoryStewardship(data);
+        setRepositoryStewardshipStatus('live');
+      })
+      .catch(() => setRepositoryStewardshipStatus('generated fallback'));
+  }, []);
+
   const builders = libraryData?.builders ?? FALLBACK_BUILDERS;
   const libraries = libraryData?.libraries ?? FALLBACK_LIBRARIES;
   const botCount = libraryData?.bot_count ?? 1247;
   const inventory = buddyInventory ?? FALLBACK_BUDDY_INVENTORY;
   const triage = githubTriage ?? FALLBACK_GITHUB_TRIAGE;
+  const stewardship = repositoryStewardship ?? FALLBACK_REPOSITORY_STEWARDSHIP;
   const inventorySummary = inventory.summary ?? FALLBACK_BUDDY_INVENTORY.summary;
   const triageSummary = triage.summary ?? FALLBACK_GITHUB_TRIAGE.summary;
+  const stewardshipSummary = stewardship.summary ?? FALLBACK_REPOSITORY_STEWARDSHIP.summary;
   const buildStates = inventorySummary.build_states ?? {};
   const testStates = inventorySummary.test_states ?? {};
   const codingPathStates = inventorySummary.coding_path_states ?? {};
@@ -818,6 +880,93 @@ export default function ActionsPage({
               </div>
             )}
           </div>
+        </div>
+      </section>
+
+      <section aria-labelledby="repository-cleanroom-heading" className="border border-slate-700 bg-slate-950 p-5">
+        <div className="flex flex-wrap items-start justify-between gap-3">
+          <div>
+            <p className="text-xs font-bold uppercase text-dreamco-accent">Repository Cleanroom</p>
+            <h3 id="repository-cleanroom-heading" className="mt-1 text-lg font-semibold text-white">
+              Always-clean PR, issue, and code-quality steward
+            </h3>
+            <p className="mt-1 max-w-3xl text-sm leading-6 text-slate-400">
+              Buddy keeps the pull request and issue sections organized by separating ready work, stale work,
+              close candidates, retest queues, and syntax gates before anything is presented as safe to merge.
+            </p>
+          </div>
+          <span className={`rounded-full border px-3 py-1 text-xs font-semibold ${
+            stewardshipSummary.cleanroom_ready
+              ? 'border-green-800 bg-green-950/30 text-green-300'
+              : 'border-yellow-800 bg-yellow-950/30 text-yellow-300'
+          }`}>
+            {repositoryStewardshipStatus} · {stewardshipSummary.cleanroom_ready ? 'cleanroom ready' : 'cleanup active'}
+          </span>
+        </div>
+
+        <div className="mt-5 grid grid-cols-2 gap-px overflow-hidden border border-slate-800 bg-slate-800 lg:grid-cols-4 xl:grid-cols-8">
+          {[
+            ['Ready PRs', stewardshipSummary.ready_prs],
+            ['Stale PRs', stewardshipSummary.stale_prs],
+            ['Stale issues', stewardshipSummary.stale_issues],
+            ['Close PR plans', stewardshipSummary.planned_close_prs],
+            ['Close issue plans', stewardshipSummary.planned_close_issues],
+            ['Quality gates', stewardshipSummary.quality_checks],
+            ['Failed gates', stewardshipSummary.failed_quality_checks],
+            ['Workflow blockers', stewardshipSummary.failed_workflow_runs],
+          ].map(([label, value]) => (
+            <div key={label} className="bg-slate-900 p-4">
+              <p className="text-xl font-black text-white">{formatNumber(value)}</p>
+              <p className="mt-1 text-xs uppercase text-slate-500">{label}</p>
+            </div>
+          ))}
+        </div>
+
+        <div className="mt-5 grid gap-5 lg:grid-cols-[minmax(0,1fr)_22rem]">
+          <div className="border border-slate-800 bg-slate-900 p-4">
+            <h4 className="text-sm font-semibold text-white">Safe code quality gates</h4>
+            <div className="mt-3 grid gap-3 md:grid-cols-3">
+              {(stewardship.quality_checks ?? []).map((check) => (
+                <div key={check.name} className="border border-slate-800 bg-slate-950 p-3">
+                  <div className="flex items-center justify-between gap-2">
+                    <p className="text-sm font-semibold text-white">{formatLabel(check.name)}</p>
+                    <span className={`rounded-full border px-2 py-0.5 text-[11px] font-semibold uppercase ${
+                      check.status === 'pass'
+                        ? 'border-green-800 bg-green-950/30 text-green-300'
+                        : check.status === 'skipped'
+                          ? 'border-slate-700 bg-slate-800 text-slate-300'
+                          : 'border-yellow-800 bg-yellow-950/30 text-yellow-300'
+                    }`}>
+                      {check.status}
+                    </span>
+                  </div>
+                  <p className="mt-2 text-xs text-slate-500">
+                    {formatNumber(check.scanned)} file(s) scanned · {formatNumber((check.failures ?? []).length)} failure(s)
+                  </p>
+                  {(check.failures ?? []).slice(0, 2).map((failure) => (
+                    <p key={`${check.name}-${failure.file}`} className="mt-2 break-words font-mono text-[11px] text-yellow-200">
+                      {failure.file}
+                    </p>
+                  ))}
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <aside className="border border-slate-800 bg-slate-900 p-4">
+            <h4 className="text-sm font-semibold text-white">Cleanup policy</h4>
+            <div className="mt-3 space-y-3 text-xs leading-5 text-slate-400">
+              <p>Auto-close without owner approval: {String(stewardship.policy?.auto_close_without_owner_approval)}</p>
+              <p>Auto-merge without green checks: {String(stewardship.policy?.auto_merge_without_green_checks)}</p>
+            </div>
+            <div className="mt-4 space-y-2">
+              {(stewardship.policy?.required_before_ready ?? []).map((item) => (
+                <div key={item} className="border-l-2 border-dreamco-accent pl-3 text-xs text-slate-300">
+                  {formatLabel(item)}
+                </div>
+              ))}
+            </div>
+          </aside>
         </div>
       </section>
 

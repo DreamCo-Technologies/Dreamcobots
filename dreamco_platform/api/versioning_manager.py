@@ -50,8 +50,7 @@ def _generate_changelog(self, old_schema: Dict[str, str], new_schema: Dict[str, 
 
 
 def _migration_preview(self, versioned: VersionedAPI) -> str:
-    return '
-'.join(versioned.migration_guide)
+    return '\n'.join(versioned.migration_guide)
 
 
 VersioningManager.generate_changelog = _generate_changelog

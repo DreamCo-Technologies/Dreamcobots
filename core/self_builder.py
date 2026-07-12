@@ -95,6 +95,7 @@ class DreamCoSelfBuilder:
 
 # ==================== 100 MAJOR OPTIMIZATIONS ====================
 
+OPTIMIZATION_ROADMAP = """
 # 1-25: Distilabel & Structured Outputs
 1. Distilabel pipeline in every core module.
 2. Structured Pydantic outputs for all generated code.
@@ -160,6 +161,7 @@ class DreamCoSelfBuilder:
 98. Tomorrow’s completion checkpoint system.
 99. Meta-optimizer that improves the self-builder itself.
 100. Ultimate Empire OS autonomy trigger — full self-completion mode.
+"""
 
 # ==================== USAGE ====================
 

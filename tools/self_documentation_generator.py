@@ -38,17 +38,13 @@ class SelfDocumentationGenerator:
             lines.extend([f"### {method['name']}", f"Parameters: {method['params']}", method['doc'], '', 'Examples: import and call the function or class method directly.', 'Pricing: internal utility, no direct charge.', ''])
         if undocumented:
             lines.extend(['## Undocumented Functions', ', '.join(undocumented), 'Add docstrings to improve generated docs quality.'])
-        return '
-'.join(lines)
+        return '\n'.join(lines)
 
     def _openapi(self, slug: str, methods: List[Dict[str, str]]) -> str:
-        lines = ['openapi: 3.0.0', f'info:
-  title: {slug}
-  version: 1.0.0', 'paths:']
+        lines = ['openapi: 3.0.0', f'info:\n  title: {slug}\n  version: 1.0.0', 'paths:']
         for method in methods:
             lines.extend([f'  /{method["name"]}:', '    post:', f'      summary: {method["doc"][:60]}', '      responses:', "        '200':", '          description: OK'])
-        return '
-'.join(lines)
+        return '\n'.join(lines)
 
 
 

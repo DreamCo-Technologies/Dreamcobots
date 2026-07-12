@@ -29,6 +29,10 @@ const GITHUB_TRIAGE_REPORT_FILE = path.join(
   __dirname,
   '../../reports/github_triage_report.json',
 );
+const REPOSITORY_STEWARDSHIP_REPORT_FILE = path.join(
+  __dirname,
+  '../../reports/repository_stewardship_report.json',
+);
 const COMMAND_CENTER_FILE = path.join(__dirname, '../config/command_center.json');
 const PRODUCTION_MEDIA_ROADMAP_FILE = path.join(
   __dirname,
@@ -132,6 +136,13 @@ function readGitHubTriageReport() {
     return null;
   }
   return JSON.parse(fs.readFileSync(GITHUB_TRIAGE_REPORT_FILE, 'utf8'));
+}
+
+function readRepositoryStewardshipReport() {
+  if (!fs.existsSync(REPOSITORY_STEWARDSHIP_REPORT_FILE)) {
+    return null;
+  }
+  return JSON.parse(fs.readFileSync(REPOSITORY_STEWARDSHIP_REPORT_FILE, 'utf8'));
 }
 
 function parseDurationToDays(duration) {
@@ -393,6 +404,17 @@ app.get('/api/github-triage', rateLimiter, (_req, res) => {
   const report = readGitHubTriageReport();
   if (!report) {
     return res.status(503).json({ error: 'github triage report not found' });
+  }
+  return res.json(report);
+});
+
+// ---------------------------------------------------------------------------
+// GET /api/repository-stewardship — cleanroom status for PRs, issues, and syntax
+// ---------------------------------------------------------------------------
+app.get('/api/repository-stewardship', rateLimiter, (_req, res) => {
+  const report = readRepositoryStewardshipReport();
+  if (!report) {
+    return res.status(503).json({ error: 'repository stewardship report not found' });
   }
   return res.json(report);
 });

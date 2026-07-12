@@ -116,6 +116,55 @@ const githubTriagePayload = {
   ],
 };
 
+const repositoryStewardshipPayload = {
+  generated_at: '2026-07-11T12:00:00+00:00',
+  repo: 'DreamCo-Technologies/Dreamcobots',
+  summary: {
+    open_prs: 56,
+    open_issues: 17,
+    ready_prs: 9,
+    stale_prs: 47,
+    stale_issues: 10,
+    failed_workflow_runs: 6,
+    restart_queue: 12,
+    planned_close_prs: 1,
+    planned_close_issues: 8,
+    quality_checks: 3,
+    failed_quality_checks: 0,
+    skipped_quality_checks: 0,
+    cleanroom_ready: false,
+  },
+  quality_checks: [
+    { name: 'json_parse', status: 'pass', scanned: 200, failures: [] },
+    { name: 'python_syntax', status: 'pass', scanned: 1000, failures: [] },
+    { name: 'javascript_syntax', status: 'pass', scanned: 250, failures: [] },
+  ],
+  policy: {
+    auto_close_without_owner_approval: false,
+    auto_merge_without_green_checks: false,
+    required_before_ready: [
+      'json_parse',
+      'python_syntax',
+      'javascript_syntax',
+      'workflow_failures_resolved_or_retested',
+      'owner_approval_for_close_or_merge',
+    ],
+  },
+  queues: {
+    ready_prs: [],
+    stale_prs: [],
+    stale_issues: [],
+    failed_workflow_runs: [],
+    restart_queue: [],
+  },
+  cleanup_plan: {
+    keep_prs: [],
+    close_pr_candidates: [],
+    keep_issues: [],
+    close_issue_candidates: [],
+  },
+};
+
 function StubActionsMonitor() {
   return <div>Actions monitor panel</div>;
 }
@@ -125,6 +174,7 @@ beforeEach(() => {
     let payload = libraryPayload;
     if (url === '/api/buddy-capabilities') payload = buddyCapabilityPayload;
     if (url === '/api/github-triage') payload = githubTriagePayload;
+    if (url === '/api/repository-stewardship') payload = repositoryStewardshipPayload;
     return Promise.resolve({
       ok: true,
       json: async () => payload,
@@ -150,6 +200,7 @@ describe('ActionsPage', () => {
     expect(screen.getByText('Builder lanes')).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: '🤝 Buddy capability tracker' })).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: '🧪 Buddy and bot test catalog' })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'Always-clean PR, issue, and code-quality steward' })).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: '🔎 GitHub PR, issue, and comment triage' })).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: 'Generated libraries' })).toBeInTheDocument();
     expect(screen.getByText('Actions monitor panel')).toBeInTheDocument();
@@ -212,6 +263,15 @@ describe('ActionsPage', () => {
   it('shows GitHub PR, issue, comment, and workflow triage', async () => {
     render(<ActionsPage ActionsMonitorComponent={StubActionsMonitor} />);
 
+    await waitFor(() => expect(screen.getByText('Repository Cleanroom')).toBeInTheDocument());
+    expect(screen.getByText('Safe code quality gates')).toBeInTheDocument();
+    expect(screen.getByText('Cleanup policy')).toBeInTheDocument();
+    expect(screen.getByText('Ready PRs')).toBeInTheDocument();
+    expect(screen.getByText('Failed gates')).toBeInTheDocument();
+    expect(screen.getAllByText('Json Parse').length).toBeGreaterThan(0);
+    expect(screen.getAllByText('Python Syntax').length).toBeGreaterThan(0);
+    expect(screen.getAllByText('Javascript Syntax').length).toBeGreaterThan(0);
+    expect(screen.getByText('Owner Approval For Close Or Merge')).toBeInTheDocument();
     await waitFor(() => expect(screen.getByText('Open PRs')).toBeInTheDocument());
     expect(screen.getByText('Issue comments')).toBeInTheDocument();
     expect(screen.getByText('Review comments')).toBeInTheDocument();
