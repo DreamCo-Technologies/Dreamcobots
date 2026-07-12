@@ -1,6 +1,6 @@
 # Buddy Capability Inventory
 
-Generated: 2026-07-12T09:26:01.320645+00:00
+Generated: 2026-07-12T17:53:52.507956+00:00
 Branch scanned: `codex/bot-test-dashboard`
 
 ## Executive Summary

@@ -5,12 +5,15 @@ from __future__ import annotations
 
 import argparse
 import json
+import re
 from pathlib import Path
 from typing import Any
 
 ROOT = Path(__file__).resolve().parents[1]
 REGISTRY_PATH = ROOT / "config" / "master_bot_registry.json"
 OUTPUT_DIR = ROOT / "config" / "generated" / "system_libraries"
+RESOURCE_SHARD_DIR = OUTPUT_DIR / "resources"
+SLUG_RE = re.compile(r"[^a-z0-9]+")
 
 LIBRARY_SPECS = {
     "tools": {
@@ -115,6 +118,37 @@ def resource_starter_kit(bot: dict[str, Any]) -> list[dict[str, Any]]:
             }
         )
     return resources
+
+
+def normalize_slug(value: object) -> str:
+    return SLUG_RE.sub("-", str(value).lower()).strip("-")
+
+
+def resource_index_entry(bot: dict[str, Any]) -> dict[str, Any]:
+    division_slug = normalize_slug(bot["division"])
+    return {
+        "id": f"{bot['slug']}:resources",
+        "bot_id": bot["slug"],
+        "legacy_registry_id": bot["id"],
+        "bot_slug": bot["slug"],
+        "bot_name": bot["name"],
+        "emoji": bot["emoji"],
+        "division": bot["division"],
+        "version": "1.0.0",
+        "status": "generated",
+        "owner": "DreamCo Technologies",
+        "library_builder": f"{bot['slug']}-resource-library-builder",
+        "resource_count": 100,
+        "resource_categories": RESOURCE_CATEGORIES,
+        "shard_path": f"config/generated/system_libraries/resources/{division_slug}.json",
+        "controls": [
+            "source_attribution_required",
+            "owner_approved_live_sources",
+            "refresh_cadence_tracked",
+            "client_safe_summary_required",
+            "sandbox_evidence_before_live_use",
+        ],
+    }
 
 BUILDERS = [
     {
@@ -229,20 +263,8 @@ def _bot_entry(bot: dict[str, Any], library: str) -> dict[str, Any]:
             "api_contract_sandbox": f"{slug}-api-topline-sandbox",
         }
     if library == "resources":
-        return {
-            **common,
-            "library_builder": f"{slug}-resource-library-builder",
-            "resource_count": 100,
-            "resource_categories": RESOURCE_CATEGORIES,
-            "resources": resource_starter_kit(bot),
-            "controls": [
-                "source_attribution_required",
-                "owner_approved_live_sources",
-                "refresh_cadence_tracked",
-                "client_safe_summary_required",
-                "sandbox_evidence_before_live_use",
-            ],
-        }
+        entry = resource_index_entry(bot)
+        return {**entry, "resources": resource_starter_kit(bot)}
     return {
         **common,
         "tool": f"{slug}-toolkit",
@@ -258,7 +280,28 @@ def build_outputs(registry: dict[str, Any]) -> dict[Path, dict[str, Any]]:
     summaries = []
 
     for name, spec in LIBRARY_SPECS.items():
-        entries = [_bot_entry(bot, name) for bot in bots]
+        entries = [resource_index_entry(bot) if name == "resources" else _bot_entry(bot, name) for bot in bots]
+        shard_paths: list[str] = []
+        if name == "resources":
+            by_division: dict[str, list[dict[str, Any]]] = {}
+            for bot in bots:
+                by_division.setdefault(bot["division"], []).append(_bot_entry(bot, "resources"))
+            for division, shard_entries in sorted(by_division.items()):
+                division_slug = normalize_slug(division)
+                shard_path = RESOURCE_SHARD_DIR / f"{division_slug}.json"
+                shard_payload = {
+                    "schema": "dreamco.resource_library_shard.v1",
+                    "generated_at": generated_at,
+                    "generated_from": str(REGISTRY_PATH.relative_to(ROOT)),
+                    "library": "resources",
+                    "division": division,
+                    "division_slug": division_slug,
+                    "count": len(shard_entries),
+                    "resources_per_bot": 100,
+                    "entries": shard_entries,
+                }
+                outputs[shard_path] = shard_payload
+                shard_paths.append(str(shard_path.relative_to(ROOT)))
         payload = {
             "schema": spec["schema"],
             "generated_at": generated_at,
@@ -267,6 +310,9 @@ def build_outputs(registry: dict[str, Any]) -> dict[Path, dict[str, Any]]:
             "factory": spec["factory"],
             "description": spec["description"],
             "count": len(entries),
+            "sharded": name == "resources",
+            "shard_count": len(shard_paths),
+            "shards": shard_paths,
             "entries": entries,
         }
         outputs[OUTPUT_DIR / f"{name}.json"] = payload
@@ -342,6 +388,7 @@ def main() -> int:
 
     OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
     for path, payload in outputs.items():
+        path.parent.mkdir(parents=True, exist_ok=True)
         path.write_text(json.dumps(payload, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
     print(f"Generated {len(LIBRARY_SPECS)} system libraries for {len(registry['bots'])} bots.")
     return 0
