@@ -1,6 +1,6 @@
 # Buddy Capability Inventory
 
-Generated: 2026-07-12T04:02:40.670154+00:00
+Generated: 2026-07-12T08:32:06.872424+00:00
 Branch scanned: `main`
 
 ## Executive Summary
