@@ -288,6 +288,11 @@ describe('ActionsPage', () => {
     expect(screen.getByText('One-click deploy')).toBeInTheDocument();
     expect(screen.getByText('Image-to-app and screenshot-to-dashboard')).toBeInTheDocument();
     expect(screen.getByText('Eval/test loop after every generated change')).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'Trust-first AI company builder roadmap' })).toBeInTheDocument();
+    expect(screen.getByText('Win the trust lane first')).toBeInTheDocument();
+    expect(screen.getByText('Ship one-prompt build packets')).toBeInTheDocument();
+    expect(screen.getByText('Own bot businesses, not just apps')).toBeInTheDocument();
+    expect(screen.getByText('Bundle essential business services')).toBeInTheDocument();
     expect(screen.getByText('Builder lanes')).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: '🤝 Buddy capability tracker' })).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: '🧪 Buddy and bot test catalog' })).toBeInTheDocument();

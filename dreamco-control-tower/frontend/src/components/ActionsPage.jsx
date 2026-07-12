@@ -408,6 +408,51 @@ const COMPETITIVE_BUILD_ROADMAP = [
   },
 ];
 
+const BEST_COMPETITIVE_PATH = [
+  {
+    phase: '01',
+    title: 'Win the trust lane first',
+    timeframe: 'now',
+    focus: 'Make Buddy the safest way to build apps, bots, media packets, courses, games, and simulations.',
+    proof: ['approval gates', 'rights checks', 'storage guard', 'test evidence'],
+  },
+  {
+    phase: '02',
+    title: 'Ship one-prompt build packets',
+    timeframe: 'next',
+    focus: 'Turn one client prompt into a plan, files, sandbox preview, tests, rollback notes, and prospectus page.',
+    proof: ['build packet', 'dashboard preview', 'pull request', 'client handoff'],
+  },
+  {
+    phase: '03',
+    title: 'Own bot businesses, not just apps',
+    timeframe: 'near term',
+    focus: 'Package every build as an AI employee, department, or company with tools, APIs, webhooks, memory, and dashboards.',
+    proof: ['bot profile', 'service library', 'workflow library', 'money approval rules'],
+  },
+  {
+    phase: '04',
+    title: 'Add live preview and visual revision',
+    timeframe: 'build track',
+    focus: 'Let clients watch Buddy build, then revise layouts, scenes, lessons, screenshots, and game screens from preview feedback.',
+    proof: ['preview route', 'screenshot evidence', 'visual edit queue', 'responsive checks'],
+  },
+  {
+    phase: '05',
+    title: 'Bundle essential business services',
+    timeframe: 'build track',
+    focus: 'Offer safe starter paths for auth, database, storage, payments, email, webhooks, and deployment.',
+    proof: ['sandbox credentials', 'service templates', 'integration tests', 'one-click deploy gate'],
+  },
+  {
+    phase: '06',
+    title: 'Make quality automatic',
+    timeframe: 'always',
+    focus: 'Run evaluations after every generated change and block risky releases until evidence is clean.',
+    proof: ['syntax checks', 'sandbox tests', 'storage checks', 'readiness reports'],
+  },
+];
+
 function formatLabel(value) {
   return String(value || '').replaceAll('_', ' ').replace(/\b\w/g, (letter) => letter.toUpperCase());
 }
@@ -830,6 +875,46 @@ export default function ActionsPage({
                 </span>
               </div>
               <p className="mt-3 text-xs leading-5 text-slate-400">{item.proof}</p>
+            </article>
+          ))}
+        </div>
+      </section>
+
+      <section aria-labelledby="best-path-heading" className="border border-slate-700 bg-slate-950 p-5">
+        <div className="flex flex-wrap items-start justify-between gap-3">
+          <div>
+            <p className="text-xs font-bold uppercase text-dreamco-accent">Best path to compete</p>
+            <h3 id="best-path-heading" className="mt-1 text-lg font-semibold text-white">
+              Trust-first AI company builder roadmap
+            </h3>
+            <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-400">
+              Buddy should compete by turning prompts into governed businesses, bot workers, creative systems,
+              evidence, and client-ready delivery instead of stopping at generated code.
+            </p>
+          </div>
+          <span className="rounded-full border border-green-800 bg-green-950/30 px-3 py-1 text-xs font-semibold text-green-300">
+            safest path · strongest lane
+          </span>
+        </div>
+
+        <div className="mt-5 grid gap-px overflow-hidden border border-slate-800 bg-slate-800 lg:grid-cols-2 xl:grid-cols-3">
+          {BEST_COMPETITIVE_PATH.map((step) => (
+            <article key={step.phase} className="min-h-56 bg-slate-900 p-4">
+              <div className="flex items-start justify-between gap-3">
+                <span className="font-mono text-xs text-dreamco-accent">{step.phase}</span>
+                <span className="rounded-full border border-slate-700 px-2 py-0.5 text-[11px] font-semibold uppercase text-slate-400">
+                  {step.timeframe}
+                </span>
+              </div>
+              <h4 className="mt-3 text-sm font-semibold text-white">{step.title}</h4>
+              <p className="mt-2 text-xs leading-5 text-slate-400">{step.focus}</p>
+              <div className="mt-4 flex flex-wrap gap-2">
+                {step.proof.map((item) => (
+                  <span key={item} className="rounded-full border border-slate-700 px-2 py-1 text-[11px] text-slate-300">
+                    {item}
+                  </span>
+                ))}
+              </div>
             </article>
           ))}
         </div>
