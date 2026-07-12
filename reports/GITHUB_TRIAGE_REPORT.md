@@ -1,6 +1,6 @@
 # GitHub Triage Report
 
-Generated: 2026-07-12T14:00:32.278248+00:00
+Generated: 2026-07-12T17:30:25.130095+00:00
 Repository: `DreamCo-Technologies/Dreamcobots`
 
 ## Summary
@@ -10,8 +10,8 @@ Repository: `DreamCo-Technologies/Dreamcobots`
 - **Issue Comments Scanned**: 100
 - **Pr Review Comments Scanned**: 100
 - **Workflow Runs Scanned**: 50
-- **Failed Workflow Runs**: 22
-- **Active Workflow Runs**: 2
+- **Failed Workflow Runs**: 19
+- **Active Workflow Runs**: 1
 - **Pr Restart Queue**: 47
 
 ## PR Restart Queue
@@ -40,8 +40,8 @@ Repository: `DreamCo-Technologies/Dreamcobots`
 - #65 `copilot/add-foundational-components-ai-level-up-bot` — Add foundational AI Level-Up Bot modules to DreamCoBots (115 days old): stale_pr_needs_rebase_or_retest
 - #72 `copilot/add-comprehensive-job-title-integration` — Add comprehensive job title integration: AI workforce platform with autonomous training (115 days old): stale_pr_needs_rebase_or_retest
 - #104 `copilot/enhance-dreamcobots-for-deployment` — [WIP] Enhance and finalize bots for Dreamcobots project (114 days old): stale_pr_needs_rebase_or_retest
+- #118 `copilot/replace-random-ai-with-decision-logic` — Add weighted decision engine and repository activity tracker (114 days old): stale_pr_needs_rebase_or_retest
 - #113 `copilot/add-foundational-files-for-self-building-system` — Add foundational self-building system: main.py, controller.py, generator.py, learning_loop.py (113 days old): stale_pr_needs_rebase_or_retest
-- #118 `copilot/replace-random-ai-with-decision-logic` — Add weighted decision engine and repository activity tracker (113 days old): stale_pr_needs_rebase_or_retest
 - #125 `copilot/resolve-ci-pipeline-conflicts` — Resolve PR#69: fix sys.modules cross-test pollution, add bot skeleton generator, drop Python 3.8 (113 days old): stale_pr_needs_rebase_or_retest
 - #126 `copilot/implement-auto-recovery-mechanism` — Add CI auto-recovery mechanism for failed workflow tests (113 days old): stale_pr_needs_rebase_or_retest
 - #44 `copilot/integrate-bots-across-sectors` — Integrate sector bots across Dreamcobots platform with BuddyAI orchestration layer (105 days old): stale_pr_needs_rebase_or_retest
@@ -59,6 +59,12 @@ Repository: `DreamCo-Technologies/Dreamcobots`
 
 ## Failed Workflow Runs
 
+- System and Bot Builds Monitoring on `main` — failure (2026-07-12T16:57:15Z)
+- 🪐 Command Tower — Empire Dashboard on `main` — failure (2026-07-12T17:08:37Z)
+- System and Bot Builds Monitoring on `main` — failure (2026-07-12T15:56:05Z)
+- 🪐 Command Tower — Empire Dashboard on `main` — failure (2026-07-12T16:08:48Z)
+- System and Bot Builds Monitoring on `main` — failure (2026-07-12T14:52:36Z)
+- 🪐 Command Tower — Empire Dashboard on `main` — failure (2026-07-12T15:05:30Z)
 - System and Bot Builds Monitoring on `main` — failure (2026-07-12T13:17:05Z)
 - 🪐 Command Tower — Empire Dashboard on `main` — failure (2026-07-12T13:20:33Z)
 - DreamCo Continuous Self-Build Audit on `main` — failure (2026-07-12T13:07:10Z)
@@ -72,15 +78,6 @@ Repository: `DreamCo-Technologies/Dreamcobots`
 - 🪐 Command Tower — Empire Dashboard on `main` — failure (2026-07-12T08:22:19Z)
 - DreamCo Continuous Self-Build Audit on `main` — failure (2026-07-12T08:09:30Z)
 - 🪐 Command Tower — Empire Dashboard on `main` — cancelled (2026-07-12T08:06:37Z)
-- DreamCo Debug Audit on `codex/bot-test-dashboard` — failure (2026-07-12T08:01:54Z)
-- Coverage Gate on `codex/bot-test-dashboard` — failure (2026-07-12T07:59:54Z)
-- 🛡️ Framework Compliance on `codex/bot-test-dashboard` — failure (2026-07-12T07:58:15Z)
-- Production Readiness Gate on `codex/bot-test-dashboard` — failure (2026-07-12T07:58:06Z)
-- Deduplication Scanner on `codex/bot-test-dashboard` — failure (2026-07-12T07:58:05Z)
-- Repo Validation on `codex/bot-test-dashboard` — failure (2026-07-12T07:58:10Z)
-- .github/workflows/workflow-map.yml on `codex/bot-test-dashboard` — failure (2026-07-12T07:57:12Z)
-- .github/workflows/integration_lookup.yml on `codex/bot-test-dashboard` — failure (2026-07-12T07:57:12Z)
-- 🪐 Command Tower — Empire Dashboard on `main` — cancelled (2026-07-12T07:58:15Z)
 
 ## Open Issues
 
