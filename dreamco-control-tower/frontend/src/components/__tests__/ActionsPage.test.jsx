@@ -3,18 +3,20 @@ import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/re
 import ActionsPage from '../ActionsPage.jsx';
 
 const libraryPayload = {
-  bot_count: 1247,
+  bot_count: 1248,
   builders: [
     { id: 'full-bot-system', name: 'Full Bot System Builder', icon: '🤖', outputs: ['profile', 'api', 'webhook', 'sandbox'], approval: 'pull_request_required' },
     { id: 'apis-builder', name: 'API Builder', icon: '🔌', outputs: ['api', 'tests'], approval: 'pull_request_required' },
+    { id: 'resources-builder', name: 'Resource Library Builder', icon: '📚', outputs: ['resource', 'tests'], approval: 'pull_request_required' },
   ],
   libraries: [
-    { id: 'tools', name: 'Tools Library', icon: '🔧', count: 1247, description: 'Typed tools.' },
-    { id: 'apis', name: 'Apis Library', icon: '🔌', count: 1247, description: 'Versioned APIs.' },
-    { id: 'webhooks', name: 'Webhooks Library', icon: '🪝', count: 1247, description: 'Signed webhooks.' },
-    { id: 'workflows', name: 'Workflows Library', icon: '🔁', count: 1247, description: 'Reusable workflows.' },
-    { id: 'skills', name: 'Skills Library', icon: '🧠', count: 1247, description: 'Versioned skills.' },
-    { id: 'sandboxes', name: 'Sandboxes Library', icon: '🧪', count: 1247, description: 'Isolated tests.' },
+    { id: 'tools', name: 'Tools Library', icon: '🔧', count: 1248, description: 'Typed tools.' },
+    { id: 'apis', name: 'Apis Library', icon: '🔌', count: 1248, description: 'Versioned APIs.' },
+    { id: 'webhooks', name: 'Webhooks Library', icon: '🪝', count: 1248, description: 'Signed webhooks.' },
+    { id: 'workflows', name: 'Workflows Library', icon: '🔁', count: 1248, description: 'Reusable workflows.' },
+    { id: 'skills', name: 'Skills Library', icon: '🧠', count: 1248, description: 'Versioned skills.' },
+    { id: 'sandboxes', name: 'Sandboxes Library', icon: '🧪', count: 1248, description: 'Isolated tests.' },
+    { id: 'resources', name: 'Resources Library', icon: '📚', count: 1248, description: 'Per-bot starter resources.' },
   ],
 };
 
@@ -247,8 +249,8 @@ describe('ActionsPage', () => {
     expect(screen.getByRole('heading', { name: 'Generated libraries' })).toBeInTheDocument();
     expect(screen.getByText('Actions monitor panel')).toBeInTheDocument();
     await waitFor(() => expect(screen.getByText('Source: live')).toBeInTheDocument());
-    expect(screen.getAllByText('1,247').length).toBeGreaterThan(0);
-    expect(screen.getByText('7,482')).toBeInTheDocument();
+    expect(screen.getAllByText('1,248').length).toBeGreaterThan(0);
+    expect(screen.getByText('8,736')).toBeInTheDocument();
   });
 
   it('shows Buddy productivity tracking for owner, clients, and bots', async () => {

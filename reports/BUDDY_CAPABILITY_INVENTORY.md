@@ -1,6 +1,6 @@
 # Buddy Capability Inventory
 
-Generated: 2026-07-12T08:18:39.408967+00:00
+Generated: 2026-07-12T09:26:01.320645+00:00
 Branch scanned: `codex/bot-test-dashboard`
 
 ## Executive Summary
@@ -10,9 +10,9 @@ Branch scanned: `codex/bot-test-dashboard`
 - **Registry Division Count**: 45
 - **Workflows**: 42
 - **Test Files**: 1493
-- **Buddy Related Files**: 207
+- **Buddy Related Files**: 210
 - **Buddy Related Bots**: 14
-- **System Library Counts**: {'tools': 1248, 'apis': 1248, 'webhooks': 1248, 'workflows': 1248, 'skills': 1248, 'sandboxes': 1248}
+- **System Library Counts**: {'tools': 1248, 'apis': 1248, 'webhooks': 1248, 'workflows': 1248, 'skills': 1248, 'sandboxes': 1248, 'resources': 1248}
 - **All System Libraries Cover Profiled Bots**: True
 - **Build States**: {'built_and_test_covered': 1248}
 - **Test States**: {'ready_for_test_run': 1248}
@@ -42,7 +42,7 @@ Branch scanned: `codex/bot-test-dashboard`
 - `buddy_media_transformation_bot` — Buddy Media Transformation Bot: built_and_test_covered; ready_for_test_run
 - `buddy_omniscient_bot` — Buddy Omniscient Bot: built_and_test_covered; ready_for_test_run
 - `buddy_orchestrator` — Buddy Orchestrator: built_and_test_covered; ready_for_test_run
-- `buddy_os` — Buddy Os: built_and_test_covered; ready_for_test_run
+- `buddy_os` — Buddy OS: built_and_test_covered; ready_for_test_run
 - `buddy_teach_bot` — Buddy Teach Bot: built_and_test_covered; ready_for_test_run
 - `buddy_trainer_bot` — Buddy Trainer Bot: built_and_test_covered; ready_for_test_run
 - `buddy_trust_bot` — Buddy Trust Bot: built_and_test_covered; ready_for_test_run

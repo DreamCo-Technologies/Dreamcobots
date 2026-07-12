@@ -152,6 +152,10 @@ class BrowserTool:
     url: str
     description: str = ""
     enabled: bool = True
+    mode: str = "client_safe"
+    sandbox_profile: str = "browser_tool_sandbox"
+    resource_library_id: str = ""
+    approval_required: bool = True
 
     def to_dict(self) -> dict:
         return {
@@ -160,6 +164,10 @@ class BrowserTool:
             "url": self.url,
             "description": self.description,
             "enabled": self.enabled,
+            "mode": self.mode,
+            "sandbox_profile": self.sandbox_profile,
+            "resource_library_id": self.resource_library_id,
+            "approval_required": self.approval_required,
         }
 
 
@@ -170,11 +178,27 @@ class BrowserToolkit:
         self._tools: dict[str, BrowserTool] = {}
         self._counter: int = 0
 
-    def add_tool(self, name: str, url: str, description: str = "") -> BrowserTool:
+    def add_tool(
+        self,
+        name: str,
+        url: str,
+        description: str = "",
+        mode: str = "client_safe",
+        sandbox_profile: str = "browser_tool_sandbox",
+        resource_library_id: str = "",
+        approval_required: bool = True,
+    ) -> BrowserTool:
         self._counter += 1
         tool_id = f"btool_{self._counter:04d}"
         tool = BrowserTool(
-            tool_id=tool_id, name=name, url=url, description=description
+            tool_id=tool_id,
+            name=name,
+            url=url,
+            description=description,
+            mode=mode,
+            sandbox_profile=sandbox_profile,
+            resource_library_id=resource_library_id,
+            approval_required=approval_required,
         )
         self._tools[tool_id] = tool
         return tool
@@ -192,6 +216,18 @@ class BrowserToolkit:
         if tool_id not in self._tools:
             raise KeyError(f"Browser tool '{tool_id}' not found.")
         return self._tools[tool_id]
+
+    def productivity_manifest(self) -> dict:
+        """Return browser workspace metadata for dashboards and sandbox launchers."""
+        tools = [tool.to_dict() for tool in self.list_tools()]
+        return {
+            "tool_count": len(tools),
+            "client_safe_tools": sum(1 for tool in tools if tool["mode"] == "client_safe"),
+            "approval_required_tools": sum(1 for tool in tools if tool["approval_required"]),
+            "sandbox_profiles": sorted({tool["sandbox_profile"] for tool in tools}),
+            "resource_libraries": sorted({tool["resource_library_id"] for tool in tools if tool["resource_library_id"]}),
+            "tools": tools,
+        }
 
 
 # ===========================================================================

@@ -21,7 +21,7 @@ REQUIRED_BUDDY_MONEY_REQUEST = (
     "Buddy, help me make money with this bot. "
     "I approve the listed live actions and understand the risks."
 )
-LIBRARY_NAMES = ("tools", "apis", "webhooks", "workflows", "skills", "sandboxes")
+LIBRARY_NAMES = ("tools", "apis", "webhooks", "workflows", "skills", "sandboxes", "resources")
 IMPLEMENTATION_EXTENSIONS = {".py", ".js", ".ts", ".jsx", ".tsx"}
 SKIP_IMPLEMENTATION_NAMES = {
     "__init__.py",

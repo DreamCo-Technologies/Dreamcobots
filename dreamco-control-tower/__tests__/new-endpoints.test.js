@@ -268,9 +268,10 @@ describe('GET /api/system-libraries', () => {
 
     expect(res.status).toBe(200);
     expect(res.body.bot_count).toBeGreaterThanOrEqual(1248);
-    expect(res.body.builders).toHaveLength(7);
-    expect(res.body.libraries).toHaveLength(6);
+    expect(res.body.builders).toHaveLength(8);
+    expect(res.body.libraries).toHaveLength(7);
     Object.values(res.body.coverage).forEach((count) => expect(count).toBe(res.body.bot_count));
+    expect(res.body.libraries.some((library) => library.id === 'resources')).toBe(true);
   });
 
   test('returns the security baseline', async () => {

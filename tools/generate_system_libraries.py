@@ -49,7 +49,72 @@ LIBRARY_SPECS = {
         "icon": "🧪",
         "description": "Isolated test environments with fixtures, limits, and no live money movement.",
     },
+    "resources": {
+        "schema": "dreamco.resource_library.v1",
+        "factory": "Resource Library Builder",
+        "icon": "📚",
+        "description": "Per-bot starter library with 100 curated resource slots, evidence sources, and learning prompts.",
+    },
 }
+
+RESOURCE_CATEGORIES = [
+    "official_documentation",
+    "api_reference",
+    "sdk_examples",
+    "schema_templates",
+    "sandbox_fixtures",
+    "security_controls",
+    "compliance_guides",
+    "pricing_research",
+    "market_research",
+    "competitor_research",
+    "customer_personas",
+    "sales_scripts",
+    "onboarding_guides",
+    "support_playbooks",
+    "workflow_examples",
+    "automation_patterns",
+    "webhook_patterns",
+    "testing_patterns",
+    "benchmark_datasets",
+    "observability_metrics",
+]
+
+
+def resource_starter_kit(bot: dict[str, Any]) -> list[dict[str, Any]]:
+    """Return 100 starter resources personalized to one bot."""
+    slug = bot["slug"]
+    division = bot["division"]
+    resources: list[dict[str, Any]] = []
+    for index in range(100):
+        category = RESOURCE_CATEGORIES[index % len(RESOURCE_CATEGORIES)]
+        resources.append(
+            {
+                "id": f"{slug}:resource:{index + 1:03d}",
+                "rank": index + 1,
+                "category": category,
+                "title": f"{bot['name']} {category.replace('_', ' ').title()} Resource {index + 1:03d}",
+                "purpose": (
+                    f"Seed {bot['name']} with {category.replace('_', ' ')} evidence, examples, "
+                    f"and reusable patterns for {division} work."
+                ),
+                "source_policy": "prefer_official_or_owner_approved_sources",
+                "refresh_cadence": "weekly_review",
+                "approval_required_for_live_use": category in {
+                    "pricing_research",
+                    "market_research",
+                    "competitor_research",
+                    "sales_scripts",
+                    "automation_patterns",
+                    "webhook_patterns",
+                },
+                "learning_prompt": (
+                    f"Compare this resource against {bot['name']}'s latest tests, client goals, "
+                    "and sandbox evidence before recommending a live action."
+                ),
+            }
+        )
+    return resources
 
 BUILDERS = [
     {
@@ -64,7 +129,7 @@ BUILDERS = [
             "id": f"{name}-builder",
             "name": spec["factory"],
             "icon": spec["icon"],
-            "outputs": [name[:-1] if name.endswith("s") else name, "schema", "tests", "documentation"],
+            "outputs": ["sandbox" if name == "sandboxes" else name[:-1] if name.endswith("s") else name, "schema", "tests", "documentation"],
             "approval": "pull_request_required",
         }
         for name, spec in LIBRARY_SPECS.items()
@@ -96,6 +161,32 @@ def _bot_entry(bot: dict[str, Any], library: str) -> dict[str, Any]:
                 {"method": "POST", "path": "/execute", "approval_required": True},
             ],
             "controls": ["authenticated", "schema_validated", "rate_limited", "retry_after_aware", "audited"],
+            "sandbox_test_profile": {
+                "name": f"{slug}-api-topline-sandbox",
+                "network": "mocked_by_default",
+                "secrets": "test_values_only",
+                "money_movement": "disabled",
+                "coverage_goal": "status_capabilities_execute_contracts",
+                "required_checks": [
+                    "openapi_schema_validation",
+                    "request_response_contracts",
+                    "auth_required_for_mutations",
+                    "rate_limit_and_retry_after",
+                    "idempotency_key_behavior",
+                    "permission_denied_negative_tests",
+                    "malformed_payload_rejection",
+                    "timeout_and_circuit_breaker",
+                    "audit_log_assertions",
+                    "no_external_side_effects",
+                ],
+                "fixtures": [
+                    "happy_path_goal",
+                    "missing_required_field",
+                    "unauthorized_execute",
+                    "rate_limit_window",
+                    "approval_required_action",
+                ],
+            },
         }
     if library == "webhooks":
         return {
@@ -135,6 +226,22 @@ def _bot_entry(bot: dict[str, Any], library: str) -> dict[str, Any]:
             "secrets": "test_values_only",
             "money_movement": "disabled",
             "checks": ["deterministic_fixtures", "resource_limits", "timeout", "output_validation", "cleanup"],
+            "api_contract_sandbox": f"{slug}-api-topline-sandbox",
+        }
+    if library == "resources":
+        return {
+            **common,
+            "library_builder": f"{slug}-resource-library-builder",
+            "resource_count": 100,
+            "resource_categories": RESOURCE_CATEGORIES,
+            "resources": resource_starter_kit(bot),
+            "controls": [
+                "source_attribution_required",
+                "owner_approved_live_sources",
+                "refresh_cadence_tracked",
+                "client_safe_summary_required",
+                "sandbox_evidence_before_live_use",
+            ],
         }
     return {
         **common,
@@ -187,6 +294,7 @@ def build_outputs(registry: dict[str, Any]) -> dict[Path, dict[str, Any]]:
             "bots_with_workflows": len(bots),
             "bots_with_skills": len(bots),
             "bots_with_sandboxes": len(bots),
+            "bots_with_resources": len(bots),
         },
         "security_baseline": {
             "github_actions": [
@@ -229,13 +337,13 @@ def main() -> int:
             for path in stale:
                 print(f" - {path}")
             return 1
-        print(f"All six libraries cover {len(registry['bots'])} bots.")
+        print(f"All {len(LIBRARY_SPECS)} libraries cover {len(registry['bots'])} bots.")
         return 0
 
     OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
     for path, payload in outputs.items():
         path.write_text(json.dumps(payload, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
-    print(f"Generated six system libraries for {len(registry['bots'])} bots.")
+    print(f"Generated {len(LIBRARY_SPECS)} system libraries for {len(registry['bots'])} bots.")
     return 0
 
 

@@ -10,15 +10,17 @@ const FALLBACK_BUILDERS = [
   { id: 'workflows-builder', name: 'Workflow Builder', icon: '🔁', outputs: ['workflow', 'schema', 'tests', 'documentation'], approval: 'pull_request_required' },
   { id: 'skills-builder', name: 'Skill Builder', icon: '🧠', outputs: ['skill', 'schema', 'tests', 'documentation'], approval: 'pull_request_required' },
   { id: 'sandboxes-builder', name: 'Sandbox Builder', icon: '🧪', outputs: ['sandbox', 'schema', 'tests', 'documentation'], approval: 'pull_request_required' },
+  { id: 'resources-builder', name: 'Resource Library Builder', icon: '📚', outputs: ['resource', 'schema', 'tests', 'documentation'], approval: 'pull_request_required' },
 ];
 
 const FALLBACK_LIBRARIES = [
-  { id: 'tools', name: 'Tools Library', icon: '🔧', count: 1247, description: 'Typed, permission-aware tools with tests and audit metadata.' },
-  { id: 'apis', name: 'Apis Library', icon: '🔌', count: 1247, description: 'Versioned per-bot APIs with schemas, rate limits, and approval gates.' },
-  { id: 'webhooks', name: 'Webhooks Library', icon: '🪝', count: 1247, description: 'Signed, idempotent per-bot event contracts with queued processing.' },
-  { id: 'workflows', name: 'Workflows Library', icon: '🔁', count: 1247, description: 'Reusable validation and delivery workflows with least privilege.' },
-  { id: 'skills', name: 'Skills Library', icon: '🧠', count: 1247, description: 'Versioned multi-step skills with evidence and tests.' },
-  { id: 'sandboxes', name: 'Sandboxes Library', icon: '🧪', count: 1247, description: 'Isolated test environments with fixtures, limits, and no live money movement.' },
+  { id: 'tools', name: 'Tools Library', icon: '🔧', count: 1248, description: 'Typed, permission-aware tools with tests and audit metadata.' },
+  { id: 'apis', name: 'Apis Library', icon: '🔌', count: 1248, description: 'Versioned per-bot APIs with schemas, rate limits, and approval gates.' },
+  { id: 'webhooks', name: 'Webhooks Library', icon: '🪝', count: 1248, description: 'Signed, idempotent per-bot event contracts with queued processing.' },
+  { id: 'workflows', name: 'Workflows Library', icon: '🔁', count: 1248, description: 'Reusable validation and delivery workflows with least privilege.' },
+  { id: 'skills', name: 'Skills Library', icon: '🧠', count: 1248, description: 'Versioned multi-step skills with evidence and tests.' },
+  { id: 'sandboxes', name: 'Sandboxes Library', icon: '🧪', count: 1248, description: 'Isolated test environments with fixtures, limits, and no live money movement.' },
+  { id: 'resources', name: 'Resources Library', icon: '📚', count: 1248, description: 'Per-bot starter kits with 100 curated resource slots and learning prompts.' },
 ];
 
 const FALLBACK_BUDDY_INVENTORY = {

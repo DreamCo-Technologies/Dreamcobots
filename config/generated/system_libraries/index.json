@@ -85,7 +85,19 @@
       "name": "Sandbox Builder",
       "icon": "🧪",
       "outputs": [
-        "sandboxe",
+        "sandbox",
+        "schema",
+        "tests",
+        "documentation"
+      ],
+      "approval": "pull_request_required"
+    },
+    {
+      "id": "resources-builder",
+      "name": "Resource Library Builder",
+      "icon": "📚",
+      "outputs": [
+        "resource",
         "schema",
         "tests",
         "documentation"
@@ -141,6 +153,14 @@
       "count": 1248,
       "description": "Isolated test environments with fixtures, limits, and no live money movement.",
       "path": "config/generated/system_libraries/sandboxes.json"
+    },
+    {
+      "id": "resources",
+      "name": "Resources Library",
+      "icon": "📚",
+      "count": 1248,
+      "description": "Per-bot starter library with 100 curated resource slots, evidence sources, and learning prompts.",
+      "path": "config/generated/system_libraries/resources.json"
     }
   ],
   "coverage": {
@@ -149,7 +169,8 @@
     "bots_with_webhooks": 1248,
     "bots_with_workflows": 1248,
     "bots_with_skills": 1248,
-    "bots_with_sandboxes": 1248
+    "bots_with_sandboxes": 1248,
+    "bots_with_resources": 1248
   },
   "security_baseline": {
     "github_actions": [

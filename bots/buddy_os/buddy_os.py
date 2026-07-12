@@ -216,10 +216,32 @@ class BuddyOS:
 
         # Pre-load built-in browser tools
         self.browser.add_tool(
-            "DreamCo Dashboard", "https://dreamcobots.com/dashboard", "Main control panel"
+            "DreamCo Dashboard",
+            "https://dreamcobots.com/dashboard",
+            "Main control panel",
+            resource_library_id="dreamco-dashboard",
+            approval_required=False,
         )
         self.browser.add_tool(
-            "Bot Marketplace", "https://dreamcobots.com/marketplace", "Browse and buy bots"
+            "Bot Marketplace",
+            "https://dreamcobots.com/marketplace",
+            "Browse and buy bots",
+            resource_library_id="bot-marketplace",
+            approval_required=False,
+        )
+        self.browser.add_tool(
+            "Bot Resource Library",
+            "https://dreamcobots.com/resources",
+            "Per-bot 100-resource starter kits and learning sources",
+            sandbox_profile="resource_discovery_sandbox",
+            resource_library_id="per-bot-resources",
+        )
+        self.browser.add_tool(
+            "API Sandbox Lab",
+            "https://dreamcobots.com/sandbox/api",
+            "Top-line API contract tests before live integrations",
+            sandbox_profile="api_contract_sandbox",
+            resource_library_id="api-sandbox-library",
         )
 
         self._boot_log.append("Default browser tools loaded.")
@@ -325,6 +347,38 @@ class BuddyOS:
                 "installed_bots": len(self.deployment.list_installed_bots()),
             },
             "features": self.config.features,
+        }
+
+    def system_manifest(self) -> dict:
+        """Return dashboard-ready OS, browser, resource, and sandbox metadata."""
+        return {
+            "name": "Buddy OS",
+            "version": "2.0",
+            "purpose": "Unified operating layer for bot workspaces, browser tools, device control, sandbox testing, and client demos.",
+            "browser": self.browser.productivity_manifest(),
+            "resource_library_system": {
+                "starter_resources_per_bot": 100,
+                "library": "config/generated/system_libraries/resources.json",
+                "builder": "Resource Library Builder",
+                "refresh_policy": "weekly_review_with_owner_approved_sources",
+            },
+            "api_sandbox_system": {
+                "profile": "topline per-bot API contract sandbox",
+                "required_checks": [
+                    "openapi_schema_validation",
+                    "auth_required_for_mutations",
+                    "rate_limit_and_retry_after",
+                    "idempotency_key_behavior",
+                    "audit_log_assertions",
+                    "no_external_side_effects",
+                ],
+            },
+            "trust_controls": [
+                "client_safe_browser_mode",
+                "human_approval_checkpoints",
+                "sandbox_before_external_actions",
+                "audit_log_required",
+            ],
         }
 
     # ------------------------------------------------------------------
