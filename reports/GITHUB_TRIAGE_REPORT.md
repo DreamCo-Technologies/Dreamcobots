@@ -1,6 +1,6 @@
 # GitHub Triage Report
 
-Generated: 2026-07-13T07:46:24.481513+00:00
+Generated: 2026-07-13T11:34:50.158731+00:00
 Repository: `DreamCo-Technologies/Dreamcobots`
 
 ## Summary
@@ -10,7 +10,7 @@ Repository: `DreamCo-Technologies/Dreamcobots`
 - **Issue Comments Scanned**: 100
 - **Pr Review Comments Scanned**: 100
 - **Workflow Runs Scanned**: 50
-- **Failed Workflow Runs**: 24
+- **Failed Workflow Runs**: 19
 - **Active Workflow Runs**: 1
 - **Pr Restart Queue**: 47
 
@@ -46,7 +46,7 @@ Repository: `DreamCo-Technologies/Dreamcobots`
 - #126 `copilot/implement-auto-recovery-mechanism` — Add CI auto-recovery mechanism for failed workflow tests (114 days old): stale_pr_needs_rebase_or_retest
 - #44 `copilot/integrate-bots-across-sectors` — Integrate sector bots across Dreamcobots platform with BuddyAI orchestration layer (106 days old): stale_pr_needs_rebase_or_retest
 - #11 `copilot/integrate-legacy platform-files` — Integrate legacy platform-specific files and fix local bot execution (104 days old): stale_pr_needs_rebase_or_retest
-- #47 `copilot/optimize-mining-bot` — Add adaptive Mining Bot with multi-strategy engine, analytics, monitoring, fraud detection, and multi-exchange routing (103 days old): stale_pr_needs_rebase_or_retest, draft_pr_needs_ready_review
+- #47 `copilot/optimize-mining-bot` — Add adaptive Mining Bot with multi-strategy engine, analytics, monitoring, fraud detection, and multi-exchange routing (104 days old): stale_pr_needs_rebase_or_retest, draft_pr_needs_ready_review
 - #58 `copilot/merge-open-pull-requests` — Merge all open PRs into unified branch with conflict resolution (103 days old): stale_pr_needs_rebase_or_retest
 - #56 `copilot/merge-features-and-bots` — Consolidate all open PRs into unified Dreamcobots bot ecosystem (102 days old): stale_pr_needs_rebase_or_retest
 - #23 `copilot/build-bots-for-all-categories` — Build 66 category bots (OOH Occupational, Mobile App, Business/Industry) connected to Buddy (92 days old): stale_pr_needs_rebase_or_retest
@@ -59,6 +59,11 @@ Repository: `DreamCo-Technologies/Dreamcobots`
 
 ## Failed Workflow Runs
 
+- System and Bot Builds Monitoring on `main` — failure (2026-07-13T10:21:32Z)
+- 🪐 Command Tower — Empire Dashboard on `main` — failure (2026-07-13T10:34:23Z)
+- DreamCo Continuous Self-Build Audit on `main` — failure (2026-07-13T08:59:38Z)
+- 🪐 Command Tower — Empire Dashboard on `main` — failure (2026-07-13T09:00:38Z)
+- Timed Monitoring System on `main` — failure (2026-07-13T08:43:59Z)
 - System and Bot Builds Monitoring on `main` — failure (2026-07-13T06:12:31Z)
 - 🪐 Command Tower — Empire Dashboard on `main` — failure (2026-07-13T06:24:42Z)
 - System and Bot Builds Monitoring on `main` — failure (2026-07-13T02:26:25Z)
@@ -73,16 +78,6 @@ Repository: `DreamCo-Technologies/Dreamcobots`
 - 🪐 Command Tower — Empire Dashboard on `main` — failure (2026-07-12T22:55:52Z)
 - System and Bot Builds Monitoring on `main` — failure (2026-07-12T21:44:18Z)
 - 🪐 Command Tower — Empire Dashboard on `main` — failure (2026-07-12T21:57:00Z)
-- System and Bot Builds Monitoring on `main` — failure (2026-07-12T20:40:28Z)
-- Actions Page - GitHub Pages on `codex/bot-test-dashboard` — failure (2026-07-12T20:33:20Z)
-- .github/workflows/workflow-map.yml on `codex/bot-test-dashboard` — failure (2026-07-12T20:31:46Z)
-- .github/workflows/integration_lookup.yml on `codex/bot-test-dashboard` — failure (2026-07-12T20:31:45Z)
-- Actions Page - GitHub Pages on `codex/bot-test-dashboard` — failure (2026-07-12T20:15:42Z)
-- .github/workflows/workflow-map.yml on `codex/bot-test-dashboard` — failure (2026-07-12T20:14:09Z)
-- .github/workflows/integration_lookup.yml on `codex/bot-test-dashboard` — failure (2026-07-12T20:14:09Z)
-- Actions Page - GitHub Pages on `codex/bot-test-dashboard` — failure (2026-07-12T20:10:14Z)
-- .github/workflows/workflow-map.yml on `codex/bot-test-dashboard` — failure (2026-07-12T20:07:30Z)
-- .github/workflows/integration_lookup.yml on `codex/bot-test-dashboard` — failure (2026-07-12T20:07:29Z)
 
 ## Open Issues
 
