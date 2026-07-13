@@ -1,6 +1,6 @@
 # GitHub Triage Report
 
-Generated: 2026-07-13T04:07:04.743601+00:00
+Generated: 2026-07-13T07:46:24.481513+00:00
 Repository: `DreamCo-Technologies/Dreamcobots`
 
 ## Summary
@@ -10,8 +10,8 @@ Repository: `DreamCo-Technologies/Dreamcobots`
 - **Issue Comments Scanned**: 100
 - **Pr Review Comments Scanned**: 100
 - **Workflow Runs Scanned**: 50
-- **Failed Workflow Runs**: 28
-- **Active Workflow Runs**: 2
+- **Failed Workflow Runs**: 24
+- **Active Workflow Runs**: 1
 - **Pr Restart Queue**: 47
 
 ## PR Restart Queue
@@ -49,16 +49,18 @@ Repository: `DreamCo-Technologies/Dreamcobots`
 - #47 `copilot/optimize-mining-bot` — Add adaptive Mining Bot with multi-strategy engine, analytics, monitoring, fraud detection, and multi-exchange routing (103 days old): stale_pr_needs_rebase_or_retest, draft_pr_needs_ready_review
 - #58 `copilot/merge-open-pull-requests` — Merge all open PRs into unified branch with conflict resolution (103 days old): stale_pr_needs_rebase_or_retest
 - #56 `copilot/merge-features-and-bots` — Consolidate all open PRs into unified Dreamcobots bot ecosystem (102 days old): stale_pr_needs_rebase_or_retest
-- #23 `copilot/build-bots-for-all-categories` — Build 66 category bots (OOH Occupational, Mobile App, Business/Industry) connected to Buddy (91 days old): stale_pr_needs_rebase_or_retest
-- #26 `copilot/build-saas-selling-bot` — Add autonomous SaaS Selling Bot with 200 free tools, REST API, AI recommendations, and subscription monetisation (91 days old): stale_pr_needs_rebase_or_retest
-- #31 `copilot/add-buddy-saas-bot` — Implement Buddy SaaS bot MVP in BuddyAI package (91 days old): stale_pr_needs_rebase_or_retest
-- #32 `copilot/optimize-ci-workflow-dreamcobots` — Optimize CI workflow: parallelization, caching, responsiveness benchmarks, incremental testing, and perf alerts (91 days old): stale_pr_needs_rebase_or_retest
-- #33 `copilot/create-government-contract-bot` — Add Government Contract & Grant Bot with full pipeline, config, and docs (91 days old): stale_pr_needs_rebase_or_retest
-- #34 `copilot/implement-residual-income-bot` — feat(BuddyAI): Implement autonomous residual income tracking & optimization bot (91 days old): stale_pr_needs_rebase_or_retest
-- #35 `copilot/develop-chatbot-resource-checker` — Add 211 Resource & Eligibility Checker Bot (91 days old): stale_pr_needs_rebase_or_retest
+- #23 `copilot/build-bots-for-all-categories` — Build 66 category bots (OOH Occupational, Mobile App, Business/Industry) connected to Buddy (92 days old): stale_pr_needs_rebase_or_retest
+- #26 `copilot/build-saas-selling-bot` — Add autonomous SaaS Selling Bot with 200 free tools, REST API, AI recommendations, and subscription monetisation (92 days old): stale_pr_needs_rebase_or_retest
+- #31 `copilot/add-buddy-saas-bot` — Implement Buddy SaaS bot MVP in BuddyAI package (92 days old): stale_pr_needs_rebase_or_retest
+- #32 `copilot/optimize-ci-workflow-dreamcobots` — Optimize CI workflow: parallelization, caching, responsiveness benchmarks, incremental testing, and perf alerts (92 days old): stale_pr_needs_rebase_or_retest
+- #33 `copilot/create-government-contract-bot` — Add Government Contract & Grant Bot with full pipeline, config, and docs (92 days old): stale_pr_needs_rebase_or_retest
+- #34 `copilot/implement-residual-income-bot` — feat(BuddyAI): Implement autonomous residual income tracking & optimization bot (92 days old): stale_pr_needs_rebase_or_retest
+- #35 `copilot/develop-chatbot-resource-checker` — Add 211 Resource & Eligibility Checker Bot (92 days old): stale_pr_needs_rebase_or_retest
 
 ## Failed Workflow Runs
 
+- System and Bot Builds Monitoring on `main` — failure (2026-07-13T06:12:31Z)
+- 🪐 Command Tower — Empire Dashboard on `main` — failure (2026-07-13T06:24:42Z)
 - System and Bot Builds Monitoring on `main` — failure (2026-07-13T02:26:25Z)
 - 24hour System Builder, Debugger, and Revenue Generator on `main` — failure (2026-07-13T02:24:37Z)
 - 🪐 Command Tower — Empire Dashboard on `main` — failure (2026-07-13T02:24:44Z)
@@ -81,9 +83,6 @@ Repository: `DreamCo-Technologies/Dreamcobots`
 - Actions Page - GitHub Pages on `codex/bot-test-dashboard` — failure (2026-07-12T20:10:14Z)
 - .github/workflows/workflow-map.yml on `codex/bot-test-dashboard` — failure (2026-07-12T20:07:30Z)
 - .github/workflows/integration_lookup.yml on `codex/bot-test-dashboard` — failure (2026-07-12T20:07:29Z)
-- 🪐 Command Tower — Empire Dashboard on `main` — failure (2026-07-12T20:20:32Z)
-- Actions Page - GitHub Pages on `codex/bot-test-dashboard` — failure (2026-07-12T20:06:54Z)
-- .github/workflows/workflow-map.yml on `codex/bot-test-dashboard` — failure (2026-07-12T20:05:17Z)
 
 ## Open Issues
 
