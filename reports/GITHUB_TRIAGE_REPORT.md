@@ -1,6 +1,6 @@
 # GitHub Triage Report
 
-Generated: 2026-07-13T18:15:11.416132+00:00
+Generated: 2026-07-13T21:26:03.320371+00:00
 Repository: `DreamCo-Technologies/Dreamcobots`
 
 ## Summary
@@ -10,7 +10,7 @@ Repository: `DreamCo-Technologies/Dreamcobots`
 - **Issue Comments Scanned**: 100
 - **Pr Review Comments Scanned**: 100
 - **Workflow Runs Scanned**: 50
-- **Failed Workflow Runs**: 14
+- **Failed Workflow Runs**: 17
 - **Active Workflow Runs**: 1
 - **Pr Restart Queue**: 47
 
@@ -25,8 +25,8 @@ Repository: `DreamCo-Technologies/Dreamcobots`
 - #20 `copilot/enhance-dreamcobots-features` — Add commands, device communication, content modules, and cross-platform rendering to Dreamcobots (128 days old): stale_pr_needs_rebase_or_retest
 - #42 `copilot/develop-creator-empire-bot` — Add CreatorEmpire bot — Phase 1 creator economy engine (128 days old): stale_pr_needs_rebase_or_retest, draft_pr_needs_ready_review
 - #43 `copilot/standardize-bot-format-and-integration` — Standardize bot format, implement missing category bots, and add BuddyAI integration core (128 days old): stale_pr_needs_rebase_or_retest, draft_pr_needs_ready_review
+- #9 `copilot/fix-bot-files-issue` — Add debug.py utility module and wire debug mode into government contract bot (126 days old): stale_pr_needs_rebase_or_retest
 - #49 `copilot/integrate-discount-dominator-settings` — Add Discount Dominator settings (401–600) and retail intelligence interoperability modules (126 days old): stale_pr_needs_rebase_or_retest
-- #9 `copilot/fix-bot-files-issue` — Add debug.py utility module and wire debug mode into government contract bot (125 days old): stale_pr_needs_rebase_or_retest
 - #10 `copilot/finish-pending-tasks` — Implement all pending Dreamcobots bot features, examples, stress test, and tests (125 days old): stale_pr_needs_rebase_or_retest
 - #16 `copilot/implement-dataforge-ai-bot` — Add DataForge AI Bot — autonomous dataset generation, packaging, licensing, and selling engine (125 days old): stale_pr_needs_rebase_or_retest
 - #18 `copilot/finish-dreamco-bots` — Implement DreamCo Phase 1: FiverrBot, LeadGenBot, shared core, FastAPI backend, Docker, and CI (125 days old): stale_pr_needs_rebase_or_retest
@@ -36,15 +36,15 @@ Repository: `DreamCo-Technologies/Dreamcobots`
 - #25 `copilot/add-login-application-bot` — Add job-application-bot: multi-site login, resume parsing, and Selenium-based application submission (125 days old): stale_pr_needs_rebase_or_retest
 - #45 `copilot/develop-ai-bot-app-store` — Add 10 tier-aware AI bot packages for DreamCo Bot App Store (125 days old): stale_pr_needs_rebase_or_retest
 - #57 `copilot/merge-all-open-pull-requests` — Merge all open PRs into unified Dreamcobots bot ecosystem (125 days old): stale_pr_needs_rebase_or_retest, draft_pr_needs_ready_review
+- #65 `copilot/add-foundational-components-ai-level-up-bot` — Add foundational AI Level-Up Bot modules to DreamCoBots (117 days old): stale_pr_needs_rebase_or_retest
 - #69 `copilot/optimize-testing-and-performance` — Stabilize CI, fix cross-test sys.modules pollution, and add bot scaffold tooling (117 days old): stale_pr_needs_rebase_or_retest
-- #65 `copilot/add-foundational-components-ai-level-up-bot` — Add foundational AI Level-Up Bot modules to DreamCoBots (116 days old): stale_pr_needs_rebase_or_retest
-- #72 `copilot/add-comprehensive-job-title-integration` — Add comprehensive job title integration: AI workforce platform with autonomous training (116 days old): stale_pr_needs_rebase_or_retest
+- #72 `copilot/add-comprehensive-job-title-integration` — Add comprehensive job title integration: AI workforce platform with autonomous training (117 days old): stale_pr_needs_rebase_or_retest
 - #104 `copilot/enhance-dreamcobots-for-deployment` — [WIP] Enhance and finalize bots for Dreamcobots project (115 days old): stale_pr_needs_rebase_or_retest
+- #113 `copilot/add-foundational-files-for-self-building-system` — Add foundational self-building system: main.py, controller.py, generator.py, learning_loop.py (115 days old): stale_pr_needs_rebase_or_retest
 - #118 `copilot/replace-random-ai-with-decision-logic` — Add weighted decision engine and repository activity tracker (115 days old): stale_pr_needs_rebase_or_retest
-- #113 `copilot/add-foundational-files-for-self-building-system` — Add foundational self-building system: main.py, controller.py, generator.py, learning_loop.py (114 days old): stale_pr_needs_rebase_or_retest
 - #125 `copilot/resolve-ci-pipeline-conflicts` — Resolve PR#69: fix sys.modules cross-test pollution, add bot skeleton generator, drop Python 3.8 (114 days old): stale_pr_needs_rebase_or_retest
 - #126 `copilot/implement-auto-recovery-mechanism` — Add CI auto-recovery mechanism for failed workflow tests (114 days old): stale_pr_needs_rebase_or_retest
-- #44 `copilot/integrate-bots-across-sectors` — Integrate sector bots across Dreamcobots platform with BuddyAI orchestration layer (106 days old): stale_pr_needs_rebase_or_retest
+- #44 `copilot/integrate-bots-across-sectors` — Integrate sector bots across Dreamcobots platform with BuddyAI orchestration layer (107 days old): stale_pr_needs_rebase_or_retest
 - #11 `copilot/integrate-legacy platform-files` — Integrate legacy platform-specific files and fix local bot execution (104 days old): stale_pr_needs_rebase_or_retest
 - #47 `copilot/optimize-mining-bot` — Add adaptive Mining Bot with multi-strategy engine, analytics, monitoring, fraud detection, and multi-exchange routing (104 days old): stale_pr_needs_rebase_or_retest, draft_pr_needs_ready_review
 - #58 `copilot/merge-open-pull-requests` — Merge all open PRs into unified branch with conflict resolution (104 days old): stale_pr_needs_rebase_or_retest
@@ -59,6 +59,13 @@ Repository: `DreamCo-Technologies/Dreamcobots`
 
 ## Failed Workflow Runs
 
+- System and Bot Builds Monitoring on `main` — failure (2026-07-13T20:11:21Z)
+- 🪐 Command Tower — Empire Dashboard on `main` — failure (2026-07-13T20:24:18Z)
+- DreamCo Continuous Self-Build Audit on `main` — failure (2026-07-13T19:20:21Z)
+- 🪐 Command Tower — Empire Dashboard on `main` — failure (2026-07-13T19:24:53Z)
+- Timed Monitoring System on `main` — failure (2026-07-13T19:09:12Z)
+- System and Bot Builds Monitoring on `main` — failure (2026-07-13T18:40:56Z)
+- 🪐 Command Tower — Empire Dashboard on `main` — failure (2026-07-13T18:44:50Z)
 - System and Bot Builds Monitoring on `main` — failure (2026-07-13T16:28:44Z)
 - 🪐 Command Tower — Empire Dashboard on `main` — failure (2026-07-13T16:42:23Z)
 - DreamCo Continuous Self-Build Audit on `main` — failure (2026-07-13T14:18:38Z)
@@ -69,10 +76,6 @@ Repository: `DreamCo-Technologies/Dreamcobots`
 - System and Bot Builds Monitoring on `main` — failure (2026-07-13T10:21:32Z)
 - 🪐 Command Tower — Empire Dashboard on `main` — failure (2026-07-13T10:34:23Z)
 - DreamCo Continuous Self-Build Audit on `main` — failure (2026-07-13T08:59:38Z)
-- 🪐 Command Tower — Empire Dashboard on `main` — failure (2026-07-13T09:00:38Z)
-- Timed Monitoring System on `main` — failure (2026-07-13T08:43:59Z)
-- System and Bot Builds Monitoring on `main` — failure (2026-07-13T06:12:31Z)
-- 🪐 Command Tower — Empire Dashboard on `main` — failure (2026-07-13T06:24:42Z)
 
 ## Open Issues
 
