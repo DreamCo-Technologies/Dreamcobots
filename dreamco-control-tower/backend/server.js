@@ -45,6 +45,10 @@ const STRIPE_REVENUE_RESCUE_REPORT_FILE = path.join(
   __dirname,
   '../../reports/stripe_revenue_rescue_report.json',
 );
+const BUDDY_BOT_CONNECTION_REPORT_FILE = path.join(
+  __dirname,
+  '../../reports/buddy_bot_connection_report.json',
+);
 const COMMAND_CENTER_FILE = path.join(__dirname, '../config/command_center.json');
 const PRODUCTION_MEDIA_ROADMAP_FILE = path.join(
   __dirname,
@@ -177,6 +181,13 @@ function readStripeRevenueRescueReport() {
     return null;
   }
   return JSON.parse(fs.readFileSync(STRIPE_REVENUE_RESCUE_REPORT_FILE, 'utf8'));
+}
+
+function readBuddyBotConnectionReport() {
+  if (!fs.existsSync(BUDDY_BOT_CONNECTION_REPORT_FILE)) {
+    return null;
+  }
+  return JSON.parse(fs.readFileSync(BUDDY_BOT_CONNECTION_REPORT_FILE, 'utf8'));
 }
 
 function readBuddyOpsQueue() {
@@ -586,6 +597,17 @@ app.get('/api/stripe-revenue-rescue', rateLimiter, (_req, res) => {
   const report = readStripeRevenueRescueReport();
   if (!report) {
     return res.status(503).json({ error: 'stripe revenue rescue report not found' });
+  }
+  return res.json(report);
+});
+
+// ---------------------------------------------------------------------------
+// GET /api/buddy-bot-connections — all-bot Buddy routing/test/resource proof
+// ---------------------------------------------------------------------------
+app.get('/api/buddy-bot-connections', rateLimiter, (_req, res) => {
+  const report = readBuddyBotConnectionReport();
+  if (!report) {
+    return res.status(503).json({ error: 'buddy bot connection report not found' });
   }
   return res.json(report);
 });

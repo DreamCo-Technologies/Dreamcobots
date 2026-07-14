@@ -283,6 +283,24 @@ const buddyOpsPayload = {
   ],
 };
 
+const buddyBotConnectionsPayload = {
+  schema: 'dreamco.buddy_bot_connection_guard.v1',
+  generated_at: '2026-07-14T00:00:00Z',
+  summary: {
+    all_bots_connected_to_buddy: true,
+    all_bots_testable_from_actions_page: true,
+    all_bots_have_custom_resources: true,
+    all_bots_ready: true,
+    bot_count: 1248,
+    buddy_connected_bots: 1248,
+    actions_page_testable_bots: 1248,
+    custom_resource_ready_bots: 1248,
+    failed_bots: 0,
+    resources_per_bot_required: 100,
+  },
+  failures: [],
+};
+
 const buddyPromptResponse = {
   packet: {
     id: 'buddy-op-test',
@@ -315,6 +333,7 @@ beforeEach(() => {
     if (url === '/api/storage-guard') payload = storageGuardPayload;
     if (url === '/api/stripe-revenue-rescue') payload = stripeRevenueRescuePayload;
     if (url === '/api/buddy-ops') payload = buddyOpsPayload;
+    if (url === '/api/buddy-bot-connections') payload = buddyBotConnectionsPayload;
     return Promise.resolve({
       ok: true,
       json: async () => payload,
@@ -369,6 +388,9 @@ describe('ActionsPage', () => {
     expect(screen.getByText('Builder lanes')).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: '🤝 Buddy capability tracker' })).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: '🧪 Buddy and bot test catalog' })).toBeInTheDocument();
+    await waitFor(() => expect(screen.getByText('Buddy all-bot connection proof')).toBeInTheDocument());
+    expect(screen.getByText('Actions-testable')).toBeInTheDocument();
+    expect(screen.getByText('Resources per bot')).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: 'Always-clean PR, issue, and code-quality steward' })).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: 'Fix why connected Stripe is making no money' })).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: '💾 Future-proof bot memory' })).toBeInTheDocument();

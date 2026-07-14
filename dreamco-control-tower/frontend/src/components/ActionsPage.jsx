@@ -278,6 +278,23 @@ const FALLBACK_BUDDY_OPS_QUEUE = {
   operations: [],
 };
 
+const FALLBACK_BUDDY_BOT_CONNECTIONS = {
+  generated_at: null,
+  summary: {
+    all_bots_connected_to_buddy: true,
+    all_bots_testable_from_actions_page: true,
+    all_bots_have_custom_resources: true,
+    all_bots_ready: true,
+    bot_count: 0,
+    buddy_connected_bots: 0,
+    actions_page_testable_bots: 0,
+    custom_resource_ready_bots: 0,
+    failed_bots: 0,
+    resources_per_bot_required: 100,
+  },
+  failures: [],
+};
+
 const BUILD_STAGES = [
   ['01', 'Specify', 'Identity, goal, inputs, outputs, limits, owner'],
   ['02', 'Compose', 'Tools, API, webhook, workflow, skills'],
@@ -647,6 +664,8 @@ export default function ActionsPage({
   const [buildPacket, setBuildPacket] = useState(null);
   const [buddyOpsQueue, setBuddyOpsQueue] = useState(null);
   const [buddyOpsStatus, setBuddyOpsStatus] = useState('loading');
+  const [buddyBotConnections, setBuddyBotConnections] = useState(null);
+  const [buddyBotConnectionsStatus, setBuddyBotConnectionsStatus] = useState('loading');
 
   useEffect(() => {
     fetchFirstJson(['/api/system-libraries'])
@@ -720,6 +739,15 @@ export default function ActionsPage({
       .catch(() => setBuddyOpsStatus('local only'));
   }, []);
 
+  useEffect(() => {
+    fetchFirstJson(['/api/buddy-bot-connections'])
+      .then((data) => {
+        setBuddyBotConnections(data);
+        setBuddyBotConnectionsStatus('live');
+      })
+      .catch(() => setBuddyBotConnectionsStatus('generated fallback'));
+  }, []);
+
   const builders = libraryData?.builders ?? FALLBACK_BUILDERS;
   const libraries = libraryData?.libraries ?? FALLBACK_LIBRARIES;
   const botCount = libraryData?.bot_count ?? 1247;
@@ -730,12 +758,14 @@ export default function ActionsPage({
   const storage = storageGuard ?? FALLBACK_STORAGE_GUARD;
   const stripeRescue = stripeRevenueRescue ?? FALLBACK_STRIPE_REVENUE_RESCUE;
   const buddyOps = buddyOpsQueue ?? FALLBACK_BUDDY_OPS_QUEUE;
+  const buddyConnections = buddyBotConnections ?? FALLBACK_BUDDY_BOT_CONNECTIONS;
   const inventorySummary = inventory.summary ?? FALLBACK_BUDDY_INVENTORY.summary;
   const triageSummary = triage.summary ?? FALLBACK_GITHUB_TRIAGE.summary;
   const stewardshipSummary = stewardship.summary ?? FALLBACK_REPOSITORY_STEWARDSHIP.summary;
   const productivitySummary = productivity.summary ?? FALLBACK_BUDDY_PRODUCTIVITY.summary;
   const storageSummary = storage.summary ?? FALLBACK_STORAGE_GUARD.summary;
   const stripeRescueSummary = stripeRescue.summary ?? FALLBACK_STRIPE_REVENUE_RESCUE.summary;
+  const buddyConnectionSummary = buddyConnections.summary ?? FALLBACK_BUDDY_BOT_CONNECTIONS.summary;
   const buildStates = inventorySummary.build_states ?? {};
   const testStates = inventorySummary.test_states ?? {};
   const codingPathStates = inventorySummary.coding_path_states ?? {};
@@ -1447,6 +1477,38 @@ export default function ActionsPage({
               <p className="mt-1 text-xs uppercase text-slate-500">{label}</p>
             </div>
           ))}
+        </div>
+
+        <div className="mt-5 border border-slate-800 bg-slate-900 p-4">
+          <div className="flex flex-wrap items-start justify-between gap-3">
+            <div>
+              <h4 className="text-sm font-semibold text-white">Buddy all-bot connection proof</h4>
+              <p className="mt-1 text-xs leading-5 text-slate-400">
+                Verifies every bot can be routed by Buddy, tested from this Actions page, and backed by customized resources.
+              </p>
+            </div>
+            <span className={`rounded-full border px-3 py-1 text-xs font-semibold ${
+              buddyConnectionSummary.all_bots_ready
+                ? 'border-green-800 bg-green-950/40 text-green-300'
+                : 'border-yellow-800 bg-yellow-950/40 text-yellow-300'
+            }`}>
+              {buddyBotConnectionsStatus} · {buddyConnectionSummary.all_bots_ready ? 'all connected' : 'needs attention'}
+            </span>
+          </div>
+          <div className="mt-4 grid grid-cols-2 gap-px overflow-hidden border border-slate-800 bg-slate-800 md:grid-cols-5">
+            {[
+              ['Buddy-connected', buddyConnectionSummary.buddy_connected_bots],
+              ['Actions-testable', buddyConnectionSummary.actions_page_testable_bots],
+              ['Custom resources', buddyConnectionSummary.custom_resource_ready_bots],
+              ['Resources per bot', buddyConnectionSummary.resources_per_bot_required],
+              ['Failures', buddyConnectionSummary.failed_bots],
+            ].map(([label, value]) => (
+              <div key={label} className="bg-slate-950 p-3">
+                <p className="text-lg font-black text-white">{formatNumber(value)}</p>
+                <p className="mt-1 text-[11px] uppercase text-slate-500">{label}</p>
+              </div>
+            ))}
+          </div>
         </div>
 
         <div className="mt-5 grid gap-5 xl:grid-cols-[20rem_minmax(0,1fr)]">

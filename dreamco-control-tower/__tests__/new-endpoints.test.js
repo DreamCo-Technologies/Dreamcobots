@@ -398,6 +398,20 @@ describe('GET /api/stripe-revenue-rescue', () => {
   });
 });
 
+describe('GET /api/buddy-bot-connections', () => {
+  test('returns all-bot Buddy routing, test, and resource coverage', async () => {
+    const res = await request(app).get('/api/buddy-bot-connections');
+
+    expect(res.status).toBe(200);
+    expect(res.body.schema).toBe('dreamco.buddy_bot_connection_guard.v1');
+    expect(res.body.summary.bot_count).toBeGreaterThanOrEqual(1248);
+    expect(res.body.summary.all_bots_connected_to_buddy).toBe(true);
+    expect(res.body.summary.all_bots_testable_from_actions_page).toBe(true);
+    expect(res.body.summary.all_bots_have_custom_resources).toBe(true);
+    expect(res.body.summary.failed_bots).toBe(0);
+  });
+});
+
 describe('Buddy operation prompt API', () => {
   test('returns the supervised operation queue', async () => {
     const res = await request(app).get('/api/buddy-ops');
