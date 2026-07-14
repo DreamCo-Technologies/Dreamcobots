@@ -1,6 +1,6 @@
 # GitHub Triage Report
 
-Generated: 2026-07-14T03:42:12.748009+00:00
+Generated: 2026-07-14T06:31:53.322402+00:00
 Repository: `DreamCo-Technologies/Dreamcobots`
 
 ## Summary
@@ -11,7 +11,7 @@ Repository: `DreamCo-Technologies/Dreamcobots`
 - **Pr Review Comments Scanned**: 100
 - **Workflow Runs Scanned**: 50
 - **Failed Workflow Runs**: 21
-- **Active Workflow Runs**: 2
+- **Active Workflow Runs**: 1
 - **Pr Restart Queue**: 47
 
 ## PR Restart Queue
@@ -49,16 +49,18 @@ Repository: `DreamCo-Technologies/Dreamcobots`
 - #47 `copilot/optimize-mining-bot` — Add adaptive Mining Bot with multi-strategy engine, analytics, monitoring, fraud detection, and multi-exchange routing (104 days old): stale_pr_needs_rebase_or_retest, draft_pr_needs_ready_review
 - #58 `copilot/merge-open-pull-requests` — Merge all open PRs into unified branch with conflict resolution (104 days old): stale_pr_needs_rebase_or_retest
 - #56 `copilot/merge-features-and-bots` — Consolidate all open PRs into unified Dreamcobots bot ecosystem (103 days old): stale_pr_needs_rebase_or_retest
-- #23 `copilot/build-bots-for-all-categories` — Build 66 category bots (OOH Occupational, Mobile App, Business/Industry) connected to Buddy (92 days old): stale_pr_needs_rebase_or_retest
-- #26 `copilot/build-saas-selling-bot` — Add autonomous SaaS Selling Bot with 200 free tools, REST API, AI recommendations, and subscription monetisation (92 days old): stale_pr_needs_rebase_or_retest
-- #31 `copilot/add-buddy-saas-bot` — Implement Buddy SaaS bot MVP in BuddyAI package (92 days old): stale_pr_needs_rebase_or_retest
-- #32 `copilot/optimize-ci-workflow-dreamcobots` — Optimize CI workflow: parallelization, caching, responsiveness benchmarks, incremental testing, and perf alerts (92 days old): stale_pr_needs_rebase_or_retest
-- #33 `copilot/create-government-contract-bot` — Add Government Contract & Grant Bot with full pipeline, config, and docs (92 days old): stale_pr_needs_rebase_or_retest
-- #34 `copilot/implement-residual-income-bot` — feat(BuddyAI): Implement autonomous residual income tracking & optimization bot (92 days old): stale_pr_needs_rebase_or_retest
-- #35 `copilot/develop-chatbot-resource-checker` — Add 211 Resource & Eligibility Checker Bot (92 days old): stale_pr_needs_rebase_or_retest
+- #23 `copilot/build-bots-for-all-categories` — Build 66 category bots (OOH Occupational, Mobile App, Business/Industry) connected to Buddy (93 days old): stale_pr_needs_rebase_or_retest
+- #26 `copilot/build-saas-selling-bot` — Add autonomous SaaS Selling Bot with 200 free tools, REST API, AI recommendations, and subscription monetisation (93 days old): stale_pr_needs_rebase_or_retest
+- #31 `copilot/add-buddy-saas-bot` — Implement Buddy SaaS bot MVP in BuddyAI package (93 days old): stale_pr_needs_rebase_or_retest
+- #32 `copilot/optimize-ci-workflow-dreamcobots` — Optimize CI workflow: parallelization, caching, responsiveness benchmarks, incremental testing, and perf alerts (93 days old): stale_pr_needs_rebase_or_retest
+- #33 `copilot/create-government-contract-bot` — Add Government Contract & Grant Bot with full pipeline, config, and docs (93 days old): stale_pr_needs_rebase_or_retest
+- #34 `copilot/implement-residual-income-bot` — feat(BuddyAI): Implement autonomous residual income tracking & optimization bot (93 days old): stale_pr_needs_rebase_or_retest
+- #35 `copilot/develop-chatbot-resource-checker` — Add 211 Resource & Eligibility Checker Bot (93 days old): stale_pr_needs_rebase_or_retest
 
 ## Failed Workflow Runs
 
+- System and Bot Builds Monitoring on `main` — failure (2026-07-14T05:25:40Z)
+- 🪐 Command Tower — Empire Dashboard on `main` — failure (2026-07-14T05:02:38Z)
 - System and Bot Builds Monitoring on `main` — failure (2026-07-14T02:06:03Z)
 - 24hour System Builder, Debugger, and Revenue Generator on `main` — failure (2026-07-14T02:03:59Z)
 - 🪐 Command Tower — Empire Dashboard on `main` — failure (2026-07-14T02:10:39Z)
@@ -78,8 +80,6 @@ Repository: `DreamCo-Technologies/Dreamcobots`
 - Timed Monitoring System on `main` — failure (2026-07-13T19:09:12Z)
 - System and Bot Builds Monitoring on `main` — failure (2026-07-13T18:40:56Z)
 - 🪐 Command Tower — Empire Dashboard on `main` — failure (2026-07-13T18:44:50Z)
-- System and Bot Builds Monitoring on `main` — failure (2026-07-13T16:28:44Z)
-- 🪐 Command Tower — Empire Dashboard on `main` — failure (2026-07-13T16:42:23Z)
 
 ## Open Issues
 
