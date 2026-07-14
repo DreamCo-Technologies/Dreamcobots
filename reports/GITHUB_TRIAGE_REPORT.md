@@ -1,6 +1,6 @@
 # GitHub Triage Report
 
-Generated: 2026-07-14T14:20:43.646996+00:00
+Generated: 2026-07-14T17:38:15.681837+00:00
 Repository: `DreamCo-Technologies/Dreamcobots`
 
 ## Summary
@@ -10,8 +10,8 @@ Repository: `DreamCo-Technologies/Dreamcobots`
 - **Issue Comments Scanned**: 100
 - **Pr Review Comments Scanned**: 100
 - **Workflow Runs Scanned**: 50
-- **Failed Workflow Runs**: 31
-- **Active Workflow Runs**: 2
+- **Failed Workflow Runs**: 26
+- **Active Workflow Runs**: 1
 - **Pr Restart Queue**: 47
 
 ## PR Restart Queue
@@ -40,8 +40,8 @@ Repository: `DreamCo-Technologies/Dreamcobots`
 - #65 `copilot/add-foundational-components-ai-level-up-bot` — Add foundational AI Level-Up Bot modules to DreamCoBots (117 days old): stale_pr_needs_rebase_or_retest
 - #72 `copilot/add-comprehensive-job-title-integration` — Add comprehensive job title integration: AI workforce platform with autonomous training (117 days old): stale_pr_needs_rebase_or_retest
 - #104 `copilot/enhance-dreamcobots-for-deployment` — [WIP] Enhance and finalize bots for Dreamcobots project (116 days old): stale_pr_needs_rebase_or_retest
+- #118 `copilot/replace-random-ai-with-decision-logic` — Add weighted decision engine and repository activity tracker (116 days old): stale_pr_needs_rebase_or_retest
 - #113 `copilot/add-foundational-files-for-self-building-system` — Add foundational self-building system: main.py, controller.py, generator.py, learning_loop.py (115 days old): stale_pr_needs_rebase_or_retest
-- #118 `copilot/replace-random-ai-with-decision-logic` — Add weighted decision engine and repository activity tracker (115 days old): stale_pr_needs_rebase_or_retest
 - #125 `copilot/resolve-ci-pipeline-conflicts` — Resolve PR#69: fix sys.modules cross-test pollution, add bot skeleton generator, drop Python 3.8 (115 days old): stale_pr_needs_rebase_or_retest
 - #126 `copilot/implement-auto-recovery-mechanism` — Add CI auto-recovery mechanism for failed workflow tests (115 days old): stale_pr_needs_rebase_or_retest
 - #44 `copilot/integrate-bots-across-sectors` — Integrate sector bots across Dreamcobots platform with BuddyAI orchestration layer (107 days old): stale_pr_needs_rebase_or_retest
@@ -59,6 +59,13 @@ Repository: `DreamCo-Technologies/Dreamcobots`
 
 ## Failed Workflow Runs
 
+- System and Bot Builds Monitoring on `main` — failure (2026-07-14T17:11:35Z)
+- 🪐 Command Tower — Empire Dashboard on `main` — failure (2026-07-14T17:25:32Z)
+- Actions Page - GitHub Pages on `codex/bot-test-dashboard` — failure (2026-07-14T15:58:05Z)
+- .github/workflows/workflow-map.yml on `codex/bot-test-dashboard` — failure (2026-07-14T15:56:26Z)
+- .github/workflows/integration_lookup.yml on `codex/bot-test-dashboard` — failure (2026-07-14T15:56:26Z)
+- System and Bot Builds Monitoring on `main` — failure (2026-07-14T15:21:12Z)
+- 🪐 Command Tower — Empire Dashboard on `main` — failure (2026-07-14T15:36:39Z)
 - System and Bot Builds Monitoring on `main` — failure (2026-07-14T13:27:00Z)
 - 🪐 Command Tower — Empire Dashboard on `main` — failure (2026-07-14T13:21:19Z)
 - DreamCo Continuous Self-Build Audit on `main` — failure (2026-07-14T13:20:42Z)
@@ -77,13 +84,6 @@ Repository: `DreamCo-Technologies/Dreamcobots`
 - .github/workflows/integration_lookup.yml on `codex/bot-test-dashboard` — failure (2026-07-14T10:46:13Z)
 - Actions Page - GitHub Pages on `codex/bot-test-dashboard` — failure (2026-07-14T10:44:25Z)
 - .github/workflows/workflow-map.yml on `codex/bot-test-dashboard` — failure (2026-07-14T10:42:48Z)
-- .github/workflows/integration_lookup.yml on `codex/bot-test-dashboard` — failure (2026-07-14T10:42:47Z)
-- Actions Page - GitHub Pages on `codex/bot-test-dashboard` — failure (2026-07-14T10:37:00Z)
-- .github/workflows/workflow-map.yml on `codex/bot-test-dashboard` — failure (2026-07-14T10:35:21Z)
-- .github/workflows/integration_lookup.yml on `codex/bot-test-dashboard` — failure (2026-07-14T10:35:21Z)
-- Actions Page - GitHub Pages on `codex/bot-test-dashboard` — failure (2026-07-14T10:33:16Z)
-- .github/workflows/workflow-map.yml on `codex/bot-test-dashboard` — failure (2026-07-14T10:31:42Z)
-- .github/workflows/integration_lookup.yml on `codex/bot-test-dashboard` — failure (2026-07-14T10:31:42Z)
 
 ## Open Issues
 
