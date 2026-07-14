@@ -140,9 +140,47 @@ def check_generated_libraries(policy: dict[str, Any]) -> tuple[list[dict[str, An
     return checks, resource_summary
 
 
+def check_useful_data_policy(policy: dict[str, Any]) -> dict[str, Any]:
+    useful_policy = policy.get("useful_data_policy", {})
+    keep_categories = useful_policy.get("keep_categories", [])
+    drop_categories = useful_policy.get("drop_categories", [])
+    required_metadata = useful_policy.get("required_metadata", [])
+    score_dimensions = useful_policy.get("score_dimensions", [])
+    failures: list[str] = []
+
+    if not useful_policy.get("rule"):
+        failures.append("useful_data_policy.rule is required")
+    if len(keep_categories) < 5:
+        failures.append("useful_data_policy.keep_categories must define at least 5 useful data classes")
+    if len(drop_categories) < 5:
+        failures.append("useful_data_policy.drop_categories must define at least 5 discard classes")
+    for field in ["source", "usefulness_reason", "retention_tier", "dedupe_key", "redaction_state"]:
+        if field not in required_metadata:
+            failures.append(f"useful_data_policy.required_metadata missing {field}")
+    if useful_policy.get("minimum_usefulness_score_to_store", 0) < 1:
+        failures.append("minimum_usefulness_score_to_store must be positive")
+    if len(score_dimensions) < 3:
+        failures.append("score_dimensions must include at least 3 dimensions")
+
+    return {
+        "name": "useful_data_policy",
+        "path": rel(POLICY_FILE),
+        "status": status_for(not failures),
+        "keep_categories": len(keep_categories),
+        "drop_categories": len(drop_categories),
+        "required_metadata": len(required_metadata),
+        "score_dimensions": len(score_dimensions),
+        "minimum_usefulness_score_to_store": useful_policy.get("minimum_usefulness_score_to_store"),
+        "failures": failures,
+        "failure_count": len(failures),
+        "message": "only useful data policy is active" if not failures else "useful data policy needs attention",
+    }
+
+
 def build_report() -> dict[str, Any]:
     policy = load_json(POLICY_FILE)
     checks, resource_summary = check_generated_libraries(policy)
+    checks.append(check_useful_data_policy(policy))
     failed = [check for check in checks if check["status"] != "pass"]
     warnings = []
     if resource_summary["largest_shard_mb"] >= policy["size_budgets"]["generated_resource_shard_max_mb"] * 0.8:
@@ -160,6 +198,9 @@ def build_report() -> dict[str, Any]:
             "memory_tiers": len(policy.get("memory_tiers", [])),
             "partitioning_rules": len(policy.get("partitioning_rules", [])),
             "compaction_rules": len(policy.get("compaction_rules", [])),
+            "useful_keep_categories": len(policy.get("useful_data_policy", {}).get("keep_categories", [])),
+            "useful_drop_categories": len(policy.get("useful_data_policy", {}).get("drop_categories", [])),
+            "useful_required_metadata": len(policy.get("useful_data_policy", {}).get("required_metadata", [])),
             "approval_gates": len(policy.get("approval_gates", [])),
             "largest_resource_shard_mb": resource_summary["largest_shard_mb"],
             "largest_resource_shard": resource_summary["largest_shard"],
@@ -168,6 +209,7 @@ def build_report() -> dict[str, Any]:
         },
         "budgets": policy["size_budgets"],
         "memory_tiers": policy.get("memory_tiers", []),
+        "useful_data_policy": policy.get("useful_data_policy", {}),
         "partitioning_rules": policy.get("partitioning_rules", []),
         "compaction_rules": policy.get("compaction_rules", []),
         "checks": checks,
@@ -189,6 +231,9 @@ def write_reports(report: dict[str, Any]) -> None:
         f"- Checks: {summary['checks']}",
         f"- Failed checks: {summary['failed_checks']}",
         f"- Warnings: {summary['warnings']}",
+        f"- Useful keep categories: {summary['useful_keep_categories']}",
+        f"- Useful drop categories: {summary['useful_drop_categories']}",
+        f"- Useful required metadata fields: {summary['useful_required_metadata']}",
         f"- Largest resource shard: {summary['largest_resource_shard']} ({summary['largest_resource_shard_mb']} MB)",
         f"- Bot resource entries checked: {summary['bot_resource_entries_checked']}",
         "",

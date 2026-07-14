@@ -212,6 +212,9 @@ const FALLBACK_STORAGE_GUARD = {
     memory_tiers: 4,
     partitioning_rules: 7,
     compaction_rules: 6,
+    useful_keep_categories: 10,
+    useful_drop_categories: 10,
+    useful_required_metadata: 8,
     approval_gates: 11,
     largest_resource_shard_mb: 0,
     largest_resource_shard: 'generated fallback',
@@ -227,6 +230,25 @@ const FALLBACK_STORAGE_GUARD = {
     single_bot_warm_partition_max_mb: 256,
     single_archive_max_mb: 512,
     dashboard_report_max_mb: 5,
+  },
+  useful_data_policy: {
+    rule: 'Only store data that can improve owner decisions, client delivery, bot learning, debugging, compliance, or reproducible rebuilds.',
+    keep_categories: [
+      'approved_user_preferences',
+      'active_task_context',
+      'tested_skill_lessons',
+      'failure_summaries_with_retest_commands',
+      'build_rebuild_and_debug_packets',
+    ],
+    drop_categories: [
+      'duplicate_records',
+      'raw_scratchpads_after_summary',
+      'stale_logs_without_failures_or_decisions',
+      'secrets_tokens_or_api_keys',
+      'low_signal_chat_fillers',
+    ],
+    required_metadata: ['source', 'owner_or_bot', 'usefulness_reason', 'retention_tier', 'dedupe_key', 'redaction_state'],
+    minimum_usefulness_score_to_store: 3,
   },
   memory_tiers: [
     { tier: 'hot', purpose: 'Active task memory and recent bot context.', rollover_at_mb: 128 },
@@ -2282,6 +2304,9 @@ export default function ActionsPage({
             ['Failed', storageSummary.failed_checks],
             ['Warnings', storageSummary.warnings],
             ['Memory tiers', storageSummary.memory_tiers],
+            ['Useful keep', storageSummary.useful_keep_categories],
+            ['Useful drop', storageSummary.useful_drop_categories],
+            ['Metadata rules', storageSummary.useful_required_metadata],
             ['Resource shards', storageSummary.resource_shard_count],
             ['Bot entries', storageSummary.bot_resource_entries_checked],
             ['Largest shard MB', storageSummary.largest_resource_shard_mb],
@@ -2326,6 +2351,45 @@ export default function ActionsPage({
                 {(storage.warnings ?? []).join(' · ')}
               </div>
             )}
+          </aside>
+        </div>
+
+        <div className="mt-5 grid gap-5 lg:grid-cols-[minmax(0,1fr)_22rem]">
+          <div className="border border-slate-800 bg-slate-900 p-4">
+            <h4 className="text-sm font-semibold text-white">Only useful data gets stored</h4>
+            <p className="mt-2 text-xs leading-5 text-slate-400">{storage.useful_data_policy?.rule}</p>
+            <div className="mt-4 grid gap-3 md:grid-cols-2">
+              <div className="border border-slate-800 bg-slate-950 p-3">
+                <h5 className="text-xs font-semibold uppercase text-green-300">Keep</h5>
+                <div className="mt-3 space-y-2">
+                  {(storage.useful_data_policy?.keep_categories ?? []).slice(0, 6).map((item) => (
+                    <p key={item} className="text-xs leading-5 text-slate-300">{formatLabel(item)}</p>
+                  ))}
+                </div>
+              </div>
+              <div className="border border-slate-800 bg-slate-950 p-3">
+                <h5 className="text-xs font-semibold uppercase text-yellow-300">Drop</h5>
+                <div className="mt-3 space-y-2">
+                  {(storage.useful_data_policy?.drop_categories ?? []).slice(0, 6).map((item) => (
+                    <p key={item} className="text-xs leading-5 text-slate-300">{formatLabel(item)}</p>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <aside className="border border-slate-800 bg-slate-900 p-4">
+            <h4 className="text-sm font-semibold text-white">Required usefulness metadata</h4>
+            <div className="mt-3 space-y-2">
+              {(storage.useful_data_policy?.required_metadata ?? []).slice(0, 8).map((field) => (
+                <div key={field} className="border-l-2 border-dreamco-accent pl-3 text-xs leading-5 text-slate-300">
+                  {formatLabel(field)}
+                </div>
+              ))}
+            </div>
+            <p className="mt-4 text-xs leading-5 text-slate-500">
+              Minimum score to store: {storage.useful_data_policy?.minimum_usefulness_score_to_store ?? 3}
+            </p>
           </aside>
         </div>
       </section>

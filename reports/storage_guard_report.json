@@ -1,15 +1,18 @@
 {
   "schema": "dreamco.storage_guard.v1",
-  "generated_at": "2026-07-12T19:39:50Z",
+  "generated_at": "2026-07-14T10:53:31Z",
   "policy_file": "config/local_first_storage_policy.json",
   "summary": {
     "storage_ready": true,
-    "checks": 55,
+    "checks": 56,
     "failed_checks": 0,
     "warnings": 0,
     "memory_tiers": 4,
     "partitioning_rules": 7,
-    "compaction_rules": 6,
+    "compaction_rules": 8,
+    "useful_keep_categories": 10,
+    "useful_drop_categories": 10,
+    "useful_required_metadata": 8,
     "approval_gates": 11,
     "largest_resource_shard_mb": 10.517,
     "largest_resource_shard": "config/generated/system_libraries/resources/dreamcodelab.json",
@@ -60,6 +63,51 @@
       "required_action_at_rollover": "create_new_vector_partition_and_rebuild_pointer_manifest"
     }
   ],
+  "useful_data_policy": {
+    "rule": "Only store data that can improve owner decisions, client delivery, bot learning, debugging, compliance, or reproducible rebuilds.",
+    "keep_categories": [
+      "approved_user_preferences",
+      "active_task_context",
+      "tested_skill_lessons",
+      "source_references_with_rights_or_citation",
+      "failure_summaries_with_retest_commands",
+      "decision_records_with_reason_and_owner",
+      "build_rebuild_and_debug_packets",
+      "client_handoff_summaries",
+      "audit_events_required_for_security_or_money_safety",
+      "dashboard_metrics_needed_for_current_views"
+    ],
+    "drop_categories": [
+      "duplicate_records",
+      "raw_scratchpads_after_summary",
+      "stale_logs_without_failures_or_decisions",
+      "unapproved_personal_data",
+      "secrets_tokens_or_api_keys",
+      "large_raw_transcripts_without_unique_source_value",
+      "temporary_preview_state_after_artifact_is_built",
+      "low_signal_chat_fillers",
+      "unreferenced_generated_blobs",
+      "expired_vectors_without_source_records"
+    ],
+    "required_metadata": [
+      "source",
+      "created_at",
+      "owner_or_bot",
+      "usefulness_reason",
+      "retention_tier",
+      "expires_or_review_after",
+      "dedupe_key",
+      "redaction_state"
+    ],
+    "minimum_usefulness_score_to_store": 3,
+    "score_dimensions": [
+      "actionable",
+      "reusable",
+      "evidence",
+      "client_value",
+      "risk_or_compliance"
+    ]
+  },
   "partitioning_rules": [
     "Never store all bot resources, memories, events, vectors, or source snapshots in one monolithic file.",
     "Every large collection must have a small manifest index and independently loadable shards.",
@@ -75,6 +123,8 @@
     "Compress cold archives and keep checksum, byte size, source, created_at, and retention metadata in the manifest.",
     "Delete or redact expired personal data when retention ends unless legal hold is active.",
     "Keep failure and decision summaries even when raw task scratchpads expire.",
+    "Drop low-signal records that have no usefulness_reason, dedupe_key, owner_or_bot, or active rebuild/debug value.",
+    "Convert useful raw logs into short evidence summaries, then expire the raw logs unless legal hold or owner approval requires them.",
     "Run storage guard checks before merging generated library or dashboard changes."
   ],
   "checks": [
@@ -527,6 +577,19 @@
       "failures": [],
       "failure_count": 0,
       "message": "resources are sharded and count-safe"
+    },
+    {
+      "name": "useful_data_policy",
+      "path": "config/local_first_storage_policy.json",
+      "status": "pass",
+      "keep_categories": 10,
+      "drop_categories": 10,
+      "required_metadata": 8,
+      "score_dimensions": 5,
+      "minimum_usefulness_score_to_store": 3,
+      "failures": [],
+      "failure_count": 0,
+      "message": "only useful data policy is active"
     }
   ],
   "warnings": [],

@@ -79,6 +79,16 @@ Memory should scale by design, not by hope. The repo uses `config/local_first_st
 - Dashboards must read summaries and manifests first, then load detail only when a user opens it.
 - Pull requests that change generated libraries or memory policy should run `npm run check:storage`.
 
+## Useful-data-only storage
+
+The system should not keep everything. It should keep data only when it can improve owner decisions, client delivery, bot learning, debugging, compliance, or reproducible rebuilds.
+
+Keep useful records such as approved preferences, active task context, tested lessons, source references, failure summaries with retest commands, decision records, rebuild packets, client handoff summaries, audit events, and dashboard metrics.
+
+Drop noise such as duplicate records, raw scratchpads after summary, stale logs without failures or decisions, unapproved personal data, secrets, oversized transcripts without unique value, temporary preview state, low-signal chat fillers, unreferenced generated blobs, and expired vectors without source records.
+
+Every stored memory record should include source, created time, owner or bot, usefulness reason, retention tier, review or expiry date, dedupe key, and redaction state.
+
 ## Agent modes
 
 Every bot dashboard should expose mode toggles.

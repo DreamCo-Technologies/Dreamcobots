@@ -218,6 +218,9 @@ const storageGuardPayload = {
     memory_tiers: 4,
     partitioning_rules: 7,
     compaction_rules: 6,
+    useful_keep_categories: 10,
+    useful_drop_categories: 10,
+    useful_required_metadata: 8,
     approval_gates: 11,
     largest_resource_shard_mb: 10.517,
     largest_resource_shard: 'config/generated/system_libraries/resources/dreamcodelab.json',
@@ -236,6 +239,13 @@ const storageGuardPayload = {
   partitioning_rules: [
     'Never store all bot resources, memories, events, vectors, or source snapshots in one monolithic file.',
   ],
+  useful_data_policy: {
+    rule: 'Only store data that can improve owner decisions, client delivery, bot learning, debugging, compliance, or reproducible rebuilds.',
+    keep_categories: ['failure_summaries_with_retest_commands', 'build_rebuild_and_debug_packets'],
+    drop_categories: ['duplicate_records', 'raw_scratchpads_after_summary', 'low_signal_chat_fillers'],
+    required_metadata: ['source', 'usefulness_reason', 'retention_tier', 'dedupe_key', 'redaction_state'],
+    minimum_usefulness_score_to_store: 3,
+  },
   checks: [{ name: 'resource_sharding_integrity', status: 'pass', message: 'resources are sharded and count-safe' }],
   warnings: [],
 };
@@ -516,6 +526,11 @@ describe('ActionsPage', () => {
     expect(screen.getAllByText(/GitHub payment notifications/).length).toBeGreaterThan(0);
     expect(screen.getByText('Rollover tiers')).toBeInTheDocument();
     expect(screen.getByText('Never one giant memory file')).toBeInTheDocument();
+    expect(screen.getByText('Only useful data gets stored')).toBeInTheDocument();
+    expect(screen.getByText('Required usefulness metadata')).toBeInTheDocument();
+    expect(screen.getByText('Failure Summaries With Retest Commands')).toBeInTheDocument();
+    expect(screen.getByText('Low Signal Chat Fillers')).toBeInTheDocument();
+    expect(screen.getByText('Usefulness Reason')).toBeInTheDocument();
     expect(screen.getAllByText('System and Bot Builds Monitoring').length).toBeGreaterThan(0);
     expect(screen.getByText(/Workflow reruns require authenticated GitHub Actions permission/)).toBeInTheDocument();
   });
