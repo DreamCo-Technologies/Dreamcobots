@@ -375,6 +375,54 @@ const VIBE_STUDIO_LANES = [
     prompt: 'Build business, science, training, finance, real estate, operations, or emergency simulation scenarios.',
     outputs: ['scenario model', 'controls', 'metrics', 'sandbox runbook'],
   },
+  {
+    title: 'Photo and image editor',
+    icon: '🖼️',
+    prompt: 'Plan image edits, product mockups, restoration, background changes, brand graphics, and asset variants with rights checks.',
+    outputs: ['edit brief', 'asset list', 'variant prompts', 'rights log'],
+  },
+  {
+    title: 'Design and brand studio',
+    icon: '🎨',
+    prompt: 'Create logos, landing page direction, ad creatives, social graphics, slide themes, and brand kits.',
+    outputs: ['brand kit', 'creative brief', 'layout plan', 'export checklist'],
+  },
+  {
+    title: 'Documents and presentations',
+    icon: '📄',
+    prompt: 'Build proposals, pitch decks, contracts, SOPs, worksheets, reports, and client handoff documents.',
+    outputs: ['document outline', 'deck plan', 'review checklist', 'handoff pack'],
+  },
+  {
+    title: 'Data dashboard',
+    icon: '📊',
+    prompt: 'Turn spreadsheets, metrics, Stripe data, bot reports, and client KPIs into dashboards and decision views.',
+    outputs: ['data model', 'charts', 'filters', 'quality checks'],
+  },
+  {
+    title: 'Automation workflow',
+    icon: '⚙️',
+    prompt: 'Design repeatable automations for emails, CRMs, webhooks, scheduling, support, inventory, and operations.',
+    outputs: ['workflow map', 'API plan', 'webhook plan', 'failure handling'],
+  },
+  {
+    title: '3D or AR experience',
+    icon: '🧊',
+    prompt: 'Plan product viewers, walkthroughs, learning labs, interactive spaces, and lightweight 3D simulations.',
+    outputs: ['scene spec', 'asset list', 'interaction map', 'performance checks'],
+  },
+  {
+    title: 'Audio and voice project',
+    icon: '🎙️',
+    prompt: 'Create podcast packets, voiceover scripts, sound design plans, narration flows, and consent-safe voice workflows.',
+    outputs: ['script', 'audio plan', 'consent log', 'publish checklist'],
+  },
+  {
+    title: 'Research and writing',
+    icon: '🔎',
+    prompt: 'Research markets, competitors, grants, customers, products, legal basics, scientific topics, and source-backed reports.',
+    outputs: ['source map', 'summary', 'citations', 'action plan'],
+  },
 ];
 
 const VIBE_STUDIO_GATES = [
@@ -948,11 +996,11 @@ export default function ActionsPage({
           <div>
             <p className="text-xs font-bold uppercase text-dreamco-accent">Buddy Vibe Studio</p>
             <h3 id="vibe-studio-heading" className="mt-1 text-lg font-semibold text-white">
-              Client vibe building for apps, videos, courses, games, and simulations
+              AI Creation Studio for apps, games, simulations, media, and business systems
             </h3>
             <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-400">
               Clients can describe what they want in plain language. Buddy turns it into a production packet, sandbox prototype,
-              safety review, and client-ready handoff.
+              safety review, rights log, tests, and client-ready handoff.
             </p>
           </div>
           <span className="rounded-full border border-green-800 bg-green-950/30 px-3 py-1 text-xs font-semibold text-green-300">
@@ -960,7 +1008,7 @@ export default function ActionsPage({
           </span>
         </div>
 
-        <div className="mt-5 grid gap-px overflow-hidden border border-slate-800 bg-slate-800 md:grid-cols-2 xl:grid-cols-3">
+        <div className="mt-5 grid gap-px overflow-hidden border border-slate-800 bg-slate-800 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
           {VIBE_STUDIO_LANES.map((lane) => (
             <article key={lane.title} className="min-h-56 bg-slate-900 p-4">
               <div className="flex items-start justify-between gap-3">

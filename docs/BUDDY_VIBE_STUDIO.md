@@ -1,6 +1,6 @@
 # Buddy Vibe Studio
 
-Buddy Vibe Studio is the client-facing build lane for turning plain-language ideas into apps, bots, music video packets, kids learning videos, college courses, video games, simulations, and client business systems.
+Buddy Vibe Studio is the client-facing AI Creation Studio for turning plain-language ideas into apps, bots, music video packets, kids learning videos, college courses, video games, simulations, photo/image edits, design systems, documents, presentations, dashboards, workflows, 3D/AR experiences, audio projects, research packets, and client business systems.
 
 ## What clients can ask for
 
@@ -10,6 +10,14 @@ Buddy Vibe Studio is the client-facing build lane for turning plain-language ide
 - College course: syllabus, modules, lessons, assignments, rubrics, labs, slides, and outcomes.
 - Video game: design doc, playable prototype, rules, levels, scoring, save state, QA, and deployment path.
 - Simulation: business, science, finance, real estate, operations, training, or emergency scenarios with metrics and controls.
+- Photo and image editor: edit brief, asset list, variant prompts, background plan, restoration plan, and rights log.
+- Design and brand studio: logos, brand kits, ad creatives, landing page direction, social graphics, and export checklist.
+- Documents and presentations: proposals, pitch decks, contracts, SOPs, worksheets, reports, and handoff documents.
+- Data dashboard: spreadsheets, Stripe data, bot reports, KPIs, charts, filters, and quality checks.
+- Automation workflow: email, CRM, webhook, scheduling, support, inventory, and operations workflows.
+- 3D or AR experience: scene spec, asset list, interaction map, lightweight simulation, and performance checks.
+- Audio and voice project: podcast packet, voiceover script, sound design plan, narration flow, and consent log.
+- Research and writing: source map, summary, citations, market research, competitor research, and action plan.
 
 ## Default build flow
 
@@ -31,6 +39,14 @@ Buddy must be stricter than broad social-platform defaults:
 - No fake customer testimonials, fake founders, fake employees, fake endorsements, or fake authority figures.
 - No robocalls or automated outreach using cloned voices.
 - Every generated voice or image asset must store consent proof, source, creator, timestamp, and usage rights.
+
+## Image and photo editing rules
+
+- Use original, licensed, public-domain, or clearly permissioned source assets.
+- Keep an edit record showing source image, owner, requested change, generated variants, and final usage rights.
+- Do not remove watermarks, falsify evidence, fabricate documents, or misrepresent real events.
+- Label materially AI-edited commercial, educational, political, or public-facing assets.
+- Do not create deceptive before/after claims for health, finance, legal, real estate, or product results.
 
 ## Product stance
 

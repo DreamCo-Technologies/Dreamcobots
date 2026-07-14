@@ -419,6 +419,17 @@ describe('Buddy operation prompt API', () => {
     expect(res.body.packet.approval_gates).toContain('owner approval before money movement');
     expect(res.body.packet.blocked_live_actions).toContain('payments or payouts');
   });
+
+  test('routes image, game, and simulation prompts to the AI creation studio', async () => {
+    const res = await request(app)
+      .post('/api/buddy-ops/prompt')
+      .send({ prompt: 'Build a Photoshop style product mockup, video game prototype, and business simulation' });
+
+    expect(res.status).toBe(201);
+    expect(res.body.packet.operation_type).toBe('vibe_studio_operation');
+    expect(res.body.packet.builder).toBe('Buddy AI Creation Studio Builder');
+    expect(res.body.packet.recommended_tests).toContain('rights review checklist');
+  });
 });
 
 // ---------------------------------------------------------------------------

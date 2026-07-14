@@ -208,10 +208,10 @@ function classifyBuddyOperation(prompt) {
       tests: ['npm run report:stripe-rescue', 'backend endpoint tests', 'Actions page payment panel test'],
     };
   }
-  if (/(video|music|course|lesson|game|simulation|vibe|image|voice)/.test(text)) {
+  if (/(video|music|course|lesson|game|simulation|vibe|image|photo|photoshop|design|brand|document|presentation|dashboard|3d|ar|audio|voice|research|writing)/.test(text)) {
     return {
       type: 'vibe_studio_operation',
-      builder: 'Buddy Vibe Studio Builder',
+      builder: 'Buddy AI Creation Studio Builder',
       tests: ['rights review checklist', 'content safety review', 'sandbox prototype test'],
     };
   }

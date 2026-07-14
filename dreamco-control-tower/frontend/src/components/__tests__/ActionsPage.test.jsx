@@ -336,7 +336,7 @@ describe('ActionsPage', () => {
     expect(screen.getByRole('heading', { name: 'Professional delivery pipeline' })).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: 'Prompt Buddy from the Actions page' })).toBeInTheDocument();
     await waitFor(() => expect(screen.getByText('Stripe Revenue Rescue Builder')).toBeInTheDocument());
-    expect(screen.getByRole('heading', { name: 'Client vibe building for apps, videos, courses, games, and simulations' })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'AI Creation Studio for apps, games, simulations, media, and business systems' })).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: 'AI company builder with human trust built in' })).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: 'Tracks what helps you, clients, and bots improve' })).toBeInTheDocument();
     expect(screen.getByText('AI companies')).toBeInTheDocument();
@@ -346,6 +346,14 @@ describe('ActionsPage', () => {
     expect(screen.getByText('College course')).toBeInTheDocument();
     expect(screen.getByText('Video game')).toBeInTheDocument();
     expect(screen.getByText('Simulation')).toBeInTheDocument();
+    expect(screen.getByText('Photo and image editor')).toBeInTheDocument();
+    expect(screen.getByText('Design and brand studio')).toBeInTheDocument();
+    expect(screen.getByText('Documents and presentations')).toBeInTheDocument();
+    expect(screen.getByText('Data dashboard')).toBeInTheDocument();
+    expect(screen.getByText('Automation workflow')).toBeInTheDocument();
+    expect(screen.getByText('3D or AR experience')).toBeInTheDocument();
+    expect(screen.getByText('Audio and voice project')).toBeInTheDocument();
+    expect(screen.getByText('Research and writing')).toBeInTheDocument();
     expect(screen.getByText('Voice and image consent rules')).toBeInTheDocument();
     expect(screen.getByText(/No fake testimonials/)).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: 'What Buddy needs to beat ordinary vibe coding' })).toBeInTheDocument();
