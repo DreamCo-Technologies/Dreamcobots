@@ -14,6 +14,13 @@ const STATUS_DOT = {
   updating: 'bg-dreamco-yellow',
 };
 
+const AGENT_DEBUG_PLAYBOOK = [
+  ['Capture', 'Heartbeat, workflow status, last PR, dashboard link, and failed command.'],
+  ['Diagnose', 'Separate bot code, workflow config, stale data, resource library, and integration failures.'],
+  ['Repair', 'Prepare a supervised patch packet with tests, rollback notes, and owner approval gates.'],
+  ['Retest', 'Run bot smoke checks, workflow rerun, dashboard proof, and prospectus link verification.'],
+];
+
 function formatHeartbeat(ts) {
   if (!ts) return 'Never';
   const diff = Date.now() - new Date(ts).getTime();
@@ -71,6 +78,11 @@ export default function BotOverview() {
 
   // Derive team list from bot data
   const teams = ['all', ...new Set(bots.map((b) => b.team || 'default'))];
+  const failedOrRiskyBots = bots.filter((bot) => (
+    bot.status === 'error'
+    || bot.workflowStatus === 'failure'
+    || Number(bot.pendingPRs || 0) > 0
+  ));
 
   const visible = bots.filter((bot) => {
     const matchTeam = teamFilter === 'all' || (bot.team || 'default') === teamFilter;
@@ -86,6 +98,60 @@ export default function BotOverview() {
 
       {/* Summary bar */}
       <StatusSummaryBar bots={bots} />
+
+      <section className="mb-5 border border-slate-700 bg-slate-950 p-5">
+        <div className="flex flex-wrap items-start justify-between gap-3">
+          <div>
+            <p className="text-xs font-bold uppercase text-dreamco-accent">Agent failure command deck</p>
+            <h3 className="mt-1 text-lg font-semibold text-white">Debug every bot before client handoff</h3>
+            <p className="mt-1 max-w-3xl text-sm leading-6 text-slate-400">
+              Buddy treats every agent failure as an evidence packet: capture the signal, diagnose the source,
+              prepare a supervised repair, and retest before the bot is shown as ready.
+            </p>
+          </div>
+          <span className={`rounded-full border px-3 py-1 text-xs font-semibold ${
+            failedOrRiskyBots.length === 0
+              ? 'border-green-800 bg-green-950/30 text-green-300'
+              : 'border-yellow-800 bg-yellow-950/30 text-yellow-300'
+          }`}>
+            {failedOrRiskyBots.length} bot debug target(s)
+          </span>
+        </div>
+
+        <div className="mt-4 grid gap-px overflow-hidden border border-slate-800 bg-slate-800 md:grid-cols-4">
+          {AGENT_DEBUG_PLAYBOOK.map(([title, detail], index) => (
+            <div key={title} className="min-h-28 bg-slate-900 p-3">
+              <p className="font-mono text-[11px] text-dreamco-accent">0{index + 1}</p>
+              <h4 className="mt-2 text-sm font-semibold text-white">{title}</h4>
+              <p className="mt-2 text-xs leading-5 text-slate-400">{detail}</p>
+            </div>
+          ))}
+        </div>
+
+        {failedOrRiskyBots.length > 0 && (
+          <div className="mt-4 grid gap-3 md:grid-cols-2 xl:grid-cols-3">
+            {failedOrRiskyBots.slice(0, 6).map((bot) => (
+              <article key={`${bot.name}-debug`} className="border border-yellow-800 bg-yellow-950/10 p-3">
+                <div className="flex items-start justify-between gap-3">
+                  <div>
+                    <p className="text-sm font-semibold text-white">{bot.emoji ?? '🤖'} {bot.name}</p>
+                    <p className="mt-1 text-xs text-yellow-100">
+                      {bot.workflowStatus === 'failure' ? 'Workflow failure' : bot.status === 'error' ? 'Runtime error' : 'Pending PR review'}
+                    </p>
+                  </div>
+                  <span className="rounded-full border border-yellow-700 px-2 py-0.5 text-[11px] font-semibold uppercase text-yellow-200">
+                    debug route
+                  </span>
+                </div>
+                <p className="mt-3 text-xs leading-5 text-slate-300">
+                  Run the smallest bot smoke test, inspect the latest workflow evidence, verify dashboard and prospectus links,
+                  then package the fix for owner review.
+                </p>
+              </article>
+            ))}
+          </div>
+        )}
+      </section>
 
       {/* Filters */}
       <div className="flex flex-wrap gap-3 mb-5">
@@ -185,6 +251,15 @@ export default function BotOverview() {
                 <div>
                   🔀 Pending PRs:{' '}
                   <span className="text-dreamco-yellow font-semibold">{bot.pendingPRs}</span>
+                </div>
+              )}
+
+              {(bot.status === 'error' || bot.workflowStatus === 'failure') && (
+                <div className="mt-3 border border-yellow-800 bg-yellow-950/20 p-3">
+                  <p className="text-xs font-semibold uppercase text-yellow-200">Buddy debug packet</p>
+                  <p className="mt-1 text-xs leading-5 text-slate-300">
+                    Capture failing signal, isolate bot or workflow cause, prepare supervised patch, and retest before ready.
+                  </p>
                 </div>
               )}
 

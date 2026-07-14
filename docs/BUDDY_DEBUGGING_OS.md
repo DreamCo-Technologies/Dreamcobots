@@ -21,6 +21,23 @@ Every pull request should get Buddy help:
 - repair failing gates through supervised operation packets;
 - package a merge-ready checklist, rollback note, and client summary.
 
+## Actions and agents failures
+
+The Actions page should show one debug queue for workflow failures, quality gate failures, bot connection issues, storage warnings, payment blockers, and agent runtime problems.
+
+Every failure packet should include:
+
+- source;
+- title;
+- target;
+- evidence;
+- route;
+- next action;
+- retest command or check;
+- owner approval state.
+
+The Agents or Bot Overview section should make failing bots easy to inspect by showing heartbeat, workflow status, pending pull requests, dashboard links, prospectus links, and the Buddy debug packet for each failing agent.
+
 ## Sellable offers
 
 - Launch Audit: repo, checkout, bot tests, deploy blockers, and dashboard readiness.

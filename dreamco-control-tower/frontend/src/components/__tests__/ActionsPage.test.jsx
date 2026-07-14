@@ -397,6 +397,9 @@ describe('ActionsPage', () => {
     expect(screen.getByRole('heading', { name: 'Fix why connected Stripe is making no money' })).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: 'Sellable debugging system for apps, bots, workflows, and AI builds' })).toBeInTheDocument();
     expect(screen.getByText('AI App Debug Desk')).toBeInTheDocument();
+    expect(screen.getByText('Debug every Actions and Agents failure')).toBeInTheDocument();
+    expect(screen.getByText('Failure routing playbook')).toBeInTheDocument();
+    expect(screen.getByText('Perfect-debug gates')).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: '💾 Future-proof bot memory' })).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: '🔎 GitHub PR, issue, and comment triage' })).toBeInTheDocument();
     expect(screen.getByText('Buddy help for every pull request')).toBeInTheDocument();
@@ -493,13 +496,16 @@ describe('ActionsPage', () => {
     expect(screen.getByText('PR restart and retest queue')).toBeInTheDocument();
     expect(screen.getByText(/Finish Buddy readiness tracker/)).toBeInTheDocument();
     expect(screen.getByText('Workflow failures to retest')).toBeInTheDocument();
+    expect(screen.getAllByText('System and Bot Builds Monitoring').length).toBeGreaterThan(0);
+    expect(screen.getByText('workflow log capture and targeted rerun')).toBeInTheDocument();
+    expect(screen.getByText(/Inspect failed job logs/)).toBeInTheDocument();
     expect(screen.getByText('Revenue blockers')).toBeInTheDocument();
-    expect(screen.getByText(/No checkout-ready live Stripe offers/)).toBeInTheDocument();
-    expect(screen.getByText(/Payment alert email recipients/)).toBeInTheDocument();
-    expect(screen.getByText(/GitHub payment notifications/)).toBeInTheDocument();
+    expect(screen.getAllByText(/No checkout-ready live Stripe offers/).length).toBeGreaterThan(0);
+    expect(screen.getAllByText(/Payment alert email recipients/).length).toBeGreaterThan(0);
+    expect(screen.getAllByText(/GitHub payment notifications/).length).toBeGreaterThan(0);
     expect(screen.getByText('Rollover tiers')).toBeInTheDocument();
     expect(screen.getByText('Never one giant memory file')).toBeInTheDocument();
-    expect(screen.getByText('System and Bot Builds Monitoring')).toBeInTheDocument();
+    expect(screen.getAllByText('System and Bot Builds Monitoring').length).toBeGreaterThan(0);
     expect(screen.getByText(/Workflow reruns require authenticated GitHub Actions permission/)).toBeInTheDocument();
   });
 

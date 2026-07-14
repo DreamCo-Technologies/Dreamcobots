@@ -391,6 +391,21 @@ const PR_BUDDY_HELP_FLOW = [
   ['Package', 'Buddy prepares a merge-ready checklist, rollback note, and client-safe summary.'],
 ];
 
+const FAILURE_DEBUG_ROUTES = [
+  ['Action workflow', 'Capture logs, job name, branch, commit, failed step, and rerun eligibility.'],
+  ['Quality gate', 'Parse exact file, syntax error, command, affected package, and smallest repro test.'],
+  ['Agent or bot', 'Check heartbeat, workflow status, test packet, resource library, and risk approval.'],
+  ['Integration', 'Trace API, webhook, payment, storage, email, and notification evidence in sandbox first.'],
+  ['Client demo', 'Package impact, screenshot, fix plan, verification command, and handoff note.'],
+];
+
+const FAILURE_DEBUG_GATES = [
+  'Every failure gets an owner, source, command, suspected cause, next fix, and retest command.',
+  'Buddy may prepare patches and pull request notes, but live deploys, merges, payments, and outreach wait for approval.',
+  'A failure is not called fixed until the matching test, workflow, or dashboard evidence is recorded.',
+  'Known flaky failures are tracked separately and still require a retry plan, timeout check, or quarantine note.',
+];
+
 const CLIENT_WORKFLOWS = [
   ['Discover', 'Show prospects what the bot fleet can build, test, and operate.'],
   ['Prototype', 'Prepare tools, APIs, webhooks, workflows, skills, and sandbox checks.'],
@@ -702,6 +717,78 @@ function buildBotTestPacket(bot, scope = 'selected') {
   };
 }
 
+function buildFailureDebugQueue({ triage, stewardship, storage, stripeRescue, buddyConnections }) {
+  const qualityFailures = (stewardship.quality_checks ?? [])
+    .flatMap((check) => (check.failures ?? []).map((failure) => ({
+      id: `quality-${check.name}-${failure.file}`,
+      source: 'Quality gate',
+      title: `${formatLabel(check.name)} failure`,
+      target: failure.file,
+      evidence: failure.error,
+      route: 'smallest local syntax or test command',
+      action: 'Patch the file, rerun the gate, and package the diff with rollback notes.',
+    })));
+
+  const workflowFailures = (triage.failed_workflow_runs ?? []).map((run) => ({
+    id: `workflow-${run.id}`,
+    source: 'Action workflow',
+    title: run.name,
+    target: run.branch,
+    evidence: `${formatLabel(run.conclusion)} · ${formatDateTime(run.updated_at)}`,
+    route: 'workflow log capture and targeted rerun',
+    action: 'Inspect failed job logs, reproduce locally when possible, then queue a supervised repair packet.',
+  }));
+
+  const botFailures = (buddyConnections.failures ?? []).map((failure, index) => ({
+    id: `bot-${failure.bot_id ?? failure.slug ?? index}`,
+    source: 'Agent or bot',
+    title: failure.name ?? failure.bot_id ?? 'Bot connection failure',
+    target: failure.division ?? failure.slug ?? 'bot registry',
+    evidence: failure.reason ?? failure.message ?? 'Connection, resource, or testability failure detected.',
+    route: 'bot test packet and resource guard',
+    action: 'Reconnect Buddy route, verify custom resources, and rerun the bot connection guard.',
+  }));
+
+  const storageFailures = [
+    ...(storage.checks ?? []).filter((check) => check.status === 'fail').map((check) => ({
+      id: `storage-${check.name}`,
+      source: 'Storage guard',
+      title: formatLabel(check.name),
+      target: 'local-first storage policy',
+      evidence: (check.failures ?? []).slice(0, 2).join(' · ') || check.message,
+      route: 'manifest, shard, budget, and compaction check',
+      action: 'Shard large files, preserve summary manifests, rerun the storage guard, and record evidence.',
+    })),
+    ...(storage.warnings ?? []).map((warning, index) => ({
+      id: `storage-warning-${index}`,
+      source: 'Storage warning',
+      title: 'Memory storage warning',
+      target: 'future memory safety',
+      evidence: warning,
+      route: 'budget warning review',
+      action: 'Convert warning into a tracked storage ticket before it becomes a blocking failure.',
+    })),
+  ];
+
+  const revenueFailures = (stripeRescue.revenue_blockers ?? []).map((blocker, index) => ({
+    id: `revenue-${index}`,
+    source: 'Revenue integration',
+    title: 'Payment flow blocker',
+    target: 'Stripe, email, or GitHub payment notice',
+    evidence: blocker,
+    route: 'sandbox payment trace',
+    action: 'Trace offer, checkout link, webhook event, email recipient, and GitHub notification path.',
+  }));
+
+  return [
+    ...qualityFailures,
+    ...workflowFailures,
+    ...botFailures,
+    ...storageFailures,
+    ...revenueFailures,
+  ].slice(0, 12);
+}
+
 export default function ActionsPage({
   ActionsMonitorComponent = ActionsMonitor,
   onBuddyCommandSubmit = () => {},
@@ -866,6 +953,16 @@ export default function ActionsPage({
   const contractCount = useMemo(
     () => libraries.reduce((total, library) => total + Number(library.count || 0), 0),
     [libraries],
+  );
+  const failureDebugQueue = useMemo(
+    () => buildFailureDebugQueue({
+      triage,
+      stewardship,
+      storage,
+      stripeRescue,
+      buddyConnections,
+    }),
+    [triage, stewardship, storage, stripeRescue, buddyConnections],
   );
 
   function prepareBuildPacket() {
@@ -1929,6 +2026,71 @@ export default function ActionsPage({
               </div>
             ))}
           </div>
+        </div>
+
+        <div className="mt-5 grid gap-5 xl:grid-cols-[minmax(0,1fr)_24rem]">
+          <div className="border border-slate-800 bg-slate-900 p-4">
+            <div className="flex flex-wrap items-start justify-between gap-3">
+              <div>
+                <h4 className="text-sm font-semibold text-white">Debug every Actions and Agents failure</h4>
+                <p className="mt-1 max-w-3xl text-xs leading-5 text-slate-400">
+                  Buddy combines workflow failures, syntax gates, bot connection issues, storage warnings, and revenue blockers
+                  into one repair queue with evidence, route, next action, and retest expectations.
+                </p>
+              </div>
+              <span className={`rounded-full border px-3 py-1 text-xs font-semibold ${
+                failureDebugQueue.length === 0
+                  ? 'border-green-800 bg-green-950/30 text-green-300'
+                  : 'border-yellow-800 bg-yellow-950/30 text-yellow-300'
+              }`}>
+                {formatNumber(failureDebugQueue.length)} failure packet(s)
+              </span>
+            </div>
+
+            <div className="mt-4 space-y-3">
+              {failureDebugQueue.map((failure) => (
+                <article key={failure.id} className="border border-slate-800 bg-slate-950 p-3">
+                  <div className="flex flex-wrap items-start justify-between gap-3">
+                    <div>
+                      <p className="text-[11px] font-bold uppercase text-dreamco-accent">{failure.source}</p>
+                      <h5 className="mt-1 text-sm font-semibold text-white">{failure.title}</h5>
+                      <p className="mt-1 break-words font-mono text-[11px] text-slate-500">{failure.target}</p>
+                    </div>
+                    <span className="rounded-full border border-slate-700 px-2 py-0.5 text-[11px] font-semibold uppercase text-slate-300">
+                      {failure.route}
+                    </span>
+                  </div>
+                  <p className="mt-3 text-xs leading-5 text-yellow-100">{failure.evidence}</p>
+                  <p className="mt-2 text-xs leading-5 text-slate-400">{failure.action}</p>
+                </article>
+              ))}
+              {failureDebugQueue.length === 0 && (
+                <p className="border border-green-800 bg-green-950/20 p-3 text-sm text-green-300">
+                  No active failure packets found. Buddy stays ready to capture the next failing check, agent, workflow, or integration.
+                </p>
+              )}
+            </div>
+          </div>
+
+          <aside className="border border-slate-800 bg-slate-900 p-4">
+            <h4 className="text-sm font-semibold text-white">Failure routing playbook</h4>
+            <div className="mt-3 space-y-3">
+              {FAILURE_DEBUG_ROUTES.map(([title, detail]) => (
+                <div key={title} className="border-l-2 border-dreamco-accent pl-3">
+                  <p className="text-xs font-semibold text-white">{title}</p>
+                  <p className="mt-1 text-xs leading-5 text-slate-400">{detail}</p>
+                </div>
+              ))}
+            </div>
+            <div className="mt-4 border border-slate-800 bg-slate-950 p-3">
+              <h5 className="text-xs font-semibold uppercase text-slate-300">Perfect-debug gates</h5>
+              <div className="mt-3 space-y-2">
+                {FAILURE_DEBUG_GATES.map((gate) => (
+                  <p key={gate} className="text-xs leading-5 text-slate-400">{gate}</p>
+                ))}
+              </div>
+            </div>
+          </aside>
         </div>
       </section>
 
