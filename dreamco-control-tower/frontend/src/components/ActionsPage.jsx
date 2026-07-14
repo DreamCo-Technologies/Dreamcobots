@@ -202,6 +202,43 @@ const FALLBACK_BUDDY_PRODUCTIVITY = {
   next_actions: [],
 };
 
+const FALLBACK_RELEASE_READINESS = {
+  generated_at: null,
+  branch: 'codex/bot-test-dashboard',
+  mission: 'Make DreamCo reliable, demonstrable, and evidence-backed.',
+  summary: {
+    release_readiness_score: 0,
+    first_ten_complete: 0,
+    first_ten_active: 10,
+    first_ten_blocked: 0,
+    top_100_groups_complete: 0,
+    top_100_groups_active: 6,
+    top_100_groups_blocked: 0,
+    open_prs: 58,
+    open_issues: 17,
+    failed_workflow_runs: 31,
+    failed_quality_checks: 0,
+    production_ready_bots: 101,
+    bot_profiles_scanned: 1051,
+    storage_ready: true,
+    revenue_rescue_ready: false,
+  },
+  first_ten_updates: [
+    { id: 'correct_registry_and_readme_counts', title: 'Correct registry and README counts', status: 'complete', proof: [], missing: [], next: 'Keep claims tied to evidence.' },
+    { id: 'classify_all_profiles_by_implementation_status', title: 'Classify all profiles by implementation status', status: 'active', proof: [], missing: [], next: 'Normalize every bot with runtime and test proof.' },
+    { id: 'triage_open_pull_requests', title: 'Triage open pull requests', status: 'active', proof: [], missing: [], next: 'Sort PRs into merge, rebuild, replace, duplicate, and close queues.' },
+  ],
+  top_100_groups: [
+    { id: 'repository_stability', title: 'Repository Stability', planned_updates: 20, status: 'active', metrics: {}, focus: [], first_move: 'Make one required CI workflow and classify open PRs.', next: 'Reduce stale PRs and failed workflow runs.' },
+    { id: 'bot_truth_registry', title: 'Bot Truth Registry', planned_updates: 20, status: 'active', metrics: {}, focus: [], first_move: 'Generate public catalog only from the master registry.', next: 'Prove each bot with runtime and tests.' },
+    { id: 'trustworthy_autonomy', title: 'Trustworthy Autonomy', planned_updates: 15, status: 'active', metrics: {}, focus: [], first_move: 'Enforce autonomy policies as code.', next: 'Connect approvals to runtime gates.' },
+  ],
+  already_done: [],
+  currently_building: [],
+  blocked_or_unproven: [],
+  next_actions: ['Run npm run report:release-readiness to populate live comparison data.'],
+};
+
 const FALLBACK_STORAGE_GUARD = {
   generated_at: null,
   summary: {
@@ -1049,6 +1086,8 @@ export default function ActionsPage({
   const [repositoryStewardshipStatus, setRepositoryStewardshipStatus] = useState('loading');
   const [buddyProductivity, setBuddyProductivity] = useState(null);
   const [buddyProductivityStatus, setBuddyProductivityStatus] = useState('loading');
+  const [releaseReadiness, setReleaseReadiness] = useState(null);
+  const [releaseReadinessStatus, setReleaseReadinessStatus] = useState('loading');
   const [storageGuard, setStorageGuard] = useState(null);
   const [storageGuardStatus, setStorageGuardStatus] = useState('loading');
   const [stripeRevenueRescue, setStripeRevenueRescue] = useState(null);
@@ -1105,6 +1144,15 @@ export default function ActionsPage({
   }, []);
 
   useEffect(() => {
+    fetchFirstJson(['/api/release-readiness'])
+      .then((data) => {
+        setReleaseReadiness(data);
+        setReleaseReadinessStatus('live');
+      })
+      .catch(() => setReleaseReadinessStatus('generated fallback'));
+  }, []);
+
+  useEffect(() => {
     fetchFirstJson(['/api/storage-guard'])
       .then((data) => {
         setStorageGuard(data);
@@ -1147,6 +1195,7 @@ export default function ActionsPage({
   const triage = githubTriage ?? FALLBACK_GITHUB_TRIAGE;
   const stewardship = repositoryStewardship ?? FALLBACK_REPOSITORY_STEWARDSHIP;
   const productivity = buddyProductivity ?? FALLBACK_BUDDY_PRODUCTIVITY;
+  const readiness = releaseReadiness ?? FALLBACK_RELEASE_READINESS;
   const storage = storageGuard ?? FALLBACK_STORAGE_GUARD;
   const stripeRescue = stripeRevenueRescue ?? FALLBACK_STRIPE_REVENUE_RESCUE;
   const buddyOps = buddyOpsQueue ?? FALLBACK_BUDDY_OPS_QUEUE;
@@ -1155,6 +1204,7 @@ export default function ActionsPage({
   const triageSummary = triage.summary ?? FALLBACK_GITHUB_TRIAGE.summary;
   const stewardshipSummary = stewardship.summary ?? FALLBACK_REPOSITORY_STEWARDSHIP.summary;
   const productivitySummary = productivity.summary ?? FALLBACK_BUDDY_PRODUCTIVITY.summary;
+  const readinessSummary = readiness.summary ?? FALLBACK_RELEASE_READINESS.summary;
   const storageSummary = storage.summary ?? FALLBACK_STORAGE_GUARD.summary;
   const stripeRescueSummary = stripeRescue.summary ?? FALLBACK_STRIPE_REVENUE_RESCUE.summary;
   const buddyConnectionSummary = buddyConnections.summary ?? FALLBACK_BUDDY_BOT_CONNECTIONS.summary;
@@ -1519,6 +1569,95 @@ export default function ActionsPage({
                 <p className="mt-3 border-l-2 border-yellow-500 pl-3 text-xs leading-5 text-yellow-100">{group.firstMove}</p>
               </article>
             ))}
+          </div>
+        </div>
+
+        <div className="mt-5 border border-emerald-700/40 bg-emerald-950/20 p-4">
+          <div className="flex flex-wrap items-start justify-between gap-3">
+            <div>
+              <h4 className="text-sm font-semibold text-white">Done versus still-building comparison</h4>
+              <p className="mt-1 max-w-3xl text-xs leading-5 text-emerald-100/80">
+                Buddy compares the DreamCo 1.0 plan against actual repository evidence so the dashboard shows proof,
+                active work, and unproven blockers without overclaiming production readiness.
+              </p>
+            </div>
+            <span className="rounded-full border border-emerald-500/40 px-3 py-1 text-xs font-semibold text-emerald-200">
+              {releaseReadinessStatus} · {formatDateTime(readiness.generated_at)}
+            </span>
+          </div>
+
+          <div className="mt-4 grid grid-cols-2 gap-px overflow-hidden border border-emerald-900 bg-emerald-900 lg:grid-cols-4 xl:grid-cols-8">
+            {[
+              ['Readiness', readinessSummary.release_readiness_score],
+              ['First ten done', readinessSummary.first_ten_complete],
+              ['First ten active', readinessSummary.first_ten_active],
+              ['Unproven', readinessSummary.first_ten_blocked],
+              ['Top groups active', readinessSummary.top_100_groups_active],
+              ['Open PRs', readinessSummary.open_prs],
+              ['Failed runs', readinessSummary.failed_workflow_runs],
+              ['Ready bots', readinessSummary.production_ready_bots],
+            ].map(([label, value]) => (
+              <div key={label} className="bg-slate-950 p-4">
+                <p className="text-xl font-black text-white">{typeof value === 'number' ? formatNumber(value) : String(value)}</p>
+                <p className="mt-1 text-xs uppercase text-emerald-200/70">{label}</p>
+              </div>
+            ))}
+          </div>
+
+          <div className="mt-5 grid gap-5 xl:grid-cols-[minmax(0,1.3fr)_minmax(0,1fr)]">
+            <div className="border border-slate-800 bg-slate-950 p-4">
+              <h5 className="text-sm font-semibold text-white">First ten execution proof</h5>
+              <div className="mt-3 space-y-2">
+                {(readiness.first_ten_updates ?? []).slice(0, 10).map((item, index) => (
+                  <div key={item.id} className="grid gap-3 border border-slate-800 bg-slate-900 p-3 md:grid-cols-[2rem_minmax(0,1fr)_7rem]">
+                    <span className="font-mono text-xs text-dreamco-accent">{String(index + 1).padStart(2, '0')}</span>
+                    <div>
+                      <p className="text-sm font-semibold text-white">{item.title}</p>
+                      <p className="mt-1 text-xs leading-5 text-slate-400">{item.next}</p>
+                    </div>
+                    <span className={`h-fit rounded-full border px-2 py-1 text-center text-[11px] font-semibold uppercase ${
+                      item.status === 'complete'
+                        ? 'border-emerald-500/50 text-emerald-200'
+                        : item.status === 'blocked'
+                          ? 'border-rose-500/50 text-rose-200'
+                          : 'border-amber-500/50 text-amber-200'
+                    }`}>
+                      {item.status}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="space-y-5">
+              <div className="border border-slate-800 bg-slate-950 p-4">
+                <h5 className="text-sm font-semibold text-white">Top 100 group state</h5>
+                <div className="mt-3 space-y-3">
+                  {(readiness.top_100_groups ?? []).map((group) => (
+                    <div key={group.id} className="border-b border-slate-800 pb-3 last:border-0 last:pb-0">
+                      <div className="flex items-center justify-between gap-3">
+                        <p className="text-xs font-semibold text-white">{formatLabel(group.title)}</p>
+                        <span className="font-mono text-[11px] text-dreamco-accent">
+                          {group.planned_updates} · {group.status}
+                        </span>
+                      </div>
+                      <p className="mt-1 text-xs leading-5 text-slate-400">{group.next}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div className="border border-slate-800 bg-slate-950 p-4">
+                <h5 className="text-sm font-semibold text-white">Buddy next moves</h5>
+                <div className="mt-3 space-y-2">
+                  {(readiness.next_actions ?? []).slice(0, 4).map((action) => (
+                    <p key={action} className="border-l-2 border-emerald-400 pl-3 text-xs leading-5 text-slate-300">
+                      {action}
+                    </p>
+                  ))}
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </section>

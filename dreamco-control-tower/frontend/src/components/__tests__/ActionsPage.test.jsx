@@ -207,6 +207,46 @@ const buddyProductivityPayload = {
   next_actions: ['Prioritize workflow failures.', 'Turn top capabilities into client packages.'],
 };
 
+const releaseReadinessPayload = {
+  schema: 'dreamco.release_readiness.v1',
+  generated_at: '2026-07-14T12:00:00Z',
+  branch: 'codex/bot-test-dashboard',
+  mission: 'Make DreamCo reliable, demonstrable, and evidence-backed.',
+  summary: {
+    release_readiness_score: 73.91,
+    first_ten_complete: 4,
+    first_ten_active: 6,
+    first_ten_blocked: 0,
+    top_100_groups_complete: 1,
+    top_100_groups_active: 5,
+    top_100_groups_blocked: 0,
+    open_prs: 56,
+    open_issues: 17,
+    failed_workflow_runs: 6,
+    failed_quality_checks: 0,
+    production_ready_bots: 101,
+    bot_profiles_scanned: 1247,
+    storage_ready: true,
+    revenue_rescue_ready: false,
+  },
+  first_ten_updates: [
+    { id: 'correct_registry_and_readme_counts', title: 'Correct registry and README counts', status: 'complete', proof: ['README truth copy'], missing: [], next: 'Keep all public claims tied to generated reports.' },
+    { id: 'classify_all_profiles_by_implementation_status', title: 'Classify all profiles by implementation status', status: 'active', proof: ['Buddy inventory'], missing: ['Direct tests'], next: 'Normalize every profile with runtime, tests, permissions, and maturity evidence.' },
+    { id: 'triage_open_pull_requests', title: 'Triage open pull requests', status: 'active', proof: ['GitHub triage report'], missing: [], next: 'Sort the open PR queue into merge, rebuild, replace, duplicate, and close candidates.' },
+  ],
+  top_100_groups: [
+    { id: 'repository_stability', title: 'Repository Stability', planned_updates: 20, status: 'active', metrics: { open_prs: 56 }, focus: [], first_move: 'Make one required CI workflow.', next: 'Use the cleanroom queue to reduce stale PRs and failed workflow runs.' },
+    { id: 'public_docs_identity', title: 'Public Docs Identity', planned_updates: 15, status: 'complete', metrics: {}, focus: [], first_move: 'Keep README claims tied to measurable evidence.', next: 'Refresh docs from generated evidence instead of manual claims.' },
+  ],
+  already_done: [],
+  currently_building: [],
+  blocked_or_unproven: [],
+  next_actions: [
+    'Refresh capability, stewardship, storage, Stripe, and bot connection reports before every release PR.',
+    'Reduce the PR restart queue before adding more bots or major dashboard surfaces.',
+  ],
+};
+
 const storageGuardPayload = {
   schema: 'dreamco.storage_guard.v1',
   generated_at: '2026-07-12T00:00:00Z',
@@ -340,6 +380,7 @@ beforeEach(() => {
     if (url === '/api/github-triage') payload = githubTriagePayload;
     if (url === '/api/repository-stewardship') payload = repositoryStewardshipPayload;
     if (url === '/api/buddy-productivity') payload = buddyProductivityPayload;
+    if (url === '/api/release-readiness') payload = releaseReadinessPayload;
     if (url === '/api/storage-guard') payload = storageGuardPayload;
     if (url === '/api/stripe-revenue-rescue') payload = stripeRevenueRescuePayload;
     if (url === '/api/buddy-ops') payload = buddyOpsPayload;
@@ -376,6 +417,11 @@ describe('ActionsPage', () => {
     expect(screen.getByText('Make five bot products work end to end')).toBeInTheDocument();
     expect(screen.getByText('Top 100 update backlog')).toBeInTheDocument();
     expect(screen.getByText('100 updates mapped')).toBeInTheDocument();
+    expect(screen.getByText('Done versus still-building comparison')).toBeInTheDocument();
+    expect(screen.getByText('First ten execution proof')).toBeInTheDocument();
+    expect(screen.getByText('Top 100 group state')).toBeInTheDocument();
+    expect(screen.getByText('Buddy next moves')).toBeInTheDocument();
+    await waitFor(() => expect(screen.getByText('73.91')).toBeInTheDocument());
     expect(screen.getByText('Repository stability')).toBeInTheDocument();
     expect(screen.getByText('Bot truth registry')).toBeInTheDocument();
     expect(screen.getAllByText('Trustworthy autonomy').length).toBeGreaterThan(0);

@@ -29,6 +29,10 @@ const BUDDY_PRODUCTIVITY_TRACKER_FILE = path.join(
   __dirname,
   '../../reports/buddy_productivity_tracker.json',
 );
+const DREAMCO_RELEASE_READINESS_FILE = path.join(
+  __dirname,
+  '../../reports/dreamco_release_readiness.json',
+);
 const GITHUB_TRIAGE_REPORT_FILE = path.join(
   __dirname,
   '../../reports/github_triage_report.json',
@@ -153,6 +157,13 @@ function readBuddyProductivityTracker() {
     return null;
   }
   return JSON.parse(fs.readFileSync(BUDDY_PRODUCTIVITY_TRACKER_FILE, 'utf8'));
+}
+
+function readDreamCoReleaseReadiness() {
+  if (!fs.existsSync(DREAMCO_RELEASE_READINESS_FILE)) {
+    return null;
+  }
+  return JSON.parse(fs.readFileSync(DREAMCO_RELEASE_READINESS_FILE, 'utf8'));
 }
 
 function readGitHubTriageReport() {
@@ -555,6 +566,17 @@ app.get('/api/buddy-productivity', rateLimiter, (_req, res) => {
     return res.status(503).json({ error: 'buddy productivity tracker not found' });
   }
   return res.json(tracker);
+});
+
+// ---------------------------------------------------------------------------
+// GET /api/release-readiness — DreamCo 1.0 plan-versus-proof comparison
+// ---------------------------------------------------------------------------
+app.get('/api/release-readiness', rateLimiter, (_req, res) => {
+  const report = readDreamCoReleaseReadiness();
+  if (!report) {
+    return res.status(503).json({ error: 'release readiness report not found' });
+  }
+  return res.json(report);
 });
 
 // ---------------------------------------------------------------------------

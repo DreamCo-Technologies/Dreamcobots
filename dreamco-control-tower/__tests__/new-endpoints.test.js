@@ -338,6 +338,20 @@ describe('GET /api/buddy-productivity', () => {
   });
 });
 
+describe('GET /api/release-readiness', () => {
+  test('returns DreamCo 1.0 plan versus proof comparison', async () => {
+    const res = await request(app).get('/api/release-readiness');
+
+    expect(res.status).toBe(200);
+    expect(res.body.schema).toBe('dreamco.release_readiness.v1');
+    expect(res.body.summary).toHaveProperty('release_readiness_score');
+    expect(res.body.summary).toHaveProperty('first_ten_complete');
+    expect(Array.isArray(res.body.first_ten_updates)).toBe(true);
+    expect(Array.isArray(res.body.top_100_groups)).toBe(true);
+    expect(res.body.sources).toHaveProperty('repository_stewardship');
+  });
+});
+
 describe('GET /api/github-triage', () => {
   test('returns generated GitHub triage report', async () => {
     const res = await request(app).get('/api/github-triage');
