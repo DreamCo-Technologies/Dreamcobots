@@ -365,6 +365,42 @@ const LIVE_ENVIRONMENT_CHECKS = [
   ['Risk posture', 'sandbox first'],
 ];
 
+const PROGRESS_WEEKEND_GOALS = [
+  {
+    title: 'Verify the repository',
+    outcome: 'One correct GitHub repository, clean branch status, pull/push path confirmed, and Actions failures visible.',
+    proof: ['git status', 'remote verified', 'workflow failures listed'],
+  },
+  {
+    title: 'Complete the bot inventory',
+    outcome: 'Every bot has purpose, inputs, outputs, revenue opportunity, API notes, status, and test path.',
+    proof: ['bot catalog', 'division coverage', 'ready or needs-work state'],
+  },
+  {
+    title: 'Finish Buddy as dashboard controller',
+    outcome: 'Buddy shows divisions, launches test packets, tracks errors, documents bots, and routes rebuild/debug work.',
+    proof: ['Actions page', 'Buddy console', 'bot test catalog'],
+  },
+  {
+    title: 'Test Mac and GitHub workflow',
+    outcome: 'Clone, pull, push, and verify a small change from the laptop without breaking the branch.',
+    proof: ['local branch', 'pushed commit', 'GitHub confirmation'],
+  },
+  {
+    title: 'Pick five sellable bots',
+    outcome: 'Choose the 5 bots most likely to make money this month and define signup, usage, pricing, and demo path.',
+    proof: ['top 5 list', 'client offer', 'demo script'],
+  },
+];
+
+const PROGRESS_WEEKEND_DONE = [
+  'One verified GitHub repository',
+  'Complete bot inventory',
+  'Buddy central dashboard',
+  'Top five production candidates',
+  'Biggest bugs and missing features list',
+];
+
 const ROYAL_PANEL_CLASS = 'border border-amber-500/40 bg-[radial-gradient(circle_at_top_left,rgba(245,158,11,0.16),transparent_34%),linear-gradient(135deg,rgba(15,23,42,0.98),rgba(6,78,59,0.5),rgba(15,23,42,0.98))] shadow-[0_24px_80px_rgba(0,0,0,0.45)]';
 const ROYAL_CARD_CLASS = 'border border-amber-500/30 bg-slate-950/75 shadow-inner shadow-amber-950/30';
 const ROYAL_TEXT_CLASS = 'bg-gradient-to-r from-amber-200 via-yellow-100 to-emerald-200 bg-clip-text text-transparent';
@@ -1272,6 +1308,53 @@ export default function ActionsPage({
             })}
           </div>
         </aside>
+      </section>
+
+      <section aria-labelledby="progress-weekend-heading" className={`relative overflow-hidden p-5 ${ROYAL_PANEL_CLASS}`}>
+        <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-amber-300/70 to-transparent" />
+        <div className="flex flex-wrap items-start justify-between gap-3">
+          <div>
+            <p className="text-xs font-bold uppercase tracking-[0.18em] text-amber-200">DreamCo progress weekend</p>
+            <h3 id="progress-weekend-heading" className={`mt-1 text-lg font-semibold ${ROYAL_TEXT_CLASS}`}>
+              Make the current system reliable, organized, and demonstrable
+            </h3>
+            <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-300">
+              This keeps Buddy focused on proving the repository, bot inventory, dashboard control, Mac/GitHub workflow,
+              sellable bot shortlist, and bug list before expanding into more new systems.
+            </p>
+          </div>
+          <span className="rounded-full border border-amber-400/40 bg-amber-950/30 px-3 py-1 text-xs font-semibold text-amber-200">
+            Sunday night milestone
+          </span>
+        </div>
+
+        <div className="mt-5 grid gap-px overflow-hidden border border-amber-500/20 bg-amber-500/20 lg:grid-cols-5">
+          {PROGRESS_WEEKEND_GOALS.map((goal, index) => (
+            <article key={goal.title} className="min-h-52 bg-slate-950/90 p-4">
+              <p className="font-mono text-xs text-amber-200">0{index + 1}</p>
+              <h4 className="mt-2 text-sm font-semibold text-white">{goal.title}</h4>
+              <p className="mt-2 text-xs leading-5 text-slate-400">{goal.outcome}</p>
+              <div className="mt-4 flex flex-wrap gap-2">
+                {goal.proof.map((item) => (
+                  <span key={item} className="rounded-full border border-amber-500/20 px-2 py-1 text-[11px] text-amber-100">
+                    {item}
+                  </span>
+                ))}
+              </div>
+            </article>
+          ))}
+        </div>
+
+        <div className="mt-5 border border-amber-500/20 bg-slate-950/70 p-4">
+          <h4 className="text-sm font-semibold text-amber-100">Done means</h4>
+          <div className="mt-3 grid gap-2 md:grid-cols-5">
+            {PROGRESS_WEEKEND_DONE.map((item) => (
+              <div key={item} className="border-l-2 border-emerald-300/60 pl-3 text-xs leading-5 text-slate-300">
+                {item}
+              </div>
+            ))}
+          </div>
+        </div>
       </section>
 
       <section aria-labelledby="client-flow-heading" className="border border-slate-700 bg-slate-950 p-5">
