@@ -391,6 +391,20 @@ const PR_BUDDY_HELP_FLOW = [
   ['Package', 'Buddy prepares a merge-ready checklist, rollback note, and client-safe summary.'],
 ];
 
+const FAILED_PR_RESCUE_FLOW = [
+  ['Find blocker', 'Read failing checks, review comments, merge conflicts, stale branch state, and linked issue goals.'],
+  ['Build fix plan', 'Map each failed check to files, commands, likely cause, owner area, and smallest safe patch.'],
+  ['Apply safely', 'Prepare a supervised patch packet, keep unrelated files untouched, and record rollback notes.'],
+  ['Retest proof', 'Rerun targeted tests, dashboard checks, and workflow-equivalent commands before asking for review.'],
+  ['Review packet', 'Write the PR comment summary with what failed, what changed, what passed, and what still needs owner approval.'],
+];
+
+const FAILED_PR_OWNER_GATES = [
+  'Buddy can prepare fixes, test notes, PR comments, and retry instructions.',
+  'Buddy does not merge, close, deploy, spend money, or change credentials without owner approval.',
+  'Failed PRs stay in the rescue queue until failing checks are green or the remaining blocker is clearly assigned.',
+];
+
 const FAILURE_DEBUG_ROUTES = [
   ['Action workflow', 'Capture logs, job name, branch, commit, failed step, and rerun eligibility.'],
   ['Quality gate', 'Parse exact file, syntax error, command, affected package, and smallest repro test.'],
@@ -2288,6 +2302,59 @@ export default function ActionsPage({
                 <p className="mt-2 text-xs leading-5 text-slate-400">{detail}</p>
               </div>
             ))}
+          </div>
+        </div>
+
+        <div className="mt-5 border border-yellow-800 bg-yellow-950/10 p-4">
+          <div className="flex flex-wrap items-start justify-between gap-3">
+            <div>
+              <h4 className="text-sm font-semibold text-white">Failed pull request rescue</h4>
+              <p className="mt-1 max-w-3xl text-xs leading-5 text-slate-300">
+                When a pull request fails checks or gets blocked by comments, Buddy turns it into a fix packet:
+                blocker, cause, patch plan, retest proof, and review-ready summary.
+              </p>
+            </div>
+            <span className="rounded-full border border-yellow-700 px-3 py-1 text-xs font-semibold text-yellow-200">
+              {formatNumber((triage.pr_restart_queue ?? []).length + (triage.failed_workflow_runs ?? []).length)} rescue signal(s)
+            </span>
+          </div>
+
+          <div className="mt-4 grid gap-px overflow-hidden border border-slate-800 bg-slate-800 md:grid-cols-5">
+            {FAILED_PR_RESCUE_FLOW.map(([title, detail], index) => (
+              <div key={title} className="min-h-32 bg-slate-950 p-3">
+                <p className="font-mono text-[11px] text-yellow-300">0{index + 1}</p>
+                <h5 className="mt-2 text-sm font-semibold text-white">{title}</h5>
+                <p className="mt-2 text-xs leading-5 text-slate-400">{detail}</p>
+              </div>
+            ))}
+          </div>
+
+          <div className="mt-4 grid gap-3 lg:grid-cols-[minmax(0,1fr)_20rem]">
+            <div className="border border-slate-800 bg-slate-950 p-3">
+              <h5 className="text-xs font-semibold uppercase text-slate-300">Active failed PR help queue</h5>
+              <div className="mt-3 space-y-2">
+                {(triage.pr_restart_queue ?? []).slice(0, 4).map((pr) => (
+                  <a key={`failed-pr-${pr.number}`} href={pr.url} className="block border-l-2 border-yellow-500 pl-3 text-xs leading-5 text-slate-300 hover:text-white">
+                    <span className="font-semibold text-white">#{pr.number}</span> {pr.title}
+                    <span className="block text-slate-500">
+                      Buddy rescue: rebase or retest, inspect comments, repair failing gates, then package review notes.
+                    </span>
+                  </a>
+                ))}
+                {(triage.pr_restart_queue ?? []).length === 0 && (
+                  <p className="text-xs leading-5 text-green-300">No failed or stale PRs need Buddy rescue in the latest scan.</p>
+                )}
+              </div>
+            </div>
+
+            <aside className="border border-slate-800 bg-slate-950 p-3">
+              <h5 className="text-xs font-semibold uppercase text-slate-300">Owner gates</h5>
+              <div className="mt-3 space-y-2">
+                {FAILED_PR_OWNER_GATES.map((gate) => (
+                  <p key={gate} className="text-xs leading-5 text-slate-400">{gate}</p>
+                ))}
+              </div>
+            </aside>
           </div>
         </div>
 

@@ -493,8 +493,13 @@ describe('ActionsPage', () => {
     expect(screen.getByText('Issue comments')).toBeInTheDocument();
     expect(screen.getByText('Review comments')).toBeInTheDocument();
     expect(screen.getByText('Restart queue')).toBeInTheDocument();
+    expect(screen.getByText('Failed pull request rescue')).toBeInTheDocument();
+    expect(screen.getByText('Active failed PR help queue')).toBeInTheDocument();
+    expect(screen.getByText('Find blocker')).toBeInTheDocument();
+    expect(screen.getByText('Retest proof')).toBeInTheDocument();
+    expect(screen.getByText(/Buddy rescue: rebase or retest/)).toBeInTheDocument();
     expect(screen.getByText('PR restart and retest queue')).toBeInTheDocument();
-    expect(screen.getByText(/Finish Buddy readiness tracker/)).toBeInTheDocument();
+    expect(screen.getAllByText(/Finish Buddy readiness tracker/).length).toBeGreaterThan(0);
     expect(screen.getByText('Workflow failures to retest')).toBeInTheDocument();
     expect(screen.getAllByText('System and Bot Builds Monitoring').length).toBeGreaterThan(0);
     expect(screen.getByText('workflow log capture and targeted rerun')).toBeInTheDocument();

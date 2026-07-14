@@ -21,6 +21,23 @@ Every pull request should get Buddy help:
 - repair failing gates through supervised operation packets;
 - package a merge-ready checklist, rollback note, and client summary.
 
+## Failed pull request rescue
+
+Failed pull requests should be converted into Buddy rescue packets.
+
+Each rescue packet should capture:
+
+- failing checks or workflow runs;
+- review comments and linked issue goals;
+- merge conflicts or stale branch state;
+- likely root cause;
+- smallest safe patch plan;
+- targeted retest commands;
+- rollback note;
+- review-ready PR comment.
+
+Buddy may prepare the patch, test evidence, retry instructions, and PR comment. Merging, deploying, credential changes, and money-related changes still require owner approval.
+
 ## Actions and agents failures
 
 The Actions page should show one debug queue for workflow failures, quality gate failures, bot connection issues, storage warnings, payment blockers, and agent runtime problems.

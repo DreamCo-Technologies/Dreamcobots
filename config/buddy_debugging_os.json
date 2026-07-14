@@ -18,6 +18,37 @@
     "repair_failing_gates_through_supervised_operation_packets",
     "package_merge_ready_checklist_rollback_note_and_client_summary"
   ],
+  "failed_pull_request_rescue": {
+    "signals": [
+      "failing_checks",
+      "failed_workflow_runs",
+      "review_comments",
+      "merge_conflicts",
+      "stale_branch",
+      "linked_issue_gap",
+      "missing_test_evidence"
+    ],
+    "flow": [
+      "find_blocker",
+      "build_fix_plan",
+      "apply_safely",
+      "retest_proof",
+      "review_packet"
+    ],
+    "buddy_outputs": [
+      "failed_check_summary",
+      "likely_root_cause",
+      "smallest_safe_patch_plan",
+      "targeted_test_commands",
+      "rollback_note",
+      "review_ready_pr_comment"
+    ],
+    "owner_gates": [
+      "no_merge_without_owner_approval",
+      "no_deploy_without_owner_approval",
+      "no_credential_or_money_changes_without_owner_approval"
+    ]
+  },
   "actions_and_agents_failure_debugging": {
     "sources": [
       "github_actions_workflow_runs",
