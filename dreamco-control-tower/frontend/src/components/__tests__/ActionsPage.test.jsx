@@ -352,6 +352,8 @@ describe('ActionsPage', () => {
 
     expect(screen.getByText('Buddy Command Tower for building, testing, and presenting bot systems')).toBeInTheDocument();
     expect(screen.getByText('Operational status')).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'Recent Buddy operations' })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'Operational proof' })).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: 'Professional delivery pipeline' })).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: 'Prompt Buddy from the Actions page' })).toBeInTheDocument();
     await waitFor(() => expect(screen.getByText('Stripe Revenue Rescue Builder')).toBeInTheDocument());
@@ -423,6 +425,8 @@ describe('ActionsPage', () => {
     expect(screen.getByText('Contract-ready')).toBeInTheDocument();
     expect(screen.getByText('Needs implementation before testing')).toBeInTheDocument();
     expect(screen.getByText('Path to fully coded')).toBeInTheDocument();
+    expect(screen.getAllByText('Buddy test evidence dossier').length).toBeGreaterThan(0);
+    expect(screen.getAllByText('Sandbox command').length).toBeGreaterThan(0);
     expect(screen.getByText('All bots have a path')).toBeInTheDocument();
     expect(screen.getByText('Review placeholders')).toBeInTheDocument();
     expect(screen.getByText('Add direct tests')).toBeInTheDocument();

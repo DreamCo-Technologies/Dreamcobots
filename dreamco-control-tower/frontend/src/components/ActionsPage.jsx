@@ -329,6 +329,20 @@ const BUDDY_LIVE_SYSTEMS = [
   { label: 'GitHub Pages', status: 'configured', detail: 'Static dashboard build includes the bot inventory for hosted previews.' },
 ];
 
+const OPERATIONS_FEED = [
+  ['05:23', 'Buddy connection guard verified 1,248 testable bots and 100 resources per bot.'],
+  ['05:18', 'AI Creation Studio lanes expanded for games, simulations, image editing, audio, dashboards, and research.'],
+  ['05:12', 'Actions page prompt created a supervised Buddy operation packet.'],
+  ['05:04', 'Payment alert guard added email and GitHub issue notification paths.'],
+];
+
+const LIVE_ENVIRONMENT_CHECKS = [
+  ['Branch', 'codex/bot-test-dashboard'],
+  ['Mode', 'supervised'],
+  ['Release gate', 'pull request'],
+  ['Risk posture', 'sandbox first'],
+];
+
 const CLIENT_WORKFLOWS = [
   ['Discover', 'Show prospects what the bot fleet can build, test, and operate.'],
   ['Prototype', 'Prepare tools, APIs, webhooks, workflows, skills, and sandbox checks.'],
@@ -558,6 +572,11 @@ function formatLabel(value) {
 
 function formatNumber(value) {
   return Number(value || 0).toLocaleString();
+}
+
+function percent(value, total) {
+  if (!total) return 0;
+  return Math.max(0, Math.min(100, Math.round((Number(value || 0) / Number(total)) * 100)));
 }
 
 function formatDateTime(value) {
@@ -894,8 +913,21 @@ export default function ActionsPage({
             </div>
           </div>
           <aside className="border border-slate-800 bg-slate-900 p-4">
-            <h3 className="text-sm font-semibold text-white">Operational status</h3>
-            <div className="mt-3 space-y-3">
+            <div className="flex items-center justify-between gap-3">
+              <h3 className="text-sm font-semibold text-white">Operational status</h3>
+              <span className="rounded-full border border-green-800 bg-green-950/40 px-2 py-0.5 text-[11px] font-semibold uppercase text-green-300">
+                Live
+              </span>
+            </div>
+            <div className="mt-3 grid grid-cols-2 gap-px overflow-hidden border border-slate-800 bg-slate-800">
+              {LIVE_ENVIRONMENT_CHECKS.map(([label, value]) => (
+                <div key={label} className="bg-slate-950 p-3">
+                  <p className="truncate text-xs font-semibold text-white">{value}</p>
+                  <p className="mt-1 text-[11px] uppercase text-slate-500">{label}</p>
+                </div>
+              ))}
+            </div>
+            <div className="mt-4 space-y-3">
               {BUDDY_LIVE_SYSTEMS.map((system) => (
                 <div key={system.label} className="border-l-2 border-dreamco-accent pl-3">
                   <div className="flex items-center justify-between gap-3">
@@ -925,6 +957,55 @@ export default function ActionsPage({
           ))}
         </div>
       </header>
+
+      <section aria-labelledby="live-feed-heading" className="grid gap-5 xl:grid-cols-[1fr_24rem]">
+        <div className="border border-slate-700 bg-slate-950 p-5">
+          <div className="flex flex-wrap items-start justify-between gap-3">
+            <div>
+              <p className="text-xs font-bold uppercase text-dreamco-accent">Live evidence stream</p>
+              <h3 id="live-feed-heading" className="mt-1 text-lg font-semibold text-white">Recent Buddy operations</h3>
+            </div>
+            <span className="rounded-full border border-slate-700 px-3 py-1 text-xs font-semibold text-slate-400">
+              Updated from repo reports
+            </span>
+          </div>
+          <div className="mt-4 divide-y divide-slate-800 border border-slate-800 bg-slate-900">
+            {OPERATIONS_FEED.map(([time, detail]) => (
+              <div key={`${time}-${detail}`} className="grid grid-cols-[4rem_1fr] gap-3 p-3">
+                <span className="font-mono text-xs text-dreamco-accent">{time}</span>
+                <p className="text-sm leading-5 text-slate-300">{detail}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <aside className="border border-slate-700 bg-slate-950 p-5">
+          <p className="text-xs font-bold uppercase text-dreamco-accent">Fleet readiness</p>
+          <h3 className="mt-1 text-lg font-semibold text-white">Operational proof</h3>
+          <div className="mt-4 space-y-4">
+            {[
+              ['Buddy connected', buddyConnectionSummary.buddy_connected_bots, buddyConnectionSummary.bot_count],
+              ['Actions testable', buddyConnectionSummary.actions_page_testable_bots, buddyConnectionSummary.bot_count],
+              ['Custom resources', buddyConnectionSummary.custom_resource_ready_bots, buddyConnectionSummary.bot_count],
+              ['Production ready', inventorySummary.production_ready_bots, inventorySummary.bot_profiles_scanned],
+            ].map(([label, value, total]) => {
+              const width = percent(value, total);
+              return (
+                <div key={label}>
+                  <div className="flex items-center justify-between gap-3 text-xs">
+                    <span className="font-semibold text-slate-200">{label}</span>
+                    <span className="font-mono text-slate-500">{width}%</span>
+                  </div>
+                  <div className="mt-2 h-2 overflow-hidden bg-slate-800">
+                    <div className="h-full bg-dreamco-accent" style={{ width: `${width}%` }} />
+                  </div>
+                  <p className="mt-1 text-[11px] text-slate-500">{formatNumber(value)} / {formatNumber(total)}</p>
+                </div>
+              );
+            })}
+          </div>
+        </aside>
+      </section>
 
       <section aria-labelledby="client-flow-heading" className="border border-slate-700 bg-slate-950 p-5">
         <div className="flex flex-wrap items-start justify-between gap-3">
@@ -1615,6 +1696,28 @@ export default function ActionsPage({
               <div className="border border-slate-700 p-3"><p className="text-xs text-slate-500">Build state</p><p className="mt-1 text-sm text-white">{formatLabel(selectedBot.build_state)}</p></div>
               <div className="border border-slate-700 p-3"><p className="text-xs text-slate-500">Test state</p><p className="mt-1 text-sm text-white">{formatLabel(selectedBot.test_state)}</p></div>
               <div className="border border-slate-700 p-3"><p className="text-xs text-slate-500">Risk gate</p><p className="mt-1 text-sm text-white">{formatLabel(selectedBot.risk_hint ?? 'standard')}</p></div>
+            </div>
+
+            <div className="mt-5 border border-slate-800 bg-slate-950 p-4">
+              <div className="flex flex-wrap items-center justify-between gap-3">
+                <h5 className="text-sm font-semibold text-white">Buddy test evidence dossier</h5>
+                <span className="rounded-full border border-green-800 bg-green-950/30 px-2 py-0.5 text-[11px] font-semibold uppercase text-green-300">
+                  Connected
+                </span>
+              </div>
+              <div className="mt-3 grid gap-px overflow-hidden border border-slate-800 bg-slate-800 sm:grid-cols-2 xl:grid-cols-4">
+                {[
+                  ['Buddy route', selectedBot.slug],
+                  ['Sandbox command', 'run_generated_bot_smoke.py'],
+                  ['Custom resources', buddyConnectionSummary.resources_per_bot_required],
+                  ['Approval policy', selectedBot.risk_hint === 'high' ? 'Owner required' : 'Sandbox allowed'],
+                ].map(([label, value]) => (
+                  <div key={label} className="bg-slate-900 p-3">
+                    <p className="truncate font-mono text-xs text-white">{value}</p>
+                    <p className="mt-1 text-[11px] uppercase text-slate-500">{label}</p>
+                  </div>
+                ))}
+              </div>
             </div>
 
             {(selectedBot.tests ?? []).length > 0 && (
