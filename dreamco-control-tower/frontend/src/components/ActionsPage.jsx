@@ -365,6 +365,10 @@ const LIVE_ENVIRONMENT_CHECKS = [
   ['Risk posture', 'sandbox first'],
 ];
 
+const ROYAL_PANEL_CLASS = 'border border-amber-500/40 bg-[radial-gradient(circle_at_top_left,rgba(245,158,11,0.16),transparent_34%),linear-gradient(135deg,rgba(15,23,42,0.98),rgba(6,78,59,0.5),rgba(15,23,42,0.98))] shadow-[0_24px_80px_rgba(0,0,0,0.45)]';
+const ROYAL_CARD_CLASS = 'border border-amber-500/30 bg-slate-950/75 shadow-inner shadow-amber-950/30';
+const ROYAL_TEXT_CLASS = 'bg-gradient-to-r from-amber-200 via-yellow-100 to-emerald-200 bg-clip-text text-transparent';
+
 const DEBUGGING_OS_STAGES = [
   {
     stage: 'Capture',
@@ -1137,19 +1141,21 @@ export default function ActionsPage({
 
   return (
     <section className="space-y-6">
-      <header className="overflow-hidden border border-slate-700 bg-slate-950">
+      <header className={`relative overflow-hidden ${ROYAL_PANEL_CLASS}`}>
+        <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-amber-300/80 to-transparent" />
+        <div className="pointer-events-none absolute right-8 top-6 h-24 w-24 rounded-full border border-amber-300/20 bg-amber-300/10 blur-2xl" />
         <div className="grid gap-6 p-5 xl:grid-cols-[minmax(0,1fr)_24rem]">
           <div>
             <div className="flex flex-wrap items-center gap-2">
-              <p className="text-xs font-bold uppercase text-dreamco-accent">Client Operations Preview</p>
-              <span className="rounded-full border border-green-800 bg-green-950/40 px-3 py-1 text-xs font-semibold text-green-300">
+              <p className="text-xs font-bold uppercase tracking-[0.18em] text-amber-200">Royal Client Operations Preview</p>
+              <span className="rounded-full border border-emerald-400/40 bg-emerald-950/50 px-3 py-1 text-xs font-semibold text-emerald-200">
                 Live dashboard
               </span>
-              <span className="rounded-full border border-yellow-800 bg-yellow-950/30 px-3 py-1 text-xs font-semibold text-yellow-300">
+              <span className="rounded-full border border-amber-400/50 bg-amber-950/30 px-3 py-1 text-xs font-semibold text-amber-200">
                 Supervised autonomy
               </span>
             </div>
-            <h2 className="mt-3 max-w-4xl text-3xl font-black tracking-normal text-white md:text-4xl">
+            <h2 className={`mt-3 max-w-4xl text-3xl font-black tracking-normal md:text-4xl ${ROYAL_TEXT_CLASS}`}>
               Buddy Command Tower for building, testing, and presenting bot systems
             </h2>
             <p className="mt-3 max-w-3xl text-sm leading-6 text-slate-300">
@@ -1160,31 +1166,31 @@ export default function ActionsPage({
               <button
                 type="button"
                 onClick={() => setShowBuddyCenter(true)}
-                className="rounded-md bg-dreamco-accent px-4 py-2 text-sm font-semibold text-white hover:bg-dreamco-accent/80"
+                className="rounded-md border border-amber-300/60 bg-gradient-to-r from-amber-500 to-yellow-600 px-4 py-2 text-sm font-semibold text-slate-950 shadow-lg shadow-amber-950/30 hover:from-amber-400 hover:to-yellow-500"
               >
                 Open Buddy Live Console
               </button>
               <button
                 type="button"
                 onClick={() => prepareBotTest(botCatalog.find((bot) => bot.slug === 'buddy-bot') ?? selectedBot, 'buddy')}
-                className="rounded-md border border-slate-600 px-4 py-2 text-sm font-semibold text-slate-200 hover:border-slate-400"
+                className="rounded-md border border-emerald-300/40 bg-emerald-950/30 px-4 py-2 text-sm font-semibold text-emerald-100 hover:border-emerald-200"
               >
                 Prepare Buddy Test
               </button>
             </div>
           </div>
-          <aside className="border border-slate-800 bg-slate-900 p-4">
+          <aside className={`${ROYAL_CARD_CLASS} p-4`}>
             <div className="flex items-center justify-between gap-3">
               <h3 className="text-sm font-semibold text-white">Operational status</h3>
-              <span className="rounded-full border border-green-800 bg-green-950/40 px-2 py-0.5 text-[11px] font-semibold uppercase text-green-300">
+              <span className="rounded-full border border-emerald-400/40 bg-emerald-950/40 px-2 py-0.5 text-[11px] font-semibold uppercase text-emerald-200">
                 Live
               </span>
             </div>
-            <div className="mt-3 grid grid-cols-2 gap-px overflow-hidden border border-slate-800 bg-slate-800">
+            <div className="mt-3 grid grid-cols-2 gap-px overflow-hidden border border-amber-500/20 bg-amber-500/20">
               {LIVE_ENVIRONMENT_CHECKS.map(([label, value]) => (
-                <div key={label} className="bg-slate-950 p-3">
+                <div key={label} className="bg-slate-950/90 p-3">
                   <p className="truncate text-xs font-semibold text-white">{value}</p>
-                  <p className="mt-1 text-[11px] uppercase text-slate-500">{label}</p>
+                  <p className="mt-1 text-[11px] uppercase tracking-wide text-amber-200/70">{label}</p>
                 </div>
               ))}
             </div>
@@ -1204,16 +1210,16 @@ export default function ActionsPage({
           </aside>
         </div>
 
-        <div className="grid grid-cols-2 gap-px border-t border-slate-800 bg-slate-800 lg:grid-cols-4">
+        <div className="grid grid-cols-2 gap-px border-t border-amber-500/20 bg-amber-500/20 lg:grid-cols-4">
           {[
             ['Registered bots', botCount.toLocaleString()],
             ['Per-bot contracts', contractCount.toLocaleString()],
             ['System builders', builders.length],
             ['Generated libraries', libraries.length],
           ].map(([label, value]) => (
-            <div key={label} className="bg-slate-950 p-4">
-              <p className="text-2xl font-black text-white">{value}</p>
-              <p className="mt-1 text-xs uppercase text-slate-500">{label}</p>
+            <div key={label} className="bg-slate-950/90 p-4">
+              <p className="text-2xl font-black text-amber-100">{value}</p>
+              <p className="mt-1 text-xs uppercase tracking-wide text-slate-500">{label}</p>
             </div>
           ))}
         </div>
@@ -1289,11 +1295,12 @@ export default function ActionsPage({
         </div>
       </section>
 
-      <section aria-labelledby="buddy-ops-heading" className="border border-slate-700 bg-slate-950 p-5">
+      <section aria-labelledby="buddy-ops-heading" className={`relative overflow-hidden p-5 ${ROYAL_PANEL_CLASS}`}>
+        <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-amber-300/70 to-transparent" />
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div>
-            <p className="text-xs font-bold uppercase text-dreamco-accent">Buddy operator console</p>
-            <h3 id="buddy-ops-heading" className="mt-1 text-lg font-semibold text-white">
+            <p className="text-xs font-bold uppercase tracking-[0.18em] text-amber-200">Royal Buddy operator console</p>
+            <h3 id="buddy-ops-heading" className={`mt-1 text-lg font-semibold ${ROYAL_TEXT_CLASS}`}>
               Prompt Buddy from the Actions page
             </h3>
             <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-400">
@@ -1304,25 +1311,25 @@ export default function ActionsPage({
           <button
             type="button"
             onClick={() => setShowBuddyCenter(true)}
-            className="rounded-md bg-dreamco-accent px-4 py-2 text-sm font-semibold text-white hover:bg-dreamco-accent/80"
+            className="rounded-md border border-amber-300/60 bg-gradient-to-r from-amber-500 to-yellow-600 px-4 py-2 text-sm font-semibold text-slate-950 shadow-lg shadow-amber-950/30 hover:from-amber-400 hover:to-yellow-500"
           >
             Open Buddy Operator
           </button>
         </div>
 
         <div className="mt-5 grid gap-5 lg:grid-cols-[0.8fr_1.2fr]">
-          <aside className="border border-slate-800 bg-slate-900 p-4">
+          <aside className={`${ROYAL_CARD_CLASS} p-4`}>
             <h4 className="text-sm font-semibold text-white">Operation status</h4>
-            <div className="mt-3 grid grid-cols-2 gap-px overflow-hidden border border-slate-800 bg-slate-800">
+            <div className="mt-3 grid grid-cols-2 gap-px overflow-hidden border border-amber-500/20 bg-amber-500/20">
               {[
                 ['Queue source', buddyOpsStatus],
                 ['Packets', buddyOps.count],
                 ['Mode', 'Sandbox first'],
                 ['Approval', 'PR required'],
               ].map(([label, value]) => (
-                <div key={label} className="bg-slate-950 p-3">
-                  <p className="text-sm font-bold text-white">{value}</p>
-                  <p className="mt-1 text-[11px] uppercase text-slate-500">{label}</p>
+                <div key={label} className="bg-slate-950/90 p-3">
+                  <p className="text-sm font-bold text-amber-100">{value}</p>
+                  <p className="mt-1 text-[11px] uppercase tracking-wide text-slate-500">{label}</p>
                 </div>
               ))}
             </div>
