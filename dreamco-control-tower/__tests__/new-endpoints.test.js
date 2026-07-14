@@ -9,6 +9,7 @@ const __dirname = path.dirname(__filename);
 process.env.NODE_ENV = 'test';
 
 const BOTS_FILE = path.join(__dirname, '..', 'config', 'bots.json');
+const BUDDY_OPS_QUEUE_FILE = path.join(__dirname, '..', '..', 'reports', 'buddy_ops_queue.json');
 
 const SAMPLE_BOTS = [
   {
@@ -43,15 +44,26 @@ const SAMPLE_BOTS = [
 
 let app;
 let originalBotsContent;
+let originalBuddyOpsQueueContent;
 
 beforeAll(async () => {
   originalBotsContent = fs.readFileSync(BOTS_FILE, 'utf8');
+  originalBuddyOpsQueueContent = fs.existsSync(BUDDY_OPS_QUEUE_FILE)
+    ? fs.readFileSync(BUDDY_OPS_QUEUE_FILE, 'utf8')
+    : null;
   const module = await import('../backend/server.js');
   app = module.default;
 });
 
 afterAll(() => {
   fs.writeFileSync(BOTS_FILE, originalBotsContent);
+  if (originalBuddyOpsQueueContent === null) {
+    if (fs.existsSync(BUDDY_OPS_QUEUE_FILE)) {
+      fs.unlinkSync(BUDDY_OPS_QUEUE_FILE);
+    }
+  } else {
+    fs.writeFileSync(BUDDY_OPS_QUEUE_FILE, originalBuddyOpsQueueContent);
+  }
 });
 
 beforeEach(() => {
@@ -383,6 +395,29 @@ describe('GET /api/stripe-revenue-rescue', () => {
     expect(Array.isArray(res.body.revenue_blockers)).toBe(true);
     expect(Array.isArray(res.body.priority_fixes)).toBe(true);
     expect(res.body.safety_note).toMatch(/never prints secret values/i);
+  });
+});
+
+describe('Buddy operation prompt API', () => {
+  test('returns the supervised operation queue', async () => {
+    const res = await request(app).get('/api/buddy-ops');
+
+    expect(res.status).toBe(200);
+    expect(res.body.schema).toBe('dreamco.buddy_ops_queue.v1');
+    expect(Array.isArray(res.body.operations)).toBe(true);
+  });
+
+  test('creates a governed operation packet from an Actions page prompt', async () => {
+    const res = await request(app)
+      .post('/api/buddy-ops/prompt')
+      .send({ prompt: 'Fix Stripe checkout and make sure I get GitHub notifications for payments' });
+
+    expect(res.status).toBe(201);
+    expect(res.body.packet.schema).toBe('dreamco.buddy_operation_packet.v1');
+    expect(res.body.packet.operation_type).toBe('revenue_operation');
+    expect(res.body.packet.mode).toBe('sandbox_first_pull_request_review');
+    expect(res.body.packet.approval_gates).toContain('owner approval before money movement');
+    expect(res.body.packet.blocked_live_actions).toContain('payments or payouts');
   });
 });
 

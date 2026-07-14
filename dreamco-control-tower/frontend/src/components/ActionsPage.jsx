@@ -272,6 +272,12 @@ const FALLBACK_STRIPE_REVENUE_RESCUE = {
   safety_note: 'Secrets stay in environment variables or secure host secrets, never in the repository.',
 };
 
+const FALLBACK_BUDDY_OPS_QUEUE = {
+  schema: 'dreamco.buddy_ops_queue.v1',
+  count: 0,
+  operations: [],
+};
+
 const BUILD_STAGES = [
   ['01', 'Specify', 'Identity, goal, inputs, outputs, limits, owner'],
   ['02', 'Compose', 'Tools, API, webhook, workflow, skills'],
@@ -591,6 +597,8 @@ export default function ActionsPage({
   const [stripeRevenueRescue, setStripeRevenueRescue] = useState(null);
   const [stripeRevenueRescueStatus, setStripeRevenueRescueStatus] = useState('loading');
   const [buildPacket, setBuildPacket] = useState(null);
+  const [buddyOpsQueue, setBuddyOpsQueue] = useState(null);
+  const [buddyOpsStatus, setBuddyOpsStatus] = useState('loading');
 
   useEffect(() => {
     fetchFirstJson(['/api/system-libraries'])
@@ -655,6 +663,15 @@ export default function ActionsPage({
       .catch(() => setStripeRevenueRescueStatus('generated fallback'));
   }, []);
 
+  useEffect(() => {
+    fetchFirstJson(['/api/buddy-ops'])
+      .then((data) => {
+        setBuddyOpsQueue(data);
+        setBuddyOpsStatus('live');
+      })
+      .catch(() => setBuddyOpsStatus('local only'));
+  }, []);
+
   const builders = libraryData?.builders ?? FALLBACK_BUILDERS;
   const libraries = libraryData?.libraries ?? FALLBACK_LIBRARIES;
   const botCount = libraryData?.bot_count ?? 1247;
@@ -664,6 +681,7 @@ export default function ActionsPage({
   const productivity = buddyProductivity ?? FALLBACK_BUDDY_PRODUCTIVITY;
   const storage = storageGuard ?? FALLBACK_STORAGE_GUARD;
   const stripeRescue = stripeRevenueRescue ?? FALLBACK_STRIPE_REVENUE_RESCUE;
+  const buddyOps = buddyOpsQueue ?? FALLBACK_BUDDY_OPS_QUEUE;
   const inventorySummary = inventory.summary ?? FALLBACK_BUDDY_INVENTORY.summary;
   const triageSummary = triage.summary ?? FALLBACK_GITHUB_TRIAGE.summary;
   const stewardshipSummary = stewardship.summary ?? FALLBACK_REPOSITORY_STEWARDSHIP.summary;
@@ -714,6 +732,42 @@ export default function ActionsPage({
     };
     setBuildPacket(packet);
     onBuildRequest(packet);
+  }
+
+  async function submitBuddyPrompt(prompt) {
+    const response = await fetch('/api/buddy-ops/prompt', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        prompt,
+        requested_by: 'actions_page',
+        target: selectedBot?.slug ?? 'dreamcobots',
+      }),
+    });
+    if (!response.ok) {
+      throw new Error(`Buddy operation API returned ${response.status}`);
+    }
+    const data = await response.json();
+    const packet = data.packet;
+    setBuildPacket({
+      builder: packet.builder,
+      outputs: packet.outputs,
+      mode: packet.mode,
+      approval: 'pull_request_review_required',
+      id: packet.id,
+      operation_type: packet.operation_type,
+    });
+    setBuddyOpsQueue((current) => {
+      const existing = current ?? FALLBACK_BUDDY_OPS_QUEUE;
+      return {
+        ...existing,
+        count: Number(existing.count || 0) + 1,
+        operations: [packet, ...(existing.operations ?? [])].slice(0, 25),
+      };
+    });
+    setBuddyOpsStatus('live');
+    onBuddyCommandSubmit(packet);
+    return { packet };
   }
 
   function prepareBotTest(bot, scope = 'selected') {
@@ -812,6 +866,80 @@ export default function ActionsPage({
               <p className="mt-2 text-xs leading-5 text-slate-400">{detail}</p>
             </div>
           ))}
+        </div>
+      </section>
+
+      <section aria-labelledby="buddy-ops-heading" className="border border-slate-700 bg-slate-950 p-5">
+        <div className="flex flex-wrap items-start justify-between gap-3">
+          <div>
+            <p className="text-xs font-bold uppercase text-dreamco-accent">Buddy operator console</p>
+            <h3 id="buddy-ops-heading" className="mt-1 text-lg font-semibold text-white">
+              Prompt Buddy from the Actions page
+            </h3>
+            <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-400">
+              Create governed operation packets for builds, tests, Stripe fixes, Vibe Studio work, deployments, and bot systems.
+              Packets stay sandbox-first until approval gates are cleared.
+            </p>
+          </div>
+          <button
+            type="button"
+            onClick={() => setShowBuddyCenter(true)}
+            className="rounded-md bg-dreamco-accent px-4 py-2 text-sm font-semibold text-white hover:bg-dreamco-accent/80"
+          >
+            Open Buddy Operator
+          </button>
+        </div>
+
+        <div className="mt-5 grid gap-5 lg:grid-cols-[0.8fr_1.2fr]">
+          <aside className="border border-slate-800 bg-slate-900 p-4">
+            <h4 className="text-sm font-semibold text-white">Operation status</h4>
+            <div className="mt-3 grid grid-cols-2 gap-px overflow-hidden border border-slate-800 bg-slate-800">
+              {[
+                ['Queue source', buddyOpsStatus],
+                ['Packets', buddyOps.count],
+                ['Mode', 'Sandbox first'],
+                ['Approval', 'PR required'],
+              ].map(([label, value]) => (
+                <div key={label} className="bg-slate-950 p-3">
+                  <p className="text-sm font-bold text-white">{value}</p>
+                  <p className="mt-1 text-[11px] uppercase text-slate-500">{label}</p>
+                </div>
+              ))}
+            </div>
+            <div className="mt-4 space-y-2">
+              {[
+                'External outreach blocked until approval',
+                'Money movement blocked until approval',
+                'Production deploy blocked until approval',
+                'Credential changes blocked until approval',
+              ].map((gate) => (
+                <div key={gate} className="border-l-2 border-dreamco-accent pl-3 text-xs leading-5 text-slate-300">
+                  {gate}
+                </div>
+              ))}
+            </div>
+          </aside>
+
+          <div className="border border-slate-800 bg-slate-900 p-4">
+            <h4 className="text-sm font-semibold text-white">Recent operation packets</h4>
+            <div className="mt-3 space-y-3">
+              {(buddyOps.operations ?? []).slice(0, 5).map((operation) => (
+                <div key={operation.id} className="border border-slate-800 bg-slate-950 p-3">
+                  <div className="flex flex-wrap items-center justify-between gap-2">
+                    <p className="text-sm font-semibold text-white">{operation.builder}</p>
+                    <span className="rounded-full border border-slate-700 px-2 py-0.5 text-[11px] font-semibold uppercase text-slate-300">
+                      {formatLabel(operation.operation_type)}
+                    </span>
+                  </div>
+                  <p className="mt-2 line-clamp-2 text-xs leading-5 text-slate-400">{operation.prompt}</p>
+                  <p className="mt-2 font-mono text-[11px] text-slate-500">{operation.id}</p>
+                </div>
+              ))}
+              {(buddyOps.operations ?? []).length === 0 && (
+                <p className="text-sm text-slate-400">No operation packets yet. Open Buddy Operator and type a prompt.</p>
+              )}
+            </div>
+          </div>
         </div>
       </section>
 
@@ -1866,7 +1994,7 @@ export default function ActionsPage({
           <div onClick={(event) => event.stopPropagation()}>
             <BuddyCommandCenter
               onClose={() => setShowBuddyCenter(false)}
-              onCommandSubmit={onBuddyCommandSubmit}
+              onCommandSubmit={submitBuddyPrompt}
             />
           </div>
         </div>

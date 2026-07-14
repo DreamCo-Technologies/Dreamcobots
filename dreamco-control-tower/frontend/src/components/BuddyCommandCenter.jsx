@@ -42,21 +42,38 @@ const QUICK_COMMANDS = [
  */
 export default function BuddyCommandCenter({ onClose, onCommandSubmit = () => {} }) {
   const [command, setCommand] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [terminalLines, setTerminalLines] = useState([
     '[Buddy] Terminal initialized in supervised semi-autonomous mode.',
     '[Buddy] Use local audits before trusting bot, customer, tool, skill, or cash-loop actions.',
   ]);
 
-  function queueCommand(nextCommand) {
+  async function queueCommand(nextCommand) {
     if (!nextCommand) return;
 
-    onCommandSubmit(nextCommand);
+    setIsSubmitting(true);
     setTerminalLines((lines) => [
       ...lines,
       `$ ${nextCommand}`,
-      `[Buddy] Command queued with evidence policy: ${nextCommand}`,
+      '[Buddy] Creating governed operation packet...',
     ]);
-    setCommand('');
+    try {
+      const result = await onCommandSubmit(nextCommand);
+      const packet = result?.packet ?? result;
+      setTerminalLines((lines) => [
+        ...lines,
+        `[Buddy] Packet ${packet?.id ?? 'local'} queued as ${packet?.operation_type ?? 'supervised_operation'}.`,
+        `[Buddy] Mode: ${packet?.mode ?? 'sandbox_first_pull_request_review'}.`,
+      ]);
+      setCommand('');
+    } catch (error) {
+      setTerminalLines((lines) => [
+        ...lines,
+        `[Buddy] Packet API unavailable. Local supervised queue only: ${error.message}`,
+      ]);
+    } finally {
+      setIsSubmitting(false);
+    }
   }
 
   function handleKeyDown(event) {
@@ -126,6 +143,15 @@ export default function BuddyCommandCenter({ onClose, onCommandSubmit = () => {}
         placeholder="Type a bot test, customer research, tool finder, skill finder, or cash-loop command…"
         className="mb-3 w-full rounded-lg border border-slate-600 bg-slate-800 px-3 py-2 text-sm text-white outline-none transition-colors focus:border-dreamco-accent"
       />
+
+      <button
+        type="button"
+        onClick={() => queueCommand(command.trim())}
+        disabled={!command.trim() || isSubmitting}
+        className="mb-3 rounded-lg bg-dreamco-accent px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-dreamco-accent/80 disabled:cursor-not-allowed disabled:opacity-50"
+      >
+        {isSubmitting ? 'Creating Packet...' : 'Create Buddy Packet'}
+      </button>
 
       <div className="mb-5 flex flex-wrap gap-2" aria-label="Buddy quick commands">
         {QUICK_COMMANDS.map((quickCommand) => (

@@ -269,12 +269,44 @@ const stripeRevenueRescuePayload = {
   safety_note: 'This report never prints secret values.',
 };
 
+const buddyOpsPayload = {
+  schema: 'dreamco.buddy_ops_queue.v1',
+  count: 1,
+  operations: [
+    {
+      id: 'buddy-op-existing',
+      builder: 'Stripe Revenue Rescue Builder',
+      operation_type: 'revenue_operation',
+      prompt: 'Fix Stripe checkout notifications',
+      mode: 'sandbox_first_pull_request_review',
+    },
+  ],
+};
+
+const buddyPromptResponse = {
+  packet: {
+    id: 'buddy-op-test',
+    builder: 'Full Bot System Builder',
+    operation_type: 'bot_system_operation',
+    prompt: 'build a new bot system',
+    mode: 'sandbox_first_pull_request_review',
+    outputs: ['implementation plan', 'sandbox test evidence'],
+  },
+};
+
 function StubActionsMonitor() {
   return <div>Actions monitor panel</div>;
 }
 
 beforeEach(() => {
-  global.fetch = vi.fn((url) => {
+  global.fetch = vi.fn((url, options = {}) => {
+    if (url === '/api/buddy-ops/prompt' && options.method === 'POST') {
+      return Promise.resolve({
+        ok: true,
+        status: 201,
+        json: async () => buddyPromptResponse,
+      });
+    }
     let payload = libraryPayload;
     if (url === '/api/buddy-capabilities') payload = buddyCapabilityPayload;
     if (url === '/api/github-triage') payload = githubTriagePayload;
@@ -282,6 +314,7 @@ beforeEach(() => {
     if (url === '/api/buddy-productivity') payload = buddyProductivityPayload;
     if (url === '/api/storage-guard') payload = storageGuardPayload;
     if (url === '/api/stripe-revenue-rescue') payload = stripeRevenueRescuePayload;
+    if (url === '/api/buddy-ops') payload = buddyOpsPayload;
     return Promise.resolve({
       ok: true,
       json: async () => payload,
@@ -301,6 +334,8 @@ describe('ActionsPage', () => {
     expect(screen.getByText('Buddy Command Tower for building, testing, and presenting bot systems')).toBeInTheDocument();
     expect(screen.getByText('Operational status')).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: 'Professional delivery pipeline' })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'Prompt Buddy from the Actions page' })).toBeInTheDocument();
+    await waitFor(() => expect(screen.getByText('Stripe Revenue Rescue Builder')).toBeInTheDocument());
     expect(screen.getByRole('heading', { name: 'Client vibe building for apps, videos, courses, games, and simulations' })).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: 'AI company builder with human trust built in' })).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: 'Tracks what helps you, clients, and bots improve' })).toBeInTheDocument();
@@ -471,12 +506,18 @@ describe('ActionsPage', () => {
     expect(screen.getByText('Pull request and human review before deployment')).toBeInTheDocument();
   });
 
-  it('opens and closes the Buddy build console', () => {
+  it('opens and submits the Buddy operator console', async () => {
     render(<ActionsPage ActionsMonitorComponent={StubActionsMonitor} />);
 
     fireEvent.click(screen.getByRole('button', { name: 'Open Buddy Live Console' }));
     expect(screen.getByRole('dialog')).toBeInTheDocument();
+    fireEvent.change(screen.getByLabelText('Buddy command input'), {
+      target: { value: 'build a new bot system' },
+    });
+    fireEvent.click(screen.getByRole('button', { name: 'Create Buddy Packet' }));
+    await waitFor(() => expect(screen.getByText(/Packet buddy-op-test queued/)).toBeInTheDocument());
     fireEvent.click(screen.getByRole('button', { name: 'Close Buddy Command Center' }));
     expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
+    expect(screen.getByText(/Build packet prepared for Full Bot System Builder/)).toBeInTheDocument();
   });
 });

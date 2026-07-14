@@ -50,6 +50,7 @@ const PRODUCTION_MEDIA_ROADMAP_FILE = path.join(
   __dirname,
   '../config/production_media_roadmap.json',
 );
+const BUDDY_OPS_QUEUE_FILE = path.join(__dirname, '../../reports/buddy_ops_queue.json');
 
 const app = express();
 app.use(express.json());
@@ -176,6 +177,110 @@ function readStripeRevenueRescueReport() {
     return null;
   }
   return JSON.parse(fs.readFileSync(STRIPE_REVENUE_RESCUE_REPORT_FILE, 'utf8'));
+}
+
+function readBuddyOpsQueue() {
+  if (!fs.existsSync(BUDDY_OPS_QUEUE_FILE)) {
+    return [];
+  }
+  return JSON.parse(fs.readFileSync(BUDDY_OPS_QUEUE_FILE, 'utf8'));
+}
+
+function writeBuddyOpsQueue(queue) {
+  fs.mkdirSync(path.dirname(BUDDY_OPS_QUEUE_FILE), { recursive: true });
+  fs.writeFileSync(BUDDY_OPS_QUEUE_FILE, `${JSON.stringify(queue, null, 2)}\n`);
+}
+
+function slugify(value) {
+  return String(value || 'buddy-operation')
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '')
+    .slice(0, 64) || 'buddy-operation';
+}
+
+function classifyBuddyOperation(prompt) {
+  const text = String(prompt || '').toLowerCase();
+  if (/(stripe|payment|checkout|invoice|subscription|payout|money|revenue)/.test(text)) {
+    return {
+      type: 'revenue_operation',
+      builder: 'Stripe Revenue Rescue Builder',
+      tests: ['npm run report:stripe-rescue', 'backend endpoint tests', 'Actions page payment panel test'],
+    };
+  }
+  if (/(video|music|course|lesson|game|simulation|vibe|image|voice)/.test(text)) {
+    return {
+      type: 'vibe_studio_operation',
+      builder: 'Buddy Vibe Studio Builder',
+      tests: ['rights review checklist', 'content safety review', 'sandbox prototype test'],
+    };
+  }
+  if (/(bot|agent|tool|api|webhook|workflow|skill|library)/.test(text)) {
+    return {
+      type: 'bot_system_operation',
+      builder: 'Full Bot System Builder',
+      tests: ['npm run check:system-libraries', 'npm run test:generated-bots', 'backend endpoint tests'],
+    };
+  }
+  if (/(deploy|host|pages|hostinger|github pages|production)/.test(text)) {
+    return {
+      type: 'deployment_operation',
+      builder: 'Deployment Gate Builder',
+      tests: ['build command', 'deployment readiness gate', 'rollback plan check'],
+    };
+  }
+  return {
+    type: 'general_buddy_operation',
+    builder: 'Buddy Operations Builder',
+    tests: ['repository stewardship scan', 'storage guard', 'Actions page smoke test'],
+  };
+}
+
+function buildBuddyOperationPacket(prompt, options = {}) {
+  const trimmedPrompt = String(prompt || '').trim().slice(0, 2000);
+  const now = new Date().toISOString();
+  const classification = classifyBuddyOperation(trimmedPrompt);
+  const id = `buddy-op-${Date.now()}-${slugify(trimmedPrompt).slice(0, 24)}`;
+  return {
+    schema: 'dreamco.buddy_operation_packet.v1',
+    id,
+    created_at: now,
+    prompt: trimmedPrompt,
+    requested_by: options.requested_by || 'actions_page',
+    operation_type: classification.type,
+    builder: classification.builder,
+    mode: 'sandbox_first_pull_request_review',
+    status: 'queued_for_supervised_execution',
+    target: options.target || 'dreamcobots',
+    branch_hint: `codex/${slugify(trimmedPrompt).slice(0, 32)}`,
+    outputs: [
+      'implementation plan',
+      'changed files list',
+      'sandbox test evidence',
+      'rollback plan',
+      'pull request summary',
+    ],
+    approval_gates: [
+      'owner approval before external outreach',
+      'owner approval before money movement',
+      'owner approval before production deploy',
+      'owner approval before credential changes',
+      'pull request review before merge',
+    ],
+    blocked_live_actions: [
+      'payments or payouts',
+      'customer messaging',
+      'social posting',
+      'production deployment',
+      'destructive file or git operations',
+    ],
+    recommended_tests: classification.tests,
+    next_actions: [
+      'Review the packet scope in the Actions page.',
+      'Run the recommended sandbox tests.',
+      'Convert the packet into a branch and pull request after owner approval.',
+    ],
+  };
 }
 
 function parseDurationToDays(duration) {
@@ -483,6 +588,41 @@ app.get('/api/stripe-revenue-rescue', rateLimiter, (_req, res) => {
     return res.status(503).json({ error: 'stripe revenue rescue report not found' });
   }
   return res.json(report);
+});
+
+// ---------------------------------------------------------------------------
+// GET /api/buddy-ops — supervised Buddy operation packet queue
+// ---------------------------------------------------------------------------
+app.get('/api/buddy-ops', rateLimiter, (_req, res) => {
+  const queue = readBuddyOpsQueue();
+  return res.json({
+    schema: 'dreamco.buddy_ops_queue.v1',
+    generated_at: new Date().toISOString(),
+    count: queue.length,
+    operations: queue.slice(-25).reverse(),
+  });
+});
+
+// ---------------------------------------------------------------------------
+// POST /api/buddy-ops/prompt — create a governed operation packet from a prompt
+// ---------------------------------------------------------------------------
+app.post('/api/buddy-ops/prompt', rateLimiter, (req, res) => {
+  const prompt = String(req.body?.prompt || '').trim();
+  if (!prompt) {
+    return res.status(400).json({ error: 'prompt is required' });
+  }
+  if (prompt.length > 2000) {
+    return res.status(400).json({ error: 'prompt must be 2000 characters or fewer' });
+  }
+
+  const packet = buildBuddyOperationPacket(prompt, {
+    requested_by: req.body?.requested_by || 'actions_page',
+    target: req.body?.target || 'dreamcobots',
+  });
+  const queue = readBuddyOpsQueue();
+  queue.push(packet);
+  writeBuddyOpsQueue(queue.slice(-250));
+  return res.status(201).json({ packet });
 });
 
 // ---------------------------------------------------------------------------
