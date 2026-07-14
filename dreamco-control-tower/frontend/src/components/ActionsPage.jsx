@@ -405,6 +405,20 @@ const FAILED_PR_OWNER_GATES = [
   'Failed PRs stay in the rescue queue until failing checks are green or the remaining blocker is clearly assigned.',
 ];
 
+const PAST_FAILURE_REBUILD_FLOW = [
+  ['Import', 'Pull past failed PRs, workflow runs, quality gates, agent failures, and integration blockers into one backlog.'],
+  ['Replay', 'Recreate the smallest safe sandbox scenario that proves the old failure still matters or is already fixed.'],
+  ['Build', 'Create the missing patch, test, bot packet, workflow repair, or documentation needed to close the failure.'],
+  ['Verify', 'Run the matching retest command and capture the dashboard, workflow, or report evidence.'],
+  ['Close loop', 'Mark rebuilt, still blocked, duplicate, or owner approval needed with a client-safe note.'],
+];
+
+const PAST_FAILURE_REBUILD_GATES = [
+  'Past failures are rebuilt from evidence, not guessed from titles alone.',
+  'Resolved failures still get a regression test or proof note so they do not silently return.',
+  'Each rebuild packet keeps source, age, target, fix type, retest proof, and owner approval state.',
+];
+
 const FAILURE_DEBUG_ROUTES = [
   ['Action workflow', 'Capture logs, job name, branch, commit, failed step, and rerun eligibility.'],
   ['Quality gate', 'Parse exact file, syntax error, command, affected package, and smallest repro test.'],
@@ -803,6 +817,63 @@ function buildFailureDebugQueue({ triage, stewardship, storage, stripeRescue, bu
   ].slice(0, 12);
 }
 
+function buildPastFailureRebuildPackets({ triage, stewardship, stripeRescue, buddyConnections }) {
+  const prPackets = (triage.pr_restart_queue ?? []).map((pr) => ({
+    id: `past-pr-${pr.number}`,
+    source: 'Past PR failure',
+    title: `#${pr.number} ${pr.title}`,
+    target: pr.head_branch,
+    build: 'Rebase or retest, inspect comments, repair gates, and write review-ready notes.',
+    proof: (pr.restart_reasons ?? []).map(formatLabel).join(', ') || 'Restart reason pending',
+  }));
+
+  const workflowPackets = (triage.failed_workflow_runs ?? []).map((run) => ({
+    id: `past-workflow-${run.id}`,
+    source: 'Past workflow failure',
+    title: run.name,
+    target: run.branch,
+    build: 'Recreate failed job locally when possible, patch the cause, then capture retest proof.',
+    proof: `${formatLabel(run.conclusion)} · ${formatDateTime(run.updated_at)}`,
+  }));
+
+  const qualityPackets = (stewardship.quality_checks ?? [])
+    .filter((check) => check.status !== 'pass' || (check.failures ?? []).length > 0)
+    .map((check) => ({
+      id: `past-quality-${check.name}`,
+      source: 'Past quality failure',
+      title: formatLabel(check.name),
+      target: `${formatNumber(check.scanned)} file(s) scanned`,
+      build: 'Patch syntax or schema issue, add focused test coverage, and rerun the quality gate.',
+      proof: `${formatNumber((check.failures ?? []).length)} failure(s)`,
+    }));
+
+  const botPackets = (buddyConnections.failures ?? []).map((failure, index) => ({
+    id: `past-bot-${failure.bot_id ?? failure.slug ?? index}`,
+    source: 'Past agent failure',
+    title: failure.name ?? failure.bot_id ?? 'Bot connection failure',
+    target: failure.division ?? failure.slug ?? 'bot registry',
+    build: 'Rebuild Buddy route, resources, sandbox test packet, and connection proof.',
+    proof: failure.reason ?? failure.message ?? 'Bot connection guard failure',
+  }));
+
+  const revenuePackets = (stripeRescue.revenue_blockers ?? []).map((blocker, index) => ({
+    id: `past-revenue-${index}`,
+    source: 'Past revenue blocker',
+    title: 'Payment path rebuild',
+    target: 'Stripe, email, and GitHub payment notice path',
+    build: 'Rebuild offer, checkout link, webhook event proof, and payment notification evidence.',
+    proof: blocker,
+  }));
+
+  return [
+    ...prPackets,
+    ...workflowPackets,
+    ...qualityPackets,
+    ...botPackets,
+    ...revenuePackets,
+  ].slice(0, 16);
+}
+
 export default function ActionsPage({
   ActionsMonitorComponent = ActionsMonitor,
   onBuddyCommandSubmit = () => {},
@@ -977,6 +1048,15 @@ export default function ActionsPage({
       buddyConnections,
     }),
     [triage, stewardship, storage, stripeRescue, buddyConnections],
+  );
+  const pastFailureRebuildPackets = useMemo(
+    () => buildPastFailureRebuildPackets({
+      triage,
+      stewardship,
+      stripeRescue,
+      buddyConnections,
+    }),
+    [triage, stewardship, stripeRescue, buddyConnections],
   );
 
   function prepareBuildPacket() {
@@ -2351,6 +2431,59 @@ export default function ActionsPage({
               <h5 className="text-xs font-semibold uppercase text-slate-300">Owner gates</h5>
               <div className="mt-3 space-y-2">
                 {FAILED_PR_OWNER_GATES.map((gate) => (
+                  <p key={gate} className="text-xs leading-5 text-slate-400">{gate}</p>
+                ))}
+              </div>
+            </aside>
+          </div>
+        </div>
+
+        <div className="mt-5 border border-slate-800 bg-slate-900 p-4">
+          <div className="flex flex-wrap items-start justify-between gap-3">
+            <div>
+              <h4 className="text-sm font-semibold text-white">Past failure rebuild backlog</h4>
+              <p className="mt-1 max-w-3xl text-xs leading-5 text-slate-400">
+                Buddy turns scanned historical PR failures, workflow runs, quality gates, agent failures, and integration blockers
+                into rebuild packets so old breakage gets rebuilt, retested, or assigned instead of forgotten.
+              </p>
+            </div>
+            <span className="rounded-full border border-slate-700 px-3 py-1 text-xs font-semibold text-slate-300">
+              {formatNumber(pastFailureRebuildPackets.length)} rebuild packet(s)
+            </span>
+          </div>
+
+          <div className="mt-4 grid gap-px overflow-hidden border border-slate-800 bg-slate-800 md:grid-cols-5">
+            {PAST_FAILURE_REBUILD_FLOW.map(([title, detail], index) => (
+              <div key={title} className="min-h-32 bg-slate-950 p-3">
+                <p className="font-mono text-[11px] text-dreamco-accent">0{index + 1}</p>
+                <h5 className="mt-2 text-sm font-semibold text-white">{title}</h5>
+                <p className="mt-2 text-xs leading-5 text-slate-400">{detail}</p>
+              </div>
+            ))}
+          </div>
+
+          <div className="mt-4 grid gap-3 xl:grid-cols-[minmax(0,1fr)_22rem]">
+            <div className="grid gap-3 md:grid-cols-2">
+              {pastFailureRebuildPackets.slice(0, 8).map((packet) => (
+                <article key={packet.id} className="border border-slate-800 bg-slate-950 p-3">
+                  <p className="text-[11px] font-bold uppercase text-dreamco-accent">{packet.source}</p>
+                  <h5 className="mt-1 text-sm font-semibold text-white">{packet.title}</h5>
+                  <p className="mt-1 break-words font-mono text-[11px] text-slate-500">{packet.target}</p>
+                  <p className="mt-3 text-xs leading-5 text-slate-300">{packet.build}</p>
+                  <p className="mt-2 text-xs leading-5 text-yellow-100">{packet.proof}</p>
+                </article>
+              ))}
+              {pastFailureRebuildPackets.length === 0 && (
+                <p className="border border-green-800 bg-green-950/20 p-3 text-sm text-green-300">
+                  No past failure rebuild packets found in the latest scan.
+                </p>
+              )}
+            </div>
+
+            <aside className="border border-slate-800 bg-slate-950 p-3">
+              <h5 className="text-xs font-semibold uppercase text-slate-300">Rebuild rules</h5>
+              <div className="mt-3 space-y-2">
+                {PAST_FAILURE_REBUILD_GATES.map((gate) => (
                   <p key={gate} className="text-xs leading-5 text-slate-400">{gate}</p>
                 ))}
               </div>

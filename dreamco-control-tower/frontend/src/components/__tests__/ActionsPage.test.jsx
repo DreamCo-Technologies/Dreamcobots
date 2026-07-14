@@ -498,6 +498,12 @@ describe('ActionsPage', () => {
     expect(screen.getByText('Find blocker')).toBeInTheDocument();
     expect(screen.getByText('Retest proof')).toBeInTheDocument();
     expect(screen.getByText(/Buddy rescue: rebase or retest/)).toBeInTheDocument();
+    expect(screen.getByText('Past failure rebuild backlog')).toBeInTheDocument();
+    expect(screen.getByText('Replay')).toBeInTheDocument();
+    expect(screen.getByText('Close loop')).toBeInTheDocument();
+    expect(screen.getByText('Past PR failure')).toBeInTheDocument();
+    expect(screen.getByText('Past workflow failure')).toBeInTheDocument();
+    expect(screen.getAllByText('Past revenue blocker').length).toBeGreaterThan(0);
     expect(screen.getByText('PR restart and retest queue')).toBeInTheDocument();
     expect(screen.getAllByText(/Finish Buddy readiness tracker/).length).toBeGreaterThan(0);
     expect(screen.getByText('Workflow failures to retest')).toBeInTheDocument();

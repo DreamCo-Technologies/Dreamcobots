@@ -21,6 +21,13 @@ const AGENT_DEBUG_PLAYBOOK = [
   ['Retest', 'Run bot smoke checks, workflow rerun, dashboard proof, and prospectus link verification.'],
 ];
 
+const AGENT_PAST_FAILURE_REBUILD_FLOW = [
+  ['Collect history', 'Past runtime errors, workflow failures, pending PRs, stale heartbeats, and broken links.'],
+  ['Rebuild packet', 'Create the bot route, smoke test, resource check, dashboard link, and prospectus proof.'],
+  ['Retest agent', 'Run the smallest safe bot test and capture workflow or dashboard evidence.'],
+  ['Promote or assign', 'Mark rebuilt, still blocked, duplicate, or owner approval needed.'],
+];
+
 function formatHeartbeat(ts) {
   if (!ts) return 'Never';
   const diff = Date.now() - new Date(ts).getTime();
@@ -83,6 +90,12 @@ export default function BotOverview() {
     || bot.workflowStatus === 'failure'
     || Number(bot.pendingPRs || 0) > 0
   ));
+  const pastAgentFailurePackets = failedOrRiskyBots.map((bot) => ({
+    id: bot.slug ?? bot.name,
+    title: bot.name,
+    source: bot.workflowStatus === 'failure' ? 'Past workflow failure' : bot.status === 'error' ? 'Past runtime failure' : 'Past PR blocker',
+    evidence: bot.workflowStatus === 'failure' ? 'Workflow failure' : bot.status === 'error' ? 'Runtime error' : `${bot.pendingPRs} pending PR(s)`,
+  }));
 
   const visible = bots.filter((bot) => {
     const matchTeam = teamFilter === 'all' || (bot.team || 'default') === teamFilter;
@@ -151,6 +164,46 @@ export default function BotOverview() {
             ))}
           </div>
         )}
+
+        <div className="mt-4 border border-slate-800 bg-slate-900 p-4">
+          <div className="flex flex-wrap items-start justify-between gap-3">
+            <div>
+              <h4 className="text-sm font-semibold text-white">Past agent failure rebuild backlog</h4>
+              <p className="mt-1 max-w-3xl text-xs leading-5 text-slate-400">
+                Buddy converts old agent failures into rebuild work: route, smoke test, resource proof, dashboard link,
+                prospectus link, and owner-ready retest evidence.
+              </p>
+            </div>
+            <span className="rounded-full border border-slate-700 px-3 py-1 text-xs font-semibold text-slate-300">
+              {pastAgentFailurePackets.length} rebuild packet(s)
+            </span>
+          </div>
+
+          <div className="mt-4 grid gap-px overflow-hidden border border-slate-800 bg-slate-800 md:grid-cols-4">
+            {AGENT_PAST_FAILURE_REBUILD_FLOW.map(([title, detail], index) => (
+              <div key={title} className="min-h-28 bg-slate-950 p-3">
+                <p className="font-mono text-[11px] text-dreamco-accent">0{index + 1}</p>
+                <h5 className="mt-2 text-sm font-semibold text-white">{title}</h5>
+                <p className="mt-2 text-xs leading-5 text-slate-400">{detail}</p>
+              </div>
+            ))}
+          </div>
+
+          {pastAgentFailurePackets.length > 0 && (
+            <div className="mt-4 grid gap-3 md:grid-cols-2 xl:grid-cols-3">
+              {pastAgentFailurePackets.slice(0, 6).map((packet) => (
+                <article key={`past-${packet.id}`} className="border border-slate-800 bg-slate-950 p-3">
+                  <p className="text-[11px] font-bold uppercase text-dreamco-accent">{packet.source}</p>
+                  <h5 className="mt-1 text-sm font-semibold text-white">{packet.title}</h5>
+                  <p className="mt-2 text-xs leading-5 text-yellow-100">{packet.evidence}</p>
+                  <p className="mt-2 text-xs leading-5 text-slate-400">
+                    Build missing route, test, resources, dashboard proof, and prospectus proof before marking ready.
+                  </p>
+                </article>
+              ))}
+            </div>
+          )}
+        </div>
       </section>
 
       {/* Filters */}

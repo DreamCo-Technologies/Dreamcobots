@@ -49,6 +49,34 @@
       "no_credential_or_money_changes_without_owner_approval"
     ]
   },
+  "past_failure_rebuild": {
+    "purpose": "Turns scanned historical failures into supervised rebuild packets for Actions and Agents.",
+    "sources": [
+      "past_failed_pull_requests",
+      "past_workflow_failures",
+      "past_quality_gate_failures",
+      "past_agent_runtime_failures",
+      "past_bot_connection_failures",
+      "past_storage_warnings",
+      "past_payment_blockers"
+    ],
+    "flow": [
+      "import_failure_history",
+      "replay_smallest_safe_scenario",
+      "build_missing_patch_or_test_or_bot_packet",
+      "verify_with_retest_evidence",
+      "close_loop_or_assign_owner_blocker"
+    ],
+    "packet_fields": [
+      "source",
+      "age_or_last_seen",
+      "target",
+      "build_action",
+      "retest_evidence",
+      "state",
+      "owner_approval_needed"
+    ]
+  },
   "actions_and_agents_failure_debugging": {
     "sources": [
       "github_actions_workflow_runs",

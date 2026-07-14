@@ -55,6 +55,16 @@ Every failure packet should include:
 
 The Agents or Bot Overview section should make failing bots easy to inspect by showing heartbeat, workflow status, pending pull requests, dashboard links, prospectus links, and the Buddy debug packet for each failing agent.
 
+## Past failure rebuilds
+
+Past failures should become rebuild packets, not forgotten history.
+
+The Actions page should rebuild from scanned historical pull request failures, workflow failures, quality gates, storage warnings, payment blockers, and bot connection failures.
+
+The Agents or Bot Overview section should rebuild from past runtime failures, workflow failures, pending pull requests, stale heartbeat evidence, broken dashboard links, and broken prospectus links.
+
+Every past failure rebuild packet should include source, target, build action, retest evidence, state, and owner approval status.
+
 ## Sellable offers
 
 - Launch Audit: repo, checkout, bot tests, deploy blockers, and dashboard readiness.
