@@ -453,6 +453,45 @@ const CONSOLIDATION_FIRST_TEN = [
   'Publish DreamCo 1.0 readiness scorecard',
 ];
 
+const TOP_100_UPDATE_GROUPS = [
+  {
+    priority: 'Repository stability',
+    count: 20,
+    focus: 'Branches, PR triage, failed workflows, required CI, report loops, runtime pins, and cost budgets.',
+    firstMove: 'Make one required CI workflow and classify the 58 open PRs.',
+  },
+  {
+    priority: 'Bot truth registry',
+    count: 20,
+    focus: 'Authoritative IDs, implementation status, runtime status, entry points, schemas, capabilities, ownership, and maturity.',
+    firstMove: 'Generate public catalog only from the master registry.',
+  },
+  {
+    priority: 'Public docs and identity',
+    count: 15,
+    focus: 'Counts, status pages, repository map, installation guide, data ownership, glossary, divisions, and capability matrix.',
+    firstMove: 'Keep README claims tied to measurable evidence.',
+  },
+  {
+    priority: 'Buddy control plane',
+    count: 15,
+    focus: 'Weighted routing, fallbacks, task decomposition, dependency-aware execution, approvals, risk, spending, and model budgets.',
+    firstMove: 'Replace first-match routing with scored registry routing.',
+  },
+  {
+    priority: 'Operational dashboard',
+    count: 15,
+    focus: 'Bot Fleet, Division Explorer, start/stop/test controls, timeline, failure center, PR center, cost, revenue, owner, and customer modes.',
+    firstMove: 'Launch Bot Fleet plus Failure Center as the official dashboard surface.',
+  },
+  {
+    priority: 'Trustworthy autonomy',
+    count: 15,
+    focus: 'Autonomy levels, operating modes, permissions, audit log, local-first memory, export/delete, golden tasks, shadow tests, and rollback.',
+    firstMove: 'Enforce Guided, Semi-Automatic, and Full Automatic as code policies.',
+  },
+];
+
 const ROYAL_PANEL_CLASS = 'border border-amber-500/40 bg-[radial-gradient(circle_at_top_left,rgba(245,158,11,0.16),transparent_34%),linear-gradient(135deg,rgba(15,23,42,0.98),rgba(6,78,59,0.5),rgba(15,23,42,0.98))] shadow-[0_24px_80px_rgba(0,0,0,0.45)]';
 const ROYAL_CARD_CLASS = 'border border-amber-500/30 bg-slate-950/75 shadow-inner shadow-amber-950/30';
 const ROYAL_TEXT_CLASS = 'bg-gradient-to-r from-amber-200 via-yellow-100 to-emerald-200 bg-clip-text text-transparent';
@@ -1450,6 +1489,35 @@ export default function ActionsPage({
               <div key={item} className="border-l-2 border-dreamco-accent pl-3 text-xs leading-5 text-slate-300">
                 <span className="font-mono text-dreamco-accent">{String(index + 1).padStart(2, '0')}</span> {item}
               </div>
+            ))}
+          </div>
+        </div>
+
+        <div className="mt-5 border border-slate-800 bg-slate-900 p-4">
+          <div className="flex flex-wrap items-start justify-between gap-3">
+            <div>
+              <h4 className="text-sm font-semibold text-white">Top 100 update backlog</h4>
+              <p className="mt-1 max-w-3xl text-xs leading-5 text-slate-400">
+                Buddy should group the 100 updates into six proof categories, then build them in order instead of scattering effort across new ideas.
+              </p>
+            </div>
+            <span className="rounded-full border border-slate-700 px-3 py-1 text-xs font-semibold text-slate-300">
+              {TOP_100_UPDATE_GROUPS.reduce((total, group) => total + group.count, 0)} updates mapped
+            </span>
+          </div>
+
+          <div className="mt-4 grid gap-px overflow-hidden border border-slate-800 bg-slate-800 md:grid-cols-2 xl:grid-cols-3">
+            {TOP_100_UPDATE_GROUPS.map((group) => (
+              <article key={group.priority} className="min-h-44 bg-slate-950 p-4">
+                <div className="flex items-start justify-between gap-3">
+                  <h5 className="text-sm font-semibold text-white">{group.priority}</h5>
+                  <span className="rounded-full border border-dreamco-accent/40 px-2 py-0.5 text-[11px] font-semibold text-dreamco-accent">
+                    {group.count}
+                  </span>
+                </div>
+                <p className="mt-3 text-xs leading-5 text-slate-400">{group.focus}</p>
+                <p className="mt-3 border-l-2 border-yellow-500 pl-3 text-xs leading-5 text-yellow-100">{group.firstMove}</p>
+              </article>
             ))}
           </div>
         </div>
