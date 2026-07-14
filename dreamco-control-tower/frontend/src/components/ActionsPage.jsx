@@ -343,6 +343,54 @@ const LIVE_ENVIRONMENT_CHECKS = [
   ['Risk posture', 'sandbox first'],
 ];
 
+const DEBUGGING_OS_STAGES = [
+  {
+    stage: 'Capture',
+    detail: 'Collect failing checks, logs, changed files, affected bots, screenshots, and user impact before guessing.',
+    evidence: ['workflow run', 'error output', 'changed files'],
+  },
+  {
+    stage: 'Reproduce',
+    detail: 'Run the smallest local command that proves the failure and records the exact command used.',
+    evidence: ['local command', 'exit code', 'test path'],
+  },
+  {
+    stage: 'Isolate',
+    detail: 'Separate source bug, config bug, dependency bug, data bug, integration bug, and flaky test risk.',
+    evidence: ['root-cause category', 'blast radius', 'owner area'],
+  },
+  {
+    stage: 'Patch',
+    detail: 'Make the smallest reviewed change, keep unrelated files untouched, and preserve rollback notes.',
+    evidence: ['diff summary', 'rollback plan', 'approval gate'],
+  },
+  {
+    stage: 'Verify',
+    detail: 'Run targeted tests first, then dashboard, storage, Stripe, bot, and cleanroom checks when affected.',
+    evidence: ['test results', 'reports', 'remaining risk'],
+  },
+  {
+    stage: 'Package',
+    detail: 'Turn the fix into a client-ready explanation, PR checklist, demo note, and next action.',
+    evidence: ['PR summary', 'client note', 'handoff status'],
+  },
+];
+
+const SELLABLE_DEBUG_PACKAGES = [
+  ['Launch Audit', 'Find broken checkout, bot tests, deploy blockers, repo health, and dashboard gaps before a client demo.'],
+  ['AI App Debug Desk', 'Turn failing app, bot, workflow, API, webhook, and UI issues into tracked fix packets.'],
+  ['Revenue Rescue', 'Trace Stripe links, offers, webhooks, payment alerts, and dashboard revenue evidence.'],
+  ['Vibe Build QA', 'Review games, simulations, videos, courses, image edits, and dashboards for rights, tests, and handoff.'],
+];
+
+const PR_BUDDY_HELP_FLOW = [
+  ['Scan', 'Buddy reads PR goal, changed files, comments, checks, linked issues, and stale risk.'],
+  ['Explain', 'Buddy summarizes what changed, why it matters, what is risky, and what should be tested.'],
+  ['Retest', 'Buddy queues targeted test commands and records pass/fail evidence before review.'],
+  ['Repair', 'Buddy creates a supervised operation packet for any failing gate or missing evidence.'],
+  ['Package', 'Buddy prepares a merge-ready checklist, rollback note, and client-safe summary.'],
+];
+
 const CLIENT_WORKFLOWS = [
   ['Discover', 'Show prospects what the bot fleet can build, test, and operate.'],
   ['Prototype', 'Prepare tools, APIs, webhooks, workflows, skills, and sandbox checks.'],
@@ -1830,6 +1878,60 @@ export default function ActionsPage({
         </div>
       </section>
 
+      <section aria-labelledby="debugging-os-heading" className="border border-slate-700 bg-slate-950 p-5">
+        <div className="flex flex-wrap items-start justify-between gap-3">
+          <div>
+            <p className="text-xs font-bold uppercase text-dreamco-accent">Buddy Debugging OS</p>
+            <h3 id="debugging-os-heading" className="mt-1 text-lg font-semibold text-white">
+              Sellable debugging system for apps, bots, workflows, and AI builds
+            </h3>
+            <p className="mt-1 max-w-3xl text-sm leading-6 text-slate-400">
+              A repeatable debugging pipeline that captures evidence, reproduces failures, isolates root cause,
+              patches safely, verifies tests, and packages the result for pull requests or client handoff.
+            </p>
+          </div>
+          <span className="rounded-full border border-green-800 bg-green-950/30 px-3 py-1 text-xs font-semibold text-green-300">
+            client-ready offer
+          </span>
+        </div>
+
+        <div className="mt-5 grid gap-px overflow-hidden border border-slate-800 bg-slate-800 md:grid-cols-2 xl:grid-cols-3">
+          {DEBUGGING_OS_STAGES.map((stage, index) => (
+            <article key={stage.stage} className="min-h-48 bg-slate-900 p-4">
+              <div className="flex items-start justify-between gap-3">
+                <div>
+                  <p className="font-mono text-xs text-dreamco-accent">0{index + 1}</p>
+                  <h4 className="mt-2 text-sm font-semibold text-white">{stage.stage}</h4>
+                </div>
+                <span className="rounded-full border border-slate-700 px-2 py-0.5 text-[11px] font-semibold uppercase text-slate-400">
+                  debug
+                </span>
+              </div>
+              <p className="mt-3 text-xs leading-5 text-slate-400">{stage.detail}</p>
+              <div className="mt-4 flex flex-wrap gap-2">
+                {stage.evidence.map((item) => (
+                  <span key={item} className="rounded-full border border-slate-700 px-2 py-1 text-[11px] text-slate-300">
+                    {item}
+                  </span>
+                ))}
+              </div>
+            </article>
+          ))}
+        </div>
+
+        <div className="mt-5 border border-slate-800 bg-slate-900 p-4">
+          <h4 className="text-sm font-semibold text-white">Sellable debugging packages</h4>
+          <div className="mt-3 grid gap-3 md:grid-cols-2 xl:grid-cols-4">
+            {SELLABLE_DEBUG_PACKAGES.map(([title, detail]) => (
+              <div key={title} className="border border-slate-800 bg-slate-950 p-3">
+                <p className="text-sm font-semibold text-white">{title}</p>
+                <p className="mt-2 text-xs leading-5 text-slate-400">{detail}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       <section aria-labelledby="stripe-rescue-heading" className="border border-slate-700 bg-slate-950 p-5">
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div>
@@ -2002,6 +2104,29 @@ export default function ActionsPage({
               <p className="mt-1 text-xs uppercase text-slate-500">{label}</p>
             </div>
           ))}
+        </div>
+
+        <div className="mt-5 border border-slate-800 bg-slate-900 p-4">
+          <div className="flex flex-wrap items-start justify-between gap-3">
+            <div>
+              <h4 className="text-sm font-semibold text-white">Buddy help for every pull request</h4>
+              <p className="mt-1 max-w-3xl text-xs leading-5 text-slate-400">
+                Every pull request should get Buddy help: scan, explain, retest, repair, and package before owner review.
+              </p>
+            </div>
+            <span className="rounded-full border border-slate-700 px-3 py-1 text-xs font-semibold text-slate-300">
+              {formatNumber(triageSummary.open_prs)} open PRs watched
+            </span>
+          </div>
+          <div className="mt-4 grid gap-px overflow-hidden border border-slate-800 bg-slate-800 md:grid-cols-5">
+            {PR_BUDDY_HELP_FLOW.map(([title, detail], index) => (
+              <div key={title} className="min-h-32 bg-slate-950 p-3">
+                <p className="font-mono text-[11px] text-dreamco-accent">0{index + 1}</p>
+                <h5 className="mt-2 text-sm font-semibold text-white">{title}</h5>
+                <p className="mt-2 text-xs leading-5 text-slate-400">{detail}</p>
+              </div>
+            ))}
+          </div>
         </div>
 
         <div className="mt-5 grid gap-5 lg:grid-cols-2">

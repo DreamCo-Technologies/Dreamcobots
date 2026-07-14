@@ -395,8 +395,12 @@ describe('ActionsPage', () => {
     expect(screen.getByText('Resources per bot')).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: 'Always-clean PR, issue, and code-quality steward' })).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: 'Fix why connected Stripe is making no money' })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'Sellable debugging system for apps, bots, workflows, and AI builds' })).toBeInTheDocument();
+    expect(screen.getByText('AI App Debug Desk')).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: '💾 Future-proof bot memory' })).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: '🔎 GitHub PR, issue, and comment triage' })).toBeInTheDocument();
+    expect(screen.getByText('Buddy help for every pull request')).toBeInTheDocument();
+    expect(screen.getByText('Retest')).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: 'Generated libraries' })).toBeInTheDocument();
     expect(screen.getByText('Actions monitor panel')).toBeInTheDocument();
     await waitFor(() => expect(screen.getByText('Source: live')).toBeInTheDocument());
