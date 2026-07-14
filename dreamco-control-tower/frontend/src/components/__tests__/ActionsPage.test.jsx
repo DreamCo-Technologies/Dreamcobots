@@ -369,6 +369,11 @@ describe('ActionsPage', () => {
     expect(screen.getByText('Complete the bot inventory')).toBeInTheDocument();
     expect(screen.getByText('Pick five sellable bots')).toBeInTheDocument();
     expect(screen.getByText('Sunday night milestone')).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'Convert the repository into one reliable operating platform' })).toBeInTheDocument();
+    expect(screen.getByText('Stabilize repository')).toBeInTheDocument();
+    expect(screen.getByText('Prove every bot')).toBeInTheDocument();
+    expect(screen.getByText('Make Buddy real control')).toBeInTheDocument();
+    expect(screen.getByText('Make five bot products work end to end')).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: 'Professional delivery pipeline' })).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: 'Prompt Buddy from the Actions page' })).toBeInTheDocument();
     await waitFor(() => expect(screen.getByText('Stripe Revenue Rescue Builder')).toBeInTheDocument());

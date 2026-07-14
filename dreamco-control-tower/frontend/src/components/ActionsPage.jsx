@@ -401,6 +401,58 @@ const PROGRESS_WEEKEND_DONE = [
   'Biggest bugs and missing features list',
 ];
 
+const CONSOLIDATION_PRIORITIES = [
+  {
+    title: 'Stabilize repository',
+    status: 'critical',
+    metric: '58 PRs / 31 failed runs',
+    action: 'Freeze expansion, triage PRs, repair required CI, and separate experiments from release gates.',
+  },
+  {
+    title: 'Prove every bot',
+    status: 'source of truth',
+    metric: '1,051 profiles / 45 divisions',
+    action: 'Make the master registry authoritative for IDs, status, runtime, entry points, schemas, permissions, and ownership.',
+  },
+  {
+    title: 'Fix public identity',
+    status: 'in progress',
+    metric: 'README corrected',
+    action: 'Separate designed profiles from working bots, remove unsupported claims, and document local-first ownership.',
+  },
+  {
+    title: 'Make Buddy real control',
+    status: 'building',
+    metric: 'approval/risk/spend gates',
+    action: 'Connect Buddy routing to registry scoring, fallback selection, task plans, approvals, and cancellation.',
+  },
+  {
+    title: 'Operational dashboard',
+    status: 'building',
+    metric: 'fleet/failure/PR/cost centers',
+    action: 'Create one official dashboard for bot fleet, divisions, failures, PRs, costs, revenue, and customer workspaces.',
+  },
+  {
+    title: 'Trustworthy autonomy',
+    status: 'planned',
+    metric: 'Guided / Semi / Full',
+    action: 'Enforce autonomy modes, permissions, audit logs, memory export/delete, golden tasks, shadow tests, and rollback.',
+  },
+];
+
+const CONSOLIDATION_FIRST_TEN = [
+  'Correct registry and README counts',
+  'Classify all profiles by implementation status',
+  'Triage open pull requests',
+  'Repair required CI pipeline',
+  'Complete Command Center consolidation decision',
+  'Make Buddy use the registry for real routing',
+  'Enforce approval, risk, spending, and autonomy',
+  'Launch Bot Fleet and Failure Center',
+  'Make five bot products work end to end',
+  'Publish DreamCo 1.0 readiness scorecard',
+];
+
 const ROYAL_PANEL_CLASS = 'border border-amber-500/40 bg-[radial-gradient(circle_at_top_left,rgba(245,158,11,0.16),transparent_34%),linear-gradient(135deg,rgba(15,23,42,0.98),rgba(6,78,59,0.5),rgba(15,23,42,0.98))] shadow-[0_24px_80px_rgba(0,0,0,0.45)]';
 const ROYAL_CARD_CLASS = 'border border-amber-500/30 bg-slate-950/75 shadow-inner shadow-amber-950/30';
 const ROYAL_TEXT_CLASS = 'bg-gradient-to-r from-amber-200 via-yellow-100 to-emerald-200 bg-clip-text text-transparent';
@@ -1351,6 +1403,52 @@ export default function ActionsPage({
             {PROGRESS_WEEKEND_DONE.map((item) => (
               <div key={item} className="border-l-2 border-emerald-300/60 pl-3 text-xs leading-5 text-slate-300">
                 {item}
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section aria-labelledby="consolidation-heading" className="border border-slate-700 bg-slate-950 p-5">
+        <div className="flex flex-wrap items-start justify-between gap-3">
+          <div>
+            <p className="text-xs font-bold uppercase text-dreamco-accent">DreamCo 1.0 consolidation</p>
+            <h3 id="consolidation-heading" className="mt-1 text-lg font-semibold text-white">
+              Convert the repository into one reliable operating platform
+            </h3>
+            <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-400">
+              The next phase is proof and consolidation: stabilize CI, make the registry authoritative, route Buddy through real
+              controls, finish one dashboard, and ship five end-to-end products before adding more divisions.
+            </p>
+          </div>
+          <span className="rounded-full border border-yellow-800 bg-yellow-950/30 px-3 py-1 text-xs font-semibold text-yellow-300">
+            expansion freeze until core proof
+          </span>
+        </div>
+
+        <div className="mt-5 grid gap-px overflow-hidden border border-slate-800 bg-slate-800 md:grid-cols-2 xl:grid-cols-3">
+          {CONSOLIDATION_PRIORITIES.map((priority) => (
+            <article key={priority.title} className="min-h-44 bg-slate-900 p-4">
+              <div className="flex items-start justify-between gap-3">
+                <div>
+                  <h4 className="text-sm font-semibold text-white">{priority.title}</h4>
+                  <p className="mt-1 font-mono text-[11px] text-dreamco-accent">{priority.metric}</p>
+                </div>
+                <span className="rounded-full border border-slate-700 px-2 py-0.5 text-[11px] font-semibold uppercase text-slate-300">
+                  {priority.status}
+                </span>
+              </div>
+              <p className="mt-3 text-xs leading-5 text-slate-400">{priority.action}</p>
+            </article>
+          ))}
+        </div>
+
+        <div className="mt-5 border border-slate-800 bg-slate-900 p-4">
+          <h4 className="text-sm font-semibold text-white">First ten execution updates</h4>
+          <div className="mt-3 grid gap-2 md:grid-cols-2 xl:grid-cols-5">
+            {CONSOLIDATION_FIRST_TEN.map((item, index) => (
+              <div key={item} className="border-l-2 border-dreamco-accent pl-3 text-xs leading-5 text-slate-300">
+                <span className="font-mono text-dreamco-accent">{String(index + 1).padStart(2, '0')}</span> {item}
               </div>
             ))}
           </div>
