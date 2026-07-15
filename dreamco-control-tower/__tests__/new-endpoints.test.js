@@ -357,6 +357,23 @@ describe('GET /api/release-readiness', () => {
   });
 });
 
+describe('GET /api/app-foundry', () => {
+  test('returns in-house build, host, and deploy readiness', async () => {
+    const res = await request(app).get('/api/app-foundry');
+
+    expect(res.status).toBe(200);
+    expect(res.body.schema).toBe('dreamco.app_foundry_readiness.v1');
+    expect(res.body.summary.creation_lanes).toBeGreaterThanOrEqual(8);
+    expect(res.body.summary.deployment_targets).toBeGreaterThanOrEqual(4);
+    expect(res.body.ownership_rule).toMatch(/source of truth/i);
+    expect(res.body.lanes.map((lane) => lane.id)).toEqual(
+      expect.arrayContaining(['games', 'websites', 'apps', 'school_courses', 'simulations']),
+    );
+    expect(res.body.deployment_targets.map((target) => target.id)).toContain('github_pages');
+    expect(res.body.quality_gates).toContain('owner_approval_before_live_money_outreach_or_deploy');
+  });
+});
+
 describe('GET /api/github-triage', () => {
   test('returns generated GitHub triage report', async () => {
     const res = await request(app).get('/api/github-triage');

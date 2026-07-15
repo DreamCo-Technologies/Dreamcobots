@@ -33,6 +33,10 @@ const DREAMCO_RELEASE_READINESS_FILE = path.join(
   __dirname,
   '../../reports/dreamco_release_readiness.json',
 );
+const APP_FOUNDRY_READINESS_FILE = path.join(
+  __dirname,
+  '../../reports/app_foundry_readiness.json',
+);
 const GITHUB_TRIAGE_REPORT_FILE = path.join(
   __dirname,
   '../../reports/github_triage_report.json',
@@ -168,6 +172,13 @@ function readDreamCoReleaseReadiness() {
     return null;
   }
   return JSON.parse(fs.readFileSync(DREAMCO_RELEASE_READINESS_FILE, 'utf8'));
+}
+
+function readAppFoundryReadiness() {
+  if (!fs.existsSync(APP_FOUNDRY_READINESS_FILE)) {
+    return null;
+  }
+  return JSON.parse(fs.readFileSync(APP_FOUNDRY_READINESS_FILE, 'utf8'));
 }
 
 function readGitHubTriageReport() {
@@ -586,6 +597,17 @@ app.get('/api/release-readiness', rateLimiter, (_req, res) => {
   const report = readDreamCoReleaseReadiness();
   if (!report) {
     return res.status(503).json({ error: 'release readiness report not found' });
+  }
+  return res.json(report);
+});
+
+// ---------------------------------------------------------------------------
+// GET /api/app-foundry — in-house A-to-Z build, host, and deploy readiness
+// ---------------------------------------------------------------------------
+app.get('/api/app-foundry', rateLimiter, (_req, res) => {
+  const report = readAppFoundryReadiness();
+  if (!report) {
+    return res.status(503).json({ error: 'app foundry readiness report not found' });
   }
   return res.json(report);
 });

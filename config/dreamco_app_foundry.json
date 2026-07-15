@@ -1,0 +1,172 @@
+{
+  "schema": "dreamco.app_foundry.v1",
+  "updated_at": "2026-07-15T00:00:00Z",
+  "mission": "Make DreamCo the in-house A-to-Z foundry for building, testing, packaging, hosting, and deploying games, websites, apps, school courses, simulations, dashboards, creative media, and business bot systems.",
+  "ownership_rule": "DreamCo-owned repository code is the source of truth. External clouds, static hosts, payment processors, email providers, and domain services are deployment targets or adapters, not the builder of record.",
+  "operating_posture": "sandbox_first_pull_request_review",
+  "creation_lanes": [
+    {
+      "id": "games",
+      "label": "Games",
+      "description": "Prompt-to-playable prototypes with game design docs, levels, scoring, controls, saves, and test scenes.",
+      "outputs": ["game_design_doc", "playable_prototype", "asset_manifest", "input_controls", "save_state", "test_plan", "deployment_bundle"],
+      "default_stack": ["React", "Canvas or Three.js", "local-first saves", "Vite static build"],
+      "sandbox_bootcamp": "gameplay loop, controls, collision, scoring, save-state, level progression, and accessibility checks",
+      "host_targets": ["github_pages", "static_host", "container_host"],
+      "approval_gates": ["asset_rights", "minor_safety_if_for_children", "no_unlicensed_likeness_or_voice_clones"]
+    },
+    {
+      "id": "websites",
+      "label": "Websites",
+      "description": "Client-ready websites, landing pages, portals, documentation hubs, and product showcases.",
+      "outputs": ["site_map", "responsive_ui", "content_schema", "seo_metadata", "analytics_plan", "accessibility_check", "deployment_bundle"],
+      "default_stack": ["React", "Vite", "static assets", "progressive enhancement"],
+      "sandbox_bootcamp": "responsive layout, forms, accessibility, SEO metadata, link integrity, and static deployment checks",
+      "host_targets": ["github_pages", "hostinger", "static_host"],
+      "approval_gates": ["brand_claim_review", "privacy_terms_review", "form_destination_approval"]
+    },
+    {
+      "id": "apps",
+      "label": "Apps",
+      "description": "Full app builds with screens, local-first data, auth adapters, API adapters, tests, and rollback notes.",
+      "outputs": ["product_spec", "screen_map", "data_model", "api_contracts", "local_storage_adapter", "test_suite", "rollback_plan"],
+      "default_stack": ["React", "Express API", "JSON or SQLite adapter", "service adapters"],
+      "sandbox_bootcamp": "auth mocks, CRUD flows, error states, API contracts, migration rehearsal, and rollback simulation",
+      "host_targets": ["local_laptop", "container_host", "managed_node_host"],
+      "approval_gates": ["credential_owner_approval", "database_backup_plan", "production_secret_check"]
+    },
+    {
+      "id": "school_courses",
+      "label": "School courses",
+      "description": "Age-appropriate course generators for lessons, quizzes, assignments, rubrics, teacher notes, and student-safe media plans.",
+      "outputs": ["course_outline", "lesson_modules", "quizzes", "rubrics", "slides_plan", "teacher_notes", "student_safety_review"],
+      "default_stack": ["content schemas", "interactive lesson widgets", "quiz engine", "export packets"],
+      "sandbox_bootcamp": "learning objectives, grade fit, quiz validation, source notes, accessibility, and content safety checks",
+      "host_targets": ["github_pages", "static_host", "course_export"],
+      "approval_gates": ["minor_safety", "source_review", "no_medical_legal_or_financial_instruction_without_review"]
+    },
+    {
+      "id": "simulations",
+      "label": "Simulations",
+      "description": "Business, science, finance, operations, robotics, real estate, and training simulations with adjustable variables.",
+      "outputs": ["scenario_model", "variable_controls", "simulation_engine", "results_dashboard", "edge_case_tests", "scenario_library"],
+      "default_stack": ["React", "deterministic simulation core", "charts", "local-first scenarios"],
+      "sandbox_bootcamp": "determinism, bounds, sensitivity checks, invalid input handling, replay logs, and explainable outputs",
+      "host_targets": ["github_pages", "static_host", "container_host"],
+      "approval_gates": ["no_guaranteed_outcome_claims", "financial_or_safety_disclaimer", "expert_review_for_high_stakes_use"]
+    },
+    {
+      "id": "dashboards",
+      "label": "Dashboards",
+      "description": "Operational command centers, prospectus pages, bot dashboards, KPI trackers, and client demo rooms.",
+      "outputs": ["metric_catalog", "data_connectors", "status_cards", "drilldowns", "export_views", "alert_rules"],
+      "default_stack": ["React", "report endpoints", "static fallbacks", "local cache"],
+      "sandbox_bootcamp": "empty states, stale data flags, loading failures, report contract tests, and role-safe views",
+      "host_targets": ["github_pages", "hostinger", "managed_node_host"],
+      "approval_gates": ["data_source_approval", "private_data_redaction", "client_visibility_review"]
+    },
+    {
+      "id": "creative_media",
+      "label": "Creative media",
+      "description": "Music video packets, image editing workflows, brand kits, storyboards, audio plans, and asset-rights ledgers.",
+      "outputs": ["concept", "script", "storyboard", "asset_manifest", "rights_log", "edit_timeline", "export_plan"],
+      "default_stack": ["media schemas", "asset manifest", "consent ledger", "export checklist"],
+      "sandbox_bootcamp": "rights review, consent proof, prompt provenance, caption checks, and no deceptive likeness use",
+      "host_targets": ["asset_export", "static_preview", "client_handoff_packet"],
+      "approval_gates": ["written_consent_for_likeness", "ai_media_label", "no_minor_cloning", "no_fake_testimonials"]
+    },
+    {
+      "id": "business_bots",
+      "label": "Business bots",
+      "description": "Client business workers for sales, support, booking, estimating, CRM updates, lead capture, and delivery workflows.",
+      "outputs": ["bot_prospectus", "tool_contracts", "api_contracts", "webhook_contracts", "workflow_runbook", "sandbox_tests", "approval_packet"],
+      "default_stack": ["DreamCo bot runtime", "per-bot libraries", "sandbox bootcamps", "approval gates"],
+      "sandbox_bootcamp": "tool permissions, API mocks, webhook replay, client data redaction, revenue-risk checks, and rollback drill",
+      "host_targets": ["local_laptop", "managed_node_host", "container_host"],
+      "approval_gates": ["client_data_permission", "money_movement_approval", "outreach_approval", "production_action_approval"]
+    }
+  ],
+  "in_house_systems": [
+    "prompt_to_plan",
+    "template_generator",
+    "asset_manifest_builder",
+    "sandbox_bootcamp_generator",
+    "workflow_generator",
+    "api_builder",
+    "webhook_builder",
+    "tool_library_builder",
+    "skill_library_builder",
+    "local_first_storage_adapter",
+    "auth_adapter",
+    "payment_adapter",
+    "email_adapter",
+    "deployment_packager",
+    "rollback_checkpoint_manager",
+    "observability_reporter",
+    "approval_gate_engine",
+    "client_prospectus_generator"
+  ],
+  "deployment_targets": [
+    {
+      "id": "github_pages",
+      "label": "GitHub Pages",
+      "role": "Free static previews for dashboards, websites, courses, simple games, and static simulations.",
+      "status": "ready_for_static_frontend"
+    },
+    {
+      "id": "hostinger",
+      "label": "Hostinger",
+      "role": "Starter public hosting target for Buddy dashboard builds and client demos.",
+      "status": "configured_adapter"
+    },
+    {
+      "id": "local_laptop",
+      "label": "Local laptop",
+      "role": "Development, demos, sandbox runs, and owner-supervised builds before public deployment.",
+      "status": "ready"
+    },
+    {
+      "id": "static_host",
+      "label": "Static host",
+      "role": "Portable static deploy bundle for CDN-style hosts.",
+      "status": "adapter_ready"
+    },
+    {
+      "id": "managed_node_host",
+      "label": "Managed Node host",
+      "role": "Node or API-backed apps after secrets, auth, observability, and rollback gates are configured.",
+      "status": "planned_adapter"
+    },
+    {
+      "id": "container_host",
+      "label": "Container host",
+      "role": "Full-stack apps, bot services, schedulers, and API workers that need a runtime beyond static hosting.",
+      "status": "planned_adapter"
+    }
+  ],
+  "quality_gates": [
+    "all_generated_code_builds",
+    "json_python_javascript_syntax_pass",
+    "sandbox_test_packet_exists",
+    "workflow_generator_exists_for_each_sandbox",
+    "api_contracts_have_mocked_sandbox_tests",
+    "no_secrets_committed",
+    "local_first_storage_policy_applied",
+    "accessibility_review_for_frontend",
+    "rights_and_consent_review_for_media",
+    "owner_approval_before_live_money_outreach_or_deploy",
+    "rollback_checkpoint_before_production"
+  ],
+  "static_preview_rules": [
+    "Every lane must produce a previewable artifact before any live deployment.",
+    "GitHub Pages can host static dashboards, courses, docs, games, websites, and simple simulations.",
+    "Apps that require backend secrets must use static mock mode until a governed API host is connected."
+  ],
+  "next_build_targets": [
+    "Create one prompt-to-preview wizard for all eight lanes.",
+    "Add deployment manifests per lane with static, Node, and container modes.",
+    "Add rollback/checkpoint records for generated app builds.",
+    "Add client prospectus pages that explain what each built artifact does, costs, risks, and test proof.",
+    "Add per-lane eval loops that rerun after every generated change."
+  ]
+}

@@ -305,6 +305,47 @@ const storageGuardPayload = {
   warnings: [],
 };
 
+const appFoundryPayload = {
+  schema: 'dreamco.app_foundry_readiness.v1',
+  generated_at: '2026-07-15T00:00:00Z',
+  mission: 'Make DreamCo the in-house A-to-Z foundry for building, testing, packaging, hosting, and deploying games, websites, apps, school courses, simulations, dashboards, creative media, and business bot systems.',
+  ownership_rule: 'DreamCo-owned repository code is the source of truth. External hosts and services are deployment targets or adapters, not the builder of record.',
+  operating_posture: 'sandbox_first_pull_request_review',
+  summary: {
+    readiness_score: 100,
+    creation_lanes: 8,
+    in_house_systems: 18,
+    deployment_targets: 6,
+    static_or_configured_targets: 4,
+    planned_runtime_targets: 2,
+    bot_count: 1248,
+    custom_api_contracts: 1248,
+    api_sandbox_bootcamps: 1248,
+    sandbox_workflow_generators: 1248,
+    storage_ready: true,
+    live_deploy_requires_owner_approval: true,
+  },
+  lanes: [
+    { id: 'games', label: 'Games', description: 'Prompt-to-playable prototypes with design docs.', output_count: 7, outputs: ['game_design_doc', 'playable_prototype', 'test_plan'], host_targets: ['github_pages', 'static_host'], approval_gates: ['asset_rights'], status: 'ready_for_sandbox_preview' },
+    { id: 'websites', label: 'Websites', description: 'Client-ready websites and product showcases.', output_count: 7, outputs: ['site_map', 'responsive_ui', 'deployment_bundle'], host_targets: ['github_pages', 'hostinger'], approval_gates: ['brand_claim_review'], status: 'ready_for_sandbox_preview' },
+    { id: 'apps', label: 'Apps', description: 'Full app builds with APIs, tests, and rollback notes.', output_count: 7, outputs: ['product_spec', 'data_model', 'test_suite'], host_targets: ['local_laptop', 'managed_node_host'], approval_gates: ['credential_owner_approval'], status: 'ready_for_sandbox_preview' },
+    { id: 'school_courses', label: 'School courses', description: 'Course generators for lessons, quizzes, and teacher notes.', output_count: 7, outputs: ['course_outline', 'lesson_modules', 'quizzes'], host_targets: ['github_pages', 'course_export'], approval_gates: ['minor_safety'], status: 'ready_for_sandbox_preview' },
+    { id: 'simulations', label: 'Simulations', description: 'Adjustable business and science simulations.', output_count: 6, outputs: ['scenario_model', 'simulation_engine', 'results_dashboard'], host_targets: ['github_pages', 'container_host'], approval_gates: ['no_guaranteed_outcome_claims'], status: 'ready_for_sandbox_preview' },
+    { id: 'dashboards', label: 'Dashboards', description: 'Operational command centers and KPI trackers.', output_count: 6, outputs: ['metric_catalog', 'status_cards', 'alert_rules'], host_targets: ['github_pages', 'hostinger'], approval_gates: ['private_data_redaction'], status: 'ready_for_sandbox_preview' },
+    { id: 'creative_media', label: 'Creative media', description: 'Music video packets and image workflows.', output_count: 7, outputs: ['concept', 'storyboard', 'rights_log'], host_targets: ['static_preview'], approval_gates: ['written_consent_for_likeness'], status: 'ready_for_sandbox_preview' },
+    { id: 'business_bots', label: 'Business bots', description: 'Client business workers and approval packets.', output_count: 7, outputs: ['bot_prospectus', 'tool_contracts', 'approval_packet'], host_targets: ['local_laptop'], approval_gates: ['money_movement_approval'], status: 'ready_for_sandbox_preview' },
+  ],
+  deployment_targets: [
+    { id: 'github_pages', label: 'GitHub Pages', role: 'Free static previews for dashboards, websites, courses, simple games, and static simulations.', status: 'ready_for_static_frontend' },
+    { id: 'hostinger', label: 'Hostinger', role: 'Starter public hosting target for Buddy dashboard builds and client demos.', status: 'configured_adapter' },
+    { id: 'local_laptop', label: 'Local laptop', role: 'Development, demos, sandbox runs, and owner-supervised builds before public deployment.', status: 'ready' },
+    { id: 'managed_node_host', label: 'Managed Node host', role: 'Node or API-backed apps after secrets and rollback gates are configured.', status: 'planned_adapter' },
+  ],
+  quality_gates: ['all_generated_code_builds', 'sandbox_test_packet_exists', 'no_secrets_committed', 'owner_approval_before_live_money_outreach_or_deploy'],
+  next_build_targets: ['Create one prompt-to-preview wizard for all eight lanes.'],
+  gaps: [],
+};
+
 const stripeRevenueRescuePayload = {
   schema: 'dreamco.stripe_revenue_rescue.v1',
   generated_at: '2026-07-12T00:00:00Z',
@@ -422,6 +463,7 @@ beforeEach(() => {
     if (url === '/api/repository-stewardship') payload = repositoryStewardshipPayload;
     if (url === '/api/buddy-productivity') payload = buddyProductivityPayload;
     if (url === '/api/release-readiness') payload = releaseReadinessPayload;
+    if (url === '/api/app-foundry') payload = appFoundryPayload;
     if (url === '/api/storage-guard') payload = storageGuardPayload;
     if (url === '/api/stripe-revenue-rescue') payload = stripeRevenueRescuePayload;
     if (url === '/api/production-approval-packets') payload = productionApprovalPacketsPayload;
@@ -471,6 +513,17 @@ describe('ActionsPage', () => {
     expect(screen.getByRole('heading', { name: 'Prompt Buddy from the Actions page' })).toBeInTheDocument();
     await waitFor(() => expect(screen.getByText('Stripe Revenue Rescue Builder')).toBeInTheDocument());
     expect(screen.getByRole('heading', { name: 'AI Creation Studio for apps, games, simulations, media, and business systems' })).toBeInTheDocument();
+    await waitFor(() => expect(screen.getByRole('heading', { name: 'In-house A-to-Z builder, host, and deploy system' })).toBeInTheDocument());
+    expect(screen.getByText('Own-code-first rule')).toBeInTheDocument();
+    expect(screen.getByText('Games')).toBeInTheDocument();
+    expect(screen.getByText('Websites')).toBeInTheDocument();
+    expect(screen.getByText('Apps')).toBeInTheDocument();
+    expect(screen.getAllByText('School courses').length).toBeGreaterThan(0);
+    expect(screen.getAllByText('Simulations').length).toBeGreaterThan(0);
+    expect(screen.getByText('Deployment targets')).toBeInTheDocument();
+    expect(screen.getAllByText('GitHub Pages').length).toBeGreaterThan(0);
+    expect(screen.getAllByText('Hostinger').length).toBeGreaterThan(0);
+    expect(screen.getByText('Live deploy gates')).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: 'AI company builder with human trust built in' })).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: 'Tracks what helps you, clients, and bots improve' })).toBeInTheDocument();
     expect(screen.getByText('AI companies')).toBeInTheDocument();
@@ -520,8 +573,8 @@ describe('ActionsPage', () => {
     expect(screen.getByRole('heading', { name: 'Generated libraries' })).toBeInTheDocument();
     expect(screen.getByText('Sandbox bootcamp generator')).toBeInTheDocument();
     expect(screen.getByText('World Class Bot Building Sandbox Bootcamp')).toBeInTheDocument();
-    expect(screen.getByText('Custom APIs')).toBeInTheDocument();
-    expect(screen.getByText('API bootcamps')).toBeInTheDocument();
+    expect(screen.getAllByText('Custom APIs').length).toBeGreaterThan(0);
+    expect(screen.getAllByText('API bootcamps').length).toBeGreaterThan(0);
     expect(screen.getByText('Workflow generators')).toBeInTheDocument();
     expect(screen.getByText('Training tracks')).toBeInTheDocument();
     expect(screen.getByText('Resource seeds')).toBeInTheDocument();

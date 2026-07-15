@@ -323,6 +323,47 @@ const FALLBACK_STORAGE_GUARD = {
   warnings: [],
 };
 
+const FALLBACK_APP_FOUNDRY = {
+  generated_at: null,
+  mission: 'Make DreamCo the in-house A-to-Z foundry for building, testing, packaging, hosting, and deploying games, websites, apps, school courses, simulations, dashboards, creative media, and business bot systems.',
+  ownership_rule: 'DreamCo-owned repository code is the source of truth. External hosts and services are deployment targets or adapters, not the builder of record.',
+  operating_posture: 'sandbox_first_pull_request_review',
+  summary: {
+    readiness_score: 0,
+    creation_lanes: 8,
+    in_house_systems: 18,
+    deployment_targets: 6,
+    static_or_configured_targets: 4,
+    planned_runtime_targets: 2,
+    bot_count: 1248,
+    custom_api_contracts: 1248,
+    api_sandbox_bootcamps: 1248,
+    sandbox_workflow_generators: 1248,
+    storage_ready: true,
+    live_deploy_requires_owner_approval: true,
+  },
+  lanes: [
+    { id: 'games', label: 'Games', description: 'Prompt-to-playable prototypes with design docs, levels, scoring, controls, saves, and test scenes.', outputs: ['game design doc', 'playable prototype', 'test plan'], host_targets: ['github_pages', 'static_host'], approval_gates: ['asset rights'], status: 'ready_for_sandbox_preview' },
+    { id: 'websites', label: 'Websites', description: 'Client-ready websites, landing pages, portals, documentation hubs, and product showcases.', outputs: ['site map', 'responsive UI', 'deployment bundle'], host_targets: ['github_pages', 'hostinger'], approval_gates: ['brand claim review'], status: 'ready_for_sandbox_preview' },
+    { id: 'apps', label: 'Apps', description: 'Full app builds with screens, local-first data, API adapters, tests, and rollback notes.', outputs: ['product spec', 'data model', 'test suite'], host_targets: ['local_laptop', 'managed_node_host'], approval_gates: ['credential approval'], status: 'ready_for_sandbox_preview' },
+    { id: 'school_courses', label: 'School courses', description: 'Age-appropriate course generators for lessons, quizzes, rubrics, teacher notes, and student-safe media plans.', outputs: ['course outline', 'lesson modules', 'quizzes'], host_targets: ['github_pages', 'course_export'], approval_gates: ['minor safety'], status: 'ready_for_sandbox_preview' },
+    { id: 'simulations', label: 'Simulations', description: 'Business, science, finance, operations, robotics, real estate, and training simulations with adjustable variables.', outputs: ['scenario model', 'simulation engine', 'results dashboard'], host_targets: ['github_pages', 'container_host'], approval_gates: ['no guaranteed outcome claims'], status: 'ready_for_sandbox_preview' },
+    { id: 'dashboards', label: 'Dashboards', description: 'Operational command centers, prospectus pages, bot dashboards, KPI trackers, and client demo rooms.', outputs: ['metric catalog', 'status cards', 'alert rules'], host_targets: ['github_pages', 'hostinger'], approval_gates: ['private data redaction'], status: 'ready_for_sandbox_preview' },
+    { id: 'creative_media', label: 'Creative media', description: 'Music video packets, image editing workflows, brand kits, storyboards, audio plans, and asset-rights ledgers.', outputs: ['concept', 'storyboard', 'rights log'], host_targets: ['static_preview', 'client_handoff_packet'], approval_gates: ['written consent'], status: 'ready_for_sandbox_preview' },
+    { id: 'business_bots', label: 'Business bots', description: 'Client business workers for sales, support, booking, estimating, CRM updates, lead capture, and delivery workflows.', outputs: ['bot prospectus', 'tool contracts', 'approval packet'], host_targets: ['local_laptop', 'managed_node_host'], approval_gates: ['money movement approval'], status: 'ready_for_sandbox_preview' },
+  ],
+  in_house_systems: ['prompt_to_plan', 'template_generator', 'sandbox_bootcamp_generator', 'api_builder', 'webhook_builder', 'deployment_packager', 'rollback_checkpoint_manager', 'client_prospectus_generator'],
+  deployment_targets: [
+    { id: 'github_pages', label: 'GitHub Pages', role: 'Free static previews for dashboards, websites, courses, simple games, and static simulations.', status: 'ready_for_static_frontend' },
+    { id: 'hostinger', label: 'Hostinger', role: 'Starter public hosting target for Buddy dashboard builds and client demos.', status: 'configured_adapter' },
+    { id: 'local_laptop', label: 'Local laptop', role: 'Development, demos, sandbox runs, and owner-supervised builds before public deployment.', status: 'ready' },
+    { id: 'managed_node_host', label: 'Managed Node host', role: 'Node or API-backed apps after secrets and rollback gates are configured.', status: 'planned_adapter' },
+  ],
+  quality_gates: ['all_generated_code_builds', 'sandbox_test_packet_exists', 'no_secrets_committed', 'owner_approval_before_live_money_outreach_or_deploy'],
+  next_build_targets: ['Create one prompt-to-preview wizard for all eight lanes.'],
+  gaps: ['Production backend hosting needs owner-approved credentials and secrets before live apps.'],
+};
+
 const FALLBACK_STRIPE_REVENUE_RESCUE = {
   generated_at: null,
   summary: {
@@ -1133,6 +1174,8 @@ export default function ActionsPage({
   const [buddyProductivityStatus, setBuddyProductivityStatus] = useState('loading');
   const [releaseReadiness, setReleaseReadiness] = useState(null);
   const [releaseReadinessStatus, setReleaseReadinessStatus] = useState('loading');
+  const [appFoundry, setAppFoundry] = useState(null);
+  const [appFoundryStatus, setAppFoundryStatus] = useState('loading');
   const [storageGuard, setStorageGuard] = useState(null);
   const [storageGuardStatus, setStorageGuardStatus] = useState('loading');
   const [stripeRevenueRescue, setStripeRevenueRescue] = useState(null);
@@ -1200,6 +1243,15 @@ export default function ActionsPage({
   }, []);
 
   useEffect(() => {
+    fetchFirstJson(['/api/app-foundry'])
+      .then((data) => {
+        setAppFoundry(data);
+        setAppFoundryStatus('live');
+      })
+      .catch(() => setAppFoundryStatus('generated fallback'));
+  }, []);
+
+  useEffect(() => {
     fetchFirstJson(['/api/storage-guard'])
       .then((data) => {
         setStorageGuard(data);
@@ -1254,6 +1306,7 @@ export default function ActionsPage({
   const stewardship = repositoryStewardship ?? FALLBACK_REPOSITORY_STEWARDSHIP;
   const productivity = buddyProductivity ?? FALLBACK_BUDDY_PRODUCTIVITY;
   const readiness = releaseReadiness ?? FALLBACK_RELEASE_READINESS;
+  const foundry = appFoundry ?? FALLBACK_APP_FOUNDRY;
   const storage = storageGuard ?? FALLBACK_STORAGE_GUARD;
   const stripeRescue = stripeRevenueRescue ?? FALLBACK_STRIPE_REVENUE_RESCUE;
   const approvalPackets = productionApprovalPackets ?? FALLBACK_PRODUCTION_APPROVAL_PACKETS;
@@ -1264,6 +1317,7 @@ export default function ActionsPage({
   const stewardshipSummary = stewardship.summary ?? FALLBACK_REPOSITORY_STEWARDSHIP.summary;
   const productivitySummary = productivity.summary ?? FALLBACK_BUDDY_PRODUCTIVITY.summary;
   const readinessSummary = readiness.summary ?? FALLBACK_RELEASE_READINESS.summary;
+  const foundrySummary = foundry.summary ?? FALLBACK_APP_FOUNDRY.summary;
   const storageSummary = storage.summary ?? FALLBACK_STORAGE_GUARD.summary;
   const stripeRescueSummary = stripeRescue.summary ?? FALLBACK_STRIPE_REVENUE_RESCUE.summary;
   const approvalPacketSummary = approvalPackets.summary ?? FALLBACK_PRODUCTION_APPROVAL_PACKETS.summary;
@@ -1883,6 +1937,114 @@ export default function ActionsPage({
                   {gate}
                 </div>
               ))}
+            </div>
+          </aside>
+        </div>
+      </section>
+
+      <section aria-labelledby="app-foundry-heading" className={`relative overflow-hidden p-5 ${ROYAL_PANEL_CLASS}`}>
+        <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-amber-300/70 to-transparent" />
+        <div className="flex flex-wrap items-start justify-between gap-3">
+          <div>
+            <p className="text-xs font-bold uppercase tracking-[0.18em] text-amber-200">DreamCo App Foundry</p>
+            <h3 id="app-foundry-heading" className={`mt-1 text-lg font-semibold ${ROYAL_TEXT_CLASS}`}>
+              In-house A-to-Z builder, host, and deploy system
+            </h3>
+            <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-300">
+              {foundry.mission}
+            </p>
+          </div>
+          <span className="rounded-full border border-amber-400/50 bg-amber-950/30 px-3 py-1 text-xs font-semibold text-amber-200">
+            {appFoundryStatus} · {formatDateTime(foundry.generated_at)}
+          </span>
+        </div>
+
+        <div className="mt-5 border border-amber-500/20 bg-slate-950/70 p-4">
+          <div className="flex flex-wrap items-start justify-between gap-3">
+            <div>
+              <h4 className="text-sm font-semibold text-amber-100">Own-code-first rule</h4>
+              <p className="mt-2 max-w-4xl text-xs leading-5 text-slate-300">{foundry.ownership_rule}</p>
+            </div>
+            <span className="rounded-full border border-emerald-400/40 bg-emerald-950/30 px-3 py-1 text-xs font-semibold text-emerald-200">
+              {formatLabel(foundry.operating_posture)}
+            </span>
+          </div>
+        </div>
+
+        <div className="mt-5 grid grid-cols-2 gap-px overflow-hidden border border-amber-500/20 bg-amber-500/20 lg:grid-cols-4 xl:grid-cols-8">
+          {[
+            ['Score', foundrySummary.readiness_score],
+            ['Lanes', foundrySummary.creation_lanes],
+            ['Systems', foundrySummary.in_house_systems],
+            ['Deploy targets', foundrySummary.deployment_targets],
+            ['Static ready', foundrySummary.static_or_configured_targets],
+            ['Custom APIs', foundrySummary.custom_api_contracts],
+            ['API bootcamps', foundrySummary.api_sandbox_bootcamps],
+            ['Workflow gens', foundrySummary.sandbox_workflow_generators],
+          ].map(([label, value]) => (
+            <div key={label} className="bg-slate-950/90 p-4">
+              <p className="text-xl font-black text-amber-100">{typeof value === 'number' ? formatNumber(value) : value}</p>
+              <p className="mt-1 text-xs uppercase tracking-wide text-slate-500">{label}</p>
+            </div>
+          ))}
+        </div>
+
+        <div className="mt-5 grid gap-px overflow-hidden border border-slate-800 bg-slate-800 md:grid-cols-2 xl:grid-cols-4">
+          {(foundry.lanes ?? []).map((lane) => (
+            <article key={lane.id} className="min-h-64 bg-slate-950 p-4">
+              <div className="flex items-start justify-between gap-3">
+                <div>
+                  <p className="text-xs font-bold uppercase text-dreamco-accent">{formatLabel(lane.status)}</p>
+                  <h4 className="mt-1 text-sm font-semibold text-white">{lane.label}</h4>
+                </div>
+                <span className="rounded-full border border-slate-700 px-2 py-0.5 text-[11px] font-semibold uppercase text-slate-300">
+                  {lane.output_count ?? lane.outputs?.length ?? 0} outputs
+                </span>
+              </div>
+              <p className="mt-3 text-xs leading-5 text-slate-400">{lane.description}</p>
+              <div className="mt-4 flex flex-wrap gap-2">
+                {(lane.outputs ?? []).slice(0, 4).map((output) => (
+                  <span key={output} className="rounded-full border border-slate-700 px-2 py-1 text-[11px] text-slate-300">
+                    {formatLabel(output)}
+                  </span>
+                ))}
+              </div>
+              <p className="mt-4 border-l-2 border-amber-300/70 pl-3 text-xs leading-5 text-amber-100/80">
+                Hosts: {(lane.host_targets ?? []).map(formatLabel).join(', ')}
+              </p>
+            </article>
+          ))}
+        </div>
+
+        <div className="mt-5 grid gap-5 xl:grid-cols-[minmax(0,1fr)_24rem]">
+          <div className="border border-slate-800 bg-slate-950 p-4">
+            <h4 className="text-sm font-semibold text-white">Deployment targets</h4>
+            <div className="mt-3 grid gap-3 md:grid-cols-2">
+              {(foundry.deployment_targets ?? []).map((target) => (
+                <div key={target.id} className="border border-slate-800 bg-slate-900 p-3">
+                  <div className="flex items-center justify-between gap-3">
+                    <p className="text-sm font-semibold text-white">{target.label}</p>
+                    <span className="rounded-full border border-slate-700 px-2 py-0.5 text-[11px] font-semibold uppercase text-slate-300">
+                      {formatLabel(target.status)}
+                    </span>
+                  </div>
+                  <p className="mt-2 text-xs leading-5 text-slate-400">{target.role}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+          <aside className="border border-slate-800 bg-slate-950 p-4">
+            <h4 className="text-sm font-semibold text-white">Live deploy gates</h4>
+            <div className="mt-3 space-y-2">
+              {(foundry.quality_gates ?? []).slice(0, 8).map((gate) => (
+                <div key={gate} className="border-l-2 border-dreamco-accent pl-3 text-xs leading-5 text-slate-300">
+                  {formatLabel(gate)}
+                </div>
+              ))}
+            </div>
+            <div className="mt-4 border border-amber-900/70 bg-amber-950/20 p-3">
+              <p className="text-xs font-semibold uppercase text-amber-200">Next build target</p>
+              <p className="mt-2 text-xs leading-5 text-amber-100/80">{foundry.next_build_targets?.[0]}</p>
             </div>
           </aside>
         </div>
