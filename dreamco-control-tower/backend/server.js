@@ -45,6 +45,10 @@ const DREAMCO_24_HOUR_SCALING_REPORT_FILE = path.join(
   __dirname,
   '../../reports/dreamco_24_hour_scaling_report.json',
 );
+const BUDDY_24_HOUR_CLIENT_PACKAGE_FILE = path.join(
+  __dirname,
+  '../../reports/buddy_24_hour_client_package.json',
+);
 const SPECIALIZED_BOT_KNOWLEDGE_REPORT_FILE = path.join(
   __dirname,
   '../../reports/specialized_bot_knowledge_report.json',
@@ -229,6 +233,13 @@ function readDreamCo24HourScalingReport() {
     return null;
   }
   return JSON.parse(fs.readFileSync(DREAMCO_24_HOUR_SCALING_REPORT_FILE, 'utf8'));
+}
+
+function readBuddy24HourClientPackage() {
+  if (!fs.existsSync(BUDDY_24_HOUR_CLIENT_PACKAGE_FILE)) {
+    return null;
+  }
+  return JSON.parse(fs.readFileSync(BUDDY_24_HOUR_CLIENT_PACKAGE_FILE, 'utf8'));
 }
 
 function readSpecializedBotKnowledgeReport() {
@@ -729,6 +740,17 @@ app.get('/api/24-hour-scaling', rateLimiter, (_req, res) => {
   const report = readDreamCo24HourScalingReport();
   if (!report) {
     return res.status(503).json({ error: '24-hour scaling report not found' });
+  }
+  return res.json(report);
+});
+
+// ---------------------------------------------------------------------------
+// GET /api/buddy-24-hour-package — sellable supervised all-bot client package
+// ---------------------------------------------------------------------------
+app.get('/api/buddy-24-hour-package', rateLimiter, (_req, res) => {
+  const report = readBuddy24HourClientPackage();
+  if (!report) {
+    return res.status(503).json({ error: 'Buddy 24-hour client package report not found' });
   }
   return res.json(report);
 });

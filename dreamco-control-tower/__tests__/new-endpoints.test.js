@@ -409,6 +409,28 @@ describe('GET /api/24-hour-scaling', () => {
   });
 });
 
+describe('GET /api/buddy-24-hour-package', () => {
+  test('returns sellable supervised all-bot client package', async () => {
+    const res = await request(app).get('/api/buddy-24-hour-package');
+
+    expect(res.status).toBe(200);
+    expect(res.body.schema).toBe('dreamco.buddy_24_hour_client_package.v1');
+    expect(res.body.summary.bot_count).toBeGreaterThanOrEqual(1200);
+    expect(res.body.summary.buddy_connected_bots).toBe(res.body.summary.bot_count);
+    expect(res.body.summary.actions_page_testable_bots).toBe(res.body.summary.bot_count);
+    expect(res.body.summary.custom_resource_ready_bots).toBe(res.body.summary.bot_count);
+    expect(res.body.summary.client_package_ready).toBe(true);
+    expect(res.body.runtime_contract.mode).toBe('continuous_supervised_safe_mode');
+    expect(res.body.runtime_contract.always_on_meaning).toMatch(/approval-gated/i);
+    expect(res.body.operating_lanes.map((lane) => lane.id)).toEqual(
+      expect.arrayContaining(['research_lane', 'build_lane', 'quality_lane']),
+    );
+    expect(res.body.package_tiers.map((tier) => tier.id)).toEqual(
+      expect.arrayContaining(['starter_showcase', 'department_os', 'company_builder']),
+    );
+  });
+});
+
 describe('GET /api/specialized-bot-knowledge', () => {
   test('returns specialized per-bot knowledge coverage', async () => {
     const res = await request(app).get('/api/specialized-bot-knowledge');
