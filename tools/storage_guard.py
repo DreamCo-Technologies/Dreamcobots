@@ -90,7 +90,54 @@ def check_generated_libraries(policy: dict[str, Any]) -> tuple[list[dict[str, An
         "largest_shard": None,
         "bot_entries_checked": 0,
     }
+    api_summary = {
+        "sharded": False,
+        "api_index_entries": 0,
+        "shard_count": 0,
+        "largest_shard_mb": 0,
+        "largest_shard": None,
+        "bot_entries_checked": 0,
+    }
     resource_failures: list[str] = []
+    api_failures: list[str] = []
+
+    api_index_path = ROOT / "config/generated/system_libraries/apis.json"
+    if api_index_path.exists():
+        api_index = load_json(api_index_path)
+        api_summary["sharded"] = api_index.get("sharded") is True
+        api_summary["api_index_entries"] = len(api_index.get("entries", []))
+        api_summary["shard_count"] = len(api_index.get("shards", []))
+        if not api_summary["sharded"]:
+            api_failures.append("api index must be sharded")
+        if api_index.get("count") != api_summary["api_index_entries"]:
+            api_failures.append("api index count does not match entries")
+        for entry in api_index.get("entries", []):
+            if not entry.get("custom_to_bot"):
+                api_failures.append(f"{entry.get('bot_id')} is missing custom_to_bot")
+            if not entry.get("shard_path"):
+                api_failures.append(f"{entry.get('bot_id')} is missing shard_path")
+
+        for shard_name in api_index.get("shards", []):
+            shard_path = ROOT / shard_name
+            shard_check = check_file_size(
+                shard_path,
+                budgets["generated_resource_shard_max_mb"],
+                f"api_shard_budget:{Path(shard_name).stem}",
+            )
+            checks.append(shard_check)
+            if shard_check["actual_mb"] is not None and shard_check["actual_mb"] > api_summary["largest_shard_mb"]:
+                api_summary["largest_shard_mb"] = shard_check["actual_mb"]
+                api_summary["largest_shard"] = shard_check["path"]
+            if not shard_path.exists():
+                api_failures.append(f"missing api shard {shard_name}")
+                continue
+            shard = load_json(shard_path)
+            for entry in shard.get("entries", []):
+                api_summary["bot_entries_checked"] += 1
+                if not entry.get("custom_contract", {}).get("custom_to_bot"):
+                    api_failures.append(f"{entry.get('bot_id')} custom api contract missing")
+                if not entry.get("operations"):
+                    api_failures.append(f"{entry.get('bot_id')} api operations missing")
 
     if resource_index_path.exists():
         resource_index = load_json(resource_index_path)
@@ -137,7 +184,19 @@ def check_generated_libraries(policy: dict[str, Any]) -> tuple[list[dict[str, An
             "message": "resources are sharded and count-safe" if not resource_failures else "resource sharding needs attention",
         }
     )
-    return checks, resource_summary
+    checks.append(
+        {
+            "name": "api_sharding_integrity",
+            "path": rel(api_index_path),
+            "status": status_for(not api_failures),
+            "actual": api_summary,
+            "max_failures_reported": 10,
+            "failures": api_failures[:10],
+            "failure_count": len(api_failures),
+            "message": "custom APIs are sharded and count-safe" if not api_failures else "api sharding needs attention",
+        }
+    )
+    return checks, {"resources": resource_summary, "apis": api_summary}
 
 
 def check_useful_data_policy(policy: dict[str, Any]) -> dict[str, Any]:
@@ -179,7 +238,9 @@ def check_useful_data_policy(policy: dict[str, Any]) -> dict[str, Any]:
 
 def build_report() -> dict[str, Any]:
     policy = load_json(POLICY_FILE)
-    checks, resource_summary = check_generated_libraries(policy)
+    checks, shard_summary = check_generated_libraries(policy)
+    resource_summary = shard_summary["resources"]
+    api_summary = shard_summary["apis"]
     checks.append(check_useful_data_policy(policy))
     failed = [check for check in checks if check["status"] != "pass"]
     warnings = []
@@ -206,6 +267,10 @@ def build_report() -> dict[str, Any]:
             "largest_resource_shard": resource_summary["largest_shard"],
             "resource_shard_count": resource_summary["shard_count"],
             "bot_resource_entries_checked": resource_summary["bot_entries_checked"],
+            "largest_api_shard_mb": api_summary["largest_shard_mb"],
+            "largest_api_shard": api_summary["largest_shard"],
+            "api_shard_count": api_summary["shard_count"],
+            "bot_api_entries_checked": api_summary["bot_entries_checked"],
         },
         "budgets": policy["size_budgets"],
         "memory_tiers": policy.get("memory_tiers", []),
@@ -235,7 +300,9 @@ def write_reports(report: dict[str, Any]) -> None:
         f"- Useful drop categories: {summary['useful_drop_categories']}",
         f"- Useful required metadata fields: {summary['useful_required_metadata']}",
         f"- Largest resource shard: {summary['largest_resource_shard']} ({summary['largest_resource_shard_mb']} MB)",
+        f"- Largest API shard: {summary['largest_api_shard']} ({summary['largest_api_shard_mb']} MB)",
         f"- Bot resource entries checked: {summary['bot_resource_entries_checked']}",
+        f"- Bot API entries checked: {summary['bot_api_entries_checked']}",
         "",
         "## Budgets",
         "",

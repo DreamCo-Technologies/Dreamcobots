@@ -3248,6 +3248,7 @@ export default function ActionsPage({
 
               <div className="mt-4 grid grid-cols-2 gap-px overflow-hidden border border-emerald-900 bg-emerald-900 md:grid-cols-4">
                 {[
+                  ['Custom APIs', libraryCoverage.bots_with_custom_api_contracts],
                   ['API bootcamps', libraryCoverage.bots_with_api_sandbox_bootcamps],
                   ['Workflow generators', libraryCoverage.bots_with_sandbox_workflow_generators],
                   ['Training tracks', libraryCoverage.bots_with_owner_buddy_client_bootcamp_tracks],

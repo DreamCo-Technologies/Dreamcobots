@@ -19,6 +19,7 @@ const libraryPayload = {
     { id: 'resources', name: 'Resources Library', icon: '📚', count: 1248, description: 'Per-bot starter resources.' },
   ],
   coverage: {
+    bots_with_custom_api_contracts: 1248,
     bots_with_api_sandbox_bootcamps: 1248,
     bots_with_sandbox_workflow_generators: 1248,
     bots_with_owner_buddy_client_bootcamp_tracks: 1248,
@@ -519,6 +520,7 @@ describe('ActionsPage', () => {
     expect(screen.getByRole('heading', { name: 'Generated libraries' })).toBeInTheDocument();
     expect(screen.getByText('Sandbox bootcamp generator')).toBeInTheDocument();
     expect(screen.getByText('World Class Bot Building Sandbox Bootcamp')).toBeInTheDocument();
+    expect(screen.getByText('Custom APIs')).toBeInTheDocument();
     expect(screen.getByText('API bootcamps')).toBeInTheDocument();
     expect(screen.getByText('Workflow generators')).toBeInTheDocument();
     expect(screen.getByText('Training tracks')).toBeInTheDocument();

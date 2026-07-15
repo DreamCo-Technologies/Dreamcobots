@@ -1,0 +1,3912 @@
+{
+  "schema": "dreamco.api_library_shard.v1",
+  "generated_at": "2026-06-01T00:00:00Z",
+  "generated_from": "config/master_bot_registry.json",
+  "library": "apis",
+  "division": "DreamEmpire",
+  "division_slug": "dreamempire",
+  "count": 5,
+  "custom_to_bot": true,
+  "entries": [
+    {
+      "id": "auto-scaler:apis",
+      "bot_id": "auto-scaler",
+      "legacy_registry_id": "auto_scaler",
+      "bot_slug": "auto-scaler",
+      "bot_name": "Empire Auto-Scaling Bot",
+      "emoji": "🤖",
+      "division": "DreamEmpire",
+      "version": "1.0.0",
+      "status": "generated",
+      "owner": "DreamCo Technologies",
+      "base_path": "/api/v1/bots/auto-scaler",
+      "operations": [
+        {
+          "operation_id": "auto-scaler_get_status",
+          "method": "GET",
+          "path": "/status",
+          "approval_required": false,
+          "purpose": "Return runtime, readiness, and approval state for Empire Auto-Scaling Bot."
+        },
+        {
+          "operation_id": "auto-scaler_get_capabilities",
+          "method": "GET",
+          "path": "/capabilities",
+          "approval_required": false,
+          "purpose": "Return Empire Auto-Scaling Bot capabilities, limits, and sandbox options."
+        },
+        {
+          "operation_id": "auto-scaler_demand-based-scaling-triggers_plan",
+          "method": "POST",
+          "path": "/capabilities/demand-based-scaling-triggers/plan",
+          "approval_required": false,
+          "purpose": "Create a sandbox-first plan for Demand-based scaling triggers.",
+          "capability": {
+            "intent": "demand-based-scaling-triggers",
+            "label": "Demand-based scaling triggers",
+            "risk_level": "high",
+            "approval_required": true,
+            "revenue_generating": true,
+            "spends_money": false,
+            "external_outreach": false
+          }
+        },
+        {
+          "operation_id": "auto-scaler_demand-based-scaling-triggers_sandbox",
+          "method": "POST",
+          "path": "/capabilities/demand-based-scaling-triggers/sandbox",
+          "approval_required": false,
+          "purpose": "Run the Demand-based scaling triggers bootcamp fixture without live side effects.",
+          "capability": {
+            "intent": "demand-based-scaling-triggers",
+            "label": "Demand-based scaling triggers",
+            "risk_level": "high",
+            "approval_required": true,
+            "revenue_generating": true,
+            "spends_money": false,
+            "external_outreach": false
+          }
+        },
+        {
+          "operation_id": "auto-scaler_demand-based-scaling-triggers_request_approval",
+          "method": "POST",
+          "path": "/capabilities/demand-based-scaling-triggers/approval-request",
+          "approval_required": true,
+          "purpose": "Prepare owner approval packet before live use of Demand-based scaling triggers.",
+          "capability": {
+            "intent": "demand-based-scaling-triggers",
+            "label": "Demand-based scaling triggers",
+            "risk_level": "high",
+            "approval_required": true,
+            "revenue_generating": true,
+            "spends_money": false,
+            "external_outreach": false
+          }
+        },
+        {
+          "operation_id": "auto-scaler_cost-optimized-resource-allocation_plan",
+          "method": "POST",
+          "path": "/capabilities/cost-optimized-resource-allocation/plan",
+          "approval_required": false,
+          "purpose": "Create a sandbox-first plan for Cost-optimized resource allocation.",
+          "capability": {
+            "intent": "cost-optimized-resource-allocation",
+            "label": "Cost-optimized resource allocation",
+            "risk_level": "high",
+            "approval_required": true,
+            "revenue_generating": true,
+            "spends_money": false,
+            "external_outreach": false
+          }
+        },
+        {
+          "operation_id": "auto-scaler_cost-optimized-resource-allocation_sandbox",
+          "method": "POST",
+          "path": "/capabilities/cost-optimized-resource-allocation/sandbox",
+          "approval_required": false,
+          "purpose": "Run the Cost-optimized resource allocation bootcamp fixture without live side effects.",
+          "capability": {
+            "intent": "cost-optimized-resource-allocation",
+            "label": "Cost-optimized resource allocation",
+            "risk_level": "high",
+            "approval_required": true,
+            "revenue_generating": true,
+            "spends_money": false,
+            "external_outreach": false
+          }
+        },
+        {
+          "operation_id": "auto-scaler_cost-optimized-resource-allocation_request_approval",
+          "method": "POST",
+          "path": "/capabilities/cost-optimized-resource-allocation/approval-request",
+          "approval_required": true,
+          "purpose": "Prepare owner approval packet before live use of Cost-optimized resource allocation.",
+          "capability": {
+            "intent": "cost-optimized-resource-allocation",
+            "label": "Cost-optimized resource allocation",
+            "risk_level": "high",
+            "approval_required": true,
+            "revenue_generating": true,
+            "spends_money": false,
+            "external_outreach": false
+          }
+        },
+        {
+          "operation_id": "auto-scaler_peak-load-prediction_plan",
+          "method": "POST",
+          "path": "/capabilities/peak-load-prediction/plan",
+          "approval_required": false,
+          "purpose": "Create a sandbox-first plan for Peak load prediction.",
+          "capability": {
+            "intent": "peak-load-prediction",
+            "label": "Peak load prediction",
+            "risk_level": "high",
+            "approval_required": true,
+            "revenue_generating": true,
+            "spends_money": true,
+            "external_outreach": true
+          }
+        },
+        {
+          "operation_id": "auto-scaler_peak-load-prediction_sandbox",
+          "method": "POST",
+          "path": "/capabilities/peak-load-prediction/sandbox",
+          "approval_required": false,
+          "purpose": "Run the Peak load prediction bootcamp fixture without live side effects.",
+          "capability": {
+            "intent": "peak-load-prediction",
+            "label": "Peak load prediction",
+            "risk_level": "high",
+            "approval_required": true,
+            "revenue_generating": true,
+            "spends_money": true,
+            "external_outreach": true
+          }
+        },
+        {
+          "operation_id": "auto-scaler_peak-load-prediction_request_approval",
+          "method": "POST",
+          "path": "/capabilities/peak-load-prediction/approval-request",
+          "approval_required": true,
+          "purpose": "Prepare owner approval packet before live use of Peak load prediction.",
+          "capability": {
+            "intent": "peak-load-prediction",
+            "label": "Peak load prediction",
+            "risk_level": "high",
+            "approval_required": true,
+            "revenue_generating": true,
+            "spends_money": true,
+            "external_outreach": true
+          }
+        },
+        {
+          "operation_id": "auto-scaler_idle-resource-reclamation_plan",
+          "method": "POST",
+          "path": "/capabilities/idle-resource-reclamation/plan",
+          "approval_required": false,
+          "purpose": "Create a sandbox-first plan for Idle resource reclamation.",
+          "capability": {
+            "intent": "idle-resource-reclamation",
+            "label": "Idle resource reclamation",
+            "risk_level": "high",
+            "approval_required": true,
+            "revenue_generating": true,
+            "spends_money": false,
+            "external_outreach": false
+          }
+        },
+        {
+          "operation_id": "auto-scaler_idle-resource-reclamation_sandbox",
+          "method": "POST",
+          "path": "/capabilities/idle-resource-reclamation/sandbox",
+          "approval_required": false,
+          "purpose": "Run the Idle resource reclamation bootcamp fixture without live side effects.",
+          "capability": {
+            "intent": "idle-resource-reclamation",
+            "label": "Idle resource reclamation",
+            "risk_level": "high",
+            "approval_required": true,
+            "revenue_generating": true,
+            "spends_money": false,
+            "external_outreach": false
+          }
+        },
+        {
+          "operation_id": "auto-scaler_idle-resource-reclamation_request_approval",
+          "method": "POST",
+          "path": "/capabilities/idle-resource-reclamation/approval-request",
+          "approval_required": true,
+          "purpose": "Prepare owner approval packet before live use of Idle resource reclamation.",
+          "capability": {
+            "intent": "idle-resource-reclamation",
+            "label": "Idle resource reclamation",
+            "risk_level": "high",
+            "approval_required": true,
+            "revenue_generating": true,
+            "spends_money": false,
+            "external_outreach": false
+          }
+        },
+        {
+          "operation_id": "auto-scaler_multi-region-scaling-orchestration_plan",
+          "method": "POST",
+          "path": "/capabilities/multi-region-scaling-orchestration/plan",
+          "approval_required": false,
+          "purpose": "Create a sandbox-first plan for Multi-region scaling orchestration.",
+          "capability": {
+            "intent": "multi-region-scaling-orchestration",
+            "label": "Multi-region scaling orchestration",
+            "risk_level": "high",
+            "approval_required": true,
+            "revenue_generating": true,
+            "spends_money": false,
+            "external_outreach": false
+          }
+        },
+        {
+          "operation_id": "auto-scaler_multi-region-scaling-orchestration_sandbox",
+          "method": "POST",
+          "path": "/capabilities/multi-region-scaling-orchestration/sandbox",
+          "approval_required": false,
+          "purpose": "Run the Multi-region scaling orchestration bootcamp fixture without live side effects.",
+          "capability": {
+            "intent": "multi-region-scaling-orchestration",
+            "label": "Multi-region scaling orchestration",
+            "risk_level": "high",
+            "approval_required": true,
+            "revenue_generating": true,
+            "spends_money": false,
+            "external_outreach": false
+          }
+        },
+        {
+          "operation_id": "auto-scaler_multi-region-scaling-orchestration_request_approval",
+          "method": "POST",
+          "path": "/capabilities/multi-region-scaling-orchestration/approval-request",
+          "approval_required": true,
+          "purpose": "Prepare owner approval packet before live use of Multi-region scaling orchestration.",
+          "capability": {
+            "intent": "multi-region-scaling-orchestration",
+            "label": "Multi-region scaling orchestration",
+            "risk_level": "high",
+            "approval_required": true,
+            "revenue_generating": true,
+            "spends_money": false,
+            "external_outreach": false
+          }
+        },
+        {
+          "operation_id": "auto-scaler_advanced-analytics-dashboard_plan",
+          "method": "POST",
+          "path": "/capabilities/advanced-analytics-dashboard/plan",
+          "approval_required": false,
+          "purpose": "Create a sandbox-first plan for Advanced analytics dashboard.",
+          "capability": {
+            "intent": "advanced-analytics-dashboard",
+            "label": "Advanced analytics dashboard",
+            "risk_level": "high",
+            "approval_required": true,
+            "revenue_generating": true,
+            "spends_money": true,
+            "external_outreach": true
+          }
+        },
+        {
+          "operation_id": "auto-scaler_advanced-analytics-dashboard_sandbox",
+          "method": "POST",
+          "path": "/capabilities/advanced-analytics-dashboard/sandbox",
+          "approval_required": false,
+          "purpose": "Run the Advanced analytics dashboard bootcamp fixture without live side effects.",
+          "capability": {
+            "intent": "advanced-analytics-dashboard",
+            "label": "Advanced analytics dashboard",
+            "risk_level": "high",
+            "approval_required": true,
+            "revenue_generating": true,
+            "spends_money": true,
+            "external_outreach": true
+          }
+        },
+        {
+          "operation_id": "auto-scaler_advanced-analytics-dashboard_request_approval",
+          "method": "POST",
+          "path": "/capabilities/advanced-analytics-dashboard/approval-request",
+          "approval_required": true,
+          "purpose": "Prepare owner approval packet before live use of Advanced analytics dashboard.",
+          "capability": {
+            "intent": "advanced-analytics-dashboard",
+            "label": "Advanced analytics dashboard",
+            "risk_level": "high",
+            "approval_required": true,
+            "revenue_generating": true,
+            "spends_money": true,
+            "external_outreach": true
+          }
+        },
+        {
+          "operation_id": "auto-scaler_execute_reviewed_packet",
+          "method": "POST",
+          "path": "/execute-reviewed-packet",
+          "approval_required": true,
+          "purpose": "Execute only a reviewed, approved, audited Empire Auto-Scaling Bot operation packet."
+        }
+      ],
+      "controls": [
+        "authenticated",
+        "schema_validated",
+        "rate_limited",
+        "retry_after_aware",
+        "audited"
+      ],
+      "custom_contract": {
+        "custom_to_bot": true,
+        "division_context": "DreamEmpire",
+        "category_context": "auto-scaling",
+        "primary_capabilities": [
+          {
+            "intent": "demand-based-scaling-triggers",
+            "label": "Demand-based scaling triggers",
+            "risk_level": "high",
+            "approval_required": true,
+            "revenue_generating": true,
+            "spends_money": false,
+            "external_outreach": false
+          },
+          {
+            "intent": "cost-optimized-resource-allocation",
+            "label": "Cost-optimized resource allocation",
+            "risk_level": "high",
+            "approval_required": true,
+            "revenue_generating": true,
+            "spends_money": false,
+            "external_outreach": false
+          },
+          {
+            "intent": "peak-load-prediction",
+            "label": "Peak load prediction",
+            "risk_level": "high",
+            "approval_required": true,
+            "revenue_generating": true,
+            "spends_money": true,
+            "external_outreach": true
+          },
+          {
+            "intent": "idle-resource-reclamation",
+            "label": "Idle resource reclamation",
+            "risk_level": "high",
+            "approval_required": true,
+            "revenue_generating": true,
+            "spends_money": false,
+            "external_outreach": false
+          },
+          {
+            "intent": "multi-region-scaling-orchestration",
+            "label": "Multi-region scaling orchestration",
+            "risk_level": "high",
+            "approval_required": true,
+            "revenue_generating": true,
+            "spends_money": false,
+            "external_outreach": false
+          },
+          {
+            "intent": "advanced-analytics-dashboard",
+            "label": "Advanced analytics dashboard",
+            "risk_level": "high",
+            "approval_required": true,
+            "revenue_generating": true,
+            "spends_money": true,
+            "external_outreach": true
+          }
+        ],
+        "business_owner_use_cases": [
+          "Find unsolved auto-scaling problems for DreamEmpire customers.",
+          "Package Empire Auto-Scaling Bot sandbox results into a client-safe offer.",
+          "Request owner approval before any live money, outreach, deployment, or external-impact action."
+        ],
+        "buddy_use_cases": [
+          "route_to_best_capability",
+          "generate_bootcamp_workflow",
+          "debug_failed_fixture",
+          "prepare_approval_packet"
+        ],
+        "client_use_cases": [
+          "run_safe_demo",
+          "see_expected_outputs",
+          "understand_limits_and_required_approvals"
+        ],
+        "schemas": {
+          "request_schema": {
+            "type": "object",
+            "required": [
+              "goal",
+              "persona",
+              "mode"
+            ],
+            "properties": {
+              "goal": {
+                "type": "string",
+                "description": "Business problem for Empire Auto-Scaling Bot to solve."
+              },
+              "persona": {
+                "type": "string",
+                "enum": [
+                  "owner",
+                  "buddy",
+                  "client"
+                ]
+              },
+              "mode": {
+                "type": "string",
+                "enum": [
+                  "sandbox",
+                  "approval_request",
+                  "reviewed_live_packet"
+                ]
+              },
+              "capability": {
+                "type": "string",
+                "enum": [
+                  "demand-based-scaling-triggers",
+                  "cost-optimized-resource-allocation",
+                  "peak-load-prediction",
+                  "idle-resource-reclamation",
+                  "multi-region-scaling-orchestration",
+                  "advanced-analytics-dashboard"
+                ]
+              },
+              "constraints": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "evidence": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "response_schema": {
+            "type": "object",
+            "required": [
+              "bot_slug",
+              "mode",
+              "result",
+              "evidence_log",
+              "approval_required"
+            ],
+            "properties": {
+              "bot_slug": {
+                "const": "auto-scaler"
+              },
+              "division": {
+                "const": "DreamEmpire"
+              },
+              "mode": {
+                "type": "string"
+              },
+              "result": {
+                "type": "object"
+              },
+              "evidence_log": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "approval_required": {
+                "type": "boolean"
+              },
+              "next_best_action": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "fixtures": [
+          {
+            "id": "auto-scaler:demand-based-scaling-triggers:happy-path",
+            "capability": "demand-based-scaling-triggers",
+            "persona": "client",
+            "mode": "sandbox",
+            "goal": "Use Empire Auto-Scaling Bot to solve a Demand-based scaling triggers problem in DreamEmpire.",
+            "expected": [
+              "returns_client_safe_plan",
+              "writes_evidence_log",
+              "does_not_take_live_external_action"
+            ]
+          },
+          {
+            "id": "auto-scaler:cost-optimized-resource-allocation:happy-path",
+            "capability": "cost-optimized-resource-allocation",
+            "persona": "client",
+            "mode": "sandbox",
+            "goal": "Use Empire Auto-Scaling Bot to solve a Cost-optimized resource allocation problem in DreamEmpire.",
+            "expected": [
+              "returns_client_safe_plan",
+              "writes_evidence_log",
+              "does_not_take_live_external_action"
+            ]
+          },
+          {
+            "id": "auto-scaler:peak-load-prediction:happy-path",
+            "capability": "peak-load-prediction",
+            "persona": "client",
+            "mode": "sandbox",
+            "goal": "Use Empire Auto-Scaling Bot to solve a Peak load prediction problem in DreamEmpire.",
+            "expected": [
+              "returns_client_safe_plan",
+              "writes_evidence_log",
+              "does_not_take_live_external_action"
+            ]
+          },
+          {
+            "id": "auto-scaler:idle-resource-reclamation:happy-path",
+            "capability": "idle-resource-reclamation",
+            "persona": "client",
+            "mode": "sandbox",
+            "goal": "Use Empire Auto-Scaling Bot to solve a Idle resource reclamation problem in DreamEmpire.",
+            "expected": [
+              "returns_client_safe_plan",
+              "writes_evidence_log",
+              "does_not_take_live_external_action"
+            ]
+          },
+          {
+            "id": "auto-scaler:unauthorized-live-action",
+            "mode": "reviewed_live_packet",
+            "expected": [
+              "reject_without_owner_approval",
+              "write_approval_request"
+            ]
+          },
+          {
+            "id": "auto-scaler:malformed-payload",
+            "mode": "sandbox",
+            "expected": [
+              "schema_error",
+              "client_safe_error_message"
+            ]
+          }
+        ]
+      },
+      "sandbox_test_profile": {
+        "name": "auto-scaler-api-topline-sandbox",
+        "network": "mocked_by_default",
+        "secrets": "test_values_only",
+        "money_movement": "disabled",
+        "coverage_goal": "auto-scaler_custom_capability_contracts",
+        "required_checks": [
+          "openapi_schema_validation",
+          "request_response_contracts",
+          "auth_required_for_mutations",
+          "rate_limit_and_retry_after",
+          "idempotency_key_behavior",
+          "permission_denied_negative_tests",
+          "malformed_payload_rejection",
+          "timeout_and_circuit_breaker",
+          "audit_log_assertions",
+          "no_external_side_effects"
+        ],
+        "fixtures": [
+          "auto-scaler:demand-based-scaling-triggers:happy-path",
+          "auto-scaler:cost-optimized-resource-allocation:happy-path",
+          "auto-scaler:peak-load-prediction:happy-path",
+          "auto-scaler:idle-resource-reclamation:happy-path",
+          "auto-scaler:unauthorized-live-action",
+          "auto-scaler:malformed-payload",
+          "auto-scaler:rate-limit-window",
+          "auto-scaler:approval-required-action"
+        ]
+      },
+      "sandbox_bootcamp": {
+        "id": "auto-scaler:api-sandbox-bootcamp",
+        "name": "Empire Auto-Scaling Bot API Sandbox Bootcamp",
+        "audiences": [
+          "owner",
+          "buddy",
+          "client"
+        ],
+        "workflow_generator": {
+          "id": "auto-scaler-api-sandbox-bootcamp-workflow",
+          "source": "api_library",
+          "generated_workflow_name": "Empire Auto-Scaling Bot Api Sandbox Bootcamp Workflow",
+          "workflow_file": ".github/workflows/generated/auto-scaler-api-sandbox-bootcamp-workflow.yml",
+          "trigger": "workflow_call",
+          "permissions": {
+            "contents": "read",
+            "actions": "read"
+          },
+          "timeout_minutes": 15,
+          "concurrency": {
+            "group": "auto-scaler-api-sandbox-bootcamp",
+            "cancel_in_progress": true
+          },
+          "stages": [
+            "checkout_readonly",
+            "install_locked_dependencies",
+            "load_mock_fixtures",
+            "run_contract_checks",
+            "run_negative_safety_checks",
+            "run_bootcamp_persona_drills",
+            "write_evidence_packet"
+          ],
+          "artifacts": [
+            "reports/sandbox_bootcamps/auto-scaler/api-sandbox-bootcamp/summary.json",
+            "reports/sandbox_bootcamps/auto-scaler/api-sandbox-bootcamp/client_notes.md"
+          ],
+          "live_action_policy": "blocked_unless_owner_approval_packet_is_green"
+        },
+        "required_checks": [
+          "openapi_schema_validation",
+          "request_response_contracts",
+          "auth_required_for_mutations",
+          "rate_limit_and_retry_after",
+          "idempotency_key_behavior",
+          "permission_denied_negative_tests",
+          "malformed_payload_rejection",
+          "timeout_and_circuit_breaker",
+          "audit_log_assertions",
+          "no_external_side_effects",
+          "client_safe_error_messages",
+          "rollback_packet_created"
+        ],
+        "bootcamp_modules": [
+          {
+            "id": "bootcamp_01_contract",
+            "title": "Contract and schema proof",
+            "goal": "Prove every request, response, event, and error shape before runtime work.",
+            "checks": [
+              "schema_compile",
+              "example_payloads",
+              "negative_contract_cases"
+            ]
+          },
+          {
+            "id": "bootcamp_02_fixture_lab",
+            "title": "Fixture lab",
+            "goal": "Build deterministic happy-path, edge-case, abuse-case, and rollback fixtures.",
+            "checks": [
+              "happy_path_fixture",
+              "edge_fixture",
+              "abuse_fixture",
+              "rollback_fixture"
+            ]
+          },
+          {
+            "id": "bootcamp_03_api_obstacle_course",
+            "title": "API obstacle course",
+            "goal": "Exercise auth, rate limits, idempotency, timeouts, retries, and audit logs.",
+            "checks": [
+              "auth_gate",
+              "rate_limit",
+              "idempotency",
+              "timeout",
+              "audit_log"
+            ]
+          },
+          {
+            "id": "bootcamp_04_safety_ring",
+            "title": "Safety ring",
+            "goal": "Block live money, outreach, deployment, credential, medical, legal, and security impact by default.",
+            "checks": [
+              "no_live_money",
+              "no_live_outreach",
+              "no_secret_leak",
+              "approval_required"
+            ]
+          },
+          {
+            "id": "bootcamp_05_builder_drill",
+            "title": "Bot builder drill",
+            "goal": "Train the operator to build, test, debug, document, and package the bot like a client product.",
+            "checks": [
+              "build_packet",
+              "debug_packet",
+              "client_summary",
+              "prospectus_update"
+            ]
+          },
+          {
+            "id": "bootcamp_06_failure_replay",
+            "title": "Failure replay",
+            "goal": "Replay old failures and prove they stay fixed with regression evidence.",
+            "checks": [
+              "known_failure_fixture",
+              "regression_test",
+              "fix_evidence",
+              "retest_command"
+            ]
+          },
+          {
+            "id": "bootcamp_07_graduation",
+            "title": "Graduation review",
+            "goal": "Produce a demo-ready, client-safe, production-gated readiness packet.",
+            "checks": [
+              "readiness_score",
+              "remaining_risks",
+              "approval_packet",
+              "handoff_notes"
+            ]
+          }
+        ],
+        "personas": {
+          "owner": [
+            "learn_what_the_bot_can_safely_do",
+            "approve_or_reject_live_actions",
+            "read_client_ready_summary"
+          ],
+          "buddy": [
+            "route_task_to_best_bot",
+            "debug_failed_contract",
+            "generate_fix_packet"
+          ],
+          "client": [
+            "try_safe_demo_scenario",
+            "see_expected_business_value",
+            "understand_limits_and_approvals"
+          ]
+        },
+        "graduation_packet": [
+          "api_contract_report",
+          "workflow_run_summary",
+          "sandbox_evidence",
+          "risk_and_approval_summary",
+          "client_demo_script"
+        ]
+      },
+      "workflow_generator": {
+        "id": "auto-scaler-api-sandbox-bootcamp-workflow",
+        "source": "api_library",
+        "generated_workflow_name": "Empire Auto-Scaling Bot Api Sandbox Bootcamp Workflow",
+        "workflow_file": ".github/workflows/generated/auto-scaler-api-sandbox-bootcamp-workflow.yml",
+        "trigger": "workflow_call",
+        "permissions": {
+          "contents": "read",
+          "actions": "read"
+        },
+        "timeout_minutes": 15,
+        "concurrency": {
+          "group": "auto-scaler-api-sandbox-bootcamp",
+          "cancel_in_progress": true
+        },
+        "stages": [
+          "checkout_readonly",
+          "install_locked_dependencies",
+          "load_mock_fixtures",
+          "run_contract_checks",
+          "run_negative_safety_checks",
+          "run_bootcamp_persona_drills",
+          "write_evidence_packet"
+        ],
+        "artifacts": [
+          "reports/sandbox_bootcamps/auto-scaler/api-sandbox-bootcamp/summary.json",
+          "reports/sandbox_bootcamps/auto-scaler/api-sandbox-bootcamp/client_notes.md"
+        ],
+        "live_action_policy": "blocked_unless_owner_approval_packet_is_green"
+      }
+    },
+    {
+      "id": "empire-monitor:apis",
+      "bot_id": "empire-monitor",
+      "legacy_registry_id": "empire_monitor",
+      "bot_slug": "empire-monitor",
+      "bot_name": "Empire Monitoring Bot",
+      "emoji": "💵",
+      "division": "DreamEmpire",
+      "version": "1.0.0",
+      "status": "generated",
+      "owner": "DreamCo Technologies",
+      "base_path": "/api/v1/bots/empire-monitor",
+      "operations": [
+        {
+          "operation_id": "empire-monitor_get_status",
+          "method": "GET",
+          "path": "/status",
+          "approval_required": false,
+          "purpose": "Return runtime, readiness, and approval state for Empire Monitoring Bot."
+        },
+        {
+          "operation_id": "empire-monitor_get_capabilities",
+          "method": "GET",
+          "path": "/capabilities",
+          "approval_required": false,
+          "purpose": "Return Empire Monitoring Bot capabilities, limits, and sandbox options."
+        },
+        {
+          "operation_id": "empire-monitor_cross-division-health-dashboard_plan",
+          "method": "POST",
+          "path": "/capabilities/cross-division-health-dashboard/plan",
+          "approval_required": false,
+          "purpose": "Create a sandbox-first plan for Cross-division health dashboard.",
+          "capability": {
+            "intent": "cross-division-health-dashboard",
+            "label": "Cross-division health dashboard",
+            "risk_level": "high",
+            "approval_required": true,
+            "revenue_generating": true,
+            "spends_money": false,
+            "external_outreach": false
+          }
+        },
+        {
+          "operation_id": "empire-monitor_cross-division-health-dashboard_sandbox",
+          "method": "POST",
+          "path": "/capabilities/cross-division-health-dashboard/sandbox",
+          "approval_required": false,
+          "purpose": "Run the Cross-division health dashboard bootcamp fixture without live side effects.",
+          "capability": {
+            "intent": "cross-division-health-dashboard",
+            "label": "Cross-division health dashboard",
+            "risk_level": "high",
+            "approval_required": true,
+            "revenue_generating": true,
+            "spends_money": false,
+            "external_outreach": false
+          }
+        },
+        {
+          "operation_id": "empire-monitor_cross-division-health-dashboard_request_approval",
+          "method": "POST",
+          "path": "/capabilities/cross-division-health-dashboard/approval-request",
+          "approval_required": true,
+          "purpose": "Prepare owner approval packet before live use of Cross-division health dashboard.",
+          "capability": {
+            "intent": "cross-division-health-dashboard",
+            "label": "Cross-division health dashboard",
+            "risk_level": "high",
+            "approval_required": true,
+            "revenue_generating": true,
+            "spends_money": false,
+            "external_outreach": false
+          }
+        },
+        {
+          "operation_id": "empire-monitor_bot-performance-scoring_plan",
+          "method": "POST",
+          "path": "/capabilities/bot-performance-scoring/plan",
+          "approval_required": false,
+          "purpose": "Create a sandbox-first plan for Bot performance scoring.",
+          "capability": {
+            "intent": "bot-performance-scoring",
+            "label": "Bot performance scoring",
+            "risk_level": "high",
+            "approval_required": true,
+            "revenue_generating": true,
+            "spends_money": false,
+            "external_outreach": false
+          }
+        },
+        {
+          "operation_id": "empire-monitor_bot-performance-scoring_sandbox",
+          "method": "POST",
+          "path": "/capabilities/bot-performance-scoring/sandbox",
+          "approval_required": false,
+          "purpose": "Run the Bot performance scoring bootcamp fixture without live side effects.",
+          "capability": {
+            "intent": "bot-performance-scoring",
+            "label": "Bot performance scoring",
+            "risk_level": "high",
+            "approval_required": true,
+            "revenue_generating": true,
+            "spends_money": false,
+            "external_outreach": false
+          }
+        },
+        {
+          "operation_id": "empire-monitor_bot-performance-scoring_request_approval",
+          "method": "POST",
+          "path": "/capabilities/bot-performance-scoring/approval-request",
+          "approval_required": true,
+          "purpose": "Prepare owner approval packet before live use of Bot performance scoring.",
+          "capability": {
+            "intent": "bot-performance-scoring",
+            "label": "Bot performance scoring",
+            "risk_level": "high",
+            "approval_required": true,
+            "revenue_generating": true,
+            "spends_money": false,
+            "external_outreach": false
+          }
+        },
+        {
+          "operation_id": "empire-monitor_revenue-stream-monitoring_plan",
+          "method": "POST",
+          "path": "/capabilities/revenue-stream-monitoring/plan",
+          "approval_required": false,
+          "purpose": "Create a sandbox-first plan for Revenue stream monitoring.",
+          "capability": {
+            "intent": "revenue-stream-monitoring",
+            "label": "Revenue stream monitoring",
+            "risk_level": "high",
+            "approval_required": true,
+            "revenue_generating": true,
+            "spends_money": true,
+            "external_outreach": false
+          }
+        },
+        {
+          "operation_id": "empire-monitor_revenue-stream-monitoring_sandbox",
+          "method": "POST",
+          "path": "/capabilities/revenue-stream-monitoring/sandbox",
+          "approval_required": false,
+          "purpose": "Run the Revenue stream monitoring bootcamp fixture without live side effects.",
+          "capability": {
+            "intent": "revenue-stream-monitoring",
+            "label": "Revenue stream monitoring",
+            "risk_level": "high",
+            "approval_required": true,
+            "revenue_generating": true,
+            "spends_money": true,
+            "external_outreach": false
+          }
+        },
+        {
+          "operation_id": "empire-monitor_revenue-stream-monitoring_request_approval",
+          "method": "POST",
+          "path": "/capabilities/revenue-stream-monitoring/approval-request",
+          "approval_required": true,
+          "purpose": "Prepare owner approval packet before live use of Revenue stream monitoring.",
+          "capability": {
+            "intent": "revenue-stream-monitoring",
+            "label": "Revenue stream monitoring",
+            "risk_level": "high",
+            "approval_required": true,
+            "revenue_generating": true,
+            "spends_money": true,
+            "external_outreach": false
+          }
+        },
+        {
+          "operation_id": "empire-monitor_anomaly-detection-and-alerting_plan",
+          "method": "POST",
+          "path": "/capabilities/anomaly-detection-and-alerting/plan",
+          "approval_required": false,
+          "purpose": "Create a sandbox-first plan for Anomaly detection and alerting.",
+          "capability": {
+            "intent": "anomaly-detection-and-alerting",
+            "label": "Anomaly detection and alerting",
+            "risk_level": "high",
+            "approval_required": true,
+            "revenue_generating": true,
+            "spends_money": false,
+            "external_outreach": false
+          }
+        },
+        {
+          "operation_id": "empire-monitor_anomaly-detection-and-alerting_sandbox",
+          "method": "POST",
+          "path": "/capabilities/anomaly-detection-and-alerting/sandbox",
+          "approval_required": false,
+          "purpose": "Run the Anomaly detection and alerting bootcamp fixture without live side effects.",
+          "capability": {
+            "intent": "anomaly-detection-and-alerting",
+            "label": "Anomaly detection and alerting",
+            "risk_level": "high",
+            "approval_required": true,
+            "revenue_generating": true,
+            "spends_money": false,
+            "external_outreach": false
+          }
+        },
+        {
+          "operation_id": "empire-monitor_anomaly-detection-and-alerting_request_approval",
+          "method": "POST",
+          "path": "/capabilities/anomaly-detection-and-alerting/approval-request",
+          "approval_required": true,
+          "purpose": "Prepare owner approval packet before live use of Anomaly detection and alerting.",
+          "capability": {
+            "intent": "anomaly-detection-and-alerting",
+            "label": "Anomaly detection and alerting",
+            "risk_level": "high",
+            "approval_required": true,
+            "revenue_generating": true,
+            "spends_money": false,
+            "external_outreach": false
+          }
+        },
+        {
+          "operation_id": "empire-monitor_sla-compliance-tracking_plan",
+          "method": "POST",
+          "path": "/capabilities/sla-compliance-tracking/plan",
+          "approval_required": false,
+          "purpose": "Create a sandbox-first plan for SLA compliance tracking.",
+          "capability": {
+            "intent": "sla-compliance-tracking",
+            "label": "SLA compliance tracking",
+            "risk_level": "high",
+            "approval_required": true,
+            "revenue_generating": true,
+            "spends_money": false,
+            "external_outreach": false
+          }
+        },
+        {
+          "operation_id": "empire-monitor_sla-compliance-tracking_sandbox",
+          "method": "POST",
+          "path": "/capabilities/sla-compliance-tracking/sandbox",
+          "approval_required": false,
+          "purpose": "Run the SLA compliance tracking bootcamp fixture without live side effects.",
+          "capability": {
+            "intent": "sla-compliance-tracking",
+            "label": "SLA compliance tracking",
+            "risk_level": "high",
+            "approval_required": true,
+            "revenue_generating": true,
+            "spends_money": false,
+            "external_outreach": false
+          }
+        },
+        {
+          "operation_id": "empire-monitor_sla-compliance-tracking_request_approval",
+          "method": "POST",
+          "path": "/capabilities/sla-compliance-tracking/approval-request",
+          "approval_required": true,
+          "purpose": "Prepare owner approval packet before live use of SLA compliance tracking.",
+          "capability": {
+            "intent": "sla-compliance-tracking",
+            "label": "SLA compliance tracking",
+            "risk_level": "high",
+            "approval_required": true,
+            "revenue_generating": true,
+            "spends_money": false,
+            "external_outreach": false
+          }
+        },
+        {
+          "operation_id": "empire-monitor_executive-summary-generation_plan",
+          "method": "POST",
+          "path": "/capabilities/executive-summary-generation/plan",
+          "approval_required": false,
+          "purpose": "Create a sandbox-first plan for Executive summary generation.",
+          "capability": {
+            "intent": "executive-summary-generation",
+            "label": "Executive summary generation",
+            "risk_level": "high",
+            "approval_required": true,
+            "revenue_generating": true,
+            "spends_money": false,
+            "external_outreach": false
+          }
+        },
+        {
+          "operation_id": "empire-monitor_executive-summary-generation_sandbox",
+          "method": "POST",
+          "path": "/capabilities/executive-summary-generation/sandbox",
+          "approval_required": false,
+          "purpose": "Run the Executive summary generation bootcamp fixture without live side effects.",
+          "capability": {
+            "intent": "executive-summary-generation",
+            "label": "Executive summary generation",
+            "risk_level": "high",
+            "approval_required": true,
+            "revenue_generating": true,
+            "spends_money": false,
+            "external_outreach": false
+          }
+        },
+        {
+          "operation_id": "empire-monitor_executive-summary-generation_request_approval",
+          "method": "POST",
+          "path": "/capabilities/executive-summary-generation/approval-request",
+          "approval_required": true,
+          "purpose": "Prepare owner approval packet before live use of Executive summary generation.",
+          "capability": {
+            "intent": "executive-summary-generation",
+            "label": "Executive summary generation",
+            "risk_level": "high",
+            "approval_required": true,
+            "revenue_generating": true,
+            "spends_money": false,
+            "external_outreach": false
+          }
+        },
+        {
+          "operation_id": "empire-monitor_execute_reviewed_packet",
+          "method": "POST",
+          "path": "/execute-reviewed-packet",
+          "approval_required": true,
+          "purpose": "Execute only a reviewed, approved, audited Empire Monitoring Bot operation packet."
+        }
+      ],
+      "controls": [
+        "authenticated",
+        "schema_validated",
+        "rate_limited",
+        "retry_after_aware",
+        "audited"
+      ],
+      "custom_contract": {
+        "custom_to_bot": true,
+        "division_context": "DreamEmpire",
+        "category_context": "empire-monitoring",
+        "primary_capabilities": [
+          {
+            "intent": "cross-division-health-dashboard",
+            "label": "Cross-division health dashboard",
+            "risk_level": "high",
+            "approval_required": true,
+            "revenue_generating": true,
+            "spends_money": false,
+            "external_outreach": false
+          },
+          {
+            "intent": "bot-performance-scoring",
+            "label": "Bot performance scoring",
+            "risk_level": "high",
+            "approval_required": true,
+            "revenue_generating": true,
+            "spends_money": false,
+            "external_outreach": false
+          },
+          {
+            "intent": "revenue-stream-monitoring",
+            "label": "Revenue stream monitoring",
+            "risk_level": "high",
+            "approval_required": true,
+            "revenue_generating": true,
+            "spends_money": true,
+            "external_outreach": false
+          },
+          {
+            "intent": "anomaly-detection-and-alerting",
+            "label": "Anomaly detection and alerting",
+            "risk_level": "high",
+            "approval_required": true,
+            "revenue_generating": true,
+            "spends_money": false,
+            "external_outreach": false
+          },
+          {
+            "intent": "sla-compliance-tracking",
+            "label": "SLA compliance tracking",
+            "risk_level": "high",
+            "approval_required": true,
+            "revenue_generating": true,
+            "spends_money": false,
+            "external_outreach": false
+          },
+          {
+            "intent": "executive-summary-generation",
+            "label": "Executive summary generation",
+            "risk_level": "high",
+            "approval_required": true,
+            "revenue_generating": true,
+            "spends_money": false,
+            "external_outreach": false
+          }
+        ],
+        "business_owner_use_cases": [
+          "Find unsolved empire-monitoring problems for DreamEmpire customers.",
+          "Package Empire Monitoring Bot sandbox results into a client-safe offer.",
+          "Request owner approval before any live money, outreach, deployment, or external-impact action."
+        ],
+        "buddy_use_cases": [
+          "route_to_best_capability",
+          "generate_bootcamp_workflow",
+          "debug_failed_fixture",
+          "prepare_approval_packet"
+        ],
+        "client_use_cases": [
+          "run_safe_demo",
+          "see_expected_outputs",
+          "understand_limits_and_required_approvals"
+        ],
+        "schemas": {
+          "request_schema": {
+            "type": "object",
+            "required": [
+              "goal",
+              "persona",
+              "mode"
+            ],
+            "properties": {
+              "goal": {
+                "type": "string",
+                "description": "Business problem for Empire Monitoring Bot to solve."
+              },
+              "persona": {
+                "type": "string",
+                "enum": [
+                  "owner",
+                  "buddy",
+                  "client"
+                ]
+              },
+              "mode": {
+                "type": "string",
+                "enum": [
+                  "sandbox",
+                  "approval_request",
+                  "reviewed_live_packet"
+                ]
+              },
+              "capability": {
+                "type": "string",
+                "enum": [
+                  "cross-division-health-dashboard",
+                  "bot-performance-scoring",
+                  "revenue-stream-monitoring",
+                  "anomaly-detection-and-alerting",
+                  "sla-compliance-tracking",
+                  "executive-summary-generation"
+                ]
+              },
+              "constraints": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "evidence": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "response_schema": {
+            "type": "object",
+            "required": [
+              "bot_slug",
+              "mode",
+              "result",
+              "evidence_log",
+              "approval_required"
+            ],
+            "properties": {
+              "bot_slug": {
+                "const": "empire-monitor"
+              },
+              "division": {
+                "const": "DreamEmpire"
+              },
+              "mode": {
+                "type": "string"
+              },
+              "result": {
+                "type": "object"
+              },
+              "evidence_log": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "approval_required": {
+                "type": "boolean"
+              },
+              "next_best_action": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "fixtures": [
+          {
+            "id": "empire-monitor:cross-division-health-dashboard:happy-path",
+            "capability": "cross-division-health-dashboard",
+            "persona": "client",
+            "mode": "sandbox",
+            "goal": "Use Empire Monitoring Bot to solve a Cross-division health dashboard problem in DreamEmpire.",
+            "expected": [
+              "returns_client_safe_plan",
+              "writes_evidence_log",
+              "does_not_take_live_external_action"
+            ]
+          },
+          {
+            "id": "empire-monitor:bot-performance-scoring:happy-path",
+            "capability": "bot-performance-scoring",
+            "persona": "client",
+            "mode": "sandbox",
+            "goal": "Use Empire Monitoring Bot to solve a Bot performance scoring problem in DreamEmpire.",
+            "expected": [
+              "returns_client_safe_plan",
+              "writes_evidence_log",
+              "does_not_take_live_external_action"
+            ]
+          },
+          {
+            "id": "empire-monitor:revenue-stream-monitoring:happy-path",
+            "capability": "revenue-stream-monitoring",
+            "persona": "client",
+            "mode": "sandbox",
+            "goal": "Use Empire Monitoring Bot to solve a Revenue stream monitoring problem in DreamEmpire.",
+            "expected": [
+              "returns_client_safe_plan",
+              "writes_evidence_log",
+              "does_not_take_live_external_action"
+            ]
+          },
+          {
+            "id": "empire-monitor:anomaly-detection-and-alerting:happy-path",
+            "capability": "anomaly-detection-and-alerting",
+            "persona": "client",
+            "mode": "sandbox",
+            "goal": "Use Empire Monitoring Bot to solve a Anomaly detection and alerting problem in DreamEmpire.",
+            "expected": [
+              "returns_client_safe_plan",
+              "writes_evidence_log",
+              "does_not_take_live_external_action"
+            ]
+          },
+          {
+            "id": "empire-monitor:unauthorized-live-action",
+            "mode": "reviewed_live_packet",
+            "expected": [
+              "reject_without_owner_approval",
+              "write_approval_request"
+            ]
+          },
+          {
+            "id": "empire-monitor:malformed-payload",
+            "mode": "sandbox",
+            "expected": [
+              "schema_error",
+              "client_safe_error_message"
+            ]
+          }
+        ]
+      },
+      "sandbox_test_profile": {
+        "name": "empire-monitor-api-topline-sandbox",
+        "network": "mocked_by_default",
+        "secrets": "test_values_only",
+        "money_movement": "disabled",
+        "coverage_goal": "empire-monitor_custom_capability_contracts",
+        "required_checks": [
+          "openapi_schema_validation",
+          "request_response_contracts",
+          "auth_required_for_mutations",
+          "rate_limit_and_retry_after",
+          "idempotency_key_behavior",
+          "permission_denied_negative_tests",
+          "malformed_payload_rejection",
+          "timeout_and_circuit_breaker",
+          "audit_log_assertions",
+          "no_external_side_effects"
+        ],
+        "fixtures": [
+          "empire-monitor:cross-division-health-dashboard:happy-path",
+          "empire-monitor:bot-performance-scoring:happy-path",
+          "empire-monitor:revenue-stream-monitoring:happy-path",
+          "empire-monitor:anomaly-detection-and-alerting:happy-path",
+          "empire-monitor:unauthorized-live-action",
+          "empire-monitor:malformed-payload",
+          "empire-monitor:rate-limit-window",
+          "empire-monitor:approval-required-action"
+        ]
+      },
+      "sandbox_bootcamp": {
+        "id": "empire-monitor:api-sandbox-bootcamp",
+        "name": "Empire Monitoring Bot API Sandbox Bootcamp",
+        "audiences": [
+          "owner",
+          "buddy",
+          "client"
+        ],
+        "workflow_generator": {
+          "id": "empire-monitor-api-sandbox-bootcamp-workflow",
+          "source": "api_library",
+          "generated_workflow_name": "Empire Monitoring Bot Api Sandbox Bootcamp Workflow",
+          "workflow_file": ".github/workflows/generated/empire-monitor-api-sandbox-bootcamp-workflow.yml",
+          "trigger": "workflow_call",
+          "permissions": {
+            "contents": "read",
+            "actions": "read"
+          },
+          "timeout_minutes": 15,
+          "concurrency": {
+            "group": "empire-monitor-api-sandbox-bootcamp",
+            "cancel_in_progress": true
+          },
+          "stages": [
+            "checkout_readonly",
+            "install_locked_dependencies",
+            "load_mock_fixtures",
+            "run_contract_checks",
+            "run_negative_safety_checks",
+            "run_bootcamp_persona_drills",
+            "write_evidence_packet"
+          ],
+          "artifacts": [
+            "reports/sandbox_bootcamps/empire-monitor/api-sandbox-bootcamp/summary.json",
+            "reports/sandbox_bootcamps/empire-monitor/api-sandbox-bootcamp/client_notes.md"
+          ],
+          "live_action_policy": "blocked_unless_owner_approval_packet_is_green"
+        },
+        "required_checks": [
+          "openapi_schema_validation",
+          "request_response_contracts",
+          "auth_required_for_mutations",
+          "rate_limit_and_retry_after",
+          "idempotency_key_behavior",
+          "permission_denied_negative_tests",
+          "malformed_payload_rejection",
+          "timeout_and_circuit_breaker",
+          "audit_log_assertions",
+          "no_external_side_effects",
+          "client_safe_error_messages",
+          "rollback_packet_created"
+        ],
+        "bootcamp_modules": [
+          {
+            "id": "bootcamp_01_contract",
+            "title": "Contract and schema proof",
+            "goal": "Prove every request, response, event, and error shape before runtime work.",
+            "checks": [
+              "schema_compile",
+              "example_payloads",
+              "negative_contract_cases"
+            ]
+          },
+          {
+            "id": "bootcamp_02_fixture_lab",
+            "title": "Fixture lab",
+            "goal": "Build deterministic happy-path, edge-case, abuse-case, and rollback fixtures.",
+            "checks": [
+              "happy_path_fixture",
+              "edge_fixture",
+              "abuse_fixture",
+              "rollback_fixture"
+            ]
+          },
+          {
+            "id": "bootcamp_03_api_obstacle_course",
+            "title": "API obstacle course",
+            "goal": "Exercise auth, rate limits, idempotency, timeouts, retries, and audit logs.",
+            "checks": [
+              "auth_gate",
+              "rate_limit",
+              "idempotency",
+              "timeout",
+              "audit_log"
+            ]
+          },
+          {
+            "id": "bootcamp_04_safety_ring",
+            "title": "Safety ring",
+            "goal": "Block live money, outreach, deployment, credential, medical, legal, and security impact by default.",
+            "checks": [
+              "no_live_money",
+              "no_live_outreach",
+              "no_secret_leak",
+              "approval_required"
+            ]
+          },
+          {
+            "id": "bootcamp_05_builder_drill",
+            "title": "Bot builder drill",
+            "goal": "Train the operator to build, test, debug, document, and package the bot like a client product.",
+            "checks": [
+              "build_packet",
+              "debug_packet",
+              "client_summary",
+              "prospectus_update"
+            ]
+          },
+          {
+            "id": "bootcamp_06_failure_replay",
+            "title": "Failure replay",
+            "goal": "Replay old failures and prove they stay fixed with regression evidence.",
+            "checks": [
+              "known_failure_fixture",
+              "regression_test",
+              "fix_evidence",
+              "retest_command"
+            ]
+          },
+          {
+            "id": "bootcamp_07_graduation",
+            "title": "Graduation review",
+            "goal": "Produce a demo-ready, client-safe, production-gated readiness packet.",
+            "checks": [
+              "readiness_score",
+              "remaining_risks",
+              "approval_packet",
+              "handoff_notes"
+            ]
+          }
+        ],
+        "personas": {
+          "owner": [
+            "learn_what_the_bot_can_safely_do",
+            "approve_or_reject_live_actions",
+            "read_client_ready_summary"
+          ],
+          "buddy": [
+            "route_task_to_best_bot",
+            "debug_failed_contract",
+            "generate_fix_packet"
+          ],
+          "client": [
+            "try_safe_demo_scenario",
+            "see_expected_business_value",
+            "understand_limits_and_approvals"
+          ]
+        },
+        "graduation_packet": [
+          "api_contract_report",
+          "workflow_run_summary",
+          "sandbox_evidence",
+          "risk_and_approval_summary",
+          "client_demo_script"
+        ]
+      },
+      "workflow_generator": {
+        "id": "empire-monitor-api-sandbox-bootcamp-workflow",
+        "source": "api_library",
+        "generated_workflow_name": "Empire Monitoring Bot Api Sandbox Bootcamp Workflow",
+        "workflow_file": ".github/workflows/generated/empire-monitor-api-sandbox-bootcamp-workflow.yml",
+        "trigger": "workflow_call",
+        "permissions": {
+          "contents": "read",
+          "actions": "read"
+        },
+        "timeout_minutes": 15,
+        "concurrency": {
+          "group": "empire-monitor-api-sandbox-bootcamp",
+          "cancel_in_progress": true
+        },
+        "stages": [
+          "checkout_readonly",
+          "install_locked_dependencies",
+          "load_mock_fixtures",
+          "run_contract_checks",
+          "run_negative_safety_checks",
+          "run_bootcamp_persona_drills",
+          "write_evidence_packet"
+        ],
+        "artifacts": [
+          "reports/sandbox_bootcamps/empire-monitor/api-sandbox-bootcamp/summary.json",
+          "reports/sandbox_bootcamps/empire-monitor/api-sandbox-bootcamp/client_notes.md"
+        ],
+        "live_action_policy": "blocked_unless_owner_approval_packet_is_green"
+      }
+    },
+    {
+      "id": "investor-report-empire:apis",
+      "bot_id": "investor-report-empire",
+      "legacy_registry_id": "investor_report_empire",
+      "bot_slug": "investor-report-empire",
+      "bot_name": "Investor Reporting Bot",
+      "emoji": "🤖",
+      "division": "DreamEmpire",
+      "version": "1.0.0",
+      "status": "generated",
+      "owner": "DreamCo Technologies",
+      "base_path": "/api/v1/bots/investor-report-empire",
+      "operations": [
+        {
+          "operation_id": "investor-report-empire_get_status",
+          "method": "GET",
+          "path": "/status",
+          "approval_required": false,
+          "purpose": "Return runtime, readiness, and approval state for Investor Reporting Bot."
+        },
+        {
+          "operation_id": "investor-report-empire_get_capabilities",
+          "method": "GET",
+          "path": "/capabilities",
+          "approval_required": false,
+          "purpose": "Return Investor Reporting Bot capabilities, limits, and sandbox options."
+        },
+        {
+          "operation_id": "investor-report-empire_financial-summary-automation_plan",
+          "method": "POST",
+          "path": "/capabilities/financial-summary-automation/plan",
+          "approval_required": false,
+          "purpose": "Create a sandbox-first plan for Financial summary automation.",
+          "capability": {
+            "intent": "financial-summary-automation",
+            "label": "Financial summary automation",
+            "risk_level": "high",
+            "approval_required": true,
+            "revenue_generating": true,
+            "spends_money": false,
+            "external_outreach": false
+          }
+        },
+        {
+          "operation_id": "investor-report-empire_financial-summary-automation_sandbox",
+          "method": "POST",
+          "path": "/capabilities/financial-summary-automation/sandbox",
+          "approval_required": false,
+          "purpose": "Run the Financial summary automation bootcamp fixture without live side effects.",
+          "capability": {
+            "intent": "financial-summary-automation",
+            "label": "Financial summary automation",
+            "risk_level": "high",
+            "approval_required": true,
+            "revenue_generating": true,
+            "spends_money": false,
+            "external_outreach": false
+          }
+        },
+        {
+          "operation_id": "investor-report-empire_financial-summary-automation_request_approval",
+          "method": "POST",
+          "path": "/capabilities/financial-summary-automation/approval-request",
+          "approval_required": true,
+          "purpose": "Prepare owner approval packet before live use of Financial summary automation.",
+          "capability": {
+            "intent": "financial-summary-automation",
+            "label": "Financial summary automation",
+            "risk_level": "high",
+            "approval_required": true,
+            "revenue_generating": true,
+            "spends_money": false,
+            "external_outreach": false
+          }
+        },
+        {
+          "operation_id": "investor-report-empire_kpi-dashboard-generation_plan",
+          "method": "POST",
+          "path": "/capabilities/kpi-dashboard-generation/plan",
+          "approval_required": false,
+          "purpose": "Create a sandbox-first plan for KPI dashboard generation.",
+          "capability": {
+            "intent": "kpi-dashboard-generation",
+            "label": "KPI dashboard generation",
+            "risk_level": "high",
+            "approval_required": true,
+            "revenue_generating": true,
+            "spends_money": false,
+            "external_outreach": false
+          }
+        },
+        {
+          "operation_id": "investor-report-empire_kpi-dashboard-generation_sandbox",
+          "method": "POST",
+          "path": "/capabilities/kpi-dashboard-generation/sandbox",
+          "approval_required": false,
+          "purpose": "Run the KPI dashboard generation bootcamp fixture without live side effects.",
+          "capability": {
+            "intent": "kpi-dashboard-generation",
+            "label": "KPI dashboard generation",
+            "risk_level": "high",
+            "approval_required": true,
+            "revenue_generating": true,
+            "spends_money": false,
+            "external_outreach": false
+          }
+        },
+        {
+          "operation_id": "investor-report-empire_kpi-dashboard-generation_request_approval",
+          "method": "POST",
+          "path": "/capabilities/kpi-dashboard-generation/approval-request",
+          "approval_required": true,
+          "purpose": "Prepare owner approval packet before live use of KPI dashboard generation.",
+          "capability": {
+            "intent": "kpi-dashboard-generation",
+            "label": "KPI dashboard generation",
+            "risk_level": "high",
+            "approval_required": true,
+            "revenue_generating": true,
+            "spends_money": false,
+            "external_outreach": false
+          }
+        },
+        {
+          "operation_id": "investor-report-empire_cohort-analysis-reports_plan",
+          "method": "POST",
+          "path": "/capabilities/cohort-analysis-reports/plan",
+          "approval_required": false,
+          "purpose": "Create a sandbox-first plan for Cohort analysis reports.",
+          "capability": {
+            "intent": "cohort-analysis-reports",
+            "label": "Cohort analysis reports",
+            "risk_level": "high",
+            "approval_required": true,
+            "revenue_generating": true,
+            "spends_money": false,
+            "external_outreach": false
+          }
+        },
+        {
+          "operation_id": "investor-report-empire_cohort-analysis-reports_sandbox",
+          "method": "POST",
+          "path": "/capabilities/cohort-analysis-reports/sandbox",
+          "approval_required": false,
+          "purpose": "Run the Cohort analysis reports bootcamp fixture without live side effects.",
+          "capability": {
+            "intent": "cohort-analysis-reports",
+            "label": "Cohort analysis reports",
+            "risk_level": "high",
+            "approval_required": true,
+            "revenue_generating": true,
+            "spends_money": false,
+            "external_outreach": false
+          }
+        },
+        {
+          "operation_id": "investor-report-empire_cohort-analysis-reports_request_approval",
+          "method": "POST",
+          "path": "/capabilities/cohort-analysis-reports/approval-request",
+          "approval_required": true,
+          "purpose": "Prepare owner approval packet before live use of Cohort analysis reports.",
+          "capability": {
+            "intent": "cohort-analysis-reports",
+            "label": "Cohort analysis reports",
+            "risk_level": "high",
+            "approval_required": true,
+            "revenue_generating": true,
+            "spends_money": false,
+            "external_outreach": false
+          }
+        },
+        {
+          "operation_id": "investor-report-empire_board-deck-preparation_plan",
+          "method": "POST",
+          "path": "/capabilities/board-deck-preparation/plan",
+          "approval_required": false,
+          "purpose": "Create a sandbox-first plan for Board deck preparation.",
+          "capability": {
+            "intent": "board-deck-preparation",
+            "label": "Board deck preparation",
+            "risk_level": "high",
+            "approval_required": true,
+            "revenue_generating": true,
+            "spends_money": false,
+            "external_outreach": false
+          }
+        },
+        {
+          "operation_id": "investor-report-empire_board-deck-preparation_sandbox",
+          "method": "POST",
+          "path": "/capabilities/board-deck-preparation/sandbox",
+          "approval_required": false,
+          "purpose": "Run the Board deck preparation bootcamp fixture without live side effects.",
+          "capability": {
+            "intent": "board-deck-preparation",
+            "label": "Board deck preparation",
+            "risk_level": "high",
+            "approval_required": true,
+            "revenue_generating": true,
+            "spends_money": false,
+            "external_outreach": false
+          }
+        },
+        {
+          "operation_id": "investor-report-empire_board-deck-preparation_request_approval",
+          "method": "POST",
+          "path": "/capabilities/board-deck-preparation/approval-request",
+          "approval_required": true,
+          "purpose": "Prepare owner approval packet before live use of Board deck preparation.",
+          "capability": {
+            "intent": "board-deck-preparation",
+            "label": "Board deck preparation",
+            "risk_level": "high",
+            "approval_required": true,
+            "revenue_generating": true,
+            "spends_money": false,
+            "external_outreach": false
+          }
+        },
+        {
+          "operation_id": "investor-report-empire_cap-table-integration_plan",
+          "method": "POST",
+          "path": "/capabilities/cap-table-integration/plan",
+          "approval_required": false,
+          "purpose": "Create a sandbox-first plan for Cap table integration.",
+          "capability": {
+            "intent": "cap-table-integration",
+            "label": "Cap table integration",
+            "risk_level": "high",
+            "approval_required": true,
+            "revenue_generating": true,
+            "spends_money": false,
+            "external_outreach": false
+          }
+        },
+        {
+          "operation_id": "investor-report-empire_cap-table-integration_sandbox",
+          "method": "POST",
+          "path": "/capabilities/cap-table-integration/sandbox",
+          "approval_required": false,
+          "purpose": "Run the Cap table integration bootcamp fixture without live side effects.",
+          "capability": {
+            "intent": "cap-table-integration",
+            "label": "Cap table integration",
+            "risk_level": "high",
+            "approval_required": true,
+            "revenue_generating": true,
+            "spends_money": false,
+            "external_outreach": false
+          }
+        },
+        {
+          "operation_id": "investor-report-empire_cap-table-integration_request_approval",
+          "method": "POST",
+          "path": "/capabilities/cap-table-integration/approval-request",
+          "approval_required": true,
+          "purpose": "Prepare owner approval packet before live use of Cap table integration.",
+          "capability": {
+            "intent": "cap-table-integration",
+            "label": "Cap table integration",
+            "risk_level": "high",
+            "approval_required": true,
+            "revenue_generating": true,
+            "spends_money": false,
+            "external_outreach": false
+          }
+        },
+        {
+          "operation_id": "investor-report-empire_fundraising-metrics-tracking_plan",
+          "method": "POST",
+          "path": "/capabilities/fundraising-metrics-tracking/plan",
+          "approval_required": false,
+          "purpose": "Create a sandbox-first plan for Fundraising metrics tracking.",
+          "capability": {
+            "intent": "fundraising-metrics-tracking",
+            "label": "Fundraising metrics tracking",
+            "risk_level": "high",
+            "approval_required": true,
+            "revenue_generating": true,
+            "spends_money": false,
+            "external_outreach": false
+          }
+        },
+        {
+          "operation_id": "investor-report-empire_fundraising-metrics-tracking_sandbox",
+          "method": "POST",
+          "path": "/capabilities/fundraising-metrics-tracking/sandbox",
+          "approval_required": false,
+          "purpose": "Run the Fundraising metrics tracking bootcamp fixture without live side effects.",
+          "capability": {
+            "intent": "fundraising-metrics-tracking",
+            "label": "Fundraising metrics tracking",
+            "risk_level": "high",
+            "approval_required": true,
+            "revenue_generating": true,
+            "spends_money": false,
+            "external_outreach": false
+          }
+        },
+        {
+          "operation_id": "investor-report-empire_fundraising-metrics-tracking_request_approval",
+          "method": "POST",
+          "path": "/capabilities/fundraising-metrics-tracking/approval-request",
+          "approval_required": true,
+          "purpose": "Prepare owner approval packet before live use of Fundraising metrics tracking.",
+          "capability": {
+            "intent": "fundraising-metrics-tracking",
+            "label": "Fundraising metrics tracking",
+            "risk_level": "high",
+            "approval_required": true,
+            "revenue_generating": true,
+            "spends_money": false,
+            "external_outreach": false
+          }
+        },
+        {
+          "operation_id": "investor-report-empire_execute_reviewed_packet",
+          "method": "POST",
+          "path": "/execute-reviewed-packet",
+          "approval_required": true,
+          "purpose": "Execute only a reviewed, approved, audited Investor Reporting Bot operation packet."
+        }
+      ],
+      "controls": [
+        "authenticated",
+        "schema_validated",
+        "rate_limited",
+        "retry_after_aware",
+        "audited"
+      ],
+      "custom_contract": {
+        "custom_to_bot": true,
+        "division_context": "DreamEmpire",
+        "category_context": "investor-reporting",
+        "primary_capabilities": [
+          {
+            "intent": "financial-summary-automation",
+            "label": "Financial summary automation",
+            "risk_level": "high",
+            "approval_required": true,
+            "revenue_generating": true,
+            "spends_money": false,
+            "external_outreach": false
+          },
+          {
+            "intent": "kpi-dashboard-generation",
+            "label": "KPI dashboard generation",
+            "risk_level": "high",
+            "approval_required": true,
+            "revenue_generating": true,
+            "spends_money": false,
+            "external_outreach": false
+          },
+          {
+            "intent": "cohort-analysis-reports",
+            "label": "Cohort analysis reports",
+            "risk_level": "high",
+            "approval_required": true,
+            "revenue_generating": true,
+            "spends_money": false,
+            "external_outreach": false
+          },
+          {
+            "intent": "board-deck-preparation",
+            "label": "Board deck preparation",
+            "risk_level": "high",
+            "approval_required": true,
+            "revenue_generating": true,
+            "spends_money": false,
+            "external_outreach": false
+          },
+          {
+            "intent": "cap-table-integration",
+            "label": "Cap table integration",
+            "risk_level": "high",
+            "approval_required": true,
+            "revenue_generating": true,
+            "spends_money": false,
+            "external_outreach": false
+          },
+          {
+            "intent": "fundraising-metrics-tracking",
+            "label": "Fundraising metrics tracking",
+            "risk_level": "high",
+            "approval_required": true,
+            "revenue_generating": true,
+            "spends_money": false,
+            "external_outreach": false
+          }
+        ],
+        "business_owner_use_cases": [
+          "Find unsolved investor-reporting problems for DreamEmpire customers.",
+          "Package Investor Reporting Bot sandbox results into a client-safe offer.",
+          "Request owner approval before any live money, outreach, deployment, or external-impact action."
+        ],
+        "buddy_use_cases": [
+          "route_to_best_capability",
+          "generate_bootcamp_workflow",
+          "debug_failed_fixture",
+          "prepare_approval_packet"
+        ],
+        "client_use_cases": [
+          "run_safe_demo",
+          "see_expected_outputs",
+          "understand_limits_and_required_approvals"
+        ],
+        "schemas": {
+          "request_schema": {
+            "type": "object",
+            "required": [
+              "goal",
+              "persona",
+              "mode"
+            ],
+            "properties": {
+              "goal": {
+                "type": "string",
+                "description": "Business problem for Investor Reporting Bot to solve."
+              },
+              "persona": {
+                "type": "string",
+                "enum": [
+                  "owner",
+                  "buddy",
+                  "client"
+                ]
+              },
+              "mode": {
+                "type": "string",
+                "enum": [
+                  "sandbox",
+                  "approval_request",
+                  "reviewed_live_packet"
+                ]
+              },
+              "capability": {
+                "type": "string",
+                "enum": [
+                  "financial-summary-automation",
+                  "kpi-dashboard-generation",
+                  "cohort-analysis-reports",
+                  "board-deck-preparation",
+                  "cap-table-integration",
+                  "fundraising-metrics-tracking"
+                ]
+              },
+              "constraints": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "evidence": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "response_schema": {
+            "type": "object",
+            "required": [
+              "bot_slug",
+              "mode",
+              "result",
+              "evidence_log",
+              "approval_required"
+            ],
+            "properties": {
+              "bot_slug": {
+                "const": "investor-report-empire"
+              },
+              "division": {
+                "const": "DreamEmpire"
+              },
+              "mode": {
+                "type": "string"
+              },
+              "result": {
+                "type": "object"
+              },
+              "evidence_log": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "approval_required": {
+                "type": "boolean"
+              },
+              "next_best_action": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "fixtures": [
+          {
+            "id": "investor-report-empire:financial-summary-automation:happy-path",
+            "capability": "financial-summary-automation",
+            "persona": "client",
+            "mode": "sandbox",
+            "goal": "Use Investor Reporting Bot to solve a Financial summary automation problem in DreamEmpire.",
+            "expected": [
+              "returns_client_safe_plan",
+              "writes_evidence_log",
+              "does_not_take_live_external_action"
+            ]
+          },
+          {
+            "id": "investor-report-empire:kpi-dashboard-generation:happy-path",
+            "capability": "kpi-dashboard-generation",
+            "persona": "client",
+            "mode": "sandbox",
+            "goal": "Use Investor Reporting Bot to solve a KPI dashboard generation problem in DreamEmpire.",
+            "expected": [
+              "returns_client_safe_plan",
+              "writes_evidence_log",
+              "does_not_take_live_external_action"
+            ]
+          },
+          {
+            "id": "investor-report-empire:cohort-analysis-reports:happy-path",
+            "capability": "cohort-analysis-reports",
+            "persona": "client",
+            "mode": "sandbox",
+            "goal": "Use Investor Reporting Bot to solve a Cohort analysis reports problem in DreamEmpire.",
+            "expected": [
+              "returns_client_safe_plan",
+              "writes_evidence_log",
+              "does_not_take_live_external_action"
+            ]
+          },
+          {
+            "id": "investor-report-empire:board-deck-preparation:happy-path",
+            "capability": "board-deck-preparation",
+            "persona": "client",
+            "mode": "sandbox",
+            "goal": "Use Investor Reporting Bot to solve a Board deck preparation problem in DreamEmpire.",
+            "expected": [
+              "returns_client_safe_plan",
+              "writes_evidence_log",
+              "does_not_take_live_external_action"
+            ]
+          },
+          {
+            "id": "investor-report-empire:unauthorized-live-action",
+            "mode": "reviewed_live_packet",
+            "expected": [
+              "reject_without_owner_approval",
+              "write_approval_request"
+            ]
+          },
+          {
+            "id": "investor-report-empire:malformed-payload",
+            "mode": "sandbox",
+            "expected": [
+              "schema_error",
+              "client_safe_error_message"
+            ]
+          }
+        ]
+      },
+      "sandbox_test_profile": {
+        "name": "investor-report-empire-api-topline-sandbox",
+        "network": "mocked_by_default",
+        "secrets": "test_values_only",
+        "money_movement": "disabled",
+        "coverage_goal": "investor-report-empire_custom_capability_contracts",
+        "required_checks": [
+          "openapi_schema_validation",
+          "request_response_contracts",
+          "auth_required_for_mutations",
+          "rate_limit_and_retry_after",
+          "idempotency_key_behavior",
+          "permission_denied_negative_tests",
+          "malformed_payload_rejection",
+          "timeout_and_circuit_breaker",
+          "audit_log_assertions",
+          "no_external_side_effects"
+        ],
+        "fixtures": [
+          "investor-report-empire:financial-summary-automation:happy-path",
+          "investor-report-empire:kpi-dashboard-generation:happy-path",
+          "investor-report-empire:cohort-analysis-reports:happy-path",
+          "investor-report-empire:board-deck-preparation:happy-path",
+          "investor-report-empire:unauthorized-live-action",
+          "investor-report-empire:malformed-payload",
+          "investor-report-empire:rate-limit-window",
+          "investor-report-empire:approval-required-action"
+        ]
+      },
+      "sandbox_bootcamp": {
+        "id": "investor-report-empire:api-sandbox-bootcamp",
+        "name": "Investor Reporting Bot API Sandbox Bootcamp",
+        "audiences": [
+          "owner",
+          "buddy",
+          "client"
+        ],
+        "workflow_generator": {
+          "id": "investor-report-empire-api-sandbox-bootcamp-workflow",
+          "source": "api_library",
+          "generated_workflow_name": "Investor Reporting Bot Api Sandbox Bootcamp Workflow",
+          "workflow_file": ".github/workflows/generated/investor-report-empire-api-sandbox-bootcamp-workflow.yml",
+          "trigger": "workflow_call",
+          "permissions": {
+            "contents": "read",
+            "actions": "read"
+          },
+          "timeout_minutes": 15,
+          "concurrency": {
+            "group": "investor-report-empire-api-sandbox-bootcamp",
+            "cancel_in_progress": true
+          },
+          "stages": [
+            "checkout_readonly",
+            "install_locked_dependencies",
+            "load_mock_fixtures",
+            "run_contract_checks",
+            "run_negative_safety_checks",
+            "run_bootcamp_persona_drills",
+            "write_evidence_packet"
+          ],
+          "artifacts": [
+            "reports/sandbox_bootcamps/investor-report-empire/api-sandbox-bootcamp/summary.json",
+            "reports/sandbox_bootcamps/investor-report-empire/api-sandbox-bootcamp/client_notes.md"
+          ],
+          "live_action_policy": "blocked_unless_owner_approval_packet_is_green"
+        },
+        "required_checks": [
+          "openapi_schema_validation",
+          "request_response_contracts",
+          "auth_required_for_mutations",
+          "rate_limit_and_retry_after",
+          "idempotency_key_behavior",
+          "permission_denied_negative_tests",
+          "malformed_payload_rejection",
+          "timeout_and_circuit_breaker",
+          "audit_log_assertions",
+          "no_external_side_effects",
+          "client_safe_error_messages",
+          "rollback_packet_created"
+        ],
+        "bootcamp_modules": [
+          {
+            "id": "bootcamp_01_contract",
+            "title": "Contract and schema proof",
+            "goal": "Prove every request, response, event, and error shape before runtime work.",
+            "checks": [
+              "schema_compile",
+              "example_payloads",
+              "negative_contract_cases"
+            ]
+          },
+          {
+            "id": "bootcamp_02_fixture_lab",
+            "title": "Fixture lab",
+            "goal": "Build deterministic happy-path, edge-case, abuse-case, and rollback fixtures.",
+            "checks": [
+              "happy_path_fixture",
+              "edge_fixture",
+              "abuse_fixture",
+              "rollback_fixture"
+            ]
+          },
+          {
+            "id": "bootcamp_03_api_obstacle_course",
+            "title": "API obstacle course",
+            "goal": "Exercise auth, rate limits, idempotency, timeouts, retries, and audit logs.",
+            "checks": [
+              "auth_gate",
+              "rate_limit",
+              "idempotency",
+              "timeout",
+              "audit_log"
+            ]
+          },
+          {
+            "id": "bootcamp_04_safety_ring",
+            "title": "Safety ring",
+            "goal": "Block live money, outreach, deployment, credential, medical, legal, and security impact by default.",
+            "checks": [
+              "no_live_money",
+              "no_live_outreach",
+              "no_secret_leak",
+              "approval_required"
+            ]
+          },
+          {
+            "id": "bootcamp_05_builder_drill",
+            "title": "Bot builder drill",
+            "goal": "Train the operator to build, test, debug, document, and package the bot like a client product.",
+            "checks": [
+              "build_packet",
+              "debug_packet",
+              "client_summary",
+              "prospectus_update"
+            ]
+          },
+          {
+            "id": "bootcamp_06_failure_replay",
+            "title": "Failure replay",
+            "goal": "Replay old failures and prove they stay fixed with regression evidence.",
+            "checks": [
+              "known_failure_fixture",
+              "regression_test",
+              "fix_evidence",
+              "retest_command"
+            ]
+          },
+          {
+            "id": "bootcamp_07_graduation",
+            "title": "Graduation review",
+            "goal": "Produce a demo-ready, client-safe, production-gated readiness packet.",
+            "checks": [
+              "readiness_score",
+              "remaining_risks",
+              "approval_packet",
+              "handoff_notes"
+            ]
+          }
+        ],
+        "personas": {
+          "owner": [
+            "learn_what_the_bot_can_safely_do",
+            "approve_or_reject_live_actions",
+            "read_client_ready_summary"
+          ],
+          "buddy": [
+            "route_task_to_best_bot",
+            "debug_failed_contract",
+            "generate_fix_packet"
+          ],
+          "client": [
+            "try_safe_demo_scenario",
+            "see_expected_business_value",
+            "understand_limits_and_approvals"
+          ]
+        },
+        "graduation_packet": [
+          "api_contract_report",
+          "workflow_run_summary",
+          "sandbox_evidence",
+          "risk_and_approval_summary",
+          "client_demo_script"
+        ]
+      },
+      "workflow_generator": {
+        "id": "investor-report-empire-api-sandbox-bootcamp-workflow",
+        "source": "api_library",
+        "generated_workflow_name": "Investor Reporting Bot Api Sandbox Bootcamp Workflow",
+        "workflow_file": ".github/workflows/generated/investor-report-empire-api-sandbox-bootcamp-workflow.yml",
+        "trigger": "workflow_call",
+        "permissions": {
+          "contents": "read",
+          "actions": "read"
+        },
+        "timeout_minutes": 15,
+        "concurrency": {
+          "group": "investor-report-empire-api-sandbox-bootcamp",
+          "cancel_in_progress": true
+        },
+        "stages": [
+          "checkout_readonly",
+          "install_locked_dependencies",
+          "load_mock_fixtures",
+          "run_contract_checks",
+          "run_negative_safety_checks",
+          "run_bootcamp_persona_drills",
+          "write_evidence_packet"
+        ],
+        "artifacts": [
+          "reports/sandbox_bootcamps/investor-report-empire/api-sandbox-bootcamp/summary.json",
+          "reports/sandbox_bootcamps/investor-report-empire/api-sandbox-bootcamp/client_notes.md"
+        ],
+        "live_action_policy": "blocked_unless_owner_approval_packet_is_green"
+      }
+    },
+    {
+      "id": "revenue-optimizer:apis",
+      "bot_id": "revenue-optimizer",
+      "legacy_registry_id": "revenue_optimizer",
+      "bot_slug": "revenue-optimizer",
+      "bot_name": "Revenue Optimization Bot",
+      "emoji": "💵",
+      "division": "DreamEmpire",
+      "version": "1.0.0",
+      "status": "generated",
+      "owner": "DreamCo Technologies",
+      "base_path": "/api/v1/bots/revenue-optimizer",
+      "operations": [
+        {
+          "operation_id": "revenue-optimizer_get_status",
+          "method": "GET",
+          "path": "/status",
+          "approval_required": false,
+          "purpose": "Return runtime, readiness, and approval state for Revenue Optimization Bot."
+        },
+        {
+          "operation_id": "revenue-optimizer_get_capabilities",
+          "method": "GET",
+          "path": "/capabilities",
+          "approval_required": false,
+          "purpose": "Return Revenue Optimization Bot capabilities, limits, and sandbox options."
+        },
+        {
+          "operation_id": "revenue-optimizer_revenue-leakage-detection_plan",
+          "method": "POST",
+          "path": "/capabilities/revenue-leakage-detection/plan",
+          "approval_required": false,
+          "purpose": "Create a sandbox-first plan for Revenue leakage detection.",
+          "capability": {
+            "intent": "revenue-leakage-detection",
+            "label": "Revenue leakage detection",
+            "risk_level": "high",
+            "approval_required": true,
+            "revenue_generating": true,
+            "spends_money": true,
+            "external_outreach": false
+          }
+        },
+        {
+          "operation_id": "revenue-optimizer_revenue-leakage-detection_sandbox",
+          "method": "POST",
+          "path": "/capabilities/revenue-leakage-detection/sandbox",
+          "approval_required": false,
+          "purpose": "Run the Revenue leakage detection bootcamp fixture without live side effects.",
+          "capability": {
+            "intent": "revenue-leakage-detection",
+            "label": "Revenue leakage detection",
+            "risk_level": "high",
+            "approval_required": true,
+            "revenue_generating": true,
+            "spends_money": true,
+            "external_outreach": false
+          }
+        },
+        {
+          "operation_id": "revenue-optimizer_revenue-leakage-detection_request_approval",
+          "method": "POST",
+          "path": "/capabilities/revenue-leakage-detection/approval-request",
+          "approval_required": true,
+          "purpose": "Prepare owner approval packet before live use of Revenue leakage detection.",
+          "capability": {
+            "intent": "revenue-leakage-detection",
+            "label": "Revenue leakage detection",
+            "risk_level": "high",
+            "approval_required": true,
+            "revenue_generating": true,
+            "spends_money": true,
+            "external_outreach": false
+          }
+        },
+        {
+          "operation_id": "revenue-optimizer_cross-division-upsell-identification_plan",
+          "method": "POST",
+          "path": "/capabilities/cross-division-upsell-identification/plan",
+          "approval_required": false,
+          "purpose": "Create a sandbox-first plan for Cross-division upsell identification.",
+          "capability": {
+            "intent": "cross-division-upsell-identification",
+            "label": "Cross-division upsell identification",
+            "risk_level": "high",
+            "approval_required": true,
+            "revenue_generating": true,
+            "spends_money": true,
+            "external_outreach": false
+          }
+        },
+        {
+          "operation_id": "revenue-optimizer_cross-division-upsell-identification_sandbox",
+          "method": "POST",
+          "path": "/capabilities/cross-division-upsell-identification/sandbox",
+          "approval_required": false,
+          "purpose": "Run the Cross-division upsell identification bootcamp fixture without live side effects.",
+          "capability": {
+            "intent": "cross-division-upsell-identification",
+            "label": "Cross-division upsell identification",
+            "risk_level": "high",
+            "approval_required": true,
+            "revenue_generating": true,
+            "spends_money": true,
+            "external_outreach": false
+          }
+        },
+        {
+          "operation_id": "revenue-optimizer_cross-division-upsell-identification_request_approval",
+          "method": "POST",
+          "path": "/capabilities/cross-division-upsell-identification/approval-request",
+          "approval_required": true,
+          "purpose": "Prepare owner approval packet before live use of Cross-division upsell identification.",
+          "capability": {
+            "intent": "cross-division-upsell-identification",
+            "label": "Cross-division upsell identification",
+            "risk_level": "high",
+            "approval_required": true,
+            "revenue_generating": true,
+            "spends_money": true,
+            "external_outreach": false
+          }
+        },
+        {
+          "operation_id": "revenue-optimizer_pricing-optimization-engine_plan",
+          "method": "POST",
+          "path": "/capabilities/pricing-optimization-engine/plan",
+          "approval_required": false,
+          "purpose": "Create a sandbox-first plan for Pricing optimization engine.",
+          "capability": {
+            "intent": "pricing-optimization-engine",
+            "label": "Pricing optimization engine",
+            "risk_level": "high",
+            "approval_required": true,
+            "revenue_generating": true,
+            "spends_money": true,
+            "external_outreach": false
+          }
+        },
+        {
+          "operation_id": "revenue-optimizer_pricing-optimization-engine_sandbox",
+          "method": "POST",
+          "path": "/capabilities/pricing-optimization-engine/sandbox",
+          "approval_required": false,
+          "purpose": "Run the Pricing optimization engine bootcamp fixture without live side effects.",
+          "capability": {
+            "intent": "pricing-optimization-engine",
+            "label": "Pricing optimization engine",
+            "risk_level": "high",
+            "approval_required": true,
+            "revenue_generating": true,
+            "spends_money": true,
+            "external_outreach": false
+          }
+        },
+        {
+          "operation_id": "revenue-optimizer_pricing-optimization-engine_request_approval",
+          "method": "POST",
+          "path": "/capabilities/pricing-optimization-engine/approval-request",
+          "approval_required": true,
+          "purpose": "Prepare owner approval packet before live use of Pricing optimization engine.",
+          "capability": {
+            "intent": "pricing-optimization-engine",
+            "label": "Pricing optimization engine",
+            "risk_level": "high",
+            "approval_required": true,
+            "revenue_generating": true,
+            "spends_money": true,
+            "external_outreach": false
+          }
+        },
+        {
+          "operation_id": "revenue-optimizer_churn-prevention-automation_plan",
+          "method": "POST",
+          "path": "/capabilities/churn-prevention-automation/plan",
+          "approval_required": false,
+          "purpose": "Create a sandbox-first plan for Churn prevention automation.",
+          "capability": {
+            "intent": "churn-prevention-automation",
+            "label": "Churn prevention automation",
+            "risk_level": "high",
+            "approval_required": true,
+            "revenue_generating": true,
+            "spends_money": true,
+            "external_outreach": false
+          }
+        },
+        {
+          "operation_id": "revenue-optimizer_churn-prevention-automation_sandbox",
+          "method": "POST",
+          "path": "/capabilities/churn-prevention-automation/sandbox",
+          "approval_required": false,
+          "purpose": "Run the Churn prevention automation bootcamp fixture without live side effects.",
+          "capability": {
+            "intent": "churn-prevention-automation",
+            "label": "Churn prevention automation",
+            "risk_level": "high",
+            "approval_required": true,
+            "revenue_generating": true,
+            "spends_money": true,
+            "external_outreach": false
+          }
+        },
+        {
+          "operation_id": "revenue-optimizer_churn-prevention-automation_request_approval",
+          "method": "POST",
+          "path": "/capabilities/churn-prevention-automation/approval-request",
+          "approval_required": true,
+          "purpose": "Prepare owner approval packet before live use of Churn prevention automation.",
+          "capability": {
+            "intent": "churn-prevention-automation",
+            "label": "Churn prevention automation",
+            "risk_level": "high",
+            "approval_required": true,
+            "revenue_generating": true,
+            "spends_money": true,
+            "external_outreach": false
+          }
+        },
+        {
+          "operation_id": "revenue-optimizer_revenue-forecasting-models_plan",
+          "method": "POST",
+          "path": "/capabilities/revenue-forecasting-models/plan",
+          "approval_required": false,
+          "purpose": "Create a sandbox-first plan for Revenue forecasting models.",
+          "capability": {
+            "intent": "revenue-forecasting-models",
+            "label": "Revenue forecasting models",
+            "risk_level": "high",
+            "approval_required": true,
+            "revenue_generating": true,
+            "spends_money": true,
+            "external_outreach": false
+          }
+        },
+        {
+          "operation_id": "revenue-optimizer_revenue-forecasting-models_sandbox",
+          "method": "POST",
+          "path": "/capabilities/revenue-forecasting-models/sandbox",
+          "approval_required": false,
+          "purpose": "Run the Revenue forecasting models bootcamp fixture without live side effects.",
+          "capability": {
+            "intent": "revenue-forecasting-models",
+            "label": "Revenue forecasting models",
+            "risk_level": "high",
+            "approval_required": true,
+            "revenue_generating": true,
+            "spends_money": true,
+            "external_outreach": false
+          }
+        },
+        {
+          "operation_id": "revenue-optimizer_revenue-forecasting-models_request_approval",
+          "method": "POST",
+          "path": "/capabilities/revenue-forecasting-models/approval-request",
+          "approval_required": true,
+          "purpose": "Prepare owner approval packet before live use of Revenue forecasting models.",
+          "capability": {
+            "intent": "revenue-forecasting-models",
+            "label": "Revenue forecasting models",
+            "risk_level": "high",
+            "approval_required": true,
+            "revenue_generating": true,
+            "spends_money": true,
+            "external_outreach": false
+          }
+        },
+        {
+          "operation_id": "revenue-optimizer_margin-improvement-suggestions_plan",
+          "method": "POST",
+          "path": "/capabilities/margin-improvement-suggestions/plan",
+          "approval_required": false,
+          "purpose": "Create a sandbox-first plan for Margin improvement suggestions.",
+          "capability": {
+            "intent": "margin-improvement-suggestions",
+            "label": "Margin improvement suggestions",
+            "risk_level": "high",
+            "approval_required": true,
+            "revenue_generating": true,
+            "spends_money": true,
+            "external_outreach": false
+          }
+        },
+        {
+          "operation_id": "revenue-optimizer_margin-improvement-suggestions_sandbox",
+          "method": "POST",
+          "path": "/capabilities/margin-improvement-suggestions/sandbox",
+          "approval_required": false,
+          "purpose": "Run the Margin improvement suggestions bootcamp fixture without live side effects.",
+          "capability": {
+            "intent": "margin-improvement-suggestions",
+            "label": "Margin improvement suggestions",
+            "risk_level": "high",
+            "approval_required": true,
+            "revenue_generating": true,
+            "spends_money": true,
+            "external_outreach": false
+          }
+        },
+        {
+          "operation_id": "revenue-optimizer_margin-improvement-suggestions_request_approval",
+          "method": "POST",
+          "path": "/capabilities/margin-improvement-suggestions/approval-request",
+          "approval_required": true,
+          "purpose": "Prepare owner approval packet before live use of Margin improvement suggestions.",
+          "capability": {
+            "intent": "margin-improvement-suggestions",
+            "label": "Margin improvement suggestions",
+            "risk_level": "high",
+            "approval_required": true,
+            "revenue_generating": true,
+            "spends_money": true,
+            "external_outreach": false
+          }
+        },
+        {
+          "operation_id": "revenue-optimizer_execute_reviewed_packet",
+          "method": "POST",
+          "path": "/execute-reviewed-packet",
+          "approval_required": true,
+          "purpose": "Execute only a reviewed, approved, audited Revenue Optimization Bot operation packet."
+        }
+      ],
+      "controls": [
+        "authenticated",
+        "schema_validated",
+        "rate_limited",
+        "retry_after_aware",
+        "audited"
+      ],
+      "custom_contract": {
+        "custom_to_bot": true,
+        "division_context": "DreamEmpire",
+        "category_context": "revenue-optimization",
+        "primary_capabilities": [
+          {
+            "intent": "revenue-leakage-detection",
+            "label": "Revenue leakage detection",
+            "risk_level": "high",
+            "approval_required": true,
+            "revenue_generating": true,
+            "spends_money": true,
+            "external_outreach": false
+          },
+          {
+            "intent": "cross-division-upsell-identification",
+            "label": "Cross-division upsell identification",
+            "risk_level": "high",
+            "approval_required": true,
+            "revenue_generating": true,
+            "spends_money": true,
+            "external_outreach": false
+          },
+          {
+            "intent": "pricing-optimization-engine",
+            "label": "Pricing optimization engine",
+            "risk_level": "high",
+            "approval_required": true,
+            "revenue_generating": true,
+            "spends_money": true,
+            "external_outreach": false
+          },
+          {
+            "intent": "churn-prevention-automation",
+            "label": "Churn prevention automation",
+            "risk_level": "high",
+            "approval_required": true,
+            "revenue_generating": true,
+            "spends_money": true,
+            "external_outreach": false
+          },
+          {
+            "intent": "revenue-forecasting-models",
+            "label": "Revenue forecasting models",
+            "risk_level": "high",
+            "approval_required": true,
+            "revenue_generating": true,
+            "spends_money": true,
+            "external_outreach": false
+          },
+          {
+            "intent": "margin-improvement-suggestions",
+            "label": "Margin improvement suggestions",
+            "risk_level": "high",
+            "approval_required": true,
+            "revenue_generating": true,
+            "spends_money": true,
+            "external_outreach": false
+          }
+        ],
+        "business_owner_use_cases": [
+          "Find unsolved revenue-optimization problems for DreamEmpire customers.",
+          "Package Revenue Optimization Bot sandbox results into a client-safe offer.",
+          "Request owner approval before any live money, outreach, deployment, or external-impact action."
+        ],
+        "buddy_use_cases": [
+          "route_to_best_capability",
+          "generate_bootcamp_workflow",
+          "debug_failed_fixture",
+          "prepare_approval_packet"
+        ],
+        "client_use_cases": [
+          "run_safe_demo",
+          "see_expected_outputs",
+          "understand_limits_and_required_approvals"
+        ],
+        "schemas": {
+          "request_schema": {
+            "type": "object",
+            "required": [
+              "goal",
+              "persona",
+              "mode"
+            ],
+            "properties": {
+              "goal": {
+                "type": "string",
+                "description": "Business problem for Revenue Optimization Bot to solve."
+              },
+              "persona": {
+                "type": "string",
+                "enum": [
+                  "owner",
+                  "buddy",
+                  "client"
+                ]
+              },
+              "mode": {
+                "type": "string",
+                "enum": [
+                  "sandbox",
+                  "approval_request",
+                  "reviewed_live_packet"
+                ]
+              },
+              "capability": {
+                "type": "string",
+                "enum": [
+                  "revenue-leakage-detection",
+                  "cross-division-upsell-identification",
+                  "pricing-optimization-engine",
+                  "churn-prevention-automation",
+                  "revenue-forecasting-models",
+                  "margin-improvement-suggestions"
+                ]
+              },
+              "constraints": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "evidence": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "response_schema": {
+            "type": "object",
+            "required": [
+              "bot_slug",
+              "mode",
+              "result",
+              "evidence_log",
+              "approval_required"
+            ],
+            "properties": {
+              "bot_slug": {
+                "const": "revenue-optimizer"
+              },
+              "division": {
+                "const": "DreamEmpire"
+              },
+              "mode": {
+                "type": "string"
+              },
+              "result": {
+                "type": "object"
+              },
+              "evidence_log": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "approval_required": {
+                "type": "boolean"
+              },
+              "next_best_action": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "fixtures": [
+          {
+            "id": "revenue-optimizer:revenue-leakage-detection:happy-path",
+            "capability": "revenue-leakage-detection",
+            "persona": "client",
+            "mode": "sandbox",
+            "goal": "Use Revenue Optimization Bot to solve a Revenue leakage detection problem in DreamEmpire.",
+            "expected": [
+              "returns_client_safe_plan",
+              "writes_evidence_log",
+              "does_not_take_live_external_action"
+            ]
+          },
+          {
+            "id": "revenue-optimizer:cross-division-upsell-identification:happy-path",
+            "capability": "cross-division-upsell-identification",
+            "persona": "client",
+            "mode": "sandbox",
+            "goal": "Use Revenue Optimization Bot to solve a Cross-division upsell identification problem in DreamEmpire.",
+            "expected": [
+              "returns_client_safe_plan",
+              "writes_evidence_log",
+              "does_not_take_live_external_action"
+            ]
+          },
+          {
+            "id": "revenue-optimizer:pricing-optimization-engine:happy-path",
+            "capability": "pricing-optimization-engine",
+            "persona": "client",
+            "mode": "sandbox",
+            "goal": "Use Revenue Optimization Bot to solve a Pricing optimization engine problem in DreamEmpire.",
+            "expected": [
+              "returns_client_safe_plan",
+              "writes_evidence_log",
+              "does_not_take_live_external_action"
+            ]
+          },
+          {
+            "id": "revenue-optimizer:churn-prevention-automation:happy-path",
+            "capability": "churn-prevention-automation",
+            "persona": "client",
+            "mode": "sandbox",
+            "goal": "Use Revenue Optimization Bot to solve a Churn prevention automation problem in DreamEmpire.",
+            "expected": [
+              "returns_client_safe_plan",
+              "writes_evidence_log",
+              "does_not_take_live_external_action"
+            ]
+          },
+          {
+            "id": "revenue-optimizer:unauthorized-live-action",
+            "mode": "reviewed_live_packet",
+            "expected": [
+              "reject_without_owner_approval",
+              "write_approval_request"
+            ]
+          },
+          {
+            "id": "revenue-optimizer:malformed-payload",
+            "mode": "sandbox",
+            "expected": [
+              "schema_error",
+              "client_safe_error_message"
+            ]
+          }
+        ]
+      },
+      "sandbox_test_profile": {
+        "name": "revenue-optimizer-api-topline-sandbox",
+        "network": "mocked_by_default",
+        "secrets": "test_values_only",
+        "money_movement": "disabled",
+        "coverage_goal": "revenue-optimizer_custom_capability_contracts",
+        "required_checks": [
+          "openapi_schema_validation",
+          "request_response_contracts",
+          "auth_required_for_mutations",
+          "rate_limit_and_retry_after",
+          "idempotency_key_behavior",
+          "permission_denied_negative_tests",
+          "malformed_payload_rejection",
+          "timeout_and_circuit_breaker",
+          "audit_log_assertions",
+          "no_external_side_effects"
+        ],
+        "fixtures": [
+          "revenue-optimizer:revenue-leakage-detection:happy-path",
+          "revenue-optimizer:cross-division-upsell-identification:happy-path",
+          "revenue-optimizer:pricing-optimization-engine:happy-path",
+          "revenue-optimizer:churn-prevention-automation:happy-path",
+          "revenue-optimizer:unauthorized-live-action",
+          "revenue-optimizer:malformed-payload",
+          "revenue-optimizer:rate-limit-window",
+          "revenue-optimizer:approval-required-action"
+        ]
+      },
+      "sandbox_bootcamp": {
+        "id": "revenue-optimizer:api-sandbox-bootcamp",
+        "name": "Revenue Optimization Bot API Sandbox Bootcamp",
+        "audiences": [
+          "owner",
+          "buddy",
+          "client"
+        ],
+        "workflow_generator": {
+          "id": "revenue-optimizer-api-sandbox-bootcamp-workflow",
+          "source": "api_library",
+          "generated_workflow_name": "Revenue Optimization Bot Api Sandbox Bootcamp Workflow",
+          "workflow_file": ".github/workflows/generated/revenue-optimizer-api-sandbox-bootcamp-workflow.yml",
+          "trigger": "workflow_call",
+          "permissions": {
+            "contents": "read",
+            "actions": "read"
+          },
+          "timeout_minutes": 15,
+          "concurrency": {
+            "group": "revenue-optimizer-api-sandbox-bootcamp",
+            "cancel_in_progress": true
+          },
+          "stages": [
+            "checkout_readonly",
+            "install_locked_dependencies",
+            "load_mock_fixtures",
+            "run_contract_checks",
+            "run_negative_safety_checks",
+            "run_bootcamp_persona_drills",
+            "write_evidence_packet"
+          ],
+          "artifacts": [
+            "reports/sandbox_bootcamps/revenue-optimizer/api-sandbox-bootcamp/summary.json",
+            "reports/sandbox_bootcamps/revenue-optimizer/api-sandbox-bootcamp/client_notes.md"
+          ],
+          "live_action_policy": "blocked_unless_owner_approval_packet_is_green"
+        },
+        "required_checks": [
+          "openapi_schema_validation",
+          "request_response_contracts",
+          "auth_required_for_mutations",
+          "rate_limit_and_retry_after",
+          "idempotency_key_behavior",
+          "permission_denied_negative_tests",
+          "malformed_payload_rejection",
+          "timeout_and_circuit_breaker",
+          "audit_log_assertions",
+          "no_external_side_effects",
+          "client_safe_error_messages",
+          "rollback_packet_created"
+        ],
+        "bootcamp_modules": [
+          {
+            "id": "bootcamp_01_contract",
+            "title": "Contract and schema proof",
+            "goal": "Prove every request, response, event, and error shape before runtime work.",
+            "checks": [
+              "schema_compile",
+              "example_payloads",
+              "negative_contract_cases"
+            ]
+          },
+          {
+            "id": "bootcamp_02_fixture_lab",
+            "title": "Fixture lab",
+            "goal": "Build deterministic happy-path, edge-case, abuse-case, and rollback fixtures.",
+            "checks": [
+              "happy_path_fixture",
+              "edge_fixture",
+              "abuse_fixture",
+              "rollback_fixture"
+            ]
+          },
+          {
+            "id": "bootcamp_03_api_obstacle_course",
+            "title": "API obstacle course",
+            "goal": "Exercise auth, rate limits, idempotency, timeouts, retries, and audit logs.",
+            "checks": [
+              "auth_gate",
+              "rate_limit",
+              "idempotency",
+              "timeout",
+              "audit_log"
+            ]
+          },
+          {
+            "id": "bootcamp_04_safety_ring",
+            "title": "Safety ring",
+            "goal": "Block live money, outreach, deployment, credential, medical, legal, and security impact by default.",
+            "checks": [
+              "no_live_money",
+              "no_live_outreach",
+              "no_secret_leak",
+              "approval_required"
+            ]
+          },
+          {
+            "id": "bootcamp_05_builder_drill",
+            "title": "Bot builder drill",
+            "goal": "Train the operator to build, test, debug, document, and package the bot like a client product.",
+            "checks": [
+              "build_packet",
+              "debug_packet",
+              "client_summary",
+              "prospectus_update"
+            ]
+          },
+          {
+            "id": "bootcamp_06_failure_replay",
+            "title": "Failure replay",
+            "goal": "Replay old failures and prove they stay fixed with regression evidence.",
+            "checks": [
+              "known_failure_fixture",
+              "regression_test",
+              "fix_evidence",
+              "retest_command"
+            ]
+          },
+          {
+            "id": "bootcamp_07_graduation",
+            "title": "Graduation review",
+            "goal": "Produce a demo-ready, client-safe, production-gated readiness packet.",
+            "checks": [
+              "readiness_score",
+              "remaining_risks",
+              "approval_packet",
+              "handoff_notes"
+            ]
+          }
+        ],
+        "personas": {
+          "owner": [
+            "learn_what_the_bot_can_safely_do",
+            "approve_or_reject_live_actions",
+            "read_client_ready_summary"
+          ],
+          "buddy": [
+            "route_task_to_best_bot",
+            "debug_failed_contract",
+            "generate_fix_packet"
+          ],
+          "client": [
+            "try_safe_demo_scenario",
+            "see_expected_business_value",
+            "understand_limits_and_approvals"
+          ]
+        },
+        "graduation_packet": [
+          "api_contract_report",
+          "workflow_run_summary",
+          "sandbox_evidence",
+          "risk_and_approval_summary",
+          "client_demo_script"
+        ]
+      },
+      "workflow_generator": {
+        "id": "revenue-optimizer-api-sandbox-bootcamp-workflow",
+        "source": "api_library",
+        "generated_workflow_name": "Revenue Optimization Bot Api Sandbox Bootcamp Workflow",
+        "workflow_file": ".github/workflows/generated/revenue-optimizer-api-sandbox-bootcamp-workflow.yml",
+        "trigger": "workflow_call",
+        "permissions": {
+          "contents": "read",
+          "actions": "read"
+        },
+        "timeout_minutes": 15,
+        "concurrency": {
+          "group": "revenue-optimizer-api-sandbox-bootcamp",
+          "cancel_in_progress": true
+        },
+        "stages": [
+          "checkout_readonly",
+          "install_locked_dependencies",
+          "load_mock_fixtures",
+          "run_contract_checks",
+          "run_negative_safety_checks",
+          "run_bootcamp_persona_drills",
+          "write_evidence_packet"
+        ],
+        "artifacts": [
+          "reports/sandbox_bootcamps/revenue-optimizer/api-sandbox-bootcamp/summary.json",
+          "reports/sandbox_bootcamps/revenue-optimizer/api-sandbox-bootcamp/client_notes.md"
+        ],
+        "live_action_policy": "blocked_unless_owner_approval_packet_is_green"
+      }
+    },
+    {
+      "id": "whitelabel-empire:apis",
+      "bot_id": "whitelabel-empire",
+      "legacy_registry_id": "whitelabel_empire",
+      "bot_slug": "whitelabel-empire",
+      "bot_name": "White-Label Publishing Bot",
+      "emoji": "🤖",
+      "division": "DreamEmpire",
+      "version": "1.0.0",
+      "status": "generated",
+      "owner": "DreamCo Technologies",
+      "base_path": "/api/v1/bots/whitelabel-empire",
+      "operations": [
+        {
+          "operation_id": "whitelabel-empire_get_status",
+          "method": "GET",
+          "path": "/status",
+          "approval_required": false,
+          "purpose": "Return runtime, readiness, and approval state for White-Label Publishing Bot."
+        },
+        {
+          "operation_id": "whitelabel-empire_get_capabilities",
+          "method": "GET",
+          "path": "/capabilities",
+          "approval_required": false,
+          "purpose": "Return White-Label Publishing Bot capabilities, limits, and sandbox options."
+        },
+        {
+          "operation_id": "whitelabel-empire_brand-customization-engine_plan",
+          "method": "POST",
+          "path": "/capabilities/brand-customization-engine/plan",
+          "approval_required": false,
+          "purpose": "Create a sandbox-first plan for Brand customization engine.",
+          "capability": {
+            "intent": "brand-customization-engine",
+            "label": "Brand customization engine",
+            "risk_level": "high",
+            "approval_required": true,
+            "revenue_generating": true,
+            "spends_money": false,
+            "external_outreach": false
+          }
+        },
+        {
+          "operation_id": "whitelabel-empire_brand-customization-engine_sandbox",
+          "method": "POST",
+          "path": "/capabilities/brand-customization-engine/sandbox",
+          "approval_required": false,
+          "purpose": "Run the Brand customization engine bootcamp fixture without live side effects.",
+          "capability": {
+            "intent": "brand-customization-engine",
+            "label": "Brand customization engine",
+            "risk_level": "high",
+            "approval_required": true,
+            "revenue_generating": true,
+            "spends_money": false,
+            "external_outreach": false
+          }
+        },
+        {
+          "operation_id": "whitelabel-empire_brand-customization-engine_request_approval",
+          "method": "POST",
+          "path": "/capabilities/brand-customization-engine/approval-request",
+          "approval_required": true,
+          "purpose": "Prepare owner approval packet before live use of Brand customization engine.",
+          "capability": {
+            "intent": "brand-customization-engine",
+            "label": "Brand customization engine",
+            "risk_level": "high",
+            "approval_required": true,
+            "revenue_generating": true,
+            "spends_money": false,
+            "external_outreach": false
+          }
+        },
+        {
+          "operation_id": "whitelabel-empire_partner-portal-management_plan",
+          "method": "POST",
+          "path": "/capabilities/partner-portal-management/plan",
+          "approval_required": false,
+          "purpose": "Create a sandbox-first plan for Partner portal management.",
+          "capability": {
+            "intent": "partner-portal-management",
+            "label": "Partner portal management",
+            "risk_level": "high",
+            "approval_required": true,
+            "revenue_generating": true,
+            "spends_money": false,
+            "external_outreach": false
+          }
+        },
+        {
+          "operation_id": "whitelabel-empire_partner-portal-management_sandbox",
+          "method": "POST",
+          "path": "/capabilities/partner-portal-management/sandbox",
+          "approval_required": false,
+          "purpose": "Run the Partner portal management bootcamp fixture without live side effects.",
+          "capability": {
+            "intent": "partner-portal-management",
+            "label": "Partner portal management",
+            "risk_level": "high",
+            "approval_required": true,
+            "revenue_generating": true,
+            "spends_money": false,
+            "external_outreach": false
+          }
+        },
+        {
+          "operation_id": "whitelabel-empire_partner-portal-management_request_approval",
+          "method": "POST",
+          "path": "/capabilities/partner-portal-management/approval-request",
+          "approval_required": true,
+          "purpose": "Prepare owner approval packet before live use of Partner portal management.",
+          "capability": {
+            "intent": "partner-portal-management",
+            "label": "Partner portal management",
+            "risk_level": "high",
+            "approval_required": true,
+            "revenue_generating": true,
+            "spends_money": false,
+            "external_outreach": false
+          }
+        },
+        {
+          "operation_id": "whitelabel-empire_revenue-share-tracking_plan",
+          "method": "POST",
+          "path": "/capabilities/revenue-share-tracking/plan",
+          "approval_required": false,
+          "purpose": "Create a sandbox-first plan for Revenue share tracking.",
+          "capability": {
+            "intent": "revenue-share-tracking",
+            "label": "Revenue share tracking",
+            "risk_level": "high",
+            "approval_required": true,
+            "revenue_generating": true,
+            "spends_money": true,
+            "external_outreach": false
+          }
+        },
+        {
+          "operation_id": "whitelabel-empire_revenue-share-tracking_sandbox",
+          "method": "POST",
+          "path": "/capabilities/revenue-share-tracking/sandbox",
+          "approval_required": false,
+          "purpose": "Run the Revenue share tracking bootcamp fixture without live side effects.",
+          "capability": {
+            "intent": "revenue-share-tracking",
+            "label": "Revenue share tracking",
+            "risk_level": "high",
+            "approval_required": true,
+            "revenue_generating": true,
+            "spends_money": true,
+            "external_outreach": false
+          }
+        },
+        {
+          "operation_id": "whitelabel-empire_revenue-share-tracking_request_approval",
+          "method": "POST",
+          "path": "/capabilities/revenue-share-tracking/approval-request",
+          "approval_required": true,
+          "purpose": "Prepare owner approval packet before live use of Revenue share tracking.",
+          "capability": {
+            "intent": "revenue-share-tracking",
+            "label": "Revenue share tracking",
+            "risk_level": "high",
+            "approval_required": true,
+            "revenue_generating": true,
+            "spends_money": true,
+            "external_outreach": false
+          }
+        },
+        {
+          "operation_id": "whitelabel-empire_custom-domain-deployment_plan",
+          "method": "POST",
+          "path": "/capabilities/custom-domain-deployment/plan",
+          "approval_required": false,
+          "purpose": "Create a sandbox-first plan for Custom domain deployment.",
+          "capability": {
+            "intent": "custom-domain-deployment",
+            "label": "Custom domain deployment",
+            "risk_level": "high",
+            "approval_required": true,
+            "revenue_generating": true,
+            "spends_money": false,
+            "external_outreach": false
+          }
+        },
+        {
+          "operation_id": "whitelabel-empire_custom-domain-deployment_sandbox",
+          "method": "POST",
+          "path": "/capabilities/custom-domain-deployment/sandbox",
+          "approval_required": false,
+          "purpose": "Run the Custom domain deployment bootcamp fixture without live side effects.",
+          "capability": {
+            "intent": "custom-domain-deployment",
+            "label": "Custom domain deployment",
+            "risk_level": "high",
+            "approval_required": true,
+            "revenue_generating": true,
+            "spends_money": false,
+            "external_outreach": false
+          }
+        },
+        {
+          "operation_id": "whitelabel-empire_custom-domain-deployment_request_approval",
+          "method": "POST",
+          "path": "/capabilities/custom-domain-deployment/approval-request",
+          "approval_required": true,
+          "purpose": "Prepare owner approval packet before live use of Custom domain deployment.",
+          "capability": {
+            "intent": "custom-domain-deployment",
+            "label": "Custom domain deployment",
+            "risk_level": "high",
+            "approval_required": true,
+            "revenue_generating": true,
+            "spends_money": false,
+            "external_outreach": false
+          }
+        },
+        {
+          "operation_id": "whitelabel-empire_feature-flag-management_plan",
+          "method": "POST",
+          "path": "/capabilities/feature-flag-management/plan",
+          "approval_required": false,
+          "purpose": "Create a sandbox-first plan for Feature flag management.",
+          "capability": {
+            "intent": "feature-flag-management",
+            "label": "Feature flag management",
+            "risk_level": "high",
+            "approval_required": true,
+            "revenue_generating": true,
+            "spends_money": false,
+            "external_outreach": false
+          }
+        },
+        {
+          "operation_id": "whitelabel-empire_feature-flag-management_sandbox",
+          "method": "POST",
+          "path": "/capabilities/feature-flag-management/sandbox",
+          "approval_required": false,
+          "purpose": "Run the Feature flag management bootcamp fixture without live side effects.",
+          "capability": {
+            "intent": "feature-flag-management",
+            "label": "Feature flag management",
+            "risk_level": "high",
+            "approval_required": true,
+            "revenue_generating": true,
+            "spends_money": false,
+            "external_outreach": false
+          }
+        },
+        {
+          "operation_id": "whitelabel-empire_feature-flag-management_request_approval",
+          "method": "POST",
+          "path": "/capabilities/feature-flag-management/approval-request",
+          "approval_required": true,
+          "purpose": "Prepare owner approval packet before live use of Feature flag management.",
+          "capability": {
+            "intent": "feature-flag-management",
+            "label": "Feature flag management",
+            "risk_level": "high",
+            "approval_required": true,
+            "revenue_generating": true,
+            "spends_money": false,
+            "external_outreach": false
+          }
+        },
+        {
+          "operation_id": "whitelabel-empire_partner-analytics-dashboard_plan",
+          "method": "POST",
+          "path": "/capabilities/partner-analytics-dashboard/plan",
+          "approval_required": false,
+          "purpose": "Create a sandbox-first plan for Partner analytics dashboard.",
+          "capability": {
+            "intent": "partner-analytics-dashboard",
+            "label": "Partner analytics dashboard",
+            "risk_level": "high",
+            "approval_required": true,
+            "revenue_generating": true,
+            "spends_money": false,
+            "external_outreach": false
+          }
+        },
+        {
+          "operation_id": "whitelabel-empire_partner-analytics-dashboard_sandbox",
+          "method": "POST",
+          "path": "/capabilities/partner-analytics-dashboard/sandbox",
+          "approval_required": false,
+          "purpose": "Run the Partner analytics dashboard bootcamp fixture without live side effects.",
+          "capability": {
+            "intent": "partner-analytics-dashboard",
+            "label": "Partner analytics dashboard",
+            "risk_level": "high",
+            "approval_required": true,
+            "revenue_generating": true,
+            "spends_money": false,
+            "external_outreach": false
+          }
+        },
+        {
+          "operation_id": "whitelabel-empire_partner-analytics-dashboard_request_approval",
+          "method": "POST",
+          "path": "/capabilities/partner-analytics-dashboard/approval-request",
+          "approval_required": true,
+          "purpose": "Prepare owner approval packet before live use of Partner analytics dashboard.",
+          "capability": {
+            "intent": "partner-analytics-dashboard",
+            "label": "Partner analytics dashboard",
+            "risk_level": "high",
+            "approval_required": true,
+            "revenue_generating": true,
+            "spends_money": false,
+            "external_outreach": false
+          }
+        },
+        {
+          "operation_id": "whitelabel-empire_execute_reviewed_packet",
+          "method": "POST",
+          "path": "/execute-reviewed-packet",
+          "approval_required": true,
+          "purpose": "Execute only a reviewed, approved, audited White-Label Publishing Bot operation packet."
+        }
+      ],
+      "controls": [
+        "authenticated",
+        "schema_validated",
+        "rate_limited",
+        "retry_after_aware",
+        "audited"
+      ],
+      "custom_contract": {
+        "custom_to_bot": true,
+        "division_context": "DreamEmpire",
+        "category_context": "white-label",
+        "primary_capabilities": [
+          {
+            "intent": "brand-customization-engine",
+            "label": "Brand customization engine",
+            "risk_level": "high",
+            "approval_required": true,
+            "revenue_generating": true,
+            "spends_money": false,
+            "external_outreach": false
+          },
+          {
+            "intent": "partner-portal-management",
+            "label": "Partner portal management",
+            "risk_level": "high",
+            "approval_required": true,
+            "revenue_generating": true,
+            "spends_money": false,
+            "external_outreach": false
+          },
+          {
+            "intent": "revenue-share-tracking",
+            "label": "Revenue share tracking",
+            "risk_level": "high",
+            "approval_required": true,
+            "revenue_generating": true,
+            "spends_money": true,
+            "external_outreach": false
+          },
+          {
+            "intent": "custom-domain-deployment",
+            "label": "Custom domain deployment",
+            "risk_level": "high",
+            "approval_required": true,
+            "revenue_generating": true,
+            "spends_money": false,
+            "external_outreach": false
+          },
+          {
+            "intent": "feature-flag-management",
+            "label": "Feature flag management",
+            "risk_level": "high",
+            "approval_required": true,
+            "revenue_generating": true,
+            "spends_money": false,
+            "external_outreach": false
+          },
+          {
+            "intent": "partner-analytics-dashboard",
+            "label": "Partner analytics dashboard",
+            "risk_level": "high",
+            "approval_required": true,
+            "revenue_generating": true,
+            "spends_money": false,
+            "external_outreach": false
+          }
+        ],
+        "business_owner_use_cases": [
+          "Find unsolved white-label problems for DreamEmpire customers.",
+          "Package White-Label Publishing Bot sandbox results into a client-safe offer.",
+          "Request owner approval before any live money, outreach, deployment, or external-impact action."
+        ],
+        "buddy_use_cases": [
+          "route_to_best_capability",
+          "generate_bootcamp_workflow",
+          "debug_failed_fixture",
+          "prepare_approval_packet"
+        ],
+        "client_use_cases": [
+          "run_safe_demo",
+          "see_expected_outputs",
+          "understand_limits_and_required_approvals"
+        ],
+        "schemas": {
+          "request_schema": {
+            "type": "object",
+            "required": [
+              "goal",
+              "persona",
+              "mode"
+            ],
+            "properties": {
+              "goal": {
+                "type": "string",
+                "description": "Business problem for White-Label Publishing Bot to solve."
+              },
+              "persona": {
+                "type": "string",
+                "enum": [
+                  "owner",
+                  "buddy",
+                  "client"
+                ]
+              },
+              "mode": {
+                "type": "string",
+                "enum": [
+                  "sandbox",
+                  "approval_request",
+                  "reviewed_live_packet"
+                ]
+              },
+              "capability": {
+                "type": "string",
+                "enum": [
+                  "brand-customization-engine",
+                  "partner-portal-management",
+                  "revenue-share-tracking",
+                  "custom-domain-deployment",
+                  "feature-flag-management",
+                  "partner-analytics-dashboard"
+                ]
+              },
+              "constraints": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "evidence": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "response_schema": {
+            "type": "object",
+            "required": [
+              "bot_slug",
+              "mode",
+              "result",
+              "evidence_log",
+              "approval_required"
+            ],
+            "properties": {
+              "bot_slug": {
+                "const": "whitelabel-empire"
+              },
+              "division": {
+                "const": "DreamEmpire"
+              },
+              "mode": {
+                "type": "string"
+              },
+              "result": {
+                "type": "object"
+              },
+              "evidence_log": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "approval_required": {
+                "type": "boolean"
+              },
+              "next_best_action": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "fixtures": [
+          {
+            "id": "whitelabel-empire:brand-customization-engine:happy-path",
+            "capability": "brand-customization-engine",
+            "persona": "client",
+            "mode": "sandbox",
+            "goal": "Use White-Label Publishing Bot to solve a Brand customization engine problem in DreamEmpire.",
+            "expected": [
+              "returns_client_safe_plan",
+              "writes_evidence_log",
+              "does_not_take_live_external_action"
+            ]
+          },
+          {
+            "id": "whitelabel-empire:partner-portal-management:happy-path",
+            "capability": "partner-portal-management",
+            "persona": "client",
+            "mode": "sandbox",
+            "goal": "Use White-Label Publishing Bot to solve a Partner portal management problem in DreamEmpire.",
+            "expected": [
+              "returns_client_safe_plan",
+              "writes_evidence_log",
+              "does_not_take_live_external_action"
+            ]
+          },
+          {
+            "id": "whitelabel-empire:revenue-share-tracking:happy-path",
+            "capability": "revenue-share-tracking",
+            "persona": "client",
+            "mode": "sandbox",
+            "goal": "Use White-Label Publishing Bot to solve a Revenue share tracking problem in DreamEmpire.",
+            "expected": [
+              "returns_client_safe_plan",
+              "writes_evidence_log",
+              "does_not_take_live_external_action"
+            ]
+          },
+          {
+            "id": "whitelabel-empire:custom-domain-deployment:happy-path",
+            "capability": "custom-domain-deployment",
+            "persona": "client",
+            "mode": "sandbox",
+            "goal": "Use White-Label Publishing Bot to solve a Custom domain deployment problem in DreamEmpire.",
+            "expected": [
+              "returns_client_safe_plan",
+              "writes_evidence_log",
+              "does_not_take_live_external_action"
+            ]
+          },
+          {
+            "id": "whitelabel-empire:unauthorized-live-action",
+            "mode": "reviewed_live_packet",
+            "expected": [
+              "reject_without_owner_approval",
+              "write_approval_request"
+            ]
+          },
+          {
+            "id": "whitelabel-empire:malformed-payload",
+            "mode": "sandbox",
+            "expected": [
+              "schema_error",
+              "client_safe_error_message"
+            ]
+          }
+        ]
+      },
+      "sandbox_test_profile": {
+        "name": "whitelabel-empire-api-topline-sandbox",
+        "network": "mocked_by_default",
+        "secrets": "test_values_only",
+        "money_movement": "disabled",
+        "coverage_goal": "whitelabel-empire_custom_capability_contracts",
+        "required_checks": [
+          "openapi_schema_validation",
+          "request_response_contracts",
+          "auth_required_for_mutations",
+          "rate_limit_and_retry_after",
+          "idempotency_key_behavior",
+          "permission_denied_negative_tests",
+          "malformed_payload_rejection",
+          "timeout_and_circuit_breaker",
+          "audit_log_assertions",
+          "no_external_side_effects"
+        ],
+        "fixtures": [
+          "whitelabel-empire:brand-customization-engine:happy-path",
+          "whitelabel-empire:partner-portal-management:happy-path",
+          "whitelabel-empire:revenue-share-tracking:happy-path",
+          "whitelabel-empire:custom-domain-deployment:happy-path",
+          "whitelabel-empire:unauthorized-live-action",
+          "whitelabel-empire:malformed-payload",
+          "whitelabel-empire:rate-limit-window",
+          "whitelabel-empire:approval-required-action"
+        ]
+      },
+      "sandbox_bootcamp": {
+        "id": "whitelabel-empire:api-sandbox-bootcamp",
+        "name": "White-Label Publishing Bot API Sandbox Bootcamp",
+        "audiences": [
+          "owner",
+          "buddy",
+          "client"
+        ],
+        "workflow_generator": {
+          "id": "whitelabel-empire-api-sandbox-bootcamp-workflow",
+          "source": "api_library",
+          "generated_workflow_name": "White-Label Publishing Bot Api Sandbox Bootcamp Workflow",
+          "workflow_file": ".github/workflows/generated/whitelabel-empire-api-sandbox-bootcamp-workflow.yml",
+          "trigger": "workflow_call",
+          "permissions": {
+            "contents": "read",
+            "actions": "read"
+          },
+          "timeout_minutes": 15,
+          "concurrency": {
+            "group": "whitelabel-empire-api-sandbox-bootcamp",
+            "cancel_in_progress": true
+          },
+          "stages": [
+            "checkout_readonly",
+            "install_locked_dependencies",
+            "load_mock_fixtures",
+            "run_contract_checks",
+            "run_negative_safety_checks",
+            "run_bootcamp_persona_drills",
+            "write_evidence_packet"
+          ],
+          "artifacts": [
+            "reports/sandbox_bootcamps/whitelabel-empire/api-sandbox-bootcamp/summary.json",
+            "reports/sandbox_bootcamps/whitelabel-empire/api-sandbox-bootcamp/client_notes.md"
+          ],
+          "live_action_policy": "blocked_unless_owner_approval_packet_is_green"
+        },
+        "required_checks": [
+          "openapi_schema_validation",
+          "request_response_contracts",
+          "auth_required_for_mutations",
+          "rate_limit_and_retry_after",
+          "idempotency_key_behavior",
+          "permission_denied_negative_tests",
+          "malformed_payload_rejection",
+          "timeout_and_circuit_breaker",
+          "audit_log_assertions",
+          "no_external_side_effects",
+          "client_safe_error_messages",
+          "rollback_packet_created"
+        ],
+        "bootcamp_modules": [
+          {
+            "id": "bootcamp_01_contract",
+            "title": "Contract and schema proof",
+            "goal": "Prove every request, response, event, and error shape before runtime work.",
+            "checks": [
+              "schema_compile",
+              "example_payloads",
+              "negative_contract_cases"
+            ]
+          },
+          {
+            "id": "bootcamp_02_fixture_lab",
+            "title": "Fixture lab",
+            "goal": "Build deterministic happy-path, edge-case, abuse-case, and rollback fixtures.",
+            "checks": [
+              "happy_path_fixture",
+              "edge_fixture",
+              "abuse_fixture",
+              "rollback_fixture"
+            ]
+          },
+          {
+            "id": "bootcamp_03_api_obstacle_course",
+            "title": "API obstacle course",
+            "goal": "Exercise auth, rate limits, idempotency, timeouts, retries, and audit logs.",
+            "checks": [
+              "auth_gate",
+              "rate_limit",
+              "idempotency",
+              "timeout",
+              "audit_log"
+            ]
+          },
+          {
+            "id": "bootcamp_04_safety_ring",
+            "title": "Safety ring",
+            "goal": "Block live money, outreach, deployment, credential, medical, legal, and security impact by default.",
+            "checks": [
+              "no_live_money",
+              "no_live_outreach",
+              "no_secret_leak",
+              "approval_required"
+            ]
+          },
+          {
+            "id": "bootcamp_05_builder_drill",
+            "title": "Bot builder drill",
+            "goal": "Train the operator to build, test, debug, document, and package the bot like a client product.",
+            "checks": [
+              "build_packet",
+              "debug_packet",
+              "client_summary",
+              "prospectus_update"
+            ]
+          },
+          {
+            "id": "bootcamp_06_failure_replay",
+            "title": "Failure replay",
+            "goal": "Replay old failures and prove they stay fixed with regression evidence.",
+            "checks": [
+              "known_failure_fixture",
+              "regression_test",
+              "fix_evidence",
+              "retest_command"
+            ]
+          },
+          {
+            "id": "bootcamp_07_graduation",
+            "title": "Graduation review",
+            "goal": "Produce a demo-ready, client-safe, production-gated readiness packet.",
+            "checks": [
+              "readiness_score",
+              "remaining_risks",
+              "approval_packet",
+              "handoff_notes"
+            ]
+          }
+        ],
+        "personas": {
+          "owner": [
+            "learn_what_the_bot_can_safely_do",
+            "approve_or_reject_live_actions",
+            "read_client_ready_summary"
+          ],
+          "buddy": [
+            "route_task_to_best_bot",
+            "debug_failed_contract",
+            "generate_fix_packet"
+          ],
+          "client": [
+            "try_safe_demo_scenario",
+            "see_expected_business_value",
+            "understand_limits_and_approvals"
+          ]
+        },
+        "graduation_packet": [
+          "api_contract_report",
+          "workflow_run_summary",
+          "sandbox_evidence",
+          "risk_and_approval_summary",
+          "client_demo_script"
+        ]
+      },
+      "workflow_generator": {
+        "id": "whitelabel-empire-api-sandbox-bootcamp-workflow",
+        "source": "api_library",
+        "generated_workflow_name": "White-Label Publishing Bot Api Sandbox Bootcamp Workflow",
+        "workflow_file": ".github/workflows/generated/whitelabel-empire-api-sandbox-bootcamp-workflow.yml",
+        "trigger": "workflow_call",
+        "permissions": {
+          "contents": "read",
+          "actions": "read"
+        },
+        "timeout_minutes": 15,
+        "concurrency": {
+          "group": "whitelabel-empire-api-sandbox-bootcamp",
+          "cancel_in_progress": true
+        },
+        "stages": [
+          "checkout_readonly",
+          "install_locked_dependencies",
+          "load_mock_fixtures",
+          "run_contract_checks",
+          "run_negative_safety_checks",
+          "run_bootcamp_persona_drills",
+          "write_evidence_packet"
+        ],
+        "artifacts": [
+          "reports/sandbox_bootcamps/whitelabel-empire/api-sandbox-bootcamp/summary.json",
+          "reports/sandbox_bootcamps/whitelabel-empire/api-sandbox-bootcamp/client_notes.md"
+        ],
+        "live_action_policy": "blocked_unless_owner_approval_packet_is_green"
+      }
+    }
+  ]
+}

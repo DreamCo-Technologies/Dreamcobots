@@ -1,15 +1,17 @@
 # DreamCo Storage Guard Report
 
-- Generated: 2026-07-15T19:49:01Z
+- Generated: 2026-07-15T20:16:01Z
 - Storage ready: True
-- Checks: 56
+- Checks: 102
 - Failed checks: 0
 - Warnings: 0
 - Useful keep categories: 10
 - Useful drop categories: 10
 - Useful required metadata fields: 8
 - Largest resource shard: config/generated/system_libraries/resources/dreamcodelab.json (16.02 MB)
+- Largest API shard: config/generated/system_libraries/apis/dreamcodelab.json (4.075 MB)
 - Bot resource entries checked: 1248
+- Bot API entries checked: 1248
 
 ## Budgets
 
@@ -33,6 +35,51 @@
 - `pass` tools_library_budget — within budget
 - `pass` webhooks_library_budget — within budget
 - `pass` workflows_library_budget — within budget
+- `pass` api_shard_budget:commandcore — within budget
+- `pass` api_shard_budget:dreamaiinfra — within budget
+- `pass` api_shard_budget:dreamadmin — within budget
+- `pass` api_shard_budget:dreamagents — within budget
+- `pass` api_shard_budget:dreamagriculture — within budget
+- `pass` api_shard_budget:dreamarts — within budget
+- `pass` api_shard_budget:dreamautomation — within budget
+- `pass` api_shard_budget:dreambizlaunch — within budget
+- `pass` api_shard_budget:dreamcodelab — within budget
+- `pass` api_shard_budget:dreamconstruction — within budget
+- `pass` api_shard_budget:dreamcontent — within budget
+- `pass` api_shard_budget:dreamcrypto — within budget
+- `pass` api_shard_budget:dreamcustintel — within budget
+- `pass` api_shard_budget:dreamcyber — within budget
+- `pass` api_shard_budget:dreamdata — within budget
+- `pass` api_shard_budget:dreamdecision — within budget
+- `pass` api_shard_budget:dreameducation — within budget
+- `pass` api_shard_budget:dreamempire — within budget
+- `pass` api_shard_budget:dreamentfinance — within budget
+- `pass` api_shard_budget:dreamfinance — within budget
+- `pass` api_shard_budget:dreamflow — within budget
+- `pass` api_shard_budget:dreamfood — within budget
+- `pass` api_shard_budget:dreamglobal — within budget
+- `pass` api_shard_budget:dreamhealth — within budget
+- `pass` api_shard_budget:dreaminfluence — within budget
+- `pass` api_shard_budget:dreamlegal — within budget
+- `pass` api_shard_budget:dreamloans — within budget
+- `pass` api_shard_budget:dreammaintenance — within budget
+- `pass` api_shard_budget:dreammarket — within budget
+- `pass` api_shard_budget:dreammilitary — within budget
+- `pass` api_shard_budget:dreamops — within budget
+- `pass` api_shard_budget:dreampayments — within budget
+- `pass` api_shard_budget:dreampersonalcare — within budget
+- `pass` api_shard_budget:dreamplanetary — within budget
+- `pass` api_shard_budget:dreamproservices — within budget
+- `pass` api_shard_budget:dreamproduction — within budget
+- `pass` api_shard_budget:dreamprotection — within budget
+- `pass` api_shard_budget:dreamrealestate — within budget
+- `pass` api_shard_budget:dreamretail — within budget
+- `pass` api_shard_budget:dreamsalespro — within budget
+- `pass` api_shard_budget:dreamscience — within budget
+- `pass` api_shard_budget:dreamsocial — within budget
+- `pass` api_shard_budget:dreamtrade — within budget
+- `pass` api_shard_budget:dreamtransport — within budget
+- `pass` api_shard_budget:gametitan — within budget
 - `pass` resource_shard_budget:commandcore — within budget
 - `pass` resource_shard_budget:dreamaiinfra — within budget
 - `pass` resource_shard_budget:dreamadmin — within budget
@@ -79,4 +126,5 @@
 - `pass` resource_shard_budget:dreamtransport — within budget
 - `pass` resource_shard_budget:gametitan — within budget
 - `pass` resource_sharding_integrity — resources are sharded and count-safe
+- `pass` api_sharding_integrity — custom APIs are sharded and count-safe
 - `pass` useful_data_policy — only useful data policy is active

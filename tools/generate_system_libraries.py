@@ -13,6 +13,7 @@ ROOT = Path(__file__).resolve().parents[1]
 REGISTRY_PATH = ROOT / "config" / "master_bot_registry.json"
 OUTPUT_DIR = ROOT / "config" / "generated" / "system_libraries"
 RESOURCE_SHARD_DIR = OUTPUT_DIR / "resources"
+API_SHARD_DIR = OUTPUT_DIR / "apis"
 SLUG_RE = re.compile(r"[^a-z0-9]+")
 
 LIBRARY_SPECS = {
@@ -315,6 +316,195 @@ def normalize_slug(value: object) -> str:
     return SLUG_RE.sub("-", str(value).lower()).strip("-")
 
 
+def capability_items(bot: dict[str, Any], limit: int = 6) -> list[dict[str, Any]]:
+    capabilities = bot.get("capabilities", [])
+    normalized: list[dict[str, Any]] = []
+    for index, capability in enumerate(capabilities[:limit]):
+        intent = normalize_slug(capability.get("intent") or capability.get("label") or f"capability-{index + 1}")
+        label = capability.get("label") or intent.replace("-", " ").title()
+        normalized.append(
+            {
+                "intent": intent,
+                "label": label,
+                "risk_level": capability.get("risk_level", "standard"),
+                "approval_required": bool(capability.get("approval_required", False)),
+                "revenue_generating": bool(capability.get("revenue_generating", False)),
+                "spends_money": bool(capability.get("spends_money", False)),
+                "external_outreach": bool(capability.get("external_outreach", False)),
+            }
+        )
+    if normalized:
+        return normalized
+    return [
+        {
+            "intent": normalize_slug(bot["category"]),
+            "label": str(bot["category"]).replace("-", " ").title(),
+            "risk_level": "standard",
+            "approval_required": False,
+            "revenue_generating": False,
+            "spends_money": False,
+            "external_outreach": False,
+        }
+    ]
+
+
+def custom_api_operations(bot: dict[str, Any]) -> list[dict[str, Any]]:
+    slug = bot["slug"]
+    operations = [
+        {
+            "operation_id": f"{normalize_slug(slug)}_get_status",
+            "method": "GET",
+            "path": "/status",
+            "approval_required": False,
+            "purpose": f"Return runtime, readiness, and approval state for {bot['name']}.",
+        },
+        {
+            "operation_id": f"{normalize_slug(slug)}_get_capabilities",
+            "method": "GET",
+            "path": "/capabilities",
+            "approval_required": False,
+            "purpose": f"Return {bot['name']} capabilities, limits, and sandbox options.",
+        },
+    ]
+    for capability in capability_items(bot):
+        path_slug = capability["intent"]
+        approval_required = capability["approval_required"] or capability["spends_money"] or capability["external_outreach"]
+        operations.extend(
+            [
+                {
+                    "operation_id": f"{normalize_slug(slug)}_{path_slug}_plan",
+                    "method": "POST",
+                    "path": f"/capabilities/{path_slug}/plan",
+                    "approval_required": False,
+                    "purpose": f"Create a sandbox-first plan for {capability['label']}.",
+                    "capability": capability,
+                },
+                {
+                    "operation_id": f"{normalize_slug(slug)}_{path_slug}_sandbox",
+                    "method": "POST",
+                    "path": f"/capabilities/{path_slug}/sandbox",
+                    "approval_required": False,
+                    "purpose": f"Run the {capability['label']} bootcamp fixture without live side effects.",
+                    "capability": capability,
+                },
+                {
+                    "operation_id": f"{normalize_slug(slug)}_{path_slug}_request_approval",
+                    "method": "POST",
+                    "path": f"/capabilities/{path_slug}/approval-request",
+                    "approval_required": approval_required,
+                    "purpose": f"Prepare owner approval packet before live use of {capability['label']}.",
+                    "capability": capability,
+                },
+            ]
+        )
+    operations.append(
+        {
+            "operation_id": f"{normalize_slug(slug)}_execute_reviewed_packet",
+            "method": "POST",
+            "path": "/execute-reviewed-packet",
+            "approval_required": True,
+            "purpose": f"Execute only a reviewed, approved, audited {bot['name']} operation packet.",
+        }
+    )
+    return operations
+
+
+def custom_api_schema(bot: dict[str, Any]) -> dict[str, Any]:
+    capabilities = capability_items(bot)
+    return {
+        "request_schema": {
+            "type": "object",
+            "required": ["goal", "persona", "mode"],
+            "properties": {
+                "goal": {"type": "string", "description": f"Business problem for {bot['name']} to solve."},
+                "persona": {"type": "string", "enum": BOOTCAMP_PERSONAS},
+                "mode": {"type": "string", "enum": ["sandbox", "approval_request", "reviewed_live_packet"]},
+                "capability": {
+                    "type": "string",
+                    "enum": [capability["intent"] for capability in capabilities],
+                },
+                "constraints": {"type": "array", "items": {"type": "string"}},
+                "evidence": {"type": "array", "items": {"type": "string"}},
+            },
+        },
+        "response_schema": {
+            "type": "object",
+            "required": ["bot_slug", "mode", "result", "evidence_log", "approval_required"],
+            "properties": {
+                "bot_slug": {"const": bot["slug"]},
+                "division": {"const": bot["division"]},
+                "mode": {"type": "string"},
+                "result": {"type": "object"},
+                "evidence_log": {"type": "array", "items": {"type": "string"}},
+                "approval_required": {"type": "boolean"},
+                "next_best_action": {"type": "string"},
+            },
+        },
+    }
+
+
+def custom_api_fixtures(bot: dict[str, Any]) -> list[dict[str, Any]]:
+    fixtures = []
+    for capability in capability_items(bot, limit=4):
+        fixtures.append(
+            {
+                "id": f"{bot['slug']}:{capability['intent']}:happy-path",
+                "capability": capability["intent"],
+                "persona": "client" if capability["revenue_generating"] else "owner",
+                "mode": "sandbox",
+                "goal": f"Use {bot['name']} to solve a {capability['label']} problem in {bot['division']}.",
+                "expected": [
+                    "returns_client_safe_plan",
+                    "writes_evidence_log",
+                    "does_not_take_live_external_action",
+                ],
+            }
+        )
+    fixtures.extend(
+        [
+            {
+                "id": f"{bot['slug']}:unauthorized-live-action",
+                "mode": "reviewed_live_packet",
+                "expected": ["reject_without_owner_approval", "write_approval_request"],
+            },
+            {
+                "id": f"{bot['slug']}:malformed-payload",
+                "mode": "sandbox",
+                "expected": ["schema_error", "client_safe_error_message"],
+            },
+        ]
+    )
+    return fixtures
+
+
+def custom_api_contract(bot: dict[str, Any]) -> dict[str, Any]:
+    capabilities = capability_items(bot)
+    return {
+        "custom_to_bot": True,
+        "division_context": bot["division"],
+        "category_context": bot["category"],
+        "primary_capabilities": capabilities,
+        "business_owner_use_cases": [
+            f"Find unsolved {bot['category']} problems for {bot['division']} customers.",
+            f"Package {bot['name']} sandbox results into a client-safe offer.",
+            f"Request owner approval before any live money, outreach, deployment, or external-impact action.",
+        ],
+        "buddy_use_cases": [
+            "route_to_best_capability",
+            "generate_bootcamp_workflow",
+            "debug_failed_fixture",
+            "prepare_approval_packet",
+        ],
+        "client_use_cases": [
+            "run_safe_demo",
+            "see_expected_outputs",
+            "understand_limits_and_required_approvals",
+        ],
+        "schemas": custom_api_schema(bot),
+        "fixtures": custom_api_fixtures(bot),
+    }
+
+
 def resource_index_entry(bot: dict[str, Any]) -> dict[str, Any]:
     division_slug = normalize_slug(bot["division"])
     return {
@@ -339,6 +529,31 @@ def resource_index_entry(bot: dict[str, Any]) -> dict[str, Any]:
             "client_safe_summary_required",
             "sandbox_evidence_before_live_use",
         ],
+    }
+
+
+def api_index_entry(bot: dict[str, Any]) -> dict[str, Any]:
+    division_slug = normalize_slug(bot["division"])
+    capabilities = capability_items(bot)
+    return {
+        "id": f"{bot['slug']}:apis",
+        "bot_id": bot["slug"],
+        "legacy_registry_id": bot["id"],
+        "bot_slug": bot["slug"],
+        "bot_name": bot["name"],
+        "emoji": bot["emoji"],
+        "division": bot["division"],
+        "category": bot["category"],
+        "version": "1.0.0",
+        "status": "generated",
+        "owner": "DreamCo Technologies",
+        "base_path": f"/api/v1/bots/{bot['slug']}",
+        "custom_to_bot": True,
+        "operation_count": len(custom_api_operations(bot)),
+        "primary_capabilities": [capability["intent"] for capability in capabilities],
+        "shard_path": f"config/generated/system_libraries/apis/{division_slug}.json",
+        "controls": ["authenticated", "schema_validated", "rate_limited", "retry_after_aware", "audited"],
+        "sandbox_bootcamp": f"{bot['slug']}:api-sandbox-bootcamp",
     }
 
 
@@ -501,18 +716,15 @@ def _bot_entry(bot: dict[str, Any], library: str) -> dict[str, Any]:
         return {
             **common,
             "base_path": f"/api/v1/bots/{slug}",
-            "operations": [
-                {"method": "GET", "path": "/status", "approval_required": False},
-                {"method": "GET", "path": "/capabilities", "approval_required": False},
-                {"method": "POST", "path": "/execute", "approval_required": True},
-            ],
+            "operations": custom_api_operations(bot),
             "controls": ["authenticated", "schema_validated", "rate_limited", "retry_after_aware", "audited"],
+            "custom_contract": custom_api_contract(bot),
             "sandbox_test_profile": {
                 "name": f"{slug}-api-topline-sandbox",
                 "network": "mocked_by_default",
                 "secrets": "test_values_only",
                 "money_movement": "disabled",
-                "coverage_goal": "status_capabilities_execute_contracts",
+                "coverage_goal": f"{slug}_custom_capability_contracts",
                 "required_checks": [
                     "openapi_schema_validation",
                     "request_response_contracts",
@@ -526,11 +738,9 @@ def _bot_entry(bot: dict[str, Any], library: str) -> dict[str, Any]:
                     "no_external_side_effects",
                 ],
                 "fixtures": [
-                    "happy_path_goal",
-                    "missing_required_field",
-                    "unauthorized_execute",
-                    "rate_limit_window",
-                    "approval_required_action",
+                    *[fixture["id"] for fixture in custom_api_fixtures(bot)],
+                    f"{slug}:rate-limit-window",
+                    f"{slug}:approval-required-action",
                 ],
             },
             "sandbox_bootcamp": bootcamp,
@@ -617,7 +827,12 @@ def build_outputs(registry: dict[str, Any]) -> dict[Path, dict[str, Any]]:
     summaries = []
 
     for name, spec in LIBRARY_SPECS.items():
-        entries = [resource_index_entry(bot) if name == "resources" else _bot_entry(bot, name) for bot in bots]
+        if name == "resources":
+            entries = [resource_index_entry(bot) for bot in bots]
+        elif name == "apis":
+            entries = [api_index_entry(bot) for bot in bots]
+        else:
+            entries = [_bot_entry(bot, name) for bot in bots]
         shard_paths: list[str] = []
         if name == "resources":
             by_division: dict[str, list[dict[str, Any]]] = {}
@@ -639,6 +854,26 @@ def build_outputs(registry: dict[str, Any]) -> dict[Path, dict[str, Any]]:
                 }
                 outputs[shard_path] = shard_payload
                 shard_paths.append(str(shard_path.relative_to(ROOT)))
+        if name == "apis":
+            by_division: dict[str, list[dict[str, Any]]] = {}
+            for bot in bots:
+                by_division.setdefault(bot["division"], []).append(_bot_entry(bot, "apis"))
+            for division, shard_entries in sorted(by_division.items()):
+                division_slug = normalize_slug(division)
+                shard_path = API_SHARD_DIR / f"{division_slug}.json"
+                shard_payload = {
+                    "schema": "dreamco.api_library_shard.v1",
+                    "generated_at": generated_at,
+                    "generated_from": str(REGISTRY_PATH.relative_to(ROOT)),
+                    "library": "apis",
+                    "division": division,
+                    "division_slug": division_slug,
+                    "count": len(shard_entries),
+                    "custom_to_bot": True,
+                    "entries": shard_entries,
+                }
+                outputs[shard_path] = shard_payload
+                shard_paths.append(str(shard_path.relative_to(ROOT)))
         payload = {
             "schema": spec["schema"],
             "generated_at": generated_at,
@@ -647,7 +882,7 @@ def build_outputs(registry: dict[str, Any]) -> dict[Path, dict[str, Any]]:
             "factory": spec["factory"],
             "description": spec["description"],
             "count": len(entries),
-            "sharded": name == "resources",
+            "sharded": name in {"apis", "resources"},
             "shard_count": len(shard_paths),
             "shards": shard_paths,
             "entries": entries,
@@ -679,6 +914,7 @@ def build_outputs(registry: dict[str, Any]) -> dict[Path, dict[str, Any]]:
             "bots_with_sandboxes": len(bots),
             "bots_with_resources": len(bots),
             "bots_with_api_sandbox_bootcamps": len(bots),
+            "bots_with_custom_api_contracts": len(bots),
             "bots_with_sandbox_workflow_generators": len(bots),
             "bots_with_owner_buddy_client_bootcamp_tracks": len(bots),
             "bots_with_top_ai_company_resource_seeds": len(bots),
