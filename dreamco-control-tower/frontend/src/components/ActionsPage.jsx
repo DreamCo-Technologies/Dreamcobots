@@ -23,6 +23,26 @@ const FALLBACK_LIBRARIES = [
   { id: 'resources', name: 'Resources Library', icon: '📚', count: 1248, description: 'Per-bot starter kits with 100 curated resource slots and learning prompts.' },
 ];
 
+const FALLBACK_BOOTCAMP_BASELINE = {
+  name: 'World Class Bot Building Sandbox Bootcamp',
+  audiences: ['owner', 'buddy', 'client'],
+  sandbox_principles: [
+    'hermetic_by_default',
+    'deterministic_fixtures',
+    'network_and_secrets_mocked',
+    'api_contract_first',
+    'workflow_generated_per_test',
+    'human_approval_for_external_impact',
+  ],
+  module_count: 7,
+  top_ai_company_resource_seed_count: 100,
+  source_boundaries: [
+    'public_documentation_only',
+    'owner_approved_notes_only',
+    'no_private_or_proprietary_company_material',
+  ],
+};
+
 const FALLBACK_BUDDY_INVENTORY = {
   generated_at: null,
   summary: {
@@ -1226,6 +1246,8 @@ export default function ActionsPage({
 
   const builders = libraryData?.builders ?? FALLBACK_BUILDERS;
   const libraries = libraryData?.libraries ?? FALLBACK_LIBRARIES;
+  const bootcampBaseline = libraryData?.bootcamp_baseline ?? FALLBACK_BOOTCAMP_BASELINE;
+  const libraryCoverage = libraryData?.coverage ?? {};
   const botCount = libraryData?.bot_count ?? 1247;
   const inventory = buddyInventory ?? FALLBACK_BUDDY_INVENTORY;
   const triage = githubTriage ?? FALLBACK_GITHUB_TRIAGE;
@@ -3207,6 +3229,61 @@ export default function ActionsPage({
               <div className="border border-slate-700 p-3"><p className="text-xs text-slate-500">Schema</p><p className="mt-1 text-sm text-white">Versioned JSON</p></div>
               <div className="border border-slate-700 p-3"><p className="text-xs text-slate-500">Validation</p><p className="mt-1 text-sm text-white">Generator drift check</p></div>
               <div className="border border-slate-700 p-3"><p className="text-xs text-slate-500">Delivery</p><p className="mt-1 text-sm text-white">Pull request</p></div>
+            </div>
+
+            <div className="mt-5 border border-emerald-800 bg-emerald-950/20 p-4">
+              <div className="flex flex-wrap items-start justify-between gap-3">
+                <div>
+                  <p className="text-xs font-bold uppercase text-emerald-200">Sandbox bootcamp generator</p>
+                  <h5 className="mt-1 text-sm font-semibold text-white">{bootcampBaseline.name}</h5>
+                  <p className="mt-1 max-w-2xl text-xs leading-5 text-emerald-100/80">
+                    Every API sandbox test now has a workflow generator, and every sandbox is packaged as a bot-building bootcamp
+                    for you, Buddy, and clients.
+                  </p>
+                </div>
+                <span className="rounded-full border border-emerald-500/40 px-3 py-1 text-xs font-semibold text-emerald-200">
+                  {formatNumber(bootcampBaseline.top_ai_company_resource_seed_count)} AI practice seeds
+                </span>
+              </div>
+
+              <div className="mt-4 grid grid-cols-2 gap-px overflow-hidden border border-emerald-900 bg-emerald-900 md:grid-cols-4">
+                {[
+                  ['API bootcamps', libraryCoverage.bots_with_api_sandbox_bootcamps],
+                  ['Workflow generators', libraryCoverage.bots_with_sandbox_workflow_generators],
+                  ['Training tracks', libraryCoverage.bots_with_owner_buddy_client_bootcamp_tracks],
+                  ['Resource seeds', libraryCoverage.bots_with_top_ai_company_resource_seeds],
+                ].map(([label, value]) => (
+                  <div key={label} className="bg-slate-950 p-3">
+                    <p className="text-lg font-black text-white">{formatNumber(value ?? botCount)}</p>
+                    <p className="mt-1 text-xs uppercase text-emerald-100/70">{label}</p>
+                  </div>
+                ))}
+              </div>
+
+              <div className="mt-4 grid gap-4 lg:grid-cols-3">
+                <div className="border border-slate-800 bg-slate-950 p-3">
+                  <p className="text-xs font-semibold uppercase text-slate-400">Audiences</p>
+                  <div className="mt-2 flex flex-wrap gap-2">
+                    {(bootcampBaseline.audiences ?? []).map((audience) => (
+                      <span key={audience} className="rounded-full border border-slate-700 px-3 py-1 text-xs text-slate-300">
+                        {formatLabel(audience)}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+                <div className="border border-slate-800 bg-slate-950 p-3">
+                  <p className="text-xs font-semibold uppercase text-slate-400">World-class sandbox rules</p>
+                  <p className="mt-2 text-xs leading-5 text-slate-300">
+                    {(bootcampBaseline.sandbox_principles ?? []).slice(0, 4).map(formatLabel).join(' · ')}
+                  </p>
+                </div>
+                <div className="border border-slate-800 bg-slate-950 p-3">
+                  <p className="text-xs font-semibold uppercase text-slate-400">Source boundaries</p>
+                  <p className="mt-2 text-xs leading-5 text-slate-300">
+                    {(bootcampBaseline.source_boundaries ?? []).slice(0, 3).map(formatLabel).join(' · ')}
+                  </p>
+                </div>
+              </div>
             </div>
           </div>
         </div>

@@ -284,6 +284,10 @@ describe('GET /api/system-libraries', () => {
     expect(res.body.libraries).toHaveLength(7);
     Object.values(res.body.coverage).forEach((count) => expect(count).toBe(res.body.bot_count));
     expect(res.body.libraries.some((library) => library.id === 'resources')).toBe(true);
+    expect(res.body.coverage.bots_with_api_sandbox_bootcamps).toBe(res.body.bot_count);
+    expect(res.body.coverage.bots_with_sandbox_workflow_generators).toBe(res.body.bot_count);
+    expect(res.body.coverage.bots_with_owner_buddy_client_bootcamp_tracks).toBe(res.body.bot_count);
+    expect(res.body.bootcamp_baseline.top_ai_company_resource_seed_count).toBe(100);
   });
 
   test('returns the security baseline', async () => {

@@ -18,6 +18,20 @@ const libraryPayload = {
     { id: 'sandboxes', name: 'Sandboxes Library', icon: '🧪', count: 1248, description: 'Isolated tests.' },
     { id: 'resources', name: 'Resources Library', icon: '📚', count: 1248, description: 'Per-bot starter resources.' },
   ],
+  coverage: {
+    bots_with_api_sandbox_bootcamps: 1248,
+    bots_with_sandbox_workflow_generators: 1248,
+    bots_with_owner_buddy_client_bootcamp_tracks: 1248,
+    bots_with_top_ai_company_resource_seeds: 1248,
+  },
+  bootcamp_baseline: {
+    name: 'World Class Bot Building Sandbox Bootcamp',
+    audiences: ['owner', 'buddy', 'client'],
+    sandbox_principles: ['hermetic_by_default', 'deterministic_fixtures', 'workflow_generated_per_test', 'human_approval_for_external_impact'],
+    module_count: 7,
+    top_ai_company_resource_seed_count: 100,
+    source_boundaries: ['public_documentation_only', 'owner_approved_notes_only', 'no_private_or_proprietary_company_material'],
+  },
 };
 
 const buddyCapabilityPayload = {
@@ -503,6 +517,13 @@ describe('ActionsPage', () => {
     expect(screen.getByText('Buddy help for every pull request')).toBeInTheDocument();
     expect(screen.getByText('Retest')).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: 'Generated libraries' })).toBeInTheDocument();
+    expect(screen.getByText('Sandbox bootcamp generator')).toBeInTheDocument();
+    expect(screen.getByText('World Class Bot Building Sandbox Bootcamp')).toBeInTheDocument();
+    expect(screen.getByText('API bootcamps')).toBeInTheDocument();
+    expect(screen.getByText('Workflow generators')).toBeInTheDocument();
+    expect(screen.getByText('Training tracks')).toBeInTheDocument();
+    expect(screen.getByText('Resource seeds')).toBeInTheDocument();
+    expect(screen.getByText('100 AI practice seeds')).toBeInTheDocument();
     expect(screen.getByText('Actions monitor panel')).toBeInTheDocument();
     await waitFor(() => expect(screen.getByText('Source: live')).toBeInTheDocument());
     expect(screen.getAllByText('1,248').length).toBeGreaterThan(0);

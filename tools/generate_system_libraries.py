@@ -183,6 +183,89 @@ RESOURCE_CATEGORIES = [
     "community_resources",
 ]
 
+TOP_AI_COMPANY_RESOURCE_SEEDS = [
+    "OpenAI", "Anthropic", "Google DeepMind", "Microsoft AI", "Meta AI",
+    "NVIDIA", "Amazon AGI", "Apple Machine Learning", "xAI", "Mistral AI",
+    "Cohere", "Perplexity", "Hugging Face", "Databricks", "Scale AI",
+    "Safe Superintelligence", "Inflection AI", "Character.AI", "Runway",
+    "Midjourney", "Stability AI", "ElevenLabs", "Synthesia", "HeyGen",
+    "Adept", "Anysphere", "Cursor", "Cloud IDE Platform", "Cognition", "Magic",
+    "Poolside", "Sourcegraph", "Tabnine", "Codeium", "Glean",
+    "Writer", "Jasper", "Harvey", "Hebbia", "Abridge",
+    "Tempus AI", "Insilico Medicine", "PathAI", "Owkin", "Recursion",
+    "Cerebras", "Groq", "SambaNova", "Together AI", "CoreWeave",
+    "Lambda", "VAST Data", "Pinecone", "Weaviate", "Qdrant",
+    "LangChain", "LlamaIndex", "Weights & Biases", "Modal", "Replicate",
+    "Roboflow", "Labelbox", "Snorkel AI", "Surge AI", "Mercor",
+    "Figure AI", "Covariant", "Skild AI", "Physical Intelligence", "Sanctuary AI",
+    "Anduril", "Shield AI", "Palantir AI", "C3 AI", "DataRobot",
+    "UiPath AI", "ServiceNow AI", "Salesforce AI", "Adobe Firefly", "Canva AI",
+    "Notion AI", "Grammarly", "Otter.ai", "Descript", "Pika",
+    "Suno", "Udio", "Krea", "Leonardo AI", "DeepSeek",
+    "Moonshot AI", "Zhipu AI", "01.AI", "MiniMax", "Baichuan",
+    "SenseTime", "iFlytek", "G42", "Aleph Alpha", "MosaicML",
+]
+
+BOOTCAMP_PERSONAS = ["owner", "buddy", "client"]
+
+SANDBOX_BOOTCAMP_MODULES = [
+    {
+        "id": "bootcamp_01_contract",
+        "title": "Contract and schema proof",
+        "goal": "Prove every request, response, event, and error shape before runtime work.",
+        "checks": ["schema_compile", "example_payloads", "negative_contract_cases"],
+    },
+    {
+        "id": "bootcamp_02_fixture_lab",
+        "title": "Fixture lab",
+        "goal": "Build deterministic happy-path, edge-case, abuse-case, and rollback fixtures.",
+        "checks": ["happy_path_fixture", "edge_fixture", "abuse_fixture", "rollback_fixture"],
+    },
+    {
+        "id": "bootcamp_03_api_obstacle_course",
+        "title": "API obstacle course",
+        "goal": "Exercise auth, rate limits, idempotency, timeouts, retries, and audit logs.",
+        "checks": ["auth_gate", "rate_limit", "idempotency", "timeout", "audit_log"],
+    },
+    {
+        "id": "bootcamp_04_safety_ring",
+        "title": "Safety ring",
+        "goal": "Block live money, outreach, deployment, credential, medical, legal, and security impact by default.",
+        "checks": ["no_live_money", "no_live_outreach", "no_secret_leak", "approval_required"],
+    },
+    {
+        "id": "bootcamp_05_builder_drill",
+        "title": "Bot builder drill",
+        "goal": "Train the operator to build, test, debug, document, and package the bot like a client product.",
+        "checks": ["build_packet", "debug_packet", "client_summary", "prospectus_update"],
+    },
+    {
+        "id": "bootcamp_06_failure_replay",
+        "title": "Failure replay",
+        "goal": "Replay old failures and prove they stay fixed with regression evidence.",
+        "checks": ["known_failure_fixture", "regression_test", "fix_evidence", "retest_command"],
+    },
+    {
+        "id": "bootcamp_07_graduation",
+        "title": "Graduation review",
+        "goal": "Produce a demo-ready, client-safe, production-gated readiness packet.",
+        "checks": ["readiness_score", "remaining_risks", "approval_packet", "handoff_notes"],
+    },
+]
+
+WORLD_CLASS_SANDBOX_PRINCIPLES = [
+    "hermetic_by_default",
+    "deterministic_fixtures",
+    "network_and_secrets_mocked",
+    "least_privilege_permissions",
+    "api_contract_first",
+    "workflow_generated_per_test",
+    "negative_tests_before_live_use",
+    "human_approval_for_external_impact",
+    "audit_log_required",
+    "replayable_failure_evidence",
+]
+
 
 def resource_starter_kit(bot: dict[str, Any]) -> list[dict[str, Any]]:
     """Return 100 starter resources personalized to one bot."""
@@ -191,17 +274,25 @@ def resource_starter_kit(bot: dict[str, Any]) -> list[dict[str, Any]]:
     resources: list[dict[str, Any]] = []
     for index in range(100):
         category = RESOURCE_CATEGORIES[index % len(RESOURCE_CATEGORIES)]
+        company_seed = TOP_AI_COMPANY_RESOURCE_SEEDS[index % len(TOP_AI_COMPANY_RESOURCE_SEEDS)]
         resources.append(
             {
                 "id": f"{slug}:resource:{index + 1:03d}",
                 "rank": index + 1,
                 "category": category,
+                "ai_company_practice_seed": company_seed,
                 "title": f"{bot['name']} {category.replace('_', ' ').title()} Resource {index + 1:03d}",
                 "purpose": (
                     f"Seed {bot['name']} with {category.replace('_', ' ')} evidence, examples, "
-                    f"and reusable patterns for {division} work."
+                    f"and reusable patterns for {division} work using public, owner-approved lessons "
+                    f"inspired by {company_seed} style AI product practice."
                 ),
                 "source_policy": "prefer_official_or_owner_approved_sources",
+                "source_boundaries": [
+                    "use_public_documentation_and_original_notes_only",
+                    "do_not_copy_private_or_proprietary_company_material",
+                    "store_source_url_license_and_refresh_date_when_added",
+                ],
                 "refresh_cadence": "weekly_review",
                 "approval_required_for_live_use": category in {
                     "pricing_research",
@@ -250,6 +341,126 @@ def resource_index_entry(bot: dict[str, Any]) -> dict[str, Any]:
         ],
     }
 
+
+def sandbox_workflow_generator(bot: dict[str, Any], test_name: str, source: str) -> dict[str, Any]:
+    slug = bot["slug"]
+    workflow_id = f"{slug}-{test_name}-workflow"
+    return {
+        "id": workflow_id,
+        "source": source,
+        "generated_workflow_name": f"{bot['name']} {test_name.replace('-', ' ').title()} Workflow",
+        "workflow_file": f".github/workflows/generated/{workflow_id}.yml",
+        "trigger": "workflow_call",
+        "permissions": {"contents": "read", "actions": "read"},
+        "timeout_minutes": 15,
+        "concurrency": {
+            "group": f"{slug}-{test_name}",
+            "cancel_in_progress": True,
+        },
+        "stages": [
+            "checkout_readonly",
+            "install_locked_dependencies",
+            "load_mock_fixtures",
+            "run_contract_checks",
+            "run_negative_safety_checks",
+            "run_bootcamp_persona_drills",
+            "write_evidence_packet",
+        ],
+        "artifacts": [
+            f"reports/sandbox_bootcamps/{slug}/{test_name}/summary.json",
+            f"reports/sandbox_bootcamps/{slug}/{test_name}/client_notes.md",
+        ],
+        "live_action_policy": "blocked_unless_owner_approval_packet_is_green",
+    }
+
+
+def api_sandbox_bootcamp(bot: dict[str, Any]) -> dict[str, Any]:
+    slug = bot["slug"]
+    test_name = "api-sandbox-bootcamp"
+    return {
+        "id": f"{slug}:{test_name}",
+        "name": f"{bot['name']} API Sandbox Bootcamp",
+        "audiences": BOOTCAMP_PERSONAS,
+        "workflow_generator": sandbox_workflow_generator(bot, test_name, "api_library"),
+        "required_checks": [
+            "openapi_schema_validation",
+            "request_response_contracts",
+            "auth_required_for_mutations",
+            "rate_limit_and_retry_after",
+            "idempotency_key_behavior",
+            "permission_denied_negative_tests",
+            "malformed_payload_rejection",
+            "timeout_and_circuit_breaker",
+            "audit_log_assertions",
+            "no_external_side_effects",
+            "client_safe_error_messages",
+            "rollback_packet_created",
+        ],
+        "bootcamp_modules": SANDBOX_BOOTCAMP_MODULES,
+        "personas": {
+            "owner": [
+                "learn_what_the_bot_can_safely_do",
+                "approve_or_reject_live_actions",
+                "read_client_ready_summary",
+            ],
+            "buddy": [
+                "route_task_to_best_bot",
+                "debug_failed_contract",
+                "generate_fix_packet",
+            ],
+            "client": [
+                "try_safe_demo_scenario",
+                "see_expected_business_value",
+                "understand_limits_and_approvals",
+            ],
+        },
+        "graduation_packet": [
+            "api_contract_report",
+            "workflow_run_summary",
+            "sandbox_evidence",
+            "risk_and_approval_summary",
+            "client_demo_script",
+        ],
+    }
+
+
+def sandbox_bootcamp_suite(bot: dict[str, Any]) -> dict[str, Any]:
+    slug = bot["slug"]
+    test_name = "world-class-sandbox-bootcamp"
+    return {
+        "id": f"{slug}:{test_name}",
+        "name": f"{bot['name']} Bot Building Bootcamp",
+        "description": "A replayable sandbox training course for the owner, Buddy, and clients to learn, build, test, debug, and approve the bot safely.",
+        "world_class_principles": WORLD_CLASS_SANDBOX_PRINCIPLES,
+        "workflow_generator": sandbox_workflow_generator(bot, test_name, "sandbox_library"),
+        "api_bootcamp": f"{slug}:api-sandbox-bootcamp",
+        "modules": SANDBOX_BOOTCAMP_MODULES,
+        "training_tracks": [
+            {
+                "persona": "owner",
+                "goal": "Understand what the bot can sell, demo, approve, and safely operate.",
+                "final_exercise": "Approve or reject a live-action packet from sandbox evidence.",
+            },
+            {
+                "persona": "buddy",
+                "goal": "Learn routing, debugging, regression replay, and fix-packet generation.",
+                "final_exercise": "Repair a seeded failure and regenerate the evidence packet.",
+            },
+            {
+                "persona": "client",
+                "goal": "Experience a safe demo that explains value, limits, data handling, and next steps.",
+                "final_exercise": "Run a client scenario and receive a prospectus-ready summary.",
+            },
+        ],
+        "pass_criteria": [
+            "all_contract_and_negative_tests_green",
+            "no_live_external_side_effects",
+            "workflow_evidence_packet_created",
+            "approval_requirements_visible",
+            "client_summary_is_safe_and_plain_language",
+        ],
+    }
+
 BUILDERS = [
     {
         "id": "full-bot-system",
@@ -286,6 +497,7 @@ def _bot_entry(bot: dict[str, Any], library: str) -> dict[str, Any]:
         "owner": "DreamCo Technologies",
     }
     if library == "apis":
+        bootcamp = api_sandbox_bootcamp(bot)
         return {
             **common,
             "base_path": f"/api/v1/bots/{slug}",
@@ -321,6 +533,8 @@ def _bot_entry(bot: dict[str, Any], library: str) -> dict[str, Any]:
                     "approval_required_action",
                 ],
             },
+            "sandbox_bootcamp": bootcamp,
+            "workflow_generator": bootcamp["workflow_generator"],
         }
     if library == "webhooks":
         return {
@@ -343,6 +557,17 @@ def _bot_entry(bot: dict[str, Any], library: str) -> dict[str, Any]:
             "trigger": "workflow_call",
             "permissions": {"contents": "read"},
             "stages": ["validate_profile", "unit_test", "sandbox_test", "security_scan", "review_packet"],
+            "sandbox_workflow_generators": [
+                sandbox_workflow_generator(bot, "profile-validation-bootcamp", "workflow_library"),
+                sandbox_workflow_generator(bot, "api-sandbox-bootcamp", "workflow_library"),
+                sandbox_workflow_generator(bot, "world-class-sandbox-bootcamp", "workflow_library"),
+            ],
+            "bootcamp_outputs": [
+                "owner_training_packet",
+                "buddy_debug_packet",
+                "client_demo_packet",
+                "approval_gate_packet",
+            ],
         }
     if library == "skills":
         return {
@@ -353,14 +578,26 @@ def _bot_entry(bot: dict[str, Any], library: str) -> dict[str, Any]:
             "steps": ["plan", "validate", "execute_in_sandbox", "evaluate", "request_review"],
         }
     if library == "sandboxes":
+        bootcamp = sandbox_bootcamp_suite(bot)
         return {
             **common,
             "sandbox": f"{slug}-sandbox",
             "network": "deny_by_default",
             "secrets": "test_values_only",
             "money_movement": "disabled",
-            "checks": ["deterministic_fixtures", "resource_limits", "timeout", "output_validation", "cleanup"],
+            "checks": [
+                "deterministic_fixtures",
+                "resource_limits",
+                "timeout",
+                "output_validation",
+                "cleanup",
+                "api_contract_bootcamp",
+                "workflow_generator_presence",
+                "owner_buddy_client_training_tracks",
+            ],
             "api_contract_sandbox": f"{slug}-api-topline-sandbox",
+            "workflow_generator": bootcamp["workflow_generator"],
+            "bootcamp_suite": bootcamp,
         }
     if library == "resources":
         entry = resource_index_entry(bot)
@@ -441,6 +678,23 @@ def build_outputs(registry: dict[str, Any]) -> dict[Path, dict[str, Any]]:
             "bots_with_skills": len(bots),
             "bots_with_sandboxes": len(bots),
             "bots_with_resources": len(bots),
+            "bots_with_api_sandbox_bootcamps": len(bots),
+            "bots_with_sandbox_workflow_generators": len(bots),
+            "bots_with_owner_buddy_client_bootcamp_tracks": len(bots),
+            "bots_with_top_ai_company_resource_seeds": len(bots),
+        },
+        "bootcamp_baseline": {
+            "name": "World Class Bot Building Sandbox Bootcamp",
+            "audiences": BOOTCAMP_PERSONAS,
+            "sandbox_principles": WORLD_CLASS_SANDBOX_PRINCIPLES,
+            "module_count": len(SANDBOX_BOOTCAMP_MODULES),
+            "top_ai_company_resource_seed_count": len(TOP_AI_COMPANY_RESOURCE_SEEDS),
+            "source_boundaries": [
+                "public_documentation_only",
+                "owner_approved_notes_only",
+                "no_private_or_proprietary_company_material",
+                "record_source_url_license_and_refresh_date",
+            ],
         },
         "security_baseline": {
             "github_actions": [

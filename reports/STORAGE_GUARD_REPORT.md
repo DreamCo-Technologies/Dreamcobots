@@ -1,6 +1,6 @@
 # DreamCo Storage Guard Report
 
-- Generated: 2026-07-14T10:53:31Z
+- Generated: 2026-07-15T19:49:01Z
 - Storage ready: True
 - Checks: 56
 - Failed checks: 0
@@ -8,7 +8,7 @@
 - Useful keep categories: 10
 - Useful drop categories: 10
 - Useful required metadata fields: 8
-- Largest resource shard: config/generated/system_libraries/resources/dreamcodelab.json (10.517 MB)
+- Largest resource shard: config/generated/system_libraries/resources/dreamcodelab.json (16.02 MB)
 - Bot resource entries checked: 1248
 
 ## Budgets
