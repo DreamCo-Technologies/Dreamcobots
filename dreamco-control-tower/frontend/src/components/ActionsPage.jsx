@@ -494,6 +494,59 @@ const FALLBACK_SPECIALIZED_BOT_KNOWLEDGE = {
   approval_gates: ['customer_outreach', 'ad_spend', 'money_movement', 'public_deployment', 'app_store_publish'],
 };
 
+const FALLBACK_AI_AGENT_MODEL_LIBRARY = {
+  generated_at: null,
+  mission: 'Give Buddy a governed prompt, tool, agent, and model-resource library so every bot can pick the best AI route for each task, explain tradeoffs, and fall back safely.',
+  policy: {
+    model_id_rule: 'Provider model IDs, prices, rate limits, and availability change often. Verify the current provider model ID before production use.',
+    approval_rule: 'External sends, paid calls, production deploys, customer data, money movement, likeness cloning, and account changes require owner approval.',
+  },
+  summary: {
+    model_resources: 100,
+    providers: 25,
+    agent_types: 16,
+    prompt_types: 20,
+    tool_types: 23,
+    task_routes: 30,
+    bot_count: 1248,
+    bots_with_model_routing: 1248,
+    resources_requiring_model_id_verification: 100,
+    approval_gated_resources: 100,
+  },
+  model_resources: [
+    {
+      id: 'openai_reasoning__quality',
+      provider: 'OpenAI',
+      label: 'OpenAI reasoning and general intelligence - Best Quality',
+      tier: 'quality',
+      good_at: ['complex planning', 'code repair', 'tool calling', 'multimodal app building'],
+      bad_at: ['unverified current facts without retrieval', 'tasks needing disabled credentials'],
+      best_tasks: ['architecture', 'coding', 'debugging', 'model_evaluation'],
+      status: 'candidate_verify_model_id_before_production',
+    },
+    {
+      id: 'google_gemini__quality',
+      provider: 'Google',
+      label: 'Gemini multimodal and long context - Best Quality',
+      tier: 'quality',
+      good_at: ['large context', 'document/video understanding', 'research synthesis'],
+      bad_at: ['private docs without privacy review'],
+      best_tasks: ['market_research', 'video_storyboard', 'course_building'],
+      status: 'candidate_verify_model_id_before_production',
+    },
+  ],
+  task_routes: [
+    { task_type: 'coding', primary_resource: 'openai_reasoning__quality', fallback_resources: ['deepseek_coder_reasoner__quality', 'qwen_models__quality'], required_evals: ['task_success', 'cost_latency', 'safety_gate'] },
+    { task_type: 'image_generation', primary_resource: 'openai_image__quality', fallback_resources: ['black_forest_image__quality', 'stability_image__quality'], required_evals: ['task_success', 'source_quality', 'safety_gate'] },
+    { task_type: 'market_research', primary_resource: 'perplexity_search__quality', fallback_resources: ['google_gemini__quality', 'openai_reasoning__quality'], required_evals: ['source_quality', 'user_value', 'safety_gate'] },
+  ],
+  agent_prompt_tool_matrix: [
+    { agent_type: 'coding_agent', label: 'Coding Agent', prompt_types: ['task_brief', 'tool_contract', 'code_review', 'test_generation'], tool_types: ['file_reader', 'code_editor', 'test_runner', 'api_client'], best_for: ['app code', 'tests', 'refactors'], avoid_for: ['large rewrites without tests'] },
+    { agent_type: 'creative_studio_agent', label: 'Creative Studio Agent', prompt_types: ['task_brief', 'visual_prompt', 'voice_consent'], tool_types: ['image_generator', 'image_editor', 'video_generator'], best_for: ['image', 'video', 'music', 'storyboards'], avoid_for: ['unapproved likeness cloning'] },
+    { agent_type: 'model_router_agent', label: 'Model Router Agent', prompt_types: ['task_brief', 'structured_output', 'rubric_eval'], tool_types: ['vector_search', 'reranker', 'approval_gate'], best_for: ['model selection', 'fallbacks', 'cost-quality tradeoffs'], avoid_for: ['using disabled providers'] },
+  ],
+};
+
 const FALLBACK_STRIPE_REVENUE_RESCUE = {
   generated_at: null,
   summary: {
@@ -1312,6 +1365,8 @@ export default function ActionsPage({
   const [dailyScalingStatus, setDailyScalingStatus] = useState('loading');
   const [specializedKnowledge, setSpecializedKnowledge] = useState(null);
   const [specializedKnowledgeStatus, setSpecializedKnowledgeStatus] = useState('loading');
+  const [aiAgentModelLibrary, setAiAgentModelLibrary] = useState(null);
+  const [aiAgentModelLibraryStatus, setAiAgentModelLibraryStatus] = useState('loading');
   const [storageGuard, setStorageGuard] = useState(null);
   const [storageGuardStatus, setStorageGuardStatus] = useState('loading');
   const [stripeRevenueRescue, setStripeRevenueRescue] = useState(null);
@@ -1415,6 +1470,15 @@ export default function ActionsPage({
   }, []);
 
   useEffect(() => {
+    fetchFirstJson(['/api/ai-agent-model-library'])
+      .then((data) => {
+        setAiAgentModelLibrary(data);
+        setAiAgentModelLibraryStatus('live');
+      })
+      .catch(() => setAiAgentModelLibraryStatus('generated fallback'));
+  }, []);
+
+  useEffect(() => {
     fetchFirstJson(['/api/storage-guard'])
       .then((data) => {
         setStorageGuard(data);
@@ -1473,6 +1537,7 @@ export default function ActionsPage({
   const botFounderStore = botFounderAppStore ?? FALLBACK_BOT_FOUNDER_APP_STORE;
   const scaling24 = dailyScaling ?? FALLBACK_24_HOUR_SCALING;
   const knowledge = specializedKnowledge ?? FALLBACK_SPECIALIZED_BOT_KNOWLEDGE;
+  const modelLibrary = aiAgentModelLibrary ?? FALLBACK_AI_AGENT_MODEL_LIBRARY;
   const storage = storageGuard ?? FALLBACK_STORAGE_GUARD;
   const stripeRescue = stripeRevenueRescue ?? FALLBACK_STRIPE_REVENUE_RESCUE;
   const approvalPackets = productionApprovalPackets ?? FALLBACK_PRODUCTION_APPROVAL_PACKETS;
@@ -1487,6 +1552,7 @@ export default function ActionsPage({
   const botFounderSummary = botFounderStore.summary ?? FALLBACK_BOT_FOUNDER_APP_STORE.summary;
   const scaling24Summary = scaling24.summary ?? FALLBACK_24_HOUR_SCALING.summary;
   const knowledgeSummary = knowledge.summary ?? FALLBACK_SPECIALIZED_BOT_KNOWLEDGE.summary;
+  const modelLibrarySummary = modelLibrary.summary ?? FALLBACK_AI_AGENT_MODEL_LIBRARY.summary;
   const storageSummary = storage.summary ?? FALLBACK_STORAGE_GUARD.summary;
   const stripeRescueSummary = stripeRescue.summary ?? FALLBACK_STRIPE_REVENUE_RESCUE.summary;
   const approvalPacketSummary = approvalPackets.summary ?? FALLBACK_PRODUCTION_APPROVAL_PACKETS.summary;
@@ -2522,6 +2588,113 @@ export default function ActionsPage({
                     </p>
                   ))}
                 </div>
+              </article>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section aria-labelledby="ai-agent-model-library-heading" className="border border-slate-700 bg-slate-950 p-5">
+        <div className="flex flex-wrap items-start justify-between gap-3">
+          <div>
+            <p className="text-xs font-bold uppercase text-dreamco-accent">Prompt, tool, agent, and model library</p>
+            <h3 id="ai-agent-model-library-heading" className="mt-1 text-lg font-semibold text-white">
+              Buddy picks the best AI route for every task
+            </h3>
+            <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-400">{modelLibrary.mission}</p>
+          </div>
+          <span className="rounded-full border border-slate-700 px-3 py-1 text-xs font-semibold text-slate-400">
+            {aiAgentModelLibraryStatus} · {formatDateTime(modelLibrary.generated_at)}
+          </span>
+        </div>
+
+        <div className="mt-5 grid grid-cols-2 gap-px overflow-hidden border border-slate-800 bg-slate-800 lg:grid-cols-4 xl:grid-cols-8">
+          {[
+            ['Model resources', modelLibrarySummary.model_resources],
+            ['Providers', modelLibrarySummary.providers],
+            ['Agent types', modelLibrarySummary.agent_types],
+            ['Prompt types', modelLibrarySummary.prompt_types],
+            ['Tool types', modelLibrarySummary.tool_types],
+            ['Task routes', modelLibrarySummary.task_routes],
+            ['Bots routed', modelLibrarySummary.bots_with_model_routing],
+            ['Approval gated', modelLibrarySummary.approval_gated_resources],
+          ].map(([label, value]) => (
+            <div key={label} className="bg-slate-900 p-4">
+              <p className="text-xl font-black text-white">{formatNumber(value)}</p>
+              <p className="mt-1 text-xs uppercase text-slate-500">{label}</p>
+            </div>
+          ))}
+        </div>
+
+        <div className="mt-5 grid gap-5 xl:grid-cols-[minmax(0,1fr)_24rem]">
+          <div className="border border-slate-800 bg-slate-900 p-4">
+            <h4 className="text-sm font-semibold text-white">Best task routes</h4>
+            <div className="mt-3 grid gap-3 md:grid-cols-2">
+              {(modelLibrary.task_routes ?? []).slice(0, 8).map((route) => (
+                <article key={route.task_type} className="border border-slate-800 bg-slate-950 p-3">
+                  <div className="flex flex-wrap items-start justify-between gap-2">
+                    <h5 className="text-sm font-semibold text-white">{formatLabel(route.task_type)}</h5>
+                    <span className="rounded-full border border-dreamco-accent/40 px-2 py-0.5 text-[11px] font-semibold text-dreamco-accent">
+                      {formatLabel(route.primary_resource)}
+                    </span>
+                  </div>
+                  <p className="mt-2 text-xs leading-5 text-slate-400">
+                    Fallbacks: {(route.fallback_resources ?? []).slice(0, 3).map(formatLabel).join(', ')}
+                  </p>
+                  <p className="mt-2 text-xs leading-5 text-slate-500">
+                    Evals: {(route.required_evals ?? []).slice(0, 4).map(formatLabel).join(', ')}
+                  </p>
+                </article>
+              ))}
+            </div>
+          </div>
+
+          <aside className="space-y-5">
+            <div className="border border-amber-900/70 bg-amber-950/20 p-4">
+              <h4 className="text-sm font-semibold text-amber-100">Production rule</h4>
+              <p className="mt-3 text-xs leading-5 text-amber-100/80">{modelLibrary.policy?.model_id_rule}</p>
+              <p className="mt-3 border-l-2 border-amber-300 pl-3 text-xs leading-5 text-amber-100/80">
+                {modelLibrary.policy?.approval_rule}
+              </p>
+            </div>
+
+            <div className="border border-slate-800 bg-slate-900 p-4">
+              <h4 className="text-sm font-semibold text-white">Agent harness</h4>
+              <div className="mt-3 space-y-3">
+                {(modelLibrary.agent_prompt_tool_matrix ?? []).slice(0, 5).map((agent) => (
+                  <div key={agent.agent_type} className="border border-slate-800 bg-slate-950 p-3">
+                    <h5 className="text-xs font-semibold uppercase text-white">{agent.label}</h5>
+                    <p className="mt-2 text-xs leading-5 text-slate-400">
+                      Prompts: {(agent.prompt_types ?? []).slice(0, 4).map(formatLabel).join(', ')}
+                    </p>
+                    <p className="mt-1 text-xs leading-5 text-slate-500">
+                      Tools: {(agent.tool_types ?? []).slice(0, 4).map(formatLabel).join(', ')}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </aside>
+        </div>
+
+        <div className="mt-5 border border-slate-800 bg-slate-900 p-4">
+          <h4 className="text-sm font-semibold text-white">Model strengths and weaknesses</h4>
+          <div className="mt-3 grid gap-3 md:grid-cols-2 xl:grid-cols-4">
+            {(modelLibrary.model_resources ?? []).slice(0, 8).map((resource) => (
+              <article key={resource.id} className="border border-slate-800 bg-slate-950 p-3">
+                <div className="flex flex-wrap items-start justify-between gap-2">
+                  <h5 className="text-sm font-semibold text-white">{resource.provider}</h5>
+                  <span className="rounded-full border border-slate-700 px-2 py-0.5 text-[11px] font-semibold uppercase text-slate-300">
+                    {formatLabel(resource.tier)}
+                  </span>
+                </div>
+                <p className="mt-2 text-xs font-semibold leading-5 text-dreamco-accent">{resource.label}</p>
+                <p className="mt-2 text-xs leading-5 text-emerald-100/80">
+                  Good: {(resource.good_at ?? []).slice(0, 3).join(', ')}
+                </p>
+                <p className="mt-2 text-xs leading-5 text-amber-100/80">
+                  Bad: {(resource.bad_at ?? []).slice(0, 2).join(', ')}
+                </p>
               </article>
             ))}
           </div>

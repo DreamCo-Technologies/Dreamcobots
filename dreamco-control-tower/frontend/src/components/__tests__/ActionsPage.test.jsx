@@ -468,6 +468,46 @@ const specializedKnowledgePayload = {
   ],
 };
 
+const aiAgentModelLibraryPayload = {
+  schema: 'dreamco.buddy_ai_agent_model_library_report.v1',
+  generated_at: '2026-07-15T00:00:00Z',
+  mission: 'Give Buddy a governed prompt, tool, agent, and model-resource library so every bot can pick the best AI route for each task.',
+  policy: {
+    model_id_rule: 'Provider model IDs, prices, rate limits, and availability change often. Verify the current provider model ID before production use.',
+    approval_rule: 'External sends, paid calls, production deploys, customer data, money movement, likeness cloning, and account changes require owner approval.',
+  },
+  summary: {
+    model_resources: 100,
+    providers: 25,
+    agent_types: 16,
+    prompt_types: 20,
+    tool_types: 23,
+    task_routes: 30,
+    bot_count: 1248,
+    bots_with_model_routing: 1248,
+    resources_requiring_model_id_verification: 100,
+    approval_gated_resources: 100,
+  },
+  model_resources: [
+    {
+      id: 'openai_reasoning__quality',
+      provider: 'OpenAI',
+      label: 'OpenAI reasoning and general intelligence - Best Quality',
+      tier: 'quality',
+      good_at: ['complex planning', 'code repair', 'tool calling'],
+      bad_at: ['unverified current facts without retrieval', 'tasks needing disabled credentials'],
+    },
+  ],
+  task_routes: [
+    { task_type: 'coding', primary_resource: 'openai_reasoning__quality', fallback_resources: ['deepseek_coder_reasoner__quality'], required_evals: ['task_success', 'cost_latency'] },
+    { task_type: 'image_generation', primary_resource: 'openai_image__quality', fallback_resources: ['black_forest_image__quality'], required_evals: ['task_success', 'safety_gate'] },
+  ],
+  agent_prompt_tool_matrix: [
+    { agent_type: 'coding_agent', label: 'Coding Agent', prompt_types: ['task_brief', 'tool_contract'], tool_types: ['file_reader', 'code_editor'] },
+    { agent_type: 'model_router_agent', label: 'Model Router Agent', prompt_types: ['task_brief', 'rubric_eval'], tool_types: ['vector_search', 'approval_gate'] },
+  ],
+};
+
 const stripeRevenueRescuePayload = {
   schema: 'dreamco.stripe_revenue_rescue.v1',
   generated_at: '2026-07-12T00:00:00Z',
@@ -589,6 +629,7 @@ beforeEach(() => {
     if (url === '/api/bot-founder-app-store') payload = botFounderAppStorePayload;
     if (url === '/api/24-hour-scaling') payload = scaling24Payload;
     if (url === '/api/specialized-bot-knowledge') payload = specializedKnowledgePayload;
+    if (url === '/api/ai-agent-model-library') payload = aiAgentModelLibraryPayload;
     if (url === '/api/storage-guard') payload = storageGuardPayload;
     if (url === '/api/stripe-revenue-rescue') payload = stripeRevenueRescuePayload;
     if (url === '/api/production-approval-packets') payload = productionApprovalPacketsPayload;
@@ -669,6 +710,12 @@ describe('ActionsPage', () => {
     expect(screen.getAllByText('Source policy').length).toBeGreaterThanOrEqual(1);
     expect(screen.getAllByText('Memory tiers').length).toBeGreaterThanOrEqual(1);
     expect(screen.getByText('Sample specialized knowledge profiles')).toBeInTheDocument();
+    await waitFor(() => expect(screen.getByRole('heading', { name: 'Buddy picks the best AI route for every task' })).toBeInTheDocument());
+    expect(screen.getByText('Prompt, tool, agent, and model library')).toBeInTheDocument();
+    expect(screen.getByText('Best task routes')).toBeInTheDocument();
+    expect(screen.getByText('Agent harness')).toBeInTheDocument();
+    expect(screen.getByText('Model strengths and weaknesses')).toBeInTheDocument();
+    expect(screen.getByText('OpenAI reasoning and general intelligence - Best Quality')).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: 'AI company builder with human trust built in' })).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: 'Tracks what helps you, clients, and bots improve' })).toBeInTheDocument();
     expect(screen.getByText('AI companies')).toBeInTheDocument();

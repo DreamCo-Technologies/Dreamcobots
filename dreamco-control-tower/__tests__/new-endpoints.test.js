@@ -426,6 +426,26 @@ describe('GET /api/specialized-bot-knowledge', () => {
   });
 });
 
+describe('GET /api/ai-agent-model-library', () => {
+  test('returns Buddy prompt, tool, agent, and model routing coverage', async () => {
+    const res = await request(app).get('/api/ai-agent-model-library');
+
+    expect(res.status).toBe(200);
+    expect(res.body.schema).toBe('dreamco.buddy_ai_agent_model_library_report.v1');
+    expect(res.body.summary.model_resources).toBe(100);
+    expect(res.body.summary.agent_types).toBeGreaterThanOrEqual(16);
+    expect(res.body.summary.prompt_types).toBeGreaterThanOrEqual(20);
+    expect(res.body.summary.tool_types).toBeGreaterThanOrEqual(20);
+    expect(res.body.summary.task_routes).toBeGreaterThanOrEqual(30);
+    expect(res.body.summary.bots_with_model_routing).toBe(res.body.summary.bot_count);
+    expect(res.body.task_routes.map((route) => route.task_type)).toEqual(
+      expect.arrayContaining(['coding', 'image_generation', 'market_research', 'simulation_building']),
+    );
+    expect(res.body.model_resources[0]).toHaveProperty('good_at');
+    expect(res.body.model_resources[0]).toHaveProperty('bad_at');
+  });
+});
+
 describe('GET /api/github-triage', () => {
   test('returns generated GitHub triage report', async () => {
     const res = await request(app).get('/api/github-triage');

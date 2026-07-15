@@ -49,6 +49,10 @@ const SPECIALIZED_BOT_KNOWLEDGE_REPORT_FILE = path.join(
   __dirname,
   '../../reports/specialized_bot_knowledge_report.json',
 );
+const BUDDY_AI_AGENT_MODEL_LIBRARY_REPORT_FILE = path.join(
+  __dirname,
+  '../../reports/buddy_ai_agent_model_library_report.json',
+);
 const GITHUB_TRIAGE_REPORT_FILE = path.join(
   __dirname,
   '../../reports/github_triage_report.json',
@@ -212,6 +216,13 @@ function readSpecializedBotKnowledgeReport() {
     return null;
   }
   return JSON.parse(fs.readFileSync(SPECIALIZED_BOT_KNOWLEDGE_REPORT_FILE, 'utf8'));
+}
+
+function readBuddyAiAgentModelLibraryReport() {
+  if (!fs.existsSync(BUDDY_AI_AGENT_MODEL_LIBRARY_REPORT_FILE)) {
+    return null;
+  }
+  return JSON.parse(fs.readFileSync(BUDDY_AI_AGENT_MODEL_LIBRARY_REPORT_FILE, 'utf8'));
 }
 
 function readGitHubTriageReport() {
@@ -674,6 +685,17 @@ app.get('/api/specialized-bot-knowledge', rateLimiter, (_req, res) => {
   const report = readSpecializedBotKnowledgeReport();
   if (!report) {
     return res.status(503).json({ error: 'specialized bot knowledge report not found' });
+  }
+  return res.json(report);
+});
+
+// ---------------------------------------------------------------------------
+// GET /api/ai-agent-model-library — prompt, tool, agent, and model routing
+// ---------------------------------------------------------------------------
+app.get('/api/ai-agent-model-library', rateLimiter, (_req, res) => {
+  const report = readBuddyAiAgentModelLibraryReport();
+  if (!report) {
+    return res.status(503).json({ error: 'AI agent model library report not found' });
   }
   return res.json(report);
 });
