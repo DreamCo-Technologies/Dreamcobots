@@ -53,6 +53,10 @@ const BUDDY_AI_AGENT_MODEL_LIBRARY_REPORT_FILE = path.join(
   __dirname,
   '../../reports/buddy_ai_agent_model_library_report.json',
 );
+const BUSINESS_LAUNCH_EXPANSION_REPORT_FILE = path.join(
+  __dirname,
+  '../../reports/business_launch_expansion_report.json',
+);
 const GITHUB_TRIAGE_REPORT_FILE = path.join(
   __dirname,
   '../../reports/github_triage_report.json',
@@ -223,6 +227,13 @@ function readBuddyAiAgentModelLibraryReport() {
     return null;
   }
   return JSON.parse(fs.readFileSync(BUDDY_AI_AGENT_MODEL_LIBRARY_REPORT_FILE, 'utf8'));
+}
+
+function readBusinessLaunchExpansionReport() {
+  if (!fs.existsSync(BUSINESS_LAUNCH_EXPANSION_REPORT_FILE)) {
+    return null;
+  }
+  return JSON.parse(fs.readFileSync(BUSINESS_LAUNCH_EXPANSION_REPORT_FILE, 'utf8'));
 }
 
 function readGitHubTriageReport() {
@@ -696,6 +707,17 @@ app.get('/api/ai-agent-model-library', rateLimiter, (_req, res) => {
   const report = readBuddyAiAgentModelLibraryReport();
   if (!report) {
     return res.status(503).json({ error: 'AI agent model library report not found' });
+  }
+  return res.json(report);
+});
+
+// ---------------------------------------------------------------------------
+// GET /api/business-launch-expansion — full business start/improve/expand system
+// ---------------------------------------------------------------------------
+app.get('/api/business-launch-expansion', rateLimiter, (_req, res) => {
+  const report = readBusinessLaunchExpansionReport();
+  if (!report) {
+    return res.status(503).json({ error: 'business launch expansion report not found' });
   }
   return res.json(report);
 });

@@ -547,6 +547,39 @@ const FALLBACK_AI_AGENT_MODEL_LIBRARY = {
   ],
 };
 
+const FALLBACK_BUSINESS_LAUNCH_EXPANSION = {
+  generated_at: null,
+  mission: 'Help clients start, improve, relocate, publish, market, staff, supply, and expand businesses through Buddy-governed bot teams and permissioned custom sub-agents.',
+  positioning: 'DreamCo is the A-to-Z business launch and expansion operating system.',
+  summary: {
+    bot_count: 1248,
+    service_lanes_ready: 10,
+    sub_agent_roles_ready: 10,
+    client_workflows_ready: 10,
+    approval_gates_declared: 12,
+    professional_review_blocks: 6,
+    deliverables_declared: 40,
+    lane_test_packets: 10,
+    all_lanes_permissioned: true,
+  },
+  permission_model: {
+    default_mode: 'draft_research_and_prepare_only',
+    client_must_approve: ['sub_agent_creation', 'domain_purchase', 'business_registration_filing', 'app_store_submission', 'paid_ad_spend', 'customer_or_supplier_outreach'],
+    blocked_without_professional_review: ['legal_filing_as_attorney', 'tax_advice_as_accountant', 'guaranteed_profit_claim'],
+  },
+  service_lanes: [
+    { id: 'business_formation', label: 'Business Formation', purpose: 'Prepare business name checks, entity comparison notes, registration checklist, permits checklist, tax/accounting handoff, and launch timeline.', deliverables: ['entity_options_brief', 'registration_checklist', 'permit_research'], approval_gates: ['business_registration_filing'] },
+    { id: 'domains_and_brand', label: 'Domains and Brand', purpose: 'Find domain options, social handles, naming risks, brand kit, logo direction, and website launch plan.', deliverables: ['domain_shortlist', 'brand_brief', 'website_launch_plan'], approval_gates: ['domain_purchase'] },
+    { id: 'supplier_network', label: 'Supplier Network', purpose: 'Find supplier categories, prepare RFQ packets, compare terms, track reliability signals, and create approval-ready outreach drafts.', deliverables: ['supplier_shortlist', 'rfq_packet', 'terms_comparison'], approval_gates: ['customer_or_supplier_outreach'] },
+    { id: 'logistics_and_supply_routes', label: 'Logistics and Supply Routes', purpose: 'Prepare trucking routes, pickup/dropoff planning, cost assumptions, delivery windows, route risk notes, and dispatch workflow drafts.', deliverables: ['route_plan', 'dispatch_workflow'], approval_gates: ['supplier_or_carrier_contact'] },
+  ],
+  sub_agent_roles: [
+    { id: 'business_formation_agent', label: 'Business Formation Agent', can_prepare: ['name research', 'entity comparison notes'], cannot_do_without_approval: ['file registrations', 'give legal or tax advice'] },
+    { id: 'domain_brand_agent', label: 'Domain and Brand Agent', can_prepare: ['domain shortlist', 'brand kit'], cannot_do_without_approval: ['buy domains', 'claim trademarks'] },
+    { id: 'supplier_agent', label: 'Supplier Agent', can_prepare: ['supplier lists', 'RFQs'], cannot_do_without_approval: ['contact suppliers', 'sign terms'] },
+  ],
+};
+
 const FALLBACK_STRIPE_REVENUE_RESCUE = {
   generated_at: null,
   summary: {
@@ -1367,6 +1400,8 @@ export default function ActionsPage({
   const [specializedKnowledgeStatus, setSpecializedKnowledgeStatus] = useState('loading');
   const [aiAgentModelLibrary, setAiAgentModelLibrary] = useState(null);
   const [aiAgentModelLibraryStatus, setAiAgentModelLibraryStatus] = useState('loading');
+  const [businessLaunchExpansion, setBusinessLaunchExpansion] = useState(null);
+  const [businessLaunchExpansionStatus, setBusinessLaunchExpansionStatus] = useState('loading');
   const [storageGuard, setStorageGuard] = useState(null);
   const [storageGuardStatus, setStorageGuardStatus] = useState('loading');
   const [stripeRevenueRescue, setStripeRevenueRescue] = useState(null);
@@ -1479,6 +1514,15 @@ export default function ActionsPage({
   }, []);
 
   useEffect(() => {
+    fetchFirstJson(['/api/business-launch-expansion'])
+      .then((data) => {
+        setBusinessLaunchExpansion(data);
+        setBusinessLaunchExpansionStatus('live');
+      })
+      .catch(() => setBusinessLaunchExpansionStatus('generated fallback'));
+  }, []);
+
+  useEffect(() => {
     fetchFirstJson(['/api/storage-guard'])
       .then((data) => {
         setStorageGuard(data);
@@ -1538,6 +1582,7 @@ export default function ActionsPage({
   const scaling24 = dailyScaling ?? FALLBACK_24_HOUR_SCALING;
   const knowledge = specializedKnowledge ?? FALLBACK_SPECIALIZED_BOT_KNOWLEDGE;
   const modelLibrary = aiAgentModelLibrary ?? FALLBACK_AI_AGENT_MODEL_LIBRARY;
+  const businessLaunch = businessLaunchExpansion ?? FALLBACK_BUSINESS_LAUNCH_EXPANSION;
   const storage = storageGuard ?? FALLBACK_STORAGE_GUARD;
   const stripeRescue = stripeRevenueRescue ?? FALLBACK_STRIPE_REVENUE_RESCUE;
   const approvalPackets = productionApprovalPackets ?? FALLBACK_PRODUCTION_APPROVAL_PACKETS;
@@ -1553,6 +1598,7 @@ export default function ActionsPage({
   const scaling24Summary = scaling24.summary ?? FALLBACK_24_HOUR_SCALING.summary;
   const knowledgeSummary = knowledge.summary ?? FALLBACK_SPECIALIZED_BOT_KNOWLEDGE.summary;
   const modelLibrarySummary = modelLibrary.summary ?? FALLBACK_AI_AGENT_MODEL_LIBRARY.summary;
+  const businessLaunchSummary = businessLaunch.summary ?? FALLBACK_BUSINESS_LAUNCH_EXPANSION.summary;
   const storageSummary = storage.summary ?? FALLBACK_STORAGE_GUARD.summary;
   const stripeRescueSummary = stripeRescue.summary ?? FALLBACK_STRIPE_REVENUE_RESCUE.summary;
   const approvalPacketSummary = approvalPackets.summary ?? FALLBACK_PRODUCTION_APPROVAL_PACKETS.summary;
@@ -2698,6 +2744,92 @@ export default function ActionsPage({
               </article>
             ))}
           </div>
+        </div>
+      </section>
+
+      <section aria-labelledby="business-launch-expansion-heading" className="border border-slate-700 bg-slate-950 p-5">
+        <div className="flex flex-wrap items-start justify-between gap-3">
+          <div>
+            <p className="text-xs font-bold uppercase text-dreamco-accent">Business launch and expansion OS</p>
+            <h3 id="business-launch-expansion-heading" className="mt-1 text-lg font-semibold text-white">
+              Buddy coordinates everything a business needs to start, improve, or expand
+            </h3>
+            <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-400">{businessLaunch.mission}</p>
+          </div>
+          <span className="rounded-full border border-slate-700 px-3 py-1 text-xs font-semibold text-slate-400">
+            {businessLaunchExpansionStatus} · {formatDateTime(businessLaunch.generated_at)}
+          </span>
+        </div>
+
+        <div className="mt-5 grid grid-cols-2 gap-px overflow-hidden border border-slate-800 bg-slate-800 lg:grid-cols-4 xl:grid-cols-8">
+          {[
+            ['Service lanes', businessLaunchSummary.service_lanes_ready],
+            ['Sub-agents', businessLaunchSummary.sub_agent_roles_ready],
+            ['Client workflows', businessLaunchSummary.client_workflows_ready],
+            ['Approval gates', businessLaunchSummary.approval_gates_declared],
+            ['Review blocks', businessLaunchSummary.professional_review_blocks],
+            ['Deliverables', businessLaunchSummary.deliverables_declared],
+            ['Test packets', businessLaunchSummary.lane_test_packets],
+            ['Bots covered', businessLaunchSummary.bot_count],
+          ].map(([label, value]) => (
+            <div key={label} className="bg-slate-900 p-4">
+              <p className="text-xl font-black text-white">{formatNumber(value)}</p>
+              <p className="mt-1 text-xs uppercase text-slate-500">{label}</p>
+            </div>
+          ))}
+        </div>
+
+        <div className="mt-5 grid gap-5 xl:grid-cols-[minmax(0,1fr)_24rem]">
+          <div className="border border-slate-800 bg-slate-900 p-4">
+            <h4 className="text-sm font-semibold text-white">A-to-Z business service lanes</h4>
+            <div className="mt-3 grid gap-3 md:grid-cols-2">
+              {(businessLaunch.service_lanes ?? []).slice(0, 10).map((lane) => (
+                <article key={lane.id} className="border border-slate-800 bg-slate-950 p-3">
+                  <h5 className="text-sm font-semibold text-white">{lane.label}</h5>
+                  <p className="mt-2 text-xs leading-5 text-slate-400">{lane.purpose}</p>
+                  <p className="mt-3 text-xs leading-5 text-dreamco-accent">
+                    Deliverables: {(lane.deliverables ?? []).slice(0, 3).map(formatLabel).join(', ')}
+                  </p>
+                  <p className="mt-2 border-l-2 border-amber-400 pl-3 text-xs leading-5 text-amber-100/80">
+                    Approval: {(lane.approval_gates ?? []).slice(0, 3).map(formatLabel).join(', ')}
+                  </p>
+                </article>
+              ))}
+            </div>
+          </div>
+
+          <aside className="space-y-5">
+            <div className="border border-amber-900/70 bg-amber-950/20 p-4">
+              <h4 className="text-sm font-semibold text-amber-100">Permission rule</h4>
+              <p className="mt-3 text-xs leading-5 text-amber-100/80">
+                Default mode: {formatLabel(businessLaunch.permission_model?.default_mode)}
+              </p>
+              <div className="mt-3 space-y-2">
+                {(businessLaunch.permission_model?.client_must_approve ?? []).slice(0, 8).map((gate) => (
+                  <p key={gate} className="border-l-2 border-amber-400 pl-3 text-xs leading-5 text-amber-100/80">
+                    {formatLabel(gate)}
+                  </p>
+                ))}
+              </div>
+            </div>
+
+            <div className="border border-slate-800 bg-slate-900 p-4">
+              <h4 className="text-sm font-semibold text-white">Custom sub-agent roles</h4>
+              <div className="mt-3 space-y-3">
+                {(businessLaunch.sub_agent_roles ?? []).slice(0, 6).map((agent) => (
+                  <div key={agent.id} className="border border-slate-800 bg-slate-950 p-3">
+                    <h5 className="text-xs font-semibold uppercase text-white">{agent.label}</h5>
+                    <p className="mt-2 text-xs leading-5 text-emerald-100/80">
+                      Can prepare: {(agent.can_prepare ?? []).slice(0, 3).join(', ')}
+                    </p>
+                    <p className="mt-1 text-xs leading-5 text-amber-100/80">
+                      Needs approval: {(agent.cannot_do_without_approval ?? []).slice(0, 2).join(', ')}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </aside>
         </div>
       </section>
 

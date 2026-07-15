@@ -446,6 +446,25 @@ describe('GET /api/ai-agent-model-library', () => {
   });
 });
 
+describe('GET /api/business-launch-expansion', () => {
+  test('returns full business launch and expansion service coverage', async () => {
+    const res = await request(app).get('/api/business-launch-expansion');
+
+    expect(res.status).toBe(200);
+    expect(res.body.schema).toBe('dreamco.business_launch_expansion_report.v1');
+    expect(res.body.summary.service_lanes_ready).toBeGreaterThanOrEqual(10);
+    expect(res.body.summary.sub_agent_roles_ready).toBeGreaterThanOrEqual(10);
+    expect(res.body.summary.client_workflows_ready).toBeGreaterThanOrEqual(10);
+    expect(res.body.summary.all_lanes_permissioned).toBe(true);
+    expect(res.body.service_lanes.map((lane) => lane.id)).toEqual(
+      expect.arrayContaining(['business_formation', 'domains_and_brand', 'supplier_network', 'logistics_and_supply_routes']),
+    );
+    expect(res.body.permission_model.client_must_approve).toEqual(
+      expect.arrayContaining(['sub_agent_creation', 'domain_purchase', 'business_registration_filing']),
+    );
+  });
+});
+
 describe('GET /api/github-triage', () => {
   test('returns generated GitHub triage report', async () => {
     const res = await request(app).get('/api/github-triage');

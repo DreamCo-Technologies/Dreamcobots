@@ -1,0 +1,136 @@
+{
+  "schema": "dreamco.business_launch_expansion_system.v1",
+  "updated_at": "2026-07-15T00:00:00Z",
+  "mission": "Help clients start, improve, relocate, publish, market, staff, supply, and expand businesses through Buddy-governed bot teams and permissioned custom sub-agents.",
+  "positioning": "DreamCo is the A-to-Z business launch and expansion operating system: idea to entity, domain, app stores, locations, suppliers, logistics, hiring, advertising, and ongoing growth.",
+  "permission_model": {
+    "default_mode": "draft_research_and_prepare_only",
+    "client_must_approve": [
+      "sub_agent_creation",
+      "domain_purchase",
+      "business_registration_filing",
+      "app_store_submission",
+      "game_store_submission",
+      "tv_store_submission",
+      "paid_ad_spend",
+      "customer_or_supplier_outreach",
+      "employee_or_contractor_contact",
+      "lease_or_real_estate_contact",
+      "payment_or_bank_account_action",
+      "regulated_claim_or_legal_tax_advice"
+    ],
+    "blocked_without_professional_review": [
+      "legal_filing_as_attorney",
+      "tax_advice_as_accountant",
+      "guaranteed_profit_claim",
+      "employment_law_decision",
+      "financial_investment_advice",
+      "regulated_health_or_safety_claim"
+    ],
+    "audit_required": ["who_requested", "what_was_prepared", "approval_status", "source_links", "cost_estimate", "risk_notes", "next_step"]
+  },
+  "service_lanes": [
+    {
+      "id": "business_formation",
+      "label": "Business Formation",
+      "purpose": "Prepare business name checks, entity comparison notes, registration checklist, permits checklist, tax/accounting handoff, and launch timeline.",
+      "deliverables": ["entity_options_brief", "registration_checklist", "permit_research", "professional_review_packet"],
+      "approval_gates": ["business_registration_filing", "regulated_claim_or_legal_tax_advice"]
+    },
+    {
+      "id": "domains_and_brand",
+      "label": "Domains and Brand",
+      "purpose": "Find domain options, social handles, naming risks, brand kit, logo direction, and website launch plan.",
+      "deliverables": ["domain_shortlist", "brand_brief", "handle_checklist", "website_launch_plan"],
+      "approval_gates": ["domain_purchase", "paid_service_usage"]
+    },
+    {
+      "id": "app_game_tv_store_publishing",
+      "label": "App, Game, and TV Store Publishing",
+      "purpose": "Prepare app-store, game-store, and TV-store listing packets, screenshots, privacy notes, support URLs, release notes, and submission readiness checks.",
+      "deliverables": ["store_listing_packet", "asset_checklist", "privacy_support_notes", "submission_runbook"],
+      "approval_gates": ["app_store_submission", "game_store_submission", "tv_store_submission"]
+    },
+    {
+      "id": "location_intelligence",
+      "label": "Home and Business Location Intelligence",
+      "purpose": "Research relocation fit, customer density, commute, cost, zoning questions, competitor maps, supplier proximity, and site visit packets.",
+      "deliverables": ["relocation_scorecard", "business_location_shortlist", "competitor_map", "site_visit_packet"],
+      "approval_gates": ["lease_or_real_estate_contact", "personal_data_use"]
+    },
+    {
+      "id": "team_and_hiring",
+      "label": "Team and Hiring",
+      "purpose": "Draft role plans, org charts, job posts, interview guides, onboarding checklists, contractor scopes, and productivity dashboards.",
+      "deliverables": ["role_blueprint", "job_post_drafts", "interview_scorecard", "onboarding_plan"],
+      "approval_gates": ["employee_or_contractor_contact", "employment_law_decision"]
+    },
+    {
+      "id": "marketing_and_advertising",
+      "label": "Marketing and Advertising",
+      "purpose": "Build launch campaigns, content calendars, SEO plans, lead magnets, ad drafts, offer tests, CRM flows, and approval-safe outreach queues.",
+      "deliverables": ["campaign_plan", "content_calendar", "ad_drafts", "crm_followup_flow"],
+      "approval_gates": ["paid_ad_spend", "customer_or_supplier_outreach"]
+    },
+    {
+      "id": "supplier_network",
+      "label": "Supplier Network",
+      "purpose": "Find supplier categories, prepare RFQ packets, compare terms, track reliability signals, and create approval-ready outreach drafts.",
+      "deliverables": ["supplier_shortlist", "rfq_packet", "terms_comparison", "supplier_risk_notes"],
+      "approval_gates": ["customer_or_supplier_outreach", "payment_or_bank_account_action"]
+    },
+    {
+      "id": "logistics_and_supply_routes",
+      "label": "Logistics and Supply Routes",
+      "purpose": "Prepare trucking routes, pickup/dropoff planning, cost assumptions, delivery windows, route risk notes, and dispatch workflow drafts.",
+      "deliverables": ["route_plan", "dispatch_workflow", "cost_assumption_sheet", "logistics_risk_notes"],
+      "approval_gates": ["supplier_or_carrier_contact", "regulated_transport_decision"]
+    },
+    {
+      "id": "existing_business_improvement",
+      "label": "Existing Business Improvement",
+      "purpose": "Audit operations, costs, subscriptions, sales funnels, customer support, workflows, automation opportunities, and expansion readiness.",
+      "deliverables": ["operations_audit", "cost_savings_queue", "automation_backlog", "expansion_scorecard"],
+      "approval_gates": ["account_change", "customer_or_supplier_outreach", "payment_or_bank_account_action"]
+    },
+    {
+      "id": "custom_sub_agent_factory",
+      "label": "Custom Sub-Agent Factory",
+      "purpose": "Create permissioned client-specific sub-agents with scoped tools, budgets, approval gates, logs, tests, and shutdown controls.",
+      "deliverables": ["sub_agent_charter", "tool_scope", "approval_policy", "test_packet", "audit_log_plan"],
+      "approval_gates": ["sub_agent_creation", "credential_change", "paid_service_usage"]
+    }
+  ],
+  "sub_agent_roles": [
+    { "id": "business_formation_agent", "label": "Business Formation Agent", "can_prepare": ["name research", "entity comparison notes", "registration checklist"], "cannot_do_without_approval": ["file registrations", "give legal or tax advice"] },
+    { "id": "domain_brand_agent", "label": "Domain and Brand Agent", "can_prepare": ["domain shortlist", "brand kit", "handle checklist"], "cannot_do_without_approval": ["buy domains", "claim trademarks"] },
+    { "id": "store_publishing_agent", "label": "Store Publishing Agent", "can_prepare": ["listings", "screenshots checklist", "release notes"], "cannot_do_without_approval": ["submit to stores", "accept paid terms"] },
+    { "id": "location_agent", "label": "Location Agent", "can_prepare": ["location scorecards", "site visit packets", "competitor maps"], "cannot_do_without_approval": ["contact landlords", "make relocation commitments"] },
+    { "id": "hiring_agent", "label": "Hiring Agent", "can_prepare": ["roles", "job posts", "interview guides"], "cannot_do_without_approval": ["contact applicants", "make hiring decisions"] },
+    { "id": "marketing_agent", "label": "Marketing Agent", "can_prepare": ["campaigns", "ads", "content", "CRM flows"], "cannot_do_without_approval": ["spend ad budget", "send outreach"] },
+    { "id": "supplier_agent", "label": "Supplier Agent", "can_prepare": ["supplier lists", "RFQs", "terms comparisons"], "cannot_do_without_approval": ["contact suppliers", "sign terms"] },
+    { "id": "logistics_agent", "label": "Logistics Agent", "can_prepare": ["route plans", "dispatch workflows", "cost estimates"], "cannot_do_without_approval": ["book freight", "contact carriers"] },
+    { "id": "operations_agent", "label": "Operations Improvement Agent", "can_prepare": ["audits", "automation backlog", "cost savings"], "cannot_do_without_approval": ["change accounts", "cancel services"] },
+    { "id": "client_success_agent", "label": "Client Success Agent", "can_prepare": ["handoffs", "status updates", "training notes"], "cannot_do_without_approval": ["promise outcomes", "send external messages"] }
+  ],
+  "client_workflows": [
+    "start_new_business",
+    "improve_existing_business",
+    "expand_to_new_location",
+    "relocate_owner_or_team",
+    "launch_app_game_or_tv_product",
+    "build_supplier_network",
+    "create_supply_routes",
+    "hire_or_train_team",
+    "market_and_advertise",
+    "create_custom_sub_agents"
+  ],
+  "success_metrics": [
+    "service_lanes_ready",
+    "sub_agent_roles_ready",
+    "approval_gates_declared",
+    "client_workflows_ready",
+    "deliverables_declared",
+    "blocked_actions_declared"
+  ]
+}

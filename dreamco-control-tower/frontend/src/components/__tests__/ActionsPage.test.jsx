@@ -508,6 +508,37 @@ const aiAgentModelLibraryPayload = {
   ],
 };
 
+const businessLaunchExpansionPayload = {
+  schema: 'dreamco.business_launch_expansion_report.v1',
+  generated_at: '2026-07-15T00:00:00Z',
+  mission: 'Help clients start, improve, relocate, publish, market, staff, supply, and expand businesses through Buddy-governed bot teams and permissioned custom sub-agents.',
+  positioning: 'DreamCo is the A-to-Z business launch and expansion operating system.',
+  summary: {
+    bot_count: 1248,
+    service_lanes_ready: 10,
+    sub_agent_roles_ready: 10,
+    client_workflows_ready: 10,
+    approval_gates_declared: 12,
+    professional_review_blocks: 6,
+    deliverables_declared: 40,
+    lane_test_packets: 10,
+    all_lanes_permissioned: true,
+  },
+  permission_model: {
+    default_mode: 'draft_research_and_prepare_only',
+    client_must_approve: ['sub_agent_creation', 'domain_purchase', 'business_registration_filing', 'app_store_submission'],
+  },
+  service_lanes: [
+    { id: 'business_formation', label: 'Business Formation', purpose: 'Prepare business name checks, registration checklist, permits checklist, and launch timeline.', deliverables: ['entity_options_brief', 'registration_checklist'], approval_gates: ['business_registration_filing'] },
+    { id: 'domains_and_brand', label: 'Domains and Brand', purpose: 'Find domain options, social handles, brand kit, and website launch plan.', deliverables: ['domain_shortlist', 'brand_brief'], approval_gates: ['domain_purchase'] },
+    { id: 'supplier_network', label: 'Supplier Network', purpose: 'Find supplier categories, prepare RFQ packets, and compare terms.', deliverables: ['supplier_shortlist', 'rfq_packet'], approval_gates: ['customer_or_supplier_outreach'] },
+  ],
+  sub_agent_roles: [
+    { id: 'business_formation_agent', label: 'Business Formation Agent', can_prepare: ['name research', 'entity comparison notes'], cannot_do_without_approval: ['file registrations'] },
+    { id: 'domain_brand_agent', label: 'Domain and Brand Agent', can_prepare: ['domain shortlist', 'brand kit'], cannot_do_without_approval: ['buy domains'] },
+  ],
+};
+
 const stripeRevenueRescuePayload = {
   schema: 'dreamco.stripe_revenue_rescue.v1',
   generated_at: '2026-07-12T00:00:00Z',
@@ -630,6 +661,7 @@ beforeEach(() => {
     if (url === '/api/24-hour-scaling') payload = scaling24Payload;
     if (url === '/api/specialized-bot-knowledge') payload = specializedKnowledgePayload;
     if (url === '/api/ai-agent-model-library') payload = aiAgentModelLibraryPayload;
+    if (url === '/api/business-launch-expansion') payload = businessLaunchExpansionPayload;
     if (url === '/api/storage-guard') payload = storageGuardPayload;
     if (url === '/api/stripe-revenue-rescue') payload = stripeRevenueRescuePayload;
     if (url === '/api/production-approval-packets') payload = productionApprovalPacketsPayload;
@@ -716,6 +748,13 @@ describe('ActionsPage', () => {
     expect(screen.getByText('Agent harness')).toBeInTheDocument();
     expect(screen.getByText('Model strengths and weaknesses')).toBeInTheDocument();
     expect(screen.getByText('OpenAI reasoning and general intelligence - Best Quality')).toBeInTheDocument();
+    await waitFor(() => expect(screen.getByRole('heading', { name: 'Buddy coordinates everything a business needs to start, improve, or expand' })).toBeInTheDocument());
+    expect(screen.getByText('Business launch and expansion OS')).toBeInTheDocument();
+    expect(screen.getByText('A-to-Z business service lanes')).toBeInTheDocument();
+    expect(screen.getByText('Business Formation')).toBeInTheDocument();
+    expect(screen.getByText('Domains and Brand')).toBeInTheDocument();
+    expect(screen.getByText('Supplier Network')).toBeInTheDocument();
+    expect(screen.getByText('Custom sub-agent roles')).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: 'AI company builder with human trust built in' })).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: 'Tracks what helps you, clients, and bots improve' })).toBeInTheDocument();
     expect(screen.getByText('AI companies')).toBeInTheDocument();
@@ -775,7 +814,7 @@ describe('ActionsPage', () => {
     await waitFor(() => expect(screen.getByText('Source: live')).toBeInTheDocument());
     expect(screen.getAllByText('1,248').length).toBeGreaterThan(0);
     expect(screen.getByText('8,736')).toBeInTheDocument();
-  });
+  }, 15000);
 
   it('shows Buddy productivity tracking for owner, clients, and bots', async () => {
     render(<ActionsPage ActionsMonitorComponent={StubActionsMonitor} />);

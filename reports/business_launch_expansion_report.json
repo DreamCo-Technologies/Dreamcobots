@@ -1,0 +1,589 @@
+{
+  "client_workflows": [
+    "start_new_business",
+    "improve_existing_business",
+    "expand_to_new_location",
+    "relocate_owner_or_team",
+    "launch_app_game_or_tv_product",
+    "build_supplier_network",
+    "create_supply_routes",
+    "hire_or_train_team",
+    "market_and_advertise",
+    "create_custom_sub_agents"
+  ],
+  "generated_at": "2026-07-15T21:46:11.948948+00:00",
+  "mission": "Help clients start, improve, relocate, publish, market, staff, supply, and expand businesses through Buddy-governed bot teams and permissioned custom sub-agents.",
+  "next_actions": [
+    "Connect each service lane to a Buddy prompt packet and approval checklist.",
+    "Add provider adapters only after credentials, pricing, and client approval are configured.",
+    "Keep all filings, purchases, submissions, outreach, hiring, and paid ads blocked until explicit approval."
+  ],
+  "permission_model": {
+    "audit_required": [
+      "who_requested",
+      "what_was_prepared",
+      "approval_status",
+      "source_links",
+      "cost_estimate",
+      "risk_notes",
+      "next_step"
+    ],
+    "blocked_without_professional_review": [
+      "legal_filing_as_attorney",
+      "tax_advice_as_accountant",
+      "guaranteed_profit_claim",
+      "employment_law_decision",
+      "financial_investment_advice",
+      "regulated_health_or_safety_claim"
+    ],
+    "client_must_approve": [
+      "sub_agent_creation",
+      "domain_purchase",
+      "business_registration_filing",
+      "app_store_submission",
+      "game_store_submission",
+      "tv_store_submission",
+      "paid_ad_spend",
+      "customer_or_supplier_outreach",
+      "employee_or_contractor_contact",
+      "lease_or_real_estate_contact",
+      "payment_or_bank_account_action",
+      "regulated_claim_or_legal_tax_advice"
+    ],
+    "default_mode": "draft_research_and_prepare_only"
+  },
+  "positioning": "DreamCo is the A-to-Z business launch and expansion operating system: idea to entity, domain, app stores, locations, suppliers, logistics, hiring, advertising, and ongoing growth.",
+  "schema": "dreamco.business_launch_expansion_report.v1",
+  "service_lanes": [
+    {
+      "approval_gates": [
+        "business_registration_filing",
+        "regulated_claim_or_legal_tax_advice"
+      ],
+      "client_prompt": "Buddy, help me with business formation and prepare everything for approval before any live action.",
+      "dashboard_status": "ready_for_supervised_client_planning",
+      "deliverables": [
+        "entity_options_brief",
+        "registration_checklist",
+        "permit_research",
+        "professional_review_packet"
+      ],
+      "id": "business_formation",
+      "label": "Business Formation",
+      "purpose": "Prepare business name checks, entity comparison notes, registration checklist, permits checklist, tax/accounting handoff, and launch timeline.",
+      "test_packet": {
+        "expected_outputs": [
+          "entity_options_brief",
+          "registration_checklist",
+          "permit_research",
+          "professional_review_packet"
+        ],
+        "must_not_do": [
+          "spend_money",
+          "submit_forms",
+          "contact_external_parties",
+          "make_legal_tax_claims"
+        ],
+        "sandbox_inputs": [
+          "client_goal",
+          "budget_range",
+          "location_or_market",
+          "timeline",
+          "risk_tolerance"
+        ]
+      }
+    },
+    {
+      "approval_gates": [
+        "domain_purchase",
+        "paid_service_usage"
+      ],
+      "client_prompt": "Buddy, help me with domains and brand and prepare everything for approval before any live action.",
+      "dashboard_status": "ready_for_supervised_client_planning",
+      "deliverables": [
+        "domain_shortlist",
+        "brand_brief",
+        "handle_checklist",
+        "website_launch_plan"
+      ],
+      "id": "domains_and_brand",
+      "label": "Domains and Brand",
+      "purpose": "Find domain options, social handles, naming risks, brand kit, logo direction, and website launch plan.",
+      "test_packet": {
+        "expected_outputs": [
+          "domain_shortlist",
+          "brand_brief",
+          "handle_checklist",
+          "website_launch_plan"
+        ],
+        "must_not_do": [
+          "spend_money",
+          "submit_forms",
+          "contact_external_parties",
+          "make_legal_tax_claims"
+        ],
+        "sandbox_inputs": [
+          "client_goal",
+          "budget_range",
+          "location_or_market",
+          "timeline",
+          "risk_tolerance"
+        ]
+      }
+    },
+    {
+      "approval_gates": [
+        "app_store_submission",
+        "game_store_submission",
+        "tv_store_submission"
+      ],
+      "client_prompt": "Buddy, help me with app, game, and tv store publishing and prepare everything for approval before any live action.",
+      "dashboard_status": "ready_for_supervised_client_planning",
+      "deliverables": [
+        "store_listing_packet",
+        "asset_checklist",
+        "privacy_support_notes",
+        "submission_runbook"
+      ],
+      "id": "app_game_tv_store_publishing",
+      "label": "App, Game, and TV Store Publishing",
+      "purpose": "Prepare app-store, game-store, and TV-store listing packets, screenshots, privacy notes, support URLs, release notes, and submission readiness checks.",
+      "test_packet": {
+        "expected_outputs": [
+          "store_listing_packet",
+          "asset_checklist",
+          "privacy_support_notes",
+          "submission_runbook"
+        ],
+        "must_not_do": [
+          "spend_money",
+          "submit_forms",
+          "contact_external_parties",
+          "make_legal_tax_claims"
+        ],
+        "sandbox_inputs": [
+          "client_goal",
+          "budget_range",
+          "location_or_market",
+          "timeline",
+          "risk_tolerance"
+        ]
+      }
+    },
+    {
+      "approval_gates": [
+        "lease_or_real_estate_contact",
+        "personal_data_use"
+      ],
+      "client_prompt": "Buddy, help me with home and business location intelligence and prepare everything for approval before any live action.",
+      "dashboard_status": "ready_for_supervised_client_planning",
+      "deliverables": [
+        "relocation_scorecard",
+        "business_location_shortlist",
+        "competitor_map",
+        "site_visit_packet"
+      ],
+      "id": "location_intelligence",
+      "label": "Home and Business Location Intelligence",
+      "purpose": "Research relocation fit, customer density, commute, cost, zoning questions, competitor maps, supplier proximity, and site visit packets.",
+      "test_packet": {
+        "expected_outputs": [
+          "relocation_scorecard",
+          "business_location_shortlist",
+          "competitor_map",
+          "site_visit_packet"
+        ],
+        "must_not_do": [
+          "spend_money",
+          "submit_forms",
+          "contact_external_parties",
+          "make_legal_tax_claims"
+        ],
+        "sandbox_inputs": [
+          "client_goal",
+          "budget_range",
+          "location_or_market",
+          "timeline",
+          "risk_tolerance"
+        ]
+      }
+    },
+    {
+      "approval_gates": [
+        "employee_or_contractor_contact",
+        "employment_law_decision"
+      ],
+      "client_prompt": "Buddy, help me with team and hiring and prepare everything for approval before any live action.",
+      "dashboard_status": "ready_for_supervised_client_planning",
+      "deliverables": [
+        "role_blueprint",
+        "job_post_drafts",
+        "interview_scorecard",
+        "onboarding_plan"
+      ],
+      "id": "team_and_hiring",
+      "label": "Team and Hiring",
+      "purpose": "Draft role plans, org charts, job posts, interview guides, onboarding checklists, contractor scopes, and productivity dashboards.",
+      "test_packet": {
+        "expected_outputs": [
+          "role_blueprint",
+          "job_post_drafts",
+          "interview_scorecard",
+          "onboarding_plan"
+        ],
+        "must_not_do": [
+          "spend_money",
+          "submit_forms",
+          "contact_external_parties",
+          "make_legal_tax_claims"
+        ],
+        "sandbox_inputs": [
+          "client_goal",
+          "budget_range",
+          "location_or_market",
+          "timeline",
+          "risk_tolerance"
+        ]
+      }
+    },
+    {
+      "approval_gates": [
+        "paid_ad_spend",
+        "customer_or_supplier_outreach"
+      ],
+      "client_prompt": "Buddy, help me with marketing and advertising and prepare everything for approval before any live action.",
+      "dashboard_status": "ready_for_supervised_client_planning",
+      "deliverables": [
+        "campaign_plan",
+        "content_calendar",
+        "ad_drafts",
+        "crm_followup_flow"
+      ],
+      "id": "marketing_and_advertising",
+      "label": "Marketing and Advertising",
+      "purpose": "Build launch campaigns, content calendars, SEO plans, lead magnets, ad drafts, offer tests, CRM flows, and approval-safe outreach queues.",
+      "test_packet": {
+        "expected_outputs": [
+          "campaign_plan",
+          "content_calendar",
+          "ad_drafts",
+          "crm_followup_flow"
+        ],
+        "must_not_do": [
+          "spend_money",
+          "submit_forms",
+          "contact_external_parties",
+          "make_legal_tax_claims"
+        ],
+        "sandbox_inputs": [
+          "client_goal",
+          "budget_range",
+          "location_or_market",
+          "timeline",
+          "risk_tolerance"
+        ]
+      }
+    },
+    {
+      "approval_gates": [
+        "customer_or_supplier_outreach",
+        "payment_or_bank_account_action"
+      ],
+      "client_prompt": "Buddy, help me with supplier network and prepare everything for approval before any live action.",
+      "dashboard_status": "ready_for_supervised_client_planning",
+      "deliverables": [
+        "supplier_shortlist",
+        "rfq_packet",
+        "terms_comparison",
+        "supplier_risk_notes"
+      ],
+      "id": "supplier_network",
+      "label": "Supplier Network",
+      "purpose": "Find supplier categories, prepare RFQ packets, compare terms, track reliability signals, and create approval-ready outreach drafts.",
+      "test_packet": {
+        "expected_outputs": [
+          "supplier_shortlist",
+          "rfq_packet",
+          "terms_comparison",
+          "supplier_risk_notes"
+        ],
+        "must_not_do": [
+          "spend_money",
+          "submit_forms",
+          "contact_external_parties",
+          "make_legal_tax_claims"
+        ],
+        "sandbox_inputs": [
+          "client_goal",
+          "budget_range",
+          "location_or_market",
+          "timeline",
+          "risk_tolerance"
+        ]
+      }
+    },
+    {
+      "approval_gates": [
+        "supplier_or_carrier_contact",
+        "regulated_transport_decision"
+      ],
+      "client_prompt": "Buddy, help me with logistics and supply routes and prepare everything for approval before any live action.",
+      "dashboard_status": "ready_for_supervised_client_planning",
+      "deliverables": [
+        "route_plan",
+        "dispatch_workflow",
+        "cost_assumption_sheet",
+        "logistics_risk_notes"
+      ],
+      "id": "logistics_and_supply_routes",
+      "label": "Logistics and Supply Routes",
+      "purpose": "Prepare trucking routes, pickup/dropoff planning, cost assumptions, delivery windows, route risk notes, and dispatch workflow drafts.",
+      "test_packet": {
+        "expected_outputs": [
+          "route_plan",
+          "dispatch_workflow",
+          "cost_assumption_sheet",
+          "logistics_risk_notes"
+        ],
+        "must_not_do": [
+          "spend_money",
+          "submit_forms",
+          "contact_external_parties",
+          "make_legal_tax_claims"
+        ],
+        "sandbox_inputs": [
+          "client_goal",
+          "budget_range",
+          "location_or_market",
+          "timeline",
+          "risk_tolerance"
+        ]
+      }
+    },
+    {
+      "approval_gates": [
+        "account_change",
+        "customer_or_supplier_outreach",
+        "payment_or_bank_account_action"
+      ],
+      "client_prompt": "Buddy, help me with existing business improvement and prepare everything for approval before any live action.",
+      "dashboard_status": "ready_for_supervised_client_planning",
+      "deliverables": [
+        "operations_audit",
+        "cost_savings_queue",
+        "automation_backlog",
+        "expansion_scorecard"
+      ],
+      "id": "existing_business_improvement",
+      "label": "Existing Business Improvement",
+      "purpose": "Audit operations, costs, subscriptions, sales funnels, customer support, workflows, automation opportunities, and expansion readiness.",
+      "test_packet": {
+        "expected_outputs": [
+          "operations_audit",
+          "cost_savings_queue",
+          "automation_backlog",
+          "expansion_scorecard"
+        ],
+        "must_not_do": [
+          "spend_money",
+          "submit_forms",
+          "contact_external_parties",
+          "make_legal_tax_claims"
+        ],
+        "sandbox_inputs": [
+          "client_goal",
+          "budget_range",
+          "location_or_market",
+          "timeline",
+          "risk_tolerance"
+        ]
+      }
+    },
+    {
+      "approval_gates": [
+        "sub_agent_creation",
+        "credential_change",
+        "paid_service_usage"
+      ],
+      "client_prompt": "Buddy, help me with custom sub-agent factory and prepare everything for approval before any live action.",
+      "dashboard_status": "ready_for_supervised_client_planning",
+      "deliverables": [
+        "sub_agent_charter",
+        "tool_scope",
+        "approval_policy",
+        "test_packet",
+        "audit_log_plan"
+      ],
+      "id": "custom_sub_agent_factory",
+      "label": "Custom Sub-Agent Factory",
+      "purpose": "Create permissioned client-specific sub-agents with scoped tools, budgets, approval gates, logs, tests, and shutdown controls.",
+      "test_packet": {
+        "expected_outputs": [
+          "sub_agent_charter",
+          "tool_scope",
+          "approval_policy",
+          "test_packet",
+          "audit_log_plan"
+        ],
+        "must_not_do": [
+          "spend_money",
+          "submit_forms",
+          "contact_external_parties",
+          "make_legal_tax_claims"
+        ],
+        "sandbox_inputs": [
+          "client_goal",
+          "budget_range",
+          "location_or_market",
+          "timeline",
+          "risk_tolerance"
+        ]
+      }
+    }
+  ],
+  "source_config": "config/business_launch_expansion_system.json",
+  "sub_agent_roles": [
+    {
+      "can_prepare": [
+        "name research",
+        "entity comparison notes",
+        "registration checklist"
+      ],
+      "cannot_do_without_approval": [
+        "file registrations",
+        "give legal or tax advice"
+      ],
+      "id": "business_formation_agent",
+      "label": "Business Formation Agent"
+    },
+    {
+      "can_prepare": [
+        "domain shortlist",
+        "brand kit",
+        "handle checklist"
+      ],
+      "cannot_do_without_approval": [
+        "buy domains",
+        "claim trademarks"
+      ],
+      "id": "domain_brand_agent",
+      "label": "Domain and Brand Agent"
+    },
+    {
+      "can_prepare": [
+        "listings",
+        "screenshots checklist",
+        "release notes"
+      ],
+      "cannot_do_without_approval": [
+        "submit to stores",
+        "accept paid terms"
+      ],
+      "id": "store_publishing_agent",
+      "label": "Store Publishing Agent"
+    },
+    {
+      "can_prepare": [
+        "location scorecards",
+        "site visit packets",
+        "competitor maps"
+      ],
+      "cannot_do_without_approval": [
+        "contact landlords",
+        "make relocation commitments"
+      ],
+      "id": "location_agent",
+      "label": "Location Agent"
+    },
+    {
+      "can_prepare": [
+        "roles",
+        "job posts",
+        "interview guides"
+      ],
+      "cannot_do_without_approval": [
+        "contact applicants",
+        "make hiring decisions"
+      ],
+      "id": "hiring_agent",
+      "label": "Hiring Agent"
+    },
+    {
+      "can_prepare": [
+        "campaigns",
+        "ads",
+        "content",
+        "CRM flows"
+      ],
+      "cannot_do_without_approval": [
+        "spend ad budget",
+        "send outreach"
+      ],
+      "id": "marketing_agent",
+      "label": "Marketing Agent"
+    },
+    {
+      "can_prepare": [
+        "supplier lists",
+        "RFQs",
+        "terms comparisons"
+      ],
+      "cannot_do_without_approval": [
+        "contact suppliers",
+        "sign terms"
+      ],
+      "id": "supplier_agent",
+      "label": "Supplier Agent"
+    },
+    {
+      "can_prepare": [
+        "route plans",
+        "dispatch workflows",
+        "cost estimates"
+      ],
+      "cannot_do_without_approval": [
+        "book freight",
+        "contact carriers"
+      ],
+      "id": "logistics_agent",
+      "label": "Logistics Agent"
+    },
+    {
+      "can_prepare": [
+        "audits",
+        "automation backlog",
+        "cost savings"
+      ],
+      "cannot_do_without_approval": [
+        "change accounts",
+        "cancel services"
+      ],
+      "id": "operations_agent",
+      "label": "Operations Improvement Agent"
+    },
+    {
+      "can_prepare": [
+        "handoffs",
+        "status updates",
+        "training notes"
+      ],
+      "cannot_do_without_approval": [
+        "promise outcomes",
+        "send external messages"
+      ],
+      "id": "client_success_agent",
+      "label": "Client Success Agent"
+    }
+  ],
+  "summary": {
+    "all_lanes_permissioned": true,
+    "approval_gates_declared": 12,
+    "bot_count": 1248,
+    "client_workflows_ready": 10,
+    "deliverables_declared": 41,
+    "lane_test_packets": 10,
+    "professional_review_blocks": 6,
+    "service_lanes_ready": 10,
+    "sub_agent_roles_ready": 10
+  }
+}
