@@ -485,6 +485,28 @@ describe('GET /api/bot-contract-discovery', () => {
   });
 });
 
+describe('GET /api/ai-data-package-library', () => {
+  test('returns governed AI data package coverage', async () => {
+    const res = await request(app).get('/api/ai-data-package-library');
+
+    expect(res.status).toBe(200);
+    expect(res.body.schema).toBe('dreamco.ai_data_package_library_report.v1');
+    expect(res.body.summary.bot_package_blueprints).toBe(res.body.summary.bot_count);
+    expect(res.body.summary.package_types_ready).toBeGreaterThanOrEqual(12);
+    expect(res.body.summary.quality_gates_ready).toBeGreaterThanOrEqual(12);
+    expect(res.body.summary.langchain_ready).toBe(true);
+    expect(res.body.langchain.javascript_packages).toEqual(
+      expect.arrayContaining(['langchain', '@langchain/core', 'zod']),
+    );
+    expect(res.body.package_types.map((item) => item.id)).toEqual(
+      expect.arrayContaining(['instruction_tuning', 'rag_knowledge_base', 'eval_benchmark', 'agent_simulation']),
+    );
+    expect(res.body.rights_policy.blocked_sources).toEqual(
+      expect.arrayContaining(['secrets', 'copyrighted content without license']),
+    );
+  });
+});
+
 describe('GET /api/github-triage', () => {
   test('returns generated GitHub triage report', async () => {
     const res = await request(app).get('/api/github-triage');

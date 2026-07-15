@@ -577,6 +577,49 @@ const botContractDiscoveryPayload = {
   ],
 };
 
+const aiDataPackageLibraryPayload = {
+  schema: 'dreamco.ai_data_package_library_report.v1',
+  generated_at: '2026-07-15T00:00:00Z',
+  mission: 'Create governed AI data packages that DreamCo can sell or license for model training, fine-tuning, retrieval, benchmarking, evaluation, and agent simulation.',
+  positioning: 'DreamCo sells rights-cleared, quality-scored, metadata-rich AI data packages.',
+  langchain: {
+    required: true,
+    javascript_packages: ['langchain', '@langchain/core', 'zod'],
+    use_cases: ['document loading', 'chunking', 'metadata normalization', 'retrieval datasets'],
+  },
+  summary: {
+    bot_count: 1248,
+    bot_package_blueprints: 1248,
+    package_types_ready: 12,
+    quality_gates_ready: 12,
+    commercial_models_ready: 7,
+    approval_gates: 9,
+    required_rights_metadata: 14,
+    allowed_source_types: 7,
+    blocked_source_types: 8,
+    langchain_ready: true,
+    langchain_packages: 3,
+    sellable_package_samples: 12,
+  },
+  package_types: [
+    { id: 'instruction_tuning', label: 'Instruction Tuning', buyer_use: 'Improve task following and business workflow agents.', formats: ['jsonl', 'parquet'] },
+    { id: 'rag_knowledge_base', label: 'RAG Knowledge Base', buyer_use: 'Power retrieval systems with chunked documents.', formats: ['jsonl', 'markdown'] },
+  ],
+  quality_gates: ['rights_clearance', 'pii_scan', 'deduplication', 'schema_validation'],
+  commercial_models: ['one_time_dataset_license', 'subscription_data_feed'],
+  approval_gates: ['sell_or_license_dataset', 'use_client_data', 'publish_sample_records'],
+  dashboard_sample: [
+    {
+      slug: 'buddy-bot',
+      name: 'Buddy Bot',
+      division: 'CommandCore',
+      package_types: ['instruction_tuning', 'eval_benchmark'],
+      sample_package_name: 'Buddy Bot Training and Eval Data Pack',
+      sample_buyer_use: 'Train, evaluate, or retrieve knowledge for CommandCore workflows.',
+    },
+  ],
+};
+
 const stripeRevenueRescuePayload = {
   schema: 'dreamco.stripe_revenue_rescue.v1',
   generated_at: '2026-07-12T00:00:00Z',
@@ -701,6 +744,7 @@ beforeEach(() => {
     if (url === '/api/ai-agent-model-library') payload = aiAgentModelLibraryPayload;
     if (url === '/api/business-launch-expansion') payload = businessLaunchExpansionPayload;
     if (url === '/api/bot-contract-discovery') payload = botContractDiscoveryPayload;
+    if (url === '/api/ai-data-package-library') payload = aiDataPackageLibraryPayload;
     if (url === '/api/storage-guard') payload = storageGuardPayload;
     if (url === '/api/stripe-revenue-rescue') payload = stripeRevenueRescuePayload;
     if (url === '/api/production-approval-packets') payload = productionApprovalPacketsPayload;
@@ -800,6 +844,12 @@ describe('ActionsPage', () => {
     expect(screen.getByText('Public Procurement')).toBeInTheDocument();
     expect(screen.getByText('Approval wall')).toBeInTheDocument();
     expect(screen.getByText('Sample bot contract scouts')).toBeInTheDocument();
+    await waitFor(() => expect(screen.getByRole('heading', { name: 'Rights-cleared data products for model training and evals' })).toBeInTheDocument());
+    expect(screen.getByText('AI data package library')).toBeInTheDocument();
+    expect(screen.getByText('Sellable data package types')).toBeInTheDocument();
+    expect(screen.getByText('LangChain ready')).toBeInTheDocument();
+    expect(screen.getByText('Instruction Tuning')).toBeInTheDocument();
+    expect(screen.getByText('Buddy Bot Training and Eval Data Pack')).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: 'AI company builder with human trust built in' })).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: 'Tracks what helps you, clients, and bots improve' })).toBeInTheDocument();
     expect(screen.getByText('AI companies')).toBeInTheDocument();

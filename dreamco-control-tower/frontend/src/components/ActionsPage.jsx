@@ -625,6 +625,55 @@ const FALLBACK_BOT_CONTRACT_DISCOVERY = {
   ],
 };
 
+const FALLBACK_AI_DATA_PACKAGE_LIBRARY = {
+  generated_at: null,
+  mission: 'Create governed AI data packages that DreamCo can sell or license for model training, fine-tuning, retrieval, benchmarking, evaluation, and agent simulation.',
+  positioning: 'DreamCo sells rights-cleared, quality-scored, metadata-rich AI data packages.',
+  langchain: {
+    required: true,
+    javascript_packages: ['langchain', '@langchain/core', 'zod'],
+    use_cases: ['document loading', 'chunking', 'metadata normalization', 'retrieval datasets', 'agent test sets'],
+  },
+  summary: {
+    bot_count: 1248,
+    bot_package_blueprints: 1248,
+    package_types_ready: 12,
+    quality_gates_ready: 12,
+    commercial_models_ready: 7,
+    approval_gates: 9,
+    required_rights_metadata: 14,
+    allowed_source_types: 7,
+    blocked_source_types: 8,
+    langchain_ready: true,
+    langchain_packages: 3,
+    sellable_package_samples: 12,
+  },
+  package_types: [
+    { id: 'instruction_tuning', label: 'Instruction Tuning', buyer_use: 'Improve task following, customer support, and business workflow agents.', formats: ['jsonl', 'parquet'] },
+    { id: 'rag_knowledge_base', label: 'RAG Knowledge Base', buyer_use: 'Power retrieval systems with chunked, cited, metadata-rich documents.', formats: ['jsonl', 'markdown'] },
+    { id: 'eval_benchmark', label: 'Eval Benchmark', buyer_use: 'Test models, agents, tools, safety, and domain performance.', formats: ['jsonl', 'csv'] },
+    { id: 'agent_simulation', label: 'Agent Simulation', buyer_use: 'Train and test agents on multi-step business workflows.', formats: ['jsonl', 'yaml'] },
+  ],
+  quality_gates: ['rights_clearance', 'pii_scan', 'deduplication', 'schema_validation', 'source_traceability', 'data_card_complete'],
+  commercial_models: ['one_time_dataset_license', 'subscription_data_feed', 'custom_dataset_build', 'evaluation_benchmark_license'],
+  approval_gates: ['sell_or_license_dataset', 'use_client_data', 'include_personal_data', 'publish_sample_records', 'share_buyer_preview'],
+  top_package_types: [
+    { package_type: 'instruction_tuning', bot_count: 1248 },
+    { package_type: 'eval_benchmark', bot_count: 1248 },
+    { package_type: 'agent_simulation', bot_count: 1248 },
+  ],
+  dashboard_sample: [
+    {
+      slug: 'buddy-bot',
+      name: 'Buddy Bot',
+      division: 'CommandCore',
+      package_types: ['instruction_tuning', 'eval_benchmark', 'agent_simulation'],
+      sample_package_name: 'Buddy Bot Training and Eval Data Pack',
+      sample_buyer_use: 'Train, evaluate, or retrieve knowledge for CommandCore workflows.',
+    },
+  ],
+};
+
 const FALLBACK_STRIPE_REVENUE_RESCUE = {
   generated_at: null,
   summary: {
@@ -1449,6 +1498,8 @@ export default function ActionsPage({
   const [businessLaunchExpansionStatus, setBusinessLaunchExpansionStatus] = useState('loading');
   const [botContractDiscovery, setBotContractDiscovery] = useState(null);
   const [botContractDiscoveryStatus, setBotContractDiscoveryStatus] = useState('loading');
+  const [aiDataPackageLibrary, setAiDataPackageLibrary] = useState(null);
+  const [aiDataPackageLibraryStatus, setAiDataPackageLibraryStatus] = useState('loading');
   const [storageGuard, setStorageGuard] = useState(null);
   const [storageGuardStatus, setStorageGuardStatus] = useState('loading');
   const [stripeRevenueRescue, setStripeRevenueRescue] = useState(null);
@@ -1579,6 +1630,15 @@ export default function ActionsPage({
   }, []);
 
   useEffect(() => {
+    fetchFirstJson(['/api/ai-data-package-library'])
+      .then((data) => {
+        setAiDataPackageLibrary(data);
+        setAiDataPackageLibraryStatus('live');
+      })
+      .catch(() => setAiDataPackageLibraryStatus('generated fallback'));
+  }, []);
+
+  useEffect(() => {
     fetchFirstJson(['/api/storage-guard'])
       .then((data) => {
         setStorageGuard(data);
@@ -1640,6 +1700,7 @@ export default function ActionsPage({
   const modelLibrary = aiAgentModelLibrary ?? FALLBACK_AI_AGENT_MODEL_LIBRARY;
   const businessLaunch = businessLaunchExpansion ?? FALLBACK_BUSINESS_LAUNCH_EXPANSION;
   const contractDiscovery = botContractDiscovery ?? FALLBACK_BOT_CONTRACT_DISCOVERY;
+  const dataPackageLibrary = aiDataPackageLibrary ?? FALLBACK_AI_DATA_PACKAGE_LIBRARY;
   const storage = storageGuard ?? FALLBACK_STORAGE_GUARD;
   const stripeRescue = stripeRevenueRescue ?? FALLBACK_STRIPE_REVENUE_RESCUE;
   const approvalPackets = productionApprovalPackets ?? FALLBACK_PRODUCTION_APPROVAL_PACKETS;
@@ -1657,6 +1718,7 @@ export default function ActionsPage({
   const modelLibrarySummary = modelLibrary.summary ?? FALLBACK_AI_AGENT_MODEL_LIBRARY.summary;
   const businessLaunchSummary = businessLaunch.summary ?? FALLBACK_BUSINESS_LAUNCH_EXPANSION.summary;
   const contractDiscoverySummary = contractDiscovery.summary ?? FALLBACK_BOT_CONTRACT_DISCOVERY.summary;
+  const dataPackageSummary = dataPackageLibrary.summary ?? FALLBACK_AI_DATA_PACKAGE_LIBRARY.summary;
   const storageSummary = storage.summary ?? FALLBACK_STORAGE_GUARD.summary;
   const stripeRescueSummary = stripeRescue.summary ?? FALLBACK_STRIPE_REVENUE_RESCUE.summary;
   const approvalPacketSummary = approvalPackets.summary ?? FALLBACK_PRODUCTION_APPROVAL_PACKETS.summary;
@@ -2992,6 +3054,114 @@ export default function ActionsPage({
                 <p className="mt-2 text-xs leading-5 text-slate-400">{packet.sample_search_prompt}</p>
                 <p className="mt-3 text-xs leading-5 text-dreamco-accent">
                   {(packet.opportunity_types ?? []).slice(0, 3).map(formatLabel).join(', ')}
+                </p>
+              </article>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section aria-labelledby="ai-data-package-library-heading" className="border border-slate-700 bg-slate-950 p-5">
+        <div className="flex flex-wrap items-start justify-between gap-3">
+          <div>
+            <p className="text-xs font-bold uppercase text-dreamco-accent">AI data package library</p>
+            <h3 id="ai-data-package-library-heading" className="mt-1 text-lg font-semibold text-white">
+              Rights-cleared data products for model training and evals
+            </h3>
+            <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-400">{dataPackageLibrary.mission}</p>
+          </div>
+          <span className="rounded-full border border-slate-700 px-3 py-1 text-xs font-semibold text-slate-400">
+            {aiDataPackageLibraryStatus} · {formatDateTime(dataPackageLibrary.generated_at)}
+          </span>
+        </div>
+
+        <div className="mt-5 grid grid-cols-2 gap-px overflow-hidden border border-slate-800 bg-slate-800 lg:grid-cols-4 xl:grid-cols-8">
+          {[
+            ['Bot blueprints', dataPackageSummary.bot_package_blueprints],
+            ['Package types', dataPackageSummary.package_types_ready],
+            ['Quality gates', dataPackageSummary.quality_gates_ready],
+            ['Commercial models', dataPackageSummary.commercial_models_ready],
+            ['Rights fields', dataPackageSummary.required_rights_metadata],
+            ['Blocked sources', dataPackageSummary.blocked_source_types],
+            ['LangChain packages', dataPackageSummary.langchain_packages],
+            ['Samples ready', dataPackageSummary.sellable_package_samples],
+          ].map(([label, value]) => (
+            <div key={label} className="bg-slate-900 p-4">
+              <p className="text-xl font-black text-white">{formatNumber(value)}</p>
+              <p className="mt-1 text-xs uppercase text-slate-500">{label}</p>
+            </div>
+          ))}
+        </div>
+
+        <div className="mt-5 grid gap-5 xl:grid-cols-[minmax(0,1fr)_24rem]">
+          <div className="border border-slate-800 bg-slate-900 p-4">
+            <h4 className="text-sm font-semibold text-white">Sellable data package types</h4>
+            <div className="mt-3 grid gap-3 md:grid-cols-2">
+              {(dataPackageLibrary.package_types ?? []).slice(0, 8).map((item) => (
+                <article key={item.id} className="border border-slate-800 bg-slate-950 p-3">
+                  <h5 className="text-sm font-semibold text-white">{item.label}</h5>
+                  <p className="mt-2 text-xs leading-5 text-slate-400">{item.buyer_use}</p>
+                  <p className="mt-2 text-xs leading-5 text-dreamco-accent">
+                    Formats: {(item.formats ?? []).join(', ')}
+                  </p>
+                </article>
+              ))}
+            </div>
+          </div>
+
+          <aside className="space-y-5">
+            <div className="border border-emerald-900/70 bg-emerald-950/20 p-4">
+              <h4 className="text-sm font-semibold text-emerald-100">LangChain ready</h4>
+              <p className="mt-3 text-xs leading-5 text-emerald-100/80">
+                Packages: {(dataPackageLibrary.langchain?.javascript_packages ?? []).join(', ')}
+              </p>
+              <div className="mt-3 flex flex-wrap gap-2">
+                {(dataPackageLibrary.langchain?.use_cases ?? []).slice(0, 6).map((useCase) => (
+                  <span key={useCase} className="rounded-full border border-emerald-500/30 px-2 py-1 text-[11px] text-emerald-100">
+                    {useCase}
+                  </span>
+                ))}
+              </div>
+            </div>
+
+            <div className="border border-amber-900/70 bg-amber-950/20 p-4">
+              <h4 className="text-sm font-semibold text-amber-100">Approval gates</h4>
+              <div className="mt-3 space-y-2">
+                {(dataPackageLibrary.approval_gates ?? []).slice(0, 8).map((gate) => (
+                  <p key={gate} className="border-l-2 border-amber-400 pl-3 text-xs leading-5 text-amber-100/80">
+                    {formatLabel(gate)}
+                  </p>
+                ))}
+              </div>
+            </div>
+
+            <div className="border border-slate-800 bg-slate-900 p-4">
+              <h4 className="text-sm font-semibold text-white">Quality gates</h4>
+              <div className="mt-3 flex flex-wrap gap-2">
+                {(dataPackageLibrary.quality_gates ?? []).slice(0, 10).map((gate) => (
+                  <span key={gate} className="rounded-full border border-slate-700 px-2 py-1 text-[11px] text-slate-300">
+                    {formatLabel(gate)}
+                  </span>
+                ))}
+              </div>
+            </div>
+          </aside>
+        </div>
+
+        <div className="mt-5 border border-slate-800 bg-slate-900 p-4">
+          <h4 className="text-sm font-semibold text-white">Sample bot data products</h4>
+          <div className="mt-3 grid gap-3 md:grid-cols-2 xl:grid-cols-4">
+            {(dataPackageLibrary.dashboard_sample ?? []).slice(0, 8).map((packet) => (
+              <article key={packet.slug} className="border border-slate-800 bg-slate-950 p-3">
+                <div className="flex flex-wrap items-start justify-between gap-2">
+                  <h5 className="text-sm font-semibold text-white">{packet.sample_package_name}</h5>
+                  <span className="rounded-full border border-slate-700 px-2 py-0.5 text-[11px] font-semibold uppercase text-slate-300">
+                    {packet.division}
+                  </span>
+                </div>
+                <p className="mt-2 text-xs leading-5 text-slate-400">{packet.sample_buyer_use}</p>
+                <p className="mt-3 text-xs leading-5 text-dreamco-accent">
+                  {(packet.package_types ?? []).slice(0, 3).map(formatLabel).join(', ')}
                 </p>
               </article>
             ))}

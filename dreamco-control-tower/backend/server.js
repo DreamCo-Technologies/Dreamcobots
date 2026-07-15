@@ -61,6 +61,10 @@ const BOT_CONTRACT_DISCOVERY_REPORT_FILE = path.join(
   __dirname,
   '../../reports/bot_contract_discovery_report.json',
 );
+const AI_DATA_PACKAGE_LIBRARY_REPORT_FILE = path.join(
+  __dirname,
+  '../../reports/ai_data_package_library_report.json',
+);
 const GITHUB_TRIAGE_REPORT_FILE = path.join(
   __dirname,
   '../../reports/github_triage_report.json',
@@ -245,6 +249,13 @@ function readBotContractDiscoveryReport() {
     return null;
   }
   return JSON.parse(fs.readFileSync(BOT_CONTRACT_DISCOVERY_REPORT_FILE, 'utf8'));
+}
+
+function readAiDataPackageLibraryReport() {
+  if (!fs.existsSync(AI_DATA_PACKAGE_LIBRARY_REPORT_FILE)) {
+    return null;
+  }
+  return JSON.parse(fs.readFileSync(AI_DATA_PACKAGE_LIBRARY_REPORT_FILE, 'utf8'));
 }
 
 function readGitHubTriageReport() {
@@ -740,6 +751,17 @@ app.get('/api/bot-contract-discovery', rateLimiter, (_req, res) => {
   const report = readBotContractDiscoveryReport();
   if (!report) {
     return res.status(503).json({ error: 'bot contract discovery report not found' });
+  }
+  return res.json(report);
+});
+
+// ---------------------------------------------------------------------------
+// GET /api/ai-data-package-library — rights-cleared data products for AI buyers
+// ---------------------------------------------------------------------------
+app.get('/api/ai-data-package-library', rateLimiter, (_req, res) => {
+  const report = readAiDataPackageLibraryReport();
+  if (!report) {
+    return res.status(503).json({ error: 'AI data package library report not found' });
   }
   return res.json(report);
 });
