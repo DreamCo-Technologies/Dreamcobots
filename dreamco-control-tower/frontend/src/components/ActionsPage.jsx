@@ -410,6 +410,38 @@ const FALLBACK_BOT_FOUNDER_APP_STORE = {
   approval_gates: ['customer_outreach', 'ad_spend', 'public_deployment', 'payment_collection', 'money_movement', 'app_store_publish'],
 };
 
+const FALLBACK_24_HOUR_SCALING = {
+  generated_at: null,
+  mission: 'Keep DreamCo improving around the clock through safe 24-hour research, build, test, app-store, and approval cycles.',
+  default_mode: 'continuous_supervised_scaling',
+  summary: {
+    readiness_score: 0,
+    cycles_defined: 6,
+    safe_automation_steps: 24,
+    cycle_approval_steps: 28,
+    always_blocked_gates: 11,
+    scale_lanes: 12,
+    bot_founder_packets: 1248,
+    app_store_categories: 12,
+    app_foundry_lanes: 8,
+    storage_ready: true,
+    min_replicas: 2,
+    max_replicas: 20,
+    self_healing_enabled: true,
+  },
+  daily_cycles: [
+    { id: 'market_research_cycle', window: '00:00-03:00', purpose: 'Study competitors, app-store ideas, customer problems, pricing, reviews, and market gaps.', safe_automation: ['public_source_queue', 'competitor_notes'], approval_required: ['customer_contact'] },
+    { id: 'build_cycle', window: '03:00-07:00', purpose: 'Turn top opportunities into app concepts, code plans, sandbox prototypes, and pull-request-safe tasks.', safe_automation: ['app_concept_generation', 'mvp_scope'], approval_required: ['production_deploy'] },
+    { id: 'test_cycle', window: '07:00-11:00', purpose: 'Run syntax checks, smoke tests, API sandbox tests, workflow generators, and dashboard health checks.', safe_automation: ['sandbox_tests', 'report_refresh'], approval_required: ['live_api_mutation'] },
+    { id: 'package_cycle', window: '11:00-15:00', purpose: 'Package app-store listings, prospectus pages, demo scripts, mockups, and pricing drafts.', safe_automation: ['listing_drafts', 'pricing_options'], approval_required: ['public_publish'] },
+    { id: 'growth_cycle', window: '15:00-19:00', purpose: 'Prepare ethical marketing, customer discovery, launch experiments, SEO briefs, and outreach drafts.', safe_automation: ['content_drafts', 'lead_scoring'], approval_required: ['ad_spend'] },
+    { id: 'review_cycle', window: '19:00-24:00', purpose: 'Summarize what worked, what failed, what needs approval, and what should ship next.', safe_automation: ['daily_scorecard', 'approval_queue'], approval_required: ['merge'] },
+  ],
+  scale_lanes: ['bot_founder_packets', 'app_store_listing_drafts', 'sandbox_bootcamps', 'competitor_research', 'customer_discovery', 'marketing_drafts'],
+  always_blocked_without_owner_approval: ['customer_outreach', 'ad_spend', 'money_movement', 'public_deployment', 'app_store_publish', 'credential_change'],
+  next_actions: ['Connect this report to a scheduled workflow when recurring automation is approved.'],
+};
+
 const FALLBACK_STRIPE_REVENUE_RESCUE = {
   generated_at: null,
   summary: {
@@ -1224,6 +1256,8 @@ export default function ActionsPage({
   const [appFoundryStatus, setAppFoundryStatus] = useState('loading');
   const [botFounderAppStore, setBotFounderAppStore] = useState(null);
   const [botFounderAppStoreStatus, setBotFounderAppStoreStatus] = useState('loading');
+  const [dailyScaling, setDailyScaling] = useState(null);
+  const [dailyScalingStatus, setDailyScalingStatus] = useState('loading');
   const [storageGuard, setStorageGuard] = useState(null);
   const [storageGuardStatus, setStorageGuardStatus] = useState('loading');
   const [stripeRevenueRescue, setStripeRevenueRescue] = useState(null);
@@ -1309,6 +1343,15 @@ export default function ActionsPage({
   }, []);
 
   useEffect(() => {
+    fetchFirstJson(['/api/24-hour-scaling'])
+      .then((data) => {
+        setDailyScaling(data);
+        setDailyScalingStatus('live');
+      })
+      .catch(() => setDailyScalingStatus('generated fallback'));
+  }, []);
+
+  useEffect(() => {
     fetchFirstJson(['/api/storage-guard'])
       .then((data) => {
         setStorageGuard(data);
@@ -1365,6 +1408,7 @@ export default function ActionsPage({
   const readiness = releaseReadiness ?? FALLBACK_RELEASE_READINESS;
   const foundry = appFoundry ?? FALLBACK_APP_FOUNDRY;
   const botFounderStore = botFounderAppStore ?? FALLBACK_BOT_FOUNDER_APP_STORE;
+  const scaling24 = dailyScaling ?? FALLBACK_24_HOUR_SCALING;
   const storage = storageGuard ?? FALLBACK_STORAGE_GUARD;
   const stripeRescue = stripeRevenueRescue ?? FALLBACK_STRIPE_REVENUE_RESCUE;
   const approvalPackets = productionApprovalPackets ?? FALLBACK_PRODUCTION_APPROVAL_PACKETS;
@@ -1377,6 +1421,7 @@ export default function ActionsPage({
   const readinessSummary = readiness.summary ?? FALLBACK_RELEASE_READINESS.summary;
   const foundrySummary = foundry.summary ?? FALLBACK_APP_FOUNDRY.summary;
   const botFounderSummary = botFounderStore.summary ?? FALLBACK_BOT_FOUNDER_APP_STORE.summary;
+  const scaling24Summary = scaling24.summary ?? FALLBACK_24_HOUR_SCALING.summary;
   const storageSummary = storage.summary ?? FALLBACK_STORAGE_GUARD.summary;
   const stripeRescueSummary = stripeRescue.summary ?? FALLBACK_STRIPE_REVENUE_RESCUE.summary;
   const approvalPacketSummary = approvalPackets.summary ?? FALLBACK_PRODUCTION_APPROVAL_PACKETS.summary;
@@ -2217,6 +2262,85 @@ export default function ActionsPage({
               </article>
             ))}
           </div>
+        </div>
+      </section>
+
+      <section aria-labelledby="scaling-24-heading" className={`relative overflow-hidden p-5 ${ROYAL_PANEL_CLASS}`}>
+        <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-amber-300/70 to-transparent" />
+        <div className="flex flex-wrap items-start justify-between gap-3">
+          <div>
+            <p className="text-xs font-bold uppercase tracking-[0.18em] text-amber-200">24-hour scaling system</p>
+            <h3 id="scaling-24-heading" className={`mt-1 text-lg font-semibold ${ROYAL_TEXT_CLASS}`}>
+              Around-the-clock research, build, test, package, growth, and review cycles
+            </h3>
+            <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-300">{scaling24.mission}</p>
+          </div>
+          <span className="rounded-full border border-amber-400/50 bg-amber-950/30 px-3 py-1 text-xs font-semibold text-amber-200">
+            {dailyScalingStatus} · {formatDateTime(scaling24.generated_at)}
+          </span>
+        </div>
+
+        <div className="mt-5 grid grid-cols-2 gap-px overflow-hidden border border-amber-500/20 bg-amber-500/20 lg:grid-cols-4 xl:grid-cols-8">
+          {[
+            ['Readiness', scaling24Summary.readiness_score],
+            ['Cycles', scaling24Summary.cycles_defined],
+            ['Safe steps', scaling24Summary.safe_automation_steps],
+            ['Approval steps', scaling24Summary.cycle_approval_steps],
+            ['Blocked gates', scaling24Summary.always_blocked_gates],
+            ['Scale lanes', scaling24Summary.scale_lanes],
+            ['Min replicas', scaling24Summary.min_replicas],
+            ['Max replicas', scaling24Summary.max_replicas],
+          ].map(([label, value]) => (
+            <div key={label} className="bg-slate-950/90 p-4">
+              <p className="text-xl font-black text-amber-100">{formatNumber(value)}</p>
+              <p className="mt-1 text-xs uppercase tracking-wide text-slate-500">{label}</p>
+            </div>
+          ))}
+        </div>
+
+        <div className="mt-5 grid gap-px overflow-hidden border border-slate-800 bg-slate-800 md:grid-cols-2 xl:grid-cols-3">
+          {(scaling24.daily_cycles ?? []).map((cycle) => (
+            <article key={cycle.id} className="min-h-52 bg-slate-950 p-4">
+              <div className="flex items-center justify-between gap-3">
+                <h4 className="text-sm font-semibold text-white">{formatLabel(cycle.id)}</h4>
+                <span className="font-mono text-xs text-dreamco-accent">{cycle.window}</span>
+              </div>
+              <p className="mt-3 text-xs leading-5 text-slate-400">{cycle.purpose}</p>
+              <div className="mt-4 flex flex-wrap gap-2">
+                {(cycle.safe_automation ?? []).slice(0, 3).map((item) => (
+                  <span key={item} className="rounded-full border border-emerald-500/30 px-2 py-1 text-[11px] text-emerald-100">
+                    {formatLabel(item)}
+                  </span>
+                ))}
+              </div>
+              <p className="mt-4 border-l-2 border-amber-300/70 pl-3 text-xs leading-5 text-amber-100/80">
+                Approval: {(cycle.approval_required ?? []).slice(0, 3).map(formatLabel).join(', ')}
+              </p>
+            </article>
+          ))}
+        </div>
+
+        <div className="mt-5 grid gap-5 xl:grid-cols-[minmax(0,1fr)_24rem]">
+          <div className="border border-slate-800 bg-slate-950 p-4">
+            <h4 className="text-sm font-semibold text-white">Scale lanes</h4>
+            <div className="mt-3 flex flex-wrap gap-2">
+              {(scaling24.scale_lanes ?? []).map((lane) => (
+                <span key={lane} className="rounded-full border border-slate-700 px-3 py-1 text-xs text-slate-300">
+                  {formatLabel(lane)}
+                </span>
+              ))}
+            </div>
+          </div>
+          <aside className="border border-amber-900/70 bg-amber-950/20 p-4">
+            <h4 className="text-sm font-semibold text-amber-100">Always blocked without approval</h4>
+            <div className="mt-3 space-y-2">
+              {(scaling24.always_blocked_without_owner_approval ?? []).slice(0, 8).map((gate) => (
+                <p key={gate} className="border-l-2 border-amber-400 pl-3 text-xs leading-5 text-amber-100/80">
+                  {formatLabel(gate)}
+                </p>
+              ))}
+            </div>
+          </aside>
         </div>
       </section>
 

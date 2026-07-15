@@ -1,0 +1,170 @@
+{
+  "always_blocked_without_owner_approval": [
+    "customer_outreach",
+    "ad_spend",
+    "money_movement",
+    "trading_or_investment_actions",
+    "public_deployment",
+    "app_store_publish",
+    "payment_link_publish",
+    "credential_change",
+    "third_party_account_change",
+    "legal_medical_financial_claims",
+    "destructive_repository_action"
+  ],
+  "daily_cycles": [
+    {
+      "approval_required": [
+        "paid_research_tools",
+        "private_data_collection",
+        "customer_contact"
+      ],
+      "id": "market_research_cycle",
+      "purpose": "Study public competitors, app-store ideas, customer problems, pricing, reviews, and market gaps.",
+      "safe_automation": [
+        "public_source_queue",
+        "competitor_notes",
+        "customer_problem_drafts",
+        "source_url_logging"
+      ],
+      "window": "00:00-03:00"
+    },
+    {
+      "approval_required": [
+        "production_deploy",
+        "credential_change",
+        "third_party_account_change"
+      ],
+      "id": "build_cycle",
+      "purpose": "Turn top opportunities into app concepts, code plans, sandbox prototypes, bot-founder packets, and pull-request-safe tasks.",
+      "safe_automation": [
+        "app_concept_generation",
+        "mvp_scope",
+        "sandbox_fixture_generation",
+        "local_first_storage_plan"
+      ],
+      "window": "03:00-07:00"
+    },
+    {
+      "approval_required": [
+        "live_api_mutation",
+        "real_customer_data_test",
+        "destructive_action"
+      ],
+      "id": "test_cycle",
+      "purpose": "Run syntax checks, generated bot smoke tests, API sandbox tests, workflow generators, and dashboard health checks.",
+      "safe_automation": [
+        "json_python_javascript_checks",
+        "sandbox_tests",
+        "smoke_tests",
+        "report_refresh"
+      ],
+      "window": "07:00-11:00"
+    },
+    {
+      "approval_required": [
+        "public_publish",
+        "price_change_live",
+        "payment_link_publish"
+      ],
+      "id": "package_cycle",
+      "purpose": "Package app-store listings, prospectus pages, demo scripts, screenshots or mockups, and pricing drafts.",
+      "safe_automation": [
+        "listing_drafts",
+        "prospectus_updates",
+        "demo_script_drafts",
+        "pricing_options"
+      ],
+      "window": "11:00-15:00"
+    },
+    {
+      "approval_required": [
+        "email_send",
+        "sms_send",
+        "phone_call",
+        "social_posting",
+        "ad_spend"
+      ],
+      "id": "growth_cycle",
+      "purpose": "Prepare ethical marketing, customer discovery, launch experiments, SEO briefs, and outreach drafts.",
+      "safe_automation": [
+        "audience_segments",
+        "content_drafts",
+        "outreach_drafts",
+        "lead_scoring"
+      ],
+      "window": "15:00-19:00"
+    },
+    {
+      "approval_required": [
+        "merge",
+        "deploy",
+        "spend_money",
+        "move_money",
+        "customer_impacting_action"
+      ],
+      "id": "review_cycle",
+      "purpose": "Summarize what worked, what failed, what needs approval, what should be rebuilt, and what should be shipped next.",
+      "safe_automation": [
+        "daily_scorecard",
+        "failure_summary",
+        "approval_queue",
+        "next_best_tasks"
+      ],
+      "window": "19:00-24:00"
+    }
+  ],
+  "default_mode": "continuous_supervised_scaling",
+  "generated_at": "2026-07-15T21:19:39.911152+00:00",
+  "infrastructure_policy": {
+    "cooldown_seconds": 300,
+    "cpu_target_percent": 65,
+    "max_replicas": 20,
+    "memory_target_percent": 75,
+    "min_replicas": 2,
+    "queue_depth_target": 100,
+    "self_healing": true
+  },
+  "mission": "Keep DreamCo improving around the clock through safe 24-hour research, build, test, app-store, and approval cycles.",
+  "next_actions": [
+    "Connect this report to a scheduled GitHub workflow when the owner approves recurring automation.",
+    "Keep cycles in report/draft mode until production credentials, budgets, and approval gates are configured.",
+    "Use the review cycle to choose one app-store listing and one bot build to ship next."
+  ],
+  "scale_lanes": [
+    "bot_founder_packets",
+    "app_store_listing_drafts",
+    "sandbox_bootcamps",
+    "api_contract_tests",
+    "workflow_generators",
+    "competitor_research",
+    "customer_discovery",
+    "marketing_drafts",
+    "stripe_revenue_rescue",
+    "github_actions_debugging",
+    "pull_request_cleanup",
+    "storage_compaction"
+  ],
+  "schema": "dreamco.24_hour_scaling_report.v1",
+  "source_config": "config/dreamco_24_hour_scaling.json",
+  "sources": {
+    "app_foundry": "reports/app_foundry_readiness.json",
+    "bot_founder_app_store": "reports/bot_founder_app_store_report.json",
+    "storage_guard": "reports/storage_guard_report.json"
+  },
+  "summary": {
+    "always_blocked_gates": 11,
+    "app_foundry_lanes": 8,
+    "app_store_categories": 12,
+    "bot_founder_packets": 1248,
+    "cycle_approval_steps": 22,
+    "cycles_defined": 6,
+    "max_replicas": 20,
+    "min_replicas": 2,
+    "readiness_score": 100,
+    "safe_automation_steps": 24,
+    "scale_lanes": 12,
+    "self_healing_enabled": true,
+    "storage_ready": true
+  }
+}

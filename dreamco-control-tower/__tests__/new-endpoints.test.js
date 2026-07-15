@@ -392,6 +392,23 @@ describe('GET /api/bot-founder-app-store', () => {
   });
 });
 
+describe('GET /api/24-hour-scaling', () => {
+  test('returns safe 24-hour scaling readiness', async () => {
+    const res = await request(app).get('/api/24-hour-scaling');
+
+    expect(res.status).toBe(200);
+    expect(res.body.schema).toBe('dreamco.24_hour_scaling_report.v1');
+    expect(res.body.summary.cycles_defined).toBe(6);
+    expect(res.body.summary.max_replicas).toBeGreaterThanOrEqual(20);
+    expect(res.body.summary.self_healing_enabled).toBe(true);
+    expect(res.body.daily_cycles.map((cycle) => cycle.id)).toEqual(
+      expect.arrayContaining(['market_research_cycle', 'build_cycle', 'test_cycle', 'growth_cycle']),
+    );
+    expect(res.body.always_blocked_without_owner_approval).toContain('money_movement');
+    expect(res.body.always_blocked_without_owner_approval).toContain('customer_outreach');
+  });
+});
+
 describe('GET /api/github-triage', () => {
   test('returns generated GitHub triage report', async () => {
     const res = await request(app).get('/api/github-triage');

@@ -41,6 +41,10 @@ const BOT_FOUNDER_APP_STORE_REPORT_FILE = path.join(
   __dirname,
   '../../reports/bot_founder_app_store_report.json',
 );
+const DREAMCO_24_HOUR_SCALING_REPORT_FILE = path.join(
+  __dirname,
+  '../../reports/dreamco_24_hour_scaling_report.json',
+);
 const GITHUB_TRIAGE_REPORT_FILE = path.join(
   __dirname,
   '../../reports/github_triage_report.json',
@@ -190,6 +194,13 @@ function readBotFounderAppStoreReport() {
     return null;
   }
   return JSON.parse(fs.readFileSync(BOT_FOUNDER_APP_STORE_REPORT_FILE, 'utf8'));
+}
+
+function readDreamCo24HourScalingReport() {
+  if (!fs.existsSync(DREAMCO_24_HOUR_SCALING_REPORT_FILE)) {
+    return null;
+  }
+  return JSON.parse(fs.readFileSync(DREAMCO_24_HOUR_SCALING_REPORT_FILE, 'utf8'));
 }
 
 function readGitHubTriageReport() {
@@ -630,6 +641,17 @@ app.get('/api/bot-founder-app-store', rateLimiter, (_req, res) => {
   const report = readBotFounderAppStoreReport();
   if (!report) {
     return res.status(503).json({ error: 'bot founder app store report not found' });
+  }
+  return res.json(report);
+});
+
+// ---------------------------------------------------------------------------
+// GET /api/24-hour-scaling — safe always-on scaling cycle readiness
+// ---------------------------------------------------------------------------
+app.get('/api/24-hour-scaling', rateLimiter, (_req, res) => {
+  const report = readDreamCo24HourScalingReport();
+  if (!report) {
+    return res.status(503).json({ error: '24-hour scaling report not found' });
   }
   return res.json(report);
 });

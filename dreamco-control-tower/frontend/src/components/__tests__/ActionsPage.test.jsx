@@ -390,6 +390,36 @@ const botFounderAppStorePayload = {
   approval_gates: ['customer_outreach', 'ad_spend', 'public_deployment', 'payment_collection', 'money_movement', 'app_store_publish'],
 };
 
+const scaling24Payload = {
+  schema: 'dreamco.24_hour_scaling_report.v1',
+  generated_at: '2026-07-15T00:00:00Z',
+  mission: 'Keep DreamCo improving around the clock through safe 24-hour research, build, test, app-store, and approval cycles.',
+  default_mode: 'continuous_supervised_scaling',
+  summary: {
+    readiness_score: 100,
+    cycles_defined: 6,
+    safe_automation_steps: 24,
+    cycle_approval_steps: 28,
+    always_blocked_gates: 11,
+    scale_lanes: 12,
+    bot_founder_packets: 1248,
+    app_store_categories: 12,
+    app_foundry_lanes: 8,
+    storage_ready: true,
+    min_replicas: 2,
+    max_replicas: 20,
+    self_healing_enabled: true,
+  },
+  daily_cycles: [
+    { id: 'market_research_cycle', window: '00:00-03:00', purpose: 'Study competitors, app-store ideas, customer problems, pricing, reviews, and market gaps.', safe_automation: ['public_source_queue', 'competitor_notes'], approval_required: ['customer_contact'] },
+    { id: 'build_cycle', window: '03:00-07:00', purpose: 'Turn top opportunities into app concepts and pull-request-safe tasks.', safe_automation: ['app_concept_generation', 'mvp_scope'], approval_required: ['production_deploy'] },
+    { id: 'test_cycle', window: '07:00-11:00', purpose: 'Run syntax checks, smoke tests, API sandbox tests, and dashboard health checks.', safe_automation: ['sandbox_tests', 'report_refresh'], approval_required: ['live_api_mutation'] },
+    { id: 'growth_cycle', window: '15:00-19:00', purpose: 'Prepare ethical marketing, customer discovery, launch experiments, SEO briefs, and outreach drafts.', safe_automation: ['content_drafts', 'lead_scoring'], approval_required: ['ad_spend'] },
+  ],
+  scale_lanes: ['bot_founder_packets', 'app_store_listing_drafts', 'sandbox_bootcamps', 'competitor_research'],
+  always_blocked_without_owner_approval: ['customer_outreach', 'ad_spend', 'money_movement', 'public_deployment', 'app_store_publish'],
+};
+
 const stripeRevenueRescuePayload = {
   schema: 'dreamco.stripe_revenue_rescue.v1',
   generated_at: '2026-07-12T00:00:00Z',
@@ -509,6 +539,7 @@ beforeEach(() => {
     if (url === '/api/release-readiness') payload = releaseReadinessPayload;
     if (url === '/api/app-foundry') payload = appFoundryPayload;
     if (url === '/api/bot-founder-app-store') payload = botFounderAppStorePayload;
+    if (url === '/api/24-hour-scaling') payload = scaling24Payload;
     if (url === '/api/storage-guard') payload = storageGuardPayload;
     if (url === '/api/stripe-revenue-rescue') payload = stripeRevenueRescuePayload;
     if (url === '/api/production-approval-packets') payload = productionApprovalPacketsPayload;
@@ -577,6 +608,11 @@ describe('ActionsPage', () => {
     expect(screen.getByText('App Builder Lab')).toBeInTheDocument();
     expect(screen.getByText('Sample bot-owned app-store packets')).toBeInTheDocument();
     expect(screen.getByText('A supervised command center for safe AI company building.')).toBeInTheDocument();
+    await waitFor(() => expect(screen.getByRole('heading', { name: 'Around-the-clock research, build, test, package, growth, and review cycles' })).toBeInTheDocument());
+    expect(screen.getByText('24-hour scaling system')).toBeInTheDocument();
+    expect(screen.getByText('Market Research Cycle')).toBeInTheDocument();
+    expect(screen.getByText('Build Cycle')).toBeInTheDocument();
+    expect(screen.getByText('Always blocked without approval')).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: 'AI company builder with human trust built in' })).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: 'Tracks what helps you, clients, and bots improve' })).toBeInTheDocument();
     expect(screen.getByText('AI companies')).toBeInTheDocument();
