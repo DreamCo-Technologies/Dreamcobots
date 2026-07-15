@@ -331,6 +331,31 @@ const FALLBACK_STRIPE_REVENUE_RESCUE = {
   safety_note: 'Secrets stay in environment variables or secure host secrets, never in the repository.',
 };
 
+const FALLBACK_PRODUCTION_APPROVAL_PACKETS = {
+  generated_at: null,
+  summary: {
+    approval_packets: 120,
+    live_approved: 0,
+    approval_required: 120,
+    smoke_tests_passed: 1248,
+    smoke_tests_failed: 0,
+    sandbox_safe_production_candidates: 120,
+    full_live_production_ready_after_approval: 0,
+  },
+  required_buddy_money_request: 'Buddy, help me make money with this bot. I approve the listed live actions and understand the risks.',
+  risk_breakdown: {
+    money_movement: 0,
+    financial_or_trading: 0,
+    security_or_defense: 0,
+  },
+  packets: [],
+  next_actions: [
+    'Review approval-required bots by risk category before enabling live actions.',
+    'Approve only the specific live actions each bot is allowed to perform.',
+    'Keep risky external actions blocked until owner approval is recorded.',
+  ],
+};
+
 const FALLBACK_BUDDY_OPS_QUEUE = {
   schema: 'dreamco.buddy_ops_queue.v1',
   count: 0,
@@ -1092,6 +1117,8 @@ export default function ActionsPage({
   const [storageGuardStatus, setStorageGuardStatus] = useState('loading');
   const [stripeRevenueRescue, setStripeRevenueRescue] = useState(null);
   const [stripeRevenueRescueStatus, setStripeRevenueRescueStatus] = useState('loading');
+  const [productionApprovalPackets, setProductionApprovalPackets] = useState(null);
+  const [productionApprovalPacketsStatus, setProductionApprovalPacketsStatus] = useState('loading');
   const [buildPacket, setBuildPacket] = useState(null);
   const [buddyOpsQueue, setBuddyOpsQueue] = useState(null);
   const [buddyOpsStatus, setBuddyOpsStatus] = useState('loading');
@@ -1171,6 +1198,15 @@ export default function ActionsPage({
   }, []);
 
   useEffect(() => {
+    fetchFirstJson(['/api/production-approval-packets'])
+      .then((data) => {
+        setProductionApprovalPackets(data);
+        setProductionApprovalPacketsStatus('live');
+      })
+      .catch(() => setProductionApprovalPacketsStatus('generated fallback'));
+  }, []);
+
+  useEffect(() => {
     fetchFirstJson(['/api/buddy-ops'])
       .then((data) => {
         setBuddyOpsQueue(data);
@@ -1198,6 +1234,7 @@ export default function ActionsPage({
   const readiness = releaseReadiness ?? FALLBACK_RELEASE_READINESS;
   const storage = storageGuard ?? FALLBACK_STORAGE_GUARD;
   const stripeRescue = stripeRevenueRescue ?? FALLBACK_STRIPE_REVENUE_RESCUE;
+  const approvalPackets = productionApprovalPackets ?? FALLBACK_PRODUCTION_APPROVAL_PACKETS;
   const buddyOps = buddyOpsQueue ?? FALLBACK_BUDDY_OPS_QUEUE;
   const buddyConnections = buddyBotConnections ?? FALLBACK_BUDDY_BOT_CONNECTIONS;
   const inventorySummary = inventory.summary ?? FALLBACK_BUDDY_INVENTORY.summary;
@@ -1207,6 +1244,7 @@ export default function ActionsPage({
   const readinessSummary = readiness.summary ?? FALLBACK_RELEASE_READINESS.summary;
   const storageSummary = storage.summary ?? FALLBACK_STORAGE_GUARD.summary;
   const stripeRescueSummary = stripeRescue.summary ?? FALLBACK_STRIPE_REVENUE_RESCUE.summary;
+  const approvalPacketSummary = approvalPackets.summary ?? FALLBACK_PRODUCTION_APPROVAL_PACKETS.summary;
   const buddyConnectionSummary = buddyConnections.summary ?? FALLBACK_BUDDY_BOT_CONNECTIONS.summary;
   const buildStates = inventorySummary.build_states ?? {};
   const testStates = inventorySummary.test_states ?? {};
@@ -2135,6 +2173,62 @@ export default function ActionsPage({
                     <p className="text-lg font-black text-white">{formatNumber(value)}</p>
                     <p className="mt-1 text-xs uppercase text-slate-500">{label}</p>
                   </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="mt-5 border border-amber-800 bg-amber-950/20 p-4">
+              <div className="flex flex-wrap items-start justify-between gap-3">
+                <div>
+                  <h4 className="text-sm font-semibold text-amber-100">Final live-action approval gate</h4>
+                  <p className="mt-1 max-w-3xl text-xs leading-5 text-amber-100/80">
+                    All bots can run in sandbox mode after green smoke tests. High-risk money, trading, legal, medical,
+                    tax, security, and third-party actions stay blocked until Buddy records owner-approved live actions.
+                  </p>
+                </div>
+                <span className="rounded-full border border-amber-500/50 px-3 py-1 text-xs font-semibold text-amber-200">
+                  {productionApprovalPacketsStatus} · {formatDateTime(approvalPackets.generated_at)}
+                </span>
+              </div>
+
+              <div className="mt-4 grid grid-cols-2 gap-px overflow-hidden border border-amber-900 bg-amber-900 md:grid-cols-4 xl:grid-cols-6">
+                {[
+                  ['Approval packets', approvalPacketSummary.approval_packets],
+                  ['Live approved', approvalPacketSummary.live_approved],
+                  ['Approval required', approvalPacketSummary.approval_required],
+                  ['Smoke passed', approvalPacketSummary.smoke_tests_passed],
+                  ['Smoke failed', approvalPacketSummary.smoke_tests_failed],
+                  ['Sandbox candidates', approvalPacketSummary.sandbox_safe_production_candidates],
+                ].map(([label, value]) => (
+                  <div key={label} className="bg-slate-950 p-3">
+                    <p className="text-lg font-black text-white">{formatNumber(value)}</p>
+                    <p className="mt-1 text-xs uppercase text-amber-100/70">{label}</p>
+                  </div>
+                ))}
+              </div>
+
+              <div className="mt-4 grid gap-4 xl:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
+                <div className="border border-amber-900/70 bg-slate-950 p-3">
+                  <p className="text-xs font-semibold uppercase text-amber-200">Required owner phrase</p>
+                  <p className="mt-2 text-sm leading-6 text-white">{approvalPackets.required_buddy_money_request}</p>
+                </div>
+                <div className="border border-amber-900/70 bg-slate-950 p-3">
+                  <p className="text-xs font-semibold uppercase text-amber-200">Top risk groups</p>
+                  <div className="mt-2 flex flex-wrap gap-2">
+                    {Object.entries(approvalPackets.risk_breakdown ?? {}).slice(0, 6).map(([risk, count]) => (
+                      <span key={risk} className="rounded-full border border-slate-700 px-3 py-1 text-xs text-slate-300">
+                        {formatLabel(risk)}: {formatNumber(count)}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              <div className="mt-4 grid gap-3 lg:grid-cols-3">
+                {(approvalPackets.next_actions ?? []).slice(0, 3).map((action) => (
+                  <p key={action} className="border-l-2 border-amber-400 pl-3 text-xs leading-5 text-amber-100/80">
+                    {action}
+                  </p>
                 ))}
               </div>
             </div>

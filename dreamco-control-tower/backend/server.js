@@ -49,6 +49,10 @@ const STRIPE_REVENUE_RESCUE_REPORT_FILE = path.join(
   __dirname,
   '../../reports/stripe_revenue_rescue_report.json',
 );
+const PRODUCTION_APPROVAL_PACKETS_FILE = path.join(
+  __dirname,
+  '../../reports/production_approval_packets.json',
+);
 const BUDDY_BOT_CONNECTION_REPORT_FILE = path.join(
   __dirname,
   '../../reports/buddy_bot_connection_report.json',
@@ -192,6 +196,13 @@ function readStripeRevenueRescueReport() {
     return null;
   }
   return JSON.parse(fs.readFileSync(STRIPE_REVENUE_RESCUE_REPORT_FILE, 'utf8'));
+}
+
+function readProductionApprovalPackets() {
+  if (!fs.existsSync(PRODUCTION_APPROVAL_PACKETS_FILE)) {
+    return null;
+  }
+  return JSON.parse(fs.readFileSync(PRODUCTION_APPROVAL_PACKETS_FILE, 'utf8'));
 }
 
 function readBuddyBotConnectionReport() {
@@ -619,6 +630,17 @@ app.get('/api/stripe-revenue-rescue', rateLimiter, (_req, res) => {
   const report = readStripeRevenueRescueReport();
   if (!report) {
     return res.status(503).json({ error: 'stripe revenue rescue report not found' });
+  }
+  return res.json(report);
+});
+
+// ---------------------------------------------------------------------------
+// GET /api/production-approval-packets — final high-risk live-action gate
+// ---------------------------------------------------------------------------
+app.get('/api/production-approval-packets', rateLimiter, (_req, res) => {
+  const report = readProductionApprovalPackets();
+  if (!report) {
+    return res.status(503).json({ error: 'production approval packets report not found' });
   }
   return res.json(report);
 });

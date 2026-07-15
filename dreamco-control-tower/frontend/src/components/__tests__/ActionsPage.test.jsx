@@ -319,6 +319,32 @@ const stripeRevenueRescuePayload = {
   safety_note: 'This report never prints secret values.',
 };
 
+const productionApprovalPacketsPayload = {
+  schema: 'dreamco.production_approval_packets.v1',
+  generated_at: '2026-07-14T13:00:00Z',
+  summary: {
+    approval_packets: 120,
+    live_approved: 0,
+    approval_required: 120,
+    smoke_tests_passed: 1248,
+    smoke_tests_failed: 0,
+    sandbox_safe_production_candidates: 120,
+    full_live_production_ready_after_approval: 0,
+  },
+  required_buddy_money_request: 'Buddy, help me make money with this bot. I approve the listed live actions and understand the risks.',
+  risk_breakdown: {
+    money_movement: 42,
+    financial_or_trading: 31,
+    security_or_defense: 20,
+  },
+  packets: [],
+  next_actions: [
+    'Review the approval-required bots by risk category before enabling live actions.',
+    'Approve only the specific live actions each bot is allowed to perform.',
+    'Keep risky external actions blocked until owner approval is recorded.',
+  ],
+};
+
 const buddyOpsPayload = {
   schema: 'dreamco.buddy_ops_queue.v1',
   count: 1,
@@ -383,6 +409,7 @@ beforeEach(() => {
     if (url === '/api/release-readiness') payload = releaseReadinessPayload;
     if (url === '/api/storage-guard') payload = storageGuardPayload;
     if (url === '/api/stripe-revenue-rescue') payload = stripeRevenueRescuePayload;
+    if (url === '/api/production-approval-packets') payload = productionApprovalPacketsPayload;
     if (url === '/api/buddy-ops') payload = buddyOpsPayload;
     if (url === '/api/buddy-bot-connections') payload = buddyBotConnectionsPayload;
     return Promise.resolve({
@@ -509,6 +536,10 @@ describe('ActionsPage', () => {
     expect(screen.getByText('Review placeholders')).toBeInTheDocument();
     expect(screen.getByText('Add direct tests')).toBeInTheDocument();
     expect(screen.getByText('Production readiness')).toBeInTheDocument();
+    expect(screen.getByText('Final live-action approval gate')).toBeInTheDocument();
+    expect(screen.getByText('Required owner phrase')).toBeInTheDocument();
+    expect(screen.getByText('Sandbox candidates')).toBeInTheDocument();
+    expect(screen.getByText('Buddy, help me make money with this bot. I approve the listed live actions and understand the risks.')).toBeInTheDocument();
     expect(screen.getByText('Review gates active')).toBeInTheDocument();
     expect(screen.getAllByText('Production ready').length).toBeGreaterThan(0);
     expect(screen.getByText('Approval needed')).toBeInTheDocument();

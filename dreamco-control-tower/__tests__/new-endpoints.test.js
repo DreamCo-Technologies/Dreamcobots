@@ -412,6 +412,19 @@ describe('GET /api/stripe-revenue-rescue', () => {
   });
 });
 
+describe('GET /api/production-approval-packets', () => {
+  test('returns high-risk production approval packets', async () => {
+    const res = await request(app).get('/api/production-approval-packets');
+
+    expect(res.status).toBe(200);
+    expect(res.body.schema).toBe('dreamco.production_approval_packets.v1');
+    expect(res.body.summary.approval_packets).toBeGreaterThan(0);
+    expect(res.body.summary.smoke_tests_failed).toBe(0);
+    expect(res.body.required_buddy_money_request).toContain('Buddy, help me make money');
+    expect(Array.isArray(res.body.packets)).toBe(true);
+  });
+});
+
 describe('GET /api/buddy-bot-connections', () => {
   test('returns all-bot Buddy routing, test, and resource coverage', async () => {
     const res = await request(app).get('/api/buddy-bot-connections');

@@ -4,8 +4,10 @@
 from __future__ import annotations
 
 import importlib.util
+import inspect
 import json
 import sys
+import tempfile
 import traceback
 from pathlib import Path
 
@@ -24,6 +26,22 @@ def load_module(path: Path):
     return module
 
 
+def run_test_function(test_function) -> None:
+    signature = inspect.signature(test_function)
+    unsupported = [name for name in signature.parameters if name != "tmp_path"]
+    if unsupported:
+        raise TypeError(
+            f"unsupported smoke test fixture(s): {', '.join(sorted(unsupported))}"
+        )
+
+    if "tmp_path" not in signature.parameters:
+        test_function()
+        return
+
+    with tempfile.TemporaryDirectory(prefix="dreamco-smoke-") as tmp_dir:
+        test_function(tmp_path=Path(tmp_dir))
+
+
 def main() -> int:
     failures: list[dict[str, str]] = []
     tests = sorted(TEST_DIR.glob("test_*_runtime.py"))
@@ -38,7 +56,7 @@ def main() -> int:
             if not test_functions:
                 raise AssertionError("no test functions found")
             for test_function in test_functions:
-                test_function()
+                run_test_function(test_function)
         except Exception as exc:  # pragma: no cover - reports external failures
             failures.append(
                 {

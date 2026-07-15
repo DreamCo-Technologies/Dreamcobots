@@ -1,6 +1,6 @@
 # Buddy Capability Inventory
 
-Generated: 2026-07-12T17:53:52.507956+00:00
+Generated: 2026-07-14T22:52:01.241443+00:00
 Branch scanned: `codex/bot-test-dashboard`
 
 ## Executive Summary
@@ -9,8 +9,8 @@ Branch scanned: `codex/bot-test-dashboard`
 - **Registry Bot Count**: 1248
 - **Registry Division Count**: 45
 - **Workflows**: 42
-- **Test Files**: 1493
-- **Buddy Related Files**: 210
+- **Test Files**: 1494
+- **Buddy Related Files**: 226
 - **Buddy Related Bots**: 14
 - **System Library Counts**: {'tools': 1248, 'apis': 1248, 'webhooks': 1248, 'workflows': 1248, 'skills': 1248, 'sandboxes': 1248, 'resources': 1248}
 - **All System Libraries Cover Profiled Bots**: True
