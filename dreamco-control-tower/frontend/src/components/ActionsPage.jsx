@@ -718,6 +718,63 @@ const FALLBACK_PEOPLE_JOB_QUALIFICATION = {
   ],
 };
 
+const FALLBACK_BOT_OWNER_SETTINGS = {
+  generated_at: null,
+  mission: 'Treat every DreamCo bot, including high-risk or previously blocked bots, as a supervised business-owner bot with clear on/off controls, permissions, approval gates, and safe-mode guardrails.',
+  default_mode: 'business_owner_safe_mode',
+  summary: {
+    bot_count: 1248,
+    bots_with_owner_settings: 1248,
+    business_owner_enabled_bots: 1248,
+    safe_mode_enabled_bots: 1248,
+    high_risk_bots: 120,
+    high_risk_bots_unblocked_for_safe_work: 120,
+    live_action_approval_required_bots: 1248,
+    settings_controls_ready: 12,
+    permission_groups_ready: 5,
+    guardrails_ready: 6,
+    all_bots_have_on_off_controls: true,
+  },
+  global_settings: [
+    { id: 'business_owner_mode', label: 'Business Owner Mode', default: true, description: 'Bot may research, plan, draft, test, package, and prepare business opportunities.' },
+    { id: 'sandbox_mode', label: 'Sandbox Mode', default: true, description: 'Bot may run local tests, generated fixtures, simulations, and dry-run workflows.' },
+    { id: 'contract_discovery', label: 'Contract Discovery', default: true, description: 'Bot may search public and owner-approved opportunities.' },
+    { id: 'client_outreach', label: 'Client Outreach', default: false, description: 'Bot may only send outreach after explicit approval.' },
+    { id: 'paid_actions', label: 'Paid Actions', default: false, description: 'Bot may only spend money or use paid APIs after approval.' },
+    { id: 'money_movement', label: 'Money Movement', default: false, description: 'Bot may only move money after approval.' },
+  ],
+  permission_groups: [
+    { id: 'safe_business_work', label: 'Safe Business Work', default: true, permissions: ['research', 'draft', 'score', 'simulate', 'sandbox_test'] },
+    { id: 'external_impact', label: 'External Impact', default: false, permissions: ['send_outreach', 'submit_bid', 'publish_listing'] },
+    { id: 'financial_impact', label: 'Financial Impact', default: false, permissions: ['charge_payment', 'issue_refund', 'buy_domain'] },
+  ],
+  always_require_approval: ['send_outreach', 'submit_bid', 'publish_app_or_store_listing', 'buy_domain', 'run_paid_ad', 'collect_or_move_money', 'production_deploy'],
+  guardrails: [
+    'Safe mode stays on by default for every bot.',
+    'High-risk bots can work like other bots in sandbox and business-owner mode.',
+    'Settings toggles expose capability state but do not bypass approval gates.',
+  ],
+  dashboard_sample: [
+    {
+      slug: 'buddy-bot',
+      name: 'Buddy Bot',
+      division: 'CommandCore',
+      risk_hint: 'standard',
+      business_owner_status: 'enabled_safe_mode',
+      safe_work_unblocked: true,
+      live_actions_require_approval: true,
+      controls: {
+        bot_enabled: true,
+        safe_mode_enabled: true,
+        business_owner_mode_enabled: true,
+        client_outreach_enabled: false,
+        paid_actions_enabled: false,
+        money_movement_enabled: false,
+      },
+    },
+  ],
+};
+
 const FALLBACK_STRIPE_REVENUE_RESCUE = {
   generated_at: null,
   summary: {
@@ -1546,6 +1603,8 @@ export default function ActionsPage({
   const [aiDataPackageLibraryStatus, setAiDataPackageLibraryStatus] = useState('loading');
   const [peopleJobQualification, setPeopleJobQualification] = useState(null);
   const [peopleJobQualificationStatus, setPeopleJobQualificationStatus] = useState('loading');
+  const [botOwnerSettings, setBotOwnerSettings] = useState(null);
+  const [botOwnerSettingsStatus, setBotOwnerSettingsStatus] = useState('loading');
   const [storageGuard, setStorageGuard] = useState(null);
   const [storageGuardStatus, setStorageGuardStatus] = useState('loading');
   const [stripeRevenueRescue, setStripeRevenueRescue] = useState(null);
@@ -1694,6 +1753,15 @@ export default function ActionsPage({
   }, []);
 
   useEffect(() => {
+    fetchFirstJson(['/api/bot-owner-settings'])
+      .then((data) => {
+        setBotOwnerSettings(data);
+        setBotOwnerSettingsStatus('live');
+      })
+      .catch(() => setBotOwnerSettingsStatus('generated fallback'));
+  }, []);
+
+  useEffect(() => {
     fetchFirstJson(['/api/storage-guard'])
       .then((data) => {
         setStorageGuard(data);
@@ -1757,6 +1825,7 @@ export default function ActionsPage({
   const contractDiscovery = botContractDiscovery ?? FALLBACK_BOT_CONTRACT_DISCOVERY;
   const dataPackageLibrary = aiDataPackageLibrary ?? FALLBACK_AI_DATA_PACKAGE_LIBRARY;
   const peopleLookup = peopleJobQualification ?? FALLBACK_PEOPLE_JOB_QUALIFICATION;
+  const ownerSettings = botOwnerSettings ?? FALLBACK_BOT_OWNER_SETTINGS;
   const storage = storageGuard ?? FALLBACK_STORAGE_GUARD;
   const stripeRescue = stripeRevenueRescue ?? FALLBACK_STRIPE_REVENUE_RESCUE;
   const approvalPackets = productionApprovalPackets ?? FALLBACK_PRODUCTION_APPROVAL_PACKETS;
@@ -1776,6 +1845,7 @@ export default function ActionsPage({
   const contractDiscoverySummary = contractDiscovery.summary ?? FALLBACK_BOT_CONTRACT_DISCOVERY.summary;
   const dataPackageSummary = dataPackageLibrary.summary ?? FALLBACK_AI_DATA_PACKAGE_LIBRARY.summary;
   const peopleLookupSummary = peopleLookup.summary ?? FALLBACK_PEOPLE_JOB_QUALIFICATION.summary;
+  const ownerSettingsSummary = ownerSettings.summary ?? FALLBACK_BOT_OWNER_SETTINGS.summary;
   const storageSummary = storage.summary ?? FALLBACK_STORAGE_GUARD.summary;
   const stripeRescueSummary = stripeRescue.summary ?? FALLBACK_STRIPE_REVENUE_RESCUE.summary;
   const approvalPacketSummary = approvalPackets.summary ?? FALLBACK_PRODUCTION_APPROVAL_PACKETS.summary;
@@ -3324,6 +3394,139 @@ export default function ActionsPage({
               </article>
             ))}
           </div>
+        </div>
+      </section>
+
+      <section aria-labelledby="bot-owner-settings-heading" className="border border-slate-700 bg-slate-950 p-5">
+        <div className="flex flex-wrap items-start justify-between gap-3">
+          <div>
+            <p className="text-xs font-bold uppercase text-dreamco-accent">Actions page settings</p>
+            <h3 id="bot-owner-settings-heading" className="mt-1 text-lg font-semibold text-white">
+              Every bot is a business owner with permission switches
+            </h3>
+            <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-400">{ownerSettings.mission}</p>
+          </div>
+          <span className="rounded-full border border-slate-700 px-3 py-1 text-xs font-semibold text-slate-400">
+            {botOwnerSettingsStatus} · {formatDateTime(ownerSettings.generated_at)}
+          </span>
+        </div>
+
+        <div className="mt-5 grid grid-cols-2 gap-px overflow-hidden border border-slate-800 bg-slate-800 lg:grid-cols-4 xl:grid-cols-8">
+          {[
+            ['Owner bots', ownerSettingsSummary.bots_with_owner_settings],
+            ['Business mode', ownerSettingsSummary.business_owner_enabled_bots],
+            ['Safe mode', ownerSettingsSummary.safe_mode_enabled_bots],
+            ['High risk', ownerSettingsSummary.high_risk_bots],
+            ['Safe-unblocked', ownerSettingsSummary.high_risk_bots_unblocked_for_safe_work],
+            ['Approval required', ownerSettingsSummary.live_action_approval_required_bots],
+            ['Controls', ownerSettingsSummary.settings_controls_ready],
+            ['Guardrails', ownerSettingsSummary.guardrails_ready],
+          ].map(([label, value]) => (
+            <div key={label} className="bg-slate-900 p-4">
+              <p className="text-xl font-black text-white">{formatNumber(value)}</p>
+              <p className="mt-1 text-xs uppercase text-slate-500">{label}</p>
+            </div>
+          ))}
+        </div>
+
+        <div className="mt-5 grid gap-5 xl:grid-cols-[minmax(0,1fr)_24rem]">
+          <div className="border border-slate-800 bg-slate-900 p-4">
+            <h4 className="text-sm font-semibold text-white">Global settings buttons</h4>
+            <div className="mt-3 grid gap-3 md:grid-cols-2 xl:grid-cols-3">
+              {(ownerSettings.global_settings ?? []).slice(0, 12).map((setting) => (
+                <button
+                  key={setting.id}
+                  type="button"
+                  className={`border p-3 text-left ${
+                    setting.default
+                      ? 'border-emerald-500/40 bg-emerald-950/20 text-emerald-100'
+                      : 'border-amber-500/40 bg-amber-950/20 text-amber-100'
+                  }`}
+                  aria-pressed={Boolean(setting.default)}
+                >
+                  <span className="block text-sm font-semibold">{setting.label}</span>
+                  <span className="mt-1 block text-[11px] font-bold uppercase">
+                    {setting.default ? 'On by default' : 'Approval only'}
+                  </span>
+                  <span className="mt-2 block text-xs leading-5 text-slate-300">{setting.description}</span>
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <aside className="space-y-5">
+            <div className="border border-amber-900/70 bg-amber-950/20 p-4">
+              <h4 className="text-sm font-semibold text-amber-100">Approval-only guardrails</h4>
+              <div className="mt-3 space-y-2">
+                {(ownerSettings.always_require_approval ?? []).slice(0, 10).map((gate) => (
+                  <p key={gate} className="border-l-2 border-amber-400 pl-3 text-xs leading-5 text-amber-100/80">
+                    {formatLabel(gate)}
+                  </p>
+                ))}
+              </div>
+            </div>
+
+            <div className="border border-slate-800 bg-slate-900 p-4">
+              <h4 className="text-sm font-semibold text-white">Permission groups</h4>
+              <div className="mt-3 space-y-3">
+                {(ownerSettings.permission_groups ?? []).slice(0, 5).map((group) => (
+                  <div key={group.id} className="border border-slate-800 bg-slate-950 p-3">
+                    <div className="flex items-center justify-between gap-3">
+                      <h5 className="text-xs font-semibold uppercase text-white">{group.label}</h5>
+                      <span className={`rounded-full border px-2 py-0.5 text-[11px] font-semibold ${group.default ? 'border-emerald-500/40 text-emerald-200' : 'border-amber-500/40 text-amber-200'}`}>
+                        {group.default ? 'on' : 'approval'}
+                      </span>
+                    </div>
+                    <p className="mt-2 text-xs leading-5 text-slate-400">
+                      {(group.permissions ?? []).slice(0, 5).map(formatLabel).join(', ')}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </aside>
+        </div>
+
+        <div className="mt-5 grid gap-5 xl:grid-cols-[minmax(0,1fr)_24rem]">
+          <div className="border border-slate-800 bg-slate-900 p-4">
+            <h4 className="text-sm font-semibold text-white">Sample bot owner controls</h4>
+            <div className="mt-3 grid gap-3 md:grid-cols-2 xl:grid-cols-4">
+              {(ownerSettings.dashboard_sample ?? []).slice(0, 8).map((bot) => (
+                <article key={bot.slug} className="border border-slate-800 bg-slate-950 p-3">
+                  <div className="flex flex-wrap items-start justify-between gap-2">
+                    <h5 className="text-sm font-semibold text-white">{bot.name}</h5>
+                    <span className={`rounded-full border px-2 py-0.5 text-[11px] font-semibold uppercase ${bot.risk_hint === 'high' ? 'border-amber-500/40 text-amber-200' : 'border-emerald-500/40 text-emerald-200'}`}>
+                      {bot.risk_hint}
+                    </span>
+                  </div>
+                  <p className="mt-2 text-xs leading-5 text-slate-400">{bot.division}</p>
+                  <div className="mt-3 grid grid-cols-2 gap-2">
+                    {Object.entries(bot.controls ?? {}).slice(0, 6).map(([control, enabled]) => (
+                      <button
+                        key={control}
+                        type="button"
+                        aria-pressed={Boolean(enabled)}
+                        className={`border px-2 py-1 text-left text-[11px] font-semibold ${enabled ? 'border-emerald-500/40 text-emerald-200' : 'border-slate-700 text-slate-400'}`}
+                      >
+                        {formatLabel(control)}
+                      </button>
+                    ))}
+                  </div>
+                </article>
+              ))}
+            </div>
+          </div>
+
+          <aside className="border border-emerald-900/70 bg-emerald-950/20 p-4">
+            <h4 className="text-sm font-semibold text-emerald-100">Guardrails</h4>
+            <div className="mt-3 space-y-2">
+              {(ownerSettings.guardrails ?? []).slice(0, 8).map((guardrail) => (
+                <p key={guardrail} className="border-l-2 border-emerald-400 pl-3 text-xs leading-5 text-emerald-100/80">
+                  {guardrail}
+                </p>
+              ))}
+            </div>
+          </aside>
         </div>
       </section>
 

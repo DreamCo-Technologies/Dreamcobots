@@ -528,6 +528,26 @@ describe('GET /api/people-job-qualification', () => {
   });
 });
 
+describe('GET /api/bot-owner-settings', () => {
+  test('returns bot business-owner settings and guardrails', async () => {
+    const res = await request(app).get('/api/bot-owner-settings');
+
+    expect(res.status).toBe(200);
+    expect(res.body.schema).toBe('dreamco.bot_owner_settings_report.v1');
+    expect(res.body.summary.bots_with_owner_settings).toBe(res.body.summary.bot_count);
+    expect(res.body.summary.business_owner_enabled_bots).toBe(res.body.summary.bot_count);
+    expect(res.body.summary.safe_mode_enabled_bots).toBe(res.body.summary.bot_count);
+    expect(res.body.summary.high_risk_bots_unblocked_for_safe_work).toBe(res.body.summary.high_risk_bots);
+    expect(res.body.summary.live_action_approval_required_bots).toBe(res.body.summary.bot_count);
+    expect(res.body.on_off_controls).toEqual(
+      expect.arrayContaining(['business_owner_mode_enabled', 'safe_mode_enabled', 'money_movement_enabled']),
+    );
+    expect(res.body.always_require_approval).toEqual(
+      expect.arrayContaining(['collect_or_move_money', 'production_deploy', 'send_outreach']),
+    );
+  });
+});
+
 describe('GET /api/github-triage', () => {
   test('returns generated GitHub triage report', async () => {
     const res = await request(app).get('/api/github-triage');

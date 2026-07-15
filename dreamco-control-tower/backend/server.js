@@ -69,6 +69,10 @@ const PEOPLE_JOB_QUALIFICATION_REPORT_FILE = path.join(
   __dirname,
   '../../reports/people_job_qualification_report.json',
 );
+const BOT_OWNER_SETTINGS_REPORT_FILE = path.join(
+  __dirname,
+  '../../reports/bot_owner_settings_report.json',
+);
 const GITHUB_TRIAGE_REPORT_FILE = path.join(
   __dirname,
   '../../reports/github_triage_report.json',
@@ -267,6 +271,13 @@ function readPeopleJobQualificationReport() {
     return null;
   }
   return JSON.parse(fs.readFileSync(PEOPLE_JOB_QUALIFICATION_REPORT_FILE, 'utf8'));
+}
+
+function readBotOwnerSettingsReport() {
+  if (!fs.existsSync(BOT_OWNER_SETTINGS_REPORT_FILE)) {
+    return null;
+  }
+  return JSON.parse(fs.readFileSync(BOT_OWNER_SETTINGS_REPORT_FILE, 'utf8'));
 }
 
 function readGitHubTriageReport() {
@@ -784,6 +795,17 @@ app.get('/api/people-job-qualification', rateLimiter, (_req, res) => {
   const report = readPeopleJobQualificationReport();
   if (!report) {
     return res.status(503).json({ error: 'people job qualification report not found' });
+  }
+  return res.json(report);
+});
+
+// ---------------------------------------------------------------------------
+// GET /api/bot-owner-settings — per-bot business owner settings and toggles
+// ---------------------------------------------------------------------------
+app.get('/api/bot-owner-settings', rateLimiter, (_req, res) => {
+  const report = readBotOwnerSettingsReport();
+  if (!report) {
+    return res.status(503).json({ error: 'bot owner settings report not found' });
   }
   return res.json(report);
 });

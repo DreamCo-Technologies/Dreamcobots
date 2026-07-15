@@ -659,6 +659,69 @@ const peopleJobQualificationPayload = {
   ],
 };
 
+const botOwnerSettingsPayload = {
+  schema: 'dreamco.bot_owner_settings_report.v1',
+  generated_at: '2026-07-15T00:00:00Z',
+  mission:
+    'Treat every DreamCo bot, including high-risk or previously blocked bots, as a supervised business-owner bot with clear on/off controls, permissions, approval gates, and safe-mode guardrails.',
+  default_mode: 'business_owner_safe_mode',
+  summary: {
+    bot_count: 1248,
+    bots_with_owner_settings: 1248,
+    business_owner_enabled_bots: 1248,
+    safe_mode_enabled_bots: 1248,
+    high_risk_bots: 120,
+    high_risk_bots_unblocked_for_safe_work: 120,
+    live_action_approval_required_bots: 1248,
+    settings_controls_ready: 12,
+    permission_groups_ready: 5,
+    guardrails_ready: 6,
+    all_bots_have_on_off_controls: true,
+  },
+  global_settings: [
+    {
+      id: 'business_owner_mode',
+      label: 'Business Owner Mode',
+      default: true,
+      description: 'Bot may research, plan, draft, test, package, and prepare business opportunities.',
+    },
+    {
+      id: 'client_outreach',
+      label: 'Client Outreach',
+      default: false,
+      description: 'Bot may only send outreach after explicit approval.',
+    },
+  ],
+  permission_groups: [
+    { id: 'safe_business_work', label: 'Safe Business Work', default: true, permissions: ['research', 'draft'] },
+    { id: 'financial_impact', label: 'Financial Impact', default: false, permissions: ['charge_payment', 'buy_domain'] },
+  ],
+  always_require_approval: ['send_outreach', 'collect_or_move_money', 'production_deploy'],
+  guardrails: [
+    'Safe mode stays on by default for every bot.',
+    'Settings toggles expose capability state but do not bypass approval gates.',
+  ],
+  dashboard_sample: [
+    {
+      slug: 'buddy-bot',
+      name: 'Buddy Bot',
+      division: 'CommandCore',
+      risk_hint: 'standard',
+      business_owner_status: 'enabled_safe_mode',
+      safe_work_unblocked: true,
+      live_actions_require_approval: true,
+      controls: {
+        bot_enabled: true,
+        safe_mode_enabled: true,
+        business_owner_mode_enabled: true,
+        client_outreach_enabled: false,
+        paid_actions_enabled: false,
+        money_movement_enabled: false,
+      },
+    },
+  ],
+};
+
 const stripeRevenueRescuePayload = {
   schema: 'dreamco.stripe_revenue_rescue.v1',
   generated_at: '2026-07-12T00:00:00Z',
@@ -785,6 +848,7 @@ beforeEach(() => {
     if (url === '/api/bot-contract-discovery') payload = botContractDiscoveryPayload;
     if (url === '/api/ai-data-package-library') payload = aiDataPackageLibraryPayload;
     if (url === '/api/people-job-qualification') payload = peopleJobQualificationPayload;
+    if (url === '/api/bot-owner-settings') payload = botOwnerSettingsPayload;
     if (url === '/api/storage-guard') payload = storageGuardPayload;
     if (url === '/api/stripe-revenue-rescue') payload = stripeRevenueRescuePayload;
     if (url === '/api/production-approval-packets') payload = productionApprovalPacketsPayload;
@@ -896,6 +960,15 @@ describe('ActionsPage', () => {
     expect(screen.getByText('Candidate Resume Match')).toBeInTheDocument();
     expect(screen.getAllByText('Allowed sources').length).toBeGreaterThanOrEqual(1);
     expect(screen.getByText('Sample people lookup bot packets')).toBeInTheDocument();
+    await waitFor(() =>
+      expect(screen.getByRole('heading', { name: 'Every bot is a business owner with permission switches' })).toBeInTheDocument(),
+    );
+    expect(screen.getByText('Actions page settings')).toBeInTheDocument();
+    expect(screen.getByText('Global settings buttons')).toBeInTheDocument();
+    expect(screen.getByText('Business Owner Mode')).toBeInTheDocument();
+    expect(screen.getByText('Approval-only guardrails')).toBeInTheDocument();
+    expect(screen.getByText('Permission groups')).toBeInTheDocument();
+    expect(screen.getByText('Sample bot owner controls')).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: 'AI company builder with human trust built in' })).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: 'Tracks what helps you, clients, and bots improve' })).toBeInTheDocument();
     expect(screen.getByText('AI companies')).toBeInTheDocument();
