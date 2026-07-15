@@ -364,6 +364,52 @@ const FALLBACK_APP_FOUNDRY = {
   gaps: ['Production backend hosting needs owner-approved credentials and secrets before live apps.'],
 };
 
+const FALLBACK_BOT_FOUNDER_APP_STORE = {
+  generated_at: null,
+  mission: 'Every DreamCo bot studies its market, designs a useful autonomous app, prepares a safe company plan, and packages itself for the DreamCo app store.',
+  positioning: 'Each bot is treated as a supervised business owner preparing a revolutionary app, website, workflow, simulation, course, or service for a DreamCo-owned app store.',
+  live_action_policy: 'Bots may research, draft, score, package, simulate, and propose. Bots must not contact customers, run ads, spend money, deploy publicly, move money, create fake claims, or publish app-store listings without owner approval.',
+  summary: {
+    bot_count: 1248,
+    founder_packets: 1248,
+    bots_with_app_concept: 1248,
+    bots_with_competitor_study_plan: 1248,
+    bots_with_revenue_model: 1248,
+    bots_with_marketing_plan: 1248,
+    bots_with_customer_discovery_plan: 1248,
+    bots_with_app_store_listing: 1248,
+    bots_with_sandbox_test_plan: 1248,
+    bots_blocked_from_live_actions_until_approval: 1248,
+    app_store_categories: 12,
+    study_loops: 7,
+    approval_gates: 11,
+  },
+  founder_study_loops: [
+    { id: 'competition_lab', label: 'Competition Lab', purpose: 'Study public competitors, substitutes, pricing, feature gaps, positioning, reviews, and customer complaints.', outputs: ['competitor_map', 'feature_gap_matrix', 'pricing_notes'] },
+    { id: 'autonomous_money_lab', label: 'Autonomous Money Lab', purpose: 'Find ethical value creation, offer packaging, pricing tests, cost savings, and revenue recovery ideas.', outputs: ['revenue_model', 'offer_stack', 'risk_disclosures'] },
+    { id: 'app_builder_lab', label: 'App Builder Lab', purpose: 'Design one app-store-ready product with user, workflow, demo, sandbox test, and deployment plan.', outputs: ['app_concept', 'mvp_scope', 'deployment_plan'] },
+    { id: 'marketing_lab', label: 'Marketing Lab', purpose: 'Draft ethical advertising, content, SEO, demos, launch copy, and campaign experiments for owner review.', outputs: ['audience_segments', 'ad_drafts', 'launch_checklist'] },
+  ],
+  app_store_categories: [
+    { category: 'business_automation', bot_count: 185 },
+    { category: 'developer_tools', bot_count: 152 },
+    { category: 'finance_and_payments', bot_count: 120 },
+  ],
+  dashboard_sample: [
+    {
+      slug: 'buddy-bot',
+      name: 'Buddy Bot',
+      emoji: '🤝',
+      division: 'CommandCore',
+      app_store_category: 'business_automation',
+      target_customer: 'DreamCo owners and client teams',
+      autonomous_app_concept: { name: 'Buddy Bot App', promise: 'A supervised command center for safe AI company building.' },
+      app_store_listing: { status: 'draft_ready_for_owner_review' },
+    },
+  ],
+  approval_gates: ['customer_outreach', 'ad_spend', 'public_deployment', 'payment_collection', 'money_movement', 'app_store_publish'],
+};
+
 const FALLBACK_STRIPE_REVENUE_RESCUE = {
   generated_at: null,
   summary: {
@@ -1176,6 +1222,8 @@ export default function ActionsPage({
   const [releaseReadinessStatus, setReleaseReadinessStatus] = useState('loading');
   const [appFoundry, setAppFoundry] = useState(null);
   const [appFoundryStatus, setAppFoundryStatus] = useState('loading');
+  const [botFounderAppStore, setBotFounderAppStore] = useState(null);
+  const [botFounderAppStoreStatus, setBotFounderAppStoreStatus] = useState('loading');
   const [storageGuard, setStorageGuard] = useState(null);
   const [storageGuardStatus, setStorageGuardStatus] = useState('loading');
   const [stripeRevenueRescue, setStripeRevenueRescue] = useState(null);
@@ -1252,6 +1300,15 @@ export default function ActionsPage({
   }, []);
 
   useEffect(() => {
+    fetchFirstJson(['/api/bot-founder-app-store'])
+      .then((data) => {
+        setBotFounderAppStore(data);
+        setBotFounderAppStoreStatus('live');
+      })
+      .catch(() => setBotFounderAppStoreStatus('generated fallback'));
+  }, []);
+
+  useEffect(() => {
     fetchFirstJson(['/api/storage-guard'])
       .then((data) => {
         setStorageGuard(data);
@@ -1307,6 +1364,7 @@ export default function ActionsPage({
   const productivity = buddyProductivity ?? FALLBACK_BUDDY_PRODUCTIVITY;
   const readiness = releaseReadiness ?? FALLBACK_RELEASE_READINESS;
   const foundry = appFoundry ?? FALLBACK_APP_FOUNDRY;
+  const botFounderStore = botFounderAppStore ?? FALLBACK_BOT_FOUNDER_APP_STORE;
   const storage = storageGuard ?? FALLBACK_STORAGE_GUARD;
   const stripeRescue = stripeRevenueRescue ?? FALLBACK_STRIPE_REVENUE_RESCUE;
   const approvalPackets = productionApprovalPackets ?? FALLBACK_PRODUCTION_APPROVAL_PACKETS;
@@ -1318,6 +1376,7 @@ export default function ActionsPage({
   const productivitySummary = productivity.summary ?? FALLBACK_BUDDY_PRODUCTIVITY.summary;
   const readinessSummary = readiness.summary ?? FALLBACK_RELEASE_READINESS.summary;
   const foundrySummary = foundry.summary ?? FALLBACK_APP_FOUNDRY.summary;
+  const botFounderSummary = botFounderStore.summary ?? FALLBACK_BOT_FOUNDER_APP_STORE.summary;
   const storageSummary = storage.summary ?? FALLBACK_STORAGE_GUARD.summary;
   const stripeRescueSummary = stripeRescue.summary ?? FALLBACK_STRIPE_REVENUE_RESCUE.summary;
   const approvalPacketSummary = approvalPackets.summary ?? FALLBACK_PRODUCTION_APPROVAL_PACKETS.summary;
@@ -2047,6 +2106,117 @@ export default function ActionsPage({
               <p className="mt-2 text-xs leading-5 text-amber-100/80">{foundry.next_build_targets?.[0]}</p>
             </div>
           </aside>
+        </div>
+      </section>
+
+      <section aria-labelledby="bot-founder-store-heading" className="border border-slate-700 bg-slate-950 p-5">
+        <div className="flex flex-wrap items-start justify-between gap-3">
+          <div>
+            <p className="text-xs font-bold uppercase text-dreamco-accent">Bot Founder App Store</p>
+            <h3 id="bot-founder-store-heading" className="mt-1 text-lg font-semibold text-white">
+              Every bot studies the market and prepares its own autonomous app business
+            </h3>
+            <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-400">
+              {botFounderStore.mission}
+            </p>
+          </div>
+          <span className="rounded-full border border-slate-700 px-3 py-1 text-xs font-semibold text-slate-400">
+            {botFounderAppStoreStatus} · {formatDateTime(botFounderStore.generated_at)}
+          </span>
+        </div>
+
+        <div className="mt-5 grid grid-cols-2 gap-px overflow-hidden border border-slate-800 bg-slate-800 lg:grid-cols-4 xl:grid-cols-8">
+          {[
+            ['Founder packets', botFounderSummary.founder_packets],
+            ['App concepts', botFounderSummary.bots_with_app_concept],
+            ['Competitor plans', botFounderSummary.bots_with_competitor_study_plan],
+            ['Revenue models', botFounderSummary.bots_with_revenue_model],
+            ['Marketing plans', botFounderSummary.bots_with_marketing_plan],
+            ['Customer discovery', botFounderSummary.bots_with_customer_discovery_plan],
+            ['Store listings', botFounderSummary.bots_with_app_store_listing],
+            ['Approval gated', botFounderSummary.bots_blocked_from_live_actions_until_approval],
+          ].map(([label, value]) => (
+            <div key={label} className="bg-slate-900 p-4">
+              <p className="text-xl font-black text-white">{formatNumber(value)}</p>
+              <p className="mt-1 text-xs uppercase text-slate-500">{label}</p>
+            </div>
+          ))}
+        </div>
+
+        <div className="mt-5 border border-amber-800 bg-amber-950/20 p-4">
+          <h4 className="text-sm font-semibold text-amber-100">Live-action approval wall</h4>
+          <p className="mt-2 text-xs leading-5 text-amber-100/80">{botFounderStore.live_action_policy}</p>
+          <div className="mt-3 flex flex-wrap gap-2">
+            {(botFounderStore.approval_gates ?? []).slice(0, 12).map((gate) => (
+              <span key={gate} className="rounded-full border border-amber-500/30 px-3 py-1 text-xs text-amber-100">
+                {formatLabel(gate)}
+              </span>
+            ))}
+          </div>
+        </div>
+
+        <div className="mt-5 grid gap-5 xl:grid-cols-[minmax(0,1.2fr)_minmax(0,0.8fr)]">
+          <div className="border border-slate-800 bg-slate-900 p-4">
+            <h4 className="text-sm font-semibold text-white">Founder study labs</h4>
+            <div className="mt-3 grid gap-3 md:grid-cols-2">
+              {(botFounderStore.founder_study_loops ?? []).slice(0, 6).map((loop) => (
+                <article key={loop.id} className="border border-slate-800 bg-slate-950 p-3">
+                  <h5 className="text-sm font-semibold text-white">{loop.label}</h5>
+                  <p className="mt-2 text-xs leading-5 text-slate-400">{loop.purpose}</p>
+                  <div className="mt-3 flex flex-wrap gap-2">
+                    {(loop.outputs ?? []).slice(0, 4).map((output) => (
+                      <span key={output} className="rounded-full border border-slate-700 px-2 py-1 text-[11px] text-slate-300">
+                        {formatLabel(output)}
+                      </span>
+                    ))}
+                  </div>
+                </article>
+              ))}
+            </div>
+          </div>
+
+          <aside className="border border-slate-800 bg-slate-900 p-4">
+            <h4 className="text-sm font-semibold text-white">App-store categories</h4>
+            <div className="mt-3 space-y-2">
+              {(botFounderStore.app_store_categories ?? []).slice(0, 10).map((item) => (
+                <div key={item.category} className="flex items-center justify-between gap-3 border-b border-slate-800 pb-2">
+                  <span className="text-xs uppercase text-slate-400">{formatLabel(item.category)}</span>
+                  <span className="font-mono text-xs text-dreamco-accent">{formatNumber(item.bot_count)}</span>
+                </div>
+              ))}
+            </div>
+          </aside>
+        </div>
+
+        <div className="mt-5 border border-slate-800 bg-slate-900 p-4">
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <h4 className="text-sm font-semibold text-white">Sample bot-owned app-store packets</h4>
+            <span className="rounded-full border border-slate-700 px-3 py-1 text-xs font-semibold text-slate-400">
+              {formatNumber(botFounderSummary.bot_count)} bots preparing listings
+            </span>
+          </div>
+          <div className="mt-3 grid gap-3 md:grid-cols-2 xl:grid-cols-4">
+            {(botFounderStore.dashboard_sample ?? []).slice(0, 8).map((packet) => (
+              <article key={packet.slug} className="border border-slate-800 bg-slate-950 p-3">
+                <div className="flex items-start justify-between gap-3">
+                  <div>
+                    <p className="text-lg">{packet.emoji}</p>
+                    <h5 className="mt-1 text-sm font-semibold text-white">{packet.name}</h5>
+                  </div>
+                  <span className="rounded-full border border-slate-700 px-2 py-0.5 text-[11px] font-semibold uppercase text-slate-300">
+                    {formatLabel(packet.app_store_category)}
+                  </span>
+                </div>
+                <p className="mt-2 text-xs leading-5 text-slate-400">{packet.autonomous_app_concept?.promise}</p>
+                <p className="mt-3 border-l-2 border-dreamco-accent pl-3 text-xs leading-5 text-slate-300">
+                  Customer: {packet.target_customer}
+                </p>
+                <p className="mt-3 text-[11px] uppercase text-slate-500">
+                  {formatLabel(packet.app_store_listing?.status)}
+                </p>
+              </article>
+            ))}
+          </div>
         </div>
       </section>
 

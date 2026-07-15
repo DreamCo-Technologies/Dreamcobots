@@ -346,6 +346,50 @@ const appFoundryPayload = {
   gaps: [],
 };
 
+const botFounderAppStorePayload = {
+  schema: 'dreamco.bot_founder_app_store_report.v1',
+  generated_at: '2026-07-15T00:00:00Z',
+  mission: 'Every DreamCo bot studies its market, designs a useful autonomous app, prepares a safe company plan, and packages itself for the DreamCo app store.',
+  live_action_policy: 'Bots may research, draft, score, package, simulate, and propose. Bots must not contact customers, run ads, spend money, deploy publicly, move money, create fake claims, or publish app-store listings without owner approval.',
+  summary: {
+    bot_count: 1248,
+    founder_packets: 1248,
+    bots_with_app_concept: 1248,
+    bots_with_competitor_study_plan: 1248,
+    bots_with_revenue_model: 1248,
+    bots_with_marketing_plan: 1248,
+    bots_with_customer_discovery_plan: 1248,
+    bots_with_app_store_listing: 1248,
+    bots_with_sandbox_test_plan: 1248,
+    bots_blocked_from_live_actions_until_approval: 1248,
+    app_store_categories: 12,
+    study_loops: 7,
+    approval_gates: 11,
+  },
+  founder_study_loops: [
+    { id: 'competition_lab', label: 'Competition Lab', purpose: 'Study public competitors, pricing, feature gaps, reviews, and customer complaints.', outputs: ['competitor_map', 'feature_gap_matrix', 'pricing_notes'] },
+    { id: 'autonomous_money_lab', label: 'Autonomous Money Lab', purpose: 'Find ethical value creation, offer packaging, pricing tests, cost savings, and revenue recovery ideas.', outputs: ['revenue_model', 'offer_stack', 'risk_disclosures'] },
+    { id: 'app_builder_lab', label: 'App Builder Lab', purpose: 'Design one app-store-ready product with user, workflow, demo, sandbox test, and deployment plan.', outputs: ['app_concept', 'mvp_scope', 'deployment_plan'] },
+  ],
+  app_store_categories: [
+    { category: 'business_automation', bot_count: 300 },
+    { category: 'developer_tools', bot_count: 152 },
+    { category: 'sales_and_marketing', bot_count: 88 },
+  ],
+  dashboard_sample: [
+    {
+      slug: 'buddy-bot',
+      name: 'Buddy Bot',
+      emoji: '🤝',
+      app_store_category: 'business_automation',
+      target_customer: 'DreamCo owners and client teams',
+      autonomous_app_concept: { name: 'Buddy Bot App', promise: 'A supervised command center for safe AI company building.' },
+      app_store_listing: { status: 'draft_ready_for_owner_review' },
+    },
+  ],
+  approval_gates: ['customer_outreach', 'ad_spend', 'public_deployment', 'payment_collection', 'money_movement', 'app_store_publish'],
+};
+
 const stripeRevenueRescuePayload = {
   schema: 'dreamco.stripe_revenue_rescue.v1',
   generated_at: '2026-07-12T00:00:00Z',
@@ -464,6 +508,7 @@ beforeEach(() => {
     if (url === '/api/buddy-productivity') payload = buddyProductivityPayload;
     if (url === '/api/release-readiness') payload = releaseReadinessPayload;
     if (url === '/api/app-foundry') payload = appFoundryPayload;
+    if (url === '/api/bot-founder-app-store') payload = botFounderAppStorePayload;
     if (url === '/api/storage-guard') payload = storageGuardPayload;
     if (url === '/api/stripe-revenue-rescue') payload = stripeRevenueRescuePayload;
     if (url === '/api/production-approval-packets') payload = productionApprovalPacketsPayload;
@@ -524,6 +569,14 @@ describe('ActionsPage', () => {
     expect(screen.getAllByText('GitHub Pages').length).toBeGreaterThan(0);
     expect(screen.getAllByText('Hostinger').length).toBeGreaterThan(0);
     expect(screen.getByText('Live deploy gates')).toBeInTheDocument();
+    await waitFor(() => expect(screen.getByRole('heading', { name: 'Every bot studies the market and prepares its own autonomous app business' })).toBeInTheDocument());
+    expect(screen.getByText('Bot Founder App Store')).toBeInTheDocument();
+    expect(screen.getByText('Live-action approval wall')).toBeInTheDocument();
+    expect(screen.getByText('Competition Lab')).toBeInTheDocument();
+    expect(screen.getByText('Autonomous Money Lab')).toBeInTheDocument();
+    expect(screen.getByText('App Builder Lab')).toBeInTheDocument();
+    expect(screen.getByText('Sample bot-owned app-store packets')).toBeInTheDocument();
+    expect(screen.getByText('A supervised command center for safe AI company building.')).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: 'AI company builder with human trust built in' })).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: 'Tracks what helps you, clients, and bots improve' })).toBeInTheDocument();
     expect(screen.getByText('AI companies')).toBeInTheDocument();
@@ -632,7 +685,7 @@ describe('ActionsPage', () => {
       />,
     );
 
-    await waitFor(() => expect(screen.getByText('Buddy Bot')).toBeInTheDocument());
+    await waitFor(() => expect(screen.getAllByText('Buddy Bot').length).toBeGreaterThan(0));
     expect(screen.getAllByText('For you').length).toBeGreaterThan(0);
     expect(screen.getByText('For your users')).toBeInTheDocument();
     expect(screen.getByText('For Buddy')).toBeInTheDocument();

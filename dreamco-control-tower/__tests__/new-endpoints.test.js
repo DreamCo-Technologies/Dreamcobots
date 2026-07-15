@@ -374,6 +374,24 @@ describe('GET /api/app-foundry', () => {
   });
 });
 
+describe('GET /api/bot-founder-app-store', () => {
+  test('returns per-bot founder and app-store readiness', async () => {
+    const res = await request(app).get('/api/bot-founder-app-store');
+
+    expect(res.status).toBe(200);
+    expect(res.body.schema).toBe('dreamco.bot_founder_app_store_report.v1');
+    expect(res.body.summary.founder_packets).toBeGreaterThanOrEqual(1248);
+    expect(res.body.summary.bots_with_app_concept).toBe(res.body.summary.bot_count);
+    expect(res.body.summary.bots_with_competitor_study_plan).toBe(res.body.summary.bot_count);
+    expect(res.body.summary.bots_blocked_from_live_actions_until_approval).toBe(res.body.summary.bot_count);
+    expect(res.body.live_action_policy).toMatch(/must not contact customers/i);
+    expect(res.body.founder_study_loops.map((loop) => loop.id)).toEqual(
+      expect.arrayContaining(['competition_lab', 'autonomous_money_lab', 'app_builder_lab']),
+    );
+    expect(Array.isArray(res.body.dashboard_sample)).toBe(true);
+  });
+});
+
 describe('GET /api/github-triage', () => {
   test('returns generated GitHub triage report', async () => {
     const res = await request(app).get('/api/github-triage');

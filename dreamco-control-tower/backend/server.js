@@ -37,6 +37,10 @@ const APP_FOUNDRY_READINESS_FILE = path.join(
   __dirname,
   '../../reports/app_foundry_readiness.json',
 );
+const BOT_FOUNDER_APP_STORE_REPORT_FILE = path.join(
+  __dirname,
+  '../../reports/bot_founder_app_store_report.json',
+);
 const GITHUB_TRIAGE_REPORT_FILE = path.join(
   __dirname,
   '../../reports/github_triage_report.json',
@@ -179,6 +183,13 @@ function readAppFoundryReadiness() {
     return null;
   }
   return JSON.parse(fs.readFileSync(APP_FOUNDRY_READINESS_FILE, 'utf8'));
+}
+
+function readBotFounderAppStoreReport() {
+  if (!fs.existsSync(BOT_FOUNDER_APP_STORE_REPORT_FILE)) {
+    return null;
+  }
+  return JSON.parse(fs.readFileSync(BOT_FOUNDER_APP_STORE_REPORT_FILE, 'utf8'));
 }
 
 function readGitHubTriageReport() {
@@ -608,6 +619,17 @@ app.get('/api/app-foundry', rateLimiter, (_req, res) => {
   const report = readAppFoundryReadiness();
   if (!report) {
     return res.status(503).json({ error: 'app foundry readiness report not found' });
+  }
+  return res.json(report);
+});
+
+// ---------------------------------------------------------------------------
+// GET /api/bot-founder-app-store — per-bot founder/app-store readiness
+// ---------------------------------------------------------------------------
+app.get('/api/bot-founder-app-store', rateLimiter, (_req, res) => {
+  const report = readBotFounderAppStoreReport();
+  if (!report) {
+    return res.status(503).json({ error: 'bot founder app store report not found' });
   }
   return res.json(report);
 });
