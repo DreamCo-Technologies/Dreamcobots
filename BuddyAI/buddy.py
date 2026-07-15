@@ -4,14 +4,10 @@
 
 from __future__ import annotations
 
-import sys
-from pathlib import Path
+from dreamco_import_paths import configure_import_paths
 
 
-_ROOT = Path(__file__).resolve().parents[1]
-_GOVERNMENT_CONTRACT_BOT_DIR = _ROOT / "bots" / "government-contract-grant-bot"
-if str(_GOVERNMENT_CONTRACT_BOT_DIR) not in sys.path:
-    sys.path.insert(0, str(_GOVERNMENT_CONTRACT_BOT_DIR))
+configure_import_paths()
 
 # ── Government Contract & Grant Bot ──────────────────────────────────────
 from government_contract_grant_bot import GovernmentContractGrantBot
