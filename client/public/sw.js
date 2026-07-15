@@ -1,4 +1,4 @@
-const CACHE_NAME = "dreamco-empire-v1";
+const CACHE_NAME = "dreamco-empire-v5";
 const STATIC_ASSETS = ["/", "/dashboard", "/bots", "/divisions"];
 
 self.addEventListener("install", (event) => {

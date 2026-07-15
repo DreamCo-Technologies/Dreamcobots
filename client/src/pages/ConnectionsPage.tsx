@@ -235,13 +235,21 @@ export default function ConnectionsPage() {
   const toggleKillSwitch = useMutation({
     mutationFn: async (enabled: boolean) => {
       const res = await apiRequest("POST", "/api/kill-switch", { enabled });
+      if (enabled) {
+        // Task says kill switch should disconnect all platforms? 
+        // "Make the Kill Switch work - it should call a mutation to disconnect all platforms"
+        // Let's assume the backend handles this or we should call deletes here.
+        // Actually, let's just make sure it does what's asked.
+        await apiRequest("POST", "/api/platform-connections/disconnect-all", {});
+      }
       return res.json();
     },
     onSuccess: (data: any) => {
       queryClient.invalidateQueries({ queryKey: ["/api/kill-switch"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/platform-connections"] });
       toast({
         title: data.enabled ? "KILL SWITCH ACTIVATED" : "Kill switch deactivated",
-        description: data.enabled ? "All bot operations have been paused." : "Bot operations resumed.",
+        description: data.enabled ? "All bot operations have been paused and platforms disconnected." : "Bot operations resumed.",
         variant: data.enabled ? "destructive" : "default",
       });
     },
@@ -615,29 +623,39 @@ export default function ConnectionsPage() {
       </div>
 
       <Dialog open={connectDialogOpen} onOpenChange={setConnectDialogOpen}>
-        <DialogContent>
+        <DialogContent className="sm:max-w-[425px]">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
               {selectedPlatform && <selectedPlatform.icon className={cn("h-5 w-5", selectedPlatform.color)} />}
               Connect {selectedPlatform?.label}
             </DialogTitle>
           </DialogHeader>
-          <div className="space-y-4">
-            <p className="text-sm text-muted-foreground">{selectedPlatform?.description}</p>
+          <div className="grid gap-4 py-4">
             <div className="space-y-2">
-              <Label>Webhook URL (auto-generated)</Label>
-              <Input readOnly value={selectedPlatform ? generateWebhookUrl(selectedPlatform.id) : ""} className="font-mono text-xs" />
+              <Label>Setup Instructions</Label>
+              <div className="text-sm text-muted-foreground p-3 bg-muted rounded-md space-y-2">
+                <p>1. Copy your {selectedPlatform?.label} API Token from your platform settings.</p>
+                <p>2. Paste the token below to verify the connection.</p>
+                <p>3. Click 'Confirm Connection' to finalize the integration.</p>
+              </div>
             </div>
             <div className="space-y-2">
-              <Label>API Key (auto-generated)</Label>
-              <Input readOnly value="Will be generated on connect" className="font-mono text-xs" />
+              <Label htmlFor="api-key">Generated Empire API Key</Label>
+              <div className="flex gap-2">
+                <Input id="api-key" value={generateApiKey()} readOnly className="font-mono text-xs" />
+                <Button size="icon" variant="outline" onClick={() => copyToClipboard(generateApiKey())} data-testid="button-copy-key-gen">
+                  <Copy className="h-4 w-4" />
+                </Button>
+              </div>
+              <p className="text-[10px] text-muted-foreground">Use this key to authenticate DreamCo requests on {selectedPlatform?.label}.</p>
             </div>
-            <div className="flex gap-2 justify-end">
-              <Button variant="outline" onClick={() => setConnectDialogOpen(false)}>Cancel</Button>
-              <Button onClick={handleConfirmConnect} disabled={createConnection.isPending} data-testid="button-confirm-connect">
-                <Plug className="h-4 w-4 mr-1" /> Connect
-              </Button>
-            </div>
+          </div>
+          <div className="flex justify-end gap-3">
+            <Button variant="outline" onClick={() => setConnectDialogOpen(false)}>Cancel</Button>
+            <Button onClick={handleConfirmConnect} disabled={createConnection.isPending} data-testid="button-confirm-connect">
+              {createConnection.isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+              <Plug className="h-4 w-4 mr-1" /> Connect
+            </Button>
           </div>
         </DialogContent>
       </Dialog>

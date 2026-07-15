@@ -22,7 +22,7 @@ import { useBots } from "@/hooks/use-bots";
 import { cn } from "@/lib/utils";
 import type { Message } from "@shared/schema";
 import { api } from "@shared/routes";
-import { Bot, Loader2, Trash2, Wand2, Map, Hammer, Zap, GraduationCap, Sparkles, BrainCircuit } from "lucide-react";
+import { Bot, Loader2, Trash2, Wand2, Map, Hammer, Zap, GraduationCap, Sparkles, BrainCircuit, Share2, Download } from "lucide-react";
 
 type ChatMode = "plan" | "build" | "execute" | "teach";
 
@@ -209,6 +209,23 @@ export default function ConversationPage() {
 
   const currentModeConfig = MODE_CONFIG[mode];
 
+  const handleExport = () => {
+    const text = messages.map(m => `${m.role.toUpperCase()}: ${m.content}`).join("\n\n");
+    const blob = new Blob([text], { type: "text/plain" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `conversation-${id}.txt`;
+    a.click();
+    URL.revokeObjectURL(url);
+    toast({ title: "Conversation exported", description: "Downloaded as text file." });
+  };
+
+  const handleShare = () => {
+    navigator.clipboard.writeText(window.location.href);
+    toast({ title: "Link copied", description: "Conversation link copied to clipboard." });
+  };
+
   return (
     <AppShell selectedBotSlug={botSlug} onBotChange={setBotSlug}>
       <Seo title={`DreamCo Empire OS — ${title}`} description="Chat thread with AI bot, streaming responses in real time." />
@@ -257,6 +274,26 @@ export default function ConversationPage() {
           </div>
 
           <div className="flex items-center gap-2">
+            <Button
+              variant="outline"
+              className="rounded-xl border-border/70 bg-card/60 hover:bg-card shadow-sm hover:shadow-md transition-all"
+              onClick={handleExport}
+              data-testid="export-conversation"
+            >
+              <Download className="h-4 w-4 mr-2" />
+              Export
+            </Button>
+
+            <Button
+              variant="outline"
+              className="rounded-xl border-border/70 bg-card/60 hover:bg-card shadow-sm hover:shadow-md transition-all"
+              onClick={handleShare}
+              data-testid="share-conversation"
+            >
+              <Share2 className="h-4 w-4 mr-2" />
+              Share
+            </Button>
+
             <Button
               variant="outline"
               className="rounded-xl border-border/70 bg-card/60 hover:bg-card shadow-sm hover:shadow-md transition-all"

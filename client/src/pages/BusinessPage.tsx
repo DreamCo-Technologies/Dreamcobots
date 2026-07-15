@@ -6,6 +6,9 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Progress } from "@/components/ui/progress";
+import { useLocation } from "wouter";
+import { useToast } from "@/hooks/use-toast";
+import { useBots } from "@/hooks/use-bots";
 import {
   Rocket,
   TrendingUp,
@@ -42,6 +45,7 @@ import {
   Bot,
   Zap,
 } from "lucide-react";
+import { apiRequest } from "@/lib/queryClient";
 
 const headerStats = [
   { label: "Businesses Launched", value: "2,847", icon: Rocket, change: "+124 this month" },
@@ -63,6 +67,7 @@ const startupTools = [
     ],
     metric: "1,247 plans created",
     status: "Popular",
+    botSlug: "business-plan-bot",
   },
   {
     title: "Market Research",
@@ -76,6 +81,7 @@ const startupTools = [
     ],
     metric: "893 reports generated",
     status: "Active",
+    botSlug: "market-research-bot",
   },
   {
     title: "Legal Formation",
@@ -90,6 +96,7 @@ const startupTools = [
     ],
     metric: "2,104 entities formed",
     status: "Essential",
+    botSlug: "legal-bot",
   },
   {
     title: "Brand Identity",
@@ -103,6 +110,7 @@ const startupTools = [
     ],
     metric: "756 brands created",
     status: "Creative",
+    botSlug: "brand-bot",
   },
   {
     title: "Domain & Website Setup",
@@ -116,6 +124,7 @@ const startupTools = [
     ],
     metric: "1,892 sites launched",
     status: "Technical",
+    botSlug: "web-dev-bot",
   },
 ];
 
@@ -126,6 +135,7 @@ const runningTools = [
     description: "Automated financial tracking with expense categorization, invoicing, and tax preparation.",
     metrics: { revenue: "$842K", expenses: "$341K", profit: "$501K", margin: "59.5%" },
     features: ["Auto-categorized transactions", "Invoice generation", "Tax estimation", "P&L statements"],
+    botSlug: "finance-bot",
   },
   {
     title: "Employee Management",
@@ -133,6 +143,7 @@ const runningTools = [
     description: "HR toolkit for payroll processing, time tracking, benefits administration, and team performance.",
     metrics: { employees: "48", payroll: "$286K/mo", satisfaction: "92%", retention: "96%" },
     features: ["Payroll automation", "Time & attendance", "Performance reviews", "Benefits admin"],
+    botSlug: "hr-bot",
   },
   {
     title: "Inventory Tracking",
@@ -140,6 +151,7 @@ const runningTools = [
     description: "Real-time inventory management with automated reordering, supplier management, and demand forecasting.",
     metrics: { skus: "3,247", turnover: "8.2x", accuracy: "99.4%", value: "$1.2M" },
     features: ["Real-time stock levels", "Auto reorder points", "Supplier management", "Demand forecasting"],
+    botSlug: "inventory-bot",
   },
   {
     title: "Customer Management (CRM)",
@@ -147,6 +159,7 @@ const runningTools = [
     description: "Full-featured CRM with pipeline management, communication tracking, and customer segmentation.",
     metrics: { contacts: "12,480", deals: "847", conversion: "34%", ltv: "$2,840" },
     features: ["Pipeline management", "Email integration", "Customer segmentation", "Activity tracking"],
+    botSlug: "crm-bot",
   },
   {
     title: "Task & Project Management",
@@ -154,6 +167,7 @@ const runningTools = [
     description: "Project planning and execution tools with team collaboration, milestones, and progress tracking.",
     metrics: { projects: "34", tasks: "1,247", completed: "89%", onTime: "94%" },
     features: ["Kanban boards", "Gantt charts", "Team assignments", "Milestone tracking"],
+    botSlug: "pm-bot",
   },
 ];
 
@@ -164,6 +178,7 @@ const expansionTools = [
     description: "Design and structure your franchise system with territory planning, fee structures, and operations manuals.",
     features: ["Territory mapping & planning", "Fee structure calculator", "Operations manual templates", "Franchisee qualification criteria"],
     stat: "142 models built",
+    botSlug: "franchise-bot",
   },
   {
     title: "Market Expansion Analyzer",
@@ -171,6 +186,7 @@ const expansionTools = [
     description: "Identify and evaluate new market opportunities with demographic analysis and competitive assessment.",
     features: ["Geographic opportunity scoring", "Demographic analysis", "Competitive density mapping", "Revenue potential estimation"],
     stat: "89 markets analyzed",
+    botSlug: "expansion-bot",
   },
   {
     title: "Funding & Investor Matching",
@@ -178,6 +194,7 @@ const expansionTools = [
     description: "Connect with investors and funding sources matched to your business stage, industry, and capital needs.",
     features: ["Investor database access", "Pitch deck optimization", "Valuation calculator", "Term sheet analysis"],
     stat: "$24M matched",
+    botSlug: "investor-bot",
   },
   {
     title: "Partnership Finder",
@@ -185,6 +202,7 @@ const expansionTools = [
     description: "Discover and evaluate strategic partnership opportunities with compatibility scoring and deal structuring.",
     features: ["Partner compatibility scoring", "Deal structure templates", "Due diligence checklists", "Integration planning"],
     stat: "367 partnerships formed",
+    botSlug: "partnership-bot",
   },
   {
     title: "International Expansion Planner",
@@ -192,6 +210,7 @@ const expansionTools = [
     description: "Navigate international markets with localization guides, regulatory compliance, and cultural adaptation tools.",
     features: ["Market entry strategies", "Regulatory compliance guides", "Cultural adaptation tools", "Currency & tax planning"],
     stat: "28 countries covered",
+    botSlug: "international-bot",
   },
 ];
 
@@ -203,6 +222,7 @@ const aiTools = [
     features: ["Strategic planning assistance", "Real-time Q&A support", "Industry-specific advice", "Growth strategy recommendations"],
     accuracy: "94%",
     queries: "48,293",
+    botSlug: "advisor-bot",
   },
   {
     title: "Financial Forecasting",
@@ -211,6 +231,7 @@ const aiTools = [
     features: ["Revenue prediction models", "Cash flow forecasting", "Scenario analysis (best/worst/likely)", "Risk quantification"],
     accuracy: "91%",
     queries: "12,847",
+    botSlug: "forecasting-bot",
   },
   {
     title: "Competitive Analysis",
@@ -219,6 +240,7 @@ const aiTools = [
     features: ["Real-time competitor tracking", "Market share estimation", "Feature comparison matrices", "Strategic gap identification"],
     accuracy: "89%",
     queries: "8,924",
+    botSlug: "competitive-bot",
   },
   {
     title: "Pricing Optimization",
@@ -227,6 +249,7 @@ const aiTools = [
     features: ["Price elasticity modeling", "Competitor price monitoring", "Bundle optimization", "A/B test recommendations"],
     accuracy: "92%",
     queries: "6,341",
+    botSlug: "pricing-bot",
   },
   {
     title: "Customer Sentiment Analysis",
@@ -235,11 +258,46 @@ const aiTools = [
     features: ["Multi-channel monitoring", "Sentiment trend tracking", "Topic extraction", "Actionable insight generation"],
     accuracy: "96%",
     queries: "34,102",
+    botSlug: "sentiment-bot",
   },
 ];
 
 export default function BusinessPage() {
   const [botSlug, setBotSlug] = useState<string | undefined>(undefined);
+  const [, setLocation] = useLocation();
+  const { toast } = useToast();
+  const { data: botsList } = useBots();
+
+  const handleLaunch = async (slug: string, toolTitle: string) => {
+    // Find the closest bot in the system
+    const targetBot = botsList?.find(b => b.slug === slug) || botsList?.[0];
+
+    if (targetBot) {
+      try {
+        const res = await apiRequest("POST", "/api/conversations", { title: `New ${toolTitle} Project` });
+        const convo = await res.json();
+        setLocation(`/c/${convo.id}?bot=${targetBot.slug}`);
+      } catch (e) {
+        toast({
+          title: "Failed to launch",
+          description: "Could not initialize tool conversation.",
+          variant: "destructive"
+        });
+      }
+    } else {
+      toast({
+        title: toolTitle,
+        description: "Tool initializing. Our specialized AI is preparing your project workspace.",
+      });
+    }
+  };
+
+  const handleLearnMore = (toolTitle: string) => {
+    toast({
+      title: `About ${toolTitle}`,
+      description: "This enterprise tool utilizes advanced DreamCo AI models to automate core business logic.",
+    });
+  };
 
   return (
     <AppShell selectedBotSlug={botSlug} onBotChange={setBotSlug}>
@@ -270,7 +328,10 @@ export default function BusinessPage() {
             {headerStats.map((stat) => (
               <Card key={stat.label} data-testid={`stat-${stat.label.toLowerCase().replace(/\s+/g, "-")}`}>
                 <CardHeader className="flex flex-row items-center justify-between gap-1 space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium text-muted-foreground">{stat.label}</CardTitle>
+                  <div className="flex items-center gap-2">
+                    <CardTitle className="text-sm font-medium text-muted-foreground">{stat.label}</CardTitle>
+                    <Badge variant="outline" className="text-[9px] px-1 py-0 h-4 rounded-sm font-normal text-muted-foreground">Projected</Badge>
+                  </div>
                   <stat.icon className="h-4 w-4 text-primary" />
                 </CardHeader>
                 <CardContent>
@@ -337,11 +398,20 @@ export default function BusinessPage() {
                         ))}
                       </ul>
                       <div className="flex items-center gap-2">
-                        <Button size="sm" data-testid={`button-launch-${tool.title.toLowerCase().replace(/\s+/g, "-")}`}>
+                        <Button
+                          size="sm"
+                          data-testid={`button-launch-${tool.title.toLowerCase().replace(/\s+/g, "-")}`}
+                          onClick={() => handleLaunch(tool.botSlug, tool.title)}
+                        >
                           <Zap className="h-3.5 w-3.5 mr-1.5" />
                           Launch Tool
                         </Button>
-                        <Button size="sm" variant="outline" data-testid={`button-learn-${tool.title.toLowerCase().replace(/\s+/g, "-")}`}>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          data-testid={`button-learn-${tool.title.toLowerCase().replace(/\s+/g, "-")}`}
+                          onClick={() => handleLearnMore(tool.title)}
+                        >
                           Learn More
                         </Button>
                       </div>
@@ -369,7 +439,8 @@ export default function BusinessPage() {
                       <CardContent className="space-y-4">
                         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                           {metricEntries.map(([key, value]) => (
-                            <div key={key} className="p-2.5 rounded-lg border border-border/40 text-center">
+                            <div key={key} className="p-2.5 rounded-lg border border-border/40 text-center relative">
+                              <Badge variant="outline" className="absolute -top-1.5 -right-1 text-[8px] px-1 py-0 h-3 rounded-xs font-normal bg-card">Proj.</Badge>
                               <p className="text-lg font-bold">{value}</p>
                               <p className="text-[10px] text-muted-foreground capitalize">{key}</p>
                             </div>
@@ -384,10 +455,19 @@ export default function BusinessPage() {
                           ))}
                         </ul>
                         <div className="flex items-center gap-2">
-                          <Button size="sm" data-testid={`button-open-${tool.title.toLowerCase().replace(/\s+/g, "-")}`}>
+                          <Button
+                            size="sm"
+                            data-testid={`button-open-${tool.title.toLowerCase().replace(/\s+/g, "-")}`}
+                            onClick={() => handleLaunch(tool.botSlug, tool.title)}
+                          >
                             Open Dashboard
                           </Button>
-                          <Button size="sm" variant="outline" data-testid={`button-settings-${tool.title.toLowerCase().replace(/\s+/g, "-")}`}>
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            data-testid={`button-settings-${tool.title.toLowerCase().replace(/\s+/g, "-")}`}
+                            onClick={() => handleLearnMore(`${tool.title} Settings`)}
+                          >
                             Settings
                           </Button>
                         </div>
@@ -428,11 +508,20 @@ export default function BusinessPage() {
                         ))}
                       </ul>
                       <div className="flex items-center gap-2">
-                        <Button size="sm" data-testid={`button-explore-${tool.title.toLowerCase().replace(/\s+/g, "-")}`}>
+                        <Button
+                          size="sm"
+                          data-testid={`button-explore-${tool.title.toLowerCase().replace(/\s+/g, "-")}`}
+                          onClick={() => handleLaunch(tool.botSlug, tool.title)}
+                        >
                           <Rocket className="h-3.5 w-3.5 mr-1.5" />
                           Explore
                         </Button>
-                        <Button size="sm" variant="outline" data-testid={`button-details-${tool.title.toLowerCase().replace(/\s+/g, "-")}`}>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          data-testid={`button-details-${tool.title.toLowerCase().replace(/\s+/g, "-")}`}
+                          onClick={() => handleLearnMore(`${tool.title} Details`)}
+                        >
                           View Details
                         </Button>
                       </div>
@@ -481,11 +570,20 @@ export default function BusinessPage() {
                         ))}
                       </ul>
                       <div className="flex items-center gap-2">
-                        <Button size="sm" data-testid={`button-activate-${tool.title.toLowerCase().replace(/\s+/g, "-")}`}>
+                        <Button
+                          size="sm"
+                          data-testid={`button-activate-${tool.title.toLowerCase().replace(/\s+/g, "-")}`}
+                          onClick={() => handleLaunch(tool.botSlug, tool.title)}
+                        >
                           <Brain className="h-3.5 w-3.5 mr-1.5" />
                           Activate
                         </Button>
-                        <Button size="sm" variant="outline" data-testid={`button-config-${tool.title.toLowerCase().replace(/\s+/g, "-")}`}>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          data-testid={`button-config-${tool.title.toLowerCase().replace(/\s+/g, "-")}`}
+                          onClick={() => handleLearnMore(`${tool.title} Configuration`)}
+                        >
                           Configure
                         </Button>
                       </div>

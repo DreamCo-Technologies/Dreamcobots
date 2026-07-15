@@ -3,6 +3,7 @@ import { queryClient } from "./lib/queryClient";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import { ErrorBoundary } from "@/components/ErrorBoundary";
 
 import NotFound from "@/pages/not-found";
 import ChatIndexPage from "@/pages/ChatIndexPage";
@@ -22,8 +23,8 @@ import MarketplacePage from "@/pages/MarketplacePage";
 import FormulasPage from "@/pages/FormulasPage";
 import LearningMatrixPage from "@/pages/LearningMatrixPage";
 import BusinessPage from "@/pages/BusinessPage";
-import CodeLabPage from "@/pages/CodeLabPage";
-import CryptoPage from "@/pages/CryptoPage";
+import CodeLabPage from "@/pages/DreamCodeLabPage";
+import CryptoPage from "@/pages/CryptoCommandCenter";
 import PaymentsPage from "@/pages/PaymentsPage";
 import LoansPage from "@/pages/LoansPage";
 import ConnectionsPage from "@/pages/ConnectionsPage";
@@ -34,37 +35,47 @@ import AIModelsPage from "@/pages/AIModelsPage";
 import BotBuilderPage from "@/pages/BotBuilderPage";
 import BotActivityPage from "@/pages/BotActivityPage";
 
+function wrap(Page: React.ComponentType, name: string) {
+  return function WrappedPage(props: any) {
+    return (
+      <ErrorBoundary pageName={name}>
+        <Page {...props} />
+      </ErrorBoundary>
+    );
+  };
+}
+
 function Router() {
   return (
     <Switch>
-      <Route path="/" component={ChatIndexPage} />
-      <Route path="/c/:id" component={ConversationPage} />
-      <Route path="/autonomy" component={AutonomyPage} />
-      <Route path="/bots" component={BotsPage} />
-      <Route path="/bot/:id" component={BotDetailPage} />
-      <Route path="/dashboard" component={DashboardPage} />
-      <Route path="/divisions" component={DivisionsPage} />
-      <Route path="/revenue" component={RevenuePage} />
-      <Route path="/pricing" component={PricingPage} />
-      <Route path="/deals" component={DealsPage} />
-      <Route path="/debug" component={DebugPage} />
-      <Route path="/ecosystem" component={EcosystemPage} />
-      <Route path="/orchestration" component={OrchestrationPage} />
-      <Route path="/marketplace" component={MarketplacePage} />
-      <Route path="/formulas" component={FormulasPage} />
-      <Route path="/learning-matrix" component={LearningMatrixPage} />
-      <Route path="/business" component={BusinessPage} />
-      <Route path="/code-lab" component={CodeLabPage} />
-      <Route path="/crypto" component={CryptoPage} />
-      <Route path="/payments" component={PaymentsPage} />
-      <Route path="/loans" component={LoansPage} />
-      <Route path="/connections" component={ConnectionsPage} />
-      <Route path="/time-capsule" component={TimeCapsulePage} />
-      <Route path="/costs" component={CostTrackingPage} />
-      <Route path="/ai-leaders" component={AILeadersPage} />
-      <Route path="/ai-models" component={AIModelsPage} />
-      <Route path="/bot-builder" component={BotBuilderPage} />
-      <Route path="/bot-activity" component={BotActivityPage} />
+      <Route path="/" component={wrap(ChatIndexPage, "Chat")} />
+      <Route path="/c/:id" component={wrap(ConversationPage, "Conversation")} />
+      <Route path="/autonomy" component={wrap(AutonomyPage, "Autonomy")} />
+      <Route path="/bots" component={wrap(BotsPage, "Bots")} />
+      <Route path="/bot/:id" component={wrap(BotDetailPage, "Bot Detail")} />
+      <Route path="/dashboard" component={wrap(DashboardPage, "Dashboard")} />
+      <Route path="/divisions" component={wrap(DivisionsPage, "Divisions")} />
+      <Route path="/revenue" component={wrap(RevenuePage, "Revenue")} />
+      <Route path="/pricing" component={wrap(PricingPage, "Pricing")} />
+      <Route path="/deals" component={wrap(DealsPage, "Deals")} />
+      <Route path="/debug" component={wrap(DebugPage, "Debug")} />
+      <Route path="/ecosystem" component={wrap(EcosystemPage, "Ecosystem")} />
+      <Route path="/orchestration" component={wrap(OrchestrationPage, "Orchestration")} />
+      <Route path="/marketplace" component={wrap(MarketplacePage, "Marketplace")} />
+      <Route path="/formulas" component={wrap(FormulasPage, "Formulas")} />
+      <Route path="/learning-matrix" component={wrap(LearningMatrixPage, "Learning Matrix")} />
+      <Route path="/business" component={wrap(BusinessPage, "Business")} />
+      <Route path="/code-lab" component={wrap(CodeLabPage, "Code Lab")} />
+      <Route path="/crypto" component={wrap(CryptoPage, "Crypto")} />
+      <Route path="/payments" component={wrap(PaymentsPage, "Payments")} />
+      <Route path="/loans" component={wrap(LoansPage, "Loans")} />
+      <Route path="/connections" component={wrap(ConnectionsPage, "Connections")} />
+      <Route path="/time-capsule" component={wrap(TimeCapsulePage, "Time Capsule")} />
+      <Route path="/costs" component={wrap(CostTrackingPage, "Cost Tracking")} />
+      <Route path="/ai-leaders" component={wrap(AILeadersPage, "AI Leaders")} />
+      <Route path="/ai-models" component={wrap(AIModelsPage, "AI Models")} />
+      <Route path="/bot-builder" component={wrap(BotBuilderPage, "Bot Builder")} />
+      <Route path="/bot-activity" component={wrap(BotActivityPage, "Bot Activity")} />
 
       {/* Legacy / convenience */}
       <Route path="/chat">
@@ -82,7 +93,9 @@ function App() {
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
         <Toaster />
-        <Router />
+        <ErrorBoundary pageName="Application">
+          <Router />
+        </ErrorBoundary>
       </TooltipProvider>
     </QueryClientProvider>
   );

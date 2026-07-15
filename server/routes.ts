@@ -1412,6 +1412,20 @@ Any improvements or fixes (optional, 1-2 bullet points max)`;
     res.json({ success: true });
   });
 
+  app.post("/api/platform-connections/disconnect-all", async (_req, res) => {
+    const connections = await storage.listPlatformConnections();
+    for (const conn of connections) {
+      await storage.deletePlatformConnection(conn.id);
+    }
+    res.json({ success: true });
+  });
+
+  // Alias for connections as requested in the task
+  app.post("/api/connections", async (req, res) => {
+    const conn = await storage.createPlatformConnection(req.body);
+    res.json(conn);
+  });
+
   // ===== KILL SWITCH =====
   app.get("/api/kill-switch", async (_req, res) => {
     const setting = await storage.getSetting("kill_switch");
@@ -1672,6 +1686,66 @@ Any improvements or fixes (optional, 1-2 bullet points max)`;
       }
     } catch (e: any) {
       res.status(500).json({ success: false, error: e.message });
+    }
+  });
+
+  // ===== MODULE STATUS — 24-module command center status =====
+  app.get("/api/modules/status", async (_req, res) => {
+    const MODULES = [
+      { id: "fleet", name: "Bot Fleet", path: "/bots", jobKeyword: "Fleet Scan", icon: "Bot", color: "blue" },
+      { id: "buddy", name: "Buddy Bot", path: "/bots/buddy-bot", jobKeyword: "Buddy Bot", icon: "BrainCircuit", color: "violet" },
+      { id: "divisions", name: "Divisions", path: "/divisions", jobKeyword: "Fleet Scan", icon: "Building2", color: "indigo" },
+      { id: "deals", name: "Deal Analyzer", path: "/deals", jobKeyword: "deal-analyzer", icon: "Calculator", color: "emerald" },
+      { id: "formulas", name: "Formula Vault", path: "/formulas", jobKeyword: "formula-vault", icon: "FlaskConical", color: "amber" },
+      { id: "learning", name: "Learning Matrix", path: "/learning-matrix", jobKeyword: "learning-matrix", icon: "Brain", color: "cyan" },
+      { id: "ai-leaders", name: "AI Leaders", path: "/ai-leaders", jobKeyword: "ai-leaders", icon: "Trophy", color: "yellow" },
+      { id: "ai-models", name: "AI Models Hub", path: "/ai-models", jobKeyword: "ai-models", icon: "Cpu", color: "pink" },
+      { id: "ecosystem", name: "AI Ecosystem", path: "/ecosystem", jobKeyword: "Global AI", icon: "Globe", color: "teal" },
+      { id: "orchestration", name: "Orchestration", path: "/orchestration", jobKeyword: "orchestration", icon: "Network", color: "purple" },
+      { id: "marketplace", name: "Marketplace", path: "/marketplace", jobKeyword: "marketplace", icon: "Store", color: "orange" },
+      { id: "crypto", name: "Crypto", path: "/crypto", jobKeyword: "crypto", icon: "Wallet", color: "green" },
+      { id: "payments", name: "Payments", path: "/payments", jobKeyword: "payments", icon: "CreditCard", color: "blue" },
+      { id: "business", name: "Biz Launch", path: "/business", jobKeyword: "biz-launch", icon: "Rocket", color: "rose" },
+      { id: "code-lab", name: "Code Lab", path: "/code-lab", jobKeyword: "code-lab", icon: "Code", color: "cyan" },
+      { id: "loans", name: "Loans & Deals", path: "/loans", jobKeyword: "loans", icon: "Landmark", color: "lime" },
+      { id: "debug", name: "Debug Intel", path: "/debug", jobKeyword: "debug-intel", icon: "Bug", color: "red" },
+      { id: "revenue", name: "Revenue", path: "/revenue", jobKeyword: "revenue", icon: "TrendingUp", color: "green" },
+      { id: "pricing", name: "Pricing", path: "/pricing", jobKeyword: "pricing", icon: "Tag", color: "violet" },
+      { id: "connections", name: "Connections", path: "/connections", jobKeyword: "connections", icon: "Plug", color: "sky" },
+      { id: "time-capsule", name: "Time Capsule", path: "/time-capsule", jobKeyword: "time-capsule", icon: "Clock", color: "slate" },
+      { id: "costs", name: "Cost Tracking", path: "/costs", jobKeyword: "cost-tracking", icon: "DollarSign", color: "amber" },
+      { id: "autonomy", name: "Autonomy", path: "/autonomy", jobKeyword: "autonomy", icon: "Zap", color: "yellow" },
+      { id: "era-testing", name: "Era Testing", path: "/bot-activity", jobKeyword: "Era Testing", icon: "Activity", color: "indigo" },
+    ];
+    try {
+      const { getToken } = await import("./github-sync");
+      const token = getToken();
+      const REPO = "DreamCo-Technologies/Dreamcobots";
+      const DASHBOARD_WF_ID = 284581909;
+      const headers = { Authorization: `Bearer ${token}`, Accept: "application/vnd.github+json", "X-GitHub-Api-Version": "2022-11-28", "User-Agent": "DreamCo-Empire-OS" };
+      const runsRes = await fetch(`https://api.github.com/repos/${REPO}/actions/workflows/${DASHBOARD_WF_ID}/runs?per_page=3&status=completed`, { headers });
+      const runsData = await runsRes.json() as any;
+      const lastRun = (runsData.workflow_runs ?? [])[0];
+      let jobs: any[] = [];
+      if (lastRun) {
+        const jobsRes = await fetch(`https://api.github.com/repos/${REPO}/actions/runs/${lastRun.id}/jobs?filter=all`, { headers });
+        const jobsData = await jobsRes.json() as any;
+        jobs = jobsData.jobs ?? [];
+      }
+      const modules = MODULES.map(m => {
+        const matchedJob = jobs.find((j: any) => j.name.toLowerCase().includes(m.jobKeyword.toLowerCase()));
+        return {
+          ...m,
+          status: matchedJob ? (matchedJob.conclusion ?? matchedJob.status) : "unknown",
+          jobName: matchedJob?.name ?? null,
+          lastRunAt: lastRun?.created_at ?? null,
+          runUrl: lastRun?.html_url ?? null,
+        };
+      });
+      const passCount = modules.filter(m => m.status === "success").length;
+      res.json({ modules, lastRunId: lastRun?.id, lastRunAt: lastRun?.created_at, lastRunUrl: lastRun?.html_url, overallHealth: Math.round((passCount / modules.length) * 100) });
+    } catch (_e) {
+      res.json({ modules: MODULES.map(m => ({ ...m, status: "unknown", jobName: null, lastRunAt: null, runUrl: null })), overallHealth: 0, offline: true });
     }
   });
 

@@ -1,0 +1,2 @@
+- [Browser Module Cache Fix Pattern](browser-cache-fix.md) — renaming files + bumping SW version clears stale module cache for real users
+- [CodeLabPage Bot Icon Bug](codelabs-bot-icon.md) — `Bot` icon import caused scope crash; fixed by using `Sparkles` and adding `onRunBot` prop
