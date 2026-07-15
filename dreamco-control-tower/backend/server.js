@@ -45,6 +45,10 @@ const DREAMCO_24_HOUR_SCALING_REPORT_FILE = path.join(
   __dirname,
   '../../reports/dreamco_24_hour_scaling_report.json',
 );
+const SPECIALIZED_BOT_KNOWLEDGE_REPORT_FILE = path.join(
+  __dirname,
+  '../../reports/specialized_bot_knowledge_report.json',
+);
 const GITHUB_TRIAGE_REPORT_FILE = path.join(
   __dirname,
   '../../reports/github_triage_report.json',
@@ -201,6 +205,13 @@ function readDreamCo24HourScalingReport() {
     return null;
   }
   return JSON.parse(fs.readFileSync(DREAMCO_24_HOUR_SCALING_REPORT_FILE, 'utf8'));
+}
+
+function readSpecializedBotKnowledgeReport() {
+  if (!fs.existsSync(SPECIALIZED_BOT_KNOWLEDGE_REPORT_FILE)) {
+    return null;
+  }
+  return JSON.parse(fs.readFileSync(SPECIALIZED_BOT_KNOWLEDGE_REPORT_FILE, 'utf8'));
 }
 
 function readGitHubTriageReport() {
@@ -652,6 +663,17 @@ app.get('/api/24-hour-scaling', rateLimiter, (_req, res) => {
   const report = readDreamCo24HourScalingReport();
   if (!report) {
     return res.status(503).json({ error: '24-hour scaling report not found' });
+  }
+  return res.json(report);
+});
+
+// ---------------------------------------------------------------------------
+// GET /api/specialized-bot-knowledge — per-bot knowledge profile coverage
+// ---------------------------------------------------------------------------
+app.get('/api/specialized-bot-knowledge', rateLimiter, (_req, res) => {
+  const report = readSpecializedBotKnowledgeReport();
+  if (!report) {
+    return res.status(503).json({ error: 'specialized bot knowledge report not found' });
   }
   return res.json(report);
 });

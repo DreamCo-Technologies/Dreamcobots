@@ -442,6 +442,58 @@ const FALLBACK_24_HOUR_SCALING = {
   next_actions: ['Connect this report to a scheduled workflow when recurring automation is approved.'],
 };
 
+const FALLBACK_SPECIALIZED_BOT_KNOWLEDGE = {
+  generated_at: null,
+  mission: 'Give every DreamCo bot a specialized knowledge system for its division, customers, competitors, app-store product, workflows, safety gates, and learning loop.',
+  default_mode: 'local_first_source_backed_learning',
+  summary: {
+    bot_count: 1248,
+    knowledge_profiles: 1248,
+    knowledge_domains: 9,
+    bots_with_all_knowledge_domains: 1248,
+    bots_with_source_policy: 1248,
+    bots_with_memory_policy: 1248,
+    bots_with_runtime_tooling_knowledge: 1248,
+    bots_with_safety_approval_knowledge: 1248,
+    bots_with_app_builder_knowledge: 1248,
+    resource_library_bot_count: 1248,
+    bot_founder_packets: 1248,
+    storage_ready: true,
+    approval_gates: 10,
+    memory_tiers: 4,
+  },
+  knowledge_domains: [
+    { id: 'domain_expertise', label: 'Domain Expertise', purpose: 'Know the bot industry, job, terminology, workflows, metrics, regulations, and common failure modes.' },
+    { id: 'customer_intelligence', label: 'Customer Intelligence', purpose: 'Know who the bot helps, what problem they have, what proof they need, and what outcome they care about.' },
+    { id: 'competitor_intelligence', label: 'Competitor Intelligence', purpose: 'Study public competitors, substitutes, pricing, feature gaps, reviews, positioning, onboarding, and trust signals.' },
+    { id: 'app_builder_knowledge', label: 'App Builder Knowledge', purpose: 'Know how to turn the bot into a usable app, website, course, game, simulation, dashboard, or workflow.' },
+    { id: 'safety_and_approval', label: 'Safety and Approval', purpose: 'Know what it may draft versus what requires owner approval before customer, money, deployment, or account impact.' },
+  ],
+  source_policy: {
+    allowed: ['public documentation', 'public pricing pages', 'public reviews', 'owner-approved notes', 'generated sandbox evidence', 'test reports'],
+    blocked: ['secrets', 'private account data without approval', 'copied proprietary code', 'low-signal raw scratchpads'],
+  },
+  memory_tiers: [
+    { id: 'hot', purpose: 'Active task context and short-lived work notes.' },
+    { id: 'warm', purpose: 'Approved lessons, competitor summaries, and reusable workflows.' },
+    { id: 'cold', purpose: 'Long-term audit evidence and archived experiments.' },
+    { id: 'vector', purpose: 'Search references partitioned by division, bot, domain, and month.' },
+  ],
+  dashboard_sample: [
+    {
+      slug: 'buddy-bot',
+      name: 'Buddy Bot',
+      emoji: '🤝',
+      division: 'CommandCore',
+      target_customer: 'DreamCo owners and client teams',
+      app_concept_name: 'Buddy Bot App',
+      dashboard_status: 'ready_for_specialized_learning',
+      specialized_study_queue: ['Map customer pains, buying triggers, and proof needs.', 'Compare public competitors and substitute workflows.'],
+    },
+  ],
+  approval_gates: ['customer_outreach', 'ad_spend', 'money_movement', 'public_deployment', 'app_store_publish'],
+};
+
 const FALLBACK_STRIPE_REVENUE_RESCUE = {
   generated_at: null,
   summary: {
@@ -1258,6 +1310,8 @@ export default function ActionsPage({
   const [botFounderAppStoreStatus, setBotFounderAppStoreStatus] = useState('loading');
   const [dailyScaling, setDailyScaling] = useState(null);
   const [dailyScalingStatus, setDailyScalingStatus] = useState('loading');
+  const [specializedKnowledge, setSpecializedKnowledge] = useState(null);
+  const [specializedKnowledgeStatus, setSpecializedKnowledgeStatus] = useState('loading');
   const [storageGuard, setStorageGuard] = useState(null);
   const [storageGuardStatus, setStorageGuardStatus] = useState('loading');
   const [stripeRevenueRescue, setStripeRevenueRescue] = useState(null);
@@ -1352,6 +1406,15 @@ export default function ActionsPage({
   }, []);
 
   useEffect(() => {
+    fetchFirstJson(['/api/specialized-bot-knowledge'])
+      .then((data) => {
+        setSpecializedKnowledge(data);
+        setSpecializedKnowledgeStatus('live');
+      })
+      .catch(() => setSpecializedKnowledgeStatus('generated fallback'));
+  }, []);
+
+  useEffect(() => {
     fetchFirstJson(['/api/storage-guard'])
       .then((data) => {
         setStorageGuard(data);
@@ -1409,6 +1472,7 @@ export default function ActionsPage({
   const foundry = appFoundry ?? FALLBACK_APP_FOUNDRY;
   const botFounderStore = botFounderAppStore ?? FALLBACK_BOT_FOUNDER_APP_STORE;
   const scaling24 = dailyScaling ?? FALLBACK_24_HOUR_SCALING;
+  const knowledge = specializedKnowledge ?? FALLBACK_SPECIALIZED_BOT_KNOWLEDGE;
   const storage = storageGuard ?? FALLBACK_STORAGE_GUARD;
   const stripeRescue = stripeRevenueRescue ?? FALLBACK_STRIPE_REVENUE_RESCUE;
   const approvalPackets = productionApprovalPackets ?? FALLBACK_PRODUCTION_APPROVAL_PACKETS;
@@ -1422,6 +1486,7 @@ export default function ActionsPage({
   const foundrySummary = foundry.summary ?? FALLBACK_APP_FOUNDRY.summary;
   const botFounderSummary = botFounderStore.summary ?? FALLBACK_BOT_FOUNDER_APP_STORE.summary;
   const scaling24Summary = scaling24.summary ?? FALLBACK_24_HOUR_SCALING.summary;
+  const knowledgeSummary = knowledge.summary ?? FALLBACK_SPECIALIZED_BOT_KNOWLEDGE.summary;
   const storageSummary = storage.summary ?? FALLBACK_STORAGE_GUARD.summary;
   const stripeRescueSummary = stripeRescue.summary ?? FALLBACK_STRIPE_REVENUE_RESCUE.summary;
   const approvalPacketSummary = approvalPackets.summary ?? FALLBACK_PRODUCTION_APPROVAL_PACKETS.summary;
@@ -2341,6 +2406,125 @@ export default function ActionsPage({
               ))}
             </div>
           </aside>
+        </div>
+      </section>
+
+      <section aria-labelledby="specialized-knowledge-heading" className="border border-slate-700 bg-slate-950 p-5">
+        <div className="flex flex-wrap items-start justify-between gap-3">
+          <div>
+            <p className="text-xs font-bold uppercase text-dreamco-accent">Specialized bot knowledge</p>
+            <h3 id="specialized-knowledge-heading" className="mt-1 text-lg font-semibold text-white">
+              Every bot gets its own source-backed knowledge system
+            </h3>
+            <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-400">{knowledge.mission}</p>
+          </div>
+          <span className="rounded-full border border-slate-700 px-3 py-1 text-xs font-semibold text-slate-400">
+            {specializedKnowledgeStatus} · {formatDateTime(knowledge.generated_at)}
+          </span>
+        </div>
+
+        <div className="mt-5 grid grid-cols-2 gap-px overflow-hidden border border-slate-800 bg-slate-800 lg:grid-cols-4 xl:grid-cols-8">
+          {[
+            ['Profiles', knowledgeSummary.knowledge_profiles],
+            ['Domains', knowledgeSummary.knowledge_domains],
+            ['All domains', knowledgeSummary.bots_with_all_knowledge_domains],
+            ['Source policy', knowledgeSummary.bots_with_source_policy],
+            ['Memory policy', knowledgeSummary.bots_with_memory_policy],
+            ['Runtime knowledge', knowledgeSummary.bots_with_runtime_tooling_knowledge],
+            ['Safety knowledge', knowledgeSummary.bots_with_safety_approval_knowledge],
+            ['App knowledge', knowledgeSummary.bots_with_app_builder_knowledge],
+          ].map(([label, value]) => (
+            <div key={label} className="bg-slate-900 p-4">
+              <p className="text-xl font-black text-white">{formatNumber(value)}</p>
+              <p className="mt-1 text-xs uppercase text-slate-500">{label}</p>
+            </div>
+          ))}
+        </div>
+
+        <div className="mt-5 grid gap-5 xl:grid-cols-[minmax(0,1.1fr)_minmax(0,0.9fr)]">
+          <div className="border border-slate-800 bg-slate-900 p-4">
+            <h4 className="text-sm font-semibold text-white">Knowledge domains</h4>
+            <div className="mt-3 grid gap-3 md:grid-cols-2">
+              {(knowledge.knowledge_domains ?? []).slice(0, 8).map((domain) => (
+                <article key={domain.id} className="border border-slate-800 bg-slate-950 p-3">
+                  <h5 className="text-sm font-semibold text-white">{domain.label}</h5>
+                  <p className="mt-2 text-xs leading-5 text-slate-400">{domain.purpose}</p>
+                </article>
+              ))}
+            </div>
+          </div>
+
+          <aside className="space-y-5">
+            <div className="border border-slate-800 bg-slate-900 p-4">
+              <h4 className="text-sm font-semibold text-white">Source policy</h4>
+              <div className="mt-3 space-y-3">
+                <div>
+                  <p className="text-xs font-semibold uppercase text-emerald-300">Allowed</p>
+                  <div className="mt-2 flex flex-wrap gap-2">
+                    {(knowledge.source_policy?.allowed ?? []).slice(0, 6).map((item) => (
+                      <span key={item} className="rounded-full border border-emerald-500/30 px-2 py-1 text-[11px] text-emerald-100">
+                        {item}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+                <div>
+                  <p className="text-xs font-semibold uppercase text-amber-300">Blocked</p>
+                  <div className="mt-2 flex flex-wrap gap-2">
+                    {(knowledge.source_policy?.blocked ?? []).slice(0, 5).map((item) => (
+                      <span key={item} className="rounded-full border border-amber-500/30 px-2 py-1 text-[11px] text-amber-100">
+                        {item}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="border border-slate-800 bg-slate-900 p-4">
+              <h4 className="text-sm font-semibold text-white">Memory tiers</h4>
+              <div className="mt-3 space-y-2">
+                {(knowledge.memory_tiers ?? []).map((tier) => (
+                  <p key={tier.id} className="border-l-2 border-dreamco-accent pl-3 text-xs leading-5 text-slate-300">
+                    <span className="font-semibold text-white">{formatLabel(tier.id)}:</span> {tier.purpose}
+                  </p>
+                ))}
+              </div>
+            </div>
+          </aside>
+        </div>
+
+        <div className="mt-5 border border-slate-800 bg-slate-900 p-4">
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <h4 className="text-sm font-semibold text-white">Sample specialized knowledge profiles</h4>
+            <span className="rounded-full border border-slate-700 px-3 py-1 text-xs font-semibold text-slate-400">
+              {formatNumber(knowledgeSummary.bot_count)} bot brains
+            </span>
+          </div>
+          <div className="mt-3 grid gap-3 md:grid-cols-2 xl:grid-cols-4">
+            {(knowledge.dashboard_sample ?? []).slice(0, 8).map((profile) => (
+              <article key={profile.slug} className="border border-slate-800 bg-slate-950 p-3">
+                <div className="flex items-start justify-between gap-3">
+                  <div>
+                    <p className="text-lg">{profile.emoji}</p>
+                    <h5 className="mt-1 text-sm font-semibold text-white">{profile.name}</h5>
+                  </div>
+                  <span className="rounded-full border border-slate-700 px-2 py-0.5 text-[11px] font-semibold uppercase text-slate-300">
+                    {profile.division}
+                  </span>
+                </div>
+                <p className="mt-2 text-xs leading-5 text-slate-400">{profile.target_customer}</p>
+                <p className="mt-3 text-xs font-semibold text-dreamco-accent">{profile.app_concept_name}</p>
+                <div className="mt-3 space-y-2">
+                  {(profile.specialized_study_queue ?? []).slice(0, 2).map((item) => (
+                    <p key={item} className="border-l-2 border-slate-700 pl-3 text-xs leading-5 text-slate-300">
+                      {item}
+                    </p>
+                  ))}
+                </div>
+              </article>
+            ))}
+          </div>
         </div>
       </section>
 

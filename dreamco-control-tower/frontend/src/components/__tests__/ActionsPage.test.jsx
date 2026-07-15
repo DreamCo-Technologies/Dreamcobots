@@ -420,6 +420,54 @@ const scaling24Payload = {
   always_blocked_without_owner_approval: ['customer_outreach', 'ad_spend', 'money_movement', 'public_deployment', 'app_store_publish'],
 };
 
+const specializedKnowledgePayload = {
+  schema: 'dreamco.specialized_bot_knowledge_report.v1',
+  generated_at: '2026-07-15T00:00:00Z',
+  mission: 'Give every DreamCo bot a specialized knowledge system for its division, customers, competitors, app-store product, workflows, safety gates, and learning loop.',
+  default_mode: 'local_first_source_backed_learning',
+  summary: {
+    bot_count: 1248,
+    knowledge_profiles: 1248,
+    knowledge_domains: 9,
+    bots_with_all_knowledge_domains: 1248,
+    bots_with_source_policy: 1248,
+    bots_with_memory_policy: 1248,
+    bots_with_runtime_tooling_knowledge: 1248,
+    bots_with_safety_approval_knowledge: 1248,
+    bots_with_app_builder_knowledge: 1248,
+    resource_library_bot_count: 1248,
+    bot_founder_packets: 1248,
+    storage_ready: true,
+    approval_gates: 10,
+    memory_tiers: 4,
+  },
+  knowledge_domains: [
+    { id: 'domain_expertise', label: 'Domain Expertise', purpose: 'Know the bot industry, job, terminology, workflows, metrics, regulations, and common failure modes.' },
+    { id: 'customer_intelligence', label: 'Customer Intelligence', purpose: 'Know who the bot helps and what outcome they care about.' },
+    { id: 'competitor_intelligence', label: 'Competitor Intelligence', purpose: 'Study public competitors, substitutes, pricing, feature gaps, reviews, positioning, onboarding, and trust signals.' },
+    { id: 'app_builder_knowledge', label: 'App Builder Knowledge', purpose: 'Know how to turn the bot into a usable app, website, course, game, simulation, dashboard, or workflow.' },
+  ],
+  source_policy: {
+    allowed: ['public documentation', 'public pricing pages', 'owner-approved notes', 'test reports'],
+    blocked: ['secrets', 'private account data without approval', 'copied proprietary code'],
+  },
+  memory_tiers: [
+    { id: 'hot', purpose: 'Active task context and short-lived work notes.' },
+    { id: 'warm', purpose: 'Approved lessons and reusable workflows.' },
+  ],
+  dashboard_sample: [
+    {
+      slug: 'buddy-bot',
+      name: 'Buddy Bot',
+      emoji: '🤝',
+      division: 'CommandCore',
+      target_customer: 'DreamCo owners and client teams',
+      app_concept_name: 'Buddy Bot App',
+      specialized_study_queue: ['Map customer pains, buying triggers, and proof needs.', 'Compare public competitors and substitute workflows.'],
+    },
+  ],
+};
+
 const stripeRevenueRescuePayload = {
   schema: 'dreamco.stripe_revenue_rescue.v1',
   generated_at: '2026-07-12T00:00:00Z',
@@ -540,6 +588,7 @@ beforeEach(() => {
     if (url === '/api/app-foundry') payload = appFoundryPayload;
     if (url === '/api/bot-founder-app-store') payload = botFounderAppStorePayload;
     if (url === '/api/24-hour-scaling') payload = scaling24Payload;
+    if (url === '/api/specialized-bot-knowledge') payload = specializedKnowledgePayload;
     if (url === '/api/storage-guard') payload = storageGuardPayload;
     if (url === '/api/stripe-revenue-rescue') payload = stripeRevenueRescuePayload;
     if (url === '/api/production-approval-packets') payload = productionApprovalPacketsPayload;
@@ -613,6 +662,13 @@ describe('ActionsPage', () => {
     expect(screen.getByText('Market Research Cycle')).toBeInTheDocument();
     expect(screen.getByText('Build Cycle')).toBeInTheDocument();
     expect(screen.getByText('Always blocked without approval')).toBeInTheDocument();
+    await waitFor(() => expect(screen.getByRole('heading', { name: 'Every bot gets its own source-backed knowledge system' })).toBeInTheDocument());
+    expect(screen.getByText('Specialized bot knowledge')).toBeInTheDocument();
+    expect(screen.getByText('Domain Expertise')).toBeInTheDocument();
+    expect(screen.getByText('Competitor Intelligence')).toBeInTheDocument();
+    expect(screen.getAllByText('Source policy').length).toBeGreaterThanOrEqual(1);
+    expect(screen.getAllByText('Memory tiers').length).toBeGreaterThanOrEqual(1);
+    expect(screen.getByText('Sample specialized knowledge profiles')).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: 'AI company builder with human trust built in' })).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: 'Tracks what helps you, clients, and bots improve' })).toBeInTheDocument();
     expect(screen.getByText('AI companies')).toBeInTheDocument();

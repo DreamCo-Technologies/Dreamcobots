@@ -409,6 +409,23 @@ describe('GET /api/24-hour-scaling', () => {
   });
 });
 
+describe('GET /api/specialized-bot-knowledge', () => {
+  test('returns specialized per-bot knowledge coverage', async () => {
+    const res = await request(app).get('/api/specialized-bot-knowledge');
+
+    expect(res.status).toBe(200);
+    expect(res.body.schema).toBe('dreamco.specialized_bot_knowledge_report.v1');
+    expect(res.body.summary.knowledge_profiles).toBeGreaterThanOrEqual(1248);
+    expect(res.body.summary.bots_with_all_knowledge_domains).toBe(res.body.summary.bot_count);
+    expect(res.body.summary.bots_with_source_policy).toBe(res.body.summary.bot_count);
+    expect(res.body.summary.bots_with_memory_policy).toBe(res.body.summary.bot_count);
+    expect(res.body.knowledge_domains.map((domain) => domain.id)).toEqual(
+      expect.arrayContaining(['domain_expertise', 'competitor_intelligence', 'app_builder_knowledge', 'safety_and_approval']),
+    );
+    expect(res.body.source_policy.blocked).toContain('secrets');
+  });
+});
+
 describe('GET /api/github-triage', () => {
   test('returns generated GitHub triage report', async () => {
     const res = await request(app).get('/api/github-triage');
