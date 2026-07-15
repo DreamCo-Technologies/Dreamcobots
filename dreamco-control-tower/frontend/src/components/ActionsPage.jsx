@@ -674,6 +674,50 @@ const FALLBACK_AI_DATA_PACKAGE_LIBRARY = {
   ],
 };
 
+const FALLBACK_PEOPLE_JOB_QUALIFICATION = {
+  generated_at: null,
+  mission: 'Give Buddy a governed people-search and job-qualification lookup system for recruiting, client discovery, contractor matching, partner research, and workforce planning.',
+  default_mode: 'public_or_owner_approved_research_only',
+  summary: {
+    bot_count: 1248,
+    bot_people_lookup_blueprints: 1248,
+    qualification_lanes_ready: 6,
+    approval_gates_declared: 12,
+    blocked_uses_declared: 8,
+    allowed_source_types: 8,
+    blocked_source_types: 10,
+    privacy_metadata_fields: 9,
+    qualification_scoring_factors: 7,
+    buddy_bot_roles: 8,
+    human_review_required: true,
+  },
+  privacy_policy: {
+    allowed_sources: ['self-provided resume or profile', 'owner-approved CRM records', 'public professional profiles', 'public company pages'],
+    blocked_sources: ['private accounts without approval', 'sensitive personal data', 'protected-class inference', 'background checks without compliant provider'],
+  },
+  qualification_lanes: [
+    { id: 'candidate_resume_match', label: 'Candidate Resume Match', purpose: 'Compare self-provided resumes or application materials against a job description using role requirements and evidence notes.', outputs: ['skills_match', 'experience_evidence', 'gap_notes'] },
+    { id: 'contractor_vendor_match', label: 'Contractor and Vendor Match', purpose: 'Research public contractor/vendor profiles, portfolios, capabilities, reviews, and fit for a project.', outputs: ['vendor_shortlist', 'capability_match', 'risk_notes'] },
+    { id: 'sales_people_research', label: 'Sales People Research', purpose: 'Prepare compliant lead or stakeholder research from public and approved sources for owner-reviewed outreach.', outputs: ['stakeholder_map', 'public_profile_summary'] },
+  ],
+  approval_gates: ['collect_personal_data', 'store_person_profile', 'contact_person', 'send_outreach', 'make_hiring_decision', 'reject_candidate', 'run_background_check'],
+  blocked_uses: ['automated_hiring_or_rejection', 'protected_class_scoring', 'background_screening_without_compliant_provider', 'mass_unsolicited_outreach'],
+  top_qualification_lanes: [
+    { qualification_lane: 'candidate_resume_match', bot_count: 1248 },
+    { qualification_lane: 'employee_role_fit', bot_count: 1248 },
+    { qualification_lane: 'sales_people_research', bot_count: 1248 },
+  ],
+  dashboard_sample: [
+    {
+      slug: 'buddy-bot',
+      name: 'Buddy Bot',
+      division: 'CommandCore',
+      qualification_lanes: ['candidate_resume_match', 'employee_role_fit', 'sales_people_research'],
+      sample_lookup_prompt: 'Prepare a privacy-safe people or job-qualification lookup packet for Buddy Bot.',
+    },
+  ],
+};
+
 const FALLBACK_STRIPE_REVENUE_RESCUE = {
   generated_at: null,
   summary: {
@@ -1500,6 +1544,8 @@ export default function ActionsPage({
   const [botContractDiscoveryStatus, setBotContractDiscoveryStatus] = useState('loading');
   const [aiDataPackageLibrary, setAiDataPackageLibrary] = useState(null);
   const [aiDataPackageLibraryStatus, setAiDataPackageLibraryStatus] = useState('loading');
+  const [peopleJobQualification, setPeopleJobQualification] = useState(null);
+  const [peopleJobQualificationStatus, setPeopleJobQualificationStatus] = useState('loading');
   const [storageGuard, setStorageGuard] = useState(null);
   const [storageGuardStatus, setStorageGuardStatus] = useState('loading');
   const [stripeRevenueRescue, setStripeRevenueRescue] = useState(null);
@@ -1639,6 +1685,15 @@ export default function ActionsPage({
   }, []);
 
   useEffect(() => {
+    fetchFirstJson(['/api/people-job-qualification'])
+      .then((data) => {
+        setPeopleJobQualification(data);
+        setPeopleJobQualificationStatus('live');
+      })
+      .catch(() => setPeopleJobQualificationStatus('generated fallback'));
+  }, []);
+
+  useEffect(() => {
     fetchFirstJson(['/api/storage-guard'])
       .then((data) => {
         setStorageGuard(data);
@@ -1701,6 +1756,7 @@ export default function ActionsPage({
   const businessLaunch = businessLaunchExpansion ?? FALLBACK_BUSINESS_LAUNCH_EXPANSION;
   const contractDiscovery = botContractDiscovery ?? FALLBACK_BOT_CONTRACT_DISCOVERY;
   const dataPackageLibrary = aiDataPackageLibrary ?? FALLBACK_AI_DATA_PACKAGE_LIBRARY;
+  const peopleLookup = peopleJobQualification ?? FALLBACK_PEOPLE_JOB_QUALIFICATION;
   const storage = storageGuard ?? FALLBACK_STORAGE_GUARD;
   const stripeRescue = stripeRevenueRescue ?? FALLBACK_STRIPE_REVENUE_RESCUE;
   const approvalPackets = productionApprovalPackets ?? FALLBACK_PRODUCTION_APPROVAL_PACKETS;
@@ -1719,6 +1775,7 @@ export default function ActionsPage({
   const businessLaunchSummary = businessLaunch.summary ?? FALLBACK_BUSINESS_LAUNCH_EXPANSION.summary;
   const contractDiscoverySummary = contractDiscovery.summary ?? FALLBACK_BOT_CONTRACT_DISCOVERY.summary;
   const dataPackageSummary = dataPackageLibrary.summary ?? FALLBACK_AI_DATA_PACKAGE_LIBRARY.summary;
+  const peopleLookupSummary = peopleLookup.summary ?? FALLBACK_PEOPLE_JOB_QUALIFICATION.summary;
   const storageSummary = storage.summary ?? FALLBACK_STORAGE_GUARD.summary;
   const stripeRescueSummary = stripeRescue.summary ?? FALLBACK_STRIPE_REVENUE_RESCUE.summary;
   const approvalPacketSummary = approvalPackets.summary ?? FALLBACK_PRODUCTION_APPROVAL_PACKETS.summary;
@@ -3162,6 +3219,107 @@ export default function ActionsPage({
                 <p className="mt-2 text-xs leading-5 text-slate-400">{packet.sample_buyer_use}</p>
                 <p className="mt-3 text-xs leading-5 text-dreamco-accent">
                   {(packet.package_types ?? []).slice(0, 3).map(formatLabel).join(', ')}
+                </p>
+              </article>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section aria-labelledby="people-job-qualification-heading" className="border border-slate-700 bg-slate-950 p-5">
+        <div className="flex flex-wrap items-start justify-between gap-3">
+          <div>
+            <p className="text-xs font-bold uppercase text-dreamco-accent">People search and job qualification</p>
+            <h3 id="people-job-qualification-heading" className="mt-1 text-lg font-semibold text-white">
+              Buddy prepares privacy-safe people and role-fit lookup packets
+            </h3>
+            <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-400">{peopleLookup.mission}</p>
+          </div>
+          <span className="rounded-full border border-slate-700 px-3 py-1 text-xs font-semibold text-slate-400">
+            {peopleJobQualificationStatus} · {formatDateTime(peopleLookup.generated_at)}
+          </span>
+        </div>
+
+        <div className="mt-5 grid grid-cols-2 gap-px overflow-hidden border border-slate-800 bg-slate-800 lg:grid-cols-4 xl:grid-cols-8">
+          {[
+            ['Bot blueprints', peopleLookupSummary.bot_people_lookup_blueprints],
+            ['Lookup lanes', peopleLookupSummary.qualification_lanes_ready],
+            ['Approval gates', peopleLookupSummary.approval_gates_declared],
+            ['Blocked uses', peopleLookupSummary.blocked_uses_declared],
+            ['Allowed sources', peopleLookupSummary.allowed_source_types],
+            ['Blocked sources', peopleLookupSummary.blocked_source_types],
+            ['Privacy fields', peopleLookupSummary.privacy_metadata_fields],
+            ['Human review', peopleLookupSummary.human_review_required ? 'Yes' : 'No'],
+          ].map(([label, value]) => (
+            <div key={label} className="bg-slate-900 p-4">
+              <p className="text-xl font-black text-white">{typeof value === 'number' ? formatNumber(value) : value}</p>
+              <p className="mt-1 text-xs uppercase text-slate-500">{label}</p>
+            </div>
+          ))}
+        </div>
+
+        <div className="mt-5 grid gap-5 xl:grid-cols-[minmax(0,1fr)_24rem]">
+          <div className="border border-slate-800 bg-slate-900 p-4">
+            <h4 className="text-sm font-semibold text-white">Qualification lookup lanes</h4>
+            <div className="mt-3 grid gap-3 md:grid-cols-2">
+              {(peopleLookup.qualification_lanes ?? []).slice(0, 6).map((lane) => (
+                <article key={lane.id} className="border border-slate-800 bg-slate-950 p-3">
+                  <h5 className="text-sm font-semibold text-white">{lane.label}</h5>
+                  <p className="mt-2 text-xs leading-5 text-slate-400">{lane.purpose}</p>
+                  <p className="mt-2 text-xs leading-5 text-dreamco-accent">
+                    Outputs: {(lane.outputs ?? []).slice(0, 3).map(formatLabel).join(', ')}
+                  </p>
+                </article>
+              ))}
+            </div>
+          </div>
+
+          <aside className="space-y-5">
+            <div className="border border-emerald-900/70 bg-emerald-950/20 p-4">
+              <h4 className="text-sm font-semibold text-emerald-100">Allowed sources</h4>
+              <div className="mt-3 flex flex-wrap gap-2">
+                {(peopleLookup.privacy_policy?.allowed_sources ?? []).slice(0, 8).map((source) => (
+                  <span key={source} className="rounded-full border border-emerald-500/30 px-2 py-1 text-[11px] text-emerald-100">
+                    {source}
+                  </span>
+                ))}
+              </div>
+            </div>
+
+            <div className="border border-amber-900/70 bg-amber-950/20 p-4">
+              <h4 className="text-sm font-semibold text-amber-100">Approval and blocked uses</h4>
+              <div className="mt-3 space-y-2">
+                {(peopleLookup.approval_gates ?? []).slice(0, 7).map((gate) => (
+                  <p key={gate} className="border-l-2 border-amber-400 pl-3 text-xs leading-5 text-amber-100/80">
+                    {formatLabel(gate)}
+                  </p>
+                ))}
+              </div>
+              <div className="mt-4 flex flex-wrap gap-2">
+                {(peopleLookup.blocked_uses ?? []).slice(0, 5).map((blocked) => (
+                  <span key={blocked} className="rounded-full border border-red-500/30 px-2 py-1 text-[11px] text-red-100">
+                    {formatLabel(blocked)}
+                  </span>
+                ))}
+              </div>
+            </div>
+          </aside>
+        </div>
+
+        <div className="mt-5 border border-slate-800 bg-slate-900 p-4">
+          <h4 className="text-sm font-semibold text-white">Sample people lookup bot packets</h4>
+          <div className="mt-3 grid gap-3 md:grid-cols-2 xl:grid-cols-4">
+            {(peopleLookup.dashboard_sample ?? []).slice(0, 8).map((packet) => (
+              <article key={packet.slug} className="border border-slate-800 bg-slate-950 p-3">
+                <div className="flex flex-wrap items-start justify-between gap-2">
+                  <h5 className="text-sm font-semibold text-white">{packet.name}</h5>
+                  <span className="rounded-full border border-slate-700 px-2 py-0.5 text-[11px] font-semibold uppercase text-slate-300">
+                    {packet.division}
+                  </span>
+                </div>
+                <p className="mt-2 text-xs leading-5 text-slate-400">{packet.sample_lookup_prompt}</p>
+                <p className="mt-3 text-xs leading-5 text-dreamco-accent">
+                  {(packet.qualification_lanes ?? []).slice(0, 3).map(formatLabel).join(', ')}
                 </p>
               </article>
             ))}

@@ -65,6 +65,10 @@ const AI_DATA_PACKAGE_LIBRARY_REPORT_FILE = path.join(
   __dirname,
   '../../reports/ai_data_package_library_report.json',
 );
+const PEOPLE_JOB_QUALIFICATION_REPORT_FILE = path.join(
+  __dirname,
+  '../../reports/people_job_qualification_report.json',
+);
 const GITHUB_TRIAGE_REPORT_FILE = path.join(
   __dirname,
   '../../reports/github_triage_report.json',
@@ -256,6 +260,13 @@ function readAiDataPackageLibraryReport() {
     return null;
   }
   return JSON.parse(fs.readFileSync(AI_DATA_PACKAGE_LIBRARY_REPORT_FILE, 'utf8'));
+}
+
+function readPeopleJobQualificationReport() {
+  if (!fs.existsSync(PEOPLE_JOB_QUALIFICATION_REPORT_FILE)) {
+    return null;
+  }
+  return JSON.parse(fs.readFileSync(PEOPLE_JOB_QUALIFICATION_REPORT_FILE, 'utf8'));
 }
 
 function readGitHubTriageReport() {
@@ -762,6 +773,17 @@ app.get('/api/ai-data-package-library', rateLimiter, (_req, res) => {
   const report = readAiDataPackageLibraryReport();
   if (!report) {
     return res.status(503).json({ error: 'AI data package library report not found' });
+  }
+  return res.json(report);
+});
+
+// ---------------------------------------------------------------------------
+// GET /api/people-job-qualification — privacy-safe people and job fit lookup
+// ---------------------------------------------------------------------------
+app.get('/api/people-job-qualification', rateLimiter, (_req, res) => {
+  const report = readPeopleJobQualificationReport();
+  if (!report) {
+    return res.status(503).json({ error: 'people job qualification report not found' });
   }
   return res.json(report);
 });

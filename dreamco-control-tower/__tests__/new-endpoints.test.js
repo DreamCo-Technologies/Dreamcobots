@@ -507,6 +507,27 @@ describe('GET /api/ai-data-package-library', () => {
   });
 });
 
+describe('GET /api/people-job-qualification', () => {
+  test('returns privacy-safe people lookup and job qualification coverage', async () => {
+    const res = await request(app).get('/api/people-job-qualification');
+
+    expect(res.status).toBe(200);
+    expect(res.body.schema).toBe('dreamco.people_job_qualification_report.v1');
+    expect(res.body.summary.bot_people_lookup_blueprints).toBe(res.body.summary.bot_count);
+    expect(res.body.summary.qualification_lanes_ready).toBeGreaterThanOrEqual(6);
+    expect(res.body.summary.human_review_required).toBe(true);
+    expect(res.body.qualification_lanes.map((lane) => lane.id)).toEqual(
+      expect.arrayContaining(['candidate_resume_match', 'contractor_vendor_match', 'sales_people_research']),
+    );
+    expect(res.body.approval_gates).toEqual(
+      expect.arrayContaining(['collect_personal_data', 'contact_person', 'make_hiring_decision']),
+    );
+    expect(res.body.blocked_uses).toEqual(
+      expect.arrayContaining(['automated_hiring_or_rejection', 'protected_class_scoring']),
+    );
+  });
+});
+
 describe('GET /api/github-triage', () => {
   test('returns generated GitHub triage report', async () => {
     const res = await request(app).get('/api/github-triage');

@@ -620,6 +620,45 @@ const aiDataPackageLibraryPayload = {
   ],
 };
 
+const peopleJobQualificationPayload = {
+  schema: 'dreamco.people_job_qualification_report.v1',
+  generated_at: '2026-07-15T00:00:00Z',
+  mission: 'Give Buddy a governed people-search and job-qualification lookup system for recruiting, client discovery, contractor matching, partner research, and workforce planning.',
+  default_mode: 'public_or_owner_approved_research_only',
+  summary: {
+    bot_count: 1248,
+    bot_people_lookup_blueprints: 1248,
+    qualification_lanes_ready: 6,
+    approval_gates_declared: 12,
+    blocked_uses_declared: 8,
+    allowed_source_types: 8,
+    blocked_source_types: 10,
+    privacy_metadata_fields: 9,
+    qualification_scoring_factors: 7,
+    buddy_bot_roles: 8,
+    human_review_required: true,
+  },
+  privacy_policy: {
+    allowed_sources: ['self-provided resume or profile', 'owner-approved CRM records', 'public professional profiles'],
+    blocked_sources: ['private accounts without approval', 'protected-class inference'],
+  },
+  qualification_lanes: [
+    { id: 'candidate_resume_match', label: 'Candidate Resume Match', purpose: 'Compare self-provided resumes against a job description.', outputs: ['skills_match', 'experience_evidence'] },
+    { id: 'contractor_vendor_match', label: 'Contractor and Vendor Match', purpose: 'Research public contractor/vendor profiles and capabilities.', outputs: ['vendor_shortlist', 'capability_match'] },
+  ],
+  approval_gates: ['collect_personal_data', 'contact_person', 'make_hiring_decision'],
+  blocked_uses: ['automated_hiring_or_rejection', 'protected_class_scoring'],
+  dashboard_sample: [
+    {
+      slug: 'buddy-bot',
+      name: 'Buddy Bot',
+      division: 'CommandCore',
+      qualification_lanes: ['candidate_resume_match', 'employee_role_fit'],
+      sample_lookup_prompt: 'Prepare a privacy-safe people or job-qualification lookup packet for Buddy Bot.',
+    },
+  ],
+};
+
 const stripeRevenueRescuePayload = {
   schema: 'dreamco.stripe_revenue_rescue.v1',
   generated_at: '2026-07-12T00:00:00Z',
@@ -745,6 +784,7 @@ beforeEach(() => {
     if (url === '/api/business-launch-expansion') payload = businessLaunchExpansionPayload;
     if (url === '/api/bot-contract-discovery') payload = botContractDiscoveryPayload;
     if (url === '/api/ai-data-package-library') payload = aiDataPackageLibraryPayload;
+    if (url === '/api/people-job-qualification') payload = peopleJobQualificationPayload;
     if (url === '/api/storage-guard') payload = storageGuardPayload;
     if (url === '/api/stripe-revenue-rescue') payload = stripeRevenueRescuePayload;
     if (url === '/api/production-approval-packets') payload = productionApprovalPacketsPayload;
@@ -850,6 +890,12 @@ describe('ActionsPage', () => {
     expect(screen.getByText('LangChain ready')).toBeInTheDocument();
     expect(screen.getByText('Instruction Tuning')).toBeInTheDocument();
     expect(screen.getByText('Buddy Bot Training and Eval Data Pack')).toBeInTheDocument();
+    await waitFor(() => expect(screen.getByRole('heading', { name: 'Buddy prepares privacy-safe people and role-fit lookup packets' })).toBeInTheDocument());
+    expect(screen.getByText('People search and job qualification')).toBeInTheDocument();
+    expect(screen.getByText('Qualification lookup lanes')).toBeInTheDocument();
+    expect(screen.getByText('Candidate Resume Match')).toBeInTheDocument();
+    expect(screen.getAllByText('Allowed sources').length).toBeGreaterThanOrEqual(1);
+    expect(screen.getByText('Sample people lookup bot packets')).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: 'AI company builder with human trust built in' })).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: 'Tracks what helps you, clients, and bots improve' })).toBeInTheDocument();
     expect(screen.getByText('AI companies')).toBeInTheDocument();
