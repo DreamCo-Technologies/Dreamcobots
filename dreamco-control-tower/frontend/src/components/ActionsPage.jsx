@@ -580,6 +580,51 @@ const FALLBACK_BUSINESS_LAUNCH_EXPANSION = {
   ],
 };
 
+const FALLBACK_BOT_CONTRACT_DISCOVERY = {
+  generated_at: null,
+  mission: 'Make every DreamCo bot continuously search for contract, grant, RFP, procurement, partnership, supplier, app-store, and service opportunities that match its division and business model.',
+  default_mode: 'public_source_discovery_and_draft_only',
+  search_cadence: {
+    market_scan: 'daily',
+    deep_match_review: 'weekly',
+    client_opportunity_digest: 'weekly',
+    stale_opportunity_cleanup: 'daily',
+  },
+  summary: {
+    bot_count: 1248,
+    bots_with_contract_discovery: 1248,
+    opportunity_types_tracked: 12,
+    source_categories_tracked: 4,
+    approval_gates_declared: 12,
+    blocked_actions_declared: 7,
+    matching_fields: 13,
+    bot_contract_roles: 8,
+    sample_opportunities_ready: 12,
+    all_bots_ready_for_contract_search: true,
+  },
+  opportunity_types: ['government_contract', 'local_procurement', 'private_rfp', 'grant', 'vendor_registration', 'supplier_contract', 'trucking_route_contract', 'subcontracting_opportunity'],
+  source_categories: [
+    { id: 'public_procurement', label: 'Public Procurement', examples: ['federal opportunity portals', 'state procurement portals', 'city and county bids'], allowed_actions: ['search', 'summarize', 'score'] },
+    { id: 'private_rfp_sources', label: 'Private RFP Sources', examples: ['company vendor pages', 'marketplace RFP listings'], allowed_actions: ['search', 'summarize', 'prepare outreach draft'] },
+  ],
+  approval_gates: ['submit_bid', 'submit_grant_application', 'register_vendor_account', 'contact_buyer', 'contact_supplier', 'sign_contract', 'accept_terms', 'spend_money'],
+  top_opportunity_types: [
+    { opportunity_type: 'client_service_opportunity', bot_count: 1248 },
+    { opportunity_type: 'private_rfp', bot_count: 1248 },
+    { opportunity_type: 'partnership_opportunity', bot_count: 1248 },
+  ],
+  dashboard_sample: [
+    {
+      slug: 'buddy-bot',
+      name: 'Buddy Bot',
+      division: 'CommandCore',
+      opportunity_types: ['client_service_opportunity', 'private_rfp', 'partnership_opportunity'],
+      sample_search_prompt: 'Search public and owner-approved sources for Buddy Bot contract opportunities.',
+      dashboard_status: 'ready_for_contract_discovery',
+    },
+  ],
+};
+
 const FALLBACK_STRIPE_REVENUE_RESCUE = {
   generated_at: null,
   summary: {
@@ -1402,6 +1447,8 @@ export default function ActionsPage({
   const [aiAgentModelLibraryStatus, setAiAgentModelLibraryStatus] = useState('loading');
   const [businessLaunchExpansion, setBusinessLaunchExpansion] = useState(null);
   const [businessLaunchExpansionStatus, setBusinessLaunchExpansionStatus] = useState('loading');
+  const [botContractDiscovery, setBotContractDiscovery] = useState(null);
+  const [botContractDiscoveryStatus, setBotContractDiscoveryStatus] = useState('loading');
   const [storageGuard, setStorageGuard] = useState(null);
   const [storageGuardStatus, setStorageGuardStatus] = useState('loading');
   const [stripeRevenueRescue, setStripeRevenueRescue] = useState(null);
@@ -1523,6 +1570,15 @@ export default function ActionsPage({
   }, []);
 
   useEffect(() => {
+    fetchFirstJson(['/api/bot-contract-discovery'])
+      .then((data) => {
+        setBotContractDiscovery(data);
+        setBotContractDiscoveryStatus('live');
+      })
+      .catch(() => setBotContractDiscoveryStatus('generated fallback'));
+  }, []);
+
+  useEffect(() => {
     fetchFirstJson(['/api/storage-guard'])
       .then((data) => {
         setStorageGuard(data);
@@ -1583,6 +1639,7 @@ export default function ActionsPage({
   const knowledge = specializedKnowledge ?? FALLBACK_SPECIALIZED_BOT_KNOWLEDGE;
   const modelLibrary = aiAgentModelLibrary ?? FALLBACK_AI_AGENT_MODEL_LIBRARY;
   const businessLaunch = businessLaunchExpansion ?? FALLBACK_BUSINESS_LAUNCH_EXPANSION;
+  const contractDiscovery = botContractDiscovery ?? FALLBACK_BOT_CONTRACT_DISCOVERY;
   const storage = storageGuard ?? FALLBACK_STORAGE_GUARD;
   const stripeRescue = stripeRevenueRescue ?? FALLBACK_STRIPE_REVENUE_RESCUE;
   const approvalPackets = productionApprovalPackets ?? FALLBACK_PRODUCTION_APPROVAL_PACKETS;
@@ -1599,6 +1656,7 @@ export default function ActionsPage({
   const knowledgeSummary = knowledge.summary ?? FALLBACK_SPECIALIZED_BOT_KNOWLEDGE.summary;
   const modelLibrarySummary = modelLibrary.summary ?? FALLBACK_AI_AGENT_MODEL_LIBRARY.summary;
   const businessLaunchSummary = businessLaunch.summary ?? FALLBACK_BUSINESS_LAUNCH_EXPANSION.summary;
+  const contractDiscoverySummary = contractDiscovery.summary ?? FALLBACK_BOT_CONTRACT_DISCOVERY.summary;
   const storageSummary = storage.summary ?? FALLBACK_STORAGE_GUARD.summary;
   const stripeRescueSummary = stripeRescue.summary ?? FALLBACK_STRIPE_REVENUE_RESCUE.summary;
   const approvalPacketSummary = approvalPackets.summary ?? FALLBACK_PRODUCTION_APPROVAL_PACKETS.summary;
@@ -2830,6 +2888,114 @@ export default function ActionsPage({
               </div>
             </div>
           </aside>
+        </div>
+      </section>
+
+      <section aria-labelledby="bot-contract-discovery-heading" className="border border-slate-700 bg-slate-950 p-5">
+        <div className="flex flex-wrap items-start justify-between gap-3">
+          <div>
+            <p className="text-xs font-bold uppercase text-dreamco-accent">Always-on contract discovery</p>
+            <h3 id="bot-contract-discovery-heading" className="mt-1 text-lg font-semibold text-white">
+              Every bot searches for contracts and opportunity paths
+            </h3>
+            <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-400">{contractDiscovery.mission}</p>
+          </div>
+          <span className="rounded-full border border-slate-700 px-3 py-1 text-xs font-semibold text-slate-400">
+            {botContractDiscoveryStatus} · {formatDateTime(contractDiscovery.generated_at)}
+          </span>
+        </div>
+
+        <div className="mt-5 grid grid-cols-2 gap-px overflow-hidden border border-slate-800 bg-slate-800 lg:grid-cols-4 xl:grid-cols-8">
+          {[
+            ['Bots searching', contractDiscoverySummary.bots_with_contract_discovery],
+            ['Opportunity types', contractDiscoverySummary.opportunity_types_tracked],
+            ['Source categories', contractDiscoverySummary.source_categories_tracked],
+            ['Approval gates', contractDiscoverySummary.approval_gates_declared],
+            ['Blocked actions', contractDiscoverySummary.blocked_actions_declared],
+            ['Match fields', contractDiscoverySummary.matching_fields],
+            ['Scout roles', contractDiscoverySummary.bot_contract_roles],
+            ['Samples ready', contractDiscoverySummary.sample_opportunities_ready],
+          ].map(([label, value]) => (
+            <div key={label} className="bg-slate-900 p-4">
+              <p className="text-xl font-black text-white">{formatNumber(value)}</p>
+              <p className="mt-1 text-xs uppercase text-slate-500">{label}</p>
+            </div>
+          ))}
+        </div>
+
+        <div className="mt-5 grid gap-5 xl:grid-cols-[minmax(0,1fr)_24rem]">
+          <div className="border border-slate-800 bg-slate-900 p-4">
+            <h4 className="text-sm font-semibold text-white">Contract opportunity types</h4>
+            <div className="mt-3 flex flex-wrap gap-2">
+              {(contractDiscovery.opportunity_types ?? []).map((type) => (
+                <span key={type} className="rounded-full border border-slate-700 px-3 py-1 text-xs text-slate-300">
+                  {formatLabel(type)}
+                </span>
+              ))}
+            </div>
+
+            <div className="mt-5 grid gap-3 md:grid-cols-2">
+              {(contractDiscovery.source_categories ?? []).slice(0, 4).map((source) => (
+                <article key={source.id} className="border border-slate-800 bg-slate-950 p-3">
+                  <h5 className="text-sm font-semibold text-white">{source.label}</h5>
+                  <p className="mt-2 text-xs leading-5 text-slate-400">
+                    Examples: {(source.examples ?? []).slice(0, 3).join(', ')}
+                  </p>
+                  <p className="mt-2 text-xs leading-5 text-dreamco-accent">
+                    Allowed: {(source.allowed_actions ?? []).slice(0, 4).map(formatLabel).join(', ')}
+                  </p>
+                </article>
+              ))}
+            </div>
+          </div>
+
+          <aside className="space-y-5">
+            <div className="border border-amber-900/70 bg-amber-950/20 p-4">
+              <h4 className="text-sm font-semibold text-amber-100">Approval wall</h4>
+              <p className="mt-3 text-xs leading-5 text-amber-100/80">
+                Default mode: {formatLabel(contractDiscovery.default_mode)}
+              </p>
+              <div className="mt-3 space-y-2">
+                {(contractDiscovery.approval_gates ?? []).slice(0, 8).map((gate) => (
+                  <p key={gate} className="border-l-2 border-amber-400 pl-3 text-xs leading-5 text-amber-100/80">
+                    {formatLabel(gate)}
+                  </p>
+                ))}
+              </div>
+            </div>
+
+            <div className="border border-slate-800 bg-slate-900 p-4">
+              <h4 className="text-sm font-semibold text-white">Top opportunity coverage</h4>
+              <div className="mt-3 space-y-2">
+                {(contractDiscovery.top_opportunity_types ?? []).slice(0, 6).map((item) => (
+                  <div key={item.opportunity_type} className="flex items-center justify-between gap-3 border border-slate-800 bg-slate-950 px-3 py-2">
+                    <span className="text-xs text-slate-300">{formatLabel(item.opportunity_type)}</span>
+                    <span className="text-xs font-semibold text-white">{formatNumber(item.bot_count)}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </aside>
+        </div>
+
+        <div className="mt-5 border border-slate-800 bg-slate-900 p-4">
+          <h4 className="text-sm font-semibold text-white">Sample bot contract scouts</h4>
+          <div className="mt-3 grid gap-3 md:grid-cols-2 xl:grid-cols-4">
+            {(contractDiscovery.dashboard_sample ?? []).slice(0, 8).map((packet) => (
+              <article key={packet.slug} className="border border-slate-800 bg-slate-950 p-3">
+                <div className="flex flex-wrap items-start justify-between gap-2">
+                  <h5 className="text-sm font-semibold text-white">{packet.name}</h5>
+                  <span className="rounded-full border border-slate-700 px-2 py-0.5 text-[11px] font-semibold uppercase text-slate-300">
+                    {packet.division}
+                  </span>
+                </div>
+                <p className="mt-2 text-xs leading-5 text-slate-400">{packet.sample_search_prompt}</p>
+                <p className="mt-3 text-xs leading-5 text-dreamco-accent">
+                  {(packet.opportunity_types ?? []).slice(0, 3).map(formatLabel).join(', ')}
+                </p>
+              </article>
+            ))}
+          </div>
         </div>
       </section>
 

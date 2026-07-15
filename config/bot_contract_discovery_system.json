@@ -1,0 +1,118 @@
+{
+  "schema": "dreamco.bot_contract_discovery_system.v1",
+  "updated_at": "2026-07-15T00:00:00Z",
+  "mission": "Make every DreamCo bot continuously search for contract, grant, RFP, procurement, partnership, supplier, app-store, and service opportunities that match its division and business model.",
+  "default_mode": "public_source_discovery_and_draft_only",
+  "search_cadence": {
+    "market_scan": "daily",
+    "deep_match_review": "weekly",
+    "client_opportunity_digest": "weekly",
+    "stale_opportunity_cleanup": "daily"
+  },
+  "opportunity_types": [
+    "government_contract",
+    "local_procurement",
+    "private_rfp",
+    "grant",
+    "vendor_registration",
+    "supplier_contract",
+    "trucking_route_contract",
+    "app_store_service_opportunity",
+    "enterprise_software_contract",
+    "subcontracting_opportunity",
+    "partnership_opportunity",
+    "client_service_opportunity"
+  ],
+  "source_categories": [
+    {
+      "id": "public_procurement",
+      "label": "Public Procurement",
+      "examples": ["federal opportunity portals", "state procurement portals", "city and county bids", "school district bids"],
+      "allowed_actions": ["search", "summarize", "score", "prepare response checklist"]
+    },
+    {
+      "id": "private_rfp_sources",
+      "label": "Private RFP Sources",
+      "examples": ["company vendor pages", "marketplace RFP listings", "industry association postings"],
+      "allowed_actions": ["search", "summarize", "score", "prepare outreach draft"]
+    },
+    {
+      "id": "grant_and_program_sources",
+      "label": "Grant and Program Sources",
+      "examples": ["small business grants", "workforce programs", "innovation programs", "local development programs"],
+      "allowed_actions": ["search", "eligibility notes", "deadline tracking", "application packet draft"]
+    },
+    {
+      "id": "supplier_and_logistics_sources",
+      "label": "Supplier and Logistics Sources",
+      "examples": ["supplier directories", "load boards", "carrier onboarding pages", "warehouse and fulfillment opportunities"],
+      "allowed_actions": ["search", "route notes", "supplier match", "risk notes"]
+    }
+  ],
+  "approval_gates": [
+    "submit_bid",
+    "submit_grant_application",
+    "register_vendor_account",
+    "contact_buyer",
+    "contact_supplier",
+    "contact_carrier",
+    "sign_contract",
+    "accept_terms",
+    "spend_money",
+    "share_client_data",
+    "make_price_commitment",
+    "make_legal_tax_or_certification_claim"
+  ],
+  "blocked_without_review": [
+    "binding_offer",
+    "false_certification",
+    "minority_or_veteran_status_claim_without_proof",
+    "licensed_professional_claim_without_license",
+    "guaranteed_delivery_claim_without_capacity",
+    "using_scraped_private_data",
+    "automated_spam_outreach"
+  ],
+  "matching_fields": [
+    "bot_slug",
+    "division",
+    "opportunity_type",
+    "buyer_or_program",
+    "location",
+    "deadline",
+    "estimated_value",
+    "requirements",
+    "eligibility",
+    "fit_score",
+    "risk_score",
+    "approval_needed",
+    "next_step"
+  ],
+  "fit_scoring": [
+    { "id": "capability_match", "weight": 30 },
+    { "id": "division_match", "weight": 15 },
+    { "id": "location_match", "weight": 10 },
+    { "id": "deadline_feasible", "weight": 10 },
+    { "id": "requirements_clear", "weight": 10 },
+    { "id": "profit_potential", "weight": 10 },
+    { "id": "proof_available", "weight": 10 },
+    { "id": "risk_low_enough", "weight": 5 }
+  ],
+  "bot_contract_roles": [
+    "contract_scout",
+    "eligibility_reader",
+    "requirements_mapper",
+    "pricing_prepper",
+    "proposal_drafter",
+    "compliance_checker",
+    "approval_packet_builder",
+    "followup_tracker"
+  ],
+  "success_metrics": [
+    "bots_with_contract_discovery",
+    "opportunity_types_tracked",
+    "source_categories_tracked",
+    "approval_gates_declared",
+    "blocked_actions_declared",
+    "sample_opportunities_ready"
+  ]
+}

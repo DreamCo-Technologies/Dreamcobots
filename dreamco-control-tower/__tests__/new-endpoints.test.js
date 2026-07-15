@@ -465,6 +465,26 @@ describe('GET /api/business-launch-expansion', () => {
   });
 });
 
+describe('GET /api/bot-contract-discovery', () => {
+  test('returns always-on bot contract discovery coverage', async () => {
+    const res = await request(app).get('/api/bot-contract-discovery');
+
+    expect(res.status).toBe(200);
+    expect(res.body.schema).toBe('dreamco.bot_contract_discovery_report.v1');
+    expect(res.body.summary.bots_with_contract_discovery).toBe(res.body.summary.bot_count);
+    expect(res.body.summary.opportunity_types_tracked).toBeGreaterThanOrEqual(12);
+    expect(res.body.summary.source_categories_tracked).toBeGreaterThanOrEqual(4);
+    expect(res.body.summary.approval_gates_declared).toBeGreaterThanOrEqual(12);
+    expect(res.body.summary.all_bots_ready_for_contract_search).toBe(true);
+    expect(res.body.opportunity_types).toEqual(
+      expect.arrayContaining(['government_contract', 'private_rfp', 'grant', 'trucking_route_contract']),
+    );
+    expect(res.body.approval_gates).toEqual(
+      expect.arrayContaining(['submit_bid', 'contact_buyer', 'sign_contract', 'spend_money']),
+    );
+  });
+});
+
 describe('GET /api/github-triage', () => {
   test('returns generated GitHub triage report', async () => {
     const res = await request(app).get('/api/github-triage');

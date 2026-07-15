@@ -57,6 +57,10 @@ const BUSINESS_LAUNCH_EXPANSION_REPORT_FILE = path.join(
   __dirname,
   '../../reports/business_launch_expansion_report.json',
 );
+const BOT_CONTRACT_DISCOVERY_REPORT_FILE = path.join(
+  __dirname,
+  '../../reports/bot_contract_discovery_report.json',
+);
 const GITHUB_TRIAGE_REPORT_FILE = path.join(
   __dirname,
   '../../reports/github_triage_report.json',
@@ -234,6 +238,13 @@ function readBusinessLaunchExpansionReport() {
     return null;
   }
   return JSON.parse(fs.readFileSync(BUSINESS_LAUNCH_EXPANSION_REPORT_FILE, 'utf8'));
+}
+
+function readBotContractDiscoveryReport() {
+  if (!fs.existsSync(BOT_CONTRACT_DISCOVERY_REPORT_FILE)) {
+    return null;
+  }
+  return JSON.parse(fs.readFileSync(BOT_CONTRACT_DISCOVERY_REPORT_FILE, 'utf8'));
 }
 
 function readGitHubTriageReport() {
@@ -718,6 +729,17 @@ app.get('/api/business-launch-expansion', rateLimiter, (_req, res) => {
   const report = readBusinessLaunchExpansionReport();
   if (!report) {
     return res.status(503).json({ error: 'business launch expansion report not found' });
+  }
+  return res.json(report);
+});
+
+// ---------------------------------------------------------------------------
+// GET /api/bot-contract-discovery — continuous contract opportunity search
+// ---------------------------------------------------------------------------
+app.get('/api/bot-contract-discovery', rateLimiter, (_req, res) => {
+  const report = readBotContractDiscoveryReport();
+  if (!report) {
+    return res.status(503).json({ error: 'bot contract discovery report not found' });
   }
   return res.json(report);
 });

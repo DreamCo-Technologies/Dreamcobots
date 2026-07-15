@@ -539,6 +539,44 @@ const businessLaunchExpansionPayload = {
   ],
 };
 
+const botContractDiscoveryPayload = {
+  schema: 'dreamco.bot_contract_discovery_report.v1',
+  generated_at: '2026-07-15T00:00:00Z',
+  mission: 'Make every DreamCo bot continuously search for contract, grant, RFP, procurement, partnership, supplier, app-store, and service opportunities.',
+  default_mode: 'public_source_discovery_and_draft_only',
+  summary: {
+    bot_count: 1248,
+    bots_with_contract_discovery: 1248,
+    opportunity_types_tracked: 12,
+    source_categories_tracked: 4,
+    approval_gates_declared: 12,
+    blocked_actions_declared: 7,
+    matching_fields: 13,
+    bot_contract_roles: 8,
+    sample_opportunities_ready: 12,
+    all_bots_ready_for_contract_search: true,
+  },
+  opportunity_types: ['government_contract', 'private_rfp', 'grant', 'supplier_contract', 'trucking_route_contract'],
+  source_categories: [
+    { id: 'public_procurement', label: 'Public Procurement', examples: ['federal opportunity portals', 'state procurement portals'], allowed_actions: ['search', 'summarize', 'score'] },
+    { id: 'private_rfp_sources', label: 'Private RFP Sources', examples: ['company vendor pages'], allowed_actions: ['search', 'prepare outreach draft'] },
+  ],
+  approval_gates: ['submit_bid', 'contact_buyer', 'contact_supplier', 'sign_contract', 'spend_money'],
+  top_opportunity_types: [
+    { opportunity_type: 'client_service_opportunity', bot_count: 1248 },
+    { opportunity_type: 'private_rfp', bot_count: 1248 },
+  ],
+  dashboard_sample: [
+    {
+      slug: 'buddy-bot',
+      name: 'Buddy Bot',
+      division: 'CommandCore',
+      opportunity_types: ['client_service_opportunity', 'private_rfp'],
+      sample_search_prompt: 'Search public and owner-approved sources for Buddy Bot contract opportunities.',
+    },
+  ],
+};
+
 const stripeRevenueRescuePayload = {
   schema: 'dreamco.stripe_revenue_rescue.v1',
   generated_at: '2026-07-12T00:00:00Z',
@@ -662,6 +700,7 @@ beforeEach(() => {
     if (url === '/api/specialized-bot-knowledge') payload = specializedKnowledgePayload;
     if (url === '/api/ai-agent-model-library') payload = aiAgentModelLibraryPayload;
     if (url === '/api/business-launch-expansion') payload = businessLaunchExpansionPayload;
+    if (url === '/api/bot-contract-discovery') payload = botContractDiscoveryPayload;
     if (url === '/api/storage-guard') payload = storageGuardPayload;
     if (url === '/api/stripe-revenue-rescue') payload = stripeRevenueRescuePayload;
     if (url === '/api/production-approval-packets') payload = productionApprovalPacketsPayload;
@@ -755,6 +794,12 @@ describe('ActionsPage', () => {
     expect(screen.getByText('Domains and Brand')).toBeInTheDocument();
     expect(screen.getByText('Supplier Network')).toBeInTheDocument();
     expect(screen.getByText('Custom sub-agent roles')).toBeInTheDocument();
+    await waitFor(() => expect(screen.getByRole('heading', { name: 'Every bot searches for contracts and opportunity paths' })).toBeInTheDocument());
+    expect(screen.getByText('Always-on contract discovery')).toBeInTheDocument();
+    expect(screen.getByText('Contract opportunity types')).toBeInTheDocument();
+    expect(screen.getByText('Public Procurement')).toBeInTheDocument();
+    expect(screen.getByText('Approval wall')).toBeInTheDocument();
+    expect(screen.getByText('Sample bot contract scouts')).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: 'AI company builder with human trust built in' })).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: 'Tracks what helps you, clients, and bots improve' })).toBeInTheDocument();
     expect(screen.getByText('AI companies')).toBeInTheDocument();
