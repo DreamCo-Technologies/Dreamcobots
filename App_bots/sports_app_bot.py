@@ -1,7 +1,5 @@
 # Adheres to the GLOBAL AI SOURCES FLOW framework — see framework/global_ai_sources_flow.py
-import sys as _sys, os as _os
-_sys.path.insert(0, _os.path.join(_os.path.dirname(_os.path.abspath(__file__)), '..', 'BuddyAI'))
-from base_bot import BaseBot
+from BuddyAI.base_bot import BaseBot
 
 # Mobile App Category: Sports
 

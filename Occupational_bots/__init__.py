@@ -1,0 +1,2 @@
+"""Occupational category bots."""
+

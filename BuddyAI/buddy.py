@@ -2,90 +2,91 @@
 # Connects OOH Major Occupational Group bots, Mobile App Category bots,
 # and Business Category / Industry Classification bots to the Buddy system.
 
-import sys, os
+from __future__ import annotations
 
-# Ensure all bot directories are on the path
-_BASE = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-for _d in ('Occupational_bots', 'App_bots', 'Business_bots',
-           os.path.join('bots', 'government-contract-grant-bot')):
-    _p = os.path.join(_BASE, _d)
-    if _p not in sys.path:
-        sys.path.insert(0, _p)
+import sys
+from pathlib import Path
+
+
+_ROOT = Path(__file__).resolve().parents[1]
+_GOVERNMENT_CONTRACT_BOT_DIR = _ROOT / "bots" / "government-contract-grant-bot"
+if str(_GOVERNMENT_CONTRACT_BOT_DIR) not in sys.path:
+    sys.path.insert(0, str(_GOVERNMENT_CONTRACT_BOT_DIR))
 
 # ── Government Contract & Grant Bot ──────────────────────────────────────
 from government_contract_grant_bot import GovernmentContractGrantBot
 
 # ── OOH Occupational Group bots ──────────────────────────────────────────
-from administrative_support_bot import AdministrativeSupportBot
-from architecture_engineering_bot import ArchitectureEngineeringBot
-from arts_media_bot import ArtsMediaBot
-from building_maintenance_bot import BuildingMaintenanceBot
-from business_financial_bot import BusinessFinancialBot
-from community_service_bot import CommunityServiceBot
-from computer_math_bot import ComputerMathBot
-from construction_extraction_bot import ConstructionExtractionBot
-from education_library_bot import EducationLibraryBot
-from farming_fishing_forestry_bot import FarmingFishingForestryBot
-from food_service_bot import FoodServiceBot
-from healthcare_practitioner_bot import HealthcarePractitionerBot
-from healthcare_support_bot import HealthcareSupportBot
-from installation_maintenance_bot import InstallationMaintenanceBot
-from legal_bot import LegalBot
-from management_bot import ManagementBot
-from military_bot import MilitaryBot
-from personal_care_bot import PersonalCareBot
-from production_bot import ProductionBot
-from protective_service_bot import ProtectiveServiceBot
-from sales_bot import SalesBot
-from science_bot import ScienceBot
-from transportation_bot import TransportationBot
+from Occupational_bots.administrative_support_bot import AdministrativeSupportBot
+from Occupational_bots.architecture_engineering_bot import ArchitectureEngineeringBot
+from Occupational_bots.arts_media_bot import ArtsMediaBot
+from Occupational_bots.building_maintenance_bot import BuildingMaintenanceBot
+from Occupational_bots.business_financial_bot import BusinessFinancialBot
+from Occupational_bots.community_service_bot import CommunityServiceBot
+from Occupational_bots.computer_math_bot import ComputerMathBot
+from Occupational_bots.construction_extraction_bot import ConstructionExtractionBot
+from Occupational_bots.education_library_bot import EducationLibraryBot
+from Occupational_bots.farming_fishing_forestry_bot import FarmingFishingForestryBot
+from Occupational_bots.food_service_bot import FoodServiceBot
+from Occupational_bots.healthcare_practitioner_bot import HealthcarePractitionerBot
+from Occupational_bots.healthcare_support_bot import HealthcareSupportBot
+from Occupational_bots.installation_maintenance_bot import InstallationMaintenanceBot
+from Occupational_bots.legal_bot import LegalBot
+from Occupational_bots.management_bot import ManagementBot
+from Occupational_bots.military_bot import MilitaryBot
+from Occupational_bots.personal_care_bot import PersonalCareBot
+from Occupational_bots.production_bot import ProductionBot
+from Occupational_bots.protective_service_bot import ProtectiveServiceBot
+from Occupational_bots.sales_bot import SalesBot
+from Occupational_bots.science_bot import ScienceBot
+from Occupational_bots.transportation_bot import TransportationBot
 
 # ── Mobile App Category bots ─────────────────────────────────────────────
-from books_app_bot import BooksAppBot
-from business_app_bot import BusinessAppBot
-from education_app_bot import EducationAppBot
-from entertainment_app_bot import EntertainmentAppBot
-from finance_app_bot import FinanceAppBot
-from food_drink_app_bot import FoodDrinkAppBot
-from games_app_bot import GamesAppBot
-from health_fitness_app_bot import HealthFitnessAppBot
-from kids_family_app_bot import KidsFamilyAppBot
-from lifestyle_app_bot import LifestyleAppBot
-from medical_app_bot import MedicalAppBot
-from music_app_bot import MusicAppBot
-from navigation_app_bot import NavigationAppBot
-from news_app_bot import NewsAppBot
-from photo_video_app_bot import PhotoVideoAppBot
-from productivity_app_bot import ProductivityAppBot
-from reference_app_bot import ReferenceAppBot
-from shopping_app_bot import ShoppingAppBot
-from social_networking_app_bot import SocialNetworkingAppBot
-from sports_app_bot import SportsAppBot
-from travel_app_bot import TravelAppBot
-from utilities_app_bot import UtilitiesAppBot
-from weather_app_bot import WeatherAppBot
+from App_bots.books_app_bot import BooksAppBot
+from App_bots.business_app_bot import BusinessAppBot
+from App_bots.education_app_bot import EducationAppBot
+from App_bots.entertainment_app_bot import EntertainmentAppBot
+from App_bots.finance_app_bot import FinanceAppBot
+from App_bots.food_drink_app_bot import FoodDrinkAppBot
+from App_bots.games_app_bot import GamesAppBot
+from App_bots.health_fitness_app_bot import HealthFitnessAppBot
+from App_bots.kids_family_app_bot import KidsFamilyAppBot
+from App_bots.lifestyle_app_bot import LifestyleAppBot
+from App_bots.medical_app_bot import MedicalAppBot
+from App_bots.music_app_bot import MusicAppBot
+from App_bots.navigation_app_bot import NavigationAppBot
+from App_bots.news_app_bot import NewsAppBot
+from App_bots.photo_video_app_bot import PhotoVideoAppBot
+from App_bots.productivity_app_bot import ProductivityAppBot
+from App_bots.reference_app_bot import ReferenceAppBot
+from App_bots.shopping_app_bot import ShoppingAppBot
+from App_bots.social_networking_app_bot import SocialNetworkingAppBot
+from App_bots.sports_app_bot import SportsAppBot
+from App_bots.travel_app_bot import TravelAppBot
+from App_bots.utilities_app_bot import UtilitiesAppBot
+from App_bots.weather_app_bot import WeatherAppBot
 
 # ── Business Category / Industry Classification bots ─────────────────────
-from accommodation_food_bot import AccommodationFoodBot
-from administrative_support_industry_bot import AdministrativeSupportIndustryBot
-from agriculture_bot import AgricultureBot
-from arts_entertainment_bot import ArtsEntertainmentBot
-from construction_bot import ConstructionBot
-from educational_services_bot import EducationalServicesBot
-from finance_insurance_bot import FinanceInsuranceBot
-from health_care_bot import HealthCareBot
-from information_bot import InformationBot
-from management_companies_bot import ManagementCompaniesBot
-from manufacturing_bot import ManufacturingBot
-from mining_bot import MiningBot
-from other_services_bot import OtherServicesBot
-from professional_services_bot import ProfessionalServicesBot
-from public_administration_bot import PublicAdministrationBot
-from real_estate_leasing_bot import RealEstateLeasingBot
-from retail_trade_bot import RetailTradeBot
-from transportation_warehousing_bot import TransportationWarehousingBot
-from utilities_bot import UtilitiesBot
-from wholesale_trade_bot import WholesaleTradeBot
+from Business_bots.accommodation_food_bot import AccommodationFoodBot
+from Business_bots.administrative_support_industry_bot import AdministrativeSupportIndustryBot
+from Business_bots.agriculture_bot import AgricultureBot
+from Business_bots.arts_entertainment_bot import ArtsEntertainmentBot
+from Business_bots.construction_bot import ConstructionBot
+from Business_bots.educational_services_bot import EducationalServicesBot
+from Business_bots.finance_insurance_bot import FinanceInsuranceBot
+from Business_bots.health_care_bot import HealthCareBot
+from Business_bots.information_bot import InformationBot
+from Business_bots.management_companies_bot import ManagementCompaniesBot
+from Business_bots.manufacturing_bot import ManufacturingBot
+from Business_bots.mining_bot import MiningBot
+from Business_bots.other_services_bot import OtherServicesBot
+from Business_bots.professional_services_bot import ProfessionalServicesBot
+from Business_bots.public_administration_bot import PublicAdministrationBot
+from Business_bots.real_estate_leasing_bot import RealEstateLeasingBot
+from Business_bots.retail_trade_bot import RetailTradeBot
+from Business_bots.transportation_warehousing_bot import TransportationWarehousingBot
+from Business_bots.utilities_bot import UtilitiesBot
+from Business_bots.wholesale_trade_bot import WholesaleTradeBot
 
 
 class Buddy:
@@ -178,13 +179,16 @@ class Buddy:
         WholesaleTradeBot(),
         ]
         for bot in all_bot_instances:
-            bot.connect_to_buddy(self)
-            self.bots[bot.name] = bot
+            self.register(bot)
 
     def register(self, bot):
         """Manually register an additional bot instance."""
-        bot.connect_to_buddy(self)
-        self.bots[bot.name] = bot
+        if hasattr(bot, "connect_to_buddy"):
+            bot.connect_to_buddy(self)
+        elif hasattr(bot, "buddy"):
+            bot.buddy = self
+        name = getattr(bot, "name", bot.__class__.__name__)
+        self.bots[name] = bot
 
     # ------------------------------------------------------------------
     # Communication
