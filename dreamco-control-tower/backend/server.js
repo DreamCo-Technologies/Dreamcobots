@@ -37,6 +37,10 @@ const APP_FOUNDRY_READINESS_FILE = path.join(
   __dirname,
   '../../reports/app_foundry_readiness.json',
 );
+const APP_CATEGORY_CATALOG_FILE = path.join(
+  __dirname,
+  '../../reports/app_category_catalog.json',
+);
 const BOT_FOUNDER_APP_STORE_REPORT_FILE = path.join(
   __dirname,
   '../../reports/bot_founder_app_store_report.json',
@@ -223,6 +227,13 @@ function readAppFoundryReadiness() {
     return null;
   }
   return JSON.parse(fs.readFileSync(APP_FOUNDRY_READINESS_FILE, 'utf8'));
+}
+
+function readAppCategoryCatalog() {
+  if (!fs.existsSync(APP_CATEGORY_CATALOG_FILE)) {
+    return null;
+  }
+  return JSON.parse(fs.readFileSync(APP_CATEGORY_CATALOG_FILE, 'utf8'));
 }
 
 function readBotFounderAppStoreReport() {
@@ -729,6 +740,17 @@ app.get('/api/app-foundry', rateLimiter, (_req, res) => {
   const report = readAppFoundryReadiness();
   if (!report) {
     return res.status(503).json({ error: 'app foundry readiness report not found' });
+  }
+  return res.json(report);
+});
+
+// ---------------------------------------------------------------------------
+// GET /api/app-category-catalog — app comparison and Buddy management catalog
+// ---------------------------------------------------------------------------
+app.get('/api/app-category-catalog', rateLimiter, (_req, res) => {
+  const report = readAppCategoryCatalog();
+  if (!report) {
+    return res.status(503).json({ error: 'app category catalog report not found' });
   }
   return res.json(report);
 });

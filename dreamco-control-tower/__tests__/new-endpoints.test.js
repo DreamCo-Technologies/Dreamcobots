@@ -374,6 +374,27 @@ describe('GET /api/app-foundry', () => {
   });
 });
 
+describe('GET /api/app-category-catalog', () => {
+  test('returns app categories for comparison and Buddy web/device management', async () => {
+    const res = await request(app).get('/api/app-category-catalog');
+
+    expect(res.status).toBe(200);
+    expect(res.body.schema).toBe('dreamco.app_category_catalog_report.v1');
+    expect(res.body.summary.app_categories).toBeGreaterThanOrEqual(40);
+    expect(res.body.summary.comparison_criteria).toBeGreaterThanOrEqual(20);
+    expect(res.body.summary.device_and_web_management_ready).toBe(true);
+    expect(res.body.categories.map((category) => category.id)).toEqual(
+      expect.arrayContaining(['couponing', 'gambling', 'job_search', 'app_builders']),
+    );
+    expect(res.body.buddy_management_modes.map((mode) => mode.id)).toEqual(
+      expect.arrayContaining(['web_research', 'device_assist', 'account_workflow']),
+    );
+    expect(res.body.blocked_without_approval).toEqual(
+      expect.arrayContaining(['install_or_uninstall_apps', 'move_money_or_purchase', 'place_bet_or_trade']),
+    );
+  });
+});
+
 describe('GET /api/bot-founder-app-store', () => {
   test('returns per-bot founder and app-store readiness', async () => {
     const res = await request(app).get('/api/bot-founder-app-store');
