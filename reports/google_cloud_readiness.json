@@ -1,4 +1,51 @@
 {
+  "bootstrap": {
+    "example": "PROJECT_ID=YOUR_PROJECT_ID REGION=us-central1 ./deploy/google-cloud/bootstrap.sh",
+    "requires_login": true,
+    "script": "deploy/google-cloud/bootstrap.sh",
+    "workload_identity_example": "PROJECT_ID=YOUR_PROJECT_ID ./deploy/google-cloud/workload-identity-github.sh",
+    "workload_identity_script": "deploy/google-cloud/workload-identity-github.sh"
+  },
+  "cloud_build": {
+    "default_region": "us-central1",
+    "default_service": "dreamco-buddy",
+    "dockerfile": "deploy/google-cloud/Dockerfile.control-tower",
+    "file": "cloudbuild.yaml"
+  },
+  "deploy_files": [
+    {
+      "exists": true,
+      "path": "deploy/google-cloud/Dockerfile.control-tower"
+    },
+    {
+      "exists": true,
+      "path": "cloudbuild.yaml"
+    },
+    {
+      "exists": true,
+      "path": ".gcloudignore"
+    },
+    {
+      "exists": true,
+      "path": ".github/workflows/google-cloud-run-deploy.yml"
+    },
+    {
+      "exists": true,
+      "path": "deploy/google-cloud/service-map.json"
+    },
+    {
+      "exists": true,
+      "path": "deploy/google-cloud/secret-manager.template.json"
+    },
+    {
+      "exists": true,
+      "path": "deploy/google-cloud/bootstrap.sh"
+    },
+    {
+      "exists": true,
+      "path": "deploy/google-cloud/workload-identity-github.sh"
+    }
+  ],
   "deployment_targets": [
     {
       "id": "cloud_run",
@@ -46,7 +93,19 @@
       "use": "Store generated assets, reports, exports, and sandbox artifacts."
     }
   ],
-  "generated_at": "2026-07-16T00:49:25Z",
+  "gcloud_context": {
+    "account_count": 0,
+    "authenticated": false,
+    "project": "",
+    "project_configured": false
+  },
+  "generated_at": "2026-07-16T00:59:23Z",
+  "github_actions": {
+    "cloud_run_deploy_workflow": ".github/workflows/google-cloud-run-deploy.yml",
+    "default_mode": "DRY_RUN",
+    "manual_approval_input": "deploy=APPROVE",
+    "uses_workload_identity": true
+  },
   "github_secrets": [
     "GCP_PROJECT_ID",
     "GCP_WORKLOAD_IDENTITY_PROVIDER",
@@ -81,6 +140,91 @@
     "storage.googleapis.com"
   ],
   "schema": "dreamco.google_cloud_readiness.v1",
+  "secret_manager_template": {
+    "policy": {
+      "store_secret_values_in_repo": false,
+      "use_github_secrets_for_deployment_identity_only": true,
+      "use_google_secret_manager_for_live_values": true
+    },
+    "schema": "dreamco.google_cloud_secret_manager_template.v1",
+    "secrets": [
+      "STRIPE_SECRET_KEY",
+      "STRIPE_WEBHOOK_SECRET",
+      "STRIPE_PUBLISHABLE_KEY",
+      "PAYMENT_ALERT_EMAILS",
+      "PAYMENT_EMAIL_PROVIDER",
+      "PAYMENT_EMAIL_FROM",
+      "PAYMENT_GITHUB_TOKEN",
+      "OPENAI_API_KEY",
+      "ANTHROPIC_API_KEY",
+      "GOOGLE_API_KEY",
+      "DATABASE_URL",
+      "SESSION_SECRET",
+      "BUDDY_ADMIN_EMAIL",
+      "WEBHOOK_SIGNING_SECRET"
+    ]
+  },
+  "service_map": {
+    "artifact_repository": "dreamco",
+    "default_region": "us-central1",
+    "queues": [
+      {
+        "id": "dreamco-bot-jobs",
+        "purpose": "Queue sandbox-safe bot jobs and recurring maintenance tasks.",
+        "runtime": "pubsub"
+      },
+      {
+        "id": "dreamco-payment-events",
+        "purpose": "Queue Stripe/payment webhook summaries after signature verification.",
+        "runtime": "pubsub"
+      },
+      {
+        "id": "dreamco-approval-events",
+        "purpose": "Queue owner-approved live actions for human review and audit.",
+        "runtime": "pubsub"
+      }
+    ],
+    "schema": "dreamco.google_cloud_service_map.v1",
+    "services": [
+      {
+        "approval_required": true,
+        "dockerfile": "deploy/google-cloud/Dockerfile.control-tower",
+        "entrypoint": "npm start",
+        "id": "dreamco-buddy",
+        "port": 8080,
+        "purpose": "Buddy Control Tower API, dashboards API, bot catalog, reports, Stripe builder, and Google readiness endpoints.",
+        "runtime": "cloud_run"
+      },
+      {
+        "approval_required": true,
+        "dockerfile": "deploy/google-cloud/Dockerfile.control-tower",
+        "entrypoint": "npm start",
+        "id": "dreamco-webhooks",
+        "port": 8080,
+        "purpose": "Payment, GitHub, automation, and bot-event webhook receiver once production handlers are approved.",
+        "runtime": "cloud_run"
+      },
+      {
+        "approval_required": true,
+        "id": "dreamco-scheduler",
+        "purpose": "Supervised recurring report refreshes, sandbox tests, repository scans, and bot readiness checks.",
+        "runtime": "cloud_scheduler_pubsub",
+        "topic": "dreamco-bot-jobs"
+      }
+    ],
+    "storage": [
+      {
+        "id": "dreamco-artifacts",
+        "purpose": "Generated reports, sandbox artifacts, dashboard exports, and client-safe packets.",
+        "runtime": "cloud_storage"
+      },
+      {
+        "id": "dreamco-state",
+        "purpose": "Bot status, approval packets, run history, dashboard state, and client workspace metadata.",
+        "runtime": "firestore"
+      }
+    ]
+  },
   "setup_steps": [
     "Run gcloud auth login in a local Terminal window.",
     "Run gcloud auth application-default login for local SDK-backed development only.",
@@ -94,12 +238,19 @@
     "Enable budgets, alerts, logs, uptime checks, and rollback before production traffic."
   ],
   "summary": {
+    "cloud_run_services_mapped": 3,
+    "deploy_files_ready": 8,
     "deployment_targets": 9,
+    "gcloud_authenticated": false,
     "gcloud_installed": true,
+    "gcloud_project_configured": false,
     "github_secrets_required": 4,
     "production_deploy_approval_required": true,
+    "pubsub_topics_mapped": 3,
     "required_apis": 11,
+    "secret_manager_placeholders": 14,
     "secret_values_stored_in_repo": false,
+    "storage_targets_mapped": 2,
     "workload_identity_recommended": true
   }
 }

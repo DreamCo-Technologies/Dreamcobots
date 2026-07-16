@@ -733,13 +733,30 @@ describe('GET /api/google-cloud-readiness', () => {
     expect(res.body.schema).toBe('dreamco.google_cloud_readiness.v1');
     expect(res.body.summary.deployment_targets).toBeGreaterThanOrEqual(8);
     expect(res.body.summary.required_apis).toBeGreaterThanOrEqual(10);
+    expect(res.body.summary.deploy_files_ready).toBeGreaterThanOrEqual(7);
+    expect(res.body.summary.cloud_run_services_mapped).toBeGreaterThanOrEqual(3);
+    expect(res.body.summary.pubsub_topics_mapped).toBeGreaterThanOrEqual(3);
+    expect(res.body.summary.secret_manager_placeholders).toBeGreaterThanOrEqual(10);
     expect(res.body.summary.workload_identity_recommended).toBe(true);
     expect(res.body.summary.secret_values_stored_in_repo).toBe(false);
+    expect(res.body.github_actions.default_mode).toBe('DRY_RUN');
+    expect(res.body.github_actions.manual_approval_input).toBe('deploy=APPROVE');
     expect(res.body.required_google_apis).toEqual(
       expect.arrayContaining(['run.googleapis.com', 'cloudbuild.googleapis.com', 'secretmanager.googleapis.com']),
     );
     expect(res.body.github_secrets).toEqual(
       expect.arrayContaining(['GCP_PROJECT_ID', 'GCP_WORKLOAD_IDENTITY_PROVIDER', 'GCP_SERVICE_ACCOUNT']),
+    );
+    expect(res.body.deploy_files.map((file) => file.path)).toEqual(
+      expect.arrayContaining([
+        'deploy/google-cloud/Dockerfile.control-tower',
+        'cloudbuild.yaml',
+        'deploy/google-cloud/bootstrap.sh',
+        'deploy/google-cloud/workload-identity-github.sh',
+      ]),
+    );
+    expect(res.body.service_map.queues.map((queue) => queue.id)).toEqual(
+      expect.arrayContaining(['dreamco-bot-jobs', 'dreamco-payment-events', 'dreamco-approval-events']),
     );
   });
 });

@@ -15,6 +15,14 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 OUTPUT_JSON = ROOT / "reports" / "google_cloud_readiness.json"
 OUTPUT_MD = ROOT / "reports" / "GOOGLE_CLOUD_READINESS.md"
+SERVICE_MAP = ROOT / "deploy" / "google-cloud" / "service-map.json"
+SECRET_TEMPLATE = ROOT / "deploy" / "google-cloud" / "secret-manager.template.json"
+BOOTSTRAP_SCRIPT = ROOT / "deploy" / "google-cloud" / "bootstrap.sh"
+WORKLOAD_IDENTITY_SCRIPT = ROOT / "deploy" / "google-cloud" / "workload-identity-github.sh"
+CLOUD_RUN_DOCKERFILE = ROOT / "deploy" / "google-cloud" / "Dockerfile.control-tower"
+CLOUD_BUILD_FILE = ROOT / "cloudbuild.yaml"
+GCLOUDIGNORE_FILE = ROOT / ".gcloudignore"
+GITHUB_WORKFLOW_FILE = ROOT / ".github" / "workflows" / "google-cloud-run-deploy.yml"
 
 REQUIRED_APIS = [
     "run.googleapis.com",
@@ -35,6 +43,17 @@ GITHUB_SECRETS = [
     "GCP_WORKLOAD_IDENTITY_PROVIDER",
     "GCP_SERVICE_ACCOUNT",
     "GCP_REGION",
+]
+
+DEPLOY_FILES = [
+    str(CLOUD_RUN_DOCKERFILE.relative_to(ROOT)),
+    str(CLOUD_BUILD_FILE.relative_to(ROOT)),
+    str(GCLOUDIGNORE_FILE.relative_to(ROOT)),
+    str(GITHUB_WORKFLOW_FILE.relative_to(ROOT)),
+    str(SERVICE_MAP.relative_to(ROOT)),
+    str(SECRET_TEMPLATE.relative_to(ROOT)),
+    str(BOOTSTRAP_SCRIPT.relative_to(ROOT)),
+    str(WORKLOAD_IDENTITY_SCRIPT.relative_to(ROOT)),
 ]
 
 DEPLOYMENT_TARGETS = [
@@ -122,25 +141,107 @@ def gcloud_version() -> dict[str, str | bool]:
         return {"installed": False, "path": gcloud, "version": "", "error": str(exc)}
 
 
+def run_gcloud(args: list[str]) -> str:
+    gcloud = shutil.which("gcloud") or "/Users/mamas/google-cloud-sdk/bin/gcloud"
+    cloudsdk_python = "/Users/mamas/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3"
+    env = os.environ.copy()
+    if Path(cloudsdk_python).exists():
+        env.setdefault("CLOUDSDK_PYTHON", cloudsdk_python)
+    result = subprocess.run(
+        [gcloud, *args],
+        check=False,
+        capture_output=True,
+        text=True,
+        timeout=15,
+        env=env,
+    )
+    if result.returncode != 0:
+        return ""
+    return result.stdout.strip()
+
+
+def gcloud_context() -> dict[str, str | bool | int]:
+    auth_json = run_gcloud(["auth", "list", "--format=json"])
+    project = run_gcloud(["config", "get-value", "project"])
+    account_count = 0
+    if auth_json:
+        try:
+            account_count = len(json.loads(auth_json))
+        except json.JSONDecodeError:
+            account_count = 0
+    return {
+        "authenticated": account_count > 0,
+        "account_count": account_count,
+        "project_configured": bool(project and project != "(unset)"),
+        "project": "" if project == "(unset)" else project,
+    }
+
+
+def read_json(path: Path, fallback: dict) -> dict:
+    try:
+        if not path.exists():
+            return fallback
+        return json.loads(path.read_text(encoding="utf-8"))
+    except json.JSONDecodeError:
+        return fallback
+
+
 def build_report() -> dict:
     cli = gcloud_version()
+    context = gcloud_context()
+    service_map = read_json(SERVICE_MAP, {"services": [], "storage": [], "queues": []})
+    secret_template = read_json(SECRET_TEMPLATE, {"secrets": []})
+    deploy_files = [
+        {"path": file_path, "exists": (ROOT / file_path).exists()}
+        for file_path in DEPLOY_FILES
+    ]
     return {
         "schema": "dreamco.google_cloud_readiness.v1",
         "generated_at": utc_now(),
         "summary": {
             "gcloud_installed": bool(cli.get("installed")),
+            "gcloud_authenticated": bool(context.get("authenticated")),
+            "gcloud_project_configured": bool(context.get("project_configured")),
             "deployment_targets": len(DEPLOYMENT_TARGETS),
             "required_apis": len(REQUIRED_APIS),
             "github_secrets_required": len(GITHUB_SECRETS),
+            "deploy_files_ready": sum(1 for item in deploy_files if item["exists"]),
+            "cloud_run_services_mapped": len(service_map.get("services", [])),
+            "storage_targets_mapped": len(service_map.get("storage", [])),
+            "pubsub_topics_mapped": len(service_map.get("queues", [])),
+            "secret_manager_placeholders": len(secret_template.get("secrets", [])),
             "workload_identity_recommended": True,
             "production_deploy_approval_required": True,
             "secret_values_stored_in_repo": False,
         },
         "local_cli": cli,
+        "gcloud_context": context,
         "recommended_region": "us-central1",
         "required_google_apis": REQUIRED_APIS,
         "github_secrets": GITHUB_SECRETS,
+        "deploy_files": deploy_files,
         "deployment_targets": DEPLOYMENT_TARGETS,
+        "service_map": service_map,
+        "secret_manager_template": secret_template,
+        "github_actions": {
+            "cloud_run_deploy_workflow": str(GITHUB_WORKFLOW_FILE.relative_to(ROOT)),
+            "manual_approval_input": "deploy=APPROVE",
+            "default_mode": "DRY_RUN",
+            "uses_workload_identity": True,
+        },
+        "cloud_build": {
+            "file": str(CLOUD_BUILD_FILE.relative_to(ROOT)),
+            "dockerfile": str(CLOUD_RUN_DOCKERFILE.relative_to(ROOT)),
+            "default_service": "dreamco-buddy",
+            "default_region": "us-central1",
+        },
+        "bootstrap": {
+            "script": str(BOOTSTRAP_SCRIPT.relative_to(ROOT)),
+            "workload_identity_script": str(WORKLOAD_IDENTITY_SCRIPT.relative_to(ROOT)),
+            "requires_login": True,
+            "example": "PROJECT_ID=YOUR_PROJECT_ID REGION=us-central1 ./deploy/google-cloud/bootstrap.sh",
+            "workload_identity_example": "PROJECT_ID=YOUR_PROJECT_ID ./deploy/google-cloud/workload-identity-github.sh",
+        },
         "setup_steps": [
             "Run gcloud auth login in a local Terminal window.",
             "Run gcloud auth application-default login for local SDK-backed development only.",
@@ -163,15 +264,29 @@ def write_markdown(report: dict) -> None:
         "# Google Cloud Readiness",
         "",
         f"- gcloud installed: {summary['gcloud_installed']}",
+        f"- gcloud authenticated: {summary['gcloud_authenticated']}",
+        f"- gcloud project configured: {summary['gcloud_project_configured']}",
         f"- Deployment targets: {summary['deployment_targets']}",
         f"- Required APIs: {summary['required_apis']}",
         f"- GitHub secrets required: {summary['github_secrets_required']}",
+        f"- Deploy files ready: {summary['deploy_files_ready']}",
+        f"- Cloud Run services mapped: {summary['cloud_run_services_mapped']}",
+        f"- Pub/Sub topics mapped: {summary['pubsub_topics_mapped']}",
+        f"- Secret Manager placeholders: {summary['secret_manager_placeholders']}",
         f"- Workload Identity recommended: {summary['workload_identity_recommended']}",
         f"- Production deploy approval required: {summary['production_deploy_approval_required']}",
         "",
-        "## Required APIs",
+        "## Deploy Files",
         "",
     ]
+    lines.extend(f"- {item['path']}: {item['exists']}" for item in report["deploy_files"])
+    lines.extend(
+        [
+            "",
+            "## Required APIs",
+            "",
+        ]
+    )
     lines.extend(f"- {api}" for api in report["required_google_apis"])
     lines.extend(["", "## GitHub Secrets", ""])
     lines.extend(f"- {secret}" for secret in report["github_secrets"])
@@ -192,6 +307,9 @@ def main() -> int:
         existing = json.loads(OUTPUT_JSON.read_text(encoding="utf-8"))
         existing["generated_at"] = report["generated_at"]
         existing["local_cli"] = report["local_cli"]
+        existing["gcloud_context"] = report["gcloud_context"]
+        existing["summary"]["gcloud_authenticated"] = report["summary"]["gcloud_authenticated"]
+        existing["summary"]["gcloud_project_configured"] = report["summary"]["gcloud_project_configured"]
         if json.dumps(existing, indent=2, sort_keys=True) + "\n" != rendered:
             raise SystemExit("Google Cloud readiness report stale; run the generator")
         return 0

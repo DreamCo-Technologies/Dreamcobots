@@ -1,11 +1,28 @@
 # Google Cloud Readiness
 
 - gcloud installed: True
+- gcloud authenticated: False
+- gcloud project configured: False
 - Deployment targets: 9
 - Required APIs: 11
 - GitHub secrets required: 4
+- Deploy files ready: 8
+- Cloud Run services mapped: 3
+- Pub/Sub topics mapped: 3
+- Secret Manager placeholders: 14
 - Workload Identity recommended: True
 - Production deploy approval required: True
+
+## Deploy Files
+
+- deploy/google-cloud/Dockerfile.control-tower: True
+- cloudbuild.yaml: True
+- .gcloudignore: True
+- .github/workflows/google-cloud-run-deploy.yml: True
+- deploy/google-cloud/service-map.json: True
+- deploy/google-cloud/secret-manager.template.json: True
+- deploy/google-cloud/bootstrap.sh: True
+- deploy/google-cloud/workload-identity-github.sh: True
 
 ## Required APIs
 

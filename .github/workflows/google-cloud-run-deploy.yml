@@ -55,7 +55,7 @@ jobs:
         if: ${{ github.event.inputs.deploy == 'APPROVE' }}
         run: |
           IMAGE="${{ github.event.inputs.region }}-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/dreamco/${{ github.event.inputs.service }}:${{ github.sha }}"
-          docker build -t "$IMAGE" .
+          docker build -f deploy/google-cloud/Dockerfile.control-tower -t "$IMAGE" .
           echo "IMAGE=$IMAGE" >> "$GITHUB_ENV"
 
       - name: Push container
