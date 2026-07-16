@@ -7,7 +7,9 @@
     "issue_refund",
     "change_payout_or_bank_settings",
     "email_customer",
-    "create_github_payment_issue"
+    "create_github_payment_issue",
+    "add_or_rotate_stripe_secret",
+    "switch_active_stripe_profile"
   ],
   "bot": {
     "buddy_connected": true,
@@ -89,17 +91,66 @@
       ],
       "id": "secret_setup_builder",
       "label": "Secret Setup Builder"
+    },
+    {
+      "builds": [
+        "default Stripe profile",
+        "future account profiles",
+        "secret aliases",
+        "profile switch checklist"
+      ],
+      "id": "stripe_profile_manager",
+      "label": "Stripe Profile Manager"
+    },
+    {
+      "builds": [
+        "new secret plan",
+        "old secret retirement plan",
+        "dry-run validation",
+        "rollback checklist"
+      ],
+      "id": "secret_rotation_builder",
+      "label": "Secret Rotation Builder"
     }
   ],
-  "generated_at": "2026-07-16T00:49:24Z",
+  "future_stripe_account_workflow": [
+    "Create a new Stripe account or project in Stripe.",
+    "Add profile-specific GitHub Secrets or Google Secret Manager entries.",
+    "Run Stripe Secret Readiness in DRY_RUN mode.",
+    "Run Stripe price audit to confirm every repository price still maps to a draft offer.",
+    "Run Stripe revenue rescue to confirm webhook, email, and GitHub notification readiness.",
+    "Approve profile switch only after a test checkout and webhook replay pass.",
+    "Keep the old profile available until subscriptions, refunds, disputes, and reports are reconciled."
+  ],
+  "generated_at": "2026-07-16T12:32:37Z",
   "production_readiness": [
     "Stripe live keys are stored only in host secrets or Google Secret Manager.",
     "Webhook endpoint is HTTPS and verifies Stripe signatures.",
     "Payment links map directly to approved DreamCo offers.",
     "Owner receives email or GitHub notification for every successful, failed, refunded, or disputed payment.",
     "Refund, dispute, tax, and customer support paths are documented.",
-    "A $1 live checkout test is approved and recorded before public launch."
+    "A $1 live checkout test is approved and recorded before public launch.",
+    "New Stripe account/profile secrets can be added without changing application code."
   ],
+  "profile_secret_template": {
+    "additional_account": {
+      "publishable_key": "STRIPE_PUBLISHABLE_KEY_{PROFILE}",
+      "secret_key": "STRIPE_SECRET_KEY_{PROFILE}",
+      "webhook_secret": "STRIPE_WEBHOOK_SECRET_{PROFILE}"
+    },
+    "default": {
+      "publishable_key": [
+        "STRIPE_PUBLISHABLE_KEY"
+      ],
+      "secret_key": [
+        "STRIPE_SECRET_KEY",
+        "STRIPE_API_KEY"
+      ],
+      "webhook_secret": [
+        "STRIPE_WEBHOOK_SECRET"
+      ]
+    }
+  },
   "required_environment": [
     "STRIPE_SECRET_KEY",
     "STRIPE_WEBHOOK_SECRET",
@@ -117,16 +168,33 @@
     "Replay signed webhook fixtures for checkout, payment, invoice, subscription, refund, and payout events.",
     "Queue owner email notices without sending until provider secrets exist.",
     "Queue GitHub payment issues only when PAYMENT_GITHUB_NOTIFICATIONS is enabled.",
-    "Run Stripe revenue rescue after every config change."
+    "Run Stripe revenue rescue after every config change.",
+    "Build a fake second Stripe profile packet and confirm no secret values are printed.",
+    "Build a rotation packet and confirm live profile switching remains approval-gated."
   ],
   "schema": "dreamco.stripe_builder_bot.v1",
+  "secret_aliases": {
+    "stripe_publishable_key": [
+      "STRIPE_PUBLISHABLE_KEY"
+    ],
+    "stripe_secret_key": [
+      "STRIPE_SECRET_KEY",
+      "STRIPE_API_KEY"
+    ],
+    "stripe_webhook_secret": [
+      "STRIPE_WEBHOOK_SECRET"
+    ]
+  },
   "summary": {
-    "approval_gates": 8,
-    "build_modules": 7,
+    "approval_gates": 10,
+    "build_modules": 9,
     "email_notifications_supported": true,
+    "future_stripe_profiles_supported": true,
     "github_notifications_supported": true,
     "live_money_blocked_without_approval": true,
     "required_env_vars": 8,
+    "secret_aliases_supported": 3,
+    "secret_rotation_supported": true,
     "secret_values_stored_in_repo": false
   }
 }

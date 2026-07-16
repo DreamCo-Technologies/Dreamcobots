@@ -713,14 +713,31 @@ describe('GET /api/stripe-builder', () => {
     expect(res.status).toBe(200);
     expect(res.body.schema).toBe('dreamco.stripe_builder_bot.v1');
     expect(res.body.bot.slug).toBe('stripe-builder-bot');
-    expect(res.body.summary.build_modules).toBeGreaterThanOrEqual(7);
+    expect(res.body.summary.build_modules).toBeGreaterThanOrEqual(9);
+    expect(res.body.summary.future_stripe_profiles_supported).toBe(true);
+    expect(res.body.summary.secret_rotation_supported).toBe(true);
     expect(res.body.summary.live_money_blocked_without_approval).toBe(true);
     expect(res.body.summary.secret_values_stored_in_repo).toBe(false);
     expect(res.body.build_modules.map((module) => module.id)).toEqual(
-      expect.arrayContaining(['offer_catalog_builder', 'checkout_builder', 'webhook_builder']),
+      expect.arrayContaining([
+        'offer_catalog_builder',
+        'checkout_builder',
+        'webhook_builder',
+        'stripe_profile_manager',
+        'secret_rotation_builder',
+      ]),
+    );
+    expect(res.body.secret_aliases.stripe_secret_key).toEqual(
+      expect.arrayContaining(['STRIPE_SECRET_KEY', 'STRIPE_API_KEY']),
     );
     expect(res.body.approval_gates).toEqual(
-      expect.arrayContaining(['publish_payment_link', 'accept_live_payment', 'change_payout_or_bank_settings']),
+      expect.arrayContaining([
+        'publish_payment_link',
+        'accept_live_payment',
+        'change_payout_or_bank_settings',
+        'add_or_rotate_stripe_secret',
+        'switch_active_stripe_profile',
+      ]),
     );
   });
 });
