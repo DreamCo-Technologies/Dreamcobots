@@ -725,6 +725,25 @@ describe('GET /api/stripe-builder', () => {
   });
 });
 
+describe('GET /api/stripe-price-audit', () => {
+  test('returns repository price to Stripe draft matching', async () => {
+    const res = await request(app).get('/api/stripe-price-audit');
+
+    expect(res.status).toBe(200);
+    expect(res.body.schema).toBe('dreamco.stripe_price_audit.v1');
+    expect(res.body.summary.repository_prices).toBeGreaterThan(0);
+    expect(res.body.summary.generated_stripe_offers).toBe(res.body.summary.repository_prices);
+    expect(res.body.summary.prices_match_generated_stripe_catalog).toBe(true);
+    expect(res.body.summary.live_stripe_actions_blocked_without_approval).toBe(true);
+    expect(res.body.summary.secret_values_stored_in_repo).toBe(false);
+    expect(res.body.stripe_catalog_files).toHaveProperty('price_map', 'data/stripe/repository-price-map.json');
+    expect(res.body.stripe_catalog_files).toHaveProperty('generated_offers', 'data/stripe/offers.generated.json');
+    expect(res.body.policy.approval_required).toEqual(
+      expect.arrayContaining(['create_live_product_or_price', 'publish_payment_link', 'accept_live_payment']),
+    );
+  });
+});
+
 describe('GET /api/google-cloud-readiness', () => {
   test('returns Google Cloud deployment readiness', async () => {
     const res = await request(app).get('/api/google-cloud-readiness');

@@ -102,6 +102,7 @@ const STRIPE_REVENUE_RESCUE_REPORT_FILE = path.join(
   '../../reports/stripe_revenue_rescue_report.json',
 );
 const STRIPE_BUILDER_BOT_FILE = path.join(__dirname, '../../reports/stripe_builder_bot.json');
+const STRIPE_PRICE_AUDIT_FILE = path.join(__dirname, '../../reports/stripe_price_audit.json');
 const GOOGLE_CLOUD_READINESS_FILE = path.join(
   __dirname,
   '../../reports/google_cloud_readiness.json',
@@ -351,6 +352,13 @@ function readStripeBuilderBot() {
     return null;
   }
   return JSON.parse(fs.readFileSync(STRIPE_BUILDER_BOT_FILE, 'utf8'));
+}
+
+function readStripePriceAudit() {
+  if (!fs.existsSync(STRIPE_PRICE_AUDIT_FILE)) {
+    return null;
+  }
+  return JSON.parse(fs.readFileSync(STRIPE_PRICE_AUDIT_FILE, 'utf8'));
 }
 
 function readGoogleCloudReadiness() {
@@ -946,6 +954,17 @@ app.get('/api/stripe-builder', rateLimiter, (_req, res) => {
   const report = readStripeBuilderBot();
   if (!report) {
     return res.status(503).json({ error: 'Stripe Builder bot report not found' });
+  }
+  return res.json(report);
+});
+
+// ---------------------------------------------------------------------------
+// GET /api/stripe-price-audit — repository price to Stripe draft matching
+// ---------------------------------------------------------------------------
+app.get('/api/stripe-price-audit', rateLimiter, (_req, res) => {
+  const report = readStripePriceAudit();
+  if (!report) {
+    return res.status(503).json({ error: 'Stripe price audit report not found' });
   }
   return res.json(report);
 });
