@@ -15,6 +15,12 @@ Every repository sellable price must have a generated Stripe draft offer with th
 
 Generated draft offers are not live until Stripe Price IDs and Payment Link IDs are added from a secure Stripe account setup.
 
+## GitHub Stripe Secret Names
+
+- Stripe secret key: STRIPE_SECRET_KEY or STRIPE_API_KEY
+- Stripe publishable key: STRIPE_PUBLISHABLE_KEY
+- Stripe webhook secret: STRIPE_WEBHOOK_SECRET
+
 ## Catalog Files
 
 - price_map: data/stripe/repository-price-map.json

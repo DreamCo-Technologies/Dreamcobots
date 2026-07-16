@@ -371,6 +371,11 @@ def build_report() -> dict[str, Any]:
         "policy": {
             "match_rule": "Every repository sellable price must have a generated Stripe draft offer with the same amount in cents.",
             "live_rule": "Generated draft offers are not live until Stripe Price IDs and Payment Link IDs are added from a secure Stripe account setup.",
+            "github_secret_aliases": {
+                "stripe_secret_key": ["STRIPE_SECRET_KEY", "STRIPE_API_KEY"],
+                "stripe_publishable_key": ["STRIPE_PUBLISHABLE_KEY"],
+                "stripe_webhook_secret": ["STRIPE_WEBHOOK_SECRET"],
+            },
             "approval_required": [
                 "create_live_product_or_price",
                 "publish_payment_link",
@@ -442,6 +447,12 @@ def write_outputs(report: dict[str, Any]) -> None:
         report["policy"]["match_rule"],
         "",
         report["policy"]["live_rule"],
+        "",
+        "## GitHub Stripe Secret Names",
+        "",
+        "- Stripe secret key: STRIPE_SECRET_KEY or STRIPE_API_KEY",
+        "- Stripe publishable key: STRIPE_PUBLISHABLE_KEY",
+        "- Stripe webhook secret: STRIPE_WEBHOOK_SECRET",
         "",
         "## Catalog Files",
         "",
