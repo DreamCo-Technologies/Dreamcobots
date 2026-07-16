@@ -467,6 +467,9 @@ describe('GET /api/revenue-practice', () => {
     expect(res.body.summary.owner_and_user_target_enabled_bots).toBe(res.body.summary.bot_count);
     expect(res.body.summary.income_guarantee).toBe(false);
     expect(res.body.summary.target_requires_validation).toBe(true);
+    expect(res.body.summary.bots_with_marketplace_need_discovery).toBe(res.body.summary.bot_count);
+    expect(res.body.summary.marketplace_source_categories).toBeGreaterThanOrEqual(5);
+    expect(res.body.summary.marketplace_approval_gates).toBeGreaterThanOrEqual(7);
     expect(res.body.summary.all_bots_practice_autonomous_money).toBe(true);
     expect(res.body.summary.live_money_actions_blocked_without_approval).toBe(true);
     expect(res.body.buddy_example.practice_status).toBe('gold_standard_revenue_coach');
@@ -475,11 +478,31 @@ describe('GET /api/revenue-practice', () => {
       expect.arrayContaining(['one_client_high_value', 'ten_clients_service', 'subscription_stack']),
     );
     expect(res.body.target_policy.income_guarantee).toBe(false);
+    expect(res.body.marketplace_demand_sources.map((source) => source.id)).toEqual(
+      expect.arrayContaining(['freelance_marketplaces', 'creator_service_markets', 'business_software_markets']),
+    );
+    expect(res.body.marketplace_demand_workflow).toEqual(
+      expect.arrayContaining(['cluster repeated paying-customer needs', 'build a sandbox demo or sample output']),
+    );
+    expect(res.body.marketplace_approval_gates).toEqual(
+      expect.arrayContaining(['buyer_or_seller_messaging', 'proposal_or_bid_submission', 'paid_order_acceptance']),
+    );
     expect(res.body.revenue_practice_lanes.map((lane) => lane.id)).toEqual(
-      expect.arrayContaining(['problem_discovery', 'offer_design', 'pricing_modeling', 'sandbox_delivery']),
+      expect.arrayContaining([
+        'problem_discovery',
+        'marketplace_need_discovery',
+        'offer_design',
+        'pricing_modeling',
+        'sandbox_delivery',
+      ]),
     );
     expect(res.body.approval_required).toEqual(
-      expect.arrayContaining(['collect_or_move_money', 'contact_leads_or_customers', 'spend_ad_budget']),
+      expect.arrayContaining([
+        'collect_or_move_money',
+        'contact_leads_or_customers',
+        'submit_bids_or_proposals',
+        'spend_ad_budget',
+      ]),
     );
   });
 });

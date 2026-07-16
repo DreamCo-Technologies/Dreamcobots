@@ -45,6 +45,12 @@ REVENUE_PRACTICE_LANES = [
         "safe_outputs": ["ICP notes", "lead category list", "qualification checklist", "source log"],
     },
     {
+        "id": "marketplace_need_discovery",
+        "label": "Marketplace Need Discovery",
+        "practice": "Study public marketplace demand signals to find paying-customer needs AI can fill.",
+        "safe_outputs": ["need brief", "buyer intent notes", "offer gap map", "approval-ready proposal draft"],
+    },
+    {
         "id": "sales_materials",
         "label": "Sales Materials",
         "practice": "Draft landing page copy, demo scripts, prospectus pages, proposals, and objection handling.",
@@ -96,6 +102,9 @@ REVENUE_PRACTICE_LANES = [
 
 APPROVAL_REQUIRED = [
     "contact_leads_or_customers",
+    "log_into_marketplace_accounts",
+    "scrape_sites_against_terms",
+    "submit_bids_or_proposals",
     "send_email_sms_calls_or_social_posts",
     "spend_ad_budget",
     "collect_private_or_sensitive_data",
@@ -162,6 +171,60 @@ TARGET_POLICY = {
     ],
 }
 
+MARKETPLACE_DEMAND_SOURCES = [
+    {
+        "id": "freelance_marketplaces",
+        "label": "Freelance Marketplaces",
+        "examples": ["Fiverr-style gigs", "Upwork-style jobs", "Contra-style projects", "PeoplePerHour-style services"],
+        "safe_research": "Use public category pages, visible demand themes, user-provided screenshots, exports, or approved APIs.",
+    },
+    {
+        "id": "creator_service_markets",
+        "label": "Creator Service Markets",
+        "examples": ["design services", "video editing", "music production", "course creation", "game asset services"],
+        "safe_research": "Compare visible service packaging, pricing bands, turnaround promises, and recurring buyer needs.",
+    },
+    {
+        "id": "business_software_markets",
+        "label": "Business Software Markets",
+        "examples": ["app stores", "SaaS directories", "automation marketplaces", "template stores"],
+        "safe_research": "Find repetitive pain points, integration gaps, reviews, and missing workflows without collecting private data.",
+    },
+    {
+        "id": "public_contract_and_rfp_sources",
+        "label": "Public Contract And RFP Sources",
+        "examples": ["government procurement", "grant notices", "vendor portals", "public bid listings"],
+        "safe_research": "Summarize requirements, deadlines, qualification gaps, and fit scores before any submission.",
+    },
+    {
+        "id": "community_problem_sources",
+        "label": "Community Problem Sources",
+        "examples": ["forums", "public Q&A", "reviews", "social comments", "support boards"],
+        "safe_research": "Extract anonymized problem themes and product opportunities without contacting people or storing private data.",
+    },
+]
+
+MARKETPLACE_DEMAND_WORKFLOW = [
+    "scan public or user-approved demand signals",
+    "cluster repeated paying-customer needs",
+    "match the need to the bot's division and lanes",
+    "draft an AI-fillable service, app, automation, report, course, game, or simulation offer",
+    "estimate price, delivery time, proof needed, and risk",
+    "build a sandbox demo or sample output",
+    "create a proposal, gig, or landing-page draft",
+    "prepare an approval packet before outreach, bidding, account login, scraping, or payment collection",
+]
+
+MARKETPLACE_APPROVAL_GATES = [
+    "marketplace_account_login",
+    "automated_site_collection",
+    "buyer_or_seller_messaging",
+    "proposal_or_bid_submission",
+    "paid_order_acceptance",
+    "payment_link_or_invoice_creation",
+    "delivery_to_real_customer",
+]
+
 
 def utc_now() -> str:
     return datetime.now(timezone.utc).replace(microsecond=0).isoformat().replace("+00:00", "Z")
@@ -180,7 +243,7 @@ def infer_primary_lanes(bot: dict[str, Any]) -> list[str]:
     division = str(bot.get("division") or "").lower()
     name = str(bot.get("name") or bot.get("slug") or "").lower()
     text = f"{division} {name}"
-    lanes = ["problem_discovery", "offer_design", "sandbox_delivery", "sales_materials"]
+    lanes = ["problem_discovery", "marketplace_need_discovery", "offer_design", "sandbox_delivery", "sales_materials"]
     if any(term in text for term in ["sales", "market", "influence", "social", "retail"]):
         lanes.extend(["lead_research", "pricing_modeling", "retention_growth"])
     if any(term in text for term in ["finance", "payment", "loan", "crypto", "trade"]):
@@ -223,6 +286,41 @@ def build_daily_target_path(bot: dict[str, Any], lanes: list[str]) -> dict[str, 
     }
 
 
+def build_marketplace_need_packet(bot: dict[str, Any], lanes: list[str]) -> dict[str, Any]:
+    name = str(bot.get("name") or bot.get("slug") or "Bot")
+    division = str(bot.get("division") or "DreamCo")
+    return {
+        "status": "marketplace_need_discovery_ready",
+        "mission": (
+            f"{name} studies public paying-customer needs and prepares AI-fillable offers for {division} "
+            "without contacting customers or taking live marketplace actions until approved."
+        ),
+        "source_categories": [source["id"] for source in MARKETPLACE_DEMAND_SOURCES],
+        "workflow": MARKETPLACE_DEMAND_WORKFLOW,
+        "offer_outputs": [
+            "customer need brief",
+            "AI-fillable service or product idea",
+            "pricing hypothesis",
+            "sandbox proof plan",
+            "sample deliverable",
+            "gig or proposal draft",
+            "risk and approval checklist",
+        ],
+        "fit_scoring": {
+            "buyer_urgency": "How often the need appears and how painful it looks.",
+            "ai_delivery_fit": "How much of the work can be safely automated or accelerated by AI.",
+            "proof_speed": "How quickly the bot can build a sandbox sample.",
+            "margin_potential": "Expected price minus tool, review, support, and delivery cost.",
+            "approval_risk": "Whether the opportunity requires outreach, private data, platform login, money movement, or regulated advice.",
+        },
+        "bot_specific_prompt": (
+            f"Find three paying-customer needs for {division} that match {', '.join(lanes[:5])}; "
+            "rank them by buyer urgency, AI delivery fit, proof speed, margin potential, and approval risk."
+        ),
+        "approval_gates": MARKETPLACE_APPROVAL_GATES,
+    }
+
+
 def build_practice() -> dict[str, Any]:
     connection = read_json(CONNECTION_REPORT, {})
     owner = read_json(OWNER_SETTINGS_REPORT, {})
@@ -252,8 +350,9 @@ def build_practice() -> dict[str, Any]:
                 "primary_revenue_lanes": lanes,
                 "daily_revenue_target_usd": DAILY_REVENUE_TARGET_USD,
                 "daily_revenue_target_path": build_daily_target_path(bot, lanes),
+                "marketplace_need_discovery": build_marketplace_need_packet(bot, lanes),
                 "daily_practice_packet": {
-                    "research": "Find one client money problem or savings opportunity.",
+                    "research": "Find one client money problem, savings opportunity, or public marketplace need AI can fill.",
                     "offer": "Draft one safe offer or service packet.",
                     "proof": "Create or update one sandbox test, demo, or evidence checklist.",
                     "package": "Prepare one client-facing value note, prospectus update, or approval packet.",
@@ -291,6 +390,7 @@ def build_practice() -> dict[str, Any]:
             "cost-saving opportunities",
             "approval packets ready",
             "blocked risky actions avoided",
+            "marketplace needs converted into sandbox offers",
         ],
     }
 
@@ -311,6 +411,9 @@ def build_practice() -> dict[str, Any]:
             "owner_and_user_target_enabled_bots": len(bot_rows),
             "income_guarantee": False,
             "target_requires_validation": True,
+            "bots_with_marketplace_need_discovery": len(bot_rows),
+            "marketplace_source_categories": len(MARKETPLACE_DEMAND_SOURCES),
+            "marketplace_approval_gates": len(MARKETPLACE_APPROVAL_GATES),
             "revenue_practice_lanes": len(REVENUE_PRACTICE_LANES),
             "approval_required_actions": len(APPROVAL_REQUIRED),
             "all_bots_practice_autonomous_money": len(bot_rows) == len(bots) and len(bots) >= 1200,
@@ -319,6 +422,9 @@ def build_practice() -> dict[str, Any]:
         "buddy_example": buddy_example,
         "target_scenarios": TARGET_SCENARIOS,
         "target_policy": TARGET_POLICY,
+        "marketplace_demand_sources": MARKETPLACE_DEMAND_SOURCES,
+        "marketplace_demand_workflow": MARKETPLACE_DEMAND_WORKFLOW,
+        "marketplace_approval_gates": MARKETPLACE_APPROVAL_GATES,
         "revenue_practice_lanes": REVENUE_PRACTICE_LANES,
         "approval_required": APPROVAL_REQUIRED,
         "division_coverage": dict(sorted(division_counter.items())),
@@ -357,6 +463,8 @@ def write_markdown(report: dict[str, Any]) -> None:
         f"- Bots with $1,000/day target paths: {summary['bots_with_1000_day_target']}",
         f"- Income guarantee: {summary['income_guarantee']}",
         f"- Target requires validation: {summary['target_requires_validation']}",
+        f"- Bots with marketplace need discovery: {summary['bots_with_marketplace_need_discovery']}",
+        f"- Marketplace source categories: {summary['marketplace_source_categories']}",
         f"- Revenue practice lanes: {summary['revenue_practice_lanes']}",
         f"- Approval-required actions: {summary['approval_required_actions']}",
         f"- All bots practice autonomous money: {summary['all_bots_practice_autonomous_money']}",
@@ -377,6 +485,9 @@ def write_markdown(report: dict[str, Any]) -> None:
     ]
     for scenario in report["target_scenarios"]:
         lines.append(f"- **{scenario['label']}**: {scenario['formula']}")
+    lines.extend(["", "## Marketplace Demand Sources", ""])
+    for source in report["marketplace_demand_sources"]:
+        lines.append(f"- **{source['label']}**: {source['safe_research']}")
     lines.extend(
         [
             "",
