@@ -107,6 +107,61 @@ APPROVAL_REQUIRED = [
     "deploy_to_production_or_app_stores",
 ]
 
+DAILY_REVENUE_TARGET_USD = 1000
+
+TARGET_SCENARIOS = [
+    {
+        "id": "one_client_high_value",
+        "label": "One High-Value Client",
+        "formula": "1 client/day x $1,000 offer",
+        "best_for": "Complex automation, app builds, audits, implementation packages, and urgent business fixes.",
+        "proof_needed": "Sandbox demo, before/after workflow, clear deliverables, buyer pain evidence, and approval packet.",
+    },
+    {
+        "id": "ten_clients_service",
+        "label": "Ten Smaller Client Services",
+        "formula": "10 clients/day x $100 service",
+        "best_for": "Reports, setup services, templates, lead lists, dashboards, design packets, and quick-turn deliverables.",
+        "proof_needed": "Repeatable service checklist, turnaround test, quality review, sample output, and pricing assumptions.",
+    },
+    {
+        "id": "subscription_stack",
+        "label": "Subscription Stack",
+        "formula": "100 users x $10/day equivalent",
+        "best_for": "Bot subscriptions, monitoring dashboards, learning tools, workflow libraries, and managed AI employees.",
+        "proof_needed": "Retention reason, support plan, onboarding flow, usage metrics, and churn-risk notes.",
+    },
+    {
+        "id": "cost_savings_retainer",
+        "label": "Cost-Savings Retainer",
+        "formula": "1 client saves or protects $1,000/day in modeled value",
+        "best_for": "Automation, fraud/risk monitoring, operations cleanup, quality checks, compliance prep, and downtime reduction.",
+        "proof_needed": "Savings model, risk assumptions, baseline workflow, sandbox evidence, and human review.",
+    },
+    {
+        "id": "marketplace_micro_sales",
+        "label": "Marketplace Micro-Sales",
+        "formula": "50 buyers/day x $20 digital product",
+        "best_for": "Templates, courses, prompts, datasets, app packs, game assets, simulation kits, and industry playbooks.",
+        "proof_needed": "Rights-cleared product, landing copy, test audience, refund policy, and distribution plan.",
+    },
+]
+
+TARGET_POLICY = {
+    "income_guarantee": False,
+    "target_statement": "$1,000/day is an aspirational owner-and-user value target, not a promised result.",
+    "evidence_rule": "Separate projections, sandbox results, approved live tests, and actual revenue in every bot record.",
+    "approval_rule": "Any live money, outreach, ads, account changes, contracts, sensitive data, trading, or production deploys require explicit approval.",
+    "blocked_methods": [
+        "deception",
+        "spam",
+        "unauthorized scraping",
+        "fake testimonials or endorsements",
+        "unapproved financial activity",
+        "unsafe legal, medical, or financial claims",
+    ],
+}
+
 
 def utc_now() -> str:
     return datetime.now(timezone.utc).replace(microsecond=0).isoformat().replace("+00:00", "Z")
@@ -139,6 +194,35 @@ def infer_primary_lanes(bot: dict[str, Any]) -> list[str]:
     return list(dict.fromkeys(lanes))[:8]
 
 
+def build_daily_target_path(bot: dict[str, Any], lanes: list[str]) -> dict[str, Any]:
+    name = str(bot.get("name") or bot.get("slug") or "Bot")
+    division = str(bot.get("division") or "DreamCo")
+    lane_text = ", ".join(lanes[:4])
+    return {
+        "target_usd_per_day": DAILY_REVENUE_TARGET_USD,
+        "target_type": "aspirational_sandbox_goal_not_income_guarantee",
+        "owner_goal": "Find, test, and package ethical ways this bot could help the owner earn, save, or protect $1,000/day.",
+        "user_goal": "Find, test, and package ethical ways this bot could help a client or user earn, save, or protect $1,000/day.",
+        "primary_formula": "price x qualified buyers x delivery capacity = daily revenue target",
+        "practice_scenarios": TARGET_SCENARIOS,
+        "bot_specific_angle": (
+            f"{name} should use {division} knowledge and its primary lanes ({lane_text}) "
+            "to build a validated $1,000/day target path."
+        ),
+        "validation_steps": [
+            "state assumptions",
+            "identify buyer or user problem",
+            "draft offer",
+            "estimate price and volume",
+            "build sandbox proof",
+            "list risks and constraints",
+            "create approval packet before live actions",
+            "track actual evidence separately from projections",
+        ],
+        "blocked_until_approval": APPROVAL_REQUIRED,
+    }
+
+
 def build_practice() -> dict[str, Any]:
     connection = read_json(CONNECTION_REPORT, {})
     owner = read_json(OWNER_SETTINGS_REPORT, {})
@@ -166,6 +250,8 @@ def build_practice() -> dict[str, Any]:
                 "safe_mode": True,
                 "practice_status": "sandbox_revenue_practice_ready",
                 "primary_revenue_lanes": lanes,
+                "daily_revenue_target_usd": DAILY_REVENUE_TARGET_USD,
+                "daily_revenue_target_path": build_daily_target_path(bot, lanes),
                 "daily_practice_packet": {
                     "research": "Find one client money problem or savings opportunity.",
                     "offer": "Draft one safe offer or service packet.",
@@ -188,6 +274,8 @@ def build_practice() -> dict[str, Any]:
         "name": "Buddy",
         "role": "Reference example for every bot",
         "practice_status": "gold_standard_revenue_coach",
+        "daily_revenue_target_usd": DAILY_REVENUE_TARGET_USD,
+        "target_instruction": "Buddy coaches every bot toward a $1,000/day target path while marking assumptions, evidence, and approval gates.",
         "daily_loop": [
             "Pick the highest-impact client money problem.",
             "Route safe research, offer design, sandbox build, sales materials, and quality checks to specialist bots.",
@@ -218,12 +306,19 @@ def build_practice() -> dict[str, Any]:
             "safe_mode_bots": len(bot_rows),
             "business_owner_enabled_bots": owner_summary.get("business_owner_enabled_bots", 0),
             "client_package_ready": bool(package_summary.get("client_package_ready")),
+            "daily_revenue_target_usd": DAILY_REVENUE_TARGET_USD,
+            "bots_with_1000_day_target": len(bot_rows),
+            "owner_and_user_target_enabled_bots": len(bot_rows),
+            "income_guarantee": False,
+            "target_requires_validation": True,
             "revenue_practice_lanes": len(REVENUE_PRACTICE_LANES),
             "approval_required_actions": len(APPROVAL_REQUIRED),
             "all_bots_practice_autonomous_money": len(bot_rows) == len(bots) and len(bots) >= 1200,
             "live_money_actions_blocked_without_approval": True,
         },
         "buddy_example": buddy_example,
+        "target_scenarios": TARGET_SCENARIOS,
+        "target_policy": TARGET_POLICY,
         "revenue_practice_lanes": REVENUE_PRACTICE_LANES,
         "approval_required": APPROVAL_REQUIRED,
         "division_coverage": dict(sorted(division_counter.items())),
@@ -258,6 +353,10 @@ def write_markdown(report: dict[str, Any]) -> None:
         f"- Bots with revenue practice: {summary['bots_with_revenue_practice']}",
         f"- Buddy-connected bots: {summary['buddy_connected_bots']}",
         f"- Safe-mode bots: {summary['safe_mode_bots']}",
+        f"- Daily target path: ${summary['daily_revenue_target_usd']:,}/day",
+        f"- Bots with $1,000/day target paths: {summary['bots_with_1000_day_target']}",
+        f"- Income guarantee: {summary['income_guarantee']}",
+        f"- Target requires validation: {summary['target_requires_validation']}",
         f"- Revenue practice lanes: {summary['revenue_practice_lanes']}",
         f"- Approval-required actions: {summary['approval_required_actions']}",
         f"- All bots practice autonomous money: {summary['all_bots_practice_autonomous_money']}",
@@ -267,9 +366,24 @@ def write_markdown(report: dict[str, Any]) -> None:
         "",
         report["buddy_example"]["example_offer"],
         "",
-        "## Revenue Practice Lanes",
+        report["buddy_example"]["target_instruction"],
+        "",
+        "## Target Policy",
+        "",
+        report["target_policy"]["target_statement"],
+        "",
+        "## Target Scenarios",
         "",
     ]
+    for scenario in report["target_scenarios"]:
+        lines.append(f"- **{scenario['label']}**: {scenario['formula']}")
+    lines.extend(
+        [
+            "",
+            "## Revenue Practice Lanes",
+            "",
+        ]
+    )
     for lane in report["revenue_practice_lanes"]:
         lines.append(f"- **{lane['label']}**: {lane['practice']}")
     lines.extend(["", "## Approval Required", ""])
@@ -311,4 +425,3 @@ def main() -> int:
 
 if __name__ == "__main__":
     raise SystemExit(main())
-

@@ -8,6 +8,10 @@ Every DreamCo bot practices helping clients make autonomous money through sandbo
 - Bots with revenue practice: 1248
 - Buddy-connected bots: 1248
 - Safe-mode bots: 1248
+- Daily target path: $1,000/day
+- Bots with $1,000/day target paths: 1248
+- Income guarantee: False
+- Target requires validation: True
 - Revenue practice lanes: 12
 - Approval-required actions: 10
 - All bots practice autonomous money: True
@@ -16,6 +20,20 @@ Every DreamCo bot practices helping clients make autonomous money through sandbo
 ## Buddy Example
 
 Buddy sells a supervised AI workforce that helps clients discover revenue, save costs, build apps and automations, test ideas, and package sellable systems.
+
+Buddy coaches every bot toward a $1,000/day target path while marking assumptions, evidence, and approval gates.
+
+## Target Policy
+
+$1,000/day is an aspirational owner-and-user value target, not a promised result.
+
+## Target Scenarios
+
+- **One High-Value Client**: 1 client/day x $1,000 offer
+- **Ten Smaller Client Services**: 10 clients/day x $100 service
+- **Subscription Stack**: 100 users x $10/day equivalent
+- **Cost-Savings Retainer**: 1 client saves or protects $1,000/day in modeled value
+- **Marketplace Micro-Sales**: 50 buyers/day x $20 digital product
 
 ## Revenue Practice Lanes
 

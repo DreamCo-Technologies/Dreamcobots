@@ -462,9 +462,19 @@ describe('GET /api/revenue-practice', () => {
     expect(res.body.summary.bots_with_revenue_practice).toBe(res.body.summary.bot_count);
     expect(res.body.summary.buddy_connected_bots).toBe(res.body.summary.bot_count);
     expect(res.body.summary.safe_mode_bots).toBe(res.body.summary.bot_count);
+    expect(res.body.summary.daily_revenue_target_usd).toBe(1000);
+    expect(res.body.summary.bots_with_1000_day_target).toBe(res.body.summary.bot_count);
+    expect(res.body.summary.owner_and_user_target_enabled_bots).toBe(res.body.summary.bot_count);
+    expect(res.body.summary.income_guarantee).toBe(false);
+    expect(res.body.summary.target_requires_validation).toBe(true);
     expect(res.body.summary.all_bots_practice_autonomous_money).toBe(true);
     expect(res.body.summary.live_money_actions_blocked_without_approval).toBe(true);
     expect(res.body.buddy_example.practice_status).toBe('gold_standard_revenue_coach');
+    expect(res.body.buddy_example.daily_revenue_target_usd).toBe(1000);
+    expect(res.body.target_scenarios.map((scenario) => scenario.id)).toEqual(
+      expect.arrayContaining(['one_client_high_value', 'ten_clients_service', 'subscription_stack']),
+    );
+    expect(res.body.target_policy.income_guarantee).toBe(false);
     expect(res.body.revenue_practice_lanes.map((lane) => lane.id)).toEqual(
       expect.arrayContaining(['problem_discovery', 'offer_design', 'pricing_modeling', 'sandbox_delivery']),
     );
