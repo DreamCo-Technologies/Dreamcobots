@@ -101,6 +101,11 @@ const STRIPE_REVENUE_RESCUE_REPORT_FILE = path.join(
   __dirname,
   '../../reports/stripe_revenue_rescue_report.json',
 );
+const STRIPE_BUILDER_BOT_FILE = path.join(__dirname, '../../reports/stripe_builder_bot.json');
+const GOOGLE_CLOUD_READINESS_FILE = path.join(
+  __dirname,
+  '../../reports/google_cloud_readiness.json',
+);
 const PRODUCTION_APPROVAL_PACKETS_FILE = path.join(
   __dirname,
   '../../reports/production_approval_packets.json',
@@ -339,6 +344,20 @@ function readStripeRevenueRescueReport() {
     return null;
   }
   return JSON.parse(fs.readFileSync(STRIPE_REVENUE_RESCUE_REPORT_FILE, 'utf8'));
+}
+
+function readStripeBuilderBot() {
+  if (!fs.existsSync(STRIPE_BUILDER_BOT_FILE)) {
+    return null;
+  }
+  return JSON.parse(fs.readFileSync(STRIPE_BUILDER_BOT_FILE, 'utf8'));
+}
+
+function readGoogleCloudReadiness() {
+  if (!fs.existsSync(GOOGLE_CLOUD_READINESS_FILE)) {
+    return null;
+  }
+  return JSON.parse(fs.readFileSync(GOOGLE_CLOUD_READINESS_FILE, 'utf8'));
 }
 
 function readProductionApprovalPackets() {
@@ -916,6 +935,28 @@ app.get('/api/stripe-revenue-rescue', rateLimiter, (_req, res) => {
   const report = readStripeRevenueRescueReport();
   if (!report) {
     return res.status(503).json({ error: 'stripe revenue rescue report not found' });
+  }
+  return res.json(report);
+});
+
+// ---------------------------------------------------------------------------
+// GET /api/stripe-builder — Buddy Stripe setup builder contract
+// ---------------------------------------------------------------------------
+app.get('/api/stripe-builder', rateLimiter, (_req, res) => {
+  const report = readStripeBuilderBot();
+  if (!report) {
+    return res.status(503).json({ error: 'Stripe Builder bot report not found' });
+  }
+  return res.json(report);
+});
+
+// ---------------------------------------------------------------------------
+// GET /api/google-cloud-readiness — Google Cloud deployment readiness
+// ---------------------------------------------------------------------------
+app.get('/api/google-cloud-readiness', rateLimiter, (_req, res) => {
+  const report = readGoogleCloudReadiness();
+  if (!report) {
+    return res.status(503).json({ error: 'Google Cloud readiness report not found' });
   }
   return res.json(report);
 });

@@ -1,0 +1,105 @@
+{
+  "deployment_targets": [
+    {
+      "id": "cloud_run",
+      "label": "Cloud Run",
+      "use": "Host Buddy, dashboards, API services, webhook receivers, and client apps as containers."
+    },
+    {
+      "id": "artifact_registry",
+      "label": "Artifact Registry",
+      "use": "Store built DreamCo containers before Cloud Run deployment."
+    },
+    {
+      "id": "secret_manager",
+      "label": "Secret Manager",
+      "use": "Store Stripe, email, webhook, AI provider, and database secrets outside the repository."
+    },
+    {
+      "id": "cloud_build",
+      "label": "Cloud Build",
+      "use": "Build containers from GitHub and prepare deployable artifacts."
+    },
+    {
+      "id": "workload_identity_federation",
+      "label": "Workload Identity Federation",
+      "use": "Let GitHub Actions deploy without storing long-lived Google service account keys."
+    },
+    {
+      "id": "cloud_scheduler",
+      "label": "Cloud Scheduler",
+      "use": "Trigger supervised recurring jobs for scans, reports, and sandbox tests."
+    },
+    {
+      "id": "pubsub",
+      "label": "Pub/Sub",
+      "use": "Queue bot jobs, webhook events, report refreshes, and approval-gated actions."
+    },
+    {
+      "id": "firestore",
+      "label": "Firestore",
+      "use": "Store dashboard state, bot run records, approval packets, and client-facing metadata."
+    },
+    {
+      "id": "cloud_storage",
+      "label": "Cloud Storage",
+      "use": "Store generated assets, reports, exports, and sandbox artifacts."
+    }
+  ],
+  "generated_at": "2026-07-16T00:49:25Z",
+  "github_secrets": [
+    "GCP_PROJECT_ID",
+    "GCP_WORKLOAD_IDENTITY_PROVIDER",
+    "GCP_SERVICE_ACCOUNT",
+    "GCP_REGION"
+  ],
+  "guardrails": [
+    "Never commit Google service account keys or Stripe secrets.",
+    "Prefer Workload Identity Federation over downloaded JSON keys.",
+    "Keep production deploys approval-gated until tests, rollback, billing alerts, and secret checks pass.",
+    "Use Secret Manager for live credentials and GitHub Secrets only for deployment identity values.",
+    "Separate sandbox, staging, and production projects before taking client payments.",
+    "Enable budgets and alerts before running always-on workloads."
+  ],
+  "local_cli": {
+    "installed": true,
+    "path": "/Users/mamas/google-cloud-sdk/bin/gcloud",
+    "version": "Google Cloud SDK 576.0.0"
+  },
+  "recommended_region": "us-central1",
+  "required_google_apis": [
+    "run.googleapis.com",
+    "cloudbuild.googleapis.com",
+    "artifactregistry.googleapis.com",
+    "iamcredentials.googleapis.com",
+    "secretmanager.googleapis.com",
+    "logging.googleapis.com",
+    "monitoring.googleapis.com",
+    "cloudscheduler.googleapis.com",
+    "pubsub.googleapis.com",
+    "firestore.googleapis.com",
+    "storage.googleapis.com"
+  ],
+  "schema": "dreamco.google_cloud_readiness.v1",
+  "setup_steps": [
+    "Run gcloud auth login in a local Terminal window.",
+    "Run gcloud auth application-default login for local SDK-backed development only.",
+    "Create or select a Google Cloud project for DreamCo staging.",
+    "Enable the required APIs listed in this report.",
+    "Create Artifact Registry repositories for containers and build outputs.",
+    "Create a deployer service account with least-privilege Cloud Run, Artifact Registry, Secret Manager read, and logging permissions.",
+    "Connect GitHub through Workload Identity Federation, not a downloaded JSON key.",
+    "Add the GitHub Secrets listed in this report.",
+    "Deploy the first service to Cloud Run from the google-cloud-run-deploy workflow.",
+    "Enable budgets, alerts, logs, uptime checks, and rollback before production traffic."
+  ],
+  "summary": {
+    "deployment_targets": 9,
+    "gcloud_installed": true,
+    "github_secrets_required": 4,
+    "production_deploy_approval_required": true,
+    "required_apis": 11,
+    "secret_values_stored_in_repo": false,
+    "workload_identity_recommended": true
+  }
+}

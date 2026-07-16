@@ -706,6 +706,44 @@ describe('GET /api/stripe-revenue-rescue', () => {
   });
 });
 
+describe('GET /api/stripe-builder', () => {
+  test('returns Buddy Stripe Builder bot contract', async () => {
+    const res = await request(app).get('/api/stripe-builder');
+
+    expect(res.status).toBe(200);
+    expect(res.body.schema).toBe('dreamco.stripe_builder_bot.v1');
+    expect(res.body.bot.slug).toBe('stripe-builder-bot');
+    expect(res.body.summary.build_modules).toBeGreaterThanOrEqual(7);
+    expect(res.body.summary.live_money_blocked_without_approval).toBe(true);
+    expect(res.body.summary.secret_values_stored_in_repo).toBe(false);
+    expect(res.body.build_modules.map((module) => module.id)).toEqual(
+      expect.arrayContaining(['offer_catalog_builder', 'checkout_builder', 'webhook_builder']),
+    );
+    expect(res.body.approval_gates).toEqual(
+      expect.arrayContaining(['publish_payment_link', 'accept_live_payment', 'change_payout_or_bank_settings']),
+    );
+  });
+});
+
+describe('GET /api/google-cloud-readiness', () => {
+  test('returns Google Cloud deployment readiness', async () => {
+    const res = await request(app).get('/api/google-cloud-readiness');
+
+    expect(res.status).toBe(200);
+    expect(res.body.schema).toBe('dreamco.google_cloud_readiness.v1');
+    expect(res.body.summary.deployment_targets).toBeGreaterThanOrEqual(8);
+    expect(res.body.summary.required_apis).toBeGreaterThanOrEqual(10);
+    expect(res.body.summary.workload_identity_recommended).toBe(true);
+    expect(res.body.summary.secret_values_stored_in_repo).toBe(false);
+    expect(res.body.required_google_apis).toEqual(
+      expect.arrayContaining(['run.googleapis.com', 'cloudbuild.googleapis.com', 'secretmanager.googleapis.com']),
+    );
+    expect(res.body.github_secrets).toEqual(
+      expect.arrayContaining(['GCP_PROJECT_ID', 'GCP_WORKLOAD_IDENTITY_PROVIDER', 'GCP_SERVICE_ACCOUNT']),
+    );
+  });
+});
+
 describe('GET /api/production-approval-packets', () => {
   test('returns high-risk production approval packets', async () => {
     const res = await request(app).get('/api/production-approval-packets');
