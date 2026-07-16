@@ -49,6 +49,10 @@ const BUDDY_24_HOUR_CLIENT_PACKAGE_FILE = path.join(
   __dirname,
   '../../reports/buddy_24_hour_client_package.json',
 );
+const BOT_AUTONOMOUS_REVENUE_PRACTICE_FILE = path.join(
+  __dirname,
+  '../../reports/bot_autonomous_revenue_practice.json',
+);
 const SPECIALIZED_BOT_KNOWLEDGE_REPORT_FILE = path.join(
   __dirname,
   '../../reports/specialized_bot_knowledge_report.json',
@@ -240,6 +244,13 @@ function readBuddy24HourClientPackage() {
     return null;
   }
   return JSON.parse(fs.readFileSync(BUDDY_24_HOUR_CLIENT_PACKAGE_FILE, 'utf8'));
+}
+
+function readBotAutonomousRevenuePractice() {
+  if (!fs.existsSync(BOT_AUTONOMOUS_REVENUE_PRACTICE_FILE)) {
+    return null;
+  }
+  return JSON.parse(fs.readFileSync(BOT_AUTONOMOUS_REVENUE_PRACTICE_FILE, 'utf8'));
 }
 
 function readSpecializedBotKnowledgeReport() {
@@ -751,6 +762,17 @@ app.get('/api/buddy-24-hour-package', rateLimiter, (_req, res) => {
   const report = readBuddy24HourClientPackage();
   if (!report) {
     return res.status(503).json({ error: 'Buddy 24-hour client package report not found' });
+  }
+  return res.json(report);
+});
+
+// ---------------------------------------------------------------------------
+// GET /api/revenue-practice — all-bot sandbox revenue practice system
+// ---------------------------------------------------------------------------
+app.get('/api/revenue-practice', rateLimiter, (_req, res) => {
+  const report = readBotAutonomousRevenuePractice();
+  if (!report) {
+    return res.status(503).json({ error: 'bot autonomous revenue practice report not found' });
   }
   return res.json(report);
 });

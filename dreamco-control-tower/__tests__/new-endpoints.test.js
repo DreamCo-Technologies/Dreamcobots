@@ -431,6 +431,28 @@ describe('GET /api/buddy-24-hour-package', () => {
   });
 });
 
+describe('GET /api/revenue-practice', () => {
+  test('returns all-bot sandbox autonomous revenue practice system', async () => {
+    const res = await request(app).get('/api/revenue-practice');
+
+    expect(res.status).toBe(200);
+    expect(res.body.schema).toBe('dreamco.bot_autonomous_revenue_practice.v1');
+    expect(res.body.summary.bot_count).toBeGreaterThanOrEqual(1200);
+    expect(res.body.summary.bots_with_revenue_practice).toBe(res.body.summary.bot_count);
+    expect(res.body.summary.buddy_connected_bots).toBe(res.body.summary.bot_count);
+    expect(res.body.summary.safe_mode_bots).toBe(res.body.summary.bot_count);
+    expect(res.body.summary.all_bots_practice_autonomous_money).toBe(true);
+    expect(res.body.summary.live_money_actions_blocked_without_approval).toBe(true);
+    expect(res.body.buddy_example.practice_status).toBe('gold_standard_revenue_coach');
+    expect(res.body.revenue_practice_lanes.map((lane) => lane.id)).toEqual(
+      expect.arrayContaining(['problem_discovery', 'offer_design', 'pricing_modeling', 'sandbox_delivery']),
+    );
+    expect(res.body.approval_required).toEqual(
+      expect.arrayContaining(['collect_or_move_money', 'contact_leads_or_customers', 'spend_ad_budget']),
+    );
+  });
+});
+
 describe('GET /api/specialized-bot-knowledge', () => {
   test('returns specialized per-bot knowledge coverage', async () => {
     const res = await request(app).get('/api/specialized-bot-knowledge');
