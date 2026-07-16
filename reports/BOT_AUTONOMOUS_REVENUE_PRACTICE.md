@@ -10,7 +10,11 @@ Every DreamCo bot practices helping clients make autonomous money through sandbo
 - Safe-mode bots: 1248
 - Daily target path: $1,000/day
 - Bots with $1,000/day target paths: 1248
+- Today sprint target: $100
+- Bots with today $100 sprint: 1248
 - Income guarantee: False
+- Same-day income guarantee: False
+- Actual revenue requires payment confirmation: True
 - Target requires validation: True
 - Bots with marketplace need discovery: 1248
 - Marketplace source categories: 5
@@ -25,6 +29,8 @@ Buddy sells a supervised AI workforce that helps clients discover revenue, save 
 
 Buddy coaches every bot toward a $1,000/day target path while marking assumptions, evidence, and approval gates.
 
+Buddy asks every bot to prepare a same-day $100 offer path, proof sample, and approval packet without claiming actual revenue until payment is confirmed.
+
 ## Target Policy
 
 $1,000/day is an aspirational owner-and-user value target, not a promised result.
@@ -36,6 +42,12 @@ $1,000/day is an aspirational owner-and-user value target, not a promised result
 - **Subscription Stack**: 100 users x $10/day equivalent
 - **Cost-Savings Retainer**: 1 client saves or protects $1,000/day in modeled value
 - **Marketplace Micro-Sales**: 50 buyers/day x $20 digital product
+
+## Today $100 Sprint Scenarios
+
+- **One $100 Service**: 1 approved customer x $100 quick service
+- **Two $50 Deliverables**: 2 approved customers x $50 lightweight deliverable
+- **Five $20 Digital Packs**: 5 approved buyers x $20 reusable digital product
 
 ## Marketplace Demand Sources
 

@@ -117,6 +117,7 @@ APPROVAL_REQUIRED = [
 ]
 
 DAILY_REVENUE_TARGET_USD = 1000
+TODAY_REVENUE_SPRINT_TARGET_USD = 100
 
 TARGET_SCENARIOS = [
     {
@@ -153,6 +154,27 @@ TARGET_SCENARIOS = [
         "formula": "50 buyers/day x $20 digital product",
         "best_for": "Templates, courses, prompts, datasets, app packs, game assets, simulation kits, and industry playbooks.",
         "proof_needed": "Rights-cleared product, landing copy, test audience, refund policy, and distribution plan.",
+    },
+]
+
+TODAY_SPRINT_SCENARIOS = [
+    {
+        "id": "one_100_dollar_service",
+        "label": "One $100 Service",
+        "formula": "1 approved customer x $100 quick service",
+        "safe_offer": "Audit, setup, report, dashboard, prompt pack, automation map, design packet, or bug triage.",
+    },
+    {
+        "id": "two_50_dollar_deliverables",
+        "label": "Two $50 Deliverables",
+        "formula": "2 approved customers x $50 lightweight deliverable",
+        "safe_offer": "Checklist, template, mini research brief, landing copy, content plan, data cleanup, or sandbox test.",
+    },
+    {
+        "id": "five_20_dollar_digital_packs",
+        "label": "Five $20 Digital Packs",
+        "formula": "5 approved buyers x $20 reusable digital product",
+        "safe_offer": "Rights-cleared prompt pack, worksheet, micro-course, comparison sheet, calculator, or starter kit.",
     },
 ]
 
@@ -286,6 +308,38 @@ def build_daily_target_path(bot: dict[str, Any], lanes: list[str]) -> dict[str, 
     }
 
 
+def build_today_revenue_sprint(bot: dict[str, Any], lanes: list[str]) -> dict[str, Any]:
+    name = str(bot.get("name") or bot.get("slug") or "Bot")
+    division = str(bot.get("division") or "DreamCo")
+    return {
+        "target_usd_today": TODAY_REVENUE_SPRINT_TARGET_USD,
+        "target_type": "same_day_sandbox_goal_not_income_guarantee",
+        "owner_goal": "Prepare one ethical same-day path that could help the owner earn, save, or protect $100 with approval.",
+        "user_goal": "Prepare one ethical same-day path that could help a user earn, save, or protect $100 with approval.",
+        "scenarios": TODAY_SPRINT_SCENARIOS,
+        "bot_specific_prompt": (
+            f"{name} should use {division} knowledge and {', '.join(lanes[:4])} to package one same-day $100 offer, "
+            "one proof sample, and one approval packet."
+        ),
+        "today_outputs": [
+            "one paying-customer need hypothesis",
+            "one $20/$50/$100 offer draft",
+            "one sandbox sample or demo",
+            "one delivery checklist",
+            "one payment-link request draft",
+            "one risk note",
+            "one owner approval packet",
+        ],
+        "evidence_tracking": {
+            "projected_value_usd": TODAY_REVENUE_SPRINT_TARGET_USD,
+            "actual_revenue_usd": 0,
+            "actual_revenue_requires_payment_confirmation": True,
+            "separate_projection_from_actual": True,
+        },
+        "blocked_until_approval": APPROVAL_REQUIRED,
+    }
+
+
 def build_marketplace_need_packet(bot: dict[str, Any], lanes: list[str]) -> dict[str, Any]:
     name = str(bot.get("name") or bot.get("slug") or "Bot")
     division = str(bot.get("division") or "DreamCo")
@@ -350,6 +404,8 @@ def build_practice() -> dict[str, Any]:
                 "primary_revenue_lanes": lanes,
                 "daily_revenue_target_usd": DAILY_REVENUE_TARGET_USD,
                 "daily_revenue_target_path": build_daily_target_path(bot, lanes),
+                "today_revenue_sprint_target_usd": TODAY_REVENUE_SPRINT_TARGET_USD,
+                "today_revenue_sprint": build_today_revenue_sprint(bot, lanes),
                 "marketplace_need_discovery": build_marketplace_need_packet(bot, lanes),
                 "daily_practice_packet": {
                     "research": "Find one client money problem, savings opportunity, or public marketplace need AI can fill.",
@@ -374,7 +430,9 @@ def build_practice() -> dict[str, Any]:
         "role": "Reference example for every bot",
         "practice_status": "gold_standard_revenue_coach",
         "daily_revenue_target_usd": DAILY_REVENUE_TARGET_USD,
+        "today_revenue_sprint_target_usd": TODAY_REVENUE_SPRINT_TARGET_USD,
         "target_instruction": "Buddy coaches every bot toward a $1,000/day target path while marking assumptions, evidence, and approval gates.",
+        "today_sprint_instruction": "Buddy asks every bot to prepare a same-day $100 offer path, proof sample, and approval packet without claiming actual revenue until payment is confirmed.",
         "daily_loop": [
             "Pick the highest-impact client money problem.",
             "Route safe research, offer design, sandbox build, sales materials, and quality checks to specialist bots.",
@@ -408,6 +466,10 @@ def build_practice() -> dict[str, Any]:
             "client_package_ready": bool(package_summary.get("client_package_ready")),
             "daily_revenue_target_usd": DAILY_REVENUE_TARGET_USD,
             "bots_with_1000_day_target": len(bot_rows),
+            "today_revenue_sprint_target_usd": TODAY_REVENUE_SPRINT_TARGET_USD,
+            "bots_with_today_100_sprint": len(bot_rows),
+            "same_day_income_guarantee": False,
+            "actual_revenue_requires_payment_confirmation": True,
             "owner_and_user_target_enabled_bots": len(bot_rows),
             "income_guarantee": False,
             "target_requires_validation": True,
@@ -421,6 +483,7 @@ def build_practice() -> dict[str, Any]:
         },
         "buddy_example": buddy_example,
         "target_scenarios": TARGET_SCENARIOS,
+        "today_sprint_scenarios": TODAY_SPRINT_SCENARIOS,
         "target_policy": TARGET_POLICY,
         "marketplace_demand_sources": MARKETPLACE_DEMAND_SOURCES,
         "marketplace_demand_workflow": MARKETPLACE_DEMAND_WORKFLOW,
@@ -461,7 +524,11 @@ def write_markdown(report: dict[str, Any]) -> None:
         f"- Safe-mode bots: {summary['safe_mode_bots']}",
         f"- Daily target path: ${summary['daily_revenue_target_usd']:,}/day",
         f"- Bots with $1,000/day target paths: {summary['bots_with_1000_day_target']}",
+        f"- Today sprint target: ${summary['today_revenue_sprint_target_usd']:,}",
+        f"- Bots with today $100 sprint: {summary['bots_with_today_100_sprint']}",
         f"- Income guarantee: {summary['income_guarantee']}",
+        f"- Same-day income guarantee: {summary['same_day_income_guarantee']}",
+        f"- Actual revenue requires payment confirmation: {summary['actual_revenue_requires_payment_confirmation']}",
         f"- Target requires validation: {summary['target_requires_validation']}",
         f"- Bots with marketplace need discovery: {summary['bots_with_marketplace_need_discovery']}",
         f"- Marketplace source categories: {summary['marketplace_source_categories']}",
@@ -476,6 +543,8 @@ def write_markdown(report: dict[str, Any]) -> None:
         "",
         report["buddy_example"]["target_instruction"],
         "",
+        report["buddy_example"]["today_sprint_instruction"],
+        "",
         "## Target Policy",
         "",
         report["target_policy"]["target_statement"],
@@ -484,6 +553,9 @@ def write_markdown(report: dict[str, Any]) -> None:
         "",
     ]
     for scenario in report["target_scenarios"]:
+        lines.append(f"- **{scenario['label']}**: {scenario['formula']}")
+    lines.extend(["", "## Today $100 Sprint Scenarios", ""])
+    for scenario in report["today_sprint_scenarios"]:
         lines.append(f"- **{scenario['label']}**: {scenario['formula']}")
     lines.extend(["", "## Marketplace Demand Sources", ""])
     for source in report["marketplace_demand_sources"]:
