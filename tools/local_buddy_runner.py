@@ -44,6 +44,8 @@ COMMANDS: dict[str, list[str]] = {
     "check:app-foundry": ["python3", "tools/generate_app_foundry_readiness.py", "--check"],
     "report:app-category-catalog": ["python3", "tools/generate_app_category_catalog.py"],
     "check:app-category-catalog": ["python3", "tools/generate_app_category_catalog.py", "--check"],
+    "report:professional-os": ["python3", "tools/generate_dreamco_professional_os.py"],
+    "check:professional-os": ["python3", "tools/generate_dreamco_professional_os.py", "--check"],
     "report:commerce-publishing": ["python3", "tools/generate_buddy_commerce_publishing_os.py"],
     "check:commerce-publishing": ["python3", "tools/generate_buddy_commerce_publishing_os.py", "--check"],
     "report:trust-search": ["python3", "tools/generate_buddy_trust_search_os.py"],

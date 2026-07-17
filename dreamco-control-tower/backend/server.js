@@ -41,6 +41,10 @@ const APP_CATEGORY_CATALOG_FILE = path.join(
   __dirname,
   '../../reports/app_category_catalog.json',
 );
+const DREAMCO_PROFESSIONAL_OS_FILE = path.join(
+  __dirname,
+  '../../reports/dreamco_professional_os.json',
+);
 const BOT_FOUNDER_APP_STORE_REPORT_FILE = path.join(
   __dirname,
   '../../reports/bot_founder_app_store_report.json',
@@ -257,6 +261,13 @@ function readAppCategoryCatalog() {
     return null;
   }
   return JSON.parse(fs.readFileSync(APP_CATEGORY_CATALOG_FILE, 'utf8'));
+}
+
+function readDreamCoProfessionalOs() {
+  if (!fs.existsSync(DREAMCO_PROFESSIONAL_OS_FILE)) {
+    return null;
+  }
+  return JSON.parse(fs.readFileSync(DREAMCO_PROFESSIONAL_OS_FILE, 'utf8'));
 }
 
 function readBotFounderAppStoreReport() {
@@ -943,6 +954,17 @@ app.get('/api/app-category-catalog', rateLimiter, (_req, res) => {
   const report = readAppCategoryCatalog();
   if (!report) {
     return res.status(503).json({ error: 'app category catalog report not found' });
+  }
+  return res.json(report);
+});
+
+// ---------------------------------------------------------------------------
+// GET /api/dreamco-professional-os — repository organization and OS readiness
+// ---------------------------------------------------------------------------
+app.get('/api/dreamco-professional-os', rateLimiter, (_req, res) => {
+  const report = readDreamCoProfessionalOs();
+  if (!report) {
+    return res.status(503).json({ error: 'DreamCo professional OS report not found' });
   }
   return res.json(report);
 });

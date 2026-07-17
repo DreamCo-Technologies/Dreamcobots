@@ -4,7 +4,7 @@ Make Buddy the download-easy, task-manager-first commerce and publishing operato
 
 ## Summary
 
-- Readiness score: 85
+- Readiness score: 100
 - Commerce lanes: 6
 - Download targets: 4
 - App-store targets: 5
@@ -12,6 +12,7 @@ Make Buddy the download-easy, task-manager-first commerce and publishing operato
 - App control targets: 9
 - Social platforms: 15
 - Social control modes: 12
+- Domain product types: 12
 - Task manager layers: 15
 - Approval gates: 19
 
@@ -46,6 +47,13 @@ Make Buddy the download-easy, task-manager-first commerce and publishing operato
 
 - Safe actions: inventory connected apps, draft social posts, build content calendar, prepare inbox triage, summarize comments, draft replies, review analytics, prepare app update checklist, prepare cross-platform launch plan
 - Approval required: connect_social_account, publish_post, send_dm, reply_to_comment, delete_content, change_profile, run_ads, boost_post, submit_app_update, change_app_store_listing, collect_private_messages
+
+## Domain Marketplace
+
+- Default mode: research_value_package_then_owner_approval
+- Domain types: dreamco_custom_domains, client_business_domains, premium_brand_domains, local_service_domains, industry_keyword_domains, app_product_domains, course_and_school_domains, game_and_simulation_domains, portfolio_domains, campaign_landing_domains, redirect_domains, defensive_brand_domains
+- Safe actions: brainstorm domain ideas, compare public registrar pricing, draft brand and SEO notes, prepare DNS plan, prepare landing page packet, prepare renewal reminders, prepare valuation notes
+- Approval required: buy_domain, sell_domain, transfer_domain, change_dns, connect_payment_method, publish_landing_page, claim_trademark
 
 ## Download Targets
 

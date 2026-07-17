@@ -42,9 +42,10 @@ def build_report():
     store_targets = config.get("app_store_targets", [])
     approval_wall = config.get("approval_wall", [])
     task_layers = config.get("task_manager_layers", [])
-    app_categories = app_catalog.get("app_categories", [])
+    app_categories = app_catalog.get("categories", app_catalog.get("app_categories", []))
     app_control = config.get("app_control_center", {})
     social_control = config.get("social_control_center", {})
+    domain_marketplace = config.get("domain_marketplace", {})
 
     lane_cards = []
     for lane in commerce_lanes:
@@ -107,6 +108,10 @@ def build_report():
         "social_control_modes": len(social_control.get("safe_control_modes", [])),
         "social_approval_gates": len(social_control.get("approval_required", [])),
         "social_blocked_without_review": len(social_control.get("blocked_without_review", [])),
+        "domain_marketplace_ready": bool(domain_marketplace),
+        "domain_types": len(domain_marketplace.get("domain_types", [])),
+        "domain_safe_actions": len(domain_marketplace.get("safe_actions", [])),
+        "domain_approval_gates": len(domain_marketplace.get("approval_required", [])),
         "download_packets_ready": sum(1 for target in download_targets if "ready" in target.get("status", "")),
         "store_packets_ready": len(store_targets),
         "web_research_policy_ready": bool(config.get("web_research_policy")),
@@ -129,6 +134,7 @@ def build_report():
         "default_mode": config.get("default_mode", ""),
         "summary": summary,
         "commerce_lanes": lane_cards,
+        "domain_marketplace": domain_marketplace,
         "download_targets": download_cards,
         "app_store_targets": store_targets,
         "app_control_center": app_control,
@@ -170,6 +176,7 @@ def write_markdown(report):
         f"- App control targets: {summary['app_control_targets']}",
         f"- Social platforms: {summary['social_platforms']}",
         f"- Social control modes: {summary['social_control_modes']}",
+        f"- Domain product types: {summary['domain_types']}",
         f"- Task manager layers: {summary['task_manager_layers']}",
         f"- Approval gates: {summary['approval_wall_gates']}",
         "",
@@ -181,6 +188,14 @@ def write_markdown(report):
         lines.append("")
         lines.append(f"- Safe actions: {', '.join(lane['safe_actions'])}")
         lines.append(f"- Approval required: {', '.join(lane['approval_required'])}")
+        lines.append("")
+    lines.extend(["## Domain Marketplace", ""])
+    domain_marketplace = report.get("domain_marketplace", {})
+    if domain_marketplace:
+        lines.append(f"- Default mode: {domain_marketplace.get('default_mode', '')}")
+        lines.append(f"- Domain types: {', '.join(domain_marketplace.get('domain_types', []))}")
+        lines.append(f"- Safe actions: {', '.join(domain_marketplace.get('safe_actions', []))}")
+        lines.append(f"- Approval required: {', '.join(domain_marketplace.get('approval_required', []))}")
         lines.append("")
     lines.extend(["## Download Targets", ""])
     for target in report["download_targets"]:

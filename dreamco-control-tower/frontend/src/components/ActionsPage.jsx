@@ -436,6 +436,45 @@ const FALLBACK_APP_CATEGORY_CATALOG = {
   blocked_without_approval: ['install_or_uninstall_apps', 'create_or_delete_accounts', 'submit_private_data', 'move_money_or_purchase', 'place_bet_or_trade', 'redeem_offer'],
 };
 
+const FALLBACK_DREAMCO_PROFESSIONAL_OS = {
+  generated_at: null,
+  mission: 'Organize DreamCo as a professional AI operating system where humans and bots safely finish tasks, build products, sell domains, and run client-ready workflows from the Actions page.',
+  summary: {
+    professional_readiness_score: 0,
+    file_count: 0,
+    source_files: 0,
+    test_files: 0,
+    bot_count: 1248,
+    bot_directories: 0,
+    actions_page_modules: 10,
+    domain_types: 12,
+    workspace_layers: 12,
+    readiness_checks: 6,
+    passing_readiness_checks: 0,
+    duplicate_name_groups: 0,
+  },
+  organization_lanes: [
+    { id: 'source_of_truth', label: 'Source Of Truth', goal: 'Keep configs and generated reports linked so dashboards show evidence instead of guesses.', next_safe_action: 'Refresh generators before editing report JSON by hand.' },
+    { id: 'bot_fleet', label: 'Bot Fleet', goal: 'Make every bot discoverable through the registry, capabilities library, test packet, and Buddy route.', next_safe_action: 'Keep large generated libraries sharded by division.' },
+    { id: 'client_surface', label: 'Client Surface', goal: 'Make the Actions page the professional command center for demos, testing, approvals, and delivery.', next_safe_action: 'Back each section with a generated report or API endpoint.' },
+    { id: 'commerce_domains', label: 'Commerce And Domains', goal: 'Sell domain research, custom DreamCo domains, app publishing packets, and client downloads.', next_safe_action: 'Keep purchase, DNS, and payment actions approval-required.' },
+  ],
+  domain_marketplace: {
+    domain_types: ['dreamco_custom_domains', 'client_business_domains', 'premium_brand_domains', 'local_service_domains', 'industry_keyword_domains', 'app_product_domains'],
+    safe_actions: ['brainstorm domain ideas', 'compare public registrar pricing', 'draft brand and SEO notes', 'prepare DNS plan'],
+    approval_required: ['buy_domain', 'sell_domain', 'transfer_domain', 'change_dns', 'connect_payment_method'],
+  },
+  human_bot_os_browser: {
+    workspace_layers: ['task_inbox', 'goal_to_project', 'bot_assignment', 'browser_workspace', 'app_workspace', 'approval_queue', 'sandbox_runner', 'evidence_timeline', 'rollback_center', 'client_demo_room'],
+    browser_standards: ['separate public research, authenticated sessions, client data, and sandbox tests', 'record source URL, timestamp, confidence, and next safe action', 'block private account actions until the owner approves'],
+    os_standards: ['one task inbox for humans and bots', 'every bot action has owner, status, evidence, and approval state', 'every connected app has permissions, risk, rollback, and support notes'],
+  },
+  readiness_checks: [
+    { id: 'registry_loaded', label: 'Registry Loaded', status: 'pass', value: 1248 },
+    { id: 'domain_marketplace', label: 'Domain Marketplace', status: 'pass', value: 12 },
+  ],
+};
+
 const FALLBACK_BOT_FOUNDER_APP_STORE = {
   generated_at: null,
   mission: 'Every DreamCo bot studies its market, designs a useful autonomous app, prepares a safe company plan, and packages itself for the DreamCo app store.',
@@ -1852,6 +1891,8 @@ export default function ActionsPage({
   const [appFoundryStatus, setAppFoundryStatus] = useState('loading');
   const [appCategoryCatalog, setAppCategoryCatalog] = useState(null);
   const [appCategoryCatalogStatus, setAppCategoryCatalogStatus] = useState('loading');
+  const [dreamcoProfessionalOs, setDreamcoProfessionalOs] = useState(null);
+  const [dreamcoProfessionalOsStatus, setDreamcoProfessionalOsStatus] = useState('loading');
   const [botFounderAppStore, setBotFounderAppStore] = useState(null);
   const [botFounderAppStoreStatus, setBotFounderAppStoreStatus] = useState('loading');
   const [dailyScaling, setDailyScaling] = useState(null);
@@ -1959,6 +2000,15 @@ export default function ActionsPage({
         setAppCategoryCatalogStatus('live');
       })
       .catch(() => setAppCategoryCatalogStatus('generated fallback'));
+  }, []);
+
+  useEffect(() => {
+    fetchFirstJson(['/api/dreamco-professional-os'])
+      .then((data) => {
+        setDreamcoProfessionalOs(data);
+        setDreamcoProfessionalOsStatus('live');
+      })
+      .catch(() => setDreamcoProfessionalOsStatus('generated fallback'));
   }, []);
 
   useEffect(() => {
@@ -2126,6 +2176,7 @@ export default function ActionsPage({
   const readiness = releaseReadiness ?? FALLBACK_RELEASE_READINESS;
   const foundry = appFoundry ?? FALLBACK_APP_FOUNDRY;
   const appCategories = appCategoryCatalog ?? FALLBACK_APP_CATEGORY_CATALOG;
+  const professionalOs = dreamcoProfessionalOs ?? FALLBACK_DREAMCO_PROFESSIONAL_OS;
   const botFounderStore = botFounderAppStore ?? FALLBACK_BOT_FOUNDER_APP_STORE;
   const scaling24 = dailyScaling ?? FALLBACK_24_HOUR_SCALING;
   const codexCheapOps = buddyCodexCheapOps ?? FALLBACK_BUDDY_CODEX_CHEAP_OPS;
@@ -2150,6 +2201,7 @@ export default function ActionsPage({
   const readinessSummary = readiness.summary ?? FALLBACK_RELEASE_READINESS.summary;
   const foundrySummary = foundry.summary ?? FALLBACK_APP_FOUNDRY.summary;
   const appCategorySummary = appCategories.summary ?? FALLBACK_APP_CATEGORY_CATALOG.summary;
+  const professionalOsSummary = professionalOs.summary ?? FALLBACK_DREAMCO_PROFESSIONAL_OS.summary;
   const botFounderSummary = botFounderStore.summary ?? FALLBACK_BOT_FOUNDER_APP_STORE.summary;
   const scaling24Summary = scaling24.summary ?? FALLBACK_24_HOUR_SCALING.summary;
   const codexCheapOpsSummary = codexCheapOps.summary ?? FALLBACK_BUDDY_CODEX_CHEAP_OPS.summary;
@@ -3054,6 +3106,108 @@ export default function ActionsPage({
                 <span key={gate} className="rounded-full border border-amber-500/30 px-2 py-1 text-[11px] text-amber-100">
                   {formatLabel(gate)}
                 </span>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section aria-labelledby="professional-os-heading" className={`relative overflow-hidden p-5 ${ROYAL_PANEL_CLASS}`}>
+        <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-amber-300/70 to-transparent" />
+        <div className="flex flex-wrap items-start justify-between gap-3">
+          <div>
+            <p className="text-xs font-bold uppercase tracking-[0.18em] text-amber-200">Professional DreamCo OS</p>
+            <h3 id="professional-os-heading" className={`mt-1 text-lg font-semibold ${ROYAL_TEXT_CLASS}`}>
+              Repository, Actions page, domains, OS, and browser organized as one client-ready system
+            </h3>
+            <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-300">{professionalOs.mission}</p>
+          </div>
+          <span className="rounded-full border border-amber-400/50 bg-amber-950/30 px-3 py-1 text-xs font-semibold text-amber-200">
+            {dreamcoProfessionalOsStatus} · {formatDateTime(professionalOs.generated_at)}
+          </span>
+        </div>
+
+        <div className="mt-5 grid grid-cols-2 gap-px overflow-hidden border border-amber-500/20 bg-amber-500/20 lg:grid-cols-4 xl:grid-cols-8">
+          {[
+            ['Score', professionalOsSummary.professional_readiness_score],
+            ['Files', professionalOsSummary.file_count],
+            ['Sources', professionalOsSummary.source_files],
+            ['Tests', professionalOsSummary.test_files],
+            ['Bots', professionalOsSummary.bot_count],
+            ['Modules', professionalOsSummary.actions_page_modules],
+            ['Domains', professionalOsSummary.domain_types],
+            ['Workspace', professionalOsSummary.workspace_layers],
+          ].map(([label, value]) => (
+            <div key={label} className="bg-slate-950/90 p-4">
+              <p className="text-xl font-black text-amber-100">{formatNumber(value)}</p>
+              <p className="mt-1 text-xs uppercase tracking-wide text-slate-500">{label}</p>
+            </div>
+          ))}
+        </div>
+
+        <div className="mt-5 grid gap-5 xl:grid-cols-[minmax(0,1fr)_24rem]">
+          <div className="border border-slate-800 bg-slate-950 p-4">
+            <h4 className="text-sm font-semibold text-white">Organization lanes</h4>
+            <div className="mt-3 grid gap-3 md:grid-cols-2">
+              {(professionalOs.organization_lanes ?? []).map((lane) => (
+                <article key={lane.id} className="border border-slate-800 bg-slate-900 p-3">
+                  <h5 className="text-sm font-semibold text-white">{lane.label}</h5>
+                  <p className="mt-2 text-xs leading-5 text-slate-400">{lane.goal}</p>
+                  <p className="mt-3 border-l-2 border-dreamco-accent pl-3 text-xs leading-5 text-slate-300">
+                    {lane.next_safe_action}
+                  </p>
+                </article>
+              ))}
+            </div>
+          </div>
+
+          <aside className="space-y-5">
+            <div className="border border-amber-900/70 bg-amber-950/20 p-4">
+              <h4 className="text-sm font-semibold text-amber-100">Domain marketplace</h4>
+              <div className="mt-3 flex flex-wrap gap-2">
+                {(professionalOs.domain_marketplace?.domain_types ?? []).slice(0, 12).map((domainType) => (
+                  <span key={domainType} className="rounded-full border border-amber-500/30 px-2 py-1 text-[11px] text-amber-100">
+                    {formatLabel(domainType)}
+                  </span>
+                ))}
+              </div>
+              <p className="mt-3 text-xs leading-5 text-amber-100/80">
+                Approval: {(professionalOs.domain_marketplace?.approval_required ?? []).slice(0, 6).map(formatLabel).join(', ')}
+              </p>
+            </div>
+
+            <div className="border border-emerald-500/30 bg-emerald-950/20 p-4">
+              <h4 className="text-sm font-semibold text-emerald-100">Readiness gates</h4>
+              <div className="mt-3 space-y-2">
+                {(professionalOs.readiness_checks ?? []).slice(0, 6).map((check) => (
+                  <p key={check.id} className="border-l-2 border-emerald-400 pl-3 text-xs leading-5 text-emerald-100/80">
+                    {check.label}: {formatLabel(check.status)} ({formatNumber(check.value)})
+                  </p>
+                ))}
+              </div>
+            </div>
+          </aside>
+        </div>
+
+        <div className="mt-5 grid gap-5 xl:grid-cols-2">
+          <div className="border border-slate-800 bg-slate-950 p-4">
+            <h4 className="text-sm font-semibold text-white">Human and bot OS workspace</h4>
+            <div className="mt-3 flex flex-wrap gap-2">
+              {(professionalOs.human_bot_os_browser?.workspace_layers ?? []).slice(0, 14).map((layer) => (
+                <span key={layer} className="rounded-full border border-slate-700 px-2 py-1 text-[11px] text-slate-300">
+                  {formatLabel(layer)}
+                </span>
+              ))}
+            </div>
+          </div>
+
+          <div className="border border-slate-800 bg-slate-950 p-4">
+            <h4 className="text-sm font-semibold text-white">Browser and app safety standards</h4>
+            <div className="mt-3 space-y-2">
+              {(professionalOs.human_bot_os_browser?.browser_standards ?? []).slice(0, 5).map((standard) => (
+                <p key={standard} className="border-l-2 border-amber-400 pl-3 text-xs leading-5 text-slate-300">
+                  {standard}
+                </p>
               ))}
             </div>
           </div>

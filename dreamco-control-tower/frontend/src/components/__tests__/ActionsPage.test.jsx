@@ -400,6 +400,43 @@ const appCategoryCatalogPayload = {
   blocked_without_approval: ['install_or_uninstall_apps', 'move_money_or_purchase', 'place_bet_or_trade'],
 };
 
+const dreamcoProfessionalOsPayload = {
+  schema: 'dreamco.professional_os_report.v1',
+  generated_at: '2026-07-17T00:00:00Z',
+  mission: 'Organize DreamCo as a professional AI operating system where humans and bots safely finish tasks, build products, sell domains, and run client-ready workflows from the Actions page.',
+  summary: {
+    professional_readiness_score: 100,
+    file_count: 10000,
+    source_files: 2500,
+    test_files: 250,
+    bot_count: 1248,
+    bot_directories: 900,
+    actions_page_modules: 10,
+    domain_types: 12,
+    workspace_layers: 12,
+    readiness_checks: 6,
+    passing_readiness_checks: 6,
+    duplicate_name_groups: 4,
+  },
+  organization_lanes: [
+    { id: 'source_of_truth', label: 'Source Of Truth', goal: 'Keep configs and generated reports linked.', next_safe_action: 'Refresh generators before editing report JSON by hand.' },
+    { id: 'bot_fleet', label: 'Bot Fleet', goal: 'Make every bot discoverable.', next_safe_action: 'Keep large generated libraries sharded by division.' },
+    { id: 'commerce_domains', label: 'Commerce And Domains', goal: 'Sell domain research and custom DreamCo domains.', next_safe_action: 'Keep purchase, DNS, and payment actions approval-required.' },
+  ],
+  domain_marketplace: {
+    domain_types: ['dreamco_custom_domains', 'client_business_domains', 'premium_brand_domains'],
+    approval_required: ['buy_domain', 'sell_domain', 'change_dns'],
+  },
+  human_bot_os_browser: {
+    workspace_layers: ['task_inbox', 'goal_to_project', 'bot_assignment', 'browser_workspace', 'approval_queue', 'sandbox_runner'],
+    browser_standards: ['record source URL, timestamp, confidence, and next safe action'],
+  },
+  readiness_checks: [
+    { id: 'registry_loaded', label: 'Registry Loaded', status: 'pass', value: 1248 },
+    { id: 'domain_marketplace', label: 'Domain Marketplace', status: 'pass', value: 12 },
+  ],
+};
+
 const botFounderAppStorePayload = {
   schema: 'dreamco.bot_founder_app_store_report.v1',
   generated_at: '2026-07-15T00:00:00Z',
@@ -975,6 +1012,7 @@ beforeEach(() => {
     if (url === '/api/release-readiness') payload = releaseReadinessPayload;
     if (url === '/api/app-foundry') payload = appFoundryPayload;
     if (url === '/api/app-category-catalog') payload = appCategoryCatalogPayload;
+    if (url === '/api/dreamco-professional-os') payload = dreamcoProfessionalOsPayload;
     if (url === '/api/bot-founder-app-store') payload = botFounderAppStorePayload;
     if (url === '/api/24-hour-scaling') payload = scaling24Payload;
     if (url === '/api/buddy-codex-cheap-ops') payload = buddyCodexCheapOpsPayload;
@@ -1052,6 +1090,12 @@ describe('ActionsPage', () => {
     expect(screen.getByText('Gambling and Betting Apps')).toBeInTheDocument();
     expect(screen.getByText('All Approved Apps')).toBeInTheDocument();
     expect(screen.getAllByText(/no betting picks/i).length).toBeGreaterThan(0);
+    await waitFor(() => expect(screen.getByRole('heading', { name: 'Repository, Actions page, domains, OS, and browser organized as one client-ready system' })).toBeInTheDocument());
+    expect(screen.getByText('Professional DreamCo OS')).toBeInTheDocument();
+    expect(screen.getByText('Domain marketplace')).toBeInTheDocument();
+    expect(screen.getByText('Dreamco Custom Domains')).toBeInTheDocument();
+    expect(screen.getByText('Human and bot OS workspace')).toBeInTheDocument();
+    expect(screen.getByText('Browser and app safety standards')).toBeInTheDocument();
     await waitFor(() => expect(screen.getByRole('heading', { name: 'Every bot studies the market and prepares its own autonomous app business' })).toBeInTheDocument());
     expect(screen.getByText('Bot Founder App Store')).toBeInTheDocument();
     expect(screen.getByText('Live-action approval wall')).toBeInTheDocument();
