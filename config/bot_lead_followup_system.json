@@ -1,0 +1,138 @@
+{
+  "schema": "dreamco.bot_lead_followup_system.v1",
+  "updated_at": "2026-07-17T00:00:00Z",
+  "mission": "Give every DreamCo bot its own supervised lead-generation, qualification, follow-up, source-quality, and 24-hour safe work system controlled by Buddy and reviewed through Codex final judge governance.",
+  "default_mode": "research_score_draft_followup_packet_only",
+  "controller": {
+    "primary": "Buddy",
+    "final_review": "Codex final judge",
+    "owner_approval_required_for_live_impact": true
+  },
+  "lead_pipeline": [
+    "define_category_problem",
+    "select_useful_source_or_api",
+    "find_public_or_owner_approved_leads",
+    "score_fit_urgency_budget_and_risk",
+    "draft_value_offer",
+    "prepare_followup_sequence",
+    "create_approval_packet",
+    "record_learning",
+    "repeat_on_24_hour_cycle"
+  ],
+  "followup_system": {
+    "cadence": ["same_day_draft", "day_2_value_followup", "day_5_case_or_demo_followup", "day_10_final_helpful_checkin"],
+    "safe_outputs": ["lead_brief", "qualification_score", "offer_draft", "followup_drafts", "demo_or_proof_packet", "approval_request"],
+    "blocked_without_approval": ["send_email", "send_sms", "send_dm", "phone_call", "social_comment", "crm_upload", "paid_enrichment", "automated_sequence_launch"]
+  },
+  "source_quality_policy": {
+    "allowed_source_types": [
+      "official APIs with clear terms",
+      "public business directories with allowed usage",
+      "government and procurement portals",
+      "grant portals",
+      "public company websites",
+      "public app-store listings and reviews",
+      "public job and contract boards with allowed usage",
+      "owner-provided CRM exports",
+      "user-provided lead lists",
+      "opt-in forms and first-party website leads",
+      "industry association directories with allowed usage",
+      "public RSS feeds or sitemaps"
+    ],
+    "low_value_or_blocked_by_default": [
+      "amazon_marketplace_scraping",
+      "alibaba_marketplace_scraping",
+      "social_media_site_scraping",
+      "private_groups_or_messages",
+      "personal_data_brokers",
+      "paywalled_or_login_only_data_without_permission",
+      "sources_that_forbid_automation",
+      "bulk_cold_contact_lists_without_permission",
+      "unverified_lead_resellers"
+    ],
+    "api_study_rule": "Bots should study APIs that directly help their category find qualified opportunities, verify business facts, route follow-up, or measure outcomes. APIs that add noise, weak buyer intent, high scraping risk, or poor fit are rejected unless the owner explicitly approves a special use case.",
+    "minimum_source_score_to_use": 70,
+    "source_score_factors": [
+      "category_fit",
+      "buyer_intent_signal",
+      "terms_and_permission_clarity",
+      "data_freshness",
+      "contact_permission_basis",
+      "privacy_risk",
+      "cost",
+      "automation_reliability"
+    ]
+  },
+  "useful_api_categories": [
+    "crm",
+    "email_marketing_after_approval",
+    "calendar_booking_after_approval",
+    "business_registry",
+    "government_procurement",
+    "grants",
+    "job_and_contract_boards",
+    "maps_and_local_business",
+    "domain_and_dns",
+    "payments_after_approval",
+    "analytics",
+    "webhooks",
+    "forms",
+    "support_ticketing",
+    "app_store_metadata",
+    "search_console_or_site_analytics_after_approval"
+  ],
+  "per_bot_requirements": [
+    "lead_generator",
+    "lead_scoring_rubric",
+    "followup_sequence",
+    "useful_api_study_plan",
+    "blocked_source_filter",
+    "24_hour_cycle",
+    "codex_final_judge_packet",
+    "owner_approval_packet"
+  ],
+  "24_hour_cycle": {
+    "enabled": true,
+    "mode": "local_first_safe_draft_cycle",
+    "cycle_steps": [
+      "refresh_category_problem",
+      "study_one_useful_api_or_source",
+      "find_lead_candidates_without_contact",
+      "score_leads",
+      "draft_followups",
+      "prepare_demo_or_proof",
+      "request_approval_for_live_contact",
+      "record_results_and_next_test"
+    ],
+    "hard_limits": [
+      "no_live_outreach_without_approval",
+      "no_scraping_against_terms",
+      "no_private_social_media_collection",
+      "no_paid_enrichment_without_approval",
+      "no_crm_upload_without_approval",
+      "no_spam",
+      "no_fake_personas_or_endorsements"
+    ]
+  },
+  "approval_gates": [
+    "send_outreach",
+    "launch_followup_sequence",
+    "upload_to_crm",
+    "use_paid_enrichment",
+    "use_social_platform_account",
+    "scrape_or_collect_at_scale",
+    "publish_offer",
+    "charge_payment",
+    "change_external_account",
+    "store_personal_data_beyond_approved_lead_record"
+  ],
+  "success_metrics": [
+    "bots_with_lead_generator",
+    "bots_with_followup_system",
+    "bots_with_useful_api_study_plan",
+    "bots_with_blocked_source_filter",
+    "bots_with_24_hour_lead_cycle",
+    "codex_final_judge_required",
+    "owner_approval_required_for_live_contact"
+  ]
+}

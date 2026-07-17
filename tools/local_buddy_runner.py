@@ -58,6 +58,8 @@ COMMANDS: dict[str, list[str]] = {
     "report:stripe-rescue": ["python3", "tools/stripe_revenue_rescue.py"],
     "report:contract-discovery": ["python3", "tools/generate_bot_contract_discovery_report.py"],
     "check:contract-discovery": ["python3", "tools/generate_bot_contract_discovery_report.py", "--check"],
+    "report:lead-followup": ["python3", "tools/generate_bot_lead_followup_system.py"],
+    "check:lead-followup": ["python3", "tools/generate_bot_lead_followup_system.py", "--check"],
     "report:people-job-qualification": ["python3", "tools/generate_people_job_qualification_report.py"],
     "check:people-job-qualification": ["python3", "tools/generate_people_job_qualification_report.py", "--check"],
     "scan:local-imports": ["python3", "tools/local_import_audit.py"],
