@@ -73,6 +73,10 @@ const BUSINESS_LAUNCH_EXPANSION_REPORT_FILE = path.join(
   __dirname,
   '../../reports/business_launch_expansion_report.json',
 );
+const BUDDY_COMMERCE_PUBLISHING_OS_FILE = path.join(
+  __dirname,
+  '../../reports/buddy_commerce_publishing_os.json',
+);
 const BOT_CONTRACT_DISCOVERY_REPORT_FILE = path.join(
   __dirname,
   '../../reports/bot_contract_discovery_report.json',
@@ -305,6 +309,13 @@ function readBusinessLaunchExpansionReport() {
     return null;
   }
   return JSON.parse(fs.readFileSync(BUSINESS_LAUNCH_EXPANSION_REPORT_FILE, 'utf8'));
+}
+
+function readBuddyCommercePublishingOs() {
+  if (!fs.existsSync(BUDDY_COMMERCE_PUBLISHING_OS_FILE)) {
+    return null;
+  }
+  return JSON.parse(fs.readFileSync(BUDDY_COMMERCE_PUBLISHING_OS_FILE, 'utf8'));
 }
 
 function readBotContractDiscoveryReport() {
@@ -1009,6 +1020,17 @@ app.get('/api/business-launch-expansion', rateLimiter, (_req, res) => {
   const report = readBusinessLaunchExpansionReport();
   if (!report) {
     return res.status(503).json({ error: 'business launch expansion report not found' });
+  }
+  return res.json(report);
+});
+
+// ---------------------------------------------------------------------------
+// GET /api/buddy-commerce-publishing — domains, downloads, app stores, tasks
+// ---------------------------------------------------------------------------
+app.get('/api/buddy-commerce-publishing', rateLimiter, (_req, res) => {
+  const report = readBuddyCommercePublishingOs();
+  if (!report) {
+    return res.status(503).json({ error: 'Buddy commerce publishing OS report not found' });
   }
   return res.json(report);
 });

@@ -1,0 +1,137 @@
+{
+  "schema": "dreamco.buddy_commerce_publishing_os.v1",
+  "updated_at": "2026-07-17T00:00:00Z",
+  "mission": "Make Buddy the download-easy, task-manager-first commerce and publishing operator for domains, app builds, web publishing, app-store readiness, device installs, and safe autonomous money research.",
+  "default_mode": "research_draft_package_test_then_owner_approval",
+  "positioning": "Buddy should feel like the best task manager chatbot for building and selling apps: it captures goals, breaks them into tasks, assigns bots, tracks evidence, prepares domain and store packets, packages downloads, and searches public web opportunities without taking live money or account actions until approved.",
+  "download_targets": [
+    {
+      "id": "web_app",
+      "label": "Web App",
+      "goal": "Open Buddy from any browser with no install.",
+      "package_outputs": ["responsive_dashboard", "pwa_manifest", "offline_fallback", "static_preview_bundle"],
+      "status": "ready_for_static_preview"
+    },
+    {
+      "id": "desktop_app",
+      "label": "Desktop App",
+      "goal": "Package Buddy for Mac, Windows, and Linux after the web dashboard stabilizes.",
+      "package_outputs": ["desktop_shell_plan", "local_runner_bridge", "auto_update_plan", "signed_release_checklist"],
+      "status": "planned_packager"
+    },
+    {
+      "id": "mobile_app",
+      "label": "Mobile App",
+      "goal": "Package Buddy for iOS and Android with store-ready screenshots, privacy notes, and offline task capture.",
+      "package_outputs": ["mobile_shell_plan", "push_notification_policy", "privacy_labels", "store_screenshots_checklist"],
+      "status": "planned_packager"
+    },
+    {
+      "id": "pwa_install",
+      "label": "PWA Install",
+      "goal": "Let clients add Buddy to phone or desktop home screens from the web version.",
+      "package_outputs": ["manifest", "icons", "service_worker_plan", "install_prompt_copy"],
+      "status": "ready_for_static_preview"
+    }
+  ],
+  "commerce_lanes": [
+    {
+      "id": "domains",
+      "label": "Domain Selling and Management",
+      "safe_actions": ["search domain ideas", "compare public registrar pricing", "draft domain shortlist", "prepare DNS plan", "prepare renewal reminders"],
+      "approval_required": ["buy_domain", "transfer_domain", "change_dns", "sell_domain", "connect_payment_method"],
+      "evidence": ["registrar", "price_checked_at", "renewal_price", "privacy_option", "brand_risk_notes"]
+    },
+    {
+      "id": "app_self_publish",
+      "label": "Self-Publishing Apps",
+      "safe_actions": ["build release checklist", "create screenshots checklist", "draft privacy and support notes", "prepare staged rollout plan", "prepare rollback checklist"],
+      "approval_required": ["submit_store_listing", "accept_store_terms", "publish_public_release", "connect_paid_account"],
+      "evidence": ["platform", "package_id", "test_status", "privacy_status", "approval_owner"]
+    },
+    {
+      "id": "client_downloads",
+      "label": "Easy Client Downloads",
+      "safe_actions": ["prepare web link", "prepare PWA install instructions", "prepare desktop package checklist", "prepare mobile store packet", "track device support"],
+      "approval_required": ["ship_installer", "submit_mobile_app", "collect_client_device_data", "send_external_download_link"],
+      "evidence": ["target_device", "install_path", "version", "support_url", "rollback_path"]
+    },
+    {
+      "id": "task_manager_chatbot",
+      "label": "Task Manager Chatbot",
+      "safe_actions": ["capture goals", "split tasks", "assign bots", "track status", "summarize blockers", "draft next actions", "store useful memory only"],
+      "approval_required": ["create_external_task", "invite_user", "send_notification", "change_client_account"],
+      "evidence": ["task_id", "owner", "due_date", "source", "decision_needed", "status"]
+    },
+    {
+      "id": "web_money_research",
+      "label": "Autonomous Money Research",
+      "safe_actions": ["search public opportunities", "compare customer pains", "draft offers", "score revenue potential", "prepare outreach drafts", "simulate pricing"],
+      "approval_required": ["contact_customer", "publish_offer", "run_ads", "charge_payment", "bid_contract", "scrape_non_public_data"],
+      "evidence": ["source_url", "customer_problem", "offer", "price_hypothesis", "risk", "next_test"]
+    }
+  ],
+  "app_store_targets": [
+    {
+      "id": "apple_app_store",
+      "label": "Apple App Store",
+      "safe_packet": ["bundle_id_plan", "screenshots", "privacy_labels", "support_url", "review_notes"],
+      "approval_required": ["developer_account_use", "submit_for_review", "accept_paid_terms"]
+    },
+    {
+      "id": "google_play",
+      "label": "Google Play",
+      "safe_packet": ["package_name_plan", "store_listing", "privacy_policy", "testing_track", "release_notes"],
+      "approval_required": ["developer_account_use", "submit_for_review", "accept_paid_terms"]
+    },
+    {
+      "id": "desktop_downloads",
+      "label": "Desktop Downloads",
+      "safe_packet": ["installer_checklist", "signing_plan", "virus_scan_plan", "update_channel", "rollback_plan"],
+      "approval_required": ["ship_installer", "sign_release", "collect_telemetry"]
+    },
+    {
+      "id": "game_stores",
+      "label": "Game Stores",
+      "safe_packet": ["age_rating_notes", "screenshots", "trailer_plan", "controller_support", "store_listing"],
+      "approval_required": ["submit_store_listing", "publish_public_release", "accept_paid_terms"]
+    },
+    {
+      "id": "tv_stores",
+      "label": "TV Stores",
+      "safe_packet": ["remote_control_checks", "privacy_notes", "screenshots", "streaming_rules", "support_url"],
+      "approval_required": ["submit_store_listing", "publish_public_release", "accept_paid_terms"]
+    }
+  ],
+  "task_manager_layers": [
+    "inbox_capture",
+    "goal_to_project",
+    "project_to_tasks",
+    "bot_assignment",
+    "approval_queue",
+    "evidence_tracker",
+    "deadline_and_reminder_queue",
+    "client_status_room",
+    "download_release_tracker",
+    "money_opportunity_pipeline"
+  ],
+  "web_research_policy": {
+    "allowed_sources": ["public web pages", "official docs", "public pricing pages", "public marketplace listings", "public reviews", "public RFP or grant pages"],
+    "blocked_sources": ["private accounts without approval", "paywalled or login-only data without permission", "personal data brokers", "sources that forbid automated collection", "copied proprietary code or private data"],
+    "must_store": ["source_url", "checked_at", "summary", "confidence", "owner_or_bot", "usefulness_reason", "next_safe_action"],
+    "must_not_claim": ["guaranteed income", "guaranteed approval", "guaranteed app-store acceptance", "legal or tax advice without professional review"]
+  },
+  "approval_wall": [
+    "buy_domain",
+    "sell_domain",
+    "change_dns",
+    "submit_app_store_listing",
+    "publish_public_release",
+    "send_customer_outreach",
+    "run_paid_ads",
+    "charge_or_move_money",
+    "connect_payment_or_bank_account",
+    "change_client_account",
+    "collect_sensitive_device_or_personal_data"
+  ]
+}

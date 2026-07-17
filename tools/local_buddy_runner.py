@@ -40,6 +40,8 @@ COMMANDS: dict[str, list[str]] = {
     "check:ai-agent-model-library": ["python3", "tools/generate_buddy_ai_agent_model_library.py", "--check"],
     "report:app-foundry": ["python3", "tools/generate_app_foundry_readiness.py"],
     "check:app-foundry": ["python3", "tools/generate_app_foundry_readiness.py", "--check"],
+    "report:commerce-publishing": ["python3", "tools/generate_buddy_commerce_publishing_os.py"],
+    "check:commerce-publishing": ["python3", "tools/generate_buddy_commerce_publishing_os.py", "--check"],
     "report:bot-founder-store": ["python3", "tools/generate_bot_founder_app_store.py"],
     "check:bot-founder-store": ["python3", "tools/generate_bot_founder_app_store.py", "--check"],
     "report:revenue-practice": ["python3", "tools/generate_bot_autonomous_revenue_practice.py"],

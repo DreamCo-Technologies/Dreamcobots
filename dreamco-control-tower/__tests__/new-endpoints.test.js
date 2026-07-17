@@ -619,6 +619,27 @@ describe('GET /api/business-launch-expansion', () => {
   });
 });
 
+describe('GET /api/buddy-commerce-publishing', () => {
+  test('returns Buddy domain, publishing, download, task, and money research coverage', async () => {
+    const res = await request(app).get('/api/buddy-commerce-publishing');
+
+    expect(res.status).toBe(200);
+    expect(res.body.schema).toBe('dreamco.buddy_commerce_publishing_os_report.v1');
+    expect(res.body.summary.commerce_lanes).toBeGreaterThanOrEqual(5);
+    expect(res.body.summary.download_targets).toBeGreaterThanOrEqual(4);
+    expect(res.body.summary.app_store_targets).toBeGreaterThanOrEqual(5);
+    expect(res.body.summary.can_sell_domains_after_approval).toBe(true);
+    expect(res.body.summary.can_prepare_app_store_submissions).toBe(true);
+    expect(res.body.summary.can_research_autonomous_money).toBe(true);
+    expect(res.body.commerce_lanes.map((lane) => lane.id)).toEqual(
+      expect.arrayContaining(['domains', 'app_self_publish', 'client_downloads', 'task_manager_chatbot', 'web_money_research']),
+    );
+    expect(res.body.approval_wall).toEqual(
+      expect.arrayContaining(['buy_domain', 'submit_app_store_listing', 'charge_or_move_money']),
+    );
+  });
+});
+
 describe('GET /api/bot-contract-discovery', () => {
   test('returns always-on bot contract discovery coverage', async () => {
     const res = await request(app).get('/api/bot-contract-discovery');

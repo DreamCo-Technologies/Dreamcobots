@@ -663,6 +663,59 @@ const FALLBACK_BUSINESS_LAUNCH_EXPANSION = {
   ],
 };
 
+const FALLBACK_BUDDY_COMMERCE_PUBLISHING = {
+  generated_at: null,
+  mission: 'Make Buddy the download-easy, task-manager-first commerce and publishing operator for domains, app builds, web publishing, app-store readiness, device installs, and safe autonomous money research.',
+  positioning: 'Buddy captures goals, breaks them into tasks, assigns bots, tracks evidence, prepares domain and store packets, packages downloads, and searches public web opportunities without live money or account actions until approved.',
+  default_mode: 'research_draft_package_test_then_owner_approval',
+  summary: {
+    readiness_score: 100,
+    bot_count: 1248,
+    commerce_lanes: 5,
+    download_targets: 4,
+    app_store_targets: 5,
+    task_manager_layers: 10,
+    app_categories: 40,
+    approval_wall_gates: 11,
+    safe_actions: 28,
+    live_actions_blocked: 28,
+    download_packets_ready: 2,
+    store_packets_ready: 5,
+    web_research_policy_ready: true,
+    can_sell_domains_after_approval: true,
+    can_prepare_app_store_submissions: true,
+    can_prepare_device_downloads: true,
+    can_research_autonomous_money: true,
+  },
+  commerce_lanes: [
+    { id: 'domains', label: 'Domain Selling and Management', safe_actions: ['search domain ideas', 'compare public registrar pricing', 'draft domain shortlist'], approval_required: ['buy_domain', 'sell_domain', 'change_dns'], dashboard_status: 'ready_for_buddy_supervised_packet' },
+    { id: 'app_self_publish', label: 'Self-Publishing Apps', safe_actions: ['build release checklist', 'draft privacy notes', 'prepare rollback checklist'], approval_required: ['submit_store_listing', 'publish_public_release'], dashboard_status: 'ready_for_buddy_supervised_packet' },
+    { id: 'client_downloads', label: 'Easy Client Downloads', safe_actions: ['prepare web link', 'prepare PWA install instructions', 'track device support'], approval_required: ['ship_installer', 'submit_mobile_app'], dashboard_status: 'ready_for_buddy_supervised_packet' },
+    { id: 'task_manager_chatbot', label: 'Task Manager Chatbot', safe_actions: ['capture goals', 'split tasks', 'assign bots', 'summarize blockers'], approval_required: ['create_external_task', 'send_notification'], dashboard_status: 'ready_for_buddy_supervised_packet' },
+    { id: 'web_money_research', label: 'Autonomous Money Research', safe_actions: ['search public opportunities', 'draft offers', 'simulate pricing'], approval_required: ['contact_customer', 'run_ads', 'charge_payment'], dashboard_status: 'ready_for_buddy_supervised_packet' },
+  ],
+  download_targets: [
+    { id: 'web_app', label: 'Web App', goal: 'Open Buddy from any browser with no install.', status: 'ready_for_static_preview' },
+    { id: 'pwa_install', label: 'PWA Install', goal: 'Let clients add Buddy to phone or desktop home screens from the web version.', status: 'ready_for_static_preview' },
+    { id: 'desktop_app', label: 'Desktop App', goal: 'Package Buddy for Mac, Windows, and Linux after the web dashboard stabilizes.', status: 'planned_packager' },
+    { id: 'mobile_app', label: 'Mobile App', goal: 'Package Buddy for iOS and Android with store-ready packets.', status: 'planned_packager' },
+  ],
+  app_store_targets: [
+    { id: 'apple_app_store', label: 'Apple App Store', approval_required: ['developer_account_use', 'submit_for_review'] },
+    { id: 'google_play', label: 'Google Play', approval_required: ['developer_account_use', 'submit_for_review'] },
+    { id: 'desktop_downloads', label: 'Desktop Downloads', approval_required: ['ship_installer', 'sign_release'] },
+    { id: 'game_stores', label: 'Game Stores', approval_required: ['submit_store_listing', 'publish_public_release'] },
+    { id: 'tv_stores', label: 'TV Stores', approval_required: ['submit_store_listing', 'publish_public_release'] },
+  ],
+  task_manager_layers: ['inbox_capture', 'goal_to_project', 'project_to_tasks', 'bot_assignment', 'approval_queue', 'evidence_tracker', 'deadline_and_reminder_queue', 'client_status_room', 'download_release_tracker', 'money_opportunity_pipeline'],
+  web_research_policy: {
+    allowed_sources: ['public web pages', 'official docs', 'public pricing pages', 'public marketplace listings', 'public reviews'],
+    blocked_sources: ['private accounts without approval', 'paywalled or login-only data without permission', 'personal data brokers'],
+    must_store: ['source_url', 'checked_at', 'summary', 'confidence', 'next_safe_action'],
+  },
+  approval_wall: ['buy_domain', 'sell_domain', 'change_dns', 'submit_app_store_listing', 'publish_public_release', 'send_customer_outreach', 'run_paid_ads', 'charge_or_move_money'],
+};
+
 const FALLBACK_BOT_CONTRACT_DISCOVERY = {
   generated_at: null,
   mission: 'Make every DreamCo bot continuously search for contract, grant, RFP, procurement, partnership, supplier, app-store, and service opportunities that match its division and business model.',
@@ -1682,6 +1735,8 @@ export default function ActionsPage({
   const [aiAgentModelLibraryStatus, setAiAgentModelLibraryStatus] = useState('loading');
   const [businessLaunchExpansion, setBusinessLaunchExpansion] = useState(null);
   const [businessLaunchExpansionStatus, setBusinessLaunchExpansionStatus] = useState('loading');
+  const [buddyCommercePublishing, setBuddyCommercePublishing] = useState(null);
+  const [buddyCommercePublishingStatus, setBuddyCommercePublishingStatus] = useState('loading');
   const [botContractDiscovery, setBotContractDiscovery] = useState(null);
   const [botContractDiscoveryStatus, setBotContractDiscoveryStatus] = useState('loading');
   const [aiDataPackageLibrary, setAiDataPackageLibrary] = useState(null);
@@ -1821,6 +1876,15 @@ export default function ActionsPage({
   }, []);
 
   useEffect(() => {
+    fetchFirstJson(['/api/buddy-commerce-publishing'])
+      .then((data) => {
+        setBuddyCommercePublishing(data);
+        setBuddyCommercePublishingStatus('live');
+      })
+      .catch(() => setBuddyCommercePublishingStatus('generated fallback'));
+  }, []);
+
+  useEffect(() => {
     fetchFirstJson(['/api/bot-contract-discovery'])
       .then((data) => {
         setBotContractDiscovery(data);
@@ -1918,6 +1982,7 @@ export default function ActionsPage({
   const knowledge = specializedKnowledge ?? FALLBACK_SPECIALIZED_BOT_KNOWLEDGE;
   const modelLibrary = aiAgentModelLibrary ?? FALLBACK_AI_AGENT_MODEL_LIBRARY;
   const businessLaunch = businessLaunchExpansion ?? FALLBACK_BUSINESS_LAUNCH_EXPANSION;
+  const commercePublishing = buddyCommercePublishing ?? FALLBACK_BUDDY_COMMERCE_PUBLISHING;
   const contractDiscovery = botContractDiscovery ?? FALLBACK_BOT_CONTRACT_DISCOVERY;
   const dataPackageLibrary = aiDataPackageLibrary ?? FALLBACK_AI_DATA_PACKAGE_LIBRARY;
   const peopleLookup = peopleJobQualification ?? FALLBACK_PEOPLE_JOB_QUALIFICATION;
@@ -1939,6 +2004,7 @@ export default function ActionsPage({
   const knowledgeSummary = knowledge.summary ?? FALLBACK_SPECIALIZED_BOT_KNOWLEDGE.summary;
   const modelLibrarySummary = modelLibrary.summary ?? FALLBACK_AI_AGENT_MODEL_LIBRARY.summary;
   const businessLaunchSummary = businessLaunch.summary ?? FALLBACK_BUSINESS_LAUNCH_EXPANSION.summary;
+  const commercePublishingSummary = commercePublishing.summary ?? FALLBACK_BUDDY_COMMERCE_PUBLISHING.summary;
   const contractDiscoverySummary = contractDiscovery.summary ?? FALLBACK_BOT_CONTRACT_DISCOVERY.summary;
   const dataPackageSummary = dataPackageLibrary.summary ?? FALLBACK_AI_DATA_PACKAGE_LIBRARY.summary;
   const peopleLookupSummary = peopleLookup.summary ?? FALLBACK_PEOPLE_JOB_QUALIFICATION.summary;
@@ -3289,6 +3355,145 @@ export default function ActionsPage({
               </div>
             </div>
           </aside>
+        </div>
+      </section>
+
+      <section aria-labelledby="buddy-commerce-publishing-heading" className={`relative overflow-hidden p-5 ${ROYAL_PANEL_CLASS}`}>
+        <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-amber-300/70 to-transparent" />
+        <div className="flex flex-wrap items-start justify-between gap-3">
+          <div>
+            <p className="text-xs font-bold uppercase tracking-[0.18em] text-amber-200">Buddy commerce and publishing OS</p>
+            <h3 id="buddy-commerce-publishing-heading" className={`mt-1 text-lg font-semibold ${ROYAL_TEXT_CLASS}`}>
+              Domains, self-publishing, downloads, tasks, and web money research
+            </h3>
+            <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-300">{commercePublishing.mission}</p>
+          </div>
+          <span className="rounded-full border border-amber-400/50 bg-amber-950/30 px-3 py-1 text-xs font-semibold text-amber-200">
+            {buddyCommercePublishingStatus} · {formatDateTime(commercePublishing.generated_at)}
+          </span>
+        </div>
+
+        <div className="mt-5 grid grid-cols-2 gap-px overflow-hidden border border-amber-500/20 bg-amber-500/20 lg:grid-cols-4 xl:grid-cols-8">
+          {[
+            ['Score', commercePublishingSummary.readiness_score],
+            ['Lanes', commercePublishingSummary.commerce_lanes],
+            ['Downloads', commercePublishingSummary.download_targets],
+            ['Stores', commercePublishingSummary.app_store_targets],
+            ['Task layers', commercePublishingSummary.task_manager_layers],
+            ['Categories', commercePublishingSummary.app_categories],
+            ['Safe actions', commercePublishingSummary.safe_actions],
+            ['Blocked live', commercePublishingSummary.live_actions_blocked],
+          ].map(([label, value]) => (
+            <div key={label} className="bg-slate-950/90 p-4">
+              <p className="text-xl font-black text-amber-100">{formatNumber(value)}</p>
+              <p className="mt-1 text-xs uppercase tracking-wide text-slate-500">{label}</p>
+            </div>
+          ))}
+        </div>
+
+        <div className="mt-5 grid gap-5 xl:grid-cols-[minmax(0,1fr)_24rem]">
+          <div className="border border-slate-800 bg-slate-950 p-4">
+            <h4 className="text-sm font-semibold text-white">Buddy commerce lanes</h4>
+            <div className="mt-3 grid gap-3 md:grid-cols-2">
+              {(commercePublishing.commerce_lanes ?? []).map((lane) => (
+                <article key={lane.id} className="border border-slate-800 bg-slate-900 p-3">
+                  <div className="flex flex-wrap items-start justify-between gap-2">
+                    <h5 className="text-sm font-semibold text-white">{lane.label}</h5>
+                    <span className="rounded-full border border-emerald-400/30 px-2 py-0.5 text-[11px] font-semibold text-emerald-100">
+                      {formatLabel(lane.dashboard_status)}
+                    </span>
+                  </div>
+                  <p className="mt-3 text-xs leading-5 text-emerald-100/80">
+                    Safe: {(lane.safe_actions ?? []).slice(0, 4).join(', ')}
+                  </p>
+                  <p className="mt-2 border-l-2 border-amber-400 pl-3 text-xs leading-5 text-amber-100/80">
+                    Approval: {(lane.approval_required ?? []).slice(0, 4).map(formatLabel).join(', ')}
+                  </p>
+                </article>
+              ))}
+            </div>
+          </div>
+
+          <aside className="space-y-5">
+            <div className="border border-amber-900/70 bg-amber-950/20 p-4">
+              <h4 className="text-sm font-semibold text-amber-100">Commerce approval wall</h4>
+              <div className="mt-3 space-y-2">
+                {(commercePublishing.approval_wall ?? []).slice(0, 9).map((gate) => (
+                  <p key={gate} className="border-l-2 border-amber-400 pl-3 text-xs leading-5 text-amber-100/80">
+                    {formatLabel(gate)}
+                  </p>
+                ))}
+              </div>
+            </div>
+
+            <div className="border border-slate-800 bg-slate-950 p-4">
+              <h4 className="text-sm font-semibold text-white">Task manager layers</h4>
+              <div className="mt-3 flex flex-wrap gap-2">
+                {(commercePublishing.task_manager_layers ?? []).slice(0, 10).map((layer) => (
+                  <span key={layer} className="rounded-full border border-slate-700 px-2 py-1 text-[11px] text-slate-300">
+                    {formatLabel(layer)}
+                  </span>
+                ))}
+              </div>
+            </div>
+          </aside>
+        </div>
+
+        <div className="mt-5 grid gap-5 xl:grid-cols-2">
+          <div className="border border-slate-800 bg-slate-950 p-4">
+            <h4 className="text-sm font-semibold text-white">Download and install targets</h4>
+            <div className="mt-3 grid gap-3 md:grid-cols-2">
+              {(commercePublishing.download_targets ?? []).map((target) => (
+                <article key={target.id} className="border border-slate-800 bg-slate-900 p-3">
+                  <div className="flex flex-wrap items-center justify-between gap-2">
+                    <h5 className="text-sm font-semibold text-white">{target.label}</h5>
+                    <span className="rounded-full border border-slate-700 px-2 py-0.5 text-[11px] font-semibold uppercase text-slate-300">
+                      {formatLabel(target.status)}
+                    </span>
+                  </div>
+                  <p className="mt-2 text-xs leading-5 text-slate-400">{target.goal}</p>
+                </article>
+              ))}
+            </div>
+          </div>
+
+          <div className="border border-slate-800 bg-slate-950 p-4">
+            <h4 className="text-sm font-semibold text-white">App-store and public release packets</h4>
+            <div className="mt-3 grid gap-3 md:grid-cols-2">
+              {(commercePublishing.app_store_targets ?? []).map((target) => (
+                <article key={target.id} className="border border-slate-800 bg-slate-900 p-3">
+                  <h5 className="text-sm font-semibold text-white">{target.label}</h5>
+                  <p className="mt-2 text-xs leading-5 text-amber-100/80">
+                    Needs approval: {(target.approval_required ?? []).slice(0, 3).map(formatLabel).join(', ')}
+                  </p>
+                </article>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        <div className="mt-5 border border-emerald-500/30 bg-emerald-950/20 p-4">
+          <h4 className="text-sm font-semibold text-emerald-100">Web money research policy</h4>
+          <div className="mt-3 grid gap-4 md:grid-cols-3">
+            <div>
+              <p className="text-xs font-semibold uppercase text-emerald-200">Allowed sources</p>
+              <p className="mt-2 text-xs leading-5 text-emerald-100/80">
+                {(commercePublishing.web_research_policy?.allowed_sources ?? []).slice(0, 5).join(', ')}
+              </p>
+            </div>
+            <div>
+              <p className="text-xs font-semibold uppercase text-amber-200">Blocked sources</p>
+              <p className="mt-2 text-xs leading-5 text-amber-100/80">
+                {(commercePublishing.web_research_policy?.blocked_sources ?? []).slice(0, 4).join(', ')}
+              </p>
+            </div>
+            <div>
+              <p className="text-xs font-semibold uppercase text-slate-200">Must store</p>
+              <p className="mt-2 text-xs leading-5 text-slate-300">
+                {(commercePublishing.web_research_policy?.must_store ?? []).slice(0, 6).map(formatLabel).join(', ')}
+              </p>
+            </div>
+          </div>
         </div>
       </section>
 
