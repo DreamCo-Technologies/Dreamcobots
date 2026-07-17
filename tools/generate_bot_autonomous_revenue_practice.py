@@ -247,6 +247,114 @@ MARKETPLACE_APPROVAL_GATES = [
     "delivery_to_real_customer",
 ]
 
+METHOD_ROTATION_FAMILIES = [
+    {
+        "id": "one_time_service",
+        "label": "One-Time Service",
+        "use_when": "The bot can solve a painful task quickly with a clear deliverable.",
+        "proof": "sample output, delivery checklist, turnaround estimate",
+    },
+    {
+        "id": "subscription_monitoring",
+        "label": "Subscription Monitoring",
+        "use_when": "The bot can watch status, risks, leads, prices, errors, or opportunities repeatedly.",
+        "proof": "monitoring dashboard, alert examples, retention reason",
+    },
+    {
+        "id": "audit_or_report",
+        "label": "Audit Or Report",
+        "use_when": "The bot can inspect a business area and produce a decision-ready report.",
+        "proof": "audit rubric, example findings, evidence links",
+    },
+    {
+        "id": "automation_setup",
+        "label": "Automation Setup",
+        "use_when": "The bot can remove repeated manual work with workflows, APIs, webhooks, or scripts.",
+        "proof": "workflow map, sandbox run, before-after time estimate",
+    },
+    {
+        "id": "template_or_digital_pack",
+        "label": "Template Or Digital Pack",
+        "use_when": "The bot can package repeatable knowledge into a rights-cleared downloadable product.",
+        "proof": "sample template, rights checklist, buyer use case",
+    },
+    {
+        "id": "course_or_training",
+        "label": "Course Or Training",
+        "use_when": "The bot can turn knowledge into lessons, quizzes, scripts, and practice labs.",
+        "proof": "lesson outline, quiz, instructor notes",
+    },
+    {
+        "id": "app_or_dashboard",
+        "label": "App Or Dashboard",
+        "use_when": "The bot can make a decision, tracking, comparison, or workflow app.",
+        "proof": "screen map, API contract, smoke test",
+    },
+    {
+        "id": "api_or_webhook_service",
+        "label": "API Or Webhook Service",
+        "use_when": "The bot can expose useful capability as a reusable endpoint or event flow.",
+        "proof": "route contract, sample payload, sandbox response",
+    },
+    {
+        "id": "contract_or_grant_packet",
+        "label": "Contract Or Grant Packet",
+        "use_when": "The bot can help users find, understand, and prepare approval-ready opportunity packets.",
+        "proof": "fit score, requirement summary, approval checklist",
+    },
+    {
+        "id": "cost_savings_workflow",
+        "label": "Cost-Savings Workflow",
+        "use_when": "The bot can reduce waste, errors, downtime, chargebacks, churn, or repeated labor.",
+        "proof": "savings model, assumptions, risk reduction checklist",
+    },
+    {
+        "id": "data_or_benchmark_package",
+        "label": "Data Or Benchmark Package",
+        "use_when": "The bot can generate rights-cleared operational data, evals, benchmarks, or comparisons.",
+        "proof": "schema, sample records, rights metadata",
+    },
+    {
+        "id": "partner_or_referral_offer",
+        "label": "Partner Or Referral Offer",
+        "use_when": "The bot can connect complementary services, suppliers, marketplaces, or clients.",
+        "proof": "partner map, value split, approval gates",
+    },
+]
+
+PRODUCTIVITY_PLAYBOOKS = [
+    {
+        "id": "save_time",
+        "label": "Save Time",
+        "play": "Automate repeated manual steps, summarize work, and build reusable checklists.",
+    },
+    {
+        "id": "find_opportunity",
+        "label": "Find Opportunity",
+        "play": "Scan public demand, contracts, grants, app gaps, reviews, and customer pain themes.",
+    },
+    {
+        "id": "improve_quality",
+        "label": "Improve Quality",
+        "play": "Run QA rubrics, compare variants, catch missing requirements, and prepare fix queues.",
+    },
+    {
+        "id": "reduce_cost",
+        "label": "Reduce Cost",
+        "play": "Find duplicated tools, manual labor, failure points, rework, refunds, or avoidable spend.",
+    },
+    {
+        "id": "increase_sales",
+        "label": "Increase Sales",
+        "play": "Draft offers, demos, prospectus pages, pricing tests, proposal packets, and follow-up plans.",
+    },
+    {
+        "id": "build_asset",
+        "label": "Build Asset",
+        "play": "Turn knowledge into reusable apps, dashboards, courses, templates, datasets, APIs, or workflows.",
+    },
+]
+
 
 def utc_now() -> str:
     return datetime.now(timezone.utc).replace(microsecond=0).isoformat().replace("+00:00", "Z")
@@ -375,6 +483,136 @@ def build_marketplace_need_packet(bot: dict[str, Any], lanes: list[str]) -> dict
     }
 
 
+def choose_method_queue(bot: dict[str, Any], lanes: list[str]) -> list[dict[str, Any]]:
+    division = str(bot.get("division") or "").lower()
+    name = str(bot.get("name") or bot.get("slug") or "").lower()
+    text = f"{division} {name} {' '.join(lanes)}"
+    preferred = ["one_time_service", "audit_or_report", "automation_setup", "app_or_dashboard"]
+    if any(term in text for term in ["sales", "market", "content", "influence", "retail"]):
+        preferred.extend(["partner_or_referral_offer", "subscription_monitoring", "template_or_digital_pack"])
+    if any(term in text for term in ["finance", "payment", "loan", "legal", "contract"]):
+        preferred.extend(["contract_or_grant_packet", "cost_savings_workflow", "api_or_webhook_service"])
+    if any(term in text for term in ["code", "automation", "data", "ai", "flow", "ops"]):
+        preferred.extend(["api_or_webhook_service", "data_or_benchmark_package", "subscription_monitoring"])
+    if any(term in text for term in ["education", "game", "simulation", "course", "arts"]):
+        preferred.extend(["course_or_training", "template_or_digital_pack", "app_or_dashboard"])
+    if any(term in text for term in ["construction", "transport", "maintenance", "health"]):
+        preferred.extend(["subscription_monitoring", "cost_savings_workflow", "contract_or_grant_packet"])
+
+    by_id = {method["id"]: method for method in METHOD_ROTATION_FAMILIES}
+    queue = []
+    for method_id in preferred + [method["id"] for method in METHOD_ROTATION_FAMILIES]:
+        if method_id in by_id and method_id not in {item["id"] for item in queue}:
+            method = by_id[method_id]
+            queue.append(
+                {
+                    **method,
+                    "cycle_status": "ready_for_sandbox_test",
+                    "actual_revenue_usd": 0,
+                    "actual_revenue_requires_payment_confirmation": True,
+                }
+            )
+        if len(queue) >= 8:
+            break
+    return queue
+
+
+def build_bot_routes_and_apis(bot: dict[str, Any], lanes: list[str]) -> dict[str, Any]:
+    slug = str(bot.get("slug") or bot.get("id") or "bot").replace("_", "-")
+    route_slug = slug.lower()
+    return {
+        "status": "bot_specific_routes_and_apis_planned",
+        "routes": [
+            {
+                "method": "GET",
+                "path": f"/api/bots/{route_slug}/money-methods",
+                "purpose": "List the bot's revenue method queue, productivity plays, and latest sandbox evidence.",
+            },
+            {
+                "method": "POST",
+                "path": f"/api/bots/{route_slug}/experiments",
+                "purpose": "Create a new supervised sandbox revenue experiment for this bot.",
+            },
+            {
+                "method": "POST",
+                "path": f"/api/bots/{route_slug}/sandbox-test",
+                "purpose": "Run or prepare the sandbox test packet for the selected method.",
+            },
+            {
+                "method": "POST",
+                "path": f"/api/bots/{route_slug}/approval-packet",
+                "purpose": "Prepare owner/client approval packets for live outreach, payments, app publish, or API mutation.",
+            },
+        ],
+        "api_contract": {
+            "inputs": ["bot_slug", "method_id", "target_customer", "problem_evidence", "budget_limit", "approval_owner"],
+            "outputs": [
+                "customer_problem",
+                "offer",
+                "route_plan",
+                "api_or_webhook_plan",
+                "sandbox_result",
+                "productivity_value",
+                "projected_value_usd",
+                "actual_revenue_usd",
+                "approval_needed",
+            ],
+            "blocked_live_mutations": APPROVAL_REQUIRED,
+        },
+        "webhook_events": [
+            f"bot.{route_slug}.experiment.prepared",
+            f"bot.{route_slug}.sandbox.passed",
+            f"bot.{route_slug}.method.won",
+            f"bot.{route_slug}.approval.requested",
+        ],
+        "route_generation_prompt": (
+            f"Generate safe internal routes, API payloads, webhook events, and tests for {bot.get('name') or slug} "
+            f"using {', '.join(lanes[:5])}; block live external actions until approval."
+        ),
+    }
+
+
+def build_productivity_money_library(bot: dict[str, Any], lanes: list[str], method_queue: list[dict[str, Any]]) -> dict[str, Any]:
+    name = str(bot.get("name") or bot.get("slug") or "Bot")
+    division = str(bot.get("division") or "DreamCo")
+    plays = []
+    for play in PRODUCTIVITY_PLAYBOOKS:
+        plays.append(
+            {
+                **play,
+                "bot_specific_use": (
+                    f"{name} applies this in {division} by using {', '.join(lanes[:4])} "
+                    "to produce a measurable client or owner benefit."
+                ),
+                "safe_outputs": ["play brief", "sample deliverable", "sandbox evidence", "approval packet"],
+            }
+        )
+    return {
+        "status": "proven_ways_library_ready",
+        "library_goal": "Give the bot repeatable ways to help the owner and clients be more productive or make/save/protect money.",
+        "productivity_plays": plays,
+        "money_methods": method_queue,
+        "lesson_memory_schema": [
+            "method_id",
+            "problem",
+            "source_evidence",
+            "offer",
+            "sandbox_result",
+            "projected_value_usd",
+            "actual_revenue_usd",
+            "why_it_worked_or_failed",
+            "next_method_to_try",
+            "approval_status",
+        ],
+        "keep_or_rotate_rules": [
+            "Keep a method when sandbox proof is strong and approval risk is acceptable.",
+            "Retry a method with a new audience, price, route, or proof when evidence is mixed.",
+            "Cool down a method when it lacks demand evidence, fails sandbox tests, or requires risky approvals.",
+            "Never mark a method as making money until payment confirmation exists.",
+        ],
+    }
+
+
 def build_practice() -> dict[str, Any]:
     connection = read_json(CONNECTION_REPORT, {})
     owner = read_json(OWNER_SETTINGS_REPORT, {})
@@ -389,6 +627,9 @@ def build_practice() -> dict[str, Any]:
 
     for bot in bots:
         lanes = infer_primary_lanes(bot)
+        method_queue = choose_method_queue(bot, lanes)
+        routes_and_apis = build_bot_routes_and_apis(bot, lanes)
+        productivity_money_library = build_productivity_money_library(bot, lanes, method_queue)
         for lane in lanes:
             lane_counter[lane] += 1
         division = str(bot.get("division") or "Unassigned")
@@ -407,6 +648,26 @@ def build_practice() -> dict[str, Any]:
                 "today_revenue_sprint_target_usd": TODAY_REVENUE_SPRINT_TARGET_USD,
                 "today_revenue_sprint": build_today_revenue_sprint(bot, lanes),
                 "marketplace_need_discovery": build_marketplace_need_packet(bot, lanes),
+                "method_rotation": {
+                    "status": "ready_to_try_next_method",
+                    "rotation_rule": "Try a different safe method each cycle until sandbox evidence shows what works; actual money requires payment confirmation.",
+                    "method_queue": method_queue,
+                    "winner_selection": [
+                        "highest buyer urgency",
+                        "fastest sandbox proof",
+                        "lowest approval risk",
+                        "clearest route/API implementation path",
+                        "best projected value with honest assumptions",
+                    ],
+                    "cool_down_triggers": [
+                        "no public demand evidence",
+                        "sandbox test failed",
+                        "too much approval or compliance risk",
+                        "weak productivity or money value",
+                    ],
+                },
+                "bot_specific_routes_and_apis": routes_and_apis,
+                "productivity_money_library": productivity_money_library,
                 "daily_practice_packet": {
                     "research": "Find one client money problem, savings opportunity, or public marketplace need AI can fill.",
                     "offer": "Draft one safe offer or service packet.",
@@ -474,11 +735,19 @@ def build_practice() -> dict[str, Any]:
             "income_guarantee": False,
             "target_requires_validation": True,
             "bots_with_marketplace_need_discovery": len(bot_rows),
+            "bots_with_method_rotation": len(bot_rows),
+            "bots_with_route_api_plans": len(bot_rows),
+            "bots_with_productivity_money_libraries": len(bot_rows),
+            "money_method_families": len(METHOD_ROTATION_FAMILIES),
+            "productivity_playbooks": len(PRODUCTIVITY_PLAYBOOKS),
             "marketplace_source_categories": len(MARKETPLACE_DEMAND_SOURCES),
             "marketplace_approval_gates": len(MARKETPLACE_APPROVAL_GATES),
             "revenue_practice_lanes": len(REVENUE_PRACTICE_LANES),
             "approval_required_actions": len(APPROVAL_REQUIRED),
             "all_bots_practice_autonomous_money": len(bot_rows) == len(bots) and len(bots) >= 1200,
+            "all_bots_have_method_rotation": len(bot_rows) == len(bots) and len(bots) >= 1200,
+            "all_bots_have_route_api_plans": len(bot_rows) == len(bots) and len(bots) >= 1200,
+            "all_bots_have_productivity_money_libraries": len(bot_rows) == len(bots) and len(bots) >= 1200,
             "live_money_actions_blocked_without_approval": True,
         },
         "buddy_example": buddy_example,
@@ -488,6 +757,8 @@ def build_practice() -> dict[str, Any]:
         "marketplace_demand_sources": MARKETPLACE_DEMAND_SOURCES,
         "marketplace_demand_workflow": MARKETPLACE_DEMAND_WORKFLOW,
         "marketplace_approval_gates": MARKETPLACE_APPROVAL_GATES,
+        "method_rotation_families": METHOD_ROTATION_FAMILIES,
+        "productivity_playbooks": PRODUCTIVITY_PLAYBOOKS,
         "revenue_practice_lanes": REVENUE_PRACTICE_LANES,
         "approval_required": APPROVAL_REQUIRED,
         "division_coverage": dict(sorted(division_counter.items())),
@@ -531,10 +802,18 @@ def write_markdown(report: dict[str, Any]) -> None:
         f"- Actual revenue requires payment confirmation: {summary['actual_revenue_requires_payment_confirmation']}",
         f"- Target requires validation: {summary['target_requires_validation']}",
         f"- Bots with marketplace need discovery: {summary['bots_with_marketplace_need_discovery']}",
+        f"- Bots with method rotation: {summary['bots_with_method_rotation']}",
+        f"- Bots with route/API plans: {summary['bots_with_route_api_plans']}",
+        f"- Bots with productivity money libraries: {summary['bots_with_productivity_money_libraries']}",
+        f"- Money method families: {summary['money_method_families']}",
+        f"- Productivity playbooks: {summary['productivity_playbooks']}",
         f"- Marketplace source categories: {summary['marketplace_source_categories']}",
         f"- Revenue practice lanes: {summary['revenue_practice_lanes']}",
         f"- Approval-required actions: {summary['approval_required_actions']}",
         f"- All bots practice autonomous money: {summary['all_bots_practice_autonomous_money']}",
+        f"- All bots have method rotation: {summary['all_bots_have_method_rotation']}",
+        f"- All bots have route/API plans: {summary['all_bots_have_route_api_plans']}",
+        f"- All bots have productivity money libraries: {summary['all_bots_have_productivity_money_libraries']}",
         f"- Live money actions blocked without approval: {summary['live_money_actions_blocked_without_approval']}",
         "",
         "## Buddy Example",
@@ -560,6 +839,12 @@ def write_markdown(report: dict[str, Any]) -> None:
     lines.extend(["", "## Marketplace Demand Sources", ""])
     for source in report["marketplace_demand_sources"]:
         lines.append(f"- **{source['label']}**: {source['safe_research']}")
+    lines.extend(["", "## Method Rotation Families", ""])
+    for method in report["method_rotation_families"]:
+        lines.append(f"- **{method['label']}**: {method['use_when']}")
+    lines.extend(["", "## Productivity Playbooks", ""])
+    for play in report["productivity_playbooks"]:
+        lines.append(f"- **{play['label']}**: {play['play']}")
     lines.extend(
         [
             "",

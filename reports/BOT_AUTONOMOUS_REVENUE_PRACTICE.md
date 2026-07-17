@@ -17,10 +17,18 @@ Every DreamCo bot practices helping clients make autonomous money through sandbo
 - Actual revenue requires payment confirmation: True
 - Target requires validation: True
 - Bots with marketplace need discovery: 1248
+- Bots with method rotation: 1248
+- Bots with route/API plans: 1248
+- Bots with productivity money libraries: 1248
+- Money method families: 12
+- Productivity playbooks: 6
 - Marketplace source categories: 5
 - Revenue practice lanes: 13
 - Approval-required actions: 13
 - All bots practice autonomous money: True
+- All bots have method rotation: True
+- All bots have route/API plans: True
+- All bots have productivity money libraries: True
 - Live money actions blocked without approval: True
 
 ## Buddy Example
@@ -56,6 +64,30 @@ $1,000/day is an aspirational owner-and-user value target, not a promised result
 - **Business Software Markets**: Find repetitive pain points, integration gaps, reviews, and missing workflows without collecting private data.
 - **Public Contract And RFP Sources**: Summarize requirements, deadlines, qualification gaps, and fit scores before any submission.
 - **Community Problem Sources**: Extract anonymized problem themes and product opportunities without contacting people or storing private data.
+
+## Method Rotation Families
+
+- **One-Time Service**: The bot can solve a painful task quickly with a clear deliverable.
+- **Subscription Monitoring**: The bot can watch status, risks, leads, prices, errors, or opportunities repeatedly.
+- **Audit Or Report**: The bot can inspect a business area and produce a decision-ready report.
+- **Automation Setup**: The bot can remove repeated manual work with workflows, APIs, webhooks, or scripts.
+- **Template Or Digital Pack**: The bot can package repeatable knowledge into a rights-cleared downloadable product.
+- **Course Or Training**: The bot can turn knowledge into lessons, quizzes, scripts, and practice labs.
+- **App Or Dashboard**: The bot can make a decision, tracking, comparison, or workflow app.
+- **API Or Webhook Service**: The bot can expose useful capability as a reusable endpoint or event flow.
+- **Contract Or Grant Packet**: The bot can help users find, understand, and prepare approval-ready opportunity packets.
+- **Cost-Savings Workflow**: The bot can reduce waste, errors, downtime, chargebacks, churn, or repeated labor.
+- **Data Or Benchmark Package**: The bot can generate rights-cleared operational data, evals, benchmarks, or comparisons.
+- **Partner Or Referral Offer**: The bot can connect complementary services, suppliers, marketplaces, or clients.
+
+## Productivity Playbooks
+
+- **Save Time**: Automate repeated manual steps, summarize work, and build reusable checklists.
+- **Find Opportunity**: Scan public demand, contracts, grants, app gaps, reviews, and customer pain themes.
+- **Improve Quality**: Run QA rubrics, compare variants, catch missing requirements, and prepare fix queues.
+- **Reduce Cost**: Find duplicated tools, manual labor, failure points, rework, refunds, or avoidable spend.
+- **Increase Sales**: Draft offers, demos, prospectus pages, pricing tests, proposal packets, and follow-up plans.
+- **Build Asset**: Turn knowledge into reusable apps, dashboards, courses, templates, datasets, APIs, or workflows.
 
 ## Revenue Practice Lanes
 

@@ -6,7 +6,7 @@ Use Google AI Studio and Gemini as a governed frontend, workflow, and revenue-ex
 
 - Readiness score: 100
 - Bots with frontend plans: 1248
-- Workflow mutation steps: 10
+- Workflow mutation steps: 14
 - Daily money experiment plans: 1248
 - Approval gates: 9
 
