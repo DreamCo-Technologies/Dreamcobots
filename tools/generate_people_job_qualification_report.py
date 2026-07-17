@@ -31,11 +31,18 @@ def choose_lanes(bot, lanes):
     division = str(bot.get("division") or "").lower()
     category = str(bot.get("category") or "").lower()
     available = {lane["id"] for lane in lanes}
-    selected = ["candidate_resume_match", "employee_role_fit", "sales_people_research"]
+    selected = [
+        "consent_based_people_search",
+        "candidate_resume_match",
+        "employee_role_fit",
+        "sales_people_research",
+    ]
     if "construction" in division or "transport" in division or "health" in division or "legal" in division:
-        selected.extend(["license_certification_checklist", "contractor_vendor_match"])
+        selected.extend(["background_check_intake", "license_certification_checklist", "contractor_vendor_match"])
     elif "sales" in division or "market" in division or "cust" in division:
         selected.extend(["sales_people_research", "contractor_vendor_match"])
+    elif "personal" in division or "family" in category or "education" in division:
+        selected.extend(["genealogy_report", "phone_number_recovery"])
     elif "admin" in division or "biz" in division or "global" in division:
         selected.extend(["relocation_workforce_match", "contractor_vendor_match"])
     elif "lead" in category or "recruit" in category:
@@ -46,7 +53,7 @@ def choose_lanes(bot, lanes):
     for lane in selected:
         if lane in available and lane not in deduped:
             deduped.append(lane)
-    return deduped[:5]
+    return deduped[:7]
 
 
 def build_bot_blueprint(bot, config):
@@ -65,8 +72,9 @@ def build_bot_blueprint(bot, config):
         "approval_gates": config.get("approval_gates", []),
         "blocked_uses": config.get("blocked_uses", []),
         "sample_lookup_prompt": (
-            f"Prepare a privacy-safe people or job-qualification lookup packet for {name}. "
-            "Use only public or owner-approved sources, cite evidence, flag gaps, and require human review."
+            f"Prepare a privacy-safe genealogy, people-search, background-check intake, phone recovery, "
+            f"or job-qualification packet for {name}. Use only public, self-provided, or owner-approved "
+            "sources, cite evidence, flag gaps, and require human review before contact or decisions."
         ),
         "dashboard_status": "ready_for_permissioned_people_lookup",
     }
@@ -91,6 +99,13 @@ def build_report():
         "privacy_metadata_fields": len(config.get("privacy_policy", {}).get("required_metadata", [])),
         "qualification_scoring_factors": len(config.get("qualification_scoring", [])),
         "buddy_bot_roles": len(config.get("buddy_bot_roles", [])),
+        "genealogy_ready": any(lane.get("id") == "genealogy_report" for lane in config.get("qualification_lanes", [])),
+        "background_check_intake_ready": any(
+            lane.get("id") == "background_check_intake" for lane in config.get("qualification_lanes", [])
+        ),
+        "phone_number_recovery_ready": any(
+            lane.get("id") == "phone_number_recovery" for lane in config.get("qualification_lanes", [])
+        ),
         "human_review_required": True,
     }
 
@@ -117,6 +132,9 @@ def build_report():
         "dashboard_sample": blueprints[:12],
         "next_actions": [
             "Connect only approved public-source and self-provided profile inputs.",
+            "Route genealogy reports through source citations and confidence notes.",
+            "Keep background checks as intake packets until a compliant provider and permissible purpose are configured.",
+            "Limit old phone-number work to owner-authorized recovery checklists; do not expose private subscriber records.",
             "Create human-review packets for hiring, recruiting, client, contractor, and vendor decisions.",
             "Keep background checks, contact, hiring/rejection, data export, and automated recruiting blocked until approval.",
         ],
@@ -137,6 +155,9 @@ def write_markdown(report):
         f"- Approval gates declared: {summary['approval_gates_declared']}",
         f"- Blocked uses declared: {summary['blocked_uses_declared']}",
         f"- Privacy metadata fields: {summary['privacy_metadata_fields']}",
+        f"- Genealogy reports ready: {summary['genealogy_ready']}",
+        f"- Background-check intake ready: {summary['background_check_intake_ready']}",
+        f"- Phone-number recovery ready: {summary['phone_number_recovery_ready']}",
         f"- Human review required: {summary['human_review_required']}",
         "",
         "## Qualification Lanes",

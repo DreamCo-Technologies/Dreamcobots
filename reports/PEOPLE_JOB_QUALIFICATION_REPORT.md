@@ -1,17 +1,44 @@
 # People Search and Job Qualification Report
 
-Give Buddy a governed people-search and job-qualification lookup system for recruiting, client discovery, contractor matching, partner research, and workforce planning.
+Give Buddy a governed genealogy, people-search, background-check intake, phone-number history, and job-qualification lookup system for recruiting, client discovery, contractor matching, partner research, ancestry reporting, and workforce planning.
 
 ## Summary
 
 - Bot people lookup blueprints: 1248 / 1248
-- Qualification lanes ready: 6
-- Approval gates declared: 12
-- Blocked uses declared: 8
+- Qualification lanes ready: 10
+- Approval gates declared: 16
+- Blocked uses declared: 13
 - Privacy metadata fields: 9
+- Genealogy reports ready: True
+- Background-check intake ready: True
+- Phone-number recovery ready: True
 - Human review required: True
 
 ## Qualification Lanes
+
+### Genealogy Report
+
+Build family-history packets from self-provided documents and public archival sources with source citations, confidence notes, and unknowns clearly marked.
+
+- Outputs: family_tree_outline, ancestor_timeline, source_citations, confidence_notes, research_gaps
+
+### Consent-Based People Search
+
+Prepare a public-source or user-authorized lookup packet for reconnecting, vendor due diligence, partnership research, or contact hygiene without private-data scraping.
+
+- Outputs: identity_match_candidates, public_source_links, confidence_score, permission_basis, human_review_packet
+
+### Background Check Intake
+
+Collect the checklist, consent status, permissible purpose, and provider handoff data needed before any lawful background check can run.
+
+- Outputs: consent_checklist, permissible_purpose_notes, provider_handoff_packet, blocked_until_compliant_provider
+
+### Phone Number Recovery
+
+Help a user document old numbers, account ownership, carrier contacts, and lawful reuse steps without accessing private subscriber data or tracking people.
+
+- Outputs: old_number_timeline, carrier_contact_plan, account_ownership_checklist, reuse_feasibility_notes, privacy_risk_notes
 
 ### Candidate Resume Match
 
@@ -54,6 +81,11 @@ Research local talent pools, workforce availability, training programs, and hiri
 - automated_hiring_or_rejection
 - protected_class_scoring
 - background_screening_without_compliant_provider
+- people_search_without_permission_basis
+- phone_number_tracking_or_live_location_lookup
+- carrier_record_access_without_account_owner_authorization
+- genealogy_outreach_without_review
+- using_public_records_to_harass_or_pressure_people
 - credit_or_insurance_decisions
 - health_or_disability_inference
 - minor_profiling

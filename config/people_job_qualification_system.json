@@ -1,7 +1,7 @@
 {
   "schema": "dreamco.people_job_qualification_system.v1",
   "updated_at": "2026-07-15T00:00:00Z",
-  "mission": "Give Buddy a governed people-search and job-qualification lookup system for recruiting, client discovery, contractor matching, partner research, and workforce planning.",
+  "mission": "Give Buddy a governed genealogy, people-search, background-check intake, phone-number history, and job-qualification lookup system for recruiting, client discovery, contractor matching, partner research, ancestry reporting, and workforce planning.",
   "default_mode": "public_or_owner_approved_research_only",
   "privacy_policy": {
     "allowed_sources": [
@@ -12,7 +12,13 @@
       "public portfolio pages",
       "public license or certification registries when allowed",
       "public job descriptions",
-      "client-approved application materials"
+      "client-approved application materials",
+      "self-provided genealogy records",
+      "public archival records",
+      "public cemetery and obituary records",
+      "public court records when legally accessible",
+      "public business registration records",
+      "public phone-carrier availability tools that do not expose private subscriber data"
     ],
     "blocked_sources": [
       "private accounts without approval",
@@ -25,6 +31,11 @@
       "medical or genetic information",
       "minor data",
       "contacting people without approval"
+      ,
+      "private phone subscriber data",
+      "carrier account records without account-owner authorization",
+      "tracking a person's live location",
+      "consumer reports without a compliant FCRA provider and permissible purpose"
     ],
     "required_metadata": [
       "source",
@@ -39,6 +50,30 @@
     ]
   },
   "qualification_lanes": [
+    {
+      "id": "genealogy_report",
+      "label": "Genealogy Report",
+      "purpose": "Build family-history packets from self-provided documents and public archival sources with source citations, confidence notes, and unknowns clearly marked.",
+      "outputs": ["family_tree_outline", "ancestor_timeline", "source_citations", "confidence_notes", "research_gaps"]
+    },
+    {
+      "id": "consent_based_people_search",
+      "label": "Consent-Based People Search",
+      "purpose": "Prepare a public-source or user-authorized lookup packet for reconnecting, vendor due diligence, partnership research, or contact hygiene without private-data scraping.",
+      "outputs": ["identity_match_candidates", "public_source_links", "confidence_score", "permission_basis", "human_review_packet"]
+    },
+    {
+      "id": "background_check_intake",
+      "label": "Background Check Intake",
+      "purpose": "Collect the checklist, consent status, permissible purpose, and provider handoff data needed before any lawful background check can run.",
+      "outputs": ["consent_checklist", "permissible_purpose_notes", "provider_handoff_packet", "blocked_until_compliant_provider"]
+    },
+    {
+      "id": "phone_number_recovery",
+      "label": "Phone Number Recovery",
+      "purpose": "Help a user document old numbers, account ownership, carrier contacts, and lawful reuse steps without accessing private subscriber data or tracking people.",
+      "outputs": ["old_number_timeline", "carrier_contact_plan", "account_ownership_checklist", "reuse_feasibility_notes", "privacy_risk_notes"]
+    },
     {
       "id": "candidate_resume_match",
       "label": "Candidate Resume Match",
@@ -84,6 +119,10 @@
     "make_hiring_decision",
     "reject_candidate",
     "run_background_check",
+    "request_consumer_report",
+    "reuse_old_phone_number",
+    "search_court_records",
+    "prepare_genealogy_contact_outreach",
     "verify_license_with_paid_provider",
     "share_candidate_with_client",
     "use_client_crm_data",
@@ -94,6 +133,11 @@
     "automated_hiring_or_rejection",
     "protected_class_scoring",
     "background_screening_without_compliant_provider",
+    "people_search_without_permission_basis",
+    "phone_number_tracking_or_live_location_lookup",
+    "carrier_record_access_without_account_owner_authorization",
+    "genealogy_outreach_without_review",
+    "using_public_records_to_harass_or_pressure_people",
     "credit_or_insurance_decisions",
     "health_or_disability_inference",
     "minor_profiling",
@@ -117,6 +161,10 @@
     "interview_question_builder",
     "license_checklist_builder",
     "privacy_guard",
+    "genealogy_researcher",
+    "public_records_source_checker",
+    "background_check_intake_guard",
+    "phone_recovery_workflow_builder",
     "human_review_packet_builder"
   ],
   "success_metrics": [

@@ -1,9 +1,14 @@
-# People Search and Job Qualification System
+# Genealogy, People Search, and Job Qualification System
 
-Buddy can support people search and job qualification lookup when the work is privacy-safe, source-backed, and reviewed by a human.
+Buddy can support genealogy reports, consent-based people search, background-check intake, phone-number recovery planning, and job qualification lookup when the work is privacy-safe, source-backed, permissioned, and reviewed by a human.
 
 ## What Buddy Can Prepare
 
+- Genealogy reports from self-provided records and public archives.
+- Family-history timelines with source citations and confidence notes.
+- Consent-based people-search packets from public or owner-approved sources.
+- Background-check intake packets for a compliant provider handoff.
+- Old phone-number recovery checklists for numbers the user owned or is authorized to manage.
 - Resume-to-job matching from self-provided materials.
 - Contractor, vendor, partner, and stakeholder research from public or owner-approved sources.
 - Skills, experience, portfolio, license, and certification checklists.
@@ -17,6 +22,10 @@ Buddy can support people search and job qualification lookup when the work is pr
 - Contact people.
 - Send outreach.
 - Run background checks.
+- Request consumer reports.
+- Reuse old phone numbers.
+- Search court records.
+- Contact relatives or genealogy leads.
 - Share candidate data with clients.
 - Export people datasets.
 - Automate recruiting workflows.
@@ -24,7 +33,9 @@ Buddy can support people search and job qualification lookup when the work is pr
 
 ## Blocked Uses
 
-Buddy must not score protected classes, infer sensitive traits, perform credit or insurance decisions, profile minors, enable harassment, or run mass unsolicited outreach.
+Buddy must not score protected classes, infer sensitive traits, perform credit or insurance decisions, profile minors, enable harassment, expose private subscriber data, track live location, bypass a carrier account process, or run mass unsolicited outreach.
+
+Background checks are intake-only until a compliant provider, permissible purpose, consent record, and owner approval are configured. Phone-number work is recovery planning only; Buddy cannot track a person, reveal private carrier records, or take a number without lawful authorization.
 
 ## Commands
 

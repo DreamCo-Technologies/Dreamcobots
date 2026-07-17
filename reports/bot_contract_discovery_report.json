@@ -2,7 +2,9 @@
   "approval_gates": [
     "submit_bid",
     "submit_grant_application",
+    "submit_loan_application",
     "register_vendor_account",
+    "register_supplier_diversity_account",
     "contact_buyer",
     "contact_supplier",
     "contact_carrier",
@@ -11,7 +13,11 @@
     "spend_money",
     "share_client_data",
     "make_price_commitment",
-    "make_legal_tax_or_certification_claim"
+    "make_legal_tax_or_certification_claim",
+    "upload_certification_documents",
+    "share_financial_statements",
+    "share_tax_documents",
+    "share_client_case_studies"
   ],
   "blocked_without_review": [
     "binding_offer",
@@ -20,14 +26,21 @@
     "licensed_professional_claim_without_license",
     "guaranteed_delivery_claim_without_capacity",
     "using_scraped_private_data",
-    "automated_spam_outreach"
+    "automated_spam_outreach",
+    "loan_application_without_owner_review",
+    "grant_application_without_eligibility_proof",
+    "bid_submission_without_capacity_check",
+    "using_fake_certifications_or_past_performance",
+    "misrepresenting insurance_bonding_or_license_status"
   ],
   "dashboard_sample": [
     {
       "approval_gates": [
         "submit_bid",
         "submit_grant_application",
+        "submit_loan_application",
         "register_vendor_account",
+        "register_supplier_diversity_account",
         "contact_buyer",
         "contact_supplier",
         "contact_carrier",
@@ -36,13 +49,21 @@
         "spend_money",
         "share_client_data",
         "make_price_commitment",
-        "make_legal_tax_or_certification_claim"
+        "make_legal_tax_or_certification_claim",
+        "upload_certification_documents",
+        "share_financial_statements",
+        "share_tax_documents",
+        "share_client_case_studies"
       ],
       "category": "dreamco-system",
       "contract_roles": [
         "contract_scout",
         "eligibility_reader",
         "requirements_mapper",
+        "source_citation_checker",
+        "grant_eligibility_builder",
+        "loan_readiness_builder",
+        "procurement_category_mapper",
         "pricing_prepper",
         "proposal_drafter",
         "compliance_checker",
@@ -61,9 +82,18 @@
         "estimated_value",
         "requirements",
         "eligibility",
+        "source_url",
+        "source_category",
+        "required_certifications",
+        "bonding_or_insurance_needed",
+        "required_documents",
+        "submission_method",
+        "competition_notes",
+        "cash_flow_notes",
         "fit_score",
         "risk_score",
         "approval_needed",
+        "approval_gate",
         "next_step"
       ],
       "name": "211 Resource Eligibility Bot",
@@ -71,11 +101,13 @@
         "client_service_opportunity",
         "private_rfp",
         "partnership_opportunity",
-        "government_contract",
-        "vendor_registration",
+        "small_business_loan",
+        "working_capital_loan",
+        "line_of_credit",
+        "financial_services_contract",
         "grant"
       ],
-      "sample_search_prompt": "Search public and owner-approved sources for 211 Resource Eligibility Bot contract opportunities in DreamFinance. Score fit, risk, deadline, requirements, proof needed, and next approval step.",
+      "sample_search_prompt": "Search public and owner-approved sources for 211 Resource Eligibility Bot contract, grant, loan, procurement, partnership, supplier, and app/service opportunities in DreamFinance. Score fit, risk, deadline, requirements, proof needed, cash-flow notes, and next approval step.",
       "search_cadence": {
         "client_opportunity_digest": "weekly",
         "deep_match_review": "weekly",
@@ -88,7 +120,9 @@
       "approval_gates": [
         "submit_bid",
         "submit_grant_application",
+        "submit_loan_application",
         "register_vendor_account",
+        "register_supplier_diversity_account",
         "contact_buyer",
         "contact_supplier",
         "contact_carrier",
@@ -97,13 +131,21 @@
         "spend_money",
         "share_client_data",
         "make_price_commitment",
-        "make_legal_tax_or_certification_claim"
+        "make_legal_tax_or_certification_claim",
+        "upload_certification_documents",
+        "share_financial_statements",
+        "share_tax_documents",
+        "share_client_case_studies"
       ],
       "category": "3d-design",
       "contract_roles": [
         "contract_scout",
         "eligibility_reader",
         "requirements_mapper",
+        "source_citation_checker",
+        "grant_eligibility_builder",
+        "loan_readiness_builder",
+        "procurement_category_mapper",
         "pricing_prepper",
         "proposal_drafter",
         "compliance_checker",
@@ -122,9 +164,18 @@
         "estimated_value",
         "requirements",
         "eligibility",
+        "source_url",
+        "source_category",
+        "required_certifications",
+        "bonding_or_insurance_needed",
+        "required_documents",
+        "submission_method",
+        "competition_notes",
+        "cash_flow_notes",
         "fit_score",
         "risk_score",
         "approval_needed",
+        "approval_gate",
         "next_step"
       ],
       "name": "3D Asset Manager",
@@ -133,10 +184,14 @@
         "private_rfp",
         "partnership_opportunity",
         "government_contract",
+        "state_contract",
+        "local_procurement",
         "vendor_registration",
-        "grant"
+        "grant",
+        "small_business_grant",
+        "small_business_loan"
       ],
-      "sample_search_prompt": "Search public and owner-approved sources for 3D Asset Manager contract opportunities in DreamArts. Score fit, risk, deadline, requirements, proof needed, and next approval step.",
+      "sample_search_prompt": "Search public and owner-approved sources for 3D Asset Manager contract, grant, loan, procurement, partnership, supplier, and app/service opportunities in DreamArts. Score fit, risk, deadline, requirements, proof needed, cash-flow notes, and next approval step.",
       "search_cadence": {
         "client_opportunity_digest": "weekly",
         "deep_match_review": "weekly",
@@ -149,7 +204,9 @@
       "approval_gates": [
         "submit_bid",
         "submit_grant_application",
+        "submit_loan_application",
         "register_vendor_account",
+        "register_supplier_diversity_account",
         "contact_buyer",
         "contact_supplier",
         "contact_carrier",
@@ -158,13 +215,21 @@
         "spend_money",
         "share_client_data",
         "make_price_commitment",
-        "make_legal_tax_or_certification_claim"
+        "make_legal_tax_or_certification_claim",
+        "upload_certification_documents",
+        "share_financial_statements",
+        "share_tax_documents",
+        "share_client_case_studies"
       ],
       "category": "workplace-org",
       "contract_roles": [
         "contract_scout",
         "eligibility_reader",
         "requirements_mapper",
+        "source_citation_checker",
+        "grant_eligibility_builder",
+        "loan_readiness_builder",
+        "procurement_category_mapper",
         "pricing_prepper",
         "proposal_drafter",
         "compliance_checker",
@@ -183,9 +248,18 @@
         "estimated_value",
         "requirements",
         "eligibility",
+        "source_url",
+        "source_category",
+        "required_certifications",
+        "bonding_or_insurance_needed",
+        "required_documents",
+        "submission_method",
+        "competition_notes",
+        "cash_flow_notes",
         "fit_score",
         "risk_score",
         "approval_needed",
+        "approval_gate",
         "next_step"
       ],
       "name": "5S Workplace Audit Tool",
@@ -194,10 +268,14 @@
         "private_rfp",
         "partnership_opportunity",
         "government_contract",
+        "state_contract",
+        "local_procurement",
         "vendor_registration",
-        "grant"
+        "grant",
+        "small_business_grant",
+        "small_business_loan"
       ],
-      "sample_search_prompt": "Search public and owner-approved sources for 5S Workplace Audit Tool contract opportunities in DreamProduction. Score fit, risk, deadline, requirements, proof needed, and next approval step.",
+      "sample_search_prompt": "Search public and owner-approved sources for 5S Workplace Audit Tool contract, grant, loan, procurement, partnership, supplier, and app/service opportunities in DreamProduction. Score fit, risk, deadline, requirements, proof needed, cash-flow notes, and next approval step.",
       "search_cadence": {
         "client_opportunity_digest": "weekly",
         "deep_match_review": "weekly",
@@ -210,7 +288,9 @@
       "approval_gates": [
         "submit_bid",
         "submit_grant_application",
+        "submit_loan_application",
         "register_vendor_account",
+        "register_supplier_diversity_account",
         "contact_buyer",
         "contact_supplier",
         "contact_carrier",
@@ -219,13 +299,21 @@
         "spend_money",
         "share_client_data",
         "make_price_commitment",
-        "make_legal_tax_or_certification_claim"
+        "make_legal_tax_or_certification_claim",
+        "upload_certification_documents",
+        "share_financial_statements",
+        "share_tax_documents",
+        "share_client_case_studies"
       ],
       "category": "dreamco-system",
       "contract_roles": [
         "contract_scout",
         "eligibility_reader",
         "requirements_mapper",
+        "source_citation_checker",
+        "grant_eligibility_builder",
+        "loan_readiness_builder",
+        "procurement_category_mapper",
         "pricing_prepper",
         "proposal_drafter",
         "compliance_checker",
@@ -244,9 +332,18 @@
         "estimated_value",
         "requirements",
         "eligibility",
+        "source_url",
+        "source_category",
+        "required_certifications",
+        "bonding_or_insurance_needed",
+        "required_documents",
+        "submission_method",
+        "competition_notes",
+        "cash_flow_notes",
         "fit_score",
         "risk_score",
         "approval_needed",
+        "approval_gate",
         "next_step"
       ],
       "name": "Apibot",
@@ -254,11 +351,15 @@
         "client_service_opportunity",
         "private_rfp",
         "partnership_opportunity",
+        "software_development_contract",
+        "data_services_contract",
+        "cloud_services_contract",
+        "cybersecurity_contract",
         "enterprise_software_contract",
         "app_store_service_opportunity",
-        "government_contract"
+        "federal_contract"
       ],
-      "sample_search_prompt": "Search public and owner-approved sources for Apibot contract opportunities in DreamCodeLab. Score fit, risk, deadline, requirements, proof needed, and next approval step.",
+      "sample_search_prompt": "Search public and owner-approved sources for Apibot contract, grant, loan, procurement, partnership, supplier, and app/service opportunities in DreamCodeLab. Score fit, risk, deadline, requirements, proof needed, cash-flow notes, and next approval step.",
       "search_cadence": {
         "client_opportunity_digest": "weekly",
         "deep_match_review": "weekly",
@@ -271,7 +372,9 @@
       "approval_gates": [
         "submit_bid",
         "submit_grant_application",
+        "submit_loan_application",
         "register_vendor_account",
+        "register_supplier_diversity_account",
         "contact_buyer",
         "contact_supplier",
         "contact_carrier",
@@ -280,13 +383,21 @@
         "spend_money",
         "share_client_data",
         "make_price_commitment",
-        "make_legal_tax_or_certification_claim"
+        "make_legal_tax_or_certification_claim",
+        "upload_certification_documents",
+        "share_financial_statements",
+        "share_tax_documents",
+        "share_client_case_studies"
       ],
       "category": "sales",
       "contract_roles": [
         "contract_scout",
         "eligibility_reader",
         "requirements_mapper",
+        "source_citation_checker",
+        "grant_eligibility_builder",
+        "loan_readiness_builder",
+        "procurement_category_mapper",
         "pricing_prepper",
         "proposal_drafter",
         "compliance_checker",
@@ -305,9 +416,18 @@
         "estimated_value",
         "requirements",
         "eligibility",
+        "source_url",
+        "source_category",
+        "required_certifications",
+        "bonding_or_insurance_needed",
+        "required_documents",
+        "submission_method",
+        "competition_notes",
+        "cash_flow_notes",
         "fit_score",
         "risk_score",
         "approval_needed",
+        "approval_gate",
         "next_step"
       ],
       "name": "CloserBot",
@@ -315,10 +435,13 @@
         "client_service_opportunity",
         "private_rfp",
         "partnership_opportunity",
+        "marketing_contract",
+        "creative_services_contract",
         "vendor_registration",
-        "enterprise_software_contract"
+        "affiliate_partnership",
+        "reseller_partnership"
       ],
-      "sample_search_prompt": "Search public and owner-approved sources for CloserBot contract opportunities in DreamSalesPro. Score fit, risk, deadline, requirements, proof needed, and next approval step.",
+      "sample_search_prompt": "Search public and owner-approved sources for CloserBot contract, grant, loan, procurement, partnership, supplier, and app/service opportunities in DreamSalesPro. Score fit, risk, deadline, requirements, proof needed, cash-flow notes, and next approval step.",
       "search_cadence": {
         "client_opportunity_digest": "weekly",
         "deep_match_review": "weekly",
@@ -331,7 +454,9 @@
       "approval_gates": [
         "submit_bid",
         "submit_grant_application",
+        "submit_loan_application",
         "register_vendor_account",
+        "register_supplier_diversity_account",
         "contact_buyer",
         "contact_supplier",
         "contact_carrier",
@@ -340,13 +465,21 @@
         "spend_money",
         "share_client_data",
         "make_price_commitment",
-        "make_legal_tax_or_certification_claim"
+        "make_legal_tax_or_certification_claim",
+        "upload_certification_documents",
+        "share_financial_statements",
+        "share_tax_documents",
+        "share_client_case_studies"
       ],
       "category": "lead_gen",
       "contract_roles": [
         "contract_scout",
         "eligibility_reader",
         "requirements_mapper",
+        "source_citation_checker",
+        "grant_eligibility_builder",
+        "loan_readiness_builder",
+        "procurement_category_mapper",
         "pricing_prepper",
         "proposal_drafter",
         "compliance_checker",
@@ -365,9 +498,18 @@
         "estimated_value",
         "requirements",
         "eligibility",
+        "source_url",
+        "source_category",
+        "required_certifications",
+        "bonding_or_insurance_needed",
+        "required_documents",
+        "submission_method",
+        "competition_notes",
+        "cash_flow_notes",
         "fit_score",
         "risk_score",
         "approval_needed",
+        "approval_gate",
         "next_step"
       ],
       "name": "EnrichmentBot",
@@ -375,10 +517,13 @@
         "client_service_opportunity",
         "private_rfp",
         "partnership_opportunity",
+        "marketing_contract",
+        "creative_services_contract",
         "vendor_registration",
-        "enterprise_software_contract"
+        "affiliate_partnership",
+        "reseller_partnership"
       ],
-      "sample_search_prompt": "Search public and owner-approved sources for EnrichmentBot contract opportunities in DreamSalesPro. Score fit, risk, deadline, requirements, proof needed, and next approval step.",
+      "sample_search_prompt": "Search public and owner-approved sources for EnrichmentBot contract, grant, loan, procurement, partnership, supplier, and app/service opportunities in DreamSalesPro. Score fit, risk, deadline, requirements, proof needed, cash-flow notes, and next approval step.",
       "search_cadence": {
         "client_opportunity_digest": "weekly",
         "deep_match_review": "weekly",
@@ -391,7 +536,9 @@
       "approval_gates": [
         "submit_bid",
         "submit_grant_application",
+        "submit_loan_application",
         "register_vendor_account",
+        "register_supplier_diversity_account",
         "contact_buyer",
         "contact_supplier",
         "contact_carrier",
@@ -400,13 +547,21 @@
         "spend_money",
         "share_client_data",
         "make_price_commitment",
-        "make_legal_tax_or_certification_claim"
+        "make_legal_tax_or_certification_claim",
+        "upload_certification_documents",
+        "share_financial_statements",
+        "share_tax_documents",
+        "share_client_case_studies"
       ],
       "category": "marketing",
       "contract_roles": [
         "contract_scout",
         "eligibility_reader",
         "requirements_mapper",
+        "source_citation_checker",
+        "grant_eligibility_builder",
+        "loan_readiness_builder",
+        "procurement_category_mapper",
         "pricing_prepper",
         "proposal_drafter",
         "compliance_checker",
@@ -425,9 +580,18 @@
         "estimated_value",
         "requirements",
         "eligibility",
+        "source_url",
+        "source_category",
+        "required_certifications",
+        "bonding_or_insurance_needed",
+        "required_documents",
+        "submission_method",
+        "competition_notes",
+        "cash_flow_notes",
         "fit_score",
         "risk_score",
         "approval_needed",
+        "approval_gate",
         "next_step"
       ],
       "name": "FollowUpBot",
@@ -435,11 +599,13 @@
         "client_service_opportunity",
         "private_rfp",
         "partnership_opportunity",
-        "government_contract",
-        "vendor_registration",
+        "small_business_loan",
+        "working_capital_loan",
+        "line_of_credit",
+        "financial_services_contract",
         "grant"
       ],
-      "sample_search_prompt": "Search public and owner-approved sources for FollowUpBot contract opportunities in DreamFinance. Score fit, risk, deadline, requirements, proof needed, and next approval step.",
+      "sample_search_prompt": "Search public and owner-approved sources for FollowUpBot contract, grant, loan, procurement, partnership, supplier, and app/service opportunities in DreamFinance. Score fit, risk, deadline, requirements, proof needed, cash-flow notes, and next approval step.",
       "search_cadence": {
         "client_opportunity_digest": "weekly",
         "deep_match_review": "weekly",
@@ -452,7 +618,9 @@
       "approval_gates": [
         "submit_bid",
         "submit_grant_application",
+        "submit_loan_application",
         "register_vendor_account",
+        "register_supplier_diversity_account",
         "contact_buyer",
         "contact_supplier",
         "contact_carrier",
@@ -461,13 +629,21 @@
         "spend_money",
         "share_client_data",
         "make_price_commitment",
-        "make_legal_tax_or_certification_claim"
+        "make_legal_tax_or_certification_claim",
+        "upload_certification_documents",
+        "share_financial_statements",
+        "share_tax_documents",
+        "share_client_case_studies"
       ],
       "category": "lead_gen",
       "contract_roles": [
         "contract_scout",
         "eligibility_reader",
         "requirements_mapper",
+        "source_citation_checker",
+        "grant_eligibility_builder",
+        "loan_readiness_builder",
+        "procurement_category_mapper",
         "pricing_prepper",
         "proposal_drafter",
         "compliance_checker",
@@ -486,9 +662,18 @@
         "estimated_value",
         "requirements",
         "eligibility",
+        "source_url",
+        "source_category",
+        "required_certifications",
+        "bonding_or_insurance_needed",
+        "required_documents",
+        "submission_method",
+        "competition_notes",
+        "cash_flow_notes",
         "fit_score",
         "risk_score",
         "approval_needed",
+        "approval_gate",
         "next_step"
       ],
       "name": "LeadGenBot",
@@ -496,11 +681,13 @@
         "client_service_opportunity",
         "private_rfp",
         "partnership_opportunity",
-        "government_contract",
-        "vendor_registration",
+        "small_business_loan",
+        "working_capital_loan",
+        "line_of_credit",
+        "financial_services_contract",
         "grant"
       ],
-      "sample_search_prompt": "Search public and owner-approved sources for LeadGenBot contract opportunities in DreamFinance. Score fit, risk, deadline, requirements, proof needed, and next approval step.",
+      "sample_search_prompt": "Search public and owner-approved sources for LeadGenBot contract, grant, loan, procurement, partnership, supplier, and app/service opportunities in DreamFinance. Score fit, risk, deadline, requirements, proof needed, cash-flow notes, and next approval step.",
       "search_cadence": {
         "client_opportunity_digest": "weekly",
         "deep_match_review": "weekly",
@@ -513,7 +700,9 @@
       "approval_gates": [
         "submit_bid",
         "submit_grant_application",
+        "submit_loan_application",
         "register_vendor_account",
+        "register_supplier_diversity_account",
         "contact_buyer",
         "contact_supplier",
         "contact_carrier",
@@ -522,13 +711,21 @@
         "spend_money",
         "share_client_data",
         "make_price_commitment",
-        "make_legal_tax_or_certification_claim"
+        "make_legal_tax_or_certification_claim",
+        "upload_certification_documents",
+        "share_financial_statements",
+        "share_tax_documents",
+        "share_client_case_studies"
       ],
       "category": "marketing",
       "contract_roles": [
         "contract_scout",
         "eligibility_reader",
         "requirements_mapper",
+        "source_citation_checker",
+        "grant_eligibility_builder",
+        "loan_readiness_builder",
+        "procurement_category_mapper",
         "pricing_prepper",
         "proposal_drafter",
         "compliance_checker",
@@ -547,9 +744,18 @@
         "estimated_value",
         "requirements",
         "eligibility",
+        "source_url",
+        "source_category",
+        "required_certifications",
+        "bonding_or_insurance_needed",
+        "required_documents",
+        "submission_method",
+        "competition_notes",
+        "cash_flow_notes",
         "fit_score",
         "risk_score",
         "approval_needed",
+        "approval_gate",
         "next_step"
       ],
       "name": "OutreachBot",
@@ -557,10 +763,13 @@
         "client_service_opportunity",
         "private_rfp",
         "partnership_opportunity",
+        "marketing_contract",
+        "creative_services_contract",
         "vendor_registration",
-        "enterprise_software_contract"
+        "affiliate_partnership",
+        "reseller_partnership"
       ],
-      "sample_search_prompt": "Search public and owner-approved sources for OutreachBot contract opportunities in DreamSalesPro. Score fit, risk, deadline, requirements, proof needed, and next approval step.",
+      "sample_search_prompt": "Search public and owner-approved sources for OutreachBot contract, grant, loan, procurement, partnership, supplier, and app/service opportunities in DreamSalesPro. Score fit, risk, deadline, requirements, proof needed, cash-flow notes, and next approval step.",
       "search_cadence": {
         "client_opportunity_digest": "weekly",
         "deep_match_review": "weekly",
@@ -573,7 +782,9 @@
       "approval_gates": [
         "submit_bid",
         "submit_grant_application",
+        "submit_loan_application",
         "register_vendor_account",
+        "register_supplier_diversity_account",
         "contact_buyer",
         "contact_supplier",
         "contact_carrier",
@@ -582,13 +793,21 @@
         "spend_money",
         "share_client_data",
         "make_price_commitment",
-        "make_legal_tax_or_certification_claim"
+        "make_legal_tax_or_certification_claim",
+        "upload_certification_documents",
+        "share_financial_statements",
+        "share_tax_documents",
+        "share_client_case_studies"
       ],
       "category": "dreamco-system",
       "contract_roles": [
         "contract_scout",
         "eligibility_reader",
         "requirements_mapper",
+        "source_citation_checker",
+        "grant_eligibility_builder",
+        "loan_readiness_builder",
+        "procurement_category_mapper",
         "pricing_prepper",
         "proposal_drafter",
         "compliance_checker",
@@ -607,9 +826,18 @@
         "estimated_value",
         "requirements",
         "eligibility",
+        "source_url",
+        "source_category",
+        "required_certifications",
+        "bonding_or_insurance_needed",
+        "required_documents",
+        "submission_method",
+        "competition_notes",
+        "cash_flow_notes",
         "fit_score",
         "risk_score",
         "approval_needed",
+        "approval_gate",
         "next_step"
       ],
       "name": "Webhooksbot",
@@ -617,11 +845,15 @@
         "client_service_opportunity",
         "private_rfp",
         "partnership_opportunity",
+        "software_development_contract",
+        "data_services_contract",
+        "cloud_services_contract",
+        "cybersecurity_contract",
         "enterprise_software_contract",
         "app_store_service_opportunity",
-        "government_contract"
+        "federal_contract"
       ],
-      "sample_search_prompt": "Search public and owner-approved sources for Webhooksbot contract opportunities in DreamCodeLab. Score fit, risk, deadline, requirements, proof needed, and next approval step.",
+      "sample_search_prompt": "Search public and owner-approved sources for Webhooksbot contract, grant, loan, procurement, partnership, supplier, and app/service opportunities in DreamCodeLab. Score fit, risk, deadline, requirements, proof needed, cash-flow notes, and next approval step.",
       "search_cadence": {
         "client_opportunity_digest": "weekly",
         "deep_match_review": "weekly",
@@ -634,7 +866,9 @@
       "approval_gates": [
         "submit_bid",
         "submit_grant_application",
+        "submit_loan_application",
         "register_vendor_account",
+        "register_supplier_diversity_account",
         "contact_buyer",
         "contact_supplier",
         "contact_carrier",
@@ -643,13 +877,21 @@
         "spend_money",
         "share_client_data",
         "make_price_commitment",
-        "make_legal_tax_or_certification_claim"
+        "make_legal_tax_or_certification_claim",
+        "upload_certification_documents",
+        "share_financial_statements",
+        "share_tax_documents",
+        "share_client_case_studies"
       ],
       "category": "app",
       "contract_roles": [
         "contract_scout",
         "eligibility_reader",
         "requirements_mapper",
+        "source_citation_checker",
+        "grant_eligibility_builder",
+        "loan_readiness_builder",
+        "procurement_category_mapper",
         "pricing_prepper",
         "proposal_drafter",
         "compliance_checker",
@@ -668,9 +910,18 @@
         "estimated_value",
         "requirements",
         "eligibility",
+        "source_url",
+        "source_category",
+        "required_certifications",
+        "bonding_or_insurance_needed",
+        "required_documents",
+        "submission_method",
+        "competition_notes",
+        "cash_flow_notes",
         "fit_score",
         "risk_score",
         "approval_needed",
+        "approval_gate",
         "next_step"
       ],
       "name": "A/B Testing Bot",
@@ -678,11 +929,15 @@
         "client_service_opportunity",
         "private_rfp",
         "partnership_opportunity",
+        "software_development_contract",
+        "data_services_contract",
+        "cloud_services_contract",
+        "cybersecurity_contract",
         "enterprise_software_contract",
         "app_store_service_opportunity",
-        "government_contract"
+        "federal_contract"
       ],
-      "sample_search_prompt": "Search public and owner-approved sources for A/B Testing Bot contract opportunities in DreamCodeLab. Score fit, risk, deadline, requirements, proof needed, and next approval step.",
+      "sample_search_prompt": "Search public and owner-approved sources for A/B Testing Bot contract, grant, loan, procurement, partnership, supplier, and app/service opportunities in DreamCodeLab. Score fit, risk, deadline, requirements, proof needed, cash-flow notes, and next approval step.",
       "search_cadence": {
         "client_opportunity_digest": "weekly",
         "deep_match_review": "weekly",
@@ -695,7 +950,9 @@
       "approval_gates": [
         "submit_bid",
         "submit_grant_application",
+        "submit_loan_application",
         "register_vendor_account",
+        "register_supplier_diversity_account",
         "contact_buyer",
         "contact_supplier",
         "contact_carrier",
@@ -704,13 +961,21 @@
         "spend_money",
         "share_client_data",
         "make_price_commitment",
-        "make_legal_tax_or_certification_claim"
+        "make_legal_tax_or_certification_claim",
+        "upload_certification_documents",
+        "share_financial_statements",
+        "share_tax_documents",
+        "share_client_case_studies"
       ],
       "category": "accelerator",
       "contract_roles": [
         "contract_scout",
         "eligibility_reader",
         "requirements_mapper",
+        "source_citation_checker",
+        "grant_eligibility_builder",
+        "loan_readiness_builder",
+        "procurement_category_mapper",
         "pricing_prepper",
         "proposal_drafter",
         "compliance_checker",
@@ -729,9 +994,18 @@
         "estimated_value",
         "requirements",
         "eligibility",
+        "source_url",
+        "source_category",
+        "required_certifications",
+        "bonding_or_insurance_needed",
+        "required_documents",
+        "submission_method",
+        "competition_notes",
+        "cash_flow_notes",
         "fit_score",
         "risk_score",
         "approval_needed",
+        "approval_gate",
         "next_step"
       ],
       "name": "Accelerator Application Prep",
@@ -740,10 +1014,14 @@
         "private_rfp",
         "partnership_opportunity",
         "government_contract",
+        "state_contract",
+        "local_procurement",
         "vendor_registration",
-        "grant"
+        "grant",
+        "small_business_grant",
+        "small_business_loan"
       ],
-      "sample_search_prompt": "Search public and owner-approved sources for Accelerator Application Prep contract opportunities in DreamBizLaunch. Score fit, risk, deadline, requirements, proof needed, and next approval step.",
+      "sample_search_prompt": "Search public and owner-approved sources for Accelerator Application Prep contract, grant, loan, procurement, partnership, supplier, and app/service opportunities in DreamBizLaunch. Score fit, risk, deadline, requirements, proof needed, cash-flow notes, and next approval step.",
       "search_cadence": {
         "client_opportunity_digest": "weekly",
         "deep_match_review": "weekly",
@@ -788,25 +1066,91 @@
       "weight": 5
     }
   ],
-  "generated_at": "2026-07-15T21:53:16.907849+00:00",
-  "mission": "Make every DreamCo bot continuously search for contract, grant, RFP, procurement, partnership, supplier, app-store, and service opportunities that match its division and business model.",
+  "generated_at": "2026-07-17T14:30:12.395023+00:00",
+  "mission": "Make every DreamCo bot continuously search for contract, grant, loan, RFP, procurement, partnership, supplier, app-store, and service opportunities that match its division, capability proof, client type, and business model.",
   "next_actions": [
     "Connect public-source search adapters after rate limits and source terms are reviewed.",
+    "Build daily contract, grant, loan, procurement, and private RFP digests for owner review.",
+    "Create construction, logistics, professional services, software, marketing, education, health, and finance bid-readiness templates.",
     "Create a weekly owner approval digest for bid, registration, outreach, and pricing decisions.",
     "Keep all submissions, buyer contact, supplier contact, signatures, and spending blocked until approved."
   ],
   "opportunity_types": [
     "government_contract",
+    "federal_contract",
+    "state_contract",
+    "county_contract",
+    "city_contract",
+    "public_authority_contract",
+    "school_district_contract",
+    "university_contract",
+    "tribal_contract",
+    "nonprofit_contract",
+    "public_private_partnership",
     "local_procurement",
+    "procurement_contract",
+    "construction_contract",
+    "professional_services_contract",
+    "financial_services_contract",
+    "technology_services_contract",
+    "data_services_contract",
+    "maintenance_contract",
+    "facility_services_contract",
+    "security_services_contract",
+    "healthcare_services_contract",
+    "education_services_contract",
+    "transportation_contract",
+    "logistics_contract",
+    "janitorial_contract",
+    "catering_contract",
+    "staffing_contract",
+    "consulting_contract",
+    "research_contract",
+    "creative_services_contract",
+    "marketing_contract",
+    "software_development_contract",
+    "cybersecurity_contract",
+    "cloud_services_contract",
     "private_rfp",
     "grant",
+    "federal_grant",
+    "state_grant",
+    "local_grant",
+    "foundation_grant",
+    "research_grant",
+    "workforce_grant",
+    "small_business_grant",
+    "nonprofit_grant",
+    "innovation_grant",
+    "education_grant",
+    "health_grant",
+    "agriculture_grant",
+    "clean_energy_grant",
+    "disaster_recovery_grant",
+    "loan",
+    "small_business_loan",
+    "microloan",
+    "equipment_financing",
+    "working_capital_loan",
+    "real_estate_loan",
+    "construction_loan",
+    "export_import_financing",
+    "revenue_based_financing",
+    "line_of_credit",
     "vendor_registration",
+    "supplier_diversity_registration",
+    "prime_subcontractor_match",
     "supplier_contract",
     "trucking_route_contract",
+    "freight_broker_opportunity",
+    "warehouse_fulfillment_contract",
     "app_store_service_opportunity",
     "enterprise_software_contract",
     "subcontracting_opportunity",
     "partnership_opportunity",
+    "affiliate_partnership",
+    "reseller_partnership",
+    "licensing_opportunity",
     "client_service_opportunity"
   ],
   "schema": "dreamco.bot_contract_discovery_report.v1",
@@ -828,7 +1172,9 @@
         "federal opportunity portals",
         "state procurement portals",
         "city and county bids",
-        "school district bids"
+        "school district bids",
+        "public authority bids",
+        "university procurement"
       ],
       "id": "public_procurement",
       "label": "Public Procurement"
@@ -856,6 +1202,9 @@
         "application packet draft"
       ],
       "examples": [
+        "federal grants",
+        "state grants",
+        "foundation grants",
         "small business grants",
         "workforce programs",
         "innovation programs",
@@ -863,6 +1212,39 @@
       ],
       "id": "grant_and_program_sources",
       "label": "Grant and Program Sources"
+    },
+    {
+      "allowed_actions": [
+        "search",
+        "eligibility notes",
+        "document checklist",
+        "cost and risk notes"
+      ],
+      "examples": [
+        "small business lenders",
+        "microloan programs",
+        "equipment financing",
+        "working capital programs",
+        "public development finance programs"
+      ],
+      "id": "loan_and_financing_sources",
+      "label": "Loan and Financing Sources"
+    },
+    {
+      "allowed_actions": [
+        "search",
+        "scope extraction",
+        "license checklist",
+        "bid-readiness checklist"
+      ],
+      "examples": [
+        "public works bids",
+        "trade subcontractor boards",
+        "maintenance bid pages",
+        "facility service solicitations"
+      ],
+      "id": "construction_and_facility_sources",
+      "label": "Construction and Facility Sources"
     },
     {
       "allowed_actions": [
@@ -879,20 +1261,40 @@
       ],
       "id": "supplier_and_logistics_sources",
       "label": "Supplier and Logistics Sources"
+    },
+    {
+      "allowed_actions": [
+        "search",
+        "compare",
+        "offer draft",
+        "approval packet"
+      ],
+      "examples": [
+        "freelance marketplaces",
+        "agency directories",
+        "app marketplaces",
+        "partner programs",
+        "affiliate programs"
+      ],
+      "id": "commercial_marketplace_sources",
+      "label": "Commercial Marketplace Sources"
     }
   ],
   "source_config": "config/bot_contract_discovery_system.json",
   "summary": {
     "all_bots_ready_for_contract_search": true,
-    "approval_gates_declared": 12,
-    "blocked_actions_declared": 7,
-    "bot_contract_roles": 8,
+    "approval_gates_declared": 18,
+    "blocked_actions_declared": 12,
+    "bot_contract_roles": 12,
     "bot_count": 1248,
     "bots_with_contract_discovery": 1248,
-    "matching_fields": 13,
-    "opportunity_types_tracked": 12,
+    "grant_types_tracked": 15,
+    "loan_types_tracked": 10,
+    "matching_fields": 22,
+    "opportunity_types_tracked": 76,
+    "procurement_contract_types_tracked": 41,
     "sample_opportunities_ready": 12,
-    "source_categories_tracked": 4
+    "source_categories_tracked": 7
   },
   "top_divisions": [
     {
@@ -958,40 +1360,40 @@
       "opportunity_type": "partnership_opportunity"
     },
     {
-      "bot_count": 1055,
-      "opportunity_type": "government_contract"
-    },
-    {
-      "bot_count": 939,
+      "bot_count": 663,
       "opportunity_type": "vendor_registration"
     },
     {
-      "bot_count": 812,
+      "bot_count": 551,
+      "opportunity_type": "small_business_loan"
+    },
+    {
+      "bot_count": 551,
       "opportunity_type": "grant"
     },
     {
-      "bot_count": 368,
-      "opportunity_type": "enterprise_software_contract"
-    },
-    {
-      "bot_count": 241,
-      "opportunity_type": "app_store_service_opportunity"
-    },
-    {
-      "bot_count": 111,
+      "bot_count": 509,
       "opportunity_type": "local_procurement"
     },
     {
-      "bot_count": 45,
-      "opportunity_type": "subcontracting_opportunity"
+      "bot_count": 422,
+      "opportunity_type": "government_contract"
     },
     {
-      "bot_count": 23,
-      "opportunity_type": "trucking_route_contract"
+      "bot_count": 421,
+      "opportunity_type": "state_contract"
     },
     {
-      "bot_count": 23,
-      "opportunity_type": "supplier_contract"
+      "bot_count": 380,
+      "opportunity_type": "small_business_grant"
+    },
+    {
+      "bot_count": 312,
+      "opportunity_type": "software_development_contract"
+    },
+    {
+      "bot_count": 312,
+      "opportunity_type": "data_services_contract"
     }
   ]
 }

@@ -30,24 +30,104 @@ def words(value):
 def opportunity_mix(bot, config):
     division = str(bot.get("division") or "").lower()
     category = str(bot.get("category") or "").lower()
+    text = f"{division} {category} {bot.get('name') or ''} {bot.get('slug') or bot.get('id') or ''}".lower()
     base = ["client_service_opportunity", "private_rfp", "partnership_opportunity"]
-    if "transport" in division or "logistics" in category:
-        base.extend(["trucking_route_contract", "supplier_contract", "local_procurement"])
-    elif "construction" in division or "real" in division:
-        base.extend(["government_contract", "local_procurement", "subcontracting_opportunity"])
-    elif "education" in division or "health" in division:
-        base.extend(["grant", "local_procurement", "vendor_registration"])
-    elif "code" in division or "ai" in division or "data" in division:
-        base.extend(["enterprise_software_contract", "app_store_service_opportunity", "government_contract"])
-    elif "sales" in division or "market" in division:
-        base.extend(["private_rfp", "vendor_registration", "enterprise_software_contract"])
+    if "transport" in text or "logistics" in text or "fleet" in text:
+        base.extend([
+            "transportation_contract",
+            "logistics_contract",
+            "trucking_route_contract",
+            "freight_broker_opportunity",
+            "warehouse_fulfillment_contract",
+            "supplier_contract",
+            "local_procurement",
+        ])
+    elif "construction" in text or "maintenance" in text or "facility" in text:
+        base.extend([
+            "construction_contract",
+            "maintenance_contract",
+            "facility_services_contract",
+            "subcontracting_opportunity",
+            "local_procurement",
+            "state_contract",
+            "county_contract",
+        ])
+    elif "real" in text or "property" in text:
+        base.extend([
+            "real_estate_loan",
+            "construction_loan",
+            "public_private_partnership",
+            "local_procurement",
+            "subcontracting_opportunity",
+        ])
+    elif "education" in text or "course" in text or "curriculum" in text:
+        base.extend([
+            "education_grant",
+            "workforce_grant",
+            "school_district_contract",
+            "university_contract",
+            "local_procurement",
+            "vendor_registration",
+        ])
+    elif "health" in text or "medical" in text or "care" in text:
+        base.extend([
+            "health_grant",
+            "healthcare_services_contract",
+            "federal_grant",
+            "state_grant",
+            "vendor_registration",
+        ])
+    elif "legal" in text or "compliance" in text:
+        base.extend([
+            "professional_services_contract",
+            "research_contract",
+            "government_contract",
+            "private_rfp",
+            "vendor_registration",
+        ])
+    elif "finance" in text or "loan" in text or "payment" in text or "stripe" in text:
+        base.extend([
+            "small_business_loan",
+            "working_capital_loan",
+            "line_of_credit",
+            "financial_services_contract",
+            "grant",
+            "private_rfp",
+        ])
+    elif "code" in text or "ai" in text or "data" in text or "software" in text:
+        base.extend([
+            "software_development_contract",
+            "data_services_contract",
+            "cloud_services_contract",
+            "cybersecurity_contract",
+            "enterprise_software_contract",
+            "app_store_service_opportunity",
+            "federal_contract",
+        ])
+    elif "sales" in text or "market" in text or "content" in text or "influence" in text:
+        base.extend([
+            "marketing_contract",
+            "creative_services_contract",
+            "private_rfp",
+            "vendor_registration",
+            "affiliate_partnership",
+            "reseller_partnership",
+        ])
     else:
-        base.extend(["government_contract", "vendor_registration", "grant"])
+        base.extend([
+            "government_contract",
+            "state_contract",
+            "local_procurement",
+            "vendor_registration",
+            "grant",
+            "small_business_grant",
+            "small_business_loan",
+        ])
     seen = []
     for item in base:
         if item in config.get("opportunity_types", []) and item not in seen:
             seen.append(item)
-    return seen[:6]
+    return seen[:10]
 
 
 def build_bot_packet(bot, config):
@@ -66,8 +146,9 @@ def build_bot_packet(bot, config):
         "matching_fields": config.get("matching_fields", []),
         "approval_gates": config.get("approval_gates", []),
         "sample_search_prompt": (
-            f"Search public and owner-approved sources for {name} contract opportunities in "
-            f"{division}. Score fit, risk, deadline, requirements, proof needed, and next approval step."
+            f"Search public and owner-approved sources for {name} contract, grant, loan, procurement, "
+            f"partnership, supplier, and app/service opportunities in {division}. Score fit, risk, deadline, "
+            "requirements, proof needed, cash-flow notes, and next approval step."
         ),
         "dashboard_status": "ready_for_contract_discovery",
     }
@@ -92,6 +173,13 @@ def build_report():
         "bot_contract_roles": len(config.get("bot_contract_roles", [])),
         "sample_opportunities_ready": len(packets[:12]),
         "all_bots_ready_for_contract_search": len(packets) == len(bots),
+        "grant_types_tracked": sum(1 for item in config.get("opportunity_types", []) if "grant" in item),
+        "loan_types_tracked": sum(1 for item in config.get("opportunity_types", []) if "loan" in item or "financing" in item or item == "line_of_credit"),
+        "procurement_contract_types_tracked": sum(
+            1
+            for item in config.get("opportunity_types", [])
+            if "contract" in item or "procurement" in item or "rfp" in item
+        ),
     }
 
     return {
@@ -118,6 +206,8 @@ def build_report():
         "dashboard_sample": packets[:12],
         "next_actions": [
             "Connect public-source search adapters after rate limits and source terms are reviewed.",
+            "Build daily contract, grant, loan, procurement, and private RFP digests for owner review.",
+            "Create construction, logistics, professional services, software, marketing, education, health, and finance bid-readiness templates.",
             "Create a weekly owner approval digest for bid, registration, outreach, and pricing decisions.",
             "Keep all submissions, buyer contact, supplier contact, signatures, and spending blocked until approved.",
         ],
@@ -135,6 +225,9 @@ def write_markdown(report):
         "",
         f"- Bots with contract discovery: {summary['bots_with_contract_discovery']} / {summary['bot_count']}",
         f"- Opportunity types tracked: {summary['opportunity_types_tracked']}",
+        f"- Grant types tracked: {summary['grant_types_tracked']}",
+        f"- Loan types tracked: {summary['loan_types_tracked']}",
+        f"- Procurement/contract types tracked: {summary['procurement_contract_types_tracked']}",
         f"- Source categories tracked: {summary['source_categories_tracked']}",
         f"- Approval gates declared: {summary['approval_gates_declared']}",
         f"- Blocked actions declared: {summary['blocked_actions_declared']}",
