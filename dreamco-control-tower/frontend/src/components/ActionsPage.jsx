@@ -475,6 +475,38 @@ const FALLBACK_DREAMCO_PROFESSIONAL_OS = {
   ],
 };
 
+const FALLBACK_BUDDY_LIFE_OPPORTUNITIES = {
+  generated_at: null,
+  mission: 'Give Buddy a friendly, device-ready opportunity encyclopedia for personal life, business life, and work life.',
+  summary: {
+    bot_count: 1248,
+    resource_lanes: 8,
+    lanes_with_all_bot_coverage: 8,
+    friend_copilot_steps: 6,
+    device_surfaces: 10,
+    approval_gates: 11,
+    allowed_source_types: 7,
+    blocked_source_types: 5,
+    contract_opportunity_types: 45,
+    settlement_claims_guarded: true,
+    unclaimed_estate_research_ready: true,
+  },
+  friend_copilot: {
+    promise: 'Make hard tasks feel like talking to a trusted friend who shows the steps, explains risks, and keeps proof visible.',
+    split_screen_steps: ['left_goal_and_chat', 'right_live_steps', 'source_evidence_panel', 'approval_queue', 'sandbox_or_draft_preview', 'next_best_action'],
+    device_surfaces: ['web_browser', 'mobile_pwa', 'desktop_shell', 'tablet', 'smart_tv', 'wifi_connected_device', 'bluetooth_connected_device', 'car_display', 'game_console_browser', 'wearable_notification'],
+  },
+  resource_lanes: [
+    { id: 'jobs_and_careers', label: 'Jobs And Careers', purpose: 'Find jobs, improve resumes, match qualifications, and track applications.', safe_actions: ['search public job boards', 'compare role fit'], approval_required: ['submit_application', 'message_recruiter'] },
+    { id: 'side_hustles', label: 'Side Hustles', purpose: 'Find realistic side-income paths and starter checklists.', safe_actions: ['compare public demand', 'draft offer'], approval_required: ['contact_customer', 'publish_offer'] },
+    { id: 'investors_loans_credit', label: 'Investors Loans Credit', purpose: 'Prepare investor, loan, credit-building, and home-loan readiness packets.', safe_actions: ['prepare readiness checklist', 'draft pitch packet'], approval_required: ['submit_loan_application', 'pull_credit'] },
+    { id: 'unclaimed_money_estates', label: 'Unclaimed Money And Estates', purpose: 'Research official unclaimed property, probate, estate, genealogy, and beneficiary paths.', safe_actions: ['prepare official-source checklist'], approval_required: ['submit_claim', 'upload_identity_documents'] },
+    { id: 'settlements_and_claims', label: 'Settlements And Claims', purpose: 'Track public settlement notices weekly with truthful eligibility questions.', safe_actions: ['summarize public notices'], approval_required: ['submit_claim'], hard_rules: ['no_fake_claims', 'user_must_attest_truthfully'] },
+  ],
+  approval_wall: ['submit_application', 'submit_claim', 'apply_for_loan_or_credit', 'contact_external_party', 'upload_identity_documents'],
+  safety_note: 'Buddy researches, organizes, scores, and prepares packets; it does not create false claims or guarantee money.',
+};
+
 const FALLBACK_BOT_FOUNDER_APP_STORE = {
   generated_at: null,
   mission: 'Every DreamCo bot studies its market, designs a useful autonomous app, prepares a safe company plan, and packages itself for the DreamCo app store.',
@@ -1893,6 +1925,8 @@ export default function ActionsPage({
   const [appCategoryCatalogStatus, setAppCategoryCatalogStatus] = useState('loading');
   const [dreamcoProfessionalOs, setDreamcoProfessionalOs] = useState(null);
   const [dreamcoProfessionalOsStatus, setDreamcoProfessionalOsStatus] = useState('loading');
+  const [buddyLifeOpportunities, setBuddyLifeOpportunities] = useState(null);
+  const [buddyLifeOpportunitiesStatus, setBuddyLifeOpportunitiesStatus] = useState('loading');
   const [botFounderAppStore, setBotFounderAppStore] = useState(null);
   const [botFounderAppStoreStatus, setBotFounderAppStoreStatus] = useState('loading');
   const [dailyScaling, setDailyScaling] = useState(null);
@@ -2009,6 +2043,15 @@ export default function ActionsPage({
         setDreamcoProfessionalOsStatus('live');
       })
       .catch(() => setDreamcoProfessionalOsStatus('generated fallback'));
+  }, []);
+
+  useEffect(() => {
+    fetchFirstJson(['/api/buddy-life-opportunities'])
+      .then((data) => {
+        setBuddyLifeOpportunities(data);
+        setBuddyLifeOpportunitiesStatus('live');
+      })
+      .catch(() => setBuddyLifeOpportunitiesStatus('generated fallback'));
   }, []);
 
   useEffect(() => {
@@ -2177,6 +2220,7 @@ export default function ActionsPage({
   const foundry = appFoundry ?? FALLBACK_APP_FOUNDRY;
   const appCategories = appCategoryCatalog ?? FALLBACK_APP_CATEGORY_CATALOG;
   const professionalOs = dreamcoProfessionalOs ?? FALLBACK_DREAMCO_PROFESSIONAL_OS;
+  const lifeOpportunities = buddyLifeOpportunities ?? FALLBACK_BUDDY_LIFE_OPPORTUNITIES;
   const botFounderStore = botFounderAppStore ?? FALLBACK_BOT_FOUNDER_APP_STORE;
   const scaling24 = dailyScaling ?? FALLBACK_24_HOUR_SCALING;
   const codexCheapOps = buddyCodexCheapOps ?? FALLBACK_BUDDY_CODEX_CHEAP_OPS;
@@ -2202,6 +2246,7 @@ export default function ActionsPage({
   const foundrySummary = foundry.summary ?? FALLBACK_APP_FOUNDRY.summary;
   const appCategorySummary = appCategories.summary ?? FALLBACK_APP_CATEGORY_CATALOG.summary;
   const professionalOsSummary = professionalOs.summary ?? FALLBACK_DREAMCO_PROFESSIONAL_OS.summary;
+  const lifeOpportunitySummary = lifeOpportunities.summary ?? FALLBACK_BUDDY_LIFE_OPPORTUNITIES.summary;
   const botFounderSummary = botFounderStore.summary ?? FALLBACK_BOT_FOUNDER_APP_STORE.summary;
   const scaling24Summary = scaling24.summary ?? FALLBACK_24_HOUR_SCALING.summary;
   const codexCheapOpsSummary = codexCheapOps.summary ?? FALLBACK_BUDDY_CODEX_CHEAP_OPS.summary;
@@ -3211,6 +3256,89 @@ export default function ActionsPage({
               ))}
             </div>
           </div>
+        </div>
+      </section>
+
+      <section aria-labelledby="life-opportunity-heading" className="border border-slate-700 bg-slate-950 p-5">
+        <div className="flex flex-wrap items-start justify-between gap-3">
+          <div>
+            <p className="text-xs font-bold uppercase text-dreamco-accent">Buddy life opportunity encyclopedia</p>
+            <h3 id="life-opportunity-heading" className="mt-1 text-lg font-semibold text-white">
+              Friendly split-screen copilot for personal, business, work, and money tasks
+            </h3>
+            <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-400">{lifeOpportunities.mission}</p>
+          </div>
+          <span className="rounded-full border border-slate-700 px-3 py-1 text-xs font-semibold text-slate-400">
+            {buddyLifeOpportunitiesStatus} · {formatDateTime(lifeOpportunities.generated_at)}
+          </span>
+        </div>
+
+        <div className="mt-5 grid grid-cols-2 gap-px overflow-hidden border border-slate-800 bg-slate-800 lg:grid-cols-4 xl:grid-cols-8">
+          {[
+            ['Lanes', lifeOpportunitySummary.resource_lanes],
+            ['Bots covered', lifeOpportunitySummary.bot_count],
+            ['Friend steps', lifeOpportunitySummary.friend_copilot_steps],
+            ['Devices', lifeOpportunitySummary.device_surfaces],
+            ['Approval gates', lifeOpportunitySummary.approval_gates],
+            ['Sources', lifeOpportunitySummary.allowed_source_types],
+            ['Contracts', lifeOpportunitySummary.contract_opportunity_types],
+            ['Settlements', lifeOpportunitySummary.settlement_claims_guarded ? 1 : 0],
+          ].map(([label, value]) => (
+            <div key={label} className="bg-slate-900 p-4">
+              <p className="text-xl font-black text-white">{formatNumber(value)}</p>
+              <p className="mt-1 text-xs uppercase text-slate-500">{label}</p>
+            </div>
+          ))}
+        </div>
+
+        <div className="mt-5 grid gap-5 xl:grid-cols-[minmax(0,1fr)_24rem]">
+          <div className="border border-slate-800 bg-slate-900 p-4">
+            <h4 className="text-sm font-semibold text-white">Money and life resource lanes</h4>
+            <div className="mt-3 grid gap-3 md:grid-cols-2">
+              {(lifeOpportunities.resource_lanes ?? []).slice(0, 8).map((lane) => (
+                <article key={lane.id} className="border border-slate-800 bg-slate-950 p-3">
+                  <h5 className="text-sm font-semibold text-white">{lane.label}</h5>
+                  <p className="mt-2 text-xs leading-5 text-slate-400">{lane.purpose}</p>
+                  <p className="mt-3 text-xs leading-5 text-emerald-100/80">
+                    Safe: {(lane.safe_actions ?? []).slice(0, 3).join(', ')}
+                  </p>
+                  <p className="mt-2 border-l-2 border-amber-400 pl-3 text-xs leading-5 text-amber-100/80">
+                    Approval: {(lane.approval_required ?? []).slice(0, 3).map(formatLabel).join(', ')}
+                  </p>
+                </article>
+              ))}
+            </div>
+          </div>
+
+          <aside className="space-y-5">
+            <div className="border border-emerald-500/30 bg-emerald-950/20 p-4">
+              <h4 className="text-sm font-semibold text-emerald-100">Friend-like split screen</h4>
+              <p className="mt-3 text-xs leading-5 text-emerald-100/80">{lifeOpportunities.friend_copilot?.promise}</p>
+              <div className="mt-3 flex flex-wrap gap-2">
+                {(lifeOpportunities.friend_copilot?.split_screen_steps ?? []).map((step) => (
+                  <span key={step} className="rounded-full border border-emerald-500/30 px-2 py-1 text-[11px] text-emerald-100">
+                    {formatLabel(step)}
+                  </span>
+                ))}
+              </div>
+            </div>
+
+            <div className="border border-slate-800 bg-slate-900 p-4">
+              <h4 className="text-sm font-semibold text-white">All-device surfaces</h4>
+              <div className="mt-3 flex flex-wrap gap-2">
+                {(lifeOpportunities.friend_copilot?.device_surfaces ?? []).slice(0, 12).map((surface) => (
+                  <span key={surface} className="rounded-full border border-slate-700 px-2 py-1 text-[11px] text-slate-300">
+                    {formatLabel(surface)}
+                  </span>
+                ))}
+              </div>
+            </div>
+
+            <div className="border border-amber-900/70 bg-amber-950/20 p-4">
+              <h4 className="text-sm font-semibold text-amber-100">Truth and approval wall</h4>
+              <p className="mt-3 text-xs leading-5 text-amber-100/80">{lifeOpportunities.safety_note}</p>
+            </div>
+          </aside>
         </div>
       </section>
 

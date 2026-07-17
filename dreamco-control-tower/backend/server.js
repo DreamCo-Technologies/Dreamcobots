@@ -45,6 +45,10 @@ const DREAMCO_PROFESSIONAL_OS_FILE = path.join(
   __dirname,
   '../../reports/dreamco_professional_os.json',
 );
+const BUDDY_LIFE_OPPORTUNITY_ENCYCLOPEDIA_FILE = path.join(
+  __dirname,
+  '../../reports/buddy_life_opportunity_encyclopedia.json',
+);
 const BOT_FOUNDER_APP_STORE_REPORT_FILE = path.join(
   __dirname,
   '../../reports/bot_founder_app_store_report.json',
@@ -268,6 +272,13 @@ function readDreamCoProfessionalOs() {
     return null;
   }
   return JSON.parse(fs.readFileSync(DREAMCO_PROFESSIONAL_OS_FILE, 'utf8'));
+}
+
+function readBuddyLifeOpportunityEncyclopedia() {
+  if (!fs.existsSync(BUDDY_LIFE_OPPORTUNITY_ENCYCLOPEDIA_FILE)) {
+    return null;
+  }
+  return JSON.parse(fs.readFileSync(BUDDY_LIFE_OPPORTUNITY_ENCYCLOPEDIA_FILE, 'utf8'));
 }
 
 function readBotFounderAppStoreReport() {
@@ -965,6 +976,17 @@ app.get('/api/dreamco-professional-os', rateLimiter, (_req, res) => {
   const report = readDreamCoProfessionalOs();
   if (!report) {
     return res.status(503).json({ error: 'DreamCo professional OS report not found' });
+  }
+  return res.json(report);
+});
+
+// ---------------------------------------------------------------------------
+// GET /api/buddy-life-opportunities — life, work, and money opportunity encyclopedia
+// ---------------------------------------------------------------------------
+app.get('/api/buddy-life-opportunities', rateLimiter, (_req, res) => {
+  const report = readBuddyLifeOpportunityEncyclopedia();
+  if (!report) {
+    return res.status(503).json({ error: 'Buddy life opportunity encyclopedia not found' });
   }
   return res.json(report);
 });

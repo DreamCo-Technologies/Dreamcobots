@@ -1,0 +1,455 @@
+{
+  "approval_wall": [
+    "submit_application",
+    "submit_claim",
+    "submit_bid",
+    "submit_grant",
+    "apply_for_loan_or_credit",
+    "contact_external_party",
+    "upload_identity_documents",
+    "connect_bank_or_payment_method",
+    "pay_fees_or_dues",
+    "enter_private_property",
+    "make_legal_financial_credit_or_tax_claim"
+  ],
+  "default_mode": "research_score_prepare_then_user_approval",
+  "friend_copilot": {
+    "device_surfaces": [
+      "web_browser",
+      "mobile_pwa",
+      "desktop_shell",
+      "tablet",
+      "smart_tv",
+      "wifi_connected_device",
+      "bluetooth_connected_device",
+      "car_display",
+      "game_console_browser",
+      "wearable_notification"
+    ],
+    "promise": "Make hard tasks feel like talking to a trusted friend who shows the steps, explains risks, and keeps proof visible.",
+    "split_screen_steps": [
+      "left_goal_and_chat",
+      "right_live_steps",
+      "source_evidence_panel",
+      "approval_queue",
+      "sandbox_or_draft_preview",
+      "next_best_action"
+    ],
+    "tone": "warm_clear_patient_practical"
+  },
+  "generated_at": "2026-07-17T16:42:51Z",
+  "mission": "Give Buddy a friendly, device-ready opportunity encyclopedia for personal life, business life, and work life so clients can find legitimate money, savings, jobs, funding, contracts, benefits, and productivity paths with clear approval and evidence gates.",
+  "next_actions": [
+    "Connect this encyclopedia to the Actions page task screen.",
+    "Create weekly official-source settlement and claims digest with truthful eligibility questions.",
+    "Create official unclaimed-property and estate research checklists by state and country.",
+    "Map each bot division to associations, job boards, grants, contracts, and side-hustle resources."
+  ],
+  "resource_lanes": [
+    {
+      "approval_required": [
+        "submit_application",
+        "message_recruiter",
+        "upload_resume",
+        "share_personal_data"
+      ],
+      "bot_coverage": 1248,
+      "buddy_prompt": "Buddy, help me with jobs and careers. Research official or owner-approved sources, show the steps, score fit, and stop before any approval-required action.",
+      "client_task_packet": {
+        "inputs": [
+          "client_goal",
+          "location",
+          "deadline",
+          "budget",
+          "documents_available",
+          "risk_tolerance"
+        ],
+        "must_not_do": [
+          "submit_application",
+          "message_recruiter",
+          "upload_resume",
+          "share_personal_data"
+        ],
+        "outputs": [
+          "source_list",
+          "fit_score",
+          "eligibility_questions",
+          "document_checklist",
+          "approval_packet"
+        ]
+      },
+      "id": "jobs_and_careers",
+      "label": "Jobs And Careers",
+      "purpose": "Help clients find jobs, improve resumes, match qualifications, track applications, and prepare interview packets.",
+      "refresh_cadence": "weekly",
+      "safe_actions": [
+        "search public job boards",
+        "compare role fit",
+        "draft resume bullets",
+        "prepare interview plan"
+      ]
+    },
+    {
+      "approval_required": [
+        "contact_customer",
+        "publish_offer",
+        "buy_supplies",
+        "accept_terms"
+      ],
+      "bot_coverage": 1248,
+      "buddy_prompt": "Buddy, help me with side hustles. Research official or owner-approved sources, show the steps, score fit, and stop before any approval-required action.",
+      "client_task_packet": {
+        "inputs": [
+          "client_goal",
+          "location",
+          "deadline",
+          "budget",
+          "documents_available",
+          "risk_tolerance"
+        ],
+        "must_not_do": [
+          "contact_customer",
+          "publish_offer",
+          "buy_supplies",
+          "accept_terms"
+        ],
+        "outputs": [
+          "source_list",
+          "fit_score",
+          "eligibility_questions",
+          "document_checklist",
+          "approval_packet"
+        ]
+      },
+      "id": "side_hustles",
+      "label": "Side Hustles",
+      "purpose": "Find realistic side-income paths, starter checklists, price tests, marketplace fit, and risk notes.",
+      "refresh_cadence": "monthly",
+      "safe_actions": [
+        "compare public demand",
+        "draft offer",
+        "estimate startup cost",
+        "prepare first task checklist"
+      ]
+    },
+    {
+      "approval_required": [
+        "submit_bid",
+        "submit_grant",
+        "register_vendor",
+        "contact_buyer",
+        "sign_contract"
+      ],
+      "bot_coverage": 1248,
+      "buddy_prompt": "Buddy, help me with contracts grants procurement. Research official or owner-approved sources, show the steps, score fit, and stop before any approval-required action.",
+      "client_task_packet": {
+        "inputs": [
+          "client_goal",
+          "location",
+          "deadline",
+          "budget",
+          "documents_available",
+          "risk_tolerance"
+        ],
+        "must_not_do": [
+          "submit_bid",
+          "submit_grant",
+          "register_vendor",
+          "contact_buyer",
+          "sign_contract"
+        ],
+        "outputs": [
+          "source_list",
+          "fit_score",
+          "eligibility_questions",
+          "document_checklist",
+          "approval_packet"
+        ]
+      },
+      "id": "contracts_grants_procurement",
+      "label": "Contracts Grants Procurement",
+      "purpose": "Find contracts, grants, RFPs, vendor registrations, procurement paths, and bid-readiness requirements.",
+      "refresh_cadence": "monthly",
+      "safe_actions": [
+        "search public portals",
+        "score fit",
+        "summarize requirements",
+        "prepare bid checklist"
+      ]
+    },
+    {
+      "approval_required": [
+        "submit_loan_application",
+        "contact_investor",
+        "connect_bank",
+        "pull_credit",
+        "apply_for_credit_card"
+      ],
+      "bot_coverage": 1248,
+      "buddy_prompt": "Buddy, help me with investors loans credit. Research official or owner-approved sources, show the steps, score fit, and stop before any approval-required action.",
+      "client_task_packet": {
+        "inputs": [
+          "client_goal",
+          "location",
+          "deadline",
+          "budget",
+          "documents_available",
+          "risk_tolerance"
+        ],
+        "must_not_do": [
+          "submit_loan_application",
+          "contact_investor",
+          "connect_bank",
+          "pull_credit",
+          "apply_for_credit_card"
+        ],
+        "outputs": [
+          "source_list",
+          "fit_score",
+          "eligibility_questions",
+          "document_checklist",
+          "approval_packet"
+        ]
+      },
+      "id": "investors_loans_credit",
+      "label": "Investors Loans Credit",
+      "purpose": "Help clients prepare investor lists, loan readiness, grant alternatives, credit-building plans, and home-loan preparation.",
+      "refresh_cadence": "monthly",
+      "safe_actions": [
+        "prepare readiness checklist",
+        "compare public program requirements",
+        "draft pitch packet",
+        "model affordability"
+      ]
+    },
+    {
+      "approval_required": [
+        "submit_claim",
+        "upload_identity_documents",
+        "contact_court",
+        "contact_relative",
+        "pay_researcher"
+      ],
+      "bot_coverage": 1248,
+      "buddy_prompt": "Buddy, help me with unclaimed money and estates. Research official or owner-approved sources, show the steps, score fit, and stop before any approval-required action.",
+      "client_task_packet": {
+        "inputs": [
+          "client_goal",
+          "location",
+          "deadline",
+          "budget",
+          "documents_available",
+          "risk_tolerance"
+        ],
+        "must_not_do": [
+          "submit_claim",
+          "upload_identity_documents",
+          "contact_court",
+          "contact_relative",
+          "pay_researcher"
+        ],
+        "outputs": [
+          "source_list",
+          "fit_score",
+          "eligibility_questions",
+          "document_checklist",
+          "approval_packet"
+        ]
+      },
+      "id": "unclaimed_money_estates",
+      "label": "Unclaimed Money And Estates",
+      "purpose": "Help clients search official public unclaimed property, probate, estate, genealogy, and beneficiary research paths.",
+      "refresh_cadence": "monthly",
+      "safe_actions": [
+        "prepare official-source checklist",
+        "draft family-tree research plan",
+        "summarize claim requirements",
+        "organize proof documents"
+      ]
+    },
+    {
+      "approval_required": [
+        "submit_claim",
+        "state_eligibility_as_fact",
+        "upload_documents",
+        "contact_law_firm"
+      ],
+      "bot_coverage": 1248,
+      "buddy_prompt": "Buddy, help me with settlements and claims. Research official or owner-approved sources, show the steps, score fit, and stop before any approval-required action.",
+      "client_task_packet": {
+        "inputs": [
+          "client_goal",
+          "location",
+          "deadline",
+          "budget",
+          "documents_available",
+          "risk_tolerance"
+        ],
+        "must_not_do": [
+          "submit_claim",
+          "state_eligibility_as_fact",
+          "upload_documents",
+          "contact_law_firm"
+        ],
+        "outputs": [
+          "source_list",
+          "fit_score",
+          "eligibility_questions",
+          "document_checklist",
+          "approval_packet"
+        ]
+      },
+      "hard_rules": [
+        "no_fake_claims",
+        "no_low_proof_claim_farming",
+        "no_guaranteed_payouts",
+        "user_must_attest_truthfully"
+      ],
+      "id": "settlements_and_claims",
+      "label": "Settlements And Claims",
+      "purpose": "Track public settlement and claims notices weekly and help users identify possible eligibility without creating false claims.",
+      "refresh_cadence": "weekly",
+      "safe_actions": [
+        "summarize public settlement notices",
+        "list eligibility questions",
+        "prepare document checklist",
+        "flag deadline"
+      ]
+    },
+    {
+      "approval_required": [
+        "join_association",
+        "pay_dues",
+        "send_outreach",
+        "share_profile"
+      ],
+      "bot_coverage": 1248,
+      "buddy_prompt": "Buddy, help me with associations and networks. Research official or owner-approved sources, show the steps, score fit, and stop before any approval-required action.",
+      "client_task_packet": {
+        "inputs": [
+          "client_goal",
+          "location",
+          "deadline",
+          "budget",
+          "documents_available",
+          "risk_tolerance"
+        ],
+        "must_not_do": [
+          "join_association",
+          "pay_dues",
+          "send_outreach",
+          "share_profile"
+        ],
+        "outputs": [
+          "source_list",
+          "fit_score",
+          "eligibility_questions",
+          "document_checklist",
+          "approval_packet"
+        ]
+      },
+      "id": "associations_and_networks",
+      "label": "Associations And Networks",
+      "purpose": "Maintain association, chamber, trade group, union, incubator, accelerator, mentor, alumni, and professional network resources for every bot category.",
+      "refresh_cadence": "monthly",
+      "safe_actions": [
+        "search public association directories",
+        "map membership benefits",
+        "prepare outreach draft",
+        "score fit"
+      ]
+    },
+    {
+      "approval_required": [
+        "enter_private_property",
+        "pay_appraiser",
+        "submit_claim",
+        "contact_owner_or_heir"
+      ],
+      "bot_coverage": 1248,
+      "buddy_prompt": "Buddy, help me with treasure and asset research. Research official or owner-approved sources, show the steps, score fit, and stop before any approval-required action.",
+      "client_task_packet": {
+        "inputs": [
+          "client_goal",
+          "location",
+          "deadline",
+          "budget",
+          "documents_available",
+          "risk_tolerance"
+        ],
+        "must_not_do": [
+          "enter_private_property",
+          "pay_appraiser",
+          "submit_claim",
+          "contact_owner_or_heir"
+        ],
+        "outputs": [
+          "source_list",
+          "fit_score",
+          "eligibility_questions",
+          "document_checklist",
+          "approval_packet"
+        ]
+      },
+      "hard_rules": [
+        "lawful_research_only",
+        "no_trespassing",
+        "no_false_ownership_claims"
+      ],
+      "id": "treasure_and_asset_research",
+      "label": "Treasure And Asset Research",
+      "purpose": "Help clients organize lawful research into collectibles, inherited assets, mineral rights, property records, forgotten accounts, and historical records.",
+      "refresh_cadence": "monthly",
+      "safe_actions": [
+        "prepare research checklist",
+        "summarize public records",
+        "organize provenance notes",
+        "draft appraisal packet"
+      ]
+    }
+  ],
+  "safety_note": "Buddy can research, organize, score, and prepare packets. Buddy must not create false claims, guarantee money, submit applications, contact outside parties, or provide legal/financial/credit decisions without approval and review.",
+  "schema": "dreamco.buddy_life_opportunity_encyclopedia_report.v1",
+  "source_config": "config/buddy_life_opportunity_encyclopedia.json",
+  "source_policy": {
+    "allowed": [
+      "official government public portals",
+      "official court or settlement administrator pages",
+      "public job boards",
+      "public grant and procurement portals",
+      "public lender or program requirement pages",
+      "public association directories",
+      "owner-approved client documents"
+    ],
+    "blocked": [
+      "private accounts without approval",
+      "data brokers without compliance review",
+      "false eligibility claims",
+      "scraping forbidden sources",
+      "legal financial tax or credit decisions without professional review"
+    ],
+    "must_store": [
+      "source_url",
+      "checked_at",
+      "lane",
+      "summary",
+      "eligibility_questions",
+      "deadline",
+      "approval_needed",
+      "next_safe_action"
+    ]
+  },
+  "summary": {
+    "allowed_source_types": 7,
+    "approval_gates": 11,
+    "blocked_source_types": 5,
+    "bot_count": 1248,
+    "contract_opportunity_types": 76,
+    "device_surfaces": 10,
+    "friend_copilot_steps": 6,
+    "lanes_with_all_bot_coverage": 8,
+    "resource_lanes": 8,
+    "settlement_claims_guarded": true,
+    "unclaimed_estate_research_ready": true
+  }
+}

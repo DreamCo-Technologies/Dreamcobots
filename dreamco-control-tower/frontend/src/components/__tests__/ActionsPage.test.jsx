@@ -437,6 +437,56 @@ const dreamcoProfessionalOsPayload = {
   ],
 };
 
+const buddyLifeOpportunitiesPayload = {
+  schema: 'dreamco.buddy_life_opportunity_encyclopedia_report.v1',
+  generated_at: '2026-07-17T00:00:00Z',
+  mission: 'Give Buddy a friendly, device-ready opportunity encyclopedia for personal life, business life, and work life.',
+  summary: {
+    bot_count: 1248,
+    resource_lanes: 8,
+    lanes_with_all_bot_coverage: 8,
+    friend_copilot_steps: 6,
+    device_surfaces: 10,
+    approval_gates: 11,
+    allowed_source_types: 7,
+    blocked_source_types: 5,
+    contract_opportunity_types: 45,
+    settlement_claims_guarded: true,
+    unclaimed_estate_research_ready: true,
+  },
+  friend_copilot: {
+    promise: 'Make hard tasks feel like talking to a trusted friend who shows the steps, explains risks, and keeps proof visible.',
+    split_screen_steps: ['left_goal_and_chat', 'right_live_steps', 'source_evidence_panel', 'approval_queue'],
+    device_surfaces: ['web_browser', 'mobile_pwa', 'wifi_connected_device', 'bluetooth_connected_device'],
+  },
+  resource_lanes: [
+    {
+      id: 'jobs_and_careers',
+      label: 'Jobs And Careers',
+      purpose: 'Find jobs, improve resumes, match qualifications, and track applications.',
+      safe_actions: ['search public job boards'],
+      approval_required: ['submit_application'],
+    },
+    {
+      id: 'settlements_and_claims',
+      label: 'Settlements And Claims',
+      purpose: 'Track public settlement notices weekly with truthful eligibility questions.',
+      safe_actions: ['summarize public notices'],
+      approval_required: ['submit_claim'],
+      hard_rules: ['no_fake_claims'],
+    },
+    {
+      id: 'unclaimed_money_estates',
+      label: 'Unclaimed Money And Estates',
+      purpose: 'Research official unclaimed property, probate, estate, genealogy, and beneficiary paths.',
+      safe_actions: ['prepare official-source checklist'],
+      approval_required: ['submit_claim'],
+    },
+  ],
+  approval_wall: ['submit_application', 'submit_claim'],
+  safety_note: 'Buddy researches, organizes, scores, and prepares packets; it does not create false claims or guarantee money.',
+};
+
 const botFounderAppStorePayload = {
   schema: 'dreamco.bot_founder_app_store_report.v1',
   generated_at: '2026-07-15T00:00:00Z',
@@ -1013,6 +1063,7 @@ beforeEach(() => {
     if (url === '/api/app-foundry') payload = appFoundryPayload;
     if (url === '/api/app-category-catalog') payload = appCategoryCatalogPayload;
     if (url === '/api/dreamco-professional-os') payload = dreamcoProfessionalOsPayload;
+    if (url === '/api/buddy-life-opportunities') payload = buddyLifeOpportunitiesPayload;
     if (url === '/api/bot-founder-app-store') payload = botFounderAppStorePayload;
     if (url === '/api/24-hour-scaling') payload = scaling24Payload;
     if (url === '/api/buddy-codex-cheap-ops') payload = buddyCodexCheapOpsPayload;
@@ -1096,6 +1147,21 @@ describe('ActionsPage', () => {
     expect(screen.getByText('Dreamco Custom Domains')).toBeInTheDocument();
     expect(screen.getByText('Human and bot OS workspace')).toBeInTheDocument();
     expect(screen.getByText('Browser and app safety standards')).toBeInTheDocument();
+    await waitFor(() =>
+      expect(
+        screen.getByRole('heading', {
+          name: 'Friendly split-screen copilot for personal, business, work, and money tasks',
+        }),
+      ).toBeInTheDocument(),
+    );
+    expect(screen.getByText('Buddy life opportunity encyclopedia')).toBeInTheDocument();
+    expect(screen.getByText('Money and life resource lanes')).toBeInTheDocument();
+    expect(screen.getByText('Jobs And Careers')).toBeInTheDocument();
+    expect(screen.getByText('Settlements And Claims')).toBeInTheDocument();
+    expect(screen.getByText('Unclaimed Money And Estates')).toBeInTheDocument();
+    expect(screen.getByText('Friend-like split screen')).toBeInTheDocument();
+    expect(screen.getByText('All-device surfaces')).toBeInTheDocument();
+    expect(screen.getByText('Truth and approval wall')).toBeInTheDocument();
     await waitFor(() => expect(screen.getByRole('heading', { name: 'Every bot studies the market and prepares its own autonomous app business' })).toBeInTheDocument());
     expect(screen.getByText('Bot Founder App Store')).toBeInTheDocument();
     expect(screen.getByText('Live-action approval wall')).toBeInTheDocument();

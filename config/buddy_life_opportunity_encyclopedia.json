@@ -1,0 +1,131 @@
+{
+  "schema": "dreamco.buddy_life_opportunity_encyclopedia.v1",
+  "updated_at": "2026-07-17T00:00:00Z",
+  "mission": "Give Buddy a friendly, device-ready opportunity encyclopedia for personal life, business life, and work life so clients can find legitimate money, savings, jobs, funding, contracts, benefits, and productivity paths with clear approval and evidence gates.",
+  "default_mode": "research_score_prepare_then_user_approval",
+  "friend_copilot": {
+    "tone": "warm_clear_patient_practical",
+    "promise": "Make hard tasks feel like talking to a trusted friend who shows the steps, explains risks, and keeps proof visible.",
+    "split_screen_steps": [
+      "left_goal_and_chat",
+      "right_live_steps",
+      "source_evidence_panel",
+      "approval_queue",
+      "sandbox_or_draft_preview",
+      "next_best_action"
+    ],
+    "device_surfaces": [
+      "web_browser",
+      "mobile_pwa",
+      "desktop_shell",
+      "tablet",
+      "smart_tv",
+      "wifi_connected_device",
+      "bluetooth_connected_device",
+      "car_display",
+      "game_console_browser",
+      "wearable_notification"
+    ]
+  },
+  "resource_lanes": [
+    {
+      "id": "jobs_and_careers",
+      "label": "Jobs And Careers",
+      "purpose": "Help clients find jobs, improve resumes, match qualifications, track applications, and prepare interview packets.",
+      "safe_actions": ["search public job boards", "compare role fit", "draft resume bullets", "prepare interview plan"],
+      "approval_required": ["submit_application", "message_recruiter", "upload_resume", "share_personal_data"]
+    },
+    {
+      "id": "side_hustles",
+      "label": "Side Hustles",
+      "purpose": "Find realistic side-income paths, starter checklists, price tests, marketplace fit, and risk notes.",
+      "safe_actions": ["compare public demand", "draft offer", "estimate startup cost", "prepare first task checklist"],
+      "approval_required": ["contact_customer", "publish_offer", "buy_supplies", "accept_terms"]
+    },
+    {
+      "id": "contracts_grants_procurement",
+      "label": "Contracts Grants Procurement",
+      "purpose": "Find contracts, grants, RFPs, vendor registrations, procurement paths, and bid-readiness requirements.",
+      "safe_actions": ["search public portals", "score fit", "summarize requirements", "prepare bid checklist"],
+      "approval_required": ["submit_bid", "submit_grant", "register_vendor", "contact_buyer", "sign_contract"]
+    },
+    {
+      "id": "investors_loans_credit",
+      "label": "Investors Loans Credit",
+      "purpose": "Help clients prepare investor lists, loan readiness, grant alternatives, credit-building plans, and home-loan preparation.",
+      "safe_actions": ["prepare readiness checklist", "compare public program requirements", "draft pitch packet", "model affordability"],
+      "approval_required": ["submit_loan_application", "contact_investor", "connect_bank", "pull_credit", "apply_for_credit_card"]
+    },
+    {
+      "id": "unclaimed_money_estates",
+      "label": "Unclaimed Money And Estates",
+      "purpose": "Help clients search official public unclaimed property, probate, estate, genealogy, and beneficiary research paths.",
+      "safe_actions": ["prepare official-source checklist", "draft family-tree research plan", "summarize claim requirements", "organize proof documents"],
+      "approval_required": ["submit_claim", "upload_identity_documents", "contact_court", "contact_relative", "pay_researcher"]
+    },
+    {
+      "id": "settlements_and_claims",
+      "label": "Settlements And Claims",
+      "purpose": "Track public settlement and claims notices weekly and help users identify possible eligibility without creating false claims.",
+      "safe_actions": ["summarize public settlement notices", "list eligibility questions", "prepare document checklist", "flag deadline"],
+      "approval_required": ["submit_claim", "state_eligibility_as_fact", "upload_documents", "contact_law_firm"],
+      "hard_rules": ["no_fake_claims", "no_low_proof_claim_farming", "no_guaranteed_payouts", "user_must_attest_truthfully"]
+    },
+    {
+      "id": "associations_and_networks",
+      "label": "Associations And Networks",
+      "purpose": "Maintain association, chamber, trade group, union, incubator, accelerator, mentor, alumni, and professional network resources for every bot category.",
+      "safe_actions": ["search public association directories", "map membership benefits", "prepare outreach draft", "score fit"],
+      "approval_required": ["join_association", "pay_dues", "send_outreach", "share_profile"]
+    },
+    {
+      "id": "treasure_and_asset_research",
+      "label": "Treasure And Asset Research",
+      "purpose": "Help clients organize lawful research into collectibles, inherited assets, mineral rights, property records, forgotten accounts, and historical records.",
+      "safe_actions": ["prepare research checklist", "summarize public records", "organize provenance notes", "draft appraisal packet"],
+      "approval_required": ["enter_private_property", "pay_appraiser", "submit_claim", "contact_owner_or_heir"],
+      "hard_rules": ["lawful_research_only", "no_trespassing", "no_false_ownership_claims"]
+    }
+  ],
+  "source_policy": {
+    "allowed": [
+      "official government public portals",
+      "official court or settlement administrator pages",
+      "public job boards",
+      "public grant and procurement portals",
+      "public lender or program requirement pages",
+      "public association directories",
+      "owner-approved client documents"
+    ],
+    "blocked": [
+      "private accounts without approval",
+      "data brokers without compliance review",
+      "false eligibility claims",
+      "scraping forbidden sources",
+      "legal financial tax or credit decisions without professional review"
+    ],
+    "must_store": [
+      "source_url",
+      "checked_at",
+      "lane",
+      "summary",
+      "eligibility_questions",
+      "deadline",
+      "approval_needed",
+      "next_safe_action"
+    ]
+  },
+  "approval_wall": [
+    "submit_application",
+    "submit_claim",
+    "submit_bid",
+    "submit_grant",
+    "apply_for_loan_or_credit",
+    "contact_external_party",
+    "upload_identity_documents",
+    "connect_bank_or_payment_method",
+    "pay_fees_or_dues",
+    "enter_private_property",
+    "make_legal_financial_credit_or_tax_claim"
+  ]
+}
