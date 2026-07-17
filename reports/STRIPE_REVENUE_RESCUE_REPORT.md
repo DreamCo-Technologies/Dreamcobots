@@ -1,6 +1,6 @@
 # Stripe Revenue Rescue Report
 
-- Generated: 2026-07-17T14:23:28Z
+- Generated: 2026-07-17T15:26:19Z
 - Rescue ready: False
 - Checkout-ready offers: 0/2
 - Tracked Stripe events: 0
