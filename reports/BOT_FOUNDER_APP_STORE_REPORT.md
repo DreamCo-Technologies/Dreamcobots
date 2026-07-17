@@ -6,6 +6,9 @@ Every DreamCo bot studies its market, designs a useful autonomous app, prepares 
 
 - Bot founder packets: 1248 / 1248
 - App concepts: 1248
+- Business-manager roles: 1248
+- Category money missions: 1248
+- Model council packets: 1248
 - Competitor study plans: 1248
 - Revenue models: 1248
 - Marketing plans: 1248
@@ -30,6 +33,12 @@ Study public competitors, substitutes, pricing, feature gaps, positioning, onboa
 Find ethical ways the bot can create value, package offers, price services, reduce costs, recover revenue, or help customers make better decisions.
 
 - Outputs: revenue_model, offer_stack, pricing_test, unit_economics_notes, risk_disclosures
+
+### World Model Council Lab
+
+Use the governed 100+ model-resource council to compare model advice, improve decisions, test prompts, build evals, and choose the best AI route for the bot's category.
+
+- Outputs: model_council_packet, routing_scorecard, debate_notes, eval_results, training_data_rights_check, winner_model_route
 
 ### App Builder Lab
 

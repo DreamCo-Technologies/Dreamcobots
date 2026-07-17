@@ -8,6 +8,9 @@
     { "id": "sandbox_mode", "label": "Sandbox Mode", "default": true, "description": "Bot may run local tests, generated fixtures, simulations, and dry-run workflows." },
     { "id": "contract_discovery", "label": "Contract Discovery", "default": true, "description": "Bot may search public and owner-approved opportunities and prepare approval packets." },
     { "id": "data_package_mode", "label": "Data Package Mode", "default": true, "description": "Bot may prepare rights-cleared AI data package blueprints and quality checks." },
+    { "id": "autonomous_money_discovery", "label": "Autonomous Money Discovery", "default": true, "description": "Bot may find category-specific customer problems, offer ideas, contract paths, productivity wins, and sandbox revenue experiments." },
+    { "id": "ai_model_council", "label": "AI Model Council", "default": true, "description": "Bot may use the governed 100+ model-resource council for decision support, routing, debate, and fallback planning." },
+    { "id": "model_training_eval", "label": "Model Training and Eval", "default": true, "description": "Bot may prepare rights-cleared evals, model cards, routing scorecards, and training plans in sandbox mode." },
     { "id": "people_lookup_safe_mode", "label": "People Lookup Safe Mode", "default": true, "description": "Bot may prepare privacy-safe lookup packets from public or owner-approved sources." },
     { "id": "client_outreach", "label": "Client Outreach", "default": false, "description": "Bot may only send or schedule outreach after explicit owner approval." },
     { "id": "paid_actions", "label": "Paid Actions", "default": false, "description": "Bot may only spend money, buy domains, run ads, or use paid APIs after approval." },
@@ -20,7 +23,13 @@
       "id": "safe_business_work",
       "label": "Safe Business Work",
       "default": true,
-      "permissions": ["research", "draft", "score", "simulate", "sandbox_test", "prepare_approval_packet"]
+      "permissions": ["research", "draft", "score", "simulate", "sandbox_test", "prepare_approval_packet", "discover_category_money_paths", "prepare_productivity_playbook"]
+    },
+    {
+      "id": "model_council_work",
+      "label": "Model Council Work",
+      "default": true,
+      "permissions": ["route_models", "compare_model_outputs", "run_model_debate", "score_model_evals", "prepare_training_plan", "record_model_lessons"]
     },
     {
       "id": "external_impact",
@@ -53,6 +62,9 @@
     "business_owner_mode_enabled",
     "contract_discovery_enabled",
     "data_package_enabled",
+    "autonomous_money_discovery_enabled",
+    "ai_model_council_enabled",
+    "model_training_eval_enabled",
     "people_lookup_enabled",
     "sandbox_testing_enabled",
     "client_outreach_enabled",
@@ -66,6 +78,10 @@
     "submit_bid",
     "submit_grant_application",
     "publish_app_or_store_listing",
+    "production_model_routing_change",
+    "fine_tune_or_train_on_customer_data",
+    "sell_or_publish_training_dataset",
+    "paid_model_benchmark_batch",
     "buy_domain",
     "run_paid_ad",
     "collect_or_move_money",
@@ -84,6 +100,8 @@
     "Live actions require explicit owner approval and audit evidence.",
     "Settings toggles expose capability state but do not bypass approval gates.",
     "Every risky action must produce an approval packet before execution.",
+    "Every bot acts as a supervised business manager for its category, not as an unsupervised money operator.",
+    "Every bot may use model-council advice in sandbox mode, but live model routing, paid batches, training on customer data, and dataset sales require approval.",
     "All user, client, payment, people, and credential data stays governed by privacy and secret policies."
   ],
   "success_metrics": [

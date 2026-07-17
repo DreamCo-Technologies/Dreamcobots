@@ -8,6 +8,32 @@
     "secret_rule": "Never store provider API keys, customer secrets, private prompts, raw credentials, or paid content in this catalog.",
     "approval_rule": "External sends, paid calls, production deploys, customer data, money movement, likeness cloning, and account changes require owner approval."
   },
+  "world_ai_model_council": {
+    "mission": "Use 100+ globally sourced model resources as a decision council for every bot while tracking strengths, weaknesses, cost, latency, safety, and task fit.",
+    "target_model_resources": 100,
+    "decision_style": "route_compare_debate_eval_then_select",
+    "benchmark_sources": [
+      "https://artificialanalysis.ai/",
+      "https://evals.report/benchmarks/aaii",
+      "https://lmarena.ai/",
+      "https://developers.openai.com/api/docs/models/all",
+      "https://ai.google.dev/gemini-api/docs/models"
+    ],
+    "council_steps": [
+      "classify task and risk",
+      "pick budget, fast, quality, and private candidates",
+      "ask at least two model families for hard decisions",
+      "run rubric and sandbox evals",
+      "compare cost, latency, quality, safety, and user value",
+      "record winner, runner up, failure mode, and next test",
+      "route live-impact work to owner approval"
+    ],
+    "training_and_testing_policy": {
+      "allowed": ["prompt evals", "routing evals", "sandbox datasets", "rights-cleared fine-tuning plans", "synthetic eval cases", "model cards", "red-team rubrics"],
+      "approval_required": ["paid benchmark batches", "fine-tuning with customer data", "selling datasets", "production routing changes", "provider credential changes"],
+      "blocked": ["private data training without rights", "secret leakage", "unlabeled synthetic media", "unsafe autonomous live actions", "claims that one model is best without current eval evidence"]
+    }
+  },
   "provider_docs": [
     { "provider": "OpenAI", "url": "https://platform.openai.com/docs/models" },
     { "provider": "Anthropic", "url": "https://docs.anthropic.com/en/docs/about-claude/models" },
@@ -42,6 +68,9 @@
     { "id": "legal_safety_agent", "label": "Legal Safety Agent", "best_for": ["risk flags", "policy checks", "approval language"], "avoid_for": ["legal advice claims"] },
     { "id": "memory_curator_agent", "label": "Memory Curator Agent", "best_for": ["useful summaries", "retention tiers", "source metadata"], "avoid_for": ["raw scratchpad hoarding"] },
     { "id": "model_router_agent", "label": "Model Router Agent", "best_for": ["model selection", "fallbacks", "cost-quality tradeoffs"], "avoid_for": ["using disabled providers"] }
+    ,
+    { "id": "world_model_council_agent", "label": "World Model Council Agent", "best_for": ["multi-model debate", "model comparison", "provider fallback planning", "global AI decision support"], "avoid_for": ["declaring a winner without eval evidence"] },
+    { "id": "model_eval_training_agent", "label": "Model Eval and Training Agent", "best_for": ["eval harnesses", "training data rights checks", "model cards", "routing scorecards"], "avoid_for": ["training on private or unlicensed data"] }
   ],
   "prompt_types": [
     "task_brief", "system_role", "tool_contract", "structured_output", "few_shot", "critique", "debate", "rubric_eval", "red_team", "chain_summary", "retrieval_grounded", "code_review", "test_generation", "sandbox_runbook", "customer_discovery", "offer_builder", "visual_prompt", "voice_consent", "workflow_plan", "handoff_summary"
@@ -50,7 +79,7 @@
     "file_reader", "code_editor", "test_runner", "browser_research", "api_client", "webhook_receiver", "database_query", "vector_search", "embedding_index", "reranker", "image_generator", "image_editor", "video_generator", "speech_to_text", "text_to_speech", "music_generator", "spreadsheet_builder", "deck_builder", "pdf_parser", "deployment_packager", "payment_checker", "notification_sender", "approval_gate"
   ],
   "task_types": [
-    "architecture", "coding", "debugging", "repo_review", "market_research", "competitor_analysis", "sales_copy", "customer_support", "data_extraction", "dashboard_building", "image_generation", "image_editing", "video_storyboard", "video_generation", "music_video_planning", "voiceover", "speech_transcription", "course_building", "kid_learning_video", "game_building", "simulation_building", "legal_safety_review", "financial_analysis", "security_review", "workflow_automation", "api_tool_building", "webhook_building", "memory_curation", "model_evaluation", "deployment_planning"
+    "architecture", "coding", "debugging", "repo_review", "market_research", "competitor_analysis", "sales_copy", "customer_support", "data_extraction", "dashboard_building", "image_generation", "image_editing", "video_storyboard", "video_generation", "music_video_planning", "voiceover", "speech_transcription", "course_building", "kid_learning_video", "game_building", "simulation_building", "legal_safety_review", "financial_analysis", "security_review", "workflow_automation", "api_tool_building", "webhook_building", "memory_curation", "model_evaluation", "deployment_planning", "multi_model_decision", "model_training_eval", "autonomous_business_strategy"
   ],
   "model_families": [
     { "id": "openai_reasoning", "provider": "OpenAI", "label": "OpenAI reasoning and general intelligence", "roles": ["reasoning", "coding", "vision", "tool_use"], "good_at": ["complex planning", "code repair", "tool calling", "multimodal app building"], "bad_at": ["unverified current facts without retrieval", "tasks needing disabled credentials"], "best_tasks": ["architecture", "coding", "debugging", "model_evaluation"] },

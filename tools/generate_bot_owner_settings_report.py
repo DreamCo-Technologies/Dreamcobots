@@ -62,6 +62,9 @@ def build_bot_settings(bot, config, approval_slugs):
         "business_owner_mode_enabled": True,
         "contract_discovery_enabled": True,
         "data_package_enabled": True,
+        "autonomous_money_discovery_enabled": True,
+        "ai_model_council_enabled": True,
+        "model_training_eval_enabled": True,
         "people_lookup_enabled": True,
         "sandbox_testing_enabled": True,
         "client_outreach_enabled": False,
@@ -75,6 +78,9 @@ def build_bot_settings(bot, config, approval_slugs):
         settings["sandbox_mode"] = True
         settings["contract_discovery"] = True
         settings["data_package_mode"] = True
+        settings["autonomous_money_discovery"] = True
+        settings["ai_model_council"] = True
+        settings["model_training_eval"] = True
         settings["people_lookup_safe_mode"] = True
 
     return {
@@ -84,6 +90,13 @@ def build_bot_settings(bot, config, approval_slugs):
         "category": bot.get("category") or "business",
         "risk_hint": risk,
         "business_owner_status": "enabled_safe_mode",
+        "business_manager_role": {
+            "status": "active_supervised_business_manager",
+            "job": "Get smarter through model-council evals, find category-specific customer problems, prepare productivity and money opportunities, and stop before live impact until approved.",
+            "category_money_focus": f"Find ethical ways to earn, save, or protect money in {bot.get('division') or 'DreamCo'} / {bot.get('category') or 'business'}.",
+            "model_council_enabled": True,
+            "training_eval_enabled": True,
+        },
         "previously_blocked_live_actions": risk == "high",
         "safe_work_unblocked": True,
         "live_actions_require_approval": True,
@@ -114,6 +127,14 @@ def build_report():
         "bot_count": len(bots),
         "bots_with_owner_settings": len(bot_settings),
         "business_owner_enabled_bots": sum(1 for item in bot_settings if item["controls"]["business_owner_mode_enabled"]),
+        "business_manager_enabled_bots": len(bot_settings),
+        "autonomous_money_discovery_enabled_bots": sum(
+            1 for item in bot_settings if item["controls"]["autonomous_money_discovery_enabled"]
+        ),
+        "ai_model_council_enabled_bots": sum(1 for item in bot_settings if item["controls"]["ai_model_council_enabled"]),
+        "model_training_eval_enabled_bots": sum(
+            1 for item in bot_settings if item["controls"]["model_training_eval_enabled"]
+        ),
         "safe_mode_enabled_bots": sum(1 for item in bot_settings if item["controls"]["safe_mode_enabled"]),
         "high_risk_bots": high_risk,
         "high_risk_bots_unblocked_for_safe_work": sum(
@@ -163,6 +184,10 @@ def write_markdown(report):
         "",
         f"- Bots with owner settings: {summary['bots_with_owner_settings']} / {summary['bot_count']}",
         f"- Business-owner enabled bots: {summary['business_owner_enabled_bots']}",
+        f"- Business-manager enabled bots: {summary['business_manager_enabled_bots']}",
+        f"- Autonomous money discovery enabled bots: {summary['autonomous_money_discovery_enabled_bots']}",
+        f"- AI model council enabled bots: {summary['ai_model_council_enabled_bots']}",
+        f"- Model training/eval enabled bots: {summary['model_training_eval_enabled_bots']}",
         f"- Safe-mode enabled bots: {summary['safe_mode_enabled_bots']}",
         f"- High-risk bots: {summary['high_risk_bots']}",
         f"- High-risk bots unblocked for safe work: {summary['high_risk_bots_unblocked_for_safe_work']}",

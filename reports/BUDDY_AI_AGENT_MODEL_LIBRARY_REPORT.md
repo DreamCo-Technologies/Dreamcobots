@@ -5,21 +5,37 @@ Give Buddy a governed prompt, tool, agent, and model-resource library so every b
 ## Summary
 
 - Model resources: 104
+- Target model resources: 100
+- Top 100 model resources ready: True
 - Providers: 23
 - Low-cost resources: 86
 - Google Gemini resources: 8
 - Free or cheap routing enabled: True
-- Agent types: 16
+- Agent types: 18
+- World model council ready: True
+- World model council steps: 7
+- Benchmark sources: 5
+- Training/eval policy ready: True
 - Prompt types: 20
 - Tool types: 23
-- Task routes: 30
+- Task routes: 33
 - Bots with model routing: 1248 / 1248
+- Bots with world model council: 1248 / 1248
+- Bots with training/eval policy: 1248 / 1248
 
 ## Routing Rule
 
 Provider model IDs, prices, rate limits, and availability change often. Treat every resource as a routing candidate and verify the current provider model ID before production use.
 
 Prefer free-tier, local, cached, batch, and smallest-capable models for sandbox work. Escalate to paid or premium models only after cost review and owner approval.
+
+## World Model Council
+
+Use 100+ globally sourced model resources as a decision council for every bot while tracking strengths, weaknesses, cost, latency, safety, and task fit.
+
+- Decision style: route_compare_debate_eval_then_select
+- Actual resources: 104
+- Provider count: 23
 
 ## Cost Control
 
@@ -60,3 +76,5 @@ Prefer free-tier, local, cached, batch, and smallest-capable models for sandbox 
 - Legal Safety Agent: prompts=task_brief, system_role, tool_contract, structured_output, few_shot; tools=file_reader, code_editor, test_runner, browser_research, api_client
 - Memory Curator Agent: prompts=task_brief, system_role, tool_contract, structured_output, few_shot; tools=file_reader, code_editor, test_runner, browser_research, api_client
 - Model Router Agent: prompts=task_brief, system_role, tool_contract, structured_output, few_shot; tools=file_reader, code_editor, test_runner, browser_research, api_client
+- World Model Council Agent: prompts=task_brief, system_role, tool_contract, structured_output, few_shot; tools=file_reader, code_editor, test_runner, browser_research, api_client
+- Model Eval and Training Agent: prompts=task_brief, system_role, tool_contract, structured_output, few_shot; tools=file_reader, code_editor, test_runner, browser_research, api_client

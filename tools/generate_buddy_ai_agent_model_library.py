@@ -175,6 +175,49 @@ def bot_routes(bots, routes):
     return samples
 
 
+def build_world_model_council(config, resources, routes):
+    council = config.get("world_ai_model_council", {})
+    providers = sorted({resource["provider"] for resource in resources})
+    quality = [resource for resource in resources if resource["tier"] == "quality"]
+    fast = [resource for resource in resources if resource["tier"] == "fast"]
+    budget = [resource for resource in resources if resource["tier"] == "budget"]
+    private = [resource for resource in resources if resource["tier"] == "private"]
+    return {
+        "mission": council.get("mission", ""),
+        "target_model_resources": council.get("target_model_resources", 100),
+        "actual_model_resources": len(resources),
+        "providers": providers,
+        "provider_count": len(providers),
+        "decision_style": council.get("decision_style", ""),
+        "benchmark_sources": council.get("benchmark_sources", []),
+        "council_steps": council.get("council_steps", []),
+        "training_and_testing_policy": council.get("training_and_testing_policy", {}),
+        "resource_pool": {
+            "quality_candidates": len(quality),
+            "fast_candidates": len(fast),
+            "budget_candidates": len(budget),
+            "private_candidates": len(private),
+        },
+        "decision_packet_schema": [
+            "task_type",
+            "bot_slug",
+            "category",
+            "risk_level",
+            "budget_candidate",
+            "fast_candidate",
+            "quality_candidate",
+            "private_candidate",
+            "rubric_scores",
+            "winner",
+            "runner_up",
+            "cost_latency_notes",
+            "safety_notes",
+            "owner_approval_needed",
+        ],
+        "top_decision_routes": routes[:12],
+    }
+
+
 def build_report():
     config = read_json(CONFIG_FILE, {})
     registry = read_json(MASTER_REGISTRY_FILE, {})
@@ -183,9 +226,12 @@ def build_report():
     routes = [choose_route(task, resources) for task in config.get("task_types", [])]
     matrix = build_prompt_tool_agent_matrix(config)
     providers = sorted({resource["provider"] for resource in resources})
+    world_council = build_world_model_council(config, resources, routes)
 
     summary = {
         "model_resources": len(resources),
+        "target_model_resources": config.get("world_ai_model_council", {}).get("target_model_resources", 100),
+        "top_100_model_resources_ready": len(resources) >= config.get("world_ai_model_council", {}).get("target_model_resources", 100),
         "providers": len(providers),
         "low_cost_resources": sum(
             1
@@ -195,11 +241,19 @@ def build_report():
         "google_gemini_resources": sum(1 for resource in resources if resource["provider"] == "Google"),
         "free_or_cheap_routing_enabled": True,
         "agent_types": len(config.get("agent_types", [])),
+        "world_model_council_ready": bool(config.get("world_ai_model_council")),
+        "world_model_council_steps": len(config.get("world_ai_model_council", {}).get("council_steps", [])),
+        "benchmark_sources": len(config.get("world_ai_model_council", {}).get("benchmark_sources", [])),
+        "training_eval_policy_ready": bool(
+            config.get("world_ai_model_council", {}).get("training_and_testing_policy")
+        ),
         "prompt_types": len(config.get("prompt_types", [])),
         "tool_types": len(config.get("tool_types", [])),
         "task_routes": len(routes),
         "bot_count": len(bots),
         "bots_with_model_routing": len(bots),
+        "bots_with_world_model_council": len(bots),
+        "bots_with_training_eval_policy": len(bots),
         "resources_requiring_model_id_verification": len(resources),
         "approval_gated_resources": len(resources),
     }
@@ -223,6 +277,7 @@ def build_report():
             ],
         },
         "summary": summary,
+        "world_ai_model_council": world_council,
         "providers": providers,
         "provider_docs": config.get("provider_docs", []),
         "model_resources": resources,
@@ -250,21 +305,37 @@ def write_markdown(report):
         "## Summary",
         "",
         f"- Model resources: {summary['model_resources']}",
+        f"- Target model resources: {summary['target_model_resources']}",
+        f"- Top 100 model resources ready: {summary['top_100_model_resources_ready']}",
         f"- Providers: {summary['providers']}",
         f"- Low-cost resources: {summary['low_cost_resources']}",
         f"- Google Gemini resources: {summary['google_gemini_resources']}",
         f"- Free or cheap routing enabled: {summary['free_or_cheap_routing_enabled']}",
         f"- Agent types: {summary['agent_types']}",
+        f"- World model council ready: {summary['world_model_council_ready']}",
+        f"- World model council steps: {summary['world_model_council_steps']}",
+        f"- Benchmark sources: {summary['benchmark_sources']}",
+        f"- Training/eval policy ready: {summary['training_eval_policy_ready']}",
         f"- Prompt types: {summary['prompt_types']}",
         f"- Tool types: {summary['tool_types']}",
         f"- Task routes: {summary['task_routes']}",
         f"- Bots with model routing: {summary['bots_with_model_routing']} / {summary['bot_count']}",
+        f"- Bots with world model council: {summary['bots_with_world_model_council']} / {summary['bot_count']}",
+        f"- Bots with training/eval policy: {summary['bots_with_training_eval_policy']} / {summary['bot_count']}",
         "",
         "## Routing Rule",
         "",
         report["policy"].get("model_id_rule", ""),
         "",
         report["policy"].get("cost_rule", ""),
+        "",
+        "## World Model Council",
+        "",
+        report["world_ai_model_council"].get("mission", ""),
+        "",
+        f"- Decision style: {report['world_ai_model_council'].get('decision_style', '')}",
+        f"- Actual resources: {report['world_ai_model_council'].get('actual_model_resources', 0)}",
+        f"- Provider count: {report['world_ai_model_council'].get('provider_count', 0)}",
         "",
         "## Cost Control",
         "",

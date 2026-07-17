@@ -91,6 +91,40 @@ def founder_packet(bot, config):
         "app_store_category": app_category,
         "target_customer": customer,
         "customer_problem": problem,
+        "business_manager_role": {
+            "status": "supervised_business_manager",
+            "job": "Study the category, find customer problems, build ethical autonomous money paths, choose model help through the council, and prepare approval packets before live actions.",
+            "decision_policy": "Research, draft, compare, sandbox test, and learn continuously; do not contact customers, spend money, deploy, train on private data, or move money without approval.",
+        },
+        "category_money_mission": (
+            f"Find ways {bot_name} can earn, save, protect, or unlock money for the owner and clients in "
+            f"{division} / {slug_text(category)} through services, apps, automations, reports, contracts, grants, data, or productivity workflows."
+        ),
+        "model_council_packet": {
+            "status": "ready_for_100_plus_model_resource_routing",
+            "model_council_roles": [
+                "budget_draft",
+                "fast_iteration",
+                "quality_reasoning",
+                "private_sensitive_review",
+                "critic_or_debate",
+                "eval_scorer",
+            ],
+            "decision_outputs": [
+                "recommended_model_route",
+                "fallback_model_route",
+                "cost_latency_notes",
+                "quality_score",
+                "safety_score",
+                "training_or_eval_next_step",
+            ],
+            "blocked_without_approval": [
+                "paid_model_batch",
+                "fine_tuning_with_customer_data",
+                "production_model_routing_change",
+                "selling_training_dataset",
+            ],
+        },
         "competitor_study_plan": [
             "Map 5-10 public competitors or substitutes.",
             "Compare pricing, onboarding, features, integrations, proof, support, and trust signals.",
@@ -163,6 +197,9 @@ def build_report():
         "bot_count": len(bots),
         "founder_packets": len(packets),
         "bots_with_app_concept": sum(1 for packet in packets if packet.get("autonomous_app_concept")),
+        "bots_with_business_manager_role": sum(1 for packet in packets if packet.get("business_manager_role")),
+        "bots_with_category_money_mission": sum(1 for packet in packets if packet.get("category_money_mission")),
+        "bots_with_model_council_packet": sum(1 for packet in packets if packet.get("model_council_packet")),
         "bots_with_competitor_study_plan": sum(1 for packet in packets if packet.get("competitor_study_plan")),
         "bots_with_revenue_model": sum(1 for packet in packets if packet.get("revenue_model")),
         "bots_with_marketing_plan": sum(1 for packet in packets if packet.get("marketing_plan")),
@@ -212,6 +249,9 @@ def write_markdown(report):
         "",
         f"- Bot founder packets: {summary['founder_packets']} / {summary['bot_count']}",
         f"- App concepts: {summary['bots_with_app_concept']}",
+        f"- Business-manager roles: {summary['bots_with_business_manager_role']}",
+        f"- Category money missions: {summary['bots_with_category_money_mission']}",
+        f"- Model council packets: {summary['bots_with_model_council_packet']}",
         f"- Competitor study plans: {summary['bots_with_competitor_study_plan']}",
         f"- Revenue models: {summary['bots_with_revenue_model']}",
         f"- Marketing plans: {summary['bots_with_marketing_plan']}",

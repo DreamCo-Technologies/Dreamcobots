@@ -419,6 +419,60 @@
         "browser_research",
         "api_client"
       ]
+    },
+    {
+      "agent_type": "world_model_council_agent",
+      "avoid_for": [
+        "declaring a winner without eval evidence"
+      ],
+      "best_for": [
+        "multi-model debate",
+        "model comparison",
+        "provider fallback planning",
+        "global AI decision support"
+      ],
+      "label": "World Model Council Agent",
+      "prompt_types": [
+        "task_brief",
+        "system_role",
+        "tool_contract",
+        "structured_output",
+        "few_shot"
+      ],
+      "tool_types": [
+        "file_reader",
+        "code_editor",
+        "test_runner",
+        "browser_research",
+        "api_client"
+      ]
+    },
+    {
+      "agent_type": "model_eval_training_agent",
+      "avoid_for": [
+        "training on private or unlicensed data"
+      ],
+      "best_for": [
+        "eval harnesses",
+        "training data rights checks",
+        "model cards",
+        "routing scorecards"
+      ],
+      "label": "Model Eval and Training Agent",
+      "prompt_types": [
+        "task_brief",
+        "system_role",
+        "tool_contract",
+        "structured_output",
+        "few_shot"
+      ],
+      "tool_types": [
+        "file_reader",
+        "code_editor",
+        "test_runner",
+        "browser_research",
+        "api_client"
+      ]
     }
   ],
   "best_practice_routing_order": [
@@ -587,7 +641,7 @@
     ],
     "secret_name": "GOOGLE_API_KEY"
   },
-  "generated_at": "2026-07-17T14:23:27.440213+00:00",
+  "generated_at": "2026-07-17T14:57:20.133196+00:00",
   "mission": "Give Buddy a governed prompt, tool, agent, and model-resource library so every bot can pick the best AI route for each task, explain tradeoffs, and fall back safely.",
   "model_resources": [
     {
@@ -4199,10 +4253,13 @@
   "schema": "dreamco.buddy_ai_agent_model_library_report.v1",
   "source_config": "config/buddy_ai_agent_model_library.json",
   "summary": {
-    "agent_types": 16,
+    "agent_types": 18,
     "approval_gated_resources": 104,
+    "benchmark_sources": 5,
     "bot_count": 1248,
     "bots_with_model_routing": 1248,
+    "bots_with_training_eval_policy": 1248,
+    "bots_with_world_model_council": 1248,
     "free_or_cheap_routing_enabled": true,
     "google_gemini_resources": 8,
     "low_cost_resources": 86,
@@ -4210,8 +4267,13 @@
     "prompt_types": 20,
     "providers": 23,
     "resources_requiring_model_id_verification": 104,
-    "task_routes": 30,
-    "tool_types": 23
+    "target_model_resources": 100,
+    "task_routes": 33,
+    "tool_types": 23,
+    "top_100_model_resources_ready": true,
+    "training_eval_policy_ready": true,
+    "world_model_council_ready": true,
+    "world_model_council_steps": 7
   },
   "task_routes": [
     {
@@ -4723,6 +4785,358 @@
       ],
       "selection_reason": "Ranked by declared best_tasks, roles, quality tier, and safe fallback coverage.",
       "task_type": "deployment_planning"
+    },
+    {
+      "fallback_resources": [
+        "adobe_firefly__quality",
+        "anthropic_claude__quality",
+        "black_forest_image__quality"
+      ],
+      "primary_resource": "ai21_language__quality",
+      "required_evals": [
+        "task_success",
+        "cost_latency",
+        "source_quality",
+        "safety_gate",
+        "user_value"
+      ],
+      "selection_reason": "Ranked by declared best_tasks, roles, quality tier, and safe fallback coverage.",
+      "task_type": "multi_model_decision"
+    },
+    {
+      "fallback_resources": [
+        "adobe_firefly__quality",
+        "anthropic_claude__quality",
+        "black_forest_image__quality"
+      ],
+      "primary_resource": "ai21_language__quality",
+      "required_evals": [
+        "task_success",
+        "cost_latency",
+        "source_quality",
+        "safety_gate",
+        "user_value"
+      ],
+      "selection_reason": "Ranked by declared best_tasks, roles, quality tier, and safe fallback coverage.",
+      "task_type": "model_training_eval"
+    },
+    {
+      "fallback_resources": [
+        "adobe_firefly__quality",
+        "anthropic_claude__quality",
+        "black_forest_image__quality"
+      ],
+      "primary_resource": "ai21_language__quality",
+      "required_evals": [
+        "task_success",
+        "cost_latency",
+        "source_quality",
+        "safety_gate",
+        "user_value"
+      ],
+      "selection_reason": "Ranked by declared best_tasks, roles, quality tier, and safe fallback coverage.",
+      "task_type": "autonomous_business_strategy"
     }
-  ]
+  ],
+  "world_ai_model_council": {
+    "actual_model_resources": 104,
+    "benchmark_sources": [
+      "https://artificialanalysis.ai/",
+      "https://evals.report/benchmarks/aaii",
+      "https://lmarena.ai/",
+      "https://developers.openai.com/api/docs/models/all",
+      "https://ai.google.dev/gemini-api/docs/models"
+    ],
+    "council_steps": [
+      "classify task and risk",
+      "pick budget, fast, quality, and private candidates",
+      "ask at least two model families for hard decisions",
+      "run rubric and sandbox evals",
+      "compare cost, latency, quality, safety, and user value",
+      "record winner, runner up, failure mode, and next test",
+      "route live-impact work to owner approval"
+    ],
+    "decision_packet_schema": [
+      "task_type",
+      "bot_slug",
+      "category",
+      "risk_level",
+      "budget_candidate",
+      "fast_candidate",
+      "quality_candidate",
+      "private_candidate",
+      "rubric_scores",
+      "winner",
+      "runner_up",
+      "cost_latency_notes",
+      "safety_notes",
+      "owner_approval_needed"
+    ],
+    "decision_style": "route_compare_debate_eval_then_select",
+    "mission": "Use 100+ globally sourced model resources as a decision council for every bot while tracking strengths, weaknesses, cost, latency, safety, and task fit.",
+    "provider_count": 23,
+    "providers": [
+      "AI21",
+      "Adobe",
+      "Anthropic",
+      "Black Forest Labs",
+      "Cohere",
+      "Databricks",
+      "DeepSeek",
+      "ElevenLabs",
+      "Fireworks AI",
+      "Google",
+      "Hugging Face",
+      "Meta",
+      "Mistral",
+      "NVIDIA",
+      "OpenAI",
+      "Perplexity",
+      "Qwen",
+      "Runway",
+      "Stability AI",
+      "Suno",
+      "Together AI",
+      "Udio",
+      "xAI"
+    ],
+    "resource_pool": {
+      "budget_candidates": 26,
+      "fast_candidates": 26,
+      "private_candidates": 26,
+      "quality_candidates": 26
+    },
+    "target_model_resources": 100,
+    "top_decision_routes": [
+      {
+        "fallback_resources": [
+          "openai_reasoning__budget",
+          "openai_reasoning__fast",
+          "openai_reasoning__private"
+        ],
+        "primary_resource": "openai_reasoning__quality",
+        "required_evals": [
+          "task_success",
+          "cost_latency",
+          "source_quality",
+          "safety_gate",
+          "user_value"
+        ],
+        "selection_reason": "Ranked by declared best_tasks, roles, quality tier, and safe fallback coverage.",
+        "task_type": "architecture"
+      },
+      {
+        "fallback_resources": [
+          "openai_reasoning__quality",
+          "qwen_models__quality",
+          "deepseek_coder_reasoner__budget"
+        ],
+        "primary_resource": "deepseek_coder_reasoner__quality",
+        "required_evals": [
+          "task_success",
+          "cost_latency",
+          "source_quality",
+          "safety_gate",
+          "user_value"
+        ],
+        "selection_reason": "Ranked by declared best_tasks, roles, quality tier, and safe fallback coverage.",
+        "task_type": "coding"
+      },
+      {
+        "fallback_resources": [
+          "openai_reasoning__quality",
+          "deepseek_coder_reasoner__budget",
+          "deepseek_coder_reasoner__fast"
+        ],
+        "primary_resource": "deepseek_coder_reasoner__quality",
+        "required_evals": [
+          "task_success",
+          "cost_latency",
+          "source_quality",
+          "safety_gate",
+          "user_value"
+        ],
+        "selection_reason": "Ranked by declared best_tasks, roles, quality tier, and safe fallback coverage.",
+        "task_type": "debugging"
+      },
+      {
+        "fallback_resources": [
+          "anthropic_claude__budget",
+          "anthropic_claude__fast",
+          "anthropic_claude__private"
+        ],
+        "primary_resource": "anthropic_claude__quality",
+        "required_evals": [
+          "task_success",
+          "cost_latency",
+          "source_quality",
+          "safety_gate",
+          "user_value"
+        ],
+        "selection_reason": "Ranked by declared best_tasks, roles, quality tier, and safe fallback coverage.",
+        "task_type": "repo_review"
+      },
+      {
+        "fallback_resources": [
+          "perplexity_search__budget",
+          "perplexity_search__fast",
+          "perplexity_search__private"
+        ],
+        "primary_resource": "perplexity_search__quality",
+        "required_evals": [
+          "task_success",
+          "cost_latency",
+          "source_quality",
+          "safety_gate",
+          "user_value"
+        ],
+        "selection_reason": "Ranked by declared best_tasks, roles, quality tier, and safe fallback coverage.",
+        "task_type": "market_research"
+      },
+      {
+        "fallback_resources": [
+          "xai_grok__quality",
+          "perplexity_search__budget",
+          "perplexity_search__fast"
+        ],
+        "primary_resource": "perplexity_search__quality",
+        "required_evals": [
+          "task_success",
+          "cost_latency",
+          "source_quality",
+          "safety_gate",
+          "user_value"
+        ],
+        "selection_reason": "Ranked by declared best_tasks, roles, quality tier, and safe fallback coverage.",
+        "task_type": "competitor_analysis"
+      },
+      {
+        "fallback_resources": [
+          "anthropic_claude__quality",
+          "mistral_models__quality",
+          "ai21_language__budget"
+        ],
+        "primary_resource": "ai21_language__quality",
+        "required_evals": [
+          "task_success",
+          "cost_latency",
+          "source_quality",
+          "safety_gate",
+          "user_value"
+        ],
+        "selection_reason": "Ranked by declared best_tasks, roles, quality tier, and safe fallback coverage.",
+        "task_type": "sales_copy"
+      },
+      {
+        "fallback_resources": [
+          "google_gemini_flash_lite__quality",
+          "meta_llama__quality",
+          "openai_realtime__quality"
+        ],
+        "primary_resource": "ai21_language__quality",
+        "required_evals": [
+          "task_success",
+          "cost_latency",
+          "source_quality",
+          "safety_gate",
+          "user_value"
+        ],
+        "selection_reason": "Ranked by declared best_tasks, roles, quality tier, and safe fallback coverage.",
+        "task_type": "customer_support"
+      },
+      {
+        "fallback_resources": [
+          "databricks_mosaic__quality",
+          "google_gemini_flash_lite__quality",
+          "mistral_models__quality"
+        ],
+        "primary_resource": "cohere_command__quality",
+        "required_evals": [
+          "task_success",
+          "cost_latency",
+          "source_quality",
+          "safety_gate",
+          "user_value"
+        ],
+        "selection_reason": "Ranked by declared best_tasks, roles, quality tier, and safe fallback coverage.",
+        "task_type": "data_extraction"
+      },
+      {
+        "fallback_resources": [
+          "databricks_mosaic__budget",
+          "databricks_mosaic__fast",
+          "databricks_mosaic__private"
+        ],
+        "primary_resource": "databricks_mosaic__quality",
+        "required_evals": [
+          "task_success",
+          "cost_latency",
+          "source_quality",
+          "safety_gate",
+          "user_value"
+        ],
+        "selection_reason": "Ranked by declared best_tasks, roles, quality tier, and safe fallback coverage.",
+        "task_type": "dashboard_building"
+      },
+      {
+        "fallback_resources": [
+          "black_forest_image__quality",
+          "openai_image__quality",
+          "stability_image__quality"
+        ],
+        "primary_resource": "adobe_firefly__quality",
+        "required_evals": [
+          "task_success",
+          "cost_latency",
+          "source_quality",
+          "safety_gate",
+          "user_value"
+        ],
+        "selection_reason": "Ranked by declared best_tasks, roles, quality tier, and safe fallback coverage.",
+        "task_type": "image_generation"
+      },
+      {
+        "fallback_resources": [
+          "black_forest_image__quality",
+          "openai_image__quality",
+          "adobe_firefly__budget"
+        ],
+        "primary_resource": "adobe_firefly__quality",
+        "required_evals": [
+          "task_success",
+          "cost_latency",
+          "source_quality",
+          "safety_gate",
+          "user_value"
+        ],
+        "selection_reason": "Ranked by declared best_tasks, roles, quality tier, and safe fallback coverage.",
+        "task_type": "image_editing"
+      }
+    ],
+    "training_and_testing_policy": {
+      "allowed": [
+        "prompt evals",
+        "routing evals",
+        "sandbox datasets",
+        "rights-cleared fine-tuning plans",
+        "synthetic eval cases",
+        "model cards",
+        "red-team rubrics"
+      ],
+      "approval_required": [
+        "paid benchmark batches",
+        "fine-tuning with customer data",
+        "selling datasets",
+        "production routing changes",
+        "provider credential changes"
+      ],
+      "blocked": [
+        "private data training without rights",
+        "secret leakage",
+        "unlabeled synthetic media",
+        "unsafe autonomous live actions",
+        "claims that one model is best without current eval evidence"
+      ]
+    }
+  }
 }
