@@ -53,6 +53,10 @@ const BUDDY_24_HOUR_CLIENT_PACKAGE_FILE = path.join(
   __dirname,
   '../../reports/buddy_24_hour_client_package.json',
 );
+const BUDDY_CODEX_CHEAP_OPS_FILE = path.join(
+  __dirname,
+  '../../reports/buddy_codex_cheap_ops.json',
+);
 const BOT_AUTONOMOUS_REVENUE_PRACTICE_FILE = path.join(
   __dirname,
   '../../reports/bot_autonomous_revenue_practice.json',
@@ -266,6 +270,13 @@ function readBuddy24HourClientPackage() {
     return null;
   }
   return JSON.parse(fs.readFileSync(BUDDY_24_HOUR_CLIENT_PACKAGE_FILE, 'utf8'));
+}
+
+function readBuddyCodexCheapOps() {
+  if (!fs.existsSync(BUDDY_CODEX_CHEAP_OPS_FILE)) {
+    return null;
+  }
+  return JSON.parse(fs.readFileSync(BUDDY_CODEX_CHEAP_OPS_FILE, 'utf8'));
 }
 
 function readBotAutonomousRevenuePractice() {
@@ -816,6 +827,17 @@ app.get('/api/buddy-24-hour-package', rateLimiter, (_req, res) => {
   const report = readBuddy24HourClientPackage();
   if (!report) {
     return res.status(503).json({ error: 'Buddy 24-hour client package report not found' });
+  }
+  return res.json(report);
+});
+
+// ---------------------------------------------------------------------------
+// GET /api/buddy-codex-cheap-ops — Codex-style cheap 24-hour Buddy contract
+// ---------------------------------------------------------------------------
+app.get('/api/buddy-codex-cheap-ops', rateLimiter, (_req, res) => {
+  const report = readBuddyCodexCheapOps();
+  if (!report) {
+    return res.status(503).json({ error: 'Buddy Codex cheap ops report not found' });
   }
   return res.json(report);
 });

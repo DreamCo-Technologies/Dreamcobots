@@ -1,8 +1,8 @@
 {
   "bot": "github-cost-saver",
   "repo_path": "/Users/mamas/Documents/GitHub/Dreamcobots",
-  "scanned_at": "2026-07-12T08:17:40.997514+00:00",
-  "workflow_count": 42,
+  "scanned_at": "2026-07-17T12:46:43.501199+00:00",
+  "workflow_count": 44,
   "findings": [
     {
       "category": "actions_minutes",
@@ -315,6 +315,16 @@
       "requires_approval": false
     },
     {
+      "category": "actions_storage",
+      "severity": "high",
+      "path": ".github/workflows/stripe-secret-readiness.yml",
+      "title": "Artifact upload without retention-days",
+      "why_it_costs": "Artifacts accrue storage charges until they expire or are deleted.",
+      "safe_replacement": "Set retention-days to 1-7 for diagnostics and 14-30 only for release evidence.",
+      "estimated_monthly_savings_usd": 5.0,
+      "requires_approval": false
+    },
+    {
       "category": "actions_minutes",
       "severity": "medium",
       "path": ".github/workflows/system-bot-monitor.yml",
@@ -386,13 +396,13 @@
     }
   ],
   "summary": {
-    "finding_count": 38,
-    "high_severity": 18,
-    "estimated_monthly_savings_usd": 233.0,
+    "finding_count": 39,
+    "high_severity": 19,
+    "estimated_monthly_savings_usd": 238.0,
     "by_category": {
       "actions_minutes": 16,
       "actions_cache": 2,
-      "actions_storage": 17,
+      "actions_storage": 18,
       "codespaces": 1,
       "packages": 1,
       "budgets": 1

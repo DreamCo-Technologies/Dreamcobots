@@ -46,6 +46,10 @@ def build_report():
     readiness_score += 15 if foundry_summary.get("creation_lanes", 0) >= 8 else 0
     readiness_score += 10 if storage_summary.get("storage_ready") else 0
     readiness_score += 10 if infra.get("self_healing") else 0
+    cost_control = config.get("cost_control_policy", {})
+    parity_goal = config.get("buddy_codex_parity_goal", {})
+    github_guardrails = cost_control.get("github_cost_guardrails", [])
+    ai_guardrails = cost_control.get("ai_cost_guardrails", [])
 
     return {
         "schema": "dreamco.24_hour_scaling_report.v1",
@@ -67,8 +71,20 @@ def build_report():
             "min_replicas": infra.get("min_replicas"),
             "max_replicas": infra.get("max_replicas"),
             "self_healing_enabled": bool(infra.get("self_healing")),
+            "cheap_24_hour_mode": config.get("default_mode") == "continuous_supervised_cheap_ops",
+            "idle_sleep_enabled": infra.get("min_replicas") == 0,
+            "max_one_instance": infra.get("max_replicas") == 1,
+            "cloud_run_cpu_throttling": bool(infra.get("cloud_run_cpu_throttling")),
+            "github_actions_default": infra.get("github_actions_default"),
+            "free_first_ai_routing": bool(infra.get("free_first_ai_routing")),
+            "github_cost_guardrails": len(github_guardrails),
+            "ai_cost_guardrails": len(ai_guardrails),
+            "codex_style_capabilities": len(parity_goal.get("can_do_with_repo_access", [])),
+            "codex_style_approval_gates": len(parity_goal.get("requires_owner_approval", [])),
         },
         "infrastructure_policy": infra,
+        "cost_control_policy": cost_control,
+        "buddy_codex_parity_goal": parity_goal,
         "daily_cycles": cycles,
         "scale_lanes": config.get("scale_lanes", []),
         "always_blocked_without_owner_approval": config.get("always_blocked_without_owner_approval", []),
@@ -102,6 +118,10 @@ def write_markdown(report):
         f"- Bot founder packets: {summary['bot_founder_packets']}",
         f"- App foundry lanes: {summary['app_foundry_lanes']}",
         f"- Infra replicas: {summary['min_replicas']} to {summary['max_replicas']}",
+        f"- Cheap 24-hour mode: {summary['cheap_24_hour_mode']}",
+        f"- Idle sleep enabled: {summary['idle_sleep_enabled']}",
+        f"- GitHub Actions default: {summary['github_actions_default']}",
+        f"- Free-first AI routing: {summary['free_first_ai_routing']}",
         "",
         "## Daily Cycles",
         "",
@@ -117,6 +137,11 @@ def write_markdown(report):
     lines.extend(["## Always Blocked Without Approval", ""])
     for gate in report["always_blocked_without_owner_approval"]:
         lines.append(f"- {gate}")
+    lines.extend(["", "## Cost Guardrails", ""])
+    for gate in report["cost_control_policy"].get("github_cost_guardrails", []):
+        lines.append(f"- GitHub: {gate}")
+    for gate in report["cost_control_policy"].get("ai_cost_guardrails", []):
+        lines.append(f"- AI: {gate}")
     lines.append("")
     OUTPUT_MD.write_text("\n".join(lines))
 

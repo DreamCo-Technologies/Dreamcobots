@@ -15,8 +15,8 @@ Buddy is the trusted control layer for AI employees that research, build, test, 
 - Business-owner enabled bots: 1248
 - Safe-mode enabled bots: 1248
 - 24-hour cycles: 6
-- Safe automation steps: 24
-- Approval gates: 11
+- Safe automation steps: 27
+- Approval gates: 13
 - Client package ready: True
 
 ## Runtime Contract
@@ -76,3 +76,5 @@ Continuously refresh reports, run smoke checks, track failures, and keep only us
 - third_party_account_change
 - legal_medical_financial_claims
 - destructive_repository_action
+- paid_github_minutes_increase
+- paid_ai_always_on_loop

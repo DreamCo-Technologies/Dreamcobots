@@ -412,8 +412,8 @@ const FALLBACK_BOT_FOUNDER_APP_STORE = {
 
 const FALLBACK_24_HOUR_SCALING = {
   generated_at: null,
-  mission: 'Keep DreamCo improving around the clock through safe 24-hour research, build, test, app-store, and approval cycles.',
-  default_mode: 'continuous_supervised_scaling',
+  mission: 'Keep DreamCo improving around the clock through safe 24-hour research, build, test, app-store, and approval cycles while keeping paid cloud and GitHub usage as low as possible.',
+  default_mode: 'continuous_supervised_cheap_ops',
   summary: {
     readiness_score: 0,
     cycles_defined: 6,
@@ -425,9 +425,18 @@ const FALLBACK_24_HOUR_SCALING = {
     app_store_categories: 12,
     app_foundry_lanes: 8,
     storage_ready: true,
-    min_replicas: 2,
-    max_replicas: 20,
+    min_replicas: 0,
+    max_replicas: 1,
     self_healing_enabled: true,
+    cheap_24_hour_mode: true,
+    idle_sleep_enabled: true,
+    max_one_instance: true,
+    cloud_run_cpu_throttling: true,
+    github_actions_default: 'manual_or_path_gated',
+    free_first_ai_routing: true,
+    github_cost_guardrails: 5,
+    ai_cost_guardrails: 5,
+    codex_style_capabilities: 8,
   },
   daily_cycles: [
     { id: 'market_research_cycle', window: '00:00-03:00', purpose: 'Study competitors, app-store ideas, customer problems, pricing, reviews, and market gaps.', safe_automation: ['public_source_queue', 'competitor_notes'], approval_required: ['customer_contact'] },
@@ -440,6 +449,50 @@ const FALLBACK_24_HOUR_SCALING = {
   scale_lanes: ['bot_founder_packets', 'app_store_listing_drafts', 'sandbox_bootcamps', 'competitor_research', 'customer_discovery', 'marketing_drafts'],
   always_blocked_without_owner_approval: ['customer_outreach', 'ad_spend', 'money_movement', 'public_deployment', 'app_store_publish', 'credential_change'],
   next_actions: ['Connect this report to a scheduled workflow when recurring automation is approved.'],
+};
+
+const FALLBACK_BUDDY_CODEX_CHEAP_OPS = {
+  generated_at: null,
+  mission: 'Make Buddy a governed Codex-style coding, debugging, orchestration, and operations teammate while keeping DreamCo free or cheap by default.',
+  summary: {
+    codex_style_capabilities: 6,
+    bot_count: 1248,
+    bots_connected_to_buddy: 1248,
+    cheap_24_hour_mode: true,
+    min_replicas: 0,
+    max_replicas: 1,
+    github_cost_guardrails: 5,
+    ai_cost_guardrails: 5,
+    low_cost_ai_resources: 86,
+    gemini_resources: 8,
+    owner_approval_boundaries: 12,
+    unlimited_autonomy_claimed: false,
+    billing_bypass_claimed: false,
+  },
+  always_on_strategy: {
+    mode: '24_hour_supervised_queue_not_24_hour_paid_compute',
+    plain_english: 'Buddy keeps the system moving by rotating cheap local/report-based cycles and queued work packets. Bots do not need expensive always-on cloud containers to stay useful.',
+    runtime_layers: ['static dashboard and generated reports', 'local scripts on owner laptop', 'manual or path-gated GitHub Actions', 'Cloud Run request-based service that sleeps when idle', 'free or low-cost AI model routes'],
+  },
+  codex_style_capabilities: [
+    { id: 'repo_reader', label: 'Repository reader', buddy_can: 'Scan files, reports, bot profiles, configs, tests, workflows, and dashboards.', cheap_path: 'Use local file reads and generated JSON reports before network calls.', approval: 'No approval for read-only local scans.' },
+    { id: 'code_editor', label: 'Code editor', buddy_can: 'Draft scoped code, config, test, and documentation changes for review.', cheap_path: 'Use deterministic templates and smallest-capable AI routes before premium models.', approval: 'Owner approval before push, merge, deploy, or destructive edits.' },
+    { id: 'test_runner', label: 'Test and debug runner', buddy_can: 'Run syntax checks, unit tests, smoke tests, report freshness checks, and failure triage.', cheap_path: 'Run locally first; use GitHub Actions only for release evidence or remote-only checks.', approval: 'Owner approval before increasing scheduled CI frequency or paid runner usage.' },
+    { id: 'pr_helper', label: 'Pull request helper', buddy_can: 'Prepare PR summaries, compare goals to repository proof, and queue fixes for failed checks.', cheap_path: 'Use cached GitHub triage reports and local diffs before API refreshes.', approval: 'Owner approval before closing, merging, rebasing, or force-pushing PR branches.' },
+    { id: 'model_router', label: 'AI model router', buddy_can: 'Pick local/static/free/cheap/premium model routes based on task risk and quality needs.', cheap_path: 'Prefer local reports, cache, Gemini low-cost routes, and small models for drafts.', approval: 'Owner approval before paid always-on loops, premium batches, or production customer data.' },
+    { id: 'bot_orchestrator', label: 'Bot orchestrator', buddy_can: 'Create supervised work packets for every bot so the fleet keeps learning, testing, and packaging.', cheap_path: 'Queue work packets and summaries instead of running every bot as a paid live service.', approval: 'Owner approval before customer outreach, money movement, deploys, or account changes.' },
+  ],
+  github_free_cheap_plan: {
+    default_hosting: 'GitHub Pages for static dashboards and docs when possible.',
+    actions_policy: 'Manual, path-gated, short retention, local-first.',
+  },
+  cheap_ai_resource_plan: {
+    default_mode: 'free_or_low_cost_first',
+    local_first: true,
+    cache_first: true,
+    secret_name: 'GOOGLE_API_KEY',
+  },
+  approval_boundaries: ['money_movement', 'credential_change', 'paid_github_minutes_increase', 'paid_ai_always_on_loop'],
 };
 
 const FALLBACK_SPECIALIZED_BOT_KNOWLEDGE = {
@@ -1591,6 +1644,8 @@ export default function ActionsPage({
   const [botFounderAppStoreStatus, setBotFounderAppStoreStatus] = useState('loading');
   const [dailyScaling, setDailyScaling] = useState(null);
   const [dailyScalingStatus, setDailyScalingStatus] = useState('loading');
+  const [buddyCodexCheapOps, setBuddyCodexCheapOps] = useState(null);
+  const [buddyCodexCheapOpsStatus, setBuddyCodexCheapOpsStatus] = useState('loading');
   const [specializedKnowledge, setSpecializedKnowledge] = useState(null);
   const [specializedKnowledgeStatus, setSpecializedKnowledgeStatus] = useState('loading');
   const [aiAgentModelLibrary, setAiAgentModelLibrary] = useState(null);
@@ -1696,6 +1751,15 @@ export default function ActionsPage({
         setDailyScalingStatus('live');
       })
       .catch(() => setDailyScalingStatus('generated fallback'));
+  }, []);
+
+  useEffect(() => {
+    fetchFirstJson(['/api/buddy-codex-cheap-ops'])
+      .then((data) => {
+        setBuddyCodexCheapOps(data);
+        setBuddyCodexCheapOpsStatus('live');
+      })
+      .catch(() => setBuddyCodexCheapOpsStatus('generated fallback'));
   }, []);
 
   useEffect(() => {
@@ -1819,6 +1883,7 @@ export default function ActionsPage({
   const foundry = appFoundry ?? FALLBACK_APP_FOUNDRY;
   const botFounderStore = botFounderAppStore ?? FALLBACK_BOT_FOUNDER_APP_STORE;
   const scaling24 = dailyScaling ?? FALLBACK_24_HOUR_SCALING;
+  const codexCheapOps = buddyCodexCheapOps ?? FALLBACK_BUDDY_CODEX_CHEAP_OPS;
   const knowledge = specializedKnowledge ?? FALLBACK_SPECIALIZED_BOT_KNOWLEDGE;
   const modelLibrary = aiAgentModelLibrary ?? FALLBACK_AI_AGENT_MODEL_LIBRARY;
   const businessLaunch = businessLaunchExpansion ?? FALLBACK_BUSINESS_LAUNCH_EXPANSION;
@@ -1839,6 +1904,7 @@ export default function ActionsPage({
   const foundrySummary = foundry.summary ?? FALLBACK_APP_FOUNDRY.summary;
   const botFounderSummary = botFounderStore.summary ?? FALLBACK_BOT_FOUNDER_APP_STORE.summary;
   const scaling24Summary = scaling24.summary ?? FALLBACK_24_HOUR_SCALING.summary;
+  const codexCheapOpsSummary = codexCheapOps.summary ?? FALLBACK_BUDDY_CODEX_CHEAP_OPS.summary;
   const knowledgeSummary = knowledge.summary ?? FALLBACK_SPECIALIZED_BOT_KNOWLEDGE.summary;
   const modelLibrarySummary = modelLibrary.summary ?? FALLBACK_AI_AGENT_MODEL_LIBRARY.summary;
   const businessLaunchSummary = businessLaunch.summary ?? FALLBACK_BUSINESS_LAUNCH_EXPANSION.summary;
@@ -2720,6 +2786,48 @@ export default function ActionsPage({
               <p className="mt-1 text-xs uppercase tracking-wide text-slate-500">{label}</p>
             </div>
           ))}
+        </div>
+
+        <div className="mt-5 border border-emerald-500/30 bg-emerald-950/20 p-4">
+          <div className="flex flex-wrap items-start justify-between gap-3">
+            <div>
+              <h4 className="text-sm font-semibold text-emerald-100">Buddy cheap Codex mode</h4>
+              <p className="mt-2 max-w-3xl text-xs leading-5 text-emerald-100/80">
+                {codexCheapOps.always_on_strategy?.plain_english}
+              </p>
+            </div>
+            <span className="rounded-full border border-emerald-400/40 px-3 py-1 text-xs font-semibold text-emerald-100">
+              {buddyCodexCheapOpsStatus} · {formatDateTime(codexCheapOps.generated_at)}
+            </span>
+          </div>
+          <div className="mt-4 grid grid-cols-2 gap-px overflow-hidden border border-emerald-500/20 bg-emerald-500/20 md:grid-cols-4 xl:grid-cols-8">
+            {[
+              ['Capabilities', codexCheapOpsSummary.codex_style_capabilities],
+              ['Buddy bots', codexCheapOpsSummary.bots_connected_to_buddy],
+              ['Low-cost AI', codexCheapOpsSummary.low_cost_ai_resources],
+              ['Gemini', codexCheapOpsSummary.gemini_resources],
+              ['GitHub guards', codexCheapOpsSummary.github_cost_guardrails],
+              ['AI guards', codexCheapOpsSummary.ai_cost_guardrails],
+              ['Billing safe', codexCheapOpsSummary.billing_bypass_claimed ? 0 : 1],
+              ['Honest autonomy', codexCheapOpsSummary.unlimited_autonomy_claimed ? 0 : 1],
+            ].map(([label, value]) => (
+              <div key={label} className="bg-slate-950/90 p-3">
+                <p className="text-lg font-black text-emerald-100">{formatNumber(value)}</p>
+                <p className="mt-1 text-[11px] uppercase tracking-wide text-slate-500">{label}</p>
+              </div>
+            ))}
+          </div>
+          <div className="mt-4 grid gap-3 md:grid-cols-2 xl:grid-cols-3">
+            {(codexCheapOps.codex_style_capabilities ?? []).slice(0, 6).map((capability) => (
+              <article key={capability.id} className="border border-slate-800 bg-slate-950 p-3">
+                <h5 className="text-sm font-semibold text-white">{capability.label}</h5>
+                <p className="mt-2 text-xs leading-5 text-slate-400">{capability.buddy_can}</p>
+                <p className="mt-2 border-l-2 border-emerald-400 pl-3 text-xs leading-5 text-emerald-100/80">
+                  {capability.cheap_path}
+                </p>
+              </article>
+            ))}
+          </div>
         </div>
 
         <div className="mt-5 grid gap-px overflow-hidden border border-slate-800 bg-slate-800 md:grid-cols-2 xl:grid-cols-3">

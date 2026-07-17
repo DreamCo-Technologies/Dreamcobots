@@ -420,13 +420,50 @@ describe('GET /api/24-hour-scaling', () => {
     expect(res.status).toBe(200);
     expect(res.body.schema).toBe('dreamco.24_hour_scaling_report.v1');
     expect(res.body.summary.cycles_defined).toBe(6);
-    expect(res.body.summary.max_replicas).toBeGreaterThanOrEqual(20);
+    expect(res.body.summary.min_replicas).toBe(0);
+    expect(res.body.summary.max_replicas).toBe(1);
+    expect(res.body.summary.cheap_24_hour_mode).toBe(true);
+    expect(res.body.summary.idle_sleep_enabled).toBe(true);
+    expect(res.body.summary.max_one_instance).toBe(true);
+    expect(res.body.summary.cloud_run_cpu_throttling).toBe(true);
+    expect(res.body.summary.free_first_ai_routing).toBe(true);
+    expect(res.body.summary.github_actions_default).toBe('manual_or_path_gated');
+    expect(res.body.summary.github_cost_guardrails).toBeGreaterThanOrEqual(5);
+    expect(res.body.summary.ai_cost_guardrails).toBeGreaterThanOrEqual(5);
+    expect(res.body.summary.codex_style_capabilities).toBeGreaterThanOrEqual(8);
     expect(res.body.summary.self_healing_enabled).toBe(true);
     expect(res.body.daily_cycles.map((cycle) => cycle.id)).toEqual(
       expect.arrayContaining(['market_research_cycle', 'build_cycle', 'test_cycle', 'growth_cycle']),
     );
     expect(res.body.always_blocked_without_owner_approval).toContain('money_movement');
     expect(res.body.always_blocked_without_owner_approval).toContain('customer_outreach');
+    expect(res.body.always_blocked_without_owner_approval).toContain('paid_ai_always_on_loop');
+  });
+});
+
+describe('GET /api/buddy-codex-cheap-ops', () => {
+  test('returns Buddy Codex-style cheap operation contract', async () => {
+    const res = await request(app).get('/api/buddy-codex-cheap-ops');
+
+    expect(res.status).toBe(200);
+    expect(res.body.schema).toBe('dreamco.buddy_codex_cheap_ops.v1');
+    expect(res.body.summary.cheap_24_hour_mode).toBe(true);
+    expect(res.body.summary.min_replicas).toBe(0);
+    expect(res.body.summary.max_replicas).toBe(1);
+    expect(res.body.summary.codex_style_capabilities).toBeGreaterThanOrEqual(6);
+    expect(res.body.summary.low_cost_ai_resources).toBeGreaterThan(0);
+    expect(res.body.summary.gemini_resources).toBeGreaterThan(0);
+    expect(res.body.summary.unlimited_autonomy_claimed).toBe(false);
+    expect(res.body.summary.billing_bypass_claimed).toBe(false);
+    expect(res.body.always_on_strategy.mode).toBe('24_hour_supervised_queue_not_24_hour_paid_compute');
+    expect(res.body.github_free_cheap_plan.actions_policy).toMatch(/Manual, path-gated/i);
+    expect(res.body.cheap_ai_resource_plan.default_mode).toBe('free_or_low_cost_first');
+    expect(res.body.codex_style_capabilities.map((capability) => capability.id)).toEqual(
+      expect.arrayContaining(['repo_reader', 'code_editor', 'test_runner', 'pr_helper', 'model_router', 'bot_orchestrator']),
+    );
+    expect(res.body.approval_boundaries).toEqual(
+      expect.arrayContaining(['money_movement', 'credential_change', 'paid_github_minutes_increase']),
+    );
   });
 });
 

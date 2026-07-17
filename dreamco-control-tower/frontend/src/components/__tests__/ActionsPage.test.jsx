@@ -394,7 +394,7 @@ const scaling24Payload = {
   schema: 'dreamco.24_hour_scaling_report.v1',
   generated_at: '2026-07-15T00:00:00Z',
   mission: 'Keep DreamCo improving around the clock through safe 24-hour research, build, test, app-store, and approval cycles.',
-  default_mode: 'continuous_supervised_scaling',
+  default_mode: 'continuous_supervised_cheap_ops',
   summary: {
     readiness_score: 100,
     cycles_defined: 6,
@@ -406,9 +406,18 @@ const scaling24Payload = {
     app_store_categories: 12,
     app_foundry_lanes: 8,
     storage_ready: true,
-    min_replicas: 2,
-    max_replicas: 20,
+    min_replicas: 0,
+    max_replicas: 1,
     self_healing_enabled: true,
+    cheap_24_hour_mode: true,
+    idle_sleep_enabled: true,
+    max_one_instance: true,
+    cloud_run_cpu_throttling: true,
+    github_actions_default: 'manual_or_path_gated',
+    free_first_ai_routing: true,
+    github_cost_guardrails: 5,
+    ai_cost_guardrails: 5,
+    codex_style_capabilities: 8,
   },
   daily_cycles: [
     { id: 'market_research_cycle', window: '00:00-03:00', purpose: 'Study competitors, app-store ideas, customer problems, pricing, reviews, and market gaps.', safe_automation: ['public_source_queue', 'competitor_notes'], approval_required: ['customer_contact'] },
@@ -418,6 +427,43 @@ const scaling24Payload = {
   ],
   scale_lanes: ['bot_founder_packets', 'app_store_listing_drafts', 'sandbox_bootcamps', 'competitor_research'],
   always_blocked_without_owner_approval: ['customer_outreach', 'ad_spend', 'money_movement', 'public_deployment', 'app_store_publish'],
+};
+
+const buddyCodexCheapOpsPayload = {
+  schema: 'dreamco.buddy_codex_cheap_ops.v1',
+  generated_at: '2026-07-17T00:00:00Z',
+  mission: 'Make Buddy a governed Codex-style coding, debugging, orchestration, and operations teammate while keeping DreamCo free or cheap by default.',
+  summary: {
+    codex_style_capabilities: 6,
+    bot_count: 1248,
+    bots_connected_to_buddy: 1248,
+    cheap_24_hour_mode: true,
+    min_replicas: 0,
+    max_replicas: 1,
+    github_cost_guardrails: 5,
+    ai_cost_guardrails: 5,
+    low_cost_ai_resources: 86,
+    gemini_resources: 8,
+    owner_approval_boundaries: 12,
+    unlimited_autonomy_claimed: false,
+    billing_bypass_claimed: false,
+  },
+  always_on_strategy: {
+    mode: '24_hour_supervised_queue_not_24_hour_paid_compute',
+    plain_english: 'Buddy keeps the system moving by rotating cheap local/report-based cycles and queued work packets. Bots do not need expensive always-on cloud containers to stay useful.',
+  },
+  codex_style_capabilities: [
+    { id: 'repo_reader', label: 'Repository reader', buddy_can: 'Scan files, reports, bot profiles, configs, tests, workflows, and dashboards.', cheap_path: 'Use local file reads and generated JSON reports before network calls.' },
+    { id: 'code_editor', label: 'Code editor', buddy_can: 'Draft scoped code, config, test, and documentation changes for review.', cheap_path: 'Use deterministic templates and smallest-capable AI routes before premium models.' },
+    { id: 'test_runner', label: 'Test and debug runner', buddy_can: 'Run syntax checks, unit tests, smoke tests, report freshness checks, and failure triage.', cheap_path: 'Run locally first; use GitHub Actions only for release evidence or remote-only checks.' },
+  ],
+  github_free_cheap_plan: {
+    actions_policy: 'Manual, path-gated, short retention, local-first.',
+  },
+  cheap_ai_resource_plan: {
+    default_mode: 'free_or_low_cost_first',
+  },
+  approval_boundaries: ['money_movement', 'credential_change', 'paid_github_minutes_increase'],
 };
 
 const specializedKnowledgePayload = {
@@ -842,6 +888,7 @@ beforeEach(() => {
     if (url === '/api/app-foundry') payload = appFoundryPayload;
     if (url === '/api/bot-founder-app-store') payload = botFounderAppStorePayload;
     if (url === '/api/24-hour-scaling') payload = scaling24Payload;
+    if (url === '/api/buddy-codex-cheap-ops') payload = buddyCodexCheapOpsPayload;
     if (url === '/api/specialized-bot-knowledge') payload = specializedKnowledgePayload;
     if (url === '/api/ai-agent-model-library') payload = aiAgentModelLibraryPayload;
     if (url === '/api/business-launch-expansion') payload = businessLaunchExpansionPayload;

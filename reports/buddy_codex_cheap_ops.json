@@ -1,0 +1,169 @@
+{
+  "always_on_strategy": {
+    "mode": "24_hour_supervised_queue_not_24_hour_paid_compute",
+    "plain_english": "Buddy keeps the system moving by rotating cheap local/report-based cycles and queued work packets. Bots do not need expensive always-on cloud containers to stay useful.",
+    "runtime_layers": [
+      "static dashboard and generated reports",
+      "local scripts on owner laptop",
+      "manual or path-gated GitHub Actions",
+      "Cloud Run request-based service that sleeps when idle",
+      "free or low-cost AI model routes",
+      "owner-approved paid production actions"
+    ],
+    "success_condition": "Every bot has a current packet, status, test path, resource path, and approval boundary."
+  },
+  "approval_boundaries": [
+    "customer_outreach",
+    "ad_spend",
+    "money_movement",
+    "trading_or_investment_actions",
+    "public_deployment",
+    "app_store_publish",
+    "payment_link_publish",
+    "credential_change",
+    "third_party_account_change",
+    "legal_medical_financial_claims",
+    "destructive_repository_action",
+    "paid_github_minutes_increase",
+    "paid_ai_always_on_loop"
+  ],
+  "buddy_codex_parity_goal": {
+    "can_do_with_repo_access": [
+      "read repository files",
+      "map bot capability inventory",
+      "draft code changes",
+      "generate tests",
+      "run local checks",
+      "prepare pull-request packets",
+      "debug failed workflows from logs",
+      "route prompts to the best available AI resource",
+      "write safe operation packets for every bot"
+    ],
+    "cannot_claim": [
+      "guaranteed income",
+      "unlimited free compute",
+      "bypassing platform billing",
+      "full autonomy without supervision"
+    ],
+    "positioning": "Buddy should behave like a governed coding and operations teammate inside DreamCo.",
+    "requires_owner_approval": [
+      "push code",
+      "merge pull requests",
+      "change secrets",
+      "deploy production services",
+      "spend money",
+      "contact customers",
+      "change GitHub billing or paid products",
+      "run destructive commands"
+    ]
+  },
+  "cheap_ai_resource_plan": {
+    "cache_first": true,
+    "default_mode": "free_or_low_cost_first",
+    "google_gemini_resources": 8,
+    "local_first": true,
+    "low_cost_resources": 86,
+    "premium_requires_reason": true,
+    "secret_name": "GOOGLE_API_KEY"
+  },
+  "codex_style_capabilities": [
+    {
+      "approval": "No approval for read-only local scans.",
+      "buddy_can": "Scan files, reports, bot profiles, configs, tests, workflows, and dashboards.",
+      "cheap_path": "Use local file reads and generated JSON reports before network calls.",
+      "id": "repo_reader",
+      "label": "Repository reader"
+    },
+    {
+      "approval": "Owner approval before push, merge, deploy, or destructive edits.",
+      "buddy_can": "Draft scoped code, config, test, and documentation changes for review.",
+      "cheap_path": "Use deterministic templates and smallest-capable AI routes before premium models.",
+      "id": "code_editor",
+      "label": "Code editor"
+    },
+    {
+      "approval": "Owner approval before increasing scheduled CI frequency or paid runner usage.",
+      "buddy_can": "Run syntax checks, unit tests, smoke tests, report freshness checks, and failure triage.",
+      "cheap_path": "Run locally first; use GitHub Actions only for release evidence or remote-only checks.",
+      "id": "test_runner",
+      "label": "Test and debug runner"
+    },
+    {
+      "approval": "Owner approval before closing, merging, rebasing, or force-pushing PR branches.",
+      "buddy_can": "Prepare PR summaries, compare goals to repository proof, and queue fixes for failed checks.",
+      "cheap_path": "Use cached GitHub triage reports and local diffs before API refreshes.",
+      "id": "pr_helper",
+      "label": "Pull request helper"
+    },
+    {
+      "approval": "Owner approval before paid always-on loops, premium batches, or production customer data.",
+      "buddy_can": "Pick local/static/free/cheap/premium model routes based on task risk and quality needs.",
+      "cheap_path": "Prefer local reports, cache, Gemini low-cost routes, and small models for drafts.",
+      "id": "model_router",
+      "label": "AI model router"
+    },
+    {
+      "approval": "Owner approval before customer outreach, money movement, deploys, or account changes.",
+      "buddy_can": "Create supervised work packets for every bot so the fleet keeps learning, testing, and packaging.",
+      "cheap_path": "Queue work packets and summaries instead of running every bot as a paid live service.",
+      "id": "bot_orchestrator",
+      "label": "Bot orchestrator"
+    }
+  ],
+  "cost_control_policy": {
+    "ai_cost_guardrails": [
+      "Use local deterministic reports before model calls.",
+      "Use cached outputs before repeated model calls.",
+      "Route drafts, summaries, classification, and sandbox planning through free or low-cost models first.",
+      "Escalate to premium models only for failed cheap-model evals, high-impact client work, or approved production tasks.",
+      "Block always-on paid model loops without a budget cap and owner approval."
+    ],
+    "default_execution": "local_first_then_static_reports_then_free_or_low_cost_ai_then_owner_approved_paid_tools",
+    "github_cost_guardrails": [
+      "Prefer GitHub Pages, static reports, and local scripts before recurring Actions jobs.",
+      "Keep scheduled workflows manual, path-gated, or low-frequency until revenue justifies more runs.",
+      "Set artifact retention to 1-7 days for diagnostics and only keep longer release evidence intentionally.",
+      "Avoid paid Codespaces and hosted runners when the same check can run locally on the owner laptop.",
+      "Never bypass billing, quotas, permissions, or platform terms."
+    ],
+    "goal": "Run useful 24-hour learning loops without surprise bills."
+  },
+  "generated_at": "2026-07-17T12:47:37Z",
+  "github_free_cheap_plan": {
+    "actions_policy": "Manual, path-gated, short retention, local-first.",
+    "artifact_policy": "1-7 day retention for diagnostics; longer only for release evidence.",
+    "default_hosting": "GitHub Pages for static dashboards and docs when possible.",
+    "estimated_monthly_savings_usd": 238.0,
+    "findings": 39,
+    "runner_policy": "Local laptop first; GitHub-hosted only when needed for proof; paid larger/macOS runners avoided unless approved."
+  },
+  "mission": "Make Buddy a governed Codex-style coding, debugging, orchestration, and operations teammate while keeping DreamCo free or cheap by default.",
+  "next_actions": [
+    "Keep Cloud Run min instances at 0 and max instances at 1 until revenue supports scale.",
+    "Move expensive scheduled workflows to manual or path-gated triggers.",
+    "Use Buddy operation packets for 24-hour progress instead of paid always-on bot containers.",
+    "Add budget alerts before enabling recurring paid AI, GitHub, or cloud workloads."
+  ],
+  "schema": "dreamco.buddy_codex_cheap_ops.v1",
+  "sources": {
+    "24_hour_scaling": "reports/dreamco_24_hour_scaling_report.json",
+    "ai_agent_model_library": "reports/buddy_ai_agent_model_library_report.json",
+    "buddy_connections": "reports/buddy_bot_connection_report.json",
+    "github_cost_saver": "reports/github_cost_saver_report.json"
+  },
+  "summary": {
+    "ai_cost_guardrails": 5,
+    "billing_bypass_claimed": false,
+    "bot_count": 1248,
+    "bots_connected_to_buddy": 1248,
+    "cheap_24_hour_mode": true,
+    "codex_style_capabilities": 6,
+    "gemini_resources": 8,
+    "github_cost_guardrails": 5,
+    "low_cost_ai_resources": 86,
+    "max_replicas": 1,
+    "min_replicas": 0,
+    "owner_approval_boundaries": 8,
+    "unlimited_autonomy_claimed": false
+  }
+}
