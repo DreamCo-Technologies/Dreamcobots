@@ -346,6 +346,60 @@ const appFoundryPayload = {
   gaps: [],
 };
 
+const appCategoryCatalogPayload = {
+  schema: 'dreamco.app_category_catalog_report.v1',
+  generated_at: '2026-07-15T00:00:00Z',
+  mission: 'Catalog apps in every useful category so clients can compare options and let Buddy route tasks to the best app or all approved apps.',
+  summary: {
+    app_categories: 40,
+    comparison_criteria: 26,
+    buddy_management_modes: 5,
+    blocked_without_approval: 10,
+    categories_with_matched_bots: 40,
+    task_screen_enabled: true,
+    task_screen_user_inputs: 8,
+    task_run_modes: 3,
+    categories_with_task_router: 40,
+  },
+  task_screen: {
+    user_inputs: ['task_goal', 'app_category', 'custom_app_list', 'budget'],
+    run_modes: [
+      { id: 'compare_only', label: 'Compare Only', safe_actions: ['rank apps', 'explain tradeoffs'], approval_required: [] },
+      { id: 'best_app', label: 'Best App', safe_actions: ['select best app for task'], approval_required: ['purchase', 'place bet'] },
+      { id: 'all_approved_apps', label: 'All Approved Apps', safe_actions: ['prepare parallel task checklist'], approval_required: ['use external accounts'] },
+    ],
+    decision_policy: [
+      'Buddy recommends apps by task fit, user preference fit, risk, price, permissions, reviews, automation support, and source freshness.',
+      'Sports betting categories are app comparison only: no betting picks, wagers, or guaranteed gambling outcomes.',
+    ],
+  },
+  categories: [
+    {
+      id: 'couponing',
+      label: 'Couponing Apps',
+      risk: 'medium',
+      matched_bot_count: 25,
+      task_router: {
+        supported_run_modes: ['compare_only', 'best_app', 'all_approved_apps'],
+        task_examples: ['find best coupon for a cart', 'compare cashback rates'],
+        special_rule: 'purchase_or_redemption_requires_approval',
+      },
+    },
+    {
+      id: 'gambling',
+      label: 'Gambling and Betting Apps',
+      risk: 'high',
+      matched_bot_count: 12,
+      task_router: {
+        supported_run_modes: ['compare_only', 'best_app'],
+        task_examples: ['compare app fees and promos'],
+        special_rule: 'app_comparison_only_no_betting_picks_or_wagers',
+      },
+    },
+  ],
+  blocked_without_approval: ['install_or_uninstall_apps', 'move_money_or_purchase', 'place_bet_or_trade'],
+};
+
 const botFounderAppStorePayload = {
   schema: 'dreamco.bot_founder_app_store_report.v1',
   generated_at: '2026-07-15T00:00:00Z',
@@ -920,6 +974,7 @@ beforeEach(() => {
     if (url === '/api/buddy-productivity') payload = buddyProductivityPayload;
     if (url === '/api/release-readiness') payload = releaseReadinessPayload;
     if (url === '/api/app-foundry') payload = appFoundryPayload;
+    if (url === '/api/app-category-catalog') payload = appCategoryCatalogPayload;
     if (url === '/api/bot-founder-app-store') payload = botFounderAppStorePayload;
     if (url === '/api/24-hour-scaling') payload = scaling24Payload;
     if (url === '/api/buddy-codex-cheap-ops') payload = buddyCodexCheapOpsPayload;
@@ -990,6 +1045,13 @@ describe('ActionsPage', () => {
     expect(screen.getAllByText('GitHub Pages').length).toBeGreaterThan(0);
     expect(screen.getAllByText('Hostinger').length).toBeGreaterThan(0);
     expect(screen.getByText('Live deploy gates')).toBeInTheDocument();
+    await waitFor(() => expect(screen.getByRole('heading', { name: 'Buddy compares apps, picks the best task path, or prepares all-app workflows' })).toBeInTheDocument());
+    expect(screen.getByText('App category task router')).toBeInTheDocument();
+    expect(screen.getByText('Task screen inputs')).toBeInTheDocument();
+    expect(screen.getByText('Couponing Apps')).toBeInTheDocument();
+    expect(screen.getByText('Gambling and Betting Apps')).toBeInTheDocument();
+    expect(screen.getByText('All Approved Apps')).toBeInTheDocument();
+    expect(screen.getAllByText(/no betting picks/i).length).toBeGreaterThan(0);
     await waitFor(() => expect(screen.getByRole('heading', { name: 'Every bot studies the market and prepares its own autonomous app business' })).toBeInTheDocument());
     expect(screen.getByText('Bot Founder App Store')).toBeInTheDocument();
     expect(screen.getByText('Live-action approval wall')).toBeInTheDocument();
@@ -1027,7 +1089,7 @@ describe('ActionsPage', () => {
     expect(screen.getByText('Always-on contract discovery')).toBeInTheDocument();
     expect(screen.getByText('Contract opportunity types')).toBeInTheDocument();
     expect(screen.getByText('Public Procurement')).toBeInTheDocument();
-    expect(screen.getByText('Approval wall')).toBeInTheDocument();
+    expect(screen.getAllByText('Approval wall').length).toBeGreaterThan(0);
     expect(screen.getByText('Sample bot contract scouts')).toBeInTheDocument();
     await waitFor(() => expect(screen.getByRole('heading', { name: 'Rights-cleared data products for model training and evals' })).toBeInTheDocument());
     expect(screen.getByText('AI data package library')).toBeInTheDocument();

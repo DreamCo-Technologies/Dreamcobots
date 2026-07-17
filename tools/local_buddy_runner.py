@@ -42,6 +42,8 @@ COMMANDS: dict[str, list[str]] = {
     "check:google-ai-studio": ["python3", "tools/generate_google_ai_studio_frontend_factory.py", "--check"],
     "report:app-foundry": ["python3", "tools/generate_app_foundry_readiness.py"],
     "check:app-foundry": ["python3", "tools/generate_app_foundry_readiness.py", "--check"],
+    "report:app-category-catalog": ["python3", "tools/generate_app_category_catalog.py"],
+    "check:app-category-catalog": ["python3", "tools/generate_app_category_catalog.py", "--check"],
     "report:commerce-publishing": ["python3", "tools/generate_buddy_commerce_publishing_os.py"],
     "check:commerce-publishing": ["python3", "tools/generate_buddy_commerce_publishing_os.py", "--check"],
     "report:trust-search": ["python3", "tools/generate_buddy_trust_search_os.py"],

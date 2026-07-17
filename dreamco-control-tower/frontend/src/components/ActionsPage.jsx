@@ -364,6 +364,78 @@ const FALLBACK_APP_FOUNDRY = {
   gaps: ['Production backend hosting needs owner-approved credentials and secrets before live apps.'],
 };
 
+const FALLBACK_APP_CATEGORY_CATALOG = {
+  generated_at: null,
+  mission: 'Catalog apps in every useful category so clients can compare options, discover gaps, and let Buddy route tasks to the best app or all approved apps.',
+  default_mode: 'compare_recommend_manage_with_approval_gates',
+  summary: {
+    app_categories: 40,
+    comparison_criteria: 26,
+    buddy_management_modes: 5,
+    blocked_without_approval: 10,
+    categories_with_matched_bots: 40,
+    task_screen_enabled: true,
+    task_screen_user_inputs: 8,
+    task_run_modes: 3,
+    categories_with_task_router: 40,
+    device_and_web_management_ready: true,
+  },
+  task_screen: {
+    enabled: true,
+    default_mode: 'compare_best_app_then_user_approved_execution',
+    user_inputs: ['task_goal', 'app_category', 'custom_app_list', 'budget', 'device', 'country_or_state', 'privacy_preference', 'run_mode'],
+    run_modes: [
+      { id: 'compare_only', label: 'Compare Only', safe_actions: ['rank apps', 'explain tradeoffs', 'prepare recommendation'], approval_required: [] },
+      { id: 'best_app', label: 'Best App', safe_actions: ['select best app for task', 'prepare steps', 'prepare sandbox workflow'], approval_required: ['open account', 'install app', 'submit data', 'purchase', 'place bet', 'redeem offer'] },
+      { id: 'all_approved_apps', label: 'All Approved Apps', safe_actions: ['prepare parallel task checklist', 'dedupe results', 'compare outputs'], approval_required: ['use external accounts', 'send forms', 'spend money', 'change settings'] },
+    ],
+    decision_policy: [
+      'Buddy recommends apps by task fit, user preference fit, risk, price, permissions, reviews, automation support, and source freshness.',
+      'Sports betting categories are app comparison only: no betting picks, wagers, or guaranteed gambling outcomes.',
+      'Coupon categories may prepare savings steps, but redemption, purchase, account connection, or payment actions require approval.',
+    ],
+  },
+  categories: [
+    {
+      id: 'couponing',
+      label: 'Couponing Apps',
+      risk: 'medium',
+      examples: ['coupon aggregators', 'cashback apps', 'price trackers'],
+      matched_bot_count: 25,
+      task_router: {
+        supported_run_modes: ['compare_only', 'best_app', 'all_approved_apps'],
+        task_examples: ['find best coupon for a cart', 'compare cashback rates', 'track price drops'],
+        special_rule: 'purchase_or_redemption_requires_approval',
+      },
+    },
+    {
+      id: 'gambling',
+      label: 'Gambling and Betting Apps',
+      risk: 'high',
+      examples: ['sportsbooks', 'casino apps', 'odds comparison'],
+      matched_bot_count: 12,
+      task_router: {
+        supported_run_modes: ['compare_only', 'best_app'],
+        task_examples: ['compare app fees and promos', 'review responsible gaming controls'],
+        special_rule: 'app_comparison_only_no_betting_picks_or_wagers',
+      },
+    },
+    {
+      id: 'job_search',
+      label: 'Job Apps',
+      risk: 'medium',
+      examples: ['job boards', 'resume builders', 'application trackers'],
+      matched_bot_count: 18,
+      task_router: {
+        supported_run_modes: ['compare_only', 'best_app', 'all_approved_apps'],
+        task_examples: ['choose best job board', 'track applications', 'compare resume tools'],
+        special_rule: 'outreach_and_applications_require_approval',
+      },
+    },
+  ],
+  blocked_without_approval: ['install_or_uninstall_apps', 'create_or_delete_accounts', 'submit_private_data', 'move_money_or_purchase', 'place_bet_or_trade', 'redeem_offer'],
+};
+
 const FALLBACK_BOT_FOUNDER_APP_STORE = {
   generated_at: null,
   mission: 'Every DreamCo bot studies its market, designs a useful autonomous app, prepares a safe company plan, and packages itself for the DreamCo app store.',
@@ -1778,6 +1850,8 @@ export default function ActionsPage({
   const [releaseReadinessStatus, setReleaseReadinessStatus] = useState('loading');
   const [appFoundry, setAppFoundry] = useState(null);
   const [appFoundryStatus, setAppFoundryStatus] = useState('loading');
+  const [appCategoryCatalog, setAppCategoryCatalog] = useState(null);
+  const [appCategoryCatalogStatus, setAppCategoryCatalogStatus] = useState('loading');
   const [botFounderAppStore, setBotFounderAppStore] = useState(null);
   const [botFounderAppStoreStatus, setBotFounderAppStoreStatus] = useState('loading');
   const [dailyScaling, setDailyScaling] = useState(null);
@@ -1876,6 +1950,15 @@ export default function ActionsPage({
         setAppFoundryStatus('live');
       })
       .catch(() => setAppFoundryStatus('generated fallback'));
+  }, []);
+
+  useEffect(() => {
+    fetchFirstJson(['/api/app-category-catalog'])
+      .then((data) => {
+        setAppCategoryCatalog(data);
+        setAppCategoryCatalogStatus('live');
+      })
+      .catch(() => setAppCategoryCatalogStatus('generated fallback'));
   }, []);
 
   useEffect(() => {
@@ -2042,6 +2125,7 @@ export default function ActionsPage({
   const productivity = buddyProductivity ?? FALLBACK_BUDDY_PRODUCTIVITY;
   const readiness = releaseReadiness ?? FALLBACK_RELEASE_READINESS;
   const foundry = appFoundry ?? FALLBACK_APP_FOUNDRY;
+  const appCategories = appCategoryCatalog ?? FALLBACK_APP_CATEGORY_CATALOG;
   const botFounderStore = botFounderAppStore ?? FALLBACK_BOT_FOUNDER_APP_STORE;
   const scaling24 = dailyScaling ?? FALLBACK_24_HOUR_SCALING;
   const codexCheapOps = buddyCodexCheapOps ?? FALLBACK_BUDDY_CODEX_CHEAP_OPS;
@@ -2065,6 +2149,7 @@ export default function ActionsPage({
   const productivitySummary = productivity.summary ?? FALLBACK_BUDDY_PRODUCTIVITY.summary;
   const readinessSummary = readiness.summary ?? FALLBACK_RELEASE_READINESS.summary;
   const foundrySummary = foundry.summary ?? FALLBACK_APP_FOUNDRY.summary;
+  const appCategorySummary = appCategories.summary ?? FALLBACK_APP_CATEGORY_CATALOG.summary;
   const botFounderSummary = botFounderStore.summary ?? FALLBACK_BOT_FOUNDER_APP_STORE.summary;
   const scaling24Summary = scaling24.summary ?? FALLBACK_24_HOUR_SCALING.summary;
   const codexCheapOpsSummary = codexCheapOps.summary ?? FALLBACK_BUDDY_CODEX_CHEAP_OPS.summary;
@@ -2852,6 +2937,126 @@ export default function ActionsPage({
               <p className="mt-2 text-xs leading-5 text-amber-100/80">{foundry.next_build_targets?.[0]}</p>
             </div>
           </aside>
+        </div>
+      </section>
+
+      <section aria-labelledby="app-category-router-heading" className="border border-slate-700 bg-slate-950 p-5">
+        <div className="flex flex-wrap items-start justify-between gap-3">
+          <div>
+            <p className="text-xs font-bold uppercase text-dreamco-accent">App category task router</p>
+            <h3 id="app-category-router-heading" className="mt-1 text-lg font-semibold text-white">
+              Buddy compares apps, picks the best task path, or prepares all-app workflows
+            </h3>
+            <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-400">{appCategories.mission}</p>
+          </div>
+          <span className="rounded-full border border-slate-700 px-3 py-1 text-xs font-semibold text-slate-400">
+            {appCategoryCatalogStatus} · {formatDateTime(appCategories.generated_at)}
+          </span>
+        </div>
+
+        <div className="mt-5 grid grid-cols-2 gap-px overflow-hidden border border-slate-800 bg-slate-800 lg:grid-cols-4 xl:grid-cols-8">
+          {[
+            ['Categories', appCategorySummary.app_categories],
+            ['Criteria', appCategorySummary.comparison_criteria],
+            ['Modes', appCategorySummary.buddy_management_modes],
+            ['Task inputs', appCategorySummary.task_screen_user_inputs],
+            ['Run modes', appCategorySummary.task_run_modes],
+            ['Routers', appCategorySummary.categories_with_task_router],
+            ['Matched', appCategorySummary.categories_with_matched_bots],
+            ['Blocked gates', appCategorySummary.blocked_without_approval],
+          ].map(([label, value]) => (
+            <div key={label} className="bg-slate-900 p-4">
+              <p className="text-xl font-black text-white">{formatNumber(value)}</p>
+              <p className="mt-1 text-xs uppercase text-slate-500">{label}</p>
+            </div>
+          ))}
+        </div>
+
+        <div className="mt-5 grid gap-5 xl:grid-cols-[minmax(0,1fr)_24rem]">
+          <div className="border border-slate-800 bg-slate-900 p-4">
+            <h4 className="text-sm font-semibold text-white">Task screen inputs</h4>
+            <div className="mt-3 grid gap-3 md:grid-cols-2">
+              {(appCategories.task_screen?.user_inputs ?? []).map((input) => (
+                <div key={input} className="border border-slate-800 bg-slate-950 p-3">
+                  <p className="text-xs font-semibold uppercase text-dreamco-accent">{formatLabel(input)}</p>
+                  <p className="mt-2 text-xs leading-5 text-slate-400">
+                    Captures the user preference Buddy needs before comparing app choices.
+                  </p>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <aside className="space-y-5">
+            <div className="border border-emerald-500/30 bg-emerald-950/20 p-4">
+              <h4 className="text-sm font-semibold text-emerald-100">Run modes</h4>
+              <div className="mt-3 space-y-3">
+                {(appCategories.task_screen?.run_modes ?? []).map((mode) => (
+                  <div key={mode.id} className="border border-emerald-500/20 bg-slate-950 p-3">
+                    <p className="text-xs font-semibold uppercase text-emerald-100">{mode.label}</p>
+                    <p className="mt-2 text-xs leading-5 text-emerald-100/80">
+                      Safe: {(mode.safe_actions ?? []).slice(0, 3).join(', ')}
+                    </p>
+                    {(mode.approval_required ?? []).length > 0 && (
+                      <p className="mt-2 text-xs leading-5 text-amber-100/80">
+                        Approval: {(mode.approval_required ?? []).slice(0, 4).map(formatLabel).join(', ')}
+                      </p>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </div>
+          </aside>
+        </div>
+
+        <div className="mt-5 grid gap-3 md:grid-cols-2 xl:grid-cols-4">
+          {(appCategories.categories ?? []).slice(0, 12).map((category) => (
+            <article key={category.id} className="border border-slate-800 bg-slate-900 p-3">
+              <div className="flex flex-wrap items-start justify-between gap-2">
+                <h4 className="text-sm font-semibold text-white">{category.label}</h4>
+                <span className={`rounded-full border px-2 py-0.5 text-[11px] font-semibold uppercase ${
+                  category.risk === 'high'
+                    ? 'border-amber-400/50 text-amber-100'
+                    : 'border-emerald-400/40 text-emerald-100'
+                }`}>
+                  {formatLabel(category.risk)}
+                </span>
+              </div>
+              <p className="mt-2 text-xs leading-5 text-slate-400">
+                Examples: {(category.task_router?.task_examples ?? category.examples ?? []).slice(0, 3).join(', ')}
+              </p>
+              <p className="mt-3 text-xs leading-5 text-dreamco-accent">
+                Modes: {(category.task_router?.supported_run_modes ?? []).map(formatLabel).join(', ')}
+              </p>
+              <p className="mt-3 border-l-2 border-amber-400 pl-3 text-xs leading-5 text-amber-100/80">
+                {formatLabel(category.task_router?.special_rule ?? category.special_rule ?? 'standard app comparison rules')}
+              </p>
+            </article>
+          ))}
+        </div>
+
+        <div className="mt-5 grid gap-5 xl:grid-cols-2">
+          <div className="border border-slate-800 bg-slate-900 p-4">
+            <h4 className="text-sm font-semibold text-white">Decision policy</h4>
+            <div className="mt-3 space-y-2">
+              {(appCategories.task_screen?.decision_policy ?? []).slice(0, 6).map((rule) => (
+                <p key={rule} className="border-l-2 border-dreamco-accent pl-3 text-xs leading-5 text-slate-300">
+                  {rule}
+                </p>
+              ))}
+            </div>
+          </div>
+
+          <div className="border border-amber-900/70 bg-amber-950/20 p-4">
+            <h4 className="text-sm font-semibold text-amber-100">Approval wall</h4>
+            <div className="mt-3 flex flex-wrap gap-2">
+              {(appCategories.blocked_without_approval ?? []).slice(0, 12).map((gate) => (
+                <span key={gate} className="rounded-full border border-amber-500/30 px-2 py-1 text-[11px] text-amber-100">
+                  {formatLabel(gate)}
+                </span>
+              ))}
+            </div>
+          </div>
         </div>
       </section>
 

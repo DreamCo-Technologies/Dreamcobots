@@ -14,6 +14,24 @@
   "buddy_management_modes": [
     {
       "approval_required": [
+        "execute external task",
+        "install app",
+        "submit data",
+        "purchase",
+        "place bet",
+        "redeem offer"
+      ],
+      "id": "task_router",
+      "label": "Task Router",
+      "safe_actions": [
+        "categorize task",
+        "rank apps",
+        "choose best fit",
+        "prepare one-app or all-app workflow"
+      ]
+    },
+    {
+      "approval_required": [
         "create account",
         "submit form",
         "contact vendor",
@@ -100,9 +118,12 @@
         "android_support": null,
         "api_available": null,
         "automation_support": null,
+        "best_pick_reason": null,
         "browser_extension_support": null,
         "client_money_use_case": null,
         "core_features": null,
+        "coupon_or_savings_fit": null,
+        "cross_app_execution_support": null,
         "customer_reviews": null,
         "data_export": null,
         "desktop_support": null,
@@ -115,6 +136,8 @@
         "security_controls": null,
         "subscription_cost": null,
         "support_quality": null,
+        "task_fit_score": null,
+        "user_preference_fit": null,
         "web_app_support": null,
         "webhook_available": null
       },
@@ -278,7 +301,72 @@
           "slug": "shopping-app-bot"
         }
       ],
-      "risk": "medium"
+      "risk": "medium",
+      "special_rule": "purchase_or_redemption_requires_approval",
+      "task_examples": [
+        "find best coupon for a cart",
+        "compare cashback rates",
+        "track price drops"
+      ],
+      "task_router": {
+        "blocked_without_approval": [
+          "install_or_uninstall_apps",
+          "create_or_delete_accounts",
+          "grant_device_permissions",
+          "submit_private_data",
+          "connect_bank_or_payment_method",
+          "move_money_or_purchase",
+          "place_bet_or_trade",
+          "send_messages_or_outreach",
+          "publish_public_content",
+          "change_security_settings"
+        ],
+        "category_id": "couponing",
+        "category_label": "Couponing Apps",
+        "custom_app_list_policy": {
+          "data_to_capture_per_app": [
+            "app_name",
+            "app_store_or_web_url",
+            "price",
+            "permissions",
+            "privacy_notes",
+            "features",
+            "user_rating",
+            "api_or_export_support",
+            "task_fit_notes"
+          ],
+          "enabled": true,
+          "minimum_apps": 1,
+          "recommended_apps_to_compare": 3
+        },
+        "execution_policy": {
+          "all_approved_apps": "Buddy prepares parallel steps and dedupes results across approved apps only.",
+          "best_app": "Buddy prepares the best app workflow; external actions require approval gates.",
+          "compare_only": "Always safe for public-source research and user-provided app lists."
+        },
+        "risk": "medium",
+        "special_rule": "purchase_or_redemption_requires_approval",
+        "supported_run_modes": [
+          "compare_only",
+          "best_app",
+          "all_approved_apps"
+        ],
+        "supported_user_inputs": [
+          "task_goal",
+          "app_category",
+          "custom_app_list",
+          "budget",
+          "device",
+          "country_or_state",
+          "privacy_preference",
+          "run_mode"
+        ],
+        "task_examples": [
+          "find best coupon for a cart",
+          "compare cashback rates",
+          "track price drops"
+        ]
+      }
     },
     {
       "buddy_device_management": [
@@ -299,9 +387,12 @@
         "android_support": null,
         "api_available": null,
         "automation_support": null,
+        "best_pick_reason": null,
         "browser_extension_support": null,
         "client_money_use_case": null,
         "core_features": null,
+        "coupon_or_savings_fit": null,
+        "cross_app_execution_support": null,
         "customer_reviews": null,
         "data_export": null,
         "desktop_support": null,
@@ -314,6 +405,8 @@
         "security_controls": null,
         "subscription_cost": null,
         "support_quality": null,
+        "task_fit_score": null,
+        "user_preference_fit": null,
         "web_app_support": null,
         "webhook_available": null
       },
@@ -477,7 +570,72 @@
           "slug": "edtech-evaluator"
         }
       ],
-      "risk": "high"
+      "risk": "high",
+      "special_rule": "app_comparison_only_no_betting_picks_or_wagers",
+      "task_examples": [
+        "compare app fees and promos",
+        "compare public odds display quality",
+        "review responsible gaming controls"
+      ],
+      "task_router": {
+        "blocked_without_approval": [
+          "install_or_uninstall_apps",
+          "create_or_delete_accounts",
+          "grant_device_permissions",
+          "submit_private_data",
+          "connect_bank_or_payment_method",
+          "move_money_or_purchase",
+          "place_bet_or_trade",
+          "send_messages_or_outreach",
+          "publish_public_content",
+          "change_security_settings"
+        ],
+        "category_id": "gambling",
+        "category_label": "Gambling and Betting Apps",
+        "custom_app_list_policy": {
+          "data_to_capture_per_app": [
+            "app_name",
+            "app_store_or_web_url",
+            "price",
+            "permissions",
+            "privacy_notes",
+            "features",
+            "user_rating",
+            "api_or_export_support",
+            "task_fit_notes"
+          ],
+          "enabled": true,
+          "minimum_apps": 1,
+          "recommended_apps_to_compare": 3
+        },
+        "execution_policy": {
+          "all_approved_apps": "Buddy prepares parallel steps and dedupes results across approved apps only.",
+          "best_app": "Buddy prepares the best app workflow; external actions require approval gates.",
+          "compare_only": "Always safe for public-source research and user-provided app lists."
+        },
+        "risk": "high",
+        "special_rule": "app_comparison_only_no_betting_picks_or_wagers",
+        "supported_run_modes": [
+          "compare_only",
+          "best_app",
+          "all_approved_apps"
+        ],
+        "supported_user_inputs": [
+          "task_goal",
+          "app_category",
+          "custom_app_list",
+          "budget",
+          "device",
+          "country_or_state",
+          "privacy_preference",
+          "run_mode"
+        ],
+        "task_examples": [
+          "compare app fees and promos",
+          "compare public odds display quality",
+          "review responsible gaming controls"
+        ]
+      }
     },
     {
       "buddy_device_management": [
@@ -498,9 +656,12 @@
         "android_support": null,
         "api_available": null,
         "automation_support": null,
+        "best_pick_reason": null,
         "browser_extension_support": null,
         "client_money_use_case": null,
         "core_features": null,
+        "coupon_or_savings_fit": null,
+        "cross_app_execution_support": null,
         "customer_reviews": null,
         "data_export": null,
         "desktop_support": null,
@@ -513,6 +674,8 @@
         "security_controls": null,
         "subscription_cost": null,
         "support_quality": null,
+        "task_fit_score": null,
+        "user_preference_fit": null,
         "web_app_support": null,
         "webhook_available": null
       },
@@ -676,7 +839,66 @@
           "slug": "foreclosure-finder"
         }
       ],
-      "risk": "medium"
+      "risk": "medium",
+      "task_router": {
+        "blocked_without_approval": [
+          "install_or_uninstall_apps",
+          "create_or_delete_accounts",
+          "grant_device_permissions",
+          "submit_private_data",
+          "connect_bank_or_payment_method",
+          "move_money_or_purchase",
+          "place_bet_or_trade",
+          "send_messages_or_outreach",
+          "publish_public_content",
+          "change_security_settings"
+        ],
+        "category_id": "job_search",
+        "category_label": "Job Apps",
+        "custom_app_list_policy": {
+          "data_to_capture_per_app": [
+            "app_name",
+            "app_store_or_web_url",
+            "price",
+            "permissions",
+            "privacy_notes",
+            "features",
+            "user_rating",
+            "api_or_export_support",
+            "task_fit_notes"
+          ],
+          "enabled": true,
+          "minimum_apps": 1,
+          "recommended_apps_to_compare": 3
+        },
+        "execution_policy": {
+          "all_approved_apps": "Buddy prepares parallel steps and dedupes results across approved apps only.",
+          "best_app": "Buddy prepares the best app workflow; external actions require approval gates.",
+          "compare_only": "Always safe for public-source research and user-provided app lists."
+        },
+        "risk": "medium",
+        "special_rule": "standard_app_comparison_rules",
+        "supported_run_modes": [
+          "compare_only",
+          "best_app",
+          "all_approved_apps"
+        ],
+        "supported_user_inputs": [
+          "task_goal",
+          "app_category",
+          "custom_app_list",
+          "budget",
+          "device",
+          "country_or_state",
+          "privacy_preference",
+          "run_mode"
+        ],
+        "task_examples": [
+          "job boards",
+          "resume builders",
+          "application trackers"
+        ]
+      }
     },
     {
       "buddy_device_management": [
@@ -697,9 +919,12 @@
         "android_support": null,
         "api_available": null,
         "automation_support": null,
+        "best_pick_reason": null,
         "browser_extension_support": null,
         "client_money_use_case": null,
         "core_features": null,
+        "coupon_or_savings_fit": null,
+        "cross_app_execution_support": null,
         "customer_reviews": null,
         "data_export": null,
         "desktop_support": null,
@@ -712,6 +937,8 @@
         "security_controls": null,
         "subscription_cost": null,
         "support_quality": null,
+        "task_fit_score": null,
+        "user_preference_fit": null,
         "web_app_support": null,
         "webhook_available": null
       },
@@ -875,7 +1102,66 @@
           "slug": "fraud-shield"
         }
       ],
-      "risk": "high"
+      "risk": "high",
+      "task_router": {
+        "blocked_without_approval": [
+          "install_or_uninstall_apps",
+          "create_or_delete_accounts",
+          "grant_device_permissions",
+          "submit_private_data",
+          "connect_bank_or_payment_method",
+          "move_money_or_purchase",
+          "place_bet_or_trade",
+          "send_messages_or_outreach",
+          "publish_public_content",
+          "change_security_settings"
+        ],
+        "category_id": "banking",
+        "category_label": "Banking Apps",
+        "custom_app_list_policy": {
+          "data_to_capture_per_app": [
+            "app_name",
+            "app_store_or_web_url",
+            "price",
+            "permissions",
+            "privacy_notes",
+            "features",
+            "user_rating",
+            "api_or_export_support",
+            "task_fit_notes"
+          ],
+          "enabled": true,
+          "minimum_apps": 1,
+          "recommended_apps_to_compare": 3
+        },
+        "execution_policy": {
+          "all_approved_apps": "Buddy prepares parallel steps and dedupes results across approved apps only.",
+          "best_app": "Buddy prepares the best app workflow; external actions require approval gates.",
+          "compare_only": "Always safe for public-source research and user-provided app lists."
+        },
+        "risk": "high",
+        "special_rule": "standard_app_comparison_rules",
+        "supported_run_modes": [
+          "compare_only",
+          "best_app",
+          "all_approved_apps"
+        ],
+        "supported_user_inputs": [
+          "task_goal",
+          "app_category",
+          "custom_app_list",
+          "budget",
+          "device",
+          "country_or_state",
+          "privacy_preference",
+          "run_mode"
+        ],
+        "task_examples": [
+          "checking",
+          "savings",
+          "neobanks"
+        ]
+      }
     },
     {
       "buddy_device_management": [
@@ -896,9 +1182,12 @@
         "android_support": null,
         "api_available": null,
         "automation_support": null,
+        "best_pick_reason": null,
         "browser_extension_support": null,
         "client_money_use_case": null,
         "core_features": null,
+        "coupon_or_savings_fit": null,
+        "cross_app_execution_support": null,
         "customer_reviews": null,
         "data_export": null,
         "desktop_support": null,
@@ -911,6 +1200,8 @@
         "security_controls": null,
         "subscription_cost": null,
         "support_quality": null,
+        "task_fit_score": null,
+        "user_preference_fit": null,
         "web_app_support": null,
         "webhook_available": null
       },
@@ -1074,7 +1365,66 @@
           "slug": "property-mgmt"
         }
       ],
-      "risk": "high"
+      "risk": "high",
+      "task_router": {
+        "blocked_without_approval": [
+          "install_or_uninstall_apps",
+          "create_or_delete_accounts",
+          "grant_device_permissions",
+          "submit_private_data",
+          "connect_bank_or_payment_method",
+          "move_money_or_purchase",
+          "place_bet_or_trade",
+          "send_messages_or_outreach",
+          "publish_public_content",
+          "change_security_settings"
+        ],
+        "category_id": "investing",
+        "category_label": "Investing Apps",
+        "custom_app_list_policy": {
+          "data_to_capture_per_app": [
+            "app_name",
+            "app_store_or_web_url",
+            "price",
+            "permissions",
+            "privacy_notes",
+            "features",
+            "user_rating",
+            "api_or_export_support",
+            "task_fit_notes"
+          ],
+          "enabled": true,
+          "minimum_apps": 1,
+          "recommended_apps_to_compare": 3
+        },
+        "execution_policy": {
+          "all_approved_apps": "Buddy prepares parallel steps and dedupes results across approved apps only.",
+          "best_app": "Buddy prepares the best app workflow; external actions require approval gates.",
+          "compare_only": "Always safe for public-source research and user-provided app lists."
+        },
+        "risk": "high",
+        "special_rule": "standard_app_comparison_rules",
+        "supported_run_modes": [
+          "compare_only",
+          "best_app",
+          "all_approved_apps"
+        ],
+        "supported_user_inputs": [
+          "task_goal",
+          "app_category",
+          "custom_app_list",
+          "budget",
+          "device",
+          "country_or_state",
+          "privacy_preference",
+          "run_mode"
+        ],
+        "task_examples": [
+          "brokerages",
+          "robo-advisors",
+          "portfolio trackers"
+        ]
+      }
     },
     {
       "buddy_device_management": [
@@ -1095,9 +1445,12 @@
         "android_support": null,
         "api_available": null,
         "automation_support": null,
+        "best_pick_reason": null,
         "browser_extension_support": null,
         "client_money_use_case": null,
         "core_features": null,
+        "coupon_or_savings_fit": null,
+        "cross_app_execution_support": null,
         "customer_reviews": null,
         "data_export": null,
         "desktop_support": null,
@@ -1110,6 +1463,8 @@
         "security_controls": null,
         "subscription_cost": null,
         "support_quality": null,
+        "task_fit_score": null,
+        "user_preference_fit": null,
         "web_app_support": null,
         "webhook_available": null
       },
@@ -1273,7 +1628,66 @@
           "slug": "btc-wallet"
         }
       ],
-      "risk": "high"
+      "risk": "high",
+      "task_router": {
+        "blocked_without_approval": [
+          "install_or_uninstall_apps",
+          "create_or_delete_accounts",
+          "grant_device_permissions",
+          "submit_private_data",
+          "connect_bank_or_payment_method",
+          "move_money_or_purchase",
+          "place_bet_or_trade",
+          "send_messages_or_outreach",
+          "publish_public_content",
+          "change_security_settings"
+        ],
+        "category_id": "crypto",
+        "category_label": "Crypto Apps",
+        "custom_app_list_policy": {
+          "data_to_capture_per_app": [
+            "app_name",
+            "app_store_or_web_url",
+            "price",
+            "permissions",
+            "privacy_notes",
+            "features",
+            "user_rating",
+            "api_or_export_support",
+            "task_fit_notes"
+          ],
+          "enabled": true,
+          "minimum_apps": 1,
+          "recommended_apps_to_compare": 3
+        },
+        "execution_policy": {
+          "all_approved_apps": "Buddy prepares parallel steps and dedupes results across approved apps only.",
+          "best_app": "Buddy prepares the best app workflow; external actions require approval gates.",
+          "compare_only": "Always safe for public-source research and user-provided app lists."
+        },
+        "risk": "high",
+        "special_rule": "standard_app_comparison_rules",
+        "supported_run_modes": [
+          "compare_only",
+          "best_app",
+          "all_approved_apps"
+        ],
+        "supported_user_inputs": [
+          "task_goal",
+          "app_category",
+          "custom_app_list",
+          "budget",
+          "device",
+          "country_or_state",
+          "privacy_preference",
+          "run_mode"
+        ],
+        "task_examples": [
+          "wallets",
+          "exchanges",
+          "tax tools"
+        ]
+      }
     },
     {
       "buddy_device_management": [
@@ -1294,9 +1708,12 @@
         "android_support": null,
         "api_available": null,
         "automation_support": null,
+        "best_pick_reason": null,
         "browser_extension_support": null,
         "client_money_use_case": null,
         "core_features": null,
+        "coupon_or_savings_fit": null,
+        "cross_app_execution_support": null,
         "customer_reviews": null,
         "data_export": null,
         "desktop_support": null,
@@ -1309,6 +1726,8 @@
         "security_controls": null,
         "subscription_cost": null,
         "support_quality": null,
+        "task_fit_score": null,
+        "user_preference_fit": null,
         "web_app_support": null,
         "webhook_available": null
       },
@@ -1472,7 +1891,66 @@
           "slug": "dreamco_payments"
         }
       ],
-      "risk": "high"
+      "risk": "high",
+      "task_router": {
+        "blocked_without_approval": [
+          "install_or_uninstall_apps",
+          "create_or_delete_accounts",
+          "grant_device_permissions",
+          "submit_private_data",
+          "connect_bank_or_payment_method",
+          "move_money_or_purchase",
+          "place_bet_or_trade",
+          "send_messages_or_outreach",
+          "publish_public_content",
+          "change_security_settings"
+        ],
+        "category_id": "payments",
+        "category_label": "Payment Apps",
+        "custom_app_list_policy": {
+          "data_to_capture_per_app": [
+            "app_name",
+            "app_store_or_web_url",
+            "price",
+            "permissions",
+            "privacy_notes",
+            "features",
+            "user_rating",
+            "api_or_export_support",
+            "task_fit_notes"
+          ],
+          "enabled": true,
+          "minimum_apps": 1,
+          "recommended_apps_to_compare": 3
+        },
+        "execution_policy": {
+          "all_approved_apps": "Buddy prepares parallel steps and dedupes results across approved apps only.",
+          "best_app": "Buddy prepares the best app workflow; external actions require approval gates.",
+          "compare_only": "Always safe for public-source research and user-provided app lists."
+        },
+        "risk": "high",
+        "special_rule": "standard_app_comparison_rules",
+        "supported_run_modes": [
+          "compare_only",
+          "best_app",
+          "all_approved_apps"
+        ],
+        "supported_user_inputs": [
+          "task_goal",
+          "app_category",
+          "custom_app_list",
+          "budget",
+          "device",
+          "country_or_state",
+          "privacy_preference",
+          "run_mode"
+        ],
+        "task_examples": [
+          "checkout",
+          "invoicing",
+          "wallets"
+        ]
+      }
     },
     {
       "buddy_device_management": [
@@ -1493,9 +1971,12 @@
         "android_support": null,
         "api_available": null,
         "automation_support": null,
+        "best_pick_reason": null,
         "browser_extension_support": null,
         "client_money_use_case": null,
         "core_features": null,
+        "coupon_or_savings_fit": null,
+        "cross_app_execution_support": null,
         "customer_reviews": null,
         "data_export": null,
         "desktop_support": null,
@@ -1508,6 +1989,8 @@
         "security_controls": null,
         "subscription_cost": null,
         "support_quality": null,
+        "task_fit_score": null,
+        "user_preference_fit": null,
         "web_app_support": null,
         "webhook_available": null
       },
@@ -1671,7 +2154,66 @@
           "slug": "cmms-analytics-elite"
         }
       ],
-      "risk": "medium"
+      "risk": "medium",
+      "task_router": {
+        "blocked_without_approval": [
+          "install_or_uninstall_apps",
+          "create_or_delete_accounts",
+          "grant_device_permissions",
+          "submit_private_data",
+          "connect_bank_or_payment_method",
+          "move_money_or_purchase",
+          "place_bet_or_trade",
+          "send_messages_or_outreach",
+          "publish_public_content",
+          "change_security_settings"
+        ],
+        "category_id": "shopping",
+        "category_label": "Shopping Apps",
+        "custom_app_list_policy": {
+          "data_to_capture_per_app": [
+            "app_name",
+            "app_store_or_web_url",
+            "price",
+            "permissions",
+            "privacy_notes",
+            "features",
+            "user_rating",
+            "api_or_export_support",
+            "task_fit_notes"
+          ],
+          "enabled": true,
+          "minimum_apps": 1,
+          "recommended_apps_to_compare": 3
+        },
+        "execution_policy": {
+          "all_approved_apps": "Buddy prepares parallel steps and dedupes results across approved apps only.",
+          "best_app": "Buddy prepares the best app workflow; external actions require approval gates.",
+          "compare_only": "Always safe for public-source research and user-provided app lists."
+        },
+        "risk": "medium",
+        "special_rule": "standard_app_comparison_rules",
+        "supported_run_modes": [
+          "compare_only",
+          "best_app",
+          "all_approved_apps"
+        ],
+        "supported_user_inputs": [
+          "task_goal",
+          "app_category",
+          "custom_app_list",
+          "budget",
+          "device",
+          "country_or_state",
+          "privacy_preference",
+          "run_mode"
+        ],
+        "task_examples": [
+          "marketplaces",
+          "deal apps",
+          "product comparison"
+        ]
+      }
     },
     {
       "buddy_device_management": [
@@ -1692,9 +2234,12 @@
         "android_support": null,
         "api_available": null,
         "automation_support": null,
+        "best_pick_reason": null,
         "browser_extension_support": null,
         "client_money_use_case": null,
         "core_features": null,
+        "coupon_or_savings_fit": null,
+        "cross_app_execution_support": null,
         "customer_reviews": null,
         "data_export": null,
         "desktop_support": null,
@@ -1707,6 +2252,8 @@
         "security_controls": null,
         "subscription_cost": null,
         "support_quality": null,
+        "task_fit_score": null,
+        "user_preference_fit": null,
         "web_app_support": null,
         "webhook_available": null
       },
@@ -1870,7 +2417,66 @@
           "slug": "animation-pipeline"
         }
       ],
-      "risk": "medium"
+      "risk": "medium",
+      "task_router": {
+        "blocked_without_approval": [
+          "install_or_uninstall_apps",
+          "create_or_delete_accounts",
+          "grant_device_permissions",
+          "submit_private_data",
+          "connect_bank_or_payment_method",
+          "move_money_or_purchase",
+          "place_bet_or_trade",
+          "send_messages_or_outreach",
+          "publish_public_content",
+          "change_security_settings"
+        ],
+        "category_id": "delivery",
+        "category_label": "Delivery Apps",
+        "custom_app_list_policy": {
+          "data_to_capture_per_app": [
+            "app_name",
+            "app_store_or_web_url",
+            "price",
+            "permissions",
+            "privacy_notes",
+            "features",
+            "user_rating",
+            "api_or_export_support",
+            "task_fit_notes"
+          ],
+          "enabled": true,
+          "minimum_apps": 1,
+          "recommended_apps_to_compare": 3
+        },
+        "execution_policy": {
+          "all_approved_apps": "Buddy prepares parallel steps and dedupes results across approved apps only.",
+          "best_app": "Buddy prepares the best app workflow; external actions require approval gates.",
+          "compare_only": "Always safe for public-source research and user-provided app lists."
+        },
+        "risk": "medium",
+        "special_rule": "standard_app_comparison_rules",
+        "supported_run_modes": [
+          "compare_only",
+          "best_app",
+          "all_approved_apps"
+        ],
+        "supported_user_inputs": [
+          "task_goal",
+          "app_category",
+          "custom_app_list",
+          "budget",
+          "device",
+          "country_or_state",
+          "privacy_preference",
+          "run_mode"
+        ],
+        "task_examples": [
+          "food delivery",
+          "package tracking",
+          "courier apps"
+        ]
+      }
     },
     {
       "buddy_device_management": [
@@ -1891,9 +2497,12 @@
         "android_support": null,
         "api_available": null,
         "automation_support": null,
+        "best_pick_reason": null,
         "browser_extension_support": null,
         "client_money_use_case": null,
         "core_features": null,
+        "coupon_or_savings_fit": null,
+        "cross_app_execution_support": null,
         "customer_reviews": null,
         "data_export": null,
         "desktop_support": null,
@@ -1906,6 +2515,8 @@
         "security_controls": null,
         "subscription_cost": null,
         "support_quality": null,
+        "task_fit_score": null,
+        "user_preference_fit": null,
         "web_app_support": null,
         "webhook_available": null
       },
@@ -1949,7 +2560,66 @@
           "slug": "travel-coordinator"
         }
       ],
-      "risk": "medium"
+      "risk": "medium",
+      "task_router": {
+        "blocked_without_approval": [
+          "install_or_uninstall_apps",
+          "create_or_delete_accounts",
+          "grant_device_permissions",
+          "submit_private_data",
+          "connect_bank_or_payment_method",
+          "move_money_or_purchase",
+          "place_bet_or_trade",
+          "send_messages_or_outreach",
+          "publish_public_content",
+          "change_security_settings"
+        ],
+        "category_id": "travel",
+        "category_label": "Travel Apps",
+        "custom_app_list_policy": {
+          "data_to_capture_per_app": [
+            "app_name",
+            "app_store_or_web_url",
+            "price",
+            "permissions",
+            "privacy_notes",
+            "features",
+            "user_rating",
+            "api_or_export_support",
+            "task_fit_notes"
+          ],
+          "enabled": true,
+          "minimum_apps": 1,
+          "recommended_apps_to_compare": 3
+        },
+        "execution_policy": {
+          "all_approved_apps": "Buddy prepares parallel steps and dedupes results across approved apps only.",
+          "best_app": "Buddy prepares the best app workflow; external actions require approval gates.",
+          "compare_only": "Always safe for public-source research and user-provided app lists."
+        },
+        "risk": "medium",
+        "special_rule": "standard_app_comparison_rules",
+        "supported_run_modes": [
+          "compare_only",
+          "best_app",
+          "all_approved_apps"
+        ],
+        "supported_user_inputs": [
+          "task_goal",
+          "app_category",
+          "custom_app_list",
+          "budget",
+          "device",
+          "country_or_state",
+          "privacy_preference",
+          "run_mode"
+        ],
+        "task_examples": [
+          "flights",
+          "hotels",
+          "itinerary planners"
+        ]
+      }
     },
     {
       "buddy_device_management": [
@@ -1970,9 +2640,12 @@
         "android_support": null,
         "api_available": null,
         "automation_support": null,
+        "best_pick_reason": null,
         "browser_extension_support": null,
         "client_money_use_case": null,
         "core_features": null,
+        "coupon_or_savings_fit": null,
+        "cross_app_execution_support": null,
         "customer_reviews": null,
         "data_export": null,
         "desktop_support": null,
@@ -1985,6 +2658,8 @@
         "security_controls": null,
         "subscription_cost": null,
         "support_quality": null,
+        "task_fit_score": null,
+        "user_preference_fit": null,
         "web_app_support": null,
         "webhook_available": null
       },
@@ -2148,7 +2823,66 @@
           "slug": "business-plan-gen"
         }
       ],
-      "risk": "medium"
+      "risk": "medium",
+      "task_router": {
+        "blocked_without_approval": [
+          "install_or_uninstall_apps",
+          "create_or_delete_accounts",
+          "grant_device_permissions",
+          "submit_private_data",
+          "connect_bank_or_payment_method",
+          "move_money_or_purchase",
+          "place_bet_or_trade",
+          "send_messages_or_outreach",
+          "publish_public_content",
+          "change_security_settings"
+        ],
+        "category_id": "real_estate",
+        "category_label": "Real Estate Apps",
+        "custom_app_list_policy": {
+          "data_to_capture_per_app": [
+            "app_name",
+            "app_store_or_web_url",
+            "price",
+            "permissions",
+            "privacy_notes",
+            "features",
+            "user_rating",
+            "api_or_export_support",
+            "task_fit_notes"
+          ],
+          "enabled": true,
+          "minimum_apps": 1,
+          "recommended_apps_to_compare": 3
+        },
+        "execution_policy": {
+          "all_approved_apps": "Buddy prepares parallel steps and dedupes results across approved apps only.",
+          "best_app": "Buddy prepares the best app workflow; external actions require approval gates.",
+          "compare_only": "Always safe for public-source research and user-provided app lists."
+        },
+        "risk": "medium",
+        "special_rule": "standard_app_comparison_rules",
+        "supported_run_modes": [
+          "compare_only",
+          "best_app",
+          "all_approved_apps"
+        ],
+        "supported_user_inputs": [
+          "task_goal",
+          "app_category",
+          "custom_app_list",
+          "budget",
+          "device",
+          "country_or_state",
+          "privacy_preference",
+          "run_mode"
+        ],
+        "task_examples": [
+          "home search",
+          "rental listings",
+          "property analysis"
+        ]
+      }
     },
     {
       "buddy_device_management": [
@@ -2169,9 +2903,12 @@
         "android_support": null,
         "api_available": null,
         "automation_support": null,
+        "best_pick_reason": null,
         "browser_extension_support": null,
         "client_money_use_case": null,
         "core_features": null,
+        "coupon_or_savings_fit": null,
+        "cross_app_execution_support": null,
         "customer_reviews": null,
         "data_export": null,
         "desktop_support": null,
@@ -2184,6 +2921,8 @@
         "security_controls": null,
         "subscription_cost": null,
         "support_quality": null,
+        "task_fit_score": null,
+        "user_preference_fit": null,
         "web_app_support": null,
         "webhook_available": null
       },
@@ -2347,7 +3086,66 @@
           "slug": "grant-writer-edu"
         }
       ],
-      "risk": "medium"
+      "risk": "medium",
+      "task_router": {
+        "blocked_without_approval": [
+          "install_or_uninstall_apps",
+          "create_or_delete_accounts",
+          "grant_device_permissions",
+          "submit_private_data",
+          "connect_bank_or_payment_method",
+          "move_money_or_purchase",
+          "place_bet_or_trade",
+          "send_messages_or_outreach",
+          "publish_public_content",
+          "change_security_settings"
+        ],
+        "category_id": "education",
+        "category_label": "Education Apps",
+        "custom_app_list_policy": {
+          "data_to_capture_per_app": [
+            "app_name",
+            "app_store_or_web_url",
+            "price",
+            "permissions",
+            "privacy_notes",
+            "features",
+            "user_rating",
+            "api_or_export_support",
+            "task_fit_notes"
+          ],
+          "enabled": true,
+          "minimum_apps": 1,
+          "recommended_apps_to_compare": 3
+        },
+        "execution_policy": {
+          "all_approved_apps": "Buddy prepares parallel steps and dedupes results across approved apps only.",
+          "best_app": "Buddy prepares the best app workflow; external actions require approval gates.",
+          "compare_only": "Always safe for public-source research and user-provided app lists."
+        },
+        "risk": "medium",
+        "special_rule": "standard_app_comparison_rules",
+        "supported_run_modes": [
+          "compare_only",
+          "best_app",
+          "all_approved_apps"
+        ],
+        "supported_user_inputs": [
+          "task_goal",
+          "app_category",
+          "custom_app_list",
+          "budget",
+          "device",
+          "country_or_state",
+          "privacy_preference",
+          "run_mode"
+        ],
+        "task_examples": [
+          "courses",
+          "tutoring",
+          "learning games"
+        ]
+      }
     },
     {
       "buddy_device_management": [
@@ -2368,9 +3166,12 @@
         "android_support": null,
         "api_available": null,
         "automation_support": null,
+        "best_pick_reason": null,
         "browser_extension_support": null,
         "client_money_use_case": null,
         "core_features": null,
+        "coupon_or_savings_fit": null,
+        "cross_app_execution_support": null,
         "customer_reviews": null,
         "data_export": null,
         "desktop_support": null,
@@ -2383,6 +3184,8 @@
         "security_controls": null,
         "subscription_cost": null,
         "support_quality": null,
+        "task_fit_score": null,
+        "user_preference_fit": null,
         "web_app_support": null,
         "webhook_available": null
       },
@@ -2546,7 +3349,66 @@
           "slug": "health-analytics-elite"
         }
       ],
-      "risk": "medium"
+      "risk": "medium",
+      "task_router": {
+        "blocked_without_approval": [
+          "install_or_uninstall_apps",
+          "create_or_delete_accounts",
+          "grant_device_permissions",
+          "submit_private_data",
+          "connect_bank_or_payment_method",
+          "move_money_or_purchase",
+          "place_bet_or_trade",
+          "send_messages_or_outreach",
+          "publish_public_content",
+          "change_security_settings"
+        ],
+        "category_id": "kids_learning",
+        "category_label": "Kids Learning Apps",
+        "custom_app_list_policy": {
+          "data_to_capture_per_app": [
+            "app_name",
+            "app_store_or_web_url",
+            "price",
+            "permissions",
+            "privacy_notes",
+            "features",
+            "user_rating",
+            "api_or_export_support",
+            "task_fit_notes"
+          ],
+          "enabled": true,
+          "minimum_apps": 1,
+          "recommended_apps_to_compare": 3
+        },
+        "execution_policy": {
+          "all_approved_apps": "Buddy prepares parallel steps and dedupes results across approved apps only.",
+          "best_app": "Buddy prepares the best app workflow; external actions require approval gates.",
+          "compare_only": "Always safe for public-source research and user-provided app lists."
+        },
+        "risk": "medium",
+        "special_rule": "standard_app_comparison_rules",
+        "supported_run_modes": [
+          "compare_only",
+          "best_app",
+          "all_approved_apps"
+        ],
+        "supported_user_inputs": [
+          "task_goal",
+          "app_category",
+          "custom_app_list",
+          "budget",
+          "device",
+          "country_or_state",
+          "privacy_preference",
+          "run_mode"
+        ],
+        "task_examples": [
+          "reading",
+          "math",
+          "parent dashboards"
+        ]
+      }
     },
     {
       "buddy_device_management": [
@@ -2567,9 +3429,12 @@
         "android_support": null,
         "api_available": null,
         "automation_support": null,
+        "best_pick_reason": null,
         "browser_extension_support": null,
         "client_money_use_case": null,
         "core_features": null,
+        "coupon_or_savings_fit": null,
+        "cross_app_execution_support": null,
         "customer_reviews": null,
         "data_export": null,
         "desktop_support": null,
@@ -2582,6 +3447,8 @@
         "security_controls": null,
         "subscription_cost": null,
         "support_quality": null,
+        "task_fit_score": null,
+        "user_preference_fit": null,
         "web_app_support": null,
         "webhook_available": null
       },
@@ -2745,7 +3612,66 @@
           "slug": "price-tracker"
         }
       ],
-      "risk": "medium"
+      "risk": "medium",
+      "task_router": {
+        "blocked_without_approval": [
+          "install_or_uninstall_apps",
+          "create_or_delete_accounts",
+          "grant_device_permissions",
+          "submit_private_data",
+          "connect_bank_or_payment_method",
+          "move_money_or_purchase",
+          "place_bet_or_trade",
+          "send_messages_or_outreach",
+          "publish_public_content",
+          "change_security_settings"
+        ],
+        "category_id": "games",
+        "category_label": "Game Apps",
+        "custom_app_list_policy": {
+          "data_to_capture_per_app": [
+            "app_name",
+            "app_store_or_web_url",
+            "price",
+            "permissions",
+            "privacy_notes",
+            "features",
+            "user_rating",
+            "api_or_export_support",
+            "task_fit_notes"
+          ],
+          "enabled": true,
+          "minimum_apps": 1,
+          "recommended_apps_to_compare": 3
+        },
+        "execution_policy": {
+          "all_approved_apps": "Buddy prepares parallel steps and dedupes results across approved apps only.",
+          "best_app": "Buddy prepares the best app workflow; external actions require approval gates.",
+          "compare_only": "Always safe for public-source research and user-provided app lists."
+        },
+        "risk": "medium",
+        "special_rule": "standard_app_comparison_rules",
+        "supported_run_modes": [
+          "compare_only",
+          "best_app",
+          "all_approved_apps"
+        ],
+        "supported_user_inputs": [
+          "task_goal",
+          "app_category",
+          "custom_app_list",
+          "budget",
+          "device",
+          "country_or_state",
+          "privacy_preference",
+          "run_mode"
+        ],
+        "task_examples": [
+          "mobile games",
+          "browser games",
+          "game stores"
+        ]
+      }
     },
     {
       "buddy_device_management": [
@@ -2766,9 +3692,12 @@
         "android_support": null,
         "api_available": null,
         "automation_support": null,
+        "best_pick_reason": null,
         "browser_extension_support": null,
         "client_money_use_case": null,
         "core_features": null,
+        "coupon_or_savings_fit": null,
+        "cross_app_execution_support": null,
         "customer_reviews": null,
         "data_export": null,
         "desktop_support": null,
@@ -2781,6 +3710,8 @@
         "security_controls": null,
         "subscription_cost": null,
         "support_quality": null,
+        "task_fit_score": null,
+        "user_preference_fit": null,
         "web_app_support": null,
         "webhook_available": null
       },
@@ -2944,7 +3875,66 @@
           "slug": "bim-coordinator"
         }
       ],
-      "risk": "medium"
+      "risk": "medium",
+      "task_router": {
+        "blocked_without_approval": [
+          "install_or_uninstall_apps",
+          "create_or_delete_accounts",
+          "grant_device_permissions",
+          "submit_private_data",
+          "connect_bank_or_payment_method",
+          "move_money_or_purchase",
+          "place_bet_or_trade",
+          "send_messages_or_outreach",
+          "publish_public_content",
+          "change_security_settings"
+        ],
+        "category_id": "music_video",
+        "category_label": "Music and Video Apps",
+        "custom_app_list_policy": {
+          "data_to_capture_per_app": [
+            "app_name",
+            "app_store_or_web_url",
+            "price",
+            "permissions",
+            "privacy_notes",
+            "features",
+            "user_rating",
+            "api_or_export_support",
+            "task_fit_notes"
+          ],
+          "enabled": true,
+          "minimum_apps": 1,
+          "recommended_apps_to_compare": 3
+        },
+        "execution_policy": {
+          "all_approved_apps": "Buddy prepares parallel steps and dedupes results across approved apps only.",
+          "best_app": "Buddy prepares the best app workflow; external actions require approval gates.",
+          "compare_only": "Always safe for public-source research and user-provided app lists."
+        },
+        "risk": "medium",
+        "special_rule": "standard_app_comparison_rules",
+        "supported_run_modes": [
+          "compare_only",
+          "best_app",
+          "all_approved_apps"
+        ],
+        "supported_user_inputs": [
+          "task_goal",
+          "app_category",
+          "custom_app_list",
+          "budget",
+          "device",
+          "country_or_state",
+          "privacy_preference",
+          "run_mode"
+        ],
+        "task_examples": [
+          "music creation",
+          "video editing",
+          "streaming tools"
+        ]
+      }
     },
     {
       "buddy_device_management": [
@@ -2965,9 +3955,12 @@
         "android_support": null,
         "api_available": null,
         "automation_support": null,
+        "best_pick_reason": null,
         "browser_extension_support": null,
         "client_money_use_case": null,
         "core_features": null,
+        "coupon_or_savings_fit": null,
+        "cross_app_execution_support": null,
         "customer_reviews": null,
         "data_export": null,
         "desktop_support": null,
@@ -2980,6 +3973,8 @@
         "security_controls": null,
         "subscription_cost": null,
         "support_quality": null,
+        "task_fit_score": null,
+        "user_preference_fit": null,
         "web_app_support": null,
         "webhook_available": null
       },
@@ -3143,7 +4138,66 @@
           "slug": "blockchain-analytics"
         }
       ],
-      "risk": "medium"
+      "risk": "medium",
+      "task_router": {
+        "blocked_without_approval": [
+          "install_or_uninstall_apps",
+          "create_or_delete_accounts",
+          "grant_device_permissions",
+          "submit_private_data",
+          "connect_bank_or_payment_method",
+          "move_money_or_purchase",
+          "place_bet_or_trade",
+          "send_messages_or_outreach",
+          "publish_public_content",
+          "change_security_settings"
+        ],
+        "category_id": "photo_design",
+        "category_label": "Photo and Design Apps",
+        "custom_app_list_policy": {
+          "data_to_capture_per_app": [
+            "app_name",
+            "app_store_or_web_url",
+            "price",
+            "permissions",
+            "privacy_notes",
+            "features",
+            "user_rating",
+            "api_or_export_support",
+            "task_fit_notes"
+          ],
+          "enabled": true,
+          "minimum_apps": 1,
+          "recommended_apps_to_compare": 3
+        },
+        "execution_policy": {
+          "all_approved_apps": "Buddy prepares parallel steps and dedupes results across approved apps only.",
+          "best_app": "Buddy prepares the best app workflow; external actions require approval gates.",
+          "compare_only": "Always safe for public-source research and user-provided app lists."
+        },
+        "risk": "medium",
+        "special_rule": "standard_app_comparison_rules",
+        "supported_run_modes": [
+          "compare_only",
+          "best_app",
+          "all_approved_apps"
+        ],
+        "supported_user_inputs": [
+          "task_goal",
+          "app_category",
+          "custom_app_list",
+          "budget",
+          "device",
+          "country_or_state",
+          "privacy_preference",
+          "run_mode"
+        ],
+        "task_examples": [
+          "photo editors",
+          "design tools",
+          "brand kits"
+        ]
+      }
     },
     {
       "buddy_device_management": [
@@ -3164,9 +4218,12 @@
         "android_support": null,
         "api_available": null,
         "automation_support": null,
+        "best_pick_reason": null,
         "browser_extension_support": null,
         "client_money_use_case": null,
         "core_features": null,
+        "coupon_or_savings_fit": null,
+        "cross_app_execution_support": null,
         "customer_reviews": null,
         "data_export": null,
         "desktop_support": null,
@@ -3179,6 +4236,8 @@
         "security_controls": null,
         "subscription_cost": null,
         "support_quality": null,
+        "task_fit_score": null,
+        "user_preference_fit": null,
         "web_app_support": null,
         "webhook_available": null
       },
@@ -3342,7 +4401,66 @@
           "slug": "animation-pipeline"
         }
       ],
-      "risk": "medium"
+      "risk": "medium",
+      "task_router": {
+        "blocked_without_approval": [
+          "install_or_uninstall_apps",
+          "create_or_delete_accounts",
+          "grant_device_permissions",
+          "submit_private_data",
+          "connect_bank_or_payment_method",
+          "move_money_or_purchase",
+          "place_bet_or_trade",
+          "send_messages_or_outreach",
+          "publish_public_content",
+          "change_security_settings"
+        ],
+        "category_id": "social_media",
+        "category_label": "Social Media Apps",
+        "custom_app_list_policy": {
+          "data_to_capture_per_app": [
+            "app_name",
+            "app_store_or_web_url",
+            "price",
+            "permissions",
+            "privacy_notes",
+            "features",
+            "user_rating",
+            "api_or_export_support",
+            "task_fit_notes"
+          ],
+          "enabled": true,
+          "minimum_apps": 1,
+          "recommended_apps_to_compare": 3
+        },
+        "execution_policy": {
+          "all_approved_apps": "Buddy prepares parallel steps and dedupes results across approved apps only.",
+          "best_app": "Buddy prepares the best app workflow; external actions require approval gates.",
+          "compare_only": "Always safe for public-source research and user-provided app lists."
+        },
+        "risk": "medium",
+        "special_rule": "standard_app_comparison_rules",
+        "supported_run_modes": [
+          "compare_only",
+          "best_app",
+          "all_approved_apps"
+        ],
+        "supported_user_inputs": [
+          "task_goal",
+          "app_category",
+          "custom_app_list",
+          "budget",
+          "device",
+          "country_or_state",
+          "privacy_preference",
+          "run_mode"
+        ],
+        "task_examples": [
+          "posting",
+          "analytics",
+          "creator tools"
+        ]
+      }
     },
     {
       "buddy_device_management": [
@@ -3363,9 +4481,12 @@
         "android_support": null,
         "api_available": null,
         "automation_support": null,
+        "best_pick_reason": null,
         "browser_extension_support": null,
         "client_money_use_case": null,
         "core_features": null,
+        "coupon_or_savings_fit": null,
+        "cross_app_execution_support": null,
         "customer_reviews": null,
         "data_export": null,
         "desktop_support": null,
@@ -3378,6 +4499,8 @@
         "security_controls": null,
         "subscription_cost": null,
         "support_quality": null,
+        "task_fit_score": null,
+        "user_preference_fit": null,
         "web_app_support": null,
         "webhook_available": null
       },
@@ -3541,7 +4664,66 @@
           "slug": "auto-loan"
         }
       ],
-      "risk": "medium"
+      "risk": "medium",
+      "task_router": {
+        "blocked_without_approval": [
+          "install_or_uninstall_apps",
+          "create_or_delete_accounts",
+          "grant_device_permissions",
+          "submit_private_data",
+          "connect_bank_or_payment_method",
+          "move_money_or_purchase",
+          "place_bet_or_trade",
+          "send_messages_or_outreach",
+          "publish_public_content",
+          "change_security_settings"
+        ],
+        "category_id": "dating",
+        "category_label": "Dating Apps",
+        "custom_app_list_policy": {
+          "data_to_capture_per_app": [
+            "app_name",
+            "app_store_or_web_url",
+            "price",
+            "permissions",
+            "privacy_notes",
+            "features",
+            "user_rating",
+            "api_or_export_support",
+            "task_fit_notes"
+          ],
+          "enabled": true,
+          "minimum_apps": 1,
+          "recommended_apps_to_compare": 3
+        },
+        "execution_policy": {
+          "all_approved_apps": "Buddy prepares parallel steps and dedupes results across approved apps only.",
+          "best_app": "Buddy prepares the best app workflow; external actions require approval gates.",
+          "compare_only": "Always safe for public-source research and user-provided app lists."
+        },
+        "risk": "medium",
+        "special_rule": "standard_app_comparison_rules",
+        "supported_run_modes": [
+          "compare_only",
+          "best_app",
+          "all_approved_apps"
+        ],
+        "supported_user_inputs": [
+          "task_goal",
+          "app_category",
+          "custom_app_list",
+          "budget",
+          "device",
+          "country_or_state",
+          "privacy_preference",
+          "run_mode"
+        ],
+        "task_examples": [
+          "matching",
+          "profile optimization",
+          "safety tools"
+        ]
+      }
     },
     {
       "buddy_device_management": [
@@ -3562,9 +4744,12 @@
         "android_support": null,
         "api_available": null,
         "automation_support": null,
+        "best_pick_reason": null,
         "browser_extension_support": null,
         "client_money_use_case": null,
         "core_features": null,
+        "coupon_or_savings_fit": null,
+        "cross_app_execution_support": null,
         "customer_reviews": null,
         "data_export": null,
         "desktop_support": null,
@@ -3577,6 +4762,8 @@
         "security_controls": null,
         "subscription_cost": null,
         "support_quality": null,
+        "task_fit_score": null,
+        "user_preference_fit": null,
         "web_app_support": null,
         "webhook_available": null
       },
@@ -3740,7 +4927,66 @@
           "slug": "health-inspection"
         }
       ],
-      "risk": "high"
+      "risk": "high",
+      "task_router": {
+        "blocked_without_approval": [
+          "install_or_uninstall_apps",
+          "create_or_delete_accounts",
+          "grant_device_permissions",
+          "submit_private_data",
+          "connect_bank_or_payment_method",
+          "move_money_or_purchase",
+          "place_bet_or_trade",
+          "send_messages_or_outreach",
+          "publish_public_content",
+          "change_security_settings"
+        ],
+        "category_id": "health",
+        "category_label": "Health Apps",
+        "custom_app_list_policy": {
+          "data_to_capture_per_app": [
+            "app_name",
+            "app_store_or_web_url",
+            "price",
+            "permissions",
+            "privacy_notes",
+            "features",
+            "user_rating",
+            "api_or_export_support",
+            "task_fit_notes"
+          ],
+          "enabled": true,
+          "minimum_apps": 1,
+          "recommended_apps_to_compare": 3
+        },
+        "execution_policy": {
+          "all_approved_apps": "Buddy prepares parallel steps and dedupes results across approved apps only.",
+          "best_app": "Buddy prepares the best app workflow; external actions require approval gates.",
+          "compare_only": "Always safe for public-source research and user-provided app lists."
+        },
+        "risk": "high",
+        "special_rule": "standard_app_comparison_rules",
+        "supported_run_modes": [
+          "compare_only",
+          "best_app",
+          "all_approved_apps"
+        ],
+        "supported_user_inputs": [
+          "task_goal",
+          "app_category",
+          "custom_app_list",
+          "budget",
+          "device",
+          "country_or_state",
+          "privacy_preference",
+          "run_mode"
+        ],
+        "task_examples": [
+          "telehealth",
+          "symptom trackers",
+          "fitness"
+        ]
+      }
     },
     {
       "buddy_device_management": [
@@ -3761,9 +5007,12 @@
         "android_support": null,
         "api_available": null,
         "automation_support": null,
+        "best_pick_reason": null,
         "browser_extension_support": null,
         "client_money_use_case": null,
         "core_features": null,
+        "coupon_or_savings_fit": null,
+        "cross_app_execution_support": null,
         "customer_reviews": null,
         "data_export": null,
         "desktop_support": null,
@@ -3776,6 +5025,8 @@
         "security_controls": null,
         "subscription_cost": null,
         "support_quality": null,
+        "task_fit_score": null,
+        "user_preference_fit": null,
         "web_app_support": null,
         "webhook_available": null
       },
@@ -3849,7 +5100,66 @@
           "slug": "recruitment-military"
         }
       ],
-      "risk": "medium"
+      "risk": "medium",
+      "task_router": {
+        "blocked_without_approval": [
+          "install_or_uninstall_apps",
+          "create_or_delete_accounts",
+          "grant_device_permissions",
+          "submit_private_data",
+          "connect_bank_or_payment_method",
+          "move_money_or_purchase",
+          "place_bet_or_trade",
+          "send_messages_or_outreach",
+          "publish_public_content",
+          "change_security_settings"
+        ],
+        "category_id": "fitness",
+        "category_label": "Fitness Apps",
+        "custom_app_list_policy": {
+          "data_to_capture_per_app": [
+            "app_name",
+            "app_store_or_web_url",
+            "price",
+            "permissions",
+            "privacy_notes",
+            "features",
+            "user_rating",
+            "api_or_export_support",
+            "task_fit_notes"
+          ],
+          "enabled": true,
+          "minimum_apps": 1,
+          "recommended_apps_to_compare": 3
+        },
+        "execution_policy": {
+          "all_approved_apps": "Buddy prepares parallel steps and dedupes results across approved apps only.",
+          "best_app": "Buddy prepares the best app workflow; external actions require approval gates.",
+          "compare_only": "Always safe for public-source research and user-provided app lists."
+        },
+        "risk": "medium",
+        "special_rule": "standard_app_comparison_rules",
+        "supported_run_modes": [
+          "compare_only",
+          "best_app",
+          "all_approved_apps"
+        ],
+        "supported_user_inputs": [
+          "task_goal",
+          "app_category",
+          "custom_app_list",
+          "budget",
+          "device",
+          "country_or_state",
+          "privacy_preference",
+          "run_mode"
+        ],
+        "task_examples": [
+          "workouts",
+          "nutrition",
+          "wearables"
+        ]
+      }
     },
     {
       "buddy_device_management": [
@@ -3870,9 +5180,12 @@
         "android_support": null,
         "api_available": null,
         "automation_support": null,
+        "best_pick_reason": null,
         "browser_extension_support": null,
         "client_money_use_case": null,
         "core_features": null,
+        "coupon_or_savings_fit": null,
+        "cross_app_execution_support": null,
         "customer_reviews": null,
         "data_export": null,
         "desktop_support": null,
@@ -3885,6 +5198,8 @@
         "security_controls": null,
         "subscription_cost": null,
         "support_quality": null,
+        "task_fit_score": null,
+        "user_preference_fit": null,
         "web_app_support": null,
         "webhook_available": null
       },
@@ -4048,7 +5363,66 @@
           "slug": "emergency-triage"
         }
       ],
-      "risk": "high"
+      "risk": "high",
+      "task_router": {
+        "blocked_without_approval": [
+          "install_or_uninstall_apps",
+          "create_or_delete_accounts",
+          "grant_device_permissions",
+          "submit_private_data",
+          "connect_bank_or_payment_method",
+          "move_money_or_purchase",
+          "place_bet_or_trade",
+          "send_messages_or_outreach",
+          "publish_public_content",
+          "change_security_settings"
+        ],
+        "category_id": "mental_health",
+        "category_label": "Mental Health Apps",
+        "custom_app_list_policy": {
+          "data_to_capture_per_app": [
+            "app_name",
+            "app_store_or_web_url",
+            "price",
+            "permissions",
+            "privacy_notes",
+            "features",
+            "user_rating",
+            "api_or_export_support",
+            "task_fit_notes"
+          ],
+          "enabled": true,
+          "minimum_apps": 1,
+          "recommended_apps_to_compare": 3
+        },
+        "execution_policy": {
+          "all_approved_apps": "Buddy prepares parallel steps and dedupes results across approved apps only.",
+          "best_app": "Buddy prepares the best app workflow; external actions require approval gates.",
+          "compare_only": "Always safe for public-source research and user-provided app lists."
+        },
+        "risk": "high",
+        "special_rule": "standard_app_comparison_rules",
+        "supported_run_modes": [
+          "compare_only",
+          "best_app",
+          "all_approved_apps"
+        ],
+        "supported_user_inputs": [
+          "task_goal",
+          "app_category",
+          "custom_app_list",
+          "budget",
+          "device",
+          "country_or_state",
+          "privacy_preference",
+          "run_mode"
+        ],
+        "task_examples": [
+          "journaling",
+          "therapy matching",
+          "meditation"
+        ]
+      }
     },
     {
       "buddy_device_management": [
@@ -4069,9 +5443,12 @@
         "android_support": null,
         "api_available": null,
         "automation_support": null,
+        "best_pick_reason": null,
         "browser_extension_support": null,
         "client_money_use_case": null,
         "core_features": null,
+        "coupon_or_savings_fit": null,
+        "cross_app_execution_support": null,
         "customer_reviews": null,
         "data_export": null,
         "desktop_support": null,
@@ -4084,6 +5461,8 @@
         "security_controls": null,
         "subscription_cost": null,
         "support_quality": null,
+        "task_fit_score": null,
+        "user_preference_fit": null,
         "web_app_support": null,
         "webhook_available": null
       },
@@ -4247,7 +5626,66 @@
           "slug": "lib-date-fns"
         }
       ],
-      "risk": "low"
+      "risk": "low",
+      "task_router": {
+        "blocked_without_approval": [
+          "install_or_uninstall_apps",
+          "create_or_delete_accounts",
+          "grant_device_permissions",
+          "submit_private_data",
+          "connect_bank_or_payment_method",
+          "move_money_or_purchase",
+          "place_bet_or_trade",
+          "send_messages_or_outreach",
+          "publish_public_content",
+          "change_security_settings"
+        ],
+        "category_id": "productivity",
+        "category_label": "Productivity Apps",
+        "custom_app_list_policy": {
+          "data_to_capture_per_app": [
+            "app_name",
+            "app_store_or_web_url",
+            "price",
+            "permissions",
+            "privacy_notes",
+            "features",
+            "user_rating",
+            "api_or_export_support",
+            "task_fit_notes"
+          ],
+          "enabled": true,
+          "minimum_apps": 1,
+          "recommended_apps_to_compare": 3
+        },
+        "execution_policy": {
+          "all_approved_apps": "Buddy prepares parallel steps and dedupes results across approved apps only.",
+          "best_app": "Buddy prepares the best app workflow; external actions require approval gates.",
+          "compare_only": "Always safe for public-source research and user-provided app lists."
+        },
+        "risk": "low",
+        "special_rule": "standard_app_comparison_rules",
+        "supported_run_modes": [
+          "compare_only",
+          "best_app",
+          "all_approved_apps"
+        ],
+        "supported_user_inputs": [
+          "task_goal",
+          "app_category",
+          "custom_app_list",
+          "budget",
+          "device",
+          "country_or_state",
+          "privacy_preference",
+          "run_mode"
+        ],
+        "task_examples": [
+          "tasks",
+          "notes",
+          "calendar"
+        ]
+      }
     },
     {
       "buddy_device_management": [
@@ -4268,9 +5706,12 @@
         "android_support": null,
         "api_available": null,
         "automation_support": null,
+        "best_pick_reason": null,
         "browser_extension_support": null,
         "client_money_use_case": null,
         "core_features": null,
+        "coupon_or_savings_fit": null,
+        "cross_app_execution_support": null,
         "customer_reviews": null,
         "data_export": null,
         "desktop_support": null,
@@ -4283,6 +5724,8 @@
         "security_controls": null,
         "subscription_cost": null,
         "support_quality": null,
+        "task_fit_score": null,
+        "user_preference_fit": null,
         "web_app_support": null,
         "webhook_available": null
       },
@@ -4446,7 +5889,66 @@
           "slug": "aquaculture-mgr"
         }
       ],
-      "risk": "medium"
+      "risk": "medium",
+      "task_router": {
+        "blocked_without_approval": [
+          "install_or_uninstall_apps",
+          "create_or_delete_accounts",
+          "grant_device_permissions",
+          "submit_private_data",
+          "connect_bank_or_payment_method",
+          "move_money_or_purchase",
+          "place_bet_or_trade",
+          "send_messages_or_outreach",
+          "publish_public_content",
+          "change_security_settings"
+        ],
+        "category_id": "crm_sales",
+        "category_label": "CRM and Sales Apps",
+        "custom_app_list_policy": {
+          "data_to_capture_per_app": [
+            "app_name",
+            "app_store_or_web_url",
+            "price",
+            "permissions",
+            "privacy_notes",
+            "features",
+            "user_rating",
+            "api_or_export_support",
+            "task_fit_notes"
+          ],
+          "enabled": true,
+          "minimum_apps": 1,
+          "recommended_apps_to_compare": 3
+        },
+        "execution_policy": {
+          "all_approved_apps": "Buddy prepares parallel steps and dedupes results across approved apps only.",
+          "best_app": "Buddy prepares the best app workflow; external actions require approval gates.",
+          "compare_only": "Always safe for public-source research and user-provided app lists."
+        },
+        "risk": "medium",
+        "special_rule": "standard_app_comparison_rules",
+        "supported_run_modes": [
+          "compare_only",
+          "best_app",
+          "all_approved_apps"
+        ],
+        "supported_user_inputs": [
+          "task_goal",
+          "app_category",
+          "custom_app_list",
+          "budget",
+          "device",
+          "country_or_state",
+          "privacy_preference",
+          "run_mode"
+        ],
+        "task_examples": [
+          "lead management",
+          "pipeline",
+          "outreach"
+        ]
+      }
     },
     {
       "buddy_device_management": [
@@ -4467,9 +5969,12 @@
         "android_support": null,
         "api_available": null,
         "automation_support": null,
+        "best_pick_reason": null,
         "browser_extension_support": null,
         "client_money_use_case": null,
         "core_features": null,
+        "coupon_or_savings_fit": null,
+        "cross_app_execution_support": null,
         "customer_reviews": null,
         "data_export": null,
         "desktop_support": null,
@@ -4482,6 +5987,8 @@
         "security_controls": null,
         "subscription_cost": null,
         "support_quality": null,
+        "task_fit_score": null,
+        "user_preference_fit": null,
         "web_app_support": null,
         "webhook_available": null
       },
@@ -4645,7 +6152,66 @@
           "slug": "algo-trading"
         }
       ],
-      "risk": "medium"
+      "risk": "medium",
+      "task_router": {
+        "blocked_without_approval": [
+          "install_or_uninstall_apps",
+          "create_or_delete_accounts",
+          "grant_device_permissions",
+          "submit_private_data",
+          "connect_bank_or_payment_method",
+          "move_money_or_purchase",
+          "place_bet_or_trade",
+          "send_messages_or_outreach",
+          "publish_public_content",
+          "change_security_settings"
+        ],
+        "category_id": "email_marketing",
+        "category_label": "Email Marketing Apps",
+        "custom_app_list_policy": {
+          "data_to_capture_per_app": [
+            "app_name",
+            "app_store_or_web_url",
+            "price",
+            "permissions",
+            "privacy_notes",
+            "features",
+            "user_rating",
+            "api_or_export_support",
+            "task_fit_notes"
+          ],
+          "enabled": true,
+          "minimum_apps": 1,
+          "recommended_apps_to_compare": 3
+        },
+        "execution_policy": {
+          "all_approved_apps": "Buddy prepares parallel steps and dedupes results across approved apps only.",
+          "best_app": "Buddy prepares the best app workflow; external actions require approval gates.",
+          "compare_only": "Always safe for public-source research and user-provided app lists."
+        },
+        "risk": "medium",
+        "special_rule": "standard_app_comparison_rules",
+        "supported_run_modes": [
+          "compare_only",
+          "best_app",
+          "all_approved_apps"
+        ],
+        "supported_user_inputs": [
+          "task_goal",
+          "app_category",
+          "custom_app_list",
+          "budget",
+          "device",
+          "country_or_state",
+          "privacy_preference",
+          "run_mode"
+        ],
+        "task_examples": [
+          "campaigns",
+          "newsletters",
+          "automation"
+        ]
+      }
     },
     {
       "buddy_device_management": [
@@ -4666,9 +6232,12 @@
         "android_support": null,
         "api_available": null,
         "automation_support": null,
+        "best_pick_reason": null,
         "browser_extension_support": null,
         "client_money_use_case": null,
         "core_features": null,
+        "coupon_or_savings_fit": null,
+        "cross_app_execution_support": null,
         "customer_reviews": null,
         "data_export": null,
         "desktop_support": null,
@@ -4681,6 +6250,8 @@
         "security_controls": null,
         "subscription_cost": null,
         "support_quality": null,
+        "task_fit_score": null,
+        "user_preference_fit": null,
         "web_app_support": null,
         "webhook_available": null
       },
@@ -4844,7 +6415,66 @@
           "slug": "ai-self-learner"
         }
       ],
-      "risk": "medium"
+      "risk": "medium",
+      "task_router": {
+        "blocked_without_approval": [
+          "install_or_uninstall_apps",
+          "create_or_delete_accounts",
+          "grant_device_permissions",
+          "submit_private_data",
+          "connect_bank_or_payment_method",
+          "move_money_or_purchase",
+          "place_bet_or_trade",
+          "send_messages_or_outreach",
+          "publish_public_content",
+          "change_security_settings"
+        ],
+        "category_id": "ai_chatbots",
+        "category_label": "AI Chatbot Apps",
+        "custom_app_list_policy": {
+          "data_to_capture_per_app": [
+            "app_name",
+            "app_store_or_web_url",
+            "price",
+            "permissions",
+            "privacy_notes",
+            "features",
+            "user_rating",
+            "api_or_export_support",
+            "task_fit_notes"
+          ],
+          "enabled": true,
+          "minimum_apps": 1,
+          "recommended_apps_to_compare": 3
+        },
+        "execution_policy": {
+          "all_approved_apps": "Buddy prepares parallel steps and dedupes results across approved apps only.",
+          "best_app": "Buddy prepares the best app workflow; external actions require approval gates.",
+          "compare_only": "Always safe for public-source research and user-provided app lists."
+        },
+        "risk": "medium",
+        "special_rule": "standard_app_comparison_rules",
+        "supported_run_modes": [
+          "compare_only",
+          "best_app",
+          "all_approved_apps"
+        ],
+        "supported_user_inputs": [
+          "task_goal",
+          "app_category",
+          "custom_app_list",
+          "budget",
+          "device",
+          "country_or_state",
+          "privacy_preference",
+          "run_mode"
+        ],
+        "task_examples": [
+          "support bots",
+          "sales bots",
+          "agent builders"
+        ]
+      }
     },
     {
       "buddy_device_management": [
@@ -4865,9 +6495,12 @@
         "android_support": null,
         "api_available": null,
         "automation_support": null,
+        "best_pick_reason": null,
         "browser_extension_support": null,
         "client_money_use_case": null,
         "core_features": null,
+        "coupon_or_savings_fit": null,
+        "cross_app_execution_support": null,
         "customer_reviews": null,
         "data_export": null,
         "desktop_support": null,
@@ -4880,6 +6513,8 @@
         "security_controls": null,
         "subscription_cost": null,
         "support_quality": null,
+        "task_fit_score": null,
+        "user_preference_fit": null,
         "web_app_support": null,
         "webhook_available": null
       },
@@ -5043,7 +6678,66 @@
           "slug": "email-automation"
         }
       ],
-      "risk": "low"
+      "risk": "low",
+      "task_router": {
+        "blocked_without_approval": [
+          "install_or_uninstall_apps",
+          "create_or_delete_accounts",
+          "grant_device_permissions",
+          "submit_private_data",
+          "connect_bank_or_payment_method",
+          "move_money_or_purchase",
+          "place_bet_or_trade",
+          "send_messages_or_outreach",
+          "publish_public_content",
+          "change_security_settings"
+        ],
+        "category_id": "website_builders",
+        "category_label": "Website Builder Apps",
+        "custom_app_list_policy": {
+          "data_to_capture_per_app": [
+            "app_name",
+            "app_store_or_web_url",
+            "price",
+            "permissions",
+            "privacy_notes",
+            "features",
+            "user_rating",
+            "api_or_export_support",
+            "task_fit_notes"
+          ],
+          "enabled": true,
+          "minimum_apps": 1,
+          "recommended_apps_to_compare": 3
+        },
+        "execution_policy": {
+          "all_approved_apps": "Buddy prepares parallel steps and dedupes results across approved apps only.",
+          "best_app": "Buddy prepares the best app workflow; external actions require approval gates.",
+          "compare_only": "Always safe for public-source research and user-provided app lists."
+        },
+        "risk": "low",
+        "special_rule": "standard_app_comparison_rules",
+        "supported_run_modes": [
+          "compare_only",
+          "best_app",
+          "all_approved_apps"
+        ],
+        "supported_user_inputs": [
+          "task_goal",
+          "app_category",
+          "custom_app_list",
+          "budget",
+          "device",
+          "country_or_state",
+          "privacy_preference",
+          "run_mode"
+        ],
+        "task_examples": [
+          "site builders",
+          "landing pages",
+          "hosting"
+        ]
+      }
     },
     {
       "buddy_device_management": [
@@ -5064,9 +6758,12 @@
         "android_support": null,
         "api_available": null,
         "automation_support": null,
+        "best_pick_reason": null,
         "browser_extension_support": null,
         "client_money_use_case": null,
         "core_features": null,
+        "coupon_or_savings_fit": null,
+        "cross_app_execution_support": null,
         "customer_reviews": null,
         "data_export": null,
         "desktop_support": null,
@@ -5079,6 +6776,8 @@
         "security_controls": null,
         "subscription_cost": null,
         "support_quality": null,
+        "task_fit_score": null,
+        "user_preference_fit": null,
         "web_app_support": null,
         "webhook_available": null
       },
@@ -5242,7 +6941,66 @@
           "slug": "animation-pipeline"
         }
       ],
-      "risk": "medium"
+      "risk": "medium",
+      "task_router": {
+        "blocked_without_approval": [
+          "install_or_uninstall_apps",
+          "create_or_delete_accounts",
+          "grant_device_permissions",
+          "submit_private_data",
+          "connect_bank_or_payment_method",
+          "move_money_or_purchase",
+          "place_bet_or_trade",
+          "send_messages_or_outreach",
+          "publish_public_content",
+          "change_security_settings"
+        ],
+        "category_id": "app_builders",
+        "category_label": "App Builder Apps",
+        "custom_app_list_policy": {
+          "data_to_capture_per_app": [
+            "app_name",
+            "app_store_or_web_url",
+            "price",
+            "permissions",
+            "privacy_notes",
+            "features",
+            "user_rating",
+            "api_or_export_support",
+            "task_fit_notes"
+          ],
+          "enabled": true,
+          "minimum_apps": 1,
+          "recommended_apps_to_compare": 3
+        },
+        "execution_policy": {
+          "all_approved_apps": "Buddy prepares parallel steps and dedupes results across approved apps only.",
+          "best_app": "Buddy prepares the best app workflow; external actions require approval gates.",
+          "compare_only": "Always safe for public-source research and user-provided app lists."
+        },
+        "risk": "medium",
+        "special_rule": "standard_app_comparison_rules",
+        "supported_run_modes": [
+          "compare_only",
+          "best_app",
+          "all_approved_apps"
+        ],
+        "supported_user_inputs": [
+          "task_goal",
+          "app_category",
+          "custom_app_list",
+          "budget",
+          "device",
+          "country_or_state",
+          "privacy_preference",
+          "run_mode"
+        ],
+        "task_examples": [
+          "no-code tools",
+          "vibe coding",
+          "deployment"
+        ]
+      }
     },
     {
       "buddy_device_management": [
@@ -5263,9 +7021,12 @@
         "android_support": null,
         "api_available": null,
         "automation_support": null,
+        "best_pick_reason": null,
         "browser_extension_support": null,
         "client_money_use_case": null,
         "core_features": null,
+        "coupon_or_savings_fit": null,
+        "cross_app_execution_support": null,
         "customer_reviews": null,
         "data_export": null,
         "desktop_support": null,
@@ -5278,6 +7039,8 @@
         "security_controls": null,
         "subscription_cost": null,
         "support_quality": null,
+        "task_fit_score": null,
+        "user_preference_fit": null,
         "web_app_support": null,
         "webhook_available": null
       },
@@ -5441,7 +7204,66 @@
           "slug": "animation-pipeline"
         }
       ],
-      "risk": "medium"
+      "risk": "medium",
+      "task_router": {
+        "blocked_without_approval": [
+          "install_or_uninstall_apps",
+          "create_or_delete_accounts",
+          "grant_device_permissions",
+          "submit_private_data",
+          "connect_bank_or_payment_method",
+          "move_money_or_purchase",
+          "place_bet_or_trade",
+          "send_messages_or_outreach",
+          "publish_public_content",
+          "change_security_settings"
+        ],
+        "category_id": "automation",
+        "category_label": "Automation Apps",
+        "custom_app_list_policy": {
+          "data_to_capture_per_app": [
+            "app_name",
+            "app_store_or_web_url",
+            "price",
+            "permissions",
+            "privacy_notes",
+            "features",
+            "user_rating",
+            "api_or_export_support",
+            "task_fit_notes"
+          ],
+          "enabled": true,
+          "minimum_apps": 1,
+          "recommended_apps_to_compare": 3
+        },
+        "execution_policy": {
+          "all_approved_apps": "Buddy prepares parallel steps and dedupes results across approved apps only.",
+          "best_app": "Buddy prepares the best app workflow; external actions require approval gates.",
+          "compare_only": "Always safe for public-source research and user-provided app lists."
+        },
+        "risk": "medium",
+        "special_rule": "standard_app_comparison_rules",
+        "supported_run_modes": [
+          "compare_only",
+          "best_app",
+          "all_approved_apps"
+        ],
+        "supported_user_inputs": [
+          "task_goal",
+          "app_category",
+          "custom_app_list",
+          "budget",
+          "device",
+          "country_or_state",
+          "privacy_preference",
+          "run_mode"
+        ],
+        "task_examples": [
+          "workflow automation",
+          "RPA",
+          "webhooks"
+        ]
+      }
     },
     {
       "buddy_device_management": [
@@ -5462,9 +7284,12 @@
         "android_support": null,
         "api_available": null,
         "automation_support": null,
+        "best_pick_reason": null,
         "browser_extension_support": null,
         "client_money_use_case": null,
         "core_features": null,
+        "coupon_or_savings_fit": null,
+        "cross_app_execution_support": null,
         "customer_reviews": null,
         "data_export": null,
         "desktop_support": null,
@@ -5477,6 +7302,8 @@
         "security_controls": null,
         "subscription_cost": null,
         "support_quality": null,
+        "task_fit_score": null,
+        "user_preference_fit": null,
         "web_app_support": null,
         "webhook_available": null
       },
@@ -5640,7 +7467,66 @@
           "slug": "brand-guidelines"
         }
       ],
-      "risk": "medium"
+      "risk": "medium",
+      "task_router": {
+        "blocked_without_approval": [
+          "install_or_uninstall_apps",
+          "create_or_delete_accounts",
+          "grant_device_permissions",
+          "submit_private_data",
+          "connect_bank_or_payment_method",
+          "move_money_or_purchase",
+          "place_bet_or_trade",
+          "send_messages_or_outreach",
+          "publish_public_content",
+          "change_security_settings"
+        ],
+        "category_id": "developer_tools",
+        "category_label": "Developer Apps",
+        "custom_app_list_policy": {
+          "data_to_capture_per_app": [
+            "app_name",
+            "app_store_or_web_url",
+            "price",
+            "permissions",
+            "privacy_notes",
+            "features",
+            "user_rating",
+            "api_or_export_support",
+            "task_fit_notes"
+          ],
+          "enabled": true,
+          "minimum_apps": 1,
+          "recommended_apps_to_compare": 3
+        },
+        "execution_policy": {
+          "all_approved_apps": "Buddy prepares parallel steps and dedupes results across approved apps only.",
+          "best_app": "Buddy prepares the best app workflow; external actions require approval gates.",
+          "compare_only": "Always safe for public-source research and user-provided app lists."
+        },
+        "risk": "medium",
+        "special_rule": "standard_app_comparison_rules",
+        "supported_run_modes": [
+          "compare_only",
+          "best_app",
+          "all_approved_apps"
+        ],
+        "supported_user_inputs": [
+          "task_goal",
+          "app_category",
+          "custom_app_list",
+          "budget",
+          "device",
+          "country_or_state",
+          "privacy_preference",
+          "run_mode"
+        ],
+        "task_examples": [
+          "IDEs",
+          "CI/CD",
+          "API clients"
+        ]
+      }
     },
     {
       "buddy_device_management": [
@@ -5661,9 +7547,12 @@
         "android_support": null,
         "api_available": null,
         "automation_support": null,
+        "best_pick_reason": null,
         "browser_extension_support": null,
         "client_money_use_case": null,
         "core_features": null,
+        "coupon_or_savings_fit": null,
+        "cross_app_execution_support": null,
         "customer_reviews": null,
         "data_export": null,
         "desktop_support": null,
@@ -5676,6 +7565,8 @@
         "security_controls": null,
         "subscription_cost": null,
         "support_quality": null,
+        "task_fit_score": null,
+        "user_preference_fit": null,
         "web_app_support": null,
         "webhook_available": null
       },
@@ -5707,7 +7598,66 @@
           "slug": "utilities-app-bot"
         }
       ],
-      "risk": "high"
+      "risk": "high",
+      "task_router": {
+        "blocked_without_approval": [
+          "install_or_uninstall_apps",
+          "create_or_delete_accounts",
+          "grant_device_permissions",
+          "submit_private_data",
+          "connect_bank_or_payment_method",
+          "move_money_or_purchase",
+          "place_bet_or_trade",
+          "send_messages_or_outreach",
+          "publish_public_content",
+          "change_security_settings"
+        ],
+        "category_id": "cybersecurity",
+        "category_label": "Cybersecurity Apps",
+        "custom_app_list_policy": {
+          "data_to_capture_per_app": [
+            "app_name",
+            "app_store_or_web_url",
+            "price",
+            "permissions",
+            "privacy_notes",
+            "features",
+            "user_rating",
+            "api_or_export_support",
+            "task_fit_notes"
+          ],
+          "enabled": true,
+          "minimum_apps": 1,
+          "recommended_apps_to_compare": 3
+        },
+        "execution_policy": {
+          "all_approved_apps": "Buddy prepares parallel steps and dedupes results across approved apps only.",
+          "best_app": "Buddy prepares the best app workflow; external actions require approval gates.",
+          "compare_only": "Always safe for public-source research and user-provided app lists."
+        },
+        "risk": "high",
+        "special_rule": "standard_app_comparison_rules",
+        "supported_run_modes": [
+          "compare_only",
+          "best_app",
+          "all_approved_apps"
+        ],
+        "supported_user_inputs": [
+          "task_goal",
+          "app_category",
+          "custom_app_list",
+          "budget",
+          "device",
+          "country_or_state",
+          "privacy_preference",
+          "run_mode"
+        ],
+        "task_examples": [
+          "password managers",
+          "scanners",
+          "VPNs"
+        ]
+      }
     },
     {
       "buddy_device_management": [
@@ -5728,9 +7678,12 @@
         "android_support": null,
         "api_available": null,
         "automation_support": null,
+        "best_pick_reason": null,
         "browser_extension_support": null,
         "client_money_use_case": null,
         "core_features": null,
+        "coupon_or_savings_fit": null,
+        "cross_app_execution_support": null,
         "customer_reviews": null,
         "data_export": null,
         "desktop_support": null,
@@ -5743,6 +7696,8 @@
         "security_controls": null,
         "subscription_cost": null,
         "support_quality": null,
+        "task_fit_score": null,
+        "user_preference_fit": null,
         "web_app_support": null,
         "webhook_available": null
       },
@@ -5906,7 +7861,66 @@
           "slug": "animation-pipeline"
         }
       ],
-      "risk": "high"
+      "risk": "high",
+      "task_router": {
+        "blocked_without_approval": [
+          "install_or_uninstall_apps",
+          "create_or_delete_accounts",
+          "grant_device_permissions",
+          "submit_private_data",
+          "connect_bank_or_payment_method",
+          "move_money_or_purchase",
+          "place_bet_or_trade",
+          "send_messages_or_outreach",
+          "publish_public_content",
+          "change_security_settings"
+        ],
+        "category_id": "legal",
+        "category_label": "Legal Apps",
+        "custom_app_list_policy": {
+          "data_to_capture_per_app": [
+            "app_name",
+            "app_store_or_web_url",
+            "price",
+            "permissions",
+            "privacy_notes",
+            "features",
+            "user_rating",
+            "api_or_export_support",
+            "task_fit_notes"
+          ],
+          "enabled": true,
+          "minimum_apps": 1,
+          "recommended_apps_to_compare": 3
+        },
+        "execution_policy": {
+          "all_approved_apps": "Buddy prepares parallel steps and dedupes results across approved apps only.",
+          "best_app": "Buddy prepares the best app workflow; external actions require approval gates.",
+          "compare_only": "Always safe for public-source research and user-provided app lists."
+        },
+        "risk": "high",
+        "special_rule": "standard_app_comparison_rules",
+        "supported_run_modes": [
+          "compare_only",
+          "best_app",
+          "all_approved_apps"
+        ],
+        "supported_user_inputs": [
+          "task_goal",
+          "app_category",
+          "custom_app_list",
+          "budget",
+          "device",
+          "country_or_state",
+          "privacy_preference",
+          "run_mode"
+        ],
+        "task_examples": [
+          "contracts",
+          "entity filing",
+          "compliance"
+        ]
+      }
     },
     {
       "buddy_device_management": [
@@ -5927,9 +7941,12 @@
         "android_support": null,
         "api_available": null,
         "automation_support": null,
+        "best_pick_reason": null,
         "browser_extension_support": null,
         "client_money_use_case": null,
         "core_features": null,
+        "coupon_or_savings_fit": null,
+        "cross_app_execution_support": null,
         "customer_reviews": null,
         "data_export": null,
         "desktop_support": null,
@@ -5942,6 +7959,8 @@
         "security_controls": null,
         "subscription_cost": null,
         "support_quality": null,
+        "task_fit_score": null,
+        "user_preference_fit": null,
         "web_app_support": null,
         "webhook_available": null
       },
@@ -6105,7 +8124,66 @@
           "slug": "capital-sustainability"
         }
       ],
-      "risk": "high"
+      "risk": "high",
+      "task_router": {
+        "blocked_without_approval": [
+          "install_or_uninstall_apps",
+          "create_or_delete_accounts",
+          "grant_device_permissions",
+          "submit_private_data",
+          "connect_bank_or_payment_method",
+          "move_money_or_purchase",
+          "place_bet_or_trade",
+          "send_messages_or_outreach",
+          "publish_public_content",
+          "change_security_settings"
+        ],
+        "category_id": "business_formation",
+        "category_label": "Business Formation Apps",
+        "custom_app_list_policy": {
+          "data_to_capture_per_app": [
+            "app_name",
+            "app_store_or_web_url",
+            "price",
+            "permissions",
+            "privacy_notes",
+            "features",
+            "user_rating",
+            "api_or_export_support",
+            "task_fit_notes"
+          ],
+          "enabled": true,
+          "minimum_apps": 1,
+          "recommended_apps_to_compare": 3
+        },
+        "execution_policy": {
+          "all_approved_apps": "Buddy prepares parallel steps and dedupes results across approved apps only.",
+          "best_app": "Buddy prepares the best app workflow; external actions require approval gates.",
+          "compare_only": "Always safe for public-source research and user-provided app lists."
+        },
+        "risk": "high",
+        "special_rule": "standard_app_comparison_rules",
+        "supported_run_modes": [
+          "compare_only",
+          "best_app",
+          "all_approved_apps"
+        ],
+        "supported_user_inputs": [
+          "task_goal",
+          "app_category",
+          "custom_app_list",
+          "budget",
+          "device",
+          "country_or_state",
+          "privacy_preference",
+          "run_mode"
+        ],
+        "task_examples": [
+          "LLC filing",
+          "domain registration",
+          "licenses"
+        ]
+      }
     },
     {
       "buddy_device_management": [
@@ -6126,9 +8204,12 @@
         "android_support": null,
         "api_available": null,
         "automation_support": null,
+        "best_pick_reason": null,
         "browser_extension_support": null,
         "client_money_use_case": null,
         "core_features": null,
+        "coupon_or_savings_fit": null,
+        "cross_app_execution_support": null,
         "customer_reviews": null,
         "data_export": null,
         "desktop_support": null,
@@ -6141,6 +8222,8 @@
         "security_controls": null,
         "subscription_cost": null,
         "support_quality": null,
+        "task_fit_score": null,
+        "user_preference_fit": null,
         "web_app_support": null,
         "webhook_available": null
       },
@@ -6304,7 +8387,66 @@
           "slug": "animation-pipeline"
         }
       ],
-      "risk": "high"
+      "risk": "high",
+      "task_router": {
+        "blocked_without_approval": [
+          "install_or_uninstall_apps",
+          "create_or_delete_accounts",
+          "grant_device_permissions",
+          "submit_private_data",
+          "connect_bank_or_payment_method",
+          "move_money_or_purchase",
+          "place_bet_or_trade",
+          "send_messages_or_outreach",
+          "publish_public_content",
+          "change_security_settings"
+        ],
+        "category_id": "accounting",
+        "category_label": "Accounting Apps",
+        "custom_app_list_policy": {
+          "data_to_capture_per_app": [
+            "app_name",
+            "app_store_or_web_url",
+            "price",
+            "permissions",
+            "privacy_notes",
+            "features",
+            "user_rating",
+            "api_or_export_support",
+            "task_fit_notes"
+          ],
+          "enabled": true,
+          "minimum_apps": 1,
+          "recommended_apps_to_compare": 3
+        },
+        "execution_policy": {
+          "all_approved_apps": "Buddy prepares parallel steps and dedupes results across approved apps only.",
+          "best_app": "Buddy prepares the best app workflow; external actions require approval gates.",
+          "compare_only": "Always safe for public-source research and user-provided app lists."
+        },
+        "risk": "high",
+        "special_rule": "standard_app_comparison_rules",
+        "supported_run_modes": [
+          "compare_only",
+          "best_app",
+          "all_approved_apps"
+        ],
+        "supported_user_inputs": [
+          "task_goal",
+          "app_category",
+          "custom_app_list",
+          "budget",
+          "device",
+          "country_or_state",
+          "privacy_preference",
+          "run_mode"
+        ],
+        "task_examples": [
+          "bookkeeping",
+          "tax",
+          "expense tracking"
+        ]
+      }
     },
     {
       "buddy_device_management": [
@@ -6325,9 +8467,12 @@
         "android_support": null,
         "api_available": null,
         "automation_support": null,
+        "best_pick_reason": null,
         "browser_extension_support": null,
         "client_money_use_case": null,
         "core_features": null,
+        "coupon_or_savings_fit": null,
+        "cross_app_execution_support": null,
         "customer_reviews": null,
         "data_export": null,
         "desktop_support": null,
@@ -6340,6 +8485,8 @@
         "security_controls": null,
         "subscription_cost": null,
         "support_quality": null,
+        "task_fit_score": null,
+        "user_preference_fit": null,
         "web_app_support": null,
         "webhook_available": null
       },
@@ -6503,7 +8650,66 @@
           "slug": "construction-estimator"
         }
       ],
-      "risk": "high"
+      "risk": "high",
+      "task_router": {
+        "blocked_without_approval": [
+          "install_or_uninstall_apps",
+          "create_or_delete_accounts",
+          "grant_device_permissions",
+          "submit_private_data",
+          "connect_bank_or_payment_method",
+          "move_money_or_purchase",
+          "place_bet_or_trade",
+          "send_messages_or_outreach",
+          "publish_public_content",
+          "change_security_settings"
+        ],
+        "category_id": "loans_credit",
+        "category_label": "Loans and Credit Apps",
+        "custom_app_list_policy": {
+          "data_to_capture_per_app": [
+            "app_name",
+            "app_store_or_web_url",
+            "price",
+            "permissions",
+            "privacy_notes",
+            "features",
+            "user_rating",
+            "api_or_export_support",
+            "task_fit_notes"
+          ],
+          "enabled": true,
+          "minimum_apps": 1,
+          "recommended_apps_to_compare": 3
+        },
+        "execution_policy": {
+          "all_approved_apps": "Buddy prepares parallel steps and dedupes results across approved apps only.",
+          "best_app": "Buddy prepares the best app workflow; external actions require approval gates.",
+          "compare_only": "Always safe for public-source research and user-provided app lists."
+        },
+        "risk": "high",
+        "special_rule": "standard_app_comparison_rules",
+        "supported_run_modes": [
+          "compare_only",
+          "best_app",
+          "all_approved_apps"
+        ],
+        "supported_user_inputs": [
+          "task_goal",
+          "app_category",
+          "custom_app_list",
+          "budget",
+          "device",
+          "country_or_state",
+          "privacy_preference",
+          "run_mode"
+        ],
+        "task_examples": [
+          "loan comparison",
+          "credit building",
+          "underwriting"
+        ]
+      }
     },
     {
       "buddy_device_management": [
@@ -6524,9 +8730,12 @@
         "android_support": null,
         "api_available": null,
         "automation_support": null,
+        "best_pick_reason": null,
         "browser_extension_support": null,
         "client_money_use_case": null,
         "core_features": null,
+        "coupon_or_savings_fit": null,
+        "cross_app_execution_support": null,
         "customer_reviews": null,
         "data_export": null,
         "desktop_support": null,
@@ -6539,6 +8748,8 @@
         "security_controls": null,
         "subscription_cost": null,
         "support_quality": null,
+        "task_fit_score": null,
+        "user_preference_fit": null,
         "web_app_support": null,
         "webhook_available": null
       },
@@ -6702,7 +8913,66 @@
           "slug": "aquaculture-mgr"
         }
       ],
-      "risk": "high"
+      "risk": "high",
+      "task_router": {
+        "blocked_without_approval": [
+          "install_or_uninstall_apps",
+          "create_or_delete_accounts",
+          "grant_device_permissions",
+          "submit_private_data",
+          "connect_bank_or_payment_method",
+          "move_money_or_purchase",
+          "place_bet_or_trade",
+          "send_messages_or_outreach",
+          "publish_public_content",
+          "change_security_settings"
+        ],
+        "category_id": "insurance",
+        "category_label": "Insurance Apps",
+        "custom_app_list_policy": {
+          "data_to_capture_per_app": [
+            "app_name",
+            "app_store_or_web_url",
+            "price",
+            "permissions",
+            "privacy_notes",
+            "features",
+            "user_rating",
+            "api_or_export_support",
+            "task_fit_notes"
+          ],
+          "enabled": true,
+          "minimum_apps": 1,
+          "recommended_apps_to_compare": 3
+        },
+        "execution_policy": {
+          "all_approved_apps": "Buddy prepares parallel steps and dedupes results across approved apps only.",
+          "best_app": "Buddy prepares the best app workflow; external actions require approval gates.",
+          "compare_only": "Always safe for public-source research and user-provided app lists."
+        },
+        "risk": "high",
+        "special_rule": "standard_app_comparison_rules",
+        "supported_run_modes": [
+          "compare_only",
+          "best_app",
+          "all_approved_apps"
+        ],
+        "supported_user_inputs": [
+          "task_goal",
+          "app_category",
+          "custom_app_list",
+          "budget",
+          "device",
+          "country_or_state",
+          "privacy_preference",
+          "run_mode"
+        ],
+        "task_examples": [
+          "quotes",
+          "claims",
+          "policy management"
+        ]
+      }
     },
     {
       "buddy_device_management": [
@@ -6723,9 +8993,12 @@
         "android_support": null,
         "api_available": null,
         "automation_support": null,
+        "best_pick_reason": null,
         "browser_extension_support": null,
         "client_money_use_case": null,
         "core_features": null,
+        "coupon_or_savings_fit": null,
+        "cross_app_execution_support": null,
         "customer_reviews": null,
         "data_export": null,
         "desktop_support": null,
@@ -6738,6 +9011,8 @@
         "security_controls": null,
         "subscription_cost": null,
         "support_quality": null,
+        "task_fit_score": null,
+        "user_preference_fit": null,
         "web_app_support": null,
         "webhook_available": null
       },
@@ -6901,7 +9176,66 @@
           "slug": "lib-hono"
         }
       ],
-      "risk": "medium"
+      "risk": "medium",
+      "task_router": {
+        "blocked_without_approval": [
+          "install_or_uninstall_apps",
+          "create_or_delete_accounts",
+          "grant_device_permissions",
+          "submit_private_data",
+          "connect_bank_or_payment_method",
+          "move_money_or_purchase",
+          "place_bet_or_trade",
+          "send_messages_or_outreach",
+          "publish_public_content",
+          "change_security_settings"
+        ],
+        "category_id": "transportation",
+        "category_label": "Transportation Apps",
+        "custom_app_list_policy": {
+          "data_to_capture_per_app": [
+            "app_name",
+            "app_store_or_web_url",
+            "price",
+            "permissions",
+            "privacy_notes",
+            "features",
+            "user_rating",
+            "api_or_export_support",
+            "task_fit_notes"
+          ],
+          "enabled": true,
+          "minimum_apps": 1,
+          "recommended_apps_to_compare": 3
+        },
+        "execution_policy": {
+          "all_approved_apps": "Buddy prepares parallel steps and dedupes results across approved apps only.",
+          "best_app": "Buddy prepares the best app workflow; external actions require approval gates.",
+          "compare_only": "Always safe for public-source research and user-provided app lists."
+        },
+        "risk": "medium",
+        "special_rule": "standard_app_comparison_rules",
+        "supported_run_modes": [
+          "compare_only",
+          "best_app",
+          "all_approved_apps"
+        ],
+        "supported_user_inputs": [
+          "task_goal",
+          "app_category",
+          "custom_app_list",
+          "budget",
+          "device",
+          "country_or_state",
+          "privacy_preference",
+          "run_mode"
+        ],
+        "task_examples": [
+          "routing",
+          "fleet",
+          "rideshare"
+        ]
+      }
     },
     {
       "buddy_device_management": [
@@ -6922,9 +9256,12 @@
         "android_support": null,
         "api_available": null,
         "automation_support": null,
+        "best_pick_reason": null,
         "browser_extension_support": null,
         "client_money_use_case": null,
         "core_features": null,
+        "coupon_or_savings_fit": null,
+        "cross_app_execution_support": null,
         "customer_reviews": null,
         "data_export": null,
         "desktop_support": null,
@@ -6937,6 +9274,8 @@
         "security_controls": null,
         "subscription_cost": null,
         "support_quality": null,
+        "task_fit_score": null,
+        "user_preference_fit": null,
         "web_app_support": null,
         "webhook_available": null
       },
@@ -7100,7 +9439,66 @@
           "slug": "space-ai-bot"
         }
       ],
-      "risk": "medium"
+      "risk": "medium",
+      "task_router": {
+        "blocked_without_approval": [
+          "install_or_uninstall_apps",
+          "create_or_delete_accounts",
+          "grant_device_permissions",
+          "submit_private_data",
+          "connect_bank_or_payment_method",
+          "move_money_or_purchase",
+          "place_bet_or_trade",
+          "send_messages_or_outreach",
+          "publish_public_content",
+          "change_security_settings"
+        ],
+        "category_id": "housing_relocation",
+        "category_label": "Housing and Relocation Apps",
+        "custom_app_list_policy": {
+          "data_to_capture_per_app": [
+            "app_name",
+            "app_store_or_web_url",
+            "price",
+            "permissions",
+            "privacy_notes",
+            "features",
+            "user_rating",
+            "api_or_export_support",
+            "task_fit_notes"
+          ],
+          "enabled": true,
+          "minimum_apps": 1,
+          "recommended_apps_to_compare": 3
+        },
+        "execution_policy": {
+          "all_approved_apps": "Buddy prepares parallel steps and dedupes results across approved apps only.",
+          "best_app": "Buddy prepares the best app workflow; external actions require approval gates.",
+          "compare_only": "Always safe for public-source research and user-provided app lists."
+        },
+        "risk": "medium",
+        "special_rule": "standard_app_comparison_rules",
+        "supported_run_modes": [
+          "compare_only",
+          "best_app",
+          "all_approved_apps"
+        ],
+        "supported_user_inputs": [
+          "task_goal",
+          "app_category",
+          "custom_app_list",
+          "budget",
+          "device",
+          "country_or_state",
+          "privacy_preference",
+          "run_mode"
+        ],
+        "task_examples": [
+          "moving",
+          "neighborhood research",
+          "rentals"
+        ]
+      }
     },
     {
       "buddy_device_management": [
@@ -7121,9 +9519,12 @@
         "android_support": null,
         "api_available": null,
         "automation_support": null,
+        "best_pick_reason": null,
         "browser_extension_support": null,
         "client_money_use_case": null,
         "core_features": null,
+        "coupon_or_savings_fit": null,
+        "cross_app_execution_support": null,
         "customer_reviews": null,
         "data_export": null,
         "desktop_support": null,
@@ -7136,6 +9537,8 @@
         "security_controls": null,
         "subscription_cost": null,
         "support_quality": null,
+        "task_fit_score": null,
+        "user_preference_fit": null,
         "web_app_support": null,
         "webhook_available": null
       },
@@ -7299,7 +9702,66 @@
           "slug": "social-commerce"
         }
       ],
-      "risk": "medium"
+      "risk": "medium",
+      "task_router": {
+        "blocked_without_approval": [
+          "install_or_uninstall_apps",
+          "create_or_delete_accounts",
+          "grant_device_permissions",
+          "submit_private_data",
+          "connect_bank_or_payment_method",
+          "move_money_or_purchase",
+          "place_bet_or_trade",
+          "send_messages_or_outreach",
+          "publish_public_content",
+          "change_security_settings"
+        ],
+        "category_id": "supplier_marketplaces",
+        "category_label": "Supplier Marketplace Apps",
+        "custom_app_list_policy": {
+          "data_to_capture_per_app": [
+            "app_name",
+            "app_store_or_web_url",
+            "price",
+            "permissions",
+            "privacy_notes",
+            "features",
+            "user_rating",
+            "api_or_export_support",
+            "task_fit_notes"
+          ],
+          "enabled": true,
+          "minimum_apps": 1,
+          "recommended_apps_to_compare": 3
+        },
+        "execution_policy": {
+          "all_approved_apps": "Buddy prepares parallel steps and dedupes results across approved apps only.",
+          "best_app": "Buddy prepares the best app workflow; external actions require approval gates.",
+          "compare_only": "Always safe for public-source research and user-provided app lists."
+        },
+        "risk": "medium",
+        "special_rule": "standard_app_comparison_rules",
+        "supported_run_modes": [
+          "compare_only",
+          "best_app",
+          "all_approved_apps"
+        ],
+        "supported_user_inputs": [
+          "task_goal",
+          "app_category",
+          "custom_app_list",
+          "budget",
+          "device",
+          "country_or_state",
+          "privacy_preference",
+          "run_mode"
+        ],
+        "task_examples": [
+          "wholesale",
+          "dropshipping",
+          "procurement"
+        ]
+      }
     },
     {
       "buddy_device_management": [
@@ -7320,9 +9782,12 @@
         "android_support": null,
         "api_available": null,
         "automation_support": null,
+        "best_pick_reason": null,
         "browser_extension_support": null,
         "client_money_use_case": null,
         "core_features": null,
+        "coupon_or_savings_fit": null,
+        "cross_app_execution_support": null,
         "customer_reviews": null,
         "data_export": null,
         "desktop_support": null,
@@ -7335,6 +9800,8 @@
         "security_controls": null,
         "subscription_cost": null,
         "support_quality": null,
+        "task_fit_score": null,
+        "user_preference_fit": null,
         "web_app_support": null,
         "webhook_available": null
       },
@@ -7498,7 +9965,66 @@
           "slug": "dropshipping-engine"
         }
       ],
-      "risk": "medium"
+      "risk": "medium",
+      "task_router": {
+        "blocked_without_approval": [
+          "install_or_uninstall_apps",
+          "create_or_delete_accounts",
+          "grant_device_permissions",
+          "submit_private_data",
+          "connect_bank_or_payment_method",
+          "move_money_or_purchase",
+          "place_bet_or_trade",
+          "send_messages_or_outreach",
+          "publish_public_content",
+          "change_security_settings"
+        ],
+        "category_id": "contract_marketplaces",
+        "category_label": "Contract Marketplace Apps",
+        "custom_app_list_policy": {
+          "data_to_capture_per_app": [
+            "app_name",
+            "app_store_or_web_url",
+            "price",
+            "permissions",
+            "privacy_notes",
+            "features",
+            "user_rating",
+            "api_or_export_support",
+            "task_fit_notes"
+          ],
+          "enabled": true,
+          "minimum_apps": 1,
+          "recommended_apps_to_compare": 3
+        },
+        "execution_policy": {
+          "all_approved_apps": "Buddy prepares parallel steps and dedupes results across approved apps only.",
+          "best_app": "Buddy prepares the best app workflow; external actions require approval gates.",
+          "compare_only": "Always safe for public-source research and user-provided app lists."
+        },
+        "risk": "medium",
+        "special_rule": "standard_app_comparison_rules",
+        "supported_run_modes": [
+          "compare_only",
+          "best_app",
+          "all_approved_apps"
+        ],
+        "supported_user_inputs": [
+          "task_goal",
+          "app_category",
+          "custom_app_list",
+          "budget",
+          "device",
+          "country_or_state",
+          "privacy_preference",
+          "run_mode"
+        ],
+        "task_examples": [
+          "RFP search",
+          "grant search",
+          "freelance marketplaces"
+        ]
+      }
     },
     {
       "buddy_device_management": [
@@ -7519,9 +10045,12 @@
         "android_support": null,
         "api_available": null,
         "automation_support": null,
+        "best_pick_reason": null,
         "browser_extension_support": null,
         "client_money_use_case": null,
         "core_features": null,
+        "coupon_or_savings_fit": null,
+        "cross_app_execution_support": null,
         "customer_reviews": null,
         "data_export": null,
         "desktop_support": null,
@@ -7534,6 +10063,8 @@
         "security_controls": null,
         "subscription_cost": null,
         "support_quality": null,
+        "task_fit_score": null,
+        "user_preference_fit": null,
         "web_app_support": null,
         "webhook_available": null
       },
@@ -7697,7 +10228,66 @@
           "slug": "consulting-proposal"
         }
       ],
-      "risk": "medium"
+      "risk": "medium",
+      "task_router": {
+        "blocked_without_approval": [
+          "install_or_uninstall_apps",
+          "create_or_delete_accounts",
+          "grant_device_permissions",
+          "submit_private_data",
+          "connect_bank_or_payment_method",
+          "move_money_or_purchase",
+          "place_bet_or_trade",
+          "send_messages_or_outreach",
+          "publish_public_content",
+          "change_security_settings"
+        ],
+        "category_id": "data_ai_training",
+        "category_label": "Data and AI Training Apps",
+        "custom_app_list_policy": {
+          "data_to_capture_per_app": [
+            "app_name",
+            "app_store_or_web_url",
+            "price",
+            "permissions",
+            "privacy_notes",
+            "features",
+            "user_rating",
+            "api_or_export_support",
+            "task_fit_notes"
+          ],
+          "enabled": true,
+          "minimum_apps": 1,
+          "recommended_apps_to_compare": 3
+        },
+        "execution_policy": {
+          "all_approved_apps": "Buddy prepares parallel steps and dedupes results across approved apps only.",
+          "best_app": "Buddy prepares the best app workflow; external actions require approval gates.",
+          "compare_only": "Always safe for public-source research and user-provided app lists."
+        },
+        "risk": "medium",
+        "special_rule": "standard_app_comparison_rules",
+        "supported_run_modes": [
+          "compare_only",
+          "best_app",
+          "all_approved_apps"
+        ],
+        "supported_user_inputs": [
+          "task_goal",
+          "app_category",
+          "custom_app_list",
+          "budget",
+          "device",
+          "country_or_state",
+          "privacy_preference",
+          "run_mode"
+        ],
+        "task_examples": [
+          "datasets",
+          "labeling",
+          "eval platforms"
+        ]
+      }
     }
   ],
   "client_workflows": [
@@ -7711,6 +10301,9 @@
     "price",
     "free_tier",
     "subscription_cost",
+    "task_fit_score",
+    "coupon_or_savings_fit",
+    "best_pick_reason",
     "core_features",
     "automation_support",
     "web_app_support",
@@ -7728,19 +10321,107 @@
     "support_quality",
     "monetization_model",
     "client_money_use_case",
+    "user_preference_fit",
+    "cross_app_execution_support",
     "risk_level"
   ],
   "default_mode": "compare_recommend_manage_with_approval_gates",
-  "generated_at": "2026-07-16T00:05:47Z",
+  "generated_at": "2026-07-17T15:32:01Z",
   "mission": "Catalog apps in every useful category so clients can compare options, discover gaps, and let Buddy manage safe web and device workflows.",
   "schema": "dreamco.app_category_catalog_report.v1",
   "source_config": "config/dreamco_app_category_catalog.json",
   "summary": {
     "app_categories": 40,
     "blocked_without_approval": 10,
-    "buddy_management_modes": 4,
+    "buddy_management_modes": 5,
     "categories_with_matched_bots": 40,
-    "comparison_criteria": 21,
-    "device_and_web_management_ready": true
+    "categories_with_task_router": 40,
+    "comparison_criteria": 26,
+    "device_and_web_management_ready": true,
+    "task_run_modes": 3,
+    "task_screen_enabled": true,
+    "task_screen_user_inputs": 8
+  },
+  "task_screen": {
+    "decision_policy": [
+      "Buddy recommends apps by task fit, user preference fit, risk, price, permissions, data export, reviews, automation support, and source freshness.",
+      "Buddy may compare sports betting apps as apps, but must not place bets or present gambling picks as guaranteed outcomes.",
+      "Buddy may compare coupon apps and prepare redemption steps, but redemption, purchase, account connection, or payment actions require approval.",
+      "Buddy must support a custom user app list so clients can compare only the apps they already use or trust.",
+      "Buddy can prepare one-app or multi-app workflows, but external execution happens only through approved integrations and approval gates."
+    ],
+    "default_mode": "compare_best_app_then_user_approved_execution",
+    "enabled": true,
+    "ranking_formula": [
+      "task_fit_score",
+      "user_preference_fit",
+      "price_and_free_tier",
+      "privacy_and_permission_risk",
+      "reviews_and_support_quality",
+      "api_webhook_or_export_support",
+      "category_specific_special_rule"
+    ],
+    "run_modes": [
+      {
+        "approval_required": [],
+        "id": "compare_only",
+        "label": "Compare Only",
+        "safe_actions": [
+          "rank apps",
+          "explain tradeoffs",
+          "prepare recommendation"
+        ]
+      },
+      {
+        "approval_required": [
+          "open account",
+          "install app",
+          "submit data",
+          "purchase",
+          "place bet",
+          "redeem offer"
+        ],
+        "id": "best_app",
+        "label": "Best App",
+        "safe_actions": [
+          "select best app for task",
+          "prepare steps",
+          "prepare sandbox workflow"
+        ]
+      },
+      {
+        "approval_required": [
+          "use external accounts",
+          "send forms",
+          "spend money",
+          "change settings"
+        ],
+        "id": "all_approved_apps",
+        "label": "All Approved Apps",
+        "safe_actions": [
+          "prepare parallel task checklist",
+          "dedupe results",
+          "compare outputs"
+        ]
+      }
+    ],
+    "user_inputs": [
+      "task_goal",
+      "app_category",
+      "custom_app_list",
+      "budget",
+      "device",
+      "country_or_state",
+      "privacy_preference",
+      "run_mode"
+    ],
+    "workflow_outputs": [
+      "best_app_recommendation",
+      "why_this_app_won",
+      "runner_steps_for_selected_app",
+      "parallel_steps_for_all_approved_apps",
+      "risk_and_approval_packet",
+      "sandbox_test_plan"
+    ]
   }
 }

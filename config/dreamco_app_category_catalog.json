@@ -7,6 +7,9 @@
     "price",
     "free_tier",
     "subscription_cost",
+    "task_fit_score",
+    "coupon_or_savings_fit",
+    "best_pick_reason",
     "core_features",
     "automation_support",
     "web_app_support",
@@ -24,9 +27,58 @@
     "support_quality",
     "monetization_model",
     "client_money_use_case",
+    "user_preference_fit",
+    "cross_app_execution_support",
     "risk_level"
   ],
+  "task_screen": {
+    "enabled": true,
+    "default_mode": "compare_best_app_then_user_approved_execution",
+    "user_inputs": [
+      "task_goal",
+      "app_category",
+      "custom_app_list",
+      "budget",
+      "device",
+      "country_or_state",
+      "privacy_preference",
+      "run_mode"
+    ],
+    "run_modes": [
+      {
+        "id": "compare_only",
+        "label": "Compare Only",
+        "safe_actions": ["rank apps", "explain tradeoffs", "prepare recommendation"],
+        "approval_required": []
+      },
+      {
+        "id": "best_app",
+        "label": "Best App",
+        "safe_actions": ["select best app for task", "prepare steps", "prepare sandbox workflow"],
+        "approval_required": ["open account", "install app", "submit data", "purchase", "place bet", "redeem offer"]
+      },
+      {
+        "id": "all_approved_apps",
+        "label": "All Approved Apps",
+        "safe_actions": ["prepare parallel task checklist", "dedupe results", "compare outputs"],
+        "approval_required": ["use external accounts", "send forms", "spend money", "change settings"]
+      }
+    ],
+    "decision_policy": [
+      "Buddy recommends apps by task fit, user preference fit, risk, price, permissions, data export, reviews, automation support, and source freshness.",
+      "Buddy may compare sports betting apps as apps, but must not place bets or present gambling picks as guaranteed outcomes.",
+      "Buddy may compare coupon apps and prepare redemption steps, but redemption, purchase, account connection, or payment actions require approval.",
+      "Buddy must support a custom user app list so clients can compare only the apps they already use or trust.",
+      "Buddy can prepare one-app or multi-app workflows, but external execution happens only through approved integrations and approval gates."
+    ]
+  },
   "buddy_management_modes": [
+    {
+      "id": "task_router",
+      "label": "Task Router",
+      "safe_actions": ["categorize task", "rank apps", "choose best fit", "prepare one-app or all-app workflow"],
+      "approval_required": ["execute external task", "install app", "submit data", "purchase", "place bet", "redeem offer"]
+    },
     {
       "id": "web_research",
       "label": "Web Research",
@@ -53,8 +105,8 @@
     }
   ],
   "app_categories": [
-    {"id": "couponing", "label": "Couponing Apps", "examples": ["coupon aggregators", "cashback apps", "price trackers"], "risk": "medium"},
-    {"id": "gambling", "label": "Gambling and Betting Apps", "examples": ["sportsbooks", "casino apps", "odds comparison"], "risk": "high"},
+    {"id": "couponing", "label": "Couponing Apps", "examples": ["coupon aggregators", "cashback apps", "price trackers"], "risk": "medium", "task_examples": ["find best coupon for a cart", "compare cashback rates", "track price drops"], "special_rule": "purchase_or_redemption_requires_approval"},
+    {"id": "gambling", "label": "Gambling and Betting Apps", "examples": ["sportsbooks", "casino apps", "odds comparison"], "risk": "high", "task_examples": ["compare app fees and promos", "compare public odds display quality", "review responsible gaming controls"], "special_rule": "app_comparison_only_no_betting_picks_or_wagers"},
     {"id": "job_search", "label": "Job Apps", "examples": ["job boards", "resume builders", "application trackers"], "risk": "medium"},
     {"id": "banking", "label": "Banking Apps", "examples": ["checking", "savings", "neobanks"], "risk": "high"},
     {"id": "investing", "label": "Investing Apps", "examples": ["brokerages", "robo-advisors", "portfolio trackers"], "risk": "high"},
