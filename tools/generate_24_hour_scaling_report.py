@@ -48,6 +48,7 @@ def build_report():
     readiness_score += 10 if infra.get("self_healing") else 0
     cost_control = config.get("cost_control_policy", {})
     parity_goal = config.get("buddy_codex_parity_goal", {})
+    aggressive_mode = config.get("aggressive_mode", {})
     github_guardrails = cost_control.get("github_cost_guardrails", [])
     ai_guardrails = cost_control.get("ai_cost_guardrails", [])
 
@@ -81,10 +82,15 @@ def build_report():
             "ai_cost_guardrails": len(ai_guardrails),
             "codex_style_capabilities": len(parity_goal.get("can_do_with_repo_access", [])),
             "codex_style_approval_gates": len(parity_goal.get("requires_owner_approval", [])),
+            "aggressive_mode_available": bool(aggressive_mode),
+            "aggressive_mode_duration_hours": aggressive_mode.get("duration_hours"),
+            "aggressive_mode_runs": len(aggressive_mode.get("what_it_runs", [])),
+            "aggressive_mode_hard_limits": len(aggressive_mode.get("hard_limits", [])),
         },
         "infrastructure_policy": infra,
         "cost_control_policy": cost_control,
         "buddy_codex_parity_goal": parity_goal,
+        "aggressive_mode": aggressive_mode,
         "daily_cycles": cycles,
         "scale_lanes": config.get("scale_lanes", []),
         "always_blocked_without_owner_approval": config.get("always_blocked_without_owner_approval", []),
@@ -122,6 +128,8 @@ def write_markdown(report):
         f"- Idle sleep enabled: {summary['idle_sleep_enabled']}",
         f"- GitHub Actions default: {summary['github_actions_default']}",
         f"- Free-first AI routing: {summary['free_first_ai_routing']}",
+        f"- Aggressive mode available: {summary['aggressive_mode_available']}",
+        f"- Aggressive mode duration hours: {summary['aggressive_mode_duration_hours']}",
         "",
         "## Daily Cycles",
         "",
@@ -142,6 +150,14 @@ def write_markdown(report):
         lines.append(f"- GitHub: {gate}")
     for gate in report["cost_control_policy"].get("ai_cost_guardrails", []):
         lines.append(f"- AI: {gate}")
+    lines.extend(["", "## Aggressive Mode", ""])
+    aggressive_mode = report.get("aggressive_mode", {})
+    lines.append(aggressive_mode.get("cost_policy", ""))
+    lines.append("")
+    for item in aggressive_mode.get("what_it_runs", []):
+        lines.append(f"- Runs: {item}")
+    for item in aggressive_mode.get("hard_limits", []):
+        lines.append(f"- Hard limit: {item}")
     lines.append("")
     OUTPUT_MD.write_text("\n".join(lines))
 

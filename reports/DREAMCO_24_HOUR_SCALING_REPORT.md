@@ -16,6 +16,8 @@ Keep DreamCo improving around the clock through safe 24-hour research, build, te
 - Idle sleep enabled: True
 - GitHub Actions default: manual_or_path_gated
 - Free-first AI routing: True
+- Aggressive mode available: True
+- Aggressive mode duration hours: 24
 
 ## Daily Cycles
 
@@ -89,3 +91,23 @@ Summarize what worked, what failed, what needs approval, what should be rebuilt,
 - AI: Route drafts, summaries, classification, and sandbox planning through free or low-cost models first.
 - AI: Escalate to premium models only for failed cheap-model evals, high-impact client work, or approved production tasks.
 - AI: Block always-on paid model loops without a budget cap and owner approval.
+
+## Aggressive Mode
+
+use local scripts, cached reports, static dashboards, and free or low-cost model routes first
+
+- Runs: refresh every generated report
+- Runs: scan every bot registry and connection report
+- Runs: queue every bot for sandbox-first test or rebuild packets
+- Runs: run local syntax and smoke checks before GitHub Actions
+- Runs: run GitHub cost saver and repository stewardship scans
+- Runs: refresh AI model routing and Gemini low-cost paths
+- Runs: prepare pull-request packets for failures
+- Runs: summarize approval gates and next best actions
+- Hard limit: no paid always-on AI loop
+- Hard limit: no customer outreach
+- Hard limit: no ad spend
+- Hard limit: no money movement
+- Hard limit: no credential changes
+- Hard limit: no destructive repository action
+- Hard limit: no production deployment without explicit owner approval

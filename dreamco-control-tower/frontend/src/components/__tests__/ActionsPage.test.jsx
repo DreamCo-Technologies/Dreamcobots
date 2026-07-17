@@ -445,6 +445,9 @@ const buddyCodexCheapOpsPayload = {
     low_cost_ai_resources: 86,
     gemini_resources: 8,
     owner_approval_boundaries: 12,
+    aggressive_mode_available: true,
+    aggressive_mode_runs: 8,
+    aggressive_mode_hard_limits: 7,
     unlimited_autonomy_claimed: false,
     billing_bypass_claimed: false,
   },
@@ -462,6 +465,12 @@ const buddyCodexCheapOpsPayload = {
   },
   cheap_ai_resource_plan: {
     default_mode: 'free_or_low_cost_first',
+  },
+  aggressive_mode_contract: {
+    button_label: 'Aggressive Mode',
+    endpoint: '/api/buddy-ops/aggressive-mode',
+    execution_mode: 'supervised_repository_wide_queue',
+    hard_limits: ['no paid always-on AI loop', 'no money movement', 'no production deployment without explicit owner approval'],
   },
   approval_boundaries: ['money_movement', 'credential_change', 'paid_github_minutes_increase'],
 };
@@ -866,6 +875,24 @@ const buddyPromptResponse = {
   },
 };
 
+const aggressiveModeResponse = {
+  schema: 'dreamco.aggressive_mode_activation.v1',
+  id: 'buddy-aggressive-test',
+  mode: 'aggressive_supervised_24_hour_repository_sweep',
+  duration_hours: 24,
+  total_packets: 8,
+  packets: [
+    {
+      id: 'buddy-aggressive-test-registry',
+      builder: 'Registry and Inventory Builder',
+      operation_type: 'aggressive_mode_lane',
+      prompt: 'Aggressive Mode: refresh every bot registry.',
+      mode: 'aggressive_supervised_24_hour_repository_sweep',
+      outputs: ['refreshed report evidence'],
+    },
+  ],
+};
+
 function StubActionsMonitor() {
   return <div>Actions monitor panel</div>;
 }
@@ -877,6 +904,13 @@ beforeEach(() => {
         ok: true,
         status: 201,
         json: async () => buddyPromptResponse,
+      });
+    }
+    if (url === '/api/buddy-ops/aggressive-mode' && options.method === 'POST') {
+      return Promise.resolve({
+        ok: true,
+        status: 201,
+        json: async () => aggressiveModeResponse,
       });
     }
     let payload = libraryPayload;
@@ -1249,5 +1283,31 @@ describe('ActionsPage', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Close Buddy Command Center' }));
     expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
     expect(screen.getByText(/Build packet prepared for Full Bot System Builder/)).toBeInTheDocument();
+  });
+
+  it('queues Aggressive Mode from the Actions page', async () => {
+    const onBuddyCommandSubmit = vi.fn();
+    render(
+      <ActionsPage
+        ActionsMonitorComponent={StubActionsMonitor}
+        onBuddyCommandSubmit={onBuddyCommandSubmit}
+      />,
+    );
+
+    fireEvent.click(screen.getByRole('button', { name: 'Aggressive Mode 24h' }));
+
+    await waitFor(() => {
+      expect(global.fetch).toHaveBeenCalledWith(
+        '/api/buddy-ops/aggressive-mode',
+        expect.objectContaining({ method: 'POST' }),
+      );
+    });
+    expect(onBuddyCommandSubmit).toHaveBeenCalledWith(
+      expect.objectContaining({
+        schema: 'dreamco.aggressive_mode_activation.v1',
+        mode: 'aggressive_supervised_24_hour_repository_sweep',
+      }),
+    );
+    expect(screen.getByText(/Build packet prepared for Aggressive Mode 24-Hour Repository Sweep/)).toBeInTheDocument();
   });
 });

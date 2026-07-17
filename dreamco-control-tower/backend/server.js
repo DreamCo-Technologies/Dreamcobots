@@ -502,6 +502,133 @@ function buildBuddyOperationPacket(prompt, options = {}) {
   };
 }
 
+function buildAggressiveModePackets(options = {}) {
+  const now = new Date().toISOString();
+  const activationId = `buddy-aggressive-${Date.now()}`;
+  const lanes = [
+    {
+      id: 'registry_inventory',
+      builder: 'Registry and Inventory Builder',
+      prompt: 'Aggressive Mode: refresh every bot registry, Buddy connection report, capability inventory, and production readiness map.',
+      tests: ['npm run generate:buddy-inventory', 'npm run check:buddy-bot-connections'],
+    },
+    {
+      id: 'local_quality',
+      builder: 'Local Quality Runner',
+      prompt: 'Aggressive Mode: run local syntax, report freshness, generated bot smoke, storage, dependency, and import checks before using paid or remote CI.',
+      tests: ['npm run check:24-hour-scaling', 'npm run check:buddy-codex-cheap-ops', 'npm run test:generated-bots'],
+    },
+    {
+      id: 'github_cost_saver',
+      builder: 'GitHub Cost Saver Builder',
+      prompt: 'Aggressive Mode: scan GitHub workflows for minute, artifact, cache, Codespaces, package, and budget savings.',
+      tests: ['python3 tools/run_github_cost_saver.py'],
+    },
+    {
+      id: 'failure_rebuild',
+      builder: 'Failure Rebuild Builder',
+      prompt: 'Aggressive Mode: rebuild past failures from Actions, agents, PRs, issues, and dashboard checks into safe pull-request packets.',
+      tests: ['npm run scan:issues', 'npm run scan:missing', 'npm run scan:local-imports'],
+    },
+    {
+      id: 'bot_systems',
+      builder: 'Full Bot System Builder',
+      prompt: 'Aggressive Mode: queue every bot for sandbox-first build, test, resource, workflow, API, webhook, skill, and prospectus packet review.',
+      tests: ['npm run check:system-libraries', 'npm run test:generated-bots'],
+    },
+    {
+      id: 'model_routing',
+      builder: 'AI Model Router Builder',
+      prompt: 'Aggressive Mode: refresh prompt, tool, agent, Gemini, local, cached, and low-cost model routing for every task.',
+      tests: ['npm run check:ai-agent-model-library'],
+    },
+    {
+      id: 'client_package',
+      builder: 'Client Package Builder',
+      prompt: 'Aggressive Mode: regenerate app foundry, bot founder app-store packets, contract discovery, revenue practice, and client demo packages.',
+      tests: ['npm run check:app-foundry', 'npm run check:buddy-24-hour-package', 'npm run check:revenue-practice'],
+    },
+    {
+      id: 'approval_review',
+      builder: 'Approval Gate Builder',
+      prompt: 'Aggressive Mode: summarize all blocked live actions, owner approvals, high-risk packets, and next best safe actions.',
+      tests: ['npm run check:production-approval-packets', 'npm run check:repo-cleanroom'],
+    },
+  ];
+
+  const packets = lanes.map((lane, index) => ({
+    schema: 'dreamco.buddy_operation_packet.v1',
+    id: `${activationId}-${lane.id}`,
+    created_at: now,
+    prompt: lane.prompt,
+    requested_by: options.requested_by || 'actions_page',
+    operation_type: 'aggressive_mode_lane',
+    builder: lane.builder,
+    mode: 'aggressive_supervised_24_hour_repository_sweep',
+    status: 'queued_for_supervised_execution',
+    target: options.target || 'dreamcobots',
+    priority: index + 1,
+    parent_activation_id: activationId,
+    branch_hint: `codex/aggressive-${lane.id}`,
+    outputs: [
+      'refreshed report evidence',
+      'bot/system work packets',
+      'failure repair queue',
+      'recommended local checks',
+      'approval packet summary',
+    ],
+    approval_gates: [
+      'owner approval before external outreach',
+      'owner approval before money movement',
+      'owner approval before paid AI always-on loops',
+      'owner approval before increasing GitHub minutes',
+      'owner approval before production deploy',
+      'pull request review before merge',
+    ],
+    blocked_live_actions: [
+      'payments or payouts',
+      'customer messaging',
+      'social posting',
+      'ad spend',
+      'production deployment',
+      'credential changes',
+      'destructive file or git operations',
+      'paid always-on model execution',
+    ],
+    recommended_tests: lane.tests,
+    next_actions: [
+      'Run the local recommended checks first.',
+      'Review generated reports in the Actions page.',
+      'Approve only the packets that are safe, useful, and affordable.',
+    ],
+  }));
+
+  return {
+    schema: 'dreamco.aggressive_mode_activation.v1',
+    id: activationId,
+    created_at: now,
+    requested_by: options.requested_by || 'actions_page',
+    target: options.target || 'dreamcobots',
+    mode: 'aggressive_supervised_24_hour_repository_sweep',
+    status: 'queued_for_supervised_execution',
+    duration_hours: 24,
+    intensity: 'maximum_safe_local_and_report_generation',
+    total_packets: packets.length,
+    cost_policy: 'local_first_cached_reports_free_or_low_cost_ai_owner_approval_for_paid_work',
+    github_policy: 'manual_or_path_gated_actions_unless_owner_approves_more_minutes',
+    hard_limits: [
+      'no paid always-on AI loop',
+      'no customer outreach',
+      'no ad spend',
+      'no money movement',
+      'no credential changes',
+      'no destructive repository action',
+      'no production deployment without explicit owner approval',
+    ],
+    packets,
+  };
+}
+
 function parseDurationToDays(duration) {
   if (typeof duration !== 'string') {
     return null;
@@ -1062,6 +1189,19 @@ app.post('/api/buddy-ops/prompt', rateLimiter, (req, res) => {
   queue.push(packet);
   writeBuddyOpsQueue(queue.slice(-250));
   return res.status(201).json({ packet });
+});
+
+// ---------------------------------------------------------------------------
+// POST /api/buddy-ops/aggressive-mode — queue a guarded 24-hour repo sweep
+// ---------------------------------------------------------------------------
+app.post('/api/buddy-ops/aggressive-mode', rateLimiter, (req, res) => {
+  const activation = buildAggressiveModePackets({
+    requested_by: req.body?.requested_by || 'actions_page',
+    target: req.body?.target || 'dreamcobots',
+  });
+  const queue = readBuddyOpsQueue();
+  writeBuddyOpsQueue([...queue, ...activation.packets].slice(-250));
+  return res.status(201).json(activation);
 });
 
 // ---------------------------------------------------------------------------

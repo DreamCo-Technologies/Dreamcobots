@@ -453,9 +453,14 @@ describe('GET /api/buddy-codex-cheap-ops', () => {
     expect(res.body.summary.codex_style_capabilities).toBeGreaterThanOrEqual(6);
     expect(res.body.summary.low_cost_ai_resources).toBeGreaterThan(0);
     expect(res.body.summary.gemini_resources).toBeGreaterThan(0);
+    expect(res.body.summary.aggressive_mode_available).toBe(true);
+    expect(res.body.summary.aggressive_mode_runs).toBeGreaterThanOrEqual(8);
+    expect(res.body.summary.aggressive_mode_hard_limits).toBeGreaterThanOrEqual(7);
     expect(res.body.summary.unlimited_autonomy_claimed).toBe(false);
     expect(res.body.summary.billing_bypass_claimed).toBe(false);
     expect(res.body.always_on_strategy.mode).toBe('24_hour_supervised_queue_not_24_hour_paid_compute');
+    expect(res.body.aggressive_mode_contract.endpoint).toBe('/api/buddy-ops/aggressive-mode');
+    expect(res.body.aggressive_mode_contract.execution_mode).toBe('supervised_repository_wide_queue');
     expect(res.body.github_free_cheap_plan.actions_policy).toMatch(/Manual, path-gated/i);
     expect(res.body.cheap_ai_resource_plan.default_mode).toBe('free_or_low_cost_first');
     expect(res.body.codex_style_capabilities.map((capability) => capability.id)).toEqual(
@@ -914,6 +919,26 @@ describe('Buddy operation prompt API', () => {
     expect(res.body.packet.operation_type).toBe('vibe_studio_operation');
     expect(res.body.packet.builder).toBe('Buddy AI Creation Studio Builder');
     expect(res.body.packet.recommended_tests).toContain('rights review checklist');
+  });
+
+  test('queues guarded aggressive mode 24-hour repository sweep packets', async () => {
+    const res = await request(app)
+      .post('/api/buddy-ops/aggressive-mode')
+      .send({ requested_by: 'actions_page', target: 'dreamcobots' });
+
+    expect(res.status).toBe(201);
+    expect(res.body.schema).toBe('dreamco.aggressive_mode_activation.v1');
+    expect(res.body.mode).toBe('aggressive_supervised_24_hour_repository_sweep');
+    expect(res.body.duration_hours).toBe(24);
+    expect(res.body.total_packets).toBeGreaterThanOrEqual(8);
+    expect(res.body.hard_limits).toEqual(
+      expect.arrayContaining(['no paid always-on AI loop', 'no money movement', 'no production deployment without explicit owner approval']),
+    );
+    expect(res.body.packets.map((packet) => packet.builder)).toEqual(
+      expect.arrayContaining(['Registry and Inventory Builder', 'GitHub Cost Saver Builder', 'Full Bot System Builder']),
+    );
+    expect(res.body.packets[0].approval_gates).toContain('owner approval before paid AI always-on loops');
+    expect(res.body.packets[0].blocked_live_actions).toContain('paid always-on model execution');
   });
 });
 

@@ -466,6 +466,9 @@ const FALLBACK_BUDDY_CODEX_CHEAP_OPS = {
     low_cost_ai_resources: 86,
     gemini_resources: 8,
     owner_approval_boundaries: 12,
+    aggressive_mode_available: true,
+    aggressive_mode_runs: 8,
+    aggressive_mode_hard_limits: 7,
     unlimited_autonomy_claimed: false,
     billing_bypass_claimed: false,
   },
@@ -473,6 +476,33 @@ const FALLBACK_BUDDY_CODEX_CHEAP_OPS = {
     mode: '24_hour_supervised_queue_not_24_hour_paid_compute',
     plain_english: 'Buddy keeps the system moving by rotating cheap local/report-based cycles and queued work packets. Bots do not need expensive always-on cloud containers to stay useful.',
     runtime_layers: ['static dashboard and generated reports', 'local scripts on owner laptop', 'manual or path-gated GitHub Actions', 'Cloud Run request-based service that sleeps when idle', 'free or low-cost AI model routes'],
+  },
+  aggressive_mode_contract: {
+    button_label: 'Aggressive Mode',
+    endpoint: '/api/buddy-ops/aggressive-mode',
+    default_state: 'owner_triggered_only',
+    duration_hours: 24,
+    execution_mode: 'supervised_repository_wide_queue',
+    intensity: 'maximum_safe_local_and_report_generation',
+    what_it_runs: [
+      'refresh every generated report',
+      'scan every bot registry and connection report',
+      'queue every bot for sandbox-first test or rebuild packets',
+      'run local syntax and smoke checks before GitHub Actions',
+      'run GitHub cost saver and repository stewardship scans',
+      'refresh AI model routing and Gemini low-cost paths',
+      'prepare pull-request packets for failures',
+      'summarize approval gates and next best actions',
+    ],
+    hard_limits: [
+      'no paid always-on AI loop',
+      'no customer outreach',
+      'no ad spend',
+      'no money movement',
+      'no credential changes',
+      'no destructive repository action',
+      'no production deployment without explicit owner approval',
+    ],
   },
   codex_style_capabilities: [
     { id: 'repo_reader', label: 'Repository reader', buddy_can: 'Scan files, reports, bot profiles, configs, tests, workflows, and dashboards.', cheap_path: 'Use local file reads and generated JSON reports before network calls.', approval: 'No approval for read-only local scans.' },
@@ -1669,6 +1699,7 @@ export default function ActionsPage({
   const [buildPacket, setBuildPacket] = useState(null);
   const [buddyOpsQueue, setBuddyOpsQueue] = useState(null);
   const [buddyOpsStatus, setBuddyOpsStatus] = useState('loading');
+  const [aggressiveModeStatus, setAggressiveModeStatus] = useState('ready');
   const [buddyBotConnections, setBuddyBotConnections] = useState(null);
   const [buddyBotConnectionsStatus, setBuddyBotConnectionsStatus] = useState('loading');
 
@@ -2017,6 +2048,44 @@ export default function ActionsPage({
     return { packet };
   }
 
+  async function activateAggressiveMode() {
+    setAggressiveModeStatus('activating');
+    const response = await fetch('/api/buddy-ops/aggressive-mode', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        requested_by: 'actions_page',
+        target: 'dreamcobots',
+      }),
+    });
+    if (!response.ok) {
+      setAggressiveModeStatus('error');
+      throw new Error(`Aggressive Mode API returned ${response.status}`);
+    }
+    const activation = await response.json();
+    const packets = activation.packets ?? [];
+    setBuildPacket({
+      builder: 'Aggressive Mode 24-Hour Repository Sweep',
+      outputs: ['repository-wide packet queue', 'local checks', 'cost guardrails', 'approval gates'],
+      mode: activation.mode,
+      approval: 'owner_approval_for_live_or_paid_actions',
+      id: activation.id,
+      operation_type: 'aggressive_mode_activation',
+    });
+    setBuddyOpsQueue((current) => {
+      const existing = current ?? FALLBACK_BUDDY_OPS_QUEUE;
+      return {
+        ...existing,
+        count: Number(existing.count || 0) + packets.length,
+        operations: [...packets].reverse().concat(existing.operations ?? []).slice(0, 25),
+      };
+    });
+    setBuddyOpsStatus('aggressive queued');
+    setAggressiveModeStatus('queued');
+    onBuddyCommandSubmit(activation);
+    return activation;
+  }
+
   function prepareBotTest(bot, scope = 'selected') {
     const packet = buildBotTestPacket(bot, scope);
     setSelectedBotSlug(bot.slug);
@@ -2061,6 +2130,14 @@ export default function ActionsPage({
                 className="rounded-md border border-emerald-300/40 bg-emerald-950/30 px-4 py-2 text-sm font-semibold text-emerald-100 hover:border-emerald-200"
               >
                 Prepare Buddy Test
+              </button>
+              <button
+                type="button"
+                onClick={activateAggressiveMode}
+                disabled={aggressiveModeStatus === 'activating'}
+                className="rounded-md border border-rose-300/50 bg-rose-950/40 px-4 py-2 text-sm font-semibold text-rose-100 hover:border-rose-200 disabled:cursor-not-allowed disabled:opacity-60"
+              >
+                {aggressiveModeStatus === 'activating' ? 'Queuing Aggressive Mode' : 'Aggressive Mode 24h'}
               </button>
             </div>
           </div>
@@ -2808,6 +2885,8 @@ export default function ActionsPage({
               ['Gemini', codexCheapOpsSummary.gemini_resources],
               ['GitHub guards', codexCheapOpsSummary.github_cost_guardrails],
               ['AI guards', codexCheapOpsSummary.ai_cost_guardrails],
+              ['Aggressive runs', codexCheapOpsSummary.aggressive_mode_runs],
+              ['Hard limits', codexCheapOpsSummary.aggressive_mode_hard_limits],
               ['Billing safe', codexCheapOpsSummary.billing_bypass_claimed ? 0 : 1],
               ['Honest autonomy', codexCheapOpsSummary.unlimited_autonomy_claimed ? 0 : 1],
             ].map(([label, value]) => (
@@ -2827,6 +2906,31 @@ export default function ActionsPage({
                 </p>
               </article>
             ))}
+          </div>
+          <div className="mt-4 border border-rose-500/30 bg-rose-950/20 p-3">
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              <div>
+                <h5 className="text-sm font-semibold text-rose-100">Aggressive Mode 24-hour sweep</h5>
+                <p className="mt-1 text-xs leading-5 text-rose-100/80">
+                  Queues every safe repository, bot, report, test, failure-rebuild, cost-saver, and model-routing lane.
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={activateAggressiveMode}
+                disabled={aggressiveModeStatus === 'activating'}
+                className="rounded-md border border-rose-300/50 bg-rose-900/50 px-3 py-2 text-xs font-semibold text-rose-50 hover:border-rose-200 disabled:cursor-not-allowed disabled:opacity-60"
+              >
+                {aggressiveModeStatus === 'activating' ? 'Queuing' : 'Run Aggressive Mode'}
+              </button>
+            </div>
+            <div className="mt-3 flex flex-wrap gap-2">
+              {(codexCheapOps.aggressive_mode_contract?.hard_limits ?? []).slice(0, 7).map((limit) => (
+                <span key={limit} className="rounded-full border border-rose-400/30 px-2 py-1 text-[11px] text-rose-100">
+                  {formatLabel(limit)}
+                </span>
+              ))}
+            </div>
           </div>
         </div>
 

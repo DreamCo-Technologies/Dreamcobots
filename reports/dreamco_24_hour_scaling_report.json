@@ -1,4 +1,32 @@
 {
+  "aggressive_mode": {
+    "cost_policy": "use local scripts, cached reports, static dashboards, and free or low-cost model routes first",
+    "default_state": "owner_triggered_only",
+    "duration_hours": 24,
+    "execution_mode": "supervised_repository_wide_queue",
+    "github_policy": "manual or path-gated actions only unless owner approves more GitHub minutes",
+    "hard_limits": [
+      "no paid always-on AI loop",
+      "no customer outreach",
+      "no ad spend",
+      "no money movement",
+      "no credential changes",
+      "no destructive repository action",
+      "no production deployment without explicit owner approval"
+    ],
+    "intensity": "maximum_safe_local_and_report_generation",
+    "label": "Aggressive Mode",
+    "what_it_runs": [
+      "refresh every generated report",
+      "scan every bot registry and connection report",
+      "queue every bot for sandbox-first test or rebuild packets",
+      "run local syntax and smoke checks before GitHub Actions",
+      "run GitHub cost saver and repository stewardship scans",
+      "refresh AI model routing and Gemini low-cost paths",
+      "prepare pull-request packets for failures",
+      "summarize approval gates and next best actions"
+    ]
+  },
   "always_blocked_without_owner_approval": [
     "customer_outreach",
     "ad_spend",
@@ -168,7 +196,7 @@
     }
   ],
   "default_mode": "continuous_supervised_cheap_ops",
-  "generated_at": "2026-07-17T12:47:00.402866+00:00",
+  "generated_at": "2026-07-17T13:11:21.929390+00:00",
   "infrastructure_policy": {
     "cloud_run_cpu_throttling": true,
     "cooldown_seconds": 300,
@@ -213,6 +241,10 @@
     "storage_guard": "reports/storage_guard_report.json"
   },
   "summary": {
+    "aggressive_mode_available": true,
+    "aggressive_mode_duration_hours": 24,
+    "aggressive_mode_hard_limits": 7,
+    "aggressive_mode_runs": 8,
     "ai_cost_guardrails": 5,
     "always_blocked_gates": 13,
     "app_foundry_lanes": 8,

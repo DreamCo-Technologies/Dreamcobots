@@ -11,6 +11,8 @@ Make Buddy a governed Codex-style coding, debugging, orchestration, and operatio
 - Cloud scale target: 0 to 1
 - Low-cost AI resources: 86
 - Gemini resources: 8
+- Aggressive mode available: True
+- Aggressive mode runs: 8
 - Unlimited autonomy claimed: False
 
 ## Always-On Strategy
@@ -25,6 +27,27 @@ Buddy keeps the system moving by rotating cheap local/report-based cycles and qu
 - Pull request helper: Prepare PR summaries, compare goals to repository proof, and queue fixes for failed checks. Cheap path: Use cached GitHub triage reports and local diffs before API refreshes.
 - AI model router: Pick local/static/free/cheap/premium model routes based on task risk and quality needs. Cheap path: Prefer local reports, cache, Gemini low-cost routes, and small models for drafts.
 - Bot orchestrator: Create supervised work packets for every bot so the fleet keeps learning, testing, and packaging. Cheap path: Queue work packets and summaries instead of running every bot as a paid live service.
+
+## Aggressive Mode
+
+- Button: Aggressive Mode
+- Endpoint: /api/buddy-ops/aggressive-mode
+- Execution mode: supervised_repository_wide_queue
+- Runs: refresh every generated report
+- Runs: scan every bot registry and connection report
+- Runs: queue every bot for sandbox-first test or rebuild packets
+- Runs: run local syntax and smoke checks before GitHub Actions
+- Runs: run GitHub cost saver and repository stewardship scans
+- Runs: refresh AI model routing and Gemini low-cost paths
+- Runs: prepare pull-request packets for failures
+- Runs: summarize approval gates and next best actions
+- Hard limit: no paid always-on AI loop
+- Hard limit: no customer outreach
+- Hard limit: no ad spend
+- Hard limit: no money movement
+- Hard limit: no credential changes
+- Hard limit: no destructive repository action
+- Hard limit: no production deployment without explicit owner approval
 
 ## Approval Boundaries
 

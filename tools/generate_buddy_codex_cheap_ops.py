@@ -41,6 +41,7 @@ def build_report() -> dict[str, Any]:
     connection_summary = connections.get("summary", {})
     cost_control = scaling.get("cost_control_policy", {})
     parity_goal = scaling.get("buddy_codex_parity_goal", {})
+    aggressive_mode = scaling.get("aggressive_mode", {})
 
     codex_style_capabilities = [
         {
@@ -104,6 +105,19 @@ def build_report() -> dict[str, Any]:
         "success_condition": "Every bot has a current packet, status, test path, resource path, and approval boundary.",
     }
 
+    aggressive_mode_contract = {
+        "button_label": aggressive_mode.get("label", "Aggressive Mode"),
+        "endpoint": "/api/buddy-ops/aggressive-mode",
+        "default_state": aggressive_mode.get("default_state", "owner_triggered_only"),
+        "duration_hours": aggressive_mode.get("duration_hours", 24),
+        "execution_mode": aggressive_mode.get("execution_mode", "supervised_repository_wide_queue"),
+        "intensity": aggressive_mode.get("intensity", "maximum_safe_local_and_report_generation"),
+        "what_it_runs": aggressive_mode.get("what_it_runs", []),
+        "hard_limits": aggressive_mode.get("hard_limits", []),
+        "cost_policy": aggressive_mode.get("cost_policy", ""),
+        "github_policy": aggressive_mode.get("github_policy", ""),
+    }
+
     github_free_cheap_plan = {
         "default_hosting": "GitHub Pages for static dashboards and docs when possible.",
         "actions_policy": "Manual, path-gated, short retention, local-first.",
@@ -135,6 +149,9 @@ def build_report() -> dict[str, Any]:
         "low_cost_ai_resources": cheap_ai_resource_plan["low_cost_resources"],
         "gemini_resources": cheap_ai_resource_plan["google_gemini_resources"],
         "owner_approval_boundaries": len(parity_goal.get("requires_owner_approval", [])),
+        "aggressive_mode_available": bool(aggressive_mode),
+        "aggressive_mode_runs": len(aggressive_mode_contract["what_it_runs"]),
+        "aggressive_mode_hard_limits": len(aggressive_mode_contract["hard_limits"]),
         "unlimited_autonomy_claimed": False,
         "billing_bypass_claimed": False,
     }
@@ -146,6 +163,7 @@ def build_report() -> dict[str, Any]:
         "summary": summary,
         "always_on_strategy": always_on_strategy,
         "codex_style_capabilities": codex_style_capabilities,
+        "aggressive_mode_contract": aggressive_mode_contract,
         "github_free_cheap_plan": github_free_cheap_plan,
         "cheap_ai_resource_plan": cheap_ai_resource_plan,
         "cost_control_policy": cost_control,
@@ -182,6 +200,8 @@ def write_markdown(report: dict[str, Any]) -> None:
         f"- Cloud scale target: {summary['min_replicas']} to {summary['max_replicas']}",
         f"- Low-cost AI resources: {summary['low_cost_ai_resources']}",
         f"- Gemini resources: {summary['gemini_resources']}",
+        f"- Aggressive mode available: {summary['aggressive_mode_available']}",
+        f"- Aggressive mode runs: {summary['aggressive_mode_runs']}",
         f"- Unlimited autonomy claimed: {summary['unlimited_autonomy_claimed']}",
         "",
         "## Always-On Strategy",
@@ -193,6 +213,15 @@ def write_markdown(report: dict[str, Any]) -> None:
     ]
     for capability in report["codex_style_capabilities"]:
         lines.append(f"- {capability['label']}: {capability['buddy_can']} Cheap path: {capability['cheap_path']}")
+    lines.extend(["", "## Aggressive Mode", ""])
+    contract = report.get("aggressive_mode_contract", {})
+    lines.append(f"- Button: {contract.get('button_label')}")
+    lines.append(f"- Endpoint: {contract.get('endpoint')}")
+    lines.append(f"- Execution mode: {contract.get('execution_mode')}")
+    for item in contract.get("what_it_runs", []):
+        lines.append(f"- Runs: {item}")
+    for item in contract.get("hard_limits", []):
+        lines.append(f"- Hard limit: {item}")
     lines.extend(["", "## Approval Boundaries", ""])
     for boundary in report["approval_boundaries"]:
         lines.append(f"- {boundary}")

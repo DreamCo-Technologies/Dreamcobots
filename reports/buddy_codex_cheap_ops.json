@@ -1,4 +1,33 @@
 {
+  "aggressive_mode_contract": {
+    "button_label": "Aggressive Mode",
+    "cost_policy": "use local scripts, cached reports, static dashboards, and free or low-cost model routes first",
+    "default_state": "owner_triggered_only",
+    "duration_hours": 24,
+    "endpoint": "/api/buddy-ops/aggressive-mode",
+    "execution_mode": "supervised_repository_wide_queue",
+    "github_policy": "manual or path-gated actions only unless owner approves more GitHub minutes",
+    "hard_limits": [
+      "no paid always-on AI loop",
+      "no customer outreach",
+      "no ad spend",
+      "no money movement",
+      "no credential changes",
+      "no destructive repository action",
+      "no production deployment without explicit owner approval"
+    ],
+    "intensity": "maximum_safe_local_and_report_generation",
+    "what_it_runs": [
+      "refresh every generated report",
+      "scan every bot registry and connection report",
+      "queue every bot for sandbox-first test or rebuild packets",
+      "run local syntax and smoke checks before GitHub Actions",
+      "run GitHub cost saver and repository stewardship scans",
+      "refresh AI model routing and Gemini low-cost paths",
+      "prepare pull-request packets for failures",
+      "summarize approval gates and next best actions"
+    ]
+  },
   "always_on_strategy": {
     "mode": "24_hour_supervised_queue_not_24_hour_paid_compute",
     "plain_english": "Buddy keeps the system moving by rotating cheap local/report-based cycles and queued work packets. Bots do not need expensive always-on cloud containers to stay useful.",
@@ -128,7 +157,7 @@
     ],
     "goal": "Run useful 24-hour learning loops without surprise bills."
   },
-  "generated_at": "2026-07-17T12:47:37Z",
+  "generated_at": "2026-07-17T13:11:45Z",
   "github_free_cheap_plan": {
     "actions_policy": "Manual, path-gated, short retention, local-first.",
     "artifact_policy": "1-7 day retention for diagnostics; longer only for release evidence.",
@@ -152,6 +181,9 @@
     "github_cost_saver": "reports/github_cost_saver_report.json"
   },
   "summary": {
+    "aggressive_mode_available": true,
+    "aggressive_mode_hard_limits": 7,
+    "aggressive_mode_runs": 8,
     "ai_cost_guardrails": 5,
     "billing_bypass_claimed": false,
     "bot_count": 1248,
