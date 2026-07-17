@@ -882,6 +882,23 @@ describe('GET /api/google-cloud-readiness', () => {
   });
 });
 
+describe('GET /api/google-ai-studio-frontend-factory', () => {
+  test('returns Google AI Studio frontend, workflow, and revenue experiment coverage', async () => {
+    const res = await request(app).get('/api/google-ai-studio-frontend-factory');
+
+    expect(res.status).toBe(200);
+    expect(res.body.schema).toBe('dreamco.google_ai_studio_frontend_factory_report.v1');
+    expect(res.body.summary.frontend_perfection_steps).toBeGreaterThanOrEqual(4);
+    expect(res.body.summary.workflow_mutation_steps).toBeGreaterThanOrEqual(8);
+    expect(res.body.summary.bots_with_frontend_factory_plan).toBe(res.body.summary.bot_count);
+    expect(res.body.summary.actual_revenue_requires_payment_confirmation).toBe(true);
+    expect(res.body.secret_policy.required_secret).toBe('GOOGLE_API_KEY');
+    expect(res.body.approval_wall).toEqual(
+      expect.arrayContaining(['paid_google_ai_batch', 'customer_outreach', 'charge_or_move_money']),
+    );
+  });
+});
+
 describe('GET /api/production-approval-packets', () => {
   test('returns high-risk production approval packets', async () => {
     const res = await request(app).get('/api/production-approval-packets');

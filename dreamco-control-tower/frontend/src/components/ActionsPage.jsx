@@ -810,6 +810,61 @@ const FALLBACK_AI_DATA_PACKAGE_LIBRARY = {
   ],
 };
 
+const FALLBACK_GOOGLE_AI_STUDIO_FACTORY = {
+  generated_at: null,
+  mission: 'Use Google AI Studio and Gemini as a governed frontend, workflow, and revenue-experiment planning lane for Buddy and every bot.',
+  default_mode: 'draft_generate_test_iterate_then_owner_approval',
+  secret_policy: {
+    required_secret: 'GOOGLE_API_KEY',
+    never_store_secret_in_repo: true,
+    paid_calls_require_owner_approval: true,
+  },
+  summary: {
+    readiness_score: 85,
+    bot_count: 1248,
+    frontend_perfection_steps: 4,
+    workflow_mutation_steps: 10,
+    google_ai_studio_roles: 4,
+    dashboard_prompts: 4,
+    approval_wall_gates: 9,
+    bots_with_frontend_factory_plan: 1248,
+    bots_with_workflow_mutation_plan: 1248,
+    bots_with_daily_money_experiment_plan: 1248,
+    actual_revenue_requires_payment_confirmation: true,
+    google_api_key_secret_required: true,
+    paid_calls_require_owner_approval: true,
+    free_or_low_cost_first: true,
+  },
+  frontend_perfection_loop: [
+    { id: 'prompt_to_screen_map', label: 'Prompt to Screen Map', purpose: 'Turn a bot business idea into screens, states, navigation, data contracts, and proof requirements.' },
+    { id: 'screen_to_code_packet', label: 'Screen to Code Packet', purpose: 'Prepare implementation-ready React, CSS, test, accessibility, and responsive layout packets.' },
+    { id: 'visual_qa_loop', label: 'Visual QA Loop', purpose: 'Rerun until layout, copy, spacing, and states are clean.' },
+    { id: 'test_and_eval_loop', label: 'Test and Eval Loop', purpose: 'Require build, tests, smoke checks, accessibility, and sandbox user flows after every generated change.' },
+  ],
+  google_ai_studio_roles: [
+    { id: 'frontend_builder', label: 'Frontend Builder', can_prepare: ['screen maps', 'component plans'], approval_required: ['paid_model_batch', 'production_deploy'] },
+    { id: 'workflow_mutator', label: 'Workflow Mutator', can_prepare: ['workflow variants', 'sandbox tests'], approval_required: ['external account action'] },
+    { id: 'money_experiment_designer', label: 'Money Experiment Designer', can_prepare: ['offer drafts', 'pricing tests'], approval_required: ['customer contact', 'payment collection'] },
+    { id: 'quality_reviewer', label: 'Quality Reviewer', can_prepare: ['visual QA notes', 'release checklist'], approval_required: ['merge', 'public release'] },
+  ],
+  bot_workflow_mutation_loop: ['observe_current_bot_goal', 'find_customer_problem', 'draft_frontend_or_workflow_offer', 'generate_variant_a', 'generate_variant_b', 'sandbox_test_both_variants', 'score_quality_cost_risk_revenue', 'keep_winner_and_record_lesson', 'prepare_owner_approval_packet', 'repeat_next_cycle'],
+  daily_money_experiment_policy: {
+    target: 'Every bot prepares a daily money experiment, not an unverified money claim.',
+    actual_revenue_rule: 'Actual daily money can only be recorded after payment confirmation.',
+    blocked_without_approval: ['customer_outreach', 'public_publish', 'ad_spend', 'charge_payment', 'contract_bid', 'production_deploy'],
+  },
+  model_routing: {
+    free_or_low_cost_first: true,
+    preferred_family: 'google_gemini_flash_lite',
+    quality_family: 'google_gemini_pro_or_latest_verified',
+    verification_rule: 'Verify the current Google model ID and pricing before production use.',
+  },
+  approval_wall: ['paid_google_ai_batch', 'customer_outreach', 'public_publish', 'production_deploy', 'ad_spend', 'charge_or_move_money', 'credential_change'],
+  bot_preview: [
+    { slug: 'buddy-bot', name: 'Buddy Bot', division: 'CommandCore', frontend_goal: 'Build a client-ready Buddy Bot dashboard with status, demo, approval, and revenue-experiment panels.', workflow_mutation_goal: 'Generate two safe workflow variants, sandbox test them, and keep the winner.', money_experiment_goal: 'Prepare one source-backed daily money experiment without claiming revenue until payment is confirmed.' },
+  ],
+};
+
 const FALLBACK_PEOPLE_JOB_QUALIFICATION = {
   generated_at: null,
   mission: 'Give Buddy a governed people-search and job-qualification lookup system for recruiting, client discovery, contractor matching, partner research, and workforce planning.',
@@ -1733,6 +1788,8 @@ export default function ActionsPage({
   const [specializedKnowledgeStatus, setSpecializedKnowledgeStatus] = useState('loading');
   const [aiAgentModelLibrary, setAiAgentModelLibrary] = useState(null);
   const [aiAgentModelLibraryStatus, setAiAgentModelLibraryStatus] = useState('loading');
+  const [googleAiStudioFactory, setGoogleAiStudioFactory] = useState(null);
+  const [googleAiStudioFactoryStatus, setGoogleAiStudioFactoryStatus] = useState('loading');
   const [businessLaunchExpansion, setBusinessLaunchExpansion] = useState(null);
   const [businessLaunchExpansionStatus, setBusinessLaunchExpansionStatus] = useState('loading');
   const [buddyCommercePublishing, setBuddyCommercePublishing] = useState(null);
@@ -1867,6 +1924,15 @@ export default function ActionsPage({
   }, []);
 
   useEffect(() => {
+    fetchFirstJson(['/api/google-ai-studio-frontend-factory'])
+      .then((data) => {
+        setGoogleAiStudioFactory(data);
+        setGoogleAiStudioFactoryStatus('live');
+      })
+      .catch(() => setGoogleAiStudioFactoryStatus('generated fallback'));
+  }, []);
+
+  useEffect(() => {
     fetchFirstJson(['/api/business-launch-expansion'])
       .then((data) => {
         setBusinessLaunchExpansion(data);
@@ -1981,6 +2047,7 @@ export default function ActionsPage({
   const codexCheapOps = buddyCodexCheapOps ?? FALLBACK_BUDDY_CODEX_CHEAP_OPS;
   const knowledge = specializedKnowledge ?? FALLBACK_SPECIALIZED_BOT_KNOWLEDGE;
   const modelLibrary = aiAgentModelLibrary ?? FALLBACK_AI_AGENT_MODEL_LIBRARY;
+  const googleAiStudio = googleAiStudioFactory ?? FALLBACK_GOOGLE_AI_STUDIO_FACTORY;
   const businessLaunch = businessLaunchExpansion ?? FALLBACK_BUSINESS_LAUNCH_EXPANSION;
   const commercePublishing = buddyCommercePublishing ?? FALLBACK_BUDDY_COMMERCE_PUBLISHING;
   const contractDiscovery = botContractDiscovery ?? FALLBACK_BOT_CONTRACT_DISCOVERY;
@@ -2003,6 +2070,7 @@ export default function ActionsPage({
   const codexCheapOpsSummary = codexCheapOps.summary ?? FALLBACK_BUDDY_CODEX_CHEAP_OPS.summary;
   const knowledgeSummary = knowledge.summary ?? FALLBACK_SPECIALIZED_BOT_KNOWLEDGE.summary;
   const modelLibrarySummary = modelLibrary.summary ?? FALLBACK_AI_AGENT_MODEL_LIBRARY.summary;
+  const googleAiStudioSummary = googleAiStudio.summary ?? FALLBACK_GOOGLE_AI_STUDIO_FACTORY.summary;
   const businessLaunchSummary = businessLaunch.summary ?? FALLBACK_BUSINESS_LAUNCH_EXPANSION.summary;
   const commercePublishingSummary = commercePublishing.summary ?? FALLBACK_BUDDY_COMMERCE_PUBLISHING.summary;
   const contractDiscoverySummary = contractDiscovery.summary ?? FALLBACK_BOT_CONTRACT_DISCOVERY.summary;
@@ -3269,6 +3337,119 @@ export default function ActionsPage({
               </article>
             ))}
           </div>
+        </div>
+      </section>
+
+      <section aria-labelledby="google-ai-studio-heading" className={`relative overflow-hidden p-5 ${ROYAL_PANEL_CLASS}`}>
+        <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-amber-300/70 to-transparent" />
+        <div className="flex flex-wrap items-start justify-between gap-3">
+          <div>
+            <p className="text-xs font-bold uppercase tracking-[0.18em] text-amber-200">Google AI Studio frontend factory</p>
+            <h3 id="google-ai-studio-heading" className={`mt-1 text-lg font-semibold ${ROYAL_TEXT_CLASS}`}>
+              Frontend perfection, bot workflow mutation, and daily money experiments
+            </h3>
+            <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-300">{googleAiStudio.mission}</p>
+          </div>
+          <span className="rounded-full border border-amber-400/50 bg-amber-950/30 px-3 py-1 text-xs font-semibold text-amber-200">
+            {googleAiStudioFactoryStatus} · {formatDateTime(googleAiStudio.generated_at)}
+          </span>
+        </div>
+
+        <div className="mt-5 grid grid-cols-2 gap-px overflow-hidden border border-amber-500/20 bg-amber-500/20 lg:grid-cols-4 xl:grid-cols-8">
+          {[
+            ['Score', googleAiStudioSummary.readiness_score],
+            ['Bots planned', googleAiStudioSummary.bots_with_frontend_factory_plan],
+            ['Frontend steps', googleAiStudioSummary.frontend_perfection_steps],
+            ['Workflow steps', googleAiStudioSummary.workflow_mutation_steps],
+            ['Studio roles', googleAiStudioSummary.google_ai_studio_roles],
+            ['Money plans', googleAiStudioSummary.bots_with_daily_money_experiment_plan],
+            ['Approval gates', googleAiStudioSummary.approval_wall_gates],
+            ['Paid safe', googleAiStudioSummary.paid_calls_require_owner_approval ? 1 : 0],
+          ].map(([label, value]) => (
+            <div key={label} className="bg-slate-950/90 p-4">
+              <p className="text-xl font-black text-amber-100">{formatNumber(value)}</p>
+              <p className="mt-1 text-xs uppercase tracking-wide text-slate-500">{label}</p>
+            </div>
+          ))}
+        </div>
+
+        <div className="mt-5 grid gap-5 xl:grid-cols-[minmax(0,1fr)_24rem]">
+          <div className="border border-slate-800 bg-slate-950 p-4">
+            <h4 className="text-sm font-semibold text-white">Frontend perfection loop</h4>
+            <div className="mt-3 grid gap-3 md:grid-cols-2">
+              {(googleAiStudio.frontend_perfection_loop ?? []).map((step) => (
+                <article key={step.id} className="border border-slate-800 bg-slate-900 p-3">
+                  <h5 className="text-sm font-semibold text-white">{step.label}</h5>
+                  <p className="mt-2 text-xs leading-5 text-slate-400">{step.purpose}</p>
+                </article>
+              ))}
+            </div>
+          </div>
+
+          <aside className="space-y-5">
+            <div className="border border-emerald-500/30 bg-emerald-950/20 p-4">
+              <h4 className="text-sm font-semibold text-emerald-100">Model route</h4>
+              <p className="mt-3 text-xs leading-5 text-emerald-100/80">
+                Preferred: {formatLabel(googleAiStudio.model_routing?.preferred_family)}
+              </p>
+              <p className="mt-2 border-l-2 border-emerald-400 pl-3 text-xs leading-5 text-emerald-100/80">
+                {googleAiStudio.model_routing?.verification_rule}
+              </p>
+            </div>
+
+            <div className="border border-amber-900/70 bg-amber-950/20 p-4">
+              <h4 className="text-sm font-semibold text-amber-100">Google approval wall</h4>
+              <div className="mt-3 space-y-2">
+                {(googleAiStudio.approval_wall ?? []).slice(0, 8).map((gate) => (
+                  <p key={gate} className="border-l-2 border-amber-400 pl-3 text-xs leading-5 text-amber-100/80">
+                    {formatLabel(gate)}
+                  </p>
+                ))}
+              </div>
+            </div>
+          </aside>
+        </div>
+
+        <div className="mt-5 grid gap-5 xl:grid-cols-2">
+          <div className="border border-slate-800 bg-slate-950 p-4">
+            <h4 className="text-sm font-semibold text-white">Workflow mutation loop</h4>
+            <div className="mt-3 flex flex-wrap gap-2">
+              {(googleAiStudio.bot_workflow_mutation_loop ?? []).map((step) => (
+                <span key={step} className="rounded-full border border-slate-700 px-2 py-1 text-[11px] text-slate-300">
+                  {formatLabel(step)}
+                </span>
+              ))}
+            </div>
+          </div>
+
+          <div className="border border-slate-800 bg-slate-950 p-4">
+            <h4 className="text-sm font-semibold text-white">Daily money experiment rule</h4>
+            <p className="mt-3 text-xs leading-5 text-slate-300">{googleAiStudio.daily_money_experiment_policy?.target}</p>
+            <p className="mt-3 border-l-2 border-amber-400 pl-3 text-xs leading-5 text-amber-100/80">
+              {googleAiStudio.daily_money_experiment_policy?.actual_revenue_rule}
+            </p>
+            <div className="mt-3 flex flex-wrap gap-2">
+              {(googleAiStudio.daily_money_experiment_policy?.blocked_without_approval ?? []).slice(0, 6).map((gate) => (
+                <span key={gate} className="rounded-full border border-amber-500/30 px-2 py-1 text-[11px] text-amber-100">
+                  {formatLabel(gate)}
+                </span>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        <div className="mt-5 grid gap-3 md:grid-cols-2 xl:grid-cols-4">
+          {(googleAiStudio.google_ai_studio_roles ?? []).map((role) => (
+            <article key={role.id} className="border border-slate-800 bg-slate-950 p-3">
+              <h4 className="text-sm font-semibold text-white">{role.label}</h4>
+              <p className="mt-2 text-xs leading-5 text-emerald-100/80">
+                Can prepare: {(role.can_prepare ?? []).slice(0, 3).join(', ')}
+              </p>
+              <p className="mt-2 text-xs leading-5 text-amber-100/80">
+                Approval: {(role.approval_required ?? []).slice(0, 3).map(formatLabel).join(', ')}
+              </p>
+            </article>
+          ))}
         </div>
       </section>
 

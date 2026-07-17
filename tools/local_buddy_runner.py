@@ -38,6 +38,8 @@ COMMANDS: dict[str, list[str]] = {
     "check:buddy-24-hour-package": ["python3", "tools/generate_buddy_24_hour_client_package.py", "--check"],
     "report:ai-agent-model-library": ["python3", "tools/generate_buddy_ai_agent_model_library.py"],
     "check:ai-agent-model-library": ["python3", "tools/generate_buddy_ai_agent_model_library.py", "--check"],
+    "report:google-ai-studio": ["python3", "tools/generate_google_ai_studio_frontend_factory.py"],
+    "check:google-ai-studio": ["python3", "tools/generate_google_ai_studio_frontend_factory.py", "--check"],
     "report:app-foundry": ["python3", "tools/generate_app_foundry_readiness.py"],
     "check:app-foundry": ["python3", "tools/generate_app_foundry_readiness.py", "--check"],
     "report:commerce-publishing": ["python3", "tools/generate_buddy_commerce_publishing_os.py"],

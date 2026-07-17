@@ -115,6 +115,10 @@ const GOOGLE_CLOUD_READINESS_FILE = path.join(
   __dirname,
   '../../reports/google_cloud_readiness.json',
 );
+const GOOGLE_AI_STUDIO_FRONTEND_FACTORY_FILE = path.join(
+  __dirname,
+  '../../reports/google_ai_studio_frontend_factory.json',
+);
 const PRODUCTION_APPROVAL_PACKETS_FILE = path.join(
   __dirname,
   '../../reports/production_approval_packets.json',
@@ -393,6 +397,13 @@ function readGoogleCloudReadiness() {
     return null;
   }
   return JSON.parse(fs.readFileSync(GOOGLE_CLOUD_READINESS_FILE, 'utf8'));
+}
+
+function readGoogleAiStudioFrontendFactory() {
+  if (!fs.existsSync(GOOGLE_AI_STUDIO_FRONTEND_FACTORY_FILE)) {
+    return null;
+  }
+  return JSON.parse(fs.readFileSync(GOOGLE_AI_STUDIO_FRONTEND_FACTORY_FILE, 'utf8'));
 }
 
 function readProductionApprovalPackets() {
@@ -1152,6 +1163,17 @@ app.get('/api/google-cloud-readiness', rateLimiter, (_req, res) => {
   const report = readGoogleCloudReadiness();
   if (!report) {
     return res.status(503).json({ error: 'Google Cloud readiness report not found' });
+  }
+  return res.json(report);
+});
+
+// ---------------------------------------------------------------------------
+// GET /api/google-ai-studio-frontend-factory — Gemini UI/workflow iteration
+// ---------------------------------------------------------------------------
+app.get('/api/google-ai-studio-frontend-factory', rateLimiter, (_req, res) => {
+  const report = readGoogleAiStudioFrontendFactory();
+  if (!report) {
+    return res.status(503).json({ error: 'Google AI Studio frontend factory report not found' });
   }
   return res.json(report);
 });
