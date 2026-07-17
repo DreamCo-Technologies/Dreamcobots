@@ -4,13 +4,28 @@
   "purpose": "Require owner payment email notices for every important Stripe money event.",
   "required_events": [
     "checkout.session.completed",
+    "checkout.session.expired",
     "payment_intent.succeeded",
     "payment_intent.payment_failed",
     "invoice.paid",
     "invoice.payment_failed",
+    "invoice.finalized",
+    "invoice.voided",
     "customer.subscription.created",
+    "customer.subscription.updated",
     "customer.subscription.deleted",
-    "payout.paid"
+    "payment_link.created",
+    "payment_link.updated",
+    "charge.refunded",
+    "refund.created",
+    "refund.updated",
+    "charge.dispute.created",
+    "charge.dispute.updated",
+    "charge.dispute.closed",
+    "payout.created",
+    "payout.paid",
+    "payout.failed",
+    "payout.canceled"
   ],
   "required_environment": [
     "STRIPE_PAYMENT_ALERT_EMAILS or PAYMENT_ALERT_EMAILS",
@@ -24,7 +39,7 @@
     "enabled_by": "PAYMENT_GITHUB_NOTIFICATIONS=true",
     "repository_variable": "PAYMENT_GITHUB_REPOSITORY or GITHUB_REPOSITORY",
     "token_variable": "PAYMENT_GITHUB_TOKEN or GITHUB_TOKEN",
-    "behavior": "Create a GitHub issue labeled payment-alert and stripe for every tracked payment event."
+    "behavior": "Create a GitHub issue labeled payment-alert and stripe for every tracked payment, refund, dispute, subscription, payment-link, invoice, checkout, and payout event."
   },
   "secret_rule": "Never commit email provider API keys or Stripe keys. Use host secrets, GitHub secrets, or local environment variables."
 }

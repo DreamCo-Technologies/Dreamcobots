@@ -53,6 +53,7 @@ COMMANDS: dict[str, list[str]] = {
     "report:bot-owner-settings": ["python3", "tools/generate_bot_owner_settings_report.py"],
     "check:bot-owner-settings": ["python3", "tools/generate_bot_owner_settings_report.py", "--check"],
     "report:storage": ["python3", "tools/storage_guard.py"],
+    "report:stripe-rescue": ["python3", "tools/stripe_revenue_rescue.py"],
     "scan:local-imports": ["python3", "tools/local_import_audit.py"],
     "check:buddy-bot-connections": ["python3", "tools/buddy_bot_connection_guard.py"],
     "github-cost-saver": ["python3", "tools/run_github_cost_saver.py"],

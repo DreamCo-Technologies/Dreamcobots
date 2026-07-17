@@ -4,13 +4,28 @@ const path = require('path');
 const DEFAULT_DATA_DIR = path.resolve(process.cwd(), '../../data/stripe');
 const EMAIL_EVENTS = new Set([
   'checkout.session.completed',
+  'checkout.session.expired',
   'payment_intent.succeeded',
   'payment_intent.payment_failed',
   'invoice.paid',
   'invoice.payment_failed',
+  'invoice.finalized',
+  'invoice.voided',
   'customer.subscription.created',
+  'customer.subscription.updated',
   'customer.subscription.deleted',
+  'payment_link.created',
+  'payment_link.updated',
+  'charge.refunded',
+  'refund.created',
+  'refund.updated',
+  'charge.dispute.created',
+  'charge.dispute.updated',
+  'charge.dispute.closed',
+  'payout.created',
   'payout.paid',
+  'payout.failed',
+  'payout.canceled',
 ]);
 const GITHUB_NOTIFICATIONS_ENABLED = ['1', 'true', 'yes'].includes(
   String(process.env.PAYMENT_GITHUB_NOTIFICATIONS || '').toLowerCase(),
@@ -59,18 +74,46 @@ function subjectFor(event) {
       return `DreamCo payment received: ${amount}`;
     case 'checkout.session.completed':
       return `DreamCo checkout completed: ${amount}`;
+    case 'checkout.session.expired':
+      return `DreamCo checkout expired: ${amount}`;
     case 'invoice.paid':
       return `DreamCo invoice paid: ${amount}`;
     case 'payment_intent.payment_failed':
       return `DreamCo payment failed: ${amount}`;
     case 'invoice.payment_failed':
       return `DreamCo invoice payment failed: ${amount}`;
+    case 'invoice.finalized':
+      return `DreamCo invoice finalized: ${amount}`;
+    case 'invoice.voided':
+      return `DreamCo invoice voided: ${amount}`;
     case 'customer.subscription.created':
       return 'DreamCo subscription created';
+    case 'customer.subscription.updated':
+      return 'DreamCo subscription updated';
     case 'customer.subscription.deleted':
       return 'DreamCo subscription canceled';
+    case 'payment_link.created':
+      return 'DreamCo payment link created';
+    case 'payment_link.updated':
+      return 'DreamCo payment link updated';
+    case 'charge.refunded':
+    case 'refund.created':
+    case 'refund.updated':
+      return `DreamCo refund event: ${amount}`;
+    case 'charge.dispute.created':
+      return `DreamCo dispute created: ${amount}`;
+    case 'charge.dispute.updated':
+      return `DreamCo dispute updated: ${amount}`;
+    case 'charge.dispute.closed':
+      return `DreamCo dispute closed: ${amount}`;
+    case 'payout.created':
+      return `DreamCo payout created: ${amount}`;
     case 'payout.paid':
       return `DreamCo payout paid: ${amount}`;
+    case 'payout.failed':
+      return `DreamCo payout failed: ${amount}`;
+    case 'payout.canceled':
+      return `DreamCo payout canceled: ${amount}`;
     default:
       return `DreamCo Stripe event: ${event.type}`;
   }

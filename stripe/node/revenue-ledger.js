@@ -103,9 +103,23 @@ class RevenueLedger {
       paymentFailed: 0,
       invoicePaid: 0,
       invoiceFailed: 0,
+      invoiceFinalized: 0,
+      invoiceVoided: 0,
       subscriptionsCreated: 0,
+      subscriptionsUpdated: 0,
       subscriptionsCanceled: 0,
+      paymentLinksCreated: 0,
+      paymentLinksUpdated: 0,
+      refunds: 0,
+      refundedRevenueCents: 0,
+      disputesCreated: 0,
+      disputesUpdated: 0,
+      disputesClosed: 0,
+      disputedRevenueCents: 0,
+      payoutsCreated: 0,
       payoutsPaid: 0,
+      payoutsFailed: 0,
+      payoutsCanceled: 0,
       grossRevenueCents: 0,
       failedRevenueCents: 0,
       byCurrency: {},
@@ -129,9 +143,13 @@ class RevenueLedger {
           paymentSucceeded: 0,
           paymentFailed: 0,
           invoicePaid: 0,
-          invoiceFailed: 0,
-          offers: {},
-          workflows: {},
+        invoiceFailed: 0,
+        refunds: 0,
+        refundedRevenueCents: 0,
+        disputesCreated: 0,
+        disputedRevenueCents: 0,
+        offers: {},
+        workflows: {},
         };
       }
 
@@ -173,14 +191,58 @@ class RevenueLedger {
           summary.byCurrency[currency].failedRevenueCents += event.amountCents;
           bot.failedRevenueCents += event.amountCents;
           break;
+        case 'invoice.finalized':
+          summary.invoiceFinalized += 1;
+          break;
+        case 'invoice.voided':
+          summary.invoiceVoided += 1;
+          break;
         case 'customer.subscription.created':
           summary.subscriptionsCreated += 1;
+          break;
+        case 'customer.subscription.updated':
+          summary.subscriptionsUpdated += 1;
           break;
         case 'customer.subscription.deleted':
           summary.subscriptionsCanceled += 1;
           break;
+        case 'payment_link.created':
+          summary.paymentLinksCreated += 1;
+          break;
+        case 'payment_link.updated':
+          summary.paymentLinksUpdated += 1;
+          break;
+        case 'charge.refunded':
+        case 'refund.created':
+        case 'refund.updated':
+          summary.refunds += 1;
+          summary.refundedRevenueCents += event.amountCents;
+          bot.refunds += 1;
+          bot.refundedRevenueCents += event.amountCents;
+          break;
+        case 'charge.dispute.created':
+          summary.disputesCreated += 1;
+          summary.disputedRevenueCents += event.amountCents;
+          bot.disputesCreated += 1;
+          bot.disputedRevenueCents += event.amountCents;
+          break;
+        case 'charge.dispute.updated':
+          summary.disputesUpdated += 1;
+          break;
+        case 'charge.dispute.closed':
+          summary.disputesClosed += 1;
+          break;
+        case 'payout.created':
+          summary.payoutsCreated += 1;
+          break;
         case 'payout.paid':
           summary.payoutsPaid += 1;
+          break;
+        case 'payout.failed':
+          summary.payoutsFailed += 1;
+          break;
+        case 'payout.canceled':
+          summary.payoutsCanceled += 1;
           break;
         default:
           break;
@@ -208,9 +270,21 @@ class RevenueLedger {
       `- Failed payments: ${summary.paymentFailed}`,
       `- Paid invoices: ${summary.invoicePaid}`,
       `- Failed invoices: ${summary.invoiceFailed}`,
+      `- Finalized invoices: ${summary.invoiceFinalized}`,
+      `- Voided invoices: ${summary.invoiceVoided}`,
       `- Subscriptions created: ${summary.subscriptionsCreated}`,
+      `- Subscriptions updated: ${summary.subscriptionsUpdated}`,
       `- Subscriptions canceled: ${summary.subscriptionsCanceled}`,
+      `- Payment links created: ${summary.paymentLinksCreated}`,
+      `- Payment links updated: ${summary.paymentLinksUpdated}`,
+      `- Refund events: ${summary.refunds}`,
+      `- Refunded amount tracked: $${dollars(summary.refundedRevenueCents)}`,
+      `- Disputes created: ${summary.disputesCreated}`,
+      `- Disputed amount tracked: $${dollars(summary.disputedRevenueCents)}`,
+      `- Payouts created: ${summary.payoutsCreated}`,
       `- Payouts paid: ${summary.payoutsPaid}`,
+      `- Payouts failed: ${summary.payoutsFailed}`,
+      `- Payouts canceled: ${summary.payoutsCanceled}`,
       '',
       '## Revenue By Bot',
       '',

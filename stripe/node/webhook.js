@@ -42,11 +42,26 @@ app.post('/webhook', express.raw({ type: 'application/json' }), async (req, res)
     case 'payment_intent.succeeded':
     case 'payment_intent.payment_failed':
     case 'checkout.session.completed':
+    case 'checkout.session.expired':
     case 'customer.subscription.created':
+    case 'customer.subscription.updated':
     case 'customer.subscription.deleted':
     case 'invoice.paid':
     case 'invoice.payment_failed':
+    case 'invoice.finalized':
+    case 'invoice.voided':
+    case 'payment_link.created':
+    case 'payment_link.updated':
+    case 'charge.refunded':
+    case 'refund.created':
+    case 'refund.updated':
+    case 'charge.dispute.created':
+    case 'charge.dispute.updated':
+    case 'charge.dispute.closed':
+    case 'payout.created':
     case 'payout.paid':
+    case 'payout.failed':
+    case 'payout.canceled':
       await record(event);
       break;
     default:

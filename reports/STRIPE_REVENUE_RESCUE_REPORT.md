@@ -1,10 +1,16 @@
 # Stripe Revenue Rescue Report
 
-- Generated: 2026-07-12T20:31:19Z
+- Generated: 2026-07-17T14:23:28Z
 - Rescue ready: False
 - Checkout-ready offers: 0/2
 - Tracked Stripe events: 0
 - Gross tracked revenue: $0.00
+- Refund events: 0
+- Refunded amount tracked: $0.00
+- Disputes created: 0
+- Disputed amount tracked: $0.00
+- Payouts paid: 0
+- Payouts failed: 0
 - Payment email recipients configured: 0
 - Payment email notices tracked: 0
 - GitHub payment notifications enabled: False
