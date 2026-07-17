@@ -34,6 +34,90 @@
       "blocked": ["private data training without rights", "secret leakage", "unlabeled synthetic media", "unsafe autonomous live actions", "claims that one model is best without current eval evidence"]
     }
   },
+  "autonomous_decision_governance": {
+    "mission": "Every autonomous decision in DreamCo must pass through the world model council, a Codex final-review judge gate, and owner approval when the decision has live external, financial, production, credential, legal, medical, hiring, privacy, or reputation impact.",
+    "default_mode": "council_review_codex_final_judge_owner_approval_for_live_impact",
+    "decision_scope": [
+      "bot_money_method_selection",
+      "customer_problem_selection",
+      "model_route_selection",
+      "api_or_webhook_design",
+      "workflow_mutation",
+      "sandbox_test_result",
+      "pricing_or_offer_draft",
+      "contract_or_grant_packet",
+      "people_lookup_packet",
+      "social_or_app_publish_packet",
+      "data_package_decision",
+      "deployment_or_release_packet",
+      "repository_fix_or_pull_request_packet",
+      "memory_retention_decision"
+    ],
+    "pipeline": [
+      "capture_decision_intent",
+      "classify_decision_risk",
+      "collect_sources_and_context",
+      "route_to_world_model_council",
+      "request_budget_fast_quality_private_model_views_when_needed",
+      "compare_model_outputs_with_rubric",
+      "run_sandbox_or_static_checks",
+      "create_decision_evidence_packet",
+      "codex_final_judge_review",
+      "owner_approval_if_live_impact",
+      "execute_only_allowed_safe_next_step",
+      "record_decision_memory"
+    ],
+    "codex_final_judge": {
+      "role": "Final repository reviewer and decision-quality judge before autonomous decisions are accepted as safe next steps.",
+      "can_approve": ["sandbox_safe_next_step", "draft_packet", "report_update", "test_plan", "pull_request_recommendation", "owner_approval_request"],
+      "cannot_override_owner_approval": true,
+      "must_check": ["source_evidence", "test_evidence", "risk_level", "approval_required", "cost_or_paid_action", "privacy_or_secrets", "legal_medical_financial_claims", "rollback_plan", "actual_vs_projected_revenue"],
+      "final_labels": ["approved_for_sandbox", "needs_more_evidence", "owner_approval_required", "blocked_risky", "ready_for_pull_request"]
+    },
+    "owner_approval_required_for": [
+      "customer_outreach",
+      "social_post_or_direct_message",
+      "ad_spend",
+      "payment_collection_or_money_movement",
+      "contract_bid_or_signature",
+      "production_deploy",
+      "external_account_change",
+      "credential_or_secret_change",
+      "paid_model_batch",
+      "model_fine_tuning_or_training_on_customer_data",
+      "dataset_sale_or_publication",
+      "legal_medical_financial_tax_or_hiring_decision",
+      "people_lookup_contact_or_background_check",
+      "public_claim_about_revenue_certification_or_partnership"
+    ],
+    "evidence_packet_schema": [
+      "decision_id",
+      "bot_slug",
+      "decision_type",
+      "risk_level",
+      "source_evidence",
+      "models_consulted",
+      "model_positions",
+      "rubric_scores",
+      "sandbox_or_static_test_evidence",
+      "codex_final_judge_label",
+      "codex_final_judge_notes",
+      "owner_approval_required",
+      "allowed_next_step",
+      "blocked_actions",
+      "recorded_at"
+    ],
+    "blocked_without_codex_final_judge": [
+      "autonomous_business_decision",
+      "autonomous_money_method_change",
+      "model_route_change",
+      "workflow_mutation",
+      "api_or_webhook_mutation",
+      "memory_retention_change",
+      "pull_request_recommendation",
+      "public_or_live_action_request"
+    ]
+  },
   "provider_docs": [
     { "provider": "OpenAI", "url": "https://platform.openai.com/docs/models" },
     { "provider": "Anthropic", "url": "https://docs.anthropic.com/en/docs/about-claude/models" },

@@ -16,12 +16,20 @@ Give Buddy a governed prompt, tool, agent, and model-resource library so every b
 - World model council steps: 7
 - Benchmark sources: 5
 - Training/eval policy ready: True
+- Autonomous decision governance ready: True
+- Autonomous decision scope count: 14
+- Autonomous decision pipeline steps: 12
+- Codex final judge enabled: True
+- Codex cannot override owner approval: True
+- Owner approval live-impact gates: 14
 - Prompt types: 20
 - Tool types: 23
 - Task routes: 33
 - Bots with model routing: 1248 / 1248
 - Bots with world model council: 1248 / 1248
 - Bots with training/eval policy: 1248 / 1248
+- Bots with autonomous decision governance: 1248 / 1248
+- Bots with Codex final judge gate: 1248 / 1248
 
 ## Routing Rule
 
@@ -36,6 +44,15 @@ Use 100+ globally sourced model resources as a decision council for every bot wh
 - Decision style: route_compare_debate_eval_then_select
 - Actual resources: 104
 - Provider count: 23
+
+## Autonomous Decision Governance
+
+Every autonomous decision in DreamCo must pass through the world model council, a Codex final-review judge gate, and owner approval when the decision has live external, financial, production, credential, legal, medical, hiring, privacy, or reputation impact.
+
+- Default mode: council_review_codex_final_judge_owner_approval_for_live_impact
+- Decision scope count: 14
+- Pipeline steps: 12
+- Owner approval gates: 14
 
 ## Cost Control
 

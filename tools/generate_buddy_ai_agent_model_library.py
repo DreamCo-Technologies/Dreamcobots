@@ -218,6 +218,37 @@ def build_world_model_council(config, resources, routes):
     }
 
 
+def build_autonomous_decision_governance(config, bots):
+    governance = config.get("autonomous_decision_governance", {})
+    return {
+        "mission": governance.get("mission", ""),
+        "default_mode": governance.get("default_mode", ""),
+        "decision_scope": governance.get("decision_scope", []),
+        "pipeline": governance.get("pipeline", []),
+        "codex_final_judge": governance.get("codex_final_judge", {}),
+        "owner_approval_required_for": governance.get("owner_approval_required_for", []),
+        "evidence_packet_schema": governance.get("evidence_packet_schema", []),
+        "blocked_without_codex_final_judge": governance.get("blocked_without_codex_final_judge", []),
+        "bot_coverage": {
+            "bot_count": len(bots),
+            "bots_required_to_use_council": len(bots),
+            "bots_required_to_use_codex_final_judge": len(bots),
+            "bots_requiring_owner_approval_for_live_impact": len(bots),
+        },
+        "dashboard_packet": {
+            "status": "ready_for_actions_page_governance",
+            "headline": "Every autonomous decision routes through council review, Codex final judge, and owner approval when live impact exists.",
+            "safe_next_steps": [
+                "show decision evidence packet",
+                "show model council comparison",
+                "show Codex final judge label",
+                "send owner approval request",
+                "block live impact until approved",
+            ],
+        },
+    }
+
+
 def build_report():
     config = read_json(CONFIG_FILE, {})
     registry = read_json(MASTER_REGISTRY_FILE, {})
@@ -227,6 +258,7 @@ def build_report():
     matrix = build_prompt_tool_agent_matrix(config)
     providers = sorted({resource["provider"] for resource in resources})
     world_council = build_world_model_council(config, resources, routes)
+    decision_governance = build_autonomous_decision_governance(config, bots)
 
     summary = {
         "model_resources": len(resources),
@@ -247,6 +279,19 @@ def build_report():
         "training_eval_policy_ready": bool(
             config.get("world_ai_model_council", {}).get("training_and_testing_policy")
         ),
+        "autonomous_decision_governance_ready": bool(config.get("autonomous_decision_governance")),
+        "autonomous_decision_scope_count": len(config.get("autonomous_decision_governance", {}).get("decision_scope", [])),
+        "autonomous_decision_pipeline_steps": len(config.get("autonomous_decision_governance", {}).get("pipeline", [])),
+        "codex_final_judge_enabled": bool(
+            config.get("autonomous_decision_governance", {}).get("codex_final_judge")
+        ),
+        "codex_final_judge_cannot_override_owner_approval": config.get("autonomous_decision_governance", {})
+        .get("codex_final_judge", {})
+        .get("cannot_override_owner_approval")
+        is True,
+        "owner_approval_live_impact_gates": len(
+            config.get("autonomous_decision_governance", {}).get("owner_approval_required_for", [])
+        ),
         "prompt_types": len(config.get("prompt_types", [])),
         "tool_types": len(config.get("tool_types", [])),
         "task_routes": len(routes),
@@ -254,6 +299,8 @@ def build_report():
         "bots_with_model_routing": len(bots),
         "bots_with_world_model_council": len(bots),
         "bots_with_training_eval_policy": len(bots),
+        "bots_with_autonomous_decision_governance": len(bots),
+        "bots_with_codex_final_judge_gate": len(bots),
         "resources_requiring_model_id_verification": len(resources),
         "approval_gated_resources": len(resources),
     }
@@ -278,6 +325,7 @@ def build_report():
         },
         "summary": summary,
         "world_ai_model_council": world_council,
+        "autonomous_decision_governance": decision_governance,
         "providers": providers,
         "provider_docs": config.get("provider_docs", []),
         "model_resources": resources,
@@ -316,12 +364,20 @@ def write_markdown(report):
         f"- World model council steps: {summary['world_model_council_steps']}",
         f"- Benchmark sources: {summary['benchmark_sources']}",
         f"- Training/eval policy ready: {summary['training_eval_policy_ready']}",
+        f"- Autonomous decision governance ready: {summary['autonomous_decision_governance_ready']}",
+        f"- Autonomous decision scope count: {summary['autonomous_decision_scope_count']}",
+        f"- Autonomous decision pipeline steps: {summary['autonomous_decision_pipeline_steps']}",
+        f"- Codex final judge enabled: {summary['codex_final_judge_enabled']}",
+        f"- Codex cannot override owner approval: {summary['codex_final_judge_cannot_override_owner_approval']}",
+        f"- Owner approval live-impact gates: {summary['owner_approval_live_impact_gates']}",
         f"- Prompt types: {summary['prompt_types']}",
         f"- Tool types: {summary['tool_types']}",
         f"- Task routes: {summary['task_routes']}",
         f"- Bots with model routing: {summary['bots_with_model_routing']} / {summary['bot_count']}",
         f"- Bots with world model council: {summary['bots_with_world_model_council']} / {summary['bot_count']}",
         f"- Bots with training/eval policy: {summary['bots_with_training_eval_policy']} / {summary['bot_count']}",
+        f"- Bots with autonomous decision governance: {summary['bots_with_autonomous_decision_governance']} / {summary['bot_count']}",
+        f"- Bots with Codex final judge gate: {summary['bots_with_codex_final_judge_gate']} / {summary['bot_count']}",
         "",
         "## Routing Rule",
         "",
@@ -336,6 +392,15 @@ def write_markdown(report):
         f"- Decision style: {report['world_ai_model_council'].get('decision_style', '')}",
         f"- Actual resources: {report['world_ai_model_council'].get('actual_model_resources', 0)}",
         f"- Provider count: {report['world_ai_model_council'].get('provider_count', 0)}",
+        "",
+        "## Autonomous Decision Governance",
+        "",
+        report["autonomous_decision_governance"].get("mission", ""),
+        "",
+        f"- Default mode: {report['autonomous_decision_governance'].get('default_mode', '')}",
+        f"- Decision scope count: {len(report['autonomous_decision_governance'].get('decision_scope', []))}",
+        f"- Pipeline steps: {len(report['autonomous_decision_governance'].get('pipeline', []))}",
+        f"- Owner approval gates: {len(report['autonomous_decision_governance'].get('owner_approval_required_for', []))}",
         "",
         "## Cost Control",
         "",

@@ -29,6 +29,32 @@
       "reports/revenue-attribution-report.json"
     ]
   },
+  "autonomousDecisionGovernance": {
+    "rule": "Every autonomous decision must go through the world AI model council, then Codex final judge review, then owner approval when there is live external, financial, production, credential, privacy, legal, medical, hiring, or reputation impact.",
+    "requiredBeforeDecisionAccepted": [
+      "decision_intent",
+      "risk_classification",
+      "world_model_council_packet",
+      "sandbox_or_static_evidence",
+      "codex_final_judge_label",
+      "owner_approval_if_live_impact"
+    ],
+    "codexFinalJudge": {
+      "role": "Final repository reviewer for decision quality, safety, evidence, and next-step boundaries.",
+      "cannotOverrideOwnerApproval": true,
+      "allowedLabels": ["approved_for_sandbox", "needs_more_evidence", "owner_approval_required", "blocked_risky", "ready_for_pull_request"]
+    },
+    "blockedWithoutCodexFinalJudge": [
+      "customer_problem_selection",
+      "money_method_selection",
+      "model_route_change",
+      "workflow_mutation",
+      "api_or_webhook_mutation",
+      "pricing_or_offer_change",
+      "memory_retention_change",
+      "public_or_live_action_request"
+    ]
+  },
   "exampleBots": [
     {
       "id": "real-estate-bot",
