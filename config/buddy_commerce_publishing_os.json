@@ -69,8 +69,135 @@
       "safe_actions": ["search public opportunities", "compare customer pains", "draft offers", "score revenue potential", "prepare outreach drafts", "simulate pricing"],
       "approval_required": ["contact_customer", "publish_offer", "run_ads", "charge_payment", "bid_contract", "scrape_non_public_data"],
       "evidence": ["source_url", "customer_problem", "offer", "price_hypothesis", "risk", "next_test"]
+    },
+    {
+      "id": "app_and_social_control",
+      "label": "App and Social Control Center",
+      "safe_actions": ["inventory connected apps", "draft social posts", "build content calendar", "prepare inbox triage", "summarize comments", "draft replies", "review analytics", "prepare app update checklist", "prepare cross-platform launch plan"],
+      "approval_required": ["connect_social_account", "publish_post", "send_dm", "reply_to_comment", "delete_content", "change_profile", "run_ads", "boost_post", "submit_app_update", "change_app_store_listing", "collect_private_messages"],
+      "evidence": ["platform", "account_or_app_id", "draft_id", "source_asset", "approval_owner", "scheduled_time", "risk_notes", "outcome_metrics"]
     }
   ],
+  "app_control_center": {
+    "mission": "Let Buddy supervise all DreamCo and client apps from one task-manager command center without taking live account actions until approved.",
+    "safe_control_modes": [
+      "read_public_app_store_listing",
+      "draft_release_notes",
+      "prepare_update_checklist",
+      "track_version_status",
+      "triage_user_feedback",
+      "summarize_crash_or_support_reports",
+      "prepare_store_assets",
+      "prepare_launch_calendar",
+      "prepare_rollback_plan"
+    ],
+    "approval_required": [
+      "connect_developer_account",
+      "submit_app",
+      "submit_update",
+      "change_pricing",
+      "change_availability",
+      "delete_app",
+      "respond_to_user_review",
+      "collect_user_data",
+      "enable_push_notifications"
+    ],
+    "supported_targets": [
+      "web_apps",
+      "pwa_apps",
+      "desktop_apps",
+      "ios_apps",
+      "android_apps",
+      "game_store_apps",
+      "tv_store_apps",
+      "browser_extensions",
+      "client_internal_tools"
+    ],
+    "must_store": [
+      "app_id",
+      "platform",
+      "version",
+      "owner",
+      "last_reviewed_at",
+      "release_status",
+      "privacy_status",
+      "approval_status",
+      "next_safe_action"
+    ]
+  },
+  "social_control_center": {
+    "mission": "Let Buddy coordinate social media strategy, drafts, calendars, approvals, and analytics while keeping posting, messaging, advertising, and account changes behind approval.",
+    "default_mode": "draft_review_schedule_after_approval",
+    "platforms": [
+      "x",
+      "linkedin",
+      "facebook",
+      "instagram",
+      "tiktok",
+      "youtube",
+      "threads",
+      "pinterest",
+      "reddit",
+      "discord",
+      "telegram",
+      "email_newsletter",
+      "blog",
+      "podcast",
+      "app_store_reviews"
+    ],
+    "safe_control_modes": [
+      "content_idea_research",
+      "post_drafting",
+      "caption_variants",
+      "hashtag_research",
+      "content_calendar",
+      "asset_checklist",
+      "comment_summary",
+      "inbox_triage_without_private_storage",
+      "analytics_summary",
+      "brand_voice_review",
+      "crisis_risk_flagging",
+      "competitor_public_post_notes"
+    ],
+    "approval_required": [
+      "connect_account",
+      "publish_post",
+      "schedule_post",
+      "send_dm",
+      "reply_publicly",
+      "delete_or_hide_content",
+      "change_profile_or_bio",
+      "follow_or_unfollow_accounts",
+      "join_group_or_server",
+      "run_ad_or_boost",
+      "use_customer_list",
+      "collect_private_messages",
+      "export_social_data"
+    ],
+    "blocked_without_review": [
+      "impersonation",
+      "fake_endorsements",
+      "spam_outreach",
+      "harassment",
+      "misleading_income_claims",
+      "political_or_public_safety_impersonation",
+      "minor_targeting",
+      "scraping_private_messages",
+      "bypassing_platform_terms"
+    ],
+    "must_store": [
+      "platform",
+      "account_owner",
+      "draft",
+      "source_assets",
+      "rights_status",
+      "reviewer",
+      "approval_time",
+      "published_url",
+      "outcome_metrics",
+      "rollback_or_delete_plan"
+    ]
+  },
   "app_store_targets": [
     {
       "id": "apple_app_store",
@@ -114,6 +241,12 @@
     "client_status_room",
     "download_release_tracker",
     "money_opportunity_pipeline"
+    ,
+    "app_control_queue",
+    "social_calendar",
+    "social_approval_queue",
+    "cross_platform_launch_room",
+    "brand_and_rights_review"
   ],
   "web_research_policy": {
     "allowed_sources": ["public web pages", "official docs", "public pricing pages", "public marketplace listings", "public reviews", "public RFP or grant pages"],
@@ -133,5 +266,14 @@
     "connect_payment_or_bank_account",
     "change_client_account",
     "collect_sensitive_device_or_personal_data"
+    ,
+    "connect_social_account",
+    "publish_social_post",
+    "send_direct_message",
+    "run_social_ads",
+    "submit_app_update",
+    "change_app_pricing",
+    "delete_or_hide_social_content",
+    "collect_private_social_messages"
   ]
 }

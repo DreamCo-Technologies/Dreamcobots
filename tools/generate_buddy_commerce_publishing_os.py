@@ -43,6 +43,8 @@ def build_report():
     approval_wall = config.get("approval_wall", [])
     task_layers = config.get("task_manager_layers", [])
     app_categories = app_catalog.get("app_categories", [])
+    app_control = config.get("app_control_center", {})
+    social_control = config.get("social_control_center", {})
 
     lane_cards = []
     for lane in commerce_lanes:
@@ -98,13 +100,24 @@ def build_report():
         "approval_wall_gates": len(approval_wall),
         "safe_actions": sum(len(lane.get("safe_actions", [])) for lane in commerce_lanes),
         "live_actions_blocked": sum(len(lane.get("approval_required", [])) for lane in commerce_lanes),
+        "app_control_modes": len(app_control.get("safe_control_modes", [])),
+        "app_control_targets": len(app_control.get("supported_targets", [])),
+        "app_control_approval_gates": len(app_control.get("approval_required", [])),
+        "social_platforms": len(social_control.get("platforms", [])),
+        "social_control_modes": len(social_control.get("safe_control_modes", [])),
+        "social_approval_gates": len(social_control.get("approval_required", [])),
+        "social_blocked_without_review": len(social_control.get("blocked_without_review", [])),
         "download_packets_ready": sum(1 for target in download_targets if "ready" in target.get("status", "")),
         "store_packets_ready": len(store_targets),
         "web_research_policy_ready": bool(config.get("web_research_policy")),
+        "app_control_center_ready": bool(app_control),
+        "social_control_center_ready": bool(social_control),
         "can_sell_domains_after_approval": any(lane.get("id") == "domains" for lane in commerce_lanes),
         "can_prepare_app_store_submissions": bool(store_targets),
         "can_prepare_device_downloads": bool(download_targets),
         "can_research_autonomous_money": any(lane.get("id") == "web_money_research" for lane in commerce_lanes),
+        "can_control_apps_after_approval": bool(app_control),
+        "can_control_social_after_approval": bool(social_control),
     }
 
     return {
@@ -118,6 +131,8 @@ def build_report():
         "commerce_lanes": lane_cards,
         "download_targets": download_cards,
         "app_store_targets": store_targets,
+        "app_control_center": app_control,
+        "social_control_center": social_control,
         "task_manager_layers": task_layers,
         "web_research_policy": config.get("web_research_policy", {}),
         "approval_wall": approval_wall,
@@ -131,6 +146,8 @@ def build_report():
             "Add PWA manifest and install-ready icons to the Buddy dashboard.",
             "Create store-specific release packets for the first Buddy web app, mobile shell, and desktop shell.",
             "Connect registrar, store, and payment adapters only through secrets plus owner approval.",
+            "Connect social and app-store accounts only through secrets-backed runtime configs, never committed tokens.",
+            "Keep social posts, DMs, replies, ads, profile changes, and app-store submissions approval-gated.",
             "Keep web money research source-backed and draft-only until the owner approves outreach, payment, or publishing.",
         ],
     }
@@ -149,6 +166,10 @@ def write_markdown(report):
         f"- Commerce lanes: {summary['commerce_lanes']}",
         f"- Download targets: {summary['download_targets']}",
         f"- App-store targets: {summary['app_store_targets']}",
+        f"- App control modes: {summary['app_control_modes']}",
+        f"- App control targets: {summary['app_control_targets']}",
+        f"- Social platforms: {summary['social_platforms']}",
+        f"- Social control modes: {summary['social_control_modes']}",
         f"- Task manager layers: {summary['task_manager_layers']}",
         f"- Approval gates: {summary['approval_wall_gates']}",
         "",
@@ -164,6 +185,23 @@ def write_markdown(report):
     lines.extend(["## Download Targets", ""])
     for target in report["download_targets"]:
         lines.append(f"- {target['label']}: {target['goal']} ({target['status']})")
+    lines.extend(["", "## App Control Center", ""])
+    app_control = report.get("app_control_center", {})
+    if app_control:
+        lines.append(app_control.get("mission", ""))
+        lines.append("")
+        lines.append(f"- Safe modes: {', '.join(app_control.get('safe_control_modes', []))}")
+        lines.append(f"- Approval required: {', '.join(app_control.get('approval_required', []))}")
+        lines.append(f"- Targets: {', '.join(app_control.get('supported_targets', []))}")
+    lines.extend(["", "## Social Control Center", ""])
+    social_control = report.get("social_control_center", {})
+    if social_control:
+        lines.append(social_control.get("mission", ""))
+        lines.append("")
+        lines.append(f"- Platforms: {', '.join(social_control.get('platforms', []))}")
+        lines.append(f"- Safe modes: {', '.join(social_control.get('safe_control_modes', []))}")
+        lines.append(f"- Approval required: {', '.join(social_control.get('approval_required', []))}")
+        lines.append(f"- Blocked without review: {', '.join(social_control.get('blocked_without_review', []))}")
     lines.extend(["", "## Approval Wall", ""])
     for gate in report["approval_wall"]:
         lines.append(f"- {gate}")
