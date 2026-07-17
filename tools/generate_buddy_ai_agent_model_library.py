@@ -50,11 +50,31 @@ def build_model_resources(config):
                     "bad_at": family.get("bad_at", []),
                     "use_when": tier["use_when"],
                     "tradeoff": tier["tradeoff"],
+                    "cost_posture": infer_cost_posture(family, tier),
                     "status": "candidate_verify_model_id_before_production",
                     "approval_gates": ["provider_credentials", "pricing_review", "data_privacy_review"],
                 }
             )
     return resources
+
+
+def infer_cost_posture(family, tier):
+    text = " ".join(
+        [
+            family.get("id", ""),
+            family.get("label", ""),
+            " ".join(family.get("roles", [])),
+            " ".join(family.get("good_at", [])),
+            tier.get("id", ""),
+        ]
+    ).lower()
+    if tier.get("id") in {"budget", "private"}:
+        return "lowest_cost_candidate"
+    if any(term in text for term in ["flash-lite", "free-tier", "cost", "budget", "open_weight", "local"]):
+        return "low_cost_candidate"
+    if tier.get("id") == "fast":
+        return "cost_controlled_iteration"
+    return "premium_or_quality_candidate"
 
 
 def choose_route(task, resources):
@@ -76,6 +96,8 @@ def choose_route(task, resources):
         if resource["tier"] == "quality":
             score += 2
         if resource["tier"] == "fast":
+            score += 1
+        if resource["tier"] == "budget" and resource.get("cost_posture") in {"lowest_cost_candidate", "low_cost_candidate"}:
             score += 1
         if score:
             scoring.append((score, resource))
@@ -165,6 +187,13 @@ def build_report():
     summary = {
         "model_resources": len(resources),
         "providers": len(providers),
+        "low_cost_resources": sum(
+            1
+            for resource in resources
+            if resource.get("cost_posture") in {"lowest_cost_candidate", "low_cost_candidate", "cost_controlled_iteration"}
+        ),
+        "google_gemini_resources": sum(1 for resource in resources if resource["provider"] == "Google"),
+        "free_or_cheap_routing_enabled": True,
         "agent_types": len(config.get("agent_types", [])),
         "prompt_types": len(config.get("prompt_types", [])),
         "tool_types": len(config.get("tool_types", [])),
@@ -181,6 +210,18 @@ def build_report():
         "source_config": str(CONFIG_FILE.relative_to(ROOT)),
         "mission": config.get("mission", ""),
         "policy": config.get("policy", {}),
+        "cost_control": {
+            "default_budget_mode": "free_or_low_cost_first",
+            "preferred_sandbox_provider": "Google",
+            "preferred_sandbox_family": "google_gemini_flash_lite",
+            "secret_name": "GOOGLE_API_KEY",
+            "rules": [
+                "Use Gemini Flash-Lite, local/open models, cached results, and batchable summaries for safe sandbox drafts.",
+                "Use premium models only for high-impact reasoning, client-facing deliverables, or failed cheap-model evals.",
+                "Keep paid calls, always-on loops, and external actions behind owner approval and budget limits.",
+                "Track projected usage separately from confirmed spend.",
+            ],
+        },
         "summary": summary,
         "providers": providers,
         "provider_docs": config.get("provider_docs", []),
@@ -210,6 +251,9 @@ def write_markdown(report):
         "",
         f"- Model resources: {summary['model_resources']}",
         f"- Providers: {summary['providers']}",
+        f"- Low-cost resources: {summary['low_cost_resources']}",
+        f"- Google Gemini resources: {summary['google_gemini_resources']}",
+        f"- Free or cheap routing enabled: {summary['free_or_cheap_routing_enabled']}",
         f"- Agent types: {summary['agent_types']}",
         f"- Prompt types: {summary['prompt_types']}",
         f"- Tool types: {summary['tool_types']}",
@@ -219,6 +263,14 @@ def write_markdown(report):
         "## Routing Rule",
         "",
         report["policy"].get("model_id_rule", ""),
+        "",
+        report["policy"].get("cost_rule", ""),
+        "",
+        "## Cost Control",
+        "",
+        f"- Default budget mode: {report['cost_control']['default_budget_mode']}",
+        f"- Preferred sandbox family: {report['cost_control']['preferred_sandbox_family']}",
+        f"- Secret name: {report['cost_control']['secret_name']}",
         "",
         "## Top Task Routes",
         "",

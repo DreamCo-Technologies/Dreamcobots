@@ -1,8 +1,8 @@
 # Google Cloud Readiness
 
 - gcloud installed: True
-- gcloud authenticated: False
-- gcloud project configured: False
+- gcloud authenticated: True
+- gcloud project configured: True
 - Deployment targets: 9
 - Required APIs: 11
 - GitHub secrets required: 4
@@ -12,6 +12,9 @@
 - Secret Manager placeholders: 14
 - Workload Identity recommended: True
 - Production deploy approval required: True
+- Free or low-cost AI routing: True
+- Google Gemini secret ready: True
+- Cloud Run min instances 0 recommended: True
 
 ## Deploy Files
 
@@ -44,6 +47,15 @@
 - GCP_WORKLOAD_IDENTITY_PROVIDER
 - GCP_SERVICE_ACCOUNT
 - GCP_REGION
+
+## AI Cost Control
+
+- Keep Cloud Run min instances at 0 unless real traffic requires warm instances.
+- Set max instances low while cash is tight, then raise only after revenue or approval.
+- Use Gemini free-tier or low-cost Flash-Lite style routes for sandbox drafts, summaries, and routing.
+- Cache repeated report reads and model outputs before making more paid calls.
+- Do not run paid always-on model loops without a budget cap and owner approval.
+- Use local/static reports when they answer the question without an API call.
 
 ## Guardrails
 

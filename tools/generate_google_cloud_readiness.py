@@ -45,6 +45,21 @@ GITHUB_SECRETS = [
     "GCP_REGION",
 ]
 
+AI_COST_CONTROL = {
+    "default_mode": "free_or_low_cost_first",
+    "preferred_sandbox_model_family": "google_gemini_flash_lite",
+    "google_secret_name": "GOOGLE_API_KEY",
+    "cloud_run_cost_posture": "request_based_min_instances_zero",
+    "rules": [
+        "Keep Cloud Run min instances at 0 unless real traffic requires warm instances.",
+        "Set max instances low while cash is tight, then raise only after revenue or approval.",
+        "Use Gemini free-tier or low-cost Flash-Lite style routes for sandbox drafts, summaries, and routing.",
+        "Cache repeated report reads and model outputs before making more paid calls.",
+        "Do not run paid always-on model loops without a budget cap and owner approval.",
+        "Use local/static reports when they answer the question without an API call.",
+    ],
+}
+
 DEPLOY_FILES = [
     str(CLOUD_RUN_DOCKERFILE.relative_to(ROOT)),
     str(CLOUD_BUILD_FILE.relative_to(ROOT)),
@@ -213,6 +228,9 @@ def build_report() -> dict:
             "workload_identity_recommended": True,
             "production_deploy_approval_required": True,
             "secret_values_stored_in_repo": False,
+            "free_or_low_cost_ai_routing": True,
+            "google_gemini_secret_ready": "GOOGLE_API_KEY" in secret_template.get("secrets", []),
+            "cloud_run_min_instances_zero_recommended": True,
         },
         "local_cli": cli,
         "gcloud_context": context,
@@ -229,6 +247,7 @@ def build_report() -> dict:
             "default_mode": "DRY_RUN",
             "uses_workload_identity": True,
         },
+        "ai_cost_control": AI_COST_CONTROL,
         "cloud_build": {
             "file": str(CLOUD_BUILD_FILE.relative_to(ROOT)),
             "dockerfile": str(CLOUD_RUN_DOCKERFILE.relative_to(ROOT)),
@@ -275,6 +294,9 @@ def write_markdown(report: dict) -> None:
         f"- Secret Manager placeholders: {summary['secret_manager_placeholders']}",
         f"- Workload Identity recommended: {summary['workload_identity_recommended']}",
         f"- Production deploy approval required: {summary['production_deploy_approval_required']}",
+        f"- Free or low-cost AI routing: {summary['free_or_low_cost_ai_routing']}",
+        f"- Google Gemini secret ready: {summary['google_gemini_secret_ready']}",
+        f"- Cloud Run min instances 0 recommended: {summary['cloud_run_min_instances_zero_recommended']}",
         "",
         "## Deploy Files",
         "",
@@ -290,6 +312,8 @@ def write_markdown(report: dict) -> None:
     lines.extend(f"- {api}" for api in report["required_google_apis"])
     lines.extend(["", "## GitHub Secrets", ""])
     lines.extend(f"- {secret}" for secret in report["github_secrets"])
+    lines.extend(["", "## AI Cost Control", ""])
+    lines.extend(f"- {rule}" for rule in report["ai_cost_control"]["rules"])
     lines.extend(["", "## Guardrails", ""])
     lines.extend(f"- {guardrail}" for guardrail in report["guardrails"])
     OUTPUT_MD.write_text("\n".join(lines) + "\n", encoding="utf-8")

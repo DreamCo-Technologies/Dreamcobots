@@ -538,7 +538,10 @@ describe('GET /api/ai-agent-model-library', () => {
 
     expect(res.status).toBe(200);
     expect(res.body.schema).toBe('dreamco.buddy_ai_agent_model_library_report.v1');
-    expect(res.body.summary.model_resources).toBe(100);
+    expect(res.body.summary.model_resources).toBeGreaterThanOrEqual(100);
+    expect(res.body.summary.low_cost_resources).toBeGreaterThan(0);
+    expect(res.body.summary.google_gemini_resources).toBeGreaterThanOrEqual(4);
+    expect(res.body.summary.free_or_cheap_routing_enabled).toBe(true);
     expect(res.body.summary.agent_types).toBeGreaterThanOrEqual(16);
     expect(res.body.summary.prompt_types).toBeGreaterThanOrEqual(20);
     expect(res.body.summary.tool_types).toBeGreaterThanOrEqual(20);
@@ -549,6 +552,9 @@ describe('GET /api/ai-agent-model-library', () => {
     );
     expect(res.body.model_resources[0]).toHaveProperty('good_at');
     expect(res.body.model_resources[0]).toHaveProperty('bad_at');
+    expect(res.body.cost_control.default_budget_mode).toBe('free_or_low_cost_first');
+    expect(res.body.cost_control.preferred_sandbox_family).toBe('google_gemini_flash_lite');
+    expect(res.body.model_resources.map((resource) => resource.family_id)).toContain('google_gemini_flash_lite');
   });
 });
 
@@ -783,6 +789,14 @@ describe('GET /api/google-cloud-readiness', () => {
     expect(res.body.summary.secret_manager_placeholders).toBeGreaterThanOrEqual(10);
     expect(res.body.summary.workload_identity_recommended).toBe(true);
     expect(res.body.summary.secret_values_stored_in_repo).toBe(false);
+    expect(res.body.summary.free_or_low_cost_ai_routing).toBe(true);
+    expect(res.body.summary.google_gemini_secret_ready).toBe(true);
+    expect(res.body.summary.cloud_run_min_instances_zero_recommended).toBe(true);
+    expect(res.body.ai_cost_control.default_mode).toBe('free_or_low_cost_first');
+    expect(res.body.ai_cost_control.google_secret_name).toBe('GOOGLE_API_KEY');
+    expect(res.body.ai_cost_control.rules).toEqual(
+      expect.arrayContaining(['Do not run paid always-on model loops without a budget cap and owner approval.']),
+    );
     expect(res.body.github_actions.default_mode).toBe('DRY_RUN');
     expect(res.body.github_actions.manual_approval_input).toBe('deploy=APPROVE');
     expect(res.body.required_google_apis).toEqual(

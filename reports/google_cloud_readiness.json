@@ -1,4 +1,18 @@
 {
+  "ai_cost_control": {
+    "cloud_run_cost_posture": "request_based_min_instances_zero",
+    "default_mode": "free_or_low_cost_first",
+    "google_secret_name": "GOOGLE_API_KEY",
+    "preferred_sandbox_model_family": "google_gemini_flash_lite",
+    "rules": [
+      "Keep Cloud Run min instances at 0 unless real traffic requires warm instances.",
+      "Set max instances low while cash is tight, then raise only after revenue or approval.",
+      "Use Gemini free-tier or low-cost Flash-Lite style routes for sandbox drafts, summaries, and routing.",
+      "Cache repeated report reads and model outputs before making more paid calls.",
+      "Do not run paid always-on model loops without a budget cap and owner approval.",
+      "Use local/static reports when they answer the question without an API call."
+    ]
+  },
   "bootstrap": {
     "example": "PROJECT_ID=YOUR_PROJECT_ID REGION=us-central1 ./deploy/google-cloud/bootstrap.sh",
     "requires_login": true,
@@ -94,12 +108,12 @@
     }
   ],
   "gcloud_context": {
-    "account_count": 0,
-    "authenticated": false,
-    "project": "",
-    "project_configured": false
+    "account_count": 1,
+    "authenticated": true,
+    "project": "project-6edace54-7846-4fda-ad8",
+    "project_configured": true
   },
-  "generated_at": "2026-07-16T00:59:23Z",
+  "generated_at": "2026-07-17T11:31:18Z",
   "github_actions": {
     "cloud_run_deploy_workflow": ".github/workflows/google-cloud-run-deploy.yml",
     "default_mode": "DRY_RUN",
@@ -238,13 +252,16 @@
     "Enable budgets, alerts, logs, uptime checks, and rollback before production traffic."
   ],
   "summary": {
+    "cloud_run_min_instances_zero_recommended": true,
     "cloud_run_services_mapped": 3,
     "deploy_files_ready": 8,
     "deployment_targets": 9,
-    "gcloud_authenticated": false,
+    "free_or_low_cost_ai_routing": true,
+    "gcloud_authenticated": true,
     "gcloud_installed": true,
-    "gcloud_project_configured": false,
+    "gcloud_project_configured": true,
     "github_secrets_required": 4,
+    "google_gemini_secret_ready": true,
     "production_deploy_approval_required": true,
     "pubsub_topics_mapped": 3,
     "required_apis": 11,

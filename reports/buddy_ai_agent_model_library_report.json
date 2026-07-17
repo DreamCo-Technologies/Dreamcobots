@@ -433,9 +433,9 @@
     {
       "division": "DreamFinance",
       "fallback_resources": [
+        "google_gemini_flash_lite__quality",
         "meta_llama__quality",
-        "mistral_models__quality",
-        "fireworks_open__fast"
+        "mistral_models__quality"
       ],
       "name": "211 Resource Eligibility Bot",
       "primary_resource": "fireworks_open__quality",
@@ -457,9 +457,9 @@
     {
       "division": "DreamProduction",
       "fallback_resources": [
+        "google_gemini_flash_lite__quality",
         "meta_llama__quality",
-        "mistral_models__quality",
-        "fireworks_open__fast"
+        "mistral_models__quality"
       ],
       "name": "5S Workplace Audit Tool",
       "primary_resource": "fireworks_open__quality",
@@ -469,9 +469,9 @@
     {
       "division": "DreamCodeLab",
       "fallback_resources": [
+        "google_gemini_flash_lite__quality",
         "meta_llama__quality",
-        "mistral_models__quality",
-        "fireworks_open__fast"
+        "mistral_models__quality"
       ],
       "name": "Apibot",
       "primary_resource": "fireworks_open__quality",
@@ -483,7 +483,7 @@
       "fallback_resources": [
         "anthropic_claude__quality",
         "mistral_models__quality",
-        "ai21_language__fast"
+        "ai21_language__budget"
       ],
       "name": "CloserBot",
       "primary_resource": "ai21_language__quality",
@@ -493,9 +493,9 @@
     {
       "division": "DreamSalesPro",
       "fallback_resources": [
+        "google_gemini_flash_lite__quality",
         "meta_llama__quality",
-        "mistral_models__quality",
-        "fireworks_open__fast"
+        "mistral_models__quality"
       ],
       "name": "EnrichmentBot",
       "primary_resource": "fireworks_open__quality",
@@ -507,7 +507,7 @@
       "fallback_resources": [
         "anthropic_claude__quality",
         "mistral_models__quality",
-        "ai21_language__fast"
+        "ai21_language__budget"
       ],
       "name": "FollowUpBot",
       "primary_resource": "ai21_language__quality",
@@ -517,9 +517,9 @@
     {
       "division": "DreamFinance",
       "fallback_resources": [
+        "google_gemini_flash_lite__quality",
         "meta_llama__quality",
-        "mistral_models__quality",
-        "fireworks_open__fast"
+        "mistral_models__quality"
       ],
       "name": "LeadGenBot",
       "primary_resource": "fireworks_open__quality",
@@ -531,7 +531,7 @@
       "fallback_resources": [
         "anthropic_claude__quality",
         "mistral_models__quality",
-        "ai21_language__fast"
+        "ai21_language__budget"
       ],
       "name": "OutreachBot",
       "primary_resource": "ai21_language__quality",
@@ -541,9 +541,9 @@
     {
       "division": "DreamCodeLab",
       "fallback_resources": [
+        "google_gemini_flash_lite__quality",
         "meta_llama__quality",
-        "mistral_models__quality",
-        "fireworks_open__fast"
+        "mistral_models__quality"
       ],
       "name": "Webhooksbot",
       "primary_resource": "fireworks_open__quality",
@@ -555,7 +555,7 @@
       "fallback_resources": [
         "openai_reasoning__quality",
         "qwen_models__quality",
-        "deepseek_coder_reasoner__fast"
+        "deepseek_coder_reasoner__budget"
       ],
       "name": "A/B Testing Bot",
       "primary_resource": "deepseek_coder_reasoner__quality",
@@ -565,9 +565,9 @@
     {
       "division": "DreamBizLaunch",
       "fallback_resources": [
+        "google_gemini_flash_lite__quality",
         "meta_llama__quality",
-        "mistral_models__quality",
-        "fireworks_open__fast"
+        "mistral_models__quality"
       ],
       "name": "Accelerator Application Prep",
       "primary_resource": "fireworks_open__quality",
@@ -575,7 +575,19 @@
       "task_type": "workflow_automation"
     }
   ],
-  "generated_at": "2026-07-15T21:39:43.078018+00:00",
+  "cost_control": {
+    "default_budget_mode": "free_or_low_cost_first",
+    "preferred_sandbox_family": "google_gemini_flash_lite",
+    "preferred_sandbox_provider": "Google",
+    "rules": [
+      "Use Gemini Flash-Lite, local/open models, cached results, and batchable summaries for safe sandbox drafts.",
+      "Use premium models only for high-impact reasoning, client-facing deliverables, or failed cheap-model evals.",
+      "Keep paid calls, always-on loops, and external actions behind owner approval and budget limits.",
+      "Track projected usage separately from confirmed spend."
+    ],
+    "secret_name": "GOOGLE_API_KEY"
+  },
+  "generated_at": "2026-07-17T11:31:17.183629+00:00",
   "mission": "Give Buddy a governed prompt, tool, agent, and model-resource library so every bot can pick the best AI route for each task, explain tradeoffs, and fall back safely.",
   "model_resources": [
     {
@@ -594,6 +606,7 @@
         "debugging",
         "model_evaluation"
       ],
+      "cost_posture": "premium_or_quality_candidate",
       "family_id": "openai_reasoning",
       "good_at": [
         "complex planning",
@@ -631,6 +644,7 @@
         "debugging",
         "model_evaluation"
       ],
+      "cost_posture": "cost_controlled_iteration",
       "family_id": "openai_reasoning",
       "good_at": [
         "complex planning",
@@ -668,6 +682,7 @@
         "debugging",
         "model_evaluation"
       ],
+      "cost_posture": "lowest_cost_candidate",
       "family_id": "openai_reasoning",
       "good_at": [
         "complex planning",
@@ -705,6 +720,7 @@
         "debugging",
         "model_evaluation"
       ],
+      "cost_posture": "lowest_cost_candidate",
       "family_id": "openai_reasoning",
       "good_at": [
         "complex planning",
@@ -741,6 +757,7 @@
         "kid_learning_video",
         "customer_support"
       ],
+      "cost_posture": "premium_or_quality_candidate",
       "family_id": "openai_realtime",
       "good_at": [
         "voice assistants",
@@ -775,6 +792,7 @@
         "kid_learning_video",
         "customer_support"
       ],
+      "cost_posture": "cost_controlled_iteration",
       "family_id": "openai_realtime",
       "good_at": [
         "voice assistants",
@@ -809,6 +827,7 @@
         "kid_learning_video",
         "customer_support"
       ],
+      "cost_posture": "lowest_cost_candidate",
       "family_id": "openai_realtime",
       "good_at": [
         "voice assistants",
@@ -843,6 +862,7 @@
         "kid_learning_video",
         "customer_support"
       ],
+      "cost_posture": "lowest_cost_candidate",
       "family_id": "openai_realtime",
       "good_at": [
         "voice assistants",
@@ -876,6 +896,7 @@
         "image_generation",
         "image_editing"
       ],
+      "cost_posture": "premium_or_quality_candidate",
       "family_id": "openai_image",
       "good_at": [
         "royal brand images",
@@ -909,6 +930,7 @@
         "image_generation",
         "image_editing"
       ],
+      "cost_posture": "cost_controlled_iteration",
       "family_id": "openai_image",
       "good_at": [
         "royal brand images",
@@ -942,6 +964,7 @@
         "image_generation",
         "image_editing"
       ],
+      "cost_posture": "lowest_cost_candidate",
       "family_id": "openai_image",
       "good_at": [
         "royal brand images",
@@ -975,6 +998,7 @@
         "image_generation",
         "image_editing"
       ],
+      "cost_posture": "lowest_cost_candidate",
       "family_id": "openai_image",
       "good_at": [
         "royal brand images",
@@ -1009,6 +1033,7 @@
         "legal_safety_review",
         "sales_copy"
       ],
+      "cost_posture": "premium_or_quality_candidate",
       "family_id": "anthropic_claude",
       "good_at": [
         "long docs",
@@ -1043,6 +1068,7 @@
         "legal_safety_review",
         "sales_copy"
       ],
+      "cost_posture": "cost_controlled_iteration",
       "family_id": "anthropic_claude",
       "good_at": [
         "long docs",
@@ -1077,6 +1103,7 @@
         "legal_safety_review",
         "sales_copy"
       ],
+      "cost_posture": "lowest_cost_candidate",
       "family_id": "anthropic_claude",
       "good_at": [
         "long docs",
@@ -1111,6 +1138,7 @@
         "legal_safety_review",
         "sales_copy"
       ],
+      "cost_posture": "lowest_cost_candidate",
       "family_id": "anthropic_claude",
       "good_at": [
         "long docs",
@@ -1144,6 +1172,7 @@
         "video_storyboard",
         "course_building"
       ],
+      "cost_posture": "premium_or_quality_candidate",
       "family_id": "google_gemini",
       "good_at": [
         "large context",
@@ -1177,6 +1206,7 @@
         "video_storyboard",
         "course_building"
       ],
+      "cost_posture": "cost_controlled_iteration",
       "family_id": "google_gemini",
       "good_at": [
         "large context",
@@ -1210,6 +1240,7 @@
         "video_storyboard",
         "course_building"
       ],
+      "cost_posture": "lowest_cost_candidate",
       "family_id": "google_gemini",
       "good_at": [
         "large context",
@@ -1243,6 +1274,7 @@
         "video_storyboard",
         "course_building"
       ],
+      "cost_posture": "lowest_cost_candidate",
       "family_id": "google_gemini",
       "good_at": [
         "large context",
@@ -1269,6 +1301,166 @@
         "data_privacy_review"
       ],
       "bad_at": [
+        "highest-stakes reasoning without review",
+        "paid scale without budget approval"
+      ],
+      "best_tasks": [
+        "workflow_automation",
+        "customer_support",
+        "data_extraction",
+        "model_evaluation"
+      ],
+      "cost_posture": "low_cost_candidate",
+      "family_id": "google_gemini_flash_lite",
+      "good_at": [
+        "free-tier testing",
+        "cheap drafts",
+        "routing decisions",
+        "summaries",
+        "batchable sandbox tasks"
+      ],
+      "id": "google_gemini_flash_lite__quality",
+      "label": "Gemini Flash-Lite free and low-cost routing - Best Quality",
+      "provider": "Google",
+      "roles": [
+        "budget",
+        "fast_reasoning",
+        "summarization",
+        "classification",
+        "multimodal"
+      ],
+      "status": "candidate_verify_model_id_before_production",
+      "tier": "quality",
+      "tradeoff": "Higher cost and latency.",
+      "use_when": "Task is high impact, hard, client-facing, or needs strong reasoning."
+    },
+    {
+      "approval_gates": [
+        "provider_credentials",
+        "pricing_review",
+        "data_privacy_review"
+      ],
+      "bad_at": [
+        "highest-stakes reasoning without review",
+        "paid scale without budget approval"
+      ],
+      "best_tasks": [
+        "workflow_automation",
+        "customer_support",
+        "data_extraction",
+        "model_evaluation"
+      ],
+      "cost_posture": "low_cost_candidate",
+      "family_id": "google_gemini_flash_lite",
+      "good_at": [
+        "free-tier testing",
+        "cheap drafts",
+        "routing decisions",
+        "summaries",
+        "batchable sandbox tasks"
+      ],
+      "id": "google_gemini_flash_lite__fast",
+      "label": "Gemini Flash-Lite free and low-cost routing - Fast Iteration",
+      "provider": "Google",
+      "roles": [
+        "budget",
+        "fast_reasoning",
+        "summarization",
+        "classification",
+        "multimodal"
+      ],
+      "status": "candidate_verify_model_id_before_production",
+      "tier": "fast",
+      "tradeoff": "May need review by a stronger model.",
+      "use_when": "Task needs quick drafts, tests, routing, or repeated loops."
+    },
+    {
+      "approval_gates": [
+        "provider_credentials",
+        "pricing_review",
+        "data_privacy_review"
+      ],
+      "bad_at": [
+        "highest-stakes reasoning without review",
+        "paid scale without budget approval"
+      ],
+      "best_tasks": [
+        "workflow_automation",
+        "customer_support",
+        "data_extraction",
+        "model_evaluation"
+      ],
+      "cost_posture": "lowest_cost_candidate",
+      "family_id": "google_gemini_flash_lite",
+      "good_at": [
+        "free-tier testing",
+        "cheap drafts",
+        "routing decisions",
+        "summaries",
+        "batchable sandbox tasks"
+      ],
+      "id": "google_gemini_flash_lite__budget",
+      "label": "Gemini Flash-Lite free and low-cost routing - Budget Scale",
+      "provider": "Google",
+      "roles": [
+        "budget",
+        "fast_reasoning",
+        "summarization",
+        "classification",
+        "multimodal"
+      ],
+      "status": "candidate_verify_model_id_before_production",
+      "tier": "budget",
+      "tradeoff": "Lower quality ceiling.",
+      "use_when": "Task is repetitive, low risk, batchable, or sandbox-only."
+    },
+    {
+      "approval_gates": [
+        "provider_credentials",
+        "pricing_review",
+        "data_privacy_review"
+      ],
+      "bad_at": [
+        "highest-stakes reasoning without review",
+        "paid scale without budget approval"
+      ],
+      "best_tasks": [
+        "workflow_automation",
+        "customer_support",
+        "data_extraction",
+        "model_evaluation"
+      ],
+      "cost_posture": "lowest_cost_candidate",
+      "family_id": "google_gemini_flash_lite",
+      "good_at": [
+        "free-tier testing",
+        "cheap drafts",
+        "routing decisions",
+        "summaries",
+        "batchable sandbox tasks"
+      ],
+      "id": "google_gemini_flash_lite__private",
+      "label": "Gemini Flash-Lite free and low-cost routing - Local or Private",
+      "provider": "Google",
+      "roles": [
+        "budget",
+        "fast_reasoning",
+        "summarization",
+        "classification",
+        "multimodal"
+      ],
+      "status": "candidate_verify_model_id_before_production",
+      "tier": "private",
+      "tradeoff": "Needs local hosting and stronger evals.",
+      "use_when": "Task touches sensitive docs or needs offline/cost-controlled processing."
+    },
+    {
+      "approval_gates": [
+        "provider_credentials",
+        "pricing_review",
+        "data_privacy_review"
+      ],
+      "bad_at": [
         "frontier reasoning unless benchmarked"
       ],
       "best_tasks": [
@@ -1276,6 +1468,7 @@
         "customer_support",
         "workflow_automation"
       ],
+      "cost_posture": "low_cost_candidate",
       "family_id": "meta_llama",
       "good_at": [
         "local/private tasks",
@@ -1309,6 +1502,7 @@
         "customer_support",
         "workflow_automation"
       ],
+      "cost_posture": "low_cost_candidate",
       "family_id": "meta_llama",
       "good_at": [
         "local/private tasks",
@@ -1342,6 +1536,7 @@
         "customer_support",
         "workflow_automation"
       ],
+      "cost_posture": "lowest_cost_candidate",
       "family_id": "meta_llama",
       "good_at": [
         "local/private tasks",
@@ -1375,6 +1570,7 @@
         "customer_support",
         "workflow_automation"
       ],
+      "cost_posture": "lowest_cost_candidate",
       "family_id": "meta_llama",
       "good_at": [
         "local/private tasks",
@@ -1408,6 +1604,7 @@
         "workflow_automation",
         "data_extraction"
       ],
+      "cost_posture": "low_cost_candidate",
       "family_id": "mistral_models",
       "good_at": [
         "fast drafts",
@@ -1441,6 +1638,7 @@
         "workflow_automation",
         "data_extraction"
       ],
+      "cost_posture": "low_cost_candidate",
       "family_id": "mistral_models",
       "good_at": [
         "fast drafts",
@@ -1474,6 +1672,7 @@
         "workflow_automation",
         "data_extraction"
       ],
+      "cost_posture": "lowest_cost_candidate",
       "family_id": "mistral_models",
       "good_at": [
         "fast drafts",
@@ -1507,6 +1706,7 @@
         "workflow_automation",
         "data_extraction"
       ],
+      "cost_posture": "lowest_cost_candidate",
       "family_id": "mistral_models",
       "good_at": [
         "fast drafts",
@@ -1540,6 +1740,7 @@
         "market_research",
         "memory_curation"
       ],
+      "cost_posture": "premium_or_quality_candidate",
       "family_id": "cohere_command",
       "good_at": [
         "retrieval",
@@ -1573,6 +1774,7 @@
         "market_research",
         "memory_curation"
       ],
+      "cost_posture": "cost_controlled_iteration",
       "family_id": "cohere_command",
       "good_at": [
         "retrieval",
@@ -1606,6 +1808,7 @@
         "market_research",
         "memory_curation"
       ],
+      "cost_posture": "lowest_cost_candidate",
       "family_id": "cohere_command",
       "good_at": [
         "retrieval",
@@ -1639,6 +1842,7 @@
         "market_research",
         "memory_curation"
       ],
+      "cost_posture": "lowest_cost_candidate",
       "family_id": "cohere_command",
       "good_at": [
         "retrieval",
@@ -1671,6 +1875,7 @@
         "coding",
         "debugging"
       ],
+      "cost_posture": "low_cost_candidate",
       "family_id": "deepseek_coder_reasoner",
       "good_at": [
         "code generation",
@@ -1703,6 +1908,7 @@
         "coding",
         "debugging"
       ],
+      "cost_posture": "low_cost_candidate",
       "family_id": "deepseek_coder_reasoner",
       "good_at": [
         "code generation",
@@ -1735,6 +1941,7 @@
         "coding",
         "debugging"
       ],
+      "cost_posture": "lowest_cost_candidate",
       "family_id": "deepseek_coder_reasoner",
       "good_at": [
         "code generation",
@@ -1767,6 +1974,7 @@
         "coding",
         "debugging"
       ],
+      "cost_posture": "lowest_cost_candidate",
       "family_id": "deepseek_coder_reasoner",
       "good_at": [
         "code generation",
@@ -1800,6 +2008,7 @@
         "course_building",
         "customer_support"
       ],
+      "cost_posture": "low_cost_candidate",
       "family_id": "qwen_models",
       "good_at": [
         "multilingual apps",
@@ -1833,6 +2042,7 @@
         "course_building",
         "customer_support"
       ],
+      "cost_posture": "low_cost_candidate",
       "family_id": "qwen_models",
       "good_at": [
         "multilingual apps",
@@ -1866,6 +2076,7 @@
         "course_building",
         "customer_support"
       ],
+      "cost_posture": "lowest_cost_candidate",
       "family_id": "qwen_models",
       "good_at": [
         "multilingual apps",
@@ -1899,6 +2110,7 @@
         "course_building",
         "customer_support"
       ],
+      "cost_posture": "lowest_cost_candidate",
       "family_id": "qwen_models",
       "good_at": [
         "multilingual apps",
@@ -1932,6 +2144,7 @@
         "market_research",
         "competitor_analysis"
       ],
+      "cost_posture": "premium_or_quality_candidate",
       "family_id": "xai_grok",
       "good_at": [
         "trend scanning",
@@ -1963,6 +2176,7 @@
         "market_research",
         "competitor_analysis"
       ],
+      "cost_posture": "cost_controlled_iteration",
       "family_id": "xai_grok",
       "good_at": [
         "trend scanning",
@@ -1994,6 +2208,7 @@
         "market_research",
         "competitor_analysis"
       ],
+      "cost_posture": "lowest_cost_candidate",
       "family_id": "xai_grok",
       "good_at": [
         "trend scanning",
@@ -2025,6 +2240,7 @@
         "market_research",
         "competitor_analysis"
       ],
+      "cost_posture": "lowest_cost_candidate",
       "family_id": "xai_grok",
       "good_at": [
         "trend scanning",
@@ -2056,6 +2272,7 @@
         "market_research",
         "competitor_analysis"
       ],
+      "cost_posture": "premium_or_quality_candidate",
       "family_id": "perplexity_search",
       "good_at": [
         "source-backed answers",
@@ -2089,6 +2306,7 @@
         "market_research",
         "competitor_analysis"
       ],
+      "cost_posture": "cost_controlled_iteration",
       "family_id": "perplexity_search",
       "good_at": [
         "source-backed answers",
@@ -2122,6 +2340,7 @@
         "market_research",
         "competitor_analysis"
       ],
+      "cost_posture": "lowest_cost_candidate",
       "family_id": "perplexity_search",
       "good_at": [
         "source-backed answers",
@@ -2155,6 +2374,7 @@
         "market_research",
         "competitor_analysis"
       ],
+      "cost_posture": "lowest_cost_candidate",
       "family_id": "perplexity_search",
       "good_at": [
         "source-backed answers",
@@ -2188,6 +2408,7 @@
         "image_generation",
         "game_building"
       ],
+      "cost_posture": "premium_or_quality_candidate",
       "family_id": "stability_image",
       "good_at": [
         "asset variants",
@@ -2221,6 +2442,7 @@
         "image_generation",
         "game_building"
       ],
+      "cost_posture": "cost_controlled_iteration",
       "family_id": "stability_image",
       "good_at": [
         "asset variants",
@@ -2254,6 +2476,7 @@
         "image_generation",
         "game_building"
       ],
+      "cost_posture": "lowest_cost_candidate",
       "family_id": "stability_image",
       "good_at": [
         "asset variants",
@@ -2287,6 +2510,7 @@
         "image_generation",
         "game_building"
       ],
+      "cost_posture": "lowest_cost_candidate",
       "family_id": "stability_image",
       "good_at": [
         "asset variants",
@@ -2319,6 +2543,7 @@
         "image_generation",
         "image_editing"
       ],
+      "cost_posture": "premium_or_quality_candidate",
       "family_id": "black_forest_image",
       "good_at": [
         "photoreal image concepts",
@@ -2350,6 +2575,7 @@
         "image_generation",
         "image_editing"
       ],
+      "cost_posture": "cost_controlled_iteration",
       "family_id": "black_forest_image",
       "good_at": [
         "photoreal image concepts",
@@ -2381,6 +2607,7 @@
         "image_generation",
         "image_editing"
       ],
+      "cost_posture": "lowest_cost_candidate",
       "family_id": "black_forest_image",
       "good_at": [
         "photoreal image concepts",
@@ -2412,6 +2639,7 @@
         "image_generation",
         "image_editing"
       ],
+      "cost_posture": "lowest_cost_candidate",
       "family_id": "black_forest_image",
       "good_at": [
         "photoreal image concepts",
@@ -2444,6 +2672,7 @@
         "video_generation",
         "music_video_planning"
       ],
+      "cost_posture": "premium_or_quality_candidate",
       "family_id": "runway_video",
       "good_at": [
         "short video concepts",
@@ -2477,6 +2706,7 @@
         "video_generation",
         "music_video_planning"
       ],
+      "cost_posture": "cost_controlled_iteration",
       "family_id": "runway_video",
       "good_at": [
         "short video concepts",
@@ -2510,6 +2740,7 @@
         "video_generation",
         "music_video_planning"
       ],
+      "cost_posture": "lowest_cost_candidate",
       "family_id": "runway_video",
       "good_at": [
         "short video concepts",
@@ -2543,6 +2774,7 @@
         "video_generation",
         "music_video_planning"
       ],
+      "cost_posture": "lowest_cost_candidate",
       "family_id": "runway_video",
       "good_at": [
         "short video concepts",
@@ -2575,6 +2807,7 @@
         "voiceover",
         "kid_learning_video"
       ],
+      "cost_posture": "low_cost_candidate",
       "family_id": "elevenlabs_voice",
       "good_at": [
         "voiceover",
@@ -2607,6 +2840,7 @@
         "voiceover",
         "kid_learning_video"
       ],
+      "cost_posture": "low_cost_candidate",
       "family_id": "elevenlabs_voice",
       "good_at": [
         "voiceover",
@@ -2639,6 +2873,7 @@
         "voiceover",
         "kid_learning_video"
       ],
+      "cost_posture": "lowest_cost_candidate",
       "family_id": "elevenlabs_voice",
       "good_at": [
         "voiceover",
@@ -2671,6 +2906,7 @@
         "voiceover",
         "kid_learning_video"
       ],
+      "cost_posture": "lowest_cost_candidate",
       "family_id": "elevenlabs_voice",
       "good_at": [
         "voiceover",
@@ -2702,6 +2938,7 @@
       "best_tasks": [
         "music_video_planning"
       ],
+      "cost_posture": "premium_or_quality_candidate",
       "family_id": "suno_music",
       "good_at": [
         "song demos",
@@ -2733,6 +2970,7 @@
       "best_tasks": [
         "music_video_planning"
       ],
+      "cost_posture": "cost_controlled_iteration",
       "family_id": "suno_music",
       "good_at": [
         "song demos",
@@ -2764,6 +3002,7 @@
       "best_tasks": [
         "music_video_planning"
       ],
+      "cost_posture": "lowest_cost_candidate",
       "family_id": "suno_music",
       "good_at": [
         "song demos",
@@ -2795,6 +3034,7 @@
       "best_tasks": [
         "music_video_planning"
       ],
+      "cost_posture": "lowest_cost_candidate",
       "family_id": "suno_music",
       "good_at": [
         "song demos",
@@ -2827,6 +3067,7 @@
       "best_tasks": [
         "music_video_planning"
       ],
+      "cost_posture": "premium_or_quality_candidate",
       "family_id": "udio_music",
       "good_at": [
         "song concepts",
@@ -2859,6 +3100,7 @@
       "best_tasks": [
         "music_video_planning"
       ],
+      "cost_posture": "cost_controlled_iteration",
       "family_id": "udio_music",
       "good_at": [
         "song concepts",
@@ -2891,6 +3133,7 @@
       "best_tasks": [
         "music_video_planning"
       ],
+      "cost_posture": "lowest_cost_candidate",
       "family_id": "udio_music",
       "good_at": [
         "song concepts",
@@ -2923,6 +3166,7 @@
       "best_tasks": [
         "music_video_planning"
       ],
+      "cost_posture": "lowest_cost_candidate",
       "family_id": "udio_music",
       "good_at": [
         "song concepts",
@@ -2955,6 +3199,7 @@
         "image_generation",
         "image_editing"
       ],
+      "cost_posture": "premium_or_quality_candidate",
       "family_id": "adobe_firefly",
       "good_at": [
         "brand assets",
@@ -2987,6 +3232,7 @@
         "image_generation",
         "image_editing"
       ],
+      "cost_posture": "cost_controlled_iteration",
       "family_id": "adobe_firefly",
       "good_at": [
         "brand assets",
@@ -3019,6 +3265,7 @@
         "image_generation",
         "image_editing"
       ],
+      "cost_posture": "lowest_cost_candidate",
       "family_id": "adobe_firefly",
       "good_at": [
         "brand assets",
@@ -3051,6 +3298,7 @@
         "image_generation",
         "image_editing"
       ],
+      "cost_posture": "lowest_cost_candidate",
       "family_id": "adobe_firefly",
       "good_at": [
         "brand assets",
@@ -3083,6 +3331,7 @@
         "model_evaluation",
         "simulation_building"
       ],
+      "cost_posture": "low_cost_candidate",
       "family_id": "huggingface_open",
       "good_at": [
         "model discovery",
@@ -3115,6 +3364,7 @@
         "model_evaluation",
         "simulation_building"
       ],
+      "cost_posture": "low_cost_candidate",
       "family_id": "huggingface_open",
       "good_at": [
         "model discovery",
@@ -3147,6 +3397,7 @@
         "model_evaluation",
         "simulation_building"
       ],
+      "cost_posture": "lowest_cost_candidate",
       "family_id": "huggingface_open",
       "good_at": [
         "model discovery",
@@ -3179,6 +3430,7 @@
         "model_evaluation",
         "simulation_building"
       ],
+      "cost_posture": "lowest_cost_candidate",
       "family_id": "huggingface_open",
       "good_at": [
         "model discovery",
@@ -3211,6 +3463,7 @@
         "simulation_building",
         "data_extraction"
       ],
+      "cost_posture": "premium_or_quality_candidate",
       "family_id": "nvidia_nim",
       "good_at": [
         "GPU inference",
@@ -3243,6 +3496,7 @@
         "simulation_building",
         "data_extraction"
       ],
+      "cost_posture": "cost_controlled_iteration",
       "family_id": "nvidia_nim",
       "good_at": [
         "GPU inference",
@@ -3275,6 +3529,7 @@
         "simulation_building",
         "data_extraction"
       ],
+      "cost_posture": "lowest_cost_candidate",
       "family_id": "nvidia_nim",
       "good_at": [
         "GPU inference",
@@ -3307,6 +3562,7 @@
         "simulation_building",
         "data_extraction"
       ],
+      "cost_posture": "lowest_cost_candidate",
       "family_id": "nvidia_nim",
       "good_at": [
         "GPU inference",
@@ -3339,6 +3595,7 @@
         "dashboard_building",
         "data_extraction"
       ],
+      "cost_posture": "premium_or_quality_candidate",
       "family_id": "databricks_mosaic",
       "good_at": [
         "data-heavy agents",
@@ -3371,6 +3628,7 @@
         "dashboard_building",
         "data_extraction"
       ],
+      "cost_posture": "cost_controlled_iteration",
       "family_id": "databricks_mosaic",
       "good_at": [
         "data-heavy agents",
@@ -3403,6 +3661,7 @@
         "dashboard_building",
         "data_extraction"
       ],
+      "cost_posture": "lowest_cost_candidate",
       "family_id": "databricks_mosaic",
       "good_at": [
         "data-heavy agents",
@@ -3435,6 +3694,7 @@
         "dashboard_building",
         "data_extraction"
       ],
+      "cost_posture": "lowest_cost_candidate",
       "family_id": "databricks_mosaic",
       "good_at": [
         "data-heavy agents",
@@ -3467,6 +3727,7 @@
         "sales_copy",
         "customer_support"
       ],
+      "cost_posture": "premium_or_quality_candidate",
       "family_id": "ai21_language",
       "good_at": [
         "business writing",
@@ -3498,6 +3759,7 @@
         "sales_copy",
         "customer_support"
       ],
+      "cost_posture": "cost_controlled_iteration",
       "family_id": "ai21_language",
       "good_at": [
         "business writing",
@@ -3529,6 +3791,7 @@
         "sales_copy",
         "customer_support"
       ],
+      "cost_posture": "lowest_cost_candidate",
       "family_id": "ai21_language",
       "good_at": [
         "business writing",
@@ -3560,6 +3823,7 @@
         "sales_copy",
         "customer_support"
       ],
+      "cost_posture": "lowest_cost_candidate",
       "family_id": "ai21_language",
       "good_at": [
         "business writing",
@@ -3591,6 +3855,7 @@
         "model_evaluation",
         "coding"
       ],
+      "cost_posture": "low_cost_candidate",
       "family_id": "together_open",
       "good_at": [
         "open model routing",
@@ -3622,6 +3887,7 @@
         "model_evaluation",
         "coding"
       ],
+      "cost_posture": "low_cost_candidate",
       "family_id": "together_open",
       "good_at": [
         "open model routing",
@@ -3653,6 +3919,7 @@
         "model_evaluation",
         "coding"
       ],
+      "cost_posture": "lowest_cost_candidate",
       "family_id": "together_open",
       "good_at": [
         "open model routing",
@@ -3684,6 +3951,7 @@
         "model_evaluation",
         "coding"
       ],
+      "cost_posture": "lowest_cost_candidate",
       "family_id": "together_open",
       "good_at": [
         "open model routing",
@@ -3715,6 +3983,7 @@
         "workflow_automation",
         "coding"
       ],
+      "cost_posture": "premium_or_quality_candidate",
       "family_id": "fireworks_open",
       "good_at": [
         "fast agent calls",
@@ -3747,6 +4016,7 @@
         "workflow_automation",
         "coding"
       ],
+      "cost_posture": "cost_controlled_iteration",
       "family_id": "fireworks_open",
       "good_at": [
         "fast agent calls",
@@ -3779,6 +4049,7 @@
         "workflow_automation",
         "coding"
       ],
+      "cost_posture": "lowest_cost_candidate",
       "family_id": "fireworks_open",
       "good_at": [
         "fast agent calls",
@@ -3811,6 +4082,7 @@
         "workflow_automation",
         "coding"
       ],
+      "cost_posture": "lowest_cost_candidate",
       "family_id": "fireworks_open",
       "good_at": [
         "fast agent calls",
@@ -3833,6 +4105,7 @@
   ],
   "policy": {
     "approval_rule": "External sends, paid calls, production deploys, customer data, money movement, likeness cloning, and account changes require owner approval.",
+    "cost_rule": "Prefer free-tier, local, cached, batch, and smallest-capable models for sandbox work. Escalate to paid or premium models only after cost review and owner approval.",
     "model_id_rule": "Provider model IDs, prices, rate limits, and availability change often. Treat every resource as a routing candidate and verify the current provider model ID before production use.",
     "secret_rule": "Never store provider API keys, customer secrets, private prompts, raw credentials, or paid content in this catalog."
   },
@@ -3927,21 +4200,24 @@
   "source_config": "config/buddy_ai_agent_model_library.json",
   "summary": {
     "agent_types": 16,
-    "approval_gated_resources": 100,
+    "approval_gated_resources": 104,
     "bot_count": 1248,
     "bots_with_model_routing": 1248,
-    "model_resources": 100,
+    "free_or_cheap_routing_enabled": true,
+    "google_gemini_resources": 8,
+    "low_cost_resources": 86,
+    "model_resources": 104,
     "prompt_types": 20,
     "providers": 23,
-    "resources_requiring_model_id_verification": 100,
+    "resources_requiring_model_id_verification": 104,
     "task_routes": 30,
     "tool_types": 23
   },
   "task_routes": [
     {
       "fallback_resources": [
-        "openai_reasoning__fast",
         "openai_reasoning__budget",
+        "openai_reasoning__fast",
         "openai_reasoning__private"
       ],
       "primary_resource": "openai_reasoning__quality",
@@ -3959,7 +4235,7 @@
       "fallback_resources": [
         "openai_reasoning__quality",
         "qwen_models__quality",
-        "deepseek_coder_reasoner__fast"
+        "deepseek_coder_reasoner__budget"
       ],
       "primary_resource": "deepseek_coder_reasoner__quality",
       "required_evals": [
@@ -3975,8 +4251,8 @@
     {
       "fallback_resources": [
         "openai_reasoning__quality",
-        "deepseek_coder_reasoner__fast",
-        "openai_reasoning__fast"
+        "deepseek_coder_reasoner__budget",
+        "deepseek_coder_reasoner__fast"
       ],
       "primary_resource": "deepseek_coder_reasoner__quality",
       "required_evals": [
@@ -3991,8 +4267,8 @@
     },
     {
       "fallback_resources": [
-        "anthropic_claude__fast",
         "anthropic_claude__budget",
+        "anthropic_claude__fast",
         "anthropic_claude__private"
       ],
       "primary_resource": "anthropic_claude__quality",
@@ -4008,8 +4284,8 @@
     },
     {
       "fallback_resources": [
-        "perplexity_search__fast",
         "perplexity_search__budget",
+        "perplexity_search__fast",
         "perplexity_search__private"
       ],
       "primary_resource": "perplexity_search__quality",
@@ -4026,8 +4302,8 @@
     {
       "fallback_resources": [
         "xai_grok__quality",
-        "perplexity_search__fast",
-        "xai_grok__fast"
+        "perplexity_search__budget",
+        "perplexity_search__fast"
       ],
       "primary_resource": "perplexity_search__quality",
       "required_evals": [
@@ -4044,7 +4320,7 @@
       "fallback_resources": [
         "anthropic_claude__quality",
         "mistral_models__quality",
-        "ai21_language__fast"
+        "ai21_language__budget"
       ],
       "primary_resource": "ai21_language__quality",
       "required_evals": [
@@ -4059,9 +4335,9 @@
     },
     {
       "fallback_resources": [
+        "google_gemini_flash_lite__quality",
         "meta_llama__quality",
-        "openai_realtime__quality",
-        "qwen_models__quality"
+        "openai_realtime__quality"
       ],
       "primary_resource": "ai21_language__quality",
       "required_evals": [
@@ -4077,8 +4353,8 @@
     {
       "fallback_resources": [
         "databricks_mosaic__quality",
-        "mistral_models__quality",
-        "nvidia_nim__quality"
+        "google_gemini_flash_lite__quality",
+        "mistral_models__quality"
       ],
       "primary_resource": "cohere_command__quality",
       "required_evals": [
@@ -4093,8 +4369,8 @@
     },
     {
       "fallback_resources": [
-        "databricks_mosaic__fast",
         "databricks_mosaic__budget",
+        "databricks_mosaic__fast",
         "databricks_mosaic__private"
       ],
       "primary_resource": "databricks_mosaic__quality",
@@ -4129,7 +4405,7 @@
       "fallback_resources": [
         "black_forest_image__quality",
         "openai_image__quality",
-        "adobe_firefly__fast"
+        "adobe_firefly__budget"
       ],
       "primary_resource": "adobe_firefly__quality",
       "required_evals": [
@@ -4144,8 +4420,8 @@
     },
     {
       "fallback_resources": [
-        "google_gemini__fast",
         "google_gemini__budget",
+        "google_gemini__fast",
         "google_gemini__private"
       ],
       "primary_resource": "google_gemini__quality",
@@ -4161,8 +4437,8 @@
     },
     {
       "fallback_resources": [
-        "runway_video__fast",
         "runway_video__budget",
+        "runway_video__fast",
         "runway_video__private"
       ],
       "primary_resource": "runway_video__quality",
@@ -4178,8 +4454,8 @@
     },
     {
       "fallback_resources": [
-        "runway_video__fast",
         "runway_video__budget",
+        "runway_video__fast",
         "runway_video__private"
       ],
       "primary_resource": "runway_video__quality",
@@ -4196,8 +4472,8 @@
     {
       "fallback_resources": [
         "openai_realtime__quality",
-        "elevenlabs_voice__fast",
-        "openai_realtime__fast"
+        "elevenlabs_voice__budget",
+        "elevenlabs_voice__fast"
       ],
       "primary_resource": "elevenlabs_voice__quality",
       "required_evals": [
@@ -4230,8 +4506,8 @@
     {
       "fallback_resources": [
         "qwen_models__quality",
-        "google_gemini__fast",
-        "qwen_models__fast"
+        "google_gemini__budget",
+        "google_gemini__fast"
       ],
       "primary_resource": "google_gemini__quality",
       "required_evals": [
@@ -4247,8 +4523,8 @@
     {
       "fallback_resources": [
         "openai_realtime__quality",
-        "elevenlabs_voice__fast",
-        "openai_realtime__fast"
+        "elevenlabs_voice__budget",
+        "elevenlabs_voice__fast"
       ],
       "primary_resource": "elevenlabs_voice__quality",
       "required_evals": [
@@ -4263,8 +4539,8 @@
     },
     {
       "fallback_resources": [
-        "stability_image__fast",
         "stability_image__budget",
+        "stability_image__fast",
         "stability_image__private"
       ],
       "primary_resource": "stability_image__quality",
@@ -4281,8 +4557,8 @@
     {
       "fallback_resources": [
         "nvidia_nim__quality",
-        "huggingface_open__fast",
-        "nvidia_nim__fast"
+        "huggingface_open__budget",
+        "huggingface_open__fast"
       ],
       "primary_resource": "huggingface_open__quality",
       "required_evals": [
@@ -4297,8 +4573,8 @@
     },
     {
       "fallback_resources": [
-        "anthropic_claude__fast",
         "anthropic_claude__budget",
+        "anthropic_claude__fast",
         "anthropic_claude__private"
       ],
       "primary_resource": "anthropic_claude__quality",
@@ -4348,9 +4624,9 @@
     },
     {
       "fallback_resources": [
+        "google_gemini_flash_lite__quality",
         "meta_llama__quality",
-        "mistral_models__quality",
-        "fireworks_open__fast"
+        "mistral_models__quality"
       ],
       "primary_resource": "fireworks_open__quality",
       "required_evals": [
@@ -4400,8 +4676,8 @@
     {
       "fallback_resources": [
         "meta_llama__quality",
-        "cohere_command__fast",
-        "meta_llama__fast"
+        "cohere_command__budget",
+        "cohere_command__fast"
       ],
       "primary_resource": "cohere_command__quality",
       "required_evals": [
@@ -4416,11 +4692,11 @@
     },
     {
       "fallback_resources": [
+        "huggingface_open__quality",
         "openai_reasoning__quality",
-        "together_open__quality",
-        "huggingface_open__fast"
+        "together_open__quality"
       ],
-      "primary_resource": "huggingface_open__quality",
+      "primary_resource": "google_gemini_flash_lite__quality",
       "required_evals": [
         "task_success",
         "cost_latency",

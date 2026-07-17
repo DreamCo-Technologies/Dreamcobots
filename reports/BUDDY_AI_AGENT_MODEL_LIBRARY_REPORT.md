@@ -4,8 +4,11 @@ Give Buddy a governed prompt, tool, agent, and model-resource library so every b
 
 ## Summary
 
-- Model resources: 100
+- Model resources: 104
 - Providers: 23
+- Low-cost resources: 86
+- Google Gemini resources: 8
+- Free or cheap routing enabled: True
 - Agent types: 16
 - Prompt types: 20
 - Tool types: 23
@@ -15,6 +18,14 @@ Give Buddy a governed prompt, tool, agent, and model-resource library so every b
 ## Routing Rule
 
 Provider model IDs, prices, rate limits, and availability change often. Treat every resource as a routing candidate and verify the current provider model ID before production use.
+
+Prefer free-tier, local, cached, batch, and smallest-capable models for sandbox work. Escalate to paid or premium models only after cost review and owner approval.
+
+## Cost Control
+
+- Default budget mode: free_or_low_cost_first
+- Preferred sandbox family: google_gemini_flash_lite
+- Secret name: GOOGLE_API_KEY
 
 ## Top Task Routes
 
