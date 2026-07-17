@@ -1,0 +1,105 @@
+{
+  "cost_policy": {
+    "ai_default": "local_reports_cached_outputs_free_or_low_cost_first",
+    "cloud_default": "do_not_use_for_local_runner",
+    "github_actions_default": "manual_or_path_gated",
+    "paid_work_requires_owner_approval": true
+  },
+  "description": "Fast local upkeep for everyday laptop runs.",
+  "dry_run": false,
+  "generated_at": "2026-07-17T13:23:16Z",
+  "hard_limits": [
+    "no customer outreach",
+    "no ad spend",
+    "no money movement",
+    "no trading or investment execution",
+    "no credential changes",
+    "no destructive repository actions",
+    "no production deploy",
+    "no paid always-on AI loop"
+  ],
+  "profile": "cheap",
+  "results": [
+    {
+      "command": [
+        "python3",
+        "tools/generate_24_hour_scaling_report.py"
+      ],
+      "dry_run": false,
+      "duration_seconds": 0.09,
+      "name": "report:24-hour-scaling",
+      "output_tail": "scaling_ready=100 cycles=6 blocked_gates=13\n",
+      "returncode": 0,
+      "started_at": "2026-07-17T13:23:16Z",
+      "status": "pass",
+      "timeout_seconds": 180
+    },
+    {
+      "command": [
+        "python3",
+        "tools/generate_buddy_codex_cheap_ops.py"
+      ],
+      "dry_run": false,
+      "duration_seconds": 0.04,
+      "name": "report:buddy-codex-cheap-ops",
+      "output_tail": "codex_cheap_ops=true capabilities=6 bots=1248 low_cost_ai=86\n",
+      "returncode": 0,
+      "started_at": "2026-07-17T13:23:16Z",
+      "status": "pass",
+      "timeout_seconds": 180
+    },
+    {
+      "command": [
+        "python3",
+        "tools/generate_24_hour_scaling_report.py",
+        "--check"
+      ],
+      "dry_run": false,
+      "duration_seconds": 0.04,
+      "name": "check:24-hour-scaling",
+      "output_tail": "",
+      "returncode": 0,
+      "started_at": "2026-07-17T13:23:16Z",
+      "status": "pass",
+      "timeout_seconds": 180
+    },
+    {
+      "command": [
+        "python3",
+        "tools/generate_buddy_codex_cheap_ops.py",
+        "--check"
+      ],
+      "dry_run": false,
+      "duration_seconds": 0.03,
+      "name": "check:buddy-codex-cheap-ops",
+      "output_tail": "",
+      "returncode": 0,
+      "started_at": "2026-07-17T13:23:16Z",
+      "status": "pass",
+      "timeout_seconds": 180
+    },
+    {
+      "command": [
+        "python3",
+        "tools/run_github_cost_saver.py"
+      ],
+      "dry_run": false,
+      "duration_seconds": 0.06,
+      "name": "github-cost-saver",
+      "output_tail": "{\n  \"bot\": \"github-cost-saver\",\n  \"report_path\": \"/Users/mamas/Documents/GitHub/Dreamcobots/reports/github_cost_saver_report.json\",\n  \"summary\": {\n    \"finding_count\": 39,\n    \"high_severity\": 19,\n    \"estimated_monthly_savings_usd\": 238.0,\n    \"by_category\": {\n      \"actions_minutes\": 16,\n      \"actions_cache\": 2,\n      \"actions_storage\": 18,\n      \"codespaces\": 1,\n      \"packages\": 1,\n      \"budgets\": 1\n    }\n  },\n  \"top_recommendations\": [\n    {\n      \"priority\": 1,\n      \"action\": \"Use GitHub Pages for static client previews before paid hosting.\",\n      \"owner\": \"Buddy\",\n      \"approval_required\": false\n    },\n    {\n      \"priority\": 2,\n      \"action\": \"Run heavy test suites locally or on self-hosted runners before GitHub-hosted CI.\",\n      \"owner\": \"Buddy\",\n      \"approval_required\": false\n    },\n    {\n      \"priority\": 3,\n      \"action\": \"Set artifact retention-days on every upload-artifact step.\",\n      \"owner\": \"Buddy\",\n      \"approval_required\": true\n    },\n    {\n      \"priority\": 4,\n      \"action\": \"Turn off paid AI/code review automation except on final PR review passes.\",\n      \"owner\": \"Owner\",\n      \"approval_required\": true\n    }\n  ]\n}\n",
+      "returncode": 0,
+      "started_at": "2026-07-17T13:23:16Z",
+      "status": "pass",
+      "timeout_seconds": 180
+    }
+  ],
+  "schema": "dreamco.local_buddy_runner_report.v1",
+  "summary": {
+    "commands": 5,
+    "failed": 0,
+    "passed": 5,
+    "planned": 0,
+    "skipped": 0,
+    "timed_out": 0
+  }
+}
