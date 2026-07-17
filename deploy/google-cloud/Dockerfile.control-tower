@@ -8,11 +8,10 @@ ENV PORT=8080
 COPY dreamco-control-tower/package.json ./dreamco-control-tower/package.json
 COPY dreamco-control-tower/backend/package.json ./dreamco-control-tower/backend/package.json
 COPY dreamco-control-tower/frontend/package.json ./dreamco-control-tower/frontend/package.json
-COPY dreamco-control-tower/frontend/package-lock.json ./dreamco-control-tower/frontend/package-lock.json
 
 RUN cd dreamco-control-tower && npm install --omit=dev
 RUN cd dreamco-control-tower/backend && npm install --omit=dev
-RUN cd dreamco-control-tower/frontend && npm ci --include=dev
+RUN cd dreamco-control-tower/frontend && npm install --include=dev --package-lock=false
 
 COPY dreamco-control-tower ./dreamco-control-tower
 COPY config ./config
