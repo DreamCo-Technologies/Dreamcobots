@@ -60,6 +60,8 @@ COMMANDS: dict[str, list[str]] = {
     "check:contract-discovery": ["python3", "tools/generate_bot_contract_discovery_report.py", "--check"],
     "report:lead-followup": ["python3", "tools/generate_bot_lead_followup_system.py"],
     "check:lead-followup": ["python3", "tools/generate_bot_lead_followup_system.py", "--check"],
+    "report:bot-capabilities-library": ["python3", "tools/generate_bot_capabilities_library.py"],
+    "check:bot-capabilities-library": ["python3", "tools/generate_bot_capabilities_library.py", "--check"],
     "report:people-job-qualification": ["python3", "tools/generate_people_job_qualification_report.py"],
     "check:people-job-qualification": ["python3", "tools/generate_people_job_qualification_report.py", "--check"],
     "scan:local-imports": ["python3", "tools/local_import_audit.py"],
