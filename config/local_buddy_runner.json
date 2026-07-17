@@ -2,6 +2,14 @@
   "schema": "dreamco.local_buddy_runner.v1",
   "default_profile": "cheap",
   "mission": "Run Buddy and bot-maintenance work on the owner laptop before using GitHub Actions or paid cloud compute.",
+  "forever_mode": {
+    "enabled": true,
+    "profile": "aggressive",
+    "sleep_minutes": 60,
+    "stop_command": "python3 tools/local_buddy_runner.py --stop",
+    "status_command": "python3 tools/local_buddy_runner.py --status",
+    "start_command": "python3 tools/local_buddy_runner.py --profile aggressive --daemon-start --sleep-minutes 60"
+  },
   "cost_policy": {
     "github_actions_default": "manual_or_path_gated",
     "cloud_default": "do_not_use_for_local_runner",
@@ -31,7 +39,7 @@
       ]
     },
     "aggressive": {
-      "description": "Repository-wide safe sweep for Buddy, reports, bot readiness, storage, and local checks.",
+      "description": "Repository-wide safe sweep for Buddy, reports, bot readiness, storage, and local checks. Safe to loop until stopped.",
       "max_command_seconds": 300,
       "commands": [
         "report:24-hour-scaling",

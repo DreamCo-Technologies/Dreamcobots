@@ -12,6 +12,7 @@ from __future__ import annotations
 import argparse
 import json
 import os
+import signal
 import subprocess
 import sys
 import time
@@ -24,6 +25,8 @@ ROOT = Path(__file__).resolve().parents[1]
 CONFIG_FILE = ROOT / "config" / "local_buddy_runner.json"
 REPORT_FILE = ROOT / "reports" / "local_buddy_runner_report.json"
 LOG_DIR = ROOT / "logs" / "local_buddy_runner"
+PID_FILE = ROOT / ".local_buddy_runner.pid"
+STDOUT_LOG_FILE = LOG_DIR / "local_buddy_runner.out"
 
 
 COMMANDS: dict[str, list[str]] = {
@@ -155,10 +158,121 @@ def write_report(report: dict[str, Any]) -> None:
     )
 
 
+def process_is_running(pid: int) -> bool:
+    try:
+        os.kill(pid, 0)
+    except ProcessLookupError:
+        return False
+    except PermissionError:
+        return True
+    return True
+
+
+def read_pid() -> int | None:
+    if not PID_FILE.exists():
+        return None
+    try:
+        return int(PID_FILE.read_text(encoding="utf-8").strip())
+    except ValueError:
+        return None
+
+
+def runner_status() -> dict[str, Any]:
+    pid = read_pid()
+    running = bool(pid and process_is_running(pid))
+    report = read_json(REPORT_FILE, {})
+    return {
+        "schema": "dreamco.local_buddy_runner_status.v1",
+        "checked_at": utc_now(),
+        "running": running,
+        "pid": pid if running else None,
+        "pid_file": str(PID_FILE.relative_to(ROOT)),
+        "stdout_log": str(STDOUT_LOG_FILE.relative_to(ROOT)),
+        "latest_report": str(REPORT_FILE.relative_to(ROOT)) if REPORT_FILE.exists() else None,
+        "latest_profile": report.get("profile"),
+        "latest_generated_at": report.get("generated_at"),
+        "latest_summary": report.get("summary", {}),
+    }
+
+
+def start_daemon(profile: str, sleep_minutes: float, max_command_seconds: int | None) -> dict[str, Any]:
+    existing_pid = read_pid()
+    if existing_pid and process_is_running(existing_pid):
+        return {
+            **runner_status(),
+            "started": False,
+            "message": "Local Buddy runner is already running.",
+        }
+
+    LOG_DIR.mkdir(parents=True, exist_ok=True)
+    command = [
+        sys.executable,
+        str(Path(__file__).relative_to(ROOT)),
+        "--profile",
+        profile,
+        "--forever",
+        "--sleep-minutes",
+        str(sleep_minutes),
+    ]
+    if max_command_seconds:
+        command.extend(["--max-command-seconds", str(max_command_seconds)])
+
+    stdout_handle = STDOUT_LOG_FILE.open("a", encoding="utf-8")
+    stdout_handle.write(f"\n[{utc_now()}] starting {' '.join(command)}\n")
+    stdout_handle.flush()
+    process = subprocess.Popen(
+        command,
+        cwd=ROOT,
+        stdout=stdout_handle,
+        stderr=subprocess.STDOUT,
+        start_new_session=True,
+        env={**os.environ, "PYTHONPYCACHEPREFIX": "/private/tmp/dreamco-pycache"},
+    )
+    PID_FILE.write_text(str(process.pid), encoding="utf-8")
+    return {
+        **runner_status(),
+        "started": True,
+        "profile": profile,
+        "sleep_minutes": sleep_minutes,
+        "message": "Local Buddy runner started.",
+    }
+
+
+def stop_daemon() -> dict[str, Any]:
+    pid = read_pid()
+    if not pid or not process_is_running(pid):
+        if PID_FILE.exists():
+            PID_FILE.unlink()
+        return {
+            **runner_status(),
+            "stopped": False,
+            "message": "Local Buddy runner was not running.",
+        }
+
+    os.kill(pid, signal.SIGTERM)
+    for _ in range(20):
+        if not process_is_running(pid):
+            break
+        time.sleep(0.25)
+    if process_is_running(pid):
+        os.kill(pid, signal.SIGKILL)
+    if PID_FILE.exists():
+        PID_FILE.unlink()
+    return {
+        **runner_status(),
+        "stopped": True,
+        "message": "Local Buddy runner stopped.",
+    }
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description="Run Buddy locally instead of spending GitHub Actions minutes.")
     parser.add_argument("--profile", choices=["cheap", "aggressive"], default=None)
     parser.add_argument("--dry-run", action="store_true")
+    parser.add_argument("--forever", action="store_true", help="Repeat until stopped with --stop or Ctrl+C.")
+    parser.add_argument("--daemon-start", action="store_true", help="Start a background local runner and return immediately.")
+    parser.add_argument("--stop", action="store_true", help="Stop the background local runner.")
+    parser.add_argument("--status", action="store_true", help="Show background local runner status.")
     parser.add_argument("--loop-hours", type=float, default=0, help="Repeat the profile for this many hours.")
     parser.add_argument("--sleep-minutes", type=float, default=60, help="Delay between loop cycles.")
     parser.add_argument("--max-command-seconds", type=int, default=None)
@@ -166,6 +280,17 @@ def main() -> int:
 
     config = load_config()
     profile = args.profile or config.get("default_profile", "cheap")
+
+    if args.status:
+        print(json.dumps(runner_status(), indent=2, sort_keys=True))
+        return 0
+    if args.stop:
+        print(json.dumps(stop_daemon(), indent=2, sort_keys=True))
+        return 0
+    if args.daemon_start:
+        print(json.dumps(start_daemon(profile, args.sleep_minutes, args.max_command_seconds), indent=2, sort_keys=True))
+        return 0
+
     started = time.monotonic()
     deadline = started + max(args.loop_hours, 0) * 3600
     cycles = []
@@ -184,9 +309,12 @@ def main() -> int:
                 report=REPORT_FILE.relative_to(ROOT),
             )
         )
-        if args.loop_hours <= 0 or time.monotonic() >= deadline:
+        if not args.forever and (args.loop_hours <= 0 or time.monotonic() >= deadline):
             break
-        time.sleep(max(args.sleep_minutes, 1) * 60)
+        try:
+            time.sleep(max(args.sleep_minutes, 1) * 60)
+        except KeyboardInterrupt:
+            break
 
     return 0 if all(cycle["failed"] == 0 and cycle["timed_out"] == 0 for cycle in cycles) else 1
 

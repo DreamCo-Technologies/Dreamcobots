@@ -1,6 +1,6 @@
 # Buddy Bot Connection Report
 
-- Generated: 2026-07-14T10:23:11Z
+- Generated: 2026-07-17T13:51:47Z
 - All bots connected to Buddy: True
 - All bots testable from Actions page: True
 - All bots have custom resources: True
