@@ -13,6 +13,7 @@ if [[ -z "$PROJECT_ID" ]]; then
 fi
 
 gcloud config set project "$PROJECT_ID"
+PROJECT_NUMBER="$(gcloud projects describe "$PROJECT_ID" --format='value(projectNumber)')"
 
 gcloud services enable \
   run.googleapis.com \
@@ -38,6 +39,7 @@ gcloud iam service-accounts create "$SERVICE_ACCOUNT" \
   --quiet || true
 
 DEPLOYER_EMAIL="$SERVICE_ACCOUNT@$PROJECT_ID.iam.gserviceaccount.com"
+BUILD_RUNTIME_EMAIL="$PROJECT_NUMBER-compute@developer.gserviceaccount.com"
 
 for ROLE in \
   roles/run.admin \
@@ -52,6 +54,19 @@ for ROLE in \
   roles/storage.admin; do
   gcloud projects add-iam-policy-binding "$PROJECT_ID" \
     --member="serviceAccount:$DEPLOYER_EMAIL" \
+    --role="$ROLE" \
+    --condition=None \
+    --quiet
+done
+
+for ROLE in \
+  roles/storage.objectViewer \
+  roles/artifactregistry.writer \
+  roles/logging.logWriter \
+  roles/run.admin \
+  roles/iam.serviceAccountUser; do
+  gcloud projects add-iam-policy-binding "$PROJECT_ID" \
+    --member="serviceAccount:$BUILD_RUNTIME_EMAIL" \
     --role="$ROLE" \
     --condition=None \
     --quiet

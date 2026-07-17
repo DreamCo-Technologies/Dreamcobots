@@ -125,6 +125,11 @@ const BUDDY_OPS_QUEUE_FILE = path.join(__dirname, '../../reports/buddy_ops_queue
 const app = express();
 app.use(express.json());
 
+const FRONTEND_DIST_DIR = path.join(__dirname, '../frontend/dist');
+if (fs.existsSync(FRONTEND_DIST_DIR)) {
+  app.use(express.static(FRONTEND_DIST_DIR));
+}
+
 // ---------------------------------------------------------------------------
 // Simple in-process rate limiter (sliding window)
 // Protects file-system endpoints from excessive reads.
@@ -1200,6 +1205,12 @@ app.get('/api/production-media-roadmap', rateLimiter, (_req, res) => {
     },
   });
 });
+
+if (fs.existsSync(FRONTEND_DIST_DIR)) {
+  app.get('*', (_req, res) => {
+    res.sendFile(path.join(FRONTEND_DIST_DIR, 'index.html'));
+  });
+}
 
 // ---------------------------------------------------------------------------
 // Start server (only when not in test mode)
