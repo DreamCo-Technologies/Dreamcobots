@@ -53,6 +53,7 @@ for ROLE in \
   gcloud projects add-iam-policy-binding "$PROJECT_ID" \
     --member="serviceAccount:$DEPLOYER_EMAIL" \
     --role="$ROLE" \
+    --condition=None \
     --quiet
 done
 
