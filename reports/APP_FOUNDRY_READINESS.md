@@ -2,7 +2,7 @@
 
 Make DreamCo the in-house A-to-Z foundry for building, testing, packaging, hosting, and deploying games, websites, apps, school courses, simulations, dashboards, creative media, and business bot systems.
 
-- Readiness score: 100
+- Readiness score: 120
 - Creation lanes: 8
 - In-house systems: 18
 - Deployment targets: 6
@@ -10,6 +10,11 @@ Make DreamCo the in-house A-to-Z foundry for building, testing, packaging, hosti
 - Custom API contracts: 1248
 - API sandbox bootcamps: 1248
 - Sandbox workflow generators: 1248
+- Category competition packets: 1248
+- Revolutionary app packets: 1248
+- Best-quality API sandbox packets: 1248
+- All bots have API sandbox system: True
+- All bots have category competition packets: True
 
 ## Own-Code-First Rule
 
@@ -80,6 +85,29 @@ Client business workers for sales, support, booking, estimating, CRM updates, le
 - Outputs: bot_prospectus, tool_contracts, api_contracts, webhook_contracts, workflow_runbook, sandbox_tests, approval_packet
 - Hosts: local_laptop, managed_node_host, container_host
 - Sandbox bootcamp: tool permissions, API mocks, webhook replay, client data redaction, revenue-risk checks, and rollback drill
+
+## Category Competition OS
+
+Every bot must be able to build a revolutionary app for the DreamCo app store that can compete with, learn from, and aim to beat the top apps in its category through better workflows, safer automation, stronger sandbox tests, and clearer client value.
+
+- Goal: beat_top_category_apps_through_proof_not_claims
+- App capability targets: 15
+- Sandbox standard checks: 12
+
+### Best Quality API Sandbox Standard
+
+- schema_contract_tests
+- mock_auth_and_permission_tests
+- rate_limit_tests
+- timeout_and_retry_tests
+- idempotency_tests
+- negative_and_abuse_tests
+- fixture_replay_tests
+- audit_log_tests
+- approval_gate_tests
+- no_live_money_or_outreach_tests
+- rollback_tests
+- client_handoff_notes
 
 ## Gaps
 

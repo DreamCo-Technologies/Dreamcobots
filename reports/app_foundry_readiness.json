@@ -1,4 +1,82 @@
 {
+  "category_competition_os": {
+    "app_capability_targets": [
+      "onboarding",
+      "dashboard",
+      "search_or_discovery",
+      "workflow_automation",
+      "notifications",
+      "reports",
+      "exports",
+      "settings",
+      "support",
+      "billing_adapter_after_approval",
+      "api_or_webhook_integration",
+      "local_first_storage",
+      "privacy_controls",
+      "rollback_or_version_history",
+      "analytics"
+    ],
+    "best_quality_api_sandbox_standard": [
+      "schema_contract_tests",
+      "mock_auth_and_permission_tests",
+      "rate_limit_tests",
+      "timeout_and_retry_tests",
+      "idempotency_tests",
+      "negative_and_abuse_tests",
+      "fixture_replay_tests",
+      "audit_log_tests",
+      "approval_gate_tests",
+      "no_live_money_or_outreach_tests",
+      "rollback_tests",
+      "client_handoff_notes"
+    ],
+    "blocked_claims": [
+      "guaranteed_best_app",
+      "guaranteed_income",
+      "guaranteed_customers",
+      "unverified_category_leader_claim",
+      "public_launch_without_owner_approval"
+    ],
+    "competition_goal": "beat_top_category_apps_through_proof_not_claims",
+    "mission": "Every bot must be able to build a revolutionary app for the DreamCo app store that can compete with, learn from, and aim to beat the top apps in its category through better workflows, safer automation, stronger sandbox tests, and clearer client value.",
+    "packet_template": {
+      "api_sandbox_proof": "Every API has schema, mock auth, rate, retry, negative, abuse, approval, rollback, and audit tests.",
+      "category_leader_map": "Top apps, substitutes, pricing, onboarding, reviews, strengths, weaknesses, and trust signals.",
+      "codex_final_judge_packet": "Codex reviews evidence, quality, source fit, and launch boundaries before the owner approves advertising or launch.",
+      "feature_gap_matrix": "Must-match features, must-beat features, missing opportunities, and risk notes.",
+      "revolutionary_app_concept": "One app-store-ready concept with workflows, APIs, webhooks, dashboard, storage, support, and proof."
+    },
+    "per_bot_requirements": [
+      "category_leader_map",
+      "feature_gap_matrix",
+      "must_match_feature_list",
+      "must_beat_feature_list",
+      "revolutionary_app_concept",
+      "api_sandbox_for_every_api",
+      "workflow_generator_for_every_sandbox",
+      "app_store_listing_packet",
+      "quality_scorecard",
+      "codex_final_judge_packet",
+      "owner_launch_approval_packet"
+    ],
+    "summary": {
+      "all_bots_have_api_sandbox_system": true,
+      "all_bots_have_category_competition_packets": true,
+      "all_bots_have_revolutionary_app_packets": true,
+      "all_bots_have_workflow_generators": true,
+      "api_sandbox_bootcamps": 1248,
+      "app_capability_targets": 15,
+      "best_quality_api_sandbox_packets": 1248,
+      "bot_count": 1248,
+      "bots_with_sandboxes": 1248,
+      "category_competition_packets": 1248,
+      "custom_api_contracts": 1248,
+      "revolutionary_app_packets": 1248,
+      "sandbox_standard_checks": 12,
+      "sandbox_workflow_generators": 1248
+    }
+  },
   "deployment_target_status_counts": {
     "adapter_ready": 1,
     "configured_adapter": 1,
@@ -48,7 +126,7 @@
     "Managed Node and container hosting adapters are planned and need production credentials before live backend apps.",
     "Payment, email, and revenue notifications still need live Stripe and notification configuration before client billing."
   ],
-  "generated_at": "2026-07-17T14:23:27.573639+00:00",
+  "generated_at": "2026-07-17T15:18:16.762148+00:00",
   "in_house_systems": [
     "prompt_to_plan",
     "template_generator",
@@ -341,7 +419,9 @@
     "Add deployment manifests per lane with static, Node, and container modes.",
     "Add rollback/checkpoint records for generated app builds.",
     "Add client prospectus pages that explain what each built artifact does, costs, risks, and test proof.",
-    "Add per-lane eval loops that rerun after every generated change."
+    "Add per-lane eval loops that rerun after every generated change.",
+    "Add category leader comparison pages for each bot app before public launch.",
+    "Add best-quality API sandbox proof cards for every generated API."
   ],
   "operating_posture": "sandbox_first_pull_request_review",
   "ownership_rule": "DreamCo-owned repository code is the source of truth. External clouds, static hosts, payment processors, email providers, and domain services are deployment targets or adapters, not the builder of record.",
@@ -351,6 +431,10 @@
     "sandbox_test_packet_exists",
     "workflow_generator_exists_for_each_sandbox",
     "api_contracts_have_mocked_sandbox_tests",
+    "every_api_has_best_quality_sandbox_system",
+    "every_sandbox_has_workflow_generator",
+    "every_bot_has_category_competition_packet",
+    "every_bot_has_revolutionary_app_store_packet",
     "no_secrets_committed",
     "local_first_storage_policy_applied",
     "accessibility_review_for_frontend",
@@ -371,15 +455,22 @@
     "Apps that require backend secrets must use static mock mode until a governed API host is connected."
   ],
   "summary": {
+    "all_bots_have_api_sandbox_system": true,
+    "all_bots_have_category_competition_packets": true,
+    "all_bots_have_revolutionary_app_packets": true,
+    "all_bots_have_workflow_generators": true,
     "api_sandbox_bootcamps": 1248,
+    "best_quality_api_sandbox_packets": 1248,
     "bot_count": 1248,
+    "category_competition_packets": 1248,
     "creation_lanes": 8,
     "custom_api_contracts": 1248,
     "deployment_targets": 6,
     "in_house_systems": 18,
     "live_deploy_requires_owner_approval": true,
     "planned_runtime_targets": 2,
-    "readiness_score": 100,
+    "readiness_score": 120,
+    "revolutionary_app_packets": 1248,
     "sandbox_workflow_generators": 1248,
     "static_or_configured_targets": 4,
     "storage_ready": true

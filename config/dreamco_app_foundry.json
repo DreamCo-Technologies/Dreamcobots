@@ -4,6 +4,61 @@
   "mission": "Make DreamCo the in-house A-to-Z foundry for building, testing, packaging, hosting, and deploying games, websites, apps, school courses, simulations, dashboards, creative media, and business bot systems.",
   "ownership_rule": "DreamCo-owned repository code is the source of truth. External clouds, static hosts, payment processors, email providers, and domain services are deployment targets or adapters, not the builder of record.",
   "operating_posture": "sandbox_first_pull_request_review",
+  "category_competition_os": {
+    "mission": "Every bot must be able to build a revolutionary app for the DreamCo app store that can compete with, learn from, and aim to beat the top apps in its category through better workflows, safer automation, stronger sandbox tests, and clearer client value.",
+    "competition_goal": "beat_top_category_apps_through_proof_not_claims",
+    "per_bot_requirements": [
+      "category_leader_map",
+      "feature_gap_matrix",
+      "must_match_feature_list",
+      "must_beat_feature_list",
+      "revolutionary_app_concept",
+      "api_sandbox_for_every_api",
+      "workflow_generator_for_every_sandbox",
+      "app_store_listing_packet",
+      "quality_scorecard",
+      "codex_final_judge_packet",
+      "owner_launch_approval_packet"
+    ],
+    "app_capability_targets": [
+      "onboarding",
+      "dashboard",
+      "search_or_discovery",
+      "workflow_automation",
+      "notifications",
+      "reports",
+      "exports",
+      "settings",
+      "support",
+      "billing_adapter_after_approval",
+      "api_or_webhook_integration",
+      "local_first_storage",
+      "privacy_controls",
+      "rollback_or_version_history",
+      "analytics"
+    ],
+    "best_quality_api_sandbox_standard": [
+      "schema_contract_tests",
+      "mock_auth_and_permission_tests",
+      "rate_limit_tests",
+      "timeout_and_retry_tests",
+      "idempotency_tests",
+      "negative_and_abuse_tests",
+      "fixture_replay_tests",
+      "audit_log_tests",
+      "approval_gate_tests",
+      "no_live_money_or_outreach_tests",
+      "rollback_tests",
+      "client_handoff_notes"
+    ],
+    "blocked_claims": [
+      "guaranteed_best_app",
+      "guaranteed_income",
+      "guaranteed_customers",
+      "unverified_category_leader_claim",
+      "public_launch_without_owner_approval"
+    ]
+  },
   "creation_lanes": [
     {
       "id": "games",
@@ -150,6 +205,10 @@
     "sandbox_test_packet_exists",
     "workflow_generator_exists_for_each_sandbox",
     "api_contracts_have_mocked_sandbox_tests",
+    "every_api_has_best_quality_sandbox_system",
+    "every_sandbox_has_workflow_generator",
+    "every_bot_has_category_competition_packet",
+    "every_bot_has_revolutionary_app_store_packet",
     "no_secrets_committed",
     "local_first_storage_policy_applied",
     "accessibility_review_for_frontend",
@@ -168,5 +227,8 @@
     "Add rollback/checkpoint records for generated app builds.",
     "Add client prospectus pages that explain what each built artifact does, costs, risks, and test proof.",
     "Add per-lane eval loops that rerun after every generated change."
+    ,
+    "Add category leader comparison pages for each bot app before public launch.",
+    "Add best-quality API sandbox proof cards for every generated API."
   ]
 }

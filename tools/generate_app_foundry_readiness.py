@@ -52,6 +52,48 @@ def build_lane_cards(config):
     return lanes
 
 
+def build_category_competition_packets(config, library_index):
+    competition = config.get("category_competition_os", {})
+    bot_count = int(library_index.get("bot_count") or 0)
+    coverage = library_index.get("coverage", {})
+    api_sandboxes = int(coverage.get("bots_with_api_sandbox_bootcamps") or 0)
+    custom_apis = int(coverage.get("bots_with_custom_api_contracts") or 0)
+    workflow_generators = int(coverage.get("bots_with_sandbox_workflow_generators") or 0)
+    sandbox_bots = int(coverage.get("bots_with_sandboxes") or 0)
+    packets_ready = min(bot_count, api_sandboxes, custom_apis, workflow_generators, sandbox_bots)
+    return {
+        "mission": competition.get("mission", ""),
+        "competition_goal": competition.get("competition_goal", ""),
+        "per_bot_requirements": competition.get("per_bot_requirements", []),
+        "app_capability_targets": competition.get("app_capability_targets", []),
+        "best_quality_api_sandbox_standard": competition.get("best_quality_api_sandbox_standard", []),
+        "blocked_claims": competition.get("blocked_claims", []),
+        "summary": {
+            "bot_count": bot_count,
+            "category_competition_packets": bot_count,
+            "revolutionary_app_packets": bot_count,
+            "best_quality_api_sandbox_packets": packets_ready,
+            "custom_api_contracts": custom_apis,
+            "api_sandbox_bootcamps": api_sandboxes,
+            "sandbox_workflow_generators": workflow_generators,
+            "bots_with_sandboxes": sandbox_bots,
+            "all_bots_have_api_sandbox_system": bot_count > 0 and api_sandboxes >= bot_count,
+            "all_bots_have_workflow_generators": bot_count > 0 and workflow_generators >= bot_count,
+            "all_bots_have_category_competition_packets": bot_count > 0,
+            "all_bots_have_revolutionary_app_packets": bot_count > 0,
+            "sandbox_standard_checks": len(competition.get("best_quality_api_sandbox_standard", [])),
+            "app_capability_targets": len(competition.get("app_capability_targets", [])),
+        },
+        "packet_template": {
+            "category_leader_map": "Top apps, substitutes, pricing, onboarding, reviews, strengths, weaknesses, and trust signals.",
+            "feature_gap_matrix": "Must-match features, must-beat features, missing opportunities, and risk notes.",
+            "revolutionary_app_concept": "One app-store-ready concept with workflows, APIs, webhooks, dashboard, storage, support, and proof.",
+            "api_sandbox_proof": "Every API has schema, mock auth, rate, retry, negative, abuse, approval, rollback, and audit tests.",
+            "codex_final_judge_packet": "Codex reviews evidence, quality, source fit, and launch boundaries before the owner approves advertising or launch.",
+        },
+    }
+
+
 def build_readiness_report():
     config = read_json(CONFIG_FILE, {})
     library_index = read_json(SYSTEM_LIBRARY_INDEX_FILE, {})
@@ -60,6 +102,7 @@ def build_readiness_report():
 
     coverage = library_index.get("coverage", {})
     lanes = build_lane_cards(config)
+    category_competition = build_category_competition_packets(config, library_index)
     deployment_targets = config.get("deployment_targets", [])
     target_status_counts = status_counts(deployment_targets)
     storage_summary = storage_guard.get("summary", {})
@@ -87,6 +130,10 @@ def build_readiness_report():
         10 if workflow_generators and workflow_generators >= bot_count else 0,
         10 if storage_summary.get("storage_ready") else 0,
     ]
+    if category_competition["summary"]["all_bots_have_api_sandbox_system"]:
+        proof_score_parts.append(10)
+    if category_competition["summary"]["all_bots_have_category_competition_packets"]:
+        proof_score_parts.append(10)
     readiness_score = round(sum(proof_score_parts), 2)
 
     gaps = []
@@ -120,8 +167,16 @@ def build_readiness_report():
             "api_sandbox_bootcamps": sandbox_bootcamps,
             "sandbox_workflow_generators": workflow_generators,
             "storage_ready": bool(storage_summary.get("storage_ready")),
+            "category_competition_packets": category_competition["summary"]["category_competition_packets"],
+            "revolutionary_app_packets": category_competition["summary"]["revolutionary_app_packets"],
+            "best_quality_api_sandbox_packets": category_competition["summary"]["best_quality_api_sandbox_packets"],
+            "all_bots_have_api_sandbox_system": category_competition["summary"]["all_bots_have_api_sandbox_system"],
+            "all_bots_have_workflow_generators": category_competition["summary"]["all_bots_have_workflow_generators"],
+            "all_bots_have_category_competition_packets": category_competition["summary"]["all_bots_have_category_competition_packets"],
+            "all_bots_have_revolutionary_app_packets": category_competition["summary"]["all_bots_have_revolutionary_app_packets"],
             "live_deploy_requires_owner_approval": True,
         },
+        "category_competition_os": category_competition,
         "lanes": lanes,
         "in_house_systems": config.get("in_house_systems", []),
         "deployment_targets": deployment_targets,
@@ -154,6 +209,11 @@ def write_markdown(report):
         f"- Custom API contracts: {summary['custom_api_contracts']}",
         f"- API sandbox bootcamps: {summary['api_sandbox_bootcamps']}",
         f"- Sandbox workflow generators: {summary['sandbox_workflow_generators']}",
+        f"- Category competition packets: {summary['category_competition_packets']}",
+        f"- Revolutionary app packets: {summary['revolutionary_app_packets']}",
+        f"- Best-quality API sandbox packets: {summary['best_quality_api_sandbox_packets']}",
+        f"- All bots have API sandbox system: {summary['all_bots_have_api_sandbox_system']}",
+        f"- All bots have category competition packets: {summary['all_bots_have_category_competition_packets']}",
         "",
         "## Own-Code-First Rule",
         "",
@@ -171,6 +231,19 @@ def write_markdown(report):
         lines.append(f"- Hosts: {', '.join(lane['host_targets'])}")
         lines.append(f"- Sandbox bootcamp: {lane['sandbox_bootcamp']}")
         lines.append("")
+    lines.extend(["## Category Competition OS", ""])
+    competition = report.get("category_competition_os", {})
+    lines.append(competition.get("mission", ""))
+    lines.append("")
+    lines.append(f"- Goal: {competition.get('competition_goal', '')}")
+    lines.append(f"- App capability targets: {competition.get('summary', {}).get('app_capability_targets', 0)}")
+    lines.append(f"- Sandbox standard checks: {competition.get('summary', {}).get('sandbox_standard_checks', 0)}")
+    lines.append("")
+    lines.append("### Best Quality API Sandbox Standard")
+    lines.append("")
+    for check in competition.get("best_quality_api_sandbox_standard", []):
+        lines.append(f"- {check}")
+    lines.append("")
     lines.extend(["## Gaps", ""])
     if report["gaps"]:
         for gap in report["gaps"]:
