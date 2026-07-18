@@ -14,10 +14,11 @@ import { Textarea } from "@/components/ui/textarea";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { cn } from "@/lib/utils";
-import { Bot, ChevronRight, Crown, Pencil, Plus, Save, Search, Filter, Building2 } from "lucide-react";
+import { Bot, ChevronRight, Crown, Pencil, Plus, Save, Search, Filter, Building2, Unlock } from "lucide-react";
 import { Link } from "wouter";
 import type { CreateBotProfileRequest, UpdateBotProfileRequest } from "@shared/schema";
 import { DIVISIONS, BOT_TIERS } from "@shared/schema";
+import { useSubscriptionTier, isBotUnlocked } from "@/hooks/use-subscription";
 
 const TIER_COLORS: Record<string, string> = {
   free: "bg-muted text-muted-foreground",
@@ -39,6 +40,7 @@ export default function BotsPage() {
   const createBot = useCreateBot();
   const updateBot = useUpdateBot();
   const setDefault = useSetDefaultBot();
+  const subscriptionQuery = useSubscriptionTier();
 
   const [activeBotSlug, setActiveBotSlug] = useState<string | undefined>(undefined);
 
@@ -396,6 +398,19 @@ export default function BotsPage() {
                             {b.tier.charAt(0).toUpperCase() + b.tier.slice(1)}
                           </Badge>
                         )}
+                        {(() => {
+                          const activeTier = subscriptionQuery.data?.tier ?? null;
+                          const unlocked = isBotUnlocked(b.tier, activeTier);
+                          if (unlocked && b.tier && b.tier !== "free") {
+                            return (
+                              <Badge className="rounded-full bg-emerald-500/15 text-emerald-500 border border-emerald-500/30" data-testid={`badge-unlocked-${b.id}`}>
+                                <Unlock className="h-3 w-3 mr-1" />
+                                Unlocked
+                              </Badge>
+                            );
+                          }
+                          return null;
+                        })()}
                         {b.category && (
                           <Badge variant="outline" className="rounded-full border-border/70" data-testid={`badge-category-${b.id}`}>
                             {b.category}

@@ -1222,29 +1222,57 @@ export async function registerRoutes(
 
   app.get("/api/stripe/subscription-status", async (_req, res) => {
     try {
-      const result = await db.execute(sql`
-        SELECT customer, status, id
-        FROM stripe.subscriptions
-        WHERE status IN ('active', 'trialing')
-        ORDER BY created DESC
-        LIMIT 1
-      `);
+      let hasActiveSubscription = false;
+      let tier: string | null = null;
 
-      if (result.rows.length > 0) {
-        res.json({ hasActiveSubscription: true });
-      } else {
+      // Try DB first — join through subscription_items → prices → products to get tier metadata
+      try {
+        const result = await db.execute(sql`
+          SELECT s.id, p.metadata
+          FROM stripe.subscriptions s
+          LEFT JOIN stripe.subscription_items si ON si.subscription = s.id
+          LEFT JOIN stripe.prices pr ON pr.id = si.price
+          LEFT JOIN stripe.products p ON p.id = pr.product
+          WHERE s.status IN ('active', 'trialing')
+          ORDER BY s.created DESC
+          LIMIT 1
+        `);
+
+        if (result.rows.length > 0) {
+          hasActiveSubscription = true;
+          const row = result.rows[0] as any;
+          const metadata = typeof row.metadata === "string" ? JSON.parse(row.metadata) : row.metadata;
+          tier = metadata?.tier ?? null;
+        }
+      } catch {
+        // DB join failed (tables may not exist yet), fall through to live API
+      }
+
+      if (!hasActiveSubscription) {
         // Fall back to live Stripe API in case DB sync hasn't populated yet
         try {
           const stripe = await getUncachableStripeClient();
-          const subs = await stripe.subscriptions.list({ status: "active", limit: 1 });
-          res.json({ hasActiveSubscription: subs.data.length > 0 });
+          const subs = await stripe.subscriptions.list({
+            status: "active",
+            limit: 1,
+            expand: ["data.items.data.price.product"],
+          });
+          if (subs.data.length > 0) {
+            hasActiveSubscription = true;
+            const sub = subs.data[0];
+            const item = sub.items?.data?.[0];
+            const product = item?.price?.product as any;
+            tier = product?.metadata?.tier ?? null;
+          }
         } catch {
-          res.json({ hasActiveSubscription: false });
+          // Live API also failed — return no subscription
         }
       }
+
+      res.json({ hasActiveSubscription, tier });
     } catch (error: any) {
       console.error("Subscription status error:", error.message);
-      res.json({ hasActiveSubscription: false });
+      res.json({ hasActiveSubscription: false, tier: null });
     }
   });
 

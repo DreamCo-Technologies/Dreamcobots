@@ -19,8 +19,9 @@ import {
   Send, Map, Hammer, Zap, GraduationCap, ShoppingCart, Search,
   Bot, Sparkles, Terminal, ChevronRight, Star, Building2,
   Code2, Cpu, DollarSign, Activity, Lock, CheckCircle2,
-  CreditCard, Crown, Rocket, Loader2,
+  CreditCard, Crown, Rocket, Loader2, Unlock,
 } from "lucide-react";
+import { useSubscriptionTier, isBotUnlocked } from "@/hooks/use-subscription";
 
 type ChatMode = "plan" | "build" | "execute" | "teach";
 
@@ -368,6 +369,7 @@ function BuyBotsModal({ open, onClose }: { open: boolean; onClose: () => void })
   const [tierFilter, setTierFilter] = useState("all");
   const bots = useBots();
   const { toast } = useToast();
+  const subscriptionQuery = useSubscriptionTier();
 
   const productsQuery = useQuery<{ products: any[]; syncing?: boolean; source?: string }>({
     queryKey: ["/api/stripe/products"],
@@ -514,28 +516,45 @@ function BuyBotsModal({ open, onClose }: { open: boolean; onClose: () => void })
                     {filtered.slice(0, 100).map((bot) => {
                       const tierKey = (bot.tier ?? "free").toLowerCase();
                       const tierClass = TIER_COLORS[tierKey] ?? TIER_COLORS.free;
+                      const activeTier = subscriptionQuery.data?.tier ?? null;
+                      const unlocked = isBotUnlocked(tierKey, activeTier);
                       const isFree = tierKey === "free";
                       const priceId = tierToPriceId[tierKey];
                       const productsLoading = productsQuery.isLoading || (productsQuery.data?.syncing && productsQuery.data?.products.length === 0);
                       return (
                         <div
                           key={bot.id}
-                          className="rounded-xl border border-border/60 bg-card/60 p-4 hover:border-primary/40 hover:bg-card transition-all group"
+                          className={cn(
+                            "rounded-xl border bg-card/60 p-4 hover:bg-card transition-all group",
+                            unlocked ? "border-emerald-500/40 hover:border-emerald-500/60" : "border-border/60 hover:border-primary/40"
+                          )}
                           data-testid={`bot-card-${bot.id}`}
                         >
                           <div className="flex items-start justify-between gap-2 mb-2">
                             <div className="flex items-center gap-2 min-w-0">
-                              <span className="inline-flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10 border border-primary/20 flex-shrink-0">
-                                <Bot className="h-4 w-4 text-primary" />
+                              <span className={cn(
+                                "inline-flex h-8 w-8 items-center justify-center rounded-lg border flex-shrink-0",
+                                unlocked ? "bg-emerald-500/10 border-emerald-500/20" : "bg-primary/10 border-primary/20"
+                              )}>
+                                {unlocked && !isFree
+                                  ? <Unlock className="h-4 w-4 text-emerald-400" />
+                                  : <Bot className="h-4 w-4 text-primary" />}
                               </span>
                               <div className="min-w-0">
                                 <p className="font-semibold text-sm truncate">{bot.displayName}</p>
                                 <p className="text-[11px] text-muted-foreground truncate">{bot.division}</p>
                               </div>
                             </div>
-                            <Badge className={cn("text-[10px] border flex-shrink-0", tierClass)}>
-                              {bot.tier ?? "free"}
-                            </Badge>
+                            <div className="flex items-center gap-1 flex-shrink-0">
+                              {unlocked && !isFree && (
+                                <Badge className="text-[10px] border bg-emerald-500/15 text-emerald-400 border-emerald-500/30">
+                                  Unlocked
+                                </Badge>
+                              )}
+                              <Badge className={cn("text-[10px] border", tierClass)}>
+                                {bot.tier ?? "free"}
+                              </Badge>
+                            </div>
                           </div>
                           <p className="text-xs text-muted-foreground line-clamp-2 mb-3">
                             {bot.description ?? "Specialized AI bot for autonomous task execution."}
@@ -549,11 +568,14 @@ function BuyBotsModal({ open, onClose }: { open: boolean; onClose: () => void })
                             <span className="text-sm font-bold text-primary capitalize">{isFree ? "Free" : tierKey + " tier"}</span>
                             <Button
                               size="sm"
-                              variant={isFree ? "outline" : "default"}
-                              className="rounded-lg text-xs h-8"
-                              disabled={!isFree && (checkoutMutation.isPending || !!productsLoading)}
+                              variant={unlocked ? "outline" : "default"}
+                              className={cn(
+                                "rounded-lg text-xs h-8",
+                                unlocked && "border-emerald-500/40 text-emerald-400 hover:bg-emerald-500/10 hover:border-emerald-500/60"
+                              )}
+                              disabled={!unlocked && (checkoutMutation.isPending || !!productsLoading)}
                               onClick={() => {
-                                if (isFree) {
+                                if (unlocked) {
                                   toast({ title: `${bot.displayName} activated!`, description: "Bot added to your fleet." });
                                 } else if (priceId) {
                                   checkoutMutation.mutate(priceId);
@@ -563,7 +585,7 @@ function BuyBotsModal({ open, onClose }: { open: boolean; onClose: () => void })
                               }}
                               data-testid={`buy-bot-${bot.id}`}
                             >
-                              {isFree ? (
+                              {unlocked ? (
                                 <><CheckCircle2 className="h-3 w-3 mr-1" />Activate</>
                               ) : productsLoading ? (
                                 <><Loader2 className="h-3 w-3 animate-spin mr-1" />Loading...</>
