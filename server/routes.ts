@@ -1150,10 +1150,48 @@ export async function registerRoutes(
         }
       }
 
-      res.json({ products: Array.from(productsMap.values()) });
+      const dbProducts = Array.from(productsMap.values());
+
+      if (dbProducts.length > 0) {
+        return res.json({ products: dbProducts });
+      }
+
+      // DB is empty — sync hasn't finished yet. Fall back to a live Stripe API call.
+      try {
+        const stripe = await getUncachableStripeClient();
+        const [stripeProducts, stripePrices] = await Promise.all([
+          stripe.products.list({ active: true, limit: 100 }),
+          stripe.prices.list({ active: true, limit: 100 }),
+        ]);
+
+        const livePricesByProduct = new Map<string, any[]>();
+        for (const price of stripePrices.data) {
+          const pid = typeof price.product === "string" ? price.product : (price.product as any).id;
+          if (!livePricesByProduct.has(pid)) livePricesByProduct.set(pid, []);
+          livePricesByProduct.get(pid)!.push({
+            id: price.id,
+            unit_amount: price.unit_amount,
+            currency: price.currency,
+            recurring: price.recurring,
+          });
+        }
+
+        const liveProducts = stripeProducts.data.map((p) => ({
+          id: p.id,
+          name: p.name,
+          description: p.description,
+          metadata: p.metadata,
+          prices: livePricesByProduct.get(p.id) ?? [],
+        }));
+
+        return res.json({ products: liveProducts, source: "live" });
+      } catch (liveError: any) {
+        console.warn("Live Stripe fallback also failed:", liveError.message);
+        return res.json({ products: [], syncing: true });
+      }
     } catch (error: any) {
       console.error("Failed to list products:", error.message);
-      res.json({ products: [] });
+      res.json({ products: [], syncing: true });
     }
   });
 

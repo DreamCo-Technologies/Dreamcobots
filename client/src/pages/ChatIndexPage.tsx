@@ -194,8 +194,13 @@ function PricingPlansTab() {
   const { toast } = useToast();
   const [yearly, setYearly] = useState(false);
 
-  const productsQuery = useQuery<{ products: any[] }>({
+  const productsQuery = useQuery<{ products: any[]; syncing?: boolean; source?: string }>({
     queryKey: ["/api/stripe/products"],
+    refetchInterval: (query) => {
+      const data = query.state.data;
+      if (data && (data.products.length > 0 || data.syncing === false)) return false;
+      return data?.syncing ? 4000 : false;
+    },
   });
 
   const checkoutMutation = useMutation({
@@ -224,10 +229,20 @@ function PricingPlansTab() {
     return ai - bi;
   });
 
-  if (productsQuery.isLoading) {
+  const isSyncing = productsQuery.data?.syncing && sorted.length === 0;
+
+  if (productsQuery.isLoading || isSyncing) {
     return (
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 p-6">
-        {Array.from({ length: 4 }).map((_, i) => <Skeleton key={i} className="h-56 rounded-2xl" />)}
+      <div className="flex flex-col items-center gap-4 p-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full">
+          {Array.from({ length: 4 }).map((_, i) => <Skeleton key={i} className="h-56 rounded-2xl" />)}
+        </div>
+        {isSyncing && (
+          <p className="text-sm text-muted-foreground flex items-center gap-2">
+            <Loader2 className="h-4 w-4 animate-spin" />
+            Pricing plans loading… checking again shortly
+          </p>
+        )}
       </div>
     );
   }
@@ -354,9 +369,14 @@ function BuyBotsModal({ open, onClose }: { open: boolean; onClose: () => void })
   const bots = useBots();
   const { toast } = useToast();
 
-  const productsQuery = useQuery<{ products: any[] }>({
+  const productsQuery = useQuery<{ products: any[]; syncing?: boolean; source?: string }>({
     queryKey: ["/api/stripe/products"],
     enabled: open,
+    refetchInterval: (query) => {
+      const data = query.state.data;
+      if (data && (data.products.length > 0 || data.syncing === false)) return false;
+      return data?.syncing ? 4000 : false;
+    },
   });
 
   const checkoutMutation = useMutation({
@@ -496,6 +516,7 @@ function BuyBotsModal({ open, onClose }: { open: boolean; onClose: () => void })
                       const tierClass = TIER_COLORS[tierKey] ?? TIER_COLORS.free;
                       const isFree = tierKey === "free";
                       const priceId = tierToPriceId[tierKey];
+                      const productsLoading = productsQuery.isLoading || (productsQuery.data?.syncing && productsQuery.data?.products.length === 0);
                       return (
                         <div
                           key={bot.id}
@@ -530,13 +551,13 @@ function BuyBotsModal({ open, onClose }: { open: boolean; onClose: () => void })
                               size="sm"
                               variant={isFree ? "outline" : "default"}
                               className="rounded-lg text-xs h-8"
-                              disabled={!isFree && checkoutMutation.isPending}
+                              disabled={!isFree && (checkoutMutation.isPending || !!productsLoading)}
                               onClick={() => {
                                 if (isFree) {
                                   toast({ title: `${bot.displayName} activated!`, description: "Bot added to your fleet." });
                                 } else if (priceId) {
                                   checkoutMutation.mutate(priceId);
-                                } else {
+                                } else if (!productsLoading) {
                                   setTab("plans");
                                 }
                               }}
@@ -544,6 +565,8 @@ function BuyBotsModal({ open, onClose }: { open: boolean; onClose: () => void })
                             >
                               {isFree ? (
                                 <><CheckCircle2 className="h-3 w-3 mr-1" />Activate</>
+                              ) : productsLoading ? (
+                                <><Loader2 className="h-3 w-3 animate-spin mr-1" />Loading...</>
                               ) : checkoutMutation.isPending ? (
                                 <Loader2 className="h-3 w-3 animate-spin mr-1" />
                               ) : (
