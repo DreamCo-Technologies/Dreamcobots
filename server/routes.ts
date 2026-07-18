@@ -1749,7 +1749,7 @@ Any improvements or fixes (optional, 1-2 bullet points max)`;
     try {
       const { pushSourceCode } = await import("./github-sync");
       const result = await pushSourceCode();
-      res.json({ success: true, pushed: result.pushed, sha: result.sha, errors: result.errors.slice(0, 10) });
+      res.json({ success: true, pushed: result.pushed, sha: result.sha, errors: result.errors.slice(0, 10), skipped: result.skipped ?? false });
     } catch (e: any) {
       res.status(500).json({ success: false, error: e.message });
     }
@@ -1769,7 +1769,7 @@ Any improvements or fixes (optional, 1-2 bullet points max)`;
     try {
       const { runAutoSync } = await import("./github-sync");
       const result = await runAutoSync();
-      res.json({ success: true, pushed: result.pushed, sha: result.sha, errors: result.errors.slice(0, 10) });
+      res.json({ success: true, pushed: result.pushed, sha: result.sha, errors: result.errors.slice(0, 10), skipped: result.skipped ?? false });
     } catch (e: any) {
       res.status(500).json({ success: false, error: e.message });
     }

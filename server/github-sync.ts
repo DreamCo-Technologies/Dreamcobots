@@ -1,4 +1,5 @@
 import * as fs from "fs";
+import * as crypto from "crypto";
 
 const REPO_OWNER = "DreamCo-Technologies";
 const REPO_NAME  = "Dreamcobots";
@@ -23,12 +24,14 @@ let _lastSyncError: string | null = null;
 let _lastSyncFileCount: number | null = null;
 let _syncCount = 0;
 let _autoSyncTimer: ReturnType<typeof setInterval> | null = null;
+let _lastSyncFingerprint: string | null = null;
 
 export interface SyncHistoryEntry {
   at: string;
   sha: string | null;
   fileCount: number;
   error: string | null;
+  skipped?: boolean;
 }
 
 const _syncHistory: SyncHistoryEntry[] = [];
@@ -46,23 +49,35 @@ export function getAutoSyncStatus() {
   };
 }
 
-export async function runAutoSync(): Promise<{ pushed: number; sha: string; errors: string[] }> {
+export async function runAutoSync(): Promise<{ pushed: number; sha: string; errors: string[]; skipped?: boolean }> {
   try {
     const result = await pushSourceCode();
     _lastSyncAt = new Date();
-    _lastSyncSha = result.sha || null;
+    if (!result.skipped) {
+      _lastSyncSha = result.sha || null;
+      _lastSyncFileCount = result.pushed;
+      _syncCount++;
+    }
     _lastSyncError = result.errors.length > 0 ? result.errors[0] : null;
-    _lastSyncFileCount = result.pushed;
-    _syncCount++;
-    _syncHistory.push({ at: _lastSyncAt.toISOString(), sha: _lastSyncSha, fileCount: result.pushed, error: _lastSyncError });
+    _syncHistory.push({
+      at: _lastSyncAt.toISOString(),
+      sha: result.skipped ? _lastSyncSha : (result.sha || null),
+      fileCount: result.pushed,
+      error: _lastSyncError,
+      skipped: result.skipped ?? false,
+    });
     if (_syncHistory.length > MAX_HISTORY) _syncHistory.shift();
-    console.log(`[github-sync] Auto-sync #${_syncCount} complete — ${result.pushed} files, sha: ${result.sha}`);
+    if (result.skipped) {
+      console.log(`[github-sync] Auto-sync skipped — no file changes detected since last push`);
+    } else {
+      console.log(`[github-sync] Auto-sync #${_syncCount} complete — ${result.pushed} files, sha: ${result.sha}`);
+    }
     return result;
   } catch (e: any) {
     _lastSyncError = e.message;
     _lastSyncAt = new Date();
     _lastSyncFileCount = 0;
-    _syncHistory.push({ at: _lastSyncAt.toISOString(), sha: null, fileCount: 0, error: e.message });
+    _syncHistory.push({ at: _lastSyncAt.toISOString(), sha: null, fileCount: 0, error: e.message, skipped: false });
     if (_syncHistory.length > MAX_HISTORY) _syncHistory.shift();
     console.warn(`[github-sync] Auto-sync failed: ${e.message}`);
     throw e;
@@ -258,7 +273,7 @@ export async function pushAllBotsToGitHub(
 }
 
 // ─── source-code push: all Replit files in ONE commit ───────────────────────
-export async function pushSourceCode(): Promise<{ pushed: number; sha: string; errors: string[] }> {
+export async function pushSourceCode(): Promise<{ pushed: number; sha: string; errors: string[]; skipped?: boolean }> {
   const files: Array<{ path: string; content: string }> = [];
   const errors: string[] = [];
 
@@ -323,8 +338,20 @@ export async function pushSourceCode(): Promise<{ pushed: number; sha: string; e
     }
   }
 
+  // Compute a fingerprint of all file paths + contents so we can skip pushing
+  // when nothing has actually changed since the last successful sync.
+  const fingerprint = crypto
+    .createHash("sha256")
+    .update(files.map(f => `${f.path}:${f.content}`).join("\n"))
+    .digest("hex");
+
+  if (fingerprint === _lastSyncFingerprint) {
+    return { pushed: 0, sha: _lastSyncSha ?? "", errors, skipped: true };
+  }
+
   const { committed, sha } = await batchPush(files, `feat: sync full Empire OS source (${files.length} files) from Replit`);
-  return { pushed: committed, sha, errors };
+  _lastSyncFingerprint = fingerprint;
+  return { pushed: committed, sha, errors, skipped: false };
 }
 
 // ─── repo info ───────────────────────────────────────────────────────────────
