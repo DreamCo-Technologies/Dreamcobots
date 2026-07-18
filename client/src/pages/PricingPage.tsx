@@ -12,15 +12,16 @@ import { useToast } from "@/hooks/use-toast";
 import {
   Check,
   Crown,
+  ExternalLink,
   Layers,
   Loader2,
   Lock,
   Network,
   Rocket,
+  Settings,
   Shield,
   Sparkles,
   Star,
-  Users,
   Zap,
 } from "lucide-react";
 
@@ -71,6 +72,18 @@ export default function PricingPage() {
 
   const totalApis = getTotalApiCount();
 
+  const urlParams = new URLSearchParams(window.location.search);
+  const checkoutSuccess = urlParams.get("success") === "true";
+  const checkoutCanceled = urlParams.get("canceled") === "true";
+
+  const { data: subStatus, isLoading: subStatusLoading } = useQuery<{ hasActiveSubscription: boolean }>({
+    queryKey: ["/api/stripe/subscription-status"],
+    refetchOnWindowFocus: true,
+    staleTime: 30_000,
+  });
+
+  const hasActiveSubscription = subStatus?.hasActiveSubscription ?? false;
+
   const { data: productsData } = useQuery<{ products: StripeProduct[] }>({
     queryKey: ["/api/stripe/products"],
   });
@@ -94,6 +107,25 @@ export default function PricingPage() {
     },
   });
 
+  const portalMutation = useMutation({
+    mutationFn: async () => {
+      const res = await apiRequest("POST", "/api/stripe/portal", {});
+      return await res.json();
+    },
+    onSuccess: (data: { url: string }) => {
+      if (data.url) {
+        window.location.href = data.url;
+      }
+    },
+    onError: (error: Error) => {
+      toast({
+        title: "Portal Error",
+        description: error.message,
+        variant: "destructive",
+      });
+    },
+  });
+
   const stripeProducts = productsData?.products || [];
 
   const getProductForTier = (tier: string) => {
@@ -109,10 +141,6 @@ export default function PricingPage() {
 
     checkoutMutation.mutate(price.id);
   };
-
-  const urlParams = new URLSearchParams(window.location.search);
-  const checkoutSuccess = urlParams.get("success") === "true";
-  const checkoutCanceled = urlParams.get("canceled") === "true";
 
   return (
     <AppShell selectedBotSlug={botSlug} onBotChange={setBotSlug}>
@@ -131,6 +159,32 @@ export default function PricingPage() {
                 Checkout was canceled. You can try again anytime.
               </div>
             )}
+
+            {!subStatusLoading && hasActiveSubscription && (
+              <div className="mb-4 p-3 rounded-xl bg-primary/5 border border-primary/20 flex items-center justify-between gap-3" data-testid="manage-subscription-banner">
+                <div className="flex items-center gap-2 text-sm">
+                  <Check className="h-4 w-4 text-green-500 flex-shrink-0" />
+                  <span className="text-foreground font-medium">You have an active subscription</span>
+                </div>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  className="rounded-xl gap-1.5 flex-shrink-0"
+                  onClick={() => portalMutation.mutate()}
+                  disabled={portalMutation.isPending}
+                  data-testid="btn-manage-subscription"
+                >
+                  {portalMutation.isPending ? (
+                    <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                  ) : (
+                    <Settings className="h-3.5 w-3.5" />
+                  )}
+                  Manage Subscription
+                  {!portalMutation.isPending && <ExternalLink className="h-3 w-3 opacity-50" />}
+                </Button>
+              </div>
+            )}
+
             <h1 className="text-2xl md:text-3xl" data-testid="text-pricing-title">Choose Your Empire Tier</h1>
             <p className="text-sm text-muted-foreground mt-2">
               Scale your autonomous AI workforce from a single bot to a full 251-bot empire
@@ -180,7 +234,6 @@ export default function PricingPage() {
                   ? monthlyPrice.amount / 100
                   : info.price;
 
-              const hasStripePrice = stripeProduct && (annual ? yearlyPrice : monthlyPrice);
               const isFree = tier === "free";
 
               return (
@@ -256,22 +309,39 @@ export default function PricingPage() {
                       ))}
                     </div>
 
-                    <Button
-                      className={cn(
-                        "w-full rounded-xl",
-                        tier === "enterprise" && "bg-[rgb(168_85_247)] text-white border-[rgb(168_85_247)]",
-                        tier === "elite" && "bg-[rgb(245_158_11)] text-white border-[rgb(245_158_11)]",
-                      )}
-                      variant={tier === "free" ? "outline" : "default"}
-                      disabled={checkoutMutation.isPending}
-                      onClick={() => !isFree && handleSubscribe(tier)}
-                      data-testid={`btn-select-${tier}`}
-                    >
-                      {checkoutMutation.isPending ? (
-                        <Loader2 className="h-4 w-4 animate-spin mr-2" />
-                      ) : null}
-                      {isFree ? "Get Started Free" : tier === "elite" ? "Subscribe Elite" : "Subscribe Now"}
-                    </Button>
+                    {hasActiveSubscription && !isFree ? (
+                      <Button
+                        className="w-full rounded-xl"
+                        variant="outline"
+                        onClick={() => portalMutation.mutate()}
+                        disabled={portalMutation.isPending}
+                        data-testid={`btn-manage-${tier}`}
+                      >
+                        {portalMutation.isPending ? (
+                          <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                        ) : (
+                          <Settings className="h-4 w-4 mr-2" />
+                        )}
+                        Manage Plan
+                      </Button>
+                    ) : (
+                      <Button
+                        className={cn(
+                          "w-full rounded-xl",
+                          tier === "enterprise" && "bg-[rgb(168_85_247)] text-white border-[rgb(168_85_247)]",
+                          tier === "elite" && "bg-[rgb(245_158_11)] text-white border-[rgb(245_158_11)]",
+                        )}
+                        variant={tier === "free" ? "outline" : "default"}
+                        disabled={checkoutMutation.isPending || subStatusLoading}
+                        onClick={() => !isFree && handleSubscribe(tier)}
+                        data-testid={`btn-select-${tier}`}
+                      >
+                        {checkoutMutation.isPending ? (
+                          <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                        ) : null}
+                        {isFree ? "Get Started Free" : tier === "elite" ? "Subscribe Elite" : "Subscribe Now"}
+                      </Button>
+                    )}
                   </CardContent>
                 </Card>
               );

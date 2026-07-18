@@ -1209,7 +1209,7 @@ export async function registerRoutes(
         payment_method_types: ["card"],
         line_items: [{ price: priceId, quantity: 1 }],
         mode: "subscription",
-        success_url: successUrl ?? `${baseUrl}/pricing?success=true`,
+        success_url: successUrl ?? `${baseUrl}/pricing?success=true&session_id={CHECKOUT_SESSION_ID}`,
         cancel_url: cancelUrl ?? `${baseUrl}/pricing?canceled=true`,
       });
 
@@ -1220,11 +1220,65 @@ export async function registerRoutes(
     }
   });
 
+  app.get("/api/stripe/subscription-status", async (_req, res) => {
+    try {
+      const result = await db.execute(sql`
+        SELECT customer, status, id
+        FROM stripe.subscriptions
+        WHERE status IN ('active', 'trialing')
+        ORDER BY created DESC
+        LIMIT 1
+      `);
+
+      if (result.rows.length > 0) {
+        res.json({ hasActiveSubscription: true });
+      } else {
+        // Fall back to live Stripe API in case DB sync hasn't populated yet
+        try {
+          const stripe = await getUncachableStripeClient();
+          const subs = await stripe.subscriptions.list({ status: "active", limit: 1 });
+          res.json({ hasActiveSubscription: subs.data.length > 0 });
+        } catch {
+          res.json({ hasActiveSubscription: false });
+        }
+      }
+    } catch (error: any) {
+      console.error("Subscription status error:", error.message);
+      res.json({ hasActiveSubscription: false });
+    }
+  });
+
   app.post("/api/stripe/portal", async (req, res) => {
     try {
-      const { customerId } = req.body;
+      // Resolve customer ID server-side from the active subscription — never trust client input
+      let customerId: string | null = null;
+
+      try {
+        const result = await db.execute(sql`
+          SELECT customer
+          FROM stripe.subscriptions
+          WHERE status IN ('active', 'trialing')
+          ORDER BY created DESC
+          LIMIT 1
+        `);
+        if (result.rows.length > 0) {
+          customerId = (result.rows[0] as any).customer as string;
+        }
+      } catch {
+        // DB lookup failed, fall through to live API
+      }
+
       if (!customerId) {
-        return res.status(400).json({ error: "customerId is required" });
+        // Fall back to live Stripe API
+        const stripe = await getUncachableStripeClient();
+        const subs = await stripe.subscriptions.list({ status: "active", limit: 1 });
+        if (subs.data.length > 0) {
+          customerId = subs.data[0].customer as string;
+        }
+      }
+
+      if (!customerId) {
+        return res.status(404).json({ error: "No active subscription found" });
       }
 
       const stripe = await getUncachableStripeClient();
