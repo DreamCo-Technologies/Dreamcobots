@@ -16,9 +16,11 @@ import { Label } from "@/components/ui/label";
 import {
   AlertTriangle,
   Check,
+  CheckCircle2,
   Copy,
   Download,
   Globe,
+  GitBranch,
   Key,
   Link2,
   MessageCircle,
@@ -37,6 +39,7 @@ import {
   Video,
   Webhook,
   Wifi,
+  XCircle,
   Zap,
   Star,
   Loader2,
@@ -217,6 +220,38 @@ export default function ConnectionsPage() {
     queryKey: ["/api/platform-connections"],
   });
 
+  const gitHubSyncQuery = useQuery<{
+    enabled: boolean;
+    lastSyncAt: string | null;
+    lastSyncSha: string | null;
+    lastSyncError: string | null;
+    lastSyncFileCount: number | null;
+    syncCount: number;
+    history: Array<{ at: string; sha: string | null; fileCount: number; error: string | null }>;
+  }>({
+    queryKey: ["/api/github/auto-sync"],
+    refetchInterval: 30_000,
+  });
+
+  const syncNowMutation = useMutation({
+    mutationFn: async () => {
+      const res = await apiRequest("POST", "/api/github/auto-sync");
+      return res.json();
+    },
+    onSuccess: (data: any) => {
+      queryClient.invalidateQueries({ queryKey: ["/api/github/auto-sync"] });
+      if (data.success) {
+        toast({ title: "GitHub Sync Complete", description: `Pushed ${data.pushed} files — ${data.sha?.slice(0, 7) ?? ""}` });
+      } else {
+        toast({ title: "Sync Failed", description: data.error, variant: "destructive" });
+      }
+    },
+    onError: (e: any) => {
+      queryClient.invalidateQueries({ queryKey: ["/api/github/auto-sync"] });
+      toast({ title: "Sync Failed", description: e.message, variant: "destructive" });
+    },
+  });
+
   const killSwitchQuery = useQuery<{ enabled: boolean; updatedAt: string }>({
     queryKey: ["/api/kill-switch"],
   });
@@ -334,6 +369,7 @@ export default function ConnectionsPage() {
         <Tabs defaultValue="platforms">
           <TabsList>
             <TabsTrigger value="platforms" data-testid="tab-platforms">Platforms</TabsTrigger>
+            <TabsTrigger value="github-sync" data-testid="tab-github-sync">GitHub Sync</TabsTrigger>
             <TabsTrigger value="install" data-testid="tab-install">Install App</TabsTrigger>
             <TabsTrigger value="kill-switch" data-testid="tab-kill-switch">Kill Switch</TabsTrigger>
             <TabsTrigger value="api-keys" data-testid="tab-api-keys">API Keys</TabsTrigger>
@@ -406,6 +442,169 @@ export default function ConnectionsPage() {
                 );
               })}
             </div>
+          </TabsContent>
+
+          <TabsContent value="github-sync" className="space-y-4 mt-6">
+            {/* Status widget */}
+            <Card data-testid="card-github-sync-status">
+              <CardHeader className="pb-3">
+                <div className="flex items-center justify-between">
+                  <CardTitle className="flex items-center gap-2 text-lg">
+                    <GitBranch className="h-5 w-5 text-purple-400" />
+                    GitHub Sync Status
+                  </CardTitle>
+                  <Button
+                    size="sm"
+                    onClick={() => syncNowMutation.mutate()}
+                    disabled={syncNowMutation.isPending}
+                    data-testid="button-sync-now"
+                  >
+                    {syncNowMutation.isPending
+                      ? <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                      : <RefreshCw className="h-4 w-4 mr-2" />}
+                    Sync Now
+                  </Button>
+                </div>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                {gitHubSyncQuery.isLoading ? (
+                  <div className="space-y-2">
+                    <Skeleton className="h-4 w-48" />
+                    <Skeleton className="h-4 w-64" />
+                    <Skeleton className="h-4 w-40" />
+                  </div>
+                ) : (
+                  <>
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                      <div className="rounded-lg bg-muted p-3 space-y-1">
+                        <p className="text-xs text-muted-foreground">Auto-Sync</p>
+                        <Badge
+                          variant="outline"
+                          className={cn(gitHubSyncQuery.data?.enabled
+                            ? "bg-green-500/15 text-green-500 border-green-500/20"
+                            : "bg-yellow-500/15 text-yellow-500 border-yellow-500/20")}
+                          data-testid="badge-autosync-status"
+                        >
+                          {gitHubSyncQuery.data?.enabled ? "Active (6h)" : "Inactive"}
+                        </Badge>
+                      </div>
+                      <div className="rounded-lg bg-muted p-3 space-y-1">
+                        <p className="text-xs text-muted-foreground">Total Syncs</p>
+                        <p className="font-semibold text-sm" data-testid="text-sync-count">
+                          {gitHubSyncQuery.data?.syncCount ?? 0}
+                        </p>
+                      </div>
+                      <div className="rounded-lg bg-muted p-3 space-y-1">
+                        <p className="text-xs text-muted-foreground">Last File Count</p>
+                        <p className="font-semibold text-sm" data-testid="text-last-file-count">
+                          {gitHubSyncQuery.data?.lastSyncFileCount != null
+                            ? `${gitHubSyncQuery.data.lastSyncFileCount} files`
+                            : "—"}
+                        </p>
+                      </div>
+                      <div className="rounded-lg bg-muted p-3 space-y-1">
+                        <p className="text-xs text-muted-foreground">Last Commit SHA</p>
+                        <p className="font-mono text-sm font-semibold truncate" data-testid="text-last-sha">
+                          {gitHubSyncQuery.data?.lastSyncSha
+                            ? gitHubSyncQuery.data.lastSyncSha.slice(0, 7)
+                            : "—"}
+                        </p>
+                      </div>
+                    </div>
+
+                    {/* Last sync time + error */}
+                    <div className="flex items-start gap-2 text-sm">
+                      {gitHubSyncQuery.data?.lastSyncError ? (
+                        <XCircle className="h-4 w-4 text-destructive flex-shrink-0 mt-0.5" />
+                      ) : gitHubSyncQuery.data?.lastSyncAt ? (
+                        <CheckCircle2 className="h-4 w-4 text-green-500 flex-shrink-0 mt-0.5" />
+                      ) : (
+                        <GitBranch className="h-4 w-4 text-muted-foreground flex-shrink-0 mt-0.5" />
+                      )}
+                      <div>
+                        {gitHubSyncQuery.data?.lastSyncAt ? (
+                          <p className="text-muted-foreground" data-testid="text-last-sync-time">
+                            Last synced: {new Date(gitHubSyncQuery.data.lastSyncAt).toLocaleString()}
+                          </p>
+                        ) : (
+                          <p className="text-muted-foreground" data-testid="text-no-sync-yet">No syncs recorded yet. Click "Sync Now" to push to GitHub.</p>
+                        )}
+                        {gitHubSyncQuery.data?.lastSyncError && (
+                          <p className="text-destructive text-xs mt-1" data-testid="text-last-sync-error">
+                            Error: {gitHubSyncQuery.data.lastSyncError}
+                          </p>
+                        )}
+                      </div>
+                    </div>
+                  </>
+                )}
+              </CardContent>
+            </Card>
+
+            {/* Sync history */}
+            <Card data-testid="card-github-sync-history">
+              <CardHeader className="pb-3">
+                <CardTitle className="text-base">Sync History (last {gitHubSyncQuery.data?.history?.length ?? 0})</CardTitle>
+              </CardHeader>
+              <CardContent>
+                {gitHubSyncQuery.isLoading ? (
+                  <div className="space-y-2">
+                    {[1, 2, 3].map(i => <Skeleton key={i} className="h-10 w-full" />)}
+                  </div>
+                ) : !gitHubSyncQuery.data?.history?.length ? (
+                  <p className="text-muted-foreground text-center py-8 text-sm" data-testid="text-no-sync-history">
+                    No sync history yet. Auto-sync runs every 6 hours, or you can trigger it manually above.
+                  </p>
+                ) : (
+                  <div className="space-y-2">
+                    {gitHubSyncQuery.data.history.map((entry, i) => (
+                      <div
+                        key={i}
+                        className={cn(
+                          "flex items-center gap-3 p-3 rounded-lg border text-sm",
+                          entry.error ? "border-destructive/30 bg-destructive/5" : "border-border"
+                        )}
+                        data-testid={`row-sync-history-${i}`}
+                      >
+                        {entry.error
+                          ? <XCircle className="h-4 w-4 text-destructive flex-shrink-0" />
+                          : <CheckCircle2 className="h-4 w-4 text-green-500 flex-shrink-0" />}
+                        <div className="flex-1 min-w-0">
+                          <p className="font-medium">
+                            {new Date(entry.at).toLocaleString()}
+                          </p>
+                          {entry.error ? (
+                            <p className="text-xs text-destructive truncate">{entry.error}</p>
+                          ) : (
+                            <p className="text-xs text-muted-foreground">
+                              {entry.fileCount} files pushed
+                              {entry.sha ? ` · ${entry.sha.slice(0, 7)}` : ""}
+                            </p>
+                          )}
+                        </div>
+                        {!entry.error && entry.sha && (
+                          <Badge variant="outline" className="font-mono text-xs shrink-0">
+                            {entry.sha.slice(0, 7)}
+                          </Badge>
+                        )}
+                        {entry.error && (
+                          <Badge variant="destructive" className="text-xs shrink-0">Failed</Badge>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardContent className="p-4 flex items-center gap-3">
+                <Shield className="h-4 w-4 text-primary flex-shrink-0" />
+                <p className="text-sm text-muted-foreground">
+                  Syncs push source code to <strong>DreamCo-Technologies/Dreamcobots</strong> on GitHub. Auto-sync requires a GitHub token set in Replit Secrets (<code className="text-xs bg-muted px-1 rounded">REPLIT_ACCESS_TOLKEN</code>).
+                </p>
+              </CardContent>
+            </Card>
           </TabsContent>
 
           <TabsContent value="install" className="space-y-6 mt-6">

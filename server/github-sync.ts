@@ -20,8 +20,19 @@ export function getToken(): string {
 let _lastSyncAt: Date | null = null;
 let _lastSyncSha: string | null = null;
 let _lastSyncError: string | null = null;
+let _lastSyncFileCount: number | null = null;
 let _syncCount = 0;
 let _autoSyncTimer: ReturnType<typeof setInterval> | null = null;
+
+export interface SyncHistoryEntry {
+  at: string;
+  sha: string | null;
+  fileCount: number;
+  error: string | null;
+}
+
+const _syncHistory: SyncHistoryEntry[] = [];
+const MAX_HISTORY = 20;
 
 export function getAutoSyncStatus() {
   return {
@@ -29,7 +40,9 @@ export function getAutoSyncStatus() {
     lastSyncAt: _lastSyncAt?.toISOString() ?? null,
     lastSyncSha: _lastSyncSha,
     lastSyncError: _lastSyncError,
+    lastSyncFileCount: _lastSyncFileCount,
     syncCount: _syncCount,
+    history: [..._syncHistory].reverse(),
   };
 }
 
@@ -39,12 +52,18 @@ export async function runAutoSync(): Promise<{ pushed: number; sha: string; erro
     _lastSyncAt = new Date();
     _lastSyncSha = result.sha || null;
     _lastSyncError = result.errors.length > 0 ? result.errors[0] : null;
+    _lastSyncFileCount = result.pushed;
     _syncCount++;
+    _syncHistory.push({ at: _lastSyncAt.toISOString(), sha: _lastSyncSha, fileCount: result.pushed, error: _lastSyncError });
+    if (_syncHistory.length > MAX_HISTORY) _syncHistory.shift();
     console.log(`[github-sync] Auto-sync #${_syncCount} complete — ${result.pushed} files, sha: ${result.sha}`);
     return result;
   } catch (e: any) {
     _lastSyncError = e.message;
     _lastSyncAt = new Date();
+    _lastSyncFileCount = 0;
+    _syncHistory.push({ at: _lastSyncAt.toISOString(), sha: null, fileCount: 0, error: e.message });
+    if (_syncHistory.length > MAX_HISTORY) _syncHistory.shift();
     console.warn(`[github-sync] Auto-sync failed: ${e.message}`);
     throw e;
   }
