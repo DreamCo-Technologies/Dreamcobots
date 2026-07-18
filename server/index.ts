@@ -163,4 +163,10 @@ app.use((req, res, next) => {
       log(`serving on port ${port}`);
     },
   );
+
+  // Auto-sync source code to GitHub after every server start (30s delay so
+  // the server is fully up), then every 6 hours while running.
+  import("./github-sync").then(({ scheduleAutoSync }) => {
+    scheduleAutoSync();
+  }).catch(() => {});
 })();

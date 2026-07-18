@@ -6,9 +6,84 @@ const GITHUB_API = "https://api.github.com";
 
 // ─── auth ────────────────────────────────────────────────────────────────────
 export function getToken(): string {
-  const t = process.env.GITHUB_PERSONAL_ACCESS_TOKEN || process.env.GITHUB_TOKEN || "";
-  if (t.length < 10) throw new Error("GitHub token not set. Add GITHUB_PERSONAL_ACCESS_TOKEN in Replit Secrets.");
+  // REPLIT_ACCESS_TOLKEN is the typo-named secret that has been verified working
+  const t =
+    process.env.GITHUB_PERSONAL_ACCESS_TOKEN ||
+    process.env.GITHUB_TOKEN ||
+    process.env.REPLIT_ACCESS_TOLKEN ||
+    "";
+  if (t.length < 10) throw new Error("GitHub token not set. Add GITHUB_PERSONAL_ACCESS_TOKEN or REPLIT_ACCESS_TOLKEN in Replit Secrets.");
   return t;
+}
+
+// ─── auto-sync state ─────────────────────────────────────────────────────────
+let _lastSyncAt: Date | null = null;
+let _lastSyncSha: string | null = null;
+let _lastSyncError: string | null = null;
+let _syncCount = 0;
+let _autoSyncTimer: ReturnType<typeof setInterval> | null = null;
+
+export function getAutoSyncStatus() {
+  return {
+    enabled: _autoSyncTimer !== null,
+    lastSyncAt: _lastSyncAt?.toISOString() ?? null,
+    lastSyncSha: _lastSyncSha,
+    lastSyncError: _lastSyncError,
+    syncCount: _syncCount,
+  };
+}
+
+export async function runAutoSync(): Promise<{ pushed: number; sha: string; errors: string[] }> {
+  try {
+    const result = await pushSourceCode();
+    _lastSyncAt = new Date();
+    _lastSyncSha = result.sha || null;
+    _lastSyncError = result.errors.length > 0 ? result.errors[0] : null;
+    _syncCount++;
+    console.log(`[github-sync] Auto-sync #${_syncCount} complete — ${result.pushed} files, sha: ${result.sha}`);
+    return result;
+  } catch (e: any) {
+    _lastSyncError = e.message;
+    _lastSyncAt = new Date();
+    console.warn(`[github-sync] Auto-sync failed: ${e.message}`);
+    throw e;
+  }
+}
+
+/**
+ * Schedule automatic GitHub sync:
+ * - First sync fires after `startupDelayMs` (default 30s, lets server fully boot)
+ * - Subsequent syncs fire every `intervalMs` (default 6h)
+ * Call once from server/index.ts after routes are registered.
+ */
+export function scheduleAutoSync(
+  intervalMs = 6 * 60 * 60 * 1000,
+  startupDelayMs = 30_000
+): void {
+  if (_autoSyncTimer) return; // already scheduled
+
+  // Check token is available before scheduling
+  try {
+    getToken();
+  } catch {
+    console.warn("[github-sync] Auto-sync disabled: no GitHub token configured.");
+    return;
+  }
+
+  console.log(`[github-sync] Auto-sync scheduled — first run in ${startupDelayMs / 1000}s, then every ${intervalMs / 3600000}h`);
+
+  // Initial startup sync
+  setTimeout(async () => {
+    try {
+      await runAutoSync();
+    } catch {}
+    // Periodic sync after first run
+    _autoSyncTimer = setInterval(async () => {
+      try {
+        await runAutoSync();
+      } catch {}
+    }, intervalMs);
+  }, startupDelayMs);
 }
 
 async function gh(path: string, opts: RequestInit = {}): Promise<any> {

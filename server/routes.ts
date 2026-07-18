@@ -1635,6 +1635,26 @@ Any improvements or fixes (optional, 1-2 bullet points max)`;
     }
   });
 
+  // Auto-sync status + manual trigger
+  app.get("/api/github/auto-sync", async (_req, res) => {
+    try {
+      const { getAutoSyncStatus } = await import("./github-sync");
+      res.json(getAutoSyncStatus());
+    } catch (e: any) {
+      res.status(500).json({ error: e.message });
+    }
+  });
+
+  app.post("/api/github/auto-sync", async (_req, res) => {
+    try {
+      const { runAutoSync } = await import("./github-sync");
+      const result = await runAutoSync();
+      res.json({ success: true, pushed: result.pushed, sha: result.sha, errors: result.errors.slice(0, 10) });
+    } catch (e: any) {
+      res.status(500).json({ success: false, error: e.message });
+    }
+  });
+
   app.get("/api/github/contents", async (req, res) => {
     try {
       const { getRepoContents } = await import("./github-sync");
