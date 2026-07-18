@@ -508,7 +508,7 @@ export async function registerRoutes(
         const learningMatch = assistantText.match(/🧠\s*LEARNING\s*LOG:\s*(.+?)(?:\n|$)/i);
         if (learningMatch && learningMatch[1]?.trim()) {
           try {
-            await storage.createBotMemory({ botId: bot.id, content: learningMatch[1].trim() });
+            await storage.createBotMemory({ botId: bot.id, key: "learning", value: learningMatch[1].trim(), category: "learning" });
           } catch (_) {}
         }
       }
@@ -1838,13 +1838,101 @@ Return ONLY valid JSON with this exact shape:
     }
   });
 
+  // ===== TASK RESTART ENDPOINTS =====
+  app.post("/api/tasks/restart-all", async (_req, res) => {
+    try {
+      const tasks = await storage.listTasks();
+      let restarted = 0;
+      for (const task of tasks) {
+        await storage.updateTask(task.id, { status: "pending" });
+        restarted++;
+      }
+      res.json({ success: true, restarted });
+    } catch (e: any) {
+      res.status(500).json({ success: false, error: e.message });
+    }
+  });
+
+  app.post("/api/tasks/:id/restart", async (req, res) => {
+    try {
+      const id = Number(req.params.id);
+      const updated = await storage.updateTask(id, { status: "pending" });
+      if (!updated) return res.status(404).json({ error: "Task not found" });
+      res.json({ success: true, task: updated });
+    } catch (e: any) {
+      res.status(500).json({ success: false, error: e.message });
+    }
+  });
+
+  // ===== GITHUB PULLS =====
+  app.get("/api/github/pulls", async (_req, res) => {
+    try {
+      const { getPullRequests, getRepoInfo } = await import("./github-sync");
+      const [prs, repo] = await Promise.all([getPullRequests(), getRepoInfo()]);
+      res.json({
+        connected: true,
+        repo: { name: repo.full_name, url: repo.html_url, defaultBranch: repo.default_branch, stars: repo.stargazers_count },
+        pullRequests: prs.map((pr: any) => ({
+          id: pr.number, title: pr.title, state: pr.state,
+          url: pr.html_url, createdAt: pr.created_at, author: pr.user?.login,
+          body: pr.body?.slice(0, 200), draft: pr.draft,
+        })),
+      });
+    } catch (e: any) {
+      // Fallback: unauthenticated for public repo
+      try {
+        const r = await fetch("https://api.github.com/repos/DreamCo-Technologies/Dreamcobots/pulls?state=all&per_page=20", {
+          headers: { Accept: "application/vnd.github+json", "X-GitHub-Api-Version": "2022-11-28" },
+        });
+        if (r.ok) {
+          const prs = await r.json() as any[];
+          res.json({ connected: true, tokenValid: false, pullRequests: prs.map((pr: any) => ({ id: pr.number, title: pr.title, state: pr.state, url: pr.html_url, createdAt: pr.created_at, author: pr.user?.login })) });
+          return;
+        }
+      } catch {}
+      res.json({ connected: false, pullRequests: [], error: e.message });
+    }
+  });
+
+  // ===== GITHUB REPO TREE =====
+  app.get("/api/github/repo-tree", async (_req, res) => {
+    try {
+      const { getToken } = await import("./github-sync");
+      const token = getToken();
+      const REPO = "DreamCo-Technologies/Dreamcobots";
+      const r = await fetch(`https://api.github.com/repos/${REPO}/git/trees/main?recursive=1`, {
+        headers: { Authorization: `Bearer ${token}`, Accept: "application/vnd.github+json", "X-GitHub-Api-Version": "2022-11-28" },
+      });
+      if (!r.ok) throw new Error(`GitHub ${r.status}`);
+      const data = await r.json() as any;
+      const tree = (data.tree ?? [])
+        .filter((f: any) => f.type === "blob" && !f.path.startsWith(".git"))
+        .slice(0, 300)
+        .map((f: any) => ({ path: f.path, type: f.type, size: f.size, html_url: `https://github.com/${REPO}/blob/main/${f.path}` }));
+      res.json({ tree, truncated: data.truncated, total: data.tree?.length ?? 0 });
+    } catch (e: any) {
+      // Unauthenticated fallback — list top-level contents
+      try {
+        const r = await fetch("https://api.github.com/repos/DreamCo-Technologies/Dreamcobots/contents/", {
+          headers: { Accept: "application/vnd.github+json", "X-GitHub-Api-Version": "2022-11-28" },
+        });
+        if (r.ok) {
+          const contents = await r.json() as any[];
+          res.json({ tree: contents.map((f: any) => ({ path: f.name, type: f.type === "dir" ? "tree" : "blob", size: f.size, html_url: f.html_url })), truncated: false, total: contents.length });
+          return;
+        }
+      } catch {}
+      res.json({ tree: [], error: e.message });
+    }
+  });
+
   // ===== BOT ACTIVITY =====
   app.get("/api/bot-activity", async (_req, res) => {
     const bots = await storage.listBotProfiles();
     const convs = await storage.listConversations();
     const activity = await Promise.all(bots.slice(0, 100).map(async (bot) => {
       const memories = await storage.listBotMemory(bot.id).catch(() => []);
-      return { id: bot.id, slug: bot.slug, displayName: bot.displayName, division: bot.division, tier: bot.tier, status: bot.status, memoryCount: memories.length, lastLearning: memories[0]?.content ?? null, lastActive: memories[0]?.createdAt ?? null };
+      return { id: bot.id, slug: bot.slug, displayName: bot.displayName, division: bot.division, tier: bot.tier, status: bot.status, memoryCount: memories.length, lastLearning: memories[0]?.value ?? null, lastActive: memories[0]?.createdAt ?? null };
     }));
     res.json({ bots: activity, totalConversations: convs.length, totalBots: bots.length });
   });
