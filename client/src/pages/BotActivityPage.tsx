@@ -462,10 +462,10 @@ export default function BotActivityPage() {
               <>
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                   {[
-                    { label: "Total Bots", value: activity.data?.totalBots ?? 0, color: "text-primary" },
-                    { label: "Conversations", value: activity.data?.totalConversations ?? 0, color: "text-green-400" },
-                    { label: "Bots with Memory", value: (activity.data?.bots ?? []).filter((b: any) => b.memoryCount > 0).length, color: "text-amber-400" },
-                    { label: "Active Learning", value: (activity.data?.bots ?? []).reduce((a: number, b: any) => a + b.memoryCount, 0), color: "text-cyan-400" },
+                    { label: "Total Bots", value: (activity.data as any)?.totalBots ?? 0, color: "text-primary" },
+                    { label: "Conversations", value: (activity.data as any)?.totalConversations ?? 0, color: "text-green-400" },
+                    { label: "Bots with Memory", value: ((activity.data as any)?.bots ?? []).filter((b: any) => b.memoryCount > 0).length, color: "text-amber-400" },
+                    { label: "Active Learning", value: ((activity.data as any)?.bots ?? []).reduce((a: number, b: any) => a + b.memoryCount, 0), color: "text-cyan-400" },
                   ].map(stat => (
                     <Card key={stat.label} className="buddy-card rounded-2xl border-border/60 p-4" data-testid={`stat-${stat.label}`}>
                       <p className="text-xs text-muted-foreground">{stat.label}</p>
@@ -474,7 +474,7 @@ export default function BotActivityPage() {
                   ))}
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3">
-                  {(activity.data?.bots ?? []).map((bot: any) => (
+                  {((activity.data as any)?.bots ?? []).map((bot: any) => (
                     <Card key={bot.id} className="buddy-card rounded-2xl border-border/60 p-4 hover:border-border transition-all" data-testid={`bot-activity-${bot.id}`}>
                       <div className="flex items-start justify-between gap-2">
                         <div className="min-w-0 flex-1">
@@ -539,10 +539,10 @@ export default function BotActivityPage() {
                     <span className="font-semibold text-sm">Push All Bots + Source Code to GitHub</span>
                   </div>
                   <div className="p-4 rounded-xl bg-muted/30 border border-border/50 space-y-2">
-                    <p className="text-sm font-medium">Step 1 — Push {activity.data?.totalBots ?? 1051} Bot Profiles</p>
+                    <p className="text-sm font-medium">Step 1 — Push {(activity.data as any)?.totalBots ?? 1051} Bot Profiles</p>
                     <p className="text-xs text-muted-foreground">Every bot → <code className="bg-muted px-1 rounded">bots/slug/replit_profile.json</code> + Python bots → <code className="bg-muted px-1 rounded">python_bots/</code> + Java → <code className="bg-muted px-1 rounded">java_bots/</code></p>
                     <Button onClick={() => pushAll.mutate()} disabled={pushAll.isPending || pushSource.isPending} className="rounded-xl w-full" data-testid="push-all-btn-2">
-                      {pushAll.isPending ? <><Loader2 className="h-4 w-4 mr-2 animate-spin" />Pushing bots...</> : <><UploadCloud className="h-4 w-4 mr-2" />Push All {activity.data?.totalBots ?? 1051} Bots</>}
+                      {pushAll.isPending ? <><Loader2 className="h-4 w-4 mr-2 animate-spin" />Pushing bots...</> : <><UploadCloud className="h-4 w-4 mr-2" />Push All {(activity.data as any)?.totalBots ?? 1051} Bots</>}
                     </Button>
                     {pushAll.isSuccess && (
                       <div className="p-3 rounded-xl bg-green-500/10 border border-green-500/20 text-sm text-green-400">

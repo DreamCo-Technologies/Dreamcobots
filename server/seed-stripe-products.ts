@@ -77,7 +77,7 @@ export async function seedStripeProducts() {
     const product = await stripe.products.create({
       name: tier.name,
       description: tier.description,
-      metadata: tier.metadata,
+      metadata: tier.metadata as unknown as Record<string, string>,
     });
     console.log(`  [created] ${tier.name} -> ${product.id}`);
 
