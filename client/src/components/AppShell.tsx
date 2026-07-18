@@ -33,6 +33,7 @@ import {
   Github,
   Wrench,
   Activity,
+  TestTube2,
 } from "lucide-react";
 import ThemeToggle from "@/components/ThemeToggle";
 import { Button } from "@/components/ui/button";
@@ -95,6 +96,7 @@ export default function AppShell(props: {
     { href: "/business", label: "Biz Launch", icon: Rocket },
     { href: "/bot-builder", label: "Bot Builder", icon: Wrench },
     { href: "/bot-activity", label: "Bot Activity & GitHub", icon: Activity },
+    { href: "/sandbox", label: "Sandbox Factory", icon: TestTube2 },
     { href: "/code-lab", label: "Code Lab", icon: Code },
     { href: "/loans", label: "Loans & Deals", icon: Landmark },
     { href: "/debug", label: "Debug Intel", icon: Bug },

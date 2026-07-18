@@ -2,3 +2,4 @@
 - [Buddy Bot auth authority](buddy-auth.md) — Buddy Bot is the empire's single auth authority; all OAuth, JWT, CLI, secrets, MFA, SAML patterns live in server/seed-buddy-bot.ts system prompt.
 - [GitHub push method](github-push.md) — Only method that works: git push "https://${REPLIT_ACCESS_TOLKEN}@github.com/DreamCo-Technologies/Dreamcobots.git" main --force (note typo: TOLKEN not TOKEN).
 - [Stripe status](stripe-status.md) — Stripe code fully wired; user still needs STRIPE_SECRET_KEY + STRIPE_PUBLISHABLE_KEY added as Replit secrets to activate live checkout.
+- [Service worker blank page trap](service-worker-blank-page.md) — Stale SW caches broken app; in dev mode always unregister instead of registering.

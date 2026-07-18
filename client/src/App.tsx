@@ -34,6 +34,7 @@ import AILeadersPage from "@/pages/AILeadersPage";
 import AIModelsPage from "@/pages/AIModelsPage";
 import BotBuilderPage from "@/pages/BotBuilderPage";
 import BotActivityPage from "@/pages/BotActivityPage";
+import SandboxPage from "@/pages/SandboxPage";
 
 function wrap(Page: React.ComponentType, name: string) {
   return function WrappedPage(props: any) {
@@ -76,6 +77,7 @@ function Router() {
       <Route path="/ai-models" component={wrap(AIModelsPage, "AI Models")} />
       <Route path="/bot-builder" component={wrap(BotBuilderPage, "Bot Builder")} />
       <Route path="/bot-activity" component={wrap(BotActivityPage, "Bot Activity")} />
+      <Route path="/sandbox" component={wrap(SandboxPage, "Sandbox Factory")} />
 
       {/* Legacy / convenience */}
       <Route path="/chat">

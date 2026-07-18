@@ -1564,7 +1564,49 @@ Any improvements or fixes (optional, 1-2 bullet points max)`;
       const [repo, prs] = await Promise.all([getRepoInfo(), getPullRequests()]);
       res.json({ connected: true, repo: { name: repo.full_name, stars: repo.stargazers_count, forks: repo.forks_count, description: repo.description, url: repo.html_url, defaultBranch: repo.default_branch }, pullRequests: prs.map((pr: any) => ({ id: pr.number, title: pr.title, state: pr.state, url: pr.html_url, createdAt: pr.created_at, author: pr.user?.login })) });
     } catch (e: any) {
-      res.status(500).json({ connected: false, error: e.message });
+      // Try unauthenticated fetch for public repo info as fallback
+      try {
+        const r = await fetch("https://api.github.com/repos/DreamCo-Technologies/Dreamcobots", {
+          headers: { Accept: "application/vnd.github+json", "X-GitHub-Api-Version": "2022-11-28" },
+        });
+        if (r.ok) {
+          const repo = await r.json();
+          res.json({ connected: true, tokenValid: false, repo: { name: repo.full_name, stars: repo.stargazers_count, forks: repo.forks_count, description: repo.description, url: repo.html_url, defaultBranch: repo.default_branch }, pullRequests: [] });
+          return;
+        }
+      } catch {}
+      // Return graceful 200 so frontend shows "offline" state rather than crashing
+      res.json({ connected: false, error: e.message?.replace(/ghp_[a-zA-Z0-9]+|ghs_[a-zA-Z0-9]+/, "***") ?? "GitHub token not configured" });
+    }
+  });
+
+  app.post("/api/github/sync", async (_req, res) => {
+    try {
+      const { exec } = await import("child_process");
+      const { promisify } = await import("util");
+      const execAsync = promisify(exec);
+      const token = process.env.REPLIT_ACCESS_TOLKEN || "";
+      if (!token) {
+        return res.status(400).json({ success: false, error: "REPLIT_ACCESS_TOLKEN secret not set" });
+      }
+      const remote = `https://${token}@github.com/DreamCo-Technologies/Dreamcobots.git`;
+      const { stdout, stderr } = await execAsync(
+        `git --no-optional-locks push "${remote}" main --force 2>&1 || true`,
+        { env: process.env, timeout: 60000 }
+      );
+      const localSha = (await execAsync("git --no-optional-locks rev-parse HEAD")).stdout.trim();
+      const localMsg = (await execAsync("git --no-optional-locks log -1 --pretty=format:%s")).stdout.trim();
+      const success = !stderr.includes("error:") && !stdout.includes("error:");
+      res.json({
+        success,
+        status: success ? "connected" : "error",
+        sha: localSha,
+        message: localMsg,
+        lastSync: new Date().toISOString(),
+        output: (stdout + stderr).replace(token, "***").trim(),
+      });
+    } catch (e: any) {
+      res.status(500).json({ success: false, error: e.message?.replace(process.env.REPLIT_ACCESS_TOLKEN || "TOKEN", "***") });
     }
   });
 

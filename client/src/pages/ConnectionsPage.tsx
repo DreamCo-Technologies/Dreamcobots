@@ -39,6 +39,7 @@ import {
   Wifi,
   Zap,
   Star,
+  Loader2,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { PlatformConnection } from "@shared/schema";
