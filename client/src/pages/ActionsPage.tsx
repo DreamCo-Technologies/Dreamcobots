@@ -18,8 +18,9 @@ import {
   Search, Filter, ChevronRight, Loader2, XCircle, Globe, Package,
   Truck, TrendingUp, Shield, Code, Store, CreditCard, ListTodo,
   BarChart2, CheckCheck, Trash2, Plus, ArrowRight, Sparkles,
-  Cpu, Network, Wallet, Bug, Users, GitBranch, Star, Eye,
+  Cpu, Network, Wallet, Bug, Users, GitBranch, Star, Eye, ImageIcon,
 } from "lucide-react";
+import ImageGeneratorPanel from "@/components/ImageGeneratorPanel";
 
 // ── Money-making API categories ──────────────────────────────────────────────
 const MONEY_APIS = [
@@ -92,7 +93,7 @@ function statusBadge(status: string) {
 export default function ActionsPage() {
   const [, setLocation] = useLocation();
   const { toast } = useToast();
-  const [activeTab, setActiveTab] = useState<"agents" | "tasks" | "repository" | "money-apis" | "debug">("agents");
+  const [activeTab, setActiveTab] = useState<"agents" | "tasks" | "repository" | "money-apis" | "debug" | "ai-tools">("agents");
   const [botSearch, setBotSearch] = useState("");
   const [botDivision, setBotDivision] = useState("All");
   const [apiCat, setApiCat] = useState("All");
@@ -164,6 +165,7 @@ export default function ActionsPage() {
     { id: "tasks", label: "Tasks", icon: ListTodo, count: tasks.length },
     { id: "repository", label: "Repository", icon: Github, count: null },
     { id: "money-apis", label: "Money APIs", icon: DollarSign, count: MONEY_APIS.length },
+    { id: "ai-tools", label: "AI Tools", icon: ImageIcon, count: null },
     { id: "debug", label: "Debug & Fix", icon: Bug, count: tasks.filter(t => t.status === "failed").length || null },
   ] as const;
 
@@ -759,6 +761,19 @@ export default function ActionsPage() {
                 })}
               </div>
             </Card>
+          </div>
+        )}
+
+        {/* ═══════════════ AI TOOLS TAB ═══════════════ */}
+        {activeTab === "ai-tools" && (
+          <div className="space-y-4">
+            <div>
+              <h3 className="text-lg font-semibold">AI Tools</h3>
+              <p className="text-sm text-muted-foreground mt-0.5">Generate images and media using the Empire OS AI stack.</p>
+            </div>
+            <div className="max-w-xl">
+              <ImageGeneratorPanel />
+            </div>
           </div>
         )}
 

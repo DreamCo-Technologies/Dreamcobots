@@ -18,9 +18,16 @@ export function registerImageRoutes(app: Express): void {
       });
 
       const imageData = (response.data ?? [])[0];
+
+      if (!imageData || (!imageData.url && !imageData.b64_json)) {
+        return res.status(502).json({
+          error: "Image generation returned no data. The AI provider may be unavailable or the prompt was rejected.",
+        });
+      }
+
       res.json({
-        url: imageData?.url,
-        b64_json: imageData?.b64_json,
+        url: imageData.url,
+        b64_json: imageData.b64_json,
       });
     } catch (error) {
       console.error("Error generating image:", error);
