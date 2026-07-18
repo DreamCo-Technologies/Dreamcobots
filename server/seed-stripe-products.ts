@@ -62,7 +62,7 @@ const EMPIRE_TIERS = [
   },
 ];
 
-async function seedProducts() {
+export async function seedStripeProducts() {
   console.log("Seeding DreamCo Empire tier products in Stripe...\n");
 
   const stripe = await getUncachableStripeClient();
@@ -105,4 +105,6 @@ async function seedProducts() {
   console.log("\nDone! Products will sync to database via webhooks.");
 }
 
-seedProducts().catch(console.error);
+if (process.argv[1] === import.meta.url?.replace('file://', '') || process.argv[1]?.endsWith('seed-stripe-products.ts')) {
+  seedStripeProducts().catch(console.error);
+}

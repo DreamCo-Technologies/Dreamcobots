@@ -5,6 +5,7 @@ import { createServer } from "http";
 import { runMigrations } from 'stripe-replit-sync';
 import { getStripeSync } from './stripeClient';
 import { WebhookHandlers } from './webhookHandlers';
+import { seedStripeProducts } from './seed-stripe-products';
 
 const app = express();
 const httpServer = createServer(app);
@@ -44,6 +45,11 @@ async function initStripe() {
     stripeSync.syncBackfill()
       .then(() => console.log('Stripe data synced'))
       .catch((err: any) => console.error('Error syncing Stripe data:', err));
+
+    // Seed Empire tier products (idempotent — skips if already exist)
+    seedStripeProducts()
+      .then(() => console.log('Stripe products ready'))
+      .catch((err: any) => console.warn('Stripe product seeding skipped:', err.message));
   } catch (error) {
     console.error('Failed to initialize Stripe:', error);
   }

@@ -356,11 +356,17 @@ function BuyBotsModal({ open, onClose }: { open: boolean; onClose: () => void })
 
   const productsQuery = useQuery<{ products: any[] }>({
     queryKey: ["/api/stripe/products"],
+    enabled: open,
   });
 
   const checkoutMutation = useMutation({
     mutationFn: async (priceId: string) => {
-      const res = await apiRequest("POST", "/api/stripe/checkout", { priceId });
+      const baseUrl = window.location.origin;
+      const res = await apiRequest("POST", "/api/stripe/checkout", {
+        priceId,
+        successUrl: `${baseUrl}/?checkout=success`,
+        cancelUrl: `${baseUrl}/?checkout=canceled`,
+      });
       return res.json();
     },
     onSuccess: (data) => {
@@ -573,6 +579,19 @@ export default function ChatIndexPage() {
 
   const [botSlug, setBotSlug] = useState<string | undefined>(undefined);
   const [mode, setMode] = useState<ChatMode>("build");
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const checkout = params.get("checkout");
+    if (checkout === "success") {
+      toast({ title: "Payment successful! 🎉", description: "Your Empire tier has been upgraded. Enjoy your new bots!" });
+      window.history.replaceState({}, "", "/");
+    } else if (checkout === "canceled") {
+      toast({ title: "Checkout canceled", description: "No charge was made. You can subscribe anytime." });
+      window.history.replaceState({}, "", "/");
+    }
+  }, []);
+
   const [input, setInput] = useState("");
   const [buyOpen, setBuyOpen] = useState(false);
 
