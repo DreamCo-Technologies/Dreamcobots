@@ -1,5 +1,6 @@
 import { useState, useEffect, useMemo } from "react";
 import { useLocation } from "wouter";
+import { useQuery, useMutation } from "@tanstack/react-query";
 import Seo from "@/components/Seo";
 import AppShell from "@/components/AppShell";
 import { Button } from "@/components/ui/button";
@@ -9,6 +10,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
+import { apiRequest } from "@/lib/queryClient";
 import { useCreateConversation } from "@/hooks/use-conversations";
 import { useBots } from "@/hooks/use-bots";
 import { useEmpireOverview } from "@/hooks/use-empire";
@@ -17,6 +19,7 @@ import {
   Send, Map, Hammer, Zap, GraduationCap, ShoppingCart, Search,
   Bot, Sparkles, Terminal, ChevronRight, Star, Building2,
   Code2, Cpu, DollarSign, Activity, Lock, CheckCircle2,
+  CreditCard, Crown, Rocket, Loader2,
 } from "lucide-react";
 
 type ChatMode = "plan" | "build" | "execute" | "teach";
@@ -173,12 +176,216 @@ function CodexPanel({ selectedBot }: { selectedBot: any }) {
   );
 }
 
+const TIER_COLORS: Record<string, string> = {
+  free: "bg-slate-500/20 text-slate-300 border-slate-500/30",
+  pro: "bg-blue-500/20 text-blue-300 border-blue-500/30",
+  elite: "bg-purple-500/20 text-purple-300 border-purple-500/30",
+  enterprise: "bg-amber-500/20 text-amber-300 border-amber-500/30",
+};
+
+const PLAN_META: Record<string, { icon: typeof Bot; color: string; highlight: boolean; perks: string[] }> = {
+  free:       { icon: Bot,     color: "text-slate-400",  highlight: false, perks: ["5 bots", "Guided mode", "All 45 divisions", "Community support"] },
+  pro:        { icon: Rocket,  color: "text-blue-400",   highlight: true,  perks: ["50 bots", "Semi-auto mode", "Advanced analytics", "Priority API access"] },
+  enterprise: { icon: Star,    color: "text-amber-400",  highlight: false, perks: ["150 bots", "Full autonomy", "All 269 APIs", "Dedicated support"] },
+  elite:      { icon: Crown,   color: "text-purple-400", highlight: false, perks: ["Unlimited bots", "White-glove onboarding", "Custom divisions", "Dedicated infra"] },
+};
+
+function PricingPlansTab() {
+  const { toast } = useToast();
+  const [yearly, setYearly] = useState(false);
+
+  const productsQuery = useQuery<{ products: any[] }>({
+    queryKey: ["/api/stripe/products"],
+  });
+
+  const checkoutMutation = useMutation({
+    mutationFn: async (priceId: string) => {
+      const res = await apiRequest("POST", "/api/stripe/checkout", { priceId });
+      return res.json();
+    },
+    onSuccess: (data) => {
+      if (data?.url) {
+        window.location.href = data.url;
+      } else {
+        toast({ title: "Checkout failed", description: "No checkout URL returned.", variant: "destructive" });
+      }
+    },
+    onError: (err: any) => {
+      toast({ title: "Checkout failed", description: err?.message ?? "Something went wrong.", variant: "destructive" });
+    },
+  });
+
+  const products = productsQuery.data?.products ?? [];
+
+  const tierOrder = ["free", "pro", "enterprise", "elite"];
+  const sorted = [...products].sort((a, b) => {
+    const ai = tierOrder.indexOf(a.metadata?.tier ?? "");
+    const bi = tierOrder.indexOf(b.metadata?.tier ?? "");
+    return ai - bi;
+  });
+
+  if (productsQuery.isLoading) {
+    return (
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 p-6">
+        {Array.from({ length: 4 }).map((_, i) => <Skeleton key={i} className="h-56 rounded-2xl" />)}
+      </div>
+    );
+  }
+
+  if (sorted.length === 0) {
+    return (
+      <div className="flex flex-col items-center justify-center py-16 gap-3 text-center">
+        <CreditCard className="h-10 w-10 text-muted-foreground/40" />
+        <p className="font-semibold">Stripe not connected yet</p>
+        <p className="text-sm text-muted-foreground max-w-xs">
+          Add your <span className="font-mono text-xs bg-muted px-1 py-0.5 rounded">STRIPE_SECRET_KEY</span> and{" "}
+          <span className="font-mono text-xs bg-muted px-1 py-0.5 rounded">STRIPE_PUBLISHABLE_KEY</span> environment secrets to enable live checkout.
+        </p>
+      </div>
+    );
+  }
+
+  return (
+    <div className="px-6 py-5">
+      <div className="flex items-center justify-center gap-3 mb-6">
+        <span className={cn("text-sm font-medium", !yearly ? "text-foreground" : "text-muted-foreground")}>Monthly</span>
+        <button
+          onClick={() => setYearly(v => !v)}
+          className={cn("relative h-6 w-11 rounded-full border-2 transition-colors", yearly ? "bg-primary border-primary" : "bg-muted border-border")}
+          data-testid="billing-toggle"
+        >
+          <span className={cn("absolute top-0.5 left-0.5 h-4 w-4 rounded-full bg-white shadow transition-transform", yearly && "translate-x-5")} />
+        </button>
+        <span className={cn("text-sm font-medium", yearly ? "text-foreground" : "text-muted-foreground")}>
+          Yearly <Badge className="ml-1 text-[10px] h-4 bg-green-500/20 text-green-400 border-green-500/30">20% off</Badge>
+        </span>
+      </div>
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        {sorted.map((product) => {
+          const tierKey = (product.metadata?.tier ?? "free").toLowerCase();
+          const meta = PLAN_META[tierKey] ?? PLAN_META.free;
+          const Icon = meta.icon;
+          const prices = product.prices ?? [];
+          const monthlyPrice = prices.find((p: any) => p.recurring?.interval === "month");
+          const yearlyPrice = prices.find((p: any) => p.recurring?.interval === "year");
+          const activePrice = yearly ? (yearlyPrice ?? monthlyPrice) : monthlyPrice;
+          const amount = activePrice ? activePrice.unit_amount / 100 : 0;
+          const isFree = amount === 0;
+          const priceDisplay = isFree ? "Free" : `$${amount.toLocaleString()}/${yearly ? "yr" : "mo"}`;
+
+          return (
+            <div
+              key={product.id}
+              className={cn(
+                "relative rounded-2xl border p-5 flex flex-col gap-4 transition-all",
+                meta.highlight
+                  ? "border-primary/60 bg-primary/5 shadow-lg shadow-primary/10"
+                  : "border-border/60 bg-card/60"
+              )}
+              data-testid={`plan-card-${tierKey}`}
+            >
+              {meta.highlight && (
+                <span className="absolute -top-3 left-1/2 -translate-x-1/2 text-[11px] font-bold px-3 py-1 rounded-full bg-primary text-primary-foreground">
+                  MOST POPULAR
+                </span>
+              )}
+              <div className="flex items-center gap-3">
+                <span className={cn("inline-flex h-10 w-10 items-center justify-center rounded-xl bg-card border", meta.highlight ? "border-primary/40" : "border-border/50")}>
+                  <Icon className={cn("h-5 w-5", meta.color)} />
+                </span>
+                <div>
+                  <p className="font-bold text-base">{product.name}</p>
+                  <Badge className={cn("text-[10px] border mt-0.5", TIER_COLORS[tierKey] ?? TIER_COLORS.free)}>{tierKey}</Badge>
+                </div>
+              </div>
+
+              <div>
+                <span className="text-3xl font-extrabold">{priceDisplay}</span>
+                {!isFree && <span className="text-sm text-muted-foreground ml-1">/ {product.metadata?.botLimit ?? "?"} bots</span>}
+              </div>
+
+              <ul className="space-y-1.5 flex-1">
+                {(meta.perks).map((perk) => (
+                  <li key={perk} className="flex items-center gap-2 text-sm text-muted-foreground">
+                    <CheckCircle2 className="h-3.5 w-3.5 text-green-400 flex-shrink-0" />
+                    {perk}
+                  </li>
+                ))}
+              </ul>
+
+              <Button
+                className={cn("w-full rounded-xl font-semibold", meta.highlight ? "bg-gradient-to-r from-primary to-accent text-primary-foreground" : "")}
+                variant={meta.highlight ? "default" : "outline"}
+                disabled={isFree || checkoutMutation.isPending}
+                onClick={() => {
+                  if (isFree) {
+                    return;
+                  }
+                  if (!activePrice?.id) {
+                    toast({ title: "Price not found", description: "Could not find a price for this plan.", variant: "destructive" });
+                    return;
+                  }
+                  checkoutMutation.mutate(activePrice.id);
+                }}
+                data-testid={`subscribe-${tierKey}`}
+              >
+                {checkoutMutation.isPending ? (
+                  <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                ) : isFree ? (
+                  <><CheckCircle2 className="h-4 w-4 mr-2" />Current Plan</>
+                ) : (
+                  <><CreditCard className="h-4 w-4 mr-2" />Subscribe</>
+                )}
+              </Button>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
 function BuyBotsModal({ open, onClose }: { open: boolean; onClose: () => void }) {
+  const [tab, setTab] = useState<"bots" | "plans">("plans");
   const [search, setSearch] = useState("");
   const [division, setDivision] = useState("all");
-  const [tier, setTier] = useState("all");
+  const [tierFilter, setTierFilter] = useState("all");
   const bots = useBots();
   const { toast } = useToast();
+
+  const productsQuery = useQuery<{ products: any[] }>({
+    queryKey: ["/api/stripe/products"],
+  });
+
+  const checkoutMutation = useMutation({
+    mutationFn: async (priceId: string) => {
+      const res = await apiRequest("POST", "/api/stripe/checkout", { priceId });
+      return res.json();
+    },
+    onSuccess: (data) => {
+      if (data?.url) {
+        window.location.href = data.url;
+      } else {
+        toast({ title: "Checkout failed", description: "No checkout URL returned.", variant: "destructive" });
+      }
+    },
+    onError: (err: any) => {
+      toast({ title: "Checkout failed", description: err?.message ?? "Something went wrong.", variant: "destructive" });
+    },
+  });
+
+  const tierToPriceId = useMemo(() => {
+    const products = productsQuery.data?.products ?? [];
+    const map: Record<string, string> = {};
+    for (const product of products) {
+      const tierKey = product.metadata?.tier;
+      if (!tierKey) continue;
+      const monthly = product.prices?.find((p: any) => p.recurring?.interval === "month");
+      if (monthly) map[tierKey] = monthly.id;
+    }
+    return map;
+  }, [productsQuery.data]);
 
   const allBots = bots.data ?? [];
   const divisions = useMemo(() => {
@@ -190,21 +397,14 @@ function BuyBotsModal({ open, onClose }: { open: boolean; onClose: () => void })
     return allBots.filter((b) => {
       const matchSearch = !search || b.displayName.toLowerCase().includes(search.toLowerCase()) || (b.description ?? "").toLowerCase().includes(search.toLowerCase());
       const matchDiv = division === "all" || b.division === division;
-      const matchTier = tier === "all" || (b.tier ?? "free") === tier;
+      const matchTier = tierFilter === "all" || (b.tier ?? "free") === tierFilter;
       return matchSearch && matchDiv && matchTier;
     });
-  }, [allBots, search, division, tier]);
-
-  const TIER_COLORS: Record<string, string> = {
-    free: "bg-slate-500/20 text-slate-300 border-slate-500/30",
-    pro: "bg-blue-500/20 text-blue-300 border-blue-500/30",
-    elite: "bg-purple-500/20 text-purple-300 border-purple-500/30",
-    enterprise: "bg-amber-500/20 text-amber-300 border-amber-500/30",
-  };
+  }, [allBots, search, division, tierFilter]);
 
   return (
     <Dialog open={open} onOpenChange={(v) => !v && onClose()}>
-      <DialogContent className="max-w-4xl h-[80vh] flex flex-col p-0 gap-0 overflow-hidden">
+      <DialogContent className="max-w-4xl h-[85vh] flex flex-col p-0 gap-0 overflow-hidden">
         <DialogHeader className="px-6 py-4 border-b border-border/60 flex-shrink-0">
           <DialogTitle className="flex items-center gap-2 text-xl">
             <ShoppingCart className="h-5 w-5 text-primary" />
@@ -213,120 +413,152 @@ function BuyBotsModal({ open, onClose }: { open: boolean; onClose: () => void })
           </DialogTitle>
         </DialogHeader>
 
-        <div className="px-6 py-3 border-b border-border/40 flex flex-wrap gap-3 flex-shrink-0">
-          <div className="relative flex-1 min-w-[200px]">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-            <Input
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              placeholder="Search bots by name or capability..."
-              className="pl-9 rounded-xl"
-              data-testid="bot-search"
-            />
-          </div>
-          <select
-            value={division}
-            onChange={(e) => setDivision(e.target.value)}
-            className="rounded-xl border border-border/60 bg-card px-3 py-2 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-ring/30"
-            data-testid="filter-division"
-          >
-            <option value="all">All Divisions</option>
-            {divisions.slice(0, 45).map((d) => (
-              <option key={d} value={d}>{d}</option>
-            ))}
-          </select>
-          <select
-            value={tier}
-            onChange={(e) => setTier(e.target.value)}
-            className="rounded-xl border border-border/60 bg-card px-3 py-2 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-ring/30"
-            data-testid="filter-tier"
-          >
-            <option value="all">All Tiers</option>
-            <option value="free">Free</option>
-            <option value="pro">Pro</option>
-            <option value="elite">Elite</option>
-            <option value="enterprise">Enterprise</option>
-          </select>
+        {/* Tab switcher */}
+        <div className="flex border-b border-border/40 flex-shrink-0">
+          {(["plans", "bots"] as const).map((t) => (
+            <button
+              key={t}
+              onClick={() => setTab(t)}
+              className={cn(
+                "flex-1 py-3 text-sm font-semibold transition-colors border-b-2 -mb-px",
+                tab === t
+                  ? "border-primary text-primary"
+                  : "border-transparent text-muted-foreground hover:text-foreground"
+              )}
+              data-testid={`tab-${t}`}
+            >
+              {t === "plans" ? "💳 Subscription Plans" : "🤖 Browse Bots"}
+            </button>
+          ))}
         </div>
 
-        <ScrollArea className="flex-1 px-6 py-4">
-          {bots.isLoading ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              {Array.from({ length: 8 }).map((_, i) => (
-                <Skeleton key={i} className="h-32 rounded-xl" />
-              ))}
+        {tab === "plans" ? (
+          <ScrollArea className="flex-1">
+            <PricingPlansTab />
+          </ScrollArea>
+        ) : (
+          <>
+            <div className="px-6 py-3 border-b border-border/40 flex flex-wrap gap-3 flex-shrink-0">
+              <div className="relative flex-1 min-w-[200px]">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                <Input
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                  placeholder="Search bots by name or capability..."
+                  className="pl-9 rounded-xl"
+                  data-testid="bot-search"
+                />
+              </div>
+              <select
+                value={division}
+                onChange={(e) => setDivision(e.target.value)}
+                className="rounded-xl border border-border/60 bg-card px-3 py-2 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-ring/30"
+                data-testid="filter-division"
+              >
+                <option value="all">All Divisions</option>
+                {divisions.slice(0, 45).map((d) => (
+                  <option key={d} value={d}>{d}</option>
+                ))}
+              </select>
+              <select
+                value={tierFilter}
+                onChange={(e) => setTierFilter(e.target.value)}
+                className="rounded-xl border border-border/60 bg-card px-3 py-2 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-ring/30"
+                data-testid="filter-tier"
+              >
+                <option value="all">All Tiers</option>
+                <option value="free">Free</option>
+                <option value="pro">Pro</option>
+                <option value="elite">Elite</option>
+                <option value="enterprise">Enterprise</option>
+              </select>
             </div>
-          ) : (
-            <>
-              <p className="text-xs text-muted-foreground mb-3">Showing {filtered.length} of {allBots.length} bots</p>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                {filtered.slice(0, 100).map((bot) => {
-                  const tierKey = (bot.tier ?? "free").toLowerCase();
-                  const tierClass = TIER_COLORS[tierKey] ?? TIER_COLORS.free;
-                  const anyBot = bot as any;
-                  const price = anyBot.price ? `$${Number(anyBot.price).toLocaleString()}/mo` : "Free";
-                  const isFree = !anyBot.price || Number(anyBot.price) === 0;
-                  return (
-                    <div
-                      key={bot.id}
-                      className="rounded-xl border border-border/60 bg-card/60 p-4 hover:border-primary/40 hover:bg-card transition-all group"
-                      data-testid={`bot-card-${bot.id}`}
-                    >
-                      <div className="flex items-start justify-between gap-2 mb-2">
-                        <div className="flex items-center gap-2 min-w-0">
-                          <span className="inline-flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10 border border-primary/20 flex-shrink-0">
-                            <Bot className="h-4 w-4 text-primary" />
-                          </span>
-                          <div className="min-w-0">
-                            <p className="font-semibold text-sm truncate">{bot.displayName}</p>
-                            <p className="text-[11px] text-muted-foreground truncate">{bot.division}</p>
+
+            <ScrollArea className="flex-1 px-6 py-4">
+              {bots.isLoading ? (
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  {Array.from({ length: 8 }).map((_, i) => (
+                    <Skeleton key={i} className="h-32 rounded-xl" />
+                  ))}
+                </div>
+              ) : (
+                <>
+                  <p className="text-xs text-muted-foreground mb-3">Showing {filtered.length} of {allBots.length} bots</p>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    {filtered.slice(0, 100).map((bot) => {
+                      const tierKey = (bot.tier ?? "free").toLowerCase();
+                      const tierClass = TIER_COLORS[tierKey] ?? TIER_COLORS.free;
+                      const isFree = tierKey === "free";
+                      const priceId = tierToPriceId[tierKey];
+                      return (
+                        <div
+                          key={bot.id}
+                          className="rounded-xl border border-border/60 bg-card/60 p-4 hover:border-primary/40 hover:bg-card transition-all group"
+                          data-testid={`bot-card-${bot.id}`}
+                        >
+                          <div className="flex items-start justify-between gap-2 mb-2">
+                            <div className="flex items-center gap-2 min-w-0">
+                              <span className="inline-flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10 border border-primary/20 flex-shrink-0">
+                                <Bot className="h-4 w-4 text-primary" />
+                              </span>
+                              <div className="min-w-0">
+                                <p className="font-semibold text-sm truncate">{bot.displayName}</p>
+                                <p className="text-[11px] text-muted-foreground truncate">{bot.division}</p>
+                              </div>
+                            </div>
+                            <Badge className={cn("text-[10px] border flex-shrink-0", tierClass)}>
+                              {bot.tier ?? "free"}
+                            </Badge>
+                          </div>
+                          <p className="text-xs text-muted-foreground line-clamp-2 mb-3">
+                            {bot.description ?? "Specialized AI bot for autonomous task execution."}
+                          </p>
+                          {bot.category && (
+                            <div className="flex flex-wrap gap-1 mb-3">
+                              <span className="text-[10px] px-1.5 py-0.5 rounded-md bg-muted text-muted-foreground">{bot.category}</span>
+                            </div>
+                          )}
+                          <div className="flex items-center justify-between">
+                            <span className="text-sm font-bold text-primary capitalize">{isFree ? "Free" : tierKey + " tier"}</span>
+                            <Button
+                              size="sm"
+                              variant={isFree ? "outline" : "default"}
+                              className="rounded-lg text-xs h-8"
+                              disabled={!isFree && checkoutMutation.isPending}
+                              onClick={() => {
+                                if (isFree) {
+                                  toast({ title: `${bot.displayName} activated!`, description: "Bot added to your fleet." });
+                                } else if (priceId) {
+                                  checkoutMutation.mutate(priceId);
+                                } else {
+                                  setTab("plans");
+                                }
+                              }}
+                              data-testid={`buy-bot-${bot.id}`}
+                            >
+                              {isFree ? (
+                                <><CheckCircle2 className="h-3 w-3 mr-1" />Activate</>
+                              ) : checkoutMutation.isPending ? (
+                                <Loader2 className="h-3 w-3 animate-spin mr-1" />
+                              ) : (
+                                <><CreditCard className="h-3 w-3 mr-1" />Subscribe</>
+                              )}
+                            </Button>
                           </div>
                         </div>
-                        <Badge className={cn("text-[10px] border flex-shrink-0", tierClass)}>
-                          {bot.tier ?? "free"}
-                        </Badge>
-                      </div>
-                      <p className="text-xs text-muted-foreground line-clamp-2 mb-3">
-                        {bot.description ?? "Specialized AI bot for autonomous task execution."}
-                      </p>
-                      {bot.category && (
-                        <div className="flex flex-wrap gap-1 mb-3">
-                          <span className="text-[10px] px-1.5 py-0.5 rounded-md bg-muted text-muted-foreground">{bot.category}</span>
-                        </div>
-                      )}
-                      <div className="flex items-center justify-between">
-                        <span className="text-sm font-bold text-primary">{price}</span>
-                        <Button
-                          size="sm"
-                          variant={isFree ? "outline" : "default"}
-                          className="rounded-lg text-xs h-8"
-                          onClick={() => {
-                            toast({
-                              title: isFree ? `${bot.displayName} activated!` : `Subscribing to ${bot.displayName}`,
-                              description: isFree ? "Bot added to your fleet." : "Redirecting to checkout…",
-                            });
-                          }}
-                          data-testid={`buy-bot-${bot.id}`}
-                        >
-                          {isFree ? (
-                            <><CheckCircle2 className="h-3 w-3 mr-1" />Activate</>
-                          ) : (
-                            <><ShoppingCart className="h-3 w-3 mr-1" />Buy</>
-                          )}
-                        </Button>
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-              {filtered.length > 100 && (
-                <p className="text-center text-xs text-muted-foreground mt-4 py-2">
-                  Showing first 100 results. Use search or filters to narrow down.
-                </p>
+                      );
+                    })}
+                  </div>
+                  {filtered.length > 100 && (
+                    <p className="text-center text-xs text-muted-foreground mt-4 py-2">
+                      Showing first 100 results. Use search or filters to narrow down.
+                    </p>
+                  )}
+                </>
               )}
-            </>
-          )}
-        </ScrollArea>
+            </ScrollArea>
+          </>
+        )}
       </DialogContent>
     </Dialog>
   );
