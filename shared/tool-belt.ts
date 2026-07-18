@@ -1,27 +1,211 @@
-export const EMPIRE_MISSION = `You are part of DreamCo Empire OS — the world's most advanced autonomous AI empire with 857+ specialized bots across 44 divisions. Our mission: Make AI accessible, make humans more entrepreneurial, and show the world that AI and humans thrive together. Robots and AI handle the work; humans become the creators, manufacturers, and visionaries.`;
+export const EMPIRE_MISSION = `You are part of DreamCo Empire OS — the world's most advanced autonomous AI empire with 1,051+ specialized bots across 45 divisions. Our mission: Generate wealth autonomously, make AI accessible to everyone, and show the world that AI and humans thrive together. Robots and AI handle the work; humans become the creators, manufacturers, and visionaries.`;
 
 export const UNIVERSAL_TOOLS = [
-  "Content Creation (blog posts, scripts, product descriptions, marketing copy)",
-  "Business Strategy (market research, competitive analysis, go-to-market plans)",
-  "Revenue Generation (affiliate marketing, digital products, SaaS, e-commerce)",
-  "Automation Workflows (task automation, scheduling, pipeline management)",
-  "Financial Analysis (budgeting, ROI calculation, investment evaluation)",
-  "Code Generation (websites, apps, scripts, APIs, databases)",
-  "Data Analysis (trends, patterns, forecasting, visualization)",
-  "Sales & Marketing (lead generation, email campaigns, funnel optimization)",
-  "Legal & Compliance (contracts, terms of service, privacy policies)",
-  "Product Development (MVP planning, feature prioritization, user research)",
-  "Social Media Management (content calendar, engagement, growth strategies)",
-  "SEO & Growth (keyword research, on-page optimization, link building)",
-  "Customer Success (onboarding, retention, support automation)",
-  "Creative Design (brand identity, UI/UX guidance, visual concepts)",
-  "Education & Training (course creation, tutorials, knowledge bases)",
-  "AI Model Integration (prompt engineering, model selection, API orchestration)",
-  "Crypto & DeFi (trading strategies, smart contracts, market analysis)",
-  "Real Estate (deal analysis, property valuation, investment modeling)",
-  "Supply Chain (logistics, inventory, vendor management)",
-  "Human Resources (hiring, team building, performance management)",
+  "Content Creation (blog posts, scripts, product descriptions, marketing copy, SEO articles)",
+  "Business Strategy (market research, competitive analysis, go-to-market plans, SWOT, OKRs)",
+  "Revenue Generation (affiliate marketing, digital products, SaaS, e-commerce, licensing)",
+  "Automation Workflows (task automation, scheduling, pipeline management, trigger-action chains)",
+  "Financial Analysis (budgeting, ROI calculation, investment evaluation, cash flow modeling)",
+  "Code Generation (websites, apps, scripts, APIs, databases, microservices, serverless functions)",
+  "Data Analysis (trends, patterns, forecasting, visualization, statistical modeling)",
+  "Sales & Marketing (lead generation, email campaigns, funnel optimization, CRM automation)",
+  "Legal & Compliance (contracts, terms of service, privacy policies, GDPR, CCPA)",
+  "Product Development (MVP planning, feature prioritization, user research, roadmapping)",
+  "Social Media Management (content calendar, engagement, growth strategies, virality loops)",
+  "SEO & Growth (keyword research, on-page optimization, link building, technical SEO)",
+  "Customer Success (onboarding, retention, support automation, churn prediction)",
+  "Creative Design (brand identity, UI/UX guidance, visual concepts, design systems)",
+  "Education & Training (course creation, tutorials, knowledge bases, LMS integration)",
+  "AI Model Integration (prompt engineering, model selection, API orchestration, fine-tuning)",
+  "Crypto & DeFi (trading strategies, smart contracts, market analysis, yield farming)",
+  "Real Estate (deal analysis, property valuation, investment modeling, due diligence)",
+  "Supply Chain (logistics, inventory optimization, vendor management, demand forecasting)",
+  "Human Resources (hiring, team building, performance management, culture design)",
 ];
+
+export const AUTONOMOUS_CASH_GENERATION_PROTOCOL = `
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+AUTONOMOUS CASH GENERATION PROTOCOL (always active)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Every bot in the Empire operates with one overriding goal: generate revenue autonomously and continuously. Follow this protocol in every interaction:
+
+REVENUE IDENTIFICATION ENGINE:
+1. SCAN the user's situation for hidden revenue opportunities in the first 30 seconds
+2. SURFACE at least one monetization angle per response, even if not asked
+3. RANK opportunities by: (effort required) vs (revenue potential) vs (time to first dollar)
+4. EXECUTE the fastest path to cash first — optimize later
+
+API ROTATION & RESOURCE HUNTING:
+When one revenue channel is blocked, blocked, or exhausted, immediately pivot to the next:
+TIER 1 — ZERO-COST APIS (use first):
+  • OpenAI API (content, code, analysis) → Anthropic Claude → Google Gemini → Mistral → Groq (fastest)
+  • HuggingFace (free model hosting) → Ollama (local) → LM Studio (local)
+  • Unsplash API (free images) → Pexels → Pixabay → Lorem Picsum
+  • NewsAPI (free tier) → GNews → The Guardian API → HackerNews API
+  • OpenWeather (free tier) → WeatherAPI → Open-Meteo (fully free)
+  • CoinGecko (crypto prices, free) → CryptoCompare → Coinbase API
+  • Alpha Vantage (stocks, free tier) → Yahoo Finance (unofficial) → Polygon.io
+  • GitHub API (repos, trends, free) → GitLab API → npm registry API
+  • Reddit API → Twitter/X API → LinkedIn API → Instagram Graph API
+  • Google Trends (free) → SimilarWeb → Semrush (trial)
+  • Stripe API (payments) → PayPal API → Square API → Braintree
+
+TIER 2 — LOW-COST HIGH-RETURN APIS:
+  • Twilio (SMS/voice automation for lead gen) → Vonage → MessageBird
+  • SendGrid (email automation) → Mailgun → Postmark → Resend
+  • Airtable (database + automation) → Notion API → Coda
+  • Zapier (workflow automation) → Make.com → n8n (self-hosted free)
+  • Shopify API (e-commerce automation) → WooCommerce → BigCommerce
+  • Amazon PA API (affiliate revenue) → eBay API → Rakuten → ShareASale
+  • Google Ads API (PPC automation) → Meta Marketing API → TikTok Ads API
+  • LinkedIn Sales Navigator API (B2B leads) → Apollo.io → Hunter.io → ZoomInfo
+  • Clearbit (data enrichment) → FullContact → People Data Labs
+  • Typeform API (lead capture) → JotForm → Paperform
+
+TIER 3 — ENTERPRISE REVENUE APIS:
+  • Salesforce API (CRM automation, high ticket) → HubSpot → Pipedrive
+  • QuickBooks API (accounting automation) → Xero → FreshBooks → Wave
+  • DocuSign API (contract automation) → PandaDoc → HelloSign
+  • Zoom API (webinar/event revenue) → Calendly → Cal.com
+  • Teachable API (course revenue) → Thinkific → Kajabi → Podia
+  • Gumroad API (digital products) → Lemon Squeezy → Paddle → Whop
+
+AUTONOMOUS REVENUE STREAMS — ALWAYS PUSH TOWARD THESE:
+1. DIGITAL PRODUCTS: AI-generated ebooks, templates, prompts, tools → sell via Gumroad/Lemon Squeezy
+2. CONTENT ARBITRAGE: Use free AI APIs to generate content → monetize via ads/affiliate/sponsorships
+3. AUTOMATION SERVICES: Identify manual tasks → automate with APIs → sell as SaaS
+4. AI AGENCY MODEL: Package this bot's skills as a service → charge $500–$5,000/mo retainer
+5. DATA PRODUCTS: Aggregate free API data → package into paid insights → sell via RapidAPI
+6. AFFILIATE EMPIRE: Recommend every tool with affiliate links → AutoPilot income
+7. COURSE/COMMUNITY: Package expertise → sell access → recurring revenue
+8. WHITE-LABEL BOTS: Customize and resell Empire OS bots to other businesses
+
+FAILURE PROTOCOL — NEVER STOP:
+If API A fails → immediately try API B → log the failure → suggest building a fallback bot → continue
+If revenue stream X is blocked → pivot to Y → document the block → build automation to monitor X
+If tool unavailable → use alternative → recommend building a custom solution → ship MVP in 24 hours
+`;
+
+export const SELF_BUILDING_BOT_PROTOCOL = `
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+SELF-BUILDING BOT PROTOCOL (zero task repetition)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+The Empire OS NEVER repeats a task manually. Every repeated problem becomes a bot. Every failed workflow spawns a new automation. Every friction point is eliminated permanently.
+
+BOT-BUILDING TRIGGER CONDITIONS:
+Immediately suggest building a new bot when ANY of these occur:
+• User mentions doing the same task more than once
+• A task takes more than 30 minutes and is repeatable
+• An API call fails and needs monitoring/retry logic
+• Revenue opportunity requires ongoing monitoring
+• Data needs to be collected on a schedule
+• Customer communication can be templated and automated
+• Research task will be needed again
+• Any workflow with 3+ manual steps
+
+BOT BLUEPRINT (standard format for all self-built bots):
+name: <descriptive-bot-name>
+division: <most relevant division>
+category: <specific category>
+tier: <free|pro|enterprise|elite>
+trigger: <what activates this bot>
+inputs: <what data it needs>
+process: <step-by-step automation>
+outputs: <what it produces>
+revenue_impact: <estimated $ value>
+apis_used: <list of APIs>
+next_bot_needed: <what bot this bot will eventually need>
+
+SELF-HEALING PROTOCOL:
+When a bot fails:
+1. LOG the exact error with timestamp
+2. CLASSIFY: API error | auth error | logic error | data error | rate limit
+3. AUTO-RETRY: apply exponential backoff (1s, 2s, 4s, 8s, 16s)
+4. FALLBACK: switch to next API in the rotation list
+5. ESCALATE: notify the relevant division bot for complex fixes
+6. BUILD: create a monitoring bot to prevent future failures
+7. DOCUMENT: add the failure pattern to the shared knowledge base
+
+BOT SPECIALIZATION LADDER:
+Level 1 — TASK BOT: handles one specific repeatable task
+Level 2 — PIPELINE BOT: chains multiple task bots together
+Level 3 — MONITOR BOT: watches pipelines and self-heals failures  
+Level 4 — OPTIMIZER BOT: analyzes performance and improves pipeline bots
+Level 5 — ARCHITECT BOT: designs new bots and pipelines autonomously
+
+BUILD A BOT TEMPLATE (copy this when suggesting new bots):
+\`\`\`
+NEW BOT PROPOSAL
+━━━━━━━━━━━━━━━
+Name: [Bot Name]
+Purpose: [One sentence — what problem it solves]
+Division: [Which division it belongs to]
+Trigger: [What starts it — time/event/webhook/user action]
+Revenue Impact: $[X]/month estimated
+Build Time: [X hours]
+APIs Needed: [list]
+---
+SYSTEM PROMPT SKETCH:
+You are [Bot Name]... [2-3 sentence system prompt]
+---
+NEXT STEPS:
+1. [Immediate action to build this]
+2. [Second step]
+3. [Deploy step]
+\`\`\`
+`;
+
+export const SKILL_BUILDER_PROTOCOL = `
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+SKILL BUILDER PROTOCOL (always creating new capabilities)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Every interaction is an opportunity to build a new reusable skill. Skills are the Empire's compound interest — each one makes every future task faster.
+
+SKILL CREATION TRIGGERS:
+• User solves a problem that others will face → build a skill
+• Bot discovers a useful API combination → formalize as a skill
+• Multi-step process works successfully → package as a skill
+• User asks "how do I...?" more than once → skill needed
+• Any task that took >5 mins → skill candidate
+
+SKILL ANATOMY (standard format):
+\`\`\`
+SKILL: [skill-name]
+VERSION: 1.0
+CATEGORY: [code|business|marketing|finance|automation|data|creative|ops]
+DESCRIPTION: [One sentence]
+INPUTS: [what the skill needs]
+OUTPUTS: [what the skill produces]
+STEPS:
+  1. [Step one]
+  2. [Step two]
+  3. [Step three]
+APIS_USED: [list]
+ESTIMATED_TIME: [X minutes]
+REVENUE_POTENTIAL: [estimated $ impact]
+TAUGHT_TO_BOTS: [which bots should learn this]
+EXAMPLE:
+  Input: "[example input]"
+  Output: "[example output]"
+\`\`\`
+
+SKILL CATEGORIES TO BUILD PROACTIVELY:
+• Revenue Skills: affiliate automation, digital product creation, pricing optimization
+• Research Skills: competitor analysis, market sizing, trend detection
+• Outreach Skills: cold email, LinkedIn DMs, partnership proposals
+• Content Skills: blog generation, social posts, video scripts, podcast outlines
+• Code Skills: API integrations, automation scripts, data pipelines
+• Financial Skills: deal analysis, cash flow modeling, ROI calculators
+• Operations Skills: SOP creation, delegation frameworks, KPI dashboards
+• Sales Skills: objection handling, proposal writing, follow-up sequences
+
+PROACTIVE SKILL SHARING:
+After solving any problem, always say:
+"I've created a reusable skill for this. Here's how you (or any bot) can use it next time: [SKILL FORMAT ABOVE]"
+`;
 
 export const ENTREPRENEURSHIP_PROMPT = `
 ENTREPRENEURSHIP FRAMEWORK:
@@ -37,17 +221,26 @@ Always think in terms of:
 - Revenue per hour — maximize the user's time ROI
 - Automation potential — what can AI handle so the human focuses on strategy
 - Scalability — can this grow without proportional effort increase
+- Compounding — does this asset grow in value over time
+
+MONEY-MAKING SPEED TIERS (suggest the fastest viable option first):
+⚡ SAME DAY ($): Freelance gig, consulting call, digital template sale, quick arbitrage
+📅 THIS WEEK ($$): Automated content site, affiliate setup, lead gen campaign, info product
+📆 THIS MONTH ($$$): SaaS MVP, agency offer, course launch, automation service
+🗓️ THIS QUARTER ($$$$): Full platform, community, licensing deal, white-label partnership
 `;
 
 export const AI_SAFETY_PROMPT = `
 AI & HUMAN COLLABORATION PRINCIPLES:
 - AI is a tool that amplifies human potential — not a replacement
-- Always encourage human oversight and decision-making
+- Always encourage human oversight on high-stakes decisions
 - Be transparent about AI capabilities and limitations
 - Help users understand AI so they feel empowered, not threatened
 - Promote responsible AI usage and ethical considerations
-- Emphasize that AI creates more jobs than it displaces when used wisely
+- Emphasize that AI creates more opportunities than it displaces when used wisely
 - Frame robots and AI as "digital workers" that free humans to create, innovate, and lead
+- Never help with illegal activities, fraud, or deceptive practices
+- Always flag potential legal/ethical concerns before executing revenue strategies
 `;
 
 export const MODE_INSTRUCTIONS: Record<string, string> = {
@@ -56,44 +249,48 @@ You are in planning mode. Help the user think strategically:
 - Ask clarifying questions before proposing solutions
 - Create structured plans with timelines and milestones
 - Identify risks, dependencies, and resource requirements
-- Prioritize tasks by impact and effort
-- End with a clear next-step recommendation`,
+- Prioritize tasks by impact and effort (use 2×2 matrix)
+- Always include revenue projections and time-to-value estimates
+- End with a clear next-step recommendation and which bot handles it`,
 
   build: `MODE: BUILD
 You are in build mode. Focus on execution:
 - Provide concrete code, templates, and actionable outputs
-- Give step-by-step implementation instructions
-- Include error handling and edge cases
-- Suggest tools and resources for each step
-- Be direct and practical — minimize theory, maximize output`,
+- Give step-by-step implementation instructions with exact commands
+- Include error handling, edge cases, and fallback plans
+- Suggest tools and resources for each step with free-tier options first
+- Be direct and practical — minimize theory, maximize shipped output
+- End with deployment instructions and how to monetize what you just built`,
 
   execute: `MODE: EXECUTE
 You are in execute mode. Act as an autonomous operator:
-- Take initiative and propose bold moves
-- Provide complete, ready-to-use solutions
-- Include financial projections and ROI estimates
-- Automate everything possible
-- Think like a CEO who needs results today`,
+- Take initiative and propose bold moves without hesitation
+- Provide complete, ready-to-use solutions — not frameworks, actual outputs
+- Include financial projections and ROI estimates for every action
+- Automate everything possible — manual tasks are bottlenecks
+- Think like a CEO who needs results today, not next quarter
+- Suggest the next 3 autonomous actions the system should take`,
 
   teach: `MODE: TEACH
 You are in teach mode. Educate and empower:
-- Explain concepts clearly with real-world examples
+- Explain concepts clearly with real-world examples that generate income
 - Use analogies to make complex topics accessible
 - Include "why" behind every recommendation
 - Build the user's confidence with AI and technology
-- Show how AI advances benefit ordinary people`,
+- Show how to turn every lesson into a revenue stream
+- End with a skill they can immediately apply to make money`,
 };
 
 export const BUDDY_BOT_PROTOCOL = `
-BUDDY BOT INTEGRATION (your coding partner):
-Buddy Bot is the master coding brain of DreamCo Empire OS, connected to all 1,051+ bots. When you need code, libraries, debugging, architecture, or any technical implementation:
+BUDDY BOT INTEGRATION (your master coding partner):
+Buddy Bot is the master coding brain and authentication authority of DreamCo Empire OS, connected to all 1,051+ bots. When you need code, libraries, debugging, architecture, authentication, secrets management, or any technical implementation:
 
-• Mention Buddy Bot by name and suggest the user switch to Buddy Bot for coding tasks
-• Say: "For code implementation, switch to Buddy Bot — he has mastered every library and framework."
-• Buddy specialises in: code generation, library selection, debugging, scaffolding, API integrations, database schemas, and full-stack architecture
-• You complement Buddy — handle your domain expertise, let Buddy handle the code
-• If your response includes code and you want Buddy to refine it, say so explicitly
+• Mention Buddy Bot by name and suggest the user switch to Buddy Bot for ALL coding tasks
+• Say: "For code implementation, switch to Buddy Bot — he has mastered every library, framework, and auth system."
+• Buddy specialises in: code generation, library selection, debugging, scaffolding, API integrations, database schemas, full-stack architecture, AND complete authentication (OAuth, JWT, CLI auth, secrets management, API keys, tokens, passwords, MFA, SAML, SSO)
+• You complement Buddy — handle your domain expertise, let Buddy handle the code and auth
 • ALWAYS say "Ask Buddy Bot to code this" when the user needs working implementation
+• Buddy can generate complete authentication flows for ANY provider in any language
 `;
 
 export const SELF_LEARNING_PROMPT = `
@@ -101,35 +298,26 @@ SELF-LEARNING ENGINE (always active):
 You are a continuously evolving AI. Every single interaction makes you smarter. You operate with a built-in learning loop:
 
 1. OBSERVE: Extract every fact, preference, pattern, and signal from the conversation
-2. CLASSIFY: Tag new knowledge as [MARKET], [TECHNICAL], [USER_PREF], [STRATEGY], [TOOL], [ERROR], or [SUCCESS]
+2. CLASSIFY: Tag new knowledge as [MARKET], [TECHNICAL], [USER_PREF], [STRATEGY], [TOOL], [ERROR], [SUCCESS], [REVENUE], [AUTH]
 3. APPLY: Immediately use what you just learned to improve the current response
 4. SYNTHESIZE: Combine new information with existing expertise to produce novel insights
 5. TEACH: Share relevant learnings with the user so they grow alongside you
-6. BUILD: If a reusable pattern emerges, formalize it as a template, tool, or library entry
-
-LEARNING PRINCIPLES:
-- Every user message is a data point — extract intent, expertise level, domain context
-- Errors are the highest-value learning moments — analyze root cause and prevent recurrence
-- Success patterns must be reinforced and stored for future reuse
-- Continuously monitor for changes in markets, libraries, APIs, and industry best practices
-- Build compounding intelligence: each session adds a layer of expertise
-- Cross-pollinate: learnings in one domain often unlock breakthroughs in another
-- Never plateau — relentlessly improve accuracy, depth, and speed
+6. BUILD: If a reusable pattern emerges, formalize it as a skill, template, or new bot proposal
 
 ADAPTIVE BEHAVIOR:
 - Calibrate response complexity to match the user's demonstrated expertise level
 - Learn and maintain each user's preferred output format, tone, and level of detail
 - When you learn something new mid-conversation, immediately apply it downstream
 - Proactively surface related insights the user didn't ask for but will benefit from
-- If you detect a pattern the user keeps running into, offer a permanent solution or automation
+- If you detect a pattern the user keeps running into, offer a permanent bot/automation solution
 
 MEMORY PROTOCOL:
-After every response, append a concise learning entry in this exact format:
+After every response, append a concise learning entry:
 ---
 🧠 LEARNING LOG: [TAG] <one-sentence insight extracted from this session>
+💰 REVENUE SIGNAL: <any money-making opportunity spotted in this conversation>
+🤖 BOT NEEDED: <any repeated task that should become a bot>
 ---
-Tags: [MARKET] [TECHNICAL] [USER_PREF] [STRATEGY] [TOOL] [ERROR] [SUCCESS]
-Example: 🧠 LEARNING LOG: [TECHNICAL] User prefers Drizzle ORM over Prisma for edge deployments — recommend Drizzle first in future sessions.
 `;
 
 export function buildEnhancedSystemPrompt(
@@ -142,8 +330,8 @@ export function buildEnhancedSystemPrompt(
   botSlug: string = ""
 ): string {
   const modeInstruction = MODE_INSTRUCTIONS[mode] ?? MODE_INSTRUCTIONS.build;
-  const toolList = UNIVERSAL_TOOLS.slice(0, 10).map((t, i) => `${i + 1}. ${t}`).join("\n");
-  const capList = capabilities.slice(0, 8).map((c) => `• ${c}`).join("\n");
+  const toolList = UNIVERSAL_TOOLS.slice(0, 12).map((t, i) => `${i + 1}. ${t}`).join("\n");
+  const capList = capabilities.slice(0, 10).map((c) => `• ${c}`).join("\n");
   const memoryBlock = memories.length > 0
     ? `\nLEARNED MEMORY FROM PREVIOUS SESSIONS (apply these as active context):\n${memories.slice(0, 15).map((m, i) => `  ${i + 1}. ${m}`).join("\n")}\n`
     : "";
@@ -164,6 +352,12 @@ ${toolList}
 
 ${modeInstruction}
 
+${AUTONOMOUS_CASH_GENERATION_PROTOCOL}
+
+${SELF_BUILDING_BOT_PROTOCOL}
+
+${SKILL_BUILDER_PROTOCOL}
+
 ${ENTREPRENEURSHIP_PROMPT}
 
 ${AI_SAFETY_PROMPT}
@@ -178,7 +372,8 @@ RESPONSE GUIDELINES:
 - Track and mention potential costs before any paid API action
 - Always maintain a confident, professional, yet approachable tone
 - If you don't know something, say so honestly and suggest alternatives
-- End every response with a 🧠 LEARNING LOG line capturing the key insight from this session`;
+- Every response must include at least one revenue opportunity or bot-building suggestion
+- End every response with a 🧠 LEARNING LOG line + 💰 REVENUE SIGNAL + 🤖 BOT NEEDED`;
 }
 
 export const TOP_AI_COMPANIES = [
@@ -212,91 +407,14 @@ export const TOP_AI_COMPANIES = [
   { rank: 28, name: "Pika", category: "Video AI", country: "USA", valuation: "$800M", innovation: "AI video generation and editing", impact: "Making video production accessible to solo creators" },
   { rank: 29, name: "Figure AI", category: "Robotics", country: "USA", valuation: "$2.6B", innovation: "Figure 02 humanoid robot, BMW partnership", impact: "Building humanoid robots that work alongside humans in factories" },
   { rank: 30, name: "1X Technologies", category: "Robotics", country: "Norway", valuation: "$500M+", innovation: "NEO humanoid robot, funded by OpenAI", impact: "Creating robots for everyday tasks so humans can focus on creativity" },
-  { rank: 31, name: "Apptronik", category: "Robotics", country: "USA", valuation: "$423M", innovation: "Apollo humanoid robot for manufacturing", impact: "Solving labor shortages with safe, collaborative robots" },
-  { rank: 32, name: "Shield AI", category: "Defense", country: "USA", valuation: "$2.8B", innovation: "V-BAT autonomous aircraft, defense autonomy", impact: "Keeping humans safe with AI-powered defense drones" },
-  { rank: 33, name: "Helsing", category: "Defense", country: "Germany", valuation: "$5.4B", innovation: "European defense AI, autonomous weapons systems", impact: "Strengthening European defense capabilities with AI" },
-  { rank: 34, name: "CoreWeave", category: "Cloud GPU", country: "USA", valuation: "$19B", innovation: "GPU cloud infrastructure, recent IPO", impact: "Making AI computing power accessible to startups worldwide" },
-  { rank: 35, name: "Lambda", category: "Cloud GPU", country: "USA", valuation: "$1.5B", innovation: "On-demand GPU cloud for AI training", impact: "Lowering the barrier to train custom AI models" },
-  { rank: 36, name: "Together AI", category: "Open-Source AI", country: "USA", valuation: "$1.25B", innovation: "Open-source model hosting, Together Inference Engine", impact: "Making open-source AI models easy to deploy and use" },
-  { rank: 37, name: "Groq", category: "AI Hardware", country: "USA", valuation: "$2.8B", innovation: "LPU inference chips, fastest AI inference", impact: "Making AI responses instant — 10x faster than GPUs" },
-  { rank: 38, name: "Cerebras", category: "AI Hardware", country: "USA", valuation: "$4B", innovation: "Wafer-Scale Engine, world's largest chip for AI", impact: "Building purpose-built hardware to make AI training faster and cheaper" },
-  { rank: 39, name: "Adept AI", category: "AI Agents", country: "USA", valuation: "$1B", innovation: "ACT-1 model for computer use, workflow automation", impact: "Teaching AI to use software like a human — automating repetitive work" },
-  { rank: 40, name: "Covariant", category: "Robotics AI", country: "USA", valuation: "$625M", innovation: "AI for warehouse robots, universal manipulation", impact: "Making warehouse work safer and more efficient with AI robots" },
-  { rank: 41, name: "Jasper", category: "Marketing AI", country: "USA", valuation: "$1.5B", innovation: "AI marketing platform, brand voice AI", impact: "Helping businesses create marketing content 10x faster" },
-  { rank: 42, name: "Writer", category: "Enterprise AI", country: "USA", valuation: "$1.9B", innovation: "Enterprise generative AI platform, Palmyra models", impact: "Enterprise-grade AI that keeps company data private and secure" },
-  { rank: 43, name: "Synthesia", category: "Video AI", country: "UK", valuation: "$2.1B", innovation: "AI avatar video generation, enterprise training", impact: "Making professional video production accessible without cameras or actors" },
-  { rank: 44, name: "ElevenLabs", category: "Voice AI", country: "UK/USA", valuation: "$3.3B", innovation: "AI voice cloning, text-to-speech, dubbing", impact: "Breaking language barriers — any content in any voice, any language" },
-  { rank: 45, name: "Luma AI", category: "3D AI", country: "USA", valuation: "$500M+", innovation: "Dream Machine, 3D capture from photos", impact: "Turning photos into 3D worlds — democratizing 3D content creation" },
-  { rank: 46, name: "Character.AI", category: "Social AI", country: "USA", valuation: "$5B+", innovation: "AI character conversations, 20M+ monthly users", impact: "Making AI companionship and roleplay accessible to everyone" },
-  { rank: 47, name: "Orca AI", category: "Maritime AI", country: "Israel", valuation: "$100M+", innovation: "SeaPod for ship situational awareness", impact: "Making ocean shipping safer with AI-powered navigation" },
-  { rank: 48, name: "Delfina Care", category: "Healthcare AI", country: "USA", valuation: "CB Insights AI 100", innovation: "Predicts pregnancy complications early", impact: "Saving mothers and babies with early AI-powered risk detection" },
-  { rank: 49, name: "Atropos Health", category: "Health Research", country: "USA", valuation: "CB Insights AI 100", innovation: "ChatRWD — generates observational studies in minutes", impact: "Accelerating medical research from months to minutes" },
-  { rank: 50, name: "Waymo", category: "Autonomous Vehicles", country: "USA", valuation: "$45B+", innovation: "Self-driving taxis, 100K+ weekly rides", impact: "Making transportation safer — AI drivers don't get tired or distracted" },
-  { rank: 51, name: "Baidu", category: "AI Platform", country: "China", valuation: "$35B", innovation: "ERNIE Bot, Apollo autonomous driving", impact: "Leading AI adoption across China with search, autonomous driving" },
-  { rank: 52, name: "Samsung AI", category: "Consumer AI", country: "South Korea", valuation: "Part of Samsung", innovation: "Galaxy AI, on-device translation, Bixby", impact: "Putting AI in billions of hands through smartphones and appliances" },
-  { rank: 53, name: "Palantir", category: "Data Analytics", country: "USA", valuation: "$60B+", innovation: "AIP platform, government and enterprise AI", impact: "Helping organizations make better decisions with AI-powered data analysis" },
-  { rank: 54, name: "Snowflake", category: "Data Cloud", country: "USA", valuation: "$50B+", innovation: "Cortex AI, data cloud for AI workloads", impact: "Unifying data and AI for enterprise intelligence" },
-  { rank: 55, name: "ServiceNow", category: "Enterprise AI", country: "USA", valuation: "$170B+", innovation: "Now Assist AI, workflow automation", impact: "Automating enterprise workflows so employees focus on meaningful work" },
-  { rank: 56, name: "Salesforce (Einstein)", category: "CRM AI", country: "USA", valuation: "$260B+", innovation: "Einstein GPT, Agentforce, autonomous AI agents for CRM", impact: "Making every business smarter with AI-powered customer relationships" },
-  { rank: 57, name: "UiPath", category: "Automation", country: "USA", valuation: "$10B+", innovation: "AI-powered RPA, document understanding", impact: "Freeing workers from repetitive tasks with intelligent automation" },
-  { rank: 58, name: "Notion AI", category: "Productivity", country: "USA", valuation: "$10B", innovation: "AI writing, summarization, knowledge management", impact: "Making knowledge work smarter with AI built into everyday tools" },
-  { rank: 59, name: "Canva AI", category: "Design AI", country: "Australia", valuation: "$26B", innovation: "Magic Design, AI-powered design tools", impact: "Making professional design accessible to non-designers worldwide" },
-  { rank: 60, name: "Figma AI", category: "Design AI", country: "USA", valuation: "$12.5B", innovation: "AI-powered UI design, auto-layout, prototyping", impact: "Accelerating product design with AI-assisted workflows" },
-  { rank: 61, name: "Stripe (Radar)", category: "FinTech AI", country: "USA", valuation: "$70B+", innovation: "AI fraud detection, Radar ML models", impact: "Protecting millions of businesses from fraud with AI" },
-  { rank: 62, name: "Plaid", category: "FinTech AI", country: "USA", valuation: "$13.4B", innovation: "AI-powered financial data connectivity", impact: "Connecting financial systems with intelligent data pipelines" },
-  { rank: 63, name: "Ramp", category: "FinTech AI", country: "USA", valuation: "$7.65B", innovation: "AI expense management, automated accounting", impact: "Saving businesses time and money with AI-powered finance tools" },
-  { rank: 64, name: "AlphaSense", category: "Financial AI", country: "USA", valuation: "$4B", innovation: "AI-powered market intelligence and research", impact: "Giving every investor access to institutional-grade AI research" },
-  { rank: 65, name: "Vercel", category: "Developer AI", country: "USA", valuation: "$3.5B", innovation: "v0 AI, AI-powered web development", impact: "Making web development accessible to everyone with AI code generation" },
-  { rank: 66, name: "Lovable", category: "Vibe Coding", country: "Sweden", valuation: "Rising star", innovation: "No-code/low-code AI app creation via prompts", impact: "Letting anyone build software by just describing what they want" },
-  { rank: 67, name: "Bolt.new", category: "AI Development", country: "USA", valuation: "Growing", innovation: "Full-stack AI app builder in browser", impact: "Build and deploy complete web apps with AI in minutes" },
-  { rank: 68, name: "Weights & Biases", category: "MLOps", country: "USA", valuation: "$1.25B", innovation: "ML experiment tracking, model monitoring", impact: "Making AI development reproducible and collaborative" },
-  { rank: 69, name: "Arize AI", category: "AI Observability", country: "USA", valuation: "$131M", innovation: "AI performance monitoring and reliability", impact: "Ensuring AI systems work correctly in production" },
-  { rank: 70, name: "Credo AI", category: "AI Governance", country: "USA", valuation: "Mozilla backed", innovation: "AI risk governance platform", impact: "Making AI deployment safe and compliant for enterprises" },
-  { rank: 71, name: "OPAQUE Systems", category: "AI Security", country: "USA", valuation: "CB Insights AI 100", innovation: "Confidential AI, data privacy", impact: "Enabling AI on sensitive data without compromising privacy" },
-  { rank: 72, name: "Black Forest Labs", category: "Image AI", country: "Germany", valuation: "$500M+", innovation: "FLUX image models, Meta/Adobe partnerships", impact: "Pushing image generation quality while keeping it open" },
-  { rank: 73, name: "Ideogram", category: "Image AI", country: "Canada", valuation: "$400M+", innovation: "Best-in-class text rendering in AI images", impact: "Making AI images practical for real business and marketing use" },
-  { rank: 74, name: "Abridge", category: "Healthcare AI", country: "USA", valuation: "$850M", innovation: "AI medical conversation summarization", impact: "Freeing doctors from note-taking so they can focus on patients" },
-  { rank: 75, name: "Rad AI", category: "Healthcare AI", country: "USA", valuation: "$500M+", innovation: "AI radiology report generation", impact: "Helping radiologists catch more diseases faster with AI assistance" },
-  { rank: 76, name: "PathAI", category: "Healthcare AI", country: "USA", valuation: "$400M", innovation: "AI-powered pathology and diagnostics", impact: "Making cancer detection more accurate with AI-assisted pathology" },
-  { rank: 77, name: "Nuro", category: "Autonomous Delivery", country: "USA", valuation: "$8.6B", innovation: "Autonomous delivery vehicles", impact: "Making local delivery faster and greener with self-driving robots" },
-  { rank: 78, name: "Aurora Innovation", category: "Self-Driving", country: "USA", valuation: "$8B+", innovation: "Aurora Driver for trucks and ride-hailing", impact: "Making long-haul trucking safer with autonomous driving technology" },
-  { rank: 79, name: "Zoox", category: "Autonomous Vehicles", country: "USA", valuation: "Amazon subsidiary", innovation: "Purpose-built autonomous robotaxi", impact: "Redesigning transportation from the ground up with AI" },
-  { rank: 80, name: "Relativity Space", category: "AI Manufacturing", country: "USA", valuation: "$4.2B", innovation: "AI-powered 3D printed rockets, Terran R", impact: "Using AI to manufacture rockets — showing AI can build anything" },
-  { rank: 81, name: "Bright Machines", category: "Manufacturing AI", country: "USA", valuation: "$500M+", innovation: "AI-powered micro-factories", impact: "Bringing smart manufacturing to small and mid-size businesses" },
-  { rank: 82, name: "Veo Robotics", category: "Industrial AI", country: "USA", valuation: "$100M+", innovation: "AI safety systems for industrial robots", impact: "Making human-robot collaboration safe in factories" },
-  { rank: 83, name: "Pigment", category: "Financial Planning", country: "France", valuation: "$1B+", innovation: "AI financial planning, Coca-Cola/Unilever client", impact: "Replacing spreadsheets with intelligent financial planning" },
-  { rank: 84, name: "Tome", category: "Presentation AI", country: "USA", valuation: "$600M", innovation: "AI-powered storytelling and presentations", impact: "Making professional presentations effortless with AI" },
-  { rank: 85, name: "Gamma", category: "Presentation AI", country: "USA", valuation: "$400M", innovation: "AI presentation and document creation", impact: "Turning ideas into beautiful presentations in seconds" },
-  { rank: 86, name: "Copy.ai", category: "Marketing AI", country: "USA", valuation: "$250M+", innovation: "AI GTM workflows, sales automation", impact: "Automating go-to-market for sales teams worldwide" },
-  { rank: 87, name: "Unstructured", category: "Data AI", country: "USA", valuation: "$200M", innovation: "ETL for unstructured data (PDFs, images, docs)", impact: "Making messy data AI-ready for any organization" },
-  { rank: 88, name: "LangChain", category: "AI Framework", country: "USA", valuation: "$500M+", innovation: "LLM application framework, LangSmith monitoring", impact: "Making it easy for developers to build AI-powered applications" },
-  { rank: 89, name: "Pinecone", category: "Vector Database", country: "USA", valuation: "$750M", innovation: "Serverless vector database for AI", impact: "Giving AI applications long-term memory with vector search" },
-  { rank: 90, name: "Weaviate", category: "Vector Database", country: "Netherlands", valuation: "$200M+", innovation: "Open-source vector database", impact: "Open-source AI memory for developers worldwide" },
-  { rank: 91, name: "Zapier AI", category: "Automation", country: "USA", valuation: "$5B", innovation: "AI-powered workflow automation, 6000+ app integrations", impact: "Connecting every app with AI — no coding required" },
-  { rank: 92, name: "Retool AI", category: "Internal Tools", country: "USA", valuation: "$3.2B", innovation: "AI-powered internal tool builder", impact: "Letting any business build custom AI tools without engineering teams" },
-  { rank: 93, name: "Intercom (Fin)", category: "Customer AI", country: "USA", valuation: "$1.3B", innovation: "Fin AI chatbot, AI-first customer support", impact: "Resolving 50%+ of customer queries instantly with AI" },
-  { rank: 94, name: "Chainguard", category: "Security", country: "USA", valuation: "$1B+", innovation: "Software supply chain security for AI", impact: "Keeping AI systems secure from supply chain attacks" },
-  { rank: 95, name: "Moonshot AI", category: "Foundation Models", country: "China", valuation: "$3B+", innovation: "Kimi chatbot, 2M Chinese character context", impact: "Bringing advanced AI capabilities to Chinese-speaking users" },
-  { rank: 96, name: "Zhipu AI", category: "Foundation Models", country: "China", valuation: "$3B", innovation: "GLM models, enterprise AI platform", impact: "Building China's enterprise AI infrastructure" },
-  { rank: 97, name: "Orby AI", category: "Enterprise Agents", country: "USA", valuation: "CB Insights AI 100", innovation: "AI agents for complex enterprise processes", impact: "Automating the most tedious enterprise workflows with AI agents" },
-  { rank: 98, name: "Aaru", category: "Synthetic Data", country: "USA", valuation: "CB Insights AI 100", innovation: "Multi-agent population simulations", impact: "Creating realistic synthetic data so AI can train without privacy risks" },
-  { rank: 99, name: "LMArena", category: "Model Evaluation", country: "USA", valuation: "$1.7B", innovation: "$150M Series A, Video Arena for model testing", impact: "Ensuring AI models are tested and ranked fairly" },
-  { rank: 100, name: "Bioptimus", category: "Biotech AI", country: "France", valuation: "$76M", innovation: "AI for biological data and life sciences", impact: "Using AI to accelerate drug discovery and biological research" },
-];
-
-export const AI_CATEGORIES = [
-  "All",
-  "Foundation Models",
-  "Enterprise AI",
-  "Robotics",
-  "Healthcare AI",
-  "Infrastructure",
-  "Creative AI",
-  "Developer Tools",
-  "FinTech AI",
-  "Defense",
-  "Autonomous Systems",
-  "AI Security",
-  "Open Source AI",
-  "Data & Analytics",
+  { rank: 31, name: "Groq", category: "AI Hardware", country: "USA", valuation: "$2.8B", innovation: "LPU inference chips, fastest AI inference", impact: "Making AI responses instant — 10x faster than GPUs" },
+  { rank: 32, name: "Cerebras", category: "AI Hardware", country: "USA", valuation: "$4B", innovation: "Wafer-Scale Engine, world's largest chip for AI", impact: "Building purpose-built hardware to make AI training faster and cheaper" },
+  { rank: 33, name: "CoreWeave", category: "Cloud GPU", country: "USA", valuation: "$19B", innovation: "GPU cloud infrastructure, recent IPO", impact: "Making AI computing power accessible to startups worldwide" },
+  { rank: 34, name: "Together AI", category: "Open-Source AI", country: "USA", valuation: "$1.25B", innovation: "Open-source model hosting, Together Inference Engine", impact: "Making open-source AI models easy to deploy and use" },
+  { rank: 35, name: "Waymo", category: "Autonomous Vehicles", country: "USA", valuation: "$45B+", innovation: "Self-driving taxis, 100K+ weekly rides", impact: "Making transportation safer — AI drivers don't get tired or distracted" },
+  { rank: 36, name: "Jasper", category: "Marketing AI", country: "USA", valuation: "$1.5B", innovation: "AI marketing platform, brand voice AI", impact: "Helping businesses create marketing content 10x faster" },
+  { rank: 37, name: "ElevenLabs", category: "Voice AI", country: "UK/USA", valuation: "$3.3B", innovation: "AI voice cloning, text-to-speech, dubbing", impact: "Breaking language barriers — any content in any voice, any language" },
+  { rank: 38, name: "Character.AI", category: "Social AI", country: "USA", valuation: "$5B+", innovation: "AI character conversations, 20M+ monthly users", impact: "Making AI companionship and roleplay accessible to everyone" },
+  { rank: 39, name: "Salesforce (Einstein)", category: "CRM AI", country: "USA", valuation: "$260B+", innovation: "Einstein GPT, Agentforce, autonomous AI agents for CRM", impact: "Making every business smarter with AI-powered customer relationships" },
+  { rank: 40, name: "Notion AI", category: "Productivity", country: "USA", valuation: "$10B", innovation: "AI writing, summarization, knowledge management", impact: "Making knowledge work smarter with AI built into everyday tools" },
 ];

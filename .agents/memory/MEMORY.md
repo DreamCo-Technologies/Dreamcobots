@@ -1,2 +1,4 @@
-- [Browser Module Cache Fix Pattern](browser-cache-fix.md) — renaming files + bumping SW version clears stale module cache for real users
-- [CodeLabPage Bot Icon Bug](codelabs-bot-icon.md) — `Bot` icon import caused scope crash; fixed by using `Sparkles` and adding `onRunBot` prop
+- [Tool-belt upgrade pattern](tool-belt-upgrade.md) — shared/tool-belt.ts is injected into ALL 1,051+ bot prompts; upgrading it is the highest-leverage single-file change in the empire.
+- [Buddy Bot auth authority](buddy-auth.md) — Buddy Bot is the empire's single auth authority; all OAuth, JWT, CLI, secrets, MFA, SAML patterns live in server/seed-buddy-bot.ts system prompt.
+- [GitHub push method](github-push.md) — Only method that works: git push "https://${REPLIT_ACCESS_TOLKEN}@github.com/DreamCo-Technologies/Dreamcobots.git" main --force (note typo: TOLKEN not TOKEN).
+- [Stripe status](stripe-status.md) — Stripe code fully wired; user still needs STRIPE_SECRET_KEY + STRIPE_PUBLISHABLE_KEY added as Replit secrets to activate live checkout.
