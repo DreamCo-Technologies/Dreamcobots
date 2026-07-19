@@ -38,6 +38,8 @@ import SandboxPage from "@/pages/SandboxPage";
 import ActionsPage from "@/pages/ActionsPage";
 import HarnessPage from "@/pages/HarnessPage";
 import GovernancePage from "@/pages/GovernancePage";
+import BuddyPage from "@/pages/BuddyPage";
+import SettingsPage from "@/pages/SettingsPage";
 
 function wrap(Page: React.ComponentType, name: string) {
   return function WrappedPage(props: any) {
@@ -84,6 +86,8 @@ function Router() {
       <Route path="/actions" component={wrap(ActionsPage, "Actions & Agents")} />
       <Route path="/harness" component={wrap(HarnessPage, "Harness Tester")} />
       <Route path="/governance" component={wrap(GovernancePage, "Governance")} />
+      <Route path="/buddy" component={wrap(BuddyPage, "Buddy Bot")} />
+      <Route path="/settings" component={wrap(SettingsPage, "Settings")} />
 
       {/* Legacy / convenience */}
       <Route path="/chat">

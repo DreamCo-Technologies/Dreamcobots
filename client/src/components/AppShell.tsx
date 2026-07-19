@@ -37,6 +37,7 @@ import {
   Activity,
   TestTube2,
   ListTodo,
+  Settings,
 } from "lucide-react";
 import ThemeToggle from "@/components/ThemeToggle";
 import { Button } from "@/components/ui/button";
@@ -83,6 +84,7 @@ export default function AppShell(props: {
 
   const nav = [
     { href: "/", label: "Chat", icon: MessageSquareText },
+    { href: "/buddy", label: "Buddy Bot", icon: BrainCircuit },
     { href: "/dashboard", label: "Empire HQ", icon: LayoutDashboard },
     { href: "/divisions", label: "Divisions", icon: Building2 },
     { href: "/bots", label: "Bot Fleet", icon: Bot },
@@ -112,6 +114,7 @@ export default function AppShell(props: {
     { href: "/time-capsule", label: "Time Capsule", icon: Clock },
     { href: "/costs", label: "Cost Tracking", icon: DollarSign },
     { href: "/autonomy", label: "Autonomy", icon: Workflow },
+    { href: "/settings", label: "Settings", icon: Settings },
   ] as const;
 
   const activeHref = (href: string) => (href === "/" ? location === "/" : location.startsWith(href));
@@ -202,10 +205,13 @@ export default function AppShell(props: {
                 </Button>
               </div>
 
-              {/* Buddy Bot quick-switch */}
-              <button
-                onClick={() => props.onBotChange?.("buddy-bot")}
-                className="mt-3 w-full flex items-center gap-2.5 rounded-xl border border-primary/30 bg-primary/8 hover:bg-primary/14 px-3 py-2.5 text-sm font-medium text-primary transition-all hover:shadow-sm"
+              {/* Buddy Bot quick-link */}
+              <Link
+                href="/buddy"
+                className={cn(
+                  "mt-3 flex items-center gap-2.5 rounded-xl border border-primary/30 bg-primary/8 hover:bg-primary/14 px-3 py-2.5 text-sm font-medium text-primary transition-all hover:shadow-sm",
+                  activeHref("/buddy") && "ring-2 ring-primary/30 bg-primary/14"
+                )}
                 data-testid="buddy-shortcut"
               >
                 <span className="inline-flex h-6 w-6 items-center justify-center rounded-lg bg-primary/15 flex-shrink-0">
@@ -216,7 +222,7 @@ export default function AppShell(props: {
                   <div className="text-[10px] text-primary/70 mt-0.5 font-normal">Master coder · All 500+ libraries</div>
                 </div>
                 <span className="ml-auto text-[10px] px-1.5 py-0.5 rounded-md bg-primary/15 text-primary/80 font-mono">ELITE</span>
-              </button>
+              </Link>
 
               <Separator className="my-5" />
 
