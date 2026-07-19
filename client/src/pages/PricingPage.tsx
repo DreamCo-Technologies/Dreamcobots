@@ -74,6 +74,7 @@ export default function PricingPage() {
   const [annual, setAnnual] = useState(false);
   const [restoreOpen, setRestoreOpen] = useState(false);
   const [restoreEmail, setRestoreEmail] = useState("");
+  const [portalError, setPortalError] = useState<{ title: string; detail: string; code?: string } | null>(null);
   const { toast } = useToast();
 
   const totalApis = getTotalApiCount();
@@ -115,18 +116,56 @@ export default function PricingPage() {
 
   const portalMutation = useMutation({
     mutationFn: async () => {
-      const res = await apiRequest("POST", "/api/stripe/portal", {});
-      return await res.json();
+      setPortalError(null);
+      let res: Response;
+      try {
+        res = await fetch("/api/stripe/portal", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          credentials: "include",
+          body: JSON.stringify({}),
+        });
+      } catch {
+        throw new Error("Network error — could not reach the server.");
+      }
+      const body = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        const err = new Error(body.error || "Failed to open billing portal") as any;
+        err.detail = body.detail ?? "";
+        err.code = body.code ?? "";
+        throw err;
+      }
+      return body as { url: string };
     },
     onSuccess: (data: { url: string }) => {
       if (data.url) {
         window.location.href = data.url;
       }
     },
-    onError: (error: Error) => {
+    onError: (error: any) => {
+      const code: string = error.code ?? "";
+      const detail: string = error.detail ?? "";
+
+      if (code === "portal_not_configured") {
+        setPortalError({
+          title: "Billing Portal not enabled",
+          detail: detail || "Go to stripe.com/dashboard → Settings → Billing → Customer portal and activate it.",
+          code,
+        });
+        return;
+      }
+      if (code === "stripe_not_configured" || code === "stripe_auth_error") {
+        setPortalError({
+          title: "Stripe is not configured",
+          detail: detail || "Add STRIPE_SECRET_KEY and STRIPE_PUBLISHABLE_KEY as environment secrets.",
+          code,
+        });
+        return;
+      }
+
       toast({
         title: "Portal Error",
-        description: error.message,
+        description: detail || error.message || "An unexpected error occurred.",
         variant: "destructive",
       });
     },
@@ -194,27 +233,46 @@ export default function PricingPage() {
             )}
 
             {!subStatusLoading && hasActiveSubscription && (
-              <div className="mb-4 p-3 rounded-xl bg-primary/5 border border-primary/20 flex items-center justify-between gap-3" data-testid="manage-subscription-banner">
-                <div className="flex items-center gap-2 text-sm">
-                  <Check className="h-4 w-4 text-green-500 flex-shrink-0" />
-                  <span className="text-foreground font-medium">You have an active subscription</span>
+              <div className="mb-4" data-testid="manage-subscription-banner">
+                <div className="p-3 rounded-xl bg-primary/5 border border-primary/20 flex items-center justify-between gap-3">
+                  <div className="flex items-center gap-2 text-sm">
+                    <Check className="h-4 w-4 text-green-500 flex-shrink-0" />
+                    <span className="text-foreground font-medium">You have an active subscription</span>
+                  </div>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    className="rounded-xl gap-1.5 flex-shrink-0"
+                    onClick={() => portalMutation.mutate()}
+                    disabled={portalMutation.isPending}
+                    data-testid="btn-manage-subscription"
+                  >
+                    {portalMutation.isPending ? (
+                      <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                    ) : (
+                      <Settings className="h-3.5 w-3.5" />
+                    )}
+                    Manage Subscription
+                    {!portalMutation.isPending && <ExternalLink className="h-3 w-3 opacity-50" />}
+                  </Button>
                 </div>
-                <Button
-                  size="sm"
-                  variant="outline"
-                  className="rounded-xl gap-1.5 flex-shrink-0"
-                  onClick={() => portalMutation.mutate()}
-                  disabled={portalMutation.isPending}
-                  data-testid="btn-manage-subscription"
-                >
-                  {portalMutation.isPending ? (
-                    <Loader2 className="h-3.5 w-3.5 animate-spin" />
-                  ) : (
-                    <Settings className="h-3.5 w-3.5" />
-                  )}
-                  Manage Subscription
-                  {!portalMutation.isPending && <ExternalLink className="h-3 w-3 opacity-50" />}
-                </Button>
+                {portalError && (
+                  <div className="mt-2 p-3 rounded-xl bg-destructive/10 border border-destructive/30 text-left" data-testid="portal-error-inline">
+                    <p className="text-sm font-medium text-destructive">{portalError.title}</p>
+                    <p className="text-xs text-muted-foreground mt-0.5">{portalError.detail}</p>
+                    {portalError.code === "portal_not_configured" && (
+                      <a
+                        href="https://dashboard.stripe.com/settings/billing/portal"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-xs text-primary underline mt-1 inline-flex items-center gap-1"
+                        data-testid="link-stripe-portal-settings"
+                      >
+                        Open Stripe Portal Settings <ExternalLink className="h-3 w-3" />
+                      </a>
+                    )}
+                  </div>
+                )}
               </div>
             )}
 

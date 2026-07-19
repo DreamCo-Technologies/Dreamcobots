@@ -2423,7 +2423,45 @@ export async function registerRoutes(
       res.json({ url: session.url });
     } catch (error: any) {
       console.error("Portal error:", error.message);
-      res.status(500).json({ error: "Failed to create portal session" });
+
+      // Stripe not configured at all (missing keys)
+      const msg: string = error?.message ?? "";
+      if (msg.includes("Stripe not configured") || msg.includes("connection not found")) {
+        return res.status(503).json({
+          error: "Stripe is not configured on this server.",
+          detail: "Add STRIPE_SECRET_KEY and STRIPE_PUBLISHABLE_KEY as environment secrets to enable billing.",
+          code: "stripe_not_configured",
+        });
+      }
+
+      // Stripe billing portal not set up in the Dashboard
+      if (
+        error?.type === "invalid_request_error" &&
+        (msg.toLowerCase().includes("no configuration") ||
+          msg.toLowerCase().includes("portal") ||
+          msg.toLowerCase().includes("billing portal"))
+      ) {
+        return res.status(422).json({
+          error: "Billing Portal is not enabled in your Stripe Dashboard.",
+          detail: "Go to stripe.com/dashboard → Settings → Billing → Customer portal and activate it.",
+          code: "portal_not_configured",
+        });
+      }
+
+      // Stripe API key invalid / authentication failure
+      if (error?.type === "authentication_error" || error?.statusCode === 401) {
+        return res.status(503).json({
+          error: "Stripe authentication failed.",
+          detail: "Check that your STRIPE_SECRET_KEY secret is correct and has not expired.",
+          code: "stripe_auth_error",
+        });
+      }
+
+      res.status(500).json({
+        error: "Failed to open billing portal.",
+        detail: msg || "An unexpected error occurred. Please try again.",
+        code: "portal_error",
+      });
     }
   });
 
