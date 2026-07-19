@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Learning Matrix — DreamCo Empire OS</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+<div id="nav-placeholder"></div><script src="nav.js"></script>
+<div class="container" style="padding:48px 0">
+  <div style="margin-bottom:32px"><h1 style="font-size:1.75rem;margin-bottom:8px">Global AI Learning Matrix</h1><p>Track global AI developments, learning methods, features, and labs across multiple countries</p></div>
+
+  <div style="display:flex;gap:8px;margin-bottom:24px;flex-wrap:wrap">
+    <button class="settings-tab active" onclick="switchTab('developments',this)">🌍 Developments</button>
+    <button class="settings-tab" onclick="switchTab('methods',this)">🧠 Learning Methods</button>
+    <button class="settings-tab" onclick="switchTab('labs',this)">🔬 AI Labs</button>
+    <button class="settings-tab" onclick="switchTab('formulas',this)">📐 Division Formulas</button>
+  </div>
+
+  <div id="developments">
+    <div class="grid-3">
+      <div class="card"><div style="display:flex;align-items:center;gap:10px;margin-bottom:12px"><span style="font-size:1.5rem">🇺🇸</span><h4>United States</h4><span class="badge badge-primary" style="margin-left:auto">Leader</span></div><p style="font-size:.83rem;color:var(--text2);margin-bottom:12px">Home to OpenAI, Anthropic, Google DeepMind, Meta AI, xAI. Leads in LLM research, foundation models, and AI chips. Executive Order on AI Safety 2024.</p><div style="display:flex;gap:6px;flex-wrap:wrap"><span class="div-tag">Foundation Models</span><span class="div-tag">AI Safety</span><span class="div-tag">Chips</span></div></div>
+      <div class="card"><div style="display:flex;align-items:center;gap:10px;margin-bottom:12px"><span style="font-size:1.5rem">🇨🇳</span><h4>China</h4><span class="badge badge-amber" style="margin-left:auto">Challenger</span></div><p style="font-size:.83rem;color:var(--text2);margin-bottom:12px">DeepSeek R1 shocked the world with GPT-4 level at 1/50th cost. Baidu ERNIE, Alibaba Qwen, ByteDance. Strong in robotics and manufacturing AI.</p><div style="display:flex;gap:6px;flex-wrap:wrap"><span class="div-tag">Cost Innovation</span><span class="div-tag">Robotics</span><span class="div-tag">Scale</span></div></div>
+      <div class="card"><div style="display:flex;align-items:center;gap:10px;margin-bottom:12px"><span style="font-size:1.5rem">🇬🇧</span><h4>United Kingdom</h4><span class="badge badge-gray" style="margin-left:auto">Research Hub</span></div><p style="font-size:.83rem;color:var(--text2);margin-bottom:12px">DeepMind HQ in London. Isomorphic Labs (drug discovery). AI Safety Institute. Oxford and Cambridge AI research groups.</p><div style="display:flex;gap:6px;flex-wrap:wrap"><span class="div-tag">Safety Research</span><span class="div-tag">Biotech AI</span></div></div>
+      <div class="card"><div style="display:flex;align-items:center;gap:10px;margin-bottom:12px"><span style="font-size:1.5rem">🇫🇷</span><h4>France</h4><span class="badge badge-gray" style="margin-left:auto">European Leader</span></div><p style="font-size:.83rem;color:var(--text2);margin-bottom:12px">Mistral AI — Europe's AI champion. Open-source models, GDPR-compliant, privacy-first. €€ billion government AI investment.</p><div style="display:flex;gap:6px;flex-wrap:wrap"><span class="div-tag">Open Source</span><span class="div-tag">Privacy</span><span class="div-tag">GDPR</span></div></div>
+      <div class="card"><div style="display:flex;align-items:center;gap:10px;margin-bottom:12px"><span style="font-size:1.5rem">🇨🇦</span><h4>Canada</h4><span class="badge badge-gray" style="margin-left:auto">Foundational</span></div><p style="font-size:.83rem;color:var(--text2);margin-bottom:12px">Birthplace of deep learning (Hinton, LeCun, Bengio). Vector Institute, MILA. Cohere headquarters in Toronto.</p><div style="display:flex;gap:6px;flex-wrap:wrap"><span class="div-tag">Deep Learning</span><span class="div-tag">Research</span><span class="div-tag">Enterprise AI</span></div></div>
+      <div class="card"><div style="display:flex;align-items:center;gap:10px;margin-bottom:12px"><span style="font-size:1.5rem">🇩🇪</span><h4>Germany</h4><span class="badge badge-gray" style="margin-left:auto">Industrial AI</span></div><p style="font-size:.83sm;color:var(--text2);margin-bottom:12px">AI for manufacturing, automotive, and industry 4.0. Aleph Alpha, Volkswagen AI, SAP AI. Strong privacy regulations.</p><div style="display:flex;gap:6px;flex-wrap:wrap"><span class="div-tag">Industrial AI</span><span class="div-tag">Manufacturing</span></div></div>
+    </div>
+  </div>
+
+  <div id="methods" style="display:none">
+    <div class="grid-3">
+      <div class="card"><h4 style="margin-bottom:10px">🧠 Reinforcement Learning from Human Feedback (RLHF)</h4><p style="font-size:.83rem;color:var(--text2)">The technique behind ChatGPT. Human raters rank outputs; model trained to maximize preferred responses. Used by OpenAI, Anthropic.</p></div>
+      <div class="card"><h4 style="margin-bottom:10px">📚 Retrieval-Augmented Generation (RAG)</h4><p style="font-size:.83rem;color:var(--text2)">Combines LLMs with external knowledge bases. Model retrieves relevant docs before generating. Powers Empire OS memory and search.</p></div>
+      <div class="card"><h4 style="margin-bottom:10px">🎯 Fine-Tuning &amp; LoRA</h4><p style="font-size:.83rem;color:var(--text2)">Adapt base models for specific tasks with a small dataset. LoRA reduces trainable parameters by 10,000x. Cost-effective specialization.</p></div>
+      <div class="card"><h4 style="margin-bottom:10px">⛓️ Chain-of-Thought Prompting</h4><p style="font-size:.83rem;color:var(--text2)">Guide models to reason step-by-step before answering. Dramatically improves accuracy on math, logic, and multi-step problems.</p></div>
+      <div class="card"><h4 style="margin-bottom:10px">🤖 Agentic AI Pipelines</h4><p style="font-size:.83rem;color:var(--text2)">Multi-step autonomous task execution. Plan → Tools → Execute → Verify. Powers DreamAgents division and Buddy Bot's Agent mode.</p></div>
+      <div class="card"><h4 style="margin-bottom:10px">🔗 Constitutional AI</h4><p style="font-size:.83rem;color:var(--text2)">Anthropic's approach to AI safety. Model trained with a set of principles (constitution) to be helpful, harmless, and honest.</p></div>
+    </div>
+  </div>
+
+  <div id="labs" style="display:none">
+    <div class="grid-3">
+      <div class="card"><h4 style="margin-bottom:8px">OpenAI</h4><p style="font-size:.8rem;color:var(--text2)">San Francisco · 700+ researchers · $20B+ funding</p><span class="badge badge-primary" style="margin-top:8px">Powers Empire OS</span></div>
+      <div class="card"><h4 style="margin-bottom:8px">Google DeepMind</h4><p style="font-size:.8rem;color:var(--text2)">London + Mountain View · 3,000+ staff · AlphaFold, Gemini</p><span class="badge badge-gray" style="margin-top:8px">Monitored</span></div>
+      <div class="card"><h4 style="margin-bottom:8px">Anthropic</h4><p style="font-size:.8rem;color:var(--text2)">San Francisco · 1,000+ staff · $7.3B raised · Safety-first</p><span class="badge badge-gray" style="margin-top:8px">Monitored</span></div>
+      <div class="card"><h4 style="margin-bottom:8px">Meta FAIR</h4><p style="font-size:.8rem;color:var(--text2)">Menlo Park · Open research · Llama, PyTorch, SAM</p><span class="badge badge-green" style="margin-top:8px">Open Source</span></div>
+      <div class="card"><h4 style="margin-bottom:8px">xAI</h4><p style="font-size:.8rem;color:var(--text2)">San Francisco · Colossus 200K GPU · Grok-3</p><span class="badge badge-gray" style="margin-top:8px">Monitored</span></div>
+      <div class="card"><h4 style="margin-bottom:8px">MILA</h4><p style="font-size:.8rem;color:var(--text2)">Montreal · Yoshua Bengio · 700+ researchers · Foundational</p><span class="badge badge-gray" style="margin-top:8px">Academic</span></div>
+    </div>
+  </div>
+
+  <div id="formulas" style="display:none">
+    <p style="margin-bottom:20px">Division-specific high-profit formulas from the Learning Matrix. Each division has its own formula set.</p>
+    <div class="grid-2">
+      <div class="card"><h4 style="margin-bottom:10px">💰 DreamFinance Formulas</h4><div style="font-family:var(--mono);font-size:.78rem;color:var(--text3);background:var(--card2);padding:12px;border-radius:8px">Rule of 72 · Sharpe Ratio · DeFi APY compound · Portfolio beta · Tax-loss harvest threshold</div><a href="formulas.html" class="btn btn-outline btn-sm" style="margin-top:12px">View All →</a></div>
+      <div class="card"><h4 style="margin-bottom:10px">🏠 DreamRealEstate Formulas</h4><div style="font-family:var(--mono);font-size:.78rem;color:var(--text3);background:var(--card2);padding:12px;border-radius:8px">70% Rule · ARV calc · Net rental yield · Cap rate · Car flip ROI · DSCR</div><a href="deals.html" class="btn btn-outline btn-sm" style="margin-top:12px">Open Deal Analyzer →</a></div>
+      <div class="card"><h4 style="margin-bottom:10px">🎯 DreamSalesPro Formulas</h4><div style="font-family:var(--mono);font-size:.78rem;color:var(--text3);background:var(--card2);padding:12px;border-radius:8px">LTV:CAC ratio · Email open rate · Conversion funnel loss · Lead velocity rate · MRR churn</div><a href="formulas.html" class="btn btn-outline btn-sm" style="margin-top:12px">View All →</a></div>
+      <div class="card"><h4 style="margin-bottom:10px">₿ DreamCrypto Formulas</h4><div style="font-family:var(--mono);font-size:.78rem;color:var(--text3);background:var(--card2);padding:12px;border-radius:8px">APY vs APR · Gas fee estimation · Impermanent loss · Arbitrage spread · Portfolio correlation</div><a href="formulas.html" class="btn btn-outline btn-sm" style="margin-top:12px">View All →</a></div>
+    </div>
+  </div>
+</div>
+<script>
+function switchTab(id, btn) {
+  ['developments','methods','labs','formulas'].forEach(t => document.getElementById(t).style.display='none');
+  document.querySelectorAll('.settings-tab').forEach(b => b.classList.remove('active'));
+  document.getElementById(id).style.display=''; btn.classList.add('active');
+}
+</script>
+</body>
+</html>

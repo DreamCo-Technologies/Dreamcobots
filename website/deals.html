@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Deal Analyzer — DreamCo Empire OS</title>
+  <meta name="description" content="Real estate flip and car flip profit calculators with KPI scoring, capital efficiency, and risk grading." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+<div id="nav-placeholder"></div><script src="nav.js"></script>
+<div class="container" style="padding:48px 0">
+  <div style="margin-bottom:32px">
+    <h1 style="font-size:1.75rem;margin-bottom:8px">Deal Analyzer</h1>
+    <p>Real estate flips, car flips — instant profit calculations with KPI scoring and risk grades.</p>
+  </div>
+
+  <!-- Tabs -->
+  <div style="display:flex;gap:8px;margin-bottom:28px">
+    <button class="settings-tab active" onclick="switchDeal('re',this)">🏠 Real Estate Flip</button>
+    <button class="settings-tab" onclick="switchDeal('car',this)">🚗 Car Flip</button>
+  </div>
+
+  <!-- Real Estate -->
+  <div id="re-deal">
+    <div class="grid-2" style="gap:32px;align-items:start">
+      <div class="card card-lg">
+        <h3 style="margin-bottom:20px">📋 Property Details</h3>
+        <div style="display:flex;flex-direction:column;gap:14px">
+          <div><label style="font-size:.8rem;color:var(--text3);display:block;margin-bottom:4px">Purchase Price ($)</label><input type="number" id="re-purchase" value="180000" oninput="calcRE()" style="width:100%;padding:10px 14px;background:var(--card2);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:.9rem" /></div>
+          <div><label style="font-size:.8rem;color:var(--text3);display:block;margin-bottom:4px">Repair Costs ($)</label><input type="number" id="re-repair" value="35000" oninput="calcRE()" style="width:100%;padding:10px 14px;background:var(--card2);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:.9rem" /></div>
+          <div><label style="font-size:.8rem;color:var(--text3);display:block;margin-bottom:4px">After Repair Value — ARV ($)</label><input type="number" id="re-arv" value="290000" oninput="calcRE()" style="width:100%;padding:10px 14px;background:var(--card2);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:.9rem" /></div>
+          <div><label style="font-size:.8rem;color:var(--text3);display:block;margin-bottom:4px">Holding Costs / month ($)</label><input type="number" id="re-hold" value="1800" oninput="calcRE()" style="width:100%;padding:10px 14px;background:var(--card2);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:.9rem" /></div>
+          <div><label style="font-size:.8rem;color:var(--text3);display:block;margin-bottom:4px">Hold Duration (months)</label><input type="number" id="re-months" value="4" oninput="calcRE()" style="width:100%;padding:10px 14px;background:var(--card2);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:.9rem" /></div>
+          <div><label style="font-size:.8rem;color:var(--text3);display:block;margin-bottom:4px">Agent Commission (%)</label><input type="number" id="re-commission" value="6" oninput="calcRE()" style="width:100%;padding:10px 14px;background:var(--card2);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:.9rem" /></div>
+        </div>
+      </div>
+      <div>
+        <div class="card card-lg" style="margin-bottom:20px" id="re-results">
+          <h3 style="margin-bottom:20px">📊 Results</h3>
+          <div id="re-kpis" style="display:flex;flex-direction:column;gap:0"></div>
+        </div>
+        <div class="card card-lg" id="re-grade-card">
+          <h3 style="margin-bottom:12px">Deal Grade</h3>
+          <div id="re-grade" style="font-size:2.5rem;font-weight:800;text-align:center;padding:16px 0"></div>
+          <div id="re-verdict" style="text-align:center;font-size:.875rem;color:var(--text2)"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Car Flip -->
+  <div id="car-deal" style="display:none">
+    <div class="grid-2" style="gap:32px;align-items:start">
+      <div class="card card-lg">
+        <h3 style="margin-bottom:20px">🚗 Vehicle Details</h3>
+        <div style="display:flex;flex-direction:column;gap:14px">
+          <div><label style="font-size:.8rem;color:var(--text3);display:block;margin-bottom:4px">Purchase Price ($)</label><input type="number" id="car-purchase" value="8500" oninput="calcCar()" style="width:100%;padding:10px 14px;background:var(--card2);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:.9rem" /></div>
+          <div><label style="font-size:.8rem;color:var(--text3);display:block;margin-bottom:4px">Reconditioning / Repairs ($)</label><input type="number" id="car-repair" value="1200" oninput="calcCar()" style="width:100%;padding:10px 14px;background:var(--card2);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:.9rem" /></div>
+          <div><label style="font-size:.8rem;color:var(--text3);display:block;margin-bottom:4px">Transport Cost ($)</label><input type="number" id="car-transport" value="300" oninput="calcCar()" style="width:100%;padding:10px 14px;background:var(--card2);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:.9rem" /></div>
+          <div><label style="font-size:.8rem;color:var(--text3);display:block;margin-bottom:4px">Market Sell Value ($)</label><input type="number" id="car-sell" value="13500" oninput="calcCar()" style="width:100%;padding:10px 14px;background:var(--card2);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:.9rem" /></div>
+          <div><label style="font-size:.8rem;color:var(--text3);display:block;margin-bottom:4px">Platform / Dealer Fees ($)</label><input type="number" id="car-fees" value="400" oninput="calcCar()" style="width:100%;padding:10px 14px;background:var(--card2);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:.9rem" /></div>
+        </div>
+      </div>
+      <div>
+        <div class="card card-lg" style="margin-bottom:20px" id="car-results">
+          <h3 style="margin-bottom:20px">📊 Results</h3>
+          <div id="car-kpis" style="display:flex;flex-direction:column;gap:0"></div>
+        </div>
+        <div class="card card-lg">
+          <h3 style="margin-bottom:12px">Deal Grade</h3>
+          <div id="car-grade" style="font-size:2.5rem;font-weight:800;text-align:center;padding:16px 0"></div>
+          <div id="car-verdict" style="text-align:center;font-size:.875rem;color:var(--text2)"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+function switchDeal(type, btn) {
+  document.getElementById('re-deal').style.display = type==='re' ? '' : 'none';
+  document.getElementById('car-deal').style.display = type==='car' ? '' : 'none';
+  document.querySelectorAll('.settings-tab').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+}
+function kpiRow(label, value, color) {
+  return `<div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--border)"><span style="font-size:.875rem;color:var(--text2)">${label}</span><strong style="color:${color||'var(--text)'}">${value}</strong></div>`;
+}
+function grade(roi) {
+  if(roi>=20) return {g:'A+',c:'var(--green)',v:'🔥 Excellent deal — move fast'};
+  if(roi>=15) return {g:'A',c:'var(--green)',v:'✅ Strong deal — worth doing'};
+  if(roi>=10) return {g:'B',c:'var(--amber)',v:'⚡ Decent deal — check comps'};
+  if(roi>=5)  return {g:'C',c:'var(--amber)',v:'⚠️ Thin margins — negotiate harder'};
+  return {g:'D',c:'var(--red)',v:'❌ Pass — not worth the risk'};
+}
+function fmt(n) { return '$' + Math.round(n).toLocaleString(); }
+function calcRE() {
+  const purchase = +document.getElementById('re-purchase').value || 0;
+  const repair = +document.getElementById('re-repair').value || 0;
+  const arv = +document.getElementById('re-arv').value || 0;
+  const hold = +document.getElementById('re-hold').value || 0;
+  const months = +document.getElementById('re-months').value || 0;
+  const commissionPct = +document.getElementById('re-commission').value || 0;
+  const totalCost = purchase + repair + (hold * months);
+  const commission = arv * (commissionPct / 100);
+  const netProfit = arv - totalCost - commission;
+  const roi = totalCost > 0 ? (netProfit / totalCost) * 100 : 0;
+  const g = grade(roi);
+  document.getElementById('re-kpis').innerHTML =
+    kpiRow('Total Investment', fmt(totalCost), null) +
+    kpiRow('Commission', fmt(commission), 'var(--red)') +
+    kpiRow('Gross Profit', fmt(arv - totalCost), arv>totalCost?'var(--green)':'var(--red)') +
+    kpiRow('Net Profit', fmt(netProfit), netProfit>0?'var(--green)':'var(--red)') +
+    kpiRow('ROI', roi.toFixed(1)+'%', netProfit>0?'var(--green)':'var(--red)') +
+    kpiRow('70% Rule', fmt(arv*0.7), null);
+  document.getElementById('re-grade').textContent = g.g;
+  document.getElementById('re-grade').style.color = g.c;
+  document.getElementById('re-verdict').textContent = g.v;
+}
+function calcCar() {
+  const purchase = +document.getElementById('car-purchase').value || 0;
+  const repair = +document.getElementById('car-repair').value || 0;
+  const transport = +document.getElementById('car-transport').value || 0;
+  const sell = +document.getElementById('car-sell').value || 0;
+  const fees = +document.getElementById('car-fees').value || 0;
+  const totalCost = purchase + repair + transport + fees;
+  const netProfit = sell - totalCost;
+  const roi = totalCost > 0 ? (netProfit / totalCost) * 100 : 0;
+  const g = grade(roi);
+  document.getElementById('car-kpis').innerHTML =
+    kpiRow('All-in Cost', fmt(totalCost), null) +
+    kpiRow('Sell Price', fmt(sell), null) +
+    kpiRow('Net Profit', fmt(netProfit), netProfit>0?'var(--green)':'var(--red)') +
+    kpiRow('ROI', roi.toFixed(1)+'%', netProfit>0?'var(--green)':'var(--red)') +
+    kpiRow('Profit Margin', ((netProfit/sell)*100).toFixed(1)+'%', null);
+  document.getElementById('car-grade').textContent = g.g;
+  document.getElementById('car-grade').style.color = g.c;
+  document.getElementById('car-verdict').textContent = g.v;
+}
+calcRE(); calcCar();
+</script>
+</body>
+</html>

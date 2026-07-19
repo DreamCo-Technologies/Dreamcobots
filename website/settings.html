@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Settings — DreamCo Empire OS</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+<div id="nav-placeholder"></div><script src="nav.js"></script>
+<div class="container" style="padding:48px 0">
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:32px">
+    <div><h1 style="font-size:1.75rem;margin-bottom:6px">Settings</h1><p>Configure your Empire OS — autonomy, appearance, integrations &amp; privacy</p></div>
+    <div style="display:flex;gap:10px">
+      <button class="btn btn-outline btn-sm" onclick="copyInfo()">📋 Copy Info</button>
+      <button class="btn btn-outline btn-sm" onclick="exportData()">⬇️ Export</button>
+    </div>
+  </div>
+
+  <div style="display:flex;gap:24px;align-items:flex-start">
+    <!-- Sidebar tabs -->
+    <div style="display:flex;flex-direction:column;gap:4px;min-width:180px">
+      <button class="settings-tab active" style="text-align:left;border-radius:10px" onclick="switchTab('general',this)">👤 General</button>
+      <button class="settings-tab" style="text-align:left;border-radius:10px" onclick="switchTab('autonomy',this)">⚡ Autonomy</button>
+      <button class="settings-tab" style="text-align:left;border-radius:10px" onclick="switchTab('appearance',this)">🎨 Appearance</button>
+      <button class="settings-tab" style="text-align:left;border-radius:10px" onclick="switchTab('integrations',this)">🔌 Integrations</button>
+      <button class="settings-tab" style="text-align:left;border-radius:10px" onclick="switchTab('international',this)">🌐 International</button>
+      <button class="settings-tab" style="text-align:left;border-radius:10px" onclick="switchTab('notifications',this)">🔔 Notifications</button>
+      <button class="settings-tab" style="text-align:left;border-radius:10px" onclick="switchTab('privacy',this)">🔒 Privacy</button>
+      <button class="settings-tab" style="text-align:left;border-radius:10px" onclick="switchTab('data',this)">📦 Data</button>
+    </div>
+
+    <!-- Content area -->
+    <div style="flex:1">
+      <!-- General -->
+      <div id="general" class="card card-lg">
+        <h3 style="margin-bottom:20px">👤 Profile</h3>
+        <div class="grid-2" style="gap:16px;margin-bottom:16px">
+          <div><label style="font-size:.8rem;color:var(--text3);display:block;margin-bottom:6px">Display Name</label><input type="text" value="DreamCo Owner" style="width:100%;padding:10px 14px;background:var(--card2);border:1px solid var(--border);border-radius:8px;color:var(--text)" /></div>
+          <div><label style="font-size:.8rem;color:var(--text3);display:block;margin-bottom:6px">Email (optional)</label><input type="email" placeholder="you@example.com" style="width:100%;padding:10px 14px;background:var(--card2);border:1px solid var(--border);border-radius:8px;color:var(--text)" /></div>
+        </div>
+        <div style="margin-bottom:20px"><label style="font-size:.8rem;color:var(--text3);display:block;margin-bottom:6px">Timezone</label><select style="width:100%;max-width:300px;padding:10px 14px;background:var(--card2);border:1px solid var(--border);border-radius:8px;color:var(--text)"><option>UTC</option><option>America/New_York</option><option>America/Los_Angeles</option><option>Europe/London</option><option>Asia/Tokyo</option></select></div>
+        <button class="btn btn-primary btn-sm">Save Profile</button>
+        <div style="margin-top:28px;padding-top:24px;border-top:1px solid var(--border)">
+          <h3 style="margin-bottom:16px">⚙️ System Info</h3>
+          <div class="grid-3" style="gap:16px">
+            <div class="card" style="text-align:center"><div style="font-size:1.5rem;font-weight:800;color:var(--primary)">1.0.0</div><div style="font-size:.75rem;color:var(--text3)">Version</div></div>
+            <div class="card" style="text-align:center"><div style="font-size:1.5rem;font-weight:800;color:var(--green)">1,051+</div><div style="font-size:.75rem;color:var(--text3)">Bots</div></div>
+            <div class="card" style="text-align:center"><div style="font-size:1.5rem;font-weight:800;color:var(--accent)">45</div><div style="font-size:.75rem;color:var(--text3)">Divisions</div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Autonomy -->
+      <div id="autonomy" class="card card-lg" style="display:none">
+        <h3 style="margin-bottom:20px">⚡ Autonomy Mode</h3>
+        <div style="display:flex;flex-direction:column;gap:12px">
+          <label style="display:flex;align-items:center;gap:14px;padding:16px;border-radius:12px;border:2px solid var(--border);cursor:pointer" onclick="selectMode(this)"><input type="radio" name="autonomy" value="guided" /> <div><strong>🎮 Guided</strong><div style="font-size:.8rem;color:var(--text3)">Manual approval for all actions</div></div><span class="badge badge-gray" style="margin-left:auto">Free+</span></label>
+          <label style="display:flex;align-items:center;gap:14px;padding:16px;border-radius:12px;border:2px solid var(--border);cursor:pointer" onclick="selectMode(this)"><input type="radio" name="autonomy" value="semi" /> <div><strong>⚡ Semi-Autonomous</strong><div style="font-size:.8rem;color:var(--text3)">Low-risk tasks auto-execute</div></div><span class="badge badge-amber" style="margin-left:auto">Pro+</span></label>
+          <label style="display:flex;align-items:center;gap:14px;padding:16px;border-radius:12px;border:2px solid var(--green);background:rgba(34,197,94,.06);cursor:pointer" onclick="selectMode(this)"><input type="radio" name="autonomy" value="full" checked /> <div><strong>🚀 Full Autonomy</strong><div style="font-size:.8rem;color:var(--text3)">24/7 autonomous operations</div></div><span class="badge badge-green" style="margin-left:auto">● ACTIVE</span></label>
+        </div>
+        <a href="autonomy.html" class="btn btn-outline btn-sm" style="margin-top:16px">Full Autonomy Settings →</a>
+      </div>
+
+      <!-- Appearance -->
+      <div id="appearance" class="card card-lg" style="display:none">
+        <h3 style="margin-bottom:20px">🎨 Theme</h3>
+        <div class="grid-3" style="gap:12px">
+          <div onclick="setTheme('dark',this)" style="cursor:pointer;padding:16px;border-radius:12px;border:2px solid var(--primary);background:rgba(79,142,247,.06);text-align:center"><div style="font-size:1.5rem;margin-bottom:8px">🌙</div><strong>Dark</strong><div style="font-size:.75rem;color:var(--text3)">Current theme</div></div>
+          <div onclick="setTheme('light',this)" style="cursor:pointer;padding:16px;border-radius:12px;border:1px solid var(--border);text-align:center"><div style="font-size:1.5rem;margin-bottom:8px">☀️</div><strong>Light</strong><div style="font-size:.75rem;color:var(--text3)">Coming soon</div></div>
+          <div onclick="setTheme('system',this)" style="cursor:pointer;padding:16px;border-radius:12px;border:1px solid var(--border);text-align:center"><div style="font-size:1.5rem;margin-bottom:8px">💻</div><strong>System</strong><div style="font-size:.75rem;color:var(--text3)">Follow OS setting</div></div>
+        </div>
+      </div>
+
+      <!-- Integrations -->
+      <div id="integrations" class="card card-lg" style="display:none">
+        <h3 style="margin-bottom:20px">🔌 API Integrations</h3>
+        <div style="display:flex;flex-direction:column;gap:0">
+          <div style="display:flex;align-items:center;justify-content:space-between;padding:16px 0;border-bottom:1px solid var(--border)"><div><strong>OpenAI GPT-4.1-mini</strong><div style="font-size:.8rem;color:var(--text3)">Core AI provider for all bots</div></div><span class="badge badge-green">✓ Connected</span></div>
+          <div style="display:flex;align-items:center;justify-content:space-between;padding:16px 0;border-bottom:1px solid var(--border)"><div><strong>Stripe</strong><div style="font-size:.8rem;color:var(--text3)">Payments &amp; subscriptions</div></div><span class="badge badge-amber">⚠ Needs Keys</span></div>
+          <div style="display:flex;align-items:center;justify-content:space-between;padding:16px 0;border-bottom:1px solid var(--border)"><div><strong>GitHub</strong><div style="font-size:.8rem;color:var(--text3)">Repository access &amp; CI/CD</div></div><span class="badge badge-green">✓ Connected</span></div>
+          <div style="display:flex;align-items:center;justify-content:space-between;padding:16px 0;border-bottom:1px solid var(--border)"><div><strong>ElevenLabs</strong><div style="font-size:.8rem;color:var(--text3)">Voice synthesis for Buddy Bot</div></div><span class="badge badge-gray">○ Add Key</span></div>
+          <div style="display:flex;align-items:center;justify-content:space-between;padding:16px 0"><div><strong>Serper</strong><div style="font-size:.8rem;color:var(--text3)">Real-time web search</div></div><span class="badge badge-gray">○ Add Key</span></div>
+        </div>
+        <a href="connections.html" class="btn btn-outline btn-sm" style="margin-top:16px">Manage All Connections →</a>
+      </div>
+
+      <!-- International -->
+      <div id="international" class="card card-lg" style="display:none">
+        <h3 style="margin-bottom:16px">💱 Currency</h3>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:24px">
+          <button class="btn btn-primary btn-sm">$ USD</button>
+          <button class="btn btn-outline btn-sm">€ EUR</button><button class="btn btn-outline btn-sm">£ GBP</button><button class="btn btn-outline btn-sm">¥ JPY</button>
+          <button class="btn btn-outline btn-sm">₿ BTC</button><button class="btn btn-outline btn-sm">Ξ ETH</button><button class="btn btn-outline btn-sm">₮ USDT</button><button class="btn btn-outline btn-sm">◎ SOL</button>
+          <button class="btn btn-outline btn-sm">BNB</button><button class="btn btn-outline btn-sm">CA$</button><button class="btn btn-outline btn-sm">A$</button><button class="btn btn-outline btn-sm">₹ INR</button>
+          <button class="btn btn-outline btn-sm">¥ CNY</button><button class="btn btn-outline btn-sm">MX$</button><button class="btn btn-outline btn-sm">R$ BRL</button>
+        </div>
+        <h3 style="margin-bottom:16px">🌐 Language</h3>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <button class="btn btn-primary btn-sm">English</button>
+          <button class="btn btn-outline btn-sm">Español</button><button class="btn btn-outline btn-sm">Français</button><button class="btn btn-outline btn-sm">Deutsch</button>
+          <button class="btn btn-outline btn-sm">Português</button><button class="btn btn-outline btn-sm">日本語</button><button class="btn btn-outline btn-sm">中文</button>
+          <button class="btn btn-outline btn-sm">한국어</button><button class="btn btn-outline btn-sm">العربية</button><button class="btn btn-outline btn-sm">हिन्दी</button>
+          <button class="btn btn-outline btn-sm">Italiano</button><button class="btn btn-outline btn-sm">Русский</button><button class="btn btn-outline btn-sm">Nederlands</button>
+          <button class="btn btn-outline btn-sm">Türkçe</button><button class="btn btn-outline btn-sm">Svenska</button>
+        </div>
+      </div>
+
+      <!-- Notifications -->
+      <div id="notifications" class="card card-lg" style="display:none">
+        <h3 style="margin-bottom:20px">🔔 Notification Preferences</h3>
+        <div style="display:flex;flex-direction:column;gap:0">
+          <div style="display:flex;align-items:center;justify-content:space-between;padding:16px 0;border-bottom:1px solid var(--border)"><div><strong>Revenue Alerts</strong><div style="font-size:.8rem;color:var(--text3)">New revenue events and milestones</div></div><div class="toggle on"></div></div>
+          <div style="display:flex;align-items:center;justify-content:space-between;padding:16px 0;border-bottom:1px solid var(--border)"><div><strong>Error Alerts</strong><div style="font-size:.8rem;color:var(--text3)">System errors and auto-fix events</div></div><div class="toggle on"></div></div>
+          <div style="display:flex;align-items:center;justify-content:space-between;padding:16px 0;border-bottom:1px solid var(--border)"><div><strong>Task Completions</strong><div style="font-size:.8rem;color:var(--text3)">When bot tasks finish</div></div><div class="toggle on"></div></div>
+          <div style="display:flex;align-items:center;justify-content:space-between;padding:16px 0"><div><strong>System Updates</strong><div style="font-size:.8rem;color:var(--text3)">New features and bot additions</div></div><div class="toggle off"></div></div>
+        </div>
+      </div>
+
+      <!-- Privacy -->
+      <div id="privacy" class="card card-lg" style="display:none">
+        <h3 style="margin-bottom:20px">🔒 Privacy Controls</h3>
+        <div style="display:flex;flex-direction:column;gap:0">
+          <div style="display:flex;align-items:center;justify-content:space-between;padding:16px 0;border-bottom:1px solid var(--border)"><div><strong>Analytics</strong><div style="font-size:.8rem;color:var(--text3)">Usage data to improve the system</div></div><div class="toggle on"></div></div>
+          <div style="display:flex;align-items:center;justify-content:space-between;padding:16px 0;border-bottom:1px solid var(--border)"><div><strong>Crash Reports</strong><div style="font-size:.8rem;color:var(--text3)">Automatic error reporting</div></div><div class="toggle on"></div></div>
+          <div style="display:flex;align-items:center;justify-content:space-between;padding:16px 0"><div><strong>Data Sharing</strong><div style="font-size:.8rem;color:var(--text3)">Share anonymized data for AI training</div></div><div class="toggle off"></div></div>
+        </div>
+      </div>
+
+      <!-- Data -->
+      <div id="data" class="card card-lg" style="display:none">
+        <h3 style="margin-bottom:20px">📦 Export Your Data</h3>
+        <div class="grid-2" style="gap:12px;margin-bottom:32px">
+          <button onclick="exportAlert('bot profiles')" class="btn btn-outline" style="justify-content:flex-start">🤖 All 1,051 Bot Profiles</button>
+          <button onclick="exportAlert('conversations')" class="btn btn-outline" style="justify-content:flex-start">💬 Conversation History</button>
+          <button onclick="exportAlert('revenue data')" class="btn btn-outline" style="justify-content:flex-start">💰 Revenue &amp; Analytics</button>
+          <button onclick="exportAlert('API costs')" class="btn btn-outline" style="justify-content:flex-start">💲 API Cost Data</button>
+          <button onclick="exportAlert('settings')" class="btn btn-outline" style="justify-content:flex-start">⚙️ Settings &amp; Config</button>
+          <button onclick="exportAlert('formulas')" class="btn btn-outline" style="justify-content:flex-start">🔢 Division Formulas</button>
+        </div>
+        <div style="padding:20px;border:1px solid rgba(239,68,68,.3);border-radius:12px;background:rgba(239,68,68,.06)">
+          <h4 style="color:var(--red);margin-bottom:8px">⚠️ Danger Zone</h4>
+          <p style="font-size:.875rem;margin-bottom:12px">Permanently delete all data. This cannot be undone.</p>
+          <button onclick="deleteAlert()" class="btn btn-sm" style="background:var(--red);color:#fff;border:none">Delete All Data</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+function switchTab(id, btn) {
+  ['general','autonomy','appearance','integrations','international','notifications','privacy','data'].forEach(t => document.getElementById(t).style.display = 'none');
+  document.querySelectorAll('.settings-tab').forEach(b => b.classList.remove('active'));
+  document.getElementById(id).style.display = '';
+  btn.classList.add('active');
+}
+function exportAlert(type) { alert('In the live app, this exports your ' + type + ' as JSON. Launch the app to access real exports.'); }
+function deleteAlert() { if(confirm('This would delete all your Empire OS data. Are you sure?')) alert('Connect to the live app to manage data.'); }
+function copyInfo() { navigator.clipboard?.writeText('DreamCo Empire OS v1.0.0 · 1,051 bots · 45 divisions · Full Autonomy'); }
+function exportData() { exportAlert('all data'); }
+function selectMode(el) { document.querySelectorAll('label[onclick]').forEach(l => { l.style.borderColor='var(--border)'; l.style.background=''; }); el.style.borderColor='var(--green)'; el.style.background='rgba(34,197,94,.06)'; }
+function setTheme(t, el) { document.querySelectorAll('[onclick^="setTheme"]').forEach(c => { c.style.borderColor='var(--border)'; c.style.background=''; c.style.borderWidth='1px'; }); el.style.borderColor='var(--primary)'; el.style.background='rgba(79,142,247,.06)'; el.style.borderWidth='2px'; }
+</script>
+</body>
+</html>

@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Bot Fleet — DreamCo Empire OS</title>
+  <meta name="description" content="Browse, search, and manage all 1,051+ AI bots across 45 divisions." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+<div id="nav-placeholder"></div><script src="nav.js"></script>
+<div class="container" style="padding:48px 0">
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:24px">
+    <div><h1 style="font-size:1.75rem;margin-bottom:6px">Bot Fleet</h1><p>1,051+ AI specialists across 45 divisions</p></div>
+    <a href="buddy.html" class="btn btn-primary">🧠 Open Buddy Bot</a>
+  </div>
+
+  <!-- Filters -->
+  <div style="display:flex;gap:10px;margin-bottom:28px;flex-wrap:wrap">
+    <input id="bot-search" type="text" placeholder="Search bots by name, skill, or division..." style="flex:1;min-width:220px;padding:10px 16px;background:var(--card);border:1px solid var(--border);border-radius:10px;color:var(--text);font-size:.875rem" oninput="filterBots()" />
+    <select id="tier-filter" style="padding:10px 14px;background:var(--card);border:1px solid var(--border);border-radius:10px;color:var(--text);font-size:.875rem" onchange="filterBots()">
+      <option value="all">All Tiers</option>
+      <option value="free">Free</option>
+      <option value="pro">Pro</option>
+      <option value="enterprise">Enterprise</option>
+      <option value="elite">Elite</option>
+    </select>
+    <select id="div-filter" style="padding:10px 14px;background:var(--card);border:1px solid var(--border);border-radius:10px;color:var(--text);font-size:.875rem" onchange="filterBots()">
+      <option value="all">All Divisions</option>
+      <option>DreamFinance</option><option>DreamSalesPro</option><option>DreamCodeLab</option>
+      <option>DreamCrypto</option><option>DreamAgents</option><option>DreamRealEstate</option>
+      <option>DreamBizLaunch</option><option>DreamContent</option><option>DreamCyber</option>
+      <option>CommandCore</option>
+    </select>
+    <button onclick="clearFilters()" class="btn btn-outline btn-sm">Clear</button>
+  </div>
+
+  <div id="bots-grid" class="grid-3">
+    <!-- CommandCore -->
+    <div class="bot-card" data-tier="elite" data-div="commandcore">
+      <div class="bot-header"><div><div class="bot-name">Buddy Bot</div><div class="bot-division">CommandCore</div></div><span class="badge badge-amber">Elite</span></div>
+      <div class="bot-desc">Master coder brain. 500+ libraries, 50+ languages. GitHub intelligence, security scanning, agent pipelines, and voice. Routes coding tasks for all 1,051 bots.</div>
+      <div class="bot-meta"><div class="dot dot-green"></div><span style="font-size:.75rem;color:var(--text3)">Online · 100% uptime</span></div>
+      <a href="buddy.html" class="btn btn-primary btn-sm" style="margin-top:8px;width:100%;text-align:center">Open Buddy →</a>
+    </div>
+
+    <!-- DreamSalesPro -->
+    <div class="bot-card" data-tier="pro" data-div="dreamsalespro">
+      <div class="bot-header"><div><div class="bot-name">Multi-Source Lead Scraper</div><div class="bot-division">DreamSalesPro</div></div><span class="badge badge-primary">Pro</span></div>
+      <div class="bot-desc">Aggregates leads from LinkedIn, Apollo, Hunter.io, Clearbit, and 12 other sources. Auto-enriches with email, phone, LinkedIn URL, and company data.</div>
+      <div class="bot-meta"><div class="dot dot-green"></div><span style="font-size:.75rem;color:var(--text3)">Online · 99.1% uptime</span></div>
+      <a href="chat.html?bot=multi-source-lead-scraper" class="btn btn-outline btn-sm" style="margin-top:8px;width:100%;text-align:center">Chat →</a>
+    </div>
+
+    <div class="bot-card" data-tier="pro" data-div="dreamsalespro">
+      <div class="bot-header"><div><div class="bot-name">Email Sequence Builder</div><div class="bot-division">DreamSalesPro</div></div><span class="badge badge-primary">Pro</span></div>
+      <div class="bot-desc">Writes 5–10 step cold email sequences, follow-ups, and re-engagement campaigns. A/B tests subject lines. Integrates with Apollo, Instantly, and Smartlead.</div>
+      <div class="bot-meta"><div class="dot dot-green"></div><span style="font-size:.75rem;color:var(--text3)">Online · 98.7% uptime</span></div>
+      <a href="chat.html?bot=email-sequence-builder" class="btn btn-outline btn-sm" style="margin-top:8px;width:100%;text-align:center">Chat →</a>
+    </div>
+
+    <!-- DreamFinance -->
+    <div class="bot-card" data-tier="enterprise" data-div="dreamfinance">
+      <div class="bot-header"><div><div class="bot-name">DeFi Yield Optimizer</div><div class="bot-division">DreamFinance</div></div><span class="badge badge-violet">Enterprise</span></div>
+      <div class="bot-desc">Monitors 50+ DeFi protocols for optimal yield. Auto-rebalances across Uniswap, Aave, Compound, Curve, and Yearn Finance. Real-time APY comparisons.</div>
+      <div class="bot-meta"><div class="dot dot-green"></div><span style="font-size:.75rem;color:var(--text3)">Online · 97.8% uptime</span></div>
+      <a href="chat.html?bot=defi-yield-optimizer" class="btn btn-outline btn-sm" style="margin-top:8px;width:100%;text-align:center">Chat →</a>
+    </div>
+
+    <div class="bot-card" data-tier="pro" data-div="dreamfinance">
+      <div class="bot-header"><div><div class="bot-name">Tax Optimization Strategist</div><div class="bot-division">DreamFinance</div></div><span class="badge badge-primary">Pro</span></div>
+      <div class="bot-desc">Identifies tax-loss harvesting opportunities, Section 1031 exchange strategies, depreciation schedules, and business deduction checklists.</div>
+      <div class="bot-meta"><div class="dot dot-green"></div><span style="font-size:.75rem;color:var(--text3)">Online · 99.3% uptime</span></div>
+      <a href="chat.html?bot=tax-optimization-strategist" class="btn btn-outline btn-sm" style="margin-top:8px;width:100%;text-align:center">Chat →</a>
+    </div>
+
+    <!-- DreamRealEstate -->
+    <div class="bot-card" data-tier="free" data-div="dreamrealestate">
+      <div class="bot-header"><div><div class="bot-name">Real Estate Flip Analyzer</div><div class="bot-division">DreamRealEstate</div></div><span class="badge badge-green">Free</span></div>
+      <div class="bot-desc">Calculates purchase price, repair costs, holding fees, ARV, agent commissions, and net profit for any flip. Color-coded KPI scoring with risk grade.</div>
+      <div class="bot-meta"><div class="dot dot-green"></div><span style="font-size:.75rem;color:var(--text3)">Online · 99.4% uptime</span></div>
+      <a href="deals.html" class="btn btn-outline btn-sm" style="margin-top:8px;width:100%;text-align:center">Use Deal Analyzer →</a>
+    </div>
+
+    <div class="bot-card" data-tier="free" data-div="dreamrealestate">
+      <div class="bot-header"><div><div class="bot-name">Car Flip Profit Calculator</div><div class="bot-division">DreamRealEstate</div></div><span class="badge badge-green">Free</span></div>
+      <div class="bot-desc">Analyzes purchase price, reconditioning cost, auction fees, transport, and dealer markup to compute net profit for any vehicle flip. Includes holding cost model.</div>
+      <div class="bot-meta"><div class="dot dot-green"></div><span style="font-size:.75rem;color:var(--text3)">Online · 99.4% uptime</span></div>
+      <a href="deals.html" class="btn btn-outline btn-sm" style="margin-top:8px;width:100%;text-align:center">Use Deal Analyzer →</a>
+    </div>
+
+    <!-- DreamCodeLab -->
+    <div class="bot-card" data-tier="free" data-div="dreamcodelab">
+      <div class="bot-header"><div><div class="bot-name">React Expert Bot</div><div class="bot-division">DreamCodeLab</div></div><span class="badge badge-green">Free</span></div>
+      <div class="bot-desc">Deep React expertise — hooks, context, server components, Next.js, Vite, Zustand, React Query, and performance optimization patterns.</div>
+      <div class="bot-meta"><div class="dot dot-green"></div><span style="font-size:.75rem;color:var(--text3)">Online · 99.1% uptime</span></div>
+      <a href="chat.html?bot=react-expert" class="btn btn-outline btn-sm" style="margin-top:8px;width:100%;text-align:center">Chat →</a>
+    </div>
+
+    <div class="bot-card" data-tier="free" data-div="dreamcodelab">
+      <div class="bot-header"><div><div class="bot-name">Python Expert Bot</div><div class="bot-division">DreamCodeLab</div></div><span class="badge badge-green">Free</span></div>
+      <div class="bot-desc">FastAPI, Django, Flask, Pandas, NumPy, scikit-learn, LangChain, asyncio, type hints, and Python best practices for any project.</div>
+      <div class="bot-meta"><div class="dot dot-green"></div><span style="font-size:.75rem;color:var(--text3)">Online · 98.9% uptime</span></div>
+      <a href="chat.html?bot=python-expert" class="btn btn-outline btn-sm" style="margin-top:8px;width:100%;text-align:center">Chat →</a>
+    </div>
+
+    <!-- DreamCrypto -->
+    <div class="bot-card" data-tier="enterprise" data-div="dreamcrypto">
+      <div class="bot-header"><div><div class="bot-name">Crypto Wallet Manager</div><div class="bot-division">DreamCrypto</div></div><span class="badge badge-violet">Enterprise</span></div>
+      <div class="bot-desc">Safe multi-wallet management, hardware wallet best practices, seed phrase security, transaction analysis, and cross-chain portfolio tracking.</div>
+      <div class="bot-meta"><div class="dot dot-green"></div><span style="font-size:.75rem;color:var(--text3)">Online · 98.5% uptime</span></div>
+      <a href="chat.html?bot=crypto-wallet-manager" class="btn btn-outline btn-sm" style="margin-top:8px;width:100%;text-align:center">Chat →</a>
+    </div>
+
+    <!-- DreamAgents -->
+    <div class="bot-card" data-tier="elite" data-div="dreamagents">
+      <div class="bot-header"><div><div class="bot-name">Account Manager Agent</div><div class="bot-division">DreamAgents</div></div><span class="badge badge-amber">Elite</span></div>
+      <div class="bot-desc">Autonomously manages accounts — sign-ups, profile setup, verification, subscription tracking, and recurring task execution across 50+ platforms.</div>
+      <div class="bot-meta"><div class="dot dot-green"></div><span style="font-size:.75rem;color:var(--text3)">Online · 97.2% uptime</span></div>
+      <a href="chat.html?bot=account-manager-agent" class="btn btn-outline btn-sm" style="margin-top:8px;width:100%;text-align:center">Chat →</a>
+    </div>
+
+    <div class="bot-card" data-tier="pro" data-div="dreamcontent">
+      <div class="bot-header"><div><div class="bot-name">Content Empire Builder</div><div class="bot-division">DreamContent</div></div><span class="badge badge-primary">Pro</span></div>
+      <div class="bot-desc">Generates blog posts, social media content, YouTube scripts, email sequences, and ad copy at scale. SEO-optimized with keyword targeting built in.</div>
+      <div class="bot-meta"><div class="dot dot-green"></div><span style="font-size:.75rem;color:var(--text3)">Online · 98.7% uptime</span></div>
+      <a href="chat.html?bot=content-empire-builder" class="btn btn-outline btn-sm" style="margin-top:8px;width:100%;text-align:center">Chat →</a>
+    </div>
+  </div>
+
+  <div style="text-align:center;margin-top:32px;padding:24px;background:var(--card2);border-radius:14px;border:1px solid var(--border)">
+    <p style="margin-bottom:12px">Showing 12 of <strong>1,051+</strong> bots. Search or filter above to find any bot.</p>
+    <div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap">
+      <span class="badge badge-green">● 847 Active</span>
+      <span class="badge badge-amber">143 Idle</span>
+      <span class="badge badge-red">3 Error</span>
+      <span class="badge badge-gray">58 Offline</span>
+    </div>
+  </div>
+</div>
+<script>
+function filterBots(){
+  const q = document.getElementById('bot-search').value.toLowerCase();
+  const tier = document.getElementById('tier-filter').value;
+  const div = document.getElementById('div-filter').value.toLowerCase().replace(/\s/g,'');
+  document.querySelectorAll('.bot-card').forEach(card => {
+    const text = card.textContent.toLowerCase();
+    const cardTier = card.getAttribute('data-tier') || '';
+    const cardDiv = (card.getAttribute('data-div') || '').replace(/\s/g,'');
+    const mQ = !q || text.includes(q);
+    const mT = tier === 'all' || cardTier === tier;
+    const mD = div === 'all' || cardDiv.includes(div);
+    card.style.display = (mQ && mT && mD) ? '' : 'none';
+  });
+}
+function clearFilters(){
+  document.getElementById('bot-search').value='';
+  document.getElementById('tier-filter').value='all';
+  document.getElementById('div-filter').value='all';
+  filterBots();
+}
+</script>
+</body>
+</html>

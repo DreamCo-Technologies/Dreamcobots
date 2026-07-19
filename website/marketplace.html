@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Marketplace — DreamCo Empire OS</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+<div id="nav-placeholder"></div><script src="nav.js"></script>
+<div class="container" style="padding:48px 0">
+  <div style="margin-bottom:32px"><h1 style="font-size:1.75rem;margin-bottom:8px">Marketplace</h1><p>Subscription tiers, skill packs, plugins, and industry verticals</p></div>
+
+  <div style="display:flex;gap:8px;margin-bottom:28px">
+    <button class="settings-tab active" onclick="switchTab('plans',this)">💎 Plans</button>
+    <button class="settings-tab" onclick="switchTab('skill-packs',this)">🎒 Skill Packs</button>
+    <button class="settings-tab" onclick="switchTab('plugins',this)">🔌 Plugins</button>
+    <button class="settings-tab" onclick="switchTab('verticals',this)">🏭 Industry Verticals</button>
+  </div>
+
+  <div id="plans">
+    <div class="pricing-grid">
+      <div class="plan-card"><div class="plan-name">Free</div><div class="plan-price"><strong>$0</strong><span>/mo</span></div><div class="plan-bots">5 bots · Guided only</div><ul class="plan-features"><li>5 AI bots across all 45 divisions</li><li>Guided autonomy</li><li>Basic deal analyzer</li><li>Community support</li></ul><a href="index.html#pricing" class="btn btn-outline" style="text-align:center">Current Plan</a></div>
+      <div class="plan-card popular"><div class="plan-name">Pro</div><div class="plan-price"><strong>$299</strong><span>/mo</span></div><div class="plan-bots">50 bots · Semi-auto</div><ul class="plan-features"><li>50 bots across all divisions</li><li>Semi-autonomous mode</li><li>Advanced deal analyzer</li><li>Formula vault access</li><li>Revenue tracking</li><li>Priority support</li></ul><a href="#" class="btn btn-primary" style="text-align:center" onclick="checkout('pro')">Upgrade to Pro →</a></div>
+      <div class="plan-card"><div class="plan-name">Enterprise</div><div class="plan-price"><strong>$999</strong><span>/mo</span></div><div class="plan-bots">150 bots · Full autonomy</div><ul class="plan-features"><li>150 AI bots</li><li>Full autonomy mode</li><li>All 200+ API integrations</li><li>Custom bot training</li><li>DIS dashboard</li><li>Dedicated support</li></ul><a href="#" class="btn btn-outline" style="text-align:center" onclick="checkout('enterprise')">Upgrade →</a></div>
+      <div class="plan-card" style="border-color:rgba(167,139,250,.4)"><div class="plan-name" style="color:var(--accent)">Elite</div><div class="plan-price"><strong style="background:linear-gradient(90deg,var(--primary),var(--accent));-webkit-background-clip:text;-webkit-text-fill-color:transparent">Custom</strong></div><div class="plan-bots">All 1,051+ bots · All features</div><ul class="plan-features"><li>All 1,051+ AI bots</li><li>Full autonomy 24/7</li><li>Buddy Bot ELITE access</li><li>Crypto wallet mgmt</li><li>Account manager agents</li><li>White-label option</li></ul><a href="index.html#pricing" class="btn btn-primary" style="text-align:center;background:linear-gradient(135deg,var(--primary),var(--accent))" onclick="checkout('elite')">Contact Sales →</a></div>
+    </div>
+  </div>
+
+  <div id="skill-packs" style="display:none">
+    <div class="grid-3">
+      <div class="card card-lg"><div style="font-size:2rem;margin-bottom:14px">💰</div><h3>Finance Pro Pack</h3><p style="margin:8px 0 16px">Unlock all 32 DreamFinance bots + DeFi yield optimizer + tax strategist + portfolio manager.</p><div style="font-size:1.5rem;font-weight:800;color:var(--primary);margin-bottom:16px">$49/mo</div><button class="btn btn-primary btn-sm" style="width:100%" onclick="checkout('finance-pack')">Add to Plan</button></div>
+      <div class="card card-lg"><div style="font-size:2rem;margin-bottom:14px">🎯</div><h3>Sales Domination Pack</h3><p style="margin:8px 0 16px">All 45 DreamSalesPro bots — leads, emails, CRM, LinkedIn outreach, and SMS campaigns.</p><div style="font-size:1.5rem;font-weight:800;color:var(--primary);margin-bottom:16px">$79/mo</div><button class="btn btn-primary btn-sm" style="width:100%" onclick="checkout('sales-pack')">Add to Plan</button></div>
+      <div class="card card-lg"><div style="font-size:2rem;margin-bottom:14px">₿</div><h3>Crypto Command Pack</h3><p style="margin:8px 0 16px">All 24 DreamCrypto bots — wallets, DeFi, arbitrage, NFT strategies, and on-chain analytics.</p><div style="font-size:1.5rem;font-weight:800;color:var(--primary);margin-bottom:16px">$59/mo</div><button class="btn btn-primary btn-sm" style="width:100%" onclick="checkout('crypto-pack')">Add to Plan</button></div>
+      <div class="card card-lg"><div style="font-size:2rem;margin-bottom:14px">💻</div><h3>CodeLab Unlimited</h3><p style="margin:8px 0 16px">All 100+ DreamCodeLab bots — every library, framework, and language ever created.</p><div style="font-size:1.5rem;font-weight:800;color:var(--primary);margin-bottom:16px">$39/mo</div><button class="btn btn-primary btn-sm" style="width:100%" onclick="checkout('code-pack')">Add to Plan</button></div>
+      <div class="card card-lg"><div style="font-size:2rem;margin-bottom:14px">🏠</div><h3>Real Estate Pack</h3><p style="margin:8px 0 16px">All 18 DreamRealEstate bots + car flip calculator + rental yield optimizer + market scanner.</p><div style="font-size:1.5rem;font-weight:800;color:var(--primary);margin-bottom:16px">$29/mo</div><button class="btn btn-primary btn-sm" style="width:100%" onclick="checkout('re-pack')">Add to Plan</button></div>
+      <div class="card card-lg"><div style="font-size:2rem;margin-bottom:14px">🤖</div><h3>Agents Unlimited</h3><p style="margin:8px 0 16px">All 30 DreamAgents bots — autonomous pipelines, account managers, sign-up bots, and task chains.</p><div style="font-size:1.5rem;font-weight:800;color:var(--primary);margin-bottom:16px">$89/mo</div><button class="btn btn-primary btn-sm" style="width:100%" onclick="checkout('agents-pack')">Add to Plan</button></div>
+    </div>
+  </div>
+
+  <div id="plugins" style="display:none">
+    <div class="grid-3">
+      <div class="card"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px"><h4>🔊 Voice Synthesis</h4><span class="badge badge-amber">Elite</span></div><p style="font-size:.83rem;margin-bottom:16px">ElevenLabs voice cloning for Buddy Bot and all conversation bots. Text-to-speech responses.</p><div style="font-size:.875rem;color:var(--text3)">Requires ELEVENLABS_API_KEY</div></div>
+      <div class="card"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px"><h4>🔍 Web Search</h4><span class="badge badge-primary">Pro</span></div><p style="font-size:.83rem;margin-bottom:16px">Real-time web search via Serper API. Gives all bots live internet access for research.</p><div style="font-size:.875rem;color:var(--text3)">Requires SERPER_API_KEY</div></div>
+      <div class="card"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px"><h4>🎨 Image Generation</h4><span class="badge badge-primary">Pro</span></div><p style="font-size:.83rem;margin-bottom:16px">DALL-E 3 integration for UI mockups, diagrams, marketing assets, and social media images.</p><div style="font-size:.875rem;color:var(--text3)">Requires OpenAI key</div></div>
+      <div class="card"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px"><h4>📊 Advanced Analytics</h4><span class="badge badge-violet">Enterprise</span></div><p style="font-size:.83rem;margin-bottom:16px">Detailed bot performance metrics, revenue forecasting, and cost optimization dashboards.</p><span class="badge badge-green">Included Enterprise+</span></div>
+      <div class="card"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px"><h4>🔐 Security Scanner</h4><span class="badge badge-primary">Pro</span></div><p style="font-size:.83rem;margin-bottom:16px">SAST/DAST code scanning, OWASP compliance checks, and vulnerability reports on any codebase.</p><span class="badge badge-green">Via Buddy Bot</span></div>
+      <div class="card"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px"><h4>💾 Time Capsule</h4><span class="badge badge-primary">Pro</span></div><p style="font-size:.83rem;margin-bottom:16px">Save, restore, and export full system snapshots. Never lose your empire configuration.</p><a href="timecapsule.html" style="font-size:.83rem;color:var(--primary)">View Snapshots →</a></div>
+    </div>
+  </div>
+
+  <div id="verticals" style="display:none">
+    <div class="grid-3">
+      <div class="card card-lg"><div style="font-size:2rem;margin-bottom:12px">🏥</div><h3>Healthcare AI</h3><p style="margin:8px 0 16px;font-size:.875rem">HIPAA-compliant bots for medical billing, clinical summaries, patient engagement, and care coordination.</p><span class="badge badge-violet">Enterprise</span></div>
+      <div class="card card-lg"><div style="font-size:2rem;margin-bottom:12px">⚖️</div><h3>Legal Tech</h3><p style="margin:8px 0 16px;font-size:.875rem">Contract drafting, legal research, compliance monitoring, case summarization, and billing automation.</p><span class="badge badge-violet">Enterprise</span></div>
+      <div class="card card-lg"><div style="font-size:2rem;margin-bottom:12px">🏗️</div><h3>Construction & Real Estate</h3><p style="margin:8px 0 16px;font-size:.875rem">Project management, cost estimation, contractor sourcing, permitting, and property management bots.</p><span class="badge badge-primary">Pro</span></div>
+      <div class="card card-lg"><div style="font-size:2rem;margin-bottom:12px">🎓</div><h3>EdTech</h3><p style="margin:8px 0 16px;font-size:.875rem">Course builders, quiz generators, student progress tracking, and AI tutoring for any subject.</p><span class="badge badge-primary">Pro</span></div>
+      <div class="card card-lg"><div style="font-size:2rem;margin-bottom:12px">🛍️</div><h3>E-Commerce</h3><p style="margin:8px 0 16px;font-size:.875rem">Product listing optimization, inventory management, review analysis, and pricing intelligence.</p><span class="badge badge-primary">Pro</span></div>
+      <div class="card card-lg"><div style="font-size:2rem;margin-bottom:12px">🏦</div><h3>Fintech</h3><p style="margin:8px 0 16px;font-size:.875rem">Banking API integrations, fraud detection, loan underwriting, and financial reporting automation.</p><span class="badge badge-amber">Elite</span></div>
+    </div>
+  </div>
+</div>
+<script>
+function switchTab(id, btn) {
+  ['plans','skill-packs','plugins','verticals'].forEach(t => document.getElementById(t).style.display='none');
+  document.querySelectorAll('.settings-tab').forEach(b => b.classList.remove('active'));
+  document.getElementById(id).style.display=''; btn.classList.add('active');
+}
+function checkout(plan) { alert('Checkout for ' + plan + ' requires the live Empire OS app with Stripe configured. Visit the app to subscribe.'); }
+</script>
+</body>
+</html>

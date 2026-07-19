@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pricing — DreamCo Empire OS</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+<div id="nav-placeholder"></div><script src="nav.js"></script>
+<div class="container" style="padding:48px 0">
+  <div style="text-align:center;margin-bottom:48px">
+    <h1 style="font-size:2rem;margin-bottom:12px">Simple, Transparent Pricing</h1>
+    <p style="font-size:1.05rem;max-width:560px;margin:0 auto">Start free, scale as you grow. Every plan includes all 45 divisions. Higher tiers unlock more bots, more autonomy, and more revenue.</p>
+    <div style="display:flex;justify-content:center;gap:10px;margin-top:20px">
+      <button class="btn btn-primary btn-sm" onclick="setBilling('monthly',this)">Monthly</button>
+      <button class="btn btn-outline btn-sm" onclick="setBilling('annual',this)">Annual (Save 20%)</button>
+    </div>
+  </div>
+
+  <div class="pricing-grid" style="margin-bottom:48px">
+    <div class="plan-card">
+      <div class="plan-name">Free</div>
+      <div class="plan-price"><strong id="free-price">$0</strong><span>/month</span></div>
+      <div class="plan-bots">5 bots · Guided only · No credit card</div>
+      <ul class="plan-features">
+        <li>5 AI bots across all 45 divisions</li>
+        <li>Guided autonomy mode</li>
+        <li>Real estate &amp; car flip calculators</li>
+        <li>Formula vault (basic)</li>
+        <li>Chat with all bots (rate limited)</li>
+        <li>Community support</li>
+        <li>PWA install on any device</li>
+      </ul>
+      <a href="dashboard.html" class="btn btn-outline" style="text-align:center;width:100%">Start for Free</a>
+    </div>
+    <div class="plan-card popular">
+      <div class="plan-name">Pro</div>
+      <div class="plan-price"><strong id="pro-price">$299</strong><span>/month</span></div>
+      <div class="plan-bots">50 bots · Semi-autonomous mode</div>
+      <ul class="plan-features">
+        <li>50 AI bots across all divisions</li>
+        <li>Semi-autonomous operations</li>
+        <li>Advanced deal analyzer</li>
+        <li>Formula vault — full access</li>
+        <li>Revenue tracking dashboard</li>
+        <li>Priority API access</li>
+        <li>Time Capsule snapshots</li>
+        <li>Priority support</li>
+      </ul>
+      <a href="marketplace.html" class="btn btn-primary" style="text-align:center;width:100%" onclick="checkout('pro')">Start Pro →</a>
+    </div>
+    <div class="plan-card">
+      <div class="plan-name">Enterprise</div>
+      <div class="plan-price"><strong id="ent-price">$999</strong><span>/month</span></div>
+      <div class="plan-bots">150 bots · Full autonomy</div>
+      <ul class="plan-features">
+        <li>150 AI bots</li>
+        <li>Full autonomy mode</li>
+        <li>All 200+ API integrations</li>
+        <li>Custom bot training</li>
+        <li>Debug Intelligence System</li>
+        <li>Learning Matrix access</li>
+        <li>Dedicated Slack support</li>
+        <li>SLA guarantee</li>
+      </ul>
+      <a href="marketplace.html" class="btn btn-outline" style="text-align:center;width:100%" onclick="checkout('enterprise')">Start Enterprise →</a>
+    </div>
+    <div class="plan-card" style="border-color:rgba(167,139,250,.4);background:linear-gradient(135deg,var(--card),rgba(139,92,246,.06))">
+      <div class="plan-name" style="color:var(--accent)">Elite</div>
+      <div class="plan-price"><strong style="background:linear-gradient(90deg,var(--primary),var(--accent));-webkit-background-clip:text;-webkit-text-fill-color:transparent">Custom</strong></div>
+      <div class="plan-bots">All 1,051+ bots · Full autonomy 24/7</div>
+      <ul class="plan-features">
+        <li>All 1,051+ AI bots</li>
+        <li>Full autonomy — 24/7</li>
+        <li>Buddy Bot ELITE access</li>
+        <li>Crypto wallet management</li>
+        <li>Account manager agents</li>
+        <li>White-label option</li>
+        <li>Dedicated account team</li>
+        <li>Custom integrations</li>
+      </ul>
+      <a href="mailto:sales@dreamco.ai" class="btn btn-primary" style="text-align:center;width:100%;background:linear-gradient(135deg,var(--primary),var(--accent))">Contact Sales →</a>
+    </div>
+  </div>
+
+  <!-- FAQ -->
+  <div class="card card-lg" style="max-width:720px;margin:0 auto">
+    <h3 style="margin-bottom:20px">Frequently Asked Questions</h3>
+    <div style="display:flex;flex-direction:column;gap:0">
+      <div style="padding:16px 0;border-bottom:1px solid var(--border)"><h4 style="margin-bottom:8px;cursor:pointer" onclick="toggleFaq(this)">What counts as a "bot"? ↓</h4><p style="font-size:.875rem;display:none">Each specialized AI is one bot. A bot has a unique system prompt, skill set, division, and tier. The 5 free-tier bots are yours to choose from any of the 1,051+ available.</p></div>
+      <div style="padding:16px 0;border-bottom:1px solid var(--border)"><h4 style="margin-bottom:8px;cursor:pointer" onclick="toggleFaq(this)">Can I change my plan anytime? ↓</h4><p style="font-size:.875rem;display:none">Yes. Upgrade, downgrade, or cancel anytime. Prorated billing applies to upgrades. No long-term contracts on Pro or Enterprise.</p></div>
+      <div style="padding:16px 0;border-bottom:1px solid var(--border)"><h4 style="margin-bottom:8px;cursor:pointer" onclick="toggleFaq(this)">What is "Full Autonomy"? ↓</h4><p style="font-size:.875rem;display:none">Full Autonomy lets your bots operate 24/7 without needing your approval for each action. They generate leads, analyze deals, write content, and run DeFi strategies automatically.</p></div>
+      <div style="padding:16px 0;border-bottom:1px solid var(--border)"><h4 style="margin-bottom:8px;cursor:pointer" onclick="toggleFaq(this)">Does Buddy Bot require a separate plan? ↓</h4><p style="font-size:.875rem;display:none">Buddy Bot is available on all plans, but full ELITE capabilities (Agent mode, Voice, GitHub, Security Scan) require Elite tier. Basic chat with Buddy is included in Free.</p></div>
+      <div style="padding:16px 0"><h4 style="margin-bottom:8px;cursor:pointer" onclick="toggleFaq(this)">What payment methods do you accept? ↓</h4><p style="font-size:.875rem;display:none">We accept all major credit cards via Stripe, plus Bitcoin, Ethereum, USDT, Solana, and 11 other cryptocurrencies.</p></div>
+    </div>
+  </div>
+</div>
+<script>
+let billing = 'monthly';
+const prices = {monthly:{free:0,pro:299,ent:999}, annual:{free:0,pro:239,ent:799}};
+function setBilling(type, btn) {
+  billing = type;
+  document.querySelectorAll('[onclick^="setBilling"]').forEach(b => { b.className = 'btn btn-outline btn-sm'; });
+  btn.className = 'btn btn-primary btn-sm';
+  document.getElementById('free-price').textContent = '$0';
+  document.getElementById('pro-price').textContent = '$' + prices[type].pro;
+  document.getElementById('ent-price').textContent = '$' + prices[type].ent;
+}
+function checkout(plan) { alert('Checkout for ' + plan + ' (' + billing + ') via Stripe requires the live Empire OS app. Launch the app to subscribe.'); }
+function toggleFaq(el) {
+  const p = el.nextElementSibling;
+  const open = p.style.display === 'block';
+  p.style.display = open ? 'none' : 'block';
+  el.textContent = el.textContent.replace(open ? '↑' : '↓', open ? '↓' : '↑');
+}
+</script>
+</body>
+</html>

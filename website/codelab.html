@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DreamCodeLab — DreamCo Empire OS</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+<div id="nav-placeholder"></div><script src="nav.js"></script>
+<div class="container" style="padding:48px 0">
+  <div style="margin-bottom:28px"><h1 style="font-size:1.75rem;margin-bottom:8px">DreamCodeLab</h1><p>100+ expert bots — one per major library, framework, language, and tool. All routed through Buddy Bot.</p></div>
+
+  <div style="display:flex;gap:10px;margin-bottom:24px;flex-wrap:wrap">
+    <input type="text" id="code-search" placeholder="Search libraries..." oninput="filterCode()" style="flex:1;min-width:200px;padding:10px 14px;background:var(--card);border:1px solid var(--border);border-radius:10px;color:var(--text);font-size:.875rem" />
+    <select id="code-cat" onchange="filterCode()" style="padding:10px 14px;background:var(--card);border:1px solid var(--border);border-radius:10px;color:var(--text);font-size:.875rem">
+      <option value="all">All Categories</option>
+      <option>Frontend</option><option>Backend</option><option>AI/ML</option><option>DevOps</option><option>Blockchain</option><option>Mobile</option><option>Database</option>
+    </select>
+  </div>
+
+  <div id="code-grid" class="grid-4">
+    <div class="card" data-cat="Frontend" style="cursor:pointer" onclick="openBot('React Expert')"><div style="font-size:1.5rem;margin-bottom:8px">⚛️</div><h4>React</h4><div style="font-size:.75rem;color:var(--text3);margin-top:4px">Frontend · Free</div></div>
+    <div class="card" data-cat="Frontend" style="cursor:pointer" onclick="openBot('Vue Expert')"><div style="font-size:1.5rem;margin-bottom:8px">💚</div><h4>Vue.js</h4><div style="font-size:.75rem;color:var(--text3);margin-top:4px">Frontend · Free</div></div>
+    <div class="card" data-cat="Frontend" style="cursor:pointer" onclick="openBot('Angular Expert')"><div style="font-size:1.5rem;margin-bottom:8px">🔴</div><h4>Angular</h4><div style="font-size:.75rem;color:var(--text3);margin-top:4px">Frontend · Free</div></div>
+    <div class="card" data-cat="Frontend" style="cursor:pointer" onclick="openBot('Next.js Expert')"><div style="font-size:1.5rem;margin-bottom:8px">▲</div><h4>Next.js</h4><div style="font-size:.75rem;color:var(--text3);margin-top:4px">Frontend · Free</div></div>
+    <div class="card" data-cat="Backend" style="cursor:pointer" onclick="openBot('Python Expert')"><div style="font-size:1.5rem;margin-bottom:8px">🐍</div><h4>Python</h4><div style="font-size:.75rem;color:var(--text3);margin-top:4px">Backend · Free</div></div>
+    <div class="card" data-cat="Backend" style="cursor:pointer" onclick="openBot('Node.js Expert')"><div style="font-size:1.5rem;margin-bottom:8px">🟢</div><h4>Node.js</h4><div style="font-size:.75rem;color:var(--text3);margin-top:4px">Backend · Free</div></div>
+    <div class="card" data-cat="Backend" style="cursor:pointer" onclick="openBot('Rust Expert')"><div style="font-size:1.5rem;margin-bottom:8px">🦀</div><h4>Rust</h4><div style="font-size:.75rem;color:var(--text3);margin-top:4px">Backend · Free</div></div>
+    <div class="card" data-cat="Backend" style="cursor:pointer" onclick="openBot('Go Expert')"><div style="font-size:1.5rem;margin-bottom:8px">🔵</div><h4>Go</h4><div style="font-size:.75rem;color:var(--text3);margin-top:4px">Backend · Free</div></div>
+    <div class="card" data-cat="AI/ML" style="cursor:pointer" onclick="openBot('TensorFlow Expert')"><div style="font-size:1.5rem;margin-bottom:8px">🧠</div><h4>TensorFlow</h4><div style="font-size:.75rem;color:var(--text3);margin-top:4px">AI/ML · Free</div></div>
+    <div class="card" data-cat="AI/ML" style="cursor:pointer" onclick="openBot('PyTorch Expert')"><div style="font-size:1.5rem;margin-bottom:8px">🔥</div><h4>PyTorch</h4><div style="font-size:.75rem;color:var(--text3);margin-top:4px">AI/ML · Free</div></div>
+    <div class="card" data-cat="AI/ML" style="cursor:pointer" onclick="openBot('LangChain Expert')"><div style="font-size:1.5rem;margin-bottom:8px">⛓️</div><h4>LangChain</h4><div style="font-size:.75rem;color:var(--text3);margin-top:4px">AI/ML · Pro</div></div>
+    <div class="card" data-cat="AI/ML" style="cursor:pointer" onclick="openBot('Hugging Face Expert')"><div style="font-size:1.5rem;margin-bottom:8px">🤗</div><h4>Hugging Face</h4><div style="font-size:.75rem;color:var(--text3);margin-top:4px">AI/ML · Free</div></div>
+    <div class="card" data-cat="DevOps" style="cursor:pointer" onclick="openBot('Docker Expert')"><div style="font-size:1.5rem;margin-bottom:8px">🐳</div><h4>Docker</h4><div style="font-size:.75rem;color:var(--text3);margin-top:4px">DevOps · Free</div></div>
+    <div class="card" data-cat="DevOps" style="cursor:pointer" onclick="openBot('Kubernetes Expert')"><div style="font-size:1.5rem;margin-bottom:8px">☸️</div><h4>Kubernetes</h4><div style="font-size:.75rem;color:var(--text3);margin-top:4px">DevOps · Pro</div></div>
+    <div class="card" data-cat="DevOps" style="cursor:pointer" onclick="openBot('Terraform Expert')"><div style="font-size:1.5rem;margin-bottom:8px">🏗️</div><h4>Terraform</h4><div style="font-size:.75rem;color:var(--text3);margin-top:4px">DevOps · Pro</div></div>
+    <div class="card" data-cat="Blockchain" style="cursor:pointer" onclick="openBot('Solidity Expert')"><div style="font-size:1.5rem;margin-bottom:8px">💎</div><h4>Solidity</h4><div style="font-size:.75rem;color:var(--text3);margin-top:4px">Blockchain · Pro</div></div>
+    <div class="card" data-cat="Database" style="cursor:pointer" onclick="openBot('PostgreSQL Expert')"><div style="font-size:1.5rem;margin-bottom:8px">🐘</div><h4>PostgreSQL</h4><div style="font-size:.75rem;color:var(--text3);margin-top:4px">Database · Free</div></div>
+    <div class="card" data-cat="Database" style="cursor:pointer" onclick="openBot('MongoDB Expert')"><div style="font-size:1.5rem;margin-bottom:8px">🍃</div><h4>MongoDB</h4><div style="font-size:.75rem;color:var(--text3);margin-top:4px">Database · Free</div></div>
+    <div class="card" data-cat="Mobile" style="cursor:pointer" onclick="openBot('React Native Expert')"><div style="font-size:1.5rem;margin-bottom:8px">📱</div><h4>React Native</h4><div style="font-size:.75rem;color:var(--text3);margin-top:4px">Mobile · Pro</div></div>
+    <div class="card" data-cat="Mobile" style="cursor:pointer" onclick="openBot('Flutter Expert')"><div style="font-size:1.5rem;margin-bottom:8px">🦋</div><h4>Flutter</h4><div style="font-size:.75rem;color:var(--text3);margin-top:4px">Mobile · Pro</div></div>
+  </div>
+  <p style="text-align:center;margin-top:24px;color:var(--text3)">Showing 20 of 100+ library bots. All coding tasks automatically routed through <a href="buddy.html" style="color:var(--primary)">Buddy Bot</a>.</p>
+</div>
+<script>
+function filterCode() {
+  const q = document.getElementById('code-search').value.toLowerCase();
+  const cat = document.getElementById('code-cat').value;
+  document.querySelectorAll('#code-grid .card').forEach(c => {
+    const text = c.textContent.toLowerCase();
+    const cardCat = c.getAttribute('data-cat') || '';
+    c.style.display = ((!q||text.includes(q)) && (cat==='all'||cardCat===cat)) ? '' : 'none';
+  });
+}
+function openBot(name) { location.href = 'chat.html?bot=' + name.toLowerCase().replace(/[\s.]+/g,'-'); }
+</script>
+</body>
+</html>

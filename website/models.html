@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI Models Hub — DreamCo Empire OS</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+<div id="nav-placeholder"></div><script src="nav.js"></script>
+<div class="container" style="padding:48px 0">
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:28px">
+    <div><h1 style="font-size:1.75rem;margin-bottom:6px">AI Models Hub</h1><p>100+ models — free tiers, paid plans, and package deals with Stripe checkout</p></div>
+  </div>
+
+  <div style="display:flex;gap:10px;margin-bottom:24px;flex-wrap:wrap">
+    <input type="text" id="model-search" placeholder="Search models..." oninput="filterModels()" style="flex:1;min-width:200px;padding:10px 14px;background:var(--card);border:1px solid var(--border);border-radius:10px;color:var(--text);font-size:.875rem" />
+    <select id="model-filter" onchange="filterModels()" style="padding:10px 14px;background:var(--card);border:1px solid var(--border);border-radius:10px;color:var(--text);font-size:.875rem">
+      <option value="all">All Tiers</option><option value="free">Free</option><option value="paid">Paid</option>
+    </select>
+  </div>
+
+  <div id="models-grid" class="grid-3">
+    <div class="card" data-tier="paid"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px"><h4>GPT-4.1-mini</h4><span class="badge badge-primary">Current Default</span></div><p style="font-size:.8rem;color:var(--text2);margin-bottom:10px">OpenAI's fast flagship. Powers all 1,051 bots. Best balance of speed, quality, and cost.</p><div style="font-size:.75rem;color:var(--text3);margin-bottom:12px">$0.15/1M input · $0.60/1M output</div><a href="marketplace.html" class="btn btn-outline btn-sm">Manage Plan</a></div>
+    <div class="card" data-tier="paid"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px"><h4>GPT-4o</h4><span class="badge badge-amber">Accuracy-First</span></div><p style="font-size:.8rem;color:var(--text2);margin-bottom:10px">OpenAI's best multimodal model. Handles images, audio, and complex reasoning chains.</p><div style="font-size:.75rem;color:var(--text3);margin-bottom:12px">$2.50/1M input · $10.00/1M output</div><a href="marketplace.html" class="btn btn-outline btn-sm">Add to Plan</a></div>
+    <div class="card" data-tier="free"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px"><h4>Llama 3.3 70B</h4><span class="badge badge-green">Open Source · Free</span></div><p style="font-size:.8rem;color:var(--text2);margin-bottom:10px">Meta's best open-weight model. Run via Groq for ultra-fast inference. No API fees.</p><div style="font-size:.75rem;color:var(--text3);margin-bottom:12px">Free via Groq · Self-hostable</div><a href="orchestration.html" class="btn btn-outline btn-sm">Configure Routing</a></div>
+    <div class="card" data-tier="paid"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px"><h4>Claude 3.5 Sonnet</h4><span class="badge badge-violet">Best for Analysis</span></div><p style="font-size:.8rem;color:var(--text2);margin-bottom:10px">Anthropic's flagship. Excellent at long documents, nuanced reasoning, and legal/financial tasks.</p><div style="font-size:.75rem;color:var(--text3);margin-bottom:12px">$3.00/1M input · $15.00/1M output</div><a href="marketplace.html" class="btn btn-outline btn-sm">Add to Plan</a></div>
+    <div class="card" data-tier="free"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px"><h4>Gemini 2.0 Flash</h4><span class="badge badge-green">Free Tier</span></div><p style="font-size:.8rem;color:var(--text2);margin-bottom:10px">Google's fastest model. 1M token context window. Free tier: 15 RPM, 1M tokens/day.</p><div style="font-size:.75rem;color:var(--text3);margin-bottom:12px">Free tier available · Google AI Studio</div><a href="orchestration.html" class="btn btn-outline btn-sm">Configure Routing</a></div>
+    <div class="card" data-tier="paid"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px"><h4>Grok-3</h4><span class="badge badge-cyan">Real-time Data</span></div><p style="font-size:.8rem;color:var(--text2);margin-bottom:10px">xAI's model with real-time X/Twitter data. Best for current events, trends, and social intelligence.</p><div style="font-size:.75rem;color:var(--text3);margin-bottom:12px">Via xAI API · Beta access</div><a href="marketplace.html" class="btn btn-outline btn-sm">Add to Plan</a></div>
+    <div class="card" data-tier="free"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px"><h4>Mistral 7B</h4><span class="badge badge-green">Open Source · Free</span></div><p style="font-size:.8rem;color:var(--text2);margin-bottom:10px">Efficient European open model. Great for bulk summarization and classification at zero cost.</p><div style="font-size:.75rem;color:var(--text3);margin-bottom:12px">Free · Open weights · Apache 2.0</div><a href="orchestration.html" class="btn btn-outline btn-sm">Configure Routing</a></div>
+    <div class="card" data-tier="paid"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px"><h4>DALL-E 3</h4><span class="badge badge-primary">Image Gen</span></div><p style="font-size:.8rem;color:var(--text2);margin-bottom:10px">OpenAI's best image model. Creates UI mockups, diagrams, marketing assets, and social media images.</p><div style="font-size:.75rem;color:var(--text3);margin-bottom:12px">$0.04–$0.12 per image</div><a href="marketplace.html" class="btn btn-outline btn-sm">Add to Plan</a></div>
+    <div class="card" data-tier="paid"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px"><h4>ElevenLabs Turbo</h4><span class="badge badge-amber">Voice</span></div><p style="font-size:.8rem;color:var(--text2);margin-bottom:10px">Ultra-low latency voice synthesis. Gives Buddy Bot a realistic voice. 29 languages.</p><div style="font-size:.75rem;color:var(--text3);margin-bottom:12px">$0.50 per 1K chars · Free tier: 10K chars</div><a href="connections.html" class="btn btn-outline btn-sm">Connect API Key</a></div>
+  </div>
+  <p style="text-align:center;margin-top:24px;color:var(--text3)">Showing 9 of 100+ models in the registry.</p>
+</div>
+<script>
+function filterModels() {
+  const q = document.getElementById('model-search').value.toLowerCase();
+  const f = document.getElementById('model-filter').value;
+  document.querySelectorAll('#models-grid .card').forEach(c => {
+    const text = c.textContent.toLowerCase();
+    const tier = c.getAttribute('data-tier');
+    c.style.display = ((!q||text.includes(q)) && (f==='all'||tier===f)) ? '' : 'none';
+  });
+}
+</script>
+</body>
+</html>

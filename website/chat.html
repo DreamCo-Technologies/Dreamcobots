@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Chat — DreamCo Empire OS</title>
+  <meta name="description" content="Chat with any of 1,051+ AI bots across 45 divisions. Plan, Build, Execute, or Teach mode." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+<div id="nav-placeholder"></div><script src="nav.js"></script>
+<div class="container" style="padding:48px 0;max-width:900px">
+  <div style="text-align:center;margin-bottom:40px">
+    <div class="hero-badge" style="margin:0 auto 16px;width:fit-content"><span></span> 1,051 BOTS READY</div>
+    <h1 style="font-size:2.25rem;margin-bottom:12px">Empire AI Hub</h1>
+    <p style="font-size:1.05rem">Select a mode, pick your bot, and start building your empire.</p>
+  </div>
+
+  <!-- Mode selector -->
+  <h3 style="margin-bottom:16px">Choose your mode</h3>
+  <div class="grid-4" style="margin-bottom:36px">
+    <div class="card" style="cursor:pointer;text-align:center;border-color:rgba(79,142,247,.5);background:rgba(79,142,247,.06)" onclick="selectMode(this,'Plan')">
+      <div style="font-size:1.75rem;margin-bottom:10px">🗺️</div>
+      <div style="font-weight:700;margin-bottom:4px">Plan</div>
+      <div style="font-size:.78rem;color:var(--text3)">Strategy &amp; architecture</div>
+    </div>
+    <div class="card" style="cursor:pointer;text-align:center" onclick="selectMode(this,'Build')">
+      <div style="font-size:1.75rem;margin-bottom:10px">🔨</div>
+      <div style="font-weight:700;margin-bottom:4px">Build</div>
+      <div style="font-size:.78rem;color:var(--text3)">Code &amp; implement</div>
+    </div>
+    <div class="card" style="cursor:pointer;text-align:center" onclick="selectMode(this,'Execute')">
+      <div style="font-size:1.75rem;margin-bottom:10px">🚀</div>
+      <div style="font-weight:700;margin-bottom:4px">Execute</div>
+      <div style="font-size:.78rem;color:var(--text3)">Take action &amp; ship</div>
+    </div>
+    <div class="card" style="cursor:pointer;text-align:center" onclick="selectMode(this,'Teach')">
+      <div style="font-size:1.75rem;margin-bottom:10px">🎓</div>
+      <div style="font-weight:700;margin-bottom:4px">Teach</div>
+      <div style="font-size:.78rem;color:var(--text3)">Learn any concept</div>
+    </div>
+  </div>
+
+  <!-- Bot selection -->
+  <div style="display:flex;gap:12px;align-items:center;margin-bottom:20px;flex-wrap:wrap">
+    <select id="bot-select" style="flex:1;padding:10px 16px;background:var(--card);border:1px solid var(--border);border-radius:10px;color:var(--text);font-size:.9rem">
+      <option value="buddy-bot">🧠 Buddy Bot — ELITE (Master Coder)</option>
+      <option value="multi-source-lead-scraper">🎯 Multi-Source Lead Scraper — Pro</option>
+      <option value="defi-yield-optimizer">💰 DeFi Yield Optimizer — Enterprise</option>
+      <option value="real-estate-flip-analyzer">🏠 Real Estate Flip Analyzer — Free</option>
+      <option value="car-flip-profit-calculator">🚗 Car Flip Profit Calculator — Free</option>
+      <option value="email-sequence-builder">📧 Email Sequence Builder — Pro</option>
+      <option value="content-empire-builder">📝 Content Empire Builder — Pro</option>
+      <option value="crypto-wallet-manager">₿ Crypto Wallet Manager — Enterprise</option>
+      <option value="tax-optimization-strategist">💼 Tax Optimization Strategist — Pro</option>
+      <option value="react-expert">⚛️ React Expert Bot — Free</option>
+      <option value="python-expert">🐍 Python Expert Bot — Free</option>
+      <option value="account-manager-agent">🤖 Account Manager Agent — Elite</option>
+    </select>
+    <a href="bots.html" class="btn btn-outline btn-sm">Browse All 1,051 Bots</a>
+  </div>
+
+  <!-- Suggested prompts -->
+  <div id="suggested-prompts" style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px">
+    <span style="font-size:.8rem;color:var(--text3)">Try:</span>
+    <button onclick="setPrompt(this.textContent)" class="btn btn-outline btn-sm" style="font-size:.78rem">Plan a scalable SaaS architecture</button>
+    <button onclick="setPrompt(this.textContent)" class="btn btn-outline btn-sm" style="font-size:.78rem">Build a REST API with auth</button>
+    <button onclick="setPrompt(this.textContent)" class="btn btn-outline btn-sm" style="font-size:.78rem">Debug this TypeScript error</button>
+    <button onclick="setPrompt(this.textContent)" class="btn btn-outline btn-sm" style="font-size:.78rem">Explain React Server Components</button>
+  </div>
+
+  <!-- Chat area -->
+  <div id="chat-box" style="background:var(--card);border:1px solid var(--border);border-radius:14px;min-height:300px;padding:20px;margin-bottom:16px;display:flex;flex-direction:column;gap:12px">
+    <div style="text-align:center;color:var(--text3);padding:40px 0;font-size:.9rem">
+      Select a mode and bot above, then type your message to start. 👆
+    </div>
+  </div>
+
+  <div style="display:flex;gap:10px">
+    <textarea id="chat-input" rows="3" placeholder="Type your message..." style="flex:1;padding:14px 16px;background:var(--card);border:1px solid var(--border);border-radius:12px;color:var(--text);font-size:.9rem;resize:none;font-family:var(--font)" onkeydown="if(event.key==='Enter'&&(event.metaKey||event.ctrlKey)){sendMsg();event.preventDefault()}"></textarea>
+    <div style="display:flex;flex-direction:column;gap:8px">
+      <button onclick="sendMsg()" class="btn btn-primary" style="height:100%">Send →</button>
+    </div>
+  </div>
+  <p style="font-size:.75rem;color:var(--text3);margin-top:8px;text-align:center">Cmd+Enter to send · Responses stream from GPT-4.1-mini · Buddy Bot routes coding tasks automatically</p>
+
+  <!-- Suggested bots -->
+  <div style="margin-top:48px">
+    <h3 style="margin-bottom:16px">Featured Bots</h3>
+    <div class="grid-3">
+      <a href="buddy.html" class="bot-card" style="text-decoration:none">
+        <div class="bot-header"><div><div class="bot-name">Buddy Bot</div><div class="bot-division">CommandCore</div></div><span class="badge badge-amber">Elite</span></div>
+        <div class="bot-desc">Master coder · 500+ libraries · GitHub · Security · Agent mode</div>
+        <div class="bot-meta"><div class="dot dot-green"></div><span style="font-size:.75rem;color:var(--text3)">Online</span></div>
+      </a>
+      <a href="deals.html" class="bot-card" style="text-decoration:none">
+        <div class="bot-header"><div><div class="bot-name">Real Estate Flip Analyzer</div><div class="bot-division">DreamRealEstate</div></div><span class="badge badge-green">Free</span></div>
+        <div class="bot-desc">Property ROI calculator with KPI scoring and risk grade</div>
+        <div class="bot-meta"><div class="dot dot-green"></div><span style="font-size:.75rem;color:var(--text3)">Online</span></div>
+      </a>
+      <div class="bot-card" onclick="document.getElementById('bot-select').value='multi-source-lead-scraper'" style="cursor:pointer">
+        <div class="bot-header"><div><div class="bot-name">Multi-Source Lead Scraper</div><div class="bot-division">DreamSalesPro</div></div><span class="badge badge-primary">Pro</span></div>
+        <div class="bot-desc">Aggregate leads from LinkedIn, Apollo, Hunter.io, and 12+ sources</div>
+        <div class="bot-meta"><div class="dot dot-green"></div><span style="font-size:.75rem;color:var(--text3)">Online</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+let currentMode = 'Plan';
+const modePrompts = {
+  Plan: ['Plan a scalable SaaS architecture','Design a microservices system','Map out a go-to-market strategy','Architect a DeFi protocol'],
+  Build: ['Build a REST API with auth','Create a React dashboard','Write a Python web scraper','Build a Stripe checkout flow'],
+  Execute: ['Deploy to Cloud Run now','Run a lead gen campaign','Execute DeFi yield strategy','Launch email sequence'],
+  Teach: ['Explain React hooks in depth','Teach me DeFi yield farming','How does OAuth 2.0 work?','Explain zero-trust security']
+};
+function selectMode(card, mode) {
+  document.querySelectorAll('.card[onclick]').forEach(c => { c.style.borderColor=''; c.style.background=''; });
+  card.style.borderColor = 'rgba(79,142,247,.5)'; card.style.background = 'rgba(79,142,247,.06)';
+  currentMode = mode;
+  const prompts = modePrompts[mode] || modePrompts.Plan;
+  document.getElementById('suggested-prompts').innerHTML = '<span style="font-size:.8rem;color:var(--text3)">Try:</span>' +
+    prompts.map(p => `<button onclick="setPrompt('${p}')" class="btn btn-outline btn-sm" style="font-size:.78rem">${p}</button>`).join('');
+}
+function setPrompt(text) { document.getElementById('chat-input').value = text; }
+function sendMsg() {
+  const input = document.getElementById('chat-input');
+  const box = document.getElementById('chat-box');
+  if (!input.value.trim()) return;
+  const bot = document.getElementById('bot-select').options[document.getElementById('bot-select').selectedIndex].text;
+  box.innerHTML = `
+    <div style="display:flex;gap:10px;justify-content:flex-end"><div style="max-width:70%;padding:12px 16px;background:var(--primary);border-radius:14px 14px 4px 14px;font-size:.9rem">${input.value}</div></div>
+    <div style="display:flex;gap:10px;align-items:flex-start"><div style="width:32px;height:32px;background:linear-gradient(135deg,var(--primary),var(--accent));border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:.9rem;flex-shrink:0">🧠</div><div style="max-width:75%;padding:12px 16px;background:var(--card2);border:1px solid var(--border);border-radius:4px 14px 14px 14px;font-size:.9rem">
+    <strong>${bot}</strong><br/><br/>Live AI responses require the Empire OS app. <a href="index.html#pricing" style="color:var(--primary)">Get access →</a> to connect directly to GPT-4.1-mini and all 1,051+ bots.</div></div>`;
+  input.value = '';
+}
+// Parse URL params
+const p = new URLSearchParams(location.search);
+if (p.get('bot')) { const s = document.getElementById('bot-select'); Array.from(s.options).forEach((o,i) => { if(o.value===p.get('bot')) s.selectedIndex=i; }); }
+if (p.get('prompt')) document.getElementById('chat-input').value = decodeURIComponent(p.get('prompt'));
+</script>
+</body>
+</html>

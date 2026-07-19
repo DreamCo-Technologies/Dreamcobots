@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI Ecosystem — DreamCo Empire OS</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+<div id="nav-placeholder"></div><script src="nav.js"></script>
+<div class="container" style="padding:48px 0">
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:28px">
+    <div><h1 style="font-size:1.75rem;margin-bottom:6px">AI Ecosystem</h1><p>200+ AI providers across 20 categories — browsed, rated, and watchlisted</p></div>
+    <button class="btn btn-outline btn-sm" onclick="copyWatchlist()">📋 Copy Watchlist</button>
+  </div>
+
+  <div style="display:flex;gap:10px;margin-bottom:24px;flex-wrap:wrap">
+    <input id="eco-search" type="text" placeholder="Search providers..." style="flex:1;min-width:200px;padding:10px 14px;background:var(--card);border:1px solid var(--border);border-radius:10px;color:var(--text);font-size:.875rem" oninput="filterProviders()" />
+    <select id="cat-filter" style="padding:10px 14px;background:var(--card);border:1px solid var(--border);border-radius:10px;color:var(--text);font-size:.875rem" onchange="filterProviders()">
+      <option value="all">All Categories</option>
+      <option>Language Models</option><option>Image Generation</option><option>Voice & Audio</option>
+      <option>Code Intelligence</option><option>Search & Research</option><option>Autonomous Agents</option>
+      <option>Video Generation</option><option>Embeddings</option>
+    </select>
+  </div>
+
+  <div id="eco-grid" class="grid-3">
+    <div class="card" data-cat="Language Models"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px"><h4>OpenAI</h4><span class="badge badge-primary">Core Provider</span></div><p style="font-size:.8rem;color:var(--text2);margin-bottom:10px">GPT-4.1-mini powers all 1,051 bots. Best at reasoning, code, and complex tasks.</p><div style="font-size:.75rem;color:var(--text3);margin-bottom:12px">Category: Language Models · Pricing: Per token</div><div style="display:flex;gap:8px"><a href="https://platform.openai.com/docs" target="_blank" class="btn btn-outline btn-sm">Docs</a><button class="btn btn-primary btn-sm">Watch</button></div></div>
+    <div class="card" data-cat="Language Models"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px"><h4>Anthropic Claude</h4><span class="badge badge-gray">Monitored</span></div><p style="font-size:.8rem;color:var(--text2);margin-bottom:10px">Claude 3.5 Sonnet and Claude 4. Best at long documents, analysis, and nuanced reasoning.</p><div style="font-size:.75rem;color:var(--text3);margin-bottom:12px">Category: Language Models · Pricing: Per token</div><div style="display:flex;gap:8px"><a href="https://docs.anthropic.com" target="_blank" class="btn btn-outline btn-sm">Docs</a><button class="btn btn-outline btn-sm">Watch</button></div></div>
+    <div class="card" data-cat="Language Models"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px"><h4>Google Gemini</h4><span class="badge badge-gray">Monitored</span></div><p style="font-size:.8rem;color:var(--text2);margin-bottom:10px">Gemini 2.0 Flash and Pro. Multimodal reasoning, long context, Google integrations.</p><div style="font-size:.75rem;color:var(--text3);margin-bottom:12px">Category: Language Models · Pricing: Free tier</div><div style="display:flex;gap:8px"><a href="https://ai.google.dev/docs" target="_blank" class="btn btn-outline btn-sm">Docs</a><button class="btn btn-outline btn-sm">Watch</button></div></div>
+    <div class="card" data-cat="Language Models"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px"><h4>xAI Grok</h4><span class="badge badge-gray">Monitored</span></div><p style="font-size:.8rem;color:var(--text2);margin-bottom:10px">Grok-3 with real-time X/Twitter data access. Best at current events and humor.</p><div style="font-size:.75rem;color:var(--text3);margin-bottom:12px">Category: Language Models · Pricing: Per token</div><div style="display:flex;gap:8px"><a href="https://x.ai" target="_blank" class="btn btn-outline btn-sm">Docs</a><button class="btn btn-outline btn-sm">Watch</button></div></div>
+    <div class="card" data-cat="Language Models"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px"><h4>Meta Llama</h4><span class="badge badge-green">Open Source</span></div><p style="font-size:.8rem;color:var(--text2);margin-bottom:10px">Llama 3.3 70B — open weights, self-hostable, no API fees. Runs via Groq or Ollama.</p><div style="font-size:.75rem;color:var(--text3);margin-bottom:12px">Category: Language Models · Pricing: Free</div><div style="display:flex;gap:8px"><a href="https://llama.meta.com" target="_blank" class="btn btn-outline btn-sm">Docs</a><button class="btn btn-outline btn-sm">Watch</button></div></div>
+    <div class="card" data-cat="Image Generation"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px"><h4>DALL-E 3</h4><span class="badge badge-primary">Active</span></div><p style="font-size:.8rem;color:var(--text2);margin-bottom:10px">OpenAI image generation. Creates UI mockups, diagrams, and marketing assets on demand.</p><div style="font-size:.75rem;color:var(--text3);margin-bottom:12px">Category: Image Generation · Pricing: Per image</div><div style="display:flex;gap:8px"><a href="https://platform.openai.com/docs/guides/images" target="_blank" class="btn btn-outline btn-sm">Docs</a><button class="btn btn-primary btn-sm">Watch</button></div></div>
+    <div class="card" data-cat="Voice & Audio"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px"><h4>ElevenLabs</h4><span class="badge badge-gray">Needs Key</span></div><p style="font-size:.8rem;color:var(--text2);margin-bottom:10px">Voice cloning and synthesis. Gives Buddy Bot a realistic voice. 29 languages supported.</p><div style="font-size:.75rem;color:var(--text3);margin-bottom:12px">Category: Voice & Audio · Pricing: Per character</div><div style="display:flex;gap:8px"><a href="https://elevenlabs.io/docs" target="_blank" class="btn btn-outline btn-sm">Docs</a><button class="btn btn-outline btn-sm">Watch</button></div></div>
+    <div class="card" data-cat="Search & Research"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px"><h4>Serper</h4><span class="badge badge-gray">Needs Key</span></div><p style="font-size:.8rem;color:var(--text2);margin-bottom:10px">Real-time Google Search API. Unlocks web access for all bots. 2,500 free searches/month.</p><div style="font-size:.75rem;color:var(--text3);margin-bottom:12px">Category: Search · Pricing: Free tier available</div><div style="display:flex;gap:8px"><a href="https://serper.dev" target="_blank" class="btn btn-outline btn-sm">Docs</a><button class="btn btn-outline btn-sm">Watch</button></div></div>
+    <div class="card" data-cat="Code Intelligence"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px"><h4>GitHub Copilot API</h4><span class="badge badge-gray">Monitored</span></div><p style="font-size:.8rem;color:var(--text2);margin-bottom:10px">Code completion and generation. Buddy Bot has native GitHub capabilities without Copilot API.</p><div style="font-size:.75rem;color:var(--text3);margin-bottom:12px">Category: Code Intelligence · Pricing: Per token</div><div style="display:flex;gap:8px"><a href="https://docs.github.com/copilot" target="_blank" class="btn btn-outline btn-sm">Docs</a><button class="btn btn-outline btn-sm">Watch</button></div></div>
+  </div>
+  <p style="text-align:center;margin-top:24px;color:var(--text3)">Showing 9 of 200+ providers. <a href="orchestration.html" style="color:var(--primary)">See MOE routing →</a></p>
+</div>
+<script>
+function filterProviders() {
+  const q = document.getElementById('eco-search').value.toLowerCase();
+  const cat = document.getElementById('cat-filter').value;
+  document.querySelectorAll('#eco-grid .card').forEach(card => {
+    const text = card.textContent.toLowerCase();
+    const cardCat = card.getAttribute('data-cat') || '';
+    card.style.display = ((!q||text.includes(q)) && (cat==='all'||cardCat===cat)) ? '' : 'none';
+  });
+}
+function copyWatchlist() { navigator.clipboard?.writeText('OpenAI, Anthropic, Google Gemini, xAI Grok, Meta Llama, ElevenLabs, Serper, DALL-E 3, GitHub Copilot'); alert('Watchlist copied!'); }
+</script>
+</body>
+</html>

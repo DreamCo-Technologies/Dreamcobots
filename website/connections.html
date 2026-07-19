@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Connections — DreamCo Empire OS</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+<div id="nav-placeholder"></div><script src="nav.js"></script>
+<div class="container" style="padding:48px 0">
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:32px">
+    <div><h1 style="font-size:1.75rem;margin-bottom:6px">Connections</h1><p>Multi-platform access, API keys, and the global kill switch</p></div>
+    <button class="btn btn-sm" style="background:var(--red);color:#fff;border:none" onclick="killSwitch()">⛔ Kill Switch</button>
+  </div>
+
+  <div style="display:flex;gap:8px;margin-bottom:28px">
+    <button class="settings-tab active" onclick="switchTab('platforms',this)">🔗 Platforms</button>
+    <button class="settings-tab" onclick="switchTab('apis',this)">🔌 APIs</button>
+    <button class="settings-tab" onclick="switchTab('install',this)">📱 Install App</button>
+  </div>
+
+  <div id="platforms">
+    <div class="grid-3" style="margin-bottom:28px">
+      <div class="card"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px"><h4>🤖 OpenAI</h4><span class="badge badge-green">● Connected</span></div><p style="font-size:.83rem;color:var(--text2)">GPT-4.1-mini powers all 1,051 bots. Token usage tracked in real-time.</p><div style="margin-top:12px;font-family:var(--mono);font-size:.75rem;color:var(--text3)">Model: gpt-4.1-mini · Max: 2,000 tokens</div></div>
+      <div class="card"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px"><h4>🐙 GitHub</h4><span class="badge badge-green">● Connected</span></div><p style="font-size:.83rem;color:var(--text2)">Repository access for DreamCo-Technologies. Buddy Bot has full read/write access.</p><div style="margin-top:12px;font-size:.8rem"><a href="https://github.com/DreamCo-Technologies/Dreamcobots" target="_blank" style="color:var(--primary)">DreamCo-Technologies/Dreamcobots →</a></div></div>
+      <div class="card"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px"><h4>💳 Stripe</h4><span class="badge badge-amber">⚠ Partial</span></div><p style="font-size:.83rem;color:var(--text2)">Stripe integration installed. Add STRIPE_SECRET_KEY and STRIPE_PUBLISHABLE_KEY to activate live checkout.</p><a href="settings.html" class="btn btn-outline btn-sm" style="margin-top:12px">Add Keys →</a></div>
+      <div class="card"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px"><h4>🔊 ElevenLabs</h4><span class="badge badge-gray">○ Not Connected</span></div><p style="font-size:.83rem;color:var(--text2)">Voice synthesis for Buddy Bot. Add ELEVENLABS_API_KEY to enable text-to-speech responses.</p><a href="settings.html" class="btn btn-outline btn-sm" style="margin-top:12px">Connect →</a></div>
+      <div class="card"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px"><h4>🔍 Serper</h4><span class="badge badge-gray">○ Not Connected</span></div><p style="font-size:.83rem;color:var(--text2)">Real-time web search. Add SERPER_API_KEY to give all bots live internet access.</p><a href="settings.html" class="btn btn-outline btn-sm" style="margin-top:12px">Connect →</a></div>
+      <div class="card"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px"><h4>🗄️ PostgreSQL</h4><span class="badge badge-green">● Connected</span></div><p style="font-size:.83rem;color:var(--text2)">Neon-backed PostgreSQL. 17 tables, all schemas applied. Zero downtime.</p><div style="margin-top:12px;font-family:var(--mono);font-size:.75rem;color:var(--text3)">17 tables · Drizzle ORM · Neon</div></div>
+    </div>
+  </div>
+
+  <div id="apis" style="display:none">
+    <div class="card card-lg" style="margin-bottom:24px">
+      <h3 style="margin-bottom:16px">API Integration Registry</h3>
+      <p style="margin-bottom:20px">200+ API integrations available across all 45 divisions.</p>
+      <div style="display:flex;flex-direction:column;gap:0">
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 0;border-bottom:1px solid var(--border)"><div><strong>Apollo.io</strong> <span style="color:var(--text3);font-size:.8rem">· DreamSalesPro</span></div><span class="badge badge-green">Active</span></div>
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 0;border-bottom:1px solid var(--border)"><div><strong>Hunter.io</strong> <span style="color:var(--text3);font-size:.8rem">· DreamSalesPro</span></div><span class="badge badge-green">Active</span></div>
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 0;border-bottom:1px solid var(--border)"><div><strong>Uniswap API</strong> <span style="color:var(--text3);font-size:.8rem">· DreamCrypto</span></div><span class="badge badge-green">Active</span></div>
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 0;border-bottom:1px solid var(--border)"><div><strong>Aave Protocol</strong> <span style="color:var(--text3);font-size:.8rem">· DreamFinance</span></div><span class="badge badge-green">Active</span></div>
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 0;border-bottom:1px solid var(--border)"><div><strong>Smartlead</strong> <span style="color:var(--text3);font-size:.8rem">· DreamSalesPro</span></div><span class="badge badge-amber">Config needed</span></div>
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 0"><div><strong>Instantly.ai</strong> <span style="color:var(--text3);font-size:.8rem">· DreamSalesPro</span></div><span class="badge badge-amber">Config needed</span></div>
+      </div>
+      <p style="font-size:.8rem;color:var(--text3);margin-top:16px">+ 194 more APIs across all 45 divisions. Manage in the live app.</p>
+    </div>
+  </div>
+
+  <div id="install" style="display:none">
+    <div class="grid-2" style="gap:24px">
+      <div class="card card-lg"><h3 style="margin-bottom:16px">📱 Android</h3><ol style="padding-left:20px;display:flex;flex-direction:column;gap:8px;font-size:.875rem;color:var(--text2)"><li>Open Empire OS in Chrome</li><li>Tap the three-dot menu (⋮)</li><li>Select "Add to Home Screen"</li><li>Tap "Add" to confirm</li></ol></div>
+      <div class="card card-lg"><h3 style="margin-bottom:16px">🍎 iPhone / iPad</h3><ol style="padding-left:20px;display:flex;flex-direction:column;gap:8px;font-size:.875rem;color:var(--text2)"><li>Open Empire OS in Safari</li><li>Tap the Share button (□↑)</li><li>Scroll down, tap "Add to Home Screen"</li><li>Tap "Add" to confirm</li></ol></div>
+      <div class="card card-lg"><h3 style="margin-bottom:16px">🪟 Windows</h3><ol style="padding-left:20px;display:flex;flex-direction:column;gap:8px;font-size:.875rem;color:var(--text2)"><li>Open Empire OS in Chrome or Edge</li><li>Click the install icon (⊕) in the address bar</li><li>Click "Install"</li></ol></div>
+      <div class="card card-lg"><h3 style="margin-bottom:16px">🍎 Mac</h3><ol style="padding-left:20px;display:flex;flex-direction:column;gap:8px;font-size:.875rem;color:var(--text2)"><li>Open Empire OS in Chrome</li><li>Click the install icon in address bar</li><li>Click "Install" to add to Dock</li></ol></div>
+      <div class="card card-lg" style="grid-column:1/-1"><h3 style="margin-bottom:12px">Install Now</h3><p style="font-size:.875rem;margin-bottom:16px">Your browser may show an install prompt below. Click to install Empire OS as a standalone app.</p><button class="btn btn-primary" onclick="installApp()">📲 Install Empire OS</button></div>
+    </div>
+  </div>
+</div>
+<script>
+function switchTab(id, btn) {
+  ['platforms','apis','install'].forEach(t => document.getElementById(t).style.display='none');
+  document.querySelectorAll('.settings-tab').forEach(b => b.classList.remove('active'));
+  document.getElementById(id).style.display=''; btn.classList.add('active');
+}
+function killSwitch() { if(confirm('Kill Switch: This disconnects ALL bots and APIs immediately. Are you sure?')) alert('In the live app, this would immediately terminate all bot connections and API calls.'); }
+let deferredPrompt;
+window.addEventListener('beforeinstallprompt', e => { e.preventDefault(); deferredPrompt = e; });
+function installApp() { if(deferredPrompt) { deferredPrompt.prompt(); } else { alert('Open this page in Chrome or Edge on desktop, or Safari on iOS to install as an app.'); } }
+</script>
+</body>
+</html>

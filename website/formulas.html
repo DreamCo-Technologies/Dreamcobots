@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Formula Vault — DreamCo Empire OS</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+<div id="nav-placeholder"></div><script src="nav.js"></script>
+<div class="container" style="padding:48px 0">
+  <div style="margin-bottom:32px"><h1 style="font-size:1.75rem;margin-bottom:8px">Formula Vault</h1><p>High-profit formulas and calculators across all 45 divisions. Per-bot deal analyzer formulas included.</p></div>
+
+  <div style="display:flex;gap:10px;margin-bottom:28px;flex-wrap:wrap">
+    <input type="text" id="formula-search" placeholder="Search formulas..." oninput="filterFormulas()" style="flex:1;min-width:200px;padding:10px 14px;background:var(--card);border:1px solid var(--border);border-radius:10px;color:var(--text);font-size:.875rem" />
+    <select id="formula-cat" onchange="filterFormulas()" style="padding:10px 14px;background:var(--card);border:1px solid var(--border);border-radius:10px;color:var(--text);font-size:.875rem">
+      <option value="all">All Divisions</option>
+      <option>Finance</option><option>Real Estate</option><option>Sales</option><option>Crypto</option><option>Business</option>
+    </select>
+  </div>
+
+  <div id="formulas-grid" class="grid-3">
+    <div class="card card-lg" data-cat="Real Estate">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px"><h3>🏠 70% Rule</h3><span class="badge badge-green">Free</span></div>
+      <p style="font-size:.83rem;margin-bottom:16px">Maximum purchase price for a flip = (ARV × 70%) − Repair Costs. Never overpay for a property.</p>
+      <div style="background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:14px;font-family:var(--mono);font-size:.82rem;margin-bottom:14px">
+        <div style="color:var(--primary)">Max Purchase Price</div>
+        <div style="color:var(--text);margin-top:4px">= (ARV × 0.70) − Repair Costs</div>
+        <div style="color:var(--text3);margin-top:8px">e.g. ($300k × 0.70) − $35k = $175k max</div>
+      </div>
+      <a href="deals.html" class="btn btn-primary btn-sm">Open Deal Analyzer →</a>
+    </div>
+
+    <div class="card card-lg" data-cat="Finance">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px"><h3>💰 Rule of 72</h3><span class="badge badge-green">Free</span></div>
+      <p style="font-size:.83rem;margin-bottom:16px">Estimate when an investment doubles. Divide 72 by the annual interest rate to get years to double.</p>
+      <div style="background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:14px;font-family:var(--mono);font-size:.82rem;margin-bottom:14px">
+        <div style="color:var(--primary)">Years to Double</div>
+        <div style="color:var(--text);margin-top:4px">= 72 ÷ Annual Rate (%)</div>
+        <div style="color:var(--text3);margin-top:8px">e.g. 72 ÷ 8% = 9 years to double</div>
+      </div>
+      <a href="chat.html?bot=tax-optimization-strategist&prompt=Apply+Rule+of+72" class="btn btn-outline btn-sm">Ask Finance Bot →</a>
+    </div>
+
+    <div class="card card-lg" data-cat="Sales">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px"><h3>🎯 Customer LTV</h3><span class="badge badge-primary">Pro</span></div>
+      <p style="font-size:.83rem;margin-bottom:16px">Lifetime Value of a customer. Use to determine max allowable customer acquisition cost (CAC).</p>
+      <div style="background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:14px;font-family:var(--mono);font-size:.82rem;margin-bottom:14px">
+        <div style="color:var(--primary)">LTV</div>
+        <div style="color:var(--text);margin-top:4px">= Avg Order Value × Purchase Freq × Lifespan</div>
+        <div style="color:var(--text3);margin-top:8px">Max CAC = LTV ÷ 3 (for 3:1 LTV:CAC ratio)</div>
+      </div>
+      <a href="chat.html?bot=multi-source-lead-scraper&prompt=Calculate+my+customer+LTV" class="btn btn-outline btn-sm">Ask Sales Bot →</a>
+    </div>
+
+    <div class="card card-lg" data-cat="Crypto">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px"><h3>₿ DeFi APY vs APR</h3><span class="badge badge-primary">Pro</span></div>
+      <p style="font-size:.83rem;margin-bottom:16px">APY accounts for compounding, APR does not. Always compare APY to understand true DeFi yields.</p>
+      <div style="background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:14px;font-family:var(--mono);font-size:.82rem;margin-bottom:14px">
+        <div style="color:var(--primary)">APY from APR</div>
+        <div style="color:var(--text);margin-top:4px">= (1 + APR/n)^n − 1</div>
+        <div style="color:var(--text3);margin-top:8px">n = compounding periods per year</div>
+      </div>
+      <a href="chat.html?bot=defi-yield-optimizer&prompt=Compare+DeFi+APY+vs+APR" class="btn btn-outline btn-sm">Ask DeFi Bot →</a>
+    </div>
+
+    <div class="card card-lg" data-cat="Real Estate">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px"><h3>🚗 Car Flip ROI</h3><span class="badge badge-green">Free</span></div>
+      <p style="font-size:.83rem;margin-bottom:16px">Net profit percentage on a car flip. Includes all-in costs: purchase, recondition, transport, and fees.</p>
+      <div style="background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:14px;font-family:var(--mono);font-size:.82rem;margin-bottom:14px">
+        <div style="color:var(--primary)">Car Flip ROI</div>
+        <div style="color:var(--text);margin-top:4px">= (Sell − All-in Cost) ÷ All-in Cost × 100</div>
+        <div style="color:var(--text3);margin-top:8px">Grade A+ = ROI &gt; 20% · Grade D = ROI &lt; 5%</div>
+      </div>
+      <a href="deals.html" class="btn btn-primary btn-sm">Car Flip Calculator →</a>
+    </div>
+
+    <div class="card card-lg" data-cat="Business">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px"><h3>🚀 Startup Runway</h3><span class="badge badge-primary">Pro</span></div>
+      <p style="font-size:.83rem;margin-bottom:16px">How long until cash runs out. Critical for knowing when to raise or achieve profitability.</p>
+      <div style="background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:14px;font-family:var(--mono);font-size:.82rem;margin-bottom:14px">
+        <div style="color:var(--primary)">Runway (months)</div>
+        <div style="color:var(--text);margin-top:4px">= Cash Balance ÷ Monthly Burn Rate</div>
+        <div style="color:var(--text3);margin-top:8px">Raise at 12mo runway to close in 6mo</div>
+      </div>
+      <a href="chat.html?bot=buddy-bot&prompt=Calculate+my+startup+runway" class="btn btn-outline btn-sm">Ask Buddy Bot →</a>
+    </div>
+
+    <div class="card card-lg" data-cat="Finance">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px"><h3>📊 Rental Yield</h3><span class="badge badge-green">Free</span></div>
+      <p style="font-size:.83rem;margin-bottom:16px">Annual return on a rental property. Gross yield is before expenses; net yield subtracts all costs.</p>
+      <div style="background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:14px;font-family:var(--mono);font-size:.82rem;margin-bottom:14px">
+        <div style="color:var(--primary)">Gross Rental Yield</div>
+        <div style="color:var(--text);margin-top:4px">= (Annual Rent ÷ Property Value) × 100</div>
+        <div style="color:var(--text3);margin-top:8px">Target: Gross &gt; 8% · Net &gt; 5%</div>
+      </div>
+      <a href="deals.html" class="btn btn-outline btn-sm">Open Deal Analyzer →</a>
+    </div>
+
+    <div class="card card-lg" data-cat="Sales">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px"><h3>📧 Email Open Rate</h3><span class="badge badge-primary">Pro</span></div>
+      <p style="font-size:.83rem;margin-bottom:16px">Track cold email campaign performance. Industry benchmark: 20–30% open, 2–5% reply.</p>
+      <div style="background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:14px;font-family:var(--mono);font-size:.82rem;margin-bottom:14px">
+        <div style="color:var(--primary)">Open Rate</div>
+        <div style="color:var(--text);margin-top:4px">= (Unique Opens ÷ Delivered) × 100</div>
+        <div style="color:var(--text3);margin-top:8px">Reply Rate = (Replies ÷ Delivered) × 100</div>
+      </div>
+      <a href="chat.html?bot=email-sequence-builder&prompt=Analyze+my+email+open+rates" class="btn btn-outline btn-sm">Ask Email Bot →</a>
+    </div>
+
+    <div class="card card-lg" data-cat="Crypto">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px"><h3>⚡ Gas Fee Calculator</h3><span class="badge badge-primary">Pro</span></div>
+      <p style="font-size:.83rem;margin-bottom:16px">Estimate Ethereum gas costs before submitting transactions. Avoid unexpected fees on DeFi swaps.</p>
+      <div style="background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:14px;font-family:var(--mono);font-size:.82rem;margin-bottom:14px">
+        <div style="color:var(--primary)">Gas Cost (ETH)</div>
+        <div style="color:var(--text);margin-top:4px">= Gas Units × Gas Price (Gwei) × 1e-9</div>
+        <div style="color:var(--text3);margin-top:8px">Simple transfer: 21,000 units</div>
+      </div>
+      <a href="chat.html?bot=crypto-wallet-manager&prompt=Calculate+gas+fees+for+my+swap" class="btn btn-outline btn-sm">Ask Crypto Bot →</a>
+    </div>
+  </div>
+</div>
+<script>
+function filterFormulas() {
+  const q = document.getElementById('formula-search').value.toLowerCase();
+  const cat = document.getElementById('formula-cat').value;
+  document.querySelectorAll('#formulas-grid .card').forEach(card => {
+    const text = card.textContent.toLowerCase();
+    const cardCat = card.getAttribute('data-cat') || '';
+    card.style.display = ((!q||text.includes(q)) && (cat==='all'||cardCat===cat)) ? '' : 'none';
+  });
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Autonomy — DreamCo Empire OS</title>
+  <meta name="description" content="Control how independently your 1,051 AI bots operate. Guided, Semi-Autonomous, or Full Autonomy modes." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+<div id="nav-placeholder"></div><script src="nav.js"></script>
+<div class="container" style="padding:48px 0">
+  <div style="text-align:center;margin-bottom:40px">
+    <h1 style="font-size:1.75rem;margin-bottom:8px">Autonomy Control</h1>
+    <p>Set exactly how independently your 1,051 bots operate. Current: <span class="badge badge-green">● Full Autonomy</span></p>
+  </div>
+
+  <div class="grid-3" style="margin-bottom:48px">
+    <div class="mode-card guided" onclick="setMode('guided',this)">
+      <div class="mode-icon">🎮</div>
+      <div class="mode-name">Guided Mode</div>
+      <div class="mode-level">Approval Required</div>
+      <div class="mode-desc">You approve every bot action before it executes. Maximum control, zero surprises. Perfect for learning the system or high-stakes decisions.</div>
+      <div style="margin-top:20px;padding-top:20px;border-top:1px solid var(--border)">
+        <div style="font-size:.78rem;color:var(--text3);margin-bottom:8px">AVAILABLE ON</div>
+        <span class="badge badge-gray">Free</span> <span class="badge badge-primary" style="margin-left:6px">Pro</span> <span class="badge badge-violet" style="margin-left:6px">Enterprise</span> <span class="badge badge-amber" style="margin-left:6px">Elite</span>
+      </div>
+    </div>
+    <div class="mode-card semi" onclick="setMode('semi',this)">
+      <div class="mode-icon">⚡</div>
+      <div class="mode-name">Semi-Autonomous</div>
+      <div class="mode-level">Low-Risk Auto-Execute</div>
+      <div class="mode-desc">Bots handle routine low-risk tasks automatically. High-impact decisions (payments, external APIs, data deletion) still require your approval.</div>
+      <div style="margin-top:20px;padding-top:20px;border-top:1px solid var(--border)">
+        <div style="font-size:.78rem;color:var(--text3);margin-bottom:8px">AVAILABLE ON</div>
+        <span class="badge badge-primary">Pro</span> <span class="badge badge-violet" style="margin-left:6px">Enterprise</span> <span class="badge badge-amber" style="margin-left:6px">Elite</span>
+      </div>
+    </div>
+    <div class="mode-card full" style="border-color:var(--green)" onclick="setMode('full',this)">
+      <div class="mode-icon">🚀</div>
+      <div class="mode-name">Full Autonomy</div>
+      <div class="mode-level">24/7 Auto-Operate</div>
+      <div class="mode-desc">Your empire runs itself around the clock. Bots operate, earn revenue, handle tasks, and report back to you. Maximum output, minimum effort.</div>
+      <div style="margin-top:20px;padding-top:20px;border-top:1px solid var(--border)">
+        <div style="font-size:.78rem;color:var(--text3);margin-bottom:8px">AVAILABLE ON</div>
+        <span class="badge badge-violet">Enterprise</span> <span class="badge badge-amber" style="margin-left:6px">Elite</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Auto-remediation rules -->
+  <div class="card card-lg" style="margin-bottom:32px">
+    <h3 style="margin-bottom:20px">⚡ Auto-Remediation Rules</h3>
+    <p style="margin-bottom:20px">Configure what bots can do automatically without asking you:</p>
+    <div style="display:flex;flex-direction:column;gap:0">
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:16px 0;border-bottom:1px solid var(--border)">
+        <div><strong>Restart failed bots</strong><div style="font-size:.8rem;color:var(--text3)">Auto-restart any bot that goes offline</div></div>
+        <div class="toggle on"></div>
+      </div>
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:16px 0;border-bottom:1px solid var(--border)">
+        <div><strong>Auto-fix code errors</strong><div style="font-size:.8rem;color:var(--text3)">Debug Intelligence System patches known errors</div></div>
+        <div class="toggle on"></div>
+      </div>
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:16px 0;border-bottom:1px solid var(--border)">
+        <div><strong>Retry failed API calls</strong><div style="font-size:.8rem;color:var(--text3)">Exponential backoff on rate limit errors</div></div>
+        <div class="toggle on"></div>
+      </div>
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:16px 0;border-bottom:1px solid var(--border)">
+        <div><strong>Execute payments autonomously</strong><div style="font-size:.8rem;color:var(--text3)">Allow bots to process Stripe transactions</div></div>
+        <div class="toggle off"></div>
+      </div>
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:16px 0">
+        <div><strong>Send outbound messages</strong><div style="font-size:.8rem;color:var(--text3)">Email, SMS, and webhook sends</div></div>
+        <div class="toggle on"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Comparison table -->
+  <div class="card card-lg">
+    <h3 style="margin-bottom:20px">Mode Comparison</h3>
+    <div style="overflow-x:auto">
+      <table style="width:100%;border-collapse:collapse;font-size:.875rem">
+        <thead>
+          <tr style="border-bottom:1px solid var(--border)">
+            <th style="text-align:left;padding:12px;color:var(--text3)">Feature</th>
+            <th style="padding:12px;text-align:center;color:var(--text2)">🎮 Guided</th>
+            <th style="padding:12px;text-align:center;color:var(--amber)">⚡ Semi-Auto</th>
+            <th style="padding:12px;text-align:center;color:var(--green)">🚀 Full Auto</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr style="border-bottom:1px solid var(--border)"><td style="padding:12px">Bot task execution</td><td style="padding:12px;text-align:center">Manual</td><td style="padding:12px;text-align:center;color:var(--amber)">Low-risk auto</td><td style="padding:12px;text-align:center;color:var(--green)">✓ All auto</td></tr>
+          <tr style="border-bottom:1px solid var(--border)"><td style="padding:12px">Revenue generation</td><td style="padding:12px;text-align:center">Assisted</td><td style="padding:12px;text-align:center;color:var(--amber)">Semi-auto</td><td style="padding:12px;text-align:center;color:var(--green)">✓ 24/7</td></tr>
+          <tr style="border-bottom:1px solid var(--border)"><td style="padding:12px">Auto error recovery</td><td style="padding:12px;text-align:center">—</td><td style="padding:12px;text-align:center;color:var(--amber)">✓</td><td style="padding:12px;text-align:center;color:var(--green)">✓</td></tr>
+          <tr style="border-bottom:1px solid var(--border)"><td style="padding:12px">Payment execution</td><td style="padding:12px;text-align:center">—</td><td style="padding:12px;text-align:center">Approval</td><td style="padding:12px;text-align:center;color:var(--green)">✓ Configurable</td></tr>
+          <tr><td style="padding:12px">Required tier</td><td style="padding:12px;text-align:center">Free+</td><td style="padding:12px;text-align:center">Pro+</td><td style="padding:12px;text-align:center">Enterprise+</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+<script>
+function setMode(mode, card) {
+  document.querySelectorAll('.mode-card').forEach(c => { c.style.background=''; c.style.boxShadow=''; });
+  const colors = {guided:'rgba(79,142,247,.1)', semi:'rgba(245,158,11,.1)', full:'rgba(34,197,94,.1)'};
+  const shadows = {guided:'0 0 40px rgba(79,142,247,.2)', semi:'0 0 40px rgba(245,158,11,.2)', full:'0 0 40px rgba(34,197,94,.2)'};
+  card.style.background = colors[mode]; card.style.boxShadow = shadows[mode];
+  alert('In the live app this would change your autonomy mode to: ' + mode + '. Visit the app to apply changes.');
+}
+</script>
+</body>
+</html>

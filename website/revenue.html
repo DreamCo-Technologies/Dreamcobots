@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Revenue — DreamCo Empire OS</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+<div id="nav-placeholder"></div><script src="nav.js"></script>
+<div class="container" style="padding:48px 0">
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:28px">
+    <div><h1 style="font-size:1.75rem;margin-bottom:6px">Revenue Dashboard</h1><p>Financial performance across all 45 divisions and 1,051+ bots</p></div>
+    <button class="btn btn-outline btn-sm" onclick="exportCSV()">📊 Export CSV</button>
+  </div>
+
+  <div class="grid-4" style="margin-bottom:32px">
+    <div class="card" style="text-align:center"><div style="font-size:2rem;font-weight:800;color:var(--green)">$4,821</div><div style="font-size:.8rem;color:var(--text3)">Today</div><div class="badge badge-green" style="margin-top:6px">↑ 12%</div></div>
+    <div class="card" style="text-align:center"><div style="font-size:2rem;font-weight:800;color:var(--primary)">$98,420</div><div style="font-size:.8rem;color:var(--text3)">This Month</div><div class="badge badge-green" style="margin-top:6px">↑ 8.4%</div></div>
+    <div class="card" style="text-align:center"><div style="font-size:2rem;font-weight:800;color:var(--accent)">$1.18M</div><div style="font-size:.8rem;color:var(--text3)">ARR Run Rate</div><div class="badge badge-amber" style="margin-top:6px">Target: $18.4M</div></div>
+    <div class="card" style="text-align:center"><div style="font-size:2rem;font-weight:800;color:var(--amber)">$12,400</div><div style="font-size:.8rem;color:var(--text3)">Avg Deal Size</div><div class="badge badge-green" style="margin-top:6px">↑ 3.2%</div></div>
+  </div>
+
+  <div class="grid-2" style="gap:28px;margin-bottom:32px">
+    <div class="card card-lg">
+      <h3 style="margin-bottom:20px">💰 Division Revenue</h3>
+      <div style="display:flex;flex-direction:column;gap:12px">
+        <div><div style="display:flex;justify-content:space-between;margin-bottom:6px"><span style="font-size:.875rem">DreamSalesPro</span><strong style="color:var(--green)">$1,240/day</strong></div><div style="height:6px;background:var(--bg3);border-radius:4px"><div style="height:6px;width:68%;background:var(--green);border-radius:4px"></div></div></div>
+        <div><div style="display:flex;justify-content:space-between;margin-bottom:6px"><span style="font-size:.875rem">DreamCodeLab</span><strong style="color:var(--primary)">$980/day</strong></div><div style="height:6px;background:var(--bg3);border-radius:4px"><div style="height:6px;width:54%;background:var(--primary);border-radius:4px"></div></div></div>
+        <div><div style="display:flex;justify-content:space-between;margin-bottom:6px"><span style="font-size:.875rem">DreamFinance</span><strong style="color:var(--amber)">$820/day</strong></div><div style="height:6px;background:var(--bg3);border-radius:4px"><div style="height:6px;width:45%;background:var(--amber);border-radius:4px"></div></div></div>
+        <div><div style="display:flex;justify-content:space-between;margin-bottom:6px"><span style="font-size:.875rem">DreamCrypto</span><strong style="color:var(--cyan)">$610/day</strong></div><div style="height:6px;background:var(--bg3);border-radius:4px"><div style="height:6px;width:33%;background:var(--cyan);border-radius:4px"></div></div></div>
+        <div><div style="display:flex;justify-content:space-between;margin-bottom:6px"><span style="font-size:.875rem">DreamAgents</span><strong style="color:var(--accent)">$540/day</strong></div><div style="height:6px;background:var(--bg3);border-radius:4px"><div style="height:6px;width:30%;background:var(--accent);border-radius:4px"></div></div></div>
+        <div><div style="display:flex;justify-content:space-between;margin-bottom:6px"><span style="font-size:.875rem">DreamRealEstate</span><strong style="color:var(--red)">$340/day</strong></div><div style="height:6px;background:var(--bg3);border-radius:4px"><div style="height:6px;width:19%;background:var(--red);border-radius:4px"></div></div></div>
+        <a href="divisions.html" style="font-size:.83rem;color:var(--primary);margin-top:4px">+ 39 more divisions →</a>
+      </div>
+    </div>
+    <div class="card card-lg">
+      <h3 style="margin-bottom:20px">🏆 Top Revenue Bots</h3>
+      <div style="display:flex;flex-direction:column;gap:0">
+        <div style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--border)"><span style="font-size:1.2rem;font-weight:800;color:var(--text3);min-width:24px">#1</span><div style="flex:1"><div style="font-size:.875rem;font-weight:600">Multi-Source Lead Scraper</div><div style="font-size:.75rem;color:var(--text3)">DreamSalesPro</div></div><strong style="color:var(--green)">$380/day</strong></div>
+        <div style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--border)"><span style="font-size:1.2rem;font-weight:800;color:var(--text3);min-width:24px">#2</span><div style="flex:1"><div style="font-size:.875rem;font-weight:600">DeFi Yield Optimizer</div><div style="font-size:.75rem;color:var(--text3)">DreamFinance</div></div><strong style="color:var(--green)">$290/day</strong></div>
+        <div style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--border)"><span style="font-size:1.2rem;font-weight:800;color:var(--text3);min-width:24px">#3</span><div style="flex:1"><div style="font-size:.875rem;font-weight:600">Email Sequence Builder</div><div style="font-size:.75rem;color:var(--text3)">DreamSalesPro</div></div><strong style="color:var(--green)">$240/day</strong></div>
+        <div style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--border)"><span style="font-size:1.2rem;font-weight:800;color:var(--text3);min-width:24px">#4</span><div style="flex:1"><div style="font-size:.875rem;font-weight:600">Content Empire Builder</div><div style="font-size:.75rem;color:var(--text3)">DreamContent</div></div><strong style="color:var(--green)">$210/day</strong></div>
+        <div style="display:flex;align-items:center;gap:12px;padding:10px 0"><span style="font-size:1.2rem;font-weight:800;color:var(--text3);min-width:24px">#5</span><div style="flex:1"><div style="font-size:.875rem;font-weight:600">Buddy Bot</div><div style="font-size:.75rem;color:var(--text3)">CommandCore</div></div><strong style="color:var(--green)">$190/day</strong></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card card-lg">
+    <h3 style="margin-bottom:16px">📊 API Integration Revenue Summary</h3>
+    <div class="grid-3" style="gap:16px">
+      <div class="card"><div style="font-weight:600;margin-bottom:4px">Connected APIs</div><div style="font-size:1.75rem;font-weight:800;color:var(--primary)">12</div><div style="font-size:.75rem;color:var(--text3)">of 200+ available</div></div>
+      <div class="card"><div style="font-weight:600;margin-bottom:4px">API Revenue Share</div><div style="font-size:1.75rem;font-weight:800;color:var(--green)">64%</div><div style="font-size:.75rem;color:var(--text3)">of total daily revenue</div></div>
+      <div class="card"><div style="font-weight:600;margin-bottom:4px">Success Rate</div><div style="font-size:1.75rem;font-weight:800;color:var(--amber)">97.2%</div><div style="font-size:.75rem;color:var(--text3)">API calls succeeding</div></div>
+    </div>
+  </div>
+</div>
+<script>function exportCSV() { alert('CSV export requires the live Empire OS app. Visit the app to download your revenue data.'); }</script>
+</body>
+</html>

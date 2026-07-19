@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Time Capsule — DreamCo Empire OS</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+<div id="nav-placeholder"></div><script src="nav.js"></script>
+<div class="container" style="padding:48px 0">
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:28px">
+    <div><h1 style="font-size:1.75rem;margin-bottom:6px">Time Capsule</h1><p>Save, restore, and export full system snapshots. Never lose your empire configuration.</p></div>
+    <button class="btn btn-primary" onclick="saveSnapshot()">⏱️ Save Snapshot Now</button>
+  </div>
+
+  <div class="grid-3" style="margin-bottom:32px">
+    <div class="card" style="text-align:center"><div style="font-size:2rem;font-weight:800;color:var(--primary)">4</div><div style="font-size:.8rem;color:var(--text3)">Saved Snapshots</div></div>
+    <div class="card" style="text-align:center"><div style="font-size:2rem;font-weight:800;color:var(--green)">2 min ago</div><div style="font-size:.8rem;color:var(--text3)">Last Snapshot</div></div>
+    <div class="card" style="text-align:center"><div style="font-size:2rem;font-weight:800;color:var(--amber)">12.4 MB</div><div style="font-size:.8rem;color:var(--text3)">Total Snapshot Size</div></div>
+  </div>
+
+  <div style="display:flex;flex-direction:column;gap:16px">
+    <div class="card card-lg">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+        <div><h4>Snapshot #4 — Latest</h4><div style="font-size:.8rem;color:var(--text3)">July 19, 2026 · 14:21 UTC · 3.2 MB</div></div>
+        <div style="display:flex;gap:8px">
+          <span class="badge badge-green">Latest</span>
+          <button class="btn btn-outline btn-sm" onclick="restoreSnapshot(4)">↺ Restore</button>
+          <button class="btn btn-outline btn-sm" onclick="exportSnapshot(4)">⬇ Export JSON</button>
+        </div>
+      </div>
+      <div style="font-family:var(--mono);font-size:.78rem;color:var(--text3);background:var(--card2);padding:12px;border-radius:8px">
+        1,051 bots · 45 divisions · Full Autonomy · 12 connections · $98,420 monthly revenue
+      </div>
+    </div>
+    <div class="card card-lg">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+        <div><h4>Snapshot #3</h4><div style="font-size:.8rem;color:var(--text3)">July 12, 2026 · 09:14 UTC · 3.1 MB</div></div>
+        <div style="display:flex;gap:8px">
+          <button class="btn btn-outline btn-sm" onclick="restoreSnapshot(3)">↺ Restore</button>
+          <button class="btn btn-outline btn-sm" onclick="exportSnapshot(3)">⬇ Export JSON</button>
+        </div>
+      </div>
+      <div style="font-family:var(--mono);font-size:.78rem;color:var(--text3);background:var(--card2);padding:12px;border-radius:8px">
+        1,004 bots · 44 divisions · Semi-Autonomous · 10 connections · $81,200 monthly revenue
+      </div>
+    </div>
+    <div class="card card-lg">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+        <div><h4>Snapshot #2</h4><div style="font-size:.8rem;color:var(--text3)">June 28, 2026 · 16:00 UTC · 3.0 MB</div></div>
+        <div style="display:flex;gap:8px">
+          <button class="btn btn-outline btn-sm" onclick="restoreSnapshot(2)">↺ Restore</button>
+          <button class="btn btn-outline btn-sm" onclick="exportSnapshot(2)">⬇ Export JSON</button>
+        </div>
+      </div>
+      <div style="font-family:var(--mono);font-size:.78rem;color:var(--text3);background:var(--card2);padding:12px;border-radius:8px">
+        884 bots · 40 divisions · Guided · 8 connections · $62,100 monthly revenue
+      </div>
+    </div>
+    <div class="card card-lg">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+        <div><h4>Snapshot #1 — Genesis</h4><div style="font-size:.8rem;color:var(--text3)">June 1, 2026 · 12:00 UTC · 3.1 MB</div></div>
+        <div style="display:flex;gap:8px">
+          <span class="badge badge-gray">Genesis</span>
+          <button class="btn btn-outline btn-sm" onclick="restoreSnapshot(1)">↺ Restore</button>
+          <button class="btn btn-outline btn-sm" onclick="exportSnapshot(1)">⬇ Export JSON</button>
+        </div>
+      </div>
+      <div style="font-family:var(--mono);font-size:.78rem;color:var(--text3);background:var(--card2);padding:12px;border-radius:8px">
+        500 bots · 20 divisions · Guided · 3 connections · $14,000 monthly revenue
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+function saveSnapshot() { alert('In the live app, this saves a full system snapshot with all bots, settings, connections, and revenue data.'); }
+function restoreSnapshot(n) { if(confirm('Restore Snapshot #' + n + '? This reverts all system settings to that point. Connect to the live app to restore.')) {} }
+function exportSnapshot(n) { alert('In the live app, Snapshot #' + n + ' exports as a full JSON file. Connect to the live app to download.'); }
+</script>
+</body>
+</html>

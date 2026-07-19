@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Debug — DreamCo Empire OS</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+<div id="nav-placeholder"></div><script src="nav.js"></script>
+<div class="container" style="padding:48px 0">
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:28px">
+    <div><h1 style="font-size:1.75rem;margin-bottom:6px">Debug Intelligence System</h1><p>12 error categories · Auto-fix engine · Revenue leak detection · Security scanning</p></div>
+    <div style="display:flex;gap:10px"><span class="badge badge-red">3 Open Errors</span><button class="btn btn-primary btn-sm" onclick="runAutoFix()">⚡ Auto-Fix All</button></div>
+  </div>
+
+  <div class="grid-4" style="margin-bottom:28px">
+    <div class="card" style="text-align:center"><div style="font-size:2rem;font-weight:800;color:var(--red)">3</div><div style="font-size:.8rem;color:var(--text3)">Open Errors</div></div>
+    <div class="card" style="text-align:center"><div style="font-size:2rem;font-weight:800;color:var(--amber)">12</div><div style="font-size:.8rem;color:var(--text3)">Warnings</div></div>
+    <div class="card" style="text-align:center"><div style="font-size:2rem;font-weight:800;color:var(--green)">847</div><div style="font-size:.8rem;color:var(--text3)">Auto-Fixed</div></div>
+    <div class="card" style="text-align:center"><div style="font-size:2rem;font-weight:800;color:var(--primary)">$0</div><div style="font-size:.8rem;color:var(--text3)">Revenue Leaked</div></div>
+  </div>
+
+  <div style="display:flex;gap:8px;margin-bottom:24px;flex-wrap:wrap">
+    <button class="settings-tab active" onclick="switchTab('errors',this)">🚨 Errors</button>
+    <button class="settings-tab" onclick="switchTab('warnings',this)">⚠️ Warnings</button>
+    <button class="settings-tab" onclick="switchTab('autofix',this)">⚡ Auto-Fix Rules</button>
+    <button class="settings-tab" onclick="switchTab('revenue',this)">💰 Revenue Leaks</button>
+    <button class="settings-tab" onclick="switchTab('security',this)">🔒 Security</button>
+    <button class="settings-tab" onclick="switchTab('categories',this)">📁 Categories</button>
+    <button class="settings-tab" onclick="switchTab('history',this)">📋 History</button>
+    <button class="settings-tab" onclick="switchTab('reports',this)">📊 Reports</button>
+  </div>
+
+  <div id="errors" class="card card-lg">
+    <h3 style="margin-bottom:20px">🚨 Open Errors (3)</h3>
+    <div style="display:flex;flex-direction:column;gap:12px">
+      <div style="padding:16px;background:rgba(239,68,68,.06);border:1px solid rgba(239,68,68,.3);border-radius:12px">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px"><strong>API Rate Limit — Serper</strong><span class="badge badge-red">High</span></div>
+        <div style="font-family:var(--mono);font-size:.78rem;color:var(--text3);margin-bottom:10px">Error: 429 Too Many Requests · Bot: DreamSalesPro/lead-scraper · 14:23:01 UTC</div>
+        <div style="font-size:.83rem;color:var(--text2);margin-bottom:12px">Serper API rate limit hit. Bot will retry with exponential backoff. No revenue impact.</div>
+        <div style="display:flex;gap:8px"><button onclick="fixError(this,'Serper rate limit')" class="btn btn-primary btn-sm">⚡ Auto-Fix</button><button class="btn btn-outline btn-sm">Ignore</button></div>
+      </div>
+      <div style="padding:16px;background:rgba(239,68,68,.06);border:1px solid rgba(239,68,68,.3);border-radius:12px">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px"><strong>Missing Bot Tier — 3 Bots</strong><span class="badge badge-amber">Medium</span></div>
+        <div style="font-family:var(--mono);font-size:.78rem;color:var(--text3);margin-bottom:10px">Warning: tier=null for bot-ids 441, 682, 891 · Detected by normalize endpoint</div>
+        <div style="font-size:.83rem;color:var(--text2);margin-bottom:12px">3 bots have no tier set. They show as "Unknown" in the fleet. Run normalize to infer from priceRange.</div>
+        <div style="display:flex;gap:8px"><button onclick="fixError(this,'bot tier normalization')" class="btn btn-primary btn-sm">⚡ Normalize</button><button class="btn btn-outline btn-sm">Review</button></div>
+      </div>
+      <div style="padding:16px;background:rgba(245,158,11,.06);border:1px solid rgba(245,158,11,.3);border-radius:12px">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px"><strong>Slow DB Query — Cost Tracking</strong><span class="badge badge-amber">Low</span></div>
+        <div style="font-family:var(--mono);font-size:.78rem;color:var(--text3);margin-bottom:10px">Warning: cost_events query took 2,340ms · Expected &lt; 500ms</div>
+        <div style="font-size:.83rem;color:var(--text2);margin-bottom:12px">Cost tracking query is slow. Suggest adding index on cost_events.created_at column.</div>
+        <div style="display:flex;gap:8px"><button onclick="fixError(this,'slow query optimization')" class="btn btn-primary btn-sm">⚡ Optimize</button><button class="btn btn-outline btn-sm">Defer</button></div>
+      </div>
+    </div>
+  </div>
+
+  <div id="warnings" class="card card-lg" style="display:none">
+    <h3 style="margin-bottom:20px">⚠️ Warnings (12)</h3>
+    <div style="display:flex;flex-direction:column;gap:8px">
+      <div style="display:flex;align-items:center;gap:12px;padding:12px;background:var(--card2);border-radius:10px;border:1px solid var(--border)"><span class="badge badge-amber">Warn</span><div style="flex:1;font-size:.875rem">Stripe secret key not configured — checkout will fail in production</div><button class="btn btn-outline btn-sm">Fix</button></div>
+      <div style="display:flex;align-items:center;gap:12px;padding:12px;background:var(--card2);border-radius:10px;border:1px solid var(--border)"><span class="badge badge-amber">Warn</span><div style="flex:1;font-size:.875rem">ElevenLabs key missing — voice responses disabled for Buddy Bot</div><button class="btn btn-outline btn-sm">Fix</button></div>
+      <div style="display:flex;align-items:center;gap:12px;padding:12px;background:var(--card2);border-radius:10px;border:1px solid var(--border)"><span class="badge badge-amber">Warn</span><div style="flex:1;font-size:.875rem">3 bots with duplicate slugs detected — deduplication recommended</div><button class="btn btn-outline btn-sm">Fix</button></div>
+      <div style="display:flex;align-items:center;gap:12px;padding:12px;background:var(--card2);border-radius:10px;border:1px solid var(--border)"><span class="badge badge-gray">Info</span><div style="flex:1;font-size:.875rem">9 bots last active &gt; 48 hours ago — consider restarting</div><button class="btn btn-outline btn-sm">Review</button></div>
+    </div>
+  </div>
+
+  <div id="autofix" class="card card-lg" style="display:none">
+    <h3 style="margin-bottom:20px">⚡ Auto-Fix Engine Rules</h3>
+    <div style="display:flex;flex-direction:column;gap:0">
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 0;border-bottom:1px solid var(--border)"><div><strong>Rate limit retry</strong><div style="font-size:.8rem;color:var(--text3)">Exponential backoff on 429 errors</div></div><div class="toggle on"></div></div>
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 0;border-bottom:1px solid var(--border)"><div><strong>Bot restart on crash</strong><div style="font-size:.8rem;color:var(--text3)">Auto-restart unresponsive bots</div></div><div class="toggle on"></div></div>
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 0;border-bottom:1px solid var(--border)"><div><strong>Tier normalization</strong><div style="font-size:.8rem;color:var(--text3)">Infer missing bot tiers from priceRange</div></div><div class="toggle on"></div></div>
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 0"><div><strong>Revenue leak alerts</strong><div style="font-size:.8rem;color:var(--text3)">Alert when bot revenue drops &gt; 30%</div></div><div class="toggle on"></div></div>
+    </div>
+  </div>
+
+  <div id="revenue" class="card card-lg" style="display:none"><h3 style="margin-bottom:12px">💰 Revenue Leak Detection</h3><div class="badge badge-green" style="margin-bottom:16px">✓ No Leaks Detected</div><p>All bot revenue streams are healthy. Last scan: 2 minutes ago.</p></div>
+  <div id="security" class="card card-lg" style="display:none"><h3 style="margin-bottom:16px">🔒 Security Scan</h3><div class="badge badge-green" style="margin-bottom:16px">✓ No Critical Vulnerabilities</div><div style="display:flex;flex-direction:column;gap:8px;font-size:.875rem"><div style="color:var(--green)">✓ No exposed API keys in codebase</div><div style="color:var(--green)">✓ All database queries use parameterized inputs</div><div style="color:var(--green)">✓ CORS configured correctly</div><div style="color:var(--amber)">⚠ Stripe keys missing (non-security issue)</div></div></div>
+  <div id="categories" class="card card-lg" style="display:none"><h3 style="margin-bottom:16px">📁 Error Categories</h3><div class="grid-3" style="gap:12px"><div class="card" style="text-align:center"><div style="font-size:1.5rem;color:var(--red);font-weight:800">2</div><div style="font-size:.8rem">API Errors</div></div><div class="card" style="text-align:center"><div style="font-size:1.5rem;color:var(--amber);font-weight:800">1</div><div style="font-size:.8rem">DB Errors</div></div><div class="card" style="text-align:center"><div style="font-size:1.5rem;color:var(--green);font-weight:800">0</div><div style="font-size:.8rem">Auth Errors</div></div><div class="card" style="text-align:center"><div style="font-size:1.5rem;color:var(--green);font-weight:800">0</div><div style="font-size:.8rem">Payment Errors</div></div><div class="card" style="text-align:center"><div style="font-size:1.5rem;color:var(--green);font-weight:800">0</div><div style="font-size:.8rem">Bot Errors</div></div><div class="card" style="text-align:center"><div style="font-size:1.5rem;color:var(--green);font-weight:800">0</div><div style="font-size:.8rem">Security Errors</div></div></div></div>
+  <div id="history" class="card card-lg" style="display:none"><h3 style="margin-bottom:16px">📋 Fix History</h3><div style="font-family:var(--mono);font-size:.8rem;display:flex;flex-direction:column;gap:8px"><div style="color:var(--green)">14:18 ✓ Auto-fixed: Bot restart — DreamSalesPro/email-sequence-builder</div><div style="color:var(--green)">13:44 ✓ Auto-fixed: Rate limit retry — DreamFinance/defi-yield-optimizer</div><div style="color:var(--green)">12:30 ✓ Auto-fixed: Tier normalization — 3 bots updated to 'pro'</div><div style="color:var(--amber)">11:15 ⚠ Manual fix needed — Stripe key configuration</div></div></div>
+  <div id="reports" class="card card-lg" style="display:none"><h3 style="margin-bottom:16px">📊 Reports</h3><div class="grid-2" style="gap:12px"><div class="card" style="text-align:center"><div style="font-size:2rem;font-weight:800;color:var(--green)">99.7%</div><div style="font-size:.8rem;color:var(--text3)">System Uptime (30d)</div></div><div class="card" style="text-align:center"><div style="font-size:2rem;font-weight:800;color:var(--primary)">847</div><div style="font-size:.8rem;color:var(--text3)">Issues Auto-Fixed (30d)</div></div></div></div>
+</div>
+<script>
+function switchTab(id, btn) {
+  ['errors','warnings','autofix','revenue','security','categories','history','reports'].forEach(t => document.getElementById(t).style.display='none');
+  document.querySelectorAll('.settings-tab').forEach(b => b.classList.remove('active'));
+  document.getElementById(id).style.display=''; btn.classList.add('active');
+}
+function fixError(btn, name) { btn.textContent='✓ Fixed'; btn.style.background='var(--green)'; btn.disabled=true; btn.closest('[style]').style.borderColor='rgba(34,197,94,.3)'; btn.closest('[style]').style.background='rgba(34,197,94,.06)'; }
+function runAutoFix() { alert('Auto-fix engine would run in the live app. All 3 issues would be remediated automatically.'); }
+</script>
+</body>
+</html>
