@@ -2,20 +2,24 @@ import Seo from "@/components/Seo";
 import AppShell from "@/components/AppShell";
 import { useState } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
-import { apiRequest } from "@/lib/queryClient";
+import { apiRequest, queryClient } from "@/lib/queryClient";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import { TIER_PRICING, TIER_AUTONOMY_LIMITS, DIVISION_API_REGISTRIES, getTotalApiCount } from "@shared/api-registry";
 import { useToast } from "@/hooks/use-toast";
 import {
   Check,
+  ChevronDown,
+  ChevronUp,
   Crown,
   ExternalLink,
   Layers,
   Loader2,
   Lock,
+  Mail,
   Network,
   Rocket,
   Settings,
@@ -68,6 +72,8 @@ function getYearlyPrice(product: StripeProduct): { id: string; amount: number } 
 export default function PricingPage() {
   const [botSlug, setBotSlug] = useState<string | undefined>(undefined);
   const [annual, setAnnual] = useState(false);
+  const [restoreOpen, setRestoreOpen] = useState(false);
+  const [restoreEmail, setRestoreEmail] = useState("");
   const { toast } = useToast();
 
   const totalApis = getTotalApiCount();
@@ -120,6 +126,33 @@ export default function PricingPage() {
     onError: (error: Error) => {
       toast({
         title: "Portal Error",
+        description: error.message,
+        variant: "destructive",
+      });
+    },
+  });
+
+  const restoreMutation = useMutation({
+    mutationFn: async (email: string) => {
+      const res = await apiRequest("POST", "/api/stripe/restore-subscription", { email });
+      if (!res.ok) {
+        const body = await res.json();
+        throw new Error(body.error || "Restore failed");
+      }
+      return await res.json();
+    },
+    onSuccess: () => {
+      toast({
+        title: "Subscription restored",
+        description: "Your active subscription has been found and restored.",
+      });
+      setRestoreOpen(false);
+      setRestoreEmail("");
+      queryClient.invalidateQueries({ queryKey: ["/api/stripe/subscription-status"] });
+    },
+    onError: (error: Error) => {
+      toast({
+        title: "Subscription not found",
         description: error.message,
         variant: "destructive",
       });
@@ -182,6 +215,63 @@ export default function PricingPage() {
                   Manage Subscription
                   {!portalMutation.isPending && <ExternalLink className="h-3 w-3 opacity-50" />}
                 </Button>
+              </div>
+            )}
+
+            {!subStatusLoading && !hasActiveSubscription && (
+              <div className="mb-4 rounded-xl border border-border/60 overflow-hidden" data-testid="restore-subscription-section">
+                <button
+                  className="w-full flex items-center justify-between gap-2 px-4 py-3 text-sm text-muted-foreground hover:text-foreground hover:bg-muted/30 transition-colors"
+                  onClick={() => setRestoreOpen(v => !v)}
+                  data-testid="btn-restore-toggle"
+                >
+                  <span className="flex items-center gap-2">
+                    <Mail className="h-4 w-4 flex-shrink-0" />
+                    Already subscribed? Restore your subscription
+                  </span>
+                  {restoreOpen ? (
+                    <ChevronUp className="h-4 w-4 flex-shrink-0" />
+                  ) : (
+                    <ChevronDown className="h-4 w-4 flex-shrink-0" />
+                  )}
+                </button>
+                {restoreOpen && (
+                  <div className="px-4 pb-4 pt-1 bg-muted/20 border-t border-border/40">
+                    <p className="text-xs text-muted-foreground mb-3">
+                      If you cleared your browser data or switched browsers, enter the email address you used to subscribe and we'll reconnect your plan.
+                    </p>
+                    <form
+                      className="flex gap-2"
+                      onSubmit={e => {
+                        e.preventDefault();
+                        if (restoreEmail.trim()) restoreMutation.mutate(restoreEmail.trim());
+                      }}
+                    >
+                      <Input
+                        type="email"
+                        placeholder="your@email.com"
+                        value={restoreEmail}
+                        onChange={e => setRestoreEmail(e.target.value)}
+                        className="rounded-xl text-sm h-9"
+                        disabled={restoreMutation.isPending}
+                        data-testid="input-restore-email"
+                      />
+                      <Button
+                        type="submit"
+                        size="sm"
+                        className="rounded-xl flex-shrink-0 h-9"
+                        disabled={restoreMutation.isPending || !restoreEmail.trim()}
+                        data-testid="btn-restore-submit"
+                      >
+                        {restoreMutation.isPending ? (
+                          <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                        ) : (
+                          "Restore"
+                        )}
+                      </Button>
+                    </form>
+                  </div>
+                )}
               </div>
             )}
 

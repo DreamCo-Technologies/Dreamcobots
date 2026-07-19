@@ -2234,11 +2234,38 @@ export async function registerRoutes(
         // Fall back to live Stripe API in case DB sync hasn't populated yet
         try {
           const stripe = await getUncachableStripeClient();
-          const subs = await stripe.subscriptions.list({
-            status: "active",
-            limit: 1,
-            expand: ["data.items.data.price.product"],
-          });
+
+          // Check if a customer email was stored from a previous restore operation
+          let customerEmail: string | null = null;
+          try {
+            const stored = await storage.getSetting("stripe_customer_email");
+            if (stored && typeof stored.value === "string" && stored.value.includes("@")) {
+              customerEmail = stored.value;
+            }
+          } catch { /* ignore */ }
+
+          let subs;
+          if (customerEmail) {
+            // Look up the specific customer by email first, then list their subscriptions
+            const customers = await stripe.customers.list({ email: customerEmail, limit: 1 });
+            if (customers.data.length > 0) {
+              subs = await stripe.subscriptions.list({
+                customer: customers.data[0].id,
+                status: "active",
+                limit: 1,
+                expand: ["data.items.data.price.product"],
+              });
+            }
+          }
+
+          if (!subs || subs.data.length === 0) {
+            subs = await stripe.subscriptions.list({
+              status: "active",
+              limit: 1,
+              expand: ["data.items.data.price.product"],
+            });
+          }
+
           if (subs.data.length > 0) {
             hasActiveSubscription = true;
             const sub = subs.data[0];
@@ -2258,32 +2285,126 @@ export async function registerRoutes(
     }
   });
 
+  app.post("/api/stripe/restore-subscription", async (req, res) => {
+    try {
+      const { email } = req.body;
+      if (!email || typeof email !== "string" || !email.includes("@")) {
+        return res.status(400).json({ error: "A valid email address is required" });
+      }
+
+      const stripe = await getUncachableStripeClient();
+
+      // Find Stripe customer by email
+      const customers = await stripe.customers.list({ email: email.trim().toLowerCase(), limit: 5 });
+      if (customers.data.length === 0) {
+        return res.status(404).json({ error: "No Stripe account found for that email address" });
+      }
+
+      // Check each matching customer for an active subscription
+      let hasActiveSubscription = false;
+      let tier: string | null = null;
+      let resolvedCustomerId: string | null = null;
+
+      for (const customer of customers.data) {
+        const subs = await stripe.subscriptions.list({
+          customer: customer.id,
+          status: "active",
+          limit: 1,
+          expand: ["data.items.data.price.product"],
+        });
+        if (subs.data.length > 0) {
+          hasActiveSubscription = true;
+          resolvedCustomerId = customer.id;
+          const sub = subs.data[0];
+          const item = sub.items?.data?.[0];
+          const product = item?.price?.product as any;
+          tier = product?.metadata?.tier ?? null;
+          break;
+        }
+        // Also check trialing
+        const trialSubs = await stripe.subscriptions.list({
+          customer: customer.id,
+          status: "trialing",
+          limit: 1,
+          expand: ["data.items.data.price.product"],
+        });
+        if (trialSubs.data.length > 0) {
+          hasActiveSubscription = true;
+          resolvedCustomerId = customer.id;
+          const sub = trialSubs.data[0];
+          const item = sub.items?.data?.[0];
+          const product = item?.price?.product as any;
+          tier = product?.metadata?.tier ?? null;
+          break;
+        }
+      }
+
+      if (!hasActiveSubscription) {
+        return res.status(404).json({ error: "No active subscription found for that email address" });
+      }
+
+      // Persist the customer email server-side so subscription status survives browser data clearing
+      await storage.upsertSetting("stripe_customer_email", email.trim().toLowerCase());
+      if (resolvedCustomerId) {
+        await storage.upsertSetting("stripe_customer_id", resolvedCustomerId);
+      }
+
+      res.json({ hasActiveSubscription, tier });
+    } catch (error: any) {
+      console.error("Restore subscription error:", error.message);
+      res.status(500).json({ error: "Failed to look up subscription" });
+    }
+  });
+
   app.post("/api/stripe/portal", async (req, res) => {
     try {
       // Resolve customer ID server-side from the active subscription — never trust client input
       let customerId: string | null = null;
 
+      // Prefer the customer ID persisted by the restore flow (survives browser data clearing)
       try {
-        const result = await db.execute(sql`
-          SELECT customer
-          FROM stripe.subscriptions
-          WHERE status IN ('active', 'trialing')
-          ORDER BY created DESC
-          LIMIT 1
-        `);
-        if (result.rows.length > 0) {
-          customerId = (result.rows[0] as any).customer as string;
+        const stored = await storage.getSetting("stripe_customer_id");
+        if (stored && typeof stored.value === "string" && stored.value.startsWith("cus_")) {
+          customerId = stored.value;
         }
-      } catch {
-        // DB lookup failed, fall through to live API
+      } catch { /* ignore */ }
+
+      if (!customerId) {
+        try {
+          const result = await db.execute(sql`
+            SELECT customer
+            FROM stripe.subscriptions
+            WHERE status IN ('active', 'trialing')
+            ORDER BY created DESC
+            LIMIT 1
+          `);
+          if (result.rows.length > 0) {
+            customerId = (result.rows[0] as any).customer as string;
+          }
+        } catch {
+          // DB lookup failed, fall through to live API
+        }
       }
 
       if (!customerId) {
-        // Fall back to live Stripe API
+        // Fall back to live Stripe API — also check stored email for customer lookup
         const stripe = await getUncachableStripeClient();
-        const subs = await stripe.subscriptions.list({ status: "active", limit: 1 });
-        if (subs.data.length > 0) {
-          customerId = subs.data[0].customer as string;
+
+        try {
+          const emailSetting = await storage.getSetting("stripe_customer_email");
+          if (emailSetting && typeof emailSetting.value === "string" && emailSetting.value.includes("@")) {
+            const customers = await stripe.customers.list({ email: emailSetting.value, limit: 1 });
+            if (customers.data.length > 0) {
+              customerId = customers.data[0].id;
+            }
+          }
+        } catch { /* ignore */ }
+
+        if (!customerId) {
+          const subs = await stripe.subscriptions.list({ status: "active", limit: 1 });
+          if (subs.data.length > 0) {
+            customerId = subs.data[0].customer as string;
+          }
         }
       }
 
