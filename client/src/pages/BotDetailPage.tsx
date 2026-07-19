@@ -11,6 +11,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Progress } from "@/components/ui/progress";
 import { cn } from "@/lib/utils";
 import { useToast } from "@/hooks/use-toast";
+import { useSubscriptionTier, isBotUnlocked } from "@/hooks/use-subscription";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -54,6 +55,7 @@ import {
   Star,
   Target,
   TrendingUp,
+  Unlock,
   Users,
   Zap,
   Calculator,
@@ -381,6 +383,7 @@ export default function BotDetailPage() {
   });
 
   const { toast } = useToast();
+  const subscriptionQuery = useSubscriptionTier();
 
   const controlsMutation = useMutation({
     mutationFn: async (body: { autonomyLevel?: string; operationalMode?: string }) => {
@@ -439,6 +442,9 @@ export default function BotDetailPage() {
   }
 
   const statusStyle = STATUS_COLORS[bot.status] ?? STATUS_COLORS.active;
+  const activeTier = subscriptionQuery.data?.tier ?? null;
+  const unlocked = isBotUnlocked(bot.tier, activeTier);
+  const isPaidTier = bot.tier && bot.tier !== "free";
 
   return (
     <AppShell selectedBotSlug={botSlug} onBotChange={setBotSlug}>
@@ -480,6 +486,18 @@ export default function BotDetailPage() {
                   <div className="mt-3 flex flex-wrap items-center gap-2">
                     <Badge variant="secondary" className="rounded-full">{bot.division}</Badge>
                     <Badge variant="outline" className={cn("rounded-full capitalize", TIER_COLORS[bot.tier])}>{bot.tier}</Badge>
+                    {isPaidTier && !subscriptionQuery.isLoading && unlocked && (
+                      <Badge className="rounded-full bg-emerald-500/15 text-emerald-500 border border-emerald-500/30" data-testid="badge-unlocked-bot">
+                        <Unlock className="h-3 w-3 mr-1" />
+                        Unlocked
+                      </Badge>
+                    )}
+                    {isPaidTier && !subscriptionQuery.isLoading && !unlocked && (
+                      <Badge className="rounded-full bg-muted text-muted-foreground border border-border/40" data-testid="badge-locked-bot">
+                        <Lock className="h-3 w-3 mr-1" />
+                        Locked
+                      </Badge>
+                    )}
                     <Badge variant="outline" className="rounded-full capitalize">{bot.category}</Badge>
                     {bot.priceRange && (
                       <Badge variant="outline" className="rounded-full text-green-600 dark:text-green-400 border-green-500/20">
@@ -498,6 +516,22 @@ export default function BotDetailPage() {
                   <p className="text-xs text-muted-foreground">Target Users</p>
                   <p className="text-sm font-medium" data-testid="bot-detail-target-users">{bot.targetUsers || "N/A"}</p>
                 </div>
+                {isPaidTier && !subscriptionQuery.isLoading && !unlocked && (
+                  <Link href="/pricing">
+                    <Button size="sm" className="rounded-xl mt-1" data-testid="btn-activate-bot">
+                      <Zap className="h-4 w-4 mr-2" />
+                      Activate
+                    </Button>
+                  </Link>
+                )}
+                {isPaidTier && !subscriptionQuery.isLoading && unlocked && (
+                  <Link href={`/chat/${bot.slug}`}>
+                    <Button size="sm" variant="outline" className="rounded-xl mt-1 border-emerald-500/30 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-500/10" data-testid="btn-launch-bot">
+                      <Unlock className="h-4 w-4 mr-2" />
+                      Launch Bot
+                    </Button>
+                  </Link>
+                )}
               </div>
             </div>
           </CardContent>
