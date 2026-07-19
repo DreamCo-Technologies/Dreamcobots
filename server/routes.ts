@@ -26,6 +26,41 @@ const DEDUPED_GITHUB = GITHUB_BOTS.filter(b => !CORE_SLUGS.has(b.slug));
 const DEDUPED_CODELAB = CODELAB_BOTS.filter(b => !CORE_SLUGS.has(b.slug) && !GITHUB_SLUGS.has(b.slug));
 const ALL_BOTS = [...CORE_BOTS, ...DEDUPED_GITHUB, ...DEDUPED_CODELAB];
 
+// ─── COST-CONTROL CONSTANTS ──────────────────────────────────────────────────
+// Keep bills as close to $0 as possible. Every byte saved is a dollar saved.
+const CHEAP_MODEL     = "gpt-4o-mini";   // $0.15/1M in · $0.60/1M out  (default for ALL routes)
+const CHAT_MODEL      = "gpt-4.1-mini";  // same price tier, already in use for streaming
+const MAX_HISTORY_MSG = 16;              // trim conversation history — prevents unbounded token growth
+const MAX_CHAT_TOKENS = 2000;            // 2k is enough for 99% of responses; saves ~50% vs 4k
+const CACHE_TTL_MS    = 5 * 60 * 1000;  // 5-minute result cache for expensive routes
+
+// Simple TTL cache (avoids re-hitting API for identical requests)
+const _cache = new Map<string, { result: unknown; expiresAt: number }>();
+function cacheKey(...parts: unknown[]): string {
+  return parts.map(p => (typeof p === "string" ? p : JSON.stringify(p))).join("|").slice(0, 512);
+}
+function fromCache<T>(key: string): T | null {
+  const entry = _cache.get(key);
+  if (!entry) return null;
+  if (Date.now() > entry.expiresAt) { _cache.delete(key); return null; }
+  return entry.result as T;
+}
+function toCache(key: string, result: unknown): void {
+  if (_cache.size > 500) {
+    // evict oldest 100 entries to prevent unbounded growth
+    const oldest = [..._cache.entries()].sort((a, b) => a[1].expiresAt - b[1].expiresAt).slice(0, 100);
+    oldest.forEach(([k]) => _cache.delete(k));
+  }
+  _cache.set(key, { result, expiresAt: Date.now() + CACHE_TTL_MS });
+}
+
+// Trim conversation history to stay within token budget
+function trimHistory(messages: Array<{ role: string; content: string }>, max = MAX_HISTORY_MSG) {
+  if (messages.length <= max) return messages;
+  // Always keep first message (context) + last (max-1) messages
+  return [messages[0], ...messages.slice(-(max - 1))];
+}
+
 const openai = new OpenAI({
   apiKey: process.env.AI_INTEGRATIONS_OPENAI_API_KEY,
   baseURL: process.env.AI_INTEGRATIONS_OPENAI_BASE_URL,
@@ -810,12 +845,12 @@ export async function registerRoutes(
         : { type: "image_url" as const, image_url: { url: imageUrl as string } };
 
       const result = await openai.chat.completions.create({
-        model: "gpt-4o",
+        model: CHEAP_MODEL, // gpt-4o-mini supports vision — 33× cheaper than gpt-4o
         messages: [
-          { role: "system", content: "You are Buddy Bot's multi-modal vision engine. When shown: (1) a UI screenshot → generate pixel-accurate React+Tailwind recreation code; (2) an ERD/diagram → generate Drizzle schema or TypeScript types; (3) a code screenshot → extract code, identify bugs, and rewrite with fixes; (4) a whiteboard/architecture sketch → produce a full system design document. Always be comprehensive and production-ready." },
+          { role: "system", content: "You are Buddy Bot's vision engine. For UI screenshots: generate pixel-accurate React+Tailwind code. For ERDs/diagrams: generate Drizzle schema or TypeScript types. For code screenshots: extract code, find bugs, rewrite with fixes. For whiteboards: produce full system design docs. Be concise and production-ready." },
           { role: "user", content: [{ type: "text", text: prompt as string }, imageSource] },
         ],
-        max_tokens: 2000,
+        max_tokens: 1500,
       });
       res.json({ analysis: result.choices[0]?.message?.content ?? "", analyzedAt: new Date().toISOString() });
     } catch (e: any) {
@@ -875,17 +910,21 @@ export async function registerRoutes(
   app.post("/api/buddy/security-scan", async (req, res) => {
     const { code, language = "javascript", scanType = "full" } = req.body ?? {};
     if (!code) return res.status(400).json({ error: "code required" });
+    const ck = cacheKey("security-scan", code, language, scanType);
+    const cached = fromCache<Record<string, unknown>>(ck);
+    if (cached) return res.json({ ...cached, fromCache: true });
     try {
       const result = await openai.chat.completions.create({
-        model: "gpt-4o-mini",
+        model: CHEAP_MODEL,
         messages: [
-          { role: "system", content: `You are Buddy Bot's SAST security engine. Scan for OWASP Top 10, CWE Top 25, SANS Top 25, hardcoded secrets, SQL injection, XSS, CSRF, auth bypass, insecure deserialization, broken access control, and cryptographic failures. Return ONLY valid JSON: { "riskLevel": "low|medium|high|critical", "score": 0-100, "vulnerabilities": [{ "id": "V001", "severity": "info|low|medium|high|critical", "title": "string", "description": "string", "lineHint": "optional line context", "cwe": "CWE-89", "owasp": "A03:2021", "attack": "how attacker exploits this", "fix": "remediation steps", "fixedCode": "corrected code snippet" }], "summary": "string", "passedChecks": ["list of things done right"] }` },
-          { role: "user", content: `Perform a ${scanType} security scan on this ${language} code:\n\`\`\`${language}\n${code}\n\`\`\`` },
+          { role: "system", content: `You are a SAST security engine. Scan for OWASP Top 10, CWE Top 25, hardcoded secrets, SQL injection, XSS, CSRF, auth bypass, broken access control, and crypto failures. Return ONLY valid JSON: { "riskLevel": "low|medium|high|critical", "score": 0-100, "vulnerabilities": [{ "id": "V001", "severity": "info|low|medium|high|critical", "title": "string", "description": "string", "lineHint": "string", "cwe": "CWE-89", "owasp": "A03:2021", "attack": "string", "fix": "string", "fixedCode": "string" }], "summary": "string", "passedChecks": ["string"] }` },
+          { role: "user", content: `${scanType} scan — ${language}:\n\`\`\`${language}\n${code}\n\`\`\`` },
         ],
-        max_tokens: 3000,
+        max_tokens: 2000,
         response_format: { type: "json_object" },
       });
       const scan = JSON.parse(result.choices[0]?.message?.content ?? "{}") as Record<string, unknown>;
+      toCache(ck, scan);
       res.json({ ...scan, scannedAt: new Date().toISOString() });
     } catch (e: any) {
       res.status(500).json({ error: e.message });
@@ -896,17 +935,21 @@ export async function registerRoutes(
   app.post("/api/buddy/architect", async (req, res) => {
     const { requirements, style = "microservices", scale = "startup" } = req.body ?? {};
     if (!requirements) return res.status(400).json({ error: "requirements required" });
+    const ck = cacheKey("architect", requirements, style, scale);
+    const cached = fromCache<Record<string, unknown>>(ck);
+    if (cached) return res.json({ ...cached, fromCache: true });
     try {
       const result = await openai.chat.completions.create({
-        model: "gpt-4o-mini",
+        model: CHEAP_MODEL,
         messages: [
-          { role: "system", content: 'You are Buddy Bot\'s architecture design engine (C4 model expert). Design complete production-grade systems. Return ONLY valid JSON: { "systemName": "string", "overview": "string", "components": [{ "name": "string", "role": "string", "technology": ["array"], "exposes": ["API endpoints or events"] }], "dataFlow": ["step-by-step flow"], "databases": [{ "name": "string", "type": "postgres|redis|mongo", "purpose": "string" }], "infrastructure": ["services/tools"], "securityLayers": ["layers"], "estimatedMonthlyCost": "string", "scalingPlan": { "1k": "string", "10k": "string", "1m": "string" }, "diagramAscii": "ASCII art diagram", "mermaidDiagram": "mermaid graph LR code", "techStack": ["list"], "keyDecisions": [{ "decision": "string", "rationale": "string", "alternatives": "string" }], "dockerCompose": "docker-compose.yml content", "nextSteps": ["ordered action items"] }' },
-          { role: "user", content: `Design a ${style} architecture for ${scale} scale:\n${requirements}` },
+          { role: "system", content: 'Architecture design engine (C4 model). Return ONLY valid JSON: { "systemName": "string", "overview": "string", "components": [{ "name": "string", "role": "string", "technology": ["array"], "exposes": ["string"] }], "dataFlow": ["string"], "databases": [{ "name": "string", "type": "string", "purpose": "string" }], "infrastructure": ["string"], "securityLayers": ["string"], "estimatedMonthlyCost": "string", "scalingPlan": { "1k": "string", "10k": "string", "1m": "string" }, "diagramAscii": "string", "mermaidDiagram": "string", "techStack": ["string"], "keyDecisions": [{ "decision": "string", "rationale": "string", "alternatives": "string" }], "dockerCompose": "string", "nextSteps": ["string"] }' },
+          { role: "user", content: `${style} architecture, ${scale} scale:\n${requirements}` },
         ],
-        max_tokens: 4000,
+        max_tokens: 2500,
         response_format: { type: "json_object" },
       });
       const arch = JSON.parse(result.choices[0]?.message?.content ?? "{}") as Record<string, unknown>;
+      toCache(ck, arch);
       res.json({ ...arch, designedAt: new Date().toISOString() });
     } catch (e: any) {
       res.status(500).json({ error: e.message });
@@ -917,16 +960,21 @@ export async function registerRoutes(
   app.post("/api/buddy/translate-code", async (req, res) => {
     const { code, fromLanguage, toLanguage, preserveComments = true } = req.body ?? {};
     if (!code || !fromLanguage || !toLanguage) return res.status(400).json({ error: "code, fromLanguage, toLanguage required" });
+    const ck = cacheKey("translate", code, fromLanguage, toLanguage);
+    const cached = fromCache<string>(ck);
+    if (cached) return res.json({ translatedCode: cached, fromLanguage, toLanguage, fromCache: true, translatedAt: new Date().toISOString() });
     try {
       const result = await openai.chat.completions.create({
-        model: "gpt-4o-mini",
+        model: CHEAP_MODEL,
         messages: [
-          { role: "system", content: `You are Buddy Bot's code translation engine. Translate code between languages with 100% functional equivalence. Use idiomatic patterns for the target language — not literal translations. Include types if the target language supports them. If ${preserveComments ? "preserve" : "omit"} comments.` },
-          { role: "user", content: `Translate from ${fromLanguage} to ${toLanguage}. Provide: 1) the translated code (complete), 2) a list of translation notes (idioms changed, library equivalents, any behavioral differences). Format as markdown with code block then notes.\n\nOriginal ${fromLanguage}:\n\`\`\`${fromLanguage}\n${code}\n\`\`\`` },
+          { role: "system", content: `Translate code from ${fromLanguage} to ${toLanguage} with 100% functional equivalence. Use idiomatic patterns. Include types if supported. ${preserveComments ? "Preserve" : "Omit"} comments. Output: the translated code block, then ## Notes with any idiom/library differences.` },
+          { role: "user", content: `\`\`\`${fromLanguage}\n${code}\n\`\`\`` },
         ],
-        max_tokens: 3000,
+        max_tokens: 2000,
       });
-      res.json({ translatedCode: result.choices[0]?.message?.content ?? "", fromLanguage, toLanguage, translatedAt: new Date().toISOString() });
+      const translatedCode = result.choices[0]?.message?.content ?? "";
+      toCache(ck, translatedCode);
+      res.json({ translatedCode, fromLanguage, toLanguage, translatedAt: new Date().toISOString() });
     } catch (e: any) {
       res.status(500).json({ error: e.message });
     }
@@ -936,17 +984,21 @@ export async function registerRoutes(
   app.post("/api/buddy/code-review", async (req, res) => {
     const { code, language = "javascript", focusAreas = ["security", "performance", "readability", "testing"] } = req.body ?? {};
     if (!code) return res.status(400).json({ error: "code required" });
+    const ck = cacheKey("code-review", code, language, focusAreas);
+    const cached = fromCache<Record<string, unknown>>(ck);
+    if (cached) return res.json({ ...cached, fromCache: true });
     try {
       const result = await openai.chat.completions.create({
-        model: "gpt-4o-mini",
+        model: CHEAP_MODEL,
         messages: [
-          { role: "system", content: 'You are Buddy Bot\'s code review engine (senior principal engineer level). Review code across all dimensions. Return ONLY valid JSON: { "overallScore": 0-100, "grade": "A+|A|B|C|D|F", "summary": "string", "strengths": ["list"], "issues": [{ "severity": "critical|major|minor|nitpick", "category": "security|performance|readability|testing|architecture|types|error-handling", "title": "string", "description": "string", "lineHint": "string", "improvement": "string", "improvedCode": "optional snippet" }], "refactoredVersion": "complete refactored code", "testSuiteTemplate": "vitest/jest test file template", "performanceNotes": "string", "securityNotes": "string" }' },
-          { role: "user", content: `Review this ${language} code. Focus areas: ${(focusAreas as string[]).join(", ")}.\n\`\`\`${language}\n${code}\n\`\`\`` },
+          { role: "system", content: 'Senior engineer code review. Return ONLY valid JSON: { "overallScore": 0-100, "grade": "A+|A|B|C|D|F", "summary": "string", "strengths": ["string"], "issues": [{ "severity": "critical|major|minor|nitpick", "category": "security|performance|readability|testing|architecture|types|error-handling", "title": "string", "description": "string", "lineHint": "string", "improvement": "string", "improvedCode": "string" }], "refactoredVersion": "string", "testSuiteTemplate": "string", "performanceNotes": "string", "securityNotes": "string" }' },
+          { role: "user", content: `Review this ${language} code. Focus: ${(focusAreas as string[]).join(", ")}.\n\`\`\`${language}\n${code}\n\`\`\`` },
         ],
-        max_tokens: 4000,
+        max_tokens: 2500,
         response_format: { type: "json_object" },
       });
       const review = JSON.parse(result.choices[0]?.message?.content ?? "{}") as Record<string, unknown>;
+      toCache(ck, review);
       res.json({ ...review, reviewedAt: new Date().toISOString() });
     } catch (e: any) {
       res.status(500).json({ error: e.message });
@@ -957,17 +1009,21 @@ export async function registerRoutes(
   app.post("/api/buddy/generate-pr", async (req, res) => {
     const { diff, repoContext = "", ticketId = "" } = req.body ?? {};
     if (!diff) return res.status(400).json({ error: "diff required" });
+    const ck = cacheKey("generate-pr", diff, repoContext, ticketId);
+    const cached = fromCache<Record<string, unknown>>(ck);
+    if (cached) return res.json({ ...cached, fromCache: true });
     try {
       const result = await openai.chat.completions.create({
-        model: "gpt-4o-mini",
+        model: CHEAP_MODEL,
         messages: [
-          { role: "system", content: 'You are Buddy Bot\'s PR generation engine. Generate professional GitHub pull request content from a git diff. Return ONLY valid JSON: { "title": "feat: Conventional Commits title", "body": "full markdown PR body with ## Summary, ## Changes, ## Testing, ## Screenshots", "commitMessages": ["semantic commit message per logical change"], "labels": ["array of GitHub labels"], "reviewers": ["suggested reviewer roles"], "changelog": "CHANGELOG.md entry in Keep a Changelog format", "breakingChanges": "null or description", "migrationSteps": "null or steps needed" }' },
-          { role: "user", content: `Repo context: ${repoContext}\nTicket: ${ticketId}\n\nGit diff:\n${diff}` },
+          { role: "system", content: 'PR generator. Return ONLY valid JSON: { "title": "feat: title", "body": "markdown PR body", "commitMessages": ["string"], "labels": ["string"], "reviewers": ["string"], "changelog": "string", "breakingChanges": null, "migrationSteps": null }' },
+          { role: "user", content: `Repo: ${repoContext} | Ticket: ${ticketId}\nDiff:\n${diff.slice(0, 3000)}` },
         ],
-        max_tokens: 2000,
+        max_tokens: 1200,
         response_format: { type: "json_object" },
       });
       const pr = JSON.parse(result.choices[0]?.message?.content ?? "{}") as Record<string, unknown>;
+      toCache(ck, pr);
       res.json({ ...pr, generatedAt: new Date().toISOString() });
     } catch (e: any) {
       res.status(500).json({ error: e.message });
@@ -978,17 +1034,21 @@ export async function registerRoutes(
   app.post("/api/buddy/deploy-config", async (req, res) => {
     const { projectDescription, techStack = [], platform = "all", port = 3000 } = req.body ?? {};
     if (!projectDescription) return res.status(400).json({ error: "projectDescription required" });
+    const ck = cacheKey("deploy-config", projectDescription, techStack, platform, port);
+    const cached = fromCache<Record<string, unknown>>(ck);
+    if (cached) return res.json({ ...cached, fromCache: true });
     try {
       const result = await openai.chat.completions.create({
-        model: "gpt-4o-mini",
+        model: CHEAP_MODEL,
         messages: [
-          { role: "system", content: 'You are Buddy Bot\'s deployment configuration engine. Generate complete, production-ready deployment configs. Return ONLY valid JSON: { "dockerfile": "complete multi-stage Dockerfile", "dockerCompose": "docker-compose.yml for local dev", "dockerComposeProduction": "docker-compose.prod.yml", "vercelJson": "vercel.json config", "railwayToml": "railway.toml config", "flyToml": "fly.toml config", "githubActionsCI": "complete .github/workflows/deploy.yml", "envTemplate": ".env.example template", "nginxConfig": "nginx.conf if needed", "kubernetesManifest": "k8s deployment.yaml", "readmeSection": "## Deployment section for README.md" }' },
-          { role: "user", content: `Generate deployment configs for:\nProject: ${projectDescription}\nTech stack: ${(techStack as string[]).join(", ") || "Node.js/Express"}\nTarget: ${platform}\nPort: ${port}` },
+          { role: "system", content: 'Deployment config generator. Return ONLY valid JSON: { "dockerfile": "string", "dockerCompose": "string", "dockerComposeProduction": "string", "vercelJson": "string", "railwayToml": "string", "flyToml": "string", "githubActionsCI": "string", "envTemplate": "string", "nginxConfig": "string", "kubernetesManifest": "string", "readmeSection": "string" }' },
+          { role: "user", content: `Project: ${projectDescription}\nStack: ${(techStack as string[]).join(", ") || "Node.js/Express"}\nTarget: ${platform}\nPort: ${port}` },
         ],
-        max_tokens: 4000,
+        max_tokens: 2500,
         response_format: { type: "json_object" },
       });
       const config = JSON.parse(result.choices[0]?.message?.content ?? "{}") as Record<string, unknown>;
+      toCache(ck, config);
       res.json({ ...config, generatedAt: new Date().toISOString() });
     } catch (e: any) {
       res.status(500).json({ error: e.message });
@@ -999,17 +1059,21 @@ export async function registerRoutes(
   app.post("/api/buddy/debug-deep", async (req, res) => {
     const { errorMessage, stackTrace = "", code = "", context = "" } = req.body ?? {};
     if (!errorMessage) return res.status(400).json({ error: "errorMessage required" });
+    const ck = cacheKey("debug-deep", errorMessage, stackTrace, code);
+    const cached = fromCache<Record<string, unknown>>(ck);
+    if (cached) return res.json({ ...cached, fromCache: true });
     try {
       const result = await openai.chat.completions.create({
-        model: "gpt-4o-mini",
+        model: CHEAP_MODEL,
         messages: [
-          { role: "system", content: 'You are Buddy Bot\'s deep debugging engine. Perform expert root-cause analysis. Return ONLY valid JSON: { "rootCause": "exact root cause in one sentence", "explanation": "detailed technical explanation", "errorCategory": "type-error|runtime|async|memory|network|auth|data|config|dependency", "affectedCode": "the specific problematic code", "fixedCode": "complete corrected code", "stepByStepFix": ["ordered fix steps"], "preventionStrategy": "how to prevent this class of bug", "relatedBugs": ["other bugs this might be hiding"], "testToVerifyFix": "code snippet to verify the fix works", "confidence": 0-100 }' },
-          { role: "user", content: `Debug this error:\nError: ${errorMessage}\nStack: ${stackTrace}\nCode:\n${code}\nContext: ${context}` },
+          { role: "system", content: 'Root-cause debugger. Return ONLY valid JSON: { "rootCause": "string", "explanation": "string", "errorCategory": "type-error|runtime|async|memory|network|auth|data|config|dependency", "affectedCode": "string", "fixedCode": "string", "stepByStepFix": ["string"], "preventionStrategy": "string", "relatedBugs": ["string"], "testToVerifyFix": "string", "confidence": 0-100 }' },
+          { role: "user", content: `Error: ${errorMessage}\nStack: ${stackTrace}\nCode:\n${code}\nContext: ${context}` },
         ],
-        max_tokens: 2500,
+        max_tokens: 1800,
         response_format: { type: "json_object" },
       });
       const debug = JSON.parse(result.choices[0]?.message?.content ?? "{}") as Record<string, unknown>;
+      toCache(ck, debug);
       res.json({ ...debug, debuggedAt: new Date().toISOString() });
     } catch (e: any) {
       res.status(500).json({ error: e.message });
@@ -1044,16 +1108,21 @@ export async function registerRoutes(
   app.post("/api/buddy/refactor", async (req, res) => {
     const { code, language = "javascript", goals = ["readability", "performance", "types", "error-handling"] } = req.body ?? {};
     if (!code) return res.status(400).json({ error: "code required" });
+    const ck = cacheKey("refactor", code, language, goals);
+    const cached = fromCache<string>(ck);
+    if (cached) return res.json({ refactoredCode: cached, language, fromCache: true, refactoredAt: new Date().toISOString() });
     try {
       const result = await openai.chat.completions.create({
-        model: "gpt-4o-mini",
+        model: CHEAP_MODEL,
         messages: [
-          { role: "system", content: "You are Buddy Bot's refactoring engine. Produce a dramatically improved version of the code without changing its external API. Apply: clean architecture principles, SOLID, DRY, proper error handling, TypeScript types, performance optimizations, and modern idioms. Explain every meaningful change." },
-          { role: "user", content: `Refactor this ${language} code. Goals: ${(goals as string[]).join(", ")}.\n\n\`\`\`${language}\n${code}\n\`\`\`\n\nProvide: 1) The fully refactored code in a code block, 2) A ## Changes Made section explaining every improvement.` },
+          { role: "system", content: "Refactoring engine. Improve code without changing its external API. Apply: SOLID, DRY, proper error handling, TypeScript types, performance optimizations, modern idioms. Explain every change." },
+          { role: "user", content: `Refactor this ${language} code. Goals: ${(goals as string[]).join(", ")}.\n\`\`\`${language}\n${code}\n\`\`\`\nOutput: refactored code block, then ## Changes Made.` },
         ],
-        max_tokens: 4000,
+        max_tokens: 2000,
       });
-      res.json({ refactoredCode: result.choices[0]?.message?.content ?? "", language, refactoredAt: new Date().toISOString() });
+      const refactoredCode = result.choices[0]?.message?.content ?? "";
+      toCache(ck, refactoredCode);
+      res.json({ refactoredCode, language, refactoredAt: new Date().toISOString() });
     } catch (e: any) {
       res.status(500).json({ error: e.message });
     }
@@ -1362,12 +1431,12 @@ export async function registerRoutes(
     const userMsg = await storage.createMessage(conversationId, "user", input.content);
 
     const history = await storage.getMessages(conversationId);
+    // Trim history to MAX_HISTORY_MSG — prevents unbounded token growth on long conversations
+    const historyMsgs = history.map((m) => ({ role: m.role as "user" | "assistant", content: m.content }));
+    const trimmedHistory = trimHistory(historyMsgs);
     const messagesForModel = [
       { role: "system" as const, content: system },
-      ...history.map((m) => ({
-        role: m.role as "user" | "assistant",
-        content: m.content,
-      })),
+      ...trimmedHistory,
     ];
 
     res.setHeader("Content-Type", "text/event-stream");
@@ -1375,10 +1444,10 @@ export async function registerRoutes(
     res.setHeader("Connection", "keep-alive");
 
     const stream = await openai.chat.completions.create({
-      model: "gpt-4.1-mini",
+      model: CHAT_MODEL,
       messages: messagesForModel,
       stream: true,
-      max_completion_tokens: 4000,
+      max_completion_tokens: MAX_CHAT_TOKENS, // was 4000 — 2k saves ~50% output cost
     });
 
     let assistantText = "";

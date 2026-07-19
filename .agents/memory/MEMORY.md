@@ -5,3 +5,4 @@
 - [Service worker blank page trap](service-worker-blank-page.md) — Stale SW caches broken app; in dev mode always unregister instead of registering.
 - [Express route vs Vite catch-all](express-vite-route-order.md) — Vite's /{*path} app.use catches ALL methods. New API routes must use the existing openai instance in routes.ts (not a separate import) or they silently fail and Vite intercepts them.
 - [Buddy feature routes](buddy-feature-routes.md) — 16 Buddy API routes live; voice needs ELEVENLABS_API_KEY, search upgrades to Serper when SERPER_API_KEY set, council is in-memory (process-level).
+- [AI cost optimization](ai-cost-optimization.md) — Full cost-control pattern: CHEAP_MODEL=gpt-4o-mini, trimHistory(16 msg), MAX_CHAT_TOKENS=2000, 5-min TTL LRU cache (fromCache/toCache/cacheKey) on all expensive Buddy routes.
