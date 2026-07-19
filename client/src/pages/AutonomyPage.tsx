@@ -5,18 +5,69 @@ import EmptyState from "@/components/EmptyState";
 import ConfirmDialog from "@/components/ConfirmDialog";
 import { useToast } from "@/hooks/use-toast";
 import { useCreateTask, useDeleteTask, useRunTask, useTaskRuns, useTasks, useUpdateTask } from "@/hooks/use-tasks";
-import { TASK_STATUSES, type TaskStatus } from "@shared/schema";
+import { useAutonomyMode, useSetAutonomyMode } from "@/hooks/use-empire";
+import { TASK_STATUSES, type TaskStatus, type AutonomyMode } from "@shared/schema";
+import type { CreateAutonomousTaskRequest, UpdateAutonomousTaskRequest } from "@shared/schema";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
-import { ClipboardList, Flame, Play, Plus, RefreshCcw, Trash2 } from "lucide-react";
-import type { CreateAutonomousTaskRequest, UpdateAutonomousTaskRequest } from "@shared/schema";
+import { CheckCircle2, ClipboardList, Eye, Flame, Play, Plus, RefreshCcw, Shield, Trash2, Zap } from "lucide-react";
+
+const AUTONOMY_OPTIONS: Array<{
+  mode: AutonomyMode;
+  label: string;
+  sublabel: string;
+  description: string;
+  icon: typeof Zap;
+  color: string;
+  ring: string;
+  bg: string;
+  permissions: string[];
+  autoRuns: string[];
+}> = [
+  {
+    mode: "guided",
+    label: "No AI",
+    sublabel: "Manual / Human-first",
+    description: "You approve every action before it runs. Best for high-stakes or sensitive workflows where you want full review.",
+    icon: Eye,
+    color: "text-sky-500",
+    ring: "ring-sky-500/40",
+    bg: "bg-sky-500/10",
+    permissions: ["Every task requires your approval", "All bot responses reviewed by you", "No auto-runs ever", "Full audit trail"],
+    autoRuns: [],
+  },
+  {
+    mode: "semi-autonomous",
+    label: "Semi-Auto",
+    sublabel: "Balanced — low risk auto, you approve high risk",
+    description: "Routine, low-risk tasks run automatically. High-risk actions (payments, emails, API calls) pause for your approval.",
+    icon: Shield,
+    color: "text-amber-500",
+    ring: "ring-amber-500/40",
+    bg: "bg-amber-500/10",
+    permissions: ["High-risk actions pause for approval", "New payment/send actions reviewed", "You can override any decision"],
+    autoRuns: ["Research & analysis", "Report generation", "Draft creation", "Data processing", "Score calculations"],
+  },
+  {
+    mode: "full-autonomy",
+    label: "Full Auto",
+    sublabel: "Fully autonomous — bots run without asking",
+    description: "All 1,051+ bots operate independently. Tasks run end-to-end without interruption. Maximize throughput.",
+    icon: Zap,
+    color: "text-green-500",
+    ring: "ring-green-500/40",
+    bg: "bg-green-500/10",
+    permissions: ["No approvals needed", "Bots self-coordinate", "Revenue flows fully automated"],
+    autoRuns: ["All task types", "Payments & outreach", "API integrations", "Bot-to-bot delegation", "24/7 background operation"],
+  },
+];
 
 function priorityLabel(p: number) {
   if (p >= 5) return "Critical";
@@ -33,6 +84,10 @@ export default function AutonomyPage() {
   const updateTask = useUpdateTask();
   const delTask = useDeleteTask();
   const runTask = useRunTask();
+  const autonomyQuery = useAutonomyMode();
+  const setAutonomy = useSetAutonomyMode();
+
+  const currentMode: AutonomyMode = (autonomyQuery.data?.mode as AutonomyMode) ?? "guided";
 
   const [activeBotSlug, setActiveBotSlug] = useState<string | undefined>(undefined);
 
@@ -94,11 +149,77 @@ export default function AutonomyPage() {
         data-testid="delete-task-dialog"
       />
 
-      <div className="buddy-appear">
-        <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4">
-          <div>
+      <div className="buddy-appear space-y-6">
+
+        {/* ── GLOBAL MODE SELECTOR ── */}
+        <div>
+          <div className="mb-4">
             <h2 className="text-3xl md:text-4xl">Autonomy</h2>
             <p className="mt-2 text-muted-foreground">
+              Set your global AI permission level once — bots will follow it on every task automatically.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            {AUTONOMY_OPTIONS.map((opt) => {
+              const Icon = opt.icon;
+              const isActive = currentMode === opt.mode;
+              return (
+                <button
+                  key={opt.mode}
+                  onClick={async () => {
+                    try {
+                      await setAutonomy.mutateAsync(opt.mode);
+                      toast({ title: `Mode set: ${opt.label}`, description: opt.sublabel });
+                    } catch {
+                      toast({ title: "Failed to update mode", variant: "destructive" });
+                    }
+                  }}
+                  disabled={setAutonomy.isPending}
+                  data-testid={`autonomy-option-${opt.mode}`}
+                  className={cn(
+                    "w-full text-left rounded-2xl border p-5 transition-all hover:-translate-y-0.5 hover:shadow-lg",
+                    isActive
+                      ? `${opt.bg} border-transparent ring-2 ${opt.ring} shadow-md`
+                      : "bg-card/60 border-border/60 hover:bg-card"
+                  )}
+                >
+                  <div className="flex items-center justify-between mb-3">
+                    <div className={cn("h-11 w-11 rounded-xl flex items-center justify-center", opt.bg)}>
+                      <Icon className={cn("h-6 w-6", opt.color)} />
+                    </div>
+                    {isActive && (
+                      <Badge className={cn("rounded-full text-xs", opt.bg, opt.color, "border-0")}>
+                        <CheckCircle2 className="h-3 w-3 mr-1" />Active
+                      </Badge>
+                    )}
+                  </div>
+                  <p className="font-bold text-lg leading-tight">{opt.label}</p>
+                  <p className={cn("text-xs font-medium mt-0.5", opt.color)}>{opt.sublabel}</p>
+                  <p className="text-xs text-muted-foreground mt-2 leading-relaxed">{opt.description}</p>
+                  <div className="mt-3 space-y-1">
+                    {opt.permissions.map(p => (
+                      <p key={p} className="text-xs text-muted-foreground flex items-start gap-1.5">
+                        <span className={cn("mt-0.5 flex-shrink-0", opt.color)}>•</span>{p}
+                      </p>
+                    ))}
+                    {opt.autoRuns.length > 0 && (
+                      <p className="text-xs text-muted-foreground flex items-start gap-1.5 mt-2">
+                        <Zap className={cn("h-3 w-3 mt-0.5 flex-shrink-0", opt.color)} />
+                        <span>Auto-runs: {opt.autoRuns.join(", ")}</span>
+                      </p>
+                    )}
+                  </div>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+
+        <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4">
+          <div>
+            <h3 className="text-2xl md:text-3xl">Task Queue</h3>
+            <p className="mt-1 text-sm text-muted-foreground">
               Capture repeatable objectives, then run them like a disciplined operator.
             </p>
           </div>

@@ -143,7 +143,7 @@ export default function CostTrackingPage() {
               </div>
             ) : (
               <div className="space-y-2">
-                {costs.slice(0, 50).map((event) => (
+                {costs.slice(0, 100).map((event) => (
                   <div key={event.id} className="flex items-center justify-between p-3 rounded-xl border border-border/40 hover-elevate" data-testid={`cost-event-${event.id}`}>
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2">
