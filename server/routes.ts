@@ -17,6 +17,7 @@ import { buildEnhancedSystemPrompt } from "@shared/tool-belt";
 import { getUncachableStripeClient, getStripePublishableKey } from "./stripeClient";
 import { db } from "./db";
 import { batchProcessWithSSE } from "./replit_integrations/batch";
+import { registerAudioRoutes } from "./replit_integrations/audio";
 
 const CORE_SLUGS = new Set(CORE_BOTS.map(b => b.slug));
 const GITHUB_SLUGS = new Set(GITHUB_BOTS.map(b => b.slug));
@@ -2490,6 +2491,9 @@ Return ONLY valid JSON with this exact shape:
       .map(b => ({ id: b.id, slug: b.slug, displayName: b.displayName, division: b.division, category: b.category, description: b.description, tier: b.tier }));
     res.json({ context, matchedCategory: bestCategory, recommendations: recommended });
   });
+
+  // Register voice chat routes (distinct path: /api/conversations/:id/voice)
+  registerAudioRoutes(app);
 
   return httpServer;
 }
