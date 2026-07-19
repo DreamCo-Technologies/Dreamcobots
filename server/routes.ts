@@ -567,6 +567,184 @@ export async function registerRoutes(
     });
   });
 
+  // ===== HARNESS TESTER =====
+  // In-memory suite store (use DB for persistence in production)
+  const harnessSuites: Array<{
+    id: string; name: string; botSlug: string;
+    cases: Array<{ id: string; name: string; prompt: string; expectedKeywords: string; mustNotContain: string }>;
+    createdAt: string;
+  }> = [];
+
+  app.get("/api/harness/suites", (_req, res) => {
+    res.json({ suites: harnessSuites });
+  });
+
+  app.post("/api/harness/suites", (req, res) => {
+    const { name, botSlug, cases } = req.body ?? {};
+    if (!name || !botSlug || !Array.isArray(cases) || cases.length === 0)
+      return res.status(400).json({ error: "name, botSlug, and at least one case required" });
+    const suite = { id: `hs-${Date.now()}`, name: String(name), botSlug: String(botSlug), cases, createdAt: new Date().toISOString() };
+    harnessSuites.unshift(suite);
+    res.json({ success: true, suite });
+  });
+
+  app.delete("/api/harness/suites/:id", (req, res) => {
+    const idx = harnessSuites.findIndex(s => s.id === req.params.id);
+    if (idx === -1) return res.status(404).json({ error: "Suite not found" });
+    harnessSuites.splice(idx, 1);
+    res.json({ success: true });
+  });
+
+  app.post("/api/harness/run-suite", async (req, res) => {
+    const { suiteId } = req.body ?? {};
+    const suite = harnessSuites.find(s => s.id === suiteId);
+    if (!suite) return res.status(404).json({ error: "Suite not found" });
+
+    const results: Array<{
+      caseId: string; caseName: string; prompt: string; response: string;
+      passed: boolean; failReasons: string[]; latencyMs: number; runAt: string;
+    }> = [];
+
+    for (const tc of suite.cases) {
+      const start = Date.now();
+      let response = "";
+      let passed = true;
+      const failReasons: string[] = [];
+      try {
+        const botProfile = await storage.getBotProfileBySlug(suite.botSlug);
+        const systemPrompt = botProfile?.systemPrompt ?? `You are ${suite.botSlug}, a DreamCo AI bot.`;
+        const completion = await openai.chat.completions.create({
+          model: "gpt-4o-mini",
+          messages: [
+            { role: "system", content: systemPrompt },
+            { role: "user", content: tc.prompt },
+          ],
+          max_tokens: 500,
+        });
+        response = completion.choices[0]?.message?.content ?? "";
+      } catch (e: any) {
+        response = `ERROR: ${e.message}`;
+        passed = false;
+        failReasons.push(`Bot failed to respond: ${e.message}`);
+      }
+
+      const lower = response.toLowerCase();
+
+      if (tc.expectedKeywords) {
+        for (const kw of tc.expectedKeywords.split(",").map(k => k.trim()).filter(Boolean)) {
+          if (!lower.includes(kw.toLowerCase())) {
+            passed = false;
+            failReasons.push(`Missing expected keyword: "${kw}"`);
+          }
+        }
+      }
+      if (tc.mustNotContain) {
+        for (const kw of tc.mustNotContain.split(",").map(k => k.trim()).filter(Boolean)) {
+          if (lower.includes(kw.toLowerCase())) {
+            passed = false;
+            failReasons.push(`Response contains blocked keyword: "${kw}"`);
+          }
+        }
+      }
+
+      results.push({
+        caseId: tc.id, caseName: tc.name || `Case ${results.length + 1}`,
+        prompt: tc.prompt, response, passed, failReasons,
+        latencyMs: Date.now() - start, runAt: new Date().toISOString(),
+      });
+    }
+
+    const passed = results.filter(r => r.passed).length;
+    const avgLatencyMs = Math.round(results.reduce((a, r) => a + r.latencyMs, 0) / results.length);
+    res.json({
+      suiteId: suite.id, suiteName: suite.name, botSlug: suite.botSlug,
+      passed, failed: results.length - passed, total: results.length,
+      avgLatencyMs, results, ranAt: new Date().toISOString(),
+    });
+  });
+
+  // ===== GOVERNANCE RULES =====
+  const governanceRules: Array<{
+    id: string; name: string; description: string; trigger: string;
+    condition: string; action: string;
+    severity: "info"|"warning"|"critical"; scope: string; scopeTarget: string;
+    enabled: boolean; createdAt: string;
+  }> = [
+    { id: "gr1", name: "Block Financial Guarantees", description: "Prevent bots from promising guaranteed returns", trigger: "Bot generates financial advice response", condition: "Response contains 'guaranteed return' OR 'risk-free' OR 'certain profit'", action: "Block response and flag for review. Replace with: 'All investments carry risk.'", severity: "critical", scope: "all-bots", scopeTarget: "", enabled: true, createdAt: new Date().toISOString() },
+    { id: "gr2", name: "PII Leak Prevention", description: "Block responses that expose user personal data", trigger: "Any bot response", condition: "Response contains email addresses, SSNs, or phone numbers from other users", action: "Redact PII, log security event, alert council", severity: "critical", scope: "all-bots", scopeTarget: "", enabled: true, createdAt: new Date().toISOString() },
+    { id: "gr3", name: "Autonomous Action Throttle", description: "Rate limit bots in full autonomy mode", trigger: "Bot initiates external API call", condition: "More than 100 external calls in 60 minutes from one bot", action: "Pause bot, submit council proposal for review, notify admin", severity: "warning", scope: "all-bots", scopeTarget: "", enabled: true, createdAt: new Date().toISOString() },
+  ];
+
+  app.get("/api/governance/rules", (_req, res) => {
+    res.json({ rules: governanceRules });
+  });
+
+  app.post("/api/governance/rules", (req, res) => {
+    const { name, description, trigger, condition, action, severity = "warning", scope = "all-bots", scopeTarget = "" } = req.body ?? {};
+    if (!name || !trigger || !condition || !action)
+      return res.status(400).json({ error: "name, trigger, condition, and action are required" });
+    const rule = {
+      id: `gr-${Date.now()}`, name: String(name), description: String(description ?? ""),
+      trigger: String(trigger), condition: String(condition), action: String(action),
+      severity: (["info","warning","critical"].includes(severity) ? severity : "warning") as "info"|"warning"|"critical",
+      scope: String(scope), scopeTarget: String(scopeTarget),
+      enabled: true, createdAt: new Date().toISOString(),
+    };
+    governanceRules.unshift(rule);
+    res.json({ success: true, rule });
+  });
+
+  app.patch("/api/governance/rules/:id", (req, res) => {
+    const idx = governanceRules.findIndex(r => r.id === req.params.id);
+    if (idx === -1) return res.status(404).json({ error: "Rule not found" });
+    const { enabled } = req.body ?? {};
+    if (typeof enabled === "boolean") governanceRules[idx].enabled = enabled;
+    res.json({ success: true, rule: governanceRules[idx] });
+  });
+
+  app.delete("/api/governance/rules/:id", (req, res) => {
+    const idx = governanceRules.findIndex(r => r.id === req.params.id);
+    if (idx === -1) return res.status(404).json({ error: "Rule not found" });
+    governanceRules.splice(idx, 1);
+    res.json({ success: true });
+  });
+
+  app.post("/api/governance/test", async (req, res) => {
+    try {
+      const { scenario, ruleId } = req.body ?? {};
+      if (!scenario) return res.status(400).json({ error: "scenario required" });
+
+      const rulesToTest = ruleId
+        ? governanceRules.filter(r => r.id === ruleId && r.enabled)
+        : governanceRules.filter(r => r.enabled);
+
+      if (rulesToTest.length === 0)
+        return res.json({ triggered: false, ruleName: "—", reasoning: "No active rules to test against.", suggestedAction: "", severity: "info", testedAt: new Date().toISOString() });
+
+      const rulesContext = rulesToTest.map(r =>
+        `Rule: "${r.name}" [${r.severity.toUpperCase()}]\nTrigger: ${r.trigger}\nCondition: ${r.condition}\nAction: ${r.action}`
+      ).join("\n\n");
+
+      const result = await openai.chat.completions.create({
+        model: "gpt-4o-mini",
+        messages: [
+          { role: "system", content: `You are DreamCo's governance AI. Analyze a scenario against governance rules and determine if any rule is triggered. Respond ONLY as JSON: { "triggered": boolean, "ruleName": string, "reasoning": string, "suggestedAction": string, "severity": "info"|"warning"|"critical" }` },
+          { role: "user", content: `Scenario: ${scenario}\n\nGovernance Rules:\n${rulesContext}\n\nDoes this scenario violate any rule? Return JSON only.` },
+        ],
+        max_tokens: 600,
+        response_format: { type: "json_object" },
+      });
+
+      const raw = result.choices[0]?.message?.content ?? "{}";
+      let parsed: any;
+      try { parsed = JSON.parse(raw); } catch { parsed = { triggered: false, reasoning: raw }; }
+
+      res.json({ ...parsed, testedAt: new Date().toISOString() });
+    } catch (e: any) {
+      res.status(500).json({ error: e.message || "Governance test failed" });
+    }
+  });
+
   // ===== BUDDY FEATURES STATUS =====
   app.get("/api/buddy/features", async (_req, res) => {
     res.json({
