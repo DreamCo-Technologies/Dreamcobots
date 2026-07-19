@@ -10,7 +10,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
-import { apiRequest } from "@/lib/queryClient";
+import { apiRequest, queryClient } from "@/lib/queryClient";
 import { useCreateConversation } from "@/hooks/use-conversations";
 import { useBots } from "@/hooks/use-bots";
 import { useEmpireOverview } from "@/hooks/use-empire";
@@ -634,6 +634,7 @@ export default function ChatIndexPage() {
     const params = new URLSearchParams(window.location.search);
     const checkout = params.get("checkout");
     if (checkout === "success") {
+      queryClient.invalidateQueries({ queryKey: ["/api/stripe/subscription-status"] });
       toast({ title: "Payment successful! 🎉", description: "Your Empire tier has been upgraded. Enjoy your new bots!" });
       window.history.replaceState({}, "", "/");
     } else if (checkout === "canceled") {
