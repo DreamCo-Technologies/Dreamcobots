@@ -11,6 +11,7 @@ import { GITHUB_BOTS } from "./seed-github-bots";
 import { CODELAB_BOTS } from "./seed-codelabs";
 import { BUDDY_BOT } from "./seed-buddy-bot";
 import { DIVISIONS, insertBotMetricSchema, insertBotErrorSchema, insertBotFinancialSchema, insertAlertRuleSchema, insertDealSchema, insertDebugEventSchema, insertAutoFixSchema, insertRevenueLeakSchema, insertSecurityScanSchema, insertFormulaSchema, insertPlatformConnectionSchema, insertPluginSchema, insertBotMemorySchema, insertSystemSnapshotSchema, insertCostEventSchema } from "@shared/schema";
+import type { BotActivityResponse } from "@shared/schema";
 import { calculateRealEstate, calculateCarFlip, type RealEstateInputs, type CarFlipInputs } from "@shared/deal-calculations";
 import { FORMULA_LIBRARY } from "@shared/formula-library";
 import { buildEnhancedSystemPrompt } from "@shared/tool-belt";
@@ -2456,11 +2457,27 @@ Return ONLY valid JSON with this exact shape:
   app.get("/api/bot-activity", async (_req, res) => {
     const bots = await storage.listBotProfiles();
     const convs = await storage.listConversations();
-    const activity = await Promise.all(bots.slice(0, 100).map(async (bot) => {
+    const botItems = await Promise.all(bots.slice(0, 100).map(async (bot) => {
       const memories = await storage.listBotMemory(bot.id).catch(() => []);
-      return { id: bot.id, slug: bot.slug, displayName: bot.displayName, division: bot.division, tier: bot.tier, status: bot.status, memoryCount: memories.length, lastLearning: memories[0]?.value ?? null, lastActive: memories[0]?.createdAt ?? null };
+      const lastActive = memories[0]?.createdAt ?? null;
+      return {
+        id: bot.id,
+        slug: bot.slug,
+        displayName: bot.displayName,
+        division: bot.division,
+        tier: bot.tier,
+        status: bot.status,
+        memoryCount: memories.length,
+        lastLearning: memories[0]?.value ?? null,
+        lastActive: lastActive instanceof Date ? lastActive.toISOString() : lastActive,
+      };
     }));
-    res.json({ bots: activity, totalConversations: convs.length, totalBots: bots.length });
+    const response: BotActivityResponse = {
+      totalBots: bots.length,
+      totalConversations: convs.length,
+      bots: botItems,
+    };
+    res.json(response);
   });
 
   // ===== BOT RECOMMENDATIONS =====

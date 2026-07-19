@@ -580,3 +580,23 @@ export const costEvents = pgTable("cost_events", {
 export const insertCostEventSchema = createInsertSchema(costEvents).omit({ id: true, createdAt: true });
 export type CostEvent = typeof costEvents.$inferSelect;
 export type InsertCostEvent = z.infer<typeof insertCostEventSchema>;
+
+// ── Bot Activity API response types ──────────────────────────────────────────
+
+export interface BotActivityItem {
+  id: number;
+  slug: string;
+  displayName: string;
+  division: string;
+  tier: string;
+  status: string;
+  memoryCount: number;
+  lastLearning: string | null;
+  lastActive: string | null;
+}
+
+export interface BotActivityResponse {
+  totalBots: number;
+  totalConversations: number;
+  bots: BotActivityItem[];
+}

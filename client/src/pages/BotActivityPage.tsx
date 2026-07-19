@@ -9,6 +9,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { useToast } from "@/hooks/use-toast";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { apiRequest, queryClient } from "@/lib/queryClient";
+import type { BotActivityResponse, BotActivityItem } from "@shared/schema";
 import { cn } from "@/lib/utils";
 import {
   Github, RefreshCw, UploadCloud, Bot, Activity, CheckCircle2, AlertCircle,
@@ -92,7 +93,7 @@ export default function BotActivityPage() {
   const [selectedBotSlug, setSelectedBotSlug] = useState<string | undefined>();
   const [activeTab, setActiveTab] = useState<"activity" | "github" | "dashboard" | "classify">("dashboard");
 
-  const activity = useQuery({ queryKey: ["/api/bot-activity"], refetchInterval: 15000 });
+  const activity = useQuery<BotActivityResponse>({ queryKey: ["/api/bot-activity"], refetchInterval: 15000 });
   const github = useQuery({ queryKey: ["/api/github/status"], retry: 1 });
   const classify = useQuery({ queryKey: ["/api/github/classify"] });
   const workflows = useQuery({
@@ -462,10 +463,10 @@ export default function BotActivityPage() {
               <>
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                   {[
-                    { label: "Total Bots", value: (activity.data as any)?.totalBots ?? 0, color: "text-primary" },
-                    { label: "Conversations", value: (activity.data as any)?.totalConversations ?? 0, color: "text-green-400" },
-                    { label: "Bots with Memory", value: ((activity.data as any)?.bots ?? []).filter((b: any) => b.memoryCount > 0).length, color: "text-amber-400" },
-                    { label: "Active Learning", value: ((activity.data as any)?.bots ?? []).reduce((a: number, b: any) => a + b.memoryCount, 0), color: "text-cyan-400" },
+                    { label: "Total Bots", value: activity.data?.totalBots ?? 0, color: "text-primary" },
+                    { label: "Conversations", value: activity.data?.totalConversations ?? 0, color: "text-green-400" },
+                    { label: "Bots with Memory", value: (activity.data?.bots ?? []).filter((b: BotActivityItem) => b.memoryCount > 0).length, color: "text-amber-400" },
+                    { label: "Active Learning", value: (activity.data?.bots ?? []).reduce((a: number, b: BotActivityItem) => a + b.memoryCount, 0), color: "text-cyan-400" },
                   ].map(stat => (
                     <Card key={stat.label} className="buddy-card rounded-2xl border-border/60 p-4" data-testid={`stat-${stat.label}`}>
                       <p className="text-xs text-muted-foreground">{stat.label}</p>
@@ -474,7 +475,7 @@ export default function BotActivityPage() {
                   ))}
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3">
-                  {((activity.data as any)?.bots ?? []).map((bot: any) => (
+                  {(activity.data?.bots ?? []).map((bot: BotActivityItem) => (
                     <Card key={bot.id} className="buddy-card rounded-2xl border-border/60 p-4 hover:border-border transition-all" data-testid={`bot-activity-${bot.id}`}>
                       <div className="flex items-start justify-between gap-2">
                         <div className="min-w-0 flex-1">
