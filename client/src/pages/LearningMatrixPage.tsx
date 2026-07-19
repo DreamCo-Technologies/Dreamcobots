@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { cn } from "@/lib/utils";
+import { useToast } from "@/hooks/use-toast";
 import {
   Brain,
   Globe,
@@ -33,6 +34,10 @@ import {
   Atom,
   Lightbulb,
   Workflow,
+  Copy,
+  Download,
+  ExternalLink,
+  BookOpen,
 } from "lucide-react";
 
 const COUNTRIES = [
@@ -343,6 +348,7 @@ function generateLabMetrics(labName: string) {
 }
 
 export default function LearningMatrixPage() {
+  const { toast } = useToast();
   const [selectedCountry, setSelectedCountry] = useState("All");
   const [selectedMethod, setSelectedMethod] = useState("All");
 
@@ -366,6 +372,57 @@ export default function LearningMatrixPage() {
             <Badge variant="outline" className="rounded-full">{totalFeatures} Features</Badge>
             <Badge className={cn("rounded-full border", STATUS_BADGE.active)}>{activeFeatures} Active</Badge>
             <Badge className={cn("rounded-full border", STATUS_BADGE.testing)}>{testingFeatures} Testing</Badge>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => {
+                const text = [
+                  "Global AI Learning Matrix — Export",
+                  `Total Features: ${totalFeatures}`,
+                  `Active: ${activeFeatures}`,
+                  `Testing: ${testingFeatures}`,
+                  `Countries Tracked: ${COUNTRIES.length}`,
+                  `Learning Methods: ${LEARNING_METHODS.length}`,
+                ].join("\n");
+                navigator.clipboard.writeText(text);
+                toast({ title: "Matrix data copied to clipboard" });
+              }}
+              data-testid="button-copy-matrix"
+            >
+              <Copy className="h-3.5 w-3.5 mr-1.5" />
+              Copy Summary
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => {
+                const rows = LEARNING_METHODS.map(m =>
+                  `${m.name},${m.accuracy},${m.efficiency},${m.cost},${m.scalability}`
+                );
+                const csv = ["Method,Accuracy,Efficiency,Cost,Scalability", ...rows].join("\n");
+                const blob = new Blob([csv], { type: "text/csv" });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement("a");
+                a.href = url;
+                a.download = `ai-learning-matrix-${new Date().toISOString().slice(0,10)}.csv`;
+                a.click();
+                URL.revokeObjectURL(url);
+                toast({ title: "Learning matrix exported" });
+              }}
+              data-testid="button-export-matrix"
+            >
+              <Download className="h-3.5 w-3.5 mr-1.5" />
+              Export CSV
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => window.open("https://paperswithcode.com/", "_blank")}
+              data-testid="button-research-ai"
+            >
+              <ExternalLink className="h-3.5 w-3.5 mr-1.5" />
+              Latest Research
+            </Button>
           </div>
         </div>
 

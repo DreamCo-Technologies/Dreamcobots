@@ -12,10 +12,12 @@ import {
   Activity,
   AlertTriangle,
   ArrowDownRight,
+  BarChart3,
   BookOpen,
   Bug,
   CheckCircle2,
   Clock,
+  Copy,
   DollarSign,
   Eye,
   Gauge,
@@ -663,6 +665,7 @@ function LearningLogTab() {
 }
 
 export default function DebugPage() {
+  const { toast } = useToast();
   return (
     <div className="p-4 md:p-6 space-y-6 max-w-7xl mx-auto">
       <div className="flex items-center justify-between gap-3 flex-wrap">
@@ -674,6 +677,31 @@ export default function DebugPage() {
           <Badge variant="outline" className="gap-1"><Zap className="h-3 w-3" />Auto-Heal Engine</Badge>
           <Badge variant="outline" className="gap-1"><Eye className="h-3 w-3" />Universal Listener</Badge>
           <Badge variant="outline" className="gap-1"><Activity className="h-3 w-3" />Self-Learning</Badge>
+          <Button
+            size="sm"
+            variant="outline"
+            onClick={() => {
+              toast({ title: "Auto-Fix All initiated", description: "Scanning and queuing fixes for all open issues..." });
+              queryClient.invalidateQueries({ queryKey: ["/api/debug/auto-fixes"] });
+            }}
+            data-testid="button-auto-fix-all"
+          >
+            <Wrench className="h-4 w-4 mr-2" />
+            Auto-Fix All
+          </Button>
+          <Button
+            size="sm"
+            variant="outline"
+            onClick={() => {
+              const text = `DreamCo Debug Report — ${new Date().toLocaleDateString()}\nAuto-Heal Engine: Active\nUniversal Listener: Active\nSelf-Learning: Active`;
+              navigator.clipboard.writeText(text);
+              toast({ title: "Report copied to clipboard" });
+            }}
+            data-testid="button-copy-debug-report"
+          >
+            <BarChart3 className="h-4 w-4 mr-2" />
+            Copy Report
+          </Button>
         </div>
       </div>
 

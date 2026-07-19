@@ -11,6 +11,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Link, useSearch } from "wouter";
+import { useToast } from "@/hooks/use-toast";
 import {
   Bot,
   Building2,
@@ -18,6 +19,8 @@ import {
   CircleDollarSign,
   Filter,
   Search,
+  MessageSquare,
+  Copy,
   Sparkles,
   Users,
   Zap,
@@ -39,6 +42,7 @@ const STATUS_COLORS: Record<string, string> = {
 };
 
 export default function DivisionsPage() {
+  const { toast } = useToast();
   const [botSlug, setBotSlug] = useState<string | undefined>(undefined);
   const empire = useEmpireOverview();
   const allBots = useBots();

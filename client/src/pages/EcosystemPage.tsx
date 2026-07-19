@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
+import { useToast } from "@/hooks/use-toast";
 import { AI_CATEGORIES, AI_PROVIDERS } from "@shared/ai-ecosystem";
 import {
   Globe,
@@ -14,6 +15,11 @@ import {
   Cpu,
   Building2,
   Sparkles,
+  ExternalLink,
+  BookOpen,
+  Download,
+  Copy,
+  Link2,
 } from "lucide-react";
 
 const PRICING_OPTIONS = ["All", "free", "freemium", "paid", "enterprise", "open-source"] as const;
@@ -36,9 +42,28 @@ const PRICING_BADGE_CLASS: Record<string, string> = {
 };
 
 export default function EcosystemPage() {
+  const { toast } = useToast();
   const [search, setSearch] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [selectedPricing, setSelectedPricing] = useState("All");
+  const [watchlist, setWatchlist] = useState<Set<number>>(new Set());
+
+  function toggleWatch(id: number, name: string) {
+    setWatchlist(prev => {
+      const next = new Set(prev);
+      if (next.has(id)) { next.delete(id); toast({ title: `Removed ${name} from watchlist` }); }
+      else { next.add(id); toast({ title: `Added ${name} to watchlist` }); }
+      return next;
+    });
+  }
+
+  function exportWatchlist() {
+    const items = AI_PROVIDERS.filter(p => watchlist.has(p.id));
+    if (!items.length) { toast({ title: "Watchlist is empty", variant: "destructive" }); return; }
+    const text = items.map(p => `${p.name} (${p.category}) — ${p.bestAt}`).join("\n");
+    navigator.clipboard.writeText(text);
+    toast({ title: `Copied ${items.length} providers to clipboard` });
+  }
 
   const filtered = useMemo(() => {
     const q = search.toLowerCase().trim();
@@ -81,6 +106,15 @@ export default function EcosystemPage() {
                 {AI_PROVIDERS.length} providers across {AI_CATEGORIES.length} categories
               </p>
             </div>
+          </div>
+          <div className="flex gap-2">
+            <Button variant="outline" size="sm" onClick={exportWatchlist} data-testid="button-export-watchlist">
+              <Copy className="h-4 w-4 mr-2" />
+              Copy Watchlist ({watchlist.size})
+            </Button>
+            <Button variant="outline" size="sm" onClick={() => { setSearch(""); setSelectedCategory("All"); setSelectedPricing("All"); toast({ title: "Filters cleared" }); }} data-testid="button-clear-filters">
+              Clear Filters
+            </Button>
           </div>
         </div>
 
@@ -250,6 +284,40 @@ export default function EcosystemPage() {
                       </Badge>
                     ))}
                   </div>
+                </div>
+                <div className="flex gap-2 pt-1">
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    className="flex-1 h-8 text-xs rounded-lg"
+                    onClick={() => window.open(`https://www.google.com/search?q=${encodeURIComponent(provider.name + " API documentation")}`, "_blank")}
+                    data-testid={`button-docs-${provider.id}`}
+                  >
+                    <BookOpen className="h-3 w-3 mr-1.5" />
+                    Docs
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant={watchlist.has(provider.id) ? "default" : "outline"}
+                    className="flex-1 h-8 text-xs rounded-lg"
+                    onClick={() => toggleWatch(provider.id, provider.name)}
+                    data-testid={`button-watch-${provider.id}`}
+                  >
+                    <Link2 className="h-3 w-3 mr-1.5" />
+                    {watchlist.has(provider.id) ? "Watching" : "Watch"}
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant="ghost"
+                    className="h-8 w-8 p-0 rounded-lg"
+                    onClick={() => {
+                      navigator.clipboard.writeText(`${provider.name}: ${provider.bestAt} — ${provider.agentSpecialization}`);
+                      toast({ title: `Copied ${provider.name} info` });
+                    }}
+                    data-testid={`button-copy-${provider.id}`}
+                  >
+                    <Copy className="h-3 w-3" />
+                  </Button>
                 </div>
               </CardContent>
             </Card>

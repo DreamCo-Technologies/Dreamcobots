@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useToast } from "@/hooks/use-toast";
 import {
   Activity,
   CheckCircle2,
@@ -26,6 +27,10 @@ import {
   Wifi,
   WifiOff,
   XCircle,
+  Copy,
+  Download,
+  RefreshCw,
+  RotateCcw,
 } from "lucide-react";
 
 const PAYMENT_METHODS = [
@@ -93,6 +98,7 @@ function getInvoiceStatusBadge(status: "paid" | "pending" | "overdue") {
 }
 
 export default function PaymentsPage() {
+  const { toast } = useToast();
   const [botSlug, setBotSlug] = useState<string | undefined>(undefined);
 
   const totalTransactionsToday = TERMINALS.reduce((s, t) => s + t.transactionCount, 0);
@@ -110,11 +116,61 @@ export default function PaymentsPage() {
               <h1 className="text-2xl md:text-3xl" data-testid="text-payments-title">Payment Processing Hub</h1>
               <p className="text-sm text-muted-foreground mt-1">DreamPayments - Tap-to-pay & payment processing management</p>
             </div>
-            <div className="flex items-center gap-3">
+            <div className="flex flex-wrap items-center gap-2">
               <Badge variant="secondary" className="rounded-full">
                 <Activity className="h-3 w-3 mr-1.5 text-green-500" />
                 Live
               </Badge>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => {
+                  const csv = ["Terminal ID,Location,Status,Daily Volume,Transactions",
+                    ...TERMINALS.map(t => `${t.id},"${t.location}",${t.status},$${t.dailyVolume},${t.transactionCount}`)
+                  ].join("\n");
+                  const blob = new Blob([csv], { type: "text/csv" });
+                  const url = URL.createObjectURL(blob);
+                  const a = document.createElement("a");
+                  a.href = url;
+                  a.download = `payment-terminals-${new Date().toISOString().slice(0,10)}.csv`;
+                  a.click();
+                  URL.revokeObjectURL(url);
+                  toast({ title: "Terminals exported" });
+                }}
+                data-testid="button-export-terminals"
+              >
+                <Download className="h-3.5 w-3.5 mr-1.5" />
+                Export CSV
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => {
+                  const text = [
+                    `DreamPayments Report — ${new Date().toLocaleDateString()}`,
+                    `Transactions Today: ${totalTransactionsToday}`,
+                    `Total Volume: $${totalVolume.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`,
+                    `Active Terminals: ${activeTerminals}/${TERMINALS.length}`,
+                  ].join("\n");
+                  navigator.clipboard.writeText(text);
+                  toast({ title: "Report copied" });
+                }}
+                data-testid="button-copy-payment-report"
+              >
+                <Copy className="h-3.5 w-3.5 mr-1.5" />
+                Copy Report
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => {
+                  toast({ title: "Refreshing payment data..." });
+                }}
+                data-testid="button-refresh-payments"
+              >
+                <RefreshCw className="h-3.5 w-3.5 mr-1.5" />
+                Refresh
+              </Button>
             </div>
           </div>
         </div>

@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { useToast } from "@/hooks/use-toast";
 import {
   Network,
   Zap,
@@ -16,6 +17,10 @@ import {
   BarChart3,
   Filter,
   ArrowRight,
+  Copy,
+  Download,
+  ExternalLink,
+  RefreshCw,
 } from "lucide-react";
 import { MOE_ROUTING_RULES } from "@shared/bundles";
 import { AI_PROVIDERS, AI_CATEGORIES } from "@shared/ai-ecosystem";
@@ -49,6 +54,7 @@ const FLOW_STEPS = [
 ];
 
 export default function OrchestrationPage() {
+  const { toast } = useToast();
   const [priorityFilter, setPriorityFilter] = useState("all");
   const [costFilter, setCostFilter] = useState("all");
 
@@ -72,7 +78,7 @@ export default function OrchestrationPage() {
     <AppShell>
       <Seo title="Model Orchestration Engine | DreamCo Empire OS" />
       <div className="space-y-6">
-        <div>
+        <div className="flex flex-wrap items-start justify-between gap-3">
           <div className="flex items-center gap-3">
             <div className="h-10 w-10 rounded-md bg-primary/10 flex items-center justify-center">
               <Network className="h-5 w-5 text-primary" />
@@ -85,6 +91,53 @@ export default function OrchestrationPage() {
                 Intelligent task routing across {AI_PROVIDERS.length} AI providers and {AI_CATEGORIES.length} categories
               </p>
             </div>
+          </div>
+          <div className="flex gap-2 flex-wrap">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => {
+                const text = MOE_ROUTING_RULES.map(r =>
+                  `${r.priority.toUpperCase()} | ${r.taskType} → ${r.preferredProvider} (${r.fallbackProvider})`
+                ).join("\n");
+                navigator.clipboard.writeText(text);
+                toast({ title: `Copied ${MOE_ROUTING_RULES.length} routing rules` });
+              }}
+              data-testid="button-copy-rules"
+            >
+              <Copy className="h-4 w-4 mr-2" />
+              Copy All Rules
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => {
+                const csv = ["Task Type,Priority,Provider,Fallback",
+                  ...MOE_ROUTING_RULES.map(r => `${r.taskType},${r.priority},${r.preferredProvider},${r.fallbackProvider}`)
+                ].join("\n");
+                const blob = new Blob([csv], { type: "text/csv" });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement("a");
+                a.href = url;
+                a.download = `moe-routing-rules-${new Date().toISOString().slice(0,10)}.csv`;
+                a.click();
+                URL.revokeObjectURL(url);
+                toast({ title: "Routing rules exported" });
+              }}
+              data-testid="button-export-rules"
+            >
+              <Download className="h-4 w-4 mr-2" />
+              Export CSV
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => window.open("https://www.google.com/search?q=AI+model+orchestration+routing+strategies", "_blank")}
+              data-testid="button-research-routing"
+            >
+              <ExternalLink className="h-4 w-4 mr-2" />
+              Research
+            </Button>
           </div>
         </div>
 

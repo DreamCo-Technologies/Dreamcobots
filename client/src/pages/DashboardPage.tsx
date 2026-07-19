@@ -29,6 +29,7 @@ import {
   Bell,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useToast } from "@/hooks/use-toast";
 import type { AutonomyMode, BotHealthSummary } from "@shared/schema";
 
 const DIVISION_COLORS: Record<string, string> = {
@@ -57,6 +58,7 @@ const AUTONOMY_MODES: { value: AutonomyMode; label: string; desc: string; color:
 ];
 
 export default function DashboardPage() {
+  const { toast } = useToast();
   const [botSlug, setBotSlug] = useState<string | undefined>(undefined);
   const empire = useEmpireOverview();
   const autonomyQuery = useAutonomyMode();
@@ -84,11 +86,42 @@ export default function DashboardPage() {
               <h1 className="text-2xl md:text-3xl" data-testid="text-dashboard-title">Empire Command Center</h1>
               <p className="text-sm text-muted-foreground mt-1">Real-time overview of all DreamCo divisions</p>
             </div>
-            <div className="flex items-center gap-3">
+            <div className="flex flex-wrap items-center gap-2">
               <Badge variant="secondary" className="rounded-full">
                 <Activity className="h-3 w-3 mr-1.5 text-green-500" />
                 Systems Online
               </Badge>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => {
+                  const report = [
+                    `DreamCo Empire OS — Command Center Report (${new Date().toLocaleDateString()})`,
+                    `Total Bots: ${data?.totalBots ?? 0}`,
+                    `Divisions: ${data?.totalDivisions ?? 0}`,
+                    `Autonomy Mode: ${AUTONOMY_MODES.find(m => m.value === currentMode)?.label ?? currentMode}`,
+                    `Tasks: ${(tasks.data ?? []).length}`,
+                  ].join("\n");
+                  navigator.clipboard.writeText(report);
+                  toast({ title: "Report copied to clipboard" });
+                }}
+                data-testid="button-copy-report"
+              >
+                <BarChart3 className="h-3.5 w-3.5 mr-1.5" />
+                Copy Report
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={async () => {
+                  await empire.refetch?.();
+                  await tasks.refetch?.();
+                }}
+                data-testid="button-refresh-dashboard"
+              >
+                <Globe className="h-3.5 w-3.5 mr-1.5" />
+                Refresh
+              </Button>
             </div>
           </div>
         </div>

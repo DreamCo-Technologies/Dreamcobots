@@ -2,10 +2,12 @@ import { useMemo, useState } from "react";
 import Seo from "@/components/Seo";
 import AppShell from "@/components/AppShell";
 import { Card } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { TOP_AI_COMPANIES } from "@shared/tool-belt";
+import { useToast } from "@/hooks/use-toast";
 import {
   Globe,
   Search,
@@ -16,6 +18,10 @@ import {
   Sparkles,
   Building2,
   Trophy,
+  ExternalLink,
+  Copy,
+  Star,
+  Download,
 } from "lucide-react";
 
 const CATEGORIES = ["All", ...Array.from(new Set(TOP_AI_COMPANIES.map((c) => c.category)))];
@@ -48,8 +54,27 @@ function categoryColor(cat: string) {
 }
 
 export default function AILeadersPage() {
+  const { toast } = useToast();
   const [search, setSearch] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("All");
+  const [starred, setStarred] = useState<Set<number>>(new Set());
+
+  function toggleStar(rank: number, name: string) {
+    setStarred(prev => {
+      const next = new Set(prev);
+      if (next.has(rank)) { next.delete(rank); toast({ title: `Unstarred ${name}` }); }
+      else { next.add(rank); toast({ title: `Starred ${name}` }); }
+      return next;
+    });
+  }
+
+  function exportStarred() {
+    const items = TOP_AI_COMPANIES.filter(c => starred.has(c.rank));
+    if (!items.length) { toast({ title: "No starred companies", variant: "destructive" }); return; }
+    const text = items.map(c => `#${c.rank} ${c.name} (${c.country}) — ${c.valuation}`).join("\n");
+    navigator.clipboard.writeText(text);
+    toast({ title: `Copied ${items.length} companies to clipboard` });
+  }
 
   const filtered = useMemo(() => {
     return TOP_AI_COMPANIES.filter((c) => {
@@ -175,6 +200,24 @@ export default function AILeadersPage() {
                 data-testid="search-companies"
               />
             </div>
+            <Button variant="outline" size="sm" onClick={exportStarred} className="shrink-0" data-testid="button-export-starred">
+              <Copy className="h-4 w-4 mr-2" />
+              Copy Starred ({starred.size})
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              className="shrink-0"
+              onClick={() => {
+                const text = filtered.slice(0, 10).map(c => `#${c.rank} ${c.name} — ${c.valuation}`).join("\n");
+                navigator.clipboard.writeText(text);
+                toast({ title: "Copied top 10 companies" });
+              }}
+              data-testid="button-copy-top10"
+            >
+              <Download className="h-4 w-4 mr-2" />
+              Copy Top 10
+            </Button>
           </div>
 
           <div className="flex flex-wrap gap-2" data-testid="category-filters">
@@ -243,6 +286,39 @@ export default function AILeadersPage() {
                   <p className="text-xs text-muted-foreground leading-relaxed line-clamp-2">
                     {company.impact}
                   </p>
+                </div>
+                <div className="flex gap-1.5 mt-3">
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    className="flex-1 h-7 text-[11px] rounded-lg"
+                    onClick={() => window.open(`https://www.google.com/search?q=${encodeURIComponent(company.name + " AI company")}`, "_blank")}
+                    data-testid={`button-visit-${company.rank}`}
+                  >
+                    <ExternalLink className="h-3 w-3 mr-1" />
+                    Visit
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant={starred.has(company.rank) ? "default" : "outline"}
+                    className="h-7 w-7 p-0 rounded-lg"
+                    onClick={() => toggleStar(company.rank, company.name)}
+                    data-testid={`button-star-${company.rank}`}
+                  >
+                    <Star className={`h-3 w-3 ${starred.has(company.rank) ? "fill-current" : ""}`} />
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant="ghost"
+                    className="h-7 w-7 p-0 rounded-lg"
+                    onClick={() => {
+                      navigator.clipboard.writeText(`#${company.rank} ${company.name} (${company.country}) — ${company.valuation}: ${company.innovation}`);
+                      toast({ title: `Copied ${company.name}` });
+                    }}
+                    data-testid={`button-copy-company-${company.rank}`}
+                  >
+                    <Copy className="h-3 w-3" />
+                  </Button>
                 </div>
               </Card>
             ))}

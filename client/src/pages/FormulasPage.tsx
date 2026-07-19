@@ -29,6 +29,10 @@ import {
   Tag,
   Save,
   Loader2,
+  Copy,
+  Download,
+  BookOpen,
+  Play,
 } from "lucide-react";
 
 const CATEGORY_COLORS: Record<string, string> = {
@@ -294,6 +298,41 @@ function FormulaCard({
             </div>
           </div>
         )}
+        <div className="flex gap-2 pt-2">
+          <Button
+            size="sm"
+            variant="outline"
+            className="flex-1 h-8 text-xs rounded-lg"
+            onClick={() => {
+              const text = [
+                formula.name,
+                formula.formula,
+                formula.description,
+                formula.target ? `Target: ${formula.target}` : "",
+                variables.length > 0 ? `Variables: ${variables.join(", ")}` : "",
+                tags.length > 0 ? `Tags: ${tags.join(", ")}` : "",
+              ].filter(Boolean).join("\n");
+              navigator.clipboard.writeText(text);
+            }}
+            data-testid={`btn-copy-formula-${formula.id}`}
+          >
+            <Copy className="h-3.5 w-3.5 mr-1.5" />
+            Copy Formula
+          </Button>
+          <Button
+            size="sm"
+            variant="ghost"
+            className="h-8 text-xs rounded-lg px-3"
+            onClick={() => {
+              const prompt = `Apply this formula: ${formula.name}\n${formula.formula}\nDescription: ${formula.description}`;
+              navigator.clipboard.writeText(prompt);
+            }}
+            data-testid={`btn-apply-formula-${formula.id}`}
+          >
+            <Play className="h-3.5 w-3.5 mr-1.5" />
+            Apply
+          </Button>
+        </div>
       </CardContent>
     </Card>
   );

@@ -14,7 +14,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { cn } from "@/lib/utils";
-import { Bot, ChevronRight, Crown, Pencil, Plus, Save, Search, Filter, Building2, Unlock } from "lucide-react";
+import { Bot, ChevronRight, Crown, Pencil, Plus, Save, Search, Filter, Building2, Unlock, MessageSquare, Copy, BarChart2, Star } from "lucide-react";
 import { Link } from "wouter";
 import type { CreateBotProfileRequest, UpdateBotProfileRequest } from "@shared/schema";
 import { DIVISIONS, BOT_TIERS } from "@shared/schema";
@@ -527,12 +527,36 @@ export default function BotsPage() {
                         </DialogContent>
                       </Dialog>
 
+                      <Link href={`/?bot=${b.slug}`}>
+                        <Button
+                          className="rounded-xl w-full bg-gradient-to-r from-primary to-accent text-primary-foreground shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all"
+                          data-testid={`chat-bot-${b.id}`}
+                        >
+                          <MessageSquare className="h-4 w-4 mr-2" />
+                          Chat
+                        </Button>
+                      </Link>
+
                       <Link href={`/bot/${b.id}`}>
-                        <Button variant="outline" className="rounded-xl border-border/70" data-testid={`view-bot-${b.id}`}>
+                        <Button variant="outline" className="rounded-xl border-border/70 w-full" data-testid={`view-bot-${b.id}`}>
                           Details
                           <ChevronRight className="h-4 w-4 ml-1" />
                         </Button>
                       </Link>
+
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="rounded-xl w-full"
+                        onClick={() => {
+                          navigator.clipboard.writeText(`Bot: ${b.displayName}\nSlug: ${b.slug}\nDivision: ${b.division ?? "—"}\nTier: ${b.tier ?? "free"}\n${b.description ?? ""}`);
+                          toast({ title: `Copied ${b.displayName}` });
+                        }}
+                        data-testid={`copy-bot-${b.id}`}
+                      >
+                        <Copy className="h-4 w-4 mr-2" />
+                        Copy Info
+                      </Button>
 
                       <Button
                         onClick={() => {

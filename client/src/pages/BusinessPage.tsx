@@ -28,6 +28,9 @@ import {
   Building2,
   MapPin,
   Banknote,
+  MessageSquare,
+  Copy,
+  ExternalLink,
   Handshake,
   Plane,
   Brain,
@@ -41,7 +44,6 @@ import {
   Briefcase,
   ShieldCheck,
   Layers,
-  MessageSquare,
   Bot,
   Zap,
 } from "lucide-react";
@@ -397,7 +399,7 @@ export default function BusinessPage() {
                           </li>
                         ))}
                       </ul>
-                      <div className="flex items-center gap-2">
+                      <div className="flex flex-wrap items-center gap-2">
                         <Button
                           size="sm"
                           data-testid={`button-launch-${tool.title.toLowerCase().replace(/\s+/g, "-")}`}
@@ -409,6 +411,30 @@ export default function BusinessPage() {
                         <Button
                           size="sm"
                           variant="outline"
+                          data-testid={`button-chat-${tool.title.toLowerCase().replace(/\s+/g, "-")}`}
+                          onClick={() => {
+                            const { setLocation } = (window as any).__dreamLocation ?? {};
+                            window.location.href = `/?bot=${tool.botSlug}`;
+                          }}
+                        >
+                          <MessageSquare className="h-3.5 w-3.5 mr-1.5" />
+                          Chat
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          data-testid={`button-copy-${tool.title.toLowerCase().replace(/\s+/g, "-")}`}
+                          onClick={() => {
+                            const text = `${tool.title}\n${tool.description}\nFeatures:\n${tool.features.map(f => `• ${f}`).join("\n")}`;
+                            navigator.clipboard.writeText(text);
+                            toast({ title: `Copied ${tool.title}` });
+                          }}
+                        >
+                          <Copy className="h-3.5 w-3.5" />
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="ghost"
                           data-testid={`button-learn-${tool.title.toLowerCase().replace(/\s+/g, "-")}`}
                           onClick={() => handleLearnMore(tool.title)}
                         >

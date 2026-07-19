@@ -16,6 +16,9 @@ import {
   RotateCcw,
   Save,
   Trash2,
+  Copy,
+  RefreshCw,
+  FileJson,
 } from "lucide-react";
 import type { SystemSnapshot } from "@shared/schema";
 
@@ -53,6 +56,23 @@ export default function TimeCapsulePage() {
   });
 
   const snapshots = snapshotsQuery.data ?? [];
+
+  function exportSnapshot(snap: SystemSnapshot) {
+    const data = JSON.stringify({ id: snap.id, name: snap.name, createdAt: snap.createdAt, data: snap.data }, null, 2);
+    const blob = new Blob([data], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `snapshot-${snap.name.replace(/\s+/g, "-")}-${snap.id}.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+    toast({ title: "Snapshot exported", description: `${snap.name}.json downloaded.` });
+  }
+
+  function copySnapshot(snap: SystemSnapshot) {
+    navigator.clipboard.writeText(JSON.stringify(snap.data, null, 2));
+    toast({ title: "Snapshot data copied", description: `${snap.name} copied to clipboard.` });
+  }
 
   return (
     <AppShell>
@@ -127,7 +147,23 @@ export default function TimeCapsulePage() {
                             </Badge>
                           </div>
                         </div>
-                        <div className="flex gap-2 flex-shrink-0">
+                        <div className="flex gap-2 flex-shrink-0 flex-wrap">
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => exportSnapshot(snap)}
+                            data-testid={`button-export-snapshot-${snap.id}`}
+                          >
+                            <Download className="h-3.5 w-3.5 mr-1" /> Export
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant="ghost"
+                            onClick={() => copySnapshot(snap)}
+                            data-testid={`button-copy-snapshot-${snap.id}`}
+                          >
+                            <Copy className="h-3.5 w-3.5 mr-1" /> Copy
+                          </Button>
                           <Button
                             size="sm"
                             variant="outline"

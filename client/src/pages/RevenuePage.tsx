@@ -12,12 +12,17 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { cn } from "@/lib/utils";
 import type { BotProfile } from "@shared/schema";
 import { DIVISION_API_REGISTRIES, getTotalApiCount, getApiCountForDivision, TIER_PRICING } from "@shared/api-registry";
+import { useToast } from "@/hooks/use-toast";
+import { queryClient } from "@/lib/queryClient";
 import {
   Activity,
   ArrowRight,
   ArrowUpRight,
   BarChart3,
   Bot,
+  Download,
+  RefreshCw,
+  Copy,
   Building2,
   CircleDollarSign,
   Clock,
@@ -140,7 +145,7 @@ export default function RevenuePage() {
               <h1 className="text-2xl md:text-3xl" data-testid="text-revenue-title">Revenue Dashboard</h1>
               <p className="text-sm text-muted-foreground mt-1">Empire-wide revenue tracking & API integration metrics</p>
             </div>
-            <div className="flex items-center gap-3">
+            <div className="flex flex-wrap items-center gap-2">
               <Badge variant="secondary" className="rounded-full">
                 <Plug className="h-3 w-3 mr-1.5 text-primary" />
                 {totalApiCount} APIs Connected
@@ -149,6 +154,55 @@ export default function RevenuePage() {
                 <Activity className="h-3 w-3 mr-1.5 text-green-500" />
                 Live
               </Badge>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => {
+                  const { toast } = (window as any).__dreamToast ?? {};
+                  const csv = ["Division,Revenue,Clients,API Count",
+                    ...topBotRevenue.map(b => `${b.division ?? ""},${generateBotRevenue(b.id, b.tier).revenue},${generateBotRevenue(b.id, b.tier).clients},${getApiCountForDivision(b.division ?? "")}`)
+                  ].join("\n");
+                  const blob = new Blob([csv], { type: "text/csv" });
+                  const url = URL.createObjectURL(blob);
+                  const a = document.createElement("a");
+                  a.href = url;
+                  a.download = `empire-revenue-${new Date().toISOString().slice(0,10)}.csv`;
+                  a.click();
+                  URL.revokeObjectURL(url);
+                }}
+                data-testid="button-export-revenue"
+              >
+                <Download className="h-3.5 w-3.5 mr-1.5" />
+                Export CSV
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={async () => {
+                  await queryClient.invalidateQueries({ queryKey: ["/api/bots"] });
+                }}
+                data-testid="button-refresh-revenue"
+              >
+                <RefreshCw className="h-3.5 w-3.5 mr-1.5" />
+                Refresh
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => {
+                  const text = [
+                    `Revenue Report — ${new Date().toLocaleDateString()}`,
+                    `Monthly Revenue: $${totals.revenue.toLocaleString()}`,
+                    `Active Clients: ${totals.clients}`,
+                    `APIs Connected: ${totalApiCount}`,
+                  ].join("\n");
+                  navigator.clipboard.writeText(text);
+                }}
+                data-testid="button-copy-revenue-report"
+              >
+                <Copy className="h-3.5 w-3.5 mr-1.5" />
+                Copy Report
+              </Button>
             </div>
           </div>
         </div>
