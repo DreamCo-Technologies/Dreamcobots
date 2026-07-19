@@ -28,12 +28,14 @@ import {
   BookOpen, Gamepad2, GraduationCap as CourseIcon, Code2, Cpu,
   CheckCircle2, AlertCircle, ChevronRight, Terminal, FileCode2,
   Globe, Users, ShieldCheck, BarChart3, Music, ImageIcon, X,
+  Bug, Lock, GitPullRequest, Rocket, FlaskConical, Layers,
+  RefreshCw, Database, Brain,
 } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 
-type ChatMode = "plan" | "build" | "execute" | "teach" | "vibe";
+type ChatMode = "plan" | "build" | "execute" | "teach" | "vibe" | "agent" | "debug" | "security";
 
-const MODE_CONFIG: Record<ChatMode, { label: string; icon: typeof Map; color: string; description: string; suggestions: string[] }> = {
+const MODE_CONFIG: Record<ChatMode, { label: string; icon: typeof Map; color: string; description: string; suggestions: string[]; badge?: string }> = {
   plan: {
     label: "Plan",
     icon: Map,
@@ -94,6 +96,45 @@ const MODE_CONFIG: Record<ChatMode, { label: string; icon: typeof Map; color: st
       "Create a real-time chat app with WebSockets and voice messages.",
     ],
   },
+  agent: {
+    label: "Agent",
+    icon: BrainCircuit,
+    color: "text-violet-500",
+    description: "Autonomous multi-step Plan → Execute → Ship",
+    badge: "NEW",
+    suggestions: [
+      "Autonomously build a full SaaS payment integration with Stripe, webhooks, and subscription management.",
+      "Plan and execute a complete OAuth 2.0 + PKCE auth system with refresh token rotation.",
+      "Build an autonomous affiliate marketing pipeline: scrape → rank → monetize → track.",
+      "Design and ship a complete REST API with auth, rate limiting, tests, and deployment config.",
+    ],
+  },
+  debug: {
+    label: "Debug",
+    icon: Bug,
+    color: "text-red-500",
+    description: "Root-cause analysis, deep fix, prevention",
+    badge: "NEW",
+    suggestions: [
+      "Debug this error: [paste your error message and stack trace here]",
+      "My code runs but gives wrong output — help me trace the exact failure point.",
+      "Find all the bugs in this function and rewrite it correctly: [paste code]",
+      "My API returns 500 in production but works locally — diagnose and fix.",
+    ],
+  },
+  security: {
+    label: "Security",
+    icon: ShieldCheck,
+    color: "text-emerald-500",
+    description: "SAST scan, OWASP, secret detection, zero-trust",
+    badge: "NEW",
+    suggestions: [
+      "Scan this code for SQL injection, XSS, and auth bypass vulnerabilities: [paste code]",
+      "Audit my Express.js auth flow for OWASP Top 10 issues.",
+      "Check this environment config for hardcoded secrets and insecure defaults.",
+      "Generate a zero-trust security architecture for my multi-tenant SaaS.",
+    ],
+  },
 };
 
 interface BuddyFeature {
@@ -120,6 +161,19 @@ const FEATURE_ICONS: Record<string, typeof Mic> = {
   "Course Simulator": CourseIcon,
   "Competitive Intel": BarChart3,
   "Data Packages": ShieldCheck,
+  // Revolutionary new capabilities
+  "Code Execution": Terminal,
+  "Image Analysis": FlaskConical,
+  "Agent Pipeline": Brain,
+  "Security Scan": Lock,
+  "System Architect": Layers,
+  "Code Translator": RefreshCw,
+  "Code Review": CheckCircle2,
+  "PR Generator": GitPullRequest,
+  "Deploy Config": Rocket,
+  "Deep Debug": Bug,
+  "Memory System": Database,
+  "Code Refactor": Wand2,
 };
 
 function BuddySuperpowersPanel({ onInjectPrompt }: { onInjectPrompt: (p: string) => void }) {
@@ -168,6 +222,82 @@ function BuddySuperpowersPanel({ onInjectPrompt }: { onInjectPrompt: (p: string)
       const r = await fetch("/api/intel/competitive", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ competitor: "ChatGPT", category: "ai-chat" }) });
       const d = await r.json() as any;
       return d.analysis ? `✅ Competitive intel live!\n\n${(d.analysis as string).slice(0, 250)}...` : `❌ ${d.error}`;
+    },
+    // ── Revolutionary new quick tests ──
+    "Code Execution": async () => {
+      const r = await fetch("/api/buddy/execute-code", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ code: "const fib = n => n <= 1 ? n : fib(n-1)+fib(n-2); console.log('fib(10)=', fib(10)); fib(10)", language: "javascript" }) });
+      const d = await r.json() as any;
+      if (d.output) return `✅ Code execution live! (${d.executionTimeMs}ms)\n\nOutput: ${d.output}`;
+      return `❌ ${d.error}`;
+    },
+    "Agent Pipeline": async () => {
+      const r = await fetch("/api/buddy/agent-run", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ goal: "Write a 3-step plan to build a REST API", maxSteps: 2 }) });
+      const d = await r.json() as any;
+      if (d.plan) return `✅ Agent pipeline live!\n\nPlan: ${d.plan}\nSteps completed: ${(d.steps ?? []).length}`;
+      return `❌ ${d.error}`;
+    },
+    "Security Scan": async () => {
+      const code = `const sql = "SELECT * FROM users WHERE id = " + req.params.id; db.query(sql);`;
+      const r = await fetch("/api/buddy/security-scan", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ code, language: "javascript" }) });
+      const d = await r.json() as any;
+      if (d.riskLevel) return `✅ Security scanner live!\n\nRisk: ${d.riskLevel.toUpperCase()} | Score: ${d.score}/100\nVulnerabilities found: ${(d.vulnerabilities ?? []).length}\n${(d.vulnerabilities ?? []).slice(0, 2).map((v: any) => `• [${v.severity?.toUpperCase()}] ${v.title}`).join("\n")}`;
+      return `❌ ${d.error}`;
+    },
+    "System Architect": async () => {
+      const r = await fetch("/api/buddy/architect", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ requirements: "A SaaS analytics platform", style: "microservices", scale: "startup" }) });
+      const d = await r.json() as any;
+      if (d.systemName) return `✅ Architect live!\n\nSystem: ${d.systemName}\nComponents: ${(d.components ?? []).length}\nStack: ${(d.techStack ?? []).slice(0, 4).join(", ")}`;
+      return `❌ ${d.error}`;
+    },
+    "Code Translator": async () => {
+      const r = await fetch("/api/buddy/translate-code", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ code: "const add = (a, b) => a + b;", fromLanguage: "javascript", toLanguage: "python" }) });
+      const d = await r.json() as any;
+      return d.translatedCode ? `✅ Code translator live!\n\n${(d.translatedCode as string).slice(0, 200)}...` : `❌ ${d.error}`;
+    },
+    "Code Review": async () => {
+      const code = `function getUser(id) { return db.query("SELECT * FROM users WHERE id=" + id) }`;
+      const r = await fetch("/api/buddy/code-review", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ code, language: "javascript" }) });
+      const d = await r.json() as any;
+      if (d.grade) return `✅ Code review live!\n\nGrade: ${d.grade} | Score: ${d.overallScore}/100\nIssues: ${(d.issues ?? []).length}\n${d.summary?.slice(0, 150)}`;
+      return `❌ ${d.error}`;
+    },
+    "Deep Debug": async () => {
+      const r = await fetch("/api/buddy/debug-deep", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ errorMessage: "TypeError: Cannot read property 'id' of undefined", stackTrace: "at getUser (app.js:42)", code: "const id = user.id;" }) });
+      const d = await r.json() as any;
+      if (d.rootCause) return `✅ Deep debug live!\n\nRoot cause: ${d.rootCause}\nCategory: ${d.errorCategory}\nConfidence: ${d.confidence}%`;
+      return `❌ ${d.error}`;
+    },
+    "Memory System": async () => {
+      const r = await fetch("/api/buddy/memory/save", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ key: "test-preference", value: "Uses TypeScript + Drizzle ORM + Tailwind", category: "preferences" }) });
+      const d = await r.json() as any;
+      if (d.saved) {
+        const r2 = await fetch("/api/buddy/memory");
+        const d2 = await r2.json() as any;
+        return `✅ Memory system live!\n\nSaved entry. Total memories: ${d2.total}`;
+      }
+      return `❌ ${d.error}`;
+    },
+    "Deploy Config": async () => {
+      const r = await fetch("/api/buddy/deploy-config", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ projectDescription: "Node.js REST API", techStack: ["Express", "PostgreSQL"], platform: "vercel", port: 3000 }) });
+      const d = await r.json() as any;
+      return d.vercelJson ? `✅ Deploy config live!\n\nVercel config ready. Dockerfile: ${d.dockerfile ? "✅" : "❌"} | K8s: ${d.kubernetesManifest ? "✅" : "❌"}` : `❌ ${d.error}`;
+    },
+    "Code Refactor": async () => {
+      const code = `function calc(x,y,op){if(op=="add"){return x+y}else if(op=="sub"){return x-y}else{return 0}}`;
+      const r = await fetch("/api/buddy/refactor", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ code, language: "javascript" }) });
+      const d = await r.json() as any;
+      return d.refactoredCode ? `✅ Refactor live!\n\n${(d.refactoredCode as string).slice(0, 300)}...` : `❌ ${d.error}`;
+    },
+    "PR Generator": async () => {
+      const diff = `+const logger = require('./logger');\n+logger.info('Request received');`;
+      const r = await fetch("/api/buddy/generate-pr", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ diff, repoContext: "Express API server" }) });
+      const d = await r.json() as any;
+      return d.title ? `✅ PR generator live!\n\nTitle: ${d.title}\nLabels: ${(d.labels ?? []).join(", ")}` : `❌ ${d.error}`;
+    },
+    "Image Analysis": async () => {
+      const r = await fetch("/api/buddy/analyze-image", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ imageUrl: "https://via.placeholder.com/400x300?text=Test+UI+Screenshot", prompt: "Describe what you see in this image." }) });
+      const d = await r.json() as any;
+      return d.analysis ? `✅ Vision analysis live!\n\n${(d.analysis as string).slice(0, 250)}...` : `❌ ${d.error}`;
     },
   };
 
@@ -596,18 +726,26 @@ export default function ConversationPage() {
                 onClick={() => setMode(m)}
                 className={cn(
                   "inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-sm font-medium transition-all",
-                  isActive
-                    ? m === "vibe"
-                      ? "bg-cyan-500 text-white shadow-md shadow-cyan-500/20"
-                      : "bg-primary text-primary-foreground shadow-md"
-                    : "bg-card/60 border border-border/60 text-muted-foreground hover:text-foreground hover:bg-card hover:shadow-sm"
+                  isActive ? (
+                    m === "vibe"    ? "bg-cyan-500 text-white shadow-md shadow-cyan-500/20" :
+                    m === "agent"   ? "bg-violet-600 text-white shadow-md shadow-violet-500/20" :
+                    m === "debug"   ? "bg-red-600 text-white shadow-md shadow-red-500/20" :
+                    m === "security"? "bg-emerald-600 text-white shadow-md shadow-emerald-500/20" :
+                    "bg-primary text-primary-foreground shadow-md"
+                  ) : "bg-card/60 border border-border/60 text-muted-foreground hover:text-foreground hover:bg-card hover:shadow-sm"
                 )}
                 data-testid={`mode-${m}`}
               >
-                <Icon className={cn("h-3.5 w-3.5", isActive ? (m === "vibe" ? "text-white" : "text-primary-foreground") : cfg.color)} />
+                <Icon className={cn("h-3.5 w-3.5", isActive ? "text-white" : cfg.color)} />
                 {cfg.label}
-                {m === "vibe" && !isActive && (
-                  <span className="ml-0.5 text-[10px] font-bold text-cyan-500 uppercase tracking-tight">NEW</span>
+                {cfg.badge && !isActive && (
+                  <span className={cn(
+                    "ml-0.5 text-[10px] font-bold uppercase tracking-tight",
+                    m === "vibe" ? "text-cyan-500" :
+                    m === "agent" ? "text-violet-500" :
+                    m === "debug" ? "text-red-500" :
+                    m === "security" ? "text-emerald-500" : "text-primary"
+                  )}>{cfg.badge}</span>
                 )}
               </button>
             );
@@ -617,7 +755,7 @@ export default function ConversationPage() {
           </span>
         </div>
 
-        {/* Vibe Code bar — shown when vibe mode is active */}
+        {/* Mode-specific info bars */}
         {mode === "vibe" && (
           <div className="mt-3 flex items-center gap-2 p-3 rounded-2xl border border-cyan-500/20 bg-cyan-950/10">
             <Terminal className="h-4 w-4 text-cyan-400 flex-shrink-0" />
@@ -625,13 +763,51 @@ export default function ConversationPage() {
             <span className="text-xs text-muted-foreground">Describe any project and Buddy builds every file from scratch. Works in React, Python, Rust, Go, n8n, and more.</span>
             <div className="ml-auto flex items-center gap-1.5 text-xs">
               {["React","Python","n8n","Rust","Game"].map(lang => (
-                <button
-                  key={lang}
-                  onClick={() => setComposer(`Build a complete ${lang} project: `)}
+                <button key={lang} onClick={() => setComposer(`Build a complete ${lang} project: `)}
                   className="px-2 py-1 rounded-lg bg-cyan-950/40 border border-cyan-500/20 text-cyan-400 hover:bg-cyan-950/60 transition-colors text-[11px] font-mono"
-                >
-                  {lang}
-                </button>
+                >{lang}</button>
+              ))}
+            </div>
+          </div>
+        )}
+        {mode === "agent" && (
+          <div className="mt-3 flex items-center gap-2 p-3 rounded-2xl border border-violet-500/20 bg-violet-950/10">
+            <Brain className="h-4 w-4 text-violet-400 flex-shrink-0" />
+            <span className="text-xs text-violet-300 font-medium">Agent Mode —</span>
+            <span className="text-xs text-muted-foreground">Buddy autonomously Plans → Executes → Verifies → Ships. Give a goal, he handles the rest — code, tests, deployment config.</span>
+            <div className="ml-auto flex items-center gap-1.5 text-xs">
+              {["Auth System","REST API","SaaS Billing","Bot Pipeline"].map(t => (
+                <button key={t} onClick={() => setComposer(`Autonomously build a complete ${t}: `)}
+                  className="px-2 py-1 rounded-lg bg-violet-950/40 border border-violet-500/20 text-violet-400 hover:bg-violet-950/60 transition-colors text-[11px] font-medium"
+                >{t}</button>
+              ))}
+            </div>
+          </div>
+        )}
+        {mode === "debug" && (
+          <div className="mt-3 flex items-center gap-2 p-3 rounded-2xl border border-red-500/20 bg-red-950/10">
+            <Bug className="h-4 w-4 text-red-400 flex-shrink-0" />
+            <span className="text-xs text-red-300 font-medium">Debug Mode —</span>
+            <span className="text-xs text-muted-foreground">Paste any error + stack trace. Buddy finds the root cause, explains the attack vector, writes the fix, and adds a prevention test.</span>
+            <div className="ml-auto flex items-center gap-1.5 text-xs">
+              {["TypeError","500 Error","Race Condition","Memory Leak"].map(t => (
+                <button key={t} onClick={() => setComposer(`Debug this ${t}: [paste error and code here]`)}
+                  className="px-2 py-1 rounded-lg bg-red-950/40 border border-red-500/20 text-red-400 hover:bg-red-950/60 transition-colors text-[11px] font-medium"
+                >{t}</button>
+              ))}
+            </div>
+          </div>
+        )}
+        {mode === "security" && (
+          <div className="mt-3 flex items-center gap-2 p-3 rounded-2xl border border-emerald-500/20 bg-emerald-950/10">
+            <Lock className="h-4 w-4 text-emerald-400 flex-shrink-0" />
+            <span className="text-xs text-emerald-300 font-medium">Security Mode —</span>
+            <span className="text-xs text-muted-foreground">SAST-level scanning: OWASP Top 10, CWE Top 25, secret detection, SQL injection, XSS. Every vulnerability gets a fix + CWE reference.</span>
+            <div className="ml-auto flex items-center gap-1.5 text-xs">
+              {["OWASP Scan","Secret Detect","Auth Audit","Zero-Trust"].map(t => (
+                <button key={t} onClick={() => setComposer(`Run a ${t} on this code: [paste code here]`)}
+                  className="px-2 py-1 rounded-lg bg-emerald-950/40 border border-emerald-500/20 text-emerald-400 hover:bg-emerald-950/60 transition-colors text-[11px] font-medium"
+                >{t}</button>
               ))}
             </div>
           </div>
