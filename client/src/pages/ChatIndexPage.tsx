@@ -514,11 +514,12 @@ function BuyBotsModal({ open, onClose }: { open: boolean; onClose: () => void })
                   <p className="text-xs text-muted-foreground mb-3">Showing {filtered.length} of {allBots.length} bots</p>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     {filtered.slice(0, 100).map((bot) => {
-                      const tierKey = (bot.tier ?? "free").toLowerCase();
-                      const tierClass = TIER_COLORS[tierKey] ?? TIER_COLORS.free;
+                      const botTierRaw = bot.tier && bot.tier.trim() !== "" ? bot.tier : null;
+                      const tierKey = botTierRaw ? botTierRaw.toLowerCase() : "unknown";
+                      const tierClass = TIER_COLORS[tierKey] ?? "bg-slate-400/10 text-slate-400 border-slate-400/20";
                       const activeTier = subscriptionQuery.data?.tier ?? null;
-                      const unlocked = isBotUnlocked(tierKey, activeTier);
-                      const isFree = tierKey === "free";
+                      const unlocked = isBotUnlocked(botTierRaw, activeTier);
+                      const isFree = botTierRaw?.toLowerCase() === "free";
                       const priceId = tierToPriceId[tierKey];
                       const productsLoading = productsQuery.isLoading || (productsQuery.data?.syncing && productsQuery.data?.products.length === 0);
                       return (
@@ -552,7 +553,7 @@ function BuyBotsModal({ open, onClose }: { open: boolean; onClose: () => void })
                                 </Badge>
                               )}
                               <Badge className={cn("text-[10px] border", tierClass)}>
-                                {bot.tier ?? "free"}
+                                {botTierRaw ?? "Unknown"}
                               </Badge>
                             </div>
                           </div>

@@ -486,16 +486,21 @@ export default function BotDetailPage() {
                   <div className="mt-3 flex flex-wrap items-center gap-2">
                     <Badge variant="secondary" className="rounded-full">{bot.division}</Badge>
                     <Badge variant="outline" className={cn("rounded-full capitalize", TIER_COLORS[bot.tier])}>{bot.tier}</Badge>
-                    {isPaidTier && !subscriptionQuery.isLoading && unlocked && (
+                    {isPaidTier && !subscriptionQuery.isLoading && unlocked === true && (
                       <Badge className="rounded-full bg-emerald-500/15 text-emerald-500 border border-emerald-500/30" data-testid="badge-unlocked-bot">
                         <Unlock className="h-3 w-3 mr-1" />
                         Unlocked
                       </Badge>
                     )}
-                    {isPaidTier && !subscriptionQuery.isLoading && !unlocked && (
+                    {isPaidTier && !subscriptionQuery.isLoading && unlocked === false && (
                       <Badge className="rounded-full bg-muted text-muted-foreground border border-border/40" data-testid="badge-locked-bot">
                         <Lock className="h-3 w-3 mr-1" />
                         Locked
+                      </Badge>
+                    )}
+                    {!subscriptionQuery.isLoading && unlocked === null && (
+                      <Badge className="rounded-full bg-muted/50 text-muted-foreground border border-border/30" data-testid="badge-unknown-tier-bot">
+                        Unknown Tier
                       </Badge>
                     )}
                     <Badge variant="outline" className="rounded-full capitalize">{bot.category}</Badge>
@@ -516,7 +521,7 @@ export default function BotDetailPage() {
                   <p className="text-xs text-muted-foreground">Target Users</p>
                   <p className="text-sm font-medium" data-testid="bot-detail-target-users">{bot.targetUsers || "N/A"}</p>
                 </div>
-                {isPaidTier && !subscriptionQuery.isLoading && !unlocked && (
+                {isPaidTier && !subscriptionQuery.isLoading && unlocked === false && (
                   <Link href="/pricing">
                     <Button size="sm" className="rounded-xl mt-1" data-testid="btn-activate-bot">
                       <Zap className="h-4 w-4 mr-2" />
@@ -524,7 +529,7 @@ export default function BotDetailPage() {
                     </Button>
                   </Link>
                 )}
-                {isPaidTier && !subscriptionQuery.isLoading && unlocked && (
+                {isPaidTier && !subscriptionQuery.isLoading && unlocked === true && (
                   <Link href={`/chat/${bot.slug}`}>
                     <Button size="sm" variant="outline" className="rounded-xl mt-1 border-emerald-500/30 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-500/10" data-testid="btn-launch-bot">
                       <Unlock className="h-4 w-4 mr-2" />

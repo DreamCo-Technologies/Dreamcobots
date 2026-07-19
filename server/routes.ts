@@ -1263,6 +1263,37 @@ export async function registerRoutes(
     const allBots = await storage.listBotProfiles();
     let fixed = 0;
     const issues: string[] = [];
+    const tierFlags: string[] = [];
+
+    const DIVISION_TIER_MAP: Record<string, string> = {
+      CommandCore: "elite",
+      DreamEmpire: "elite",
+      DreamAgents: "enterprise",
+      DreamAIInfra: "enterprise",
+      DreamCyber: "enterprise",
+      DreamEntFinance: "enterprise",
+      DreamLegal: "enterprise",
+      DreamCodeLab: "free",
+    };
+
+    function inferTierFromPriceRange(priceRange: string): string | null {
+      const trimmed = priceRange?.trim() ?? "";
+      if (!trimmed) return null;
+      if (trimmed.toLowerCase() === "free") return "free";
+      const match = trimmed.match(/\$?([\d,]+)/);
+      if (!match) return null;
+      const price = parseInt(match[1].replace(",", ""), 10);
+      if (price <= 0) return "free";
+      if (price < 200) return "pro";
+      if (price < 500) return "enterprise";
+      return "elite";
+    }
+
+    function inferTier(priceRange: string, division: string): string {
+      const fromPrice = inferTierFromPriceRange(priceRange);
+      if (fromPrice !== null) return fromPrice;
+      return DIVISION_TIER_MAP[division] ?? "pro";
+    }
 
     for (const bot of allBots) {
       const updates: Record<string, any> = {};
@@ -1297,6 +1328,21 @@ export async function registerRoutes(
         issues.push(`${bot.slug}: missing category`);
       }
 
+      // Tier validation: fill in missing tier and flag potential miscategorization
+      if (!bot.tier || bot.tier.trim() === "") {
+        const inferred = inferTier(bot.priceRange ?? "", bot.division ?? "");
+        updates.tier = inferred;
+        const flag = `${bot.slug}: missing tier — inferred '${inferred}' from priceRange/division`;
+        issues.push(flag);
+        tierFlags.push(flag);
+      } else if (bot.tier?.toLowerCase() === "free") {
+        const inferred = inferTier(bot.priceRange ?? "", bot.division ?? "");
+        if (inferred !== "free") {
+          const flag = `${bot.slug}: tier='free' but priceRange/division suggests '${inferred}' — review needed`;
+          tierFlags.push(flag);
+        }
+      }
+
       if (Object.keys(updates).length > 0) {
         await storage.updateBotProfile(bot.id, updates);
         fixed++;
@@ -1307,6 +1353,7 @@ export async function registerRoutes(
       total: allBots.length,
       fixed,
       issues,
+      tierFlags,
       message: fixed > 0 ? `Normalized ${fixed} bots` : "All bots already normalized",
     });
   });
