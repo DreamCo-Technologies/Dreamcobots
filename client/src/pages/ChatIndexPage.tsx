@@ -580,6 +580,11 @@ function BuyBotsModal({ open, onClose }: { open: boolean; onClose: () => void })
                                 } else if (priceId) {
                                   checkoutMutation.mutate(priceId);
                                 } else if (!productsLoading) {
+                                  toast({
+                                    title: "Plan not found",
+                                    description: `No Stripe price found for the "${tierKey}" tier. Visit the Plans tab to subscribe manually.`,
+                                    variant: "destructive",
+                                  });
                                   setTab("plans");
                                 }
                               }}

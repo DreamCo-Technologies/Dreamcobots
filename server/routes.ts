@@ -2088,15 +2088,30 @@ export async function registerRoutes(
         ORDER BY p.name, pr.unit_amount
       `);
 
+      const inferTierFromName = (name: string | null | undefined): string | null => {
+        if (!name) return null;
+        const lower = name.toLowerCase();
+        if (lower.includes("elite")) return "elite";
+        if (lower.includes("enterprise")) return "enterprise";
+        if (lower.includes("pro")) return "pro";
+        if (lower.includes("free")) return "free";
+        return null;
+      };
+
       const productsMap = new Map<string, any>();
       for (const row of result.rows) {
         const r = row as any;
         if (!productsMap.has(r.product_id)) {
+          const meta = r.product_metadata ?? {};
+          if (!meta.tier) {
+            const inferred = inferTierFromName(r.product_name);
+            if (inferred) meta.tier = inferred;
+          }
           productsMap.set(r.product_id, {
             id: r.product_id,
             name: r.product_name,
             description: r.product_description,
-            metadata: r.product_metadata,
+            metadata: meta,
             prices: [],
           });
         }
@@ -2136,13 +2151,20 @@ export async function registerRoutes(
           });
         }
 
-        const liveProducts = stripeProducts.data.map((p) => ({
-          id: p.id,
-          name: p.name,
-          description: p.description,
-          metadata: p.metadata,
-          prices: livePricesByProduct.get(p.id) ?? [],
-        }));
+        const liveProducts = stripeProducts.data.map((p) => {
+          const meta: Record<string, string> = { ...(p.metadata as Record<string, string>) };
+          if (!meta.tier) {
+            const inferred = inferTierFromName(p.name);
+            if (inferred) meta.tier = inferred;
+          }
+          return {
+            id: p.id,
+            name: p.name,
+            description: p.description,
+            metadata: meta,
+            prices: livePricesByProduct.get(p.id) ?? [],
+          };
+        });
 
         return res.json({ products: liveProducts, source: "live" });
       } catch (liveError: any) {
