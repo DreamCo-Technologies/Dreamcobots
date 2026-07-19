@@ -224,6 +224,367 @@ export async function registerRoutes(
     }
   });
 
+  // ===== VOICE CLONING =====
+  app.post("/api/voice/clone", async (req, res) => {
+    try {
+      const { text, voiceId = "21m00Tcm4TlvDq8ikWAM", stability = 0.5, similarityBoost = 0.75 } = req.body ?? {};
+      if (!text || !String(text).trim()) return res.status(400).json({ error: "Text is required" });
+      const apiKey = process.env.ELEVENLABS_API_KEY;
+      if (!apiKey) {
+        return res.status(503).json({
+          error: "ELEVENLABS_API_KEY not configured",
+          setup: "Add ELEVENLABS_API_KEY to Replit Secrets — get a free key at elevenlabs.io",
+          capability: "voice-cloning",
+        });
+      }
+      const response = await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${voiceId}`, {
+        method: "POST",
+        headers: { "xi-api-key": apiKey, "Content-Type": "application/json", "Accept": "audio/mpeg" },
+        body: JSON.stringify({ text: String(text).trim(), model_id: "eleven_monolingual_v1", voice_settings: { stability, similarity_boost: similarityBoost } }),
+      });
+      if (!response.ok) {
+        const err = await response.text();
+        return res.status(response.status).json({ error: `ElevenLabs error: ${err}` });
+      }
+      const audioBuffer = Buffer.from(await response.arrayBuffer());
+      res.set({ "Content-Type": "audio/mpeg", "Content-Length": audioBuffer.length });
+      res.send(audioBuffer);
+    } catch (e: any) {
+      console.error("[voice] clone error:", e.message);
+      res.status(500).json({ error: e.message || "Voice cloning failed" });
+    }
+  });
+
+  // List available voices
+  app.get("/api/voice/voices", async (req, res) => {
+    const apiKey = process.env.ELEVENLABS_API_KEY;
+    if (!apiKey) return res.status(503).json({ error: "ELEVENLABS_API_KEY not configured", voices: [] });
+    try {
+      const r = await fetch("https://api.elevenlabs.io/v1/voices", { headers: { "xi-api-key": apiKey } });
+      const data = await r.json() as any;
+      res.json({ voices: (data.voices ?? []).map((v: any) => ({ id: v.voice_id, name: v.name, category: v.category })) });
+    } catch (e: any) {
+      res.status(500).json({ error: e.message, voices: [] });
+    }
+  });
+
+  // ===== WEB SEARCH =====
+  app.post("/api/search/web", async (req, res) => {
+    try {
+      const { query, numResults = 5 } = req.body ?? {};
+      if (!query || !String(query).trim()) return res.status(400).json({ error: "Query is required" });
+      const q = String(query).trim();
+
+      // Try Serper API first
+      const serperKey = process.env.SERPER_API_KEY;
+      if (serperKey) {
+        const r = await fetch("https://google.serper.dev/search", {
+          method: "POST",
+          headers: { "X-API-KEY": serperKey, "Content-Type": "application/json" },
+          body: JSON.stringify({ q, num: numResults }),
+        });
+        if (r.ok) {
+          const data = await r.json() as any;
+          const results = (data.organic ?? []).slice(0, numResults).map((item: any) => ({
+            title: item.title, url: item.link, snippet: item.snippet,
+          }));
+          // Use Buddy (OpenAI) to synthesize a useful answer from results
+          const synthesis = await openai.chat.completions.create({
+            model: "gpt-4o-mini",
+            messages: [
+              { role: "system", content: "You are Buddy Bot, DreamCo's research AI. Synthesize the search results into a clear, actionable answer. Include source links." },
+              { role: "user", content: `Query: ${q}\n\nSearch results:\n${results.map((r: any, i: number) => `${i+1}. ${r.title}\n${r.url}\n${r.snippet}`).join("\n\n")}` },
+            ],
+            max_tokens: 800,
+          });
+          return res.json({ query: q, results, synthesis: synthesis.choices[0]?.message?.content ?? "", source: "serper" });
+        }
+      }
+
+      // Fall back to GitHub search for tech queries + OpenAI synthesis
+      const ghResponse = await fetch(`https://api.github.com/search/repositories?q=${encodeURIComponent(q)}&sort=stars&per_page=${numResults}`, {
+        headers: { "Accept": "application/vnd.github.v3+json", ...(process.env.GITHUB_TOKEN ? { "Authorization": `token ${process.env.GITHUB_TOKEN}` } : {}) },
+      });
+      const ghData = await ghResponse.json() as any;
+      const ghResults = (ghData.items ?? []).slice(0, numResults).map((item: any) => ({
+        title: item.full_name, url: item.html_url, snippet: item.description ?? "No description",
+        stars: item.stargazers_count, language: item.language,
+      }));
+
+      // Use OpenAI to synthesize a general research answer
+      const synthesis = await openai.chat.completions.create({
+        model: "gpt-4o-mini",
+        messages: [
+          { role: "system", content: "You are Buddy Bot, DreamCo's research AI. Answer the query with your knowledge + the GitHub repos found. Be comprehensive and include actionable steps." },
+          { role: "user", content: `Research query: ${q}\n\nTop GitHub repos found:\n${ghResults.map((r: any, i: number) => `${i+1}. ${r.title} (⭐${r.stars}) — ${r.snippet}\n${r.url}`).join("\n\n")}` },
+        ],
+        max_tokens: 1000,
+      });
+
+      res.json({ query: q, results: ghResults, synthesis: synthesis.choices[0]?.message?.content ?? "", source: "github+openai" });
+    } catch (e: any) {
+      console.error("[search] web error:", e.message);
+      res.status(500).json({ error: e.message || "Search failed" });
+    }
+  });
+
+  // ===== GITHUB INTELLIGENCE =====
+  // Every bot gets a GitHub intelligence feed — top tools/repos by topic
+  app.get("/api/github-intel/trending", async (req, res) => {
+    try {
+      const topic = String(req.query.topic ?? "artificial-intelligence");
+      const language = req.query.language as string | undefined;
+      const langFilter = language ? `+language:${language}` : "";
+      const ghUrl = `https://api.github.com/search/repositories?q=topic:${encodeURIComponent(topic)}${langFilter}&sort=stars&order=desc&per_page=10`;
+      const r = await fetch(ghUrl, {
+        headers: { "Accept": "application/vnd.github.v3+json", ...(process.env.GITHUB_TOKEN ? { "Authorization": `token ${process.env.GITHUB_TOKEN}` } : {}) },
+      });
+      const data = await r.json() as any;
+      const repos = (data.items ?? []).map((item: any) => ({
+        name: item.full_name, url: item.html_url, description: item.description,
+        stars: item.stargazers_count, language: item.language, updatedAt: item.pushed_at,
+        topics: item.topics ?? [],
+      }));
+      res.json({ topic, repos, fetchedAt: new Date().toISOString() });
+    } catch (e: any) {
+      res.status(500).json({ error: e.message || "GitHub intel fetch failed" });
+    }
+  });
+
+  // Search GitHub for specific tools/code patterns
+  app.post("/api/github-intel/search", async (req, res) => {
+    try {
+      const { query, type = "repositories" } = req.body ?? {};
+      if (!query) return res.status(400).json({ error: "Query required" });
+      const r = await fetch(`https://api.github.com/search/${type}?q=${encodeURIComponent(String(query))}&sort=stars&per_page=8`, {
+        headers: { "Accept": "application/vnd.github.v3+json", ...(process.env.GITHUB_TOKEN ? { "Authorization": `token ${process.env.GITHUB_TOKEN}` } : {}) },
+      });
+      const data = await r.json() as any;
+      res.json({ query, results: data.items ?? [], total: data.total_count ?? 0 });
+    } catch (e: any) {
+      res.status(500).json({ error: e.message || "GitHub search failed" });
+    }
+  });
+
+  // ===== COUNCIL SYSTEM =====
+  // In-memory council store (persists in process, use DB for production)
+  const councilProposals: Array<{
+    id: string; botSlug: string; division: string; type: string;
+    title: string; description: string; priority: "low"|"medium"|"high"|"critical";
+    status: "pending"|"approved"|"rejected"; submittedAt: string;
+  }> = [
+    { id: "c1", botSlug: "research-bot", division: "CommandCore", type: "upgrade", title: "Add vector memory to all bots", description: "Each bot should store key learnings in a vector DB for retrieval across sessions.", priority: "high", status: "pending", submittedAt: new Date().toISOString() },
+    { id: "c2", botSlug: "analytics-hub", division: "CommandCore", type: "integration", title: "Connect Serper API for live web search", description: "Add SERPER_API_KEY to enable real-time web search across all research bots.", priority: "high", status: "pending", submittedAt: new Date().toISOString() },
+    { id: "c3", botSlug: "security-compliance-bot", division: "DreamCyber", type: "security", title: "Rotate all API keys every 90 days", description: "Implement automatic key rotation scheduler for all registered platform connections.", priority: "critical", status: "pending", submittedAt: new Date().toISOString() },
+  ];
+
+  app.get("/api/council/proposals", async (_req, res) => {
+    res.json({ proposals: councilProposals, total: councilProposals.length });
+  });
+
+  app.post("/api/council/report", async (req, res) => {
+    try {
+      const { botSlug, division, type, title, description, priority = "medium" } = req.body ?? {};
+      if (!botSlug || !title || !description) return res.status(400).json({ error: "botSlug, title, description required" });
+      const proposal = {
+        id: `c${Date.now()}`, botSlug: String(botSlug), division: String(division ?? "unknown"),
+        type: String(type ?? "upgrade"), title: String(title), description: String(description),
+        priority: (["low","medium","high","critical"].includes(priority) ? priority : "medium") as "low"|"medium"|"high"|"critical",
+        status: "pending" as const, submittedAt: new Date().toISOString(),
+      };
+      councilProposals.unshift(proposal);
+      console.log(`[council] New proposal from ${botSlug}: ${title}`);
+      res.json({ success: true, proposal });
+    } catch (e: any) {
+      res.status(500).json({ error: e.message || "Council report failed" });
+    }
+  });
+
+  app.patch("/api/council/proposals/:id", async (req, res) => {
+    const { id } = req.params;
+    const { status } = req.body ?? {};
+    const idx = councilProposals.findIndex(p => p.id === id);
+    if (idx === -1) return res.status(404).json({ error: "Proposal not found" });
+    if (!["pending","approved","rejected"].includes(status)) return res.status(400).json({ error: "Invalid status" });
+    councilProposals[idx].status = status;
+    res.json({ success: true, proposal: councilProposals[idx] });
+  });
+
+  // ===== BUDDY SELF-TRAINING / BOOTCAMP =====
+  app.post("/api/buddy/train", async (req, res) => {
+    try {
+      const { topic, difficulty = "intermediate", format = "exercise" } = req.body ?? {};
+      if (!topic) return res.status(400).json({ error: "Topic required" });
+      const prompt = format === "exercise"
+        ? `Create a coding bootcamp exercise for: "${topic}". Difficulty: ${difficulty}. Include: 1) Learning objective, 2) Problem statement, 3) Starter code, 4) Expected solution, 5) Test cases, 6) How this earns revenue or solves a real problem.`
+        : `Create a self-training curriculum for Buddy Bot to master: "${topic}". Include: phases, resources, practice projects, and how to verify mastery.`;
+      const result = await openai.chat.completions.create({
+        model: "gpt-4o-mini",
+        messages: [
+          { role: "system", content: "You are Buddy Bot, DreamCo's master coder and trainer. Generate high-quality bootcamp content." },
+          { role: "user", content: prompt },
+        ],
+        max_tokens: 1500,
+      });
+      res.json({ topic, difficulty, format, content: result.choices[0]?.message?.content ?? "", generatedAt: new Date().toISOString() });
+    } catch (e: any) {
+      res.status(500).json({ error: e.message || "Training generation failed" });
+    }
+  });
+
+  // ===== BOOK STUDY =====
+  app.post("/api/buddy/study-book", async (req, res) => {
+    try {
+      const { title, author, extractType = "key-insights" } = req.body ?? {};
+      if (!title) return res.status(400).json({ error: "Book title required" });
+      const prompt = extractType === "key-insights"
+        ? `Provide a comprehensive study guide for "${title}" by ${author ?? "unknown author"}. Include: 1) Core thesis, 2) 10 key insights, 3) Actionable takeaways for entrepreneurs/AI builders, 4) How to apply the lessons to build revenue-generating systems, 5) Related books to read next.`
+        : `Summarize "${title}" by ${author ?? "unknown"} as a structured course outline with modules, lessons, and exercises for each chapter.`;
+      const result = await openai.chat.completions.create({
+        model: "gpt-4o-mini",
+        messages: [
+          { role: "system", content: "You are Buddy Bot, an expert at extracting actionable insights from nonfiction books and turning them into executable business strategies." },
+          { role: "user", content: prompt },
+        ],
+        max_tokens: 2000,
+      });
+      res.json({ title, author, extractType, content: result.choices[0]?.message?.content ?? "", studiedAt: new Date().toISOString() });
+    } catch (e: any) {
+      res.status(500).json({ error: e.message || "Book study failed" });
+    }
+  });
+
+  // ===== VIBE CODE — Full project generation =====
+  app.post("/api/buddy/vibe-code", async (req, res) => {
+    try {
+      const { description, stack = "React + TypeScript + Tailwind", includeFiles = true } = req.body ?? {};
+      if (!description) return res.status(400).json({ error: "Project description required" });
+      const result = await openai.chat.completions.create({
+        model: "gpt-4o-mini",
+        messages: [
+          { role: "system", content: `You are Buddy Bot, the world's best vibe coder. When given a project description, generate a complete, production-ready project in ${stack}. Include ALL files with full code. Format output as JSON: { "projectName": string, "description": string, "stack": string, "files": [{"path": string, "content": string, "type": "tsx"|"ts"|"css"|"json"|"md"}], "commands": string[], "features": string[] }` },
+          { role: "user", content: `Vibe code this project from scratch: ${description}\n\nStack: ${stack}\n\nInclude every file needed to run this immediately.` },
+        ],
+        max_tokens: 3000,
+        response_format: { type: "json_object" },
+      });
+      const raw = result.choices[0]?.message?.content ?? "{}";
+      let project: any;
+      try { project = JSON.parse(raw); } catch { project = { projectName: "Generated Project", files: [], rawOutput: raw }; }
+      res.json({ ...project, generatedAt: new Date().toISOString() });
+    } catch (e: any) {
+      res.status(500).json({ error: e.message || "Vibe code generation failed" });
+    }
+  });
+
+  // ===== GAME BUILDER =====
+  app.post("/api/buddy/build-game", async (req, res) => {
+    try {
+      const { gameType, description } = req.body ?? {};
+      if (!description) return res.status(400).json({ error: "Game description required" });
+      const result = await openai.chat.completions.create({
+        model: "gpt-4o-mini",
+        messages: [
+          { role: "system", content: `You are Buddy Bot, expert game developer. Build complete browser games using HTML5 Canvas + JavaScript or Phaser 3. Output as JSON: { "gameName": string, "gameType": string, "files": [{"path": string, "content": string}], "instructions": string, "controls": string }` },
+          { role: "user", content: `Build a complete ${gameType ?? "browser"} game: ${description}. Make it fully playable in a browser. Include HTML, CSS, and JavaScript.` },
+        ],
+        max_tokens: 3000,
+        response_format: { type: "json_object" },
+      });
+      const raw = result.choices[0]?.message?.content ?? "{}";
+      let game: any;
+      try { game = JSON.parse(raw); } catch { game = { gameName: "Generated Game", files: [], rawOutput: raw }; }
+      res.json({ ...game, generatedAt: new Date().toISOString() });
+    } catch (e: any) {
+      res.status(500).json({ error: e.message || "Game build failed" });
+    }
+  });
+
+  // ===== COLLEGE COURSE SIMULATOR =====
+  app.post("/api/buddy/simulate-course", async (req, res) => {
+    try {
+      const { subject, level = "undergraduate", weeks = 12 } = req.body ?? {};
+      if (!subject) return res.status(400).json({ error: "Subject required" });
+      const result = await openai.chat.completions.create({
+        model: "gpt-4o-mini",
+        messages: [
+          { role: "system", content: `You are Buddy Bot, curriculum designer. Create complete college course simulations. Output JSON: { "courseTitle": string, "subject": string, "level": string, "creditHours": number, "syllabus": string, "weeks": [{"week": number, "topic": string, "lecture": string, "assignment": string, "quiz": string}], "finalProject": string, "gradingRubric": string }` },
+          { role: "user", content: `Simulate a complete ${level} college course on "${subject}" for ${weeks} weeks. Include full syllabus, weekly lectures, assignments, quizzes, and final project.` },
+        ],
+        max_tokens: 3000,
+        response_format: { type: "json_object" },
+      });
+      const raw = result.choices[0]?.message?.content ?? "{}";
+      let course: any;
+      try { course = JSON.parse(raw); } catch { course = { courseTitle: subject, weeks: [], rawOutput: raw }; }
+      res.json({ ...course, generatedAt: new Date().toISOString() });
+    } catch (e: any) {
+      res.status(500).json({ error: e.message || "Course simulation failed" });
+    }
+  });
+
+  // ===== COMPETITIVE INTELLIGENCE =====
+  app.post("/api/intel/competitive", async (req, res) => {
+    try {
+      const { competitor, category = "ai-tools" } = req.body ?? {};
+      if (!competitor) return res.status(400).json({ error: "Competitor name required" });
+      const [ghData, analysisData] = await Promise.all([
+        fetch(`https://api.github.com/search/repositories?q=${encodeURIComponent(competitor)}&sort=stars&per_page=5`, {
+          headers: { "Accept": "application/vnd.github.v3+json", ...(process.env.GITHUB_TOKEN ? { "Authorization": `token ${process.env.GITHUB_TOKEN}` } : {}) },
+        }).then(r => r.json() as Promise<any>),
+        openai.chat.completions.create({
+          model: "gpt-4o-mini",
+          messages: [
+            { role: "system", content: "You are DreamCo's competitive intelligence analyst. Analyze competitors and identify weaknesses DreamCo can exploit." },
+            { role: "user", content: `Analyze competitor: "${competitor}" in the ${category} space. Identify: 1) Their strengths, 2) Their weaknesses/gaps, 3) How DreamCo can outcompete them, 4) Features to copy/improve, 5) Price positioning opportunities.` },
+          ],
+          max_tokens: 1000,
+        }),
+      ]);
+      res.json({
+        competitor, category,
+        githubPresence: { repos: (ghData.items ?? []).slice(0, 5).map((r: any) => ({ name: r.full_name, stars: r.stargazers_count, url: r.html_url })) },
+        analysis: analysisData.choices[0]?.message?.content ?? "",
+        analyzedAt: new Date().toISOString(),
+      });
+    } catch (e: any) {
+      res.status(500).json({ error: e.message || "Intel failed" });
+    }
+  });
+
+  // ===== DATA PACKAGES (for selling training data) =====
+  app.get("/api/data-packages", async (_req, res) => {
+    res.json({
+      packages: [
+        { id: "dp-conversations", name: "Empire OS Conversation Dataset", size: "~50K conversations", price: "$299/mo", description: "High-quality AI conversations across 45 business domains for fine-tuning", tier: "pro" },
+        { id: "dp-bot-prompts", name: "1,051 Bot System Prompts", size: "~2MB", price: "$499 one-time", description: "Complete system prompt library covering every industry vertical", tier: "enterprise" },
+        { id: "dp-revenue-flows", name: "Revenue Automation Flows", size: "~500 workflows", price: "$199/mo", description: "n8n/workflow templates for autonomous revenue generation", tier: "pro" },
+        { id: "dp-code-snippets", name: "DreamCode Snippet Library", size: "~10K snippets", price: "$149/mo", description: "Production-ready code snippets across 50+ languages and frameworks", tier: "pro" },
+        { id: "dp-formulas", name: "High-Profit Formula Library", size: "~300 formulas", price: "$999 one-time", description: "Business formulas, deal calculators, and financial models", tier: "elite" },
+      ],
+    });
+  });
+
+  // ===== BUDDY FEATURES STATUS =====
+  app.get("/api/buddy/features", async (_req, res) => {
+    res.json({
+      features: [
+        { name: "Vibe Coding", route: "POST /api/buddy/vibe-code", status: "live", description: "Generate full projects from description" },
+        { name: "Image Generation", route: "POST /api/generate-image", status: "live", description: "AI image generation via gpt-image-1" },
+        { name: "Voice Cloning", route: "POST /api/voice/clone", status: process.env.ELEVENLABS_API_KEY ? "live" : "needs-key", description: "Text-to-speech + voice cloning via ElevenLabs", setup: "Add ELEVENLABS_API_KEY" },
+        { name: "Web Search", route: "POST /api/search/web", status: "live", description: "GitHub + OpenAI synthesis search (Serper upgrade available)", setup: "Add SERPER_API_KEY for Google results" },
+        { name: "GitHub Intelligence", route: "GET /api/github-intel/trending", status: "live", description: "Hourly GitHub trending + search" },
+        { name: "Council Governance", route: "GET /api/council/proposals", status: "live", description: "Bot proposal submission and approval" },
+        { name: "Self Training", route: "POST /api/buddy/train", status: "live", description: "Generate coding bootcamp exercises" },
+        { name: "Book Study", route: "POST /api/buddy/study-book", status: "live", description: "Extract insights from any nonfiction book" },
+        { name: "Game Builder", route: "POST /api/buddy/build-game", status: "live", description: "Build browser-playable games from description" },
+        { name: "Course Simulator", route: "POST /api/buddy/simulate-course", status: "live", description: "Simulate full college courses" },
+        { name: "Competitive Intel", route: "POST /api/intel/competitive", status: "live", description: "Analyze any competitor" },
+        { name: "Data Packages", route: "GET /api/data-packages", status: "live", description: "Sell training data to other AI models" },
+      ],
+    });
+  });
+
   // Bots
   app.get(api.bots.list.path, async (req, res) => {
     const division = req.query.division as string | undefined;
