@@ -200,6 +200,30 @@ export async function registerRoutes(
 ): Promise<Server> {
   await ensureSeeded();
 
+  // ===== IMAGE GENERATION =====
+  app.post("/api/generate-image", async (req, res) => {
+    try {
+      const { prompt, size = "1024x1024" } = req.body ?? {};
+      if (!prompt || !String(prompt).trim()) {
+        return res.status(400).json({ error: "Prompt is required" });
+      }
+      const response = await openai.images.generate({
+        model: "gpt-image-1",
+        prompt: String(prompt).trim(),
+        n: 1,
+        size: size as "1024x1024" | "512x512" | "256x256",
+      });
+      const imageData = (response.data ?? [])[0];
+      if (!imageData || (!imageData.url && !(imageData as any).b64_json)) {
+        return res.status(502).json({ error: "Image generation returned no data. The AI provider may be unavailable or the prompt was rejected." });
+      }
+      res.json({ url: imageData.url, b64_json: (imageData as any).b64_json });
+    } catch (e: any) {
+      console.error("[image] generation error:", e.message);
+      res.status(500).json({ error: e.message || "Failed to generate image" });
+    }
+  });
+
   // Bots
   app.get(api.bots.list.path, async (req, res) => {
     const division = req.query.division as string | undefined;

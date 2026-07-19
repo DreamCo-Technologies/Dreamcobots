@@ -3,3 +3,4 @@
 - [GitHub push method](github-push.md) — Only method that works: git push "https://${REPLIT_ACCESS_TOLKEN}@github.com/DreamCo-Technologies/Dreamcobots.git" main --force (note typo: TOLKEN not TOKEN).
 - [Stripe status](stripe-status.md) — Stripe code fully wired; user still needs STRIPE_SECRET_KEY + STRIPE_PUBLISHABLE_KEY added as Replit secrets to activate live checkout.
 - [Service worker blank page trap](service-worker-blank-page.md) — Stale SW caches broken app; in dev mode always unregister instead of registering.
+- [Express route vs Vite catch-all](express-vite-route-order.md) — Vite's /{*path} app.use catches ALL methods. New API routes must use the existing openai instance in routes.ts (not a separate import) or they silently fail and Vite intercepts them.
