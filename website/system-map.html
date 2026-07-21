@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Repository Map - DreamCo Empire OS</title>
+  <meta name="description" content="A generated, public-safe map of DreamCo bot registries, divisions, libraries, readiness, and deployment status." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+<div id="nav-placeholder"></div><script src="nav.js"></script>
+
+<main class="system-map-shell">
+  <header class="system-map-header">
+    <div>
+      <span class="badge badge-primary">Generated from repository evidence</span>
+      <h1>Repository System Map</h1>
+      <p>One public-safe view of what is cataloged, prototyped, approval-gated, and still being completed.</p>
+    </div>
+    <a class="btn btn-primary" href="buddy.html">Open Buddy</a>
+  </header>
+
+  <section class="system-map-metrics" aria-label="Repository summary">
+    <div class="map-metric"><strong data-map-stat="registered_bots">--</strong><span>Registered bots</span></div>
+    <div class="map-metric"><strong data-map-stat="registered_divisions">--</strong><span>Divisions</span></div>
+    <div class="map-metric"><strong data-map-stat="native_runnable_candidates">--</strong><span>Native candidates</span></div>
+    <div class="map-metric"><strong data-map-stat="completion_queue">--</strong><span>Completion queue</span></div>
+    <div class="map-metric"><strong data-map-stat="capability_blueprints">--</strong><span>Capability slots</span></div>
+  </section>
+
+  <section class="system-map-section">
+    <div class="system-map-title">
+      <div><h2>System Readiness</h2><p>Status labels distinguish real repository evidence from public prototypes.</p></div>
+      <span id="map-generated" class="map-generated">Loading generated data</span>
+    </div>
+    <div id="system-readiness-grid" class="system-readiness-grid" aria-live="polite"></div>
+  </section>
+
+  <section class="system-map-section">
+    <div class="system-map-title">
+      <div><h2>Per-Bot Libraries</h2><p>Generated contracts that organize each bot's tools, APIs, webhooks, workflows, skills, sandboxes, and resources.</p></div>
+    </div>
+    <div id="system-library-grid" class="system-library-grid"></div>
+  </section>
+
+  <section class="system-map-section">
+    <div class="system-map-title">
+      <div><h2>Division Registry</h2><p>The public view exposes missions and counts, never secrets, personal data, raw logs, or private reports.</p></div>
+      <label class="map-search-label" for="division-search">
+        <span>Filter divisions</span>
+        <input id="division-search" type="search" placeholder="Search by name or mission" autocomplete="off" />
+      </label>
+    </div>
+    <div id="division-map-grid" class="division-map-grid"></div>
+  </section>
+
+  <section class="public-contract">
+    <div><span class="badge badge-amber">Public contract</span><h2>Preview, not unattended production</h2></div>
+    <p>The live site presents verified repository structure and browser-based prototypes. It does not claim verified revenue, process payments, execute private bots, contact people, or modify accounts.</p>
+  </section>
+</main>
+
+<script src="system-map.js" defer></script>
+</body>
+</html>

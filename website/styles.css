@@ -64,6 +64,24 @@ nav {
   backdrop-filter: blur(20px);
   border-bottom: 1px solid var(--border);
 }
+.site-preview-notice {
+  position: relative;
+  z-index: 90;
+  border-bottom: 1px solid rgba(245,158,11,.28);
+  background: #17130b;
+  color: #f7d58c;
+}
+.site-preview-notice .container {
+  min-height: 38px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  font-size: .76rem;
+  text-align: center;
+}
+.site-preview-notice strong { color: #fbbf24; }
+.site-preview-notice a { color: #fff; text-decoration: underline; text-underline-offset: 3px; }
 .nav-inner {
   display: flex; align-items: center; justify-content: space-between;
   gap: 24px; height: 64px;
@@ -277,6 +295,8 @@ nav {
 .buddy-route-pill strong {
   color: var(--text);
   text-align: right;
+  min-width: 0;
+  overflow-wrap: anywhere;
 }
 
 /* ── Buddy home chatbot shell ── */
@@ -518,12 +538,87 @@ nav {
   grid-template-columns: 1fr 1fr;
   gap: 18px;
 }
+.buddy-home-grid > .card { min-width: 0; }
 .buddy-inline-actions {
   display: flex;
   gap: 8px;
   flex-wrap: wrap;
   margin-top: 10px;
 }
+
+/* Repository system map */
+.system-map-shell {
+  width: min(1240px, calc(100% - 40px));
+  margin: 0 auto;
+  padding: 48px 0 72px;
+}
+.system-map-header,
+.system-map-title,
+.system-status-heading,
+.system-library-card > div,
+.division-map-card > div,
+.public-contract {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+}
+.system-map-header { align-items: flex-end; margin-bottom: 28px; }
+.system-map-header h1 { margin: 12px 0 8px; font-size: clamp(2rem, 4vw, 3.4rem); }
+.system-map-header p { max-width: 760px; }
+.system-map-metrics {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  border: 1px solid var(--border);
+  background: var(--card);
+}
+.map-metric { padding: 20px; border-right: 1px solid var(--border); }
+.map-metric:last-child { border-right: 0; }
+.map-metric strong { display: block; font-size: 1.8rem; color: var(--text); }
+.map-metric span { display: block; margin-top: 4px; color: var(--text3); font-size: .76rem; }
+.system-map-section { padding-top: 54px; }
+.system-map-title { align-items: flex-end; margin-bottom: 18px; }
+.system-map-title h2 { font-size: 1.55rem; }
+.system-map-title p { margin-top: 6px; max-width: 740px; font-size: .88rem; }
+.map-generated { color: var(--text3); font-size: .74rem; }
+.system-readiness-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+.system-status-card,
+.system-library-card,
+.division-map-card {
+  border: 1px solid var(--border);
+  background: var(--card);
+  padding: 20px;
+}
+.system-status-card p,
+.system-library-card p,
+.division-map-card p { margin: 10px 0 14px; font-size: .84rem; }
+.system-status-card code { display: inline-block; color: var(--text3); overflow-wrap: anywhere; }
+.system-library-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
+.system-library-card strong,
+.division-map-card strong { color: var(--primary2); font-size: 1.2rem; }
+.map-search-label { display: grid; gap: 5px; color: var(--text3); font-size: .72rem; }
+.map-search-label input {
+  width: min(320px, 72vw);
+  border: 1px solid var(--border2);
+  border-radius: 6px;
+  padding: 10px 12px;
+  background: var(--bg2);
+  color: var(--text);
+  font: inherit;
+}
+.division-map-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+.division-governance { color: #f7d58c; font-size: .72rem; }
+.public-contract {
+  align-items: flex-start;
+  margin-top: 54px;
+  border-left: 3px solid var(--amber);
+  background: #17130b;
+  padding: 22px;
+}
+.public-contract h2 { margin-top: 8px; font-size: 1.3rem; }
+.public-contract p { max-width: 720px; font-size: .86rem; }
+.map-empty,
+.map-error { grid-column: 1 / -1; padding: 24px; border: 1px solid var(--border); background: var(--card); }
 
 /* ── Buddy Creative Studio ── */
 .studio-shell {
@@ -880,6 +975,10 @@ footer {
 @media (max-width: 1100px) {
   .pricing-grid { grid-template-columns: repeat(2, 1fr); }
   .footer-inner { grid-template-columns: 1fr 1fr; }
+  .system-map-metrics { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .map-metric { border-bottom: 1px solid var(--border); }
+  .map-metric:nth-child(3) { border-right: 0; }
+  .system-library-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 @media (max-width: 900px) {
   .hero-inner { grid-template-columns: 1fr; }
@@ -890,17 +989,17 @@ footer {
   .nav-links { display: none; }
   .buddy-shell { grid-template-columns: 1fr; }
   .buddy-rail {
-    position: static;
-    height: auto;
-    border-right: none;
-    border-bottom: 1px solid var(--border);
-    display: grid;
-    grid-template-columns: 1fr;
+    display: none;
   }
-  .buddy-chat-home { padding: 24px 18px 42px; }
+  .buddy-chat-home { display: flex; flex-direction: column; padding: 24px 18px 42px; }
+  .buddy-topbar { order: 1; }
+  .buddy-composer-panel { order: 2; }
+  .buddy-chat-stage { order: 3; }
+  .buddy-home-grid { order: 4; }
   .buddy-home-grid { grid-template-columns: 1fr; }
   .studio-layout { grid-template-columns: 1fr; }
   .studio-preview { position: static; }
+  .division-map-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 @media (max-width: 640px) {
   .section { padding: 64px 0; }
@@ -910,6 +1009,7 @@ footer {
   .footer-bottom { flex-direction: column; gap: 12px; text-align: center; }
   .metrics-inner { gap: 32px; }
   .buddy-capabilities { grid-template-columns: 1fr; }
+  .buddy-shell { grid-template-columns: minmax(0, 1fr); width: 100%; }
   .buddy-topbar { flex-direction: column; }
   .buddy-chat-stage { padding: 14px; }
   .buddy-bubble { max-width: 100%; }
@@ -928,4 +1028,16 @@ footer {
   .studio-results > div:nth-child(-n+2) { border-bottom: 1px solid var(--border); }
   .studio-avatar-preview,
   .studio-built-project .studio-generated-avatar { width: 110px; height: 110px; }
+  .site-preview-notice .container { align-items: flex-start; flex-direction: column; gap: 2px; padding-top: 8px; padding-bottom: 8px; text-align: left; }
+  .system-map-shell { width: min(100% - 24px, 1240px); padding-top: 30px; }
+  .system-map-header,
+  .system-map-title,
+  .public-contract { align-items: flex-start; flex-direction: column; }
+  .system-map-metrics,
+  .system-readiness-grid,
+  .system-library-grid,
+  .division-map-grid { grid-template-columns: 1fr; }
+  .map-metric { border-right: 0; }
+  .map-search-label,
+  .map-search-label input { width: 100%; }
 }

@@ -7,6 +7,7 @@
     { href: 'studio.html', label: '🎮 Creative Studio' },
     { href: 'divisions.html', label: '🏛️ Divisions' },
     { href: 'bots.html', label: '🤖 Bot Fleet' },
+    { href: 'system-map.html', label: '🗺️ Repository Map' },
     { href: 'chat.html', label: '💬 Chat' },
     { href: 'autonomy.html', label: '⚡ Autonomy' },
     { href: 'ecosystem.html', label: '🌐 Ecosystem' },
@@ -37,7 +38,7 @@
         <div class="nav-more">
           <a href="#" class="nav-more-btn" onclick="toggleMoreMenu(event)">More ▾</a>
           <div class="nav-more-menu" id="nav-more-menu">
-            ${links.slice(9).map(l=>`<a href="${l.href}">${l.label}</a>`).join('')}
+            ${links.slice(9).map(l=>`<a href="${l.href}" class="${current===l.href?'nav-active':''}">${l.label}</a>`).join('')}
           </div>
         </div>
       </div>
@@ -47,9 +48,30 @@
       </div>
     </div>
   </div>
-</nav>`;
+</nav>
+<div class="site-preview-notice" role="status">
+  <div class="container">
+    <strong>Repository preview</strong>
+    <span>Generated inventory is real repository data. Revenue, payment, task, and autonomy screens are demos unless connected to an approved backend.</span>
+    <a href="system-map.html">View verified status</a>
+  </div>
+</div>`;
   const placeholder = document.getElementById('nav-placeholder');
   if (placeholder) placeholder.outerHTML = navHTML;
+
+  if (!document.querySelector('link[rel="icon"]')) {
+    const icon = document.createElement('link');
+    icon.rel = 'icon';
+    icon.href = 'assets/images/favicon.svg';
+    icon.type = 'image/svg+xml';
+    document.head.appendChild(icon);
+  }
+  if (!document.querySelector('link[rel="manifest"]')) {
+    const manifest = document.createElement('link');
+    manifest.rel = 'manifest';
+    manifest.href = 'manifest.webmanifest';
+    document.head.appendChild(manifest);
+  }
 
   const style = document.createElement('style');
   style.textContent = `

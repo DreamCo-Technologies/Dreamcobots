@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Dashboard — DreamCo Empire OS</title>
-  <meta name="description" content="Empire command center. Live bot status, revenue metrics, autonomy controls, and system health across all 45 divisions." />
+  <meta name="description" content="DreamCo repository dashboard with generated bot inventory, readiness metrics, completion queues, and governed autonomy plans." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="styles.css" />
@@ -17,11 +17,11 @@
   <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:32px">
     <div>
       <h1 style="font-size:1.75rem">Empire Command Center</h1>
-      <p>Live system status across 1,051 bots · 45 divisions · Full Auto active</p>
+      <p>Generated repository status across the governed bot registry and 45 divisions</p>
     </div>
     <div style="display:flex;gap:10px">
-      <span class="badge badge-green">● All Systems Operational</span>
-      <a href="autonomy.html" class="btn btn-primary btn-sm">⚡ Full Auto</a>
+      <span class="badge badge-primary">Repository data connected</span>
+      <a href="system-map.html" class="btn btn-primary btn-sm">Verified System Map</a>
     </div>
   </div>
 
@@ -38,9 +38,9 @@
       <div class="badge badge-green" style="margin-top:8px">↑ 0.3% this week</div>
     </div>
     <div class="card" style="text-align:center">
-      <div style="font-size:2.25rem;font-weight:800;color:var(--amber)">$4,821</div>
-      <div style="font-size:.8rem;color:var(--text3);margin-top:4px">Revenue Today</div>
-      <div class="badge badge-amber" style="margin-top:8px">↑ 12% vs yesterday</div>
+      <div style="font-size:1.3rem;font-weight:800;color:var(--amber)">Not connected</div>
+      <div style="font-size:.8rem;color:var(--text3);margin-top:4px">Verified Revenue Feed</div>
+      <div class="badge badge-amber" style="margin-top:8px">Backend required</div>
     </div>
     <div class="card" style="text-align:center">
       <div style="font-size:2.25rem;font-weight:800;color:var(--accent)">3</div>
@@ -63,8 +63,8 @@
           <span class="badge badge-amber">Pro / Enterprise</span>
         </div>
         <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 18px;border-radius:12px;border:2px solid var(--green);background:rgba(34,197,94,.06)">
-          <div><div style="font-weight:700">🚀 Full Autonomy</div><div style="font-size:.8rem;color:var(--text3)">24/7 autonomous operations</div></div>
-          <span class="badge badge-green">● ACTIVE</span>
+          <div><div style="font-weight:700">🚀 Full Autonomy</div><div style="font-size:.8rem;color:var(--text3)">Planned, guarded production operations</div></div>
+          <span class="badge badge-amber">NOT LIVE</span>
         </div>
       </div>
       <a href="autonomy.html" class="btn btn-outline btn-sm" style="margin-top:16px">Manage Autonomy →</a>
@@ -74,11 +74,11 @@
     <div class="card card-lg">
       <h3 style="margin-bottom:20px">🏛️ Top Divisions</h3>
       <div style="display:flex;flex-direction:column;gap:10px">
-        <div class="settings-row"><div><strong>DreamSalesPro</strong><div style="font-size:.75rem;color:var(--text3)">45 bots · CRM, Lead Gen, Email</div></div><span class="badge badge-green">$1,240/day</span></div>
-        <div class="settings-row"><div><strong>DreamCodeLab</strong><div style="font-size:.75rem;color:var(--text3)">100+ bots · Every library</div></div><span class="badge badge-primary">$980/day</span></div>
-        <div class="settings-row"><div><strong>DreamFinance</strong><div style="font-size:.75rem;color:var(--text3)">32 bots · Trading, DeFi</div></div><span class="badge badge-amber">$820/day</span></div>
-        <div class="settings-row"><div><strong>DreamCrypto</strong><div style="font-size:.75rem;color:var(--text3)">24 bots · Wallets, Arbitrage</div></div><span class="badge badge-cyan">$610/day</span></div>
-        <div class="settings-row"><div><strong>DreamAgents</strong><div style="font-size:.75rem;color:var(--text3)">30 bots · Autonomous tasks</div></div><span class="badge badge-violet">$540/day</span></div>
+        <div class="settings-row"><div><strong>DreamSalesPro</strong><div style="font-size:.75rem;color:var(--text3)">Sales workflow registry</div></div><span class="badge badge-primary">Cataloged</span></div>
+        <div class="settings-row"><div><strong>DreamCodeLab</strong><div style="font-size:.75rem;color:var(--text3)">Code and builder registry</div></div><span class="badge badge-primary">Cataloged</span></div>
+        <div class="settings-row"><div><strong>DreamFinance</strong><div style="font-size:.75rem;color:var(--text3)">Finance workflow registry</div></div><span class="badge badge-amber">Approval gated</span></div>
+        <div class="settings-row"><div><strong>DreamCrypto</strong><div style="font-size:.75rem;color:var(--text3)">Digital asset workflow registry</div></div><span class="badge badge-amber">Approval gated</span></div>
+        <div class="settings-row"><div><strong>DreamAgents</strong><div style="font-size:.75rem;color:var(--text3)">Agent workflow registry</div></div><span class="badge badge-primary">Cataloged</span></div>
       </div>
       <a href="divisions.html" class="btn btn-outline btn-sm" style="margin-top:16px">All 45 Divisions →</a>
     </div>
@@ -87,28 +87,25 @@
   <!-- Task queue -->
   <div class="card card-lg" style="margin-bottom:32px">
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px">
-      <h3>📋 Task Queue</h3>
+      <h3>📋 Example Task Queue</h3>
       <div style="display:flex;gap:8px">
-        <span class="badge badge-amber">12 Pending</span>
-        <span class="badge badge-primary">5 Running</span>
-        <span class="badge badge-green">847 Completed</span>
-        <span class="badge badge-red">3 Failed</span>
+        <span class="badge badge-gray">Demo data</span>
       </div>
     </div>
     <div style="display:flex;flex-direction:column;gap:8px">
       <div style="display:flex;align-items:center;gap:12px;padding:12px 16px;background:var(--card2);border-radius:10px;border:1px solid var(--border)">
-        <span class="badge badge-primary">Running</span>
-        <div style="flex:1"><strong>Lead generation sweep — DreamSalesPro</strong><div style="font-size:.78rem;color:var(--text3)">Multi-Source Lead Scraper · Started 4 min ago</div></div>
+        <span class="badge badge-primary">Example</span>
+        <div style="flex:1"><strong>Lead workflow review — DreamSalesPro</strong><div style="font-size:.78rem;color:var(--text3)">No outreach is sent from the public site</div></div>
         <a href="bots.html" class="btn btn-outline btn-sm">View Bot</a>
       </div>
       <div style="display:flex;align-items:center;gap:12px;padding:12px 16px;background:var(--card2);border-radius:10px;border:1px solid var(--border)">
-        <span class="badge badge-amber">Pending</span>
-        <div style="flex:1"><strong>DeFi yield scan — DreamFinance</strong><div style="font-size:.78rem;color:var(--text3)">DeFi Yield Optimizer · Queued 8 min ago</div></div>
+        <span class="badge badge-amber">Example</span>
+        <div style="flex:1"><strong>Finance sandbox review — DreamFinance</strong><div style="font-size:.78rem;color:var(--text3)">No funds are accessed or moved</div></div>
         <a href="bots.html" class="btn btn-outline btn-sm">View Bot</a>
       </div>
       <div style="display:flex;align-items:center;gap:12px;padding:12px 16px;background:var(--card2);border-radius:10px;border:1px solid var(--border)">
-        <span class="badge badge-green">Done</span>
-        <div style="flex:1"><strong>Property analysis — DreamRealEstate</strong><div style="font-size:.78rem;color:var(--text3)">Real Estate Flip Analyzer · Completed 2 min ago · +$340 value</div></div>
+        <span class="badge badge-gray">Example</span>
+        <div style="flex:1"><strong>Property analysis plan — DreamRealEstate</strong><div style="font-size:.78rem;color:var(--text3)">Client data and deal decisions require confirmation</div></div>
         <a href="deals.html" class="btn btn-outline btn-sm">View Deal</a>
       </div>
     </div>
