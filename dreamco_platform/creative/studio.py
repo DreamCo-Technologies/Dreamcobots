@@ -16,6 +16,8 @@ from enum import Enum
 from pathlib import Path
 from typing import Any, Protocol
 
+from dreamco_platform.innovation import InnovationEngine, InnovationRequest
+
 
 class ProjectType(str, Enum):
     GAME = "game"
@@ -90,6 +92,7 @@ class CreativeBrief:
     subject: str
     audience: str
     target_platform: str = "web"
+    innovation_mode: str = "balanced"
     use_voice_clone: bool = False
     use_image_avatar: bool = False
     voice_sample_ref: str = ""
@@ -103,6 +106,14 @@ class CreativeBrief:
             raise CreativeStudioError("Describe a clear learning or gameplay objective.")
         if not self.subject.strip() or not self.audience.strip():
             raise CreativeStudioError("Subject and audience are required.")
+        try:
+            InnovationRequest(
+                objective=self.objective,
+                audience=self.audience,
+                mode=self.innovation_mode,
+            ).validate()
+        except ValueError as exc:
+            raise CreativeStudioError(str(exc)) from exc
         if self.use_voice_clone and not self.voice_sample_ref:
             raise CreativeStudioError("A local or encrypted voice sample reference is required.")
         if self.use_image_avatar and not self.image_sample_ref:
@@ -138,6 +149,7 @@ class StudioProject:
     media: dict[str, Any]
     sandbox: dict[str, Any]
     deliverables: list[str]
+    innovation: dict[str, Any]
     audit: dict[str, Any]
 
     def to_dict(self) -> dict[str, Any]:
@@ -160,6 +172,7 @@ class StudioProject:
             "media": self.media,
             "sandbox": self.sandbox,
             "deliverables": self.deliverables,
+            "innovation": self.innovation,
             "audit": self.audit,
         }
 
@@ -198,6 +211,15 @@ class BuddyCreativeStudio:
         project_id = f"studio-{uuid.uuid4().hex[:12]}"
         routes = [*self.TYPE_ROUTES[brief.project_type], *self.COMMON_ROUTES]
         media = self._media_plan(brief)
+        innovation = InnovationEngine().run(
+            InnovationRequest(
+                objective=brief.objective,
+                audience=brief.audience,
+                mode=brief.innovation_mode,
+                tags=self._innovation_tags(brief),
+                constraints=("local_first", "reversible", "owner_approval_before_publish"),
+            )
+        )
         return StudioProject(
             project_id=project_id,
             brief=brief,
@@ -207,6 +229,7 @@ class BuddyCreativeStudio:
             media=media,
             sandbox=self._sandbox_plan(brief),
             deliverables=self._deliverables(brief),
+            innovation=innovation.to_dict(),
             audit={
                 "local_first": True,
                 "live_external_action_taken": False,
@@ -276,6 +299,19 @@ class BuddyCreativeStudio:
         script.write_text(self._starter_js(project), encoding="utf-8")
         styles.write_text(self._starter_css(), encoding="utf-8")
         return [manifest, index, script, styles]
+
+    @staticmethod
+    def _innovation_tags(brief: CreativeBrief) -> tuple[str, ...]:
+        tags = {"accessibility", "low_cost"}
+        if brief.project_type == ProjectType.GAME:
+            tags.add("game")
+        elif brief.project_type == ProjectType.SCHOOL_SIMULATION:
+            tags.update({"education", "game", "simulation"})
+        else:
+            tags.update({"education", "multimodal"})
+        if brief.use_voice_clone or brief.use_image_avatar:
+            tags.update({"multimodal", "privacy"})
+        return tuple(sorted(tags))
 
     @staticmethod
     def _validate_project_consent(project: StudioProject) -> None:
@@ -415,6 +451,11 @@ class BuddyCreativeStudio:
                 "subject": project.brief.subject,
                 "audience": project.brief.audience,
                 "objective": project.brief.objective,
+                "innovation": {
+                    "lens": project.innovation["winner"]["lens"],
+                    "design_score": project.innovation["winner"]["weighted_score"],
+                    "evidence_level": project.innovation["winner"]["evidence_level"],
+                },
             }
         )
         return f"""const project = {payload};
@@ -426,7 +467,7 @@ let step = 0;
 const scenes = [
   `Meet the challenge: ${{project.subject}}`,
   `Choose a path that helps ${{project.audience}} practice the objective.`,
-  `Explain what changed and why.`,
+  `Explain what changed and why. Buddy selected the ${{project.innovation.lens.replaceAll('_', ' ')}} design.`,
   `Complete the learning check and review your result.`
 ];
 

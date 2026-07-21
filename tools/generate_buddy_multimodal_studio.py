@@ -12,6 +12,7 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
 from dreamco_platform.creative import BuddyCreativeStudio, ProjectType
+from dreamco_platform.innovation import InnovationEngine
 
 
 OUT_JSON = ROOT / "config" / "generated" / "buddy_multimodal_studio.json"
@@ -40,6 +41,8 @@ def build_registry() -> dict:
             "prepare local or optional model rendering",
             "generate captions, lesson checks, and accessibility tests",
             "generate portable project code and production manifests",
+            "compare six architecture strategies before implementation",
+            "create rollback checkpoints and observed-evidence release gates",
         ],
         "media_truth_states": [
             "not_requested",
@@ -57,6 +60,9 @@ def build_registry() -> dict:
             "outside models are optional",
         ],
         "website": "website/studio.html",
+        "innovation_engine": "dreamco_platform/innovation/engine.py",
+        "innovation_modes": ["balanced", "bold", "trusted", "lean"],
+        "innovation_lenses": sorted(InnovationEngine.LENSES),
         "cli": ["buddy studio-refresh", "buddy studio-report", "buddy open-studio"],
     }
 
@@ -77,6 +83,12 @@ def write_report(registry: dict) -> None:
             "## Honest Media Readiness",
             "",
             "The studio never calls a voice or likeness asset rendered until a configured engine returns an asset reference. Capture, consent, and local previews work independently of a paid service.",
+            "",
+            "## Innovation Loop",
+            "",
+            f"- Design lenses compared per project: {len(registry['innovation_lenses'])}",
+            f"- User-selectable priorities: {', '.join(registry['innovation_modes'])}",
+            "- Design scores remain separate from observed production evidence.",
             "",
             "## Guardrails",
             "",

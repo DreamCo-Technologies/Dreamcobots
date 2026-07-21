@@ -20,6 +20,7 @@ API_ROUTER = ROOT / "config" / "generated" / "buddy_professional_api_router.json
 FREE_MODELS = ROOT / "config" / "generated" / "buddy_free_model_task_library.json"
 GIT_RECOVERY = ROOT / "config" / "generated" / "buddy_git_recovery_audit.json"
 CREATIVE_STUDIO = ROOT / "config" / "generated" / "buddy_multimodal_studio.json"
+INNOVATION_ENGINE = ROOT / "config" / "generated" / "buddy_innovation_engine.json"
 
 
 def utc_now() -> str:
@@ -39,6 +40,7 @@ def load_payload() -> dict[str, Any]:
     free = read_json(FREE_MODELS)
     recovery = read_json(GIT_RECOVERY)
     creative_studio = read_json(CREATIVE_STUDIO)
+    innovation_engine = read_json(INNOVATION_ENGINE)
 
     native_summary = native.get("summary", {})
     sprint_summary = sprint.get("summary", {})
@@ -75,6 +77,8 @@ def load_payload() -> dict[str, Any]:
             "git_recovery_refs_seen": recovery_summary.get("total_branches_seen", 0),
             "git_repositories_scanned": recovery_summary.get("git_repositories_found", 0),
             "creative_studio_tracks": len(creative_studio.get("project_types", [])),
+            "innovation_design_lenses": len(innovation_engine.get("design_lenses", [])),
+            "innovation_modes": len(innovation_engine.get("modes", {})),
         },
         "top_completion_queue": queue[:12],
         "native_routes": native.get("task_routes", [])[:16],
@@ -106,6 +110,8 @@ def write_report(payload: dict[str, Any]) -> None:
         f"- Free model/resources: {summary['free_model_resources']}",
         f"- Professional API routes: {summary['professional_api_routes']}",
         f"- Creative Studio production tracks: {summary['creative_studio_tracks']}",
+        f"- Innovation design lenses: {summary['innovation_design_lenses']}",
+        f"- Innovation priority modes: {summary['innovation_modes']}",
         "",
         "## Website Files",
         "",

@@ -87,6 +87,14 @@ def main() -> int:
     sub.add_parser("studio-refresh", help="Regenerate Buddy Creative Studio registry and report.")
     sub.add_parser("studio-report", help="Print the Buddy Creative Studio registry.")
     sub.add_parser("open-studio", help="Open the local Buddy Creative Studio page.")
+    innovate_parser = sub.add_parser("innovate", help="Compare six designs for a Buddy objective.")
+    innovate_parser.add_argument("objective")
+    innovate_parser.add_argument("--audience", default="DreamCo user")
+    innovate_parser.add_argument("--mode", choices=["balanced", "bold", "trusted", "lean"], default="balanced")
+    innovate_parser.add_argument("--tag", action="append", default=[])
+    innovate_parser.add_argument("--constraint", action="append", default=[])
+    sub.add_parser("innovation-refresh", help="Regenerate Buddy's innovation engine registry.")
+    sub.add_parser("innovation-report", help="Print Buddy's innovation engine registry.")
     sub.add_parser("history-audit", help="Scan local Git clones, branches, and reflogs for recoverable work.")
     sub.add_parser("history-report", help="Print Buddy's Git recovery audit JSON.")
 
@@ -145,6 +153,25 @@ def main() -> int:
         return show_json(ROOT / "config" / "generated" / "buddy_multimodal_studio.json")
     if command == "open-studio":
         return open_file(STUDIO_HOME)
+    if command == "innovate":
+        invocation = [
+            "python3",
+            "tools/buddy_innovation_loop.py",
+            args.objective,
+            "--audience",
+            args.audience,
+            "--mode",
+            args.mode,
+        ]
+        for tag in args.tag:
+            invocation.extend(["--tag", tag])
+        for constraint in args.constraint:
+            invocation.extend(["--constraint", constraint])
+        return run(invocation)
+    if command == "innovation-refresh":
+        return run(["python3", "tools/generate_buddy_innovation_registry.py"])
+    if command == "innovation-report":
+        return show_json(ROOT / "config" / "generated" / "buddy_innovation_engine.json")
     if command == "history-audit":
         return run(["python3", "tools/generate_buddy_git_recovery_audit.py"])
     if command == "history-report":

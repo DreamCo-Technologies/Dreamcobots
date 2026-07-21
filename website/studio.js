@@ -140,6 +140,97 @@ function escapeHtml(value) {
     .replaceAll("'", '&#39;');
 }
 
+const innovationProfiles = {
+  adaptive_experience: { label: 'Adaptive experience', scores: { utility: 91, novelty: 82, feasibility: 82, trust: 84, efficiency: 80, observability: 88 } },
+  simulation_twin: { label: 'Simulation twin', scores: { utility: 88, novelty: 91, feasibility: 76, trust: 84, efficiency: 74, observability: 94 } },
+  multimodal_creator: { label: 'Multimodal creator', scores: { utility: 92, novelty: 88, feasibility: 74, trust: 89, efficiency: 72, observability: 86 } },
+  trust_trace: { label: 'Trust trace', scores: { utility: 86, novelty: 79, feasibility: 90, trust: 98, efficiency: 80, observability: 97 } },
+  local_first_mesh: { label: 'Local-first mesh', scores: { utility: 87, novelty: 83, feasibility: 88, trust: 92, efficiency: 96, observability: 84 } },
+  human_ai_workbench: { label: 'Human + AI workbench', scores: { utility: 90, novelty: 86, feasibility: 86, trust: 94, efficiency: 82, observability: 96 } },
+};
+
+const innovationWeights = {
+  balanced: { utility: .25, novelty: .18, feasibility: .18, trust: .18, efficiency: .11, observability: .10 },
+  bold: { utility: .22, novelty: .31, feasibility: .12, trust: .16, efficiency: .08, observability: .11 },
+  trusted: { utility: .22, novelty: .10, feasibility: .18, trust: .30, efficiency: .08, observability: .12 },
+  lean: { utility: .23, novelty: .12, feasibility: .22, trust: .16, efficiency: .19, observability: .08 },
+};
+
+const innovationTagModifiers = {
+  education: { adaptive_experience: 7, simulation_twin: 4, human_ai_workbench: 3 },
+  game: { simulation_twin: 7, adaptive_experience: 5, multimodal_creator: 3 },
+  simulation: { simulation_twin: 8, trust_trace: 2 },
+  multimodal: { multimodal_creator: 8, trust_trace: 3 },
+  privacy: { trust_trace: 7, local_first_mesh: 6 },
+  low_cost: { local_first_mesh: 8, adaptive_experience: 2 },
+  accessibility: { human_ai_workbench: 5, adaptive_experience: 5 },
+};
+
+const innovationConstraintModifiers = {
+  local_first: { local_first_mesh: 8, trust_trace: 2 },
+  reversible: { human_ai_workbench: 5, trust_trace: 4, simulation_twin: 2 },
+  owner_approval_before_publish: { trust_trace: 5, human_ai_workbench: 3 },
+};
+
+function innovationContext(type) {
+  const tags = new Set(['accessibility', 'low_cost']);
+  if (type === 'game') tags.add('game');
+  if (type === 'school_simulation') ['education', 'game', 'simulation'].forEach(tag => tags.add(tag));
+  if (type === 'parent_learning_video') ['education', 'multimodal'].forEach(tag => tags.add(tag));
+  if (useVoice.checked || useImage.checked) ['multimodal', 'privacy'].forEach(tag => tags.add(tag));
+  return {
+    tags: [...tags],
+    constraints: ['local_first', 'reversible', 'owner_approval_before_publish'],
+  };
+}
+
+function runInnovationLoop(type, mode) {
+  const weights = innovationWeights[mode] || innovationWeights.balanced;
+  const context = innovationContext(type);
+  const candidates = Object.entries(innovationProfiles).map(([lens, profile]) => {
+    const modifier = context.tags.reduce((total, tag) => total + (innovationTagModifiers[tag]?.[lens] || 0), 0)
+      + context.constraints.reduce((total, constraint) => total + (innovationConstraintModifiers[constraint]?.[lens] || 0), 0);
+    const scores = { ...profile.scores, utility: Math.min(100, profile.scores.utility + modifier) };
+    const score = Object.entries(weights).reduce((total, [name, weight]) => total + scores[name] * weight, 0);
+    return { lens, label: profile.label, design_score: Math.round(score * 100) / 100, evidence_level: 'design-time estimate' };
+  }).sort((a, b) => b.design_score - a.design_score);
+  return {
+    mode,
+    candidates,
+    winner: candidates[0],
+    rollback_checkpoint: `local-digest:fnv1a32:${simpleDigest(candidates[0].lens + ':' + candidates[0].design_score)}`,
+    release_gate: 'Observed tests and owner approval required',
+  };
+}
+
+function simpleDigest(value) {
+  let hash = 2166136261;
+  for (const character of value) {
+    hash ^= character.charCodeAt(0);
+    hash = Math.imul(hash, 16777619);
+  }
+  return (hash >>> 0).toString(16).padStart(8, '0');
+}
+
+function renderInnovation(innovation) {
+  const target = document.getElementById('innovation-comparison');
+  target.hidden = false;
+  target.innerHTML = `
+    <div class="studio-innovation-heading">
+      <div><span>Selected design</span><strong>${innovation.winner.label}</strong></div>
+      <div><span>Design score</span><strong>${innovation.winner.design_score}</strong></div>
+      <div><span>Release gate</span><strong>Observed tests required</strong></div>
+    </div>
+    <div class="studio-candidate-list">
+      ${innovation.candidates.map(candidate => `
+        <div class="studio-candidate-row">
+          <span>${candidate.label}</span>
+          <div><i style="width:${candidate.design_score}%"></i></div>
+          <strong>${candidate.design_score}</strong>
+        </div>`).join('')}
+    </div>`;
+}
+
 function renderPrototype(packet) {
   const copy = projectCopy(packet.project_type, escapeHtml(packet.subject), escapeHtml(packet.audience));
   const avatar = useImage.checked ? `<img class="studio-avatar-preview" src="${imageObjectUrl}" alt="Approved creator likeness preview" />` : '<div class="studio-generated-avatar">B</div>';
@@ -151,6 +242,7 @@ function renderPrototype(packet) {
         <p class="studio-project-eyebrow">${copy.eyebrow}</p>
         <h2>${copy.title}</h2>
         <p>${copy.body}</p>
+        <p class="studio-design-note">Selected design: <strong>${packet.innovation.winner.label}</strong>. Score is a design estimate, not production evidence.</p>
         ${label}
         <button id="prototype-action" class="btn btn-primary btn-sm" type="button">${copy.action}</button>
       </div>
@@ -174,6 +266,7 @@ form.addEventListener('submit', event => {
       objective: document.getElementById('project-objective').value.trim(),
       subject: document.getElementById('project-subject').value.trim(),
       audience: document.getElementById('project-audience').value.trim(),
+      innovation: runInnovationLoop(selectedType(), document.getElementById('innovation-mode').value),
       code: { status: 'local_prototype_ready', network_default: 'off' },
       voice: { requested: useVoice.checked, status: useVoice.checked ? 'consent_verified_pending_render' : 'not_requested' },
       likeness: { requested: useImage.checked, status: useImage.checked ? 'consent_verified_pending_render' : 'not_requested' },
@@ -187,9 +280,11 @@ form.addEventListener('submit', event => {
       publish_requires_owner_approval: true,
     };
     renderPrototype(latestPacket);
+    renderInnovation(latestPacket.innovation);
     readiness.textContent = useVoice.checked || useImage.checked ? 'Prototype ready · media renderer needed' : 'Prototype ready';
     readiness.className = useVoice.checked || useImage.checked ? 'badge badge-amber' : 'badge badge-green';
     document.getElementById('result-code').textContent = 'Prototype ready';
+    document.getElementById('result-innovation').textContent = `${latestPacket.innovation.winner.design_score} · ${latestPacket.innovation.winner.label}`;
     document.getElementById('result-voice').textContent = useVoice.checked ? 'Consent verified' : 'Not requested';
     document.getElementById('result-image').textContent = useImage.checked ? 'Consent verified' : 'Not requested';
     document.getElementById('result-tests').textContent = '6 planned';

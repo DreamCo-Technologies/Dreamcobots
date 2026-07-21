@@ -1,0 +1,154 @@
+{
+  "design_lenses": [
+    {
+      "architecture": [
+        "mastery graph",
+        "adaptive state machine",
+        "local learner profile",
+        "checkpoint replay"
+      ],
+      "concept": "A mastery-aware experience that changes difficulty and presentation from observed progress.",
+      "id": "adaptive_experience",
+      "known_risks": [
+        "adaptation can overfit sparse behavior"
+      ]
+    },
+    {
+      "architecture": [
+        "visible task graph",
+        "approval checkpoints",
+        "variant comparison",
+        "reversible edits"
+      ],
+      "concept": "A collaborative workbench where Buddy proposes, users steer, and every major change is reversible.",
+      "id": "human_ai_workbench",
+      "known_risks": [
+        "too many choices can slow simple tasks"
+      ]
+    },
+    {
+      "architecture": [
+        "offline core",
+        "capability adapters",
+        "resource budget",
+        "deterministic fallback"
+      ],
+      "concept": "A device-resilient runtime that works offline and activates optional engines only when useful.",
+      "id": "local_first_mesh",
+      "known_risks": [
+        "local devices can limit heavy media rendering"
+      ]
+    },
+    {
+      "architecture": [
+        "asset provenance graph",
+        "renderer adapters",
+        "caption timeline",
+        "consent gate"
+      ],
+      "concept": "A creator-controlled pipeline that turns one brief into interactive, visual, and narrated variants.",
+      "id": "multimodal_creator",
+      "known_risks": [
+        "render quality depends on configured engines"
+      ]
+    },
+    {
+      "architecture": [
+        "seeded world model",
+        "event ledger",
+        "counterfactual replay",
+        "rollback checkpoint"
+      ],
+      "concept": "A deterministic digital twin that lets users replay decisions and compare counterfactual outcomes.",
+      "id": "simulation_twin",
+      "known_risks": [
+        "the model can simplify real-world uncertainty"
+      ]
+    },
+    {
+      "architecture": [
+        "decision trace",
+        "policy gate",
+        "content lineage",
+        "reversible checkpoint"
+      ],
+      "concept": "A transparent build where every decision, permission, source, and rollback point is inspectable.",
+      "id": "trust_trace",
+      "known_risks": [
+        "additional evidence can add interface complexity"
+      ]
+    }
+  ],
+  "engine": "dreamco_platform/innovation/engine.py",
+  "execution_contract": [
+    "generate six competing designs",
+    "score utility, novelty, feasibility, trust, efficiency, and observability",
+    "select a winner using user-selected priorities",
+    "record durable execution checkpoints",
+    "create a content-addressed rollback snapshot",
+    "emit an implementation dependency graph",
+    "block production until observed evidence and owner approval exist"
+  ],
+  "integrations": [
+    "Buddy Creative Studio",
+    "Buddy local CLI",
+    "Buddy website status sync",
+    "DreamCo durable execution runtime",
+    "DreamCo evolutionary ranking engine"
+  ],
+  "modes": {
+    "balanced": {
+      "efficiency": 0.11,
+      "feasibility": 0.18,
+      "novelty": 0.18,
+      "observability": 0.1,
+      "trust": 0.18,
+      "utility": 0.25
+    },
+    "bold": {
+      "efficiency": 0.08,
+      "feasibility": 0.12,
+      "novelty": 0.31,
+      "observability": 0.11,
+      "trust": 0.16,
+      "utility": 0.22
+    },
+    "lean": {
+      "efficiency": 0.19000000000000003,
+      "feasibility": 0.22000000000000003,
+      "novelty": 0.12000000000000001,
+      "observability": 0.08000000000000002,
+      "trust": 0.16000000000000003,
+      "utility": 0.23000000000000004
+    },
+    "trusted": {
+      "efficiency": 0.08,
+      "feasibility": 0.18,
+      "novelty": 0.1,
+      "observability": 0.12,
+      "trust": 0.3,
+      "utility": 0.22
+    }
+  },
+  "recognized_constraints": [
+    "local_first",
+    "owner_approval_before_publish",
+    "reversible",
+    "strict_cost_ceiling"
+  ],
+  "required_observed_checks": [
+    "functional_tests",
+    "failure_recovery",
+    "privacy_and_permissions",
+    "accessibility",
+    "cost_budget",
+    "human_acceptance"
+  ],
+  "schema": "dreamco.buddy_innovation_engine.v1",
+  "status": "local_runtime_ready",
+  "truth_boundary": {
+    "design_scores": "heuristic comparison only",
+    "live_external_action_taken": false,
+    "production_claim": "forbidden until all observed checks pass"
+  }
+}

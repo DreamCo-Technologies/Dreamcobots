@@ -57,6 +57,8 @@ class BuddyCreativeStudioTests(unittest.TestCase):
         self.assertEqual(project.sandbox["network_default"], "off")
         self.assertFalse(project.audit["live_external_action_taken"])
         self.assertIn("teacher_guide", project.deliverables)
+        self.assertEqual(len(project.innovation["candidates"]), 6)
+        self.assertEqual(project.innovation["release_gate"]["status"], "observed_evidence_required")
 
     def test_voice_clone_requires_consent_and_sample(self):
         with self.assertRaisesRegex(CreativeStudioError, "voice sample"):

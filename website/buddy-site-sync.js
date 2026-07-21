@@ -56,6 +56,7 @@
     const apiRoutes = fmt.format(summary.professional_api_routes || 0);
     const nativeRoutes = fmt.format(summary.native_task_routes || 0);
     const studioTracks = fmt.format(summary.creative_studio_tracks || 0);
+    const innovationLenses = fmt.format(summary.innovation_design_lenses || 0);
     const readiness = `${summary.readiness_percent || 0}%`;
 
     setText("[data-buddy-stat='product-bots']", total);
@@ -66,6 +67,7 @@
     setText("[data-buddy-stat='api-routes']", apiRoutes);
     setText("[data-buddy-stat='native-routes']", nativeRoutes);
     setText("[data-buddy-stat='studio-tracks']", studioTracks);
+    setText("[data-buddy-stat='innovation-lenses']", innovationLenses);
     setText("[data-buddy-stat='readiness']", readiness);
     setHtml("[data-buddy-status-badges]", [
       badge(`${ready} native-ready`, "green"),
