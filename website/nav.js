@@ -27,7 +27,7 @@
 <nav>
   <div class="container">
     <div class="nav-inner">
-      <a href="index.html" class="nav-brand">
+      <a href="buddy.html" class="nav-brand">
         <div class="nav-logo">⚡</div>
         <span>DreamCo <strong>Empire OS</strong></span>
       </a>
@@ -42,7 +42,7 @@
       </div>
       <div class="nav-cta">
         <a href="pricing.html" class="btn btn-outline btn-sm">Plans</a>
-        <a href="chat.html" class="btn btn-primary btn-sm">🚀 Launch App</a>
+        <a href="buddy.html" class="btn btn-primary btn-sm">Open Buddy</a>
       </div>
     </div>
   </div>

@@ -1,195 +1,157 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Buddy Bot — DreamCo Empire OS</title>
-  <meta name="description" content="Buddy Bot — the master coder brain of Empire OS. 500+ libraries, GitHub intelligence, security scanning, and full autonomy." />
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Buddy — DreamCo Empire OS</title>
+  <meta name="description" content="Buddy is the DreamCo command chatbot: native-code-first routing, bot building, debugging, simulations, and safe autonomous work from one prompt." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="styles.css" />
 </head>
-<body>
+<body class="buddy-home">
 <div id="nav-placeholder"></div><script src="nav.js"></script>
-<div class="container" style="padding:48px 0">
 
-  <!-- Header -->
-  <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:24px;margin-bottom:32px;flex-wrap:wrap">
-    <div style="display:flex;align-items:center;gap:20px">
-      <div style="width:72px;height:72px;background:linear-gradient(135deg,var(--primary),var(--accent));border-radius:20px;display:flex;align-items:center;justify-content:center;font-size:2rem;flex-shrink:0">🧠</div>
+<main class="buddy-shell">
+  <aside class="buddy-rail">
+    <a class="buddy-new-chat" href="buddy.html">+ New Buddy task</a>
+    <div class="buddy-rail-section">
+      <div class="buddy-rail-label">Pinned Workflows</div>
+      <button class="buddy-rail-item active" onclick="loadPrompt('Build me a full app from one prompt, then test and package it.')">App Builder</button>
+      <button class="buddy-rail-item" onclick="loadPrompt('Debug my latest failed build and explain the root cause.')">Debug Center</button>
+      <button class="buddy-rail-item" onclick="loadPrompt('Create a game or simulation from this idea.')">Game + Simulation</button>
+      <button class="buddy-rail-item" onclick="loadPrompt('Find the best native bot route and cheapest model fallback for this task.')">Model Router</button>
+      <button class="buddy-rail-item" onclick="loadPrompt('Show the bot completion sprint and what needs coding next.')">Bot Sprint</button>
+    </div>
+    <div class="buddy-rail-section">
+      <div class="buddy-rail-label">Live Repo Sync</div>
+      <div class="buddy-rail-stat"><span>Product bots</span><strong data-buddy-stat="product-bots">1,470</strong></div>
+      <div class="buddy-rail-stat"><span>Native-ready</span><strong data-buddy-stat="ready-bots">1,236</strong></div>
+      <div class="buddy-rail-stat"><span>Finish queue</span><strong data-buddy-stat="completion-queue">232</strong></div>
+      <div class="buddy-rail-stat"><span>Free resources</span><strong data-buddy-stat="free-models">100</strong></div>
+    </div>
+  </aside>
+
+  <section class="buddy-chat-home">
+    <div class="buddy-topbar">
       <div>
-        <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px">
-          <h1 style="font-size:2rem">Buddy Bot</h1>
-          <span class="badge badge-amber">ELITE</span>
-          <span style="display:flex;align-items:center;gap:5px;font-size:.8rem;color:var(--green)"><span style="width:7px;height:7px;background:var(--green);border-radius:50%;display:inline-block"></span>Online</span>
-        </div>
-        <p>Master coder · 500+ libraries · GitHub-level intelligence · Full autonomy</p>
+        <div class="hero-badge buddy-status-pill"><span></span> Buddy online · native code first</div>
+        <h1>What should Buddy build today?</h1>
+        <p>Code, debug, design bots, build simulations, compare models, and keep DreamCo moving from one command screen.</p>
+      </div>
+      <div class="buddy-top-actions">
+        <a href="dashboard.html" class="btn btn-outline btn-sm">Dashboard</a>
+        <a href="bots.html" class="btn btn-outline btn-sm">Bot Fleet</a>
       </div>
     </div>
-    <div style="display:flex;gap:10px">
-      <button onclick="copyInfo()" class="btn btn-outline btn-sm">📋 Copy Info</button>
-      <a href="chat.html?bot=buddy-bot" class="btn btn-primary">⚡ Start Chat</a>
-    </div>
-  </div>
 
-  <!-- Stats bar -->
-  <div style="display:flex;gap:16px;flex-wrap:wrap;margin-bottom:32px;padding:20px 24px;background:var(--card);border:1px solid var(--border);border-radius:16px">
-    <div style="text-align:center;flex:1;min-width:80px"><div style="font-size:1.5rem;font-weight:800;color:var(--primary)">500+</div><div style="font-size:.75rem;color:var(--text3)">Libraries</div></div>
-    <div style="width:1px;background:var(--border)"></div>
-    <div style="text-align:center;flex:1;min-width:80px"><div style="font-size:1.5rem;font-weight:800;color:var(--accent)">50+</div><div style="font-size:.75rem;color:var(--text3)">Languages</div></div>
-    <div style="width:1px;background:var(--border)"></div>
-    <div style="text-align:center;flex:1;min-width:80px"><div style="font-size:1.5rem;font-weight:800;color:var(--green)">200+</div><div style="font-size:.75rem;color:var(--text3)">Frameworks</div></div>
-    <div style="width:1px;background:var(--border)"></div>
-    <div style="text-align:center;flex:1;min-width:80px"><div style="font-size:1.5rem;font-weight:800;color:var(--amber)">16</div><div style="font-size:.75rem;color:var(--text3)">Capabilities</div></div>
-    <div style="width:1px;background:var(--border)"></div>
-    <div style="text-align:center;flex:1;min-width:80px"><div style="font-size:1.5rem;font-weight:800;color:var(--cyan)">9/12</div><div style="font-size:.75rem;color:var(--text3)">GitHub Features</div></div>
-  </div>
-
-  <!-- Tabs -->
-  <div style="display:flex;gap:8px;margin-bottom:28px;border-bottom:1px solid var(--border);padding-bottom:0">
-    <button class="settings-tab active" onclick="switchTab('chat-tab',this)">💬 Chat with Buddy</button>
-    <button class="settings-tab" onclick="switchTab('github-tab',this)">🐙 GitHub Capabilities</button>
-    <button class="settings-tab" onclick="switchTab('powers-tab',this)">⚡ Superpowers</button>
-  </div>
-
-  <!-- Chat tab -->
-  <div id="chat-tab">
-    <h3 style="margin-bottom:20px">Select Mode</h3>
-    <div class="grid-4" style="margin-bottom:28px">
-      <div class="card" style="cursor:pointer;border-color:rgba(79,142,247,.4);background:rgba(79,142,247,.06)" onclick="selectMode(this,'Plan')">
-        <div style="font-size:1.25rem;margin-bottom:8px">🗺️</div>
-        <div style="font-weight:700">Plan</div>
-        <div style="font-size:.78rem;color:var(--text3)">Strategy &amp; architecture</div>
-      </div>
-      <div class="card" style="cursor:pointer" onclick="selectMode(this,'Build')">
-        <div style="font-size:1.25rem;margin-bottom:8px">🔨</div>
-        <div style="font-weight:700">Build</div>
-        <div style="font-size:.78rem;color:var(--text3)">Code &amp; implement</div>
-      </div>
-      <div class="card" style="cursor:pointer" onclick="selectMode(this,'Vibe Code')">
-        <div style="font-size:1.25rem;margin-bottom:8px">🎵</div>
-        <div style="font-weight:700">Vibe Code</div>
-        <div style="font-size:.78rem;color:var(--text3)">Full projects from one prompt</div>
-      </div>
-      <div class="card" style="cursor:pointer" onclick="selectMode(this,'Agent')">
-        <div style="font-size:1.25rem;margin-bottom:8px">🤖</div>
-        <div style="font-weight:700">Agent <span class="badge badge-green" style="font-size:.6rem">NEW</span></div>
-        <div style="font-size:.78rem;color:var(--text3)">Autonomous Plan→Execute→Ship</div>
-      </div>
-      <div class="card" style="cursor:pointer" onclick="selectMode(this,'Debug')">
-        <div style="font-size:1.25rem;margin-bottom:8px">🐛</div>
-        <div style="font-weight:700">Debug <span class="badge badge-green" style="font-size:.6rem">NEW</span></div>
-        <div style="font-size:.78rem;color:var(--text3)">Root-cause → fix → prevent</div>
-      </div>
-      <div class="card" style="cursor:pointer" onclick="selectMode(this,'Security')">
-        <div style="font-size:1.25rem;margin-bottom:8px">🔒</div>
-        <div style="font-weight:700">Security <span class="badge badge-green" style="font-size:.6rem">NEW</span></div>
-        <div style="font-size:.78rem;color:var(--text3)">SAST · OWASP · Zero-trust</div>
-      </div>
-      <div class="card" style="cursor:pointer" onclick="selectMode(this,'Execute')">
-        <div style="font-size:1.25rem;margin-bottom:8px">🚀</div>
-        <div style="font-weight:700">Execute</div>
-        <div style="font-size:.78rem;color:var(--text3)">Take action &amp; ship</div>
-      </div>
-      <div class="card" style="cursor:pointer" onclick="selectMode(this,'Teach')">
-        <div style="font-size:1.25rem;margin-bottom:8px">🎓</div>
-        <div style="font-weight:700">Teach</div>
-        <div style="font-size:.78rem;color:var(--text3)">Learn any library or concept</div>
-      </div>
-    </div>
-    <div>
-      <p style="color:var(--text2);margin-bottom:10px">Tell Buddy what to build</p>
-      <textarea id="buddy-input" rows="4" placeholder="Build a complete REST API with auth, rate limiting, and Swagger docs." style="width:100%;padding:16px;background:var(--card);border:1px solid var(--border);border-radius:12px;color:var(--text);font-size:.9rem;resize:vertical;font-family:var(--font)"></textarea>
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-top:10px">
-        <span style="font-size:.78rem;color:var(--text3)">Cmd+Enter to send · Mode: <span id="current-mode">Plan</span></span>
-        <a href="chat.html?bot=buddy-bot" class="btn btn-primary">⚡ Send to Buddy</a>
-      </div>
-    </div>
-  </div>
-
-  <!-- GitHub tab -->
-  <div id="github-tab" style="display:none">
-    <div class="github-grid">
-      <div class="card card-lg">
-        <h3 style="margin-bottom:20px">GitHub Capabilities (9 Live)</h3>
-        <div class="github-check"><span class="ck">✓</span><div><strong>Create &amp; manage repositories</strong><div style="font-size:.8rem;color:var(--text3)">Public and private repos, descriptions, topics</div></div></div>
-        <div class="github-check"><span class="ck">✓</span><div><strong>Open, review &amp; merge pull requests</strong><div style="font-size:.8rem;color:var(--text3)">Full PR lifecycle management</div></div></div>
-        <div class="github-check"><span class="ck">✓</span><div><strong>Create issues &amp; project boards</strong><div style="font-size:.8rem;color:var(--text3)">Issue tracking, labels, milestones</div></div></div>
-        <div class="github-check"><span class="ck">✓</span><div><strong>Browse &amp; fork open-source projects</strong><div style="font-size:.8rem;color:var(--text3)">Search, explore, fork any public repo</div></div></div>
-        <div class="github-check"><span class="ck">✓</span><div><strong>Search trending repos by topic</strong><div style="font-size:.8rem;color:var(--text3)">Find top repos by language, stars, topic</div></div></div>
-        <div class="github-check"><span class="ck">✓</span><div><strong>Clone &amp; analyze any public repository</strong><div style="font-size:.8rem;color:var(--text3)">Deep code analysis and documentation</div></div></div>
-        <div class="github-check"><span class="ck">✓</span><div><strong>Generate GitHub Actions workflows</strong><div style="font-size:.8rem;color:var(--text3)">CI/CD pipelines for any stack</div></div></div>
-        <div class="github-check"><span class="ck">✓</span><div><strong>Write commit messages &amp; changelogs</strong><div style="font-size:.8rem;color:var(--text3)">Conventional commits, semantic versioning</div></div></div>
-        <div class="github-check"><span class="ck">✓</span><div><strong>Code review with inline suggestions</strong><div style="font-size:.8rem;color:var(--text3)">Security, perf, style suggestions</div></div></div>
-        <div class="github-check"><span class="ck-soon">○</span><div><strong>Auto-fix and push corrected code</strong><div style="font-size:.8rem;color:var(--text3)"><span class="badge badge-gray" style="font-size:.65rem">Coming Soon</span></div></div></div>
-        <div class="github-check"><span class="ck-soon">○</span><div><strong>Manage GitHub Secrets &amp; CI vars</strong><div style="font-size:.8rem;color:var(--text3)"><span class="badge badge-gray" style="font-size:.65rem">Coming Soon</span></div></div></div>
-        <div class="github-check"><span class="ck-soon">○</span><div><strong>Deploy via GitHub Pages / Releases</strong><div style="font-size:.8rem;color:var(--text3)"><span class="badge badge-gray" style="font-size:.65rem">Coming Soon</span></div></div></div>
-      </div>
-      <div style="display:flex;flex-direction:column;gap:16px">
-        <div class="card card-lg">
-          <h3 style="margin-bottom:14px">🔬 Open Source Testing</h3>
-          <p style="font-size:.875rem;margin-bottom:14px">Test any GitHub project directly inside Empire OS — no setup required.</p>
-          <div style="display:flex;flex-direction:column;gap:8px">
-            <a href="chat.html?bot=buddy-bot&prompt=Analyze+the+security+of+this+repo" class="buddy-cap"><span>→</span> Security audit any public repo</a>
-            <a href="chat.html?bot=buddy-bot&prompt=Generate+tests+for+this+library" class="buddy-cap"><span>→</span> Generate test suites</a>
-            <a href="chat.html?bot=buddy-bot&prompt=Compare+this+project+to+competitors" class="buddy-cap"><span>→</span> Competitive comparison</a>
-            <a href="chat.html?bot=buddy-bot&prompt=Find+bugs+in+this+codebase" class="buddy-cap"><span>→</span> Bug hunting &amp; root-cause</a>
-            <a href="chat.html?bot=buddy-bot&prompt=Summarize+this+open+source+project" class="buddy-cap"><span>→</span> Project summarization</a>
-            <a href="chat.html?bot=buddy-bot&prompt=Generate+GitHub+Actions+CI" class="buddy-cap"><span>→</span> Generate CI/CD workflow</a>
-          </div>
-        </div>
-        <div class="card" style="background:linear-gradient(135deg,rgba(79,142,247,.08),rgba(167,139,250,.06))">
-          <h4 style="margin-bottom:8px">📋 Quick GitHub Actions</h4>
-          <div style="display:flex;flex-direction:column;gap:6px;font-size:.83rem">
-            <a href="chat.html?bot=buddy-bot&prompt=Create+a+new+GitHub+repo" class="buddy-cap" style="text-decoration:none"><span>+</span> Create new repository</a>
-            <a href="chat.html?bot=buddy-bot&prompt=Review+my+latest+PR" class="buddy-cap" style="text-decoration:none"><span>👁</span> Review latest PR</a>
-            <a href="chat.html?bot=buddy-bot&prompt=Write+a+CHANGELOG+for+my+repo" class="buddy-cap" style="text-decoration:none"><span>📝</span> Write CHANGELOG</a>
-            <a href="chat.html?bot=buddy-bot&prompt=Generate+GitHub+Actions+for+Node.js" class="buddy-cap" style="text-decoration:none"><span>⚙</span> Generate GitHub Actions</a>
+    <div class="buddy-chat-stage">
+      <div class="buddy-message buddy-message-bot">
+        <div class="buddy-avatar">B</div>
+        <div class="buddy-bubble">
+          <strong>Buddy</strong>
+          <p>I am ready. I will try DreamCo's native bot code first, then use free/local model resources as backup when helpful. Live money, account, outreach, deploy, and personal-data actions stay approval-gated.</p>
+          <div data-buddy-status-badges>
+            <span class="badge badge-green">Native-first</span>
+            <span class="badge badge-primary">Free backup</span>
+            <span class="badge badge-amber">Approval gates</span>
           </div>
         </div>
       </div>
-    </div>
-  </div>
 
-  <!-- Superpowers tab -->
-  <div id="powers-tab" style="display:none">
-    <div class="grid-4">
-      <div class="card"><div style="font-size:1.5rem;margin-bottom:10px">🐙</div><h4>GitHub Intelligence</h4><p style="font-size:.8rem;margin-top:6px">Browse, fork, PR, and analyze any repository</p></div>
-      <div class="card"><div style="font-size:1.5rem;margin-bottom:10px">🔍</div><h4>Web Search</h4><p style="font-size:.8rem;margin-top:6px">Real-time search via Serper API</p></div>
-      <div class="card"><div style="font-size:1.5rem;margin-bottom:10px">⚡</div><h4>Code Execution</h4><p style="font-size:.8rem;margin-top:6px">Run code snippets in-context</p></div>
-      <div class="card"><div style="font-size:1.5rem;margin-bottom:10px">🔒</div><h4>Security Scan</h4><p style="font-size:.8rem;margin-top:6px">SAST, OWASP, zero-trust audit</p></div>
-      <div class="card"><div style="font-size:1.5rem;margin-bottom:10px">🔀</div><h4>PR Generator</h4><p style="font-size:.8rem;margin-top:6px">Auto-writes PR descriptions</p></div>
-      <div class="card"><div style="font-size:1.5rem;margin-bottom:10px">🤖</div><h4>Agent Pipeline</h4><p style="font-size:.8rem;margin-top:6px">Multi-step autonomous task execution</p></div>
-      <div class="card"><div style="font-size:1.5rem;margin-bottom:10px">🐛</div><h4>Deep Debug</h4><p style="font-size:.8rem;margin-top:6px">Root-cause analysis with fix suggestions</p></div>
-      <div class="card"><div style="font-size:1.5rem;margin-bottom:10px">🏗️</div><h4>System Architect</h4><p style="font-size:.8rem;margin-top:6px">Design scalable system diagrams</p></div>
-      <div class="card"><div style="font-size:1.5rem;margin-bottom:10px">🔄</div><h4>Code Translator</h4><p style="font-size:.8rem;margin-top:6px">Convert between any languages</p></div>
-      <div class="card"><div style="font-size:1.5rem;margin-bottom:10px">🚀</div><h4>Deploy Config</h4><p style="font-size:.8rem;margin-top:6px">Generate Dockerfiles, CI/CD, IaC</p></div>
-      <div class="card"><div style="font-size:1.5rem;margin-bottom:10px">👥</div><h4>Council Governance</h4><p style="font-size:.8rem;margin-top:6px">Multi-agent deliberation system</p></div>
-      <div class="card"><div style="font-size:1.5rem;margin-bottom:10px">🧩</div><h4>Memory System</h4><p style="font-size:.8rem;margin-top:6px">Persistent context across sessions</p></div>
-      <div class="card"><div style="font-size:1.5rem;margin-bottom:10px">📖</div><h4>Book Study</h4><p style="font-size:.8rem;margin-top:6px">Deep-dive any technical book or docs</p></div>
-      <div class="card"><div style="font-size:1.5rem;margin-bottom:10px">📊</div><h4>Competitive Intel</h4><p style="font-size:.8rem;margin-top:6px">Research competitors and markets</p></div>
-      <div class="card"><div style="font-size:1.5rem;margin-bottom:10px">🎨</div><h4>Image Generation</h4><p style="font-size:.8rem;margin-top:6px">Generate diagrams and UI mockups</p></div>
-      <div class="card"><div style="font-size:1.5rem;margin-bottom:10px">🎙️</div><h4>Voice Cloning</h4><p style="font-size:.8rem;margin-top:6px">ElevenLabs voice synthesis</p></div>
+      <div id="buddy-thread" class="buddy-thread">
+        <div class="buddy-message buddy-message-user muted">
+          <div class="buddy-bubble">Try: "Buddy, build me a client-ready lead-gen dashboard and test it."</div>
+        </div>
+      </div>
     </div>
-  </div>
-</div>
+
+    <section class="buddy-composer-panel">
+      <div class="buddy-mode-row">
+        <button class="buddy-mode active" data-mode="Build" onclick="selectBuddyMode(this)">Build</button>
+        <button class="buddy-mode" data-mode="Debug" onclick="selectBuddyMode(this)">Debug</button>
+        <button class="buddy-mode" data-mode="Vibe Code" onclick="selectBuddyMode(this)">Vibe Code</button>
+        <button class="buddy-mode" data-mode="Simulation" onclick="selectBuddyMode(this)">Simulation</button>
+        <button class="buddy-mode" data-mode="Research" onclick="selectBuddyMode(this)">Research</button>
+        <button class="buddy-mode" data-mode="Agent" onclick="selectBuddyMode(this)">Agent</button>
+      </div>
+      <div class="buddy-composer">
+        <textarea id="buddy-input" rows="5" placeholder="Message Buddy... build an app, fix code, make a simulation, test a bot, compare models, or prepare a client demo." onkeydown="if(event.key==='Enter'&&(event.metaKey||event.ctrlKey)){sendBuddyPrompt();event.preventDefault()}"></textarea>
+        <div class="buddy-composer-footer">
+          <span>Mode: <strong id="current-mode">Build</strong> · Cmd+Enter to send · Safe actions first</span>
+          <button class="btn btn-primary" onclick="sendBuddyPrompt()">Send to Buddy</button>
+        </div>
+      </div>
+      <div class="buddy-prompt-chips">
+        <button onclick="loadPrompt('Build a full customer demo app with auth, dashboard, database plan, tests, and deployment checklist.')">Full app</button>
+        <button onclick="loadPrompt('Debug my Actions page and explain every failed workflow like a sellable debugging system.')">Debug actions</button>
+        <button onclick="loadPrompt('Create a 3D learning simulation and package it as a client-ready prototype.')">3D simulation</button>
+        <button onclick="loadPrompt('Route this task through native DreamCo bots first, then cheapest free model fallback.')">Route task</button>
+        <button onclick="loadPrompt('Finish the next bot in the completion sprint and add a smoke test.')">Finish bot</button>
+      </div>
+    </section>
+
+    <section class="buddy-home-grid">
+      <div class="card">
+        <h3>Native Routes</h3>
+        <p style="font-size:.86rem;margin:6px 0 14px">Buddy chooses your local bot code before optional model help.</p>
+        <div data-buddy-native-routes></div>
+      </div>
+      <div class="card">
+        <h3>Completion Sprint</h3>
+        <p style="font-size:.86rem;margin:6px 0 14px">What still needs coding, tests, or interface cleanup.</p>
+        <div data-buddy-completion-queue></div>
+      </div>
+    </section>
+  </section>
+</main>
+
 <script>
-function switchTab(id, btn) {
-  ['chat-tab','github-tab','powers-tab'].forEach(t => document.getElementById(t).style.display = 'none');
-  document.querySelectorAll('.settings-tab').forEach(b => b.classList.remove('active'));
-  document.getElementById(id).style.display = '';
-  btn.classList.add('active');
+let buddyMode = 'Build';
+
+function selectBuddyMode(button) {
+  document.querySelectorAll('.buddy-mode').forEach((item) => item.classList.remove('active'));
+  button.classList.add('active');
+  buddyMode = button.dataset.mode || 'Build';
+  document.getElementById('current-mode').textContent = buddyMode;
+  document.getElementById('buddy-input').placeholder = 'Mode: ' + buddyMode + ' — tell Buddy exactly what you want done...';
 }
-function selectMode(card, mode) {
-  document.querySelectorAll('#chat-tab .card').forEach(c => { c.style.borderColor=''; c.style.background=''; });
-  card.style.borderColor = 'rgba(79,142,247,.6)';
-  card.style.background = 'rgba(79,142,247,.08)';
-  document.getElementById('current-mode').textContent = mode;
-  document.getElementById('buddy-input').placeholder = 'Mode: ' + mode + ' — Tell Buddy what you need...';
+
+function loadPrompt(prompt) {
+  const input = document.getElementById('buddy-input');
+  input.value = prompt;
+  input.focus();
 }
-function copyInfo() {
-  navigator.clipboard.writeText('Buddy Bot — Elite · CommandCore Division · 500+ Libraries · 50+ Languages · GitHub Intelligence · Security Scan · Agent Mode');
-  alert('Buddy Bot info copied!');
+
+function sendBuddyPrompt() {
+  const input = document.getElementById('buddy-input');
+  const thread = document.getElementById('buddy-thread');
+  const value = input.value.trim();
+  if (!value) return;
+  const user = document.createElement('div');
+  user.className = 'buddy-message buddy-message-user';
+  user.innerHTML = '<div class="buddy-bubble"></div>';
+  user.querySelector('.buddy-bubble').textContent = value;
+  const bot = document.createElement('div');
+  bot.className = 'buddy-message buddy-message-bot';
+  bot.innerHTML = `
+    <div class="buddy-avatar">B</div>
+    <div class="buddy-bubble">
+      <strong>Buddy task packet ready</strong>
+      <p>I will handle this as a ${buddyMode} task: native repo code first, free/local resources second, approval gates for live actions. In the deployed app this prompt can be sent directly into Buddy's execution workflow.</p>
+      <div class="buddy-inline-actions">
+        <a class="btn btn-outline btn-sm" href="dashboard.html">View dashboard</a>
+        <a class="btn btn-outline btn-sm" href="bots.html">Pick bot</a>
+      </div>
+    </div>`;
+  thread.appendChild(user);
+  thread.appendChild(bot);
+  input.value = '';
+  bot.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
 }
+
+const params = new URLSearchParams(location.search);
+if (params.get('prompt')) loadPrompt(decodeURIComponent(params.get('prompt')));
 </script>
 </body>
 </html>
