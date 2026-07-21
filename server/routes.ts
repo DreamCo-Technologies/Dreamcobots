@@ -78,6 +78,71 @@ function zodValidationError(err: z.ZodError) {
   };
 }
 
+const offlineDealSchema = z.object({
+  title: z.string().trim().min(1, "Deal title is required").max(160),
+  customerName: z.string().trim().min(1, "Customer name is required").max(120),
+  customerEmail: z.string().trim().email("Valid customer email is required").max(180),
+  amount: z.coerce.number().positive("Amount must be greater than 0").max(1_000_000),
+  currency: z.string().trim().min(3).max(3).default("USD"),
+  method: z.enum(["cash", "check", "bank_transfer", "paypal", "cash_app", "zelle", "manual_invoice", "other"]).default("manual_invoice"),
+  description: z.string().trim().max(2000).default(""),
+  dueDays: z.coerce.number().int().min(0).max(365).default(7),
+});
+
+const offlineDealStatusSchema = z.object({
+  status: z.enum(["draft", "sent", "approved", "paid", "failed", "refunded", "cancelled"]),
+  note: z.string().trim().max(1000).default(""),
+});
+
+type OfflineDeal = {
+  id: string;
+  invoiceNumber: string;
+  title: string;
+  customerName: string;
+  customerEmail: string;
+  amount: number;
+  currency: string;
+  method: string;
+  description: string;
+  status: "draft" | "sent" | "approved" | "paid" | "failed" | "refunded" | "cancelled";
+  paymentInstructions: string[];
+  guardrails: string[];
+  createdAt: string;
+  dueAt: string;
+  auditTrail: Array<{ at: string; event: string; note?: string }>;
+};
+
+const OFFLINE_DEALS_SETTING = "dreamco_offline_deal_ledger";
+
+function buildPaymentInstructions(method: string, amount: number, currency: string) {
+  const formatted = new Intl.NumberFormat("en-US", { style: "currency", currency }).format(amount);
+  const base = [
+    `Invoice amount: ${formatted}.`,
+    "Do not collect or store card numbers, bank logins, SSNs, or customer passwords in Buddy.",
+    "Confirm funds in your bank/payment app before marking the deal paid.",
+  ];
+  const methodSteps: Record<string, string[]> = {
+    cash: ["Accept cash in person only when lawful and safe.", "Issue a receipt immediately after counting and confirming funds."],
+    check: ["Send check mailing or pickup instructions outside this app.", "Mark paid only after the check clears."],
+    bank_transfer: ["Send your official business bank transfer instructions directly to the customer.", "Mark paid only after the transfer is visible and settled."],
+    paypal: ["Send your PayPal invoice or PayPal.me link from your own PayPal account.", "Reconcile PayPal fees before closing the deal."],
+    cash_app: ["Send your business Cash App handle outside this app.", "Confirm the sender and amount before fulfillment."],
+    zelle: ["Send your Zelle business email/phone outside this app.", "Confirm receipt with your bank before fulfillment."],
+    manual_invoice: ["Send a PDF/email invoice with your preferred payment options.", "Keep proof of approval and proof of payment in your records."],
+    other: ["Use only a lawful, approved payment method.", "Document who approved it, how it was paid, and when funds settled."],
+  };
+  return [...base, ...(methodSteps[method] ?? methodSteps.other)];
+}
+
+async function getOfflineDeals(): Promise<OfflineDeal[]> {
+  const setting = await storage.getSetting(OFFLINE_DEALS_SETTING);
+  return Array.isArray(setting?.value) ? setting.value as OfflineDeal[] : [];
+}
+
+async function saveOfflineDeals(deals: OfflineDeal[]) {
+  await storage.upsertSetting(OFFLINE_DEALS_SETTING, deals.slice(0, 500));
+}
+
 async function ensureSeeded() {
   const bots = await storage.listBotProfiles();
   const existingSlugs = new Set(bots.map(b => b.slug));
@@ -1883,6 +1948,114 @@ export async function registerRoutes(
     if (!deal) return res.status(404).json({ message: "Deal not found" });
     await storage.deleteDeal(id);
     res.status(204).send();
+  });
+
+  // ─── Safe Deal Rails: Stripe-Optional Manual Settlement ─────────────
+
+  app.get("/api/payments/safe-rails/status", async (_req, res) => {
+    const deals = await getOfflineDeals();
+    const openDeals = deals.filter(d => ["draft", "sent", "approved"].includes(d.status));
+    const paidDeals = deals.filter(d => d.status === "paid");
+    res.json({
+      mode: "safe-deal-rails",
+      stripeRequired: false,
+      cardDataStored: false,
+      custodyOfFunds: false,
+      moneyMovement: "external-provider-or-manual-confirmation",
+      openDeals: openDeals.length,
+      paidDeals: paidDeals.length,
+      totalTracked: deals.length,
+      paidVolume: paidDeals.reduce((sum, deal) => sum + deal.amount, 0),
+      guardrails: [
+        "Buddy creates invoices, approvals, reminders, and reconciliation records.",
+        "Buddy does not process cards, hold funds, or store bank credentials.",
+        "Mark a deal paid only after you confirm funds in the payment provider or bank.",
+        "Use licensed providers for regulated money movement, lending, escrow, or card processing.",
+      ],
+    });
+  });
+
+  app.get("/api/payments/offline-deals", async (_req, res) => {
+    res.json({ deals: await getOfflineDeals() });
+  });
+
+  app.post("/api/payments/offline-deals", async (req, res) => {
+    const parsed = offlineDealSchema.safeParse(req.body ?? {});
+    if (!parsed.success) return res.status(400).json(zodValidationError(parsed.error));
+
+    const now = new Date();
+    const dueAt = new Date(now);
+    dueAt.setDate(dueAt.getDate() + parsed.data.dueDays);
+
+    const existing = await getOfflineDeals();
+    const deal: OfflineDeal = {
+      id: `od_${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 8)}`,
+      invoiceNumber: `DRM-${now.getFullYear()}-${String(existing.length + 1).padStart(5, "0")}`,
+      title: parsed.data.title,
+      customerName: parsed.data.customerName,
+      customerEmail: parsed.data.customerEmail.toLowerCase(),
+      amount: Math.round(parsed.data.amount * 100) / 100,
+      currency: parsed.data.currency.toUpperCase(),
+      method: parsed.data.method,
+      description: parsed.data.description,
+      status: "draft",
+      paymentInstructions: buildPaymentInstructions(parsed.data.method, parsed.data.amount, parsed.data.currency.toUpperCase()),
+      guardrails: [
+        "No card numbers or bank credentials are accepted here.",
+        "Customer approval should be saved before fulfillment.",
+        "Funds must be verified in the external account before paid status.",
+        "High-risk, escrow, lending, or regulated transfers require a licensed provider.",
+      ],
+      createdAt: now.toISOString(),
+      dueAt: dueAt.toISOString(),
+      auditTrail: [{ at: now.toISOString(), event: "created", note: "Safe offline deal created." }],
+    };
+
+    await saveOfflineDeals([deal, ...existing]);
+    res.status(201).json(deal);
+  });
+
+  app.patch("/api/payments/offline-deals/:id/status", async (req, res) => {
+    const parsed = offlineDealStatusSchema.safeParse(req.body ?? {});
+    if (!parsed.success) return res.status(400).json(zodValidationError(parsed.error));
+
+    const deals = await getOfflineDeals();
+    const index = deals.findIndex(deal => deal.id === req.params.id);
+    if (index === -1) return res.status(404).json({ message: "Offline deal not found" });
+
+    const updated: OfflineDeal = {
+      ...deals[index],
+      status: parsed.data.status,
+      auditTrail: [
+        { at: new Date().toISOString(), event: `status:${parsed.data.status}`, note: parsed.data.note || undefined },
+        ...deals[index].auditTrail,
+      ],
+    };
+    deals[index] = updated;
+    await saveOfflineDeals(deals);
+    res.json(updated);
+  });
+
+  app.get("/api/payments/offline-deals/export", async (_req, res) => {
+    const deals = await getOfflineDeals();
+    const rows = [
+      ["Invoice", "Title", "Customer", "Email", "Amount", "Currency", "Method", "Status", "Created", "Due"].join(","),
+      ...deals.map(deal => [
+        deal.invoiceNumber,
+        JSON.stringify(deal.title),
+        JSON.stringify(deal.customerName),
+        deal.customerEmail,
+        deal.amount,
+        deal.currency,
+        deal.method,
+        deal.status,
+        deal.createdAt,
+        deal.dueAt,
+      ].join(",")),
+    ];
+    res.setHeader("Content-Type", "text/csv");
+    res.setHeader("Content-Disposition", "attachment; filename=dreamco-safe-deal-ledger.csv");
+    res.send(rows.join("\n"));
   });
 
   // ─── Debug Intelligence System Routes ──────────────────────────────────

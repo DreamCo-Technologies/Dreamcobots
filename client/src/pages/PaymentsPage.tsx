@@ -1,11 +1,15 @@
 import Seo from "@/components/Seo";
 import AppShell from "@/components/AppShell";
 import { useState } from "react";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
+import { apiRequest, queryClient } from "@/lib/queryClient";
 import {
   Activity,
   CheckCircle2,
@@ -31,6 +35,7 @@ import {
   Download,
   RefreshCw,
   RotateCcw,
+  ShieldCheck,
 } from "lucide-react";
 
 const PAYMENT_METHODS = [
@@ -75,6 +80,34 @@ const INVOICES = [
   { id: "INV-2024-008", client: "Cascade Ventures", amount: 27650.00, status: "pending" as const, dueDate: "Mar 05, 2026", issuedDate: "Feb 05, 2026" },
 ];
 
+type OfflineDeal = {
+  id: string;
+  invoiceNumber: string;
+  title: string;
+  customerName: string;
+  customerEmail: string;
+  amount: number;
+  currency: string;
+  method: string;
+  description: string;
+  status: "draft" | "sent" | "approved" | "paid" | "failed" | "refunded" | "cancelled";
+  paymentInstructions: string[];
+  guardrails: string[];
+  createdAt: string;
+  dueAt: string;
+};
+
+type SafeRailsStatus = {
+  stripeRequired: boolean;
+  cardDataStored: boolean;
+  custodyOfFunds: boolean;
+  openDeals: number;
+  paidDeals: number;
+  totalTracked: number;
+  paidVolume: number;
+  guardrails: string[];
+};
+
 function getStatusBadge(status: "completed" | "pending" | "failed") {
   switch (status) {
     case "completed":
@@ -100,6 +133,61 @@ function getInvoiceStatusBadge(status: "paid" | "pending" | "overdue") {
 export default function PaymentsPage() {
   const { toast } = useToast();
   const [botSlug, setBotSlug] = useState<string | undefined>(undefined);
+  const [offlineDealForm, setOfflineDealForm] = useState({
+    title: "Buddy automation service package",
+    customerName: "",
+    customerEmail: "",
+    amount: "100",
+    method: "manual_invoice",
+    description: "Safe manual invoice tracked by DreamCo. No card or bank credentials stored.",
+  });
+
+  const { data: safeRails } = useQuery<SafeRailsStatus>({
+    queryKey: ["/api/payments/safe-rails/status"],
+  });
+  const { data: offlineDealsData } = useQuery<{ deals: OfflineDeal[] }>({
+    queryKey: ["/api/payments/offline-deals"],
+  });
+  const offlineDeals = offlineDealsData?.deals ?? [];
+
+  const createOfflineDeal = useMutation({
+    mutationFn: async () => {
+      const res = await apiRequest("POST", "/api/payments/offline-deals", {
+        ...offlineDealForm,
+        amount: Number(offlineDealForm.amount),
+        currency: "USD",
+        dueDays: 7,
+      });
+      return res.json() as Promise<OfflineDeal>;
+    },
+    onSuccess: (deal) => {
+      queryClient.invalidateQueries({ queryKey: ["/api/payments/safe-rails/status"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/payments/offline-deals"] });
+      setOfflineDealForm((current) => ({ ...current, customerName: "", customerEmail: "" }));
+      toast({ title: "Safe deal created", description: `${deal.invoiceNumber} is ready to send.` });
+    },
+    onError: (error: Error) => {
+      toast({ title: "Deal was not created", description: error.message, variant: "destructive" });
+    },
+  });
+
+  const updateOfflineDealStatus = useMutation({
+    mutationFn: async ({ id, status }: { id: string; status: OfflineDeal["status"] }) => {
+      const res = await apiRequest("PATCH", `/api/payments/offline-deals/${id}/status`, {
+        status,
+        note: status === "paid" ? "Funds confirmed outside Buddy before marking paid." : "",
+      });
+      return res.json() as Promise<OfflineDeal>;
+    },
+    onSuccess: (deal) => {
+      queryClient.invalidateQueries({ queryKey: ["/api/payments/safe-rails/status"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/payments/offline-deals"] });
+      toast({ title: "Deal updated", description: `${deal.invoiceNumber} is now ${deal.status}.` });
+    },
+    onError: (error: Error) => {
+      toast({ title: "Status update failed", description: error.message, variant: "destructive" });
+    },
+  });
 
   const totalTransactionsToday = TERMINALS.reduce((s, t) => s + t.transactionCount, 0);
   const totalVolume = TERMINALS.reduce((s, t) => s + t.dailyVolume, 0);
@@ -226,8 +314,11 @@ export default function PaymentsPage() {
             </Card>
           </div>
 
-          <Tabs defaultValue="tap-to-pay" data-testid="payments-tabs">
+          <Tabs defaultValue="safe-rails" data-testid="payments-tabs">
             <TabsList className="w-full justify-start gap-1 flex-wrap" data-testid="payments-tabs-list">
+              <TabsTrigger value="safe-rails" data-testid="tab-safe-rails">
+                <ShieldCheck className="h-4 w-4 mr-1.5" />Safe Deal Rails
+              </TabsTrigger>
               <TabsTrigger value="tap-to-pay" data-testid="tab-tap-to-pay">
                 <Smartphone className="h-4 w-4 mr-1.5" />Tap to Pay
               </TabsTrigger>
@@ -241,6 +332,193 @@ export default function PaymentsPage() {
                 <FileText className="h-4 w-4 mr-1.5" />Invoicing
               </TabsTrigger>
             </TabsList>
+
+            <TabsContent value="safe-rails" className="mt-6 space-y-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
+                <Card data-testid="safe-rails-stripe-required">
+                  <CardContent className="p-4">
+                    <p className="text-xs text-muted-foreground">Stripe Required</p>
+                    <p className="text-2xl font-bold mt-1">{safeRails?.stripeRequired ? "Yes" : "No"}</p>
+                    <p className="text-xs text-muted-foreground mt-1">Manual deal tracking works without a processor key.</p>
+                  </CardContent>
+                </Card>
+                <Card data-testid="safe-rails-open-deals">
+                  <CardContent className="p-4">
+                    <p className="text-xs text-muted-foreground">Open Deals</p>
+                    <p className="text-2xl font-bold mt-1">{safeRails?.openDeals ?? 0}</p>
+                    <p className="text-xs text-muted-foreground mt-1">Draft, sent, and approved invoices.</p>
+                  </CardContent>
+                </Card>
+                <Card data-testid="safe-rails-paid-deals">
+                  <CardContent className="p-4">
+                    <p className="text-xs text-muted-foreground">Paid Deals</p>
+                    <p className="text-2xl font-bold mt-1">{safeRails?.paidDeals ?? 0}</p>
+                    <p className="text-xs text-muted-foreground mt-1">Confirmed manually after funds settle.</p>
+                  </CardContent>
+                </Card>
+                <Card data-testid="safe-rails-paid-volume">
+                  <CardContent className="p-4">
+                    <p className="text-xs text-muted-foreground">Tracked Paid Volume</p>
+                    <p className="text-2xl font-bold mt-1">${(safeRails?.paidVolume ?? 0).toLocaleString(undefined, { minimumFractionDigits: 2 })}</p>
+                    <p className="text-xs text-muted-foreground mt-1">Ledger value, not custody of funds.</p>
+                  </CardContent>
+                </Card>
+              </div>
+
+              <div className="grid grid-cols-1 xl:grid-cols-[0.9fr_1.1fr] gap-4">
+                <Card data-testid="safe-deal-create-card">
+                  <CardHeader>
+                    <CardTitle className="text-base">Create Safe Offline Deal</CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-3">
+                    <Input
+                      value={offlineDealForm.title}
+                      onChange={(e) => setOfflineDealForm((current) => ({ ...current, title: e.target.value }))}
+                      placeholder="Deal title"
+                      data-testid="input-offline-deal-title"
+                    />
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      <Input
+                        value={offlineDealForm.customerName}
+                        onChange={(e) => setOfflineDealForm((current) => ({ ...current, customerName: e.target.value }))}
+                        placeholder="Customer name"
+                        data-testid="input-offline-customer-name"
+                      />
+                      <Input
+                        value={offlineDealForm.customerEmail}
+                        onChange={(e) => setOfflineDealForm((current) => ({ ...current, customerEmail: e.target.value }))}
+                        placeholder="Customer email"
+                        data-testid="input-offline-customer-email"
+                      />
+                    </div>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      <Input
+                        value={offlineDealForm.amount}
+                        onChange={(e) => setOfflineDealForm((current) => ({ ...current, amount: e.target.value }))}
+                        placeholder="Amount"
+                        inputMode="decimal"
+                        data-testid="input-offline-amount"
+                      />
+                      <select
+                        value={offlineDealForm.method}
+                        onChange={(e) => setOfflineDealForm((current) => ({ ...current, method: e.target.value }))}
+                        className="h-10 rounded-md border border-input bg-background px-3 text-sm"
+                        data-testid="select-offline-method"
+                      >
+                        <option value="manual_invoice">Manual invoice</option>
+                        <option value="cash">Cash</option>
+                        <option value="check">Check</option>
+                        <option value="bank_transfer">Bank transfer</option>
+                        <option value="paypal">PayPal</option>
+                        <option value="cash_app">Cash App</option>
+                        <option value="zelle">Zelle</option>
+                        <option value="other">Other approved method</option>
+                      </select>
+                    </div>
+                    <Textarea
+                      value={offlineDealForm.description}
+                      onChange={(e) => setOfflineDealForm((current) => ({ ...current, description: e.target.value }))}
+                      placeholder="What is this customer buying?"
+                      className="min-h-24"
+                      data-testid="textarea-offline-description"
+                    />
+                    <Button
+                      className="w-full"
+                      onClick={() => createOfflineDeal.mutate()}
+                      disabled={createOfflineDeal.isPending}
+                      data-testid="button-create-safe-offline-deal"
+                    >
+                      <ShieldCheck className="h-4 w-4 mr-2" />
+                      {createOfflineDeal.isPending ? "Creating..." : "Create Safe Deal"}
+                    </Button>
+                  </CardContent>
+                </Card>
+
+                <Card data-testid="safe-rails-guardrails-card">
+                  <CardHeader className="flex flex-row items-center justify-between gap-2 space-y-0">
+                    <CardTitle className="text-base">Safe Payment Guardrails</CardTitle>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => window.open("/api/payments/offline-deals/export", "_blank")}
+                      data-testid="button-export-safe-ledger"
+                    >
+                      <Download className="h-3.5 w-3.5 mr-1.5" />Export Ledger
+                    </Button>
+                  </CardHeader>
+                  <CardContent className="space-y-3">
+                    {(safeRails?.guardrails ?? [
+                      "Buddy creates invoices, approvals, reminders, and reconciliation records.",
+                      "Buddy does not process cards, hold funds, or store bank credentials.",
+                      "Mark a deal paid only after you confirm funds in the payment provider or bank.",
+                      "Use licensed providers for regulated money movement, lending, escrow, or card processing.",
+                    ]).map((guardrail) => (
+                      <div key={guardrail} className="flex items-start gap-3 p-3 rounded-xl border border-border/40">
+                        <ShieldCheck className="h-4 w-4 text-green-500 mt-0.5 flex-shrink-0" />
+                        <p className="text-sm text-muted-foreground">{guardrail}</p>
+                      </div>
+                    ))}
+                  </CardContent>
+                </Card>
+              </div>
+
+              <Card data-testid="safe-offline-deal-ledger">
+                <CardHeader className="flex flex-row items-center justify-between gap-2 space-y-0">
+                  <CardTitle className="text-base">Safe Offline Deal Ledger</CardTitle>
+                  <Badge variant="secondary" className="rounded-full">{offlineDeals.length} tracked</Badge>
+                </CardHeader>
+                <CardContent className="space-y-2">
+                  {offlineDeals.length === 0 ? (
+                    <div className="p-6 rounded-xl border border-dashed border-border/60 text-center text-muted-foreground">
+                      <p className="text-sm font-medium">No offline deals yet</p>
+                      <p className="text-xs mt-1">Create one above to track a customer deal without Stripe.</p>
+                    </div>
+                  ) : (
+                    offlineDeals.map((deal) => (
+                      <div key={deal.id} className="p-3 rounded-xl border border-border/40 space-y-3" data-testid={`safe-deal-row-${deal.id}`}>
+                        <div className="flex flex-wrap items-start justify-between gap-3">
+                          <div>
+                            <div className="flex flex-wrap items-center gap-2">
+                              <p className="text-sm font-semibold">{deal.invoiceNumber}</p>
+                              <Badge variant="secondary">{deal.status}</Badge>
+                            </div>
+                            <p className="text-sm">{deal.title}</p>
+                            <p className="text-xs text-muted-foreground">{deal.customerName} - {deal.customerEmail}</p>
+                          </div>
+                          <div className="text-right">
+                            <p className="text-sm font-bold">${deal.amount.toLocaleString(undefined, { minimumFractionDigits: 2 })} {deal.currency}</p>
+                            <p className="text-xs text-muted-foreground">{deal.method.replace("_", " ")}</p>
+                          </div>
+                        </div>
+                        <div className="rounded-lg bg-muted/30 p-3">
+                          <p className="text-xs font-medium mb-1">Instructions</p>
+                          <ul className="space-y-1">
+                            {deal.paymentInstructions.slice(0, 3).map((instruction) => (
+                              <li key={instruction} className="text-xs text-muted-foreground">{instruction}</li>
+                            ))}
+                          </ul>
+                        </div>
+                        <div className="flex flex-wrap gap-2">
+                          {(["sent", "approved", "paid", "failed", "cancelled"] as const).map((status) => (
+                            <Button
+                              key={status}
+                              variant={status === "paid" ? "default" : "outline"}
+                              size="sm"
+                              onClick={() => updateOfflineDealStatus.mutate({ id: deal.id, status })}
+                              disabled={updateOfflineDealStatus.isPending}
+                              data-testid={`button-safe-deal-${status}-${deal.id}`}
+                            >
+                              {status === "paid" ? <CheckCircle2 className="h-3.5 w-3.5 mr-1.5" /> : null}
+                              {status}
+                            </Button>
+                          ))}
+                        </div>
+                      </div>
+                    ))
+                  )}
+                </CardContent>
+              </Card>
+            </TabsContent>
 
             <TabsContent value="tap-to-pay" className="mt-6 space-y-6">
               <div>
