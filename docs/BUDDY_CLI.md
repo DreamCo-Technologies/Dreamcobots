@@ -25,6 +25,8 @@ buddy native-coverage
 buddy native-report
 buddy bot-sprint
 buddy bot-sprint-report
+buddy site-sync
+buddy site-report
 buddy history-audit
 buddy history-report
 buddy router-refresh
@@ -40,6 +42,8 @@ For media testing, `buddy song-test` creates a local song packet and `buddy open
 For native bot routing, `buddy native-coverage` scans the repository and proves which bot code can run first without another model. `buddy route <task>` now includes a `native_route` section so Buddy can try DreamCo bot code before optional free/local model help.
 
 For bot completion, `buddy bot-sprint` builds the ASAP queue for unfinished product bots. It separates real product bots from support scripts/tests, ranks the missing runtime work, and defines the finish line for each bot: local behavior, structured outputs, smoke tests, Buddy routing, and approval gates.
+
+For the website build, `buddy site-sync` refreshes `website/data/buddy-site-status.json` from Buddy's generated reports. The static `website/` pages read that file so the go-live site keeps the polished static style while showing current repo readiness data.
 
 For recovery checks, `buddy history-audit` scans local clones, branches, and reflogs for recoverable work. It is non-destructive and only creates a report; compare candidate refs before merging or copying code.
 

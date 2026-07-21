@@ -81,6 +81,8 @@ def main() -> int:
     sub.add_parser("native-report", help="Print Buddy's repo-native bot coverage JSON.")
     sub.add_parser("bot-sprint", help="Regenerate Buddy's ASAP bot completion sprint queue.")
     sub.add_parser("bot-sprint-report", help="Print Buddy's ASAP bot completion sprint JSON.")
+    sub.add_parser("site-sync", help="Sync Buddy generated report data into the static website build.")
+    sub.add_parser("site-report", help="Print the static website Buddy status JSON.")
     sub.add_parser("history-audit", help="Scan local Git clones, branches, and reflogs for recoverable work.")
     sub.add_parser("history-report", help="Print Buddy's Git recovery audit JSON.")
 
@@ -129,6 +131,10 @@ def main() -> int:
         return run(["python3", "tools/generate_buddy_bot_completion_sprint.py"])
     if command == "bot-sprint-report":
         return show_json(ROOT / "config" / "generated" / "buddy_bot_completion_sprint.json")
+    if command == "site-sync":
+        return run(["python3", "tools/sync_buddy_website_build.py"])
+    if command == "site-report":
+        return show_json(ROOT / "website" / "data" / "buddy-site-status.json")
     if command == "history-audit":
         return run(["python3", "tools/generate_buddy_git_recovery_audit.py"])
     if command == "history-report":

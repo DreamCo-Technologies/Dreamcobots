@@ -33,15 +33,38 @@
 
   <!-- Stats bar -->
   <div style="display:flex;gap:16px;flex-wrap:wrap;margin-bottom:32px;padding:20px 24px;background:var(--card);border:1px solid var(--border);border-radius:16px">
-    <div style="text-align:center;flex:1;min-width:80px"><div style="font-size:1.5rem;font-weight:800;color:var(--primary)">500+</div><div style="font-size:.75rem;color:var(--text3)">Libraries</div></div>
+    <div style="text-align:center;flex:1;min-width:80px"><div style="font-size:1.5rem;font-weight:800;color:var(--primary)" data-buddy-stat="free-models">100</div><div style="font-size:.75rem;color:var(--text3)">Free Resources</div></div>
     <div style="width:1px;background:var(--border)"></div>
     <div style="text-align:center;flex:1;min-width:80px"><div style="font-size:1.5rem;font-weight:800;color:var(--accent)">50+</div><div style="font-size:.75rem;color:var(--text3)">Languages</div></div>
     <div style="width:1px;background:var(--border)"></div>
-    <div style="text-align:center;flex:1;min-width:80px"><div style="font-size:1.5rem;font-weight:800;color:var(--green)">200+</div><div style="font-size:.75rem;color:var(--text3)">Frameworks</div></div>
+    <div style="text-align:center;flex:1;min-width:80px"><div style="font-size:1.5rem;font-weight:800;color:var(--green)" data-buddy-stat="api-routes">52</div><div style="font-size:.75rem;color:var(--text3)">API Routes</div></div>
     <div style="width:1px;background:var(--border)"></div>
-    <div style="text-align:center;flex:1;min-width:80px"><div style="font-size:1.5rem;font-weight:800;color:var(--amber)">16</div><div style="font-size:.75rem;color:var(--text3)">Capabilities</div></div>
+    <div style="text-align:center;flex:1;min-width:80px"><div style="font-size:1.5rem;font-weight:800;color:var(--amber)" data-buddy-stat="native-routes">16</div><div style="font-size:.75rem;color:var(--text3)">Native Routes</div></div>
     <div style="width:1px;background:var(--border)"></div>
-    <div style="text-align:center;flex:1;min-width:80px"><div style="font-size:1.5rem;font-weight:800;color:var(--cyan)">9/12</div><div style="font-size:.75rem;color:var(--text3)">GitHub Features</div></div>
+    <div style="text-align:center;flex:1;min-width:80px"><div style="font-size:1.5rem;font-weight:800;color:var(--cyan)" data-buddy-stat="completion-queue">232</div><div style="font-size:.75rem;color:var(--text3)">Finish Queue</div></div>
+  </div>
+
+  <div class="card card-lg" style="margin-bottom:28px;background:linear-gradient(135deg,rgba(79,142,247,.08),rgba(167,139,250,.05))">
+    <div style="display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:16px;flex-wrap:wrap">
+      <div>
+        <h3>Native Code First</h3>
+        <p style="font-size:.875rem">Buddy checks DreamCo bot code before optional model routing. This page syncs from the repository build reports.</p>
+      </div>
+      <div data-buddy-status-badges>
+        <span class="badge badge-green">Native-first</span>
+        <span class="badge badge-primary">Free backup</span>
+      </div>
+    </div>
+    <div class="grid-2">
+      <div>
+        <h4 style="margin-bottom:10px">Top Native Routes</h4>
+        <div data-buddy-native-routes></div>
+      </div>
+      <div>
+        <h4 style="margin-bottom:10px">Completion Sprint</h4>
+        <div data-buddy-completion-queue></div>
+      </div>
+    </div>
   </div>
 
   <!-- Tabs -->

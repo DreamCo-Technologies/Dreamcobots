@@ -28,14 +28,14 @@
   <!-- Stats grid -->
   <div class="grid-4" style="margin-bottom:32px">
     <div class="card" style="text-align:center">
-      <div style="font-size:2.25rem;font-weight:800;color:var(--primary)">1,051</div>
-      <div style="font-size:.8rem;color:var(--text3);margin-top:4px">Total Bots</div>
-      <div class="badge badge-green" style="margin-top:8px">847 Active</div>
+      <div style="font-size:2.25rem;font-weight:800;color:var(--primary)" data-buddy-stat="product-bots">1,051</div>
+      <div style="font-size:.8rem;color:var(--text3);margin-top:4px">Product Bots</div>
+      <div class="badge badge-green" style="margin-top:8px"><span data-buddy-stat="ready-bots">847</span> Native-Ready</div>
     </div>
     <div class="card" style="text-align:center">
-      <div style="font-size:2.25rem;font-weight:800;color:var(--green)">98.4%</div>
-      <div style="font-size:.8rem;color:var(--text3);margin-top:4px">Avg Uptime</div>
-      <div class="badge badge-green" style="margin-top:8px">↑ 0.3% this week</div>
+      <div style="font-size:2.25rem;font-weight:800;color:var(--green)" data-buddy-stat="readiness">98.4%</div>
+      <div style="font-size:.8rem;color:var(--text3);margin-top:4px">Native Readiness</div>
+      <div class="badge badge-green" style="margin-top:8px">Repo synced</div>
     </div>
     <div class="card" style="text-align:center">
       <div style="font-size:2.25rem;font-weight:800;color:var(--amber)">$4,821</div>
@@ -43,9 +43,31 @@
       <div class="badge badge-amber" style="margin-top:8px">↑ 12% vs yesterday</div>
     </div>
     <div class="card" style="text-align:center">
-      <div style="font-size:2.25rem;font-weight:800;color:var(--accent)">3</div>
-      <div style="font-size:.8rem;color:var(--text3);margin-top:4px">Open Errors</div>
-      <div class="badge badge-red" style="margin-top:8px">Auto-fix queued</div>
+      <div style="font-size:2.25rem;font-weight:800;color:var(--accent)" data-buddy-stat="completion-queue">3</div>
+      <div style="font-size:.8rem;color:var(--text3);margin-top:4px">Bot Completion Queue</div>
+      <div class="badge badge-amber" style="margin-top:8px"><span data-buddy-stat="core-runtime">12</span> core runtime</div>
+    </div>
+  </div>
+
+  <div class="card card-lg" style="margin-bottom:32px">
+    <div style="display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:18px;flex-wrap:wrap">
+      <div>
+        <h3>🧠 Buddy Build Sync</h3>
+        <p style="font-size:.875rem">This launch site reads Buddy's generated reports so repository edits keep showing up here.</p>
+      </div>
+      <div data-buddy-status-badges>
+        <span class="badge badge-green">Native code first</span>
+        <span class="badge badge-primary">Free model backup</span>
+      </div>
+    </div>
+    <div class="grid-4" style="margin-bottom:18px">
+      <div class="mini-stat"><strong data-buddy-stat="native-routes">16</strong><span>Native Routes</span></div>
+      <div class="mini-stat"><strong data-buddy-stat="api-routes">52</strong><span>API Routes</span></div>
+      <div class="mini-stat"><strong data-buddy-stat="free-models">100</strong><span>Free Resources</span></div>
+      <div class="mini-stat"><strong data-buddy-stat="completion-queue">232</strong><span>Finish Queue</span></div>
+    </div>
+    <div data-buddy-completion-queue>
+      <div class="buddy-sync-row"><span class="badge badge-primary">Sync</span><div><strong>Loading Buddy queue</strong><div>Generated from repo reports when hosted.</div></div><a href="bots.html" class="btn btn-outline btn-sm">Review</a></div>
     </div>
   </div>
 

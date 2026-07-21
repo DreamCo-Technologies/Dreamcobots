@@ -61,6 +61,13 @@
     .nav-more-menu.open { display: block; }
   `;
   document.head.appendChild(style);
+  if (!document.querySelector('script[data-buddy-site-sync]')) {
+    const syncScript = document.createElement('script');
+    syncScript.src = 'buddy-site-sync.js';
+    syncScript.defer = true;
+    syncScript.dataset.buddySiteSync = 'true';
+    document.body.appendChild(syncScript);
+  }
 })();
 
 function toggleMoreMenu(e) {
