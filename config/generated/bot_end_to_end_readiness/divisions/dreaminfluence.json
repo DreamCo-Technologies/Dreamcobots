@@ -1,0 +1,4783 @@
+{
+  "schema": "dreamco.bot_end_to_end_readiness.division.v1",
+  "generated_at": "2026-07-21T03:00:32Z",
+  "division": "DreamInfluence",
+  "bot_count": 26,
+  "bots": [
+    {
+      "slug": "advocacy-scorer",
+      "displayName": "Advocacy Opportunity Scorer",
+      "division": "DreamInfluence",
+      "category": "advocacy-scoring",
+      "tier": "pro",
+      "status": "active",
+      "profilePath": "bots/advocacy-scorer/bot_profile.json",
+      "source": "bots_profile",
+      "codeFiles": [
+        "bots/advocacy-scorer/__init__.py",
+        "bots/advocacy-scorer/bot.py",
+        "bots/advocacy-scorer/runtime.py",
+        "bots/advocacy-scorer/tiers.py"
+      ],
+      "tests": [],
+      "capabilities": [
+        "Opportunity impact scoring",
+        "Advocacy alignment analysis",
+        "Coalition potential assessment",
+        "Resource requirement estimation",
+        "Success probability modeling",
+        "Advanced analytics dashboard",
+        "Priority email support",
+        "API access",
+        "Custom integrations",
+        "Webhook notifications",
+        "Data export (CSV/JSON)",
+        "Scheduled automations",
+        "Multi-user access",
+        "Real-time monitoring dashboard",
+        "Automated error recovery",
+        "Cross-bot data sharing",
+        "Version history tracking",
+        "Performance benchmarking",
+        "Compliance reporting",
+        "Multi-region deployment",
+        "Auto-scaling resources",
+        "Encrypted data at rest",
+        "SOC 2 Type II compliant"
+      ],
+      "taskContract": {
+        "primary_mode": "local_first_no_external_provider_required",
+        "can_run_without_other_providers": true,
+        "optional_models_available": true,
+        "local_first_tasks": [
+          "task-specific intake",
+          "local workflow plan",
+          "sandbox output",
+          "quality checklist",
+          "dashboard/prospectus packet"
+        ],
+        "end_to_end_stages": [
+          {
+            "id": "intake",
+            "label": "Task Intake",
+            "required_output": "structured task brief with user goal, inputs, constraints, and approval level",
+            "local_method": "Use bot profile, existing capabilities, local forms, local files, and deterministic templates."
+          },
+          {
+            "id": "plan",
+            "label": "Build Plan",
+            "required_output": "step-by-step workflow, needed files, test plan, and expected deliverables",
+            "local_method": "Generate a rule-based plan from the bot division, category, description, and capabilities."
+          },
+          {
+            "id": "execute_sandbox",
+            "label": "Sandbox Execution",
+            "required_output": "local prototype, report, checklist, script output, or simulated workflow result",
+            "local_method": "Run only local code, local fixtures, mock data, and no-key fallbacks unless the owner approves live integrations."
+          },
+          {
+            "id": "validate",
+            "label": "Validation",
+            "required_output": "syntax check, unit/smoke test, data-quality review, safety review, and failure notes",
+            "local_method": "Prefer existing tests, Python compilation, TypeScript checks, JSON validation, and deterministic fixture replay."
+          },
+          {
+            "id": "package",
+            "label": "Client Package",
+            "required_output": "dashboard summary, prospectus page, export packet, and next approved action",
+            "local_method": "Create local Markdown/JSON/HTML artifacts first; publish, email, charge, or submit only after approval."
+          }
+        ],
+        "approval_gates": [
+          "paid model calls",
+          "live web scraping beyond allowed/public use",
+          "sending email, SMS, calls, social posts, bids, or proposals",
+          "collecting private or sensitive data",
+          "using real voice, face, likeness, or private biography details",
+          "collecting, moving, refunding, or reconciling money",
+          "legal, medical, financial, employment, tenant, credit, or eligibility decisions",
+          "production deploys, app-store submissions, marketplace listings, or domain purchases"
+        ],
+        "deliverables": [
+          "task brief",
+          "local sandbox result",
+          "test evidence",
+          "dashboard/prospectus summary",
+          "next approved action packet"
+        ],
+        "provider_policy": {
+          "default": "Use DreamCo local code, local storage, local fixtures, deterministic templates, and no-key fallbacks first.",
+          "optional": "Use external AI models only when configured by the owner or selected by the user for quality, speed, or media generation.",
+          "cost_control": "Budget-first routing, caching, and owner approval before paid calls."
+        },
+        "model_options": [
+          {
+            "id": "openai",
+            "provider": "OpenAI",
+            "best_for": [
+              "coding",
+              "debugging",
+              "agent tools"
+            ],
+            "optional_only": true
+          },
+          {
+            "id": "google_gemini",
+            "provider": "Google Gemini",
+            "best_for": [
+              "course building",
+              "long documents",
+              "video understanding"
+            ],
+            "optional_only": true
+          },
+          {
+            "id": "anthropic_claude",
+            "provider": "Anthropic Claude",
+            "best_for": [
+              "careful reasoning",
+              "long-form review",
+              "policy/safety review"
+            ],
+            "optional_only": true
+          },
+          {
+            "id": "meta_llama",
+            "provider": "Meta Llama",
+            "best_for": [
+              "local/private tasks",
+              "low-cost experiments",
+              "self-hosted assistants"
+            ],
+            "optional_only": true
+          },
+          {
+            "id": "mistral",
+            "provider": "Mistral AI",
+            "best_for": [
+              "fast drafts",
+              "European language workflows",
+              "cost-aware agents"
+            ],
+            "optional_only": true
+          },
+          {
+            "id": "deepseek",
+            "provider": "DeepSeek",
+            "best_for": [
+              "coding drafts",
+              "math-like reasoning",
+              "low-cost code comparison"
+            ],
+            "optional_only": true
+          }
+        ]
+      },
+      "readiness": {
+        "score": 90,
+        "status": "mostly_ready_needs_targeted_tests",
+        "missing": [
+          "direct test coverage"
+        ],
+        "next_steps": [
+          "Add or verify direct test coverage."
+        ]
+      }
+    },
+    {
+      "slug": "brand-perception-steer",
+      "displayName": "Brand Perception Steering AI",
+      "division": "DreamInfluence",
+      "category": "brand-perception",
+      "tier": "enterprise",
+      "status": "active",
+      "profilePath": "bots/brand-perception-steer/bot_profile.json",
+      "source": "bots_profile",
+      "codeFiles": [
+        "bots/brand-perception-steer/__init__.py",
+        "bots/brand-perception-steer/bot.py",
+        "bots/brand-perception-steer/runtime.py",
+        "bots/brand-perception-steer/tiers.py"
+      ],
+      "tests": [],
+      "capabilities": [
+        "Perception gap analysis",
+        "Message optimization engine",
+        "Audience sentiment targeting",
+        "Brand health scoring",
+        "Perception drift alerts",
+        "Campaign effectiveness tracking",
+        "Advanced analytics dashboard",
+        "Priority email support",
+        "API access",
+        "Custom integrations",
+        "Webhook notifications",
+        "Data export (CSV/JSON)",
+        "Scheduled automations",
+        "Multi-user access",
+        "Dedicated account manager",
+        "SLA guarantee (99.9%)",
+        "Custom model fine-tuning",
+        "SSO/SAML authentication",
+        "Audit logging",
+        "Role-based access control",
+        "White-label options",
+        "On-premise deployment option",
+        "Real-time monitoring dashboard",
+        "Automated error recovery",
+        "Cross-bot data sharing",
+        "Version history tracking",
+        "Performance benchmarking",
+        "Compliance reporting",
+        "Multi-region deployment",
+        "Auto-scaling resources",
+        "Encrypted data at rest",
+        "SOC 2 Type II compliant"
+      ],
+      "taskContract": {
+        "primary_mode": "local_first_no_external_provider_required",
+        "can_run_without_other_providers": true,
+        "optional_models_available": true,
+        "local_first_tasks": [
+          "task-specific intake",
+          "local workflow plan",
+          "sandbox output",
+          "quality checklist",
+          "dashboard/prospectus packet"
+        ],
+        "end_to_end_stages": [
+          {
+            "id": "intake",
+            "label": "Task Intake",
+            "required_output": "structured task brief with user goal, inputs, constraints, and approval level",
+            "local_method": "Use bot profile, existing capabilities, local forms, local files, and deterministic templates."
+          },
+          {
+            "id": "plan",
+            "label": "Build Plan",
+            "required_output": "step-by-step workflow, needed files, test plan, and expected deliverables",
+            "local_method": "Generate a rule-based plan from the bot division, category, description, and capabilities."
+          },
+          {
+            "id": "execute_sandbox",
+            "label": "Sandbox Execution",
+            "required_output": "local prototype, report, checklist, script output, or simulated workflow result",
+            "local_method": "Run only local code, local fixtures, mock data, and no-key fallbacks unless the owner approves live integrations."
+          },
+          {
+            "id": "validate",
+            "label": "Validation",
+            "required_output": "syntax check, unit/smoke test, data-quality review, safety review, and failure notes",
+            "local_method": "Prefer existing tests, Python compilation, TypeScript checks, JSON validation, and deterministic fixture replay."
+          },
+          {
+            "id": "package",
+            "label": "Client Package",
+            "required_output": "dashboard summary, prospectus page, export packet, and next approved action",
+            "local_method": "Create local Markdown/JSON/HTML artifacts first; publish, email, charge, or submit only after approval."
+          }
+        ],
+        "approval_gates": [
+          "paid model calls",
+          "live web scraping beyond allowed/public use",
+          "sending email, SMS, calls, social posts, bids, or proposals",
+          "collecting private or sensitive data",
+          "using real voice, face, likeness, or private biography details",
+          "collecting, moving, refunding, or reconciling money",
+          "legal, medical, financial, employment, tenant, credit, or eligibility decisions",
+          "production deploys, app-store submissions, marketplace listings, or domain purchases"
+        ],
+        "deliverables": [
+          "task brief",
+          "local sandbox result",
+          "test evidence",
+          "dashboard/prospectus summary",
+          "next approved action packet"
+        ],
+        "provider_policy": {
+          "default": "Use DreamCo local code, local storage, local fixtures, deterministic templates, and no-key fallbacks first.",
+          "optional": "Use external AI models only when configured by the owner or selected by the user for quality, speed, or media generation.",
+          "cost_control": "Budget-first routing, caching, and owner approval before paid calls."
+        },
+        "model_options": [
+          {
+            "id": "openai",
+            "provider": "OpenAI",
+            "best_for": [
+              "coding",
+              "debugging",
+              "agent tools"
+            ],
+            "optional_only": true
+          },
+          {
+            "id": "google_gemini",
+            "provider": "Google Gemini",
+            "best_for": [
+              "course building",
+              "long documents",
+              "video understanding"
+            ],
+            "optional_only": true
+          },
+          {
+            "id": "anthropic_claude",
+            "provider": "Anthropic Claude",
+            "best_for": [
+              "careful reasoning",
+              "long-form review",
+              "policy/safety review"
+            ],
+            "optional_only": true
+          },
+          {
+            "id": "meta_llama",
+            "provider": "Meta Llama",
+            "best_for": [
+              "local/private tasks",
+              "low-cost experiments",
+              "self-hosted assistants"
+            ],
+            "optional_only": true
+          },
+          {
+            "id": "mistral",
+            "provider": "Mistral AI",
+            "best_for": [
+              "fast drafts",
+              "European language workflows",
+              "cost-aware agents"
+            ],
+            "optional_only": true
+          },
+          {
+            "id": "deepseek",
+            "provider": "DeepSeek",
+            "best_for": [
+              "coding drafts",
+              "math-like reasoning",
+              "low-cost code comparison"
+            ],
+            "optional_only": true
+          }
+        ]
+      },
+      "readiness": {
+        "score": 90,
+        "status": "mostly_ready_needs_targeted_tests",
+        "missing": [
+          "direct test coverage"
+        ],
+        "next_steps": [
+          "Add or verify direct test coverage."
+        ]
+      }
+    },
+    {
+      "slug": "brand-trust-monitor",
+      "displayName": "Brand Trust Velocity Monitor",
+      "division": "DreamInfluence",
+      "category": "trust-monitoring",
+      "tier": "enterprise",
+      "status": "active",
+      "profilePath": "bots/brand-trust-monitor/bot_profile.json",
+      "source": "bots_profile",
+      "codeFiles": [
+        "bots/brand-trust-monitor/__init__.py",
+        "bots/brand-trust-monitor/bot.py",
+        "bots/brand-trust-monitor/runtime.py",
+        "bots/brand-trust-monitor/tiers.py"
+      ],
+      "tests": [],
+      "capabilities": [
+        "Trust velocity tracking",
+        "Multi-channel trust scoring",
+        "Trust driver identification",
+        "Competitive trust benchmarking",
+        "Trust recovery analysis",
+        "Real-time trust dashboards",
+        "Advanced analytics dashboard",
+        "Priority email support",
+        "API access",
+        "Custom integrations",
+        "Webhook notifications",
+        "Data export (CSV/JSON)",
+        "Scheduled automations",
+        "Multi-user access",
+        "Dedicated account manager",
+        "SLA guarantee (99.9%)",
+        "Custom model fine-tuning",
+        "SSO/SAML authentication",
+        "Audit logging",
+        "Role-based access control",
+        "White-label options",
+        "On-premise deployment option",
+        "Real-time monitoring dashboard",
+        "Automated error recovery",
+        "Cross-bot data sharing",
+        "Version history tracking",
+        "Performance benchmarking",
+        "Compliance reporting",
+        "Multi-region deployment",
+        "Auto-scaling resources",
+        "Encrypted data at rest",
+        "SOC 2 Type II compliant"
+      ],
+      "taskContract": {
+        "primary_mode": "local_first_no_external_provider_required",
+        "can_run_without_other_providers": true,
+        "optional_models_available": true,
+        "local_first_tasks": [
+          "task-specific intake",
+          "local workflow plan",
+          "sandbox output",
+          "quality checklist",
+          "dashboard/prospectus packet"
+        ],
+        "end_to_end_stages": [
+          {
+            "id": "intake",
+            "label": "Task Intake",
+            "required_output": "structured task brief with user goal, inputs, constraints, and approval level",
+            "local_method": "Use bot profile, existing capabilities, local forms, local files, and deterministic templates."
+          },
+          {
+            "id": "plan",
+            "label": "Build Plan",
+            "required_output": "step-by-step workflow, needed files, test plan, and expected deliverables",
+            "local_method": "Generate a rule-based plan from the bot division, category, description, and capabilities."
+          },
+          {
+            "id": "execute_sandbox",
+            "label": "Sandbox Execution",
+            "required_output": "local prototype, report, checklist, script output, or simulated workflow result",
+            "local_method": "Run only local code, local fixtures, mock data, and no-key fallbacks unless the owner approves live integrations."
+          },
+          {
+            "id": "validate",
+            "label": "Validation",
+            "required_output": "syntax check, unit/smoke test, data-quality review, safety review, and failure notes",
+            "local_method": "Prefer existing tests, Python compilation, TypeScript checks, JSON validation, and deterministic fixture replay."
+          },
+          {
+            "id": "package",
+            "label": "Client Package",
+            "required_output": "dashboard summary, prospectus page, export packet, and next approved action",
+            "local_method": "Create local Markdown/JSON/HTML artifacts first; publish, email, charge, or submit only after approval."
+          }
+        ],
+        "approval_gates": [
+          "paid model calls",
+          "live web scraping beyond allowed/public use",
+          "sending email, SMS, calls, social posts, bids, or proposals",
+          "collecting private or sensitive data",
+          "using real voice, face, likeness, or private biography details",
+          "collecting, moving, refunding, or reconciling money",
+          "legal, medical, financial, employment, tenant, credit, or eligibility decisions",
+          "production deploys, app-store submissions, marketplace listings, or domain purchases"
+        ],
+        "deliverables": [
+          "task brief",
+          "local sandbox result",
+          "test evidence",
+          "dashboard/prospectus summary",
+          "next approved action packet"
+        ],
+        "provider_policy": {
+          "default": "Use DreamCo local code, local storage, local fixtures, deterministic templates, and no-key fallbacks first.",
+          "optional": "Use external AI models only when configured by the owner or selected by the user for quality, speed, or media generation.",
+          "cost_control": "Budget-first routing, caching, and owner approval before paid calls."
+        },
+        "model_options": [
+          {
+            "id": "openai",
+            "provider": "OpenAI",
+            "best_for": [
+              "coding",
+              "debugging",
+              "agent tools"
+            ],
+            "optional_only": true
+          },
+          {
+            "id": "google_gemini",
+            "provider": "Google Gemini",
+            "best_for": [
+              "course building",
+              "long documents",
+              "video understanding"
+            ],
+            "optional_only": true
+          },
+          {
+            "id": "anthropic_claude",
+            "provider": "Anthropic Claude",
+            "best_for": [
+              "careful reasoning",
+              "long-form review",
+              "policy/safety review"
+            ],
+            "optional_only": true
+          },
+          {
+            "id": "meta_llama",
+            "provider": "Meta Llama",
+            "best_for": [
+              "local/private tasks",
+              "low-cost experiments",
+              "self-hosted assistants"
+            ],
+            "optional_only": true
+          },
+          {
+            "id": "mistral",
+            "provider": "Mistral AI",
+            "best_for": [
+              "fast drafts",
+              "European language workflows",
+              "cost-aware agents"
+            ],
+            "optional_only": true
+          },
+          {
+            "id": "deepseek",
+            "provider": "DeepSeek",
+            "best_for": [
+              "coding drafts",
+              "math-like reasoning",
+              "low-cost code comparison"
+            ],
+            "optional_only": true
+          }
+        ]
+      },
+      "readiness": {
+        "score": 90,
+        "status": "mostly_ready_needs_targeted_tests",
+        "missing": [
+          "direct test coverage"
+        ],
+        "next_steps": [
+          "Add or verify direct test coverage."
+        ]
+      }
+    },
+    {
+      "slug": "campaign-alignment-opt",
+      "displayName": "Campaign Alignment Optimizer",
+      "division": "DreamInfluence",
+      "category": "campaign-alignment",
+      "tier": "pro",
+      "status": "active",
+      "profilePath": "bots/campaign-alignment-opt/bot_profile.json",
+      "source": "bots_profile",
+      "codeFiles": [
+        "bots/campaign-alignment-opt/__init__.py",
+        "bots/campaign-alignment-opt/bot.py",
+        "bots/campaign-alignment-opt/runtime.py",
+        "bots/campaign-alignment-opt/tiers.py"
+      ],
+      "tests": [],
+      "capabilities": [
+        "Campaign-strategy alignment scoring",
+        "Message consistency analysis",
+        "Cross-channel harmonization",
+        "Budget-to-impact optimization",
+        "Real-time adjustment suggestions",
+        "Advanced analytics dashboard",
+        "Priority email support",
+        "API access",
+        "Custom integrations",
+        "Webhook notifications",
+        "Data export (CSV/JSON)",
+        "Scheduled automations",
+        "Multi-user access",
+        "Real-time monitoring dashboard",
+        "Automated error recovery",
+        "Cross-bot data sharing",
+        "Version history tracking",
+        "Performance benchmarking",
+        "Compliance reporting",
+        "Multi-region deployment",
+        "Auto-scaling resources",
+        "Encrypted data at rest",
+        "SOC 2 Type II compliant"
+      ],
+      "taskContract": {
+        "primary_mode": "local_first_no_external_provider_required",
+        "can_run_without_other_providers": true,
+        "optional_models_available": true,
+        "local_first_tasks": [
+          "campaign brief",
+          "SEO checklist",
+          "content calendar",
+          "mock analytics",
+          "approval gate"
+        ],
+        "end_to_end_stages": [
+          {
+            "id": "intake",
+            "label": "Task Intake",
+            "required_output": "structured task brief with user goal, inputs, constraints, and approval level",
+            "local_method": "Use bot profile, existing capabilities, local forms, local files, and deterministic templates."
+          },
+          {
+            "id": "plan",
+            "label": "Build Plan",
+            "required_output": "step-by-step workflow, needed files, test plan, and expected deliverables",
+            "local_method": "Generate a rule-based plan from the bot division, category, description, and capabilities."
+          },
+          {
+            "id": "execute_sandbox",
+            "label": "Sandbox Execution",
+            "required_output": "local prototype, report, checklist, script output, or simulated workflow result",
+            "local_method": "Run only local code, local fixtures, mock data, and no-key fallbacks unless the owner approves live integrations."
+          },
+          {
+            "id": "validate",
+            "label": "Validation",
+            "required_output": "syntax check, unit/smoke test, data-quality review, safety review, and failure notes",
+            "local_method": "Prefer existing tests, Python compilation, TypeScript checks, JSON validation, and deterministic fixture replay."
+          },
+          {
+            "id": "package",
+            "label": "Client Package",
+            "required_output": "dashboard summary, prospectus page, export packet, and next approved action",
+            "local_method": "Create local Markdown/JSON/HTML artifacts first; publish, email, charge, or submit only after approval."
+          }
+        ],
+        "approval_gates": [
+          "paid model calls",
+          "live web scraping beyond allowed/public use",
+          "sending email, SMS, calls, social posts, bids, or proposals",
+          "collecting private or sensitive data",
+          "using real voice, face, likeness, or private biography details",
+          "collecting, moving, refunding, or reconciling money",
+          "legal, medical, financial, employment, tenant, credit, or eligibility decisions",
+          "production deploys, app-store submissions, marketplace listings, or domain purchases"
+        ],
+        "deliverables": [
+          "task brief",
+          "local sandbox result",
+          "test evidence",
+          "dashboard/prospectus summary",
+          "next approved action packet"
+        ],
+        "provider_policy": {
+          "default": "Use DreamCo local code, local storage, local fixtures, deterministic templates, and no-key fallbacks first.",
+          "optional": "Use external AI models only when configured by the owner or selected by the user for quality, speed, or media generation.",
+          "cost_control": "Budget-first routing, caching, and owner approval before paid calls."
+        },
+        "model_options": [
+          {
+            "id": "openai",
+            "provider": "OpenAI",
+            "best_for": [
+              "coding",
+              "debugging",
+              "agent tools"
+            ],
+            "optional_only": true
+          },
+          {
+            "id": "google_gemini",
+            "provider": "Google Gemini",
+            "best_for": [
+              "course building",
+              "long documents",
+              "video understanding"
+            ],
+            "optional_only": true
+          },
+          {
+            "id": "anthropic_claude",
+            "provider": "Anthropic Claude",
+            "best_for": [
+              "careful reasoning",
+              "long-form review",
+              "policy/safety review"
+            ],
+            "optional_only": true
+          },
+          {
+            "id": "meta_llama",
+            "provider": "Meta Llama",
+            "best_for": [
+              "local/private tasks",
+              "low-cost experiments",
+              "self-hosted assistants"
+            ],
+            "optional_only": true
+          },
+          {
+            "id": "mistral",
+            "provider": "Mistral AI",
+            "best_for": [
+              "fast drafts",
+              "European language workflows",
+              "cost-aware agents"
+            ],
+            "optional_only": true
+          },
+          {
+            "id": "deepseek",
+            "provider": "DeepSeek",
+            "best_for": [
+              "coding drafts",
+              "math-like reasoning",
+              "low-cost code comparison"
+            ],
+            "optional_only": true
+          }
+        ]
+      },
+      "readiness": {
+        "score": 90,
+        "status": "mostly_ready_needs_targeted_tests",
+        "missing": [
+          "direct test coverage"
+        ],
+        "next_steps": [
+          "Add or verify direct test coverage."
+        ]
+      }
+    },
+    {
+      "slug": "competitor-narrative",
+      "displayName": "Competitor Narrative Detector",
+      "division": "DreamInfluence",
+      "category": "narrative-detection",
+      "tier": "enterprise",
+      "status": "active",
+      "profilePath": "bots/competitor-narrative/bot_profile.json",
+      "source": "bots_profile",
+      "codeFiles": [
+        "bots/competitor-narrative/__init__.py",
+        "bots/competitor-narrative/bot.py",
+        "bots/competitor-narrative/runtime.py",
+        "bots/competitor-narrative/tiers.py"
+      ],
+      "tests": [],
+      "capabilities": [
+        "Narrative pattern recognition",
+        "Media channel monitoring",
+        "Competitor messaging analysis",
+        "Tone and framing detection",
+        "Counter-narrative suggestions",
+        "Advanced analytics dashboard",
+        "Priority email support",
+        "API access",
+        "Custom integrations",
+        "Webhook notifications",
+        "Data export (CSV/JSON)",
+        "Scheduled automations",
+        "Multi-user access",
+        "Dedicated account manager",
+        "SLA guarantee (99.9%)",
+        "Custom model fine-tuning",
+        "SSO/SAML authentication",
+        "Audit logging",
+        "Role-based access control",
+        "White-label options",
+        "On-premise deployment option",
+        "Real-time monitoring dashboard",
+        "Automated error recovery",
+        "Cross-bot data sharing",
+        "Version history tracking",
+        "Performance benchmarking",
+        "Compliance reporting",
+        "Multi-region deployment",
+        "Auto-scaling resources",
+        "Encrypted data at rest",
+        "SOC 2 Type II compliant"
+      ],
+      "taskContract": {
+        "primary_mode": "local_first_no_external_provider_required",
+        "can_run_without_other_providers": true,
+        "optional_models_available": true,
+        "local_first_tasks": [
+          "task-specific intake",
+          "local workflow plan",
+          "sandbox output",
+          "quality checklist",
+          "dashboard/prospectus packet"
+        ],
+        "end_to_end_stages": [
+          {
+            "id": "intake",
+            "label": "Task Intake",
+            "required_output": "structured task brief with user goal, inputs, constraints, and approval level",
+            "local_method": "Use bot profile, existing capabilities, local forms, local files, and deterministic templates."
+          },
+          {
+            "id": "plan",
+            "label": "Build Plan",
+            "required_output": "step-by-step workflow, needed files, test plan, and expected deliverables",
+            "local_method": "Generate a rule-based plan from the bot division, category, description, and capabilities."
+          },
+          {
+            "id": "execute_sandbox",
+            "label": "Sandbox Execution",
+            "required_output": "local prototype, report, checklist, script output, or simulated workflow result",
+            "local_method": "Run only local code, local fixtures, mock data, and no-key fallbacks unless the owner approves live integrations."
+          },
+          {
+            "id": "validate",
+            "label": "Validation",
+            "required_output": "syntax check, unit/smoke test, data-quality review, safety review, and failure notes",
+            "local_method": "Prefer existing tests, Python compilation, TypeScript checks, JSON validation, and deterministic fixture replay."
+          },
+          {
+            "id": "package",
+            "label": "Client Package",
+            "required_output": "dashboard summary, prospectus page, export packet, and next approved action",
+            "local_method": "Create local Markdown/JSON/HTML artifacts first; publish, email, charge, or submit only after approval."
+          }
+        ],
+        "approval_gates": [
+          "paid model calls",
+          "live web scraping beyond allowed/public use",
+          "sending email, SMS, calls, social posts, bids, or proposals",
+          "collecting private or sensitive data",
+          "using real voice, face, likeness, or private biography details",
+          "collecting, moving, refunding, or reconciling money",
+          "legal, medical, financial, employment, tenant, credit, or eligibility decisions",
+          "production deploys, app-store submissions, marketplace listings, or domain purchases"
+        ],
+        "deliverables": [
+          "task brief",
+          "local sandbox result",
+          "test evidence",
+          "dashboard/prospectus summary",
+          "next approved action packet"
+        ],
+        "provider_policy": {
+          "default": "Use DreamCo local code, local storage, local fixtures, deterministic templates, and no-key fallbacks first.",
+          "optional": "Use external AI models only when configured by the owner or selected by the user for quality, speed, or media generation.",
+          "cost_control": "Budget-first routing, caching, and owner approval before paid calls."
+        },
+        "model_options": [
+          {
+            "id": "openai",
+            "provider": "OpenAI",
+            "best_for": [
+              "coding",
+              "debugging",
+              "agent tools"
+            ],
+            "optional_only": true
+          },
+          {
+            "id": "google_gemini",
+            "provider": "Google Gemini",
+            "best_for": [
+              "course building",
+              "long documents",
+              "video understanding"
+            ],
+            "optional_only": true
+          },
+          {
+            "id": "anthropic_claude",
+            "provider": "Anthropic Claude",
+            "best_for": [
+              "careful reasoning",
+              "long-form review",
+              "policy/safety review"
+            ],
+            "optional_only": true
+          },
+          {
+            "id": "meta_llama",
+            "provider": "Meta Llama",
+            "best_for": [
+              "local/private tasks",
+              "low-cost experiments",
+              "self-hosted assistants"
+            ],
+            "optional_only": true
+          },
+          {
+            "id": "mistral",
+            "provider": "Mistral AI",
+            "best_for": [
+              "fast drafts",
+              "European language workflows",
+              "cost-aware agents"
+            ],
+            "optional_only": true
+          },
+          {
+            "id": "deepseek",
+            "provider": "DeepSeek",
+            "best_for": [
+              "coding drafts",
+              "math-like reasoning",
+              "low-cost code comparison"
+            ],
+            "optional_only": true
+          }
+        ]
+      },
+      "readiness": {
+        "score": 90,
+        "status": "mostly_ready_needs_targeted_tests",
+        "missing": [
+          "direct test coverage"
+        ],
+        "next_steps": [
+          "Add or verify direct test coverage."
+        ]
+      }
+    },
+    {
+      "slug": "narrative-disruption-sim",
+      "displayName": "Competitor Narrative Disruption Simulator",
+      "division": "DreamInfluence",
+      "category": "narrative-disruption",
+      "tier": "elite",
+      "status": "active",
+      "profilePath": "bots/narrative-disruption-sim/bot_profile.json",
+      "source": "bots_profile",
+      "codeFiles": [
+        "bots/narrative-disruption-sim/__init__.py",
+        "bots/narrative-disruption-sim/bot.py",
+        "bots/narrative-disruption-sim/runtime.py",
+        "bots/narrative-disruption-sim/tiers.py"
+      ],
+      "tests": [],
+      "capabilities": [
+        "Disruption scenario modeling",
+        "Counter-narrative generation",
+        "Impact prediction engine",
+        "Risk-reward analysis",
+        "Campaign timing optimizer",
+        "Competitive response forecasting",
+        "Advanced analytics dashboard",
+        "Priority email support",
+        "API access",
+        "Custom integrations",
+        "Webhook notifications",
+        "Data export (CSV/JSON)",
+        "Scheduled automations",
+        "Multi-user access",
+        "Dedicated account manager",
+        "SLA guarantee (99.99%)",
+        "Custom model fine-tuning",
+        "SSO/SAML authentication",
+        "Audit logging",
+        "Role-based access control",
+        "White-label options",
+        "On-premise deployment option",
+        "24/7 phone support",
+        "Custom AI model training",
+        "Unlimited API calls",
+        "Dedicated infrastructure",
+        "Quarterly business reviews",
+        "Early access to features",
+        "Real-time monitoring dashboard",
+        "Automated error recovery",
+        "Cross-bot data sharing",
+        "Version history tracking",
+        "Performance benchmarking",
+        "Compliance reporting",
+        "Multi-region deployment",
+        "Auto-scaling resources",
+        "Encrypted data at rest",
+        "SOC 2 Type II compliant"
+      ],
+      "taskContract": {
+        "primary_mode": "local_first_no_external_provider_required",
+        "can_run_without_other_providers": true,
+        "optional_models_available": true,
+        "local_first_tasks": [
+          "task-specific intake",
+          "local workflow plan",
+          "sandbox output",
+          "quality checklist",
+          "dashboard/prospectus packet"
+        ],
+        "end_to_end_stages": [
+          {
+            "id": "intake",
+            "label": "Task Intake",
+            "required_output": "structured task brief with user goal, inputs, constraints, and approval level",
+            "local_method": "Use bot profile, existing capabilities, local forms, local files, and deterministic templates."
+          },
+          {
+            "id": "plan",
+            "label": "Build Plan",
+            "required_output": "step-by-step workflow, needed files, test plan, and expected deliverables",
+            "local_method": "Generate a rule-based plan from the bot division, category, description, and capabilities."
+          },
+          {
+            "id": "execute_sandbox",
+            "label": "Sandbox Execution",
+            "required_output": "local prototype, report, checklist, script output, or simulated workflow result",
+            "local_method": "Run only local code, local fixtures, mock data, and no-key fallbacks unless the owner approves live integrations."
+          },
+          {
+            "id": "validate",
+            "label": "Validation",
+            "required_output": "syntax check, unit/smoke test, data-quality review, safety review, and failure notes",
+            "local_method": "Prefer existing tests, Python compilation, TypeScript checks, JSON validation, and deterministic fixture replay."
+          },
+          {
+            "id": "package",
+            "label": "Client Package",
+            "required_output": "dashboard summary, prospectus page, export packet, and next approved action",
+            "local_method": "Create local Markdown/JSON/HTML artifacts first; publish, email, charge, or submit only after approval."
+          }
+        ],
+        "approval_gates": [
+          "paid model calls",
+          "live web scraping beyond allowed/public use",
+          "sending email, SMS, calls, social posts, bids, or proposals",
+          "collecting private or sensitive data",
+          "using real voice, face, likeness, or private biography details",
+          "collecting, moving, refunding, or reconciling money",
+          "legal, medical, financial, employment, tenant, credit, or eligibility decisions",
+          "production deploys, app-store submissions, marketplace listings, or domain purchases"
+        ],
+        "deliverables": [
+          "task brief",
+          "local sandbox result",
+          "test evidence",
+          "dashboard/prospectus summary",
+          "next approved action packet"
+        ],
+        "provider_policy": {
+          "default": "Use DreamCo local code, local storage, local fixtures, deterministic templates, and no-key fallbacks first.",
+          "optional": "Use external AI models only when configured by the owner or selected by the user for quality, speed, or media generation.",
+          "cost_control": "Budget-first routing, caching, and owner approval before paid calls."
+        },
+        "model_options": [
+          {
+            "id": "openai",
+            "provider": "OpenAI",
+            "best_for": [
+              "coding",
+              "debugging",
+              "agent tools"
+            ],
+            "optional_only": true
+          },
+          {
+            "id": "google_gemini",
+            "provider": "Google Gemini",
+            "best_for": [
+              "course building",
+              "long documents",
+              "video understanding"
+            ],
+            "optional_only": true
+          },
+          {
+            "id": "anthropic_claude",
+            "provider": "Anthropic Claude",
+            "best_for": [
+              "careful reasoning",
+              "long-form review",
+              "policy/safety review"
+            ],
+            "optional_only": true
+          },
+          {
+            "id": "meta_llama",
+            "provider": "Meta Llama",
+            "best_for": [
+              "local/private tasks",
+              "low-cost experiments",
+              "self-hosted assistants"
+            ],
+            "optional_only": true
+          },
+          {
+            "id": "mistral",
+            "provider": "Mistral AI",
+            "best_for": [
+              "fast drafts",
+              "European language workflows",
+              "cost-aware agents"
+            ],
+            "optional_only": true
+          },
+          {
+            "id": "deepseek",
+            "provider": "DeepSeek",
+            "best_for": [
+              "coding drafts",
+              "math-like reasoning",
+              "low-cost code comparison"
+            ],
+            "optional_only": true
+          }
+        ]
+      },
+      "readiness": {
+        "score": 90,
+        "status": "mostly_ready_needs_targeted_tests",
+        "missing": [
+          "direct test coverage"
+        ],
+        "next_steps": [
+          "Add or verify direct test coverage."
+        ]
+      }
+    },
+    {
+      "slug": "cross-industry-influence",
+      "displayName": "Cross-Industry Influence Detector",
+      "division": "DreamInfluence",
+      "category": "cross-industry",
+      "tier": "pro",
+      "status": "active",
+      "profilePath": "bots/cross-industry-influence/bot_profile.json",
+      "source": "bots_profile",
+      "codeFiles": [
+        "bots/cross-industry-influence/__init__.py",
+        "bots/cross-industry-influence/bot.py",
+        "bots/cross-industry-influence/runtime.py",
+        "bots/cross-industry-influence/tiers.py"
+      ],
+      "tests": [],
+      "capabilities": [
+        "Cross-sector trend detection",
+        "Influence spillover analysis",
+        "Industry convergence mapping",
+        "Emerging alliance identification",
+        "Cross-pollination opportunity scoring",
+        "Advanced analytics dashboard",
+        "Priority email support",
+        "API access",
+        "Custom integrations",
+        "Webhook notifications",
+        "Data export (CSV/JSON)",
+        "Scheduled automations",
+        "Multi-user access",
+        "Real-time monitoring dashboard",
+        "Automated error recovery",
+        "Cross-bot data sharing",
+        "Version history tracking",
+        "Performance benchmarking",
+        "Compliance reporting",
+        "Multi-region deployment",
+        "Auto-scaling resources",
+        "Encrypted data at rest",
+        "SOC 2 Type II compliant"
+      ],
+      "taskContract": {
+        "primary_mode": "local_first_no_external_provider_required",
+        "can_run_without_other_providers": true,
+        "optional_models_available": true,
+        "local_first_tasks": [
+          "task-specific intake",
+          "local workflow plan",
+          "sandbox output",
+          "quality checklist",
+          "dashboard/prospectus packet"
+        ],
+        "end_to_end_stages": [
+          {
+            "id": "intake",
+            "label": "Task Intake",
+            "required_output": "structured task brief with user goal, inputs, constraints, and approval level",
+            "local_method": "Use bot profile, existing capabilities, local forms, local files, and deterministic templates."
+          },
+          {
+            "id": "plan",
+            "label": "Build Plan",
+            "required_output": "step-by-step workflow, needed files, test plan, and expected deliverables",
+            "local_method": "Generate a rule-based plan from the bot division, category, description, and capabilities."
+          },
+          {
+            "id": "execute_sandbox",
+            "label": "Sandbox Execution",
+            "required_output": "local prototype, report, checklist, script output, or simulated workflow result",
+            "local_method": "Run only local code, local fixtures, mock data, and no-key fallbacks unless the owner approves live integrations."
+          },
+          {
+            "id": "validate",
+            "label": "Validation",
+            "required_output": "syntax check, unit/smoke test, data-quality review, safety review, and failure notes",
+            "local_method": "Prefer existing tests, Python compilation, TypeScript checks, JSON validation, and deterministic fixture replay."
+          },
+          {
+            "id": "package",
+            "label": "Client Package",
+            "required_output": "dashboard summary, prospectus page, export packet, and next approved action",
+            "local_method": "Create local Markdown/JSON/HTML artifacts first; publish, email, charge, or submit only after approval."
+          }
+        ],
+        "approval_gates": [
+          "paid model calls",
+          "live web scraping beyond allowed/public use",
+          "sending email, SMS, calls, social posts, bids, or proposals",
+          "collecting private or sensitive data",
+          "using real voice, face, likeness, or private biography details",
+          "collecting, moving, refunding, or reconciling money",
+          "legal, medical, financial, employment, tenant, credit, or eligibility decisions",
+          "production deploys, app-store submissions, marketplace listings, or domain purchases"
+        ],
+        "deliverables": [
+          "task brief",
+          "local sandbox result",
+          "test evidence",
+          "dashboard/prospectus summary",
+          "next approved action packet"
+        ],
+        "provider_policy": {
+          "default": "Use DreamCo local code, local storage, local fixtures, deterministic templates, and no-key fallbacks first.",
+          "optional": "Use external AI models only when configured by the owner or selected by the user for quality, speed, or media generation.",
+          "cost_control": "Budget-first routing, caching, and owner approval before paid calls."
+        },
+        "model_options": [
+          {
+            "id": "openai",
+            "provider": "OpenAI",
+            "best_for": [
+              "coding",
+              "debugging",
+              "agent tools"
+            ],
+            "optional_only": true
+          },
+          {
+            "id": "google_gemini",
+            "provider": "Google Gemini",
+            "best_for": [
+              "course building",
+              "long documents",
+              "video understanding"
+            ],
+            "optional_only": true
+          },
+          {
+            "id": "anthropic_claude",
+            "provider": "Anthropic Claude",
+            "best_for": [
+              "careful reasoning",
+              "long-form review",
+              "policy/safety review"
+            ],
+            "optional_only": true
+          },
+          {
+            "id": "meta_llama",
+            "provider": "Meta Llama",
+            "best_for": [
+              "local/private tasks",
+              "low-cost experiments",
+              "self-hosted assistants"
+            ],
+            "optional_only": true
+          },
+          {
+            "id": "mistral",
+            "provider": "Mistral AI",
+            "best_for": [
+              "fast drafts",
+              "European language workflows",
+              "cost-aware agents"
+            ],
+            "optional_only": true
+          },
+          {
+            "id": "deepseek",
+            "provider": "DeepSeek",
+            "best_for": [
+              "coding drafts",
+              "math-like reasoning",
+              "low-cost code comparison"
+            ],
+            "optional_only": true
+          }
+        ]
+      },
+      "readiness": {
+        "score": 90,
+        "status": "mostly_ready_needs_targeted_tests",
+        "missing": [
+          "direct test coverage"
+        ],
+        "next_steps": [
+          "Add or verify direct test coverage."
+        ]
+      }
+    },
+    {
+      "slug": "dreaminfluence",
+      "displayName": "DreamInfluence Division System",
+      "division": "DreamInfluence",
+      "category": "division-system",
+      "tier": "system",
+      "status": "active",
+      "profilePath": "App_bots/DreamInfluence.json",
+      "source": "division_json_system",
+      "codeFiles": [],
+      "tests": [],
+      "capabilities": [],
+      "taskContract": {
+        "primary_mode": "local_first_no_external_provider_required",
+        "can_run_without_other_providers": true,
+        "optional_models_available": true,
+        "local_first_tasks": [
+          "coordination plan",
+          "health check",
+          "task queue",
+          "dashboard status",
+          "handoff report"
+        ],
+        "end_to_end_stages": [
+          {
+            "id": "intake",
+            "label": "Task Intake",
+            "required_output": "structured task brief with user goal, inputs, constraints, and approval level",
+            "local_method": "Use bot profile, existing capabilities, local forms, local files, and deterministic templates."
+          },
+          {
+            "id": "plan",
+            "label": "Build Plan",
+            "required_output": "step-by-step workflow, needed files, test plan, and expected deliverables",
+            "local_method": "Generate a rule-based plan from the bot division, category, description, and capabilities."
+          },
+          {
+            "id": "execute_sandbox",
+            "label": "Sandbox Execution",
+            "required_output": "local prototype, report, checklist, script output, or simulated workflow result",
+            "local_method": "Run only local code, local fixtures, mock data, and no-key fallbacks unless the owner approves live integrations."
+          },
+          {
+            "id": "validate",
+            "label": "Validation",
+            "required_output": "syntax check, unit/smoke test, data-quality review, safety review, and failure notes",
+            "local_method": "Prefer existing tests, Python compilation, TypeScript checks, JSON validation, and deterministic fixture replay."
+          },
+          {
+            "id": "package",
+            "label": "Client Package",
+            "required_output": "dashboard summary, prospectus page, export packet, and next approved action",
+            "local_method": "Create local Markdown/JSON/HTML artifacts first; publish, email, charge, or submit only after approval."
+          }
+        ],
+        "approval_gates": [
+          "paid model calls",
+          "live web scraping beyond allowed/public use",
+          "sending email, SMS, calls, social posts, bids, or proposals",
+          "collecting private or sensitive data",
+          "using real voice, face, likeness, or private biography details",
+          "collecting, moving, refunding, or reconciling money",
+          "legal, medical, financial, employment, tenant, credit, or eligibility decisions",
+          "production deploys, app-store submissions, marketplace listings, or domain purchases"
+        ],
+        "deliverables": [
+          "task brief",
+          "local sandbox result",
+          "test evidence",
+          "dashboard/prospectus summary",
+          "next approved action packet"
+        ],
+        "provider_policy": {
+          "default": "Use DreamCo local code, local storage, local fixtures, deterministic templates, and no-key fallbacks first.",
+          "optional": "Use external AI models only when configured by the owner or selected by the user for quality, speed, or media generation.",
+          "cost_control": "Budget-first routing, caching, and owner approval before paid calls."
+        },
+        "model_options": [
+          {
+            "id": "openai",
+            "provider": "OpenAI",
+            "best_for": [
+              "coding",
+              "debugging",
+              "agent tools"
+            ],
+            "optional_only": true
+          },
+          {
+            "id": "google_gemini",
+            "provider": "Google Gemini",
+            "best_for": [
+              "course building",
+              "long documents",
+              "video understanding"
+            ],
+            "optional_only": true
+          },
+          {
+            "id": "anthropic_claude",
+            "provider": "Anthropic Claude",
+            "best_for": [
+              "careful reasoning",
+              "long-form review",
+              "policy/safety review"
+            ],
+            "optional_only": true
+          },
+          {
+            "id": "meta_llama",
+            "provider": "Meta Llama",
+            "best_for": [
+              "local/private tasks",
+              "low-cost experiments",
+              "self-hosted assistants"
+            ],
+            "optional_only": true
+          },
+          {
+            "id": "mistral",
+            "provider": "Mistral AI",
+            "best_for": [
+              "fast drafts",
+              "European language workflows",
+              "cost-aware agents"
+            ],
+            "optional_only": true
+          },
+          {
+            "id": "deepseek",
+            "provider": "DeepSeek",
+            "best_for": [
+              "coding drafts",
+              "math-like reasoning",
+              "low-cost code comparison"
+            ],
+            "optional_only": true
+          }
+        ]
+      },
+      "readiness": {
+        "score": 50,
+        "status": "needs_buildout_before_client_demo",
+        "missing": [
+          "capabilities",
+          "runtime code file",
+          "direct test coverage",
+          "business model or target users"
+        ],
+        "next_steps": [
+          "Add or verify capabilities.",
+          "Add or verify runtime code file.",
+          "Add or verify direct test coverage.",
+          "Add or verify business model or target users."
+        ]
+      }
+    },
+    {
+      "slug": "global-influence-index",
+      "displayName": "Global Influence Index",
+      "division": "DreamInfluence",
+      "category": "global-influence",
+      "tier": "free",
+      "status": "active",
+      "profilePath": "bots/global-influence-index/bot_profile.json",
+      "source": "bots_profile",
+      "codeFiles": [
+        "bots/global-influence-index/__init__.py",
+        "bots/global-influence-index/bot.py",
+        "bots/global-influence-index/runtime.py",
+        "bots/global-influence-index/tiers.py"
+      ],
+      "tests": [],
+      "capabilities": [
+        "Global influence scorecard",
+        "Regional influence breakdown",
+        "Trend visualization dashboard",
+        "Benchmark comparisons",
+        "Public data aggregation",
+        "Basic analytics",
+        "Email support",
+        "Community access",
+        "Real-time monitoring dashboard",
+        "Automated error recovery",
+        "Cross-bot data sharing",
+        "Version history tracking",
+        "Performance benchmarking",
+        "Compliance reporting",
+        "Multi-region deployment",
+        "Auto-scaling resources",
+        "Encrypted data at rest",
+        "SOC 2 Type II compliant"
+      ],
+      "taskContract": {
+        "primary_mode": "local_first_no_external_provider_required",
+        "can_run_without_other_providers": true,
+        "optional_models_available": true,
+        "local_first_tasks": [
+          "task-specific intake",
+          "local workflow plan",
+          "sandbox output",
+          "quality checklist",
+          "dashboard/prospectus packet"
+        ],
+        "end_to_end_stages": [
+          {
+            "id": "intake",
+            "label": "Task Intake",
+            "required_output": "structured task brief with user goal, inputs, constraints, and approval level",
+            "local_method": "Use bot profile, existing capabilities, local forms, local files, and deterministic templates."
+          },
+          {
+            "id": "plan",
+            "label": "Build Plan",
+            "required_output": "step-by-step workflow, needed files, test plan, and expected deliverables",
+            "local_method": "Generate a rule-based plan from the bot division, category, description, and capabilities."
+          },
+          {
+            "id": "execute_sandbox",
+            "label": "Sandbox Execution",
+            "required_output": "local prototype, report, checklist, script output, or simulated workflow result",
+            "local_method": "Run only local code, local fixtures, mock data, and no-key fallbacks unless the owner approves live integrations."
+          },
+          {
+            "id": "validate",
+            "label": "Validation",
+            "required_output": "syntax check, unit/smoke test, data-quality review, safety review, and failure notes",
+            "local_method": "Prefer existing tests, Python compilation, TypeScript checks, JSON validation, and deterministic fixture replay."
+          },
+          {
+            "id": "package",
+            "label": "Client Package",
+            "required_output": "dashboard summary, prospectus page, export packet, and next approved action",
+            "local_method": "Create local Markdown/JSON/HTML artifacts first; publish, email, charge, or submit only after approval."
+          }
+        ],
+        "approval_gates": [
+          "paid model calls",
+          "live web scraping beyond allowed/public use",
+          "sending email, SMS, calls, social posts, bids, or proposals",
+          "collecting private or sensitive data",
+          "using real voice, face, likeness, or private biography details",
+          "collecting, moving, refunding, or reconciling money",
+          "legal, medical, financial, employment, tenant, credit, or eligibility decisions",
+          "production deploys, app-store submissions, marketplace listings, or domain purchases"
+        ],
+        "deliverables": [
+          "task brief",
+          "local sandbox result",
+          "test evidence",
+          "dashboard/prospectus summary",
+          "next approved action packet"
+        ],
+        "provider_policy": {
+          "default": "Use DreamCo local code, local storage, local fixtures, deterministic templates, and no-key fallbacks first.",
+          "optional": "Use external AI models only when configured by the owner or selected by the user for quality, speed, or media generation.",
+          "cost_control": "Budget-first routing, caching, and owner approval before paid calls."
+        },
+        "model_options": [
+          {
+            "id": "openai",
+            "provider": "OpenAI",
+            "best_for": [
+              "coding",
+              "debugging",
+              "agent tools"
+            ],
+            "optional_only": true
+          },
+          {
+            "id": "google_gemini",
+            "provider": "Google Gemini",
+            "best_for": [
+              "course building",
+              "long documents",
+              "video understanding"
+            ],
+            "optional_only": true
+          },
+          {
+            "id": "anthropic_claude",
+            "provider": "Anthropic Claude",
+            "best_for": [
+              "careful reasoning",
+              "long-form review",
+              "policy/safety review"
+            ],
+            "optional_only": true
+          },
+          {
+            "id": "meta_llama",
+            "provider": "Meta Llama",
+            "best_for": [
+              "local/private tasks",
+              "low-cost experiments",
+              "self-hosted assistants"
+            ],
+            "optional_only": true
+          },
+          {
+            "id": "mistral",
+            "provider": "Mistral AI",
+            "best_for": [
+              "fast drafts",
+              "European language workflows",
+              "cost-aware agents"
+            ],
+            "optional_only": true
+          },
+          {
+            "id": "deepseek",
+            "provider": "DeepSeek",
+            "best_for": [
+              "coding drafts",
+              "math-like reasoning",
+              "low-cost code comparison"
+            ],
+            "optional_only": true
+          }
+        ]
+      },
+      "readiness": {
+        "score": 90,
+        "status": "mostly_ready_needs_targeted_tests",
+        "missing": [
+          "direct test coverage"
+        ],
+        "next_steps": [
+          "Add or verify direct test coverage."
+        ]
+      }
+    },
+    {
+      "slug": "influence-mapping",
+      "displayName": "Industry Influence Mapper",
+      "division": "DreamInfluence",
+      "category": "influence-mapping",
+      "tier": "elite",
+      "status": "active",
+      "profilePath": "bots/influence-mapping/bot_profile.json",
+      "source": "bots_profile",
+      "codeFiles": [
+        "bots/influence-mapping/__init__.py",
+        "bots/influence-mapping/bot.py",
+        "bots/influence-mapping/runtime.py",
+        "bots/influence-mapping/tiers.py"
+      ],
+      "tests": [],
+      "capabilities": [
+        "Influence network graph generation",
+        "Power node identification",
+        "Relationship strength scoring",
+        "Industry cluster analysis",
+        "Influence pathway tracing",
+        "Real-time network updates",
+        "Advanced analytics dashboard",
+        "Priority email support",
+        "API access",
+        "Custom integrations",
+        "Webhook notifications",
+        "Data export (CSV/JSON)",
+        "Scheduled automations",
+        "Multi-user access",
+        "Dedicated account manager",
+        "SLA guarantee (99.99%)",
+        "Custom model fine-tuning",
+        "SSO/SAML authentication",
+        "Audit logging",
+        "Role-based access control",
+        "White-label options",
+        "On-premise deployment option",
+        "24/7 phone support",
+        "Custom AI model training",
+        "Unlimited API calls",
+        "Dedicated infrastructure",
+        "Quarterly business reviews",
+        "Early access to features",
+        "Real-time monitoring dashboard",
+        "Automated error recovery",
+        "Cross-bot data sharing",
+        "Version history tracking",
+        "Performance benchmarking",
+        "Compliance reporting",
+        "Multi-region deployment",
+        "Auto-scaling resources",
+        "Encrypted data at rest",
+        "SOC 2 Type II compliant"
+      ],
+      "taskContract": {
+        "primary_mode": "local_first_no_external_provider_required",
+        "can_run_without_other_providers": true,
+        "optional_models_available": true,
+        "local_first_tasks": [
+          "task-specific intake",
+          "local workflow plan",
+          "sandbox output",
+          "quality checklist",
+          "dashboard/prospectus packet"
+        ],
+        "end_to_end_stages": [
+          {
+            "id": "intake",
+            "label": "Task Intake",
+            "required_output": "structured task brief with user goal, inputs, constraints, and approval level",
+            "local_method": "Use bot profile, existing capabilities, local forms, local files, and deterministic templates."
+          },
+          {
+            "id": "plan",
+            "label": "Build Plan",
+            "required_output": "step-by-step workflow, needed files, test plan, and expected deliverables",
+            "local_method": "Generate a rule-based plan from the bot division, category, description, and capabilities."
+          },
+          {
+            "id": "execute_sandbox",
+            "label": "Sandbox Execution",
+            "required_output": "local prototype, report, checklist, script output, or simulated workflow result",
+            "local_method": "Run only local code, local fixtures, mock data, and no-key fallbacks unless the owner approves live integrations."
+          },
+          {
+            "id": "validate",
+            "label": "Validation",
+            "required_output": "syntax check, unit/smoke test, data-quality review, safety review, and failure notes",
+            "local_method": "Prefer existing tests, Python compilation, TypeScript checks, JSON validation, and deterministic fixture replay."
+          },
+          {
+            "id": "package",
+            "label": "Client Package",
+            "required_output": "dashboard summary, prospectus page, export packet, and next approved action",
+            "local_method": "Create local Markdown/JSON/HTML artifacts first; publish, email, charge, or submit only after approval."
+          }
+        ],
+        "approval_gates": [
+          "paid model calls",
+          "live web scraping beyond allowed/public use",
+          "sending email, SMS, calls, social posts, bids, or proposals",
+          "collecting private or sensitive data",
+          "using real voice, face, likeness, or private biography details",
+          "collecting, moving, refunding, or reconciling money",
+          "legal, medical, financial, employment, tenant, credit, or eligibility decisions",
+          "production deploys, app-store submissions, marketplace listings, or domain purchases"
+        ],
+        "deliverables": [
+          "task brief",
+          "local sandbox result",
+          "test evidence",
+          "dashboard/prospectus summary",
+          "next approved action packet"
+        ],
+        "provider_policy": {
+          "default": "Use DreamCo local code, local storage, local fixtures, deterministic templates, and no-key fallbacks first.",
+          "optional": "Use external AI models only when configured by the owner or selected by the user for quality, speed, or media generation.",
+          "cost_control": "Budget-first routing, caching, and owner approval before paid calls."
+        },
+        "model_options": [
+          {
+            "id": "openai",
+            "provider": "OpenAI",
+            "best_for": [
+              "coding",
+              "debugging",
+              "agent tools"
+            ],
+            "optional_only": true
+          },
+          {
+            "id": "google_gemini",
+            "provider": "Google Gemini",
+            "best_for": [
+              "course building",
+              "long documents",
+              "video understanding"
+            ],
+            "optional_only": true
+          },
+          {
+            "id": "anthropic_claude",
+            "provider": "Anthropic Claude",
+            "best_for": [
+              "careful reasoning",
+              "long-form review",
+              "policy/safety review"
+            ],
+            "optional_only": true
+          },
+          {
+            "id": "meta_llama",
+            "provider": "Meta Llama",
+            "best_for": [
+              "local/private tasks",
+              "low-cost experiments",
+              "self-hosted assistants"
+            ],
+            "optional_only": true
+          },
+          {
+            "id": "mistral",
+            "provider": "Mistral AI",
+            "best_for": [
+              "fast drafts",
+              "European language workflows",
+              "cost-aware agents"
+            ],
+            "optional_only": true
+          },
+          {
+            "id": "deepseek",
+            "provider": "DeepSeek",
+            "best_for": [
+              "coding drafts",
+              "math-like reasoning",
+              "low-cost code comparison"
+            ],
+            "optional_only": true
+          }
+        ]
+      },
+      "readiness": {
+        "score": 90,
+        "status": "mostly_ready_needs_targeted_tests",
+        "missing": [
+          "direct test coverage"
+        ],
+        "next_steps": [
+          "Add or verify direct test coverage."
+        ]
+      }
+    },
+    {
+      "slug": "influence-network-opt",
+      "displayName": "Influence Network Optimizer",
+      "division": "DreamInfluence",
+      "category": "network-optimization",
+      "tier": "enterprise",
+      "status": "active",
+      "profilePath": "bots/influence-network-opt/bot_profile.json",
+      "source": "bots_profile",
+      "codeFiles": [
+        "bots/influence-network-opt/__init__.py",
+        "bots/influence-network-opt/bot.py",
+        "bots/influence-network-opt/runtime.py",
+        "bots/influence-network-opt/tiers.py"
+      ],
+      "tests": [],
+      "capabilities": [
+        "Network topology optimization",
+        "Engagement path analysis",
+        "Influencer ROI scoring",
+        "Network gap identification",
+        "Amplification strategy engine",
+        "Advanced analytics dashboard",
+        "Priority email support",
+        "API access",
+        "Custom integrations",
+        "Webhook notifications",
+        "Data export (CSV/JSON)",
+        "Scheduled automations",
+        "Multi-user access",
+        "Dedicated account manager",
+        "SLA guarantee (99.9%)",
+        "Custom model fine-tuning",
+        "SSO/SAML authentication",
+        "Audit logging",
+        "Role-based access control",
+        "White-label options",
+        "On-premise deployment option",
+        "Real-time monitoring dashboard",
+        "Automated error recovery",
+        "Cross-bot data sharing",
+        "Version history tracking",
+        "Performance benchmarking",
+        "Compliance reporting",
+        "Multi-region deployment",
+        "Auto-scaling resources",
+        "Encrypted data at rest",
+        "SOC 2 Type II compliant"
+      ],
+      "taskContract": {
+        "primary_mode": "local_first_no_external_provider_required",
+        "can_run_without_other_providers": true,
+        "optional_models_available": true,
+        "local_first_tasks": [
+          "task-specific intake",
+          "local workflow plan",
+          "sandbox output",
+          "quality checklist",
+          "dashboard/prospectus packet"
+        ],
+        "end_to_end_stages": [
+          {
+            "id": "intake",
+            "label": "Task Intake",
+            "required_output": "structured task brief with user goal, inputs, constraints, and approval level",
+            "local_method": "Use bot profile, existing capabilities, local forms, local files, and deterministic templates."
+          },
+          {
+            "id": "plan",
+            "label": "Build Plan",
+            "required_output": "step-by-step workflow, needed files, test plan, and expected deliverables",
+            "local_method": "Generate a rule-based plan from the bot division, category, description, and capabilities."
+          },
+          {
+            "id": "execute_sandbox",
+            "label": "Sandbox Execution",
+            "required_output": "local prototype, report, checklist, script output, or simulated workflow result",
+            "local_method": "Run only local code, local fixtures, mock data, and no-key fallbacks unless the owner approves live integrations."
+          },
+          {
+            "id": "validate",
+            "label": "Validation",
+            "required_output": "syntax check, unit/smoke test, data-quality review, safety review, and failure notes",
+            "local_method": "Prefer existing tests, Python compilation, TypeScript checks, JSON validation, and deterministic fixture replay."
+          },
+          {
+            "id": "package",
+            "label": "Client Package",
+            "required_output": "dashboard summary, prospectus page, export packet, and next approved action",
+            "local_method": "Create local Markdown/JSON/HTML artifacts first; publish, email, charge, or submit only after approval."
+          }
+        ],
+        "approval_gates": [
+          "paid model calls",
+          "live web scraping beyond allowed/public use",
+          "sending email, SMS, calls, social posts, bids, or proposals",
+          "collecting private or sensitive data",
+          "using real voice, face, likeness, or private biography details",
+          "collecting, moving, refunding, or reconciling money",
+          "legal, medical, financial, employment, tenant, credit, or eligibility decisions",
+          "production deploys, app-store submissions, marketplace listings, or domain purchases"
+        ],
+        "deliverables": [
+          "task brief",
+          "local sandbox result",
+          "test evidence",
+          "dashboard/prospectus summary",
+          "next approved action packet"
+        ],
+        "provider_policy": {
+          "default": "Use DreamCo local code, local storage, local fixtures, deterministic templates, and no-key fallbacks first.",
+          "optional": "Use external AI models only when configured by the owner or selected by the user for quality, speed, or media generation.",
+          "cost_control": "Budget-first routing, caching, and owner approval before paid calls."
+        },
+        "model_options": [
+          {
+            "id": "openai",
+            "provider": "OpenAI",
+            "best_for": [
+              "coding",
+              "debugging",
+              "agent tools"
+            ],
+            "optional_only": true
+          },
+          {
+            "id": "google_gemini",
+            "provider": "Google Gemini",
+            "best_for": [
+              "course building",
+              "long documents",
+              "video understanding"
+            ],
+            "optional_only": true
+          },
+          {
+            "id": "anthropic_claude",
+            "provider": "Anthropic Claude",
+            "best_for": [
+              "careful reasoning",
+              "long-form review",
+              "policy/safety review"
+            ],
+            "optional_only": true
+          },
+          {
+            "id": "meta_llama",
+            "provider": "Meta Llama",
+            "best_for": [
+              "local/private tasks",
+              "low-cost experiments",
+              "self-hosted assistants"
+            ],
+            "optional_only": true
+          },
+          {
+            "id": "mistral",
+            "provider": "Mistral AI",
+            "best_for": [
+              "fast drafts",
+              "European language workflows",
+              "cost-aware agents"
+            ],
+            "optional_only": true
+          },
+          {
+            "id": "deepseek",
+            "provider": "DeepSeek",
+            "best_for": [
+              "coding drafts",
+              "math-like reasoning",
+              "low-cost code comparison"
+            ],
+            "optional_only": true
+          }
+        ]
+      },
+      "readiness": {
+        "score": 90,
+        "status": "mostly_ready_needs_targeted_tests",
+        "missing": [
+          "direct test coverage"
+        ],
+        "next_steps": [
+          "Add or verify direct test coverage."
+        ]
+      }
+    },
+    {
+      "slug": "influencer-engagement",
+      "displayName": "Key Influencer Engagement Scorer",
+      "division": "DreamInfluence",
+      "category": "influencer-scoring",
+      "tier": "pro",
+      "status": "active",
+      "profilePath": "bots/influencer-engagement/bot_profile.json",
+      "source": "bots_profile",
+      "codeFiles": [
+        "bots/influencer-engagement/__init__.py",
+        "bots/influencer-engagement/bot.py",
+        "bots/influencer-engagement/runtime.py",
+        "bots/influencer-engagement/tiers.py"
+      ],
+      "tests": [],
+      "capabilities": [
+        "Engagement authenticity scoring",
+        "Brand alignment analysis",
+        "Audience overlap detection",
+        "Content resonance metrics",
+        "Influencer tier ranking",
+        "ROI per influencer tracking",
+        "Advanced analytics dashboard",
+        "Priority email support",
+        "API access",
+        "Custom integrations",
+        "Webhook notifications",
+        "Data export (CSV/JSON)",
+        "Scheduled automations",
+        "Multi-user access",
+        "Real-time monitoring dashboard",
+        "Automated error recovery",
+        "Cross-bot data sharing",
+        "Version history tracking",
+        "Performance benchmarking",
+        "Compliance reporting",
+        "Multi-region deployment",
+        "Auto-scaling resources",
+        "Encrypted data at rest",
+        "SOC 2 Type II compliant"
+      ],
+      "taskContract": {
+        "primary_mode": "local_first_no_external_provider_required",
+        "can_run_without_other_providers": true,
+        "optional_models_available": true,
+        "local_first_tasks": [
+          "task-specific intake",
+          "local workflow plan",
+          "sandbox output",
+          "quality checklist",
+          "dashboard/prospectus packet"
+        ],
+        "end_to_end_stages": [
+          {
+            "id": "intake",
+            "label": "Task Intake",
+            "required_output": "structured task brief with user goal, inputs, constraints, and approval level",
+            "local_method": "Use bot profile, existing capabilities, local forms, local files, and deterministic templates."
+          },
+          {
+            "id": "plan",
+            "label": "Build Plan",
+            "required_output": "step-by-step workflow, needed files, test plan, and expected deliverables",
+            "local_method": "Generate a rule-based plan from the bot division, category, description, and capabilities."
+          },
+          {
+            "id": "execute_sandbox",
+            "label": "Sandbox Execution",
+            "required_output": "local prototype, report, checklist, script output, or simulated workflow result",
+            "local_method": "Run only local code, local fixtures, mock data, and no-key fallbacks unless the owner approves live integrations."
+          },
+          {
+            "id": "validate",
+            "label": "Validation",
+            "required_output": "syntax check, unit/smoke test, data-quality review, safety review, and failure notes",
+            "local_method": "Prefer existing tests, Python compilation, TypeScript checks, JSON validation, and deterministic fixture replay."
+          },
+          {
+            "id": "package",
+            "label": "Client Package",
+            "required_output": "dashboard summary, prospectus page, export packet, and next approved action",
+            "local_method": "Create local Markdown/JSON/HTML artifacts first; publish, email, charge, or submit only after approval."
+          }
+        ],
+        "approval_gates": [
+          "paid model calls",
+          "live web scraping beyond allowed/public use",
+          "sending email, SMS, calls, social posts, bids, or proposals",
+          "collecting private or sensitive data",
+          "using real voice, face, likeness, or private biography details",
+          "collecting, moving, refunding, or reconciling money",
+          "legal, medical, financial, employment, tenant, credit, or eligibility decisions",
+          "production deploys, app-store submissions, marketplace listings, or domain purchases"
+        ],
+        "deliverables": [
+          "task brief",
+          "local sandbox result",
+          "test evidence",
+          "dashboard/prospectus summary",
+          "next approved action packet"
+        ],
+        "provider_policy": {
+          "default": "Use DreamCo local code, local storage, local fixtures, deterministic templates, and no-key fallbacks first.",
+          "optional": "Use external AI models only when configured by the owner or selected by the user for quality, speed, or media generation.",
+          "cost_control": "Budget-first routing, caching, and owner approval before paid calls."
+        },
+        "model_options": [
+          {
+            "id": "openai",
+            "provider": "OpenAI",
+            "best_for": [
+              "coding",
+              "debugging",
+              "agent tools"
+            ],
+            "optional_only": true
+          },
+          {
+            "id": "google_gemini",
+            "provider": "Google Gemini",
+            "best_for": [
+              "course building",
+              "long documents",
+              "video understanding"
+            ],
+            "optional_only": true
+          },
+          {
+            "id": "anthropic_claude",
+            "provider": "Anthropic Claude",
+            "best_for": [
+              "careful reasoning",
+              "long-form review",
+              "policy/safety review"
+            ],
+            "optional_only": true
+          },
+          {
+            "id": "meta_llama",
+            "provider": "Meta Llama",
+            "best_for": [
+              "local/private tasks",
+              "low-cost experiments",
+              "self-hosted assistants"
+            ],
+            "optional_only": true
+          },
+          {
+            "id": "mistral",
+            "provider": "Mistral AI",
+            "best_for": [
+              "fast drafts",
+              "European language workflows",
+              "cost-aware agents"
+            ],
+            "optional_only": true
+          },
+          {
+            "id": "deepseek",
+            "provider": "DeepSeek",
+            "best_for": [
+              "coding drafts",
+              "math-like reasoning",
+              "low-cost code comparison"
+            ],
+            "optional_only": true
+          }
+        ]
+      },
+      "readiness": {
+        "score": 90,
+        "status": "mostly_ready_needs_targeted_tests",
+        "missing": [
+          "direct test coverage"
+        ],
+        "next_steps": [
+          "Add or verify direct test coverage."
+        ]
+      }
+    },
+    {
+      "slug": "opinion-shift-predictor",
+      "displayName": "Market Opinion Shift Predictor",
+      "division": "DreamInfluence",
+      "category": "opinion-analytics",
+      "tier": "elite",
+      "status": "active",
+      "profilePath": "bots/opinion-shift-predictor/bot_profile.json",
+      "source": "bots_profile",
+      "codeFiles": [
+        "bots/opinion-shift-predictor/__init__.py",
+        "bots/opinion-shift-predictor/bot.py",
+        "bots/opinion-shift-predictor/runtime.py",
+        "bots/opinion-shift-predictor/tiers.py"
+      ],
+      "tests": [],
+      "capabilities": [
+        "Sentiment trend forecasting",
+        "Behavioral signal aggregation",
+        "Opinion momentum scoring",
+        "Shift probability modeling",
+        "Early warning alerts",
+        "Historical pattern matching",
+        "Advanced analytics dashboard",
+        "Priority email support",
+        "API access",
+        "Custom integrations",
+        "Webhook notifications",
+        "Data export (CSV/JSON)",
+        "Scheduled automations",
+        "Multi-user access",
+        "Dedicated account manager",
+        "SLA guarantee (99.99%)",
+        "Custom model fine-tuning",
+        "SSO/SAML authentication",
+        "Audit logging",
+        "Role-based access control",
+        "White-label options",
+        "On-premise deployment option",
+        "24/7 phone support",
+        "Custom AI model training",
+        "Unlimited API calls",
+        "Dedicated infrastructure",
+        "Quarterly business reviews",
+        "Early access to features",
+        "Real-time monitoring dashboard",
+        "Automated error recovery",
+        "Cross-bot data sharing",
+        "Version history tracking",
+        "Performance benchmarking",
+        "Compliance reporting",
+        "Multi-region deployment",
+        "Auto-scaling resources",
+        "Encrypted data at rest",
+        "SOC 2 Type II compliant"
+      ],
+      "taskContract": {
+        "primary_mode": "local_first_no_external_provider_required",
+        "can_run_without_other_providers": true,
+        "optional_models_available": true,
+        "local_first_tasks": [
+          "task-specific intake",
+          "local workflow plan",
+          "sandbox output",
+          "quality checklist",
+          "dashboard/prospectus packet"
+        ],
+        "end_to_end_stages": [
+          {
+            "id": "intake",
+            "label": "Task Intake",
+            "required_output": "structured task brief with user goal, inputs, constraints, and approval level",
+            "local_method": "Use bot profile, existing capabilities, local forms, local files, and deterministic templates."
+          },
+          {
+            "id": "plan",
+            "label": "Build Plan",
+            "required_output": "step-by-step workflow, needed files, test plan, and expected deliverables",
+            "local_method": "Generate a rule-based plan from the bot division, category, description, and capabilities."
+          },
+          {
+            "id": "execute_sandbox",
+            "label": "Sandbox Execution",
+            "required_output": "local prototype, report, checklist, script output, or simulated workflow result",
+            "local_method": "Run only local code, local fixtures, mock data, and no-key fallbacks unless the owner approves live integrations."
+          },
+          {
+            "id": "validate",
+            "label": "Validation",
+            "required_output": "syntax check, unit/smoke test, data-quality review, safety review, and failure notes",
+            "local_method": "Prefer existing tests, Python compilation, TypeScript checks, JSON validation, and deterministic fixture replay."
+          },
+          {
+            "id": "package",
+            "label": "Client Package",
+            "required_output": "dashboard summary, prospectus page, export packet, and next approved action",
+            "local_method": "Create local Markdown/JSON/HTML artifacts first; publish, email, charge, or submit only after approval."
+          }
+        ],
+        "approval_gates": [
+          "paid model calls",
+          "live web scraping beyond allowed/public use",
+          "sending email, SMS, calls, social posts, bids, or proposals",
+          "collecting private or sensitive data",
+          "using real voice, face, likeness, or private biography details",
+          "collecting, moving, refunding, or reconciling money",
+          "legal, medical, financial, employment, tenant, credit, or eligibility decisions",
+          "production deploys, app-store submissions, marketplace listings, or domain purchases"
+        ],
+        "deliverables": [
+          "task brief",
+          "local sandbox result",
+          "test evidence",
+          "dashboard/prospectus summary",
+          "next approved action packet"
+        ],
+        "provider_policy": {
+          "default": "Use DreamCo local code, local storage, local fixtures, deterministic templates, and no-key fallbacks first.",
+          "optional": "Use external AI models only when configured by the owner or selected by the user for quality, speed, or media generation.",
+          "cost_control": "Budget-first routing, caching, and owner approval before paid calls."
+        },
+        "model_options": [
+          {
+            "id": "openai",
+            "provider": "OpenAI",
+            "best_for": [
+              "coding",
+              "debugging",
+              "agent tools"
+            ],
+            "optional_only": true
+          },
+          {
+            "id": "google_gemini",
+            "provider": "Google Gemini",
+            "best_for": [
+              "course building",
+              "long documents",
+              "video understanding"
+            ],
+            "optional_only": true
+          },
+          {
+            "id": "anthropic_claude",
+            "provider": "Anthropic Claude",
+            "best_for": [
+              "careful reasoning",
+              "long-form review",
+              "policy/safety review"
+            ],
+            "optional_only": true
+          },
+          {
+            "id": "meta_llama",
+            "provider": "Meta Llama",
+            "best_for": [
+              "local/private tasks",
+              "low-cost experiments",
+              "self-hosted assistants"
+            ],
+            "optional_only": true
+          },
+          {
+            "id": "mistral",
+            "provider": "Mistral AI",
+            "best_for": [
+              "fast drafts",
+              "European language workflows",
+              "cost-aware agents"
+            ],
+            "optional_only": true
+          },
+          {
+            "id": "deepseek",
+            "provider": "DeepSeek",
+            "best_for": [
+              "coding drafts",
+              "math-like reasoning",
+              "low-cost code comparison"
+            ],
+            "optional_only": true
+          }
+        ]
+      },
+      "readiness": {
+        "score": 90,
+        "status": "mostly_ready_needs_targeted_tests",
+        "missing": [
+          "direct test coverage"
+        ],
+        "next_steps": [
+          "Add or verify direct test coverage."
+        ]
+      }
+    },
+    {
+      "slug": "rumor-validation",
+      "displayName": "Market Rumor Validation Engine",
+      "division": "DreamInfluence",
+      "category": "rumor-analysis",
+      "tier": "pro",
+      "status": "active",
+      "profilePath": "bots/rumor-validation/bot_profile.json",
+      "source": "bots_profile",
+      "codeFiles": [
+        "bots/rumor-validation/__init__.py",
+        "bots/rumor-validation/bot.py",
+        "bots/rumor-validation/runtime.py",
+        "bots/rumor-validation/tiers.py"
+      ],
+      "tests": [],
+      "capabilities": [
+        "Multi-source cross-referencing",
+        "Credibility scoring algorithm",
+        "Rumor propagation tracking",
+        "Source reliability rating",
+        "Historical accuracy database",
+        "Advanced analytics dashboard",
+        "Priority email support",
+        "API access",
+        "Custom integrations",
+        "Webhook notifications",
+        "Data export (CSV/JSON)",
+        "Scheduled automations",
+        "Multi-user access",
+        "Real-time monitoring dashboard",
+        "Automated error recovery",
+        "Cross-bot data sharing",
+        "Version history tracking",
+        "Performance benchmarking",
+        "Compliance reporting",
+        "Multi-region deployment",
+        "Auto-scaling resources",
+        "Encrypted data at rest",
+        "SOC 2 Type II compliant"
+      ],
+      "taskContract": {
+        "primary_mode": "local_first_no_external_provider_required",
+        "can_run_without_other_providers": true,
+        "optional_models_available": true,
+        "local_first_tasks": [
+          "task-specific intake",
+          "local workflow plan",
+          "sandbox output",
+          "quality checklist",
+          "dashboard/prospectus packet"
+        ],
+        "end_to_end_stages": [
+          {
+            "id": "intake",
+            "label": "Task Intake",
+            "required_output": "structured task brief with user goal, inputs, constraints, and approval level",
+            "local_method": "Use bot profile, existing capabilities, local forms, local files, and deterministic templates."
+          },
+          {
+            "id": "plan",
+            "label": "Build Plan",
+            "required_output": "step-by-step workflow, needed files, test plan, and expected deliverables",
+            "local_method": "Generate a rule-based plan from the bot division, category, description, and capabilities."
+          },
+          {
+            "id": "execute_sandbox",
+            "label": "Sandbox Execution",
+            "required_output": "local prototype, report, checklist, script output, or simulated workflow result",
+            "local_method": "Run only local code, local fixtures, mock data, and no-key fallbacks unless the owner approves live integrations."
+          },
+          {
+            "id": "validate",
+            "label": "Validation",
+            "required_output": "syntax check, unit/smoke test, data-quality review, safety review, and failure notes",
+            "local_method": "Prefer existing tests, Python compilation, TypeScript checks, JSON validation, and deterministic fixture replay."
+          },
+          {
+            "id": "package",
+            "label": "Client Package",
+            "required_output": "dashboard summary, prospectus page, export packet, and next approved action",
+            "local_method": "Create local Markdown/JSON/HTML artifacts first; publish, email, charge, or submit only after approval."
+          }
+        ],
+        "approval_gates": [
+          "paid model calls",
+          "live web scraping beyond allowed/public use",
+          "sending email, SMS, calls, social posts, bids, or proposals",
+          "collecting private or sensitive data",
+          "using real voice, face, likeness, or private biography details",
+          "collecting, moving, refunding, or reconciling money",
+          "legal, medical, financial, employment, tenant, credit, or eligibility decisions",
+          "production deploys, app-store submissions, marketplace listings, or domain purchases"
+        ],
+        "deliverables": [
+          "task brief",
+          "local sandbox result",
+          "test evidence",
+          "dashboard/prospectus summary",
+          "next approved action packet"
+        ],
+        "provider_policy": {
+          "default": "Use DreamCo local code, local storage, local fixtures, deterministic templates, and no-key fallbacks first.",
+          "optional": "Use external AI models only when configured by the owner or selected by the user for quality, speed, or media generation.",
+          "cost_control": "Budget-first routing, caching, and owner approval before paid calls."
+        },
+        "model_options": [
+          {
+            "id": "openai",
+            "provider": "OpenAI",
+            "best_for": [
+              "coding",
+              "debugging",
+              "agent tools"
+            ],
+            "optional_only": true
+          },
+          {
+            "id": "google_gemini",
+            "provider": "Google Gemini",
+            "best_for": [
+              "course building",
+              "long documents",
+              "video understanding"
+            ],
+            "optional_only": true
+          },
+          {
+            "id": "anthropic_claude",
+            "provider": "Anthropic Claude",
+            "best_for": [
+              "careful reasoning",
+              "long-form review",
+              "policy/safety review"
+            ],
+            "optional_only": true
+          },
+          {
+            "id": "meta_llama",
+            "provider": "Meta Llama",
+            "best_for": [
+              "local/private tasks",
+              "low-cost experiments",
+              "self-hosted assistants"
+            ],
+            "optional_only": true
+          },
+          {
+            "id": "mistral",
+            "provider": "Mistral AI",
+            "best_for": [
+              "fast drafts",
+              "European language workflows",
+              "cost-aware agents"
+            ],
+            "optional_only": true
+          },
+          {
+            "id": "deepseek",
+            "provider": "DeepSeek",
+            "best_for": [
+              "coding drafts",
+              "math-like reasoning",
+              "low-cost code comparison"
+            ],
+            "optional_only": true
+          }
+        ]
+      },
+      "readiness": {
+        "score": 90,
+        "status": "mostly_ready_needs_targeted_tests",
+        "missing": [
+          "direct test coverage"
+        ],
+        "next_steps": [
+          "Add or verify direct test coverage."
+        ]
+      }
+    },
+    {
+      "slug": "messaging-impact-ai",
+      "displayName": "Messaging Impact AI",
+      "division": "DreamInfluence",
+      "category": "messaging-impact",
+      "tier": "pro",
+      "status": "active",
+      "profilePath": "bots/messaging-impact-ai/bot_profile.json",
+      "source": "bots_profile",
+      "codeFiles": [
+        "bots/messaging-impact-ai/__init__.py",
+        "bots/messaging-impact-ai/bot.py",
+        "bots/messaging-impact-ai/runtime.py",
+        "bots/messaging-impact-ai/tiers.py"
+      ],
+      "tests": [],
+      "capabilities": [
+        "Message effectiveness scoring",
+        "Channel impact prediction",
+        "A/B message comparison",
+        "Audience reception modeling",
+        "Message fatigue detection",
+        "Advanced analytics dashboard",
+        "Priority email support",
+        "API access",
+        "Custom integrations",
+        "Webhook notifications",
+        "Data export (CSV/JSON)",
+        "Scheduled automations",
+        "Multi-user access",
+        "Real-time monitoring dashboard",
+        "Automated error recovery",
+        "Cross-bot data sharing",
+        "Version history tracking",
+        "Performance benchmarking",
+        "Compliance reporting",
+        "Multi-region deployment",
+        "Auto-scaling resources",
+        "Encrypted data at rest",
+        "SOC 2 Type II compliant"
+      ],
+      "taskContract": {
+        "primary_mode": "local_first_no_external_provider_required",
+        "can_run_without_other_providers": true,
+        "optional_models_available": true,
+        "local_first_tasks": [
+          "task-specific intake",
+          "local workflow plan",
+          "sandbox output",
+          "quality checklist",
+          "dashboard/prospectus packet"
+        ],
+        "end_to_end_stages": [
+          {
+            "id": "intake",
+            "label": "Task Intake",
+            "required_output": "structured task brief with user goal, inputs, constraints, and approval level",
+            "local_method": "Use bot profile, existing capabilities, local forms, local files, and deterministic templates."
+          },
+          {
+            "id": "plan",
+            "label": "Build Plan",
+            "required_output": "step-by-step workflow, needed files, test plan, and expected deliverables",
+            "local_method": "Generate a rule-based plan from the bot division, category, description, and capabilities."
+          },
+          {
+            "id": "execute_sandbox",
+            "label": "Sandbox Execution",
+            "required_output": "local prototype, report, checklist, script output, or simulated workflow result",
+            "local_method": "Run only local code, local fixtures, mock data, and no-key fallbacks unless the owner approves live integrations."
+          },
+          {
+            "id": "validate",
+            "label": "Validation",
+            "required_output": "syntax check, unit/smoke test, data-quality review, safety review, and failure notes",
+            "local_method": "Prefer existing tests, Python compilation, TypeScript checks, JSON validation, and deterministic fixture replay."
+          },
+          {
+            "id": "package",
+            "label": "Client Package",
+            "required_output": "dashboard summary, prospectus page, export packet, and next approved action",
+            "local_method": "Create local Markdown/JSON/HTML artifacts first; publish, email, charge, or submit only after approval."
+          }
+        ],
+        "approval_gates": [
+          "paid model calls",
+          "live web scraping beyond allowed/public use",
+          "sending email, SMS, calls, social posts, bids, or proposals",
+          "collecting private or sensitive data",
+          "using real voice, face, likeness, or private biography details",
+          "collecting, moving, refunding, or reconciling money",
+          "legal, medical, financial, employment, tenant, credit, or eligibility decisions",
+          "production deploys, app-store submissions, marketplace listings, or domain purchases"
+        ],
+        "deliverables": [
+          "task brief",
+          "local sandbox result",
+          "test evidence",
+          "dashboard/prospectus summary",
+          "next approved action packet"
+        ],
+        "provider_policy": {
+          "default": "Use DreamCo local code, local storage, local fixtures, deterministic templates, and no-key fallbacks first.",
+          "optional": "Use external AI models only when configured by the owner or selected by the user for quality, speed, or media generation.",
+          "cost_control": "Budget-first routing, caching, and owner approval before paid calls."
+        },
+        "model_options": [
+          {
+            "id": "openai",
+            "provider": "OpenAI",
+            "best_for": [
+              "coding",
+              "debugging",
+              "agent tools"
+            ],
+            "optional_only": true
+          },
+          {
+            "id": "google_gemini",
+            "provider": "Google Gemini",
+            "best_for": [
+              "course building",
+              "long documents",
+              "video understanding"
+            ],
+            "optional_only": true
+          },
+          {
+            "id": "anthropic_claude",
+            "provider": "Anthropic Claude",
+            "best_for": [
+              "careful reasoning",
+              "long-form review",
+              "policy/safety review"
+            ],
+            "optional_only": true
+          },
+          {
+            "id": "meta_llama",
+            "provider": "Meta Llama",
+            "best_for": [
+              "local/private tasks",
+              "low-cost experiments",
+              "self-hosted assistants"
+            ],
+            "optional_only": true
+          },
+          {
+            "id": "mistral",
+            "provider": "Mistral AI",
+            "best_for": [
+              "fast drafts",
+              "European language workflows",
+              "cost-aware agents"
+            ],
+            "optional_only": true
+          },
+          {
+            "id": "deepseek",
+            "provider": "DeepSeek",
+            "best_for": [
+              "coding drafts",
+              "math-like reasoning",
+              "low-cost code comparison"
+            ],
+            "optional_only": true
+          }
+        ]
+      },
+      "readiness": {
+        "score": 90,
+        "status": "mostly_ready_needs_targeted_tests",
+        "missing": [
+          "direct test coverage"
+        ],
+        "next_steps": [
+          "Add or verify direct test coverage."
+        ]
+      }
+    },
+    {
+      "slug": "multichannel-amplifier",
+      "displayName": "Multi-Channel Influence Amplifier",
+      "division": "DreamInfluence",
+      "category": "influence-amplification",
+      "tier": "free",
+      "status": "active",
+      "profilePath": "bots/multichannel-amplifier/bot_profile.json",
+      "source": "bots_profile",
+      "codeFiles": [
+        "bots/multichannel-amplifier/__init__.py",
+        "bots/multichannel-amplifier/bot.py",
+        "bots/multichannel-amplifier/runtime.py",
+        "bots/multichannel-amplifier/tiers.py"
+      ],
+      "tests": [],
+      "capabilities": [
+        "Cross-channel syndication",
+        "Amplification scheduling",
+        "Reach optimization engine",
+        "Channel performance tracking",
+        "Content format adaptation",
+        "Basic analytics",
+        "Email support",
+        "Community access",
+        "Real-time monitoring dashboard",
+        "Automated error recovery",
+        "Cross-bot data sharing",
+        "Version history tracking",
+        "Performance benchmarking",
+        "Compliance reporting",
+        "Multi-region deployment",
+        "Auto-scaling resources",
+        "Encrypted data at rest",
+        "SOC 2 Type II compliant"
+      ],
+      "taskContract": {
+        "primary_mode": "local_first_no_external_provider_required",
+        "can_run_without_other_providers": true,
+        "optional_models_available": true,
+        "local_first_tasks": [
+          "task-specific intake",
+          "local workflow plan",
+          "sandbox output",
+          "quality checklist",
+          "dashboard/prospectus packet"
+        ],
+        "end_to_end_stages": [
+          {
+            "id": "intake",
+            "label": "Task Intake",
+            "required_output": "structured task brief with user goal, inputs, constraints, and approval level",
+            "local_method": "Use bot profile, existing capabilities, local forms, local files, and deterministic templates."
+          },
+          {
+            "id": "plan",
+            "label": "Build Plan",
+            "required_output": "step-by-step workflow, needed files, test plan, and expected deliverables",
+            "local_method": "Generate a rule-based plan from the bot division, category, description, and capabilities."
+          },
+          {
+            "id": "execute_sandbox",
+            "label": "Sandbox Execution",
+            "required_output": "local prototype, report, checklist, script output, or simulated workflow result",
+            "local_method": "Run only local code, local fixtures, mock data, and no-key fallbacks unless the owner approves live integrations."
+          },
+          {
+            "id": "validate",
+            "label": "Validation",
+            "required_output": "syntax check, unit/smoke test, data-quality review, safety review, and failure notes",
+            "local_method": "Prefer existing tests, Python compilation, TypeScript checks, JSON validation, and deterministic fixture replay."
+          },
+          {
+            "id": "package",
+            "label": "Client Package",
+            "required_output": "dashboard summary, prospectus page, export packet, and next approved action",
+            "local_method": "Create local Markdown/JSON/HTML artifacts first; publish, email, charge, or submit only after approval."
+          }
+        ],
+        "approval_gates": [
+          "paid model calls",
+          "live web scraping beyond allowed/public use",
+          "sending email, SMS, calls, social posts, bids, or proposals",
+          "collecting private or sensitive data",
+          "using real voice, face, likeness, or private biography details",
+          "collecting, moving, refunding, or reconciling money",
+          "legal, medical, financial, employment, tenant, credit, or eligibility decisions",
+          "production deploys, app-store submissions, marketplace listings, or domain purchases"
+        ],
+        "deliverables": [
+          "task brief",
+          "local sandbox result",
+          "test evidence",
+          "dashboard/prospectus summary",
+          "next approved action packet"
+        ],
+        "provider_policy": {
+          "default": "Use DreamCo local code, local storage, local fixtures, deterministic templates, and no-key fallbacks first.",
+          "optional": "Use external AI models only when configured by the owner or selected by the user for quality, speed, or media generation.",
+          "cost_control": "Budget-first routing, caching, and owner approval before paid calls."
+        },
+        "model_options": [
+          {
+            "id": "openai",
+            "provider": "OpenAI",
+            "best_for": [
+              "coding",
+              "debugging",
+              "agent tools"
+            ],
+            "optional_only": true
+          },
+          {
+            "id": "google_gemini",
+            "provider": "Google Gemini",
+            "best_for": [
+              "course building",
+              "long documents",
+              "video understanding"
+            ],
+            "optional_only": true
+          },
+          {
+            "id": "anthropic_claude",
+            "provider": "Anthropic Claude",
+            "best_for": [
+              "careful reasoning",
+              "long-form review",
+              "policy/safety review"
+            ],
+            "optional_only": true
+          },
+          {
+            "id": "meta_llama",
+            "provider": "Meta Llama",
+            "best_for": [
+              "local/private tasks",
+              "low-cost experiments",
+              "self-hosted assistants"
+            ],
+            "optional_only": true
+          },
+          {
+            "id": "mistral",
+            "provider": "Mistral AI",
+            "best_for": [
+              "fast drafts",
+              "European language workflows",
+              "cost-aware agents"
+            ],
+            "optional_only": true
+          },
+          {
+            "id": "deepseek",
+            "provider": "DeepSeek",
+            "best_for": [
+              "coding drafts",
+              "math-like reasoning",
+              "low-cost code comparison"
+            ],
+            "optional_only": true
+          }
+        ]
+      },
+      "readiness": {
+        "score": 90,
+        "status": "mostly_ready_needs_targeted_tests",
+        "missing": [
+          "direct test coverage"
+        ],
+        "next_steps": [
+          "Add or verify direct test coverage."
+        ]
+      }
+    },
+    {
+      "slug": "opinion-leadership-map",
+      "displayName": "Opinion Leadership Mapper",
+      "division": "DreamInfluence",
+      "category": "opinion-leadership",
+      "tier": "enterprise",
+      "status": "active",
+      "profilePath": "bots/opinion-leadership-map/bot_profile.json",
+      "source": "bots_profile",
+      "codeFiles": [
+        "bots/opinion-leadership-map/__init__.py",
+        "bots/opinion-leadership-map/bot.py",
+        "bots/opinion-leadership-map/runtime.py",
+        "bots/opinion-leadership-map/tiers.py"
+      ],
+      "tests": [],
+      "capabilities": [
+        "Opinion leader identification",
+        "Thought leadership scoring",
+        "Emerging voice detection",
+        "Influence trajectory prediction",
+        "Network centrality analysis",
+        "Advanced analytics dashboard",
+        "Priority email support",
+        "API access",
+        "Custom integrations",
+        "Webhook notifications",
+        "Data export (CSV/JSON)",
+        "Scheduled automations",
+        "Multi-user access",
+        "Dedicated account manager",
+        "SLA guarantee (99.9%)",
+        "Custom model fine-tuning",
+        "SSO/SAML authentication",
+        "Audit logging",
+        "Role-based access control",
+        "White-label options",
+        "On-premise deployment option",
+        "Real-time monitoring dashboard",
+        "Automated error recovery",
+        "Cross-bot data sharing",
+        "Version history tracking",
+        "Performance benchmarking",
+        "Compliance reporting",
+        "Multi-region deployment",
+        "Auto-scaling resources",
+        "Encrypted data at rest",
+        "SOC 2 Type II compliant"
+      ],
+      "taskContract": {
+        "primary_mode": "local_first_no_external_provider_required",
+        "can_run_without_other_providers": true,
+        "optional_models_available": true,
+        "local_first_tasks": [
+          "task-specific intake",
+          "local workflow plan",
+          "sandbox output",
+          "quality checklist",
+          "dashboard/prospectus packet"
+        ],
+        "end_to_end_stages": [
+          {
+            "id": "intake",
+            "label": "Task Intake",
+            "required_output": "structured task brief with user goal, inputs, constraints, and approval level",
+            "local_method": "Use bot profile, existing capabilities, local forms, local files, and deterministic templates."
+          },
+          {
+            "id": "plan",
+            "label": "Build Plan",
+            "required_output": "step-by-step workflow, needed files, test plan, and expected deliverables",
+            "local_method": "Generate a rule-based plan from the bot division, category, description, and capabilities."
+          },
+          {
+            "id": "execute_sandbox",
+            "label": "Sandbox Execution",
+            "required_output": "local prototype, report, checklist, script output, or simulated workflow result",
+            "local_method": "Run only local code, local fixtures, mock data, and no-key fallbacks unless the owner approves live integrations."
+          },
+          {
+            "id": "validate",
+            "label": "Validation",
+            "required_output": "syntax check, unit/smoke test, data-quality review, safety review, and failure notes",
+            "local_method": "Prefer existing tests, Python compilation, TypeScript checks, JSON validation, and deterministic fixture replay."
+          },
+          {
+            "id": "package",
+            "label": "Client Package",
+            "required_output": "dashboard summary, prospectus page, export packet, and next approved action",
+            "local_method": "Create local Markdown/JSON/HTML artifacts first; publish, email, charge, or submit only after approval."
+          }
+        ],
+        "approval_gates": [
+          "paid model calls",
+          "live web scraping beyond allowed/public use",
+          "sending email, SMS, calls, social posts, bids, or proposals",
+          "collecting private or sensitive data",
+          "using real voice, face, likeness, or private biography details",
+          "collecting, moving, refunding, or reconciling money",
+          "legal, medical, financial, employment, tenant, credit, or eligibility decisions",
+          "production deploys, app-store submissions, marketplace listings, or domain purchases"
+        ],
+        "deliverables": [
+          "task brief",
+          "local sandbox result",
+          "test evidence",
+          "dashboard/prospectus summary",
+          "next approved action packet"
+        ],
+        "provider_policy": {
+          "default": "Use DreamCo local code, local storage, local fixtures, deterministic templates, and no-key fallbacks first.",
+          "optional": "Use external AI models only when configured by the owner or selected by the user for quality, speed, or media generation.",
+          "cost_control": "Budget-first routing, caching, and owner approval before paid calls."
+        },
+        "model_options": [
+          {
+            "id": "openai",
+            "provider": "OpenAI",
+            "best_for": [
+              "coding",
+              "debugging",
+              "agent tools"
+            ],
+            "optional_only": true
+          },
+          {
+            "id": "google_gemini",
+            "provider": "Google Gemini",
+            "best_for": [
+              "course building",
+              "long documents",
+              "video understanding"
+            ],
+            "optional_only": true
+          },
+          {
+            "id": "anthropic_claude",
+            "provider": "Anthropic Claude",
+            "best_for": [
+              "careful reasoning",
+              "long-form review",
+              "policy/safety review"
+            ],
+            "optional_only": true
+          },
+          {
+            "id": "meta_llama",
+            "provider": "Meta Llama",
+            "best_for": [
+              "local/private tasks",
+              "low-cost experiments",
+              "self-hosted assistants"
+            ],
+            "optional_only": true
+          },
+          {
+            "id": "mistral",
+            "provider": "Mistral AI",
+            "best_for": [
+              "fast drafts",
+              "European language workflows",
+              "cost-aware agents"
+            ],
+            "optional_only": true
+          },
+          {
+            "id": "deepseek",
+            "provider": "DeepSeek",
+            "best_for": [
+              "coding drafts",
+              "math-like reasoning",
+              "low-cost code comparison"
+            ],
+            "optional_only": true
+          }
+        ]
+      },
+      "readiness": {
+        "score": 90,
+        "status": "mostly_ready_needs_targeted_tests",
+        "missing": [
+          "direct test coverage"
+        ],
+        "next_steps": [
+          "Add or verify direct test coverage."
+        ]
+      }
+    },
+    {
+      "slug": "pr-impact-sim",
+      "displayName": "PR Impact Simulator",
+      "division": "DreamInfluence",
+      "category": "pr-simulation",
+      "tier": "enterprise",
+      "status": "active",
+      "profilePath": "bots/pr-impact-sim/bot_profile.json",
+      "source": "bots_profile",
+      "codeFiles": [
+        "bots/pr-impact-sim/__init__.py",
+        "bots/pr-impact-sim/bot.py",
+        "bots/pr-impact-sim/runtime.py",
+        "bots/pr-impact-sim/tiers.py"
+      ],
+      "tests": [],
+      "capabilities": [
+        "Campaign outcome modeling",
+        "Audience reaction simulation",
+        "Media coverage prediction",
+        "Crisis scenario testing",
+        "Message resonance scoring",
+        "Channel mix optimization",
+        "Advanced analytics dashboard",
+        "Priority email support",
+        "API access",
+        "Custom integrations",
+        "Webhook notifications",
+        "Data export (CSV/JSON)",
+        "Scheduled automations",
+        "Multi-user access",
+        "Dedicated account manager",
+        "SLA guarantee (99.9%)",
+        "Custom model fine-tuning",
+        "SSO/SAML authentication",
+        "Audit logging",
+        "Role-based access control",
+        "White-label options",
+        "On-premise deployment option",
+        "Real-time monitoring dashboard",
+        "Automated error recovery",
+        "Cross-bot data sharing",
+        "Version history tracking",
+        "Performance benchmarking",
+        "Compliance reporting",
+        "Multi-region deployment",
+        "Auto-scaling resources",
+        "Encrypted data at rest",
+        "SOC 2 Type II compliant"
+      ],
+      "taskContract": {
+        "primary_mode": "local_first_no_external_provider_required",
+        "can_run_without_other_providers": true,
+        "optional_models_available": true,
+        "local_first_tasks": [
+          "scenario spec",
+          "variables",
+          "deterministic engine",
+          "replay log",
+          "analysis report"
+        ],
+        "end_to_end_stages": [
+          {
+            "id": "intake",
+            "label": "Task Intake",
+            "required_output": "structured task brief with user goal, inputs, constraints, and approval level",
+            "local_method": "Use bot profile, existing capabilities, local forms, local files, and deterministic templates."
+          },
+          {
+            "id": "plan",
+            "label": "Build Plan",
+            "required_output": "step-by-step workflow, needed files, test plan, and expected deliverables",
+            "local_method": "Generate a rule-based plan from the bot division, category, description, and capabilities."
+          },
+          {
+            "id": "execute_sandbox",
+            "label": "Sandbox Execution",
+            "required_output": "local prototype, report, checklist, script output, or simulated workflow result",
+            "local_method": "Run only local code, local fixtures, mock data, and no-key fallbacks unless the owner approves live integrations."
+          },
+          {
+            "id": "validate",
+            "label": "Validation",
+            "required_output": "syntax check, unit/smoke test, data-quality review, safety review, and failure notes",
+            "local_method": "Prefer existing tests, Python compilation, TypeScript checks, JSON validation, and deterministic fixture replay."
+          },
+          {
+            "id": "package",
+            "label": "Client Package",
+            "required_output": "dashboard summary, prospectus page, export packet, and next approved action",
+            "local_method": "Create local Markdown/JSON/HTML artifacts first; publish, email, charge, or submit only after approval."
+          }
+        ],
+        "approval_gates": [
+          "paid model calls",
+          "live web scraping beyond allowed/public use",
+          "sending email, SMS, calls, social posts, bids, or proposals",
+          "collecting private or sensitive data",
+          "using real voice, face, likeness, or private biography details",
+          "collecting, moving, refunding, or reconciling money",
+          "legal, medical, financial, employment, tenant, credit, or eligibility decisions",
+          "production deploys, app-store submissions, marketplace listings, or domain purchases"
+        ],
+        "deliverables": [
+          "task brief",
+          "local sandbox result",
+          "test evidence",
+          "dashboard/prospectus summary",
+          "next approved action packet"
+        ],
+        "provider_policy": {
+          "default": "Use DreamCo local code, local storage, local fixtures, deterministic templates, and no-key fallbacks first.",
+          "optional": "Use external AI models only when configured by the owner or selected by the user for quality, speed, or media generation.",
+          "cost_control": "Budget-first routing, caching, and owner approval before paid calls."
+        },
+        "model_options": [
+          {
+            "id": "openai",
+            "provider": "OpenAI",
+            "best_for": [
+              "coding",
+              "debugging",
+              "agent tools"
+            ],
+            "optional_only": true
+          },
+          {
+            "id": "google_gemini",
+            "provider": "Google Gemini",
+            "best_for": [
+              "course building",
+              "long documents",
+              "video understanding"
+            ],
+            "optional_only": true
+          },
+          {
+            "id": "anthropic_claude",
+            "provider": "Anthropic Claude",
+            "best_for": [
+              "careful reasoning",
+              "long-form review",
+              "policy/safety review"
+            ],
+            "optional_only": true
+          },
+          {
+            "id": "meta_llama",
+            "provider": "Meta Llama",
+            "best_for": [
+              "local/private tasks",
+              "low-cost experiments",
+              "self-hosted assistants"
+            ],
+            "optional_only": true
+          },
+          {
+            "id": "mistral",
+            "provider": "Mistral AI",
+            "best_for": [
+              "fast drafts",
+              "European language workflows",
+              "cost-aware agents"
+            ],
+            "optional_only": true
+          },
+          {
+            "id": "deepseek",
+            "provider": "DeepSeek",
+            "best_for": [
+              "coding drafts",
+              "math-like reasoning",
+              "low-cost code comparison"
+            ],
+            "optional_only": true
+          }
+        ]
+      },
+      "readiness": {
+        "score": 90,
+        "status": "mostly_ready_needs_targeted_tests",
+        "missing": [
+          "direct test coverage"
+        ],
+        "next_steps": [
+          "Add or verify direct test coverage."
+        ]
+      }
+    },
+    {
+      "slug": "partnership-leverage",
+      "displayName": "Partnership Leverage Scorer",
+      "division": "DreamInfluence",
+      "category": "partnership-scoring",
+      "tier": "pro",
+      "status": "active",
+      "profilePath": "bots/partnership-leverage/bot_profile.json",
+      "source": "bots_profile",
+      "codeFiles": [
+        "bots/partnership-leverage/__init__.py",
+        "bots/partnership-leverage/bot.py",
+        "bots/partnership-leverage/runtime.py",
+        "bots/partnership-leverage/tiers.py"
+      ],
+      "tests": [],
+      "capabilities": [
+        "Partnership value assessment",
+        "Leverage potential scoring",
+        "Mutual benefit analysis",
+        "Risk-reward partnership matrix",
+        "Partnership health monitoring",
+        "Renegotiation timing alerts",
+        "Advanced analytics dashboard",
+        "Priority email support",
+        "API access",
+        "Custom integrations",
+        "Webhook notifications",
+        "Data export (CSV/JSON)",
+        "Scheduled automations",
+        "Multi-user access",
+        "Real-time monitoring dashboard",
+        "Automated error recovery",
+        "Cross-bot data sharing",
+        "Version history tracking",
+        "Performance benchmarking",
+        "Compliance reporting",
+        "Multi-region deployment",
+        "Auto-scaling resources",
+        "Encrypted data at rest",
+        "SOC 2 Type II compliant"
+      ],
+      "taskContract": {
+        "primary_mode": "local_first_no_external_provider_required",
+        "can_run_without_other_providers": true,
+        "optional_models_available": true,
+        "local_first_tasks": [
+          "task-specific intake",
+          "local workflow plan",
+          "sandbox output",
+          "quality checklist",
+          "dashboard/prospectus packet"
+        ],
+        "end_to_end_stages": [
+          {
+            "id": "intake",
+            "label": "Task Intake",
+            "required_output": "structured task brief with user goal, inputs, constraints, and approval level",
+            "local_method": "Use bot profile, existing capabilities, local forms, local files, and deterministic templates."
+          },
+          {
+            "id": "plan",
+            "label": "Build Plan",
+            "required_output": "step-by-step workflow, needed files, test plan, and expected deliverables",
+            "local_method": "Generate a rule-based plan from the bot division, category, description, and capabilities."
+          },
+          {
+            "id": "execute_sandbox",
+            "label": "Sandbox Execution",
+            "required_output": "local prototype, report, checklist, script output, or simulated workflow result",
+            "local_method": "Run only local code, local fixtures, mock data, and no-key fallbacks unless the owner approves live integrations."
+          },
+          {
+            "id": "validate",
+            "label": "Validation",
+            "required_output": "syntax check, unit/smoke test, data-quality review, safety review, and failure notes",
+            "local_method": "Prefer existing tests, Python compilation, TypeScript checks, JSON validation, and deterministic fixture replay."
+          },
+          {
+            "id": "package",
+            "label": "Client Package",
+            "required_output": "dashboard summary, prospectus page, export packet, and next approved action",
+            "local_method": "Create local Markdown/JSON/HTML artifacts first; publish, email, charge, or submit only after approval."
+          }
+        ],
+        "approval_gates": [
+          "paid model calls",
+          "live web scraping beyond allowed/public use",
+          "sending email, SMS, calls, social posts, bids, or proposals",
+          "collecting private or sensitive data",
+          "using real voice, face, likeness, or private biography details",
+          "collecting, moving, refunding, or reconciling money",
+          "legal, medical, financial, employment, tenant, credit, or eligibility decisions",
+          "production deploys, app-store submissions, marketplace listings, or domain purchases"
+        ],
+        "deliverables": [
+          "task brief",
+          "local sandbox result",
+          "test evidence",
+          "dashboard/prospectus summary",
+          "next approved action packet"
+        ],
+        "provider_policy": {
+          "default": "Use DreamCo local code, local storage, local fixtures, deterministic templates, and no-key fallbacks first.",
+          "optional": "Use external AI models only when configured by the owner or selected by the user for quality, speed, or media generation.",
+          "cost_control": "Budget-first routing, caching, and owner approval before paid calls."
+        },
+        "model_options": [
+          {
+            "id": "openai",
+            "provider": "OpenAI",
+            "best_for": [
+              "coding",
+              "debugging",
+              "agent tools"
+            ],
+            "optional_only": true
+          },
+          {
+            "id": "google_gemini",
+            "provider": "Google Gemini",
+            "best_for": [
+              "course building",
+              "long documents",
+              "video understanding"
+            ],
+            "optional_only": true
+          },
+          {
+            "id": "anthropic_claude",
+            "provider": "Anthropic Claude",
+            "best_for": [
+              "careful reasoning",
+              "long-form review",
+              "policy/safety review"
+            ],
+            "optional_only": true
+          },
+          {
+            "id": "meta_llama",
+            "provider": "Meta Llama",
+            "best_for": [
+              "local/private tasks",
+              "low-cost experiments",
+              "self-hosted assistants"
+            ],
+            "optional_only": true
+          },
+          {
+            "id": "mistral",
+            "provider": "Mistral AI",
+            "best_for": [
+              "fast drafts",
+              "European language workflows",
+              "cost-aware agents"
+            ],
+            "optional_only": true
+          },
+          {
+            "id": "deepseek",
+            "provider": "DeepSeek",
+            "best_for": [
+              "coding drafts",
+              "math-like reasoning",
+              "low-cost code comparison"
+            ],
+            "optional_only": true
+          }
+        ]
+      },
+      "readiness": {
+        "score": 90,
+        "status": "mostly_ready_needs_targeted_tests",
+        "missing": [
+          "direct test coverage"
+        ],
+        "next_steps": [
+          "Add or verify direct test coverage."
+        ]
+      }
+    },
+    {
+      "slug": "sentiment-drift-detector",
+      "displayName": "Public Sentiment Drift Detector",
+      "division": "DreamInfluence",
+      "category": "sentiment-drift",
+      "tier": "pro",
+      "status": "active",
+      "profilePath": "bots/sentiment-drift-detector/bot_profile.json",
+      "source": "bots_profile",
+      "codeFiles": [
+        "bots/sentiment-drift-detector/__init__.py",
+        "bots/sentiment-drift-detector/bot.py",
+        "bots/sentiment-drift-detector/runtime.py",
+        "bots/sentiment-drift-detector/tiers.py"
+      ],
+      "tests": [],
+      "capabilities": [
+        "Micro-sentiment tracking",
+        "Drift velocity measurement",
+        "Early shift detection",
+        "Cause attribution analysis",
+        "Trend reversal prediction",
+        "Advanced analytics dashboard",
+        "Priority email support",
+        "API access",
+        "Custom integrations",
+        "Webhook notifications",
+        "Data export (CSV/JSON)",
+        "Scheduled automations",
+        "Multi-user access",
+        "Real-time monitoring dashboard",
+        "Automated error recovery",
+        "Cross-bot data sharing",
+        "Version history tracking",
+        "Performance benchmarking",
+        "Compliance reporting",
+        "Multi-region deployment",
+        "Auto-scaling resources",
+        "Encrypted data at rest",
+        "SOC 2 Type II compliant"
+      ],
+      "taskContract": {
+        "primary_mode": "local_first_no_external_provider_required",
+        "can_run_without_other_providers": true,
+        "optional_models_available": true,
+        "local_first_tasks": [
+          "task-specific intake",
+          "local workflow plan",
+          "sandbox output",
+          "quality checklist",
+          "dashboard/prospectus packet"
+        ],
+        "end_to_end_stages": [
+          {
+            "id": "intake",
+            "label": "Task Intake",
+            "required_output": "structured task brief with user goal, inputs, constraints, and approval level",
+            "local_method": "Use bot profile, existing capabilities, local forms, local files, and deterministic templates."
+          },
+          {
+            "id": "plan",
+            "label": "Build Plan",
+            "required_output": "step-by-step workflow, needed files, test plan, and expected deliverables",
+            "local_method": "Generate a rule-based plan from the bot division, category, description, and capabilities."
+          },
+          {
+            "id": "execute_sandbox",
+            "label": "Sandbox Execution",
+            "required_output": "local prototype, report, checklist, script output, or simulated workflow result",
+            "local_method": "Run only local code, local fixtures, mock data, and no-key fallbacks unless the owner approves live integrations."
+          },
+          {
+            "id": "validate",
+            "label": "Validation",
+            "required_output": "syntax check, unit/smoke test, data-quality review, safety review, and failure notes",
+            "local_method": "Prefer existing tests, Python compilation, TypeScript checks, JSON validation, and deterministic fixture replay."
+          },
+          {
+            "id": "package",
+            "label": "Client Package",
+            "required_output": "dashboard summary, prospectus page, export packet, and next approved action",
+            "local_method": "Create local Markdown/JSON/HTML artifacts first; publish, email, charge, or submit only after approval."
+          }
+        ],
+        "approval_gates": [
+          "paid model calls",
+          "live web scraping beyond allowed/public use",
+          "sending email, SMS, calls, social posts, bids, or proposals",
+          "collecting private or sensitive data",
+          "using real voice, face, likeness, or private biography details",
+          "collecting, moving, refunding, or reconciling money",
+          "legal, medical, financial, employment, tenant, credit, or eligibility decisions",
+          "production deploys, app-store submissions, marketplace listings, or domain purchases"
+        ],
+        "deliverables": [
+          "task brief",
+          "local sandbox result",
+          "test evidence",
+          "dashboard/prospectus summary",
+          "next approved action packet"
+        ],
+        "provider_policy": {
+          "default": "Use DreamCo local code, local storage, local fixtures, deterministic templates, and no-key fallbacks first.",
+          "optional": "Use external AI models only when configured by the owner or selected by the user for quality, speed, or media generation.",
+          "cost_control": "Budget-first routing, caching, and owner approval before paid calls."
+        },
+        "model_options": [
+          {
+            "id": "openai",
+            "provider": "OpenAI",
+            "best_for": [
+              "coding",
+              "debugging",
+              "agent tools"
+            ],
+            "optional_only": true
+          },
+          {
+            "id": "google_gemini",
+            "provider": "Google Gemini",
+            "best_for": [
+              "course building",
+              "long documents",
+              "video understanding"
+            ],
+            "optional_only": true
+          },
+          {
+            "id": "anthropic_claude",
+            "provider": "Anthropic Claude",
+            "best_for": [
+              "careful reasoning",
+              "long-form review",
+              "policy/safety review"
+            ],
+            "optional_only": true
+          },
+          {
+            "id": "meta_llama",
+            "provider": "Meta Llama",
+            "best_for": [
+              "local/private tasks",
+              "low-cost experiments",
+              "self-hosted assistants"
+            ],
+            "optional_only": true
+          },
+          {
+            "id": "mistral",
+            "provider": "Mistral AI",
+            "best_for": [
+              "fast drafts",
+              "European language workflows",
+              "cost-aware agents"
+            ],
+            "optional_only": true
+          },
+          {
+            "id": "deepseek",
+            "provider": "DeepSeek",
+            "best_for": [
+              "coding drafts",
+              "math-like reasoning",
+              "low-cost code comparison"
+            ],
+            "optional_only": true
+          }
+        ]
+      },
+      "readiness": {
+        "score": 90,
+        "status": "mostly_ready_needs_targeted_tests",
+        "missing": [
+          "direct test coverage"
+        ],
+        "next_steps": [
+          "Add or verify direct test coverage."
+        ]
+      }
+    },
+    {
+      "slug": "sentiment-manipulation-alert",
+      "displayName": "Social Sentiment Manipulation Alert",
+      "division": "DreamInfluence",
+      "category": "sentiment-alerts",
+      "tier": "pro",
+      "status": "active",
+      "profilePath": "bots/sentiment-manipulation-alert/bot_profile.json",
+      "source": "bots_profile",
+      "codeFiles": [
+        "bots/sentiment-manipulation-alert/__init__.py",
+        "bots/sentiment-manipulation-alert/bot.py",
+        "bots/sentiment-manipulation-alert/runtime.py",
+        "bots/sentiment-manipulation-alert/tiers.py"
+      ],
+      "tests": [],
+      "capabilities": [
+        "Bot activity detection",
+        "Coordinated campaign identification",
+        "Sentiment spike analysis",
+        "Fake engagement scoring",
+        "Alert escalation workflows",
+        "Advanced analytics dashboard",
+        "Priority email support",
+        "API access",
+        "Custom integrations",
+        "Webhook notifications",
+        "Data export (CSV/JSON)",
+        "Scheduled automations",
+        "Multi-user access",
+        "Real-time monitoring dashboard",
+        "Automated error recovery",
+        "Cross-bot data sharing",
+        "Version history tracking",
+        "Performance benchmarking",
+        "Compliance reporting",
+        "Multi-region deployment",
+        "Auto-scaling resources",
+        "Encrypted data at rest",
+        "SOC 2 Type II compliant"
+      ],
+      "taskContract": {
+        "primary_mode": "local_first_no_external_provider_required",
+        "can_run_without_other_providers": true,
+        "optional_models_available": true,
+        "local_first_tasks": [
+          "task-specific intake",
+          "local workflow plan",
+          "sandbox output",
+          "quality checklist",
+          "dashboard/prospectus packet"
+        ],
+        "end_to_end_stages": [
+          {
+            "id": "intake",
+            "label": "Task Intake",
+            "required_output": "structured task brief with user goal, inputs, constraints, and approval level",
+            "local_method": "Use bot profile, existing capabilities, local forms, local files, and deterministic templates."
+          },
+          {
+            "id": "plan",
+            "label": "Build Plan",
+            "required_output": "step-by-step workflow, needed files, test plan, and expected deliverables",
+            "local_method": "Generate a rule-based plan from the bot division, category, description, and capabilities."
+          },
+          {
+            "id": "execute_sandbox",
+            "label": "Sandbox Execution",
+            "required_output": "local prototype, report, checklist, script output, or simulated workflow result",
+            "local_method": "Run only local code, local fixtures, mock data, and no-key fallbacks unless the owner approves live integrations."
+          },
+          {
+            "id": "validate",
+            "label": "Validation",
+            "required_output": "syntax check, unit/smoke test, data-quality review, safety review, and failure notes",
+            "local_method": "Prefer existing tests, Python compilation, TypeScript checks, JSON validation, and deterministic fixture replay."
+          },
+          {
+            "id": "package",
+            "label": "Client Package",
+            "required_output": "dashboard summary, prospectus page, export packet, and next approved action",
+            "local_method": "Create local Markdown/JSON/HTML artifacts first; publish, email, charge, or submit only after approval."
+          }
+        ],
+        "approval_gates": [
+          "paid model calls",
+          "live web scraping beyond allowed/public use",
+          "sending email, SMS, calls, social posts, bids, or proposals",
+          "collecting private or sensitive data",
+          "using real voice, face, likeness, or private biography details",
+          "collecting, moving, refunding, or reconciling money",
+          "legal, medical, financial, employment, tenant, credit, or eligibility decisions",
+          "production deploys, app-store submissions, marketplace listings, or domain purchases"
+        ],
+        "deliverables": [
+          "task brief",
+          "local sandbox result",
+          "test evidence",
+          "dashboard/prospectus summary",
+          "next approved action packet"
+        ],
+        "provider_policy": {
+          "default": "Use DreamCo local code, local storage, local fixtures, deterministic templates, and no-key fallbacks first.",
+          "optional": "Use external AI models only when configured by the owner or selected by the user for quality, speed, or media generation.",
+          "cost_control": "Budget-first routing, caching, and owner approval before paid calls."
+        },
+        "model_options": [
+          {
+            "id": "openai",
+            "provider": "OpenAI",
+            "best_for": [
+              "coding",
+              "debugging",
+              "agent tools"
+            ],
+            "optional_only": true
+          },
+          {
+            "id": "google_gemini",
+            "provider": "Google Gemini",
+            "best_for": [
+              "course building",
+              "long documents",
+              "video understanding"
+            ],
+            "optional_only": true
+          },
+          {
+            "id": "anthropic_claude",
+            "provider": "Anthropic Claude",
+            "best_for": [
+              "careful reasoning",
+              "long-form review",
+              "policy/safety review"
+            ],
+            "optional_only": true
+          },
+          {
+            "id": "meta_llama",
+            "provider": "Meta Llama",
+            "best_for": [
+              "local/private tasks",
+              "low-cost experiments",
+              "self-hosted assistants"
+            ],
+            "optional_only": true
+          },
+          {
+            "id": "mistral",
+            "provider": "Mistral AI",
+            "best_for": [
+              "fast drafts",
+              "European language workflows",
+              "cost-aware agents"
+            ],
+            "optional_only": true
+          },
+          {
+            "id": "deepseek",
+            "provider": "DeepSeek",
+            "best_for": [
+              "coding drafts",
+              "math-like reasoning",
+              "low-cost code comparison"
+            ],
+            "optional_only": true
+          }
+        ]
+      },
+      "readiness": {
+        "score": 90,
+        "status": "mostly_ready_needs_targeted_tests",
+        "missing": [
+          "direct test coverage"
+        ],
+        "next_steps": [
+          "Add or verify direct test coverage."
+        ]
+      }
+    },
+    {
+      "slug": "stakeholder-impact",
+      "displayName": "Stakeholder Impact Scorer",
+      "division": "DreamInfluence",
+      "category": "stakeholder-scoring",
+      "tier": "enterprise",
+      "status": "active",
+      "profilePath": "bots/stakeholder-impact/bot_profile.json",
+      "source": "bots_profile",
+      "codeFiles": [
+        "bots/stakeholder-impact/__init__.py",
+        "bots/stakeholder-impact/bot.py",
+        "bots/stakeholder-impact/runtime.py",
+        "bots/stakeholder-impact/tiers.py"
+      ],
+      "tests": [],
+      "capabilities": [
+        "Multi-dimensional impact scoring",
+        "Stakeholder prioritization matrix",
+        "Engagement ROI estimation",
+        "Influence decay tracking",
+        "Stakeholder relationship mapping",
+        "Advanced analytics dashboard",
+        "Priority email support",
+        "API access",
+        "Custom integrations",
+        "Webhook notifications",
+        "Data export (CSV/JSON)",
+        "Scheduled automations",
+        "Multi-user access",
+        "Dedicated account manager",
+        "SLA guarantee (99.9%)",
+        "Custom model fine-tuning",
+        "SSO/SAML authentication",
+        "Audit logging",
+        "Role-based access control",
+        "White-label options",
+        "On-premise deployment option",
+        "Real-time monitoring dashboard",
+        "Automated error recovery",
+        "Cross-bot data sharing",
+        "Version history tracking",
+        "Performance benchmarking",
+        "Compliance reporting",
+        "Multi-region deployment",
+        "Auto-scaling resources",
+        "Encrypted data at rest",
+        "SOC 2 Type II compliant"
+      ],
+      "taskContract": {
+        "primary_mode": "local_first_no_external_provider_required",
+        "can_run_without_other_providers": true,
+        "optional_models_available": true,
+        "local_first_tasks": [
+          "task-specific intake",
+          "local workflow plan",
+          "sandbox output",
+          "quality checklist",
+          "dashboard/prospectus packet"
+        ],
+        "end_to_end_stages": [
+          {
+            "id": "intake",
+            "label": "Task Intake",
+            "required_output": "structured task brief with user goal, inputs, constraints, and approval level",
+            "local_method": "Use bot profile, existing capabilities, local forms, local files, and deterministic templates."
+          },
+          {
+            "id": "plan",
+            "label": "Build Plan",
+            "required_output": "step-by-step workflow, needed files, test plan, and expected deliverables",
+            "local_method": "Generate a rule-based plan from the bot division, category, description, and capabilities."
+          },
+          {
+            "id": "execute_sandbox",
+            "label": "Sandbox Execution",
+            "required_output": "local prototype, report, checklist, script output, or simulated workflow result",
+            "local_method": "Run only local code, local fixtures, mock data, and no-key fallbacks unless the owner approves live integrations."
+          },
+          {
+            "id": "validate",
+            "label": "Validation",
+            "required_output": "syntax check, unit/smoke test, data-quality review, safety review, and failure notes",
+            "local_method": "Prefer existing tests, Python compilation, TypeScript checks, JSON validation, and deterministic fixture replay."
+          },
+          {
+            "id": "package",
+            "label": "Client Package",
+            "required_output": "dashboard summary, prospectus page, export packet, and next approved action",
+            "local_method": "Create local Markdown/JSON/HTML artifacts first; publish, email, charge, or submit only after approval."
+          }
+        ],
+        "approval_gates": [
+          "paid model calls",
+          "live web scraping beyond allowed/public use",
+          "sending email, SMS, calls, social posts, bids, or proposals",
+          "collecting private or sensitive data",
+          "using real voice, face, likeness, or private biography details",
+          "collecting, moving, refunding, or reconciling money",
+          "legal, medical, financial, employment, tenant, credit, or eligibility decisions",
+          "production deploys, app-store submissions, marketplace listings, or domain purchases"
+        ],
+        "deliverables": [
+          "task brief",
+          "local sandbox result",
+          "test evidence",
+          "dashboard/prospectus summary",
+          "next approved action packet"
+        ],
+        "provider_policy": {
+          "default": "Use DreamCo local code, local storage, local fixtures, deterministic templates, and no-key fallbacks first.",
+          "optional": "Use external AI models only when configured by the owner or selected by the user for quality, speed, or media generation.",
+          "cost_control": "Budget-first routing, caching, and owner approval before paid calls."
+        },
+        "model_options": [
+          {
+            "id": "openai",
+            "provider": "OpenAI",
+            "best_for": [
+              "coding",
+              "debugging",
+              "agent tools"
+            ],
+            "optional_only": true
+          },
+          {
+            "id": "google_gemini",
+            "provider": "Google Gemini",
+            "best_for": [
+              "course building",
+              "long documents",
+              "video understanding"
+            ],
+            "optional_only": true
+          },
+          {
+            "id": "anthropic_claude",
+            "provider": "Anthropic Claude",
+            "best_for": [
+              "careful reasoning",
+              "long-form review",
+              "policy/safety review"
+            ],
+            "optional_only": true
+          },
+          {
+            "id": "meta_llama",
+            "provider": "Meta Llama",
+            "best_for": [
+              "local/private tasks",
+              "low-cost experiments",
+              "self-hosted assistants"
+            ],
+            "optional_only": true
+          },
+          {
+            "id": "mistral",
+            "provider": "Mistral AI",
+            "best_for": [
+              "fast drafts",
+              "European language workflows",
+              "cost-aware agents"
+            ],
+            "optional_only": true
+          },
+          {
+            "id": "deepseek",
+            "provider": "DeepSeek",
+            "best_for": [
+              "coding drafts",
+              "math-like reasoning",
+              "low-cost code comparison"
+            ],
+            "optional_only": true
+          }
+        ]
+      },
+      "readiness": {
+        "score": 90,
+        "status": "mostly_ready_needs_targeted_tests",
+        "missing": [
+          "direct test coverage"
+        ],
+        "next_steps": [
+          "Add or verify direct test coverage."
+        ]
+      }
+    },
+    {
+      "slug": "stakeholder-risk-mitigator",
+      "displayName": "Stakeholder Risk Mitigation AI",
+      "division": "DreamInfluence",
+      "category": "stakeholder-risk",
+      "tier": "enterprise",
+      "status": "active",
+      "profilePath": "bots/stakeholder-risk-mitigator/bot_profile.json",
+      "source": "bots_profile",
+      "codeFiles": [
+        "bots/stakeholder-risk-mitigator/__init__.py",
+        "bots/stakeholder-risk-mitigator/bot.py",
+        "bots/stakeholder-risk-mitigator/runtime.py",
+        "bots/stakeholder-risk-mitigator/tiers.py"
+      ],
+      "tests": [],
+      "capabilities": [
+        "Stakeholder risk mapping",
+        "Proactive engagement planning",
+        "Risk scenario simulation",
+        "Mitigation strategy generation",
+        "Relationship health monitoring",
+        "Advanced analytics dashboard",
+        "Priority email support",
+        "API access",
+        "Custom integrations",
+        "Webhook notifications",
+        "Data export (CSV/JSON)",
+        "Scheduled automations",
+        "Multi-user access",
+        "Dedicated account manager",
+        "SLA guarantee (99.9%)",
+        "Custom model fine-tuning",
+        "SSO/SAML authentication",
+        "Audit logging",
+        "Role-based access control",
+        "White-label options",
+        "On-premise deployment option",
+        "Real-time monitoring dashboard",
+        "Automated error recovery",
+        "Cross-bot data sharing",
+        "Version history tracking",
+        "Performance benchmarking",
+        "Compliance reporting",
+        "Multi-region deployment",
+        "Auto-scaling resources",
+        "Encrypted data at rest",
+        "SOC 2 Type II compliant"
+      ],
+      "taskContract": {
+        "primary_mode": "local_first_no_external_provider_required",
+        "can_run_without_other_providers": true,
+        "optional_models_available": true,
+        "local_first_tasks": [
+          "task-specific intake",
+          "local workflow plan",
+          "sandbox output",
+          "quality checklist",
+          "dashboard/prospectus packet"
+        ],
+        "end_to_end_stages": [
+          {
+            "id": "intake",
+            "label": "Task Intake",
+            "required_output": "structured task brief with user goal, inputs, constraints, and approval level",
+            "local_method": "Use bot profile, existing capabilities, local forms, local files, and deterministic templates."
+          },
+          {
+            "id": "plan",
+            "label": "Build Plan",
+            "required_output": "step-by-step workflow, needed files, test plan, and expected deliverables",
+            "local_method": "Generate a rule-based plan from the bot division, category, description, and capabilities."
+          },
+          {
+            "id": "execute_sandbox",
+            "label": "Sandbox Execution",
+            "required_output": "local prototype, report, checklist, script output, or simulated workflow result",
+            "local_method": "Run only local code, local fixtures, mock data, and no-key fallbacks unless the owner approves live integrations."
+          },
+          {
+            "id": "validate",
+            "label": "Validation",
+            "required_output": "syntax check, unit/smoke test, data-quality review, safety review, and failure notes",
+            "local_method": "Prefer existing tests, Python compilation, TypeScript checks, JSON validation, and deterministic fixture replay."
+          },
+          {
+            "id": "package",
+            "label": "Client Package",
+            "required_output": "dashboard summary, prospectus page, export packet, and next approved action",
+            "local_method": "Create local Markdown/JSON/HTML artifacts first; publish, email, charge, or submit only after approval."
+          }
+        ],
+        "approval_gates": [
+          "paid model calls",
+          "live web scraping beyond allowed/public use",
+          "sending email, SMS, calls, social posts, bids, or proposals",
+          "collecting private or sensitive data",
+          "using real voice, face, likeness, or private biography details",
+          "collecting, moving, refunding, or reconciling money",
+          "legal, medical, financial, employment, tenant, credit, or eligibility decisions",
+          "production deploys, app-store submissions, marketplace listings, or domain purchases"
+        ],
+        "deliverables": [
+          "task brief",
+          "local sandbox result",
+          "test evidence",
+          "dashboard/prospectus summary",
+          "next approved action packet"
+        ],
+        "provider_policy": {
+          "default": "Use DreamCo local code, local storage, local fixtures, deterministic templates, and no-key fallbacks first.",
+          "optional": "Use external AI models only when configured by the owner or selected by the user for quality, speed, or media generation.",
+          "cost_control": "Budget-first routing, caching, and owner approval before paid calls."
+        },
+        "model_options": [
+          {
+            "id": "openai",
+            "provider": "OpenAI",
+            "best_for": [
+              "coding",
+              "debugging",
+              "agent tools"
+            ],
+            "optional_only": true
+          },
+          {
+            "id": "google_gemini",
+            "provider": "Google Gemini",
+            "best_for": [
+              "course building",
+              "long documents",
+              "video understanding"
+            ],
+            "optional_only": true
+          },
+          {
+            "id": "anthropic_claude",
+            "provider": "Anthropic Claude",
+            "best_for": [
+              "careful reasoning",
+              "long-form review",
+              "policy/safety review"
+            ],
+            "optional_only": true
+          },
+          {
+            "id": "meta_llama",
+            "provider": "Meta Llama",
+            "best_for": [
+              "local/private tasks",
+              "low-cost experiments",
+              "self-hosted assistants"
+            ],
+            "optional_only": true
+          },
+          {
+            "id": "mistral",
+            "provider": "Mistral AI",
+            "best_for": [
+              "fast drafts",
+              "European language workflows",
+              "cost-aware agents"
+            ],
+            "optional_only": true
+          },
+          {
+            "id": "deepseek",
+            "provider": "DeepSeek",
+            "best_for": [
+              "coding drafts",
+              "math-like reasoning",
+              "low-cost code comparison"
+            ],
+            "optional_only": true
+          }
+        ]
+      },
+      "readiness": {
+        "score": 90,
+        "status": "mostly_ready_needs_targeted_tests",
+        "missing": [
+          "direct test coverage"
+        ],
+        "next_steps": [
+          "Add or verify direct test coverage."
+        ]
+      }
+    },
+    {
+      "slug": "influence-gap-detector",
+      "displayName": "Strategic Influence Gap Detector",
+      "division": "DreamInfluence",
+      "category": "influence-gaps",
+      "tier": "pro",
+      "status": "active",
+      "profilePath": "bots/influence-gap-detector/bot_profile.json",
+      "source": "bots_profile",
+      "codeFiles": [
+        "bots/influence-gap-detector/__init__.py",
+        "bots/influence-gap-detector/bot.py",
+        "bots/influence-gap-detector/runtime.py",
+        "bots/influence-gap-detector/tiers.py"
+      ],
+      "tests": [],
+      "capabilities": [
+        "Influence coverage mapping",
+        "Gap severity scoring",
+        "Opportunity prioritization",
+        "Competitor advantage analysis",
+        "Gap closure recommendations",
+        "Advanced analytics dashboard",
+        "Priority email support",
+        "API access",
+        "Custom integrations",
+        "Webhook notifications",
+        "Data export (CSV/JSON)",
+        "Scheduled automations",
+        "Multi-user access",
+        "Real-time monitoring dashboard",
+        "Automated error recovery",
+        "Cross-bot data sharing",
+        "Version history tracking",
+        "Performance benchmarking",
+        "Compliance reporting",
+        "Multi-region deployment",
+        "Auto-scaling resources",
+        "Encrypted data at rest",
+        "SOC 2 Type II compliant"
+      ],
+      "taskContract": {
+        "primary_mode": "local_first_no_external_provider_required",
+        "can_run_without_other_providers": true,
+        "optional_models_available": true,
+        "local_first_tasks": [
+          "task-specific intake",
+          "local workflow plan",
+          "sandbox output",
+          "quality checklist",
+          "dashboard/prospectus packet"
+        ],
+        "end_to_end_stages": [
+          {
+            "id": "intake",
+            "label": "Task Intake",
+            "required_output": "structured task brief with user goal, inputs, constraints, and approval level",
+            "local_method": "Use bot profile, existing capabilities, local forms, local files, and deterministic templates."
+          },
+          {
+            "id": "plan",
+            "label": "Build Plan",
+            "required_output": "step-by-step workflow, needed files, test plan, and expected deliverables",
+            "local_method": "Generate a rule-based plan from the bot division, category, description, and capabilities."
+          },
+          {
+            "id": "execute_sandbox",
+            "label": "Sandbox Execution",
+            "required_output": "local prototype, report, checklist, script output, or simulated workflow result",
+            "local_method": "Run only local code, local fixtures, mock data, and no-key fallbacks unless the owner approves live integrations."
+          },
+          {
+            "id": "validate",
+            "label": "Validation",
+            "required_output": "syntax check, unit/smoke test, data-quality review, safety review, and failure notes",
+            "local_method": "Prefer existing tests, Python compilation, TypeScript checks, JSON validation, and deterministic fixture replay."
+          },
+          {
+            "id": "package",
+            "label": "Client Package",
+            "required_output": "dashboard summary, prospectus page, export packet, and next approved action",
+            "local_method": "Create local Markdown/JSON/HTML artifacts first; publish, email, charge, or submit only after approval."
+          }
+        ],
+        "approval_gates": [
+          "paid model calls",
+          "live web scraping beyond allowed/public use",
+          "sending email, SMS, calls, social posts, bids, or proposals",
+          "collecting private or sensitive data",
+          "using real voice, face, likeness, or private biography details",
+          "collecting, moving, refunding, or reconciling money",
+          "legal, medical, financial, employment, tenant, credit, or eligibility decisions",
+          "production deploys, app-store submissions, marketplace listings, or domain purchases"
+        ],
+        "deliverables": [
+          "task brief",
+          "local sandbox result",
+          "test evidence",
+          "dashboard/prospectus summary",
+          "next approved action packet"
+        ],
+        "provider_policy": {
+          "default": "Use DreamCo local code, local storage, local fixtures, deterministic templates, and no-key fallbacks first.",
+          "optional": "Use external AI models only when configured by the owner or selected by the user for quality, speed, or media generation.",
+          "cost_control": "Budget-first routing, caching, and owner approval before paid calls."
+        },
+        "model_options": [
+          {
+            "id": "openai",
+            "provider": "OpenAI",
+            "best_for": [
+              "coding",
+              "debugging",
+              "agent tools"
+            ],
+            "optional_only": true
+          },
+          {
+            "id": "google_gemini",
+            "provider": "Google Gemini",
+            "best_for": [
+              "course building",
+              "long documents",
+              "video understanding"
+            ],
+            "optional_only": true
+          },
+          {
+            "id": "anthropic_claude",
+            "provider": "Anthropic Claude",
+            "best_for": [
+              "careful reasoning",
+              "long-form review",
+              "policy/safety review"
+            ],
+            "optional_only": true
+          },
+          {
+            "id": "meta_llama",
+            "provider": "Meta Llama",
+            "best_for": [
+              "local/private tasks",
+              "low-cost experiments",
+              "self-hosted assistants"
+            ],
+            "optional_only": true
+          },
+          {
+            "id": "mistral",
+            "provider": "Mistral AI",
+            "best_for": [
+              "fast drafts",
+              "European language workflows",
+              "cost-aware agents"
+            ],
+            "optional_only": true
+          },
+          {
+            "id": "deepseek",
+            "provider": "DeepSeek",
+            "best_for": [
+              "coding drafts",
+              "math-like reasoning",
+              "low-cost code comparison"
+            ],
+            "optional_only": true
+          }
+        ]
+      },
+      "readiness": {
+        "score": 90,
+        "status": "mostly_ready_needs_targeted_tests",
+        "missing": [
+          "direct test coverage"
+        ],
+        "next_steps": [
+          "Add or verify direct test coverage."
+        ]
+      }
+    },
+    {
+      "slug": "lobbying-detector",
+      "displayName": "Strategic Lobbying Opportunity Detector",
+      "division": "DreamInfluence",
+      "category": "lobbying-intelligence",
+      "tier": "elite",
+      "status": "active",
+      "profilePath": "bots/lobbying-detector/bot_profile.json",
+      "source": "bots_profile",
+      "codeFiles": [
+        "bots/lobbying-detector/__init__.py",
+        "bots/lobbying-detector/bot.py",
+        "bots/lobbying-detector/runtime.py",
+        "bots/lobbying-detector/tiers.py"
+      ],
+      "tests": [],
+      "capabilities": [
+        "Regulatory signal monitoring",
+        "Legislative trend analysis",
+        "Lobbying ROI estimation",
+        "Policy impact scoring",
+        "Stakeholder alignment mapping",
+        "Advanced analytics dashboard",
+        "Priority email support",
+        "API access",
+        "Custom integrations",
+        "Webhook notifications",
+        "Data export (CSV/JSON)",
+        "Scheduled automations",
+        "Multi-user access",
+        "Dedicated account manager",
+        "SLA guarantee (99.99%)",
+        "Custom model fine-tuning",
+        "SSO/SAML authentication",
+        "Audit logging",
+        "Role-based access control",
+        "White-label options",
+        "On-premise deployment option",
+        "24/7 phone support",
+        "Custom AI model training",
+        "Unlimited API calls",
+        "Dedicated infrastructure",
+        "Quarterly business reviews",
+        "Early access to features",
+        "Real-time monitoring dashboard",
+        "Automated error recovery",
+        "Cross-bot data sharing",
+        "Version history tracking",
+        "Performance benchmarking",
+        "Compliance reporting",
+        "Multi-region deployment",
+        "Auto-scaling resources",
+        "Encrypted data at rest",
+        "SOC 2 Type II compliant"
+      ],
+      "taskContract": {
+        "primary_mode": "local_first_no_external_provider_required",
+        "can_run_without_other_providers": true,
+        "optional_models_available": true,
+        "local_first_tasks": [
+          "research packet",
+          "scoring rubric",
+          "evidence log",
+          "comparison table",
+          "recommendation"
+        ],
+        "end_to_end_stages": [
+          {
+            "id": "intake",
+            "label": "Task Intake",
+            "required_output": "structured task brief with user goal, inputs, constraints, and approval level",
+            "local_method": "Use bot profile, existing capabilities, local forms, local files, and deterministic templates."
+          },
+          {
+            "id": "plan",
+            "label": "Build Plan",
+            "required_output": "step-by-step workflow, needed files, test plan, and expected deliverables",
+            "local_method": "Generate a rule-based plan from the bot division, category, description, and capabilities."
+          },
+          {
+            "id": "execute_sandbox",
+            "label": "Sandbox Execution",
+            "required_output": "local prototype, report, checklist, script output, or simulated workflow result",
+            "local_method": "Run only local code, local fixtures, mock data, and no-key fallbacks unless the owner approves live integrations."
+          },
+          {
+            "id": "validate",
+            "label": "Validation",
+            "required_output": "syntax check, unit/smoke test, data-quality review, safety review, and failure notes",
+            "local_method": "Prefer existing tests, Python compilation, TypeScript checks, JSON validation, and deterministic fixture replay."
+          },
+          {
+            "id": "package",
+            "label": "Client Package",
+            "required_output": "dashboard summary, prospectus page, export packet, and next approved action",
+            "local_method": "Create local Markdown/JSON/HTML artifacts first; publish, email, charge, or submit only after approval."
+          }
+        ],
+        "approval_gates": [
+          "paid model calls",
+          "live web scraping beyond allowed/public use",
+          "sending email, SMS, calls, social posts, bids, or proposals",
+          "collecting private or sensitive data",
+          "using real voice, face, likeness, or private biography details",
+          "collecting, moving, refunding, or reconciling money",
+          "legal, medical, financial, employment, tenant, credit, or eligibility decisions",
+          "production deploys, app-store submissions, marketplace listings, or domain purchases"
+        ],
+        "deliverables": [
+          "task brief",
+          "local sandbox result",
+          "test evidence",
+          "dashboard/prospectus summary",
+          "next approved action packet"
+        ],
+        "provider_policy": {
+          "default": "Use DreamCo local code, local storage, local fixtures, deterministic templates, and no-key fallbacks first.",
+          "optional": "Use external AI models only when configured by the owner or selected by the user for quality, speed, or media generation.",
+          "cost_control": "Budget-first routing, caching, and owner approval before paid calls."
+        },
+        "model_options": [
+          {
+            "id": "openai",
+            "provider": "OpenAI",
+            "best_for": [
+              "coding",
+              "debugging",
+              "agent tools"
+            ],
+            "optional_only": true
+          },
+          {
+            "id": "google_gemini",
+            "provider": "Google Gemini",
+            "best_for": [
+              "course building",
+              "long documents",
+              "video understanding"
+            ],
+            "optional_only": true
+          },
+          {
+            "id": "anthropic_claude",
+            "provider": "Anthropic Claude",
+            "best_for": [
+              "careful reasoning",
+              "long-form review",
+              "policy/safety review"
+            ],
+            "optional_only": true
+          },
+          {
+            "id": "meta_llama",
+            "provider": "Meta Llama",
+            "best_for": [
+              "local/private tasks",
+              "low-cost experiments",
+              "self-hosted assistants"
+            ],
+            "optional_only": true
+          },
+          {
+            "id": "mistral",
+            "provider": "Mistral AI",
+            "best_for": [
+              "fast drafts",
+              "European language workflows",
+              "cost-aware agents"
+            ],
+            "optional_only": true
+          },
+          {
+            "id": "deepseek",
+            "provider": "DeepSeek",
+            "best_for": [
+              "coding drafts",
+              "math-like reasoning",
+              "low-cost code comparison"
+            ],
+            "optional_only": true
+          }
+        ]
+      },
+      "readiness": {
+        "score": 90,
+        "status": "mostly_ready_needs_targeted_tests",
+        "missing": [
+          "direct test coverage"
+        ],
+        "next_steps": [
+          "Add or verify direct test coverage."
+        ]
+      }
+    },
+    {
+      "slug": "narrative-prioritizer",
+      "displayName": "Strategic Narrative Prioritizer",
+      "division": "DreamInfluence",
+      "category": "narrative-strategy",
+      "tier": "pro",
+      "status": "active",
+      "profilePath": "bots/narrative-prioritizer/bot_profile.json",
+      "source": "bots_profile",
+      "codeFiles": [
+        "bots/narrative-prioritizer/__init__.py",
+        "bots/narrative-prioritizer/bot.py",
+        "bots/narrative-prioritizer/runtime.py",
+        "bots/narrative-prioritizer/tiers.py"
+      ],
+      "tests": [],
+      "capabilities": [
+        "Narrative impact scoring",
+        "Audience resonance analysis",
+        "Strategic alignment ranking",
+        "Resource allocation guidance",
+        "Timing optimization engine",
+        "Advanced analytics dashboard",
+        "Priority email support",
+        "API access",
+        "Custom integrations",
+        "Webhook notifications",
+        "Data export (CSV/JSON)",
+        "Scheduled automations",
+        "Multi-user access",
+        "Real-time monitoring dashboard",
+        "Automated error recovery",
+        "Cross-bot data sharing",
+        "Version history tracking",
+        "Performance benchmarking",
+        "Compliance reporting",
+        "Multi-region deployment",
+        "Auto-scaling resources",
+        "Encrypted data at rest",
+        "SOC 2 Type II compliant"
+      ],
+      "taskContract": {
+        "primary_mode": "local_first_no_external_provider_required",
+        "can_run_without_other_providers": true,
+        "optional_models_available": true,
+        "local_first_tasks": [
+          "task-specific intake",
+          "local workflow plan",
+          "sandbox output",
+          "quality checklist",
+          "dashboard/prospectus packet"
+        ],
+        "end_to_end_stages": [
+          {
+            "id": "intake",
+            "label": "Task Intake",
+            "required_output": "structured task brief with user goal, inputs, constraints, and approval level",
+            "local_method": "Use bot profile, existing capabilities, local forms, local files, and deterministic templates."
+          },
+          {
+            "id": "plan",
+            "label": "Build Plan",
+            "required_output": "step-by-step workflow, needed files, test plan, and expected deliverables",
+            "local_method": "Generate a rule-based plan from the bot division, category, description, and capabilities."
+          },
+          {
+            "id": "execute_sandbox",
+            "label": "Sandbox Execution",
+            "required_output": "local prototype, report, checklist, script output, or simulated workflow result",
+            "local_method": "Run only local code, local fixtures, mock data, and no-key fallbacks unless the owner approves live integrations."
+          },
+          {
+            "id": "validate",
+            "label": "Validation",
+            "required_output": "syntax check, unit/smoke test, data-quality review, safety review, and failure notes",
+            "local_method": "Prefer existing tests, Python compilation, TypeScript checks, JSON validation, and deterministic fixture replay."
+          },
+          {
+            "id": "package",
+            "label": "Client Package",
+            "required_output": "dashboard summary, prospectus page, export packet, and next approved action",
+            "local_method": "Create local Markdown/JSON/HTML artifacts first; publish, email, charge, or submit only after approval."
+          }
+        ],
+        "approval_gates": [
+          "paid model calls",
+          "live web scraping beyond allowed/public use",
+          "sending email, SMS, calls, social posts, bids, or proposals",
+          "collecting private or sensitive data",
+          "using real voice, face, likeness, or private biography details",
+          "collecting, moving, refunding, or reconciling money",
+          "legal, medical, financial, employment, tenant, credit, or eligibility decisions",
+          "production deploys, app-store submissions, marketplace listings, or domain purchases"
+        ],
+        "deliverables": [
+          "task brief",
+          "local sandbox result",
+          "test evidence",
+          "dashboard/prospectus summary",
+          "next approved action packet"
+        ],
+        "provider_policy": {
+          "default": "Use DreamCo local code, local storage, local fixtures, deterministic templates, and no-key fallbacks first.",
+          "optional": "Use external AI models only when configured by the owner or selected by the user for quality, speed, or media generation.",
+          "cost_control": "Budget-first routing, caching, and owner approval before paid calls."
+        },
+        "model_options": [
+          {
+            "id": "openai",
+            "provider": "OpenAI",
+            "best_for": [
+              "coding",
+              "debugging",
+              "agent tools"
+            ],
+            "optional_only": true
+          },
+          {
+            "id": "google_gemini",
+            "provider": "Google Gemini",
+            "best_for": [
+              "course building",
+              "long documents",
+              "video understanding"
+            ],
+            "optional_only": true
+          },
+          {
+            "id": "anthropic_claude",
+            "provider": "Anthropic Claude",
+            "best_for": [
+              "careful reasoning",
+              "long-form review",
+              "policy/safety review"
+            ],
+            "optional_only": true
+          },
+          {
+            "id": "meta_llama",
+            "provider": "Meta Llama",
+            "best_for": [
+              "local/private tasks",
+              "low-cost experiments",
+              "self-hosted assistants"
+            ],
+            "optional_only": true
+          },
+          {
+            "id": "mistral",
+            "provider": "Mistral AI",
+            "best_for": [
+              "fast drafts",
+              "European language workflows",
+              "cost-aware agents"
+            ],
+            "optional_only": true
+          },
+          {
+            "id": "deepseek",
+            "provider": "DeepSeek",
+            "best_for": [
+              "coding drafts",
+              "math-like reasoning",
+              "low-cost code comparison"
+            ],
+            "optional_only": true
+          }
+        ]
+      },
+      "readiness": {
+        "score": 90,
+        "status": "mostly_ready_needs_targeted_tests",
+        "missing": [
+          "direct test coverage"
+        ],
+        "next_steps": [
+          "Add or verify direct test coverage."
+        ]
+      }
+    }
+  ]
+}

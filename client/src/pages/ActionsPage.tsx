@@ -110,6 +110,7 @@ export default function ActionsPage() {
   const creatorStudioQ = useQuery<any>({ queryKey: ["/api/buddy/creator-studio"], retry: 1 });
   const modelChoicesQ = useQuery<any>({ queryKey: ["/api/buddy/model-choices"], retry: 1 });
   const restoredFamiliesQ = useQuery<any>({ queryKey: ["/api/buddy/restored-bot-families"], retry: 1 });
+  const endToEndQ = useQuery<any>({ queryKey: ["/api/buddy/bot-end-to-end-readiness"], retry: 1 });
 
   const restartAll = useMutation({
     mutationFn: () => apiRequest("POST", "/api/tasks/restart-all", {}),
@@ -245,7 +246,7 @@ export default function ActionsPage() {
           </div>
         </Card>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4" data-testid="buddy-creator-model-bridge">
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-4" data-testid="buddy-creator-model-bridge">
           <Card className="buddy-card rounded-2xl border border-border/60 p-4">
             <div className="flex items-center gap-3 mb-3">
               <span className="inline-flex h-9 w-9 items-center justify-center rounded-xl bg-violet-500/15 border border-violet-500/30">
@@ -304,6 +305,29 @@ export default function ActionsPage() {
                 </div>
               ))}
             </div>
+          </Card>
+
+          <Card className="buddy-card rounded-2xl border border-border/60 p-4">
+            <div className="flex items-center gap-3 mb-3">
+              <span className="inline-flex h-9 w-9 items-center justify-center rounded-xl bg-amber-500/15 border border-amber-500/30">
+                <ListTodo className="h-4 w-4 text-amber-400" />
+              </span>
+              <div>
+                <p className="text-sm font-bold">End-To-End Readiness</p>
+                <p className="text-xs text-muted-foreground">{endToEndQ.data?.totals?.bots ?? 0} bots/systems</p>
+              </div>
+            </div>
+            <div className="grid grid-cols-2 gap-2 text-xs">
+              <div className="rounded-xl border border-border/40 p-2">
+                <p className="text-[10px] text-muted-foreground">Ready</p>
+                <p className="font-bold">{endToEndQ.data?.totals?.ready_for_local_end_to_end_testing ?? 0}</p>
+              </div>
+              <div className="rounded-xl border border-border/40 p-2">
+                <p className="text-[10px] text-muted-foreground">Needs Tests</p>
+                <p className="font-bold">{endToEndQ.data?.totals?.mostly_ready_needs_targeted_tests ?? 0}</p>
+              </div>
+            </div>
+            <p className="text-xs text-muted-foreground mt-3">Local-first by default; other models stay optional.</p>
           </Card>
         </div>
 

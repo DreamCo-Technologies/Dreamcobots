@@ -1321,6 +1321,15 @@ export async function registerRoutes(
     res.json(readRepoJson("config/buddy_restored_bot_family_bridge.json"));
   });
 
+  app.get("/api/buddy/bot-end-to-end-readiness", async (_req, res) => {
+    res.json(readRepoJson("config/generated/bot_end_to_end_readiness/index.json"));
+  });
+
+  app.get("/api/buddy/bot-end-to-end-readiness/divisions/:division", async (req, res) => {
+    const division = String(req.params.division || "").replace(/[^a-zA-Z0-9-]/g, "").toLowerCase();
+    res.json(readRepoJson(`config/generated/bot_end_to_end_readiness/divisions/${division}.json`));
+  });
+
   app.post("/api/buddy/creator-studio/build-packet", async (req, res) => {
     const parsed = creatorBuildPacketSchema.safeParse(req.body ?? {});
     if (!parsed.success) return res.status(400).json(zodValidationError(parsed.error));
@@ -1386,6 +1395,7 @@ export async function registerRoutes(
         { name: "Creator Build Packet", route: "POST /api/buddy/creator-studio/build-packet", status: "live", description: "Free local project packet for large games, study-to-game courses, autobiographies, and client prototypes" },
         { name: "Model Choice Registry", route: "GET /api/buddy/model-choices", status: "live", description: "User-selectable model families with strengths, watchouts, and budget-first routing" },
         { name: "Restored Bot Family Bridge", route: "GET /api/buddy/restored-bot-families", status: "live", description: "Recovered original bot families connected back to Buddy as capability groups" },
+        { name: "Bot End-To-End Readiness", route: "GET /api/buddy/bot-end-to-end-readiness", status: "live", description: "One-by-one local-first readiness audit for every discovered bot and recovered system" },
         { name: "Web Search", route: "POST /api/search/web", status: "live", description: "GitHub + OpenAI synthesis search" },
         { name: "GitHub Intelligence", route: "GET /api/github-intel/trending", status: "live", description: "Hourly GitHub trending + search" },
         { name: "Council Governance", route: "GET /api/council/proposals", status: "live", description: "Bot proposal submission and approval" },
