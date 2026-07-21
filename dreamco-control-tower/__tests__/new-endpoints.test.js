@@ -1,0 +1,1076 @@
+import request from 'supertest';
+import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+process.env.NODE_ENV = 'test';
+
+const BOTS_FILE = path.join(__dirname, '..', 'config', 'bots.json');
+const BUDDY_OPS_QUEUE_FILE = path.join(__dirname, '..', '..', 'reports', 'buddy_ops_queue.json');
+
+const SAMPLE_BOTS = [
+  {
+    name: 'buddy-bot',
+    repoName: 'Dreamcobots',
+    repoPath: './bots/buddy_bot',
+    status: 'active',
+    tier: 'PRO',
+    category: 'AI Companion',
+    description: 'The most human-like AI companion.',
+    price_usd: 49,
+    features: ['Emotion detection', 'Voice synthesis'],
+    lastHeartbeat: null,
+    lastUpdate: null,
+    pendingPRs: 0,
+  },
+  {
+    name: 'sales-bot',
+    repoName: 'Dreamcobots',
+    repoPath: './bots/sales_bot',
+    status: 'idle',
+    tier: 'FREE',
+    category: 'Sales',
+    description: 'Automated sales outreach.',
+    price_usd: 0,
+    features: ['LeadQualifier', 'EmailSequencer'],
+    lastHeartbeat: null,
+    lastUpdate: null,
+    pendingPRs: 0,
+  },
+];
+
+let app;
+let originalBotsContent;
+let originalBuddyOpsQueueContent;
+
+beforeAll(async () => {
+  originalBotsContent = fs.readFileSync(BOTS_FILE, 'utf8');
+  originalBuddyOpsQueueContent = fs.existsSync(BUDDY_OPS_QUEUE_FILE)
+    ? fs.readFileSync(BUDDY_OPS_QUEUE_FILE, 'utf8')
+    : null;
+  const module = await import('../backend/server.js');
+  app = module.default;
+});
+
+afterAll(() => {
+  fs.writeFileSync(BOTS_FILE, originalBotsContent);
+  if (originalBuddyOpsQueueContent === null) {
+    if (fs.existsSync(BUDDY_OPS_QUEUE_FILE)) {
+      fs.unlinkSync(BUDDY_OPS_QUEUE_FILE);
+    }
+  } else {
+    fs.writeFileSync(BUDDY_OPS_QUEUE_FILE, originalBuddyOpsQueueContent);
+  }
+});
+
+beforeEach(() => {
+  fs.writeFileSync(BOTS_FILE, JSON.stringify(SAMPLE_BOTS, null, 2));
+});
+
+// ---------------------------------------------------------------------------
+// GET /api/catalog
+// ---------------------------------------------------------------------------
+
+describe('GET /api/catalog', () => {
+  test('returns 200', async () => {
+    const res = await request(app).get('/api/catalog');
+    expect(res.status).toBe(200);
+  });
+
+  test('returns a JSON array', async () => {
+    const res = await request(app).get('/api/catalog');
+    expect(Array.isArray(res.body)).toBe(true);
+  });
+
+  test('array length matches bots.json length', async () => {
+    const res = await request(app).get('/api/catalog');
+    expect(res.body.length).toBe(SAMPLE_BOTS.length);
+  });
+
+  test('each item has bot_id', async () => {
+    const res = await request(app).get('/api/catalog');
+    res.body.forEach((item) => expect(item).toHaveProperty('bot_id'));
+  });
+
+  test('each item has display_name', async () => {
+    const res = await request(app).get('/api/catalog');
+    res.body.forEach((item) => expect(item).toHaveProperty('display_name'));
+  });
+
+  test('each item has tier', async () => {
+    const res = await request(app).get('/api/catalog');
+    res.body.forEach((item) => expect(item).toHaveProperty('tier'));
+  });
+
+  test('each item has price_usd', async () => {
+    const res = await request(app).get('/api/catalog');
+    res.body.forEach((item) => expect(item).toHaveProperty('price_usd'));
+  });
+
+  test('each item has features array', async () => {
+    const res = await request(app).get('/api/catalog');
+    res.body.forEach((item) => {
+      expect(item).toHaveProperty('features');
+      expect(Array.isArray(item.features)).toBe(true);
+    });
+  });
+
+  test('each item has is_live boolean', async () => {
+    const res = await request(app).get('/api/catalog');
+    res.body.forEach((item) => {
+      expect(item).toHaveProperty('is_live');
+      expect(typeof item.is_live).toBe('boolean');
+    });
+  });
+
+  test('active bot is_live is true', async () => {
+    const res = await request(app).get('/api/catalog');
+    const buddy = res.body.find((b) => b.bot_id === 'buddy_bot');
+    expect(buddy.is_live).toBe(true);
+  });
+
+  test('idle bot is_live is false', async () => {
+    const res = await request(app).get('/api/catalog');
+    const sales = res.body.find((b) => b.bot_id === 'sales_bot');
+    expect(sales.is_live).toBe(false);
+  });
+
+  test('dashes in name converted to underscores in bot_id', async () => {
+    const res = await request(app).get('/api/catalog');
+    res.body.forEach((item) => {
+      expect(item.bot_id).not.toContain('-');
+    });
+  });
+
+  test('display_name is title-cased', async () => {
+    const res = await request(app).get('/api/catalog');
+    const buddy = res.body.find((b) => b.bot_id === 'buddy_bot');
+    // "buddy-bot" → "Buddy Bot"
+    expect(buddy.display_name).toBe('Buddy Bot');
+  });
+
+  test('propagates description from bots.json', async () => {
+    const res = await request(app).get('/api/catalog');
+    const buddy = res.body.find((b) => b.bot_id === 'buddy_bot');
+    expect(buddy.description).toBe('The most human-like AI companion.');
+  });
+
+  test('propagates features from bots.json', async () => {
+    const res = await request(app).get('/api/catalog');
+    const buddy = res.body.find((b) => b.bot_id === 'buddy_bot');
+    expect(buddy.features).toContain('Emotion detection');
+  });
+
+  test('returns empty array when bots.json is empty', async () => {
+    fs.writeFileSync(BOTS_FILE, '[]');
+    const res = await request(app).get('/api/catalog');
+    expect(res.status).toBe(200);
+    expect(res.body).toEqual([]);
+  });
+});
+
+// ---------------------------------------------------------------------------
+// GET /api/orchestrator
+// ---------------------------------------------------------------------------
+
+describe('GET /api/orchestrator', () => {
+  test('returns 200', async () => {
+    const res = await request(app).get('/api/orchestrator');
+    expect(res.status).toBe(200);
+  });
+
+  test('has orchestrator field', async () => {
+    const res = await request(app).get('/api/orchestrator');
+    expect(res.body).toHaveProperty('orchestrator', 'BuddyOrchestrator');
+  });
+
+  test('has github_repo field', async () => {
+    const res = await request(app).get('/api/orchestrator');
+    expect(res.body).toHaveProperty('github_repo');
+    expect(typeof res.body.github_repo).toBe('string');
+  });
+
+  test('has catalog_size matching bots.json', async () => {
+    const res = await request(app).get('/api/orchestrator');
+    expect(res.body.catalog_size).toBe(SAMPLE_BOTS.length);
+  });
+
+  test('has scrape_deadline field', async () => {
+    const res = await request(app).get('/api/orchestrator');
+    expect(res.body).toHaveProperty('scrape_deadline', '2026-06-22');
+  });
+
+  test('has days_until_deadline as non-negative number', async () => {
+    const res = await request(app).get('/api/orchestrator');
+    expect(typeof res.body.days_until_deadline).toBe('number');
+    expect(res.body.days_until_deadline).toBeGreaterThanOrEqual(0);
+  });
+
+  test('has scraping_active boolean', async () => {
+    const res = await request(app).get('/api/orchestrator');
+    expect(typeof res.body.scraping_active).toBe('boolean');
+  });
+
+  test('has timestamp as valid ISO string', async () => {
+    const res = await request(app).get('/api/orchestrator');
+    expect(typeof res.body.timestamp).toBe('string');
+    expect(() => new Date(res.body.timestamp)).not.toThrow();
+  });
+
+  test('scraping_active matches current date against deadline', async () => {
+    const res = await request(app).get('/api/orchestrator');
+    const expected = new Date() <= new Date(res.body.scrape_deadline);
+    expect(res.body.scraping_active).toBe(expected);
+  });
+});
+
+// ---------------------------------------------------------------------------
+// GET /api/actions
+// ---------------------------------------------------------------------------
+
+describe('GET /api/actions', () => {
+  test('returns 200', async () => {
+    const res = await request(app).get('/api/actions');
+    expect(res.status).toBe(200);
+  });
+
+  test('has runs array', async () => {
+    const res = await request(app).get('/api/actions');
+    expect(Array.isArray(res.body.runs)).toBe(true);
+  });
+
+  test('has source field', async () => {
+    const res = await request(app).get('/api/actions');
+    expect(res.body).toHaveProperty('source');
+  });
+
+  test('has repo field', async () => {
+    const res = await request(app).get('/api/actions');
+    expect(res.body).toHaveProperty('repo');
+  });
+
+  test('has fetched_at ISO timestamp', async () => {
+    const res = await request(app).get('/api/actions');
+    expect(res.body).toHaveProperty('fetched_at');
+    expect(typeof res.body.fetched_at).toBe('string');
+  });
+
+  test('does not throw without GITHUB_TOKEN', async () => {
+    const orig = process.env.GITHUB_TOKEN;
+    delete process.env.GITHUB_TOKEN;
+    const res = await request(app).get('/api/actions');
+    expect(res.status).toBe(200);
+    if (orig !== undefined) {
+      process.env.GITHUB_TOKEN = orig;
+    }
+  });
+
+  test('returns content-type json', async () => {
+    const res = await request(app).get('/api/actions');
+    expect(res.headers['content-type']).toMatch(/application\/json/);
+  });
+});
+
+describe('GET /api/system-libraries', () => {
+  test('returns complete per-bot library coverage', async () => {
+    const res = await request(app).get('/api/system-libraries');
+
+    expect(res.status).toBe(200);
+    expect(res.body.bot_count).toBeGreaterThanOrEqual(1248);
+    expect(res.body.builders).toHaveLength(8);
+    expect(res.body.libraries).toHaveLength(7);
+    Object.values(res.body.coverage).forEach((count) => expect(count).toBe(res.body.bot_count));
+    expect(res.body.libraries.some((library) => library.id === 'resources')).toBe(true);
+    expect(res.body.coverage.bots_with_api_sandbox_bootcamps).toBe(res.body.bot_count);
+    expect(res.body.coverage.bots_with_custom_api_contracts).toBe(res.body.bot_count);
+    expect(res.body.coverage.bots_with_sandbox_workflow_generators).toBe(res.body.bot_count);
+    expect(res.body.coverage.bots_with_owner_buddy_client_bootcamp_tracks).toBe(res.body.bot_count);
+    expect(res.body.bootcamp_baseline.top_ai_company_resource_seed_count).toBe(100);
+  });
+
+  test('returns the security baseline', async () => {
+    const res = await request(app).get('/api/system-libraries');
+
+    expect(res.body.security_baseline.webhooks).toContain('hmac_sha256');
+    expect(res.body.security_baseline.apis).toContain('rate_limit_backoff');
+    expect(res.body.security_baseline.github_actions).toContain(
+      'least_privilege_permissions',
+    );
+  });
+});
+
+describe('GET /api/buddy-capabilities', () => {
+  test('returns generated Buddy capability inventory', async () => {
+    const res = await request(app).get('/api/buddy-capabilities');
+
+    expect(res.status).toBe(200);
+    expect(res.body.schema).toBe('dreamco.buddy_capability_inventory.v1');
+    expect(res.body.summary.bot_profiles_scanned).toBeGreaterThanOrEqual(1248);
+    expect(res.body.summary.buddy_related_bots).toBeGreaterThanOrEqual(10);
+    expect(res.body.summary.test_states.ready_for_test_run).toBeGreaterThan(0);
+    expect(res.body.summary.bots_with_full_coding_path).toBe(res.body.summary.bot_profiles_scanned);
+    expect(res.body.summary.all_bots_have_full_coding_path).toBe(true);
+    expect(res.body.summary.production_ready_bots).toBeGreaterThan(0);
+    expect(res.body.summary.all_bots_production_ready).toBe(false);
+  });
+
+  test('returns attention list and direct Buddy systems', async () => {
+    const res = await request(app).get('/api/buddy-capabilities');
+
+    expect(Array.isArray(res.body.buddy_bots)).toBe(true);
+    expect(res.body.buddy_bots.some((bot) => bot.slug === 'buddy_core')).toBe(true);
+    expect(Array.isArray(res.body.attention.needs_implementation)).toBe(true);
+    expect(Array.isArray(res.body.attention.needs_direct_test_coverage)).toBe(true);
+    expect(Array.isArray(res.body.attention.needs_existing_system_mapping)).toBe(true);
+  });
+});
+
+describe('GET /api/buddy-productivity', () => {
+  test('returns productivity tracking for owner, clients, and bots', async () => {
+    const res = await request(app).get('/api/buddy-productivity');
+
+    expect(res.status).toBe(200);
+    expect(res.body.schema).toBe('dreamco.buddy_productivity_tracker.v1');
+    expect(res.body.summary).toHaveProperty('productivity_score');
+    expect(res.body.summary.bot_count).toBeGreaterThanOrEqual(1248);
+    expect(res.body.owner_productivity.tracks).toContain('next best build task');
+    expect(res.body.client_productivity.tracks).toContain('demo-ready bots');
+    expect(res.body.bot_productivity.tracks).toContain('runtime readiness');
+    expect(Array.isArray(res.body.learning_loops)).toBe(true);
+  });
+});
+
+describe('GET /api/release-readiness', () => {
+  test('returns DreamCo 1.0 plan versus proof comparison', async () => {
+    const res = await request(app).get('/api/release-readiness');
+
+    expect(res.status).toBe(200);
+    expect(res.body.schema).toBe('dreamco.release_readiness.v1');
+    expect(res.body.summary).toHaveProperty('release_readiness_score');
+    expect(res.body.summary).toHaveProperty('first_ten_complete');
+    expect(Array.isArray(res.body.first_ten_updates)).toBe(true);
+    expect(Array.isArray(res.body.top_100_groups)).toBe(true);
+    expect(res.body.sources).toHaveProperty('repository_stewardship');
+  });
+});
+
+describe('GET /api/app-foundry', () => {
+  test('returns in-house build, host, and deploy readiness', async () => {
+    const res = await request(app).get('/api/app-foundry');
+
+    expect(res.status).toBe(200);
+    expect(res.body.schema).toBe('dreamco.app_foundry_readiness.v1');
+    expect(res.body.summary.creation_lanes).toBeGreaterThanOrEqual(8);
+    expect(res.body.summary.deployment_targets).toBeGreaterThanOrEqual(4);
+    expect(res.body.ownership_rule).toMatch(/source of truth/i);
+    expect(res.body.lanes.map((lane) => lane.id)).toEqual(
+      expect.arrayContaining(['games', 'websites', 'apps', 'school_courses', 'simulations']),
+    );
+    expect(res.body.deployment_targets.map((target) => target.id)).toContain('github_pages');
+    expect(res.body.quality_gates).toContain('owner_approval_before_live_money_outreach_or_deploy');
+  });
+});
+
+describe('GET /api/app-category-catalog', () => {
+  test('returns app categories for comparison and Buddy web/device management', async () => {
+    const res = await request(app).get('/api/app-category-catalog');
+
+    expect(res.status).toBe(200);
+    expect(res.body.schema).toBe('dreamco.app_category_catalog_report.v1');
+    expect(res.body.summary.app_categories).toBeGreaterThanOrEqual(40);
+    expect(res.body.summary.comparison_criteria).toBeGreaterThanOrEqual(20);
+    expect(res.body.summary.device_and_web_management_ready).toBe(true);
+    expect(res.body.categories.map((category) => category.id)).toEqual(
+      expect.arrayContaining(['couponing', 'gambling', 'job_search', 'app_builders']),
+    );
+    expect(res.body.buddy_management_modes.map((mode) => mode.id)).toEqual(
+      expect.arrayContaining(['web_research', 'device_assist', 'account_workflow']),
+    );
+    expect(res.body.blocked_without_approval).toEqual(
+      expect.arrayContaining(['install_or_uninstall_apps', 'move_money_or_purchase', 'place_bet_or_trade']),
+    );
+  });
+});
+
+describe('GET /api/bot-founder-app-store', () => {
+  test('returns per-bot founder and app-store readiness', async () => {
+    const res = await request(app).get('/api/bot-founder-app-store');
+
+    expect(res.status).toBe(200);
+    expect(res.body.schema).toBe('dreamco.bot_founder_app_store_report.v1');
+    expect(res.body.summary.founder_packets).toBeGreaterThanOrEqual(1248);
+    expect(res.body.summary.bots_with_app_concept).toBe(res.body.summary.bot_count);
+    expect(res.body.summary.bots_with_competitor_study_plan).toBe(res.body.summary.bot_count);
+    expect(res.body.summary.bots_blocked_from_live_actions_until_approval).toBe(res.body.summary.bot_count);
+    expect(res.body.live_action_policy).toMatch(/must not contact customers/i);
+    expect(res.body.founder_study_loops.map((loop) => loop.id)).toEqual(
+      expect.arrayContaining(['competition_lab', 'autonomous_money_lab', 'app_builder_lab']),
+    );
+    expect(Array.isArray(res.body.dashboard_sample)).toBe(true);
+  });
+});
+
+describe('GET /api/24-hour-scaling', () => {
+  test('returns safe 24-hour scaling readiness', async () => {
+    const res = await request(app).get('/api/24-hour-scaling');
+
+    expect(res.status).toBe(200);
+    expect(res.body.schema).toBe('dreamco.24_hour_scaling_report.v1');
+    expect(res.body.summary.cycles_defined).toBe(6);
+    expect(res.body.summary.min_replicas).toBe(0);
+    expect(res.body.summary.max_replicas).toBe(1);
+    expect(res.body.summary.cheap_24_hour_mode).toBe(true);
+    expect(res.body.summary.idle_sleep_enabled).toBe(true);
+    expect(res.body.summary.max_one_instance).toBe(true);
+    expect(res.body.summary.cloud_run_cpu_throttling).toBe(true);
+    expect(res.body.summary.free_first_ai_routing).toBe(true);
+    expect(res.body.summary.github_actions_default).toBe('manual_or_path_gated');
+    expect(res.body.summary.github_cost_guardrails).toBeGreaterThanOrEqual(5);
+    expect(res.body.summary.ai_cost_guardrails).toBeGreaterThanOrEqual(5);
+    expect(res.body.summary.codex_style_capabilities).toBeGreaterThanOrEqual(8);
+    expect(res.body.summary.self_healing_enabled).toBe(true);
+    expect(res.body.daily_cycles.map((cycle) => cycle.id)).toEqual(
+      expect.arrayContaining(['market_research_cycle', 'build_cycle', 'test_cycle', 'growth_cycle']),
+    );
+    expect(res.body.always_blocked_without_owner_approval).toContain('money_movement');
+    expect(res.body.always_blocked_without_owner_approval).toContain('customer_outreach');
+    expect(res.body.always_blocked_without_owner_approval).toContain('paid_ai_always_on_loop');
+  });
+});
+
+describe('GET /api/buddy-codex-cheap-ops', () => {
+  test('returns Buddy Codex-style cheap operation contract', async () => {
+    const res = await request(app).get('/api/buddy-codex-cheap-ops');
+
+    expect(res.status).toBe(200);
+    expect(res.body.schema).toBe('dreamco.buddy_codex_cheap_ops.v1');
+    expect(res.body.summary.cheap_24_hour_mode).toBe(true);
+    expect(res.body.summary.min_replicas).toBe(0);
+    expect(res.body.summary.max_replicas).toBe(1);
+    expect(res.body.summary.codex_style_capabilities).toBeGreaterThanOrEqual(6);
+    expect(res.body.summary.low_cost_ai_resources).toBeGreaterThan(0);
+    expect(res.body.summary.gemini_resources).toBeGreaterThan(0);
+    expect(res.body.summary.aggressive_mode_available).toBe(true);
+    expect(res.body.summary.aggressive_mode_runs).toBeGreaterThanOrEqual(8);
+    expect(res.body.summary.aggressive_mode_hard_limits).toBeGreaterThanOrEqual(7);
+    expect(res.body.summary.unlimited_autonomy_claimed).toBe(false);
+    expect(res.body.summary.billing_bypass_claimed).toBe(false);
+    expect(res.body.always_on_strategy.mode).toBe('24_hour_supervised_queue_not_24_hour_paid_compute');
+    expect(res.body.aggressive_mode_contract.endpoint).toBe('/api/buddy-ops/aggressive-mode');
+    expect(res.body.aggressive_mode_contract.execution_mode).toBe('supervised_repository_wide_queue');
+    expect(res.body.github_free_cheap_plan.actions_policy).toMatch(/Manual, path-gated/i);
+    expect(res.body.cheap_ai_resource_plan.default_mode).toBe('free_or_low_cost_first');
+    expect(res.body.codex_style_capabilities.map((capability) => capability.id)).toEqual(
+      expect.arrayContaining(['repo_reader', 'code_editor', 'test_runner', 'pr_helper', 'model_router', 'bot_orchestrator']),
+    );
+    expect(res.body.approval_boundaries).toEqual(
+      expect.arrayContaining(['money_movement', 'credential_change', 'paid_github_minutes_increase']),
+    );
+  });
+});
+
+describe('GET /api/buddy-24-hour-package', () => {
+  test('returns sellable supervised all-bot client package', async () => {
+    const res = await request(app).get('/api/buddy-24-hour-package');
+
+    expect(res.status).toBe(200);
+    expect(res.body.schema).toBe('dreamco.buddy_24_hour_client_package.v1');
+    expect(res.body.summary.bot_count).toBeGreaterThanOrEqual(1200);
+    expect(res.body.summary.buddy_connected_bots).toBe(res.body.summary.bot_count);
+    expect(res.body.summary.actions_page_testable_bots).toBe(res.body.summary.bot_count);
+    expect(res.body.summary.custom_resource_ready_bots).toBe(res.body.summary.bot_count);
+    expect(res.body.summary.client_package_ready).toBe(true);
+    expect(res.body.runtime_contract.mode).toBe('continuous_supervised_safe_mode');
+    expect(res.body.runtime_contract.always_on_meaning).toMatch(/approval-gated/i);
+    expect(res.body.operating_lanes.map((lane) => lane.id)).toEqual(
+      expect.arrayContaining(['research_lane', 'build_lane', 'quality_lane']),
+    );
+    expect(res.body.package_tiers.map((tier) => tier.id)).toEqual(
+      expect.arrayContaining(['starter_showcase', 'department_os', 'company_builder']),
+    );
+  });
+});
+
+describe('GET /api/revenue-practice', () => {
+  test('returns all-bot sandbox autonomous revenue practice system', async () => {
+    const res = await request(app).get('/api/revenue-practice');
+
+    expect(res.status).toBe(200);
+    expect(res.body.schema).toBe('dreamco.bot_autonomous_revenue_practice.v1');
+    expect(res.body.summary.bot_count).toBeGreaterThanOrEqual(1200);
+    expect(res.body.summary.bots_with_revenue_practice).toBe(res.body.summary.bot_count);
+    expect(res.body.summary.buddy_connected_bots).toBe(res.body.summary.bot_count);
+    expect(res.body.summary.safe_mode_bots).toBe(res.body.summary.bot_count);
+    expect(res.body.summary.daily_revenue_target_usd).toBe(1000);
+    expect(res.body.summary.bots_with_1000_day_target).toBe(res.body.summary.bot_count);
+    expect(res.body.summary.today_revenue_sprint_target_usd).toBe(100);
+    expect(res.body.summary.bots_with_today_100_sprint).toBe(res.body.summary.bot_count);
+    expect(res.body.summary.same_day_income_guarantee).toBe(false);
+    expect(res.body.summary.actual_revenue_requires_payment_confirmation).toBe(true);
+    expect(res.body.summary.owner_and_user_target_enabled_bots).toBe(res.body.summary.bot_count);
+    expect(res.body.summary.income_guarantee).toBe(false);
+    expect(res.body.summary.target_requires_validation).toBe(true);
+    expect(res.body.summary.bots_with_marketplace_need_discovery).toBe(res.body.summary.bot_count);
+    expect(res.body.summary.marketplace_source_categories).toBeGreaterThanOrEqual(5);
+    expect(res.body.summary.marketplace_approval_gates).toBeGreaterThanOrEqual(7);
+    expect(res.body.summary.all_bots_practice_autonomous_money).toBe(true);
+    expect(res.body.summary.live_money_actions_blocked_without_approval).toBe(true);
+    expect(res.body.buddy_example.practice_status).toBe('gold_standard_revenue_coach');
+    expect(res.body.buddy_example.daily_revenue_target_usd).toBe(1000);
+    expect(res.body.buddy_example.today_revenue_sprint_target_usd).toBe(100);
+    expect(res.body.target_scenarios.map((scenario) => scenario.id)).toEqual(
+      expect.arrayContaining(['one_client_high_value', 'ten_clients_service', 'subscription_stack']),
+    );
+    expect(res.body.today_sprint_scenarios.map((scenario) => scenario.id)).toEqual(
+      expect.arrayContaining(['one_100_dollar_service', 'two_50_dollar_deliverables', 'five_20_dollar_digital_packs']),
+    );
+    expect(res.body.target_policy.income_guarantee).toBe(false);
+    expect(res.body.marketplace_demand_sources.map((source) => source.id)).toEqual(
+      expect.arrayContaining(['freelance_marketplaces', 'creator_service_markets', 'business_software_markets']),
+    );
+    expect(res.body.marketplace_demand_workflow).toEqual(
+      expect.arrayContaining(['cluster repeated paying-customer needs', 'build a sandbox demo or sample output']),
+    );
+    expect(res.body.marketplace_approval_gates).toEqual(
+      expect.arrayContaining(['buyer_or_seller_messaging', 'proposal_or_bid_submission', 'paid_order_acceptance']),
+    );
+    expect(res.body.revenue_practice_lanes.map((lane) => lane.id)).toEqual(
+      expect.arrayContaining([
+        'problem_discovery',
+        'marketplace_need_discovery',
+        'offer_design',
+        'pricing_modeling',
+        'sandbox_delivery',
+      ]),
+    );
+    expect(res.body.approval_required).toEqual(
+      expect.arrayContaining([
+        'collect_or_move_money',
+        'contact_leads_or_customers',
+        'submit_bids_or_proposals',
+        'spend_ad_budget',
+      ]),
+    );
+  });
+});
+
+describe('GET /api/specialized-bot-knowledge', () => {
+  test('returns specialized per-bot knowledge coverage', async () => {
+    const res = await request(app).get('/api/specialized-bot-knowledge');
+
+    expect(res.status).toBe(200);
+    expect(res.body.schema).toBe('dreamco.specialized_bot_knowledge_report.v1');
+    expect(res.body.summary.knowledge_profiles).toBeGreaterThanOrEqual(1248);
+    expect(res.body.summary.bots_with_all_knowledge_domains).toBe(res.body.summary.bot_count);
+    expect(res.body.summary.bots_with_source_policy).toBe(res.body.summary.bot_count);
+    expect(res.body.summary.bots_with_memory_policy).toBe(res.body.summary.bot_count);
+    expect(res.body.knowledge_domains.map((domain) => domain.id)).toEqual(
+      expect.arrayContaining(['domain_expertise', 'competitor_intelligence', 'app_builder_knowledge', 'safety_and_approval']),
+    );
+    expect(res.body.source_policy.blocked).toContain('secrets');
+  });
+});
+
+describe('GET /api/ai-agent-model-library', () => {
+  test('returns Buddy prompt, tool, agent, and model routing coverage', async () => {
+    const res = await request(app).get('/api/ai-agent-model-library');
+
+    expect(res.status).toBe(200);
+    expect(res.body.schema).toBe('dreamco.buddy_ai_agent_model_library_report.v1');
+    expect(res.body.summary.model_resources).toBeGreaterThanOrEqual(100);
+    expect(res.body.summary.low_cost_resources).toBeGreaterThan(0);
+    expect(res.body.summary.google_gemini_resources).toBeGreaterThanOrEqual(4);
+    expect(res.body.summary.free_or_cheap_routing_enabled).toBe(true);
+    expect(res.body.summary.agent_types).toBeGreaterThanOrEqual(16);
+    expect(res.body.summary.prompt_types).toBeGreaterThanOrEqual(20);
+    expect(res.body.summary.tool_types).toBeGreaterThanOrEqual(20);
+    expect(res.body.summary.task_routes).toBeGreaterThanOrEqual(30);
+    expect(res.body.summary.bots_with_model_routing).toBe(res.body.summary.bot_count);
+    expect(res.body.task_routes.map((route) => route.task_type)).toEqual(
+      expect.arrayContaining(['coding', 'image_generation', 'market_research', 'simulation_building']),
+    );
+    expect(res.body.model_resources[0]).toHaveProperty('good_at');
+    expect(res.body.model_resources[0]).toHaveProperty('bad_at');
+    expect(res.body.cost_control.default_budget_mode).toBe('free_or_low_cost_first');
+    expect(res.body.cost_control.preferred_sandbox_family).toBe('google_gemini_flash_lite');
+    expect(res.body.model_resources.map((resource) => resource.family_id)).toContain('google_gemini_flash_lite');
+  });
+});
+
+describe('GET /api/business-launch-expansion', () => {
+  test('returns full business launch and expansion service coverage', async () => {
+    const res = await request(app).get('/api/business-launch-expansion');
+
+    expect(res.status).toBe(200);
+    expect(res.body.schema).toBe('dreamco.business_launch_expansion_report.v1');
+    expect(res.body.summary.service_lanes_ready).toBeGreaterThanOrEqual(10);
+    expect(res.body.summary.sub_agent_roles_ready).toBeGreaterThanOrEqual(10);
+    expect(res.body.summary.client_workflows_ready).toBeGreaterThanOrEqual(10);
+    expect(res.body.summary.all_lanes_permissioned).toBe(true);
+    expect(res.body.service_lanes.map((lane) => lane.id)).toEqual(
+      expect.arrayContaining(['business_formation', 'domains_and_brand', 'supplier_network', 'logistics_and_supply_routes']),
+    );
+    expect(res.body.permission_model.client_must_approve).toEqual(
+      expect.arrayContaining(['sub_agent_creation', 'domain_purchase', 'business_registration_filing']),
+    );
+  });
+});
+
+describe('GET /api/buddy-commerce-publishing', () => {
+  test('returns Buddy domain, publishing, download, task, and money research coverage', async () => {
+    const res = await request(app).get('/api/buddy-commerce-publishing');
+
+    expect(res.status).toBe(200);
+    expect(res.body.schema).toBe('dreamco.buddy_commerce_publishing_os_report.v1');
+    expect(res.body.summary.commerce_lanes).toBeGreaterThanOrEqual(5);
+    expect(res.body.summary.download_targets).toBeGreaterThanOrEqual(4);
+    expect(res.body.summary.app_store_targets).toBeGreaterThanOrEqual(5);
+    expect(res.body.summary.can_sell_domains_after_approval).toBe(true);
+    expect(res.body.summary.can_prepare_app_store_submissions).toBe(true);
+    expect(res.body.summary.can_research_autonomous_money).toBe(true);
+    expect(res.body.commerce_lanes.map((lane) => lane.id)).toEqual(
+      expect.arrayContaining(['domains', 'app_self_publish', 'client_downloads', 'task_manager_chatbot', 'web_money_research']),
+    );
+    expect(res.body.approval_wall).toEqual(
+      expect.arrayContaining(['buy_domain', 'submit_app_store_listing', 'charge_or_move_money']),
+    );
+  });
+});
+
+describe('GET /api/bot-contract-discovery', () => {
+  test('returns always-on bot contract discovery coverage', async () => {
+    const res = await request(app).get('/api/bot-contract-discovery');
+
+    expect(res.status).toBe(200);
+    expect(res.body.schema).toBe('dreamco.bot_contract_discovery_report.v1');
+    expect(res.body.summary.bots_with_contract_discovery).toBe(res.body.summary.bot_count);
+    expect(res.body.summary.opportunity_types_tracked).toBeGreaterThanOrEqual(12);
+    expect(res.body.summary.source_categories_tracked).toBeGreaterThanOrEqual(4);
+    expect(res.body.summary.approval_gates_declared).toBeGreaterThanOrEqual(12);
+    expect(res.body.summary.all_bots_ready_for_contract_search).toBe(true);
+    expect(res.body.opportunity_types).toEqual(
+      expect.arrayContaining(['government_contract', 'private_rfp', 'grant', 'trucking_route_contract']),
+    );
+    expect(res.body.approval_gates).toEqual(
+      expect.arrayContaining(['submit_bid', 'contact_buyer', 'sign_contract', 'spend_money']),
+    );
+  });
+});
+
+describe('GET /api/ai-data-package-library', () => {
+  test('returns governed AI data package coverage', async () => {
+    const res = await request(app).get('/api/ai-data-package-library');
+
+    expect(res.status).toBe(200);
+    expect(res.body.schema).toBe('dreamco.ai_data_package_library_report.v1');
+    expect(res.body.summary.bot_package_blueprints).toBe(res.body.summary.bot_count);
+    expect(res.body.summary.package_types_ready).toBeGreaterThanOrEqual(12);
+    expect(res.body.summary.quality_gates_ready).toBeGreaterThanOrEqual(12);
+    expect(res.body.summary.langchain_ready).toBe(true);
+    expect(res.body.langchain.javascript_packages).toEqual(
+      expect.arrayContaining(['langchain', '@langchain/core', 'zod']),
+    );
+    expect(res.body.package_types.map((item) => item.id)).toEqual(
+      expect.arrayContaining(['instruction_tuning', 'rag_knowledge_base', 'eval_benchmark', 'agent_simulation']),
+    );
+    expect(res.body.rights_policy.blocked_sources).toEqual(
+      expect.arrayContaining(['secrets', 'copyrighted content without license']),
+    );
+  });
+});
+
+describe('GET /api/people-job-qualification', () => {
+  test('returns privacy-safe people lookup and job qualification coverage', async () => {
+    const res = await request(app).get('/api/people-job-qualification');
+
+    expect(res.status).toBe(200);
+    expect(res.body.schema).toBe('dreamco.people_job_qualification_report.v1');
+    expect(res.body.summary.bot_people_lookup_blueprints).toBe(res.body.summary.bot_count);
+    expect(res.body.summary.qualification_lanes_ready).toBeGreaterThanOrEqual(6);
+    expect(res.body.summary.human_review_required).toBe(true);
+    expect(res.body.qualification_lanes.map((lane) => lane.id)).toEqual(
+      expect.arrayContaining(['candidate_resume_match', 'contractor_vendor_match', 'sales_people_research']),
+    );
+    expect(res.body.approval_gates).toEqual(
+      expect.arrayContaining(['collect_personal_data', 'contact_person', 'make_hiring_decision']),
+    );
+    expect(res.body.blocked_uses).toEqual(
+      expect.arrayContaining(['automated_hiring_or_rejection', 'protected_class_scoring']),
+    );
+  });
+});
+
+describe('GET /api/bot-owner-settings', () => {
+  test('returns bot business-owner settings and guardrails', async () => {
+    const res = await request(app).get('/api/bot-owner-settings');
+
+    expect(res.status).toBe(200);
+    expect(res.body.schema).toBe('dreamco.bot_owner_settings_report.v1');
+    expect(res.body.summary.bots_with_owner_settings).toBe(res.body.summary.bot_count);
+    expect(res.body.summary.business_owner_enabled_bots).toBe(res.body.summary.bot_count);
+    expect(res.body.summary.safe_mode_enabled_bots).toBe(res.body.summary.bot_count);
+    expect(res.body.summary.high_risk_bots_unblocked_for_safe_work).toBe(res.body.summary.high_risk_bots);
+    expect(res.body.summary.live_action_approval_required_bots).toBe(res.body.summary.bot_count);
+    expect(res.body.on_off_controls).toEqual(
+      expect.arrayContaining(['business_owner_mode_enabled', 'safe_mode_enabled', 'money_movement_enabled']),
+    );
+    expect(res.body.always_require_approval).toEqual(
+      expect.arrayContaining(['collect_or_move_money', 'production_deploy', 'send_outreach']),
+    );
+  });
+});
+
+describe('GET /api/github-triage', () => {
+  test('returns generated GitHub triage report', async () => {
+    const res = await request(app).get('/api/github-triage');
+
+    expect(res.status).toBe(200);
+    expect(res.body.schema).toBe('dreamco.github_triage.v1');
+    expect(res.body.repo).toBe('DreamCo-Technologies/Dreamcobots');
+    expect(res.body.summary).toHaveProperty('open_prs');
+    expect(res.body.summary).toHaveProperty('open_issues');
+    expect(res.body.summary).toHaveProperty('issue_comments_scanned');
+    expect(res.body.summary).toHaveProperty('pr_review_comments_scanned');
+    expect(res.body.summary).toHaveProperty('failed_workflow_runs');
+    expect(Array.isArray(res.body.pr_restart_queue)).toBe(true);
+    expect(Array.isArray(res.body.failed_workflow_runs)).toBe(true);
+  });
+});
+
+describe('GET /api/repository-stewardship', () => {
+  test('returns cleanroom status and quality gates', async () => {
+    const res = await request(app).get('/api/repository-stewardship');
+
+    expect(res.status).toBe(200);
+    expect(res.body.schema).toBe('dreamco.repository_steward.v1');
+    expect(res.body.summary).toHaveProperty('cleanroom_ready');
+    expect(res.body.summary.failed_quality_checks).toBe(0);
+    expect(res.body.quality_checks.map((check) => check.name)).toEqual(
+      expect.arrayContaining(['json_parse', 'python_syntax', 'javascript_syntax']),
+    );
+    expect(res.body.policy.auto_close_without_owner_approval).toBe(false);
+  });
+});
+
+describe('GET /api/storage-guard', () => {
+  test('returns storage budgets and sharding health', async () => {
+    const res = await request(app).get('/api/storage-guard');
+
+    expect(res.status).toBe(200);
+    expect(res.body.schema).toBe('dreamco.storage_guard.v1');
+    expect(res.body.summary).toHaveProperty('storage_ready', true);
+    expect(res.body.summary.failed_checks).toBe(0);
+    expect(res.body.summary.resource_shard_count).toBeGreaterThanOrEqual(45);
+    expect(res.body.budgets).toHaveProperty('generated_resource_shard_max_mb');
+    expect(res.body.checks.map((check) => check.name)).toContain('resource_sharding_integrity');
+  });
+});
+
+describe('GET /api/stripe-revenue-rescue', () => {
+  test('returns Stripe no-money diagnosis and priority fixes', async () => {
+    const res = await request(app).get('/api/stripe-revenue-rescue');
+
+    expect(res.status).toBe(200);
+    expect(res.body.schema).toBe('dreamco.stripe_revenue_rescue.v1');
+    expect(res.body.summary).toHaveProperty('checkout_ready_offers');
+    expect(res.body.summary).toHaveProperty('tracked_events');
+    expect(Array.isArray(res.body.revenue_blockers)).toBe(true);
+    expect(Array.isArray(res.body.priority_fixes)).toBe(true);
+    expect(res.body.safety_note).toMatch(/never prints secret values/i);
+  });
+});
+
+describe('GET /api/stripe-builder', () => {
+  test('returns Buddy Stripe Builder bot contract', async () => {
+    const res = await request(app).get('/api/stripe-builder');
+
+    expect(res.status).toBe(200);
+    expect(res.body.schema).toBe('dreamco.stripe_builder_bot.v1');
+    expect(res.body.bot.slug).toBe('stripe-builder-bot');
+    expect(res.body.summary.build_modules).toBeGreaterThanOrEqual(9);
+    expect(res.body.summary.future_stripe_profiles_supported).toBe(true);
+    expect(res.body.summary.secret_rotation_supported).toBe(true);
+    expect(res.body.summary.live_money_blocked_without_approval).toBe(true);
+    expect(res.body.summary.secret_values_stored_in_repo).toBe(false);
+    expect(res.body.build_modules.map((module) => module.id)).toEqual(
+      expect.arrayContaining([
+        'offer_catalog_builder',
+        'checkout_builder',
+        'webhook_builder',
+        'stripe_profile_manager',
+        'secret_rotation_builder',
+      ]),
+    );
+    expect(res.body.secret_aliases.stripe_secret_key).toEqual(
+      expect.arrayContaining(['STRIPE_SECRET_KEY', 'STRIPE_API_KEY']),
+    );
+    expect(res.body.approval_gates).toEqual(
+      expect.arrayContaining([
+        'publish_payment_link',
+        'accept_live_payment',
+        'change_payout_or_bank_settings',
+        'add_or_rotate_stripe_secret',
+        'switch_active_stripe_profile',
+      ]),
+    );
+  });
+});
+
+describe('GET /api/stripe-price-audit', () => {
+  test('returns repository price to Stripe draft matching', async () => {
+    const res = await request(app).get('/api/stripe-price-audit');
+
+    expect(res.status).toBe(200);
+    expect(res.body.schema).toBe('dreamco.stripe_price_audit.v1');
+    expect(res.body.summary.repository_prices).toBeGreaterThan(0);
+    expect(res.body.summary.generated_stripe_offers).toBe(res.body.summary.repository_prices);
+    expect(res.body.summary.prices_match_generated_stripe_catalog).toBe(true);
+    expect(res.body.summary.live_stripe_actions_blocked_without_approval).toBe(true);
+    expect(res.body.summary.secret_values_stored_in_repo).toBe(false);
+    expect(res.body.stripe_catalog_files).toHaveProperty('price_map', 'data/stripe/repository-price-map.json');
+    expect(res.body.stripe_catalog_files).toHaveProperty('generated_offers', 'data/stripe/offers.generated.json');
+    expect(res.body.policy.approval_required).toEqual(
+      expect.arrayContaining(['create_live_product_or_price', 'publish_payment_link', 'accept_live_payment']),
+    );
+  });
+});
+
+describe('GET /api/google-cloud-readiness', () => {
+  test('returns Google Cloud deployment readiness', async () => {
+    const res = await request(app).get('/api/google-cloud-readiness');
+
+    expect(res.status).toBe(200);
+    expect(res.body.schema).toBe('dreamco.google_cloud_readiness.v1');
+    expect(res.body.summary.deployment_targets).toBeGreaterThanOrEqual(8);
+    expect(res.body.summary.required_apis).toBeGreaterThanOrEqual(10);
+    expect(res.body.summary.deploy_files_ready).toBeGreaterThanOrEqual(7);
+    expect(res.body.summary.cloud_run_services_mapped).toBeGreaterThanOrEqual(3);
+    expect(res.body.summary.pubsub_topics_mapped).toBeGreaterThanOrEqual(3);
+    expect(res.body.summary.secret_manager_placeholders).toBeGreaterThanOrEqual(10);
+    expect(res.body.summary.workload_identity_recommended).toBe(true);
+    expect(res.body.summary.secret_values_stored_in_repo).toBe(false);
+    expect(res.body.summary.free_or_low_cost_ai_routing).toBe(true);
+    expect(res.body.summary.google_gemini_secret_ready).toBe(true);
+    expect(res.body.summary.cloud_run_min_instances_zero_recommended).toBe(true);
+    expect(res.body.ai_cost_control.default_mode).toBe('free_or_low_cost_first');
+    expect(res.body.ai_cost_control.google_secret_name).toBe('GOOGLE_API_KEY');
+    expect(res.body.ai_cost_control.rules).toEqual(
+      expect.arrayContaining(['Do not run paid always-on model loops without a budget cap and owner approval.']),
+    );
+    expect(res.body.github_actions.default_mode).toBe('DRY_RUN');
+    expect(res.body.github_actions.manual_approval_input).toBe('deploy=APPROVE');
+    expect(res.body.required_google_apis).toEqual(
+      expect.arrayContaining(['run.googleapis.com', 'cloudbuild.googleapis.com', 'secretmanager.googleapis.com']),
+    );
+    expect(res.body.github_secrets).toEqual(
+      expect.arrayContaining(['GCP_PROJECT_ID', 'GCP_WORKLOAD_IDENTITY_PROVIDER', 'GCP_SERVICE_ACCOUNT']),
+    );
+    expect(res.body.deploy_files.map((file) => file.path)).toEqual(
+      expect.arrayContaining([
+        'deploy/google-cloud/Dockerfile.control-tower',
+        'cloudbuild.yaml',
+        'deploy/google-cloud/bootstrap.sh',
+        'deploy/google-cloud/workload-identity-github.sh',
+      ]),
+    );
+    expect(res.body.service_map.queues.map((queue) => queue.id)).toEqual(
+      expect.arrayContaining(['dreamco-bot-jobs', 'dreamco-payment-events', 'dreamco-approval-events']),
+    );
+  });
+});
+
+describe('GET /api/google-ai-studio-frontend-factory', () => {
+  test('returns Google AI Studio frontend, workflow, and revenue experiment coverage', async () => {
+    const res = await request(app).get('/api/google-ai-studio-frontend-factory');
+
+    expect(res.status).toBe(200);
+    expect(res.body.schema).toBe('dreamco.google_ai_studio_frontend_factory_report.v1');
+    expect(res.body.summary.frontend_perfection_steps).toBeGreaterThanOrEqual(4);
+    expect(res.body.summary.workflow_mutation_steps).toBeGreaterThanOrEqual(8);
+    expect(res.body.summary.bots_with_frontend_factory_plan).toBe(res.body.summary.bot_count);
+    expect(res.body.summary.actual_revenue_requires_payment_confirmation).toBe(true);
+    expect(res.body.secret_policy.required_secret).toBe('GOOGLE_API_KEY');
+    expect(res.body.approval_wall).toEqual(
+      expect.arrayContaining(['paid_google_ai_batch', 'customer_outreach', 'charge_or_move_money']),
+    );
+  });
+});
+
+describe('GET /api/production-approval-packets', () => {
+  test('returns high-risk production approval packets', async () => {
+    const res = await request(app).get('/api/production-approval-packets');
+
+    expect(res.status).toBe(200);
+    expect(res.body.schema).toBe('dreamco.production_approval_packets.v1');
+    expect(res.body.summary.approval_packets).toBeGreaterThan(0);
+    expect(res.body.summary.smoke_tests_failed).toBe(0);
+    expect(res.body.required_buddy_money_request).toContain('Buddy, help me make money');
+    expect(Array.isArray(res.body.packets)).toBe(true);
+  });
+});
+
+describe('GET /api/buddy-bot-connections', () => {
+  test('returns all-bot Buddy routing, test, and resource coverage', async () => {
+    const res = await request(app).get('/api/buddy-bot-connections');
+
+    expect(res.status).toBe(200);
+    expect(res.body.schema).toBe('dreamco.buddy_bot_connection_guard.v1');
+    expect(res.body.summary.bot_count).toBeGreaterThanOrEqual(1248);
+    expect(res.body.summary.all_bots_connected_to_buddy).toBe(true);
+    expect(res.body.summary.all_bots_testable_from_actions_page).toBe(true);
+    expect(res.body.summary.all_bots_have_custom_resources).toBe(true);
+    expect(res.body.summary.failed_bots).toBe(0);
+  });
+});
+
+describe('Buddy operation prompt API', () => {
+  test('returns the supervised operation queue', async () => {
+    const res = await request(app).get('/api/buddy-ops');
+
+    expect(res.status).toBe(200);
+    expect(res.body.schema).toBe('dreamco.buddy_ops_queue.v1');
+    expect(Array.isArray(res.body.operations)).toBe(true);
+  });
+
+  test('creates a governed operation packet from an Actions page prompt', async () => {
+    const res = await request(app)
+      .post('/api/buddy-ops/prompt')
+      .send({ prompt: 'Fix Stripe checkout and make sure I get GitHub notifications for payments' });
+
+    expect(res.status).toBe(201);
+    expect(res.body.packet.schema).toBe('dreamco.buddy_operation_packet.v1');
+    expect(res.body.packet.operation_type).toBe('revenue_operation');
+    expect(res.body.packet.mode).toBe('sandbox_first_pull_request_review');
+    expect(res.body.packet.approval_gates).toContain('owner approval before money movement');
+    expect(res.body.packet.blocked_live_actions).toContain('payments or payouts');
+  });
+
+  test('routes image, game, and simulation prompts to the AI creation studio', async () => {
+    const res = await request(app)
+      .post('/api/buddy-ops/prompt')
+      .send({ prompt: 'Build a Photoshop style product mockup, video game prototype, and business simulation' });
+
+    expect(res.status).toBe(201);
+    expect(res.body.packet.operation_type).toBe('vibe_studio_operation');
+    expect(res.body.packet.builder).toBe('Buddy AI Creation Studio Builder');
+    expect(res.body.packet.recommended_tests).toContain('rights review checklist');
+  });
+
+  test('queues guarded aggressive mode 24-hour repository sweep packets', async () => {
+    const res = await request(app)
+      .post('/api/buddy-ops/aggressive-mode')
+      .send({ requested_by: 'actions_page', target: 'dreamcobots' });
+
+    expect(res.status).toBe(201);
+    expect(res.body.schema).toBe('dreamco.aggressive_mode_activation.v1');
+    expect(res.body.mode).toBe('aggressive_supervised_24_hour_repository_sweep');
+    expect(res.body.duration_hours).toBe(24);
+    expect(res.body.total_packets).toBeGreaterThanOrEqual(8);
+    expect(res.body.hard_limits).toEqual(
+      expect.arrayContaining(['no paid always-on AI loop', 'no money movement', 'no production deployment without explicit owner approval']),
+    );
+    expect(res.body.packets.map((packet) => packet.builder)).toEqual(
+      expect.arrayContaining(['Registry and Inventory Builder', 'GitHub Cost Saver Builder', 'Full Bot System Builder']),
+    );
+    expect(res.body.packets[0].approval_gates).toContain('owner approval before paid AI always-on loops');
+    expect(res.body.packets[0].blocked_live_actions).toContain('paid always-on model execution');
+  });
+});
+
+// ---------------------------------------------------------------------------
+// GET /api/command-center
+// ---------------------------------------------------------------------------
+
+describe('GET /api/command-center', () => {
+  test('returns 200', async () => {
+    const res = await request(app).get('/api/command-center');
+    expect(res.status).toBe(200);
+  });
+
+  test('returns target deadline', async () => {
+    const res = await request(app).get('/api/command-center');
+    expect(res.body).toHaveProperty('target_deadline', '2026-06-22');
+  });
+
+  test('returns must_ship list', async () => {
+    const res = await request(app).get('/api/command-center');
+    expect(Array.isArray(res.body.must_ship)).toBe(true);
+    expect(res.body.must_ship.length).toBeGreaterThan(0);
+  });
+
+  test('returns parallel_lanes list with owner/status fields', async () => {
+    const res = await request(app).get('/api/command-center');
+    expect(Array.isArray(res.body.parallel_lanes)).toBe(true);
+    res.body.parallel_lanes.forEach((lane) => {
+      expect(lane).toHaveProperty('owner');
+      expect(lane).toHaveProperty('status');
+      expect(lane).toHaveProperty('validation_state');
+      expect(lane).toHaveProperty('ship_decision');
+    });
+  });
+
+  // ---------------------------------------------------------------------------
+  // GET /api/production-media-roadmap
+  // ---------------------------------------------------------------------------
+
+  describe('GET /api/production-media-roadmap', () => {
+    test('returns 200', async () => {
+      const res = await request(app).get('/api/production-media-roadmap');
+      expect(res.status).toBe(200);
+    });
+
+    test('returns roadmap metadata', async () => {
+      const res = await request(app).get('/api/production-media-roadmap');
+      expect(res.body).toHaveProperty('program', 'Buddy Production Media Roadmap');
+      expect(res.body).toHaveProperty('estimated_total');
+      expect(res.body.estimated_total).toHaveProperty('strong_mvp', '2-3 months');
+    });
+
+    test('returns six phases with computed order and duration days', async () => {
+      const res = await request(app).get('/api/production-media-roadmap');
+      expect(Array.isArray(res.body.phases)).toBe(true);
+      expect(res.body.phases).toHaveLength(6);
+      expect(res.body.phases[0]).toHaveProperty('order', 1);
+      expect(res.body.phases[0]).toHaveProperty('duration_days');
+      expect(res.body.phases[0].duration_days).toEqual({ minDays: 14, maxDays: 28 });
+    });
+
+    test('returns computed totals', async () => {
+      const res = await request(app).get('/api/production-media-roadmap');
+      expect(res.body).toHaveProperty('computed');
+      expect(res.body.computed).toHaveProperty('phase_count', 6);
+      expect(res.body.computed).toHaveProperty('total_duration_days');
+      expect(res.body.computed.total_duration_days).toEqual({ minDays: 274, maxDays: 520 });
+      expect(res.body.computed.total_duration_months).toEqual({ minMonths: 9.1, maxMonths: 17.3 });
+    });
+  });
+
+  test('returns computed telemetry', async () => {
+    const res = await request(app).get('/api/command-center');
+    expect(res.body).toHaveProperty('computed');
+    expect(typeof res.body.computed.days_remaining).toBe('number');
+    expect(typeof res.body.computed.total_lanes).toBe('number');
+  });
+
+  test('returns swarm architecture benchmarks', async () => {
+    const res = await request(app).get('/api/command-center');
+    expect(Array.isArray(res.body.swarm_architectures)).toBe(true);
+    expect(res.body.swarm_architectures.length).toBeGreaterThan(0);
+    expect(res.body.swarm_architectures[0]).toHaveProperty('overall_score');
+  });
+
+  test('returns coordination layer governance metadata', async () => {
+    const res = await request(app).get('/api/command-center');
+    expect(res.body.coordination_layer).toHaveProperty('governor', 'BuddyAI');
+    expect(Array.isArray(res.body.coordination_layer.communication_layers)).toBe(true);
+  });
+
+  test('computes best swarm architecture', async () => {
+    const res = await request(app).get('/api/command-center');
+    expect(res.body.computed.best_swarm_architecture).toBe('hybrid_llm_marl');
+    expect(typeof res.body.computed.marl_ready_architectures).toBe('number');
+  });
+});

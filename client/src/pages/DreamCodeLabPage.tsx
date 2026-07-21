@@ -1231,7 +1231,7 @@ export default function CodeLabPage() {
             <CardContent className="p-4 flex items-center gap-3">
               <ArrowUpRight className="h-4 w-4 text-primary flex-shrink-0" />
               <p className="text-sm text-muted-foreground">
-                Same fees as Replit - transparent and fair. No hidden costs for code generation, analysis, deployments, or secret management.
+                Same fees as DreamCo - transparent and fair. No hidden costs for code generation, analysis, deployments, or secret management.
               </p>
             </CardContent>
           </Card>

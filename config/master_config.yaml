@@ -1,0 +1,40 @@
+version: "2.0.0"
+environment: "${DREAMCO_ENV:-production}"
+
+tiers:
+  free:
+    requests_per_month: 500
+    models: ["gpt-3.5-turbo"]
+    concurrent_bots: 2
+  pro:
+    price_monthly: 49.00
+    requests_per_month: 10000
+    models: ["gpt-4", "dalle-3"]
+    concurrent_bots: 10
+  enterprise:
+    price_monthly: 299.00
+    requests_per_month: 999999
+    models: ["gpt-4-vision", "claude-3"]
+    concurrent_bots: 50
+
+bot_priorities:
+  trading: 1
+  job_application: 3
+  content_generation: 2
+  government_contracts: 4
+
+profit_targets:
+  daily: 500.00
+  weekly: 3500.00
+  monthly: 15000.00
+
+resource_allocation:
+  max_api_budget_daily: 200.00
+  reinvestment_percentage: 0.30
+  emergency_fund_threshold: 5000.00
+
+learning:
+  feedback_retention_days: 90
+  retrain_frequency_hours: 168
+  min_samples_to_retrain: 1000
+  model_registry_path: "models/registry"

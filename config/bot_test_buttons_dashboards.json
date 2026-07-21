@@ -1,0 +1,123 @@
+{
+  "version": "1.0.0",
+  "name": "Bot-Specific Test Buttons & Dashboards",
+  "description": "Individual test buttons for each bot's prompt techniques with dedicated dashboards",
+  "bot_test_interface": {
+    "dreambuddy_test_panel": {
+      "bot_id": "buddy",
+      "panel_url": "/test-panel/buddy",
+      "buttons": [
+        {"id": "buddy-test-steelman", "label": "🏆 Test Steelman", "color": "#3498db", "endpoint": "/api/test/buddy/steelman"},
+        {"id": "buddy-test-devil", "label": "😈 Test Devil's Advocate", "color": "#e74c3c", "endpoint": "/api/test/buddy/devil_advocate"},
+        {"id": "buddy-test-first", "label": "🔬 Test First Principles", "color": "#f39c12", "endpoint": "/api/test/buddy/first_principles"},
+        {"id": "buddy-test-5why", "label": "🔍 Test 5 Why Analysis", "color": "#9b59b6", "endpoint": "/api/test/buddy/5why"},
+        {"id": "buddy-test-second-order", "label": "🔮 Test Second Order", "color": "#27ae60", "endpoint": "/api/test/buddy/second_order"},
+        {"id": "buddy-test-lateral", "label": "🎨 Test Lateral Thinking", "color": "#16a085", "endpoint": "/api/test/buddy/lateral"},
+        {"id": "buddy-test-inversion", "label": "🔄 Test Inversion", "color": "#c0392b", "endpoint": "/api/test/buddy/inversion"},
+        {"id": "buddy-test-socratic", "label": "❓ Test Socratic Method", "color": "#f1c40f", "endpoint": "/api/test/buddy/socratic"},
+        {"id": "buddy-test-design", "label": "🎯 Test Design Thinking", "color": "#e91e63", "endpoint": "/api/test/buddy/design_thinking"},
+        {"id": "buddy-test-systems", "label": "🕸️ Test Systems Thinking", "color": "#009688", "endpoint": "/api/test/buddy/systems_thinking"},
+        {"id": "buddy-test-cot", "label": "📊 Test Chain of Thought", "color": "#cddc39", "endpoint": "/api/test/buddy/chain_of_thought"},
+        {"id": "buddy-test-pe", "label": "✍️ Test Prompt Engineering", "color": "#000080", "endpoint": "/api/test/buddy/prompt_engineering"},
+        {"id": "buddy-test-recursive", "label": "🔗 Test Recursive Solving", "color": "#808000", "endpoint": "/api/test/buddy/recursive"}
+      ],
+      "dashboard": {"url": "/dashboard/buddy/test-results", "metrics": ["total_tests", "pass_rate", "avg_quality", "fastest_prompt", "most_accurate"]}
+    },
+    "dreamcoder_test_panel": {
+      "bot_id": "coder",
+      "panel_url": "/test-panel/coder",
+      "specialization_buttons": [
+        {"id": "coder-test-steelman", "label": "💻 Code Architecture Steelman", "color": "#3498db", "endpoint": "/api/test/coder/steelman"},
+        {"id": "coder-test-first", "label": "🧱 Code First Principles", "color": "#f39c12", "endpoint": "/api/test/coder/first_principles"},
+        {"id": "coder-test-optimization", "label": "⚡ Optimization Analysis", "color": "#e74c3c", "endpoint": "/api/test/coder/optimization"},
+        {"id": "coder-test-lateral", "label": "🎨 Creative Coding Solutions", "color": "#16a085", "endpoint": "/api/test/coder/lateral_thinking"},
+        {"id": "coder-test-cot", "label": "📋 Code Logic Chain", "color": "#cddc39", "endpoint": "/api/test/coder/chain_of_thought"}
+      ],
+      "dashboard": {"url": "/dashboard/coder/test-results", "metrics": ["code_quality_score", "optimization_potential", "correctness_rate", "performance_improvement"]}
+    },
+    "dreamdebugger_test_panel": {
+      "bot_id": "debugger",
+      "panel_url": "/test-panel/debugger",
+      "specialization_buttons": [
+        {"id": "debugger-test-5why", "label": "🔍 Bug Root Cause 5 Why", "color": "#9b59b6", "endpoint": "/api/test/debugger/5why"},
+        {"id": "debugger-test-cot", "label": "📜 Debug Trace Chain", "color": "#cddc39", "endpoint": "/api/test/debugger/chain_of_thought"},
+        {"id": "debugger-test-systems", "label": "🕸️ Bug Cascade Systems", "color": "#009688", "endpoint": "/api/test/debugger/systems_thinking"},
+        {"id": "debugger-test-inversion", "label": "🔄 How to Break It", "color": "#c0392b", "endpoint": "/api/test/debugger/inversion_thinking"}
+      ],
+      "dashboard": {"url": "/dashboard/debugger/test-results", "metrics": ["bug_detection_rate", "root_cause_accuracy", "fix_validation_success", "debug_speed_ms"]}
+    },
+    "dreamcyber_test_panel": {
+      "bot_id": "cyber",
+      "panel_url": "/test-panel/cyber",
+      "specialization_buttons": [
+        {"id": "cyber-test-inversion", "label": "🎯 Attack Surface Inversion", "color": "#c0392b", "endpoint": "/api/test/cyber/inversion_thinking"},
+        {"id": "cyber-test-systems", "label": "🛡️ Security Ecosystem Systems", "color": "#009688", "endpoint": "/api/test/cyber/systems_thinking"},
+        {"id": "cyber-test-threat", "label": "⚠️ Threat Model Analysis", "color": "#e74c3c", "endpoint": "/api/test/cyber/threat_modeling"},
+        {"id": "cyber-test-5why", "label": "🔐 Vulnerability Root Cause", "color": "#9b59b6", "endpoint": "/api/test/cyber/5why_analysis"}
+      ],
+      "dashboard": {"url": "/dashboard/cyber/test-results", "metrics": ["vulnerability_detection_rate", "threat_model_completeness", "attack_vector_coverage", "remediation_effectiveness"]}
+    },
+    "dreammarketing_test_panel": {
+      "bot_id": "marketing",
+      "panel_url": "/test-panel/marketing",
+      "specialization_buttons": [
+        {"id": "marketing-test-design", "label": "🎯 Campaign Design Thinking", "color": "#e91e63", "endpoint": "/api/test/marketing/design_thinking"},
+        {"id": "marketing-test-lateral", "label": "💡 Creative Lateral Strategy", "color": "#16a085", "endpoint": "/api/test/marketing/lateral_thinking"},
+        {"id": "marketing-test-steelman", "label": "📢 Strongest Market Position", "color": "#3498db", "endpoint": "/api/test/marketing/steelman"}
+      ],
+      "dashboard": {"url": "/dashboard/marketing/test-results", "metrics": ["campaign_effectiveness", "creative_score", "audience_resonance", "engagement_potential"]}
+    },
+    "dreamsales_test_panel": {
+      "bot_id": "sales",
+      "panel_url": "/test-panel/sales",
+      "specialization_buttons": [
+        {"id": "sales-test-steelman", "label": "💼 Objection Steelman", "color": "#3498db", "endpoint": "/api/test/sales/steelman_argument"},
+        {"id": "sales-test-socratic", "label": "❓ Discovery Questions", "color": "#f1c40f", "endpoint": "/api/test/sales/socratic_method"},
+        {"id": "sales-test-second-order", "label": "🔮 Sales Impact Prediction", "color": "#27ae60", "endpoint": "/api/test/sales/second_order_thinking"}
+      ],
+      "dashboard": {"url": "/dashboard/sales/test-results", "metrics": ["objection_handling_effectiveness", "discovery_completeness", "deal_closing_success", "client_satisfaction"]}
+    }
+  },
+  "test_button_features": {
+    "enabled": true,
+    "click_to_execute": "Click button to instantly test prompt technique",
+    "live_results": "See results in real-time as they appear",
+    "test_history": "Track all tests performed on each bot",
+    "compare_results": "Compare results across different bots",
+    "export_data": "Export test results as CSV/JSON",
+    "save_favorites": "Save favorite test combinations",
+    "batch_testing": "Test multiple prompts in sequence",
+    "performance_ranking": "Rank bots by prompt performance"
+  },
+  "test_execution_flow": {
+    "step_1_select_bot": "Choose bot from sidebar",
+    "step_2_choose_prompt": "Select prompt technique from available buttons",
+    "step_3_provide_input": "Enter test input or use example",
+    "step_4_execute": "Click colored test button",
+    "step_5_view_results": "See output, metrics, and quality score",
+    "step_6_compare_optional": "Optional: Compare with other bot results",
+    "step_7_save_optional": "Optional: Save results for later analysis"
+  },
+  "cross_bot_comparison": {
+    "enabled": true,
+    "url": "/dashboard/compare-all-bots",
+    "features": [
+      "side_by_side_test_results",
+      "performance_heatmap",
+      "prompt_effectiveness_rankings",
+      "bot_specialization_analysis",
+      "trend_graphs_over_time",
+      "export_comparison_report"
+    ]
+  },
+  "test_metrics_collected": {
+    "response_quality_1_10": "Overall quality score",
+    "relevance_percentage": "How relevant is answer to prompt",
+    "accuracy_percentage": "Factual accuracy",
+    "completeness_percentage": "How complete is the response",
+    "response_time_ms": "Time to generate response",
+    "user_satisfaction_1_5": "User satisfaction rating",
+    "detail_level": "Depth of explanation",
+    "clarity_score": "Clarity of writing"
+  }
+}

@@ -1,0 +1,116 @@
+{
+  "schema": "dreamco.bot_owner_settings_system.v1",
+  "updated_at": "2026-07-15T00:00:00Z",
+  "mission": "Treat every DreamCo bot, including high-risk or previously blocked bots, as a supervised business-owner bot with clear on/off controls, permissions, approval gates, and safe-mode guardrails.",
+  "default_mode": "business_owner_safe_mode",
+  "global_settings": [
+    { "id": "business_owner_mode", "label": "Business Owner Mode", "default": true, "description": "Bot may research, plan, draft, test, package, and prepare business opportunities." },
+    { "id": "sandbox_mode", "label": "Sandbox Mode", "default": true, "description": "Bot may run local tests, generated fixtures, simulations, and dry-run workflows." },
+    { "id": "contract_discovery", "label": "Contract Discovery", "default": true, "description": "Bot may search public and owner-approved opportunities and prepare approval packets." },
+    { "id": "data_package_mode", "label": "Data Package Mode", "default": true, "description": "Bot may prepare rights-cleared AI data package blueprints and quality checks." },
+    { "id": "autonomous_money_discovery", "label": "Autonomous Money Discovery", "default": true, "description": "Bot may find category-specific customer problems, offer ideas, contract paths, productivity wins, and sandbox revenue experiments." },
+    { "id": "ai_model_council", "label": "AI Model Council", "default": true, "description": "Bot may use the governed 100+ model-resource council for decision support, routing, debate, and fallback planning." },
+    { "id": "model_training_eval", "label": "Model Training and Eval", "default": true, "description": "Bot may prepare rights-cleared evals, model cards, routing scorecards, and training plans in sandbox mode." },
+    { "id": "people_lookup_safe_mode", "label": "People Lookup Safe Mode", "default": true, "description": "Bot may prepare privacy-safe lookup packets from public or owner-approved sources." },
+    { "id": "client_outreach", "label": "Client Outreach", "default": false, "description": "Bot may only send or schedule outreach after explicit owner approval." },
+    { "id": "paid_actions", "label": "Paid Actions", "default": false, "description": "Bot may only spend money, buy domains, run ads, or use paid APIs after approval." },
+    { "id": "production_deploy", "label": "Production Deploy", "default": false, "description": "Bot may only deploy, publish, or submit store listings after approval." },
+    { "id": "money_movement", "label": "Money Movement", "default": false, "description": "Bot may only collect, transfer, trade, refund, or move money after approval." },
+    { "id": "third_party_account_actions", "label": "Third-Party Account Actions", "default": false, "description": "Bot may only mutate external accounts after approval and audit logging." }
+  ],
+  "permission_groups": [
+    {
+      "id": "safe_business_work",
+      "label": "Safe Business Work",
+      "default": true,
+      "permissions": ["research", "draft", "score", "simulate", "sandbox_test", "prepare_approval_packet", "discover_category_money_paths", "prepare_productivity_playbook"]
+    },
+    {
+      "id": "model_council_work",
+      "label": "Model Council Work",
+      "default": true,
+      "permissions": ["route_models", "compare_model_outputs", "run_model_debate", "score_model_evals", "prepare_training_plan", "record_model_lessons"]
+    },
+    {
+      "id": "external_impact",
+      "label": "External Impact",
+      "default": false,
+      "permissions": ["send_outreach", "submit_bid", "publish_listing", "contact_supplier", "contact_candidate"]
+    },
+    {
+      "id": "financial_impact",
+      "label": "Financial Impact",
+      "default": false,
+      "permissions": ["charge_payment", "issue_refund", "place_trade", "buy_domain", "run_paid_ad"]
+    },
+    {
+      "id": "regulated_impact",
+      "label": "Regulated Impact",
+      "default": false,
+      "permissions": ["legal_claim", "medical_claim", "tax_claim", "credit_decision", "hiring_decision"]
+    },
+    {
+      "id": "system_impact",
+      "label": "System Impact",
+      "default": false,
+      "permissions": ["production_deploy", "credential_change", "external_account_mutation", "destructive_repository_action"]
+    }
+  ],
+  "on_off_controls": [
+    "bot_enabled",
+    "safe_mode_enabled",
+    "business_owner_mode_enabled",
+    "contract_discovery_enabled",
+    "data_package_enabled",
+    "autonomous_money_discovery_enabled",
+    "ai_model_council_enabled",
+    "model_training_eval_enabled",
+    "people_lookup_enabled",
+    "sandbox_testing_enabled",
+    "client_outreach_enabled",
+    "paid_actions_enabled",
+    "production_deploy_enabled",
+    "money_movement_enabled",
+    "third_party_account_actions_enabled"
+  ],
+  "always_require_approval": [
+    "send_outreach",
+    "submit_bid",
+    "submit_grant_application",
+    "publish_app_or_store_listing",
+    "production_model_routing_change",
+    "fine_tune_or_train_on_customer_data",
+    "sell_or_publish_training_dataset",
+    "paid_model_benchmark_batch",
+    "buy_domain",
+    "run_paid_ad",
+    "collect_or_move_money",
+    "place_trade_or_financial_order",
+    "contact_candidate_or_customer",
+    "make_hiring_or_rejection_decision",
+    "provide_legal_medical_tax_financial_claim",
+    "change_credentials",
+    "mutate_third_party_account",
+    "production_deploy",
+    "delete_or_destroy_repository_data"
+  ],
+  "guardrails": [
+    "Safe mode stays on by default for every bot.",
+    "High-risk bots can work like other bots in sandbox and business-owner mode.",
+    "Live actions require explicit owner approval and audit evidence.",
+    "Settings toggles expose capability state but do not bypass approval gates.",
+    "Every risky action must produce an approval packet before execution.",
+    "Every bot acts as a supervised business manager for its category, not as an unsupervised money operator.",
+    "Every bot may use model-council advice in sandbox mode, but live model routing, paid batches, training on customer data, and dataset sales require approval.",
+    "All user, client, payment, people, and credential data stays governed by privacy and secret policies."
+  ],
+  "success_metrics": [
+    "bots_with_owner_settings",
+    "business_owner_enabled_bots",
+    "safe_mode_enabled_bots",
+    "high_risk_bots_unblocked_for_safe_work",
+    "live_action_approval_required_bots",
+    "settings_controls_ready",
+    "guardrails_ready"
+  ]
+}

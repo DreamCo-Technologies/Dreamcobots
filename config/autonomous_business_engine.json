@@ -1,0 +1,91 @@
+{
+  "schemaVersion": "2026-07-06",
+  "purpose": "Semi-autonomous operating contract for DreamCo bots that research customers, test offers, build tools, and learn from outcomes without unsafe unsupervised actions.",
+  "defaultMode": "semi-autonomous",
+  "cashLoop": {
+    "steps": [
+      "define_problem",
+      "identify_customer",
+      "research_market",
+      "create_mvp_offer",
+      "validate_with_real_customer",
+      "draft_pricing",
+      "build_repeatable_sales_process",
+      "measure_kpis",
+      "review_daily",
+      "improve_system"
+    ],
+    "approvalRequiredBefore": [
+      "contacting_customer",
+      "posting_to_social_media",
+      "spending_money",
+      "moving_money",
+      "deploying_public_service",
+      "scraping_non_public_data"
+    ],
+    "evidenceOutputs": [
+      "reports/customer-discovery-report.json",
+      "reports/offer-validation-report.json",
+      "reports/revenue-attribution-report.json"
+    ]
+  },
+  "autonomousDecisionGovernance": {
+    "rule": "Every autonomous decision must go through the world AI model council, then Codex final judge review, then owner approval when there is live external, financial, production, credential, privacy, legal, medical, hiring, or reputation impact.",
+    "requiredBeforeDecisionAccepted": [
+      "decision_intent",
+      "risk_classification",
+      "world_model_council_packet",
+      "sandbox_or_static_evidence",
+      "codex_final_judge_label",
+      "owner_approval_if_live_impact"
+    ],
+    "codexFinalJudge": {
+      "role": "Final repository reviewer for decision quality, safety, evidence, and next-step boundaries.",
+      "cannotOverrideOwnerApproval": true,
+      "allowedLabels": ["approved_for_sandbox", "needs_more_evidence", "owner_approval_required", "blocked_risky", "ready_for_pull_request"]
+    },
+    "blockedWithoutCodexFinalJudge": [
+      "customer_problem_selection",
+      "money_method_selection",
+      "model_route_change",
+      "workflow_mutation",
+      "api_or_webhook_mutation",
+      "pricing_or_offer_change",
+      "memory_retention_change",
+      "public_or_live_action_request"
+    ]
+  },
+  "exampleBots": [
+    {
+      "id": "real-estate-bot",
+      "division": "DreamRealEstate",
+      "workflows": ["property_lead_research", "deal_scoring", "renovation_estimate", "financing_handoff", "seller_outreach_draft"],
+      "approvalRequiredBefore": ["seller_contact", "buyer_contact", "ad_spend"]
+    },
+    {
+      "id": "fiverr-services-bot",
+      "division": "DreamBizLaunch",
+      "workflows": ["gig_research", "offer_packaging", "portfolio_asset_plan", "pricing_test", "buyer_message_draft"],
+      "approvalRequiredBefore": ["publishing_gig", "sending_buyer_message", "paid_promotion"]
+    },
+    {
+      "id": "lead-generation-bot",
+      "division": "DreamSalesPro",
+      "workflows": ["segment_selection", "public_source_research", "lead_scoring", "crm_log", "outreach_draft", "kpi_review"],
+      "approvalRequiredBefore": ["email_send", "sms_send", "linkedin_message", "phone_call"]
+    }
+  ],
+  "teams": {
+    "advertising": ["offer_angle_researcher", "ad_copy_writer", "creative_brief_builder", "landing_page_reviewer", "experiment_tracker"],
+    "marketing": ["audience_researcher", "content_calendar_planner", "seo_researcher", "social_post_drafter", "analytics_reviewer"],
+    "sales": ["lead_hunter", "qualification_agent", "proposal_writer", "follow_up_planner", "pipeline_analyst"],
+    "learning": ["result_collector", "pattern_miner", "playbook_writer", "experiment_designer", "memory_curator"]
+  },
+  "guardrails": [
+    "Bots may draft outreach but must not contact prospects without approval.",
+    "Bots may recommend paid ads but must not spend money without approval.",
+    "Bots may collect public source links but must not bypass paywalls, logins, robots restrictions, or privacy rules.",
+    "Bots must write what they learned to memory with source, timestamp, confidence, and next test.",
+    "Bots must separate verified evidence from ideas and assumptions."
+  ]
+}

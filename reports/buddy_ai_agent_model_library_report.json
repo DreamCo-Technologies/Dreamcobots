@@ -1,0 +1,5274 @@
+{
+  "agent_prompt_tool_matrix": [
+    {
+      "agent_type": "planner_agent",
+      "avoid_for": [
+        "final factual claims without sources"
+      ],
+      "best_for": [
+        "break down goals",
+        "scope work",
+        "sequence tasks"
+      ],
+      "label": "Planner Agent",
+      "prompt_types": [
+        "task_brief",
+        "system_role",
+        "tool_contract",
+        "structured_output",
+        "few_shot"
+      ],
+      "tool_types": [
+        "file_reader",
+        "code_editor",
+        "test_runner",
+        "browser_research",
+        "api_client"
+      ]
+    },
+    {
+      "agent_type": "research_agent",
+      "avoid_for": [
+        "private data collection without approval"
+      ],
+      "best_for": [
+        "source-backed market maps",
+        "competitor studies",
+        "current docs"
+      ],
+      "label": "Research Agent",
+      "prompt_types": [
+        "retrieval_grounded",
+        "customer_discovery",
+        "offer_builder",
+        "critique",
+        "handoff_summary"
+      ],
+      "tool_types": [
+        "browser_research",
+        "vector_search",
+        "reranker",
+        "spreadsheet_builder",
+        "notification_sender"
+      ]
+    },
+    {
+      "agent_type": "coding_agent",
+      "avoid_for": [
+        "large rewrites without tests"
+      ],
+      "best_for": [
+        "app code",
+        "tests",
+        "refactors",
+        "tool adapters"
+      ],
+      "label": "Coding Agent",
+      "prompt_types": [
+        "task_brief",
+        "tool_contract",
+        "code_review",
+        "test_generation",
+        "sandbox_runbook"
+      ],
+      "tool_types": [
+        "file_reader",
+        "code_editor",
+        "test_runner",
+        "api_client",
+        "approval_gate"
+      ]
+    },
+    {
+      "agent_type": "debugging_agent",
+      "avoid_for": [
+        "guessing fixes without logs"
+      ],
+      "best_for": [
+        "CI failures",
+        "stack traces",
+        "root cause analysis"
+      ],
+      "label": "Debugging Agent",
+      "prompt_types": [
+        "task_brief",
+        "tool_contract",
+        "code_review",
+        "test_generation",
+        "sandbox_runbook"
+      ],
+      "tool_types": [
+        "file_reader",
+        "code_editor",
+        "test_runner",
+        "api_client",
+        "approval_gate"
+      ]
+    },
+    {
+      "agent_type": "tool_builder_agent",
+      "avoid_for": [
+        "live credentials"
+      ],
+      "best_for": [
+        "CLI tools",
+        "API clients",
+        "schemas",
+        "test fixtures"
+      ],
+      "label": "Tool Builder Agent",
+      "prompt_types": [
+        "task_brief",
+        "tool_contract",
+        "code_review",
+        "test_generation",
+        "sandbox_runbook"
+      ],
+      "tool_types": [
+        "file_reader",
+        "code_editor",
+        "test_runner",
+        "api_client",
+        "approval_gate"
+      ]
+    },
+    {
+      "agent_type": "workflow_agent",
+      "avoid_for": [
+        "unapproved live automation"
+      ],
+      "best_for": [
+        "durable runs",
+        "retry plans",
+        "human approvals"
+      ],
+      "label": "Workflow Agent",
+      "prompt_types": [
+        "task_brief",
+        "system_role",
+        "tool_contract",
+        "structured_output",
+        "few_shot"
+      ],
+      "tool_types": [
+        "file_reader",
+        "code_editor",
+        "test_runner",
+        "browser_research",
+        "api_client"
+      ]
+    },
+    {
+      "agent_type": "sandbox_eval_agent",
+      "avoid_for": [
+        "self-grading only"
+      ],
+      "best_for": [
+        "scored tests",
+        "red teams",
+        "quality gates"
+      ],
+      "label": "Sandbox Eval Agent",
+      "prompt_types": [
+        "task_brief",
+        "system_role",
+        "tool_contract",
+        "structured_output",
+        "few_shot"
+      ],
+      "tool_types": [
+        "file_reader",
+        "code_editor",
+        "test_runner",
+        "browser_research",
+        "api_client"
+      ]
+    },
+    {
+      "agent_type": "creative_studio_agent",
+      "avoid_for": [
+        "unapproved likeness cloning"
+      ],
+      "best_for": [
+        "image",
+        "video",
+        "music",
+        "storyboards"
+      ],
+      "label": "Creative Studio Agent",
+      "prompt_types": [
+        "task_brief",
+        "visual_prompt",
+        "voice_consent",
+        "rubric_eval",
+        "handoff_summary"
+      ],
+      "tool_types": [
+        "image_generator",
+        "image_editor",
+        "video_generator",
+        "text_to_speech",
+        "approval_gate"
+      ]
+    },
+    {
+      "agent_type": "voice_rights_agent",
+      "avoid_for": [
+        "cloning real people without proof"
+      ],
+      "best_for": [
+        "consent checks",
+        "voiceover scripts",
+        "usage rights"
+      ],
+      "label": "Voice Rights Agent",
+      "prompt_types": [
+        "task_brief",
+        "visual_prompt",
+        "voice_consent",
+        "rubric_eval",
+        "handoff_summary"
+      ],
+      "tool_types": [
+        "image_generator",
+        "image_editor",
+        "video_generator",
+        "text_to_speech",
+        "approval_gate"
+      ]
+    },
+    {
+      "agent_type": "business_owner_agent",
+      "avoid_for": [
+        "guaranteed income claims"
+      ],
+      "best_for": [
+        "offers",
+        "pricing hypotheses",
+        "customer discovery"
+      ],
+      "label": "Business Owner Agent",
+      "prompt_types": [
+        "retrieval_grounded",
+        "customer_discovery",
+        "offer_builder",
+        "critique",
+        "handoff_summary"
+      ],
+      "tool_types": [
+        "browser_research",
+        "vector_search",
+        "reranker",
+        "spreadsheet_builder",
+        "notification_sender"
+      ]
+    },
+    {
+      "agent_type": "sales_agent",
+      "avoid_for": [
+        "sending outreach without approval"
+      ],
+      "best_for": [
+        "drafts",
+        "objection handling",
+        "CRM notes"
+      ],
+      "label": "Sales Agent",
+      "prompt_types": [
+        "retrieval_grounded",
+        "customer_discovery",
+        "offer_builder",
+        "critique",
+        "handoff_summary"
+      ],
+      "tool_types": [
+        "browser_research",
+        "vector_search",
+        "reranker",
+        "spreadsheet_builder",
+        "notification_sender"
+      ]
+    },
+    {
+      "agent_type": "data_agent",
+      "avoid_for": [
+        "unverified data joins"
+      ],
+      "best_for": [
+        "dashboards",
+        "extraction",
+        "classification",
+        "analytics"
+      ],
+      "label": "Data Agent",
+      "prompt_types": [
+        "task_brief",
+        "system_role",
+        "tool_contract",
+        "structured_output",
+        "few_shot"
+      ],
+      "tool_types": [
+        "file_reader",
+        "code_editor",
+        "test_runner",
+        "browser_research",
+        "api_client"
+      ]
+    },
+    {
+      "agent_type": "security_agent",
+      "avoid_for": [
+        "offensive instructions"
+      ],
+      "best_for": [
+        "threat models",
+        "secrets scans",
+        "defensive reviews"
+      ],
+      "label": "Security Agent",
+      "prompt_types": [
+        "task_brief",
+        "system_role",
+        "tool_contract",
+        "structured_output",
+        "few_shot"
+      ],
+      "tool_types": [
+        "file_reader",
+        "code_editor",
+        "test_runner",
+        "browser_research",
+        "api_client"
+      ]
+    },
+    {
+      "agent_type": "legal_safety_agent",
+      "avoid_for": [
+        "legal advice claims"
+      ],
+      "best_for": [
+        "risk flags",
+        "policy checks",
+        "approval language"
+      ],
+      "label": "Legal Safety Agent",
+      "prompt_types": [
+        "task_brief",
+        "system_role",
+        "tool_contract",
+        "structured_output",
+        "few_shot"
+      ],
+      "tool_types": [
+        "file_reader",
+        "code_editor",
+        "test_runner",
+        "browser_research",
+        "api_client"
+      ]
+    },
+    {
+      "agent_type": "memory_curator_agent",
+      "avoid_for": [
+        "raw scratchpad hoarding"
+      ],
+      "best_for": [
+        "useful summaries",
+        "retention tiers",
+        "source metadata"
+      ],
+      "label": "Memory Curator Agent",
+      "prompt_types": [
+        "task_brief",
+        "system_role",
+        "tool_contract",
+        "structured_output",
+        "few_shot"
+      ],
+      "tool_types": [
+        "file_reader",
+        "code_editor",
+        "test_runner",
+        "browser_research",
+        "api_client"
+      ]
+    },
+    {
+      "agent_type": "model_router_agent",
+      "avoid_for": [
+        "using disabled providers"
+      ],
+      "best_for": [
+        "model selection",
+        "fallbacks",
+        "cost-quality tradeoffs"
+      ],
+      "label": "Model Router Agent",
+      "prompt_types": [
+        "task_brief",
+        "system_role",
+        "tool_contract",
+        "structured_output",
+        "few_shot"
+      ],
+      "tool_types": [
+        "file_reader",
+        "code_editor",
+        "test_runner",
+        "browser_research",
+        "api_client"
+      ]
+    },
+    {
+      "agent_type": "world_model_council_agent",
+      "avoid_for": [
+        "declaring a winner without eval evidence"
+      ],
+      "best_for": [
+        "multi-model debate",
+        "model comparison",
+        "provider fallback planning",
+        "global AI decision support"
+      ],
+      "label": "World Model Council Agent",
+      "prompt_types": [
+        "task_brief",
+        "system_role",
+        "tool_contract",
+        "structured_output",
+        "few_shot"
+      ],
+      "tool_types": [
+        "file_reader",
+        "code_editor",
+        "test_runner",
+        "browser_research",
+        "api_client"
+      ]
+    },
+    {
+      "agent_type": "model_eval_training_agent",
+      "avoid_for": [
+        "training on private or unlicensed data"
+      ],
+      "best_for": [
+        "eval harnesses",
+        "training data rights checks",
+        "model cards",
+        "routing scorecards"
+      ],
+      "label": "Model Eval and Training Agent",
+      "prompt_types": [
+        "task_brief",
+        "system_role",
+        "tool_contract",
+        "structured_output",
+        "few_shot"
+      ],
+      "tool_types": [
+        "file_reader",
+        "code_editor",
+        "test_runner",
+        "browser_research",
+        "api_client"
+      ]
+    }
+  ],
+  "autonomous_decision_governance": {
+    "blocked_without_codex_final_judge": [
+      "autonomous_business_decision",
+      "autonomous_money_method_change",
+      "model_route_change",
+      "workflow_mutation",
+      "api_or_webhook_mutation",
+      "memory_retention_change",
+      "pull_request_recommendation",
+      "public_or_live_action_request"
+    ],
+    "bot_coverage": {
+      "bot_count": 1248,
+      "bots_required_to_use_codex_final_judge": 1248,
+      "bots_required_to_use_council": 1248,
+      "bots_requiring_owner_approval_for_live_impact": 1248
+    },
+    "codex_final_judge": {
+      "can_approve": [
+        "sandbox_safe_next_step",
+        "draft_packet",
+        "report_update",
+        "test_plan",
+        "pull_request_recommendation",
+        "owner_approval_request"
+      ],
+      "cannot_override_owner_approval": true,
+      "final_labels": [
+        "approved_for_sandbox",
+        "needs_more_evidence",
+        "owner_approval_required",
+        "blocked_risky",
+        "ready_for_pull_request"
+      ],
+      "must_check": [
+        "source_evidence",
+        "test_evidence",
+        "risk_level",
+        "approval_required",
+        "cost_or_paid_action",
+        "privacy_or_secrets",
+        "legal_medical_financial_claims",
+        "rollback_plan",
+        "actual_vs_projected_revenue"
+      ],
+      "role": "Final repository reviewer and decision-quality judge before autonomous decisions are accepted as safe next steps."
+    },
+    "dashboard_packet": {
+      "headline": "Every autonomous decision routes through council review, Codex final judge, and owner approval when live impact exists.",
+      "safe_next_steps": [
+        "show decision evidence packet",
+        "show model council comparison",
+        "show Codex final judge label",
+        "send owner approval request",
+        "block live impact until approved"
+      ],
+      "status": "ready_for_actions_page_governance"
+    },
+    "decision_scope": [
+      "bot_money_method_selection",
+      "customer_problem_selection",
+      "model_route_selection",
+      "api_or_webhook_design",
+      "workflow_mutation",
+      "sandbox_test_result",
+      "pricing_or_offer_draft",
+      "contract_or_grant_packet",
+      "people_lookup_packet",
+      "social_or_app_publish_packet",
+      "data_package_decision",
+      "deployment_or_release_packet",
+      "repository_fix_or_pull_request_packet",
+      "memory_retention_decision"
+    ],
+    "default_mode": "council_review_codex_final_judge_owner_approval_for_live_impact",
+    "evidence_packet_schema": [
+      "decision_id",
+      "bot_slug",
+      "decision_type",
+      "risk_level",
+      "source_evidence",
+      "models_consulted",
+      "model_positions",
+      "rubric_scores",
+      "sandbox_or_static_test_evidence",
+      "codex_final_judge_label",
+      "codex_final_judge_notes",
+      "owner_approval_required",
+      "allowed_next_step",
+      "blocked_actions",
+      "recorded_at"
+    ],
+    "mission": "Every autonomous decision in DreamCo must pass through the world model council, a Codex final-review judge gate, and owner approval when the decision has live external, financial, production, credential, legal, medical, hiring, privacy, or reputation impact.",
+    "owner_approval_required_for": [
+      "customer_outreach",
+      "social_post_or_direct_message",
+      "ad_spend",
+      "payment_collection_or_money_movement",
+      "contract_bid_or_signature",
+      "production_deploy",
+      "external_account_change",
+      "credential_or_secret_change",
+      "paid_model_batch",
+      "model_fine_tuning_or_training_on_customer_data",
+      "dataset_sale_or_publication",
+      "legal_medical_financial_tax_or_hiring_decision",
+      "people_lookup_contact_or_background_check",
+      "public_claim_about_revenue_certification_or_partnership"
+    ],
+    "pipeline": [
+      "capture_decision_intent",
+      "classify_decision_risk",
+      "collect_sources_and_context",
+      "route_to_world_model_council",
+      "request_budget_fast_quality_private_model_views_when_needed",
+      "compare_model_outputs_with_rubric",
+      "run_sandbox_or_static_checks",
+      "create_decision_evidence_packet",
+      "codex_final_judge_review",
+      "owner_approval_if_live_impact",
+      "execute_only_allowed_safe_next_step",
+      "record_decision_memory"
+    ]
+  },
+  "best_practice_routing_order": [
+    "Classify task type and risk.",
+    "Select a quality resource for hard or client-facing work.",
+    "Use fast or budget resources for sandbox iteration.",
+    "Use private resources for sensitive inputs only after privacy review.",
+    "Run evals before trusting output.",
+    "Escalate to owner approval before external, paid, credential, customer, or production impact."
+  ],
+  "bot_route_sample": [
+    {
+      "division": "DreamFinance",
+      "fallback_resources": [
+        "google_gemini_flash_lite__quality",
+        "meta_llama__quality",
+        "mistral_models__quality"
+      ],
+      "name": "211 Resource Eligibility Bot",
+      "primary_resource": "fireworks_open__quality",
+      "slug": "211-resource-eligibility-bot",
+      "task_type": "workflow_automation"
+    },
+    {
+      "division": "DreamArts",
+      "fallback_resources": [
+        "black_forest_image__quality",
+        "openai_image__quality",
+        "stability_image__quality"
+      ],
+      "name": "3D Asset Manager",
+      "primary_resource": "adobe_firefly__quality",
+      "slug": "3d-asset-mgr",
+      "task_type": "image_generation"
+    },
+    {
+      "division": "DreamProduction",
+      "fallback_resources": [
+        "google_gemini_flash_lite__quality",
+        "meta_llama__quality",
+        "mistral_models__quality"
+      ],
+      "name": "5S Workplace Audit Tool",
+      "primary_resource": "fireworks_open__quality",
+      "slug": "5s-audit-tool",
+      "task_type": "workflow_automation"
+    },
+    {
+      "division": "DreamCodeLab",
+      "fallback_resources": [
+        "google_gemini_flash_lite__quality",
+        "meta_llama__quality",
+        "mistral_models__quality"
+      ],
+      "name": "Apibot",
+      "primary_resource": "fireworks_open__quality",
+      "slug": "APIBot",
+      "task_type": "workflow_automation"
+    },
+    {
+      "division": "DreamSalesPro",
+      "fallback_resources": [
+        "anthropic_claude__quality",
+        "mistral_models__quality",
+        "ai21_language__budget"
+      ],
+      "name": "CloserBot",
+      "primary_resource": "ai21_language__quality",
+      "slug": "CloserBot",
+      "task_type": "sales_copy"
+    },
+    {
+      "division": "DreamSalesPro",
+      "fallback_resources": [
+        "google_gemini_flash_lite__quality",
+        "meta_llama__quality",
+        "mistral_models__quality"
+      ],
+      "name": "EnrichmentBot",
+      "primary_resource": "fireworks_open__quality",
+      "slug": "EnrichmentBot",
+      "task_type": "workflow_automation"
+    },
+    {
+      "division": "DreamFinance",
+      "fallback_resources": [
+        "anthropic_claude__quality",
+        "mistral_models__quality",
+        "ai21_language__budget"
+      ],
+      "name": "FollowUpBot",
+      "primary_resource": "ai21_language__quality",
+      "slug": "FollowUpBot",
+      "task_type": "sales_copy"
+    },
+    {
+      "division": "DreamFinance",
+      "fallback_resources": [
+        "google_gemini_flash_lite__quality",
+        "meta_llama__quality",
+        "mistral_models__quality"
+      ],
+      "name": "LeadGenBot",
+      "primary_resource": "fireworks_open__quality",
+      "slug": "LeadGenBot",
+      "task_type": "workflow_automation"
+    },
+    {
+      "division": "DreamSalesPro",
+      "fallback_resources": [
+        "anthropic_claude__quality",
+        "mistral_models__quality",
+        "ai21_language__budget"
+      ],
+      "name": "OutreachBot",
+      "primary_resource": "ai21_language__quality",
+      "slug": "OutreachBot",
+      "task_type": "sales_copy"
+    },
+    {
+      "division": "DreamCodeLab",
+      "fallback_resources": [
+        "google_gemini_flash_lite__quality",
+        "meta_llama__quality",
+        "mistral_models__quality"
+      ],
+      "name": "Webhooksbot",
+      "primary_resource": "fireworks_open__quality",
+      "slug": "WebhooksBot",
+      "task_type": "workflow_automation"
+    },
+    {
+      "division": "DreamCodeLab",
+      "fallback_resources": [
+        "openai_reasoning__quality",
+        "qwen_models__quality",
+        "deepseek_coder_reasoner__budget"
+      ],
+      "name": "A/B Testing Bot",
+      "primary_resource": "deepseek_coder_reasoner__quality",
+      "slug": "ab-testing-bot",
+      "task_type": "coding"
+    },
+    {
+      "division": "DreamBizLaunch",
+      "fallback_resources": [
+        "google_gemini_flash_lite__quality",
+        "meta_llama__quality",
+        "mistral_models__quality"
+      ],
+      "name": "Accelerator Application Prep",
+      "primary_resource": "fireworks_open__quality",
+      "slug": "accelerator-prep",
+      "task_type": "workflow_automation"
+    }
+  ],
+  "cost_control": {
+    "default_budget_mode": "free_or_low_cost_first",
+    "preferred_sandbox_family": "google_gemini_flash_lite",
+    "preferred_sandbox_provider": "Google",
+    "rules": [
+      "Use Gemini Flash-Lite, local/open models, cached results, and batchable summaries for safe sandbox drafts.",
+      "Use premium models only for high-impact reasoning, client-facing deliverables, or failed cheap-model evals.",
+      "Keep paid calls, always-on loops, and external actions behind owner approval and budget limits.",
+      "Track projected usage separately from confirmed spend."
+    ],
+    "secret_name": "GOOGLE_API_KEY"
+  },
+  "generated_at": "2026-07-17T15:26:17.278409+00:00",
+  "mission": "Give Buddy a governed prompt, tool, agent, and model-resource library so every bot can pick the best AI route for each task, explain tradeoffs, and fall back safely.",
+  "model_resources": [
+    {
+      "approval_gates": [
+        "provider_credentials",
+        "pricing_review",
+        "data_privacy_review"
+      ],
+      "bad_at": [
+        "unverified current facts without retrieval",
+        "tasks needing disabled credentials"
+      ],
+      "best_tasks": [
+        "architecture",
+        "coding",
+        "debugging",
+        "model_evaluation"
+      ],
+      "cost_posture": "premium_or_quality_candidate",
+      "family_id": "openai_reasoning",
+      "good_at": [
+        "complex planning",
+        "code repair",
+        "tool calling",
+        "multimodal app building"
+      ],
+      "id": "openai_reasoning__quality",
+      "label": "OpenAI reasoning and general intelligence - Best Quality",
+      "provider": "OpenAI",
+      "roles": [
+        "reasoning",
+        "coding",
+        "vision",
+        "tool_use"
+      ],
+      "status": "candidate_verify_model_id_before_production",
+      "tier": "quality",
+      "tradeoff": "Higher cost and latency.",
+      "use_when": "Task is high impact, hard, client-facing, or needs strong reasoning."
+    },
+    {
+      "approval_gates": [
+        "provider_credentials",
+        "pricing_review",
+        "data_privacy_review"
+      ],
+      "bad_at": [
+        "unverified current facts without retrieval",
+        "tasks needing disabled credentials"
+      ],
+      "best_tasks": [
+        "architecture",
+        "coding",
+        "debugging",
+        "model_evaluation"
+      ],
+      "cost_posture": "cost_controlled_iteration",
+      "family_id": "openai_reasoning",
+      "good_at": [
+        "complex planning",
+        "code repair",
+        "tool calling",
+        "multimodal app building"
+      ],
+      "id": "openai_reasoning__fast",
+      "label": "OpenAI reasoning and general intelligence - Fast Iteration",
+      "provider": "OpenAI",
+      "roles": [
+        "reasoning",
+        "coding",
+        "vision",
+        "tool_use"
+      ],
+      "status": "candidate_verify_model_id_before_production",
+      "tier": "fast",
+      "tradeoff": "May need review by a stronger model.",
+      "use_when": "Task needs quick drafts, tests, routing, or repeated loops."
+    },
+    {
+      "approval_gates": [
+        "provider_credentials",
+        "pricing_review",
+        "data_privacy_review"
+      ],
+      "bad_at": [
+        "unverified current facts without retrieval",
+        "tasks needing disabled credentials"
+      ],
+      "best_tasks": [
+        "architecture",
+        "coding",
+        "debugging",
+        "model_evaluation"
+      ],
+      "cost_posture": "lowest_cost_candidate",
+      "family_id": "openai_reasoning",
+      "good_at": [
+        "complex planning",
+        "code repair",
+        "tool calling",
+        "multimodal app building"
+      ],
+      "id": "openai_reasoning__budget",
+      "label": "OpenAI reasoning and general intelligence - Budget Scale",
+      "provider": "OpenAI",
+      "roles": [
+        "reasoning",
+        "coding",
+        "vision",
+        "tool_use"
+      ],
+      "status": "candidate_verify_model_id_before_production",
+      "tier": "budget",
+      "tradeoff": "Lower quality ceiling.",
+      "use_when": "Task is repetitive, low risk, batchable, or sandbox-only."
+    },
+    {
+      "approval_gates": [
+        "provider_credentials",
+        "pricing_review",
+        "data_privacy_review"
+      ],
+      "bad_at": [
+        "unverified current facts without retrieval",
+        "tasks needing disabled credentials"
+      ],
+      "best_tasks": [
+        "architecture",
+        "coding",
+        "debugging",
+        "model_evaluation"
+      ],
+      "cost_posture": "lowest_cost_candidate",
+      "family_id": "openai_reasoning",
+      "good_at": [
+        "complex planning",
+        "code repair",
+        "tool calling",
+        "multimodal app building"
+      ],
+      "id": "openai_reasoning__private",
+      "label": "OpenAI reasoning and general intelligence - Local or Private",
+      "provider": "OpenAI",
+      "roles": [
+        "reasoning",
+        "coding",
+        "vision",
+        "tool_use"
+      ],
+      "status": "candidate_verify_model_id_before_production",
+      "tier": "private",
+      "tradeoff": "Needs local hosting and stronger evals.",
+      "use_when": "Task touches sensitive docs or needs offline/cost-controlled processing."
+    },
+    {
+      "approval_gates": [
+        "provider_credentials",
+        "pricing_review",
+        "data_privacy_review"
+      ],
+      "bad_at": [
+        "batch research",
+        "long unattended jobs"
+      ],
+      "best_tasks": [
+        "voiceover",
+        "kid_learning_video",
+        "customer_support"
+      ],
+      "cost_posture": "premium_or_quality_candidate",
+      "family_id": "openai_realtime",
+      "good_at": [
+        "voice assistants",
+        "live tutoring",
+        "operator consoles"
+      ],
+      "id": "openai_realtime__quality",
+      "label": "OpenAI realtime voice and multimodal - Best Quality",
+      "provider": "OpenAI",
+      "roles": [
+        "realtime",
+        "voice",
+        "interactive"
+      ],
+      "status": "candidate_verify_model_id_before_production",
+      "tier": "quality",
+      "tradeoff": "Higher cost and latency.",
+      "use_when": "Task is high impact, hard, client-facing, or needs strong reasoning."
+    },
+    {
+      "approval_gates": [
+        "provider_credentials",
+        "pricing_review",
+        "data_privacy_review"
+      ],
+      "bad_at": [
+        "batch research",
+        "long unattended jobs"
+      ],
+      "best_tasks": [
+        "voiceover",
+        "kid_learning_video",
+        "customer_support"
+      ],
+      "cost_posture": "cost_controlled_iteration",
+      "family_id": "openai_realtime",
+      "good_at": [
+        "voice assistants",
+        "live tutoring",
+        "operator consoles"
+      ],
+      "id": "openai_realtime__fast",
+      "label": "OpenAI realtime voice and multimodal - Fast Iteration",
+      "provider": "OpenAI",
+      "roles": [
+        "realtime",
+        "voice",
+        "interactive"
+      ],
+      "status": "candidate_verify_model_id_before_production",
+      "tier": "fast",
+      "tradeoff": "May need review by a stronger model.",
+      "use_when": "Task needs quick drafts, tests, routing, or repeated loops."
+    },
+    {
+      "approval_gates": [
+        "provider_credentials",
+        "pricing_review",
+        "data_privacy_review"
+      ],
+      "bad_at": [
+        "batch research",
+        "long unattended jobs"
+      ],
+      "best_tasks": [
+        "voiceover",
+        "kid_learning_video",
+        "customer_support"
+      ],
+      "cost_posture": "lowest_cost_candidate",
+      "family_id": "openai_realtime",
+      "good_at": [
+        "voice assistants",
+        "live tutoring",
+        "operator consoles"
+      ],
+      "id": "openai_realtime__budget",
+      "label": "OpenAI realtime voice and multimodal - Budget Scale",
+      "provider": "OpenAI",
+      "roles": [
+        "realtime",
+        "voice",
+        "interactive"
+      ],
+      "status": "candidate_verify_model_id_before_production",
+      "tier": "budget",
+      "tradeoff": "Lower quality ceiling.",
+      "use_when": "Task is repetitive, low risk, batchable, or sandbox-only."
+    },
+    {
+      "approval_gates": [
+        "provider_credentials",
+        "pricing_review",
+        "data_privacy_review"
+      ],
+      "bad_at": [
+        "batch research",
+        "long unattended jobs"
+      ],
+      "best_tasks": [
+        "voiceover",
+        "kid_learning_video",
+        "customer_support"
+      ],
+      "cost_posture": "lowest_cost_candidate",
+      "family_id": "openai_realtime",
+      "good_at": [
+        "voice assistants",
+        "live tutoring",
+        "operator consoles"
+      ],
+      "id": "openai_realtime__private",
+      "label": "OpenAI realtime voice and multimodal - Local or Private",
+      "provider": "OpenAI",
+      "roles": [
+        "realtime",
+        "voice",
+        "interactive"
+      ],
+      "status": "candidate_verify_model_id_before_production",
+      "tier": "private",
+      "tradeoff": "Needs local hosting and stronger evals.",
+      "use_when": "Task touches sensitive docs or needs offline/cost-controlled processing."
+    },
+    {
+      "approval_gates": [
+        "provider_credentials",
+        "pricing_review",
+        "data_privacy_review"
+      ],
+      "bad_at": [
+        "unapproved likeness cloning",
+        "precise CAD"
+      ],
+      "best_tasks": [
+        "image_generation",
+        "image_editing"
+      ],
+      "cost_posture": "premium_or_quality_candidate",
+      "family_id": "openai_image",
+      "good_at": [
+        "royal brand images",
+        "mockups",
+        "image edits"
+      ],
+      "id": "openai_image__quality",
+      "label": "OpenAI image generation and editing - Best Quality",
+      "provider": "OpenAI",
+      "roles": [
+        "image",
+        "vision",
+        "creative"
+      ],
+      "status": "candidate_verify_model_id_before_production",
+      "tier": "quality",
+      "tradeoff": "Higher cost and latency.",
+      "use_when": "Task is high impact, hard, client-facing, or needs strong reasoning."
+    },
+    {
+      "approval_gates": [
+        "provider_credentials",
+        "pricing_review",
+        "data_privacy_review"
+      ],
+      "bad_at": [
+        "unapproved likeness cloning",
+        "precise CAD"
+      ],
+      "best_tasks": [
+        "image_generation",
+        "image_editing"
+      ],
+      "cost_posture": "cost_controlled_iteration",
+      "family_id": "openai_image",
+      "good_at": [
+        "royal brand images",
+        "mockups",
+        "image edits"
+      ],
+      "id": "openai_image__fast",
+      "label": "OpenAI image generation and editing - Fast Iteration",
+      "provider": "OpenAI",
+      "roles": [
+        "image",
+        "vision",
+        "creative"
+      ],
+      "status": "candidate_verify_model_id_before_production",
+      "tier": "fast",
+      "tradeoff": "May need review by a stronger model.",
+      "use_when": "Task needs quick drafts, tests, routing, or repeated loops."
+    },
+    {
+      "approval_gates": [
+        "provider_credentials",
+        "pricing_review",
+        "data_privacy_review"
+      ],
+      "bad_at": [
+        "unapproved likeness cloning",
+        "precise CAD"
+      ],
+      "best_tasks": [
+        "image_generation",
+        "image_editing"
+      ],
+      "cost_posture": "lowest_cost_candidate",
+      "family_id": "openai_image",
+      "good_at": [
+        "royal brand images",
+        "mockups",
+        "image edits"
+      ],
+      "id": "openai_image__budget",
+      "label": "OpenAI image generation and editing - Budget Scale",
+      "provider": "OpenAI",
+      "roles": [
+        "image",
+        "vision",
+        "creative"
+      ],
+      "status": "candidate_verify_model_id_before_production",
+      "tier": "budget",
+      "tradeoff": "Lower quality ceiling.",
+      "use_when": "Task is repetitive, low risk, batchable, or sandbox-only."
+    },
+    {
+      "approval_gates": [
+        "provider_credentials",
+        "pricing_review",
+        "data_privacy_review"
+      ],
+      "bad_at": [
+        "unapproved likeness cloning",
+        "precise CAD"
+      ],
+      "best_tasks": [
+        "image_generation",
+        "image_editing"
+      ],
+      "cost_posture": "lowest_cost_candidate",
+      "family_id": "openai_image",
+      "good_at": [
+        "royal brand images",
+        "mockups",
+        "image edits"
+      ],
+      "id": "openai_image__private",
+      "label": "OpenAI image generation and editing - Local or Private",
+      "provider": "OpenAI",
+      "roles": [
+        "image",
+        "vision",
+        "creative"
+      ],
+      "status": "candidate_verify_model_id_before_production",
+      "tier": "private",
+      "tradeoff": "Needs local hosting and stronger evals.",
+      "use_when": "Task touches sensitive docs or needs offline/cost-controlled processing."
+    },
+    {
+      "approval_gates": [
+        "provider_credentials",
+        "pricing_review",
+        "data_privacy_review"
+      ],
+      "bad_at": [
+        "tool execution unless wired",
+        "current facts without retrieval"
+      ],
+      "best_tasks": [
+        "repo_review",
+        "legal_safety_review",
+        "sales_copy"
+      ],
+      "cost_posture": "premium_or_quality_candidate",
+      "family_id": "anthropic_claude",
+      "good_at": [
+        "long docs",
+        "careful critique",
+        "business writing"
+      ],
+      "id": "anthropic_claude__quality",
+      "label": "Claude long-form reasoning and writing - Best Quality",
+      "provider": "Anthropic",
+      "roles": [
+        "long_context",
+        "analysis",
+        "writing"
+      ],
+      "status": "candidate_verify_model_id_before_production",
+      "tier": "quality",
+      "tradeoff": "Higher cost and latency.",
+      "use_when": "Task is high impact, hard, client-facing, or needs strong reasoning."
+    },
+    {
+      "approval_gates": [
+        "provider_credentials",
+        "pricing_review",
+        "data_privacy_review"
+      ],
+      "bad_at": [
+        "tool execution unless wired",
+        "current facts without retrieval"
+      ],
+      "best_tasks": [
+        "repo_review",
+        "legal_safety_review",
+        "sales_copy"
+      ],
+      "cost_posture": "cost_controlled_iteration",
+      "family_id": "anthropic_claude",
+      "good_at": [
+        "long docs",
+        "careful critique",
+        "business writing"
+      ],
+      "id": "anthropic_claude__fast",
+      "label": "Claude long-form reasoning and writing - Fast Iteration",
+      "provider": "Anthropic",
+      "roles": [
+        "long_context",
+        "analysis",
+        "writing"
+      ],
+      "status": "candidate_verify_model_id_before_production",
+      "tier": "fast",
+      "tradeoff": "May need review by a stronger model.",
+      "use_when": "Task needs quick drafts, tests, routing, or repeated loops."
+    },
+    {
+      "approval_gates": [
+        "provider_credentials",
+        "pricing_review",
+        "data_privacy_review"
+      ],
+      "bad_at": [
+        "tool execution unless wired",
+        "current facts without retrieval"
+      ],
+      "best_tasks": [
+        "repo_review",
+        "legal_safety_review",
+        "sales_copy"
+      ],
+      "cost_posture": "lowest_cost_candidate",
+      "family_id": "anthropic_claude",
+      "good_at": [
+        "long docs",
+        "careful critique",
+        "business writing"
+      ],
+      "id": "anthropic_claude__budget",
+      "label": "Claude long-form reasoning and writing - Budget Scale",
+      "provider": "Anthropic",
+      "roles": [
+        "long_context",
+        "analysis",
+        "writing"
+      ],
+      "status": "candidate_verify_model_id_before_production",
+      "tier": "budget",
+      "tradeoff": "Lower quality ceiling.",
+      "use_when": "Task is repetitive, low risk, batchable, or sandbox-only."
+    },
+    {
+      "approval_gates": [
+        "provider_credentials",
+        "pricing_review",
+        "data_privacy_review"
+      ],
+      "bad_at": [
+        "tool execution unless wired",
+        "current facts without retrieval"
+      ],
+      "best_tasks": [
+        "repo_review",
+        "legal_safety_review",
+        "sales_copy"
+      ],
+      "cost_posture": "lowest_cost_candidate",
+      "family_id": "anthropic_claude",
+      "good_at": [
+        "long docs",
+        "careful critique",
+        "business writing"
+      ],
+      "id": "anthropic_claude__private",
+      "label": "Claude long-form reasoning and writing - Local or Private",
+      "provider": "Anthropic",
+      "roles": [
+        "long_context",
+        "analysis",
+        "writing"
+      ],
+      "status": "candidate_verify_model_id_before_production",
+      "tier": "private",
+      "tradeoff": "Needs local hosting and stronger evals.",
+      "use_when": "Task touches sensitive docs or needs offline/cost-controlled processing."
+    },
+    {
+      "approval_gates": [
+        "provider_credentials",
+        "pricing_review",
+        "data_privacy_review"
+      ],
+      "bad_at": [
+        "private docs without privacy review"
+      ],
+      "best_tasks": [
+        "market_research",
+        "video_storyboard",
+        "course_building"
+      ],
+      "cost_posture": "premium_or_quality_candidate",
+      "family_id": "google_gemini",
+      "good_at": [
+        "large context",
+        "document/video understanding",
+        "research synthesis"
+      ],
+      "id": "google_gemini__quality",
+      "label": "Gemini multimodal and long context - Best Quality",
+      "provider": "Google",
+      "roles": [
+        "multimodal",
+        "long_context",
+        "video_understanding"
+      ],
+      "status": "candidate_verify_model_id_before_production",
+      "tier": "quality",
+      "tradeoff": "Higher cost and latency.",
+      "use_when": "Task is high impact, hard, client-facing, or needs strong reasoning."
+    },
+    {
+      "approval_gates": [
+        "provider_credentials",
+        "pricing_review",
+        "data_privacy_review"
+      ],
+      "bad_at": [
+        "private docs without privacy review"
+      ],
+      "best_tasks": [
+        "market_research",
+        "video_storyboard",
+        "course_building"
+      ],
+      "cost_posture": "cost_controlled_iteration",
+      "family_id": "google_gemini",
+      "good_at": [
+        "large context",
+        "document/video understanding",
+        "research synthesis"
+      ],
+      "id": "google_gemini__fast",
+      "label": "Gemini multimodal and long context - Fast Iteration",
+      "provider": "Google",
+      "roles": [
+        "multimodal",
+        "long_context",
+        "video_understanding"
+      ],
+      "status": "candidate_verify_model_id_before_production",
+      "tier": "fast",
+      "tradeoff": "May need review by a stronger model.",
+      "use_when": "Task needs quick drafts, tests, routing, or repeated loops."
+    },
+    {
+      "approval_gates": [
+        "provider_credentials",
+        "pricing_review",
+        "data_privacy_review"
+      ],
+      "bad_at": [
+        "private docs without privacy review"
+      ],
+      "best_tasks": [
+        "market_research",
+        "video_storyboard",
+        "course_building"
+      ],
+      "cost_posture": "lowest_cost_candidate",
+      "family_id": "google_gemini",
+      "good_at": [
+        "large context",
+        "document/video understanding",
+        "research synthesis"
+      ],
+      "id": "google_gemini__budget",
+      "label": "Gemini multimodal and long context - Budget Scale",
+      "provider": "Google",
+      "roles": [
+        "multimodal",
+        "long_context",
+        "video_understanding"
+      ],
+      "status": "candidate_verify_model_id_before_production",
+      "tier": "budget",
+      "tradeoff": "Lower quality ceiling.",
+      "use_when": "Task is repetitive, low risk, batchable, or sandbox-only."
+    },
+    {
+      "approval_gates": [
+        "provider_credentials",
+        "pricing_review",
+        "data_privacy_review"
+      ],
+      "bad_at": [
+        "private docs without privacy review"
+      ],
+      "best_tasks": [
+        "market_research",
+        "video_storyboard",
+        "course_building"
+      ],
+      "cost_posture": "lowest_cost_candidate",
+      "family_id": "google_gemini",
+      "good_at": [
+        "large context",
+        "document/video understanding",
+        "research synthesis"
+      ],
+      "id": "google_gemini__private",
+      "label": "Gemini multimodal and long context - Local or Private",
+      "provider": "Google",
+      "roles": [
+        "multimodal",
+        "long_context",
+        "video_understanding"
+      ],
+      "status": "candidate_verify_model_id_before_production",
+      "tier": "private",
+      "tradeoff": "Needs local hosting and stronger evals.",
+      "use_when": "Task touches sensitive docs or needs offline/cost-controlled processing."
+    },
+    {
+      "approval_gates": [
+        "provider_credentials",
+        "pricing_review",
+        "data_privacy_review"
+      ],
+      "bad_at": [
+        "highest-stakes reasoning without review",
+        "paid scale without budget approval"
+      ],
+      "best_tasks": [
+        "workflow_automation",
+        "customer_support",
+        "data_extraction",
+        "model_evaluation"
+      ],
+      "cost_posture": "low_cost_candidate",
+      "family_id": "google_gemini_flash_lite",
+      "good_at": [
+        "free-tier testing",
+        "cheap drafts",
+        "routing decisions",
+        "summaries",
+        "batchable sandbox tasks"
+      ],
+      "id": "google_gemini_flash_lite__quality",
+      "label": "Gemini Flash-Lite free and low-cost routing - Best Quality",
+      "provider": "Google",
+      "roles": [
+        "budget",
+        "fast_reasoning",
+        "summarization",
+        "classification",
+        "multimodal"
+      ],
+      "status": "candidate_verify_model_id_before_production",
+      "tier": "quality",
+      "tradeoff": "Higher cost and latency.",
+      "use_when": "Task is high impact, hard, client-facing, or needs strong reasoning."
+    },
+    {
+      "approval_gates": [
+        "provider_credentials",
+        "pricing_review",
+        "data_privacy_review"
+      ],
+      "bad_at": [
+        "highest-stakes reasoning without review",
+        "paid scale without budget approval"
+      ],
+      "best_tasks": [
+        "workflow_automation",
+        "customer_support",
+        "data_extraction",
+        "model_evaluation"
+      ],
+      "cost_posture": "low_cost_candidate",
+      "family_id": "google_gemini_flash_lite",
+      "good_at": [
+        "free-tier testing",
+        "cheap drafts",
+        "routing decisions",
+        "summaries",
+        "batchable sandbox tasks"
+      ],
+      "id": "google_gemini_flash_lite__fast",
+      "label": "Gemini Flash-Lite free and low-cost routing - Fast Iteration",
+      "provider": "Google",
+      "roles": [
+        "budget",
+        "fast_reasoning",
+        "summarization",
+        "classification",
+        "multimodal"
+      ],
+      "status": "candidate_verify_model_id_before_production",
+      "tier": "fast",
+      "tradeoff": "May need review by a stronger model.",
+      "use_when": "Task needs quick drafts, tests, routing, or repeated loops."
+    },
+    {
+      "approval_gates": [
+        "provider_credentials",
+        "pricing_review",
+        "data_privacy_review"
+      ],
+      "bad_at": [
+        "highest-stakes reasoning without review",
+        "paid scale without budget approval"
+      ],
+      "best_tasks": [
+        "workflow_automation",
+        "customer_support",
+        "data_extraction",
+        "model_evaluation"
+      ],
+      "cost_posture": "lowest_cost_candidate",
+      "family_id": "google_gemini_flash_lite",
+      "good_at": [
+        "free-tier testing",
+        "cheap drafts",
+        "routing decisions",
+        "summaries",
+        "batchable sandbox tasks"
+      ],
+      "id": "google_gemini_flash_lite__budget",
+      "label": "Gemini Flash-Lite free and low-cost routing - Budget Scale",
+      "provider": "Google",
+      "roles": [
+        "budget",
+        "fast_reasoning",
+        "summarization",
+        "classification",
+        "multimodal"
+      ],
+      "status": "candidate_verify_model_id_before_production",
+      "tier": "budget",
+      "tradeoff": "Lower quality ceiling.",
+      "use_when": "Task is repetitive, low risk, batchable, or sandbox-only."
+    },
+    {
+      "approval_gates": [
+        "provider_credentials",
+        "pricing_review",
+        "data_privacy_review"
+      ],
+      "bad_at": [
+        "highest-stakes reasoning without review",
+        "paid scale without budget approval"
+      ],
+      "best_tasks": [
+        "workflow_automation",
+        "customer_support",
+        "data_extraction",
+        "model_evaluation"
+      ],
+      "cost_posture": "lowest_cost_candidate",
+      "family_id": "google_gemini_flash_lite",
+      "good_at": [
+        "free-tier testing",
+        "cheap drafts",
+        "routing decisions",
+        "summaries",
+        "batchable sandbox tasks"
+      ],
+      "id": "google_gemini_flash_lite__private",
+      "label": "Gemini Flash-Lite free and low-cost routing - Local or Private",
+      "provider": "Google",
+      "roles": [
+        "budget",
+        "fast_reasoning",
+        "summarization",
+        "classification",
+        "multimodal"
+      ],
+      "status": "candidate_verify_model_id_before_production",
+      "tier": "private",
+      "tradeoff": "Needs local hosting and stronger evals.",
+      "use_when": "Task touches sensitive docs or needs offline/cost-controlled processing."
+    },
+    {
+      "approval_gates": [
+        "provider_credentials",
+        "pricing_review",
+        "data_privacy_review"
+      ],
+      "bad_at": [
+        "frontier reasoning unless benchmarked"
+      ],
+      "best_tasks": [
+        "memory_curation",
+        "customer_support",
+        "workflow_automation"
+      ],
+      "cost_posture": "low_cost_candidate",
+      "family_id": "meta_llama",
+      "good_at": [
+        "local/private tasks",
+        "fine-tuning experiments",
+        "cost control"
+      ],
+      "id": "meta_llama__quality",
+      "label": "Llama open-weight models - Best Quality",
+      "provider": "Meta",
+      "roles": [
+        "open_weight",
+        "local_private",
+        "general"
+      ],
+      "status": "candidate_verify_model_id_before_production",
+      "tier": "quality",
+      "tradeoff": "Higher cost and latency.",
+      "use_when": "Task is high impact, hard, client-facing, or needs strong reasoning."
+    },
+    {
+      "approval_gates": [
+        "provider_credentials",
+        "pricing_review",
+        "data_privacy_review"
+      ],
+      "bad_at": [
+        "frontier reasoning unless benchmarked"
+      ],
+      "best_tasks": [
+        "memory_curation",
+        "customer_support",
+        "workflow_automation"
+      ],
+      "cost_posture": "low_cost_candidate",
+      "family_id": "meta_llama",
+      "good_at": [
+        "local/private tasks",
+        "fine-tuning experiments",
+        "cost control"
+      ],
+      "id": "meta_llama__fast",
+      "label": "Llama open-weight models - Fast Iteration",
+      "provider": "Meta",
+      "roles": [
+        "open_weight",
+        "local_private",
+        "general"
+      ],
+      "status": "candidate_verify_model_id_before_production",
+      "tier": "fast",
+      "tradeoff": "May need review by a stronger model.",
+      "use_when": "Task needs quick drafts, tests, routing, or repeated loops."
+    },
+    {
+      "approval_gates": [
+        "provider_credentials",
+        "pricing_review",
+        "data_privacy_review"
+      ],
+      "bad_at": [
+        "frontier reasoning unless benchmarked"
+      ],
+      "best_tasks": [
+        "memory_curation",
+        "customer_support",
+        "workflow_automation"
+      ],
+      "cost_posture": "lowest_cost_candidate",
+      "family_id": "meta_llama",
+      "good_at": [
+        "local/private tasks",
+        "fine-tuning experiments",
+        "cost control"
+      ],
+      "id": "meta_llama__budget",
+      "label": "Llama open-weight models - Budget Scale",
+      "provider": "Meta",
+      "roles": [
+        "open_weight",
+        "local_private",
+        "general"
+      ],
+      "status": "candidate_verify_model_id_before_production",
+      "tier": "budget",
+      "tradeoff": "Lower quality ceiling.",
+      "use_when": "Task is repetitive, low risk, batchable, or sandbox-only."
+    },
+    {
+      "approval_gates": [
+        "provider_credentials",
+        "pricing_review",
+        "data_privacy_review"
+      ],
+      "bad_at": [
+        "frontier reasoning unless benchmarked"
+      ],
+      "best_tasks": [
+        "memory_curation",
+        "customer_support",
+        "workflow_automation"
+      ],
+      "cost_posture": "lowest_cost_candidate",
+      "family_id": "meta_llama",
+      "good_at": [
+        "local/private tasks",
+        "fine-tuning experiments",
+        "cost control"
+      ],
+      "id": "meta_llama__private",
+      "label": "Llama open-weight models - Local or Private",
+      "provider": "Meta",
+      "roles": [
+        "open_weight",
+        "local_private",
+        "general"
+      ],
+      "status": "candidate_verify_model_id_before_production",
+      "tier": "private",
+      "tradeoff": "Needs local hosting and stronger evals.",
+      "use_when": "Task touches sensitive docs or needs offline/cost-controlled processing."
+    },
+    {
+      "approval_gates": [
+        "provider_credentials",
+        "pricing_review",
+        "data_privacy_review"
+      ],
+      "bad_at": [
+        "highest-stakes reasoning without eval"
+      ],
+      "best_tasks": [
+        "sales_copy",
+        "workflow_automation",
+        "data_extraction"
+      ],
+      "cost_posture": "low_cost_candidate",
+      "family_id": "mistral_models",
+      "good_at": [
+        "fast drafts",
+        "European language tasks",
+        "cost-aware agents"
+      ],
+      "id": "mistral_models__quality",
+      "label": "Mistral fast and open models - Best Quality",
+      "provider": "Mistral",
+      "roles": [
+        "fast_reasoning",
+        "open_weight",
+        "multilingual"
+      ],
+      "status": "candidate_verify_model_id_before_production",
+      "tier": "quality",
+      "tradeoff": "Higher cost and latency.",
+      "use_when": "Task is high impact, hard, client-facing, or needs strong reasoning."
+    },
+    {
+      "approval_gates": [
+        "provider_credentials",
+        "pricing_review",
+        "data_privacy_review"
+      ],
+      "bad_at": [
+        "highest-stakes reasoning without eval"
+      ],
+      "best_tasks": [
+        "sales_copy",
+        "workflow_automation",
+        "data_extraction"
+      ],
+      "cost_posture": "low_cost_candidate",
+      "family_id": "mistral_models",
+      "good_at": [
+        "fast drafts",
+        "European language tasks",
+        "cost-aware agents"
+      ],
+      "id": "mistral_models__fast",
+      "label": "Mistral fast and open models - Fast Iteration",
+      "provider": "Mistral",
+      "roles": [
+        "fast_reasoning",
+        "open_weight",
+        "multilingual"
+      ],
+      "status": "candidate_verify_model_id_before_production",
+      "tier": "fast",
+      "tradeoff": "May need review by a stronger model.",
+      "use_when": "Task needs quick drafts, tests, routing, or repeated loops."
+    },
+    {
+      "approval_gates": [
+        "provider_credentials",
+        "pricing_review",
+        "data_privacy_review"
+      ],
+      "bad_at": [
+        "highest-stakes reasoning without eval"
+      ],
+      "best_tasks": [
+        "sales_copy",
+        "workflow_automation",
+        "data_extraction"
+      ],
+      "cost_posture": "lowest_cost_candidate",
+      "family_id": "mistral_models",
+      "good_at": [
+        "fast drafts",
+        "European language tasks",
+        "cost-aware agents"
+      ],
+      "id": "mistral_models__budget",
+      "label": "Mistral fast and open models - Budget Scale",
+      "provider": "Mistral",
+      "roles": [
+        "fast_reasoning",
+        "open_weight",
+        "multilingual"
+      ],
+      "status": "candidate_verify_model_id_before_production",
+      "tier": "budget",
+      "tradeoff": "Lower quality ceiling.",
+      "use_when": "Task is repetitive, low risk, batchable, or sandbox-only."
+    },
+    {
+      "approval_gates": [
+        "provider_credentials",
+        "pricing_review",
+        "data_privacy_review"
+      ],
+      "bad_at": [
+        "highest-stakes reasoning without eval"
+      ],
+      "best_tasks": [
+        "sales_copy",
+        "workflow_automation",
+        "data_extraction"
+      ],
+      "cost_posture": "lowest_cost_candidate",
+      "family_id": "mistral_models",
+      "good_at": [
+        "fast drafts",
+        "European language tasks",
+        "cost-aware agents"
+      ],
+      "id": "mistral_models__private",
+      "label": "Mistral fast and open models - Local or Private",
+      "provider": "Mistral",
+      "roles": [
+        "fast_reasoning",
+        "open_weight",
+        "multilingual"
+      ],
+      "status": "candidate_verify_model_id_before_production",
+      "tier": "private",
+      "tradeoff": "Needs local hosting and stronger evals.",
+      "use_when": "Task touches sensitive docs or needs offline/cost-controlled processing."
+    },
+    {
+      "approval_gates": [
+        "provider_credentials",
+        "pricing_review",
+        "data_privacy_review"
+      ],
+      "bad_at": [
+        "image/video generation"
+      ],
+      "best_tasks": [
+        "data_extraction",
+        "market_research",
+        "memory_curation"
+      ],
+      "cost_posture": "premium_or_quality_candidate",
+      "family_id": "cohere_command",
+      "good_at": [
+        "retrieval",
+        "classification",
+        "reranking"
+      ],
+      "id": "cohere_command__quality",
+      "label": "Cohere enterprise RAG and reranking - Best Quality",
+      "provider": "Cohere",
+      "roles": [
+        "rag",
+        "rerank",
+        "enterprise_search"
+      ],
+      "status": "candidate_verify_model_id_before_production",
+      "tier": "quality",
+      "tradeoff": "Higher cost and latency.",
+      "use_when": "Task is high impact, hard, client-facing, or needs strong reasoning."
+    },
+    {
+      "approval_gates": [
+        "provider_credentials",
+        "pricing_review",
+        "data_privacy_review"
+      ],
+      "bad_at": [
+        "image/video generation"
+      ],
+      "best_tasks": [
+        "data_extraction",
+        "market_research",
+        "memory_curation"
+      ],
+      "cost_posture": "cost_controlled_iteration",
+      "family_id": "cohere_command",
+      "good_at": [
+        "retrieval",
+        "classification",
+        "reranking"
+      ],
+      "id": "cohere_command__fast",
+      "label": "Cohere enterprise RAG and reranking - Fast Iteration",
+      "provider": "Cohere",
+      "roles": [
+        "rag",
+        "rerank",
+        "enterprise_search"
+      ],
+      "status": "candidate_verify_model_id_before_production",
+      "tier": "fast",
+      "tradeoff": "May need review by a stronger model.",
+      "use_when": "Task needs quick drafts, tests, routing, or repeated loops."
+    },
+    {
+      "approval_gates": [
+        "provider_credentials",
+        "pricing_review",
+        "data_privacy_review"
+      ],
+      "bad_at": [
+        "image/video generation"
+      ],
+      "best_tasks": [
+        "data_extraction",
+        "market_research",
+        "memory_curation"
+      ],
+      "cost_posture": "lowest_cost_candidate",
+      "family_id": "cohere_command",
+      "good_at": [
+        "retrieval",
+        "classification",
+        "reranking"
+      ],
+      "id": "cohere_command__budget",
+      "label": "Cohere enterprise RAG and reranking - Budget Scale",
+      "provider": "Cohere",
+      "roles": [
+        "rag",
+        "rerank",
+        "enterprise_search"
+      ],
+      "status": "candidate_verify_model_id_before_production",
+      "tier": "budget",
+      "tradeoff": "Lower quality ceiling.",
+      "use_when": "Task is repetitive, low risk, batchable, or sandbox-only."
+    },
+    {
+      "approval_gates": [
+        "provider_credentials",
+        "pricing_review",
+        "data_privacy_review"
+      ],
+      "bad_at": [
+        "image/video generation"
+      ],
+      "best_tasks": [
+        "data_extraction",
+        "market_research",
+        "memory_curation"
+      ],
+      "cost_posture": "lowest_cost_candidate",
+      "family_id": "cohere_command",
+      "good_at": [
+        "retrieval",
+        "classification",
+        "reranking"
+      ],
+      "id": "cohere_command__private",
+      "label": "Cohere enterprise RAG and reranking - Local or Private",
+      "provider": "Cohere",
+      "roles": [
+        "rag",
+        "rerank",
+        "enterprise_search"
+      ],
+      "status": "candidate_verify_model_id_before_production",
+      "tier": "private",
+      "tradeoff": "Needs local hosting and stronger evals.",
+      "use_when": "Task touches sensitive docs or needs offline/cost-controlled processing."
+    },
+    {
+      "approval_gates": [
+        "provider_credentials",
+        "pricing_review",
+        "data_privacy_review"
+      ],
+      "bad_at": [
+        "sensitive production changes without tests"
+      ],
+      "best_tasks": [
+        "coding",
+        "debugging"
+      ],
+      "cost_posture": "low_cost_candidate",
+      "family_id": "deepseek_coder_reasoner",
+      "good_at": [
+        "code generation",
+        "math-style reasoning",
+        "cost-aware coding"
+      ],
+      "id": "deepseek_coder_reasoner__quality",
+      "label": "DeepSeek coding and reasoning - Best Quality",
+      "provider": "DeepSeek",
+      "roles": [
+        "coding",
+        "reasoning",
+        "cost_efficiency"
+      ],
+      "status": "candidate_verify_model_id_before_production",
+      "tier": "quality",
+      "tradeoff": "Higher cost and latency.",
+      "use_when": "Task is high impact, hard, client-facing, or needs strong reasoning."
+    },
+    {
+      "approval_gates": [
+        "provider_credentials",
+        "pricing_review",
+        "data_privacy_review"
+      ],
+      "bad_at": [
+        "sensitive production changes without tests"
+      ],
+      "best_tasks": [
+        "coding",
+        "debugging"
+      ],
+      "cost_posture": "low_cost_candidate",
+      "family_id": "deepseek_coder_reasoner",
+      "good_at": [
+        "code generation",
+        "math-style reasoning",
+        "cost-aware coding"
+      ],
+      "id": "deepseek_coder_reasoner__fast",
+      "label": "DeepSeek coding and reasoning - Fast Iteration",
+      "provider": "DeepSeek",
+      "roles": [
+        "coding",
+        "reasoning",
+        "cost_efficiency"
+      ],
+      "status": "candidate_verify_model_id_before_production",
+      "tier": "fast",
+      "tradeoff": "May need review by a stronger model.",
+      "use_when": "Task needs quick drafts, tests, routing, or repeated loops."
+    },
+    {
+      "approval_gates": [
+        "provider_credentials",
+        "pricing_review",
+        "data_privacy_review"
+      ],
+      "bad_at": [
+        "sensitive production changes without tests"
+      ],
+      "best_tasks": [
+        "coding",
+        "debugging"
+      ],
+      "cost_posture": "lowest_cost_candidate",
+      "family_id": "deepseek_coder_reasoner",
+      "good_at": [
+        "code generation",
+        "math-style reasoning",
+        "cost-aware coding"
+      ],
+      "id": "deepseek_coder_reasoner__budget",
+      "label": "DeepSeek coding and reasoning - Budget Scale",
+      "provider": "DeepSeek",
+      "roles": [
+        "coding",
+        "reasoning",
+        "cost_efficiency"
+      ],
+      "status": "candidate_verify_model_id_before_production",
+      "tier": "budget",
+      "tradeoff": "Lower quality ceiling.",
+      "use_when": "Task is repetitive, low risk, batchable, or sandbox-only."
+    },
+    {
+      "approval_gates": [
+        "provider_credentials",
+        "pricing_review",
+        "data_privacy_review"
+      ],
+      "bad_at": [
+        "sensitive production changes without tests"
+      ],
+      "best_tasks": [
+        "coding",
+        "debugging"
+      ],
+      "cost_posture": "lowest_cost_candidate",
+      "family_id": "deepseek_coder_reasoner",
+      "good_at": [
+        "code generation",
+        "math-style reasoning",
+        "cost-aware coding"
+      ],
+      "id": "deepseek_coder_reasoner__private",
+      "label": "DeepSeek coding and reasoning - Local or Private",
+      "provider": "DeepSeek",
+      "roles": [
+        "coding",
+        "reasoning",
+        "cost_efficiency"
+      ],
+      "status": "candidate_verify_model_id_before_production",
+      "tier": "private",
+      "tradeoff": "Needs local hosting and stronger evals.",
+      "use_when": "Task touches sensitive docs or needs offline/cost-controlled processing."
+    },
+    {
+      "approval_gates": [
+        "provider_credentials",
+        "pricing_review",
+        "data_privacy_review"
+      ],
+      "bad_at": [
+        "provider-specific tool support unless wired"
+      ],
+      "best_tasks": [
+        "coding",
+        "course_building",
+        "customer_support"
+      ],
+      "cost_posture": "low_cost_candidate",
+      "family_id": "qwen_models",
+      "good_at": [
+        "multilingual apps",
+        "coding drafts",
+        "local experiments"
+      ],
+      "id": "qwen_models__quality",
+      "label": "Qwen multilingual and coding models - Best Quality",
+      "provider": "Qwen",
+      "roles": [
+        "multilingual",
+        "coding",
+        "open_weight"
+      ],
+      "status": "candidate_verify_model_id_before_production",
+      "tier": "quality",
+      "tradeoff": "Higher cost and latency.",
+      "use_when": "Task is high impact, hard, client-facing, or needs strong reasoning."
+    },
+    {
+      "approval_gates": [
+        "provider_credentials",
+        "pricing_review",
+        "data_privacy_review"
+      ],
+      "bad_at": [
+        "provider-specific tool support unless wired"
+      ],
+      "best_tasks": [
+        "coding",
+        "course_building",
+        "customer_support"
+      ],
+      "cost_posture": "low_cost_candidate",
+      "family_id": "qwen_models",
+      "good_at": [
+        "multilingual apps",
+        "coding drafts",
+        "local experiments"
+      ],
+      "id": "qwen_models__fast",
+      "label": "Qwen multilingual and coding models - Fast Iteration",
+      "provider": "Qwen",
+      "roles": [
+        "multilingual",
+        "coding",
+        "open_weight"
+      ],
+      "status": "candidate_verify_model_id_before_production",
+      "tier": "fast",
+      "tradeoff": "May need review by a stronger model.",
+      "use_when": "Task needs quick drafts, tests, routing, or repeated loops."
+    },
+    {
+      "approval_gates": [
+        "provider_credentials",
+        "pricing_review",
+        "data_privacy_review"
+      ],
+      "bad_at": [
+        "provider-specific tool support unless wired"
+      ],
+      "best_tasks": [
+        "coding",
+        "course_building",
+        "customer_support"
+      ],
+      "cost_posture": "lowest_cost_candidate",
+      "family_id": "qwen_models",
+      "good_at": [
+        "multilingual apps",
+        "coding drafts",
+        "local experiments"
+      ],
+      "id": "qwen_models__budget",
+      "label": "Qwen multilingual and coding models - Budget Scale",
+      "provider": "Qwen",
+      "roles": [
+        "multilingual",
+        "coding",
+        "open_weight"
+      ],
+      "status": "candidate_verify_model_id_before_production",
+      "tier": "budget",
+      "tradeoff": "Lower quality ceiling.",
+      "use_when": "Task is repetitive, low risk, batchable, or sandbox-only."
+    },
+    {
+      "approval_gates": [
+        "provider_credentials",
+        "pricing_review",
+        "data_privacy_review"
+      ],
+      "bad_at": [
+        "provider-specific tool support unless wired"
+      ],
+      "best_tasks": [
+        "coding",
+        "course_building",
+        "customer_support"
+      ],
+      "cost_posture": "lowest_cost_candidate",
+      "family_id": "qwen_models",
+      "good_at": [
+        "multilingual apps",
+        "coding drafts",
+        "local experiments"
+      ],
+      "id": "qwen_models__private",
+      "label": "Qwen multilingual and coding models - Local or Private",
+      "provider": "Qwen",
+      "roles": [
+        "multilingual",
+        "coding",
+        "open_weight"
+      ],
+      "status": "candidate_verify_model_id_before_production",
+      "tier": "private",
+      "tradeoff": "Needs local hosting and stronger evals.",
+      "use_when": "Task touches sensitive docs or needs offline/cost-controlled processing."
+    },
+    {
+      "approval_gates": [
+        "provider_credentials",
+        "pricing_review",
+        "data_privacy_review"
+      ],
+      "bad_at": [
+        "private facts",
+        "unverified social claims"
+      ],
+      "best_tasks": [
+        "market_research",
+        "competitor_analysis"
+      ],
+      "cost_posture": "premium_or_quality_candidate",
+      "family_id": "xai_grok",
+      "good_at": [
+        "trend scanning",
+        "public conversation summaries"
+      ],
+      "id": "xai_grok__quality",
+      "label": "Grok realtime trend-aware models - Best Quality",
+      "provider": "xAI",
+      "roles": [
+        "realtime_context",
+        "social_trends"
+      ],
+      "status": "candidate_verify_model_id_before_production",
+      "tier": "quality",
+      "tradeoff": "Higher cost and latency.",
+      "use_when": "Task is high impact, hard, client-facing, or needs strong reasoning."
+    },
+    {
+      "approval_gates": [
+        "provider_credentials",
+        "pricing_review",
+        "data_privacy_review"
+      ],
+      "bad_at": [
+        "private facts",
+        "unverified social claims"
+      ],
+      "best_tasks": [
+        "market_research",
+        "competitor_analysis"
+      ],
+      "cost_posture": "cost_controlled_iteration",
+      "family_id": "xai_grok",
+      "good_at": [
+        "trend scanning",
+        "public conversation summaries"
+      ],
+      "id": "xai_grok__fast",
+      "label": "Grok realtime trend-aware models - Fast Iteration",
+      "provider": "xAI",
+      "roles": [
+        "realtime_context",
+        "social_trends"
+      ],
+      "status": "candidate_verify_model_id_before_production",
+      "tier": "fast",
+      "tradeoff": "May need review by a stronger model.",
+      "use_when": "Task needs quick drafts, tests, routing, or repeated loops."
+    },
+    {
+      "approval_gates": [
+        "provider_credentials",
+        "pricing_review",
+        "data_privacy_review"
+      ],
+      "bad_at": [
+        "private facts",
+        "unverified social claims"
+      ],
+      "best_tasks": [
+        "market_research",
+        "competitor_analysis"
+      ],
+      "cost_posture": "lowest_cost_candidate",
+      "family_id": "xai_grok",
+      "good_at": [
+        "trend scanning",
+        "public conversation summaries"
+      ],
+      "id": "xai_grok__budget",
+      "label": "Grok realtime trend-aware models - Budget Scale",
+      "provider": "xAI",
+      "roles": [
+        "realtime_context",
+        "social_trends"
+      ],
+      "status": "candidate_verify_model_id_before_production",
+      "tier": "budget",
+      "tradeoff": "Lower quality ceiling.",
+      "use_when": "Task is repetitive, low risk, batchable, or sandbox-only."
+    },
+    {
+      "approval_gates": [
+        "provider_credentials",
+        "pricing_review",
+        "data_privacy_review"
+      ],
+      "bad_at": [
+        "private facts",
+        "unverified social claims"
+      ],
+      "best_tasks": [
+        "market_research",
+        "competitor_analysis"
+      ],
+      "cost_posture": "lowest_cost_candidate",
+      "family_id": "xai_grok",
+      "good_at": [
+        "trend scanning",
+        "public conversation summaries"
+      ],
+      "id": "xai_grok__private",
+      "label": "Grok realtime trend-aware models - Local or Private",
+      "provider": "xAI",
+      "roles": [
+        "realtime_context",
+        "social_trends"
+      ],
+      "status": "candidate_verify_model_id_before_production",
+      "tier": "private",
+      "tradeoff": "Needs local hosting and stronger evals.",
+      "use_when": "Task touches sensitive docs or needs offline/cost-controlled processing."
+    },
+    {
+      "approval_gates": [
+        "provider_credentials",
+        "pricing_review",
+        "data_privacy_review"
+      ],
+      "bad_at": [
+        "private repo edits",
+        "creative asset generation"
+      ],
+      "best_tasks": [
+        "market_research",
+        "competitor_analysis"
+      ],
+      "cost_posture": "premium_or_quality_candidate",
+      "family_id": "perplexity_search",
+      "good_at": [
+        "source-backed answers",
+        "current public facts",
+        "market scans"
+      ],
+      "id": "perplexity_search__quality",
+      "label": "Search-grounded answer models - Best Quality",
+      "provider": "Perplexity",
+      "roles": [
+        "web_search",
+        "citations",
+        "research"
+      ],
+      "status": "candidate_verify_model_id_before_production",
+      "tier": "quality",
+      "tradeoff": "Higher cost and latency.",
+      "use_when": "Task is high impact, hard, client-facing, or needs strong reasoning."
+    },
+    {
+      "approval_gates": [
+        "provider_credentials",
+        "pricing_review",
+        "data_privacy_review"
+      ],
+      "bad_at": [
+        "private repo edits",
+        "creative asset generation"
+      ],
+      "best_tasks": [
+        "market_research",
+        "competitor_analysis"
+      ],
+      "cost_posture": "cost_controlled_iteration",
+      "family_id": "perplexity_search",
+      "good_at": [
+        "source-backed answers",
+        "current public facts",
+        "market scans"
+      ],
+      "id": "perplexity_search__fast",
+      "label": "Search-grounded answer models - Fast Iteration",
+      "provider": "Perplexity",
+      "roles": [
+        "web_search",
+        "citations",
+        "research"
+      ],
+      "status": "candidate_verify_model_id_before_production",
+      "tier": "fast",
+      "tradeoff": "May need review by a stronger model.",
+      "use_when": "Task needs quick drafts, tests, routing, or repeated loops."
+    },
+    {
+      "approval_gates": [
+        "provider_credentials",
+        "pricing_review",
+        "data_privacy_review"
+      ],
+      "bad_at": [
+        "private repo edits",
+        "creative asset generation"
+      ],
+      "best_tasks": [
+        "market_research",
+        "competitor_analysis"
+      ],
+      "cost_posture": "lowest_cost_candidate",
+      "family_id": "perplexity_search",
+      "good_at": [
+        "source-backed answers",
+        "current public facts",
+        "market scans"
+      ],
+      "id": "perplexity_search__budget",
+      "label": "Search-grounded answer models - Budget Scale",
+      "provider": "Perplexity",
+      "roles": [
+        "web_search",
+        "citations",
+        "research"
+      ],
+      "status": "candidate_verify_model_id_before_production",
+      "tier": "budget",
+      "tradeoff": "Lower quality ceiling.",
+      "use_when": "Task is repetitive, low risk, batchable, or sandbox-only."
+    },
+    {
+      "approval_gates": [
+        "provider_credentials",
+        "pricing_review",
+        "data_privacy_review"
+      ],
+      "bad_at": [
+        "private repo edits",
+        "creative asset generation"
+      ],
+      "best_tasks": [
+        "market_research",
+        "competitor_analysis"
+      ],
+      "cost_posture": "lowest_cost_candidate",
+      "family_id": "perplexity_search",
+      "good_at": [
+        "source-backed answers",
+        "current public facts",
+        "market scans"
+      ],
+      "id": "perplexity_search__private",
+      "label": "Search-grounded answer models - Local or Private",
+      "provider": "Perplexity",
+      "roles": [
+        "web_search",
+        "citations",
+        "research"
+      ],
+      "status": "candidate_verify_model_id_before_production",
+      "tier": "private",
+      "tradeoff": "Needs local hosting and stronger evals.",
+      "use_when": "Task touches sensitive docs or needs offline/cost-controlled processing."
+    },
+    {
+      "approval_gates": [
+        "provider_credentials",
+        "pricing_review",
+        "data_privacy_review"
+      ],
+      "bad_at": [
+        "text accuracy in images",
+        "unapproved likeness"
+      ],
+      "best_tasks": [
+        "image_generation",
+        "game_building"
+      ],
+      "cost_posture": "premium_or_quality_candidate",
+      "family_id": "stability_image",
+      "good_at": [
+        "asset variants",
+        "style exploration",
+        "textures"
+      ],
+      "id": "stability_image__quality",
+      "label": "Stability image models - Best Quality",
+      "provider": "Stability AI",
+      "roles": [
+        "image",
+        "design",
+        "assets"
+      ],
+      "status": "candidate_verify_model_id_before_production",
+      "tier": "quality",
+      "tradeoff": "Higher cost and latency.",
+      "use_when": "Task is high impact, hard, client-facing, or needs strong reasoning."
+    },
+    {
+      "approval_gates": [
+        "provider_credentials",
+        "pricing_review",
+        "data_privacy_review"
+      ],
+      "bad_at": [
+        "text accuracy in images",
+        "unapproved likeness"
+      ],
+      "best_tasks": [
+        "image_generation",
+        "game_building"
+      ],
+      "cost_posture": "cost_controlled_iteration",
+      "family_id": "stability_image",
+      "good_at": [
+        "asset variants",
+        "style exploration",
+        "textures"
+      ],
+      "id": "stability_image__fast",
+      "label": "Stability image models - Fast Iteration",
+      "provider": "Stability AI",
+      "roles": [
+        "image",
+        "design",
+        "assets"
+      ],
+      "status": "candidate_verify_model_id_before_production",
+      "tier": "fast",
+      "tradeoff": "May need review by a stronger model.",
+      "use_when": "Task needs quick drafts, tests, routing, or repeated loops."
+    },
+    {
+      "approval_gates": [
+        "provider_credentials",
+        "pricing_review",
+        "data_privacy_review"
+      ],
+      "bad_at": [
+        "text accuracy in images",
+        "unapproved likeness"
+      ],
+      "best_tasks": [
+        "image_generation",
+        "game_building"
+      ],
+      "cost_posture": "lowest_cost_candidate",
+      "family_id": "stability_image",
+      "good_at": [
+        "asset variants",
+        "style exploration",
+        "textures"
+      ],
+      "id": "stability_image__budget",
+      "label": "Stability image models - Budget Scale",
+      "provider": "Stability AI",
+      "roles": [
+        "image",
+        "design",
+        "assets"
+      ],
+      "status": "candidate_verify_model_id_before_production",
+      "tier": "budget",
+      "tradeoff": "Lower quality ceiling.",
+      "use_when": "Task is repetitive, low risk, batchable, or sandbox-only."
+    },
+    {
+      "approval_gates": [
+        "provider_credentials",
+        "pricing_review",
+        "data_privacy_review"
+      ],
+      "bad_at": [
+        "text accuracy in images",
+        "unapproved likeness"
+      ],
+      "best_tasks": [
+        "image_generation",
+        "game_building"
+      ],
+      "cost_posture": "lowest_cost_candidate",
+      "family_id": "stability_image",
+      "good_at": [
+        "asset variants",
+        "style exploration",
+        "textures"
+      ],
+      "id": "stability_image__private",
+      "label": "Stability image models - Local or Private",
+      "provider": "Stability AI",
+      "roles": [
+        "image",
+        "design",
+        "assets"
+      ],
+      "status": "candidate_verify_model_id_before_production",
+      "tier": "private",
+      "tradeoff": "Needs local hosting and stronger evals.",
+      "use_when": "Task touches sensitive docs or needs offline/cost-controlled processing."
+    },
+    {
+      "approval_gates": [
+        "provider_credentials",
+        "pricing_review",
+        "data_privacy_review"
+      ],
+      "bad_at": [
+        "rights-sensitive likeness tasks"
+      ],
+      "best_tasks": [
+        "image_generation",
+        "image_editing"
+      ],
+      "cost_posture": "premium_or_quality_candidate",
+      "family_id": "black_forest_image",
+      "good_at": [
+        "photoreal image concepts",
+        "brand visuals"
+      ],
+      "id": "black_forest_image__quality",
+      "label": "Black Forest Labs image models - Best Quality",
+      "provider": "Black Forest Labs",
+      "roles": [
+        "image",
+        "photoreal",
+        "creative"
+      ],
+      "status": "candidate_verify_model_id_before_production",
+      "tier": "quality",
+      "tradeoff": "Higher cost and latency.",
+      "use_when": "Task is high impact, hard, client-facing, or needs strong reasoning."
+    },
+    {
+      "approval_gates": [
+        "provider_credentials",
+        "pricing_review",
+        "data_privacy_review"
+      ],
+      "bad_at": [
+        "rights-sensitive likeness tasks"
+      ],
+      "best_tasks": [
+        "image_generation",
+        "image_editing"
+      ],
+      "cost_posture": "cost_controlled_iteration",
+      "family_id": "black_forest_image",
+      "good_at": [
+        "photoreal image concepts",
+        "brand visuals"
+      ],
+      "id": "black_forest_image__fast",
+      "label": "Black Forest Labs image models - Fast Iteration",
+      "provider": "Black Forest Labs",
+      "roles": [
+        "image",
+        "photoreal",
+        "creative"
+      ],
+      "status": "candidate_verify_model_id_before_production",
+      "tier": "fast",
+      "tradeoff": "May need review by a stronger model.",
+      "use_when": "Task needs quick drafts, tests, routing, or repeated loops."
+    },
+    {
+      "approval_gates": [
+        "provider_credentials",
+        "pricing_review",
+        "data_privacy_review"
+      ],
+      "bad_at": [
+        "rights-sensitive likeness tasks"
+      ],
+      "best_tasks": [
+        "image_generation",
+        "image_editing"
+      ],
+      "cost_posture": "lowest_cost_candidate",
+      "family_id": "black_forest_image",
+      "good_at": [
+        "photoreal image concepts",
+        "brand visuals"
+      ],
+      "id": "black_forest_image__budget",
+      "label": "Black Forest Labs image models - Budget Scale",
+      "provider": "Black Forest Labs",
+      "roles": [
+        "image",
+        "photoreal",
+        "creative"
+      ],
+      "status": "candidate_verify_model_id_before_production",
+      "tier": "budget",
+      "tradeoff": "Lower quality ceiling.",
+      "use_when": "Task is repetitive, low risk, batchable, or sandbox-only."
+    },
+    {
+      "approval_gates": [
+        "provider_credentials",
+        "pricing_review",
+        "data_privacy_review"
+      ],
+      "bad_at": [
+        "rights-sensitive likeness tasks"
+      ],
+      "best_tasks": [
+        "image_generation",
+        "image_editing"
+      ],
+      "cost_posture": "lowest_cost_candidate",
+      "family_id": "black_forest_image",
+      "good_at": [
+        "photoreal image concepts",
+        "brand visuals"
+      ],
+      "id": "black_forest_image__private",
+      "label": "Black Forest Labs image models - Local or Private",
+      "provider": "Black Forest Labs",
+      "roles": [
+        "image",
+        "photoreal",
+        "creative"
+      ],
+      "status": "candidate_verify_model_id_before_production",
+      "tier": "private",
+      "tradeoff": "Needs local hosting and stronger evals.",
+      "use_when": "Task touches sensitive docs or needs offline/cost-controlled processing."
+    },
+    {
+      "approval_gates": [
+        "provider_credentials",
+        "pricing_review",
+        "data_privacy_review"
+      ],
+      "bad_at": [
+        "regulated claims",
+        "unapproved people"
+      ],
+      "best_tasks": [
+        "video_generation",
+        "music_video_planning"
+      ],
+      "cost_posture": "premium_or_quality_candidate",
+      "family_id": "runway_video",
+      "good_at": [
+        "short video concepts",
+        "scene motion",
+        "creative drafts"
+      ],
+      "id": "runway_video__quality",
+      "label": "Runway video generation - Best Quality",
+      "provider": "Runway",
+      "roles": [
+        "video",
+        "storyboard",
+        "creative"
+      ],
+      "status": "candidate_verify_model_id_before_production",
+      "tier": "quality",
+      "tradeoff": "Higher cost and latency.",
+      "use_when": "Task is high impact, hard, client-facing, or needs strong reasoning."
+    },
+    {
+      "approval_gates": [
+        "provider_credentials",
+        "pricing_review",
+        "data_privacy_review"
+      ],
+      "bad_at": [
+        "regulated claims",
+        "unapproved people"
+      ],
+      "best_tasks": [
+        "video_generation",
+        "music_video_planning"
+      ],
+      "cost_posture": "cost_controlled_iteration",
+      "family_id": "runway_video",
+      "good_at": [
+        "short video concepts",
+        "scene motion",
+        "creative drafts"
+      ],
+      "id": "runway_video__fast",
+      "label": "Runway video generation - Fast Iteration",
+      "provider": "Runway",
+      "roles": [
+        "video",
+        "storyboard",
+        "creative"
+      ],
+      "status": "candidate_verify_model_id_before_production",
+      "tier": "fast",
+      "tradeoff": "May need review by a stronger model.",
+      "use_when": "Task needs quick drafts, tests, routing, or repeated loops."
+    },
+    {
+      "approval_gates": [
+        "provider_credentials",
+        "pricing_review",
+        "data_privacy_review"
+      ],
+      "bad_at": [
+        "regulated claims",
+        "unapproved people"
+      ],
+      "best_tasks": [
+        "video_generation",
+        "music_video_planning"
+      ],
+      "cost_posture": "lowest_cost_candidate",
+      "family_id": "runway_video",
+      "good_at": [
+        "short video concepts",
+        "scene motion",
+        "creative drafts"
+      ],
+      "id": "runway_video__budget",
+      "label": "Runway video generation - Budget Scale",
+      "provider": "Runway",
+      "roles": [
+        "video",
+        "storyboard",
+        "creative"
+      ],
+      "status": "candidate_verify_model_id_before_production",
+      "tier": "budget",
+      "tradeoff": "Lower quality ceiling.",
+      "use_when": "Task is repetitive, low risk, batchable, or sandbox-only."
+    },
+    {
+      "approval_gates": [
+        "provider_credentials",
+        "pricing_review",
+        "data_privacy_review"
+      ],
+      "bad_at": [
+        "regulated claims",
+        "unapproved people"
+      ],
+      "best_tasks": [
+        "video_generation",
+        "music_video_planning"
+      ],
+      "cost_posture": "lowest_cost_candidate",
+      "family_id": "runway_video",
+      "good_at": [
+        "short video concepts",
+        "scene motion",
+        "creative drafts"
+      ],
+      "id": "runway_video__private",
+      "label": "Runway video generation - Local or Private",
+      "provider": "Runway",
+      "roles": [
+        "video",
+        "storyboard",
+        "creative"
+      ],
+      "status": "candidate_verify_model_id_before_production",
+      "tier": "private",
+      "tradeoff": "Needs local hosting and stronger evals.",
+      "use_when": "Task touches sensitive docs or needs offline/cost-controlled processing."
+    },
+    {
+      "approval_gates": [
+        "provider_credentials",
+        "pricing_review",
+        "data_privacy_review"
+      ],
+      "bad_at": [
+        "voice cloning without consent"
+      ],
+      "best_tasks": [
+        "voiceover",
+        "kid_learning_video"
+      ],
+      "cost_posture": "low_cost_candidate",
+      "family_id": "elevenlabs_voice",
+      "good_at": [
+        "voiceover",
+        "narration",
+        "audio localization"
+      ],
+      "id": "elevenlabs_voice__quality",
+      "label": "ElevenLabs speech and voice - Best Quality",
+      "provider": "ElevenLabs",
+      "roles": [
+        "tts",
+        "voice",
+        "audio"
+      ],
+      "status": "candidate_verify_model_id_before_production",
+      "tier": "quality",
+      "tradeoff": "Higher cost and latency.",
+      "use_when": "Task is high impact, hard, client-facing, or needs strong reasoning."
+    },
+    {
+      "approval_gates": [
+        "provider_credentials",
+        "pricing_review",
+        "data_privacy_review"
+      ],
+      "bad_at": [
+        "voice cloning without consent"
+      ],
+      "best_tasks": [
+        "voiceover",
+        "kid_learning_video"
+      ],
+      "cost_posture": "low_cost_candidate",
+      "family_id": "elevenlabs_voice",
+      "good_at": [
+        "voiceover",
+        "narration",
+        "audio localization"
+      ],
+      "id": "elevenlabs_voice__fast",
+      "label": "ElevenLabs speech and voice - Fast Iteration",
+      "provider": "ElevenLabs",
+      "roles": [
+        "tts",
+        "voice",
+        "audio"
+      ],
+      "status": "candidate_verify_model_id_before_production",
+      "tier": "fast",
+      "tradeoff": "May need review by a stronger model.",
+      "use_when": "Task needs quick drafts, tests, routing, or repeated loops."
+    },
+    {
+      "approval_gates": [
+        "provider_credentials",
+        "pricing_review",
+        "data_privacy_review"
+      ],
+      "bad_at": [
+        "voice cloning without consent"
+      ],
+      "best_tasks": [
+        "voiceover",
+        "kid_learning_video"
+      ],
+      "cost_posture": "lowest_cost_candidate",
+      "family_id": "elevenlabs_voice",
+      "good_at": [
+        "voiceover",
+        "narration",
+        "audio localization"
+      ],
+      "id": "elevenlabs_voice__budget",
+      "label": "ElevenLabs speech and voice - Budget Scale",
+      "provider": "ElevenLabs",
+      "roles": [
+        "tts",
+        "voice",
+        "audio"
+      ],
+      "status": "candidate_verify_model_id_before_production",
+      "tier": "budget",
+      "tradeoff": "Lower quality ceiling.",
+      "use_when": "Task is repetitive, low risk, batchable, or sandbox-only."
+    },
+    {
+      "approval_gates": [
+        "provider_credentials",
+        "pricing_review",
+        "data_privacy_review"
+      ],
+      "bad_at": [
+        "voice cloning without consent"
+      ],
+      "best_tasks": [
+        "voiceover",
+        "kid_learning_video"
+      ],
+      "cost_posture": "lowest_cost_candidate",
+      "family_id": "elevenlabs_voice",
+      "good_at": [
+        "voiceover",
+        "narration",
+        "audio localization"
+      ],
+      "id": "elevenlabs_voice__private",
+      "label": "ElevenLabs speech and voice - Local or Private",
+      "provider": "ElevenLabs",
+      "roles": [
+        "tts",
+        "voice",
+        "audio"
+      ],
+      "status": "candidate_verify_model_id_before_production",
+      "tier": "private",
+      "tradeoff": "Needs local hosting and stronger evals.",
+      "use_when": "Task touches sensitive docs or needs offline/cost-controlled processing."
+    },
+    {
+      "approval_gates": [
+        "provider_credentials",
+        "pricing_review",
+        "data_privacy_review"
+      ],
+      "bad_at": [
+        "copyright-sensitive imitation"
+      ],
+      "best_tasks": [
+        "music_video_planning"
+      ],
+      "cost_posture": "premium_or_quality_candidate",
+      "family_id": "suno_music",
+      "good_at": [
+        "song demos",
+        "music video drafts",
+        "jingles"
+      ],
+      "id": "suno_music__quality",
+      "label": "Suno music generation - Best Quality",
+      "provider": "Suno",
+      "roles": [
+        "music",
+        "song",
+        "creative"
+      ],
+      "status": "candidate_verify_model_id_before_production",
+      "tier": "quality",
+      "tradeoff": "Higher cost and latency.",
+      "use_when": "Task is high impact, hard, client-facing, or needs strong reasoning."
+    },
+    {
+      "approval_gates": [
+        "provider_credentials",
+        "pricing_review",
+        "data_privacy_review"
+      ],
+      "bad_at": [
+        "copyright-sensitive imitation"
+      ],
+      "best_tasks": [
+        "music_video_planning"
+      ],
+      "cost_posture": "cost_controlled_iteration",
+      "family_id": "suno_music",
+      "good_at": [
+        "song demos",
+        "music video drafts",
+        "jingles"
+      ],
+      "id": "suno_music__fast",
+      "label": "Suno music generation - Fast Iteration",
+      "provider": "Suno",
+      "roles": [
+        "music",
+        "song",
+        "creative"
+      ],
+      "status": "candidate_verify_model_id_before_production",
+      "tier": "fast",
+      "tradeoff": "May need review by a stronger model.",
+      "use_when": "Task needs quick drafts, tests, routing, or repeated loops."
+    },
+    {
+      "approval_gates": [
+        "provider_credentials",
+        "pricing_review",
+        "data_privacy_review"
+      ],
+      "bad_at": [
+        "copyright-sensitive imitation"
+      ],
+      "best_tasks": [
+        "music_video_planning"
+      ],
+      "cost_posture": "lowest_cost_candidate",
+      "family_id": "suno_music",
+      "good_at": [
+        "song demos",
+        "music video drafts",
+        "jingles"
+      ],
+      "id": "suno_music__budget",
+      "label": "Suno music generation - Budget Scale",
+      "provider": "Suno",
+      "roles": [
+        "music",
+        "song",
+        "creative"
+      ],
+      "status": "candidate_verify_model_id_before_production",
+      "tier": "budget",
+      "tradeoff": "Lower quality ceiling.",
+      "use_when": "Task is repetitive, low risk, batchable, or sandbox-only."
+    },
+    {
+      "approval_gates": [
+        "provider_credentials",
+        "pricing_review",
+        "data_privacy_review"
+      ],
+      "bad_at": [
+        "copyright-sensitive imitation"
+      ],
+      "best_tasks": [
+        "music_video_planning"
+      ],
+      "cost_posture": "lowest_cost_candidate",
+      "family_id": "suno_music",
+      "good_at": [
+        "song demos",
+        "music video drafts",
+        "jingles"
+      ],
+      "id": "suno_music__private",
+      "label": "Suno music generation - Local or Private",
+      "provider": "Suno",
+      "roles": [
+        "music",
+        "song",
+        "creative"
+      ],
+      "status": "candidate_verify_model_id_before_production",
+      "tier": "private",
+      "tradeoff": "Needs local hosting and stronger evals.",
+      "use_when": "Task touches sensitive docs or needs offline/cost-controlled processing."
+    },
+    {
+      "approval_gates": [
+        "provider_credentials",
+        "pricing_review",
+        "data_privacy_review"
+      ],
+      "bad_at": [
+        "artist imitation",
+        "rights-sensitive lyrics"
+      ],
+      "best_tasks": [
+        "music_video_planning"
+      ],
+      "cost_posture": "premium_or_quality_candidate",
+      "family_id": "udio_music",
+      "good_at": [
+        "song concepts",
+        "genre sketches",
+        "creative audio"
+      ],
+      "id": "udio_music__quality",
+      "label": "Udio music generation - Best Quality",
+      "provider": "Udio",
+      "roles": [
+        "music",
+        "song",
+        "creative"
+      ],
+      "status": "candidate_verify_model_id_before_production",
+      "tier": "quality",
+      "tradeoff": "Higher cost and latency.",
+      "use_when": "Task is high impact, hard, client-facing, or needs strong reasoning."
+    },
+    {
+      "approval_gates": [
+        "provider_credentials",
+        "pricing_review",
+        "data_privacy_review"
+      ],
+      "bad_at": [
+        "artist imitation",
+        "rights-sensitive lyrics"
+      ],
+      "best_tasks": [
+        "music_video_planning"
+      ],
+      "cost_posture": "cost_controlled_iteration",
+      "family_id": "udio_music",
+      "good_at": [
+        "song concepts",
+        "genre sketches",
+        "creative audio"
+      ],
+      "id": "udio_music__fast",
+      "label": "Udio music generation - Fast Iteration",
+      "provider": "Udio",
+      "roles": [
+        "music",
+        "song",
+        "creative"
+      ],
+      "status": "candidate_verify_model_id_before_production",
+      "tier": "fast",
+      "tradeoff": "May need review by a stronger model.",
+      "use_when": "Task needs quick drafts, tests, routing, or repeated loops."
+    },
+    {
+      "approval_gates": [
+        "provider_credentials",
+        "pricing_review",
+        "data_privacy_review"
+      ],
+      "bad_at": [
+        "artist imitation",
+        "rights-sensitive lyrics"
+      ],
+      "best_tasks": [
+        "music_video_planning"
+      ],
+      "cost_posture": "lowest_cost_candidate",
+      "family_id": "udio_music",
+      "good_at": [
+        "song concepts",
+        "genre sketches",
+        "creative audio"
+      ],
+      "id": "udio_music__budget",
+      "label": "Udio music generation - Budget Scale",
+      "provider": "Udio",
+      "roles": [
+        "music",
+        "song",
+        "creative"
+      ],
+      "status": "candidate_verify_model_id_before_production",
+      "tier": "budget",
+      "tradeoff": "Lower quality ceiling.",
+      "use_when": "Task is repetitive, low risk, batchable, or sandbox-only."
+    },
+    {
+      "approval_gates": [
+        "provider_credentials",
+        "pricing_review",
+        "data_privacy_review"
+      ],
+      "bad_at": [
+        "artist imitation",
+        "rights-sensitive lyrics"
+      ],
+      "best_tasks": [
+        "music_video_planning"
+      ],
+      "cost_posture": "lowest_cost_candidate",
+      "family_id": "udio_music",
+      "good_at": [
+        "song concepts",
+        "genre sketches",
+        "creative audio"
+      ],
+      "id": "udio_music__private",
+      "label": "Udio music generation - Local or Private",
+      "provider": "Udio",
+      "roles": [
+        "music",
+        "song",
+        "creative"
+      ],
+      "status": "candidate_verify_model_id_before_production",
+      "tier": "private",
+      "tradeoff": "Needs local hosting and stronger evals.",
+      "use_when": "Task touches sensitive docs or needs offline/cost-controlled processing."
+    },
+    {
+      "approval_gates": [
+        "provider_credentials",
+        "pricing_review",
+        "data_privacy_review"
+      ],
+      "bad_at": [
+        "live editing unless integrated"
+      ],
+      "best_tasks": [
+        "image_generation",
+        "image_editing"
+      ],
+      "cost_posture": "premium_or_quality_candidate",
+      "family_id": "adobe_firefly",
+      "good_at": [
+        "brand assets",
+        "commercial-safe workflows",
+        "design iteration"
+      ],
+      "id": "adobe_firefly__quality",
+      "label": "Adobe Firefly creative media - Best Quality",
+      "provider": "Adobe",
+      "roles": [
+        "image",
+        "design",
+        "brand_safe"
+      ],
+      "status": "candidate_verify_model_id_before_production",
+      "tier": "quality",
+      "tradeoff": "Higher cost and latency.",
+      "use_when": "Task is high impact, hard, client-facing, or needs strong reasoning."
+    },
+    {
+      "approval_gates": [
+        "provider_credentials",
+        "pricing_review",
+        "data_privacy_review"
+      ],
+      "bad_at": [
+        "live editing unless integrated"
+      ],
+      "best_tasks": [
+        "image_generation",
+        "image_editing"
+      ],
+      "cost_posture": "cost_controlled_iteration",
+      "family_id": "adobe_firefly",
+      "good_at": [
+        "brand assets",
+        "commercial-safe workflows",
+        "design iteration"
+      ],
+      "id": "adobe_firefly__fast",
+      "label": "Adobe Firefly creative media - Fast Iteration",
+      "provider": "Adobe",
+      "roles": [
+        "image",
+        "design",
+        "brand_safe"
+      ],
+      "status": "candidate_verify_model_id_before_production",
+      "tier": "fast",
+      "tradeoff": "May need review by a stronger model.",
+      "use_when": "Task needs quick drafts, tests, routing, or repeated loops."
+    },
+    {
+      "approval_gates": [
+        "provider_credentials",
+        "pricing_review",
+        "data_privacy_review"
+      ],
+      "bad_at": [
+        "live editing unless integrated"
+      ],
+      "best_tasks": [
+        "image_generation",
+        "image_editing"
+      ],
+      "cost_posture": "lowest_cost_candidate",
+      "family_id": "adobe_firefly",
+      "good_at": [
+        "brand assets",
+        "commercial-safe workflows",
+        "design iteration"
+      ],
+      "id": "adobe_firefly__budget",
+      "label": "Adobe Firefly creative media - Budget Scale",
+      "provider": "Adobe",
+      "roles": [
+        "image",
+        "design",
+        "brand_safe"
+      ],
+      "status": "candidate_verify_model_id_before_production",
+      "tier": "budget",
+      "tradeoff": "Lower quality ceiling.",
+      "use_when": "Task is repetitive, low risk, batchable, or sandbox-only."
+    },
+    {
+      "approval_gates": [
+        "provider_credentials",
+        "pricing_review",
+        "data_privacy_review"
+      ],
+      "bad_at": [
+        "live editing unless integrated"
+      ],
+      "best_tasks": [
+        "image_generation",
+        "image_editing"
+      ],
+      "cost_posture": "lowest_cost_candidate",
+      "family_id": "adobe_firefly",
+      "good_at": [
+        "brand assets",
+        "commercial-safe workflows",
+        "design iteration"
+      ],
+      "id": "adobe_firefly__private",
+      "label": "Adobe Firefly creative media - Local or Private",
+      "provider": "Adobe",
+      "roles": [
+        "image",
+        "design",
+        "brand_safe"
+      ],
+      "status": "candidate_verify_model_id_before_production",
+      "tier": "private",
+      "tradeoff": "Needs local hosting and stronger evals.",
+      "use_when": "Task touches sensitive docs or needs offline/cost-controlled processing."
+    },
+    {
+      "approval_gates": [
+        "provider_credentials",
+        "pricing_review",
+        "data_privacy_review"
+      ],
+      "bad_at": [
+        "production reliability without hosting review"
+      ],
+      "best_tasks": [
+        "model_evaluation",
+        "simulation_building"
+      ],
+      "cost_posture": "low_cost_candidate",
+      "family_id": "huggingface_open",
+      "good_at": [
+        "model discovery",
+        "local tests",
+        "specialized models"
+      ],
+      "id": "huggingface_open__quality",
+      "label": "Hugging Face open model hub - Best Quality",
+      "provider": "Hugging Face",
+      "roles": [
+        "open_models",
+        "experiments",
+        "benchmarks"
+      ],
+      "status": "candidate_verify_model_id_before_production",
+      "tier": "quality",
+      "tradeoff": "Higher cost and latency.",
+      "use_when": "Task is high impact, hard, client-facing, or needs strong reasoning."
+    },
+    {
+      "approval_gates": [
+        "provider_credentials",
+        "pricing_review",
+        "data_privacy_review"
+      ],
+      "bad_at": [
+        "production reliability without hosting review"
+      ],
+      "best_tasks": [
+        "model_evaluation",
+        "simulation_building"
+      ],
+      "cost_posture": "low_cost_candidate",
+      "family_id": "huggingface_open",
+      "good_at": [
+        "model discovery",
+        "local tests",
+        "specialized models"
+      ],
+      "id": "huggingface_open__fast",
+      "label": "Hugging Face open model hub - Fast Iteration",
+      "provider": "Hugging Face",
+      "roles": [
+        "open_models",
+        "experiments",
+        "benchmarks"
+      ],
+      "status": "candidate_verify_model_id_before_production",
+      "tier": "fast",
+      "tradeoff": "May need review by a stronger model.",
+      "use_when": "Task needs quick drafts, tests, routing, or repeated loops."
+    },
+    {
+      "approval_gates": [
+        "provider_credentials",
+        "pricing_review",
+        "data_privacy_review"
+      ],
+      "bad_at": [
+        "production reliability without hosting review"
+      ],
+      "best_tasks": [
+        "model_evaluation",
+        "simulation_building"
+      ],
+      "cost_posture": "lowest_cost_candidate",
+      "family_id": "huggingface_open",
+      "good_at": [
+        "model discovery",
+        "local tests",
+        "specialized models"
+      ],
+      "id": "huggingface_open__budget",
+      "label": "Hugging Face open model hub - Budget Scale",
+      "provider": "Hugging Face",
+      "roles": [
+        "open_models",
+        "experiments",
+        "benchmarks"
+      ],
+      "status": "candidate_verify_model_id_before_production",
+      "tier": "budget",
+      "tradeoff": "Lower quality ceiling.",
+      "use_when": "Task is repetitive, low risk, batchable, or sandbox-only."
+    },
+    {
+      "approval_gates": [
+        "provider_credentials",
+        "pricing_review",
+        "data_privacy_review"
+      ],
+      "bad_at": [
+        "production reliability without hosting review"
+      ],
+      "best_tasks": [
+        "model_evaluation",
+        "simulation_building"
+      ],
+      "cost_posture": "lowest_cost_candidate",
+      "family_id": "huggingface_open",
+      "good_at": [
+        "model discovery",
+        "local tests",
+        "specialized models"
+      ],
+      "id": "huggingface_open__private",
+      "label": "Hugging Face open model hub - Local or Private",
+      "provider": "Hugging Face",
+      "roles": [
+        "open_models",
+        "experiments",
+        "benchmarks"
+      ],
+      "status": "candidate_verify_model_id_before_production",
+      "tier": "private",
+      "tradeoff": "Needs local hosting and stronger evals.",
+      "use_when": "Task touches sensitive docs or needs offline/cost-controlled processing."
+    },
+    {
+      "approval_gates": [
+        "provider_credentials",
+        "pricing_review",
+        "data_privacy_review"
+      ],
+      "bad_at": [
+        "small low-budget projects unless justified"
+      ],
+      "best_tasks": [
+        "simulation_building",
+        "data_extraction"
+      ],
+      "cost_posture": "premium_or_quality_candidate",
+      "family_id": "nvidia_nim",
+      "good_at": [
+        "GPU inference",
+        "vision pipelines",
+        "enterprise deployment"
+      ],
+      "id": "nvidia_nim__quality",
+      "label": "NVIDIA hosted/open AI services - Best Quality",
+      "provider": "NVIDIA",
+      "roles": [
+        "accelerated_inference",
+        "vision",
+        "enterprise"
+      ],
+      "status": "candidate_verify_model_id_before_production",
+      "tier": "quality",
+      "tradeoff": "Higher cost and latency.",
+      "use_when": "Task is high impact, hard, client-facing, or needs strong reasoning."
+    },
+    {
+      "approval_gates": [
+        "provider_credentials",
+        "pricing_review",
+        "data_privacy_review"
+      ],
+      "bad_at": [
+        "small low-budget projects unless justified"
+      ],
+      "best_tasks": [
+        "simulation_building",
+        "data_extraction"
+      ],
+      "cost_posture": "cost_controlled_iteration",
+      "family_id": "nvidia_nim",
+      "good_at": [
+        "GPU inference",
+        "vision pipelines",
+        "enterprise deployment"
+      ],
+      "id": "nvidia_nim__fast",
+      "label": "NVIDIA hosted/open AI services - Fast Iteration",
+      "provider": "NVIDIA",
+      "roles": [
+        "accelerated_inference",
+        "vision",
+        "enterprise"
+      ],
+      "status": "candidate_verify_model_id_before_production",
+      "tier": "fast",
+      "tradeoff": "May need review by a stronger model.",
+      "use_when": "Task needs quick drafts, tests, routing, or repeated loops."
+    },
+    {
+      "approval_gates": [
+        "provider_credentials",
+        "pricing_review",
+        "data_privacy_review"
+      ],
+      "bad_at": [
+        "small low-budget projects unless justified"
+      ],
+      "best_tasks": [
+        "simulation_building",
+        "data_extraction"
+      ],
+      "cost_posture": "lowest_cost_candidate",
+      "family_id": "nvidia_nim",
+      "good_at": [
+        "GPU inference",
+        "vision pipelines",
+        "enterprise deployment"
+      ],
+      "id": "nvidia_nim__budget",
+      "label": "NVIDIA hosted/open AI services - Budget Scale",
+      "provider": "NVIDIA",
+      "roles": [
+        "accelerated_inference",
+        "vision",
+        "enterprise"
+      ],
+      "status": "candidate_verify_model_id_before_production",
+      "tier": "budget",
+      "tradeoff": "Lower quality ceiling.",
+      "use_when": "Task is repetitive, low risk, batchable, or sandbox-only."
+    },
+    {
+      "approval_gates": [
+        "provider_credentials",
+        "pricing_review",
+        "data_privacy_review"
+      ],
+      "bad_at": [
+        "small low-budget projects unless justified"
+      ],
+      "best_tasks": [
+        "simulation_building",
+        "data_extraction"
+      ],
+      "cost_posture": "lowest_cost_candidate",
+      "family_id": "nvidia_nim",
+      "good_at": [
+        "GPU inference",
+        "vision pipelines",
+        "enterprise deployment"
+      ],
+      "id": "nvidia_nim__private",
+      "label": "NVIDIA hosted/open AI services - Local or Private",
+      "provider": "NVIDIA",
+      "roles": [
+        "accelerated_inference",
+        "vision",
+        "enterprise"
+      ],
+      "status": "candidate_verify_model_id_before_production",
+      "tier": "private",
+      "tradeoff": "Needs local hosting and stronger evals.",
+      "use_when": "Task touches sensitive docs or needs offline/cost-controlled processing."
+    },
+    {
+      "approval_gates": [
+        "provider_credentials",
+        "pricing_review",
+        "data_privacy_review"
+      ],
+      "bad_at": [
+        "simple creative tasks"
+      ],
+      "best_tasks": [
+        "dashboard_building",
+        "data_extraction"
+      ],
+      "cost_posture": "premium_or_quality_candidate",
+      "family_id": "databricks_mosaic",
+      "good_at": [
+        "data-heavy agents",
+        "analytics",
+        "enterprise pipelines"
+      ],
+      "id": "databricks_mosaic__quality",
+      "label": "Databricks data and model serving - Best Quality",
+      "provider": "Databricks",
+      "roles": [
+        "data_ai",
+        "enterprise",
+        "analytics"
+      ],
+      "status": "candidate_verify_model_id_before_production",
+      "tier": "quality",
+      "tradeoff": "Higher cost and latency.",
+      "use_when": "Task is high impact, hard, client-facing, or needs strong reasoning."
+    },
+    {
+      "approval_gates": [
+        "provider_credentials",
+        "pricing_review",
+        "data_privacy_review"
+      ],
+      "bad_at": [
+        "simple creative tasks"
+      ],
+      "best_tasks": [
+        "dashboard_building",
+        "data_extraction"
+      ],
+      "cost_posture": "cost_controlled_iteration",
+      "family_id": "databricks_mosaic",
+      "good_at": [
+        "data-heavy agents",
+        "analytics",
+        "enterprise pipelines"
+      ],
+      "id": "databricks_mosaic__fast",
+      "label": "Databricks data and model serving - Fast Iteration",
+      "provider": "Databricks",
+      "roles": [
+        "data_ai",
+        "enterprise",
+        "analytics"
+      ],
+      "status": "candidate_verify_model_id_before_production",
+      "tier": "fast",
+      "tradeoff": "May need review by a stronger model.",
+      "use_when": "Task needs quick drafts, tests, routing, or repeated loops."
+    },
+    {
+      "approval_gates": [
+        "provider_credentials",
+        "pricing_review",
+        "data_privacy_review"
+      ],
+      "bad_at": [
+        "simple creative tasks"
+      ],
+      "best_tasks": [
+        "dashboard_building",
+        "data_extraction"
+      ],
+      "cost_posture": "lowest_cost_candidate",
+      "family_id": "databricks_mosaic",
+      "good_at": [
+        "data-heavy agents",
+        "analytics",
+        "enterprise pipelines"
+      ],
+      "id": "databricks_mosaic__budget",
+      "label": "Databricks data and model serving - Budget Scale",
+      "provider": "Databricks",
+      "roles": [
+        "data_ai",
+        "enterprise",
+        "analytics"
+      ],
+      "status": "candidate_verify_model_id_before_production",
+      "tier": "budget",
+      "tradeoff": "Lower quality ceiling.",
+      "use_when": "Task is repetitive, low risk, batchable, or sandbox-only."
+    },
+    {
+      "approval_gates": [
+        "provider_credentials",
+        "pricing_review",
+        "data_privacy_review"
+      ],
+      "bad_at": [
+        "simple creative tasks"
+      ],
+      "best_tasks": [
+        "dashboard_building",
+        "data_extraction"
+      ],
+      "cost_posture": "lowest_cost_candidate",
+      "family_id": "databricks_mosaic",
+      "good_at": [
+        "data-heavy agents",
+        "analytics",
+        "enterprise pipelines"
+      ],
+      "id": "databricks_mosaic__private",
+      "label": "Databricks data and model serving - Local or Private",
+      "provider": "Databricks",
+      "roles": [
+        "data_ai",
+        "enterprise",
+        "analytics"
+      ],
+      "status": "candidate_verify_model_id_before_production",
+      "tier": "private",
+      "tradeoff": "Needs local hosting and stronger evals.",
+      "use_when": "Task touches sensitive docs or needs offline/cost-controlled processing."
+    },
+    {
+      "approval_gates": [
+        "provider_credentials",
+        "pricing_review",
+        "data_privacy_review"
+      ],
+      "bad_at": [
+        "image/video/audio"
+      ],
+      "best_tasks": [
+        "sales_copy",
+        "customer_support"
+      ],
+      "cost_posture": "premium_or_quality_candidate",
+      "family_id": "ai21_language",
+      "good_at": [
+        "business writing",
+        "summaries",
+        "text workflows"
+      ],
+      "id": "ai21_language__quality",
+      "label": "AI21 language models - Best Quality",
+      "provider": "AI21",
+      "roles": [
+        "writing",
+        "enterprise_text"
+      ],
+      "status": "candidate_verify_model_id_before_production",
+      "tier": "quality",
+      "tradeoff": "Higher cost and latency.",
+      "use_when": "Task is high impact, hard, client-facing, or needs strong reasoning."
+    },
+    {
+      "approval_gates": [
+        "provider_credentials",
+        "pricing_review",
+        "data_privacy_review"
+      ],
+      "bad_at": [
+        "image/video/audio"
+      ],
+      "best_tasks": [
+        "sales_copy",
+        "customer_support"
+      ],
+      "cost_posture": "cost_controlled_iteration",
+      "family_id": "ai21_language",
+      "good_at": [
+        "business writing",
+        "summaries",
+        "text workflows"
+      ],
+      "id": "ai21_language__fast",
+      "label": "AI21 language models - Fast Iteration",
+      "provider": "AI21",
+      "roles": [
+        "writing",
+        "enterprise_text"
+      ],
+      "status": "candidate_verify_model_id_before_production",
+      "tier": "fast",
+      "tradeoff": "May need review by a stronger model.",
+      "use_when": "Task needs quick drafts, tests, routing, or repeated loops."
+    },
+    {
+      "approval_gates": [
+        "provider_credentials",
+        "pricing_review",
+        "data_privacy_review"
+      ],
+      "bad_at": [
+        "image/video/audio"
+      ],
+      "best_tasks": [
+        "sales_copy",
+        "customer_support"
+      ],
+      "cost_posture": "lowest_cost_candidate",
+      "family_id": "ai21_language",
+      "good_at": [
+        "business writing",
+        "summaries",
+        "text workflows"
+      ],
+      "id": "ai21_language__budget",
+      "label": "AI21 language models - Budget Scale",
+      "provider": "AI21",
+      "roles": [
+        "writing",
+        "enterprise_text"
+      ],
+      "status": "candidate_verify_model_id_before_production",
+      "tier": "budget",
+      "tradeoff": "Lower quality ceiling.",
+      "use_when": "Task is repetitive, low risk, batchable, or sandbox-only."
+    },
+    {
+      "approval_gates": [
+        "provider_credentials",
+        "pricing_review",
+        "data_privacy_review"
+      ],
+      "bad_at": [
+        "image/video/audio"
+      ],
+      "best_tasks": [
+        "sales_copy",
+        "customer_support"
+      ],
+      "cost_posture": "lowest_cost_candidate",
+      "family_id": "ai21_language",
+      "good_at": [
+        "business writing",
+        "summaries",
+        "text workflows"
+      ],
+      "id": "ai21_language__private",
+      "label": "AI21 language models - Local or Private",
+      "provider": "AI21",
+      "roles": [
+        "writing",
+        "enterprise_text"
+      ],
+      "status": "candidate_verify_model_id_before_production",
+      "tier": "private",
+      "tradeoff": "Needs local hosting and stronger evals.",
+      "use_when": "Task touches sensitive docs or needs offline/cost-controlled processing."
+    },
+    {
+      "approval_gates": [
+        "provider_credentials",
+        "pricing_review",
+        "data_privacy_review"
+      ],
+      "bad_at": [
+        "unsupported proprietary-only features"
+      ],
+      "best_tasks": [
+        "model_evaluation",
+        "coding"
+      ],
+      "cost_posture": "low_cost_candidate",
+      "family_id": "together_open",
+      "good_at": [
+        "open model routing",
+        "experiments",
+        "cost comparison"
+      ],
+      "id": "together_open__quality",
+      "label": "Together open model hosting - Best Quality",
+      "provider": "Together AI",
+      "roles": [
+        "open_model_hosting",
+        "fast_inference"
+      ],
+      "status": "candidate_verify_model_id_before_production",
+      "tier": "quality",
+      "tradeoff": "Higher cost and latency.",
+      "use_when": "Task is high impact, hard, client-facing, or needs strong reasoning."
+    },
+    {
+      "approval_gates": [
+        "provider_credentials",
+        "pricing_review",
+        "data_privacy_review"
+      ],
+      "bad_at": [
+        "unsupported proprietary-only features"
+      ],
+      "best_tasks": [
+        "model_evaluation",
+        "coding"
+      ],
+      "cost_posture": "low_cost_candidate",
+      "family_id": "together_open",
+      "good_at": [
+        "open model routing",
+        "experiments",
+        "cost comparison"
+      ],
+      "id": "together_open__fast",
+      "label": "Together open model hosting - Fast Iteration",
+      "provider": "Together AI",
+      "roles": [
+        "open_model_hosting",
+        "fast_inference"
+      ],
+      "status": "candidate_verify_model_id_before_production",
+      "tier": "fast",
+      "tradeoff": "May need review by a stronger model.",
+      "use_when": "Task needs quick drafts, tests, routing, or repeated loops."
+    },
+    {
+      "approval_gates": [
+        "provider_credentials",
+        "pricing_review",
+        "data_privacy_review"
+      ],
+      "bad_at": [
+        "unsupported proprietary-only features"
+      ],
+      "best_tasks": [
+        "model_evaluation",
+        "coding"
+      ],
+      "cost_posture": "lowest_cost_candidate",
+      "family_id": "together_open",
+      "good_at": [
+        "open model routing",
+        "experiments",
+        "cost comparison"
+      ],
+      "id": "together_open__budget",
+      "label": "Together open model hosting - Budget Scale",
+      "provider": "Together AI",
+      "roles": [
+        "open_model_hosting",
+        "fast_inference"
+      ],
+      "status": "candidate_verify_model_id_before_production",
+      "tier": "budget",
+      "tradeoff": "Lower quality ceiling.",
+      "use_when": "Task is repetitive, low risk, batchable, or sandbox-only."
+    },
+    {
+      "approval_gates": [
+        "provider_credentials",
+        "pricing_review",
+        "data_privacy_review"
+      ],
+      "bad_at": [
+        "unsupported proprietary-only features"
+      ],
+      "best_tasks": [
+        "model_evaluation",
+        "coding"
+      ],
+      "cost_posture": "lowest_cost_candidate",
+      "family_id": "together_open",
+      "good_at": [
+        "open model routing",
+        "experiments",
+        "cost comparison"
+      ],
+      "id": "together_open__private",
+      "label": "Together open model hosting - Local or Private",
+      "provider": "Together AI",
+      "roles": [
+        "open_model_hosting",
+        "fast_inference"
+      ],
+      "status": "candidate_verify_model_id_before_production",
+      "tier": "private",
+      "tradeoff": "Needs local hosting and stronger evals.",
+      "use_when": "Task touches sensitive docs or needs offline/cost-controlled processing."
+    },
+    {
+      "approval_gates": [
+        "provider_credentials",
+        "pricing_review",
+        "data_privacy_review"
+      ],
+      "bad_at": [
+        "unverified high-stakes decisions"
+      ],
+      "best_tasks": [
+        "workflow_automation",
+        "coding"
+      ],
+      "cost_posture": "premium_or_quality_candidate",
+      "family_id": "fireworks_open",
+      "good_at": [
+        "fast agent calls",
+        "open model testing",
+        "batch tasks"
+      ],
+      "id": "fireworks_open__quality",
+      "label": "Fireworks fast model serving - Best Quality",
+      "provider": "Fireworks AI",
+      "roles": [
+        "fast_inference",
+        "open_models",
+        "agents"
+      ],
+      "status": "candidate_verify_model_id_before_production",
+      "tier": "quality",
+      "tradeoff": "Higher cost and latency.",
+      "use_when": "Task is high impact, hard, client-facing, or needs strong reasoning."
+    },
+    {
+      "approval_gates": [
+        "provider_credentials",
+        "pricing_review",
+        "data_privacy_review"
+      ],
+      "bad_at": [
+        "unverified high-stakes decisions"
+      ],
+      "best_tasks": [
+        "workflow_automation",
+        "coding"
+      ],
+      "cost_posture": "cost_controlled_iteration",
+      "family_id": "fireworks_open",
+      "good_at": [
+        "fast agent calls",
+        "open model testing",
+        "batch tasks"
+      ],
+      "id": "fireworks_open__fast",
+      "label": "Fireworks fast model serving - Fast Iteration",
+      "provider": "Fireworks AI",
+      "roles": [
+        "fast_inference",
+        "open_models",
+        "agents"
+      ],
+      "status": "candidate_verify_model_id_before_production",
+      "tier": "fast",
+      "tradeoff": "May need review by a stronger model.",
+      "use_when": "Task needs quick drafts, tests, routing, or repeated loops."
+    },
+    {
+      "approval_gates": [
+        "provider_credentials",
+        "pricing_review",
+        "data_privacy_review"
+      ],
+      "bad_at": [
+        "unverified high-stakes decisions"
+      ],
+      "best_tasks": [
+        "workflow_automation",
+        "coding"
+      ],
+      "cost_posture": "lowest_cost_candidate",
+      "family_id": "fireworks_open",
+      "good_at": [
+        "fast agent calls",
+        "open model testing",
+        "batch tasks"
+      ],
+      "id": "fireworks_open__budget",
+      "label": "Fireworks fast model serving - Budget Scale",
+      "provider": "Fireworks AI",
+      "roles": [
+        "fast_inference",
+        "open_models",
+        "agents"
+      ],
+      "status": "candidate_verify_model_id_before_production",
+      "tier": "budget",
+      "tradeoff": "Lower quality ceiling.",
+      "use_when": "Task is repetitive, low risk, batchable, or sandbox-only."
+    },
+    {
+      "approval_gates": [
+        "provider_credentials",
+        "pricing_review",
+        "data_privacy_review"
+      ],
+      "bad_at": [
+        "unverified high-stakes decisions"
+      ],
+      "best_tasks": [
+        "workflow_automation",
+        "coding"
+      ],
+      "cost_posture": "lowest_cost_candidate",
+      "family_id": "fireworks_open",
+      "good_at": [
+        "fast agent calls",
+        "open model testing",
+        "batch tasks"
+      ],
+      "id": "fireworks_open__private",
+      "label": "Fireworks fast model serving - Local or Private",
+      "provider": "Fireworks AI",
+      "roles": [
+        "fast_inference",
+        "open_models",
+        "agents"
+      ],
+      "status": "candidate_verify_model_id_before_production",
+      "tier": "private",
+      "tradeoff": "Needs local hosting and stronger evals.",
+      "use_when": "Task touches sensitive docs or needs offline/cost-controlled processing."
+    }
+  ],
+  "policy": {
+    "approval_rule": "External sends, paid calls, production deploys, customer data, money movement, likeness cloning, and account changes require owner approval.",
+    "cost_rule": "Prefer free-tier, local, cached, batch, and smallest-capable models for sandbox work. Escalate to paid or premium models only after cost review and owner approval.",
+    "model_id_rule": "Provider model IDs, prices, rate limits, and availability change often. Treat every resource as a routing candidate and verify the current provider model ID before production use.",
+    "secret_rule": "Never store provider API keys, customer secrets, private prompts, raw credentials, or paid content in this catalog."
+  },
+  "provider_docs": [
+    {
+      "provider": "OpenAI",
+      "url": "https://platform.openai.com/docs/models"
+    },
+    {
+      "provider": "Anthropic",
+      "url": "https://docs.anthropic.com/en/docs/about-claude/models"
+    },
+    {
+      "provider": "Google",
+      "url": "https://ai.google.dev/gemini-api/docs/models"
+    },
+    {
+      "provider": "Meta",
+      "url": "https://llama.meta.com/docs/model-cards-and-prompt-formats/"
+    },
+    {
+      "provider": "Mistral",
+      "url": "https://docs.mistral.ai/getting-started/models/"
+    },
+    {
+      "provider": "Cohere",
+      "url": "https://docs.cohere.com/docs/models"
+    },
+    {
+      "provider": "xAI",
+      "url": "https://docs.x.ai/docs/models"
+    },
+    {
+      "provider": "DeepSeek",
+      "url": "https://api-docs.deepseek.com/quick_start/pricing"
+    },
+    {
+      "provider": "Qwen",
+      "url": "https://qwen.readthedocs.io/"
+    },
+    {
+      "provider": "Perplexity",
+      "url": "https://docs.perplexity.ai/guides/model-cards"
+    },
+    {
+      "provider": "Stability AI",
+      "url": "https://platform.stability.ai/docs"
+    },
+    {
+      "provider": "Black Forest Labs",
+      "url": "https://docs.bfl.ai/"
+    },
+    {
+      "provider": "Runway",
+      "url": "https://docs.dev.runwayml.com/"
+    },
+    {
+      "provider": "ElevenLabs",
+      "url": "https://elevenlabs.io/docs"
+    },
+    {
+      "provider": "Hugging Face",
+      "url": "https://huggingface.co/docs"
+    }
+  ],
+  "providers": [
+    "AI21",
+    "Adobe",
+    "Anthropic",
+    "Black Forest Labs",
+    "Cohere",
+    "Databricks",
+    "DeepSeek",
+    "ElevenLabs",
+    "Fireworks AI",
+    "Google",
+    "Hugging Face",
+    "Meta",
+    "Mistral",
+    "NVIDIA",
+    "OpenAI",
+    "Perplexity",
+    "Qwen",
+    "Runway",
+    "Stability AI",
+    "Suno",
+    "Together AI",
+    "Udio",
+    "xAI"
+  ],
+  "schema": "dreamco.buddy_ai_agent_model_library_report.v1",
+  "source_config": "config/buddy_ai_agent_model_library.json",
+  "summary": {
+    "agent_types": 18,
+    "approval_gated_resources": 104,
+    "autonomous_decision_governance_ready": true,
+    "autonomous_decision_pipeline_steps": 12,
+    "autonomous_decision_scope_count": 14,
+    "benchmark_sources": 5,
+    "bot_count": 1248,
+    "bots_with_autonomous_decision_governance": 1248,
+    "bots_with_codex_final_judge_gate": 1248,
+    "bots_with_model_routing": 1248,
+    "bots_with_training_eval_policy": 1248,
+    "bots_with_world_model_council": 1248,
+    "codex_final_judge_cannot_override_owner_approval": true,
+    "codex_final_judge_enabled": true,
+    "free_or_cheap_routing_enabled": true,
+    "google_gemini_resources": 8,
+    "low_cost_resources": 86,
+    "model_resources": 104,
+    "owner_approval_live_impact_gates": 14,
+    "prompt_types": 20,
+    "providers": 23,
+    "resources_requiring_model_id_verification": 104,
+    "target_model_resources": 100,
+    "task_routes": 33,
+    "tool_types": 23,
+    "top_100_model_resources_ready": true,
+    "training_eval_policy_ready": true,
+    "world_model_council_ready": true,
+    "world_model_council_steps": 7
+  },
+  "task_routes": [
+    {
+      "fallback_resources": [
+        "openai_reasoning__budget",
+        "openai_reasoning__fast",
+        "openai_reasoning__private"
+      ],
+      "primary_resource": "openai_reasoning__quality",
+      "required_evals": [
+        "task_success",
+        "cost_latency",
+        "source_quality",
+        "safety_gate",
+        "user_value"
+      ],
+      "selection_reason": "Ranked by declared best_tasks, roles, quality tier, and safe fallback coverage.",
+      "task_type": "architecture"
+    },
+    {
+      "fallback_resources": [
+        "openai_reasoning__quality",
+        "qwen_models__quality",
+        "deepseek_coder_reasoner__budget"
+      ],
+      "primary_resource": "deepseek_coder_reasoner__quality",
+      "required_evals": [
+        "task_success",
+        "cost_latency",
+        "source_quality",
+        "safety_gate",
+        "user_value"
+      ],
+      "selection_reason": "Ranked by declared best_tasks, roles, quality tier, and safe fallback coverage.",
+      "task_type": "coding"
+    },
+    {
+      "fallback_resources": [
+        "openai_reasoning__quality",
+        "deepseek_coder_reasoner__budget",
+        "deepseek_coder_reasoner__fast"
+      ],
+      "primary_resource": "deepseek_coder_reasoner__quality",
+      "required_evals": [
+        "task_success",
+        "cost_latency",
+        "source_quality",
+        "safety_gate",
+        "user_value"
+      ],
+      "selection_reason": "Ranked by declared best_tasks, roles, quality tier, and safe fallback coverage.",
+      "task_type": "debugging"
+    },
+    {
+      "fallback_resources": [
+        "anthropic_claude__budget",
+        "anthropic_claude__fast",
+        "anthropic_claude__private"
+      ],
+      "primary_resource": "anthropic_claude__quality",
+      "required_evals": [
+        "task_success",
+        "cost_latency",
+        "source_quality",
+        "safety_gate",
+        "user_value"
+      ],
+      "selection_reason": "Ranked by declared best_tasks, roles, quality tier, and safe fallback coverage.",
+      "task_type": "repo_review"
+    },
+    {
+      "fallback_resources": [
+        "perplexity_search__budget",
+        "perplexity_search__fast",
+        "perplexity_search__private"
+      ],
+      "primary_resource": "perplexity_search__quality",
+      "required_evals": [
+        "task_success",
+        "cost_latency",
+        "source_quality",
+        "safety_gate",
+        "user_value"
+      ],
+      "selection_reason": "Ranked by declared best_tasks, roles, quality tier, and safe fallback coverage.",
+      "task_type": "market_research"
+    },
+    {
+      "fallback_resources": [
+        "xai_grok__quality",
+        "perplexity_search__budget",
+        "perplexity_search__fast"
+      ],
+      "primary_resource": "perplexity_search__quality",
+      "required_evals": [
+        "task_success",
+        "cost_latency",
+        "source_quality",
+        "safety_gate",
+        "user_value"
+      ],
+      "selection_reason": "Ranked by declared best_tasks, roles, quality tier, and safe fallback coverage.",
+      "task_type": "competitor_analysis"
+    },
+    {
+      "fallback_resources": [
+        "anthropic_claude__quality",
+        "mistral_models__quality",
+        "ai21_language__budget"
+      ],
+      "primary_resource": "ai21_language__quality",
+      "required_evals": [
+        "task_success",
+        "cost_latency",
+        "source_quality",
+        "safety_gate",
+        "user_value"
+      ],
+      "selection_reason": "Ranked by declared best_tasks, roles, quality tier, and safe fallback coverage.",
+      "task_type": "sales_copy"
+    },
+    {
+      "fallback_resources": [
+        "google_gemini_flash_lite__quality",
+        "meta_llama__quality",
+        "openai_realtime__quality"
+      ],
+      "primary_resource": "ai21_language__quality",
+      "required_evals": [
+        "task_success",
+        "cost_latency",
+        "source_quality",
+        "safety_gate",
+        "user_value"
+      ],
+      "selection_reason": "Ranked by declared best_tasks, roles, quality tier, and safe fallback coverage.",
+      "task_type": "customer_support"
+    },
+    {
+      "fallback_resources": [
+        "databricks_mosaic__quality",
+        "google_gemini_flash_lite__quality",
+        "mistral_models__quality"
+      ],
+      "primary_resource": "cohere_command__quality",
+      "required_evals": [
+        "task_success",
+        "cost_latency",
+        "source_quality",
+        "safety_gate",
+        "user_value"
+      ],
+      "selection_reason": "Ranked by declared best_tasks, roles, quality tier, and safe fallback coverage.",
+      "task_type": "data_extraction"
+    },
+    {
+      "fallback_resources": [
+        "databricks_mosaic__budget",
+        "databricks_mosaic__fast",
+        "databricks_mosaic__private"
+      ],
+      "primary_resource": "databricks_mosaic__quality",
+      "required_evals": [
+        "task_success",
+        "cost_latency",
+        "source_quality",
+        "safety_gate",
+        "user_value"
+      ],
+      "selection_reason": "Ranked by declared best_tasks, roles, quality tier, and safe fallback coverage.",
+      "task_type": "dashboard_building"
+    },
+    {
+      "fallback_resources": [
+        "black_forest_image__quality",
+        "openai_image__quality",
+        "stability_image__quality"
+      ],
+      "primary_resource": "adobe_firefly__quality",
+      "required_evals": [
+        "task_success",
+        "cost_latency",
+        "source_quality",
+        "safety_gate",
+        "user_value"
+      ],
+      "selection_reason": "Ranked by declared best_tasks, roles, quality tier, and safe fallback coverage.",
+      "task_type": "image_generation"
+    },
+    {
+      "fallback_resources": [
+        "black_forest_image__quality",
+        "openai_image__quality",
+        "adobe_firefly__budget"
+      ],
+      "primary_resource": "adobe_firefly__quality",
+      "required_evals": [
+        "task_success",
+        "cost_latency",
+        "source_quality",
+        "safety_gate",
+        "user_value"
+      ],
+      "selection_reason": "Ranked by declared best_tasks, roles, quality tier, and safe fallback coverage.",
+      "task_type": "image_editing"
+    },
+    {
+      "fallback_resources": [
+        "google_gemini__budget",
+        "google_gemini__fast",
+        "google_gemini__private"
+      ],
+      "primary_resource": "google_gemini__quality",
+      "required_evals": [
+        "task_success",
+        "cost_latency",
+        "source_quality",
+        "safety_gate",
+        "user_value"
+      ],
+      "selection_reason": "Ranked by declared best_tasks, roles, quality tier, and safe fallback coverage.",
+      "task_type": "video_storyboard"
+    },
+    {
+      "fallback_resources": [
+        "runway_video__budget",
+        "runway_video__fast",
+        "runway_video__private"
+      ],
+      "primary_resource": "runway_video__quality",
+      "required_evals": [
+        "task_success",
+        "cost_latency",
+        "source_quality",
+        "safety_gate",
+        "user_value"
+      ],
+      "selection_reason": "Ranked by declared best_tasks, roles, quality tier, and safe fallback coverage.",
+      "task_type": "video_generation"
+    },
+    {
+      "fallback_resources": [
+        "runway_video__budget",
+        "runway_video__fast",
+        "runway_video__private"
+      ],
+      "primary_resource": "runway_video__quality",
+      "required_evals": [
+        "task_success",
+        "cost_latency",
+        "source_quality",
+        "safety_gate",
+        "user_value"
+      ],
+      "selection_reason": "Ranked by declared best_tasks, roles, quality tier, and safe fallback coverage.",
+      "task_type": "music_video_planning"
+    },
+    {
+      "fallback_resources": [
+        "openai_realtime__quality",
+        "elevenlabs_voice__budget",
+        "elevenlabs_voice__fast"
+      ],
+      "primary_resource": "elevenlabs_voice__quality",
+      "required_evals": [
+        "task_success",
+        "cost_latency",
+        "source_quality",
+        "safety_gate",
+        "user_value"
+      ],
+      "selection_reason": "Ranked by declared best_tasks, roles, quality tier, and safe fallback coverage.",
+      "task_type": "voiceover"
+    },
+    {
+      "fallback_resources": [
+        "adobe_firefly__quality",
+        "anthropic_claude__quality",
+        "black_forest_image__quality"
+      ],
+      "primary_resource": "ai21_language__quality",
+      "required_evals": [
+        "task_success",
+        "cost_latency",
+        "source_quality",
+        "safety_gate",
+        "user_value"
+      ],
+      "selection_reason": "Ranked by declared best_tasks, roles, quality tier, and safe fallback coverage.",
+      "task_type": "speech_transcription"
+    },
+    {
+      "fallback_resources": [
+        "qwen_models__quality",
+        "google_gemini__budget",
+        "google_gemini__fast"
+      ],
+      "primary_resource": "google_gemini__quality",
+      "required_evals": [
+        "task_success",
+        "cost_latency",
+        "source_quality",
+        "safety_gate",
+        "user_value"
+      ],
+      "selection_reason": "Ranked by declared best_tasks, roles, quality tier, and safe fallback coverage.",
+      "task_type": "course_building"
+    },
+    {
+      "fallback_resources": [
+        "openai_realtime__quality",
+        "elevenlabs_voice__budget",
+        "elevenlabs_voice__fast"
+      ],
+      "primary_resource": "elevenlabs_voice__quality",
+      "required_evals": [
+        "task_success",
+        "cost_latency",
+        "source_quality",
+        "safety_gate",
+        "user_value"
+      ],
+      "selection_reason": "Ranked by declared best_tasks, roles, quality tier, and safe fallback coverage.",
+      "task_type": "kid_learning_video"
+    },
+    {
+      "fallback_resources": [
+        "stability_image__budget",
+        "stability_image__fast",
+        "stability_image__private"
+      ],
+      "primary_resource": "stability_image__quality",
+      "required_evals": [
+        "task_success",
+        "cost_latency",
+        "source_quality",
+        "safety_gate",
+        "user_value"
+      ],
+      "selection_reason": "Ranked by declared best_tasks, roles, quality tier, and safe fallback coverage.",
+      "task_type": "game_building"
+    },
+    {
+      "fallback_resources": [
+        "nvidia_nim__quality",
+        "huggingface_open__budget",
+        "huggingface_open__fast"
+      ],
+      "primary_resource": "huggingface_open__quality",
+      "required_evals": [
+        "task_success",
+        "cost_latency",
+        "source_quality",
+        "safety_gate",
+        "user_value"
+      ],
+      "selection_reason": "Ranked by declared best_tasks, roles, quality tier, and safe fallback coverage.",
+      "task_type": "simulation_building"
+    },
+    {
+      "fallback_resources": [
+        "anthropic_claude__budget",
+        "anthropic_claude__fast",
+        "anthropic_claude__private"
+      ],
+      "primary_resource": "anthropic_claude__quality",
+      "required_evals": [
+        "task_success",
+        "cost_latency",
+        "source_quality",
+        "safety_gate",
+        "user_value"
+      ],
+      "selection_reason": "Ranked by declared best_tasks, roles, quality tier, and safe fallback coverage.",
+      "task_type": "legal_safety_review"
+    },
+    {
+      "fallback_resources": [
+        "adobe_firefly__quality",
+        "anthropic_claude__quality",
+        "black_forest_image__quality"
+      ],
+      "primary_resource": "ai21_language__quality",
+      "required_evals": [
+        "task_success",
+        "cost_latency",
+        "source_quality",
+        "safety_gate",
+        "user_value"
+      ],
+      "selection_reason": "Ranked by declared best_tasks, roles, quality tier, and safe fallback coverage.",
+      "task_type": "financial_analysis"
+    },
+    {
+      "fallback_resources": [
+        "adobe_firefly__quality",
+        "anthropic_claude__quality",
+        "black_forest_image__quality"
+      ],
+      "primary_resource": "ai21_language__quality",
+      "required_evals": [
+        "task_success",
+        "cost_latency",
+        "source_quality",
+        "safety_gate",
+        "user_value"
+      ],
+      "selection_reason": "Ranked by declared best_tasks, roles, quality tier, and safe fallback coverage.",
+      "task_type": "security_review"
+    },
+    {
+      "fallback_resources": [
+        "google_gemini_flash_lite__quality",
+        "meta_llama__quality",
+        "mistral_models__quality"
+      ],
+      "primary_resource": "fireworks_open__quality",
+      "required_evals": [
+        "task_success",
+        "cost_latency",
+        "source_quality",
+        "safety_gate",
+        "user_value"
+      ],
+      "selection_reason": "Ranked by declared best_tasks, roles, quality tier, and safe fallback coverage.",
+      "task_type": "workflow_automation"
+    },
+    {
+      "fallback_resources": [
+        "adobe_firefly__quality",
+        "anthropic_claude__quality",
+        "black_forest_image__quality"
+      ],
+      "primary_resource": "ai21_language__quality",
+      "required_evals": [
+        "task_success",
+        "cost_latency",
+        "source_quality",
+        "safety_gate",
+        "user_value"
+      ],
+      "selection_reason": "Ranked by declared best_tasks, roles, quality tier, and safe fallback coverage.",
+      "task_type": "api_tool_building"
+    },
+    {
+      "fallback_resources": [
+        "adobe_firefly__quality",
+        "anthropic_claude__quality",
+        "black_forest_image__quality"
+      ],
+      "primary_resource": "ai21_language__quality",
+      "required_evals": [
+        "task_success",
+        "cost_latency",
+        "source_quality",
+        "safety_gate",
+        "user_value"
+      ],
+      "selection_reason": "Ranked by declared best_tasks, roles, quality tier, and safe fallback coverage.",
+      "task_type": "webhook_building"
+    },
+    {
+      "fallback_resources": [
+        "meta_llama__quality",
+        "cohere_command__budget",
+        "cohere_command__fast"
+      ],
+      "primary_resource": "cohere_command__quality",
+      "required_evals": [
+        "task_success",
+        "cost_latency",
+        "source_quality",
+        "safety_gate",
+        "user_value"
+      ],
+      "selection_reason": "Ranked by declared best_tasks, roles, quality tier, and safe fallback coverage.",
+      "task_type": "memory_curation"
+    },
+    {
+      "fallback_resources": [
+        "huggingface_open__quality",
+        "openai_reasoning__quality",
+        "together_open__quality"
+      ],
+      "primary_resource": "google_gemini_flash_lite__quality",
+      "required_evals": [
+        "task_success",
+        "cost_latency",
+        "source_quality",
+        "safety_gate",
+        "user_value"
+      ],
+      "selection_reason": "Ranked by declared best_tasks, roles, quality tier, and safe fallback coverage.",
+      "task_type": "model_evaluation"
+    },
+    {
+      "fallback_resources": [
+        "adobe_firefly__quality",
+        "anthropic_claude__quality",
+        "black_forest_image__quality"
+      ],
+      "primary_resource": "ai21_language__quality",
+      "required_evals": [
+        "task_success",
+        "cost_latency",
+        "source_quality",
+        "safety_gate",
+        "user_value"
+      ],
+      "selection_reason": "Ranked by declared best_tasks, roles, quality tier, and safe fallback coverage.",
+      "task_type": "deployment_planning"
+    },
+    {
+      "fallback_resources": [
+        "adobe_firefly__quality",
+        "anthropic_claude__quality",
+        "black_forest_image__quality"
+      ],
+      "primary_resource": "ai21_language__quality",
+      "required_evals": [
+        "task_success",
+        "cost_latency",
+        "source_quality",
+        "safety_gate",
+        "user_value"
+      ],
+      "selection_reason": "Ranked by declared best_tasks, roles, quality tier, and safe fallback coverage.",
+      "task_type": "multi_model_decision"
+    },
+    {
+      "fallback_resources": [
+        "adobe_firefly__quality",
+        "anthropic_claude__quality",
+        "black_forest_image__quality"
+      ],
+      "primary_resource": "ai21_language__quality",
+      "required_evals": [
+        "task_success",
+        "cost_latency",
+        "source_quality",
+        "safety_gate",
+        "user_value"
+      ],
+      "selection_reason": "Ranked by declared best_tasks, roles, quality tier, and safe fallback coverage.",
+      "task_type": "model_training_eval"
+    },
+    {
+      "fallback_resources": [
+        "adobe_firefly__quality",
+        "anthropic_claude__quality",
+        "black_forest_image__quality"
+      ],
+      "primary_resource": "ai21_language__quality",
+      "required_evals": [
+        "task_success",
+        "cost_latency",
+        "source_quality",
+        "safety_gate",
+        "user_value"
+      ],
+      "selection_reason": "Ranked by declared best_tasks, roles, quality tier, and safe fallback coverage.",
+      "task_type": "autonomous_business_strategy"
+    }
+  ],
+  "world_ai_model_council": {
+    "actual_model_resources": 104,
+    "benchmark_sources": [
+      "https://artificialanalysis.ai/",
+      "https://evals.report/benchmarks/aaii",
+      "https://lmarena.ai/",
+      "https://developers.openai.com/api/docs/models/all",
+      "https://ai.google.dev/gemini-api/docs/models"
+    ],
+    "council_steps": [
+      "classify task and risk",
+      "pick budget, fast, quality, and private candidates",
+      "ask at least two model families for hard decisions",
+      "run rubric and sandbox evals",
+      "compare cost, latency, quality, safety, and user value",
+      "record winner, runner up, failure mode, and next test",
+      "route live-impact work to owner approval"
+    ],
+    "decision_packet_schema": [
+      "task_type",
+      "bot_slug",
+      "category",
+      "risk_level",
+      "budget_candidate",
+      "fast_candidate",
+      "quality_candidate",
+      "private_candidate",
+      "rubric_scores",
+      "winner",
+      "runner_up",
+      "cost_latency_notes",
+      "safety_notes",
+      "owner_approval_needed"
+    ],
+    "decision_style": "route_compare_debate_eval_then_select",
+    "mission": "Use 100+ globally sourced model resources as a decision council for every bot while tracking strengths, weaknesses, cost, latency, safety, and task fit.",
+    "provider_count": 23,
+    "providers": [
+      "AI21",
+      "Adobe",
+      "Anthropic",
+      "Black Forest Labs",
+      "Cohere",
+      "Databricks",
+      "DeepSeek",
+      "ElevenLabs",
+      "Fireworks AI",
+      "Google",
+      "Hugging Face",
+      "Meta",
+      "Mistral",
+      "NVIDIA",
+      "OpenAI",
+      "Perplexity",
+      "Qwen",
+      "Runway",
+      "Stability AI",
+      "Suno",
+      "Together AI",
+      "Udio",
+      "xAI"
+    ],
+    "resource_pool": {
+      "budget_candidates": 26,
+      "fast_candidates": 26,
+      "private_candidates": 26,
+      "quality_candidates": 26
+    },
+    "target_model_resources": 100,
+    "top_decision_routes": [
+      {
+        "fallback_resources": [
+          "openai_reasoning__budget",
+          "openai_reasoning__fast",
+          "openai_reasoning__private"
+        ],
+        "primary_resource": "openai_reasoning__quality",
+        "required_evals": [
+          "task_success",
+          "cost_latency",
+          "source_quality",
+          "safety_gate",
+          "user_value"
+        ],
+        "selection_reason": "Ranked by declared best_tasks, roles, quality tier, and safe fallback coverage.",
+        "task_type": "architecture"
+      },
+      {
+        "fallback_resources": [
+          "openai_reasoning__quality",
+          "qwen_models__quality",
+          "deepseek_coder_reasoner__budget"
+        ],
+        "primary_resource": "deepseek_coder_reasoner__quality",
+        "required_evals": [
+          "task_success",
+          "cost_latency",
+          "source_quality",
+          "safety_gate",
+          "user_value"
+        ],
+        "selection_reason": "Ranked by declared best_tasks, roles, quality tier, and safe fallback coverage.",
+        "task_type": "coding"
+      },
+      {
+        "fallback_resources": [
+          "openai_reasoning__quality",
+          "deepseek_coder_reasoner__budget",
+          "deepseek_coder_reasoner__fast"
+        ],
+        "primary_resource": "deepseek_coder_reasoner__quality",
+        "required_evals": [
+          "task_success",
+          "cost_latency",
+          "source_quality",
+          "safety_gate",
+          "user_value"
+        ],
+        "selection_reason": "Ranked by declared best_tasks, roles, quality tier, and safe fallback coverage.",
+        "task_type": "debugging"
+      },
+      {
+        "fallback_resources": [
+          "anthropic_claude__budget",
+          "anthropic_claude__fast",
+          "anthropic_claude__private"
+        ],
+        "primary_resource": "anthropic_claude__quality",
+        "required_evals": [
+          "task_success",
+          "cost_latency",
+          "source_quality",
+          "safety_gate",
+          "user_value"
+        ],
+        "selection_reason": "Ranked by declared best_tasks, roles, quality tier, and safe fallback coverage.",
+        "task_type": "repo_review"
+      },
+      {
+        "fallback_resources": [
+          "perplexity_search__budget",
+          "perplexity_search__fast",
+          "perplexity_search__private"
+        ],
+        "primary_resource": "perplexity_search__quality",
+        "required_evals": [
+          "task_success",
+          "cost_latency",
+          "source_quality",
+          "safety_gate",
+          "user_value"
+        ],
+        "selection_reason": "Ranked by declared best_tasks, roles, quality tier, and safe fallback coverage.",
+        "task_type": "market_research"
+      },
+      {
+        "fallback_resources": [
+          "xai_grok__quality",
+          "perplexity_search__budget",
+          "perplexity_search__fast"
+        ],
+        "primary_resource": "perplexity_search__quality",
+        "required_evals": [
+          "task_success",
+          "cost_latency",
+          "source_quality",
+          "safety_gate",
+          "user_value"
+        ],
+        "selection_reason": "Ranked by declared best_tasks, roles, quality tier, and safe fallback coverage.",
+        "task_type": "competitor_analysis"
+      },
+      {
+        "fallback_resources": [
+          "anthropic_claude__quality",
+          "mistral_models__quality",
+          "ai21_language__budget"
+        ],
+        "primary_resource": "ai21_language__quality",
+        "required_evals": [
+          "task_success",
+          "cost_latency",
+          "source_quality",
+          "safety_gate",
+          "user_value"
+        ],
+        "selection_reason": "Ranked by declared best_tasks, roles, quality tier, and safe fallback coverage.",
+        "task_type": "sales_copy"
+      },
+      {
+        "fallback_resources": [
+          "google_gemini_flash_lite__quality",
+          "meta_llama__quality",
+          "openai_realtime__quality"
+        ],
+        "primary_resource": "ai21_language__quality",
+        "required_evals": [
+          "task_success",
+          "cost_latency",
+          "source_quality",
+          "safety_gate",
+          "user_value"
+        ],
+        "selection_reason": "Ranked by declared best_tasks, roles, quality tier, and safe fallback coverage.",
+        "task_type": "customer_support"
+      },
+      {
+        "fallback_resources": [
+          "databricks_mosaic__quality",
+          "google_gemini_flash_lite__quality",
+          "mistral_models__quality"
+        ],
+        "primary_resource": "cohere_command__quality",
+        "required_evals": [
+          "task_success",
+          "cost_latency",
+          "source_quality",
+          "safety_gate",
+          "user_value"
+        ],
+        "selection_reason": "Ranked by declared best_tasks, roles, quality tier, and safe fallback coverage.",
+        "task_type": "data_extraction"
+      },
+      {
+        "fallback_resources": [
+          "databricks_mosaic__budget",
+          "databricks_mosaic__fast",
+          "databricks_mosaic__private"
+        ],
+        "primary_resource": "databricks_mosaic__quality",
+        "required_evals": [
+          "task_success",
+          "cost_latency",
+          "source_quality",
+          "safety_gate",
+          "user_value"
+        ],
+        "selection_reason": "Ranked by declared best_tasks, roles, quality tier, and safe fallback coverage.",
+        "task_type": "dashboard_building"
+      },
+      {
+        "fallback_resources": [
+          "black_forest_image__quality",
+          "openai_image__quality",
+          "stability_image__quality"
+        ],
+        "primary_resource": "adobe_firefly__quality",
+        "required_evals": [
+          "task_success",
+          "cost_latency",
+          "source_quality",
+          "safety_gate",
+          "user_value"
+        ],
+        "selection_reason": "Ranked by declared best_tasks, roles, quality tier, and safe fallback coverage.",
+        "task_type": "image_generation"
+      },
+      {
+        "fallback_resources": [
+          "black_forest_image__quality",
+          "openai_image__quality",
+          "adobe_firefly__budget"
+        ],
+        "primary_resource": "adobe_firefly__quality",
+        "required_evals": [
+          "task_success",
+          "cost_latency",
+          "source_quality",
+          "safety_gate",
+          "user_value"
+        ],
+        "selection_reason": "Ranked by declared best_tasks, roles, quality tier, and safe fallback coverage.",
+        "task_type": "image_editing"
+      }
+    ],
+    "training_and_testing_policy": {
+      "allowed": [
+        "prompt evals",
+        "routing evals",
+        "sandbox datasets",
+        "rights-cleared fine-tuning plans",
+        "synthetic eval cases",
+        "model cards",
+        "red-team rubrics"
+      ],
+      "approval_required": [
+        "paid benchmark batches",
+        "fine-tuning with customer data",
+        "selling datasets",
+        "production routing changes",
+        "provider credential changes"
+      ],
+      "blocked": [
+        "private data training without rights",
+        "secret leakage",
+        "unlabeled synthetic media",
+        "unsafe autonomous live actions",
+        "claims that one model is best without current eval evidence"
+      ]
+    }
+  }
+}

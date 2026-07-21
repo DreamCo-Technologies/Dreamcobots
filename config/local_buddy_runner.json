@@ -1,0 +1,91 @@
+{
+  "schema": "dreamco.local_buddy_runner.v1",
+  "default_profile": "cheap",
+  "mission": "Run Buddy and bot-maintenance work on the owner laptop before using GitHub Actions or paid cloud compute.",
+  "forever_mode": {
+    "enabled": true,
+    "profile": "aggressive",
+    "sleep_minutes": 60,
+    "stop_command": "python3 tools/local_buddy_runner.py --stop",
+    "status_command": "python3 tools/local_buddy_runner.py --status",
+    "start_command": "python3 tools/local_buddy_runner.py --profile aggressive --daemon-start --sleep-minutes 60"
+  },
+  "cost_policy": {
+    "github_actions_default": "manual_or_path_gated",
+    "cloud_default": "do_not_use_for_local_runner",
+    "ai_default": "local_reports_cached_outputs_free_or_low_cost_first",
+    "paid_work_requires_owner_approval": true
+  },
+  "hard_limits": [
+    "no customer outreach",
+    "no ad spend",
+    "no money movement",
+    "no trading or investment execution",
+    "no credential changes",
+    "no destructive repository actions",
+    "no production deploy",
+    "no paid always-on AI loop"
+  ],
+  "profiles": {
+    "cheap": {
+      "description": "Fast local upkeep for everyday laptop runs.",
+      "max_command_seconds": 120,
+      "commands": [
+        "report:24-hour-scaling",
+        "report:buddy-codex-cheap-ops",
+        "check:24-hour-scaling",
+        "check:buddy-codex-cheap-ops",
+        "github-cost-saver"
+      ]
+    },
+    "aggressive": {
+      "description": "Repository-wide safe sweep for Buddy, reports, bot readiness, storage, and local checks. Safe to loop until stopped.",
+      "max_command_seconds": 300,
+      "commands": [
+        "report:24-hour-scaling",
+        "report:buddy-codex-cheap-ops",
+        "report:buddy-24-hour-package",
+        "report:ai-agent-model-library",
+        "report:google-ai-studio",
+        "report:app-foundry",
+        "report:app-category-catalog",
+        "report:professional-os",
+        "report:life-opportunities",
+        "report:commerce-publishing",
+        "report:trust-search",
+        "report:bot-founder-store",
+        "report:revenue-practice",
+        "report:specialized-knowledge",
+        "report:bot-owner-settings",
+        "report:contract-discovery",
+        "report:lead-followup",
+        "report:bot-capabilities-library",
+        "report:people-job-qualification",
+        "report:storage",
+        "report:stripe-rescue",
+        "github-cost-saver",
+        "check:24-hour-scaling",
+        "check:buddy-codex-cheap-ops",
+        "check:buddy-24-hour-package",
+        "check:ai-agent-model-library",
+        "check:google-ai-studio",
+        "check:app-foundry",
+        "check:app-category-catalog",
+        "check:professional-os",
+        "check:life-opportunities",
+        "check:commerce-publishing",
+        "check:trust-search",
+        "check:bot-founder-store",
+        "check:revenue-practice",
+        "check:specialized-knowledge",
+        "check:bot-owner-settings",
+        "check:contract-discovery",
+        "check:lead-followup",
+        "check:bot-capabilities-library",
+        "check:people-job-qualification",
+        "check:buddy-bot-connections",
+        "scan:local-imports"
+      ]
+    }
+  }
+}

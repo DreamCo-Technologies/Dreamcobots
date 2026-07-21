@@ -601,7 +601,7 @@ export default function ConnectionsPage() {
               <CardContent className="p-4 flex items-center gap-3">
                 <Shield className="h-4 w-4 text-primary flex-shrink-0" />
                 <p className="text-sm text-muted-foreground">
-                  Syncs push source code to <strong>DreamCo-Technologies/Dreamcobots</strong> on GitHub. Auto-sync requires a GitHub token set in Replit Secrets (<code className="text-xs bg-muted px-1 rounded">REPLIT_ACCESS_TOLKEN</code>).
+                  Syncs push source code to <strong>DreamCo-Technologies/Dreamcobots</strong> on GitHub. Auto-sync requires a GitHub token set in environment secrets (<code className="text-xs bg-muted px-1 rounded">GITHUB_TOKEN</code>).
                 </p>
               </CardContent>
             </Card>
@@ -814,7 +814,7 @@ export default function ConnectionsPage() {
               <CardContent className="p-4 flex items-center gap-3">
                 <Shield className="h-4 w-4 text-primary flex-shrink-0" />
                 <p className="text-sm text-muted-foreground">
-                  All API keys are encrypted. Low to zero API costs - you'll be notified before any charges apply. Same pricing as Replit.
+                  All API keys are encrypted. Low to zero API costs - you'll be notified before any charges apply. Same pricing as DreamCo.
                 </p>
               </CardContent>
             </Card>

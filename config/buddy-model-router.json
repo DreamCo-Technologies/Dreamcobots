@@ -1,0 +1,45 @@
+{
+  "version": "1.0.0",
+  "purpose": "Buddy model routing registry for routing common AI tasks to approved model/provider slots.",
+  "policy": "Model IDs and availability change often. Verify provider model IDs before production use. Keep disabled until credentials and pricing are approved.",
+  "defaultRoutingMode": "quality_then_cost",
+  "providers": [
+    { "id": "openai", "enabled": true, "roles": ["reasoning", "coding", "vision", "realtime", "embeddings"] },
+    { "id": "anthropic", "enabled": false, "roles": ["long_context", "writing", "analysis"] },
+    { "id": "google", "enabled": false, "roles": ["multimodal", "long_context", "search_grounded"] },
+    { "id": "meta", "enabled": false, "roles": ["open_weight", "local_or_private"] },
+    { "id": "mistral", "enabled": false, "roles": ["fast_reasoning", "open_weight"] },
+    { "id": "cohere", "enabled": false, "roles": ["enterprise_rag", "reranking"] },
+    { "id": "xai", "enabled": false, "roles": ["realtime_context", "social_trends"] },
+    { "id": "deepseek", "enabled": false, "roles": ["coding", "reasoning"] },
+    { "id": "qwen", "enabled": false, "roles": ["multilingual", "coding", "open_weight"] },
+    { "id": "enterprise_ai", "enabled": false, "roles": ["enterprise_governance", "enterprise AI", "external_builder"] }
+  ],
+  "modelSlots": [
+    { "slot": "frontier_reasoning", "enabled": true, "providerPreference": ["openai", "anthropic", "google"], "useFor": ["architecture", "debugging", "strategy", "security"] },
+    { "slot": "coding_fast", "enabled": true, "providerPreference": ["openai", "deepseek", "qwen", "mistral"], "useFor": ["small_fixes", "tests", "refactors"] },
+    { "slot": "long_context_review", "enabled": false, "providerPreference": ["anthropic", "google", "openai"], "useFor": ["large_repo_review", "contracts", "research_synthesis"] },
+    { "slot": "sales_copy", "enabled": true, "providerPreference": ["openai", "anthropic", "cohere"], "useFor": ["outreach", "offers", "landing_pages"] },
+    { "slot": "web_research", "enabled": true, "providerPreference": ["openai", "google", "perplexity_style_retrieval"], "useFor": ["client_research", "market_maps", "competitors"] },
+    { "slot": "local_private", "enabled": false, "providerPreference": ["meta", "mistral", "qwen"], "useFor": ["private_docs", "offline_eval"] }
+  ],
+  "topInternetIntentRoutes": [
+    "answer_question", "learn_skill", "find_product", "compare_options", "solve_problem", "buy_service", "find_local_business", "research_company", "find_job", "hire_contractor",
+    "book_appointment", "manage_money", "track_order", "read_news", "watch_video", "listen_audio", "message_person", "write_email", "summarize_document", "translate_text",
+    "plan_trip", "find_health_info", "find_legal_info", "find_government_service", "apply_for_benefits", "pay_bill", "sell_item", "start_business", "build_website", "create_content",
+    "post_social_media", "analyze_data", "create_image", "edit_video", "generate_code", "debug_code", "automate_task", "search_real_estate", "compare_prices", "find_coupon",
+    "track_competitor", "research_market", "find_leads", "qualify_leads", "draft_outreach", "schedule_followup", "create_invoice", "collect_payment", "support_customer", "write_contract",
+    "review_resume", "prepare_interview", "find_training", "manage_calendar", "organize_files", "extract_pdf", "build_spreadsheet", "create_presentation", "monitor_reputation", "run_ad_campaign",
+    "optimize_seo", "generate_report", "detect_risk", "monitor_security", "summarize_meeting", "create_agent", "route_task", "evaluate_model", "test_workflow", "deploy_app",
+    "create_mvp", "validate_customer", "create_pricing", "measure_kpi", "review_daily", "improve_system", "find_partner", "manage_crm", "forecast_revenue", "audit_expenses",
+    "track_subscriptions", "recover_failed_payment", "write_sales_script", "create_offer", "segment_customers", "personalize_message", "research_grants", "find_contracts", "analyze_property", "score_deal",
+    "generate_learning_path", "store_memory", "compare_models", "create_dashboard", "inspect_github", "open_pr", "run_ci", "repair_bot", "document_system", "handoff_to_human"
+  ],
+  "routingRules": [
+    { "when": "task involves money, Stripe, pricing, or outreach", "route": "sales_copy", "approval": "owner_review_before_external_send" },
+    { "when": "task involves code changes or tests", "route": "coding_fast", "approval": "pull_request_required" },
+    { "when": "task involves architecture, security, or production", "route": "frontier_reasoning", "approval": "human_review" },
+    { "when": "task needs current public data", "route": "web_research", "approval": "cite_sources_and_log" },
+    { "when": "task includes private customer data", "route": "local_private", "approval": "disabled_until_privacy_review" }
+  ]
+}

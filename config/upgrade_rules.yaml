@@ -1,0 +1,15 @@
+schemaVersion: 2026-07-06
+upgradeRules:
+  requirePullRequest: true
+  requireDebugAudit: true
+  requireSandboxNoHallucinations: true
+  requireIssueGoalCoverage: true
+  requireHumanApprovalFor:
+    - production-deploy
+    - payment-write
+    - customer-outreach
+    - destructive-command
+rollback:
+  automaticOnHealthRegression: true
+  automaticOnFailedSmokeTest: true
+  preserveReports: true

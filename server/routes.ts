@@ -17,8 +17,8 @@ import { FORMULA_LIBRARY } from "@shared/formula-library";
 import { buildEnhancedSystemPrompt } from "@shared/tool-belt";
 import { getUncachableStripeClient, getStripePublishableKey } from "./stripeClient";
 import { db } from "./db";
-import { batchProcessWithSSE } from "./replit_integrations/batch";
-import { registerAudioRoutes } from "./replit_integrations/audio";
+import { batchProcessWithSSE } from "./dreamco_integrations/batch";
+import { registerAudioRoutes } from "./dreamco_integrations/audio";
 
 const CORE_SLUGS = new Set(CORE_BOTS.map(b => b.slug));
 const GITHUB_SLUGS = new Set(GITHUB_BOTS.map(b => b.slug));
@@ -65,6 +65,28 @@ const openai = new OpenAI({
   apiKey: process.env.AI_INTEGRATIONS_OPENAI_API_KEY,
   baseURL: process.env.AI_INTEGRATIONS_OPENAI_BASE_URL,
 });
+
+const LOCAL_VOICE_ID = "dreamco-buddy-local";
+const EXTERNAL_VOICE_API_KEY = process.env.BUDDY_VOICE_API_KEY;
+const EXTERNAL_VOICE_API_URL = process.env.BUDDY_VOICE_TTS_URL;
+
+function buildLocalVoicePacket(text: string, voiceId = LOCAL_VOICE_ID) {
+  return {
+    engine: "dreamco-local-browser-tts",
+    provider: "DreamCo",
+    voiceId,
+    format: "browser-speech-synthesis",
+    text,
+    audio: null,
+    consentRequired: true,
+    consentPolicy: "Use only approved voices, scripts, and likenesses. Do not imitate a real person without explicit written consent.",
+    clientInstructions: {
+      api: "window.speechSynthesis",
+      utterance: "new SpeechSynthesisUtterance(packet.text)",
+      voiceSelection: "Use a local system voice selected by the user, then cache only the preference name.",
+    },
+  };
+}
 
 function zodValidationError(err: z.ZodError) {
   return {
@@ -261,27 +283,35 @@ export async function registerRoutes(
     }
   });
 
-  // ===== VOICE CLONING =====
+  // ===== DREAMCO VOICE =====
   app.post("/api/voice/clone", async (req, res) => {
     try {
-      const { text, voiceId = "21m00Tcm4TlvDq8ikWAM", stability = 0.5, similarityBoost = 0.75 } = req.body ?? {};
+      const { text, voiceId = LOCAL_VOICE_ID, provider = "dreamco-local" } = req.body ?? {};
       if (!text || !String(text).trim()) return res.status(400).json({ error: "Text is required" });
-      const apiKey = process.env.ELEVENLABS_API_KEY;
-      if (!apiKey) {
-        return res.status(503).json({
-          error: "ELEVENLABS_API_KEY not configured",
-          setup: "Add ELEVENLABS_API_KEY to Replit Secrets — get a free key at elevenlabs.io",
-          capability: "voice-cloning",
+
+      const cleanText = String(text).trim();
+      const externalRequested = provider === "external" || provider === "premium";
+      if (!externalRequested || !EXTERNAL_VOICE_API_KEY || !EXTERNAL_VOICE_API_URL) {
+        return res.json({
+          status: "local-ready",
+          capability: "voice-synthesis",
+          fallbackReason: externalRequested ? "External voice endpoint is not configured." : "DreamCo local voice is the default.",
+          packet: buildLocalVoicePacket(cleanText, String(voiceId)),
         });
       }
-      const response = await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${voiceId}`, {
+
+      const response = await fetch(EXTERNAL_VOICE_API_URL.replace(":voiceId", encodeURIComponent(String(voiceId))), {
         method: "POST",
-        headers: { "xi-api-key": apiKey, "Content-Type": "application/json", "Accept": "audio/mpeg" },
-        body: JSON.stringify({ text: String(text).trim(), model_id: "eleven_monolingual_v1", voice_settings: { stability, similarity_boost: similarityBoost } }),
+        headers: {
+          "Authorization": `Bearer ${EXTERNAL_VOICE_API_KEY}`,
+          "Content-Type": "application/json",
+          "Accept": "audio/mpeg",
+        },
+        body: JSON.stringify({ text: cleanText, voiceId }),
       });
       if (!response.ok) {
         const err = await response.text();
-        return res.status(response.status).json({ error: `ElevenLabs error: ${err}` });
+        return res.status(response.status).json({ error: `External voice provider error: ${err}` });
       }
       const audioBuffer = Buffer.from(await response.arrayBuffer());
       res.set({ "Content-Type": "audio/mpeg", "Content-Length": audioBuffer.length });
@@ -294,15 +324,16 @@ export async function registerRoutes(
 
   // List available voices
   app.get("/api/voice/voices", async (req, res) => {
-    const apiKey = process.env.ELEVENLABS_API_KEY;
-    if (!apiKey) return res.status(503).json({ error: "ELEVENLABS_API_KEY not configured", voices: [] });
-    try {
-      const r = await fetch("https://api.elevenlabs.io/v1/voices", { headers: { "xi-api-key": apiKey } });
-      const data = await r.json() as any;
-      res.json({ voices: (data.voices ?? []).map((v: any) => ({ id: v.voice_id, name: v.name, category: v.category })) });
-    } catch (e: any) {
-      res.status(500).json({ error: e.message, voices: [] });
-    }
+    res.json({
+      defaultProvider: "dreamco-local-browser-tts",
+      externalConfigured: Boolean(EXTERNAL_VOICE_API_KEY && EXTERNAL_VOICE_API_URL),
+      voices: [
+        { id: LOCAL_VOICE_ID, name: "Buddy Local", category: "local-browser", cost: "free" },
+        { id: "dreamco-clear", name: "DreamCo Clear", category: "local-browser", cost: "free" },
+        { id: "dreamco-warm", name: "DreamCo Warm", category: "local-browser", cost: "free" },
+      ],
+      policy: "External voice providers are optional. Real-person voice or likeness use requires explicit written consent.",
+    });
   });
 
   // ===== WEB SEARCH =====
@@ -808,7 +839,7 @@ export async function registerRoutes(
         Buffer: { from: (s: string) => ({ toString: () => s }) },
       };
       try {
-        const script = new vm.Script(code, { timeout: 5000 });
+        const script = new vm.Script(code);
         const result = script.runInNewContext(sandbox, { timeout: 5000 } as any);
         if (result !== undefined && result !== null) logs.push(String(result));
         res.json({ output: logs.join("\n") || "(no output)", error: errs.length ? errs.join("\n") : null, executionTimeMs: Date.now() - start, language: lang });
@@ -1134,7 +1165,7 @@ export async function registerRoutes(
       features: [
         { name: "Vibe Coding", route: "POST /api/buddy/vibe-code", status: "live", description: "Generate full projects from description" },
         { name: "Image Generation", route: "POST /api/generate-image", status: "live", description: "AI image generation via gpt-image-1" },
-        { name: "Voice Cloning", route: "POST /api/voice/clone", status: process.env.ELEVENLABS_API_KEY ? "live" : "needs-key", description: "Text-to-speech + voice cloning via ElevenLabs", setup: "Add ELEVENLABS_API_KEY" },
+        { name: "DreamCo Local Voice", route: "POST /api/voice/clone", status: "live", description: "Free local/browser text-to-speech by default; optional external provider only when configured", setup: "No paid key required for local voice" },
         { name: "Web Search", route: "POST /api/search/web", status: "live", description: "GitHub + OpenAI synthesis search" },
         { name: "GitHub Intelligence", route: "GET /api/github-intel/trending", status: "live", description: "Hourly GitHub trending + search" },
         { name: "Council Governance", route: "GET /api/council/proposals", status: "live", description: "Bot proposal submission and approval" },
@@ -1479,9 +1510,12 @@ export async function registerRoutes(
 
     const history = await storage.getMessages(conversationId);
     // Trim history to MAX_HISTORY_MSG — prevents unbounded token growth on long conversations
-    const historyMsgs = history.map((m) => ({ role: m.role as "user" | "assistant", content: m.content }));
-    const trimmedHistory = trimHistory(historyMsgs);
-    const messagesForModel = [
+    const historyMsgs: Array<{ role: "user" | "assistant"; content: string }> = history.map((m) => ({
+      role: m.role === "assistant" ? "assistant" : "user",
+      content: m.content,
+    }));
+    const trimmedHistory = trimHistory(historyMsgs) as Array<{ role: "user" | "assistant"; content: string }>;
+    const messagesForModel: Array<{ role: "system" | "user" | "assistant"; content: string }> = [
       { role: "system" as const, content: system },
       ...trimmedHistory,
     ];
@@ -2893,13 +2927,13 @@ Any improvements or fixes (optional, 1-2 bullet points max)`;
       const { exec } = await import("child_process");
       const { promisify } = await import("util");
       const execAsync = promisify(exec);
-      const token = process.env.REPLIT_ACCESS_TOLKEN || "";
+      const token = process.env.GITHUB_TOKEN || process.env.GITHUB_PERSONAL_ACCESS_TOKEN || "";
       if (!token) {
-        return res.status(400).json({ success: false, error: "REPLIT_ACCESS_TOLKEN secret not set" });
+        return res.status(400).json({ success: false, error: "GitHub token secret not set" });
       }
       const remote = `https://${token}@github.com/DreamCo-Technologies/Dreamcobots.git`;
       const { stdout, stderr } = await execAsync(
-        `git --no-optional-locks push "${remote}" main --force 2>&1 || true`,
+        `git --no-optional-locks push "${remote}" HEAD:codex/recover-buddy-after-import 2>&1 || true`,
         { env: process.env, timeout: 60000 }
       );
       const localSha = (await execAsync("git --no-optional-locks rev-parse HEAD")).stdout.trim();
@@ -2914,7 +2948,7 @@ Any improvements or fixes (optional, 1-2 bullet points max)`;
         output: (stdout + stderr).replace(token, "***").trim(),
       });
     } catch (e: any) {
-      res.status(500).json({ success: false, error: e.message?.replace(process.env.REPLIT_ACCESS_TOLKEN || "TOKEN", "***") });
+      res.status(500).json({ success: false, error: e.message?.replace(process.env.GITHUB_TOKEN || process.env.GITHUB_PERSONAL_ACCESS_TOKEN || "TOKEN", "***") });
     }
   });
 

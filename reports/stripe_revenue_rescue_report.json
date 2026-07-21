@@ -1,0 +1,156 @@
+{
+  "schema": "dreamco.stripe_revenue_rescue.v1",
+  "generated_at": "2026-07-17T15:26:19Z",
+  "summary": {
+    "revenue_rescue_ready": false,
+    "checkout_ready_offers": 0,
+    "offers_checked": 2,
+    "tracked_events": 0,
+    "gross_revenue_cents": 0,
+    "checkout_completed": 0,
+    "payment_succeeded": 0,
+    "invoice_paid": 0,
+    "refund_events": 0,
+    "refunded_revenue_cents": 0,
+    "disputes_created": 0,
+    "disputed_revenue_cents": 0,
+    "payouts_paid": 0,
+    "payouts_failed": 0,
+    "payment_email_recipients": 0,
+    "payment_email_notices": 0,
+    "payment_email_sent": 0,
+    "github_payment_notifications_enabled": false,
+    "github_payment_issues_created": 0,
+    "blocker_count": 9
+  },
+  "revenue_blockers": [
+    "No checkout-ready live Stripe offers with price and payment link IDs.",
+    "No Stripe webhook events are recorded locally.",
+    "No successful payment or paid invoice revenue is tracked.",
+    "Customer CTA buttons are not mapped to verified live Stripe Payment Links.",
+    "STRIPE_SECRET_KEY is not configured in this runtime.",
+    "STRIPE_WEBHOOK_SECRET is not configured in this runtime.",
+    "Payment alert email recipients are not configured.",
+    "Payment email provider is not configured.",
+    "GitHub payment notifications are not enabled."
+  ],
+  "priority_fixes": [
+    "Set STRIPE_PAYMENT_ALERT_EMAILS or PAYMENT_ALERT_EMAILS to the owner email list that should receive every payment notice.",
+    "Configure PAYMENT_EMAIL_PROVIDER=resend plus RESEND_API_KEY and PAYMENT_EMAIL_FROM, or connect another production email provider.",
+    "For GitHub payment alerts, set PAYMENT_GITHUB_NOTIFICATIONS=true, PAYMENT_GITHUB_REPOSITORY=DreamCo-Technologies/Dreamcobots, and PAYMENT_GITHUB_TOKEN or GITHUB_TOKEN with issue-write access.",
+    "Create or confirm two live Stripe Payment Links for the starter audit and monthly command center offers.",
+    "Put the live Stripe price/payment link IDs in a private production offer catalog or environment-backed config.",
+    "Update customer-facing CTA buttons to use verified live Stripe Payment Links, not generic placeholder checkout routes.",
+    "Deploy the webhook endpoint over HTTPS and subscribe it to checkout, payment, invoice, subscription, and payout events.",
+    "Send one $1 live-mode internal checkout test, then confirm the rescue report shows checkoutCompleted > 0 and grossRevenueCents > 0.",
+    "Review the Stripe Dashboard for failed payments, disabled payouts, test-mode products, and broken success/cancel URLs."
+  ],
+  "offers": [
+    {
+      "offerId": "dreamco-starter-audit",
+      "name": "DreamCo Starter Bot Audit",
+      "status": "draft",
+      "priceCents": 4900,
+      "hasStripePriceId": false,
+      "hasStripePaymentLinkId": false,
+      "checkoutReady": false
+    },
+    {
+      "offerId": "dreamco-monthly-command-center",
+      "name": "DreamCo Monthly Command Center",
+      "status": "draft",
+      "priceCents": 9900,
+      "hasStripePriceId": false,
+      "hasStripePaymentLinkId": false,
+      "checkoutReady": false
+    }
+  ],
+  "offer_issues": [
+    "dreamco-starter-audit is not live/published",
+    "dreamco-starter-audit is missing stripePriceId",
+    "dreamco-starter-audit is missing stripePaymentLinkId",
+    "dreamco-monthly-command-center is not live/published",
+    "dreamco-monthly-command-center is missing stripePriceId",
+    "dreamco-monthly-command-center is missing stripePaymentLinkId"
+  ],
+  "events": {
+    "eventsFileExists": false,
+    "summaryFileExists": false,
+    "trackedEvents": 0,
+    "grossRevenueCents": 0,
+    "checkoutCompleted": 0,
+    "paymentSucceeded": 0,
+    "invoicePaid": 0,
+    "paymentFailed": 0,
+    "invoiceFailed": 0,
+    "invoiceFinalized": 0,
+    "invoiceVoided": 0,
+    "subscriptionsCreated": 0,
+    "subscriptionsUpdated": 0,
+    "subscriptionsCanceled": 0,
+    "paymentLinksCreated": 0,
+    "paymentLinksUpdated": 0,
+    "refunds": 0,
+    "refundedRevenueCents": 0,
+    "disputesCreated": 0,
+    "disputesUpdated": 0,
+    "disputesClosed": 0,
+    "disputedRevenueCents": 0,
+    "payoutsCreated": 0,
+    "payoutsPaid": 0,
+    "payoutsFailed": 0,
+    "payoutsCanceled": 0
+  },
+  "payment_email_notifications": {
+    "outboxFileExists": false,
+    "outboxNotices": 0,
+    "sentNotices": 0,
+    "queuedNotices": 0,
+    "blockedNotices": 0,
+    "recipientCount": 0,
+    "provider": "missing",
+    "resendConfigured": false,
+    "fromConfigured": false,
+    "githubNotificationsEnabled": false,
+    "githubRepositoryConfigured": false,
+    "githubTokenConfigured": false,
+    "githubIssuesCreated": 0
+  },
+  "customer_links": {
+    "file": "src/components/MonetizationLinks.jsx",
+    "exists": true,
+    "defaultPaymentBase": "https://pay.dreamco.ai",
+    "usesTemplateCheckoutRoute": true,
+    "hasDirectPaymentLinkMapping": false,
+    "risk": "high",
+    "message": "Customer buttons appear to build a generic checkout URL, not verified live Stripe Payment Links."
+  },
+  "runtime_secret_state": [
+    {
+      "name": "STRIPE_SECRET_KEY",
+      "configured": false,
+      "mode": "missing"
+    },
+    {
+      "name": "STRIPE_WEBHOOK_SECRET",
+      "configured": false,
+      "mode": "missing"
+    },
+    {
+      "name": "STRIPE_PUBLISHABLE_KEY",
+      "configured": false,
+      "mode": "missing"
+    },
+    {
+      "name": "REACT_APP_DREAMCO_PAYMENT_URL",
+      "configured": false,
+      "mode": "missing"
+    },
+    {
+      "name": "VITE_DREAMCO_PAYMENT_URL",
+      "configured": false,
+      "mode": "missing"
+    }
+  ],
+  "safety_note": "This report never prints secret values. Configure Stripe keys only in environment variables or a secure host secret store."
+}

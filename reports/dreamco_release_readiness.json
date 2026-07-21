@@ -1,0 +1,423 @@
+{
+  "schema": "dreamco.release_readiness.v1",
+  "generated_at": "2026-07-14T22:50:15.833901+00:00",
+  "branch": "codex/bot-test-dashboard",
+  "mission": "Convert DreamCo from a large collection of generated systems into one reliable operating platform.",
+  "summary": {
+    "release_readiness_score": 64.75,
+    "first_ten_complete": 3,
+    "first_ten_active": 7,
+    "first_ten_blocked": 0,
+    "top_100_groups_complete": 1,
+    "top_100_groups_active": 5,
+    "top_100_groups_blocked": 0,
+    "open_prs": 56,
+    "open_issues": 17,
+    "failed_workflow_runs": 24,
+    "failed_quality_checks": 0,
+    "production_ready_bots": 1128,
+    "bot_profiles_scanned": 1248,
+    "storage_ready": true,
+    "revenue_rescue_ready": false
+  },
+  "first_ten_updates": [
+    {
+      "id": "correct_registry_and_readme_counts",
+      "title": "Correct registry and README counts",
+      "status": "complete",
+      "proof": [
+        "README truth copy: README.md",
+        "Consolidation scorecard: config/dreamco_1_0_consolidation_scorecard.json",
+        "Capability inventory: reports/buddy_capability_inventory.json"
+      ],
+      "missing": [],
+      "next": "Keep all public claims tied to generated reports."
+    },
+    {
+      "id": "classify_all_profiles_by_implementation_status",
+      "title": "Classify all profiles by implementation status",
+      "status": "active",
+      "proof": [
+        "Buddy capability inventory: reports/buddy_capability_inventory.json",
+        "Bot production contract validator: tools/validate_bot_production_contracts.py",
+        "Generated smoke results: reports/generated_bot_smoke_results.json"
+      ],
+      "missing": [],
+      "next": "Profiles are inventoried, but not every bot is production-ready yet."
+    },
+    {
+      "id": "triage_open_pull_requests",
+      "title": "Triage open pull requests",
+      "status": "active",
+      "proof": [
+        "GitHub triage report: reports/github_triage_report.json",
+        "Repository stewardship report: reports/repository_stewardship_report.json",
+        "Goal consolidation map: config/github_goal_consolidation.json"
+      ],
+      "missing": [],
+      "next": "Triage exists, but open PRs and restart/retest work still remain."
+    },
+    {
+      "id": "repair_required_ci_pipeline",
+      "title": "Repair required CI pipeline",
+      "status": "active",
+      "proof": [
+        "Repository steward: tools/repository_steward.py",
+        "Storage guard: tools/storage_guard.py",
+        "Bot connection guard: tools/buddy_bot_connection_guard.py"
+      ],
+      "missing": [],
+      "next": "Local quality gates are clean, but failed workflow runs still need retest or repair."
+    },
+    {
+      "id": "complete_command_center_consolidation_decision",
+      "title": "Complete Command Center consolidation decision",
+      "status": "complete",
+      "proof": [
+        "Command Center component: dreamco-control-tower/frontend/src/components/CommandCenter.jsx",
+        "Buddy Command Center component: dreamco-control-tower/frontend/src/components/BuddyCommandCenter.jsx",
+        "Actions page command surface: dreamco-control-tower/frontend/src/components/ActionsPage.jsx"
+      ],
+      "missing": [],
+      "next": "Keep one official dashboard path and retire duplicate dashboard experiments only after coverage is preserved."
+    },
+    {
+      "id": "make_buddy_use_master_registry_for_real_routing",
+      "title": "Make Buddy use the registry for real routing",
+      "status": "active",
+      "proof": [
+        "Master registry: config/master_bot_registry.json",
+        "Buddy master registry adapter: BuddyAI/master_registry.py",
+        "Buddy connection guard: tools/buddy_bot_connection_guard.py"
+      ],
+      "missing": [],
+      "next": "Registry and connection proof exist; scored live routing, fallbacks, and cancellation still need deeper runtime enforcement."
+    },
+    {
+      "id": "enforce_approval_risk_spending_and_autonomy",
+      "title": "Enforce approval, risk, spending, and autonomy",
+      "status": "active",
+      "proof": [
+        "High-risk approval registry: config/production_approvals/high_risk_bot_approvals.json",
+        "Local-first storage policy: config/local_first_storage_policy.json",
+        "Autonomous business policy: config/autonomous_business_engine.json"
+      ],
+      "missing": [],
+      "next": "Approval policies exist; runtime enforcement and audit logging still need full proof."
+    },
+    {
+      "id": "launch_bot_fleet_and_failure_center",
+      "title": "Launch Bot Fleet and Failure Center",
+      "status": "active",
+      "proof": [
+        "Actions page: dreamco-control-tower/frontend/src/components/ActionsPage.jsx",
+        "GitHub triage report: reports/github_triage_report.json",
+        "Repository stewardship report: reports/repository_stewardship_report.json"
+      ],
+      "missing": [],
+      "next": "The failure center is visible, but failed workflow work is still active."
+    },
+    {
+      "id": "make_five_bot_products_work_end_to_end",
+      "title": "Make five bot products work end to end",
+      "status": "active",
+      "proof": [
+        "Company builder operating model: config/dreamco_company_builder_operating_model.json",
+        "Prospectus pages: docs/bots",
+        "Stripe revenue rescue: reports/stripe_revenue_rescue_report.json"
+      ],
+      "missing": [],
+      "next": "Product packaging exists, but revenue rescue is not ready, so paid end-to-end proof remains active."
+    },
+    {
+      "id": "publish_dreamco_1_0_readiness_scorecard",
+      "title": "Publish DreamCo 1.0 readiness scorecard",
+      "status": "complete",
+      "proof": [
+        "Release readiness generator: tools/generate_dreamco_release_readiness.py",
+        "Scorecard docs: docs/DREAMCO_1_0_CONSOLIDATION_SCORECARD.md",
+        "Top 100 docs: docs/DREAMCO_TOP_100_UPDATE_BACKLOG.md"
+      ],
+      "missing": [],
+      "next": "Keep this generated report visible in Actions and refresh it before every PR."
+    }
+  ],
+  "top_100_groups": [
+    {
+      "id": "repository_stability",
+      "title": "Repository Stability",
+      "planned_updates": 20,
+      "status": "active",
+      "metrics": {
+        "open_prs": 56,
+        "failed_workflow_runs": 24,
+        "failed_quality_checks": 0
+      },
+      "focus": [
+        "branch_strategy",
+        "pull_request_triage",
+        "failed_workflows",
+        "runtime_pinning",
+        "report_loop_prevention",
+        "ci_cost_budget"
+      ],
+      "first_move": "make_one_required_ci_workflow_and_classify_open_pull_requests",
+      "next": "Use the cleanroom queue to reduce stale PRs and failed workflow runs."
+    },
+    {
+      "id": "bot_truth_registry",
+      "title": "Bot Truth Registry",
+      "planned_updates": 20,
+      "status": "active",
+      "metrics": {
+        "profiles_scanned": 1248,
+        "production_ready_bots": 1128,
+        "placeholder_review": 0
+      },
+      "focus": [
+        "global_ids",
+        "implementation_status",
+        "runtime_status",
+        "entry_points",
+        "schemas",
+        "permissions",
+        "ownership",
+        "maturity"
+      ],
+      "first_move": "generate_public_catalog_only_from_master_registry",
+      "next": "Continue turning profiles into runtime-proven bots with direct tests."
+    },
+    {
+      "id": "public_docs_identity",
+      "title": "Public Docs Identity",
+      "planned_updates": 15,
+      "status": "complete",
+      "metrics": {
+        "scorecard_docs": 1,
+        "top_100_docs": 1,
+        "progress_docs": 1
+      },
+      "focus": [
+        "counts",
+        "status_page",
+        "repository_map",
+        "installation_guide",
+        "data_ownership",
+        "glossary",
+        "division_docs",
+        "capability_matrix"
+      ],
+      "first_move": "keep_readme_claims_tied_to_measurable_evidence",
+      "next": "Refresh docs from generated evidence instead of manual claims."
+    },
+    {
+      "id": "buddy_control_plane",
+      "title": "Buddy Control Plane",
+      "planned_updates": 15,
+      "status": "active",
+      "metrics": {
+        "buddy_connected_bots": 1248,
+        "actions_testable_bots": 1248,
+        "ops_packets": 0
+      },
+      "focus": [
+        "weighted_routing",
+        "fallbacks",
+        "task_decomposition",
+        "dependency_aware_execution",
+        "approval_inbox",
+        "risk_gates",
+        "spending_gates",
+        "model_budgeting"
+      ],
+      "first_move": "replace_first_match_routing_with_scored_registry_routing",
+      "next": "Add scored routing, cancellation, and approval inbox actions."
+    },
+    {
+      "id": "operational_dashboard",
+      "title": "Operational Dashboard",
+      "planned_updates": 15,
+      "status": "active",
+      "metrics": {
+        "productivity_score": 78.19,
+        "storage_ready": true,
+        "revenue_rescue_ready": false
+      },
+      "focus": [
+        "bot_fleet",
+        "division_explorer",
+        "task_timeline",
+        "failure_center",
+        "pr_center",
+        "cost_tracking",
+        "revenue_tracking",
+        "owner_customer_modes"
+      ],
+      "first_move": "launch_bot_fleet_and_failure_center_as_official_dashboard_surfaces",
+      "next": "Keep dashboard-backed checks green and connect revenue fixes to real offer evidence."
+    },
+    {
+      "id": "trustworthy_autonomy",
+      "title": "Trustworthy Autonomy",
+      "planned_updates": 15,
+      "status": "active",
+      "metrics": {
+        "approval_gates": 11,
+        "approval_gated_bots": 120,
+        "storage_failed_checks": 0
+      },
+      "focus": [
+        "autonomy_levels",
+        "operating_modes",
+        "permissions",
+        "audit_log",
+        "local_first_memory",
+        "export_delete",
+        "golden_tasks",
+        "shadow_tests",
+        "rollback"
+      ],
+      "first_move": "enforce_guided_semi_automatic_and_full_automatic_as_code_policies",
+      "next": "Convert policies into runtime enforcement, audit log, export/delete, shadow tests, and rollback."
+    }
+  ],
+  "already_done": [
+    {
+      "id": "correct_registry_and_readme_counts",
+      "title": "Correct registry and README counts",
+      "status": "complete",
+      "proof": [
+        "README truth copy: README.md",
+        "Consolidation scorecard: config/dreamco_1_0_consolidation_scorecard.json",
+        "Capability inventory: reports/buddy_capability_inventory.json"
+      ],
+      "missing": [],
+      "next": "Keep all public claims tied to generated reports."
+    },
+    {
+      "id": "complete_command_center_consolidation_decision",
+      "title": "Complete Command Center consolidation decision",
+      "status": "complete",
+      "proof": [
+        "Command Center component: dreamco-control-tower/frontend/src/components/CommandCenter.jsx",
+        "Buddy Command Center component: dreamco-control-tower/frontend/src/components/BuddyCommandCenter.jsx",
+        "Actions page command surface: dreamco-control-tower/frontend/src/components/ActionsPage.jsx"
+      ],
+      "missing": [],
+      "next": "Keep one official dashboard path and retire duplicate dashboard experiments only after coverage is preserved."
+    },
+    {
+      "id": "publish_dreamco_1_0_readiness_scorecard",
+      "title": "Publish DreamCo 1.0 readiness scorecard",
+      "status": "complete",
+      "proof": [
+        "Release readiness generator: tools/generate_dreamco_release_readiness.py",
+        "Scorecard docs: docs/DREAMCO_1_0_CONSOLIDATION_SCORECARD.md",
+        "Top 100 docs: docs/DREAMCO_TOP_100_UPDATE_BACKLOG.md"
+      ],
+      "missing": [],
+      "next": "Keep this generated report visible in Actions and refresh it before every PR."
+    }
+  ],
+  "currently_building": [
+    {
+      "id": "classify_all_profiles_by_implementation_status",
+      "title": "Classify all profiles by implementation status",
+      "status": "active",
+      "proof": [
+        "Buddy capability inventory: reports/buddy_capability_inventory.json",
+        "Bot production contract validator: tools/validate_bot_production_contracts.py",
+        "Generated smoke results: reports/generated_bot_smoke_results.json"
+      ],
+      "missing": [],
+      "next": "Profiles are inventoried, but not every bot is production-ready yet."
+    },
+    {
+      "id": "triage_open_pull_requests",
+      "title": "Triage open pull requests",
+      "status": "active",
+      "proof": [
+        "GitHub triage report: reports/github_triage_report.json",
+        "Repository stewardship report: reports/repository_stewardship_report.json",
+        "Goal consolidation map: config/github_goal_consolidation.json"
+      ],
+      "missing": [],
+      "next": "Triage exists, but open PRs and restart/retest work still remain."
+    },
+    {
+      "id": "repair_required_ci_pipeline",
+      "title": "Repair required CI pipeline",
+      "status": "active",
+      "proof": [
+        "Repository steward: tools/repository_steward.py",
+        "Storage guard: tools/storage_guard.py",
+        "Bot connection guard: tools/buddy_bot_connection_guard.py"
+      ],
+      "missing": [],
+      "next": "Local quality gates are clean, but failed workflow runs still need retest or repair."
+    },
+    {
+      "id": "make_buddy_use_master_registry_for_real_routing",
+      "title": "Make Buddy use the registry for real routing",
+      "status": "active",
+      "proof": [
+        "Master registry: config/master_bot_registry.json",
+        "Buddy master registry adapter: BuddyAI/master_registry.py",
+        "Buddy connection guard: tools/buddy_bot_connection_guard.py"
+      ],
+      "missing": [],
+      "next": "Registry and connection proof exist; scored live routing, fallbacks, and cancellation still need deeper runtime enforcement."
+    },
+    {
+      "id": "enforce_approval_risk_spending_and_autonomy",
+      "title": "Enforce approval, risk, spending, and autonomy",
+      "status": "active",
+      "proof": [
+        "High-risk approval registry: config/production_approvals/high_risk_bot_approvals.json",
+        "Local-first storage policy: config/local_first_storage_policy.json",
+        "Autonomous business policy: config/autonomous_business_engine.json"
+      ],
+      "missing": [],
+      "next": "Approval policies exist; runtime enforcement and audit logging still need full proof."
+    },
+    {
+      "id": "launch_bot_fleet_and_failure_center",
+      "title": "Launch Bot Fleet and Failure Center",
+      "status": "active",
+      "proof": [
+        "Actions page: dreamco-control-tower/frontend/src/components/ActionsPage.jsx",
+        "GitHub triage report: reports/github_triage_report.json",
+        "Repository stewardship report: reports/repository_stewardship_report.json"
+      ],
+      "missing": [],
+      "next": "The failure center is visible, but failed workflow work is still active."
+    },
+    {
+      "id": "make_five_bot_products_work_end_to_end",
+      "title": "Make five bot products work end to end",
+      "status": "active",
+      "proof": [
+        "Company builder operating model: config/dreamco_company_builder_operating_model.json",
+        "Prospectus pages: docs/bots",
+        "Stripe revenue rescue: reports/stripe_revenue_rescue_report.json"
+      ],
+      "missing": [],
+      "next": "Product packaging exists, but revenue rescue is not ready, so paid end-to-end proof remains active."
+    }
+  ],
+  "blocked_or_unproven": [],
+  "next_actions": [
+    "Refresh capability, stewardship, storage, Stripe, and bot connection reports before every release PR.",
+    "Reduce the PR restart queue before adding more bots or major dashboard surfaces.",
+    "Promote five bot products only after signup, sandbox, payment, support, and dashboard proof all exist.",
+    "Keep Buddy supervised for live money, outreach, deployment, credential, and customer-impacting actions."
+  ],
+  "sources": {
+    "scorecard": "config/dreamco_1_0_consolidation_scorecard.json",
+    "capability_inventory": "reports/buddy_capability_inventory.json",
+    "repository_stewardship": "reports/repository_stewardship_report.json",
+    "storage_guard": "reports/storage_guard_report.json",
+    "stripe_revenue_rescue": "reports/stripe_revenue_rescue_report.json",
+    "buddy_bot_connections": "reports/buddy_bot_connection_report.json"
+  }
+}

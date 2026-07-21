@@ -1,0 +1,18 @@
+{
+  "schemaVersion": "2026-07-06",
+  "purpose": "Seed registry for bot workers that map jobs, hustles, and categories to efficiency workflows.",
+  "botWorkerTemplate": {
+    "fields": ["jobFamily", "workerBot", "problemsToSolve", "customerTypes", "toolsToFind", "skillsToLearn", "workflowsToAutomate", "evidenceOutputs"],
+    "memoryRequired": true,
+    "approvalRequiredBeforeCustomerContact": true
+  },
+  "jobFamilies": [
+    { "jobFamily": "Real Estate", "workerBot": "DreamRealEstateWorker", "problemsToSolve": ["find_deals", "score_properties", "estimate_rent", "coordinate_financing"], "customerTypes": ["agents", "investors", "landlords", "homebuyers"], "toolsToFind": ["property_data", "maps", "valuation", "crm"], "skillsToLearn": ["market_analysis", "deal_underwriting", "contract_review_handoff"], "workflowsToAutomate": ["lead_research", "deal_scorecard", "follow_up_plan"] },
+    { "jobFamily": "Freelance Services", "workerBot": "FiverrServiceWorker", "problemsToSolve": ["package_offer", "price_gig", "deliver_service", "collect_reviews"], "customerTypes": ["small_business", "creators", "startups"], "toolsToFind": ["portfolio_builders", "proposal_tools", "automation_templates"], "skillsToLearn": ["offer_design", "copywriting", "client_delivery"], "workflowsToAutomate": ["gig_research", "brief_intake", "delivery_checklist"] },
+    { "jobFamily": "Lead Generation", "workerBot": "DreamLeadGenWorker", "problemsToSolve": ["find_customers", "score_fit", "draft_outreach", "track_pipeline"], "customerTypes": ["local_businesses", "saas_buyers", "real_estate_prospects"], "toolsToFind": ["public_directories", "email_verification", "crm", "analytics"], "skillsToLearn": ["segmentation", "qualification", "sales_operations"], "workflowsToAutomate": ["segment_research", "lead_scoring", "outreach_draft"] },
+    { "jobFamily": "Marketing", "workerBot": "DreamMarketingWorker", "problemsToSolve": ["plan_campaign", "write_content", "measure_conversion"], "customerTypes": ["brands", "local_businesses", "creators"], "toolsToFind": ["seo", "social_scheduling", "analytics", "ad_libraries"], "skillsToLearn": ["positioning", "content_strategy", "experiment_design"], "workflowsToAutomate": ["content_calendar", "campaign_brief", "kpi_review"] },
+    { "jobFamily": "Software", "workerBot": "DreamCodeLabWorker", "problemsToSolve": ["debug_code", "build_mvp", "write_tests", "ship_pr"], "customerTypes": ["founders", "teams", "internal_divisions"], "toolsToFind": ["github", "ci", "testing", "docs"], "skillsToLearn": ["architecture", "test_design", "devops"], "workflowsToAutomate": ["issue_triage", "test_run", "pr_plan"] },
+    { "jobFamily": "Customer Support", "workerBot": "DreamSupportWorker", "problemsToSolve": ["answer_questions", "triage_tickets", "write_help_docs"], "customerTypes": ["product_users", "clients", "internal_teams"], "toolsToFind": ["helpdesk", "knowledge_base", "chat", "sentiment"], "skillsToLearn": ["support_quality", "escalation", "documentation"], "workflowsToAutomate": ["ticket_summary", "reply_draft", "faq_update"] }
+  ],
+  "expansionPlan": "Generate additional job families from public labor taxonomies, GitHub workflows, Wikipedia topic maps, and user-approved niche hustles."
+}

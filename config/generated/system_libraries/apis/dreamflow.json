@@ -1,0 +1,3912 @@
+{
+  "schema": "dreamco.api_library_shard.v1",
+  "generated_at": "2026-06-01T00:00:00Z",
+  "generated_from": "config/master_bot_registry.json",
+  "library": "apis",
+  "division": "DreamFlow",
+  "division_slug": "dreamflow",
+  "count": 5,
+  "custom_to_bot": true,
+  "entries": [
+    {
+      "id": "captcha-handler:apis",
+      "bot_id": "captcha-handler",
+      "legacy_registry_id": "captcha_handler",
+      "bot_slug": "captcha-handler",
+      "bot_name": "CAPTCHA Handler Bot",
+      "emoji": "🔎",
+      "division": "DreamFlow",
+      "version": "1.0.0",
+      "status": "generated",
+      "owner": "DreamCo Technologies",
+      "base_path": "/api/v1/bots/captcha-handler",
+      "operations": [
+        {
+          "operation_id": "captcha-handler_get_status",
+          "method": "GET",
+          "path": "/status",
+          "approval_required": false,
+          "purpose": "Return runtime, readiness, and approval state for CAPTCHA Handler Bot."
+        },
+        {
+          "operation_id": "captcha-handler_get_capabilities",
+          "method": "GET",
+          "path": "/capabilities",
+          "approval_required": false,
+          "purpose": "Return CAPTCHA Handler Bot capabilities, limits, and sandbox options."
+        },
+        {
+          "operation_id": "captcha-handler_recaptcha-solving_plan",
+          "method": "POST",
+          "path": "/capabilities/recaptcha-solving/plan",
+          "approval_required": false,
+          "purpose": "Create a sandbox-first plan for reCAPTCHA solving.",
+          "capability": {
+            "intent": "recaptcha-solving",
+            "label": "reCAPTCHA solving",
+            "risk_level": "high",
+            "approval_required": true,
+            "revenue_generating": true,
+            "spends_money": false,
+            "external_outreach": false
+          }
+        },
+        {
+          "operation_id": "captcha-handler_recaptcha-solving_sandbox",
+          "method": "POST",
+          "path": "/capabilities/recaptcha-solving/sandbox",
+          "approval_required": false,
+          "purpose": "Run the reCAPTCHA solving bootcamp fixture without live side effects.",
+          "capability": {
+            "intent": "recaptcha-solving",
+            "label": "reCAPTCHA solving",
+            "risk_level": "high",
+            "approval_required": true,
+            "revenue_generating": true,
+            "spends_money": false,
+            "external_outreach": false
+          }
+        },
+        {
+          "operation_id": "captcha-handler_recaptcha-solving_request_approval",
+          "method": "POST",
+          "path": "/capabilities/recaptcha-solving/approval-request",
+          "approval_required": true,
+          "purpose": "Prepare owner approval packet before live use of reCAPTCHA solving.",
+          "capability": {
+            "intent": "recaptcha-solving",
+            "label": "reCAPTCHA solving",
+            "risk_level": "high",
+            "approval_required": true,
+            "revenue_generating": true,
+            "spends_money": false,
+            "external_outreach": false
+          }
+        },
+        {
+          "operation_id": "captcha-handler_hcaptcha-support_plan",
+          "method": "POST",
+          "path": "/capabilities/hcaptcha-support/plan",
+          "approval_required": false,
+          "purpose": "Create a sandbox-first plan for hCaptcha support.",
+          "capability": {
+            "intent": "hcaptcha-support",
+            "label": "hCaptcha support",
+            "risk_level": "high",
+            "approval_required": true,
+            "revenue_generating": true,
+            "spends_money": false,
+            "external_outreach": false
+          }
+        },
+        {
+          "operation_id": "captcha-handler_hcaptcha-support_sandbox",
+          "method": "POST",
+          "path": "/capabilities/hcaptcha-support/sandbox",
+          "approval_required": false,
+          "purpose": "Run the hCaptcha support bootcamp fixture without live side effects.",
+          "capability": {
+            "intent": "hcaptcha-support",
+            "label": "hCaptcha support",
+            "risk_level": "high",
+            "approval_required": true,
+            "revenue_generating": true,
+            "spends_money": false,
+            "external_outreach": false
+          }
+        },
+        {
+          "operation_id": "captcha-handler_hcaptcha-support_request_approval",
+          "method": "POST",
+          "path": "/capabilities/hcaptcha-support/approval-request",
+          "approval_required": true,
+          "purpose": "Prepare owner approval packet before live use of hCaptcha support.",
+          "capability": {
+            "intent": "hcaptcha-support",
+            "label": "hCaptcha support",
+            "risk_level": "high",
+            "approval_required": true,
+            "revenue_generating": true,
+            "spends_money": false,
+            "external_outreach": false
+          }
+        },
+        {
+          "operation_id": "captcha-handler_image-captcha-recognition_plan",
+          "method": "POST",
+          "path": "/capabilities/image-captcha-recognition/plan",
+          "approval_required": false,
+          "purpose": "Create a sandbox-first plan for Image CAPTCHA recognition.",
+          "capability": {
+            "intent": "image-captcha-recognition",
+            "label": "Image CAPTCHA recognition",
+            "risk_level": "high",
+            "approval_required": true,
+            "revenue_generating": true,
+            "spends_money": false,
+            "external_outreach": false
+          }
+        },
+        {
+          "operation_id": "captcha-handler_image-captcha-recognition_sandbox",
+          "method": "POST",
+          "path": "/capabilities/image-captcha-recognition/sandbox",
+          "approval_required": false,
+          "purpose": "Run the Image CAPTCHA recognition bootcamp fixture without live side effects.",
+          "capability": {
+            "intent": "image-captcha-recognition",
+            "label": "Image CAPTCHA recognition",
+            "risk_level": "high",
+            "approval_required": true,
+            "revenue_generating": true,
+            "spends_money": false,
+            "external_outreach": false
+          }
+        },
+        {
+          "operation_id": "captcha-handler_image-captcha-recognition_request_approval",
+          "method": "POST",
+          "path": "/capabilities/image-captcha-recognition/approval-request",
+          "approval_required": true,
+          "purpose": "Prepare owner approval packet before live use of Image CAPTCHA recognition.",
+          "capability": {
+            "intent": "image-captcha-recognition",
+            "label": "Image CAPTCHA recognition",
+            "risk_level": "high",
+            "approval_required": true,
+            "revenue_generating": true,
+            "spends_money": false,
+            "external_outreach": false
+          }
+        },
+        {
+          "operation_id": "captcha-handler_cloudflare-bypass-strategies_plan",
+          "method": "POST",
+          "path": "/capabilities/cloudflare-bypass-strategies/plan",
+          "approval_required": false,
+          "purpose": "Create a sandbox-first plan for Cloudflare bypass strategies.",
+          "capability": {
+            "intent": "cloudflare-bypass-strategies",
+            "label": "Cloudflare bypass strategies",
+            "risk_level": "high",
+            "approval_required": true,
+            "revenue_generating": true,
+            "spends_money": false,
+            "external_outreach": false
+          }
+        },
+        {
+          "operation_id": "captcha-handler_cloudflare-bypass-strategies_sandbox",
+          "method": "POST",
+          "path": "/capabilities/cloudflare-bypass-strategies/sandbox",
+          "approval_required": false,
+          "purpose": "Run the Cloudflare bypass strategies bootcamp fixture without live side effects.",
+          "capability": {
+            "intent": "cloudflare-bypass-strategies",
+            "label": "Cloudflare bypass strategies",
+            "risk_level": "high",
+            "approval_required": true,
+            "revenue_generating": true,
+            "spends_money": false,
+            "external_outreach": false
+          }
+        },
+        {
+          "operation_id": "captcha-handler_cloudflare-bypass-strategies_request_approval",
+          "method": "POST",
+          "path": "/capabilities/cloudflare-bypass-strategies/approval-request",
+          "approval_required": true,
+          "purpose": "Prepare owner approval packet before live use of Cloudflare bypass strategies.",
+          "capability": {
+            "intent": "cloudflare-bypass-strategies",
+            "label": "Cloudflare bypass strategies",
+            "risk_level": "high",
+            "approval_required": true,
+            "revenue_generating": true,
+            "spends_money": false,
+            "external_outreach": false
+          }
+        },
+        {
+          "operation_id": "captcha-handler_challenge-rotation-handling_plan",
+          "method": "POST",
+          "path": "/capabilities/challenge-rotation-handling/plan",
+          "approval_required": false,
+          "purpose": "Create a sandbox-first plan for Challenge rotation handling.",
+          "capability": {
+            "intent": "challenge-rotation-handling",
+            "label": "Challenge rotation handling",
+            "risk_level": "high",
+            "approval_required": true,
+            "revenue_generating": true,
+            "spends_money": false,
+            "external_outreach": false
+          }
+        },
+        {
+          "operation_id": "captcha-handler_challenge-rotation-handling_sandbox",
+          "method": "POST",
+          "path": "/capabilities/challenge-rotation-handling/sandbox",
+          "approval_required": false,
+          "purpose": "Run the Challenge rotation handling bootcamp fixture without live side effects.",
+          "capability": {
+            "intent": "challenge-rotation-handling",
+            "label": "Challenge rotation handling",
+            "risk_level": "high",
+            "approval_required": true,
+            "revenue_generating": true,
+            "spends_money": false,
+            "external_outreach": false
+          }
+        },
+        {
+          "operation_id": "captcha-handler_challenge-rotation-handling_request_approval",
+          "method": "POST",
+          "path": "/capabilities/challenge-rotation-handling/approval-request",
+          "approval_required": true,
+          "purpose": "Prepare owner approval packet before live use of Challenge rotation handling.",
+          "capability": {
+            "intent": "challenge-rotation-handling",
+            "label": "Challenge rotation handling",
+            "risk_level": "high",
+            "approval_required": true,
+            "revenue_generating": true,
+            "spends_money": false,
+            "external_outreach": false
+          }
+        },
+        {
+          "operation_id": "captcha-handler_advanced-analytics-dashboard_plan",
+          "method": "POST",
+          "path": "/capabilities/advanced-analytics-dashboard/plan",
+          "approval_required": false,
+          "purpose": "Create a sandbox-first plan for Advanced analytics dashboard.",
+          "capability": {
+            "intent": "advanced-analytics-dashboard",
+            "label": "Advanced analytics dashboard",
+            "risk_level": "high",
+            "approval_required": true,
+            "revenue_generating": true,
+            "spends_money": true,
+            "external_outreach": true
+          }
+        },
+        {
+          "operation_id": "captcha-handler_advanced-analytics-dashboard_sandbox",
+          "method": "POST",
+          "path": "/capabilities/advanced-analytics-dashboard/sandbox",
+          "approval_required": false,
+          "purpose": "Run the Advanced analytics dashboard bootcamp fixture without live side effects.",
+          "capability": {
+            "intent": "advanced-analytics-dashboard",
+            "label": "Advanced analytics dashboard",
+            "risk_level": "high",
+            "approval_required": true,
+            "revenue_generating": true,
+            "spends_money": true,
+            "external_outreach": true
+          }
+        },
+        {
+          "operation_id": "captcha-handler_advanced-analytics-dashboard_request_approval",
+          "method": "POST",
+          "path": "/capabilities/advanced-analytics-dashboard/approval-request",
+          "approval_required": true,
+          "purpose": "Prepare owner approval packet before live use of Advanced analytics dashboard.",
+          "capability": {
+            "intent": "advanced-analytics-dashboard",
+            "label": "Advanced analytics dashboard",
+            "risk_level": "high",
+            "approval_required": true,
+            "revenue_generating": true,
+            "spends_money": true,
+            "external_outreach": true
+          }
+        },
+        {
+          "operation_id": "captcha-handler_execute_reviewed_packet",
+          "method": "POST",
+          "path": "/execute-reviewed-packet",
+          "approval_required": true,
+          "purpose": "Execute only a reviewed, approved, audited CAPTCHA Handler Bot operation packet."
+        }
+      ],
+      "controls": [
+        "authenticated",
+        "schema_validated",
+        "rate_limited",
+        "retry_after_aware",
+        "audited"
+      ],
+      "custom_contract": {
+        "custom_to_bot": true,
+        "division_context": "DreamFlow",
+        "category_context": "captcha-handling",
+        "primary_capabilities": [
+          {
+            "intent": "recaptcha-solving",
+            "label": "reCAPTCHA solving",
+            "risk_level": "high",
+            "approval_required": true,
+            "revenue_generating": true,
+            "spends_money": false,
+            "external_outreach": false
+          },
+          {
+            "intent": "hcaptcha-support",
+            "label": "hCaptcha support",
+            "risk_level": "high",
+            "approval_required": true,
+            "revenue_generating": true,
+            "spends_money": false,
+            "external_outreach": false
+          },
+          {
+            "intent": "image-captcha-recognition",
+            "label": "Image CAPTCHA recognition",
+            "risk_level": "high",
+            "approval_required": true,
+            "revenue_generating": true,
+            "spends_money": false,
+            "external_outreach": false
+          },
+          {
+            "intent": "cloudflare-bypass-strategies",
+            "label": "Cloudflare bypass strategies",
+            "risk_level": "high",
+            "approval_required": true,
+            "revenue_generating": true,
+            "spends_money": false,
+            "external_outreach": false
+          },
+          {
+            "intent": "challenge-rotation-handling",
+            "label": "Challenge rotation handling",
+            "risk_level": "high",
+            "approval_required": true,
+            "revenue_generating": true,
+            "spends_money": false,
+            "external_outreach": false
+          },
+          {
+            "intent": "advanced-analytics-dashboard",
+            "label": "Advanced analytics dashboard",
+            "risk_level": "high",
+            "approval_required": true,
+            "revenue_generating": true,
+            "spends_money": true,
+            "external_outreach": true
+          }
+        ],
+        "business_owner_use_cases": [
+          "Find unsolved captcha-handling problems for DreamFlow customers.",
+          "Package CAPTCHA Handler Bot sandbox results into a client-safe offer.",
+          "Request owner approval before any live money, outreach, deployment, or external-impact action."
+        ],
+        "buddy_use_cases": [
+          "route_to_best_capability",
+          "generate_bootcamp_workflow",
+          "debug_failed_fixture",
+          "prepare_approval_packet"
+        ],
+        "client_use_cases": [
+          "run_safe_demo",
+          "see_expected_outputs",
+          "understand_limits_and_required_approvals"
+        ],
+        "schemas": {
+          "request_schema": {
+            "type": "object",
+            "required": [
+              "goal",
+              "persona",
+              "mode"
+            ],
+            "properties": {
+              "goal": {
+                "type": "string",
+                "description": "Business problem for CAPTCHA Handler Bot to solve."
+              },
+              "persona": {
+                "type": "string",
+                "enum": [
+                  "owner",
+                  "buddy",
+                  "client"
+                ]
+              },
+              "mode": {
+                "type": "string",
+                "enum": [
+                  "sandbox",
+                  "approval_request",
+                  "reviewed_live_packet"
+                ]
+              },
+              "capability": {
+                "type": "string",
+                "enum": [
+                  "recaptcha-solving",
+                  "hcaptcha-support",
+                  "image-captcha-recognition",
+                  "cloudflare-bypass-strategies",
+                  "challenge-rotation-handling",
+                  "advanced-analytics-dashboard"
+                ]
+              },
+              "constraints": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "evidence": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "response_schema": {
+            "type": "object",
+            "required": [
+              "bot_slug",
+              "mode",
+              "result",
+              "evidence_log",
+              "approval_required"
+            ],
+            "properties": {
+              "bot_slug": {
+                "const": "captcha-handler"
+              },
+              "division": {
+                "const": "DreamFlow"
+              },
+              "mode": {
+                "type": "string"
+              },
+              "result": {
+                "type": "object"
+              },
+              "evidence_log": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "approval_required": {
+                "type": "boolean"
+              },
+              "next_best_action": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "fixtures": [
+          {
+            "id": "captcha-handler:recaptcha-solving:happy-path",
+            "capability": "recaptcha-solving",
+            "persona": "client",
+            "mode": "sandbox",
+            "goal": "Use CAPTCHA Handler Bot to solve a reCAPTCHA solving problem in DreamFlow.",
+            "expected": [
+              "returns_client_safe_plan",
+              "writes_evidence_log",
+              "does_not_take_live_external_action"
+            ]
+          },
+          {
+            "id": "captcha-handler:hcaptcha-support:happy-path",
+            "capability": "hcaptcha-support",
+            "persona": "client",
+            "mode": "sandbox",
+            "goal": "Use CAPTCHA Handler Bot to solve a hCaptcha support problem in DreamFlow.",
+            "expected": [
+              "returns_client_safe_plan",
+              "writes_evidence_log",
+              "does_not_take_live_external_action"
+            ]
+          },
+          {
+            "id": "captcha-handler:image-captcha-recognition:happy-path",
+            "capability": "image-captcha-recognition",
+            "persona": "client",
+            "mode": "sandbox",
+            "goal": "Use CAPTCHA Handler Bot to solve a Image CAPTCHA recognition problem in DreamFlow.",
+            "expected": [
+              "returns_client_safe_plan",
+              "writes_evidence_log",
+              "does_not_take_live_external_action"
+            ]
+          },
+          {
+            "id": "captcha-handler:cloudflare-bypass-strategies:happy-path",
+            "capability": "cloudflare-bypass-strategies",
+            "persona": "client",
+            "mode": "sandbox",
+            "goal": "Use CAPTCHA Handler Bot to solve a Cloudflare bypass strategies problem in DreamFlow.",
+            "expected": [
+              "returns_client_safe_plan",
+              "writes_evidence_log",
+              "does_not_take_live_external_action"
+            ]
+          },
+          {
+            "id": "captcha-handler:unauthorized-live-action",
+            "mode": "reviewed_live_packet",
+            "expected": [
+              "reject_without_owner_approval",
+              "write_approval_request"
+            ]
+          },
+          {
+            "id": "captcha-handler:malformed-payload",
+            "mode": "sandbox",
+            "expected": [
+              "schema_error",
+              "client_safe_error_message"
+            ]
+          }
+        ]
+      },
+      "sandbox_test_profile": {
+        "name": "captcha-handler-api-topline-sandbox",
+        "network": "mocked_by_default",
+        "secrets": "test_values_only",
+        "money_movement": "disabled",
+        "coverage_goal": "captcha-handler_custom_capability_contracts",
+        "required_checks": [
+          "openapi_schema_validation",
+          "request_response_contracts",
+          "auth_required_for_mutations",
+          "rate_limit_and_retry_after",
+          "idempotency_key_behavior",
+          "permission_denied_negative_tests",
+          "malformed_payload_rejection",
+          "timeout_and_circuit_breaker",
+          "audit_log_assertions",
+          "no_external_side_effects"
+        ],
+        "fixtures": [
+          "captcha-handler:recaptcha-solving:happy-path",
+          "captcha-handler:hcaptcha-support:happy-path",
+          "captcha-handler:image-captcha-recognition:happy-path",
+          "captcha-handler:cloudflare-bypass-strategies:happy-path",
+          "captcha-handler:unauthorized-live-action",
+          "captcha-handler:malformed-payload",
+          "captcha-handler:rate-limit-window",
+          "captcha-handler:approval-required-action"
+        ]
+      },
+      "sandbox_bootcamp": {
+        "id": "captcha-handler:api-sandbox-bootcamp",
+        "name": "CAPTCHA Handler Bot API Sandbox Bootcamp",
+        "audiences": [
+          "owner",
+          "buddy",
+          "client"
+        ],
+        "workflow_generator": {
+          "id": "captcha-handler-api-sandbox-bootcamp-workflow",
+          "source": "api_library",
+          "generated_workflow_name": "CAPTCHA Handler Bot Api Sandbox Bootcamp Workflow",
+          "workflow_file": ".github/workflows/generated/captcha-handler-api-sandbox-bootcamp-workflow.yml",
+          "trigger": "workflow_call",
+          "permissions": {
+            "contents": "read",
+            "actions": "read"
+          },
+          "timeout_minutes": 15,
+          "concurrency": {
+            "group": "captcha-handler-api-sandbox-bootcamp",
+            "cancel_in_progress": true
+          },
+          "stages": [
+            "checkout_readonly",
+            "install_locked_dependencies",
+            "load_mock_fixtures",
+            "run_contract_checks",
+            "run_negative_safety_checks",
+            "run_bootcamp_persona_drills",
+            "write_evidence_packet"
+          ],
+          "artifacts": [
+            "reports/sandbox_bootcamps/captcha-handler/api-sandbox-bootcamp/summary.json",
+            "reports/sandbox_bootcamps/captcha-handler/api-sandbox-bootcamp/client_notes.md"
+          ],
+          "live_action_policy": "blocked_unless_owner_approval_packet_is_green"
+        },
+        "required_checks": [
+          "openapi_schema_validation",
+          "request_response_contracts",
+          "auth_required_for_mutations",
+          "rate_limit_and_retry_after",
+          "idempotency_key_behavior",
+          "permission_denied_negative_tests",
+          "malformed_payload_rejection",
+          "timeout_and_circuit_breaker",
+          "audit_log_assertions",
+          "no_external_side_effects",
+          "client_safe_error_messages",
+          "rollback_packet_created"
+        ],
+        "bootcamp_modules": [
+          {
+            "id": "bootcamp_01_contract",
+            "title": "Contract and schema proof",
+            "goal": "Prove every request, response, event, and error shape before runtime work.",
+            "checks": [
+              "schema_compile",
+              "example_payloads",
+              "negative_contract_cases"
+            ]
+          },
+          {
+            "id": "bootcamp_02_fixture_lab",
+            "title": "Fixture lab",
+            "goal": "Build deterministic happy-path, edge-case, abuse-case, and rollback fixtures.",
+            "checks": [
+              "happy_path_fixture",
+              "edge_fixture",
+              "abuse_fixture",
+              "rollback_fixture"
+            ]
+          },
+          {
+            "id": "bootcamp_03_api_obstacle_course",
+            "title": "API obstacle course",
+            "goal": "Exercise auth, rate limits, idempotency, timeouts, retries, and audit logs.",
+            "checks": [
+              "auth_gate",
+              "rate_limit",
+              "idempotency",
+              "timeout",
+              "audit_log"
+            ]
+          },
+          {
+            "id": "bootcamp_04_safety_ring",
+            "title": "Safety ring",
+            "goal": "Block live money, outreach, deployment, credential, medical, legal, and security impact by default.",
+            "checks": [
+              "no_live_money",
+              "no_live_outreach",
+              "no_secret_leak",
+              "approval_required"
+            ]
+          },
+          {
+            "id": "bootcamp_05_builder_drill",
+            "title": "Bot builder drill",
+            "goal": "Train the operator to build, test, debug, document, and package the bot like a client product.",
+            "checks": [
+              "build_packet",
+              "debug_packet",
+              "client_summary",
+              "prospectus_update"
+            ]
+          },
+          {
+            "id": "bootcamp_06_failure_replay",
+            "title": "Failure replay",
+            "goal": "Replay old failures and prove they stay fixed with regression evidence.",
+            "checks": [
+              "known_failure_fixture",
+              "regression_test",
+              "fix_evidence",
+              "retest_command"
+            ]
+          },
+          {
+            "id": "bootcamp_07_graduation",
+            "title": "Graduation review",
+            "goal": "Produce a demo-ready, client-safe, production-gated readiness packet.",
+            "checks": [
+              "readiness_score",
+              "remaining_risks",
+              "approval_packet",
+              "handoff_notes"
+            ]
+          }
+        ],
+        "personas": {
+          "owner": [
+            "learn_what_the_bot_can_safely_do",
+            "approve_or_reject_live_actions",
+            "read_client_ready_summary"
+          ],
+          "buddy": [
+            "route_task_to_best_bot",
+            "debug_failed_contract",
+            "generate_fix_packet"
+          ],
+          "client": [
+            "try_safe_demo_scenario",
+            "see_expected_business_value",
+            "understand_limits_and_approvals"
+          ]
+        },
+        "graduation_packet": [
+          "api_contract_report",
+          "workflow_run_summary",
+          "sandbox_evidence",
+          "risk_and_approval_summary",
+          "client_demo_script"
+        ]
+      },
+      "workflow_generator": {
+        "id": "captcha-handler-api-sandbox-bootcamp-workflow",
+        "source": "api_library",
+        "generated_workflow_name": "CAPTCHA Handler Bot Api Sandbox Bootcamp Workflow",
+        "workflow_file": ".github/workflows/generated/captcha-handler-api-sandbox-bootcamp-workflow.yml",
+        "trigger": "workflow_call",
+        "permissions": {
+          "contents": "read",
+          "actions": "read"
+        },
+        "timeout_minutes": 15,
+        "concurrency": {
+          "group": "captcha-handler-api-sandbox-bootcamp",
+          "cancel_in_progress": true
+        },
+        "stages": [
+          "checkout_readonly",
+          "install_locked_dependencies",
+          "load_mock_fixtures",
+          "run_contract_checks",
+          "run_negative_safety_checks",
+          "run_bootcamp_persona_drills",
+          "write_evidence_packet"
+        ],
+        "artifacts": [
+          "reports/sandbox_bootcamps/captcha-handler/api-sandbox-bootcamp/summary.json",
+          "reports/sandbox_bootcamps/captcha-handler/api-sandbox-bootcamp/client_notes.md"
+        ],
+        "live_action_policy": "blocked_unless_owner_approval_packet_is_green"
+      }
+    },
+    {
+      "id": "crm-exporter:apis",
+      "bot_id": "crm-exporter",
+      "legacy_registry_id": "crm_exporter",
+      "bot_slug": "crm-exporter",
+      "bot_name": "CRM Export Connector",
+      "emoji": "🎯",
+      "division": "DreamFlow",
+      "version": "1.0.0",
+      "status": "generated",
+      "owner": "DreamCo Technologies",
+      "base_path": "/api/v1/bots/crm-exporter",
+      "operations": [
+        {
+          "operation_id": "crm-exporter_get_status",
+          "method": "GET",
+          "path": "/status",
+          "approval_required": false,
+          "purpose": "Return runtime, readiness, and approval state for CRM Export Connector."
+        },
+        {
+          "operation_id": "crm-exporter_get_capabilities",
+          "method": "GET",
+          "path": "/capabilities",
+          "approval_required": false,
+          "purpose": "Return CRM Export Connector capabilities, limits, and sandbox options."
+        },
+        {
+          "operation_id": "crm-exporter_salesforce-integration_plan",
+          "method": "POST",
+          "path": "/capabilities/salesforce-integration/plan",
+          "approval_required": false,
+          "purpose": "Create a sandbox-first plan for Salesforce integration.",
+          "capability": {
+            "intent": "salesforce-integration",
+            "label": "Salesforce integration",
+            "risk_level": "high",
+            "approval_required": true,
+            "revenue_generating": true,
+            "spends_money": false,
+            "external_outreach": true
+          }
+        },
+        {
+          "operation_id": "crm-exporter_salesforce-integration_sandbox",
+          "method": "POST",
+          "path": "/capabilities/salesforce-integration/sandbox",
+          "approval_required": false,
+          "purpose": "Run the Salesforce integration bootcamp fixture without live side effects.",
+          "capability": {
+            "intent": "salesforce-integration",
+            "label": "Salesforce integration",
+            "risk_level": "high",
+            "approval_required": true,
+            "revenue_generating": true,
+            "spends_money": false,
+            "external_outreach": true
+          }
+        },
+        {
+          "operation_id": "crm-exporter_salesforce-integration_request_approval",
+          "method": "POST",
+          "path": "/capabilities/salesforce-integration/approval-request",
+          "approval_required": true,
+          "purpose": "Prepare owner approval packet before live use of Salesforce integration.",
+          "capability": {
+            "intent": "salesforce-integration",
+            "label": "Salesforce integration",
+            "risk_level": "high",
+            "approval_required": true,
+            "revenue_generating": true,
+            "spends_money": false,
+            "external_outreach": true
+          }
+        },
+        {
+          "operation_id": "crm-exporter_hubspot-connector_plan",
+          "method": "POST",
+          "path": "/capabilities/hubspot-connector/plan",
+          "approval_required": false,
+          "purpose": "Create a sandbox-first plan for HubSpot connector.",
+          "capability": {
+            "intent": "hubspot-connector",
+            "label": "HubSpot connector",
+            "risk_level": "high",
+            "approval_required": true,
+            "revenue_generating": true,
+            "spends_money": false,
+            "external_outreach": true
+          }
+        },
+        {
+          "operation_id": "crm-exporter_hubspot-connector_sandbox",
+          "method": "POST",
+          "path": "/capabilities/hubspot-connector/sandbox",
+          "approval_required": false,
+          "purpose": "Run the HubSpot connector bootcamp fixture without live side effects.",
+          "capability": {
+            "intent": "hubspot-connector",
+            "label": "HubSpot connector",
+            "risk_level": "high",
+            "approval_required": true,
+            "revenue_generating": true,
+            "spends_money": false,
+            "external_outreach": true
+          }
+        },
+        {
+          "operation_id": "crm-exporter_hubspot-connector_request_approval",
+          "method": "POST",
+          "path": "/capabilities/hubspot-connector/approval-request",
+          "approval_required": true,
+          "purpose": "Prepare owner approval packet before live use of HubSpot connector.",
+          "capability": {
+            "intent": "hubspot-connector",
+            "label": "HubSpot connector",
+            "risk_level": "high",
+            "approval_required": true,
+            "revenue_generating": true,
+            "spends_money": false,
+            "external_outreach": true
+          }
+        },
+        {
+          "operation_id": "crm-exporter_custom-field-mapping_plan",
+          "method": "POST",
+          "path": "/capabilities/custom-field-mapping/plan",
+          "approval_required": false,
+          "purpose": "Create a sandbox-first plan for Custom field mapping.",
+          "capability": {
+            "intent": "custom-field-mapping",
+            "label": "Custom field mapping",
+            "risk_level": "high",
+            "approval_required": true,
+            "revenue_generating": true,
+            "spends_money": false,
+            "external_outreach": true
+          }
+        },
+        {
+          "operation_id": "crm-exporter_custom-field-mapping_sandbox",
+          "method": "POST",
+          "path": "/capabilities/custom-field-mapping/sandbox",
+          "approval_required": false,
+          "purpose": "Run the Custom field mapping bootcamp fixture without live side effects.",
+          "capability": {
+            "intent": "custom-field-mapping",
+            "label": "Custom field mapping",
+            "risk_level": "high",
+            "approval_required": true,
+            "revenue_generating": true,
+            "spends_money": false,
+            "external_outreach": true
+          }
+        },
+        {
+          "operation_id": "crm-exporter_custom-field-mapping_request_approval",
+          "method": "POST",
+          "path": "/capabilities/custom-field-mapping/approval-request",
+          "approval_required": true,
+          "purpose": "Prepare owner approval packet before live use of Custom field mapping.",
+          "capability": {
+            "intent": "custom-field-mapping",
+            "label": "Custom field mapping",
+            "risk_level": "high",
+            "approval_required": true,
+            "revenue_generating": true,
+            "spends_money": false,
+            "external_outreach": true
+          }
+        },
+        {
+          "operation_id": "crm-exporter_duplicate-prevention_plan",
+          "method": "POST",
+          "path": "/capabilities/duplicate-prevention/plan",
+          "approval_required": false,
+          "purpose": "Create a sandbox-first plan for Duplicate prevention.",
+          "capability": {
+            "intent": "duplicate-prevention",
+            "label": "Duplicate prevention",
+            "risk_level": "high",
+            "approval_required": true,
+            "revenue_generating": true,
+            "spends_money": false,
+            "external_outreach": true
+          }
+        },
+        {
+          "operation_id": "crm-exporter_duplicate-prevention_sandbox",
+          "method": "POST",
+          "path": "/capabilities/duplicate-prevention/sandbox",
+          "approval_required": false,
+          "purpose": "Run the Duplicate prevention bootcamp fixture without live side effects.",
+          "capability": {
+            "intent": "duplicate-prevention",
+            "label": "Duplicate prevention",
+            "risk_level": "high",
+            "approval_required": true,
+            "revenue_generating": true,
+            "spends_money": false,
+            "external_outreach": true
+          }
+        },
+        {
+          "operation_id": "crm-exporter_duplicate-prevention_request_approval",
+          "method": "POST",
+          "path": "/capabilities/duplicate-prevention/approval-request",
+          "approval_required": true,
+          "purpose": "Prepare owner approval packet before live use of Duplicate prevention.",
+          "capability": {
+            "intent": "duplicate-prevention",
+            "label": "Duplicate prevention",
+            "risk_level": "high",
+            "approval_required": true,
+            "revenue_generating": true,
+            "spends_money": false,
+            "external_outreach": true
+          }
+        },
+        {
+          "operation_id": "crm-exporter_incremental-sync-engine_plan",
+          "method": "POST",
+          "path": "/capabilities/incremental-sync-engine/plan",
+          "approval_required": false,
+          "purpose": "Create a sandbox-first plan for Incremental sync engine.",
+          "capability": {
+            "intent": "incremental-sync-engine",
+            "label": "Incremental sync engine",
+            "risk_level": "high",
+            "approval_required": true,
+            "revenue_generating": true,
+            "spends_money": false,
+            "external_outreach": true
+          }
+        },
+        {
+          "operation_id": "crm-exporter_incremental-sync-engine_sandbox",
+          "method": "POST",
+          "path": "/capabilities/incremental-sync-engine/sandbox",
+          "approval_required": false,
+          "purpose": "Run the Incremental sync engine bootcamp fixture without live side effects.",
+          "capability": {
+            "intent": "incremental-sync-engine",
+            "label": "Incremental sync engine",
+            "risk_level": "high",
+            "approval_required": true,
+            "revenue_generating": true,
+            "spends_money": false,
+            "external_outreach": true
+          }
+        },
+        {
+          "operation_id": "crm-exporter_incremental-sync-engine_request_approval",
+          "method": "POST",
+          "path": "/capabilities/incremental-sync-engine/approval-request",
+          "approval_required": true,
+          "purpose": "Prepare owner approval packet before live use of Incremental sync engine.",
+          "capability": {
+            "intent": "incremental-sync-engine",
+            "label": "Incremental sync engine",
+            "risk_level": "high",
+            "approval_required": true,
+            "revenue_generating": true,
+            "spends_money": false,
+            "external_outreach": true
+          }
+        },
+        {
+          "operation_id": "crm-exporter_advanced-analytics-dashboard_plan",
+          "method": "POST",
+          "path": "/capabilities/advanced-analytics-dashboard/plan",
+          "approval_required": false,
+          "purpose": "Create a sandbox-first plan for Advanced analytics dashboard.",
+          "capability": {
+            "intent": "advanced-analytics-dashboard",
+            "label": "Advanced analytics dashboard",
+            "risk_level": "high",
+            "approval_required": true,
+            "revenue_generating": true,
+            "spends_money": true,
+            "external_outreach": true
+          }
+        },
+        {
+          "operation_id": "crm-exporter_advanced-analytics-dashboard_sandbox",
+          "method": "POST",
+          "path": "/capabilities/advanced-analytics-dashboard/sandbox",
+          "approval_required": false,
+          "purpose": "Run the Advanced analytics dashboard bootcamp fixture without live side effects.",
+          "capability": {
+            "intent": "advanced-analytics-dashboard",
+            "label": "Advanced analytics dashboard",
+            "risk_level": "high",
+            "approval_required": true,
+            "revenue_generating": true,
+            "spends_money": true,
+            "external_outreach": true
+          }
+        },
+        {
+          "operation_id": "crm-exporter_advanced-analytics-dashboard_request_approval",
+          "method": "POST",
+          "path": "/capabilities/advanced-analytics-dashboard/approval-request",
+          "approval_required": true,
+          "purpose": "Prepare owner approval packet before live use of Advanced analytics dashboard.",
+          "capability": {
+            "intent": "advanced-analytics-dashboard",
+            "label": "Advanced analytics dashboard",
+            "risk_level": "high",
+            "approval_required": true,
+            "revenue_generating": true,
+            "spends_money": true,
+            "external_outreach": true
+          }
+        },
+        {
+          "operation_id": "crm-exporter_execute_reviewed_packet",
+          "method": "POST",
+          "path": "/execute-reviewed-packet",
+          "approval_required": true,
+          "purpose": "Execute only a reviewed, approved, audited CRM Export Connector operation packet."
+        }
+      ],
+      "controls": [
+        "authenticated",
+        "schema_validated",
+        "rate_limited",
+        "retry_after_aware",
+        "audited"
+      ],
+      "custom_contract": {
+        "custom_to_bot": true,
+        "division_context": "DreamFlow",
+        "category_context": "crm-export",
+        "primary_capabilities": [
+          {
+            "intent": "salesforce-integration",
+            "label": "Salesforce integration",
+            "risk_level": "high",
+            "approval_required": true,
+            "revenue_generating": true,
+            "spends_money": false,
+            "external_outreach": true
+          },
+          {
+            "intent": "hubspot-connector",
+            "label": "HubSpot connector",
+            "risk_level": "high",
+            "approval_required": true,
+            "revenue_generating": true,
+            "spends_money": false,
+            "external_outreach": true
+          },
+          {
+            "intent": "custom-field-mapping",
+            "label": "Custom field mapping",
+            "risk_level": "high",
+            "approval_required": true,
+            "revenue_generating": true,
+            "spends_money": false,
+            "external_outreach": true
+          },
+          {
+            "intent": "duplicate-prevention",
+            "label": "Duplicate prevention",
+            "risk_level": "high",
+            "approval_required": true,
+            "revenue_generating": true,
+            "spends_money": false,
+            "external_outreach": true
+          },
+          {
+            "intent": "incremental-sync-engine",
+            "label": "Incremental sync engine",
+            "risk_level": "high",
+            "approval_required": true,
+            "revenue_generating": true,
+            "spends_money": false,
+            "external_outreach": true
+          },
+          {
+            "intent": "advanced-analytics-dashboard",
+            "label": "Advanced analytics dashboard",
+            "risk_level": "high",
+            "approval_required": true,
+            "revenue_generating": true,
+            "spends_money": true,
+            "external_outreach": true
+          }
+        ],
+        "business_owner_use_cases": [
+          "Find unsolved crm-export problems for DreamFlow customers.",
+          "Package CRM Export Connector sandbox results into a client-safe offer.",
+          "Request owner approval before any live money, outreach, deployment, or external-impact action."
+        ],
+        "buddy_use_cases": [
+          "route_to_best_capability",
+          "generate_bootcamp_workflow",
+          "debug_failed_fixture",
+          "prepare_approval_packet"
+        ],
+        "client_use_cases": [
+          "run_safe_demo",
+          "see_expected_outputs",
+          "understand_limits_and_required_approvals"
+        ],
+        "schemas": {
+          "request_schema": {
+            "type": "object",
+            "required": [
+              "goal",
+              "persona",
+              "mode"
+            ],
+            "properties": {
+              "goal": {
+                "type": "string",
+                "description": "Business problem for CRM Export Connector to solve."
+              },
+              "persona": {
+                "type": "string",
+                "enum": [
+                  "owner",
+                  "buddy",
+                  "client"
+                ]
+              },
+              "mode": {
+                "type": "string",
+                "enum": [
+                  "sandbox",
+                  "approval_request",
+                  "reviewed_live_packet"
+                ]
+              },
+              "capability": {
+                "type": "string",
+                "enum": [
+                  "salesforce-integration",
+                  "hubspot-connector",
+                  "custom-field-mapping",
+                  "duplicate-prevention",
+                  "incremental-sync-engine",
+                  "advanced-analytics-dashboard"
+                ]
+              },
+              "constraints": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "evidence": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "response_schema": {
+            "type": "object",
+            "required": [
+              "bot_slug",
+              "mode",
+              "result",
+              "evidence_log",
+              "approval_required"
+            ],
+            "properties": {
+              "bot_slug": {
+                "const": "crm-exporter"
+              },
+              "division": {
+                "const": "DreamFlow"
+              },
+              "mode": {
+                "type": "string"
+              },
+              "result": {
+                "type": "object"
+              },
+              "evidence_log": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "approval_required": {
+                "type": "boolean"
+              },
+              "next_best_action": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "fixtures": [
+          {
+            "id": "crm-exporter:salesforce-integration:happy-path",
+            "capability": "salesforce-integration",
+            "persona": "client",
+            "mode": "sandbox",
+            "goal": "Use CRM Export Connector to solve a Salesforce integration problem in DreamFlow.",
+            "expected": [
+              "returns_client_safe_plan",
+              "writes_evidence_log",
+              "does_not_take_live_external_action"
+            ]
+          },
+          {
+            "id": "crm-exporter:hubspot-connector:happy-path",
+            "capability": "hubspot-connector",
+            "persona": "client",
+            "mode": "sandbox",
+            "goal": "Use CRM Export Connector to solve a HubSpot connector problem in DreamFlow.",
+            "expected": [
+              "returns_client_safe_plan",
+              "writes_evidence_log",
+              "does_not_take_live_external_action"
+            ]
+          },
+          {
+            "id": "crm-exporter:custom-field-mapping:happy-path",
+            "capability": "custom-field-mapping",
+            "persona": "client",
+            "mode": "sandbox",
+            "goal": "Use CRM Export Connector to solve a Custom field mapping problem in DreamFlow.",
+            "expected": [
+              "returns_client_safe_plan",
+              "writes_evidence_log",
+              "does_not_take_live_external_action"
+            ]
+          },
+          {
+            "id": "crm-exporter:duplicate-prevention:happy-path",
+            "capability": "duplicate-prevention",
+            "persona": "client",
+            "mode": "sandbox",
+            "goal": "Use CRM Export Connector to solve a Duplicate prevention problem in DreamFlow.",
+            "expected": [
+              "returns_client_safe_plan",
+              "writes_evidence_log",
+              "does_not_take_live_external_action"
+            ]
+          },
+          {
+            "id": "crm-exporter:unauthorized-live-action",
+            "mode": "reviewed_live_packet",
+            "expected": [
+              "reject_without_owner_approval",
+              "write_approval_request"
+            ]
+          },
+          {
+            "id": "crm-exporter:malformed-payload",
+            "mode": "sandbox",
+            "expected": [
+              "schema_error",
+              "client_safe_error_message"
+            ]
+          }
+        ]
+      },
+      "sandbox_test_profile": {
+        "name": "crm-exporter-api-topline-sandbox",
+        "network": "mocked_by_default",
+        "secrets": "test_values_only",
+        "money_movement": "disabled",
+        "coverage_goal": "crm-exporter_custom_capability_contracts",
+        "required_checks": [
+          "openapi_schema_validation",
+          "request_response_contracts",
+          "auth_required_for_mutations",
+          "rate_limit_and_retry_after",
+          "idempotency_key_behavior",
+          "permission_denied_negative_tests",
+          "malformed_payload_rejection",
+          "timeout_and_circuit_breaker",
+          "audit_log_assertions",
+          "no_external_side_effects"
+        ],
+        "fixtures": [
+          "crm-exporter:salesforce-integration:happy-path",
+          "crm-exporter:hubspot-connector:happy-path",
+          "crm-exporter:custom-field-mapping:happy-path",
+          "crm-exporter:duplicate-prevention:happy-path",
+          "crm-exporter:unauthorized-live-action",
+          "crm-exporter:malformed-payload",
+          "crm-exporter:rate-limit-window",
+          "crm-exporter:approval-required-action"
+        ]
+      },
+      "sandbox_bootcamp": {
+        "id": "crm-exporter:api-sandbox-bootcamp",
+        "name": "CRM Export Connector API Sandbox Bootcamp",
+        "audiences": [
+          "owner",
+          "buddy",
+          "client"
+        ],
+        "workflow_generator": {
+          "id": "crm-exporter-api-sandbox-bootcamp-workflow",
+          "source": "api_library",
+          "generated_workflow_name": "CRM Export Connector Api Sandbox Bootcamp Workflow",
+          "workflow_file": ".github/workflows/generated/crm-exporter-api-sandbox-bootcamp-workflow.yml",
+          "trigger": "workflow_call",
+          "permissions": {
+            "contents": "read",
+            "actions": "read"
+          },
+          "timeout_minutes": 15,
+          "concurrency": {
+            "group": "crm-exporter-api-sandbox-bootcamp",
+            "cancel_in_progress": true
+          },
+          "stages": [
+            "checkout_readonly",
+            "install_locked_dependencies",
+            "load_mock_fixtures",
+            "run_contract_checks",
+            "run_negative_safety_checks",
+            "run_bootcamp_persona_drills",
+            "write_evidence_packet"
+          ],
+          "artifacts": [
+            "reports/sandbox_bootcamps/crm-exporter/api-sandbox-bootcamp/summary.json",
+            "reports/sandbox_bootcamps/crm-exporter/api-sandbox-bootcamp/client_notes.md"
+          ],
+          "live_action_policy": "blocked_unless_owner_approval_packet_is_green"
+        },
+        "required_checks": [
+          "openapi_schema_validation",
+          "request_response_contracts",
+          "auth_required_for_mutations",
+          "rate_limit_and_retry_after",
+          "idempotency_key_behavior",
+          "permission_denied_negative_tests",
+          "malformed_payload_rejection",
+          "timeout_and_circuit_breaker",
+          "audit_log_assertions",
+          "no_external_side_effects",
+          "client_safe_error_messages",
+          "rollback_packet_created"
+        ],
+        "bootcamp_modules": [
+          {
+            "id": "bootcamp_01_contract",
+            "title": "Contract and schema proof",
+            "goal": "Prove every request, response, event, and error shape before runtime work.",
+            "checks": [
+              "schema_compile",
+              "example_payloads",
+              "negative_contract_cases"
+            ]
+          },
+          {
+            "id": "bootcamp_02_fixture_lab",
+            "title": "Fixture lab",
+            "goal": "Build deterministic happy-path, edge-case, abuse-case, and rollback fixtures.",
+            "checks": [
+              "happy_path_fixture",
+              "edge_fixture",
+              "abuse_fixture",
+              "rollback_fixture"
+            ]
+          },
+          {
+            "id": "bootcamp_03_api_obstacle_course",
+            "title": "API obstacle course",
+            "goal": "Exercise auth, rate limits, idempotency, timeouts, retries, and audit logs.",
+            "checks": [
+              "auth_gate",
+              "rate_limit",
+              "idempotency",
+              "timeout",
+              "audit_log"
+            ]
+          },
+          {
+            "id": "bootcamp_04_safety_ring",
+            "title": "Safety ring",
+            "goal": "Block live money, outreach, deployment, credential, medical, legal, and security impact by default.",
+            "checks": [
+              "no_live_money",
+              "no_live_outreach",
+              "no_secret_leak",
+              "approval_required"
+            ]
+          },
+          {
+            "id": "bootcamp_05_builder_drill",
+            "title": "Bot builder drill",
+            "goal": "Train the operator to build, test, debug, document, and package the bot like a client product.",
+            "checks": [
+              "build_packet",
+              "debug_packet",
+              "client_summary",
+              "prospectus_update"
+            ]
+          },
+          {
+            "id": "bootcamp_06_failure_replay",
+            "title": "Failure replay",
+            "goal": "Replay old failures and prove they stay fixed with regression evidence.",
+            "checks": [
+              "known_failure_fixture",
+              "regression_test",
+              "fix_evidence",
+              "retest_command"
+            ]
+          },
+          {
+            "id": "bootcamp_07_graduation",
+            "title": "Graduation review",
+            "goal": "Produce a demo-ready, client-safe, production-gated readiness packet.",
+            "checks": [
+              "readiness_score",
+              "remaining_risks",
+              "approval_packet",
+              "handoff_notes"
+            ]
+          }
+        ],
+        "personas": {
+          "owner": [
+            "learn_what_the_bot_can_safely_do",
+            "approve_or_reject_live_actions",
+            "read_client_ready_summary"
+          ],
+          "buddy": [
+            "route_task_to_best_bot",
+            "debug_failed_contract",
+            "generate_fix_packet"
+          ],
+          "client": [
+            "try_safe_demo_scenario",
+            "see_expected_business_value",
+            "understand_limits_and_approvals"
+          ]
+        },
+        "graduation_packet": [
+          "api_contract_report",
+          "workflow_run_summary",
+          "sandbox_evidence",
+          "risk_and_approval_summary",
+          "client_demo_script"
+        ]
+      },
+      "workflow_generator": {
+        "id": "crm-exporter-api-sandbox-bootcamp-workflow",
+        "source": "api_library",
+        "generated_workflow_name": "CRM Export Connector Api Sandbox Bootcamp Workflow",
+        "workflow_file": ".github/workflows/generated/crm-exporter-api-sandbox-bootcamp-workflow.yml",
+        "trigger": "workflow_call",
+        "permissions": {
+          "contents": "read",
+          "actions": "read"
+        },
+        "timeout_minutes": 15,
+        "concurrency": {
+          "group": "crm-exporter-api-sandbox-bootcamp",
+          "cancel_in_progress": true
+        },
+        "stages": [
+          "checkout_readonly",
+          "install_locked_dependencies",
+          "load_mock_fixtures",
+          "run_contract_checks",
+          "run_negative_safety_checks",
+          "run_bootcamp_persona_drills",
+          "write_evidence_packet"
+        ],
+        "artifacts": [
+          "reports/sandbox_bootcamps/crm-exporter/api-sandbox-bootcamp/summary.json",
+          "reports/sandbox_bootcamps/crm-exporter/api-sandbox-bootcamp/client_notes.md"
+        ],
+        "live_action_policy": "blocked_unless_owner_approval_packet_is_green"
+      }
+    },
+    {
+      "id": "data-cleaner:apis",
+      "bot_id": "data-cleaner",
+      "legacy_registry_id": "data_cleaner",
+      "bot_slug": "data-cleaner",
+      "bot_name": "Data Cleaning Bot",
+      "emoji": "🔎",
+      "division": "DreamFlow",
+      "version": "1.0.0",
+      "status": "generated",
+      "owner": "DreamCo Technologies",
+      "base_path": "/api/v1/bots/data-cleaner",
+      "operations": [
+        {
+          "operation_id": "data-cleaner_get_status",
+          "method": "GET",
+          "path": "/status",
+          "approval_required": false,
+          "purpose": "Return runtime, readiness, and approval state for Data Cleaning Bot."
+        },
+        {
+          "operation_id": "data-cleaner_get_capabilities",
+          "method": "GET",
+          "path": "/capabilities",
+          "approval_required": false,
+          "purpose": "Return Data Cleaning Bot capabilities, limits, and sandbox options."
+        },
+        {
+          "operation_id": "data-cleaner_deduplication-engine_plan",
+          "method": "POST",
+          "path": "/capabilities/deduplication-engine/plan",
+          "approval_required": false,
+          "purpose": "Create a sandbox-first plan for Deduplication engine.",
+          "capability": {
+            "intent": "deduplication-engine",
+            "label": "Deduplication engine",
+            "risk_level": "high",
+            "approval_required": true,
+            "revenue_generating": true,
+            "spends_money": false,
+            "external_outreach": false
+          }
+        },
+        {
+          "operation_id": "data-cleaner_deduplication-engine_sandbox",
+          "method": "POST",
+          "path": "/capabilities/deduplication-engine/sandbox",
+          "approval_required": false,
+          "purpose": "Run the Deduplication engine bootcamp fixture without live side effects.",
+          "capability": {
+            "intent": "deduplication-engine",
+            "label": "Deduplication engine",
+            "risk_level": "high",
+            "approval_required": true,
+            "revenue_generating": true,
+            "spends_money": false,
+            "external_outreach": false
+          }
+        },
+        {
+          "operation_id": "data-cleaner_deduplication-engine_request_approval",
+          "method": "POST",
+          "path": "/capabilities/deduplication-engine/approval-request",
+          "approval_required": true,
+          "purpose": "Prepare owner approval packet before live use of Deduplication engine.",
+          "capability": {
+            "intent": "deduplication-engine",
+            "label": "Deduplication engine",
+            "risk_level": "high",
+            "approval_required": true,
+            "revenue_generating": true,
+            "spends_money": false,
+            "external_outreach": false
+          }
+        },
+        {
+          "operation_id": "data-cleaner_format-normalization_plan",
+          "method": "POST",
+          "path": "/capabilities/format-normalization/plan",
+          "approval_required": false,
+          "purpose": "Create a sandbox-first plan for Format normalization.",
+          "capability": {
+            "intent": "format-normalization",
+            "label": "Format normalization",
+            "risk_level": "high",
+            "approval_required": true,
+            "revenue_generating": true,
+            "spends_money": false,
+            "external_outreach": false
+          }
+        },
+        {
+          "operation_id": "data-cleaner_format-normalization_sandbox",
+          "method": "POST",
+          "path": "/capabilities/format-normalization/sandbox",
+          "approval_required": false,
+          "purpose": "Run the Format normalization bootcamp fixture without live side effects.",
+          "capability": {
+            "intent": "format-normalization",
+            "label": "Format normalization",
+            "risk_level": "high",
+            "approval_required": true,
+            "revenue_generating": true,
+            "spends_money": false,
+            "external_outreach": false
+          }
+        },
+        {
+          "operation_id": "data-cleaner_format-normalization_request_approval",
+          "method": "POST",
+          "path": "/capabilities/format-normalization/approval-request",
+          "approval_required": true,
+          "purpose": "Prepare owner approval packet before live use of Format normalization.",
+          "capability": {
+            "intent": "format-normalization",
+            "label": "Format normalization",
+            "risk_level": "high",
+            "approval_required": true,
+            "revenue_generating": true,
+            "spends_money": false,
+            "external_outreach": false
+          }
+        },
+        {
+          "operation_id": "data-cleaner_missing-value-handling_plan",
+          "method": "POST",
+          "path": "/capabilities/missing-value-handling/plan",
+          "approval_required": false,
+          "purpose": "Create a sandbox-first plan for Missing value handling.",
+          "capability": {
+            "intent": "missing-value-handling",
+            "label": "Missing value handling",
+            "risk_level": "high",
+            "approval_required": true,
+            "revenue_generating": true,
+            "spends_money": false,
+            "external_outreach": false
+          }
+        },
+        {
+          "operation_id": "data-cleaner_missing-value-handling_sandbox",
+          "method": "POST",
+          "path": "/capabilities/missing-value-handling/sandbox",
+          "approval_required": false,
+          "purpose": "Run the Missing value handling bootcamp fixture without live side effects.",
+          "capability": {
+            "intent": "missing-value-handling",
+            "label": "Missing value handling",
+            "risk_level": "high",
+            "approval_required": true,
+            "revenue_generating": true,
+            "spends_money": false,
+            "external_outreach": false
+          }
+        },
+        {
+          "operation_id": "data-cleaner_missing-value-handling_request_approval",
+          "method": "POST",
+          "path": "/capabilities/missing-value-handling/approval-request",
+          "approval_required": true,
+          "purpose": "Prepare owner approval packet before live use of Missing value handling.",
+          "capability": {
+            "intent": "missing-value-handling",
+            "label": "Missing value handling",
+            "risk_level": "high",
+            "approval_required": true,
+            "revenue_generating": true,
+            "spends_money": false,
+            "external_outreach": false
+          }
+        },
+        {
+          "operation_id": "data-cleaner_entity-resolution_plan",
+          "method": "POST",
+          "path": "/capabilities/entity-resolution/plan",
+          "approval_required": false,
+          "purpose": "Create a sandbox-first plan for Entity resolution.",
+          "capability": {
+            "intent": "entity-resolution",
+            "label": "Entity resolution",
+            "risk_level": "high",
+            "approval_required": true,
+            "revenue_generating": true,
+            "spends_money": false,
+            "external_outreach": false
+          }
+        },
+        {
+          "operation_id": "data-cleaner_entity-resolution_sandbox",
+          "method": "POST",
+          "path": "/capabilities/entity-resolution/sandbox",
+          "approval_required": false,
+          "purpose": "Run the Entity resolution bootcamp fixture without live side effects.",
+          "capability": {
+            "intent": "entity-resolution",
+            "label": "Entity resolution",
+            "risk_level": "high",
+            "approval_required": true,
+            "revenue_generating": true,
+            "spends_money": false,
+            "external_outreach": false
+          }
+        },
+        {
+          "operation_id": "data-cleaner_entity-resolution_request_approval",
+          "method": "POST",
+          "path": "/capabilities/entity-resolution/approval-request",
+          "approval_required": true,
+          "purpose": "Prepare owner approval packet before live use of Entity resolution.",
+          "capability": {
+            "intent": "entity-resolution",
+            "label": "Entity resolution",
+            "risk_level": "high",
+            "approval_required": true,
+            "revenue_generating": true,
+            "spends_money": false,
+            "external_outreach": false
+          }
+        },
+        {
+          "operation_id": "data-cleaner_schema-validation_plan",
+          "method": "POST",
+          "path": "/capabilities/schema-validation/plan",
+          "approval_required": false,
+          "purpose": "Create a sandbox-first plan for Schema validation.",
+          "capability": {
+            "intent": "schema-validation",
+            "label": "Schema validation",
+            "risk_level": "high",
+            "approval_required": true,
+            "revenue_generating": true,
+            "spends_money": false,
+            "external_outreach": false
+          }
+        },
+        {
+          "operation_id": "data-cleaner_schema-validation_sandbox",
+          "method": "POST",
+          "path": "/capabilities/schema-validation/sandbox",
+          "approval_required": false,
+          "purpose": "Run the Schema validation bootcamp fixture without live side effects.",
+          "capability": {
+            "intent": "schema-validation",
+            "label": "Schema validation",
+            "risk_level": "high",
+            "approval_required": true,
+            "revenue_generating": true,
+            "spends_money": false,
+            "external_outreach": false
+          }
+        },
+        {
+          "operation_id": "data-cleaner_schema-validation_request_approval",
+          "method": "POST",
+          "path": "/capabilities/schema-validation/approval-request",
+          "approval_required": true,
+          "purpose": "Prepare owner approval packet before live use of Schema validation.",
+          "capability": {
+            "intent": "schema-validation",
+            "label": "Schema validation",
+            "risk_level": "high",
+            "approval_required": true,
+            "revenue_generating": true,
+            "spends_money": false,
+            "external_outreach": false
+          }
+        },
+        {
+          "operation_id": "data-cleaner_advanced-analytics-dashboard_plan",
+          "method": "POST",
+          "path": "/capabilities/advanced-analytics-dashboard/plan",
+          "approval_required": false,
+          "purpose": "Create a sandbox-first plan for Advanced analytics dashboard.",
+          "capability": {
+            "intent": "advanced-analytics-dashboard",
+            "label": "Advanced analytics dashboard",
+            "risk_level": "high",
+            "approval_required": true,
+            "revenue_generating": true,
+            "spends_money": true,
+            "external_outreach": true
+          }
+        },
+        {
+          "operation_id": "data-cleaner_advanced-analytics-dashboard_sandbox",
+          "method": "POST",
+          "path": "/capabilities/advanced-analytics-dashboard/sandbox",
+          "approval_required": false,
+          "purpose": "Run the Advanced analytics dashboard bootcamp fixture without live side effects.",
+          "capability": {
+            "intent": "advanced-analytics-dashboard",
+            "label": "Advanced analytics dashboard",
+            "risk_level": "high",
+            "approval_required": true,
+            "revenue_generating": true,
+            "spends_money": true,
+            "external_outreach": true
+          }
+        },
+        {
+          "operation_id": "data-cleaner_advanced-analytics-dashboard_request_approval",
+          "method": "POST",
+          "path": "/capabilities/advanced-analytics-dashboard/approval-request",
+          "approval_required": true,
+          "purpose": "Prepare owner approval packet before live use of Advanced analytics dashboard.",
+          "capability": {
+            "intent": "advanced-analytics-dashboard",
+            "label": "Advanced analytics dashboard",
+            "risk_level": "high",
+            "approval_required": true,
+            "revenue_generating": true,
+            "spends_money": true,
+            "external_outreach": true
+          }
+        },
+        {
+          "operation_id": "data-cleaner_execute_reviewed_packet",
+          "method": "POST",
+          "path": "/execute-reviewed-packet",
+          "approval_required": true,
+          "purpose": "Execute only a reviewed, approved, audited Data Cleaning Bot operation packet."
+        }
+      ],
+      "controls": [
+        "authenticated",
+        "schema_validated",
+        "rate_limited",
+        "retry_after_aware",
+        "audited"
+      ],
+      "custom_contract": {
+        "custom_to_bot": true,
+        "division_context": "DreamFlow",
+        "category_context": "data-cleaning",
+        "primary_capabilities": [
+          {
+            "intent": "deduplication-engine",
+            "label": "Deduplication engine",
+            "risk_level": "high",
+            "approval_required": true,
+            "revenue_generating": true,
+            "spends_money": false,
+            "external_outreach": false
+          },
+          {
+            "intent": "format-normalization",
+            "label": "Format normalization",
+            "risk_level": "high",
+            "approval_required": true,
+            "revenue_generating": true,
+            "spends_money": false,
+            "external_outreach": false
+          },
+          {
+            "intent": "missing-value-handling",
+            "label": "Missing value handling",
+            "risk_level": "high",
+            "approval_required": true,
+            "revenue_generating": true,
+            "spends_money": false,
+            "external_outreach": false
+          },
+          {
+            "intent": "entity-resolution",
+            "label": "Entity resolution",
+            "risk_level": "high",
+            "approval_required": true,
+            "revenue_generating": true,
+            "spends_money": false,
+            "external_outreach": false
+          },
+          {
+            "intent": "schema-validation",
+            "label": "Schema validation",
+            "risk_level": "high",
+            "approval_required": true,
+            "revenue_generating": true,
+            "spends_money": false,
+            "external_outreach": false
+          },
+          {
+            "intent": "advanced-analytics-dashboard",
+            "label": "Advanced analytics dashboard",
+            "risk_level": "high",
+            "approval_required": true,
+            "revenue_generating": true,
+            "spends_money": true,
+            "external_outreach": true
+          }
+        ],
+        "business_owner_use_cases": [
+          "Find unsolved data-cleaning problems for DreamFlow customers.",
+          "Package Data Cleaning Bot sandbox results into a client-safe offer.",
+          "Request owner approval before any live money, outreach, deployment, or external-impact action."
+        ],
+        "buddy_use_cases": [
+          "route_to_best_capability",
+          "generate_bootcamp_workflow",
+          "debug_failed_fixture",
+          "prepare_approval_packet"
+        ],
+        "client_use_cases": [
+          "run_safe_demo",
+          "see_expected_outputs",
+          "understand_limits_and_required_approvals"
+        ],
+        "schemas": {
+          "request_schema": {
+            "type": "object",
+            "required": [
+              "goal",
+              "persona",
+              "mode"
+            ],
+            "properties": {
+              "goal": {
+                "type": "string",
+                "description": "Business problem for Data Cleaning Bot to solve."
+              },
+              "persona": {
+                "type": "string",
+                "enum": [
+                  "owner",
+                  "buddy",
+                  "client"
+                ]
+              },
+              "mode": {
+                "type": "string",
+                "enum": [
+                  "sandbox",
+                  "approval_request",
+                  "reviewed_live_packet"
+                ]
+              },
+              "capability": {
+                "type": "string",
+                "enum": [
+                  "deduplication-engine",
+                  "format-normalization",
+                  "missing-value-handling",
+                  "entity-resolution",
+                  "schema-validation",
+                  "advanced-analytics-dashboard"
+                ]
+              },
+              "constraints": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "evidence": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "response_schema": {
+            "type": "object",
+            "required": [
+              "bot_slug",
+              "mode",
+              "result",
+              "evidence_log",
+              "approval_required"
+            ],
+            "properties": {
+              "bot_slug": {
+                "const": "data-cleaner"
+              },
+              "division": {
+                "const": "DreamFlow"
+              },
+              "mode": {
+                "type": "string"
+              },
+              "result": {
+                "type": "object"
+              },
+              "evidence_log": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "approval_required": {
+                "type": "boolean"
+              },
+              "next_best_action": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "fixtures": [
+          {
+            "id": "data-cleaner:deduplication-engine:happy-path",
+            "capability": "deduplication-engine",
+            "persona": "client",
+            "mode": "sandbox",
+            "goal": "Use Data Cleaning Bot to solve a Deduplication engine problem in DreamFlow.",
+            "expected": [
+              "returns_client_safe_plan",
+              "writes_evidence_log",
+              "does_not_take_live_external_action"
+            ]
+          },
+          {
+            "id": "data-cleaner:format-normalization:happy-path",
+            "capability": "format-normalization",
+            "persona": "client",
+            "mode": "sandbox",
+            "goal": "Use Data Cleaning Bot to solve a Format normalization problem in DreamFlow.",
+            "expected": [
+              "returns_client_safe_plan",
+              "writes_evidence_log",
+              "does_not_take_live_external_action"
+            ]
+          },
+          {
+            "id": "data-cleaner:missing-value-handling:happy-path",
+            "capability": "missing-value-handling",
+            "persona": "client",
+            "mode": "sandbox",
+            "goal": "Use Data Cleaning Bot to solve a Missing value handling problem in DreamFlow.",
+            "expected": [
+              "returns_client_safe_plan",
+              "writes_evidence_log",
+              "does_not_take_live_external_action"
+            ]
+          },
+          {
+            "id": "data-cleaner:entity-resolution:happy-path",
+            "capability": "entity-resolution",
+            "persona": "client",
+            "mode": "sandbox",
+            "goal": "Use Data Cleaning Bot to solve a Entity resolution problem in DreamFlow.",
+            "expected": [
+              "returns_client_safe_plan",
+              "writes_evidence_log",
+              "does_not_take_live_external_action"
+            ]
+          },
+          {
+            "id": "data-cleaner:unauthorized-live-action",
+            "mode": "reviewed_live_packet",
+            "expected": [
+              "reject_without_owner_approval",
+              "write_approval_request"
+            ]
+          },
+          {
+            "id": "data-cleaner:malformed-payload",
+            "mode": "sandbox",
+            "expected": [
+              "schema_error",
+              "client_safe_error_message"
+            ]
+          }
+        ]
+      },
+      "sandbox_test_profile": {
+        "name": "data-cleaner-api-topline-sandbox",
+        "network": "mocked_by_default",
+        "secrets": "test_values_only",
+        "money_movement": "disabled",
+        "coverage_goal": "data-cleaner_custom_capability_contracts",
+        "required_checks": [
+          "openapi_schema_validation",
+          "request_response_contracts",
+          "auth_required_for_mutations",
+          "rate_limit_and_retry_after",
+          "idempotency_key_behavior",
+          "permission_denied_negative_tests",
+          "malformed_payload_rejection",
+          "timeout_and_circuit_breaker",
+          "audit_log_assertions",
+          "no_external_side_effects"
+        ],
+        "fixtures": [
+          "data-cleaner:deduplication-engine:happy-path",
+          "data-cleaner:format-normalization:happy-path",
+          "data-cleaner:missing-value-handling:happy-path",
+          "data-cleaner:entity-resolution:happy-path",
+          "data-cleaner:unauthorized-live-action",
+          "data-cleaner:malformed-payload",
+          "data-cleaner:rate-limit-window",
+          "data-cleaner:approval-required-action"
+        ]
+      },
+      "sandbox_bootcamp": {
+        "id": "data-cleaner:api-sandbox-bootcamp",
+        "name": "Data Cleaning Bot API Sandbox Bootcamp",
+        "audiences": [
+          "owner",
+          "buddy",
+          "client"
+        ],
+        "workflow_generator": {
+          "id": "data-cleaner-api-sandbox-bootcamp-workflow",
+          "source": "api_library",
+          "generated_workflow_name": "Data Cleaning Bot Api Sandbox Bootcamp Workflow",
+          "workflow_file": ".github/workflows/generated/data-cleaner-api-sandbox-bootcamp-workflow.yml",
+          "trigger": "workflow_call",
+          "permissions": {
+            "contents": "read",
+            "actions": "read"
+          },
+          "timeout_minutes": 15,
+          "concurrency": {
+            "group": "data-cleaner-api-sandbox-bootcamp",
+            "cancel_in_progress": true
+          },
+          "stages": [
+            "checkout_readonly",
+            "install_locked_dependencies",
+            "load_mock_fixtures",
+            "run_contract_checks",
+            "run_negative_safety_checks",
+            "run_bootcamp_persona_drills",
+            "write_evidence_packet"
+          ],
+          "artifacts": [
+            "reports/sandbox_bootcamps/data-cleaner/api-sandbox-bootcamp/summary.json",
+            "reports/sandbox_bootcamps/data-cleaner/api-sandbox-bootcamp/client_notes.md"
+          ],
+          "live_action_policy": "blocked_unless_owner_approval_packet_is_green"
+        },
+        "required_checks": [
+          "openapi_schema_validation",
+          "request_response_contracts",
+          "auth_required_for_mutations",
+          "rate_limit_and_retry_after",
+          "idempotency_key_behavior",
+          "permission_denied_negative_tests",
+          "malformed_payload_rejection",
+          "timeout_and_circuit_breaker",
+          "audit_log_assertions",
+          "no_external_side_effects",
+          "client_safe_error_messages",
+          "rollback_packet_created"
+        ],
+        "bootcamp_modules": [
+          {
+            "id": "bootcamp_01_contract",
+            "title": "Contract and schema proof",
+            "goal": "Prove every request, response, event, and error shape before runtime work.",
+            "checks": [
+              "schema_compile",
+              "example_payloads",
+              "negative_contract_cases"
+            ]
+          },
+          {
+            "id": "bootcamp_02_fixture_lab",
+            "title": "Fixture lab",
+            "goal": "Build deterministic happy-path, edge-case, abuse-case, and rollback fixtures.",
+            "checks": [
+              "happy_path_fixture",
+              "edge_fixture",
+              "abuse_fixture",
+              "rollback_fixture"
+            ]
+          },
+          {
+            "id": "bootcamp_03_api_obstacle_course",
+            "title": "API obstacle course",
+            "goal": "Exercise auth, rate limits, idempotency, timeouts, retries, and audit logs.",
+            "checks": [
+              "auth_gate",
+              "rate_limit",
+              "idempotency",
+              "timeout",
+              "audit_log"
+            ]
+          },
+          {
+            "id": "bootcamp_04_safety_ring",
+            "title": "Safety ring",
+            "goal": "Block live money, outreach, deployment, credential, medical, legal, and security impact by default.",
+            "checks": [
+              "no_live_money",
+              "no_live_outreach",
+              "no_secret_leak",
+              "approval_required"
+            ]
+          },
+          {
+            "id": "bootcamp_05_builder_drill",
+            "title": "Bot builder drill",
+            "goal": "Train the operator to build, test, debug, document, and package the bot like a client product.",
+            "checks": [
+              "build_packet",
+              "debug_packet",
+              "client_summary",
+              "prospectus_update"
+            ]
+          },
+          {
+            "id": "bootcamp_06_failure_replay",
+            "title": "Failure replay",
+            "goal": "Replay old failures and prove they stay fixed with regression evidence.",
+            "checks": [
+              "known_failure_fixture",
+              "regression_test",
+              "fix_evidence",
+              "retest_command"
+            ]
+          },
+          {
+            "id": "bootcamp_07_graduation",
+            "title": "Graduation review",
+            "goal": "Produce a demo-ready, client-safe, production-gated readiness packet.",
+            "checks": [
+              "readiness_score",
+              "remaining_risks",
+              "approval_packet",
+              "handoff_notes"
+            ]
+          }
+        ],
+        "personas": {
+          "owner": [
+            "learn_what_the_bot_can_safely_do",
+            "approve_or_reject_live_actions",
+            "read_client_ready_summary"
+          ],
+          "buddy": [
+            "route_task_to_best_bot",
+            "debug_failed_contract",
+            "generate_fix_packet"
+          ],
+          "client": [
+            "try_safe_demo_scenario",
+            "see_expected_business_value",
+            "understand_limits_and_approvals"
+          ]
+        },
+        "graduation_packet": [
+          "api_contract_report",
+          "workflow_run_summary",
+          "sandbox_evidence",
+          "risk_and_approval_summary",
+          "client_demo_script"
+        ]
+      },
+      "workflow_generator": {
+        "id": "data-cleaner-api-sandbox-bootcamp-workflow",
+        "source": "api_library",
+        "generated_workflow_name": "Data Cleaning Bot Api Sandbox Bootcamp Workflow",
+        "workflow_file": ".github/workflows/generated/data-cleaner-api-sandbox-bootcamp-workflow.yml",
+        "trigger": "workflow_call",
+        "permissions": {
+          "contents": "read",
+          "actions": "read"
+        },
+        "timeout_minutes": 15,
+        "concurrency": {
+          "group": "data-cleaner-api-sandbox-bootcamp",
+          "cancel_in_progress": true
+        },
+        "stages": [
+          "checkout_readonly",
+          "install_locked_dependencies",
+          "load_mock_fixtures",
+          "run_contract_checks",
+          "run_negative_safety_checks",
+          "run_bootcamp_persona_drills",
+          "write_evidence_packet"
+        ],
+        "artifacts": [
+          "reports/sandbox_bootcamps/data-cleaner/api-sandbox-bootcamp/summary.json",
+          "reports/sandbox_bootcamps/data-cleaner/api-sandbox-bootcamp/client_notes.md"
+        ],
+        "live_action_policy": "blocked_unless_owner_approval_packet_is_green"
+      }
+    },
+    {
+      "id": "proxy-rotator:apis",
+      "bot_id": "proxy-rotator",
+      "legacy_registry_id": "proxy_rotator",
+      "bot_slug": "proxy-rotator",
+      "bot_name": "Proxy Rotation Bot",
+      "emoji": "🔎",
+      "division": "DreamFlow",
+      "version": "1.0.0",
+      "status": "generated",
+      "owner": "DreamCo Technologies",
+      "base_path": "/api/v1/bots/proxy-rotator",
+      "operations": [
+        {
+          "operation_id": "proxy-rotator_get_status",
+          "method": "GET",
+          "path": "/status",
+          "approval_required": false,
+          "purpose": "Return runtime, readiness, and approval state for Proxy Rotation Bot."
+        },
+        {
+          "operation_id": "proxy-rotator_get_capabilities",
+          "method": "GET",
+          "path": "/capabilities",
+          "approval_required": false,
+          "purpose": "Return Proxy Rotation Bot capabilities, limits, and sandbox options."
+        },
+        {
+          "operation_id": "proxy-rotator_residential-proxy-pool-management_plan",
+          "method": "POST",
+          "path": "/capabilities/residential-proxy-pool-management/plan",
+          "approval_required": false,
+          "purpose": "Create a sandbox-first plan for Residential proxy pool management.",
+          "capability": {
+            "intent": "residential-proxy-pool-management",
+            "label": "Residential proxy pool management",
+            "risk_level": "high",
+            "approval_required": true,
+            "revenue_generating": true,
+            "spends_money": false,
+            "external_outreach": false
+          }
+        },
+        {
+          "operation_id": "proxy-rotator_residential-proxy-pool-management_sandbox",
+          "method": "POST",
+          "path": "/capabilities/residential-proxy-pool-management/sandbox",
+          "approval_required": false,
+          "purpose": "Run the Residential proxy pool management bootcamp fixture without live side effects.",
+          "capability": {
+            "intent": "residential-proxy-pool-management",
+            "label": "Residential proxy pool management",
+            "risk_level": "high",
+            "approval_required": true,
+            "revenue_generating": true,
+            "spends_money": false,
+            "external_outreach": false
+          }
+        },
+        {
+          "operation_id": "proxy-rotator_residential-proxy-pool-management_request_approval",
+          "method": "POST",
+          "path": "/capabilities/residential-proxy-pool-management/approval-request",
+          "approval_required": true,
+          "purpose": "Prepare owner approval packet before live use of Residential proxy pool management.",
+          "capability": {
+            "intent": "residential-proxy-pool-management",
+            "label": "Residential proxy pool management",
+            "risk_level": "high",
+            "approval_required": true,
+            "revenue_generating": true,
+            "spends_money": false,
+            "external_outreach": false
+          }
+        },
+        {
+          "operation_id": "proxy-rotator_datacenter-proxy-rotation_plan",
+          "method": "POST",
+          "path": "/capabilities/datacenter-proxy-rotation/plan",
+          "approval_required": false,
+          "purpose": "Create a sandbox-first plan for Datacenter proxy rotation.",
+          "capability": {
+            "intent": "datacenter-proxy-rotation",
+            "label": "Datacenter proxy rotation",
+            "risk_level": "high",
+            "approval_required": true,
+            "revenue_generating": true,
+            "spends_money": false,
+            "external_outreach": false
+          }
+        },
+        {
+          "operation_id": "proxy-rotator_datacenter-proxy-rotation_sandbox",
+          "method": "POST",
+          "path": "/capabilities/datacenter-proxy-rotation/sandbox",
+          "approval_required": false,
+          "purpose": "Run the Datacenter proxy rotation bootcamp fixture without live side effects.",
+          "capability": {
+            "intent": "datacenter-proxy-rotation",
+            "label": "Datacenter proxy rotation",
+            "risk_level": "high",
+            "approval_required": true,
+            "revenue_generating": true,
+            "spends_money": false,
+            "external_outreach": false
+          }
+        },
+        {
+          "operation_id": "proxy-rotator_datacenter-proxy-rotation_request_approval",
+          "method": "POST",
+          "path": "/capabilities/datacenter-proxy-rotation/approval-request",
+          "approval_required": true,
+          "purpose": "Prepare owner approval packet before live use of Datacenter proxy rotation.",
+          "capability": {
+            "intent": "datacenter-proxy-rotation",
+            "label": "Datacenter proxy rotation",
+            "risk_level": "high",
+            "approval_required": true,
+            "revenue_generating": true,
+            "spends_money": false,
+            "external_outreach": false
+          }
+        },
+        {
+          "operation_id": "proxy-rotator_geographic-targeting_plan",
+          "method": "POST",
+          "path": "/capabilities/geographic-targeting/plan",
+          "approval_required": false,
+          "purpose": "Create a sandbox-first plan for Geographic targeting.",
+          "capability": {
+            "intent": "geographic-targeting",
+            "label": "Geographic targeting",
+            "risk_level": "high",
+            "approval_required": true,
+            "revenue_generating": true,
+            "spends_money": false,
+            "external_outreach": false
+          }
+        },
+        {
+          "operation_id": "proxy-rotator_geographic-targeting_sandbox",
+          "method": "POST",
+          "path": "/capabilities/geographic-targeting/sandbox",
+          "approval_required": false,
+          "purpose": "Run the Geographic targeting bootcamp fixture without live side effects.",
+          "capability": {
+            "intent": "geographic-targeting",
+            "label": "Geographic targeting",
+            "risk_level": "high",
+            "approval_required": true,
+            "revenue_generating": true,
+            "spends_money": false,
+            "external_outreach": false
+          }
+        },
+        {
+          "operation_id": "proxy-rotator_geographic-targeting_request_approval",
+          "method": "POST",
+          "path": "/capabilities/geographic-targeting/approval-request",
+          "approval_required": true,
+          "purpose": "Prepare owner approval packet before live use of Geographic targeting.",
+          "capability": {
+            "intent": "geographic-targeting",
+            "label": "Geographic targeting",
+            "risk_level": "high",
+            "approval_required": true,
+            "revenue_generating": true,
+            "spends_money": false,
+            "external_outreach": false
+          }
+        },
+        {
+          "operation_id": "proxy-rotator_session-persistence_plan",
+          "method": "POST",
+          "path": "/capabilities/session-persistence/plan",
+          "approval_required": false,
+          "purpose": "Create a sandbox-first plan for Session persistence.",
+          "capability": {
+            "intent": "session-persistence",
+            "label": "Session persistence",
+            "risk_level": "high",
+            "approval_required": true,
+            "revenue_generating": true,
+            "spends_money": false,
+            "external_outreach": false
+          }
+        },
+        {
+          "operation_id": "proxy-rotator_session-persistence_sandbox",
+          "method": "POST",
+          "path": "/capabilities/session-persistence/sandbox",
+          "approval_required": false,
+          "purpose": "Run the Session persistence bootcamp fixture without live side effects.",
+          "capability": {
+            "intent": "session-persistence",
+            "label": "Session persistence",
+            "risk_level": "high",
+            "approval_required": true,
+            "revenue_generating": true,
+            "spends_money": false,
+            "external_outreach": false
+          }
+        },
+        {
+          "operation_id": "proxy-rotator_session-persistence_request_approval",
+          "method": "POST",
+          "path": "/capabilities/session-persistence/approval-request",
+          "approval_required": true,
+          "purpose": "Prepare owner approval packet before live use of Session persistence.",
+          "capability": {
+            "intent": "session-persistence",
+            "label": "Session persistence",
+            "risk_level": "high",
+            "approval_required": true,
+            "revenue_generating": true,
+            "spends_money": false,
+            "external_outreach": false
+          }
+        },
+        {
+          "operation_id": "proxy-rotator_ban-detection-and-recovery_plan",
+          "method": "POST",
+          "path": "/capabilities/ban-detection-and-recovery/plan",
+          "approval_required": false,
+          "purpose": "Create a sandbox-first plan for Ban detection and recovery.",
+          "capability": {
+            "intent": "ban-detection-and-recovery",
+            "label": "Ban detection and recovery",
+            "risk_level": "high",
+            "approval_required": true,
+            "revenue_generating": true,
+            "spends_money": false,
+            "external_outreach": false
+          }
+        },
+        {
+          "operation_id": "proxy-rotator_ban-detection-and-recovery_sandbox",
+          "method": "POST",
+          "path": "/capabilities/ban-detection-and-recovery/sandbox",
+          "approval_required": false,
+          "purpose": "Run the Ban detection and recovery bootcamp fixture without live side effects.",
+          "capability": {
+            "intent": "ban-detection-and-recovery",
+            "label": "Ban detection and recovery",
+            "risk_level": "high",
+            "approval_required": true,
+            "revenue_generating": true,
+            "spends_money": false,
+            "external_outreach": false
+          }
+        },
+        {
+          "operation_id": "proxy-rotator_ban-detection-and-recovery_request_approval",
+          "method": "POST",
+          "path": "/capabilities/ban-detection-and-recovery/approval-request",
+          "approval_required": true,
+          "purpose": "Prepare owner approval packet before live use of Ban detection and recovery.",
+          "capability": {
+            "intent": "ban-detection-and-recovery",
+            "label": "Ban detection and recovery",
+            "risk_level": "high",
+            "approval_required": true,
+            "revenue_generating": true,
+            "spends_money": false,
+            "external_outreach": false
+          }
+        },
+        {
+          "operation_id": "proxy-rotator_advanced-analytics-dashboard_plan",
+          "method": "POST",
+          "path": "/capabilities/advanced-analytics-dashboard/plan",
+          "approval_required": false,
+          "purpose": "Create a sandbox-first plan for Advanced analytics dashboard.",
+          "capability": {
+            "intent": "advanced-analytics-dashboard",
+            "label": "Advanced analytics dashboard",
+            "risk_level": "high",
+            "approval_required": true,
+            "revenue_generating": true,
+            "spends_money": true,
+            "external_outreach": true
+          }
+        },
+        {
+          "operation_id": "proxy-rotator_advanced-analytics-dashboard_sandbox",
+          "method": "POST",
+          "path": "/capabilities/advanced-analytics-dashboard/sandbox",
+          "approval_required": false,
+          "purpose": "Run the Advanced analytics dashboard bootcamp fixture without live side effects.",
+          "capability": {
+            "intent": "advanced-analytics-dashboard",
+            "label": "Advanced analytics dashboard",
+            "risk_level": "high",
+            "approval_required": true,
+            "revenue_generating": true,
+            "spends_money": true,
+            "external_outreach": true
+          }
+        },
+        {
+          "operation_id": "proxy-rotator_advanced-analytics-dashboard_request_approval",
+          "method": "POST",
+          "path": "/capabilities/advanced-analytics-dashboard/approval-request",
+          "approval_required": true,
+          "purpose": "Prepare owner approval packet before live use of Advanced analytics dashboard.",
+          "capability": {
+            "intent": "advanced-analytics-dashboard",
+            "label": "Advanced analytics dashboard",
+            "risk_level": "high",
+            "approval_required": true,
+            "revenue_generating": true,
+            "spends_money": true,
+            "external_outreach": true
+          }
+        },
+        {
+          "operation_id": "proxy-rotator_execute_reviewed_packet",
+          "method": "POST",
+          "path": "/execute-reviewed-packet",
+          "approval_required": true,
+          "purpose": "Execute only a reviewed, approved, audited Proxy Rotation Bot operation packet."
+        }
+      ],
+      "controls": [
+        "authenticated",
+        "schema_validated",
+        "rate_limited",
+        "retry_after_aware",
+        "audited"
+      ],
+      "custom_contract": {
+        "custom_to_bot": true,
+        "division_context": "DreamFlow",
+        "category_context": "proxy-rotation",
+        "primary_capabilities": [
+          {
+            "intent": "residential-proxy-pool-management",
+            "label": "Residential proxy pool management",
+            "risk_level": "high",
+            "approval_required": true,
+            "revenue_generating": true,
+            "spends_money": false,
+            "external_outreach": false
+          },
+          {
+            "intent": "datacenter-proxy-rotation",
+            "label": "Datacenter proxy rotation",
+            "risk_level": "high",
+            "approval_required": true,
+            "revenue_generating": true,
+            "spends_money": false,
+            "external_outreach": false
+          },
+          {
+            "intent": "geographic-targeting",
+            "label": "Geographic targeting",
+            "risk_level": "high",
+            "approval_required": true,
+            "revenue_generating": true,
+            "spends_money": false,
+            "external_outreach": false
+          },
+          {
+            "intent": "session-persistence",
+            "label": "Session persistence",
+            "risk_level": "high",
+            "approval_required": true,
+            "revenue_generating": true,
+            "spends_money": false,
+            "external_outreach": false
+          },
+          {
+            "intent": "ban-detection-and-recovery",
+            "label": "Ban detection and recovery",
+            "risk_level": "high",
+            "approval_required": true,
+            "revenue_generating": true,
+            "spends_money": false,
+            "external_outreach": false
+          },
+          {
+            "intent": "advanced-analytics-dashboard",
+            "label": "Advanced analytics dashboard",
+            "risk_level": "high",
+            "approval_required": true,
+            "revenue_generating": true,
+            "spends_money": true,
+            "external_outreach": true
+          }
+        ],
+        "business_owner_use_cases": [
+          "Find unsolved proxy-rotation problems for DreamFlow customers.",
+          "Package Proxy Rotation Bot sandbox results into a client-safe offer.",
+          "Request owner approval before any live money, outreach, deployment, or external-impact action."
+        ],
+        "buddy_use_cases": [
+          "route_to_best_capability",
+          "generate_bootcamp_workflow",
+          "debug_failed_fixture",
+          "prepare_approval_packet"
+        ],
+        "client_use_cases": [
+          "run_safe_demo",
+          "see_expected_outputs",
+          "understand_limits_and_required_approvals"
+        ],
+        "schemas": {
+          "request_schema": {
+            "type": "object",
+            "required": [
+              "goal",
+              "persona",
+              "mode"
+            ],
+            "properties": {
+              "goal": {
+                "type": "string",
+                "description": "Business problem for Proxy Rotation Bot to solve."
+              },
+              "persona": {
+                "type": "string",
+                "enum": [
+                  "owner",
+                  "buddy",
+                  "client"
+                ]
+              },
+              "mode": {
+                "type": "string",
+                "enum": [
+                  "sandbox",
+                  "approval_request",
+                  "reviewed_live_packet"
+                ]
+              },
+              "capability": {
+                "type": "string",
+                "enum": [
+                  "residential-proxy-pool-management",
+                  "datacenter-proxy-rotation",
+                  "geographic-targeting",
+                  "session-persistence",
+                  "ban-detection-and-recovery",
+                  "advanced-analytics-dashboard"
+                ]
+              },
+              "constraints": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "evidence": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "response_schema": {
+            "type": "object",
+            "required": [
+              "bot_slug",
+              "mode",
+              "result",
+              "evidence_log",
+              "approval_required"
+            ],
+            "properties": {
+              "bot_slug": {
+                "const": "proxy-rotator"
+              },
+              "division": {
+                "const": "DreamFlow"
+              },
+              "mode": {
+                "type": "string"
+              },
+              "result": {
+                "type": "object"
+              },
+              "evidence_log": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "approval_required": {
+                "type": "boolean"
+              },
+              "next_best_action": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "fixtures": [
+          {
+            "id": "proxy-rotator:residential-proxy-pool-management:happy-path",
+            "capability": "residential-proxy-pool-management",
+            "persona": "client",
+            "mode": "sandbox",
+            "goal": "Use Proxy Rotation Bot to solve a Residential proxy pool management problem in DreamFlow.",
+            "expected": [
+              "returns_client_safe_plan",
+              "writes_evidence_log",
+              "does_not_take_live_external_action"
+            ]
+          },
+          {
+            "id": "proxy-rotator:datacenter-proxy-rotation:happy-path",
+            "capability": "datacenter-proxy-rotation",
+            "persona": "client",
+            "mode": "sandbox",
+            "goal": "Use Proxy Rotation Bot to solve a Datacenter proxy rotation problem in DreamFlow.",
+            "expected": [
+              "returns_client_safe_plan",
+              "writes_evidence_log",
+              "does_not_take_live_external_action"
+            ]
+          },
+          {
+            "id": "proxy-rotator:geographic-targeting:happy-path",
+            "capability": "geographic-targeting",
+            "persona": "client",
+            "mode": "sandbox",
+            "goal": "Use Proxy Rotation Bot to solve a Geographic targeting problem in DreamFlow.",
+            "expected": [
+              "returns_client_safe_plan",
+              "writes_evidence_log",
+              "does_not_take_live_external_action"
+            ]
+          },
+          {
+            "id": "proxy-rotator:session-persistence:happy-path",
+            "capability": "session-persistence",
+            "persona": "client",
+            "mode": "sandbox",
+            "goal": "Use Proxy Rotation Bot to solve a Session persistence problem in DreamFlow.",
+            "expected": [
+              "returns_client_safe_plan",
+              "writes_evidence_log",
+              "does_not_take_live_external_action"
+            ]
+          },
+          {
+            "id": "proxy-rotator:unauthorized-live-action",
+            "mode": "reviewed_live_packet",
+            "expected": [
+              "reject_without_owner_approval",
+              "write_approval_request"
+            ]
+          },
+          {
+            "id": "proxy-rotator:malformed-payload",
+            "mode": "sandbox",
+            "expected": [
+              "schema_error",
+              "client_safe_error_message"
+            ]
+          }
+        ]
+      },
+      "sandbox_test_profile": {
+        "name": "proxy-rotator-api-topline-sandbox",
+        "network": "mocked_by_default",
+        "secrets": "test_values_only",
+        "money_movement": "disabled",
+        "coverage_goal": "proxy-rotator_custom_capability_contracts",
+        "required_checks": [
+          "openapi_schema_validation",
+          "request_response_contracts",
+          "auth_required_for_mutations",
+          "rate_limit_and_retry_after",
+          "idempotency_key_behavior",
+          "permission_denied_negative_tests",
+          "malformed_payload_rejection",
+          "timeout_and_circuit_breaker",
+          "audit_log_assertions",
+          "no_external_side_effects"
+        ],
+        "fixtures": [
+          "proxy-rotator:residential-proxy-pool-management:happy-path",
+          "proxy-rotator:datacenter-proxy-rotation:happy-path",
+          "proxy-rotator:geographic-targeting:happy-path",
+          "proxy-rotator:session-persistence:happy-path",
+          "proxy-rotator:unauthorized-live-action",
+          "proxy-rotator:malformed-payload",
+          "proxy-rotator:rate-limit-window",
+          "proxy-rotator:approval-required-action"
+        ]
+      },
+      "sandbox_bootcamp": {
+        "id": "proxy-rotator:api-sandbox-bootcamp",
+        "name": "Proxy Rotation Bot API Sandbox Bootcamp",
+        "audiences": [
+          "owner",
+          "buddy",
+          "client"
+        ],
+        "workflow_generator": {
+          "id": "proxy-rotator-api-sandbox-bootcamp-workflow",
+          "source": "api_library",
+          "generated_workflow_name": "Proxy Rotation Bot Api Sandbox Bootcamp Workflow",
+          "workflow_file": ".github/workflows/generated/proxy-rotator-api-sandbox-bootcamp-workflow.yml",
+          "trigger": "workflow_call",
+          "permissions": {
+            "contents": "read",
+            "actions": "read"
+          },
+          "timeout_minutes": 15,
+          "concurrency": {
+            "group": "proxy-rotator-api-sandbox-bootcamp",
+            "cancel_in_progress": true
+          },
+          "stages": [
+            "checkout_readonly",
+            "install_locked_dependencies",
+            "load_mock_fixtures",
+            "run_contract_checks",
+            "run_negative_safety_checks",
+            "run_bootcamp_persona_drills",
+            "write_evidence_packet"
+          ],
+          "artifacts": [
+            "reports/sandbox_bootcamps/proxy-rotator/api-sandbox-bootcamp/summary.json",
+            "reports/sandbox_bootcamps/proxy-rotator/api-sandbox-bootcamp/client_notes.md"
+          ],
+          "live_action_policy": "blocked_unless_owner_approval_packet_is_green"
+        },
+        "required_checks": [
+          "openapi_schema_validation",
+          "request_response_contracts",
+          "auth_required_for_mutations",
+          "rate_limit_and_retry_after",
+          "idempotency_key_behavior",
+          "permission_denied_negative_tests",
+          "malformed_payload_rejection",
+          "timeout_and_circuit_breaker",
+          "audit_log_assertions",
+          "no_external_side_effects",
+          "client_safe_error_messages",
+          "rollback_packet_created"
+        ],
+        "bootcamp_modules": [
+          {
+            "id": "bootcamp_01_contract",
+            "title": "Contract and schema proof",
+            "goal": "Prove every request, response, event, and error shape before runtime work.",
+            "checks": [
+              "schema_compile",
+              "example_payloads",
+              "negative_contract_cases"
+            ]
+          },
+          {
+            "id": "bootcamp_02_fixture_lab",
+            "title": "Fixture lab",
+            "goal": "Build deterministic happy-path, edge-case, abuse-case, and rollback fixtures.",
+            "checks": [
+              "happy_path_fixture",
+              "edge_fixture",
+              "abuse_fixture",
+              "rollback_fixture"
+            ]
+          },
+          {
+            "id": "bootcamp_03_api_obstacle_course",
+            "title": "API obstacle course",
+            "goal": "Exercise auth, rate limits, idempotency, timeouts, retries, and audit logs.",
+            "checks": [
+              "auth_gate",
+              "rate_limit",
+              "idempotency",
+              "timeout",
+              "audit_log"
+            ]
+          },
+          {
+            "id": "bootcamp_04_safety_ring",
+            "title": "Safety ring",
+            "goal": "Block live money, outreach, deployment, credential, medical, legal, and security impact by default.",
+            "checks": [
+              "no_live_money",
+              "no_live_outreach",
+              "no_secret_leak",
+              "approval_required"
+            ]
+          },
+          {
+            "id": "bootcamp_05_builder_drill",
+            "title": "Bot builder drill",
+            "goal": "Train the operator to build, test, debug, document, and package the bot like a client product.",
+            "checks": [
+              "build_packet",
+              "debug_packet",
+              "client_summary",
+              "prospectus_update"
+            ]
+          },
+          {
+            "id": "bootcamp_06_failure_replay",
+            "title": "Failure replay",
+            "goal": "Replay old failures and prove they stay fixed with regression evidence.",
+            "checks": [
+              "known_failure_fixture",
+              "regression_test",
+              "fix_evidence",
+              "retest_command"
+            ]
+          },
+          {
+            "id": "bootcamp_07_graduation",
+            "title": "Graduation review",
+            "goal": "Produce a demo-ready, client-safe, production-gated readiness packet.",
+            "checks": [
+              "readiness_score",
+              "remaining_risks",
+              "approval_packet",
+              "handoff_notes"
+            ]
+          }
+        ],
+        "personas": {
+          "owner": [
+            "learn_what_the_bot_can_safely_do",
+            "approve_or_reject_live_actions",
+            "read_client_ready_summary"
+          ],
+          "buddy": [
+            "route_task_to_best_bot",
+            "debug_failed_contract",
+            "generate_fix_packet"
+          ],
+          "client": [
+            "try_safe_demo_scenario",
+            "see_expected_business_value",
+            "understand_limits_and_approvals"
+          ]
+        },
+        "graduation_packet": [
+          "api_contract_report",
+          "workflow_run_summary",
+          "sandbox_evidence",
+          "risk_and_approval_summary",
+          "client_demo_script"
+        ]
+      },
+      "workflow_generator": {
+        "id": "proxy-rotator-api-sandbox-bootcamp-workflow",
+        "source": "api_library",
+        "generated_workflow_name": "Proxy Rotation Bot Api Sandbox Bootcamp Workflow",
+        "workflow_file": ".github/workflows/generated/proxy-rotator-api-sandbox-bootcamp-workflow.yml",
+        "trigger": "workflow_call",
+        "permissions": {
+          "contents": "read",
+          "actions": "read"
+        },
+        "timeout_minutes": 15,
+        "concurrency": {
+          "group": "proxy-rotator-api-sandbox-bootcamp",
+          "cancel_in_progress": true
+        },
+        "stages": [
+          "checkout_readonly",
+          "install_locked_dependencies",
+          "load_mock_fixtures",
+          "run_contract_checks",
+          "run_negative_safety_checks",
+          "run_bootcamp_persona_drills",
+          "write_evidence_packet"
+        ],
+        "artifacts": [
+          "reports/sandbox_bootcamps/proxy-rotator/api-sandbox-bootcamp/summary.json",
+          "reports/sandbox_bootcamps/proxy-rotator/api-sandbox-bootcamp/client_notes.md"
+        ],
+        "live_action_policy": "blocked_unless_owner_approval_packet_is_green"
+      }
+    },
+    {
+      "id": "web-scraper:apis",
+      "bot_id": "web-scraper",
+      "legacy_registry_id": "web_scraper",
+      "bot_slug": "web-scraper",
+      "bot_name": "Web Scraping Engine",
+      "emoji": "🔎",
+      "division": "DreamFlow",
+      "version": "1.0.0",
+      "status": "generated",
+      "owner": "DreamCo Technologies",
+      "base_path": "/api/v1/bots/web-scraper",
+      "operations": [
+        {
+          "operation_id": "web-scraper_get_status",
+          "method": "GET",
+          "path": "/status",
+          "approval_required": false,
+          "purpose": "Return runtime, readiness, and approval state for Web Scraping Engine."
+        },
+        {
+          "operation_id": "web-scraper_get_capabilities",
+          "method": "GET",
+          "path": "/capabilities",
+          "approval_required": false,
+          "purpose": "Return Web Scraping Engine capabilities, limits, and sandbox options."
+        },
+        {
+          "operation_id": "web-scraper_javascript-page-rendering_plan",
+          "method": "POST",
+          "path": "/capabilities/javascript-page-rendering/plan",
+          "approval_required": false,
+          "purpose": "Create a sandbox-first plan for JavaScript page rendering.",
+          "capability": {
+            "intent": "javascript-page-rendering",
+            "label": "JavaScript page rendering",
+            "risk_level": "high",
+            "approval_required": true,
+            "revenue_generating": true,
+            "spends_money": false,
+            "external_outreach": false
+          }
+        },
+        {
+          "operation_id": "web-scraper_javascript-page-rendering_sandbox",
+          "method": "POST",
+          "path": "/capabilities/javascript-page-rendering/sandbox",
+          "approval_required": false,
+          "purpose": "Run the JavaScript page rendering bootcamp fixture without live side effects.",
+          "capability": {
+            "intent": "javascript-page-rendering",
+            "label": "JavaScript page rendering",
+            "risk_level": "high",
+            "approval_required": true,
+            "revenue_generating": true,
+            "spends_money": false,
+            "external_outreach": false
+          }
+        },
+        {
+          "operation_id": "web-scraper_javascript-page-rendering_request_approval",
+          "method": "POST",
+          "path": "/capabilities/javascript-page-rendering/approval-request",
+          "approval_required": true,
+          "purpose": "Prepare owner approval packet before live use of JavaScript page rendering.",
+          "capability": {
+            "intent": "javascript-page-rendering",
+            "label": "JavaScript page rendering",
+            "risk_level": "high",
+            "approval_required": true,
+            "revenue_generating": true,
+            "spends_money": false,
+            "external_outreach": false
+          }
+        },
+        {
+          "operation_id": "web-scraper_css-xpath-selector-engine_plan",
+          "method": "POST",
+          "path": "/capabilities/css-xpath-selector-engine/plan",
+          "approval_required": false,
+          "purpose": "Create a sandbox-first plan for CSS/XPath selector engine.",
+          "capability": {
+            "intent": "css-xpath-selector-engine",
+            "label": "CSS/XPath selector engine",
+            "risk_level": "high",
+            "approval_required": true,
+            "revenue_generating": true,
+            "spends_money": false,
+            "external_outreach": false
+          }
+        },
+        {
+          "operation_id": "web-scraper_css-xpath-selector-engine_sandbox",
+          "method": "POST",
+          "path": "/capabilities/css-xpath-selector-engine/sandbox",
+          "approval_required": false,
+          "purpose": "Run the CSS/XPath selector engine bootcamp fixture without live side effects.",
+          "capability": {
+            "intent": "css-xpath-selector-engine",
+            "label": "CSS/XPath selector engine",
+            "risk_level": "high",
+            "approval_required": true,
+            "revenue_generating": true,
+            "spends_money": false,
+            "external_outreach": false
+          }
+        },
+        {
+          "operation_id": "web-scraper_css-xpath-selector-engine_request_approval",
+          "method": "POST",
+          "path": "/capabilities/css-xpath-selector-engine/approval-request",
+          "approval_required": true,
+          "purpose": "Prepare owner approval packet before live use of CSS/XPath selector engine.",
+          "capability": {
+            "intent": "css-xpath-selector-engine",
+            "label": "CSS/XPath selector engine",
+            "risk_level": "high",
+            "approval_required": true,
+            "revenue_generating": true,
+            "spends_money": false,
+            "external_outreach": false
+          }
+        },
+        {
+          "operation_id": "web-scraper_pagination-handling_plan",
+          "method": "POST",
+          "path": "/capabilities/pagination-handling/plan",
+          "approval_required": false,
+          "purpose": "Create a sandbox-first plan for Pagination handling.",
+          "capability": {
+            "intent": "pagination-handling",
+            "label": "Pagination handling",
+            "risk_level": "high",
+            "approval_required": true,
+            "revenue_generating": true,
+            "spends_money": false,
+            "external_outreach": false
+          }
+        },
+        {
+          "operation_id": "web-scraper_pagination-handling_sandbox",
+          "method": "POST",
+          "path": "/capabilities/pagination-handling/sandbox",
+          "approval_required": false,
+          "purpose": "Run the Pagination handling bootcamp fixture without live side effects.",
+          "capability": {
+            "intent": "pagination-handling",
+            "label": "Pagination handling",
+            "risk_level": "high",
+            "approval_required": true,
+            "revenue_generating": true,
+            "spends_money": false,
+            "external_outreach": false
+          }
+        },
+        {
+          "operation_id": "web-scraper_pagination-handling_request_approval",
+          "method": "POST",
+          "path": "/capabilities/pagination-handling/approval-request",
+          "approval_required": true,
+          "purpose": "Prepare owner approval packet before live use of Pagination handling.",
+          "capability": {
+            "intent": "pagination-handling",
+            "label": "Pagination handling",
+            "risk_level": "high",
+            "approval_required": true,
+            "revenue_generating": true,
+            "spends_money": false,
+            "external_outreach": false
+          }
+        },
+        {
+          "operation_id": "web-scraper_rate-limiting-and-politeness_plan",
+          "method": "POST",
+          "path": "/capabilities/rate-limiting-and-politeness/plan",
+          "approval_required": false,
+          "purpose": "Create a sandbox-first plan for Rate limiting and politeness.",
+          "capability": {
+            "intent": "rate-limiting-and-politeness",
+            "label": "Rate limiting and politeness",
+            "risk_level": "high",
+            "approval_required": true,
+            "revenue_generating": true,
+            "spends_money": false,
+            "external_outreach": false
+          }
+        },
+        {
+          "operation_id": "web-scraper_rate-limiting-and-politeness_sandbox",
+          "method": "POST",
+          "path": "/capabilities/rate-limiting-and-politeness/sandbox",
+          "approval_required": false,
+          "purpose": "Run the Rate limiting and politeness bootcamp fixture without live side effects.",
+          "capability": {
+            "intent": "rate-limiting-and-politeness",
+            "label": "Rate limiting and politeness",
+            "risk_level": "high",
+            "approval_required": true,
+            "revenue_generating": true,
+            "spends_money": false,
+            "external_outreach": false
+          }
+        },
+        {
+          "operation_id": "web-scraper_rate-limiting-and-politeness_request_approval",
+          "method": "POST",
+          "path": "/capabilities/rate-limiting-and-politeness/approval-request",
+          "approval_required": true,
+          "purpose": "Prepare owner approval packet before live use of Rate limiting and politeness.",
+          "capability": {
+            "intent": "rate-limiting-and-politeness",
+            "label": "Rate limiting and politeness",
+            "risk_level": "high",
+            "approval_required": true,
+            "revenue_generating": true,
+            "spends_money": false,
+            "external_outreach": false
+          }
+        },
+        {
+          "operation_id": "web-scraper_structured-data-output_plan",
+          "method": "POST",
+          "path": "/capabilities/structured-data-output/plan",
+          "approval_required": false,
+          "purpose": "Create a sandbox-first plan for Structured data output.",
+          "capability": {
+            "intent": "structured-data-output",
+            "label": "Structured data output",
+            "risk_level": "high",
+            "approval_required": true,
+            "revenue_generating": true,
+            "spends_money": false,
+            "external_outreach": false
+          }
+        },
+        {
+          "operation_id": "web-scraper_structured-data-output_sandbox",
+          "method": "POST",
+          "path": "/capabilities/structured-data-output/sandbox",
+          "approval_required": false,
+          "purpose": "Run the Structured data output bootcamp fixture without live side effects.",
+          "capability": {
+            "intent": "structured-data-output",
+            "label": "Structured data output",
+            "risk_level": "high",
+            "approval_required": true,
+            "revenue_generating": true,
+            "spends_money": false,
+            "external_outreach": false
+          }
+        },
+        {
+          "operation_id": "web-scraper_structured-data-output_request_approval",
+          "method": "POST",
+          "path": "/capabilities/structured-data-output/approval-request",
+          "approval_required": true,
+          "purpose": "Prepare owner approval packet before live use of Structured data output.",
+          "capability": {
+            "intent": "structured-data-output",
+            "label": "Structured data output",
+            "risk_level": "high",
+            "approval_required": true,
+            "revenue_generating": true,
+            "spends_money": false,
+            "external_outreach": false
+          }
+        },
+        {
+          "operation_id": "web-scraper_scheduled-scrape-jobs_plan",
+          "method": "POST",
+          "path": "/capabilities/scheduled-scrape-jobs/plan",
+          "approval_required": false,
+          "purpose": "Create a sandbox-first plan for Scheduled scrape jobs.",
+          "capability": {
+            "intent": "scheduled-scrape-jobs",
+            "label": "Scheduled scrape jobs",
+            "risk_level": "high",
+            "approval_required": true,
+            "revenue_generating": true,
+            "spends_money": false,
+            "external_outreach": false
+          }
+        },
+        {
+          "operation_id": "web-scraper_scheduled-scrape-jobs_sandbox",
+          "method": "POST",
+          "path": "/capabilities/scheduled-scrape-jobs/sandbox",
+          "approval_required": false,
+          "purpose": "Run the Scheduled scrape jobs bootcamp fixture without live side effects.",
+          "capability": {
+            "intent": "scheduled-scrape-jobs",
+            "label": "Scheduled scrape jobs",
+            "risk_level": "high",
+            "approval_required": true,
+            "revenue_generating": true,
+            "spends_money": false,
+            "external_outreach": false
+          }
+        },
+        {
+          "operation_id": "web-scraper_scheduled-scrape-jobs_request_approval",
+          "method": "POST",
+          "path": "/capabilities/scheduled-scrape-jobs/approval-request",
+          "approval_required": true,
+          "purpose": "Prepare owner approval packet before live use of Scheduled scrape jobs.",
+          "capability": {
+            "intent": "scheduled-scrape-jobs",
+            "label": "Scheduled scrape jobs",
+            "risk_level": "high",
+            "approval_required": true,
+            "revenue_generating": true,
+            "spends_money": false,
+            "external_outreach": false
+          }
+        },
+        {
+          "operation_id": "web-scraper_execute_reviewed_packet",
+          "method": "POST",
+          "path": "/execute-reviewed-packet",
+          "approval_required": true,
+          "purpose": "Execute only a reviewed, approved, audited Web Scraping Engine operation packet."
+        }
+      ],
+      "controls": [
+        "authenticated",
+        "schema_validated",
+        "rate_limited",
+        "retry_after_aware",
+        "audited"
+      ],
+      "custom_contract": {
+        "custom_to_bot": true,
+        "division_context": "DreamFlow",
+        "category_context": "web-scraping",
+        "primary_capabilities": [
+          {
+            "intent": "javascript-page-rendering",
+            "label": "JavaScript page rendering",
+            "risk_level": "high",
+            "approval_required": true,
+            "revenue_generating": true,
+            "spends_money": false,
+            "external_outreach": false
+          },
+          {
+            "intent": "css-xpath-selector-engine",
+            "label": "CSS/XPath selector engine",
+            "risk_level": "high",
+            "approval_required": true,
+            "revenue_generating": true,
+            "spends_money": false,
+            "external_outreach": false
+          },
+          {
+            "intent": "pagination-handling",
+            "label": "Pagination handling",
+            "risk_level": "high",
+            "approval_required": true,
+            "revenue_generating": true,
+            "spends_money": false,
+            "external_outreach": false
+          },
+          {
+            "intent": "rate-limiting-and-politeness",
+            "label": "Rate limiting and politeness",
+            "risk_level": "high",
+            "approval_required": true,
+            "revenue_generating": true,
+            "spends_money": false,
+            "external_outreach": false
+          },
+          {
+            "intent": "structured-data-output",
+            "label": "Structured data output",
+            "risk_level": "high",
+            "approval_required": true,
+            "revenue_generating": true,
+            "spends_money": false,
+            "external_outreach": false
+          },
+          {
+            "intent": "scheduled-scrape-jobs",
+            "label": "Scheduled scrape jobs",
+            "risk_level": "high",
+            "approval_required": true,
+            "revenue_generating": true,
+            "spends_money": false,
+            "external_outreach": false
+          }
+        ],
+        "business_owner_use_cases": [
+          "Find unsolved web-scraping problems for DreamFlow customers.",
+          "Package Web Scraping Engine sandbox results into a client-safe offer.",
+          "Request owner approval before any live money, outreach, deployment, or external-impact action."
+        ],
+        "buddy_use_cases": [
+          "route_to_best_capability",
+          "generate_bootcamp_workflow",
+          "debug_failed_fixture",
+          "prepare_approval_packet"
+        ],
+        "client_use_cases": [
+          "run_safe_demo",
+          "see_expected_outputs",
+          "understand_limits_and_required_approvals"
+        ],
+        "schemas": {
+          "request_schema": {
+            "type": "object",
+            "required": [
+              "goal",
+              "persona",
+              "mode"
+            ],
+            "properties": {
+              "goal": {
+                "type": "string",
+                "description": "Business problem for Web Scraping Engine to solve."
+              },
+              "persona": {
+                "type": "string",
+                "enum": [
+                  "owner",
+                  "buddy",
+                  "client"
+                ]
+              },
+              "mode": {
+                "type": "string",
+                "enum": [
+                  "sandbox",
+                  "approval_request",
+                  "reviewed_live_packet"
+                ]
+              },
+              "capability": {
+                "type": "string",
+                "enum": [
+                  "javascript-page-rendering",
+                  "css-xpath-selector-engine",
+                  "pagination-handling",
+                  "rate-limiting-and-politeness",
+                  "structured-data-output",
+                  "scheduled-scrape-jobs"
+                ]
+              },
+              "constraints": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "evidence": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "response_schema": {
+            "type": "object",
+            "required": [
+              "bot_slug",
+              "mode",
+              "result",
+              "evidence_log",
+              "approval_required"
+            ],
+            "properties": {
+              "bot_slug": {
+                "const": "web-scraper"
+              },
+              "division": {
+                "const": "DreamFlow"
+              },
+              "mode": {
+                "type": "string"
+              },
+              "result": {
+                "type": "object"
+              },
+              "evidence_log": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "approval_required": {
+                "type": "boolean"
+              },
+              "next_best_action": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "fixtures": [
+          {
+            "id": "web-scraper:javascript-page-rendering:happy-path",
+            "capability": "javascript-page-rendering",
+            "persona": "client",
+            "mode": "sandbox",
+            "goal": "Use Web Scraping Engine to solve a JavaScript page rendering problem in DreamFlow.",
+            "expected": [
+              "returns_client_safe_plan",
+              "writes_evidence_log",
+              "does_not_take_live_external_action"
+            ]
+          },
+          {
+            "id": "web-scraper:css-xpath-selector-engine:happy-path",
+            "capability": "css-xpath-selector-engine",
+            "persona": "client",
+            "mode": "sandbox",
+            "goal": "Use Web Scraping Engine to solve a CSS/XPath selector engine problem in DreamFlow.",
+            "expected": [
+              "returns_client_safe_plan",
+              "writes_evidence_log",
+              "does_not_take_live_external_action"
+            ]
+          },
+          {
+            "id": "web-scraper:pagination-handling:happy-path",
+            "capability": "pagination-handling",
+            "persona": "client",
+            "mode": "sandbox",
+            "goal": "Use Web Scraping Engine to solve a Pagination handling problem in DreamFlow.",
+            "expected": [
+              "returns_client_safe_plan",
+              "writes_evidence_log",
+              "does_not_take_live_external_action"
+            ]
+          },
+          {
+            "id": "web-scraper:rate-limiting-and-politeness:happy-path",
+            "capability": "rate-limiting-and-politeness",
+            "persona": "client",
+            "mode": "sandbox",
+            "goal": "Use Web Scraping Engine to solve a Rate limiting and politeness problem in DreamFlow.",
+            "expected": [
+              "returns_client_safe_plan",
+              "writes_evidence_log",
+              "does_not_take_live_external_action"
+            ]
+          },
+          {
+            "id": "web-scraper:unauthorized-live-action",
+            "mode": "reviewed_live_packet",
+            "expected": [
+              "reject_without_owner_approval",
+              "write_approval_request"
+            ]
+          },
+          {
+            "id": "web-scraper:malformed-payload",
+            "mode": "sandbox",
+            "expected": [
+              "schema_error",
+              "client_safe_error_message"
+            ]
+          }
+        ]
+      },
+      "sandbox_test_profile": {
+        "name": "web-scraper-api-topline-sandbox",
+        "network": "mocked_by_default",
+        "secrets": "test_values_only",
+        "money_movement": "disabled",
+        "coverage_goal": "web-scraper_custom_capability_contracts",
+        "required_checks": [
+          "openapi_schema_validation",
+          "request_response_contracts",
+          "auth_required_for_mutations",
+          "rate_limit_and_retry_after",
+          "idempotency_key_behavior",
+          "permission_denied_negative_tests",
+          "malformed_payload_rejection",
+          "timeout_and_circuit_breaker",
+          "audit_log_assertions",
+          "no_external_side_effects"
+        ],
+        "fixtures": [
+          "web-scraper:javascript-page-rendering:happy-path",
+          "web-scraper:css-xpath-selector-engine:happy-path",
+          "web-scraper:pagination-handling:happy-path",
+          "web-scraper:rate-limiting-and-politeness:happy-path",
+          "web-scraper:unauthorized-live-action",
+          "web-scraper:malformed-payload",
+          "web-scraper:rate-limit-window",
+          "web-scraper:approval-required-action"
+        ]
+      },
+      "sandbox_bootcamp": {
+        "id": "web-scraper:api-sandbox-bootcamp",
+        "name": "Web Scraping Engine API Sandbox Bootcamp",
+        "audiences": [
+          "owner",
+          "buddy",
+          "client"
+        ],
+        "workflow_generator": {
+          "id": "web-scraper-api-sandbox-bootcamp-workflow",
+          "source": "api_library",
+          "generated_workflow_name": "Web Scraping Engine Api Sandbox Bootcamp Workflow",
+          "workflow_file": ".github/workflows/generated/web-scraper-api-sandbox-bootcamp-workflow.yml",
+          "trigger": "workflow_call",
+          "permissions": {
+            "contents": "read",
+            "actions": "read"
+          },
+          "timeout_minutes": 15,
+          "concurrency": {
+            "group": "web-scraper-api-sandbox-bootcamp",
+            "cancel_in_progress": true
+          },
+          "stages": [
+            "checkout_readonly",
+            "install_locked_dependencies",
+            "load_mock_fixtures",
+            "run_contract_checks",
+            "run_negative_safety_checks",
+            "run_bootcamp_persona_drills",
+            "write_evidence_packet"
+          ],
+          "artifacts": [
+            "reports/sandbox_bootcamps/web-scraper/api-sandbox-bootcamp/summary.json",
+            "reports/sandbox_bootcamps/web-scraper/api-sandbox-bootcamp/client_notes.md"
+          ],
+          "live_action_policy": "blocked_unless_owner_approval_packet_is_green"
+        },
+        "required_checks": [
+          "openapi_schema_validation",
+          "request_response_contracts",
+          "auth_required_for_mutations",
+          "rate_limit_and_retry_after",
+          "idempotency_key_behavior",
+          "permission_denied_negative_tests",
+          "malformed_payload_rejection",
+          "timeout_and_circuit_breaker",
+          "audit_log_assertions",
+          "no_external_side_effects",
+          "client_safe_error_messages",
+          "rollback_packet_created"
+        ],
+        "bootcamp_modules": [
+          {
+            "id": "bootcamp_01_contract",
+            "title": "Contract and schema proof",
+            "goal": "Prove every request, response, event, and error shape before runtime work.",
+            "checks": [
+              "schema_compile",
+              "example_payloads",
+              "negative_contract_cases"
+            ]
+          },
+          {
+            "id": "bootcamp_02_fixture_lab",
+            "title": "Fixture lab",
+            "goal": "Build deterministic happy-path, edge-case, abuse-case, and rollback fixtures.",
+            "checks": [
+              "happy_path_fixture",
+              "edge_fixture",
+              "abuse_fixture",
+              "rollback_fixture"
+            ]
+          },
+          {
+            "id": "bootcamp_03_api_obstacle_course",
+            "title": "API obstacle course",
+            "goal": "Exercise auth, rate limits, idempotency, timeouts, retries, and audit logs.",
+            "checks": [
+              "auth_gate",
+              "rate_limit",
+              "idempotency",
+              "timeout",
+              "audit_log"
+            ]
+          },
+          {
+            "id": "bootcamp_04_safety_ring",
+            "title": "Safety ring",
+            "goal": "Block live money, outreach, deployment, credential, medical, legal, and security impact by default.",
+            "checks": [
+              "no_live_money",
+              "no_live_outreach",
+              "no_secret_leak",
+              "approval_required"
+            ]
+          },
+          {
+            "id": "bootcamp_05_builder_drill",
+            "title": "Bot builder drill",
+            "goal": "Train the operator to build, test, debug, document, and package the bot like a client product.",
+            "checks": [
+              "build_packet",
+              "debug_packet",
+              "client_summary",
+              "prospectus_update"
+            ]
+          },
+          {
+            "id": "bootcamp_06_failure_replay",
+            "title": "Failure replay",
+            "goal": "Replay old failures and prove they stay fixed with regression evidence.",
+            "checks": [
+              "known_failure_fixture",
+              "regression_test",
+              "fix_evidence",
+              "retest_command"
+            ]
+          },
+          {
+            "id": "bootcamp_07_graduation",
+            "title": "Graduation review",
+            "goal": "Produce a demo-ready, client-safe, production-gated readiness packet.",
+            "checks": [
+              "readiness_score",
+              "remaining_risks",
+              "approval_packet",
+              "handoff_notes"
+            ]
+          }
+        ],
+        "personas": {
+          "owner": [
+            "learn_what_the_bot_can_safely_do",
+            "approve_or_reject_live_actions",
+            "read_client_ready_summary"
+          ],
+          "buddy": [
+            "route_task_to_best_bot",
+            "debug_failed_contract",
+            "generate_fix_packet"
+          ],
+          "client": [
+            "try_safe_demo_scenario",
+            "see_expected_business_value",
+            "understand_limits_and_approvals"
+          ]
+        },
+        "graduation_packet": [
+          "api_contract_report",
+          "workflow_run_summary",
+          "sandbox_evidence",
+          "risk_and_approval_summary",
+          "client_demo_script"
+        ]
+      },
+      "workflow_generator": {
+        "id": "web-scraper-api-sandbox-bootcamp-workflow",
+        "source": "api_library",
+        "generated_workflow_name": "Web Scraping Engine Api Sandbox Bootcamp Workflow",
+        "workflow_file": ".github/workflows/generated/web-scraper-api-sandbox-bootcamp-workflow.yml",
+        "trigger": "workflow_call",
+        "permissions": {
+          "contents": "read",
+          "actions": "read"
+        },
+        "timeout_minutes": 15,
+        "concurrency": {
+          "group": "web-scraper-api-sandbox-bootcamp",
+          "cancel_in_progress": true
+        },
+        "stages": [
+          "checkout_readonly",
+          "install_locked_dependencies",
+          "load_mock_fixtures",
+          "run_contract_checks",
+          "run_negative_safety_checks",
+          "run_bootcamp_persona_drills",
+          "write_evidence_packet"
+        ],
+        "artifacts": [
+          "reports/sandbox_bootcamps/web-scraper/api-sandbox-bootcamp/summary.json",
+          "reports/sandbox_bootcamps/web-scraper/api-sandbox-bootcamp/client_notes.md"
+        ],
+        "live_action_policy": "blocked_unless_owner_approval_packet_is_green"
+      }
+    }
+  ]
+}

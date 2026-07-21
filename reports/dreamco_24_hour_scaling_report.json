@@ -1,0 +1,272 @@
+{
+  "aggressive_mode": {
+    "cost_policy": "use local scripts, cached reports, static dashboards, and free or low-cost model routes first",
+    "default_state": "owner_triggered_only",
+    "duration_hours": 24,
+    "execution_mode": "supervised_repository_wide_queue",
+    "github_policy": "manual or path-gated actions only unless owner approves more GitHub minutes",
+    "hard_limits": [
+      "no paid always-on AI loop",
+      "no customer outreach",
+      "no ad spend",
+      "no money movement",
+      "no credential changes",
+      "no destructive repository action",
+      "no production deployment without explicit owner approval"
+    ],
+    "intensity": "maximum_safe_local_and_report_generation",
+    "label": "Aggressive Mode",
+    "what_it_runs": [
+      "refresh every generated report",
+      "scan every bot registry and connection report",
+      "queue every bot for sandbox-first test or rebuild packets",
+      "run local syntax and smoke checks before GitHub Actions",
+      "run GitHub cost saver and repository stewardship scans",
+      "refresh AI model routing and Gemini low-cost paths",
+      "prepare pull-request packets for failures",
+      "summarize approval gates and next best actions"
+    ]
+  },
+  "always_blocked_without_owner_approval": [
+    "customer_outreach",
+    "ad_spend",
+    "money_movement",
+    "trading_or_investment_actions",
+    "public_deployment",
+    "app_store_publish",
+    "payment_link_publish",
+    "credential_change",
+    "third_party_account_change",
+    "legal_medical_financial_claims",
+    "destructive_repository_action",
+    "paid_github_minutes_increase",
+    "paid_ai_always_on_loop"
+  ],
+  "buddy_codex_parity_goal": {
+    "can_do_with_repo_access": [
+      "read repository files",
+      "map bot capability inventory",
+      "draft code changes",
+      "generate tests",
+      "run local checks",
+      "prepare pull-request packets",
+      "debug failed workflows from logs",
+      "route prompts to the best available AI resource",
+      "write safe operation packets for every bot"
+    ],
+    "cannot_claim": [
+      "guaranteed income",
+      "unlimited free compute",
+      "bypassing platform billing",
+      "full autonomy without supervision"
+    ],
+    "positioning": "Buddy should behave like a governed coding and operations teammate inside DreamCo.",
+    "requires_owner_approval": [
+      "push code",
+      "merge pull requests",
+      "change secrets",
+      "deploy production services",
+      "spend money",
+      "contact customers",
+      "change GitHub billing or paid products",
+      "run destructive commands"
+    ]
+  },
+  "cost_control_policy": {
+    "ai_cost_guardrails": [
+      "Use local deterministic reports before model calls.",
+      "Use cached outputs before repeated model calls.",
+      "Route drafts, summaries, classification, and sandbox planning through free or low-cost models first.",
+      "Escalate to premium models only for failed cheap-model evals, high-impact client work, or approved production tasks.",
+      "Block always-on paid model loops without a budget cap and owner approval."
+    ],
+    "default_execution": "local_first_then_static_reports_then_free_or_low_cost_ai_then_owner_approved_paid_tools",
+    "github_cost_guardrails": [
+      "Prefer GitHub Pages, static reports, and local scripts before recurring Actions jobs.",
+      "Keep scheduled workflows manual, path-gated, or low-frequency until revenue justifies more runs.",
+      "Set artifact retention to 1-7 days for diagnostics and only keep longer release evidence intentionally.",
+      "Avoid paid Codespaces and hosted runners when the same check can run locally on the owner laptop.",
+      "Never bypass billing, quotas, permissions, or platform terms."
+    ],
+    "goal": "Run useful 24-hour learning loops without surprise bills."
+  },
+  "daily_cycles": [
+    {
+      "approval_required": [
+        "paid_research_tools",
+        "private_data_collection",
+        "customer_contact"
+      ],
+      "id": "market_research_cycle",
+      "purpose": "Study public competitors, app-store ideas, customer problems, pricing, reviews, and market gaps.",
+      "safe_automation": [
+        "public_source_queue",
+        "competitor_notes",
+        "customer_problem_drafts",
+        "source_url_logging",
+        "cache_first_ai_summary"
+      ],
+      "window": "00:00-03:00"
+    },
+    {
+      "approval_required": [
+        "production_deploy",
+        "credential_change",
+        "third_party_account_change"
+      ],
+      "id": "build_cycle",
+      "purpose": "Turn top opportunities into app concepts, code plans, sandbox prototypes, bot-founder packets, and pull-request-safe tasks.",
+      "safe_automation": [
+        "app_concept_generation",
+        "mvp_scope",
+        "sandbox_fixture_generation",
+        "local_first_storage_plan"
+      ],
+      "window": "03:00-07:00"
+    },
+    {
+      "approval_required": [
+        "live_api_mutation",
+        "real_customer_data_test",
+        "destructive_action"
+      ],
+      "id": "test_cycle",
+      "purpose": "Run syntax checks, generated bot smoke tests, API sandbox tests, workflow generators, and dashboard health checks.",
+      "safe_automation": [
+        "json_python_javascript_checks",
+        "sandbox_tests",
+        "smoke_tests",
+        "report_refresh",
+        "local_before_github_actions"
+      ],
+      "window": "07:00-11:00"
+    },
+    {
+      "approval_required": [
+        "public_publish",
+        "price_change_live",
+        "payment_link_publish"
+      ],
+      "id": "package_cycle",
+      "purpose": "Package app-store listings, prospectus pages, demo scripts, screenshots or mockups, and pricing drafts.",
+      "safe_automation": [
+        "listing_drafts",
+        "prospectus_updates",
+        "demo_script_drafts",
+        "pricing_options"
+      ],
+      "window": "11:00-15:00"
+    },
+    {
+      "approval_required": [
+        "email_send",
+        "sms_send",
+        "phone_call",
+        "social_posting",
+        "ad_spend"
+      ],
+      "id": "growth_cycle",
+      "purpose": "Prepare ethical marketing, customer discovery, launch experiments, SEO briefs, and outreach drafts.",
+      "safe_automation": [
+        "audience_segments",
+        "content_drafts",
+        "outreach_drafts",
+        "lead_scoring"
+      ],
+      "window": "15:00-19:00"
+    },
+    {
+      "approval_required": [
+        "merge",
+        "deploy",
+        "spend_money",
+        "move_money",
+        "customer_impacting_action"
+      ],
+      "id": "review_cycle",
+      "purpose": "Summarize what worked, what failed, what needs approval, what should be rebuilt, and what should be shipped next.",
+      "safe_automation": [
+        "daily_scorecard",
+        "failure_summary",
+        "approval_queue",
+        "next_best_tasks",
+        "cost_guardrail_review"
+      ],
+      "window": "19:00-24:00"
+    }
+  ],
+  "default_mode": "continuous_supervised_cheap_ops",
+  "generated_at": "2026-07-17T15:26:17.124546+00:00",
+  "infrastructure_policy": {
+    "cloud_run_cpu_throttling": true,
+    "cooldown_seconds": 300,
+    "cost_posture": "idle_sleep_request_based",
+    "cpu_target_percent": 65,
+    "free_first_ai_routing": true,
+    "github_actions_default": "manual_or_path_gated",
+    "max_replicas": 1,
+    "memory_target_percent": 75,
+    "min_replicas": 0,
+    "queue_depth_target": 25,
+    "self_healing": true
+  },
+  "mission": "Keep DreamCo improving around the clock through safe 24-hour research, build, test, app-store, and approval cycles while keeping paid cloud and GitHub usage as low as possible.",
+  "next_actions": [
+    "Connect this report to a scheduled GitHub workflow when the owner approves recurring automation.",
+    "Keep cycles in report/draft mode until production credentials, budgets, and approval gates are configured.",
+    "Use the review cycle to choose one app-store listing and one bot build to ship next."
+  ],
+  "scale_lanes": [
+    "bot_founder_packets",
+    "app_store_listing_drafts",
+    "sandbox_bootcamps",
+    "api_contract_tests",
+    "workflow_generators",
+    "competitor_research",
+    "customer_discovery",
+    "marketing_drafts",
+    "stripe_revenue_rescue",
+    "github_actions_debugging",
+    "pull_request_cleanup",
+    "storage_compaction",
+    "github_cost_saver",
+    "cheap_ai_model_routing",
+    "codex_style_task_packets"
+  ],
+  "schema": "dreamco.24_hour_scaling_report.v1",
+  "source_config": "config/dreamco_24_hour_scaling.json",
+  "sources": {
+    "app_foundry": "reports/app_foundry_readiness.json",
+    "bot_founder_app_store": "reports/bot_founder_app_store_report.json",
+    "storage_guard": "reports/storage_guard_report.json"
+  },
+  "summary": {
+    "aggressive_mode_available": true,
+    "aggressive_mode_duration_hours": 24,
+    "aggressive_mode_hard_limits": 7,
+    "aggressive_mode_runs": 8,
+    "ai_cost_guardrails": 5,
+    "always_blocked_gates": 13,
+    "app_foundry_lanes": 8,
+    "app_store_categories": 12,
+    "bot_founder_packets": 1248,
+    "cheap_24_hour_mode": true,
+    "cloud_run_cpu_throttling": true,
+    "codex_style_approval_gates": 8,
+    "codex_style_capabilities": 9,
+    "cycle_approval_steps": 22,
+    "cycles_defined": 6,
+    "free_first_ai_routing": true,
+    "github_actions_default": "manual_or_path_gated",
+    "github_cost_guardrails": 5,
+    "idle_sleep_enabled": true,
+    "max_one_instance": true,
+    "max_replicas": 1,
+    "min_replicas": 0,
+    "readiness_score": 100,
+    "safe_automation_steps": 27,
+    "scale_lanes": 15,
+    "self_healing_enabled": true,
+    "storage_ready": true
+  }
+}

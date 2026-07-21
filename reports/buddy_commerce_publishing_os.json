@@ -1,0 +1,780 @@
+{
+  "app_control_center": {
+    "approval_required": [
+      "connect_developer_account",
+      "submit_app",
+      "submit_update",
+      "change_pricing",
+      "change_availability",
+      "delete_app",
+      "respond_to_user_review",
+      "collect_user_data",
+      "enable_push_notifications"
+    ],
+    "mission": "Let Buddy supervise all DreamCo and client apps from one task-manager command center without taking live account actions until approved.",
+    "must_store": [
+      "app_id",
+      "platform",
+      "version",
+      "owner",
+      "last_reviewed_at",
+      "release_status",
+      "privacy_status",
+      "approval_status",
+      "next_safe_action"
+    ],
+    "safe_control_modes": [
+      "read_public_app_store_listing",
+      "draft_release_notes",
+      "prepare_update_checklist",
+      "track_version_status",
+      "triage_user_feedback",
+      "summarize_crash_or_support_reports",
+      "prepare_store_assets",
+      "prepare_launch_calendar",
+      "prepare_rollback_plan"
+    ],
+    "supported_targets": [
+      "web_apps",
+      "pwa_apps",
+      "desktop_apps",
+      "ios_apps",
+      "android_apps",
+      "game_store_apps",
+      "tv_store_apps",
+      "browser_extensions",
+      "client_internal_tools"
+    ]
+  },
+  "app_store_targets": [
+    {
+      "approval_required": [
+        "developer_account_use",
+        "submit_for_review",
+        "accept_paid_terms"
+      ],
+      "id": "apple_app_store",
+      "label": "Apple App Store",
+      "safe_packet": [
+        "bundle_id_plan",
+        "screenshots",
+        "privacy_labels",
+        "support_url",
+        "review_notes"
+      ]
+    },
+    {
+      "approval_required": [
+        "developer_account_use",
+        "submit_for_review",
+        "accept_paid_terms"
+      ],
+      "id": "google_play",
+      "label": "Google Play",
+      "safe_packet": [
+        "package_name_plan",
+        "store_listing",
+        "privacy_policy",
+        "testing_track",
+        "release_notes"
+      ]
+    },
+    {
+      "approval_required": [
+        "ship_installer",
+        "sign_release",
+        "collect_telemetry"
+      ],
+      "id": "desktop_downloads",
+      "label": "Desktop Downloads",
+      "safe_packet": [
+        "installer_checklist",
+        "signing_plan",
+        "virus_scan_plan",
+        "update_channel",
+        "rollback_plan"
+      ]
+    },
+    {
+      "approval_required": [
+        "submit_store_listing",
+        "publish_public_release",
+        "accept_paid_terms"
+      ],
+      "id": "game_stores",
+      "label": "Game Stores",
+      "safe_packet": [
+        "age_rating_notes",
+        "screenshots",
+        "trailer_plan",
+        "controller_support",
+        "store_listing"
+      ]
+    },
+    {
+      "approval_required": [
+        "submit_store_listing",
+        "publish_public_release",
+        "accept_paid_terms"
+      ],
+      "id": "tv_stores",
+      "label": "TV Stores",
+      "safe_packet": [
+        "remote_control_checks",
+        "privacy_notes",
+        "screenshots",
+        "streaming_rules",
+        "support_url"
+      ]
+    }
+  ],
+  "approval_wall": [
+    "buy_domain",
+    "sell_domain",
+    "change_dns",
+    "submit_app_store_listing",
+    "publish_public_release",
+    "send_customer_outreach",
+    "run_paid_ads",
+    "charge_or_move_money",
+    "connect_payment_or_bank_account",
+    "change_client_account",
+    "collect_sensitive_device_or_personal_data",
+    "connect_social_account",
+    "publish_social_post",
+    "send_direct_message",
+    "run_social_ads",
+    "submit_app_update",
+    "change_app_pricing",
+    "delete_or_hide_social_content",
+    "collect_private_social_messages"
+  ],
+  "commerce_lanes": [
+    {
+      "approval_required": [
+        "buy_domain",
+        "transfer_domain",
+        "change_dns",
+        "sell_domain",
+        "connect_payment_method"
+      ],
+      "buddy_prompt": "Buddy, prepare a supervised domain selling and management packet and stop before any live external action.",
+      "dashboard_status": "ready_for_buddy_supervised_packet",
+      "evidence": [
+        "registrar",
+        "price_checked_at",
+        "renewal_price",
+        "privacy_option",
+        "brand_risk_notes"
+      ],
+      "id": "domains",
+      "label": "Domain Selling and Management",
+      "safe_actions": [
+        "search domain ideas",
+        "compare public registrar pricing",
+        "draft domain shortlist",
+        "prepare DNS plan",
+        "prepare renewal reminders"
+      ],
+      "sandbox_test": {
+        "expected_outputs": [
+          "registrar",
+          "price_checked_at",
+          "renewal_price",
+          "privacy_option",
+          "brand_risk_notes"
+        ],
+        "inputs": [
+          "client_goal",
+          "target_market",
+          "budget_limit",
+          "device_or_platform",
+          "approval_owner"
+        ],
+        "must_not_do": [
+          "buy_domain",
+          "transfer_domain",
+          "change_dns",
+          "sell_domain",
+          "connect_payment_method"
+        ]
+      }
+    },
+    {
+      "approval_required": [
+        "submit_store_listing",
+        "accept_store_terms",
+        "publish_public_release",
+        "connect_paid_account"
+      ],
+      "buddy_prompt": "Buddy, prepare a supervised self-publishing apps packet and stop before any live external action.",
+      "dashboard_status": "ready_for_buddy_supervised_packet",
+      "evidence": [
+        "platform",
+        "package_id",
+        "test_status",
+        "privacy_status",
+        "approval_owner"
+      ],
+      "id": "app_self_publish",
+      "label": "Self-Publishing Apps",
+      "safe_actions": [
+        "build release checklist",
+        "create screenshots checklist",
+        "draft privacy and support notes",
+        "prepare staged rollout plan",
+        "prepare rollback checklist"
+      ],
+      "sandbox_test": {
+        "expected_outputs": [
+          "platform",
+          "package_id",
+          "test_status",
+          "privacy_status",
+          "approval_owner"
+        ],
+        "inputs": [
+          "client_goal",
+          "target_market",
+          "budget_limit",
+          "device_or_platform",
+          "approval_owner"
+        ],
+        "must_not_do": [
+          "submit_store_listing",
+          "accept_store_terms",
+          "publish_public_release",
+          "connect_paid_account"
+        ]
+      }
+    },
+    {
+      "approval_required": [
+        "ship_installer",
+        "submit_mobile_app",
+        "collect_client_device_data",
+        "send_external_download_link"
+      ],
+      "buddy_prompt": "Buddy, prepare a supervised easy client downloads packet and stop before any live external action.",
+      "dashboard_status": "ready_for_buddy_supervised_packet",
+      "evidence": [
+        "target_device",
+        "install_path",
+        "version",
+        "support_url",
+        "rollback_path"
+      ],
+      "id": "client_downloads",
+      "label": "Easy Client Downloads",
+      "safe_actions": [
+        "prepare web link",
+        "prepare PWA install instructions",
+        "prepare desktop package checklist",
+        "prepare mobile store packet",
+        "track device support"
+      ],
+      "sandbox_test": {
+        "expected_outputs": [
+          "target_device",
+          "install_path",
+          "version",
+          "support_url",
+          "rollback_path"
+        ],
+        "inputs": [
+          "client_goal",
+          "target_market",
+          "budget_limit",
+          "device_or_platform",
+          "approval_owner"
+        ],
+        "must_not_do": [
+          "ship_installer",
+          "submit_mobile_app",
+          "collect_client_device_data",
+          "send_external_download_link"
+        ]
+      }
+    },
+    {
+      "approval_required": [
+        "create_external_task",
+        "invite_user",
+        "send_notification",
+        "change_client_account"
+      ],
+      "buddy_prompt": "Buddy, prepare a supervised task manager chatbot packet and stop before any live external action.",
+      "dashboard_status": "ready_for_buddy_supervised_packet",
+      "evidence": [
+        "task_id",
+        "owner",
+        "due_date",
+        "source",
+        "decision_needed",
+        "status"
+      ],
+      "id": "task_manager_chatbot",
+      "label": "Task Manager Chatbot",
+      "safe_actions": [
+        "capture goals",
+        "split tasks",
+        "assign bots",
+        "track status",
+        "summarize blockers",
+        "draft next actions",
+        "store useful memory only"
+      ],
+      "sandbox_test": {
+        "expected_outputs": [
+          "task_id",
+          "owner",
+          "due_date",
+          "source",
+          "decision_needed",
+          "status"
+        ],
+        "inputs": [
+          "client_goal",
+          "target_market",
+          "budget_limit",
+          "device_or_platform",
+          "approval_owner"
+        ],
+        "must_not_do": [
+          "create_external_task",
+          "invite_user",
+          "send_notification",
+          "change_client_account"
+        ]
+      }
+    },
+    {
+      "approval_required": [
+        "contact_customer",
+        "publish_offer",
+        "run_ads",
+        "charge_payment",
+        "bid_contract",
+        "scrape_non_public_data"
+      ],
+      "buddy_prompt": "Buddy, prepare a supervised autonomous money research packet and stop before any live external action.",
+      "dashboard_status": "ready_for_buddy_supervised_packet",
+      "evidence": [
+        "source_url",
+        "customer_problem",
+        "offer",
+        "price_hypothesis",
+        "risk",
+        "next_test"
+      ],
+      "id": "web_money_research",
+      "label": "Autonomous Money Research",
+      "safe_actions": [
+        "search public opportunities",
+        "compare customer pains",
+        "draft offers",
+        "score revenue potential",
+        "prepare outreach drafts",
+        "simulate pricing"
+      ],
+      "sandbox_test": {
+        "expected_outputs": [
+          "source_url",
+          "customer_problem",
+          "offer",
+          "price_hypothesis",
+          "risk",
+          "next_test"
+        ],
+        "inputs": [
+          "client_goal",
+          "target_market",
+          "budget_limit",
+          "device_or_platform",
+          "approval_owner"
+        ],
+        "must_not_do": [
+          "contact_customer",
+          "publish_offer",
+          "run_ads",
+          "charge_payment",
+          "bid_contract",
+          "scrape_non_public_data"
+        ]
+      }
+    },
+    {
+      "approval_required": [
+        "connect_social_account",
+        "publish_post",
+        "send_dm",
+        "reply_to_comment",
+        "delete_content",
+        "change_profile",
+        "run_ads",
+        "boost_post",
+        "submit_app_update",
+        "change_app_store_listing",
+        "collect_private_messages"
+      ],
+      "buddy_prompt": "Buddy, prepare a supervised app and social control center packet and stop before any live external action.",
+      "dashboard_status": "ready_for_buddy_supervised_packet",
+      "evidence": [
+        "platform",
+        "account_or_app_id",
+        "draft_id",
+        "source_asset",
+        "approval_owner",
+        "scheduled_time",
+        "risk_notes",
+        "outcome_metrics"
+      ],
+      "id": "app_and_social_control",
+      "label": "App and Social Control Center",
+      "safe_actions": [
+        "inventory connected apps",
+        "draft social posts",
+        "build content calendar",
+        "prepare inbox triage",
+        "summarize comments",
+        "draft replies",
+        "review analytics",
+        "prepare app update checklist",
+        "prepare cross-platform launch plan"
+      ],
+      "sandbox_test": {
+        "expected_outputs": [
+          "platform",
+          "account_or_app_id",
+          "draft_id",
+          "source_asset",
+          "approval_owner",
+          "scheduled_time",
+          "risk_notes",
+          "outcome_metrics"
+        ],
+        "inputs": [
+          "client_goal",
+          "target_market",
+          "budget_limit",
+          "device_or_platform",
+          "approval_owner"
+        ],
+        "must_not_do": [
+          "connect_social_account",
+          "publish_post",
+          "send_dm",
+          "reply_to_comment",
+          "delete_content",
+          "change_profile",
+          "run_ads",
+          "boost_post",
+          "submit_app_update",
+          "change_app_store_listing",
+          "collect_private_messages"
+        ]
+      }
+    }
+  ],
+  "default_mode": "research_draft_package_test_then_owner_approval",
+  "domain_marketplace": {
+    "approval_required": [
+      "buy_domain",
+      "sell_domain",
+      "transfer_domain",
+      "change_dns",
+      "connect_payment_method",
+      "publish_landing_page",
+      "claim_trademark"
+    ],
+    "default_mode": "research_value_package_then_owner_approval",
+    "domain_types": [
+      "dreamco_custom_domains",
+      "client_business_domains",
+      "premium_brand_domains",
+      "local_service_domains",
+      "industry_keyword_domains",
+      "app_product_domains",
+      "course_and_school_domains",
+      "game_and_simulation_domains",
+      "portfolio_domains",
+      "campaign_landing_domains",
+      "redirect_domains",
+      "defensive_brand_domains"
+    ],
+    "safe_actions": [
+      "brainstorm domain ideas",
+      "compare public registrar pricing",
+      "draft brand and SEO notes",
+      "prepare DNS plan",
+      "prepare landing page packet",
+      "prepare renewal reminders",
+      "prepare valuation notes"
+    ]
+  },
+  "download_targets": [
+    {
+      "buddy_release_packet": {
+        "required_before_release": [
+          "test_evidence",
+          "privacy_review",
+          "rollback_path",
+          "owner_publish_approval"
+        ],
+        "status": "ready_for_static_preview",
+        "version": "draft"
+      },
+      "goal": "Open Buddy from any browser with no install.",
+      "id": "web_app",
+      "label": "Web App",
+      "package_outputs": [
+        "responsive_dashboard",
+        "pwa_manifest",
+        "offline_fallback",
+        "static_preview_bundle"
+      ],
+      "status": "ready_for_static_preview"
+    },
+    {
+      "buddy_release_packet": {
+        "required_before_release": [
+          "test_evidence",
+          "privacy_review",
+          "rollback_path",
+          "owner_publish_approval"
+        ],
+        "status": "planned_packager",
+        "version": "draft"
+      },
+      "goal": "Package Buddy for Mac, Windows, and Linux after the web dashboard stabilizes.",
+      "id": "desktop_app",
+      "label": "Desktop App",
+      "package_outputs": [
+        "desktop_shell_plan",
+        "local_runner_bridge",
+        "auto_update_plan",
+        "signed_release_checklist"
+      ],
+      "status": "planned_packager"
+    },
+    {
+      "buddy_release_packet": {
+        "required_before_release": [
+          "test_evidence",
+          "privacy_review",
+          "rollback_path",
+          "owner_publish_approval"
+        ],
+        "status": "planned_packager",
+        "version": "draft"
+      },
+      "goal": "Package Buddy for iOS and Android with store-ready screenshots, privacy notes, and offline task capture.",
+      "id": "mobile_app",
+      "label": "Mobile App",
+      "package_outputs": [
+        "mobile_shell_plan",
+        "push_notification_policy",
+        "privacy_labels",
+        "store_screenshots_checklist"
+      ],
+      "status": "planned_packager"
+    },
+    {
+      "buddy_release_packet": {
+        "required_before_release": [
+          "test_evidence",
+          "privacy_review",
+          "rollback_path",
+          "owner_publish_approval"
+        ],
+        "status": "ready_for_static_preview",
+        "version": "draft"
+      },
+      "goal": "Let clients add Buddy to phone or desktop home screens from the web version.",
+      "id": "pwa_install",
+      "label": "PWA Install",
+      "package_outputs": [
+        "manifest",
+        "icons",
+        "service_worker_plan",
+        "install_prompt_copy"
+      ],
+      "status": "ready_for_static_preview"
+    }
+  ],
+  "generated_at": "2026-07-17T15:42:47Z",
+  "mission": "Make Buddy the download-easy, task-manager-first commerce and publishing operator for domains, app builds, web publishing, app-store readiness, device installs, and safe autonomous money research.",
+  "next_actions": [
+    "Add PWA manifest and install-ready icons to the Buddy dashboard.",
+    "Create store-specific release packets for the first Buddy web app, mobile shell, and desktop shell.",
+    "Connect registrar, store, and payment adapters only through secrets plus owner approval.",
+    "Connect social and app-store accounts only through secrets-backed runtime configs, never committed tokens.",
+    "Keep social posts, DMs, replies, ads, profile changes, and app-store submissions approval-gated.",
+    "Keep web money research source-backed and draft-only until the owner approves outreach, payment, or publishing."
+  ],
+  "positioning": "Buddy should feel like the best task manager chatbot for building and selling apps: it captures goals, breaks them into tasks, assigns bots, tracks evidence, prepares domain and store packets, packages downloads, and searches public web opportunities without taking live money or account actions until approved.",
+  "schema": "dreamco.buddy_commerce_publishing_os_report.v1",
+  "social_control_center": {
+    "approval_required": [
+      "connect_account",
+      "publish_post",
+      "schedule_post",
+      "send_dm",
+      "reply_publicly",
+      "delete_or_hide_content",
+      "change_profile_or_bio",
+      "follow_or_unfollow_accounts",
+      "join_group_or_server",
+      "run_ad_or_boost",
+      "use_customer_list",
+      "collect_private_messages",
+      "export_social_data"
+    ],
+    "blocked_without_review": [
+      "impersonation",
+      "fake_endorsements",
+      "spam_outreach",
+      "harassment",
+      "misleading_income_claims",
+      "political_or_public_safety_impersonation",
+      "minor_targeting",
+      "scraping_private_messages",
+      "bypassing_platform_terms"
+    ],
+    "default_mode": "draft_review_schedule_after_approval",
+    "mission": "Let Buddy coordinate social media strategy, drafts, calendars, approvals, and analytics while keeping posting, messaging, advertising, and account changes behind approval.",
+    "must_store": [
+      "platform",
+      "account_owner",
+      "draft",
+      "source_assets",
+      "rights_status",
+      "reviewer",
+      "approval_time",
+      "published_url",
+      "outcome_metrics",
+      "rollback_or_delete_plan"
+    ],
+    "platforms": [
+      "x",
+      "linkedin",
+      "facebook",
+      "instagram",
+      "tiktok",
+      "youtube",
+      "threads",
+      "pinterest",
+      "reddit",
+      "discord",
+      "telegram",
+      "email_newsletter",
+      "blog",
+      "podcast",
+      "app_store_reviews"
+    ],
+    "safe_control_modes": [
+      "content_idea_research",
+      "post_drafting",
+      "caption_variants",
+      "hashtag_research",
+      "content_calendar",
+      "asset_checklist",
+      "comment_summary",
+      "inbox_triage_without_private_storage",
+      "analytics_summary",
+      "brand_voice_review",
+      "crisis_risk_flagging",
+      "competitor_public_post_notes"
+    ]
+  },
+  "source_config": "config/buddy_commerce_publishing_os.json",
+  "sources": {
+    "app_category_catalog": "reports/app_category_catalog.json",
+    "app_foundry": "reports/app_foundry_readiness.json",
+    "business_launch_expansion": "reports/business_launch_expansion_report.json",
+    "master_registry": "config/master_bot_registry.json"
+  },
+  "summary": {
+    "app_categories": 40,
+    "app_control_approval_gates": 9,
+    "app_control_center_ready": true,
+    "app_control_modes": 9,
+    "app_control_targets": 9,
+    "app_store_targets": 5,
+    "approval_wall_gates": 19,
+    "bot_count": 1248,
+    "can_control_apps_after_approval": true,
+    "can_control_social_after_approval": true,
+    "can_prepare_app_store_submissions": true,
+    "can_prepare_device_downloads": true,
+    "can_research_autonomous_money": true,
+    "can_sell_domains_after_approval": true,
+    "commerce_lanes": 6,
+    "domain_approval_gates": 7,
+    "domain_marketplace_ready": true,
+    "domain_safe_actions": 7,
+    "domain_types": 12,
+    "download_packets_ready": 2,
+    "download_targets": 4,
+    "live_actions_blocked": 34,
+    "readiness_score": 100,
+    "safe_actions": 37,
+    "social_approval_gates": 13,
+    "social_blocked_without_review": 9,
+    "social_control_center_ready": true,
+    "social_control_modes": 12,
+    "social_platforms": 15,
+    "store_packets_ready": 5,
+    "task_manager_layers": 15,
+    "web_research_policy_ready": true
+  },
+  "task_manager_layers": [
+    "inbox_capture",
+    "goal_to_project",
+    "project_to_tasks",
+    "bot_assignment",
+    "approval_queue",
+    "evidence_tracker",
+    "deadline_and_reminder_queue",
+    "client_status_room",
+    "download_release_tracker",
+    "money_opportunity_pipeline",
+    "app_control_queue",
+    "social_calendar",
+    "social_approval_queue",
+    "cross_platform_launch_room",
+    "brand_and_rights_review"
+  ],
+  "web_research_policy": {
+    "allowed_sources": [
+      "public web pages",
+      "official docs",
+      "public pricing pages",
+      "public marketplace listings",
+      "public reviews",
+      "public RFP or grant pages"
+    ],
+    "blocked_sources": [
+      "private accounts without approval",
+      "paywalled or login-only data without permission",
+      "personal data brokers",
+      "sources that forbid automated collection",
+      "copied proprietary code or private data"
+    ],
+    "must_not_claim": [
+      "guaranteed income",
+      "guaranteed approval",
+      "guaranteed app-store acceptance",
+      "legal or tax advice without professional review"
+    ],
+    "must_store": [
+      "source_url",
+      "checked_at",
+      "summary",
+      "confidence",
+      "owner_or_bot",
+      "usefulness_reason",
+      "next_safe_action"
+    ]
+  }
+}

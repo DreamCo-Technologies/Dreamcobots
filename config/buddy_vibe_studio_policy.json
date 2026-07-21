@@ -1,0 +1,57 @@
+{
+  "schema": "dreamco.buddy_vibe_studio_policy.v1",
+  "updated_at": "2026-07-12T00:00:00Z",
+  "purpose": "Client-facing policy for vibe building apps, bots, videos, courses, games, and simulations through Buddy.",
+  "positioning": "Trust-first vibe building for full creative systems, AI employees, and client-ready prototypes.",
+  "lanes": [
+    {
+      "id": "app_or_bot",
+      "name": "App or bot",
+      "outputs": ["working prototype", "bot prospectus", "API/webhook plan", "test loop"],
+      "required_review": ["security", "privacy", "workflow_tests", "owner_approval"]
+    },
+    {
+      "id": "music_video",
+      "name": "Music video",
+      "outputs": ["concept", "storyboard", "scene prompts", "edit timeline", "rights checklist"],
+      "required_review": ["music_rights", "likeness_consent", "synthetic_media_label"]
+    },
+    {
+      "id": "kids_learning_video",
+      "name": "Kids learning video",
+      "outputs": ["lesson script", "visual plan", "quiz", "captions", "parent_teacher_notes"],
+      "required_review": ["age_fit", "child_safety", "factual_accuracy", "ad_free_design"]
+    },
+    {
+      "id": "college_course",
+      "name": "College course",
+      "outputs": ["syllabus", "modules", "assignments", "rubrics", "labs", "slides"],
+      "required_review": ["learning_outcomes", "citation_quality", "assessment_validity", "accessibility"]
+    },
+    {
+      "id": "video_game",
+      "name": "Video game",
+      "outputs": ["game_design_doc", "playable_prototype", "level_plan", "qa_checklist"],
+      "required_review": ["age_rating", "content_safety", "performance", "save_state"]
+    },
+    {
+      "id": "simulation",
+      "name": "Simulation",
+      "outputs": ["scenario_model", "controls", "metrics", "sandbox_runbook"],
+      "required_review": ["domain_limits", "factual_accuracy", "risk_disclosure", "sandbox_only_defaults"]
+    }
+  ],
+  "media_consent_rules": [
+    "No cloning a real person voice, face, likeness, or image without explicit written consent.",
+    "Always label AI-generated or AI-edited media in the asset record.",
+    "No political, election, financial, medical, legal, emergency, or public-safety impersonation.",
+    "No cloning minors.",
+    "No sexual or degrading fake media of real people.",
+    "No fake customer testimonials, fake founders, fake employees, fake endorsements, or fake authority figures.",
+    "No robocalls or automated outreach using cloned voices.",
+    "Every generated voice or image asset must store consent proof, source, creator, timestamp, and usage rights."
+  ],
+  "default_build_flow": ["prompt", "packet", "prototype", "review", "ship"],
+  "default_mode": "sandbox_first_pull_request_review",
+  "live_release_requires": ["rights_review", "safety_review", "client_approval", "test_evidence", "rollback_plan"]
+}

@@ -1,0 +1,202 @@
+{
+  "schema": "dreamco.buddy_ai_agent_model_library.v1",
+  "updated_at": "2026-07-15T00:00:00Z",
+  "mission": "Give Buddy a governed prompt, tool, agent, and model-resource library so every bot can pick the best AI route for each task, explain tradeoffs, and fall back safely.",
+  "policy": {
+    "model_id_rule": "Provider model IDs, prices, rate limits, and availability change often. Treat every resource as a routing candidate and verify the current provider model ID before production use.",
+    "cost_rule": "Prefer free-tier, local, cached, batch, and smallest-capable models for sandbox work. Escalate to paid or premium models only after cost review and owner approval.",
+    "secret_rule": "Never store provider API keys, customer secrets, private prompts, raw credentials, or paid content in this catalog.",
+    "approval_rule": "External sends, paid calls, production deploys, customer data, money movement, likeness cloning, and account changes require owner approval."
+  },
+  "world_ai_model_council": {
+    "mission": "Use 100+ globally sourced model resources as a decision council for every bot while tracking strengths, weaknesses, cost, latency, safety, and task fit.",
+    "target_model_resources": 100,
+    "decision_style": "route_compare_debate_eval_then_select",
+    "benchmark_sources": [
+      "https://artificialanalysis.ai/",
+      "https://evals.report/benchmarks/aaii",
+      "https://lmarena.ai/",
+      "https://developers.openai.com/api/docs/models/all",
+      "https://ai.google.dev/gemini-api/docs/models"
+    ],
+    "council_steps": [
+      "classify task and risk",
+      "pick budget, fast, quality, and private candidates",
+      "ask at least two model families for hard decisions",
+      "run rubric and sandbox evals",
+      "compare cost, latency, quality, safety, and user value",
+      "record winner, runner up, failure mode, and next test",
+      "route live-impact work to owner approval"
+    ],
+    "training_and_testing_policy": {
+      "allowed": ["prompt evals", "routing evals", "sandbox datasets", "rights-cleared fine-tuning plans", "synthetic eval cases", "model cards", "red-team rubrics"],
+      "approval_required": ["paid benchmark batches", "fine-tuning with customer data", "selling datasets", "production routing changes", "provider credential changes"],
+      "blocked": ["private data training without rights", "secret leakage", "unlabeled synthetic media", "unsafe autonomous live actions", "claims that one model is best without current eval evidence"]
+    }
+  },
+  "autonomous_decision_governance": {
+    "mission": "Every autonomous decision in DreamCo must pass through the world model council, a Codex final-review judge gate, and owner approval when the decision has live external, financial, production, credential, legal, medical, hiring, privacy, or reputation impact.",
+    "default_mode": "council_review_codex_final_judge_owner_approval_for_live_impact",
+    "decision_scope": [
+      "bot_money_method_selection",
+      "customer_problem_selection",
+      "model_route_selection",
+      "api_or_webhook_design",
+      "workflow_mutation",
+      "sandbox_test_result",
+      "pricing_or_offer_draft",
+      "contract_or_grant_packet",
+      "people_lookup_packet",
+      "social_or_app_publish_packet",
+      "data_package_decision",
+      "deployment_or_release_packet",
+      "repository_fix_or_pull_request_packet",
+      "memory_retention_decision"
+    ],
+    "pipeline": [
+      "capture_decision_intent",
+      "classify_decision_risk",
+      "collect_sources_and_context",
+      "route_to_world_model_council",
+      "request_budget_fast_quality_private_model_views_when_needed",
+      "compare_model_outputs_with_rubric",
+      "run_sandbox_or_static_checks",
+      "create_decision_evidence_packet",
+      "codex_final_judge_review",
+      "owner_approval_if_live_impact",
+      "execute_only_allowed_safe_next_step",
+      "record_decision_memory"
+    ],
+    "codex_final_judge": {
+      "role": "Final repository reviewer and decision-quality judge before autonomous decisions are accepted as safe next steps.",
+      "can_approve": ["sandbox_safe_next_step", "draft_packet", "report_update", "test_plan", "pull_request_recommendation", "owner_approval_request"],
+      "cannot_override_owner_approval": true,
+      "must_check": ["source_evidence", "test_evidence", "risk_level", "approval_required", "cost_or_paid_action", "privacy_or_secrets", "legal_medical_financial_claims", "rollback_plan", "actual_vs_projected_revenue"],
+      "final_labels": ["approved_for_sandbox", "needs_more_evidence", "owner_approval_required", "blocked_risky", "ready_for_pull_request"]
+    },
+    "owner_approval_required_for": [
+      "customer_outreach",
+      "social_post_or_direct_message",
+      "ad_spend",
+      "payment_collection_or_money_movement",
+      "contract_bid_or_signature",
+      "production_deploy",
+      "external_account_change",
+      "credential_or_secret_change",
+      "paid_model_batch",
+      "model_fine_tuning_or_training_on_customer_data",
+      "dataset_sale_or_publication",
+      "legal_medical_financial_tax_or_hiring_decision",
+      "people_lookup_contact_or_background_check",
+      "public_claim_about_revenue_certification_or_partnership"
+    ],
+    "evidence_packet_schema": [
+      "decision_id",
+      "bot_slug",
+      "decision_type",
+      "risk_level",
+      "source_evidence",
+      "models_consulted",
+      "model_positions",
+      "rubric_scores",
+      "sandbox_or_static_test_evidence",
+      "codex_final_judge_label",
+      "codex_final_judge_notes",
+      "owner_approval_required",
+      "allowed_next_step",
+      "blocked_actions",
+      "recorded_at"
+    ],
+    "blocked_without_codex_final_judge": [
+      "autonomous_business_decision",
+      "autonomous_money_method_change",
+      "model_route_change",
+      "workflow_mutation",
+      "api_or_webhook_mutation",
+      "memory_retention_change",
+      "pull_request_recommendation",
+      "public_or_live_action_request"
+    ]
+  },
+  "provider_docs": [
+    { "provider": "OpenAI", "url": "https://platform.openai.com/docs/models" },
+    { "provider": "Anthropic", "url": "https://docs.anthropic.com/en/docs/about-claude/models" },
+    { "provider": "Google", "url": "https://ai.google.dev/gemini-api/docs/models" },
+    { "provider": "Meta", "url": "https://llama.meta.com/docs/model-cards-and-prompt-formats/" },
+    { "provider": "Mistral", "url": "https://docs.mistral.ai/getting-started/models/" },
+    { "provider": "Cohere", "url": "https://docs.cohere.com/docs/models" },
+    { "provider": "xAI", "url": "https://docs.x.ai/docs/models" },
+    { "provider": "DeepSeek", "url": "https://api-docs.deepseek.com/quick_start/pricing" },
+    { "provider": "Qwen", "url": "https://qwen.readthedocs.io/" },
+    { "provider": "Perplexity", "url": "https://docs.perplexity.ai/guides/model-cards" },
+    { "provider": "Stability AI", "url": "https://platform.stability.ai/docs" },
+    { "provider": "Black Forest Labs", "url": "https://docs.bfl.ai/" },
+    { "provider": "Runway", "url": "https://docs.dev.runwayml.com/" },
+    { "provider": "ElevenLabs", "url": "https://elevenlabs.io/docs" },
+    { "provider": "Hugging Face", "url": "https://huggingface.co/docs" }
+  ],
+  "agent_types": [
+    { "id": "planner_agent", "label": "Planner Agent", "best_for": ["break down goals", "scope work", "sequence tasks"], "avoid_for": ["final factual claims without sources"] },
+    { "id": "research_agent", "label": "Research Agent", "best_for": ["source-backed market maps", "competitor studies", "current docs"], "avoid_for": ["private data collection without approval"] },
+    { "id": "coding_agent", "label": "Coding Agent", "best_for": ["app code", "tests", "refactors", "tool adapters"], "avoid_for": ["large rewrites without tests"] },
+    { "id": "debugging_agent", "label": "Debugging Agent", "best_for": ["CI failures", "stack traces", "root cause analysis"], "avoid_for": ["guessing fixes without logs"] },
+    { "id": "tool_builder_agent", "label": "Tool Builder Agent", "best_for": ["CLI tools", "API clients", "schemas", "test fixtures"], "avoid_for": ["live credentials"] },
+    { "id": "workflow_agent", "label": "Workflow Agent", "best_for": ["durable runs", "retry plans", "human approvals"], "avoid_for": ["unapproved live automation"] },
+    { "id": "sandbox_eval_agent", "label": "Sandbox Eval Agent", "best_for": ["scored tests", "red teams", "quality gates"], "avoid_for": ["self-grading only"] },
+    { "id": "creative_studio_agent", "label": "Creative Studio Agent", "best_for": ["image", "video", "music", "storyboards"], "avoid_for": ["unapproved likeness cloning"] },
+    { "id": "voice_rights_agent", "label": "Voice Rights Agent", "best_for": ["consent checks", "voiceover scripts", "usage rights"], "avoid_for": ["cloning real people without proof"] },
+    { "id": "business_owner_agent", "label": "Business Owner Agent", "best_for": ["offers", "pricing hypotheses", "customer discovery"], "avoid_for": ["guaranteed income claims"] },
+    { "id": "sales_agent", "label": "Sales Agent", "best_for": ["drafts", "objection handling", "CRM notes"], "avoid_for": ["sending outreach without approval"] },
+    { "id": "data_agent", "label": "Data Agent", "best_for": ["dashboards", "extraction", "classification", "analytics"], "avoid_for": ["unverified data joins"] },
+    { "id": "security_agent", "label": "Security Agent", "best_for": ["threat models", "secrets scans", "defensive reviews"], "avoid_for": ["offensive instructions"] },
+    { "id": "legal_safety_agent", "label": "Legal Safety Agent", "best_for": ["risk flags", "policy checks", "approval language"], "avoid_for": ["legal advice claims"] },
+    { "id": "memory_curator_agent", "label": "Memory Curator Agent", "best_for": ["useful summaries", "retention tiers", "source metadata"], "avoid_for": ["raw scratchpad hoarding"] },
+    { "id": "model_router_agent", "label": "Model Router Agent", "best_for": ["model selection", "fallbacks", "cost-quality tradeoffs"], "avoid_for": ["using disabled providers"] }
+    ,
+    { "id": "world_model_council_agent", "label": "World Model Council Agent", "best_for": ["multi-model debate", "model comparison", "provider fallback planning", "global AI decision support"], "avoid_for": ["declaring a winner without eval evidence"] },
+    { "id": "model_eval_training_agent", "label": "Model Eval and Training Agent", "best_for": ["eval harnesses", "training data rights checks", "model cards", "routing scorecards"], "avoid_for": ["training on private or unlicensed data"] }
+  ],
+  "prompt_types": [
+    "task_brief", "system_role", "tool_contract", "structured_output", "few_shot", "critique", "debate", "rubric_eval", "red_team", "chain_summary", "retrieval_grounded", "code_review", "test_generation", "sandbox_runbook", "customer_discovery", "offer_builder", "visual_prompt", "voice_consent", "workflow_plan", "handoff_summary"
+  ],
+  "tool_types": [
+    "file_reader", "code_editor", "test_runner", "browser_research", "api_client", "webhook_receiver", "database_query", "vector_search", "embedding_index", "reranker", "image_generator", "image_editor", "video_generator", "speech_to_text", "text_to_speech", "music_generator", "spreadsheet_builder", "deck_builder", "pdf_parser", "deployment_packager", "payment_checker", "notification_sender", "approval_gate"
+  ],
+  "task_types": [
+    "architecture", "coding", "debugging", "repo_review", "market_research", "competitor_analysis", "sales_copy", "customer_support", "data_extraction", "dashboard_building", "image_generation", "image_editing", "video_storyboard", "video_generation", "music_video_planning", "voiceover", "speech_transcription", "course_building", "kid_learning_video", "game_building", "simulation_building", "legal_safety_review", "financial_analysis", "security_review", "workflow_automation", "api_tool_building", "webhook_building", "memory_curation", "model_evaluation", "deployment_planning", "multi_model_decision", "model_training_eval", "autonomous_business_strategy"
+  ],
+  "model_families": [
+    { "id": "openai_reasoning", "provider": "OpenAI", "label": "OpenAI reasoning and general intelligence", "roles": ["reasoning", "coding", "vision", "tool_use"], "good_at": ["complex planning", "code repair", "tool calling", "multimodal app building"], "bad_at": ["unverified current facts without retrieval", "tasks needing disabled credentials"], "best_tasks": ["architecture", "coding", "debugging", "model_evaluation"] },
+    { "id": "openai_realtime", "provider": "OpenAI", "label": "OpenAI realtime voice and multimodal", "roles": ["realtime", "voice", "interactive"], "good_at": ["voice assistants", "live tutoring", "operator consoles"], "bad_at": ["batch research", "long unattended jobs"], "best_tasks": ["voiceover", "kid_learning_video", "customer_support"] },
+    { "id": "openai_image", "provider": "OpenAI", "label": "OpenAI image generation and editing", "roles": ["image", "vision", "creative"], "good_at": ["royal brand images", "mockups", "image edits"], "bad_at": ["unapproved likeness cloning", "precise CAD"], "best_tasks": ["image_generation", "image_editing"] },
+    { "id": "anthropic_claude", "provider": "Anthropic", "label": "Claude long-form reasoning and writing", "roles": ["long_context", "analysis", "writing"], "good_at": ["long docs", "careful critique", "business writing"], "bad_at": ["tool execution unless wired", "current facts without retrieval"], "best_tasks": ["repo_review", "legal_safety_review", "sales_copy"] },
+    { "id": "google_gemini", "provider": "Google", "label": "Gemini multimodal and long context", "roles": ["multimodal", "long_context", "video_understanding"], "good_at": ["large context", "document/video understanding", "research synthesis"], "bad_at": ["private docs without privacy review"], "best_tasks": ["market_research", "video_storyboard", "course_building"] },
+    { "id": "google_gemini_flash_lite", "provider": "Google", "label": "Gemini Flash-Lite free and low-cost routing", "roles": ["budget", "fast_reasoning", "summarization", "classification", "multimodal"], "good_at": ["free-tier testing", "cheap drafts", "routing decisions", "summaries", "batchable sandbox tasks"], "bad_at": ["highest-stakes reasoning without review", "paid scale without budget approval"], "best_tasks": ["workflow_automation", "customer_support", "data_extraction", "model_evaluation"] },
+    { "id": "meta_llama", "provider": "Meta", "label": "Llama open-weight models", "roles": ["open_weight", "local_private", "general"], "good_at": ["local/private tasks", "fine-tuning experiments", "cost control"], "bad_at": ["frontier reasoning unless benchmarked"], "best_tasks": ["memory_curation", "customer_support", "workflow_automation"] },
+    { "id": "mistral_models", "provider": "Mistral", "label": "Mistral fast and open models", "roles": ["fast_reasoning", "open_weight", "multilingual"], "good_at": ["fast drafts", "European language tasks", "cost-aware agents"], "bad_at": ["highest-stakes reasoning without eval"], "best_tasks": ["sales_copy", "workflow_automation", "data_extraction"] },
+    { "id": "cohere_command", "provider": "Cohere", "label": "Cohere enterprise RAG and reranking", "roles": ["rag", "rerank", "enterprise_search"], "good_at": ["retrieval", "classification", "reranking"], "bad_at": ["image/video generation"], "best_tasks": ["data_extraction", "market_research", "memory_curation"] },
+    { "id": "deepseek_coder_reasoner", "provider": "DeepSeek", "label": "DeepSeek coding and reasoning", "roles": ["coding", "reasoning", "cost_efficiency"], "good_at": ["code generation", "math-style reasoning", "cost-aware coding"], "bad_at": ["sensitive production changes without tests"], "best_tasks": ["coding", "debugging"] },
+    { "id": "qwen_models", "provider": "Qwen", "label": "Qwen multilingual and coding models", "roles": ["multilingual", "coding", "open_weight"], "good_at": ["multilingual apps", "coding drafts", "local experiments"], "bad_at": ["provider-specific tool support unless wired"], "best_tasks": ["coding", "course_building", "customer_support"] },
+    { "id": "xai_grok", "provider": "xAI", "label": "Grok realtime trend-aware models", "roles": ["realtime_context", "social_trends"], "good_at": ["trend scanning", "public conversation summaries"], "bad_at": ["private facts", "unverified social claims"], "best_tasks": ["market_research", "competitor_analysis"] },
+    { "id": "perplexity_search", "provider": "Perplexity", "label": "Search-grounded answer models", "roles": ["web_search", "citations", "research"], "good_at": ["source-backed answers", "current public facts", "market scans"], "bad_at": ["private repo edits", "creative asset generation"], "best_tasks": ["market_research", "competitor_analysis"] },
+    { "id": "stability_image", "provider": "Stability AI", "label": "Stability image models", "roles": ["image", "design", "assets"], "good_at": ["asset variants", "style exploration", "textures"], "bad_at": ["text accuracy in images", "unapproved likeness"], "best_tasks": ["image_generation", "game_building"] },
+    { "id": "black_forest_image", "provider": "Black Forest Labs", "label": "Black Forest Labs image models", "roles": ["image", "photoreal", "creative"], "good_at": ["photoreal image concepts", "brand visuals"], "bad_at": ["rights-sensitive likeness tasks"], "best_tasks": ["image_generation", "image_editing"] },
+    { "id": "runway_video", "provider": "Runway", "label": "Runway video generation", "roles": ["video", "storyboard", "creative"], "good_at": ["short video concepts", "scene motion", "creative drafts"], "bad_at": ["regulated claims", "unapproved people"], "best_tasks": ["video_generation", "music_video_planning"] },
+    { "id": "elevenlabs_voice", "provider": "ElevenLabs", "label": "ElevenLabs speech and voice", "roles": ["tts", "voice", "audio"], "good_at": ["voiceover", "narration", "audio localization"], "bad_at": ["voice cloning without consent"], "best_tasks": ["voiceover", "kid_learning_video"] },
+    { "id": "suno_music", "provider": "Suno", "label": "Suno music generation", "roles": ["music", "song", "creative"], "good_at": ["song demos", "music video drafts", "jingles"], "bad_at": ["copyright-sensitive imitation"], "best_tasks": ["music_video_planning"] },
+    { "id": "udio_music", "provider": "Udio", "label": "Udio music generation", "roles": ["music", "song", "creative"], "good_at": ["song concepts", "genre sketches", "creative audio"], "bad_at": ["artist imitation", "rights-sensitive lyrics"], "best_tasks": ["music_video_planning"] },
+    { "id": "adobe_firefly", "provider": "Adobe", "label": "Adobe Firefly creative media", "roles": ["image", "design", "brand_safe"], "good_at": ["brand assets", "commercial-safe workflows", "design iteration"], "bad_at": ["live editing unless integrated"], "best_tasks": ["image_generation", "image_editing"] },
+    { "id": "huggingface_open", "provider": "Hugging Face", "label": "Hugging Face open model hub", "roles": ["open_models", "experiments", "benchmarks"], "good_at": ["model discovery", "local tests", "specialized models"], "bad_at": ["production reliability without hosting review"], "best_tasks": ["model_evaluation", "simulation_building"] },
+    { "id": "nvidia_nim", "provider": "NVIDIA", "label": "NVIDIA hosted/open AI services", "roles": ["accelerated_inference", "vision", "enterprise"], "good_at": ["GPU inference", "vision pipelines", "enterprise deployment"], "bad_at": ["small low-budget projects unless justified"], "best_tasks": ["simulation_building", "data_extraction"] },
+    { "id": "databricks_mosaic", "provider": "Databricks", "label": "Databricks data and model serving", "roles": ["data_ai", "enterprise", "analytics"], "good_at": ["data-heavy agents", "analytics", "enterprise pipelines"], "bad_at": ["simple creative tasks"], "best_tasks": ["dashboard_building", "data_extraction"] },
+    { "id": "ai21_language", "provider": "AI21", "label": "AI21 language models", "roles": ["writing", "enterprise_text"], "good_at": ["business writing", "summaries", "text workflows"], "bad_at": ["image/video/audio"], "best_tasks": ["sales_copy", "customer_support"] },
+    { "id": "together_open", "provider": "Together AI", "label": "Together open model hosting", "roles": ["open_model_hosting", "fast_inference"], "good_at": ["open model routing", "experiments", "cost comparison"], "bad_at": ["unsupported proprietary-only features"], "best_tasks": ["model_evaluation", "coding"] },
+    { "id": "fireworks_open", "provider": "Fireworks AI", "label": "Fireworks fast model serving", "roles": ["fast_inference", "open_models", "agents"], "good_at": ["fast agent calls", "open model testing", "batch tasks"], "bad_at": ["unverified high-stakes decisions"], "best_tasks": ["workflow_automation", "coding"] }
+  ],
+  "resource_tiers": [
+    { "id": "quality", "label": "Best Quality", "use_when": "Task is high impact, hard, client-facing, or needs strong reasoning.", "tradeoff": "Higher cost and latency." },
+    { "id": "fast", "label": "Fast Iteration", "use_when": "Task needs quick drafts, tests, routing, or repeated loops.", "tradeoff": "May need review by a stronger model." },
+    { "id": "budget", "label": "Budget Scale", "use_when": "Task is repetitive, low risk, batchable, or sandbox-only.", "tradeoff": "Lower quality ceiling." },
+    { "id": "private", "label": "Local or Private", "use_when": "Task touches sensitive docs or needs offline/cost-controlled processing.", "tradeoff": "Needs local hosting and stronger evals." }
+  ]
+}

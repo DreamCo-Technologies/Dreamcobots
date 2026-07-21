@@ -528,7 +528,7 @@ export default function ActionsPage() {
                   <div className="text-center py-6 space-y-2">
                     <Github className="h-7 w-7 text-muted-foreground/40 mx-auto" />
                     <p className="text-sm text-muted-foreground">GitHub token required</p>
-                    <p className="text-xs text-muted-foreground">Add GITHUB_TOKEN to Replit Secrets</p>
+                    <p className="text-xs text-muted-foreground">Add GITHUB_TOKEN to environment secrets</p>
                   </div>
                 ) : pulls.length === 0 ? (
                   <div className="text-center py-6">
@@ -828,7 +828,7 @@ export default function ActionsPage() {
               <div className="space-y-2">
                 {[
                   { label: "Repo Access", ok: (githubQ.data as any)?.connected, detail: (githubQ.data as any)?.repo?.name ?? "DreamCo-Technologies/Dreamcobots" },
-                  { label: "GitHub Token", ok: (githubQ.data as any)?.tokenValid !== false && (githubQ.data as any)?.connected, detail: (githubQ.data as any)?.connected ? "Valid" : "Add GITHUB_TOKEN to Replit Secrets" },
+                  { label: "GitHub Token", ok: (githubQ.data as any)?.tokenValid !== false && (githubQ.data as any)?.connected, detail: (githubQ.data as any)?.connected ? "Valid" : "Add GITHUB_TOKEN to environment secrets" },
                   { label: "Buddy Bot", ok: !!buddy, detail: buddy ? "Connected — Elite tier" : "Loading..." },
                   { label: "Tasks API", ok: !tasksQ.isError, detail: `${tasks.length} tasks loaded` },
                 ].map(item => (

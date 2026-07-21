@@ -2,8 +2,6 @@ import express, { type Request, Response, NextFunction } from "express";
 import { registerRoutes } from "./routes";
 import { serveStatic } from "./static";
 import { createServer } from "http";
-import { runMigrations } from 'stripe-replit-sync';
-import { getStripeSync } from './stripeClient';
 import { WebhookHandlers } from './webhookHandlers';
 import { seedStripeProducts } from './seed-stripe-products';
 
@@ -24,28 +22,6 @@ async function initStripe() {
   }
 
   try {
-    console.log('Initializing Stripe schema...');
-    await runMigrations({ databaseUrl });
-    console.log('Stripe schema ready');
-
-    const stripeSync = await getStripeSync();
-
-    console.log('Setting up managed webhook...');
-    const webhookBaseUrl = `https://${process.env.REPLIT_DOMAINS?.split(',')[0]}`;
-    try {
-      const result = await stripeSync.findOrCreateManagedWebhook(
-        `${webhookBaseUrl}/api/stripe/webhook`
-      );
-      console.log(`Webhook configured: ${result?.webhook?.url ?? 'managed'}`);
-    } catch (webhookErr: any) {
-      console.warn('Webhook setup skipped (will work in production):', webhookErr.message);
-    }
-
-    console.log('Syncing Stripe data...');
-    stripeSync.syncBackfill()
-      .then(() => console.log('Stripe data synced'))
-      .catch((err: any) => console.error('Error syncing Stripe data:', err));
-
     // Seed Empire tier products (idempotent — skips if already exist)
     seedStripeProducts()
       .then(() => console.log('Stripe products ready'))
@@ -55,7 +31,7 @@ async function initStripe() {
   }
 }
 
-await initStripe();
+void initStripe();
 
 app.post(
   '/api/stripe/webhook',

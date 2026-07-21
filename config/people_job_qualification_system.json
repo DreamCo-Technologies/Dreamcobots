@@ -1,0 +1,178 @@
+{
+  "schema": "dreamco.people_job_qualification_system.v1",
+  "updated_at": "2026-07-15T00:00:00Z",
+  "mission": "Give Buddy a governed genealogy, people-search, background-check intake, phone-number history, and job-qualification lookup system for recruiting, client discovery, contractor matching, partner research, ancestry reporting, and workforce planning.",
+  "default_mode": "public_or_owner_approved_research_only",
+  "privacy_policy": {
+    "allowed_sources": [
+      "self-provided resume or profile",
+      "owner-approved CRM records",
+      "public professional profiles",
+      "public company pages",
+      "public portfolio pages",
+      "public license or certification registries when allowed",
+      "public job descriptions",
+      "client-approved application materials",
+      "self-provided genealogy records",
+      "public archival records",
+      "public cemetery and obituary records",
+      "public court records when legally accessible",
+      "public business registration records",
+      "public phone-carrier availability tools that do not expose private subscriber data"
+    ],
+    "blocked_sources": [
+      "private accounts without approval",
+      "password-protected profiles",
+      "scraped personal data that violates terms",
+      "sensitive personal data",
+      "protected-class inference",
+      "background checks without compliant provider",
+      "credit checks",
+      "medical or genetic information",
+      "minor data",
+      "contacting people without approval"
+      ,
+      "private phone subscriber data",
+      "carrier account records without account-owner authorization",
+      "tracking a person's live location",
+      "consumer reports without a compliant FCRA provider and permissible purpose"
+    ],
+    "required_metadata": [
+      "source",
+      "source_type",
+      "permission_basis",
+      "person_or_role_id",
+      "use_case",
+      "privacy_class",
+      "retention_tier",
+      "created_at",
+      "review_status"
+    ]
+  },
+  "qualification_lanes": [
+    {
+      "id": "genealogy_report",
+      "label": "Genealogy Report",
+      "purpose": "Build family-history packets from self-provided documents and public archival sources with source citations, confidence notes, and unknowns clearly marked.",
+      "outputs": ["family_tree_outline", "ancestor_timeline", "source_citations", "confidence_notes", "research_gaps"]
+    },
+    {
+      "id": "consent_based_people_search",
+      "label": "Consent-Based People Search",
+      "purpose": "Prepare a public-source or user-authorized lookup packet for reconnecting, vendor due diligence, partnership research, or contact hygiene without private-data scraping.",
+      "outputs": ["identity_match_candidates", "public_source_links", "confidence_score", "permission_basis", "human_review_packet"]
+    },
+    {
+      "id": "background_check_intake",
+      "label": "Background Check Intake",
+      "purpose": "Collect the checklist, consent status, permissible purpose, and provider handoff data needed before any lawful background check can run.",
+      "outputs": ["consent_checklist", "permissible_purpose_notes", "provider_handoff_packet", "blocked_until_compliant_provider"]
+    },
+    {
+      "id": "phone_number_recovery",
+      "label": "Phone Number Recovery",
+      "purpose": "Help a user document old numbers, account ownership, carrier contacts, and lawful reuse steps without accessing private subscriber data or tracking people.",
+      "outputs": ["old_number_timeline", "carrier_contact_plan", "account_ownership_checklist", "reuse_feasibility_notes", "privacy_risk_notes"]
+    },
+    {
+      "id": "candidate_resume_match",
+      "label": "Candidate Resume Match",
+      "purpose": "Compare self-provided resumes or application materials against a job description using role requirements and evidence notes.",
+      "outputs": ["skills_match", "experience_evidence", "gap_notes", "interview_questions", "human_review_packet"]
+    },
+    {
+      "id": "contractor_vendor_match",
+      "label": "Contractor and Vendor Match",
+      "purpose": "Research public contractor/vendor profiles, portfolios, capabilities, reviews, and fit for a project.",
+      "outputs": ["vendor_shortlist", "capability_match", "risk_notes", "approval_packet"]
+    },
+    {
+      "id": "sales_people_research",
+      "label": "Sales People Research",
+      "purpose": "Prepare compliant lead or stakeholder research from public and approved sources for owner-reviewed outreach.",
+      "outputs": ["stakeholder_map", "public_profile_summary", "relevance_reason", "outreach_draft"]
+    },
+    {
+      "id": "employee_role_fit",
+      "label": "Employee Role Fit",
+      "purpose": "Prepare role-fit notes, training needs, onboarding plans, and interview prompts without making automated hiring decisions.",
+      "outputs": ["role_fit_notes", "training_plan", "interview_prompts", "human_decision_notes"]
+    },
+    {
+      "id": "license_certification_checklist",
+      "label": "License and Certification Checklist",
+      "purpose": "Prepare a checklist for licenses, certifications, permits, and evidence that a human must verify against allowed sources.",
+      "outputs": ["license_checklist", "source_links", "verification_status", "review_notes"]
+    },
+    {
+      "id": "relocation_workforce_match",
+      "label": "Relocation Workforce Match",
+      "purpose": "Research local talent pools, workforce availability, training programs, and hiring channels for business relocation or expansion.",
+      "outputs": ["talent_market_notes", "hiring_channel_map", "training_programs", "location_fit_score"]
+    }
+  ],
+  "approval_gates": [
+    "collect_personal_data",
+    "store_person_profile",
+    "contact_person",
+    "send_outreach",
+    "make_hiring_decision",
+    "reject_candidate",
+    "run_background_check",
+    "request_consumer_report",
+    "reuse_old_phone_number",
+    "search_court_records",
+    "prepare_genealogy_contact_outreach",
+    "verify_license_with_paid_provider",
+    "share_candidate_with_client",
+    "use_client_crm_data",
+    "export_people_dataset",
+    "automate_recruiting_workflow"
+  ],
+  "blocked_uses": [
+    "automated_hiring_or_rejection",
+    "protected_class_scoring",
+    "background_screening_without_compliant_provider",
+    "people_search_without_permission_basis",
+    "phone_number_tracking_or_live_location_lookup",
+    "carrier_record_access_without_account_owner_authorization",
+    "genealogy_outreach_without_review",
+    "using_public_records_to_harass_or_pressure_people",
+    "credit_or_insurance_decisions",
+    "health_or_disability_inference",
+    "minor_profiling",
+    "doxxing_or_harassment",
+    "mass_unsolicited_outreach"
+  ],
+  "qualification_scoring": [
+    { "id": "required_skill_match", "weight": 25 },
+    { "id": "experience_evidence", "weight": 20 },
+    { "id": "portfolio_or_work_sample", "weight": 15 },
+    { "id": "location_or_availability_fit", "weight": 10 },
+    { "id": "certification_evidence", "weight": 10 },
+    { "id": "communication_fit", "weight": 10 },
+    { "id": "risk_or_gap_notes", "weight": 10 }
+  ],
+  "buddy_bot_roles": [
+    "people_researcher",
+    "resume_parser",
+    "job_description_analyzer",
+    "qualification_matcher",
+    "interview_question_builder",
+    "license_checklist_builder",
+    "privacy_guard",
+    "genealogy_researcher",
+    "public_records_source_checker",
+    "background_check_intake_guard",
+    "phone_recovery_workflow_builder",
+    "human_review_packet_builder"
+  ],
+  "success_metrics": [
+    "qualification_lanes_ready",
+    "privacy_policy_ready",
+    "approval_gates_declared",
+    "blocked_uses_declared",
+    "bot_people_lookup_blueprints",
+    "human_review_required"
+  ]
+}

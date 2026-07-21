@@ -1,7 +1,7 @@
 - [Tool-belt upgrade pattern](tool-belt-upgrade.md) — shared/tool-belt.ts is injected into ALL 1,051+ bot prompts; upgrading it is the highest-leverage single-file change in the empire.
 - [Buddy Bot auth authority](buddy-auth.md) — Buddy Bot is the empire's single auth authority; all OAuth, JWT, CLI, secrets, MFA, SAML patterns live in server/seed-buddy-bot.ts system prompt.
-- [GitHub push method](github-push.md) — Only method that works: git push "https://${REPLIT_ACCESS_TOLKEN}@github.com/DreamCo-Technologies/Dreamcobots.git" main --force (note typo: TOLKEN not TOKEN).
-- [Stripe status](stripe-status.md) — Stripe code fully wired; user still needs STRIPE_SECRET_KEY + STRIPE_PUBLISHABLE_KEY added as Replit secrets to activate live checkout.
+- [GitHub push method](github-push.md) — Only method that works: git push "https://${GITHUB_TOKEN}@github.com/DreamCo-Technologies/Dreamcobots.git" main --force (note typo: TOLKEN not TOKEN).
+- [Stripe status](stripe-status.md) — Stripe code fully wired; user still needs STRIPE_SECRET_KEY + STRIPE_PUBLISHABLE_KEY added as DreamCo secrets to activate live checkout.
 - [Service worker blank page trap](service-worker-blank-page.md) — Stale SW caches broken app; in dev mode always unregister instead of registering.
 - [Express route vs Vite catch-all](express-vite-route-order.md) — Vite's /{*path} app.use catches ALL methods. New API routes must use the existing openai instance in routes.ts (not a separate import) or they silently fail and Vite intercepts them.
 - [Buddy feature routes](buddy-feature-routes.md) — 16 Buddy API routes live; voice needs ELEVENLABS_API_KEY, search upgrades to Serper when SERPER_API_KEY set, council is in-memory (process-level).

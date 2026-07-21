@@ -1,0 +1,15 @@
+{
+  "version": "1.0.0",
+  "lastUpdated": "2026-07-03T03:30:43Z",
+  "webhookTypes": {
+    "github_push": {"event": "push", "description": "Triggered when code is pushed to a repository", "payload_schema": {"repository": "string", "pusher": "object", "commits": "array"}, "handlers": ["bot_training", "code_analysis", "deployment_trigger"]},
+    "github_pr": {"event": "pull_request", "description": "Triggered when a pull request is created or updated", "payload_schema": {"action": "string", "pull_request": "object"}, "handlers": ["pr_validation", "code_review", "auto_merge"]},
+    "github_issues": {"event": "issues", "description": "Triggered when an issue is created, edited, or deleted", "payload_schema": {"action": "string", "issue": "object"}, "handlers": ["issue_triage", "bug_analysis", "assignment"]},
+    "test_failure_events": {"event": "test.failed", "description": "Triggered when test suite fails", "payload_schema": {"test_name": "string", "error": "string", "stack_trace": "string"}, "handlers": ["debugger_activation", "error_logging", "alert_notification"]},
+    "payment_events": {"event": "stripe.payment", "description": "Stripe payment webhook events", "payload_schema": {"event_type": "string", "data": "object"}, "handlers": ["revenue_tracking", "subscription_management", "invoice_generation"]},
+    "security_events": {"event": "security.alert", "description": "Security threat and vulnerability alerts", "payload_schema": {"severity": "string", "threat": "object", "cve": "string"}, "handlers": ["cyber_bot_activation", "incident_response", "remediation"]},
+    "slack_commands": {"event": "slash_command", "description": "Slack slash commands trigger bot actions", "payload_schema": {"command": "string", "text": "string", "user_id": "string"}, "handlers": ["command_routing", "response_generation", "workflow_execution"]},
+    "discord_commands": {"event": "message", "description": "Discord message triggers for bot interactions", "payload_schema": {"content": "string", "author": "object", "channel_id": "string"}, "handlers": ["message_parsing", "bot_response", "async_task_queue"]}
+  },
+  "webhook_delivery": {"max_retries": 5, "base_backoff_seconds": 2, "max_backoff_seconds": 300, "timeout_seconds": 10, "signature_algorithm": "sha256", "dead_letter_queue_enabled": true}
+}

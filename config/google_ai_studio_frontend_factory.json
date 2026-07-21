@@ -1,0 +1,149 @@
+{
+  "schema": "dreamco.google_ai_studio_frontend_factory.v1",
+  "updated_at": "2026-07-17T00:00:00Z",
+  "mission": "Use Google AI Studio and Gemini as a governed frontend, workflow, and revenue-experiment planning lane for Buddy and every bot.",
+  "default_mode": "draft_generate_test_iterate_then_owner_approval",
+  "secret_policy": {
+    "required_secret": "GOOGLE_API_KEY",
+    "secret_storage": "GitHub Actions secret, Google Secret Manager, or local environment only",
+    "never_store_secret_in_repo": true,
+    "paid_calls_require_owner_approval": true
+  },
+  "frontend_perfection_loop": [
+    {
+      "id": "prompt_to_screen_map",
+      "label": "Prompt to Screen Map",
+      "purpose": "Turn a bot business idea into screens, states, navigation, data contracts, and proof requirements.",
+      "outputs": ["screen_map", "state_inventory", "component_plan", "data_contracts"]
+    },
+    {
+      "id": "screen_to_code_packet",
+      "label": "Screen to Code Packet",
+      "purpose": "Prepare implementation-ready React, CSS, test, accessibility, and responsive layout packets.",
+      "outputs": ["component_tasks", "style_contract", "accessibility_checks", "responsive_breakpoints"]
+    },
+    {
+      "id": "visual_qa_loop",
+      "label": "Visual QA Loop",
+      "purpose": "Compare generated screens against professional UI rules and rerun until layout, copy, spacing, and states are clean.",
+      "outputs": ["screenshot_checklist", "layout_findings", "copy_findings", "fix_queue"]
+    },
+    {
+      "id": "test_and_eval_loop",
+      "label": "Test and Eval Loop",
+      "purpose": "Require build, unit tests, smoke tests, accessibility checks, and sandbox user flows after every generated change.",
+      "outputs": ["test_plan", "eval_rubric", "failure_repair_prompt", "release_evidence"]
+    }
+  ],
+  "bot_workflow_mutation_loop": [
+    "observe_current_bot_goal",
+    "find_customer_problem",
+    "draft_frontend_or_workflow_offer",
+    "select_a_new_revenue_method_not_used_last_cycle",
+    "draft_bot_specific_route_and_api_contract",
+    "generate_productivity_or_money_play",
+    "generate_variant_a",
+    "generate_variant_b",
+    "sandbox_test_both_variants",
+    "score_quality_cost_risk_revenue",
+    "keep_winner_and_record_lesson",
+    "retire_or_cool_down_failed_method",
+    "prepare_owner_approval_packet",
+    "repeat_next_cycle"
+  ],
+  "per_bot_money_method_rotation": {
+    "mission": "Help every bot try different ethical money and productivity methods until it finds evidence-backed offers that can earn, save, or protect money for the owner or clients.",
+    "rotation_rule": "Each cycle picks a method, builds a sandbox proof, records evidence, keeps winners, cools down weak methods, and never records actual revenue until a payment is confirmed.",
+    "method_families": [
+      "one_time_service",
+      "subscription_monitoring",
+      "audit_or_report",
+      "automation_setup",
+      "template_or_digital_pack",
+      "course_or_training",
+      "app_or_dashboard",
+      "api_or_webhook_service",
+      "contract_or_grant_packet",
+      "lead_or_customer_research_packet",
+      "cost_savings_workflow",
+      "data_or_benchmark_package",
+      "marketplace_listing_draft",
+      "referral_or_partner_offer",
+      "maintenance_or_support_retainer"
+    ],
+    "must_generate_per_bot": [
+      "revenue_method_queue",
+      "productivity_playbook",
+      "bot_specific_routes",
+      "bot_specific_api_contracts",
+      "sandbox_experiment_plan",
+      "approval_packet",
+      "lesson_memory"
+    ],
+    "blocked_without_approval": [
+      "customer_outreach",
+      "public_publish",
+      "ad_spend",
+      "charge_payment",
+      "bid_contract",
+      "live_api_mutation",
+      "production_deploy"
+    ]
+  },
+  "daily_money_experiment_policy": {
+    "target": "Every bot prepares a daily money experiment, not an unverified money claim.",
+    "must_track": ["offer", "target_customer", "source_evidence", "frontend_or_workflow_variant", "sandbox_result", "approval_needed", "actual_revenue_usd"],
+    "actual_revenue_rule": "Actual daily money can only be recorded after payment confirmation.",
+    "blocked_without_approval": ["customer_outreach", "public_publish", "ad_spend", "charge_payment", "contract_bid", "regulated_advice", "production_deploy"]
+  },
+  "google_ai_studio_roles": [
+    {
+      "id": "frontend_builder",
+      "label": "Frontend Builder",
+      "can_prepare": ["screen maps", "component plans", "React task packets", "accessibility checks"],
+      "approval_required": ["paid_model_batch", "production_deploy"]
+    },
+    {
+      "id": "workflow_mutator",
+      "label": "Workflow Mutator",
+      "can_prepare": ["workflow variants", "automation steps", "sandbox tests", "scoring rubrics"],
+      "approval_required": ["external account action", "live webhook mutation"]
+    },
+    {
+      "id": "money_experiment_designer",
+      "label": "Money Experiment Designer",
+      "can_prepare": ["offer drafts", "pricing tests", "marketplace research prompts", "client demo plans"],
+      "approval_required": ["customer contact", "paid ads", "payment collection"]
+    },
+    {
+      "id": "quality_reviewer",
+      "label": "Quality Reviewer",
+      "can_prepare": ["visual QA notes", "test failures", "copy improvements", "release checklist"],
+      "approval_required": ["merge", "public release"]
+    }
+  ],
+  "model_routing": {
+    "free_or_low_cost_first": true,
+    "preferred_family": "google_gemini_flash_lite",
+    "quality_family": "google_gemini_pro_or_latest_verified",
+    "verification_rule": "Verify the current Google model ID and pricing before production use.",
+    "fallbacks": ["local_reports", "cached_templates", "small_model_draft", "owner_manual_review"]
+  },
+  "dashboard_prompts": [
+    "Use Google AI Studio to draft the cleanest frontend plan for this bot, with tests and approval gates.",
+    "Generate two workflow variants for this bot and pick the safer money experiment.",
+    "Find the highest-value customer problem this bot can solve today and prepare a sandbox demo packet.",
+    "Review this bot UI like a professional product designer and produce a fix queue."
+  ],
+  "approval_wall": [
+    "paid_google_ai_batch",
+    "customer_outreach",
+    "public_publish",
+    "production_deploy",
+    "ad_spend",
+    "charge_or_move_money",
+    "credential_change",
+    "live_webhook_or_api_mutation",
+    "regulated_financial_legal_health_claim"
+  ]
+}

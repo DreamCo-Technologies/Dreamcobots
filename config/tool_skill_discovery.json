@@ -1,0 +1,38 @@
+{
+  "schemaVersion": "2026-07-06",
+  "purpose": "Source map for Tool Finder, Tool Builder, Skill Finder, and Skill Builder bots.",
+  "sources": [
+    { "id": "github", "name": "GitHub", "mode": "public_search", "finds": ["repositories", "actions", "sdks", "mcp_servers", "templates", "examples"], "requiresApprovalFor": ["fork", "clone_private", "open_pr", "install_dependency"] },
+    { "id": "wikipedia", "name": "Wikipedia", "mode": "public_reference", "finds": ["topic_maps", "occupational_categories", "domain_summaries", "source_leads"], "requiresApprovalFor": [] },
+    { "id": "official_docs", "name": "Official Documentation", "mode": "primary_sources", "finds": ["api_docs", "integration_guides", "limits", "terms"], "requiresApprovalFor": [] },
+    { "id": "package_registries", "name": "Package Registries", "mode": "metadata_only", "finds": ["libraries", "versions", "licenses", "download_signals"], "requiresApprovalFor": ["install_dependency"] },
+    { "id": "public_business_directories", "name": "Public Business Directories", "mode": "public_research", "finds": ["customer_segments", "business_categories", "market_signals"], "requiresApprovalFor": ["contact_customer", "bulk_export"] }
+  ],
+  "bots": {
+    "ToolFinderBot": {
+      "mission": "Find tools, APIs, repositories, MCP servers, SaaS products, and automations that can improve each DreamCo division.",
+      "outputs": ["reports/tool-finder-report.json", "reports/tool-finder-report.md"],
+      "scoring": ["license", "maintenance", "security", "documentation", "fit", "cost", "integration_effort"]
+    },
+    "ToolBuilderBot": {
+      "mission": "Turn repeated needs into internal DreamCo tools, templates, workflows, or GitHub Actions.",
+      "outputs": ["reports/tool-builder-plan.json", "reports/tool-builder-plan.md"],
+      "approvalRequiredBefore": ["creating_files", "installing_packages", "publishing_tool"]
+    },
+    "SkillFinderBot": {
+      "mission": "Find skills, playbooks, courses, methods, and operating procedures that make each occupational bot better.",
+      "outputs": ["reports/skill-finder-report.json", "reports/skill-finder-report.md"],
+      "memoryFields": ["source", "summary", "confidence", "practice_task", "verification_method"]
+    },
+    "SkillBuilderBot": {
+      "mission": "Convert validated skills into checklists, prompts, tests, playbooks, and teaching material for DreamCo bots.",
+      "outputs": ["reports/skill-builder-plan.json", "reports/skill-builder-plan.md"],
+      "approvalRequiredBefore": ["changing_bot_training_path", "publishing_public_content"]
+    }
+  },
+  "memoryPolicy": {
+    "store": "educated_memory_record",
+    "requiredFields": ["sourceUrl", "sourceType", "summary", "usableKnowledge", "confidence", "division", "bot", "nextExperiment", "createdAt"],
+    "rejectIfMissingSource": true
+  }
+}

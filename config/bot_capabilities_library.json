@@ -1,0 +1,47 @@
+{
+  "schema": "dreamco.bot_capabilities_library_config.v1",
+  "updated_at": "2026-07-17T00:00:00Z",
+  "mission": "Scan every bot and generate a per-bot capabilities library with the top 100 capabilities each bot needs to compete with the best apps in its category.",
+  "default_mode": "category_competition_capability_library",
+  "capability_target_per_bot": 100,
+  "source_priority": [
+    "existing_bot_capabilities",
+    "category_specific_competition_capabilities",
+    "app_store_capabilities",
+    "api_and_sandbox_capabilities",
+    "trust_safety_and_approval_capabilities",
+    "revenue_productivity_and_support_capabilities"
+  ],
+  "capability_groups": [
+    "core_workflow",
+    "user_experience",
+    "data_and_search",
+    "automation",
+    "api_and_webhooks",
+    "sandbox_and_testing",
+    "analytics_and_reporting",
+    "security_privacy_trust",
+    "revenue_and_growth",
+    "app_store_readiness",
+    "support_and_operations",
+    "category_advantage"
+  ],
+  "competition_rules": [
+    "Every bot keeps its existing capability metadata first.",
+    "Every bot is filled to 100 capabilities with category-relevant app, API, sandbox, trust, and revenue capabilities.",
+    "Every capability must identify whether it is existing, category-required, or competition-required.",
+    "Every live outreach, money, production, personal-data, or external-account capability remains approval-gated.",
+    "Every bot capability library must be generated from repository metadata and reviewed by Codex final judge before public claims."
+  ],
+  "approval_required_for_live_use": [
+    "external_outreach",
+    "paid_ads",
+    "payment_collection",
+    "money_movement",
+    "production_deploy",
+    "third_party_account_changes",
+    "collecting_or_exporting_personal_data",
+    "legal_medical_financial_tax_or_hiring_decisions",
+    "public_claims_about_beating_competitors"
+  ]
+}

@@ -1,0 +1,20 @@
+{
+  "name": "dreamco-control-tower",
+  "version": "1.0.0",
+  "description": "DreamCo Control Tower — centralized bot management hub integrated with GitHub",
+  "type": "module",
+  "main": "backend/server.js",
+  "scripts": {
+    "start": "node backend/server.js",
+    "dev": "node --watch backend/server.js",
+    "heartbeat": "node scripts/heartbeat-check.js",
+    "upgrade": "node automation/auto-upgrade-bots.js"
+  },
+  "dependencies": {
+    "@octokit/rest": "^20.1.1",
+    "express": "^4.18.2"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

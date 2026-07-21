@@ -1,0 +1,110 @@
+{
+  "schema": "dreamco.specialized_bot_knowledge.v1",
+  "updated_at": "2026-07-15T00:00:00Z",
+  "mission": "Give every DreamCo bot a specialized knowledge system for its division, customers, competitors, app-store product, workflows, safety gates, and learning loop.",
+  "default_mode": "local_first_source_backed_learning",
+  "knowledge_domains": [
+    {
+      "id": "domain_expertise",
+      "label": "Domain Expertise",
+      "purpose": "Know the bot's industry, job, terminology, workflows, metrics, regulations, and common failure modes.",
+      "required_artifacts": ["domain_glossary", "workflow_map", "kpi_list", "risk_notes"]
+    },
+    {
+      "id": "customer_intelligence",
+      "label": "Customer Intelligence",
+      "purpose": "Know who the bot helps, what problem they have, what proof they need, and what outcome they care about.",
+      "required_artifacts": ["target_customer", "problem_brief", "buying_triggers", "objection_notes"]
+    },
+    {
+      "id": "competitor_intelligence",
+      "label": "Competitor Intelligence",
+      "purpose": "Study public competitors, substitutes, pricing, feature gaps, reviews, positioning, onboarding, and trust signals.",
+      "required_artifacts": ["competitor_map", "feature_gap_matrix", "pricing_notes", "differentiation_angle"]
+    },
+    {
+      "id": "app_builder_knowledge",
+      "label": "App Builder Knowledge",
+      "purpose": "Know how to turn the bot into a usable app, website, course, game, simulation, dashboard, or workflow.",
+      "required_artifacts": ["app_concept", "screen_map", "api_contract_notes", "sandbox_plan", "deployment_plan"]
+    },
+    {
+      "id": "money_and_business_model",
+      "label": "Money and Business Model",
+      "purpose": "Know ethical ways the bot can create value, package offers, reduce costs, recover revenue, or support paid client work.",
+      "required_artifacts": ["offer_stack", "pricing_hypothesis", "unit_economics_notes", "blocked_claims"]
+    },
+    {
+      "id": "marketing_and_distribution",
+      "label": "Marketing and Distribution",
+      "purpose": "Know the audience, launch copy, content ideas, SEO angles, demo script, and outreach drafts without sending anything live.",
+      "required_artifacts": ["audience_segments", "content_drafts", "demo_script", "launch_checklist"]
+    },
+    {
+      "id": "runtime_and_tooling",
+      "label": "Runtime and Tooling",
+      "purpose": "Know its tools, APIs, webhooks, workflows, skills, sandbox tests, fixtures, and dashboard route.",
+      "required_artifacts": ["tool_contracts", "api_contracts", "webhook_contracts", "workflow_runbook", "test_commands"]
+    },
+    {
+      "id": "safety_and_approval",
+      "label": "Safety and Approval",
+      "purpose": "Know what it may draft versus what requires owner approval before customer, money, deployment, or account impact.",
+      "required_artifacts": ["approval_gates", "risk_label", "safe_mode_limits", "rollback_notes"]
+    },
+    {
+      "id": "learning_memory",
+      "label": "Learning Memory",
+      "purpose": "Store only useful, source-backed lessons with retention tier, source, confidence, usefulness reason, and next test.",
+      "required_artifacts": ["source_notes", "lesson_summary", "confidence_score", "next_experiment", "retention_tier"]
+    }
+  ],
+  "source_policy": {
+    "allowed": ["public documentation", "public pricing pages", "public reviews", "public case studies", "owner-approved notes", "generated sandbox evidence", "test reports"],
+    "blocked": ["secrets", "private account data without approval", "copied proprietary code", "paywalled content without permission", "personal data beyond approved lead records", "low-signal raw scratchpads"],
+    "required_metadata": ["source", "source_type", "bot_slug", "division", "knowledge_domain", "usefulness_reason", "confidence", "retention_tier", "created_at"]
+  },
+  "memory_tiers": [
+    {
+      "id": "hot",
+      "purpose": "Active task context, current app concept, open failures, and short-lived work notes.",
+      "rollover": "summarize_to_warm_after_task_or_7_days"
+    },
+    {
+      "id": "warm",
+      "purpose": "Approved lessons, competitor summaries, customer problem patterns, reusable prompts, and tested workflows.",
+      "rollover": "compact_monthly"
+    },
+    {
+      "id": "cold",
+      "purpose": "Long-term audit evidence, release records, app-store approvals, and archived experiments.",
+      "rollover": "manifest_only_in_dashboard"
+    },
+    {
+      "id": "vector",
+      "purpose": "Search references for retrieval, partitioned by division, bot, domain, and month.",
+      "rollover": "shard_by_manifest"
+    }
+  ],
+  "approval_gates": [
+    "customer_outreach",
+    "ad_spend",
+    "money_movement",
+    "public_deployment",
+    "app_store_publish",
+    "credential_change",
+    "third_party_account_change",
+    "legal_medical_financial_claims",
+    "collecting_personal_data",
+    "destructive_repository_action"
+  ],
+  "success_metrics": [
+    "bots_with_knowledge_profile",
+    "bots_with_all_knowledge_domains",
+    "bots_with_source_policy",
+    "bots_with_memory_policy",
+    "bots_with_runtime_tooling_knowledge",
+    "bots_with_safety_approval_knowledge",
+    "bots_with_app_builder_knowledge"
+  ]
+}

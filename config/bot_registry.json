@@ -1,0 +1,25 @@
+{
+  "schemaVersion": "2026-07-06",
+  "description": "Configuration-as-code contract for every DreamCo bot self-registration record.",
+  "requiredFields": [
+    "id",
+    "displayName",
+    "division",
+    "version",
+    "status",
+    "lastHeartbeat",
+    "capabilities",
+    "workflows",
+    "tools",
+    "permissions",
+    "metrics"
+  ],
+  "statusValues": ["healthy", "degraded", "paused", "training", "offline", "unknown"],
+  "autonomyModes": ["manual", "assist", "semi-autonomous", "autonomous", "enterprise-autonomous"],
+  "evidenceRequiredForHealthy": true,
+  "heartbeat": {
+    "maxAgeMinutes": 15,
+    "missingHeartbeatStatus": "unknown",
+    "reportPath": "reports/bot-health-report.json"
+  }
+}

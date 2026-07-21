@@ -128,7 +128,7 @@ Buddy Bot ([profile](bots/buddy-bot.md)) is the empire's elite CommandCore AI:
 
 ## 🌐 Live Website
 
-The `website/` directory contains a complete **26-page standalone HTML/CSS website** that mirrors every feature of the live Replit app. Open `website/index.html` in any browser — no build step required.
+The `website/` directory contains a complete **26-page standalone HTML/CSS website** that mirrors every feature of the live DreamCo app. Open `website/index.html` in any browser — no build step required.
 
 ## ☁️ Cloud Deployment
 

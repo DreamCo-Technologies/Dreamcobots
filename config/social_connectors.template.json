@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "2026-07-06",
+  "purpose": "Template for connecting Buddy and DreamCo teams to social platforms safely. Copy to a secrets-backed runtime config; do not commit tokens.",
+  "defaultPostingMode": "draft_review_schedule_after_approval",
+  "platforms": [
+    { "id": "x", "name": "X / Twitter", "enabled": false, "capabilities": ["draft_posts", "schedule_after_approval", "read_public_profile_metrics", "public_reply_drafts"], "requiresSecrets": ["X_API_KEY", "X_API_SECRET", "X_ACCESS_TOKEN"] },
+    { "id": "linkedin", "name": "LinkedIn", "enabled": false, "capabilities": ["draft_posts", "company_page_review", "lead_research", "article_drafts"], "requiresSecrets": ["LINKEDIN_CLIENT_ID", "LINKEDIN_CLIENT_SECRET"] },
+    { "id": "facebook", "name": "Facebook", "enabled": false, "capabilities": ["draft_page_posts", "campaign_briefing", "page_metrics", "comment_summary"], "requiresSecrets": ["META_APP_ID", "META_APP_SECRET"] },
+    { "id": "instagram", "name": "Instagram", "enabled": false, "capabilities": ["draft_captions", "content_calendar", "asset_briefs", "reel_briefs"], "requiresSecrets": ["META_APP_ID", "META_APP_SECRET"] },
+    { "id": "tiktok", "name": "TikTok", "enabled": false, "capabilities": ["video_idea_research", "caption_drafts", "trend_notes", "asset_checklists"], "requiresSecrets": ["TIKTOK_CLIENT_KEY", "TIKTOK_CLIENT_SECRET"] },
+    { "id": "youtube", "name": "YouTube", "enabled": false, "capabilities": ["video_topic_research", "title_description_drafts", "analytics_review", "community_post_drafts"], "requiresSecrets": ["GOOGLE_CLIENT_ID", "GOOGLE_CLIENT_SECRET"] },
+    { "id": "threads", "name": "Threads", "enabled": false, "capabilities": ["draft_posts", "content_calendar", "public_engagement_summary"], "requiresSecrets": ["META_APP_ID", "META_APP_SECRET"] },
+    { "id": "pinterest", "name": "Pinterest", "enabled": false, "capabilities": ["pin_idea_drafts", "board_plan", "public_metric_summary"], "requiresSecrets": ["PINTEREST_APP_ID", "PINTEREST_APP_SECRET"] },
+    { "id": "reddit", "name": "Reddit", "enabled": false, "capabilities": ["community_research", "draft_posts", "rules_checklist"], "requiresSecrets": ["REDDIT_CLIENT_ID", "REDDIT_CLIENT_SECRET"] },
+    { "id": "discord", "name": "Discord", "enabled": false, "capabilities": ["announcement_drafts", "community_summary", "support_triage"], "requiresSecrets": ["DISCORD_BOT_TOKEN"] },
+    { "id": "telegram", "name": "Telegram", "enabled": false, "capabilities": ["channel_drafts", "announcement_calendar", "support_triage"], "requiresSecrets": ["TELEGRAM_BOT_TOKEN"] },
+    { "id": "email_newsletter", "name": "Email Newsletter", "enabled": false, "capabilities": ["newsletter_drafts", "segment_notes", "send_after_approval"], "requiresSecrets": ["EMAIL_PROVIDER_API_KEY"] }
+  ],
+  "approvalRules": [
+    "Default mode is draft-only.",
+    "Human approval is required before posting, commenting, messaging, or spending ad budget.",
+    "Human approval is required before connecting accounts, changing profiles, joining groups, following accounts, exporting data, or collecting private messages.",
+    "Every post must store platform, draft, source, reviewer, approval time, and outcome metrics.",
+    "Every live action must store the account owner, approval reason, platform result, rollback or delete plan, and metrics.",
+    "Never use social media to impersonate people, fake endorsements, harass, spam, or make misleading income claims.",
+    "Do not store access tokens in this repository."
+  ]
+}

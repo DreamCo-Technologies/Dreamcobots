@@ -192,7 +192,7 @@ export default function SettingsPage() {
                   <button
                     key={opt.value}
                     onClick={async () => {
-                      await setMode.mutateAsync({ mode: opt.value as any });
+                      await setMode.mutateAsync(opt.value as "guided" | "semi-autonomous" | "full-autonomy");
                       toast({ title: `Autonomy set to ${opt.label}` });
                     }}
                     className={cn(
@@ -271,7 +271,7 @@ export default function SettingsPage() {
                       <p className="text-xs text-muted-foreground mt-0.5">{int.desc}</p>
                     </div>
                     {int.status !== "connected" && (
-                      <Button variant="outline" size="sm" className="text-xs" onClick={() => toast({ title: `Configure ${int.name}`, description: "Add the API key as a Replit secret." })} data-testid={`button-configure-${int.name.toLowerCase()}`}>
+                      <Button variant="outline" size="sm" className="text-xs" onClick={() => toast({ title: `Configure ${int.name}`, description: "Add the API key as a DreamCo secret." })} data-testid={`button-configure-${int.name.toLowerCase()}`}>
                         Configure
                       </Button>
                     )}

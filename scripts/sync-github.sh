@@ -6,21 +6,21 @@
 set -euo pipefail
 
 REPO="DreamCo-Technologies/Dreamcobots"
-BRANCH="main"
+BRANCH="${DREAMCO_SYNC_BRANCH:-codex/recover-buddy-after-import}"
 
-if [ -z "${REPLIT_ACCESS_TOLKEN:-}" ]; then
-  echo "[sync] ❌ REPLIT_ACCESS_TOLKEN not set — add it as a Replit Secret"
+if [ -z "${GITHUB_TOKEN:-}" ]; then
+  echo "[sync] ❌ GITHUB_TOKEN not set — add it as an environment secret"
   exit 1
 fi
 
-REMOTE="https://${REPLIT_ACCESS_TOLKEN}@github.com/${REPO}.git"
+REMOTE="https://${GITHUB_TOKEN}@github.com/${REPO}.git"
 LOCAL_SHA=$(git --no-optional-locks rev-parse HEAD 2>/dev/null || echo "unknown")
 LOCAL_MSG=$(git --no-optional-locks log -1 --pretty=format:"%s" 2>/dev/null || echo "unknown")
 
 echo "[sync] 🚀 Pushing to github.com/${REPO}"
 echo "[sync] 📌 Commit: ${LOCAL_SHA:0:7} — ${LOCAL_MSG}"
 
-git --no-optional-locks push "$REMOTE" "$BRANCH" --force 2>&1 | grep -v "token\|password\|TOLKEN\|Authorization" || true
+git --no-optional-locks push "$REMOTE" "HEAD:${BRANCH}" 2>&1 | grep -v "token\|password\|Authorization" || true
 
 REMOTE_SHA=$(git --no-optional-locks ls-remote "$REMOTE" "$BRANCH" 2>/dev/null | cut -f1 | head -1 || echo "unknown")
 

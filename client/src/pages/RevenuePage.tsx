@@ -160,7 +160,7 @@ export default function RevenuePage() {
                 onClick={() => {
                   const { toast } = (window as any).__dreamToast ?? {};
                   const csv = ["Division,Revenue,Clients,API Count",
-                    ...topBotRevenue.map(b => `${b.division ?? ""},${generateBotRevenue(b.id, b.tier).revenue},${generateBotRevenue(b.id, b.tier).clients},${getApiCountForDivision(b.division ?? "")}`)
+                    ...topBots.map((b) => `${b.division ?? ""},${b.revenue},${b.clients},${getApiCountForDivision(b.division ?? "")}`)
                   ].join("\n");
                   const blob = new Blob([csv], { type: "text/csv" });
                   const url = URL.createObjectURL(blob);

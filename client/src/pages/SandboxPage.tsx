@@ -96,7 +96,7 @@ export default function SandboxPage() {
       toast({ title: "✅ GitHub Synced", description: `Pushed ${data?.sha?.slice(0,7) || "latest"} — ${data?.message || "all commits pushed"}` });
       githubStatus.refetch();
     },
-    onError: () => toast({ title: "Sync failed", description: "Check REPLIT_ACCESS_TOLKEN in Replit Secrets.", variant: "destructive" }),
+    onError: () => toast({ title: "Sync failed", description: "Check GITHUB_TOKEN in environment secrets.", variant: "destructive" }),
   });
 
   const runTest = async (test: typeof SANDBOX_TESTS[number]) => {
@@ -226,7 +226,7 @@ export default function SandboxPage() {
                   <Activity className="h-4 w-4 text-primary" />
                   Sync Status
                 </CardTitle>
-                <CardDescription>Push all commits from this Replit to GitHub instantly</CardDescription>
+                <CardDescription>Push all commits from this DreamCo to GitHub instantly</CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
                 {githubStatus.isLoading ? (
@@ -278,7 +278,7 @@ export default function SandboxPage() {
                   <div className="bg-muted/40 rounded-lg p-3 font-mono text-xs">
                     bash scripts/sync-github.sh
                   </div>
-                  <p className="text-muted-foreground text-xs">The sync script reads your <code>REPLIT_ACCESS_TOLKEN</code> secret at runtime — it never stores the token in any file.</p>
+                  <p className="text-muted-foreground text-xs">The sync script reads your <code>GITHUB_TOKEN</code> secret at runtime — it never stores the token in any file.</p>
                 </div>
               </CardContent>
             </Card>
@@ -304,7 +304,7 @@ export default function SandboxPage() {
                     <Key className="h-5 w-5 text-blue-400 mt-0.5 shrink-0" />
                     <div className="space-y-1">
                       <p className="font-semibold text-sm">API Keys Setup</p>
-                      <p className="text-xs text-muted-foreground">Add <code className="bg-muted px-1 rounded">STRIPE_SECRET_KEY</code> and <code className="bg-muted px-1 rounded">STRIPE_PUBLISHABLE_KEY</code> to Replit Secrets to activate checkout.</p>
+                      <p className="text-xs text-muted-foreground">Add <code className="bg-muted px-1 rounded">STRIPE_SECRET_KEY</code> and <code className="bg-muted px-1 rounded">STRIPE_PUBLISHABLE_KEY</code> to environment secrets to activate checkout.</p>
                     </div>
                   </div>
                 </CardContent>

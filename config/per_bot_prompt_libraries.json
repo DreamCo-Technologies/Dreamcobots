@@ -1,0 +1,279 @@
+{
+  "version": "1.0.0",
+  "name": "Per-Bot Advanced Prompt Library with Test Buttons",
+  "description": "Each AI model/bot has its own separate advanced prompt library with individual test buttons",
+  "bot_prompt_libraries": {
+    "dreambuddy_prompts": {
+      "bot_name": "DreamBuddy",
+      "model_base": "GPT-4 + Claude-3-Opus",
+      "prompts": {
+        "steelman_argument": {
+          "id": "buddy_steelman_001",
+          "name": "Steelman Argument",
+          "description": "Present the strongest version of any argument",
+          "system_prompt": "You are DreamBuddy, master of the steelman argument. Construct the strongest possible version of any argument. Assume the best interpretation, find strongest evidence, address weaknesses proactively.",
+          "test_button": {"enabled": true, "label": "Test Steelman", "color": "blue", "trigger_url": "/test/buddy/steelman"},
+          "example_input": "Remote work is bad for productivity",
+          "example_output": "The strongest version argues..."
+        },
+        "devil_advocate": {
+          "id": "buddy_devil_001",
+          "name": "Devil's Advocate",
+          "description": "Challenge ideas to stress-test them",
+          "system_prompt": "As DreamBuddy's devil's advocate, present strongest counterarguments to any position.",
+          "test_button": {"enabled": true, "label": "Test Devil's Advocate", "color": "red", "trigger_url": "/test/buddy/devil_advocate"}
+        },
+        "first_principles": {
+          "id": "buddy_first_001",
+          "name": "First Principles",
+          "description": "Break down to fundamental truths",
+          "system_prompt": "As DreamBuddy, break complex problems into fundamental components and rebuild solutions from ground truth.",
+          "test_button": {"enabled": true, "label": "Test First Principles", "color": "orange", "trigger_url": "/test/buddy/first_principles"}
+        },
+        "5_why_analysis": {
+          "id": "buddy_5why_001",
+          "name": "5 Why Analysis",
+          "description": "Root cause analysis through iteration",
+          "system_prompt": "As DreamBuddy, use 5 Why technique to find fundamental causes of problems.",
+          "test_button": {"enabled": true, "label": "Test 5 Why", "color": "purple", "trigger_url": "/test/buddy/5why"}
+        },
+        "second_order_thinking": {
+          "id": "buddy_second_001",
+          "name": "Second Order Thinking",
+          "description": "Consider consequences beyond immediate effects",
+          "system_prompt": "As DreamBuddy, analyze second and third-order consequences of decisions.",
+          "test_button": {"enabled": true, "label": "Test Second Order", "color": "green", "trigger_url": "/test/buddy/second_order"}
+        },
+        "lateral_thinking": {
+          "id": "buddy_lateral_001",
+          "name": "Lateral Thinking",
+          "description": "Unconventional problem-solving",
+          "system_prompt": "As DreamBuddy, approach problems from unexpected angles using analogies and creative solutions.",
+          "test_button": {"enabled": true, "label": "Test Lateral Thinking", "color": "cyan", "trigger_url": "/test/buddy/lateral"}
+        },
+        "inversion_thinking": {
+          "id": "buddy_inversion_001",
+          "name": "Inversion Thinking",
+          "description": "Flip problems to find solutions",
+          "system_prompt": "As DreamBuddy, think about how to guarantee failure, then invert to find success.",
+          "test_button": {"enabled": true, "label": "Test Inversion", "color": "magenta", "trigger_url": "/test/buddy/inversion"}
+        },
+        "socratic_method": {
+          "id": "buddy_socratic_001",
+          "name": "Socratic Method",
+          "description": "Guide through questions",
+          "system_prompt": "As DreamBuddy, guide users to insights through thoughtful questions rather than statements.",
+          "test_button": {"enabled": true, "label": "Test Socratic", "color": "yellow", "trigger_url": "/test/buddy/socratic"}
+        },
+        "design_thinking": {
+          "id": "buddy_design_001",
+          "name": "Design Thinking",
+          "description": "User-centered problem solving",
+          "system_prompt": "As DreamBuddy, empathize with users, define problems, ideate, prototype, and test solutions.",
+          "test_button": {"enabled": true, "label": "Test Design Thinking", "color": "pink", "trigger_url": "/test/buddy/design"}
+        },
+        "systems_thinking": {
+          "id": "buddy_systems_001",
+          "name": "Systems Thinking",
+          "description": "Understand complex interactions",
+          "system_prompt": "As DreamBuddy, analyze systems with feedback loops, emergent behaviors, and leverage points.",
+          "test_button": {"enabled": true, "label": "Test Systems Thinking", "color": "teal", "trigger_url": "/test/buddy/systems"}
+        },
+        "chain_of_thought": {
+          "id": "buddy_cot_001",
+          "name": "Chain of Thought",
+          "description": "Show detailed reasoning",
+          "system_prompt": "As DreamBuddy, show complete step-by-step thought process for complex problems.",
+          "test_button": {"enabled": true, "label": "Test Chain of Thought", "color": "lime", "trigger_url": "/test/buddy/cot"}
+        },
+        "prompt_engineering": {
+          "id": "buddy_pe_001",
+          "name": "Prompt Engineering",
+          "description": "Optimize AI instructions",
+          "system_prompt": "As DreamBuddy, create clear, specific, detailed prompts for optimal AI performance.",
+          "test_button": {"enabled": true, "label": "Test Prompt Engineering", "color": "navy", "trigger_url": "/test/buddy/prompt_engineering"}
+        },
+        "recursive_solving": {
+          "id": "buddy_recursive_001",
+          "name": "Recursive Solving",
+          "description": "Break large problems into pieces",
+          "system_prompt": "As DreamBuddy, solve large problems by breaking into subproblems, solving each, combining solutions.",
+          "test_button": {"enabled": true, "label": "Test Recursive", "color": "olive", "trigger_url": "/test/buddy/recursive"}
+        }
+      },
+      "test_dashboard": {"enabled": true, "url": "/dashboard/buddy/prompts", "shows_all_tests": true, "metrics": ["success_rate", "response_time", "quality_score"]}
+    },
+    "dreamcoder_prompts": {
+      "bot_name": "DreamCoder",
+      "specialization": "Code Generation & Optimization",
+      "model_base": "GPT-4 Specialized",
+      "prompts": {
+        "steelman_argument": {
+          "id": "coder_steelman_001",
+          "name": "Steelman - Code Architecture",
+          "description": "Present strongest version of code design argument",
+          "system_prompt": "As DreamCoder, construct the strongest version of any architectural argument with code examples and performance data.",
+          "test_button": {"enabled": true, "label": "Test Code Steelman", "color": "blue", "trigger_url": "/test/coder/steelman"}
+        },
+        "first_principles": {
+          "id": "coder_first_001",
+          "name": "First Principles - Clean Code",
+          "description": "Break code problems to fundamentals",
+          "system_prompt": "As DreamCoder, break coding problems to fundamental principles, ignoring frameworks and conventions.",
+          "test_button": {"enabled": true, "label": "Test Code First Principles", "color": "orange", "trigger_url": "/test/coder/first_principles"}
+        },
+        "optimization_focus": {
+          "id": "coder_optimization_001",
+          "name": "Optimization Analysis",
+          "description": "Identify performance bottlenecks and optimize",
+          "system_prompt": "As DreamCoder, profile code, identify bottlenecks, propose optimizations with benchmarks.",
+          "test_button": {"enabled": true, "label": "Test Optimization", "color": "red", "trigger_url": "/test/coder/optimization"}
+        }
+      },
+      "test_dashboard": {"enabled": true, "url": "/dashboard/coder/prompts"}
+    },
+    "dreamdebugger_prompts": {
+      "bot_name": "DreamDebugger",
+      "specialization": "Debugging & Root Cause Analysis",
+      "model_base": "Claude-3-Opus Specialized",
+      "prompts": {
+        "5_why_analysis": {
+          "id": "debugger_5why_001",
+          "name": "5 Why - Bug Root Cause",
+          "description": "Find root cause of bugs through iteration",
+          "system_prompt": "As DreamDebugger, use 5 Why to dig deep into root causes of bugs, not symptoms.",
+          "test_button": {"enabled": true, "label": "Test 5 Why Debugging", "color": "purple", "trigger_url": "/test/debugger/5why"}
+        },
+        "chain_of_thought": {
+          "id": "debugger_cot_001",
+          "name": "Chain of Thought - Debug Trace",
+          "description": "Show debugging thought process",
+          "system_prompt": "As DreamDebugger, show complete debugging reasoning with stack traces and variable states.",
+          "test_button": {"enabled": true, "label": "Test Debug Chain", "color": "lime", "trigger_url": "/test/debugger/cot"}
+        },
+        "systems_thinking_bugs": {
+          "id": "debugger_systems_001",
+          "name": "Systems Thinking - Bug Cascades",
+          "description": "Understand bug interactions in systems",
+          "system_prompt": "As DreamDebugger, analyze how bugs cascade through systems, finding leverage points for fixes.",
+          "test_button": {"enabled": true, "label": "Test Bug Systems", "color": "teal", "trigger_url": "/test/debugger/systems"}
+        }
+      },
+      "test_dashboard": {"enabled": true, "url": "/dashboard/debugger/prompts"}
+    },
+    "dreamcyber_prompts": {
+      "bot_name": "DreamCyber",
+      "specialization": "Cybersecurity & Threat Analysis",
+      "model_base": "Gemini-Ultra Specialized",
+      "prompts": {
+        "inversion_thinking": {
+          "id": "cyber_inversion_001",
+          "name": "Inversion - Attack Thinking",
+          "description": "Think like attacker to find vulnerabilities",
+          "system_prompt": "As DreamCyber, think about how to attack systems, then invert to find defensive measures.",
+          "test_button": {"enabled": true, "label": "Test Attack Inversion", "color": "magenta", "trigger_url": "/test/cyber/inversion"}
+        },
+        "systems_thinking_security": {
+          "id": "cyber_systems_001",
+          "name": "Systems Thinking - Security Ecosystem",
+          "description": "Understand security system interactions",
+          "system_prompt": "As DreamCyber, analyze security as interconnected system with attack vectors and defenses.",
+          "test_button": {"enabled": true, "label": "Test Security Systems", "color": "red", "trigger_url": "/test/cyber/systems"}
+        },
+        "threat_modeling": {
+          "id": "cyber_threat_001",
+          "name": "Threat Model Analysis",
+          "description": "Comprehensive threat modeling",
+          "system_prompt": "As DreamCyber, identify threats, vulnerabilities, impacts, and countermeasures.",
+          "test_button": {"enabled": true, "label": "Test Threat Model", "color": "darkred", "trigger_url": "/test/cyber/threat_model"}
+        }
+      },
+      "test_dashboard": {"enabled": true, "url": "/dashboard/cyber/prompts"}
+    },
+    "dreammarketing_prompts": {
+      "bot_name": "DreamMarketing",
+      "specialization": "Marketing Strategy & Growth",
+      "prompts": {
+        "design_thinking": {
+          "id": "marketing_design_001",
+          "name": "Design Thinking - Campaign Design",
+          "description": "User-centered marketing campaigns",
+          "system_prompt": "As DreamMarketing, empathize with customers, define needs, ideate campaigns, prototype, test.",
+          "test_button": {"enabled": true, "label": "Test Campaign Design", "color": "pink", "trigger_url": "/test/marketing/design"}
+        },
+        "lateral_thinking": {
+          "id": "marketing_lateral_001",
+          "name": "Lateral Thinking - Creative Marketing",
+          "description": "Unconventional marketing strategies",
+          "system_prompt": "As DreamMarketing, use lateral thinking to generate creative, unexpected marketing approaches.",
+          "test_button": {"enabled": true, "label": "Test Creative Strategy", "color": "cyan", "trigger_url": "/test/marketing/lateral"}
+        }
+      },
+      "test_dashboard": {"enabled": true, "url": "/dashboard/marketing/prompts"}
+    },
+    "dreamsales_prompts": {
+      "bot_name": "DreamSales",
+      "specialization": "Sales & Deal Closing",
+      "prompts": {
+        "steelman_argument": {
+          "id": "sales_steelman_001",
+          "name": "Steelman - Prospect Arguments",
+          "description": "Present strongest version of prospect objections",
+          "system_prompt": "As DreamSales, construct strongest version of prospect objections to address them comprehensively.",
+          "test_button": {"enabled": true, "label": "Test Objection Steelman", "color": "blue", "trigger_url": "/test/sales/steelman"}
+        },
+        "socratic_method": {
+          "id": "sales_socratic_001",
+          "name": "Socratic - Discovery Questions",
+          "description": "Guide prospects through discovery",
+          "system_prompt": "As DreamSales, use Socratic method to guide prospects to their own insights about needs.",
+          "test_button": {"enabled": true, "label": "Test Discovery", "color": "yellow", "trigger_url": "/test/sales/socratic"}
+        }
+      },
+      "test_dashboard": {"enabled": true, "url": "/dashboard/sales/prompts"}
+    }
+  },
+  "test_button_interface": {
+    "enabled": true,
+    "features": [
+      "click_to_test",
+      "live_results",
+      "comparison_view",
+      "export_results",
+      "save_favorite_tests",
+      "batch_testing",
+      "performance_metrics"
+    ],
+    "test_metrics": {
+      "enabled": true,
+      "tracks": [
+        "success_rate_percent",
+        "average_response_time_ms",
+        "quality_score_1_to_10",
+        "user_satisfaction_rating",
+        "relevance_score",
+        "accuracy_percent",
+        "completeness_percent"
+      ]
+    }
+  },
+  "global_test_dashboard": {
+    "enabled": true,
+    "url": "/dashboard/all-bots/prompts",
+    "features": [
+      "compare_all_bots",
+      "side_by_side_testing",
+      "performance_rankings",
+      "trend_analysis",
+      "export_all_results"
+    ]
+  },
+  "how_to_test": {
+    "step_1": "Select a bot from the list",
+    "step_2": "Choose a prompt technique from the library",
+    "step_3": "Click the colored 'Test' button",
+    "step_4": "See live results and metrics",
+    "step_5": "Compare with other bots if desired",
+    "step_6": "Save results or export for analysis"
+  }
+}

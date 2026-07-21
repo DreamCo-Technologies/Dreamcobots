@@ -1,0 +1,13 @@
+schemaVersion: 2026-07-06
+runtime: dreamco-control-tower
+scaling:
+  minReplicas: 2
+  maxReplicas: 20
+  cpuTargetPercent: 65
+  memoryTargetPercent: 75
+  queueDepthTarget: 100
+  cooldownSeconds: 300
+selfHealing:
+  restartOnFailedHealthCheck: true
+  maxRestartAttempts: 3
+  retryBackoffSeconds: 60

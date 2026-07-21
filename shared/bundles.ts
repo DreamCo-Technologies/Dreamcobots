@@ -109,7 +109,7 @@ export const SKILL_PACKS: SkillPack[] = [
     name: "Coding Agent Pack",
     description: "Full-stack development assistance with AI pair programming and DevOps",
     price: "$79/mo",
-    providers: ["OpenAI", "Codeium", "Tabnine", "GitHub Copilot", "Replit AI", "Vercel AI"],
+    providers: ["OpenAI", "Codeium", "Tabnine", "GitHub Copilot", "DreamCo AI", "Vercel AI"],
     agentCount: 12,
     features: ["AI pair programming", "Code review & optimization", "Auto-debugging", "CI/CD automation", "Security scanning"],
   },
