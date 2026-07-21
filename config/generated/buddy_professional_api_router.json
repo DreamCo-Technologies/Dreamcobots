@@ -1,0 +1,668 @@
+{
+  "approval_required_for": [
+    "paid model calls",
+    "provider key creation or rotation",
+    "uploading private user media",
+    "customer data processing by third-party providers",
+    "voice or likeness cloning",
+    "production route changes",
+    "public claims that one model is best without current eval evidence"
+  ],
+  "cost_controls": {
+    "batch_when_possible": true,
+    "cache_reuse": true,
+    "log_estimated_cost_before_paid_escalation": true,
+    "monthly_budget_without_owner_approval_usd": 0,
+    "per_user_default_mode": "free_first",
+    "smallest_capable_model_first": true
+  },
+  "default_mode": "free_first",
+  "free_model_candidate_count": 100,
+  "generated_at": "2026-07-21T18:27:34Z",
+  "mission": "Route every Buddy task to the best available model/resource with free-first defaults, user choice, fallbacks, safety gates, and cost controls.",
+  "routes": [
+    {
+      "fallback_free_models": [
+        "qwen2.5-7b-instruct",
+        "mistral-7b-instruct",
+        "gemma-2-2b-it",
+        "gemma-2-9b-it"
+      ],
+      "primary_free_model": "llama-3.1-8b-instruct",
+      "selection_rule": "Prefer local/open/free-tier models; escalate only when the user chooses premium or an approved provider key exists.",
+      "task_type": "general_chat",
+      "user_choice_mode": "free_first"
+    },
+    {
+      "fallback_free_models": [
+        "qwen2.5-coder-7b",
+        "qwen2.5-coder-14b",
+        "deepseek-coder-6.7b-instruct",
+        "deepseek-coder-v2-lite"
+      ],
+      "primary_free_model": "qwen2.5-32b-instruct",
+      "selection_rule": "Prefer local/open/free-tier models; escalate only when the user chooses premium or an approved provider key exists.",
+      "task_type": "coding",
+      "user_choice_mode": "free_first"
+    },
+    {
+      "fallback_free_models": [
+        "qwen2.5-coder-32b",
+        "deepseek-coder-6.7b-instruct",
+        "command-r",
+        "command-r-plus"
+      ],
+      "primary_free_model": "qwen2.5-coder-7b",
+      "selection_rule": "Prefer local/open/free-tier models; escalate only when the user chooses premium or an approved provider key exists.",
+      "task_type": "debugging",
+      "user_choice_mode": "free_first"
+    },
+    {
+      "fallback_free_models": [
+        "llama-3.2-vision-11b",
+        "llama-3.3-70b-instruct",
+        "deepseek-coder-v2-lite",
+        "codegemma-7b-it"
+      ],
+      "primary_free_model": "qwen2.5-coder-14b",
+      "selection_rule": "Prefer local/open/free-tier models; escalate only when the user chooses premium or an approved provider key exists.",
+      "task_type": "repo_review",
+      "user_choice_mode": "free_first"
+    },
+    {
+      "fallback_free_models": [
+        "deepseek-coder-v2-lite",
+        "codegemma-7b-it",
+        "segment-anything",
+        "langchain"
+      ],
+      "primary_free_model": "qwen2.5-coder-14b",
+      "selection_rule": "Prefer local/open/free-tier models; escalate only when the user chooses premium or an approved provider key exists.",
+      "task_type": "tool_building",
+      "user_choice_mode": "free_first"
+    },
+    {
+      "fallback_free_models": [
+        "command-r",
+        "command-r-plus",
+        "cloudflare-workers-free",
+        "llama-3.1-8b-instruct"
+      ],
+      "primary_free_model": "stable-diffusion-3-medium",
+      "selection_rule": "Prefer local/open/free-tier models; escalate only when the user chooses premium or an approved provider key exists.",
+      "task_type": "api_router_design",
+      "user_choice_mode": "free_first"
+    },
+    {
+      "fallback_free_models": [
+        "langchain",
+        "autogen",
+        "crewai",
+        "command-r"
+      ],
+      "primary_free_model": "mixtral-8x7b-instruct",
+      "selection_rule": "Prefer local/open/free-tier models; escalate only when the user chooses premium or an approved provider key exists.",
+      "task_type": "workflow_automation",
+      "user_choice_mode": "free_first"
+    },
+    {
+      "fallback_free_models": [
+        "mistral-nemo-instruct",
+        "deepseek-r1-distill-llama-70b",
+        "command-r",
+        "command-r-plus"
+      ],
+      "primary_free_model": "llama-3.1-8b-instruct",
+      "selection_rule": "Prefer local/open/free-tier models; escalate only when the user chooses premium or an approved provider key exists.",
+      "task_type": "customer_support",
+      "user_choice_mode": "free_first"
+    },
+    {
+      "fallback_free_models": [
+        "command-r-plus",
+        "llama-3.1-8b-instruct",
+        "llama-3.1-70b-instruct",
+        "llama-3.2-vision-11b"
+      ],
+      "primary_free_model": "command-r",
+      "selection_rule": "Prefer local/open/free-tier models; escalate only when the user chooses premium or an approved provider key exists.",
+      "task_type": "sales_copy",
+      "user_choice_mode": "free_first"
+    },
+    {
+      "fallback_free_models": [
+        "qwen2.5-72b-instruct",
+        "crewai",
+        "command-r",
+        "command-r-plus"
+      ],
+      "primary_free_model": "llama-3.1-70b-instruct",
+      "selection_rule": "Prefer local/open/free-tier models; escalate only when the user chooses premium or an approved provider key exists.",
+      "task_type": "business_strategy",
+      "user_choice_mode": "free_first"
+    },
+    {
+      "fallback_free_models": [
+        "stable-diffusion-xl",
+        "command-r",
+        "llama-3.1-8b-instruct",
+        "llama-3.1-70b-instruct"
+      ],
+      "primary_free_model": "command-r-plus",
+      "selection_rule": "Prefer local/open/free-tier models; escalate only when the user chooses premium or an approved provider key exists.",
+      "task_type": "market_research",
+      "user_choice_mode": "free_first"
+    },
+    {
+      "fallback_free_models": [
+        "qwen2.5-14b-instruct",
+        "qwen2.5-72b-instruct",
+        "gemma-2-27b-it",
+        "yi-1.5-34b-chat"
+      ],
+      "primary_free_model": "mixtral-8x22b-instruct",
+      "selection_rule": "Prefer local/open/free-tier models; escalate only when the user chooses premium or an approved provider key exists.",
+      "task_type": "competitor_analysis",
+      "user_choice_mode": "free_first"
+    },
+    {
+      "fallback_free_models": [
+        "command-r",
+        "llama-3.1-8b-instruct",
+        "llama-3.1-70b-instruct",
+        "llama-3.2-vision-11b"
+      ],
+      "primary_free_model": "command-r-plus",
+      "selection_rule": "Prefer local/open/free-tier models; escalate only when the user chooses premium or an approved provider key exists.",
+      "task_type": "lead_research_packet",
+      "user_choice_mode": "free_first"
+    },
+    {
+      "fallback_free_models": [
+        "command-r",
+        "llama-3.1-8b-instruct",
+        "llama-3.1-70b-instruct",
+        "llama-3.2-vision-11b"
+      ],
+      "primary_free_model": "command-r-plus",
+      "selection_rule": "Prefer local/open/free-tier models; escalate only when the user chooses premium or an approved provider key exists.",
+      "task_type": "grant_contract_research",
+      "user_choice_mode": "free_first"
+    },
+    {
+      "fallback_free_models": [
+        "tesseract-ocr",
+        "layoutlmv3",
+        "donut-base",
+        "nougat"
+      ],
+      "primary_free_model": "llama-3.2-vision-11b",
+      "selection_rule": "Prefer local/open/free-tier models; escalate only when the user chooses premium or an approved provider key exists.",
+      "task_type": "document_summary",
+      "user_choice_mode": "free_first"
+    },
+    {
+      "fallback_free_models": [
+        "llama-3.3-70b-instruct",
+        "qwen2.5-coder-14b",
+        "codegemma-7b-it",
+        "command-r"
+      ],
+      "primary_free_model": "llama-3.2-vision-11b",
+      "selection_rule": "Prefer local/open/free-tier models; escalate only when the user chooses premium or an approved provider key exists.",
+      "task_type": "legal_safety_review",
+      "user_choice_mode": "free_first"
+    },
+    {
+      "fallback_free_models": [
+        "qwen2.5-14b-instruct",
+        "qwen2.5-72b-instruct",
+        "gemma-2-2b-it",
+        "gemma-2-27b-it"
+      ],
+      "primary_free_model": "mixtral-8x22b-instruct",
+      "selection_rule": "Prefer local/open/free-tier models; escalate only when the user chooses premium or an approved provider key exists.",
+      "task_type": "financial_analysis_draft",
+      "user_choice_mode": "free_first"
+    },
+    {
+      "fallback_free_models": [
+        "nougat",
+        "command-r",
+        "command-r-plus",
+        "supabase-free"
+      ],
+      "primary_free_model": "duckdb",
+      "selection_rule": "Prefer local/open/free-tier models; escalate only when the user chooses premium or an approved provider key exists.",
+      "task_type": "data_extraction",
+      "user_choice_mode": "free_first"
+    },
+    {
+      "fallback_free_models": [
+        "command-r",
+        "command-r-plus",
+        "llama-3.1-8b-instruct",
+        "llama-3.1-70b-instruct"
+      ],
+      "primary_free_model": "qwen2.5-coder-14b",
+      "selection_rule": "Prefer local/open/free-tier models; escalate only when the user chooses premium or an approved provider key exists.",
+      "task_type": "dashboard_building",
+      "user_choice_mode": "free_first"
+    },
+    {
+      "fallback_free_models": [
+        "mixtral-8x22b-instruct",
+        "qwen2.5-14b-instruct",
+        "qwen2.5-72b-instruct",
+        "gemma-2-27b-it"
+      ],
+      "primary_free_model": "duckdb",
+      "selection_rule": "Prefer local/open/free-tier models; escalate only when the user chooses premium or an approved provider key exists.",
+      "task_type": "spreadsheet_analysis",
+      "user_choice_mode": "free_first"
+    },
+    {
+      "fallback_free_models": [
+        "command-r-plus",
+        "haystack",
+        "jina-embeddings-v2",
+        "bge-m3"
+      ],
+      "primary_free_model": "command-r",
+      "selection_rule": "Prefer local/open/free-tier models; escalate only when the user chooses premium or an approved provider key exists.",
+      "task_type": "rag_search",
+      "user_choice_mode": "free_first"
+    },
+    {
+      "fallback_free_models": [
+        "jina-embeddings-v2",
+        "bge-m3",
+        "nomic-embed-text",
+        "command-r"
+      ],
+      "primary_free_model": "sqlite-vec",
+      "selection_rule": "Prefer local/open/free-tier models; escalate only when the user chooses premium or an approved provider key exists.",
+      "task_type": "memory_curation",
+      "user_choice_mode": "free_first"
+    },
+    {
+      "fallback_free_models": [
+        "bge-large-en-v1.5",
+        "e5-large-v2",
+        "nomic-embed-text",
+        "gte-large"
+      ],
+      "primary_free_model": "jina-embeddings-v2",
+      "selection_rule": "Prefer local/open/free-tier models; escalate only when the user chooses premium or an approved provider key exists.",
+      "task_type": "embeddings",
+      "user_choice_mode": "free_first"
+    },
+    {
+      "fallback_free_models": [
+        "bge-reranker-large",
+        "command-r",
+        "command-r-plus",
+        "llama-3.1-8b-instruct"
+      ],
+      "primary_free_model": "colbertv2",
+      "selection_rule": "Prefer local/open/free-tier models; escalate only when the user chooses premium or an approved provider key exists.",
+      "task_type": "reranking",
+      "user_choice_mode": "free_first"
+    },
+    {
+      "fallback_free_models": [
+        "nomic-embed-text",
+        "bge-m3",
+        "jina-embeddings-v2",
+        "e5-large-v2"
+      ],
+      "primary_free_model": "sqlite-vec",
+      "selection_rule": "Prefer local/open/free-tier models; escalate only when the user chooses premium or an approved provider key exists.",
+      "task_type": "semantic_search",
+      "user_choice_mode": "free_first"
+    },
+    {
+      "fallback_free_models": [
+        "faster-whisper",
+        "whisper-small",
+        "wav2vec2-base-960h",
+        "coqui-tts"
+      ],
+      "primary_free_model": "whisper-large-v3",
+      "selection_rule": "Prefer local/open/free-tier models; escalate only when the user chooses premium or an approved provider key exists.",
+      "task_type": "speech_transcription",
+      "user_choice_mode": "free_first"
+    },
+    {
+      "fallback_free_models": [
+        "whisper-large-v3",
+        "wav2vec2-base-960h",
+        "coqui-tts",
+        "piper-tts"
+      ],
+      "primary_free_model": "whisper-small",
+      "selection_rule": "Prefer local/open/free-tier models; escalate only when the user chooses premium or an approved provider key exists.",
+      "task_type": "voice_notes",
+      "user_choice_mode": "free_first"
+    },
+    {
+      "fallback_free_models": [
+        "llama-3.1-8b-instruct",
+        "mistral-nemo-instruct",
+        "qwen2.5-coder-14b",
+        "qwen2.5-coder-32b"
+      ],
+      "primary_free_model": "coqui-tts",
+      "selection_rule": "Prefer local/open/free-tier models; escalate only when the user chooses premium or an approved provider key exists.",
+      "task_type": "text_to_speech",
+      "user_choice_mode": "free_first"
+    },
+    {
+      "fallback_free_models": [
+        "piper-tts",
+        "whisper-small",
+        "wav2vec2-base-960h",
+        "bark-small"
+      ],
+      "primary_free_model": "coqui-tts",
+      "selection_rule": "Prefer local/open/free-tier models; escalate only when the user chooses premium or an approved provider key exists.",
+      "task_type": "voice_clone_readiness",
+      "user_choice_mode": "free_first"
+    },
+    {
+      "fallback_free_models": [
+        "musicgen-medium",
+        "audiocraft",
+        "whisper-large-v3",
+        "faster-whisper"
+      ],
+      "primary_free_model": "musicgen-small",
+      "selection_rule": "Prefer local/open/free-tier models; escalate only when the user chooses premium or an approved provider key exists.",
+      "task_type": "music_generation",
+      "user_choice_mode": "free_first"
+    },
+    {
+      "fallback_free_models": [
+        "whisper-large-v3",
+        "faster-whisper",
+        "wav2vec2-base-960h",
+        "coqui-tts"
+      ],
+      "primary_free_model": "musicgen-small",
+      "selection_rule": "Prefer local/open/free-tier models; escalate only when the user chooses premium or an approved provider key exists.",
+      "task_type": "song_sketch",
+      "user_choice_mode": "free_first"
+    },
+    {
+      "fallback_free_models": [
+        "musicgen-medium",
+        "command-r",
+        "command-r-plus",
+        "llama-3.1-8b-instruct"
+      ],
+      "primary_free_model": "audiocraft",
+      "selection_rule": "Prefer local/open/free-tier models; escalate only when the user chooses premium or an approved provider key exists.",
+      "task_type": "sound_effects",
+      "user_choice_mode": "free_first"
+    },
+    {
+      "fallback_free_models": [
+        "stable-diffusion-3-medium",
+        "kandinsky-3",
+        "pixart-alpha",
+        "deepfloyd-if"
+      ],
+      "primary_free_model": "stable-diffusion-xl",
+      "selection_rule": "Prefer local/open/free-tier models; escalate only when the user chooses premium or an approved provider key exists.",
+      "task_type": "image_generation",
+      "user_choice_mode": "free_first"
+    },
+    {
+      "fallback_free_models": [
+        "llama-3.2-vision-11b",
+        "phi-3.5-vision-instruct",
+        "stable-diffusion-xl",
+        "stable-diffusion-3-medium"
+      ],
+      "primary_free_model": "segment-anything",
+      "selection_rule": "Prefer local/open/free-tier models; escalate only when the user chooses premium or an approved provider key exists.",
+      "task_type": "image_editing",
+      "user_choice_mode": "free_first"
+    },
+    {
+      "fallback_free_models": [
+        "llama-3.2-vision-11b",
+        "phi-3.5-vision-instruct",
+        "stable-diffusion-xl",
+        "stable-diffusion-3-medium"
+      ],
+      "primary_free_model": "blip-2",
+      "selection_rule": "Prefer local/open/free-tier models; escalate only when the user chooses premium or an approved provider key exists.",
+      "task_type": "image_captioning",
+      "user_choice_mode": "free_first"
+    },
+    {
+      "fallback_free_models": [
+        "llama-3.1-8b-instruct",
+        "llama-3.2-vision-11b",
+        "mistral-7b-instruct",
+        "qwen2.5-7b-instruct"
+      ],
+      "primary_free_model": "llava-1.6",
+      "selection_rule": "Prefer local/open/free-tier models; escalate only when the user chooses premium or an approved provider key exists.",
+      "task_type": "vision_chat",
+      "user_choice_mode": "free_first"
+    },
+    {
+      "fallback_free_models": [
+        "mixtral-8x22b-instruct",
+        "qwen2.5-14b-instruct",
+        "qwen2.5-72b-instruct",
+        "gemma-2-27b-it"
+      ],
+      "primary_free_model": "llava-1.6",
+      "selection_rule": "Prefer local/open/free-tier models; escalate only when the user chooses premium or an approved provider key exists.",
+      "task_type": "screenshot_analysis",
+      "user_choice_mode": "free_first"
+    },
+    {
+      "fallback_free_models": [
+        "yolo-v8",
+        "sam-2",
+        "opencv",
+        "presidio"
+      ],
+      "primary_free_model": "owl-vit",
+      "selection_rule": "Prefer local/open/free-tier models; escalate only when the user chooses premium or an approved provider key exists.",
+      "task_type": "object_detection",
+      "user_choice_mode": "free_first"
+    },
+    {
+      "fallback_free_models": [
+        "llama-3.2-vision-11b",
+        "phi-3.5-vision-instruct",
+        "stable-diffusion-xl",
+        "stable-diffusion-3-medium"
+      ],
+      "primary_free_model": "segment-anything",
+      "selection_rule": "Prefer local/open/free-tier models; escalate only when the user chooses premium or an approved provider key exists.",
+      "task_type": "image_segmentation",
+      "user_choice_mode": "free_first"
+    },
+    {
+      "fallback_free_models": [
+        "easyocr",
+        "command-r",
+        "command-r-plus",
+        "llama-3.1-8b-instruct"
+      ],
+      "primary_free_model": "tesseract-ocr",
+      "selection_rule": "Prefer local/open/free-tier models; escalate only when the user chooses premium or an approved provider key exists.",
+      "task_type": "ocr",
+      "user_choice_mode": "free_first"
+    },
+    {
+      "fallback_free_models": [
+        "llama-3.2-vision-11b",
+        "tesseract-ocr",
+        "donut-base",
+        "nougat"
+      ],
+      "primary_free_model": "layoutlmv3",
+      "selection_rule": "Prefer local/open/free-tier models; escalate only when the user chooses premium or an approved provider key exists.",
+      "task_type": "document_ai",
+      "user_choice_mode": "free_first"
+    },
+    {
+      "fallback_free_models": [
+        "duckdb",
+        "command-r",
+        "command-r-plus",
+        "llama-3.1-8b-instruct"
+      ],
+      "primary_free_model": "nougat",
+      "selection_rule": "Prefer local/open/free-tier models; escalate only when the user chooses premium or an approved provider key exists.",
+      "task_type": "pdf_extraction",
+      "user_choice_mode": "free_first"
+    },
+    {
+      "fallback_free_models": [
+        "command-r",
+        "command-r-plus",
+        "llama-3.1-8b-instruct",
+        "llama-3.1-70b-instruct"
+      ],
+      "primary_free_model": "presidio",
+      "selection_rule": "Prefer local/open/free-tier models; escalate only when the user chooses premium or an approved provider key exists.",
+      "task_type": "privacy_redaction",
+      "user_choice_mode": "free_first"
+    },
+    {
+      "fallback_free_models": [
+        "mixtral-8x7b-instruct",
+        "langchain",
+        "autogen",
+        "crewai"
+      ],
+      "primary_free_model": "rasa",
+      "selection_rule": "Prefer local/open/free-tier models; escalate only when the user chooses premium or an approved provider key exists.",
+      "task_type": "chatbot_flow_builder",
+      "user_choice_mode": "free_first"
+    },
+    {
+      "fallback_free_models": [
+        "deepseek-coder-v2-lite",
+        "llamaindex",
+        "autogen",
+        "crewai"
+      ],
+      "primary_free_model": "langchain",
+      "selection_rule": "Prefer local/open/free-tier models; escalate only when the user chooses premium or an approved provider key exists.",
+      "task_type": "agent_orchestration",
+      "user_choice_mode": "free_first"
+    },
+    {
+      "fallback_free_models": [
+        "crewai",
+        "mixtral-8x7b-instruct",
+        "mistral-nemo-instruct",
+        "qwen2.5-72b-instruct"
+      ],
+      "primary_free_model": "autogen",
+      "selection_rule": "Prefer local/open/free-tier models; escalate only when the user chooses premium or an approved provider key exists.",
+      "task_type": "multi_agent_debate",
+      "user_choice_mode": "free_first"
+    },
+    {
+      "fallback_free_models": [
+        "llama.cpp",
+        "vllm",
+        "open-webui",
+        "anythingllm"
+      ],
+      "primary_free_model": "ollama",
+      "selection_rule": "Prefer local/open/free-tier models; escalate only when the user chooses premium or an approved provider key exists.",
+      "task_type": "local_model_runner",
+      "user_choice_mode": "free_first"
+    },
+    {
+      "fallback_free_models": [
+        "text-generation-inference",
+        "llama.cpp",
+        "ollama",
+        "nomic-embed-text"
+      ],
+      "primary_free_model": "vllm",
+      "selection_rule": "Prefer local/open/free-tier models; escalate only when the user chooses premium or an approved provider key exists.",
+      "task_type": "local_inference_server",
+      "user_choice_mode": "free_first"
+    },
+    {
+      "fallback_free_models": [
+        "cloudflare-workers-free",
+        "vercel-free",
+        "netlify-free",
+        "command-r"
+      ],
+      "primary_free_model": "github-pages-free",
+      "selection_rule": "Prefer local/open/free-tier models; escalate only when the user chooses premium or an approved provider key exists.",
+      "task_type": "frontend_hosting",
+      "user_choice_mode": "free_first"
+    },
+    {
+      "fallback_free_models": [
+        "render-free",
+        "firebase-free",
+        "supabase-free",
+        "railway-trial"
+      ],
+      "primary_free_model": "cloudflare-workers-free",
+      "selection_rule": "Prefer local/open/free-tier models; escalate only when the user chooses premium or an approved provider key exists.",
+      "task_type": "backend_prototype",
+      "user_choice_mode": "free_first"
+    },
+    {
+      "fallback_free_models": [
+        "neon-free",
+        "turso-free",
+        "duckdb",
+        "sqlite-vec"
+      ],
+      "primary_free_model": "supabase-free",
+      "selection_rule": "Prefer local/open/free-tier models; escalate only when the user chooses premium or an approved provider key exists.",
+      "task_type": "database_free_tier",
+      "user_choice_mode": "free_first"
+    },
+    {
+      "fallback_free_models": [
+        "firebase-free",
+        "cloudflare-workers-free",
+        "command-r",
+        "command-r-plus"
+      ],
+      "primary_free_model": "supabase-free",
+      "selection_rule": "Prefer local/open/free-tier models; escalate only when the user chooses premium or an approved provider key exists.",
+      "task_type": "auth_free_tier",
+      "user_choice_mode": "free_first"
+    }
+  ],
+  "routing_pipeline": [
+    "classify_task",
+    "classify_risk",
+    "read_user_model_preference",
+    "pick_free_primary_and_fallbacks",
+    "check_local_runtime_or_free_tier_availability",
+    "block_paid_call_unless_approved",
+    "run_sandbox_eval",
+    "record_cost_quality_latency",
+    "return_answer_with_route_evidence"
+  ],
+  "schema": "dreamco.buddy_professional_api_router.v1",
+  "task_routes_source": "config/generated/buddy_free_model_task_library.json",
+  "user_selectable_modes": {
+    "free_first": "Use local, open, and free-tier resources before any paid provider.",
+    "local_only": "Use only local/offline/open runtime resources.",
+    "premium_optional": "Use free routes first, then allow approved paid providers for hard tasks.",
+    "quality_first": "Use highest-quality approved provider route after user budget approval."
+  }
+}

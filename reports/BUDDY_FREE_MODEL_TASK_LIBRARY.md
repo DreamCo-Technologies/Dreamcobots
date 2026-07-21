@@ -1,0 +1,109 @@
+# Buddy Free Model Task Library
+
+Give Buddy and users 100 free-first model/resource candidates organized by task.
+
+- Model/resource candidates: 100
+- Task route groups: 52
+
+## Top 100 Free-First Candidates
+
+- 1. llama-3.1-8b-instruct (Meta): general_chat, summarization, customer_support
+- 2. llama-3.1-70b-instruct (Meta): reasoning, planning, business_strategy
+- 3. llama-3.2-vision-11b (Meta): vision, image_understanding, document_review
+- 4. llama-3.3-70b-instruct (Meta): reasoning, coding_review, long_form_writing
+- 5. mistral-7b-instruct (Mistral): fast_chat, summarization, classification
+- 6. mixtral-8x7b-instruct (Mistral): reasoning, multilingual, workflow_planning
+- 7. mixtral-8x22b-instruct (Mistral): complex_writing, analysis, planning
+- 8. mistral-nemo-instruct (Mistral): multilingual, customer_support, summarization
+- 9. qwen2.5-7b-instruct (Qwen): general_chat, coding_help, translation
+- 10. qwen2.5-14b-instruct (Qwen): reasoning, analysis, structured_outputs
+- 11. qwen2.5-32b-instruct (Qwen): coding, math, planning
+- 12. qwen2.5-72b-instruct (Qwen): advanced_reasoning, multilingual, business_analysis
+- 13. qwen2.5-coder-7b (Qwen): coding, debugging, test_generation
+- 14. qwen2.5-coder-14b (Qwen): coding, repo_review, tool_building
+- 15. qwen2.5-coder-32b (Qwen): advanced_coding, debugging, refactoring
+- 16. deepseek-coder-6.7b-instruct (DeepSeek): coding, debugging, code_explanation
+- 17. deepseek-coder-v2-lite (DeepSeek): coding, agent_tools, repo_tasks
+- 18. deepseek-r1-distill-qwen-7b (DeepSeek): reasoning, math, verification
+- 19. deepseek-r1-distill-qwen-14b (DeepSeek): reasoning, planning, rubric_eval
+- 20. deepseek-r1-distill-llama-70b (DeepSeek): hard_reasoning, debate, decision_support
+- 21. gemma-2-2b-it (Google): small_device_chat, classification, drafting
+- 22. gemma-2-9b-it (Google): chat, summarization, content
+- 23. gemma-2-27b-it (Google): analysis, long_form, planning
+- 24. codegemma-7b-it (Google): coding, code_review, tool_scripts
+- 25. phi-3.5-mini-instruct (Microsoft): small_device_chat, fast_drafts, classification
+- 26. phi-3.5-moe-instruct (Microsoft): reasoning, summarization, planning
+- 27. phi-3.5-vision-instruct (Microsoft): vision, image_qa, screenshots
+- 28. phi-4-mini-instruct (Microsoft): fast_reasoning, coding_help, education
+- 29. yi-1.5-9b-chat (01.AI): chat, writing, summarization
+- 30. yi-1.5-34b-chat (01.AI): analysis, multilingual, long_form
+- 31. command-r (Cohere): rag, retrieval, enterprise_search
+- 32. command-r-plus (Cohere): rag, research, summarization
+- 33. jina-embeddings-v2 (Jina AI): embeddings, semantic_search, memory
+- 34. bge-large-en-v1.5 (BAAI): embeddings, retrieval, ranking
+- 35. bge-m3 (BAAI): multilingual_embeddings, hybrid_search, memory
+- 36. e5-large-v2 (Microsoft): embeddings, semantic_search, classification
+- 37. nomic-embed-text (Nomic): embeddings, local_memory, search
+- 38. gte-large (Alibaba): embeddings, retrieval, clustering
+- 39. colbertv2 (Stanford): reranking, search, evidence
+- 40. bge-reranker-large (BAAI): reranking, rag_quality, source_selection
+- 41. whisper-large-v3 (OpenAI): speech_transcription, audio_notes, captions
+- 42. whisper-small (OpenAI): fast_transcription, captions, voice_notes
+- 43. faster-whisper (SYSTRAN): speech_transcription, batch_audio, local_cpu_gpu
+- 44. wav2vec2-base-960h (Meta): speech_recognition, audio_classification, voice_features
+- 45. coqui-tts (Coqui): text_to_speech, voice_lab, local_audio
+- 46. piper-tts (Rhasspy): fast_tts, local_voice, offline_voice
+- 47. bark-small (Suno): creative_tts, audio_experiment, voice_style
+- 48. musicgen-small (Meta): music_generation, jingles, song_sketch
+- 49. musicgen-medium (Meta): music_generation, soundtrack, loop_creation
+- 50. audiocraft (Meta): audio_generation, sound_effects, music
+- 51. stable-diffusion-xl (Stability AI): image_generation, marketing_images, concept_art
+- 52. stable-diffusion-3-medium (Stability AI): image_generation, design, assets
+- 53. flux.1-schnell (Black Forest Labs): fast_image_generation, concepts, mockups
+- 54. flux.1-dev (Black Forest Labs): high_quality_images, brand_mockups, visual_exploration
+- 55. kandinsky-3 (Kandinsky): image_generation, style_transfer, creative_assets
+- 56. pixart-alpha (PixArt): image_generation, posters, visual_drafts
+- 57. deepfloyd-if (DeepFloyd): image_generation, prompt_testing, creative
+- 58. controlnet (Open Source): image_control, pose_guidance, layout_guidance
+- 59. segment-anything (Meta): image_segmentation, photo_editing, vision_tools
+- 60. sam-2 (Meta): video_segmentation, object_tracking, editing
+- 61. clip-vit-large (OpenAI): image_search, classification, moderation_assist
+- 62. blip-2 (Salesforce): image_captioning, visual_qa, accessibility
+- 63. llava-1.6 (LLaVA): vision_chat, screenshot_analysis, image_reasoning
+- 64. moondream2 (Moondream): lightweight_vision, image_qa, device_tasks
+- 65. kosmos-2 (Microsoft): vision_language, grounding, image_explanation
+- 66. owl-vit (Google): object_detection, visual_search, inventory
+- 67. yolo-v8 (Ultralytics): object_detection, video_detection, inspection
+- 68. opencv (OpenCV): computer_vision, face_detection_local, image_processing
+- 69. tesseract-ocr (Tesseract): ocr, document_text, receipts
+- 70. easyocr (JaidedAI): ocr, multilingual_text, forms
+- 71. layoutlmv3 (Microsoft): document_ai, forms, layout_understanding
+- 72. donut-base (NAVER): document_parsing, receipts, invoices
+- 73. nougat (Meta): scientific_pdf, math_documents, paper_extraction
+- 74. spacy (Explosion): ner, text_pipeline, classification
+- 75. presidio (Microsoft): pii_detection, privacy, redaction
+- 76. rasa (Rasa): chatbot_flows, intent_detection, dialog_manager
+- 77. haystack (deepset): rag_pipeline, search, qa
+- 78. langchain (LangChain): agent_orchestration, tools, workflows
+- 79. llamaindex (LlamaIndex): rag, document_agents, knowledge_graph
+- 80. autogen (Microsoft): multi_agent, debate, workflow_agents
+- 81. crewai (CrewAI): multi_agent, role_agents, business_workflows
+- 82. semantic-kernel (Microsoft): agent_framework, plugins, enterprise
+- 83. ollama (Ollama): local_model_runner, free_local_inference, model_switching
+- 84. llama.cpp (GGML): local_inference, quantized_models, offline
+- 85. vllm (vLLM): fast_inference, server, batching
+- 86. text-generation-inference (Hugging Face): model_server, inference, deployment
+- 87. open-webui (Open WebUI): chat_ui, local_models, admin
+- 88. anythingllm (Mintplex): local_rag_ui, documents, workspace_chat
+- 89. supabase-free (Supabase): auth, database, storage
+- 90. firebase-free (Google): auth, realtime_db, hosting
+- 91. cloudflare-workers-free (Cloudflare): edge_api, workers, static_hosting
+- 92. github-pages-free (GitHub): static_hosting, docs, demo_site
+- 93. vercel-free (Vercel): frontend_hosting, previews, serverless_light
+- 94. netlify-free (Netlify): static_hosting, forms_light, previews
+- 95. render-free (Render): prototype_backend, web_service, cron_light
+- 96. railway-trial (Railway): prototype_backend, database, workers
+- 97. neon-free (Neon): postgres, branching, serverless_db
+- 98. turso-free (Turso): sqlite_edge, local_first_db, replication
+- 99. duckdb (DuckDB): local_analytics, data_extraction, spreadsheet_analysis
+- 100. sqlite-vec (SQLite): local_vectors, memory_curation, semantic_search

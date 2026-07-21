@@ -47,6 +47,8 @@ COMMANDS: dict[str, list[str]] = {
     "check:buddy-24-hour-package": ["python3", "tools/generate_buddy_24_hour_client_package.py", "--check"],
     "report:ai-agent-model-library": ["python3", "tools/generate_buddy_ai_agent_model_library.py"],
     "check:ai-agent-model-library": ["python3", "tools/generate_buddy_ai_agent_model_library.py", "--check"],
+    "report:professional-api-router": ["python3", "tools/generate_buddy_professional_api_router.py"],
+    "check:professional-api-router": ["python3", "tools/generate_buddy_professional_api_router.py", "--check"],
     "report:google-ai-studio": ["python3", "tools/generate_google_ai_studio_frontend_factory.py"],
     "check:google-ai-studio": ["python3", "tools/generate_google_ai_studio_frontend_factory.py", "--check"],
     "report:app-foundry": ["python3", "tools/generate_app_foundry_readiness.py"],

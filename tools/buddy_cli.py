@@ -72,6 +72,11 @@ def main() -> int:
     sub.add_parser("open-website", help="Open the static website home page.")
     sub.add_parser("free-report", help="Print the free/local test kit JSON report.")
     sub.add_parser("autonomy-report", help="Print the governed autonomy JSON report.")
+    route_parser = sub.add_parser("route", help="Route a task through Buddy's free-first API router.")
+    route_parser.add_argument("task", nargs="?", default="general_chat")
+    route_parser.add_argument("--mode", choices=["free_first", "local_only", "premium_optional", "quality_first"], default="free_first")
+    sub.add_parser("router-refresh", help="Regenerate the professional API router and free model library.")
+    sub.add_parser("free-models", help="Print the free model/task library JSON.")
 
     args = parser.parse_args()
     command = args.command or "status"
@@ -104,6 +109,12 @@ def main() -> int:
         return show_json(ROOT / "reports" / "buddy_free_local_test_kit.json")
     if command == "autonomy-report":
         return show_json(ROOT / "config" / "generated" / "buddy_autonomous_everything.json")
+    if command == "route":
+        return run(["python3", "tools/buddy_api_router.py", args.task, "--mode", args.mode])
+    if command == "router-refresh":
+        return run(["python3", "tools/generate_buddy_professional_api_router.py"])
+    if command == "free-models":
+        return show_json(ROOT / "config" / "generated" / "buddy_free_model_task_library.json")
 
     parser.print_help()
     return 1
