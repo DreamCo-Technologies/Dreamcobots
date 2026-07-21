@@ -20,6 +20,7 @@
       <button class="buddy-rail-item active" onclick="loadPrompt('Build me a full app from one prompt, then test and package it.')">App Builder</button>
       <button class="buddy-rail-item" onclick="loadPrompt('Debug my latest failed build and explain the root cause.')">Debug Center</button>
       <button class="buddy-rail-item" onclick="loadPrompt('Create a game or simulation from this idea.')">Game + Simulation</button>
+      <a class="buddy-rail-item" href="studio.html">Creative Studio</a>
       <button class="buddy-rail-item" onclick="loadPrompt('Find the best native bot route and cheapest model fallback for this task.')">Model Router</button>
       <button class="buddy-rail-item" onclick="loadPrompt('Show the bot completion sprint and what needs coding next.')">Bot Sprint</button>
     </div>
@@ -29,6 +30,7 @@
       <div class="buddy-rail-stat"><span>Native-ready</span><strong data-buddy-stat="ready-bots">1,236</strong></div>
       <div class="buddy-rail-stat"><span>Finish queue</span><strong data-buddy-stat="completion-queue">232</strong></div>
       <div class="buddy-rail-stat"><span>Free resources</span><strong data-buddy-stat="free-models">100</strong></div>
+      <div class="buddy-rail-stat"><span>Studio tracks</span><strong data-buddy-stat="studio-tracks">3</strong></div>
     </div>
   </aside>
 
@@ -72,6 +74,7 @@
         <button class="buddy-mode" data-mode="Debug" onclick="selectBuddyMode(this)">Debug</button>
         <button class="buddy-mode" data-mode="Vibe Code" onclick="selectBuddyMode(this)">Vibe Code</button>
         <button class="buddy-mode" data-mode="Simulation" onclick="selectBuddyMode(this)">Simulation</button>
+        <button class="buddy-mode" data-mode="Creative Studio" onclick="selectBuddyMode(this)">Media Studio</button>
         <button class="buddy-mode" data-mode="Research" onclick="selectBuddyMode(this)">Research</button>
         <button class="buddy-mode" data-mode="Agent" onclick="selectBuddyMode(this)">Agent</button>
       </div>
@@ -86,6 +89,9 @@
         <button onclick="loadPrompt('Build a full customer demo app with auth, dashboard, database plan, tests, and deployment checklist.')">Full app</button>
         <button onclick="loadPrompt('Debug my Actions page and explain every failed workflow like a sellable debugging system.')">Debug actions</button>
         <button onclick="loadPrompt('Create a 3D learning simulation and package it as a client-ready prototype.')">3D simulation</button>
+        <button onclick="openStudio('game')">Code a game</button>
+        <button onclick="openStudio('school_simulation')">School simulation</button>
+        <button onclick="openStudio('parent_learning_video')">Learning video</button>
         <button onclick="loadPrompt('Route this task through native DreamCo bots first, then cheapest free model fallback.')">Route task</button>
         <button onclick="loadPrompt('Finish the next bot in the completion sprint and add a smoke test.')">Finish bot</button>
       </div>
@@ -123,6 +129,10 @@ function loadPrompt(prompt) {
   input.focus();
 }
 
+function openStudio(type) {
+  location.href = 'studio.html?type=' + encodeURIComponent(type);
+}
+
 function sendBuddyPrompt() {
   const input = document.getElementById('buddy-input');
   const thread = document.getElementById('buddy-thread');
@@ -140,6 +150,7 @@ function sendBuddyPrompt() {
       <strong>Buddy task packet ready</strong>
       <p>I will handle this as a ${buddyMode} task: native repo code first, free/local resources second, approval gates for live actions. In the deployed app this prompt can be sent directly into Buddy's execution workflow.</p>
       <div class="buddy-inline-actions">
+        <a class="btn btn-primary btn-sm" href="studio.html">Open Creative Studio</a>
         <a class="btn btn-outline btn-sm" href="dashboard.html">View dashboard</a>
         <a class="btn btn-outline btn-sm" href="bots.html">Pick bot</a>
       </div>
