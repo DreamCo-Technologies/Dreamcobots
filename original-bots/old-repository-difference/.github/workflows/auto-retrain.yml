@@ -1,0 +1,199 @@
+name: "🧠 Autonomous Retraining Pipeline"
+
+on:
+  schedule:
+    # Daily at 03:00 UTC — off-peak learning consolidation
+    - cron: "0 3 * * *"
+  workflow_dispatch:
+    inputs:
+      force_retrain:
+        description: "Force retrain even if drift threshold not met"
+        required: false
+        default: "false"
+        type: choice
+        options: ["true", "false"]
+      bot_id:
+        description: "Target specific bot_id (leave blank for global)"
+        required: false
+        default: ""
+
+concurrency:
+  group: auto-retrain
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  detect-drift:
+    name: "📡 Drift Detection"
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    outputs:
+      drift_detected: ${{ steps.drift.outputs.drift_detected }}
+      top_strategy: ${{ steps.drift.outputs.top_strategy }}
+      candidate_count: ${{ steps.drift.outputs.candidate_count }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Restore learning history
+        uses: actions/cache/restore@v4
+        with:
+          path: database/learning.db
+          key: dreamco-retrain-${{ github.ref_name }}-${{ github.run_id }}
+          restore-keys: |
+            dreamco-learning-${{ github.ref_name }}-
+
+      - name: Run drift detection
+        id: drift
+        shell: python
+        env:
+          FORCE_RETRAIN: ${{ inputs.force_retrain || 'false' }}
+          TARGET_BOT: ${{ inputs.bot_id || '' }}
+        run: |
+          import os, sys, json, pathlib
+          sys.path.insert(0, ".")
+
+          force = os.environ.get("FORCE_RETRAIN","false").lower() == "true"
+          target_bot = os.environ.get("TARGET_BOT","").strip()
+
+          drift_detected = force
+          top_strategy = "n/a"
+          candidate_count = 0
+
+          try:
+              from global_learning_system.learning_loop import GlobalLearningLoop
+              loop = GlobalLearningLoop()
+              strategies = loop.extract_successful_strategies()[:5]
+              candidate_count = len(strategies)
+              if strategies:
+                  top_strategy = (
+                      f"{strategies[0].bot_name}:{strategies[0].action_type}"
+                  )
+
+              # Drift heuristic: retrain if < 30% recent outcomes are successes
+              recent = loop.get_recent_outcomes(n=50) if hasattr(loop, "get_recent_outcomes") else []
+              if recent:
+                  success_rate = sum(1 for r in recent if r.get("outcome") == "success") / len(recent)
+                  drift_detected = drift_detected or (success_rate < 0.3)
+                  print(f"Recent success rate: {success_rate:.1%}  drift_detected={drift_detected}")
+              elif force:
+                  drift_detected = True
+          except Exception as exc:
+              print(f"::warning::Drift check fallback: {exc}")
+              drift_detected = force
+
+          output = os.environ.get("GITHUB_OUTPUT","")
+          if output:
+              with open(output,"a") as fh:
+                  fh.write(f"drift_detected={'true' if drift_detected else 'false'}\n")
+                  fh.write(f"top_strategy={top_strategy}\n")
+                  fh.write(f"candidate_count={candidate_count}\n")
+
+          print(f"drift_detected={drift_detected}  top_strategy={top_strategy}  candidates={candidate_count}")
+
+  retrain:
+    name: "🔁 Build FormulaVault Candidates"
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    needs: detect-drift
+    if: needs.detect-drift.outputs.drift_detected == 'true'
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Restore learning history
+        uses: actions/cache/restore@v4
+        with:
+          path: database/learning.db
+          key: dreamco-retrain-${{ github.ref_name }}-${{ github.run_id }}
+          restore-keys: |
+            dreamco-learning-${{ github.ref_name }}-
+
+      - name: Run retraining and FormulaVault sync
+        id: retrain-step
+        shell: python
+        env:
+          TARGET_BOT: ${{ inputs.bot_id || '' }}
+        run: |
+          import os, sys, json, datetime, pathlib
+          sys.path.insert(0, ".")
+
+          target_bot = os.environ.get("TARGET_BOT","").strip()
+          report = {"timestamp": datetime.datetime.utcnow().isoformat()+"Z", "updates": []}
+
+          # Learned strategies become review candidates. A strategy does not
+          # contain a validated mathematical expression, so it must never be
+          # promoted directly into the executable FormulaVault.
+          try:
+              from global_learning_system.learning_loop import GlobalLearningLoop
+              loop = GlobalLearningLoop()
+              strategies = loop.extract_successful_strategies()[:10]
+              for s in strategies:
+                  name = f"{s.bot_name}:{s.action_type}"
+                  report["updates"].append({
+                      "formula": name,
+                      "status": "candidate_for_review",
+                      "strategy": {
+                          "strategy_id": s.strategy_id,
+                          "bot_name": s.bot_name,
+                          "action_type": s.action_type,
+                          "avg_reward": s.avg_reward,
+                          "success_count": s.success_count,
+                          "conditions": s.conditions,
+                      },
+                  })
+          except Exception as exc:
+              print(f"::warning::Candidate generation skipped: {exc}")
+              report["error"] = str(exc)
+
+          out_dir = pathlib.Path("reports")
+          out_dir.mkdir(exist_ok=True)
+          report_path = out_dir / "last_retrain.json"
+          report_path.write_text(json.dumps(report, indent=2))
+          print(f"Candidate generation complete. Updates: {len(report['updates'])}")
+
+          # Write summary
+          with open(os.environ.get("GITHUB_STEP_SUMMARY","/dev/null"),"a") as fh:
+              fh.write("## Learning Candidate Report\n\n")
+              fh.write(f"| Formula | Status |\n|---|---|\n")
+              for u in report["updates"]:
+                  fh.write(f"| `{u['formula']}` | {u['status']} |\n")
+
+      - name: Upload candidate review packet
+        uses: actions/upload-artifact@v4
+        with:
+          name: learning-candidates-${{ github.run_id }}
+          path: reports/last_retrain.json
+          retention-days: 30
+
+      - name: Record in learning loop
+        uses: ./.github/actions/learning-loop
+        with:
+          event-type: deploy
+          outcome: success
+          strategy-tags: autonomous_retrain,formula_vault_sync

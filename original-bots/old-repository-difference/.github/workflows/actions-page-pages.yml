@@ -1,0 +1,79 @@
+name: Actions Page - GitHub Pages
+
+on:
+  push:
+    branches:
+      - main
+      - buddy-hostinger-starter
+      - codex/bot-test-dashboard
+    paths:
+      - "dreamco-control-tower/frontend/**"
+      - ".github/workflows/actions-page-pages.yml"
+      - "reports/buddy_capability_inventory.json"
+  workflow_dispatch:
+
+concurrency:
+  group: actions-page-pages
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+jobs:
+  build:
+    name: Build Actions dashboard
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+          cache-dependency-path: dreamco-control-tower/frontend/package-lock.json
+
+      - name: Install dependencies
+        working-directory: dreamco-control-tower/frontend
+        run: npm ci
+
+      - name: Test Actions dashboard
+        working-directory: dreamco-control-tower/frontend
+        run: npm run test
+
+      - name: Build Actions dashboard
+        working-directory: dreamco-control-tower/frontend
+        env:
+          VITE_START_TAB: actions
+        run: npm run build
+
+      - name: Add bot inventory data
+        run: |
+          mkdir -p dreamco-control-tower/frontend/dist/data
+          cp reports/buddy_capability_inventory.json dreamco-control-tower/frontend/dist/data/buddy_capability_inventory.json
+
+      - name: Add static hosting files
+        working-directory: dreamco-control-tower/frontend/dist
+        run: |
+          cp index.html 404.html
+          touch .nojekyll
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: dreamco-control-tower/frontend/dist
+
+  deploy:
+    name: Deploy Actions dashboard
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

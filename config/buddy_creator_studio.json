@@ -2,7 +2,120 @@
   "schema": "dreamco.buddy_creator_studio.v1",
   "mission": "Let Buddy help users build games, 3D simulations, college courses, kids learning projects, music videos, apps, websites, and bot businesses with model choice, consent checks, and sandbox-first workflows.",
   "default_mode": "sandbox_first_owner_approval_for_publish_or_paid_actions",
+  "production_packet_schema": {
+    "required_outputs": [
+      "creative_brief",
+      "scope_and_assumptions",
+      "rights_privacy_and_consent_checklist",
+      "model_route",
+      "bot_team",
+      "build_plan",
+      "asset_manifest",
+      "sandbox_tests",
+      "prototype_tasks",
+      "export_or_deploy_path",
+      "approval_gates"
+    ],
+    "approval_gates": [
+      "paid model calls",
+      "publishing to public stores or domains",
+      "using real names, faces, voices, or private life details",
+      "payment collection",
+      "customer outreach",
+      "regulated advice or eligibility claims"
+    ]
+  },
   "workflows": [
+    {
+      "id": "large_open_world_game_builder",
+      "label": "Large Open-World Game Builder",
+      "outputs": [
+        "creative brief",
+        "world bible",
+        "city map",
+        "mission system",
+        "NPC/dialogue system",
+        "prototype slice",
+        "performance budget",
+        "store/deploy plan"
+      ],
+      "engines": [
+        "Three.js",
+        "React Three Fiber",
+        "Phaser for 2D systems",
+        "Godot export plan",
+        "Unity export plan",
+        "local save system"
+      ],
+      "buddy_steps": [
+        "define an original world and avoid copying protected games, characters, maps, or missions",
+        "scope the first playable vertical slice",
+        "draft city districts, player goals, NPC roles, missions, economy, vehicles, and safety rules",
+        "create asset and code module manifests",
+        "build a web prototype first",
+        "run performance, accessibility, save/load, input, and content safety tests",
+        "prepare store listing, export, and expansion roadmap after owner approval"
+      ]
+    },
+    {
+      "id": "autobiography_to_multimedia_project",
+      "label": "Autobiography To Book, Audio, And Documentary Builder",
+      "outputs": [
+        "interview plan",
+        "life timeline",
+        "chapter outline",
+        "privacy review",
+        "photo/audio rights packet",
+        "audiobook plan",
+        "documentary storyboard",
+        "website/export plan"
+      ],
+      "engines": [
+        "local writing studio",
+        "browser speech synthesis",
+        "image asset catalog",
+        "timeline builder",
+        "PDF/ebook export plan"
+      ],
+      "buddy_steps": [
+        "collect user-owned memories, dates, photos, recordings, and consent proof",
+        "separate private facts from publishable facts",
+        "build a timeline and chapter map",
+        "draft scenes, interview questions, and source notes",
+        "prepare audiobook, documentary, website, and book proposal packets",
+        "review defamation, privacy, likeness, and family-safety risks before sharing"
+      ]
+    },
+    {
+      "id": "studies_to_video_game_curriculum",
+      "label": "Studies To Video Game Curriculum Builder",
+      "outputs": [
+        "learning objectives",
+        "concept map",
+        "mechanics map",
+        "level plan",
+        "quiz plan",
+        "simulation labs",
+        "teacher dashboard spec",
+        "student progress spec"
+      ],
+      "engines": [
+        "Three.js",
+        "Phaser",
+        "Canvas",
+        "local quiz engine",
+        "citation tracker",
+        "accessibility review"
+      ],
+      "buddy_steps": [
+        "ingest notes, studies, course documents, or research summaries",
+        "extract learning objectives and cite source material",
+        "turn concepts into game mechanics, levels, choices, challenges, and simulations",
+        "build a first playable lesson",
+        "add quizzes, feedback, accessibility checks, and teacher/student dashboards",
+        "package for web, classroom demo, or LMS after review"
+      ]
+    },
     {
       "id": "college_3d_simulation_course",
       "label": "College 3D Simulation Course Builder",
@@ -123,5 +236,5 @@
     "Public publishing, paid model calls, app store submissions, customer outreach, and payment actions require owner approval.",
     "Kids and education content must include age range, safety level, accessibility review, and parent/teacher notes."
   ],
-  "generated_at": "2026-07-21T02:48:28.501275+00:00"
+  "generated_at": "2026-07-21T02:54:06.280280+00:00"
 }

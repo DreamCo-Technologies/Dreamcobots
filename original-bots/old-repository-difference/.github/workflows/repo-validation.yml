@@ -1,0 +1,297 @@
+name: Repo Validation
+
+# Runs the Repo Validation Bot (and Debug Bot) on every push and pull request
+# to main to surface structural issues in bot directories before they reach
+# production.
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+    branches: [main, master]
+  workflow_dispatch:   # allow manual runs from the Actions UI
+
+permissions:
+  contents: read
+
+jobs:
+  validate-bots:
+    name: Validate Bot Structure
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Discover dashboards and build comparison summary
+        run: |
+          python - <<'PY'
+          import datetime as dt
+          import json
+          import os
+          import re
+          import subprocess
+          from pathlib import Path
+
+          def infer_dashboard_name(path: Path) -> str:
+              if path.as_posix() == "dreamco.md":
+                  return "DreamCo Dashboard"
+              return path.stem.replace("_", " ").replace("-", " ").title()
+
+          tracked_files = subprocess.check_output(
+              ["git", "ls-files"], text=True
+          ).splitlines()
+          dashboard_pattern = re.compile(r"dashboard", re.IGNORECASE)
+          dashboards = []
+
+          for rel_path in tracked_files:
+              path = Path(rel_path)
+              if any(part in {"node_modules", ".git", "__pycache__"} for part in path.parts):
+                  continue
+              if dashboard_pattern.search(path.as_posix()):
+                  dashboards.append(
+                      {
+                          "name": infer_dashboard_name(path),
+                          "path": path.as_posix(),
+                          "type": path.suffix.lower().lstrip(".") or "none",
+                          "size_bytes": path.stat().st_size if path.exists() else 0,
+                      }
+                  )
+
+          dreamco_path = Path("dreamco.md")
+          if dreamco_path.exists() and not any(d["path"] == "dreamco.md" for d in dashboards):
+              dashboards.append(
+                  {
+                      "name": "DreamCo Dashboard",
+                      "path": "dreamco.md",
+                      "type": "md",
+                      "size_bytes": dreamco_path.stat().st_size,
+                  }
+              )
+
+          dashboards.sort(key=lambda item: item["path"].lower())
+
+          payload = {
+              "generated_at_utc": dt.datetime.now(dt.timezone.utc).isoformat(),
+              "dashboard_count": len(dashboards),
+              "dashboards": dashboards,
+          }
+
+          with open("/tmp/dashboard-comparison.json", "w", encoding="utf-8") as f:
+              json.dump(payload, f, indent=2)
+
+          lines = [
+              "## 📊 Dashboard Comparison",
+              "",
+              f"Discovered **{len(dashboards)}** dashboard entries (including DreamCo dashboard when present).",
+              "",
+              "| Dashboard | Path | Type | Size (bytes) |",
+              "|---|---|---:|---:|",
+          ]
+
+          for dashboard in dashboards:
+              safe_name = dashboard["name"].replace("|", "\\|")
+              safe_path = dashboard["path"].replace("|", "\\|")
+              lines.append(
+                  f"| {safe_name} | `{safe_path}` | {dashboard['type']} | {dashboard['size_bytes']} |"
+              )
+
+          if not dashboards:
+              lines.append("| _None found_ | - | - | - |")
+
+          with open("/tmp/dashboard-comparison-summary.md", "w", encoding="utf-8") as f:
+              f.write("\n".join(lines) + "\n")
+
+          summary_file = os.environ.get("GITHUB_STEP_SUMMARY")
+          if summary_file:
+              with open(summary_file, "a", encoding="utf-8") as f:
+                  f.write("\n".join(lines) + "\n")
+          PY
+
+      - name: Upload dashboard comparison artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: dashboard-comparison
+          overwrite: true
+          path: |
+            /tmp/dashboard-comparison.json
+            /tmp/dashboard-comparison-summary.md
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Validate Bot Registry
+        run: python tools/validate_bot_registry.py
+
+      - name: Audit Capabilities
+        run: python tools/audit_capabilities.py
+
+      - name: DreamCo AI Debate Council
+        env:
+          COUNCIL_TITLE: ${{ github.event.pull_request.title || github.event.head_commit.message || github.workflow }}
+          COUNCIL_BODY: ${{ github.event.pull_request.body || github.event.pull_request.html_url || github.server_url }}
+        run: |
+          python tools/dreamco_council.py \
+            --title "$COUNCIL_TITLE" \
+            --body "$COUNCIL_BODY" \
+            --output /tmp/dreamco_council_vote.json
+
+      - name: Security Scan
+        run: |
+          pip install bandit
+          bandit -r . -x "./node_modules,./dist,./.venv,./venv"
+
+      - name: Auto Fix
+        run: |
+          python tools/self_repair.py \
+            --detect-cmd "python3 tools/validate_bot_registry.py" \
+            --test-cmd "npm run test -- --passWithNoTests" \
+            --dry-run \
+            --output /tmp/self_repair_report.json
+        continue-on-error: true
+
+      - name: Validate generated bot registry outputs
+        run: python3 tools/generate_master_registry_outputs.py --check
+
+      - name: Validate bot specialization outputs
+        run: python3 tools/generate_bot_specializations.py --check
+
+      - name: Validate bot production contracts
+        run: python3 tools/validate_bot_production_contracts.py
+
+      - name: Discover dashboards and dashboard tests
+        run: |
+          python - <<'PY'
+          import json
+          import os
+          from pathlib import Path
+
+          root = Path(".").resolve()
+          skip_dirs = {
+              ".git", ".venv", "venv", "__pycache__", "node_modules",
+              ".pytest_cache", ".mypy_cache", "dist", "build",
+          }
+          allowed_suffixes = {".py", ".js", ".jsx", ".ts", ".tsx", ".html", ".md"}
+
+          dashboard_files = []
+          dashboard_tests = []
+
+          for path in root.rglob("*"):
+              if not path.is_file():
+                  continue
+              rel = path.relative_to(root)
+              if any(part in skip_dirs for part in rel.parts):
+                  continue
+
+              lowered = rel.as_posix().lower()
+              suffix = path.suffix.lower()
+              if "dashboard" in lowered and suffix in allowed_suffixes:
+                  dashboard_files.append(rel.as_posix())
+                  if (
+                      "/tests/" in lowered
+                      and ("/test_" in lowered or lowered.endswith("_test.py") or lowered.endswith(".test.js"))
+                  ):
+                      dashboard_tests.append(rel.as_posix())
+
+          dashboard_files = sorted(set(dashboard_files))
+          dashboard_tests = sorted(set(dashboard_tests))
+
+          payload = {
+              "dashboard_count": len(dashboard_files),
+              "dashboard_test_count": len(dashboard_tests),
+              "dashboards": dashboard_files,
+              "dashboard_tests": dashboard_tests,
+          }
+
+          with open("/tmp/dashboard-comparison.json", "w", encoding="utf-8") as fh:
+              json.dump(payload, fh, indent=2)
+
+          summary_path = os.environ.get("GITHUB_STEP_SUMMARY")
+          if summary_path:
+              with open(summary_path, "a", encoding="utf-8") as fh:
+                  fh.write("## Dashboard Discovery\n\n")
+                  fh.write(f"- Dashboards found: **{len(dashboard_files)}**\n")
+                  fh.write(f"- Dashboard tests found: **{len(dashboard_tests)}**\n\n")
+                  fh.write("| Type | Path |\n|---|---|\n")
+                  for item in dashboard_files:
+                      fh.write(f"| dashboard | `{item}` |\n")
+                  for item in dashboard_tests:
+                      fh.write(f"| dashboard-test | `{item}` |\n")
+
+          if not dashboard_files:
+              raise SystemExit("No dashboard files were discovered in the repository.")
+          PY
+
+      - name: Upload dashboard comparison artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: dashboard-comparison-discovery
+          overwrite: true
+          path: /tmp/dashboard-comparison.json
+
+      - name: Upload council and self-repair artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: governance-audit-reports
+          overwrite: true
+          path: |
+            /tmp/dreamco_council_vote.json
+            /tmp/self_repair_report.json
+
+      - name: Run dashboard tests
+        run: |
+          python - <<'PY'
+          import json
+          import subprocess
+          import sys
+
+          with open("/tmp/dashboard-comparison.json", "r", encoding="utf-8") as fh:
+              data = json.load(fh)
+
+          tests = data.get("dashboard_tests", [])
+          if not tests:
+              print("No dashboard tests discovered; skipping pytest dashboard suite.")
+              raise SystemExit(0)
+
+          cmd = [sys.executable, "-m", "pytest", "-q", *tests]
+          print("Running:", " ".join(cmd))
+          result = subprocess.run(cmd, check=False)
+          raise SystemExit(result.returncode)
+          PY
+
+      - name: Run Repo Validation Bot
+        id: repo-validation
+        run: |
+          python bots/repo_validation_bot/repo_validation_bot.py --root . --json \
+            | tee /tmp/repo_validation_report.json
+          python bots/repo_validation_bot/repo_validation_bot.py --root .
+        continue-on-error: true
+
+      - name: Upload validation report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: repo-validation-report
+          overwrite: true
+          path: /tmp/repo_validation_report.json
+
+      - name: Run Debug Bot
+        run: python ai/debug_bot.py
+        continue-on-error: true
+
+      - name: Fail if critical bot issues found
+        if: steps.repo-validation.outcome == 'failure'
+        run: |
+          echo "::error::Repo Validation Bot detected structural issues — see logs above."
+          exit 1

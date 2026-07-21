@@ -1,0 +1,150 @@
+version: "3.9"
+
+# DreamCobots — Local Development & Testing Stack
+# Usage:
+#   docker-compose up -d          # start all services
+#   docker-compose run tests      # run full test suite
+#   docker-compose run lint       # run flake8 lint
+#   docker-compose run security   # run bandit security scan
+
+services:
+  # ──────────────────────────────────────────────
+  # Core application — runs framework + bots
+  # ──────────────────────────────────────────────
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    env_file: .env
+    volumes:
+      - .:/app
+      - ./data:/app/data
+    networks:
+      - dreamco-net
+    depends_on:
+      - redis
+    restart: unless-stopped
+
+  # ──────────────────────────────────────────────
+  # Test runner
+  # ──────────────────────────────────────────────
+  tests:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    env_file: .env
+    command: >
+      python -m pytest tests/
+        --ignore=tests/test_backend.py
+        -q
+        --tb=short
+        --cov=bots
+        --cov=framework
+        --cov-report=term-missing
+        --cov-fail-under=70
+    volumes:
+      - .:/app
+    networks:
+      - dreamco-net
+    profiles:
+      - testing
+
+  # ──────────────────────────────────────────────
+  # Lint runner
+  # ──────────────────────────────────────────────
+  lint:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: >
+      sh -c "flake8 bots/ framework/ tools/ ui/
+        --max-line-length=120
+        --ignore=E501,W503,E241,E302,E401,E402,E741,F401,F541,F841,W292
+        --statistics"
+    volumes:
+      - .:/app
+    profiles:
+      - testing
+
+  # ──────────────────────────────────────────────
+  # Security scanner
+  # ──────────────────────────────────────────────
+  security:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: >
+      sh -c "bandit -r bots/ framework/ tools/ ui/
+        --severity-level medium
+        --confidence-level medium
+        --skip B101,B311
+        -f txt"
+    volumes:
+      - .:/app
+    profiles:
+      - testing
+
+  # ──────────────────────────────────────────────
+  # Redis — in-memory cache / message broker
+  # ──────────────────────────────────────────────
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    networks:
+      - dreamco-net
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+  # ──────────────────────────────────────────────
+  # Prometheus — metrics collection
+  # ──────────────────────────────────────────────
+  prometheus:
+    image: prom/prometheus:v2.51.0
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus-data:/prometheus
+    networks:
+      - dreamco-net
+    restart: unless-stopped
+    profiles:
+      - monitoring
+
+  # ──────────────────────────────────────────────
+  # Grafana — metrics dashboard
+  # ──────────────────────────────────────────────
+  grafana:
+    image: grafana/grafana:10.4.2
+    ports:
+      - "3000:3000"
+    environment:
+      GF_SECURITY_ADMIN_USER: "${GRAFANA_USER:-admin}"
+      GF_SECURITY_ADMIN_PASSWORD: "${GRAFANA_PASSWORD:-changeme}"
+      GF_USERS_ALLOW_SIGN_UP: "false"
+    volumes:
+      - grafana-data:/var/lib/grafana
+      - ./monitoring/grafana/provisioning:/etc/grafana/provisioning:ro
+    networks:
+      - dreamco-net
+    depends_on:
+      - prometheus
+    restart: unless-stopped
+    profiles:
+      - monitoring
+
+volumes:
+  redis-data:
+  prometheus-data:
+  grafana-data:
+
+networks:
+  dreamco-net:
+    driver: bridge

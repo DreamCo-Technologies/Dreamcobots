@@ -1,0 +1,38 @@
+name: Stripe Revenue Tracking
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 14 * * 1'
+
+jobs:
+  revenue-report:
+    name: Generate Stripe revenue report
+    runs-on: ubuntu-latest
+    env:
+      STRIPE_SECRET_KEY: ${{ secrets.STRIPE_SECRET_KEY || secrets.STRIPE_API_KEY }}
+      STRIPE_API_KEY: ${{ secrets.STRIPE_API_KEY || secrets.STRIPE_SECRET_KEY }}
+      STRIPE_WEBHOOK_SECRET: ${{ secrets.STRIPE_WEBHOOK_SECRET }}
+      STRIPE_PUBLISHABLE_KEY: ${{ secrets.STRIPE_PUBLISHABLE_KEY }}
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Generate revenue report from tracked events
+        working-directory: stripe/node
+        run: node revenue-report.js
+
+      - name: Upload Stripe revenue artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: stripe-revenue-report
+          path: |
+            data/stripe/*.json
+            reports/stripe-revenue-report.md

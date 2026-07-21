@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DreamCo Dashboards — Live Portal</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+           background: #0d0d0d; color: #e0e0e0; line-height: 1.6; }
+
+    header { background: linear-gradient(135deg, #0d1117 0%, #1a1a2e 100%);
+             border-bottom: 2px solid #00ff88; padding: 2.5rem 2rem; text-align: center; }
+    header h1 { font-size: 2.6rem; color: #00ff88; margin-bottom: 0.4rem; }
+    header p  { font-size: 1.1rem; color: #aaa; }
+    header .stats { display: flex; justify-content: center; gap: 1.5rem; margin-top: 1.2rem; flex-wrap: wrap; }
+    header .stat { background: rgba(0,255,136,0.08); border: 1px solid #00ff8844;
+                   border-radius: 8px; padding: 0.4rem 1rem; color: #00ff88; font-weight: 600; font-size: 0.9rem; }
+
+    nav { background: #111; border-bottom: 1px solid #222; padding: 0.75rem 2rem;
+          display: flex; gap: 1.5rem; flex-wrap: wrap; position: sticky; top: 0; z-index: 100; }
+    nav a { color: #00ff88; text-decoration: none; font-weight: 500; font-size: 0.95rem; }
+    nav a:hover { text-decoration: underline; }
+
+    main { max-width: 1100px; margin: 2rem auto; padding: 0 1.5rem; }
+    section { margin-bottom: 3rem; }
+    h2 { color: #f0f6fc; font-size: 1.5rem; margin-bottom: 1.2rem;
+         border-bottom: 1px solid #333; padding-bottom: 0.5rem; }
+
+    /* Dashboard cards grid */
+    .dash-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1.2rem; }
+    .dash-card { background: #1a1a2e; border: 1px solid #2a2a4a; border-radius: 10px;
+                 padding: 1.25rem 1.4rem; display: flex; flex-direction: column; gap: 0.6rem;
+                 transition: border-color 0.2s, transform 0.15s; }
+    .dash-card:hover { border-color: #00ff88; transform: translateY(-2px); }
+    .dash-card .card-title { font-size: 1.1rem; font-weight: 700; color: #fff; }
+    .dash-card .card-desc  { font-size: 0.88rem; color: #999; flex: 1; }
+    .dash-card .card-footer { display: flex; justify-content: space-between; align-items: center; margin-top: 0.4rem; }
+    .badge { display: inline-block; padding: 0.15em 0.6em; border-radius: 12px;
+             font-size: 0.76rem; font-weight: 700; text-transform: uppercase; }
+    .badge-flask  { background: #1a4530; color: #00ff88; }
+    .badge-python { background: #1a2a4a; color: #58a6ff; }
+    .badge-live   { background: #4a3000; color: #ffa500; }
+    .badge-pages  { background: #2a1a4a; color: #c084fc; }
+    .card-link { font-size: 0.82rem; color: #00ff88; text-decoration: none; font-weight: 600; }
+    .card-link:hover { text-decoration: underline; }
+
+    /* Quick-start block */
+    pre { background: #111; border: 1px solid #333; border-radius: 6px;
+          padding: 1rem 1.2rem; overflow-x: auto; margin-bottom: 1rem; }
+    code { font-family: "SFMono-Regular", Consolas, monospace; font-size: 0.88rem; color: #e6edf3; }
+    .inline-code { background: #1a1a2e; border: 1px solid #333; border-radius: 4px;
+                   padding: 0.1em 0.4em; font-family: monospace; font-size: 0.85em; color: #00ff88; }
+
+    footer { text-align: center; padding: 2rem; color: #555; border-top: 1px solid #222; margin-top: 2rem; }
+    a { color: #00ff88; }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>🚀 DreamCo Live Dashboards</h1>
+  <p>All dashboards — organized, documented, and ready to deploy</p>
+  <div class="stats">
+    <div class="stat">🖥 13 Dashboards</div>
+    <div class="stat">⚡ 2 Flask Apps</div>
+    <div class="stat">📄 GitHub Pages Live</div>
+    <div class="stat">🤖 DreamCo Ecosystem</div>
+  </div>
+</header>
+
+<nav>
+  <a href="index.html">🏠 Home</a>
+  <a href="#flask">Flask Dashboards</a>
+  <a href="#python">Python Dashboards</a>
+  <a href="#deploy">Deploy Guide</a>
+</nav>
+
+<main>
+
+  <!-- FLASK DASHBOARDS (go-live ready) -->
+  <section id="flask">
+    <h2>⚡ Flask Dashboards — Go Live Now</h2>
+    <div class="dash-grid">
+
+      <div class="dash-card">
+        <div class="card-title">🤖 DreamCo Main Dashboard</div>
+        <div class="card-desc">
+          Real-time revenue, lead counts, and bot-scaling status for the entire
+          DreamCo Money Operating System. Auto-refreshes every 30 seconds.
+        </div>
+        <div class="card-footer">
+          <span class="badge badge-flask">Flask</span>
+          <a class="card-link"
+             href="https://github.com/DreamCo-Technologies/Dreamcobots/tree/main/dashboard">
+            View Source →
+          </a>
+        </div>
+      </div>
+
+      <div class="dash-card">
+        <div class="card-title">🎛 Web Control Dashboard</div>
+        <div class="card-desc">
+          Centralized control interface — monitor bots, launch Go Live deployments,
+          view leaderboard, and track revenue in real time. 11 REST endpoints.
+        </div>
+        <div class="card-footer">
+          <span class="badge badge-flask">Flask</span>
+          <a class="card-link"
+             href="https://github.com/DreamCo-Technologies/Dreamcobots/tree/main/dashboards/web_control">
+            View Source →
+          </a>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- PYTHON DASHBOARDS -->
+  <section id="python">
+    <h2>🐍 Python Dashboards</h2>
+    <div class="dash-grid">
+
+      <div class="dash-card">
+        <div class="card-title">📊 Analytics Dashboard Bot</div>
+        <div class="card-desc">
+          Tier-aware metric tracking, ROI calculation, funnel analysis, and channel
+          attribution. FREE / PRO / ENTERPRISE tiers.
+        </div>
+        <div class="card-footer">
+          <span class="badge badge-python">Python</span>
+          <a class="card-link"
+             href="https://github.com/DreamCo-Technologies/Dreamcobots/tree/main/bots/analytics_dashboard_bot">
+            View Source →
+          </a>
+        </div>
+      </div>
+
+      <div class="dash-card">
+        <div class="card-title">📈 Division Performance Dashboard</div>
+        <div class="card-desc">
+          Revenue tracking, month-over-month growth analysis, API utilization metrics,
+          and bot performance insights across all DreamCo divisions.
+        </div>
+        <div class="card-footer">
+          <span class="badge badge-python">Python</span>
+          <a class="card-link"
+             href="https://github.com/DreamCo-Technologies/Dreamcobots/tree/main/bots/division_performance_dashboard">
+            View Source →
+          </a>
+        </div>
+      </div>
+
+      <div class="dash-card">
+        <div class="card-title">🧠 Big Bro AI — Master Dashboard</div>
+        <div class="card-desc">
+          Unified executive view across all Big Bro AI subsystems — memory, bot factory,
+          study, prospectus, courses, sales, franchises, and mentor engine.
+        </div>
+        <div class="card-footer">
+          <span class="badge badge-python">Python</span>
+          <a class="card-link"
+             href="https://github.com/DreamCo-Technologies/Dreamcobots/tree/main/bots/big_bro_ai">
+            View Source →
+          </a>
+        </div>
+      </div>
+
+      <div class="dash-card">
+        <div class="card-title">🎮 Big Bro AI — Interactive Dashboard</div>
+        <div class="card-desc">
+          Gamified XP/level system, achievement badges, Hustle Simulator, Code Gladiator,
+          bot speed control, and Big Bro motivational commentary.
+        </div>
+        <div class="card-footer">
+          <span class="badge badge-python">Python</span>
+          <a class="card-link"
+             href="https://github.com/DreamCo-Technologies/Dreamcobots/tree/main/bots/big_bro_ai">
+            View Source →
+          </a>
+        </div>
+      </div>
+
+      <div class="dash-card">
+        <div class="card-title">₿ Crypto Bot Dashboard</div>
+        <div class="card-desc">
+          Console dashboard summarising portfolio holdings, market overview,
+          mining stats, and recent buy/sell/mine transactions.
+        </div>
+        <div class="card-footer">
+          <span class="badge badge-python">Python</span>
+          <a class="card-link"
+             href="https://github.com/DreamCo-Technologies/Dreamcobots/tree/main/bots/crypto_bot">
+            View Source →
+          </a>
+        </div>
+      </div>
+
+      <div class="dash-card">
+        <div class="card-title">👤 Owner Dashboard</div>
+        <div class="card-desc">
+          Per-owner view of registered bots, live chat feeds, activity logs,
+          earnings tracker, and kill-switch controls. Firebase-ready.
+        </div>
+        <div class="card-footer">
+          <span class="badge badge-python">Python</span>
+          <a class="card-link"
+             href="https://github.com/DreamCo-Technologies/Dreamcobots/tree/main/bots/global_bot_network">
+            View Source →
+          </a>
+        </div>
+      </div>
+
+      <div class="dash-card">
+        <div class="card-title">💳 Payments Reporting Dashboard</div>
+        <div class="card-desc">
+          Financial summaries, bot-performance tracking, and Discount Dominator
+          settings management (IDs 401–600) across 5 groups.
+        </div>
+        <div class="card-footer">
+          <span class="badge badge-python">Python</span>
+          <a class="card-link"
+             href="https://github.com/DreamCo-Technologies/Dreamcobots/tree/main/bots/dreamco_payments">
+            View Source →
+          </a>
+        </div>
+      </div>
+
+      <div class="dash-card">
+        <div class="card-title">⚙️ DreamOps Dashboard</div>
+        <div class="card-desc">
+          Formatted summary of all DreamOps subsystems — anomaly detection, auto-scaling,
+          ops commander, bottleneck detector, cost reduction, and resilience scores.
+        </div>
+        <div class="card-footer">
+          <span class="badge badge-python">Python</span>
+          <a class="card-link"
+             href="https://github.com/DreamCo-Technologies/Dreamcobots/tree/main/bots/dreamops">
+            View Source →
+          </a>
+        </div>
+      </div>
+
+      <div class="dash-card">
+        <div class="card-title">🌍 Global Learning Dashboards</div>
+        <div class="card-desc">
+          Three dashboards for the global AI learning stack: Learning (pipeline metrics),
+          Profit (ROI / market signals), and Sandbox (experiment pass/fail rates).
+        </div>
+        <div class="card-footer">
+          <span class="badge badge-python">Python</span>
+          <a class="card-link"
+             href="https://github.com/DreamCo-Technologies/Dreamcobots/tree/main/global_learning_system/dashboards">
+            View Source →
+          </a>
+        </div>
+      </div>
+
+      <div class="dash-card">
+        <div class="card-title">📺 Roku TV Dashboard</div>
+        <div class="card-desc">
+          Pushes live KPI data — revenue, active bots, alerts, throughput, uptime —
+          to a Roku TV display for executive monitoring.
+        </div>
+        <div class="card-footer">
+          <span class="badge badge-python">Python</span>
+          <a class="card-link"
+             href="https://github.com/DreamCo-Technologies/Dreamcobots/tree/main/ConnectionsControl">
+            View Source →
+          </a>
+        </div>
+      </div>
+
+      <div class="dash-card">
+        <div class="card-title">🏠 Home Screen Dashboard</div>
+        <div class="card-desc">
+          Mobile-style home screen showing daily profit estimate, active alerts,
+          and top deals. Tier-aware display (FREE / PRO / ENTERPRISE).
+        </div>
+        <div class="card-footer">
+          <span class="badge badge-python">Python</span>
+          <a class="card-link"
+             href="https://github.com/DreamCo-Technologies/Dreamcobots/tree/main/frontend/screens">
+            View Source →
+          </a>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- DEPLOY GUIDE -->
+  <section id="deploy">
+    <h2>🚀 Deploy Guide</h2>
+
+    <h3 style="color:#00ff88; margin-bottom:0.5rem;">DreamCo Main Dashboard (Flask)</h3>
+    <pre><code>git clone https://github.com/DreamCo-Technologies/Dreamcobots.git
+cd Dreamcobots
+pip install -r dashboard/requirements.txt
+python dashboard/app.py
+# → http://localhost:5001</code></pre>
+
+    <h3 style="color:#00ff88; margin-bottom:0.5rem; margin-top:1.2rem;">Web Control Dashboard (Flask)</h3>
+    <pre><code>pip install -r dashboards/web_control/requirements.txt
+python dashboards/web_control/run.py
+# → http://localhost:5050</code></pre>
+
+    <h3 style="color:#00ff88; margin-bottom:0.5rem; margin-top:1.2rem;">Deploy to Heroku</h3>
+    <pre><code># DreamCo Main Dashboard
+heroku create dreamco-main-dashboard
+git subtree push --prefix dashboard heroku main
+
+# Web Control Dashboard
+heroku create dreamco-web-control
+git subtree push --prefix dashboards/web_control heroku main</code></pre>
+
+    <h3 style="color:#00ff88; margin-bottom:0.5rem; margin-top:1.2rem;">Enable GitHub Pages</h3>
+    <p style="color:#999; margin-bottom:0.5rem;">
+      Go to <strong>Repository Settings → Pages → Source</strong> and select
+      <span class="inline-code">main</span> branch, <span class="inline-code">docs/</span> folder.
+      This page will then be live at:
+    </p>
+    <pre><code>https://dreamco-technologies.github.io/Dreamcobots/dashboards.html</code></pre>
+  </section>
+
+</main>
+
+<footer>
+  <p>© 2026 DreamCo Technologies · <a href="https://github.com/DreamCo-Technologies/Dreamcobots">GitHub</a></p>
+</footer>
+
+</body>
+</html>

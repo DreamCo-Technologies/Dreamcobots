@@ -1,6 +1,6 @@
 # Buddy Creator, Model Choice, And Restored Bot Bridge
 
-Generated: 2026-07-21T02:48:28.501275+00:00
+Generated: 2026-07-21T02:54:06.280280+00:00
 
 ## Restored Bot Families Connected To Buddy
 
@@ -14,6 +14,9 @@ Generated: 2026-07-21T02:48:28.501275+00:00
 
 ## Creator Studio Workflows
 
+- Large Open-World Game Builder: creative brief, world bible, city map, mission system.
+- Autobiography To Book, Audio, And Documentary Builder: interview plan, life timeline, chapter outline, privacy review.
+- Studies To Video Game Curriculum Builder: learning objectives, concept map, mechanics map, level plan.
 - College 3D Simulation Course Builder: syllabus, module map, lesson plan, 3D scene spec.
 - Kids Voice/Image Game Builder: guardian consent checklist, kid-safe game design doc, character sheet, voice preference packet.
 - Music Video And Simulation Studio: concept, script, shot list, storyboard.

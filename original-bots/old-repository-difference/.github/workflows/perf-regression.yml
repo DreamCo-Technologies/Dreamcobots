@@ -1,0 +1,56 @@
+name: Performance Regression Gate
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+jobs:
+  benchmark:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+      actions: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+      - name: Run benchmarks
+        run: python tools/bot_benchmark_runner.py --compare HEAD~1
+      - name: Enforce P95 threshold
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          latest = sorted(Path('reports').glob('benchmark_*.json'))[-1]
+          report = json.loads(latest.read_text())
+          for bot, diff in report.get('comparison', {}).items():
+              baseline = report['bots'][bot]['p95_ms'] - diff['p95_ms']
+              if baseline > 0 and diff['p95_ms'] / baseline > 0.2:
+                  raise SystemExit(f'P95 latency regression > 20% for {bot}')
+          PY
+      - name: Create PR benchmark comment
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const path = fs.readdirSync('reports').filter(n => n.startsWith('benchmark_')).sort().pop();
+            const report = JSON.parse(fs.readFileSync(`reports/${path}`, 'utf8'));
+            const rows = Object.entries(report.bots).map(([name, metrics]) => `| ${name} | ${metrics.p50_ms.toFixed?.(2) ?? metrics.p50_ms} | ${metrics.p95_ms.toFixed?.(2) ?? metrics.p95_ms} | ${metrics.throughput_rps.toFixed?.(2) ?? metrics.throughput_rps} |`);
+            const body = ['## Benchmark Comparison', '| Bot | P50 ms | P95 ms | RPS |', '| --- | ---: | ---: | ---: |', ...rows].join('\n');
+            github.rest.issues.createComment({ owner: context.repo.owner, repo: context.repo.repo, issue_number: context.issue.number, body });
+      - name: Upload benchmark artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: benchmark-report
+          path: reports/benchmark_*.json

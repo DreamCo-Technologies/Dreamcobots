@@ -1,0 +1,67 @@
+{
+  "version": "1.0.0",
+  "platform": "DreamCo",
+  "global_settings": {
+    "max_concurrent_workflows": 5,
+    "default_retry_attempts": 3,
+    "notify_on_failure": true,
+    "log_level": "info"
+  },
+  "workflows": [
+    {
+      "id": "fiverr",
+      "name": "Fiverr Gig Automation",
+      "action": "fiverr_bot.run",
+      "file": "workflows/fiverr.json",
+      "trigger": "cron:0 */6 * * *",
+      "enabled": true,
+      "priority": 1,
+      "retries": 3,
+      "timeout": 300000
+    },
+    {
+      "id": "real_estate",
+      "name": "Real Estate Lead Generation",
+      "action": "realEstateBot.run",
+      "file": "workflows/real_estate.json",
+      "trigger": "cron:0 */4 * * *",
+      "enabled": true,
+      "priority": 2,
+      "retries": 3,
+      "timeout": 300000
+    },
+    {
+      "id": "grants",
+      "name": "Grant Scanner",
+      "action": "grantBot.run",
+      "file": "workflows/grants.json",
+      "trigger": "cron:0 0 * * 0",
+      "enabled": true,
+      "priority": 3,
+      "retries": 3,
+      "timeout": 600000
+    },
+    {
+      "id": "legal_money",
+      "name": "Legal Payout Tracker",
+      "action": "legalMoneyBot.run",
+      "file": "workflows/legal_money.json",
+      "trigger": "cron:0 0 * * 1",
+      "enabled": true,
+      "priority": 4,
+      "retries": 3,
+      "timeout": 600000
+    },
+    {
+      "id": "crypto",
+      "name": "Crypto Bot",
+      "action": "cryptoBot.run",
+      "file": "workflows/crypto.json",
+      "trigger": "cron:0 */2 * * *",
+      "enabled": true,
+      "priority": 5,
+      "retries": 3,
+      "timeout": 120000
+    }
+  ]
+}

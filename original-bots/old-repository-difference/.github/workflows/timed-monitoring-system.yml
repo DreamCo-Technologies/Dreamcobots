@@ -1,0 +1,118 @@
+name: Timed Monitoring System
+
+on:
+  workflow_dispatch:
+    inputs:
+      dispatch_all_workflows:
+        description: "Dispatch all connected workflows after checks"
+        required: false
+        default: "true"
+      run_full_suite:
+        description: "Run both JS and focused Python tests"
+        required: false
+        default: "false"
+  workflow_call:
+    inputs:
+      dispatch_all_workflows:
+        description: Dispatch all connected workflows.
+        required: false
+        type: string
+        default: "true"
+      run_full_suite:
+        description: Run full monitoring checks.
+        required: false
+        type: string
+        default: "false"
+  schedule:
+    # Every 6 hours at 00:00, 06:00, 12:00, and 18:00 UTC.
+    - cron: "0 */6 * * *"
+
+jobs:
+  monitor:
+    name: Monitor workflows, detect anomalies, optimize bots
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      contents: read
+      actions: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          npm ci
+
+      - name: Detect repository anomalies
+        run: |
+          python -m compileall bots scripts framework core
+          python -m pytest tests/test_company_lookup_bot.py tests/test_integration_feedback_bot.py -q
+          if [ "${{ inputs.run_full_suite || github.event.inputs.run_full_suite || 'false' }}" = "true" ]; then
+            npm run test -- --passWithNoTests
+          fi
+
+      - name: Generate bot learning and optimization report
+        run: |
+          python - <<'PY'
+          import json
+          from datetime import datetime, timezone
+          from framework.retraining_optimizer import RetrainingOptimizer
+
+          optimizer = RetrainingOptimizer(threshold=0.05)
+          learning_report = {
+              "generated_at": datetime.now(timezone.utc).isoformat(),
+              "drift_detected": optimizer.should_retrain(0.92, 0.84),
+              "recommended_method": optimizer.select_retraining_method(0.92, 0.84),
+              "recommendation_summary": "Use automated retraining strategy when monitored accuracy drops.",
+          }
+
+          with open("monitoring-learning-report.json", "w", encoding="utf-8") as f:
+              json.dump(learning_report, f, indent=2)
+
+          print(json.dumps(learning_report, indent=2))
+          PY
+
+      - name: Upload monitoring report
+        uses: actions/upload-artifact@v4
+        with:
+          name: monitoring-learning-report
+          path: monitoring-learning-report.json
+
+      - name: Dispatch connected workflows
+        if: ${{ (inputs.dispatch_all_workflows || github.event.inputs.dispatch_all_workflows || 'true') == 'true' }}
+        uses: actions/github-script@v9
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const ref = context.ref.replace('refs/heads/', '');
+            const workflows = [
+              { id: '24hour-button.yml', inputs: { run_monitoring: 'false' } },
+              { id: 'company-lookup.yml', inputs: { companies: 'Stripe,OpenAI', tier: 'pro' } },
+              { id: 'integration-feedback.yml', inputs: { platform: 'Timed Monitoring', status: 'success', details: 'Scheduled monitoring heartbeat', tier: 'pro' } },
+              { id: 'integration_lookup.yml', inputs: { query: 'automation reliability tooling' } },
+              { id: 'buddy-system.yml', inputs: { action: 'test', prompt: 'Timed monitoring initiated system test', run_full_suite: 'true' } },
+            ];
+            for (const workflow of workflows) {
+              await github.rest.actions.createWorkflowDispatch({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                workflow_id: workflow.id,
+                ref,
+                inputs: workflow.inputs,
+              });
+              core.info(`Dispatched ${workflow.id}`);
+            }

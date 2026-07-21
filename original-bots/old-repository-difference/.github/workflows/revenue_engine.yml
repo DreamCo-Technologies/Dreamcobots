@@ -1,0 +1,255 @@
+name: 💰 Revenue Engine
+
+on:
+  schedule:
+    # Every 15 minutes around the clock
+    - cron: "*/15 * * * *"
+  workflow_dispatch:
+    inputs:
+      cycle_mode:
+        description: "Run mode: single | continuous"
+        required: false
+        default: "single"
+      notify_slack:
+        description: "Send Slack notification on completion (true/false)"
+        required: false
+        default: "true"
+
+concurrency:
+  group: revenue-engine
+  cancel-in-progress: false
+
+jobs:
+  # -------------------------------------------------------------------------
+  # 1. Pre-flight checks
+  # -------------------------------------------------------------------------
+  pre-flight:
+    name: Pre-flight Checks
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+
+      - name: Install dependencies
+        run: |
+          pip install --quiet -r requirements.txt
+          pip install --quiet pyyaml stripe scikit-learn
+
+      - name: Validate master config
+        run: |
+          python -c "
+          from config.config_manager import config
+          daily  = config.get('profit_targets.daily')
+          weekly = config.get('profit_targets.weekly')
+          print(f'Profit targets — daily: \${daily}, weekly: \${weekly}')
+          assert daily is not None, 'profit_targets.daily missing'
+          print('master_config.yaml OK')
+          "
+
+      - name: Validate learning loop DB init
+        run: |
+          python -c "
+          from global_learning_system.learning_loop import GlobalLearningLoop
+          import tempfile, pathlib
+          tmp = pathlib.Path(tempfile.mkdtemp()) / 'learning.db'
+          ll = GlobalLearningLoop(db_path=tmp)
+          count = ll.count_decisions()
+          print(f'Learning DB initialised — {count} decisions on record')
+          "
+
+  # -------------------------------------------------------------------------
+  # 2. Run the Revenue Orchestrator (one cycle)
+  # -------------------------------------------------------------------------
+  orchestrator:
+    name: Revenue Orchestrator Cycle
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    needs: pre-flight
+    permissions:
+      contents: read
+
+    env:
+      OPENAI_API_KEY:  ${{ secrets.OPENAI_API_KEY }}
+      STRIPE_API_KEY:  ${{ secrets.STRIPE_API_KEY }}
+      GITHUB_TOKEN:    ${{ secrets.GITHUB_TOKEN }}
+      DREAMCO_ENV:     production
+      SIMULATION_MODE: ${{ vars.SIMULATION_MODE || 'true' }}
+      DREAMCO_LEARNING_DB: database/learning.db
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+
+      - name: Install dependencies
+        run: |
+          pip install --quiet -r requirements.txt
+          pip install --quiet pyyaml stripe scikit-learn
+
+      - name: Restore learning history
+        uses: actions/cache/restore@v4
+        with:
+          path: database/learning.db
+          key: dreamco-learning-${{ github.ref_name }}-${{ github.run_id }}
+          restore-keys: |
+            dreamco-learning-${{ github.ref_name }}-
+
+      - name: Run one orchestrator cycle
+        run: |
+          python - <<'EOF'
+          import asyncio, json
+          from dreamco.revenue_orchestrator import RevenueOrchestrator
+
+          orch = RevenueOrchestrator()
+          results = asyncio.run(orch.run_profitable_bots())
+          status  = orch.status()
+
+          successes = sum(1 for r in results if r.get("success"))
+          total_rev = sum(r.get("revenue_usd", 0.0) for r in results)
+
+          print(json.dumps(status, indent=2))
+          print(f"\nCycle complete — {successes}/{len(results)} bots succeeded, "
+                f"${total_rev:.2f} revenue")
+          EOF
+
+      - name: Save learning history
+        if: always()
+        uses: actions/cache/save@v4
+        with:
+          path: database/learning.db
+          key: dreamco-learning-${{ github.ref_name }}-${{ github.run_id }}
+
+      - name: Upload learning handoff
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: learning-db-${{ github.run_id }}
+          path: database/learning.db
+          retention-days: 7
+
+  # -------------------------------------------------------------------------
+  # 3. Learning cycle — extract strategies, gate retraining
+  # -------------------------------------------------------------------------
+  learning-cycle:
+    name: Learning Cycle
+    runs-on: ubuntu-latest
+    needs: orchestrator
+    permissions:
+      contents: read
+    env:
+      DREAMCO_LEARNING_DB: database/learning.db
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+
+      - name: Install dependencies
+        run: |
+          pip install --quiet -r requirements.txt
+          pip install --quiet pyyaml
+
+      - name: Download learning handoff
+        uses: actions/download-artifact@v4
+        with:
+          name: learning-db-${{ github.run_id }}
+          path: database
+
+      - name: Extract successful strategies
+        run: |
+          python - <<'EOF'
+          from global_learning_system.learning_loop import GlobalLearningLoop
+
+          ll = GlobalLearningLoop()
+          strategies = ll.extract_successful_strategies()
+          print(f"Evaluated {ll.count_decisions()} persistent decisions")
+          print(f"Extracted {len(strategies)} learned strategies")
+          for s in strategies:
+              print(f"  [{s.bot_name}] {s.action_type}: avg_reward={s.avg_reward:.2f}, count={s.success_count}")
+          EOF
+
+  # -------------------------------------------------------------------------
+  # 4. Payment processing (Stripe health check)
+  # -------------------------------------------------------------------------
+  payment-processing:
+    name: Payment Processing Health Check
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    needs: orchestrator
+    permissions:
+      contents: read
+
+    env:
+      STRIPE_API_KEY: ${{ secrets.STRIPE_API_KEY }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+
+      - name: Install dependencies
+        run: |
+          pip install --quiet -r requirements.txt
+          pip install --quiet pyyaml stripe
+
+      - name: Verify SubscriptionHandler initialises
+        run: |
+          python - <<'EOF'
+          from stripe.subscription_handler import SubscriptionHandler
+
+          handler = SubscriptionHandler()
+          record  = handler.create_subscription("cus_health_check", tier="pro")
+          caps    = handler.get_capabilities("cus_health_check")
+
+          print(f"Subscription tier : {record.tier}")
+          print(f"Status            : {record.status}")
+          print(f"Concurrent bots   : {caps.get('concurrent_bots')}")
+          print("Stripe health check passed")
+          EOF
+
+  # -------------------------------------------------------------------------
+  # 5. Notify on failure
+  # -------------------------------------------------------------------------
+  notify:
+    name: Notify on Failure
+    runs-on: ubuntu-latest
+    needs: [pre-flight, orchestrator, learning-cycle, payment-processing]
+    if: failure() && github.event.inputs.notify_slack != 'false'
+    permissions:
+      contents: read
+
+    steps:
+      - name: Send Slack notification
+        if: env.SLACK_WEBHOOK_URL != ''
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+        run: |
+          curl -s -X POST "$SLACK_WEBHOOK_URL" \
+            -H "Content-Type: application/json" \
+            -d "{
+              \"text\": \":red_circle: *Revenue Engine* workflow failed on \`${{ github.ref_name }}\`. <${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|View run>\"
+            }"

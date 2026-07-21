@@ -1,0 +1,49 @@
+name: DreamCo Continuous Self-Build Audit
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 */6 * * *'
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  self-build-audit:
+    name: Continuous rebuild readiness checks
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Run dependency audit
+        run: npm run scan:dependencies
+
+      - name: Run issue goal coverage audit
+        run: npm run scan:issues
+
+      - name: Run autonomous readiness audit
+        run: npm run autonomous:readiness
+
+      - name: Run missing-file scan
+        run: npm run scan:missing
+
+      - name: Run sandbox no-hallucination audit
+        run: npm run sandbox:no-hallucinations
+
+      - name: Run Buddy connectivity test
+        run: npm run test:buddy
+
+      - name: Upload self-build reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: dreamco-self-build-reports
+          path: reports/

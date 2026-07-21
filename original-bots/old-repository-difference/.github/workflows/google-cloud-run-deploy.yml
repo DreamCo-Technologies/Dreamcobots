@@ -1,0 +1,73 @@
+name: Google Cloud Run Deploy
+
+on:
+  workflow_dispatch:
+    inputs:
+      service:
+        description: Cloud Run service name
+        required: true
+        default: dreamco-buddy
+      region:
+        description: Google Cloud region
+        required: true
+        default: us-central1
+      deploy:
+        description: Type APPROVE to deploy
+        required: true
+        default: DRY_RUN
+
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Require manual approval word
+        if: ${{ github.event.inputs.deploy != 'APPROVE' }}
+        run: |
+          echo "Dry run only. Re-run with deploy=APPROVE after tests and owner approval."
+          exit 0
+
+      - name: Authenticate to Google Cloud
+        if: ${{ github.event.inputs.deploy == 'APPROVE' }}
+        uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: ${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}
+          service_account: ${{ secrets.GCP_SERVICE_ACCOUNT }}
+
+      - name: Set up gcloud
+        if: ${{ github.event.inputs.deploy == 'APPROVE' }}
+        uses: google-github-actions/setup-gcloud@v2
+        with:
+          project_id: ${{ secrets.GCP_PROJECT_ID }}
+
+      - name: Configure Docker
+        if: ${{ github.event.inputs.deploy == 'APPROVE' }}
+        run: gcloud auth configure-docker ${{ github.event.inputs.region }}-docker.pkg.dev --quiet
+
+      - name: Build container
+        if: ${{ github.event.inputs.deploy == 'APPROVE' }}
+        run: |
+          IMAGE="${{ github.event.inputs.region }}-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/dreamco/${{ github.event.inputs.service }}:${{ github.sha }}"
+          docker build -f deploy/google-cloud/Dockerfile.control-tower -t "$IMAGE" .
+          echo "IMAGE=$IMAGE" >> "$GITHUB_ENV"
+
+      - name: Push container
+        if: ${{ github.event.inputs.deploy == 'APPROVE' }}
+        run: docker push "$IMAGE"
+
+      - name: Deploy to Cloud Run
+        if: ${{ github.event.inputs.deploy == 'APPROVE' }}
+        run: |
+          gcloud run deploy "${{ github.event.inputs.service }}" \
+            --image "$IMAGE" \
+            --region "${{ github.event.inputs.region }}" \
+            --platform managed \
+            --allow-unauthenticated \
+            --quiet

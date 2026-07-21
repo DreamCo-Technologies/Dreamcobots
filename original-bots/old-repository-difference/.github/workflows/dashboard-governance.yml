@@ -1,0 +1,57 @@
+name: Dashboard Governance
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - "dashboard_inventory_builder.py"
+      - "dashboard_feature_extractor.py"
+      - "dashboard_comparison_engine.py"
+      - "dashboard_capability_adapter.py"
+      - "dashboard_event_bridge.py"
+      - "dashboard_queue_adapter.py"
+      - "ui/dashboard_chooser.py"
+      - "ui/web_dashboard.py"
+      - ".github/workflows/dashboard-governance.yml"
+
+jobs:
+  dashboard-governance:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Dashboard discovery
+        run: python dashboard_inventory_builder.py
+
+      - name: Feature extraction
+        run: python dashboard_feature_extractor.py
+
+      - name: Comparison and ranking
+        run: python dashboard_comparison_engine.py
+
+      - name: Publish artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: dashboard-governance-artifacts
+          path: |
+            dashboard_inventory/**
+            dashboard-comparison-report.html
+            dashboard-feature-matrix.json
+            dashboard-rankings.json
+            dashboard-security-findings.json
+            dashboard-dead-code-report.json
+            dashboard-migration-plan.md

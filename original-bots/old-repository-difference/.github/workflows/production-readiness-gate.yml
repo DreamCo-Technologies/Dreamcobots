@@ -1,0 +1,73 @@
+name: Production Readiness Gate
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+      - master
+
+permissions:
+  contents: read
+
+jobs:
+  active-scope-gates:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+
+      - name: Install Node dependencies
+        run: npm ci
+
+      - name: Run Node lint/test/build
+        run: |
+          npm run lint
+          npm run test -- --passWithNoTests
+          npm run build
+
+      - name: Install Control Tower frontend dependencies
+        working-directory: dreamco-control-tower/frontend
+        run: npm ci
+
+      - name: Test Control Tower Actions dashboard
+        working-directory: dreamco-control-tower/frontend
+        run: npm run test
+
+      - name: Build Control Tower Actions page
+        working-directory: dreamco-control-tower/frontend
+        env:
+          VITE_START_TAB: actions
+        run: npm run build
+
+      - name: Build Control Tower Command Center
+        working-directory: dreamco-control-tower/frontend
+        env:
+          VITE_START_TAB: command-center
+        run: npm run build
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: "pip"
+
+      - name: Install Python dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Run active Python production tests
+        run: |
+          python -m pytest \
+            tests/test_backend.py \
+            tests/test_master_config.py \
+            tests/test_company_lookup_bot.py \
+            tests/test_integration_feedback_bot.py \
+            -q

@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>AI Image Generator</title>
+  <style>
+    body { font-family: Arial, sans-serif; max-width: 600px; margin: 40px auto; padding: 0 20px; }
+    input { width: 100%; padding: 8px; margin: 10px 0; box-sizing: border-box; }
+    button { padding: 10px 20px; background: #0070f3; color: white; border: none; cursor: pointer; border-radius: 4px; }
+    button:hover { background: #0051b3; }
+    #result { margin-top: 20px; }
+  </style>
+</head>
+<body>
+  <h1>Generate Images</h1>
+  <input id="prompt" placeholder="Type a prompt" />
+  <button onclick="generateImage()">Generate</button>
+  <div id="result"></div>
+  <script>
+    function generateImage() {
+      var prompt = document.getElementById('prompt').value;
+      if (!prompt) { alert('Please enter a prompt'); return; }
+      var result = document.getElementById('result');
+      result.textContent = '';
+      var p = document.createElement('p');
+      p.textContent = 'Generating image for: ';
+      var em = document.createElement('em');
+      em.textContent = prompt;
+      p.appendChild(em);
+      result.appendChild(p);
+    }
+  </script>
+</body>
+</html>

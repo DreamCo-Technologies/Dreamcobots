@@ -96,6 +96,23 @@ const offlineDealStatusSchema = z.object({
   note: z.string().trim().max(1000).default(""),
 });
 
+const creatorBuildPacketSchema = z.object({
+  projectType: z.enum([
+    "large_open_world_game",
+    "autobiography",
+    "studies_to_game",
+    "college_3d_simulation",
+    "kids_game",
+    "music_video",
+    "game_app",
+  ]).default("game_app"),
+  title: z.string().trim().min(1, "Project title is required").max(160),
+  audience: z.string().trim().max(160).default("general"),
+  sourceMaterial: z.string().trim().max(5000).default(""),
+  modelPreference: z.string().trim().max(80).default("buddy_recommended"),
+  outputTarget: z.string().trim().max(120).default("web_prototype"),
+});
+
 type OfflineDeal = {
   id: string;
   invoiceNumber: string;
@@ -151,6 +168,99 @@ function readRepoJson(relativePath: string) {
   } catch (error: any) {
     return { error: `Unable to read ${relativePath}`, detail: error.message };
   }
+}
+
+type CreatorBuildPacketInput = z.infer<typeof creatorBuildPacketSchema>;
+
+function buildCreatorProjectPacket(input: CreatorBuildPacketInput) {
+  const studio = readRepoJson("config/buddy_creator_studio.json");
+  const modelRegistry = readRepoJson("config/buddy_user_model_choice_registry.json");
+  const restoredFamilies = readRepoJson("config/buddy_restored_bot_family_bridge.json");
+  const now = new Date().toISOString();
+  const projectTypeLabels: Record<CreatorBuildPacketInput["projectType"], string> = {
+    large_open_world_game: "Large open-world game",
+    autobiography: "Autobiography and multimedia story",
+    studies_to_game: "Study material to video game curriculum",
+    college_3d_simulation: "College 3D simulation course",
+    kids_game: "Kids learning game",
+    music_video: "Music video and simulation",
+    game_app: "Game or app store project",
+  };
+  const workflowMap: Record<CreatorBuildPacketInput["projectType"], string> = {
+    large_open_world_game: "large_open_world_game_builder",
+    autobiography: "autobiography_to_multimedia_project",
+    studies_to_game: "studies_to_video_game_curriculum",
+    college_3d_simulation: "college_3d_simulation_course",
+    kids_game: "kids_voice_image_game_builder",
+    music_video: "music_video_and_simulation_studio",
+    game_app: "game_app_store_builder",
+  };
+  const workflows = Array.isArray(studio?.workflows) ? studio.workflows : [];
+  const workflow = workflows.find((item: any) => item.id === workflowMap[input.projectType]) ?? workflows[0] ?? {};
+  const modelChoices = Array.isArray(modelRegistry?.choices) ? modelRegistry.choices : [];
+  const selectedModel = modelChoices.find((choice: any) => choice.id === input.modelPreference) ?? modelChoices.find((choice: any) => choice.id === "google_gemini") ?? modelChoices[0] ?? null;
+  const restoredFamilyList = Array.isArray(restoredFamilies?.families) ? restoredFamilies.families : [];
+  const suggestedBots = [
+    "Buddy Bot",
+    "DreamCodeLab",
+    input.projectType.includes("game") ? "GameTitan" : "DreamContent",
+    input.projectType.includes("studies") || input.projectType.includes("college") || input.projectType.includes("kids") ? "DreamEducation" : "DreamArts",
+    "DreamLegal",
+    "DreamData",
+    "DreamPayments",
+  ];
+  const stageBase = [
+    "Discovery: turn the prompt, audience, source material, and target device into a signed-off creative brief.",
+    "Rights and privacy: check consent, likeness, citations, age safety, source ownership, and publishability before generation.",
+    "Design: produce the world bible, story outline, curriculum map, or product spec with measurable acceptance criteria.",
+    "Prototype: build the smallest playable or readable vertical slice locally first.",
+    "Assets: generate or import only rights-safe text, images, audio, video, 3D, code, and data assets.",
+    "Tests: run sandbox checks for syntax, performance, accessibility, content safety, save/load, API behavior, and mobile layout.",
+    "Export/deploy: prepare web, PWA, store, ebook, PDF, LMS, or client handoff packages after owner approval.",
+    "Review: Buddy summarizes risks, missing pieces, cost impact, and next build tasks before any public or paid action.",
+  ];
+  return {
+    id: `creator_${Date.now()}`,
+    title: input.title,
+    projectType: input.projectType,
+    projectTypeLabel: projectTypeLabels[input.projectType],
+    audience: input.audience || "general",
+    outputTarget: input.outputTarget || "web_prototype",
+    generatedAt: now,
+    sourceMaterialSummary: input.sourceMaterial ? input.sourceMaterial.slice(0, 500) : "No source material supplied yet.",
+    workflow,
+    endToEndStages: stageBase,
+    suggestedBots,
+    modelRoute: {
+      requested: input.modelPreference,
+      selected: selectedModel,
+      fallback: "Use Buddy local packet generation, browser speech, local SVG/image placeholders, and free sandbox tests when paid keys are missing.",
+      currentnessPolicy: modelRegistry?.currentness_policy ?? "Verify provider docs before production routing.",
+    },
+    restoredBotFamiliesAvailable: restoredFamilyList.map((family: any) => ({
+      id: family.id,
+      label: family.label,
+      fileCount: family.file_count,
+      jobs: family.buddy_jobs,
+    })),
+    firstPrototypeTasks: [
+      "Create the project brief and approval checklist.",
+      "Generate the folder/file manifest and data model.",
+      "Build a local browser prototype with placeholder assets.",
+      "Add a sandbox test plan for every API, asset pipeline, and export target.",
+      "Run syntax, accessibility, responsiveness, and rights-safety checks before sharing.",
+    ],
+    filesToCreate: [
+      "PROJECT_BRIEF.md",
+      "RIGHTS_AND_CONSENT.md",
+      "ASSET_MANIFEST.json",
+      "SANDBOX_TEST_PLAN.md",
+      "src/prototype/",
+      "reports/build-readiness.md",
+    ],
+    guardrails: studio?.guardrails ?? [],
+    approvalRequiredFor: studio?.production_packet_schema?.approval_gates ?? [],
+  };
 }
 
 async function ensureSeeded() {
@@ -1211,6 +1321,12 @@ export async function registerRoutes(
     res.json(readRepoJson("config/buddy_restored_bot_family_bridge.json"));
   });
 
+  app.post("/api/buddy/creator-studio/build-packet", async (req, res) => {
+    const parsed = creatorBuildPacketSchema.safeParse(req.body ?? {});
+    if (!parsed.success) return res.status(400).json(zodValidationError(parsed.error));
+    res.json(buildCreatorProjectPacket(parsed.data));
+  });
+
   // ===== REVOLUTIONARY: MEMORY SYSTEM =====
   const buddyMemory: Array<{ id: string; category: string; key: string; value: string; savedAt: string }> = [];
 
@@ -1266,6 +1382,10 @@ export async function registerRoutes(
         { name: "Vibe Coding", route: "POST /api/buddy/vibe-code", status: "live", description: "Generate full projects from description" },
         { name: "Image Generation", route: "POST /api/generate-image", status: "live", description: "AI image generation via gpt-image-1" },
         { name: "DreamCo Local Voice", route: "POST /api/voice/clone", status: "live", description: "Free local/browser text-to-speech by default; optional external provider only when configured", setup: "No paid key required for local voice" },
+        { name: "Creator Studio", route: "GET /api/buddy/creator-studio", status: "live", description: "End-to-end workflows for games, apps, courses, simulations, music videos, and autobiographies" },
+        { name: "Creator Build Packet", route: "POST /api/buddy/creator-studio/build-packet", status: "live", description: "Free local project packet for large games, study-to-game courses, autobiographies, and client prototypes" },
+        { name: "Model Choice Registry", route: "GET /api/buddy/model-choices", status: "live", description: "User-selectable model families with strengths, watchouts, and budget-first routing" },
+        { name: "Restored Bot Family Bridge", route: "GET /api/buddy/restored-bot-families", status: "live", description: "Recovered original bot families connected back to Buddy as capability groups" },
         { name: "Web Search", route: "POST /api/search/web", status: "live", description: "GitHub + OpenAI synthesis search" },
         { name: "GitHub Intelligence", route: "GET /api/github-intel/trending", status: "live", description: "Hourly GitHub trending + search" },
         { name: "Council Governance", route: "GET /api/council/proposals", status: "live", description: "Bot proposal submission and approval" },

@@ -1,0 +1,231 @@
+name: Integration Feedback Bot
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      platform:
+        description: "Platform name (WordPress, Wix, Streamlit, Stripe, etc.)"
+        required: true
+        default: "WordPress"
+      status:
+        description: "Integration status: success | failure"
+        required: true
+        default: "success"
+      details:
+        description: "Details about the integration event"
+        required: false
+        default: "Automated integration check."
+      version:
+        description: "Version or release tag (optional)"
+        required: false
+        default: ""
+      tier:
+        description: "Bot tier: free | pro | enterprise"
+        required: false
+        default: "pro"
+  workflow_call:
+    inputs:
+      platform:
+        description: Platform name.
+        required: false
+        type: string
+        default: "GitHub Actions"
+      status:
+        description: Integration status.
+        required: false
+        type: string
+        default: "success"
+      details:
+        description: Details about the integration event.
+        required: false
+        type: string
+        default: "Reusable workflow call."
+      version:
+        description: Version or release tag.
+        required: false
+        type: string
+        default: ""
+      tier:
+        description: Bot tier.
+        required: false
+        type: string
+        default: "pro"
+    secrets:
+      SLACK_WEBHOOK_URL:
+        required: false
+  schedule:
+    # Run daily at 08:00 UTC to log a scheduled health-check entry for GitHub Actions
+    - cron: "0 8 * * *"
+
+concurrency:
+  group: bot-data-updates-main
+  cancel-in-progress: false
+
+jobs:
+  integration-feedback:
+    name: Log Integration Feedback
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: write
+      actions: read
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Log integration event
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+          INTEGRATION_PLATFORM: ${{ inputs.platform || github.event.inputs.platform || 'GitHub Actions' }}
+          INTEGRATION_STATUS: ${{ inputs.status || github.event.inputs.status || 'success' }}
+          INTEGRATION_DETAILS: ${{ inputs.details || github.event.inputs.details || 'Scheduled health-check passed.' }}
+          INTEGRATION_VERSION: ${{ inputs.version || github.event.inputs.version || '' }}
+          INTEGRATION_TIER: ${{ inputs.tier || github.event.inputs.tier || 'pro' }}
+          GITHUB_RUN_NUMBER: ${{ github.run_number }}
+          GITHUB_REF_NAME: ${{ github.ref_name }}
+        run: |
+          python - <<'EOF'
+          import sys, os, time, json, logging
+
+          logging.basicConfig(
+              level=logging.INFO,
+              format="%(asctime)s [%(levelname)s] %(message)s",
+          )
+          logger = logging.getLogger("integration_feedback_bot")
+
+          sys.path.insert(0, ".")
+
+          from bots.integration_feedback_bot.integration_feedback_bot import IntegrationFeedbackBot
+          from bots.integration_feedback_bot.tiers import Tier
+
+          tier_map = {"free": Tier.FREE, "pro": Tier.PRO, "enterprise": Tier.ENTERPRISE}
+          tier = tier_map.get(os.getenv("INTEGRATION_TIER", "pro").lower(), Tier.PRO)
+
+          platform  = os.getenv("INTEGRATION_PLATFORM", "GitHub Actions")
+          status    = os.getenv("INTEGRATION_STATUS", "success")
+          details   = os.getenv("INTEGRATION_DETAILS", "")
+          version   = os.getenv("INTEGRATION_VERSION") or None
+          triggered = f"GitHub Actions run #{os.getenv('GITHUB_RUN_NUMBER', '?')}"
+
+          # Retry logic: 3 attempts with exponential backoff
+          MAX_ATTEMPTS = 3
+          result = None
+          last_exc = None
+          for attempt in range(1, MAX_ATTEMPTS + 1):
+              try:
+                  bot = IntegrationFeedbackBot(tier=tier)
+                  result = bot.log_integration(
+                      platform=platform,
+                      status=status,
+                      details=details,
+                      version=version,
+                      triggered_by=triggered,
+                  )
+                  break
+              except Exception as exc:
+                  last_exc = exc
+                  log_entry = {
+                      "workflow": "integration_feedback_bot",
+                      "attempt": attempt,
+                      "max_attempts": MAX_ATTEMPTS,
+                      "error": str(exc),
+                      "platform": platform,
+                      "run_number": os.getenv("GITHUB_RUN_NUMBER", "?"),
+                  }
+                  if attempt < MAX_ATTEMPTS:
+                      wait = 5 * (2 ** (attempt - 1))
+                      log_entry["retry_in_seconds"] = wait
+                      logger.warning(json.dumps(log_entry))
+                      time.sleep(wait)
+                  else:
+                      logger.error(json.dumps(log_entry))
+                      raise
+
+          entry = result["entry"]
+          logger.info(json.dumps({
+              "workflow": "integration_feedback_bot",
+              "platform": entry["platform"],
+              "status": entry["status"],
+              "details": entry["details"],
+              "slack_sent": result["slack_sent"],
+              "discord_sent": result["discord_sent"],
+              "suggestions_count": len(result.get("suggestions", [])),
+          }))
+
+          print(f"  Platform : {entry['platform']}")
+          print(f"  Status   : {entry['status'].upper()}")
+          print(f"  Details  : {entry['details']}")
+          print(f"  Slack    : {'sent' if result['slack_sent'] else 'not sent'}")
+          if result["suggestions"]:
+              print("  Auto-Heal Suggestions:")
+              for s in result["suggestions"]:
+                  print(f"    • {s}")
+
+          summary = bot.get_summary()
+          print(f"\nTotal logged: {summary['total_logged']} | "
+                f"Success rate: {summary['success_rate_pct']}%")
+          EOF
+
+      - name: Commit updated integration_log.json
+        run: |
+          BRANCH="${GITHUB_REF_NAME:-main}"
+          git config user.name  "dreamco-bot[bot]"
+          git config user.email "dreamco-bot@users.noreply.github.com"
+          git add data/integration_log.json
+          if git diff --cached --quiet; then
+            echo "No changes to commit."
+          else
+            git commit -m "chore(data): update integration_log.json via Integration Feedback Bot [skip ci]"
+            for attempt in 1 2 3; do
+              git pull --rebase origin "${BRANCH}" || { git rebase --abort || true; }
+              if git push origin "HEAD:${BRANCH}"; then
+                echo "Push succeeded on attempt ${attempt}."
+                break
+              fi
+              if [ "${attempt}" -eq 3 ]; then
+                echo "Push failed after 3 attempts."
+                exit 1
+              fi
+              echo "Push rejected, retrying..."
+              sleep $((attempt * 2))
+            done
+          fi
+
+      - name: Notify Slack on job failure
+        if: failure()
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+        run: |
+          if [ -n "$SLACK_WEBHOOK_URL" ]; then
+            python - <<'PYEOF'
+          import json, urllib.request, os
+          url = os.environ["SLACK_WEBHOOK_URL"]
+          payload = json.dumps({
+              "text": (
+                  ":rotating_light: *Integration Feedback Bot FAILED*\n"
+                  f"> Workflow run #{os.environ.get('GITHUB_RUN_NUMBER', '?')} "
+                  f"on `{os.environ.get('GITHUB_REF_NAME', 'main')}`\n"
+                  f"> Repo: {os.environ.get('GITHUB_REPOSITORY', '')}"
+              )
+          }).encode()
+          req = urllib.request.Request(url, data=payload,
+                                        headers={"Content-Type": "application/json"})
+          urllib.request.urlopen(req, timeout=10)
+          PYEOF
+          fi

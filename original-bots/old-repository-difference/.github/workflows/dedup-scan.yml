@@ -1,0 +1,49 @@
+name: Deduplication Scanner
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  dedup-scan:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      actions: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+      - name: Prepare reports directory
+        run: mkdir -p reports
+      - name: Run duplication scanner
+        run: python dreamco_platform/refactor/duplication_scanner.py --json reports/dedup-report.json
+      - name: Print scanner summary
+        run: cat reports/dedup-report.json
+      - name: Validate overlap threshold
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          report = json.loads(Path('reports/dedup-report.json').read_text())
+          overlap = float(report.get('overlap_percent', 0))
+          print(f'Overlap: {overlap}%')
+          if overlap > 5.0:
+              raise SystemExit(1)
+          PY
+      - name: Upload dedup report
+        uses: actions/upload-artifact@v4
+        with:
+          name: dedup-report
+          path: reports/dedup-report.json
+          if-no-files-found: error

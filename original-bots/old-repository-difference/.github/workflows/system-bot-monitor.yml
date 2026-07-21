@@ -1,0 +1,50 @@
+name: System and Bot Builds Monitoring
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 * * * *' # Run build monitoring hourly
+
+jobs:
+  monitor-system-build:
+    name: Monitor and Track System Builds
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v3
+
+    - name: Install Dependencies
+      run: |
+        pip install rq redis
+
+    - name: Monitor System Build
+      run: |
+        python -m core.self_builder > build-monitor.log 2>&1 || echo 'Build Failed'
+
+    - name: Upload Logs
+      uses: actions/upload-artifact@v3
+      with:
+        name: system-build-monitor-logs
+        path: build-monitor.log
+
+  monitor-bot-builds:
+    name: Monitor All Bot Builds
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        bot: [$(ls bots/)]
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v3
+
+    - name: Monitor Bot Build
+      run: |
+        python bots/{{ matrix.bot }}/main.py > bot-monitor-logs.log 2>&1 || echo 'Bot Build Failed'
+
+    - name: Upload Logs
+      uses: actions/upload-artifact@v3
+      with:
+        name: bot-{{ matrix.bot }}-logs
+        path: bot-monitor-logs.log

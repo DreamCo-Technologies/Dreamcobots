@@ -1,0 +1,169 @@
+name: Buddy
+
+on:
+  workflow_dispatch:
+    inputs:
+      action:
+        description: "Buddy action: question | music | code | test | orchestrate | all"
+        required: true
+        default: "question"
+      prompt:
+        description: "Message or request for Buddy"
+        required: false
+        default: "How can Buddy help me today?"
+      run_full_suite:
+        description: "Run repository test suites from Buddy"
+        required: false
+        default: "false"
+  workflow_call:
+    inputs:
+      action:
+        description: Buddy action.
+        required: false
+        type: string
+        default: "question"
+      prompt:
+        description: Buddy prompt.
+        required: false
+        type: string
+        default: "How can Buddy help me today?"
+      run_full_suite:
+        description: Run repository test suites.
+        required: false
+        type: string
+        default: "false"
+
+jobs:
+  buddy-interaction:
+    name: Buddy interaction + capability testing
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    outputs:
+      action: ${{ steps.buddy.outputs.action }}
+      prompt: ${{ steps.buddy.outputs.prompt }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+
+      - name: Buddy command center
+        id: buddy
+        env:
+          BUDDY_ACTION: ${{ inputs.action || github.event.inputs.action || 'question' }}
+          BUDDY_PROMPT: ${{ inputs.prompt || github.event.inputs.prompt || 'How can Buddy help me today?' }}
+        run: |
+          python - <<'PY'
+          import os
+          from datetime import datetime, timezone
+
+          action = os.getenv("BUDDY_ACTION", "question").strip().lower()
+          prompt = os.getenv("BUDDY_PROMPT", "").strip()
+          now = datetime.now(timezone.utc).isoformat()
+
+          if action == "music":
+              seed = sum(ord(ch) for ch in prompt) if prompt else 0
+              scale = ["C4", "D4", "E4", "F4", "G4", "A4", "B4"]
+              melody = [scale[(seed + i * 2) % len(scale)] for i in range(8)]
+              response = f"🎵 Buddy made a vibe melody for '{prompt}': {' - '.join(melody)}"
+          elif action == "code":
+              response = "💻 Buddy ran a coding check request. Use action=test or run_full_suite=true for full checks."
+          elif action == "test":
+              response = "🧪 Buddy queued repository capability tests."
+          elif action == "orchestrate":
+              response = "🛰️ Buddy queued orchestration of all connected workflows."
+          elif action == "all":
+              response = "🤖 Buddy queued interaction, tests, and orchestration."
+          else:
+              response = f"🤝 Buddy heard your question: '{prompt}' and is ready to help."
+
+          with open("buddy-response.txt", "w", encoding="utf-8") as f:
+              f.write(f"[{now}] action={action}\n")
+              f.write(response + "\n")
+
+          print(response)
+          PY
+          echo "action=${BUDDY_ACTION}" >> "${GITHUB_OUTPUT}"
+          echo "prompt=${BUDDY_PROMPT}" >> "${GITHUB_OUTPUT}"
+
+      - name: Upload Buddy response artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: buddy-response
+          path: buddy-response.txt
+
+  buddy-tests:
+    name: Buddy tests repository capabilities
+    runs-on: ubuntu-latest
+    needs: buddy-interaction
+    permissions:
+      contents: read
+    if: ${{ contains(fromJSON('["test","all","code"]'), needs.buddy-interaction.outputs.action) || (inputs.run_full_suite == 'true') || (github.event.inputs.run_full_suite == 'true') }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          npm ci
+
+      - name: Run bot and workflow capability checks
+        run: |
+          python -m pytest tests/test_company_lookup_bot.py tests/test_integration_feedback_bot.py -q
+          npm run test -- --passWithNoTests
+
+  buddy-control-center:
+    name: Buddy controls all workflow systems
+    runs-on: ubuntu-latest
+    needs: buddy-interaction
+    permissions:
+      actions: write
+      contents: read
+    if: ${{ contains(fromJSON('["orchestrate","all","test"]'), needs.buddy-interaction.outputs.action) }}
+
+    steps:
+      - name: Dispatch all connected workflows
+        uses: actions/github-script@v9
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const ref = context.ref.replace('refs/heads/', '');
+            const prompt = `${{ needs.buddy-interaction.outputs.prompt }}`;
+            const workflows = [
+              { id: '24hour-button.yml', inputs: { run_monitoring: 'false' } },
+              { id: 'company-lookup.yml', inputs: { companies: 'Stripe,OpenAI', tier: 'pro' } },
+              { id: 'integration-feedback.yml', inputs: { platform: 'Buddy', status: 'success', details: `Buddy dispatch executed: ${prompt}`, tier: 'pro' } },
+              { id: 'integration_lookup.yml', inputs: { query: prompt || 'buddy integration query' } },
+              { id: 'timed-monitoring-system.yml', inputs: { dispatch_all_workflows: 'false', run_full_suite: 'true' } },
+            ];
+            for (const workflow of workflows) {
+              await github.rest.actions.createWorkflowDispatch({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                workflow_id: workflow.id,
+                ref,
+                inputs: workflow.inputs,
+              });
+              core.info(`Dispatched ${workflow.id}`);
+            }

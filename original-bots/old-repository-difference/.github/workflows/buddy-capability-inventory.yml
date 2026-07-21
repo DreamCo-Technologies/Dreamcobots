@@ -1,0 +1,69 @@
+name: Buddy Capability Inventory
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+      - buddy-hostinger-starter
+    paths:
+      - "bots/**"
+      - "config/local_first_storage_policy.json"
+      - "config/master_bot_registry.json"
+      - "config/generated/system_libraries/**"
+      - "tests/**"
+      - ".github/workflows/**"
+      - "tools/generate_buddy_capability_inventory.py"
+      - "tools/storage_guard.py"
+  schedule:
+    - cron: "17 */6 * * *"
+
+jobs:
+  inventory:
+    name: Refresh Buddy capability inventory
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Generate inventory
+        run: |
+          python3 tools/generate_buddy_capability_inventory.py
+          python3 tools/generate_buddy_productivity_tracker.py
+          python3 tools/storage_guard.py
+
+      - name: Report production readiness gate
+        run: |
+          python3 tools/generate_buddy_capability_inventory.py --strict-production-ready || {
+            echo "::warning::Not all bots are production-ready yet. See reports/buddy_capability_inventory.json for blockers."
+          }
+          python3 tools/storage_guard.py --strict
+
+      - name: Commit refreshed inventory
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add reports/BUDDY_CAPABILITY_INVENTORY.md reports/buddy_capability_inventory.json reports/buddy_bot_readiness.csv reports/BUDDY_PRODUCTIVITY_TRACKER.md reports/buddy_productivity_tracker.json reports/STORAGE_GUARD_REPORT.md reports/storage_guard_report.json
+          git diff --cached --quiet || git commit -m "Refresh Buddy capability inventory"
+          git push
+
+      - name: Upload Buddy inventory artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: buddy-capability-inventory
+          path: |
+            reports/BUDDY_CAPABILITY_INVENTORY.md
+            reports/buddy_capability_inventory.json
+            reports/buddy_bot_readiness.csv
+            reports/BUDDY_PRODUCTIVITY_TRACKER.md
+            reports/buddy_productivity_tracker.json
+            reports/STORAGE_GUARD_REPORT.md
+            reports/storage_guard_report.json
