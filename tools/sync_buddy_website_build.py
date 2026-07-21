@@ -19,6 +19,7 @@ BOT_SPRINT = ROOT / "config" / "generated" / "buddy_bot_completion_sprint.json"
 API_ROUTER = ROOT / "config" / "generated" / "buddy_professional_api_router.json"
 FREE_MODELS = ROOT / "config" / "generated" / "buddy_free_model_task_library.json"
 GIT_RECOVERY = ROOT / "config" / "generated" / "buddy_git_recovery_audit.json"
+CREATIVE_STUDIO = ROOT / "config" / "generated" / "buddy_multimodal_studio.json"
 
 
 def utc_now() -> str:
@@ -37,6 +38,7 @@ def load_payload() -> dict[str, Any]:
     router = read_json(API_ROUTER)
     free = read_json(FREE_MODELS)
     recovery = read_json(GIT_RECOVERY)
+    creative_studio = read_json(CREATIVE_STUDIO)
 
     native_summary = native.get("summary", {})
     sprint_summary = sprint.get("summary", {})
@@ -72,6 +74,7 @@ def load_payload() -> dict[str, Any]:
             "professional_api_routes": len(router_routes),
             "git_recovery_refs_seen": recovery_summary.get("total_branches_seen", 0),
             "git_repositories_scanned": recovery_summary.get("git_repositories_found", 0),
+            "creative_studio_tracks": len(creative_studio.get("project_types", [])),
         },
         "top_completion_queue": queue[:12],
         "native_routes": native.get("task_routes", [])[:16],
@@ -81,6 +84,7 @@ def load_payload() -> dict[str, Any]:
             "Free/local model resources are optional backup.",
             "Paid, live, money, account, outreach, deploy, and personal-data actions require approval.",
             "The website can show readiness and queue data without claiming unfinished bots are fully complete.",
+            "Voice and likeness rendering requires active adult-owner consent and a configured media engine.",
         ],
     }
 
@@ -101,6 +105,7 @@ def write_report(payload: dict[str, Any]) -> None:
         f"- Completion queue: {summary['completion_queue']}",
         f"- Free model/resources: {summary['free_model_resources']}",
         f"- Professional API routes: {summary['professional_api_routes']}",
+        f"- Creative Studio production tracks: {summary['creative_studio_tracks']}",
         "",
         "## Website Files",
         "",

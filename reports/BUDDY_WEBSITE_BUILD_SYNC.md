@@ -11,6 +11,7 @@ The static website build now has a generated Buddy status file. Future Buddy aud
 - Completion queue: 232
 - Free model/resources: 100
 - Professional API routes: 52
+- Creative Studio production tracks: 3
 
 ## Website Files
 

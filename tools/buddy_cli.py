@@ -17,6 +17,7 @@ BUNDLED_PNPM = Path("/Users/mamas/.cache/codex-runtimes/codex-primary-runtime/de
 TEST_KIT = ROOT / "reports" / "buddy-free-local-test-kit.html"
 SONG_TEST = ROOT / "reports" / "buddy-song-voice-image-test.html"
 WEBSITE_HOME = ROOT / "website" / "index.html"
+STUDIO_HOME = ROOT / "website" / "studio.html"
 
 
 def run(command: list[str], *, check: bool = True) -> int:
@@ -83,6 +84,9 @@ def main() -> int:
     sub.add_parser("bot-sprint-report", help="Print Buddy's ASAP bot completion sprint JSON.")
     sub.add_parser("site-sync", help="Sync Buddy generated report data into the static website build.")
     sub.add_parser("site-report", help="Print the static website Buddy status JSON.")
+    sub.add_parser("studio-refresh", help="Regenerate Buddy Creative Studio registry and report.")
+    sub.add_parser("studio-report", help="Print the Buddy Creative Studio registry.")
+    sub.add_parser("open-studio", help="Open the local Buddy Creative Studio page.")
     sub.add_parser("history-audit", help="Scan local Git clones, branches, and reflogs for recoverable work.")
     sub.add_parser("history-report", help="Print Buddy's Git recovery audit JSON.")
 
@@ -135,6 +139,12 @@ def main() -> int:
         return run(["python3", "tools/sync_buddy_website_build.py"])
     if command == "site-report":
         return show_json(ROOT / "website" / "data" / "buddy-site-status.json")
+    if command == "studio-refresh":
+        return run(["python3", "tools/generate_buddy_multimodal_studio.py"])
+    if command == "studio-report":
+        return show_json(ROOT / "config" / "generated" / "buddy_multimodal_studio.json")
+    if command == "open-studio":
+        return open_file(STUDIO_HOME)
     if command == "history-audit":
         return run(["python3", "tools/generate_buddy_git_recovery_audit.py"])
     if command == "history-report":

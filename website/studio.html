@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Buddy Creative Studio — DreamCo Empire OS</title>
+  <meta name="description" content="Build games, school simulations, and family learning videos with Buddy's local-first, consent-gated creative workflow." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body class="buddy-home studio-page">
+<div id="nav-placeholder"></div><script src="nav.js"></script>
+
+<main class="studio-shell">
+  <header class="studio-header">
+    <div>
+      <div class="hero-badge buddy-status-pill"><span></span> Local-first creative runtime</div>
+      <h1>Build with your story, voice, and image.</h1>
+      <p>Game code, school simulations, and family learning media in one governed production workspace.</p>
+    </div>
+    <a class="btn btn-outline btn-sm" href="buddy.html">Back to Buddy</a>
+  </header>
+
+  <div class="studio-layout">
+    <form id="studio-form" class="studio-controls">
+      <fieldset class="studio-fieldset">
+        <legend>Project</legend>
+        <div class="studio-type-picker" role="radiogroup" aria-label="Project type">
+          <label><input type="radio" name="projectType" value="game" checked /><span>Game</span></label>
+          <label><input type="radio" name="projectType" value="school_simulation" /><span>School simulation</span></label>
+          <label><input type="radio" name="projectType" value="parent_learning_video" /><span>Learning video</span></label>
+        </div>
+        <label class="studio-label" for="project-title">Title</label>
+        <input class="studio-input" id="project-title" required minlength="3" value="Fraction Quest" />
+        <label class="studio-label" for="project-objective">Goal</label>
+        <textarea class="studio-input" id="project-objective" required minlength="10">Teach learners to compare fractions through a playable kitchen challenge.</textarea>
+        <div class="studio-two-col">
+          <label>Subject<input class="studio-input" id="project-subject" required value="Fraction comparison" /></label>
+          <label>Audience<input class="studio-input" id="project-audience" required value="Ages 9 to 11" /></label>
+        </div>
+      </fieldset>
+
+      <fieldset class="studio-fieldset">
+        <legend>Creator media</legend>
+        <div class="studio-toggle-row">
+          <div><strong>Use my voice</strong><small>Adult owner recording</small></div>
+          <label class="studio-switch"><input id="use-voice" type="checkbox" aria-label="Use my voice" /><span></span></label>
+        </div>
+        <div id="voice-controls" class="studio-media-controls" hidden>
+          <input id="voice-file" type="file" accept="audio/*" />
+          <div class="studio-button-row">
+            <button id="record-voice" class="btn btn-outline btn-sm" type="button">Record voice</button>
+            <button id="stop-voice" class="btn btn-outline btn-sm" type="button" disabled>Stop</button>
+          </div>
+          <audio id="voice-preview" controls></audio>
+          <p id="voice-status" class="studio-status">No sample selected.</p>
+        </div>
+
+        <div class="studio-toggle-row">
+          <div><strong>Use my likeness</strong><small>Adult owner photo</small></div>
+          <label class="studio-switch"><input id="use-image" type="checkbox" aria-label="Use my likeness" /><span></span></label>
+        </div>
+        <div id="image-controls" class="studio-media-controls" hidden>
+          <input id="image-file" type="file" accept="image/*" />
+          <div class="studio-image-frame"><img id="image-preview" alt="Local creator preview" hidden /></div>
+        </div>
+      </fieldset>
+
+      <fieldset id="consent-controls" class="studio-fieldset" hidden>
+        <legend>Consent</legend>
+        <label class="studio-check"><input id="consent-self" type="checkbox" /> I own this voice and image and they represent me.</label>
+        <label class="studio-check"><input id="consent-adult" type="checkbox" /> I confirm I am an adult.</label>
+        <label class="studio-check"><input id="consent-label" type="checkbox" /> Keep the AI-assisted media label on every output.</label>
+        <p class="studio-guardrail">Minor cloning and cloning another person are blocked. Raw media stays in this browser session unless the owner explicitly configures encrypted storage.</p>
+      </fieldset>
+
+      <div class="studio-action-row">
+        <button class="btn btn-primary" type="submit">Build prototype</button>
+        <button id="clear-media" class="btn btn-outline" type="button">Delete local media</button>
+      </div>
+      <p id="studio-form-status" class="studio-form-status" aria-live="polite"></p>
+    </form>
+
+    <section class="studio-preview" aria-label="Project preview">
+      <div class="studio-preview-bar">
+        <div><span class="dot dot-green"></span><strong> Buddy sandbox</strong></div>
+        <span id="studio-readiness" class="badge badge-green">Ready to build</span>
+      </div>
+      <div id="studio-stage" class="studio-stage">
+        <div class="studio-stage-empty">
+          <span>B</span>
+          <h2>Fraction Quest</h2>
+          <p>Your playable or watchable prototype appears here.</p>
+        </div>
+      </div>
+      <div class="studio-results">
+        <div><span>Code</span><strong id="result-code">Waiting</strong></div>
+        <div><span>Voice</span><strong id="result-voice">Not requested</strong></div>
+        <div><span>Image</span><strong id="result-image">Not requested</strong></div>
+        <div><span>Tests</span><strong id="result-tests">Waiting</strong></div>
+      </div>
+      <div id="studio-output-actions" class="studio-output-actions" hidden>
+        <button id="download-packet" class="btn btn-outline btn-sm" type="button">Save project packet</button>
+        <button id="send-buddy" class="btn btn-outline btn-sm" type="button">Continue in Buddy</button>
+      </div>
+    </section>
+  </div>
+</main>
+
+<script src="studio.js"></script>
+</body>
+</html>
