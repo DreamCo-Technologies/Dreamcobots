@@ -19,6 +19,7 @@ import { getUncachableStripeClient, getStripePublishableKey } from "./stripeClie
 import { db } from "./db";
 import { batchProcessWithSSE } from "./dreamco_integrations/batch";
 import { registerAudioRoutes } from "./dreamco_integrations/audio";
+import { LOCAL_VOICE_ID, buildLocalImagePacket, buildLocalVoicePacket } from "./mediaEngine";
 
 const CORE_SLUGS = new Set(CORE_BOTS.map(b => b.slug));
 const GITHUB_SLUGS = new Set(GITHUB_BOTS.map(b => b.slug));
@@ -66,27 +67,9 @@ const openai = new OpenAI({
   baseURL: process.env.AI_INTEGRATIONS_OPENAI_BASE_URL,
 });
 
-const LOCAL_VOICE_ID = "dreamco-buddy-local";
+const HAS_OPENAI_KEY = Boolean(process.env.AI_INTEGRATIONS_OPENAI_API_KEY);
 const EXTERNAL_VOICE_API_KEY = process.env.BUDDY_VOICE_API_KEY;
 const EXTERNAL_VOICE_API_URL = process.env.BUDDY_VOICE_TTS_URL;
-
-function buildLocalVoicePacket(text: string, voiceId = LOCAL_VOICE_ID) {
-  return {
-    engine: "dreamco-local-browser-tts",
-    provider: "DreamCo",
-    voiceId,
-    format: "browser-speech-synthesis",
-    text,
-    audio: null,
-    consentRequired: true,
-    consentPolicy: "Use only approved voices, scripts, and likenesses. Do not imitate a real person without explicit written consent.",
-    clientInstructions: {
-      api: "window.speechSynthesis",
-      utterance: "new SpeechSynthesisUtterance(packet.text)",
-      voiceSelection: "Use a local system voice selected by the user, then cache only the preference name.",
-    },
-  };
-}
 
 function zodValidationError(err: z.ZodError) {
   return {
@@ -266,9 +249,13 @@ export async function registerRoutes(
       if (!prompt || !String(prompt).trim()) {
         return res.status(400).json({ error: "Prompt is required" });
       }
+      const cleanPrompt = String(prompt).trim();
+      if (!HAS_OPENAI_KEY) {
+        return res.json(buildLocalImagePacket(cleanPrompt, size));
+      }
       const response = await openai.images.generate({
         model: "gpt-image-1",
-        prompt: String(prompt).trim(),
+        prompt: cleanPrompt,
         n: 1,
         size: size as "1024x1024" | "512x512" | "256x256",
       });
@@ -276,9 +263,16 @@ export async function registerRoutes(
       if (!imageData || (!imageData.url && !(imageData as any).b64_json)) {
         return res.status(502).json({ error: "Image generation returned no data. The AI provider may be unavailable or the prompt was rejected." });
       }
-      res.json({ url: imageData.url, b64_json: (imageData as any).b64_json });
+      res.json({ url: imageData.url, b64_json: (imageData as any).b64_json, mimeType: "image/png", provider: "OpenAI", engine: "gpt-image-1" });
     } catch (e: any) {
       console.error("[image] generation error:", e.message);
+      const prompt = String(req.body?.prompt ?? "").trim();
+      if (prompt) {
+        return res.json({
+          ...buildLocalImagePacket(prompt, req.body?.size),
+          fallbackReason: e.message || "AI image provider failed. Local image generation handled the request.",
+        });
+      }
       res.status(500).json({ error: e.message || "Failed to generate image" });
     }
   });
@@ -871,6 +865,24 @@ export async function registerRoutes(
     const { imageUrl, base64Image, mimeType = "image/jpeg", prompt = "Analyze this image in complete detail." } = req.body ?? {};
     if (!imageUrl && !base64Image) return res.status(400).json({ error: "imageUrl or base64Image required" });
     try {
+      if (!HAS_OPENAI_KEY) {
+        const imageType = base64Image ? "base64 upload" : "image URL";
+        const byteEstimate = typeof base64Image === "string" ? Math.round((base64Image.length * 3) / 4) : null;
+        return res.json({
+          analysis: [
+            "Local image intake is working.",
+            `Input type: ${imageType}.`,
+            `MIME type: ${String(mimeType)}.`,
+            byteEstimate ? `Estimated image bytes: ${byteEstimate}.` : `Image URL: ${String(imageUrl).slice(0, 180)}.`,
+            `Requested task: ${String(prompt).slice(0, 500)}`,
+            "Set AI_INTEGRATIONS_OPENAI_API_KEY to enable full visual reasoning, screenshot-to-code, OCR-style extraction, and diagram analysis.",
+          ].join("\n"),
+          provider: "DreamCo",
+          engine: "dreamco-local-image-intake",
+          analyzedAt: new Date().toISOString(),
+          fallbackReason: "AI vision provider is not configured. Local intake still validates the image pipeline.",
+        });
+      }
       const imageSource = base64Image
         ? { type: "image_url" as const, image_url: { url: `data:${mimeType};base64,${base64Image}` } }
         : { type: "image_url" as const, image_url: { url: imageUrl as string } };
@@ -883,7 +895,7 @@ export async function registerRoutes(
         ],
         max_tokens: 1500,
       });
-      res.json({ analysis: result.choices[0]?.message?.content ?? "", analyzedAt: new Date().toISOString() });
+      res.json({ analysis: result.choices[0]?.message?.content ?? "", provider: "OpenAI", engine: CHEAP_MODEL, analyzedAt: new Date().toISOString() });
     } catch (e: any) {
       res.status(500).json({ error: e.message });
     }

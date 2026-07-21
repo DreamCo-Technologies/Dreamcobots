@@ -18,6 +18,10 @@ type Size = typeof SIZES[number];
 interface GenerateImageResponse {
   url?: string;
   b64_json?: string;
+  mimeType?: string;
+  provider?: string;
+  engine?: string;
+  fallbackReason?: string;
 }
 
 export default function ImageGeneratorPanel() {
@@ -57,7 +61,7 @@ export default function ImageGeneratorPanel() {
   const imageSrc = imageResult?.url
     ? imageResult.url
     : imageResult?.b64_json
-    ? `data:image/png;base64,${imageResult.b64_json}`
+    ? `data:${imageResult.mimeType ?? "image/png"};base64,${imageResult.b64_json}`
     : null;
 
   function handleGenerate() {
@@ -86,7 +90,7 @@ export default function ImageGeneratorPanel() {
           </span>
           <div>
             <CardTitle className="text-base">AI Image Generator</CardTitle>
-            <CardDescription className="text-xs">Powered by GPT-Image-1 · 1024×1024 default</CardDescription>
+            <CardDescription className="text-xs">AI provider when configured, local image engine by default</CardDescription>
           </div>
           <Badge className="ml-auto bg-violet-500/15 text-violet-400 border-violet-500/30 text-[10px]">BETA</Badge>
         </div>
@@ -151,6 +155,11 @@ export default function ImageGeneratorPanel() {
 
         {imageSrc && !generateMutation.isPending && (
           <div className="space-y-3" data-testid="image-result">
+            {imageResult?.fallbackReason && (
+              <p className="rounded-lg border border-amber-500/30 bg-amber-500/10 px-3 py-2 text-xs text-amber-200">
+                {imageResult.fallbackReason}
+              </p>
+            )}
             <img
               src={imageSrc}
               alt="AI generated image"
