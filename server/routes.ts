@@ -113,6 +113,13 @@ const creatorBuildPacketSchema = z.object({
   outputTarget: z.string().trim().max(120).default("web_prototype"),
 });
 
+const safeCodexRepairPlanSchema = z.object({
+  problem: z.string().trim().min(1, "Problem description is required").max(5000),
+  affectedFiles: z.array(z.string().trim().max(300)).max(50).default([]),
+  failureLog: z.string().trim().max(10000).default(""),
+  mode: z.enum(["dry_run", "prepare_patch", "owner_approved_local_fix"]).default("dry_run"),
+});
+
 type OfflineDeal = {
   id: string;
   invoiceNumber: string;
@@ -260,6 +267,87 @@ function buildCreatorProjectPacket(input: CreatorBuildPacketInput) {
     ],
     guardrails: studio?.guardrails ?? [],
     approvalRequiredFor: studio?.production_packet_schema?.approval_gates ?? [],
+  };
+}
+
+type SafeCodexRepairPlanInput = z.infer<typeof safeCodexRepairPlanSchema>;
+
+function classifySafeCodexLane(problem: string, failureLog: string) {
+  const text = `${problem}\n${failureLog}`.toLowerCase();
+  const laneRules = [
+    { lane: "security", tokens: ["secret", "token", "credential", "auth bypass", "injection", "xss", "sql"] },
+    { lane: "types", tokens: ["tsc", "typescript", "type error", "not assignable", "property does not exist"] },
+    { lane: "imports", tokens: ["modulenotfounderror", "cannot find module", "import", "path alias"] },
+    { lane: "registry", tokens: ["registry", "catalog", "duplicate slug", "missing bot", "drift"] },
+    { lane: "workflow", tokens: ["github actions", "workflow", "ci", "yaml", "runner"] },
+    { lane: "tests", tokens: ["test failed", "assertion", "playwright", "vitest", "pytest", "jest"] },
+    { lane: "syntax", tokens: ["syntaxerror", "unexpected token", "invalid json", "parse error", "compile"] },
+  ];
+  return laneRules.find(rule => rule.tokens.some(token => text.includes(token)))?.lane ?? "general";
+}
+
+function buildSafeCodexRepairPlan(input: SafeCodexRepairPlanInput) {
+  const system = readRepoJson("config/buddy_safe_codex_system.json");
+  const codeBots = readRepoJson("config/buddy_safe_codex_code_bots.json");
+  const lane = classifySafeCodexLane(input.problem, input.failureLog);
+  const laneConfig = system?.problem_lanes?.[lane] ?? {
+    signals: [],
+    first_tools: ["repository_steward", "targeted local checks"],
+    safe_default: "Create a small local patch plan and verify before shipping.",
+  };
+  const risky = input.mode === "owner_approved_local_fix" ? [] : system?.approval_gates ?? [];
+  return {
+    schema: "dreamco.buddy_safe_codex_repair_plan.v1",
+    generatedAt: new Date().toISOString(),
+    mode: input.mode,
+    lane,
+    problem: input.problem,
+    affectedFiles: input.affectedFiles,
+    localFirst: true,
+    externalProvidersRequired: false,
+    optionalModelsAllowed: true,
+    classification: {
+      signals: laneConfig.signals ?? [],
+      firstTools: laneConfig.first_tools ?? [],
+      safeDefault: laneConfig.safe_default ?? "Investigate locally and prepare a minimal patch.",
+    },
+    codeBotCouncil: {
+      totalCodeBots: codeBots?.total_code_bots ?? 0,
+      suggestedLane: lane,
+      suggestedBots: (codeBots?.bots ?? [])
+        .filter((bot: any) => Array.isArray(bot.lanes) && (bot.lanes.includes(lane) || bot.lanes.includes("general_code")))
+        .slice(0, 12)
+        .map((bot: any) => ({
+          slug: bot.slug,
+          name: bot.name,
+          division: bot.division,
+          category: bot.category,
+          lanes: bot.lanes,
+          role: bot.safe_codex_role,
+        })),
+    },
+    repairPlan: [
+      "Capture current git status and avoid touching unrelated user changes.",
+      "Reproduce or parse the failure with the smallest local command possible.",
+      "Map the failure to affected files and expected behavior.",
+      "Prepare the smallest scoped patch or generated artifact update.",
+      "Run targeted checks first, then broader checks if shared code changed.",
+      "Summarize remaining risk, warnings, and rollback notes before pushing or opening a PR.",
+    ],
+    requiredVerification: [
+      "git diff --check",
+      "JSON validation when configs/reports changed",
+      "Python compile when Python changed",
+      "pnpm run check when TypeScript/frontend/backend changed",
+      "pnpm run build when frontend/backend or server routes changed",
+    ],
+    approvalRequiredBefore: risky,
+    memoryPolicy: system?.memory_policy ?? {},
+    outputPacket: {
+      patchSummary: "pending",
+      testsToRun: laneConfig.first_tools ?? [],
+      prBodySections: ["Problem", "Root Cause", "Fix", "Verification", "Approval Gates", "Rollback"],
+    },
   };
 }
 
@@ -1330,6 +1418,20 @@ export async function registerRoutes(
     res.json(readRepoJson(`config/generated/bot_end_to_end_readiness/divisions/${division}.json`));
   });
 
+  app.get("/api/buddy/safe-codex-system", async (_req, res) => {
+    res.json(readRepoJson("config/buddy_safe_codex_system.json"));
+  });
+
+  app.get("/api/buddy/safe-codex-code-bots", async (_req, res) => {
+    res.json(readRepoJson("config/buddy_safe_codex_code_bots.json"));
+  });
+
+  app.post("/api/buddy/safe-codex/repair-plan", async (req, res) => {
+    const parsed = safeCodexRepairPlanSchema.safeParse(req.body ?? {});
+    if (!parsed.success) return res.status(400).json(zodValidationError(parsed.error));
+    res.json(buildSafeCodexRepairPlan(parsed.data));
+  });
+
   app.post("/api/buddy/creator-studio/build-packet", async (req, res) => {
     const parsed = creatorBuildPacketSchema.safeParse(req.body ?? {});
     if (!parsed.success) return res.status(400).json(zodValidationError(parsed.error));
@@ -1396,6 +1498,7 @@ export async function registerRoutes(
         { name: "Model Choice Registry", route: "GET /api/buddy/model-choices", status: "live", description: "User-selectable model families with strengths, watchouts, and budget-first routing" },
         { name: "Restored Bot Family Bridge", route: "GET /api/buddy/restored-bot-families", status: "live", description: "Recovered original bot families connected back to Buddy as capability groups" },
         { name: "Bot End-To-End Readiness", route: "GET /api/buddy/bot-end-to-end-readiness", status: "live", description: "One-by-one local-first readiness audit for every discovered bot and recovered system" },
+        { name: "Safe Codex Code Manager", route: "POST /api/buddy/safe-codex/repair-plan", status: "live", description: "Local-first repo repair loop for scan, classify, plan, verify, PR packet, and owner-approved fixes" },
         { name: "Web Search", route: "POST /api/search/web", status: "live", description: "GitHub + OpenAI synthesis search" },
         { name: "GitHub Intelligence", route: "GET /api/github-intel/trending", status: "live", description: "Hourly GitHub trending + search" },
         { name: "Council Governance", route: "GET /api/council/proposals", status: "live", description: "Bot proposal submission and approval" },

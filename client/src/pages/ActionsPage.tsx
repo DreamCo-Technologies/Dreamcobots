@@ -111,6 +111,7 @@ export default function ActionsPage() {
   const modelChoicesQ = useQuery<any>({ queryKey: ["/api/buddy/model-choices"], retry: 1 });
   const restoredFamiliesQ = useQuery<any>({ queryKey: ["/api/buddy/restored-bot-families"], retry: 1 });
   const endToEndQ = useQuery<any>({ queryKey: ["/api/buddy/bot-end-to-end-readiness"], retry: 1 });
+  const safeCodexQ = useQuery<any>({ queryKey: ["/api/buddy/safe-codex-code-bots"], retry: 1 });
 
   const restartAll = useMutation({
     mutationFn: () => apiRequest("POST", "/api/tasks/restart-all", {}),
@@ -246,7 +247,7 @@ export default function ActionsPage() {
           </div>
         </Card>
 
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-4" data-testid="buddy-creator-model-bridge">
+        <div className="grid grid-cols-1 lg:grid-cols-5 gap-4" data-testid="buddy-creator-model-bridge">
           <Card className="buddy-card rounded-2xl border border-border/60 p-4">
             <div className="flex items-center gap-3 mb-3">
               <span className="inline-flex h-9 w-9 items-center justify-center rounded-xl bg-violet-500/15 border border-violet-500/30">
@@ -328,6 +329,26 @@ export default function ActionsPage() {
               </div>
             </div>
             <p className="text-xs text-muted-foreground mt-3">Local-first by default; other models stay optional.</p>
+          </Card>
+
+          <Card className="buddy-card rounded-2xl border border-border/60 p-4">
+            <div className="flex items-center gap-3 mb-3">
+              <span className="inline-flex h-9 w-9 items-center justify-center rounded-xl bg-cyan-500/15 border border-cyan-500/30">
+                <Code className="h-4 w-4 text-cyan-400" />
+              </span>
+              <div>
+                <p className="text-sm font-bold">Safe Code Bots</p>
+                <p className="text-xs text-muted-foreground">{safeCodexQ.data?.total_code_bots ?? 0} specialists</p>
+              </div>
+            </div>
+            <div className="flex flex-wrap gap-2">
+              {Object.entries(safeCodexQ.data?.lane_counts ?? {}).slice(0, 6).map(([lane, count]: any) => (
+                <Badge key={lane} variant="secondary" className="rounded-full text-[10px]">
+                  {lane}: {count}
+                </Badge>
+              ))}
+            </div>
+            <p className="text-xs text-muted-foreground mt-3">Buddy routes repo fixes to code specialists, then verifies locally.</p>
           </Card>
         </div>
 

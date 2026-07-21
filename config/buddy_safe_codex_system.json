@@ -1,0 +1,233 @@
+{
+  "schema": "dreamco.buddy_safe_codex_system.v1",
+  "mission": "Make Buddy manage repository code like a safe local coding agent: detect problems, plan repairs, run local checks, prepare patches, and request approval before risky actions.",
+  "default_mode": "local_first_dry_run_until_owner_approval",
+  "operating_loop": [
+    {
+      "id": "observe",
+      "label": "Observe",
+      "goal": "Collect repo status, changed files, failing checks, logs, task failures, bot readiness gaps, and GitHub issue/PR context.",
+      "local_tools": [
+        "git status",
+        "repository_steward",
+        "local_import_audit",
+        "registry_drift_detector",
+        "bot_end_to_end_readiness"
+      ],
+      "outputs": [
+        "problem inventory",
+        "risk labels",
+        "affected files"
+      ]
+    },
+    {
+      "id": "classify",
+      "label": "Classify",
+      "goal": "Route each problem to the right fix lane and decide whether it is safe for local repair.",
+      "code_bot_council": "config/buddy_safe_codex_code_bots.json",
+      "lanes": [
+        "syntax",
+        "types",
+        "imports",
+        "tests",
+        "registry",
+        "bot contract",
+        "frontend",
+        "backend",
+        "workflow",
+        "dependency",
+        "security",
+        "docs"
+      ],
+      "outputs": [
+        "root-cause guess",
+        "repair lane",
+        "approval need"
+      ]
+    },
+    {
+      "id": "plan",
+      "label": "Plan",
+      "goal": "Create a small repair plan with expected files, commands, tests, rollback notes, and success criteria.",
+      "outputs": [
+        "patch plan",
+        "test plan",
+        "rollback plan"
+      ]
+    },
+    {
+      "id": "repair",
+      "label": "Repair",
+      "goal": "Apply tightly scoped local fixes only inside the repository and never overwrite unrelated user work.",
+      "outputs": [
+        "local patch",
+        "changed-file summary"
+      ]
+    },
+    {
+      "id": "verify",
+      "label": "Verify",
+      "goal": "Run deterministic local checks and capture evidence before claiming the issue is fixed.",
+      "required_gates": [
+        "git diff --check",
+        "json validation",
+        "python compile where relevant",
+        "TypeScript check",
+        "production build when frontend/backend changed"
+      ],
+      "outputs": [
+        "test evidence",
+        "remaining failures",
+        "known warnings"
+      ]
+    },
+    {
+      "id": "ship_packet",
+      "label": "Ship Packet",
+      "goal": "Prepare commit/PR/release notes with human-readable risks and approval gates.",
+      "outputs": [
+        "commit message",
+        "PR body",
+        "owner approval checklist"
+      ]
+    },
+    {
+      "id": "learn",
+      "label": "Learn",
+      "goal": "Record only useful recurring failure patterns, fix recipes, and prevention checks.",
+      "outputs": [
+        "useful memory",
+        "new lint/test idea",
+        "bot readiness update"
+      ]
+    }
+  ],
+  "approval_gates": [
+    "pushing branches or opening pull requests",
+    "merging or closing pull requests/issues",
+    "installing dependencies",
+    "running networked commands",
+    "changing secrets or credentials",
+    "deploying production",
+    "running paid model calls",
+    "modifying payment, legal, medical, finance, identity, or public-safety behavior",
+    "deleting files or reverting user changes"
+  ],
+  "problem_lanes": {
+    "syntax": {
+      "signals": [
+        "parser error",
+        "compile error",
+        "unexpected token",
+        "invalid JSON"
+      ],
+      "first_tools": [
+        "python3 -m py_compile",
+        "node --check",
+        "python3 -m json.tool"
+      ],
+      "safe_default": "fix locally and re-run parser check"
+    },
+    "types": {
+      "signals": [
+        "tsc error",
+        "missing type",
+        "type mismatch"
+      ],
+      "first_tools": [
+        "pnpm run check"
+      ],
+      "safe_default": "minimal type-correct patch and re-run TypeScript"
+    },
+    "imports": {
+      "signals": [
+        "ModuleNotFoundError",
+        "Cannot find module",
+        "import path"
+      ],
+      "first_tools": [
+        "tools/local_import_audit.py",
+        "rg import"
+      ],
+      "safe_default": "fix path aliases, package exports, or local import guards"
+    },
+    "tests": {
+      "signals": [
+        "failing test",
+        "assertion",
+        "snapshot",
+        "playwright"
+      ],
+      "first_tools": [
+        "targeted test",
+        "fixture replay",
+        "repository_steward"
+      ],
+      "safe_default": "fix production code first; update tests only when expected behavior changed"
+    },
+    "registry": {
+      "signals": [
+        "drift",
+        "missing bot",
+        "duplicate slug",
+        "catalog mismatch"
+      ],
+      "first_tools": [
+        "generate_master_bot_registry.py",
+        "registry_drift_detector.py",
+        "validate_bot_registry.py"
+      ],
+      "safe_default": "regenerate structured outputs and validate"
+    },
+    "security": {
+      "signals": [
+        "secret",
+        "injection",
+        "unsafe eval",
+        "auth bypass"
+      ],
+      "first_tools": [
+        "secret scan",
+        "security-scan",
+        "code review"
+      ],
+      "safe_default": "stop, redact, add guardrail, and request owner review for sensitive fixes"
+    },
+    "workflow": {
+      "signals": [
+        "GitHub Actions failure",
+        "CI",
+        "workflow syntax",
+        "permissions"
+      ],
+      "first_tools": [
+        "repository_steward",
+        "gh logs when available"
+      ],
+      "safe_default": "fix workflow in sandbox branch; avoid activating expensive schedules by default"
+    }
+  },
+  "memory_policy": {
+    "store_only": [
+      "failure pattern",
+      "root cause",
+      "successful fix recipe",
+      "test command",
+      "affected subsystem"
+    ],
+    "do_not_store": [
+      "secrets",
+      "private customer data",
+      "raw tokens",
+      "unneeded logs",
+      "personal sensitive data"
+    ],
+    "retention": "Keep compact recipes and discard noisy raw output after report generation."
+  },
+  "local_first_model_policy": {
+    "default": "Use deterministic local tools and repository context before any AI provider.",
+    "optional_models": "External models may help summarize, compare fixes, or generate code, but only when configured and approved.",
+    "cost_control": "Use cached reports and minimal context. Never run paid model calls for routine lint, JSON, TypeScript, or compile checks."
+  },
+  "generated_at": "2026-07-21T03:07:03Z"
+}
