@@ -51,6 +51,8 @@ COMMANDS: dict[str, list[str]] = {
     "check:professional-api-router": ["python3", "tools/generate_buddy_professional_api_router.py", "--check"],
     "report:native-bot-coverage": ["python3", "tools/generate_buddy_native_bot_coverage.py"],
     "check:native-bot-coverage": ["python3", "tools/generate_buddy_native_bot_coverage.py", "--check"],
+    "report:bot-completion-sprint": ["python3", "tools/generate_buddy_bot_completion_sprint.py"],
+    "check:bot-completion-sprint": ["python3", "tools/generate_buddy_bot_completion_sprint.py", "--check"],
     "report:git-recovery-audit": ["python3", "tools/generate_buddy_git_recovery_audit.py"],
     "check:git-recovery-audit": ["python3", "tools/generate_buddy_git_recovery_audit.py", "--check"],
     "report:google-ai-studio": ["python3", "tools/generate_google_ai_studio_frontend_factory.py"],

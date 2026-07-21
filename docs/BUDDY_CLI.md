@@ -23,6 +23,8 @@ buddy open-song-test
 buddy open-website
 buddy native-coverage
 buddy native-report
+buddy bot-sprint
+buddy bot-sprint-report
 buddy history-audit
 buddy history-report
 buddy router-refresh
@@ -36,6 +38,8 @@ The CLI is free/local-first by default. It can scan, test, generate reports, ope
 For media testing, `buddy song-test` creates a local song packet and `buddy open-song-test` opens a browser page where you can select your own image, select or record your own voice sample locally, and create a clone-readiness packet. The browser test previews and records files locally without uploading them; actual voice cloning stays gated until you approve a configured local model or approved provider for that specific use.
 
 For native bot routing, `buddy native-coverage` scans the repository and proves which bot code can run first without another model. `buddy route <task>` now includes a `native_route` section so Buddy can try DreamCo bot code before optional free/local model help.
+
+For bot completion, `buddy bot-sprint` builds the ASAP queue for unfinished product bots. It separates real product bots from support scripts/tests, ranks the missing runtime work, and defines the finish line for each bot: local behavior, structured outputs, smoke tests, Buddy routing, and approval gates.
 
 For recovery checks, `buddy history-audit` scans local clones, branches, and reflogs for recoverable work. It is non-destructive and only creates a report; compare candidate refs before merging or copying code.
 
