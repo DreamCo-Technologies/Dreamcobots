@@ -33,6 +33,7 @@ SECRET_VALUE_PATTERNS = {
     "Stripe live key": re.compile(r"(?:sk|rk)_live_[A-Za-z0-9]{16,}"),
     "Private key": re.compile(r"-----BEGIN (?:RSA |EC |OPENSSH )?PRIVATE KEY-----"),
 }
+FORBIDDEN_PUBLIC_NAMES = re.compile(r"(?:replit|\bibm\b|watson)", re.IGNORECASE)
 PUBLIC_EXTENSIONS = {
     ".css",
     ".gif",
@@ -257,6 +258,11 @@ def validate_site() -> dict[str, Any]:
         WEBSITE / "404.html",
         WEBSITE / "index.html",
         WEBSITE / "buddy.html",
+        WEBSITE / "buddy-site-sync.js",
+        WEBSITE / "nav.js",
+        WEBSITE / "studio.html",
+        WEBSITE / "studio.js",
+        WEBSITE / "styles.css",
         WEBSITE / "system-map.html",
         WEBSITE / "data" / "buddy-site-status.json",
         PUBLIC_MAP,
@@ -277,6 +283,8 @@ def validate_site() -> dict[str, Any]:
             warnings.append(f"Large public file: website/{relative} ({path.stat().st_size:,} bytes)")
         if path.suffix.lower() in {".html", ".js", ".json", ".txt", ".xml", ".webmanifest"}:
             text = path.read_text(encoding="utf-8")
+            if FORBIDDEN_PUBLIC_NAMES.search(text):
+                errors.append(f"Disallowed outside-builder name detected in website/{relative}")
             for label, pattern in SECRET_VALUE_PATTERNS.items():
                 if pattern.search(text):
                     errors.append(f"{label} detected in website/{relative}")

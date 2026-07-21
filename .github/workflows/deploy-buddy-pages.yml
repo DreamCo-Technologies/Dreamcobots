@@ -35,15 +35,8 @@ jobs:
         with:
           python-version: "3.13"
 
-      - name: Refresh public repository data
-        run: |
-          python3 tools/sync_buddy_website_build.py
-          python3 tools/build_buddy_public_site.py
-
       - name: Run deployment preflight
-        run: |
-          python3 tools/sync_buddy_website_build.py --check
-          python3 tools/build_buddy_public_site.py --check
+        run: python3 tools/build_buddy_public_site.py --check
 
       - name: Configure GitHub Pages
         uses: actions/configure-pages@v6
