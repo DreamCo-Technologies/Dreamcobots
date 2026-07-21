@@ -34,8 +34,16 @@ Buddy is configured to run on this laptop as a local-first DreamCo command cente
 - legal, medical, financial, credit, employment, tenant, identity, or public-safety decisions
 - destructive file operations or overwriting user work
 
+## Safety
+
+- Safety policy: `config/buddy_laptop_safety.json`
+- Safety guide: `docs/BUDDY_LAPTOP_SAFETY.md`
+- Buddy can prepare signup, app-access, and secret setup packets, but live submission or access changes require approval.
+- Raw secret values must stay out of repository files, reports, logs, screenshots, and messages.
+
 ## Key Status Files
 
+- laptop_safety: `config/buddy_laptop_safety.json`
 - runner_report: `reports/local_buddy_runner_report.json`
 - runner_log: `logs/local_buddy_runner/local_buddy_runner.out`
 - bot_readiness: `config/generated/bot_end_to_end_readiness/index.json`

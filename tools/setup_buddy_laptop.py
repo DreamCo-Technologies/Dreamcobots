@@ -15,8 +15,10 @@ from typing import Any
 
 ROOT = Path(__file__).resolve().parents[1]
 CONFIG_FILE = ROOT / "config" / "buddy_laptop_install.json"
+SAFETY_FILE = ROOT / "config" / "buddy_laptop_safety.json"
 REPORT_FILE = ROOT / "reports" / "buddy_laptop_install_report.json"
 README_FILE = ROOT / "docs" / "BUDDY_LAPTOP_SETUP.md"
+SAFETY_README_FILE = ROOT / "docs" / "BUDDY_LAPTOP_SAFETY.md"
 BUNDLED_NODE = Path("/Users/mamas/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node")
 BUNDLED_PNPM = Path("/Users/mamas/.cache/codex-runtimes/codex-primary-runtime/dependencies/bin/fallback/pnpm")
 BUNDLED_NODE_PATH = str(BUNDLED_NODE.parent)
@@ -85,6 +87,7 @@ def build_config() -> dict[str, Any]:
             "destructive file operations or overwriting user work",
         ],
         "status_files": {
+            "laptop_safety": "config/buddy_laptop_safety.json",
             "runner_report": "reports/local_buddy_runner_report.json",
             "runner_log": "logs/local_buddy_runner/local_buddy_runner.out",
             "bot_readiness": "config/generated/bot_end_to_end_readiness/index.json",
@@ -121,6 +124,13 @@ def write_readme(config: dict[str, Any]) -> None:
     lines.extend(
         [
             "",
+            "## Safety",
+            "",
+            f"- Safety policy: `{SAFETY_FILE.relative_to(ROOT)}`",
+            f"- Safety guide: `{SAFETY_README_FILE.relative_to(ROOT)}`",
+            "- Buddy can prepare signup, app-access, and secret setup packets, but live submission or access changes require approval.",
+            "- Raw secret values must stay out of repository files, reports, logs, screenshots, and messages.",
+            "",
             "## Key Status Files",
             "",
         ]
@@ -145,6 +155,7 @@ def main() -> int:
     ]
     commands = [
         run([sys.executable, "tools/local_buddy_runner.py", "--status"]),
+        run([sys.executable, "-m", "json.tool", str(SAFETY_FILE.relative_to(ROOT))]),
         run([sys.executable, "tools/generate_bot_end_to_end_readiness.py"]),
         run([sys.executable, "tools/run_generated_bot_smoke.py"]),
     ]
@@ -152,7 +163,9 @@ def main() -> int:
         "schema": "dreamco.buddy_laptop_install_report.v1",
         "generated_at": utc_now(),
         "config_file": str(CONFIG_FILE.relative_to(ROOT)),
+        "safety_file": str(SAFETY_FILE.relative_to(ROOT)),
         "readme_file": str(README_FILE.relative_to(ROOT)),
+        "safety_readme_file": str(SAFETY_README_FILE.relative_to(ROOT)),
         "binary_checks": checks,
         "command_checks": commands,
         "ready": all(item.get("ok") for item in commands),

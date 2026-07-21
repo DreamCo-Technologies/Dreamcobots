@@ -1,0 +1,69 @@
+{
+  "schema": "dreamco.buddy_laptop_safety.v1",
+  "mission": "Keep Buddy useful on the owner laptop without freezing, leaking secrets, spending money, damaging files, or taking live account actions without approval.",
+  "resource_limits": {
+    "min_free_disk_gb": 5,
+    "max_load_average_1m": 10,
+    "min_battery_percent": 15,
+    "max_command_seconds_cap": 300,
+    "min_background_sleep_minutes": 15,
+    "background_default_sleep_minutes": 60
+  },
+  "secret_key_policy": {
+    "store_values_in_repository": false,
+    "store_values_in_reports": false,
+    "print_values_to_logs": false,
+    "recommended_local_storage": [
+      "macOS Keychain",
+      "environment variables",
+      "provider dashboards",
+      "GitHub Actions secrets for CI only"
+    ],
+    "buddy_can_do": [
+      "detect missing secret names",
+      "create setup checklists",
+      "prepare rotation plans",
+      "prepare masked status reports",
+      "verify that code reads secrets from environment variables"
+    ],
+    "buddy_cannot_do_without_owner_approval": [
+      "create live credentials",
+      "change live credentials",
+      "paste secrets into third-party forms",
+      "commit secrets",
+      "email or message secrets",
+      "store raw secrets in generated files"
+    ]
+  },
+  "app_task_policy": {
+    "safe_by_default": [
+      "open local dashboard",
+      "scan repository",
+      "prepare signup packets",
+      "prepare account setup checklists",
+      "fill local test forms",
+      "draft support messages",
+      "draft pull request notes",
+      "run local tests"
+    ],
+    "approval_required": [
+      "submit signups",
+      "accept terms",
+      "grant repository or account access",
+      "connect payment accounts",
+      "send messages",
+      "publish content",
+      "deploy apps",
+      "buy domains",
+      "change billing",
+      "delete or overwrite user data"
+    ]
+  },
+  "damage_prevention": [
+    "Prefer dry runs and report generation before live action.",
+    "Stop background mode when disk, load, or battery safety checks fail.",
+    "Keep generated logs out of git.",
+    "Redact token-like values from command output before writing reports.",
+    "Require owner approval for any external account, money, credential, deploy, signup, outreach, social, legal, medical, credit, employment, tenant, or identity action."
+  ]
+}

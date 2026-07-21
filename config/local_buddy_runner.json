@@ -16,6 +16,29 @@
     "ai_default": "local_reports_cached_outputs_free_or_low_cost_first",
     "paid_work_requires_owner_approval": true
   },
+  "laptop_safety": {
+    "min_free_disk_gb": 5,
+    "max_load_average_1m": 10,
+    "min_battery_percent": 15,
+    "allow_when_battery_unknown": true,
+    "max_command_seconds_cap": 300,
+    "min_sleep_minutes": 15,
+    "log_redaction": true,
+    "secret_values_in_reports": false,
+    "auto_signup": "prepare_packet_only",
+    "app_control": "local_or_user_visible_only",
+    "external_account_access": "owner_approval_required",
+    "damage_prevention": [
+      "no destructive file operations",
+      "no credential mutation",
+      "no payment changes",
+      "no production deploy",
+      "no social posting",
+      "no customer outreach",
+      "no unattended signups",
+      "no bypassing platform terms"
+    ]
+  },
   "laptop_mode": {
     "enabled": true,
     "local_dashboard_command": "PATH=/Users/mamas/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin:$PATH /Users/mamas/.cache/codex-runtimes/codex-primary-runtime/dependencies/bin/fallback/pnpm run dev",

@@ -12,7 +12,9 @@ from __future__ import annotations
 import argparse
 import json
 import os
+import re
 import signal
+import shutil
 import subprocess
 import sys
 import time
@@ -27,6 +29,13 @@ REPORT_FILE = ROOT / "reports" / "local_buddy_runner_report.json"
 LOG_DIR = ROOT / "logs" / "local_buddy_runner"
 PID_FILE = ROOT / ".local_buddy_runner.pid"
 STDOUT_LOG_FILE = LOG_DIR / "local_buddy_runner.out"
+
+SECRET_PATTERNS = [
+    re.compile(r"(sk-[A-Za-z0-9_\-]{12,})"),
+    re.compile(r"(gh[pousr]_[A-Za-z0-9_]{20,})"),
+    re.compile(r"(xox[baprs]-[A-Za-z0-9\-]{20,})"),
+    re.compile(r"(?i)(api[_-]?key|secret|token|password|credential)(['\"\s:=]+)([A-Za-z0-9_\-./+=]{8,})"),
+]
 
 
 COMMANDS: dict[str, list[str]] = {
@@ -94,6 +103,66 @@ def load_config() -> dict[str, Any]:
     return read_json(CONFIG_FILE, {})
 
 
+def redact_sensitive_text(text: str) -> str:
+    redacted = text
+    for pattern in SECRET_PATTERNS:
+        if pattern.groups >= 3:
+            redacted = pattern.sub(lambda match: f"{match.group(1)}{match.group(2)}[REDACTED]", redacted)
+        else:
+            redacted = pattern.sub("[REDACTED]", redacted)
+    return redacted
+
+
+def battery_percent() -> int | None:
+    if sys.platform != "darwin":
+        return None
+    try:
+        completed = subprocess.run(
+            ["pmset", "-g", "batt"],
+            text=True,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.DEVNULL,
+            timeout=5,
+        )
+    except Exception:
+        return None
+    match = re.search(r"(\d+)%", completed.stdout)
+    return int(match.group(1)) if match else None
+
+
+def safety_preflight(config: dict[str, Any]) -> dict[str, Any]:
+    safety = config.get("laptop_safety", {})
+    disk = shutil.disk_usage(ROOT)
+    free_gb = round(disk.free / (1024**3), 2)
+    min_free_gb = float(safety.get("min_free_disk_gb", 5))
+    max_load = float(safety.get("max_load_average_1m", 10))
+    load_1m = os.getloadavg()[0] if hasattr(os, "getloadavg") else 0
+    charge = battery_percent()
+    min_battery = int(safety.get("min_battery_percent", 15))
+    allow_on_low_battery = bool(safety.get("allow_when_battery_unknown", True))
+    blockers = []
+    if free_gb < min_free_gb:
+        blockers.append(f"free_disk_gb_below_{min_free_gb}")
+    if load_1m > max_load:
+        blockers.append(f"load_average_above_{max_load}")
+    if charge is not None and charge < min_battery:
+        blockers.append(f"battery_below_{min_battery}_percent")
+    if charge is None and not allow_on_low_battery:
+        blockers.append("battery_state_unknown")
+    return {
+        "ok": not blockers,
+        "blockers": blockers,
+        "free_disk_gb": free_gb,
+        "load_average_1m": round(load_1m, 2),
+        "battery_percent": charge,
+        "limits": {
+            "min_free_disk_gb": min_free_gb,
+            "max_load_average_1m": max_load,
+            "min_battery_percent": min_battery,
+        },
+    }
+
+
 def run_command(name: str, timeout: int, dry_run: bool) -> dict[str, Any]:
     command = COMMANDS.get(name)
     started = time.monotonic()
@@ -121,7 +190,7 @@ def run_command(name: str, timeout: int, dry_run: bool) -> dict[str, Any]:
             timeout=timeout,
             env={**os.environ, "PYTHONPYCACHEPREFIX": "/private/tmp/dreamco-pycache"},
         )
-        output = completed.stdout[-8000:]
+        output = redact_sensitive_text(completed.stdout[-8000:])
         record.update(
             {
                 "status": "pass" if completed.returncode == 0 else "fail",
@@ -148,7 +217,24 @@ def run_profile(profile: str, dry_run: bool = False, max_command_seconds: int | 
     if not profile_config:
         raise SystemExit(f"Unknown local Buddy profile: {profile}")
 
-    timeout = int(max_command_seconds or profile_config.get("max_command_seconds") or 120)
+    safety = config.get("laptop_safety", {})
+    timeout_cap = int(safety.get("max_command_seconds_cap", 300))
+    requested_timeout = int(max_command_seconds or profile_config.get("max_command_seconds") or 120)
+    timeout = min(requested_timeout, timeout_cap)
+    preflight = safety_preflight(config)
+    if not preflight["ok"]:
+        return {
+            "schema": "dreamco.local_buddy_runner_report.v1",
+            "generated_at": utc_now(),
+            "profile": profile,
+            "description": profile_config.get("description", ""),
+            "dry_run": dry_run,
+            "summary": {"commands": 0, "passed": 0, "failed": 0, "timed_out": 0, "skipped": 0, "planned": 0},
+            "cost_policy": config.get("cost_policy", {}),
+            "hard_limits": config.get("hard_limits", []),
+            "safety_preflight": preflight,
+            "results": [],
+        }
     commands = list(profile_config.get("commands", []))
     results = [run_command(name, timeout, dry_run) for name in commands]
     summary = {
@@ -168,6 +254,8 @@ def run_profile(profile: str, dry_run: bool = False, max_command_seconds: int | 
         "summary": summary,
         "cost_policy": config.get("cost_policy", {}),
         "hard_limits": config.get("hard_limits", []),
+        "safety_preflight": preflight,
+        "timeout_seconds": timeout,
         "results": results,
     }
 
@@ -245,6 +333,16 @@ def start_daemon(profile: str, sleep_minutes: float, max_command_seconds: int | 
     stdout_handle = STDOUT_LOG_FILE.open("a", encoding="utf-8")
     stdout_handle.write(f"\n[{utc_now()}] starting {' '.join(command)}\n")
     stdout_handle.flush()
+    config = load_config()
+    preflight = safety_preflight(config)
+    if not preflight["ok"]:
+        return {
+            **runner_status(),
+            "started": False,
+            "message": "Local Buddy runner did not start because laptop safety checks failed.",
+            "safety_preflight": preflight,
+        }
+
     process = subprocess.Popen(
         command,
         cwd=ROOT,
@@ -336,8 +434,10 @@ def main() -> int:
         )
         if not args.forever and (args.loop_hours <= 0 or time.monotonic() >= deadline):
             break
+        config = load_config()
+        min_sleep = float(config.get("laptop_safety", {}).get("min_sleep_minutes", 15))
         try:
-            time.sleep(max(args.sleep_minutes, 1) * 60)
+            time.sleep(max(args.sleep_minutes, min_sleep) * 60)
         except KeyboardInterrupt:
             break
 
