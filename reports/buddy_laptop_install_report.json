@@ -1,0 +1,63 @@
+{
+  "binary_checks": [
+    {
+      "name": "python",
+      "path": "/usr/bin/python3"
+    },
+    {
+      "name": "git",
+      "path": "/usr/bin/git"
+    },
+    {
+      "name": "node",
+      "path": null
+    },
+    {
+      "name": "pnpm",
+      "path": null
+    },
+    {
+      "name": "bundled_node",
+      "path": "/Users/mamas/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node"
+    },
+    {
+      "name": "bundled_pnpm",
+      "path": "/Users/mamas/.cache/codex-runtimes/codex-primary-runtime/dependencies/bin/fallback/pnpm"
+    }
+  ],
+  "command_checks": [
+    {
+      "command": [
+        "/Applications/Xcode.app/Contents/Developer/usr/bin/python3",
+        "tools/local_buddy_runner.py",
+        "--status"
+      ],
+      "ok": true,
+      "output_tail": "{\n  \"checked_at\": \"2026-07-21T03:57:23Z\",\n  \"latest_generated_at\": \"2026-07-17T16:42:47Z\",\n  \"latest_profile\": \"aggressive\",\n  \"latest_report\": \"reports/local_buddy_runner_report.json\",\n  \"latest_summary\": {\n    \"commands\": 43,\n    \"failed\": 0,\n    \"passed\": 0,\n    \"planned\": 43,\n    \"skipped\": 0,\n    \"timed_out\": 0\n  },\n  \"pid\": null,\n  \"pid_file\": \".local_buddy_runner.pid\",\n  \"running\": false,\n  \"schema\": \"dreamco.local_buddy_runner_status.v1\",\n  \"stdout_log\": \"logs/local_buddy_runner/local_buddy_runner.out\"\n}\n",
+      "returncode": 0
+    },
+    {
+      "command": [
+        "/Applications/Xcode.app/Contents/Developer/usr/bin/python3",
+        "tools/generate_bot_end_to_end_readiness.py"
+      ],
+      "ok": true,
+      "output_tail": "{\n  \"ok\": true,\n  \"bots\": 1331,\n  \"divisions\": 46\n}\n",
+      "returncode": 0
+    },
+    {
+      "command": [
+        "/Applications/Xcode.app/Contents/Developer/usr/bin/python3",
+        "tools/run_generated_bot_smoke.py"
+      ],
+      "ok": true,
+      "output_tail": "{\n  \"schema\": \"dreamco.generated_bot_smoke.v1\",\n  \"tests_discovered\": 1250,\n  \"tests_passed\": 1250,\n  \"tests_failed\": 0\n}\n",
+      "returncode": 0
+    }
+  ],
+  "config_file": "config/buddy_laptop_install.json",
+  "generated_at": "2026-07-21T03:57:32Z",
+  "readme_file": "docs/BUDDY_LAPTOP_SETUP.md",
+  "ready": true,
+  "schema": "dreamco.buddy_laptop_install_report.v1"
+}

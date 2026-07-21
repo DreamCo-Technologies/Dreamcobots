@@ -15,7 +15,13 @@
     "dreamco:check": "python3 tools/generate_dreamco_professional_os.py --check && python3 tools/generate_buddy_life_opportunity_encyclopedia.py --check && python3 tools/generate_bot_capabilities_library.py --check",
     "dreamco:voice:check": "node -e \"console.log('DreamCo local voice is available without a paid key')\"",
     "dreamco:media:check": "tsx tools/check_media_end_to_end.ts",
-    "dreamco:creator-models": "python3 tools/generate_buddy_creator_model_system.py"
+    "dreamco:creator-models": "python3 tools/generate_buddy_creator_model_system.py",
+    "buddy:laptop:setup": "python3 tools/setup_buddy_laptop.py",
+    "buddy:laptop:once": "python3 tools/local_buddy_runner.py --profile cheap",
+    "buddy:laptop:full": "python3 tools/local_buddy_runner.py --profile aggressive",
+    "buddy:laptop:start": "python3 tools/local_buddy_runner.py --profile aggressive --daemon-start --sleep-minutes 60",
+    "buddy:laptop:status": "python3 tools/local_buddy_runner.py --status",
+    "buddy:laptop:stop": "python3 tools/local_buddy_runner.py --stop"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",
