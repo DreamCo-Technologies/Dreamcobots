@@ -1,6 +1,6 @@
 {
   "schema": "dreamco.bot_end_to_end_readiness.division.v1",
-  "generated_at": "2026-07-21T03:00:32Z",
+  "generated_at": "2026-07-21T03:45:15Z",
   "division": "DreamTrade",
   "bot_count": 13,
   "bots": [
@@ -19,7 +19,9 @@
         "bots/commodity-trader/runtime.py",
         "bots/commodity-trader/tiers.py"
       ],
-      "tests": [],
+      "tests": [
+        "tests/generated_bot_smoke/test_commodity_trader_2e2d3c23_runtime.py"
+      ],
       "capabilities": [
         "Commodity price forecasting",
         "Supply/demand modeling",
@@ -189,13 +191,11 @@
         ]
       },
       "readiness": {
-        "score": 90,
-        "status": "mostly_ready_needs_targeted_tests",
-        "missing": [
-          "direct test coverage"
-        ],
+        "score": 100,
+        "status": "ready_for_local_end_to_end_testing",
+        "missing": [],
         "next_steps": [
-          "Add or verify direct test coverage."
+          "Run direct smoke test and connect the bot card in Buddy/Actions."
         ]
       }
     },
@@ -214,7 +214,9 @@
         "bots/demand-planner/runtime.py",
         "bots/demand-planner/tiers.py"
       ],
-      "tests": [],
+      "tests": [
+        "tests/generated_bot_smoke/test_demand_planner_5942901d_runtime.py"
+      ],
       "capabilities": [
         "Consensus forecast builder",
         "S&OP integration",
@@ -369,13 +371,11 @@
         ]
       },
       "readiness": {
-        "score": 90,
-        "status": "mostly_ready_needs_targeted_tests",
-        "missing": [
-          "direct test coverage"
-        ],
+        "score": 100,
+        "status": "ready_for_local_end_to_end_testing",
+        "missing": [],
         "next_steps": [
-          "Add or verify direct test coverage."
+          "Run direct smoke test and connect the bot card in Buddy/Actions."
         ]
       }
     },
@@ -388,9 +388,18 @@
       "status": "active",
       "profilePath": "App_bots/DreamTrade.json",
       "source": "division_json_system",
-      "codeFiles": [],
-      "tests": [],
-      "capabilities": [],
+      "codeFiles": [
+        "App_bots/DreamTrade.json"
+      ],
+      "tests": [
+        "tests/generated_bot_smoke/test_division_systems_contract.py"
+      ],
+      "capabilities": [
+        "local task intake",
+        "sandbox workflow execution",
+        "test evidence packet",
+        "Buddy approval handoff"
+      ],
       "taskContract": {
         "primary_mode": "local_first_no_external_provider_required",
         "can_run_without_other_providers": true,
@@ -520,19 +529,11 @@
         ]
       },
       "readiness": {
-        "score": 50,
-        "status": "needs_buildout_before_client_demo",
-        "missing": [
-          "capabilities",
-          "runtime code file",
-          "direct test coverage",
-          "business model or target users"
-        ],
+        "score": 100,
+        "status": "ready_for_local_end_to_end_testing",
+        "missing": [],
         "next_steps": [
-          "Add or verify capabilities.",
-          "Add or verify runtime code file.",
-          "Add or verify direct test coverage.",
-          "Add or verify business model or target users."
+          "Run direct smoke test and connect the bot card in Buddy/Actions."
         ]
       }
     },
@@ -551,7 +552,9 @@
         "bots/trade-master/runtime.py",
         "bots/trade-master/tiers.py"
       ],
-      "tests": [],
+      "tests": [
+        "tests/generated_bot_smoke/test_trade_master_927f77ba_runtime.py"
+      ],
       "capabilities": [
         "Import/export documentation",
         "Customs compliance checking",
@@ -721,13 +724,11 @@
         ]
       },
       "readiness": {
-        "score": 90,
-        "status": "mostly_ready_needs_targeted_tests",
-        "missing": [
-          "direct test coverage"
-        ],
+        "score": 100,
+        "status": "ready_for_local_end_to_end_testing",
+        "missing": [],
         "next_steps": [
-          "Add or verify direct test coverage."
+          "Run direct smoke test and connect the bot card in Buddy/Actions."
         ]
       }
     },
@@ -746,7 +747,9 @@
         "bots/import-export/runtime.py",
         "bots/import-export/tiers.py"
       ],
-      "tests": [],
+      "tests": [
+        "tests/generated_bot_smoke/test_import_export_c1b50df1_runtime.py"
+      ],
       "capabilities": [
         "Bill of lading generation",
         "Commercial invoice creation",
@@ -908,13 +911,11 @@
         ]
       },
       "readiness": {
-        "score": 90,
-        "status": "mostly_ready_needs_targeted_tests",
-        "missing": [
-          "direct test coverage"
-        ],
+        "score": 100,
+        "status": "ready_for_local_end_to_end_testing",
+        "missing": [],
         "next_steps": [
-          "Add or verify direct test coverage."
+          "Run direct smoke test and connect the bot card in Buddy/Actions."
         ]
       }
     },
@@ -933,7 +934,9 @@
         "bots/inventory-forecaster/runtime.py",
         "bots/inventory-forecaster/tiers.py"
       ],
-      "tests": [],
+      "tests": [
+        "tests/generated_bot_smoke/test_inventory_forecaster_0b49ea8d_runtime.py"
+      ],
       "capabilities": [
         "SKU demand forecasting",
         "Safety stock calculator",
@@ -1088,13 +1091,11 @@
         ]
       },
       "readiness": {
-        "score": 90,
-        "status": "mostly_ready_needs_targeted_tests",
-        "missing": [
-          "direct test coverage"
-        ],
+        "score": 100,
+        "status": "ready_for_local_end_to_end_testing",
+        "missing": [],
         "next_steps": [
-          "Add or verify direct test coverage."
+          "Run direct smoke test and connect the bot card in Buddy/Actions."
         ]
       }
     },
@@ -1113,7 +1114,9 @@
         "bots/logistics-router/runtime.py",
         "bots/logistics-router/tiers.py"
       ],
-      "tests": [],
+      "tests": [
+        "tests/generated_bot_smoke/test_logistics_router_14bc6e0e_runtime.py"
+      ],
       "capabilities": [
         "Multi-modal route optimization",
         "Carrier rate comparison",
@@ -1268,13 +1271,11 @@
         ]
       },
       "readiness": {
-        "score": 90,
-        "status": "mostly_ready_needs_targeted_tests",
-        "missing": [
-          "direct test coverage"
-        ],
+        "score": 100,
+        "status": "ready_for_local_end_to_end_testing",
+        "missing": [],
         "next_steps": [
-          "Add or verify direct test coverage."
+          "Run direct smoke test and connect the bot card in Buddy/Actions."
         ]
       }
     },
@@ -1293,7 +1294,9 @@
         "bots/procurement-auto/runtime.py",
         "bots/procurement-auto/tiers.py"
       ],
-      "tests": [],
+      "tests": [
+        "tests/generated_bot_smoke/test_procurement_auto_c8eef146_runtime.py"
+      ],
       "capabilities": [
         "Requisition automation",
         "Vendor selection scoring",
@@ -1456,13 +1459,11 @@
         ]
       },
       "readiness": {
-        "score": 90,
-        "status": "mostly_ready_needs_targeted_tests",
-        "missing": [
-          "direct test coverage"
-        ],
+        "score": 100,
+        "status": "ready_for_local_end_to_end_testing",
+        "missing": [],
         "next_steps": [
-          "Add or verify direct test coverage."
+          "Run direct smoke test and connect the bot card in Buddy/Actions."
         ]
       }
     },
@@ -1481,7 +1482,9 @@
         "bots/quality-inspector/runtime.py",
         "bots/quality-inspector/tiers.py"
       ],
-      "tests": [],
+      "tests": [
+        "tests/generated_bot_smoke/test_quality_inspector_661d8f8c_runtime.py"
+      ],
       "capabilities": [
         "Visual defect detection",
         "AQL sampling plans",
@@ -1636,13 +1639,11 @@
         ]
       },
       "readiness": {
-        "score": 90,
-        "status": "mostly_ready_needs_targeted_tests",
-        "missing": [
-          "direct test coverage"
-        ],
+        "score": 100,
+        "status": "ready_for_local_end_to_end_testing",
+        "missing": [],
         "next_steps": [
-          "Add or verify direct test coverage."
+          "Run direct smoke test and connect the bot card in Buddy/Actions."
         ]
       }
     },
@@ -1661,7 +1662,9 @@
         "bots/supply-chain-optimizer/runtime.py",
         "bots/supply-chain-optimizer/tiers.py"
       ],
-      "tests": [],
+      "tests": [
+        "tests/generated_bot_smoke/test_supply_chain_optimizer_a87d54b1_runtime.py"
+      ],
       "capabilities": [
         "Network design optimization",
         "Multi-tier supplier mapping",
@@ -1824,13 +1827,11 @@
         ]
       },
       "readiness": {
-        "score": 90,
-        "status": "mostly_ready_needs_targeted_tests",
-        "missing": [
-          "direct test coverage"
-        ],
+        "score": 100,
+        "status": "ready_for_local_end_to_end_testing",
+        "missing": [],
         "next_steps": [
-          "Add or verify direct test coverage."
+          "Run direct smoke test and connect the bot card in Buddy/Actions."
         ]
       }
     },
@@ -1849,7 +1850,9 @@
         "bots/trade-compliance-engine/runtime.py",
         "bots/trade-compliance-engine/tiers.py"
       ],
-      "tests": [],
+      "tests": [
+        "tests/generated_bot_smoke/test_trade_compliance_engine_c94cc2c7_runtime.py"
+      ],
       "capabilities": [
         "Sanctions list screening",
         "Export control classification",
@@ -2019,13 +2022,11 @@
         ]
       },
       "readiness": {
-        "score": 90,
-        "status": "mostly_ready_needs_targeted_tests",
-        "missing": [
-          "direct test coverage"
-        ],
+        "score": 100,
+        "status": "ready_for_local_end_to_end_testing",
+        "missing": [],
         "next_steps": [
-          "Add or verify direct test coverage."
+          "Run direct smoke test and connect the bot card in Buddy/Actions."
         ]
       }
     },
@@ -2044,7 +2045,9 @@
         "bots/vendor-manager/runtime.py",
         "bots/vendor-manager/tiers.py"
       ],
-      "tests": [],
+      "tests": [
+        "tests/generated_bot_smoke/test_vendor_manager_a25547d5_runtime.py"
+      ],
       "capabilities": [
         "Vendor scorecard engine",
         "Performance benchmarking",
@@ -2198,13 +2201,11 @@
         ]
       },
       "readiness": {
-        "score": 90,
-        "status": "mostly_ready_needs_targeted_tests",
-        "missing": [
-          "direct test coverage"
-        ],
+        "score": 100,
+        "status": "ready_for_local_end_to_end_testing",
+        "missing": [],
         "next_steps": [
-          "Add or verify direct test coverage."
+          "Run direct smoke test and connect the bot card in Buddy/Actions."
         ]
       }
     },
@@ -2223,7 +2224,9 @@
         "bots/warehouse-manager/runtime.py",
         "bots/warehouse-manager/tiers.py"
       ],
-      "tests": [],
+      "tests": [
+        "tests/generated_bot_smoke/test_warehouse_manager_5d5f67a4_runtime.py"
+      ],
       "capabilities": [
         "Slotting optimization engine",
         "Pick wave planning",
@@ -2386,13 +2389,11 @@
         ]
       },
       "readiness": {
-        "score": 90,
-        "status": "mostly_ready_needs_targeted_tests",
-        "missing": [
-          "direct test coverage"
-        ],
+        "score": 100,
+        "status": "ready_for_local_end_to_end_testing",
+        "missing": [],
         "next_steps": [
-          "Add or verify direct test coverage."
+          "Run direct smoke test and connect the bot card in Buddy/Actions."
         ]
       }
     }

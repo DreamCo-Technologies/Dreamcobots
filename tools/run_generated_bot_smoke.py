@@ -44,7 +44,7 @@ def run_test_function(test_function) -> None:
 
 def main() -> int:
     failures: list[dict[str, str]] = []
-    tests = sorted(TEST_DIR.glob("test_*_runtime.py"))
+    tests = sorted(TEST_DIR.glob("test_*.py"))
     for path in tests:
         try:
             module = load_module(path)

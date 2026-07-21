@@ -1,6 +1,6 @@
 {
   "schema": "dreamco.bot_end_to_end_readiness.division.v1",
-  "generated_at": "2026-07-21T03:00:32Z",
+  "generated_at": "2026-07-21T03:45:15Z",
   "division": "DreamMaintenance",
   "bot_count": 22,
   "bots": [
@@ -19,7 +19,9 @@
         "bots/appliance-repair/runtime.py",
         "bots/appliance-repair/tiers.py"
       ],
-      "tests": [],
+      "tests": [
+        "tests/generated_bot_smoke/test_appliance_repair_718fd860_runtime.py"
+      ],
       "capabilities": [
         "Symptom-based diagnosis",
         "Troubleshooting step guides",
@@ -175,13 +177,11 @@
         ]
       },
       "readiness": {
-        "score": 90,
-        "status": "mostly_ready_needs_targeted_tests",
-        "missing": [
-          "direct test coverage"
-        ],
+        "score": 100,
+        "status": "ready_for_local_end_to_end_testing",
+        "missing": [],
         "next_steps": [
-          "Add or verify direct test coverage."
+          "Run direct smoke test and connect the bot card in Buddy/Actions."
         ]
       }
     },
@@ -200,7 +200,9 @@
         "bots/building-automation/runtime.py",
         "bots/building-automation/tiers.py"
       ],
-      "tests": [],
+      "tests": [
+        "tests/generated_bot_smoke/test_building_automation_f2c77ab6_runtime.py"
+      ],
       "capabilities": [
         "BAS integration engine",
         "Energy optimization tools",
@@ -364,13 +366,11 @@
         ]
       },
       "readiness": {
-        "score": 90,
-        "status": "mostly_ready_needs_targeted_tests",
-        "missing": [
-          "direct test coverage"
-        ],
+        "score": 100,
+        "status": "ready_for_local_end_to_end_testing",
+        "missing": [],
         "next_steps": [
-          "Add or verify direct test coverage."
+          "Run direct smoke test and connect the bot card in Buddy/Actions."
         ]
       }
     },
@@ -389,7 +389,9 @@
         "bots/cmms-analytics-elite/runtime.py",
         "bots/cmms-analytics-elite/tiers.py"
       ],
-      "tests": [],
+      "tests": [
+        "tests/generated_bot_smoke/test_cmms_analytics_elite_9f37a5fc_runtime.py"
+      ],
       "capabilities": [
         "Predictive failure modeling",
         "Maintenance cost optimization",
@@ -559,13 +561,11 @@
         ]
       },
       "readiness": {
-        "score": 90,
-        "status": "mostly_ready_needs_targeted_tests",
-        "missing": [
-          "direct test coverage"
-        ],
+        "score": 100,
+        "status": "ready_for_local_end_to_end_testing",
+        "missing": [],
         "next_steps": [
-          "Add or verify direct test coverage."
+          "Run direct smoke test and connect the bot card in Buddy/Actions."
         ]
       }
     },
@@ -578,9 +578,18 @@
       "status": "active",
       "profilePath": "App_bots/DreamMaintenance.json",
       "source": "division_json_system",
-      "codeFiles": [],
-      "tests": [],
-      "capabilities": [],
+      "codeFiles": [
+        "App_bots/DreamMaintenance.json"
+      ],
+      "tests": [
+        "tests/generated_bot_smoke/test_division_systems_contract.py"
+      ],
+      "capabilities": [
+        "local task intake",
+        "sandbox workflow execution",
+        "test evidence packet",
+        "Buddy approval handoff"
+      ],
       "taskContract": {
         "primary_mode": "local_first_no_external_provider_required",
         "can_run_without_other_providers": true,
@@ -710,19 +719,11 @@
         ]
       },
       "readiness": {
-        "score": 50,
-        "status": "needs_buildout_before_client_demo",
-        "missing": [
-          "capabilities",
-          "runtime code file",
-          "direct test coverage",
-          "business model or target users"
-        ],
+        "score": 100,
+        "status": "ready_for_local_end_to_end_testing",
+        "missing": [],
         "next_steps": [
-          "Add or verify capabilities.",
-          "Add or verify runtime code file.",
-          "Add or verify direct test coverage.",
-          "Add or verify business model or target users."
+          "Run direct smoke test and connect the bot card in Buddy/Actions."
         ]
       }
     },
@@ -741,7 +742,9 @@
         "bots/electrical-inspector/runtime.py",
         "bots/electrical-inspector/tiers.py"
       ],
-      "tests": [],
+      "tests": [
+        "tests/generated_bot_smoke/test_electrical_inspector_e317fd02_runtime.py"
+      ],
       "capabilities": [
         "NEC code compliance checking",
         "Load calculation engine",
@@ -897,13 +900,11 @@
         ]
       },
       "readiness": {
-        "score": 90,
-        "status": "mostly_ready_needs_targeted_tests",
-        "missing": [
-          "direct test coverage"
-        ],
+        "score": 100,
+        "status": "ready_for_local_end_to_end_testing",
+        "missing": [],
         "next_steps": [
-          "Add or verify direct test coverage."
+          "Run direct smoke test and connect the bot card in Buddy/Actions."
         ]
       }
     },
@@ -922,7 +923,9 @@
         "bots/elevator-maint/runtime.py",
         "bots/elevator-maint/tiers.py"
       ],
-      "tests": [],
+      "tests": [
+        "tests/generated_bot_smoke/test_elevator_maint_3c948963_runtime.py"
+      ],
       "capabilities": [
         "Inspection schedule tracking",
         "Code compliance monitoring",
@@ -1086,13 +1089,11 @@
         ]
       },
       "readiness": {
-        "score": 90,
-        "status": "mostly_ready_needs_targeted_tests",
-        "missing": [
-          "direct test coverage"
-        ],
+        "score": 100,
+        "status": "ready_for_local_end_to_end_testing",
+        "missing": [],
         "next_steps": [
-          "Add or verify direct test coverage."
+          "Run direct smoke test and connect the bot card in Buddy/Actions."
         ]
       }
     },
@@ -1111,7 +1112,9 @@
         "bots/energy-auditor/runtime.py",
         "bots/energy-auditor/tiers.py"
       ],
-      "tests": [],
+      "tests": [
+        "tests/generated_bot_smoke/test_energy_auditor_60ae174b_runtime.py"
+      ],
       "capabilities": [
         "Energy consumption benchmarking",
         "Building envelope analysis",
@@ -1275,13 +1278,11 @@
         ]
       },
       "readiness": {
-        "score": 90,
-        "status": "mostly_ready_needs_targeted_tests",
-        "missing": [
-          "direct test coverage"
-        ],
+        "score": 100,
+        "status": "ready_for_local_end_to_end_testing",
+        "missing": [],
         "next_steps": [
-          "Add or verify direct test coverage."
+          "Run direct smoke test and connect the bot card in Buddy/Actions."
         ]
       }
     },
@@ -1300,7 +1301,9 @@
         "bots/fire-sprinkler/runtime.py",
         "bots/fire-sprinkler/tiers.py"
       ],
-      "tests": [],
+      "tests": [
+        "tests/generated_bot_smoke/test_fire_sprinkler_b5eca088_runtime.py"
+      ],
       "capabilities": [
         "NFPA 25 compliance tracking",
         "Inspection schedule automation",
@@ -1464,13 +1467,11 @@
         ]
       },
       "readiness": {
-        "score": 90,
-        "status": "mostly_ready_needs_targeted_tests",
-        "missing": [
-          "direct test coverage"
-        ],
+        "score": 100,
+        "status": "ready_for_local_end_to_end_testing",
+        "missing": [],
         "next_steps": [
-          "Add or verify direct test coverage."
+          "Run direct smoke test and connect the bot card in Buddy/Actions."
         ]
       }
     },
@@ -1489,7 +1490,9 @@
         "bots/generator-monitor/runtime.py",
         "bots/generator-monitor/tiers.py"
       ],
-      "tests": [],
+      "tests": [
+        "tests/generated_bot_smoke/test_generator_monitor_70aea9d4_runtime.py"
+      ],
       "capabilities": [
         "Runtime hour tracking",
         "Fuel level monitoring",
@@ -1645,13 +1648,11 @@
         ]
       },
       "readiness": {
-        "score": 90,
-        "status": "mostly_ready_needs_targeted_tests",
-        "missing": [
-          "direct test coverage"
-        ],
+        "score": 100,
+        "status": "ready_for_local_end_to_end_testing",
+        "missing": [],
         "next_steps": [
-          "Add or verify direct test coverage."
+          "Run direct smoke test and connect the bot card in Buddy/Actions."
         ]
       }
     },
@@ -1670,7 +1671,9 @@
         "bots/hvac-diagnostic/runtime.py",
         "bots/hvac-diagnostic/tiers.py"
       ],
-      "tests": [],
+      "tests": [
+        "tests/generated_bot_smoke/test_hvac_diagnostic_a80cae21_runtime.py"
+      ],
       "capabilities": [
         "Fault code interpretation",
         "System performance analysis",
@@ -1826,13 +1829,11 @@
         ]
       },
       "readiness": {
-        "score": 90,
-        "status": "mostly_ready_needs_targeted_tests",
-        "missing": [
-          "direct test coverage"
-        ],
+        "score": 100,
+        "status": "ready_for_local_end_to_end_testing",
+        "missing": [],
         "next_steps": [
-          "Add or verify direct test coverage."
+          "Run direct smoke test and connect the bot card in Buddy/Actions."
         ]
       }
     },
@@ -1851,7 +1852,9 @@
         "bots/home-maint-checklist/runtime.py",
         "bots/home-maint-checklist/tiers.py"
       ],
-      "tests": [],
+      "tests": [
+        "tests/generated_bot_smoke/test_home_maint_checklist_6a39af59_runtime.py"
+      ],
       "capabilities": [
         "Seasonal checklist templates",
         "Reminder schedule configuration",
@@ -2001,13 +2004,11 @@
         ]
       },
       "readiness": {
-        "score": 90,
-        "status": "mostly_ready_needs_targeted_tests",
-        "missing": [
-          "direct test coverage"
-        ],
+        "score": 100,
+        "status": "ready_for_local_end_to_end_testing",
+        "missing": [],
         "next_steps": [
-          "Add or verify direct test coverage."
+          "Run direct smoke test and connect the bot card in Buddy/Actions."
         ]
       }
     },
@@ -2026,7 +2027,9 @@
         "bots/landscaping-mgr/runtime.py",
         "bots/landscaping-mgr/tiers.py"
       ],
-      "tests": [],
+      "tests": [
+        "tests/generated_bot_smoke/test_landscaping_mgr_788fe9f3_runtime.py"
+      ],
       "capabilities": [
         "Service route optimization",
         "Seasonal plan calendar",
@@ -2182,13 +2185,11 @@
         ]
       },
       "readiness": {
-        "score": 90,
-        "status": "mostly_ready_needs_targeted_tests",
-        "missing": [
-          "direct test coverage"
-        ],
+        "score": 100,
+        "status": "ready_for_local_end_to_end_testing",
+        "missing": [],
         "next_steps": [
-          "Add or verify direct test coverage."
+          "Run direct smoke test and connect the bot card in Buddy/Actions."
         ]
       }
     },
@@ -2207,7 +2208,9 @@
         "bots/medical-app-bot/runtime.py",
         "bots/medical-app-bot/tiers.py"
       ],
-      "tests": [],
+      "tests": [
+        "tests/generated_bot_smoke/test_medical_app_bot_c54b8245_runtime.py"
+      ],
       "capabilities": [
         "HIPAA compliance monitoring",
         "EHR/EMR integration (HL7 FHIR)",
@@ -2357,13 +2360,11 @@
         ]
       },
       "readiness": {
-        "score": 90,
-        "status": "mostly_ready_needs_targeted_tests",
-        "missing": [
-          "direct test coverage"
-        ],
+        "score": 100,
+        "status": "ready_for_local_end_to_end_testing",
+        "missing": [],
         "next_steps": [
-          "Add or verify direct test coverage."
+          "Run direct smoke test and connect the bot card in Buddy/Actions."
         ]
       }
     },
@@ -2382,7 +2383,9 @@
         "bots/painting-estimator/runtime.py",
         "bots/painting-estimator/tiers.py"
       ],
-      "tests": [],
+      "tests": [
+        "tests/generated_bot_smoke/test_painting_estimator_f9886cc4_runtime.py"
+      ],
       "capabilities": [
         "Surface area calculator",
         "Paint quantity estimation",
@@ -2532,13 +2535,11 @@
         ]
       },
       "readiness": {
-        "score": 90,
-        "status": "mostly_ready_needs_targeted_tests",
-        "missing": [
-          "direct test coverage"
-        ],
+        "score": 100,
+        "status": "ready_for_local_end_to_end_testing",
+        "missing": [],
         "next_steps": [
-          "Add or verify direct test coverage."
+          "Run direct smoke test and connect the bot card in Buddy/Actions."
         ]
       }
     },
@@ -2557,7 +2558,9 @@
         "bots/pest-control-mgr/runtime.py",
         "bots/pest-control-mgr/tiers.py"
       ],
-      "tests": [],
+      "tests": [
+        "tests/generated_bot_smoke/test_pest_control_mgr_7d3d629e_runtime.py"
+      ],
       "capabilities": [
         "Treatment schedule management",
         "Chemical application logging",
@@ -2713,13 +2716,11 @@
         ]
       },
       "readiness": {
-        "score": 90,
-        "status": "mostly_ready_needs_targeted_tests",
-        "missing": [
-          "direct test coverage"
-        ],
+        "score": 100,
+        "status": "ready_for_local_end_to_end_testing",
+        "missing": [],
         "next_steps": [
-          "Add or verify direct test coverage."
+          "Run direct smoke test and connect the bot card in Buddy/Actions."
         ]
       }
     },
@@ -2738,7 +2739,9 @@
         "bots/plumbing-estimator/runtime.py",
         "bots/plumbing-estimator/tiers.py"
       ],
-      "tests": [],
+      "tests": [
+        "tests/generated_bot_smoke/test_plumbing_estimator_b211d2e6_runtime.py"
+      ],
       "capabilities": [
         "Material takeoff automation",
         "Labor hour calculation",
@@ -2894,13 +2897,11 @@
         ]
       },
       "readiness": {
-        "score": 90,
-        "status": "mostly_ready_needs_targeted_tests",
-        "missing": [
-          "direct test coverage"
-        ],
+        "score": 100,
+        "status": "ready_for_local_end_to_end_testing",
+        "missing": [],
         "next_steps": [
-          "Add or verify direct test coverage."
+          "Run direct smoke test and connect the bot card in Buddy/Actions."
         ]
       }
     },
@@ -2919,7 +2920,9 @@
         "bots/pool-maintenance/runtime.py",
         "bots/pool-maintenance/tiers.py"
       ],
-      "tests": [],
+      "tests": [
+        "tests/generated_bot_smoke/test_pool_maintenance_20f229d0_runtime.py"
+      ],
       "capabilities": [
         "Water chemistry analysis",
         "Chemical dosing calculator",
@@ -3075,13 +3078,11 @@
         ]
       },
       "readiness": {
-        "score": 90,
-        "status": "mostly_ready_needs_targeted_tests",
-        "missing": [
-          "direct test coverage"
-        ],
+        "score": 100,
+        "status": "ready_for_local_end_to_end_testing",
+        "missing": [],
         "next_steps": [
-          "Add or verify direct test coverage."
+          "Run direct smoke test and connect the bot card in Buddy/Actions."
         ]
       }
     },
@@ -3100,7 +3101,9 @@
         "bots/preventive-maint/runtime.py",
         "bots/preventive-maint/tiers.py"
       ],
-      "tests": [],
+      "tests": [
+        "tests/generated_bot_smoke/test_preventive_maint_dec65b3b_runtime.py"
+      ],
       "capabilities": [
         "PM schedule automation",
         "Asset lifecycle tracking",
@@ -3256,13 +3259,11 @@
         ]
       },
       "readiness": {
-        "score": 90,
-        "status": "mostly_ready_needs_targeted_tests",
-        "missing": [
-          "direct test coverage"
-        ],
+        "score": 100,
+        "status": "ready_for_local_end_to_end_testing",
+        "missing": [],
         "next_steps": [
-          "Add or verify direct test coverage."
+          "Run direct smoke test and connect the bot card in Buddy/Actions."
         ]
       }
     },
@@ -3281,7 +3282,9 @@
         "bots/roofing-estimator/runtime.py",
         "bots/roofing-estimator/tiers.py"
       ],
-      "tests": [],
+      "tests": [
+        "tests/generated_bot_smoke/test_roofing_estimator_ba807272_runtime.py"
+      ],
       "capabilities": [
         "Roof measurement tools",
         "Material quantity calculation",
@@ -3437,13 +3440,11 @@
         ]
       },
       "readiness": {
-        "score": 90,
-        "status": "mostly_ready_needs_targeted_tests",
-        "missing": [
-          "direct test coverage"
-        ],
+        "score": 100,
+        "status": "ready_for_local_end_to_end_testing",
+        "missing": [],
         "next_steps": [
-          "Add or verify direct test coverage."
+          "Run direct smoke test and connect the bot card in Buddy/Actions."
         ]
       }
     },
@@ -3462,7 +3463,9 @@
         "bots/smart-building-elite/runtime.py",
         "bots/smart-building-elite/tiers.py"
       ],
-      "tests": [],
+      "tests": [
+        "tests/generated_bot_smoke/test_smart_building_elite_2459b493_runtime.py"
+      ],
       "capabilities": [
         "IoT sensor network management",
         "AI energy modeling engine",
@@ -3632,13 +3635,11 @@
         ]
       },
       "readiness": {
-        "score": 90,
-        "status": "mostly_ready_needs_targeted_tests",
-        "missing": [
-          "direct test coverage"
-        ],
+        "score": 100,
+        "status": "ready_for_local_end_to_end_testing",
+        "missing": [],
         "next_steps": [
-          "Add or verify direct test coverage."
+          "Run direct smoke test and connect the bot card in Buddy/Actions."
         ]
       }
     },
@@ -3657,7 +3658,9 @@
         "bots/tool-inventory/runtime.py",
         "bots/tool-inventory/tiers.py"
       ],
-      "tests": [],
+      "tests": [
+        "tests/generated_bot_smoke/test_tool_inventory_4e621088_runtime.py"
+      ],
       "capabilities": [
         "Tool checkout management",
         "Calibration schedule tracking",
@@ -3807,13 +3810,11 @@
         ]
       },
       "readiness": {
-        "score": 90,
-        "status": "mostly_ready_needs_targeted_tests",
-        "missing": [
-          "direct test coverage"
-        ],
+        "score": 100,
+        "status": "ready_for_local_end_to_end_testing",
+        "missing": [],
         "next_steps": [
-          "Add or verify direct test coverage."
+          "Run direct smoke test and connect the bot card in Buddy/Actions."
         ]
       }
     },
@@ -3832,7 +3833,9 @@
         "bots/work-order-mgr/runtime.py",
         "bots/work-order-mgr/tiers.py"
       ],
-      "tests": [],
+      "tests": [
+        "tests/generated_bot_smoke/test_work_order_mgr_87af5917_runtime.py"
+      ],
       "capabilities": [
         "Work order creation automation",
         "Priority-based routing",
@@ -3988,13 +3991,11 @@
         ]
       },
       "readiness": {
-        "score": 90,
-        "status": "mostly_ready_needs_targeted_tests",
-        "missing": [
-          "direct test coverage"
-        ],
+        "score": 100,
+        "status": "ready_for_local_end_to_end_testing",
+        "missing": [],
         "next_steps": [
-          "Add or verify direct test coverage."
+          "Run direct smoke test and connect the bot card in Buddy/Actions."
         ]
       }
     }

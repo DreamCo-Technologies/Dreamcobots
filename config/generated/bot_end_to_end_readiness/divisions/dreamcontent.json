@@ -1,6 +1,6 @@
 {
   "schema": "dreamco.bot_end_to_end_readiness.division.v1",
-  "generated_at": "2026-07-21T03:00:32Z",
+  "generated_at": "2026-07-21T03:45:15Z",
   "division": "DreamContent",
   "bot_count": 17,
   "bots": [
@@ -20,6 +20,8 @@
         "bots/ad-copy/tiers.py"
       ],
       "tests": [
+        "tests/generated_bot_smoke/test_ad_copy_539481de_runtime.py",
+        "tests/generated_bot_smoke/test_ad_copy_generator_bot_a2a00a74_runtime.py",
         "tests/test_ad_copy_generator_bot.py"
       ],
       "capabilities": [
@@ -199,7 +201,9 @@
         "bots/blog-writer/runtime.py",
         "bots/blog-writer/tiers.py"
       ],
-      "tests": [],
+      "tests": [
+        "tests/generated_bot_smoke/test_blog_writer_5e877201_runtime.py"
+      ],
       "capabilities": [
         "Long-form content generation",
         "SEO keyword integration",
@@ -363,13 +367,11 @@
         ]
       },
       "readiness": {
-        "score": 90,
-        "status": "mostly_ready_needs_targeted_tests",
-        "missing": [
-          "direct test coverage"
-        ],
+        "score": 100,
+        "status": "ready_for_local_end_to_end_testing",
+        "missing": [],
         "next_steps": [
-          "Add or verify direct test coverage."
+          "Run direct smoke test and connect the bot card in Buddy/Actions."
         ]
       }
     },
@@ -388,7 +390,9 @@
         "bots/brand-voice/runtime.py",
         "bots/brand-voice/tiers.py"
       ],
-      "tests": [],
+      "tests": [
+        "tests/generated_bot_smoke/test_brand_voice_23703991_runtime.py"
+      ],
       "capabilities": [
         "Brand voice training engine",
         "Style guide enforcement",
@@ -552,13 +556,11 @@
         ]
       },
       "readiness": {
-        "score": 90,
-        "status": "mostly_ready_needs_targeted_tests",
-        "missing": [
-          "direct test coverage"
-        ],
+        "score": 100,
+        "status": "ready_for_local_end_to_end_testing",
+        "missing": [],
         "next_steps": [
-          "Add or verify direct test coverage."
+          "Run direct smoke test and connect the bot card in Buddy/Actions."
         ]
       }
     },
@@ -577,7 +579,9 @@
         "bots/content-calendar/runtime.py",
         "bots/content-calendar/tiers.py"
       ],
-      "tests": [],
+      "tests": [
+        "tests/generated_bot_smoke/test_content_calendar_fba9bea1_runtime.py"
+      ],
       "capabilities": [
         "Topic cluster planning",
         "Publishing schedule optimization",
@@ -732,13 +736,11 @@
         ]
       },
       "readiness": {
-        "score": 90,
-        "status": "mostly_ready_needs_targeted_tests",
-        "missing": [
-          "direct test coverage"
-        ],
+        "score": 100,
+        "status": "ready_for_local_end_to_end_testing",
+        "missing": [],
         "next_steps": [
-          "Add or verify direct test coverage."
+          "Run direct smoke test and connect the bot card in Buddy/Actions."
         ]
       }
     },
@@ -757,7 +759,9 @@
         "bots/content-analytics/runtime.py",
         "bots/content-analytics/tiers.py"
       ],
-      "tests": [],
+      "tests": [
+        "tests/generated_bot_smoke/test_content_analytics_2aa5014c_runtime.py"
+      ],
       "capabilities": [
         "Content attribution modeling",
         "Engagement scoring engine",
@@ -921,13 +925,11 @@
         ]
       },
       "readiness": {
-        "score": 90,
-        "status": "mostly_ready_needs_targeted_tests",
-        "missing": [
-          "direct test coverage"
-        ],
+        "score": 100,
+        "status": "ready_for_local_end_to_end_testing",
+        "missing": [],
         "next_steps": [
-          "Add or verify direct test coverage."
+          "Run direct smoke test and connect the bot card in Buddy/Actions."
         ]
       }
     },
@@ -946,7 +948,9 @@
         "bots/creative-writer/runtime.py",
         "bots/creative-writer/tiers.py"
       ],
-      "tests": [],
+      "tests": [
+        "tests/generated_bot_smoke/test_creative_writer_adab7692_runtime.py"
+      ],
       "capabilities": [
         "Article writing",
         "Story creation",
@@ -1104,13 +1108,11 @@
         ]
       },
       "readiness": {
-        "score": 90,
-        "status": "mostly_ready_needs_targeted_tests",
-        "missing": [
-          "direct test coverage"
-        ],
+        "score": 100,
+        "status": "ready_for_local_end_to_end_testing",
+        "missing": [],
         "next_steps": [
-          "Add or verify direct test coverage."
+          "Run direct smoke test and connect the bot card in Buddy/Actions."
         ]
       }
     },
@@ -1123,9 +1125,18 @@
       "status": "active",
       "profilePath": "App_bots/DreamContent.json",
       "source": "division_json_system",
-      "codeFiles": [],
-      "tests": [],
-      "capabilities": [],
+      "codeFiles": [
+        "App_bots/DreamContent.json"
+      ],
+      "tests": [
+        "tests/generated_bot_smoke/test_division_systems_contract.py"
+      ],
+      "capabilities": [
+        "local task intake",
+        "sandbox workflow execution",
+        "test evidence packet",
+        "Buddy approval handoff"
+      ],
       "taskContract": {
         "primary_mode": "local_first_no_external_provider_required",
         "can_run_without_other_providers": true,
@@ -1255,19 +1266,11 @@
         ]
       },
       "readiness": {
-        "score": 50,
-        "status": "needs_buildout_before_client_demo",
-        "missing": [
-          "capabilities",
-          "runtime code file",
-          "direct test coverage",
-          "business model or target users"
-        ],
+        "score": 100,
+        "status": "ready_for_local_end_to_end_testing",
+        "missing": [],
         "next_steps": [
-          "Add or verify capabilities.",
-          "Add or verify runtime code file.",
-          "Add or verify direct test coverage.",
-          "Add or verify business model or target users."
+          "Run direct smoke test and connect the bot card in Buddy/Actions."
         ]
       }
     },
@@ -1286,7 +1289,9 @@
         "bots/email-newsletter/runtime.py",
         "bots/email-newsletter/tiers.py"
       ],
-      "tests": [],
+      "tests": [
+        "tests/generated_bot_smoke/test_email_newsletter_5ac7f15b_runtime.py"
+      ],
       "capabilities": [
         "Newsletter template engine",
         "Subject line optimizer",
@@ -1441,13 +1446,11 @@
         ]
       },
       "readiness": {
-        "score": 90,
-        "status": "mostly_ready_needs_targeted_tests",
-        "missing": [
-          "direct test coverage"
-        ],
+        "score": 100,
+        "status": "ready_for_local_end_to_end_testing",
+        "missing": [],
         "next_steps": [
-          "Add or verify direct test coverage."
+          "Run direct smoke test and connect the bot card in Buddy/Actions."
         ]
       }
     },
@@ -1466,7 +1469,9 @@
         "bots/influencer-outreach/runtime.py",
         "bots/influencer-outreach/tiers.py"
       ],
-      "tests": [],
+      "tests": [
+        "tests/generated_bot_smoke/test_influencer_outreach_35b60f91_runtime.py"
+      ],
       "capabilities": [
         "Influencer discovery engine",
         "Engagement rate analysis",
@@ -1621,13 +1626,11 @@
         ]
       },
       "readiness": {
-        "score": 90,
-        "status": "mostly_ready_needs_targeted_tests",
-        "missing": [
-          "direct test coverage"
-        ],
+        "score": 100,
+        "status": "ready_for_local_end_to_end_testing",
+        "missing": [],
         "next_steps": [
-          "Add or verify direct test coverage."
+          "Run direct smoke test and connect the bot card in Buddy/Actions."
         ]
       }
     },
@@ -1646,7 +1649,9 @@
         "bots/pr-press/runtime.py",
         "bots/pr-press/tiers.py"
       ],
-      "tests": [],
+      "tests": [
+        "tests/generated_bot_smoke/test_pr_press_1c362a59_runtime.py"
+      ],
       "capabilities": [
         "Press release templates",
         "News angle finder",
@@ -1801,13 +1806,11 @@
         ]
       },
       "readiness": {
-        "score": 90,
-        "status": "mostly_ready_needs_targeted_tests",
-        "missing": [
-          "direct test coverage"
-        ],
+        "score": 100,
+        "status": "ready_for_local_end_to_end_testing",
+        "missing": [],
         "next_steps": [
-          "Add or verify direct test coverage."
+          "Run direct smoke test and connect the bot card in Buddy/Actions."
         ]
       }
     },
@@ -1826,7 +1829,9 @@
         "bots/podcast-producer/runtime.py",
         "bots/podcast-producer/tiers.py"
       ],
-      "tests": [],
+      "tests": [
+        "tests/generated_bot_smoke/test_podcast_producer_efddd765_runtime.py"
+      ],
       "capabilities": [
         "Episode outline generator",
         "Show notes automation",
@@ -1976,13 +1981,11 @@
         ]
       },
       "readiness": {
-        "score": 90,
-        "status": "mostly_ready_needs_targeted_tests",
-        "missing": [
-          "direct test coverage"
-        ],
+        "score": 100,
+        "status": "ready_for_local_end_to_end_testing",
+        "missing": [],
         "next_steps": [
-          "Add or verify direct test coverage."
+          "Run direct smoke test and connect the bot card in Buddy/Actions."
         ]
       }
     },
@@ -2001,7 +2004,9 @@
         "bots/product-description/runtime.py",
         "bots/product-description/tiers.py"
       ],
-      "tests": [],
+      "tests": [
+        "tests/generated_bot_smoke/test_product_description_b684f4ec_runtime.py"
+      ],
       "capabilities": [
         "Bulk description generation",
         "Feature-to-benefit conversion",
@@ -2156,13 +2161,11 @@
         ]
       },
       "readiness": {
-        "score": 90,
-        "status": "mostly_ready_needs_targeted_tests",
-        "missing": [
-          "direct test coverage"
-        ],
+        "score": 100,
+        "status": "ready_for_local_end_to_end_testing",
+        "missing": [],
         "next_steps": [
-          "Add or verify direct test coverage."
+          "Run direct smoke test and connect the bot card in Buddy/Actions."
         ]
       }
     },
@@ -2181,7 +2184,9 @@
         "bots/seo-optimizer/runtime.py",
         "bots/seo-optimizer/tiers.py"
       ],
-      "tests": [],
+      "tests": [
+        "tests/generated_bot_smoke/test_seo_optimizer_25cc3856_runtime.py"
+      ],
       "capabilities": [
         "Keyword research engine",
         "SERP competitor analysis",
@@ -2336,13 +2341,11 @@
         ]
       },
       "readiness": {
-        "score": 90,
-        "status": "mostly_ready_needs_targeted_tests",
-        "missing": [
-          "direct test coverage"
-        ],
+        "score": 100,
+        "status": "ready_for_local_end_to_end_testing",
+        "missing": [],
         "next_steps": [
-          "Add or verify direct test coverage."
+          "Run direct smoke test and connect the bot card in Buddy/Actions."
         ]
       }
     },
@@ -2361,7 +2364,9 @@
         "bots/social-content/runtime.py",
         "bots/social-content/tiers.py"
       ],
-      "tests": [],
+      "tests": [
+        "tests/generated_bot_smoke/test_social_content_992903ac_runtime.py"
+      ],
       "capabilities": [
         "Platform-specific formatting",
         "Trending topic integration",
@@ -2516,13 +2521,11 @@
         ]
       },
       "readiness": {
-        "score": 90,
-        "status": "mostly_ready_needs_targeted_tests",
-        "missing": [
-          "direct test coverage"
-        ],
+        "score": 100,
+        "status": "ready_for_local_end_to_end_testing",
+        "missing": [],
         "next_steps": [
-          "Add or verify direct test coverage."
+          "Run direct smoke test and connect the bot card in Buddy/Actions."
         ]
       }
     },
@@ -2541,7 +2544,9 @@
         "bots/video-script/runtime.py",
         "bots/video-script/tiers.py"
       ],
-      "tests": [],
+      "tests": [
+        "tests/generated_bot_smoke/test_video_script_409434bb_runtime.py"
+      ],
       "capabilities": [
         "Script structure templates",
         "Hook generator engine",
@@ -2696,13 +2701,11 @@
         ]
       },
       "readiness": {
-        "score": 90,
-        "status": "mostly_ready_needs_targeted_tests",
-        "missing": [
-          "direct test coverage"
-        ],
+        "score": 100,
+        "status": "ready_for_local_end_to_end_testing",
+        "missing": [],
         "next_steps": [
-          "Add or verify direct test coverage."
+          "Run direct smoke test and connect the bot card in Buddy/Actions."
         ]
       }
     },
@@ -2721,7 +2724,9 @@
         "bots/visual-planner/runtime.py",
         "bots/visual-planner/tiers.py"
       ],
-      "tests": [],
+      "tests": [
+        "tests/generated_bot_smoke/test_visual_planner_3b9e5032_runtime.py"
+      ],
       "capabilities": [
         "Mood board generator",
         "Design brief templates",
@@ -2871,13 +2876,11 @@
         ]
       },
       "readiness": {
-        "score": 90,
-        "status": "mostly_ready_needs_targeted_tests",
-        "missing": [
-          "direct test coverage"
-        ],
+        "score": 100,
+        "status": "ready_for_local_end_to_end_testing",
+        "missing": [],
         "next_steps": [
-          "Add or verify direct test coverage."
+          "Run direct smoke test and connect the bot card in Buddy/Actions."
         ]
       }
     },
@@ -2896,7 +2899,9 @@
         "bots/whitepaper-ebook/runtime.py",
         "bots/whitepaper-ebook/tiers.py"
       ],
-      "tests": [],
+      "tests": [
+        "tests/generated_bot_smoke/test_whitepaper_ebook_30b63bb0_runtime.py"
+      ],
       "capabilities": [
         "Research synthesis engine",
         "Chapter structure planner",
@@ -3051,13 +3056,11 @@
         ]
       },
       "readiness": {
-        "score": 90,
-        "status": "mostly_ready_needs_targeted_tests",
-        "missing": [
-          "direct test coverage"
-        ],
+        "score": 100,
+        "status": "ready_for_local_end_to_end_testing",
+        "missing": [],
         "next_steps": [
-          "Add or verify direct test coverage."
+          "Run direct smoke test and connect the bot card in Buddy/Actions."
         ]
       }
     }

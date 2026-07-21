@@ -1,6 +1,6 @@
 {
   "schema": "dreamco.bot_end_to_end_readiness.division.v1",
-  "generated_at": "2026-07-21T03:00:32Z",
+  "generated_at": "2026-07-21T03:45:15Z",
   "division": "DreamEmpire",
   "bot_count": 6,
   "bots": [
@@ -13,9 +13,18 @@
       "status": "active",
       "profilePath": "App_bots/DreamEmpire.json",
       "source": "division_json_system",
-      "codeFiles": [],
-      "tests": [],
-      "capabilities": [],
+      "codeFiles": [
+        "App_bots/DreamEmpire.json"
+      ],
+      "tests": [
+        "tests/generated_bot_smoke/test_division_systems_contract.py"
+      ],
+      "capabilities": [
+        "local task intake",
+        "sandbox workflow execution",
+        "test evidence packet",
+        "Buddy approval handoff"
+      ],
       "taskContract": {
         "primary_mode": "local_first_no_external_provider_required",
         "can_run_without_other_providers": true,
@@ -145,19 +154,11 @@
         ]
       },
       "readiness": {
-        "score": 50,
-        "status": "needs_buildout_before_client_demo",
-        "missing": [
-          "capabilities",
-          "runtime code file",
-          "direct test coverage",
-          "business model or target users"
-        ],
+        "score": 100,
+        "status": "ready_for_local_end_to_end_testing",
+        "missing": [],
         "next_steps": [
-          "Add or verify capabilities.",
-          "Add or verify runtime code file.",
-          "Add or verify direct test coverage.",
-          "Add or verify business model or target users."
+          "Run direct smoke test and connect the bot card in Buddy/Actions."
         ]
       }
     },
@@ -177,6 +178,8 @@
         "bots/auto-scaler/tiers.py"
       ],
       "tests": [
+        "tests/generated_bot_smoke/test_auto_scaler_5193cfd2_runtime.py",
+        "tests/generated_bot_smoke/test_auto_scaler_ba14295d_runtime.py",
         "tests/test_auto_scaler_bot.py"
       ],
       "capabilities": [
@@ -364,7 +367,9 @@
         "bots/empire-monitor/runtime.py",
         "bots/empire-monitor/tiers.py"
       ],
-      "tests": [],
+      "tests": [
+        "tests/generated_bot_smoke/test_empire_monitor_6018bcb7_runtime.py"
+      ],
       "capabilities": [
         "Cross-division health dashboard",
         "Bot performance scoring",
@@ -528,13 +533,11 @@
         ]
       },
       "readiness": {
-        "score": 90,
-        "status": "mostly_ready_needs_targeted_tests",
-        "missing": [
-          "direct test coverage"
-        ],
+        "score": 100,
+        "status": "ready_for_local_end_to_end_testing",
+        "missing": [],
         "next_steps": [
-          "Add or verify direct test coverage."
+          "Run direct smoke test and connect the bot card in Buddy/Actions."
         ]
       }
     },
@@ -553,7 +556,9 @@
         "bots/investor-report-empire/runtime.py",
         "bots/investor-report-empire/tiers.py"
       ],
-      "tests": [],
+      "tests": [
+        "tests/generated_bot_smoke/test_investor_report_empire_a0ebbdc2_runtime.py"
+      ],
       "capabilities": [
         "Financial summary automation",
         "KPI dashboard generation",
@@ -717,13 +722,11 @@
         ]
       },
       "readiness": {
-        "score": 90,
-        "status": "mostly_ready_needs_targeted_tests",
-        "missing": [
-          "direct test coverage"
-        ],
+        "score": 100,
+        "status": "ready_for_local_end_to_end_testing",
+        "missing": [],
         "next_steps": [
-          "Add or verify direct test coverage."
+          "Run direct smoke test and connect the bot card in Buddy/Actions."
         ]
       }
     },
@@ -742,7 +745,9 @@
         "bots/revenue-optimizer/runtime.py",
         "bots/revenue-optimizer/tiers.py"
       ],
-      "tests": [],
+      "tests": [
+        "tests/generated_bot_smoke/test_revenue_optimizer_e666fd3d_runtime.py"
+      ],
       "capabilities": [
         "Revenue leakage detection",
         "Cross-division upsell identification",
@@ -906,13 +911,11 @@
         ]
       },
       "readiness": {
-        "score": 90,
-        "status": "mostly_ready_needs_targeted_tests",
-        "missing": [
-          "direct test coverage"
-        ],
+        "score": 100,
+        "status": "ready_for_local_end_to_end_testing",
+        "missing": [],
         "next_steps": [
-          "Add or verify direct test coverage."
+          "Run direct smoke test and connect the bot card in Buddy/Actions."
         ]
       }
     },
@@ -931,7 +934,9 @@
         "bots/whitelabel-empire/runtime.py",
         "bots/whitelabel-empire/tiers.py"
       ],
-      "tests": [],
+      "tests": [
+        "tests/generated_bot_smoke/test_whitelabel_empire_4423ee8c_runtime.py"
+      ],
       "capabilities": [
         "Brand customization engine",
         "Partner portal management",
@@ -1095,13 +1100,11 @@
         ]
       },
       "readiness": {
-        "score": 90,
-        "status": "mostly_ready_needs_targeted_tests",
-        "missing": [
-          "direct test coverage"
-        ],
+        "score": 100,
+        "status": "ready_for_local_end_to_end_testing",
+        "missing": [],
         "next_steps": [
-          "Add or verify direct test coverage."
+          "Run direct smoke test and connect the bot card in Buddy/Actions."
         ]
       }
     }

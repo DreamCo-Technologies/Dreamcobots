@@ -1,6 +1,6 @@
 {
   "schema": "dreamco.bot_end_to_end_readiness.division.v1",
-  "generated_at": "2026-07-21T03:00:32Z",
+  "generated_at": "2026-07-21T03:45:15Z",
   "division": "DreamScience",
   "bot_count": 22,
   "bots": [
@@ -19,7 +19,9 @@
         "bots/chemical-inventory/runtime.py",
         "bots/chemical-inventory/tiers.py"
       ],
-      "tests": [],
+      "tests": [
+        "tests/generated_bot_smoke/test_chemical_inventory_7c8b3ccf_runtime.py"
+      ],
       "capabilities": [
         "Chemical stock tracking",
         "SDS document management",
@@ -175,13 +177,11 @@
         ]
       },
       "readiness": {
-        "score": 90,
-        "status": "mostly_ready_needs_targeted_tests",
-        "missing": [
-          "direct test coverage"
-        ],
+        "score": 100,
+        "status": "ready_for_local_end_to_end_testing",
+        "missing": [],
         "next_steps": [
-          "Add or verify direct test coverage."
+          "Run direct smoke test and connect the bot card in Buddy/Actions."
         ]
       }
     },
@@ -200,7 +200,9 @@
         "bots/citation-formatter/runtime.py",
         "bots/citation-formatter/tiers.py"
       ],
-      "tests": [],
+      "tests": [
+        "tests/generated_bot_smoke/test_citation_formatter_d1ad7175_runtime.py"
+      ],
       "capabilities": [
         "Multi-style formatting engine",
         "DOI resolution tools",
@@ -350,13 +352,11 @@
         ]
       },
       "readiness": {
-        "score": 90,
-        "status": "mostly_ready_needs_targeted_tests",
-        "missing": [
-          "direct test coverage"
-        ],
+        "score": 100,
+        "status": "ready_for_local_end_to_end_testing",
+        "missing": [],
         "next_steps": [
-          "Add or verify direct test coverage."
+          "Run direct smoke test and connect the bot card in Buddy/Actions."
         ]
       }
     },
@@ -375,7 +375,9 @@
         "bots/clinical-trial-mgr/runtime.py",
         "bots/clinical-trial-mgr/tiers.py"
       ],
-      "tests": [],
+      "tests": [
+        "tests/generated_bot_smoke/test_clinical_trial_mgr_cf38476d_runtime.py"
+      ],
       "capabilities": [
         "Participant recruitment tools",
         "Enrollment tracking dashboard",
@@ -539,13 +541,11 @@
         ]
       },
       "readiness": {
-        "score": 90,
-        "status": "mostly_ready_needs_targeted_tests",
-        "missing": [
-          "direct test coverage"
-        ],
+        "score": 100,
+        "status": "ready_for_local_end_to_end_testing",
+        "missing": [],
         "next_steps": [
-          "Add or verify direct test coverage."
+          "Run direct smoke test and connect the bot card in Buddy/Actions."
         ]
       }
     },
@@ -564,7 +564,9 @@
         "bots/lab-notebook/runtime.py",
         "bots/lab-notebook/tiers.py"
       ],
-      "tests": [],
+      "tests": [
+        "tests/generated_bot_smoke/test_lab_notebook_c69dc217_runtime.py"
+      ],
       "capabilities": [
         "Experiment protocol management",
         "Data entry and timestamping",
@@ -720,13 +722,11 @@
         ]
       },
       "readiness": {
-        "score": 90,
-        "status": "mostly_ready_needs_targeted_tests",
-        "missing": [
-          "direct test coverage"
-        ],
+        "score": 100,
+        "status": "ready_for_local_end_to_end_testing",
+        "missing": [],
         "next_steps": [
-          "Add or verify direct test coverage."
+          "Run direct smoke test and connect the bot card in Buddy/Actions."
         ]
       }
     },
@@ -739,9 +739,18 @@
       "status": "active",
       "profilePath": "App_bots/DreamScience.json",
       "source": "division_json_system",
-      "codeFiles": [],
-      "tests": [],
-      "capabilities": [],
+      "codeFiles": [
+        "App_bots/DreamScience.json"
+      ],
+      "tests": [
+        "tests/generated_bot_smoke/test_division_systems_contract.py"
+      ],
+      "capabilities": [
+        "local task intake",
+        "sandbox workflow execution",
+        "test evidence packet",
+        "Buddy approval handoff"
+      ],
       "taskContract": {
         "primary_mode": "local_first_no_external_provider_required",
         "can_run_without_other_providers": true,
@@ -871,19 +880,11 @@
         ]
       },
       "readiness": {
-        "score": 50,
-        "status": "needs_buildout_before_client_demo",
-        "missing": [
-          "capabilities",
-          "runtime code file",
-          "direct test coverage",
-          "business model or target users"
-        ],
+        "score": 100,
+        "status": "ready_for_local_end_to_end_testing",
+        "missing": [],
         "next_steps": [
-          "Add or verify capabilities.",
-          "Add or verify runtime code file.",
-          "Add or verify direct test coverage.",
-          "Add or verify business model or target users."
+          "Run direct smoke test and connect the bot card in Buddy/Actions."
         ]
       }
     },
@@ -905,6 +906,7 @@
         "bots/dreamco_science/runtime.py"
       ],
       "tests": [
+        "tests/generated_bot_smoke/test_dreamco_science_9f048d10_runtime.py",
         "tests/test_dreamco_science.py"
       ],
       "capabilities": [
@@ -1063,6 +1065,7 @@
         "bots/drug-discovery-ai/tiers.py"
       ],
       "tests": [
+        "tests/generated_bot_smoke/test_drug_discovery_ai_00f81272_runtime.py",
         "tests/test_drug_discovery_pipeline_ai.py"
       ],
       "capabilities": [
@@ -1257,7 +1260,9 @@
         "bots/protocol-builder/runtime.py",
         "bots/protocol-builder/tiers.py"
       ],
-      "tests": [],
+      "tests": [
+        "tests/generated_bot_smoke/test_protocol_builder_3327d333_runtime.py"
+      ],
       "capabilities": [
         "Protocol template library",
         "Step-by-step builder tools",
@@ -1413,13 +1418,11 @@
         ]
       },
       "readiness": {
-        "score": 90,
-        "status": "mostly_ready_needs_targeted_tests",
-        "missing": [
-          "direct test coverage"
-        ],
+        "score": 100,
+        "status": "ready_for_local_end_to_end_testing",
+        "missing": [],
         "next_steps": [
-          "Add or verify direct test coverage."
+          "Run direct smoke test and connect the bot card in Buddy/Actions."
         ]
       }
     },
@@ -1438,7 +1441,9 @@
         "bots/genomics-pipeline/runtime.py",
         "bots/genomics-pipeline/tiers.py"
       ],
-      "tests": [],
+      "tests": [
+        "tests/generated_bot_smoke/test_genomics_pipeline_38581661_runtime.py"
+      ],
       "capabilities": [
         "Sequence alignment automation",
         "Variant calling pipeline",
@@ -1602,13 +1607,11 @@
         ]
       },
       "readiness": {
-        "score": 90,
-        "status": "mostly_ready_needs_targeted_tests",
-        "missing": [
-          "direct test coverage"
-        ],
+        "score": 100,
+        "status": "ready_for_local_end_to_end_testing",
+        "missing": [],
         "next_steps": [
-          "Add or verify direct test coverage."
+          "Run direct smoke test and connect the bot card in Buddy/Actions."
         ]
       }
     },
@@ -1627,7 +1630,9 @@
         "bots/lab-equipment-mgr/runtime.py",
         "bots/lab-equipment-mgr/tiers.py"
       ],
-      "tests": [],
+      "tests": [
+        "tests/generated_bot_smoke/test_lab_equipment_mgr_da23dd67_runtime.py"
+      ],
       "capabilities": [
         "Equipment booking calendar",
         "Maintenance log tracking",
@@ -1777,13 +1782,11 @@
         ]
       },
       "readiness": {
-        "score": 90,
-        "status": "mostly_ready_needs_targeted_tests",
-        "missing": [
-          "direct test coverage"
-        ],
+        "score": 100,
+        "status": "ready_for_local_end_to_end_testing",
+        "missing": [],
         "next_steps": [
-          "Add or verify direct test coverage."
+          "Run direct smoke test and connect the bot card in Buddy/Actions."
         ]
       }
     },
@@ -1802,7 +1805,9 @@
         "bots/lab-safety-training/runtime.py",
         "bots/lab-safety-training/tiers.py"
       ],
-      "tests": [],
+      "tests": [
+        "tests/generated_bot_smoke/test_lab_safety_training_01d426bf_runtime.py"
+      ],
       "capabilities": [
         "Safety module library",
         "Quiz and assessment tools",
@@ -1952,13 +1957,11 @@
         ]
       },
       "readiness": {
-        "score": 90,
-        "status": "mostly_ready_needs_targeted_tests",
-        "missing": [
-          "direct test coverage"
-        ],
+        "score": 100,
+        "status": "ready_for_local_end_to_end_testing",
+        "missing": [],
         "next_steps": [
-          "Add or verify direct test coverage."
+          "Run direct smoke test and connect the bot card in Buddy/Actions."
         ]
       }
     },
@@ -1977,7 +1980,9 @@
         "bots/literature-review/runtime.py",
         "bots/literature-review/tiers.py"
       ],
-      "tests": [],
+      "tests": [
+        "tests/generated_bot_smoke/test_literature_review_d8646280_runtime.py"
+      ],
       "capabilities": [
         "Citation network mapping",
         "Knowledge gap identification",
@@ -2133,13 +2138,11 @@
         ]
       },
       "readiness": {
-        "score": 90,
-        "status": "mostly_ready_needs_targeted_tests",
-        "missing": [
-          "direct test coverage"
-        ],
+        "score": 100,
+        "status": "ready_for_local_end_to_end_testing",
+        "missing": [],
         "next_steps": [
-          "Add or verify direct test coverage."
+          "Run direct smoke test and connect the bot card in Buddy/Actions."
         ]
       }
     },
@@ -2158,7 +2161,9 @@
         "bots/microscopy-ai/runtime.py",
         "bots/microscopy-ai/tiers.py"
       ],
-      "tests": [],
+      "tests": [
+        "tests/generated_bot_smoke/test_microscopy_ai_66e9b302_runtime.py"
+      ],
       "capabilities": [
         "Cell detection and counting",
         "Morphology measurement tools",
@@ -2322,13 +2327,11 @@
         ]
       },
       "readiness": {
-        "score": 90,
-        "status": "mostly_ready_needs_targeted_tests",
-        "missing": [
-          "direct test coverage"
-        ],
+        "score": 100,
+        "status": "ready_for_local_end_to_end_testing",
+        "missing": [],
         "next_steps": [
-          "Add or verify direct test coverage."
+          "Run direct smoke test and connect the bot card in Buddy/Actions."
         ]
       }
     },
@@ -2347,7 +2350,9 @@
         "bots/patent-research/runtime.py",
         "bots/patent-research/tiers.py"
       ],
-      "tests": [],
+      "tests": [
+        "tests/generated_bot_smoke/test_patent_research_116db67e_runtime.py"
+      ],
       "capabilities": [
         "Patent database searching",
         "Prior art identification",
@@ -2503,13 +2508,11 @@
         ]
       },
       "readiness": {
-        "score": 90,
-        "status": "mostly_ready_needs_targeted_tests",
-        "missing": [
-          "direct test coverage"
-        ],
+        "score": 100,
+        "status": "ready_for_local_end_to_end_testing",
+        "missing": [],
         "next_steps": [
-          "Add or verify direct test coverage."
+          "Run direct smoke test and connect the bot card in Buddy/Actions."
         ]
       }
     },
@@ -2528,7 +2531,9 @@
         "bots/peer-review-ai/runtime.py",
         "bots/peer-review-ai/tiers.py"
       ],
-      "tests": [],
+      "tests": [
+        "tests/generated_bot_smoke/test_peer_review_ai_a83efc8a_runtime.py"
+      ],
       "capabilities": [
         "Manuscript quality assessment",
         "Reviewer matching algorithm",
@@ -2692,13 +2697,11 @@
         ]
       },
       "readiness": {
-        "score": 90,
-        "status": "mostly_ready_needs_targeted_tests",
-        "missing": [
-          "direct test coverage"
-        ],
+        "score": 100,
+        "status": "ready_for_local_end_to_end_testing",
+        "missing": [],
         "next_steps": [
-          "Add or verify direct test coverage."
+          "Run direct smoke test and connect the bot card in Buddy/Actions."
         ]
       }
     },
@@ -2717,7 +2720,9 @@
         "bots/research-compliance/runtime.py",
         "bots/research-compliance/tiers.py"
       ],
-      "tests": [],
+      "tests": [
+        "tests/generated_bot_smoke/test_research_compliance_b01ec5b8_runtime.py"
+      ],
       "capabilities": [
         "IRB submission management",
         "IACUC protocol tracking",
@@ -2881,13 +2886,11 @@
         ]
       },
       "readiness": {
-        "score": 90,
-        "status": "mostly_ready_needs_targeted_tests",
-        "missing": [
-          "direct test coverage"
-        ],
+        "score": 100,
+        "status": "ready_for_local_end_to_end_testing",
+        "missing": [],
         "next_steps": [
-          "Add or verify direct test coverage."
+          "Run direct smoke test and connect the bot card in Buddy/Actions."
         ]
       }
     },
@@ -2906,7 +2909,9 @@
         "bots/research-data-mgr/runtime.py",
         "bots/research-data-mgr/tiers.py"
       ],
-      "tests": [],
+      "tests": [
+        "tests/generated_bot_smoke/test_research_data_mgr_01e30757_runtime.py"
+      ],
       "capabilities": [
         "FAIR compliance scoring",
         "Data deposit automation",
@@ -3062,13 +3067,11 @@
         ]
       },
       "readiness": {
-        "score": 90,
-        "status": "mostly_ready_needs_targeted_tests",
-        "missing": [
-          "direct test coverage"
-        ],
+        "score": 100,
+        "status": "ready_for_local_end_to_end_testing",
+        "missing": [],
         "next_steps": [
-          "Add or verify direct test coverage."
+          "Run direct smoke test and connect the bot card in Buddy/Actions."
         ]
       }
     },
@@ -3087,7 +3090,9 @@
         "bots/grant-writer-sci/runtime.py",
         "bots/grant-writer-sci/tiers.py"
       ],
-      "tests": [],
+      "tests": [
+        "tests/generated_bot_smoke/test_grant_writer_sci_63f412cd_runtime.py"
+      ],
       "capabilities": [
         "Funding opportunity database",
         "Proposal structure templates",
@@ -3243,13 +3248,11 @@
         ]
       },
       "readiness": {
-        "score": 90,
-        "status": "mostly_ready_needs_targeted_tests",
-        "missing": [
-          "direct test coverage"
-        ],
+        "score": 100,
+        "status": "ready_for_local_end_to_end_testing",
+        "missing": [],
         "next_steps": [
-          "Add or verify direct test coverage."
+          "Run direct smoke test and connect the bot card in Buddy/Actions."
         ]
       }
     },
@@ -3268,7 +3271,9 @@
         "bots/research-analytics-elite/runtime.py",
         "bots/research-analytics-elite/tiers.py"
       ],
-      "tests": [],
+      "tests": [
+        "tests/generated_bot_smoke/test_research_analytics_elite_c9e4f8a1_runtime.py"
+      ],
       "capabilities": [
         "Research impact scoring",
         "Citation velocity tracking",
@@ -3438,13 +3443,11 @@
         ]
       },
       "readiness": {
-        "score": 90,
-        "status": "mostly_ready_needs_targeted_tests",
-        "missing": [
-          "direct test coverage"
-        ],
+        "score": 100,
+        "status": "ready_for_local_end_to_end_testing",
+        "missing": [],
         "next_steps": [
-          "Add or verify direct test coverage."
+          "Run direct smoke test and connect the bot card in Buddy/Actions."
         ]
       }
     },
@@ -3463,7 +3466,9 @@
         "bots/sample-tracker/runtime.py",
         "bots/sample-tracker/tiers.py"
       ],
-      "tests": [],
+      "tests": [
+        "tests/generated_bot_smoke/test_sample_tracker_2c0adcfa_runtime.py"
+      ],
       "capabilities": [
         "Barcode tracking system",
         "Chain of custody logging",
@@ -3619,13 +3624,11 @@
         ]
       },
       "readiness": {
-        "score": 90,
-        "status": "mostly_ready_needs_targeted_tests",
-        "missing": [
-          "direct test coverage"
-        ],
+        "score": 100,
+        "status": "ready_for_local_end_to_end_testing",
+        "missing": [],
         "next_steps": [
-          "Add or verify direct test coverage."
+          "Run direct smoke test and connect the bot card in Buddy/Actions."
         ]
       }
     },
@@ -3644,7 +3647,9 @@
         "bots/data-analysis-sci/runtime.py",
         "bots/data-analysis-sci/tiers.py"
       ],
-      "tests": [],
+      "tests": [
+        "tests/generated_bot_smoke/test_data_analysis_sci_f5357c25_runtime.py"
+      ],
       "capabilities": [
         "Statistical test selection",
         "Data visualization engine",
@@ -3800,13 +3805,11 @@
         ]
       },
       "readiness": {
-        "score": 90,
-        "status": "mostly_ready_needs_targeted_tests",
-        "missing": [
-          "direct test coverage"
-        ],
+        "score": 100,
+        "status": "ready_for_local_end_to_end_testing",
+        "missing": [],
         "next_steps": [
-          "Add or verify direct test coverage."
+          "Run direct smoke test and connect the bot card in Buddy/Actions."
         ]
       }
     },
@@ -3825,7 +3828,9 @@
         "bots/thesis-writing-ai/runtime.py",
         "bots/thesis-writing-ai/tiers.py"
       ],
-      "tests": [],
+      "tests": [
+        "tests/generated_bot_smoke/test_thesis_writing_ai_37afdf52_runtime.py"
+      ],
       "capabilities": [
         "Chapter structure templates",
         "Formatting compliance checker",
@@ -3981,13 +3986,11 @@
         ]
       },
       "readiness": {
-        "score": 90,
-        "status": "mostly_ready_needs_targeted_tests",
-        "missing": [
-          "direct test coverage"
-        ],
+        "score": 100,
+        "status": "ready_for_local_end_to_end_testing",
+        "missing": [],
         "next_steps": [
-          "Add or verify direct test coverage."
+          "Run direct smoke test and connect the bot card in Buddy/Actions."
         ]
       }
     }

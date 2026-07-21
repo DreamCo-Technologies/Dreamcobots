@@ -1,6 +1,6 @@
 {
   "schema": "dreamco.bot_end_to_end_readiness.division.v1",
-  "generated_at": "2026-07-21T03:00:32Z",
+  "generated_at": "2026-07-21T03:45:15Z",
   "division": "DreamRealEstate",
   "bot_count": 28,
   "bots": [
@@ -19,7 +19,9 @@
         "bots/exchange-1031/runtime.py",
         "bots/exchange-1031/tiers.py"
       ],
-      "tests": [],
+      "tests": [
+        "tests/generated_bot_smoke/test_exchange_1031_3558facf_runtime.py"
+      ],
       "capabilities": [
         "Replacement property matching",
         "45-day identification tracker",
@@ -174,13 +176,11 @@
         ]
       },
       "readiness": {
-        "score": 90,
-        "status": "mostly_ready_needs_targeted_tests",
-        "missing": [
-          "direct test coverage"
-        ],
+        "score": 100,
+        "status": "ready_for_local_end_to_end_testing",
+        "missing": [],
         "next_steps": [
-          "Add or verify direct test coverage."
+          "Run direct smoke test and connect the bot card in Buddy/Actions."
         ]
       }
     },
@@ -199,7 +199,9 @@
         "bots/property-mgmt/runtime.py",
         "bots/property-mgmt/tiers.py"
       ],
-      "tests": [],
+      "tests": [
+        "tests/generated_bot_smoke/test_property_mgmt_1da46b39_runtime.py"
+      ],
       "capabilities": [
         "Tenant screening automation",
         "Rent collection engine",
@@ -354,13 +356,11 @@
         ]
       },
       "readiness": {
-        "score": 90,
-        "status": "mostly_ready_needs_targeted_tests",
-        "missing": [
-          "direct test coverage"
-        ],
+        "score": 100,
+        "status": "ready_for_local_end_to_end_testing",
+        "missing": [],
         "next_steps": [
-          "Add or verify direct test coverage."
+          "Run direct smoke test and connect the bot card in Buddy/Actions."
         ]
       }
     },
@@ -379,7 +379,9 @@
         "bots/lease-analyzer/runtime.py",
         "bots/lease-analyzer/tiers.py"
       ],
-      "tests": [],
+      "tests": [
+        "tests/generated_bot_smoke/test_lease_analyzer_34852f31_runtime.py"
+      ],
       "capabilities": [
         "Lease abstraction NLP",
         "Expense passthrough analysis",
@@ -534,13 +536,11 @@
         ]
       },
       "readiness": {
-        "score": 90,
-        "status": "mostly_ready_needs_targeted_tests",
-        "missing": [
-          "direct test coverage"
-        ],
+        "score": 100,
+        "status": "ready_for_local_end_to_end_testing",
+        "missing": [],
         "next_steps": [
-          "Add or verify direct test coverage."
+          "Run direct smoke test and connect the bot card in Buddy/Actions."
         ]
       }
     },
@@ -559,7 +559,9 @@
         "bots/commercial-scanner/runtime.py",
         "bots/commercial-scanner/tiers.py"
       ],
-      "tests": [],
+      "tests": [
+        "tests/generated_bot_smoke/test_commercial_scanner_98f01ce5_runtime.py"
+      ],
       "capabilities": [
         "Off-market deal sourcing",
         "Cap rate calculator",
@@ -722,13 +724,11 @@
         ]
       },
       "readiness": {
-        "score": 90,
-        "status": "mostly_ready_needs_targeted_tests",
-        "missing": [
-          "direct test coverage"
-        ],
+        "score": 100,
+        "status": "ready_for_local_end_to_end_testing",
+        "missing": [],
         "next_steps": [
-          "Add or verify direct test coverage."
+          "Run direct smoke test and connect the bot card in Buddy/Actions."
         ]
       }
     },
@@ -747,7 +747,9 @@
         "bots/construction-budget/runtime.py",
         "bots/construction-budget/tiers.py"
       ],
-      "tests": [],
+      "tests": [
+        "tests/generated_bot_smoke/test_construction_budget_b6cb76da_runtime.py"
+      ],
       "capabilities": [
         "Budget vs. actual tracking",
         "Change order impact analysis",
@@ -902,13 +904,11 @@
         ]
       },
       "readiness": {
-        "score": 90,
-        "status": "mostly_ready_needs_targeted_tests",
-        "missing": [
-          "direct test coverage"
-        ],
+        "score": 100,
+        "status": "ready_for_local_end_to_end_testing",
+        "missing": [],
         "next_steps": [
-          "Add or verify direct test coverage."
+          "Run direct smoke test and connect the bot card in Buddy/Actions."
         ]
       }
     },
@@ -927,7 +927,9 @@
         "bots/distressed-asset/runtime.py",
         "bots/distressed-asset/tiers.py"
       ],
-      "tests": [],
+      "tests": [
+        "tests/generated_bot_smoke/test_distressed_asset_86b26d83_runtime.py"
+      ],
       "capabilities": [
         "Foreclosure pipeline tracker",
         "Pre-foreclosure outreach",
@@ -1082,13 +1084,11 @@
         ]
       },
       "readiness": {
-        "score": 90,
-        "status": "mostly_ready_needs_targeted_tests",
-        "missing": [
-          "direct test coverage"
-        ],
+        "score": 100,
+        "status": "ready_for_local_end_to_end_testing",
+        "missing": [],
         "next_steps": [
-          "Add or verify direct test coverage."
+          "Run direct smoke test and connect the bot card in Buddy/Actions."
         ]
       }
     },
@@ -1108,6 +1108,7 @@
         "bots/dream_real_estate/tiers.py"
       ],
       "tests": [
+        "tests/generated_bot_smoke/test_dream_real_estate_219fc5a2_runtime.py",
         "tests/test_dream_real_estate.py"
       ],
       "capabilities": [
@@ -1259,9 +1260,18 @@
       "status": "active",
       "profilePath": "App_bots/DreamRealEstate.json",
       "source": "division_json_system",
-      "codeFiles": [],
-      "tests": [],
-      "capabilities": [],
+      "codeFiles": [
+        "App_bots/DreamRealEstate.json"
+      ],
+      "tests": [
+        "tests/generated_bot_smoke/test_division_systems_contract.py"
+      ],
+      "capabilities": [
+        "local task intake",
+        "sandbox workflow execution",
+        "test evidence packet",
+        "Buddy approval handoff"
+      ],
       "taskContract": {
         "primary_mode": "local_first_no_external_provider_required",
         "can_run_without_other_providers": true,
@@ -1391,19 +1401,11 @@
         ]
       },
       "readiness": {
-        "score": 50,
-        "status": "needs_buildout_before_client_demo",
-        "missing": [
-          "capabilities",
-          "runtime code file",
-          "direct test coverage",
-          "business model or target users"
-        ],
+        "score": 100,
+        "status": "ready_for_local_end_to_end_testing",
+        "missing": [],
         "next_steps": [
-          "Add or verify capabilities.",
-          "Add or verify runtime code file.",
-          "Add or verify direct test coverage.",
-          "Add or verify business model or target users."
+          "Run direct smoke test and connect the bot card in Buddy/Actions."
         ]
       }
     },
@@ -1422,7 +1424,9 @@
         "bots/energy-optimizer/runtime.py",
         "bots/energy-optimizer/tiers.py"
       ],
-      "tests": [],
+      "tests": [
+        "tests/generated_bot_smoke/test_energy_optimizer_1afa38be_runtime.py"
+      ],
       "capabilities": [
         "Energy usage benchmarking",
         "Rate plan comparison",
@@ -1577,13 +1581,11 @@
         ]
       },
       "readiness": {
-        "score": 90,
-        "status": "mostly_ready_needs_targeted_tests",
-        "missing": [
-          "direct test coverage"
-        ],
+        "score": 100,
+        "status": "ready_for_local_end_to_end_testing",
+        "missing": [],
         "next_steps": [
-          "Add or verify direct test coverage."
+          "Run direct smoke test and connect the bot card in Buddy/Actions."
         ]
       }
     },
@@ -1602,7 +1604,9 @@
         "bots/investor-reporting/runtime.py",
         "bots/investor-reporting/tiers.py"
       ],
-      "tests": [],
+      "tests": [
+        "tests/generated_bot_smoke/test_investor_reporting_8a95de96_runtime.py"
+      ],
       "capabilities": [
         "Automated report generation",
         "IRR/equity multiple tracking",
@@ -1757,13 +1761,11 @@
         ]
       },
       "readiness": {
-        "score": 90,
-        "status": "mostly_ready_needs_targeted_tests",
-        "missing": [
-          "direct test coverage"
-        ],
+        "score": 100,
+        "status": "ready_for_local_end_to_end_testing",
+        "missing": [],
         "next_steps": [
-          "Add or verify direct test coverage."
+          "Run direct smoke test and connect the bot card in Buddy/Actions."
         ]
       }
     },
@@ -1782,7 +1784,9 @@
         "bots/land-bank/runtime.py",
         "bots/land-bank/tiers.py"
       ],
-      "tests": [],
+      "tests": [
+        "tests/generated_bot_smoke/test_land_bank_8e9d869c_runtime.py"
+      ],
       "capabilities": [
         "Parcel growth scoring",
         "Zoning change prediction",
@@ -1937,13 +1941,11 @@
         ]
       },
       "readiness": {
-        "score": 90,
-        "status": "mostly_ready_needs_targeted_tests",
-        "missing": [
-          "direct test coverage"
-        ],
+        "score": 100,
+        "status": "ready_for_local_end_to_end_testing",
+        "missing": [],
         "next_steps": [
-          "Add or verify direct test coverage."
+          "Run direct smoke test and connect the bot card in Buddy/Actions."
         ]
       }
     },
@@ -1962,7 +1964,9 @@
         "bots/lease-optimizer/runtime.py",
         "bots/lease-optimizer/tiers.py"
       ],
-      "tests": [],
+      "tests": [
+        "tests/generated_bot_smoke/test_lease_optimizer_c07fc0e7_runtime.py"
+      ],
       "capabilities": [
         "Dynamic rent pricing",
         "Concession optimization",
@@ -2117,13 +2121,11 @@
         ]
       },
       "readiness": {
-        "score": 90,
-        "status": "mostly_ready_needs_targeted_tests",
-        "missing": [
-          "direct test coverage"
-        ],
+        "score": 100,
+        "status": "ready_for_local_end_to_end_testing",
+        "missing": [],
         "next_steps": [
-          "Add or verify direct test coverage."
+          "Run direct smoke test and connect the bot card in Buddy/Actions."
         ]
       }
     },
@@ -2142,7 +2144,9 @@
         "bots/multifamily-acquisition/runtime.py",
         "bots/multifamily-acquisition/tiers.py"
       ],
-      "tests": [],
+      "tests": [
+        "tests/generated_bot_smoke/test_multifamily_acquisition_10988358_runtime.py"
+      ],
       "capabilities": [
         "NOI waterfall analysis",
         "Rent comp scraping",
@@ -2305,13 +2309,11 @@
         ]
       },
       "readiness": {
-        "score": 90,
-        "status": "mostly_ready_needs_targeted_tests",
-        "missing": [
-          "direct test coverage"
-        ],
+        "score": 100,
+        "status": "ready_for_local_end_to_end_testing",
+        "missing": [],
         "next_steps": [
-          "Add or verify direct test coverage."
+          "Run direct smoke test and connect the bot card in Buddy/Actions."
         ]
       }
     },
@@ -2330,7 +2332,9 @@
         "bots/predictive-maintenance/runtime.py",
         "bots/predictive-maintenance/tiers.py"
       ],
-      "tests": [],
+      "tests": [
+        "tests/generated_bot_smoke/test_predictive_maintenance_b6962b3b_runtime.py"
+      ],
       "capabilities": [
         "Equipment failure prediction",
         "Maintenance schedule optimization",
@@ -2485,13 +2489,11 @@
         ]
       },
       "readiness": {
-        "score": 90,
-        "status": "mostly_ready_needs_targeted_tests",
-        "missing": [
-          "direct test coverage"
-        ],
+        "score": 100,
+        "status": "ready_for_local_end_to_end_testing",
+        "missing": [],
         "next_steps": [
-          "Add or verify direct test coverage."
+          "Run direct smoke test and connect the bot card in Buddy/Actions."
         ]
       }
     },
@@ -2510,7 +2512,9 @@
         "bots/property-liquidity/runtime.py",
         "bots/property-liquidity/tiers.py"
       ],
-      "tests": [],
+      "tests": [
+        "tests/generated_bot_smoke/test_property_liquidity_1dcb5ff4_runtime.py"
+      ],
       "capabilities": [
         "Days-on-market prediction",
         "Buyer demand scoring",
@@ -2665,13 +2669,11 @@
         ]
       },
       "readiness": {
-        "score": 90,
-        "status": "mostly_ready_needs_targeted_tests",
-        "missing": [
-          "direct test coverage"
-        ],
+        "score": 100,
+        "status": "ready_for_local_end_to_end_testing",
+        "missing": [],
         "next_steps": [
-          "Add or verify direct test coverage."
+          "Run direct smoke test and connect the bot card in Buddy/Actions."
         ]
       }
     },
@@ -2690,7 +2692,9 @@
         "bots/property-risk-sim/runtime.py",
         "bots/property-risk-sim/tiers.py"
       ],
-      "tests": [],
+      "tests": [
+        "tests/generated_bot_smoke/test_property_risk_sim_f704a265_runtime.py"
+      ],
       "capabilities": [
         "Monte Carlo scenario engine",
         "Interest rate shock modeling",
@@ -2853,13 +2857,11 @@
         ]
       },
       "readiness": {
-        "score": 90,
-        "status": "mostly_ready_needs_targeted_tests",
-        "missing": [
-          "direct test coverage"
-        ],
+        "score": 100,
+        "status": "ready_for_local_end_to_end_testing",
+        "missing": [],
         "next_steps": [
-          "Add or verify direct test coverage."
+          "Run direct smoke test and connect the bot card in Buddy/Actions."
         ]
       }
     },
@@ -2878,7 +2880,9 @@
         "bots/property-value/runtime.py",
         "bots/property-value/tiers.py"
       ],
-      "tests": [],
+      "tests": [
+        "tests/generated_bot_smoke/test_property_value_2081e7e8_runtime.py"
+      ],
       "capabilities": [
         "AVM regression models",
         "Comparable adjustment engine",
@@ -3041,13 +3045,11 @@
         ]
       },
       "readiness": {
-        "score": 90,
-        "status": "mostly_ready_needs_targeted_tests",
-        "missing": [
-          "direct test coverage"
-        ],
+        "score": 100,
+        "status": "ready_for_local_end_to_end_testing",
+        "missing": [],
         "next_steps": [
-          "Add or verify direct test coverage."
+          "Run direct smoke test and connect the bot card in Buddy/Actions."
         ]
       }
     },
@@ -3066,7 +3068,9 @@
         "bots/re-crowdfunding/runtime.py",
         "bots/re-crowdfunding/tiers.py"
       ],
-      "tests": [],
+      "tests": [
+        "tests/generated_bot_smoke/test_re_crowdfunding_e4be830d_runtime.py"
+      ],
       "capabilities": [
         "Platform comparison engine",
         "Deal scoring algorithm",
@@ -3221,13 +3225,11 @@
         ]
       },
       "readiness": {
-        "score": 90,
-        "status": "mostly_ready_needs_targeted_tests",
-        "missing": [
-          "direct test coverage"
-        ],
+        "score": 100,
+        "status": "ready_for_local_end_to_end_testing",
+        "missing": [],
         "next_steps": [
-          "Add or verify direct test coverage."
+          "Run direct smoke test and connect the bot card in Buddy/Actions."
         ]
       }
     },
@@ -3246,7 +3248,9 @@
         "bots/reit-predictor/runtime.py",
         "bots/reit-predictor/tiers.py"
       ],
-      "tests": [],
+      "tests": [
+        "tests/generated_bot_smoke/test_reit_predictor_2c813734_runtime.py"
+      ],
       "capabilities": [
         "FFO/AFFO forecasting",
         "Dividend yield prediction",
@@ -3401,13 +3405,11 @@
         ]
       },
       "readiness": {
-        "score": 90,
-        "status": "mostly_ready_needs_targeted_tests",
-        "missing": [
-          "direct test coverage"
-        ],
+        "score": 100,
+        "status": "ready_for_local_end_to_end_testing",
+        "missing": [],
         "next_steps": [
-          "Add or verify direct test coverage."
+          "Run direct smoke test and connect the bot card in Buddy/Actions."
         ]
       }
     },
@@ -3426,6 +3428,8 @@
         "bots/real-estate-bot/runtime.py"
       ],
       "tests": [
+        "tests/generated_bot_smoke/test_real_estate_bot_11623dc4_runtime.py",
+        "tests/generated_bot_smoke/test_real_estate_bot_f2f5f44d_runtime.py",
         "tests/test_real_estate_bot.py"
       ],
       "capabilities": [
@@ -3583,7 +3587,9 @@
         "bots/re-rebalancer/runtime.py",
         "bots/re-rebalancer/tiers.py"
       ],
-      "tests": [],
+      "tests": [
+        "tests/generated_bot_smoke/test_re_rebalancer_e9541863_runtime.py"
+      ],
       "capabilities": [
         "Allocation drift monitoring",
         "Geographic diversification scoring",
@@ -3738,13 +3744,11 @@
         ]
       },
       "readiness": {
-        "score": 90,
-        "status": "mostly_ready_needs_targeted_tests",
-        "missing": [
-          "direct test coverage"
-        ],
+        "score": 100,
+        "status": "ready_for_local_end_to_end_testing",
+        "missing": [],
         "next_steps": [
-          "Add or verify direct test coverage."
+          "Run direct smoke test and connect the bot card in Buddy/Actions."
         ]
       }
     },
@@ -3763,7 +3767,9 @@
         "bots/re-investment/runtime.py",
         "bots/re-investment/tiers.py"
       ],
-      "tests": [],
+      "tests": [
+        "tests/generated_bot_smoke/test_re_investment_1c9af5d7_runtime.py"
+      ],
       "capabilities": [
         "Deal finding engine",
         "Rehab cost estimator",
@@ -3918,13 +3924,11 @@
         ]
       },
       "readiness": {
-        "score": 90,
-        "status": "mostly_ready_needs_targeted_tests",
-        "missing": [
-          "direct test coverage"
-        ],
+        "score": 100,
+        "status": "ready_for_local_end_to_end_testing",
+        "missing": [],
         "next_steps": [
-          "Add or verify direct test coverage."
+          "Run direct smoke test and connect the bot card in Buddy/Actions."
         ]
       }
     },
@@ -3943,7 +3947,11 @@
         "bots/smart-building/runtime.py",
         "bots/smart-building/tiers.py"
       ],
-      "tests": [],
+      "tests": [
+        "tests/generated_bot_smoke/test_smart_building_ai_5ec4d897_runtime.py",
+        "tests/generated_bot_smoke/test_smart_building_e965c558_runtime.py",
+        "tests/generated_bot_smoke/test_smart_building_elite_2459b493_runtime.py"
+      ],
       "capabilities": [
         "HVAC optimization engine",
         "Occupancy-based lighting",
@@ -4107,13 +4115,11 @@
         ]
       },
       "readiness": {
-        "score": 90,
-        "status": "mostly_ready_needs_targeted_tests",
-        "missing": [
-          "direct test coverage"
-        ],
+        "score": 100,
+        "status": "ready_for_local_end_to_end_testing",
+        "missing": [],
         "next_steps": [
-          "Add or verify direct test coverage."
+          "Run direct smoke test and connect the bot card in Buddy/Actions."
         ]
       }
     },
@@ -4132,7 +4138,9 @@
         "bots/syndication-mgr/runtime.py",
         "bots/syndication-mgr/tiers.py"
       ],
-      "tests": [],
+      "tests": [
+        "tests/generated_bot_smoke/test_syndication_mgr_af014e68_runtime.py"
+      ],
       "capabilities": [
         "Investor waterfall modeling",
         "K-1 distribution automation",
@@ -4287,13 +4295,11 @@
         ]
       },
       "readiness": {
-        "score": 90,
-        "status": "mostly_ready_needs_targeted_tests",
-        "missing": [
-          "direct test coverage"
-        ],
+        "score": 100,
+        "status": "ready_for_local_end_to_end_testing",
+        "missing": [],
         "next_steps": [
-          "Add or verify direct test coverage."
+          "Run direct smoke test and connect the bot card in Buddy/Actions."
         ]
       }
     },
@@ -4312,7 +4318,9 @@
         "bots/tax-incentive-finder/runtime.py",
         "bots/tax-incentive-finder/tiers.py"
       ],
-      "tests": [],
+      "tests": [
+        "tests/generated_bot_smoke/test_tax_incentive_finder_f725fa97_runtime.py"
+      ],
       "capabilities": [
         "Opportunity zone mapping",
         "Tax abatement scanning",
@@ -4467,13 +4475,11 @@
         ]
       },
       "readiness": {
-        "score": 90,
-        "status": "mostly_ready_needs_targeted_tests",
-        "missing": [
-          "direct test coverage"
-        ],
+        "score": 100,
+        "status": "ready_for_local_end_to_end_testing",
+        "missing": [],
         "next_steps": [
-          "Add or verify direct test coverage."
+          "Run direct smoke test and connect the bot card in Buddy/Actions."
         ]
       }
     },
@@ -4492,7 +4498,9 @@
         "bots/tax-lien/runtime.py",
         "bots/tax-lien/tiers.py"
       ],
-      "tests": [],
+      "tests": [
+        "tests/generated_bot_smoke/test_tax_lien_cc6496b1_runtime.py"
+      ],
       "capabilities": [
         "Tax lien auction scanner",
         "Yield-to-maturity calculation",
@@ -4647,13 +4655,11 @@
         ]
       },
       "readiness": {
-        "score": 90,
-        "status": "mostly_ready_needs_targeted_tests",
-        "missing": [
-          "direct test coverage"
-        ],
+        "score": 100,
+        "status": "ready_for_local_end_to_end_testing",
+        "missing": [],
         "next_steps": [
-          "Add or verify direct test coverage."
+          "Run direct smoke test and connect the bot card in Buddy/Actions."
         ]
       }
     },
@@ -4672,7 +4678,9 @@
         "bots/urban-heatmap/runtime.py",
         "bots/urban-heatmap/tiers.py"
       ],
-      "tests": [],
+      "tests": [
+        "tests/generated_bot_smoke/test_urban_heatmap_3f5a9df8_runtime.py"
+      ],
       "capabilities": [
         "Population growth mapping",
         "Infrastructure development tracking",
@@ -4827,13 +4835,11 @@
         ]
       },
       "readiness": {
-        "score": 90,
-        "status": "mostly_ready_needs_targeted_tests",
-        "missing": [
-          "direct test coverage"
-        ],
+        "score": 100,
+        "status": "ready_for_local_end_to_end_testing",
+        "missing": [],
         "next_steps": [
-          "Add or verify direct test coverage."
+          "Run direct smoke test and connect the bot card in Buddy/Actions."
         ]
       }
     },
@@ -4852,7 +4858,9 @@
         "bots/zoning-compliance/runtime.py",
         "bots/zoning-compliance/tiers.py"
       ],
-      "tests": [],
+      "tests": [
+        "tests/generated_bot_smoke/test_zoning_compliance_a501abc9_runtime.py"
+      ],
       "capabilities": [
         "Zoning code lookup",
         "Permit requirement checker",
@@ -5007,13 +5015,11 @@
         ]
       },
       "readiness": {
-        "score": 90,
-        "status": "mostly_ready_needs_targeted_tests",
-        "missing": [
-          "direct test coverage"
-        ],
+        "score": 100,
+        "status": "ready_for_local_end_to_end_testing",
+        "missing": [],
         "next_steps": [
-          "Add or verify direct test coverage."
+          "Run direct smoke test and connect the bot card in Buddy/Actions."
         ]
       }
     }

@@ -1,6 +1,6 @@
 {
   "schema": "dreamco.bot_end_to_end_readiness.division.v1",
-  "generated_at": "2026-07-21T03:00:32Z",
+  "generated_at": "2026-07-21T03:45:15Z",
   "division": "DreamPayments",
   "bot_count": 54,
   "bots": [
@@ -19,7 +19,9 @@
         "bots/ach-processor/runtime.py",
         "bots/ach-processor/tiers.py"
       ],
-      "tests": [],
+      "tests": [
+        "tests/generated_bot_smoke/test_ach_processor_86d70575_runtime.py"
+      ],
       "capabilities": [
         "ACH batch processing",
         "Return and NOC handling",
@@ -175,13 +177,11 @@
         ]
       },
       "readiness": {
-        "score": 90,
-        "status": "mostly_ready_needs_targeted_tests",
-        "missing": [
-          "direct test coverage"
-        ],
+        "score": 100,
+        "status": "ready_for_local_end_to_end_testing",
+        "missing": [],
         "next_steps": [
-          "Add or verify direct test coverage."
+          "Run direct smoke test and connect the bot card in Buddy/Actions."
         ]
       }
     },
@@ -201,6 +201,7 @@
         "bots/advertising_marketing_bot/tiers.py"
       ],
       "tests": [
+        "tests/generated_bot_smoke/test_advertising_marketing_bot_3e505fa1_runtime.py",
         "tests/test_advertising_marketing_bot.py"
       ],
       "capabilities": [
@@ -364,6 +365,7 @@
         "bots/ai_level_up_bot/token_marketplace.py"
       ],
       "tests": [
+        "tests/generated_bot_smoke/test_ai_level_up_bot_4b4ddf53_runtime.py",
         "tests/test_ai_level_up_bot.py"
       ],
       "capabilities": [
@@ -525,6 +527,7 @@
         "bots/ai_marketplace/tiers.py"
       ],
       "tests": [
+        "tests/generated_bot_smoke/test_ai_marketplace_011102fe_runtime.py",
         "tests/test_ai_marketplace.py"
       ],
       "capabilities": [
@@ -683,6 +686,7 @@
         "bots/ai_writing_bot/tiers.py"
       ],
       "tests": [
+        "tests/generated_bot_smoke/test_ai_writing_bot_2e880975_runtime.py",
         "tests/test_ai_writing_bot.py"
       ],
       "capabilities": [
@@ -841,7 +845,9 @@
         "bots/split-pay-calc/runtime.py",
         "bots/split-pay-calc/tiers.py"
       ],
-      "tests": [],
+      "tests": [
+        "tests/generated_bot_smoke/test_split_pay_calc_f902e8fd_runtime.py"
+      ],
       "capabilities": [
         "Itemized bill splitting",
         "Tax and tip allocation",
@@ -991,13 +997,11 @@
         ]
       },
       "readiness": {
-        "score": 90,
-        "status": "mostly_ready_needs_targeted_tests",
-        "missing": [
-          "direct test coverage"
-        ],
+        "score": 100,
+        "status": "ready_for_local_end_to_end_testing",
+        "missing": [],
         "next_steps": [
-          "Add or verify direct test coverage."
+          "Run direct smoke test and connect the bot card in Buddy/Actions."
         ]
       }
     },
@@ -1022,6 +1026,7 @@
         "bots/bot_generator_bot/tool_injector.py"
       ],
       "tests": [
+        "tests/generated_bot_smoke/test_bot_generator_bot_df60337c_runtime.py",
         "tests/test_bot_generator_bot.py"
       ],
       "capabilities": [
@@ -1188,6 +1193,7 @@
         "bots/buddy_trainer_bot/tiers.py"
       ],
       "tests": [
+        "tests/generated_bot_smoke/test_buddy_trainer_bot_f6b01f3b_runtime.py",
         "tests/test_buddy_trainer_bot.py"
       ],
       "capabilities": [
@@ -1347,7 +1353,9 @@
         "bots/chargeback-mgr/runtime.py",
         "bots/chargeback-mgr/tiers.py"
       ],
-      "tests": [],
+      "tests": [
+        "tests/generated_bot_smoke/test_chargeback_mgr_a97624d7_runtime.py"
+      ],
       "capabilities": [
         "Chargeback alert integration",
         "Evidence collection automation",
@@ -1511,13 +1519,11 @@
         ]
       },
       "readiness": {
-        "score": 90,
-        "status": "mostly_ready_needs_targeted_tests",
-        "missing": [
-          "direct test coverage"
-        ],
+        "score": 100,
+        "status": "ready_for_local_end_to_end_testing",
+        "missing": [],
         "next_steps": [
-          "Add or verify direct test coverage."
+          "Run direct smoke test and connect the bot card in Buddy/Actions."
         ]
       }
     },
@@ -1537,6 +1543,7 @@
         "bots/cinecore_bot/tiers.py"
       ],
       "tests": [
+        "tests/generated_bot_smoke/test_cinecore_bot_878a3010_runtime.py",
         "tests/test_cinecore_bot.py"
       ],
       "capabilities": [
@@ -1696,6 +1703,7 @@
         "bots/coding_assistant_bot/tiers.py"
       ],
       "tests": [
+        "tests/generated_bot_smoke/test_coding_assistant_bot_5551bfef_runtime.py",
         "tests/test_coding_assistant_bot.py"
       ],
       "capabilities": [
@@ -1855,6 +1863,7 @@
         "bots/commercial_bot/tiers.py"
       ],
       "tests": [
+        "tests/generated_bot_smoke/test_commercial_bot_272e65ed_runtime.py",
         "tests/test_commercial_bot.py"
       ],
       "capabilities": [
@@ -2024,6 +2033,7 @@
         "bots/creator_empire/tiers.py"
       ],
       "tests": [
+        "tests/generated_bot_smoke/test_creator_empire_3293199e_runtime.py",
         "tests/test_creator_empire.py"
       ],
       "capabilities": [
@@ -2183,6 +2193,7 @@
         "bots/crm_automation_bot/tiers.py"
       ],
       "tests": [
+        "tests/generated_bot_smoke/test_crm_automation_bot_67512eee_runtime.py",
         "tests/test_crm_automation_bot.py"
       ],
       "capabilities": [
@@ -2341,7 +2352,10 @@
         "bots/cross-border-pay/runtime.py",
         "bots/cross-border-pay/tiers.py"
       ],
-      "tests": [],
+      "tests": [
+        "tests/generated_bot_smoke/test_cross_border_pay_fe5f4b1d_runtime.py",
+        "tests/generated_bot_smoke/test_cross_border_payments_c4f71fbc_runtime.py"
+      ],
       "capabilities": [
         "Multi-currency processing",
         "Real-time exchange rates",
@@ -2505,13 +2519,11 @@
         ]
       },
       "readiness": {
-        "score": 90,
-        "status": "mostly_ready_needs_targeted_tests",
-        "missing": [
-          "direct test coverage"
-        ],
+        "score": 100,
+        "status": "ready_for_local_end_to_end_testing",
+        "missing": [],
         "next_steps": [
-          "Add or verify direct test coverage."
+          "Run direct smoke test and connect the bot card in Buddy/Actions."
         ]
       }
     },
@@ -2531,6 +2543,7 @@
         "bots/customer_support_bot/tiers.py"
       ],
       "tests": [
+        "tests/generated_bot_smoke/test_customer_support_bot_c4c11cda_runtime.py",
         "tests/test_customer_support_bot.py"
       ],
       "capabilities": [
@@ -2689,7 +2702,9 @@
         "bots/apple-google-pay/runtime.py",
         "bots/apple-google-pay/tiers.py"
       ],
-      "tests": [],
+      "tests": [
+        "tests/generated_bot_smoke/test_apple_google_pay_4d32948c_runtime.py"
+      ],
       "capabilities": [
         "Apple Pay integration",
         "Google Pay provisioning",
@@ -2853,13 +2868,11 @@
         ]
       },
       "readiness": {
-        "score": 90,
-        "status": "mostly_ready_needs_targeted_tests",
-        "missing": [
-          "direct test coverage"
-        ],
+        "score": 100,
+        "status": "ready_for_local_end_to_end_testing",
+        "missing": [],
         "next_steps": [
-          "Add or verify direct test coverage."
+          "Run direct smoke test and connect the bot card in Buddy/Actions."
         ]
       }
     },
@@ -2872,9 +2885,18 @@
       "status": "active",
       "profilePath": "App_bots/DreamPayments.json",
       "source": "division_json_system",
-      "codeFiles": [],
-      "tests": [],
-      "capabilities": [],
+      "codeFiles": [
+        "App_bots/DreamPayments.json"
+      ],
+      "tests": [
+        "tests/generated_bot_smoke/test_division_systems_contract.py"
+      ],
+      "capabilities": [
+        "local task intake",
+        "sandbox workflow execution",
+        "test evidence packet",
+        "Buddy approval handoff"
+      ],
       "taskContract": {
         "primary_mode": "local_first_no_external_provider_required",
         "can_run_without_other_providers": true,
@@ -3004,19 +3026,11 @@
         ]
       },
       "readiness": {
-        "score": 50,
-        "status": "needs_buildout_before_client_demo",
-        "missing": [
-          "capabilities",
-          "runtime code file",
-          "direct test coverage",
-          "business model or target users"
-        ],
+        "score": 100,
+        "status": "ready_for_local_end_to_end_testing",
+        "missing": [],
         "next_steps": [
-          "Add or verify capabilities.",
-          "Add or verify runtime code file.",
-          "Add or verify direct test coverage.",
-          "Add or verify business model or target users."
+          "Run direct smoke test and connect the bot card in Buddy/Actions."
         ]
       }
     },
@@ -3040,6 +3054,7 @@
         "bots/dreamco_payments/tiers.py"
       ],
       "tests": [
+        "tests/generated_bot_smoke/test_dreamco_payments_f3189d3f_runtime.py",
         "tests/test_dreamco_payments.py"
       ],
       "capabilities": [
@@ -3200,7 +3215,9 @@
         "bots/embedded-finance/runtime.py",
         "bots/embedded-finance/tiers.py"
       ],
-      "tests": [],
+      "tests": [
+        "tests/generated_bot_smoke/test_embedded_finance_bf9c2629_runtime.py"
+      ],
       "capabilities": [
         "BaaS integration engine",
         "Payment orchestration tools",
@@ -3370,13 +3387,11 @@
         ]
       },
       "readiness": {
-        "score": 90,
-        "status": "mostly_ready_needs_targeted_tests",
-        "missing": [
-          "direct test coverage"
-        ],
+        "score": 100,
+        "status": "ready_for_local_end_to_end_testing",
+        "missing": [],
         "next_steps": [
-          "Add or verify direct test coverage."
+          "Run direct smoke test and connect the bot card in Buddy/Actions."
         ]
       }
     },
@@ -3396,6 +3411,7 @@
         "bots/enterprise_integrations_bot/tiers.py"
       ],
       "tests": [
+        "tests/generated_bot_smoke/test_enterprise_integrations_bot_9cd87a9f_runtime.py",
         "tests/test_enterprise_integrations_bot.py"
       ],
       "capabilities": [
@@ -3553,7 +3569,9 @@
         "bots/finance-app-bot/runtime.py",
         "bots/finance-app-bot/tiers.py"
       ],
-      "tests": [],
+      "tests": [
+        "tests/generated_bot_smoke/test_finance_app_bot_2a5043e6_runtime.py"
+      ],
       "capabilities": [
         "Transaction categorization",
         "Budget vs. actuals tracking",
@@ -3703,13 +3721,11 @@
         ]
       },
       "readiness": {
-        "score": 90,
-        "status": "mostly_ready_needs_targeted_tests",
-        "missing": [
-          "direct test coverage"
-        ],
+        "score": 100,
+        "status": "ready_for_local_end_to_end_testing",
+        "missing": [],
         "next_steps": [
-          "Add or verify direct test coverage."
+          "Run direct smoke test and connect the bot card in Buddy/Actions."
         ]
       }
     },
@@ -3729,6 +3745,7 @@
         "bots/financial_literacy_bot/tiers.py"
       ],
       "tests": [
+        "tests/generated_bot_smoke/test_financial_literacy_bot_97d81b50_runtime.py",
         "tests/test_financial_literacy_bot.py"
       ],
       "capabilities": [
@@ -3887,6 +3904,7 @@
         "bots/fiverr_bot/tiers.py"
       ],
       "tests": [
+        "tests/generated_bot_smoke/test_fiverr_bot_4bbcb465_runtime.py",
         "tests/test_fiverr_bot.py"
       ],
       "capabilities": [
@@ -4046,6 +4064,7 @@
         "bots/fraud_detection_bot/tiers.py"
       ],
       "tests": [
+        "tests/generated_bot_smoke/test_fraud_detection_bot_62f4beaa_runtime.py",
         "tests/test_fraud_detection_bot.py"
       ],
       "capabilities": [
@@ -4206,7 +4225,9 @@
         "bots/in-app-purchase-opt/runtime.py",
         "bots/in-app-purchase-opt/tiers.py"
       ],
-      "tests": [],
+      "tests": [
+        "tests/generated_bot_smoke/test_in_app_purchase_opt_9522c61d_runtime.py"
+      ],
       "capabilities": [
         "IAP pricing experiments",
         "Whale/dolphin/minnow segmentation",
@@ -4356,13 +4377,11 @@
         ]
       },
       "readiness": {
-        "score": 90,
-        "status": "mostly_ready_needs_targeted_tests",
-        "missing": [
-          "direct test coverage"
-        ],
+        "score": 100,
+        "status": "ready_for_local_end_to_end_testing",
+        "missing": [],
         "next_steps": [
-          "Add or verify direct test coverage."
+          "Run direct smoke test and connect the bot card in Buddy/Actions."
         ]
       }
     },
@@ -4382,6 +4401,7 @@
         "bots/integration_feedback_bot/tiers.py"
       ],
       "tests": [
+        "tests/generated_bot_smoke/test_integration_feedback_bot_396f06c5_runtime.py",
         "tests/test_integration_feedback_bot.py"
       ],
       "capabilities": [
@@ -4544,6 +4564,7 @@
         "bots/job_titles_bot/tiers.py"
       ],
       "tests": [
+        "tests/generated_bot_smoke/test_job_titles_bot_52e9b451_runtime.py",
         "tests/test_job_titles_bot.py"
       ],
       "capabilities": [
@@ -4703,6 +4724,7 @@
         "bots/lead_generation_bot/tiers.py"
       ],
       "tests": [
+        "tests/generated_bot_smoke/test_lead_generation_bot_292df26a_runtime.py",
         "tests/test_lead_generation_bot.py"
       ],
       "capabilities": [
@@ -4863,7 +4885,9 @@
         "bots/loyalty-rewards/runtime.py",
         "bots/loyalty-rewards/tiers.py"
       ],
-      "tests": [],
+      "tests": [
+        "tests/generated_bot_smoke/test_loyalty_rewards_930141c6_runtime.py"
+      ],
       "capabilities": [
         "Points accumulation engine",
         "Redemption management tools",
@@ -5019,13 +5043,11 @@
         ]
       },
       "readiness": {
-        "score": 90,
-        "status": "mostly_ready_needs_targeted_tests",
-        "missing": [
-          "direct test coverage"
-        ],
+        "score": 100,
+        "status": "ready_for_local_end_to_end_testing",
+        "missing": [],
         "next_steps": [
-          "Add or verify direct test coverage."
+          "Run direct smoke test and connect the bot card in Buddy/Actions."
         ]
       }
     },
@@ -5044,7 +5066,9 @@
         "bots/merchant-onboarding/runtime.py",
         "bots/merchant-onboarding/tiers.py"
       ],
-      "tests": [],
+      "tests": [
+        "tests/generated_bot_smoke/test_merchant_onboarding_497965a6_runtime.py"
+      ],
       "capabilities": [
         "KYC document collection",
         "Underwriting decision engine",
@@ -5208,13 +5232,11 @@
         ]
       },
       "readiness": {
-        "score": 90,
-        "status": "mostly_ready_needs_targeted_tests",
-        "missing": [
-          "direct test coverage"
-        ],
+        "score": 100,
+        "status": "ready_for_local_end_to_end_testing",
+        "missing": [],
         "next_steps": [
-          "Add or verify direct test coverage."
+          "Run direct smoke test and connect the bot card in Buddy/Actions."
         ]
       }
     },
@@ -5233,7 +5255,9 @@
         "bots/mobile-pay/runtime.py",
         "bots/mobile-pay/tiers.py"
       ],
-      "tests": [],
+      "tests": [
+        "tests/generated_bot_smoke/test_mobile_pay_588747f0_runtime.py"
+      ],
       "capabilities": [
         "NFC payment processing",
         "Contactless transaction handling",
@@ -5389,13 +5413,11 @@
         ]
       },
       "readiness": {
-        "score": 90,
-        "status": "mostly_ready_needs_targeted_tests",
-        "missing": [
-          "direct test coverage"
-        ],
+        "score": 100,
+        "status": "ready_for_local_end_to_end_testing",
+        "missing": [],
         "next_steps": [
-          "Add or verify direct test coverage."
+          "Run direct smoke test and connect the bot card in Buddy/Actions."
         ]
       }
     },
@@ -5414,7 +5436,9 @@
         "bots/pci-compliance/runtime.py",
         "bots/pci-compliance/tiers.py"
       ],
-      "tests": [],
+      "tests": [
+        "tests/generated_bot_smoke/test_pci_compliance_b149e83b_runtime.py"
+      ],
       "capabilities": [
         "SAQ questionnaire automation",
         "Vulnerability scan scheduling",
@@ -5578,13 +5602,11 @@
         ]
       },
       "readiness": {
-        "score": 90,
-        "status": "mostly_ready_needs_targeted_tests",
-        "missing": [
-          "direct test coverage"
-        ],
+        "score": 100,
+        "status": "ready_for_local_end_to_end_testing",
+        "missing": [],
         "next_steps": [
-          "Add or verify direct test coverage."
+          "Run direct smoke test and connect the bot card in Buddy/Actions."
         ]
       }
     },
@@ -5603,7 +5625,9 @@
         "bots/pos-terminal/runtime.py",
         "bots/pos-terminal/tiers.py"
       ],
-      "tests": [],
+      "tests": [
+        "tests/generated_bot_smoke/test_pos_terminal_fb2d07a3_runtime.py"
+      ],
       "capabilities": [
         "Terminal fleet management",
         "Configuration deployment tools",
@@ -5759,13 +5783,11 @@
         ]
       },
       "readiness": {
-        "score": 90,
-        "status": "mostly_ready_needs_targeted_tests",
-        "missing": [
-          "direct test coverage"
-        ],
+        "score": 100,
+        "status": "ready_for_local_end_to_end_testing",
+        "missing": [],
         "next_steps": [
-          "Add or verify direct test coverage."
+          "Run direct smoke test and connect the bot card in Buddy/Actions."
         ]
       }
     },
@@ -5784,7 +5806,9 @@
         "bots/fraud-detection-pay/runtime.py",
         "bots/fraud-detection-pay/tiers.py"
       ],
-      "tests": [],
+      "tests": [
+        "tests/generated_bot_smoke/test_fraud_detection_pay_182f8d9e_runtime.py"
+      ],
       "capabilities": [
         "Real-time fraud scoring",
         "Rule engine management",
@@ -5940,13 +5964,11 @@
         ]
       },
       "readiness": {
-        "score": 90,
-        "status": "mostly_ready_needs_targeted_tests",
-        "missing": [
-          "direct test coverage"
-        ],
+        "score": 100,
+        "status": "ready_for_local_end_to_end_testing",
+        "missing": [],
         "next_steps": [
-          "Add or verify direct test coverage."
+          "Run direct smoke test and connect the bot card in Buddy/Actions."
         ]
       }
     },
@@ -5965,7 +5987,9 @@
         "bots/payment-gateway-bot/runtime.py",
         "bots/payment-gateway-bot/tiers.py"
       ],
-      "tests": [],
+      "tests": [
+        "tests/generated_bot_smoke/test_payment_gateway_bot_2d2590c3_runtime.py"
+      ],
       "capabilities": [
         "Smart payment routing",
         "Failure & retry automation",
@@ -6115,13 +6139,11 @@
         ]
       },
       "readiness": {
-        "score": 90,
-        "status": "mostly_ready_needs_targeted_tests",
-        "missing": [
-          "direct test coverage"
-        ],
+        "score": 100,
+        "status": "ready_for_local_end_to_end_testing",
+        "missing": [],
         "next_steps": [
-          "Add or verify direct test coverage."
+          "Run direct smoke test and connect the bot card in Buddy/Actions."
         ]
       }
     },
@@ -6140,7 +6162,10 @@
         "bots/payment-gateway/runtime.py",
         "bots/payment-gateway/tiers.py"
       ],
-      "tests": [],
+      "tests": [
+        "tests/generated_bot_smoke/test_payment_gateway_02ce191d_runtime.py",
+        "tests/generated_bot_smoke/test_payment_gateway_bot_2d2590c3_runtime.py"
+      ],
       "capabilities": [
         "Smart payment routing",
         "Failover management engine",
@@ -6304,13 +6329,11 @@
         ]
       },
       "readiness": {
-        "score": 90,
-        "status": "mostly_ready_needs_targeted_tests",
-        "missing": [
-          "direct test coverage"
-        ],
+        "score": 100,
+        "status": "ready_for_local_end_to_end_testing",
+        "missing": [],
         "next_steps": [
-          "Add or verify direct test coverage."
+          "Run direct smoke test and connect the bot card in Buddy/Actions."
         ]
       }
     },
@@ -6329,7 +6352,9 @@
         "bots/payment-analytics-elite/runtime.py",
         "bots/payment-analytics-elite/tiers.py"
       ],
-      "tests": [],
+      "tests": [
+        "tests/generated_bot_smoke/test_payment_analytics_elite_f23ab2cb_runtime.py"
+      ],
       "capabilities": [
         "Revenue optimization modeling",
         "Fraud pattern intelligence",
@@ -6499,13 +6524,11 @@
         ]
       },
       "readiness": {
-        "score": 90,
-        "status": "mostly_ready_needs_targeted_tests",
-        "missing": [
-          "direct test coverage"
-        ],
+        "score": 100,
+        "status": "ready_for_local_end_to_end_testing",
+        "missing": [],
         "next_steps": [
-          "Add or verify direct test coverage."
+          "Run direct smoke test and connect the bot card in Buddy/Actions."
         ]
       }
     },
@@ -6524,7 +6547,9 @@
         "bots/payment-reconciliation/runtime.py",
         "bots/payment-reconciliation/tiers.py"
       ],
-      "tests": [],
+      "tests": [
+        "tests/generated_bot_smoke/test_payment_reconciliation_5e92f262_runtime.py"
+      ],
       "capabilities": [
         "Multi-processor reconciliation",
         "Exception identification engine",
@@ -6680,13 +6705,11 @@
         ]
       },
       "readiness": {
-        "score": 90,
-        "status": "mostly_ready_needs_targeted_tests",
-        "missing": [
-          "direct test coverage"
-        ],
+        "score": 100,
+        "status": "ready_for_local_end_to_end_testing",
+        "missing": [],
         "next_steps": [
-          "Add or verify direct test coverage."
+          "Run direct smoke test and connect the bot card in Buddy/Actions."
         ]
       }
     },
@@ -6705,7 +6728,9 @@
         "bots/terminal-deploy/runtime.py",
         "bots/terminal-deploy/tiers.py"
       ],
-      "tests": [],
+      "tests": [
+        "tests/generated_bot_smoke/test_terminal_deploy_7f160466_runtime.py"
+      ],
       "capabilities": [
         "Terminal inventory tracking",
         "Configuration management tools",
@@ -6861,13 +6886,11 @@
         ]
       },
       "readiness": {
-        "score": 90,
-        "status": "mostly_ready_needs_targeted_tests",
-        "missing": [
-          "direct test coverage"
-        ],
+        "score": 100,
+        "status": "ready_for_local_end_to_end_testing",
+        "missing": [],
         "next_steps": [
-          "Add or verify direct test coverage."
+          "Run direct smoke test and connect the bot card in Buddy/Actions."
         ]
       }
     },
@@ -6886,7 +6909,9 @@
         "bots/receipt-scanner/runtime.py",
         "bots/receipt-scanner/tiers.py"
       ],
-      "tests": [],
+      "tests": [
+        "tests/generated_bot_smoke/test_receipt_scanner_024283dc_runtime.py"
+      ],
       "capabilities": [
         "OCR receipt scanning",
         "Expense categorization",
@@ -7036,13 +7061,11 @@
         ]
       },
       "readiness": {
-        "score": 90,
-        "status": "mostly_ready_needs_targeted_tests",
-        "missing": [
-          "direct test coverage"
-        ],
+        "score": 100,
+        "status": "ready_for_local_end_to_end_testing",
+        "missing": [],
         "next_steps": [
-          "Add or verify direct test coverage."
+          "Run direct smoke test and connect the bot card in Buddy/Actions."
         ]
       }
     },
@@ -7062,6 +7085,7 @@
         "bots/revenue_engine_bot/tiers.py"
       ],
       "tests": [
+        "tests/generated_bot_smoke/test_revenue_engine_bot_c05ea47f_runtime.py",
         "tests/test_revenue_engine_bot.py"
       ],
       "capabilities": [
@@ -7222,6 +7246,7 @@
         "bots/saas_bot/tiers.py"
       ],
       "tests": [
+        "tests/generated_bot_smoke/test_saas_bot_bbb5881a_runtime.py",
         "tests/test_saas_bot.py"
       ],
       "capabilities": [
@@ -7384,6 +7409,7 @@
         "bots/saas-selling-bot/runtime.py"
       ],
       "tests": [
+        "tests/generated_bot_smoke/test_saas_selling_bot_2c8602bc_runtime.py",
         "tests/test_saas_selling_bot.py"
       ],
       "capabilities": [
@@ -7543,6 +7569,7 @@
         "bots/saas_upsell/saas_upsell.py"
       ],
       "tests": [
+        "tests/generated_bot_smoke/test_saas_upsell_3a3a84bc_runtime.py",
         "tests/test_saas_upsell.py"
       ],
       "capabilities": [
@@ -7701,6 +7728,7 @@
         "bots/shopify_automation_bot/tiers.py"
       ],
       "tests": [
+        "tests/generated_bot_smoke/test_shopify_automation_bot_29201f84_runtime.py",
         "tests/test_shopify_automation_bot.py"
       ],
       "capabilities": [
@@ -7860,6 +7888,7 @@
         "bots/social_media_bot/tiers.py"
       ],
       "tests": [
+        "tests/generated_bot_smoke/test_social_media_bot_dadf4360_runtime.py",
         "tests/test_social_media_bot.py"
       ],
       "capabilities": [
@@ -8019,7 +8048,12 @@
       "tests": [
         "tests/test_stripe_builder_bot.py"
       ],
-      "capabilities": [],
+      "capabilities": [
+        "local task intake",
+        "sandbox workflow execution",
+        "test evidence packet",
+        "Buddy approval handoff"
+      ],
       "taskContract": {
         "primary_mode": "local_first_no_external_provider_required",
         "can_run_without_other_providers": true,
@@ -8149,17 +8183,11 @@
         ]
       },
       "readiness": {
-        "score": 75,
-        "status": "mostly_ready_needs_targeted_tests",
-        "missing": [
-          "capabilities",
-          "business model or target users",
-          "active status"
-        ],
+        "score": 100,
+        "status": "ready_for_local_end_to_end_testing",
+        "missing": [],
         "next_steps": [
-          "Add or verify capabilities.",
-          "Add or verify business model or target users.",
-          "Add or verify active status."
+          "Run direct smoke test and connect the bot card in Buddy/Actions."
         ]
       }
     },
@@ -8181,6 +8209,7 @@
         "bots/stripe_integration/webhook_handler.py"
       ],
       "tests": [
+        "tests/generated_bot_smoke/test_stripe_integration_bcf02a07_runtime.py",
         "tests/test_stripe_integration.py"
       ],
       "capabilities": [
@@ -8341,6 +8370,7 @@
         "bots/stripe_key_rotation_bot/tiers.py"
       ],
       "tests": [
+        "tests/generated_bot_smoke/test_stripe_key_rotation_bot_2d50ec1e_runtime.py",
         "tests/test_stripe_key_rotation_bot.py"
       ],
       "capabilities": [
@@ -8501,6 +8531,7 @@
         "bots/stripe_payment_bot/tiers.py"
       ],
       "tests": [
+        "tests/generated_bot_smoke/test_stripe_payment_bot_ab81bb61_runtime.py",
         "tests/test_stripe_payment_bot.py"
       ],
       "capabilities": [
@@ -8660,7 +8691,9 @@
         "bots/subscription-billing/runtime.py",
         "bots/subscription-billing/tiers.py"
       ],
-      "tests": [],
+      "tests": [
+        "tests/generated_bot_smoke/test_subscription_billing_ca190413_runtime.py"
+      ],
       "capabilities": [
         "Recurring billing automation",
         "Dunning management workflow",
@@ -8816,13 +8849,11 @@
         ]
       },
       "readiness": {
-        "score": 90,
-        "status": "mostly_ready_needs_targeted_tests",
-        "missing": [
-          "direct test coverage"
-        ],
+        "score": 100,
+        "status": "ready_for_local_end_to_end_testing",
+        "missing": [],
         "next_steps": [
-          "Add or verify direct test coverage."
+          "Run direct smoke test and connect the bot card in Buddy/Actions."
         ]
       }
     },
@@ -8841,7 +8872,9 @@
         "bots/subscription-lifecycle-mgr/runtime.py",
         "bots/subscription-lifecycle-mgr/tiers.py"
       ],
-      "tests": [],
+      "tests": [
+        "tests/generated_bot_smoke/test_subscription_lifecycle_mgr_e3145d15_runtime.py"
+      ],
       "capabilities": [
         "Trial conversion optimization",
         "Upgrade/downgrade flow automation",
@@ -8991,13 +9024,11 @@
         ]
       },
       "readiness": {
-        "score": 90,
-        "status": "mostly_ready_needs_targeted_tests",
-        "missing": [
-          "direct test coverage"
-        ],
+        "score": 100,
+        "status": "ready_for_local_end_to_end_testing",
+        "missing": [],
         "next_steps": [
-          "Add or verify direct test coverage."
+          "Run direct smoke test and connect the bot card in Buddy/Actions."
         ]
       }
     },
@@ -9016,7 +9047,9 @@
         "bots/tip-processing/runtime.py",
         "bots/tip-processing/tiers.py"
       ],
-      "tests": [],
+      "tests": [
+        "tests/generated_bot_smoke/test_tip_processing_35438730_runtime.py"
+      ],
       "capabilities": [
         "Tip adjustment processing",
         "Gratuity pooling calculation",
@@ -9172,13 +9205,11 @@
         ]
       },
       "readiness": {
-        "score": 90,
-        "status": "mostly_ready_needs_targeted_tests",
-        "missing": [
-          "direct test coverage"
-        ],
+        "score": 100,
+        "status": "ready_for_local_end_to_end_testing",
+        "missing": [],
         "next_steps": [
-          "Add or verify direct test coverage."
+          "Run direct smoke test and connect the bot card in Buddy/Actions."
         ]
       }
     }

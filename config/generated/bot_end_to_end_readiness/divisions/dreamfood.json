@@ -1,6 +1,6 @@
 {
   "schema": "dreamco.bot_end_to_end_readiness.division.v1",
-  "generated_at": "2026-07-21T03:00:32Z",
+  "generated_at": "2026-07-21T03:45:15Z",
   "division": "DreamFood",
   "bot_count": 21,
   "bots": [
@@ -19,7 +19,9 @@
         "bots/bartender-ai/runtime.py",
         "bots/bartender-ai/tiers.py"
       ],
-      "tests": [],
+      "tests": [
+        "tests/generated_bot_smoke/test_bartender_ai_6516d0bc_runtime.py"
+      ],
       "capabilities": [
         "Liquor inventory tracking",
         "Pour cost calculation",
@@ -175,13 +177,11 @@
         ]
       },
       "readiness": {
-        "score": 90,
-        "status": "mostly_ready_needs_targeted_tests",
-        "missing": [
-          "direct test coverage"
-        ],
+        "score": 100,
+        "status": "ready_for_local_end_to_end_testing",
+        "missing": [],
         "next_steps": [
-          "Add or verify direct test coverage."
+          "Run direct smoke test and connect the bot card in Buddy/Actions."
         ]
       }
     },
@@ -200,7 +200,9 @@
         "bots/catering-coordinator/runtime.py",
         "bots/catering-coordinator/tiers.py"
       ],
-      "tests": [],
+      "tests": [
+        "tests/generated_bot_smoke/test_catering_coordinator_90584905_runtime.py"
+      ],
       "capabilities": [
         "Event menu planning tools",
         "Guest count management",
@@ -356,13 +358,11 @@
         ]
       },
       "readiness": {
-        "score": 90,
-        "status": "mostly_ready_needs_targeted_tests",
-        "missing": [
-          "direct test coverage"
-        ],
+        "score": 100,
+        "status": "ready_for_local_end_to_end_testing",
+        "missing": [],
         "next_steps": [
-          "Add or verify direct test coverage."
+          "Run direct smoke test and connect the bot card in Buddy/Actions."
         ]
       }
     },
@@ -381,7 +381,9 @@
         "bots/delivery-integration/runtime.py",
         "bots/delivery-integration/tiers.py"
       ],
-      "tests": [],
+      "tests": [
+        "tests/generated_bot_smoke/test_delivery_integration_9dbebb79_runtime.py"
+      ],
       "capabilities": [
         "Multi-platform order aggregation",
         "Menu sync automation",
@@ -545,13 +547,11 @@
         ]
       },
       "readiness": {
-        "score": 90,
-        "status": "mostly_ready_needs_targeted_tests",
-        "missing": [
-          "direct test coverage"
-        ],
+        "score": 100,
+        "status": "ready_for_local_end_to_end_testing",
+        "missing": [],
         "next_steps": [
-          "Add or verify direct test coverage."
+          "Run direct smoke test and connect the bot card in Buddy/Actions."
         ]
       }
     },
@@ -570,7 +570,9 @@
         "bots/wine-sommelier/runtime.py",
         "bots/wine-sommelier/tiers.py"
       ],
-      "tests": [],
+      "tests": [
+        "tests/generated_bot_smoke/test_wine_sommelier_c37be4db_runtime.py"
+      ],
       "capabilities": [
         "Wine pairing algorithm",
         "Cellar inventory management",
@@ -726,13 +728,11 @@
         ]
       },
       "readiness": {
-        "score": 90,
-        "status": "mostly_ready_needs_targeted_tests",
-        "missing": [
-          "direct test coverage"
-        ],
+        "score": 100,
+        "status": "ready_for_local_end_to_end_testing",
+        "missing": [],
         "next_steps": [
-          "Add or verify direct test coverage."
+          "Run direct smoke test and connect the bot card in Buddy/Actions."
         ]
       }
     },
@@ -745,9 +745,18 @@
       "status": "active",
       "profilePath": "App_bots/DreamFood.json",
       "source": "division_json_system",
-      "codeFiles": [],
-      "tests": [],
-      "capabilities": [],
+      "codeFiles": [
+        "App_bots/DreamFood.json"
+      ],
+      "tests": [
+        "tests/generated_bot_smoke/test_division_systems_contract.py"
+      ],
+      "capabilities": [
+        "local task intake",
+        "sandbox workflow execution",
+        "test evidence packet",
+        "Buddy approval handoff"
+      ],
       "taskContract": {
         "primary_mode": "local_first_no_external_provider_required",
         "can_run_without_other_providers": true,
@@ -877,19 +886,11 @@
         ]
       },
       "readiness": {
-        "score": 50,
-        "status": "needs_buildout_before_client_demo",
-        "missing": [
-          "capabilities",
-          "runtime code file",
-          "direct test coverage",
-          "business model or target users"
-        ],
+        "score": 100,
+        "status": "ready_for_local_end_to_end_testing",
+        "missing": [],
         "next_steps": [
-          "Add or verify capabilities.",
-          "Add or verify runtime code file.",
-          "Add or verify direct test coverage.",
-          "Add or verify business model or target users."
+          "Run direct smoke test and connect the bot card in Buddy/Actions."
         ]
       }
     },
@@ -908,7 +909,9 @@
         "bots/food-analytics-elite/runtime.py",
         "bots/food-analytics-elite/tiers.py"
       ],
-      "tests": [],
+      "tests": [
+        "tests/generated_bot_smoke/test_food_analytics_elite_cd701eed_runtime.py"
+      ],
       "capabilities": [
         "Multi-location dashboard",
         "Demand forecasting engine",
@@ -1078,13 +1081,11 @@
         ]
       },
       "readiness": {
-        "score": 90,
-        "status": "mostly_ready_needs_targeted_tests",
-        "missing": [
-          "direct test coverage"
-        ],
+        "score": 100,
+        "status": "ready_for_local_end_to_end_testing",
+        "missing": [],
         "next_steps": [
-          "Add or verify direct test coverage."
+          "Run direct smoke test and connect the bot card in Buddy/Actions."
         ]
       }
     },
@@ -1103,7 +1104,9 @@
         "bots/food-cost-ctrl/runtime.py",
         "bots/food-cost-ctrl/tiers.py"
       ],
-      "tests": [],
+      "tests": [
+        "tests/generated_bot_smoke/test_food_cost_ctrl_e3fec5a3_runtime.py"
+      ],
       "capabilities": [
         "Recipe cost calculation",
         "Actual vs theoretical food cost",
@@ -1267,13 +1270,11 @@
         ]
       },
       "readiness": {
-        "score": 90,
-        "status": "mostly_ready_needs_targeted_tests",
-        "missing": [
-          "direct test coverage"
-        ],
+        "score": 100,
+        "status": "ready_for_local_end_to_end_testing",
+        "missing": [],
         "next_steps": [
-          "Add or verify direct test coverage."
+          "Run direct smoke test and connect the bot card in Buddy/Actions."
         ]
       }
     },
@@ -1292,7 +1293,9 @@
         "bots/food-inventory/runtime.py",
         "bots/food-inventory/tiers.py"
       ],
-      "tests": [],
+      "tests": [
+        "tests/generated_bot_smoke/test_food_inventory_cd0d5a4d_runtime.py"
+      ],
       "capabilities": [
         "Ingredient stock tracking",
         "Spoilage prediction engine",
@@ -1448,13 +1451,11 @@
         ]
       },
       "readiness": {
-        "score": 90,
-        "status": "mostly_ready_needs_targeted_tests",
-        "missing": [
-          "direct test coverage"
-        ],
+        "score": 100,
+        "status": "ready_for_local_end_to_end_testing",
+        "missing": [],
         "next_steps": [
-          "Add or verify direct test coverage."
+          "Run direct smoke test and connect the bot card in Buddy/Actions."
         ]
       }
     },
@@ -1473,7 +1474,9 @@
         "bots/sustainability-food/runtime.py",
         "bots/sustainability-food/tiers.py"
       ],
-      "tests": [],
+      "tests": [
+        "tests/generated_bot_smoke/test_sustainability_food_21ac26ed_runtime.py"
+      ],
       "capabilities": [
         "Carbon footprint calculation",
         "Local sourcing percentage tracking",
@@ -1637,13 +1640,11 @@
         ]
       },
       "readiness": {
-        "score": 90,
-        "status": "mostly_ready_needs_targeted_tests",
-        "missing": [
-          "direct test coverage"
-        ],
+        "score": 100,
+        "status": "ready_for_local_end_to_end_testing",
+        "missing": [],
         "next_steps": [
-          "Add or verify direct test coverage."
+          "Run direct smoke test and connect the bot card in Buddy/Actions."
         ]
       }
     },
@@ -1662,7 +1663,9 @@
         "bots/food-truck-ops/runtime.py",
         "bots/food-truck-ops/tiers.py"
       ],
-      "tests": [],
+      "tests": [
+        "tests/generated_bot_smoke/test_food_truck_ops_2c1352b9_runtime.py"
+      ],
       "capabilities": [
         "Location performance analytics",
         "Route planning optimization",
@@ -1818,13 +1821,11 @@
         ]
       },
       "readiness": {
-        "score": 90,
-        "status": "mostly_ready_needs_targeted_tests",
-        "missing": [
-          "direct test coverage"
-        ],
+        "score": 100,
+        "status": "ready_for_local_end_to_end_testing",
+        "missing": [],
         "next_steps": [
-          "Add or verify direct test coverage."
+          "Run direct smoke test and connect the bot card in Buddy/Actions."
         ]
       }
     },
@@ -1843,7 +1844,9 @@
         "bots/franchise-ops/runtime.py",
         "bots/franchise-ops/tiers.py"
       ],
-      "tests": [],
+      "tests": [
+        "tests/generated_bot_smoke/test_franchise_ops_5494ff4a_runtime.py"
+      ],
       "capabilities": [
         "Brand standards auditing",
         "Franchisee performance scoring",
@@ -2007,13 +2010,11 @@
         ]
       },
       "readiness": {
-        "score": 90,
-        "status": "mostly_ready_needs_targeted_tests",
-        "missing": [
-          "direct test coverage"
-        ],
+        "score": 100,
+        "status": "ready_for_local_end_to_end_testing",
+        "missing": [],
         "next_steps": [
-          "Add or verify direct test coverage."
+          "Run direct smoke test and connect the bot card in Buddy/Actions."
         ]
       }
     },
@@ -2032,7 +2033,9 @@
         "bots/ghost-kitchen/runtime.py",
         "bots/ghost-kitchen/tiers.py"
       ],
-      "tests": [],
+      "tests": [
+        "tests/generated_bot_smoke/test_ghost_kitchen_f813ba0f_runtime.py"
+      ],
       "capabilities": [
         "Multi-brand order management",
         "Kitchen capacity optimization",
@@ -2202,13 +2205,11 @@
         ]
       },
       "readiness": {
-        "score": 90,
-        "status": "mostly_ready_needs_targeted_tests",
-        "missing": [
-          "direct test coverage"
-        ],
+        "score": 100,
+        "status": "ready_for_local_end_to_end_testing",
+        "missing": [],
         "next_steps": [
-          "Add or verify direct test coverage."
+          "Run direct smoke test and connect the bot card in Buddy/Actions."
         ]
       }
     },
@@ -2227,7 +2228,9 @@
         "bots/health-inspection/runtime.py",
         "bots/health-inspection/tiers.py"
       ],
-      "tests": [],
+      "tests": [
+        "tests/generated_bot_smoke/test_health_inspection_6f94bc65_runtime.py"
+      ],
       "capabilities": [
         "Inspection checklist automation",
         "Temperature log management",
@@ -2383,13 +2386,11 @@
         ]
       },
       "readiness": {
-        "score": 90,
-        "status": "mostly_ready_needs_targeted_tests",
-        "missing": [
-          "direct test coverage"
-        ],
+        "score": 100,
+        "status": "ready_for_local_end_to_end_testing",
+        "missing": [],
         "next_steps": [
-          "Add or verify direct test coverage."
+          "Run direct smoke test and connect the bot card in Buddy/Actions."
         ]
       }
     },
@@ -2408,7 +2409,9 @@
         "bots/kitchen-order/runtime.py",
         "bots/kitchen-order/tiers.py"
       ],
-      "tests": [],
+      "tests": [
+        "tests/generated_bot_smoke/test_kitchen_order_2fcd2e2c_runtime.py"
+      ],
       "capabilities": [
         "Order ticket management",
         "Cooking time optimization",
@@ -2564,13 +2567,11 @@
         ]
       },
       "readiness": {
-        "score": 90,
-        "status": "mostly_ready_needs_targeted_tests",
-        "missing": [
-          "direct test coverage"
-        ],
+        "score": 100,
+        "status": "ready_for_local_end_to_end_testing",
+        "missing": [],
         "next_steps": [
-          "Add or verify direct test coverage."
+          "Run direct smoke test and connect the bot card in Buddy/Actions."
         ]
       }
     },
@@ -2589,7 +2590,9 @@
         "bots/menu-engineer/runtime.py",
         "bots/menu-engineer/tiers.py"
       ],
-      "tests": [],
+      "tests": [
+        "tests/generated_bot_smoke/test_menu_engineer_8595f268_runtime.py"
+      ],
       "capabilities": [
         "Menu item cost analysis",
         "Profitability matrix scoring",
@@ -2745,13 +2748,11 @@
         ]
       },
       "readiness": {
-        "score": 90,
-        "status": "mostly_ready_needs_targeted_tests",
-        "missing": [
-          "direct test coverage"
-        ],
+        "score": 100,
+        "status": "ready_for_local_end_to_end_testing",
+        "missing": [],
         "next_steps": [
-          "Add or verify direct test coverage."
+          "Run direct smoke test and connect the bot card in Buddy/Actions."
         ]
       }
     },
@@ -2770,7 +2771,9 @@
         "bots/pos-analytics/runtime.py",
         "bots/pos-analytics/tiers.py"
       ],
-      "tests": [],
+      "tests": [
+        "tests/generated_bot_smoke/test_pos_analytics_8589cb2f_runtime.py"
+      ],
       "capabilities": [
         "Sales trend visualization",
         "Menu item performance scoring",
@@ -2926,13 +2929,11 @@
         ]
       },
       "readiness": {
-        "score": 90,
-        "status": "mostly_ready_needs_targeted_tests",
-        "missing": [
-          "direct test coverage"
-        ],
+        "score": 100,
+        "status": "ready_for_local_end_to_end_testing",
+        "missing": [],
         "next_steps": [
-          "Add or verify direct test coverage."
+          "Run direct smoke test and connect the bot card in Buddy/Actions."
         ]
       }
     },
@@ -2952,6 +2953,7 @@
         "bots/recipe-scaler/tiers.py"
       ],
       "tests": [
+        "tests/generated_bot_smoke/test_recipe_scaler_6752dbda_runtime.py",
         "tests/test_recipe_scaling_tool.py"
       ],
       "capabilities": [
@@ -3126,7 +3128,9 @@
         "bots/reservation-ai/runtime.py",
         "bots/reservation-ai/tiers.py"
       ],
-      "tests": [],
+      "tests": [
+        "tests/generated_bot_smoke/test_reservation_ai_7b0fad71_runtime.py"
+      ],
       "capabilities": [
         "Online reservation engine",
         "Table assignment optimization",
@@ -3282,13 +3286,11 @@
         ]
       },
       "readiness": {
-        "score": 90,
-        "status": "mostly_ready_needs_targeted_tests",
-        "missing": [
-          "direct test coverage"
-        ],
+        "score": 100,
+        "status": "ready_for_local_end_to_end_testing",
+        "missing": [],
         "next_steps": [
-          "Add or verify direct test coverage."
+          "Run direct smoke test and connect the bot card in Buddy/Actions."
         ]
       }
     },
@@ -3307,7 +3309,9 @@
         "bots/staff-scheduler-food/runtime.py",
         "bots/staff-scheduler-food/tiers.py"
       ],
-      "tests": [],
+      "tests": [
+        "tests/generated_bot_smoke/test_staff_scheduler_food_f5ed494a_runtime.py"
+      ],
       "capabilities": [
         "Shift scheduling automation",
         "Labor cost forecasting",
@@ -3463,13 +3467,11 @@
         ]
       },
       "readiness": {
-        "score": 90,
-        "status": "mostly_ready_needs_targeted_tests",
-        "missing": [
-          "direct test coverage"
-        ],
+        "score": 100,
+        "status": "ready_for_local_end_to_end_testing",
+        "missing": [],
         "next_steps": [
-          "Add or verify direct test coverage."
+          "Run direct smoke test and connect the bot card in Buddy/Actions."
         ]
       }
     },
@@ -3488,7 +3490,9 @@
         "bots/hotel-room-service/runtime.py",
         "bots/hotel-room-service/tiers.py"
       ],
-      "tests": [],
+      "tests": [
+        "tests/generated_bot_smoke/test_hotel_room_service_b9c01b42_runtime.py"
+      ],
       "capabilities": [
         "Order routing automation",
         "Guest preference profiling",
@@ -3652,13 +3656,11 @@
         ]
       },
       "readiness": {
-        "score": 90,
-        "status": "mostly_ready_needs_targeted_tests",
-        "missing": [
-          "direct test coverage"
-        ],
+        "score": 100,
+        "status": "ready_for_local_end_to_end_testing",
+        "missing": [],
         "next_steps": [
-          "Add or verify direct test coverage."
+          "Run direct smoke test and connect the bot card in Buddy/Actions."
         ]
       }
     },
@@ -3677,7 +3679,9 @@
         "bots/tip-calculator/runtime.py",
         "bots/tip-calculator/tiers.py"
       ],
-      "tests": [],
+      "tests": [
+        "tests/generated_bot_smoke/test_tip_calculator_dd30de84_runtime.py"
+      ],
       "capabilities": [
         "Tip pool calculation",
         "Distribution rule management",
@@ -3827,13 +3831,11 @@
         ]
       },
       "readiness": {
-        "score": 90,
-        "status": "mostly_ready_needs_targeted_tests",
-        "missing": [
-          "direct test coverage"
-        ],
+        "score": 100,
+        "status": "ready_for_local_end_to_end_testing",
+        "missing": [],
         "next_steps": [
-          "Add or verify direct test coverage."
+          "Run direct smoke test and connect the bot card in Buddy/Actions."
         ]
       }
     }

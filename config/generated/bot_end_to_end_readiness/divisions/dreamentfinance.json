@@ -1,6 +1,6 @@
 {
   "schema": "dreamco.bot_end_to_end_readiness.division.v1",
-  "generated_at": "2026-07-21T03:00:32Z",
+  "generated_at": "2026-07-21T03:45:15Z",
   "division": "DreamEntFinance",
   "bot_count": 26,
   "bots": [
@@ -19,7 +19,9 @@
         "bots/asset-perf-scorer/runtime.py",
         "bots/asset-perf-scorer/tiers.py"
       ],
-      "tests": [],
+      "tests": [
+        "tests/generated_bot_smoke/test_asset_perf_scorer_4137d70b_runtime.py"
+      ],
       "capabilities": [
         "Asset utilization scoring",
         "ROA calculation engine",
@@ -175,13 +177,11 @@
         ]
       },
       "readiness": {
-        "score": 90,
-        "status": "mostly_ready_needs_targeted_tests",
-        "missing": [
-          "direct test coverage"
-        ],
+        "score": 100,
+        "status": "ready_for_local_end_to_end_testing",
+        "missing": [],
         "next_steps": [
-          "Add or verify direct test coverage."
+          "Run direct smoke test and connect the bot card in Buddy/Actions."
         ]
       }
     },
@@ -200,7 +200,9 @@
         "bots/financial-dashboard-gen/runtime.py",
         "bots/financial-dashboard-gen/tiers.py"
       ],
-      "tests": [],
+      "tests": [
+        "tests/generated_bot_smoke/test_financial_dashboard_gen_713dc694_runtime.py"
+      ],
       "capabilities": [
         "Auto-dashboard generation",
         "KPI widget library",
@@ -350,13 +352,11 @@
         ]
       },
       "readiness": {
-        "score": 90,
-        "status": "mostly_ready_needs_targeted_tests",
-        "missing": [
-          "direct test coverage"
-        ],
+        "score": 100,
+        "status": "ready_for_local_end_to_end_testing",
+        "missing": [],
         "next_steps": [
-          "Add or verify direct test coverage."
+          "Run direct smoke test and connect the bot card in Buddy/Actions."
         ]
       }
     },
@@ -375,7 +375,9 @@
         "bots/budget-allocation-ai/runtime.py",
         "bots/budget-allocation-ai/tiers.py"
       ],
-      "tests": [],
+      "tests": [
+        "tests/generated_bot_smoke/test_budget_allocation_ai_59157a18_runtime.py"
+      ],
       "capabilities": [
         "Priority-based budget distribution",
         "Historical performance integration",
@@ -539,13 +541,11 @@
         ]
       },
       "readiness": {
-        "score": 90,
-        "status": "mostly_ready_needs_targeted_tests",
-        "missing": [
-          "direct test coverage"
-        ],
+        "score": 100,
+        "status": "ready_for_local_end_to_end_testing",
+        "missing": [],
         "next_steps": [
-          "Add or verify direct test coverage."
+          "Run direct smoke test and connect the bot card in Buddy/Actions."
         ]
       }
     },
@@ -564,7 +564,9 @@
         "bots/capex-opex-engine/runtime.py",
         "bots/capex-opex-engine/tiers.py"
       ],
-      "tests": [],
+      "tests": [
+        "tests/generated_bot_smoke/test_capex_opex_engine_96900c94_runtime.py"
+      ],
       "capabilities": [
         "TCO comparison modeling",
         "Tax impact analysis",
@@ -719,13 +721,11 @@
         ]
       },
       "readiness": {
-        "score": 90,
-        "status": "mostly_ready_needs_targeted_tests",
-        "missing": [
-          "direct test coverage"
-        ],
+        "score": 100,
+        "status": "ready_for_local_end_to_end_testing",
+        "missing": [],
         "next_steps": [
-          "Add or verify direct test coverage."
+          "Run direct smoke test and connect the bot card in Buddy/Actions."
         ]
       }
     },
@@ -744,7 +744,9 @@
         "bots/capital-alloc-optimizer/runtime.py",
         "bots/capital-alloc-optimizer/tiers.py"
       ],
-      "tests": [],
+      "tests": [
+        "tests/generated_bot_smoke/test_capital_alloc_optimizer_a472f072_runtime.py"
+      ],
       "capabilities": [
         "Portfolio optimization engine",
         "Risk-return frontier analysis",
@@ -907,13 +909,11 @@
         ]
       },
       "readiness": {
-        "score": 90,
-        "status": "mostly_ready_needs_targeted_tests",
-        "missing": [
-          "direct test coverage"
-        ],
+        "score": 100,
+        "status": "ready_for_local_end_to_end_testing",
+        "missing": [],
         "next_steps": [
-          "Add or verify direct test coverage."
+          "Run direct smoke test and connect the bot card in Buddy/Actions."
         ]
       }
     },
@@ -932,7 +932,9 @@
         "bots/cashflow-stress-test/runtime.py",
         "bots/cashflow-stress-test/tiers.py"
       ],
-      "tests": [],
+      "tests": [
+        "tests/generated_bot_smoke/test_cashflow_stress_test_7111a648_runtime.py"
+      ],
       "capabilities": [
         "Adverse scenario generation",
         "Cash position stress modeling",
@@ -1096,13 +1098,11 @@
         ]
       },
       "readiness": {
-        "score": 90,
-        "status": "mostly_ready_needs_targeted_tests",
-        "missing": [
-          "direct test coverage"
-        ],
+        "score": 100,
+        "status": "ready_for_local_end_to_end_testing",
+        "missing": [],
         "next_steps": [
-          "Add or verify direct test coverage."
+          "Run direct smoke test and connect the bot card in Buddy/Actions."
         ]
       }
     },
@@ -1115,9 +1115,18 @@
       "status": "active",
       "profilePath": "App_bots/DreamEntFinance.json",
       "source": "division_json_system",
-      "codeFiles": [],
-      "tests": [],
-      "capabilities": [],
+      "codeFiles": [
+        "App_bots/DreamEntFinance.json"
+      ],
+      "tests": [
+        "tests/generated_bot_smoke/test_division_systems_contract.py"
+      ],
+      "capabilities": [
+        "local task intake",
+        "sandbox workflow execution",
+        "test evidence packet",
+        "Buddy approval handoff"
+      ],
       "taskContract": {
         "primary_mode": "local_first_no_external_provider_required",
         "can_run_without_other_providers": true,
@@ -1247,19 +1256,11 @@
         ]
       },
       "readiness": {
-        "score": 50,
-        "status": "needs_buildout_before_client_demo",
-        "missing": [
-          "capabilities",
-          "runtime code file",
-          "direct test coverage",
-          "business model or target users"
-        ],
+        "score": 100,
+        "status": "ready_for_local_end_to_end_testing",
+        "missing": [],
         "next_steps": [
-          "Add or verify capabilities.",
-          "Add or verify runtime code file.",
-          "Add or verify direct test coverage.",
-          "Add or verify business model or target users."
+          "Run direct smoke test and connect the bot card in Buddy/Actions."
         ]
       }
     },
@@ -1278,7 +1279,9 @@
         "bots/cost-consolidation/runtime.py",
         "bots/cost-consolidation/tiers.py"
       ],
-      "tests": [],
+      "tests": [
+        "tests/generated_bot_smoke/test_cost_consolidation_6733b67d_runtime.py"
+      ],
       "capabilities": [
         "Multi-entity cost aggregation",
         "Cost center consolidation",
@@ -1442,13 +1445,11 @@
         ]
       },
       "readiness": {
-        "score": 90,
-        "status": "mostly_ready_needs_targeted_tests",
-        "missing": [
-          "direct test coverage"
-        ],
+        "score": 100,
+        "status": "ready_for_local_end_to_end_testing",
+        "missing": [],
         "next_steps": [
-          "Add or verify direct test coverage."
+          "Run direct smoke test and connect the bot card in Buddy/Actions."
         ]
       }
     },
@@ -1467,7 +1468,9 @@
         "bots/financial-resilience-index/runtime.py",
         "bots/financial-resilience-index/tiers.py"
       ],
-      "tests": [],
+      "tests": [
+        "tests/generated_bot_smoke/test_financial_resilience_index_35ae7a5d_runtime.py"
+      ],
       "capabilities": [
         "Resilience score calculation",
         "Health indicator tracking",
@@ -1617,13 +1620,11 @@
         ]
       },
       "readiness": {
-        "score": 90,
-        "status": "mostly_ready_needs_targeted_tests",
-        "missing": [
-          "direct test coverage"
-        ],
+        "score": 100,
+        "status": "ready_for_local_end_to_end_testing",
+        "missing": [],
         "next_steps": [
-          "Add or verify direct test coverage."
+          "Run direct smoke test and connect the bot card in Buddy/Actions."
         ]
       }
     },
@@ -1642,7 +1643,9 @@
         "bots/expense-anomaly-ai/runtime.py",
         "bots/expense-anomaly-ai/tiers.py"
       ],
-      "tests": [],
+      "tests": [
+        "tests/generated_bot_smoke/test_expense_anomaly_ai_15994b2f_runtime.py"
+      ],
       "capabilities": [
         "Statistical anomaly detection",
         "Expense categorization AI",
@@ -1806,13 +1809,11 @@
         ]
       },
       "readiness": {
-        "score": 90,
-        "status": "mostly_ready_needs_targeted_tests",
-        "missing": [
-          "direct test coverage"
-        ],
+        "score": 100,
+        "status": "ready_for_local_end_to_end_testing",
+        "missing": [],
         "next_steps": [
-          "Add or verify direct test coverage."
+          "Run direct smoke test and connect the bot card in Buddy/Actions."
         ]
       }
     },
@@ -1831,7 +1832,9 @@
         "bots/financial-kpi-auto/runtime.py",
         "bots/financial-kpi-auto/tiers.py"
       ],
-      "tests": [],
+      "tests": [
+        "tests/generated_bot_smoke/test_financial_kpi_auto_72261585_runtime.py"
+      ],
       "capabilities": [
         "KPI auto-calculation",
         "Threshold alert management",
@@ -1986,13 +1989,11 @@
         ]
       },
       "readiness": {
-        "score": 90,
-        "status": "mostly_ready_needs_targeted_tests",
-        "missing": [
-          "direct test coverage"
-        ],
+        "score": 100,
+        "status": "ready_for_local_end_to_end_testing",
+        "missing": [],
         "next_steps": [
-          "Add or verify direct test coverage."
+          "Run direct smoke test and connect the bot card in Buddy/Actions."
         ]
       }
     },
@@ -2011,7 +2012,9 @@
         "bots/investment-opp-scorer/runtime.py",
         "bots/investment-opp-scorer/tiers.py"
       ],
-      "tests": [],
+      "tests": [
+        "tests/generated_bot_smoke/test_investment_opp_scorer_64dd98f3_runtime.py"
+      ],
       "capabilities": [
         "Risk-adjusted return calculation",
         "Strategic fit assessment",
@@ -2166,13 +2169,11 @@
         ]
       },
       "readiness": {
-        "score": 90,
-        "status": "mostly_ready_needs_targeted_tests",
-        "missing": [
-          "direct test coverage"
-        ],
+        "score": 100,
+        "status": "ready_for_local_end_to_end_testing",
+        "missing": [],
         "next_steps": [
-          "Add or verify direct test coverage."
+          "Run direct smoke test and connect the bot card in Buddy/Actions."
         ]
       }
     },
@@ -2191,7 +2192,9 @@
         "bots/capital-sustainability/runtime.py",
         "bots/capital-sustainability/tiers.py"
       ],
-      "tests": [],
+      "tests": [
+        "tests/generated_bot_smoke/test_capital_sustainability_19398e1d_runtime.py"
+      ],
       "capabilities": [
         "Runway projection modeling",
         "Burn rate optimization",
@@ -2361,13 +2364,11 @@
         ]
       },
       "readiness": {
-        "score": 90,
-        "status": "mostly_ready_needs_targeted_tests",
-        "missing": [
-          "direct test coverage"
-        ],
+        "score": 100,
+        "status": "ready_for_local_end_to_end_testing",
+        "missing": [],
         "next_steps": [
-          "Add or verify direct test coverage."
+          "Run direct smoke test and connect the bot card in Buddy/Actions."
         ]
       }
     },
@@ -2386,7 +2387,9 @@
         "bots/financial-scenario-modeler/runtime.py",
         "bots/financial-scenario-modeler/tiers.py"
       ],
-      "tests": [],
+      "tests": [
+        "tests/generated_bot_smoke/test_financial_scenario_modeler_683b1a10_runtime.py"
+      ],
       "capabilities": [
         "Multi-year financial projection",
         "Macro-economic integration",
@@ -2556,13 +2559,11 @@
         ]
       },
       "readiness": {
-        "score": 90,
-        "status": "mostly_ready_needs_targeted_tests",
-        "missing": [
-          "direct test coverage"
-        ],
+        "score": 100,
+        "status": "ready_for_local_end_to_end_testing",
+        "missing": [],
         "next_steps": [
-          "Add or verify direct test coverage."
+          "Run direct smoke test and connect the bot card in Buddy/Actions."
         ]
       }
     },
@@ -2581,7 +2582,9 @@
         "bots/multi-currency-optimizer/runtime.py",
         "bots/multi-currency-optimizer/tiers.py"
       ],
-      "tests": [],
+      "tests": [
+        "tests/generated_bot_smoke/test_multi_currency_optimizer_3ab7cd8e_runtime.py"
+      ],
       "capabilities": [
         "Currency exposure analysis",
         "Hedging strategy recommendation",
@@ -2745,13 +2748,11 @@
         ]
       },
       "readiness": {
-        "score": 90,
-        "status": "mostly_ready_needs_targeted_tests",
-        "missing": [
-          "direct test coverage"
-        ],
+        "score": 100,
+        "status": "ready_for_local_end_to_end_testing",
+        "missing": [],
         "next_steps": [
-          "Add or verify direct test coverage."
+          "Run direct smoke test and connect the bot card in Buddy/Actions."
         ]
       }
     },
@@ -2770,7 +2771,9 @@
         "bots/financial-impact-sim/runtime.py",
         "bots/financial-impact-sim/tiers.py"
       ],
-      "tests": [],
+      "tests": [
+        "tests/generated_bot_smoke/test_financial_impact_sim_70411e5d_runtime.py"
+      ],
       "capabilities": [
         "Cross-department impact modeling",
         "Budget ripple effect analysis",
@@ -2925,13 +2928,11 @@
         ]
       },
       "readiness": {
-        "score": 90,
-        "status": "mostly_ready_needs_targeted_tests",
-        "missing": [
-          "direct test coverage"
-        ],
+        "score": 100,
+        "status": "ready_for_local_end_to_end_testing",
+        "missing": [],
         "next_steps": [
-          "Add or verify direct test coverage."
+          "Run direct smoke test and connect the bot card in Buddy/Actions."
         ]
       }
     },
@@ -2950,7 +2951,9 @@
         "bots/multi-entity-cashflow/runtime.py",
         "bots/multi-entity-cashflow/tiers.py"
       ],
-      "tests": [],
+      "tests": [
+        "tests/generated_bot_smoke/test_multi_entity_cashflow_96c747ad_runtime.py"
+      ],
       "capabilities": [
         "Multi-entity modeling engine",
         "Inter-company cash flow tracking",
@@ -3120,13 +3123,11 @@
         ]
       },
       "readiness": {
-        "score": 90,
-        "status": "mostly_ready_needs_targeted_tests",
-        "missing": [
-          "direct test coverage"
-        ],
+        "score": 100,
+        "status": "ready_for_local_end_to_end_testing",
+        "missing": [],
         "next_steps": [
-          "Add or verify direct test coverage."
+          "Run direct smoke test and connect the bot card in Buddy/Actions."
         ]
       }
     },
@@ -3145,7 +3146,9 @@
         "bots/profit-center-tracker/runtime.py",
         "bots/profit-center-tracker/tiers.py"
       ],
-      "tests": [],
+      "tests": [
+        "tests/generated_bot_smoke/test_profit_center_tracker_6b18a369_runtime.py"
+      ],
       "capabilities": [
         "Profit center P&L generation",
         "Benchmark comparison engine",
@@ -3300,13 +3303,11 @@
         ]
       },
       "readiness": {
-        "score": 90,
-        "status": "mostly_ready_needs_targeted_tests",
-        "missing": [
-          "direct test coverage"
-        ],
+        "score": 100,
+        "status": "ready_for_local_end_to_end_testing",
+        "missing": [],
         "next_steps": [
-          "Add or verify direct test coverage."
+          "Run direct smoke test and connect the bot card in Buddy/Actions."
         ]
       }
     },
@@ -3325,7 +3326,9 @@
         "bots/profit-per-feature/runtime.py",
         "bots/profit-per-feature/tiers.py"
       ],
-      "tests": [],
+      "tests": [
+        "tests/generated_bot_smoke/test_profit_per_feature_e3c11d2c_runtime.py"
+      ],
       "capabilities": [
         "Feature revenue attribution",
         "Cost allocation modeling",
@@ -3488,13 +3491,11 @@
         ]
       },
       "readiness": {
-        "score": 90,
-        "status": "mostly_ready_needs_targeted_tests",
-        "missing": [
-          "direct test coverage"
-        ],
+        "score": 100,
+        "status": "ready_for_local_end_to_end_testing",
+        "missing": [],
         "next_steps": [
-          "Add or verify direct test coverage."
+          "Run direct smoke test and connect the bot card in Buddy/Actions."
         ]
       }
     },
@@ -3513,7 +3514,9 @@
         "bots/profitability-anomaly/runtime.py",
         "bots/profitability-anomaly/tiers.py"
       ],
-      "tests": [],
+      "tests": [
+        "tests/generated_bot_smoke/test_profitability_anomaly_05c8d73d_runtime.py"
+      ],
       "capabilities": [
         "Margin anomaly detection",
         "Cost spike identification",
@@ -3668,13 +3671,11 @@
         ]
       },
       "readiness": {
-        "score": 90,
-        "status": "mostly_ready_needs_targeted_tests",
-        "missing": [
-          "direct test coverage"
-        ],
+        "score": 100,
+        "status": "ready_for_local_end_to_end_testing",
+        "missing": [],
         "next_steps": [
-          "Add or verify direct test coverage."
+          "Run direct smoke test and connect the bot card in Buddy/Actions."
         ]
       }
     },
@@ -3693,7 +3694,9 @@
         "bots/roi-per-client/runtime.py",
         "bots/roi-per-client/tiers.py"
       ],
-      "tests": [],
+      "tests": [
+        "tests/generated_bot_smoke/test_roi_per_client_88b2fe2d_runtime.py"
+      ],
       "capabilities": [
         "Client profitability modeling",
         "Usage-to-revenue correlation",
@@ -3848,13 +3851,11 @@
         ]
       },
       "readiness": {
-        "score": 90,
-        "status": "mostly_ready_needs_targeted_tests",
-        "missing": [
-          "direct test coverage"
-        ],
+        "score": 100,
+        "status": "ready_for_local_end_to_end_testing",
+        "missing": [],
         "next_steps": [
-          "Add or verify direct test coverage."
+          "Run direct smoke test and connect the bot card in Buddy/Actions."
         ]
       }
     },
@@ -3873,7 +3874,9 @@
         "bots/revenue-leakage-alert/runtime.py",
         "bots/revenue-leakage-alert/tiers.py"
       ],
-      "tests": [],
+      "tests": [
+        "tests/generated_bot_smoke/test_revenue_leakage_alert_a2ab422b_runtime.py"
+      ],
       "capabilities": [
         "Billing accuracy monitoring",
         "Contract compliance checking",
@@ -4037,13 +4040,11 @@
         ]
       },
       "readiness": {
-        "score": 90,
-        "status": "mostly_ready_needs_targeted_tests",
-        "missing": [
-          "direct test coverage"
-        ],
+        "score": 100,
+        "status": "ready_for_local_end_to_end_testing",
+        "missing": [],
         "next_steps": [
-          "Add or verify direct test coverage."
+          "Run direct smoke test and connect the bot card in Buddy/Actions."
         ]
       }
     },
@@ -4062,7 +4063,9 @@
         "bots/revenue-max-engine/runtime.py",
         "bots/revenue-max-engine/tiers.py"
       ],
-      "tests": [],
+      "tests": [
+        "tests/generated_bot_smoke/test_revenue_max_engine_85e97427_runtime.py"
+      ],
       "capabilities": [
         "Dynamic pricing optimization",
         "Upsell opportunity detection",
@@ -4232,13 +4235,11 @@
         ]
       },
       "readiness": {
-        "score": 90,
-        "status": "mostly_ready_needs_targeted_tests",
-        "missing": [
-          "direct test coverage"
-        ],
+        "score": 100,
+        "status": "ready_for_local_end_to_end_testing",
+        "missing": [],
         "next_steps": [
-          "Add or verify direct test coverage."
+          "Run direct smoke test and connect the bot card in Buddy/Actions."
         ]
       }
     },
@@ -4257,7 +4258,9 @@
         "bots/revenue-per-task/runtime.py",
         "bots/revenue-per-task/tiers.py"
       ],
-      "tests": [],
+      "tests": [
+        "tests/generated_bot_smoke/test_revenue_per_task_169c5855_runtime.py"
+      ],
       "capabilities": [
         "Task revenue attribution",
         "Cost-per-task calculation",
@@ -4412,13 +4415,11 @@
         ]
       },
       "readiness": {
-        "score": 90,
-        "status": "mostly_ready_needs_targeted_tests",
-        "missing": [
-          "direct test coverage"
-        ],
+        "score": 100,
+        "status": "ready_for_local_end_to_end_testing",
+        "missing": [],
         "next_steps": [
-          "Add or verify direct test coverage."
+          "Run direct smoke test and connect the bot card in Buddy/Actions."
         ]
       }
     },
@@ -4437,7 +4438,9 @@
         "bots/budget-realloc-ai/runtime.py",
         "bots/budget-realloc-ai/tiers.py"
       ],
-      "tests": [],
+      "tests": [
+        "tests/generated_bot_smoke/test_budget_realloc_ai_9a12a406_runtime.py"
+      ],
       "capabilities": [
         "Performance-based reallocation",
         "Market-driven adjustments",
@@ -4592,13 +4595,11 @@
         ]
       },
       "readiness": {
-        "score": 90,
-        "status": "mostly_ready_needs_targeted_tests",
-        "missing": [
-          "direct test coverage"
-        ],
+        "score": 100,
+        "status": "ready_for_local_end_to_end_testing",
+        "missing": [],
         "next_steps": [
-          "Add or verify direct test coverage."
+          "Run direct smoke test and connect the bot card in Buddy/Actions."
         ]
       }
     },
@@ -4617,7 +4618,9 @@
         "bots/strategic-revenue-proj/runtime.py",
         "bots/strategic-revenue-proj/tiers.py"
       ],
-      "tests": [],
+      "tests": [
+        "tests/generated_bot_smoke/test_strategic_revenue_proj_a1e9daef_runtime.py"
+      ],
       "capabilities": [
         "Multi-scenario revenue modeling",
         "Market size integration",
@@ -4781,13 +4784,11 @@
         ]
       },
       "readiness": {
-        "score": 90,
-        "status": "mostly_ready_needs_targeted_tests",
-        "missing": [
-          "direct test coverage"
-        ],
+        "score": 100,
+        "status": "ready_for_local_end_to_end_testing",
+        "missing": [],
         "next_steps": [
-          "Add or verify direct test coverage."
+          "Run direct smoke test and connect the bot card in Buddy/Actions."
         ]
       }
     }

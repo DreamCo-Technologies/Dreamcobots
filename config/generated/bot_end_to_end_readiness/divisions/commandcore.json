@@ -1,6 +1,6 @@
 {
   "schema": "dreamco.bot_end_to_end_readiness.division.v1",
-  "generated_at": "2026-07-21T03:00:32Z",
+  "generated_at": "2026-07-21T03:45:15Z",
   "division": "CommandCore",
   "bot_count": 14,
   "bots": [
@@ -19,7 +19,9 @@
         "bots/ai-self-learner/runtime.py",
         "bots/ai-self-learner/tiers.py"
       ],
-      "tests": [],
+      "tests": [
+        "tests/generated_bot_smoke/test_ai_self_learner_cd718bcd_runtime.py"
+      ],
       "capabilities": [
         "Continuous learning",
         "Pattern recognition",
@@ -187,13 +189,11 @@
         ]
       },
       "readiness": {
-        "score": 90,
-        "status": "mostly_ready_needs_targeted_tests",
-        "missing": [
-          "direct test coverage"
-        ],
+        "score": 100,
+        "status": "ready_for_local_end_to_end_testing",
+        "missing": [],
         "next_steps": [
-          "Add or verify direct test coverage."
+          "Run direct smoke test and connect the bot card in Buddy/Actions."
         ]
       }
     },
@@ -212,7 +212,9 @@
         "bots/analytics-hub/runtime.py",
         "bots/analytics-hub/tiers.py"
       ],
-      "tests": [],
+      "tests": [
+        "tests/generated_bot_smoke/test_analytics_hub_521ca6aa_runtime.py"
+      ],
       "capabilities": [
         "Cross-bot analytics",
         "KPI tracking",
@@ -366,13 +368,11 @@
         ]
       },
       "readiness": {
-        "score": 90,
-        "status": "mostly_ready_needs_targeted_tests",
-        "missing": [
-          "direct test coverage"
-        ],
+        "score": 100,
+        "status": "ready_for_local_end_to_end_testing",
+        "missing": [],
         "next_steps": [
-          "Add or verify direct test coverage."
+          "Run direct smoke test and connect the bot card in Buddy/Actions."
         ]
       }
     },
@@ -391,6 +391,8 @@
         "bots/buddy-bot/runtime.py"
       ],
       "tests": [
+        "tests/generated_bot_smoke/test_buddy_bot_2681ceac_runtime.py",
+        "tests/generated_bot_smoke/test_buddy_bot_9dfb8cba_runtime.py",
         "tests/test_buddy_bot.py"
       ],
       "capabilities": [
@@ -569,7 +571,9 @@
         "bots/cloud-scaler/runtime.py",
         "bots/cloud-scaler/tiers.py"
       ],
-      "tests": [],
+      "tests": [
+        "tests/generated_bot_smoke/test_cloud_scaler_efda2a06_runtime.py"
+      ],
       "capabilities": [
         "Auto-scaling",
         "Load balancing",
@@ -731,13 +735,11 @@
         ]
       },
       "readiness": {
-        "score": 90,
-        "status": "mostly_ready_needs_targeted_tests",
-        "missing": [
-          "direct test coverage"
-        ],
+        "score": 100,
+        "status": "ready_for_local_end_to_end_testing",
+        "missing": [],
         "next_steps": [
-          "Add or verify direct test coverage."
+          "Run direct smoke test and connect the bot card in Buddy/Actions."
         ]
       }
     },
@@ -750,9 +752,18 @@
       "status": "active",
       "profilePath": "App_bots/CommandCore.json",
       "source": "division_json_system",
-      "codeFiles": [],
-      "tests": [],
-      "capabilities": [],
+      "codeFiles": [
+        "App_bots/CommandCore.json"
+      ],
+      "tests": [
+        "tests/generated_bot_smoke/test_division_systems_contract.py"
+      ],
+      "capabilities": [
+        "local task intake",
+        "sandbox workflow execution",
+        "test evidence packet",
+        "Buddy approval handoff"
+      ],
       "taskContract": {
         "primary_mode": "local_first_no_external_provider_required",
         "can_run_without_other_providers": true,
@@ -882,19 +893,11 @@
         ]
       },
       "readiness": {
-        "score": 50,
-        "status": "needs_buildout_before_client_demo",
-        "missing": [
-          "capabilities",
-          "runtime code file",
-          "direct test coverage",
-          "business model or target users"
-        ],
+        "score": 100,
+        "status": "ready_for_local_end_to_end_testing",
+        "missing": [],
         "next_steps": [
-          "Add or verify capabilities.",
-          "Add or verify runtime code file.",
-          "Add or verify direct test coverage.",
-          "Add or verify business model or target users."
+          "Run direct smoke test and connect the bot card in Buddy/Actions."
         ]
       }
     },
@@ -913,7 +916,9 @@
         "bots/dreambot/runtime.py",
         "bots/dreambot/tiers.py"
       ],
-      "tests": [],
+      "tests": [
+        "tests/generated_bot_smoke/test_dreambot_bbd5c467_runtime.py"
+      ],
       "capabilities": [
         "Multi-bot coordination",
         "Performance monitoring",
@@ -1063,13 +1068,11 @@
         ]
       },
       "readiness": {
-        "score": 90,
-        "status": "mostly_ready_needs_targeted_tests",
-        "missing": [
-          "direct test coverage"
-        ],
+        "score": 100,
+        "status": "ready_for_local_end_to_end_testing",
+        "missing": [],
         "next_steps": [
-          "Add or verify direct test coverage."
+          "Run direct smoke test and connect the bot card in Buddy/Actions."
         ]
       }
     },
@@ -1089,6 +1092,8 @@
         "bots/global-bot-network/tiers.py"
       ],
       "tests": [
+        "tests/generated_bot_smoke/test_global_bot_network_378577b8_runtime.py",
+        "tests/generated_bot_smoke/test_global_bot_network_4ff178c5_runtime.py",
         "tests/test_global_bot_network.py"
       ],
       "capabilities": [
@@ -1264,6 +1269,8 @@
         "bots/god-mode-bot/tiers.py"
       ],
       "tests": [
+        "tests/generated_bot_smoke/test_god_mode_bot_be1a35aa_runtime.py",
+        "tests/generated_bot_smoke/test_god_mode_bot_f4059691_runtime.py",
         "tests/test_god_mode_bot.py"
       ],
       "capabilities": [
@@ -1438,7 +1445,9 @@
         "bots/memory-vault/runtime.py",
         "bots/memory-vault/tiers.py"
       ],
-      "tests": [],
+      "tests": [
+        "tests/generated_bot_smoke/test_memory_vault_faa3b0e5_runtime.py"
+      ],
       "capabilities": [
         "Persistent note storage",
         "Cross-bot memory sharing",
@@ -1593,13 +1602,11 @@
         ]
       },
       "readiness": {
-        "score": 90,
-        "status": "mostly_ready_needs_targeted_tests",
-        "missing": [
-          "direct test coverage"
-        ],
+        "score": 100,
+        "status": "ready_for_local_end_to_end_testing",
+        "missing": [],
         "next_steps": [
-          "Add or verify direct test coverage."
+          "Run direct smoke test and connect the bot card in Buddy/Actions."
         ]
       }
     },
@@ -1618,7 +1625,9 @@
         "bots/research-analyst/runtime.py",
         "bots/research-analyst/tiers.py"
       ],
-      "tests": [],
+      "tests": [
+        "tests/generated_bot_smoke/test_research_analyst_7eab4a9d_runtime.py"
+      ],
       "capabilities": [
         "Multi-source research",
         "Citation tracking",
@@ -1776,13 +1785,11 @@
         ]
       },
       "readiness": {
-        "score": 90,
-        "status": "mostly_ready_needs_targeted_tests",
-        "missing": [
-          "direct test coverage"
-        ],
+        "score": 100,
+        "status": "ready_for_local_end_to_end_testing",
+        "missing": [],
         "next_steps": [
-          "Add or verify direct test coverage."
+          "Run direct smoke test and connect the bot card in Buddy/Actions."
         ]
       }
     },
@@ -1801,7 +1808,9 @@
         "bots/research-bot/runtime.py",
         "bots/research-bot/tiers.py"
       ],
-      "tests": [],
+      "tests": [
+        "tests/generated_bot_smoke/test_research_bot_2f0bf7bd_runtime.py"
+      ],
       "capabilities": [
         "Market research",
         "Competitor analysis",
@@ -1951,13 +1960,11 @@
         ]
       },
       "readiness": {
-        "score": 90,
-        "status": "mostly_ready_needs_targeted_tests",
-        "missing": [
-          "direct test coverage"
-        ],
+        "score": 100,
+        "status": "ready_for_local_end_to_end_testing",
+        "missing": [],
         "next_steps": [
-          "Add or verify direct test coverage."
+          "Run direct smoke test and connect the bot card in Buddy/Actions."
         ]
       }
     },
@@ -1976,7 +1983,9 @@
         "bots/security-compliance/runtime.py",
         "bots/security-compliance/tiers.py"
       ],
-      "tests": [],
+      "tests": [
+        "tests/generated_bot_smoke/test_security_compliance_6c9a80fa_runtime.py"
+      ],
       "capabilities": [
         "Compliance monitoring",
         "Security audits",
@@ -2138,13 +2147,11 @@
         ]
       },
       "readiness": {
-        "score": 90,
-        "status": "mostly_ready_needs_targeted_tests",
-        "missing": [
-          "direct test coverage"
-        ],
+        "score": 100,
+        "status": "ready_for_local_end_to_end_testing",
+        "missing": [],
         "next_steps": [
-          "Add or verify direct test coverage."
+          "Run direct smoke test and connect the bot card in Buddy/Actions."
         ]
       }
     },
@@ -2163,7 +2170,9 @@
         "bots/self-debug-engine/runtime.py",
         "bots/self-debug-engine/tiers.py"
       ],
-      "tests": [],
+      "tests": [
+        "tests/generated_bot_smoke/test_self_debug_engine_1af75a26_runtime.py"
+      ],
       "capabilities": [
         "Error detection",
         "Auto-repair",
@@ -2325,13 +2334,11 @@
         ]
       },
       "readiness": {
-        "score": 90,
-        "status": "mostly_ready_needs_targeted_tests",
-        "missing": [
-          "direct test coverage"
-        ],
+        "score": 100,
+        "status": "ready_for_local_end_to_end_testing",
+        "missing": [],
         "next_steps": [
-          "Add or verify direct test coverage."
+          "Run direct smoke test and connect the bot card in Buddy/Actions."
         ]
       }
     },
@@ -2350,7 +2357,9 @@
         "bots/task-scheduler/runtime.py",
         "bots/task-scheduler/tiers.py"
       ],
-      "tests": [],
+      "tests": [
+        "tests/generated_bot_smoke/test_task_scheduler_ba402c83_runtime.py"
+      ],
       "capabilities": [
         "Task prioritization",
         "Auto-scheduling",
@@ -2504,13 +2513,11 @@
         ]
       },
       "readiness": {
-        "score": 90,
-        "status": "mostly_ready_needs_targeted_tests",
-        "missing": [
-          "direct test coverage"
-        ],
+        "score": 100,
+        "status": "ready_for_local_end_to_end_testing",
+        "missing": [],
         "next_steps": [
-          "Add or verify direct test coverage."
+          "Run direct smoke test and connect the bot card in Buddy/Actions."
         ]
       }
     }

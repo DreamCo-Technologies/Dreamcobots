@@ -1,6 +1,6 @@
 {
   "schema": "dreamco.bot_end_to_end_readiness.division.v1",
-  "generated_at": "2026-07-21T03:00:32Z",
+  "generated_at": "2026-07-21T03:45:15Z",
   "division": "DreamPersonalCare",
   "bot_count": 31,
   "bots": [
@@ -19,7 +19,10 @@
         "bots/resource-eligibility-bot/runtime.py",
         "bots/resource-eligibility-bot/tiers.py"
       ],
-      "tests": [],
+      "tests": [
+        "tests/generated_bot_smoke/test_bot_211_resource_eligibility_bot_6b7cd2e0_runtime.py",
+        "tests/generated_bot_smoke/test_resource_eligibility_bot_014df8ec_runtime.py"
+      ],
       "capabilities": [
         "Local resource database",
         "Eligibility screening",
@@ -169,13 +172,11 @@
         ]
       },
       "readiness": {
-        "score": 90,
-        "status": "mostly_ready_needs_targeted_tests",
-        "missing": [
-          "direct test coverage"
-        ],
+        "score": 100,
+        "status": "ready_for_local_end_to_end_testing",
+        "missing": [],
         "next_steps": [
-          "Add or verify direct test coverage."
+          "Run direct smoke test and connect the bot card in Buddy/Actions."
         ]
       }
     },
@@ -194,7 +195,9 @@
         "bots/barber-booking/runtime.py",
         "bots/barber-booking/tiers.py"
       ],
-      "tests": [],
+      "tests": [
+        "tests/generated_bot_smoke/test_barber_booking_99761f5e_runtime.py"
+      ],
       "capabilities": [
         "Online booking portal",
         "Walk-in queue management",
@@ -350,13 +353,11 @@
         ]
       },
       "readiness": {
-        "score": 90,
-        "status": "mostly_ready_needs_targeted_tests",
-        "missing": [
-          "direct test coverage"
-        ],
+        "score": 100,
+        "status": "ready_for_local_end_to_end_testing",
+        "missing": [],
         "next_steps": [
-          "Add or verify direct test coverage."
+          "Run direct smoke test and connect the bot card in Buddy/Actions."
         ]
       }
     },
@@ -375,7 +376,9 @@
         "bots/retail-product-mgr/runtime.py",
         "bots/retail-product-mgr/tiers.py"
       ],
-      "tests": [],
+      "tests": [
+        "tests/generated_bot_smoke/test_retail_product_mgr_bfac5664_runtime.py"
+      ],
       "capabilities": [
         "Product inventory management",
         "Client recommendation engine",
@@ -531,13 +534,11 @@
         ]
       },
       "readiness": {
-        "score": 90,
-        "status": "mostly_ready_needs_targeted_tests",
-        "missing": [
-          "direct test coverage"
-        ],
+        "score": 100,
+        "status": "ready_for_local_end_to_end_testing",
+        "missing": [],
         "next_steps": [
-          "Add or verify direct test coverage."
+          "Run direct smoke test and connect the bot card in Buddy/Actions."
         ]
       }
     },
@@ -556,7 +557,9 @@
         "bots/beauty-school/runtime.py",
         "bots/beauty-school/tiers.py"
       ],
-      "tests": [],
+      "tests": [
+        "tests/generated_bot_smoke/test_beauty_school_c23a9035_runtime.py"
+      ],
       "capabilities": [
         "Student enrollment management",
         "Practical hours tracking",
@@ -720,13 +723,11 @@
         ]
       },
       "readiness": {
-        "score": 90,
-        "status": "mostly_ready_needs_targeted_tests",
-        "missing": [
-          "direct test coverage"
-        ],
+        "score": 100,
+        "status": "ready_for_local_end_to_end_testing",
+        "missing": [],
         "next_steps": [
-          "Add or verify direct test coverage."
+          "Run direct smoke test and connect the bot card in Buddy/Actions."
         ]
       }
     },
@@ -745,7 +746,9 @@
         "bots/client-intake-care/runtime.py",
         "bots/client-intake-care/tiers.py"
       ],
-      "tests": [],
+      "tests": [
+        "tests/generated_bot_smoke/test_client_intake_care_a0486c65_runtime.py"
+      ],
       "capabilities": [
         "Digital intake form builder",
         "Consultation note management",
@@ -901,13 +904,11 @@
         ]
       },
       "readiness": {
-        "score": 90,
-        "status": "mostly_ready_needs_targeted_tests",
-        "missing": [
-          "direct test coverage"
-        ],
+        "score": 100,
+        "status": "ready_for_local_end_to_end_testing",
+        "missing": [],
         "next_steps": [
-          "Add or verify direct test coverage."
+          "Run direct smoke test and connect the bot card in Buddy/Actions."
         ]
       }
     },
@@ -926,7 +927,9 @@
         "bots/cosmetology-license/runtime.py",
         "bots/cosmetology-license/tiers.py"
       ],
-      "tests": [],
+      "tests": [
+        "tests/generated_bot_smoke/test_cosmetology_license_d37daf84_runtime.py"
+      ],
       "capabilities": [
         "License renewal tracking",
         "CE credit logging",
@@ -1082,13 +1085,11 @@
         ]
       },
       "readiness": {
-        "score": 90,
-        "status": "mostly_ready_needs_targeted_tests",
-        "missing": [
-          "direct test coverage"
-        ],
+        "score": 100,
+        "status": "ready_for_local_end_to_end_testing",
+        "missing": [],
         "next_steps": [
-          "Add or verify direct test coverage."
+          "Run direct smoke test and connect the bot card in Buddy/Actions."
         ]
       }
     },
@@ -1101,9 +1102,18 @@
       "status": "active",
       "profilePath": "App_bots/DreamPersonalCare.json",
       "source": "division_json_system",
-      "codeFiles": [],
-      "tests": [],
-      "capabilities": [],
+      "codeFiles": [
+        "App_bots/DreamPersonalCare.json"
+      ],
+      "tests": [
+        "tests/generated_bot_smoke/test_division_systems_contract.py"
+      ],
+      "capabilities": [
+        "local task intake",
+        "sandbox workflow execution",
+        "test evidence packet",
+        "Buddy approval handoff"
+      ],
       "taskContract": {
         "primary_mode": "local_first_no_external_provider_required",
         "can_run_without_other_providers": true,
@@ -1233,19 +1243,11 @@
         ]
       },
       "readiness": {
-        "score": 50,
-        "status": "needs_buildout_before_client_demo",
-        "missing": [
-          "capabilities",
-          "runtime code file",
-          "direct test coverage",
-          "business model or target users"
-        ],
+        "score": 100,
+        "status": "ready_for_local_end_to_end_testing",
+        "missing": [],
         "next_steps": [
-          "Add or verify capabilities.",
-          "Add or verify runtime code file.",
-          "Add or verify direct test coverage.",
-          "Add or verify business model or target users."
+          "Run direct smoke test and connect the bot card in Buddy/Actions."
         ]
       }
     },
@@ -1264,7 +1266,9 @@
         "bots/education-app-bot/runtime.py",
         "bots/education-app-bot/tiers.py"
       ],
-      "tests": [],
+      "tests": [
+        "tests/generated_bot_smoke/test_education_app_bot_1597b561_runtime.py"
+      ],
       "capabilities": [
         "Adaptive learning paths",
         "AI quiz generation",
@@ -1414,13 +1418,11 @@
         ]
       },
       "readiness": {
-        "score": 90,
-        "status": "mostly_ready_needs_targeted_tests",
-        "missing": [
-          "direct test coverage"
-        ],
+        "score": 100,
+        "status": "ready_for_local_end_to_end_testing",
+        "missing": [],
         "next_steps": [
-          "Add or verify direct test coverage."
+          "Run direct smoke test and connect the bot card in Buddy/Actions."
         ]
       }
     },
@@ -1439,7 +1441,9 @@
         "bots/fitness-trainer/runtime.py",
         "bots/fitness-trainer/tiers.py"
       ],
-      "tests": [],
+      "tests": [
+        "tests/generated_bot_smoke/test_fitness_trainer_db3a98a1_runtime.py"
+      ],
       "capabilities": [
         "Workout program builder",
         "Exercise library database",
@@ -1595,13 +1599,11 @@
         ]
       },
       "readiness": {
-        "score": 90,
-        "status": "mostly_ready_needs_targeted_tests",
-        "missing": [
-          "direct test coverage"
-        ],
+        "score": 100,
+        "status": "ready_for_local_end_to_end_testing",
+        "missing": [],
         "next_steps": [
-          "Add or verify direct test coverage."
+          "Run direct smoke test and connect the bot card in Buddy/Actions."
         ]
       }
     },
@@ -1620,7 +1622,9 @@
         "bots/food-drink-app-bot/runtime.py",
         "bots/food-drink-app-bot/tiers.py"
       ],
-      "tests": [],
+      "tests": [
+        "tests/generated_bot_smoke/test_food_drink_app_bot_6d9e8f8b_runtime.py"
+      ],
       "capabilities": [
         "Menu optimization AI",
         "Nutritional label analysis",
@@ -1770,13 +1774,11 @@
         ]
       },
       "readiness": {
-        "score": 90,
-        "status": "mostly_ready_needs_targeted_tests",
-        "missing": [
-          "direct test coverage"
-        ],
+        "score": 100,
+        "status": "ready_for_local_end_to_end_testing",
+        "missing": [],
         "next_steps": [
-          "Add or verify direct test coverage."
+          "Run direct smoke test and connect the bot card in Buddy/Actions."
         ]
       }
     },
@@ -1795,7 +1797,9 @@
         "bots/class-scheduler/runtime.py",
         "bots/class-scheduler/tiers.py"
       ],
-      "tests": [],
+      "tests": [
+        "tests/generated_bot_smoke/test_class_scheduler_bbdd8071_runtime.py"
+      ],
       "capabilities": [
         "Class schedule builder",
         "Capacity management tools",
@@ -1951,13 +1955,11 @@
         ]
       },
       "readiness": {
-        "score": 90,
-        "status": "mostly_ready_needs_targeted_tests",
-        "missing": [
-          "direct test coverage"
-        ],
+        "score": 100,
+        "status": "ready_for_local_end_to_end_testing",
+        "missing": [],
         "next_steps": [
-          "Add or verify direct test coverage."
+          "Run direct smoke test and connect the bot card in Buddy/Actions."
         ]
       }
     },
@@ -1976,7 +1978,9 @@
         "bots/hair-color-formula/runtime.py",
         "bots/hair-color-formula/tiers.py"
       ],
-      "tests": [],
+      "tests": [
+        "tests/generated_bot_smoke/test_hair_color_formula_89eb27fc_runtime.py"
+      ],
       "capabilities": [
         "Formula database management",
         "Client color history",
@@ -2132,13 +2136,11 @@
         ]
       },
       "readiness": {
-        "score": 90,
-        "status": "mostly_ready_needs_targeted_tests",
-        "missing": [
-          "direct test coverage"
-        ],
+        "score": 100,
+        "status": "ready_for_local_end_to_end_testing",
+        "missing": [],
         "next_steps": [
-          "Add or verify direct test coverage."
+          "Run direct smoke test and connect the bot card in Buddy/Actions."
         ]
       }
     },
@@ -2157,7 +2159,9 @@
         "bots/health-fitness-app-bot/runtime.py",
         "bots/health-fitness-app-bot/tiers.py"
       ],
-      "tests": [],
+      "tests": [
+        "tests/generated_bot_smoke/test_health_fitness_app_bot_bef08b67_runtime.py"
+      ],
       "capabilities": [
         "AI workout plan generator",
         "Nutrition & macro tracking",
@@ -2307,13 +2311,11 @@
         ]
       },
       "readiness": {
-        "score": 90,
-        "status": "mostly_ready_needs_targeted_tests",
-        "missing": [
-          "direct test coverage"
-        ],
+        "score": 100,
+        "status": "ready_for_local_end_to_end_testing",
+        "missing": [],
         "next_steps": [
-          "Add or verify direct test coverage."
+          "Run direct smoke test and connect the bot card in Buddy/Actions."
         ]
       }
     },
@@ -2333,6 +2335,8 @@
         "bots/home-buyer-bot/tiers.py"
       ],
       "tests": [
+        "tests/generated_bot_smoke/test_home_buyer_bot_70a37b24_runtime.py",
+        "tests/generated_bot_smoke/test_home_buyer_bot_e18f5be6_runtime.py",
         "tests/test_home_buyer_bot.py"
       ],
       "capabilities": [
@@ -2510,7 +2514,10 @@
         "bots/job-application-bot/resume_parser.py",
         "bots/job-application-bot/runtime.py"
       ],
-      "tests": [],
+      "tests": [
+        "tests/generated_bot_smoke/test_job_application_bot_b374f730_runtime.py",
+        "tests/generated_bot_smoke/test_selenium_job_application_bot_000f873f_runtime.py"
+      ],
       "capabilities": [
         "Multi-platform job search",
         "Auto-application submission",
@@ -2660,13 +2667,11 @@
         ]
       },
       "readiness": {
-        "score": 90,
-        "status": "mostly_ready_needs_targeted_tests",
-        "missing": [
-          "direct test coverage"
-        ],
+        "score": 100,
+        "status": "ready_for_local_end_to_end_testing",
+        "missing": [],
         "next_steps": [
-          "Add or verify direct test coverage."
+          "Run direct smoke test and connect the bot card in Buddy/Actions."
         ]
       }
     },
@@ -2685,7 +2690,9 @@
         "bots/kids-family-app-bot/runtime.py",
         "bots/kids-family-app-bot/tiers.py"
       ],
-      "tests": [],
+      "tests": [
+        "tests/generated_bot_smoke/test_kids_family_app_bot_8912886d_runtime.py"
+      ],
       "capabilities": [
         "Parental control enforcement",
         "Safe-content AI filtering",
@@ -2835,13 +2842,11 @@
         ]
       },
       "readiness": {
-        "score": 90,
-        "status": "mostly_ready_needs_targeted_tests",
-        "missing": [
-          "direct test coverage"
-        ],
+        "score": 100,
+        "status": "ready_for_local_end_to_end_testing",
+        "missing": [],
         "next_steps": [
-          "Add or verify direct test coverage."
+          "Run direct smoke test and connect the bot card in Buddy/Actions."
         ]
       }
     },
@@ -2860,7 +2865,9 @@
         "bots/lifestyle-app-bot/runtime.py",
         "bots/lifestyle-app-bot/tiers.py"
       ],
-      "tests": [],
+      "tests": [
+        "tests/generated_bot_smoke/test_lifestyle_app_bot_d23a7a58_runtime.py"
+      ],
       "capabilities": [
         "Habit stack builder",
         "Daily mood & energy logger",
@@ -3010,13 +3017,11 @@
         ]
       },
       "readiness": {
-        "score": 90,
-        "status": "mostly_ready_needs_targeted_tests",
-        "missing": [
-          "direct test coverage"
-        ],
+        "score": 100,
+        "status": "ready_for_local_end_to_end_testing",
+        "missing": [],
         "next_steps": [
-          "Add or verify direct test coverage."
+          "Run direct smoke test and connect the bot card in Buddy/Actions."
         ]
       }
     },
@@ -3035,7 +3040,9 @@
         "bots/massage-therapist/runtime.py",
         "bots/massage-therapist/tiers.py"
       ],
-      "tests": [],
+      "tests": [
+        "tests/generated_bot_smoke/test_massage_therapist_a0019200_runtime.py"
+      ],
       "capabilities": [
         "SOAP note generation",
         "Insurance billing automation",
@@ -3199,13 +3206,11 @@
         ]
       },
       "readiness": {
-        "score": 90,
-        "status": "mostly_ready_needs_targeted_tests",
-        "missing": [
-          "direct test coverage"
-        ],
+        "score": 100,
+        "status": "ready_for_local_end_to_end_testing",
+        "missing": [],
         "next_steps": [
-          "Add or verify direct test coverage."
+          "Run direct smoke test and connect the bot card in Buddy/Actions."
         ]
       }
     },
@@ -3224,7 +3229,9 @@
         "bots/med-spa-mgr/runtime.py",
         "bots/med-spa-mgr/tiers.py"
       ],
-      "tests": [],
+      "tests": [
+        "tests/generated_bot_smoke/test_med_spa_mgr_110a5e8a_runtime.py"
+      ],
       "capabilities": [
         "Treatment protocol compliance",
         "Clinical outcome tracking",
@@ -3388,13 +3395,11 @@
         ]
       },
       "readiness": {
-        "score": 90,
-        "status": "mostly_ready_needs_targeted_tests",
-        "missing": [
-          "direct test coverage"
-        ],
+        "score": 100,
+        "status": "ready_for_local_end_to_end_testing",
+        "missing": [],
         "next_steps": [
-          "Add or verify direct test coverage."
+          "Run direct smoke test and connect the bot card in Buddy/Actions."
         ]
       }
     },
@@ -3413,7 +3418,9 @@
         "bots/membership-mgr-care/runtime.py",
         "bots/membership-mgr-care/tiers.py"
       ],
-      "tests": [],
+      "tests": [
+        "tests/generated_bot_smoke/test_membership_mgr_care_215e7f9a_runtime.py"
+      ],
       "capabilities": [
         "Membership plan management",
         "Automated billing engine",
@@ -3569,13 +3576,11 @@
         ]
       },
       "readiness": {
-        "score": 90,
-        "status": "mostly_ready_needs_targeted_tests",
-        "missing": [
-          "direct test coverage"
-        ],
+        "score": 100,
+        "status": "ready_for_local_end_to_end_testing",
+        "missing": [],
         "next_steps": [
-          "Add or verify direct test coverage."
+          "Run direct smoke test and connect the bot card in Buddy/Actions."
         ]
       }
     },
@@ -3594,7 +3599,9 @@
         "bots/nutrition-planner/runtime.py",
         "bots/nutrition-planner/tiers.py"
       ],
-      "tests": [],
+      "tests": [
+        "tests/generated_bot_smoke/test_nutrition_planner_29b75e13_runtime.py"
+      ],
       "capabilities": [
         "Meal plan generation",
         "Macronutrient calculation engine",
@@ -3750,13 +3757,11 @@
         ]
       },
       "readiness": {
-        "score": 90,
-        "status": "mostly_ready_needs_targeted_tests",
-        "missing": [
-          "direct test coverage"
-        ],
+        "score": 100,
+        "status": "ready_for_local_end_to_end_testing",
+        "missing": [],
         "next_steps": [
-          "Add or verify direct test coverage."
+          "Run direct smoke test and connect the bot card in Buddy/Actions."
         ]
       }
     },
@@ -3775,7 +3780,9 @@
         "bots/personal-care-analytics-elite/runtime.py",
         "bots/personal-care-analytics-elite/tiers.py"
       ],
-      "tests": [],
+      "tests": [
+        "tests/generated_bot_smoke/test_personal_care_analytics_elite_380e8999_runtime.py"
+      ],
       "capabilities": [
         "Client lifetime value modeling",
         "Market positioning analysis",
@@ -3945,13 +3952,11 @@
         ]
       },
       "readiness": {
-        "score": 90,
-        "status": "mostly_ready_needs_targeted_tests",
-        "missing": [
-          "direct test coverage"
-        ],
+        "score": 100,
+        "status": "ready_for_local_end_to_end_testing",
+        "missing": [],
         "next_steps": [
-          "Add or verify direct test coverage."
+          "Run direct smoke test and connect the bot card in Buddy/Actions."
         ]
       }
     },
@@ -3971,6 +3976,8 @@
         "bots/resume-builder-bot/tiers.py"
       ],
       "tests": [
+        "tests/generated_bot_smoke/test_resume_builder_bot_6d27284a_runtime.py",
+        "tests/generated_bot_smoke/test_resume_builder_bot_c29a3b76_runtime.py",
         "tests/test_resume_builder_bot.py"
       ],
       "capabilities": [
@@ -4145,7 +4152,9 @@
         "bots/salon-scheduler/runtime.py",
         "bots/salon-scheduler/tiers.py"
       ],
-      "tests": [],
+      "tests": [
+        "tests/generated_bot_smoke/test_salon_scheduler_b9c6cab6_runtime.py"
+      ],
       "capabilities": [
         "Online booking engine",
         "Stylist matching algorithm",
@@ -4301,13 +4310,11 @@
         ]
       },
       "readiness": {
-        "score": 90,
-        "status": "mostly_ready_needs_targeted_tests",
-        "missing": [
-          "direct test coverage"
-        ],
+        "score": 100,
+        "status": "ready_for_local_end_to_end_testing",
+        "missing": [],
         "next_steps": [
-          "Add or verify direct test coverage."
+          "Run direct smoke test and connect the bot card in Buddy/Actions."
         ]
       }
     },
@@ -4326,7 +4333,9 @@
         "bots/hustle-finder-bot/runtime.py",
         "bots/hustle-finder-bot/tiers.py"
       ],
-      "tests": [],
+      "tests": [
+        "tests/generated_bot_smoke/test_hustle_finder_bot_92bce5a3_runtime.py"
+      ],
       "capabilities": [
         "Skill-to-hustle matching",
         "Income potential calculator",
@@ -4476,13 +4485,11 @@
         ]
       },
       "readiness": {
-        "score": 90,
-        "status": "mostly_ready_needs_targeted_tests",
-        "missing": [
-          "direct test coverage"
-        ],
+        "score": 100,
+        "status": "ready_for_local_end_to_end_testing",
+        "missing": [],
         "next_steps": [
-          "Add or verify direct test coverage."
+          "Run direct smoke test and connect the bot card in Buddy/Actions."
         ]
       }
     },
@@ -4501,7 +4508,9 @@
         "bots/skincare-routine/runtime.py",
         "bots/skincare-routine/tiers.py"
       ],
-      "tests": [],
+      "tests": [
+        "tests/generated_bot_smoke/test_skincare_routine_52a0f274_runtime.py"
+      ],
       "capabilities": [
         "Skin type assessment",
         "Routine step builder",
@@ -4651,13 +4660,11 @@
         ]
       },
       "readiness": {
-        "score": 90,
-        "status": "mostly_ready_needs_targeted_tests",
-        "missing": [
-          "direct test coverage"
-        ],
+        "score": 100,
+        "status": "ready_for_local_end_to_end_testing",
+        "missing": [],
         "next_steps": [
-          "Add or verify direct test coverage."
+          "Run direct smoke test and connect the bot card in Buddy/Actions."
         ]
       }
     },
@@ -4676,7 +4683,9 @@
         "bots/spa-manager/runtime.py",
         "bots/spa-manager/tiers.py"
       ],
-      "tests": [],
+      "tests": [
+        "tests/generated_bot_smoke/test_spa_manager_61f5200d_runtime.py"
+      ],
       "capabilities": [
         "Treatment room scheduling",
         "Protocol management system",
@@ -4840,13 +4849,11 @@
         ]
       },
       "readiness": {
-        "score": 90,
-        "status": "mostly_ready_needs_targeted_tests",
-        "missing": [
-          "direct test coverage"
-        ],
+        "score": 100,
+        "status": "ready_for_local_end_to_end_testing",
+        "missing": [],
         "next_steps": [
-          "Add or verify direct test coverage."
+          "Run direct smoke test and connect the bot card in Buddy/Actions."
         ]
       }
     },
@@ -4865,7 +4872,9 @@
         "bots/wellness-coach/runtime.py",
         "bots/wellness-coach/tiers.py"
       ],
-      "tests": [],
+      "tests": [
+        "tests/generated_bot_smoke/test_wellness_coach_5a832798_runtime.py"
+      ],
       "capabilities": [
         "Habit tracking automation",
         "Wellness assessment tools",
@@ -5021,13 +5030,11 @@
         ]
       },
       "readiness": {
-        "score": 90,
-        "status": "mostly_ready_needs_targeted_tests",
-        "missing": [
-          "direct test coverage"
-        ],
+        "score": 100,
+        "status": "ready_for_local_end_to_end_testing",
+        "missing": [],
         "next_steps": [
-          "Add or verify direct test coverage."
+          "Run direct smoke test and connect the bot card in Buddy/Actions."
         ]
       }
     },
@@ -5046,7 +5053,9 @@
         "bots/wellness-retreat/runtime.py",
         "bots/wellness-retreat/tiers.py"
       ],
-      "tests": [],
+      "tests": [
+        "tests/generated_bot_smoke/test_wellness_retreat_3b5df7f1_runtime.py"
+      ],
       "capabilities": [
         "Retreat program design",
         "Guest journey mapping",
@@ -5216,13 +5225,11 @@
         ]
       },
       "readiness": {
-        "score": 90,
-        "status": "mostly_ready_needs_targeted_tests",
-        "missing": [
-          "direct test coverage"
-        ],
+        "score": 100,
+        "status": "ready_for_local_end_to_end_testing",
+        "missing": [],
         "next_steps": [
-          "Add or verify direct test coverage."
+          "Run direct smoke test and connect the bot card in Buddy/Actions."
         ]
       }
     },
@@ -5241,7 +5248,9 @@
         "bots/workout-timer/runtime.py",
         "bots/workout-timer/tiers.py"
       ],
-      "tests": [],
+      "tests": [
+        "tests/generated_bot_smoke/test_workout_timer_08ca7d3d_runtime.py"
+      ],
       "capabilities": [
         "Interval timer system",
         "Exercise logging tools",
@@ -5391,13 +5400,11 @@
         ]
       },
       "readiness": {
-        "score": 90,
-        "status": "mostly_ready_needs_targeted_tests",
-        "missing": [
-          "direct test coverage"
-        ],
+        "score": 100,
+        "status": "ready_for_local_end_to_end_testing",
+        "missing": [],
         "next_steps": [
-          "Add or verify direct test coverage."
+          "Run direct smoke test and connect the bot card in Buddy/Actions."
         ]
       }
     },
@@ -5416,7 +5423,9 @@
         "bots/yoga-studio/runtime.py",
         "bots/yoga-studio/tiers.py"
       ],
-      "tests": [],
+      "tests": [
+        "tests/generated_bot_smoke/test_yoga_studio_44c57f09_runtime.py"
+      ],
       "capabilities": [
         "Class schedule management",
         "Teacher scheduling tools",
@@ -5580,13 +5589,11 @@
         ]
       },
       "readiness": {
-        "score": 90,
-        "status": "mostly_ready_needs_targeted_tests",
-        "missing": [
-          "direct test coverage"
-        ],
+        "score": 100,
+        "status": "ready_for_local_end_to_end_testing",
+        "missing": [],
         "next_steps": [
-          "Add or verify direct test coverage."
+          "Run direct smoke test and connect the bot card in Buddy/Actions."
         ]
       }
     }

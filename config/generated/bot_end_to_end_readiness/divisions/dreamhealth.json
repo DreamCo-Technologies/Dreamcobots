@@ -1,6 +1,6 @@
 {
   "schema": "dreamco.bot_end_to_end_readiness.division.v1",
-  "generated_at": "2026-07-21T03:00:32Z",
+  "generated_at": "2026-07-21T03:45:15Z",
   "division": "DreamHealth",
   "bot_count": 22,
   "bots": [
@@ -19,7 +19,9 @@
         "bots/chronic-care-mgr/runtime.py",
         "bots/chronic-care-mgr/tiers.py"
       ],
-      "tests": [],
+      "tests": [
+        "tests/generated_bot_smoke/test_chronic_care_mgr_5e10865f_runtime.py"
+      ],
       "capabilities": [
         "Care plan creation",
         "Adherence monitoring",
@@ -175,13 +177,11 @@
         ]
       },
       "readiness": {
-        "score": 90,
-        "status": "mostly_ready_needs_targeted_tests",
-        "missing": [
-          "direct test coverage"
-        ],
+        "score": 100,
+        "status": "ready_for_local_end_to_end_testing",
+        "missing": [],
         "next_steps": [
-          "Add or verify direct test coverage."
+          "Run direct smoke test and connect the bot card in Buddy/Actions."
         ]
       }
     },
@@ -200,7 +200,9 @@
         "bots/clinical-decision/runtime.py",
         "bots/clinical-decision/tiers.py"
       ],
-      "tests": [],
+      "tests": [
+        "tests/generated_bot_smoke/test_clinical_decision_ad895a06_runtime.py"
+      ],
       "capabilities": [
         "Drug interaction alerts",
         "Evidence-based recommendations",
@@ -364,13 +366,11 @@
         ]
       },
       "readiness": {
-        "score": 90,
-        "status": "mostly_ready_needs_targeted_tests",
-        "missing": [
-          "direct test coverage"
-        ],
+        "score": 100,
+        "status": "ready_for_local_end_to_end_testing",
+        "missing": [],
         "next_steps": [
-          "Add or verify direct test coverage."
+          "Run direct smoke test and connect the bot card in Buddy/Actions."
         ]
       }
     },
@@ -383,9 +383,18 @@
       "status": "active",
       "profilePath": "App_bots/DreamHealth.json",
       "source": "division_json_system",
-      "codeFiles": [],
-      "tests": [],
-      "capabilities": [],
+      "codeFiles": [
+        "App_bots/DreamHealth.json"
+      ],
+      "tests": [
+        "tests/generated_bot_smoke/test_division_systems_contract.py"
+      ],
+      "capabilities": [
+        "local task intake",
+        "sandbox workflow execution",
+        "test evidence packet",
+        "Buddy approval handoff"
+      ],
       "taskContract": {
         "primary_mode": "local_first_no_external_provider_required",
         "can_run_without_other_providers": true,
@@ -515,19 +524,11 @@
         ]
       },
       "readiness": {
-        "score": 50,
-        "status": "needs_buildout_before_client_demo",
-        "missing": [
-          "capabilities",
-          "runtime code file",
-          "direct test coverage",
-          "business model or target users"
-        ],
+        "score": 100,
+        "status": "ready_for_local_end_to_end_testing",
+        "missing": [],
         "next_steps": [
-          "Add or verify capabilities.",
-          "Add or verify runtime code file.",
-          "Add or verify direct test coverage.",
-          "Add or verify business model or target users."
+          "Run direct smoke test and connect the bot card in Buddy/Actions."
         ]
       }
     },
@@ -546,7 +547,9 @@
         "bots/ehr-migration/runtime.py",
         "bots/ehr-migration/tiers.py"
       ],
-      "tests": [],
+      "tests": [
+        "tests/generated_bot_smoke/test_ehr_migration_199dc4e8_runtime.py"
+      ],
       "capabilities": [
         "Data mapping engine",
         "Validation rule processing",
@@ -710,13 +713,11 @@
         ]
       },
       "readiness": {
-        "score": 90,
-        "status": "mostly_ready_needs_targeted_tests",
-        "missing": [
-          "direct test coverage"
-        ],
+        "score": 100,
+        "status": "ready_for_local_end_to_end_testing",
+        "missing": [],
         "next_steps": [
-          "Add or verify direct test coverage."
+          "Run direct smoke test and connect the bot card in Buddy/Actions."
         ]
       }
     },
@@ -735,7 +736,9 @@
         "bots/emergency-triage/runtime.py",
         "bots/emergency-triage/tiers.py"
       ],
-      "tests": [],
+      "tests": [
+        "tests/generated_bot_smoke/test_emergency_triage_648cc7ff_runtime.py"
+      ],
       "capabilities": [
         "ESI acuity prediction",
         "Wait time forecasting",
@@ -905,13 +908,11 @@
         ]
       },
       "readiness": {
-        "score": 90,
-        "status": "mostly_ready_needs_targeted_tests",
-        "missing": [
-          "direct test coverage"
-        ],
+        "score": 100,
+        "status": "ready_for_local_end_to_end_testing",
+        "missing": [],
         "next_steps": [
-          "Add or verify direct test coverage."
+          "Run direct smoke test and connect the bot card in Buddy/Actions."
         ]
       }
     },
@@ -930,7 +931,9 @@
         "bots/health-compliance/runtime.py",
         "bots/health-compliance/tiers.py"
       ],
-      "tests": [],
+      "tests": [
+        "tests/generated_bot_smoke/test_health_compliance_cd2ed8cf_runtime.py"
+      ],
       "capabilities": [
         "HIPAA audit automation",
         "CMS regulation tracking",
@@ -1094,13 +1097,11 @@
         ]
       },
       "readiness": {
-        "score": 90,
-        "status": "mostly_ready_needs_targeted_tests",
-        "missing": [
-          "direct test coverage"
-        ],
+        "score": 100,
+        "status": "ready_for_local_end_to_end_testing",
+        "missing": [],
         "next_steps": [
-          "Add or verify direct test coverage."
+          "Run direct smoke test and connect the bot card in Buddy/Actions."
         ]
       }
     },
@@ -1119,7 +1120,9 @@
         "bots/lab-results-tracker/runtime.py",
         "bots/lab-results-tracker/tiers.py"
       ],
-      "tests": [],
+      "tests": [
+        "tests/generated_bot_smoke/test_lab_results_tracker_6f3ba857_runtime.py"
+      ],
       "capabilities": [
         "Abnormal value alerting",
         "Result trend visualization",
@@ -1275,13 +1278,11 @@
         ]
       },
       "readiness": {
-        "score": 90,
-        "status": "mostly_ready_needs_targeted_tests",
-        "missing": [
-          "direct test coverage"
-        ],
+        "score": 100,
+        "status": "ready_for_local_end_to_end_testing",
+        "missing": [],
         "next_steps": [
-          "Add or verify direct test coverage."
+          "Run direct smoke test and connect the bot card in Buddy/Actions."
         ]
       }
     },
@@ -1300,7 +1301,9 @@
         "bots/medical-billing/runtime.py",
         "bots/medical-billing/tiers.py"
       ],
-      "tests": [],
+      "tests": [
+        "tests/generated_bot_smoke/test_medical_billing_eb3e4724_runtime.py"
+      ],
       "capabilities": [
         "Claim scrubbing engine",
         "Denial pattern analysis",
@@ -1464,13 +1467,11 @@
         ]
       },
       "readiness": {
-        "score": 90,
-        "status": "mostly_ready_needs_targeted_tests",
-        "missing": [
-          "direct test coverage"
-        ],
+        "score": 100,
+        "status": "ready_for_local_end_to_end_testing",
+        "missing": [],
         "next_steps": [
-          "Add or verify direct test coverage."
+          "Run direct smoke test and connect the bot card in Buddy/Actions."
         ]
       }
     },
@@ -1489,6 +1490,9 @@
         "bots/medical-bot/runtime.py"
       ],
       "tests": [
+        "tests/generated_bot_smoke/test_biomedical_bot_59232b13_runtime.py",
+        "tests/generated_bot_smoke/test_medical_bot_0be8db51_runtime.py",
+        "tests/generated_bot_smoke/test_science_medical_bot_1495a519_runtime.py",
         "tests/test_biomedical_bot.py"
       ],
       "capabilities": [
@@ -1646,7 +1650,9 @@
         "bots/medical-device-tracker/runtime.py",
         "bots/medical-device-tracker/tiers.py"
       ],
-      "tests": [],
+      "tests": [
+        "tests/generated_bot_smoke/test_medical_device_tracker_f75c8419_runtime.py"
+      ],
       "capabilities": [
         "Device inventory management",
         "Maintenance schedule automation",
@@ -1802,13 +1808,11 @@
         ]
       },
       "readiness": {
-        "score": 90,
-        "status": "mostly_ready_needs_targeted_tests",
-        "missing": [
-          "direct test coverage"
-        ],
+        "score": 100,
+        "status": "ready_for_local_end_to_end_testing",
+        "missing": [],
         "next_steps": [
-          "Add or verify direct test coverage."
+          "Run direct smoke test and connect the bot card in Buddy/Actions."
         ]
       }
     },
@@ -1828,6 +1832,7 @@
         "bots/mental-health-screen/tiers.py"
       ],
       "tests": [
+        "tests/generated_bot_smoke/test_mental_health_screen_7b4a5ea4_runtime.py",
         "tests/test_mental_health_screening_bot.py"
       ],
       "capabilities": [
@@ -2002,7 +2007,9 @@
         "bots/nurse-scheduler/runtime.py",
         "bots/nurse-scheduler/tiers.py"
       ],
-      "tests": [],
+      "tests": [
+        "tests/generated_bot_smoke/test_nurse_scheduler_fdd67b70_runtime.py"
+      ],
       "capabilities": [
         "Shift pattern optimization",
         "Fatigue risk scoring",
@@ -2158,13 +2165,11 @@
         ]
       },
       "readiness": {
-        "score": 90,
-        "status": "mostly_ready_needs_targeted_tests",
-        "missing": [
-          "direct test coverage"
-        ],
+        "score": 100,
+        "status": "ready_for_local_end_to_end_testing",
+        "missing": [],
         "next_steps": [
-          "Add or verify direct test coverage."
+          "Run direct smoke test and connect the bot card in Buddy/Actions."
         ]
       }
     },
@@ -2183,7 +2188,9 @@
         "bots/patient-engagement/runtime.py",
         "bots/patient-engagement/tiers.py"
       ],
-      "tests": [],
+      "tests": [
+        "tests/generated_bot_smoke/test_patient_engagement_2be1d9b7_runtime.py"
+      ],
       "capabilities": [
         "Appointment reminder automation",
         "Health education delivery",
@@ -2339,13 +2346,11 @@
         ]
       },
       "readiness": {
-        "score": 90,
-        "status": "mostly_ready_needs_targeted_tests",
-        "missing": [
-          "direct test coverage"
-        ],
+        "score": 100,
+        "status": "ready_for_local_end_to_end_testing",
+        "missing": [],
         "next_steps": [
-          "Add or verify direct test coverage."
+          "Run direct smoke test and connect the bot card in Buddy/Actions."
         ]
       }
     },
@@ -2364,7 +2369,9 @@
         "bots/patient-intake-ai/runtime.py",
         "bots/patient-intake-ai/tiers.py"
       ],
-      "tests": [],
+      "tests": [
+        "tests/generated_bot_smoke/test_patient_intake_ai_f75c4a5d_runtime.py"
+      ],
       "capabilities": [
         "Digital form processing",
         "Insurance eligibility verification",
@@ -2520,13 +2527,11 @@
         ]
       },
       "readiness": {
-        "score": 90,
-        "status": "mostly_ready_needs_targeted_tests",
-        "missing": [
-          "direct test coverage"
-        ],
+        "score": 100,
+        "status": "ready_for_local_end_to_end_testing",
+        "missing": [],
         "next_steps": [
-          "Add or verify direct test coverage."
+          "Run direct smoke test and connect the bot card in Buddy/Actions."
         ]
       }
     },
@@ -2545,7 +2550,9 @@
         "bots/pharmacy-inventory/runtime.py",
         "bots/pharmacy-inventory/tiers.py"
       ],
-      "tests": [],
+      "tests": [
+        "tests/generated_bot_smoke/test_pharmacy_inventory_a8c2cafb_runtime.py"
+      ],
       "capabilities": [
         "Medication stock tracking",
         "Expiry date alerting",
@@ -2701,13 +2708,11 @@
         ]
       },
       "readiness": {
-        "score": 90,
-        "status": "mostly_ready_needs_targeted_tests",
-        "missing": [
-          "direct test coverage"
-        ],
+        "score": 100,
+        "status": "ready_for_local_end_to_end_testing",
+        "missing": [],
         "next_steps": [
-          "Add or verify direct test coverage."
+          "Run direct smoke test and connect the bot card in Buddy/Actions."
         ]
       }
     },
@@ -2726,7 +2731,9 @@
         "bots/health-analytics-elite/runtime.py",
         "bots/health-analytics-elite/tiers.py"
       ],
-      "tests": [],
+      "tests": [
+        "tests/generated_bot_smoke/test_health_analytics_elite_c92a065f_runtime.py"
+      ],
       "capabilities": [
         "Risk stratification modeling",
         "Social determinants analysis",
@@ -2896,13 +2903,11 @@
         ]
       },
       "readiness": {
-        "score": 90,
-        "status": "mostly_ready_needs_targeted_tests",
-        "missing": [
-          "direct test coverage"
-        ],
+        "score": 100,
+        "status": "ready_for_local_end_to_end_testing",
+        "missing": [],
         "next_steps": [
-          "Add or verify direct test coverage."
+          "Run direct smoke test and connect the bot card in Buddy/Actions."
         ]
       }
     },
@@ -2921,7 +2926,9 @@
         "bots/credentialing-ai/runtime.py",
         "bots/credentialing-ai/tiers.py"
       ],
-      "tests": [],
+      "tests": [
+        "tests/generated_bot_smoke/test_credentialing_ai_c5f5b2ad_runtime.py"
+      ],
       "capabilities": [
         "Primary source verification",
         "License expiry tracking",
@@ -3085,13 +3092,11 @@
         ]
       },
       "readiness": {
-        "score": 90,
-        "status": "mostly_ready_needs_targeted_tests",
-        "missing": [
-          "direct test coverage"
-        ],
+        "score": 100,
+        "status": "ready_for_local_end_to_end_testing",
+        "missing": [],
         "next_steps": [
-          "Add or verify direct test coverage."
+          "Run direct smoke test and connect the bot card in Buddy/Actions."
         ]
       }
     },
@@ -3110,7 +3115,9 @@
         "bots/radiology-ai/runtime.py",
         "bots/radiology-ai/tiers.py"
       ],
-      "tests": [],
+      "tests": [
+        "tests/generated_bot_smoke/test_radiology_ai_bbabb06e_runtime.py"
+      ],
       "capabilities": [
         "Structured report generation",
         "Critical finding escalation",
@@ -3274,13 +3281,11 @@
         ]
       },
       "readiness": {
-        "score": 90,
-        "status": "mostly_ready_needs_targeted_tests",
-        "missing": [
-          "direct test coverage"
-        ],
+        "score": 100,
+        "status": "ready_for_local_end_to_end_testing",
+        "missing": [],
         "next_steps": [
-          "Add or verify direct test coverage."
+          "Run direct smoke test and connect the bot card in Buddy/Actions."
         ]
       }
     },
@@ -3299,7 +3304,9 @@
         "bots/surgical-scheduler/runtime.py",
         "bots/surgical-scheduler/tiers.py"
       ],
-      "tests": [],
+      "tests": [
+        "tests/generated_bot_smoke/test_surgical_scheduler_58f8fce7_runtime.py"
+      ],
       "capabilities": [
         "OR block scheduling",
         "Equipment availability checking",
@@ -3455,13 +3462,11 @@
         ]
       },
       "readiness": {
-        "score": 90,
-        "status": "mostly_ready_needs_targeted_tests",
-        "missing": [
-          "direct test coverage"
-        ],
+        "score": 100,
+        "status": "ready_for_local_end_to_end_testing",
+        "missing": [],
         "next_steps": [
-          "Add or verify direct test coverage."
+          "Run direct smoke test and connect the bot card in Buddy/Actions."
         ]
       }
     },
@@ -3480,7 +3485,9 @@
         "bots/telehealth-assistant/runtime.py",
         "bots/telehealth-assistant/tiers.py"
       ],
-      "tests": [],
+      "tests": [
+        "tests/generated_bot_smoke/test_telehealth_assistant_3814fdd0_runtime.py"
+      ],
       "capabilities": [
         "Virtual visit scheduling",
         "Pre-visit questionnaire automation",
@@ -3636,13 +3643,11 @@
         ]
       },
       "readiness": {
-        "score": 90,
-        "status": "mostly_ready_needs_targeted_tests",
-        "missing": [
-          "direct test coverage"
-        ],
+        "score": 100,
+        "status": "ready_for_local_end_to_end_testing",
+        "missing": [],
         "next_steps": [
-          "Add or verify direct test coverage."
+          "Run direct smoke test and connect the bot card in Buddy/Actions."
         ]
       }
     },
@@ -3661,7 +3666,9 @@
         "bots/therapy-notes-ai/runtime.py",
         "bots/therapy-notes-ai/tiers.py"
       ],
-      "tests": [],
+      "tests": [
+        "tests/generated_bot_smoke/test_therapy_notes_ai_870f4b4b_runtime.py"
+      ],
       "capabilities": [
         "Session note templates",
         "Treatment plan tracking",
@@ -3817,13 +3824,11 @@
         ]
       },
       "readiness": {
-        "score": 90,
-        "status": "mostly_ready_needs_targeted_tests",
-        "missing": [
-          "direct test coverage"
-        ],
+        "score": 100,
+        "status": "ready_for_local_end_to_end_testing",
+        "missing": [],
         "next_steps": [
-          "Add or verify direct test coverage."
+          "Run direct smoke test and connect the bot card in Buddy/Actions."
         ]
       }
     },
@@ -3842,7 +3847,9 @@
         "bots/vaccine-tracker/runtime.py",
         "bots/vaccine-tracker/tiers.py"
       ],
-      "tests": [],
+      "tests": [
+        "tests/generated_bot_smoke/test_vaccine_tracker_534d852a_runtime.py"
+      ],
       "capabilities": [
         "CDC schedule tracking",
         "Age-based recommendations",
@@ -3992,13 +3999,11 @@
         ]
       },
       "readiness": {
-        "score": 90,
-        "status": "mostly_ready_needs_targeted_tests",
-        "missing": [
-          "direct test coverage"
-        ],
+        "score": 100,
+        "status": "ready_for_local_end_to_end_testing",
+        "missing": [],
         "next_steps": [
-          "Add or verify direct test coverage."
+          "Run direct smoke test and connect the bot card in Buddy/Actions."
         ]
       }
     }

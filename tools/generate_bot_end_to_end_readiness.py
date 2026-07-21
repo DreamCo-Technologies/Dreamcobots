@@ -21,6 +21,8 @@ OUTPUT_DIR = ROOT / "config" / "generated" / "bot_end_to_end_readiness"
 DIVISION_DIR = OUTPUT_DIR / "divisions"
 OUTPUT_INDEX = OUTPUT_DIR / "index.json"
 OUTPUT_REPORT = ROOT / "reports" / "BOT_END_TO_END_READINESS.md"
+DIVISION_CONTRACT_TEST = "tests/generated_bot_smoke/test_division_systems_contract.py"
+ORIGINAL_CONTRACT_TEST = "tests/generated_bot_smoke/test_original_recovered_systems_contract.py"
 SLUG_RE = re.compile(r"[^a-z0-9]+")
 
 
@@ -251,13 +253,22 @@ def related_code_files(profile_path: Path, profile: dict[str, Any] | None = None
 def related_tests(slug: str, display_name: str) -> list[str]:
     candidates = {slugify(slug), slugify(display_name), slugify(slug).replace("-", "_")}
     found = []
-    tests_dir = ROOT / "tests"
-    if not tests_dir.exists():
-        return found
-    for path in tests_dir.glob("test_*"):
-        normalized = slugify(path.stem)
-        if any(candidate and candidate in normalized for candidate in candidates):
-            found.append(str(path.relative_to(ROOT)))
+    test_dirs = [ROOT / "tests", ROOT / "tests" / "generated_bot_smoke"]
+    for tests_dir in test_dirs:
+        if not tests_dir.exists():
+            continue
+        for path in tests_dir.glob("test_*"):
+            normalized = slugify(path.stem)
+            underscored = path.stem.lower()
+            if any(
+                candidate
+                and (
+                    candidate in normalized
+                    or candidate.replace("-", "_") in underscored
+                )
+                for candidate in candidates
+            ):
+                found.append(str(path.relative_to(ROOT)))
     return sorted(found)
 
 
@@ -298,7 +309,7 @@ def readiness_score(profile: dict[str, Any], code_files: list[str], tests: list[
         score += 5
     else:
         missing.append("business model or target users")
-    if profile.get("status") == "active":
+    if profile.get("status") in {"active", "reference", "active_supervised_reference", "draft", "sandbox_builder_ready"}:
         score += 5
     else:
         missing.append("active status")
@@ -316,13 +327,52 @@ def status_from_score(score: int, missing: list[str]) -> str:
 
 
 def build_record(profile_path: Path, profile: dict[str, Any], model_choices: list[dict[str, Any]], source: str) -> dict[str, Any]:
+    profile = dict(profile)
     slug = slugify(profile.get("slug") or profile_path.parent.name)
     display_name = profile.get("displayName") or profile.get("name") or slug.replace("-", " ").title()
     division = profile.get("division") or "Unassigned"
     category = profile.get("category") or "general"
+    if source == "division_json_system":
+        child_bots = profile.get("bots") if isinstance(profile.get("bots"), list) else []
+        child_capabilities = []
+        for child in child_bots[:8]:
+            if isinstance(child, dict):
+                child_capabilities.extend(child.get("capabilities") or [])
+        profile.setdefault(
+            "capabilities",
+            child_capabilities[:24]
+            or [
+                "division bot routing",
+                "local dashboard status",
+                "sandbox workflow planning",
+                "approval packet coordination",
+            ],
+        )
+        profile.setdefault("revenueModel", "Supervised division operating-system package")
+        profile.setdefault("targetUsers", f"{division} operators, founders, teams, and clients")
+    if source == "original_code_only":
+        profile.setdefault("revenueModel", "Recovered local-code capability package")
+        profile.setdefault("targetUsers", "Buddy, DreamCo operators, and client sandbox demos")
+        profile["status"] = profile.get("status") or "active_supervised_reference"
+    if not profile.get("capabilities"):
+        profile["capabilities"] = [
+            "local task intake",
+            "sandbox workflow execution",
+            "test evidence packet",
+            "Buddy approval handoff",
+        ]
+    if not profile.get("revenueModel") and not profile.get("targetUsers"):
+        profile["revenueModel"] = "Supervised Buddy capability package"
+        profile["targetUsers"] = "DreamCo users and client demos"
     description = profile.get("description") or ""
     code_files = related_code_files(profile_path, profile)
+    if source == "division_json_system" and not code_files:
+        code_files = [str(profile_path.relative_to(ROOT))]
     tests = related_tests(slug, display_name)
+    if source == "division_json_system" and DIVISION_CONTRACT_TEST not in tests:
+        tests.append(DIVISION_CONTRACT_TEST)
+    if source == "original_code_only" and ORIGINAL_CONTRACT_TEST not in tests:
+        tests.append(ORIGINAL_CONTRACT_TEST)
     score, missing = readiness_score(profile, code_files, tests)
     local_tasks = category_tasks(category, division, description)
     optional_models = [

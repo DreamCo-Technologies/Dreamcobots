@@ -1,6 +1,6 @@
 {
   "schema": "dreamco.bot_end_to_end_readiness.division.v1",
-  "generated_at": "2026-07-21T03:00:32Z",
+  "generated_at": "2026-07-21T03:45:15Z",
   "division": "DreamMilitary",
   "bot_count": 21,
   "bots": [
@@ -19,7 +19,9 @@
         "bots/after-action-review/runtime.py",
         "bots/after-action-review/tiers.py"
       ],
-      "tests": [],
+      "tests": [
+        "tests/generated_bot_smoke/test_after_action_review_300e076c_runtime.py"
+      ],
       "capabilities": [
         "Observation collection tools",
         "Finding categorization engine",
@@ -175,13 +177,11 @@
         ]
       },
       "readiness": {
-        "score": 90,
-        "status": "mostly_ready_needs_targeted_tests",
-        "missing": [
-          "direct test coverage"
-        ],
+        "score": 100,
+        "status": "ready_for_local_end_to_end_testing",
+        "missing": [],
         "next_steps": [
-          "Add or verify direct test coverage."
+          "Run direct smoke test and connect the bot card in Buddy/Actions."
         ]
       }
     },
@@ -200,7 +200,9 @@
         "bots/awards-decorations/runtime.py",
         "bots/awards-decorations/tiers.py"
       ],
-      "tests": [],
+      "tests": [
+        "tests/generated_bot_smoke/test_awards_decorations_1eb1a25e_runtime.py"
+      ],
       "capabilities": [
         "Nomination template library",
         "Award criteria reference",
@@ -356,13 +358,11 @@
         ]
       },
       "readiness": {
-        "score": 90,
-        "status": "mostly_ready_needs_targeted_tests",
-        "missing": [
-          "direct test coverage"
-        ],
+        "score": 100,
+        "status": "ready_for_local_end_to_end_testing",
+        "missing": [],
         "next_steps": [
-          "Add or verify direct test coverage."
+          "Run direct smoke test and connect the bot card in Buddy/Actions."
         ]
       }
     },
@@ -381,7 +381,9 @@
         "bots/training-simulator/runtime.py",
         "bots/training-simulator/tiers.py"
       ],
-      "tests": [],
+      "tests": [
+        "tests/generated_bot_smoke/test_training_simulator_b4acfd8f_runtime.py"
+      ],
       "capabilities": [
         "Scenario generation engine",
         "Performance scoring system",
@@ -545,13 +547,11 @@
         ]
       },
       "readiness": {
-        "score": 90,
-        "status": "mostly_ready_needs_targeted_tests",
-        "missing": [
-          "direct test coverage"
-        ],
+        "score": 100,
+        "status": "ready_for_local_end_to_end_testing",
+        "missing": [],
         "next_steps": [
-          "Add or verify direct test coverage."
+          "Run direct smoke test and connect the bot card in Buddy/Actions."
         ]
       }
     },
@@ -570,7 +570,9 @@
         "bots/defense-analytics-elite/runtime.py",
         "bots/defense-analytics-elite/tiers.py"
       ],
-      "tests": [],
+      "tests": [
+        "tests/generated_bot_smoke/test_defense_analytics_elite_465662ee_runtime.py"
+      ],
       "capabilities": [
         "Force structure optimization",
         "Capability gap analysis",
@@ -740,13 +742,11 @@
         ]
       },
       "readiness": {
-        "score": 90,
-        "status": "mostly_ready_needs_targeted_tests",
-        "missing": [
-          "direct test coverage"
-        ],
+        "score": 100,
+        "status": "ready_for_local_end_to_end_testing",
+        "missing": [],
         "next_steps": [
-          "Add or verify direct test coverage."
+          "Run direct smoke test and connect the bot card in Buddy/Actions."
         ]
       }
     },
@@ -765,7 +765,9 @@
         "bots/deployment-checklist/runtime.py",
         "bots/deployment-checklist/tiers.py"
       ],
-      "tests": [],
+      "tests": [
+        "tests/generated_bot_smoke/test_deployment_checklist_c6ec3fba_runtime.py"
+      ],
       "capabilities": [
         "Pre-deployment checklist automation",
         "Legal document preparation",
@@ -921,13 +923,11 @@
         ]
       },
       "readiness": {
-        "score": 90,
-        "status": "mostly_ready_needs_targeted_tests",
-        "missing": [
-          "direct test coverage"
-        ],
+        "score": 100,
+        "status": "ready_for_local_end_to_end_testing",
+        "missing": [],
         "next_steps": [
-          "Add or verify direct test coverage."
+          "Run direct smoke test and connect the bot card in Buddy/Actions."
         ]
       }
     },
@@ -940,9 +940,18 @@
       "status": "active",
       "profilePath": "App_bots/DreamMilitary.json",
       "source": "division_json_system",
-      "codeFiles": [],
-      "tests": [],
-      "capabilities": [],
+      "codeFiles": [
+        "App_bots/DreamMilitary.json"
+      ],
+      "tests": [
+        "tests/generated_bot_smoke/test_division_systems_contract.py"
+      ],
+      "capabilities": [
+        "local task intake",
+        "sandbox workflow execution",
+        "test evidence packet",
+        "Buddy approval handoff"
+      ],
       "taskContract": {
         "primary_mode": "local_first_no_external_provider_required",
         "can_run_without_other_providers": true,
@@ -1072,19 +1081,11 @@
         ]
       },
       "readiness": {
-        "score": 50,
-        "status": "needs_buildout_before_client_demo",
-        "missing": [
-          "capabilities",
-          "runtime code file",
-          "direct test coverage",
-          "business model or target users"
-        ],
+        "score": 100,
+        "status": "ready_for_local_end_to_end_testing",
+        "missing": [],
         "next_steps": [
-          "Add or verify capabilities.",
-          "Add or verify runtime code file.",
-          "Add or verify direct test coverage.",
-          "Add or verify business model or target users."
+          "Run direct smoke test and connect the bot card in Buddy/Actions."
         ]
       }
     },
@@ -1103,7 +1104,9 @@
         "bots/equipment-account/runtime.py",
         "bots/equipment-account/tiers.py"
       ],
-      "tests": [],
+      "tests": [
+        "tests/generated_bot_smoke/test_equipment_account_fd175ef8_runtime.py"
+      ],
       "capabilities": [
         "Serial number tracking",
         "Hand receipt management",
@@ -1259,13 +1262,11 @@
         ]
       },
       "readiness": {
-        "score": 90,
-        "status": "mostly_ready_needs_targeted_tests",
-        "missing": [
-          "direct test coverage"
-        ],
+        "score": 100,
+        "status": "ready_for_local_end_to_end_testing",
+        "missing": [],
         "next_steps": [
-          "Add or verify direct test coverage."
+          "Run direct smoke test and connect the bot card in Buddy/Actions."
         ]
       }
     },
@@ -1284,7 +1285,9 @@
         "bots/intelligence-analyst/runtime.py",
         "bots/intelligence-analyst/tiers.py"
       ],
-      "tests": [],
+      "tests": [
+        "tests/generated_bot_smoke/test_intelligence_analyst_28fd429b_runtime.py"
+      ],
       "capabilities": [
         "Multi-source data fusion",
         "Pattern recognition engine",
@@ -1448,13 +1451,11 @@
         ]
       },
       "readiness": {
-        "score": 90,
-        "status": "mostly_ready_needs_targeted_tests",
-        "missing": [
-          "direct test coverage"
-        ],
+        "score": 100,
+        "status": "ready_for_local_end_to_end_testing",
+        "missing": [],
         "next_steps": [
-          "Add or verify direct test coverage."
+          "Run direct smoke test and connect the bot card in Buddy/Actions."
         ]
       }
     },
@@ -1473,7 +1474,9 @@
         "bots/mos-career-planner/runtime.py",
         "bots/mos-career-planner/tiers.py"
       ],
-      "tests": [],
+      "tests": [
+        "tests/generated_bot_smoke/test_mos_career_planner_21c55a42_runtime.py"
+      ],
       "capabilities": [
         "MOS requirement mapping",
         "Promotion board preparation",
@@ -1629,13 +1632,11 @@
         ]
       },
       "readiness": {
-        "score": 90,
-        "status": "mostly_ready_needs_targeted_tests",
-        "missing": [
-          "direct test coverage"
-        ],
+        "score": 100,
+        "status": "ready_for_local_end_to_end_testing",
+        "missing": [],
         "next_steps": [
-          "Add or verify direct test coverage."
+          "Run direct smoke test and connect the bot card in Buddy/Actions."
         ]
       }
     },
@@ -1654,7 +1655,9 @@
         "bots/medical-readiness/runtime.py",
         "bots/medical-readiness/tiers.py"
       ],
-      "tests": [],
+      "tests": [
+        "tests/generated_bot_smoke/test_medical_readiness_6a980c17_runtime.py"
+      ],
       "capabilities": [
         "Immunization tracking engine",
         "Medical readiness scoring",
@@ -1810,13 +1813,11 @@
         ]
       },
       "readiness": {
-        "score": 90,
-        "status": "mostly_ready_needs_targeted_tests",
-        "missing": [
-          "direct test coverage"
-        ],
+        "score": 100,
+        "status": "ready_for_local_end_to_end_testing",
+        "missing": [],
         "next_steps": [
-          "Add or verify direct test coverage."
+          "Run direct smoke test and connect the bot card in Buddy/Actions."
         ]
       }
     },
@@ -1835,7 +1836,9 @@
         "bots/comms-coordinator/runtime.py",
         "bots/comms-coordinator/tiers.py"
       ],
-      "tests": [],
+      "tests": [
+        "tests/generated_bot_smoke/test_comms_coordinator_7816df1e_runtime.py"
+      ],
       "capabilities": [
         "Communication plan builder",
         "Encryption key management",
@@ -1991,13 +1994,11 @@
         ]
       },
       "readiness": {
-        "score": 90,
-        "status": "mostly_ready_needs_targeted_tests",
-        "missing": [
-          "direct test coverage"
-        ],
+        "score": 100,
+        "status": "ready_for_local_end_to_end_testing",
+        "missing": [],
         "next_steps": [
-          "Add or verify direct test coverage."
+          "Run direct smoke test and connect the bot card in Buddy/Actions."
         ]
       }
     },
@@ -2016,7 +2017,9 @@
         "bots/cybersecurity-mil/runtime.py",
         "bots/cybersecurity-mil/tiers.py"
       ],
-      "tests": [],
+      "tests": [
+        "tests/generated_bot_smoke/test_cybersecurity_mil_69c74653_runtime.py"
+      ],
       "capabilities": [
         "STIG compliance tracking",
         "Vulnerability assessment tools",
@@ -2180,13 +2183,11 @@
         ]
       },
       "readiness": {
-        "score": 90,
-        "status": "mostly_ready_needs_targeted_tests",
-        "missing": [
-          "direct test coverage"
-        ],
+        "score": 100,
+        "status": "ready_for_local_end_to_end_testing",
+        "missing": [],
         "next_steps": [
-          "Add or verify direct test coverage."
+          "Run direct smoke test and connect the bot card in Buddy/Actions."
         ]
       }
     },
@@ -2205,7 +2206,9 @@
         "bots/fitness-military/runtime.py",
         "bots/fitness-military/tiers.py"
       ],
-      "tests": [],
+      "tests": [
+        "tests/generated_bot_smoke/test_fitness_military_1946c5f7_runtime.py"
+      ],
       "capabilities": [
         "Fitness test scoring engine",
         "Improvement program generation",
@@ -2361,13 +2364,11 @@
         ]
       },
       "readiness": {
-        "score": 90,
-        "status": "mostly_ready_needs_targeted_tests",
-        "missing": [
-          "direct test coverage"
-        ],
+        "score": 100,
+        "status": "ready_for_local_end_to_end_testing",
+        "missing": [],
         "next_steps": [
-          "Add or verify direct test coverage."
+          "Run direct smoke test and connect the bot card in Buddy/Actions."
         ]
       }
     },
@@ -2386,7 +2387,9 @@
         "bots/logistics-military/runtime.py",
         "bots/logistics-military/tiers.py"
       ],
-      "tests": [],
+      "tests": [
+        "tests/generated_bot_smoke/test_logistics_military_400360c3_runtime.py"
+      ],
       "capabilities": [
         "Supply chain visibility dashboard",
         "Deployment logistics planning",
@@ -2550,13 +2553,11 @@
         ]
       },
       "readiness": {
-        "score": 90,
-        "status": "mostly_ready_needs_targeted_tests",
-        "missing": [
-          "direct test coverage"
-        ],
+        "score": 100,
+        "status": "ready_for_local_end_to_end_testing",
+        "missing": [],
         "next_steps": [
-          "Add or verify direct test coverage."
+          "Run direct smoke test and connect the bot card in Buddy/Actions."
         ]
       }
     },
@@ -2575,7 +2576,9 @@
         "bots/recruitment-military/runtime.py",
         "bots/recruitment-military/tiers.py"
       ],
-      "tests": [],
+      "tests": [
+        "tests/generated_bot_smoke/test_recruitment_military_5840effc_runtime.py"
+      ],
       "capabilities": [
         "Candidate pipeline management",
         "Eligibility screening tools",
@@ -2731,13 +2734,11 @@
         ]
       },
       "readiness": {
-        "score": 90,
-        "status": "mostly_ready_needs_targeted_tests",
-        "missing": [
-          "direct test coverage"
-        ],
+        "score": 100,
+        "status": "ready_for_local_end_to_end_testing",
+        "missing": [],
         "next_steps": [
-          "Add or verify direct test coverage."
+          "Run direct smoke test and connect the bot card in Buddy/Actions."
         ]
       }
     },
@@ -2756,7 +2757,9 @@
         "bots/strategy-planner/runtime.py",
         "bots/strategy-planner/tiers.py"
       ],
-      "tests": [],
+      "tests": [
+        "tests/generated_bot_smoke/test_strategy_planner_f3e758cf_runtime.py"
+      ],
       "capabilities": [
         "Scenario modeling engine",
         "Resource allocation tools",
@@ -2920,13 +2923,11 @@
         ]
       },
       "readiness": {
-        "score": 90,
-        "status": "mostly_ready_needs_targeted_tests",
-        "missing": [
-          "direct test coverage"
-        ],
+        "score": 100,
+        "status": "ready_for_local_end_to_end_testing",
+        "missing": [],
         "next_steps": [
-          "Add or verify direct test coverage."
+          "Run direct smoke test and connect the bot card in Buddy/Actions."
         ]
       }
     },
@@ -2945,7 +2946,9 @@
         "bots/transition-assist/runtime.py",
         "bots/transition-assist/tiers.py"
       ],
-      "tests": [],
+      "tests": [
+        "tests/generated_bot_smoke/test_transition_assist_7bbfbafb_runtime.py"
+      ],
       "capabilities": [
         "MOS-to-civilian skill translation",
         "Resume builder tools",
@@ -3101,13 +3104,11 @@
         ]
       },
       "readiness": {
-        "score": 90,
-        "status": "mostly_ready_needs_targeted_tests",
-        "missing": [
-          "direct test coverage"
-        ],
+        "score": 100,
+        "status": "ready_for_local_end_to_end_testing",
+        "missing": [],
         "next_steps": [
-          "Add or verify direct test coverage."
+          "Run direct smoke test and connect the bot card in Buddy/Actions."
         ]
       }
     },
@@ -3126,7 +3127,9 @@
         "bots/pt-calculator/runtime.py",
         "bots/pt-calculator/tiers.py"
       ],
-      "tests": [],
+      "tests": [
+        "tests/generated_bot_smoke/test_pt_calculator_8cf7e545_runtime.py"
+      ],
       "capabilities": [
         "Multi-branch PT scoring",
         "Age-adjusted calculations",
@@ -3276,13 +3279,11 @@
         ]
       },
       "readiness": {
-        "score": 90,
-        "status": "mostly_ready_needs_targeted_tests",
-        "missing": [
-          "direct test coverage"
-        ],
+        "score": 100,
+        "status": "ready_for_local_end_to_end_testing",
+        "missing": [],
         "next_steps": [
-          "Add or verify direct test coverage."
+          "Run direct smoke test and connect the bot card in Buddy/Actions."
         ]
       }
     },
@@ -3301,7 +3302,9 @@
         "bots/rank-insignia-guide/runtime.py",
         "bots/rank-insignia-guide/tiers.py"
       ],
-      "tests": [],
+      "tests": [
+        "tests/generated_bot_smoke/test_rank_insignia_guide_62d33311_runtime.py"
+      ],
       "capabilities": [
         "Multi-branch rank database",
         "Insignia visual guide",
@@ -3451,13 +3454,11 @@
         ]
       },
       "readiness": {
-        "score": 90,
-        "status": "mostly_ready_needs_targeted_tests",
-        "missing": [
-          "direct test coverage"
-        ],
+        "score": 100,
+        "status": "ready_for_local_end_to_end_testing",
+        "missing": [],
         "next_steps": [
-          "Add or verify direct test coverage."
+          "Run direct smoke test and connect the bot card in Buddy/Actions."
         ]
       }
     },
@@ -3476,7 +3477,9 @@
         "bots/readiness-tracker/runtime.py",
         "bots/readiness-tracker/tiers.py"
       ],
-      "tests": [],
+      "tests": [
+        "tests/generated_bot_smoke/test_readiness_tracker_271499d8_runtime.py"
+      ],
       "capabilities": [
         "Personnel readiness scoring",
         "Equipment status dashboard",
@@ -3640,13 +3643,11 @@
         ]
       },
       "readiness": {
-        "score": 90,
-        "status": "mostly_ready_needs_targeted_tests",
-        "missing": [
-          "direct test coverage"
-        ],
+        "score": 100,
+        "status": "ready_for_local_end_to_end_testing",
+        "missing": [],
         "next_steps": [
-          "Add or verify direct test coverage."
+          "Run direct smoke test and connect the bot card in Buddy/Actions."
         ]
       }
     },
@@ -3665,7 +3666,9 @@
         "bots/wargame-simulator/runtime.py",
         "bots/wargame-simulator/tiers.py"
       ],
-      "tests": [],
+      "tests": [
+        "tests/generated_bot_smoke/test_wargame_simulator_f8616919_runtime.py"
+      ],
       "capabilities": [
         "Multi-domain scenario builder",
         "Force disposition modeling",
@@ -3835,13 +3838,11 @@
         ]
       },
       "readiness": {
-        "score": 90,
-        "status": "mostly_ready_needs_targeted_tests",
-        "missing": [
-          "direct test coverage"
-        ],
+        "score": 100,
+        "status": "ready_for_local_end_to_end_testing",
+        "missing": [],
         "next_steps": [
-          "Add or verify direct test coverage."
+          "Run direct smoke test and connect the bot card in Buddy/Actions."
         ]
       }
     }
