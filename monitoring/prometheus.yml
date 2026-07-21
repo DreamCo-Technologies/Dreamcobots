@@ -1,0 +1,32 @@
+# DreamCobots — Prometheus Configuration
+# Scrapes metrics from the DreamCo application and system exporters.
+
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+  external_labels:
+    project: DreamCobots
+
+# ── Alerting ─────────────────────────────────────────────────────────────────
+# alerting:
+#   alertmanagers:
+#     - static_configs:
+#         - targets: ["alertmanager:9093"]
+
+# ── Scrape targets ────────────────────────────────────────────────────────────
+scrape_configs:
+  # Prometheus itself
+  - job_name: prometheus
+    static_configs:
+      - targets: ["localhost:9090"]
+
+  # DreamCobots application (exposes /metrics via prometheus-client)
+  - job_name: dreamcobots_app
+    static_configs:
+      - targets: ["app:8000"]
+    metrics_path: /metrics
+
+  # Redis exporter (optional — enable when redis_exporter is added)
+  # - job_name: redis
+  #   static_configs:
+  #     - targets: ["redis-exporter:9121"]

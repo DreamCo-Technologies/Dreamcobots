@@ -1,0 +1,21 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "DreamCo Client Tracking Record",
+  "type": "object",
+  "required": ["leadId", "company", "problem", "score", "status", "sourceUrls"],
+  "properties": {
+    "leadId": { "type": "string" },
+    "company": { "type": "string" },
+    "contactName": { "type": ["string", "null"] },
+    "segment": { "type": "string" },
+    "problem": { "type": "string" },
+    "sourceUrls": { "type": "array", "items": { "type": "string", "format": "uri" } },
+    "score": { "type": "integer", "minimum": 0, "maximum": 100 },
+    "recommendedOfferId": { "type": "string" },
+    "assignedBot": { "type": "string" },
+    "workflowStage": { "type": "string" },
+    "status": { "type": "string", "enum": ["new", "researching", "needs_human_review", "approved_for_outreach", "contacted", "replied", "booked", "won", "lost", "do_not_contact"] },
+    "nextAction": { "type": "string" },
+    "lastReviewedAt": { "type": ["string", "null"] }
+  }
+}

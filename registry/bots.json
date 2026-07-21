@@ -1,0 +1,31 @@
+{
+  "schemaVersion": "2026-07-06",
+  "bots": {
+    "DreamBuddy": {
+      "id": "dreambuddy",
+      "displayName": "DreamBuddy",
+      "division": "DreamAgents",
+      "version": "1.0.0",
+      "status": "healthy",
+      "lastHeartbeat": "sample-data",
+      "capabilities": ["command-routing", "github-read", "workflow-audit", "model-routing"],
+      "workflows": ["buddy-connectivity.yml", "dreamco-debug-audit.yml"],
+      "tools": ["github_repository_read", "github_repository_write_gated", "stripe_revenue_tracking", "web_research_gated"],
+      "permissions": { "writeRequiresApproval": true, "moneyRequiresApproval": true, "deployRequiresApproval": true },
+      "metrics": { "health": "sample", "issues": 0, "lastAudit": "reports/buddy-connectivity-report.json" }
+    },
+    "DreamAgentsRegistry": {
+      "id": "dreamagents-registry",
+      "displayName": "DreamAgents Registry",
+      "division": "DreamAgents",
+      "version": "1.0.0",
+      "status": "healthy",
+      "lastHeartbeat": "sample-data",
+      "capabilities": ["bot-discovery", "metadata-repair", "missing-file-scan", "sandbox-evidence-audit"],
+      "workflows": ["bot-health-scan.yml", "repair-bot-metadata-pr.yml", "dreamco-continuous-self-build.yml"],
+      "tools": ["dreamco-missing-files-scan", "repair-bot-metadata", "sandbox-hallucination-audit", "issue-goal-coverage"],
+      "permissions": { "writeRequiresApproval": true, "autonomousRepairRequiresPR": true },
+      "metrics": { "health": "sample", "issues": 1349, "lastAudit": "reports/issue-goal-coverage.json" }
+    }
+  }
+}

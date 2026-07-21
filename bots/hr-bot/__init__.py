@@ -1,0 +1,1 @@
+"""hr-bot package."""

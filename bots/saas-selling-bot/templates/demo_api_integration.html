@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+{% block title %}API Integration Demo — DreamCobots{% endblock %}
+
+{% block content %}
+<div class="max-w-3xl mx-auto px-4 py-12">
+  <a href="/" class="text-sky-600 text-sm hover:underline">← Back to Services</a>
+  <h1 class="text-3xl font-bold mt-4 mb-2">🔗 API Integration Demo</h1>
+  <p class="text-gray-500 mb-8">
+    Watch a simulated multi-step API pipeline execute: each service is called in sequence,
+    errors are handled gracefully, and results are aggregated automatically.
+  </p>
+
+  <div class="bg-white rounded-2xl shadow overflow-hidden mb-8">
+    <div class="px-5 py-3 bg-gray-50 border-b border-gray-100">
+      <h2 class="font-semibold text-sm text-gray-700">🚀 Pipeline Execution Log</h2>
+    </div>
+    <ul class="divide-y divide-gray-100 font-mono text-sm">
+      {% for api in apis %}
+      <li class="px-5 py-4 flex items-center gap-4 hover:bg-sky-50 transition">
+        <span class="text-lg">⚙️</span>
+        <div class="flex-1">
+          <p class="font-medium">{{ api.name }} API</p>
+          <p class="text-gray-500 text-xs mt-0.5">{{ api.action }}</p>
+        </div>
+        <span class="text-sm font-medium">{{ api.status }}</span>
+      </li>
+      {% endfor %}
+      <li class="px-5 py-4 bg-green-50 text-green-700 text-sm font-medium">
+        ✅ All {{ apis | length }} integrations completed in 0.42s — data synced across systems.
+      </li>
+    </ul>
+  </div>
+
+  <div class="bg-white rounded-2xl shadow p-6 mb-8">
+    <h2 class="font-semibold mb-3">How It Works</h2>
+    <ol class="space-y-2 text-sm text-gray-600 list-decimal list-inside">
+      <li>An event triggers the pipeline (e.g. new customer sign-up).</li>
+      <li>The bot authenticates with each API using stored credentials.</li>
+      <li>Payloads are mapped and validated before each API call.</li>
+      <li>Responses are parsed and forwarded to the next step.</li>
+      <li>A final aggregated result is returned and logged.</li>
+    </ol>
+  </div>
+
+  <div class="bg-sky-50 border border-sky-200 rounded-2xl p-5 text-center mb-8">
+    <p class="font-semibold text-sky-800 mb-1">Need to connect your business tools?</p>
+    <p class="text-gray-500 text-sm mb-3">We integrate CRMs, ERPs, payment gateways, social media, and custom APIs.</p>
+    <a href="/lead-gen" class="gradient-hero text-white text-sm font-medium px-5 py-2 rounded-full inline-block hover:opacity-90 transition">
+      Get a Custom Quote →
+    </a>
+  </div>
+
+  <!-- Pricing snippet -->
+  <h2 class="text-xl font-bold mb-4">Pricing</h2>
+  <div class="grid sm:grid-cols-3 gap-4">
+    {% for tier in pricing %}
+    <div class="bg-white rounded-xl shadow p-4 border {% if tier.highlight %}border-sky-400{% else %}border-gray-200{% endif %}">
+      {% if tier.highlight %}<span class="text-xs bg-sky-100 text-sky-700 px-2 py-0.5 rounded-full font-medium">Most Popular</span>{% endif %}
+      <p class="text-lg font-bold mt-2">{{ tier.name }}</p>
+      <p class="text-2xl font-extrabold text-sky-600">{{ tier.price }}<span class="text-sm text-gray-400 font-normal">{{ tier.period }}</span></p>
+      <a href="/lead-gen" class="block mt-3 text-center text-sm font-medium bg-sky-600 text-white py-1.5 rounded-lg hover:bg-sky-700 transition">
+        Get Started
+      </a>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}

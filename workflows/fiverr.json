@@ -1,0 +1,146 @@
+{
+  "id": "fiverr",
+  "name": "Fiverr Gig Automation",
+  "description": "Fully automated Fiverr income pipeline: discovers high-demand gigs, submits proposals, closes deals, collects payment via Stripe, upsells premium packages, and loops every 6 hours.",
+  "trigger": {
+    "type": "cron",
+    "schedule": "0 */6 * * *",
+    "endpoint": null
+  },
+  "steps": [
+    {
+      "id": "find_gigs",
+      "name": "Find High-Demand Gigs",
+      "action": "fiverr_bot.scanMarketplace",
+      "params": {
+        "categories": ["digital-marketing", "programming", "writing", "video-animation"],
+        "min_budget": 50,
+        "max_competition": 20,
+        "sort_by": "demand_score"
+      },
+      "on_success": "analyze_gigs",
+      "on_failure": "error_handler"
+    },
+    {
+      "id": "analyze_gigs",
+      "name": "Analyze Gig Profitability",
+      "action": "pricing_engine.analyzeOpportunity",
+      "params": {
+        "min_roi": 0.35,
+        "filter_spam": true,
+        "rank_by": "revenue_potential"
+      },
+      "on_success": "apply_to_gigs",
+      "on_failure": "error_handler"
+    },
+    {
+      "id": "apply_to_gigs",
+      "name": "Submit Gig Proposals",
+      "action": "fiverr_bot.submitProposals",
+      "params": {
+        "max_proposals_per_cycle": 10,
+        "personalize_message": true,
+        "include_portfolio": true,
+        "response_time_target_hours": 2
+      },
+      "on_success": "monitor_responses",
+      "on_failure": "error_handler"
+    },
+    {
+      "id": "monitor_responses",
+      "name": "Monitor Buyer Responses",
+      "action": "fiverr_bot.checkInbox",
+      "params": {
+        "auto_reply": true,
+        "reply_delay_minutes": 5,
+        "escalate_on_keyword": ["urgent", "asap", "today"]
+      },
+      "on_success": "close_deal",
+      "on_failure": "error_handler"
+    },
+    {
+      "id": "close_deal",
+      "name": "Close Deal & Create Order",
+      "action": "fiverr_bot.acceptOrder",
+      "params": {
+        "auto_accept": true,
+        "send_requirements_form": true,
+        "estimated_delivery_days": 3
+      },
+      "on_success": "collect_payment",
+      "on_failure": "error_handler"
+    },
+    {
+      "id": "collect_payment",
+      "name": "Collect Payment via Stripe",
+      "action": "auto_checkout.processPayment",
+      "params": {
+        "payment_processor": "stripe",
+        "auto_invoice": true,
+        "tax_rate": 0.0,
+        "currency": "USD"
+      },
+      "on_success": "upsell",
+      "on_failure": "payment_retry"
+    },
+    {
+      "id": "payment_retry",
+      "name": "Retry Failed Payment",
+      "action": "auto_checkout.retryPayment",
+      "params": {
+        "max_retries": 3,
+        "retry_delay_minutes": 30
+      },
+      "on_success": "upsell",
+      "on_failure": "error_handler"
+    },
+    {
+      "id": "upsell",
+      "name": "Upsell Premium Package",
+      "action": "fiverr_bot.sendUpsell",
+      "params": {
+        "upsell_delay_hours": 24,
+        "discount_percent": 10,
+        "packages": ["express_delivery", "source_files", "commercial_license"]
+      },
+      "on_success": "log_revenue",
+      "on_failure": "log_revenue"
+    },
+    {
+      "id": "log_revenue",
+      "name": "Log Revenue & Update Dashboard",
+      "action": "revenue_engine.recordDeal",
+      "params": {
+        "source": "fiverr",
+        "update_dashboard": true,
+        "notify_slack": false
+      },
+      "on_success": "complete",
+      "on_failure": "error_handler"
+    },
+    {
+      "id": "error_handler",
+      "name": "Handle Errors",
+      "action": "error_handler.log",
+      "params": {
+        "alert_email": true,
+        "retry_after_minutes": 60
+      },
+      "on_success": "complete",
+      "on_failure": "complete"
+    }
+  ],
+  "monetization": {
+    "model": "service_sales",
+    "revenue_per_cycle": 350,
+    "affiliate_programs": ["fiverr_affiliate"],
+    "payment_processor": "stripe"
+  },
+  "automation": {
+    "retry_attempts": 3,
+    "timeout_seconds": 300,
+    "notify_on_completion": true
+  },
+  "created_at": "2026-01-01T00:00:00Z",
+  "version": "1.0.0"
+}

@@ -1,0 +1,48 @@
+"""DreamCo CineCore Bot — AI-Powered Commercial & Video Creation System."""
+
+from bots.cinecore_bot.cinecore_bot import (
+    CineCoreBot,
+    CineCoreBotTierError,
+    CineCoreBotError,
+    CommercialScript,
+    VideoAsset,
+    LeadRecord,
+    AnalyticsRecord,
+    ScriptEngine,
+    VideoEngine,
+    VoiceEngine,
+    PlatformOptimizer,
+    LeadEngine,
+    BusinessScorer,
+    ClosingAgent,
+    BillingEngine,
+    AnalyticsEngine,
+    BulkGenerator,
+    SelfHeal,
+    CRM,
+)
+from bots.cinecore_bot.tiers import BOT_FEATURES, get_bot_tier_info
+
+__all__ = [
+    "CineCoreBot",
+    "CineCoreBotTierError",
+    "CineCoreBotError",
+    "CommercialScript",
+    "VideoAsset",
+    "LeadRecord",
+    "AnalyticsRecord",
+    "ScriptEngine",
+    "VideoEngine",
+    "VoiceEngine",
+    "PlatformOptimizer",
+    "LeadEngine",
+    "BusinessScorer",
+    "ClosingAgent",
+    "BillingEngine",
+    "AnalyticsEngine",
+    "BulkGenerator",
+    "SelfHeal",
+    "CRM",
+    "BOT_FEATURES",
+    "get_bot_tier_info",
+]

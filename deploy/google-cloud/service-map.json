@@ -1,0 +1,61 @@
+{
+  "schema": "dreamco.google_cloud_service_map.v1",
+  "default_region": "us-central1",
+  "artifact_repository": "dreamco",
+  "services": [
+    {
+      "id": "dreamco-buddy",
+      "runtime": "cloud_run",
+      "dockerfile": "deploy/google-cloud/Dockerfile.control-tower",
+      "port": 8080,
+      "entrypoint": "npm start",
+      "purpose": "Buddy Control Tower API, dashboards API, bot catalog, reports, Stripe builder, and Google readiness endpoints.",
+      "approval_required": true
+    },
+    {
+      "id": "dreamco-webhooks",
+      "runtime": "cloud_run",
+      "dockerfile": "deploy/google-cloud/Dockerfile.control-tower",
+      "port": 8080,
+      "entrypoint": "npm start",
+      "purpose": "Payment, GitHub, automation, and bot-event webhook receiver once production handlers are approved.",
+      "approval_required": true
+    },
+    {
+      "id": "dreamco-scheduler",
+      "runtime": "cloud_scheduler_pubsub",
+      "topic": "dreamco-bot-jobs",
+      "purpose": "Supervised recurring report refreshes, sandbox tests, repository scans, and bot readiness checks.",
+      "approval_required": true
+    }
+  ],
+  "storage": [
+    {
+      "id": "dreamco-artifacts",
+      "runtime": "cloud_storage",
+      "purpose": "Generated reports, sandbox artifacts, dashboard exports, and client-safe packets."
+    },
+    {
+      "id": "dreamco-state",
+      "runtime": "firestore",
+      "purpose": "Bot status, approval packets, run history, dashboard state, and client workspace metadata."
+    }
+  ],
+  "queues": [
+    {
+      "id": "dreamco-bot-jobs",
+      "runtime": "pubsub",
+      "purpose": "Queue sandbox-safe bot jobs and recurring maintenance tasks."
+    },
+    {
+      "id": "dreamco-payment-events",
+      "runtime": "pubsub",
+      "purpose": "Queue Stripe/payment webhook summaries after signature verification."
+    },
+    {
+      "id": "dreamco-approval-events",
+      "runtime": "pubsub",
+      "purpose": "Queue owner-approved live actions for human review and audit."
+    }
+  ]
+}

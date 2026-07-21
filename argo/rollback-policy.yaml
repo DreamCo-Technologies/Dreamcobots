@@ -1,0 +1,12 @@
+schemaVersion: 2026-07-06
+rollbackPolicy:
+  automaticRollback: true
+  rollbackOn:
+    - failed-health-check
+    - failed-issue-goal-coverage
+    - failed-sandbox-no-hallucination-audit
+    - elevated-error-rate
+  preserveArtifacts:
+    - reports/
+    - workflow-logs
+  requireHumanApprovalForRetryAfterRollback: true

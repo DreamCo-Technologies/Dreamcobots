@@ -1,0 +1,1903 @@
+import type { Express } from "express";
+import type { Server } from "http";
+import path from "node:path";
+import OpenAI from "openai";
+import { z } from "zod";
+import { sql } from "drizzle-orm";
+import multer from "multer";
+import { storage } from "./storage";
+import { api } from "@shared/routes";
+import { ALL_BOTS as CORE_BOTS } from "./seed-bots";
+import { GITHUB_BOTS } from "./seed-github-bots";
+import { CODELAB_BOTS } from "./seed-codelabs";
+import { BUDDY_BOT } from "./seed-buddy-bot";
+import { DIVISIONS, insertBotMetricSchema, insertBotErrorSchema, insertBotFinancialSchema, insertAlertRuleSchema, insertDealSchema, insertDebugEventSchema, insertAutoFixSchema, insertRevenueLeakSchema, insertSecurityScanSchema, insertFormulaSchema, insertPlatformConnectionSchema, insertPluginSchema, insertBotMemorySchema, insertSystemSnapshotSchema, insertCostEventSchema, type CrossDivisionDelegation, type Division, type DreamCoMigrationValidationReport } from "@shared/schema";
+import { calculateRealEstate, calculateCarFlip, type RealEstateInputs, type CarFlipInputs } from "@shared/deal-calculations";
+import { FORMULA_LIBRARY } from "@shared/formula-library";
+import { buildEnhancedSystemPrompt } from "@shared/tool-belt";
+import { getUncachableStripeClient, getStripePublishableKey } from "./stripeClient";
+import { db } from "./db";
+import { batchProcessWithSSE } from "./dreamco_integrations/batch";
+import { buildDivisionRuntime } from "./division-runtime";
+import { createDelegation, decideApprovalGate, updateDependencyStatus } from "./division-orchestration";
+import { buildDreamCoMigrationManifest, ingestDreamCoManifest } from "./dreamco_integrations/migration";
+
+const CORE_SLUGS = new Set(CORE_BOTS.map(b => b.slug));
+const GITHUB_SLUGS = new Set(GITHUB_BOTS.map(b => b.slug));
+const DEDUPED_GITHUB = GITHUB_BOTS.filter(b => !CORE_SLUGS.has(b.slug));
+const DEDUPED_CODELAB = CODELAB_BOTS.filter(b => !CORE_SLUGS.has(b.slug) && !GITHUB_SLUGS.has(b.slug));
+const ALL_BOTS = [...CORE_BOTS, ...DEDUPED_GITHUB, ...DEDUPED_CODELAB];
+const DELEGATION_KEY = "cross_division_delegations";
+const DREAMCO_MIGRATION_REPORT_KEY = "dreamco_migration_report";
+
+const openai = new OpenAI({
+  apiKey: process.env.AI_INTEGRATIONS_OPENAI_API_KEY,
+  baseURL: process.env.AI_INTEGRATIONS_OPENAI_BASE_URL,
+});
+
+function zodValidationError(err: z.ZodError) {
+  return {
+    message: err.errors[0]?.message ?? "Invalid request",
+    field: err.errors[0]?.path?.join("."),
+  };
+}
+
+function isDivision(value: string): value is Division {
+  return (DIVISIONS as readonly string[]).includes(value);
+}
+
+function normalizeDelegationList(value: unknown): CrossDivisionDelegation[] {
+  if (!Array.isArray(value)) return [];
+  return value.filter((item) => item && typeof item === "object" && typeof (item as any).id === "string") as CrossDivisionDelegation[];
+}
+
+async function ensureSeeded() {
+  const bots = await storage.listBotProfiles();
+  const existingSlugs = new Set(bots.map(b => b.slug));
+  const missingBots = ALL_BOTS.filter(b => !existingSlugs.has(b.slug));
+  if (missingBots.length > 0) {
+    for (const botData of missingBots) {
+      try {
+        await storage.createBotProfile(botData);
+      } catch (e: any) {
+        if (e?.code === "23505") continue;
+        console.error(`Seed bot ${botData.slug} failed:`, e?.message);
+      }
+    }
+    console.log(`Seeded ${missingBots.length} new bots`);
+  }
+
+  // Always upsert Buddy Bot with his full library curriculum so updates apply immediately
+  try {
+    const existingBuddy = bots.find(b => b.slug === "buddy-bot");
+    if (existingBuddy) {
+      await storage.updateBotProfile(existingBuddy.id, {
+        systemPrompt: BUDDY_BOT.systemPrompt,
+        capabilities: BUDDY_BOT.capabilities,
+        description: BUDDY_BOT.description,
+        traits: BUDDY_BOT.traits,
+        tier: BUDDY_BOT.tier,
+      });
+      console.log("Buddy Bot updated with full library curriculum");
+    } else {
+      await storage.createBotProfile(BUDDY_BOT);
+      console.log("Buddy Bot created with full library curriculum");
+    }
+  } catch (e: any) {
+    console.error("Buddy Bot upsert failed:", e?.message);
+  }
+
+  const convs = await storage.listConversations();
+  if (convs.length === 0) {
+    const conv = await storage.createConversation("Welcome to DreamCo Empire OS");
+    await storage.createMessage(
+      conv.id,
+      "assistant",
+      "Welcome to DreamCo Empire OS. I'm your central AI brain, coordinating 250+ specialized bots across 16 divisions to build autonomous wealth-generation systems. Tell me what you want to automate first, and I'll route you to the right division and bots.",
+    );
+  }
+
+  const tasks = await storage.listTasks();
+  if (tasks.length === 0) {
+    await storage.createTask({
+      title: "Empire startup diagnostic",
+      objective: "Scan all divisions, verify bot readiness, and generate an empire health report with recommended first actions.",
+      status: "pending",
+      priority: 1,
+      autonomyMode: "guided",
+      division: "CommandCore",
+    });
+  }
+
+  const existingFormulas = await storage.listFormulas();
+  if (existingFormulas.length === 0) {
+    for (const f of FORMULA_LIBRARY) {
+      try {
+        await storage.createFormula({
+          name: f.name,
+          category: f.category,
+          description: f.description,
+          formula: f.formula,
+          variables: f.variables,
+          target: f.target,
+          tags: f.tags,
+          isSystem: true,
+        });
+      } catch (e: any) {
+        console.error(`Seed formula ${f.name} failed:`, e?.message);
+      }
+    }
+    console.log(`Seeded ${FORMULA_LIBRARY.length} system formulas`);
+  }
+
+  // Seed default plugins
+  const existingPlugins = await storage.listPlugins();
+  if (existingPlugins.length === 0) {
+    const defaultPlugins = [
+      { name: "Deal Alert Pro", slug: "deal-alert-pro", description: "Real-time deal alerts via push notifications, email, SMS, and webhooks. Monitors price drops across all major retailers.", category: "alerts", author: "DreamCo", version: "2.1.0", rating: 5, status: "published", capabilities: ["Push notifications", "Email alerts", "SMS alerts", "Webhook integration", "Price monitoring"] },
+      { name: "Coupon Stacker", slug: "coupon-stacker", description: "Automatically finds and stacks coupons, cashback offers, and loyalty rewards for maximum savings.", category: "savings", author: "DreamCo", version: "1.8.0", rating: 5, status: "published", capabilities: ["Coupon detection", "Stack optimization", "Cashback tracking", "Loyalty rewards"] },
+      { name: "Flip Profit Calculator", slug: "flip-profit-calc", description: "Advanced ROI calculator for resale arbitrage. Accounts for fees, shipping, taxes, and time costs.", category: "finance", author: "DreamCo", version: "1.5.0", rating: 4, status: "published", capabilities: ["ROI calculation", "Fee estimation", "Shipping costs", "Tax tracking"] },
+      { name: "Telegram Bot Connector", slug: "telegram-connector", description: "Connect your DreamCo Empire to Telegram for text-based control. Send commands, receive alerts, and manage bots from Telegram.", category: "integration", author: "DreamCo", version: "1.2.0", rating: 4, status: "published", capabilities: ["Telegram webhook", "Command interface", "Alert forwarding", "Bot control"] },
+      { name: "Slack Workspace Plugin", slug: "slack-workspace", description: "Full Slack integration for team collaboration. Create channels per division, receive bot alerts, and manage workflows from Slack.", category: "integration", author: "DreamCo", version: "1.3.0", rating: 4, status: "published", capabilities: ["Slack webhooks", "Channel management", "Alert routing", "Workflow triggers"] },
+      { name: "Discord Server Bot", slug: "discord-server", description: "Discord bot integration for community management and real-time bot control. Perfect for gaming and social divisions.", category: "integration", author: "DreamCo", version: "1.1.0", rating: 4, status: "published", capabilities: ["Discord webhooks", "Server management", "Real-time alerts", "Community tools"] },
+      { name: "Receipt Scanner Pro", slug: "receipt-scanner", description: "OCR-powered receipt scanning for automatic cashback matching, expense tracking, and deal verification.", category: "tools", author: "DreamCo", version: "2.0.0", rating: 5, status: "published", capabilities: ["OCR scanning", "Cashback matching", "Expense categorization", "Deal verification"] },
+      { name: "AI Model Router", slug: "ai-model-router", description: "Intelligent routing between 100+ AI models based on task requirements. Minimizes costs while maximizing quality.", category: "ai", author: "DreamCo", version: "1.4.0", rating: 5, status: "published", capabilities: ["Model selection", "Cost optimization", "Quality scoring", "Fallback routing"] },
+      { name: "Crypto Price Tracker", slug: "crypto-tracker", description: "Real-time cryptocurrency price monitoring with alert triggers, portfolio tracking, and arbitrage detection.", category: "finance", author: "DreamCo", version: "1.6.0", rating: 4, status: "published", capabilities: ["Price monitoring", "Portfolio tracking", "Arbitrage detection", "Alert triggers"] },
+      { name: "SEO Optimizer", slug: "seo-optimizer", description: "AI-powered SEO analysis and optimization for websites. Keyword research, content scoring, and competitor analysis.", category: "marketing", author: "DreamCo", version: "1.2.0", rating: 4, status: "published", capabilities: ["Keyword research", "Content scoring", "Competitor analysis", "Rank tracking"] },
+      { name: "Inventory Manager", slug: "inventory-manager", description: "Track inventory across multiple locations and platforms. Sync with eBay, Amazon, and Facebook Marketplace listings.", category: "tools", author: "DreamCo", version: "1.3.0", rating: 4, status: "published", capabilities: ["Multi-platform sync", "Stock tracking", "Low stock alerts", "Listing management"] },
+      { name: "Route Optimizer", slug: "route-optimizer", description: "Plan optimal clearance shopping routes. Calculates fuel costs, time estimates, and ROI per stop.", category: "tools", author: "DreamCo", version: "1.1.0", rating: 4, status: "published", capabilities: ["Route planning", "Fuel estimation", "ROI per stop", "Time optimization"] },
+    ];
+    for (const p of defaultPlugins) {
+      try {
+        await storage.createPlugin(p as any);
+      } catch (e: any) {
+        if (e?.code === "23505") continue;
+        console.error(`Seed plugin ${p.slug} failed:`, e?.message);
+      }
+    }
+    console.log(`Seeded ${defaultPlugins.length} default plugins`);
+  }
+}
+
+async function runAutonomousTask(taskId: number, dryRun: boolean) {
+  const tasks = await storage.listTasks();
+  const task = tasks.find((t) => t.id === taskId);
+  if (!task) return undefined;
+
+  const bot = task.assignedBotId
+    ? (await storage.listBotProfiles()).find(b => b.id === task.assignedBotId)
+    : (await storage.getDefaultBotProfile()) ?? (await storage.getBotProfileBySlug("dreambot"));
+
+  const system = bot?.systemPrompt ?? "You are the central AI brain of DreamCo Empire OS.";
+
+  const modeInstructions = task.autonomyMode === "full-autonomy"
+    ? "Execute fully. Report results only."
+    : task.autonomyMode === "semi-autonomous"
+      ? "Execute low-risk steps automatically. Flag high-risk decisions for approval."
+      : "Propose a plan. Wait for user approval before any execution.";
+
+  const prompt = `Division: ${task.division}\nAutonomy Mode: ${task.autonomyMode} - ${modeInstructions}\nTask: ${task.title}\nObjective: ${task.objective}\n\nReturn JSON with keys: steps (array of {title, description, risk: "low"|"medium"|"high"}), risks (array of strings), estimatedRevenue (string), and "messageToUser" string. Be practical and revenue-focused.`;
+
+  const response = await openai.chat.completions.create({
+    model: "gpt-4.1-mini",
+    messages: [
+      { role: "system", content: system },
+      { role: "user", content: prompt },
+    ],
+    response_format: { type: "json_object" },
+    max_completion_tokens: 1200,
+  });
+
+  const content = response.choices[0]?.message?.content ?? "{}";
+  let parsed: any = {};
+  try {
+    parsed = JSON.parse(content);
+  } catch {
+    parsed = { raw: content };
+  }
+
+  const summary =
+    typeof parsed?.messageToUser === "string"
+      ? parsed.messageToUser
+      : "Generated task run output.";
+
+  if (dryRun) {
+    return await storage.createTaskRun(taskId, "dry_run", summary, parsed);
+  }
+
+  await storage.updateTask(taskId, { status: "complete" } as any);
+  return await storage.createTaskRun(taskId, "complete", summary, parsed);
+}
+
+export async function registerRoutes(
+  httpServer: Server,
+  app: Express,
+): Promise<Server> {
+  await ensureSeeded();
+
+  // Bots
+  app.get(api.bots.list.path, async (req, res) => {
+    const division = req.query.division as string | undefined;
+    if (division) {
+      const bots = await storage.listBotsByDivision(division);
+      return res.json(bots);
+    }
+    const bots = await storage.listBotProfiles();
+    res.json(bots);
+  });
+
+  app.get(api.bots.byDivision.path, async (req, res) => {
+    const division = req.params.division;
+    const bots = await storage.listBotsByDivision(division);
+    res.json(bots);
+  });
+
+  app.get("/api/bots/:id", async (req, res) => {
+    const id = Number(req.params.id);
+    if (isNaN(id)) return res.status(400).json({ message: "Invalid bot ID" });
+    const bot = await storage.getBotProfileById(id);
+    if (!bot) return res.status(404).json({ message: "Bot not found" });
+    res.json(bot);
+  });
+
+  const botControlsSchema = z.object({
+    autonomyLevel: z.enum(["guided", "semi-autonomous", "full-autonomy"]).optional(),
+    operationalMode: z.enum(["sandbox", "live", "offline"]).optional(),
+  }).refine(d => d.autonomyLevel || d.operationalMode, { message: "At least one field required" });
+
+  const TIER_AUTONOMY_MAP: Record<string, string[]> = {
+    free: ["guided"],
+    pro: ["guided", "semi-autonomous"],
+    enterprise: ["guided", "semi-autonomous", "full-autonomy"],
+    elite: ["guided", "semi-autonomous", "full-autonomy"],
+  };
+
+  app.patch("/api/bots/:id/controls", async (req, res) => {
+    const id = Number(req.params.id);
+    if (isNaN(id)) return res.status(400).json({ message: "Invalid bot ID" });
+    try {
+      const parsed = botControlsSchema.parse(req.body);
+      if (parsed.autonomyLevel) {
+        const bot = await storage.getBotProfile(id);
+        if (!bot) return res.status(404).json({ message: "Bot not found" });
+        const allowed = TIER_AUTONOMY_MAP[bot.tier] ?? ["guided"];
+        if (!allowed.includes(parsed.autonomyLevel)) {
+          return res.status(403).json({
+            message: `Autonomy level "${parsed.autonomyLevel}" requires a higher tier. Current tier: ${bot.tier}`,
+          });
+        }
+      }
+      const updates: Record<string, string> = {};
+      if (parsed.autonomyLevel) updates.autonomyLevel = parsed.autonomyLevel;
+      if (parsed.operationalMode) updates.operationalMode = parsed.operationalMode;
+      const updated = await storage.updateBotProfile(id, updates);
+      if (!updated) return res.status(404).json({ message: "Bot not found" });
+      res.json(updated);
+    } catch (err) {
+      if (err instanceof z.ZodError) return res.status(400).json(zodValidationError(err));
+      throw err;
+    }
+  });
+
+  app.post(api.bots.create.path, async (req, res) => {
+    try {
+      const input = api.bots.create.input.parse(req.body);
+      const created = await storage.createBotProfile(input);
+      res.status(201).json(created);
+    } catch (err) {
+      if (err instanceof z.ZodError) {
+        return res.status(400).json(zodValidationError(err));
+      }
+      throw err;
+    }
+  });
+
+  app.put(api.bots.update.path, async (req, res) => {
+    const id = Number(req.params.id);
+    try {
+      const updates = api.bots.update.input.parse(req.body);
+      const updated = await storage.updateBotProfile(id, updates);
+      if (!updated) return res.status(404).json({ message: "Bot not found" });
+      res.json(updated);
+    } catch (err) {
+      if (err instanceof z.ZodError) {
+        return res.status(400).json(zodValidationError(err));
+      }
+      throw err;
+    }
+  });
+
+  app.post(api.bots.setDefault.path, async (req, res) => {
+    const id = Number(req.params.id);
+    const updated = await storage.setDefaultBotProfile(id);
+    if (!updated) return res.status(404).json({ message: "Bot not found" });
+    res.json(updated);
+  });
+
+  app.post("/api/bots/normalize", async (req, res) => {
+    const allBots = await storage.listBotProfiles();
+    let fixed = 0;
+    const issues: string[] = [];
+
+    for (const bot of allBots) {
+      const updates: Record<string, any> = {};
+
+      if (!bot.systemPrompt || bot.systemPrompt.trim().length < 10) {
+        updates.systemPrompt = `You are ${bot.displayName}, a specialized AI bot in the ${bot.division} division of DreamCo Empire OS. Help the user with tasks related to your expertise.`;
+        issues.push(`${bot.slug}: missing/short systemPrompt`);
+      }
+
+      if (!bot.description || bot.description.trim().length < 5) {
+        updates.description = `${bot.displayName} - ${bot.division} division bot`;
+        issues.push(`${bot.slug}: missing description`);
+      }
+
+      if (!Array.isArray(bot.capabilities) || (bot.capabilities as any[]).length === 0) {
+        updates.capabilities = ["general-assistance", "task-execution"];
+        issues.push(`${bot.slug}: empty capabilities`);
+      }
+
+      if (!Array.isArray(bot.traits) || (bot.traits as any[]).length === 0) {
+        updates.traits = ["reliable", "efficient"];
+        issues.push(`${bot.slug}: empty traits`);
+      }
+
+      if (!bot.revenueModel) {
+        updates.revenueModel = "subscription";
+        issues.push(`${bot.slug}: missing revenueModel`);
+      }
+
+      if (!bot.category) {
+        updates.category = "general";
+        issues.push(`${bot.slug}: missing category`);
+      }
+
+      if (Object.keys(updates).length > 0) {
+        await storage.updateBotProfile(bot.id, updates);
+        fixed++;
+      }
+    }
+
+    res.json({
+      total: allBots.length,
+      fixed,
+      issues,
+      message: fixed > 0 ? `Normalized ${fixed} bots` : "All bots already normalized",
+    });
+  });
+
+  // Conversations
+  app.get(api.conversations.list.path, async (req, res) => {
+    const convs = await storage.listConversations();
+    res.json(convs);
+  });
+
+  app.get(api.conversations.get.path, async (req, res) => {
+    const id = Number(req.params.id);
+    const conv = await storage.getConversation(id);
+    if (!conv) return res.status(404).json({ message: "Conversation not found" });
+    const msgs = await storage.getMessages(id);
+    res.json({ conversation: conv, messages: msgs });
+  });
+
+  app.post(api.conversations.create.path, async (req, res) => {
+    try {
+      const input = api.conversations.create.input?.parse(req.body) ?? {};
+      const title = input?.title?.trim() || "New chat";
+      const conv = await storage.createConversation(title);
+      res.status(201).json(conv);
+    } catch (err) {
+      if (err instanceof z.ZodError) {
+        return res.status(400).json(zodValidationError(err));
+      }
+      throw err;
+    }
+  });
+
+  app.delete(api.conversations.delete.path, async (req, res) => {
+    const id = Number(req.params.id);
+    const conv = await storage.getConversation(id);
+    if (!conv) return res.status(404).json({ message: "Conversation not found" });
+    await storage.deleteConversation(id);
+    res.status(204).send();
+  });
+
+  app.post(api.conversations.createMessage.path, async (req, res) => {
+    const conversationId = Number(req.params.id);
+    const conv = await storage.getConversation(conversationId);
+    if (!conv) return res.status(404).json({ message: "Conversation not found" });
+
+    try {
+      const input = api.conversations.createMessage.input.parse(req.body);
+      const bot = input.botSlug
+        ? await storage.getBotProfileBySlug(input.botSlug)
+        : await storage.getDefaultBotProfile();
+
+      const system = bot?.systemPrompt ?? "You are the central AI brain of DreamCo Empire OS.";
+
+      const userMsg = await storage.createMessage(conversationId, "user", input.content);
+
+      const history = await storage.getMessages(conversationId);
+      const messagesForModel = [
+        { role: "system" as const, content: system },
+        ...history.map((m) => ({
+          role: m.role as "user" | "assistant",
+          content: m.content,
+        })),
+      ];
+
+      const completion = await openai.chat.completions.create({
+        model: "gpt-4.1-mini",
+        messages: messagesForModel,
+        max_completion_tokens: 1800,
+      });
+
+      const assistantText = completion.choices[0]?.message?.content ?? "";
+      const assistantMsg = await storage.createMessage(conversationId, "assistant", assistantText);
+
+      res.status(201).json({ message: userMsg, assistantMessage: assistantMsg });
+    } catch (err) {
+      if (err instanceof z.ZodError) {
+        return res.status(400).json(zodValidationError(err));
+      }
+      throw err;
+    }
+  });
+
+  // Streaming SSE
+  app.post(api.conversations.stream.path, async (req, res) => {
+    const conversationId = Number(req.params.id);
+    const conv = await storage.getConversation(conversationId);
+    if (!conv) return res.status(404).json({ message: "Conversation not found" });
+
+    let input: { content: string; botSlug?: string; mode?: string };
+    try {
+      input = api.conversations.stream.input.parse(req.body);
+    } catch (err) {
+      if (err instanceof z.ZodError) {
+        return res.status(400).json(zodValidationError(err));
+      }
+      throw err;
+    }
+
+    const bot = input.botSlug
+      ? await storage.getBotProfileBySlug(input.botSlug)
+      : await storage.getDefaultBotProfile();
+
+    const mode = (input as any).mode ?? "build";
+    const basePrompt = bot?.systemPrompt ?? "You are the central AI brain of DreamCo Empire OS.";
+    const botName = bot?.displayName ?? "Empire AI";
+    const division = bot?.division ?? "CommandCore";
+    const capabilities = Array.isArray(bot?.capabilities) ? (bot.capabilities as string[]) : [];
+
+    // Load bot's learned memories for self-learning context injection
+    const memories: string[] = [];
+    if (bot?.id) {
+      try {
+        const memRecords = await storage.listBotMemory(bot.id);
+        memRecords.slice(0, 15).forEach((m: any) => {
+          if (m.value) memories.push(m.value);
+        });
+      } catch (_) {}
+    }
+
+    const system = buildEnhancedSystemPrompt(basePrompt, botName, division, capabilities, mode, memories, bot?.slug ?? "");
+
+    const userMsg = await storage.createMessage(conversationId, "user", input.content);
+
+    const history = await storage.getMessages(conversationId);
+    const messagesForModel = [
+      { role: "system" as const, content: system },
+      ...history.map((m) => ({
+        role: m.role as "user" | "assistant",
+        content: m.content,
+      })),
+    ];
+
+    res.setHeader("Content-Type", "text/event-stream");
+    res.setHeader("Cache-Control", "no-cache");
+    res.setHeader("Connection", "keep-alive");
+
+    const stream = await openai.chat.completions.create({
+      model: "gpt-4.1-mini",
+      messages: messagesForModel,
+      stream: true,
+      max_completion_tokens: 4000,
+    });
+
+    let assistantText = "";
+    try {
+      for await (const chunk of stream) {
+        const delta = chunk.choices[0]?.delta?.content ?? "";
+        if (!delta) continue;
+        assistantText += delta;
+        res.write(`data: ${JSON.stringify({ type: "delta", content: delta, messageId: userMsg.id, conversationId })}\n\n`);
+      }
+
+      const assistantMsg = await storage.createMessage(conversationId, "assistant", assistantText);
+      res.write(`data: ${JSON.stringify({ type: "done", conversationId, messageId: assistantMsg.id })}\n\n`);
+      res.end();
+
+      // Extract and persist learning log entries from the response (self-learning memory)
+      if (bot?.id) {
+        const learningMatch = assistantText.match(/🧠\s*LEARNING\s*LOG:\s*(.+?)(?:\n|$)/i);
+        if (learningMatch && learningMatch[1]?.trim()) {
+          try {
+            await storage.createBotMemory({ botId: bot.id, key: "learning_log", value: learningMatch[1].trim() });
+          } catch (_) {}
+        }
+      }
+    } catch (e) {
+      res.write(`data: ${JSON.stringify({ type: "error", error: "Stream failed" })}\n\n`);
+      res.end();
+    }
+  });
+
+  // Tasks
+  app.get(api.tasks.list.path, async (req, res) => {
+    const division = req.query.division as string | undefined;
+    if (division) {
+      const tasks = await storage.listTasksByDivision(division);
+      return res.json(tasks);
+    }
+    const tasks = await storage.listTasks();
+    res.json(tasks);
+  });
+
+  app.post(api.tasks.create.path, async (req, res) => {
+    try {
+      const input = api.tasks.create.input.parse(req.body);
+      const task = await storage.createTask(input as any);
+      res.status(201).json(task);
+    } catch (err) {
+      if (err instanceof z.ZodError) {
+        return res.status(400).json(zodValidationError(err));
+      }
+      throw err;
+    }
+  });
+
+  app.put(api.tasks.update.path, async (req, res) => {
+    const id = Number(req.params.id);
+    try {
+      const updates = api.tasks.update.input.parse(req.body);
+      const task = await storage.updateTask(id, updates as any);
+      if (!task) return res.status(404).json({ message: "Task not found" });
+      res.json(task);
+    } catch (err) {
+      if (err instanceof z.ZodError) {
+        return res.status(400).json(zodValidationError(err));
+      }
+      throw err;
+    }
+  });
+
+  app.delete(api.tasks.delete.path, async (req, res) => {
+    const id = Number(req.params.id);
+    const tasks = await storage.listTasks();
+    const exists = tasks.some((t) => t.id === id);
+    if (!exists) return res.status(404).json({ message: "Task not found" });
+    await storage.deleteTask(id);
+    res.status(204).send();
+  });
+
+  app.post(api.tasks.run.path, async (req, res) => {
+    const id = Number(req.params.id);
+    const body = api.tasks.run.input?.safeParse(req.body);
+    const dryRun = body?.success ? Boolean(body.data?.dryRun) : false;
+
+    const tasks = await storage.listTasks();
+    const exists = tasks.some((t) => t.id === id);
+    if (!exists) return res.status(404).json({ message: "Task not found" });
+
+    const run = await runAutonomousTask(id, dryRun);
+    if (!run) return res.status(404).json({ message: "Task not found" });
+    res.status(201).json(run);
+  });
+
+  app.get(api.tasks.runs.path, async (req, res) => {
+    const id = Number(req.params.id);
+    const tasks = await storage.listTasks();
+    const exists = tasks.some((t) => t.id === id);
+    if (!exists) return res.status(404).json({ message: "Task not found" });
+    const runs = await storage.listTaskRuns(id);
+    res.json(runs);
+  });
+
+  // Empire
+  app.get(api.empire.overview.path, async (req, res) => {
+    const [bots, tasks, autonomySetting, latestMetrics, errors, financials, alertRules, plugins, formulas, delegationSetting] = await Promise.all([
+      storage.listBotProfiles(),
+      storage.listTasks(),
+      storage.getSetting("autonomy_mode"),
+      storage.getLatestBotMetrics(),
+      storage.listBotErrors(),
+      storage.listBotFinancials(),
+      storage.listAlertRules(),
+      storage.listPlugins(),
+      storage.listFormulas(),
+      storage.getSetting(DELEGATION_KEY),
+    ]);
+    const autonomyMode = (autonomySetting?.value as any)?.mode ?? "guided";
+    const delegations = normalizeDelegationList(delegationSetting?.value);
+
+    const divisions = DIVISIONS.map(d => {
+      const divBots = bots.filter(b => b.division === d);
+      const divTasks = tasks.filter(t => t.division === d);
+      const activeDelegations = delegations.filter((del) =>
+        del.status !== "complete" &&
+        del.status !== "rejected" &&
+        (del.sourceDivision === d || del.targetDivisions.includes(d)),
+      ).length;
+      const runtime = buildDivisionRuntime({
+        division: d,
+        autonomyMode,
+        bots: divBots,
+        tasks: divTasks,
+        latestMetrics,
+        errors,
+        financials,
+        alertRules,
+        plugins,
+        formulas,
+        activeDelegations,
+      });
+      return {
+        division: d,
+        botCount: divBots.length,
+        activeTasks: divTasks.filter(t => t.status === "running" || t.status === "pending").length,
+        completedTasks: divTasks.filter(t => t.status === "complete").length,
+        revenue: divBots.length > 0 ? `$${(divBots.length * 199).toLocaleString()}/mo potential` : "$0",
+        runtime,
+      };
+    });
+
+    res.json({
+      totalBots: bots.length,
+      totalDivisions: DIVISIONS.length,
+      activeTasks: tasks.filter(t => t.status === "running" || t.status === "pending").length,
+      completedTasks: tasks.filter(t => t.status === "complete").length,
+      autonomyMode,
+      divisions,
+    });
+  });
+
+  app.get(api.empire.divisions.path, async (req, res) => {
+    const [bots, tasks, delegationSetting, autonomySetting, latestMetrics, errors, financials, alertRules, plugins, formulas] = await Promise.all([
+      storage.listBotProfiles(),
+      storage.listTasks(),
+      storage.getSetting(DELEGATION_KEY),
+      storage.getSetting("autonomy_mode"),
+      storage.getLatestBotMetrics(),
+      storage.listBotErrors(),
+      storage.listBotFinancials(),
+      storage.listAlertRules(),
+      storage.listPlugins(),
+      storage.listFormulas(),
+    ]);
+    const autonomyMode = (autonomySetting?.value as any)?.mode ?? "guided";
+    const delegations = normalizeDelegationList(delegationSetting?.value);
+    const rows = DIVISIONS.map((division) => {
+      const count = bots.filter((b) => b.division === division).length;
+      const runtime = buildDivisionRuntime({
+        division,
+        autonomyMode,
+        bots: bots.filter((b) => b.division === division),
+        tasks: tasks.filter((t) => t.division === division),
+        latestMetrics,
+        errors,
+        financials,
+        alertRules,
+        plugins,
+        formulas,
+        activeDelegations: delegations.filter((del) =>
+          del.status !== "complete" &&
+          del.status !== "rejected" &&
+          (del.sourceDivision === division || del.targetDivisions.includes(division)),
+        ).length,
+      });
+      return { division, count, health: runtime.health, activeWorkflows: runtime.kpis.activeWorkflows };
+    });
+    res.json(rows);
+  });
+
+  app.get(api.empire.settings.get.path, async (req, res) => {
+    const key = req.params.key;
+    const setting = await storage.getSetting(key);
+    if (!setting) return res.status(404).json({ message: "Setting not found" });
+    res.json(setting);
+  });
+
+  app.put(api.empire.settings.set.path, async (req, res) => {
+    const key = req.params.key;
+    const { value } = req.body;
+    const setting = await storage.upsertSetting(key, value);
+    res.json(setting);
+  });
+
+  app.post("/api/divisions/:division/workflows/run", async (req, res) => {
+    const division = req.params.division;
+    if (!isDivision(division)) return res.status(400).json({ message: "Invalid division" });
+    const title = typeof req.body?.title === "string" && req.body.title.trim().length > 0
+      ? req.body.title.trim()
+      : `${division} quick workflow`;
+    const objective = typeof req.body?.objective === "string" && req.body.objective.trim().length > 0
+      ? req.body.objective.trim()
+      : `Execute highest-priority workflow for ${division}`;
+    const task = await storage.createTask({
+      title,
+      objective,
+      status: "running",
+      priority: 2,
+      autonomyMode: "semi-autonomous",
+      division,
+    });
+    res.status(201).json(task);
+  });
+
+  app.get("/api/orchestration/delegations", async (_req, res) => {
+    const setting = await storage.getSetting(DELEGATION_KEY);
+    res.json(normalizeDelegationList(setting?.value));
+  });
+
+  app.post("/api/orchestration/delegations", async (req, res) => {
+    const schema = z.object({
+      sourceDivision: z.string(),
+      sourceWorkflow: z.string().min(3),
+      objective: z.string().min(5),
+      targetDivisions: z.array(z.string()).min(1),
+      riskLevel: z.enum(["low", "medium", "high"]).default("medium"),
+      requestedBy: z.string().default("system"),
+    });
+    try {
+      const parsed = schema.parse(req.body);
+      if (!isDivision(parsed.sourceDivision)) return res.status(400).json({ message: "Invalid source division" });
+      const targets = parsed.targetDivisions.filter(isDivision);
+      if (targets.length === 0) return res.status(400).json({ message: "No valid target divisions provided" });
+
+      const setting = await storage.getSetting(DELEGATION_KEY);
+      const delegations = normalizeDelegationList(setting?.value);
+      const created = createDelegation({
+        sourceDivision: parsed.sourceDivision,
+        sourceWorkflow: parsed.sourceWorkflow,
+        objective: parsed.objective,
+        targetDivisions: targets,
+        riskLevel: parsed.riskLevel,
+        requestedBy: parsed.requestedBy,
+      });
+      const next = [created, ...delegations];
+      await storage.upsertSetting(DELEGATION_KEY, next);
+      res.status(201).json(created);
+    } catch (err) {
+      if (err instanceof z.ZodError) return res.status(400).json(zodValidationError(err));
+      throw err;
+    }
+  });
+
+  app.patch("/api/orchestration/delegations/:id/dependencies/:dependencyId", async (req, res) => {
+    const schema = z.object({ status: z.enum(["pending", "in_progress", "complete", "blocked"]) });
+    try {
+      const parsed = schema.parse(req.body);
+      const setting = await storage.getSetting(DELEGATION_KEY);
+      const delegations = normalizeDelegationList(setting?.value);
+      const delegation = delegations.find((d) => d.id === req.params.id);
+      if (!delegation) return res.status(404).json({ message: "Delegation not found" });
+      const updated = updateDependencyStatus(delegation, req.params.dependencyId, parsed.status);
+      const next = delegations.map((d) => (d.id === updated.id ? updated : d));
+      await storage.upsertSetting(DELEGATION_KEY, next);
+      res.json(updated);
+    } catch (err) {
+      if (err instanceof z.ZodError) return res.status(400).json(zodValidationError(err));
+      throw err;
+    }
+  });
+
+  app.patch("/api/orchestration/delegations/:id/approval/:gateId", async (req, res) => {
+    const schema = z.object({
+      decision: z.enum(["approved", "rejected"]),
+      approverDivision: z.string().default("CommandCore"),
+    });
+    try {
+      const parsed = schema.parse(req.body);
+      if (!isDivision(parsed.approverDivision)) return res.status(400).json({ message: "Invalid approver division" });
+      const setting = await storage.getSetting(DELEGATION_KEY);
+      const delegations = normalizeDelegationList(setting?.value);
+      const delegation = delegations.find((d) => d.id === req.params.id);
+      if (!delegation) return res.status(404).json({ message: "Delegation not found" });
+      const updated = decideApprovalGate(delegation, req.params.gateId, parsed.decision, parsed.approverDivision);
+      const next = delegations.map((d) => (d.id === updated.id ? updated : d));
+      await storage.upsertSetting(DELEGATION_KEY, next);
+      res.json(updated);
+    } catch (err) {
+      if (err instanceof z.ZodError) return res.status(400).json(zodValidationError(err));
+      throw err;
+    }
+  });
+
+  app.get("/api/migration/dreamco/manifest", async (req, res) => {
+    const expected = Number(req.query.expectedTotal ?? 1200);
+    const repositoryRoot = path.resolve(process.cwd(), "..");
+    const manifest = await buildDreamCoMigrationManifest(repositoryRoot, Number.isFinite(expected) ? expected : 1200);
+    res.json(manifest);
+  });
+
+  app.post("/api/migration/dreamco/ingest", async (req, res) => {
+    const expected = Number(req.body?.expectedTotal ?? 1200);
+    const repositoryRoot = path.resolve(process.cwd(), "..");
+    const result = await ingestDreamCoManifest(repositoryRoot, storage, Number.isFinite(expected) ? expected : 1200);
+    await storage.upsertSetting(DREAMCO_MIGRATION_REPORT_KEY, result.report);
+    res.json(result);
+  });
+
+  app.get("/api/migration/dreamco/report", async (req, res) => {
+    const expected = Number(req.query.expectedTotal ?? 1200);
+    const setting = await storage.getSetting(DREAMCO_MIGRATION_REPORT_KEY);
+    const report = setting?.value as DreamCoMigrationValidationReport | undefined;
+    if (report) {
+      const complete = report.unaccounted === 0 && report.expectedTotal >= expected;
+      return res.json({ ...report, complete });
+    }
+    const repositoryRoot = path.resolve(process.cwd(), "..");
+    const manifest = await buildDreamCoMigrationManifest(repositoryRoot, Number.isFinite(expected) ? expected : 1200);
+    const unaccounted = Math.max(0, manifest.expectedTotal - manifest.discoveredAssets);
+    res.json({
+      expectedTotal: manifest.expectedTotal,
+      discoveredAssets: manifest.discoveredAssets,
+      imported: 0,
+      deduped: 0,
+      failed: 0,
+      unmapped: 0,
+      unaccounted,
+      complete: unaccounted === 0,
+    } satisfies DreamCoMigrationValidationReport);
+  });
+
+  // Bot Metrics & Tracking
+  app.get("/api/metrics/health", async (_req, res) => {
+    const summary = await storage.getBotHealthSummary();
+    res.json(summary);
+  });
+
+  app.get("/api/metrics/bot/:botId", async (req, res) => {
+    const botId = Number(req.params.botId);
+    const metrics = await storage.listBotMetrics(botId);
+    res.json(metrics);
+  });
+
+  app.post("/api/metrics", async (req, res) => {
+    try {
+      const input = insertBotMetricSchema.parse(req.body);
+      const metric = await storage.createBotMetric(input);
+      res.status(201).json(metric);
+    } catch (err) {
+      if (err instanceof z.ZodError) return res.status(400).json(zodValidationError(err));
+      res.status(400).json({ message: "Invalid metric data" });
+    }
+  });
+
+  app.get("/api/errors", async (req, res) => {
+    const botId = req.query.botId ? Number(req.query.botId) : undefined;
+    const errors = await storage.listBotErrors(botId);
+    res.json(errors);
+  });
+
+  app.post("/api/errors", async (req, res) => {
+    try {
+      const input = insertBotErrorSchema.parse(req.body);
+      const error = await storage.createBotError(input);
+      res.status(201).json(error);
+    } catch (err) {
+      if (err instanceof z.ZodError) return res.status(400).json(zodValidationError(err));
+      res.status(400).json({ message: "Invalid error data" });
+    }
+  });
+
+  app.put("/api/errors/:id/resolve", async (req, res) => {
+    const id = Number(req.params.id);
+    const resolved = await storage.resolveError(id);
+    if (!resolved) return res.status(404).json({ message: "Error not found" });
+    res.json(resolved);
+  });
+
+  app.get("/api/interactions", async (req, res) => {
+    const botId = req.query.botId ? Number(req.query.botId) : undefined;
+    const limit = req.query.limit ? Number(req.query.limit) : 50;
+    const interactions = await storage.listBotInteractions(botId, limit);
+    res.json(interactions);
+  });
+
+  app.get("/api/financials", async (req, res) => {
+    const botId = req.query.botId ? Number(req.query.botId) : undefined;
+    const financials = await storage.listBotFinancials(botId);
+    res.json(financials);
+  });
+
+  app.post("/api/financials", async (req, res) => {
+    try {
+      const input = insertBotFinancialSchema.parse(req.body);
+      const financial = await storage.createBotFinancial(input);
+      res.status(201).json(financial);
+    } catch (err) {
+      if (err instanceof z.ZodError) return res.status(400).json(zodValidationError(err));
+      res.status(400).json({ message: "Invalid financial data" });
+    }
+  });
+
+  app.get("/api/alerts", async (_req, res) => {
+    const rules = await storage.listAlertRules();
+    res.json(rules);
+  });
+
+  app.post("/api/alerts", async (req, res) => {
+    try {
+      const input = insertAlertRuleSchema.parse(req.body);
+      const rule = await storage.createAlertRule(input);
+      res.status(201).json(rule);
+    } catch (err) {
+      if (err instanceof z.ZodError) return res.status(400).json(zodValidationError(err));
+      res.status(400).json({ message: "Invalid alert rule data" });
+    }
+  });
+
+  app.put("/api/alerts/:id/toggle", async (req, res) => {
+    const id = Number(req.params.id);
+    const { enabled } = req.body;
+    const rule = await storage.toggleAlertRule(id, enabled);
+    if (!rule) return res.status(404).json({ message: "Alert rule not found" });
+    res.json(rule);
+  });
+
+  // Seed default alert rules if none exist
+  const existingAlerts = await storage.listAlertRules();
+  if (existingAlerts.length === 0) {
+    const defaultAlerts = [
+      { name: "Task Failure Cascade", trigger: "task_fail_consecutive", action: "Restart bot / rollback config", threshold: 5 },
+      { name: "CPU Overload", trigger: "cpu_high", action: "Scale resources / notify engineer", threshold: 85 },
+      { name: "Unauthorized Access", trigger: "unauthorized_access", action: "Lock bot / send security alert", threshold: 1 },
+      { name: "Model Drift", trigger: "model_drift", action: "Queue bot for retraining", threshold: 10 },
+      { name: "High Error Rate", trigger: "high_error_rate", action: "Pause bot / notify for review", threshold: 10 },
+      { name: "Revenue Drop", trigger: "revenue_drop", action: "Alert finance team / investigate", threshold: 20 },
+      { name: "Bot Offline", trigger: "bot_offline", action: "Auto-restart / escalate", threshold: 1 },
+    ];
+    for (const alert of defaultAlerts) {
+      await storage.createAlertRule(alert);
+    }
+  }
+
+  // ─── Deal Analyzer Routes ──────────────────────────────────────────
+
+  app.get("/api/deals", async (_req, res) => {
+    const allDeals = await storage.listDeals();
+    res.json(allDeals);
+  });
+
+  app.get("/api/deals/kpis", async (_req, res) => {
+    const kpis = await storage.getDealKpis();
+    res.json(kpis);
+  });
+
+  app.get("/api/deals/:id", async (req, res) => {
+    const id = Number(req.params.id);
+    if (isNaN(id)) return res.status(400).json({ message: "Invalid deal ID" });
+    const deal = await storage.getDeal(id);
+    if (!deal) return res.status(404).json({ message: "Deal not found" });
+    res.json(deal);
+  });
+
+  app.post("/api/deals", async (req, res) => {
+    try {
+      const { name, dealType, inputs: rawInputs } = req.body;
+      if (!name || !dealType || !rawInputs) {
+        return res.status(400).json({ message: "name, dealType, and inputs are required" });
+      }
+
+      let results: any;
+      let status: string;
+      let netProfit = 0;
+      let roi = 0;
+      let capitalEfficiency = 0;
+      let daysHeld = 0;
+      let cashInvested = 0;
+
+      if (dealType === "real_estate") {
+        const calc = calculateRealEstate(rawInputs as RealEstateInputs);
+        results = calc;
+        status = calc.status;
+        netProfit = calc.netProfit;
+        roi = Math.round(calc.roi);
+        capitalEfficiency = Math.round(calc.capitalEfficiency * 10000);
+        daysHeld = rawInputs.daysHeld || 0;
+        cashInvested = rawInputs.cashInvested || 0;
+      } else {
+        const calc = calculateCarFlip(rawInputs as CarFlipInputs);
+        results = calc;
+        status = calc.status;
+        netProfit = calc.netProfit;
+        roi = Math.round(calc.roi);
+        capitalEfficiency = Math.round(calc.capitalEfficiency * 10000);
+        daysHeld = rawInputs.daysHeld || 0;
+        cashInvested = rawInputs.cashInvested || 0;
+      }
+
+      const deal = await storage.createDeal({
+        name,
+        dealType,
+        status,
+        inputs: rawInputs,
+        results,
+        netProfit,
+        roi,
+        capitalEfficiency,
+        daysHeld,
+        cashInvested,
+      });
+      res.status(201).json(deal);
+    } catch (err: any) {
+      res.status(400).json({ message: err.message || "Invalid deal data" });
+    }
+  });
+
+  app.delete("/api/deals/:id", async (req, res) => {
+    const id = Number(req.params.id);
+    if (isNaN(id)) return res.status(400).json({ message: "Invalid deal ID" });
+    const deal = await storage.getDeal(id);
+    if (!deal) return res.status(404).json({ message: "Deal not found" });
+    await storage.deleteDeal(id);
+    res.status(204).send();
+  });
+
+  // ─── Debug Intelligence System Routes ──────────────────────────────────
+
+  app.get("/api/debug/overview", async (_req, res) => {
+    const overview = await storage.getDebugOverview();
+    res.json(overview);
+  });
+
+  app.get("/api/debug/events", async (req, res) => {
+    const status = req.query.status as string | undefined;
+    const botId = req.query.botId ? Number(req.query.botId) : undefined;
+    const events = await storage.listDebugEvents(status, botId);
+    res.json(events);
+  });
+
+  app.post("/api/debug/events", async (req, res) => {
+    try {
+      const input = insertDebugEventSchema.parse(req.body);
+      const event = await storage.createDebugEvent(input);
+      res.status(201).json(event);
+    } catch (err) {
+      if (err instanceof z.ZodError) return res.status(400).json(zodValidationError(err));
+      throw err;
+    }
+  });
+
+  app.patch("/api/debug/events/:id/resolve", async (req, res) => {
+    const id = Number(req.params.id);
+    const { resolution } = req.body;
+    const updated = await storage.resolveDebugEvent(id, resolution || "Resolved");
+    if (!updated) return res.status(404).json({ message: "Event not found" });
+    res.json(updated);
+  });
+
+  app.get("/api/debug/auto-fixes", async (req, res) => {
+    const status = req.query.status as string | undefined;
+    const fixes = await storage.listAutoFixes(status);
+    res.json(fixes);
+  });
+
+  app.post("/api/debug/auto-fixes", async (req, res) => {
+    try {
+      const input = insertAutoFixSchema.parse(req.body);
+      const fix = await storage.createAutoFix(input);
+      if (fix.confidence >= 90) {
+        const applied = await storage.applyAutoFix(fix.id);
+        return res.status(201).json(applied);
+      }
+      res.status(201).json(fix);
+    } catch (err) {
+      if (err instanceof z.ZodError) return res.status(400).json(zodValidationError(err));
+      throw err;
+    }
+  });
+
+  app.patch("/api/debug/auto-fixes/:id/apply", async (req, res) => {
+    const id = Number(req.params.id);
+    const applied = await storage.applyAutoFix(id);
+    if (!applied) return res.status(404).json({ message: "Fix not found" });
+    res.json(applied);
+  });
+
+  app.patch("/api/debug/auto-fixes/:id/reject", async (req, res) => {
+    const id = Number(req.params.id);
+    const rejected = await storage.rejectAutoFix(id);
+    if (!rejected) return res.status(404).json({ message: "Fix not found" });
+    res.json(rejected);
+  });
+
+  app.get("/api/debug/revenue-leaks", async (req, res) => {
+    const status = req.query.status as string | undefined;
+    const leaks = await storage.listRevenueLeaks(status);
+    res.json(leaks);
+  });
+
+  app.post("/api/debug/revenue-leaks", async (req, res) => {
+    try {
+      const input = insertRevenueLeakSchema.parse(req.body);
+      const leak = await storage.createRevenueLeak(input);
+      res.status(201).json(leak);
+    } catch (err) {
+      if (err instanceof z.ZodError) return res.status(400).json(zodValidationError(err));
+      throw err;
+    }
+  });
+
+  app.patch("/api/debug/revenue-leaks/:id/resolve", async (req, res) => {
+    const id = Number(req.params.id);
+    const { notes } = req.body;
+    const resolved = await storage.resolveRevenueLeak(id, notes || "Resolved");
+    if (!resolved) return res.status(404).json({ message: "Revenue leak not found" });
+    res.json(resolved);
+  });
+
+  app.get("/api/debug/security-scans", async (req, res) => {
+    const status = req.query.status as string | undefined;
+    const scans = await storage.listSecurityScans(status);
+    res.json(scans);
+  });
+
+  app.post("/api/debug/security-scans", async (req, res) => {
+    try {
+      const input = insertSecurityScanSchema.parse(req.body);
+      const scan = await storage.createSecurityScan(input);
+      res.status(201).json(scan);
+    } catch (err) {
+      if (err instanceof z.ZodError) return res.status(400).json(zodValidationError(err));
+      throw err;
+    }
+  });
+
+  app.patch("/api/debug/security-scans/:id/remediate", async (req, res) => {
+    const id = Number(req.params.id);
+    const { mitigation } = req.body;
+    const remediated = await storage.remediateSecurityScan(id, mitigation || "Remediated");
+    if (!remediated) return res.status(404).json({ message: "Scan not found" });
+    res.json(remediated);
+  });
+
+  app.post("/api/debug/seed", async (_req, res) => {
+    const existing = await storage.listDebugEvents();
+    if (existing.length > 0) {
+      return res.json({ message: "Demo data already seeded", count: existing.length });
+    }
+
+    const categories = ["syntax_error", "runtime_crash", "api_failure", "auth_error", "logic_bug", "performance_issue", "ux_friction", "revenue_leak", "security_risk", "infinite_loop", "model_drift", "cost_explosion"];
+    const allBots = await storage.listBotProfiles();
+    const botIds = allBots.slice(0, 15).map(b => b.id);
+    const summaries: Record<string, string[]> = {
+      syntax_error: ["Unexpected token in response parser", "Missing semicolon in payment handler", "Invalid JSON template in email bot"],
+      runtime_crash: ["Null reference in customer lookup", "Stack overflow in recursive task planner", "Out of memory during batch processing"],
+      api_failure: ["Stripe webhook timeout after 30s", "OpenAI rate limit exceeded", "CRM sync returning 503"],
+      auth_error: ["JWT expired for service account", "OAuth token refresh loop detected", "API key rotation missed for bot #42"],
+      logic_bug: ["Commission calculator using wrong tier", "Lead scoring inverted priority weights", "Duplicate invoice generation on retry"],
+      performance_issue: ["Response time >5s for search queries", "Database connection pool exhausted", "Memory leak in WebSocket handler"],
+      ux_friction: ["Checkout button unresponsive on mobile", "Search results pagination broken", "Form validation error messages not visible"],
+      revenue_leak: ["Failed checkout not triggering cart recovery", "Pricing page showing wrong tier features", "Abandoned cart emails not sending"],
+      security_risk: ["SQL injection vector in search endpoint", "CORS misconfiguration allowing wildcard", "Unencrypted PII in log output"],
+      infinite_loop: ["Task retry loop with no backoff", "Webhook echo causing infinite callbacks", "State machine stuck in processing state"],
+      model_drift: ["Sentiment analysis accuracy dropped 15%", "Lead quality predictions diverging from actuals", "Price optimization suggesting below-cost items"],
+      cost_explosion: ["API call volume 300% above forecast", "Cloud storage growing 50GB/day unexpectedly", "LLM token usage 5x projected budget"],
+    };
+
+    const events = [];
+    for (let i = 0; i < 24; i++) {
+      const cat = categories[i % categories.length];
+      const sums = summaries[cat];
+      const severity = cat === "security_risk" || cat === "cost_explosion" ? 8 + Math.floor(Math.random() * 3) :
+                        cat === "syntax_error" || cat === "ux_friction" ? 2 + Math.floor(Math.random() * 4) :
+                        4 + Math.floor(Math.random() * 5);
+      const status = i < 8 ? "open" : i < 12 ? "investigating" : "resolved";
+      const revenueImpact = ["revenue_leak", "cost_explosion", "api_failure"].includes(cat) ? 500 + Math.floor(Math.random() * 4500) : 0;
+      events.push(await storage.createDebugEvent({
+        category: cat,
+        severity,
+        summary: sums[i % sums.length],
+        details: { stackTrace: `Error at ${cat}.handler:${10 + i}\n  at processQueue (worker.ts:${44 + i})` },
+        botId: botIds[i % botIds.length],
+        status,
+        resolution: status === "resolved" ? "Patched and deployed" : undefined,
+        revenueImpact,
+        fixPriority: severity,
+      }));
+    }
+
+    const fixPatches = [
+      { summary: "Fix null reference in customer lookup", before: "const name = customer.name;", after: "const name = customer?.name ?? 'Unknown';", confidence: 95 },
+      { summary: "Add rate limit retry with exponential backoff", before: "await openai.chat(prompt);", after: "await retryWithBackoff(() => openai.chat(prompt), 3);", confidence: 92 },
+      { summary: "Fix SQL injection in search endpoint", before: "WHERE name LIKE '%${query}%'", after: "WHERE name LIKE $1", confidence: 97 },
+      { summary: "Fix commission calculation tier lookup", before: "const rate = tiers[tier - 1];", after: "const rate = tiers[Math.min(tier, tiers.length) - 1];", confidence: 78 },
+      { summary: "Add connection pool limit increase", before: "pool: { max: 5 }", after: "pool: { max: 20, idleTimeoutMillis: 30000 }", confidence: 85 },
+      { summary: "Fix JWT refresh token handling", before: "if (token.expired) throw new Error();", after: "if (token.expired) { token = await refreshToken(); }", confidence: 91 },
+      { summary: "Add task retry backoff strategy", before: "while (!done) { retry(); }", after: "for (let i=0; i<maxRetries; i++) { await delay(2**i * 1000); retry(); }", confidence: 88 },
+      { summary: "Fix CORS configuration", before: "origin: '*'", after: "origin: ALLOWED_ORIGINS", confidence: 94 },
+    ];
+
+    for (const p of fixPatches) {
+      await storage.createAutoFix({
+        debugEventId: events[fixPatches.indexOf(p) % events.length].id,
+        botId: botIds[fixPatches.indexOf(p) % botIds.length],
+        patchSummary: p.summary,
+        codeBefore: p.before,
+        codeAfter: p.after,
+        confidence: p.confidence,
+        status: p.confidence >= 90 ? "applied" : "queued",
+      });
+    }
+
+    const leakTypes = ["failed_checkout", "broken_funnel", "pricing_error", "cart_abandonment", "api_overuse", "subscription_churn"];
+    for (let i = 0; i < 6; i++) {
+      await storage.createRevenueLeak({
+        botId: botIds[i % botIds.length],
+        leakType: leakTypes[i],
+        impactEstimate: 1000 + Math.floor(Math.random() * 9000),
+        status: i < 4 ? "open" : "resolved",
+        notes: i >= 4 ? "Patched and verified" : undefined,
+      });
+    }
+
+    const scanTypes = ["dependency_audit", "code_scan", "config_review", "penetration_test", "compliance_check"];
+    const findings = [
+      "Outdated dependency with known CVE-2025-1234",
+      "Hardcoded credentials in config file",
+      "Missing rate limiting on public endpoints",
+      "XSS vulnerability in user input display",
+      "Insecure deserialization in webhook handler",
+    ];
+    for (let i = 0; i < 5; i++) {
+      await storage.createSecurityScan({
+        botId: botIds[i % botIds.length],
+        scanType: scanTypes[i],
+        finding: findings[i],
+        severity: 6 + Math.floor(Math.random() * 4),
+        status: i < 3 ? "open" : "remediated",
+        mitigation: i >= 3 ? "Patched and deployed" : undefined,
+      });
+    }
+
+    res.json({ message: "Demo data seeded", events: events.length, fixes: fixPatches.length, leaks: 6, scans: 5 });
+  });
+
+  // ─── Formula Vault Routes ────────────────────────────────────────────
+
+  app.get("/api/formulas", async (_req, res) => {
+    const list = await storage.listFormulas();
+    res.json(list);
+  });
+
+  app.get("/api/formulas/:id", async (req, res) => {
+    const id = Number(req.params.id);
+    if (isNaN(id)) return res.status(400).json({ message: "Invalid formula ID" });
+    const formula = await storage.getFormula(id);
+    if (!formula) return res.status(404).json({ message: "Formula not found" });
+    res.json(formula);
+  });
+
+  app.post("/api/formulas", async (req, res) => {
+    try {
+      const input = insertFormulaSchema.parse(req.body);
+      const formula = await storage.createFormula(input);
+      res.status(201).json(formula);
+    } catch (err) {
+      if (err instanceof z.ZodError) return res.status(400).json(zodValidationError(err));
+      throw err;
+    }
+  });
+
+  app.patch("/api/formulas/:id", async (req, res) => {
+    const id = Number(req.params.id);
+    if (isNaN(id)) return res.status(400).json({ message: "Invalid formula ID" });
+    const existing = await storage.getFormula(id);
+    if (!existing) return res.status(404).json({ message: "Formula not found" });
+    const updated = await storage.updateFormula(id, req.body);
+    res.json(updated);
+  });
+
+  app.delete("/api/formulas/:id", async (req, res) => {
+    const id = Number(req.params.id);
+    if (isNaN(id)) return res.status(400).json({ message: "Invalid formula ID" });
+    const existing = await storage.getFormula(id);
+    if (!existing) return res.status(404).json({ message: "Formula not found" });
+    await storage.deleteFormula(id);
+    res.status(204).send();
+  });
+
+  // ─── Stripe Payment Routes ───────────────────────────────────────────
+
+  app.get("/api/stripe/publishable-key", async (_req, res) => {
+    try {
+      const key = await getStripePublishableKey();
+      res.json({ publishableKey: key });
+    } catch (error: any) {
+      console.error("Failed to get Stripe publishable key:", error.message);
+      res.status(500).json({ error: "Stripe not configured" });
+    }
+  });
+
+  app.get("/api/stripe/products", async (_req, res) => {
+    try {
+      const result = await db.execute(sql`
+        SELECT
+          p.id as product_id,
+          p.name as product_name,
+          p.description as product_description,
+          p.active as product_active,
+          p.metadata as product_metadata,
+          pr.id as price_id,
+          pr.unit_amount,
+          pr.currency,
+          pr.recurring,
+          pr.active as price_active
+        FROM stripe.products p
+        LEFT JOIN stripe.prices pr ON pr.product = p.id AND pr.active = true
+        WHERE p.active = true
+        ORDER BY p.name, pr.unit_amount
+      `);
+
+      const productsMap = new Map<string, any>();
+      for (const row of result.rows) {
+        const r = row as any;
+        if (!productsMap.has(r.product_id)) {
+          productsMap.set(r.product_id, {
+            id: r.product_id,
+            name: r.product_name,
+            description: r.product_description,
+            metadata: r.product_metadata,
+            prices: [],
+          });
+        }
+        if (r.price_id) {
+          productsMap.get(r.product_id).prices.push({
+            id: r.price_id,
+            unit_amount: r.unit_amount,
+            currency: r.currency,
+            recurring: r.recurring,
+          });
+        }
+      }
+
+      res.json({ products: Array.from(productsMap.values()) });
+    } catch (error: any) {
+      console.error("Failed to list products:", error.message);
+      res.json({ products: [] });
+    }
+  });
+
+  app.post("/api/stripe/checkout", async (req, res) => {
+    try {
+      const { priceId } = req.body;
+      if (!priceId) {
+        return res.status(400).json({ error: "priceId is required" });
+      }
+
+      const stripe = await getUncachableStripeClient();
+      const baseUrl = `${req.protocol}://${req.get("host")}`;
+
+      const session = await stripe.checkout.sessions.create({
+        payment_method_types: ["card"],
+        line_items: [{ price: priceId, quantity: 1 }],
+        mode: "subscription",
+        success_url: `${baseUrl}/pricing?success=true`,
+        cancel_url: `${baseUrl}/pricing?canceled=true`,
+      });
+
+      res.json({ url: session.url });
+    } catch (error: any) {
+      console.error("Checkout error:", error.message);
+      res.status(500).json({ error: "Failed to create checkout session" });
+    }
+  });
+
+  app.post("/api/stripe/portal", async (req, res) => {
+    try {
+      const { customerId } = req.body;
+      if (!customerId) {
+        return res.status(400).json({ error: "customerId is required" });
+      }
+
+      const stripe = await getUncachableStripeClient();
+      const baseUrl = `${req.protocol}://${req.get("host")}`;
+
+      const session = await stripe.billingPortal.sessions.create({
+        customer: customerId,
+        return_url: `${baseUrl}/pricing`,
+      });
+
+      res.json({ url: session.url });
+    } catch (error: any) {
+      console.error("Portal error:", error.message);
+      res.status(500).json({ error: "Failed to create portal session" });
+    }
+  });
+
+  const upload = multer({
+    storage: multer.memoryStorage(),
+    limits: { fileSize: 500 * 1024, files: 20 },
+  });
+
+  app.post("/api/batch/process", upload.array("files", 20), async (req, res) => {
+    try {
+      const files = req.files as Express.Multer.File[] | undefined;
+      const { instruction, language, mode } = req.body;
+
+      if (!instruction && (!files || files.length === 0)) {
+        return res.status(400).json({ error: "Provide files or an instruction" });
+      }
+
+      res.setHeader("Content-Type", "text/event-stream");
+      res.setHeader("Cache-Control", "no-cache");
+      res.setHeader("Connection", "keep-alive");
+
+      const sendEvent = (event: { type: string; [key: string]: unknown }) => {
+        res.write(`data: ${JSON.stringify(event)}\n\n`);
+      };
+
+      let items: Array<{ name: string; content: string; type: string }> = [];
+
+      if (files && files.length > 0) {
+        items = files.map((f) => ({
+          name: f.originalname,
+          content: f.buffer.toString("utf-8").slice(0, 8000),
+          type: f.mimetype || "text/plain",
+        }));
+      } else if (instruction) {
+        const chunks = splitLongRequest(instruction, 2000);
+        items = chunks.map((chunk, i) => ({
+          name: `Part ${i + 1} of ${chunks.length}`,
+          content: chunk,
+          type: "text/request",
+        }));
+      }
+
+      const batchInstruction = instruction || "Analyze and process this file. Provide a summary, key findings, and any suggestions for improvement.";
+
+      await batchProcessWithSSE(
+        items,
+        async (item) => {
+          const isDataFile = item.name.endsWith(".csv") || item.name.endsWith(".json") || item.name.endsWith(".tsv");
+          const isCodeFile = /\.(ts|tsx|js|jsx|py|go|rs|java|kt|swift|cpp|cs|rb|php|sol|sql)$/i.test(item.name);
+
+          let systemMsg = "";
+          if (isDataFile) {
+            systemMsg = `You are a data analyst AI. Process this ${item.name} data file. ${batchInstruction}. Be concise and actionable.`;
+          } else if (isCodeFile) {
+            systemMsg = `You are a senior code reviewer AI. Review this ${language || "code"} file named "${item.name}". ${batchInstruction}. Be concise.`;
+          } else if (item.type === "text/request") {
+            systemMsg = `You are DreamCodeLab's AI assistant. Complete this part of a larger request in ${language || "TypeScript"}. Be thorough and provide complete code/output.`;
+          } else {
+            systemMsg = `You are DreamCodeLab's AI assistant. Process this content from "${item.name}". ${batchInstruction}. Be concise.`;
+          }
+
+          const response = await openai.chat.completions.create({
+            model: "gpt-4.1-mini",
+            messages: [
+              { role: "system", content: systemMsg },
+              { role: "user", content: item.content },
+            ],
+            max_completion_tokens: 8192,
+          });
+
+          return response.choices[0]?.message?.content || "No output";
+        },
+        sendEvent,
+        { retries: 3, minTimeout: 2000 }
+      );
+
+      res.end();
+    } catch (error: any) {
+      console.error("Batch process error:", error.message);
+      if (!res.headersSent) {
+        res.status(500).json({ error: "Batch processing failed" });
+      } else {
+        res.write(`data: ${JSON.stringify({ type: "error", message: error.message })}\n\n`);
+        res.end();
+      }
+    }
+  });
+
+  function splitLongRequest(text: string, maxChunkSize: number): string[] {
+    if (text.length <= maxChunkSize) return [text];
+    const chunks: string[] = [];
+    const paragraphs = text.split(/\n\n+/);
+    let current = "";
+
+    for (const para of paragraphs) {
+      if (current.length + para.length + 2 > maxChunkSize && current.length > 0) {
+        chunks.push(current.trim());
+        current = "";
+      }
+      if (para.length > maxChunkSize) {
+        if (current) { chunks.push(current.trim()); current = ""; }
+        for (let i = 0; i < para.length; i += maxChunkSize) {
+          chunks.push(para.slice(i, i + maxChunkSize));
+        }
+      } else {
+        current += (current ? "\n\n" : "") + para;
+      }
+    }
+    if (current.trim()) chunks.push(current.trim());
+    return chunks.length > 0 ? chunks : [text];
+  }
+
+  const codeRunLimiter = new Map<string, number>();
+  const CODE_MAX_LENGTH = 10000;
+  const PROMPT_MAX_LENGTH = 1000;
+  const RATE_LIMIT_MS = 3000;
+
+  app.post("/api/code/run", async (req, res) => {
+    try {
+      const { code, language, prompt } = req.body;
+      if (!code && !prompt) {
+        return res.status(400).json({ error: "code or prompt is required" });
+      }
+
+      if (code && typeof code === "string" && code.length > CODE_MAX_LENGTH) {
+        return res.status(400).json({ error: `Code must be under ${CODE_MAX_LENGTH} characters` });
+      }
+      if (prompt && typeof prompt === "string" && prompt.length > PROMPT_MAX_LENGTH) {
+        return res.status(400).json({ error: `Prompt must be under ${PROMPT_MAX_LENGTH} characters` });
+      }
+
+      const clientIp = req.ip || "unknown";
+      const lastCall = codeRunLimiter.get(clientIp) || 0;
+      if (Date.now() - lastCall < RATE_LIMIT_MS) {
+        return res.status(429).json({ error: "Please wait a moment before running again" });
+      }
+      codeRunLimiter.set(clientIp, Date.now());
+
+      res.setHeader("Content-Type", "text/event-stream");
+      res.setHeader("Cache-Control", "no-cache");
+      res.setHeader("Connection", "keep-alive");
+
+      const systemPrompt = prompt && !code
+        ? `You are DreamCodeLab's AI coding assistant. The user wants you to generate code. Generate clean, production-ready code in ${language || "TypeScript"}. Respond with ONLY the code, no explanations. After the code block, add a separator "---OUTPUT---" followed by what the expected output would be if this code were run.`
+        : `You are DreamCodeLab's AI code execution engine. The user has written code in ${language || "TypeScript"}. Analyze and simulate running this code. First, check for any syntax errors or issues. Then simulate the execution and provide the output. Format your response as:
+---ANALYSIS---
+Brief analysis of the code (1-2 sentences)
+---OUTPUT---
+The simulated output of running this code (show exactly what would print/return)
+---SUGGESTIONS---
+Any improvements or fixes (optional, 1-2 bullet points max)`;
+
+      const userMessage = prompt && !code
+        ? `Generate ${language || "TypeScript"} code for: ${prompt}`
+        : `Run this ${language || "TypeScript"} code:\n\`\`\`\n${code}\n\`\`\``;
+
+      const stream = await openai.chat.completions.create({
+        model: "gpt-4.1-mini",
+        messages: [
+          { role: "system", content: systemPrompt },
+          { role: "user", content: userMessage },
+        ],
+        stream: true,
+        max_completion_tokens: 8192,
+      });
+
+      for await (const chunk of stream) {
+        const content = chunk.choices[0]?.delta?.content;
+        if (content) {
+          res.write(`data: ${JSON.stringify({ content })}\n\n`);
+        }
+      }
+      res.write(`data: ${JSON.stringify({ done: true })}\n\n`);
+      res.end();
+    } catch (error: any) {
+      console.error("Code run error:", error.message);
+      if (!res.headersSent) {
+        res.status(500).json({ error: "Code execution failed" });
+      } else {
+        res.write(`data: ${JSON.stringify({ error: error.message })}\n\n`);
+        res.end();
+      }
+    }
+  });
+
+  // ===== PLATFORM CONNECTIONS =====
+  app.get("/api/platform-connections", async (_req, res) => {
+    const connections = await storage.listPlatformConnections();
+    res.json(connections);
+  });
+
+  app.post("/api/platform-connections", async (req, res) => {
+    const parsed = insertPlatformConnectionSchema.safeParse(req.body);
+    if (!parsed.success) return res.status(400).json(zodValidationError(parsed.error));
+    const conn = await storage.createPlatformConnection(parsed.data);
+    res.json(conn);
+  });
+
+  app.patch("/api/platform-connections/:id", async (req, res) => {
+    const id = parseInt(req.params.id);
+    const conn = await storage.updatePlatformConnection(id, req.body);
+    if (!conn) return res.status(404).json({ error: "Connection not found" });
+    res.json(conn);
+  });
+
+  app.delete("/api/platform-connections/:id", async (req, res) => {
+    const id = parseInt(req.params.id);
+    await storage.deletePlatformConnection(id);
+    res.json({ success: true });
+  });
+
+  // ===== KILL SWITCH =====
+  app.get("/api/kill-switch", async (_req, res) => {
+    const setting = await storage.getSetting("kill_switch");
+    res.json({ enabled: (setting?.value as any)?.enabled ?? false, updatedAt: setting?.updatedAt });
+  });
+
+  app.post("/api/kill-switch", async (req, res) => {
+    const { enabled } = req.body;
+    const setting = await storage.upsertSetting("kill_switch", { enabled: !!enabled, triggeredAt: new Date().toISOString() });
+    res.json({ enabled: (setting.value as any)?.enabled ?? false, updatedAt: setting.updatedAt });
+  });
+
+  // ===== PLUGINS =====
+  app.get("/api/plugins", async (req, res) => {
+    const allPlugins = await storage.listPlugins();
+    const search = (req.query.search as string)?.toLowerCase();
+    const category = req.query.category as string;
+    let filtered = allPlugins;
+    if (search) filtered = filtered.filter(p => p.name.toLowerCase().includes(search) || p.description.toLowerCase().includes(search));
+    if (category && category !== "all") filtered = filtered.filter(p => p.category === category);
+    res.json(filtered);
+  });
+
+  app.post("/api/plugins", async (req, res) => {
+    const parsed = insertPluginSchema.safeParse(req.body);
+    if (!parsed.success) return res.status(400).json(zodValidationError(parsed.error));
+    const plugin = await storage.createPlugin(parsed.data);
+    res.json(plugin);
+  });
+
+  app.patch("/api/plugins/:id", async (req, res) => {
+    const id = parseInt(req.params.id);
+    const plugin = await storage.updatePlugin(id, req.body);
+    if (!plugin) return res.status(404).json({ error: "Plugin not found" });
+    res.json(plugin);
+  });
+
+  app.post("/api/plugins/:id/download", async (req, res) => {
+    const id = parseInt(req.params.id);
+    const plugin = await storage.incrementPluginDownloads(id);
+    if (!plugin) return res.status(404).json({ error: "Plugin not found" });
+    res.json(plugin);
+  });
+
+  app.post("/api/plugins/:id/install", async (req, res) => {
+    const id = parseInt(req.params.id);
+    const plugin = await storage.updatePlugin(id, { installed: true });
+    if (!plugin) return res.status(404).json({ error: "Plugin not found" });
+    res.json(plugin);
+  });
+
+  app.post("/api/plugins/:id/uninstall", async (req, res) => {
+    const id = parseInt(req.params.id);
+    const plugin = await storage.updatePlugin(id, { installed: false });
+    if (!plugin) return res.status(404).json({ error: "Plugin not found" });
+    res.json(plugin);
+  });
+
+  app.delete("/api/plugins/:id", async (req, res) => {
+    const id = parseInt(req.params.id);
+    await storage.deletePlugin(id);
+    res.json({ success: true });
+  });
+
+  // ===== BOT MEMORY =====
+  app.get("/api/bots/:botId/memory", async (req, res) => {
+    const botId = parseInt(req.params.botId);
+    const memories = await storage.listBotMemory(botId);
+    res.json(memories);
+  });
+
+  app.post("/api/bots/:botId/memory", async (req, res) => {
+    const botId = parseInt(req.params.botId);
+    const parsed = insertBotMemorySchema.safeParse({ ...req.body, botId });
+    if (!parsed.success) return res.status(400).json(zodValidationError(parsed.error));
+    const mem = await storage.createBotMemory(parsed.data);
+    res.json(mem);
+  });
+
+  app.delete("/api/bots/:botId/memory/:memId", async (req, res) => {
+    const memId = parseInt(req.params.memId);
+    await storage.deleteBotMemory(memId);
+    res.json({ success: true });
+  });
+
+  // ===== SYSTEM SNAPSHOTS (TIME CAPSULE) =====
+  app.get("/api/snapshots", async (_req, res) => {
+    const snapshots = await storage.listSystemSnapshots();
+    res.json(snapshots);
+  });
+
+  app.post("/api/snapshots", async (req, res) => {
+    try {
+      const bots = await storage.listBotProfiles();
+      const tasks = await storage.listTasks();
+      const settings: any[] = [];
+      for (const key of ["autonomy_mode", "kill_switch"]) {
+        const s = await storage.getSetting(key);
+        if (s) settings.push(s);
+      }
+      const snapshot = await storage.createSystemSnapshot({
+        name: req.body.name || `Snapshot ${new Date().toLocaleString()}`,
+        description: req.body.description || "",
+        snapshotData: { botCount: bots.length, taskCount: tasks.length, settings, timestamp: new Date().toISOString() },
+        botCount: bots.length,
+        taskCount: tasks.length,
+        settingsCount: settings.length,
+      });
+      res.json(snapshot);
+    } catch (err: any) {
+      res.status(500).json({ error: err.message });
+    }
+  });
+
+  app.delete("/api/snapshots/:id", async (req, res) => {
+    const id = parseInt(req.params.id);
+    await storage.deleteSystemSnapshot(id);
+    res.json({ success: true });
+  });
+
+  // ===== COST TRACKING =====
+  app.get("/api/costs", async (_req, res) => {
+    const events = await storage.listCostEvents(100);
+    res.json(events);
+  });
+
+  app.get("/api/costs/summary", async (_req, res) => {
+    const summary = await storage.getCostSummary();
+    res.json(summary);
+  });
+
+  // ===== GITHUB SYNC =====
+  app.get("/api/github/status", async (_req, res) => {
+    try {
+      const { getRepoInfo, getPullRequests } = await import("./github-sync");
+      const [repo, prs] = await Promise.all([getRepoInfo(), getPullRequests()]);
+      res.json({ connected: true, repo: { name: repo.full_name, stars: repo.stargazers_count, forks: repo.forks_count, description: repo.description, url: repo.html_url, defaultBranch: repo.default_branch }, pullRequests: prs.map((pr: any) => ({ id: pr.number, title: pr.title, state: pr.state, url: pr.html_url, createdAt: pr.created_at, author: pr.user?.login })) });
+    } catch (e: any) {
+      res.status(500).json({ connected: false, error: e.message });
+    }
+  });
+
+  app.post("/api/github/push-all", async (_req, res) => {
+    try {
+      const { pushAllBotsToGitHub, pushFile, buildMasterReadme } = await import("./github-sync");
+      const bots = await storage.listBotProfiles();
+      const result = await pushAllBotsToGitHub(bots);
+      // push master README after all bots
+      try {
+        await pushFile("README.md", buildMasterReadme(bots, result.byLang), "docs: update master README from Empire OS");
+      } catch {}
+      res.json({ success: true, pushed: result.pushed, errors: result.errors.slice(0, 20), byLang: result.byLang, total: bots.length });
+    } catch (e: any) {
+      res.status(500).json({ success: false, error: e.message });
+    }
+  });
+
+  app.post("/api/github/push-source", async (_req, res) => {
+    try {
+      const { pushSourceCode } = await import("./github-sync");
+      const result = await pushSourceCode();
+      res.json({ success: true, pushed: result.pushed, sha: result.sha, errors: result.errors.slice(0, 10) });
+    } catch (e: any) {
+      res.status(500).json({ success: false, error: e.message });
+    }
+  });
+
+  app.get("/api/github/contents", async (req, res) => {
+    try {
+      const { getRepoContents } = await import("./github-sync");
+      const path = (req.query.path as string) ?? "";
+      const contents = await getRepoContents(path);
+      res.json(contents);
+    } catch (e: any) {
+      res.status(500).json({ error: e.message });
+    }
+  });
+
+  app.get("/api/github/classify", async (_req, res) => {
+    const { classifyBotLanguage } = await import("./github-sync");
+    const bots = await storage.listBotProfiles();
+    const classified = bots.map(b => ({ id: b.id, slug: b.slug, displayName: b.displayName, division: b.division, language: classifyBotLanguage(b) }));
+    const summary = { python: classified.filter(b => b.language === "python").length, java: classified.filter(b => b.language === "java").length, typescript: classified.filter(b => b.language === "typescript").length, general: classified.filter(b => b.language === "general").length, total: classified.length };
+    res.json({ summary, bots: classified });
+  });
+
+  // ===== BOT BUILDER =====
+  app.post("/api/bot-builder/generate", async (req, res) => {
+    const { libraries = [], name, division = "DreamCodeLab", description = "" } = req.body;
+    if (!name) return res.status(400).json({ error: "name is required" });
+    try {
+      const prompt = `You are a DreamCo Empire OS bot architect. Generate a complete bot profile as JSON for a bot named "${name}" that specializes in: ${libraries.join(", ")}. Division: ${division}. Additional context: ${description}
+
+Return ONLY valid JSON with this exact shape:
+{
+  "slug": "kebab-case-unique-slug",
+  "displayName": "${name}",
+  "division": "${division}",
+  "category": "coding-library",
+  "tier": "pro",
+  "description": "2-3 sentence specialist description",
+  "capabilities": ["10 specific capabilities as strings"],
+  "systemPrompt": "Detailed system prompt paragraph for this specialist bot",
+  "revenueModel": "SaaS subscription",
+  "targetUsers": "target user description",
+  "priceRange": "$99/mo"
+}`;
+      const completion = await openai.chat.completions.create({ model: "gpt-4.1-mini", messages: [{ role: "user", content: prompt }], response_format: { type: "json_object" }, max_completion_tokens: 1500 });
+      const botData = JSON.parse(completion.choices[0].message.content ?? "{}");
+      botData.status = "active";
+      botData.traits = { division, category: "coding-library", tier: "pro", version: "1.0", engine: "GPT-4.1", autonomy: "full", libraries: libraries.join(",") };
+      res.json({ success: true, bot: botData });
+    } catch (e: any) {
+      res.status(500).json({ error: e.message });
+    }
+  });
+
+  app.post("/api/bot-builder/save", async (req, res) => {
+    const { bot } = req.body;
+    if (!bot?.slug) return res.status(400).json({ error: "bot with slug required" });
+    try {
+      const existing = await storage.getBotProfileBySlug(bot.slug);
+      if (existing) {
+        const updated = await storage.updateBotProfile(existing.id, bot);
+        return res.json({ success: true, bot: updated, action: "updated" });
+      }
+      const created = await storage.createBotProfile(bot);
+      res.json({ success: true, bot: created, action: "created" });
+    } catch (e: any) {
+      res.status(500).json({ error: e.message });
+    }
+  });
+
+  // ===== BOT ACTIVITY =====
+  app.get("/api/bot-activity", async (_req, res) => {
+    const bots = await storage.listBotProfiles();
+    const convs = await storage.listConversations();
+    const activity = await Promise.all(bots.slice(0, 100).map(async (bot) => {
+      const memories = await storage.listBotMemory(bot.id).catch(() => []);
+      return { id: bot.id, slug: bot.slug, displayName: bot.displayName, division: bot.division, tier: bot.tier, status: bot.status, memoryCount: memories.length, lastLearning: memories[0]?.value ?? null, lastActive: memories[0]?.createdAt ?? null };
+    }));
+    res.json({ bots: activity, totalConversations: convs.length, totalBots: bots.length });
+  });
+
+  // ===== BOT RECOMMENDATIONS =====
+  app.get("/api/bots/recommend", async (req, res) => {
+    const context = (req.query.context as string)?.toLowerCase() || "";
+    const bots = await storage.listBotProfiles();
+    const keywords: Record<string, string[]> = {
+      finance: ["finance", "money", "invest", "loan", "bank", "payment", "crypto", "trade"],
+      sales: ["sales", "lead", "crm", "email", "marketing", "outreach", "pipeline"],
+      "real-estate": ["real estate", "property", "house", "flip", "renovation", "mortgage"],
+      gaming: ["game", "gaming", "play", "simulator", "build game"],
+      coding: ["code", "develop", "build", "software", "website", "app", "program"],
+      travel: ["travel", "trip", "flight", "hotel", "vacation", "booking"],
+      production: ["produce", "production", "media", "video", "content", "film"],
+      trade: ["trade", "import", "export", "supply chain", "logistics"],
+      security: ["security", "protect", "hack", "cyber", "compliance"],
+      data: ["data", "analytics", "report", "insight", "research"],
+    };
+    let bestCategory = "general";
+    let bestScore = 0;
+    for (const [cat, words] of Object.entries(keywords)) {
+      const score = words.filter(w => context.includes(w)).length;
+      if (score > bestScore) { bestCategory = cat; bestScore = score; }
+    }
+    const recommended = bots
+      .filter(b => bestScore > 0 ? b.category === bestCategory || b.division.toLowerCase().includes(bestCategory) : true)
+      .slice(0, 5)
+      .map(b => ({ id: b.id, slug: b.slug, displayName: b.displayName, division: b.division, category: b.category, description: b.description, tier: b.tier }));
+    res.json({ context, matchedCategory: bestCategory, recommendations: recommended });
+  });
+
+  return httpServer;
+}

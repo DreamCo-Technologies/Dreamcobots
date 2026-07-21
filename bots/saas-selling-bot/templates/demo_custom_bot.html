@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+{% block title %}Custom Bot Demo — DreamCobots{% endblock %}
+
+{% block content %}
+<div class="max-w-3xl mx-auto px-4 py-12">
+  <a href="/" class="text-sky-600 text-sm hover:underline">← Back to Services</a>
+  <h1 class="text-3xl font-bold mt-4 mb-2">🤖 Custom Bot Development Demo</h1>
+  <p class="text-gray-500 mb-8">
+    Enter any business task and watch the mock automation pipeline execute it step by step.
+  </p>
+
+  <form method="POST" class="bg-white rounded-2xl shadow p-6 mb-8">
+    <label class="block text-sm font-medium text-gray-700 mb-1" for="task">What task should the bot automate?</label>
+    <div class="flex gap-2">
+      <input id="task" name="task" type="text" value="{{ task }}"
+             placeholder="e.g. Send weekly sales report to team"
+             class="flex-1 border border-gray-300 rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-sky-400"/>
+      <button type="submit" class="gradient-hero text-white px-5 py-2 rounded-lg text-sm font-medium hover:opacity-90 transition">
+        Run Demo
+      </button>
+    </div>
+  </form>
+
+  {% if result %}
+  <div class="bg-white rounded-2xl shadow p-6 mb-8">
+    <h2 class="font-semibold text-lg mb-4">⚙️ Pipeline Execution</h2>
+    <ol class="space-y-2">
+      {% for step in result.steps %}
+      <li class="flex items-start gap-2 text-sm">
+        <span class="text-sky-500 font-bold mt-0.5">{{ loop.index }}.</span>
+        <span>{{ step }}</span>
+      </li>
+      {% endfor %}
+    </ol>
+    <div class="mt-4 p-3 bg-green-50 border border-green-200 rounded-lg text-green-700 text-sm">
+      {{ result.result }}
+    </div>
+  </div>
+
+  <!-- Upsell -->
+  <div class="bg-sky-50 border border-sky-200 rounded-2xl p-5 text-center mb-8">
+    <p class="font-semibold text-sky-800 mb-2">Liked the demo? This is just 1% of what the full bot can do.</p>
+    <a href="/lead-gen" class="gradient-hero text-white text-sm font-medium px-5 py-2 rounded-full inline-block hover:opacity-90 transition">
+      Get a Custom Quote →
+    </a>
+  </div>
+  {% endif %}
+
+  <!-- Pricing snippet -->
+  <h2 class="text-xl font-bold mb-4">Pricing</h2>
+  <div class="grid sm:grid-cols-3 gap-4">
+    {% for tier in pricing %}
+    <div class="bg-white rounded-xl shadow p-4 border {% if tier.highlight %}border-sky-400{% else %}border-gray-200{% endif %}">
+      {% if tier.highlight %}<span class="text-xs bg-sky-100 text-sky-700 px-2 py-0.5 rounded-full font-medium">Most Popular</span>{% endif %}
+      <p class="text-lg font-bold mt-2">{{ tier.name }}</p>
+      <p class="text-2xl font-extrabold text-sky-600">{{ tier.price }}<span class="text-sm text-gray-400 font-normal">{{ tier.period }}</span></p>
+      <ul class="mt-3 text-xs text-gray-500 space-y-1">
+        {% for f in tier.features %}<li>✓ {{ f }}</li>{% endfor %}
+      </ul>
+      <a href="/lead-gen" class="block mt-4 text-center text-sm font-medium bg-sky-600 text-white py-1.5 rounded-lg hover:bg-sky-700 transition">
+        Get Started
+      </a>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}

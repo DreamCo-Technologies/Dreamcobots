@@ -1,0 +1,343 @@
+---
+name: file-reading
+description: Read and parse various file formats in Node.js including CSV, JSON, XML, YAML, TOML, INI, TSV, plain text, Markdown, and binary files. Covers streaming large files, encoding detection, and data transformation patterns.
+user-invocable: false
+---
+
+# file-reading Skill — Reading Various File Formats
+
+## Libraries
+
+```bash
+npm install csv-parse    # CSV/TSV parsing
+npm install fast-csv     # fast CSV streaming
+npm install yaml         # YAML parsing
+npm install xml2js       # XML to JSON
+npm install @iarna/toml  # TOML parsing
+npm install ini          # INI/config file parsing
+npm install iconv-lite   # character encoding
+npm install chardet      # encoding detection
+```
+
+---
+
+## JSON
+
+```js
+const fs = require('fs');
+
+// Synchronous
+const data = JSON.parse(fs.readFileSync('data.json', 'utf8'));
+
+// Async
+const data = JSON.parse(await fs.promises.readFile('data.json', 'utf8'));
+
+// With error handling
+function readJson(filePath) {
+  try {
+    return JSON.parse(fs.readFileSync(filePath, 'utf8'));
+  } catch (err) {
+    if (err.code === 'ENOENT') throw new Error(`File not found: ${filePath}`);
+    if (err instanceof SyntaxError) throw new Error(`Invalid JSON in ${filePath}: ${err.message}`);
+    throw err;
+  }
+}
+
+// JSONL (newline-delimited JSON)
+const lines = fs.readFileSync('data.jsonl', 'utf8').split('\n').filter(Boolean);
+const records = lines.map((l) => JSON.parse(l));
+```
+
+---
+
+## CSV
+
+### csv-parse
+
+```js
+const { parse } = require('csv-parse');
+const fs = require('fs');
+
+// Parse full file to array
+async function parseCsv(filePath) {
+  const content = fs.readFileSync(filePath, 'utf8');
+  return new Promise((resolve, reject) => {
+    parse(content, {
+      columns: true,         // first row = headers
+      skip_empty_lines: true,
+      trim: true,
+      cast: true,            // auto-cast numbers/booleans
+      delimiter: ',',
+      quote: '"',
+      escape: '\\',
+      comment: '#',
+      relax_column_count: true,
+    }, (err, records) => {
+      if (err) reject(err); else resolve(records);
+    });
+  });
+}
+
+// Streaming (for large files)
+async function streamCsv(filePath, onRow) {
+  const parser = fs.createReadStream(filePath)
+    .pipe(parse({ columns: true, trim: true, cast: true }));
+
+  for await (const record of parser) {
+    await onRow(record);
+  }
+}
+```
+
+### TSV (Tab-separated)
+
+```js
+parse(content, { delimiter: '\t', columns: true })
+```
+
+---
+
+## XML
+
+### xml2js
+
+```js
+const xml2js = require('xml2js');
+const fs = require('fs');
+
+// Parse XML to JSON object
+async function parseXml(filePath) {
+  const xml = fs.readFileSync(filePath, 'utf8');
+  return xml2js.parseStringPromise(xml, {
+    explicitArray: false,    // don't wrap single values in arrays
+    mergeAttrs: true,        // merge attributes into parent object
+    trim: true,
+    normalize: true,
+    ignoreAttrs: false,
+    attrNameProcessors: [(name) => name.toLowerCase()],
+    tagNameProcessors: [(name) => name.toLowerCase()],
+  });
+}
+
+// Build XML from JS object
+function buildXml(jsObj) {
+  const builder = new xml2js.Builder({
+    rootName: 'root',
+    headless: false,
+    renderOpts: { pretty: true, indent: '  ' },
+  });
+  return builder.buildObject(jsObj);
+}
+```
+
+---
+
+## YAML
+
+```js
+const YAML = require('yaml');
+const fs = require('fs');
+
+// Parse YAML
+const data = YAML.parse(fs.readFileSync('config.yml', 'utf8'));
+
+// Multiple YAML documents (---) in one file
+const docs = YAML.parseAllDocuments(fs.readFileSync('multi.yml', 'utf8'));
+const objects = docs.map((d) => d.toJSON());
+
+// Stringify
+const yaml = YAML.stringify(data, { indent: 2 });
+```
+
+---
+
+## TOML
+
+```js
+const TOML = require('@iarna/toml');
+const fs = require('fs');
+
+const config = TOML.parse(fs.readFileSync('Cargo.toml', 'utf8'));
+console.log(config.package.name);
+```
+
+---
+
+## INI / Config Files
+
+```js
+const ini = require('ini');
+const fs = require('fs');
+
+const config = ini.parse(fs.readFileSync('.env.ini', 'utf8'));
+// config.section.key = 'value'
+
+// Stringify
+const iniStr = ini.stringify(config);
+```
+
+---
+
+## Plain Text / Markdown
+
+```js
+const fs = require('fs');
+
+// Read lines
+const lines = fs.readFileSync('notes.txt', 'utf8').split('\n');
+
+// Stream lines (large files)
+const readline = require('readline');
+async function readLines(filePath) {
+  const rl = readline.createInterface({
+    input: fs.createReadStream(filePath),
+    crlfDelay: Infinity,
+  });
+  const lines = [];
+  for await (const line of rl) {
+    lines.push(line);
+  }
+  return lines;
+}
+
+// Extract headings from Markdown
+function extractMarkdownHeadings(content) {
+  const headings = [];
+  const re = /^(#{1,6})\s+(.+)$/gm;
+  let match;
+  while ((match = re.exec(content)) !== null) {
+    headings.push({ level: match[1].length, text: match[2].trim() });
+  }
+  return headings;
+}
+```
+
+---
+
+## Binary Files
+
+```js
+const fs = require('fs');
+
+// Read as Buffer
+const buf = fs.readFileSync('file.bin');
+
+// Read specific bytes
+const fd = fs.openSync('file.bin', 'r');
+const chunk = Buffer.alloc(16);
+fs.readSync(fd, chunk, 0, 16, 0);  // read 16 bytes at offset 0
+fs.closeSync(fd);
+
+// Check magic bytes / file signatures
+function getFileType(filePath) {
+  const buf = Buffer.alloc(8);
+  const fd = fs.openSync(filePath, 'r');
+  fs.readSync(fd, buf, 0, 8, 0);
+  fs.closeSync(fd);
+
+  if (buf[0] === 0x25 && buf[1] === 0x50) return 'PDF';     // %PDF
+  if (buf[0] === 0x89 && buf[1] === 0x50) return 'PNG';
+  if (buf[0] === 0xFF && buf[1] === 0xD8) return 'JPEG';
+  if (buf[0] === 0x50 && buf[1] === 0x4B) return 'ZIP/Office';
+  if (buf[0] === 0xD0 && buf[1] === 0xCF) return 'OLE/Legacy Office';
+  return 'Unknown';
+}
+```
+
+---
+
+## Encoding Detection & Conversion
+
+```js
+const chardet = require('chardet');
+const iconv = require('iconv-lite');
+const fs = require('fs');
+
+// Detect encoding
+const encoding = chardet.detectFileSync('file.txt') || 'utf8';
+console.log('Detected encoding:', encoding);
+
+// Read with correct encoding
+const content = iconv.decode(fs.readFileSync('file.txt'), encoding);
+
+// Convert to UTF-8
+function readWithEncoding(filePath) {
+  const buf = fs.readFileSync(filePath);
+  const enc = chardet.detect(buf) || 'utf8';
+  return iconv.decode(buf, enc);
+}
+```
+
+---
+
+## Streaming Large Files
+
+```js
+const fs = require('fs');
+const readline = require('readline');
+const { Transform } = require('stream');
+
+// Process line-by-line without loading into memory
+async function processLargeFile(filePath, processor) {
+  const rl = readline.createInterface({
+    input: fs.createReadStream(filePath, { encoding: 'utf8' }),
+    crlfDelay: Infinity,
+  });
+
+  let lineNum = 0;
+  for await (const line of rl) {
+    lineNum++;
+    await processor(line, lineNum);
+  }
+  return lineNum;
+}
+
+// Usage
+await processLargeFile('huge.csv', async (line, n) => {
+  if (n === 1) return;  // skip header
+  const fields = line.split(',');
+  // process fields...
+});
+```
+
+---
+
+## Error Handling Patterns
+
+```js
+async function safeReadFile(filePath) {
+  try {
+    const stat = await fs.promises.stat(filePath);
+    if (!stat.isFile()) throw new Error(`Not a file: ${filePath}`);
+    if (stat.size > 100 * 1024 * 1024) console.warn(`Large file: ${(stat.size / 1024 / 1024).toFixed(1)} MB`);
+    return await fs.promises.readFile(filePath, 'utf8');
+  } catch (err) {
+    if (err.code === 'ENOENT') throw new Error(`File not found: ${filePath}`);
+    if (err.code === 'EACCES') throw new Error(`Permission denied: ${filePath}`);
+    throw err;
+  }
+}
+```
+
+---
+
+## Quick Format Detection
+
+```js
+const path = require('path');
+
+function getParser(filePath) {
+  const ext = path.extname(filePath).toLowerCase();
+  const parsers = {
+    '.json': (s) => JSON.parse(s),
+    '.yaml': (s) => require('yaml').parse(s),
+    '.yml':  (s) => require('yaml').parse(s),
+    '.toml': (s) => require('@iarna/toml').parse(s),
+    '.ini':  (s) => require('ini').parse(s),
+    '.csv':  (s) => require('csv-parse/sync').parse(s, { columns: true, cast: true }),
+    '.tsv':  (s) => require('csv-parse/sync').parse(s, { columns: true, delimiter: '\t' }),
+    '.xml':  async (s) => require('xml2js').parseStringPromise(s, { explicitArray: false }),
+  };
+  return parsers[ext] || ((s) => s);
+}
+```

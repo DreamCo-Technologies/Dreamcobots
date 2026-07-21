@@ -1,0 +1,1 @@
+"""farewell-bot package."""

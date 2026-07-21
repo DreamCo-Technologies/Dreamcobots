@@ -1,0 +1,30 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Rollout
+metadata:
+  name: dreamco-control-tower
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: dreamco-control-tower
+  strategy:
+    canary:
+      steps:
+        - setWeight: 20
+        - pause: { duration: 60s }
+        - analysis:
+            templates:
+              - templateName: dreamco-control-tower-analysis
+        - setWeight: 50
+        - pause: { duration: 120s }
+        - setWeight: 100
+  template:
+    metadata:
+      labels:
+        app: dreamco-control-tower
+    spec:
+      containers:
+        - name: control-tower
+          image: ghcr.io/dreamco-technologies/dreamcobots/control-tower:latest
+          ports:
+            - containerPort: 3000

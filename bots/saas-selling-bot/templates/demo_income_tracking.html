@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+{% block title %}Income Tracking Demo — DreamCobots{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto px-4 py-12">
+  <a href="/" class="text-sky-600 text-sm hover:underline">← Back to Services</a>
+  <h1 class="text-3xl font-bold mt-4 mb-2">💰 Residual Income Tracking Demo</h1>
+  <p class="text-gray-500 mb-8">
+    This mock dashboard shows real-time revenue tracking across multiple income streams.
+    The full product connects to Stripe, PayPal, affiliate networks, and more.
+  </p>
+
+  <!-- Summary Cards -->
+  <div class="grid sm:grid-cols-2 gap-4 mb-8">
+    <div class="bg-white rounded-2xl shadow p-6">
+      <p class="text-sm text-gray-500">Total Monthly Revenue</p>
+      <p class="text-3xl font-extrabold text-green-600 mt-1">${{ "{:,}".format(total_monthly) }}</p>
+    </div>
+    <div class="bg-white rounded-2xl shadow p-6">
+      <p class="text-sm text-gray-500">Year-to-Date Revenue</p>
+      <p class="text-3xl font-extrabold text-sky-600 mt-1">${{ "{:,}".format(total_ytd) }}</p>
+    </div>
+  </div>
+
+  <!-- Streams Table -->
+  <div class="bg-white rounded-2xl shadow overflow-hidden mb-8">
+    <table class="w-full text-sm">
+      <thead class="bg-gray-50 text-gray-600">
+        <tr>
+          <th class="text-left px-5 py-3 font-medium">Revenue Stream</th>
+          <th class="text-right px-5 py-3 font-medium">Monthly</th>
+          <th class="text-right px-5 py-3 font-medium">YTD</th>
+          <th class="text-right px-5 py-3 font-medium">% of Total</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-gray-100">
+        {% for s in streams %}
+        <tr class="hover:bg-sky-50 transition">
+          <td class="px-5 py-3 font-medium">{{ s.source }}</td>
+          <td class="px-5 py-3 text-right text-green-600">${{ "{:,}".format(s.monthly) }}</td>
+          <td class="px-5 py-3 text-right">${{ "{:,}".format(s.ytd) }}</td>
+          <td class="px-5 py-3 text-right">
+            {% set pct = ((s.monthly / total_monthly) * 100) | round(1) %}
+            <div class="flex items-center justify-end gap-2">
+              <div class="w-20 bg-gray-200 rounded-full h-2">
+                <div class="bg-sky-500 h-2 rounded-full" style="width:{{ pct }}%"></div>
+              </div>
+              <span class="text-gray-600">{{ pct }}%</span>
+            </div>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Upsell -->
+  <div class="bg-sky-50 border border-sky-200 rounded-2xl p-5 text-center mb-8">
+    <p class="font-semibold text-sky-800 mb-1">Connect your real accounts and track live revenue.</p>
+    <p class="text-gray-500 text-sm mb-3">Stripe, PayPal, Amazon Associates, and 30+ more integrations.</p>
+    <a href="/lead-gen" class="gradient-hero text-white text-sm font-medium px-5 py-2 rounded-full inline-block hover:opacity-90 transition">
+      Get a Custom Quote →
+    </a>
+  </div>
+
+  <!-- Pricing snippet -->
+  <h2 class="text-xl font-bold mb-4">Pricing</h2>
+  <div class="grid sm:grid-cols-3 gap-4">
+    {% for tier in pricing %}
+    <div class="bg-white rounded-xl shadow p-4 border {% if tier.highlight %}border-sky-400{% else %}border-gray-200{% endif %}">
+      {% if tier.highlight %}<span class="text-xs bg-sky-100 text-sky-700 px-2 py-0.5 rounded-full font-medium">Most Popular</span>{% endif %}
+      <p class="text-lg font-bold mt-2">{{ tier.name }}</p>
+      <p class="text-2xl font-extrabold text-sky-600">{{ tier.price }}<span class="text-sm text-gray-400 font-normal">{{ tier.period }}</span></p>
+      <a href="/lead-gen" class="block mt-3 text-center text-sm font-medium bg-sky-600 text-white py-1.5 rounded-lg hover:bg-sky-700 transition">
+        Get Started
+      </a>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}

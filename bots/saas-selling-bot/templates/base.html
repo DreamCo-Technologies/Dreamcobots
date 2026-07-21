@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>{% block title %}DreamCobots{% endblock %}</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body { font-family: 'Segoe UI', sans-serif; }
+    .gradient-hero { background: linear-gradient(135deg, #1e3a5f 0%, #0ea5e9 100%); }
+  </style>
+</head>
+<body class="bg-gray-50 text-gray-800 min-h-screen flex flex-col">
+
+  <!-- Nav -->
+  <nav class="gradient-hero text-white shadow-lg">
+    <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
+      <a href="/" class="text-xl font-bold tracking-tight">🤖 DreamCobots</a>
+      <div class="flex gap-4 text-sm font-medium">
+        <a href="/" class="hover:text-sky-200 transition">Home</a>
+        <a href="/pricing" class="hover:text-sky-200 transition">Pricing</a>
+        <a href="/faq" class="hover:text-sky-200 transition">FAQ</a>
+        <a href="/lead-gen" class="bg-white text-sky-700 px-3 py-1 rounded-full hover:bg-sky-100 transition">Get a Quote</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Content -->
+  <main class="flex-1">
+    {% block content %}{% endblock %}
+  </main>
+
+  <!-- Footer -->
+  <footer class="bg-gray-800 text-gray-300 text-sm py-6 mt-10">
+    <div class="max-w-6xl mx-auto px-4 flex flex-col md:flex-row justify-between items-center gap-2">
+      <p>© 2024 DreamCobots. All rights reserved.</p>
+      <p>Built with 💙 on the free tier — <a href="/lead-gen" class="underline hover:text-white">Contact us</a></p>
+    </div>
+  </footer>
+
+</body>
+</html>

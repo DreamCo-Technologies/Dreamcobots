@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DreamCo LeadGenBot — Dashboard</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <!-- Header -->
+  <header class="header">
+    <div class="header-inner">
+      <div class="brand">
+        <span class="brand-icon">🤖</span>
+        <span class="brand-name">DreamCo <strong>LeadGenBot</strong></span>
+        <span class="brand-badge">MVP</span>
+      </div>
+      <nav class="nav">
+        <a href="#leads" class="nav-link active">Leads</a>
+        <a href="#bots" class="nav-link">Bots</a>
+        <a href="#pricing" class="nav-link">Pricing</a>
+      </nav>
+      <div class="header-actions">
+        <button class="btn btn-outline" id="btnExport">⬇ Export CSV</button>
+        <button class="btn btn-primary" id="btnScrape">🔍 Scrape Leads</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="main">
+
+    <!-- Stats Row -->
+    <section class="stats-row" id="leads">
+      <div class="stat-card">
+        <div class="stat-value" id="statTotal">—</div>
+        <div class="stat-label">Total Leads</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value" id="statNew">—</div>
+        <div class="stat-label">New This Week</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value" id="statAvgScore">—</div>
+        <div class="stat-label">Avg. Quality Score</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value" id="statIndustries">—</div>
+        <div class="stat-label">Industries</div>
+      </div>
+    </section>
+
+    <!-- Controls -->
+    <section class="controls">
+      <div class="controls-left">
+        <input
+          type="text"
+          id="searchInput"
+          class="input"
+          placeholder="Search leads by name, company, or email…"
+        />
+        <select id="filterIndustry" class="select">
+          <option value="">All Industries</option>
+          <option value="Real Estate">Real Estate</option>
+          <option value="Finance">Finance</option>
+          <option value="Local Business">Local Business</option>
+          <option value="General">General</option>
+        </select>
+      </div>
+      <div class="controls-right">
+        <button class="btn btn-ghost" id="btnAddLead">+ Add Lead</button>
+      </div>
+    </section>
+
+    <!-- Scrape Modal Overlay -->
+    <div id="scrapeModal" class="modal hidden">
+      <div class="modal-card">
+        <h2 class="modal-title">🔍 Scrape New Leads</h2>
+        <label class="label" for="scrapeIndustry">Industry</label>
+        <select id="scrapeIndustry" class="select">
+          <option value="Real Estate">Real Estate</option>
+          <option value="Finance">Finance</option>
+          <option value="Local Business">Local Business</option>
+          <option value="General">General</option>
+        </select>
+        <label class="label" for="scrapeCount">Lead Count (max 200)</label>
+        <input type="number" id="scrapeCount" class="input" value="50" min="1" max="200" />
+        <div class="modal-actions">
+          <button class="btn btn-ghost" id="btnScrapeCancelModal">Cancel</button>
+          <button class="btn btn-primary" id="btnScrapeConfirm">Start Scrape</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Add Lead Modal -->
+    <div id="addLeadModal" class="modal hidden">
+      <div class="modal-card">
+        <h2 class="modal-title">+ Add Lead Manually</h2>
+        <label class="label" for="addName">Full Name *</label>
+        <input type="text" id="addName" class="input" placeholder="Alex Johnson" />
+        <label class="label" for="addEmail">Email *</label>
+        <input type="email" id="addEmail" class="input" placeholder="alex@example.com" />
+        <label class="label" for="addPhone">Phone</label>
+        <input type="tel" id="addPhone" class="input" placeholder="+1-555-123-4567" />
+        <label class="label" for="addCompany">Company</label>
+        <input type="text" id="addCompany" class="input" placeholder="Acme Corp" />
+        <label class="label" for="addIndustry">Industry</label>
+        <select id="addIndustry" class="select">
+          <option value="Real Estate">Real Estate</option>
+          <option value="Finance">Finance</option>
+          <option value="Local Business">Local Business</option>
+          <option value="General">General</option>
+        </select>
+        <label class="label" for="addLocation">Location</label>
+        <input type="text" id="addLocation" class="input" placeholder="New York, NY" />
+        <div class="modal-actions">
+          <button class="btn btn-ghost" id="btnAddLeadCancel">Cancel</button>
+          <button class="btn btn-primary" id="btnAddLeadConfirm">Add Lead</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Leads Table -->
+    <section class="table-section">
+      <div id="loadingIndicator" class="loading hidden">Loading leads…</div>
+      <div id="errorMessage" class="error hidden"></div>
+
+      <table class="table" id="leadsTable">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Company</th>
+            <th>Industry</th>
+            <th>Location</th>
+            <th>Score</th>
+            <th>Source</th>
+          </tr>
+        </thead>
+        <tbody id="leadsBody">
+          <tr>
+            <td colspan="7" class="empty-state">No leads loaded yet. Click <strong>Scrape Leads</strong> to get started.</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- Pricing Section -->
+    <section class="pricing-section" id="pricing">
+      <h2 class="section-title">Choose Your Plan</h2>
+      <p class="section-subtitle">Start generating leads today — or pay only for what you use.</p>
+      <div class="pricing-grid">
+        <div class="pricing-card">
+          <div class="plan-name">Starter</div>
+          <div class="plan-price">$29<span>/mo</span></div>
+          <ul class="plan-features">
+            <li>✅ 50 leads / week</li>
+            <li>✅ CSV export</li>
+            <li>✅ Dashboard access</li>
+            <li>✅ Email support</li>
+          </ul>
+          <button class="btn btn-outline plan-btn" data-plan="starter">Get Started</button>
+        </div>
+        <div class="pricing-card pricing-card--featured">
+          <div class="plan-badge">Most Popular</div>
+          <div class="plan-name">Pro</div>
+          <div class="plan-price">$99<span>/mo</span></div>
+          <ul class="plan-features">
+            <li>✅ 200 leads / week</li>
+            <li>✅ Multi-industry scraping</li>
+            <li>✅ AI quality scoring</li>
+            <li>✅ CRM export</li>
+            <li>✅ Priority support</li>
+          </ul>
+          <button class="btn btn-primary plan-btn" data-plan="pro">Get Started</button>
+        </div>
+        <div class="pricing-card">
+          <div class="plan-name">Agency</div>
+          <div class="plan-price">$299<span>/mo</span></div>
+          <ul class="plan-features">
+            <li>✅ Unlimited leads</li>
+            <li>✅ White-label bots</li>
+            <li>✅ API access</li>
+            <li>✅ Dedicated account manager</li>
+            <li>✅ Custom integrations</li>
+          </ul>
+          <button class="btn btn-outline plan-btn" data-plan="agency">Get Started</button>
+        </div>
+        <div class="pricing-card pricing-card--ppl">
+          <div class="plan-name">Pay-Per-Lead</div>
+          <div class="plan-price">$2–$10<span>/lead</span></div>
+          <ul class="plan-features">
+            <li>✅ No subscription required</li>
+            <li>✅ Buy 1 lead or 1,000</li>
+            <li>✅ Volume discounts</li>
+            <li>✅ Instant delivery</li>
+          </ul>
+          <button class="btn btn-outline plan-btn" data-plan="buy-leads">Buy Leads</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Bots Section -->
+    <section class="bots-section" id="bots">
+      <div class="bots-header">
+        <h2 class="section-title">Active Bots</h2>
+        <button class="btn btn-primary" id="btnCreateBot">+ Create Bot</button>
+      </div>
+      <div id="botsGrid" class="bots-grid">
+        <div class="loading">Loading bots…</div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <p>Powered by <strong>DreamCo</strong> 🤖 &nbsp;|&nbsp; <a href="https://github.com/ireanjordan24/Dreamcobots" target="_blank" rel="noopener">GitHub</a></p>
+  </footer>
+
+  <!-- Toast notifications -->
+  <div id="toast" class="toast hidden"></div>
+
+  <script src="dashboard.js"></script>
+</body>
+</html>

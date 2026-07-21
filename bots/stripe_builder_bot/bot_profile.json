@@ -1,0 +1,19 @@
+{
+  "name": "Stripe Builder Bot",
+  "slug": "stripe-builder-bot",
+  "division": "DreamPayments",
+  "status": "sandbox_builder_ready",
+  "description": "Builds supervised Stripe offer, checkout, webhook, subscription, email, and GitHub notification packets for Buddy.",
+  "safe_mode": true,
+  "live_money_blocked_without_approval": true,
+  "approval_gates": [
+    "create_live_product_or_price",
+    "publish_payment_link",
+    "send_invoice",
+    "accept_live_payment",
+    "issue_refund",
+    "change_payout_or_bank_settings",
+    "email_customer",
+    "create_github_payment_issue"
+  ]
+}

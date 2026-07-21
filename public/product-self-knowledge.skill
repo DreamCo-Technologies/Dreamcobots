@@ -1,0 +1,142 @@
+---
+name: product-self-knowledge
+description: Knowledge about the DreamCo Technologies Dreamcobots platform — what it is, what bots exist, how it is structured, and how to help users navigate and extend it.
+user-invocable: false
+---
+
+# product-self-knowledge Skill — Dreamcobots Platform
+
+## What is Dreamcobots?
+
+Dreamcobots is an AI-powered bot platform built by **DreamCo Technologies**. It provides a collection of specialized automation bots organized by industry, use case, and skill domain. The platform enables:
+
+- **Business automation** — invoicing, proposals, CRM tasks
+- **Financial workflows** — budgets, expense tracking, financial models
+- **Marketing content** — social posts, campaigns, SEO copy
+- **Real estate** — listing descriptions, client communications, market analysis
+- **Side hustles** — freelance automation, passive income tools
+- **Government contracts** — RFP responses, compliance documentation
+- **Education tools** — curriculum generation, student feedback
+- **Healthcare tools** — clinical summaries, patient education content
+- **Global AI** — multi-language support, international workflows
+
+---
+
+## Repository Structure
+
+```
+Dreamcobots/
+├── bots/                     # Core bot implementations
+├── App_bots/                 # Application-specific bots
+├── Business_bots/            # Business workflow bots
+├── Marketing_bots/           # Marketing automation
+├── Fiverr_bots/              # Freelance platform bots
+├── Real_Estate_bots/         # Real estate bots
+├── Side_Hustle_bots/         # Side hustle automation
+├── Government_Contract_bots/ # GovCon automation
+├── Occupational_bots/        # Job/occupation tools
+├── java_bots/                # Java-based bots
+├── python_bots/              # Python-based bots
+├── ai/                       # AI integration layer
+├── api/                      # Backend API endpoints
+├── frontend/                 # Web UI
+├── marketplace/              # AIMarketplace integration
+├── dashboard/                # DivisionDashboard + DreamCo dashboards
+├── analytics-elites/         # Analytics tooling
+├── integrations/             # Third-party integrations
+├── src/                      # Core source modules
+├── public/                   # Static assets & Copilot skills
+├── docs/                     # Documentation
+└── tests/                    # Test suite
+```
+
+---
+
+## Key Modules
+
+| Module | Purpose |
+|--------|---------|
+| `BuddyAI/` | Conversational AI assistant companion |
+| `GlobalAI/` | Multi-language AI capabilities |
+| `DreamFinance/` | Financial analysis and automation |
+| `BusinessLaunchPad/` | End-to-end business launch workflows |
+| `ConnectionsControl/` | CRM and networking automation |
+| `DivisionDashboard/` | Per-division metrics and management |
+| `AutoBotFactory/` | Bot creation and templating engine |
+| `AIMarketplace/` | Marketplace for buying/selling bot services |
+| `compliance/` | Regulatory compliance tooling |
+| `dreamco-control-tower/` | Central orchestration and monitoring |
+
+---
+
+## Documentation Files
+
+| File | Content |
+|------|---------|
+| `README.md` | Project overview and quick start |
+| `BOT_GUIDE.md` | How to create and configure bots |
+| `SETUP.md` | Environment setup instructions |
+| `CONTRIBUTING.md` | Contribution guidelines |
+| `MONEY_GUIDE.md` | Monetization and revenue guidance |
+| `MARKETING.md` | Marketing strategy for the platform |
+| `IDEAS.md` | Roadmap ideas and feature requests |
+| `Buddy_Features.md` | BuddyAI feature documentation |
+| `bots_details_instructions.md` | Detailed bot specification format |
+
+---
+
+## Tech Stack
+
+- **Backend**: Node.js, Python
+- **Frontend**: HTML/CSS/JS (see `frontend/`, `public/`)
+- **Database**: Configured via `database/` and `config/`
+- **AI Layer**: OpenAI integration via `ai/`
+- **Payments**: Stripe (`stripe/`, `publishable_key.txt`)
+- **Containers**: Docker (`Dockerfile`, `docker-compose.yml`)
+- **Testing**: Jest (`__tests__/`), pytest (`tests/`, `pytest.ini`)
+- **CI**: GitHub Actions (`.github/workflows/`)
+
+---
+
+## Bot Configuration Format
+
+Bots are described in `bots_details_instructions.md`. A bot spec includes:
+
+```yaml
+name: BotName
+description: What this bot does
+category: Business | Marketing | Finance | RealEstate | ...
+inputs:
+  - name: field
+    type: string | number | boolean
+    required: true
+outputs:
+  - type: text | document | email | report
+actions:
+  - step description
+```
+
+---
+
+## Helpful Commands
+
+```bash
+# Install dependencies
+npm install
+
+# Run the platform
+node index.js
+
+# Run tests
+npm test          # Jest
+pytest            # Python tests
+
+# Build
+node deploy.js
+
+# Run all bots
+python run_all_bots.py
+
+# Docker
+docker-compose up
+```

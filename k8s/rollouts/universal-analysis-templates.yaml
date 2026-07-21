@@ -1,0 +1,33 @@
+apiVersion: argoproj.io/v1alpha1
+kind: AnalysisTemplate
+metadata:
+  name: ai-bot-analysis
+spec:
+  metrics:
+  - name: error-rate
+    interval: 30s
+    successCondition: result[0] < 0.02
+    provider:
+      prometheus:
+        query: |
+          sum(rate(ai_bot_errors_total[5m]))
+          /
+          sum(rate(ai_bot_requests_total[5m]))
+
+---
+
+apiVersion: argoproj.io/v1alpha1
+kind: AnalysisTemplate
+metadata:
+  name: revenue-bot-analysis
+spec:
+  metrics:
+  - name: revenue-growth
+    interval: 1m
+    successCondition: result[0] > 10  # Placeholder, adjust per criteria via Prometheus queries
+
+---
+metadata:
+  name: trading-bot-analysis
+...
+...(truncated)...

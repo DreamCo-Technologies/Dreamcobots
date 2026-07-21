@@ -1,0 +1,130 @@
+{
+  "id": "grants",
+  "name": "Government Grants Automation",
+  "description": "Automated government grant pipeline: searches SAM.gov and Grants.gov for opportunities, scores eligibility, drafts proposals using AI, submits applications, and tracks award status.",
+  "trigger": {
+    "type": "cron",
+    "schedule": "0 6 * * 1",
+    "endpoint": null
+  },
+  "steps": [
+    {
+      "id": "search_grants",
+      "name": "Search SAM.gov & Grants.gov",
+      "action": "grants_bot.searchOpportunities",
+      "params": {
+        "sources": ["sam_gov", "grants_gov", "sbir_sttr", "usda_rural"],
+        "naics_codes": ["541511", "541512", "518210"],
+        "max_results": 50,
+        "deadline_days_ahead": 30,
+        "min_award_amount": 25000
+      },
+      "on_success": "score_eligibility",
+      "on_failure": "error_handler"
+    },
+    {
+      "id": "score_eligibility",
+      "name": "Score Grant Eligibility",
+      "action": "grants_bot.scoreEligibility",
+      "params": {
+        "business_type": "small_business",
+        "certifications": ["8a", "hubzone", "wosb"],
+        "years_in_business": 2,
+        "min_eligibility_score": 65,
+        "auto_filter": true
+      },
+      "on_success": "draft_proposal",
+      "on_failure": "error_handler"
+    },
+    {
+      "id": "draft_proposal",
+      "name": "AI Draft Grant Proposal",
+      "action": "grants_bot.draftProposal",
+      "params": {
+        "ai_model": "gpt-4o-mini",
+        "include_budget_narrative": true,
+        "include_project_narrative": true,
+        "include_management_plan": true,
+        "template": "federal_standard_v3",
+        "max_pages": 15
+      },
+      "on_success": "review_proposal",
+      "on_failure": "error_handler"
+    },
+    {
+      "id": "review_proposal",
+      "name": "Review & Refine Proposal",
+      "action": "grants_bot.reviewProposal",
+      "params": {
+        "ai_review": true,
+        "check_compliance": true,
+        "plagiarism_check": true,
+        "score_threshold": 80
+      },
+      "on_success": "submit_application",
+      "on_failure": "draft_proposal"
+    },
+    {
+      "id": "submit_application",
+      "name": "Submit Grant Application",
+      "action": "grants_bot.submitApplication",
+      "params": {
+        "submit_via": "grants_gov_api",
+        "attach_documents": ["business_plan", "financial_statements", "team_bios"],
+        "confirm_submission": true,
+        "save_confirmation": true
+      },
+      "on_success": "track_status",
+      "on_failure": "error_handler"
+    },
+    {
+      "id": "track_status",
+      "name": "Track Application Status",
+      "action": "grants_bot.trackStatus",
+      "params": {
+        "check_interval_hours": 24,
+        "notify_on_update": true,
+        "expected_decision_days": 90,
+        "follow_up_at_days": [30, 60, 75]
+      },
+      "on_success": "log_application",
+      "on_failure": "error_handler"
+    },
+    {
+      "id": "log_application",
+      "name": "Log Application & Update Pipeline",
+      "action": "revenue_engine.recordApplication",
+      "params": {
+        "source": "government_grants",
+        "update_dashboard": true,
+        "generate_report": true
+      },
+      "on_success": "complete",
+      "on_failure": "error_handler"
+    },
+    {
+      "id": "error_handler",
+      "name": "Handle Grant Pipeline Errors",
+      "action": "error_handler.log",
+      "params": {
+        "alert_email": true,
+        "retry_after_hours": 24
+      },
+      "on_success": "complete",
+      "on_failure": "complete"
+    }
+  ],
+  "monetization": {
+    "model": "grant_awards",
+    "revenue_per_cycle": 50000,
+    "affiliate_programs": ["grant_consultant_referral"],
+    "payment_processor": "paypal"
+  },
+  "automation": {
+    "retry_attempts": 3,
+    "timeout_seconds": 600,
+    "notify_on_completion": true
+  },
+  "created_at": "2026-01-01T00:00:00Z",
+  "version": "1.0.0"
+}

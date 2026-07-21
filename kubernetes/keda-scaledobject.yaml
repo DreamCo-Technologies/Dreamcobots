@@ -1,0 +1,17 @@
+apiVersion: keda.sh/v1alpha1
+kind: ScaledObject
+metadata:
+  name: dreamco-control-tower-queue-scaler
+spec:
+  scaleTargetRef:
+    name: dreamco-control-tower
+  minReplicaCount: 2
+  maxReplicaCount: 20
+  cooldownPeriod: 300
+  triggers:
+    - type: cron
+      metadata:
+        timezone: America/Chicago
+        start: "0 7 * * *"
+        end: "0 22 * * *"
+        desiredReplicas: "3"

@@ -1,0 +1,334 @@
+---
+name: pdf-reading
+description: Extract text, metadata, images, and structured content from PDF files using pdf-parse, pdfjs-dist, and pdf-lib. Covers full-text extraction, page-by-page reading, table detection, and metadata retrieval.
+user-invocable: false
+---
+
+# pdf-reading Skill — Extracting Content from PDF Files
+
+This skill covers reading and extracting content from existing PDF files.
+
+## Libraries
+
+| Library | Best For |
+|---------|----------|
+| `pdf-parse` | Fast text extraction, simple API |
+| `pdfjs-dist` | Page-by-page text with positions |
+| `pdf-lib` | Metadata, form fields, structure |
+| `pdf-table-extractor` | Tabular data from PDFs |
+
+## Installation
+
+```bash
+npm install pdf-parse         # text extraction
+npm install pdfjs-dist        # full PDF.js in Node
+npm install pdf-lib           # metadata & structure
+```
+
+---
+
+## pdf-parse — Simple Text Extraction
+
+```js
+const pdfParse = require('pdf-parse');
+const fs = require('fs');
+
+async function extractText(pdfPath) {
+  const dataBuffer = fs.readFileSync(pdfPath);
+  const data = await pdfParse(dataBuffer);
+
+  console.log('Pages:', data.numpages);
+  console.log('Info:', data.info);
+  console.log('Metadata:', data.metadata);
+  console.log('Text:\n', data.text);
+  return data;
+}
+```
+
+### pdf-parse Options
+
+```js
+const data = await pdfParse(buffer, {
+  pagerender: renderPageCallback,  // custom per-page renderer
+  max: 0,                          // 0 = all pages; n = first n pages
+  version: 'v2.0.550',             // pdf.js version string
+});
+
+// Custom per-page renderer
+function renderPageCallback(pageData) {
+  const renderOptions = {
+    normalizeWhitespace: false,
+    disableCombineTextItems: false,
+  };
+  return pageData.getTextContent(renderOptions).then((textContent) => {
+    let lastY, text = '';
+    for (const item of textContent.items) {
+      if (lastY === item.transform[5] || !lastY) {
+        text += item.str;
+      } else {
+        text += '\n' + item.str;
+      }
+      lastY = item.transform[5];
+    }
+    return text;
+  });
+}
+```
+
+### Data Object Fields
+
+```js
+data.numpages      // total page count
+data.numrender     // pages actually rendered
+data.info          // PDF Info dictionary { Title, Author, Creator, ... }
+data.metadata      // XMP metadata object (if present)
+data.version       // PDF spec version
+data.text          // full text string (all pages combined)
+```
+
+---
+
+## pdfjs-dist — Per-Page Text with Positions
+
+```js
+const pdfjsLib = require('pdfjs-dist/legacy/build/pdf');
+
+async function extractByPage(pdfPath) {
+  const loadingTask = pdfjsLib.getDocument(pdfPath);
+  const pdfDocument = await loadingTask.promise;
+
+  console.log(`Total pages: ${pdfDocument.numPages}`);
+
+  for (let pageNum = 1; pageNum <= pdfDocument.numPages; pageNum++) {
+    const page = await pdfDocument.getPage(pageNum);
+    const textContent = await page.getTextContent();
+
+    const pageText = textContent.items
+      .map((item) => item.str)
+      .join(' ');
+
+    console.log(`\n--- Page ${pageNum} ---`);
+    console.log(pageText);
+  }
+}
+```
+
+### Text Item Structure
+
+Each `item` in `textContent.items`:
+
+```js
+{
+  str: 'Hello',              // text content
+  dir: 'ltr',               // text direction
+  transform: [sx, shy, shx, sy, tx, ty],  // transformation matrix
+  width: 45.6,              // text width in user units
+  height: 12.0,             // text height
+  fontName: 'g_d0_f1',      // internal font name
+  hasEOL: false,            // end of line marker
+}
+
+// Position extraction
+const x = item.transform[4];   // x position
+const y = item.transform[5];   // y position (from bottom)
+const fontSize = item.height;
+```
+
+### Grouping Text by Lines
+
+```js
+function groupByLines(textContent, lineThreshold = 5) {
+  const items = textContent.items.slice().sort((a, b) => {
+    const yDiff = b.transform[5] - a.transform[5];
+    return Math.abs(yDiff) > lineThreshold ? yDiff : a.transform[4] - b.transform[4];
+  });
+
+  const lines = [];
+  let currentLine = null;
+  let currentY = null;
+
+  for (const item of items) {
+    const y = item.transform[5];
+    if (currentY === null || Math.abs(y - currentY) > lineThreshold) {
+      if (currentLine) lines.push(currentLine);
+      currentLine = { y, items: [item] };
+      currentY = y;
+    } else {
+      currentLine.items.push(item);
+    }
+  }
+  if (currentLine) lines.push(currentLine);
+  return lines.map((l) => l.items.map((i) => i.str).join(' '));
+}
+```
+
+### Getting Metadata via pdfjs
+
+```js
+const metadata = await pdfDocument.getMetadata();
+console.log('Info:', metadata.info);
+console.log('Metadata:', metadata.metadata?.getAll());
+```
+
+### Getting Annotations
+
+```js
+const page = await pdfDocument.getPage(1);
+const annotations = await page.getAnnotations();
+
+annotations.forEach((ann) => {
+  console.log('Type:', ann.subtype);
+  if (ann.subtype === 'Link') {
+    console.log('URL:', ann.url);
+    console.log('Rect:', ann.rect);
+  }
+  if (ann.subtype === 'Widget') {
+    console.log('Field:', ann.fieldName, '=', ann.fieldValue);
+  }
+});
+```
+
+---
+
+## pdf-lib — Reading Metadata & Structure
+
+```js
+const { PDFDocument } = require('pdf-lib');
+const fs = require('fs');
+
+async function readPdfMetadata(pdfPath) {
+  const pdfDoc = await PDFDocument.load(fs.readFileSync(pdfPath));
+
+  return {
+    title:        pdfDoc.getTitle(),
+    author:       pdfDoc.getAuthor(),
+    subject:      pdfDoc.getSubject(),
+    keywords:     pdfDoc.getKeywords(),
+    producer:     pdfDoc.getProducer(),
+    creator:      pdfDoc.getCreator(),
+    creationDate: pdfDoc.getCreationDate(),
+    modDate:      pdfDoc.getModificationDate(),
+    pageCount:    pdfDoc.getPageCount(),
+    pages: pdfDoc.getPages().map((p, i) => ({
+      index: i,
+      width:    p.getWidth(),
+      height:   p.getHeight(),
+      rotation: p.getRotation().angle,
+    })),
+  };
+}
+```
+
+### Reading Form Fields
+
+```js
+async function getFormData(pdfPath) {
+  const pdfDoc = await PDFDocument.load(fs.readFileSync(pdfPath));
+  const form = pdfDoc.getForm();
+  const result = {};
+
+  form.getFields().forEach((field) => {
+    const name = field.getName();
+    const type = field.constructor.name;
+    try {
+      switch (type) {
+        case 'PDFTextField':    result[name] = field.getText(); break;
+        case 'PDFCheckBox':     result[name] = field.isChecked(); break;
+        case 'PDFDropdown':     result[name] = field.getSelected(); break;
+        case 'PDFRadioGroup':   result[name] = field.getSelected(); break;
+        case 'PDFOptionList':   result[name] = field.getSelected(); break;
+        default:                result[name] = `[${type}]`;
+      }
+    } catch {
+      result[name] = null;
+    }
+  });
+  return result;
+}
+```
+
+---
+
+## Extracting Images
+
+PDF images are embedded as XObjects. Extraction requires lower-level access:
+
+```js
+const pdfjsLib = require('pdfjs-dist/legacy/build/pdf');
+const fs = require('fs');
+const path = require('path');
+
+async function extractImages(pdfPath, outputDir) {
+  const doc = await pdfjsLib.getDocument(pdfPath).promise;
+  let imgCount = 0;
+
+  for (let p = 1; p <= doc.numPages; p++) {
+    const page = await doc.getPage(p);
+    const ops  = await page.getOperatorList();
+
+    for (let i = 0; i < ops.fnArray.length; i++) {
+      if (ops.fnArray[i] === pdfjsLib.OPS.paintImageXObject ||
+          ops.fnArray[i] === pdfjsLib.OPS.paintJpegXObject) {
+        console.log(`Page ${p}: image reference ${ops.argsArray[i][0]}`);
+        imgCount++;
+      }
+    }
+  }
+  console.log(`Found ${imgCount} image references`);
+}
+```
+
+---
+
+## Searching PDF Text
+
+```js
+async function searchPdf(pdfPath, searchTerm) {
+  const data = await require('pdf-parse')(require('fs').readFileSync(pdfPath));
+  const term = searchTerm.toLowerCase();
+  const text = data.text;
+  const matches = [];
+  let pos = 0;
+  while ((pos = text.toLowerCase().indexOf(term, pos)) !== -1) {
+    matches.push({
+      index: pos,
+      excerpt: text.substring(Math.max(0, pos - 50), pos + searchTerm.length + 50),
+    });
+    pos++;
+  }
+  console.log(`Found "${searchTerm}" ${matches.length} times`);
+  return matches;
+}
+```
+
+---
+
+## Converting PDF Text to Structured Data
+
+```js
+async function pdfToMarkdown(pdfPath) {
+  const pdfParse = require('pdf-parse');
+  const data = await pdfParse(require('fs').readFileSync(pdfPath));
+
+  const lines = data.text.split('\n').map((l) => l.trim()).filter(Boolean);
+  const mdLines = lines.map((line) => {
+    // Heuristic: short ALL-CAPS lines are headings
+    if (line.length < 60 && line === line.toUpperCase() && /[A-Z]/.test(line)) {
+      return `## ${line}`;
+    }
+    return line;
+  });
+  return mdLines.join('\n\n');
+}
+```
+
+---
+
+## Tips
+
+1. **pdf-parse** is easiest for bulk text extraction; use `max: N` to limit pages.
+2. **pdfjs-dist** provides positional information useful for layout reconstruction.
+3. PDF text order is not always reading order — sort by `transform[5]` (y) then `transform[4]` (x).
+4. Password-protected PDFs: `pdfParse(buf, { password: 'secret' })`.
+5. Scanned PDFs contain images, not text — use OCR (tesseract.js) for those.
+6. `pdf-lib` does not extract text; use it for metadata/form access only.

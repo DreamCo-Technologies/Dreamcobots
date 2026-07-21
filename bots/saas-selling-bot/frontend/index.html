@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SaaSBot – Discover 200+ Free SaaS Tools</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+</head>
+<body>
+
+<!-- ═══════════════════════════ NAVBAR ═══════════════════════════ -->
+<header class="navbar">
+  <div class="nav-inner">
+    <a href="#" class="logo">
+      <span class="logo-icon">🤖</span>
+      <span class="logo-text">SaaSBot</span>
+    </a>
+    <nav class="nav-links">
+      <a href="#tools" class="nav-link">Tools</a>
+      <a href="#categories" class="nav-link">Categories</a>
+      <a href="#pricing" class="nav-link">Pricing</a>
+      <a href="#chat" class="nav-link">AI Chat</a>
+    </nav>
+    <button class="btn btn-primary btn-sm" onclick="openSubscribeModal()">Get Started Free</button>
+    <button class="hamburger" id="hamburger" aria-label="Open menu">&#9776;</button>
+  </div>
+  <div class="mobile-nav" id="mobileNav">
+    <a href="#tools" onclick="closeMobileNav()">Tools</a>
+    <a href="#categories" onclick="closeMobileNav()">Categories</a>
+    <a href="#pricing" onclick="closeMobileNav()">Pricing</a>
+    <a href="#chat" onclick="closeMobileNav()">AI Chat</a>
+    <button class="btn btn-primary" onclick="openSubscribeModal(); closeMobileNav()">Get Started Free</button>
+  </div>
+</header>
+
+<!-- ═══════════════════════════ HERO ════════════════════════════ -->
+<section class="hero">
+  <div class="hero-inner">
+    <div class="hero-badge">✨ 200+ Free SaaS Tools Curated</div>
+    <h1 class="hero-title">The Ultimate SaaS<br/><span class="gradient-text">Selling Bot</span></h1>
+    <p class="hero-subtitle">
+      Discover, compare, and get personalised AI recommendations for the best
+      free SaaS tools across Analytics, Marketing, Development, Collaboration,
+      Finance, and AI.
+    </p>
+    <div class="hero-actions">
+      <button class="btn btn-primary btn-lg" onclick="document.getElementById('searchInput').focus(); document.getElementById('tools').scrollIntoView({behavior:'smooth'})">
+        🔍 Explore Tools
+      </button>
+      <button class="btn btn-secondary btn-lg" onclick="document.getElementById('chat').scrollIntoView({behavior:'smooth'})">
+        🤖 Chat with AI
+      </button>
+    </div>
+    <div class="hero-stats">
+      <div class="stat"><span class="stat-num" id="statTools">200+</span><span class="stat-label">Free Tools</span></div>
+      <div class="stat"><span class="stat-num">6</span><span class="stat-label">Categories</span></div>
+      <div class="stat"><span class="stat-num">$0</span><span class="stat-label">To Start</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════ CATEGORIES ═══════════════════════ -->
+<section class="section" id="categories">
+  <div class="container">
+    <div class="section-header">
+      <h2 class="section-title">Browse by Category</h2>
+      <p class="section-sub">Filter 200+ tools by their primary use case</p>
+    </div>
+    <div class="category-grid" id="categoryGrid">
+      <!-- populated by JS -->
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════ TOOLS ═══════════════════════════ -->
+<section class="section section-alt" id="tools">
+  <div class="container">
+    <div class="section-header">
+      <h2 class="section-title">SaaS Tools Catalogue</h2>
+      <p class="section-sub">All tools have a free tier or free self-hosted option</p>
+    </div>
+
+    <!-- Search & Filter Bar -->
+    <div class="toolbar">
+      <div class="search-wrap">
+        <span class="search-icon">🔍</span>
+        <input
+          id="searchInput"
+          type="text"
+          placeholder="Search tools, categories, or descriptions…"
+          class="search-input"
+          autocomplete="off"
+        />
+        <button class="clear-btn" id="clearSearch" onclick="clearSearch()" style="display:none">✕</button>
+      </div>
+      <div class="filter-wrap">
+        <select id="categoryFilter" class="filter-select">
+          <option value="">All Categories</option>
+        </select>
+        <select id="sortSelect" class="filter-select">
+          <option value="name">Sort: A–Z</option>
+          <option value="category">Sort: Category</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Results count -->
+    <p class="results-count" id="resultsCount"></p>
+
+    <!-- Tools Grid -->
+    <div class="tools-grid" id="toolsGrid">
+      <div class="loader" id="toolsLoader">Loading tools…</div>
+    </div>
+
+    <!-- Load more -->
+    <div class="load-more-wrap" id="loadMoreWrap" style="display:none">
+      <button class="btn btn-outline" onclick="loadMore()">Load More Tools</button>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════ PRICING ═════════════════════════ -->
+<section class="section" id="pricing">
+  <div class="container">
+    <div class="section-header">
+      <h2 class="section-title">Simple, Transparent Pricing</h2>
+      <p class="section-sub">Start free. Upgrade when you need more power.</p>
+    </div>
+    <div class="pricing-grid" id="pricingGrid">
+      <!-- populated by JS -->
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════ AI CHAT ═════════════════════════ -->
+<section class="section section-alt" id="chat">
+  <div class="container">
+    <div class="section-header">
+      <h2 class="section-title">🤖 AI SaaS Advisor</h2>
+      <p class="section-sub">Describe your needs and get personalised tool recommendations</p>
+    </div>
+    <div class="chat-layout">
+      <div class="chat-card">
+        <div class="chat-messages" id="chatMessages">
+          <div class="message bot-message">
+            <div class="message-avatar">🤖</div>
+            <div class="message-bubble">
+              Hi! I'm SaaSBot. Tell me what you're trying to accomplish and I'll
+              recommend the best free SaaS tools for your needs!
+            </div>
+          </div>
+        </div>
+        <div class="chat-input-wrap">
+          <input
+            id="chatInput"
+            type="text"
+            class="chat-input"
+            placeholder="e.g. I need tools for email marketing and analytics…"
+            onkeydown="if(event.key==='Enter') sendMessage()"
+          />
+          <button class="btn btn-primary" onclick="sendMessage()" id="sendBtn">Send</button>
+        </div>
+        <div class="chat-suggestions">
+          <span class="suggestion-label">Try:</span>
+          <button class="chip" onclick="setQuery('email marketing automation')">Email marketing</button>
+          <button class="chip" onclick="setQuery('team collaboration tools')">Team collaboration</button>
+          <button class="chip" onclick="setQuery('free AI APIs for developers')">AI APIs</button>
+          <button class="chip" onclick="setQuery('SaaS analytics dashboards')">Analytics</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════ FOOTER ══════════════════════════ -->
+<footer class="footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <div class="logo"><span class="logo-icon">🤖</span><span class="logo-text">SaaSBot</span></div>
+        <p>The autonomous SaaS selling bot – discover and leverage 200+ free tools.</p>
+      </div>
+      <div class="footer-links">
+        <h4>Tools</h4>
+        <a href="#categories">Analytics</a>
+        <a href="#categories">Marketing</a>
+        <a href="#categories">Development</a>
+        <a href="#categories">Collaboration</a>
+        <a href="#categories">Finance</a>
+        <a href="#categories">AI</a>
+      </div>
+      <div class="footer-links">
+        <h4>Product</h4>
+        <a href="#pricing">Pricing</a>
+        <a href="#chat">AI Chat</a>
+        <a href="/api/tools" target="_blank">API</a>
+        <a href="https://github.com/ireanjordan24/Dreamcobots" target="_blank">GitHub</a>
+      </div>
+      <div class="footer-links">
+        <h4>API Quick Links</h4>
+        <a href="/api/tools" target="_blank">GET /api/tools</a>
+        <a href="/api/categories" target="_blank">GET /api/categories</a>
+        <a href="/api/plans" target="_blank">GET /api/plans</a>
+        <a href="/api/search?q=ai" target="_blank">GET /api/search</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>© 2025 DreamCObots · SaaSBot · All Rights Reserved</p>
+    </div>
+  </div>
+</footer>
+
+<!-- ═════════════════════ SUBSCRIBE MODAL ═══════════════════════ -->
+<div class="modal-overlay" id="subscribeModal" onclick="closeSubscribeModal(event)">
+  <div class="modal-card">
+    <button class="modal-close" onclick="closeSubscribeModal()">✕</button>
+    <h3 class="modal-title">Get Started with SaaSBot</h3>
+    <p class="modal-sub">Enter your email and choose a plan.</p>
+    <div id="subscribeForm">
+      <input type="email" id="subEmail" class="form-input" placeholder="you@example.com" />
+      <div class="plan-options" id="planOptions"></div>
+      <button class="btn btn-primary btn-full" onclick="submitSubscription()">Start Now</button>
+    </div>
+    <p class="modal-note" id="subscribeMessage"></p>
+  </div>
+</div>
+
+<!-- ═══════════════════════ TOOL DETAIL MODAL ═══════════════════ -->
+<div class="modal-overlay" id="toolModal" onclick="closeToolModal(event)">
+  <div class="modal-card modal-wide">
+    <button class="modal-close" onclick="closeToolModal()">✕</button>
+    <div id="toolModalContent"></div>
+  </div>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>

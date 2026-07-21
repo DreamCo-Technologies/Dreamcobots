@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+{% block title %}UI/UX Demo — DreamCobots{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto px-4 py-12">
+  <a href="/" class="text-sky-600 text-sm hover:underline">← Back to Services</a>
+  <h1 class="text-3xl font-bold mt-4 mb-2">🎨 UI/UX Automation Demo</h1>
+  <p class="text-gray-500 mb-8">
+    Browse a gallery of front-end automation templates. Each is production-ready,
+    TailwindCSS-powered, and customisable to your brand in hours — not weeks.
+  </p>
+
+  <div class="grid sm:grid-cols-2 gap-6 mb-8">
+    {% for t in templates %}
+    <div class="bg-white rounded-2xl shadow hover:shadow-md transition p-6 border border-gray-100 hover:border-sky-300">
+      <div class="h-24 bg-gradient-to-br from-sky-100 to-sky-200 rounded-xl mb-4 flex items-center justify-center text-4xl">
+        {% if loop.index == 1 %}📊{% elif loop.index == 2 %}🏠{% elif loop.index == 3 %}🚀{% else %}🧾{% endif %}
+      </div>
+      <h3 class="font-semibold text-base mb-1">{{ t.name }}</h3>
+      <p class="text-gray-500 text-sm mb-3">{{ t.description }}</p>
+      <div class="flex flex-wrap gap-1">
+        {% for tag in t.tags %}
+        <span class="bg-sky-50 text-sky-700 text-xs px-2 py-0.5 rounded-full">{{ tag }}</span>
+        {% endfor %}
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+
+  <div class="bg-white rounded-2xl shadow p-6 mb-8">
+    <h2 class="font-semibold mb-3">What's Included</h2>
+    <div class="grid sm:grid-cols-2 gap-3 text-sm text-gray-600">
+      <div class="flex gap-2"><span>✅</span><span>Responsive design (mobile-first)</span></div>
+      <div class="flex gap-2"><span>✅</span><span>TailwindCSS utility classes</span></div>
+      <div class="flex gap-2"><span>✅</span><span>Dark-mode ready components</span></div>
+      <div class="flex gap-2"><span>✅</span><span>Accessibility (WCAG 2.1 AA)</span></div>
+      <div class="flex gap-2"><span>✅</span><span>Interactive charts & tables</span></div>
+      <div class="flex gap-2"><span>✅</span><span>Custom branding in &lt;1 day</span></div>
+    </div>
+  </div>
+
+  <div class="bg-sky-50 border border-sky-200 rounded-2xl p-5 text-center mb-8">
+    <p class="font-semibold text-sky-800 mb-1">Want a branded dashboard built for your business?</p>
+    <p class="text-gray-500 text-sm mb-3">We deliver a custom, fully responsive UI in 5-10 business days.</p>
+    <a href="/lead-gen" class="gradient-hero text-white text-sm font-medium px-5 py-2 rounded-full inline-block hover:opacity-90 transition">
+      Get a Custom Quote →
+    </a>
+  </div>
+
+  <!-- Pricing snippet -->
+  <h2 class="text-xl font-bold mb-4">Pricing</h2>
+  <div class="grid sm:grid-cols-3 gap-4">
+    {% for tier in pricing %}
+    <div class="bg-white rounded-xl shadow p-4 border {% if tier.highlight %}border-sky-400{% else %}border-gray-200{% endif %}">
+      {% if tier.highlight %}<span class="text-xs bg-sky-100 text-sky-700 px-2 py-0.5 rounded-full font-medium">Most Popular</span>{% endif %}
+      <p class="text-lg font-bold mt-2">{{ tier.name }}</p>
+      <p class="text-2xl font-extrabold text-sky-600">{{ tier.price }}<span class="text-sm text-gray-400 font-normal">{{ tier.period }}</span></p>
+      <a href="/lead-gen" class="block mt-3 text-center text-sm font-medium bg-sky-600 text-white py-1.5 rounded-lg hover:bg-sky-700 transition">
+        Get Started
+      </a>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}

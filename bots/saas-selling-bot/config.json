@@ -1,0 +1,26 @@
+{
+  "app": {
+    "port": 5000,
+    "debug": false,
+    "host": "0.0.0.0"
+  },
+  "openai": {
+    "api_key": "YOUR_OPENAI_API_KEY",
+    "model": "gpt-4o-mini",
+    "max_tokens": 800
+  },
+  "stripe": {
+    "secret_key": "YOUR_STRIPE_SECRET_KEY",
+    "webhook_secret": "YOUR_STRIPE_WEBHOOK_SECRET",
+    "pro_price_id": "price_YOUR_PRO_PRICE_ID",
+    "enterprise_price_id": "price_YOUR_ENTERPRISE_PRICE_ID",
+    "success_url": "http://localhost:5000/payment/success?session_id={CHECKOUT_SESSION_ID}",
+    "cancel_url": "http://localhost:5000/payment/cancel"
+  },
+  "database": {
+    "path": "saas_tools.db"
+  },
+  "affiliate": {
+    "default_commission_usd": 5.0
+  }
+}

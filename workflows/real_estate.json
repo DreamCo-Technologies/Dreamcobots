@@ -1,0 +1,154 @@
+{
+  "id": "real_estate",
+  "name": "Real Estate Deal Pipeline",
+  "description": "Automated real estate deal sourcing: scans MLS and Zillow listings, runs ROI analysis, contacts motivated sellers, schedules viewings, and closes deals using AI-assisted negotiation.",
+  "trigger": {
+    "type": "cron",
+    "schedule": "0 8 * * *",
+    "endpoint": null
+  },
+  "steps": [
+    {
+      "id": "scan_listings",
+      "name": "Scan MLS & Zillow Listings",
+      "action": "real_estate_bot.scanListings",
+      "params": {
+        "sources": ["zillow", "mls", "realtor_com", "redfin"],
+        "property_types": ["single_family", "multi_family", "commercial"],
+        "max_price": 500000,
+        "min_cap_rate": 0.08,
+        "zip_codes": []
+      },
+      "on_success": "analyze_roi",
+      "on_failure": "error_handler"
+    },
+    {
+      "id": "analyze_roi",
+      "name": "Analyze ROI & Cash Flow",
+      "action": "real_estate_bot.analyzeROI",
+      "params": {
+        "include_repairs": true,
+        "vacancy_rate": 0.05,
+        "management_fee_percent": 0.1,
+        "financing_rate": 0.07,
+        "min_monthly_cashflow": 200
+      },
+      "on_success": "score_properties",
+      "on_failure": "error_handler"
+    },
+    {
+      "id": "score_properties",
+      "name": "AI Score Properties",
+      "action": "pricing_engine.scoreOpportunity",
+      "params": {
+        "min_score": 70,
+        "weight_cashflow": 0.4,
+        "weight_appreciation": 0.3,
+        "weight_location": 0.3
+      },
+      "on_success": "contact_sellers",
+      "on_failure": "error_handler"
+    },
+    {
+      "id": "contact_sellers",
+      "name": "Contact Motivated Sellers",
+      "action": "real_estate_bot.outreachSellers",
+      "params": {
+        "channel": ["email", "sms", "phone"],
+        "message_template": "motivated_seller_v2",
+        "max_contacts_per_day": 25,
+        "follow_up_days": [3, 7, 14]
+      },
+      "on_success": "schedule_viewings",
+      "on_failure": "error_handler"
+    },
+    {
+      "id": "schedule_viewings",
+      "name": "Schedule Property Viewings",
+      "action": "real_estate_bot.scheduleViewing",
+      "params": {
+        "calendar": "google_calendar",
+        "buffer_minutes": 60,
+        "auto_confirm": true,
+        "send_reminder_hours": 24
+      },
+      "on_success": "negotiate_offer",
+      "on_failure": "error_handler"
+    },
+    {
+      "id": "negotiate_offer",
+      "name": "AI-Assisted Offer Negotiation",
+      "action": "real_estate_bot.submitOffer",
+      "params": {
+        "offer_percent_below_ask": 0.1,
+        "include_inspection_contingency": true,
+        "include_financing_contingency": true,
+        "closing_days": 30,
+        "ai_counter_offer": true
+      },
+      "on_success": "close_deal",
+      "on_failure": "error_handler"
+    },
+    {
+      "id": "close_deal",
+      "name": "Close Real Estate Deal",
+      "action": "real_estate_bot.closeDeal",
+      "params": {
+        "title_company": "auto_assign",
+        "escrow_days": 30,
+        "notify_team": true
+      },
+      "on_success": "collect_payment",
+      "on_failure": "error_handler"
+    },
+    {
+      "id": "collect_payment",
+      "name": "Process Transaction Payment",
+      "action": "auto_checkout.processPayment",
+      "params": {
+        "payment_processor": "stripe",
+        "payment_type": "wire_transfer",
+        "auto_invoice": true
+      },
+      "on_success": "log_revenue",
+      "on_failure": "error_handler"
+    },
+    {
+      "id": "log_revenue",
+      "name": "Log Deal & Update Portfolio",
+      "action": "revenue_engine.recordDeal",
+      "params": {
+        "source": "real_estate",
+        "update_portfolio": true,
+        "generate_report": true
+      },
+      "on_success": "complete",
+      "on_failure": "error_handler"
+    },
+    {
+      "id": "error_handler",
+      "name": "Handle Pipeline Errors",
+      "action": "error_handler.log",
+      "params": {
+        "alert_email": true,
+        "alert_sms": true,
+        "retry_after_minutes": 120
+      },
+      "on_success": "complete",
+      "on_failure": "complete"
+    }
+  ],
+  "monetization": {
+    "model": "deal_commission",
+    "revenue_per_cycle": 15000,
+    "affiliate_programs": ["zillow_partner", "realtor_affiliate"],
+    "payment_processor": "stripe"
+  },
+  "automation": {
+    "retry_attempts": 3,
+    "timeout_seconds": 600,
+    "notify_on_completion": true
+  },
+  "created_at": "2026-01-01T00:00:00Z",
+  "version": "1.0.0"
+}

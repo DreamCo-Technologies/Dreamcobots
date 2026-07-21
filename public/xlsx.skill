@@ -1,0 +1,7023 @@
+---
+name: xlsx
+description: Create, read, and manipulate Excel spreadsheets (.xlsx, .xls, .csv) using the xlsx (SheetJS) and ExcelJS npm packages. Covers cells, formulas, charts, formatting, multiple sheets, data import/export, and pivot tables.
+user-invocable: false
+---
+
+# xlsx Skill — Excel Spreadsheet Creation & Manipulation
+
+This skill covers two complementary libraries for working with Excel files in Node.js:
+
+1. **SheetJS (`xlsx`)** — fastest reader/writer, broad format support (xlsx, xls, csv, ods, etc.)
+2. **ExcelJS (`exceljs`)** — rich formatting, charts, images, streaming
+
+## Installation
+
+```bash
+npm install xlsx            # SheetJS
+npm install exceljs         # ExcelJS (richer formatting/charts)
+```
+
+---
+
+## SheetJS — Quick Start
+
+```js
+const XLSX = require('xlsx');
+
+// --- READING ---
+const workbook = XLSX.readFile('data.xlsx');
+const sheetName = workbook.SheetNames[0];
+const sheet = workbook.Sheets[sheetName];
+
+// To array of arrays
+const aoa = XLSX.utils.sheet_to_aoa(sheet);
+
+// To array of objects (row 1 = headers)
+const json = XLSX.utils.sheet_to_json(sheet);
+
+// --- WRITING ---
+const wb = XLSX.utils.book_new();
+const data = [
+  ['Name', 'Age', 'Score'],
+  ['Alice', 30, 95],
+  ['Bob',   25, 87],
+];
+const ws = XLSX.utils.aoa_to_sheet(data);
+XLSX.utils.book_append_sheet(wb, ws, 'Results');
+XLSX.writeFile(wb, 'output.xlsx');
+```
+
+---
+
+## SheetJS — Detailed API
+
+### Reading Files
+
+```js
+// From file path
+const wb = XLSX.readFile('file.xlsx');
+
+// From Buffer
+const buf = fs.readFileSync('file.xlsx');
+const wb = XLSX.read(buf, { type: 'buffer' });
+
+// From base64 string
+const wb = XLSX.read(b64string, { type: 'base64' });
+
+// From URL (with node-fetch)
+const resp = await fetch(url);
+const ab = await resp.arrayBuffer();
+const wb = XLSX.read(ab, { type: 'array' });
+
+// Options
+XLSX.readFile('file.xlsx', {
+  cellDates: true,   // parse dates as Date objects
+  cellNF: true,      // include number format strings
+  sheetRows: 100,    // only read first 100 rows
+  password: 'abc',   // password-protected files
+});
+```
+
+### Sheet Ranges & Cells
+
+```js
+const ws = wb.Sheets['Sheet1'];
+
+// Get sheet range
+const range = XLSX.utils.decode_range(ws['!ref']);
+// range = { s: {r:0, c:0}, e: {r:99, c:9} }
+
+// Access a cell directly
+const cellA1 = ws['A1'];
+console.log(cellA1.v);  // raw value
+console.log(cellA1.t);  // type: 'n'=number, 's'=string, 'b'=boolean, 'd'=date
+
+// Iterate all cells
+for (let row = range.s.r; row <= range.e.r; row++) {
+  for (let col = range.s.c; col <= range.e.c; col++) {
+    const addr = XLSX.utils.encode_cell({ r: row, c: col });
+    const cell = ws[addr];
+    if (cell) console.log(addr, cell.v);
+  }
+}
+
+// Set a cell value
+ws['B2'] = { t: 'n', v: 42 };
+ws['C2'] = { t: 's', v: 'Hello' };
+ws['D2'] = { t: 'f', f: 'A2+B2' };  // formula
+```
+
+### JSON <-> Sheet Conversion
+
+```js
+// Array-of-arrays to sheet
+const ws = XLSX.utils.aoa_to_sheet([
+  ['ID', 'Name', 'Value'],
+  [1, 'Alpha', 100],
+  [2, 'Beta',  200],
+]);
+
+// JSON (array of objects) to sheet
+const ws = XLSX.utils.json_to_sheet([
+  { ID: 1, Name: 'Alpha', Value: 100 },
+  { ID: 2, Name: 'Beta',  Value: 200 },
+]);
+
+// Sheet to JSON
+const rows = XLSX.utils.sheet_to_json(ws);
+// [{ ID:1, Name:'Alpha', Value:100 }, ...]
+
+// Sheet to CSV
+const csv = XLSX.utils.sheet_to_csv(ws);
+
+// Sheet to HTML table
+const html = XLSX.utils.sheet_to_html(ws);
+```
+
+### Column Widths
+
+```js
+ws['!cols'] = [
+  { wch: 10 },   // col A width 10 chars
+  { wch: 25 },   // col B width 25 chars
+  { wch: 15 },
+];
+```
+
+### Row Heights
+
+```js
+ws['!rows'] = [
+  { hpx: 30 },  // row 1 height in pixels
+  { hpx: 20 },
+];
+```
+
+### Merging Cells
+
+```js
+ws['!merges'] = [
+  { s: { r: 0, c: 0 }, e: { r: 0, c: 3 } },  // A1:D1
+  { s: { r: 5, c: 0 }, e: { r: 7, c: 0 } },  // A6:A8
+];
+```
+
+### Writing Options
+
+```js
+XLSX.writeFile(wb, 'output.xlsx');
+XLSX.writeFile(wb, 'output.xlsb', { bookType: 'xlsb', compression: true });
+XLSX.writeFile(wb, 'output.csv',  { bookType: 'csv' });
+XLSX.writeFile(wb, 'output.ods',  { bookType: 'ods' });
+
+// To buffer
+const buf = XLSX.write(wb, { type: 'buffer', bookType: 'xlsx' });
+
+// To base64
+const b64 = XLSX.write(wb, { type: 'base64', bookType: 'xlsx' });
+```
+
+---
+
+## ExcelJS — Rich Formatting
+
+```js
+const ExcelJS = require('exceljs');
+
+const workbook = new ExcelJS.Workbook();
+workbook.creator = 'Dreamcobots';
+workbook.created = new Date();
+
+const sheet = workbook.addWorksheet('Sales', {
+  pageSetup: { paperSize: 9, orientation: 'landscape' },
+  views: [{ state: 'frozen', ySplit: 1 }],  // freeze header row
+});
+```
+
+### Column Definitions
+
+```js
+sheet.columns = [
+  { header: 'ID',     key: 'id',    width: 8 },
+  { header: 'Name',   key: 'name',  width: 25 },
+  { header: 'Amount', key: 'amount', width: 14, style: { numFmt: '$#,##0.00' } },
+  { header: 'Date',   key: 'date',  width: 14, style: { numFmt: 'yyyy-mm-dd' } },
+];
+```
+
+### Adding Rows
+
+```js
+// Add a single row by key
+sheet.addRow({ id: 1, name: 'Alice', amount: 5000, date: new Date() });
+
+// Add multiple rows
+sheet.addRows([
+  { id: 2, name: 'Bob',   amount: 3200, date: new Date() },
+  { id: 3, name: 'Carol', amount: 4800, date: new Date() },
+]);
+
+// Add formula row
+sheet.addRow({ id: '', name: 'Total', amount: { formula: 'SUM(C2:C100)' } });
+```
+
+### Cell Styling
+
+```js
+const cell = sheet.getCell('A1');
+
+// Font
+cell.font = {
+  name: 'Calibri',
+  size: 12,
+  bold: true,
+  italic: false,
+  underline: 'single',
+  color: { argb: 'FF1F4E79' },  // ARGB (FF = fully opaque)
+};
+
+// Fill
+cell.fill = {
+  type: 'pattern',
+  pattern: 'solid',
+  fgColor: { argb: 'FFDEEAF1' },
+};
+
+// Border
+cell.border = {
+  top:    { style: 'thin',   color: { argb: 'FF000000' } },
+  left:   { style: 'thin',   color: { argb: 'FF000000' } },
+  bottom: { style: 'medium', color: { argb: 'FF1F4E79' } },
+  right:  { style: 'thin',   color: { argb: 'FF000000' } },
+};
+
+// Alignment
+cell.alignment = {
+  horizontal: 'center',
+  vertical: 'middle',
+  wrapText: true,
+};
+
+// Number format
+cell.numFmt = '$#,##0.00';
+cell.numFmt = '0.00%';
+cell.numFmt = 'yyyy-mm-dd hh:mm';
+```
+
+### Styling a Range via Row/Column Access
+
+```js
+// Style header row (row 1)
+sheet.getRow(1).eachCell((cell) => {
+  cell.font = { bold: true, color: { argb: 'FFFFFFFF' } };
+  cell.fill  = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF1F4E79' } };
+  cell.alignment = { horizontal: 'center', vertical: 'middle' };
+});
+sheet.getRow(1).height = 25;
+
+// Style a column
+sheet.getColumn('amount').numFmt = '$#,##0.00';
+sheet.getColumn('amount').alignment = { horizontal: 'right' };
+```
+
+### Merged Cells
+
+```js
+sheet.mergeCells('A1:D1');
+sheet.getCell('A1').value = 'Report Title';
+sheet.getCell('A1').alignment = { horizontal: 'center' };
+```
+
+### Formulas
+
+```js
+sheet.getCell('C10').value = { formula: 'SUM(C2:C9)', result: 0 };
+sheet.getCell('D10').value = { formula: 'AVERAGE(D2:D9)' };
+sheet.getCell('E10').value = { formula: 'IF(C10>10000,"Above Target","Below Target")' };
+sheet.getCell('F10').value = { sharedFormula: 'C10*1.1', result: 0 };
+```
+
+### Conditional Formatting
+
+```js
+sheet.addConditionalFormatting({
+  ref: 'C2:C50',
+  rules: [
+    {
+      type: 'colorScale',
+      colorScale: {
+        cfvo: [{ type: 'min' }, { type: 'max' }],
+        color: [{ argb: 'FFF8696B' }, { argb: 'FF63BE7B' }],  // red to green
+      },
+    },
+    {
+      type: 'cellIs',
+      operator: 'lessThan',
+      formulae: [1000],
+      style: {
+        font: { color: { argb: 'FFFF0000' }, bold: true },
+        fill: { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFFFCCCC' } },
+      },
+    },
+  ],
+});
+```
+
+### Data Validation
+
+```js
+sheet.dataValidations.add('D2:D100', {
+  type: 'list',
+  allowBlank: true,
+  formulae: ['"North,South,East,West"'],
+  showErrorMessage: true,
+  errorTitle: 'Invalid Region',
+  error: 'Please select from the dropdown',
+});
+
+sheet.dataValidations.add('E2:E100', {
+  type: 'whole',
+  operator: 'between',
+  formulae: [0, 100],
+  showErrorMessage: true,
+  error: 'Value must be 0–100',
+});
+```
+
+### Images
+
+```js
+const imageId = workbook.addImage({
+  filename: 'logo.png',
+  extension: 'png',
+});
+
+sheet.addImage(imageId, {
+  tl: { col: 0, row: 0 },
+  ext: { width: 150, height: 60 },
+});
+```
+
+### Charts
+
+```js
+// Note: ExcelJS chart support is limited; use xlsx-chart or
+// embed chart definitions manually for complex charts.
+
+// For basic charts with exceljs:
+const chart = workbook.addChart({
+  type: 'bar',
+  title: 'Sales by Region',
+  series: [
+    {
+      name: sheet.getCell('B1'),
+      xValues: sheet.getColumn('A'),
+      yValues: sheet.getColumn('B'),
+    },
+  ],
+});
+sheet.addChart(chart, 'F2:L20');
+```
+
+### Multiple Sheets
+
+```js
+const sheet1 = workbook.addWorksheet('Summary');
+const sheet2 = workbook.addWorksheet('Data');
+const sheet3 = workbook.addWorksheet('Charts');
+
+// Cross-sheet formula
+sheet1.getCell('B2').value = { formula: 'Data!C2' };
+```
+
+### Saving
+
+```js
+// To file
+await workbook.xlsx.writeFile('output.xlsx');
+
+// To buffer
+const buffer = await workbook.xlsx.writeBuffer();
+
+// To stream
+const stream = fs.createWriteStream('output.xlsx');
+await workbook.xlsx.write(stream);
+
+// As CSV
+await workbook.csv.writeFile('output.csv');
+```
+
+### Reading with ExcelJS
+
+```js
+const workbook = new ExcelJS.Workbook();
+await workbook.xlsx.readFile('input.xlsx');
+
+workbook.eachSheet((sheet, id) => {
+  console.log(`Sheet: ${sheet.name}`);
+  sheet.eachRow({ includeEmpty: false }, (row, rowNum) => {
+    console.log(`Row ${rowNum}:`, row.values);
+  });
+});
+```
+
+---
+
+## CSV Handling
+
+```js
+const XLSX = require('xlsx');
+
+// CSV to workbook
+const wb = XLSX.readFile('data.csv');
+
+// Workbook to CSV
+const csv = XLSX.utils.sheet_to_csv(wb.Sheets[wb.SheetNames[0]]);
+
+// ExcelJS CSV
+const workbook = new ExcelJS.Workbook();
+await workbook.csv.readFile('data.csv', {
+  parserOptions: {
+    headers: true,
+    delimiter: ',',
+  },
+});
+await workbook.csv.writeFile('output.csv');
+```
+
+---
+
+## Pivot-style Summaries (SheetJS)
+
+```js
+function pivot(data, rowKey, colKey, valKey) {
+  const cols = [...new Set(data.map((r) => r[colKey]))].sort();
+  const rows = [...new Set(data.map((r) => r[rowKey]))].sort();
+  const aoa = [['', ...cols]];
+  for (const row of rows) {
+    const line = [row];
+    for (const col of cols) {
+      const match = data.find((r) => r[rowKey] === row && r[colKey] === col);
+      line.push(match ? match[valKey] : 0);
+    }
+    aoa.push(line);
+  }
+  return XLSX.utils.aoa_to_sheet(aoa);
+}
+```
+
+---
+
+## Tips & Best Practices
+
+1. **SheetJS** is best for fast read/write without rich formatting.
+2. **ExcelJS** is best when you need cell styles, conditional formatting, images.
+3. Always use `{ cellDates: true }` in SheetJS when dates matter.
+4. ExcelJS colors use ARGB (8-char hex) — prefix with `FF` for fully opaque.
+5. Freeze panes with `views: [{ state: 'frozen', ySplit: 1 }]` to lock header row.
+6. Use `sheet.getRow(n).commit()` in ExcelJS streaming mode to free memory.
+7. For very large files (>100k rows) use ExcelJS streaming writer:
+   ```js
+   const stream = workbook.xlsx.createInputStream();
+   ```
+
+
+---
+
+## SheetJS (xlsx) Complete API Reference
+
+### Installation
+
+```bash
+npm install xlsx
+# or
+yarn add xlsx
+# or with ExcelJS
+npm install exceljs
+```
+
+### Core Reading API
+
+```js
+const XLSX = require('xlsx');
+
+// Read from file path
+const wb = XLSX.readFile('spreadsheet.xlsx', {
+  type: 'file',
+  cellDates: true,
+  cellFormula: true,
+  cellNF: true,
+  cellStyles: true,
+  sheetStubs: false,
+  bookSheets: false,
+  bookDeps: false,
+  bookFiles: false,
+  bookVBA: false,
+  password: '',
+  WTF: false,
+  dense: false,
+  nodim: false,
+  PRN: false,
+  UTC: false,
+});
+
+// Read from Buffer
+const buf = fs.readFileSync('data.xlsx');
+const wb2 = XLSX.read(buf, { type: 'buffer' });
+
+// Read from base64 string
+const b64 = fs.readFileSync('data.xlsx', 'base64');
+const wb3 = XLSX.read(b64, { type: 'base64' });
+
+// Read from array of bytes
+const arr = new Uint8Array(fs.readFileSync('data.xlsx'));
+const wb4 = XLSX.read(arr, { type: 'array' });
+
+// Read from binary string
+const bstr = fs.readFileSync('data.xlsx', 'binary');
+const wb5 = XLSX.read(bstr, { type: 'binary' });
+```
+
+### Workbook Object Structure
+
+```js
+// Workbook structure
+const workbook = {
+  SheetNames: ['Sheet1', 'Sheet2'],  // Ordered list of sheet names
+  Sheets: {
+    'Sheet1': { /* worksheet object */ },
+    'Sheet2': { /* worksheet object */ }
+  },
+  Props: {
+    Author: 'John Doe',
+    Title: 'My Spreadsheet',
+    Subject: 'Data Analysis',
+    CreatedDate: new Date(),
+    ModifiedDate: new Date(),
+    Category: 'Finance',
+    Keywords: 'budget, finance',
+    Description: 'Annual budget spreadsheet',
+    LastAuthor: 'Jane Doe',
+    Company: 'ACME Corp',
+    Manager: 'Bob Smith'
+  },
+  Custprops: {},
+  Calcchain: null,
+  Workbook: {
+    Names: [],
+    Views: [{ RTL: false }],
+    WBProps: {
+      date1904: false,
+      defaultThemeVersion: 124226
+    }
+  }
+};
+```
+
+### Worksheet Object Structure
+
+```js
+// Worksheet structure
+const worksheet = {
+  '!ref': 'A1:Z100',         // cell range
+  '!margins': {              // page margins
+    left: 0.7,
+    right: 0.7,
+    top: 0.75,
+    bottom: 0.75,
+    header: 0.3,
+    footer: 0.3
+  },
+  '!cols': [                 // column info array
+    { wch: 20 },             // width in characters
+    { wpx: 150 },            // width in pixels
+    { hidden: true }         // hidden column
+  ],
+  '!rows': [                 // row info array
+    { hpt: 20 },             // height in points
+    { hpx: 27 },             // height in pixels
+    { hidden: false }
+  ],
+  '!merges': [               // merged cell ranges
+    { s: { r: 0, c: 0 }, e: { r: 0, c: 3 } }
+  ],
+  '!protect': {              // worksheet protection
+    password: 'secret',
+    selectLockedCells: true,
+    selectUnlockedCells: true,
+    formatCells: false,
+    formatColumns: false,
+    formatRows: false,
+    insertColumns: false,
+    insertRows: false,
+    insertHyperlinks: false,
+    deleteColumns: false,
+    deleteRows: false,
+    sort: false,
+    autoFilter: false,
+    pivotTables: false
+  },
+  '!autofilter': { ref: 'A1:F1' },
+  'A1': { t: 's', v: 'Name', w: 'Name' },
+  'B1': { t: 's', v: 'Age' },
+  'A2': { t: 's', v: 'Alice' },
+  'B2': { t: 'n', v: 30, w: '30' }
+};
+```
+
+### Cell Object Reference
+
+```js
+// Cell object properties
+const cell = {
+  t: 'n',          // type: 'b'=bool, 'n'=num, 's'=str, 'd'=date, 'e'=err, 'z'=stub
+  v: 42,           // raw value
+  w: '42',         // formatted text
+  f: 'SUM(A1:A10)',// formula
+  F: 'A1:A10',     // array formula range
+  r: '<t>42</t>',  // rich text
+  h: '42',         // HTML rendering
+  c: [             // comments
+    { a: 'Author', t: 'comment text', T: false }
+  ],
+  z: '#,##0.00',   // number format string
+  l: {             // hyperlink
+    Target: 'https://example.com',
+    Tooltip: 'Visit site'
+  },
+  s: {             // style object
+    font: { name: 'Arial', sz: 12, bold: true, color: { rgb: 'FF0000' } },
+    fill: { patternType: 'solid', fgColor: { rgb: 'FFFFCC' } },
+    border: {
+      top: { style: 'thin', color: { auto: 1 } },
+      bottom: { style: 'thin', color: { auto: 1 } },
+      left: { style: 'thin', color: { auto: 1 } },
+      right: { style: 'thin', color: { auto: 1 } }
+    },
+    alignment: {
+      horizontal: 'center',
+      vertical: 'middle',
+      wrapText: true,
+      indent: 0,
+      readingOrder: 0,
+      textRotation: 0,
+      shrinkToFit: false
+    },
+    numFmt: '0.00%'
+  }
+};
+```
+
+### Writing Files
+
+```js
+// Write to file
+XLSX.writeFile(workbook, 'output.xlsx', {
+  bookType: 'xlsx',        // 'xlsx'|'xlsm'|'xlsb'|'xls'|'csv'|'txt'|'sylk'|'html'|'dif'|'dbf'|'prn'|'ods'
+  type: 'file',
+  compression: true,       // zip compression
+  Props: { Author: 'Me' },
+  bookSST: false,          // use shared string table
+  bookVBA: false,
+  cellDates: false,        // write dates as date types
+  cellStyles: false,       // write styles
+  numbers: XLSX.SSF._table,
+  sheet: 'Sheet1',         // for single-sheet formats
+});
+
+// Write to buffer
+const wbuf = XLSX.write(workbook, { bookType: 'xlsx', type: 'buffer' });
+
+// Write to base64
+const wb64 = XLSX.write(workbook, { bookType: 'xlsx', type: 'base64' });
+
+// Write to binary string
+const wbin = XLSX.write(workbook, { bookType: 'xlsx', type: 'binary' });
+
+// Write to array
+const warr = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
+```
+
+### Sheet Operations
+
+```js
+// Access sheets
+const sheet = workbook.Sheets[workbook.SheetNames[0]];
+
+// Add a new sheet
+const newSheet = XLSX.utils.aoa_to_sheet([
+  ['Name', 'Age', 'Score'],
+  ['Alice', 30, 95.5],
+  ['Bob', 25, 87.3],
+  ['Charlie', 35, 91.0],
+]);
+XLSX.utils.book_append_sheet(workbook, newSheet, 'People');
+
+// Delete a sheet
+const idx = workbook.SheetNames.indexOf('OldSheet');
+if (idx !== -1) {
+  workbook.SheetNames.splice(idx, 1);
+  delete workbook.Sheets['OldSheet'];
+}
+
+// Copy a sheet
+function copySheet(wb, fromName, toName) {
+  const srcSheet = wb.Sheets[fromName];
+  const destSheet = JSON.parse(JSON.stringify(srcSheet));
+  XLSX.utils.book_append_sheet(wb, destSheet, toName);
+}
+```
+
+### Data Conversion Utilities
+
+```js
+// Array of arrays to worksheet
+const aoaData = [
+  ['ID', 'Product', 'Qty', 'Price', 'Total'],
+  [1, 'Widget A', 10, 9.99, 99.90],
+  [2, 'Widget B', 5, 14.99, 74.95],
+  [3, 'Gadget X', 3, 29.99, 89.97],
+];
+const ws1 = XLSX.utils.aoa_to_sheet(aoaData, {
+  header: [],           // custom header row
+  skipHeader: false,    // skip header
+  origin: 'A1',         // starting cell
+  dateNF: 'yyyy-mm-dd', // date format
+  cellDates: true,      // output dates as Date objects
+  dense: false,         // use dense format
+  sheetRows: 100,       // max rows to read
+});
+
+// Array of objects to worksheet
+const aooData = [
+  { name: 'Alice', dept: 'Engineering', salary: 95000 },
+  { name: 'Bob', dept: 'Marketing', salary: 72000 },
+  { name: 'Charlie', dept: 'Sales', salary: 68000 },
+];
+const ws2 = XLSX.utils.json_to_sheet(aooData, {
+  header: ['name', 'dept', 'salary'],  // key order
+  skipHeader: false,
+  origin: { r: 1, c: 0 },
+  dateNF: 'yyyy-mm-dd',
+});
+
+// Worksheet to array of arrays
+const aoa = XLSX.utils.sheet_to_aoa(worksheet, {
+  header: 1,           // 1 = return arrays, 'A' = use column letters
+  defval: null,        // default value for empty cells
+  blankrows: false,    // include blank rows
+  range: 'A1:D10',     // only this range
+  raw: true,           // return raw values
+  rawNumbers: false,   // return raw number values
+  dateNF: 'yyyy-mm-dd',
+});
+
+// Worksheet to array of objects
+const aoo = XLSX.utils.sheet_to_json(worksheet, {
+  header: 1,           // use row 1 as header
+  defval: '',
+  blankrows: false,
+  range: 1,            // start from row index 1
+  raw: false,
+});
+
+// Worksheet to CSV
+const csv = XLSX.utils.sheet_to_csv(worksheet, {
+  FS: ',',             // field separator
+  RS: '\n',            // row separator
+  dateNF: 'yyyy-mm-dd',
+  strip: false,        // strip trailing whitespace
+  blankrows: true,
+  skipHidden: false,
+});
+
+// Worksheet to HTML
+const html = XLSX.utils.sheet_to_html(worksheet, {
+  id: 'table1',
+  editable: false,
+  header: '',
+  footer: '',
+});
+
+// Worksheet to formula text
+const txt = XLSX.utils.sheet_to_formulae(worksheet);
+```
+
+### Cell Range Operations
+
+```js
+// Encode/decode cell addresses
+const addr = XLSX.utils.encode_cell({ r: 0, c: 0 }); // 'A1'
+const cell2 = XLSX.utils.decode_cell('A1');            // {r:0, c:0}
+const col = XLSX.utils.encode_col(0);                  // 'A'
+const row = XLSX.utils.encode_row(0);                  // '1'
+const range = XLSX.utils.encode_range({ s:{r:0,c:0}, e:{r:9,c:4} }); // 'A1:E10'
+const rangeObj = XLSX.utils.decode_range('A1:E10'); // {s:{r:0,c:0}, e:{r:9,c:4}}
+
+// Update worksheet range
+function updateSheetRange(ws) {
+  const range = XLSX.utils.decode_range(ws['!ref']);
+  // iterate over cells
+  for (let r = range.s.r; r <= range.e.r; r++) {
+    for (let c = range.s.c; c <= range.e.c; c++) {
+      const cellRef = XLSX.utils.encode_cell({ r, c });
+      const cell = ws[cellRef];
+      if (!cell) continue;
+      // process cell
+    }
+  }
+}
+
+// Set cell value
+function setCellValue(ws, cellRef, value, type) {
+  const cell = ws[cellRef] || (ws[cellRef] = {});
+  cell.v = value;
+  cell.t = type || (typeof value === 'number' ? 'n' : 's');
+  if (typeof value === 'boolean') cell.t = 'b';
+  if (value instanceof Date) cell.t = 'd';
+}
+```
+
+### Number Formatting
+
+```js
+// Common number formats
+const numberFormats = {
+  // General
+  general: 'General',
+  // Number
+  integer: '0',
+  decimal1: '0.0',
+  decimal2: '0.00',
+  thousands: '#,##0',
+  thousandsDecimal2: '#,##0.00',
+  // Percentage
+  percent: '0%',
+  percentDecimal2: '0.00%',
+  // Currency
+  usd: '"$"#,##0.00',
+  usdNeg: '"$"#,##0.00;[Red]"$"#,##0.00',
+  euro: '[$€-407]#,##0.00',
+  gbp: '[$£-809]#,##0.00',
+  // Date
+  date: 'yyyy-mm-dd',
+  dateUs: 'mm/dd/yyyy',
+  dateEu: 'dd/mm/yyyy',
+  datetime: 'yyyy-mm-dd hh:mm:ss',
+  time: 'hh:mm:ss',
+  time12: 'h:mm AM/PM',
+  // Special
+  zip: '00000',
+  phone: '(000) 000-0000',
+  ssn: '000-00-0000',
+  // Scientific
+  scientific: '0.00E+00',
+  // Fraction
+  fraction: '# ?/?',
+  fractionHalf: '# ??/??',
+  // Text
+  text: '@',
+};
+
+// Format a value
+function formatValue(value, formatStr) {
+  return XLSX.SSF.format(formatStr, value);
+}
+```
+
+### ExcelJS Complete API
+
+```js
+const ExcelJS = require('exceljs');
+
+// Create workbook
+const workbook = new ExcelJS.Workbook();
+workbook.creator = 'My App';
+workbook.lastModifiedBy = 'My App';
+workbook.created = new Date();
+workbook.modified = new Date();
+workbook.lastPrinted = new Date();
+workbook.properties.date1904 = false;
+workbook.calcProperties.fullCalcOnLoad = true;
+
+// Add worksheet
+const worksheet = workbook.addWorksheet('My Sheet', {
+  properties: {
+    tabColor: { argb: 'FF00FF00' },
+    outlineLevelCol: 0,
+    outlineLevelRow: 0,
+    defaultRowHeight: 15,
+    defaultColWidth: 8,
+    dyDescent: 55,
+    showGridLines: true,
+  },
+  pageSetup: {
+    paperSize: 9,           // A4
+    orientation: 'portrait', // 'portrait' | 'landscape'
+    fitToPage: true,
+    fitToHeight: 1,
+    fitToWidth: 1,
+    margins: {
+      left: 0.7, right: 0.7,
+      top: 0.75, bottom: 0.75,
+      header: 0.3, footer: 0.3
+    },
+    horizontalCentered: true,
+    verticalCentered: false,
+    printGridLines: false,
+    printTitlesRow: '$1:$1',
+    printTitlesColumn: '$A:$A',
+    firstPageNumber: 1,
+    useFirstPageNumber: false,
+  },
+  headerFooter: {
+    firstHeader: '&CFirst Page Header',
+    firstFooter: '&CFirst Page Footer',
+    oddHeader: '&L&"Calibri,Bold"&K000000My Report&R&D',
+    oddFooter: '&CPage &P of &N',
+    evenHeader: '&CReport',
+    evenFooter: '&CPage &P of &N',
+    differentFirst: false,
+    differentOddEven: false,
+  },
+  views: [
+    {
+      state: 'frozen',
+      xSplit: 1,
+      ySplit: 1,
+      topLeftCell: 'B2',
+      activeCell: 'A1',
+      showGridLines: true,
+      showRowColHeaders: true,
+      zoomScale: 100,
+      zoomScaleNormal: 100,
+      zoomScalePageLayoutView: 100,
+    }
+  ]
+});
+```
+
+### ExcelJS Column Operations
+
+```js
+// Define columns
+worksheet.columns = [
+  {
+    header: 'ID', key: 'id', width: 8,
+    style: { font: { bold: true }, alignment: { horizontal: 'center' } }
+  },
+  {
+    header: 'Name', key: 'name', width: 25,
+    style: { font: { name: 'Calibri', size: 11 } }
+  },
+  {
+    header: 'Date', key: 'date', width: 15,
+    style: { numFmt: 'yyyy-mm-dd' }
+  },
+  {
+    header: 'Amount', key: 'amount', width: 15,
+    style: { numFmt: '"$"#,##0.00' }
+  },
+  {
+    header: 'Status', key: 'status', width: 12,
+    style: { alignment: { horizontal: 'center' } }
+  },
+];
+
+// Get/manipulate a column
+const col = worksheet.getColumn('name'); // or worksheet.getColumn(2)
+col.header = 'Full Name';
+col.key = 'fullName';
+col.width = 30;
+col.hidden = false;
+col.outlineLevel = 0;
+col.style = { font: { bold: false } };
+
+// Iterate columns
+worksheet.columns.forEach(column => {
+  column.width = Math.max(column.header.length + 2, 12);
+});
+
+// Get column by number
+const firstCol = worksheet.getColumn(1);
+const lastColNum = worksheet.columnCount;
+const actualLastColNum = worksheet.actualColumnCount;
+```
+
+### ExcelJS Row Operations
+
+```js
+// Add rows
+worksheet.addRow({ id: 1, name: 'Alice Smith', date: new Date('2024-01-15'), amount: 1500.00, status: 'Active' });
+worksheet.addRow([2, 'Bob Johnson', new Date('2024-02-20'), 2200.50, 'Inactive']);
+
+// Add multiple rows
+const rows = [
+  { id: 3, name: 'Charlie Brown', amount: 1800 },
+  { id: 4, name: 'Diana Prince', amount: 3200 },
+  { id: 5, name: 'Eve Wilson', amount: 2750 },
+];
+worksheet.addRows(rows);
+
+// Get row
+const row = worksheet.getRow(2);
+row.height = 25;
+row.hidden = false;
+row.outlineLevel = 0;
+row.collapsed = false;
+row.getCell(1).value = 'Updated';
+
+// Commit row (for streaming)
+row.commit();
+
+// Iterate rows
+worksheet.eachRow({ includeEmpty: false }, (row, rowNumber) => {
+  console.log(`Row ${rowNumber}:`, row.values);
+  row.eachCell({ includeEmpty: true }, (cell, colNumber) => {
+    console.log(`  Cell ${colNumber}:`, cell.value);
+  });
+});
+
+// Insert row
+worksheet.insertRow(3, { id: 99, name: 'Inserted Row', amount: 0 });
+
+// Duplicate row
+worksheet.duplicateRow(1, 1, true);
+
+// Delete row
+worksheet.spliceRows(3, 1);
+
+// Row properties
+const lastRow = worksheet.lastRow;
+const rowCount = worksheet.rowCount;
+const actualRowCount = worksheet.actualRowCount;
+```
+
+### ExcelJS Cell Operations
+
+```js
+// Get cell
+const cell = worksheet.getCell('A1');  // by address
+const cell2 = worksheet.getCell(1, 1); // by row, col
+
+// Set values
+cell.value = 'Hello World';
+cell.value = 42;
+cell.value = true;
+cell.value = new Date();
+cell.value = { formula: 'SUM(B2:B10)', result: 550 };
+cell.value = { formula: 'SUM(A1:A10)' };
+cell.value = { sharedFormula: 'A2', result: 100 };
+cell.value = { richText: [
+  { font: { bold: true, color: { argb: 'FF0000FF' } }, text: 'Bold Blue' },
+  { font: { italic: true }, text: ' and Italic' },
+  { text: ' Normal text' }
+]};
+cell.value = { hyperlink: 'https://example.com', text: 'Visit Site', tooltip: 'Click here' };
+cell.value = { error: '#DIV/0!' };
+
+// Cell type
+console.log(cell.type); // ExcelJS.ValueType.Number etc.
+
+// Cell formatting
+cell.numFmt = '#,##0.00';
+cell.font = {
+  name: 'Calibri',
+  family: 2,
+  size: 12,
+  scheme: 'minor',
+  bold: true,
+  italic: false,
+  underline: true,  // true | 'none' | 'single' | 'double' | 'singleAccounting' | 'doubleAccounting'
+  strike: false,
+  outline: false,
+  color: { argb: 'FF000000' },
+  charset: 1,
+  vertAlign: 'superscript',  // 'superscript' | 'subscript'
+};
+cell.alignment = {
+  horizontal: 'center',   // 'left'|'center'|'right'|'fill'|'justify'|'centerContinuous'|'distributed'
+  vertical: 'middle',     // 'top'|'middle'|'bottom'|'distributed'|'justify'
+  wrapText: true,
+  shrinkToFit: false,
+  indent: 0,
+  readingOrder: 'ltr',    // 'ltr'|'rtl'
+  textRotation: 45,       // -90 to 90 degrees
+};
+cell.border = {
+  top: { style: 'thin', color: { argb: 'FF000000' } },
+  left: { style: 'thin', color: { argb: 'FF000000' } },
+  bottom: { style: 'double', color: { argb: 'FF000000' } },
+  right: { style: 'thin', color: { argb: 'FF000000' } },
+  diagonal: { up: true, down: false, style: 'dashed', color: { argb: 'FFFF0000' } },
+};
+cell.fill = {
+  type: 'pattern',
+  pattern: 'solid',
+  fgColor: { argb: 'FFFFFF00' },
+  bgColor: { argb: 'FFFFFFFF' },
+};
+// Gradient fill
+cell.fill = {
+  type: 'gradient',
+  gradient: 'angle',
+  degree: 0,
+  stops: [
+    { position: 0, color: { argb: 'FF0000FF' } },
+    { position: 0.5, color: { argb: 'FFFFFFFF' } },
+    { position: 1, color: { argb: 'FFFF0000' } },
+  ]
+};
+
+// Protection
+cell.protection = {
+  locked: true,
+  hidden: false,
+};
+
+// Merge cells
+worksheet.mergeCells('A1:D1');
+worksheet.mergeCells(1, 1, 1, 4);  // top, left, bottom, right
+worksheet.unMergeCells('A1:D1');
+```
+
+### ExcelJS Data Validation
+
+```js
+// List validation
+worksheet.getCell('E2').dataValidation = {
+  type: 'list',
+  allowBlank: true,
+  formulae: ['"Active,Inactive,Pending"'],
+  showErrorMessage: true,
+  errorStyle: 'error',  // 'error'|'warning'|'information'
+  errorTitle: 'Invalid Input',
+  error: 'Please select from the list',
+  showInputMessage: true,
+  promptTitle: 'Status',
+  prompt: 'Select employee status',
+};
+
+// Whole number validation
+worksheet.getCell('B2').dataValidation = {
+  type: 'whole',
+  operator: 'between',  // 'between'|'notBetween'|'equal'|'notEqual'|'greaterThan'|'lessThan'|'greaterThanOrEqual'|'lessThanOrEqual'
+  formula1: 1,
+  formula2: 100,
+  showErrorMessage: true,
+  errorTitle: 'Invalid',
+  error: 'Value must be between 1 and 100',
+};
+
+// Decimal validation
+worksheet.getCell('D2').dataValidation = {
+  type: 'decimal',
+  operator: 'greaterThan',
+  formula1: 0,
+  showErrorMessage: true,
+  errorTitle: 'Invalid Amount',
+  error: 'Amount must be positive',
+};
+
+// Date validation
+worksheet.getCell('C2').dataValidation = {
+  type: 'date',
+  operator: 'greaterThanOrEqual',
+  formula1: new Date(2020, 0, 1),
+  showErrorMessage: true,
+  errorTitle: 'Invalid Date',
+  error: 'Date must be after 2020-01-01',
+};
+
+// Custom formula validation
+worksheet.getCell('F2').dataValidation = {
+  type: 'custom',
+  formulae: ['=AND(LEN(F2)>=3,LEN(F2)<=50)'],
+  showErrorMessage: true,
+  errorTitle: 'Invalid Length',
+  error: 'Must be between 3 and 50 characters',
+};
+```
+
+### ExcelJS Conditional Formatting
+
+```js
+// Color scale
+worksheet.addConditionalFormatting({
+  ref: 'D2:D100',
+  rules: [
+    {
+      type: 'colorScale',
+      cfvo: [
+        { type: 'min' },
+        { type: 'percentile', value: 50 },
+        { type: 'max' },
+      ],
+      color: [
+        { argb: 'FFF8696B' },  // red
+        { argb: 'FFFFEB84' },  // yellow
+        { argb: 'FF63BE7B' },  // green
+      ],
+    }
+  ]
+});
+
+// Data bar
+worksheet.addConditionalFormatting({
+  ref: 'D2:D100',
+  rules: [
+    {
+      type: 'dataBar',
+      minLength: 0,
+      maxLength: 100,
+      cfvo: [{ type: 'min' }, { type: 'max' }],
+      color: { argb: 'FF638EC6' },
+      gradient: true,
+      border: false,
+      negativeBarColorSameAsPositive: false,
+      showValue: true,
+      axisPosition: 'auto',
+    }
+  ]
+});
+
+// Icon set
+worksheet.addConditionalFormatting({
+  ref: 'D2:D100',
+  rules: [
+    {
+      type: 'iconSet',
+      iconSet: '3TrafficLights1',  // many options
+      showValue: true,
+      reverse: false,
+      cfvo: [
+        { type: 'percent', value: 0 },
+        { type: 'percent', value: 33 },
+        { type: 'percent', value: 67 },
+      ],
+    }
+  ]
+});
+
+// Cell value rule
+worksheet.addConditionalFormatting({
+  ref: 'B2:B100',
+  rules: [
+    {
+      type: 'cellIs',
+      operator: 'greaterThan',
+      formulae: [100],
+      priority: 1,
+      style: {
+        font: { bold: true, color: { argb: 'FF006100' } },
+        fill: { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFC6EFCE' } },
+      }
+    }
+  ]
+});
+
+// Contains text
+worksheet.addConditionalFormatting({
+  ref: 'A2:A100',
+  rules: [
+    {
+      type: 'containsText',
+      operator: 'containsText',
+      text: 'URGENT',
+      priority: 1,
+      style: {
+        font: { bold: true, color: { argb: 'FF9C0006' } },
+        fill: { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFFFC7CE' } },
+      }
+    }
+  ]
+});
+```
+
+### ExcelJS Charts
+
+```js
+// Add chart to worksheet
+worksheet.addChart({
+  type: 'bar',           // 'bar'|'column'|'line'|'area'|'pie'|'doughnut'|'scatter'|'bubble'|'radar'|'stock'
+  style: 10,
+  title: { name: 'Monthly Sales' },
+  legend: {
+    position: 'b',      // 't'|'b'|'l'|'r'|'tr'
+    overlay: false,
+  },
+  plotArea: {
+    catAxis: {
+      title: { name: 'Month' },
+      numFmt: 'mmm',
+      tickLblSkip: 1,
+      tickMarkSkip: 1,
+    },
+    valAxis: {
+      title: { name: 'Revenue ($)' },
+      numFmt: '"$"#,##0',
+      minVal: 0,
+      gridlines: { major: {} },
+    },
+    ser: [
+      {
+        name: { name: 'Q1 Sales', ref: 'Sheet1!$B$1' },
+        labels: { ref: 'Sheet1!$A$2:$A$13' },
+        values: { ref: 'Sheet1!$B$2:$B$13' },
+        fill: { type: 'solid', color: '4472C4' },
+        border: { pt: 1, color: '4472C4' },
+        marker: {
+          symbol: 'circle',
+          size: 6,
+          fill: { type: 'solid', color: '4472C4' },
+        },
+        dataPt: [],
+        dLbls: {
+          position: 'outEnd',
+          showVal: true,
+          showCatName: false,
+          showSerName: false,
+          showPercent: false,
+          showLeaderLines: true,
+          numFmt: '"$"#,##0',
+        },
+        trendline: {
+          type: 'linear',   // 'exp'|'log'|'poly'|'power'|'movAvg'
+          name: 'Trend',
+          forward: 2,
+          backward: 0,
+          intercept: 0,
+          dispRSqr: true,
+          dispEq: true,
+        }
+      },
+    ],
+  },
+  trendline: false,
+  position: { type: 'twoCellAnchor', from: 'A15', to: 'H30' },
+});
+```
+
+### ExcelJS Reading Files
+
+```js
+// Read xlsx file
+const workbook = new ExcelJS.Workbook();
+await workbook.xlsx.readFile('data.xlsx');
+
+// Read from stream
+const stream = fs.createReadStream('data.xlsx');
+await workbook.xlsx.read(stream);
+
+// Read from buffer
+const buffer = fs.readFileSync('data.xlsx');
+await workbook.xlsx.load(buffer);
+
+// Read csv
+await workbook.csv.readFile('data.csv', {
+  dateFormats: ['YYYY/MM/DD', 'MM-DD-YYYY'],
+  map(value, index) {
+    switch (index) {
+      case 0: return parseInt(value, 10);
+      case 3: return parseFloat(value);
+      default: return value;
+    }
+  },
+  sheetName: 'Sheet1',
+  encoding: 'utf8',
+  parserOptions: {
+    delimiter: ',',
+    quote: '"',
+    escape: '"',
+    comment: '#',
+    relax: true,
+    trim: true,
+    skip_empty_lines: true,
+    skip_lines_with_error: false,
+  }
+});
+
+// Iterate worksheets
+workbook.eachSheet((worksheet, sheetId) => {
+  console.log(`Sheet: ${worksheet.name} (id: ${sheetId})`);
+  worksheet.eachRow((row, rowNumber) => {
+    console.log(`Row ${rowNumber}:`, row.values.slice(1));
+  });
+});
+```
+
+### ExcelJS Writing Files
+
+```js
+// Write xlsx
+await workbook.xlsx.writeFile('output.xlsx');
+
+// Write to buffer
+const buffer = await workbook.xlsx.writeBuffer();
+
+// Write to stream
+const stream = fs.createWriteStream('output.xlsx');
+await workbook.xlsx.write(stream);
+stream.end();
+
+// Write csv
+await workbook.csv.writeFile('output.csv', {
+  sheetName: 'Sheet1',
+  encoding: 'utf8',
+  includeEmptyRows: false,
+  dateUTC: false,
+  dateFormat: 'YYYY/MM/DD',
+  formatterOptions: {
+    delimiter: ',',
+    quote: '"',
+    escape: '"',
+    eof: '\n',
+  },
+  map(value, index) {
+    if (value instanceof Date) {
+      return value.toISOString().split('T')[0];
+    }
+    return value;
+  }
+});
+```
+
+### Streaming Large Files (SheetJS)
+
+```js
+const XLSX = require('xlsx');
+
+// Stream reading
+function readLargeFile(filePath) {
+  const workbook = XLSX.readFile(filePath, {
+    type: 'file',
+    sheetRows: 0,          // 0 = all rows
+    cellDates: true,
+    cellFormula: false,    // skip formula parsing for speed
+    cellHTML: false,       // skip HTML rendering for speed
+    bookSheets: false,     // read all sheets
+  });
+  return workbook;
+}
+
+// Process row by row
+function processFileStreaming(filePath, sheetName, rowCallback) {
+  const workbook = XLSX.readFile(filePath);
+  const worksheet = workbook.Sheets[sheetName || workbook.SheetNames[0]];
+  const range = XLSX.utils.decode_range(worksheet['!ref']);
+
+  for (let r = range.s.r; r <= range.e.r; r++) {
+    const rowData = {};
+    for (let c = range.s.c; c <= range.e.c; c++) {
+      const cellRef = XLSX.utils.encode_cell({ r, c });
+      const cell = worksheet[cellRef];
+      if (cell) rowData[XLSX.utils.encode_col(c)] = cell.v;
+    }
+    rowCallback(rowData, r);
+  }
+}
+
+// ExcelJS streaming read
+const ExcelJS = require('exceljs');
+
+async function streamReadXlsx(filePath) {
+  const workbookReader = new ExcelJS.stream.xlsx.WorkbookReader(filePath, {
+    entries: 'emit',
+    sharedStrings: 'cache',
+    hyperlinks: 'cache',
+    styles: 'cache',
+    worksheets: 'emit',
+  });
+
+  workbookReader.on('worksheet', worksheet => {
+    worksheet.on('row', row => {
+      const values = row.values.slice(1); // remove index 0
+      console.log('Row:', values);
+    });
+    worksheet.on('dimension', dimension => {
+      console.log('Dimension:', dimension);
+    });
+  });
+
+  workbookReader.on('shared-strings', sharedStrings => {
+    console.log('Shared strings count:', sharedStrings.count);
+  });
+
+  workbookReader.on('end', () => {
+    console.log('Done reading');
+  });
+
+  await workbookReader.read();
+}
+
+// ExcelJS streaming write
+async function streamWriteXlsx(outputPath, data) {
+  const workbookWriter = new ExcelJS.stream.xlsx.WorkbookWriter({
+    filename: outputPath,
+    useStyles: true,
+    useSharedStrings: true,
+  });
+
+  const worksheet = workbookWriter.addWorksheet('Data');
+  worksheet.columns = [
+    { header: 'ID', key: 'id', width: 10 },
+    { header: 'Name', key: 'name', width: 30 },
+    { header: 'Value', key: 'value', width: 15 },
+  ];
+
+  for (const row of data) {
+    await worksheet.addRow(row).commit();
+  }
+
+  await worksheet.commit();
+  await workbookWriter.commit();
+}
+```
+
+### Named Ranges and Defined Names
+
+```js
+// SheetJS named ranges
+const wb = XLSX.utils.book_new();
+const ws = XLSX.utils.aoa_to_sheet([['a','b'],['c','d']]);
+XLSX.utils.book_append_sheet(wb, ws, 'Sheet1');
+
+// Add named range
+wb.Workbook = wb.Workbook || {};
+wb.Workbook.Names = wb.Workbook.Names || [];
+wb.Workbook.Names.push({
+  Name: 'MyRange',
+  Ref: 'Sheet1!$A$1:$B$2',
+  Comment: 'My named range',
+  Hidden: false,
+});
+
+// ExcelJS defined names
+workbook.definedNames.add('Sheet1!$A$1:$A$10', 'SalesData');
+workbook.definedNames.add('Sheet1!$B$1:$B$10', 'ExpenseData');
+
+// Get defined name
+const name = workbook.definedNames.getMatrix('SalesData');
+console.log(name);
+
+// Remove defined name
+workbook.definedNames.remove('SalesData');
+
+// List all defined names
+workbook.definedNames.model.forEach(([name, refStr]) => {
+  console.log(`${name}: ${refStr}`);
+});
+```
+
+### Pivot Table Patterns
+
+```js
+// Create pivot-like summary using SheetJS
+function createPivotSummary(data, rowField, colField, valueField) {
+  // Collect unique row and column values
+  const rows = [...new Set(data.map(d => d[rowField]))].sort();
+  const cols = [...new Set(data.map(d => d[colField]))].sort();
+
+  // Build summary matrix
+  const matrix = [['', ...cols, 'Total']];
+
+  for (const row of rows) {
+    const rowData = [row];
+    let rowTotal = 0;
+
+    for (const col of cols) {
+      const val = data
+        .filter(d => d[rowField] === row && d[colField] === col)
+        .reduce((sum, d) => sum + (d[valueField] || 0), 0);
+      rowData.push(val);
+      rowTotal += val;
+    }
+
+    rowData.push(rowTotal);
+    matrix.push(rowData);
+  }
+
+  // Add grand total row
+  const totals = ['Grand Total'];
+  let grandTotal = 0;
+  for (let c = 1; c <= cols.length; c++) {
+    const colTotal = matrix.slice(1).reduce((sum, r) => sum + (r[c] || 0), 0);
+    totals.push(colTotal);
+    grandTotal += colTotal;
+  }
+  totals.push(grandTotal);
+  matrix.push(totals);
+
+  const wb = XLSX.utils.book_new();
+  const ws = XLSX.utils.aoa_to_sheet(matrix);
+  XLSX.utils.book_append_sheet(wb, ws, 'Pivot');
+  return wb;
+}
+```
+
+### CSV and TSV Processing
+
+```js
+// Parse CSV with SheetJS
+function parseCSV(csvString, options = {}) {
+  const wb = XLSX.read(csvString, {
+    type: 'string',
+    raw: false,
+    ...options,
+  });
+  return XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]]);
+}
+
+// Generate CSV from data
+function generateCSV(data, fields) {
+  const ws = XLSX.utils.json_to_sheet(data, { header: fields });
+  return XLSX.utils.sheet_to_csv(ws);
+}
+
+// Handle large CSV files
+const fs = require('fs');
+const readline = require('readline');
+
+async function processLargeCSV(filePath, processRow) {
+  const stream = fs.createReadStream(filePath);
+  const rl = readline.createInterface({ input: stream, crlfDelay: Infinity });
+
+  let headers = null;
+  let rowNum = 0;
+
+  for await (const line of rl) {
+    if (!headers) {
+      headers = line.split(',').map(h => h.trim().replace(/"/g, ''));
+    } else {
+      const values = line.split(',');
+      const row = {};
+      headers.forEach((h, i) => { row[h] = values[i]?.trim().replace(/"/g, ''); });
+      await processRow(row, ++rowNum);
+    }
+  }
+
+  return rowNum;
+}
+```
+
+### Complete Reporting Example
+
+```js
+const XLSX = require('xlsx');
+const ExcelJS = require('exceljs');
+
+async function generateSalesReport(salesData, outputPath) {
+  const wb = new ExcelJS.Workbook();
+  wb.creator = 'Sales Analytics';
+  wb.created = new Date();
+
+  // Summary sheet
+  const summary = wb.addWorksheet('Summary', {
+    properties: { tabColor: { argb: 'FF4472C4' } },
+  });
+
+  summary.columns = [
+    { header: 'Metric', key: 'metric', width: 30 },
+    { header: 'Value', key: 'value', width: 20 },
+    { header: 'Change', key: 'change', width: 15 },
+  ];
+
+  // Style header row
+  summary.getRow(1).font = { bold: true, size: 12, color: { argb: 'FFFFFFFF' } };
+  summary.getRow(1).fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF4472C4' } };
+
+  // Add summary rows
+  const metrics = [
+    { metric: 'Total Revenue', value: salesData.totalRevenue, change: '+12.5%' },
+    { metric: 'Total Orders', value: salesData.totalOrders, change: '+8.3%' },
+    { metric: 'Avg Order Value', value: salesData.avgOrderValue, change: '+3.8%' },
+    { metric: 'New Customers', value: salesData.newCustomers, change: '+15.2%' },
+    { metric: 'Repeat Rate', value: salesData.repeatRate + '%', change: '+2.1%' },
+  ];
+
+  metrics.forEach(m => {
+    const row = summary.addRow(m);
+    row.getCell('value').numFmt = typeof m.value === 'number' ? '"$"#,##0.00' : '@';
+  });
+
+  // Detail sheet
+  const detail = wb.addWorksheet('Sales Detail');
+  detail.columns = [
+    { header: 'Date', key: 'date', width: 15 },
+    { header: 'Product', key: 'product', width: 25 },
+    { header: 'Qty', key: 'qty', width: 10 },
+    { header: 'Unit Price', key: 'unitPrice', width: 15 },
+    { header: 'Total', key: 'total', width: 15 },
+    { header: 'Sales Rep', key: 'rep', width: 20 },
+    { header: 'Region', key: 'region', width: 15 },
+  ];
+
+  salesData.items.forEach(item => {
+    const row = detail.addRow(item);
+    row.getCell('date').numFmt = 'yyyy-mm-dd';
+    row.getCell('unitPrice').numFmt = '"$"#,##0.00';
+    row.getCell('total').numFmt = '"$"#,##0.00';
+  });
+
+  // Add chart
+  const chart = detail.addChart('column', {
+    title: { name: 'Sales by Region' },
+    legend: { position: 'b' },
+    plotArea: {
+      catAxis: { title: { name: 'Region' } },
+      valAxis: { title: { name: 'Revenue ($)' } },
+    },
+    tl: { col: 0, row: detail.rowCount + 2 },
+    br: { col: 7, row: detail.rowCount + 20 },
+  });
+
+  await wb.xlsx.writeFile(outputPath);
+  return outputPath;
+}
+```
+
+### Troubleshooting Guide
+
+**Issue: Dates showing as numbers**
+```js
+// Solution: Enable cellDates option
+const wb = XLSX.readFile('file.xlsx', { cellDates: true });
+// Or convert manually
+function excelDateToJsDate(serial) {
+  const utc_days = Math.floor(serial - 25569);
+  const utc_value = utc_days * 86400;
+  return new Date(utc_value * 1000);
+}
+```
+
+**Issue: Formula cells showing old values**
+```js
+// Solution: Force recalculation
+workbook.calcProperties.fullCalcOnLoad = true;
+// Or clear cached formula results
+worksheet.eachRow(row => {
+  row.eachCell(cell => {
+    if (cell.type === ExcelJS.ValueType.Formula) {
+      cell.value = { formula: cell.formula }; // remove cached result
+    }
+  });
+});
+```
+
+**Issue: Large file memory issues**
+```js
+// Solution: Use streaming API
+const workbookWriter = new ExcelJS.stream.xlsx.WorkbookWriter({
+  filename: 'large-output.xlsx',
+  useStyles: true,
+  useSharedStrings: false, // disable for performance
+});
+```
+
+**Issue: Chinese/Japanese/Korean characters garbled in CSV**
+```js
+// Solution: Use UTF-8 BOM
+const csv = XLSX.utils.sheet_to_csv(ws);
+const bom = '\uFEFF'; // UTF-8 BOM
+fs.writeFileSync('output.csv', bom + csv, 'utf8');
+```
+
+**Issue: Cell styles not preserved**
+```js
+// Solution: Enable cellStyles when reading
+const wb = XLSX.read(data, { type: 'buffer', cellStyles: true });
+// Or when writing with ExcelJS, explicitly set styles on each cell
+```
+
+
+---
+
+## SheetJS (xlsx) Complete API Reference
+
+### Installation
+
+```bash
+npm install xlsx
+# or
+yarn add xlsx
+# or with ExcelJS
+npm install exceljs
+```
+
+### Core Reading API
+
+```js
+const XLSX = require('xlsx');
+
+// Read from file path
+const wb = XLSX.readFile('spreadsheet.xlsx', {
+  type: 'file',
+  cellDates: true,
+  cellFormula: true,
+  cellNF: true,
+  cellStyles: true,
+  sheetStubs: false,
+  bookSheets: false,
+  bookDeps: false,
+  bookFiles: false,
+  bookVBA: false,
+  password: '',
+  WTF: false,
+  dense: false,
+  nodim: false,
+  PRN: false,
+  UTC: false,
+});
+
+// Read from Buffer
+const buf = fs.readFileSync('data.xlsx');
+const wb2 = XLSX.read(buf, { type: 'buffer' });
+
+// Read from base64 string
+const b64 = fs.readFileSync('data.xlsx', 'base64');
+const wb3 = XLSX.read(b64, { type: 'base64' });
+
+// Read from array of bytes
+const arr = new Uint8Array(fs.readFileSync('data.xlsx'));
+const wb4 = XLSX.read(arr, { type: 'array' });
+
+// Read from binary string
+const bstr = fs.readFileSync('data.xlsx', 'binary');
+const wb5 = XLSX.read(bstr, { type: 'binary' });
+```
+
+### Workbook Object Structure
+
+```js
+// Workbook structure
+const workbook = {
+  SheetNames: ['Sheet1', 'Sheet2'],  // Ordered list of sheet names
+  Sheets: {
+    'Sheet1': { /* worksheet object */ },
+    'Sheet2': { /* worksheet object */ }
+  },
+  Props: {
+    Author: 'John Doe',
+    Title: 'My Spreadsheet',
+    Subject: 'Data Analysis',
+    CreatedDate: new Date(),
+    ModifiedDate: new Date(),
+    Category: 'Finance',
+    Keywords: 'budget, finance',
+    Description: 'Annual budget spreadsheet',
+    LastAuthor: 'Jane Doe',
+    Company: 'ACME Corp',
+    Manager: 'Bob Smith'
+  },
+  Custprops: {},
+  Calcchain: null,
+  Workbook: {
+    Names: [],
+    Views: [{ RTL: false }],
+    WBProps: {
+      date1904: false,
+      defaultThemeVersion: 124226
+    }
+  }
+};
+```
+
+### Worksheet Object Structure
+
+```js
+// Worksheet structure
+const worksheet = {
+  '!ref': 'A1:Z100',         // cell range
+  '!margins': {              // page margins
+    left: 0.7,
+    right: 0.7,
+    top: 0.75,
+    bottom: 0.75,
+    header: 0.3,
+    footer: 0.3
+  },
+  '!cols': [                 // column info array
+    { wch: 20 },             // width in characters
+    { wpx: 150 },            // width in pixels
+    { hidden: true }         // hidden column
+  ],
+  '!rows': [                 // row info array
+    { hpt: 20 },             // height in points
+    { hpx: 27 },             // height in pixels
+    { hidden: false }
+  ],
+  '!merges': [               // merged cell ranges
+    { s: { r: 0, c: 0 }, e: { r: 0, c: 3 } }
+  ],
+  '!protect': {              // worksheet protection
+    password: 'secret',
+    selectLockedCells: true,
+    selectUnlockedCells: true,
+    formatCells: false,
+    formatColumns: false,
+    formatRows: false,
+    insertColumns: false,
+    insertRows: false,
+    insertHyperlinks: false,
+    deleteColumns: false,
+    deleteRows: false,
+    sort: false,
+    autoFilter: false,
+    pivotTables: false
+  },
+  '!autofilter': { ref: 'A1:F1' },
+  'A1': { t: 's', v: 'Name', w: 'Name' },
+  'B1': { t: 's', v: 'Age' },
+  'A2': { t: 's', v: 'Alice' },
+  'B2': { t: 'n', v: 30, w: '30' }
+};
+```
+
+### Cell Object Reference
+
+```js
+// Cell object properties
+const cell = {
+  t: 'n',          // type: 'b'=bool, 'n'=num, 's'=str, 'd'=date, 'e'=err, 'z'=stub
+  v: 42,           // raw value
+  w: '42',         // formatted text
+  f: 'SUM(A1:A10)',// formula
+  F: 'A1:A10',     // array formula range
+  r: '<t>42</t>',  // rich text
+  h: '42',         // HTML rendering
+  c: [             // comments
+    { a: 'Author', t: 'comment text', T: false }
+  ],
+  z: '#,##0.00',   // number format string
+  l: {             // hyperlink
+    Target: 'https://example.com',
+    Tooltip: 'Visit site'
+  },
+  s: {             // style object
+    font: { name: 'Arial', sz: 12, bold: true, color: { rgb: 'FF0000' } },
+    fill: { patternType: 'solid', fgColor: { rgb: 'FFFFCC' } },
+    border: {
+      top: { style: 'thin', color: { auto: 1 } },
+      bottom: { style: 'thin', color: { auto: 1 } },
+      left: { style: 'thin', color: { auto: 1 } },
+      right: { style: 'thin', color: { auto: 1 } }
+    },
+    alignment: {
+      horizontal: 'center',
+      vertical: 'middle',
+      wrapText: true,
+      indent: 0,
+      readingOrder: 0,
+      textRotation: 0,
+      shrinkToFit: false
+    },
+    numFmt: '0.00%'
+  }
+};
+```
+
+### Writing Files
+
+```js
+// Write to file
+XLSX.writeFile(workbook, 'output.xlsx', {
+  bookType: 'xlsx',        // 'xlsx'|'xlsm'|'xlsb'|'xls'|'csv'|'txt'|'sylk'|'html'|'dif'|'dbf'|'prn'|'ods'
+  type: 'file',
+  compression: true,       // zip compression
+  Props: { Author: 'Me' },
+  bookSST: false,          // use shared string table
+  bookVBA: false,
+  cellDates: false,        // write dates as date types
+  cellStyles: false,       // write styles
+  numbers: XLSX.SSF._table,
+  sheet: 'Sheet1',         // for single-sheet formats
+});
+
+// Write to buffer
+const wbuf = XLSX.write(workbook, { bookType: 'xlsx', type: 'buffer' });
+
+// Write to base64
+const wb64 = XLSX.write(workbook, { bookType: 'xlsx', type: 'base64' });
+
+// Write to binary string
+const wbin = XLSX.write(workbook, { bookType: 'xlsx', type: 'binary' });
+
+// Write to array
+const warr = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
+```
+
+### Sheet Operations
+
+```js
+// Access sheets
+const sheet = workbook.Sheets[workbook.SheetNames[0]];
+
+// Add a new sheet
+const newSheet = XLSX.utils.aoa_to_sheet([
+  ['Name', 'Age', 'Score'],
+  ['Alice', 30, 95.5],
+  ['Bob', 25, 87.3],
+  ['Charlie', 35, 91.0],
+]);
+XLSX.utils.book_append_sheet(workbook, newSheet, 'People');
+
+// Delete a sheet
+const idx = workbook.SheetNames.indexOf('OldSheet');
+if (idx !== -1) {
+  workbook.SheetNames.splice(idx, 1);
+  delete workbook.Sheets['OldSheet'];
+}
+
+// Copy a sheet
+function copySheet(wb, fromName, toName) {
+  const srcSheet = wb.Sheets[fromName];
+  const destSheet = JSON.parse(JSON.stringify(srcSheet));
+  XLSX.utils.book_append_sheet(wb, destSheet, toName);
+}
+```
+
+### Data Conversion Utilities
+
+```js
+// Array of arrays to worksheet
+const aoaData = [
+  ['ID', 'Product', 'Qty', 'Price', 'Total'],
+  [1, 'Widget A', 10, 9.99, 99.90],
+  [2, 'Widget B', 5, 14.99, 74.95],
+  [3, 'Gadget X', 3, 29.99, 89.97],
+];
+const ws1 = XLSX.utils.aoa_to_sheet(aoaData, {
+  header: [],           // custom header row
+  skipHeader: false,    // skip header
+  origin: 'A1',         // starting cell
+  dateNF: 'yyyy-mm-dd', // date format
+  cellDates: true,      // output dates as Date objects
+  dense: false,         // use dense format
+  sheetRows: 100,       // max rows to read
+});
+
+// Array of objects to worksheet
+const aooData = [
+  { name: 'Alice', dept: 'Engineering', salary: 95000 },
+  { name: 'Bob', dept: 'Marketing', salary: 72000 },
+  { name: 'Charlie', dept: 'Sales', salary: 68000 },
+];
+const ws2 = XLSX.utils.json_to_sheet(aooData, {
+  header: ['name', 'dept', 'salary'],  // key order
+  skipHeader: false,
+  origin: { r: 1, c: 0 },
+  dateNF: 'yyyy-mm-dd',
+});
+
+// Worksheet to array of arrays
+const aoa = XLSX.utils.sheet_to_aoa(worksheet, {
+  header: 1,           // 1 = return arrays, 'A' = use column letters
+  defval: null,        // default value for empty cells
+  blankrows: false,    // include blank rows
+  range: 'A1:D10',     // only this range
+  raw: true,           // return raw values
+  rawNumbers: false,   // return raw number values
+  dateNF: 'yyyy-mm-dd',
+});
+
+// Worksheet to array of objects
+const aoo = XLSX.utils.sheet_to_json(worksheet, {
+  header: 1,           // use row 1 as header
+  defval: '',
+  blankrows: false,
+  range: 1,            // start from row index 1
+  raw: false,
+});
+
+// Worksheet to CSV
+const csv = XLSX.utils.sheet_to_csv(worksheet, {
+  FS: ',',             // field separator
+  RS: '\n',            // row separator
+  dateNF: 'yyyy-mm-dd',
+  strip: false,        // strip trailing whitespace
+  blankrows: true,
+  skipHidden: false,
+});
+
+// Worksheet to HTML
+const html = XLSX.utils.sheet_to_html(worksheet, {
+  id: 'table1',
+  editable: false,
+  header: '',
+  footer: '',
+});
+
+// Worksheet to formula text
+const txt = XLSX.utils.sheet_to_formulae(worksheet);
+```
+
+### Cell Range Operations
+
+```js
+// Encode/decode cell addresses
+const addr = XLSX.utils.encode_cell({ r: 0, c: 0 }); // 'A1'
+const cell2 = XLSX.utils.decode_cell('A1');            // {r:0, c:0}
+const col = XLSX.utils.encode_col(0);                  // 'A'
+const row = XLSX.utils.encode_row(0);                  // '1'
+const range = XLSX.utils.encode_range({ s:{r:0,c:0}, e:{r:9,c:4} }); // 'A1:E10'
+const rangeObj = XLSX.utils.decode_range('A1:E10'); // {s:{r:0,c:0}, e:{r:9,c:4}}
+
+// Update worksheet range
+function updateSheetRange(ws) {
+  const range = XLSX.utils.decode_range(ws['!ref']);
+  // iterate over cells
+  for (let r = range.s.r; r <= range.e.r; r++) {
+    for (let c = range.s.c; c <= range.e.c; c++) {
+      const cellRef = XLSX.utils.encode_cell({ r, c });
+      const cell = ws[cellRef];
+      if (!cell) continue;
+      // process cell
+    }
+  }
+}
+
+// Set cell value
+function setCellValue(ws, cellRef, value, type) {
+  const cell = ws[cellRef] || (ws[cellRef] = {});
+  cell.v = value;
+  cell.t = type || (typeof value === 'number' ? 'n' : 's');
+  if (typeof value === 'boolean') cell.t = 'b';
+  if (value instanceof Date) cell.t = 'd';
+}
+```
+
+### Number Formatting
+
+```js
+// Common number formats
+const numberFormats = {
+  // General
+  general: 'General',
+  // Number
+  integer: '0',
+  decimal1: '0.0',
+  decimal2: '0.00',
+  thousands: '#,##0',
+  thousandsDecimal2: '#,##0.00',
+  // Percentage
+  percent: '0%',
+  percentDecimal2: '0.00%',
+  // Currency
+  usd: '"$"#,##0.00',
+  usdNeg: '"$"#,##0.00;[Red]"$"#,##0.00',
+  euro: '[$€-407]#,##0.00',
+  gbp: '[$£-809]#,##0.00',
+  // Date
+  date: 'yyyy-mm-dd',
+  dateUs: 'mm/dd/yyyy',
+  dateEu: 'dd/mm/yyyy',
+  datetime: 'yyyy-mm-dd hh:mm:ss',
+  time: 'hh:mm:ss',
+  time12: 'h:mm AM/PM',
+  // Special
+  zip: '00000',
+  phone: '(000) 000-0000',
+  ssn: '000-00-0000',
+  // Scientific
+  scientific: '0.00E+00',
+  // Fraction
+  fraction: '# ?/?',
+  fractionHalf: '# ??/??',
+  // Text
+  text: '@',
+};
+
+// Format a value
+function formatValue(value, formatStr) {
+  return XLSX.SSF.format(formatStr, value);
+}
+```
+
+### ExcelJS Complete API
+
+```js
+const ExcelJS = require('exceljs');
+
+// Create workbook
+const workbook = new ExcelJS.Workbook();
+workbook.creator = 'My App';
+workbook.lastModifiedBy = 'My App';
+workbook.created = new Date();
+workbook.modified = new Date();
+workbook.lastPrinted = new Date();
+workbook.properties.date1904 = false;
+workbook.calcProperties.fullCalcOnLoad = true;
+
+// Add worksheet
+const worksheet = workbook.addWorksheet('My Sheet', {
+  properties: {
+    tabColor: { argb: 'FF00FF00' },
+    outlineLevelCol: 0,
+    outlineLevelRow: 0,
+    defaultRowHeight: 15,
+    defaultColWidth: 8,
+    dyDescent: 55,
+    showGridLines: true,
+  },
+  pageSetup: {
+    paperSize: 9,           // A4
+    orientation: 'portrait', // 'portrait' | 'landscape'
+    fitToPage: true,
+    fitToHeight: 1,
+    fitToWidth: 1,
+    margins: {
+      left: 0.7, right: 0.7,
+      top: 0.75, bottom: 0.75,
+      header: 0.3, footer: 0.3
+    },
+    horizontalCentered: true,
+    verticalCentered: false,
+    printGridLines: false,
+    printTitlesRow: '$1:$1',
+    printTitlesColumn: '$A:$A',
+    firstPageNumber: 1,
+    useFirstPageNumber: false,
+  },
+  headerFooter: {
+    firstHeader: '&CFirst Page Header',
+    firstFooter: '&CFirst Page Footer',
+    oddHeader: '&L&"Calibri,Bold"&K000000My Report&R&D',
+    oddFooter: '&CPage &P of &N',
+    evenHeader: '&CReport',
+    evenFooter: '&CPage &P of &N',
+    differentFirst: false,
+    differentOddEven: false,
+  },
+  views: [
+    {
+      state: 'frozen',
+      xSplit: 1,
+      ySplit: 1,
+      topLeftCell: 'B2',
+      activeCell: 'A1',
+      showGridLines: true,
+      showRowColHeaders: true,
+      zoomScale: 100,
+      zoomScaleNormal: 100,
+      zoomScalePageLayoutView: 100,
+    }
+  ]
+});
+```
+
+### ExcelJS Column Operations
+
+```js
+// Define columns
+worksheet.columns = [
+  {
+    header: 'ID', key: 'id', width: 8,
+    style: { font: { bold: true }, alignment: { horizontal: 'center' } }
+  },
+  {
+    header: 'Name', key: 'name', width: 25,
+    style: { font: { name: 'Calibri', size: 11 } }
+  },
+  {
+    header: 'Date', key: 'date', width: 15,
+    style: { numFmt: 'yyyy-mm-dd' }
+  },
+  {
+    header: 'Amount', key: 'amount', width: 15,
+    style: { numFmt: '"$"#,##0.00' }
+  },
+  {
+    header: 'Status', key: 'status', width: 12,
+    style: { alignment: { horizontal: 'center' } }
+  },
+];
+
+// Get/manipulate a column
+const col = worksheet.getColumn('name'); // or worksheet.getColumn(2)
+col.header = 'Full Name';
+col.key = 'fullName';
+col.width = 30;
+col.hidden = false;
+col.outlineLevel = 0;
+col.style = { font: { bold: false } };
+
+// Iterate columns
+worksheet.columns.forEach(column => {
+  column.width = Math.max(column.header.length + 2, 12);
+});
+
+// Get column by number
+const firstCol = worksheet.getColumn(1);
+const lastColNum = worksheet.columnCount;
+const actualLastColNum = worksheet.actualColumnCount;
+```
+
+### ExcelJS Row Operations
+
+```js
+// Add rows
+worksheet.addRow({ id: 1, name: 'Alice Smith', date: new Date('2024-01-15'), amount: 1500.00, status: 'Active' });
+worksheet.addRow([2, 'Bob Johnson', new Date('2024-02-20'), 2200.50, 'Inactive']);
+
+// Add multiple rows
+const rows = [
+  { id: 3, name: 'Charlie Brown', amount: 1800 },
+  { id: 4, name: 'Diana Prince', amount: 3200 },
+  { id: 5, name: 'Eve Wilson', amount: 2750 },
+];
+worksheet.addRows(rows);
+
+// Get row
+const row = worksheet.getRow(2);
+row.height = 25;
+row.hidden = false;
+row.outlineLevel = 0;
+row.collapsed = false;
+row.getCell(1).value = 'Updated';
+
+// Commit row (for streaming)
+row.commit();
+
+// Iterate rows
+worksheet.eachRow({ includeEmpty: false }, (row, rowNumber) => {
+  console.log(`Row ${rowNumber}:`, row.values);
+  row.eachCell({ includeEmpty: true }, (cell, colNumber) => {
+    console.log(`  Cell ${colNumber}:`, cell.value);
+  });
+});
+
+// Insert row
+worksheet.insertRow(3, { id: 99, name: 'Inserted Row', amount: 0 });
+
+// Duplicate row
+worksheet.duplicateRow(1, 1, true);
+
+// Delete row
+worksheet.spliceRows(3, 1);
+
+// Row properties
+const lastRow = worksheet.lastRow;
+const rowCount = worksheet.rowCount;
+const actualRowCount = worksheet.actualRowCount;
+```
+
+### ExcelJS Cell Operations
+
+```js
+// Get cell
+const cell = worksheet.getCell('A1');  // by address
+const cell2 = worksheet.getCell(1, 1); // by row, col
+
+// Set values
+cell.value = 'Hello World';
+cell.value = 42;
+cell.value = true;
+cell.value = new Date();
+cell.value = { formula: 'SUM(B2:B10)', result: 550 };
+cell.value = { formula: 'SUM(A1:A10)' };
+cell.value = { sharedFormula: 'A2', result: 100 };
+cell.value = { richText: [
+  { font: { bold: true, color: { argb: 'FF0000FF' } }, text: 'Bold Blue' },
+  { font: { italic: true }, text: ' and Italic' },
+  { text: ' Normal text' }
+]};
+cell.value = { hyperlink: 'https://example.com', text: 'Visit Site', tooltip: 'Click here' };
+cell.value = { error: '#DIV/0!' };
+
+// Cell type
+console.log(cell.type); // ExcelJS.ValueType.Number etc.
+
+// Cell formatting
+cell.numFmt = '#,##0.00';
+cell.font = {
+  name: 'Calibri',
+  family: 2,
+  size: 12,
+  scheme: 'minor',
+  bold: true,
+  italic: false,
+  underline: true,  // true | 'none' | 'single' | 'double' | 'singleAccounting' | 'doubleAccounting'
+  strike: false,
+  outline: false,
+  color: { argb: 'FF000000' },
+  charset: 1,
+  vertAlign: 'superscript',  // 'superscript' | 'subscript'
+};
+cell.alignment = {
+  horizontal: 'center',   // 'left'|'center'|'right'|'fill'|'justify'|'centerContinuous'|'distributed'
+  vertical: 'middle',     // 'top'|'middle'|'bottom'|'distributed'|'justify'
+  wrapText: true,
+  shrinkToFit: false,
+  indent: 0,
+  readingOrder: 'ltr',    // 'ltr'|'rtl'
+  textRotation: 45,       // -90 to 90 degrees
+};
+cell.border = {
+  top: { style: 'thin', color: { argb: 'FF000000' } },
+  left: { style: 'thin', color: { argb: 'FF000000' } },
+  bottom: { style: 'double', color: { argb: 'FF000000' } },
+  right: { style: 'thin', color: { argb: 'FF000000' } },
+  diagonal: { up: true, down: false, style: 'dashed', color: { argb: 'FFFF0000' } },
+};
+cell.fill = {
+  type: 'pattern',
+  pattern: 'solid',
+  fgColor: { argb: 'FFFFFF00' },
+  bgColor: { argb: 'FFFFFFFF' },
+};
+// Gradient fill
+cell.fill = {
+  type: 'gradient',
+  gradient: 'angle',
+  degree: 0,
+  stops: [
+    { position: 0, color: { argb: 'FF0000FF' } },
+    { position: 0.5, color: { argb: 'FFFFFFFF' } },
+    { position: 1, color: { argb: 'FFFF0000' } },
+  ]
+};
+
+// Protection
+cell.protection = {
+  locked: true,
+  hidden: false,
+};
+
+// Merge cells
+worksheet.mergeCells('A1:D1');
+worksheet.mergeCells(1, 1, 1, 4);  // top, left, bottom, right
+worksheet.unMergeCells('A1:D1');
+```
+
+### ExcelJS Data Validation
+
+```js
+// List validation
+worksheet.getCell('E2').dataValidation = {
+  type: 'list',
+  allowBlank: true,
+  formulae: ['"Active,Inactive,Pending"'],
+  showErrorMessage: true,
+  errorStyle: 'error',  // 'error'|'warning'|'information'
+  errorTitle: 'Invalid Input',
+  error: 'Please select from the list',
+  showInputMessage: true,
+  promptTitle: 'Status',
+  prompt: 'Select employee status',
+};
+
+// Whole number validation
+worksheet.getCell('B2').dataValidation = {
+  type: 'whole',
+  operator: 'between',  // 'between'|'notBetween'|'equal'|'notEqual'|'greaterThan'|'lessThan'|'greaterThanOrEqual'|'lessThanOrEqual'
+  formula1: 1,
+  formula2: 100,
+  showErrorMessage: true,
+  errorTitle: 'Invalid',
+  error: 'Value must be between 1 and 100',
+};
+
+// Decimal validation
+worksheet.getCell('D2').dataValidation = {
+  type: 'decimal',
+  operator: 'greaterThan',
+  formula1: 0,
+  showErrorMessage: true,
+  errorTitle: 'Invalid Amount',
+  error: 'Amount must be positive',
+};
+
+// Date validation
+worksheet.getCell('C2').dataValidation = {
+  type: 'date',
+  operator: 'greaterThanOrEqual',
+  formula1: new Date(2020, 0, 1),
+  showErrorMessage: true,
+  errorTitle: 'Invalid Date',
+  error: 'Date must be after 2020-01-01',
+};
+
+// Custom formula validation
+worksheet.getCell('F2').dataValidation = {
+  type: 'custom',
+  formulae: ['=AND(LEN(F2)>=3,LEN(F2)<=50)'],
+  showErrorMessage: true,
+  errorTitle: 'Invalid Length',
+  error: 'Must be between 3 and 50 characters',
+};
+```
+
+### ExcelJS Conditional Formatting
+
+```js
+// Color scale
+worksheet.addConditionalFormatting({
+  ref: 'D2:D100',
+  rules: [
+    {
+      type: 'colorScale',
+      cfvo: [
+        { type: 'min' },
+        { type: 'percentile', value: 50 },
+        { type: 'max' },
+      ],
+      color: [
+        { argb: 'FFF8696B' },  // red
+        { argb: 'FFFFEB84' },  // yellow
+        { argb: 'FF63BE7B' },  // green
+      ],
+    }
+  ]
+});
+
+// Data bar
+worksheet.addConditionalFormatting({
+  ref: 'D2:D100',
+  rules: [
+    {
+      type: 'dataBar',
+      minLength: 0,
+      maxLength: 100,
+      cfvo: [{ type: 'min' }, { type: 'max' }],
+      color: { argb: 'FF638EC6' },
+      gradient: true,
+      border: false,
+      negativeBarColorSameAsPositive: false,
+      showValue: true,
+      axisPosition: 'auto',
+    }
+  ]
+});
+
+// Icon set
+worksheet.addConditionalFormatting({
+  ref: 'D2:D100',
+  rules: [
+    {
+      type: 'iconSet',
+      iconSet: '3TrafficLights1',  // many options
+      showValue: true,
+      reverse: false,
+      cfvo: [
+        { type: 'percent', value: 0 },
+        { type: 'percent', value: 33 },
+        { type: 'percent', value: 67 },
+      ],
+    }
+  ]
+});
+
+// Cell value rule
+worksheet.addConditionalFormatting({
+  ref: 'B2:B100',
+  rules: [
+    {
+      type: 'cellIs',
+      operator: 'greaterThan',
+      formulae: [100],
+      priority: 1,
+      style: {
+        font: { bold: true, color: { argb: 'FF006100' } },
+        fill: { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFC6EFCE' } },
+      }
+    }
+  ]
+});
+
+// Contains text
+worksheet.addConditionalFormatting({
+  ref: 'A2:A100',
+  rules: [
+    {
+      type: 'containsText',
+      operator: 'containsText',
+      text: 'URGENT',
+      priority: 1,
+      style: {
+        font: { bold: true, color: { argb: 'FF9C0006' } },
+        fill: { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFFFC7CE' } },
+      }
+    }
+  ]
+});
+```
+
+### ExcelJS Charts
+
+```js
+// Add chart to worksheet
+worksheet.addChart({
+  type: 'bar',           // 'bar'|'column'|'line'|'area'|'pie'|'doughnut'|'scatter'|'bubble'|'radar'|'stock'
+  style: 10,
+  title: { name: 'Monthly Sales' },
+  legend: {
+    position: 'b',      // 't'|'b'|'l'|'r'|'tr'
+    overlay: false,
+  },
+  plotArea: {
+    catAxis: {
+      title: { name: 'Month' },
+      numFmt: 'mmm',
+      tickLblSkip: 1,
+      tickMarkSkip: 1,
+    },
+    valAxis: {
+      title: { name: 'Revenue ($)' },
+      numFmt: '"$"#,##0',
+      minVal: 0,
+      gridlines: { major: {} },
+    },
+    ser: [
+      {
+        name: { name: 'Q1 Sales', ref: 'Sheet1!$B$1' },
+        labels: { ref: 'Sheet1!$A$2:$A$13' },
+        values: { ref: 'Sheet1!$B$2:$B$13' },
+        fill: { type: 'solid', color: '4472C4' },
+        border: { pt: 1, color: '4472C4' },
+        marker: {
+          symbol: 'circle',
+          size: 6,
+          fill: { type: 'solid', color: '4472C4' },
+        },
+        dataPt: [],
+        dLbls: {
+          position: 'outEnd',
+          showVal: true,
+          showCatName: false,
+          showSerName: false,
+          showPercent: false,
+          showLeaderLines: true,
+          numFmt: '"$"#,##0',
+        },
+        trendline: {
+          type: 'linear',   // 'exp'|'log'|'poly'|'power'|'movAvg'
+          name: 'Trend',
+          forward: 2,
+          backward: 0,
+          intercept: 0,
+          dispRSqr: true,
+          dispEq: true,
+        }
+      },
+    ],
+  },
+  trendline: false,
+  position: { type: 'twoCellAnchor', from: 'A15', to: 'H30' },
+});
+```
+
+### ExcelJS Reading Files
+
+```js
+// Read xlsx file
+const workbook = new ExcelJS.Workbook();
+await workbook.xlsx.readFile('data.xlsx');
+
+// Read from stream
+const stream = fs.createReadStream('data.xlsx');
+await workbook.xlsx.read(stream);
+
+// Read from buffer
+const buffer = fs.readFileSync('data.xlsx');
+await workbook.xlsx.load(buffer);
+
+// Read csv
+await workbook.csv.readFile('data.csv', {
+  dateFormats: ['YYYY/MM/DD', 'MM-DD-YYYY'],
+  map(value, index) {
+    switch (index) {
+      case 0: return parseInt(value, 10);
+      case 3: return parseFloat(value);
+      default: return value;
+    }
+  },
+  sheetName: 'Sheet1',
+  encoding: 'utf8',
+  parserOptions: {
+    delimiter: ',',
+    quote: '"',
+    escape: '"',
+    comment: '#',
+    relax: true,
+    trim: true,
+    skip_empty_lines: true,
+    skip_lines_with_error: false,
+  }
+});
+
+// Iterate worksheets
+workbook.eachSheet((worksheet, sheetId) => {
+  console.log(`Sheet: ${worksheet.name} (id: ${sheetId})`);
+  worksheet.eachRow((row, rowNumber) => {
+    console.log(`Row ${rowNumber}:`, row.values.slice(1));
+  });
+});
+```
+
+### ExcelJS Writing Files
+
+```js
+// Write xlsx
+await workbook.xlsx.writeFile('output.xlsx');
+
+// Write to buffer
+const buffer = await workbook.xlsx.writeBuffer();
+
+// Write to stream
+const stream = fs.createWriteStream('output.xlsx');
+await workbook.xlsx.write(stream);
+stream.end();
+
+// Write csv
+await workbook.csv.writeFile('output.csv', {
+  sheetName: 'Sheet1',
+  encoding: 'utf8',
+  includeEmptyRows: false,
+  dateUTC: false,
+  dateFormat: 'YYYY/MM/DD',
+  formatterOptions: {
+    delimiter: ',',
+    quote: '"',
+    escape: '"',
+    eof: '\n',
+  },
+  map(value, index) {
+    if (value instanceof Date) {
+      return value.toISOString().split('T')[0];
+    }
+    return value;
+  }
+});
+```
+
+### Streaming Large Files (SheetJS)
+
+```js
+const XLSX = require('xlsx');
+
+// Stream reading
+function readLargeFile(filePath) {
+  const workbook = XLSX.readFile(filePath, {
+    type: 'file',
+    sheetRows: 0,          // 0 = all rows
+    cellDates: true,
+    cellFormula: false,    // skip formula parsing for speed
+    cellHTML: false,       // skip HTML rendering for speed
+    bookSheets: false,     // read all sheets
+  });
+  return workbook;
+}
+
+// Process row by row
+function processFileStreaming(filePath, sheetName, rowCallback) {
+  const workbook = XLSX.readFile(filePath);
+  const worksheet = workbook.Sheets[sheetName || workbook.SheetNames[0]];
+  const range = XLSX.utils.decode_range(worksheet['!ref']);
+
+  for (let r = range.s.r; r <= range.e.r; r++) {
+    const rowData = {};
+    for (let c = range.s.c; c <= range.e.c; c++) {
+      const cellRef = XLSX.utils.encode_cell({ r, c });
+      const cell = worksheet[cellRef];
+      if (cell) rowData[XLSX.utils.encode_col(c)] = cell.v;
+    }
+    rowCallback(rowData, r);
+  }
+}
+
+// ExcelJS streaming read
+const ExcelJS = require('exceljs');
+
+async function streamReadXlsx(filePath) {
+  const workbookReader = new ExcelJS.stream.xlsx.WorkbookReader(filePath, {
+    entries: 'emit',
+    sharedStrings: 'cache',
+    hyperlinks: 'cache',
+    styles: 'cache',
+    worksheets: 'emit',
+  });
+
+  workbookReader.on('worksheet', worksheet => {
+    worksheet.on('row', row => {
+      const values = row.values.slice(1); // remove index 0
+      console.log('Row:', values);
+    });
+    worksheet.on('dimension', dimension => {
+      console.log('Dimension:', dimension);
+    });
+  });
+
+  workbookReader.on('shared-strings', sharedStrings => {
+    console.log('Shared strings count:', sharedStrings.count);
+  });
+
+  workbookReader.on('end', () => {
+    console.log('Done reading');
+  });
+
+  await workbookReader.read();
+}
+
+// ExcelJS streaming write
+async function streamWriteXlsx(outputPath, data) {
+  const workbookWriter = new ExcelJS.stream.xlsx.WorkbookWriter({
+    filename: outputPath,
+    useStyles: true,
+    useSharedStrings: true,
+  });
+
+  const worksheet = workbookWriter.addWorksheet('Data');
+  worksheet.columns = [
+    { header: 'ID', key: 'id', width: 10 },
+    { header: 'Name', key: 'name', width: 30 },
+    { header: 'Value', key: 'value', width: 15 },
+  ];
+
+  for (const row of data) {
+    await worksheet.addRow(row).commit();
+  }
+
+  await worksheet.commit();
+  await workbookWriter.commit();
+}
+```
+
+### Named Ranges and Defined Names
+
+```js
+// SheetJS named ranges
+const wb = XLSX.utils.book_new();
+const ws = XLSX.utils.aoa_to_sheet([['a','b'],['c','d']]);
+XLSX.utils.book_append_sheet(wb, ws, 'Sheet1');
+
+// Add named range
+wb.Workbook = wb.Workbook || {};
+wb.Workbook.Names = wb.Workbook.Names || [];
+wb.Workbook.Names.push({
+  Name: 'MyRange',
+  Ref: 'Sheet1!$A$1:$B$2',
+  Comment: 'My named range',
+  Hidden: false,
+});
+
+// ExcelJS defined names
+workbook.definedNames.add('Sheet1!$A$1:$A$10', 'SalesData');
+workbook.definedNames.add('Sheet1!$B$1:$B$10', 'ExpenseData');
+
+// Get defined name
+const name = workbook.definedNames.getMatrix('SalesData');
+console.log(name);
+
+// Remove defined name
+workbook.definedNames.remove('SalesData');
+
+// List all defined names
+workbook.definedNames.model.forEach(([name, refStr]) => {
+  console.log(`${name}: ${refStr}`);
+});
+```
+
+### Pivot Table Patterns
+
+```js
+// Create pivot-like summary using SheetJS
+function createPivotSummary(data, rowField, colField, valueField) {
+  // Collect unique row and column values
+  const rows = [...new Set(data.map(d => d[rowField]))].sort();
+  const cols = [...new Set(data.map(d => d[colField]))].sort();
+
+  // Build summary matrix
+  const matrix = [['', ...cols, 'Total']];
+
+  for (const row of rows) {
+    const rowData = [row];
+    let rowTotal = 0;
+
+    for (const col of cols) {
+      const val = data
+        .filter(d => d[rowField] === row && d[colField] === col)
+        .reduce((sum, d) => sum + (d[valueField] || 0), 0);
+      rowData.push(val);
+      rowTotal += val;
+    }
+
+    rowData.push(rowTotal);
+    matrix.push(rowData);
+  }
+
+  // Add grand total row
+  const totals = ['Grand Total'];
+  let grandTotal = 0;
+  for (let c = 1; c <= cols.length; c++) {
+    const colTotal = matrix.slice(1).reduce((sum, r) => sum + (r[c] || 0), 0);
+    totals.push(colTotal);
+    grandTotal += colTotal;
+  }
+  totals.push(grandTotal);
+  matrix.push(totals);
+
+  const wb = XLSX.utils.book_new();
+  const ws = XLSX.utils.aoa_to_sheet(matrix);
+  XLSX.utils.book_append_sheet(wb, ws, 'Pivot');
+  return wb;
+}
+```
+
+### CSV and TSV Processing
+
+```js
+// Parse CSV with SheetJS
+function parseCSV(csvString, options = {}) {
+  const wb = XLSX.read(csvString, {
+    type: 'string',
+    raw: false,
+    ...options,
+  });
+  return XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]]);
+}
+
+// Generate CSV from data
+function generateCSV(data, fields) {
+  const ws = XLSX.utils.json_to_sheet(data, { header: fields });
+  return XLSX.utils.sheet_to_csv(ws);
+}
+
+// Handle large CSV files
+const fs = require('fs');
+const readline = require('readline');
+
+async function processLargeCSV(filePath, processRow) {
+  const stream = fs.createReadStream(filePath);
+  const rl = readline.createInterface({ input: stream, crlfDelay: Infinity });
+
+  let headers = null;
+  let rowNum = 0;
+
+  for await (const line of rl) {
+    if (!headers) {
+      headers = line.split(',').map(h => h.trim().replace(/"/g, ''));
+    } else {
+      const values = line.split(',');
+      const row = {};
+      headers.forEach((h, i) => { row[h] = values[i]?.trim().replace(/"/g, ''); });
+      await processRow(row, ++rowNum);
+    }
+  }
+
+  return rowNum;
+}
+```
+
+### Complete Reporting Example
+
+```js
+const XLSX = require('xlsx');
+const ExcelJS = require('exceljs');
+
+async function generateSalesReport(salesData, outputPath) {
+  const wb = new ExcelJS.Workbook();
+  wb.creator = 'Sales Analytics';
+  wb.created = new Date();
+
+  // Summary sheet
+  const summary = wb.addWorksheet('Summary', {
+    properties: { tabColor: { argb: 'FF4472C4' } },
+  });
+
+  summary.columns = [
+    { header: 'Metric', key: 'metric', width: 30 },
+    { header: 'Value', key: 'value', width: 20 },
+    { header: 'Change', key: 'change', width: 15 },
+  ];
+
+  // Style header row
+  summary.getRow(1).font = { bold: true, size: 12, color: { argb: 'FFFFFFFF' } };
+  summary.getRow(1).fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF4472C4' } };
+
+  // Add summary rows
+  const metrics = [
+    { metric: 'Total Revenue', value: salesData.totalRevenue, change: '+12.5%' },
+    { metric: 'Total Orders', value: salesData.totalOrders, change: '+8.3%' },
+    { metric: 'Avg Order Value', value: salesData.avgOrderValue, change: '+3.8%' },
+    { metric: 'New Customers', value: salesData.newCustomers, change: '+15.2%' },
+    { metric: 'Repeat Rate', value: salesData.repeatRate + '%', change: '+2.1%' },
+  ];
+
+  metrics.forEach(m => {
+    const row = summary.addRow(m);
+    row.getCell('value').numFmt = typeof m.value === 'number' ? '"$"#,##0.00' : '@';
+  });
+
+  // Detail sheet
+  const detail = wb.addWorksheet('Sales Detail');
+  detail.columns = [
+    { header: 'Date', key: 'date', width: 15 },
+    { header: 'Product', key: 'product', width: 25 },
+    { header: 'Qty', key: 'qty', width: 10 },
+    { header: 'Unit Price', key: 'unitPrice', width: 15 },
+    { header: 'Total', key: 'total', width: 15 },
+    { header: 'Sales Rep', key: 'rep', width: 20 },
+    { header: 'Region', key: 'region', width: 15 },
+  ];
+
+  salesData.items.forEach(item => {
+    const row = detail.addRow(item);
+    row.getCell('date').numFmt = 'yyyy-mm-dd';
+    row.getCell('unitPrice').numFmt = '"$"#,##0.00';
+    row.getCell('total').numFmt = '"$"#,##0.00';
+  });
+
+  // Add chart
+  const chart = detail.addChart('column', {
+    title: { name: 'Sales by Region' },
+    legend: { position: 'b' },
+    plotArea: {
+      catAxis: { title: { name: 'Region' } },
+      valAxis: { title: { name: 'Revenue ($)' } },
+    },
+    tl: { col: 0, row: detail.rowCount + 2 },
+    br: { col: 7, row: detail.rowCount + 20 },
+  });
+
+  await wb.xlsx.writeFile(outputPath);
+  return outputPath;
+}
+```
+
+### Troubleshooting Guide
+
+**Issue: Dates showing as numbers**
+```js
+// Solution: Enable cellDates option
+const wb = XLSX.readFile('file.xlsx', { cellDates: true });
+// Or convert manually
+function excelDateToJsDate(serial) {
+  const utc_days = Math.floor(serial - 25569);
+  const utc_value = utc_days * 86400;
+  return new Date(utc_value * 1000);
+}
+```
+
+**Issue: Formula cells showing old values**
+```js
+// Solution: Force recalculation
+workbook.calcProperties.fullCalcOnLoad = true;
+// Or clear cached formula results
+worksheet.eachRow(row => {
+  row.eachCell(cell => {
+    if (cell.type === ExcelJS.ValueType.Formula) {
+      cell.value = { formula: cell.formula }; // remove cached result
+    }
+  });
+});
+```
+
+**Issue: Large file memory issues**
+```js
+// Solution: Use streaming API
+const workbookWriter = new ExcelJS.stream.xlsx.WorkbookWriter({
+  filename: 'large-output.xlsx',
+  useStyles: true,
+  useSharedStrings: false, // disable for performance
+});
+```
+
+**Issue: Chinese/Japanese/Korean characters garbled in CSV**
+```js
+// Solution: Use UTF-8 BOM
+const csv = XLSX.utils.sheet_to_csv(ws);
+const bom = '\uFEFF'; // UTF-8 BOM
+fs.writeFileSync('output.csv', bom + csv, 'utf8');
+```
+
+**Issue: Cell styles not preserved**
+```js
+// Solution: Enable cellStyles when reading
+const wb = XLSX.read(data, { type: 'buffer', cellStyles: true });
+// Or when writing with ExcelJS, explicitly set styles on each cell
+```
+
+
+---
+
+## SheetJS (xlsx) Complete API Reference
+
+### Installation
+
+```bash
+npm install xlsx
+# or
+yarn add xlsx
+# or with ExcelJS
+npm install exceljs
+```
+
+### Core Reading API
+
+```js
+const XLSX = require('xlsx');
+
+// Read from file path
+const wb = XLSX.readFile('spreadsheet.xlsx', {
+  type: 'file',
+  cellDates: true,
+  cellFormula: true,
+  cellNF: true,
+  cellStyles: true,
+  sheetStubs: false,
+  bookSheets: false,
+  bookDeps: false,
+  bookFiles: false,
+  bookVBA: false,
+  password: '',
+  WTF: false,
+  dense: false,
+  nodim: false,
+  PRN: false,
+  UTC: false,
+});
+
+// Read from Buffer
+const buf = fs.readFileSync('data.xlsx');
+const wb2 = XLSX.read(buf, { type: 'buffer' });
+
+// Read from base64 string
+const b64 = fs.readFileSync('data.xlsx', 'base64');
+const wb3 = XLSX.read(b64, { type: 'base64' });
+
+// Read from array of bytes
+const arr = new Uint8Array(fs.readFileSync('data.xlsx'));
+const wb4 = XLSX.read(arr, { type: 'array' });
+
+// Read from binary string
+const bstr = fs.readFileSync('data.xlsx', 'binary');
+const wb5 = XLSX.read(bstr, { type: 'binary' });
+```
+
+### Workbook Object Structure
+
+```js
+// Workbook structure
+const workbook = {
+  SheetNames: ['Sheet1', 'Sheet2'],  // Ordered list of sheet names
+  Sheets: {
+    'Sheet1': { /* worksheet object */ },
+    'Sheet2': { /* worksheet object */ }
+  },
+  Props: {
+    Author: 'John Doe',
+    Title: 'My Spreadsheet',
+    Subject: 'Data Analysis',
+    CreatedDate: new Date(),
+    ModifiedDate: new Date(),
+    Category: 'Finance',
+    Keywords: 'budget, finance',
+    Description: 'Annual budget spreadsheet',
+    LastAuthor: 'Jane Doe',
+    Company: 'ACME Corp',
+    Manager: 'Bob Smith'
+  },
+  Custprops: {},
+  Calcchain: null,
+  Workbook: {
+    Names: [],
+    Views: [{ RTL: false }],
+    WBProps: {
+      date1904: false,
+      defaultThemeVersion: 124226
+    }
+  }
+};
+```
+
+### Worksheet Object Structure
+
+```js
+// Worksheet structure
+const worksheet = {
+  '!ref': 'A1:Z100',         // cell range
+  '!margins': {              // page margins
+    left: 0.7,
+    right: 0.7,
+    top: 0.75,
+    bottom: 0.75,
+    header: 0.3,
+    footer: 0.3
+  },
+  '!cols': [                 // column info array
+    { wch: 20 },             // width in characters
+    { wpx: 150 },            // width in pixels
+    { hidden: true }         // hidden column
+  ],
+  '!rows': [                 // row info array
+    { hpt: 20 },             // height in points
+    { hpx: 27 },             // height in pixels
+    { hidden: false }
+  ],
+  '!merges': [               // merged cell ranges
+    { s: { r: 0, c: 0 }, e: { r: 0, c: 3 } }
+  ],
+  '!protect': {              // worksheet protection
+    password: 'secret',
+    selectLockedCells: true,
+    selectUnlockedCells: true,
+    formatCells: false,
+    formatColumns: false,
+    formatRows: false,
+    insertColumns: false,
+    insertRows: false,
+    insertHyperlinks: false,
+    deleteColumns: false,
+    deleteRows: false,
+    sort: false,
+    autoFilter: false,
+    pivotTables: false
+  },
+  '!autofilter': { ref: 'A1:F1' },
+  'A1': { t: 's', v: 'Name', w: 'Name' },
+  'B1': { t: 's', v: 'Age' },
+  'A2': { t: 's', v: 'Alice' },
+  'B2': { t: 'n', v: 30, w: '30' }
+};
+```
+
+### Cell Object Reference
+
+```js
+// Cell object properties
+const cell = {
+  t: 'n',          // type: 'b'=bool, 'n'=num, 's'=str, 'd'=date, 'e'=err, 'z'=stub
+  v: 42,           // raw value
+  w: '42',         // formatted text
+  f: 'SUM(A1:A10)',// formula
+  F: 'A1:A10',     // array formula range
+  r: '<t>42</t>',  // rich text
+  h: '42',         // HTML rendering
+  c: [             // comments
+    { a: 'Author', t: 'comment text', T: false }
+  ],
+  z: '#,##0.00',   // number format string
+  l: {             // hyperlink
+    Target: 'https://example.com',
+    Tooltip: 'Visit site'
+  },
+  s: {             // style object
+    font: { name: 'Arial', sz: 12, bold: true, color: { rgb: 'FF0000' } },
+    fill: { patternType: 'solid', fgColor: { rgb: 'FFFFCC' } },
+    border: {
+      top: { style: 'thin', color: { auto: 1 } },
+      bottom: { style: 'thin', color: { auto: 1 } },
+      left: { style: 'thin', color: { auto: 1 } },
+      right: { style: 'thin', color: { auto: 1 } }
+    },
+    alignment: {
+      horizontal: 'center',
+      vertical: 'middle',
+      wrapText: true,
+      indent: 0,
+      readingOrder: 0,
+      textRotation: 0,
+      shrinkToFit: false
+    },
+    numFmt: '0.00%'
+  }
+};
+```
+
+### Writing Files
+
+```js
+// Write to file
+XLSX.writeFile(workbook, 'output.xlsx', {
+  bookType: 'xlsx',        // 'xlsx'|'xlsm'|'xlsb'|'xls'|'csv'|'txt'|'sylk'|'html'|'dif'|'dbf'|'prn'|'ods'
+  type: 'file',
+  compression: true,       // zip compression
+  Props: { Author: 'Me' },
+  bookSST: false,          // use shared string table
+  bookVBA: false,
+  cellDates: false,        // write dates as date types
+  cellStyles: false,       // write styles
+  numbers: XLSX.SSF._table,
+  sheet: 'Sheet1',         // for single-sheet formats
+});
+
+// Write to buffer
+const wbuf = XLSX.write(workbook, { bookType: 'xlsx', type: 'buffer' });
+
+// Write to base64
+const wb64 = XLSX.write(workbook, { bookType: 'xlsx', type: 'base64' });
+
+// Write to binary string
+const wbin = XLSX.write(workbook, { bookType: 'xlsx', type: 'binary' });
+
+// Write to array
+const warr = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
+```
+
+### Sheet Operations
+
+```js
+// Access sheets
+const sheet = workbook.Sheets[workbook.SheetNames[0]];
+
+// Add a new sheet
+const newSheet = XLSX.utils.aoa_to_sheet([
+  ['Name', 'Age', 'Score'],
+  ['Alice', 30, 95.5],
+  ['Bob', 25, 87.3],
+  ['Charlie', 35, 91.0],
+]);
+XLSX.utils.book_append_sheet(workbook, newSheet, 'People');
+
+// Delete a sheet
+const idx = workbook.SheetNames.indexOf('OldSheet');
+if (idx !== -1) {
+  workbook.SheetNames.splice(idx, 1);
+  delete workbook.Sheets['OldSheet'];
+}
+
+// Copy a sheet
+function copySheet(wb, fromName, toName) {
+  const srcSheet = wb.Sheets[fromName];
+  const destSheet = JSON.parse(JSON.stringify(srcSheet));
+  XLSX.utils.book_append_sheet(wb, destSheet, toName);
+}
+```
+
+### Data Conversion Utilities
+
+```js
+// Array of arrays to worksheet
+const aoaData = [
+  ['ID', 'Product', 'Qty', 'Price', 'Total'],
+  [1, 'Widget A', 10, 9.99, 99.90],
+  [2, 'Widget B', 5, 14.99, 74.95],
+  [3, 'Gadget X', 3, 29.99, 89.97],
+];
+const ws1 = XLSX.utils.aoa_to_sheet(aoaData, {
+  header: [],           // custom header row
+  skipHeader: false,    // skip header
+  origin: 'A1',         // starting cell
+  dateNF: 'yyyy-mm-dd', // date format
+  cellDates: true,      // output dates as Date objects
+  dense: false,         // use dense format
+  sheetRows: 100,       // max rows to read
+});
+
+// Array of objects to worksheet
+const aooData = [
+  { name: 'Alice', dept: 'Engineering', salary: 95000 },
+  { name: 'Bob', dept: 'Marketing', salary: 72000 },
+  { name: 'Charlie', dept: 'Sales', salary: 68000 },
+];
+const ws2 = XLSX.utils.json_to_sheet(aooData, {
+  header: ['name', 'dept', 'salary'],  // key order
+  skipHeader: false,
+  origin: { r: 1, c: 0 },
+  dateNF: 'yyyy-mm-dd',
+});
+
+// Worksheet to array of arrays
+const aoa = XLSX.utils.sheet_to_aoa(worksheet, {
+  header: 1,           // 1 = return arrays, 'A' = use column letters
+  defval: null,        // default value for empty cells
+  blankrows: false,    // include blank rows
+  range: 'A1:D10',     // only this range
+  raw: true,           // return raw values
+  rawNumbers: false,   // return raw number values
+  dateNF: 'yyyy-mm-dd',
+});
+
+// Worksheet to array of objects
+const aoo = XLSX.utils.sheet_to_json(worksheet, {
+  header: 1,           // use row 1 as header
+  defval: '',
+  blankrows: false,
+  range: 1,            // start from row index 1
+  raw: false,
+});
+
+// Worksheet to CSV
+const csv = XLSX.utils.sheet_to_csv(worksheet, {
+  FS: ',',             // field separator
+  RS: '\n',            // row separator
+  dateNF: 'yyyy-mm-dd',
+  strip: false,        // strip trailing whitespace
+  blankrows: true,
+  skipHidden: false,
+});
+
+// Worksheet to HTML
+const html = XLSX.utils.sheet_to_html(worksheet, {
+  id: 'table1',
+  editable: false,
+  header: '',
+  footer: '',
+});
+
+// Worksheet to formula text
+const txt = XLSX.utils.sheet_to_formulae(worksheet);
+```
+
+### Cell Range Operations
+
+```js
+// Encode/decode cell addresses
+const addr = XLSX.utils.encode_cell({ r: 0, c: 0 }); // 'A1'
+const cell2 = XLSX.utils.decode_cell('A1');            // {r:0, c:0}
+const col = XLSX.utils.encode_col(0);                  // 'A'
+const row = XLSX.utils.encode_row(0);                  // '1'
+const range = XLSX.utils.encode_range({ s:{r:0,c:0}, e:{r:9,c:4} }); // 'A1:E10'
+const rangeObj = XLSX.utils.decode_range('A1:E10'); // {s:{r:0,c:0}, e:{r:9,c:4}}
+
+// Update worksheet range
+function updateSheetRange(ws) {
+  const range = XLSX.utils.decode_range(ws['!ref']);
+  // iterate over cells
+  for (let r = range.s.r; r <= range.e.r; r++) {
+    for (let c = range.s.c; c <= range.e.c; c++) {
+      const cellRef = XLSX.utils.encode_cell({ r, c });
+      const cell = ws[cellRef];
+      if (!cell) continue;
+      // process cell
+    }
+  }
+}
+
+// Set cell value
+function setCellValue(ws, cellRef, value, type) {
+  const cell = ws[cellRef] || (ws[cellRef] = {});
+  cell.v = value;
+  cell.t = type || (typeof value === 'number' ? 'n' : 's');
+  if (typeof value === 'boolean') cell.t = 'b';
+  if (value instanceof Date) cell.t = 'd';
+}
+```
+
+### Number Formatting
+
+```js
+// Common number formats
+const numberFormats = {
+  // General
+  general: 'General',
+  // Number
+  integer: '0',
+  decimal1: '0.0',
+  decimal2: '0.00',
+  thousands: '#,##0',
+  thousandsDecimal2: '#,##0.00',
+  // Percentage
+  percent: '0%',
+  percentDecimal2: '0.00%',
+  // Currency
+  usd: '"$"#,##0.00',
+  usdNeg: '"$"#,##0.00;[Red]"$"#,##0.00',
+  euro: '[$€-407]#,##0.00',
+  gbp: '[$£-809]#,##0.00',
+  // Date
+  date: 'yyyy-mm-dd',
+  dateUs: 'mm/dd/yyyy',
+  dateEu: 'dd/mm/yyyy',
+  datetime: 'yyyy-mm-dd hh:mm:ss',
+  time: 'hh:mm:ss',
+  time12: 'h:mm AM/PM',
+  // Special
+  zip: '00000',
+  phone: '(000) 000-0000',
+  ssn: '000-00-0000',
+  // Scientific
+  scientific: '0.00E+00',
+  // Fraction
+  fraction: '# ?/?',
+  fractionHalf: '# ??/??',
+  // Text
+  text: '@',
+};
+
+// Format a value
+function formatValue(value, formatStr) {
+  return XLSX.SSF.format(formatStr, value);
+}
+```
+
+### ExcelJS Complete API
+
+```js
+const ExcelJS = require('exceljs');
+
+// Create workbook
+const workbook = new ExcelJS.Workbook();
+workbook.creator = 'My App';
+workbook.lastModifiedBy = 'My App';
+workbook.created = new Date();
+workbook.modified = new Date();
+workbook.lastPrinted = new Date();
+workbook.properties.date1904 = false;
+workbook.calcProperties.fullCalcOnLoad = true;
+
+// Add worksheet
+const worksheet = workbook.addWorksheet('My Sheet', {
+  properties: {
+    tabColor: { argb: 'FF00FF00' },
+    outlineLevelCol: 0,
+    outlineLevelRow: 0,
+    defaultRowHeight: 15,
+    defaultColWidth: 8,
+    dyDescent: 55,
+    showGridLines: true,
+  },
+  pageSetup: {
+    paperSize: 9,           // A4
+    orientation: 'portrait', // 'portrait' | 'landscape'
+    fitToPage: true,
+    fitToHeight: 1,
+    fitToWidth: 1,
+    margins: {
+      left: 0.7, right: 0.7,
+      top: 0.75, bottom: 0.75,
+      header: 0.3, footer: 0.3
+    },
+    horizontalCentered: true,
+    verticalCentered: false,
+    printGridLines: false,
+    printTitlesRow: '$1:$1',
+    printTitlesColumn: '$A:$A',
+    firstPageNumber: 1,
+    useFirstPageNumber: false,
+  },
+  headerFooter: {
+    firstHeader: '&CFirst Page Header',
+    firstFooter: '&CFirst Page Footer',
+    oddHeader: '&L&"Calibri,Bold"&K000000My Report&R&D',
+    oddFooter: '&CPage &P of &N',
+    evenHeader: '&CReport',
+    evenFooter: '&CPage &P of &N',
+    differentFirst: false,
+    differentOddEven: false,
+  },
+  views: [
+    {
+      state: 'frozen',
+      xSplit: 1,
+      ySplit: 1,
+      topLeftCell: 'B2',
+      activeCell: 'A1',
+      showGridLines: true,
+      showRowColHeaders: true,
+      zoomScale: 100,
+      zoomScaleNormal: 100,
+      zoomScalePageLayoutView: 100,
+    }
+  ]
+});
+```
+
+### ExcelJS Column Operations
+
+```js
+// Define columns
+worksheet.columns = [
+  {
+    header: 'ID', key: 'id', width: 8,
+    style: { font: { bold: true }, alignment: { horizontal: 'center' } }
+  },
+  {
+    header: 'Name', key: 'name', width: 25,
+    style: { font: { name: 'Calibri', size: 11 } }
+  },
+  {
+    header: 'Date', key: 'date', width: 15,
+    style: { numFmt: 'yyyy-mm-dd' }
+  },
+  {
+    header: 'Amount', key: 'amount', width: 15,
+    style: { numFmt: '"$"#,##0.00' }
+  },
+  {
+    header: 'Status', key: 'status', width: 12,
+    style: { alignment: { horizontal: 'center' } }
+  },
+];
+
+// Get/manipulate a column
+const col = worksheet.getColumn('name'); // or worksheet.getColumn(2)
+col.header = 'Full Name';
+col.key = 'fullName';
+col.width = 30;
+col.hidden = false;
+col.outlineLevel = 0;
+col.style = { font: { bold: false } };
+
+// Iterate columns
+worksheet.columns.forEach(column => {
+  column.width = Math.max(column.header.length + 2, 12);
+});
+
+// Get column by number
+const firstCol = worksheet.getColumn(1);
+const lastColNum = worksheet.columnCount;
+const actualLastColNum = worksheet.actualColumnCount;
+```
+
+### ExcelJS Row Operations
+
+```js
+// Add rows
+worksheet.addRow({ id: 1, name: 'Alice Smith', date: new Date('2024-01-15'), amount: 1500.00, status: 'Active' });
+worksheet.addRow([2, 'Bob Johnson', new Date('2024-02-20'), 2200.50, 'Inactive']);
+
+// Add multiple rows
+const rows = [
+  { id: 3, name: 'Charlie Brown', amount: 1800 },
+  { id: 4, name: 'Diana Prince', amount: 3200 },
+  { id: 5, name: 'Eve Wilson', amount: 2750 },
+];
+worksheet.addRows(rows);
+
+// Get row
+const row = worksheet.getRow(2);
+row.height = 25;
+row.hidden = false;
+row.outlineLevel = 0;
+row.collapsed = false;
+row.getCell(1).value = 'Updated';
+
+// Commit row (for streaming)
+row.commit();
+
+// Iterate rows
+worksheet.eachRow({ includeEmpty: false }, (row, rowNumber) => {
+  console.log(`Row ${rowNumber}:`, row.values);
+  row.eachCell({ includeEmpty: true }, (cell, colNumber) => {
+    console.log(`  Cell ${colNumber}:`, cell.value);
+  });
+});
+
+// Insert row
+worksheet.insertRow(3, { id: 99, name: 'Inserted Row', amount: 0 });
+
+// Duplicate row
+worksheet.duplicateRow(1, 1, true);
+
+// Delete row
+worksheet.spliceRows(3, 1);
+
+// Row properties
+const lastRow = worksheet.lastRow;
+const rowCount = worksheet.rowCount;
+const actualRowCount = worksheet.actualRowCount;
+```
+
+### ExcelJS Cell Operations
+
+```js
+// Get cell
+const cell = worksheet.getCell('A1');  // by address
+const cell2 = worksheet.getCell(1, 1); // by row, col
+
+// Set values
+cell.value = 'Hello World';
+cell.value = 42;
+cell.value = true;
+cell.value = new Date();
+cell.value = { formula: 'SUM(B2:B10)', result: 550 };
+cell.value = { formula: 'SUM(A1:A10)' };
+cell.value = { sharedFormula: 'A2', result: 100 };
+cell.value = { richText: [
+  { font: { bold: true, color: { argb: 'FF0000FF' } }, text: 'Bold Blue' },
+  { font: { italic: true }, text: ' and Italic' },
+  { text: ' Normal text' }
+]};
+cell.value = { hyperlink: 'https://example.com', text: 'Visit Site', tooltip: 'Click here' };
+cell.value = { error: '#DIV/0!' };
+
+// Cell type
+console.log(cell.type); // ExcelJS.ValueType.Number etc.
+
+// Cell formatting
+cell.numFmt = '#,##0.00';
+cell.font = {
+  name: 'Calibri',
+  family: 2,
+  size: 12,
+  scheme: 'minor',
+  bold: true,
+  italic: false,
+  underline: true,  // true | 'none' | 'single' | 'double' | 'singleAccounting' | 'doubleAccounting'
+  strike: false,
+  outline: false,
+  color: { argb: 'FF000000' },
+  charset: 1,
+  vertAlign: 'superscript',  // 'superscript' | 'subscript'
+};
+cell.alignment = {
+  horizontal: 'center',   // 'left'|'center'|'right'|'fill'|'justify'|'centerContinuous'|'distributed'
+  vertical: 'middle',     // 'top'|'middle'|'bottom'|'distributed'|'justify'
+  wrapText: true,
+  shrinkToFit: false,
+  indent: 0,
+  readingOrder: 'ltr',    // 'ltr'|'rtl'
+  textRotation: 45,       // -90 to 90 degrees
+};
+cell.border = {
+  top: { style: 'thin', color: { argb: 'FF000000' } },
+  left: { style: 'thin', color: { argb: 'FF000000' } },
+  bottom: { style: 'double', color: { argb: 'FF000000' } },
+  right: { style: 'thin', color: { argb: 'FF000000' } },
+  diagonal: { up: true, down: false, style: 'dashed', color: { argb: 'FFFF0000' } },
+};
+cell.fill = {
+  type: 'pattern',
+  pattern: 'solid',
+  fgColor: { argb: 'FFFFFF00' },
+  bgColor: { argb: 'FFFFFFFF' },
+};
+// Gradient fill
+cell.fill = {
+  type: 'gradient',
+  gradient: 'angle',
+  degree: 0,
+  stops: [
+    { position: 0, color: { argb: 'FF0000FF' } },
+    { position: 0.5, color: { argb: 'FFFFFFFF' } },
+    { position: 1, color: { argb: 'FFFF0000' } },
+  ]
+};
+
+// Protection
+cell.protection = {
+  locked: true,
+  hidden: false,
+};
+
+// Merge cells
+worksheet.mergeCells('A1:D1');
+worksheet.mergeCells(1, 1, 1, 4);  // top, left, bottom, right
+worksheet.unMergeCells('A1:D1');
+```
+
+### ExcelJS Data Validation
+
+```js
+// List validation
+worksheet.getCell('E2').dataValidation = {
+  type: 'list',
+  allowBlank: true,
+  formulae: ['"Active,Inactive,Pending"'],
+  showErrorMessage: true,
+  errorStyle: 'error',  // 'error'|'warning'|'information'
+  errorTitle: 'Invalid Input',
+  error: 'Please select from the list',
+  showInputMessage: true,
+  promptTitle: 'Status',
+  prompt: 'Select employee status',
+};
+
+// Whole number validation
+worksheet.getCell('B2').dataValidation = {
+  type: 'whole',
+  operator: 'between',  // 'between'|'notBetween'|'equal'|'notEqual'|'greaterThan'|'lessThan'|'greaterThanOrEqual'|'lessThanOrEqual'
+  formula1: 1,
+  formula2: 100,
+  showErrorMessage: true,
+  errorTitle: 'Invalid',
+  error: 'Value must be between 1 and 100',
+};
+
+// Decimal validation
+worksheet.getCell('D2').dataValidation = {
+  type: 'decimal',
+  operator: 'greaterThan',
+  formula1: 0,
+  showErrorMessage: true,
+  errorTitle: 'Invalid Amount',
+  error: 'Amount must be positive',
+};
+
+// Date validation
+worksheet.getCell('C2').dataValidation = {
+  type: 'date',
+  operator: 'greaterThanOrEqual',
+  formula1: new Date(2020, 0, 1),
+  showErrorMessage: true,
+  errorTitle: 'Invalid Date',
+  error: 'Date must be after 2020-01-01',
+};
+
+// Custom formula validation
+worksheet.getCell('F2').dataValidation = {
+  type: 'custom',
+  formulae: ['=AND(LEN(F2)>=3,LEN(F2)<=50)'],
+  showErrorMessage: true,
+  errorTitle: 'Invalid Length',
+  error: 'Must be between 3 and 50 characters',
+};
+```
+
+### ExcelJS Conditional Formatting
+
+```js
+// Color scale
+worksheet.addConditionalFormatting({
+  ref: 'D2:D100',
+  rules: [
+    {
+      type: 'colorScale',
+      cfvo: [
+        { type: 'min' },
+        { type: 'percentile', value: 50 },
+        { type: 'max' },
+      ],
+      color: [
+        { argb: 'FFF8696B' },  // red
+        { argb: 'FFFFEB84' },  // yellow
+        { argb: 'FF63BE7B' },  // green
+      ],
+    }
+  ]
+});
+
+// Data bar
+worksheet.addConditionalFormatting({
+  ref: 'D2:D100',
+  rules: [
+    {
+      type: 'dataBar',
+      minLength: 0,
+      maxLength: 100,
+      cfvo: [{ type: 'min' }, { type: 'max' }],
+      color: { argb: 'FF638EC6' },
+      gradient: true,
+      border: false,
+      negativeBarColorSameAsPositive: false,
+      showValue: true,
+      axisPosition: 'auto',
+    }
+  ]
+});
+
+// Icon set
+worksheet.addConditionalFormatting({
+  ref: 'D2:D100',
+  rules: [
+    {
+      type: 'iconSet',
+      iconSet: '3TrafficLights1',  // many options
+      showValue: true,
+      reverse: false,
+      cfvo: [
+        { type: 'percent', value: 0 },
+        { type: 'percent', value: 33 },
+        { type: 'percent', value: 67 },
+      ],
+    }
+  ]
+});
+
+// Cell value rule
+worksheet.addConditionalFormatting({
+  ref: 'B2:B100',
+  rules: [
+    {
+      type: 'cellIs',
+      operator: 'greaterThan',
+      formulae: [100],
+      priority: 1,
+      style: {
+        font: { bold: true, color: { argb: 'FF006100' } },
+        fill: { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFC6EFCE' } },
+      }
+    }
+  ]
+});
+
+// Contains text
+worksheet.addConditionalFormatting({
+  ref: 'A2:A100',
+  rules: [
+    {
+      type: 'containsText',
+      operator: 'containsText',
+      text: 'URGENT',
+      priority: 1,
+      style: {
+        font: { bold: true, color: { argb: 'FF9C0006' } },
+        fill: { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFFFC7CE' } },
+      }
+    }
+  ]
+});
+```
+
+### ExcelJS Charts
+
+```js
+// Add chart to worksheet
+worksheet.addChart({
+  type: 'bar',           // 'bar'|'column'|'line'|'area'|'pie'|'doughnut'|'scatter'|'bubble'|'radar'|'stock'
+  style: 10,
+  title: { name: 'Monthly Sales' },
+  legend: {
+    position: 'b',      // 't'|'b'|'l'|'r'|'tr'
+    overlay: false,
+  },
+  plotArea: {
+    catAxis: {
+      title: { name: 'Month' },
+      numFmt: 'mmm',
+      tickLblSkip: 1,
+      tickMarkSkip: 1,
+    },
+    valAxis: {
+      title: { name: 'Revenue ($)' },
+      numFmt: '"$"#,##0',
+      minVal: 0,
+      gridlines: { major: {} },
+    },
+    ser: [
+      {
+        name: { name: 'Q1 Sales', ref: 'Sheet1!$B$1' },
+        labels: { ref: 'Sheet1!$A$2:$A$13' },
+        values: { ref: 'Sheet1!$B$2:$B$13' },
+        fill: { type: 'solid', color: '4472C4' },
+        border: { pt: 1, color: '4472C4' },
+        marker: {
+          symbol: 'circle',
+          size: 6,
+          fill: { type: 'solid', color: '4472C4' },
+        },
+        dataPt: [],
+        dLbls: {
+          position: 'outEnd',
+          showVal: true,
+          showCatName: false,
+          showSerName: false,
+          showPercent: false,
+          showLeaderLines: true,
+          numFmt: '"$"#,##0',
+        },
+        trendline: {
+          type: 'linear',   // 'exp'|'log'|'poly'|'power'|'movAvg'
+          name: 'Trend',
+          forward: 2,
+          backward: 0,
+          intercept: 0,
+          dispRSqr: true,
+          dispEq: true,
+        }
+      },
+    ],
+  },
+  trendline: false,
+  position: { type: 'twoCellAnchor', from: 'A15', to: 'H30' },
+});
+```
+
+### ExcelJS Reading Files
+
+```js
+// Read xlsx file
+const workbook = new ExcelJS.Workbook();
+await workbook.xlsx.readFile('data.xlsx');
+
+// Read from stream
+const stream = fs.createReadStream('data.xlsx');
+await workbook.xlsx.read(stream);
+
+// Read from buffer
+const buffer = fs.readFileSync('data.xlsx');
+await workbook.xlsx.load(buffer);
+
+// Read csv
+await workbook.csv.readFile('data.csv', {
+  dateFormats: ['YYYY/MM/DD', 'MM-DD-YYYY'],
+  map(value, index) {
+    switch (index) {
+      case 0: return parseInt(value, 10);
+      case 3: return parseFloat(value);
+      default: return value;
+    }
+  },
+  sheetName: 'Sheet1',
+  encoding: 'utf8',
+  parserOptions: {
+    delimiter: ',',
+    quote: '"',
+    escape: '"',
+    comment: '#',
+    relax: true,
+    trim: true,
+    skip_empty_lines: true,
+    skip_lines_with_error: false,
+  }
+});
+
+// Iterate worksheets
+workbook.eachSheet((worksheet, sheetId) => {
+  console.log(`Sheet: ${worksheet.name} (id: ${sheetId})`);
+  worksheet.eachRow((row, rowNumber) => {
+    console.log(`Row ${rowNumber}:`, row.values.slice(1));
+  });
+});
+```
+
+### ExcelJS Writing Files
+
+```js
+// Write xlsx
+await workbook.xlsx.writeFile('output.xlsx');
+
+// Write to buffer
+const buffer = await workbook.xlsx.writeBuffer();
+
+// Write to stream
+const stream = fs.createWriteStream('output.xlsx');
+await workbook.xlsx.write(stream);
+stream.end();
+
+// Write csv
+await workbook.csv.writeFile('output.csv', {
+  sheetName: 'Sheet1',
+  encoding: 'utf8',
+  includeEmptyRows: false,
+  dateUTC: false,
+  dateFormat: 'YYYY/MM/DD',
+  formatterOptions: {
+    delimiter: ',',
+    quote: '"',
+    escape: '"',
+    eof: '\n',
+  },
+  map(value, index) {
+    if (value instanceof Date) {
+      return value.toISOString().split('T')[0];
+    }
+    return value;
+  }
+});
+```
+
+### Streaming Large Files (SheetJS)
+
+```js
+const XLSX = require('xlsx');
+
+// Stream reading
+function readLargeFile(filePath) {
+  const workbook = XLSX.readFile(filePath, {
+    type: 'file',
+    sheetRows: 0,          // 0 = all rows
+    cellDates: true,
+    cellFormula: false,    // skip formula parsing for speed
+    cellHTML: false,       // skip HTML rendering for speed
+    bookSheets: false,     // read all sheets
+  });
+  return workbook;
+}
+
+// Process row by row
+function processFileStreaming(filePath, sheetName, rowCallback) {
+  const workbook = XLSX.readFile(filePath);
+  const worksheet = workbook.Sheets[sheetName || workbook.SheetNames[0]];
+  const range = XLSX.utils.decode_range(worksheet['!ref']);
+
+  for (let r = range.s.r; r <= range.e.r; r++) {
+    const rowData = {};
+    for (let c = range.s.c; c <= range.e.c; c++) {
+      const cellRef = XLSX.utils.encode_cell({ r, c });
+      const cell = worksheet[cellRef];
+      if (cell) rowData[XLSX.utils.encode_col(c)] = cell.v;
+    }
+    rowCallback(rowData, r);
+  }
+}
+
+// ExcelJS streaming read
+const ExcelJS = require('exceljs');
+
+async function streamReadXlsx(filePath) {
+  const workbookReader = new ExcelJS.stream.xlsx.WorkbookReader(filePath, {
+    entries: 'emit',
+    sharedStrings: 'cache',
+    hyperlinks: 'cache',
+    styles: 'cache',
+    worksheets: 'emit',
+  });
+
+  workbookReader.on('worksheet', worksheet => {
+    worksheet.on('row', row => {
+      const values = row.values.slice(1); // remove index 0
+      console.log('Row:', values);
+    });
+    worksheet.on('dimension', dimension => {
+      console.log('Dimension:', dimension);
+    });
+  });
+
+  workbookReader.on('shared-strings', sharedStrings => {
+    console.log('Shared strings count:', sharedStrings.count);
+  });
+
+  workbookReader.on('end', () => {
+    console.log('Done reading');
+  });
+
+  await workbookReader.read();
+}
+
+// ExcelJS streaming write
+async function streamWriteXlsx(outputPath, data) {
+  const workbookWriter = new ExcelJS.stream.xlsx.WorkbookWriter({
+    filename: outputPath,
+    useStyles: true,
+    useSharedStrings: true,
+  });
+
+  const worksheet = workbookWriter.addWorksheet('Data');
+  worksheet.columns = [
+    { header: 'ID', key: 'id', width: 10 },
+    { header: 'Name', key: 'name', width: 30 },
+    { header: 'Value', key: 'value', width: 15 },
+  ];
+
+  for (const row of data) {
+    await worksheet.addRow(row).commit();
+  }
+
+  await worksheet.commit();
+  await workbookWriter.commit();
+}
+```
+
+### Named Ranges and Defined Names
+
+```js
+// SheetJS named ranges
+const wb = XLSX.utils.book_new();
+const ws = XLSX.utils.aoa_to_sheet([['a','b'],['c','d']]);
+XLSX.utils.book_append_sheet(wb, ws, 'Sheet1');
+
+// Add named range
+wb.Workbook = wb.Workbook || {};
+wb.Workbook.Names = wb.Workbook.Names || [];
+wb.Workbook.Names.push({
+  Name: 'MyRange',
+  Ref: 'Sheet1!$A$1:$B$2',
+  Comment: 'My named range',
+  Hidden: false,
+});
+
+// ExcelJS defined names
+workbook.definedNames.add('Sheet1!$A$1:$A$10', 'SalesData');
+workbook.definedNames.add('Sheet1!$B$1:$B$10', 'ExpenseData');
+
+// Get defined name
+const name = workbook.definedNames.getMatrix('SalesData');
+console.log(name);
+
+// Remove defined name
+workbook.definedNames.remove('SalesData');
+
+// List all defined names
+workbook.definedNames.model.forEach(([name, refStr]) => {
+  console.log(`${name}: ${refStr}`);
+});
+```
+
+### Pivot Table Patterns
+
+```js
+// Create pivot-like summary using SheetJS
+function createPivotSummary(data, rowField, colField, valueField) {
+  // Collect unique row and column values
+  const rows = [...new Set(data.map(d => d[rowField]))].sort();
+  const cols = [...new Set(data.map(d => d[colField]))].sort();
+
+  // Build summary matrix
+  const matrix = [['', ...cols, 'Total']];
+
+  for (const row of rows) {
+    const rowData = [row];
+    let rowTotal = 0;
+
+    for (const col of cols) {
+      const val = data
+        .filter(d => d[rowField] === row && d[colField] === col)
+        .reduce((sum, d) => sum + (d[valueField] || 0), 0);
+      rowData.push(val);
+      rowTotal += val;
+    }
+
+    rowData.push(rowTotal);
+    matrix.push(rowData);
+  }
+
+  // Add grand total row
+  const totals = ['Grand Total'];
+  let grandTotal = 0;
+  for (let c = 1; c <= cols.length; c++) {
+    const colTotal = matrix.slice(1).reduce((sum, r) => sum + (r[c] || 0), 0);
+    totals.push(colTotal);
+    grandTotal += colTotal;
+  }
+  totals.push(grandTotal);
+  matrix.push(totals);
+
+  const wb = XLSX.utils.book_new();
+  const ws = XLSX.utils.aoa_to_sheet(matrix);
+  XLSX.utils.book_append_sheet(wb, ws, 'Pivot');
+  return wb;
+}
+```
+
+### CSV and TSV Processing
+
+```js
+// Parse CSV with SheetJS
+function parseCSV(csvString, options = {}) {
+  const wb = XLSX.read(csvString, {
+    type: 'string',
+    raw: false,
+    ...options,
+  });
+  return XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]]);
+}
+
+// Generate CSV from data
+function generateCSV(data, fields) {
+  const ws = XLSX.utils.json_to_sheet(data, { header: fields });
+  return XLSX.utils.sheet_to_csv(ws);
+}
+
+// Handle large CSV files
+const fs = require('fs');
+const readline = require('readline');
+
+async function processLargeCSV(filePath, processRow) {
+  const stream = fs.createReadStream(filePath);
+  const rl = readline.createInterface({ input: stream, crlfDelay: Infinity });
+
+  let headers = null;
+  let rowNum = 0;
+
+  for await (const line of rl) {
+    if (!headers) {
+      headers = line.split(',').map(h => h.trim().replace(/"/g, ''));
+    } else {
+      const values = line.split(',');
+      const row = {};
+      headers.forEach((h, i) => { row[h] = values[i]?.trim().replace(/"/g, ''); });
+      await processRow(row, ++rowNum);
+    }
+  }
+
+  return rowNum;
+}
+```
+
+### Complete Reporting Example
+
+```js
+const XLSX = require('xlsx');
+const ExcelJS = require('exceljs');
+
+async function generateSalesReport(salesData, outputPath) {
+  const wb = new ExcelJS.Workbook();
+  wb.creator = 'Sales Analytics';
+  wb.created = new Date();
+
+  // Summary sheet
+  const summary = wb.addWorksheet('Summary', {
+    properties: { tabColor: { argb: 'FF4472C4' } },
+  });
+
+  summary.columns = [
+    { header: 'Metric', key: 'metric', width: 30 },
+    { header: 'Value', key: 'value', width: 20 },
+    { header: 'Change', key: 'change', width: 15 },
+  ];
+
+  // Style header row
+  summary.getRow(1).font = { bold: true, size: 12, color: { argb: 'FFFFFFFF' } };
+  summary.getRow(1).fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF4472C4' } };
+
+  // Add summary rows
+  const metrics = [
+    { metric: 'Total Revenue', value: salesData.totalRevenue, change: '+12.5%' },
+    { metric: 'Total Orders', value: salesData.totalOrders, change: '+8.3%' },
+    { metric: 'Avg Order Value', value: salesData.avgOrderValue, change: '+3.8%' },
+    { metric: 'New Customers', value: salesData.newCustomers, change: '+15.2%' },
+    { metric: 'Repeat Rate', value: salesData.repeatRate + '%', change: '+2.1%' },
+  ];
+
+  metrics.forEach(m => {
+    const row = summary.addRow(m);
+    row.getCell('value').numFmt = typeof m.value === 'number' ? '"$"#,##0.00' : '@';
+  });
+
+  // Detail sheet
+  const detail = wb.addWorksheet('Sales Detail');
+  detail.columns = [
+    { header: 'Date', key: 'date', width: 15 },
+    { header: 'Product', key: 'product', width: 25 },
+    { header: 'Qty', key: 'qty', width: 10 },
+    { header: 'Unit Price', key: 'unitPrice', width: 15 },
+    { header: 'Total', key: 'total', width: 15 },
+    { header: 'Sales Rep', key: 'rep', width: 20 },
+    { header: 'Region', key: 'region', width: 15 },
+  ];
+
+  salesData.items.forEach(item => {
+    const row = detail.addRow(item);
+    row.getCell('date').numFmt = 'yyyy-mm-dd';
+    row.getCell('unitPrice').numFmt = '"$"#,##0.00';
+    row.getCell('total').numFmt = '"$"#,##0.00';
+  });
+
+  // Add chart
+  const chart = detail.addChart('column', {
+    title: { name: 'Sales by Region' },
+    legend: { position: 'b' },
+    plotArea: {
+      catAxis: { title: { name: 'Region' } },
+      valAxis: { title: { name: 'Revenue ($)' } },
+    },
+    tl: { col: 0, row: detail.rowCount + 2 },
+    br: { col: 7, row: detail.rowCount + 20 },
+  });
+
+  await wb.xlsx.writeFile(outputPath);
+  return outputPath;
+}
+```
+
+### Troubleshooting Guide
+
+**Issue: Dates showing as numbers**
+```js
+// Solution: Enable cellDates option
+const wb = XLSX.readFile('file.xlsx', { cellDates: true });
+// Or convert manually
+function excelDateToJsDate(serial) {
+  const utc_days = Math.floor(serial - 25569);
+  const utc_value = utc_days * 86400;
+  return new Date(utc_value * 1000);
+}
+```
+
+**Issue: Formula cells showing old values**
+```js
+// Solution: Force recalculation
+workbook.calcProperties.fullCalcOnLoad = true;
+// Or clear cached formula results
+worksheet.eachRow(row => {
+  row.eachCell(cell => {
+    if (cell.type === ExcelJS.ValueType.Formula) {
+      cell.value = { formula: cell.formula }; // remove cached result
+    }
+  });
+});
+```
+
+**Issue: Large file memory issues**
+```js
+// Solution: Use streaming API
+const workbookWriter = new ExcelJS.stream.xlsx.WorkbookWriter({
+  filename: 'large-output.xlsx',
+  useStyles: true,
+  useSharedStrings: false, // disable for performance
+});
+```
+
+**Issue: Chinese/Japanese/Korean characters garbled in CSV**
+```js
+// Solution: Use UTF-8 BOM
+const csv = XLSX.utils.sheet_to_csv(ws);
+const bom = '\uFEFF'; // UTF-8 BOM
+fs.writeFileSync('output.csv', bom + csv, 'utf8');
+```
+
+**Issue: Cell styles not preserved**
+```js
+// Solution: Enable cellStyles when reading
+const wb = XLSX.read(data, { type: 'buffer', cellStyles: true });
+// Or when writing with ExcelJS, explicitly set styles on each cell
+```
+
+
+---
+
+## SheetJS (xlsx) Complete API Reference
+
+### Installation
+
+```bash
+npm install xlsx
+# or
+yarn add xlsx
+# or with ExcelJS
+npm install exceljs
+```
+
+### Core Reading API
+
+```js
+const XLSX = require('xlsx');
+
+// Read from file path
+const wb = XLSX.readFile('spreadsheet.xlsx', {
+  type: 'file',
+  cellDates: true,
+  cellFormula: true,
+  cellNF: true,
+  cellStyles: true,
+  sheetStubs: false,
+  bookSheets: false,
+  bookDeps: false,
+  bookFiles: false,
+  bookVBA: false,
+  password: '',
+  WTF: false,
+  dense: false,
+  nodim: false,
+  PRN: false,
+  UTC: false,
+});
+
+// Read from Buffer
+const buf = fs.readFileSync('data.xlsx');
+const wb2 = XLSX.read(buf, { type: 'buffer' });
+
+// Read from base64 string
+const b64 = fs.readFileSync('data.xlsx', 'base64');
+const wb3 = XLSX.read(b64, { type: 'base64' });
+
+// Read from array of bytes
+const arr = new Uint8Array(fs.readFileSync('data.xlsx'));
+const wb4 = XLSX.read(arr, { type: 'array' });
+
+// Read from binary string
+const bstr = fs.readFileSync('data.xlsx', 'binary');
+const wb5 = XLSX.read(bstr, { type: 'binary' });
+```
+
+### Workbook Object Structure
+
+```js
+// Workbook structure
+const workbook = {
+  SheetNames: ['Sheet1', 'Sheet2'],  // Ordered list of sheet names
+  Sheets: {
+    'Sheet1': { /* worksheet object */ },
+    'Sheet2': { /* worksheet object */ }
+  },
+  Props: {
+    Author: 'John Doe',
+    Title: 'My Spreadsheet',
+    Subject: 'Data Analysis',
+    CreatedDate: new Date(),
+    ModifiedDate: new Date(),
+    Category: 'Finance',
+    Keywords: 'budget, finance',
+    Description: 'Annual budget spreadsheet',
+    LastAuthor: 'Jane Doe',
+    Company: 'ACME Corp',
+    Manager: 'Bob Smith'
+  },
+  Custprops: {},
+  Calcchain: null,
+  Workbook: {
+    Names: [],
+    Views: [{ RTL: false }],
+    WBProps: {
+      date1904: false,
+      defaultThemeVersion: 124226
+    }
+  }
+};
+```
+
+### Worksheet Object Structure
+
+```js
+// Worksheet structure
+const worksheet = {
+  '!ref': 'A1:Z100',         // cell range
+  '!margins': {              // page margins
+    left: 0.7,
+    right: 0.7,
+    top: 0.75,
+    bottom: 0.75,
+    header: 0.3,
+    footer: 0.3
+  },
+  '!cols': [                 // column info array
+    { wch: 20 },             // width in characters
+    { wpx: 150 },            // width in pixels
+    { hidden: true }         // hidden column
+  ],
+  '!rows': [                 // row info array
+    { hpt: 20 },             // height in points
+    { hpx: 27 },             // height in pixels
+    { hidden: false }
+  ],
+  '!merges': [               // merged cell ranges
+    { s: { r: 0, c: 0 }, e: { r: 0, c: 3 } }
+  ],
+  '!protect': {              // worksheet protection
+    password: 'secret',
+    selectLockedCells: true,
+    selectUnlockedCells: true,
+    formatCells: false,
+    formatColumns: false,
+    formatRows: false,
+    insertColumns: false,
+    insertRows: false,
+    insertHyperlinks: false,
+    deleteColumns: false,
+    deleteRows: false,
+    sort: false,
+    autoFilter: false,
+    pivotTables: false
+  },
+  '!autofilter': { ref: 'A1:F1' },
+  'A1': { t: 's', v: 'Name', w: 'Name' },
+  'B1': { t: 's', v: 'Age' },
+  'A2': { t: 's', v: 'Alice' },
+  'B2': { t: 'n', v: 30, w: '30' }
+};
+```
+
+### Cell Object Reference
+
+```js
+// Cell object properties
+const cell = {
+  t: 'n',          // type: 'b'=bool, 'n'=num, 's'=str, 'd'=date, 'e'=err, 'z'=stub
+  v: 42,           // raw value
+  w: '42',         // formatted text
+  f: 'SUM(A1:A10)',// formula
+  F: 'A1:A10',     // array formula range
+  r: '<t>42</t>',  // rich text
+  h: '42',         // HTML rendering
+  c: [             // comments
+    { a: 'Author', t: 'comment text', T: false }
+  ],
+  z: '#,##0.00',   // number format string
+  l: {             // hyperlink
+    Target: 'https://example.com',
+    Tooltip: 'Visit site'
+  },
+  s: {             // style object
+    font: { name: 'Arial', sz: 12, bold: true, color: { rgb: 'FF0000' } },
+    fill: { patternType: 'solid', fgColor: { rgb: 'FFFFCC' } },
+    border: {
+      top: { style: 'thin', color: { auto: 1 } },
+      bottom: { style: 'thin', color: { auto: 1 } },
+      left: { style: 'thin', color: { auto: 1 } },
+      right: { style: 'thin', color: { auto: 1 } }
+    },
+    alignment: {
+      horizontal: 'center',
+      vertical: 'middle',
+      wrapText: true,
+      indent: 0,
+      readingOrder: 0,
+      textRotation: 0,
+      shrinkToFit: false
+    },
+    numFmt: '0.00%'
+  }
+};
+```
+
+### Writing Files
+
+```js
+// Write to file
+XLSX.writeFile(workbook, 'output.xlsx', {
+  bookType: 'xlsx',        // 'xlsx'|'xlsm'|'xlsb'|'xls'|'csv'|'txt'|'sylk'|'html'|'dif'|'dbf'|'prn'|'ods'
+  type: 'file',
+  compression: true,       // zip compression
+  Props: { Author: 'Me' },
+  bookSST: false,          // use shared string table
+  bookVBA: false,
+  cellDates: false,        // write dates as date types
+  cellStyles: false,       // write styles
+  numbers: XLSX.SSF._table,
+  sheet: 'Sheet1',         // for single-sheet formats
+});
+
+// Write to buffer
+const wbuf = XLSX.write(workbook, { bookType: 'xlsx', type: 'buffer' });
+
+// Write to base64
+const wb64 = XLSX.write(workbook, { bookType: 'xlsx', type: 'base64' });
+
+// Write to binary string
+const wbin = XLSX.write(workbook, { bookType: 'xlsx', type: 'binary' });
+
+// Write to array
+const warr = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
+```
+
+### Sheet Operations
+
+```js
+// Access sheets
+const sheet = workbook.Sheets[workbook.SheetNames[0]];
+
+// Add a new sheet
+const newSheet = XLSX.utils.aoa_to_sheet([
+  ['Name', 'Age', 'Score'],
+  ['Alice', 30, 95.5],
+  ['Bob', 25, 87.3],
+  ['Charlie', 35, 91.0],
+]);
+XLSX.utils.book_append_sheet(workbook, newSheet, 'People');
+
+// Delete a sheet
+const idx = workbook.SheetNames.indexOf('OldSheet');
+if (idx !== -1) {
+  workbook.SheetNames.splice(idx, 1);
+  delete workbook.Sheets['OldSheet'];
+}
+
+// Copy a sheet
+function copySheet(wb, fromName, toName) {
+  const srcSheet = wb.Sheets[fromName];
+  const destSheet = JSON.parse(JSON.stringify(srcSheet));
+  XLSX.utils.book_append_sheet(wb, destSheet, toName);
+}
+```
+
+### Data Conversion Utilities
+
+```js
+// Array of arrays to worksheet
+const aoaData = [
+  ['ID', 'Product', 'Qty', 'Price', 'Total'],
+  [1, 'Widget A', 10, 9.99, 99.90],
+  [2, 'Widget B', 5, 14.99, 74.95],
+  [3, 'Gadget X', 3, 29.99, 89.97],
+];
+const ws1 = XLSX.utils.aoa_to_sheet(aoaData, {
+  header: [],           // custom header row
+  skipHeader: false,    // skip header
+  origin: 'A1',         // starting cell
+  dateNF: 'yyyy-mm-dd', // date format
+  cellDates: true,      // output dates as Date objects
+  dense: false,         // use dense format
+  sheetRows: 100,       // max rows to read
+});
+
+// Array of objects to worksheet
+const aooData = [
+  { name: 'Alice', dept: 'Engineering', salary: 95000 },
+  { name: 'Bob', dept: 'Marketing', salary: 72000 },
+  { name: 'Charlie', dept: 'Sales', salary: 68000 },
+];
+const ws2 = XLSX.utils.json_to_sheet(aooData, {
+  header: ['name', 'dept', 'salary'],  // key order
+  skipHeader: false,
+  origin: { r: 1, c: 0 },
+  dateNF: 'yyyy-mm-dd',
+});
+
+// Worksheet to array of arrays
+const aoa = XLSX.utils.sheet_to_aoa(worksheet, {
+  header: 1,           // 1 = return arrays, 'A' = use column letters
+  defval: null,        // default value for empty cells
+  blankrows: false,    // include blank rows
+  range: 'A1:D10',     // only this range
+  raw: true,           // return raw values
+  rawNumbers: false,   // return raw number values
+  dateNF: 'yyyy-mm-dd',
+});
+
+// Worksheet to array of objects
+const aoo = XLSX.utils.sheet_to_json(worksheet, {
+  header: 1,           // use row 1 as header
+  defval: '',
+  blankrows: false,
+  range: 1,            // start from row index 1
+  raw: false,
+});
+
+// Worksheet to CSV
+const csv = XLSX.utils.sheet_to_csv(worksheet, {
+  FS: ',',             // field separator
+  RS: '\n',            // row separator
+  dateNF: 'yyyy-mm-dd',
+  strip: false,        // strip trailing whitespace
+  blankrows: true,
+  skipHidden: false,
+});
+
+// Worksheet to HTML
+const html = XLSX.utils.sheet_to_html(worksheet, {
+  id: 'table1',
+  editable: false,
+  header: '',
+  footer: '',
+});
+
+// Worksheet to formula text
+const txt = XLSX.utils.sheet_to_formulae(worksheet);
+```
+
+### Cell Range Operations
+
+```js
+// Encode/decode cell addresses
+const addr = XLSX.utils.encode_cell({ r: 0, c: 0 }); // 'A1'
+const cell2 = XLSX.utils.decode_cell('A1');            // {r:0, c:0}
+const col = XLSX.utils.encode_col(0);                  // 'A'
+const row = XLSX.utils.encode_row(0);                  // '1'
+const range = XLSX.utils.encode_range({ s:{r:0,c:0}, e:{r:9,c:4} }); // 'A1:E10'
+const rangeObj = XLSX.utils.decode_range('A1:E10'); // {s:{r:0,c:0}, e:{r:9,c:4}}
+
+// Update worksheet range
+function updateSheetRange(ws) {
+  const range = XLSX.utils.decode_range(ws['!ref']);
+  // iterate over cells
+  for (let r = range.s.r; r <= range.e.r; r++) {
+    for (let c = range.s.c; c <= range.e.c; c++) {
+      const cellRef = XLSX.utils.encode_cell({ r, c });
+      const cell = ws[cellRef];
+      if (!cell) continue;
+      // process cell
+    }
+  }
+}
+
+// Set cell value
+function setCellValue(ws, cellRef, value, type) {
+  const cell = ws[cellRef] || (ws[cellRef] = {});
+  cell.v = value;
+  cell.t = type || (typeof value === 'number' ? 'n' : 's');
+  if (typeof value === 'boolean') cell.t = 'b';
+  if (value instanceof Date) cell.t = 'd';
+}
+```
+
+### Number Formatting
+
+```js
+// Common number formats
+const numberFormats = {
+  // General
+  general: 'General',
+  // Number
+  integer: '0',
+  decimal1: '0.0',
+  decimal2: '0.00',
+  thousands: '#,##0',
+  thousandsDecimal2: '#,##0.00',
+  // Percentage
+  percent: '0%',
+  percentDecimal2: '0.00%',
+  // Currency
+  usd: '"$"#,##0.00',
+  usdNeg: '"$"#,##0.00;[Red]"$"#,##0.00',
+  euro: '[$€-407]#,##0.00',
+  gbp: '[$£-809]#,##0.00',
+  // Date
+  date: 'yyyy-mm-dd',
+  dateUs: 'mm/dd/yyyy',
+  dateEu: 'dd/mm/yyyy',
+  datetime: 'yyyy-mm-dd hh:mm:ss',
+  time: 'hh:mm:ss',
+  time12: 'h:mm AM/PM',
+  // Special
+  zip: '00000',
+  phone: '(000) 000-0000',
+  ssn: '000-00-0000',
+  // Scientific
+  scientific: '0.00E+00',
+  // Fraction
+  fraction: '# ?/?',
+  fractionHalf: '# ??/??',
+  // Text
+  text: '@',
+};
+
+// Format a value
+function formatValue(value, formatStr) {
+  return XLSX.SSF.format(formatStr, value);
+}
+```
+
+### ExcelJS Complete API
+
+```js
+const ExcelJS = require('exceljs');
+
+// Create workbook
+const workbook = new ExcelJS.Workbook();
+workbook.creator = 'My App';
+workbook.lastModifiedBy = 'My App';
+workbook.created = new Date();
+workbook.modified = new Date();
+workbook.lastPrinted = new Date();
+workbook.properties.date1904 = false;
+workbook.calcProperties.fullCalcOnLoad = true;
+
+// Add worksheet
+const worksheet = workbook.addWorksheet('My Sheet', {
+  properties: {
+    tabColor: { argb: 'FF00FF00' },
+    outlineLevelCol: 0,
+    outlineLevelRow: 0,
+    defaultRowHeight: 15,
+    defaultColWidth: 8,
+    dyDescent: 55,
+    showGridLines: true,
+  },
+  pageSetup: {
+    paperSize: 9,           // A4
+    orientation: 'portrait', // 'portrait' | 'landscape'
+    fitToPage: true,
+    fitToHeight: 1,
+    fitToWidth: 1,
+    margins: {
+      left: 0.7, right: 0.7,
+      top: 0.75, bottom: 0.75,
+      header: 0.3, footer: 0.3
+    },
+    horizontalCentered: true,
+    verticalCentered: false,
+    printGridLines: false,
+    printTitlesRow: '$1:$1',
+    printTitlesColumn: '$A:$A',
+    firstPageNumber: 1,
+    useFirstPageNumber: false,
+  },
+  headerFooter: {
+    firstHeader: '&CFirst Page Header',
+    firstFooter: '&CFirst Page Footer',
+    oddHeader: '&L&"Calibri,Bold"&K000000My Report&R&D',
+    oddFooter: '&CPage &P of &N',
+    evenHeader: '&CReport',
+    evenFooter: '&CPage &P of &N',
+    differentFirst: false,
+    differentOddEven: false,
+  },
+  views: [
+    {
+      state: 'frozen',
+      xSplit: 1,
+      ySplit: 1,
+      topLeftCell: 'B2',
+      activeCell: 'A1',
+      showGridLines: true,
+      showRowColHeaders: true,
+      zoomScale: 100,
+      zoomScaleNormal: 100,
+      zoomScalePageLayoutView: 100,
+    }
+  ]
+});
+```
+
+### ExcelJS Column Operations
+
+```js
+// Define columns
+worksheet.columns = [
+  {
+    header: 'ID', key: 'id', width: 8,
+    style: { font: { bold: true }, alignment: { horizontal: 'center' } }
+  },
+  {
+    header: 'Name', key: 'name', width: 25,
+    style: { font: { name: 'Calibri', size: 11 } }
+  },
+  {
+    header: 'Date', key: 'date', width: 15,
+    style: { numFmt: 'yyyy-mm-dd' }
+  },
+  {
+    header: 'Amount', key: 'amount', width: 15,
+    style: { numFmt: '"$"#,##0.00' }
+  },
+  {
+    header: 'Status', key: 'status', width: 12,
+    style: { alignment: { horizontal: 'center' } }
+  },
+];
+
+// Get/manipulate a column
+const col = worksheet.getColumn('name'); // or worksheet.getColumn(2)
+col.header = 'Full Name';
+col.key = 'fullName';
+col.width = 30;
+col.hidden = false;
+col.outlineLevel = 0;
+col.style = { font: { bold: false } };
+
+// Iterate columns
+worksheet.columns.forEach(column => {
+  column.width = Math.max(column.header.length + 2, 12);
+});
+
+// Get column by number
+const firstCol = worksheet.getColumn(1);
+const lastColNum = worksheet.columnCount;
+const actualLastColNum = worksheet.actualColumnCount;
+```
+
+### ExcelJS Row Operations
+
+```js
+// Add rows
+worksheet.addRow({ id: 1, name: 'Alice Smith', date: new Date('2024-01-15'), amount: 1500.00, status: 'Active' });
+worksheet.addRow([2, 'Bob Johnson', new Date('2024-02-20'), 2200.50, 'Inactive']);
+
+// Add multiple rows
+const rows = [
+  { id: 3, name: 'Charlie Brown', amount: 1800 },
+  { id: 4, name: 'Diana Prince', amount: 3200 },
+  { id: 5, name: 'Eve Wilson', amount: 2750 },
+];
+worksheet.addRows(rows);
+
+// Get row
+const row = worksheet.getRow(2);
+row.height = 25;
+row.hidden = false;
+row.outlineLevel = 0;
+row.collapsed = false;
+row.getCell(1).value = 'Updated';
+
+// Commit row (for streaming)
+row.commit();
+
+// Iterate rows
+worksheet.eachRow({ includeEmpty: false }, (row, rowNumber) => {
+  console.log(`Row ${rowNumber}:`, row.values);
+  row.eachCell({ includeEmpty: true }, (cell, colNumber) => {
+    console.log(`  Cell ${colNumber}:`, cell.value);
+  });
+});
+
+// Insert row
+worksheet.insertRow(3, { id: 99, name: 'Inserted Row', amount: 0 });
+
+// Duplicate row
+worksheet.duplicateRow(1, 1, true);
+
+// Delete row
+worksheet.spliceRows(3, 1);
+
+// Row properties
+const lastRow = worksheet.lastRow;
+const rowCount = worksheet.rowCount;
+const actualRowCount = worksheet.actualRowCount;
+```
+
+### ExcelJS Cell Operations
+
+```js
+// Get cell
+const cell = worksheet.getCell('A1');  // by address
+const cell2 = worksheet.getCell(1, 1); // by row, col
+
+// Set values
+cell.value = 'Hello World';
+cell.value = 42;
+cell.value = true;
+cell.value = new Date();
+cell.value = { formula: 'SUM(B2:B10)', result: 550 };
+cell.value = { formula: 'SUM(A1:A10)' };
+cell.value = { sharedFormula: 'A2', result: 100 };
+cell.value = { richText: [
+  { font: { bold: true, color: { argb: 'FF0000FF' } }, text: 'Bold Blue' },
+  { font: { italic: true }, text: ' and Italic' },
+  { text: ' Normal text' }
+]};
+cell.value = { hyperlink: 'https://example.com', text: 'Visit Site', tooltip: 'Click here' };
+cell.value = { error: '#DIV/0!' };
+
+// Cell type
+console.log(cell.type); // ExcelJS.ValueType.Number etc.
+
+// Cell formatting
+cell.numFmt = '#,##0.00';
+cell.font = {
+  name: 'Calibri',
+  family: 2,
+  size: 12,
+  scheme: 'minor',
+  bold: true,
+  italic: false,
+  underline: true,  // true | 'none' | 'single' | 'double' | 'singleAccounting' | 'doubleAccounting'
+  strike: false,
+  outline: false,
+  color: { argb: 'FF000000' },
+  charset: 1,
+  vertAlign: 'superscript',  // 'superscript' | 'subscript'
+};
+cell.alignment = {
+  horizontal: 'center',   // 'left'|'center'|'right'|'fill'|'justify'|'centerContinuous'|'distributed'
+  vertical: 'middle',     // 'top'|'middle'|'bottom'|'distributed'|'justify'
+  wrapText: true,
+  shrinkToFit: false,
+  indent: 0,
+  readingOrder: 'ltr',    // 'ltr'|'rtl'
+  textRotation: 45,       // -90 to 90 degrees
+};
+cell.border = {
+  top: { style: 'thin', color: { argb: 'FF000000' } },
+  left: { style: 'thin', color: { argb: 'FF000000' } },
+  bottom: { style: 'double', color: { argb: 'FF000000' } },
+  right: { style: 'thin', color: { argb: 'FF000000' } },
+  diagonal: { up: true, down: false, style: 'dashed', color: { argb: 'FFFF0000' } },
+};
+cell.fill = {
+  type: 'pattern',
+  pattern: 'solid',
+  fgColor: { argb: 'FFFFFF00' },
+  bgColor: { argb: 'FFFFFFFF' },
+};
+// Gradient fill
+cell.fill = {
+  type: 'gradient',
+  gradient: 'angle',
+  degree: 0,
+  stops: [
+    { position: 0, color: { argb: 'FF0000FF' } },
+    { position: 0.5, color: { argb: 'FFFFFFFF' } },
+    { position: 1, color: { argb: 'FFFF0000' } },
+  ]
+};
+
+// Protection
+cell.protection = {
+  locked: true,
+  hidden: false,
+};
+
+// Merge cells
+worksheet.mergeCells('A1:D1');
+worksheet.mergeCells(1, 1, 1, 4);  // top, left, bottom, right
+worksheet.unMergeCells('A1:D1');
+```
+
+### ExcelJS Data Validation
+
+```js
+// List validation
+worksheet.getCell('E2').dataValidation = {
+  type: 'list',
+  allowBlank: true,
+  formulae: ['"Active,Inactive,Pending"'],
+  showErrorMessage: true,
+  errorStyle: 'error',  // 'error'|'warning'|'information'
+  errorTitle: 'Invalid Input',
+  error: 'Please select from the list',
+  showInputMessage: true,
+  promptTitle: 'Status',
+  prompt: 'Select employee status',
+};
+
+// Whole number validation
+worksheet.getCell('B2').dataValidation = {
+  type: 'whole',
+  operator: 'between',  // 'between'|'notBetween'|'equal'|'notEqual'|'greaterThan'|'lessThan'|'greaterThanOrEqual'|'lessThanOrEqual'
+  formula1: 1,
+  formula2: 100,
+  showErrorMessage: true,
+  errorTitle: 'Invalid',
+  error: 'Value must be between 1 and 100',
+};
+
+// Decimal validation
+worksheet.getCell('D2').dataValidation = {
+  type: 'decimal',
+  operator: 'greaterThan',
+  formula1: 0,
+  showErrorMessage: true,
+  errorTitle: 'Invalid Amount',
+  error: 'Amount must be positive',
+};
+
+// Date validation
+worksheet.getCell('C2').dataValidation = {
+  type: 'date',
+  operator: 'greaterThanOrEqual',
+  formula1: new Date(2020, 0, 1),
+  showErrorMessage: true,
+  errorTitle: 'Invalid Date',
+  error: 'Date must be after 2020-01-01',
+};
+
+// Custom formula validation
+worksheet.getCell('F2').dataValidation = {
+  type: 'custom',
+  formulae: ['=AND(LEN(F2)>=3,LEN(F2)<=50)'],
+  showErrorMessage: true,
+  errorTitle: 'Invalid Length',
+  error: 'Must be between 3 and 50 characters',
+};
+```
+
+### ExcelJS Conditional Formatting
+
+```js
+// Color scale
+worksheet.addConditionalFormatting({
+  ref: 'D2:D100',
+  rules: [
+    {
+      type: 'colorScale',
+      cfvo: [
+        { type: 'min' },
+        { type: 'percentile', value: 50 },
+        { type: 'max' },
+      ],
+      color: [
+        { argb: 'FFF8696B' },  // red
+        { argb: 'FFFFEB84' },  // yellow
+        { argb: 'FF63BE7B' },  // green
+      ],
+    }
+  ]
+});
+
+// Data bar
+worksheet.addConditionalFormatting({
+  ref: 'D2:D100',
+  rules: [
+    {
+      type: 'dataBar',
+      minLength: 0,
+      maxLength: 100,
+      cfvo: [{ type: 'min' }, { type: 'max' }],
+      color: { argb: 'FF638EC6' },
+      gradient: true,
+      border: false,
+      negativeBarColorSameAsPositive: false,
+      showValue: true,
+      axisPosition: 'auto',
+    }
+  ]
+});
+
+// Icon set
+worksheet.addConditionalFormatting({
+  ref: 'D2:D100',
+  rules: [
+    {
+      type: 'iconSet',
+      iconSet: '3TrafficLights1',  // many options
+      showValue: true,
+      reverse: false,
+      cfvo: [
+        { type: 'percent', value: 0 },
+        { type: 'percent', value: 33 },
+        { type: 'percent', value: 67 },
+      ],
+    }
+  ]
+});
+
+// Cell value rule
+worksheet.addConditionalFormatting({
+  ref: 'B2:B100',
+  rules: [
+    {
+      type: 'cellIs',
+      operator: 'greaterThan',
+      formulae: [100],
+      priority: 1,
+      style: {
+        font: { bold: true, color: { argb: 'FF006100' } },
+        fill: { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFC6EFCE' } },
+      }
+    }
+  ]
+});
+
+// Contains text
+worksheet.addConditionalFormatting({
+  ref: 'A2:A100',
+  rules: [
+    {
+      type: 'containsText',
+      operator: 'containsText',
+      text: 'URGENT',
+      priority: 1,
+      style: {
+        font: { bold: true, color: { argb: 'FF9C0006' } },
+        fill: { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFFFC7CE' } },
+      }
+    }
+  ]
+});
+```
+
+### ExcelJS Charts
+
+```js
+// Add chart to worksheet
+worksheet.addChart({
+  type: 'bar',           // 'bar'|'column'|'line'|'area'|'pie'|'doughnut'|'scatter'|'bubble'|'radar'|'stock'
+  style: 10,
+  title: { name: 'Monthly Sales' },
+  legend: {
+    position: 'b',      // 't'|'b'|'l'|'r'|'tr'
+    overlay: false,
+  },
+  plotArea: {
+    catAxis: {
+      title: { name: 'Month' },
+      numFmt: 'mmm',
+      tickLblSkip: 1,
+      tickMarkSkip: 1,
+    },
+    valAxis: {
+      title: { name: 'Revenue ($)' },
+      numFmt: '"$"#,##0',
+      minVal: 0,
+      gridlines: { major: {} },
+    },
+    ser: [
+      {
+        name: { name: 'Q1 Sales', ref: 'Sheet1!$B$1' },
+        labels: { ref: 'Sheet1!$A$2:$A$13' },
+        values: { ref: 'Sheet1!$B$2:$B$13' },
+        fill: { type: 'solid', color: '4472C4' },
+        border: { pt: 1, color: '4472C4' },
+        marker: {
+          symbol: 'circle',
+          size: 6,
+          fill: { type: 'solid', color: '4472C4' },
+        },
+        dataPt: [],
+        dLbls: {
+          position: 'outEnd',
+          showVal: true,
+          showCatName: false,
+          showSerName: false,
+          showPercent: false,
+          showLeaderLines: true,
+          numFmt: '"$"#,##0',
+        },
+        trendline: {
+          type: 'linear',   // 'exp'|'log'|'poly'|'power'|'movAvg'
+          name: 'Trend',
+          forward: 2,
+          backward: 0,
+          intercept: 0,
+          dispRSqr: true,
+          dispEq: true,
+        }
+      },
+    ],
+  },
+  trendline: false,
+  position: { type: 'twoCellAnchor', from: 'A15', to: 'H30' },
+});
+```
+
+### ExcelJS Reading Files
+
+```js
+// Read xlsx file
+const workbook = new ExcelJS.Workbook();
+await workbook.xlsx.readFile('data.xlsx');
+
+// Read from stream
+const stream = fs.createReadStream('data.xlsx');
+await workbook.xlsx.read(stream);
+
+// Read from buffer
+const buffer = fs.readFileSync('data.xlsx');
+await workbook.xlsx.load(buffer);
+
+// Read csv
+await workbook.csv.readFile('data.csv', {
+  dateFormats: ['YYYY/MM/DD', 'MM-DD-YYYY'],
+  map(value, index) {
+    switch (index) {
+      case 0: return parseInt(value, 10);
+      case 3: return parseFloat(value);
+      default: return value;
+    }
+  },
+  sheetName: 'Sheet1',
+  encoding: 'utf8',
+  parserOptions: {
+    delimiter: ',',
+    quote: '"',
+    escape: '"',
+    comment: '#',
+    relax: true,
+    trim: true,
+    skip_empty_lines: true,
+    skip_lines_with_error: false,
+  }
+});
+
+// Iterate worksheets
+workbook.eachSheet((worksheet, sheetId) => {
+  console.log(`Sheet: ${worksheet.name} (id: ${sheetId})`);
+  worksheet.eachRow((row, rowNumber) => {
+    console.log(`Row ${rowNumber}:`, row.values.slice(1));
+  });
+});
+```
+
+### ExcelJS Writing Files
+
+```js
+// Write xlsx
+await workbook.xlsx.writeFile('output.xlsx');
+
+// Write to buffer
+const buffer = await workbook.xlsx.writeBuffer();
+
+// Write to stream
+const stream = fs.createWriteStream('output.xlsx');
+await workbook.xlsx.write(stream);
+stream.end();
+
+// Write csv
+await workbook.csv.writeFile('output.csv', {
+  sheetName: 'Sheet1',
+  encoding: 'utf8',
+  includeEmptyRows: false,
+  dateUTC: false,
+  dateFormat: 'YYYY/MM/DD',
+  formatterOptions: {
+    delimiter: ',',
+    quote: '"',
+    escape: '"',
+    eof: '\n',
+  },
+  map(value, index) {
+    if (value instanceof Date) {
+      return value.toISOString().split('T')[0];
+    }
+    return value;
+  }
+});
+```
+
+### Streaming Large Files (SheetJS)
+
+```js
+const XLSX = require('xlsx');
+
+// Stream reading
+function readLargeFile(filePath) {
+  const workbook = XLSX.readFile(filePath, {
+    type: 'file',
+    sheetRows: 0,          // 0 = all rows
+    cellDates: true,
+    cellFormula: false,    // skip formula parsing for speed
+    cellHTML: false,       // skip HTML rendering for speed
+    bookSheets: false,     // read all sheets
+  });
+  return workbook;
+}
+
+// Process row by row
+function processFileStreaming(filePath, sheetName, rowCallback) {
+  const workbook = XLSX.readFile(filePath);
+  const worksheet = workbook.Sheets[sheetName || workbook.SheetNames[0]];
+  const range = XLSX.utils.decode_range(worksheet['!ref']);
+
+  for (let r = range.s.r; r <= range.e.r; r++) {
+    const rowData = {};
+    for (let c = range.s.c; c <= range.e.c; c++) {
+      const cellRef = XLSX.utils.encode_cell({ r, c });
+      const cell = worksheet[cellRef];
+      if (cell) rowData[XLSX.utils.encode_col(c)] = cell.v;
+    }
+    rowCallback(rowData, r);
+  }
+}
+
+// ExcelJS streaming read
+const ExcelJS = require('exceljs');
+
+async function streamReadXlsx(filePath) {
+  const workbookReader = new ExcelJS.stream.xlsx.WorkbookReader(filePath, {
+    entries: 'emit',
+    sharedStrings: 'cache',
+    hyperlinks: 'cache',
+    styles: 'cache',
+    worksheets: 'emit',
+  });
+
+  workbookReader.on('worksheet', worksheet => {
+    worksheet.on('row', row => {
+      const values = row.values.slice(1); // remove index 0
+      console.log('Row:', values);
+    });
+    worksheet.on('dimension', dimension => {
+      console.log('Dimension:', dimension);
+    });
+  });
+
+  workbookReader.on('shared-strings', sharedStrings => {
+    console.log('Shared strings count:', sharedStrings.count);
+  });
+
+  workbookReader.on('end', () => {
+    console.log('Done reading');
+  });
+
+  await workbookReader.read();
+}
+
+// ExcelJS streaming write
+async function streamWriteXlsx(outputPath, data) {
+  const workbookWriter = new ExcelJS.stream.xlsx.WorkbookWriter({
+    filename: outputPath,
+    useStyles: true,
+    useSharedStrings: true,
+  });
+
+  const worksheet = workbookWriter.addWorksheet('Data');
+  worksheet.columns = [
+    { header: 'ID', key: 'id', width: 10 },
+    { header: 'Name', key: 'name', width: 30 },
+    { header: 'Value', key: 'value', width: 15 },
+  ];
+
+  for (const row of data) {
+    await worksheet.addRow(row).commit();
+  }
+
+  await worksheet.commit();
+  await workbookWriter.commit();
+}
+```
+
+### Named Ranges and Defined Names
+
+```js
+// SheetJS named ranges
+const wb = XLSX.utils.book_new();
+const ws = XLSX.utils.aoa_to_sheet([['a','b'],['c','d']]);
+XLSX.utils.book_append_sheet(wb, ws, 'Sheet1');
+
+// Add named range
+wb.Workbook = wb.Workbook || {};
+wb.Workbook.Names = wb.Workbook.Names || [];
+wb.Workbook.Names.push({
+  Name: 'MyRange',
+  Ref: 'Sheet1!$A$1:$B$2',
+  Comment: 'My named range',
+  Hidden: false,
+});
+
+// ExcelJS defined names
+workbook.definedNames.add('Sheet1!$A$1:$A$10', 'SalesData');
+workbook.definedNames.add('Sheet1!$B$1:$B$10', 'ExpenseData');
+
+// Get defined name
+const name = workbook.definedNames.getMatrix('SalesData');
+console.log(name);
+
+// Remove defined name
+workbook.definedNames.remove('SalesData');
+
+// List all defined names
+workbook.definedNames.model.forEach(([name, refStr]) => {
+  console.log(`${name}: ${refStr}`);
+});
+```
+
+### Pivot Table Patterns
+
+```js
+// Create pivot-like summary using SheetJS
+function createPivotSummary(data, rowField, colField, valueField) {
+  // Collect unique row and column values
+  const rows = [...new Set(data.map(d => d[rowField]))].sort();
+  const cols = [...new Set(data.map(d => d[colField]))].sort();
+
+  // Build summary matrix
+  const matrix = [['', ...cols, 'Total']];
+
+  for (const row of rows) {
+    const rowData = [row];
+    let rowTotal = 0;
+
+    for (const col of cols) {
+      const val = data
+        .filter(d => d[rowField] === row && d[colField] === col)
+        .reduce((sum, d) => sum + (d[valueField] || 0), 0);
+      rowData.push(val);
+      rowTotal += val;
+    }
+
+    rowData.push(rowTotal);
+    matrix.push(rowData);
+  }
+
+  // Add grand total row
+  const totals = ['Grand Total'];
+  let grandTotal = 0;
+  for (let c = 1; c <= cols.length; c++) {
+    const colTotal = matrix.slice(1).reduce((sum, r) => sum + (r[c] || 0), 0);
+    totals.push(colTotal);
+    grandTotal += colTotal;
+  }
+  totals.push(grandTotal);
+  matrix.push(totals);
+
+  const wb = XLSX.utils.book_new();
+  const ws = XLSX.utils.aoa_to_sheet(matrix);
+  XLSX.utils.book_append_sheet(wb, ws, 'Pivot');
+  return wb;
+}
+```
+
+### CSV and TSV Processing
+
+```js
+// Parse CSV with SheetJS
+function parseCSV(csvString, options = {}) {
+  const wb = XLSX.read(csvString, {
+    type: 'string',
+    raw: false,
+    ...options,
+  });
+  return XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]]);
+}
+
+// Generate CSV from data
+function generateCSV(data, fields) {
+  const ws = XLSX.utils.json_to_sheet(data, { header: fields });
+  return XLSX.utils.sheet_to_csv(ws);
+}
+
+// Handle large CSV files
+const fs = require('fs');
+const readline = require('readline');
+
+async function processLargeCSV(filePath, processRow) {
+  const stream = fs.createReadStream(filePath);
+  const rl = readline.createInterface({ input: stream, crlfDelay: Infinity });
+
+  let headers = null;
+  let rowNum = 0;
+
+  for await (const line of rl) {
+    if (!headers) {
+      headers = line.split(',').map(h => h.trim().replace(/"/g, ''));
+    } else {
+      const values = line.split(',');
+      const row = {};
+      headers.forEach((h, i) => { row[h] = values[i]?.trim().replace(/"/g, ''); });
+      await processRow(row, ++rowNum);
+    }
+  }
+
+  return rowNum;
+}
+```
+
+### Complete Reporting Example
+
+```js
+const XLSX = require('xlsx');
+const ExcelJS = require('exceljs');
+
+async function generateSalesReport(salesData, outputPath) {
+  const wb = new ExcelJS.Workbook();
+  wb.creator = 'Sales Analytics';
+  wb.created = new Date();
+
+  // Summary sheet
+  const summary = wb.addWorksheet('Summary', {
+    properties: { tabColor: { argb: 'FF4472C4' } },
+  });
+
+  summary.columns = [
+    { header: 'Metric', key: 'metric', width: 30 },
+    { header: 'Value', key: 'value', width: 20 },
+    { header: 'Change', key: 'change', width: 15 },
+  ];
+
+  // Style header row
+  summary.getRow(1).font = { bold: true, size: 12, color: { argb: 'FFFFFFFF' } };
+  summary.getRow(1).fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF4472C4' } };
+
+  // Add summary rows
+  const metrics = [
+    { metric: 'Total Revenue', value: salesData.totalRevenue, change: '+12.5%' },
+    { metric: 'Total Orders', value: salesData.totalOrders, change: '+8.3%' },
+    { metric: 'Avg Order Value', value: salesData.avgOrderValue, change: '+3.8%' },
+    { metric: 'New Customers', value: salesData.newCustomers, change: '+15.2%' },
+    { metric: 'Repeat Rate', value: salesData.repeatRate + '%', change: '+2.1%' },
+  ];
+
+  metrics.forEach(m => {
+    const row = summary.addRow(m);
+    row.getCell('value').numFmt = typeof m.value === 'number' ? '"$"#,##0.00' : '@';
+  });
+
+  // Detail sheet
+  const detail = wb.addWorksheet('Sales Detail');
+  detail.columns = [
+    { header: 'Date', key: 'date', width: 15 },
+    { header: 'Product', key: 'product', width: 25 },
+    { header: 'Qty', key: 'qty', width: 10 },
+    { header: 'Unit Price', key: 'unitPrice', width: 15 },
+    { header: 'Total', key: 'total', width: 15 },
+    { header: 'Sales Rep', key: 'rep', width: 20 },
+    { header: 'Region', key: 'region', width: 15 },
+  ];
+
+  salesData.items.forEach(item => {
+    const row = detail.addRow(item);
+    row.getCell('date').numFmt = 'yyyy-mm-dd';
+    row.getCell('unitPrice').numFmt = '"$"#,##0.00';
+    row.getCell('total').numFmt = '"$"#,##0.00';
+  });
+
+  // Add chart
+  const chart = detail.addChart('column', {
+    title: { name: 'Sales by Region' },
+    legend: { position: 'b' },
+    plotArea: {
+      catAxis: { title: { name: 'Region' } },
+      valAxis: { title: { name: 'Revenue ($)' } },
+    },
+    tl: { col: 0, row: detail.rowCount + 2 },
+    br: { col: 7, row: detail.rowCount + 20 },
+  });
+
+  await wb.xlsx.writeFile(outputPath);
+  return outputPath;
+}
+```
+
+### Troubleshooting Guide
+
+**Issue: Dates showing as numbers**
+```js
+// Solution: Enable cellDates option
+const wb = XLSX.readFile('file.xlsx', { cellDates: true });
+// Or convert manually
+function excelDateToJsDate(serial) {
+  const utc_days = Math.floor(serial - 25569);
+  const utc_value = utc_days * 86400;
+  return new Date(utc_value * 1000);
+}
+```
+
+**Issue: Formula cells showing old values**
+```js
+// Solution: Force recalculation
+workbook.calcProperties.fullCalcOnLoad = true;
+// Or clear cached formula results
+worksheet.eachRow(row => {
+  row.eachCell(cell => {
+    if (cell.type === ExcelJS.ValueType.Formula) {
+      cell.value = { formula: cell.formula }; // remove cached result
+    }
+  });
+});
+```
+
+**Issue: Large file memory issues**
+```js
+// Solution: Use streaming API
+const workbookWriter = new ExcelJS.stream.xlsx.WorkbookWriter({
+  filename: 'large-output.xlsx',
+  useStyles: true,
+  useSharedStrings: false, // disable for performance
+});
+```
+
+**Issue: Chinese/Japanese/Korean characters garbled in CSV**
+```js
+// Solution: Use UTF-8 BOM
+const csv = XLSX.utils.sheet_to_csv(ws);
+const bom = '\uFEFF'; // UTF-8 BOM
+fs.writeFileSync('output.csv', bom + csv, 'utf8');
+```
+
+**Issue: Cell styles not preserved**
+```js
+// Solution: Enable cellStyles when reading
+const wb = XLSX.read(data, { type: 'buffer', cellStyles: true });
+// Or when writing with ExcelJS, explicitly set styles on each cell
+```
+
+
+---
+
+## SheetJS (xlsx) Complete API Reference
+
+### Installation
+
+```bash
+npm install xlsx
+# or
+yarn add xlsx
+# or with ExcelJS
+npm install exceljs
+```
+
+### Core Reading API
+
+```js
+const XLSX = require('xlsx');
+
+// Read from file path
+const wb = XLSX.readFile('spreadsheet.xlsx', {
+  type: 'file',
+  cellDates: true,
+  cellFormula: true,
+  cellNF: true,
+  cellStyles: true,
+  sheetStubs: false,
+  bookSheets: false,
+  bookDeps: false,
+  bookFiles: false,
+  bookVBA: false,
+  password: '',
+  WTF: false,
+  dense: false,
+  nodim: false,
+  PRN: false,
+  UTC: false,
+});
+
+// Read from Buffer
+const buf = fs.readFileSync('data.xlsx');
+const wb2 = XLSX.read(buf, { type: 'buffer' });
+
+// Read from base64 string
+const b64 = fs.readFileSync('data.xlsx', 'base64');
+const wb3 = XLSX.read(b64, { type: 'base64' });
+
+// Read from array of bytes
+const arr = new Uint8Array(fs.readFileSync('data.xlsx'));
+const wb4 = XLSX.read(arr, { type: 'array' });
+
+// Read from binary string
+const bstr = fs.readFileSync('data.xlsx', 'binary');
+const wb5 = XLSX.read(bstr, { type: 'binary' });
+```
+
+### Workbook Object Structure
+
+```js
+// Workbook structure
+const workbook = {
+  SheetNames: ['Sheet1', 'Sheet2'],  // Ordered list of sheet names
+  Sheets: {
+    'Sheet1': { /* worksheet object */ },
+    'Sheet2': { /* worksheet object */ }
+  },
+  Props: {
+    Author: 'John Doe',
+    Title: 'My Spreadsheet',
+    Subject: 'Data Analysis',
+    CreatedDate: new Date(),
+    ModifiedDate: new Date(),
+    Category: 'Finance',
+    Keywords: 'budget, finance',
+    Description: 'Annual budget spreadsheet',
+    LastAuthor: 'Jane Doe',
+    Company: 'ACME Corp',
+    Manager: 'Bob Smith'
+  },
+  Custprops: {},
+  Calcchain: null,
+  Workbook: {
+    Names: [],
+    Views: [{ RTL: false }],
+    WBProps: {
+      date1904: false,
+      defaultThemeVersion: 124226
+    }
+  }
+};
+```
+
+### Worksheet Object Structure
+
+```js
+// Worksheet structure
+const worksheet = {
+  '!ref': 'A1:Z100',         // cell range
+  '!margins': {              // page margins
+    left: 0.7,
+    right: 0.7,
+    top: 0.75,
+    bottom: 0.75,
+    header: 0.3,
+    footer: 0.3
+  },
+  '!cols': [                 // column info array
+    { wch: 20 },             // width in characters
+    { wpx: 150 },            // width in pixels
+    { hidden: true }         // hidden column
+  ],
+  '!rows': [                 // row info array
+    { hpt: 20 },             // height in points
+    { hpx: 27 },             // height in pixels
+    { hidden: false }
+  ],
+  '!merges': [               // merged cell ranges
+    { s: { r: 0, c: 0 }, e: { r: 0, c: 3 } }
+  ],
+  '!protect': {              // worksheet protection
+    password: 'secret',
+    selectLockedCells: true,
+    selectUnlockedCells: true,
+    formatCells: false,
+    formatColumns: false,
+    formatRows: false,
+    insertColumns: false,
+    insertRows: false,
+    insertHyperlinks: false,
+    deleteColumns: false,
+    deleteRows: false,
+    sort: false,
+    autoFilter: false,
+    pivotTables: false
+  },
+  '!autofilter': { ref: 'A1:F1' },
+  'A1': { t: 's', v: 'Name', w: 'Name' },
+  'B1': { t: 's', v: 'Age' },
+  'A2': { t: 's', v: 'Alice' },
+  'B2': { t: 'n', v: 30, w: '30' }
+};
+```
+
+### Cell Object Reference
+
+```js
+// Cell object properties
+const cell = {
+  t: 'n',          // type: 'b'=bool, 'n'=num, 's'=str, 'd'=date, 'e'=err, 'z'=stub
+  v: 42,           // raw value
+  w: '42',         // formatted text
+  f: 'SUM(A1:A10)',// formula
+  F: 'A1:A10',     // array formula range
+  r: '<t>42</t>',  // rich text
+  h: '42',         // HTML rendering
+  c: [             // comments
+    { a: 'Author', t: 'comment text', T: false }
+  ],
+  z: '#,##0.00',   // number format string
+  l: {             // hyperlink
+    Target: 'https://example.com',
+    Tooltip: 'Visit site'
+  },
+  s: {             // style object
+    font: { name: 'Arial', sz: 12, bold: true, color: { rgb: 'FF0000' } },
+    fill: { patternType: 'solid', fgColor: { rgb: 'FFFFCC' } },
+    border: {
+      top: { style: 'thin', color: { auto: 1 } },
+      bottom: { style: 'thin', color: { auto: 1 } },
+      left: { style: 'thin', color: { auto: 1 } },
+      right: { style: 'thin', color: { auto: 1 } }
+    },
+    alignment: {
+      horizontal: 'center',
+      vertical: 'middle',
+      wrapText: true,
+      indent: 0,
+      readingOrder: 0,
+      textRotation: 0,
+      shrinkToFit: false
+    },
+    numFmt: '0.00%'
+  }
+};
+```
+
+### Writing Files
+
+```js
+// Write to file
+XLSX.writeFile(workbook, 'output.xlsx', {
+  bookType: 'xlsx',        // 'xlsx'|'xlsm'|'xlsb'|'xls'|'csv'|'txt'|'sylk'|'html'|'dif'|'dbf'|'prn'|'ods'
+  type: 'file',
+  compression: true,       // zip compression
+  Props: { Author: 'Me' },
+  bookSST: false,          // use shared string table
+  bookVBA: false,
+  cellDates: false,        // write dates as date types
+  cellStyles: false,       // write styles
+  numbers: XLSX.SSF._table,
+  sheet: 'Sheet1',         // for single-sheet formats
+});
+
+// Write to buffer
+const wbuf = XLSX.write(workbook, { bookType: 'xlsx', type: 'buffer' });
+
+// Write to base64
+const wb64 = XLSX.write(workbook, { bookType: 'xlsx', type: 'base64' });
+
+// Write to binary string
+const wbin = XLSX.write(workbook, { bookType: 'xlsx', type: 'binary' });
+
+// Write to array
+const warr = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
+```
+
+### Sheet Operations
+
+```js
+// Access sheets
+const sheet = workbook.Sheets[workbook.SheetNames[0]];
+
+// Add a new sheet
+const newSheet = XLSX.utils.aoa_to_sheet([
+  ['Name', 'Age', 'Score'],
+  ['Alice', 30, 95.5],
+  ['Bob', 25, 87.3],
+  ['Charlie', 35, 91.0],
+]);
+XLSX.utils.book_append_sheet(workbook, newSheet, 'People');
+
+// Delete a sheet
+const idx = workbook.SheetNames.indexOf('OldSheet');
+if (idx !== -1) {
+  workbook.SheetNames.splice(idx, 1);
+  delete workbook.Sheets['OldSheet'];
+}
+
+// Copy a sheet
+function copySheet(wb, fromName, toName) {
+  const srcSheet = wb.Sheets[fromName];
+  const destSheet = JSON.parse(JSON.stringify(srcSheet));
+  XLSX.utils.book_append_sheet(wb, destSheet, toName);
+}
+```
+
+### Data Conversion Utilities
+
+```js
+// Array of arrays to worksheet
+const aoaData = [
+  ['ID', 'Product', 'Qty', 'Price', 'Total'],
+  [1, 'Widget A', 10, 9.99, 99.90],
+  [2, 'Widget B', 5, 14.99, 74.95],
+  [3, 'Gadget X', 3, 29.99, 89.97],
+];
+const ws1 = XLSX.utils.aoa_to_sheet(aoaData, {
+  header: [],           // custom header row
+  skipHeader: false,    // skip header
+  origin: 'A1',         // starting cell
+  dateNF: 'yyyy-mm-dd', // date format
+  cellDates: true,      // output dates as Date objects
+  dense: false,         // use dense format
+  sheetRows: 100,       // max rows to read
+});
+
+// Array of objects to worksheet
+const aooData = [
+  { name: 'Alice', dept: 'Engineering', salary: 95000 },
+  { name: 'Bob', dept: 'Marketing', salary: 72000 },
+  { name: 'Charlie', dept: 'Sales', salary: 68000 },
+];
+const ws2 = XLSX.utils.json_to_sheet(aooData, {
+  header: ['name', 'dept', 'salary'],  // key order
+  skipHeader: false,
+  origin: { r: 1, c: 0 },
+  dateNF: 'yyyy-mm-dd',
+});
+
+// Worksheet to array of arrays
+const aoa = XLSX.utils.sheet_to_aoa(worksheet, {
+  header: 1,           // 1 = return arrays, 'A' = use column letters
+  defval: null,        // default value for empty cells
+  blankrows: false,    // include blank rows
+  range: 'A1:D10',     // only this range
+  raw: true,           // return raw values
+  rawNumbers: false,   // return raw number values
+  dateNF: 'yyyy-mm-dd',
+});
+
+// Worksheet to array of objects
+const aoo = XLSX.utils.sheet_to_json(worksheet, {
+  header: 1,           // use row 1 as header
+  defval: '',
+  blankrows: false,
+  range: 1,            // start from row index 1
+  raw: false,
+});
+
+// Worksheet to CSV
+const csv = XLSX.utils.sheet_to_csv(worksheet, {
+  FS: ',',             // field separator
+  RS: '\n',            // row separator
+  dateNF: 'yyyy-mm-dd',
+  strip: false,        // strip trailing whitespace
+  blankrows: true,
+  skipHidden: false,
+});
+
+// Worksheet to HTML
+const html = XLSX.utils.sheet_to_html(worksheet, {
+  id: 'table1',
+  editable: false,
+  header: '',
+  footer: '',
+});
+
+// Worksheet to formula text
+const txt = XLSX.utils.sheet_to_formulae(worksheet);
+```
+
+### Cell Range Operations
+
+```js
+// Encode/decode cell addresses
+const addr = XLSX.utils.encode_cell({ r: 0, c: 0 }); // 'A1'
+const cell2 = XLSX.utils.decode_cell('A1');            // {r:0, c:0}
+const col = XLSX.utils.encode_col(0);                  // 'A'
+const row = XLSX.utils.encode_row(0);                  // '1'
+const range = XLSX.utils.encode_range({ s:{r:0,c:0}, e:{r:9,c:4} }); // 'A1:E10'
+const rangeObj = XLSX.utils.decode_range('A1:E10'); // {s:{r:0,c:0}, e:{r:9,c:4}}
+
+// Update worksheet range
+function updateSheetRange(ws) {
+  const range = XLSX.utils.decode_range(ws['!ref']);
+  // iterate over cells
+  for (let r = range.s.r; r <= range.e.r; r++) {
+    for (let c = range.s.c; c <= range.e.c; c++) {
+      const cellRef = XLSX.utils.encode_cell({ r, c });
+      const cell = ws[cellRef];
+      if (!cell) continue;
+      // process cell
+    }
+  }
+}
+
+// Set cell value
+function setCellValue(ws, cellRef, value, type) {
+  const cell = ws[cellRef] || (ws[cellRef] = {});
+  cell.v = value;
+  cell.t = type || (typeof value === 'number' ? 'n' : 's');
+  if (typeof value === 'boolean') cell.t = 'b';
+  if (value instanceof Date) cell.t = 'd';
+}
+```
+
+### Number Formatting
+
+```js
+// Common number formats
+const numberFormats = {
+  // General
+  general: 'General',
+  // Number
+  integer: '0',
+  decimal1: '0.0',
+  decimal2: '0.00',
+  thousands: '#,##0',
+  thousandsDecimal2: '#,##0.00',
+  // Percentage
+  percent: '0%',
+  percentDecimal2: '0.00%',
+  // Currency
+  usd: '"$"#,##0.00',
+  usdNeg: '"$"#,##0.00;[Red]"$"#,##0.00',
+  euro: '[$€-407]#,##0.00',
+  gbp: '[$£-809]#,##0.00',
+  // Date
+  date: 'yyyy-mm-dd',
+  dateUs: 'mm/dd/yyyy',
+  dateEu: 'dd/mm/yyyy',
+  datetime: 'yyyy-mm-dd hh:mm:ss',
+  time: 'hh:mm:ss',
+  time12: 'h:mm AM/PM',
+  // Special
+  zip: '00000',
+  phone: '(000) 000-0000',
+  ssn: '000-00-0000',
+  // Scientific
+  scientific: '0.00E+00',
+  // Fraction
+  fraction: '# ?/?',
+  fractionHalf: '# ??/??',
+  // Text
+  text: '@',
+};
+
+// Format a value
+function formatValue(value, formatStr) {
+  return XLSX.SSF.format(formatStr, value);
+}
+```
+
+### ExcelJS Complete API
+
+```js
+const ExcelJS = require('exceljs');
+
+// Create workbook
+const workbook = new ExcelJS.Workbook();
+workbook.creator = 'My App';
+workbook.lastModifiedBy = 'My App';
+workbook.created = new Date();
+workbook.modified = new Date();
+workbook.lastPrinted = new Date();
+workbook.properties.date1904 = false;
+workbook.calcProperties.fullCalcOnLoad = true;
+
+// Add worksheet
+const worksheet = workbook.addWorksheet('My Sheet', {
+  properties: {
+    tabColor: { argb: 'FF00FF00' },
+    outlineLevelCol: 0,
+    outlineLevelRow: 0,
+    defaultRowHeight: 15,
+    defaultColWidth: 8,
+    dyDescent: 55,
+    showGridLines: true,
+  },
+  pageSetup: {
+    paperSize: 9,           // A4
+    orientation: 'portrait', // 'portrait' | 'landscape'
+    fitToPage: true,
+    fitToHeight: 1,
+    fitToWidth: 1,
+    margins: {
+      left: 0.7, right: 0.7,
+      top: 0.75, bottom: 0.75,
+      header: 0.3, footer: 0.3
+    },
+    horizontalCentered: true,
+    verticalCentered: false,
+    printGridLines: false,
+    printTitlesRow: '$1:$1',
+    printTitlesColumn: '$A:$A',
+    firstPageNumber: 1,
+    useFirstPageNumber: false,
+  },
+  headerFooter: {
+    firstHeader: '&CFirst Page Header',
+    firstFooter: '&CFirst Page Footer',
+    oddHeader: '&L&"Calibri,Bold"&K000000My Report&R&D',
+    oddFooter: '&CPage &P of &N',
+    evenHeader: '&CReport',
+    evenFooter: '&CPage &P of &N',
+    differentFirst: false,
+    differentOddEven: false,
+  },
+  views: [
+    {
+      state: 'frozen',
+      xSplit: 1,
+      ySplit: 1,
+      topLeftCell: 'B2',
+      activeCell: 'A1',
+      showGridLines: true,
+      showRowColHeaders: true,
+      zoomScale: 100,
+      zoomScaleNormal: 100,
+      zoomScalePageLayoutView: 100,
+    }
+  ]
+});
+```
+
+### ExcelJS Column Operations
+
+```js
+// Define columns
+worksheet.columns = [
+  {
+    header: 'ID', key: 'id', width: 8,
+    style: { font: { bold: true }, alignment: { horizontal: 'center' } }
+  },
+  {
+    header: 'Name', key: 'name', width: 25,
+    style: { font: { name: 'Calibri', size: 11 } }
+  },
+  {
+    header: 'Date', key: 'date', width: 15,
+    style: { numFmt: 'yyyy-mm-dd' }
+  },
+  {
+    header: 'Amount', key: 'amount', width: 15,
+    style: { numFmt: '"$"#,##0.00' }
+  },
+  {
+    header: 'Status', key: 'status', width: 12,
+    style: { alignment: { horizontal: 'center' } }
+  },
+];
+
+// Get/manipulate a column
+const col = worksheet.getColumn('name'); // or worksheet.getColumn(2)
+col.header = 'Full Name';
+col.key = 'fullName';
+col.width = 30;
+col.hidden = false;
+col.outlineLevel = 0;
+col.style = { font: { bold: false } };
+
+// Iterate columns
+worksheet.columns.forEach(column => {
+  column.width = Math.max(column.header.length + 2, 12);
+});
+
+// Get column by number
+const firstCol = worksheet.getColumn(1);
+const lastColNum = worksheet.columnCount;
+const actualLastColNum = worksheet.actualColumnCount;
+```
+
+### ExcelJS Row Operations
+
+```js
+// Add rows
+worksheet.addRow({ id: 1, name: 'Alice Smith', date: new Date('2024-01-15'), amount: 1500.00, status: 'Active' });
+worksheet.addRow([2, 'Bob Johnson', new Date('2024-02-20'), 2200.50, 'Inactive']);
+
+// Add multiple rows
+const rows = [
+  { id: 3, name: 'Charlie Brown', amount: 1800 },
+  { id: 4, name: 'Diana Prince', amount: 3200 },
+  { id: 5, name: 'Eve Wilson', amount: 2750 },
+];
+worksheet.addRows(rows);
+
+// Get row
+const row = worksheet.getRow(2);
+row.height = 25;
+row.hidden = false;
+row.outlineLevel = 0;
+row.collapsed = false;
+row.getCell(1).value = 'Updated';
+
+// Commit row (for streaming)
+row.commit();
+
+// Iterate rows
+worksheet.eachRow({ includeEmpty: false }, (row, rowNumber) => {
+  console.log(`Row ${rowNumber}:`, row.values);
+  row.eachCell({ includeEmpty: true }, (cell, colNumber) => {
+    console.log(`  Cell ${colNumber}:`, cell.value);
+  });
+});
+
+// Insert row
+worksheet.insertRow(3, { id: 99, name: 'Inserted Row', amount: 0 });
+
+// Duplicate row
+worksheet.duplicateRow(1, 1, true);
+
+// Delete row
+worksheet.spliceRows(3, 1);
+
+// Row properties
+const lastRow = worksheet.lastRow;
+const rowCount = worksheet.rowCount;
+const actualRowCount = worksheet.actualRowCount;
+```
+
+### ExcelJS Cell Operations
+
+```js
+// Get cell
+const cell = worksheet.getCell('A1');  // by address
+const cell2 = worksheet.getCell(1, 1); // by row, col
+
+// Set values
+cell.value = 'Hello World';
+cell.value = 42;
+cell.value = true;
+cell.value = new Date();
+cell.value = { formula: 'SUM(B2:B10)', result: 550 };
+cell.value = { formula: 'SUM(A1:A10)' };
+cell.value = { sharedFormula: 'A2', result: 100 };
+cell.value = { richText: [
+  { font: { bold: true, color: { argb: 'FF0000FF' } }, text: 'Bold Blue' },
+  { font: { italic: true }, text: ' and Italic' },
+  { text: ' Normal text' }
+]};
+cell.value = { hyperlink: 'https://example.com', text: 'Visit Site', tooltip: 'Click here' };
+cell.value = { error: '#DIV/0!' };
+
+// Cell type
+console.log(cell.type); // ExcelJS.ValueType.Number etc.
+
+// Cell formatting
+cell.numFmt = '#,##0.00';
+cell.font = {
+  name: 'Calibri',
+  family: 2,
+  size: 12,
+  scheme: 'minor',
+  bold: true,
+  italic: false,
+  underline: true,  // true | 'none' | 'single' | 'double' | 'singleAccounting' | 'doubleAccounting'
+  strike: false,
+  outline: false,
+  color: { argb: 'FF000000' },
+  charset: 1,
+  vertAlign: 'superscript',  // 'superscript' | 'subscript'
+};
+cell.alignment = {
+  horizontal: 'center',   // 'left'|'center'|'right'|'fill'|'justify'|'centerContinuous'|'distributed'
+  vertical: 'middle',     // 'top'|'middle'|'bottom'|'distributed'|'justify'
+  wrapText: true,
+  shrinkToFit: false,
+  indent: 0,
+  readingOrder: 'ltr',    // 'ltr'|'rtl'
+  textRotation: 45,       // -90 to 90 degrees
+};
+cell.border = {
+  top: { style: 'thin', color: { argb: 'FF000000' } },
+  left: { style: 'thin', color: { argb: 'FF000000' } },
+  bottom: { style: 'double', color: { argb: 'FF000000' } },
+  right: { style: 'thin', color: { argb: 'FF000000' } },
+  diagonal: { up: true, down: false, style: 'dashed', color: { argb: 'FFFF0000' } },
+};
+cell.fill = {
+  type: 'pattern',
+  pattern: 'solid',
+  fgColor: { argb: 'FFFFFF00' },
+  bgColor: { argb: 'FFFFFFFF' },
+};
+// Gradient fill
+cell.fill = {
+  type: 'gradient',
+  gradient: 'angle',
+  degree: 0,
+  stops: [
+    { position: 0, color: { argb: 'FF0000FF' } },
+    { position: 0.5, color: { argb: 'FFFFFFFF' } },
+    { position: 1, color: { argb: 'FFFF0000' } },
+  ]
+};
+
+// Protection
+cell.protection = {
+  locked: true,
+  hidden: false,
+};
+
+// Merge cells
+worksheet.mergeCells('A1:D1');
+worksheet.mergeCells(1, 1, 1, 4);  // top, left, bottom, right
+worksheet.unMergeCells('A1:D1');
+```
+
+### ExcelJS Data Validation
+
+```js
+// List validation
+worksheet.getCell('E2').dataValidation = {
+  type: 'list',
+  allowBlank: true,
+  formulae: ['"Active,Inactive,Pending"'],
+  showErrorMessage: true,
+  errorStyle: 'error',  // 'error'|'warning'|'information'
+  errorTitle: 'Invalid Input',
+  error: 'Please select from the list',
+  showInputMessage: true,
+  promptTitle: 'Status',
+  prompt: 'Select employee status',
+};
+
+// Whole number validation
+worksheet.getCell('B2').dataValidation = {
+  type: 'whole',
+  operator: 'between',  // 'between'|'notBetween'|'equal'|'notEqual'|'greaterThan'|'lessThan'|'greaterThanOrEqual'|'lessThanOrEqual'
+  formula1: 1,
+  formula2: 100,
+  showErrorMessage: true,
+  errorTitle: 'Invalid',
+  error: 'Value must be between 1 and 100',
+};
+
+// Decimal validation
+worksheet.getCell('D2').dataValidation = {
+  type: 'decimal',
+  operator: 'greaterThan',
+  formula1: 0,
+  showErrorMessage: true,
+  errorTitle: 'Invalid Amount',
+  error: 'Amount must be positive',
+};
+
+// Date validation
+worksheet.getCell('C2').dataValidation = {
+  type: 'date',
+  operator: 'greaterThanOrEqual',
+  formula1: new Date(2020, 0, 1),
+  showErrorMessage: true,
+  errorTitle: 'Invalid Date',
+  error: 'Date must be after 2020-01-01',
+};
+
+// Custom formula validation
+worksheet.getCell('F2').dataValidation = {
+  type: 'custom',
+  formulae: ['=AND(LEN(F2)>=3,LEN(F2)<=50)'],
+  showErrorMessage: true,
+  errorTitle: 'Invalid Length',
+  error: 'Must be between 3 and 50 characters',
+};
+```
+
+### ExcelJS Conditional Formatting
+
+```js
+// Color scale
+worksheet.addConditionalFormatting({
+  ref: 'D2:D100',
+  rules: [
+    {
+      type: 'colorScale',
+      cfvo: [
+        { type: 'min' },
+        { type: 'percentile', value: 50 },
+        { type: 'max' },
+      ],
+      color: [
+        { argb: 'FFF8696B' },  // red
+        { argb: 'FFFFEB84' },  // yellow
+        { argb: 'FF63BE7B' },  // green
+      ],
+    }
+  ]
+});
+
+// Data bar
+worksheet.addConditionalFormatting({
+  ref: 'D2:D100',
+  rules: [
+    {
+      type: 'dataBar',
+      minLength: 0,
+      maxLength: 100,
+      cfvo: [{ type: 'min' }, { type: 'max' }],
+      color: { argb: 'FF638EC6' },
+      gradient: true,
+      border: false,
+      negativeBarColorSameAsPositive: false,
+      showValue: true,
+      axisPosition: 'auto',
+    }
+  ]
+});
+
+// Icon set
+worksheet.addConditionalFormatting({
+  ref: 'D2:D100',
+  rules: [
+    {
+      type: 'iconSet',
+      iconSet: '3TrafficLights1',  // many options
+      showValue: true,
+      reverse: false,
+      cfvo: [
+        { type: 'percent', value: 0 },
+        { type: 'percent', value: 33 },
+        { type: 'percent', value: 67 },
+      ],
+    }
+  ]
+});
+
+// Cell value rule
+worksheet.addConditionalFormatting({
+  ref: 'B2:B100',
+  rules: [
+    {
+      type: 'cellIs',
+      operator: 'greaterThan',
+      formulae: [100],
+      priority: 1,
+      style: {
+        font: { bold: true, color: { argb: 'FF006100' } },
+        fill: { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFC6EFCE' } },
+      }
+    }
+  ]
+});
+
+// Contains text
+worksheet.addConditionalFormatting({
+  ref: 'A2:A100',
+  rules: [
+    {
+      type: 'containsText',
+      operator: 'containsText',
+      text: 'URGENT',
+      priority: 1,
+      style: {
+        font: { bold: true, color: { argb: 'FF9C0006' } },
+        fill: { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFFFC7CE' } },
+      }
+    }
+  ]
+});
+```
+
+### ExcelJS Charts
+
+```js
+// Add chart to worksheet
+worksheet.addChart({
+  type: 'bar',           // 'bar'|'column'|'line'|'area'|'pie'|'doughnut'|'scatter'|'bubble'|'radar'|'stock'
+  style: 10,
+  title: { name: 'Monthly Sales' },
+  legend: {
+    position: 'b',      // 't'|'b'|'l'|'r'|'tr'
+    overlay: false,
+  },
+  plotArea: {
+    catAxis: {
+      title: { name: 'Month' },
+      numFmt: 'mmm',
+      tickLblSkip: 1,
+      tickMarkSkip: 1,
+    },
+    valAxis: {
+      title: { name: 'Revenue ($)' },
+      numFmt: '"$"#,##0',
+      minVal: 0,
+      gridlines: { major: {} },
+    },
+    ser: [
+      {
+        name: { name: 'Q1 Sales', ref: 'Sheet1!$B$1' },
+        labels: { ref: 'Sheet1!$A$2:$A$13' },
+        values: { ref: 'Sheet1!$B$2:$B$13' },
+        fill: { type: 'solid', color: '4472C4' },
+        border: { pt: 1, color: '4472C4' },
+        marker: {
+          symbol: 'circle',
+          size: 6,
+          fill: { type: 'solid', color: '4472C4' },
+        },
+        dataPt: [],
+        dLbls: {
+          position: 'outEnd',
+          showVal: true,
+          showCatName: false,
+          showSerName: false,
+          showPercent: false,
+          showLeaderLines: true,
+          numFmt: '"$"#,##0',
+        },
+        trendline: {
+          type: 'linear',   // 'exp'|'log'|'poly'|'power'|'movAvg'
+          name: 'Trend',
+          forward: 2,
+          backward: 0,
+          intercept: 0,
+          dispRSqr: true,
+          dispEq: true,
+        }
+      },
+    ],
+  },
+  trendline: false,
+  position: { type: 'twoCellAnchor', from: 'A15', to: 'H30' },
+});
+```
+
+### ExcelJS Reading Files
+
+```js
+// Read xlsx file
+const workbook = new ExcelJS.Workbook();
+await workbook.xlsx.readFile('data.xlsx');
+
+// Read from stream
+const stream = fs.createReadStream('data.xlsx');
+await workbook.xlsx.read(stream);
+
+// Read from buffer
+const buffer = fs.readFileSync('data.xlsx');
+await workbook.xlsx.load(buffer);
+
+// Read csv
+await workbook.csv.readFile('data.csv', {
+  dateFormats: ['YYYY/MM/DD', 'MM-DD-YYYY'],
+  map(value, index) {
+    switch (index) {
+      case 0: return parseInt(value, 10);
+      case 3: return parseFloat(value);
+      default: return value;
+    }
+  },
+  sheetName: 'Sheet1',
+  encoding: 'utf8',
+  parserOptions: {
+    delimiter: ',',
+    quote: '"',
+    escape: '"',
+    comment: '#',
+    relax: true,
+    trim: true,
+    skip_empty_lines: true,
+    skip_lines_with_error: false,
+  }
+});
+
+// Iterate worksheets
+workbook.eachSheet((worksheet, sheetId) => {
+  console.log(`Sheet: ${worksheet.name} (id: ${sheetId})`);
+  worksheet.eachRow((row, rowNumber) => {
+    console.log(`Row ${rowNumber}:`, row.values.slice(1));
+  });
+});
+```
+
+### ExcelJS Writing Files
+
+```js
+// Write xlsx
+await workbook.xlsx.writeFile('output.xlsx');
+
+// Write to buffer
+const buffer = await workbook.xlsx.writeBuffer();
+
+// Write to stream
+const stream = fs.createWriteStream('output.xlsx');
+await workbook.xlsx.write(stream);
+stream.end();
+
+// Write csv
+await workbook.csv.writeFile('output.csv', {
+  sheetName: 'Sheet1',
+  encoding: 'utf8',
+  includeEmptyRows: false,
+  dateUTC: false,
+  dateFormat: 'YYYY/MM/DD',
+  formatterOptions: {
+    delimiter: ',',
+    quote: '"',
+    escape: '"',
+    eof: '\n',
+  },
+  map(value, index) {
+    if (value instanceof Date) {
+      return value.toISOString().split('T')[0];
+    }
+    return value;
+  }
+});
+```
+
+### Streaming Large Files (SheetJS)
+
+```js
+const XLSX = require('xlsx');
+
+// Stream reading
+function readLargeFile(filePath) {
+  const workbook = XLSX.readFile(filePath, {
+    type: 'file',
+    sheetRows: 0,          // 0 = all rows
+    cellDates: true,
+    cellFormula: false,    // skip formula parsing for speed
+    cellHTML: false,       // skip HTML rendering for speed
+    bookSheets: false,     // read all sheets
+  });
+  return workbook;
+}
+
+// Process row by row
+function processFileStreaming(filePath, sheetName, rowCallback) {
+  const workbook = XLSX.readFile(filePath);
+  const worksheet = workbook.Sheets[sheetName || workbook.SheetNames[0]];
+  const range = XLSX.utils.decode_range(worksheet['!ref']);
+
+  for (let r = range.s.r; r <= range.e.r; r++) {
+    const rowData = {};
+    for (let c = range.s.c; c <= range.e.c; c++) {
+      const cellRef = XLSX.utils.encode_cell({ r, c });
+      const cell = worksheet[cellRef];
+      if (cell) rowData[XLSX.utils.encode_col(c)] = cell.v;
+    }
+    rowCallback(rowData, r);
+  }
+}
+
+// ExcelJS streaming read
+const ExcelJS = require('exceljs');
+
+async function streamReadXlsx(filePath) {
+  const workbookReader = new ExcelJS.stream.xlsx.WorkbookReader(filePath, {
+    entries: 'emit',
+    sharedStrings: 'cache',
+    hyperlinks: 'cache',
+    styles: 'cache',
+    worksheets: 'emit',
+  });
+
+  workbookReader.on('worksheet', worksheet => {
+    worksheet.on('row', row => {
+      const values = row.values.slice(1); // remove index 0
+      console.log('Row:', values);
+    });
+    worksheet.on('dimension', dimension => {
+      console.log('Dimension:', dimension);
+    });
+  });
+
+  workbookReader.on('shared-strings', sharedStrings => {
+    console.log('Shared strings count:', sharedStrings.count);
+  });
+
+  workbookReader.on('end', () => {
+    console.log('Done reading');
+  });
+
+  await workbookReader.read();
+}
+
+// ExcelJS streaming write
+async function streamWriteXlsx(outputPath, data) {
+  const workbookWriter = new ExcelJS.stream.xlsx.WorkbookWriter({
+    filename: outputPath,
+    useStyles: true,
+    useSharedStrings: true,
+  });
+
+  const worksheet = workbookWriter.addWorksheet('Data');
+  worksheet.columns = [
+    { header: 'ID', key: 'id', width: 10 },
+    { header: 'Name', key: 'name', width: 30 },
+    { header: 'Value', key: 'value', width: 15 },
+  ];
+
+  for (const row of data) {
+    await worksheet.addRow(row).commit();
+  }
+
+  await worksheet.commit();
+  await workbookWriter.commit();
+}
+```
+
+### Named Ranges and Defined Names
+
+```js
+// SheetJS named ranges
+const wb = XLSX.utils.book_new();
+const ws = XLSX.utils.aoa_to_sheet([['a','b'],['c','d']]);
+XLSX.utils.book_append_sheet(wb, ws, 'Sheet1');
+
+// Add named range
+wb.Workbook = wb.Workbook || {};
+wb.Workbook.Names = wb.Workbook.Names || [];
+wb.Workbook.Names.push({
+  Name: 'MyRange',
+  Ref: 'Sheet1!$A$1:$B$2',
+  Comment: 'My named range',
+  Hidden: false,
+});
+
+// ExcelJS defined names
+workbook.definedNames.add('Sheet1!$A$1:$A$10', 'SalesData');
+workbook.definedNames.add('Sheet1!$B$1:$B$10', 'ExpenseData');
+
+// Get defined name
+const name = workbook.definedNames.getMatrix('SalesData');
+console.log(name);
+
+// Remove defined name
+workbook.definedNames.remove('SalesData');
+
+// List all defined names
+workbook.definedNames.model.forEach(([name, refStr]) => {
+  console.log(`${name}: ${refStr}`);
+});
+```
+
+### Pivot Table Patterns
+
+```js
+// Create pivot-like summary using SheetJS
+function createPivotSummary(data, rowField, colField, valueField) {
+  // Collect unique row and column values
+  const rows = [...new Set(data.map(d => d[rowField]))].sort();
+  const cols = [...new Set(data.map(d => d[colField]))].sort();
+
+  // Build summary matrix
+  const matrix = [['', ...cols, 'Total']];
+
+  for (const row of rows) {
+    const rowData = [row];
+    let rowTotal = 0;
+
+    for (const col of cols) {
+      const val = data
+        .filter(d => d[rowField] === row && d[colField] === col)
+        .reduce((sum, d) => sum + (d[valueField] || 0), 0);
+      rowData.push(val);
+      rowTotal += val;
+    }
+
+    rowData.push(rowTotal);
+    matrix.push(rowData);
+  }
+
+  // Add grand total row
+  const totals = ['Grand Total'];
+  let grandTotal = 0;
+  for (let c = 1; c <= cols.length; c++) {
+    const colTotal = matrix.slice(1).reduce((sum, r) => sum + (r[c] || 0), 0);
+    totals.push(colTotal);
+    grandTotal += colTotal;
+  }
+  totals.push(grandTotal);
+  matrix.push(totals);
+
+  const wb = XLSX.utils.book_new();
+  const ws = XLSX.utils.aoa_to_sheet(matrix);
+  XLSX.utils.book_append_sheet(wb, ws, 'Pivot');
+  return wb;
+}
+```
+
+### CSV and TSV Processing
+
+```js
+// Parse CSV with SheetJS
+function parseCSV(csvString, options = {}) {
+  const wb = XLSX.read(csvString, {
+    type: 'string',
+    raw: false,
+    ...options,
+  });
+  return XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]]);
+}
+
+// Generate CSV from data
+function generateCSV(data, fields) {
+  const ws = XLSX.utils.json_to_sheet(data, { header: fields });
+  return XLSX.utils.sheet_to_csv(ws);
+}
+
+// Handle large CSV files
+const fs = require('fs');
+const readline = require('readline');
+
+async function processLargeCSV(filePath, processRow) {
+  const stream = fs.createReadStream(filePath);
+  const rl = readline.createInterface({ input: stream, crlfDelay: Infinity });
+
+  let headers = null;
+  let rowNum = 0;
+
+  for await (const line of rl) {
+    if (!headers) {
+      headers = line.split(',').map(h => h.trim().replace(/"/g, ''));
+    } else {
+      const values = line.split(',');
+      const row = {};
+      headers.forEach((h, i) => { row[h] = values[i]?.trim().replace(/"/g, ''); });
+      await processRow(row, ++rowNum);
+    }
+  }
+
+  return rowNum;
+}
+```
+
+### Complete Reporting Example
+
+```js
+const XLSX = require('xlsx');
+const ExcelJS = require('exceljs');
+
+async function generateSalesReport(salesData, outputPath) {
+  const wb = new ExcelJS.Workbook();
+  wb.creator = 'Sales Analytics';
+  wb.created = new Date();
+
+  // Summary sheet
+  const summary = wb.addWorksheet('Summary', {
+    properties: { tabColor: { argb: 'FF4472C4' } },
+  });
+
+  summary.columns = [
+    { header: 'Metric', key: 'metric', width: 30 },
+    { header: 'Value', key: 'value', width: 20 },
+    { header: 'Change', key: 'change', width: 15 },
+  ];
+
+  // Style header row
+  summary.getRow(1).font = { bold: true, size: 12, color: { argb: 'FFFFFFFF' } };
+  summary.getRow(1).fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF4472C4' } };
+
+  // Add summary rows
+  const metrics = [
+    { metric: 'Total Revenue', value: salesData.totalRevenue, change: '+12.5%' },
+    { metric: 'Total Orders', value: salesData.totalOrders, change: '+8.3%' },
+    { metric: 'Avg Order Value', value: salesData.avgOrderValue, change: '+3.8%' },
+    { metric: 'New Customers', value: salesData.newCustomers, change: '+15.2%' },
+    { metric: 'Repeat Rate', value: salesData.repeatRate + '%', change: '+2.1%' },
+  ];
+
+  metrics.forEach(m => {
+    const row = summary.addRow(m);
+    row.getCell('value').numFmt = typeof m.value === 'number' ? '"$"#,##0.00' : '@';
+  });
+
+  // Detail sheet
+  const detail = wb.addWorksheet('Sales Detail');
+  detail.columns = [
+    { header: 'Date', key: 'date', width: 15 },
+    { header: 'Product', key: 'product', width: 25 },
+    { header: 'Qty', key: 'qty', width: 10 },
+    { header: 'Unit Price', key: 'unitPrice', width: 15 },
+    { header: 'Total', key: 'total', width: 15 },
+    { header: 'Sales Rep', key: 'rep', width: 20 },
+    { header: 'Region', key: 'region', width: 15 },
+  ];
+
+  salesData.items.forEach(item => {
+    const row = detail.addRow(item);
+    row.getCell('date').numFmt = 'yyyy-mm-dd';
+    row.getCell('unitPrice').numFmt = '"$"#,##0.00';
+    row.getCell('total').numFmt = '"$"#,##0.00';
+  });
+
+  // Add chart
+  const chart = detail.addChart('column', {
+    title: { name: 'Sales by Region' },
+    legend: { position: 'b' },
+    plotArea: {
+      catAxis: { title: { name: 'Region' } },
+      valAxis: { title: { name: 'Revenue ($)' } },
+    },
+    tl: { col: 0, row: detail.rowCount + 2 },
+    br: { col: 7, row: detail.rowCount + 20 },
+  });
+
+  await wb.xlsx.writeFile(outputPath);
+  return outputPath;
+}
+```
+
+### Troubleshooting Guide
+
+**Issue: Dates showing as numbers**
+```js
+// Solution: Enable cellDates option
+const wb = XLSX.readFile('file.xlsx', { cellDates: true });
+// Or convert manually
+function excelDateToJsDate(serial) {
+  const utc_days = Math.floor(serial - 25569);
+  const utc_value = utc_days * 86400;
+  return new Date(utc_value * 1000);
+}
+```
+
+**Issue: Formula cells showing old values**
+```js
+// Solution: Force recalculation
+workbook.calcProperties.fullCalcOnLoad = true;
+// Or clear cached formula results
+worksheet.eachRow(row => {
+  row.eachCell(cell => {
+    if (cell.type === ExcelJS.ValueType.Formula) {
+      cell.value = { formula: cell.formula }; // remove cached result
+    }
+  });
+});
+```
+
+**Issue: Large file memory issues**
+```js
+// Solution: Use streaming API
+const workbookWriter = new ExcelJS.stream.xlsx.WorkbookWriter({
+  filename: 'large-output.xlsx',
+  useStyles: true,
+  useSharedStrings: false, // disable for performance
+});
+```
+
+**Issue: Chinese/Japanese/Korean characters garbled in CSV**
+```js
+// Solution: Use UTF-8 BOM
+const csv = XLSX.utils.sheet_to_csv(ws);
+const bom = '\uFEFF'; // UTF-8 BOM
+fs.writeFileSync('output.csv', bom + csv, 'utf8');
+```
+
+**Issue: Cell styles not preserved**
+```js
+// Solution: Enable cellStyles when reading
+const wb = XLSX.read(data, { type: 'buffer', cellStyles: true });
+// Or when writing with ExcelJS, explicitly set styles on each cell
+```

@@ -1,0 +1,180 @@
+{
+  "id": "crypto",
+  "name": "Crypto Trading Automation",
+  "description": "Automated cryptocurrency trading pipeline: monitors multi-exchange price feeds, generates buy/sell signals using technical analysis, executes trades, tracks P&L, and rebalances portfolio on schedule.",
+  "trigger": {
+    "type": "cron",
+    "schedule": "*/15 * * * *",
+    "endpoint": null
+  },
+  "steps": [
+    {
+      "id": "monitor_prices",
+      "name": "Monitor Crypto Prices",
+      "action": "crypto_bot.fetchPrices",
+      "params": {
+        "exchanges": ["binance", "coinbase", "kraken", "bybit"],
+        "pairs": ["BTC/USDT", "ETH/USDT", "SOL/USDT", "BNB/USDT", "MATIC/USDT"],
+        "timeframes": ["1m", "5m", "15m", "1h", "4h"],
+        "depth": 50
+      },
+      "on_success": "analyze_signals",
+      "on_failure": "error_handler"
+    },
+    {
+      "id": "analyze_signals",
+      "name": "Generate Trading Signals",
+      "action": "crypto_bot.analyzeSignals",
+      "params": {
+        "indicators": ["RSI", "MACD", "Bollinger_Bands", "EMA_cross", "Volume_profile"],
+        "strategy": "trend_following",
+        "min_signal_strength": 0.7,
+        "sentiment_analysis": true,
+        "news_feed": true
+      },
+      "on_success": "risk_check",
+      "on_failure": "error_handler"
+    },
+    {
+      "id": "risk_check",
+      "name": "Run Risk Management Check",
+      "action": "crypto_bot.riskCheck",
+      "params": {
+        "max_portfolio_exposure": 0.15,
+        "max_single_trade_size_percent": 0.05,
+        "stop_loss_percent": 0.03,
+        "take_profit_percent": 0.06,
+        "check_correlation": true,
+        "abort_on_high_volatility": true
+      },
+      "on_success": "execute_trade",
+      "on_failure": "log_skipped_trade"
+    },
+    {
+      "id": "execute_trade",
+      "name": "Execute Trade Order",
+      "action": "crypto_bot.executeTrade",
+      "params": {
+        "order_type": "limit",
+        "slippage_tolerance": 0.001,
+        "use_smart_routing": true,
+        "simulate_first": false,
+        "log_execution": true
+      },
+      "on_success": "monitor_position",
+      "on_failure": "error_handler"
+    },
+    {
+      "id": "monitor_position",
+      "name": "Monitor Open Position",
+      "action": "crypto_bot.monitorPosition",
+      "params": {
+        "check_interval_seconds": 60,
+        "trailing_stop": true,
+        "trailing_stop_percent": 0.015,
+        "max_hold_hours": 48
+      },
+      "on_success": "close_position",
+      "on_failure": "emergency_close"
+    },
+    {
+      "id": "close_position",
+      "name": "Close Position & Book Profit",
+      "action": "crypto_bot.closePosition",
+      "params": {
+        "exit_strategy": "take_profit_or_stop",
+        "partial_exit": false,
+        "calculate_fees": true
+      },
+      "on_success": "track_pnl",
+      "on_failure": "emergency_close"
+    },
+    {
+      "id": "emergency_close",
+      "name": "Emergency Position Close",
+      "action": "crypto_bot.emergencyClose",
+      "params": {
+        "order_type": "market",
+        "reason": "error_or_timeout"
+      },
+      "on_success": "track_pnl",
+      "on_failure": "error_handler"
+    },
+    {
+      "id": "log_skipped_trade",
+      "name": "Log Skipped Trade",
+      "action": "crypto_bot.logSkipped",
+      "params": {
+        "reason": "risk_check_failed"
+      },
+      "on_success": "rebalance",
+      "on_failure": "complete"
+    },
+    {
+      "id": "track_pnl",
+      "name": "Track P&L & Performance",
+      "action": "crypto_bot.updatePnL",
+      "params": {
+        "include_fees": true,
+        "include_funding": true,
+        "benchmark": "BTC",
+        "update_dashboard": true
+      },
+      "on_success": "rebalance",
+      "on_failure": "error_handler"
+    },
+    {
+      "id": "rebalance",
+      "name": "Rebalance Portfolio",
+      "action": "crypto_bot.rebalance",
+      "params": {
+        "target_allocations": {
+          "BTC": 0.4,
+          "ETH": 0.3,
+          "SOL": 0.15,
+          "stable": 0.15
+        },
+        "rebalance_threshold": 0.05,
+        "rebalance_interval_hours": 24
+      },
+      "on_success": "log_revenue",
+      "on_failure": "error_handler"
+    },
+    {
+      "id": "log_revenue",
+      "name": "Log Trading Revenue",
+      "action": "revenue_engine.recordDeal",
+      "params": {
+        "source": "crypto_trading",
+        "update_dashboard": true
+      },
+      "on_success": "complete",
+      "on_failure": "error_handler"
+    },
+    {
+      "id": "error_handler",
+      "name": "Handle Trading Errors",
+      "action": "error_handler.log",
+      "params": {
+        "alert_email": true,
+        "close_positions_on_critical": true,
+        "retry_after_minutes": 15
+      },
+      "on_success": "complete",
+      "on_failure": "complete"
+    }
+  ],
+  "monetization": {
+    "model": "trading_profits",
+    "revenue_per_cycle": 450,
+    "affiliate_programs": ["binance_affiliate", "coinbase_referral", "kraken_partner"],
+    "payment_processor": "stripe"
+  },
+  "automation": {
+    "retry_attempts": 3,
+    "timeout_seconds": 120,
+    "notify_on_completion": true
+  },
+  "created_at": "2026-01-01T00:00:00Z",
+  "version": "1.0.0"
+}

@@ -1,0 +1,1 @@
+"""legal-bot package."""

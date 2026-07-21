@@ -1,0 +1,6711 @@
+---
+name: pptx
+description: Create and manipulate PowerPoint presentations (.pptx) using the pptxgenjs npm package. Covers slides, text boxes, shapes, images, charts, tables, animations, slide masters, and export options.
+user-invocable: false
+---
+
+# pptx Skill — PowerPoint Presentation Creation
+
+This skill covers creating `.pptx` presentations using **pptxgenjs** (https://gitbrent.github.io/PptxGenJS/).
+
+## Installation
+
+```bash
+npm install pptxgenjs
+```
+
+## Quick Start
+
+```js
+const PptxGenJS = require('pptxgenjs');
+const pres = new PptxGenJS();
+
+const slide = pres.addSlide();
+slide.addText('Hello, World!', { x: 1, y: 1, w: 8, h: 1.5, fontSize: 40, bold: true, color: '1F4E79' });
+
+pres.writeFile({ fileName: 'hello.pptx' });
+```
+
+---
+
+## Presentation Setup
+
+```js
+const pres = new PptxGenJS();
+
+// Layout (default: LAYOUT_16x9)
+pres.layout = 'LAYOUT_16x9';   // 10" × 5.625"
+pres.layout = 'LAYOUT_4x3';    // 10" × 7.5"
+pres.layout = 'LAYOUT_WIDE';   // 13.33" × 7.5"
+
+// Custom layout
+pres.defineLayout({ name: 'A4', width: 11.7, height: 8.27 });
+pres.layout = 'A4';
+
+// Metadata
+pres.author  = 'DreamCo Bot';
+pres.company = 'DreamCo Technologies';
+pres.subject = 'Quarterly Report';
+pres.title   = 'Q4 2024';
+```
+
+---
+
+## Slides
+
+```js
+// Add slide (optional: specify layout or master)
+const slide = pres.addSlide();
+const titleSlide = pres.addSlide({ masterName: 'TITLE_SLIDE' });
+
+// Slide background
+slide.background = { fill: '1F4E79' };                  // solid color
+slide.background = { path: 'background.jpg' };           // image
+slide.background = { data: 'data:image/png;base64,...' }; // base64
+```
+
+---
+
+## Text
+
+```js
+// Simple text
+slide.addText('Simple text', { x: 0.5, y: 0.5, w: 9, h: 1 });
+
+// Rich formatted text
+slide.addText('Bold Title', {
+  x: 0.5, y: 0.5, w: 9, h: 1.5,
+  fontSize:  40,
+  bold:      true,
+  italic:    false,
+  underline: { style: 'sng' },
+  color:     '1F4E79',
+  fontFace:  'Calibri',
+  align:     'center',     // 'left' | 'center' | 'right' | 'justify'
+  valign:    'middle',     // 'top' | 'middle' | 'bottom'
+  paraSpaceBefore: 6,
+  paraSpaceAfter:  6,
+  lineSpacingMultiple: 1.2,
+  wrap:  true,
+  autoFit: true,
+});
+
+// Multi-run text (mixed formatting in one box)
+slide.addText(
+  [
+    { text: 'Revenue: ',  options: { bold: true, color: '000000' } },
+    { text: '$1.2M',      options: { bold: true, color: '276221', fontSize: 28 } },
+    { text: ' (+12% YoY)', options: { italic: true, color: '555555', fontSize: 18 } },
+  ],
+  { x: 1, y: 2, w: 8, h: 1 }
+);
+
+// Bullet list
+slide.addText(
+  [
+    { text: 'First point',  options: { bullet: true } },
+    { text: 'Second point', options: { bullet: true } },
+    { text: 'Sub-point',    options: { bullet: { indent: 30 } } },
+  ],
+  { x: 1, y: 2, w: 8, h: 3 }
+);
+
+// Numbered list
+slide.addText(
+  [
+    { text: 'Step one',   options: { bullet: { type: 'number' } } },
+    { text: 'Step two',   options: { bullet: { type: 'number' } } },
+    { text: 'Step three', options: { bullet: { type: 'number' } } },
+  ],
+  { x: 1, y: 2, w: 8, h: 3 }
+);
+```
+
+---
+
+## Shapes
+
+```js
+const { ShapeType } = require('pptxgenjs');
+
+// Rectangle
+slide.addShape(pres.ShapeType.rect, {
+  x: 1, y: 1, w: 4, h: 2,
+  fill:  { color: '1F4E79' },
+  line:  { color: 'FFFFFF', width: 2 },
+});
+
+// Rounded rectangle
+slide.addShape(pres.ShapeType.roundRect, {
+  x: 1, y: 1, w: 4, h: 2,
+  fill:  { color: 'DEEAF1' },
+  line:  { color: '1F4E79', width: 1.5 },
+  rectRadius: 0.2,
+});
+
+// Oval / circle
+slide.addShape(pres.ShapeType.ellipse, {
+  x: 2, y: 1, w: 2, h: 2,
+  fill: { color: 'E74C3C' },
+  line: { color: 'FFFFFF', width: 2 },
+});
+
+// Line
+slide.addShape(pres.ShapeType.line, {
+  x: 0.5, y: 3, w: 9, h: 0,
+  line: { color: 'CCCCCC', width: 1, dashType: 'dash' },
+});
+
+// Arrow
+slide.addShape(pres.ShapeType.rightArrow, {
+  x: 1, y: 2, w: 3, h: 1,
+  fill: { color: '2E75B6' },
+  line: { color: '1F4E79', width: 1 },
+});
+```
+
+---
+
+## Images
+
+```js
+// From file path
+slide.addImage({ path: 'logo.png', x: 0.5, y: 0.5, w: 2, h: 1 });
+
+// From URL
+slide.addImage({ path: 'https://example.com/img.png', x: 0.5, y: 0.5, w: 2, h: 1 });
+
+// From base64
+slide.addImage({ data: 'data:image/png;base64,...', x: 0.5, y: 0.5, w: 2, h: 1 });
+
+// With options
+slide.addImage({
+  path:     'photo.jpg',
+  x: 1, y: 1.5, w: 4, h: 3,
+  sizing:   { type: 'cover', w: 4, h: 3 },   // 'contain' | 'cover' | 'crop'
+  rounding: true,                              // circular crop
+  hyperlink: { url: 'https://example.com', tooltip: 'Visit site' },
+  rotate:    15,                               // degrees
+  shadow:    { type: 'outer', color: '000000', blur: 10, offset: 5, angle: 45, opacity: 0.5 },
+});
+```
+
+---
+
+## Tables
+
+```js
+const rows = [
+  [
+    { text: 'Region',    options: { bold: true, fill: '1F4E79', color: 'FFFFFF' } },
+    { text: 'Q1',        options: { bold: true, fill: '1F4E79', color: 'FFFFFF', align: 'center' } },
+    { text: 'Q2',        options: { bold: true, fill: '1F4E79', color: 'FFFFFF', align: 'center' } },
+    { text: 'Q3',        options: { bold: true, fill: '1F4E79', color: 'FFFFFF', align: 'center' } },
+  ],
+  ['North America', '42,500', '48,300', '51,200'],
+  ['Europe',        '31,200', '33,900', '29,800'],
+  ['Asia Pacific',  '27,400', '32,100', '35,600'],
+];
+
+slide.addTable(rows, {
+  x: 0.5, y: 1.5, w: 9,
+  fontSize:     12,
+  border:       { type: 'solid', pt: 1, color: 'CCCCCC' },
+  rowH:         0.5,
+  align:        'left',
+  valign:       'middle',
+  colW:         [2.5, 2.2, 2.2, 2.1],
+});
+```
+
+---
+
+## Charts
+
+```js
+// Bar chart
+slide.addChart(pres.ChartType.bar,
+  [
+    { name: 'Sales',  labels: ['Q1','Q2','Q3','Q4'], values: [42500, 48300, 51200, 55800] },
+    { name: 'Target', labels: ['Q1','Q2','Q3','Q4'], values: [40000, 45000, 50000, 55000] },
+  ],
+  {
+    x: 0.5, y: 1, w: 9, h: 4,
+    barDir:      'col',    // 'col' (vertical) or 'bar' (horizontal)
+    barGrouping: 'clustered',  // 'clustered' | 'stacked' | 'percentStacked'
+    catAxisLabelColor: '555555',
+    valAxisLabelColor: '555555',
+    showLegend:  true,
+    legendPos:   'b',      // 'b' | 't' | 'l' | 'r' | 'tr'
+    showValue:   true,
+    dataLabelColor: 'FFFFFF',
+    chartColors: ['1F4E79', '2E75B6'],
+    title:       'Quarterly Performance',
+    showTitle:   true,
+  }
+);
+
+// Line chart
+slide.addChart(pres.ChartType.line,
+  [{ name: 'Revenue', labels: ['Jan','Feb','Mar','Apr','May'], values: [42500, 38900, 51200, 47800, 55300] }],
+  {
+    x: 0.5, y: 1, w: 9, h: 4,
+    lineSize:    2,
+    lineSmooth:  true,
+    showDot:     true,
+    dotSize:     5,
+    showLegend:  false,
+    chartColors: ['E74C3C'],
+  }
+);
+
+// Pie / Doughnut chart
+slide.addChart(pres.ChartType.pie,
+  [{ name: 'Market Share', labels: ['Product A','Product B','Product C','Other'], values: [35, 28, 22, 15] }],
+  {
+    x: 1, y: 1, w: 8, h: 4.5,
+    showLegend:     true,
+    legendPos:      'r',
+    showPercent:    true,
+    chartColors:    ['1F4E79','2E75B6','9DC3E6','D6E4F0'],
+  }
+);
+
+// Scatter chart
+slide.addChart(pres.ChartType.scatter,
+  [
+    {
+      name: 'Products',
+      values: [{ x: 10, y: 20 }, { x: 15, y: 35 }, { x: 25, y: 28 }],
+    },
+  ],
+  { x: 0.5, y: 1, w: 9, h: 4 }
+);
+
+// Combo chart (bar + line)
+slide.addChart(
+  [pres.ChartType.bar, pres.ChartType.line],
+  [
+    { name: 'Revenue', labels: ['Q1','Q2','Q3'], values: [42500, 48300, 51200] },
+    { name: 'Margin%', labels: ['Q1','Q2','Q3'], values: [0.32, 0.35, 0.38] },
+  ],
+  {
+    x: 0.5, y: 1, w: 9, h: 4,
+    secondValAxis:     true,
+    secondCatAxis:     false,
+    valAxisMinVal:     0,
+    valAxisMaxVal:     70000,
+    secondValAxisMinVal: 0,
+    secondValAxisMaxVal: 0.5,
+  }
+);
+```
+
+---
+
+## Slide Masters & Layouts
+
+```js
+pres.defineSlideMaster({
+  title: 'CORPORATE',
+  background: { fill: 'F8F8F8' },
+  objects: [
+    // Logo
+    { image: { x: 8.8, y: 0.1, w: 1, h: 0.5, path: 'logo.png' } },
+    // Footer line
+    { line:  { x: 0, y: 5.2, w: '100%', h: 0, line: { color: '1F4E79', width: 2 } } },
+    // Footer text
+    { text:  { text: 'DreamCo Technologies — Confidential', options: { x: 0.5, y: 5.3, w: 9, h: 0.3, fontSize: 9, color: '999999' } } },
+  ],
+  slideNumber: { x: 9.2, y: 5.3, color: '999999', fontSize: 9 },
+});
+
+const slide = pres.addSlide({ masterName: 'CORPORATE' });
+```
+
+---
+
+## Animations (Limited Support)
+
+```js
+// pptxgenjs supports basic entrance animations on shapes/text
+slide.addText('Animated Title', {
+  x: 1, y: 1, w: 8, h: 1.5,
+  fontSize: 36,
+  bold: true,
+  // animations are set post-generation via openxml or separate tools
+});
+// For full animation support, use apache poi or python-pptx via a subprocess.
+```
+
+---
+
+## Hyperlinks
+
+```js
+// Text hyperlink
+slide.addText('Visit our website', {
+  x: 1, y: 3, w: 4, h: 0.5,
+  hyperlink: { url: 'https://dreamco.com', tooltip: 'DreamCo' },
+  color:     '0563C1',
+  underline: { style: 'sng' },
+});
+
+// Slide-to-slide navigation
+slide.addText('Go to Slide 3', {
+  x: 1, y: 4, w: 4, h: 0.5,
+  hyperlink: { slide: 3 },
+  color:     '0563C1',
+});
+```
+
+---
+
+## Notes
+
+```js
+slide.addNotes('Speaker notes go here. Remember to mention the Q4 results and the new product launch.');
+```
+
+---
+
+## Saving / Exporting
+
+```js
+// Save to file (Node.js)
+await pres.writeFile({ fileName: 'presentation.pptx' });
+
+// Get as buffer
+const buffer = await pres.write({ outputType: 'nodebuffer' });
+fs.writeFileSync('presentation.pptx', buffer);
+
+// Get as base64
+const base64 = await pres.write({ outputType: 'base64' });
+
+// Stream to HTTP response
+app.get('/download', async (req, res) => {
+  const buffer = await pres.write({ outputType: 'nodebuffer' });
+  res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.presentationml.presentation');
+  res.setHeader('Content-Disposition', 'attachment; filename=report.pptx');
+  res.send(buffer);
+});
+```
+
+---
+
+## Position & Size Units
+
+All `x`, `y`, `w`, `h` values are in **inches** by default:
+
+```js
+{ x: 1,    y: 0.5,  w: 8,   h: 1.5  }  // 1" from left, 0.5" from top
+{ x: '10%', y: '5%', w: '80%', h: '25%' }  // percentage of slide
+```
+
+---
+
+## Tips & Best Practices
+
+1. **Position in inches** — default pptxgenjs unit; slide = 10" × 5.625" (16:9).
+2. **Colors** — hex without `#` (e.g., `'1F4E79'`).
+3. **Chart data** — always provide parallel `labels` and `values` arrays of equal length.
+4. **Images** — use `Buffer` or base64 `data:` URI for embedded images; `path` for file paths.
+5. **Slide master** — define once, reference by `masterName` on each slide.
+6. **Font size** — in points.
+7. **Large decks** — build slides in loops; each `pres.addSlide()` is cheap.
+
+
+---
+
+## pptxgenjs Complete API Reference
+
+### Installation & Setup
+
+```bash
+npm install pptxgenjs
+```
+
+```js
+const PptxGenJS = require('pptxgenjs');
+const pptx = new PptxGenJS();
+
+// Global settings
+pptx.layout = 'LAYOUT_16x9';  // 'LAYOUT_4x3'|'LAYOUT_16x9'|'LAYOUT_16x10'|'LAYOUT_WIDE'|custom
+pptx.subject = 'Quarterly Report';
+pptx.author = 'John Doe';
+pptx.company = 'ACME Corp';
+pptx.revision = '1';
+pptx.title = 'Q4 2024 Results';
+
+// Custom layout
+pptx.defineLayout({ name: 'A3', width: 16.54, height: 11.69 });
+pptx.layout = 'A3';
+```
+
+### Slide Masters & Layouts
+
+```js
+// Define slide master
+pptx.defineSlideMaster({
+  title: 'MASTER_SLIDE',
+  background: { color: 'FFFFFF' },
+  objects: [
+    { rect: { x: 0, y: 7.0, w: '100%', h: 0.75, fill: { color: '003366' } } },
+    {
+      text: {
+        text: 'CONFIDENTIAL',
+        options: {
+          x: 0, y: 7.0, w: '100%', h: 0.75,
+          align: 'center', valign: 'middle',
+          color: 'FFFFFF', fontSize: 10,
+        }
+      }
+    },
+    {
+      image: {
+        x: 0.5, y: 0.25, w: 1.5, h: 0.5,
+        path: './logo.png',
+      }
+    },
+  ],
+  slideNumber: { x: '90%', y: 7.1, color: 'FFFFFF', fontSize: 9, fontFace: 'Arial' },
+  margin: [0.5, 0.25, 1.25, 0.5],
+});
+
+// Add slide using master
+const slide = pptx.addSlide({ masterName: 'MASTER_SLIDE' });
+```
+
+### Adding Slides
+
+```js
+// Basic slide
+const slide1 = pptx.addSlide();
+
+// Slide with master
+const slide2 = pptx.addSlide({ masterName: 'MASTER_SLIDE' });
+
+// Slide with background
+const slide3 = pptx.addSlide();
+slide3.background = { color: 'F5F5F5' };
+slide3.background = { path: './bg.jpg' };
+slide3.background = { data: 'data:image/png;base64,...' };
+
+// Hidden slide
+const slide4 = pptx.addSlide();
+slide4.hidden = true;
+
+// Slide number display
+pptx.slides.forEach((slide, i) => {
+  slide.addText(`Slide ${i + 1}`, {
+    x: '90%', y: '95%', w: '8%', h: '4%',
+    fontSize: 9, color: '999999', align: 'right',
+  });
+});
+```
+
+### Text Elements
+
+```js
+// Simple text
+slide.addText('Hello, World!', {
+  x: 0.5, y: 0.5, w: 9, h: 1,
+  fontFace: 'Arial',
+  fontSize: 36,
+  bold: true,
+  italic: false,
+  underline: { style: 'sng', color: '0000FF' },
+  strike: false,
+  color: '003366',
+  fill: { color: 'FFFFCC' },
+  transparency: 0,
+  border: { pt: 1, color: '666666' },
+  align: 'center',  // 'left'|'center'|'right'|'justify'
+  valign: 'middle', // 'top'|'middle'|'bottom'
+  wrap: true,
+  autoFit: false,
+  shrinkText: false,
+  inset: 0.05,
+  paraSpaceBefore: 6,
+  paraSpaceAfter: 6,
+  lineSpacingMultiple: 1.2,
+  charSpacing: 1,
+  rotate: 0,         // degrees
+  shadow: {
+    type: 'outer',
+    color: '000000',
+    opacity: 0.5,
+    blur: 4,
+    offset: 4,
+    angle: 45,
+  },
+  hyperlink: {
+    url: 'https://example.com',
+    tooltip: 'Visit our site',
+  },
+  rtlMode: false,
+  lang: 'en-US',
+  placeholder: 'body',  // for master slide placeholders
+});
+
+// Multi-format text (text runs)
+slide.addText([
+  { text: 'Bold text ', options: { bold: true, color: 'FF0000' } },
+  { text: 'and normal text ', options: { bold: false } },
+  { text: '\n' },
+  { text: 'New line with ', options: { fontSize: 18 } },
+  { text: 'hyperlink', options: { hyperlink: { url: 'https://google.com' } } },
+  { text: '\nBullet point', options: { bullet: true, indentLevel: 0 } },
+  { text: '\nSub-bullet', options: { bullet: { type: 'number', indent: 30 }, indentLevel: 1 } },
+], {
+  x: 0.5, y: 1.5, w: 9, h: 5,
+  fontSize: 16,
+  fontFace: 'Calibri',
+  color: '333333',
+});
+```
+
+### Shape Elements
+
+```js
+// Rectangle
+slide.addShape(pptx.shapes.RECTANGLE, {
+  x: 1, y: 1, w: 3, h: 2,
+  fill: { color: '4472C4' },
+  line: { color: '2F5597', width: 2, dashType: 'solid' },
+  shadow: { type: 'outer', color: '000000', opacity: 0.3, blur: 3, offset: 3, angle: 45 },
+  transparency: 0,
+  rotate: 0,
+});
+
+// All shape types
+const shapes = [
+  pptx.shapes.RECTANGLE,
+  pptx.shapes.ROUNDED_RECTANGLE,
+  pptx.shapes.OVAL,
+  pptx.shapes.TRIANGLE,
+  pptx.shapes.RIGHT_TRIANGLE,
+  pptx.shapes.PARALLELOGRAM,
+  pptx.shapes.TRAPEZOID,
+  pptx.shapes.DIAMOND,
+  pptx.shapes.PENTAGON,
+  pptx.shapes.HEXAGON,
+  pptx.shapes.HEPTAGON,
+  pptx.shapes.OCTAGON,
+  pptx.shapes.DECAGON,
+  pptx.shapes.STAR_4,
+  pptx.shapes.STAR_5,
+  pptx.shapes.STAR_6,
+  pptx.shapes.STAR_7,
+  pptx.shapes.STAR_8,
+  pptx.shapes.STAR_10,
+  pptx.shapes.STAR_12,
+  pptx.shapes.STAR_16,
+  pptx.shapes.STAR_24,
+  pptx.shapes.STAR_32,
+  pptx.shapes.ARROW_RIGHT,
+  pptx.shapes.ARROW_LEFT,
+  pptx.shapes.ARROW_UP,
+  pptx.shapes.ARROW_DOWN,
+  pptx.shapes.ARROW_LEFT_RIGHT,
+  pptx.shapes.ARROW_UP_DOWN,
+  pptx.shapes.CALLOUT_1,
+  pptx.shapes.CALLOUT_2,
+  pptx.shapes.CALLOUT_3,
+  pptx.shapes.LINE,
+  pptx.shapes.LINE_ARROW,
+  pptx.shapes.LINE_ARROWS,
+  pptx.shapes.FLOW_CHART_PROCESS,
+  pptx.shapes.FLOW_CHART_DECISION,
+  pptx.shapes.FLOW_CHART_DATA,
+  pptx.shapes.FLOW_CHART_TERMINATOR,
+  pptx.shapes.FLOW_CHART_CONNECTOR,
+  pptx.shapes.FLOW_CHART_ALTERNATE_PROCESS,
+  pptx.shapes.CROSS,
+  pptx.shapes.PLUS,
+  pptx.shapes.SMILEY_FACE,
+  pptx.shapes.NO_SMOKING,
+  pptx.shapes.PLAQUE,
+  pptx.shapes.CAN,
+  pptx.shapes.CUBE,
+  pptx.shapes.BEVEL,
+  pptx.shapes.DONUT,
+  pptx.shapes.CLOUD,
+  pptx.shapes.CLOUD_CALLOUT,
+  pptx.shapes.HEART,
+  pptx.shapes.LIGHTNING_BOLT,
+  pptx.shapes.SUN,
+  pptx.shapes.MOON,
+  pptx.shapes.ARC,
+  pptx.shapes.CHORD,
+  pptx.shapes.PIE,
+];
+
+// Filled shape with text
+slide.addShape(pptx.shapes.ROUNDED_RECTANGLE, {
+  x: 1, y: 3, w: 4, h: 1.5,
+  fill: { color: 'ED7D31' },
+  line: { color: 'ED7D31', width: 0 },
+  text: 'Click Here',
+  options: {
+    fontFace: 'Arial',
+    fontSize: 18,
+    bold: true,
+    color: 'FFFFFF',
+    align: 'center',
+    valign: 'middle',
+  }
+});
+```
+
+### Image Elements
+
+```js
+// Add image from file path
+slide.addImage({
+  path: './images/photo.jpg',
+  x: 0.5, y: 0.5, w: 4, h: 3,
+  sizing: {
+    type: 'contain',   // 'contain'|'cover'|'crop'
+    w: 4, h: 3,
+  },
+  rounding: true,    // circular crop
+  opacity: 1,
+  rotate: 0,
+  shadow: { type: 'outer', color: '000000', opacity: 0.3, blur: 5, offset: 3 },
+  border: { pt: 2, color: '666666' },
+  hyperlink: { url: 'https://example.com' },
+  altText: 'Company logo',
+  placeholder: 'body',
+});
+
+// Add image from URL
+slide.addImage({
+  path: 'https://example.com/image.png',
+  x: 5, y: 0.5, w: 4, h: 3,
+});
+
+// Add image from base64
+slide.addImage({
+  data: 'data:image/png;base64,iVBORw0KGgo...',
+  x: 0.5, y: 4, w: 9, h: 4,
+});
+
+// SVG image
+slide.addImage({
+  data: '<svg>...</svg>',
+  type: 'svg',
+  x: 1, y: 1, w: 3, h: 3,
+});
+```
+
+### Chart Elements
+
+```js
+// Bar chart
+slide.addChart(pptx.charts.BAR, [
+  {
+    name: 'Q1 2024',
+    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+    values: [48000, 52000, 61000, 58000, 63000, 71000],
+  },
+  {
+    name: 'Q1 2023',
+    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+    values: [42000, 48000, 55000, 50000, 58000, 65000],
+  },
+], {
+  x: 0.5, y: 1.5, w: 9, h: 5,
+  barDir: 'col',        // 'bar'|'col'
+  barGrouping: 'clustered',  // 'clustered'|'stacked'|'percentStacked'
+  bar3DShape: '',       // ''|'box'|'cone'|'coneToMax'|'cylinder'|'pyramid'|'pyramidToMax'
+  chartColors: ['4472C4', 'ED7D31', 'A9D18E', 'FFC000', '5B9BD5'],
+  chartColorsOpacity: 100,
+  showTitle: true,
+  title: 'Monthly Revenue Comparison',
+  titleFontSize: 14,
+  titleFontFace: 'Calibri',
+  titleColor: '363636',
+  titlePos: { x: 0, y: 0 },
+  showLegend: true,
+  legendPos: 'b',      // 't'|'b'|'l'|'r'|'tr'
+  legendFontSize: 12,
+  legendFontFace: 'Calibri',
+  legendColor: '363636',
+  catAxisTitle: 'Month',
+  catAxisTitleColor: '363636',
+  catAxisTitleFontSize: 12,
+  catAxisLabelColor: '595959',
+  catAxisLabelFontFace: 'Calibri',
+  catAxisLabelFontSize: 10,
+  catAxisLabelFrequency: 1,
+  catAxisLabelRotate: 0,
+  catGridLine: { style: 'none' },
+  catAxisLineShow: true,
+  catAxisBaseTimeUnit: 'months',
+  valAxisTitle: 'Revenue ($)',
+  valAxisTitleColor: '363636',
+  valAxisTitleFontSize: 12,
+  valAxisLabelColor: '595959',
+  valAxisLabelFontFace: 'Calibri',
+  valAxisLabelFontSize: 10,
+  valAxisNumFmt: '"$"#,##0',
+  valAxisMinVal: 0,
+  valAxisMaxVal: 100000,
+  valAxisMajorUnit: 10000,
+  valGridLine: { style: 'solid', color: 'CCCCCC', size: 0.5 },
+  valAxisLineShow: true,
+  showValue: true,
+  dataLabelColor: '000000',
+  dataLabelFontFace: 'Calibri',
+  dataLabelFontSize: 9,
+  dataLabelPosition: 'outEnd',  // 'inBase'|'inEnd'|'outEnd'|'ctr'|'bestFit'
+  dataLabelFormatCode: '"$"#,##0',
+  showPercent: false,
+  showSerName: false,
+  showCatName: false,
+  plotAreaFill: { color: 'FFFFFF' },
+  plotAreaBorder: { pt: 0 },
+  border: { pt: 0 },
+  fill: { color: 'FFFFFF' },
+  shadow: null,
+  invertedColors: false,
+  radarStyle: 'standard',
+  lineDataSymbol: 'circle',
+  lineDataSymbolSize: 6,
+  lineDataSymbolLineColor: '4472C4',
+  lineDataSymbolLineSize: 1,
+  lineSmooth: false,
+  lineDash: 'solid',
+});
+
+// All chart types
+const chartTypes = {
+  BAR: pptx.charts.BAR,
+  BUBBLE: pptx.charts.BUBBLE,
+  DOUGHNUT: pptx.charts.DOUGHNUT,
+  LINE: pptx.charts.LINE,
+  PIE: pptx.charts.PIE,
+  RADAR: pptx.charts.RADAR,
+  SCATTER: pptx.charts.SCATTER,
+  AREA: pptx.charts.AREA,
+};
+
+// Line chart
+slide.addChart(pptx.charts.LINE, [
+  {
+    name: 'Revenue',
+    labels: ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'],
+    values: [48,52,61,58,63,71,68,75,82,79,88,95].map(v => v * 1000),
+  }
+], {
+  x: 0.5, y: 1.5, w: 9, h: 5,
+  showTitle: true,
+  title: 'Annual Revenue Trend',
+  lineDataSymbol: 'circle',
+  lineDataSymbolSize: 6,
+  lineSmooth: false,
+  catAxisTitle: 'Month',
+  valAxisTitle: 'Revenue ($)',
+  valAxisNumFmt: '"$"#,##0',
+  valAxisMinVal: 0,
+  chartColors: ['2E75B6'],
+  showValue: false,
+  dataLabelPosition: 'ctr',
+});
+
+// Pie chart
+slide.addChart(pptx.charts.PIE, [
+  {
+    name: 'Market Share',
+    labels: ['Product A', 'Product B', 'Product C', 'Product D', 'Other'],
+    values: [35.2, 28.7, 18.5, 11.3, 6.3],
+  }
+], {
+  x: 1, y: 1.5, w: 8, h: 5.5,
+  showTitle: true,
+  title: 'Market Share by Product',
+  showLegend: true,
+  legendPos: 'r',
+  showPercent: true,
+  showValue: false,
+  dataLabelColor: 'FFFFFF',
+  dataLabelFontSize: 12,
+  dataLabelFontFace: 'Calibri',
+  chartColors: ['4472C4','ED7D31','A9D18E','FFC000','5B9BD5'],
+  chartColorsOpacity: 100,
+  holeSize: 50,  // for doughnut only
+  firstSliceAng: 0,
+  showBubbleSize: false,
+  showCatName: true,
+  showSerName: false,
+  dataLabelPosition: 'bestFit',
+});
+
+// Scatter chart
+slide.addChart(pptx.charts.SCATTER, [
+  {
+    name: 'Dataset 1',
+    values: [43.5, 52.2, 28.1, 65.8, 37.4, 71.2, 44.6, 58.9, 82.3, 55.7],
+    sizes: [5, 8, 3, 12, 6, 15, 7, 10, 18, 9],  // for bubble
+  }
+], {
+  x: 0.5, y: 1, w: 9, h: 6,
+  showTitle: true,
+  title: 'Data Distribution',
+  catAxisTitle: 'X Values',
+  valAxisTitle: 'Y Values',
+  lineDataSymbol: 'circle',
+  lineDataSymbolSize: 8,
+  chartColors: ['4472C4'],
+  lineSize: 0,  // 0 = no line, just points
+});
+```
+
+### Table Elements
+
+```js
+// Add table
+slide.addTable([
+  [
+    { text: 'Name', options: { bold: true, fill: '4472C4', color: 'FFFFFF' } },
+    { text: 'Department', options: { bold: true, fill: '4472C4', color: 'FFFFFF' } },
+    { text: 'Salary', options: { bold: true, fill: '4472C4', color: 'FFFFFF' } },
+    { text: 'Status', options: { bold: true, fill: '4472C4', color: 'FFFFFF' } },
+  ],
+  ['Alice Smith', 'Engineering', '$95,000', 'Active'],
+  ['Bob Johnson', 'Marketing', '$72,000', 'Active'],
+  ['Charlie Brown', 'Sales', '$68,000', 'Inactive'],
+  ['Diana Prince', 'HR', '$78,000', 'Active'],
+  [{ text: 'Total', options: { bold: true } }, '', { text: '$313,000', options: { bold: true } }, ''],
+], {
+  x: 0.5, y: 1, w: 9, h: 6,
+  fill: 'FFFFFF',
+  fontFace: 'Calibri',
+  fontSize: 12,
+  color: '363636',
+  align: 'left',
+  valign: 'middle',
+  border: {
+    type: 'all',     // 'all'|'none'|specific sides
+    pt: 0.5,
+    color: 'CCCCCC',
+  },
+  margin: [0.05, 0.1, 0.05, 0.1],  // top, right, bottom, left (inches)
+  colW: [3, 2.5, 1.5, 1.5],      // column widths
+  rowH: [0.5],                     // row heights
+  autoPage: true,                  // auto-paginate when table is too tall
+  autoPageRepeatHeader: true,      // repeat header on continuation slides
+  autoPageLineWeight: 0.5,
+  newSlideStartY: 1,               // Y position for continuation slides
+});
+```
+
+### Speaker Notes
+
+```js
+// Add notes to slide
+slide.addNotes('These are speaker notes for this slide.\nKey points:\n- Revenue up 12%\n- New markets performing well\n- Cost reduction initiatives underway');
+
+// Notes with formatting
+slide.addNotes([
+  { text: 'Key Talking Points', options: { fontSize: 14, bold: true } },
+  { text: '\n\n' },
+  { text: '1. Revenue increased 12% year-over-year\n', options: { fontSize: 12 } },
+  { text: '2. Market expansion in APAC region (+25%)\n', options: { fontSize: 12 } },
+  { text: '3. Cost optimization saved $2.3M\n', options: { fontSize: 12 } },
+  { text: '\nQuestions to expect:', options: { bold: true, color: 'CC0000' } },
+  { text: '\n- Why did margins compress in Q3?\n- What is the APAC expansion timeline?', options: { italic: true } },
+]);
+```
+
+### Transitions and Animations
+
+```js
+// Slide transition
+slide.transition = {
+  type: 'fade',    // 'none'|'cut'|'fade'|'push'|'wipe'|'split'|'reveal'|'random_bars'|'shape'|'blinds'|'checker'|'comb'|'cover'|'dissolve'|'newsflash'|'pull'|'random'|'zoom'
+  speed: 'medium', // 'slow'|'medium'|'fast'
+  advAuto: '00:03:00',  // auto advance after 3 seconds
+};
+
+// Object animation (limited support)
+slide.addText('Animated text', {
+  x: 1, y: 1, w: 8, h: 1,
+  fontSize: 24,
+  animate: {
+    type: 'appear',
+    triggerType: 'onClick',
+    delay: 500,
+  }
+});
+```
+
+### Media Embedding
+
+```js
+// Video from file
+slide.addMedia({
+  type: 'video',
+  path: './videos/intro.mp4',
+  x: 1, y: 1, w: 8, h: 4.5,
+  cover: './images/video-thumbnail.jpg',
+  autoPlay: false,
+  loop: false,
+  muted: false,
+});
+
+// Audio from URL
+slide.addMedia({
+  type: 'audio',
+  link: 'https://example.com/audio.mp3',
+  x: 0.5, y: 0.5, w: 1, h: 0.5,
+  autoPlay: false,
+  loop: false,
+});
+
+// Online video (YouTube embed)
+slide.addMedia({
+  type: 'online',
+  link: 'https://www.youtube.com/embed/dQw4w9WgXcQ',
+  x: 1, y: 1, w: 8, h: 4.5,
+});
+```
+
+### Export Options
+
+```js
+// Save to file
+await pptx.writeFile({ fileName: 'presentation.pptx' });
+
+// Get as base64
+const base64Data = await pptx.write({ outputType: 'base64' });
+
+// Get as Blob (browser)
+const blob = await pptx.write({ outputType: 'blob' });
+
+// Get as Buffer (Node.js)
+const buffer = await pptx.write({ outputType: 'nodebuffer' });
+
+// Get as Uint8Array
+const uint8 = await pptx.write({ outputType: 'uint8array' });
+
+// Get as ArrayBuffer
+const arrayBuffer = await pptx.write({ outputType: 'arraybuffer' });
+
+// Callback style (older API)
+pptx.save('my-presentation', (fileName) => {
+  console.log(`Saved: ${fileName}`);
+}, 'nodebuffer');
+```
+
+### Complete Presentation Example
+
+```js
+const PptxGenJS = require('pptxgenjs');
+
+async function createQuarterlyReport(data) {
+  const pptx = new PptxGenJS();
+  pptx.layout = 'LAYOUT_16x9';
+  pptx.title = 'Q4 2024 Quarterly Report';
+  pptx.author = 'Analytics Team';
+
+  // Define master
+  pptx.defineSlideMaster({
+    title: 'CORPORATE',
+    background: { color: 'FFFFFF' },
+    objects: [
+      { rect: { x: 0, y: 0, w: '100%', h: 0.08, fill: { color: '003366' } } },
+      { rect: { x: 0, y: 7.42, w: '100%', h: 0.08, fill: { color: '003366' } } },
+      {
+        text: {
+          text: data.companyName,
+          options: {
+            x: 0.4, y: 7.4, w: 5, h: 0.1,
+            fontSize: 8, color: 'FFFFFF', bold: false, align: 'left',
+          }
+        }
+      },
+    ],
+    slideNumber: { x: '92%', y: 7.38, color: 'CCCCCC', fontSize: 8 },
+  });
+
+  // Title slide
+  const titleSlide = pptx.addSlide({ masterName: 'CORPORATE' });
+  titleSlide.addShape(pptx.shapes.RECTANGLE, {
+    x: 0, y: 2.5, w: '100%', h: 2.5,
+    fill: { color: '003366' },
+    line: { width: 0 },
+  });
+  titleSlide.addText(data.title, {
+    x: 0.5, y: 2.7, w: 9, h: 1.2,
+    fontFace: 'Calibri Light',
+    fontSize: 40,
+    bold: false,
+    color: 'FFFFFF',
+    align: 'center',
+  });
+  titleSlide.addText(`Q4 ${data.year} | ${data.presenter}`, {
+    x: 0.5, y: 3.9, w: 9, h: 0.6,
+    fontFace: 'Calibri',
+    fontSize: 18,
+    color: 'CCCCCC',
+    align: 'center',
+  });
+
+  // Executive Summary slide
+  const summarySlide = pptx.addSlide({ masterName: 'CORPORATE' });
+  summarySlide.addText('Executive Summary', {
+    x: 0.4, y: 0.2, w: 9.2, h: 0.6,
+    fontFace: 'Calibri Light',
+    fontSize: 28,
+    color: '003366',
+    bold: false,
+  });
+
+  // KPI boxes
+  const kpis = [
+    { label: 'Revenue', value: '$' + (data.revenue / 1e6).toFixed(1) + 'M', change: '+12.5%', positive: true },
+    { label: 'Net Income', value: '$' + (data.netIncome / 1e6).toFixed(1) + 'M', change: '+8.3%', positive: true },
+    { label: 'EBITDA', value: (data.ebitdaMargin * 100).toFixed(1) + '%', change: '+1.2pp', positive: true },
+    { label: 'Customers', value: data.customers.toLocaleString(), change: '-2.1%', positive: false },
+  ];
+
+  kpis.forEach((kpi, i) => {
+    const x = 0.4 + i * 2.35;
+    summarySlide.addShape(pptx.shapes.RECTANGLE, {
+      x, y: 1.0, w: 2.2, h: 2.5,
+      fill: { color: kpi.positive ? 'E8F4FD' : 'FDE8E8' },
+      line: { color: kpi.positive ? '2E75B6' : 'C00000', width: 1 },
+    });
+    summarySlide.addText(kpi.label, { x, y: 1.1, w: 2.2, h: 0.4, fontSize: 11, color: '666666', align: 'center' });
+    summarySlide.addText(kpi.value, { x, y: 1.5, w: 2.2, h: 0.8, fontSize: 22, bold: true, color: '003366', align: 'center' });
+    summarySlide.addText(kpi.change, {
+      x, y: 2.3, w: 2.2, h: 0.4,
+      fontSize: 14, bold: true,
+      color: kpi.positive ? '375623' : '9C0006',
+      align: 'center'
+    });
+  });
+
+  // Revenue chart slide
+  const chartSlide = pptx.addSlide({ masterName: 'CORPORATE' });
+  chartSlide.addText('Revenue Trend', { x: 0.4, y: 0.2, w: 9.2, h: 0.6, fontSize: 28, color: '003366', fontFace: 'Calibri Light' });
+  chartSlide.addChart(pptx.charts.LINE, [
+    {
+      name: 'Revenue',
+      labels: data.months,
+      values: data.monthlyRevenue,
+    },
+    {
+      name: 'Target',
+      labels: data.months,
+      values: data.monthlyTarget,
+    }
+  ], {
+    x: 0.4, y: 1.0, w: 9.2, h: 5.8,
+    showTitle: false,
+    showLegend: true,
+    legendPos: 'b',
+    chartColors: ['2E75B6', 'ED7D31'],
+    lineSmooth: true,
+    lineDataSymbol: 'circle',
+    valAxisNumFmt: '"$"#,##0',
+    valAxisTitle: 'Monthly Revenue',
+    catAxisTitle: 'Month',
+    gridLineMajorClr: 'EEEEEE',
+  });
+
+  await pptx.writeFile({ fileName: 'quarterly-report.pptx' });
+  return 'quarterly-report.pptx';
+}
+```
+
+### Color Schemes and Themes
+
+```js
+// Theme colors for consistent presentations
+const THEME_COLORS = {
+  primary:    '003366',  // dark blue
+  secondary:  '2E75B6',  // medium blue
+  accent1:    'ED7D31',  // orange
+  accent2:    'A9D18E',  // green
+  accent3:    'FFC000',  // yellow
+  accent4:    'FF0000',  // red
+  dark1:      '000000',  // black
+  dark2:      '333333',  // dark gray
+  light1:     'FFFFFF',  // white
+  light2:     'F5F5F5',  // off-white
+  text:       '363636',  // near black
+  textLight:  '666666',  // medium gray
+  border:     'CCCCCC',  // light gray
+  success:    '375623',  // dark green
+  warning:    'FF6B00',  // orange
+  error:      '9C0006',  // dark red
+  info:       '0070C0',  // blue
+  successBg:  'C6EFCE',  // light green
+  warningBg:  'FFEB9C',  // light yellow
+  errorBg:    'FFC7CE',  // light red
+  infoBg:     'DDEBF7',  // light blue
+};
+
+// Apply consistent styles across multiple slides
+function applyTheme(pptx, slides) {
+  slides.forEach(slide => {
+    slide.background = { color: THEME_COLORS.light1 };
+  });
+}
+```
+
+### Troubleshooting
+
+**Issue: Images not loading from URL**
+```js
+// Use local path or base64 instead
+const axios = require('axios');
+const response = await axios.get(imageUrl, { responseType: 'arraybuffer' });
+const base64 = Buffer.from(response.data).toString('base64');
+const ext = imageUrl.split('.').pop();
+slide.addImage({ data: `data:image/${ext};base64,${base64}`, x, y, w, h });
+```
+
+**Issue: Large file size**
+```js
+// Compress images before embedding
+const sharp = require('sharp');
+const compressed = await sharp(imagePath).resize(800).jpeg({ quality: 80 }).toBuffer();
+const b64 = compressed.toString('base64');
+slide.addImage({ data: `data:image/jpeg;base64,${b64}`, x, y, w, h });
+```
+
+**Issue: Text not wrapping**
+```js
+// Ensure wrap is true and dimensions allow wrapping
+slide.addText('Long text content...', {
+  x: 0.5, y: 0.5, w: 5, h: 3,  // specify w and h
+  wrap: true,
+  autoFit: false,
+});
+```
+
+**Issue: Charts with too many data points**
+```js
+// Aggregate data before charting
+function aggregateByMonth(data) {
+  return data.reduce((acc, item) => {
+    const month = item.date.toISOString().slice(0, 7);
+    if (!acc[month]) acc[month] = 0;
+    acc[month] += item.value;
+    return acc;
+  }, {});
+}
+```
+
+
+---
+
+## pptxgenjs Complete API Reference
+
+### Installation & Setup
+
+```bash
+npm install pptxgenjs
+```
+
+```js
+const PptxGenJS = require('pptxgenjs');
+const pptx = new PptxGenJS();
+
+// Global settings
+pptx.layout = 'LAYOUT_16x9';  // 'LAYOUT_4x3'|'LAYOUT_16x9'|'LAYOUT_16x10'|'LAYOUT_WIDE'|custom
+pptx.subject = 'Quarterly Report';
+pptx.author = 'John Doe';
+pptx.company = 'ACME Corp';
+pptx.revision = '1';
+pptx.title = 'Q4 2024 Results';
+
+// Custom layout
+pptx.defineLayout({ name: 'A3', width: 16.54, height: 11.69 });
+pptx.layout = 'A3';
+```
+
+### Slide Masters & Layouts
+
+```js
+// Define slide master
+pptx.defineSlideMaster({
+  title: 'MASTER_SLIDE',
+  background: { color: 'FFFFFF' },
+  objects: [
+    { rect: { x: 0, y: 7.0, w: '100%', h: 0.75, fill: { color: '003366' } } },
+    {
+      text: {
+        text: 'CONFIDENTIAL',
+        options: {
+          x: 0, y: 7.0, w: '100%', h: 0.75,
+          align: 'center', valign: 'middle',
+          color: 'FFFFFF', fontSize: 10,
+        }
+      }
+    },
+    {
+      image: {
+        x: 0.5, y: 0.25, w: 1.5, h: 0.5,
+        path: './logo.png',
+      }
+    },
+  ],
+  slideNumber: { x: '90%', y: 7.1, color: 'FFFFFF', fontSize: 9, fontFace: 'Arial' },
+  margin: [0.5, 0.25, 1.25, 0.5],
+});
+
+// Add slide using master
+const slide = pptx.addSlide({ masterName: 'MASTER_SLIDE' });
+```
+
+### Adding Slides
+
+```js
+// Basic slide
+const slide1 = pptx.addSlide();
+
+// Slide with master
+const slide2 = pptx.addSlide({ masterName: 'MASTER_SLIDE' });
+
+// Slide with background
+const slide3 = pptx.addSlide();
+slide3.background = { color: 'F5F5F5' };
+slide3.background = { path: './bg.jpg' };
+slide3.background = { data: 'data:image/png;base64,...' };
+
+// Hidden slide
+const slide4 = pptx.addSlide();
+slide4.hidden = true;
+
+// Slide number display
+pptx.slides.forEach((slide, i) => {
+  slide.addText(`Slide ${i + 1}`, {
+    x: '90%', y: '95%', w: '8%', h: '4%',
+    fontSize: 9, color: '999999', align: 'right',
+  });
+});
+```
+
+### Text Elements
+
+```js
+// Simple text
+slide.addText('Hello, World!', {
+  x: 0.5, y: 0.5, w: 9, h: 1,
+  fontFace: 'Arial',
+  fontSize: 36,
+  bold: true,
+  italic: false,
+  underline: { style: 'sng', color: '0000FF' },
+  strike: false,
+  color: '003366',
+  fill: { color: 'FFFFCC' },
+  transparency: 0,
+  border: { pt: 1, color: '666666' },
+  align: 'center',  // 'left'|'center'|'right'|'justify'
+  valign: 'middle', // 'top'|'middle'|'bottom'
+  wrap: true,
+  autoFit: false,
+  shrinkText: false,
+  inset: 0.05,
+  paraSpaceBefore: 6,
+  paraSpaceAfter: 6,
+  lineSpacingMultiple: 1.2,
+  charSpacing: 1,
+  rotate: 0,         // degrees
+  shadow: {
+    type: 'outer',
+    color: '000000',
+    opacity: 0.5,
+    blur: 4,
+    offset: 4,
+    angle: 45,
+  },
+  hyperlink: {
+    url: 'https://example.com',
+    tooltip: 'Visit our site',
+  },
+  rtlMode: false,
+  lang: 'en-US',
+  placeholder: 'body',  // for master slide placeholders
+});
+
+// Multi-format text (text runs)
+slide.addText([
+  { text: 'Bold text ', options: { bold: true, color: 'FF0000' } },
+  { text: 'and normal text ', options: { bold: false } },
+  { text: '\n' },
+  { text: 'New line with ', options: { fontSize: 18 } },
+  { text: 'hyperlink', options: { hyperlink: { url: 'https://google.com' } } },
+  { text: '\nBullet point', options: { bullet: true, indentLevel: 0 } },
+  { text: '\nSub-bullet', options: { bullet: { type: 'number', indent: 30 }, indentLevel: 1 } },
+], {
+  x: 0.5, y: 1.5, w: 9, h: 5,
+  fontSize: 16,
+  fontFace: 'Calibri',
+  color: '333333',
+});
+```
+
+### Shape Elements
+
+```js
+// Rectangle
+slide.addShape(pptx.shapes.RECTANGLE, {
+  x: 1, y: 1, w: 3, h: 2,
+  fill: { color: '4472C4' },
+  line: { color: '2F5597', width: 2, dashType: 'solid' },
+  shadow: { type: 'outer', color: '000000', opacity: 0.3, blur: 3, offset: 3, angle: 45 },
+  transparency: 0,
+  rotate: 0,
+});
+
+// All shape types
+const shapes = [
+  pptx.shapes.RECTANGLE,
+  pptx.shapes.ROUNDED_RECTANGLE,
+  pptx.shapes.OVAL,
+  pptx.shapes.TRIANGLE,
+  pptx.shapes.RIGHT_TRIANGLE,
+  pptx.shapes.PARALLELOGRAM,
+  pptx.shapes.TRAPEZOID,
+  pptx.shapes.DIAMOND,
+  pptx.shapes.PENTAGON,
+  pptx.shapes.HEXAGON,
+  pptx.shapes.HEPTAGON,
+  pptx.shapes.OCTAGON,
+  pptx.shapes.DECAGON,
+  pptx.shapes.STAR_4,
+  pptx.shapes.STAR_5,
+  pptx.shapes.STAR_6,
+  pptx.shapes.STAR_7,
+  pptx.shapes.STAR_8,
+  pptx.shapes.STAR_10,
+  pptx.shapes.STAR_12,
+  pptx.shapes.STAR_16,
+  pptx.shapes.STAR_24,
+  pptx.shapes.STAR_32,
+  pptx.shapes.ARROW_RIGHT,
+  pptx.shapes.ARROW_LEFT,
+  pptx.shapes.ARROW_UP,
+  pptx.shapes.ARROW_DOWN,
+  pptx.shapes.ARROW_LEFT_RIGHT,
+  pptx.shapes.ARROW_UP_DOWN,
+  pptx.shapes.CALLOUT_1,
+  pptx.shapes.CALLOUT_2,
+  pptx.shapes.CALLOUT_3,
+  pptx.shapes.LINE,
+  pptx.shapes.LINE_ARROW,
+  pptx.shapes.LINE_ARROWS,
+  pptx.shapes.FLOW_CHART_PROCESS,
+  pptx.shapes.FLOW_CHART_DECISION,
+  pptx.shapes.FLOW_CHART_DATA,
+  pptx.shapes.FLOW_CHART_TERMINATOR,
+  pptx.shapes.FLOW_CHART_CONNECTOR,
+  pptx.shapes.FLOW_CHART_ALTERNATE_PROCESS,
+  pptx.shapes.CROSS,
+  pptx.shapes.PLUS,
+  pptx.shapes.SMILEY_FACE,
+  pptx.shapes.NO_SMOKING,
+  pptx.shapes.PLAQUE,
+  pptx.shapes.CAN,
+  pptx.shapes.CUBE,
+  pptx.shapes.BEVEL,
+  pptx.shapes.DONUT,
+  pptx.shapes.CLOUD,
+  pptx.shapes.CLOUD_CALLOUT,
+  pptx.shapes.HEART,
+  pptx.shapes.LIGHTNING_BOLT,
+  pptx.shapes.SUN,
+  pptx.shapes.MOON,
+  pptx.shapes.ARC,
+  pptx.shapes.CHORD,
+  pptx.shapes.PIE,
+];
+
+// Filled shape with text
+slide.addShape(pptx.shapes.ROUNDED_RECTANGLE, {
+  x: 1, y: 3, w: 4, h: 1.5,
+  fill: { color: 'ED7D31' },
+  line: { color: 'ED7D31', width: 0 },
+  text: 'Click Here',
+  options: {
+    fontFace: 'Arial',
+    fontSize: 18,
+    bold: true,
+    color: 'FFFFFF',
+    align: 'center',
+    valign: 'middle',
+  }
+});
+```
+
+### Image Elements
+
+```js
+// Add image from file path
+slide.addImage({
+  path: './images/photo.jpg',
+  x: 0.5, y: 0.5, w: 4, h: 3,
+  sizing: {
+    type: 'contain',   // 'contain'|'cover'|'crop'
+    w: 4, h: 3,
+  },
+  rounding: true,    // circular crop
+  opacity: 1,
+  rotate: 0,
+  shadow: { type: 'outer', color: '000000', opacity: 0.3, blur: 5, offset: 3 },
+  border: { pt: 2, color: '666666' },
+  hyperlink: { url: 'https://example.com' },
+  altText: 'Company logo',
+  placeholder: 'body',
+});
+
+// Add image from URL
+slide.addImage({
+  path: 'https://example.com/image.png',
+  x: 5, y: 0.5, w: 4, h: 3,
+});
+
+// Add image from base64
+slide.addImage({
+  data: 'data:image/png;base64,iVBORw0KGgo...',
+  x: 0.5, y: 4, w: 9, h: 4,
+});
+
+// SVG image
+slide.addImage({
+  data: '<svg>...</svg>',
+  type: 'svg',
+  x: 1, y: 1, w: 3, h: 3,
+});
+```
+
+### Chart Elements
+
+```js
+// Bar chart
+slide.addChart(pptx.charts.BAR, [
+  {
+    name: 'Q1 2024',
+    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+    values: [48000, 52000, 61000, 58000, 63000, 71000],
+  },
+  {
+    name: 'Q1 2023',
+    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+    values: [42000, 48000, 55000, 50000, 58000, 65000],
+  },
+], {
+  x: 0.5, y: 1.5, w: 9, h: 5,
+  barDir: 'col',        // 'bar'|'col'
+  barGrouping: 'clustered',  // 'clustered'|'stacked'|'percentStacked'
+  bar3DShape: '',       // ''|'box'|'cone'|'coneToMax'|'cylinder'|'pyramid'|'pyramidToMax'
+  chartColors: ['4472C4', 'ED7D31', 'A9D18E', 'FFC000', '5B9BD5'],
+  chartColorsOpacity: 100,
+  showTitle: true,
+  title: 'Monthly Revenue Comparison',
+  titleFontSize: 14,
+  titleFontFace: 'Calibri',
+  titleColor: '363636',
+  titlePos: { x: 0, y: 0 },
+  showLegend: true,
+  legendPos: 'b',      // 't'|'b'|'l'|'r'|'tr'
+  legendFontSize: 12,
+  legendFontFace: 'Calibri',
+  legendColor: '363636',
+  catAxisTitle: 'Month',
+  catAxisTitleColor: '363636',
+  catAxisTitleFontSize: 12,
+  catAxisLabelColor: '595959',
+  catAxisLabelFontFace: 'Calibri',
+  catAxisLabelFontSize: 10,
+  catAxisLabelFrequency: 1,
+  catAxisLabelRotate: 0,
+  catGridLine: { style: 'none' },
+  catAxisLineShow: true,
+  catAxisBaseTimeUnit: 'months',
+  valAxisTitle: 'Revenue ($)',
+  valAxisTitleColor: '363636',
+  valAxisTitleFontSize: 12,
+  valAxisLabelColor: '595959',
+  valAxisLabelFontFace: 'Calibri',
+  valAxisLabelFontSize: 10,
+  valAxisNumFmt: '"$"#,##0',
+  valAxisMinVal: 0,
+  valAxisMaxVal: 100000,
+  valAxisMajorUnit: 10000,
+  valGridLine: { style: 'solid', color: 'CCCCCC', size: 0.5 },
+  valAxisLineShow: true,
+  showValue: true,
+  dataLabelColor: '000000',
+  dataLabelFontFace: 'Calibri',
+  dataLabelFontSize: 9,
+  dataLabelPosition: 'outEnd',  // 'inBase'|'inEnd'|'outEnd'|'ctr'|'bestFit'
+  dataLabelFormatCode: '"$"#,##0',
+  showPercent: false,
+  showSerName: false,
+  showCatName: false,
+  plotAreaFill: { color: 'FFFFFF' },
+  plotAreaBorder: { pt: 0 },
+  border: { pt: 0 },
+  fill: { color: 'FFFFFF' },
+  shadow: null,
+  invertedColors: false,
+  radarStyle: 'standard',
+  lineDataSymbol: 'circle',
+  lineDataSymbolSize: 6,
+  lineDataSymbolLineColor: '4472C4',
+  lineDataSymbolLineSize: 1,
+  lineSmooth: false,
+  lineDash: 'solid',
+});
+
+// All chart types
+const chartTypes = {
+  BAR: pptx.charts.BAR,
+  BUBBLE: pptx.charts.BUBBLE,
+  DOUGHNUT: pptx.charts.DOUGHNUT,
+  LINE: pptx.charts.LINE,
+  PIE: pptx.charts.PIE,
+  RADAR: pptx.charts.RADAR,
+  SCATTER: pptx.charts.SCATTER,
+  AREA: pptx.charts.AREA,
+};
+
+// Line chart
+slide.addChart(pptx.charts.LINE, [
+  {
+    name: 'Revenue',
+    labels: ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'],
+    values: [48,52,61,58,63,71,68,75,82,79,88,95].map(v => v * 1000),
+  }
+], {
+  x: 0.5, y: 1.5, w: 9, h: 5,
+  showTitle: true,
+  title: 'Annual Revenue Trend',
+  lineDataSymbol: 'circle',
+  lineDataSymbolSize: 6,
+  lineSmooth: false,
+  catAxisTitle: 'Month',
+  valAxisTitle: 'Revenue ($)',
+  valAxisNumFmt: '"$"#,##0',
+  valAxisMinVal: 0,
+  chartColors: ['2E75B6'],
+  showValue: false,
+  dataLabelPosition: 'ctr',
+});
+
+// Pie chart
+slide.addChart(pptx.charts.PIE, [
+  {
+    name: 'Market Share',
+    labels: ['Product A', 'Product B', 'Product C', 'Product D', 'Other'],
+    values: [35.2, 28.7, 18.5, 11.3, 6.3],
+  }
+], {
+  x: 1, y: 1.5, w: 8, h: 5.5,
+  showTitle: true,
+  title: 'Market Share by Product',
+  showLegend: true,
+  legendPos: 'r',
+  showPercent: true,
+  showValue: false,
+  dataLabelColor: 'FFFFFF',
+  dataLabelFontSize: 12,
+  dataLabelFontFace: 'Calibri',
+  chartColors: ['4472C4','ED7D31','A9D18E','FFC000','5B9BD5'],
+  chartColorsOpacity: 100,
+  holeSize: 50,  // for doughnut only
+  firstSliceAng: 0,
+  showBubbleSize: false,
+  showCatName: true,
+  showSerName: false,
+  dataLabelPosition: 'bestFit',
+});
+
+// Scatter chart
+slide.addChart(pptx.charts.SCATTER, [
+  {
+    name: 'Dataset 1',
+    values: [43.5, 52.2, 28.1, 65.8, 37.4, 71.2, 44.6, 58.9, 82.3, 55.7],
+    sizes: [5, 8, 3, 12, 6, 15, 7, 10, 18, 9],  // for bubble
+  }
+], {
+  x: 0.5, y: 1, w: 9, h: 6,
+  showTitle: true,
+  title: 'Data Distribution',
+  catAxisTitle: 'X Values',
+  valAxisTitle: 'Y Values',
+  lineDataSymbol: 'circle',
+  lineDataSymbolSize: 8,
+  chartColors: ['4472C4'],
+  lineSize: 0,  // 0 = no line, just points
+});
+```
+
+### Table Elements
+
+```js
+// Add table
+slide.addTable([
+  [
+    { text: 'Name', options: { bold: true, fill: '4472C4', color: 'FFFFFF' } },
+    { text: 'Department', options: { bold: true, fill: '4472C4', color: 'FFFFFF' } },
+    { text: 'Salary', options: { bold: true, fill: '4472C4', color: 'FFFFFF' } },
+    { text: 'Status', options: { bold: true, fill: '4472C4', color: 'FFFFFF' } },
+  ],
+  ['Alice Smith', 'Engineering', '$95,000', 'Active'],
+  ['Bob Johnson', 'Marketing', '$72,000', 'Active'],
+  ['Charlie Brown', 'Sales', '$68,000', 'Inactive'],
+  ['Diana Prince', 'HR', '$78,000', 'Active'],
+  [{ text: 'Total', options: { bold: true } }, '', { text: '$313,000', options: { bold: true } }, ''],
+], {
+  x: 0.5, y: 1, w: 9, h: 6,
+  fill: 'FFFFFF',
+  fontFace: 'Calibri',
+  fontSize: 12,
+  color: '363636',
+  align: 'left',
+  valign: 'middle',
+  border: {
+    type: 'all',     // 'all'|'none'|specific sides
+    pt: 0.5,
+    color: 'CCCCCC',
+  },
+  margin: [0.05, 0.1, 0.05, 0.1],  // top, right, bottom, left (inches)
+  colW: [3, 2.5, 1.5, 1.5],      // column widths
+  rowH: [0.5],                     // row heights
+  autoPage: true,                  // auto-paginate when table is too tall
+  autoPageRepeatHeader: true,      // repeat header on continuation slides
+  autoPageLineWeight: 0.5,
+  newSlideStartY: 1,               // Y position for continuation slides
+});
+```
+
+### Speaker Notes
+
+```js
+// Add notes to slide
+slide.addNotes('These are speaker notes for this slide.\nKey points:\n- Revenue up 12%\n- New markets performing well\n- Cost reduction initiatives underway');
+
+// Notes with formatting
+slide.addNotes([
+  { text: 'Key Talking Points', options: { fontSize: 14, bold: true } },
+  { text: '\n\n' },
+  { text: '1. Revenue increased 12% year-over-year\n', options: { fontSize: 12 } },
+  { text: '2. Market expansion in APAC region (+25%)\n', options: { fontSize: 12 } },
+  { text: '3. Cost optimization saved $2.3M\n', options: { fontSize: 12 } },
+  { text: '\nQuestions to expect:', options: { bold: true, color: 'CC0000' } },
+  { text: '\n- Why did margins compress in Q3?\n- What is the APAC expansion timeline?', options: { italic: true } },
+]);
+```
+
+### Transitions and Animations
+
+```js
+// Slide transition
+slide.transition = {
+  type: 'fade',    // 'none'|'cut'|'fade'|'push'|'wipe'|'split'|'reveal'|'random_bars'|'shape'|'blinds'|'checker'|'comb'|'cover'|'dissolve'|'newsflash'|'pull'|'random'|'zoom'
+  speed: 'medium', // 'slow'|'medium'|'fast'
+  advAuto: '00:03:00',  // auto advance after 3 seconds
+};
+
+// Object animation (limited support)
+slide.addText('Animated text', {
+  x: 1, y: 1, w: 8, h: 1,
+  fontSize: 24,
+  animate: {
+    type: 'appear',
+    triggerType: 'onClick',
+    delay: 500,
+  }
+});
+```
+
+### Media Embedding
+
+```js
+// Video from file
+slide.addMedia({
+  type: 'video',
+  path: './videos/intro.mp4',
+  x: 1, y: 1, w: 8, h: 4.5,
+  cover: './images/video-thumbnail.jpg',
+  autoPlay: false,
+  loop: false,
+  muted: false,
+});
+
+// Audio from URL
+slide.addMedia({
+  type: 'audio',
+  link: 'https://example.com/audio.mp3',
+  x: 0.5, y: 0.5, w: 1, h: 0.5,
+  autoPlay: false,
+  loop: false,
+});
+
+// Online video (YouTube embed)
+slide.addMedia({
+  type: 'online',
+  link: 'https://www.youtube.com/embed/dQw4w9WgXcQ',
+  x: 1, y: 1, w: 8, h: 4.5,
+});
+```
+
+### Export Options
+
+```js
+// Save to file
+await pptx.writeFile({ fileName: 'presentation.pptx' });
+
+// Get as base64
+const base64Data = await pptx.write({ outputType: 'base64' });
+
+// Get as Blob (browser)
+const blob = await pptx.write({ outputType: 'blob' });
+
+// Get as Buffer (Node.js)
+const buffer = await pptx.write({ outputType: 'nodebuffer' });
+
+// Get as Uint8Array
+const uint8 = await pptx.write({ outputType: 'uint8array' });
+
+// Get as ArrayBuffer
+const arrayBuffer = await pptx.write({ outputType: 'arraybuffer' });
+
+// Callback style (older API)
+pptx.save('my-presentation', (fileName) => {
+  console.log(`Saved: ${fileName}`);
+}, 'nodebuffer');
+```
+
+### Complete Presentation Example
+
+```js
+const PptxGenJS = require('pptxgenjs');
+
+async function createQuarterlyReport(data) {
+  const pptx = new PptxGenJS();
+  pptx.layout = 'LAYOUT_16x9';
+  pptx.title = 'Q4 2024 Quarterly Report';
+  pptx.author = 'Analytics Team';
+
+  // Define master
+  pptx.defineSlideMaster({
+    title: 'CORPORATE',
+    background: { color: 'FFFFFF' },
+    objects: [
+      { rect: { x: 0, y: 0, w: '100%', h: 0.08, fill: { color: '003366' } } },
+      { rect: { x: 0, y: 7.42, w: '100%', h: 0.08, fill: { color: '003366' } } },
+      {
+        text: {
+          text: data.companyName,
+          options: {
+            x: 0.4, y: 7.4, w: 5, h: 0.1,
+            fontSize: 8, color: 'FFFFFF', bold: false, align: 'left',
+          }
+        }
+      },
+    ],
+    slideNumber: { x: '92%', y: 7.38, color: 'CCCCCC', fontSize: 8 },
+  });
+
+  // Title slide
+  const titleSlide = pptx.addSlide({ masterName: 'CORPORATE' });
+  titleSlide.addShape(pptx.shapes.RECTANGLE, {
+    x: 0, y: 2.5, w: '100%', h: 2.5,
+    fill: { color: '003366' },
+    line: { width: 0 },
+  });
+  titleSlide.addText(data.title, {
+    x: 0.5, y: 2.7, w: 9, h: 1.2,
+    fontFace: 'Calibri Light',
+    fontSize: 40,
+    bold: false,
+    color: 'FFFFFF',
+    align: 'center',
+  });
+  titleSlide.addText(`Q4 ${data.year} | ${data.presenter}`, {
+    x: 0.5, y: 3.9, w: 9, h: 0.6,
+    fontFace: 'Calibri',
+    fontSize: 18,
+    color: 'CCCCCC',
+    align: 'center',
+  });
+
+  // Executive Summary slide
+  const summarySlide = pptx.addSlide({ masterName: 'CORPORATE' });
+  summarySlide.addText('Executive Summary', {
+    x: 0.4, y: 0.2, w: 9.2, h: 0.6,
+    fontFace: 'Calibri Light',
+    fontSize: 28,
+    color: '003366',
+    bold: false,
+  });
+
+  // KPI boxes
+  const kpis = [
+    { label: 'Revenue', value: '$' + (data.revenue / 1e6).toFixed(1) + 'M', change: '+12.5%', positive: true },
+    { label: 'Net Income', value: '$' + (data.netIncome / 1e6).toFixed(1) + 'M', change: '+8.3%', positive: true },
+    { label: 'EBITDA', value: (data.ebitdaMargin * 100).toFixed(1) + '%', change: '+1.2pp', positive: true },
+    { label: 'Customers', value: data.customers.toLocaleString(), change: '-2.1%', positive: false },
+  ];
+
+  kpis.forEach((kpi, i) => {
+    const x = 0.4 + i * 2.35;
+    summarySlide.addShape(pptx.shapes.RECTANGLE, {
+      x, y: 1.0, w: 2.2, h: 2.5,
+      fill: { color: kpi.positive ? 'E8F4FD' : 'FDE8E8' },
+      line: { color: kpi.positive ? '2E75B6' : 'C00000', width: 1 },
+    });
+    summarySlide.addText(kpi.label, { x, y: 1.1, w: 2.2, h: 0.4, fontSize: 11, color: '666666', align: 'center' });
+    summarySlide.addText(kpi.value, { x, y: 1.5, w: 2.2, h: 0.8, fontSize: 22, bold: true, color: '003366', align: 'center' });
+    summarySlide.addText(kpi.change, {
+      x, y: 2.3, w: 2.2, h: 0.4,
+      fontSize: 14, bold: true,
+      color: kpi.positive ? '375623' : '9C0006',
+      align: 'center'
+    });
+  });
+
+  // Revenue chart slide
+  const chartSlide = pptx.addSlide({ masterName: 'CORPORATE' });
+  chartSlide.addText('Revenue Trend', { x: 0.4, y: 0.2, w: 9.2, h: 0.6, fontSize: 28, color: '003366', fontFace: 'Calibri Light' });
+  chartSlide.addChart(pptx.charts.LINE, [
+    {
+      name: 'Revenue',
+      labels: data.months,
+      values: data.monthlyRevenue,
+    },
+    {
+      name: 'Target',
+      labels: data.months,
+      values: data.monthlyTarget,
+    }
+  ], {
+    x: 0.4, y: 1.0, w: 9.2, h: 5.8,
+    showTitle: false,
+    showLegend: true,
+    legendPos: 'b',
+    chartColors: ['2E75B6', 'ED7D31'],
+    lineSmooth: true,
+    lineDataSymbol: 'circle',
+    valAxisNumFmt: '"$"#,##0',
+    valAxisTitle: 'Monthly Revenue',
+    catAxisTitle: 'Month',
+    gridLineMajorClr: 'EEEEEE',
+  });
+
+  await pptx.writeFile({ fileName: 'quarterly-report.pptx' });
+  return 'quarterly-report.pptx';
+}
+```
+
+### Color Schemes and Themes
+
+```js
+// Theme colors for consistent presentations
+const THEME_COLORS = {
+  primary:    '003366',  // dark blue
+  secondary:  '2E75B6',  // medium blue
+  accent1:    'ED7D31',  // orange
+  accent2:    'A9D18E',  // green
+  accent3:    'FFC000',  // yellow
+  accent4:    'FF0000',  // red
+  dark1:      '000000',  // black
+  dark2:      '333333',  // dark gray
+  light1:     'FFFFFF',  // white
+  light2:     'F5F5F5',  // off-white
+  text:       '363636',  // near black
+  textLight:  '666666',  // medium gray
+  border:     'CCCCCC',  // light gray
+  success:    '375623',  // dark green
+  warning:    'FF6B00',  // orange
+  error:      '9C0006',  // dark red
+  info:       '0070C0',  // blue
+  successBg:  'C6EFCE',  // light green
+  warningBg:  'FFEB9C',  // light yellow
+  errorBg:    'FFC7CE',  // light red
+  infoBg:     'DDEBF7',  // light blue
+};
+
+// Apply consistent styles across multiple slides
+function applyTheme(pptx, slides) {
+  slides.forEach(slide => {
+    slide.background = { color: THEME_COLORS.light1 };
+  });
+}
+```
+
+### Troubleshooting
+
+**Issue: Images not loading from URL**
+```js
+// Use local path or base64 instead
+const axios = require('axios');
+const response = await axios.get(imageUrl, { responseType: 'arraybuffer' });
+const base64 = Buffer.from(response.data).toString('base64');
+const ext = imageUrl.split('.').pop();
+slide.addImage({ data: `data:image/${ext};base64,${base64}`, x, y, w, h });
+```
+
+**Issue: Large file size**
+```js
+// Compress images before embedding
+const sharp = require('sharp');
+const compressed = await sharp(imagePath).resize(800).jpeg({ quality: 80 }).toBuffer();
+const b64 = compressed.toString('base64');
+slide.addImage({ data: `data:image/jpeg;base64,${b64}`, x, y, w, h });
+```
+
+**Issue: Text not wrapping**
+```js
+// Ensure wrap is true and dimensions allow wrapping
+slide.addText('Long text content...', {
+  x: 0.5, y: 0.5, w: 5, h: 3,  // specify w and h
+  wrap: true,
+  autoFit: false,
+});
+```
+
+**Issue: Charts with too many data points**
+```js
+// Aggregate data before charting
+function aggregateByMonth(data) {
+  return data.reduce((acc, item) => {
+    const month = item.date.toISOString().slice(0, 7);
+    if (!acc[month]) acc[month] = 0;
+    acc[month] += item.value;
+    return acc;
+  }, {});
+}
+```
+
+
+---
+
+## pptxgenjs Complete API Reference
+
+### Installation & Setup
+
+```bash
+npm install pptxgenjs
+```
+
+```js
+const PptxGenJS = require('pptxgenjs');
+const pptx = new PptxGenJS();
+
+// Global settings
+pptx.layout = 'LAYOUT_16x9';  // 'LAYOUT_4x3'|'LAYOUT_16x9'|'LAYOUT_16x10'|'LAYOUT_WIDE'|custom
+pptx.subject = 'Quarterly Report';
+pptx.author = 'John Doe';
+pptx.company = 'ACME Corp';
+pptx.revision = '1';
+pptx.title = 'Q4 2024 Results';
+
+// Custom layout
+pptx.defineLayout({ name: 'A3', width: 16.54, height: 11.69 });
+pptx.layout = 'A3';
+```
+
+### Slide Masters & Layouts
+
+```js
+// Define slide master
+pptx.defineSlideMaster({
+  title: 'MASTER_SLIDE',
+  background: { color: 'FFFFFF' },
+  objects: [
+    { rect: { x: 0, y: 7.0, w: '100%', h: 0.75, fill: { color: '003366' } } },
+    {
+      text: {
+        text: 'CONFIDENTIAL',
+        options: {
+          x: 0, y: 7.0, w: '100%', h: 0.75,
+          align: 'center', valign: 'middle',
+          color: 'FFFFFF', fontSize: 10,
+        }
+      }
+    },
+    {
+      image: {
+        x: 0.5, y: 0.25, w: 1.5, h: 0.5,
+        path: './logo.png',
+      }
+    },
+  ],
+  slideNumber: { x: '90%', y: 7.1, color: 'FFFFFF', fontSize: 9, fontFace: 'Arial' },
+  margin: [0.5, 0.25, 1.25, 0.5],
+});
+
+// Add slide using master
+const slide = pptx.addSlide({ masterName: 'MASTER_SLIDE' });
+```
+
+### Adding Slides
+
+```js
+// Basic slide
+const slide1 = pptx.addSlide();
+
+// Slide with master
+const slide2 = pptx.addSlide({ masterName: 'MASTER_SLIDE' });
+
+// Slide with background
+const slide3 = pptx.addSlide();
+slide3.background = { color: 'F5F5F5' };
+slide3.background = { path: './bg.jpg' };
+slide3.background = { data: 'data:image/png;base64,...' };
+
+// Hidden slide
+const slide4 = pptx.addSlide();
+slide4.hidden = true;
+
+// Slide number display
+pptx.slides.forEach((slide, i) => {
+  slide.addText(`Slide ${i + 1}`, {
+    x: '90%', y: '95%', w: '8%', h: '4%',
+    fontSize: 9, color: '999999', align: 'right',
+  });
+});
+```
+
+### Text Elements
+
+```js
+// Simple text
+slide.addText('Hello, World!', {
+  x: 0.5, y: 0.5, w: 9, h: 1,
+  fontFace: 'Arial',
+  fontSize: 36,
+  bold: true,
+  italic: false,
+  underline: { style: 'sng', color: '0000FF' },
+  strike: false,
+  color: '003366',
+  fill: { color: 'FFFFCC' },
+  transparency: 0,
+  border: { pt: 1, color: '666666' },
+  align: 'center',  // 'left'|'center'|'right'|'justify'
+  valign: 'middle', // 'top'|'middle'|'bottom'
+  wrap: true,
+  autoFit: false,
+  shrinkText: false,
+  inset: 0.05,
+  paraSpaceBefore: 6,
+  paraSpaceAfter: 6,
+  lineSpacingMultiple: 1.2,
+  charSpacing: 1,
+  rotate: 0,         // degrees
+  shadow: {
+    type: 'outer',
+    color: '000000',
+    opacity: 0.5,
+    blur: 4,
+    offset: 4,
+    angle: 45,
+  },
+  hyperlink: {
+    url: 'https://example.com',
+    tooltip: 'Visit our site',
+  },
+  rtlMode: false,
+  lang: 'en-US',
+  placeholder: 'body',  // for master slide placeholders
+});
+
+// Multi-format text (text runs)
+slide.addText([
+  { text: 'Bold text ', options: { bold: true, color: 'FF0000' } },
+  { text: 'and normal text ', options: { bold: false } },
+  { text: '\n' },
+  { text: 'New line with ', options: { fontSize: 18 } },
+  { text: 'hyperlink', options: { hyperlink: { url: 'https://google.com' } } },
+  { text: '\nBullet point', options: { bullet: true, indentLevel: 0 } },
+  { text: '\nSub-bullet', options: { bullet: { type: 'number', indent: 30 }, indentLevel: 1 } },
+], {
+  x: 0.5, y: 1.5, w: 9, h: 5,
+  fontSize: 16,
+  fontFace: 'Calibri',
+  color: '333333',
+});
+```
+
+### Shape Elements
+
+```js
+// Rectangle
+slide.addShape(pptx.shapes.RECTANGLE, {
+  x: 1, y: 1, w: 3, h: 2,
+  fill: { color: '4472C4' },
+  line: { color: '2F5597', width: 2, dashType: 'solid' },
+  shadow: { type: 'outer', color: '000000', opacity: 0.3, blur: 3, offset: 3, angle: 45 },
+  transparency: 0,
+  rotate: 0,
+});
+
+// All shape types
+const shapes = [
+  pptx.shapes.RECTANGLE,
+  pptx.shapes.ROUNDED_RECTANGLE,
+  pptx.shapes.OVAL,
+  pptx.shapes.TRIANGLE,
+  pptx.shapes.RIGHT_TRIANGLE,
+  pptx.shapes.PARALLELOGRAM,
+  pptx.shapes.TRAPEZOID,
+  pptx.shapes.DIAMOND,
+  pptx.shapes.PENTAGON,
+  pptx.shapes.HEXAGON,
+  pptx.shapes.HEPTAGON,
+  pptx.shapes.OCTAGON,
+  pptx.shapes.DECAGON,
+  pptx.shapes.STAR_4,
+  pptx.shapes.STAR_5,
+  pptx.shapes.STAR_6,
+  pptx.shapes.STAR_7,
+  pptx.shapes.STAR_8,
+  pptx.shapes.STAR_10,
+  pptx.shapes.STAR_12,
+  pptx.shapes.STAR_16,
+  pptx.shapes.STAR_24,
+  pptx.shapes.STAR_32,
+  pptx.shapes.ARROW_RIGHT,
+  pptx.shapes.ARROW_LEFT,
+  pptx.shapes.ARROW_UP,
+  pptx.shapes.ARROW_DOWN,
+  pptx.shapes.ARROW_LEFT_RIGHT,
+  pptx.shapes.ARROW_UP_DOWN,
+  pptx.shapes.CALLOUT_1,
+  pptx.shapes.CALLOUT_2,
+  pptx.shapes.CALLOUT_3,
+  pptx.shapes.LINE,
+  pptx.shapes.LINE_ARROW,
+  pptx.shapes.LINE_ARROWS,
+  pptx.shapes.FLOW_CHART_PROCESS,
+  pptx.shapes.FLOW_CHART_DECISION,
+  pptx.shapes.FLOW_CHART_DATA,
+  pptx.shapes.FLOW_CHART_TERMINATOR,
+  pptx.shapes.FLOW_CHART_CONNECTOR,
+  pptx.shapes.FLOW_CHART_ALTERNATE_PROCESS,
+  pptx.shapes.CROSS,
+  pptx.shapes.PLUS,
+  pptx.shapes.SMILEY_FACE,
+  pptx.shapes.NO_SMOKING,
+  pptx.shapes.PLAQUE,
+  pptx.shapes.CAN,
+  pptx.shapes.CUBE,
+  pptx.shapes.BEVEL,
+  pptx.shapes.DONUT,
+  pptx.shapes.CLOUD,
+  pptx.shapes.CLOUD_CALLOUT,
+  pptx.shapes.HEART,
+  pptx.shapes.LIGHTNING_BOLT,
+  pptx.shapes.SUN,
+  pptx.shapes.MOON,
+  pptx.shapes.ARC,
+  pptx.shapes.CHORD,
+  pptx.shapes.PIE,
+];
+
+// Filled shape with text
+slide.addShape(pptx.shapes.ROUNDED_RECTANGLE, {
+  x: 1, y: 3, w: 4, h: 1.5,
+  fill: { color: 'ED7D31' },
+  line: { color: 'ED7D31', width: 0 },
+  text: 'Click Here',
+  options: {
+    fontFace: 'Arial',
+    fontSize: 18,
+    bold: true,
+    color: 'FFFFFF',
+    align: 'center',
+    valign: 'middle',
+  }
+});
+```
+
+### Image Elements
+
+```js
+// Add image from file path
+slide.addImage({
+  path: './images/photo.jpg',
+  x: 0.5, y: 0.5, w: 4, h: 3,
+  sizing: {
+    type: 'contain',   // 'contain'|'cover'|'crop'
+    w: 4, h: 3,
+  },
+  rounding: true,    // circular crop
+  opacity: 1,
+  rotate: 0,
+  shadow: { type: 'outer', color: '000000', opacity: 0.3, blur: 5, offset: 3 },
+  border: { pt: 2, color: '666666' },
+  hyperlink: { url: 'https://example.com' },
+  altText: 'Company logo',
+  placeholder: 'body',
+});
+
+// Add image from URL
+slide.addImage({
+  path: 'https://example.com/image.png',
+  x: 5, y: 0.5, w: 4, h: 3,
+});
+
+// Add image from base64
+slide.addImage({
+  data: 'data:image/png;base64,iVBORw0KGgo...',
+  x: 0.5, y: 4, w: 9, h: 4,
+});
+
+// SVG image
+slide.addImage({
+  data: '<svg>...</svg>',
+  type: 'svg',
+  x: 1, y: 1, w: 3, h: 3,
+});
+```
+
+### Chart Elements
+
+```js
+// Bar chart
+slide.addChart(pptx.charts.BAR, [
+  {
+    name: 'Q1 2024',
+    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+    values: [48000, 52000, 61000, 58000, 63000, 71000],
+  },
+  {
+    name: 'Q1 2023',
+    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+    values: [42000, 48000, 55000, 50000, 58000, 65000],
+  },
+], {
+  x: 0.5, y: 1.5, w: 9, h: 5,
+  barDir: 'col',        // 'bar'|'col'
+  barGrouping: 'clustered',  // 'clustered'|'stacked'|'percentStacked'
+  bar3DShape: '',       // ''|'box'|'cone'|'coneToMax'|'cylinder'|'pyramid'|'pyramidToMax'
+  chartColors: ['4472C4', 'ED7D31', 'A9D18E', 'FFC000', '5B9BD5'],
+  chartColorsOpacity: 100,
+  showTitle: true,
+  title: 'Monthly Revenue Comparison',
+  titleFontSize: 14,
+  titleFontFace: 'Calibri',
+  titleColor: '363636',
+  titlePos: { x: 0, y: 0 },
+  showLegend: true,
+  legendPos: 'b',      // 't'|'b'|'l'|'r'|'tr'
+  legendFontSize: 12,
+  legendFontFace: 'Calibri',
+  legendColor: '363636',
+  catAxisTitle: 'Month',
+  catAxisTitleColor: '363636',
+  catAxisTitleFontSize: 12,
+  catAxisLabelColor: '595959',
+  catAxisLabelFontFace: 'Calibri',
+  catAxisLabelFontSize: 10,
+  catAxisLabelFrequency: 1,
+  catAxisLabelRotate: 0,
+  catGridLine: { style: 'none' },
+  catAxisLineShow: true,
+  catAxisBaseTimeUnit: 'months',
+  valAxisTitle: 'Revenue ($)',
+  valAxisTitleColor: '363636',
+  valAxisTitleFontSize: 12,
+  valAxisLabelColor: '595959',
+  valAxisLabelFontFace: 'Calibri',
+  valAxisLabelFontSize: 10,
+  valAxisNumFmt: '"$"#,##0',
+  valAxisMinVal: 0,
+  valAxisMaxVal: 100000,
+  valAxisMajorUnit: 10000,
+  valGridLine: { style: 'solid', color: 'CCCCCC', size: 0.5 },
+  valAxisLineShow: true,
+  showValue: true,
+  dataLabelColor: '000000',
+  dataLabelFontFace: 'Calibri',
+  dataLabelFontSize: 9,
+  dataLabelPosition: 'outEnd',  // 'inBase'|'inEnd'|'outEnd'|'ctr'|'bestFit'
+  dataLabelFormatCode: '"$"#,##0',
+  showPercent: false,
+  showSerName: false,
+  showCatName: false,
+  plotAreaFill: { color: 'FFFFFF' },
+  plotAreaBorder: { pt: 0 },
+  border: { pt: 0 },
+  fill: { color: 'FFFFFF' },
+  shadow: null,
+  invertedColors: false,
+  radarStyle: 'standard',
+  lineDataSymbol: 'circle',
+  lineDataSymbolSize: 6,
+  lineDataSymbolLineColor: '4472C4',
+  lineDataSymbolLineSize: 1,
+  lineSmooth: false,
+  lineDash: 'solid',
+});
+
+// All chart types
+const chartTypes = {
+  BAR: pptx.charts.BAR,
+  BUBBLE: pptx.charts.BUBBLE,
+  DOUGHNUT: pptx.charts.DOUGHNUT,
+  LINE: pptx.charts.LINE,
+  PIE: pptx.charts.PIE,
+  RADAR: pptx.charts.RADAR,
+  SCATTER: pptx.charts.SCATTER,
+  AREA: pptx.charts.AREA,
+};
+
+// Line chart
+slide.addChart(pptx.charts.LINE, [
+  {
+    name: 'Revenue',
+    labels: ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'],
+    values: [48,52,61,58,63,71,68,75,82,79,88,95].map(v => v * 1000),
+  }
+], {
+  x: 0.5, y: 1.5, w: 9, h: 5,
+  showTitle: true,
+  title: 'Annual Revenue Trend',
+  lineDataSymbol: 'circle',
+  lineDataSymbolSize: 6,
+  lineSmooth: false,
+  catAxisTitle: 'Month',
+  valAxisTitle: 'Revenue ($)',
+  valAxisNumFmt: '"$"#,##0',
+  valAxisMinVal: 0,
+  chartColors: ['2E75B6'],
+  showValue: false,
+  dataLabelPosition: 'ctr',
+});
+
+// Pie chart
+slide.addChart(pptx.charts.PIE, [
+  {
+    name: 'Market Share',
+    labels: ['Product A', 'Product B', 'Product C', 'Product D', 'Other'],
+    values: [35.2, 28.7, 18.5, 11.3, 6.3],
+  }
+], {
+  x: 1, y: 1.5, w: 8, h: 5.5,
+  showTitle: true,
+  title: 'Market Share by Product',
+  showLegend: true,
+  legendPos: 'r',
+  showPercent: true,
+  showValue: false,
+  dataLabelColor: 'FFFFFF',
+  dataLabelFontSize: 12,
+  dataLabelFontFace: 'Calibri',
+  chartColors: ['4472C4','ED7D31','A9D18E','FFC000','5B9BD5'],
+  chartColorsOpacity: 100,
+  holeSize: 50,  // for doughnut only
+  firstSliceAng: 0,
+  showBubbleSize: false,
+  showCatName: true,
+  showSerName: false,
+  dataLabelPosition: 'bestFit',
+});
+
+// Scatter chart
+slide.addChart(pptx.charts.SCATTER, [
+  {
+    name: 'Dataset 1',
+    values: [43.5, 52.2, 28.1, 65.8, 37.4, 71.2, 44.6, 58.9, 82.3, 55.7],
+    sizes: [5, 8, 3, 12, 6, 15, 7, 10, 18, 9],  // for bubble
+  }
+], {
+  x: 0.5, y: 1, w: 9, h: 6,
+  showTitle: true,
+  title: 'Data Distribution',
+  catAxisTitle: 'X Values',
+  valAxisTitle: 'Y Values',
+  lineDataSymbol: 'circle',
+  lineDataSymbolSize: 8,
+  chartColors: ['4472C4'],
+  lineSize: 0,  // 0 = no line, just points
+});
+```
+
+### Table Elements
+
+```js
+// Add table
+slide.addTable([
+  [
+    { text: 'Name', options: { bold: true, fill: '4472C4', color: 'FFFFFF' } },
+    { text: 'Department', options: { bold: true, fill: '4472C4', color: 'FFFFFF' } },
+    { text: 'Salary', options: { bold: true, fill: '4472C4', color: 'FFFFFF' } },
+    { text: 'Status', options: { bold: true, fill: '4472C4', color: 'FFFFFF' } },
+  ],
+  ['Alice Smith', 'Engineering', '$95,000', 'Active'],
+  ['Bob Johnson', 'Marketing', '$72,000', 'Active'],
+  ['Charlie Brown', 'Sales', '$68,000', 'Inactive'],
+  ['Diana Prince', 'HR', '$78,000', 'Active'],
+  [{ text: 'Total', options: { bold: true } }, '', { text: '$313,000', options: { bold: true } }, ''],
+], {
+  x: 0.5, y: 1, w: 9, h: 6,
+  fill: 'FFFFFF',
+  fontFace: 'Calibri',
+  fontSize: 12,
+  color: '363636',
+  align: 'left',
+  valign: 'middle',
+  border: {
+    type: 'all',     // 'all'|'none'|specific sides
+    pt: 0.5,
+    color: 'CCCCCC',
+  },
+  margin: [0.05, 0.1, 0.05, 0.1],  // top, right, bottom, left (inches)
+  colW: [3, 2.5, 1.5, 1.5],      // column widths
+  rowH: [0.5],                     // row heights
+  autoPage: true,                  // auto-paginate when table is too tall
+  autoPageRepeatHeader: true,      // repeat header on continuation slides
+  autoPageLineWeight: 0.5,
+  newSlideStartY: 1,               // Y position for continuation slides
+});
+```
+
+### Speaker Notes
+
+```js
+// Add notes to slide
+slide.addNotes('These are speaker notes for this slide.\nKey points:\n- Revenue up 12%\n- New markets performing well\n- Cost reduction initiatives underway');
+
+// Notes with formatting
+slide.addNotes([
+  { text: 'Key Talking Points', options: { fontSize: 14, bold: true } },
+  { text: '\n\n' },
+  { text: '1. Revenue increased 12% year-over-year\n', options: { fontSize: 12 } },
+  { text: '2. Market expansion in APAC region (+25%)\n', options: { fontSize: 12 } },
+  { text: '3. Cost optimization saved $2.3M\n', options: { fontSize: 12 } },
+  { text: '\nQuestions to expect:', options: { bold: true, color: 'CC0000' } },
+  { text: '\n- Why did margins compress in Q3?\n- What is the APAC expansion timeline?', options: { italic: true } },
+]);
+```
+
+### Transitions and Animations
+
+```js
+// Slide transition
+slide.transition = {
+  type: 'fade',    // 'none'|'cut'|'fade'|'push'|'wipe'|'split'|'reveal'|'random_bars'|'shape'|'blinds'|'checker'|'comb'|'cover'|'dissolve'|'newsflash'|'pull'|'random'|'zoom'
+  speed: 'medium', // 'slow'|'medium'|'fast'
+  advAuto: '00:03:00',  // auto advance after 3 seconds
+};
+
+// Object animation (limited support)
+slide.addText('Animated text', {
+  x: 1, y: 1, w: 8, h: 1,
+  fontSize: 24,
+  animate: {
+    type: 'appear',
+    triggerType: 'onClick',
+    delay: 500,
+  }
+});
+```
+
+### Media Embedding
+
+```js
+// Video from file
+slide.addMedia({
+  type: 'video',
+  path: './videos/intro.mp4',
+  x: 1, y: 1, w: 8, h: 4.5,
+  cover: './images/video-thumbnail.jpg',
+  autoPlay: false,
+  loop: false,
+  muted: false,
+});
+
+// Audio from URL
+slide.addMedia({
+  type: 'audio',
+  link: 'https://example.com/audio.mp3',
+  x: 0.5, y: 0.5, w: 1, h: 0.5,
+  autoPlay: false,
+  loop: false,
+});
+
+// Online video (YouTube embed)
+slide.addMedia({
+  type: 'online',
+  link: 'https://www.youtube.com/embed/dQw4w9WgXcQ',
+  x: 1, y: 1, w: 8, h: 4.5,
+});
+```
+
+### Export Options
+
+```js
+// Save to file
+await pptx.writeFile({ fileName: 'presentation.pptx' });
+
+// Get as base64
+const base64Data = await pptx.write({ outputType: 'base64' });
+
+// Get as Blob (browser)
+const blob = await pptx.write({ outputType: 'blob' });
+
+// Get as Buffer (Node.js)
+const buffer = await pptx.write({ outputType: 'nodebuffer' });
+
+// Get as Uint8Array
+const uint8 = await pptx.write({ outputType: 'uint8array' });
+
+// Get as ArrayBuffer
+const arrayBuffer = await pptx.write({ outputType: 'arraybuffer' });
+
+// Callback style (older API)
+pptx.save('my-presentation', (fileName) => {
+  console.log(`Saved: ${fileName}`);
+}, 'nodebuffer');
+```
+
+### Complete Presentation Example
+
+```js
+const PptxGenJS = require('pptxgenjs');
+
+async function createQuarterlyReport(data) {
+  const pptx = new PptxGenJS();
+  pptx.layout = 'LAYOUT_16x9';
+  pptx.title = 'Q4 2024 Quarterly Report';
+  pptx.author = 'Analytics Team';
+
+  // Define master
+  pptx.defineSlideMaster({
+    title: 'CORPORATE',
+    background: { color: 'FFFFFF' },
+    objects: [
+      { rect: { x: 0, y: 0, w: '100%', h: 0.08, fill: { color: '003366' } } },
+      { rect: { x: 0, y: 7.42, w: '100%', h: 0.08, fill: { color: '003366' } } },
+      {
+        text: {
+          text: data.companyName,
+          options: {
+            x: 0.4, y: 7.4, w: 5, h: 0.1,
+            fontSize: 8, color: 'FFFFFF', bold: false, align: 'left',
+          }
+        }
+      },
+    ],
+    slideNumber: { x: '92%', y: 7.38, color: 'CCCCCC', fontSize: 8 },
+  });
+
+  // Title slide
+  const titleSlide = pptx.addSlide({ masterName: 'CORPORATE' });
+  titleSlide.addShape(pptx.shapes.RECTANGLE, {
+    x: 0, y: 2.5, w: '100%', h: 2.5,
+    fill: { color: '003366' },
+    line: { width: 0 },
+  });
+  titleSlide.addText(data.title, {
+    x: 0.5, y: 2.7, w: 9, h: 1.2,
+    fontFace: 'Calibri Light',
+    fontSize: 40,
+    bold: false,
+    color: 'FFFFFF',
+    align: 'center',
+  });
+  titleSlide.addText(`Q4 ${data.year} | ${data.presenter}`, {
+    x: 0.5, y: 3.9, w: 9, h: 0.6,
+    fontFace: 'Calibri',
+    fontSize: 18,
+    color: 'CCCCCC',
+    align: 'center',
+  });
+
+  // Executive Summary slide
+  const summarySlide = pptx.addSlide({ masterName: 'CORPORATE' });
+  summarySlide.addText('Executive Summary', {
+    x: 0.4, y: 0.2, w: 9.2, h: 0.6,
+    fontFace: 'Calibri Light',
+    fontSize: 28,
+    color: '003366',
+    bold: false,
+  });
+
+  // KPI boxes
+  const kpis = [
+    { label: 'Revenue', value: '$' + (data.revenue / 1e6).toFixed(1) + 'M', change: '+12.5%', positive: true },
+    { label: 'Net Income', value: '$' + (data.netIncome / 1e6).toFixed(1) + 'M', change: '+8.3%', positive: true },
+    { label: 'EBITDA', value: (data.ebitdaMargin * 100).toFixed(1) + '%', change: '+1.2pp', positive: true },
+    { label: 'Customers', value: data.customers.toLocaleString(), change: '-2.1%', positive: false },
+  ];
+
+  kpis.forEach((kpi, i) => {
+    const x = 0.4 + i * 2.35;
+    summarySlide.addShape(pptx.shapes.RECTANGLE, {
+      x, y: 1.0, w: 2.2, h: 2.5,
+      fill: { color: kpi.positive ? 'E8F4FD' : 'FDE8E8' },
+      line: { color: kpi.positive ? '2E75B6' : 'C00000', width: 1 },
+    });
+    summarySlide.addText(kpi.label, { x, y: 1.1, w: 2.2, h: 0.4, fontSize: 11, color: '666666', align: 'center' });
+    summarySlide.addText(kpi.value, { x, y: 1.5, w: 2.2, h: 0.8, fontSize: 22, bold: true, color: '003366', align: 'center' });
+    summarySlide.addText(kpi.change, {
+      x, y: 2.3, w: 2.2, h: 0.4,
+      fontSize: 14, bold: true,
+      color: kpi.positive ? '375623' : '9C0006',
+      align: 'center'
+    });
+  });
+
+  // Revenue chart slide
+  const chartSlide = pptx.addSlide({ masterName: 'CORPORATE' });
+  chartSlide.addText('Revenue Trend', { x: 0.4, y: 0.2, w: 9.2, h: 0.6, fontSize: 28, color: '003366', fontFace: 'Calibri Light' });
+  chartSlide.addChart(pptx.charts.LINE, [
+    {
+      name: 'Revenue',
+      labels: data.months,
+      values: data.monthlyRevenue,
+    },
+    {
+      name: 'Target',
+      labels: data.months,
+      values: data.monthlyTarget,
+    }
+  ], {
+    x: 0.4, y: 1.0, w: 9.2, h: 5.8,
+    showTitle: false,
+    showLegend: true,
+    legendPos: 'b',
+    chartColors: ['2E75B6', 'ED7D31'],
+    lineSmooth: true,
+    lineDataSymbol: 'circle',
+    valAxisNumFmt: '"$"#,##0',
+    valAxisTitle: 'Monthly Revenue',
+    catAxisTitle: 'Month',
+    gridLineMajorClr: 'EEEEEE',
+  });
+
+  await pptx.writeFile({ fileName: 'quarterly-report.pptx' });
+  return 'quarterly-report.pptx';
+}
+```
+
+### Color Schemes and Themes
+
+```js
+// Theme colors for consistent presentations
+const THEME_COLORS = {
+  primary:    '003366',  // dark blue
+  secondary:  '2E75B6',  // medium blue
+  accent1:    'ED7D31',  // orange
+  accent2:    'A9D18E',  // green
+  accent3:    'FFC000',  // yellow
+  accent4:    'FF0000',  // red
+  dark1:      '000000',  // black
+  dark2:      '333333',  // dark gray
+  light1:     'FFFFFF',  // white
+  light2:     'F5F5F5',  // off-white
+  text:       '363636',  // near black
+  textLight:  '666666',  // medium gray
+  border:     'CCCCCC',  // light gray
+  success:    '375623',  // dark green
+  warning:    'FF6B00',  // orange
+  error:      '9C0006',  // dark red
+  info:       '0070C0',  // blue
+  successBg:  'C6EFCE',  // light green
+  warningBg:  'FFEB9C',  // light yellow
+  errorBg:    'FFC7CE',  // light red
+  infoBg:     'DDEBF7',  // light blue
+};
+
+// Apply consistent styles across multiple slides
+function applyTheme(pptx, slides) {
+  slides.forEach(slide => {
+    slide.background = { color: THEME_COLORS.light1 };
+  });
+}
+```
+
+### Troubleshooting
+
+**Issue: Images not loading from URL**
+```js
+// Use local path or base64 instead
+const axios = require('axios');
+const response = await axios.get(imageUrl, { responseType: 'arraybuffer' });
+const base64 = Buffer.from(response.data).toString('base64');
+const ext = imageUrl.split('.').pop();
+slide.addImage({ data: `data:image/${ext};base64,${base64}`, x, y, w, h });
+```
+
+**Issue: Large file size**
+```js
+// Compress images before embedding
+const sharp = require('sharp');
+const compressed = await sharp(imagePath).resize(800).jpeg({ quality: 80 }).toBuffer();
+const b64 = compressed.toString('base64');
+slide.addImage({ data: `data:image/jpeg;base64,${b64}`, x, y, w, h });
+```
+
+**Issue: Text not wrapping**
+```js
+// Ensure wrap is true and dimensions allow wrapping
+slide.addText('Long text content...', {
+  x: 0.5, y: 0.5, w: 5, h: 3,  // specify w and h
+  wrap: true,
+  autoFit: false,
+});
+```
+
+**Issue: Charts with too many data points**
+```js
+// Aggregate data before charting
+function aggregateByMonth(data) {
+  return data.reduce((acc, item) => {
+    const month = item.date.toISOString().slice(0, 7);
+    if (!acc[month]) acc[month] = 0;
+    acc[month] += item.value;
+    return acc;
+  }, {});
+}
+```
+
+
+---
+
+## pptxgenjs Complete API Reference
+
+### Installation & Setup
+
+```bash
+npm install pptxgenjs
+```
+
+```js
+const PptxGenJS = require('pptxgenjs');
+const pptx = new PptxGenJS();
+
+// Global settings
+pptx.layout = 'LAYOUT_16x9';  // 'LAYOUT_4x3'|'LAYOUT_16x9'|'LAYOUT_16x10'|'LAYOUT_WIDE'|custom
+pptx.subject = 'Quarterly Report';
+pptx.author = 'John Doe';
+pptx.company = 'ACME Corp';
+pptx.revision = '1';
+pptx.title = 'Q4 2024 Results';
+
+// Custom layout
+pptx.defineLayout({ name: 'A3', width: 16.54, height: 11.69 });
+pptx.layout = 'A3';
+```
+
+### Slide Masters & Layouts
+
+```js
+// Define slide master
+pptx.defineSlideMaster({
+  title: 'MASTER_SLIDE',
+  background: { color: 'FFFFFF' },
+  objects: [
+    { rect: { x: 0, y: 7.0, w: '100%', h: 0.75, fill: { color: '003366' } } },
+    {
+      text: {
+        text: 'CONFIDENTIAL',
+        options: {
+          x: 0, y: 7.0, w: '100%', h: 0.75,
+          align: 'center', valign: 'middle',
+          color: 'FFFFFF', fontSize: 10,
+        }
+      }
+    },
+    {
+      image: {
+        x: 0.5, y: 0.25, w: 1.5, h: 0.5,
+        path: './logo.png',
+      }
+    },
+  ],
+  slideNumber: { x: '90%', y: 7.1, color: 'FFFFFF', fontSize: 9, fontFace: 'Arial' },
+  margin: [0.5, 0.25, 1.25, 0.5],
+});
+
+// Add slide using master
+const slide = pptx.addSlide({ masterName: 'MASTER_SLIDE' });
+```
+
+### Adding Slides
+
+```js
+// Basic slide
+const slide1 = pptx.addSlide();
+
+// Slide with master
+const slide2 = pptx.addSlide({ masterName: 'MASTER_SLIDE' });
+
+// Slide with background
+const slide3 = pptx.addSlide();
+slide3.background = { color: 'F5F5F5' };
+slide3.background = { path: './bg.jpg' };
+slide3.background = { data: 'data:image/png;base64,...' };
+
+// Hidden slide
+const slide4 = pptx.addSlide();
+slide4.hidden = true;
+
+// Slide number display
+pptx.slides.forEach((slide, i) => {
+  slide.addText(`Slide ${i + 1}`, {
+    x: '90%', y: '95%', w: '8%', h: '4%',
+    fontSize: 9, color: '999999', align: 'right',
+  });
+});
+```
+
+### Text Elements
+
+```js
+// Simple text
+slide.addText('Hello, World!', {
+  x: 0.5, y: 0.5, w: 9, h: 1,
+  fontFace: 'Arial',
+  fontSize: 36,
+  bold: true,
+  italic: false,
+  underline: { style: 'sng', color: '0000FF' },
+  strike: false,
+  color: '003366',
+  fill: { color: 'FFFFCC' },
+  transparency: 0,
+  border: { pt: 1, color: '666666' },
+  align: 'center',  // 'left'|'center'|'right'|'justify'
+  valign: 'middle', // 'top'|'middle'|'bottom'
+  wrap: true,
+  autoFit: false,
+  shrinkText: false,
+  inset: 0.05,
+  paraSpaceBefore: 6,
+  paraSpaceAfter: 6,
+  lineSpacingMultiple: 1.2,
+  charSpacing: 1,
+  rotate: 0,         // degrees
+  shadow: {
+    type: 'outer',
+    color: '000000',
+    opacity: 0.5,
+    blur: 4,
+    offset: 4,
+    angle: 45,
+  },
+  hyperlink: {
+    url: 'https://example.com',
+    tooltip: 'Visit our site',
+  },
+  rtlMode: false,
+  lang: 'en-US',
+  placeholder: 'body',  // for master slide placeholders
+});
+
+// Multi-format text (text runs)
+slide.addText([
+  { text: 'Bold text ', options: { bold: true, color: 'FF0000' } },
+  { text: 'and normal text ', options: { bold: false } },
+  { text: '\n' },
+  { text: 'New line with ', options: { fontSize: 18 } },
+  { text: 'hyperlink', options: { hyperlink: { url: 'https://google.com' } } },
+  { text: '\nBullet point', options: { bullet: true, indentLevel: 0 } },
+  { text: '\nSub-bullet', options: { bullet: { type: 'number', indent: 30 }, indentLevel: 1 } },
+], {
+  x: 0.5, y: 1.5, w: 9, h: 5,
+  fontSize: 16,
+  fontFace: 'Calibri',
+  color: '333333',
+});
+```
+
+### Shape Elements
+
+```js
+// Rectangle
+slide.addShape(pptx.shapes.RECTANGLE, {
+  x: 1, y: 1, w: 3, h: 2,
+  fill: { color: '4472C4' },
+  line: { color: '2F5597', width: 2, dashType: 'solid' },
+  shadow: { type: 'outer', color: '000000', opacity: 0.3, blur: 3, offset: 3, angle: 45 },
+  transparency: 0,
+  rotate: 0,
+});
+
+// All shape types
+const shapes = [
+  pptx.shapes.RECTANGLE,
+  pptx.shapes.ROUNDED_RECTANGLE,
+  pptx.shapes.OVAL,
+  pptx.shapes.TRIANGLE,
+  pptx.shapes.RIGHT_TRIANGLE,
+  pptx.shapes.PARALLELOGRAM,
+  pptx.shapes.TRAPEZOID,
+  pptx.shapes.DIAMOND,
+  pptx.shapes.PENTAGON,
+  pptx.shapes.HEXAGON,
+  pptx.shapes.HEPTAGON,
+  pptx.shapes.OCTAGON,
+  pptx.shapes.DECAGON,
+  pptx.shapes.STAR_4,
+  pptx.shapes.STAR_5,
+  pptx.shapes.STAR_6,
+  pptx.shapes.STAR_7,
+  pptx.shapes.STAR_8,
+  pptx.shapes.STAR_10,
+  pptx.shapes.STAR_12,
+  pptx.shapes.STAR_16,
+  pptx.shapes.STAR_24,
+  pptx.shapes.STAR_32,
+  pptx.shapes.ARROW_RIGHT,
+  pptx.shapes.ARROW_LEFT,
+  pptx.shapes.ARROW_UP,
+  pptx.shapes.ARROW_DOWN,
+  pptx.shapes.ARROW_LEFT_RIGHT,
+  pptx.shapes.ARROW_UP_DOWN,
+  pptx.shapes.CALLOUT_1,
+  pptx.shapes.CALLOUT_2,
+  pptx.shapes.CALLOUT_3,
+  pptx.shapes.LINE,
+  pptx.shapes.LINE_ARROW,
+  pptx.shapes.LINE_ARROWS,
+  pptx.shapes.FLOW_CHART_PROCESS,
+  pptx.shapes.FLOW_CHART_DECISION,
+  pptx.shapes.FLOW_CHART_DATA,
+  pptx.shapes.FLOW_CHART_TERMINATOR,
+  pptx.shapes.FLOW_CHART_CONNECTOR,
+  pptx.shapes.FLOW_CHART_ALTERNATE_PROCESS,
+  pptx.shapes.CROSS,
+  pptx.shapes.PLUS,
+  pptx.shapes.SMILEY_FACE,
+  pptx.shapes.NO_SMOKING,
+  pptx.shapes.PLAQUE,
+  pptx.shapes.CAN,
+  pptx.shapes.CUBE,
+  pptx.shapes.BEVEL,
+  pptx.shapes.DONUT,
+  pptx.shapes.CLOUD,
+  pptx.shapes.CLOUD_CALLOUT,
+  pptx.shapes.HEART,
+  pptx.shapes.LIGHTNING_BOLT,
+  pptx.shapes.SUN,
+  pptx.shapes.MOON,
+  pptx.shapes.ARC,
+  pptx.shapes.CHORD,
+  pptx.shapes.PIE,
+];
+
+// Filled shape with text
+slide.addShape(pptx.shapes.ROUNDED_RECTANGLE, {
+  x: 1, y: 3, w: 4, h: 1.5,
+  fill: { color: 'ED7D31' },
+  line: { color: 'ED7D31', width: 0 },
+  text: 'Click Here',
+  options: {
+    fontFace: 'Arial',
+    fontSize: 18,
+    bold: true,
+    color: 'FFFFFF',
+    align: 'center',
+    valign: 'middle',
+  }
+});
+```
+
+### Image Elements
+
+```js
+// Add image from file path
+slide.addImage({
+  path: './images/photo.jpg',
+  x: 0.5, y: 0.5, w: 4, h: 3,
+  sizing: {
+    type: 'contain',   // 'contain'|'cover'|'crop'
+    w: 4, h: 3,
+  },
+  rounding: true,    // circular crop
+  opacity: 1,
+  rotate: 0,
+  shadow: { type: 'outer', color: '000000', opacity: 0.3, blur: 5, offset: 3 },
+  border: { pt: 2, color: '666666' },
+  hyperlink: { url: 'https://example.com' },
+  altText: 'Company logo',
+  placeholder: 'body',
+});
+
+// Add image from URL
+slide.addImage({
+  path: 'https://example.com/image.png',
+  x: 5, y: 0.5, w: 4, h: 3,
+});
+
+// Add image from base64
+slide.addImage({
+  data: 'data:image/png;base64,iVBORw0KGgo...',
+  x: 0.5, y: 4, w: 9, h: 4,
+});
+
+// SVG image
+slide.addImage({
+  data: '<svg>...</svg>',
+  type: 'svg',
+  x: 1, y: 1, w: 3, h: 3,
+});
+```
+
+### Chart Elements
+
+```js
+// Bar chart
+slide.addChart(pptx.charts.BAR, [
+  {
+    name: 'Q1 2024',
+    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+    values: [48000, 52000, 61000, 58000, 63000, 71000],
+  },
+  {
+    name: 'Q1 2023',
+    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+    values: [42000, 48000, 55000, 50000, 58000, 65000],
+  },
+], {
+  x: 0.5, y: 1.5, w: 9, h: 5,
+  barDir: 'col',        // 'bar'|'col'
+  barGrouping: 'clustered',  // 'clustered'|'stacked'|'percentStacked'
+  bar3DShape: '',       // ''|'box'|'cone'|'coneToMax'|'cylinder'|'pyramid'|'pyramidToMax'
+  chartColors: ['4472C4', 'ED7D31', 'A9D18E', 'FFC000', '5B9BD5'],
+  chartColorsOpacity: 100,
+  showTitle: true,
+  title: 'Monthly Revenue Comparison',
+  titleFontSize: 14,
+  titleFontFace: 'Calibri',
+  titleColor: '363636',
+  titlePos: { x: 0, y: 0 },
+  showLegend: true,
+  legendPos: 'b',      // 't'|'b'|'l'|'r'|'tr'
+  legendFontSize: 12,
+  legendFontFace: 'Calibri',
+  legendColor: '363636',
+  catAxisTitle: 'Month',
+  catAxisTitleColor: '363636',
+  catAxisTitleFontSize: 12,
+  catAxisLabelColor: '595959',
+  catAxisLabelFontFace: 'Calibri',
+  catAxisLabelFontSize: 10,
+  catAxisLabelFrequency: 1,
+  catAxisLabelRotate: 0,
+  catGridLine: { style: 'none' },
+  catAxisLineShow: true,
+  catAxisBaseTimeUnit: 'months',
+  valAxisTitle: 'Revenue ($)',
+  valAxisTitleColor: '363636',
+  valAxisTitleFontSize: 12,
+  valAxisLabelColor: '595959',
+  valAxisLabelFontFace: 'Calibri',
+  valAxisLabelFontSize: 10,
+  valAxisNumFmt: '"$"#,##0',
+  valAxisMinVal: 0,
+  valAxisMaxVal: 100000,
+  valAxisMajorUnit: 10000,
+  valGridLine: { style: 'solid', color: 'CCCCCC', size: 0.5 },
+  valAxisLineShow: true,
+  showValue: true,
+  dataLabelColor: '000000',
+  dataLabelFontFace: 'Calibri',
+  dataLabelFontSize: 9,
+  dataLabelPosition: 'outEnd',  // 'inBase'|'inEnd'|'outEnd'|'ctr'|'bestFit'
+  dataLabelFormatCode: '"$"#,##0',
+  showPercent: false,
+  showSerName: false,
+  showCatName: false,
+  plotAreaFill: { color: 'FFFFFF' },
+  plotAreaBorder: { pt: 0 },
+  border: { pt: 0 },
+  fill: { color: 'FFFFFF' },
+  shadow: null,
+  invertedColors: false,
+  radarStyle: 'standard',
+  lineDataSymbol: 'circle',
+  lineDataSymbolSize: 6,
+  lineDataSymbolLineColor: '4472C4',
+  lineDataSymbolLineSize: 1,
+  lineSmooth: false,
+  lineDash: 'solid',
+});
+
+// All chart types
+const chartTypes = {
+  BAR: pptx.charts.BAR,
+  BUBBLE: pptx.charts.BUBBLE,
+  DOUGHNUT: pptx.charts.DOUGHNUT,
+  LINE: pptx.charts.LINE,
+  PIE: pptx.charts.PIE,
+  RADAR: pptx.charts.RADAR,
+  SCATTER: pptx.charts.SCATTER,
+  AREA: pptx.charts.AREA,
+};
+
+// Line chart
+slide.addChart(pptx.charts.LINE, [
+  {
+    name: 'Revenue',
+    labels: ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'],
+    values: [48,52,61,58,63,71,68,75,82,79,88,95].map(v => v * 1000),
+  }
+], {
+  x: 0.5, y: 1.5, w: 9, h: 5,
+  showTitle: true,
+  title: 'Annual Revenue Trend',
+  lineDataSymbol: 'circle',
+  lineDataSymbolSize: 6,
+  lineSmooth: false,
+  catAxisTitle: 'Month',
+  valAxisTitle: 'Revenue ($)',
+  valAxisNumFmt: '"$"#,##0',
+  valAxisMinVal: 0,
+  chartColors: ['2E75B6'],
+  showValue: false,
+  dataLabelPosition: 'ctr',
+});
+
+// Pie chart
+slide.addChart(pptx.charts.PIE, [
+  {
+    name: 'Market Share',
+    labels: ['Product A', 'Product B', 'Product C', 'Product D', 'Other'],
+    values: [35.2, 28.7, 18.5, 11.3, 6.3],
+  }
+], {
+  x: 1, y: 1.5, w: 8, h: 5.5,
+  showTitle: true,
+  title: 'Market Share by Product',
+  showLegend: true,
+  legendPos: 'r',
+  showPercent: true,
+  showValue: false,
+  dataLabelColor: 'FFFFFF',
+  dataLabelFontSize: 12,
+  dataLabelFontFace: 'Calibri',
+  chartColors: ['4472C4','ED7D31','A9D18E','FFC000','5B9BD5'],
+  chartColorsOpacity: 100,
+  holeSize: 50,  // for doughnut only
+  firstSliceAng: 0,
+  showBubbleSize: false,
+  showCatName: true,
+  showSerName: false,
+  dataLabelPosition: 'bestFit',
+});
+
+// Scatter chart
+slide.addChart(pptx.charts.SCATTER, [
+  {
+    name: 'Dataset 1',
+    values: [43.5, 52.2, 28.1, 65.8, 37.4, 71.2, 44.6, 58.9, 82.3, 55.7],
+    sizes: [5, 8, 3, 12, 6, 15, 7, 10, 18, 9],  // for bubble
+  }
+], {
+  x: 0.5, y: 1, w: 9, h: 6,
+  showTitle: true,
+  title: 'Data Distribution',
+  catAxisTitle: 'X Values',
+  valAxisTitle: 'Y Values',
+  lineDataSymbol: 'circle',
+  lineDataSymbolSize: 8,
+  chartColors: ['4472C4'],
+  lineSize: 0,  // 0 = no line, just points
+});
+```
+
+### Table Elements
+
+```js
+// Add table
+slide.addTable([
+  [
+    { text: 'Name', options: { bold: true, fill: '4472C4', color: 'FFFFFF' } },
+    { text: 'Department', options: { bold: true, fill: '4472C4', color: 'FFFFFF' } },
+    { text: 'Salary', options: { bold: true, fill: '4472C4', color: 'FFFFFF' } },
+    { text: 'Status', options: { bold: true, fill: '4472C4', color: 'FFFFFF' } },
+  ],
+  ['Alice Smith', 'Engineering', '$95,000', 'Active'],
+  ['Bob Johnson', 'Marketing', '$72,000', 'Active'],
+  ['Charlie Brown', 'Sales', '$68,000', 'Inactive'],
+  ['Diana Prince', 'HR', '$78,000', 'Active'],
+  [{ text: 'Total', options: { bold: true } }, '', { text: '$313,000', options: { bold: true } }, ''],
+], {
+  x: 0.5, y: 1, w: 9, h: 6,
+  fill: 'FFFFFF',
+  fontFace: 'Calibri',
+  fontSize: 12,
+  color: '363636',
+  align: 'left',
+  valign: 'middle',
+  border: {
+    type: 'all',     // 'all'|'none'|specific sides
+    pt: 0.5,
+    color: 'CCCCCC',
+  },
+  margin: [0.05, 0.1, 0.05, 0.1],  // top, right, bottom, left (inches)
+  colW: [3, 2.5, 1.5, 1.5],      // column widths
+  rowH: [0.5],                     // row heights
+  autoPage: true,                  // auto-paginate when table is too tall
+  autoPageRepeatHeader: true,      // repeat header on continuation slides
+  autoPageLineWeight: 0.5,
+  newSlideStartY: 1,               // Y position for continuation slides
+});
+```
+
+### Speaker Notes
+
+```js
+// Add notes to slide
+slide.addNotes('These are speaker notes for this slide.\nKey points:\n- Revenue up 12%\n- New markets performing well\n- Cost reduction initiatives underway');
+
+// Notes with formatting
+slide.addNotes([
+  { text: 'Key Talking Points', options: { fontSize: 14, bold: true } },
+  { text: '\n\n' },
+  { text: '1. Revenue increased 12% year-over-year\n', options: { fontSize: 12 } },
+  { text: '2. Market expansion in APAC region (+25%)\n', options: { fontSize: 12 } },
+  { text: '3. Cost optimization saved $2.3M\n', options: { fontSize: 12 } },
+  { text: '\nQuestions to expect:', options: { bold: true, color: 'CC0000' } },
+  { text: '\n- Why did margins compress in Q3?\n- What is the APAC expansion timeline?', options: { italic: true } },
+]);
+```
+
+### Transitions and Animations
+
+```js
+// Slide transition
+slide.transition = {
+  type: 'fade',    // 'none'|'cut'|'fade'|'push'|'wipe'|'split'|'reveal'|'random_bars'|'shape'|'blinds'|'checker'|'comb'|'cover'|'dissolve'|'newsflash'|'pull'|'random'|'zoom'
+  speed: 'medium', // 'slow'|'medium'|'fast'
+  advAuto: '00:03:00',  // auto advance after 3 seconds
+};
+
+// Object animation (limited support)
+slide.addText('Animated text', {
+  x: 1, y: 1, w: 8, h: 1,
+  fontSize: 24,
+  animate: {
+    type: 'appear',
+    triggerType: 'onClick',
+    delay: 500,
+  }
+});
+```
+
+### Media Embedding
+
+```js
+// Video from file
+slide.addMedia({
+  type: 'video',
+  path: './videos/intro.mp4',
+  x: 1, y: 1, w: 8, h: 4.5,
+  cover: './images/video-thumbnail.jpg',
+  autoPlay: false,
+  loop: false,
+  muted: false,
+});
+
+// Audio from URL
+slide.addMedia({
+  type: 'audio',
+  link: 'https://example.com/audio.mp3',
+  x: 0.5, y: 0.5, w: 1, h: 0.5,
+  autoPlay: false,
+  loop: false,
+});
+
+// Online video (YouTube embed)
+slide.addMedia({
+  type: 'online',
+  link: 'https://www.youtube.com/embed/dQw4w9WgXcQ',
+  x: 1, y: 1, w: 8, h: 4.5,
+});
+```
+
+### Export Options
+
+```js
+// Save to file
+await pptx.writeFile({ fileName: 'presentation.pptx' });
+
+// Get as base64
+const base64Data = await pptx.write({ outputType: 'base64' });
+
+// Get as Blob (browser)
+const blob = await pptx.write({ outputType: 'blob' });
+
+// Get as Buffer (Node.js)
+const buffer = await pptx.write({ outputType: 'nodebuffer' });
+
+// Get as Uint8Array
+const uint8 = await pptx.write({ outputType: 'uint8array' });
+
+// Get as ArrayBuffer
+const arrayBuffer = await pptx.write({ outputType: 'arraybuffer' });
+
+// Callback style (older API)
+pptx.save('my-presentation', (fileName) => {
+  console.log(`Saved: ${fileName}`);
+}, 'nodebuffer');
+```
+
+### Complete Presentation Example
+
+```js
+const PptxGenJS = require('pptxgenjs');
+
+async function createQuarterlyReport(data) {
+  const pptx = new PptxGenJS();
+  pptx.layout = 'LAYOUT_16x9';
+  pptx.title = 'Q4 2024 Quarterly Report';
+  pptx.author = 'Analytics Team';
+
+  // Define master
+  pptx.defineSlideMaster({
+    title: 'CORPORATE',
+    background: { color: 'FFFFFF' },
+    objects: [
+      { rect: { x: 0, y: 0, w: '100%', h: 0.08, fill: { color: '003366' } } },
+      { rect: { x: 0, y: 7.42, w: '100%', h: 0.08, fill: { color: '003366' } } },
+      {
+        text: {
+          text: data.companyName,
+          options: {
+            x: 0.4, y: 7.4, w: 5, h: 0.1,
+            fontSize: 8, color: 'FFFFFF', bold: false, align: 'left',
+          }
+        }
+      },
+    ],
+    slideNumber: { x: '92%', y: 7.38, color: 'CCCCCC', fontSize: 8 },
+  });
+
+  // Title slide
+  const titleSlide = pptx.addSlide({ masterName: 'CORPORATE' });
+  titleSlide.addShape(pptx.shapes.RECTANGLE, {
+    x: 0, y: 2.5, w: '100%', h: 2.5,
+    fill: { color: '003366' },
+    line: { width: 0 },
+  });
+  titleSlide.addText(data.title, {
+    x: 0.5, y: 2.7, w: 9, h: 1.2,
+    fontFace: 'Calibri Light',
+    fontSize: 40,
+    bold: false,
+    color: 'FFFFFF',
+    align: 'center',
+  });
+  titleSlide.addText(`Q4 ${data.year} | ${data.presenter}`, {
+    x: 0.5, y: 3.9, w: 9, h: 0.6,
+    fontFace: 'Calibri',
+    fontSize: 18,
+    color: 'CCCCCC',
+    align: 'center',
+  });
+
+  // Executive Summary slide
+  const summarySlide = pptx.addSlide({ masterName: 'CORPORATE' });
+  summarySlide.addText('Executive Summary', {
+    x: 0.4, y: 0.2, w: 9.2, h: 0.6,
+    fontFace: 'Calibri Light',
+    fontSize: 28,
+    color: '003366',
+    bold: false,
+  });
+
+  // KPI boxes
+  const kpis = [
+    { label: 'Revenue', value: '$' + (data.revenue / 1e6).toFixed(1) + 'M', change: '+12.5%', positive: true },
+    { label: 'Net Income', value: '$' + (data.netIncome / 1e6).toFixed(1) + 'M', change: '+8.3%', positive: true },
+    { label: 'EBITDA', value: (data.ebitdaMargin * 100).toFixed(1) + '%', change: '+1.2pp', positive: true },
+    { label: 'Customers', value: data.customers.toLocaleString(), change: '-2.1%', positive: false },
+  ];
+
+  kpis.forEach((kpi, i) => {
+    const x = 0.4 + i * 2.35;
+    summarySlide.addShape(pptx.shapes.RECTANGLE, {
+      x, y: 1.0, w: 2.2, h: 2.5,
+      fill: { color: kpi.positive ? 'E8F4FD' : 'FDE8E8' },
+      line: { color: kpi.positive ? '2E75B6' : 'C00000', width: 1 },
+    });
+    summarySlide.addText(kpi.label, { x, y: 1.1, w: 2.2, h: 0.4, fontSize: 11, color: '666666', align: 'center' });
+    summarySlide.addText(kpi.value, { x, y: 1.5, w: 2.2, h: 0.8, fontSize: 22, bold: true, color: '003366', align: 'center' });
+    summarySlide.addText(kpi.change, {
+      x, y: 2.3, w: 2.2, h: 0.4,
+      fontSize: 14, bold: true,
+      color: kpi.positive ? '375623' : '9C0006',
+      align: 'center'
+    });
+  });
+
+  // Revenue chart slide
+  const chartSlide = pptx.addSlide({ masterName: 'CORPORATE' });
+  chartSlide.addText('Revenue Trend', { x: 0.4, y: 0.2, w: 9.2, h: 0.6, fontSize: 28, color: '003366', fontFace: 'Calibri Light' });
+  chartSlide.addChart(pptx.charts.LINE, [
+    {
+      name: 'Revenue',
+      labels: data.months,
+      values: data.monthlyRevenue,
+    },
+    {
+      name: 'Target',
+      labels: data.months,
+      values: data.monthlyTarget,
+    }
+  ], {
+    x: 0.4, y: 1.0, w: 9.2, h: 5.8,
+    showTitle: false,
+    showLegend: true,
+    legendPos: 'b',
+    chartColors: ['2E75B6', 'ED7D31'],
+    lineSmooth: true,
+    lineDataSymbol: 'circle',
+    valAxisNumFmt: '"$"#,##0',
+    valAxisTitle: 'Monthly Revenue',
+    catAxisTitle: 'Month',
+    gridLineMajorClr: 'EEEEEE',
+  });
+
+  await pptx.writeFile({ fileName: 'quarterly-report.pptx' });
+  return 'quarterly-report.pptx';
+}
+```
+
+### Color Schemes and Themes
+
+```js
+// Theme colors for consistent presentations
+const THEME_COLORS = {
+  primary:    '003366',  // dark blue
+  secondary:  '2E75B6',  // medium blue
+  accent1:    'ED7D31',  // orange
+  accent2:    'A9D18E',  // green
+  accent3:    'FFC000',  // yellow
+  accent4:    'FF0000',  // red
+  dark1:      '000000',  // black
+  dark2:      '333333',  // dark gray
+  light1:     'FFFFFF',  // white
+  light2:     'F5F5F5',  // off-white
+  text:       '363636',  // near black
+  textLight:  '666666',  // medium gray
+  border:     'CCCCCC',  // light gray
+  success:    '375623',  // dark green
+  warning:    'FF6B00',  // orange
+  error:      '9C0006',  // dark red
+  info:       '0070C0',  // blue
+  successBg:  'C6EFCE',  // light green
+  warningBg:  'FFEB9C',  // light yellow
+  errorBg:    'FFC7CE',  // light red
+  infoBg:     'DDEBF7',  // light blue
+};
+
+// Apply consistent styles across multiple slides
+function applyTheme(pptx, slides) {
+  slides.forEach(slide => {
+    slide.background = { color: THEME_COLORS.light1 };
+  });
+}
+```
+
+### Troubleshooting
+
+**Issue: Images not loading from URL**
+```js
+// Use local path or base64 instead
+const axios = require('axios');
+const response = await axios.get(imageUrl, { responseType: 'arraybuffer' });
+const base64 = Buffer.from(response.data).toString('base64');
+const ext = imageUrl.split('.').pop();
+slide.addImage({ data: `data:image/${ext};base64,${base64}`, x, y, w, h });
+```
+
+**Issue: Large file size**
+```js
+// Compress images before embedding
+const sharp = require('sharp');
+const compressed = await sharp(imagePath).resize(800).jpeg({ quality: 80 }).toBuffer();
+const b64 = compressed.toString('base64');
+slide.addImage({ data: `data:image/jpeg;base64,${b64}`, x, y, w, h });
+```
+
+**Issue: Text not wrapping**
+```js
+// Ensure wrap is true and dimensions allow wrapping
+slide.addText('Long text content...', {
+  x: 0.5, y: 0.5, w: 5, h: 3,  // specify w and h
+  wrap: true,
+  autoFit: false,
+});
+```
+
+**Issue: Charts with too many data points**
+```js
+// Aggregate data before charting
+function aggregateByMonth(data) {
+  return data.reduce((acc, item) => {
+    const month = item.date.toISOString().slice(0, 7);
+    if (!acc[month]) acc[month] = 0;
+    acc[month] += item.value;
+    return acc;
+  }, {});
+}
+```
+
+
+---
+
+## pptxgenjs Complete API Reference
+
+### Installation & Setup
+
+```bash
+npm install pptxgenjs
+```
+
+```js
+const PptxGenJS = require('pptxgenjs');
+const pptx = new PptxGenJS();
+
+// Global settings
+pptx.layout = 'LAYOUT_16x9';  // 'LAYOUT_4x3'|'LAYOUT_16x9'|'LAYOUT_16x10'|'LAYOUT_WIDE'|custom
+pptx.subject = 'Quarterly Report';
+pptx.author = 'John Doe';
+pptx.company = 'ACME Corp';
+pptx.revision = '1';
+pptx.title = 'Q4 2024 Results';
+
+// Custom layout
+pptx.defineLayout({ name: 'A3', width: 16.54, height: 11.69 });
+pptx.layout = 'A3';
+```
+
+### Slide Masters & Layouts
+
+```js
+// Define slide master
+pptx.defineSlideMaster({
+  title: 'MASTER_SLIDE',
+  background: { color: 'FFFFFF' },
+  objects: [
+    { rect: { x: 0, y: 7.0, w: '100%', h: 0.75, fill: { color: '003366' } } },
+    {
+      text: {
+        text: 'CONFIDENTIAL',
+        options: {
+          x: 0, y: 7.0, w: '100%', h: 0.75,
+          align: 'center', valign: 'middle',
+          color: 'FFFFFF', fontSize: 10,
+        }
+      }
+    },
+    {
+      image: {
+        x: 0.5, y: 0.25, w: 1.5, h: 0.5,
+        path: './logo.png',
+      }
+    },
+  ],
+  slideNumber: { x: '90%', y: 7.1, color: 'FFFFFF', fontSize: 9, fontFace: 'Arial' },
+  margin: [0.5, 0.25, 1.25, 0.5],
+});
+
+// Add slide using master
+const slide = pptx.addSlide({ masterName: 'MASTER_SLIDE' });
+```
+
+### Adding Slides
+
+```js
+// Basic slide
+const slide1 = pptx.addSlide();
+
+// Slide with master
+const slide2 = pptx.addSlide({ masterName: 'MASTER_SLIDE' });
+
+// Slide with background
+const slide3 = pptx.addSlide();
+slide3.background = { color: 'F5F5F5' };
+slide3.background = { path: './bg.jpg' };
+slide3.background = { data: 'data:image/png;base64,...' };
+
+// Hidden slide
+const slide4 = pptx.addSlide();
+slide4.hidden = true;
+
+// Slide number display
+pptx.slides.forEach((slide, i) => {
+  slide.addText(`Slide ${i + 1}`, {
+    x: '90%', y: '95%', w: '8%', h: '4%',
+    fontSize: 9, color: '999999', align: 'right',
+  });
+});
+```
+
+### Text Elements
+
+```js
+// Simple text
+slide.addText('Hello, World!', {
+  x: 0.5, y: 0.5, w: 9, h: 1,
+  fontFace: 'Arial',
+  fontSize: 36,
+  bold: true,
+  italic: false,
+  underline: { style: 'sng', color: '0000FF' },
+  strike: false,
+  color: '003366',
+  fill: { color: 'FFFFCC' },
+  transparency: 0,
+  border: { pt: 1, color: '666666' },
+  align: 'center',  // 'left'|'center'|'right'|'justify'
+  valign: 'middle', // 'top'|'middle'|'bottom'
+  wrap: true,
+  autoFit: false,
+  shrinkText: false,
+  inset: 0.05,
+  paraSpaceBefore: 6,
+  paraSpaceAfter: 6,
+  lineSpacingMultiple: 1.2,
+  charSpacing: 1,
+  rotate: 0,         // degrees
+  shadow: {
+    type: 'outer',
+    color: '000000',
+    opacity: 0.5,
+    blur: 4,
+    offset: 4,
+    angle: 45,
+  },
+  hyperlink: {
+    url: 'https://example.com',
+    tooltip: 'Visit our site',
+  },
+  rtlMode: false,
+  lang: 'en-US',
+  placeholder: 'body',  // for master slide placeholders
+});
+
+// Multi-format text (text runs)
+slide.addText([
+  { text: 'Bold text ', options: { bold: true, color: 'FF0000' } },
+  { text: 'and normal text ', options: { bold: false } },
+  { text: '\n' },
+  { text: 'New line with ', options: { fontSize: 18 } },
+  { text: 'hyperlink', options: { hyperlink: { url: 'https://google.com' } } },
+  { text: '\nBullet point', options: { bullet: true, indentLevel: 0 } },
+  { text: '\nSub-bullet', options: { bullet: { type: 'number', indent: 30 }, indentLevel: 1 } },
+], {
+  x: 0.5, y: 1.5, w: 9, h: 5,
+  fontSize: 16,
+  fontFace: 'Calibri',
+  color: '333333',
+});
+```
+
+### Shape Elements
+
+```js
+// Rectangle
+slide.addShape(pptx.shapes.RECTANGLE, {
+  x: 1, y: 1, w: 3, h: 2,
+  fill: { color: '4472C4' },
+  line: { color: '2F5597', width: 2, dashType: 'solid' },
+  shadow: { type: 'outer', color: '000000', opacity: 0.3, blur: 3, offset: 3, angle: 45 },
+  transparency: 0,
+  rotate: 0,
+});
+
+// All shape types
+const shapes = [
+  pptx.shapes.RECTANGLE,
+  pptx.shapes.ROUNDED_RECTANGLE,
+  pptx.shapes.OVAL,
+  pptx.shapes.TRIANGLE,
+  pptx.shapes.RIGHT_TRIANGLE,
+  pptx.shapes.PARALLELOGRAM,
+  pptx.shapes.TRAPEZOID,
+  pptx.shapes.DIAMOND,
+  pptx.shapes.PENTAGON,
+  pptx.shapes.HEXAGON,
+  pptx.shapes.HEPTAGON,
+  pptx.shapes.OCTAGON,
+  pptx.shapes.DECAGON,
+  pptx.shapes.STAR_4,
+  pptx.shapes.STAR_5,
+  pptx.shapes.STAR_6,
+  pptx.shapes.STAR_7,
+  pptx.shapes.STAR_8,
+  pptx.shapes.STAR_10,
+  pptx.shapes.STAR_12,
+  pptx.shapes.STAR_16,
+  pptx.shapes.STAR_24,
+  pptx.shapes.STAR_32,
+  pptx.shapes.ARROW_RIGHT,
+  pptx.shapes.ARROW_LEFT,
+  pptx.shapes.ARROW_UP,
+  pptx.shapes.ARROW_DOWN,
+  pptx.shapes.ARROW_LEFT_RIGHT,
+  pptx.shapes.ARROW_UP_DOWN,
+  pptx.shapes.CALLOUT_1,
+  pptx.shapes.CALLOUT_2,
+  pptx.shapes.CALLOUT_3,
+  pptx.shapes.LINE,
+  pptx.shapes.LINE_ARROW,
+  pptx.shapes.LINE_ARROWS,
+  pptx.shapes.FLOW_CHART_PROCESS,
+  pptx.shapes.FLOW_CHART_DECISION,
+  pptx.shapes.FLOW_CHART_DATA,
+  pptx.shapes.FLOW_CHART_TERMINATOR,
+  pptx.shapes.FLOW_CHART_CONNECTOR,
+  pptx.shapes.FLOW_CHART_ALTERNATE_PROCESS,
+  pptx.shapes.CROSS,
+  pptx.shapes.PLUS,
+  pptx.shapes.SMILEY_FACE,
+  pptx.shapes.NO_SMOKING,
+  pptx.shapes.PLAQUE,
+  pptx.shapes.CAN,
+  pptx.shapes.CUBE,
+  pptx.shapes.BEVEL,
+  pptx.shapes.DONUT,
+  pptx.shapes.CLOUD,
+  pptx.shapes.CLOUD_CALLOUT,
+  pptx.shapes.HEART,
+  pptx.shapes.LIGHTNING_BOLT,
+  pptx.shapes.SUN,
+  pptx.shapes.MOON,
+  pptx.shapes.ARC,
+  pptx.shapes.CHORD,
+  pptx.shapes.PIE,
+];
+
+// Filled shape with text
+slide.addShape(pptx.shapes.ROUNDED_RECTANGLE, {
+  x: 1, y: 3, w: 4, h: 1.5,
+  fill: { color: 'ED7D31' },
+  line: { color: 'ED7D31', width: 0 },
+  text: 'Click Here',
+  options: {
+    fontFace: 'Arial',
+    fontSize: 18,
+    bold: true,
+    color: 'FFFFFF',
+    align: 'center',
+    valign: 'middle',
+  }
+});
+```
+
+### Image Elements
+
+```js
+// Add image from file path
+slide.addImage({
+  path: './images/photo.jpg',
+  x: 0.5, y: 0.5, w: 4, h: 3,
+  sizing: {
+    type: 'contain',   // 'contain'|'cover'|'crop'
+    w: 4, h: 3,
+  },
+  rounding: true,    // circular crop
+  opacity: 1,
+  rotate: 0,
+  shadow: { type: 'outer', color: '000000', opacity: 0.3, blur: 5, offset: 3 },
+  border: { pt: 2, color: '666666' },
+  hyperlink: { url: 'https://example.com' },
+  altText: 'Company logo',
+  placeholder: 'body',
+});
+
+// Add image from URL
+slide.addImage({
+  path: 'https://example.com/image.png',
+  x: 5, y: 0.5, w: 4, h: 3,
+});
+
+// Add image from base64
+slide.addImage({
+  data: 'data:image/png;base64,iVBORw0KGgo...',
+  x: 0.5, y: 4, w: 9, h: 4,
+});
+
+// SVG image
+slide.addImage({
+  data: '<svg>...</svg>',
+  type: 'svg',
+  x: 1, y: 1, w: 3, h: 3,
+});
+```
+
+### Chart Elements
+
+```js
+// Bar chart
+slide.addChart(pptx.charts.BAR, [
+  {
+    name: 'Q1 2024',
+    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+    values: [48000, 52000, 61000, 58000, 63000, 71000],
+  },
+  {
+    name: 'Q1 2023',
+    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+    values: [42000, 48000, 55000, 50000, 58000, 65000],
+  },
+], {
+  x: 0.5, y: 1.5, w: 9, h: 5,
+  barDir: 'col',        // 'bar'|'col'
+  barGrouping: 'clustered',  // 'clustered'|'stacked'|'percentStacked'
+  bar3DShape: '',       // ''|'box'|'cone'|'coneToMax'|'cylinder'|'pyramid'|'pyramidToMax'
+  chartColors: ['4472C4', 'ED7D31', 'A9D18E', 'FFC000', '5B9BD5'],
+  chartColorsOpacity: 100,
+  showTitle: true,
+  title: 'Monthly Revenue Comparison',
+  titleFontSize: 14,
+  titleFontFace: 'Calibri',
+  titleColor: '363636',
+  titlePos: { x: 0, y: 0 },
+  showLegend: true,
+  legendPos: 'b',      // 't'|'b'|'l'|'r'|'tr'
+  legendFontSize: 12,
+  legendFontFace: 'Calibri',
+  legendColor: '363636',
+  catAxisTitle: 'Month',
+  catAxisTitleColor: '363636',
+  catAxisTitleFontSize: 12,
+  catAxisLabelColor: '595959',
+  catAxisLabelFontFace: 'Calibri',
+  catAxisLabelFontSize: 10,
+  catAxisLabelFrequency: 1,
+  catAxisLabelRotate: 0,
+  catGridLine: { style: 'none' },
+  catAxisLineShow: true,
+  catAxisBaseTimeUnit: 'months',
+  valAxisTitle: 'Revenue ($)',
+  valAxisTitleColor: '363636',
+  valAxisTitleFontSize: 12,
+  valAxisLabelColor: '595959',
+  valAxisLabelFontFace: 'Calibri',
+  valAxisLabelFontSize: 10,
+  valAxisNumFmt: '"$"#,##0',
+  valAxisMinVal: 0,
+  valAxisMaxVal: 100000,
+  valAxisMajorUnit: 10000,
+  valGridLine: { style: 'solid', color: 'CCCCCC', size: 0.5 },
+  valAxisLineShow: true,
+  showValue: true,
+  dataLabelColor: '000000',
+  dataLabelFontFace: 'Calibri',
+  dataLabelFontSize: 9,
+  dataLabelPosition: 'outEnd',  // 'inBase'|'inEnd'|'outEnd'|'ctr'|'bestFit'
+  dataLabelFormatCode: '"$"#,##0',
+  showPercent: false,
+  showSerName: false,
+  showCatName: false,
+  plotAreaFill: { color: 'FFFFFF' },
+  plotAreaBorder: { pt: 0 },
+  border: { pt: 0 },
+  fill: { color: 'FFFFFF' },
+  shadow: null,
+  invertedColors: false,
+  radarStyle: 'standard',
+  lineDataSymbol: 'circle',
+  lineDataSymbolSize: 6,
+  lineDataSymbolLineColor: '4472C4',
+  lineDataSymbolLineSize: 1,
+  lineSmooth: false,
+  lineDash: 'solid',
+});
+
+// All chart types
+const chartTypes = {
+  BAR: pptx.charts.BAR,
+  BUBBLE: pptx.charts.BUBBLE,
+  DOUGHNUT: pptx.charts.DOUGHNUT,
+  LINE: pptx.charts.LINE,
+  PIE: pptx.charts.PIE,
+  RADAR: pptx.charts.RADAR,
+  SCATTER: pptx.charts.SCATTER,
+  AREA: pptx.charts.AREA,
+};
+
+// Line chart
+slide.addChart(pptx.charts.LINE, [
+  {
+    name: 'Revenue',
+    labels: ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'],
+    values: [48,52,61,58,63,71,68,75,82,79,88,95].map(v => v * 1000),
+  }
+], {
+  x: 0.5, y: 1.5, w: 9, h: 5,
+  showTitle: true,
+  title: 'Annual Revenue Trend',
+  lineDataSymbol: 'circle',
+  lineDataSymbolSize: 6,
+  lineSmooth: false,
+  catAxisTitle: 'Month',
+  valAxisTitle: 'Revenue ($)',
+  valAxisNumFmt: '"$"#,##0',
+  valAxisMinVal: 0,
+  chartColors: ['2E75B6'],
+  showValue: false,
+  dataLabelPosition: 'ctr',
+});
+
+// Pie chart
+slide.addChart(pptx.charts.PIE, [
+  {
+    name: 'Market Share',
+    labels: ['Product A', 'Product B', 'Product C', 'Product D', 'Other'],
+    values: [35.2, 28.7, 18.5, 11.3, 6.3],
+  }
+], {
+  x: 1, y: 1.5, w: 8, h: 5.5,
+  showTitle: true,
+  title: 'Market Share by Product',
+  showLegend: true,
+  legendPos: 'r',
+  showPercent: true,
+  showValue: false,
+  dataLabelColor: 'FFFFFF',
+  dataLabelFontSize: 12,
+  dataLabelFontFace: 'Calibri',
+  chartColors: ['4472C4','ED7D31','A9D18E','FFC000','5B9BD5'],
+  chartColorsOpacity: 100,
+  holeSize: 50,  // for doughnut only
+  firstSliceAng: 0,
+  showBubbleSize: false,
+  showCatName: true,
+  showSerName: false,
+  dataLabelPosition: 'bestFit',
+});
+
+// Scatter chart
+slide.addChart(pptx.charts.SCATTER, [
+  {
+    name: 'Dataset 1',
+    values: [43.5, 52.2, 28.1, 65.8, 37.4, 71.2, 44.6, 58.9, 82.3, 55.7],
+    sizes: [5, 8, 3, 12, 6, 15, 7, 10, 18, 9],  // for bubble
+  }
+], {
+  x: 0.5, y: 1, w: 9, h: 6,
+  showTitle: true,
+  title: 'Data Distribution',
+  catAxisTitle: 'X Values',
+  valAxisTitle: 'Y Values',
+  lineDataSymbol: 'circle',
+  lineDataSymbolSize: 8,
+  chartColors: ['4472C4'],
+  lineSize: 0,  // 0 = no line, just points
+});
+```
+
+### Table Elements
+
+```js
+// Add table
+slide.addTable([
+  [
+    { text: 'Name', options: { bold: true, fill: '4472C4', color: 'FFFFFF' } },
+    { text: 'Department', options: { bold: true, fill: '4472C4', color: 'FFFFFF' } },
+    { text: 'Salary', options: { bold: true, fill: '4472C4', color: 'FFFFFF' } },
+    { text: 'Status', options: { bold: true, fill: '4472C4', color: 'FFFFFF' } },
+  ],
+  ['Alice Smith', 'Engineering', '$95,000', 'Active'],
+  ['Bob Johnson', 'Marketing', '$72,000', 'Active'],
+  ['Charlie Brown', 'Sales', '$68,000', 'Inactive'],
+  ['Diana Prince', 'HR', '$78,000', 'Active'],
+  [{ text: 'Total', options: { bold: true } }, '', { text: '$313,000', options: { bold: true } }, ''],
+], {
+  x: 0.5, y: 1, w: 9, h: 6,
+  fill: 'FFFFFF',
+  fontFace: 'Calibri',
+  fontSize: 12,
+  color: '363636',
+  align: 'left',
+  valign: 'middle',
+  border: {
+    type: 'all',     // 'all'|'none'|specific sides
+    pt: 0.5,
+    color: 'CCCCCC',
+  },
+  margin: [0.05, 0.1, 0.05, 0.1],  // top, right, bottom, left (inches)
+  colW: [3, 2.5, 1.5, 1.5],      // column widths
+  rowH: [0.5],                     // row heights
+  autoPage: true,                  // auto-paginate when table is too tall
+  autoPageRepeatHeader: true,      // repeat header on continuation slides
+  autoPageLineWeight: 0.5,
+  newSlideStartY: 1,               // Y position for continuation slides
+});
+```
+
+### Speaker Notes
+
+```js
+// Add notes to slide
+slide.addNotes('These are speaker notes for this slide.\nKey points:\n- Revenue up 12%\n- New markets performing well\n- Cost reduction initiatives underway');
+
+// Notes with formatting
+slide.addNotes([
+  { text: 'Key Talking Points', options: { fontSize: 14, bold: true } },
+  { text: '\n\n' },
+  { text: '1. Revenue increased 12% year-over-year\n', options: { fontSize: 12 } },
+  { text: '2. Market expansion in APAC region (+25%)\n', options: { fontSize: 12 } },
+  { text: '3. Cost optimization saved $2.3M\n', options: { fontSize: 12 } },
+  { text: '\nQuestions to expect:', options: { bold: true, color: 'CC0000' } },
+  { text: '\n- Why did margins compress in Q3?\n- What is the APAC expansion timeline?', options: { italic: true } },
+]);
+```
+
+### Transitions and Animations
+
+```js
+// Slide transition
+slide.transition = {
+  type: 'fade',    // 'none'|'cut'|'fade'|'push'|'wipe'|'split'|'reveal'|'random_bars'|'shape'|'blinds'|'checker'|'comb'|'cover'|'dissolve'|'newsflash'|'pull'|'random'|'zoom'
+  speed: 'medium', // 'slow'|'medium'|'fast'
+  advAuto: '00:03:00',  // auto advance after 3 seconds
+};
+
+// Object animation (limited support)
+slide.addText('Animated text', {
+  x: 1, y: 1, w: 8, h: 1,
+  fontSize: 24,
+  animate: {
+    type: 'appear',
+    triggerType: 'onClick',
+    delay: 500,
+  }
+});
+```
+
+### Media Embedding
+
+```js
+// Video from file
+slide.addMedia({
+  type: 'video',
+  path: './videos/intro.mp4',
+  x: 1, y: 1, w: 8, h: 4.5,
+  cover: './images/video-thumbnail.jpg',
+  autoPlay: false,
+  loop: false,
+  muted: false,
+});
+
+// Audio from URL
+slide.addMedia({
+  type: 'audio',
+  link: 'https://example.com/audio.mp3',
+  x: 0.5, y: 0.5, w: 1, h: 0.5,
+  autoPlay: false,
+  loop: false,
+});
+
+// Online video (YouTube embed)
+slide.addMedia({
+  type: 'online',
+  link: 'https://www.youtube.com/embed/dQw4w9WgXcQ',
+  x: 1, y: 1, w: 8, h: 4.5,
+});
+```
+
+### Export Options
+
+```js
+// Save to file
+await pptx.writeFile({ fileName: 'presentation.pptx' });
+
+// Get as base64
+const base64Data = await pptx.write({ outputType: 'base64' });
+
+// Get as Blob (browser)
+const blob = await pptx.write({ outputType: 'blob' });
+
+// Get as Buffer (Node.js)
+const buffer = await pptx.write({ outputType: 'nodebuffer' });
+
+// Get as Uint8Array
+const uint8 = await pptx.write({ outputType: 'uint8array' });
+
+// Get as ArrayBuffer
+const arrayBuffer = await pptx.write({ outputType: 'arraybuffer' });
+
+// Callback style (older API)
+pptx.save('my-presentation', (fileName) => {
+  console.log(`Saved: ${fileName}`);
+}, 'nodebuffer');
+```
+
+### Complete Presentation Example
+
+```js
+const PptxGenJS = require('pptxgenjs');
+
+async function createQuarterlyReport(data) {
+  const pptx = new PptxGenJS();
+  pptx.layout = 'LAYOUT_16x9';
+  pptx.title = 'Q4 2024 Quarterly Report';
+  pptx.author = 'Analytics Team';
+
+  // Define master
+  pptx.defineSlideMaster({
+    title: 'CORPORATE',
+    background: { color: 'FFFFFF' },
+    objects: [
+      { rect: { x: 0, y: 0, w: '100%', h: 0.08, fill: { color: '003366' } } },
+      { rect: { x: 0, y: 7.42, w: '100%', h: 0.08, fill: { color: '003366' } } },
+      {
+        text: {
+          text: data.companyName,
+          options: {
+            x: 0.4, y: 7.4, w: 5, h: 0.1,
+            fontSize: 8, color: 'FFFFFF', bold: false, align: 'left',
+          }
+        }
+      },
+    ],
+    slideNumber: { x: '92%', y: 7.38, color: 'CCCCCC', fontSize: 8 },
+  });
+
+  // Title slide
+  const titleSlide = pptx.addSlide({ masterName: 'CORPORATE' });
+  titleSlide.addShape(pptx.shapes.RECTANGLE, {
+    x: 0, y: 2.5, w: '100%', h: 2.5,
+    fill: { color: '003366' },
+    line: { width: 0 },
+  });
+  titleSlide.addText(data.title, {
+    x: 0.5, y: 2.7, w: 9, h: 1.2,
+    fontFace: 'Calibri Light',
+    fontSize: 40,
+    bold: false,
+    color: 'FFFFFF',
+    align: 'center',
+  });
+  titleSlide.addText(`Q4 ${data.year} | ${data.presenter}`, {
+    x: 0.5, y: 3.9, w: 9, h: 0.6,
+    fontFace: 'Calibri',
+    fontSize: 18,
+    color: 'CCCCCC',
+    align: 'center',
+  });
+
+  // Executive Summary slide
+  const summarySlide = pptx.addSlide({ masterName: 'CORPORATE' });
+  summarySlide.addText('Executive Summary', {
+    x: 0.4, y: 0.2, w: 9.2, h: 0.6,
+    fontFace: 'Calibri Light',
+    fontSize: 28,
+    color: '003366',
+    bold: false,
+  });
+
+  // KPI boxes
+  const kpis = [
+    { label: 'Revenue', value: '$' + (data.revenue / 1e6).toFixed(1) + 'M', change: '+12.5%', positive: true },
+    { label: 'Net Income', value: '$' + (data.netIncome / 1e6).toFixed(1) + 'M', change: '+8.3%', positive: true },
+    { label: 'EBITDA', value: (data.ebitdaMargin * 100).toFixed(1) + '%', change: '+1.2pp', positive: true },
+    { label: 'Customers', value: data.customers.toLocaleString(), change: '-2.1%', positive: false },
+  ];
+
+  kpis.forEach((kpi, i) => {
+    const x = 0.4 + i * 2.35;
+    summarySlide.addShape(pptx.shapes.RECTANGLE, {
+      x, y: 1.0, w: 2.2, h: 2.5,
+      fill: { color: kpi.positive ? 'E8F4FD' : 'FDE8E8' },
+      line: { color: kpi.positive ? '2E75B6' : 'C00000', width: 1 },
+    });
+    summarySlide.addText(kpi.label, { x, y: 1.1, w: 2.2, h: 0.4, fontSize: 11, color: '666666', align: 'center' });
+    summarySlide.addText(kpi.value, { x, y: 1.5, w: 2.2, h: 0.8, fontSize: 22, bold: true, color: '003366', align: 'center' });
+    summarySlide.addText(kpi.change, {
+      x, y: 2.3, w: 2.2, h: 0.4,
+      fontSize: 14, bold: true,
+      color: kpi.positive ? '375623' : '9C0006',
+      align: 'center'
+    });
+  });
+
+  // Revenue chart slide
+  const chartSlide = pptx.addSlide({ masterName: 'CORPORATE' });
+  chartSlide.addText('Revenue Trend', { x: 0.4, y: 0.2, w: 9.2, h: 0.6, fontSize: 28, color: '003366', fontFace: 'Calibri Light' });
+  chartSlide.addChart(pptx.charts.LINE, [
+    {
+      name: 'Revenue',
+      labels: data.months,
+      values: data.monthlyRevenue,
+    },
+    {
+      name: 'Target',
+      labels: data.months,
+      values: data.monthlyTarget,
+    }
+  ], {
+    x: 0.4, y: 1.0, w: 9.2, h: 5.8,
+    showTitle: false,
+    showLegend: true,
+    legendPos: 'b',
+    chartColors: ['2E75B6', 'ED7D31'],
+    lineSmooth: true,
+    lineDataSymbol: 'circle',
+    valAxisNumFmt: '"$"#,##0',
+    valAxisTitle: 'Monthly Revenue',
+    catAxisTitle: 'Month',
+    gridLineMajorClr: 'EEEEEE',
+  });
+
+  await pptx.writeFile({ fileName: 'quarterly-report.pptx' });
+  return 'quarterly-report.pptx';
+}
+```
+
+### Color Schemes and Themes
+
+```js
+// Theme colors for consistent presentations
+const THEME_COLORS = {
+  primary:    '003366',  // dark blue
+  secondary:  '2E75B6',  // medium blue
+  accent1:    'ED7D31',  // orange
+  accent2:    'A9D18E',  // green
+  accent3:    'FFC000',  // yellow
+  accent4:    'FF0000',  // red
+  dark1:      '000000',  // black
+  dark2:      '333333',  // dark gray
+  light1:     'FFFFFF',  // white
+  light2:     'F5F5F5',  // off-white
+  text:       '363636',  // near black
+  textLight:  '666666',  // medium gray
+  border:     'CCCCCC',  // light gray
+  success:    '375623',  // dark green
+  warning:    'FF6B00',  // orange
+  error:      '9C0006',  // dark red
+  info:       '0070C0',  // blue
+  successBg:  'C6EFCE',  // light green
+  warningBg:  'FFEB9C',  // light yellow
+  errorBg:    'FFC7CE',  // light red
+  infoBg:     'DDEBF7',  // light blue
+};
+
+// Apply consistent styles across multiple slides
+function applyTheme(pptx, slides) {
+  slides.forEach(slide => {
+    slide.background = { color: THEME_COLORS.light1 };
+  });
+}
+```
+
+### Troubleshooting
+
+**Issue: Images not loading from URL**
+```js
+// Use local path or base64 instead
+const axios = require('axios');
+const response = await axios.get(imageUrl, { responseType: 'arraybuffer' });
+const base64 = Buffer.from(response.data).toString('base64');
+const ext = imageUrl.split('.').pop();
+slide.addImage({ data: `data:image/${ext};base64,${base64}`, x, y, w, h });
+```
+
+**Issue: Large file size**
+```js
+// Compress images before embedding
+const sharp = require('sharp');
+const compressed = await sharp(imagePath).resize(800).jpeg({ quality: 80 }).toBuffer();
+const b64 = compressed.toString('base64');
+slide.addImage({ data: `data:image/jpeg;base64,${b64}`, x, y, w, h });
+```
+
+**Issue: Text not wrapping**
+```js
+// Ensure wrap is true and dimensions allow wrapping
+slide.addText('Long text content...', {
+  x: 0.5, y: 0.5, w: 5, h: 3,  // specify w and h
+  wrap: true,
+  autoFit: false,
+});
+```
+
+**Issue: Charts with too many data points**
+```js
+// Aggregate data before charting
+function aggregateByMonth(data) {
+  return data.reduce((acc, item) => {
+    const month = item.date.toISOString().slice(0, 7);
+    if (!acc[month]) acc[month] = 0;
+    acc[month] += item.value;
+    return acc;
+  }, {});
+}
+```
+
+
+---
+
+## pptxgenjs Complete API Reference
+
+### Installation & Setup
+
+```bash
+npm install pptxgenjs
+```
+
+```js
+const PptxGenJS = require('pptxgenjs');
+const pptx = new PptxGenJS();
+
+// Global settings
+pptx.layout = 'LAYOUT_16x9';  // 'LAYOUT_4x3'|'LAYOUT_16x9'|'LAYOUT_16x10'|'LAYOUT_WIDE'|custom
+pptx.subject = 'Quarterly Report';
+pptx.author = 'John Doe';
+pptx.company = 'ACME Corp';
+pptx.revision = '1';
+pptx.title = 'Q4 2024 Results';
+
+// Custom layout
+pptx.defineLayout({ name: 'A3', width: 16.54, height: 11.69 });
+pptx.layout = 'A3';
+```
+
+### Slide Masters & Layouts
+
+```js
+// Define slide master
+pptx.defineSlideMaster({
+  title: 'MASTER_SLIDE',
+  background: { color: 'FFFFFF' },
+  objects: [
+    { rect: { x: 0, y: 7.0, w: '100%', h: 0.75, fill: { color: '003366' } } },
+    {
+      text: {
+        text: 'CONFIDENTIAL',
+        options: {
+          x: 0, y: 7.0, w: '100%', h: 0.75,
+          align: 'center', valign: 'middle',
+          color: 'FFFFFF', fontSize: 10,
+        }
+      }
+    },
+    {
+      image: {
+        x: 0.5, y: 0.25, w: 1.5, h: 0.5,
+        path: './logo.png',
+      }
+    },
+  ],
+  slideNumber: { x: '90%', y: 7.1, color: 'FFFFFF', fontSize: 9, fontFace: 'Arial' },
+  margin: [0.5, 0.25, 1.25, 0.5],
+});
+
+// Add slide using master
+const slide = pptx.addSlide({ masterName: 'MASTER_SLIDE' });
+```
+
+### Adding Slides
+
+```js
+// Basic slide
+const slide1 = pptx.addSlide();
+
+// Slide with master
+const slide2 = pptx.addSlide({ masterName: 'MASTER_SLIDE' });
+
+// Slide with background
+const slide3 = pptx.addSlide();
+slide3.background = { color: 'F5F5F5' };
+slide3.background = { path: './bg.jpg' };
+slide3.background = { data: 'data:image/png;base64,...' };
+
+// Hidden slide
+const slide4 = pptx.addSlide();
+slide4.hidden = true;
+
+// Slide number display
+pptx.slides.forEach((slide, i) => {
+  slide.addText(`Slide ${i + 1}`, {
+    x: '90%', y: '95%', w: '8%', h: '4%',
+    fontSize: 9, color: '999999', align: 'right',
+  });
+});
+```
+
+### Text Elements
+
+```js
+// Simple text
+slide.addText('Hello, World!', {
+  x: 0.5, y: 0.5, w: 9, h: 1,
+  fontFace: 'Arial',
+  fontSize: 36,
+  bold: true,
+  italic: false,
+  underline: { style: 'sng', color: '0000FF' },
+  strike: false,
+  color: '003366',
+  fill: { color: 'FFFFCC' },
+  transparency: 0,
+  border: { pt: 1, color: '666666' },
+  align: 'center',  // 'left'|'center'|'right'|'justify'
+  valign: 'middle', // 'top'|'middle'|'bottom'
+  wrap: true,
+  autoFit: false,
+  shrinkText: false,
+  inset: 0.05,
+  paraSpaceBefore: 6,
+  paraSpaceAfter: 6,
+  lineSpacingMultiple: 1.2,
+  charSpacing: 1,
+  rotate: 0,         // degrees
+  shadow: {
+    type: 'outer',
+    color: '000000',
+    opacity: 0.5,
+    blur: 4,
+    offset: 4,
+    angle: 45,
+  },
+  hyperlink: {
+    url: 'https://example.com',
+    tooltip: 'Visit our site',
+  },
+  rtlMode: false,
+  lang: 'en-US',
+  placeholder: 'body',  // for master slide placeholders
+});
+
+// Multi-format text (text runs)
+slide.addText([
+  { text: 'Bold text ', options: { bold: true, color: 'FF0000' } },
+  { text: 'and normal text ', options: { bold: false } },
+  { text: '\n' },
+  { text: 'New line with ', options: { fontSize: 18 } },
+  { text: 'hyperlink', options: { hyperlink: { url: 'https://google.com' } } },
+  { text: '\nBullet point', options: { bullet: true, indentLevel: 0 } },
+  { text: '\nSub-bullet', options: { bullet: { type: 'number', indent: 30 }, indentLevel: 1 } },
+], {
+  x: 0.5, y: 1.5, w: 9, h: 5,
+  fontSize: 16,
+  fontFace: 'Calibri',
+  color: '333333',
+});
+```
+
+### Shape Elements
+
+```js
+// Rectangle
+slide.addShape(pptx.shapes.RECTANGLE, {
+  x: 1, y: 1, w: 3, h: 2,
+  fill: { color: '4472C4' },
+  line: { color: '2F5597', width: 2, dashType: 'solid' },
+  shadow: { type: 'outer', color: '000000', opacity: 0.3, blur: 3, offset: 3, angle: 45 },
+  transparency: 0,
+  rotate: 0,
+});
+
+// All shape types
+const shapes = [
+  pptx.shapes.RECTANGLE,
+  pptx.shapes.ROUNDED_RECTANGLE,
+  pptx.shapes.OVAL,
+  pptx.shapes.TRIANGLE,
+  pptx.shapes.RIGHT_TRIANGLE,
+  pptx.shapes.PARALLELOGRAM,
+  pptx.shapes.TRAPEZOID,
+  pptx.shapes.DIAMOND,
+  pptx.shapes.PENTAGON,
+  pptx.shapes.HEXAGON,
+  pptx.shapes.HEPTAGON,
+  pptx.shapes.OCTAGON,
+  pptx.shapes.DECAGON,
+  pptx.shapes.STAR_4,
+  pptx.shapes.STAR_5,
+  pptx.shapes.STAR_6,
+  pptx.shapes.STAR_7,
+  pptx.shapes.STAR_8,
+  pptx.shapes.STAR_10,
+  pptx.shapes.STAR_12,
+  pptx.shapes.STAR_16,
+  pptx.shapes.STAR_24,
+  pptx.shapes.STAR_32,
+  pptx.shapes.ARROW_RIGHT,
+  pptx.shapes.ARROW_LEFT,
+  pptx.shapes.ARROW_UP,
+  pptx.shapes.ARROW_DOWN,
+  pptx.shapes.ARROW_LEFT_RIGHT,
+  pptx.shapes.ARROW_UP_DOWN,
+  pptx.shapes.CALLOUT_1,
+  pptx.shapes.CALLOUT_2,
+  pptx.shapes.CALLOUT_3,
+  pptx.shapes.LINE,
+  pptx.shapes.LINE_ARROW,
+  pptx.shapes.LINE_ARROWS,
+  pptx.shapes.FLOW_CHART_PROCESS,
+  pptx.shapes.FLOW_CHART_DECISION,
+  pptx.shapes.FLOW_CHART_DATA,
+  pptx.shapes.FLOW_CHART_TERMINATOR,
+  pptx.shapes.FLOW_CHART_CONNECTOR,
+  pptx.shapes.FLOW_CHART_ALTERNATE_PROCESS,
+  pptx.shapes.CROSS,
+  pptx.shapes.PLUS,
+  pptx.shapes.SMILEY_FACE,
+  pptx.shapes.NO_SMOKING,
+  pptx.shapes.PLAQUE,
+  pptx.shapes.CAN,
+  pptx.shapes.CUBE,
+  pptx.shapes.BEVEL,
+  pptx.shapes.DONUT,
+  pptx.shapes.CLOUD,
+  pptx.shapes.CLOUD_CALLOUT,
+  pptx.shapes.HEART,
+  pptx.shapes.LIGHTNING_BOLT,
+  pptx.shapes.SUN,
+  pptx.shapes.MOON,
+  pptx.shapes.ARC,
+  pptx.shapes.CHORD,
+  pptx.shapes.PIE,
+];
+
+// Filled shape with text
+slide.addShape(pptx.shapes.ROUNDED_RECTANGLE, {
+  x: 1, y: 3, w: 4, h: 1.5,
+  fill: { color: 'ED7D31' },
+  line: { color: 'ED7D31', width: 0 },
+  text: 'Click Here',
+  options: {
+    fontFace: 'Arial',
+    fontSize: 18,
+    bold: true,
+    color: 'FFFFFF',
+    align: 'center',
+    valign: 'middle',
+  }
+});
+```
+
+### Image Elements
+
+```js
+// Add image from file path
+slide.addImage({
+  path: './images/photo.jpg',
+  x: 0.5, y: 0.5, w: 4, h: 3,
+  sizing: {
+    type: 'contain',   // 'contain'|'cover'|'crop'
+    w: 4, h: 3,
+  },
+  rounding: true,    // circular crop
+  opacity: 1,
+  rotate: 0,
+  shadow: { type: 'outer', color: '000000', opacity: 0.3, blur: 5, offset: 3 },
+  border: { pt: 2, color: '666666' },
+  hyperlink: { url: 'https://example.com' },
+  altText: 'Company logo',
+  placeholder: 'body',
+});
+
+// Add image from URL
+slide.addImage({
+  path: 'https://example.com/image.png',
+  x: 5, y: 0.5, w: 4, h: 3,
+});
+
+// Add image from base64
+slide.addImage({
+  data: 'data:image/png;base64,iVBORw0KGgo...',
+  x: 0.5, y: 4, w: 9, h: 4,
+});
+
+// SVG image
+slide.addImage({
+  data: '<svg>...</svg>',
+  type: 'svg',
+  x: 1, y: 1, w: 3, h: 3,
+});
+```
+
+### Chart Elements
+
+```js
+// Bar chart
+slide.addChart(pptx.charts.BAR, [
+  {
+    name: 'Q1 2024',
+    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+    values: [48000, 52000, 61000, 58000, 63000, 71000],
+  },
+  {
+    name: 'Q1 2023',
+    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+    values: [42000, 48000, 55000, 50000, 58000, 65000],
+  },
+], {
+  x: 0.5, y: 1.5, w: 9, h: 5,
+  barDir: 'col',        // 'bar'|'col'
+  barGrouping: 'clustered',  // 'clustered'|'stacked'|'percentStacked'
+  bar3DShape: '',       // ''|'box'|'cone'|'coneToMax'|'cylinder'|'pyramid'|'pyramidToMax'
+  chartColors: ['4472C4', 'ED7D31', 'A9D18E', 'FFC000', '5B9BD5'],
+  chartColorsOpacity: 100,
+  showTitle: true,
+  title: 'Monthly Revenue Comparison',
+  titleFontSize: 14,
+  titleFontFace: 'Calibri',
+  titleColor: '363636',
+  titlePos: { x: 0, y: 0 },
+  showLegend: true,
+  legendPos: 'b',      // 't'|'b'|'l'|'r'|'tr'
+  legendFontSize: 12,
+  legendFontFace: 'Calibri',
+  legendColor: '363636',
+  catAxisTitle: 'Month',
+  catAxisTitleColor: '363636',
+  catAxisTitleFontSize: 12,
+  catAxisLabelColor: '595959',
+  catAxisLabelFontFace: 'Calibri',
+  catAxisLabelFontSize: 10,
+  catAxisLabelFrequency: 1,
+  catAxisLabelRotate: 0,
+  catGridLine: { style: 'none' },
+  catAxisLineShow: true,
+  catAxisBaseTimeUnit: 'months',
+  valAxisTitle: 'Revenue ($)',
+  valAxisTitleColor: '363636',
+  valAxisTitleFontSize: 12,
+  valAxisLabelColor: '595959',
+  valAxisLabelFontFace: 'Calibri',
+  valAxisLabelFontSize: 10,
+  valAxisNumFmt: '"$"#,##0',
+  valAxisMinVal: 0,
+  valAxisMaxVal: 100000,
+  valAxisMajorUnit: 10000,
+  valGridLine: { style: 'solid', color: 'CCCCCC', size: 0.5 },
+  valAxisLineShow: true,
+  showValue: true,
+  dataLabelColor: '000000',
+  dataLabelFontFace: 'Calibri',
+  dataLabelFontSize: 9,
+  dataLabelPosition: 'outEnd',  // 'inBase'|'inEnd'|'outEnd'|'ctr'|'bestFit'
+  dataLabelFormatCode: '"$"#,##0',
+  showPercent: false,
+  showSerName: false,
+  showCatName: false,
+  plotAreaFill: { color: 'FFFFFF' },
+  plotAreaBorder: { pt: 0 },
+  border: { pt: 0 },
+  fill: { color: 'FFFFFF' },
+  shadow: null,
+  invertedColors: false,
+  radarStyle: 'standard',
+  lineDataSymbol: 'circle',
+  lineDataSymbolSize: 6,
+  lineDataSymbolLineColor: '4472C4',
+  lineDataSymbolLineSize: 1,
+  lineSmooth: false,
+  lineDash: 'solid',
+});
+
+// All chart types
+const chartTypes = {
+  BAR: pptx.charts.BAR,
+  BUBBLE: pptx.charts.BUBBLE,
+  DOUGHNUT: pptx.charts.DOUGHNUT,
+  LINE: pptx.charts.LINE,
+  PIE: pptx.charts.PIE,
+  RADAR: pptx.charts.RADAR,
+  SCATTER: pptx.charts.SCATTER,
+  AREA: pptx.charts.AREA,
+};
+
+// Line chart
+slide.addChart(pptx.charts.LINE, [
+  {
+    name: 'Revenue',
+    labels: ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'],
+    values: [48,52,61,58,63,71,68,75,82,79,88,95].map(v => v * 1000),
+  }
+], {
+  x: 0.5, y: 1.5, w: 9, h: 5,
+  showTitle: true,
+  title: 'Annual Revenue Trend',
+  lineDataSymbol: 'circle',
+  lineDataSymbolSize: 6,
+  lineSmooth: false,
+  catAxisTitle: 'Month',
+  valAxisTitle: 'Revenue ($)',
+  valAxisNumFmt: '"$"#,##0',
+  valAxisMinVal: 0,
+  chartColors: ['2E75B6'],
+  showValue: false,
+  dataLabelPosition: 'ctr',
+});
+
+// Pie chart
+slide.addChart(pptx.charts.PIE, [
+  {
+    name: 'Market Share',
+    labels: ['Product A', 'Product B', 'Product C', 'Product D', 'Other'],
+    values: [35.2, 28.7, 18.5, 11.3, 6.3],
+  }
+], {
+  x: 1, y: 1.5, w: 8, h: 5.5,
+  showTitle: true,
+  title: 'Market Share by Product',
+  showLegend: true,
+  legendPos: 'r',
+  showPercent: true,
+  showValue: false,
+  dataLabelColor: 'FFFFFF',
+  dataLabelFontSize: 12,
+  dataLabelFontFace: 'Calibri',
+  chartColors: ['4472C4','ED7D31','A9D18E','FFC000','5B9BD5'],
+  chartColorsOpacity: 100,
+  holeSize: 50,  // for doughnut only
+  firstSliceAng: 0,
+  showBubbleSize: false,
+  showCatName: true,
+  showSerName: false,
+  dataLabelPosition: 'bestFit',
+});
+
+// Scatter chart
+slide.addChart(pptx.charts.SCATTER, [
+  {
+    name: 'Dataset 1',
+    values: [43.5, 52.2, 28.1, 65.8, 37.4, 71.2, 44.6, 58.9, 82.3, 55.7],
+    sizes: [5, 8, 3, 12, 6, 15, 7, 10, 18, 9],  // for bubble
+  }
+], {
+  x: 0.5, y: 1, w: 9, h: 6,
+  showTitle: true,
+  title: 'Data Distribution',
+  catAxisTitle: 'X Values',
+  valAxisTitle: 'Y Values',
+  lineDataSymbol: 'circle',
+  lineDataSymbolSize: 8,
+  chartColors: ['4472C4'],
+  lineSize: 0,  // 0 = no line, just points
+});
+```
+
+### Table Elements
+
+```js
+// Add table
+slide.addTable([
+  [
+    { text: 'Name', options: { bold: true, fill: '4472C4', color: 'FFFFFF' } },
+    { text: 'Department', options: { bold: true, fill: '4472C4', color: 'FFFFFF' } },
+    { text: 'Salary', options: { bold: true, fill: '4472C4', color: 'FFFFFF' } },
+    { text: 'Status', options: { bold: true, fill: '4472C4', color: 'FFFFFF' } },
+  ],
+  ['Alice Smith', 'Engineering', '$95,000', 'Active'],
+  ['Bob Johnson', 'Marketing', '$72,000', 'Active'],
+  ['Charlie Brown', 'Sales', '$68,000', 'Inactive'],
+  ['Diana Prince', 'HR', '$78,000', 'Active'],
+  [{ text: 'Total', options: { bold: true } }, '', { text: '$313,000', options: { bold: true } }, ''],
+], {
+  x: 0.5, y: 1, w: 9, h: 6,
+  fill: 'FFFFFF',
+  fontFace: 'Calibri',
+  fontSize: 12,
+  color: '363636',
+  align: 'left',
+  valign: 'middle',
+  border: {
+    type: 'all',     // 'all'|'none'|specific sides
+    pt: 0.5,
+    color: 'CCCCCC',
+  },
+  margin: [0.05, 0.1, 0.05, 0.1],  // top, right, bottom, left (inches)
+  colW: [3, 2.5, 1.5, 1.5],      // column widths
+  rowH: [0.5],                     // row heights
+  autoPage: true,                  // auto-paginate when table is too tall
+  autoPageRepeatHeader: true,      // repeat header on continuation slides
+  autoPageLineWeight: 0.5,
+  newSlideStartY: 1,               // Y position for continuation slides
+});
+```
+
+### Speaker Notes
+
+```js
+// Add notes to slide
+slide.addNotes('These are speaker notes for this slide.\nKey points:\n- Revenue up 12%\n- New markets performing well\n- Cost reduction initiatives underway');
+
+// Notes with formatting
+slide.addNotes([
+  { text: 'Key Talking Points', options: { fontSize: 14, bold: true } },
+  { text: '\n\n' },
+  { text: '1. Revenue increased 12% year-over-year\n', options: { fontSize: 12 } },
+  { text: '2. Market expansion in APAC region (+25%)\n', options: { fontSize: 12 } },
+  { text: '3. Cost optimization saved $2.3M\n', options: { fontSize: 12 } },
+  { text: '\nQuestions to expect:', options: { bold: true, color: 'CC0000' } },
+  { text: '\n- Why did margins compress in Q3?\n- What is the APAC expansion timeline?', options: { italic: true } },
+]);
+```
+
+### Transitions and Animations
+
+```js
+// Slide transition
+slide.transition = {
+  type: 'fade',    // 'none'|'cut'|'fade'|'push'|'wipe'|'split'|'reveal'|'random_bars'|'shape'|'blinds'|'checker'|'comb'|'cover'|'dissolve'|'newsflash'|'pull'|'random'|'zoom'
+  speed: 'medium', // 'slow'|'medium'|'fast'
+  advAuto: '00:03:00',  // auto advance after 3 seconds
+};
+
+// Object animation (limited support)
+slide.addText('Animated text', {
+  x: 1, y: 1, w: 8, h: 1,
+  fontSize: 24,
+  animate: {
+    type: 'appear',
+    triggerType: 'onClick',
+    delay: 500,
+  }
+});
+```
+
+### Media Embedding
+
+```js
+// Video from file
+slide.addMedia({
+  type: 'video',
+  path: './videos/intro.mp4',
+  x: 1, y: 1, w: 8, h: 4.5,
+  cover: './images/video-thumbnail.jpg',
+  autoPlay: false,
+  loop: false,
+  muted: false,
+});
+
+// Audio from URL
+slide.addMedia({
+  type: 'audio',
+  link: 'https://example.com/audio.mp3',
+  x: 0.5, y: 0.5, w: 1, h: 0.5,
+  autoPlay: false,
+  loop: false,
+});
+
+// Online video (YouTube embed)
+slide.addMedia({
+  type: 'online',
+  link: 'https://www.youtube.com/embed/dQw4w9WgXcQ',
+  x: 1, y: 1, w: 8, h: 4.5,
+});
+```
+
+### Export Options
+
+```js
+// Save to file
+await pptx.writeFile({ fileName: 'presentation.pptx' });
+
+// Get as base64
+const base64Data = await pptx.write({ outputType: 'base64' });
+
+// Get as Blob (browser)
+const blob = await pptx.write({ outputType: 'blob' });
+
+// Get as Buffer (Node.js)
+const buffer = await pptx.write({ outputType: 'nodebuffer' });
+
+// Get as Uint8Array
+const uint8 = await pptx.write({ outputType: 'uint8array' });
+
+// Get as ArrayBuffer
+const arrayBuffer = await pptx.write({ outputType: 'arraybuffer' });
+
+// Callback style (older API)
+pptx.save('my-presentation', (fileName) => {
+  console.log(`Saved: ${fileName}`);
+}, 'nodebuffer');
+```
+
+### Complete Presentation Example
+
+```js
+const PptxGenJS = require('pptxgenjs');
+
+async function createQuarterlyReport(data) {
+  const pptx = new PptxGenJS();
+  pptx.layout = 'LAYOUT_16x9';
+  pptx.title = 'Q4 2024 Quarterly Report';
+  pptx.author = 'Analytics Team';
+
+  // Define master
+  pptx.defineSlideMaster({
+    title: 'CORPORATE',
+    background: { color: 'FFFFFF' },
+    objects: [
+      { rect: { x: 0, y: 0, w: '100%', h: 0.08, fill: { color: '003366' } } },
+      { rect: { x: 0, y: 7.42, w: '100%', h: 0.08, fill: { color: '003366' } } },
+      {
+        text: {
+          text: data.companyName,
+          options: {
+            x: 0.4, y: 7.4, w: 5, h: 0.1,
+            fontSize: 8, color: 'FFFFFF', bold: false, align: 'left',
+          }
+        }
+      },
+    ],
+    slideNumber: { x: '92%', y: 7.38, color: 'CCCCCC', fontSize: 8 },
+  });
+
+  // Title slide
+  const titleSlide = pptx.addSlide({ masterName: 'CORPORATE' });
+  titleSlide.addShape(pptx.shapes.RECTANGLE, {
+    x: 0, y: 2.5, w: '100%', h: 2.5,
+    fill: { color: '003366' },
+    line: { width: 0 },
+  });
+  titleSlide.addText(data.title, {
+    x: 0.5, y: 2.7, w: 9, h: 1.2,
+    fontFace: 'Calibri Light',
+    fontSize: 40,
+    bold: false,
+    color: 'FFFFFF',
+    align: 'center',
+  });
+  titleSlide.addText(`Q4 ${data.year} | ${data.presenter}`, {
+    x: 0.5, y: 3.9, w: 9, h: 0.6,
+    fontFace: 'Calibri',
+    fontSize: 18,
+    color: 'CCCCCC',
+    align: 'center',
+  });
+
+  // Executive Summary slide
+  const summarySlide = pptx.addSlide({ masterName: 'CORPORATE' });
+  summarySlide.addText('Executive Summary', {
+    x: 0.4, y: 0.2, w: 9.2, h: 0.6,
+    fontFace: 'Calibri Light',
+    fontSize: 28,
+    color: '003366',
+    bold: false,
+  });
+
+  // KPI boxes
+  const kpis = [
+    { label: 'Revenue', value: '$' + (data.revenue / 1e6).toFixed(1) + 'M', change: '+12.5%', positive: true },
+    { label: 'Net Income', value: '$' + (data.netIncome / 1e6).toFixed(1) + 'M', change: '+8.3%', positive: true },
+    { label: 'EBITDA', value: (data.ebitdaMargin * 100).toFixed(1) + '%', change: '+1.2pp', positive: true },
+    { label: 'Customers', value: data.customers.toLocaleString(), change: '-2.1%', positive: false },
+  ];
+
+  kpis.forEach((kpi, i) => {
+    const x = 0.4 + i * 2.35;
+    summarySlide.addShape(pptx.shapes.RECTANGLE, {
+      x, y: 1.0, w: 2.2, h: 2.5,
+      fill: { color: kpi.positive ? 'E8F4FD' : 'FDE8E8' },
+      line: { color: kpi.positive ? '2E75B6' : 'C00000', width: 1 },
+    });
+    summarySlide.addText(kpi.label, { x, y: 1.1, w: 2.2, h: 0.4, fontSize: 11, color: '666666', align: 'center' });
+    summarySlide.addText(kpi.value, { x, y: 1.5, w: 2.2, h: 0.8, fontSize: 22, bold: true, color: '003366', align: 'center' });
+    summarySlide.addText(kpi.change, {
+      x, y: 2.3, w: 2.2, h: 0.4,
+      fontSize: 14, bold: true,
+      color: kpi.positive ? '375623' : '9C0006',
+      align: 'center'
+    });
+  });
+
+  // Revenue chart slide
+  const chartSlide = pptx.addSlide({ masterName: 'CORPORATE' });
+  chartSlide.addText('Revenue Trend', { x: 0.4, y: 0.2, w: 9.2, h: 0.6, fontSize: 28, color: '003366', fontFace: 'Calibri Light' });
+  chartSlide.addChart(pptx.charts.LINE, [
+    {
+      name: 'Revenue',
+      labels: data.months,
+      values: data.monthlyRevenue,
+    },
+    {
+      name: 'Target',
+      labels: data.months,
+      values: data.monthlyTarget,
+    }
+  ], {
+    x: 0.4, y: 1.0, w: 9.2, h: 5.8,
+    showTitle: false,
+    showLegend: true,
+    legendPos: 'b',
+    chartColors: ['2E75B6', 'ED7D31'],
+    lineSmooth: true,
+    lineDataSymbol: 'circle',
+    valAxisNumFmt: '"$"#,##0',
+    valAxisTitle: 'Monthly Revenue',
+    catAxisTitle: 'Month',
+    gridLineMajorClr: 'EEEEEE',
+  });
+
+  await pptx.writeFile({ fileName: 'quarterly-report.pptx' });
+  return 'quarterly-report.pptx';
+}
+```
+
+### Color Schemes and Themes
+
+```js
+// Theme colors for consistent presentations
+const THEME_COLORS = {
+  primary:    '003366',  // dark blue
+  secondary:  '2E75B6',  // medium blue
+  accent1:    'ED7D31',  // orange
+  accent2:    'A9D18E',  // green
+  accent3:    'FFC000',  // yellow
+  accent4:    'FF0000',  // red
+  dark1:      '000000',  // black
+  dark2:      '333333',  // dark gray
+  light1:     'FFFFFF',  // white
+  light2:     'F5F5F5',  // off-white
+  text:       '363636',  // near black
+  textLight:  '666666',  // medium gray
+  border:     'CCCCCC',  // light gray
+  success:    '375623',  // dark green
+  warning:    'FF6B00',  // orange
+  error:      '9C0006',  // dark red
+  info:       '0070C0',  // blue
+  successBg:  'C6EFCE',  // light green
+  warningBg:  'FFEB9C',  // light yellow
+  errorBg:    'FFC7CE',  // light red
+  infoBg:     'DDEBF7',  // light blue
+};
+
+// Apply consistent styles across multiple slides
+function applyTheme(pptx, slides) {
+  slides.forEach(slide => {
+    slide.background = { color: THEME_COLORS.light1 };
+  });
+}
+```
+
+### Troubleshooting
+
+**Issue: Images not loading from URL**
+```js
+// Use local path or base64 instead
+const axios = require('axios');
+const response = await axios.get(imageUrl, { responseType: 'arraybuffer' });
+const base64 = Buffer.from(response.data).toString('base64');
+const ext = imageUrl.split('.').pop();
+slide.addImage({ data: `data:image/${ext};base64,${base64}`, x, y, w, h });
+```
+
+**Issue: Large file size**
+```js
+// Compress images before embedding
+const sharp = require('sharp');
+const compressed = await sharp(imagePath).resize(800).jpeg({ quality: 80 }).toBuffer();
+const b64 = compressed.toString('base64');
+slide.addImage({ data: `data:image/jpeg;base64,${b64}`, x, y, w, h });
+```
+
+**Issue: Text not wrapping**
+```js
+// Ensure wrap is true and dimensions allow wrapping
+slide.addText('Long text content...', {
+  x: 0.5, y: 0.5, w: 5, h: 3,  // specify w and h
+  wrap: true,
+  autoFit: false,
+});
+```
+
+**Issue: Charts with too many data points**
+```js
+// Aggregate data before charting
+function aggregateByMonth(data) {
+  return data.reduce((acc, item) => {
+    const month = item.date.toISOString().slice(0, 7);
+    if (!acc[month]) acc[month] = 0;
+    acc[month] += item.value;
+    return acc;
+  }, {});
+}
+```
+
+
+---
+
+## pptxgenjs Complete API Reference
+
+### Installation & Setup
+
+```bash
+npm install pptxgenjs
+```
+
+```js
+const PptxGenJS = require('pptxgenjs');
+const pptx = new PptxGenJS();
+
+// Global settings
+pptx.layout = 'LAYOUT_16x9';  // 'LAYOUT_4x3'|'LAYOUT_16x9'|'LAYOUT_16x10'|'LAYOUT_WIDE'|custom
+pptx.subject = 'Quarterly Report';
+pptx.author = 'John Doe';
+pptx.company = 'ACME Corp';
+pptx.revision = '1';
+pptx.title = 'Q4 2024 Results';
+
+// Custom layout
+pptx.defineLayout({ name: 'A3', width: 16.54, height: 11.69 });
+pptx.layout = 'A3';
+```
+
+### Slide Masters & Layouts
+
+```js
+// Define slide master
+pptx.defineSlideMaster({
+  title: 'MASTER_SLIDE',
+  background: { color: 'FFFFFF' },
+  objects: [
+    { rect: { x: 0, y: 7.0, w: '100%', h: 0.75, fill: { color: '003366' } } },
+    {
+      text: {
+        text: 'CONFIDENTIAL',
+        options: {
+          x: 0, y: 7.0, w: '100%', h: 0.75,
+          align: 'center', valign: 'middle',
+          color: 'FFFFFF', fontSize: 10,
+        }
+      }
+    },
+    {
+      image: {
+        x: 0.5, y: 0.25, w: 1.5, h: 0.5,
+        path: './logo.png',
+      }
+    },
+  ],
+  slideNumber: { x: '90%', y: 7.1, color: 'FFFFFF', fontSize: 9, fontFace: 'Arial' },
+  margin: [0.5, 0.25, 1.25, 0.5],
+});
+
+// Add slide using master
+const slide = pptx.addSlide({ masterName: 'MASTER_SLIDE' });
+```
+
+### Adding Slides
+
+```js
+// Basic slide
+const slide1 = pptx.addSlide();
+
+// Slide with master
+const slide2 = pptx.addSlide({ masterName: 'MASTER_SLIDE' });
+
+// Slide with background
+const slide3 = pptx.addSlide();
+slide3.background = { color: 'F5F5F5' };
+slide3.background = { path: './bg.jpg' };
+slide3.background = { data: 'data:image/png;base64,...' };
+
+// Hidden slide
+const slide4 = pptx.addSlide();
+slide4.hidden = true;
+
+// Slide number display
+pptx.slides.forEach((slide, i) => {
+  slide.addText(`Slide ${i + 1}`, {
+    x: '90%', y: '95%', w: '8%', h: '4%',
+    fontSize: 9, color: '999999', align: 'right',
+  });
+});
+```
+
+### Text Elements
+
+```js
+// Simple text
+slide.addText('Hello, World!', {
+  x: 0.5, y: 0.5, w: 9, h: 1,
+  fontFace: 'Arial',
+  fontSize: 36,
+  bold: true,
+  italic: false,
+  underline: { style: 'sng', color: '0000FF' },
+  strike: false,
+  color: '003366',
+  fill: { color: 'FFFFCC' },
+  transparency: 0,
+  border: { pt: 1, color: '666666' },
+  align: 'center',  // 'left'|'center'|'right'|'justify'
+  valign: 'middle', // 'top'|'middle'|'bottom'
+  wrap: true,
+  autoFit: false,
+  shrinkText: false,
+  inset: 0.05,
+  paraSpaceBefore: 6,
+  paraSpaceAfter: 6,
+  lineSpacingMultiple: 1.2,
+  charSpacing: 1,
+  rotate: 0,         // degrees
+  shadow: {
+    type: 'outer',
+    color: '000000',
+    opacity: 0.5,
+    blur: 4,
+    offset: 4,
+    angle: 45,
+  },
+  hyperlink: {
+    url: 'https://example.com',
+    tooltip: 'Visit our site',
+  },
+  rtlMode: false,
+  lang: 'en-US',
+  placeholder: 'body',  // for master slide placeholders
+});
+
+// Multi-format text (text runs)
+slide.addText([
+  { text: 'Bold text ', options: { bold: true, color: 'FF0000' } },
+  { text: 'and normal text ', options: { bold: false } },
+  { text: '\n' },
+  { text: 'New line with ', options: { fontSize: 18 } },
+  { text: 'hyperlink', options: { hyperlink: { url: 'https://google.com' } } },
+  { text: '\nBullet point', options: { bullet: true, indentLevel: 0 } },
+  { text: '\nSub-bullet', options: { bullet: { type: 'number', indent: 30 }, indentLevel: 1 } },
+], {
+  x: 0.5, y: 1.5, w: 9, h: 5,
+  fontSize: 16,
+  fontFace: 'Calibri',
+  color: '333333',
+});
+```
+
+### Shape Elements
+
+```js
+// Rectangle
+slide.addShape(pptx.shapes.RECTANGLE, {
+  x: 1, y: 1, w: 3, h: 2,
+  fill: { color: '4472C4' },
+  line: { color: '2F5597', width: 2, dashType: 'solid' },
+  shadow: { type: 'outer', color: '000000', opacity: 0.3, blur: 3, offset: 3, angle: 45 },
+  transparency: 0,
+  rotate: 0,
+});
+
+// All shape types
+const shapes = [
+  pptx.shapes.RECTANGLE,
+  pptx.shapes.ROUNDED_RECTANGLE,
+  pptx.shapes.OVAL,
+  pptx.shapes.TRIANGLE,
+  pptx.shapes.RIGHT_TRIANGLE,
+  pptx.shapes.PARALLELOGRAM,
+  pptx.shapes.TRAPEZOID,
+  pptx.shapes.DIAMOND,
+  pptx.shapes.PENTAGON,
+  pptx.shapes.HEXAGON,
+  pptx.shapes.HEPTAGON,
+  pptx.shapes.OCTAGON,
+  pptx.shapes.DECAGON,
+  pptx.shapes.STAR_4,
+  pptx.shapes.STAR_5,
+  pptx.shapes.STAR_6,
+  pptx.shapes.STAR_7,
+  pptx.shapes.STAR_8,
+  pptx.shapes.STAR_10,
+  pptx.shapes.STAR_12,
+  pptx.shapes.STAR_16,
+  pptx.shapes.STAR_24,
+  pptx.shapes.STAR_32,
+  pptx.shapes.ARROW_RIGHT,
+  pptx.shapes.ARROW_LEFT,
+  pptx.shapes.ARROW_UP,
+  pptx.shapes.ARROW_DOWN,
+  pptx.shapes.ARROW_LEFT_RIGHT,
+  pptx.shapes.ARROW_UP_DOWN,
+  pptx.shapes.CALLOUT_1,
+  pptx.shapes.CALLOUT_2,
+  pptx.shapes.CALLOUT_3,
+  pptx.shapes.LINE,
+  pptx.shapes.LINE_ARROW,
+  pptx.shapes.LINE_ARROWS,
+  pptx.shapes.FLOW_CHART_PROCESS,
+  pptx.shapes.FLOW_CHART_DECISION,
+  pptx.shapes.FLOW_CHART_DATA,
+  pptx.shapes.FLOW_CHART_TERMINATOR,
+  pptx.shapes.FLOW_CHART_CONNECTOR,
+  pptx.shapes.FLOW_CHART_ALTERNATE_PROCESS,
+  pptx.shapes.CROSS,
+  pptx.shapes.PLUS,
+  pptx.shapes.SMILEY_FACE,
+  pptx.shapes.NO_SMOKING,
+  pptx.shapes.PLAQUE,
+  pptx.shapes.CAN,
+  pptx.shapes.CUBE,
+  pptx.shapes.BEVEL,
+  pptx.shapes.DONUT,
+  pptx.shapes.CLOUD,
+  pptx.shapes.CLOUD_CALLOUT,
+  pptx.shapes.HEART,
+  pptx.shapes.LIGHTNING_BOLT,
+  pptx.shapes.SUN,
+  pptx.shapes.MOON,
+  pptx.shapes.ARC,
+  pptx.shapes.CHORD,
+  pptx.shapes.PIE,
+];
+
+// Filled shape with text
+slide.addShape(pptx.shapes.ROUNDED_RECTANGLE, {
+  x: 1, y: 3, w: 4, h: 1.5,
+  fill: { color: 'ED7D31' },
+  line: { color: 'ED7D31', width: 0 },
+  text: 'Click Here',
+  options: {
+    fontFace: 'Arial',
+    fontSize: 18,
+    bold: true,
+    color: 'FFFFFF',
+    align: 'center',
+    valign: 'middle',
+  }
+});
+```
+
+### Image Elements
+
+```js
+// Add image from file path
+slide.addImage({
+  path: './images/photo.jpg',
+  x: 0.5, y: 0.5, w: 4, h: 3,
+  sizing: {
+    type: 'contain',   // 'contain'|'cover'|'crop'
+    w: 4, h: 3,
+  },
+  rounding: true,    // circular crop
+  opacity: 1,
+  rotate: 0,
+  shadow: { type: 'outer', color: '000000', opacity: 0.3, blur: 5, offset: 3 },
+  border: { pt: 2, color: '666666' },
+  hyperlink: { url: 'https://example.com' },
+  altText: 'Company logo',
+  placeholder: 'body',
+});
+
+// Add image from URL
+slide.addImage({
+  path: 'https://example.com/image.png',
+  x: 5, y: 0.5, w: 4, h: 3,
+});
+
+// Add image from base64
+slide.addImage({
+  data: 'data:image/png;base64,iVBORw0KGgo...',
+  x: 0.5, y: 4, w: 9, h: 4,
+});
+
+// SVG image
+slide.addImage({
+  data: '<svg>...</svg>',
+  type: 'svg',
+  x: 1, y: 1, w: 3, h: 3,
+});
+```
+
+### Chart Elements
+
+```js
+// Bar chart
+slide.addChart(pptx.charts.BAR, [
+  {
+    name: 'Q1 2024',
+    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+    values: [48000, 52000, 61000, 58000, 63000, 71000],
+  },
+  {
+    name: 'Q1 2023',
+    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+    values: [42000, 48000, 55000, 50000, 58000, 65000],
+  },
+], {
+  x: 0.5, y: 1.5, w: 9, h: 5,
+  barDir: 'col',        // 'bar'|'col'
+  barGrouping: 'clustered',  // 'clustered'|'stacked'|'percentStacked'
+  bar3DShape: '',       // ''|'box'|'cone'|'coneToMax'|'cylinder'|'pyramid'|'pyramidToMax'
+  chartColors: ['4472C4', 'ED7D31', 'A9D18E', 'FFC000', '5B9BD5'],
+  chartColorsOpacity: 100,
+  showTitle: true,
+  title: 'Monthly Revenue Comparison',
+  titleFontSize: 14,
+  titleFontFace: 'Calibri',
+  titleColor: '363636',
+  titlePos: { x: 0, y: 0 },
+  showLegend: true,
+  legendPos: 'b',      // 't'|'b'|'l'|'r'|'tr'
+  legendFontSize: 12,
+  legendFontFace: 'Calibri',
+  legendColor: '363636',
+  catAxisTitle: 'Month',
+  catAxisTitleColor: '363636',
+  catAxisTitleFontSize: 12,
+  catAxisLabelColor: '595959',
+  catAxisLabelFontFace: 'Calibri',
+  catAxisLabelFontSize: 10,
+  catAxisLabelFrequency: 1,
+  catAxisLabelRotate: 0,
+  catGridLine: { style: 'none' },
+  catAxisLineShow: true,
+  catAxisBaseTimeUnit: 'months',
+  valAxisTitle: 'Revenue ($)',
+  valAxisTitleColor: '363636',
+  valAxisTitleFontSize: 12,
+  valAxisLabelColor: '595959',
+  valAxisLabelFontFace: 'Calibri',
+  valAxisLabelFontSize: 10,
+  valAxisNumFmt: '"$"#,##0',
+  valAxisMinVal: 0,
+  valAxisMaxVal: 100000,
+  valAxisMajorUnit: 10000,
+  valGridLine: { style: 'solid', color: 'CCCCCC', size: 0.5 },
+  valAxisLineShow: true,
+  showValue: true,
+  dataLabelColor: '000000',
+  dataLabelFontFace: 'Calibri',
+  dataLabelFontSize: 9,
+  dataLabelPosition: 'outEnd',  // 'inBase'|'inEnd'|'outEnd'|'ctr'|'bestFit'
+  dataLabelFormatCode: '"$"#,##0',
+  showPercent: false,
+  showSerName: false,
+  showCatName: false,
+  plotAreaFill: { color: 'FFFFFF' },
+  plotAreaBorder: { pt: 0 },
+  border: { pt: 0 },
+  fill: { color: 'FFFFFF' },
+  shadow: null,
+  invertedColors: false,
+  radarStyle: 'standard',
+  lineDataSymbol: 'circle',
+  lineDataSymbolSize: 6,
+  lineDataSymbolLineColor: '4472C4',
+  lineDataSymbolLineSize: 1,
+  lineSmooth: false,
+  lineDash: 'solid',
+});
+
+// All chart types
+const chartTypes = {
+  BAR: pptx.charts.BAR,
+  BUBBLE: pptx.charts.BUBBLE,
+  DOUGHNUT: pptx.charts.DOUGHNUT,
+  LINE: pptx.charts.LINE,
+  PIE: pptx.charts.PIE,
+  RADAR: pptx.charts.RADAR,
+  SCATTER: pptx.charts.SCATTER,
+  AREA: pptx.charts.AREA,
+};
+
+// Line chart
+slide.addChart(pptx.charts.LINE, [
+  {
+    name: 'Revenue',
+    labels: ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'],
+    values: [48,52,61,58,63,71,68,75,82,79,88,95].map(v => v * 1000),
+  }
+], {
+  x: 0.5, y: 1.5, w: 9, h: 5,
+  showTitle: true,
+  title: 'Annual Revenue Trend',
+  lineDataSymbol: 'circle',
+  lineDataSymbolSize: 6,
+  lineSmooth: false,
+  catAxisTitle: 'Month',
+  valAxisTitle: 'Revenue ($)',
+  valAxisNumFmt: '"$"#,##0',
+  valAxisMinVal: 0,
+  chartColors: ['2E75B6'],
+  showValue: false,
+  dataLabelPosition: 'ctr',
+});
+
+// Pie chart
+slide.addChart(pptx.charts.PIE, [
+  {
+    name: 'Market Share',
+    labels: ['Product A', 'Product B', 'Product C', 'Product D', 'Other'],
+    values: [35.2, 28.7, 18.5, 11.3, 6.3],
+  }
+], {
+  x: 1, y: 1.5, w: 8, h: 5.5,
+  showTitle: true,
+  title: 'Market Share by Product',
+  showLegend: true,
+  legendPos: 'r',
+  showPercent: true,
+  showValue: false,
+  dataLabelColor: 'FFFFFF',
+  dataLabelFontSize: 12,
+  dataLabelFontFace: 'Calibri',
+  chartColors: ['4472C4','ED7D31','A9D18E','FFC000','5B9BD5'],
+  chartColorsOpacity: 100,
+  holeSize: 50,  // for doughnut only
+  firstSliceAng: 0,
+  showBubbleSize: false,
+  showCatName: true,
+  showSerName: false,
+  dataLabelPosition: 'bestFit',
+});
+
+// Scatter chart
+slide.addChart(pptx.charts.SCATTER, [
+  {
+    name: 'Dataset 1',
+    values: [43.5, 52.2, 28.1, 65.8, 37.4, 71.2, 44.6, 58.9, 82.3, 55.7],
+    sizes: [5, 8, 3, 12, 6, 15, 7, 10, 18, 9],  // for bubble
+  }
+], {
+  x: 0.5, y: 1, w: 9, h: 6,
+  showTitle: true,
+  title: 'Data Distribution',
+  catAxisTitle: 'X Values',
+  valAxisTitle: 'Y Values',
+  lineDataSymbol: 'circle',
+  lineDataSymbolSize: 8,
+  chartColors: ['4472C4'],
+  lineSize: 0,  // 0 = no line, just points
+});
+```
+
+### Table Elements
+
+```js
+// Add table
+slide.addTable([
+  [
+    { text: 'Name', options: { bold: true, fill: '4472C4', color: 'FFFFFF' } },
+    { text: 'Department', options: { bold: true, fill: '4472C4', color: 'FFFFFF' } },
+    { text: 'Salary', options: { bold: true, fill: '4472C4', color: 'FFFFFF' } },
+    { text: 'Status', options: { bold: true, fill: '4472C4', color: 'FFFFFF' } },
+  ],
+  ['Alice Smith', 'Engineering', '$95,000', 'Active'],
+  ['Bob Johnson', 'Marketing', '$72,000', 'Active'],
+  ['Charlie Brown', 'Sales', '$68,000', 'Inactive'],
+  ['Diana Prince', 'HR', '$78,000', 'Active'],
+  [{ text: 'Total', options: { bold: true } }, '', { text: '$313,000', options: { bold: true } }, ''],
+], {
+  x: 0.5, y: 1, w: 9, h: 6,
+  fill: 'FFFFFF',
+  fontFace: 'Calibri',
+  fontSize: 12,
+  color: '363636',
+  align: 'left',
+  valign: 'middle',
+  border: {
+    type: 'all',     // 'all'|'none'|specific sides
+    pt: 0.5,
+    color: 'CCCCCC',
+  },
+  margin: [0.05, 0.1, 0.05, 0.1],  // top, right, bottom, left (inches)
+  colW: [3, 2.5, 1.5, 1.5],      // column widths
+  rowH: [0.5],                     // row heights
+  autoPage: true,                  // auto-paginate when table is too tall
+  autoPageRepeatHeader: true,      // repeat header on continuation slides
+  autoPageLineWeight: 0.5,
+  newSlideStartY: 1,               // Y position for continuation slides
+});
+```
+
+### Speaker Notes
+
+```js
+// Add notes to slide
+slide.addNotes('These are speaker notes for this slide.\nKey points:\n- Revenue up 12%\n- New markets performing well\n- Cost reduction initiatives underway');
+
+// Notes with formatting
+slide.addNotes([
+  { text: 'Key Talking Points', options: { fontSize: 14, bold: true } },
+  { text: '\n\n' },
+  { text: '1. Revenue increased 12% year-over-year\n', options: { fontSize: 12 } },
+  { text: '2. Market expansion in APAC region (+25%)\n', options: { fontSize: 12 } },
+  { text: '3. Cost optimization saved $2.3M\n', options: { fontSize: 12 } },
+  { text: '\nQuestions to expect:', options: { bold: true, color: 'CC0000' } },
+  { text: '\n- Why did margins compress in Q3?\n- What is the APAC expansion timeline?', options: { italic: true } },
+]);
+```
+
+### Transitions and Animations
+
+```js
+// Slide transition
+slide.transition = {
+  type: 'fade',    // 'none'|'cut'|'fade'|'push'|'wipe'|'split'|'reveal'|'random_bars'|'shape'|'blinds'|'checker'|'comb'|'cover'|'dissolve'|'newsflash'|'pull'|'random'|'zoom'
+  speed: 'medium', // 'slow'|'medium'|'fast'
+  advAuto: '00:03:00',  // auto advance after 3 seconds
+};
+
+// Object animation (limited support)
+slide.addText('Animated text', {
+  x: 1, y: 1, w: 8, h: 1,
+  fontSize: 24,
+  animate: {
+    type: 'appear',
+    triggerType: 'onClick',
+    delay: 500,
+  }
+});
+```
+
+### Media Embedding
+
+```js
+// Video from file
+slide.addMedia({
+  type: 'video',
+  path: './videos/intro.mp4',
+  x: 1, y: 1, w: 8, h: 4.5,
+  cover: './images/video-thumbnail.jpg',
+  autoPlay: false,
+  loop: false,
+  muted: false,
+});
+
+// Audio from URL
+slide.addMedia({
+  type: 'audio',
+  link: 'https://example.com/audio.mp3',
+  x: 0.5, y: 0.5, w: 1, h: 0.5,
+  autoPlay: false,
+  loop: false,
+});
+
+// Online video (YouTube embed)
+slide.addMedia({
+  type: 'online',
+  link: 'https://www.youtube.com/embed/dQw4w9WgXcQ',
+  x: 1, y: 1, w: 8, h: 4.5,
+});
+```
+
+### Export Options
+
+```js
+// Save to file
+await pptx.writeFile({ fileName: 'presentation.pptx' });
+
+// Get as base64
+const base64Data = await pptx.write({ outputType: 'base64' });
+
+// Get as Blob (browser)
+const blob = await pptx.write({ outputType: 'blob' });
+
+// Get as Buffer (Node.js)
+const buffer = await pptx.write({ outputType: 'nodebuffer' });
+
+// Get as Uint8Array
+const uint8 = await pptx.write({ outputType: 'uint8array' });
+
+// Get as ArrayBuffer
+const arrayBuffer = await pptx.write({ outputType: 'arraybuffer' });
+
+// Callback style (older API)
+pptx.save('my-presentation', (fileName) => {
+  console.log(`Saved: ${fileName}`);
+}, 'nodebuffer');
+```
+
+### Complete Presentation Example
+
+```js
+const PptxGenJS = require('pptxgenjs');
+
+async function createQuarterlyReport(data) {
+  const pptx = new PptxGenJS();
+  pptx.layout = 'LAYOUT_16x9';
+  pptx.title = 'Q4 2024 Quarterly Report';
+  pptx.author = 'Analytics Team';
+
+  // Define master
+  pptx.defineSlideMaster({
+    title: 'CORPORATE',
+    background: { color: 'FFFFFF' },
+    objects: [
+      { rect: { x: 0, y: 0, w: '100%', h: 0.08, fill: { color: '003366' } } },
+      { rect: { x: 0, y: 7.42, w: '100%', h: 0.08, fill: { color: '003366' } } },
+      {
+        text: {
+          text: data.companyName,
+          options: {
+            x: 0.4, y: 7.4, w: 5, h: 0.1,
+            fontSize: 8, color: 'FFFFFF', bold: false, align: 'left',
+          }
+        }
+      },
+    ],
+    slideNumber: { x: '92%', y: 7.38, color: 'CCCCCC', fontSize: 8 },
+  });
+
+  // Title slide
+  const titleSlide = pptx.addSlide({ masterName: 'CORPORATE' });
+  titleSlide.addShape(pptx.shapes.RECTANGLE, {
+    x: 0, y: 2.5, w: '100%', h: 2.5,
+    fill: { color: '003366' },
+    line: { width: 0 },
+  });
+  titleSlide.addText(data.title, {
+    x: 0.5, y: 2.7, w: 9, h: 1.2,
+    fontFace: 'Calibri Light',
+    fontSize: 40,
+    bold: false,
+    color: 'FFFFFF',
+    align: 'center',
+  });
+  titleSlide.addText(`Q4 ${data.year} | ${data.presenter}`, {
+    x: 0.5, y: 3.9, w: 9, h: 0.6,
+    fontFace: 'Calibri',
+    fontSize: 18,
+    color: 'CCCCCC',
+    align: 'center',
+  });
+
+  // Executive Summary slide
+  const summarySlide = pptx.addSlide({ masterName: 'CORPORATE' });
+  summarySlide.addText('Executive Summary', {
+    x: 0.4, y: 0.2, w: 9.2, h: 0.6,
+    fontFace: 'Calibri Light',
+    fontSize: 28,
+    color: '003366',
+    bold: false,
+  });
+
+  // KPI boxes
+  const kpis = [
+    { label: 'Revenue', value: '$' + (data.revenue / 1e6).toFixed(1) + 'M', change: '+12.5%', positive: true },
+    { label: 'Net Income', value: '$' + (data.netIncome / 1e6).toFixed(1) + 'M', change: '+8.3%', positive: true },
+    { label: 'EBITDA', value: (data.ebitdaMargin * 100).toFixed(1) + '%', change: '+1.2pp', positive: true },
+    { label: 'Customers', value: data.customers.toLocaleString(), change: '-2.1%', positive: false },
+  ];
+
+  kpis.forEach((kpi, i) => {
+    const x = 0.4 + i * 2.35;
+    summarySlide.addShape(pptx.shapes.RECTANGLE, {
+      x, y: 1.0, w: 2.2, h: 2.5,
+      fill: { color: kpi.positive ? 'E8F4FD' : 'FDE8E8' },
+      line: { color: kpi.positive ? '2E75B6' : 'C00000', width: 1 },
+    });
+    summarySlide.addText(kpi.label, { x, y: 1.1, w: 2.2, h: 0.4, fontSize: 11, color: '666666', align: 'center' });
+    summarySlide.addText(kpi.value, { x, y: 1.5, w: 2.2, h: 0.8, fontSize: 22, bold: true, color: '003366', align: 'center' });
+    summarySlide.addText(kpi.change, {
+      x, y: 2.3, w: 2.2, h: 0.4,
+      fontSize: 14, bold: true,
+      color: kpi.positive ? '375623' : '9C0006',
+      align: 'center'
+    });
+  });
+
+  // Revenue chart slide
+  const chartSlide = pptx.addSlide({ masterName: 'CORPORATE' });
+  chartSlide.addText('Revenue Trend', { x: 0.4, y: 0.2, w: 9.2, h: 0.6, fontSize: 28, color: '003366', fontFace: 'Calibri Light' });
+  chartSlide.addChart(pptx.charts.LINE, [
+    {
+      name: 'Revenue',
+      labels: data.months,
+      values: data.monthlyRevenue,
+    },
+    {
+      name: 'Target',
+      labels: data.months,
+      values: data.monthlyTarget,
+    }
+  ], {
+    x: 0.4, y: 1.0, w: 9.2, h: 5.8,
+    showTitle: false,
+    showLegend: true,
+    legendPos: 'b',
+    chartColors: ['2E75B6', 'ED7D31'],
+    lineSmooth: true,
+    lineDataSymbol: 'circle',
+    valAxisNumFmt: '"$"#,##0',
+    valAxisTitle: 'Monthly Revenue',
+    catAxisTitle: 'Month',
+    gridLineMajorClr: 'EEEEEE',
+  });
+
+  await pptx.writeFile({ fileName: 'quarterly-report.pptx' });
+  return 'quarterly-report.pptx';
+}
+```
+
+### Color Schemes and Themes
+
+```js
+// Theme colors for consistent presentations
+const THEME_COLORS = {
+  primary:    '003366',  // dark blue
+  secondary:  '2E75B6',  // medium blue
+  accent1:    'ED7D31',  // orange
+  accent2:    'A9D18E',  // green
+  accent3:    'FFC000',  // yellow
+  accent4:    'FF0000',  // red
+  dark1:      '000000',  // black
+  dark2:      '333333',  // dark gray
+  light1:     'FFFFFF',  // white
+  light2:     'F5F5F5',  // off-white
+  text:       '363636',  // near black
+  textLight:  '666666',  // medium gray
+  border:     'CCCCCC',  // light gray
+  success:    '375623',  // dark green
+  warning:    'FF6B00',  // orange
+  error:      '9C0006',  // dark red
+  info:       '0070C0',  // blue
+  successBg:  'C6EFCE',  // light green
+  warningBg:  'FFEB9C',  // light yellow
+  errorBg:    'FFC7CE',  // light red
+  infoBg:     'DDEBF7',  // light blue
+};
+
+// Apply consistent styles across multiple slides
+function applyTheme(pptx, slides) {
+  slides.forEach(slide => {
+    slide.background = { color: THEME_COLORS.light1 };
+  });
+}
+```
+
+### Troubleshooting
+
+**Issue: Images not loading from URL**
+```js
+// Use local path or base64 instead
+const axios = require('axios');
+const response = await axios.get(imageUrl, { responseType: 'arraybuffer' });
+const base64 = Buffer.from(response.data).toString('base64');
+const ext = imageUrl.split('.').pop();
+slide.addImage({ data: `data:image/${ext};base64,${base64}`, x, y, w, h });
+```
+
+**Issue: Large file size**
+```js
+// Compress images before embedding
+const sharp = require('sharp');
+const compressed = await sharp(imagePath).resize(800).jpeg({ quality: 80 }).toBuffer();
+const b64 = compressed.toString('base64');
+slide.addImage({ data: `data:image/jpeg;base64,${b64}`, x, y, w, h });
+```
+
+**Issue: Text not wrapping**
+```js
+// Ensure wrap is true and dimensions allow wrapping
+slide.addText('Long text content...', {
+  x: 0.5, y: 0.5, w: 5, h: 3,  // specify w and h
+  wrap: true,
+  autoFit: false,
+});
+```
+
+**Issue: Charts with too many data points**
+```js
+// Aggregate data before charting
+function aggregateByMonth(data) {
+  return data.reduce((acc, item) => {
+    const month = item.date.toISOString().slice(0, 7);
+    if (!acc[month]) acc[month] = 0;
+    acc[month] += item.value;
+    return acc;
+  }, {});
+}
+```
+
+
+---
+
+## pptxgenjs Complete API Reference
+
+### Installation & Setup
+
+```bash
+npm install pptxgenjs
+```
+
+```js
+const PptxGenJS = require('pptxgenjs');
+const pptx = new PptxGenJS();
+
+// Global settings
+pptx.layout = 'LAYOUT_16x9';  // 'LAYOUT_4x3'|'LAYOUT_16x9'|'LAYOUT_16x10'|'LAYOUT_WIDE'|custom
+pptx.subject = 'Quarterly Report';
+pptx.author = 'John Doe';
+pptx.company = 'ACME Corp';
+pptx.revision = '1';
+pptx.title = 'Q4 2024 Results';
+
+// Custom layout
+pptx.defineLayout({ name: 'A3', width: 16.54, height: 11.69 });
+pptx.layout = 'A3';
+```
+
+### Slide Masters & Layouts
+
+```js
+// Define slide master
+pptx.defineSlideMaster({
+  title: 'MASTER_SLIDE',
+  background: { color: 'FFFFFF' },
+  objects: [
+    { rect: { x: 0, y: 7.0, w: '100%', h: 0.75, fill: { color: '003366' } } },
+    {
+      text: {
+        text: 'CONFIDENTIAL',
+        options: {
+          x: 0, y: 7.0, w: '100%', h: 0.75,
+          align: 'center', valign: 'middle',
+          color: 'FFFFFF', fontSize: 10,
+        }
+      }
+    },
+    {
+      image: {
+        x: 0.5, y: 0.25, w: 1.5, h: 0.5,
+        path: './logo.png',
+      }
+    },
+  ],
+  slideNumber: { x: '90%', y: 7.1, color: 'FFFFFF', fontSize: 9, fontFace: 'Arial' },
+  margin: [0.5, 0.25, 1.25, 0.5],
+});
+
+// Add slide using master
+const slide = pptx.addSlide({ masterName: 'MASTER_SLIDE' });
+```
+
+### Adding Slides
+
+```js
+// Basic slide
+const slide1 = pptx.addSlide();
+
+// Slide with master
+const slide2 = pptx.addSlide({ masterName: 'MASTER_SLIDE' });
+
+// Slide with background
+const slide3 = pptx.addSlide();
+slide3.background = { color: 'F5F5F5' };
+slide3.background = { path: './bg.jpg' };
+slide3.background = { data: 'data:image/png;base64,...' };
+
+// Hidden slide
+const slide4 = pptx.addSlide();
+slide4.hidden = true;
+
+// Slide number display
+pptx.slides.forEach((slide, i) => {
+  slide.addText(`Slide ${i + 1}`, {
+    x: '90%', y: '95%', w: '8%', h: '4%',
+    fontSize: 9, color: '999999', align: 'right',
+  });
+});
+```
+
+### Text Elements
+
+```js
+// Simple text
+slide.addText('Hello, World!', {
+  x: 0.5, y: 0.5, w: 9, h: 1,
+  fontFace: 'Arial',
+  fontSize: 36,
+  bold: true,
+  italic: false,
+  underline: { style: 'sng', color: '0000FF' },
+  strike: false,
+  color: '003366',
+  fill: { color: 'FFFFCC' },
+  transparency: 0,
+  border: { pt: 1, color: '666666' },
+  align: 'center',  // 'left'|'center'|'right'|'justify'
+  valign: 'middle', // 'top'|'middle'|'bottom'
+  wrap: true,
+  autoFit: false,
+  shrinkText: false,
+  inset: 0.05,
+  paraSpaceBefore: 6,
+  paraSpaceAfter: 6,
+  lineSpacingMultiple: 1.2,
+  charSpacing: 1,
+  rotate: 0,         // degrees
+  shadow: {
+    type: 'outer',
+    color: '000000',
+    opacity: 0.5,
+    blur: 4,
+    offset: 4,
+    angle: 45,
+  },
+  hyperlink: {
+    url: 'https://example.com',
+    tooltip: 'Visit our site',
+  },
+  rtlMode: false,
+  lang: 'en-US',
+  placeholder: 'body',  // for master slide placeholders
+});
+
+// Multi-format text (text runs)
+slide.addText([
+  { text: 'Bold text ', options: { bold: true, color: 'FF0000' } },
+  { text: 'and normal text ', options: { bold: false } },
+  { text: '\n' },
+  { text: 'New line with ', options: { fontSize: 18 } },
+  { text: 'hyperlink', options: { hyperlink: { url: 'https://google.com' } } },
+  { text: '\nBullet point', options: { bullet: true, indentLevel: 0 } },
+  { text: '\nSub-bullet', options: { bullet: { type: 'number', indent: 30 }, indentLevel: 1 } },
+], {
+  x: 0.5, y: 1.5, w: 9, h: 5,
+  fontSize: 16,
+  fontFace: 'Calibri',
+  color: '333333',
+});
+```
+
+### Shape Elements
+
+```js
+// Rectangle
+slide.addShape(pptx.shapes.RECTANGLE, {
+  x: 1, y: 1, w: 3, h: 2,
+  fill: { color: '4472C4' },
+  line: { color: '2F5597', width: 2, dashType: 'solid' },
+  shadow: { type: 'outer', color: '000000', opacity: 0.3, blur: 3, offset: 3, angle: 45 },
+  transparency: 0,
+  rotate: 0,
+});
+
+// All shape types
+const shapes = [
+  pptx.shapes.RECTANGLE,
+  pptx.shapes.ROUNDED_RECTANGLE,
+  pptx.shapes.OVAL,
+  pptx.shapes.TRIANGLE,
+  pptx.shapes.RIGHT_TRIANGLE,
+  pptx.shapes.PARALLELOGRAM,
+  pptx.shapes.TRAPEZOID,
+  pptx.shapes.DIAMOND,
+  pptx.shapes.PENTAGON,
+  pptx.shapes.HEXAGON,
+  pptx.shapes.HEPTAGON,
+  pptx.shapes.OCTAGON,
+  pptx.shapes.DECAGON,
+  pptx.shapes.STAR_4,
+  pptx.shapes.STAR_5,
+  pptx.shapes.STAR_6,
+  pptx.shapes.STAR_7,
+  pptx.shapes.STAR_8,
+  pptx.shapes.STAR_10,
+  pptx.shapes.STAR_12,
+  pptx.shapes.STAR_16,
+  pptx.shapes.STAR_24,
+  pptx.shapes.STAR_32,
+  pptx.shapes.ARROW_RIGHT,
+  pptx.shapes.ARROW_LEFT,
+  pptx.shapes.ARROW_UP,
+  pptx.shapes.ARROW_DOWN,
+  pptx.shapes.ARROW_LEFT_RIGHT,
+  pptx.shapes.ARROW_UP_DOWN,
+  pptx.shapes.CALLOUT_1,
+  pptx.shapes.CALLOUT_2,
+  pptx.shapes.CALLOUT_3,
+  pptx.shapes.LINE,
+  pptx.shapes.LINE_ARROW,
+  pptx.shapes.LINE_ARROWS,
+  pptx.shapes.FLOW_CHART_PROCESS,
+  pptx.shapes.FLOW_CHART_DECISION,
+  pptx.shapes.FLOW_CHART_DATA,
+  pptx.shapes.FLOW_CHART_TERMINATOR,
+  pptx.shapes.FLOW_CHART_CONNECTOR,
+  pptx.shapes.FLOW_CHART_ALTERNATE_PROCESS,
+  pptx.shapes.CROSS,
+  pptx.shapes.PLUS,
+  pptx.shapes.SMILEY_FACE,
+  pptx.shapes.NO_SMOKING,
+  pptx.shapes.PLAQUE,
+  pptx.shapes.CAN,
+  pptx.shapes.CUBE,
+  pptx.shapes.BEVEL,
+  pptx.shapes.DONUT,
+  pptx.shapes.CLOUD,
+  pptx.shapes.CLOUD_CALLOUT,
+  pptx.shapes.HEART,
+  pptx.shapes.LIGHTNING_BOLT,
+  pptx.shapes.SUN,
+  pptx.shapes.MOON,
+  pptx.shapes.ARC,
+  pptx.shapes.CHORD,
+  pptx.shapes.PIE,
+];
+
+// Filled shape with text
+slide.addShape(pptx.shapes.ROUNDED_RECTANGLE, {
+  x: 1, y: 3, w: 4, h: 1.5,
+  fill: { color: 'ED7D31' },
+  line: { color: 'ED7D31', width: 0 },
+  text: 'Click Here',
+  options: {
+    fontFace: 'Arial',
+    fontSize: 18,
+    bold: true,
+    color: 'FFFFFF',
+    align: 'center',
+    valign: 'middle',
+  }
+});
+```
+
+### Image Elements
+
+```js
+// Add image from file path
+slide.addImage({
+  path: './images/photo.jpg',
+  x: 0.5, y: 0.5, w: 4, h: 3,
+  sizing: {
+    type: 'contain',   // 'contain'|'cover'|'crop'
+    w: 4, h: 3,
+  },
+  rounding: true,    // circular crop
+  opacity: 1,
+  rotate: 0,
+  shadow: { type: 'outer', color: '000000', opacity: 0.3, blur: 5, offset: 3 },
+  border: { pt: 2, color: '666666' },
+  hyperlink: { url: 'https://example.com' },
+  altText: 'Company logo',
+  placeholder: 'body',
+});
+
+// Add image from URL
+slide.addImage({
+  path: 'https://example.com/image.png',
+  x: 5, y: 0.5, w: 4, h: 3,
+});
+
+// Add image from base64
+slide.addImage({
+  data: 'data:image/png;base64,iVBORw0KGgo...',
+  x: 0.5, y: 4, w: 9, h: 4,
+});
+
+// SVG image
+slide.addImage({
+  data: '<svg>...</svg>',
+  type: 'svg',
+  x: 1, y: 1, w: 3, h: 3,
+});
+```
+
+### Chart Elements
+
+```js
+// Bar chart
+slide.addChart(pptx.charts.BAR, [
+  {
+    name: 'Q1 2024',
+    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+    values: [48000, 52000, 61000, 58000, 63000, 71000],
+  },
+  {
+    name: 'Q1 2023',
+    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+    values: [42000, 48000, 55000, 50000, 58000, 65000],
+  },
+], {
+  x: 0.5, y: 1.5, w: 9, h: 5,
+  barDir: 'col',        // 'bar'|'col'
+  barGrouping: 'clustered',  // 'clustered'|'stacked'|'percentStacked'
+  bar3DShape: '',       // ''|'box'|'cone'|'coneToMax'|'cylinder'|'pyramid'|'pyramidToMax'
+  chartColors: ['4472C4', 'ED7D31', 'A9D18E', 'FFC000', '5B9BD5'],
+  chartColorsOpacity: 100,
+  showTitle: true,
+  title: 'Monthly Revenue Comparison',
+  titleFontSize: 14,
+  titleFontFace: 'Calibri',
+  titleColor: '363636',
+  titlePos: { x: 0, y: 0 },
+  showLegend: true,
+  legendPos: 'b',      // 't'|'b'|'l'|'r'|'tr'
+  legendFontSize: 12,
+  legendFontFace: 'Calibri',
+  legendColor: '363636',
+  catAxisTitle: 'Month',
+  catAxisTitleColor: '363636',
+  catAxisTitleFontSize: 12,
+  catAxisLabelColor: '595959',
+  catAxisLabelFontFace: 'Calibri',
+  catAxisLabelFontSize: 10,
+  catAxisLabelFrequency: 1,
+  catAxisLabelRotate: 0,
+  catGridLine: { style: 'none' },
+  catAxisLineShow: true,
+  catAxisBaseTimeUnit: 'months',
+  valAxisTitle: 'Revenue ($)',
+  valAxisTitleColor: '363636',
+  valAxisTitleFontSize: 12,
+  valAxisLabelColor: '595959',
+  valAxisLabelFontFace: 'Calibri',
+  valAxisLabelFontSize: 10,
+  valAxisNumFmt: '"$"#,##0',
+  valAxisMinVal: 0,
+  valAxisMaxVal: 100000,
+  valAxisMajorUnit: 10000,
+  valGridLine: { style: 'solid', color: 'CCCCCC', size: 0.5 },
+  valAxisLineShow: true,
+  showValue: true,
+  dataLabelColor: '000000',
+  dataLabelFontFace: 'Calibri',
+  dataLabelFontSize: 9,
+  dataLabelPosition: 'outEnd',  // 'inBase'|'inEnd'|'outEnd'|'ctr'|'bestFit'
+  dataLabelFormatCode: '"$"#,##0',
+  showPercent: false,
+  showSerName: false,
+  showCatName: false,
+  plotAreaFill: { color: 'FFFFFF' },
+  plotAreaBorder: { pt: 0 },
+  border: { pt: 0 },
+  fill: { color: 'FFFFFF' },
+  shadow: null,
+  invertedColors: false,
+  radarStyle: 'standard',
+  lineDataSymbol: 'circle',
+  lineDataSymbolSize: 6,
+  lineDataSymbolLineColor: '4472C4',
+  lineDataSymbolLineSize: 1,
+  lineSmooth: false,
+  lineDash: 'solid',
+});
+
+// All chart types
+const chartTypes = {
+  BAR: pptx.charts.BAR,
+  BUBBLE: pptx.charts.BUBBLE,
+  DOUGHNUT: pptx.charts.DOUGHNUT,
+  LINE: pptx.charts.LINE,
+  PIE: pptx.charts.PIE,
+  RADAR: pptx.charts.RADAR,
+  SCATTER: pptx.charts.SCATTER,
+  AREA: pptx.charts.AREA,
+};
+
+// Line chart
+slide.addChart(pptx.charts.LINE, [
+  {
+    name: 'Revenue',
+    labels: ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'],
+    values: [48,52,61,58,63,71,68,75,82,79,88,95].map(v => v * 1000),
+  }
+], {
+  x: 0.5, y: 1.5, w: 9, h: 5,
+  showTitle: true,
+  title: 'Annual Revenue Trend',
+  lineDataSymbol: 'circle',
+  lineDataSymbolSize: 6,
+  lineSmooth: false,
+  catAxisTitle: 'Month',
+  valAxisTitle: 'Revenue ($)',
+  valAxisNumFmt: '"$"#,##0',
+  valAxisMinVal: 0,
+  chartColors: ['2E75B6'],
+  showValue: false,
+  dataLabelPosition: 'ctr',
+});
+
+// Pie chart
+slide.addChart(pptx.charts.PIE, [
+  {
+    name: 'Market Share',
+    labels: ['Product A', 'Product B', 'Product C', 'Product D', 'Other'],
+    values: [35.2, 28.7, 18.5, 11.3, 6.3],
+  }
+], {
+  x: 1, y: 1.5, w: 8, h: 5.5,
+  showTitle: true,
+  title: 'Market Share by Product',
+  showLegend: true,
+  legendPos: 'r',
+  showPercent: true,
+  showValue: false,
+  dataLabelColor: 'FFFFFF',
+  dataLabelFontSize: 12,
+  dataLabelFontFace: 'Calibri',
+  chartColors: ['4472C4','ED7D31','A9D18E','FFC000','5B9BD5'],
+  chartColorsOpacity: 100,
+  holeSize: 50,  // for doughnut only
+  firstSliceAng: 0,
+  showBubbleSize: false,
+  showCatName: true,
+  showSerName: false,
+  dataLabelPosition: 'bestFit',
+});
+
+// Scatter chart
+slide.addChart(pptx.charts.SCATTER, [
+  {
+    name: 'Dataset 1',
+    values: [43.5, 52.2, 28.1, 65.8, 37.4, 71.2, 44.6, 58.9, 82.3, 55.7],
+    sizes: [5, 8, 3, 12, 6, 15, 7, 10, 18, 9],  // for bubble
+  }
+], {
+  x: 0.5, y: 1, w: 9, h: 6,
+  showTitle: true,
+  title: 'Data Distribution',
+  catAxisTitle: 'X Values',
+  valAxisTitle: 'Y Values',
+  lineDataSymbol: 'circle',
+  lineDataSymbolSize: 8,
+  chartColors: ['4472C4'],
+  lineSize: 0,  // 0 = no line, just points
+});
+```
+
+### Table Elements
+
+```js
+// Add table
+slide.addTable([
+  [
+    { text: 'Name', options: { bold: true, fill: '4472C4', color: 'FFFFFF' } },
+    { text: 'Department', options: { bold: true, fill: '4472C4', color: 'FFFFFF' } },
+    { text: 'Salary', options: { bold: true, fill: '4472C4', color: 'FFFFFF' } },
+    { text: 'Status', options: { bold: true, fill: '4472C4', color: 'FFFFFF' } },
+  ],
+  ['Alice Smith', 'Engineering', '$95,000', 'Active'],
+  ['Bob Johnson', 'Marketing', '$72,000', 'Active'],
+  ['Charlie Brown', 'Sales', '$68,000', 'Inactive'],
+  ['Diana Prince', 'HR', '$78,000', 'Active'],
+  [{ text: 'Total', options: { bold: true } }, '', { text: '$313,000', options: { bold: true } }, ''],
+], {
+  x: 0.5, y: 1, w: 9, h: 6,
+  fill: 'FFFFFF',
+  fontFace: 'Calibri',
+  fontSize: 12,
+  color: '363636',
+  align: 'left',
+  valign: 'middle',
+  border: {
+    type: 'all',     // 'all'|'none'|specific sides
+    pt: 0.5,
+    color: 'CCCCCC',
+  },
+  margin: [0.05, 0.1, 0.05, 0.1],  // top, right, bottom, left (inches)
+  colW: [3, 2.5, 1.5, 1.5],      // column widths
+  rowH: [0.5],                     // row heights
+  autoPage: true,                  // auto-paginate when table is too tall
+  autoPageRepeatHeader: true,      // repeat header on continuation slides
+  autoPageLineWeight: 0.5,
+  newSlideStartY: 1,               // Y position for continuation slides
+});
+```
+
+### Speaker Notes
+
+```js
+// Add notes to slide
+slide.addNotes('These are speaker notes for this slide.\nKey points:\n- Revenue up 12%\n- New markets performing well\n- Cost reduction initiatives underway');
+
+// Notes with formatting
+slide.addNotes([
+  { text: 'Key Talking Points', options: { fontSize: 14, bold: true } },
+  { text: '\n\n' },
+  { text: '1. Revenue increased 12% year-over-year\n', options: { fontSize: 12 } },
+  { text: '2. Market expansion in APAC region (+25%)\n', options: { fontSize: 12 } },
+  { text: '3. Cost optimization saved $2.3M\n', options: { fontSize: 12 } },
+  { text: '\nQuestions to expect:', options: { bold: true, color: 'CC0000' } },
+  { text: '\n- Why did margins compress in Q3?\n- What is the APAC expansion timeline?', options: { italic: true } },
+]);
+```
+
+### Transitions and Animations
+
+```js
+// Slide transition
+slide.transition = {
+  type: 'fade',    // 'none'|'cut'|'fade'|'push'|'wipe'|'split'|'reveal'|'random_bars'|'shape'|'blinds'|'checker'|'comb'|'cover'|'dissolve'|'newsflash'|'pull'|'random'|'zoom'
+  speed: 'medium', // 'slow'|'medium'|'fast'
+  advAuto: '00:03:00',  // auto advance after 3 seconds
+};
+
+// Object animation (limited support)
+slide.addText('Animated text', {
+  x: 1, y: 1, w: 8, h: 1,
+  fontSize: 24,
+  animate: {
+    type: 'appear',
+    triggerType: 'onClick',
+    delay: 500,
+  }
+});
+```
+
+### Media Embedding
+
+```js
+// Video from file
+slide.addMedia({
+  type: 'video',
+  path: './videos/intro.mp4',
+  x: 1, y: 1, w: 8, h: 4.5,
+  cover: './images/video-thumbnail.jpg',
+  autoPlay: false,
+  loop: false,
+  muted: false,
+});
+
+// Audio from URL
+slide.addMedia({
+  type: 'audio',
+  link: 'https://example.com/audio.mp3',
+  x: 0.5, y: 0.5, w: 1, h: 0.5,
+  autoPlay: false,
+  loop: false,
+});
+
+// Online video (YouTube embed)
+slide.addMedia({
+  type: 'online',
+  link: 'https://www.youtube.com/embed/dQw4w9WgXcQ',
+  x: 1, y: 1, w: 8, h: 4.5,
+});
+```
+
+### Export Options
+
+```js
+// Save to file
+await pptx.writeFile({ fileName: 'presentation.pptx' });
+
+// Get as base64
+const base64Data = await pptx.write({ outputType: 'base64' });
+
+// Get as Blob (browser)
+const blob = await pptx.write({ outputType: 'blob' });
+
+// Get as Buffer (Node.js)
+const buffer = await pptx.write({ outputType: 'nodebuffer' });
+
+// Get as Uint8Array
+const uint8 = await pptx.write({ outputType: 'uint8array' });
+
+// Get as ArrayBuffer
+const arrayBuffer = await pptx.write({ outputType: 'arraybuffer' });
+
+// Callback style (older API)
+pptx.save('my-presentation', (fileName) => {
+  console.log(`Saved: ${fileName}`);
+}, 'nodebuffer');
+```
+
+### Complete Presentation Example
+
+```js
+const PptxGenJS = require('pptxgenjs');
+
+async function createQuarterlyReport(data) {
+  const pptx = new PptxGenJS();
+  pptx.layout = 'LAYOUT_16x9';
+  pptx.title = 'Q4 2024 Quarterly Report';
+  pptx.author = 'Analytics Team';
+
+  // Define master
+  pptx.defineSlideMaster({
+    title: 'CORPORATE',
+    background: { color: 'FFFFFF' },
+    objects: [
+      { rect: { x: 0, y: 0, w: '100%', h: 0.08, fill: { color: '003366' } } },
+      { rect: { x: 0, y: 7.42, w: '100%', h: 0.08, fill: { color: '003366' } } },
+      {
+        text: {
+          text: data.companyName,
+          options: {
+            x: 0.4, y: 7.4, w: 5, h: 0.1,
+            fontSize: 8, color: 'FFFFFF', bold: false, align: 'left',
+          }
+        }
+      },
+    ],
+    slideNumber: { x: '92%', y: 7.38, color: 'CCCCCC', fontSize: 8 },
+  });
+
+  // Title slide
+  const titleSlide = pptx.addSlide({ masterName: 'CORPORATE' });
+  titleSlide.addShape(pptx.shapes.RECTANGLE, {
+    x: 0, y: 2.5, w: '100%', h: 2.5,
+    fill: { color: '003366' },
+    line: { width: 0 },
+  });
+  titleSlide.addText(data.title, {
+    x: 0.5, y: 2.7, w: 9, h: 1.2,
+    fontFace: 'Calibri Light',
+    fontSize: 40,
+    bold: false,
+    color: 'FFFFFF',
+    align: 'center',
+  });
+  titleSlide.addText(`Q4 ${data.year} | ${data.presenter}`, {
+    x: 0.5, y: 3.9, w: 9, h: 0.6,
+    fontFace: 'Calibri',
+    fontSize: 18,
+    color: 'CCCCCC',
+    align: 'center',
+  });
+
+  // Executive Summary slide
+  const summarySlide = pptx.addSlide({ masterName: 'CORPORATE' });
+  summarySlide.addText('Executive Summary', {
+    x: 0.4, y: 0.2, w: 9.2, h: 0.6,
+    fontFace: 'Calibri Light',
+    fontSize: 28,
+    color: '003366',
+    bold: false,
+  });
+
+  // KPI boxes
+  const kpis = [
+    { label: 'Revenue', value: '$' + (data.revenue / 1e6).toFixed(1) + 'M', change: '+12.5%', positive: true },
+    { label: 'Net Income', value: '$' + (data.netIncome / 1e6).toFixed(1) + 'M', change: '+8.3%', positive: true },
+    { label: 'EBITDA', value: (data.ebitdaMargin * 100).toFixed(1) + '%', change: '+1.2pp', positive: true },
+    { label: 'Customers', value: data.customers.toLocaleString(), change: '-2.1%', positive: false },
+  ];
+
+  kpis.forEach((kpi, i) => {
+    const x = 0.4 + i * 2.35;
+    summarySlide.addShape(pptx.shapes.RECTANGLE, {
+      x, y: 1.0, w: 2.2, h: 2.5,
+      fill: { color: kpi.positive ? 'E8F4FD' : 'FDE8E8' },
+      line: { color: kpi.positive ? '2E75B6' : 'C00000', width: 1 },
+    });
+    summarySlide.addText(kpi.label, { x, y: 1.1, w: 2.2, h: 0.4, fontSize: 11, color: '666666', align: 'center' });
+    summarySlide.addText(kpi.value, { x, y: 1.5, w: 2.2, h: 0.8, fontSize: 22, bold: true, color: '003366', align: 'center' });
+    summarySlide.addText(kpi.change, {
+      x, y: 2.3, w: 2.2, h: 0.4,
+      fontSize: 14, bold: true,
+      color: kpi.positive ? '375623' : '9C0006',
+      align: 'center'
+    });
+  });
+
+  // Revenue chart slide
+  const chartSlide = pptx.addSlide({ masterName: 'CORPORATE' });
+  chartSlide.addText('Revenue Trend', { x: 0.4, y: 0.2, w: 9.2, h: 0.6, fontSize: 28, color: '003366', fontFace: 'Calibri Light' });
+  chartSlide.addChart(pptx.charts.LINE, [
+    {
+      name: 'Revenue',
+      labels: data.months,
+      values: data.monthlyRevenue,
+    },
+    {
+      name: 'Target',
+      labels: data.months,
+      values: data.monthlyTarget,
+    }
+  ], {
+    x: 0.4, y: 1.0, w: 9.2, h: 5.8,
+    showTitle: false,
+    showLegend: true,
+    legendPos: 'b',
+    chartColors: ['2E75B6', 'ED7D31'],
+    lineSmooth: true,
+    lineDataSymbol: 'circle',
+    valAxisNumFmt: '"$"#,##0',
+    valAxisTitle: 'Monthly Revenue',
+    catAxisTitle: 'Month',
+    gridLineMajorClr: 'EEEEEE',
+  });
+
+  await pptx.writeFile({ fileName: 'quarterly-report.pptx' });
+  return 'quarterly-report.pptx';
+}
+```
+
+### Color Schemes and Themes
+
+```js
+// Theme colors for consistent presentations
+const THEME_COLORS = {
+  primary:    '003366',  // dark blue
+  secondary:  '2E75B6',  // medium blue
+  accent1:    'ED7D31',  // orange
+  accent2:    'A9D18E',  // green
+  accent3:    'FFC000',  // yellow
+  accent4:    'FF0000',  // red
+  dark1:      '000000',  // black
+  dark2:      '333333',  // dark gray
+  light1:     'FFFFFF',  // white
+  light2:     'F5F5F5',  // off-white
+  text:       '363636',  // near black
+  textLight:  '666666',  // medium gray
+  border:     'CCCCCC',  // light gray
+  success:    '375623',  // dark green
+  warning:    'FF6B00',  // orange
+  error:      '9C0006',  // dark red
+  info:       '0070C0',  // blue
+  successBg:  'C6EFCE',  // light green
+  warningBg:  'FFEB9C',  // light yellow
+  errorBg:    'FFC7CE',  // light red
+  infoBg:     'DDEBF7',  // light blue
+};
+
+// Apply consistent styles across multiple slides
+function applyTheme(pptx, slides) {
+  slides.forEach(slide => {
+    slide.background = { color: THEME_COLORS.light1 };
+  });
+}
+```
+
+### Troubleshooting
+
+**Issue: Images not loading from URL**
+```js
+// Use local path or base64 instead
+const axios = require('axios');
+const response = await axios.get(imageUrl, { responseType: 'arraybuffer' });
+const base64 = Buffer.from(response.data).toString('base64');
+const ext = imageUrl.split('.').pop();
+slide.addImage({ data: `data:image/${ext};base64,${base64}`, x, y, w, h });
+```
+
+**Issue: Large file size**
+```js
+// Compress images before embedding
+const sharp = require('sharp');
+const compressed = await sharp(imagePath).resize(800).jpeg({ quality: 80 }).toBuffer();
+const b64 = compressed.toString('base64');
+slide.addImage({ data: `data:image/jpeg;base64,${b64}`, x, y, w, h });
+```
+
+**Issue: Text not wrapping**
+```js
+// Ensure wrap is true and dimensions allow wrapping
+slide.addText('Long text content...', {
+  x: 0.5, y: 0.5, w: 5, h: 3,  // specify w and h
+  wrap: true,
+  autoFit: false,
+});
+```
+
+**Issue: Charts with too many data points**
+```js
+// Aggregate data before charting
+function aggregateByMonth(data) {
+  return data.reduce((acc, item) => {
+    const month = item.date.toISOString().slice(0, 7);
+    if (!acc[month]) acc[month] = 0;
+    acc[month] += item.value;
+    return acc;
+  }, {});
+}
+```

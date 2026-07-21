@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+{% block title %}Contract & Grant Bot Demo — DreamCobots{% endblock %}
+
+{% block content %}
+<div class="max-w-3xl mx-auto px-4 py-12">
+  <a href="/" class="text-sky-600 text-sm hover:underline">← Back to Services</a>
+  <h1 class="text-3xl font-bold mt-4 mb-2">📋 Government Contract & Grant Bot Demo</h1>
+  <p class="text-gray-500 mb-8">
+    Enter a keyword and we'll simulate scanning federal databases (SAM.gov, Grants.gov) for matching opportunities.
+  </p>
+
+  <form method="POST" class="bg-white rounded-2xl shadow p-6 mb-8">
+    <label class="block text-sm font-medium text-gray-700 mb-1" for="keyword">Search keyword</label>
+    <div class="flex gap-2">
+      <input id="keyword" name="keyword" type="text" value="{{ keyword }}"
+             placeholder="e.g. automation, AI, cybersecurity"
+             class="flex-1 border border-gray-300 rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-sky-400"/>
+      <button type="submit" class="gradient-hero text-white px-5 py-2 rounded-lg text-sm font-medium hover:opacity-90 transition">
+        Search
+      </button>
+    </div>
+    <p class="text-xs text-gray-400 mt-2">Tip: try "automation", "AI", "data", or "cloud"</p>
+  </form>
+
+  {% if results is not none %}
+  <div class="bg-white rounded-2xl shadow overflow-hidden mb-8">
+    <div class="px-5 py-3 bg-gray-50 border-b border-gray-100 flex items-center justify-between">
+      <h2 class="font-semibold text-sm text-gray-700">🔎 {{ results | length }} result(s) for "{{ keyword }}"</h2>
+      <span class="text-xs text-gray-400">Mock data — full bot scans live databases</span>
+    </div>
+    <ul class="divide-y divide-gray-100">
+      {% for c in results %}
+      <li class="px-5 py-4 hover:bg-sky-50 transition">
+        <div class="flex justify-between items-start gap-4">
+          <div>
+            <p class="font-medium text-sm">{{ c.title }}</p>
+            <p class="text-xs text-gray-400 mt-0.5">{{ c.agency }} · ID: {{ c.id }}</p>
+          </div>
+          <span class="text-green-600 font-semibold text-sm whitespace-nowrap">{{ c.value }}</span>
+        </div>
+      </li>
+      {% endfor %}
+    </ul>
+  </div>
+
+  <div class="bg-sky-50 border border-sky-200 rounded-2xl p-5 text-center mb-8">
+    <p class="font-semibold text-sky-800 mb-1">Want daily alerts for matching contracts & grants?</p>
+    <p class="text-gray-500 text-sm mb-3">The full bot monitors 10+ databases and emails you matched opportunities every morning.</p>
+    <a href="/lead-gen" class="gradient-hero text-white text-sm font-medium px-5 py-2 rounded-full inline-block hover:opacity-90 transition">
+      Get a Custom Quote →
+    </a>
+  </div>
+  {% endif %}
+
+  <!-- Pricing snippet -->
+  <h2 class="text-xl font-bold mb-4">Pricing</h2>
+  <div class="grid sm:grid-cols-3 gap-4">
+    {% for tier in pricing %}
+    <div class="bg-white rounded-xl shadow p-4 border {% if tier.highlight %}border-sky-400{% else %}border-gray-200{% endif %}">
+      {% if tier.highlight %}<span class="text-xs bg-sky-100 text-sky-700 px-2 py-0.5 rounded-full font-medium">Most Popular</span>{% endif %}
+      <p class="text-lg font-bold mt-2">{{ tier.name }}</p>
+      <p class="text-2xl font-extrabold text-sky-600">{{ tier.price }}<span class="text-sm text-gray-400 font-normal">{{ tier.period }}</span></p>
+      <a href="/lead-gen" class="block mt-3 text-center text-sm font-medium bg-sky-600 text-white py-1.5 rounded-lg hover:bg-sky-700 transition">
+        Get Started
+      </a>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}

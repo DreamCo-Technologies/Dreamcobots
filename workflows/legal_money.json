@@ -1,0 +1,146 @@
+{
+  "id": "legal_money",
+  "name": "Legal Claims Automation",
+  "description": "Automated legal claims pipeline: identifies viable consumer protection, class action, and small claims opportunities, assists claimants through intake questionnaire, files claims, and tracks settlement progress.",
+  "trigger": {
+    "type": "cron",
+    "schedule": "0 9 * * 1,3,5",
+    "endpoint": null
+  },
+  "steps": [
+    {
+      "id": "find_claims",
+      "name": "Find Viable Legal Claims",
+      "action": "legal_bot.findClaims",
+      "params": {
+        "claim_types": [
+          "consumer_protection",
+          "data_breach",
+          "class_action",
+          "small_claims",
+          "wage_theft",
+          "insurance_denial"
+        ],
+        "sources": ["pacer", "class_action_db", "state_courts", "ftc_complaints"],
+        "min_settlement_value": 500,
+        "max_case_complexity": "medium"
+      },
+      "on_success": "qualify_claims",
+      "on_failure": "error_handler"
+    },
+    {
+      "id": "qualify_claims",
+      "name": "Qualify & Score Claims",
+      "action": "legal_bot.scoreClaims",
+      "params": {
+        "factors": ["evidence_strength", "precedent", "defendant_assets", "statute_of_limitations"],
+        "min_score": 60,
+        "auto_disqualify_expired": true
+      },
+      "on_success": "intake_questionnaire",
+      "on_failure": "error_handler"
+    },
+    {
+      "id": "intake_questionnaire",
+      "name": "Send Claimant Questionnaire",
+      "action": "legal_bot.sendQuestionnaire",
+      "params": {
+        "delivery": ["email", "sms"],
+        "form_template": "legal_intake_v2",
+        "reminder_days": [3, 7],
+        "auto_follow_up": true
+      },
+      "on_success": "draft_claim",
+      "on_failure": "error_handler"
+    },
+    {
+      "id": "draft_claim",
+      "name": "AI Draft Legal Claim Documents",
+      "action": "legal_bot.draftDocuments",
+      "params": {
+        "document_types": ["complaint", "demand_letter", "evidence_summary"],
+        "ai_model": "gpt-4o-mini",
+        "jurisdiction": "auto_detect",
+        "include_case_law": true,
+        "review_required": true
+      },
+      "on_success": "file_claim",
+      "on_failure": "error_handler"
+    },
+    {
+      "id": "file_claim",
+      "name": "File Legal Claim",
+      "action": "legal_bot.fileClaim",
+      "params": {
+        "filing_method": "e_file",
+        "courts": ["small_claims", "district_court", "class_action_coordinator"],
+        "pay_filing_fee": true,
+        "confirm_receipt": true
+      },
+      "on_success": "track_settlement",
+      "on_failure": "error_handler"
+    },
+    {
+      "id": "track_settlement",
+      "name": "Track Settlement Progress",
+      "action": "legal_bot.trackSettlement",
+      "params": {
+        "check_interval_days": 7,
+        "respond_to_discovery": true,
+        "accept_settlement_above": 0.7,
+        "notify_claimant": true
+      },
+      "on_success": "collect_settlement",
+      "on_failure": "error_handler"
+    },
+    {
+      "id": "collect_settlement",
+      "name": "Collect Settlement Payment",
+      "action": "auto_checkout.processPayment",
+      "params": {
+        "payment_processor": "stripe",
+        "deduct_contingency_fee": true,
+        "contingency_percent": 0.33,
+        "auto_distribute": true
+      },
+      "on_success": "log_revenue",
+      "on_failure": "error_handler"
+    },
+    {
+      "id": "log_revenue",
+      "name": "Log Settlement Revenue",
+      "action": "revenue_engine.recordDeal",
+      "params": {
+        "source": "legal_claims",
+        "update_dashboard": true
+      },
+      "on_success": "complete",
+      "on_failure": "error_handler"
+    },
+    {
+      "id": "error_handler",
+      "name": "Handle Legal Pipeline Errors",
+      "action": "error_handler.log",
+      "params": {
+        "alert_email": true,
+        "alert_legal_team": true,
+        "retry_after_hours": 48
+      },
+      "on_success": "complete",
+      "on_failure": "complete"
+    }
+  ],
+  "monetization": {
+    "model": "contingency_fee",
+    "revenue_per_cycle": 8500,
+    "affiliate_programs": ["legal_referral_network", "lawsuits_affiliate"],
+    "payment_processor": "stripe"
+  },
+  "automation": {
+    "retry_attempts": 3,
+    "timeout_seconds": 900,
+    "notify_on_completion": true
+  },
+  "created_at": "2026-01-01T00:00:00Z",
+  "version": "1.0.0"
+}

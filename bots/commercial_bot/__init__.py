@@ -1,0 +1,38 @@
+"""CommercialBot AI — DreamCo CineCore™ autonomous commercial creation and revenue bot."""
+from bots.commercial_bot.commercial_bot import (
+    CommercialBot,
+    CommercialBotTierError,
+    CommercialScript,
+    Lead,
+    Deal,
+    AdPerformance,
+    ScriptEngine,
+    VideoEngine,
+    VoiceEngine,
+    PlatformOptimizer,
+    ClientFinder,
+    ClosingAgent,
+    BillingEngine,
+    AnalyticsEngine,
+    BulkGenerator,
+    SelfHeal,
+)
+
+__all__ = [
+    "CommercialBot",
+    "CommercialBotTierError",
+    "CommercialScript",
+    "Lead",
+    "Deal",
+    "AdPerformance",
+    "ScriptEngine",
+    "VideoEngine",
+    "VoiceEngine",
+    "PlatformOptimizer",
+    "ClientFinder",
+    "ClosingAgent",
+    "BillingEngine",
+    "AnalyticsEngine",
+    "BulkGenerator",
+    "SelfHeal",
+]

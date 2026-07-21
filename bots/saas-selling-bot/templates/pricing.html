@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block title %}Pricing — DreamCobots{% endblock %}
+
+{% block content %}
+<div class="max-w-5xl mx-auto px-4 py-16">
+  <div class="text-center mb-12">
+    <h1 class="text-4xl font-extrabold mb-3">Simple, Transparent Pricing</h1>
+    <p class="text-gray-500 text-lg">All plans include a 14-day free trial. No credit card required.</p>
+  </div>
+
+  <div class="grid sm:grid-cols-3 gap-6">
+    {% for tier in tiers %}
+    <div class="bg-white rounded-2xl shadow-md p-8 flex flex-col border-2 {% if tier.highlight %}border-sky-400 scale-105{% else %}border-gray-100{% endif %} transition">
+      {% if tier.highlight %}
+      <div class="text-center mb-3">
+        <span class="bg-sky-500 text-white text-xs font-bold px-3 py-1 rounded-full">MOST POPULAR</span>
+      </div>
+      {% endif %}
+      <h2 class="text-xl font-bold">{{ tier.name }}</h2>
+      <p class="text-gray-400 text-sm mt-1 mb-4">{{ tier.description }}</p>
+      <p class="text-4xl font-extrabold text-sky-600 mb-1">{{ tier.price }}
+        <span class="text-base text-gray-400 font-normal">{{ tier.period }}</span>
+      </p>
+      <ul class="mt-5 space-y-2 text-sm text-gray-600 flex-1">
+        {% for feature in tier.features %}
+        <li class="flex gap-2 items-start">
+          <span class="text-green-500 mt-0.5">✓</span>
+          <span>{{ feature }}</span>
+        </li>
+        {% endfor %}
+      </ul>
+      <a href="/lead-gen?service={{ tier.name | lower }}"
+         class="mt-6 block text-center font-semibold py-3 rounded-xl transition
+                {% if tier.highlight %}gradient-hero text-white hover:opacity-90{% else %}border border-sky-500 text-sky-600 hover:bg-sky-50{% endif %}">
+        Get Started
+      </a>
+    </div>
+    {% endfor %}
+  </div>
+
+  <div class="mt-14 text-center text-gray-500 text-sm">
+    <p>All prices are in USD. Annual billing available (save 20%). <a href="/lead-gen" class="text-sky-600 hover:underline">Contact us</a> for custom pricing.</p>
+  </div>
+</div>
+{% endblock %}

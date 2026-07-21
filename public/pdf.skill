@@ -1,0 +1,371 @@
+---
+name: pdf
+description: Create, modify, and manipulate PDF documents using pdfkit and pdf-lib npm packages. Covers text, images, shapes, forms, annotations, page management, and metadata.
+user-invocable: false
+---
+
+# pdf Skill — PDF Creation & Manipulation
+
+Two main libraries are covered:
+
+- **PDFKit** (`pdfkit`) — streaming PDF generation, great for new documents
+- **pdf-lib** (`pdf-lib`) — programmatic modification of existing PDFs, form filling
+
+## Installation
+
+```bash
+npm install pdfkit       # create PDFs from scratch
+npm install pdf-lib      # modify existing PDFs, fill forms
+npm install @pdf-lib/fontkit  # embed custom fonts in pdf-lib
+```
+
+---
+
+## PDFKit — Creating PDFs from Scratch
+
+```js
+const PDFDocument = require('pdfkit');
+const fs = require('fs');
+
+const doc = new PDFDocument({ size: 'A4', margin: 50 });
+doc.pipe(fs.createWriteStream('output.pdf'));
+
+doc.fontSize(26).text('Hello, World!', { align: 'center' });
+doc.moveDown();
+doc.fontSize(12).text('This is a PDF generated with PDFKit.');
+
+doc.end();
+```
+
+### Page Setup
+
+```js
+const doc = new PDFDocument({
+  size: 'A4',           // 'A4', 'LETTER', 'LEGAL', or [w, h] in points
+  layout: 'portrait',   // 'portrait' or 'landscape'
+  margin: 50,           // uniform margin in points
+  margins: { top: 72, bottom: 72, left: 72, right: 72 },
+  bufferPages: true,    // keep all pages in memory (for adding page numbers)
+  autoFirstPage: true,  // auto-create first page
+  info: {
+    Title: 'My Document',
+    Author: 'Dreamcobots',
+    Subject: 'Report',
+    Keywords: 'pdf, report',
+    CreationDate: new Date(),
+  },
+});
+```
+
+### Text
+
+```js
+// Basic text
+doc.text('Hello', x, y);
+doc.text('Continued text');  // auto-flows after previous
+
+// Formatting
+doc
+  .font('Helvetica-Bold')
+  .fontSize(18)
+  .fillColor('#1F4E79')
+  .text('Section Heading', { underline: false, align: 'left' });
+
+// Text options
+doc.text('Lorem ipsum...', {
+  width: 400,
+  align: 'justify',      // 'left' | 'right' | 'center' | 'justify'
+  lineGap: 4,
+  paragraphGap: 10,
+  indent: 30,
+  columns: 2,
+  columnGap: 20,
+  height: 300,
+  ellipsis: true,        // truncate with '...' if too long
+  link: 'https://example.com',
+  underline: true,
+  strike: false,
+  oblique: false,
+  continued: true,       // don't move cursor after this text
+});
+
+// Move cursor
+doc.moveDown(2);   // move down 2 line heights
+doc.moveUp(1);
+doc.text('', 100, 200);  // move to specific position
+```
+
+### Fonts
+
+```js
+// Built-in fonts (no embedding needed)
+doc.font('Helvetica');
+doc.font('Helvetica-Bold');
+doc.font('Helvetica-Oblique');
+doc.font('Helvetica-BoldOblique');
+doc.font('Times-Roman');
+doc.font('Times-Bold');
+doc.font('Courier');
+doc.font('Symbol');
+doc.font('ZapfDingbats');
+
+// Custom font from file
+doc.font('./fonts/OpenSans-Regular.ttf');
+
+// Custom font from buffer
+const fontBuffer = fs.readFileSync('./fonts/MyFont.ttf');
+doc.font(fontBuffer);
+```
+
+### Colors
+
+```js
+doc.fillColor('#1F4E79');          // hex
+doc.fillColor('blue');             // CSS name
+doc.fillColor([255, 0, 0]);       // RGB array
+doc.fillColor('cmyk', 0, 0.5, 0, 0.2);  // CMYK
+
+doc.strokeColor('#000000');        // stroke (outline) color
+doc.opacity(0.8);                  // transparency
+```
+
+### Shapes & Graphics
+
+```js
+// Rectangle
+doc.rect(x, y, width, height).fill('#1F4E79');
+doc.rect(x, y, w, h).stroke('#000000');
+doc.rect(x, y, w, h).fillAndStroke('#DEEAF1', '#1F4E79');
+
+// Rounded rectangle
+doc.roundedRect(x, y, w, h, radius).fill('#DEEAF1');
+
+// Circle / ellipse
+doc.circle(cx, cy, radius).fill('#E74C3C');
+doc.ellipse(cx, cy, rx, ry).stroke();
+
+// Line
+doc.moveTo(x1, y1).lineTo(x2, y2).stroke();
+
+// Polygon
+doc.polygon([x1,y1], [x2,y2], [x3,y3]).fill('#2E75B6');
+
+// Path
+doc.path('M 100 100 L 200 100 L 200 200 Z').fill();
+
+// Line width and dash
+doc.lineWidth(2);
+doc.dash(5, { space: 3 });
+doc.undash();
+```
+
+### Images
+
+```js
+// From file
+doc.image('photo.jpg', x, y, { width: 200 });
+doc.image('logo.png', x, y, { width: 150, height: 75 });
+
+// From buffer
+const imgBuf = fs.readFileSync('image.png');
+doc.image(imgBuf, x, y, { fit: [300, 200], align: 'center', valign: 'center' });
+
+// Options
+doc.image('photo.jpg', x, y, {
+  width: 200,           // scale to width
+  height: 150,          // scale to height
+  fit: [200, 150],      // fit within box (maintain aspect ratio)
+  cover: [200, 150],    // cover box (crop)
+  align: 'center',      // horizontal alignment within fit box
+  valign: 'center',     // vertical alignment within fit box
+  link: 'https://example.com',
+  goTo: 2,              // go to page 2 on click
+});
+```
+
+### Headers & Footers (via bufferPages)
+
+```js
+const doc = new PDFDocument({ bufferPages: true });
+// ... add all content ...
+
+const totalPages = doc.bufferedPageRange().count;
+for (let i = 0; i < totalPages; i++) {
+  doc.switchToPage(i);
+  // Header
+  doc.fontSize(9).fillColor('#888888').text(
+    'My Report — Confidential',
+    50, 20, { align: 'left', width: doc.page.width - 100 }
+  );
+  // Footer
+  doc.text(
+    `Page ${i + 1} of ${totalPages}`,
+    50, doc.page.height - 30, { align: 'center', width: doc.page.width - 100 }
+  );
+}
+doc.flushPages();
+doc.end();
+```
+
+### Multiple Pages
+
+```js
+doc.addPage();                  // add page with same settings
+doc.addPage({ size: 'A4', layout: 'landscape' });
+doc.addPage({ margin: 30 });
+```
+
+### Tables (manual)
+
+```js
+function drawTable(doc, data, x, y, colWidths, rowHeight) {
+  const cols = data[0].length;
+  data.forEach((row, ri) => {
+    row.forEach((cell, ci) => {
+      const cx = x + colWidths.slice(0, ci).reduce((a, b) => a + b, 0);
+      const cy = y + ri * rowHeight;
+      const cw = colWidths[ci];
+      // Cell border
+      doc.rect(cx, cy, cw, rowHeight).stroke('#CCCCCC');
+      // Cell fill for header
+      if (ri === 0) doc.rect(cx, cy, cw, rowHeight).fill('#1F4E79');
+      // Cell text
+      doc.fillColor(ri === 0 ? '#FFFFFF' : '#000000')
+         .fontSize(10)
+         .text(String(cell), cx + 4, cy + (rowHeight - 12) / 2, {
+           width: cw - 8, height: rowHeight, align: 'left',
+         });
+    });
+  });
+}
+```
+
+### Links & Bookmarks
+
+```js
+doc.text('Click here', { link: 'https://example.com', underline: true });
+doc.goTo(x, y, width, height, 2);  // link to page 2
+
+// Named destination
+doc.addNamedDestination('section1');
+doc.goToNamedDestination('section1');
+```
+
+---
+
+## pdf-lib — Modifying Existing PDFs
+
+```js
+const { PDFDocument, rgb, degrees, StandardFonts } = require('pdf-lib');
+const fs = require('fs');
+
+async function modifyPdf() {
+  const pdfBytes = fs.readFileSync('input.pdf');
+  const pdfDoc = await PDFDocument.load(pdfBytes);
+
+  const pages = pdfDoc.getPages();
+  const firstPage = pages[0];
+  const { width, height } = firstPage.getSize();
+
+  const font = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
+
+  firstPage.drawText('Added by pdf-lib', {
+    x: 50, y: height - 50,
+    size: 16,
+    font,
+    color: rgb(0.12, 0.31, 0.47),
+  });
+
+  const savedBytes = await pdfDoc.save();
+  fs.writeFileSync('output.pdf', savedBytes);
+}
+```
+
+### Drawing on Pages (pdf-lib)
+
+```js
+const { PDFDocument, rgb, StandardFonts, degrees } = require('pdf-lib');
+
+// Rectangle
+page.drawRectangle({ x: 50, y: 100, width: 200, height: 80,
+  color: rgb(0.87, 0.93, 0.95), borderColor: rgb(0.12, 0.31, 0.47), borderWidth: 2 });
+
+// Line
+page.drawLine({ start: { x: 50, y: 500 }, end: { x: 550, y: 500 },
+  thickness: 1, color: rgb(0.8, 0.8, 0.8) });
+
+// Ellipse
+page.drawEllipse({ x: 300, y: 300, xScale: 100, yScale: 60,
+  color: rgb(0.91, 0.30, 0.24) });
+
+// Rotated text
+page.drawText('Watermark', {
+  x: 150, y: 300, size: 60,
+  font, color: rgb(0.8, 0.8, 0.8),
+  opacity: 0.3, rotate: degrees(45),
+});
+```
+
+### Adding Pages (pdf-lib)
+
+```js
+// Add blank page
+const page = pdfDoc.addPage([595, 842]);  // A4 in points
+const page2 = pdfDoc.insertPage(0);      // insert at position 0
+
+// Copy page from another doc
+const donor = await PDFDocument.load(fs.readFileSync('other.pdf'));
+const [copiedPage] = await pdfDoc.copyPages(donor, [0]);
+pdfDoc.addPage(copiedPage);
+```
+
+### Merging PDFs
+
+```js
+async function mergePdfs(paths, outputPath) {
+  const mergedDoc = await PDFDocument.create();
+  for (const p of paths) {
+    const doc = await PDFDocument.load(fs.readFileSync(p));
+    const pages = await mergedDoc.copyPages(doc, doc.getPageIndices());
+    pages.forEach((pg) => mergedDoc.addPage(pg));
+  }
+  fs.writeFileSync(outputPath, await mergedDoc.save());
+}
+```
+
+### Embedding Images (pdf-lib)
+
+```js
+const pngImage = await pdfDoc.embedPng(fs.readFileSync('logo.png'));
+const jpgImage = await pdfDoc.embedJpg(fs.readFileSync('photo.jpg'));
+
+const dims = pngImage.scale(0.5);  // scale by 50%
+page.drawImage(pngImage, { x: 50, y: 400, width: dims.width, height: dims.height });
+```
+
+### Metadata (pdf-lib)
+
+```js
+pdfDoc.setTitle('My Report');
+pdfDoc.setAuthor('Dreamcobots');
+pdfDoc.setSubject('Quarterly Analysis');
+pdfDoc.setKeywords(['report', 'q4', '2024']);
+pdfDoc.setProducer('DreamCo Technologies');
+pdfDoc.setCreator('pdfkit/pdf-lib');
+pdfDoc.setCreationDate(new Date());
+pdfDoc.setModificationDate(new Date());
+```
+
+---
+
+## Choosing Between PDFKit and pdf-lib
+
+| Feature | PDFKit | pdf-lib |
+|---------|--------|---------|
+| Create new PDFs | ✅ Best choice | ✅ |
+| Modify existing PDFs | ❌ | ✅ Best choice |
+| Fill forms | ❌ | ✅ |
+| Streaming output | ✅ | ❌ |
+| Custom fonts | ✅ | ✅ (with fontkit) |
+| Charts/complex layouts | Manual | Manual |
+| Merge PDFs | ❌ | ✅ |

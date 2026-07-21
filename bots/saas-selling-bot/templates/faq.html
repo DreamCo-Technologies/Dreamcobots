@@ -1,0 +1,115 @@
+{% extends "base.html" %}
+{% block title %}FAQ — DreamCobots{% endblock %}
+
+{% block content %}
+<div class="max-w-3xl mx-auto px-4 py-12">
+  <h1 class="text-3xl font-bold mb-2">❓ FAQ & Live Chat Support</h1>
+  <p class="text-gray-500 mb-8">
+    Have a question? Ask our AI assistant below, or browse common questions.
+  </p>
+
+  <!-- Chat widget -->
+  <div class="bg-white rounded-2xl shadow mb-10 overflow-hidden" id="chat-section">
+    <div class="px-5 py-3 gradient-hero text-white flex items-center gap-2">
+      <span>🤖</span>
+      <span class="font-semibold text-sm">DreamCobots Assistant</span>
+      <span class="ml-auto text-xs text-sky-200">Keyword NLP · Free Tier</span>
+    </div>
+
+    <!-- Message thread -->
+    <div id="chat-messages" class="h-64 overflow-y-auto px-5 py-4 space-y-3 bg-gray-50">
+      <div class="flex justify-start">
+        <span class="bg-white border border-gray-200 rounded-xl px-3 py-2 text-sm max-w-xs shadow-sm">
+          Hi! 👋 I'm the DreamCobots assistant. Ask me anything about our services, pricing, or demos.
+        </span>
+      </div>
+    </div>
+
+    <!-- Input -->
+    <div class="px-5 py-3 border-t border-gray-100 flex gap-2">
+      <input id="chat-input" type="text" placeholder="Type a question…"
+             class="flex-1 border border-gray-300 rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-sky-400"/>
+      <button id="chat-send"
+              class="gradient-hero text-white px-4 py-2 rounded-lg text-sm font-medium hover:opacity-90 transition">
+        Send
+      </button>
+    </div>
+  </div>
+
+  <!-- FAQ accordion -->
+  <h2 class="text-xl font-bold mb-4">Common Questions</h2>
+  <div class="space-y-3" id="faq-list">
+    {% set faqs = [
+      ("How much does a custom bot cost?", "Pricing starts at $99/month for the Starter plan. Custom bots are available on the Professional ($299/mo) and Enterprise (custom) plans. All include a 14-day free trial."),
+      ("Do I need technical skills to use DreamCobots?", "No! We handle all the technical setup. You just describe what you want to automate, and our team builds and deploys it for you."),
+      ("How long does deployment take?", "Most bots are deployed within 2-4 weeks. API integrations and UI templates can be delivered even faster — sometimes in just 5-7 days."),
+      ("Can I try before I buy?", "Yes! Every service on this site has an interactive demo you can try right now for free. We also offer a 14-day free trial on all paid plans."),
+      ("What APIs do you integrate with?", "We integrate with Stripe, PayPal, Twilio, Slack, HubSpot, Salesforce, Google Workspace, Airtable, and 30+ others. Custom APIs are also supported."),
+      ("Is my data secure?", "Absolutely. All data is encrypted at rest (AES-256) and in transit (TLS 1.3). We are GDPR-compliant and never sell or share your data."),
+      ("Do you offer white-label solutions?", "Yes! Enterprise clients can white-label all bots and dashboards with their own branding. Contact us for details."),
+    ] %}
+    {% for q, a in faqs %}
+    <details class="bg-white rounded-xl shadow p-4 group">
+      <summary class="font-medium text-sm cursor-pointer flex justify-between items-center">
+        {{ q }}
+        <span class="text-sky-500 group-open:rotate-180 transition-transform">▼</span>
+      </summary>
+      <p class="text-gray-500 text-sm mt-3 leading-relaxed">{{ a }}</p>
+    </details>
+    {% endfor %}
+  </div>
+
+  <!-- CTA -->
+  <div class="mt-10 text-center">
+    <p class="text-gray-500 mb-3">Didn't find your answer?</p>
+    <a href="/lead-gen" class="gradient-hero text-white font-semibold px-6 py-3 rounded-full inline-block hover:opacity-90 transition">
+      Contact Us
+    </a>
+  </div>
+</div>
+
+<script>
+  const input = document.getElementById('chat-input');
+  const sendBtn = document.getElementById('chat-send');
+  const messages = document.getElementById('chat-messages');
+
+  function appendMessage(text, isUser) {
+    const div = document.createElement('div');
+    div.className = 'flex ' + (isUser ? 'justify-end' : 'justify-start');
+    const span = document.createElement('span');
+    span.className = isUser
+      ? 'bg-sky-500 text-white rounded-xl px-3 py-2 text-sm max-w-xs shadow-sm'
+      : 'bg-white border border-gray-200 rounded-xl px-3 py-2 text-sm max-w-xs shadow-sm';
+    span.textContent = text;
+    div.appendChild(span);
+    messages.appendChild(div);
+    messages.scrollTop = messages.scrollHeight;
+  }
+
+  async function sendMessage() {
+    const text = input.value.trim();
+    if (!text) return;
+    appendMessage(text, true);
+    input.value = '';
+    sendBtn.disabled = true;
+
+    try {
+      const res = await fetch('/api/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message: text }),
+      });
+      const data = await res.json();
+      appendMessage(data.response || data.error, false);
+    } catch {
+      appendMessage('Sorry, something went wrong. Please try again.', false);
+    } finally {
+      sendBtn.disabled = false;
+      input.focus();
+    }
+  }
+
+  sendBtn.addEventListener('click', sendMessage);
+  input.addEventListener('keydown', e => { if (e.key === 'Enter') sendMessage(); });
+</script>
+{% endblock %}

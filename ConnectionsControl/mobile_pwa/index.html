@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#0a0f1e" />
+  <title>DreamCobots Control</title>
+  <link rel="manifest" href="manifest.json" />
+  <style>
+    :root {
+      --bg: #0a0f1e;
+      --card: #111827;
+      --accent: #00aaff;
+      --danger: #ff4444;
+      --success: #00cc88;
+      --text: #e2e8f0;
+      --muted: #94a3b8;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      min-height: 100vh;
+      padding: 1rem;
+    }
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 0;
+      border-bottom: 1px solid #1e293b;
+      margin-bottom: 1.5rem;
+    }
+    header h1 { font-size: 1.4rem; color: var(--accent); }
+    .badge {
+      background: var(--success);
+      color: #000;
+      padding: 2px 10px;
+      border-radius: 12px;
+      font-size: 0.75rem;
+      font-weight: 600;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+    .card {
+      background: var(--card);
+      border-radius: 12px;
+      padding: 1rem;
+      border: 1px solid #1e293b;
+    }
+    .card .label { color: var(--muted); font-size: 0.75rem; margin-bottom: 4px; }
+    .card .value { font-size: 1.6rem; font-weight: 700; color: var(--accent); }
+    .card .value.alert { color: var(--danger); }
+    .platforms { margin-bottom: 1.5rem; }
+    .platforms h2 { font-size: 1rem; margin-bottom: 0.75rem; color: var(--muted); }
+    .platform-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: var(--card);
+      border-radius: 8px;
+      padding: 0.75rem 1rem;
+      margin-bottom: 0.5rem;
+      border: 1px solid #1e293b;
+    }
+    .platform-item .name { font-size: 0.9rem; }
+    .dot {
+      width: 10px; height: 10px;
+      border-radius: 50%;
+      background: var(--success);
+    }
+    .dot.inactive { background: var(--muted); }
+    .kill-switch-btn {
+      width: 100%;
+      padding: 1rem;
+      background: var(--danger);
+      color: #fff;
+      border: none;
+      border-radius: 12px;
+      font-size: 1.1rem;
+      font-weight: 700;
+      cursor: pointer;
+      letter-spacing: 1px;
+      transition: opacity 0.2s;
+    }
+    .kill-switch-btn:active { opacity: 0.8; }
+    .kill-switch-btn.inactive {
+      background: var(--success);
+    }
+    footer {
+      margin-top: 1.5rem;
+      text-align: center;
+      color: var(--muted);
+      font-size: 0.75rem;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>🤖 DreamCobots</h1>
+    <span class="badge" id="status-badge">ONLINE</span>
+  </header>
+
+  <section class="grid">
+    <div class="card">
+      <div class="label">Active Bots</div>
+      <div class="value" id="active-bots">12</div>
+    </div>
+    <div class="card">
+      <div class="label">Alerts</div>
+      <div class="value alert" id="alerts">3</div>
+    </div>
+    <div class="card">
+      <div class="label">Throughput</div>
+      <div class="value" id="throughput">847/hr</div>
+    </div>
+    <div class="card">
+      <div class="label">Uptime</div>
+      <div class="value" id="uptime">99.9%</div>
+    </div>
+  </section>
+
+  <section class="platforms">
+    <h2>CONNECTED PLATFORMS</h2>
+    <div class="platform-item"><span class="name">Telegram</span><span class="dot" id="dot-telegram"></span></div>
+    <div class="platform-item"><span class="name">Slack</span><span class="dot" id="dot-slack"></span></div>
+    <div class="platform-item"><span class="name">Discord</span><span class="dot inactive" id="dot-discord"></span></div>
+    <div class="platform-item"><span class="name">Webhooks</span><span class="dot" id="dot-webhooks"></span></div>
+    <div class="platform-item"><span class="name">Zoom</span><span class="dot inactive" id="dot-zoom"></span></div>
+    <div class="platform-item"><span class="name">Roku TV</span><span class="dot" id="dot-roku"></span></div>
+    <div class="platform-item"><span class="name">SMS</span><span class="dot inactive" id="dot-sms"></span></div>
+    <div class="platform-item"><span class="name">REST API</span><span class="dot" id="dot-api"></span></div>
+  </section>
+
+  <button class="kill-switch-btn" id="kill-btn" onclick="toggleKillSwitch()">
+    🚨 ACTIVATE KILL SWITCH
+  </button>
+
+  <footer>
+    <p>DreamCobots ConnectionsControl PWA &bull; GLOBAL AI SOURCES FLOW</p>
+    <p id="last-updated"></p>
+  </footer>
+
+  <script>
+    let killActive = false;
+
+    function toggleKillSwitch() {
+      killActive = !killActive;
+      const btn = document.getElementById('kill-btn');
+      const badge = document.getElementById('status-badge');
+      if (killActive) {
+        btn.textContent = '✅ DEACTIVATE KILL SWITCH';
+        btn.classList.add('inactive');
+        badge.textContent = 'HALTED';
+        badge.style.background = '#ff4444';
+        badge.style.color = '#fff';
+      } else {
+        btn.textContent = '🚨 ACTIVATE KILL SWITCH';
+        btn.classList.remove('inactive');
+        badge.textContent = 'ONLINE';
+        badge.style.background = '';
+        badge.style.color = '';
+      }
+    }
+
+    function updateTimestamp() {
+      document.getElementById('last-updated').textContent =
+        'Last updated: ' + new Date().toLocaleTimeString();
+    }
+
+    updateTimestamp();
+    setInterval(updateTimestamp, 30000);
+  </script>
+</body>
+</html>
