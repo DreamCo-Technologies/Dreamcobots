@@ -4,8 +4,10 @@
   const links = [
     { href: 'dashboard.html', label: '📊 Dashboard' },
     { href: 'buddy.html', label: '🧠 Buddy Bot' },
+    { href: 'studio.html', label: '🎮 Creative Studio' },
     { href: 'divisions.html', label: '🏛️ Divisions' },
     { href: 'bots.html', label: '🤖 Bot Fleet' },
+    { href: 'system-map.html', label: '🗺️ Repository Map' },
     { href: 'chat.html', label: '💬 Chat' },
     { href: 'autonomy.html', label: '⚡ Autonomy' },
     { href: 'ecosystem.html', label: '🌐 Ecosystem' },
@@ -27,7 +29,7 @@
 <nav>
   <div class="container">
     <div class="nav-inner">
-      <a href="index.html" class="nav-brand">
+      <a href="buddy.html" class="nav-brand">
         <div class="nav-logo">⚡</div>
         <span>DreamCo <strong>Empire OS</strong></span>
       </a>
@@ -36,19 +38,40 @@
         <div class="nav-more">
           <a href="#" class="nav-more-btn" onclick="toggleMoreMenu(event)">More ▾</a>
           <div class="nav-more-menu" id="nav-more-menu">
-            ${links.slice(9).map(l=>`<a href="${l.href}">${l.label}</a>`).join('')}
+            ${links.slice(9).map(l=>`<a href="${l.href}" class="${current===l.href?'nav-active':''}">${l.label}</a>`).join('')}
           </div>
         </div>
       </div>
       <div class="nav-cta">
         <a href="pricing.html" class="btn btn-outline btn-sm">Plans</a>
-        <a href="chat.html" class="btn btn-primary btn-sm">🚀 Launch App</a>
+        <a href="buddy.html" class="btn btn-primary btn-sm">Open Buddy</a>
       </div>
     </div>
   </div>
-</nav>`;
+</nav>
+<div class="site-preview-notice" role="status">
+  <div class="container">
+    <strong>Repository preview</strong>
+    <span>Generated inventory is real repository data. Revenue, payment, task, and autonomy screens are demos unless connected to an approved backend.</span>
+    <a href="system-map.html">View verified status</a>
+  </div>
+</div>`;
   const placeholder = document.getElementById('nav-placeholder');
   if (placeholder) placeholder.outerHTML = navHTML;
+
+  if (!document.querySelector('link[rel="icon"]')) {
+    const icon = document.createElement('link');
+    icon.rel = 'icon';
+    icon.href = 'assets/images/favicon.svg';
+    icon.type = 'image/svg+xml';
+    document.head.appendChild(icon);
+  }
+  if (!document.querySelector('link[rel="manifest"]')) {
+    const manifest = document.createElement('link');
+    manifest.rel = 'manifest';
+    manifest.href = 'manifest.webmanifest';
+    document.head.appendChild(manifest);
+  }
 
   const style = document.createElement('style');
   style.textContent = `

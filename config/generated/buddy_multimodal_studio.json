@@ -1,0 +1,99 @@
+{
+  "capabilities": [
+    "code responsive browser games",
+    "build curriculum-aligned school simulations",
+    "build parent and family learning videos",
+    "capture adult user voice and image locally",
+    "enforce voice and likeness consent",
+    "prepare local or optional model rendering",
+    "generate captions, lesson checks, and accessibility tests",
+    "generate portable project code and production manifests"
+  ],
+  "cli": [
+    "buddy studio-refresh",
+    "buddy studio-report",
+    "buddy open-studio"
+  ],
+  "media_truth_states": [
+    "not_requested",
+    "consent_verified_pending_render",
+    "media_engine_configuration_required",
+    "rendered"
+  ],
+  "name": "Buddy Creative Studio",
+  "project_types": [
+    {
+      "id": "game",
+      "native_routes": [
+        {
+          "bot": "games-app-bot",
+          "role": "game loop, progression, and packaging"
+        },
+        {
+          "bot": "game-ai-player",
+          "role": "play testing and difficulty checks"
+        },
+        {
+          "bot": "game-analytics",
+          "role": "completion, retention, and balance metrics"
+        }
+      ]
+    },
+    {
+      "id": "school_simulation",
+      "native_routes": [
+        {
+          "bot": "games-app-bot",
+          "role": "interactive learning game runtime"
+        },
+        {
+          "bot": "simulation-world-builder",
+          "role": "deterministic scenario engine"
+        },
+        {
+          "bot": "video-script",
+          "role": "lesson narration and scene script"
+        }
+      ]
+    },
+    {
+      "id": "parent_learning_video",
+      "native_routes": [
+        {
+          "bot": "video-script",
+          "role": "age-aware lesson script and pacing"
+        },
+        {
+          "bot": "professional-video-editing-bot",
+          "role": "timeline and export plan"
+        },
+        {
+          "bot": "photo-video-app-bot",
+          "role": "captions, moderation, and asset checks"
+        }
+      ]
+    }
+  ],
+  "release_guardrails": [
+    "self-owned adult voice and likeness only",
+    "no voice or likeness cloning of minors",
+    "synthetic-media label cannot be disabled",
+    "raw biometric media stays local or in an encrypted owner vault",
+    "consent can be revoked",
+    "publishing requires owner approval",
+    "outside models are optional"
+  ],
+  "schema": "dreamco.buddy_multimodal_studio.v1",
+  "shared_routes": [
+    {
+      "bot": "buddy-trust-bot",
+      "role": "consent, revocation, audit, and synthetic-media labeling"
+    },
+    {
+      "bot": "adaptive-learning",
+      "role": "learning objectives and difficulty tuning"
+    }
+  ],
+  "status": "production_packet_and_local_prototype_ready",
+  "website": "website/studio.html"
+}

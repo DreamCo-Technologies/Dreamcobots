@@ -1,0 +1,63 @@
+name: Deploy Buddy Website
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - ".github/workflows/deploy-buddy-pages.yml"
+      - "website/**"
+      - "config/master_bot_registry.json"
+      - "config/buddy-mcp-tool-registry.json"
+      - "config/generated/**"
+      - "tools/build_buddy_public_site.py"
+      - "tools/sync_buddy_website_build.py"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: buddy-github-pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - name: Set up Python
+        uses: actions/setup-python@v7
+        with:
+          python-version: "3.13"
+
+      - name: Run deployment preflight
+        run: python3 tools/build_buddy_public_site.py --check
+
+      - name: Configure GitHub Pages
+        uses: actions/configure-pages@v6
+
+      - name: Upload public website only
+        uses: actions/upload-pages-artifact@v5
+        with:
+          path: website
+          include-hidden-files: true
+
+  deploy:
+    if: github.ref == 'refs/heads/main'
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v5
