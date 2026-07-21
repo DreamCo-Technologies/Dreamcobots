@@ -77,6 +77,10 @@ def main() -> int:
     route_parser.add_argument("--mode", choices=["free_first", "local_only", "premium_optional", "quality_first"], default="free_first")
     sub.add_parser("router-refresh", help="Regenerate the professional API router and free model library.")
     sub.add_parser("free-models", help="Print the free model/task library JSON.")
+    sub.add_parser("native-coverage", help="Regenerate Buddy's repo-native bot coverage map.")
+    sub.add_parser("native-report", help="Print Buddy's repo-native bot coverage JSON.")
+    sub.add_parser("history-audit", help="Scan local Git clones, branches, and reflogs for recoverable work.")
+    sub.add_parser("history-report", help="Print Buddy's Git recovery audit JSON.")
 
     args = parser.parse_args()
     command = args.command or "status"
@@ -115,6 +119,14 @@ def main() -> int:
         return run(["python3", "tools/generate_buddy_professional_api_router.py"])
     if command == "free-models":
         return show_json(ROOT / "config" / "generated" / "buddy_free_model_task_library.json")
+    if command == "native-coverage":
+        return run(["python3", "tools/generate_buddy_native_bot_coverage.py"])
+    if command == "native-report":
+        return show_json(ROOT / "config" / "generated" / "buddy_native_bot_coverage.json")
+    if command == "history-audit":
+        return run(["python3", "tools/generate_buddy_git_recovery_audit.py"])
+    if command == "history-report":
+        return show_json(ROOT / "config" / "generated" / "buddy_git_recovery_audit.json")
 
     parser.print_help()
     return 1
