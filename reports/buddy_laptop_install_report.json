@@ -33,7 +33,7 @@
         "--status"
       ],
       "ok": true,
-      "output_tail": "{\n  \"checked_at\": \"2026-07-21T04:00:17Z\",\n  \"latest_generated_at\": \"2026-07-17T16:42:47Z\",\n  \"latest_profile\": \"aggressive\",\n  \"latest_report\": \"reports/local_buddy_runner_report.json\",\n  \"latest_summary\": {\n    \"commands\": 43,\n    \"failed\": 0,\n    \"passed\": 0,\n    \"planned\": 43,\n    \"skipped\": 0,\n    \"timed_out\": 0\n  },\n  \"pid\": null,\n  \"pid_file\": \".local_buddy_runner.pid\",\n  \"running\": false,\n  \"schema\": \"dreamco.local_buddy_runner_status.v1\",\n  \"stdout_log\": \"logs/local_buddy_runner/local_buddy_runner.out\"\n}\n",
+      "output_tail": "{\n  \"checked_at\": \"2026-07-21T04:04:27Z\",\n  \"latest_generated_at\": \"2026-07-17T16:42:47Z\",\n  \"latest_profile\": \"aggressive\",\n  \"latest_report\": \"reports/local_buddy_runner_report.json\",\n  \"latest_summary\": {\n    \"commands\": 43,\n    \"failed\": 0,\n    \"passed\": 0,\n    \"planned\": 43,\n    \"skipped\": 0,\n    \"timed_out\": 0\n  },\n  \"pid\": null,\n  \"pid_file\": \".local_buddy_runner.pid\",\n  \"running\": false,\n  \"schema\": \"dreamco.local_buddy_runner_status.v1\",\n  \"stdout_log\": \"logs/local_buddy_runner/local_buddy_runner.out\"\n}\n",
       "returncode": 0
     },
     {
@@ -45,6 +45,16 @@
       ],
       "ok": true,
       "output_tail": "{\n    \"schema\": \"dreamco.buddy_laptop_safety.v1\",\n    \"mission\": \"Keep Buddy useful on the owner laptop without freezing, leaking secrets, spending money, damaging files, or taking live account actions without approval.\",\n    \"resource_limits\": {\n        \"min_free_disk_gb\": 5,\n        \"max_load_average_1m\": 10,\n        \"min_battery_percent\": 15,\n        \"max_command_seconds_cap\": 300,\n        \"min_background_sleep_minutes\": 15,\n        \"background_default_sleep_minutes\": 60\n    },\n    \"secret_key_policy\": {\n        \"store_values_in_repository\": false,\n        \"store_values_in_reports\": false,\n        \"print_values_to_logs\": false,\n        \"recommended_local_storage\": [\n            \"macOS Keychain\",\n            \"environment variables\",\n            \"provider dashboards\",\n            \"GitHub Actions secrets for CI only\"\n        ],\n        \"buddy_can_do\": [\n            \"detect missing secret names\",\n            \"create setup checklists\",\n            \"prepare rotation plans\",\n            \"prepare masked status reports\",\n            \"verify that code reads secrets from environment variables\"\n        ],\n        \"buddy_cannot_do_without_owner_approval\": [\n            \"create live credentials\",\n            \"change live credentials\",\n            \"paste secrets into third-party forms\",\n            \"commit secrets\",\n            \"email or message secrets\",\n            \"store raw secrets in generated files\"\n        ]\n    },\n    \"app_task_policy\": {\n        \"safe_by_default\": [\n            \"open local dashboard\",\n            \"scan repository\",\n            \"prepare signup packets\",\n            \"prepare account setup checklists\",\n            \"fill local test forms\",\n            \"draft support messages\",\n            \"draft pull request notes\",\n            \"run local tests\"\n        ],\n        \"approval_required\": [\n            \"submit signups\",\n            \"accept terms\",\n            \"grant repository or account access\",\n            \"connect payment accounts\",\n            \"send messages\",\n            \"publish content\",\n            \"deploy apps\",\n            \"buy domains\",\n            \"change billing\",\n            \"delete or overwrite user data\"\n        ]\n    },\n    \"damage_prevention\": [\n        \"Prefer dry runs and report generation before live action.\",\n        \"Stop background mode when disk, load, or battery safety checks fail.\",\n        \"Keep generated logs out of git.\",\n        \"Redact token-like values from command output before writing reports.\",\n        \"Require owner approval for any external account, money, credential, deploy, signup, outreach, social, legal, medical, credit, employment, tenant, or identity action.\"\n    ]\n}\n",
+      "returncode": 0
+    },
+    {
+      "command": [
+        "/Applications/Xcode.app/Contents/Developer/usr/bin/python3",
+        "tools/generate_buddy_autonomous_everything.py",
+        "--check"
+      ],
+      "ok": true,
+      "output_tail": "{\n  \"ok\": true,\n  \"bots\": 1331,\n  \"divisions\": 46\n}\n",
       "returncode": 0
     },
     {
@@ -67,7 +77,7 @@
     }
   ],
   "config_file": "config/buddy_laptop_install.json",
-  "generated_at": "2026-07-21T04:00:25Z",
+  "generated_at": "2026-07-21T04:04:55Z",
   "readme_file": "docs/BUDDY_LAPTOP_SETUP.md",
   "ready": true,
   "safety_file": "config/buddy_laptop_safety.json",

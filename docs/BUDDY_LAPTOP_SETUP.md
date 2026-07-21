@@ -46,6 +46,9 @@ Buddy is configured to run on this laptop as a local-first DreamCo command cente
 - laptop_safety: `config/buddy_laptop_safety.json`
 - runner_report: `reports/local_buddy_runner_report.json`
 - runner_log: `logs/local_buddy_runner/local_buddy_runner.out`
+- autonomous_everything: `config/generated/buddy_autonomous_everything.json`
+- autonomous_everything_report: `reports/BUDDY_AUTONOMOUS_EVERYTHING.md`
+- free_local_test_kit: `reports/buddy-free-local-test-kit.html`
 - bot_readiness: `config/generated/bot_end_to_end_readiness/index.json`
 - smoke_results: `reports/generated_bot_smoke_results.json`
 - unified_workforce: `config/buddy_unified_bot_workforce.json`

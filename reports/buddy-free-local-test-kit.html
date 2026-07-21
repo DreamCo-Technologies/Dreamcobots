@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Buddy Free Local Test Kit</title>
+  <style>
+    body { font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; margin: 0; background: #f7f7f4; color: #171717; }
+    main { max-width: 1040px; margin: 0 auto; padding: 32px 18px 56px; }
+    header { border-bottom: 2px solid #1f6f5b; padding-bottom: 20px; margin-bottom: 24px; }
+    h1 { font-size: 34px; margin: 0 0 10px; }
+    h2 { font-size: 20px; margin: 0 0 8px; }
+    section { background: #fff; border: 1px solid #d9d7ce; border-radius: 8px; padding: 18px; margin: 14px 0; }
+    pre { white-space: pre-wrap; background: #111; color: #f4f4f4; padding: 12px; border-radius: 6px; overflow-x: auto; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 12px; }
+    .metric { background: #e8f3ef; border: 1px solid #9cc8bb; border-radius: 8px; padding: 14px; }
+    .metric b { display: block; font-size: 28px; }
+  </style>
+</head>
+<body>
+  <main>
+    <header>
+      <h1>Buddy Free Local Test Kit</h1>
+      <p>Make Buddy testable in free/local-first mode before using paid services or live account actions.</p>
+    </header>
+    <div class="grid">
+      <div class="metric"><span>Bots Queued</span><b>1331</b></div>
+      <div class="metric"><span>Divisions Queued</span><b>46</b></div>
+      <div class="metric"><span>Default Cost Mode</span><b>Free</b></div>
+    </div>
+    <section><h2>Laptop setup verification</h2><p><strong>Cost:</strong> free_local</p><p>Buddy can validate local setup, safety policy, autonomy config, bot readiness, and smoke tests.</p><pre>python3 tools/setup_buddy_laptop.py</pre></section>
+<section><h2>Quick free sweep</h2><p><strong>Cost:</strong> free_local</p><p>Buddy can run low-cost reports and checks without cloud minutes.</p><pre>python3 tools/local_buddy_runner.py --profile cheap</pre></section>
+<section><h2>Autonomous everything catalog</h2><p><strong>Cost:</strong> free_local</p><p>Every connected bot/division is represented in the governed autonomy queue.</p><pre>python3 tools/generate_buddy_autonomous_everything.py --check</pre></section>
+<section><h2>Generated bot smoke tests</h2><p><strong>Cost:</strong> free_local</p><p>Generated bot contracts can be discovered and smoke-tested locally.</p><pre>python3 tools/run_generated_bot_smoke.py</pre></section>
+<section><h2>Dashboard TypeScript check</h2><p><strong>Cost:</strong> free_local</p><p>The dashboard code compiles with the bundled local runtime.</p><pre>PATH=/Users/mamas/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin:$PATH /Users/mamas/.cache/codex-runtimes/codex-primary-runtime/dependencies/bin/fallback/pnpm run check</pre></section>
+<section><h2>Open local dashboard</h2><p><strong>Cost:</strong> free_local</p><p>Buddy can be tested through the local app without deploying.</p><pre>PATH=/Users/mamas/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin:$PATH /Users/mamas/.cache/codex-runtimes/codex-primary-runtime/dependencies/bin/fallback/pnpm run dev</pre></section>
+    <section>
+      <h2>Approval Required Before Paid Or Live Actions</h2>
+      <ul><li>paid model calls</li>
+<li>production deploys</li>
+<li>domain purchases</li>
+<li>app-store submissions</li>
+<li>payment account changes</li>
+<li>customer charges, refunds, payouts, or transfers</li>
+<li>secret creation or rotation</li>
+<li>external account signups</li>
+<li>granting repository, cloud, payment, email, or social access</li>
+<li>sending outreach, calls, messages, proposals, bids, or social posts</li></ul>
+    </section>
+  </main>
+</body>
+</html>

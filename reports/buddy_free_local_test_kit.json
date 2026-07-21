@@ -1,0 +1,97 @@
+{
+  "current_inventory": {
+    "bots_connected_to_queue": 1331,
+    "divisions_connected_to_queue": 46,
+    "resource_limits": {
+      "background_default_sleep_minutes": 60,
+      "max_command_seconds_cap": 300,
+      "max_load_average_1m": 10,
+      "min_background_sleep_minutes": 15,
+      "min_battery_percent": 15,
+      "min_free_disk_gb": 5
+    },
+    "safe_local_capabilities": [
+      "scan and summarize the whole repository",
+      "coordinate all registered bots through Buddy",
+      "run generated bot smoke tests",
+      "run local TypeScript/build/Python/JSON checks",
+      "generate readiness, capability, source-fusion, cost, storage, and revenue-practice reports",
+      "prepare app, website, game, course, simulation, workflow, API, webhook, image, voice, and bot-builder packets",
+      "prepare safe commits and pull request packets",
+      "create repair plans for failed checks",
+      "store only useful reports, test evidence, approvals, and reusable fix recipes"
+    ]
+  },
+  "files_to_open": {
+    "html": "reports/buddy-free-local-test-kit.html",
+    "json": "reports/buddy_free_local_test_kit.json",
+    "markdown": "reports/BUDDY_FREE_LOCAL_TEST_KIT.md"
+  },
+  "free_first_policy": {
+    "default_mode": "free_local_first",
+    "live_actions_require_approval": true,
+    "store_secret_values_in_repo": false,
+    "use_cloud_by_default": false,
+    "use_github_actions_by_default": false,
+    "use_paid_model_calls_by_default": false
+  },
+  "free_tests": [
+    {
+      "command": "python3 tools/setup_buddy_laptop.py",
+      "cost": "free_local",
+      "id": "setup",
+      "name": "Laptop setup verification",
+      "proves": "Buddy can validate local setup, safety policy, autonomy config, bot readiness, and smoke tests."
+    },
+    {
+      "command": "python3 tools/local_buddy_runner.py --profile cheap",
+      "cost": "free_local",
+      "id": "quick_sweep",
+      "name": "Quick free sweep",
+      "proves": "Buddy can run low-cost reports and checks without cloud minutes."
+    },
+    {
+      "command": "python3 tools/generate_buddy_autonomous_everything.py --check",
+      "cost": "free_local",
+      "id": "autonomy_catalog",
+      "name": "Autonomous everything catalog",
+      "proves": "Every connected bot/division is represented in the governed autonomy queue."
+    },
+    {
+      "command": "python3 tools/run_generated_bot_smoke.py",
+      "cost": "free_local",
+      "id": "generated_bot_smoke",
+      "name": "Generated bot smoke tests",
+      "proves": "Generated bot contracts can be discovered and smoke-tested locally."
+    },
+    {
+      "command": "PATH=/Users/mamas/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin:$PATH /Users/mamas/.cache/codex-runtimes/codex-primary-runtime/dependencies/bin/fallback/pnpm run check",
+      "cost": "free_local",
+      "id": "typecheck",
+      "name": "Dashboard TypeScript check",
+      "proves": "The dashboard code compiles with the bundled local runtime."
+    },
+    {
+      "command": "PATH=/Users/mamas/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin:$PATH /Users/mamas/.cache/codex-runtimes/codex-primary-runtime/dependencies/bin/fallback/pnpm run dev",
+      "cost": "free_local",
+      "id": "dashboard",
+      "name": "Open local dashboard",
+      "proves": "Buddy can be tested through the local app without deploying."
+    }
+  ],
+  "generated_at": "2026-07-21T04:09:01Z",
+  "mission": "Make Buddy testable in free/local-first mode before using paid services or live account actions.",
+  "paid_or_live_blocks": [
+    "paid model calls",
+    "production deploys",
+    "domain purchases",
+    "app-store submissions",
+    "payment account changes",
+    "customer charges, refunds, payouts, or transfers",
+    "secret creation or rotation",
+    "external account signups",
+    "granting repository, cloud, payment, email, or social access",
+    "sending outreach, calls, messages, proposals, bids, or social posts"
+  ],
+  "schema": "dreamco.buddy_free_local_test_kit.v1"
+}

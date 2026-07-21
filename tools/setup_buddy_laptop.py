@@ -90,6 +90,9 @@ def build_config() -> dict[str, Any]:
             "laptop_safety": "config/buddy_laptop_safety.json",
             "runner_report": "reports/local_buddy_runner_report.json",
             "runner_log": "logs/local_buddy_runner/local_buddy_runner.out",
+            "autonomous_everything": "config/generated/buddy_autonomous_everything.json",
+            "autonomous_everything_report": "reports/BUDDY_AUTONOMOUS_EVERYTHING.md",
+            "free_local_test_kit": "reports/buddy-free-local-test-kit.html",
             "bot_readiness": "config/generated/bot_end_to_end_readiness/index.json",
             "smoke_results": "reports/generated_bot_smoke_results.json",
             "unified_workforce": "config/buddy_unified_bot_workforce.json",
@@ -156,6 +159,8 @@ def main() -> int:
     commands = [
         run([sys.executable, "tools/local_buddy_runner.py", "--status"]),
         run([sys.executable, "-m", "json.tool", str(SAFETY_FILE.relative_to(ROOT))]),
+        run([sys.executable, "tools/generate_buddy_autonomous_everything.py", "--check"]),
+        run([sys.executable, "tools/generate_buddy_free_local_test_kit.py", "--check"]),
         run([sys.executable, "tools/generate_bot_end_to_end_readiness.py"]),
         run([sys.executable, "tools/run_generated_bot_smoke.py"]),
     ]
