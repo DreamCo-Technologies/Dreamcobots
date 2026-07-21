@@ -127,6 +127,11 @@ def main() -> int:
         print(json.dumps({"ok": True, **payload["summary"]}, indent=2, sort_keys=True))
         return 0
 
+    if not NATIVE_COVERAGE.exists() and not BOT_SPRINT.exists():
+        raise SystemExit(
+            "Refusing to replace the public status with zeros: native coverage and bot sprint inputs are missing."
+        )
+
     WEBSITE_DATA.parent.mkdir(parents=True, exist_ok=True)
     WEBSITE_REPORT.parent.mkdir(parents=True, exist_ok=True)
     payload = load_payload()
