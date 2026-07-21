@@ -1,5 +1,7 @@
 import type { Express } from "express";
 import type { Server } from "http";
+import { readFileSync } from "fs";
+import { resolve } from "path";
 import OpenAI from "openai";
 import { z } from "zod";
 import { sql } from "drizzle-orm";
@@ -141,6 +143,14 @@ async function getOfflineDeals(): Promise<OfflineDeal[]> {
 
 async function saveOfflineDeals(deals: OfflineDeal[]) {
   await storage.upsertSetting(OFFLINE_DEALS_SETTING, deals.slice(0, 500));
+}
+
+function readRepoJson(relativePath: string) {
+  try {
+    return JSON.parse(readFileSync(resolve(process.cwd(), relativePath), "utf8"));
+  } catch (error: any) {
+    return { error: `Unable to read ${relativePath}`, detail: error.message };
+  }
 }
 
 async function ensureSeeded() {
@@ -1186,6 +1196,19 @@ export async function registerRoutes(
     } catch (e: any) {
       res.status(500).json({ error: e.message });
     }
+  });
+
+  // ===== BUDDY CREATOR STUDIO, RESTORED BOT FAMILIES, AND MODEL CHOICE =====
+  app.get("/api/buddy/creator-studio", async (_req, res) => {
+    res.json(readRepoJson("config/buddy_creator_studio.json"));
+  });
+
+  app.get("/api/buddy/model-choices", async (_req, res) => {
+    res.json(readRepoJson("config/buddy_user_model_choice_registry.json"));
+  });
+
+  app.get("/api/buddy/restored-bot-families", async (_req, res) => {
+    res.json(readRepoJson("config/buddy_restored_bot_family_bridge.json"));
   });
 
   // ===== REVOLUTIONARY: MEMORY SYSTEM =====

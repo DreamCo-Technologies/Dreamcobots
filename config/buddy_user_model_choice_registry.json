@@ -1,0 +1,254 @@
+{
+  "schema": "dreamco.buddy_user_model_choice_registry.v1",
+  "generated_at": "2026-07-21T02:48:28.501275+00:00",
+  "mission": "Let users choose the AI provider/model family Buddy uses, while Buddy explains strengths, weaknesses, cost posture, and safety gates.",
+  "currentness_policy": "Provider model IDs, availability, pricing, and rate limits change often. Verify official docs before production routing.",
+  "selection_modes": [
+    "user_choice",
+    "buddy_recommended",
+    "budget_first",
+    "quality_first",
+    "privacy_first",
+    "creative_media",
+    "coding_debugging"
+  ],
+  "default_choice": "buddy_recommended",
+  "choices": [
+    {
+      "id": "openai",
+      "provider": "OpenAI",
+      "modalities": [
+        "text",
+        "code",
+        "vision",
+        "image",
+        "realtime_voice",
+        "tools"
+      ],
+      "best_for": [
+        "coding",
+        "debugging",
+        "agent tools",
+        "image generation",
+        "multimodal Buddy chat"
+      ],
+      "watchouts": [
+        "verify current model IDs and prices before production",
+        "use budget caps for paid calls"
+      ],
+      "docs": "https://platform.openai.com/docs/models"
+    },
+    {
+      "id": "google_gemini",
+      "provider": "Google Gemini",
+      "modalities": [
+        "text",
+        "code",
+        "vision",
+        "audio",
+        "video",
+        "long_context"
+      ],
+      "best_for": [
+        "course building",
+        "long documents",
+        "video understanding",
+        "budget Flash-class routing"
+      ],
+      "watchouts": [
+        "verify current model IDs in AI Studio before production",
+        "privacy review before uploading client media"
+      ],
+      "docs": "https://ai.google.dev/gemini-api/docs/models"
+    },
+    {
+      "id": "anthropic_claude",
+      "provider": "Anthropic Claude",
+      "modalities": [
+        "text",
+        "code",
+        "vision",
+        "long_context",
+        "computer_use"
+      ],
+      "best_for": [
+        "careful reasoning",
+        "long-form review",
+        "policy/safety review",
+        "complex refactors"
+      ],
+      "watchouts": [
+        "tool execution must be explicitly wired",
+        "current model IDs and rate limits change"
+      ],
+      "docs": "https://docs.anthropic.com/en/docs/about-claude/models"
+    },
+    {
+      "id": "meta_llama",
+      "provider": "Meta Llama",
+      "modalities": [
+        "text",
+        "code",
+        "open_weight"
+      ],
+      "best_for": [
+        "local/private tasks",
+        "low-cost experiments",
+        "self-hosted assistants"
+      ],
+      "watchouts": [
+        "hosting and safety evals required before client use"
+      ],
+      "docs": "https://llama.meta.com/docs/"
+    },
+    {
+      "id": "mistral",
+      "provider": "Mistral AI",
+      "modalities": [
+        "text",
+        "code",
+        "multilingual",
+        "open_weight"
+      ],
+      "best_for": [
+        "fast drafts",
+        "European language workflows",
+        "cost-aware agents"
+      ],
+      "watchouts": [
+        "verify model availability before routing"
+      ],
+      "docs": "https://docs.mistral.ai/getting-started/models/"
+    },
+    {
+      "id": "deepseek",
+      "provider": "DeepSeek",
+      "modalities": [
+        "text",
+        "code",
+        "reasoning"
+      ],
+      "best_for": [
+        "coding drafts",
+        "math-like reasoning",
+        "low-cost code comparison"
+      ],
+      "watchouts": [
+        "production fixes still need tests and review"
+      ],
+      "docs": "https://api-docs.deepseek.com/"
+    },
+    {
+      "id": "qwen",
+      "provider": "Qwen",
+      "modalities": [
+        "text",
+        "code",
+        "vision",
+        "open_weight"
+      ],
+      "best_for": [
+        "multilingual apps",
+        "open model experiments",
+        "coding alternatives"
+      ],
+      "watchouts": [
+        "route through approved host only"
+      ],
+      "docs": "https://qwen.readthedocs.io/"
+    },
+    {
+      "id": "huggingface",
+      "provider": "Hugging Face",
+      "modalities": [
+        "open_models",
+        "datasets",
+        "embeddings",
+        "vision",
+        "audio"
+      ],
+      "best_for": [
+        "model discovery",
+        "dataset cards",
+        "local experiments",
+        "specialized models"
+      ],
+      "watchouts": [
+        "check license and commercial use rights per model/dataset"
+      ],
+      "docs": "https://huggingface.co/docs"
+    },
+    {
+      "id": "stability",
+      "provider": "Stability AI",
+      "modalities": [
+        "image",
+        "3d_assets"
+      ],
+      "best_for": [
+        "image variants",
+        "textures",
+        "game concept assets"
+      ],
+      "watchouts": [
+        "rights-sensitive likeness rules still apply"
+      ],
+      "docs": "https://platform.stability.ai/docs"
+    },
+    {
+      "id": "runway",
+      "provider": "Runway",
+      "modalities": [
+        "video",
+        "image",
+        "creative_media"
+      ],
+      "best_for": [
+        "video storyboards",
+        "music video concepts",
+        "short creative clips"
+      ],
+      "watchouts": [
+        "public publishing and likeness use require approval"
+      ],
+      "docs": "https://docs.dev.runwayml.com/"
+    },
+    {
+      "id": "elevenlabs_optional",
+      "provider": "ElevenLabs optional",
+      "modalities": [
+        "voice",
+        "tts",
+        "dubbing"
+      ],
+      "best_for": [
+        "voiceover",
+        "narration",
+        "audio localization"
+      ],
+      "watchouts": [
+        "not required for Buddy local voice; real-person cloning requires explicit written consent"
+      ],
+      "docs": "https://elevenlabs.io/docs"
+    },
+    {
+      "id": "local_browser",
+      "provider": "DreamCo Local",
+      "modalities": [
+        "browser_tts",
+        "local_svg_image",
+        "offline_packet_generation"
+      ],
+      "best_for": [
+        "free tests",
+        "kids demos",
+        "local previews",
+        "no-key fallback"
+      ],
+      "watchouts": [
+        "not a full AI provider; use as offline fallback and preview layer"
+      ],
+      "docs": "reports/ORIGINAL_CODE_RECOVERY.md"
+    }
+  ]
+}

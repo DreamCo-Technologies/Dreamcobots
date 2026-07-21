@@ -107,6 +107,9 @@ export default function ActionsPage() {
   const pullsQ = useQuery<any>({ queryKey: ["/api/github/pulls"], retry: 1 });
   const repoTreeQ = useQuery<any>({ queryKey: ["/api/github/repo-tree"], retry: 1, enabled: activeTab === "repository" });
   const wfQ = useQuery<any>({ queryKey: ["/api/github/workflows"], retry: 1, enabled: activeTab === "repository" });
+  const creatorStudioQ = useQuery<any>({ queryKey: ["/api/buddy/creator-studio"], retry: 1 });
+  const modelChoicesQ = useQuery<any>({ queryKey: ["/api/buddy/model-choices"], retry: 1 });
+  const restoredFamiliesQ = useQuery<any>({ queryKey: ["/api/buddy/restored-bot-families"], retry: 1 });
 
   const restartAll = useMutation({
     mutationFn: () => apiRequest("POST", "/api/tasks/restart-all", {}),
@@ -241,6 +244,68 @@ export default function ActionsPage() {
             </Button>
           </div>
         </Card>
+
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4" data-testid="buddy-creator-model-bridge">
+          <Card className="buddy-card rounded-2xl border border-border/60 p-4">
+            <div className="flex items-center gap-3 mb-3">
+              <span className="inline-flex h-9 w-9 items-center justify-center rounded-xl bg-violet-500/15 border border-violet-500/30">
+                <Sparkles className="h-4 w-4 text-violet-400" />
+              </span>
+              <div>
+                <p className="text-sm font-bold">Creator Studio</p>
+                <p className="text-xs text-muted-foreground">{creatorStudioQ.data?.workflows?.length ?? 0} workflows</p>
+              </div>
+            </div>
+            <div className="space-y-2">
+              {(creatorStudioQ.data?.workflows ?? []).slice(0, 3).map((workflow: any) => (
+                <div key={workflow.id} className="rounded-xl border border-border/40 p-3">
+                  <p className="text-xs font-semibold">{workflow.label}</p>
+                  <p className="text-[11px] text-muted-foreground mt-1">{(workflow.outputs ?? []).slice(0, 3).join(" · ")}</p>
+                </div>
+              ))}
+            </div>
+          </Card>
+
+          <Card className="buddy-card rounded-2xl border border-border/60 p-4">
+            <div className="flex items-center gap-3 mb-3">
+              <span className="inline-flex h-9 w-9 items-center justify-center rounded-xl bg-blue-500/15 border border-blue-500/30">
+                <BrainCircuit className="h-4 w-4 text-blue-400" />
+              </span>
+              <div>
+                <p className="text-sm font-bold">Model Choice</p>
+                <p className="text-xs text-muted-foreground">{modelChoicesQ.data?.choices?.length ?? 0} provider routes</p>
+              </div>
+            </div>
+            <div className="flex flex-wrap gap-2">
+              {(modelChoicesQ.data?.choices ?? []).slice(0, 8).map((choice: any) => (
+                <Badge key={choice.id} variant="secondary" className="rounded-full text-[10px]">
+                  {choice.provider}
+                </Badge>
+              ))}
+            </div>
+            <p className="text-xs text-muted-foreground mt-3">Users can choose a provider; Buddy still keeps paid/live actions behind approval.</p>
+          </Card>
+
+          <Card className="buddy-card rounded-2xl border border-border/60 p-4">
+            <div className="flex items-center gap-3 mb-3">
+              <span className="inline-flex h-9 w-9 items-center justify-center rounded-xl bg-green-500/15 border border-green-500/30">
+                <Bot className="h-4 w-4 text-green-400" />
+              </span>
+              <div>
+                <p className="text-sm font-bold">Restored Bot Families</p>
+                <p className="text-xs text-muted-foreground">{restoredFamiliesQ.data?.totals?.files ?? 0} mapped files</p>
+              </div>
+            </div>
+            <div className="space-y-2">
+              {(restoredFamiliesQ.data?.families ?? []).slice(0, 4).map((family: any) => (
+                <div key={family.id} className="flex items-center justify-between gap-3 text-xs">
+                  <span className="truncate">{family.label}</span>
+                  <Badge variant="secondary" className="text-[10px]">{family.python_count} py</Badge>
+                </div>
+              ))}
+            </div>
+          </Card>
+        </div>
 
         {/* Tabs */}
         <div className="flex flex-wrap gap-2" data-testid="actions-tabs">
