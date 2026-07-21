@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Buddy Song Voice Image Test</title>
+  <style>
+    body { margin: 0; font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: #101418; color: #f8fafc; }
+    main { max-width: 1100px; margin: 0 auto; padding: 32px 18px 54px; }
+    header { border-bottom: 1px solid #334155; padding-bottom: 20px; margin-bottom: 22px; }
+    h1 { margin: 0 0 8px; font-size: clamp(30px, 5vw, 56px); }
+    h2 { margin: 0 0 10px; font-size: 22px; }
+    section { background: #18212b; border: 1px solid #334155; border-radius: 8px; padding: 18px; margin: 14px 0; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 14px; }
+    label { display: block; margin: 10px 0 6px; color: #cbd5e1; }
+    input, button, textarea { font: inherit; }
+    input[type="file"], textarea { width: 100%; box-sizing: border-box; background: #0f172a; color: #e2e8f0; border: 1px solid #475569; border-radius: 6px; padding: 10px; }
+    button { border: 0; border-radius: 6px; padding: 10px 14px; background: #22c55e; color: #052e16; font-weight: 800; cursor: pointer; margin: 8px 8px 0 0; }
+    button.secondary { background: #f8fafc; color: #111827; }
+    img { width: 100%; max-height: 420px; object-fit: contain; border-radius: 8px; background: #0f172a; border: 1px solid #334155; }
+    audio { width: 100%; margin-top: 10px; }
+    .notice { background: #2a1f08; border-color: #a16207; color: #fde68a; }
+    .song { font-size: 18px; line-height: 1.6; }
+    .meta { color: #94a3b8; }
+  </style>
+</head>
+<body>
+  <main>
+    <header>
+      <p class="meta">Buddy free/local browser test</p>
+      <h1>Built With My Own Hands</h1>
+      <p>Test Buddy&#x27;s song-with-my-voice-and-image workflow without uploading private media or using paid services.</p>
+    </header>
+
+    <section class="notice">
+      <h2>Consent-Safe Test</h2>
+      <p>This page keeps your selected voice and image files inside your browser. It does not upload, clone, publish, or use paid services.</p>
+    </section>
+
+    <div class="grid">
+      <section>
+        <h2>Your Image</h2>
+        <label for="imageInput">Choose your photo locally</label>
+        <input id="imageInput" type="file" accept="image/*" />
+        <p class="meta">Preview only. Not uploaded.</p>
+        <img id="preview" alt="Selected image preview" />
+      </section>
+
+      <section>
+        <h2>Your Voice Sample</h2>
+        <label for="voiceInput">Choose your voice sample locally</label>
+        <input id="voiceInput" type="file" accept="audio/*" />
+        <audio id="voiceAudio" controls></audio>
+        <p class="meta">Playback only. This test does not clone your voice.</p>
+      </section>
+    </div>
+
+    <section>
+      <h2>Song Packet</h2>
+      <p class="meta">motivational hip-hop soul · 92 BPM · A minor</p>
+      <div class="song">
+        <strong>Hook</strong><br />
+        <span id="hook">I built it with my own hands, now Buddy light the way. We turn the work into a plan, then make a brighter day.</span><br /><br />
+        <strong>Verse</strong><br />
+        Started with a laptop and a dream in motion<br />Bots in the dashboard, focus like an ocean<br />Every safe step leaves a trail I can see<br />DreamCo in the room, building what I believe
+      </div>
+      <button id="speakHook">Speak hook with local browser voice</button>
+      <button id="stopSpeech" class="secondary">Stop</button>
+    </section>
+
+    <section>
+      <h2>Approval Required Before Real Voice/Image Generation</h2>
+      <ul><li>voice cloning</li><li>face or likeness generation</li><li>public release</li><li>commercial use</li><li>third-party model or API use</li><li>uploading private media</li></ul>
+    </section>
+  </main>
+
+  <script>
+    const imageInput = document.getElementById('imageInput');
+    const preview = document.getElementById('preview');
+    imageInput.addEventListener('change', () => {
+      const file = imageInput.files && imageInput.files[0];
+      if (!file) return;
+      preview.src = URL.createObjectURL(file);
+    });
+
+    const voiceInput = document.getElementById('voiceInput');
+    const voiceAudio = document.getElementById('voiceAudio');
+    voiceInput.addEventListener('change', () => {
+      const file = voiceInput.files && voiceInput.files[0];
+      if (!file) return;
+      voiceAudio.src = URL.createObjectURL(file);
+    });
+
+    document.getElementById('speakHook').addEventListener('click', () => {
+      window.speechSynthesis.cancel();
+      const utterance = new SpeechSynthesisUtterance(document.getElementById('hook').textContent);
+      utterance.rate = 0.94;
+      utterance.pitch = 0.92;
+      window.speechSynthesis.speak(utterance);
+    });
+    document.getElementById('stopSpeech').addEventListener('click', () => window.speechSynthesis.cancel());
+  </script>
+</body>
+</html>

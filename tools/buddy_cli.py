@@ -15,6 +15,7 @@ ROOT = Path(__file__).resolve().parents[1]
 BUNDLED_NODE_BIN = Path("/Users/mamas/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin")
 BUNDLED_PNPM = Path("/Users/mamas/.cache/codex-runtimes/codex-primary-runtime/dependencies/bin/fallback/pnpm")
 TEST_KIT = ROOT / "reports" / "buddy-free-local-test-kit.html"
+SONG_TEST = ROOT / "reports" / "buddy-song-voice-image-test.html"
 WEBSITE_HOME = ROOT / "website" / "index.html"
 
 
@@ -66,6 +67,8 @@ def main() -> int:
     sub.add_parser("stop", help="Stop guarded background mode.")
     sub.add_parser("dashboard", help="Start the local dashboard dev server.")
     sub.add_parser("open-test-kit", help="Open the free/local test kit HTML file.")
+    sub.add_parser("song-test", help="Generate the local song, voice, and image test packet.")
+    sub.add_parser("open-song-test", help="Open the local song, voice, and image test page.")
     sub.add_parser("open-website", help="Open the static website home page.")
     sub.add_parser("free-report", help="Print the free/local test kit JSON report.")
     sub.add_parser("autonomy-report", help="Print the governed autonomy JSON report.")
@@ -91,6 +94,10 @@ def main() -> int:
         return dashboard()
     if command == "open-test-kit":
         return open_file(TEST_KIT)
+    if command == "song-test":
+        return run(["python3", "tools/generate_buddy_song_voice_image_test.py"])
+    if command == "open-song-test":
+        return open_file(SONG_TEST)
     if command == "open-website":
         return open_file(WEBSITE_HOME)
     if command == "free-report":
