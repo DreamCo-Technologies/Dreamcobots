@@ -46,6 +46,9 @@ def build_packet() -> dict[str, Any]:
         "local_test_capabilities": [
             "preview your selected image locally in the browser",
             "play your selected voice sample locally in the browser",
+            "record a fresh voice sample locally with the browser microphone",
+            "play back the recorded voice sample locally",
+            "create a clone-readiness packet with consent metadata",
             "speak the hook with local browser speech synthesis",
             "store a consent checklist and production packet",
             "prepare the handoff path for a real approved voice model later",
@@ -53,7 +56,7 @@ def build_packet() -> dict[str, Any]:
         "what_this_does_not_do": [
             "does not upload your image",
             "does not upload your voice sample",
-            "does not clone your voice",
+            "does not clone your voice without a configured approved local model or owner-approved provider",
             "does not publish, message, or sell anything",
             "does not use paid cloud services",
         ],
@@ -72,6 +75,17 @@ def build_packet() -> dict[str, Any]:
             "private_media_upload_allowed": False,
             "local_browser_only": True,
             "label_synthetic_media": True,
+        },
+        "clone_capability": {
+            "recording": "browser_media_recorder_local_only",
+            "sample_storage": "user_controlled_browser_blob",
+            "clone_status": "ready_for_approved_local_model_or_provider",
+            "blocked_until": [
+                "owner confirms recorded voice belongs to owner",
+                "owner approves cloning for this song",
+                "local voice model or approved provider is configured",
+                "synthetic media label is preserved",
+            ],
         },
         "files": {
             "html": str(OUT_HTML.relative_to(ROOT)),
@@ -105,6 +119,13 @@ def write_markdown(packet: dict[str, Any]) -> None:
     lines.extend(f"- {line}" for line in song["verse"])
     lines.extend(["", "## Local Test Capabilities", ""])
     lines.extend(f"- {item}" for item in packet["local_test_capabilities"])
+    lines.extend(["", "## Clone Capability", ""])
+    for key, value in packet["clone_capability"].items():
+        if isinstance(value, list):
+            lines.append(f"- {key}:")
+            lines.extend(f"  - {item}" for item in value)
+        else:
+            lines.append(f"- {key}: `{value}`")
     lines.extend(["", "## Approval Required For", ""])
     lines.extend(f"- {item}" for item in packet["approval_required_for"])
     lines.append("")
@@ -134,12 +155,15 @@ def write_html(packet: dict[str, Any]) -> None:
     input, button, textarea {{ font: inherit; }}
     input[type="file"], textarea {{ width: 100%; box-sizing: border-box; background: #0f172a; color: #e2e8f0; border: 1px solid #475569; border-radius: 6px; padding: 10px; }}
     button {{ border: 0; border-radius: 6px; padding: 10px 14px; background: #22c55e; color: #052e16; font-weight: 800; cursor: pointer; margin: 8px 8px 0 0; }}
+    button:disabled {{ opacity: 0.5; cursor: not-allowed; }}
     button.secondary {{ background: #f8fafc; color: #111827; }}
     img {{ width: 100%; max-height: 420px; object-fit: contain; border-radius: 8px; background: #0f172a; border: 1px solid #334155; }}
     audio {{ width: 100%; margin-top: 10px; }}
     .notice {{ background: #2a1f08; border-color: #a16207; color: #fde68a; }}
     .song {{ font-size: 18px; line-height: 1.6; }}
     .meta {{ color: #94a3b8; }}
+    .status {{ min-height: 24px; color: #bbf7d0; }}
+    textarea {{ min-height: 210px; margin-top: 10px; }}
   </style>
 </head>
 <body>
@@ -169,9 +193,18 @@ def write_html(packet: dict[str, Any]) -> None:
         <label for="voiceInput">Choose your voice sample locally</label>
         <input id="voiceInput" type="file" accept="audio/*" />
         <audio id="voiceAudio" controls></audio>
-        <p class="meta">Playback only. This test does not clone your voice.</p>
+      <p class="meta">Playback only. This test does not clone your voice.</p>
       </section>
     </div>
+
+    <section>
+      <h2>Record Your Voice Locally</h2>
+      <p class="meta">Use this to record a clean sample for this song test. The recording stays in this browser session unless you choose to save it yourself.</p>
+      <button id="startRecording">Start recording</button>
+      <button id="stopRecording" class="secondary" disabled>Stop recording</button>
+      <audio id="recordedAudio" controls></audio>
+      <p id="recordingStatus" class="status">Ready to record.</p>
+    </section>
 
     <section>
       <h2>Song Packet</h2>
@@ -184,6 +217,13 @@ def write_html(packet: dict[str, Any]) -> None:
       </div>
       <button id="speakHook">Speak hook with local browser voice</button>
       <button id="stopSpeech" class="secondary">Stop</button>
+    </section>
+
+    <section>
+      <h2>Clone-Readiness Packet</h2>
+      <p class="meta">This prepares the safe handoff for a real clone later. It does not clone yet.</p>
+      <button id="buildClonePacket">Create clone-ready packet</button>
+      <textarea id="clonePacket" readonly aria-label="Clone readiness packet"></textarea>
     </section>
 
     <section>
@@ -203,10 +243,56 @@ def write_html(packet: dict[str, Any]) -> None:
 
     const voiceInput = document.getElementById('voiceInput');
     const voiceAudio = document.getElementById('voiceAudio');
+    let selectedVoiceFileName = null;
+    let recordedVoiceBlob = null;
+    let recordedVoiceUrl = null;
     voiceInput.addEventListener('change', () => {{
       const file = voiceInput.files && voiceInput.files[0];
       if (!file) return;
+      selectedVoiceFileName = file.name;
       voiceAudio.src = URL.createObjectURL(file);
+    }});
+
+    const startRecording = document.getElementById('startRecording');
+    const stopRecording = document.getElementById('stopRecording');
+    const recordedAudio = document.getElementById('recordedAudio');
+    const recordingStatus = document.getElementById('recordingStatus');
+    let mediaRecorder = null;
+    let recordingChunks = [];
+
+    startRecording.addEventListener('click', async () => {{
+      if (!navigator.mediaDevices || !window.MediaRecorder) {{
+        recordingStatus.textContent = 'Recording is not supported in this browser.';
+        return;
+      }}
+      try {{
+        const stream = await navigator.mediaDevices.getUserMedia({{ audio: true }});
+        recordingChunks = [];
+        mediaRecorder = new MediaRecorder(stream);
+        mediaRecorder.addEventListener('dataavailable', event => {{
+          if (event.data && event.data.size > 0) recordingChunks.push(event.data);
+        }});
+        mediaRecorder.addEventListener('stop', () => {{
+          recordedVoiceBlob = new Blob(recordingChunks, {{ type: mediaRecorder.mimeType || 'audio/webm' }});
+          if (recordedVoiceUrl) URL.revokeObjectURL(recordedVoiceUrl);
+          recordedVoiceUrl = URL.createObjectURL(recordedVoiceBlob);
+          recordedAudio.src = recordedVoiceUrl;
+          stream.getTracks().forEach(track => track.stop());
+          recordingStatus.textContent = `Recorded locally: ${{Math.round(recordedVoiceBlob.size / 1024)}} KB`;
+        }});
+        mediaRecorder.start();
+        startRecording.disabled = true;
+        stopRecording.disabled = false;
+        recordingStatus.textContent = 'Recording locally...';
+      }} catch (error) {{
+        recordingStatus.textContent = `Microphone unavailable: ${{error.message || error}}`;
+      }}
+    }});
+
+    stopRecording.addEventListener('click', () => {{
+      if (mediaRecorder && mediaRecorder.state !== 'inactive') mediaRecorder.stop();
+      startRecording.disabled = false;
+      stopRecording.disabled = true;
     }});
 
     document.getElementById('speakHook').addEventListener('click', () => {{
@@ -217,6 +303,34 @@ def write_html(packet: dict[str, Any]) -> None:
       window.speechSynthesis.speak(utterance);
     }});
     document.getElementById('stopSpeech').addEventListener('click', () => window.speechSynthesis.cancel());
+
+    document.getElementById('buildClonePacket').addEventListener('click', () => {{
+      const packet = {{
+        schema: 'dreamco.browser_clone_readiness_packet.v1',
+        created_at: new Date().toISOString(),
+        song_title: {json.dumps(LYRICS["title"])},
+        consent: {{
+          voice_owner_confirmed: true,
+          image_owner_confirmed: true,
+          owner_approval_required_before_cloning: true,
+          synthetic_media_label_required: true
+        }},
+        local_assets: {{
+          selected_voice_file_name: selectedVoiceFileName,
+          recorded_voice_available: Boolean(recordedVoiceBlob),
+          recorded_voice_size_bytes: recordedVoiceBlob ? recordedVoiceBlob.size : 0,
+          selected_image_available: Boolean(preview.src)
+        }},
+        clone_status: 'ready_for_approved_local_model_or_provider',
+        blocked_actions: [
+          'do_not_upload_private_media_without_approval',
+          'do_not_clone_until_owner_approves_this_specific_use',
+          'do_not_publish_without_release_approval',
+          'do_not_remove_synthetic_media_label'
+        ]
+      }};
+      document.getElementById('clonePacket').value = JSON.stringify(packet, null, 2);
+    }});
   </script>
 </body>
 </html>

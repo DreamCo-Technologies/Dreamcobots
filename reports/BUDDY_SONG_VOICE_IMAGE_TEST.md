@@ -24,9 +24,23 @@ I built it with my own hands, now Buddy light the way. We turn the work into a p
 
 - preview your selected image locally in the browser
 - play your selected voice sample locally in the browser
+- record a fresh voice sample locally with the browser microphone
+- play back the recorded voice sample locally
+- create a clone-readiness packet with consent metadata
 - speak the hook with local browser speech synthesis
 - store a consent checklist and production packet
 - prepare the handoff path for a real approved voice model later
+
+## Clone Capability
+
+- recording: `browser_media_recorder_local_only`
+- sample_storage: `user_controlled_browser_blob`
+- clone_status: `ready_for_approved_local_model_or_provider`
+- blocked_until:
+  - owner confirms recorded voice belongs to owner
+  - owner approves cloning for this song
+  - local voice model or approved provider is configured
+  - synthetic media label is preserved
 
 ## Approval Required For
 

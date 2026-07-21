@@ -7,6 +7,17 @@
     "third-party model or API use",
     "uploading private media"
   ],
+  "clone_capability": {
+    "blocked_until": [
+      "owner confirms recorded voice belongs to owner",
+      "owner approves cloning for this song",
+      "local voice model or approved provider is configured",
+      "synthetic media label is preserved"
+    ],
+    "clone_status": "ready_for_approved_local_model_or_provider",
+    "recording": "browser_media_recorder_local_only",
+    "sample_storage": "user_controlled_browser_blob"
+  },
   "consent_metadata_required": {
     "image_owner_confirmed": true,
     "label_synthetic_media": true,
@@ -20,10 +31,13 @@
     "json": "reports/buddy_song_voice_image_test.json",
     "markdown": "reports/BUDDY_SONG_VOICE_IMAGE_TEST.md"
   },
-  "generated_at": "2026-07-21T16:36:21Z",
+  "generated_at": "2026-07-21T16:38:51Z",
   "local_test_capabilities": [
     "preview your selected image locally in the browser",
     "play your selected voice sample locally in the browser",
+    "record a fresh voice sample locally with the browser microphone",
+    "play back the recorded voice sample locally",
+    "create a clone-readiness packet with consent metadata",
     "speak the hook with local browser speech synthesis",
     "store a consent checklist and production packet",
     "prepare the handoff path for a real approved voice model later"
@@ -47,7 +61,7 @@
   "what_this_does_not_do": [
     "does not upload your image",
     "does not upload your voice sample",
-    "does not clone your voice",
+    "does not clone your voice without a configured approved local model or owner-approved provider",
     "does not publish, message, or sell anything",
     "does not use paid cloud services"
   ]

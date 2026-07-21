@@ -25,4 +25,4 @@ buddy open-website
 
 The CLI is free/local-first by default. It can scan, test, generate reports, open local files, start the local dashboard, and run guarded background maintenance. Live signups, secrets, money, deploys, outreach, account access, publishing, and destructive actions still require approval.
 
-For media testing, `buddy song-test` creates a local song packet and `buddy open-song-test` opens a browser page where you can select your own image and voice sample locally. The browser test previews your files without uploading or cloning them.
+For media testing, `buddy song-test` creates a local song packet and `buddy open-song-test` opens a browser page where you can select your own image, select or record your own voice sample locally, and create a clone-readiness packet. The browser test previews and records files locally without uploading them; actual voice cloning stays gated until you approve a configured local model or approved provider for that specific use.

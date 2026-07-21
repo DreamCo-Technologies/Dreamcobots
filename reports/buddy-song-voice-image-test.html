@@ -16,12 +16,15 @@
     input, button, textarea { font: inherit; }
     input[type="file"], textarea { width: 100%; box-sizing: border-box; background: #0f172a; color: #e2e8f0; border: 1px solid #475569; border-radius: 6px; padding: 10px; }
     button { border: 0; border-radius: 6px; padding: 10px 14px; background: #22c55e; color: #052e16; font-weight: 800; cursor: pointer; margin: 8px 8px 0 0; }
+    button:disabled { opacity: 0.5; cursor: not-allowed; }
     button.secondary { background: #f8fafc; color: #111827; }
     img { width: 100%; max-height: 420px; object-fit: contain; border-radius: 8px; background: #0f172a; border: 1px solid #334155; }
     audio { width: 100%; margin-top: 10px; }
     .notice { background: #2a1f08; border-color: #a16207; color: #fde68a; }
     .song { font-size: 18px; line-height: 1.6; }
     .meta { color: #94a3b8; }
+    .status { min-height: 24px; color: #bbf7d0; }
+    textarea { min-height: 210px; margin-top: 10px; }
   </style>
 </head>
 <body>
@@ -51,9 +54,18 @@
         <label for="voiceInput">Choose your voice sample locally</label>
         <input id="voiceInput" type="file" accept="audio/*" />
         <audio id="voiceAudio" controls></audio>
-        <p class="meta">Playback only. This test does not clone your voice.</p>
+      <p class="meta">Playback only. This test does not clone your voice.</p>
       </section>
     </div>
+
+    <section>
+      <h2>Record Your Voice Locally</h2>
+      <p class="meta">Use this to record a clean sample for this song test. The recording stays in this browser session unless you choose to save it yourself.</p>
+      <button id="startRecording">Start recording</button>
+      <button id="stopRecording" class="secondary" disabled>Stop recording</button>
+      <audio id="recordedAudio" controls></audio>
+      <p id="recordingStatus" class="status">Ready to record.</p>
+    </section>
 
     <section>
       <h2>Song Packet</h2>
@@ -66,6 +78,13 @@
       </div>
       <button id="speakHook">Speak hook with local browser voice</button>
       <button id="stopSpeech" class="secondary">Stop</button>
+    </section>
+
+    <section>
+      <h2>Clone-Readiness Packet</h2>
+      <p class="meta">This prepares the safe handoff for a real clone later. It does not clone yet.</p>
+      <button id="buildClonePacket">Create clone-ready packet</button>
+      <textarea id="clonePacket" readonly aria-label="Clone readiness packet"></textarea>
     </section>
 
     <section>
@@ -85,10 +104,56 @@
 
     const voiceInput = document.getElementById('voiceInput');
     const voiceAudio = document.getElementById('voiceAudio');
+    let selectedVoiceFileName = null;
+    let recordedVoiceBlob = null;
+    let recordedVoiceUrl = null;
     voiceInput.addEventListener('change', () => {
       const file = voiceInput.files && voiceInput.files[0];
       if (!file) return;
+      selectedVoiceFileName = file.name;
       voiceAudio.src = URL.createObjectURL(file);
+    });
+
+    const startRecording = document.getElementById('startRecording');
+    const stopRecording = document.getElementById('stopRecording');
+    const recordedAudio = document.getElementById('recordedAudio');
+    const recordingStatus = document.getElementById('recordingStatus');
+    let mediaRecorder = null;
+    let recordingChunks = [];
+
+    startRecording.addEventListener('click', async () => {
+      if (!navigator.mediaDevices || !window.MediaRecorder) {
+        recordingStatus.textContent = 'Recording is not supported in this browser.';
+        return;
+      }
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        recordingChunks = [];
+        mediaRecorder = new MediaRecorder(stream);
+        mediaRecorder.addEventListener('dataavailable', event => {
+          if (event.data && event.data.size > 0) recordingChunks.push(event.data);
+        });
+        mediaRecorder.addEventListener('stop', () => {
+          recordedVoiceBlob = new Blob(recordingChunks, { type: mediaRecorder.mimeType || 'audio/webm' });
+          if (recordedVoiceUrl) URL.revokeObjectURL(recordedVoiceUrl);
+          recordedVoiceUrl = URL.createObjectURL(recordedVoiceBlob);
+          recordedAudio.src = recordedVoiceUrl;
+          stream.getTracks().forEach(track => track.stop());
+          recordingStatus.textContent = `Recorded locally: ${Math.round(recordedVoiceBlob.size / 1024)} KB`;
+        });
+        mediaRecorder.start();
+        startRecording.disabled = true;
+        stopRecording.disabled = false;
+        recordingStatus.textContent = 'Recording locally...';
+      } catch (error) {
+        recordingStatus.textContent = `Microphone unavailable: ${error.message || error}`;
+      }
+    });
+
+    stopRecording.addEventListener('click', () => {
+      if (mediaRecorder && mediaRecorder.state !== 'inactive') mediaRecorder.stop();
+      startRecording.disabled = false;
+      stopRecording.disabled = true;
     });
 
     document.getElementById('speakHook').addEventListener('click', () => {
@@ -99,6 +164,34 @@
       window.speechSynthesis.speak(utterance);
     });
     document.getElementById('stopSpeech').addEventListener('click', () => window.speechSynthesis.cancel());
+
+    document.getElementById('buildClonePacket').addEventListener('click', () => {
+      const packet = {
+        schema: 'dreamco.browser_clone_readiness_packet.v1',
+        created_at: new Date().toISOString(),
+        song_title: "Built With My Own Hands",
+        consent: {
+          voice_owner_confirmed: true,
+          image_owner_confirmed: true,
+          owner_approval_required_before_cloning: true,
+          synthetic_media_label_required: true
+        },
+        local_assets: {
+          selected_voice_file_name: selectedVoiceFileName,
+          recorded_voice_available: Boolean(recordedVoiceBlob),
+          recorded_voice_size_bytes: recordedVoiceBlob ? recordedVoiceBlob.size : 0,
+          selected_image_available: Boolean(preview.src)
+        },
+        clone_status: 'ready_for_approved_local_model_or_provider',
+        blocked_actions: [
+          'do_not_upload_private_media_without_approval',
+          'do_not_clone_until_owner_approves_this_specific_use',
+          'do_not_publish_without_release_approval',
+          'do_not_remove_synthetic_media_label'
+        ]
+      };
+      document.getElementById('clonePacket').value = JSON.stringify(packet, null, 2);
+    });
   </script>
 </body>
 </html>
