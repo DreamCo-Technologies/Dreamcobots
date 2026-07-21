@@ -1426,6 +1426,10 @@ export async function registerRoutes(
     res.json(readRepoJson("config/buddy_safe_codex_code_bots.json"));
   });
 
+  app.get("/api/buddy/unified-bot-workforce", async (_req, res) => {
+    res.json(readRepoJson("config/buddy_unified_bot_workforce.json"));
+  });
+
   app.post("/api/buddy/safe-codex/repair-plan", async (req, res) => {
     const parsed = safeCodexRepairPlanSchema.safeParse(req.body ?? {});
     if (!parsed.success) return res.status(400).json(zodValidationError(parsed.error));

@@ -1,0 +1,20 @@
+{
+  "manifestVersion": "1",
+  "name": "auto_client_hunter",
+  "displayName": "Auto Client Hunter",
+  "description": "Continuously hunts new ICP-fit prospects across web, social, and signals, qualifies them, and pushes them into the closer pipeline.",
+  "division": "DreamSalesPro",
+  "tier": "PRO",
+  "category": "Lead Generation",
+  "capabilities": ["signal_detect", "icp_match", "auto_outreach"],
+  "entrypoint": {
+    "runtime": "python",
+    "command": "python -m auto_client_hunter.scheduler",
+    "workdir": "src"
+  },
+  "revenueModel": { "type": "subscription", "targetMrr": 12000, "currency": "USD" },
+  "dependencies": ["httpx", "pydantic", "celery"],
+  "owner": { "team": "DreamSalesPro", "githubHandles": [] },
+  "status": "draft",
+  "tags": ["prospecting", "automation", "revived-pr-240"]
+}

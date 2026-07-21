@@ -1,0 +1,86 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dreamco.tech/schemas/bot.manifest.schema.json",
+  "title": "DreamCo Bot Manifest",
+  "description": "Source of truth describing a single bot. Each bot lives in bots/<name>/ and MUST ship a bot.manifest.json that validates against this schema.",
+  "type": "object",
+  "required": [
+    "manifestVersion",
+    "name",
+    "description",
+    "division",
+    "tier",
+    "category",
+    "entrypoint",
+    "owner"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "manifestVersion": { "const": "1" },
+    "name": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 80,
+      "pattern": "^[a-z0-9][a-z0-9_-]*$"
+    },
+    "displayName": { "type": "string", "minLength": 1, "maxLength": 120 },
+    "description": { "type": "string", "minLength": 1, "maxLength": 500 },
+    "division": {
+      "type": "string",
+      "enum": [
+        "DreamRealEstate",
+        "DreamSalesPro",
+        "DreamFinance",
+        "DreamAI",
+        "DreamSoft",
+        "DreamGov",
+        "DreamMedia",
+        "DreamOps"
+      ]
+    },
+    "tier": { "type": "string", "enum": ["FREE", "PRO", "ENTERPRISE"] },
+    "category": { "type": "string", "minLength": 1, "maxLength": 80 },
+    "capabilities": { "type": "array", "items": { "type": "string", "minLength": 1 } },
+    "entrypoint": {
+      "type": "object",
+      "required": ["runtime", "command"],
+      "additionalProperties": false,
+      "properties": {
+        "runtime": {
+          "type": "string",
+          "enum": ["python", "node", "bun", "deno", "container"]
+        },
+        "command": { "type": "string", "minLength": 1 },
+        "workdir": { "type": "string" }
+      }
+    },
+    "revenueModel": {
+      "type": "object",
+      "required": ["type"],
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": ["subscription", "usage", "one_time", "commission", "internal"]
+        },
+        "targetMrr": { "type": "number", "minimum": 0 },
+        "currency": { "type": "string", "minLength": 3, "maxLength": 3 }
+      }
+    },
+    "dependencies": { "type": "array", "items": { "type": "string" } },
+    "owner": {
+      "type": "object",
+      "required": ["team"],
+      "additionalProperties": false,
+      "properties": {
+        "team": { "type": "string", "minLength": 1 },
+        "githubHandles": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "status": {
+      "type": "string",
+      "enum": ["draft", "active", "paused", "deprecated"]
+    },
+    "tags": { "type": "array", "items": { "type": "string" } }
+  }
+}

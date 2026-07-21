@@ -1,0 +1,25 @@
+{
+  "manifestVersion": "1",
+  "name": "ai_enablement_hub",
+  "displayName": "AI Enablement Hub",
+  "description": "Central hub that enables, gates, and meters AI capabilities across all DreamCo bots (model routing, prompt registry, usage caps).",
+  "division": "DreamAI",
+  "tier": "ENTERPRISE",
+  "category": "AI Research",
+  "capabilities": [
+    "model_routing",
+    "prompt_registry",
+    "usage_metering",
+    "tier_enforcement"
+  ],
+  "entrypoint": {
+    "runtime": "python",
+    "command": "python -m ai_enablement_hub.server",
+    "workdir": "src"
+  },
+  "revenueModel": { "type": "internal", "currency": "USD" },
+  "dependencies": ["fastapi", "uvicorn", "httpx", "redis"],
+  "owner": { "team": "DreamAI", "githubHandles": [] },
+  "status": "draft",
+  "tags": ["platform", "ai", "metering", "revived-pr-344"]
+}

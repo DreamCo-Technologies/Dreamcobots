@@ -112,6 +112,7 @@ export default function ActionsPage() {
   const restoredFamiliesQ = useQuery<any>({ queryKey: ["/api/buddy/restored-bot-families"], retry: 1 });
   const endToEndQ = useQuery<any>({ queryKey: ["/api/buddy/bot-end-to-end-readiness"], retry: 1 });
   const safeCodexQ = useQuery<any>({ queryKey: ["/api/buddy/safe-codex-code-bots"], retry: 1 });
+  const unifiedWorkforceQ = useQuery<any>({ queryKey: ["/api/buddy/unified-bot-workforce"], retry: 1 });
 
   const restartAll = useMutation({
     mutationFn: () => apiRequest("POST", "/api/tasks/restart-all", {}),
@@ -351,6 +352,58 @@ export default function ActionsPage() {
             <p className="text-xs text-muted-foreground mt-3">Buddy routes repo fixes to code specialists, then verifies locally.</p>
           </Card>
         </div>
+
+        <Card className="buddy-card rounded-2xl border border-primary/25 bg-primary/5 p-5" data-testid="buddy-unified-workforce">
+          <div className="flex flex-col xl:flex-row xl:items-center gap-5">
+            <div className="flex-1">
+              <div className="flex items-center gap-3">
+                <span className="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-primary/15 border border-primary/30">
+                  <Network className="h-5 w-5 text-primary" />
+                </span>
+                <div>
+                  <p className="text-sm font-bold">Buddy Unified Bot Workforce</p>
+                  <p className="text-xs text-muted-foreground">
+                    Every bot fits into one supervised system: research, build, test, learn, prepare opportunities, and stop for approval before live impact.
+                  </p>
+                </div>
+              </div>
+              <div className="mt-4 grid grid-cols-2 md:grid-cols-4 gap-3">
+                {[
+                  { label: "Bots Fitted", value: unifiedWorkforceQ.data?.summary?.bot_count ?? "..." },
+                  { label: "Safe Work", value: unifiedWorkforceQ.data?.summary?.all_bots_safe_work_enabled ? "All" : "Checking" },
+                  { label: "Approval Gated", value: unifiedWorkforceQ.data?.summary?.all_bots_live_actions_approval_gated ? "All" : "Review" },
+                  { label: "Model Options", value: unifiedWorkforceQ.data?.summary?.optional_model_choices ?? "..." },
+                ].map(item => (
+                  <div key={item.label} className="rounded-xl border border-border/50 bg-background/60 p-3">
+                    <p className="text-[10px] uppercase tracking-wide text-muted-foreground">{item.label}</p>
+                    <p className="mt-1 text-lg font-black">{item.value}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+            <div className="w-full xl:w-[360px] rounded-xl border border-border/50 bg-background/60 p-4">
+              <div className="flex items-center justify-between gap-3">
+                <p className="text-xs font-bold">High-risk bots</p>
+                <Badge className="bg-green-500/15 text-green-400 border-green-500/30 text-[10px]">
+                  Safe work enabled
+                </Badge>
+              </div>
+              <p className="mt-2 text-3xl font-black">
+                {unifiedWorkforceQ.data?.summary?.high_risk_or_previously_blocked_safe_work_enabled ?? "..."}
+              </p>
+              <p className="mt-1 text-xs text-muted-foreground">
+                Sensitive bots can research, plan, sandbox, test, and draft. Live money, outreach, account, deploy, legal, medical, financial, or destructive actions require owner approval.
+              </p>
+              <div className="mt-3 flex flex-wrap gap-2">
+                {(Object.entries(unifiedWorkforceQ.data?.work_lanes ?? {}) as [string, number][]).slice(0, 6).map(([lane, count]) => (
+                  <Badge key={lane} variant="secondary" className="rounded-full text-[10px]">
+                    {lane}: {count}
+                  </Badge>
+                ))}
+              </div>
+            </div>
+          </div>
+        </Card>
 
         {/* Tabs */}
         <div className="flex flex-wrap gap-2" data-testid="actions-tabs">

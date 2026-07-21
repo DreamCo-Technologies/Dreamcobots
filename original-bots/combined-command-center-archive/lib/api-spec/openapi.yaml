@@ -1,0 +1,853 @@
+openapi: 3.1.0
+info:
+  title: Api
+  version: 0.1.0
+  description: DreamCo Command Center API
+servers:
+  - url: /api
+    description: Base API path
+tags:
+  - name: health
+    description: Health operations
+  - name: bots
+    description: Bot management
+  - name: github
+    description: GitHub repository tracking
+  - name: stripe
+    description: Stripe revenue and payments
+  - name: buddy
+    description: BuddyBot AI chatbot
+  - name: dashboard
+    description: Dashboard summary
+  - name: copilot
+    description: Copilot PR collaboration
+  - name: Auth
+    description: Browser and mobile authentication endpoints.
+
+paths:
+  /healthz:
+    get:
+      operationId: healthCheck
+      tags: [health]
+      summary: Health check
+      responses:
+        "200":
+          description: Healthy
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HealthStatus"
+
+  /bots:
+    get:
+      operationId: listBots
+      tags: [bots]
+      summary: List all bots with status
+      responses:
+        "200":
+          description: List of bots
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Bot"
+
+  /bots/{name}:
+    get:
+      operationId: getBot
+      tags: [bots]
+      summary: Get bot details
+      parameters:
+        - name: name
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Bot details
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Bot"
+        "404":
+          description: Bot not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /bots/{name}/run:
+    post:
+      operationId: runBot
+      tags: [bots]
+      summary: Trigger a manual run of a bot (records heartbeat + invocation)
+      parameters:
+        - name: name
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Bot run recorded
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BotRunResult"
+        "404":
+          description: Bot not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /github/repos:
+    get:
+      operationId: listRepos
+      tags: [github]
+      summary: List all GitHub repositories
+      responses:
+        "200":
+          description: List of repos
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Repo"
+
+  /github/commits:
+    get:
+      operationId: listCommits
+      tags: [github]
+      summary: Recent commits across all repos
+      responses:
+        "200":
+          description: Recent commits
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Commit"
+
+  /github/activity:
+    get:
+      operationId: getRepoActivity
+      tags: [github]
+      summary: Repository activity summary
+      responses:
+        "200":
+          description: Activity summary
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RepoActivity"
+
+  /stripe/revenue:
+    get:
+      operationId: getStripeRevenue
+      tags: [stripe]
+      summary: Stripe revenue metrics
+      responses:
+        "200":
+          description: Revenue metrics
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RevenueMetrics"
+
+  /stripe/subscriptions:
+    get:
+      operationId: listSubscriptions
+      tags: [stripe]
+      summary: Active Stripe subscriptions
+      responses:
+        "200":
+          description: Subscriptions list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Subscription"
+
+  /stripe/transactions:
+    get:
+      operationId: listTransactions
+      tags: [stripe]
+      summary: Recent Stripe transactions
+      responses:
+        "200":
+          description: Recent transactions
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Transaction"
+
+  /buddy/chat:
+    post:
+      operationId: sendBuddyMessage
+      tags: [buddy]
+      summary: Send a message to BuddyBot
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/BuddyMessageInput"
+      responses:
+        "200":
+          description: BuddyBot response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BuddyResponse"
+
+  /buddy/history:
+    get:
+      operationId: getBuddyHistory
+      tags: [buddy]
+      summary: Get chat history
+      responses:
+        "200":
+          description: Chat history
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ChatMessage"
+
+  /copilot/prs:
+    get:
+      operationId: listCopilotPrs
+      tags: [copilot]
+      summary: List open Copilot PRs across Dreamcobots with contract compliance
+      responses:
+        "200":
+          description: Open Copilot PRs
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/CopilotPr"
+
+  /copilot/rewrite/{prNumber}:
+    post:
+      operationId: requestCopilotRewrite
+      tags: [copilot]
+      summary: Ask Copilot to rewrite a PR to fit the bot contract
+      parameters:
+        - name: prNumber
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Rewrite issue created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CopilotRewriteResponse"
+        "404":
+          description: PR not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /dashboard/summary:
+    get:
+      operationId: getDashboardSummary
+      tags: [dashboard]
+      summary: Overall dashboard stats
+      responses:
+        "200":
+          description: Dashboard summary
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DashboardSummary"
+
+  /dashboard/build-progress:
+    get:
+      operationId: getBuildProgress
+      tags: [dashboard]
+      summary: Aggregated build completion across the system
+      responses:
+        "200":
+          description: Build progress sections + overall percent
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BuildProgress"
+
+  /dashboard/tiers:
+    get:
+      operationId: listTiers
+      tags: [dashboard]
+      summary: Subscription tier definitions
+      responses:
+        "200":
+          description: Tier list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Tier"
+
+  /auth/user:
+    get:
+      tags: [Auth]
+      operationId: getCurrentAuthUser
+      summary: Get the currently authenticated user
+      parameters:
+        - $ref: '#/components/parameters/AuthorizationSessionHeader'
+        - $ref: '#/components/parameters/SessionCookie'
+      responses:
+        '200':
+          description: Auth status resolved successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthUserEnvelope'
+  /login:
+    get:
+      tags: [Auth]
+      operationId: beginBrowserLogin
+      summary: Start the browser OIDC login flow
+      parameters:
+        - name: returnTo
+          in: query
+          required: false
+          schema:
+            type: string
+      responses:
+        '302':
+          description: Redirect to the OIDC authorization endpoint.
+  /callback:
+    get:
+      tags: [Auth]
+      operationId: handleBrowserLoginCallback
+      summary: Complete the browser OIDC login flow
+      parameters:
+        - name: code
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: state
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: iss
+          in: query
+          required: false
+          schema:
+            type: string
+            format: uri
+      responses:
+        '302':
+          description: Redirect to the returnTo path or /api/login on failure.
+  /logout:
+    get:
+      tags: [Auth]
+      operationId: logoutBrowserSession
+      summary: Clear the session and begin OIDC logout
+      parameters:
+        - $ref: '#/components/parameters/AuthorizationSessionHeader'
+        - $ref: '#/components/parameters/SessionCookie'
+      responses:
+        '302':
+          description: Redirect to the OIDC provider logout URL.
+  /mobile-auth/token-exchange:
+    post:
+      tags: [Auth]
+      operationId: exchangeMobileAuthorizationCode
+      summary: Exchange a mobile OIDC code for a session token
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MobileTokenExchangeRequest'
+      responses:
+        '200':
+          description: Session created successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MobileTokenExchangeSuccess'
+        '400':
+          description: Missing or invalid required fields.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '401':
+          description: Token did not contain usable claims.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '500':
+          description: Token exchange failed.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+  /mobile-auth/logout:
+    post:
+      tags: [Auth]
+      operationId: logoutMobileSession
+      summary: Delete a mobile session token
+      parameters:
+        - $ref: '#/components/parameters/AuthorizationSessionHeader'
+      responses:
+        '200':
+          description: Logout processed.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LogoutSuccess'
+
+components:
+  parameters:
+    AuthorizationSessionHeader:
+      name: Authorization
+      in: header
+      required: false
+      description: Opaque session token — `Bearer <sid>`.
+      schema:
+        type: string
+    SessionCookie:
+      name: sid
+      in: cookie
+      required: false
+      description: Browser session cookie.
+      schema:
+        type: string
+  schemas:
+    AuthUser:
+      type: object
+      required: [id, email, firstName, lastName, profileImageUrl]
+      properties:
+        id:
+          type: string
+        email:
+          type: [string, 'null']
+          format: email
+        firstName:
+          type: [string, 'null']
+        lastName:
+          type: [string, 'null']
+        profileImageUrl:
+          type: [string, 'null']
+    AuthUserEnvelope:
+      type: object
+      required: [user]
+      properties:
+        user:
+          oneOf:
+            - $ref: '#/components/schemas/AuthUser'
+            - type: 'null'
+    MobileTokenExchangeRequest:
+      type: object
+      required: [code, code_verifier, redirect_uri, state]
+      properties:
+        code:
+          type: string
+          minLength: 1
+        code_verifier:
+          type: string
+          minLength: 1
+        redirect_uri:
+          type: string
+          minLength: 1
+          format: uri
+        state:
+          type: string
+          minLength: 1
+        nonce:
+          type: string
+          minLength: 1
+    MobileTokenExchangeSuccess:
+      type: object
+      required: [token]
+      properties:
+        token:
+          type: string
+    LogoutSuccess:
+      type: object
+      required: [success]
+      properties:
+        success:
+          type: boolean
+          const: true
+    ErrorEnvelope:
+      type: object
+      required: [error]
+      properties:
+        error:
+          type: string
+    HealthStatus:
+      type: object
+      required: [status]
+      properties:
+        status:
+          type: string
+
+    ErrorResponse:
+      type: object
+      required: [error]
+      properties:
+        error:
+          type: string
+
+    Bot:
+      type: object
+      required: [name, status, tier, category, source]
+      properties:
+        name:
+          type: string
+        displayName:
+          type: ["string", "null"]
+        repoPath:
+          type: string
+        status:
+          type: string
+          enum: [active, idle, error, unknown]
+        tier:
+          type: string
+          enum: [FREE, PRO, ENTERPRISE]
+        category:
+          type: string
+        division:
+          type: ["string", "null"]
+          description: Division slug from bot.manifest.json (e.g. DreamFinance)
+        capabilities:
+          type: array
+          items:
+            type: string
+        entrypoint:
+          type: ["string", "null"]
+        revenueModel:
+          type: ["string", "null"]
+        owner:
+          type: ["string", "null"]
+        description:
+          type: string
+        lastHeartbeat:
+          type: ["string", "null"]
+        pendingPRs:
+          type: integer
+        revenue:
+          type: number
+        lastUpdate:
+          type: ["string", "null"]
+        source:
+          type: string
+          enum: [manifest, heuristic, fallback]
+          description: Where this bot's metadata came from
+
+    Repo:
+      type: object
+      required: [name, fullName, description, isPrivate, url, stars, forks, updatedAt]
+      properties:
+        name:
+          type: string
+        fullName:
+          type: string
+        description:
+          type: ["string", "null"]
+        isPrivate:
+          type: boolean
+        url:
+          type: string
+        stars:
+          type: integer
+        forks:
+          type: integer
+        updatedAt:
+          type: string
+        language:
+          type: ["string", "null"]
+        openIssues:
+          type: integer
+
+    Commit:
+      type: object
+      required: [sha, message, author, date, repoName, url]
+      properties:
+        sha:
+          type: string
+        message:
+          type: string
+        author:
+          type: string
+        date:
+          type: string
+        repoName:
+          type: string
+        url:
+          type: string
+
+    RepoActivity:
+      type: object
+      required: [totalCommits, totalRepos, totalBots, activeRepos, recentEvents]
+      properties:
+        totalCommits:
+          type: integer
+        totalRepos:
+          type: integer
+        totalBots:
+          type: integer
+        activeRepos:
+          type: integer
+        recentEvents:
+          type: array
+          items:
+            type: object
+            required: [type, repo, description, date]
+            properties:
+              type:
+                type: string
+              repo:
+                type: string
+              description:
+                type: string
+              date:
+                type: string
+
+    RevenueMetrics:
+      type: object
+      required: [totalRevenue, dailyRevenue, weeklyRevenue, monthlyRevenue, dailyTarget, weeklyTarget, monthlyTarget, currency]
+      properties:
+        totalRevenue:
+          type: number
+        dailyRevenue:
+          type: number
+        weeklyRevenue:
+          type: number
+        monthlyRevenue:
+          type: number
+        dailyTarget:
+          type: number
+        weeklyTarget:
+          type: number
+        monthlyTarget:
+          type: number
+        currency:
+          type: string
+        connected:
+          type: boolean
+
+    Subscription:
+      type: object
+      required: [id, customer, plan, status, amount, currency, currentPeriodEnd]
+      properties:
+        id:
+          type: string
+        customer:
+          type: string
+        plan:
+          type: string
+        status:
+          type: string
+        amount:
+          type: number
+        currency:
+          type: string
+        currentPeriodEnd:
+          type: string
+
+    Transaction:
+      type: object
+      required: [id, amount, currency, status, description, date]
+      properties:
+        id:
+          type: string
+        amount:
+          type: number
+        currency:
+          type: string
+        status:
+          type: string
+        description:
+          type: string
+        date:
+          type: string
+
+    BuddyMessageInput:
+      type: object
+      required: [message]
+      properties:
+        message:
+          type: string
+        sessionId:
+          type: string
+
+    BuddyResponse:
+      type: object
+      required: [message, sessionId, timestamp]
+      properties:
+        message:
+          type: string
+        sessionId:
+          type: string
+        timestamp:
+          type: string
+        emotion:
+          type: ["string", "null"]
+
+    ChatMessage:
+      type: object
+      required: [id, role, content, timestamp]
+      properties:
+        id:
+          type: string
+        role:
+          type: string
+          enum: [user, buddy]
+        content:
+          type: string
+        timestamp:
+          type: string
+        emotion:
+          type: ["string", "null"]
+
+    DashboardSummary:
+      type: object
+      required: [totalBots, activeBots, idleBots, totalRepos, dailyRevenue, monthlyRevenue, dailyTarget, monthlyTarget, totalSubscriptions, recentCommits]
+      properties:
+        totalBots:
+          type: integer
+        activeBots:
+          type: integer
+        idleBots:
+          type: integer
+        totalRepos:
+          type: integer
+        dailyRevenue:
+          type: number
+        monthlyRevenue:
+          type: number
+        dailyTarget:
+          type: number
+        monthlyTarget:
+          type: number
+        totalSubscriptions:
+          type: integer
+        recentCommits:
+          type: integer
+        profitTargetDaily:
+          type: number
+        profitTargetMonthly:
+          type: number
+
+    BuildProgressSection:
+      type: object
+      required: [name, done, total]
+      properties:
+        name:
+          type: string
+        done:
+          type: integer
+        total:
+          type: integer
+
+    BuildProgress:
+      type: object
+      required: [overallPercent, sections]
+      properties:
+        overallPercent:
+          type: integer
+        sections:
+          type: array
+          items:
+            $ref: "#/components/schemas/BuildProgressSection"
+        detail:
+          type: object
+          additionalProperties: true
+
+    BotRunResult:
+      type: object
+      required: [ok, name, status, invocations, lastHeartbeat]
+      properties:
+        ok:
+          type: boolean
+        name:
+          type: string
+        status:
+          type: string
+        invocations:
+          type: integer
+        lastHeartbeat:
+          type: string
+        message:
+          type: string
+
+    CopilotPr:
+      type: object
+      required: [number, title, url, author, createdAt, mergeable, contractCompliant, touchedDirs]
+      properties:
+        number:
+          type: integer
+        title:
+          type: string
+        url:
+          type: string
+        author:
+          type: string
+        createdAt:
+          type: string
+        mergeable:
+          type: ["boolean", "null"]
+        mergeableState:
+          type: ["string", "null"]
+        contractCompliant:
+          type: boolean
+          description: True when PR touches exactly one bots/* dir with a valid manifest
+        complianceReason:
+          type: string
+        touchedDirs:
+          type: array
+          items:
+            type: string
+        manifestPresent:
+          type: boolean
+
+    CopilotRewriteResponse:
+      type: object
+      required: [issueNumber, issueUrl]
+      properties:
+        issueNumber:
+          type: integer
+        issueUrl:
+          type: string
+
+    Tier:
+      type: object
+      required: [name, priceMonthly, requestsPerMonth, concurrentBots, models]
+      properties:
+        name:
+          type: string
+        priceMonthly:
+          type: number
+        requestsPerMonth:
+          type: integer
+        concurrentBots:
+          type: integer
+        models:
+          type: array
+          items:
+            type: string
