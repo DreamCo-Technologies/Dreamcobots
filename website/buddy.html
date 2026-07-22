@@ -29,6 +29,7 @@
       <div class="buddy-rail-stat"><span>Profiles</span><strong data-fleet-stat="profiles">1,051</strong></div>
       <div class="buddy-rail-stat"><span>Buddy routes</span><strong data-fleet-stat="routes">1,051</strong></div>
       <div class="buddy-rail-stat"><span>Runtime instances</span><strong data-fleet-stat="runtime">1,051</strong></div>
+      <div class="buddy-rail-stat"><span>E2E sandbox certified</span><strong data-fleet-stat="e2e">1,051</strong></div>
       <div class="buddy-rail-stat"><span>Connected APIs</span><strong data-fleet-stat="apis">0</strong></div>
       <div class="buddy-rail-stat"><span>Studio tracks</span><strong data-fleet-stat="studio">7</strong></div>
     </div>
@@ -184,6 +185,13 @@ fetch('data/bot-fleet-catalog.json', { cache: 'no-store' })
     const route = document.getElementById('selected-bot-route');
     route.hidden = false;
     route.textContent = `Selected route: ${selected.identity.display_name} (${selected.identity.division}). Sandbox blueprint and Buddy route are verified; live adapters remain approval-gated.`;
+  })
+  .catch(() => {});
+
+fetch('data/bot-fleet-e2e.json', { cache: 'no-store' })
+  .then(response => response.ok ? response.json() : Promise.reject(new Error('certification unavailable')))
+  .then(report => {
+    document.querySelector('[data-fleet-stat="e2e"]').textContent = report.summary.sandboxCertified.toLocaleString();
   })
   .catch(() => {});
 </script>

@@ -40,3 +40,18 @@ test("stops before any requested live external action", () => {
   assert.equal(result.liveExternalActionTaken, false);
   assert.equal(result.approval.oneActionOnly, true);
 });
+
+test("certifies the repository-controlled end-to-end flow for every bot", () => {
+  const report = FleetRuntimeRegistry.fromFile().certifyAllEndToEnd();
+  assert.equal(report.summary.profilesTested, 1051);
+  assert.equal(report.summary.divisionsTested, 45);
+  assert.equal(report.summary.sandboxCertified, 1051);
+  assert.equal(report.summary.failed, 0);
+  assert.equal(report.summary.repositoryControlledFlowComplete, true);
+  assert.equal(report.summary.liveExternalFlowComplete, false);
+  assert.equal(report.profiles.every((profile) => profile.status === "sandbox_certified"), true);
+  assert.equal(
+    report.profiles.every((profile) => Object.values(profile.checks).every(Boolean)),
+    true,
+  );
+});

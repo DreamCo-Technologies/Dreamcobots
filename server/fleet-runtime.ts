@@ -43,6 +43,32 @@ type FleetCatalog = {
 
 export type RuntimeState = "ready" | "offline" | "error";
 
+export type BotEndToEndCertification = {
+  schema: "dreamco.bot_e2e_certification.v1";
+  slug: string;
+  displayName: string;
+  division: string;
+  category: string;
+  instanceId: string;
+  status: "sandbox_certified" | "failed";
+  checks: {
+    runtimeReady: boolean;
+    profileAndBuddyRouteVerified: boolean;
+    declaredCapabilitiesVerified: boolean;
+    runtimeToolBindingVerified: boolean;
+    samplePromptVerified: boolean;
+    sandboxExecutionVerified: boolean;
+    sandboxEvidenceVerified: boolean;
+    liveApprovalGateVerified: boolean;
+    noLiveSideEffectVerified: boolean;
+  };
+  declaredCapabilityCount: number;
+  toolBindingCount: number;
+  apiCandidateCount: number;
+  liveEndToEndStatus: "not_executed_requires_authenticated_deployment";
+  failures: string[];
+};
+
 export class BotRuntimeInstance {
   readonly instanceId: string;
   readonly profile: CatalogBot;
@@ -151,6 +177,83 @@ export class BotRuntimeInstance {
       createdAt: now,
     } as const;
   }
+
+  certifyEndToEnd(): BotEndToEndCertification {
+    const declaredCapabilities = this.profile.capability_search.split(" | ").filter(Boolean);
+    const health = this.health();
+    const checks: BotEndToEndCertification["checks"] = {
+      runtimeReady: health.state === "ready",
+      profileAndBuddyRouteVerified:
+        this.profile.readiness.profile_schema === "verified" &&
+        this.profile.readiness.buddy_chat_route === "verified",
+      declaredCapabilitiesVerified:
+        declaredCapabilities.length > 0 && declaredCapabilities.length === this.profile.capability_count,
+      runtimeToolBindingVerified: this.profile.tool_summary.some(
+        (tool) => tool.id === "buddy_fleet_runtime" && tool.status === "runtime_instance_ready",
+      ),
+      samplePromptVerified: this.profile.sample_test_prompt.trim().length >= 10,
+      sandboxExecutionVerified: false,
+      sandboxEvidenceVerified: false,
+      liveApprovalGateVerified: false,
+      noLiveSideEffectVerified: false,
+    };
+
+    try {
+      const sandboxResult = this.execute({
+        objective: this.profile.sample_test_prompt,
+        input: { certification: true, botSlug: this.profile.identity.slug },
+        requestedCapabilities: declaredCapabilities.slice(0, 3),
+        liveActionRequested: false,
+      });
+      if (sandboxResult.status === "sandbox_task_packet_ready") {
+        checks.sandboxExecutionVerified =
+          sandboxResult.instanceId === this.instanceId &&
+          sandboxResult.capabilityPlan.length > 0 &&
+          sandboxResult.capabilityPlan.every((step) => step.status === "declared_capability");
+        const evidence = new Set<string>(sandboxResult.sandboxEvidence);
+        checks.sandboxEvidenceVerified = [
+          "runtime_instance_resolved",
+          "profile_and_route_verified",
+          "network_default_off",
+          "no_live_external_write",
+          "approval_gate_available",
+        ].every((item) => evidence.has(item));
+      }
+
+      const liveResult = this.execute({
+        objective: `Request one live external action for ${this.profile.identity.display_name}.`,
+        input: { certification: true, botSlug: this.profile.identity.slug },
+        requestedCapabilities: declaredCapabilities.slice(0, 1),
+        liveActionRequested: true,
+      });
+      checks.liveApprovalGateVerified =
+        liveResult.status === "approval_required" && liveResult.approval.oneActionOnly === true;
+      checks.noLiveSideEffectVerified = liveResult.liveExternalActionTaken === false;
+    } catch {
+      checks.sandboxExecutionVerified = false;
+      checks.liveApprovalGateVerified = false;
+      checks.noLiveSideEffectVerified = false;
+    }
+
+    const failures = Object.entries(checks)
+      .filter(([, passed]) => !passed)
+      .map(([check]) => check);
+    return {
+      schema: "dreamco.bot_e2e_certification.v1",
+      slug: this.profile.identity.slug,
+      displayName: this.profile.identity.display_name,
+      division: this.profile.identity.division,
+      category: this.profile.identity.category,
+      instanceId: this.instanceId,
+      status: failures.length === 0 ? "sandbox_certified" : "failed",
+      checks,
+      declaredCapabilityCount: declaredCapabilities.length,
+      toolBindingCount: this.profile.tool_summary.length,
+      apiCandidateCount: this.profile.api_candidate_names.length,
+      liveEndToEndStatus: "not_executed_requires_authenticated_deployment",
+      failures,
+    };
+  }
 }
 
 export class FleetRuntimeRegistry {
@@ -198,6 +301,36 @@ export class FleetRuntimeRegistry {
 
   healthChecks() {
     return [...this.runtimes.values()].map((runtime) => runtime.health());
+  }
+
+  certifyAllEndToEnd() {
+    const profiles = [...this.runtimes.values()]
+      .map((runtime) => runtime.certifyEndToEnd())
+      .sort((a, b) => a.slug.localeCompare(b.slug));
+    const divisionMap = new Map<string, { profiles: number; passed: number; failed: number }>();
+    for (const profile of profiles) {
+      const division = divisionMap.get(profile.division) ?? { profiles: 0, passed: 0, failed: 0 };
+      division.profiles += 1;
+      if (profile.status === "sandbox_certified") division.passed += 1;
+      else division.failed += 1;
+      divisionMap.set(profile.division, division);
+    }
+    return {
+      schema: "dreamco.bot_fleet_e2e.v1",
+      summary: {
+        profilesTested: profiles.length,
+        sandboxCertified: profiles.filter((profile) => profile.status === "sandbox_certified").length,
+        failed: profiles.filter((profile) => profile.status === "failed").length,
+        divisionsTested: divisionMap.size,
+        repositoryControlledFlowComplete: profiles.every((profile) => profile.status === "sandbox_certified"),
+        liveExternalFlowComplete: false,
+        liveExternalBoundary: "an authenticated deployment, configured adapter, owner approval, and provider sandbox",
+      },
+      divisions: [...divisionMap.entries()]
+        .map(([division, result]) => ({ division, ...result }))
+        .sort((a, b) => a.division.localeCompare(b.division)),
+      profiles,
+    } as const;
   }
 }
 
