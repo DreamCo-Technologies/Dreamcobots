@@ -1,0 +1,4384 @@
+{
+  "schema": "dreamco.bot_fleet_division.v2",
+  "division": "DreamAdmin",
+  "bots": [
+    {
+      "identity": {
+        "slug": "meeting-scheduler",
+        "display_name": "Smart Meeting Scheduler",
+        "division": "DreamAdmin",
+        "category": "scheduling",
+        "tier": "pro",
+        "catalog_status": "active"
+      },
+      "logo": {
+        "logo_id": "logo-meeting-scheduler",
+        "emoji": "🔐",
+        "monogram": "SM",
+        "call_sign": "Grand Atlas AB6865AF",
+        "shape": "shield",
+        "colors": {
+          "primary": "#77521F",
+          "accent": "#287878",
+          "surface": "#FFF9ED"
+        },
+        "accessibility_label": "Smart Meeting Scheduler logo"
+      },
+      "prospectus": {
+        "mission": "Schedules meetings with availability optimization and room booking integration.",
+        "target_users": "Executive assistants, office managers",
+        "catalog_business_model": "SaaS subscription",
+        "catalog_price_range": "$79/mo",
+        "pricing_evidence": "catalog_claim_not_verified_revenue",
+        "inputs": [
+          "user brief",
+          "user-selected files or records",
+          "approved connector references"
+        ],
+        "outputs": [
+          "draft",
+          "analysis",
+          "task packet",
+          "sandbox evidence",
+          "approval request when required"
+        ],
+        "limitations": [
+          "This profile has an executable governed runtime instance backed by shared hardened code, not a separate always-running operating-system process.",
+          "External APIs require owner configuration, provider terms, sandbox tests, and scoped approval.",
+          "Published pricing and revenue models are catalog plans, not evidence of sales or earnings."
+        ]
+      },
+      "capabilities": [
+        {
+          "name": "Calendar availability analysis",
+          "source": "App_bots/DreamAdmin.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Room booking integration",
+          "source": "App_bots/DreamAdmin.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Agenda template management",
+          "source": "App_bots/DreamAdmin.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Meeting cadence optimization",
+          "source": "App_bots/DreamAdmin.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Attendee preference tracking",
+          "source": "App_bots/DreamAdmin.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Video conferencing integration",
+          "source": "App_bots/DreamAdmin.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Advanced analytics dashboard",
+          "source": "App_bots/DreamAdmin.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Priority email support",
+          "source": "App_bots/DreamAdmin.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        }
+      ],
+      "tools": [
+        {
+          "id": "buddy_fleet_runtime",
+          "name": "Executable fleet runtime",
+          "status": "runtime_instance_ready",
+          "evidence": "server/fleet-runtime.ts"
+        },
+        {
+          "id": "buddy_chat_router",
+          "name": "Buddy shared chat router",
+          "status": "runtime_routed",
+          "evidence": "server/routes.ts"
+        },
+        {
+          "id": "buddy_approval_gateway",
+          "name": "Buddy approval gateway",
+          "status": "policy_available",
+          "evidence": "server/approval-notifications.ts"
+        },
+        {
+          "id": "buddy_bot_sandbox",
+          "name": "Per-bot sandbox blueprint",
+          "status": "generated",
+          "evidence": "config/generated/bots.catalog.json"
+        },
+        {
+          "id": "buddy_platform_registry",
+          "name": "Governed platform capability registry",
+          "status": "runtime_routed",
+          "evidence": "config/generated/buddy_platform_expansion.json"
+        },
+        {
+          "id": "buddy_bot_calculator",
+          "name": "Per-bot planning calculator",
+          "status": "local_interactive_ready",
+          "evidence": "config/generated/bot_calculators.json"
+        },
+        {
+          "id": "buddy_creative_studio",
+          "name": "Buddy Creative Studio",
+          "status": "local_prototype_available",
+          "evidence": "dreamco_platform/creative/studio.py"
+        },
+        {
+          "id": "buddy_connection_broker",
+          "name": "Buddy Connection Broker",
+          "status": "backend_broker_available",
+          "evidence": "dreamco_platform/connections/broker.py"
+        }
+      ],
+      "api_candidates": [],
+      "data_contract": {
+        "accepted_inputs": [
+          "user brief",
+          "user-selected files or records",
+          "approved connector references"
+        ],
+        "produced_outputs": [
+          "draft",
+          "analysis",
+          "task packet",
+          "sandbox evidence",
+          "approval request when required"
+        ],
+        "sensitivity": "standard_business_data",
+        "sensitive_domains": [],
+        "storage_policy": "store useful project artifacts only; raw credentials are forbidden; raw biometric media remains local or in an encrypted owner vault",
+        "retention": "owner-configurable with deletion and revocation support"
+      },
+      "approvals": {
+        "default_mode": "sandbox",
+        "approval_required": true,
+        "high_impact_profile": true,
+        "triggers": [
+          "email"
+        ],
+        "channels_supported": [
+          "in_app",
+          "email",
+          "sms",
+          "voice_call"
+        ],
+        "contact_requirement": "verified user-owned destination and explicit channel opt-in",
+        "execution_rule": "approval authorizes one scoped action; it never exposes credentials to the bot or browser"
+      },
+      "sandbox": {
+        "sandbox_id": "sandbox-meeting-scheduler",
+        "network_default": "off",
+        "fixture_mode": "synthetic_or_owner_supplied",
+        "seed": 2875745711,
+        "checks": [
+          "profile_schema_valid",
+          "runtime_slug_resolves",
+          "capability_output_matches_brief",
+          "no_secret_in_output",
+          "no_live_external_write",
+          "approval_gate_for_high_impact_action",
+          "failure_and_retry_state_recorded"
+        ],
+        "api_tests": [],
+        "release_gate": "all applicable checks pass and owner approves any live action"
+      },
+      "readiness": {
+        "profile_schema": "verified",
+        "buddy_chat_route": "verified",
+        "executable_runtime_instance": "verified",
+        "standalone_native_runtime": "shared_worker_not_standalone",
+        "external_integrations": "no_division_api_catalog",
+        "production_ready": false,
+        "production_gate": "implement or configure adapters, pass sandbox checks, add authentication, and verify deployment telemetry"
+      },
+      "evidence": {
+        "catalog_source": "App_bots/DreamAdmin.json",
+        "runtime_sources": [
+          "server/seed-bots.ts"
+        ],
+        "runtime_seed_duplicates": 0
+      },
+      "sample_test_prompt": "Test Smart Meeting Scheduler in sandbox mode. Use synthetic data, demonstrate Calendar availability analysis, record evidence, and stop before any live external action."
+    },
+    {
+      "identity": {
+        "slug": "document-manager",
+        "display_name": "Document Management System",
+        "division": "DreamAdmin",
+        "category": "documents",
+        "tier": "pro",
+        "catalog_status": "active"
+      },
+      "logo": {
+        "logo_id": "logo-document-manager",
+        "emoji": "📚",
+        "monogram": "DM",
+        "call_sign": "Ready Signal A2824E40",
+        "shape": "circle",
+        "colors": {
+          "primary": "#176B5B",
+          "accent": "#D7A73B",
+          "surface": "#F5F7F3"
+        },
+        "accessibility_label": "Document Management System logo"
+      },
+      "prospectus": {
+        "mission": "Manages documents with version control and approval workflows.",
+        "target_users": "Office managers, records administrators",
+        "catalog_business_model": "SaaS subscription",
+        "catalog_price_range": "$129/mo",
+        "pricing_evidence": "catalog_claim_not_verified_revenue",
+        "inputs": [
+          "user brief",
+          "user-selected files or records",
+          "approved connector references"
+        ],
+        "outputs": [
+          "draft",
+          "analysis",
+          "task packet",
+          "sandbox evidence",
+          "approval request when required"
+        ],
+        "limitations": [
+          "This profile has an executable governed runtime instance backed by shared hardened code, not a separate always-running operating-system process.",
+          "External APIs require owner configuration, provider terms, sandbox tests, and scoped approval.",
+          "Published pricing and revenue models are catalog plans, not evidence of sales or earnings."
+        ]
+      },
+      "capabilities": [
+        {
+          "name": "Document version control",
+          "source": "App_bots/DreamAdmin.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Approval workflow automation",
+          "source": "App_bots/DreamAdmin.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Template library management",
+          "source": "App_bots/DreamAdmin.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Search and retrieval engine",
+          "source": "App_bots/DreamAdmin.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Retention policy enforcement",
+          "source": "App_bots/DreamAdmin.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Access permission management",
+          "source": "App_bots/DreamAdmin.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Advanced analytics dashboard",
+          "source": "App_bots/DreamAdmin.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Priority email support",
+          "source": "App_bots/DreamAdmin.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        }
+      ],
+      "tools": [
+        {
+          "id": "buddy_fleet_runtime",
+          "name": "Executable fleet runtime",
+          "status": "runtime_instance_ready",
+          "evidence": "server/fleet-runtime.ts"
+        },
+        {
+          "id": "buddy_chat_router",
+          "name": "Buddy shared chat router",
+          "status": "runtime_routed",
+          "evidence": "server/routes.ts"
+        },
+        {
+          "id": "buddy_approval_gateway",
+          "name": "Buddy approval gateway",
+          "status": "policy_available",
+          "evidence": "server/approval-notifications.ts"
+        },
+        {
+          "id": "buddy_bot_sandbox",
+          "name": "Per-bot sandbox blueprint",
+          "status": "generated",
+          "evidence": "config/generated/bots.catalog.json"
+        },
+        {
+          "id": "buddy_platform_registry",
+          "name": "Governed platform capability registry",
+          "status": "runtime_routed",
+          "evidence": "config/generated/buddy_platform_expansion.json"
+        },
+        {
+          "id": "buddy_bot_calculator",
+          "name": "Per-bot planning calculator",
+          "status": "local_interactive_ready",
+          "evidence": "config/generated/bot_calculators.json"
+        },
+        {
+          "id": "buddy_code_workspace",
+          "name": "Buddy Code Workspace",
+          "status": "shared_runtime_route",
+          "evidence": "server/seed-buddy-bot.ts"
+        }
+      ],
+      "api_candidates": [],
+      "data_contract": {
+        "accepted_inputs": [
+          "user brief",
+          "user-selected files or records",
+          "approved connector references"
+        ],
+        "produced_outputs": [
+          "draft",
+          "analysis",
+          "task packet",
+          "sandbox evidence",
+          "approval request when required"
+        ],
+        "sensitivity": "standard_business_data",
+        "sensitive_domains": [],
+        "storage_policy": "store useful project artifacts only; raw credentials are forbidden; raw biometric media remains local or in an encrypted owner vault",
+        "retention": "owner-configurable with deletion and revocation support"
+      },
+      "approvals": {
+        "default_mode": "sandbox",
+        "approval_required": true,
+        "high_impact_profile": true,
+        "triggers": [
+          "email"
+        ],
+        "channels_supported": [
+          "in_app",
+          "email",
+          "sms",
+          "voice_call"
+        ],
+        "contact_requirement": "verified user-owned destination and explicit channel opt-in",
+        "execution_rule": "approval authorizes one scoped action; it never exposes credentials to the bot or browser"
+      },
+      "sandbox": {
+        "sandbox_id": "sandbox-document-manager",
+        "network_default": "off",
+        "fixture_mode": "synthetic_or_owner_supplied",
+        "seed": 2726448704,
+        "checks": [
+          "profile_schema_valid",
+          "runtime_slug_resolves",
+          "capability_output_matches_brief",
+          "no_secret_in_output",
+          "no_live_external_write",
+          "approval_gate_for_high_impact_action",
+          "failure_and_retry_state_recorded"
+        ],
+        "api_tests": [],
+        "release_gate": "all applicable checks pass and owner approves any live action"
+      },
+      "readiness": {
+        "profile_schema": "verified",
+        "buddy_chat_route": "verified",
+        "executable_runtime_instance": "verified",
+        "standalone_native_runtime": "shared_worker_not_standalone",
+        "external_integrations": "no_division_api_catalog",
+        "production_ready": false,
+        "production_gate": "implement or configure adapters, pass sandbox checks, add authentication, and verify deployment telemetry"
+      },
+      "evidence": {
+        "catalog_source": "App_bots/DreamAdmin.json",
+        "runtime_sources": [
+          "server/seed-bots.ts"
+        ],
+        "runtime_seed_duplicates": 0
+      },
+      "sample_test_prompt": "Test Document Management System in sandbox mode. Use synthetic data, demonstrate Document version control, record evidence, and stop before any live external action."
+    },
+    {
+      "identity": {
+        "slug": "payroll-processor",
+        "display_name": "Payroll Processing Assistant",
+        "division": "DreamAdmin",
+        "category": "payroll",
+        "tier": "enterprise",
+        "catalog_status": "active"
+      },
+      "logo": {
+        "logo_id": "logo-payroll-processor",
+        "emoji": "🧠",
+        "monogram": "PP",
+        "call_sign": "Grand Engine B650E3AB",
+        "shape": "shield",
+        "colors": {
+          "primary": "#5B3A8A",
+          "accent": "#D89B2B",
+          "surface": "#F8F5FF"
+        },
+        "accessibility_label": "Payroll Processing Assistant logo"
+      },
+      "prospectus": {
+        "mission": "Assists payroll processing with calculation verification and compliance checking.",
+        "target_users": "Payroll managers, HR directors",
+        "catalog_business_model": "Enterprise license",
+        "catalog_price_range": "$699/mo",
+        "pricing_evidence": "catalog_claim_not_verified_revenue",
+        "inputs": [
+          "user brief",
+          "user-selected files or records",
+          "approved connector references"
+        ],
+        "outputs": [
+          "draft",
+          "analysis",
+          "task packet",
+          "sandbox evidence",
+          "approval request when required"
+        ],
+        "limitations": [
+          "This profile has an executable governed runtime instance backed by shared hardened code, not a separate always-running operating-system process.",
+          "External APIs require owner configuration, provider terms, sandbox tests, and scoped approval.",
+          "Published pricing and revenue models are catalog plans, not evidence of sales or earnings."
+        ]
+      },
+      "capabilities": [
+        {
+          "name": "Pay calculation verification",
+          "source": "App_bots/DreamAdmin.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Tax withholding compliance",
+          "source": "App_bots/DreamAdmin.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Overtime calculation tools",
+          "source": "App_bots/DreamAdmin.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Benefits deduction management",
+          "source": "App_bots/DreamAdmin.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Direct deposit coordination",
+          "source": "App_bots/DreamAdmin.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Payroll report generation",
+          "source": "App_bots/DreamAdmin.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Advanced analytics dashboard",
+          "source": "App_bots/DreamAdmin.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Priority email support",
+          "source": "App_bots/DreamAdmin.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        }
+      ],
+      "tools": [
+        {
+          "id": "buddy_fleet_runtime",
+          "name": "Executable fleet runtime",
+          "status": "runtime_instance_ready",
+          "evidence": "server/fleet-runtime.ts"
+        },
+        {
+          "id": "buddy_chat_router",
+          "name": "Buddy shared chat router",
+          "status": "runtime_routed",
+          "evidence": "server/routes.ts"
+        },
+        {
+          "id": "buddy_approval_gateway",
+          "name": "Buddy approval gateway",
+          "status": "policy_available",
+          "evidence": "server/approval-notifications.ts"
+        },
+        {
+          "id": "buddy_bot_sandbox",
+          "name": "Per-bot sandbox blueprint",
+          "status": "generated",
+          "evidence": "config/generated/bots.catalog.json"
+        },
+        {
+          "id": "buddy_platform_registry",
+          "name": "Governed platform capability registry",
+          "status": "runtime_routed",
+          "evidence": "config/generated/buddy_platform_expansion.json"
+        },
+        {
+          "id": "buddy_bot_calculator",
+          "name": "Per-bot planning calculator",
+          "status": "local_interactive_ready",
+          "evidence": "config/generated/bot_calculators.json"
+        }
+      ],
+      "api_candidates": [],
+      "data_contract": {
+        "accepted_inputs": [
+          "user brief",
+          "user-selected files or records",
+          "approved connector references"
+        ],
+        "produced_outputs": [
+          "draft",
+          "analysis",
+          "task packet",
+          "sandbox evidence",
+          "approval request when required"
+        ],
+        "sensitivity": "standard_business_data",
+        "sensitive_domains": [],
+        "storage_policy": "store useful project artifacts only; raw credentials are forbidden; raw biometric media remains local or in an encrypted owner vault",
+        "retention": "owner-configurable with deletion and revocation support"
+      },
+      "approvals": {
+        "default_mode": "sandbox",
+        "approval_required": true,
+        "high_impact_profile": true,
+        "triggers": [
+          "email"
+        ],
+        "channels_supported": [
+          "in_app",
+          "email",
+          "sms",
+          "voice_call"
+        ],
+        "contact_requirement": "verified user-owned destination and explicit channel opt-in",
+        "execution_rule": "approval authorizes one scoped action; it never exposes credentials to the bot or browser"
+      },
+      "sandbox": {
+        "sandbox_id": "sandbox-payroll-processor",
+        "network_default": "off",
+        "fixture_mode": "synthetic_or_owner_supplied",
+        "seed": 3058754475,
+        "checks": [
+          "profile_schema_valid",
+          "runtime_slug_resolves",
+          "capability_output_matches_brief",
+          "no_secret_in_output",
+          "no_live_external_write",
+          "approval_gate_for_high_impact_action",
+          "failure_and_retry_state_recorded"
+        ],
+        "api_tests": [],
+        "release_gate": "all applicable checks pass and owner approves any live action"
+      },
+      "readiness": {
+        "profile_schema": "verified",
+        "buddy_chat_route": "verified",
+        "executable_runtime_instance": "verified",
+        "standalone_native_runtime": "shared_worker_not_standalone",
+        "external_integrations": "no_division_api_catalog",
+        "production_ready": false,
+        "production_gate": "implement or configure adapters, pass sandbox checks, add authentication, and verify deployment telemetry"
+      },
+      "evidence": {
+        "catalog_source": "App_bots/DreamAdmin.json",
+        "runtime_sources": [
+          "server/seed-bots.ts"
+        ],
+        "runtime_seed_duplicates": 0
+      },
+      "sample_test_prompt": "Test Payroll Processing Assistant in sandbox mode. Use synthetic data, demonstrate Pay calculation verification, record evidence, and stop before any live external action."
+    },
+    {
+      "identity": {
+        "slug": "expense-reporter",
+        "display_name": "Expense Report Manager",
+        "division": "DreamAdmin",
+        "category": "expenses",
+        "tier": "pro",
+        "catalog_status": "active"
+      },
+      "logo": {
+        "logo_id": "logo-expense-reporter",
+        "emoji": "⚙️",
+        "monogram": "ER",
+        "call_sign": "Bright Forge D9A8D94C",
+        "shape": "shield",
+        "colors": {
+          "primary": "#0F6F88",
+          "accent": "#C94D63",
+          "surface": "#F4FBFC"
+        },
+        "accessibility_label": "Expense Report Manager logo"
+      },
+      "prospectus": {
+        "mission": "Manages expense reports with receipt scanning and policy compliance checking.",
+        "target_users": "Finance teams, traveling employees",
+        "catalog_business_model": "SaaS subscription",
+        "catalog_price_range": "$99/mo",
+        "pricing_evidence": "catalog_claim_not_verified_revenue",
+        "inputs": [
+          "user brief",
+          "user-selected files or records",
+          "approved connector references"
+        ],
+        "outputs": [
+          "draft",
+          "analysis",
+          "task packet",
+          "sandbox evidence",
+          "approval request when required"
+        ],
+        "limitations": [
+          "This profile has an executable governed runtime instance backed by shared hardened code, not a separate always-running operating-system process.",
+          "External APIs require owner configuration, provider terms, sandbox tests, and scoped approval.",
+          "Published pricing and revenue models are catalog plans, not evidence of sales or earnings."
+        ]
+      },
+      "capabilities": [
+        {
+          "name": "Receipt OCR scanning",
+          "source": "App_bots/DreamAdmin.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Policy compliance validation",
+          "source": "App_bots/DreamAdmin.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Approval routing automation",
+          "source": "App_bots/DreamAdmin.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Reimbursement tracking tools",
+          "source": "App_bots/DreamAdmin.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Budget category allocation",
+          "source": "App_bots/DreamAdmin.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Spending analytics dashboard",
+          "source": "App_bots/DreamAdmin.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Advanced analytics dashboard",
+          "source": "App_bots/DreamAdmin.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Priority email support",
+          "source": "App_bots/DreamAdmin.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        }
+      ],
+      "tools": [
+        {
+          "id": "buddy_fleet_runtime",
+          "name": "Executable fleet runtime",
+          "status": "runtime_instance_ready",
+          "evidence": "server/fleet-runtime.ts"
+        },
+        {
+          "id": "buddy_chat_router",
+          "name": "Buddy shared chat router",
+          "status": "runtime_routed",
+          "evidence": "server/routes.ts"
+        },
+        {
+          "id": "buddy_approval_gateway",
+          "name": "Buddy approval gateway",
+          "status": "policy_available",
+          "evidence": "server/approval-notifications.ts"
+        },
+        {
+          "id": "buddy_bot_sandbox",
+          "name": "Per-bot sandbox blueprint",
+          "status": "generated",
+          "evidence": "config/generated/bots.catalog.json"
+        },
+        {
+          "id": "buddy_platform_registry",
+          "name": "Governed platform capability registry",
+          "status": "runtime_routed",
+          "evidence": "config/generated/buddy_platform_expansion.json"
+        },
+        {
+          "id": "buddy_bot_calculator",
+          "name": "Per-bot planning calculator",
+          "status": "local_interactive_ready",
+          "evidence": "config/generated/bot_calculators.json"
+        },
+        {
+          "id": "buddy_code_workspace",
+          "name": "Buddy Code Workspace",
+          "status": "shared_runtime_route",
+          "evidence": "server/seed-buddy-bot.ts"
+        }
+      ],
+      "api_candidates": [],
+      "data_contract": {
+        "accepted_inputs": [
+          "user brief",
+          "user-selected files or records",
+          "approved connector references"
+        ],
+        "produced_outputs": [
+          "draft",
+          "analysis",
+          "task packet",
+          "sandbox evidence",
+          "approval request when required"
+        ],
+        "sensitivity": "standard_business_data",
+        "sensitive_domains": [],
+        "storage_policy": "store useful project artifacts only; raw credentials are forbidden; raw biometric media remains local or in an encrypted owner vault",
+        "retention": "owner-configurable with deletion and revocation support"
+      },
+      "approvals": {
+        "default_mode": "sandbox",
+        "approval_required": true,
+        "high_impact_profile": true,
+        "triggers": [
+          "email"
+        ],
+        "channels_supported": [
+          "in_app",
+          "email",
+          "sms",
+          "voice_call"
+        ],
+        "contact_requirement": "verified user-owned destination and explicit channel opt-in",
+        "execution_rule": "approval authorizes one scoped action; it never exposes credentials to the bot or browser"
+      },
+      "sandbox": {
+        "sandbox_id": "sandbox-expense-reporter",
+        "network_default": "off",
+        "fixture_mode": "synthetic_or_owner_supplied",
+        "seed": 3651721548,
+        "checks": [
+          "profile_schema_valid",
+          "runtime_slug_resolves",
+          "capability_output_matches_brief",
+          "no_secret_in_output",
+          "no_live_external_write",
+          "approval_gate_for_high_impact_action",
+          "failure_and_retry_state_recorded"
+        ],
+        "api_tests": [],
+        "release_gate": "all applicable checks pass and owner approves any live action"
+      },
+      "readiness": {
+        "profile_schema": "verified",
+        "buddy_chat_route": "verified",
+        "executable_runtime_instance": "verified",
+        "standalone_native_runtime": "shared_worker_not_standalone",
+        "external_integrations": "no_division_api_catalog",
+        "production_ready": false,
+        "production_gate": "implement or configure adapters, pass sandbox checks, add authentication, and verify deployment telemetry"
+      },
+      "evidence": {
+        "catalog_source": "App_bots/DreamAdmin.json",
+        "runtime_sources": [
+          "server/seed-bots.ts"
+        ],
+        "runtime_seed_duplicates": 0
+      },
+      "sample_test_prompt": "Test Expense Report Manager in sandbox mode. Use synthetic data, demonstrate Receipt OCR scanning, record evidence, and stop before any live external action."
+    },
+    {
+      "identity": {
+        "slug": "travel-coordinator",
+        "display_name": "Business Travel Coordinator",
+        "division": "DreamAdmin",
+        "category": "travel",
+        "tier": "pro",
+        "catalog_status": "active"
+      },
+      "logo": {
+        "logo_id": "logo-travel-coordinator",
+        "emoji": "🧩",
+        "monogram": "BT",
+        "call_sign": "Prime Scope 601DCA49",
+        "shape": "shield",
+        "colors": {
+          "primary": "#275DAD",
+          "accent": "#E38B3C",
+          "surface": "#F7F9FC"
+        },
+        "accessibility_label": "Business Travel Coordinator logo"
+      },
+      "prospectus": {
+        "mission": "Coordinates business travel with booking management and itinerary creation.",
+        "target_users": "Office managers, travel coordinators",
+        "catalog_business_model": "SaaS subscription",
+        "catalog_price_range": "$99/mo",
+        "pricing_evidence": "catalog_claim_not_verified_revenue",
+        "inputs": [
+          "user brief",
+          "user-selected files or records",
+          "approved connector references"
+        ],
+        "outputs": [
+          "draft",
+          "analysis",
+          "task packet",
+          "sandbox evidence",
+          "approval request when required"
+        ],
+        "limitations": [
+          "This profile has an executable governed runtime instance backed by shared hardened code, not a separate always-running operating-system process.",
+          "External APIs require owner configuration, provider terms, sandbox tests, and scoped approval.",
+          "Published pricing and revenue models are catalog plans, not evidence of sales or earnings."
+        ]
+      },
+      "capabilities": [
+        {
+          "name": "Travel booking management",
+          "source": "App_bots/DreamAdmin.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Itinerary creation tools",
+          "source": "App_bots/DreamAdmin.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Policy compliance checking",
+          "source": "App_bots/DreamAdmin.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Expense pre-approval workflow",
+          "source": "App_bots/DreamAdmin.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Visa requirement tracking",
+          "source": "App_bots/DreamAdmin.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Travel risk assessment",
+          "source": "App_bots/DreamAdmin.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Advanced analytics dashboard",
+          "source": "App_bots/DreamAdmin.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Priority email support",
+          "source": "App_bots/DreamAdmin.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        }
+      ],
+      "tools": [
+        {
+          "id": "buddy_fleet_runtime",
+          "name": "Executable fleet runtime",
+          "status": "runtime_instance_ready",
+          "evidence": "server/fleet-runtime.ts"
+        },
+        {
+          "id": "buddy_chat_router",
+          "name": "Buddy shared chat router",
+          "status": "runtime_routed",
+          "evidence": "server/routes.ts"
+        },
+        {
+          "id": "buddy_approval_gateway",
+          "name": "Buddy approval gateway",
+          "status": "policy_available",
+          "evidence": "server/approval-notifications.ts"
+        },
+        {
+          "id": "buddy_bot_sandbox",
+          "name": "Per-bot sandbox blueprint",
+          "status": "generated",
+          "evidence": "config/generated/bots.catalog.json"
+        },
+        {
+          "id": "buddy_platform_registry",
+          "name": "Governed platform capability registry",
+          "status": "runtime_routed",
+          "evidence": "config/generated/buddy_platform_expansion.json"
+        },
+        {
+          "id": "buddy_bot_calculator",
+          "name": "Per-bot planning calculator",
+          "status": "local_interactive_ready",
+          "evidence": "config/generated/bot_calculators.json"
+        },
+        {
+          "id": "buddy_code_workspace",
+          "name": "Buddy Code Workspace",
+          "status": "shared_runtime_route",
+          "evidence": "server/seed-buddy-bot.ts"
+        }
+      ],
+      "api_candidates": [],
+      "data_contract": {
+        "accepted_inputs": [
+          "user brief",
+          "user-selected files or records",
+          "approved connector references"
+        ],
+        "produced_outputs": [
+          "draft",
+          "analysis",
+          "task packet",
+          "sandbox evidence",
+          "approval request when required"
+        ],
+        "sensitivity": "standard_business_data",
+        "sensitive_domains": [],
+        "storage_policy": "store useful project artifacts only; raw credentials are forbidden; raw biometric media remains local or in an encrypted owner vault",
+        "retention": "owner-configurable with deletion and revocation support"
+      },
+      "approvals": {
+        "default_mode": "sandbox",
+        "approval_required": true,
+        "high_impact_profile": true,
+        "triggers": [
+          "email"
+        ],
+        "channels_supported": [
+          "in_app",
+          "email",
+          "sms",
+          "voice_call"
+        ],
+        "contact_requirement": "verified user-owned destination and explicit channel opt-in",
+        "execution_rule": "approval authorizes one scoped action; it never exposes credentials to the bot or browser"
+      },
+      "sandbox": {
+        "sandbox_id": "sandbox-travel-coordinator",
+        "network_default": "off",
+        "fixture_mode": "synthetic_or_owner_supplied",
+        "seed": 1612565065,
+        "checks": [
+          "profile_schema_valid",
+          "runtime_slug_resolves",
+          "capability_output_matches_brief",
+          "no_secret_in_output",
+          "no_live_external_write",
+          "approval_gate_for_high_impact_action",
+          "failure_and_retry_state_recorded"
+        ],
+        "api_tests": [],
+        "release_gate": "all applicable checks pass and owner approves any live action"
+      },
+      "readiness": {
+        "profile_schema": "verified",
+        "buddy_chat_route": "verified",
+        "executable_runtime_instance": "verified",
+        "standalone_native_runtime": "shared_worker_not_standalone",
+        "external_integrations": "no_division_api_catalog",
+        "production_ready": false,
+        "production_gate": "implement or configure adapters, pass sandbox checks, add authentication, and verify deployment telemetry"
+      },
+      "evidence": {
+        "catalog_source": "App_bots/DreamAdmin.json",
+        "runtime_sources": [
+          "server/seed-bots.ts"
+        ],
+        "runtime_seed_duplicates": 0
+      },
+      "sample_test_prompt": "Test Business Travel Coordinator in sandbox mode. Use synthetic data, demonstrate Travel booking management, record evidence, and stop before any live external action."
+    },
+    {
+      "identity": {
+        "slug": "reception-bot",
+        "display_name": "Virtual Reception Assistant",
+        "division": "DreamAdmin",
+        "category": "reception",
+        "tier": "pro",
+        "catalog_status": "active"
+      },
+      "logo": {
+        "logo_id": "logo-reception-bot",
+        "emoji": "🎮",
+        "monogram": "VR",
+        "call_sign": "Agile Canvas 65E65B2B",
+        "shape": "shield",
+        "colors": {
+          "primary": "#5B3A8A",
+          "accent": "#D89B2B",
+          "surface": "#F8F5FF"
+        },
+        "accessibility_label": "Virtual Reception Assistant logo"
+      },
+      "prospectus": {
+        "mission": "Manages virtual reception duties with visitor management and package tracking.",
+        "target_users": "Receptionists, office managers, facility teams",
+        "catalog_business_model": "SaaS subscription",
+        "catalog_price_range": "$79/mo",
+        "pricing_evidence": "catalog_claim_not_verified_revenue",
+        "inputs": [
+          "user brief",
+          "user-selected files or records",
+          "approved connector references"
+        ],
+        "outputs": [
+          "draft",
+          "analysis",
+          "task packet",
+          "sandbox evidence",
+          "approval request when required"
+        ],
+        "limitations": [
+          "This profile has an executable governed runtime instance backed by shared hardened code, not a separate always-running operating-system process.",
+          "External APIs require owner configuration, provider terms, sandbox tests, and scoped approval.",
+          "Published pricing and revenue models are catalog plans, not evidence of sales or earnings."
+        ]
+      },
+      "capabilities": [
+        {
+          "name": "Visitor registration system",
+          "source": "App_bots/DreamAdmin.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Badge printing integration",
+          "source": "App_bots/DreamAdmin.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Package delivery tracking",
+          "source": "App_bots/DreamAdmin.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Phone call routing",
+          "source": "App_bots/DreamAdmin.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Meeting room directions",
+          "source": "App_bots/DreamAdmin.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Emergency contact management",
+          "source": "App_bots/DreamAdmin.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Advanced analytics dashboard",
+          "source": "App_bots/DreamAdmin.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Priority email support",
+          "source": "App_bots/DreamAdmin.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        }
+      ],
+      "tools": [
+        {
+          "id": "buddy_fleet_runtime",
+          "name": "Executable fleet runtime",
+          "status": "runtime_instance_ready",
+          "evidence": "server/fleet-runtime.ts"
+        },
+        {
+          "id": "buddy_chat_router",
+          "name": "Buddy shared chat router",
+          "status": "runtime_routed",
+          "evidence": "server/routes.ts"
+        },
+        {
+          "id": "buddy_approval_gateway",
+          "name": "Buddy approval gateway",
+          "status": "policy_available",
+          "evidence": "server/approval-notifications.ts"
+        },
+        {
+          "id": "buddy_bot_sandbox",
+          "name": "Per-bot sandbox blueprint",
+          "status": "generated",
+          "evidence": "config/generated/bots.catalog.json"
+        },
+        {
+          "id": "buddy_platform_registry",
+          "name": "Governed platform capability registry",
+          "status": "runtime_routed",
+          "evidence": "config/generated/buddy_platform_expansion.json"
+        },
+        {
+          "id": "buddy_bot_calculator",
+          "name": "Per-bot planning calculator",
+          "status": "local_interactive_ready",
+          "evidence": "config/generated/bot_calculators.json"
+        },
+        {
+          "id": "buddy_connection_broker",
+          "name": "Buddy Connection Broker",
+          "status": "backend_broker_available",
+          "evidence": "dreamco_platform/connections/broker.py"
+        }
+      ],
+      "api_candidates": [],
+      "data_contract": {
+        "accepted_inputs": [
+          "user brief",
+          "user-selected files or records",
+          "approved connector references"
+        ],
+        "produced_outputs": [
+          "draft",
+          "analysis",
+          "task packet",
+          "sandbox evidence",
+          "approval request when required"
+        ],
+        "sensitivity": "standard_business_data",
+        "sensitive_domains": [],
+        "storage_policy": "store useful project artifacts only; raw credentials are forbidden; raw biometric media remains local or in an encrypted owner vault",
+        "retention": "owner-configurable with deletion and revocation support"
+      },
+      "approvals": {
+        "default_mode": "sandbox",
+        "approval_required": true,
+        "high_impact_profile": true,
+        "triggers": [
+          "email",
+          "call"
+        ],
+        "channels_supported": [
+          "in_app",
+          "email",
+          "sms",
+          "voice_call"
+        ],
+        "contact_requirement": "verified user-owned destination and explicit channel opt-in",
+        "execution_rule": "approval authorizes one scoped action; it never exposes credentials to the bot or browser"
+      },
+      "sandbox": {
+        "sandbox_id": "sandbox-reception-bot",
+        "network_default": "off",
+        "fixture_mode": "synthetic_or_owner_supplied",
+        "seed": 1709595435,
+        "checks": [
+          "profile_schema_valid",
+          "runtime_slug_resolves",
+          "capability_output_matches_brief",
+          "no_secret_in_output",
+          "no_live_external_write",
+          "approval_gate_for_high_impact_action",
+          "failure_and_retry_state_recorded"
+        ],
+        "api_tests": [],
+        "release_gate": "all applicable checks pass and owner approves any live action"
+      },
+      "readiness": {
+        "profile_schema": "verified",
+        "buddy_chat_route": "verified",
+        "executable_runtime_instance": "verified",
+        "standalone_native_runtime": "shared_worker_not_standalone",
+        "external_integrations": "no_division_api_catalog",
+        "production_ready": false,
+        "production_gate": "implement or configure adapters, pass sandbox checks, add authentication, and verify deployment telemetry"
+      },
+      "evidence": {
+        "catalog_source": "App_bots/DreamAdmin.json",
+        "runtime_sources": [
+          "server/seed-bots.ts"
+        ],
+        "runtime_seed_duplicates": 0
+      },
+      "sample_test_prompt": "Test Virtual Reception Assistant in sandbox mode. Use synthetic data, demonstrate Visitor registration system, record evidence, and stop before any live external action."
+    },
+    {
+      "identity": {
+        "slug": "office-supplies",
+        "display_name": "Office Supply Manager",
+        "division": "DreamAdmin",
+        "category": "procurement",
+        "tier": "pro",
+        "catalog_status": "active"
+      },
+      "logo": {
+        "logo_id": "logo-office-supplies",
+        "emoji": "🌐",
+        "monogram": "OS",
+        "call_sign": "Calm Pilot A417C4B8",
+        "shape": "tile",
+        "colors": {
+          "primary": "#176B5B",
+          "accent": "#D7A73B",
+          "surface": "#F5F7F3"
+        },
+        "accessibility_label": "Office Supply Manager logo"
+      },
+      "prospectus": {
+        "mission": "Manages office supplies with inventory tracking and automated reordering.",
+        "target_users": "Office managers, procurement staff",
+        "catalog_business_model": "SaaS subscription",
+        "catalog_price_range": "$49/mo",
+        "pricing_evidence": "catalog_claim_not_verified_revenue",
+        "inputs": [
+          "user brief",
+          "user-selected files or records",
+          "approved connector references"
+        ],
+        "outputs": [
+          "draft",
+          "analysis",
+          "task packet",
+          "sandbox evidence",
+          "approval request when required"
+        ],
+        "limitations": [
+          "This profile has an executable governed runtime instance backed by shared hardened code, not a separate always-running operating-system process.",
+          "External APIs require owner configuration, provider terms, sandbox tests, and scoped approval.",
+          "Published pricing and revenue models are catalog plans, not evidence of sales or earnings."
+        ]
+      },
+      "capabilities": [
+        {
+          "name": "Supply inventory tracking",
+          "source": "App_bots/DreamAdmin.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Automated reorder triggers",
+          "source": "App_bots/DreamAdmin.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Budget allocation management",
+          "source": "App_bots/DreamAdmin.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Vendor comparison engine",
+          "source": "App_bots/DreamAdmin.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Usage analytics dashboard",
+          "source": "App_bots/DreamAdmin.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Approval workflow system",
+          "source": "App_bots/DreamAdmin.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Advanced analytics dashboard",
+          "source": "App_bots/DreamAdmin.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Priority email support",
+          "source": "App_bots/DreamAdmin.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        }
+      ],
+      "tools": [
+        {
+          "id": "buddy_fleet_runtime",
+          "name": "Executable fleet runtime",
+          "status": "runtime_instance_ready",
+          "evidence": "server/fleet-runtime.ts"
+        },
+        {
+          "id": "buddy_chat_router",
+          "name": "Buddy shared chat router",
+          "status": "runtime_routed",
+          "evidence": "server/routes.ts"
+        },
+        {
+          "id": "buddy_approval_gateway",
+          "name": "Buddy approval gateway",
+          "status": "policy_available",
+          "evidence": "server/approval-notifications.ts"
+        },
+        {
+          "id": "buddy_bot_sandbox",
+          "name": "Per-bot sandbox blueprint",
+          "status": "generated",
+          "evidence": "config/generated/bots.catalog.json"
+        },
+        {
+          "id": "buddy_platform_registry",
+          "name": "Governed platform capability registry",
+          "status": "runtime_routed",
+          "evidence": "config/generated/buddy_platform_expansion.json"
+        },
+        {
+          "id": "buddy_bot_calculator",
+          "name": "Per-bot planning calculator",
+          "status": "local_interactive_ready",
+          "evidence": "config/generated/bot_calculators.json"
+        },
+        {
+          "id": "buddy_code_workspace",
+          "name": "Buddy Code Workspace",
+          "status": "shared_runtime_route",
+          "evidence": "server/seed-buddy-bot.ts"
+        }
+      ],
+      "api_candidates": [],
+      "data_contract": {
+        "accepted_inputs": [
+          "user brief",
+          "user-selected files or records",
+          "approved connector references"
+        ],
+        "produced_outputs": [
+          "draft",
+          "analysis",
+          "task packet",
+          "sandbox evidence",
+          "approval request when required"
+        ],
+        "sensitivity": "standard_business_data",
+        "sensitive_domains": [],
+        "storage_policy": "store useful project artifacts only; raw credentials are forbidden; raw biometric media remains local or in an encrypted owner vault",
+        "retention": "owner-configurable with deletion and revocation support"
+      },
+      "approvals": {
+        "default_mode": "sandbox",
+        "approval_required": true,
+        "high_impact_profile": true,
+        "triggers": [
+          "email"
+        ],
+        "channels_supported": [
+          "in_app",
+          "email",
+          "sms",
+          "voice_call"
+        ],
+        "contact_requirement": "verified user-owned destination and explicit channel opt-in",
+        "execution_rule": "approval authorizes one scoped action; it never exposes credentials to the bot or browser"
+      },
+      "sandbox": {
+        "sandbox_id": "sandbox-office-supplies",
+        "network_default": "off",
+        "fixture_mode": "synthetic_or_owner_supplied",
+        "seed": 2753021112,
+        "checks": [
+          "profile_schema_valid",
+          "runtime_slug_resolves",
+          "capability_output_matches_brief",
+          "no_secret_in_output",
+          "no_live_external_write",
+          "approval_gate_for_high_impact_action",
+          "failure_and_retry_state_recorded"
+        ],
+        "api_tests": [],
+        "release_gate": "all applicable checks pass and owner approves any live action"
+      },
+      "readiness": {
+        "profile_schema": "verified",
+        "buddy_chat_route": "verified",
+        "executable_runtime_instance": "verified",
+        "standalone_native_runtime": "shared_worker_not_standalone",
+        "external_integrations": "no_division_api_catalog",
+        "production_ready": false,
+        "production_gate": "implement or configure adapters, pass sandbox checks, add authentication, and verify deployment telemetry"
+      },
+      "evidence": {
+        "catalog_source": "App_bots/DreamAdmin.json",
+        "runtime_sources": [
+          "server/seed-bots.ts"
+        ],
+        "runtime_seed_duplicates": 0
+      },
+      "sample_test_prompt": "Test Office Supply Manager in sandbox mode. Use synthetic data, demonstrate Supply inventory tracking, record evidence, and stop before any live external action."
+    },
+    {
+      "identity": {
+        "slug": "policy-manager",
+        "display_name": "Company Policy Manager",
+        "division": "DreamAdmin",
+        "category": "compliance",
+        "tier": "enterprise",
+        "catalog_status": "active"
+      },
+      "logo": {
+        "logo_id": "logo-policy-manager",
+        "emoji": "⚙️",
+        "monogram": "CP",
+        "call_sign": "Grand Atlas 9D987D1B",
+        "shape": "circle",
+        "colors": {
+          "primary": "#5B3A8A",
+          "accent": "#D89B2B",
+          "surface": "#F8F5FF"
+        },
+        "accessibility_label": "Company Policy Manager logo"
+      },
+      "prospectus": {
+        "mission": "Manages company policies with distribution tracking and acknowledgment collection.",
+        "target_users": "HR directors, compliance officers",
+        "catalog_business_model": "Enterprise license",
+        "catalog_price_range": "$499/mo",
+        "pricing_evidence": "catalog_claim_not_verified_revenue",
+        "inputs": [
+          "user brief",
+          "user-selected files or records",
+          "approved connector references"
+        ],
+        "outputs": [
+          "draft",
+          "analysis",
+          "task packet",
+          "sandbox evidence",
+          "approval request when required"
+        ],
+        "limitations": [
+          "This profile has an executable governed runtime instance backed by shared hardened code, not a separate always-running operating-system process.",
+          "External APIs require owner configuration, provider terms, sandbox tests, and scoped approval.",
+          "Published pricing and revenue models are catalog plans, not evidence of sales or earnings."
+        ]
+      },
+      "capabilities": [
+        {
+          "name": "Policy document management",
+          "source": "App_bots/DreamAdmin.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Version control system",
+          "source": "App_bots/DreamAdmin.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Distribution tracking engine",
+          "source": "App_bots/DreamAdmin.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Acknowledgment collection",
+          "source": "App_bots/DreamAdmin.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Compliance audit trail",
+          "source": "App_bots/DreamAdmin.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Update notification automation",
+          "source": "App_bots/DreamAdmin.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Advanced analytics dashboard",
+          "source": "App_bots/DreamAdmin.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Priority email support",
+          "source": "App_bots/DreamAdmin.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        }
+      ],
+      "tools": [
+        {
+          "id": "buddy_fleet_runtime",
+          "name": "Executable fleet runtime",
+          "status": "runtime_instance_ready",
+          "evidence": "server/fleet-runtime.ts"
+        },
+        {
+          "id": "buddy_chat_router",
+          "name": "Buddy shared chat router",
+          "status": "runtime_routed",
+          "evidence": "server/routes.ts"
+        },
+        {
+          "id": "buddy_approval_gateway",
+          "name": "Buddy approval gateway",
+          "status": "policy_available",
+          "evidence": "server/approval-notifications.ts"
+        },
+        {
+          "id": "buddy_bot_sandbox",
+          "name": "Per-bot sandbox blueprint",
+          "status": "generated",
+          "evidence": "config/generated/bots.catalog.json"
+        },
+        {
+          "id": "buddy_platform_registry",
+          "name": "Governed platform capability registry",
+          "status": "runtime_routed",
+          "evidence": "config/generated/buddy_platform_expansion.json"
+        },
+        {
+          "id": "buddy_bot_calculator",
+          "name": "Per-bot planning calculator",
+          "status": "local_interactive_ready",
+          "evidence": "config/generated/bot_calculators.json"
+        }
+      ],
+      "api_candidates": [],
+      "data_contract": {
+        "accepted_inputs": [
+          "user brief",
+          "user-selected files or records",
+          "approved connector references"
+        ],
+        "produced_outputs": [
+          "draft",
+          "analysis",
+          "task packet",
+          "sandbox evidence",
+          "approval request when required"
+        ],
+        "sensitivity": "standard_business_data",
+        "sensitive_domains": [],
+        "storage_policy": "store useful project artifacts only; raw credentials are forbidden; raw biometric media remains local or in an encrypted owner vault",
+        "retention": "owner-configurable with deletion and revocation support"
+      },
+      "approvals": {
+        "default_mode": "sandbox",
+        "approval_required": true,
+        "high_impact_profile": true,
+        "triggers": [
+          "email"
+        ],
+        "channels_supported": [
+          "in_app",
+          "email",
+          "sms",
+          "voice_call"
+        ],
+        "contact_requirement": "verified user-owned destination and explicit channel opt-in",
+        "execution_rule": "approval authorizes one scoped action; it never exposes credentials to the bot or browser"
+      },
+      "sandbox": {
+        "sandbox_id": "sandbox-policy-manager",
+        "network_default": "off",
+        "fixture_mode": "synthetic_or_owner_supplied",
+        "seed": 2644016411,
+        "checks": [
+          "profile_schema_valid",
+          "runtime_slug_resolves",
+          "capability_output_matches_brief",
+          "no_secret_in_output",
+          "no_live_external_write",
+          "approval_gate_for_high_impact_action",
+          "failure_and_retry_state_recorded"
+        ],
+        "api_tests": [],
+        "release_gate": "all applicable checks pass and owner approves any live action"
+      },
+      "readiness": {
+        "profile_schema": "verified",
+        "buddy_chat_route": "verified",
+        "executable_runtime_instance": "verified",
+        "standalone_native_runtime": "shared_worker_not_standalone",
+        "external_integrations": "no_division_api_catalog",
+        "production_ready": false,
+        "production_gate": "implement or configure adapters, pass sandbox checks, add authentication, and verify deployment telemetry"
+      },
+      "evidence": {
+        "catalog_source": "App_bots/DreamAdmin.json",
+        "runtime_sources": [
+          "server/seed-bots.ts"
+        ],
+        "runtime_seed_duplicates": 0
+      },
+      "sample_test_prompt": "Test Company Policy Manager in sandbox mode. Use synthetic data, demonstrate Policy document management, record evidence, and stop before any live external action."
+    },
+    {
+      "identity": {
+        "slug": "time-attendance",
+        "display_name": "Time & Attendance Tracker",
+        "division": "DreamAdmin",
+        "category": "time-tracking",
+        "tier": "pro",
+        "catalog_status": "active"
+      },
+      "logo": {
+        "logo_id": "logo-time-attendance",
+        "emoji": "🎮",
+        "monogram": "T&",
+        "call_sign": "Solar Launchpad 65E37799",
+        "shape": "tile",
+        "colors": {
+          "primary": "#275DAD",
+          "accent": "#E38B3C",
+          "surface": "#F7F9FC"
+        },
+        "accessibility_label": "Time & Attendance Tracker logo"
+      },
+      "prospectus": {
+        "mission": "Tracks employee time and attendance with PTO management and overtime alerting.",
+        "target_users": "HR managers, department supervisors",
+        "catalog_business_model": "SaaS subscription",
+        "catalog_price_range": "$99/mo",
+        "pricing_evidence": "catalog_claim_not_verified_revenue",
+        "inputs": [
+          "user brief",
+          "user-selected files or records",
+          "approved connector references"
+        ],
+        "outputs": [
+          "draft",
+          "analysis",
+          "task packet",
+          "sandbox evidence",
+          "approval request when required"
+        ],
+        "limitations": [
+          "This profile has an executable governed runtime instance backed by shared hardened code, not a separate always-running operating-system process.",
+          "External APIs require owner configuration, provider terms, sandbox tests, and scoped approval.",
+          "Published pricing and revenue models are catalog plans, not evidence of sales or earnings."
+        ]
+      },
+      "capabilities": [
+        {
+          "name": "Clock-in/out management",
+          "source": "App_bots/DreamAdmin.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "PTO balance tracking",
+          "source": "App_bots/DreamAdmin.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Overtime alert system",
+          "source": "App_bots/DreamAdmin.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Schedule adherence monitoring",
+          "source": "App_bots/DreamAdmin.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Reporting and analytics",
+          "source": "App_bots/DreamAdmin.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Payroll integration tools",
+          "source": "App_bots/DreamAdmin.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Advanced analytics dashboard",
+          "source": "App_bots/DreamAdmin.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Priority email support",
+          "source": "App_bots/DreamAdmin.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        }
+      ],
+      "tools": [
+        {
+          "id": "buddy_fleet_runtime",
+          "name": "Executable fleet runtime",
+          "status": "runtime_instance_ready",
+          "evidence": "server/fleet-runtime.ts"
+        },
+        {
+          "id": "buddy_chat_router",
+          "name": "Buddy shared chat router",
+          "status": "runtime_routed",
+          "evidence": "server/routes.ts"
+        },
+        {
+          "id": "buddy_approval_gateway",
+          "name": "Buddy approval gateway",
+          "status": "policy_available",
+          "evidence": "server/approval-notifications.ts"
+        },
+        {
+          "id": "buddy_bot_sandbox",
+          "name": "Per-bot sandbox blueprint",
+          "status": "generated",
+          "evidence": "config/generated/bots.catalog.json"
+        },
+        {
+          "id": "buddy_platform_registry",
+          "name": "Governed platform capability registry",
+          "status": "runtime_routed",
+          "evidence": "config/generated/buddy_platform_expansion.json"
+        },
+        {
+          "id": "buddy_bot_calculator",
+          "name": "Per-bot planning calculator",
+          "status": "local_interactive_ready",
+          "evidence": "config/generated/bot_calculators.json"
+        },
+        {
+          "id": "buddy_connection_broker",
+          "name": "Buddy Connection Broker",
+          "status": "backend_broker_available",
+          "evidence": "dreamco_platform/connections/broker.py"
+        }
+      ],
+      "api_candidates": [],
+      "data_contract": {
+        "accepted_inputs": [
+          "user brief",
+          "user-selected files or records",
+          "approved connector references"
+        ],
+        "produced_outputs": [
+          "draft",
+          "analysis",
+          "task packet",
+          "sandbox evidence",
+          "approval request when required"
+        ],
+        "sensitivity": "potentially_sensitive",
+        "sensitive_domains": [
+          "employee"
+        ],
+        "storage_policy": "store useful project artifacts only; raw credentials are forbidden; raw biometric media remains local or in an encrypted owner vault",
+        "retention": "owner-configurable with deletion and revocation support"
+      },
+      "approvals": {
+        "default_mode": "sandbox",
+        "approval_required": true,
+        "high_impact_profile": true,
+        "triggers": [
+          "email"
+        ],
+        "channels_supported": [
+          "in_app",
+          "email",
+          "sms",
+          "voice_call"
+        ],
+        "contact_requirement": "verified user-owned destination and explicit channel opt-in",
+        "execution_rule": "approval authorizes one scoped action; it never exposes credentials to the bot or browser"
+      },
+      "sandbox": {
+        "sandbox_id": "sandbox-time-attendance",
+        "network_default": "off",
+        "fixture_mode": "synthetic_or_owner_supplied",
+        "seed": 1709406105,
+        "checks": [
+          "profile_schema_valid",
+          "runtime_slug_resolves",
+          "capability_output_matches_brief",
+          "no_secret_in_output",
+          "no_live_external_write",
+          "approval_gate_for_high_impact_action",
+          "failure_and_retry_state_recorded"
+        ],
+        "api_tests": [],
+        "release_gate": "all applicable checks pass and owner approves any live action"
+      },
+      "readiness": {
+        "profile_schema": "verified",
+        "buddy_chat_route": "verified",
+        "executable_runtime_instance": "verified",
+        "standalone_native_runtime": "shared_worker_not_standalone",
+        "external_integrations": "no_division_api_catalog",
+        "production_ready": false,
+        "production_gate": "implement or configure adapters, pass sandbox checks, add authentication, and verify deployment telemetry"
+      },
+      "evidence": {
+        "catalog_source": "App_bots/DreamAdmin.json",
+        "runtime_sources": [
+          "server/seed-bots.ts"
+        ],
+        "runtime_seed_duplicates": 0
+      },
+      "sample_test_prompt": "Test Time & Attendance Tracker in sandbox mode. Use synthetic data, demonstrate Clock-in/out management, record evidence, and stop before any live external action."
+    },
+    {
+      "identity": {
+        "slug": "mail-room",
+        "display_name": "Digital Mailroom Manager",
+        "division": "DreamAdmin",
+        "category": "mail",
+        "tier": "pro",
+        "catalog_status": "active"
+      },
+      "logo": {
+        "logo_id": "logo-mail-room",
+        "emoji": "💼",
+        "monogram": "DM",
+        "call_sign": "Focused Engine 948D0B12",
+        "shape": "hex",
+        "colors": {
+          "primary": "#7A2E3A",
+          "accent": "#2D8C7C",
+          "surface": "#FFF8EE"
+        },
+        "accessibility_label": "Digital Mailroom Manager logo"
+      },
+      "prospectus": {
+        "mission": "Manages mailroom operations with digital sorting and delivery tracking.",
+        "target_users": "Mailroom staff, office managers",
+        "catalog_business_model": "SaaS subscription",
+        "catalog_price_range": "$79/mo",
+        "pricing_evidence": "catalog_claim_not_verified_revenue",
+        "inputs": [
+          "user brief",
+          "user-selected files or records",
+          "approved connector references"
+        ],
+        "outputs": [
+          "draft",
+          "analysis",
+          "task packet",
+          "sandbox evidence",
+          "approval request when required"
+        ],
+        "limitations": [
+          "This profile has an executable governed runtime instance backed by shared hardened code, not a separate always-running operating-system process.",
+          "External APIs require owner configuration, provider terms, sandbox tests, and scoped approval.",
+          "Published pricing and revenue models are catalog plans, not evidence of sales or earnings."
+        ]
+      },
+      "capabilities": [
+        {
+          "name": "Mail sorting automation",
+          "source": "App_bots/DreamAdmin.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Package tracking system",
+          "source": "App_bots/DreamAdmin.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Digital delivery notification",
+          "source": "App_bots/DreamAdmin.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Return mail management",
+          "source": "App_bots/DreamAdmin.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Courier scheduling tools",
+          "source": "App_bots/DreamAdmin.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Volume analytics dashboard",
+          "source": "App_bots/DreamAdmin.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Advanced analytics dashboard",
+          "source": "App_bots/DreamAdmin.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Priority email support",
+          "source": "App_bots/DreamAdmin.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        }
+      ],
+      "tools": [
+        {
+          "id": "buddy_fleet_runtime",
+          "name": "Executable fleet runtime",
+          "status": "runtime_instance_ready",
+          "evidence": "server/fleet-runtime.ts"
+        },
+        {
+          "id": "buddy_chat_router",
+          "name": "Buddy shared chat router",
+          "status": "runtime_routed",
+          "evidence": "server/routes.ts"
+        },
+        {
+          "id": "buddy_approval_gateway",
+          "name": "Buddy approval gateway",
+          "status": "policy_available",
+          "evidence": "server/approval-notifications.ts"
+        },
+        {
+          "id": "buddy_bot_sandbox",
+          "name": "Per-bot sandbox blueprint",
+          "status": "generated",
+          "evidence": "config/generated/bots.catalog.json"
+        },
+        {
+          "id": "buddy_platform_registry",
+          "name": "Governed platform capability registry",
+          "status": "runtime_routed",
+          "evidence": "config/generated/buddy_platform_expansion.json"
+        },
+        {
+          "id": "buddy_bot_calculator",
+          "name": "Per-bot planning calculator",
+          "status": "local_interactive_ready",
+          "evidence": "config/generated/bot_calculators.json"
+        }
+      ],
+      "api_candidates": [],
+      "data_contract": {
+        "accepted_inputs": [
+          "user brief",
+          "user-selected files or records",
+          "approved connector references"
+        ],
+        "produced_outputs": [
+          "draft",
+          "analysis",
+          "task packet",
+          "sandbox evidence",
+          "approval request when required"
+        ],
+        "sensitivity": "standard_business_data",
+        "sensitive_domains": [],
+        "storage_policy": "store useful project artifacts only; raw credentials are forbidden; raw biometric media remains local or in an encrypted owner vault",
+        "retention": "owner-configurable with deletion and revocation support"
+      },
+      "approvals": {
+        "default_mode": "sandbox",
+        "approval_required": true,
+        "high_impact_profile": true,
+        "triggers": [
+          "email"
+        ],
+        "channels_supported": [
+          "in_app",
+          "email",
+          "sms",
+          "voice_call"
+        ],
+        "contact_requirement": "verified user-owned destination and explicit channel opt-in",
+        "execution_rule": "approval authorizes one scoped action; it never exposes credentials to the bot or browser"
+      },
+      "sandbox": {
+        "sandbox_id": "sandbox-mail-room",
+        "network_default": "off",
+        "fixture_mode": "synthetic_or_owner_supplied",
+        "seed": 2492271378,
+        "checks": [
+          "profile_schema_valid",
+          "runtime_slug_resolves",
+          "capability_output_matches_brief",
+          "no_secret_in_output",
+          "no_live_external_write",
+          "approval_gate_for_high_impact_action",
+          "failure_and_retry_state_recorded"
+        ],
+        "api_tests": [],
+        "release_gate": "all applicable checks pass and owner approves any live action"
+      },
+      "readiness": {
+        "profile_schema": "verified",
+        "buddy_chat_route": "verified",
+        "executable_runtime_instance": "verified",
+        "standalone_native_runtime": "shared_worker_not_standalone",
+        "external_integrations": "no_division_api_catalog",
+        "production_ready": false,
+        "production_gate": "implement or configure adapters, pass sandbox checks, add authentication, and verify deployment telemetry"
+      },
+      "evidence": {
+        "catalog_source": "App_bots/DreamAdmin.json",
+        "runtime_sources": [
+          "server/seed-bots.ts"
+        ],
+        "runtime_seed_duplicates": 0
+      },
+      "sample_test_prompt": "Test Digital Mailroom Manager in sandbox mode. Use synthetic data, demonstrate Mail sorting automation, record evidence, and stop before any live external action."
+    },
+    {
+      "identity": {
+        "slug": "fleet-admin",
+        "display_name": "Company Vehicle Fleet Admin",
+        "division": "DreamAdmin",
+        "category": "fleet",
+        "tier": "pro",
+        "catalog_status": "active"
+      },
+      "logo": {
+        "logo_id": "logo-fleet-admin",
+        "emoji": "🌐",
+        "monogram": "CV",
+        "call_sign": "Bright Canvas 4A30BB23",
+        "shape": "hex",
+        "colors": {
+          "primary": "#5B3A8A",
+          "accent": "#D89B2B",
+          "surface": "#F8F5FF"
+        },
+        "accessibility_label": "Company Vehicle Fleet Admin logo"
+      },
+      "prospectus": {
+        "mission": "Administers company vehicle fleet with assignment and maintenance tracking.",
+        "target_users": "Office managers, fleet administrators",
+        "catalog_business_model": "SaaS subscription",
+        "catalog_price_range": "$99/mo",
+        "pricing_evidence": "catalog_claim_not_verified_revenue",
+        "inputs": [
+          "user brief",
+          "user-selected files or records",
+          "approved connector references"
+        ],
+        "outputs": [
+          "draft",
+          "analysis",
+          "task packet",
+          "sandbox evidence",
+          "approval request when required"
+        ],
+        "limitations": [
+          "This profile has an executable governed runtime instance backed by shared hardened code, not a separate always-running operating-system process.",
+          "External APIs require owner configuration, provider terms, sandbox tests, and scoped approval.",
+          "Published pricing and revenue models are catalog plans, not evidence of sales or earnings."
+        ]
+      },
+      "capabilities": [
+        {
+          "name": "Vehicle assignment management",
+          "source": "App_bots/DreamAdmin.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Maintenance schedule tracking",
+          "source": "App_bots/DreamAdmin.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Insurance document management",
+          "source": "App_bots/DreamAdmin.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Fuel card administration",
+          "source": "App_bots/DreamAdmin.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Mileage reporting tools",
+          "source": "App_bots/DreamAdmin.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Driver license verification",
+          "source": "App_bots/DreamAdmin.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Advanced analytics dashboard",
+          "source": "App_bots/DreamAdmin.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Priority email support",
+          "source": "App_bots/DreamAdmin.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        }
+      ],
+      "tools": [
+        {
+          "id": "buddy_fleet_runtime",
+          "name": "Executable fleet runtime",
+          "status": "runtime_instance_ready",
+          "evidence": "server/fleet-runtime.ts"
+        },
+        {
+          "id": "buddy_chat_router",
+          "name": "Buddy shared chat router",
+          "status": "runtime_routed",
+          "evidence": "server/routes.ts"
+        },
+        {
+          "id": "buddy_approval_gateway",
+          "name": "Buddy approval gateway",
+          "status": "policy_available",
+          "evidence": "server/approval-notifications.ts"
+        },
+        {
+          "id": "buddy_bot_sandbox",
+          "name": "Per-bot sandbox blueprint",
+          "status": "generated",
+          "evidence": "config/generated/bots.catalog.json"
+        },
+        {
+          "id": "buddy_platform_registry",
+          "name": "Governed platform capability registry",
+          "status": "runtime_routed",
+          "evidence": "config/generated/buddy_platform_expansion.json"
+        },
+        {
+          "id": "buddy_bot_calculator",
+          "name": "Per-bot planning calculator",
+          "status": "local_interactive_ready",
+          "evidence": "config/generated/bot_calculators.json"
+        }
+      ],
+      "api_candidates": [],
+      "data_contract": {
+        "accepted_inputs": [
+          "user brief",
+          "user-selected files or records",
+          "approved connector references"
+        ],
+        "produced_outputs": [
+          "draft",
+          "analysis",
+          "task packet",
+          "sandbox evidence",
+          "approval request when required"
+        ],
+        "sensitivity": "standard_business_data",
+        "sensitive_domains": [],
+        "storage_policy": "store useful project artifacts only; raw credentials are forbidden; raw biometric media remains local or in an encrypted owner vault",
+        "retention": "owner-configurable with deletion and revocation support"
+      },
+      "approvals": {
+        "default_mode": "sandbox",
+        "approval_required": true,
+        "high_impact_profile": true,
+        "triggers": [
+          "email"
+        ],
+        "channels_supported": [
+          "in_app",
+          "email",
+          "sms",
+          "voice_call"
+        ],
+        "contact_requirement": "verified user-owned destination and explicit channel opt-in",
+        "execution_rule": "approval authorizes one scoped action; it never exposes credentials to the bot or browser"
+      },
+      "sandbox": {
+        "sandbox_id": "sandbox-fleet-admin",
+        "network_default": "off",
+        "fixture_mode": "synthetic_or_owner_supplied",
+        "seed": 1244707619,
+        "checks": [
+          "profile_schema_valid",
+          "runtime_slug_resolves",
+          "capability_output_matches_brief",
+          "no_secret_in_output",
+          "no_live_external_write",
+          "approval_gate_for_high_impact_action",
+          "failure_and_retry_state_recorded"
+        ],
+        "api_tests": [],
+        "release_gate": "all applicable checks pass and owner approves any live action"
+      },
+      "readiness": {
+        "profile_schema": "verified",
+        "buddy_chat_route": "verified",
+        "executable_runtime_instance": "verified",
+        "standalone_native_runtime": "shared_worker_not_standalone",
+        "external_integrations": "no_division_api_catalog",
+        "production_ready": false,
+        "production_gate": "implement or configure adapters, pass sandbox checks, add authentication, and verify deployment telemetry"
+      },
+      "evidence": {
+        "catalog_source": "App_bots/DreamAdmin.json",
+        "runtime_sources": [
+          "server/seed-bots.ts"
+        ],
+        "runtime_seed_duplicates": 0
+      },
+      "sample_test_prompt": "Test Company Vehicle Fleet Admin in sandbox mode. Use synthetic data, demonstrate Vehicle assignment management, record evidence, and stop before any live external action."
+    },
+    {
+      "identity": {
+        "slug": "admin-analytics-elite",
+        "display_name": "Administrative Intelligence Suite",
+        "division": "DreamAdmin",
+        "category": "analytics",
+        "tier": "elite",
+        "catalog_status": "active"
+      },
+      "logo": {
+        "logo_id": "logo-admin-analytics-elite",
+        "emoji": "🎮",
+        "monogram": "AI",
+        "call_sign": "Clever Studio 830103A3",
+        "shape": "tile",
+        "colors": {
+          "primary": "#5B3A8A",
+          "accent": "#D89B2B",
+          "surface": "#F8F5FF"
+        },
+        "accessibility_label": "Administrative Intelligence Suite logo"
+      },
+      "prospectus": {
+        "mission": "Enterprise administrative analytics with operational efficiency and cost optimization.",
+        "target_users": "COOs, VP administration, facility directors",
+        "catalog_business_model": "Enterprise license",
+        "catalog_price_range": "$1,499/mo",
+        "pricing_evidence": "catalog_claim_not_verified_revenue",
+        "inputs": [
+          "user brief",
+          "user-selected files or records",
+          "approved connector references"
+        ],
+        "outputs": [
+          "draft",
+          "analysis",
+          "task packet",
+          "sandbox evidence",
+          "approval request when required"
+        ],
+        "limitations": [
+          "This profile has an executable governed runtime instance backed by shared hardened code, not a separate always-running operating-system process.",
+          "External APIs require owner configuration, provider terms, sandbox tests, and scoped approval.",
+          "Published pricing and revenue models are catalog plans, not evidence of sales or earnings."
+        ]
+      },
+      "capabilities": [
+        {
+          "name": "Operational efficiency scoring",
+          "source": "App_bots/DreamAdmin.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Cost per employee analytics",
+          "source": "App_bots/DreamAdmin.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Space utilization modeling",
+          "source": "App_bots/DreamAdmin.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Vendor performance benchmarking",
+          "source": "App_bots/DreamAdmin.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Process automation recommendations",
+          "source": "App_bots/DreamAdmin.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Executive dashboard suite",
+          "source": "App_bots/DreamAdmin.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Advanced analytics dashboard",
+          "source": "App_bots/DreamAdmin.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Priority email support",
+          "source": "App_bots/DreamAdmin.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        }
+      ],
+      "tools": [
+        {
+          "id": "buddy_fleet_runtime",
+          "name": "Executable fleet runtime",
+          "status": "runtime_instance_ready",
+          "evidence": "server/fleet-runtime.ts"
+        },
+        {
+          "id": "buddy_chat_router",
+          "name": "Buddy shared chat router",
+          "status": "runtime_routed",
+          "evidence": "server/routes.ts"
+        },
+        {
+          "id": "buddy_approval_gateway",
+          "name": "Buddy approval gateway",
+          "status": "policy_available",
+          "evidence": "server/approval-notifications.ts"
+        },
+        {
+          "id": "buddy_bot_sandbox",
+          "name": "Per-bot sandbox blueprint",
+          "status": "generated",
+          "evidence": "config/generated/bots.catalog.json"
+        },
+        {
+          "id": "buddy_platform_registry",
+          "name": "Governed platform capability registry",
+          "status": "runtime_routed",
+          "evidence": "config/generated/buddy_platform_expansion.json"
+        },
+        {
+          "id": "buddy_bot_calculator",
+          "name": "Per-bot planning calculator",
+          "status": "local_interactive_ready",
+          "evidence": "config/generated/bot_calculators.json"
+        }
+      ],
+      "api_candidates": [],
+      "data_contract": {
+        "accepted_inputs": [
+          "user brief",
+          "user-selected files or records",
+          "approved connector references"
+        ],
+        "produced_outputs": [
+          "draft",
+          "analysis",
+          "task packet",
+          "sandbox evidence",
+          "approval request when required"
+        ],
+        "sensitivity": "potentially_sensitive",
+        "sensitive_domains": [
+          "employee"
+        ],
+        "storage_policy": "store useful project artifacts only; raw credentials are forbidden; raw biometric media remains local or in an encrypted owner vault",
+        "retention": "owner-configurable with deletion and revocation support"
+      },
+      "approvals": {
+        "default_mode": "sandbox",
+        "approval_required": true,
+        "high_impact_profile": true,
+        "triggers": [
+          "email"
+        ],
+        "channels_supported": [
+          "in_app",
+          "email",
+          "sms",
+          "voice_call"
+        ],
+        "contact_requirement": "verified user-owned destination and explicit channel opt-in",
+        "execution_rule": "approval authorizes one scoped action; it never exposes credentials to the bot or browser"
+      },
+      "sandbox": {
+        "sandbox_id": "sandbox-admin-analytics-elite",
+        "network_default": "off",
+        "fixture_mode": "synthetic_or_owner_supplied",
+        "seed": 2197881763,
+        "checks": [
+          "profile_schema_valid",
+          "runtime_slug_resolves",
+          "capability_output_matches_brief",
+          "no_secret_in_output",
+          "no_live_external_write",
+          "approval_gate_for_high_impact_action",
+          "failure_and_retry_state_recorded"
+        ],
+        "api_tests": [],
+        "release_gate": "all applicable checks pass and owner approves any live action"
+      },
+      "readiness": {
+        "profile_schema": "verified",
+        "buddy_chat_route": "verified",
+        "executable_runtime_instance": "verified",
+        "standalone_native_runtime": "shared_worker_not_standalone",
+        "external_integrations": "no_division_api_catalog",
+        "production_ready": false,
+        "production_gate": "implement or configure adapters, pass sandbox checks, add authentication, and verify deployment telemetry"
+      },
+      "evidence": {
+        "catalog_source": "App_bots/DreamAdmin.json",
+        "runtime_sources": [
+          "server/seed-bots.ts"
+        ],
+        "runtime_seed_duplicates": 0
+      },
+      "sample_test_prompt": "Test Administrative Intelligence Suite in sandbox mode. Use synthetic data, demonstrate Operational efficiency scoring, record evidence, and stop before any live external action."
+    },
+    {
+      "identity": {
+        "slug": "workplace-experience",
+        "display_name": "Workplace Experience Platform",
+        "division": "DreamAdmin",
+        "category": "workplace",
+        "tier": "elite",
+        "catalog_status": "active"
+      },
+      "logo": {
+        "logo_id": "logo-workplace-experience",
+        "emoji": "💡",
+        "monogram": "WE",
+        "call_sign": "Bright Vault 09781215",
+        "shape": "tile",
+        "colors": {
+          "primary": "#334E3C",
+          "accent": "#B96332",
+          "surface": "#F7F4ED"
+        },
+        "accessibility_label": "Workplace Experience Platform logo"
+      },
+      "prospectus": {
+        "mission": "AI-driven workplace experience platform with employee satisfaction and space optimization.",
+        "target_users": "Chief people officers, workplace directors",
+        "catalog_business_model": "Enterprise license",
+        "catalog_price_range": "$1,999/mo",
+        "pricing_evidence": "catalog_claim_not_verified_revenue",
+        "inputs": [
+          "user brief",
+          "user-selected files or records",
+          "approved connector references"
+        ],
+        "outputs": [
+          "draft",
+          "analysis",
+          "task packet",
+          "sandbox evidence",
+          "approval request when required"
+        ],
+        "limitations": [
+          "This profile has an executable governed runtime instance backed by shared hardened code, not a separate always-running operating-system process.",
+          "External APIs require owner configuration, provider terms, sandbox tests, and scoped approval.",
+          "Published pricing and revenue models are catalog plans, not evidence of sales or earnings."
+        ]
+      },
+      "capabilities": [
+        {
+          "name": "Employee satisfaction monitoring",
+          "source": "App_bots/DreamAdmin.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Space utilization optimization",
+          "source": "App_bots/DreamAdmin.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Amenity management system",
+          "source": "App_bots/DreamAdmin.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Workplace analytics engine",
+          "source": "App_bots/DreamAdmin.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Hybrid work coordination",
+          "source": "App_bots/DreamAdmin.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Environmental comfort scoring",
+          "source": "App_bots/DreamAdmin.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Advanced analytics dashboard",
+          "source": "App_bots/DreamAdmin.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Priority email support",
+          "source": "App_bots/DreamAdmin.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        }
+      ],
+      "tools": [
+        {
+          "id": "buddy_fleet_runtime",
+          "name": "Executable fleet runtime",
+          "status": "runtime_instance_ready",
+          "evidence": "server/fleet-runtime.ts"
+        },
+        {
+          "id": "buddy_chat_router",
+          "name": "Buddy shared chat router",
+          "status": "runtime_routed",
+          "evidence": "server/routes.ts"
+        },
+        {
+          "id": "buddy_approval_gateway",
+          "name": "Buddy approval gateway",
+          "status": "policy_available",
+          "evidence": "server/approval-notifications.ts"
+        },
+        {
+          "id": "buddy_bot_sandbox",
+          "name": "Per-bot sandbox blueprint",
+          "status": "generated",
+          "evidence": "config/generated/bots.catalog.json"
+        },
+        {
+          "id": "buddy_platform_registry",
+          "name": "Governed platform capability registry",
+          "status": "runtime_routed",
+          "evidence": "config/generated/buddy_platform_expansion.json"
+        },
+        {
+          "id": "buddy_bot_calculator",
+          "name": "Per-bot planning calculator",
+          "status": "local_interactive_ready",
+          "evidence": "config/generated/bot_calculators.json"
+        }
+      ],
+      "api_candidates": [],
+      "data_contract": {
+        "accepted_inputs": [
+          "user brief",
+          "user-selected files or records",
+          "approved connector references"
+        ],
+        "produced_outputs": [
+          "draft",
+          "analysis",
+          "task packet",
+          "sandbox evidence",
+          "approval request when required"
+        ],
+        "sensitivity": "potentially_sensitive",
+        "sensitive_domains": [
+          "employee"
+        ],
+        "storage_policy": "store useful project artifacts only; raw credentials are forbidden; raw biometric media remains local or in an encrypted owner vault",
+        "retention": "owner-configurable with deletion and revocation support"
+      },
+      "approvals": {
+        "default_mode": "sandbox",
+        "approval_required": true,
+        "high_impact_profile": true,
+        "triggers": [
+          "email"
+        ],
+        "channels_supported": [
+          "in_app",
+          "email",
+          "sms",
+          "voice_call"
+        ],
+        "contact_requirement": "verified user-owned destination and explicit channel opt-in",
+        "execution_rule": "approval authorizes one scoped action; it never exposes credentials to the bot or browser"
+      },
+      "sandbox": {
+        "sandbox_id": "sandbox-workplace-experience",
+        "network_default": "off",
+        "fixture_mode": "synthetic_or_owner_supplied",
+        "seed": 158863893,
+        "checks": [
+          "profile_schema_valid",
+          "runtime_slug_resolves",
+          "capability_output_matches_brief",
+          "no_secret_in_output",
+          "no_live_external_write",
+          "approval_gate_for_high_impact_action",
+          "failure_and_retry_state_recorded"
+        ],
+        "api_tests": [],
+        "release_gate": "all applicable checks pass and owner approves any live action"
+      },
+      "readiness": {
+        "profile_schema": "verified",
+        "buddy_chat_route": "verified",
+        "executable_runtime_instance": "verified",
+        "standalone_native_runtime": "shared_worker_not_standalone",
+        "external_integrations": "no_division_api_catalog",
+        "production_ready": false,
+        "production_gate": "implement or configure adapters, pass sandbox checks, add authentication, and verify deployment telemetry"
+      },
+      "evidence": {
+        "catalog_source": "App_bots/DreamAdmin.json",
+        "runtime_sources": [
+          "server/seed-bots.ts"
+        ],
+        "runtime_seed_duplicates": 0
+      },
+      "sample_test_prompt": "Test Workplace Experience Platform in sandbox mode. Use synthetic data, demonstrate Employee satisfaction monitoring, record evidence, and stop before any live external action."
+    },
+    {
+      "identity": {
+        "slug": "business-card-scanner",
+        "display_name": "Business Card Scanner",
+        "division": "DreamAdmin",
+        "category": "contacts",
+        "tier": "free",
+        "catalog_status": "active"
+      },
+      "logo": {
+        "logo_id": "logo-business-card-scanner",
+        "emoji": "🧠",
+        "monogram": "BC",
+        "call_sign": "Golden Compass 2025F03C",
+        "shape": "circle",
+        "colors": {
+          "primary": "#0F6F88",
+          "accent": "#C94D63",
+          "surface": "#F4FBFC"
+        },
+        "accessibility_label": "Business Card Scanner logo"
+      },
+      "prospectus": {
+        "mission": "Scans and digitizes business cards with contact management.",
+        "target_users": "Sales teams, networking professionals",
+        "catalog_business_model": "SaaS subscription",
+        "catalog_price_range": "$0",
+        "pricing_evidence": "catalog_claim_not_verified_revenue",
+        "inputs": [
+          "user brief",
+          "user-selected files or records",
+          "approved connector references"
+        ],
+        "outputs": [
+          "draft",
+          "analysis",
+          "task packet",
+          "sandbox evidence",
+          "approval request when required"
+        ],
+        "limitations": [
+          "This profile has an executable governed runtime instance backed by shared hardened code, not a separate always-running operating-system process.",
+          "External APIs require owner configuration, provider terms, sandbox tests, and scoped approval.",
+          "Published pricing and revenue models are catalog plans, not evidence of sales or earnings."
+        ]
+      },
+      "capabilities": [
+        {
+          "name": "OCR card scanning",
+          "source": "App_bots/DreamAdmin.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Contact database creation",
+          "source": "App_bots/DreamAdmin.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Duplicate detection engine",
+          "source": "App_bots/DreamAdmin.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "CRM integration tools",
+          "source": "App_bots/DreamAdmin.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Export format options",
+          "source": "App_bots/DreamAdmin.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Basic analytics",
+          "source": "App_bots/DreamAdmin.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Email support",
+          "source": "App_bots/DreamAdmin.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Community access",
+          "source": "App_bots/DreamAdmin.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        }
+      ],
+      "tools": [
+        {
+          "id": "buddy_fleet_runtime",
+          "name": "Executable fleet runtime",
+          "status": "runtime_instance_ready",
+          "evidence": "server/fleet-runtime.ts"
+        },
+        {
+          "id": "buddy_chat_router",
+          "name": "Buddy shared chat router",
+          "status": "runtime_routed",
+          "evidence": "server/routes.ts"
+        },
+        {
+          "id": "buddy_approval_gateway",
+          "name": "Buddy approval gateway",
+          "status": "policy_available",
+          "evidence": "server/approval-notifications.ts"
+        },
+        {
+          "id": "buddy_bot_sandbox",
+          "name": "Per-bot sandbox blueprint",
+          "status": "generated",
+          "evidence": "config/generated/bots.catalog.json"
+        },
+        {
+          "id": "buddy_platform_registry",
+          "name": "Governed platform capability registry",
+          "status": "runtime_routed",
+          "evidence": "config/generated/buddy_platform_expansion.json"
+        },
+        {
+          "id": "buddy_bot_calculator",
+          "name": "Per-bot planning calculator",
+          "status": "local_interactive_ready",
+          "evidence": "config/generated/bot_calculators.json"
+        },
+        {
+          "id": "buddy_connection_broker",
+          "name": "Buddy Connection Broker",
+          "status": "backend_broker_available",
+          "evidence": "dreamco_platform/connections/broker.py"
+        }
+      ],
+      "api_candidates": [],
+      "data_contract": {
+        "accepted_inputs": [
+          "user brief",
+          "user-selected files or records",
+          "approved connector references"
+        ],
+        "produced_outputs": [
+          "draft",
+          "analysis",
+          "task packet",
+          "sandbox evidence",
+          "approval request when required"
+        ],
+        "sensitivity": "standard_business_data",
+        "sensitive_domains": [],
+        "storage_policy": "store useful project artifacts only; raw credentials are forbidden; raw biometric media remains local or in an encrypted owner vault",
+        "retention": "owner-configurable with deletion and revocation support"
+      },
+      "approvals": {
+        "default_mode": "sandbox",
+        "approval_required": true,
+        "high_impact_profile": true,
+        "triggers": [
+          "email"
+        ],
+        "channels_supported": [
+          "in_app",
+          "email",
+          "sms",
+          "voice_call"
+        ],
+        "contact_requirement": "verified user-owned destination and explicit channel opt-in",
+        "execution_rule": "approval authorizes one scoped action; it never exposes credentials to the bot or browser"
+      },
+      "sandbox": {
+        "sandbox_id": "sandbox-business-card-scanner",
+        "network_default": "off",
+        "fixture_mode": "synthetic_or_owner_supplied",
+        "seed": 539357244,
+        "checks": [
+          "profile_schema_valid",
+          "runtime_slug_resolves",
+          "capability_output_matches_brief",
+          "no_secret_in_output",
+          "no_live_external_write",
+          "approval_gate_for_high_impact_action",
+          "failure_and_retry_state_recorded"
+        ],
+        "api_tests": [],
+        "release_gate": "all applicable checks pass and owner approves any live action"
+      },
+      "readiness": {
+        "profile_schema": "verified",
+        "buddy_chat_route": "verified",
+        "executable_runtime_instance": "verified",
+        "standalone_native_runtime": "shared_worker_not_standalone",
+        "external_integrations": "no_division_api_catalog",
+        "production_ready": false,
+        "production_gate": "implement or configure adapters, pass sandbox checks, add authentication, and verify deployment telemetry"
+      },
+      "evidence": {
+        "catalog_source": "App_bots/DreamAdmin.json",
+        "runtime_sources": [
+          "server/seed-bots.ts"
+        ],
+        "runtime_seed_duplicates": 0
+      },
+      "sample_test_prompt": "Test Business Card Scanner in sandbox mode. Use synthetic data, demonstrate OCR card scanning, record evidence, and stop before any live external action."
+    },
+    {
+      "identity": {
+        "slug": "meeting-notes",
+        "display_name": "Meeting Notes Summarizer",
+        "division": "DreamAdmin",
+        "category": "meetings",
+        "tier": "free",
+        "catalog_status": "active"
+      },
+      "logo": {
+        "logo_id": "logo-meeting-notes",
+        "emoji": "🖥️",
+        "monogram": "MN",
+        "call_sign": "Grand Path B1E0715B",
+        "shape": "hex",
+        "colors": {
+          "primary": "#5B3A8A",
+          "accent": "#D89B2B",
+          "surface": "#F8F5FF"
+        },
+        "accessibility_label": "Meeting Notes Summarizer logo"
+      },
+      "prospectus": {
+        "mission": "Summarizes meeting notes with action item extraction and follow-up tracking.",
+        "target_users": "All office employees, meeting organizers",
+        "catalog_business_model": "SaaS subscription",
+        "catalog_price_range": "$0",
+        "pricing_evidence": "catalog_claim_not_verified_revenue",
+        "inputs": [
+          "user brief",
+          "user-selected files or records",
+          "approved connector references"
+        ],
+        "outputs": [
+          "draft",
+          "analysis",
+          "task packet",
+          "sandbox evidence",
+          "approval request when required"
+        ],
+        "limitations": [
+          "This profile has an executable governed runtime instance backed by shared hardened code, not a separate always-running operating-system process.",
+          "External APIs require owner configuration, provider terms, sandbox tests, and scoped approval.",
+          "Published pricing and revenue models are catalog plans, not evidence of sales or earnings."
+        ]
+      },
+      "capabilities": [
+        {
+          "name": "Meeting summary generation",
+          "source": "App_bots/DreamAdmin.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Action item extraction",
+          "source": "App_bots/DreamAdmin.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Follow-up reminder scheduling",
+          "source": "App_bots/DreamAdmin.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Attendee distribution tools",
+          "source": "App_bots/DreamAdmin.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Search and archive access",
+          "source": "App_bots/DreamAdmin.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Basic analytics",
+          "source": "App_bots/DreamAdmin.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Email support",
+          "source": "App_bots/DreamAdmin.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Community access",
+          "source": "App_bots/DreamAdmin.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        }
+      ],
+      "tools": [
+        {
+          "id": "buddy_fleet_runtime",
+          "name": "Executable fleet runtime",
+          "status": "runtime_instance_ready",
+          "evidence": "server/fleet-runtime.ts"
+        },
+        {
+          "id": "buddy_chat_router",
+          "name": "Buddy shared chat router",
+          "status": "runtime_routed",
+          "evidence": "server/routes.ts"
+        },
+        {
+          "id": "buddy_approval_gateway",
+          "name": "Buddy approval gateway",
+          "status": "policy_available",
+          "evidence": "server/approval-notifications.ts"
+        },
+        {
+          "id": "buddy_bot_sandbox",
+          "name": "Per-bot sandbox blueprint",
+          "status": "generated",
+          "evidence": "config/generated/bots.catalog.json"
+        },
+        {
+          "id": "buddy_platform_registry",
+          "name": "Governed platform capability registry",
+          "status": "runtime_routed",
+          "evidence": "config/generated/buddy_platform_expansion.json"
+        },
+        {
+          "id": "buddy_bot_calculator",
+          "name": "Per-bot planning calculator",
+          "status": "local_interactive_ready",
+          "evidence": "config/generated/bot_calculators.json"
+        }
+      ],
+      "api_candidates": [],
+      "data_contract": {
+        "accepted_inputs": [
+          "user brief",
+          "user-selected files or records",
+          "approved connector references"
+        ],
+        "produced_outputs": [
+          "draft",
+          "analysis",
+          "task packet",
+          "sandbox evidence",
+          "approval request when required"
+        ],
+        "sensitivity": "standard_business_data",
+        "sensitive_domains": [],
+        "storage_policy": "store useful project artifacts only; raw credentials are forbidden; raw biometric media remains local or in an encrypted owner vault",
+        "retention": "owner-configurable with deletion and revocation support"
+      },
+      "approvals": {
+        "default_mode": "sandbox",
+        "approval_required": true,
+        "high_impact_profile": true,
+        "triggers": [
+          "email"
+        ],
+        "channels_supported": [
+          "in_app",
+          "email",
+          "sms",
+          "voice_call"
+        ],
+        "contact_requirement": "verified user-owned destination and explicit channel opt-in",
+        "execution_rule": "approval authorizes one scoped action; it never exposes credentials to the bot or browser"
+      },
+      "sandbox": {
+        "sandbox_id": "sandbox-meeting-notes",
+        "network_default": "off",
+        "fixture_mode": "synthetic_or_owner_supplied",
+        "seed": 2984276315,
+        "checks": [
+          "profile_schema_valid",
+          "runtime_slug_resolves",
+          "capability_output_matches_brief",
+          "no_secret_in_output",
+          "no_live_external_write",
+          "approval_gate_for_high_impact_action",
+          "failure_and_retry_state_recorded"
+        ],
+        "api_tests": [],
+        "release_gate": "all applicable checks pass and owner approves any live action"
+      },
+      "readiness": {
+        "profile_schema": "verified",
+        "buddy_chat_route": "verified",
+        "executable_runtime_instance": "verified",
+        "standalone_native_runtime": "shared_worker_not_standalone",
+        "external_integrations": "no_division_api_catalog",
+        "production_ready": false,
+        "production_gate": "implement or configure adapters, pass sandbox checks, add authentication, and verify deployment telemetry"
+      },
+      "evidence": {
+        "catalog_source": "App_bots/DreamAdmin.json",
+        "runtime_sources": [
+          "server/seed-bots.ts"
+        ],
+        "runtime_seed_duplicates": 0
+      },
+      "sample_test_prompt": "Test Meeting Notes Summarizer in sandbox mode. Use synthetic data, demonstrate Meeting summary generation, record evidence, and stop before any live external action."
+    },
+    {
+      "identity": {
+        "slug": "facilities-request",
+        "display_name": "Facilities Request Manager",
+        "division": "DreamAdmin",
+        "category": "facilities",
+        "tier": "pro",
+        "catalog_status": "active"
+      },
+      "logo": {
+        "logo_id": "logo-facilities-request",
+        "emoji": "🎬",
+        "monogram": "FR",
+        "call_sign": "Grand Lab 30C8FDE7",
+        "shape": "circle",
+        "colors": {
+          "primary": "#77521F",
+          "accent": "#287878",
+          "surface": "#FFF9ED"
+        },
+        "accessibility_label": "Facilities Request Manager logo"
+      },
+      "prospectus": {
+        "mission": "Manages facility maintenance requests with priority routing and status tracking.",
+        "target_users": "Facility managers, office coordinators",
+        "catalog_business_model": "SaaS subscription",
+        "catalog_price_range": "$79/mo",
+        "pricing_evidence": "catalog_claim_not_verified_revenue",
+        "inputs": [
+          "user brief",
+          "user-selected files or records",
+          "approved connector references"
+        ],
+        "outputs": [
+          "draft",
+          "analysis",
+          "task packet",
+          "sandbox evidence",
+          "approval request when required"
+        ],
+        "limitations": [
+          "This profile has an executable governed runtime instance backed by shared hardened code, not a separate always-running operating-system process.",
+          "External APIs require owner configuration, provider terms, sandbox tests, and scoped approval.",
+          "Published pricing and revenue models are catalog plans, not evidence of sales or earnings."
+        ]
+      },
+      "capabilities": [
+        {
+          "name": "Request submission portal",
+          "source": "App_bots/DreamAdmin.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Priority routing automation",
+          "source": "App_bots/DreamAdmin.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Status update tracking",
+          "source": "App_bots/DreamAdmin.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Vendor dispatch coordination",
+          "source": "App_bots/DreamAdmin.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Budget tracking tools",
+          "source": "App_bots/DreamAdmin.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Satisfaction survey collection",
+          "source": "App_bots/DreamAdmin.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Advanced analytics dashboard",
+          "source": "App_bots/DreamAdmin.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Priority email support",
+          "source": "App_bots/DreamAdmin.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        }
+      ],
+      "tools": [
+        {
+          "id": "buddy_fleet_runtime",
+          "name": "Executable fleet runtime",
+          "status": "runtime_instance_ready",
+          "evidence": "server/fleet-runtime.ts"
+        },
+        {
+          "id": "buddy_chat_router",
+          "name": "Buddy shared chat router",
+          "status": "runtime_routed",
+          "evidence": "server/routes.ts"
+        },
+        {
+          "id": "buddy_approval_gateway",
+          "name": "Buddy approval gateway",
+          "status": "policy_available",
+          "evidence": "server/approval-notifications.ts"
+        },
+        {
+          "id": "buddy_bot_sandbox",
+          "name": "Per-bot sandbox blueprint",
+          "status": "generated",
+          "evidence": "config/generated/bots.catalog.json"
+        },
+        {
+          "id": "buddy_platform_registry",
+          "name": "Governed platform capability registry",
+          "status": "runtime_routed",
+          "evidence": "config/generated/buddy_platform_expansion.json"
+        },
+        {
+          "id": "buddy_bot_calculator",
+          "name": "Per-bot planning calculator",
+          "status": "local_interactive_ready",
+          "evidence": "config/generated/bot_calculators.json"
+        }
+      ],
+      "api_candidates": [],
+      "data_contract": {
+        "accepted_inputs": [
+          "user brief",
+          "user-selected files or records",
+          "approved connector references"
+        ],
+        "produced_outputs": [
+          "draft",
+          "analysis",
+          "task packet",
+          "sandbox evidence",
+          "approval request when required"
+        ],
+        "sensitivity": "standard_business_data",
+        "sensitive_domains": [],
+        "storage_policy": "store useful project artifacts only; raw credentials are forbidden; raw biometric media remains local or in an encrypted owner vault",
+        "retention": "owner-configurable with deletion and revocation support"
+      },
+      "approvals": {
+        "default_mode": "sandbox",
+        "approval_required": true,
+        "high_impact_profile": true,
+        "triggers": [
+          "email"
+        ],
+        "channels_supported": [
+          "in_app",
+          "email",
+          "sms",
+          "voice_call"
+        ],
+        "contact_requirement": "verified user-owned destination and explicit channel opt-in",
+        "execution_rule": "approval authorizes one scoped action; it never exposes credentials to the bot or browser"
+      },
+      "sandbox": {
+        "sandbox_id": "sandbox-facilities-request",
+        "network_default": "off",
+        "fixture_mode": "synthetic_or_owner_supplied",
+        "seed": 818478567,
+        "checks": [
+          "profile_schema_valid",
+          "runtime_slug_resolves",
+          "capability_output_matches_brief",
+          "no_secret_in_output",
+          "no_live_external_write",
+          "approval_gate_for_high_impact_action",
+          "failure_and_retry_state_recorded"
+        ],
+        "api_tests": [],
+        "release_gate": "all applicable checks pass and owner approves any live action"
+      },
+      "readiness": {
+        "profile_schema": "verified",
+        "buddy_chat_route": "verified",
+        "executable_runtime_instance": "verified",
+        "standalone_native_runtime": "shared_worker_not_standalone",
+        "external_integrations": "no_division_api_catalog",
+        "production_ready": false,
+        "production_gate": "implement or configure adapters, pass sandbox checks, add authentication, and verify deployment telemetry"
+      },
+      "evidence": {
+        "catalog_source": "App_bots/DreamAdmin.json",
+        "runtime_sources": [
+          "server/seed-bots.ts"
+        ],
+        "runtime_seed_duplicates": 0
+      },
+      "sample_test_prompt": "Test Facilities Request Manager in sandbox mode. Use synthetic data, demonstrate Request submission portal, record evidence, and stop before any live external action."
+    },
+    {
+      "identity": {
+        "slug": "contract-admin",
+        "display_name": "Contract Administration Tool",
+        "division": "DreamAdmin",
+        "category": "contracts",
+        "tier": "enterprise",
+        "catalog_status": "active"
+      },
+      "logo": {
+        "logo_id": "logo-contract-admin",
+        "emoji": "📈",
+        "monogram": "CA",
+        "call_sign": "Dynamic Pulse 4BEBA5BF",
+        "shape": "circle",
+        "colors": {
+          "primary": "#77521F",
+          "accent": "#287878",
+          "surface": "#FFF9ED"
+        },
+        "accessibility_label": "Contract Administration Tool logo"
+      },
+      "prospectus": {
+        "mission": "Administers contracts with renewal tracking and obligation management.",
+        "target_users": "Legal teams, procurement managers",
+        "catalog_business_model": "Enterprise license",
+        "catalog_price_range": "$599/mo",
+        "pricing_evidence": "catalog_claim_not_verified_revenue",
+        "inputs": [
+          "user brief",
+          "user-selected files or records",
+          "approved connector references"
+        ],
+        "outputs": [
+          "draft",
+          "analysis",
+          "task packet",
+          "sandbox evidence",
+          "approval request when required"
+        ],
+        "limitations": [
+          "This profile has an executable governed runtime instance backed by shared hardened code, not a separate always-running operating-system process.",
+          "External APIs require owner configuration, provider terms, sandbox tests, and scoped approval.",
+          "Published pricing and revenue models are catalog plans, not evidence of sales or earnings."
+        ]
+      },
+      "capabilities": [
+        {
+          "name": "Contract repository management",
+          "source": "App_bots/DreamAdmin.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Renewal alert automation",
+          "source": "App_bots/DreamAdmin.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Obligation tracking system",
+          "source": "App_bots/DreamAdmin.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Approval workflow engine",
+          "source": "App_bots/DreamAdmin.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Compliance clause monitoring",
+          "source": "App_bots/DreamAdmin.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Spend analysis dashboard",
+          "source": "App_bots/DreamAdmin.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Advanced analytics dashboard",
+          "source": "App_bots/DreamAdmin.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Priority email support",
+          "source": "App_bots/DreamAdmin.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        }
+      ],
+      "tools": [
+        {
+          "id": "buddy_fleet_runtime",
+          "name": "Executable fleet runtime",
+          "status": "runtime_instance_ready",
+          "evidence": "server/fleet-runtime.ts"
+        },
+        {
+          "id": "buddy_chat_router",
+          "name": "Buddy shared chat router",
+          "status": "runtime_routed",
+          "evidence": "server/routes.ts"
+        },
+        {
+          "id": "buddy_approval_gateway",
+          "name": "Buddy approval gateway",
+          "status": "policy_available",
+          "evidence": "server/approval-notifications.ts"
+        },
+        {
+          "id": "buddy_bot_sandbox",
+          "name": "Per-bot sandbox blueprint",
+          "status": "generated",
+          "evidence": "config/generated/bots.catalog.json"
+        },
+        {
+          "id": "buddy_platform_registry",
+          "name": "Governed platform capability registry",
+          "status": "runtime_routed",
+          "evidence": "config/generated/buddy_platform_expansion.json"
+        },
+        {
+          "id": "buddy_bot_calculator",
+          "name": "Per-bot planning calculator",
+          "status": "local_interactive_ready",
+          "evidence": "config/generated/bot_calculators.json"
+        },
+        {
+          "id": "buddy_code_workspace",
+          "name": "Buddy Code Workspace",
+          "status": "shared_runtime_route",
+          "evidence": "server/seed-buddy-bot.ts"
+        }
+      ],
+      "api_candidates": [],
+      "data_contract": {
+        "accepted_inputs": [
+          "user brief",
+          "user-selected files or records",
+          "approved connector references"
+        ],
+        "produced_outputs": [
+          "draft",
+          "analysis",
+          "task packet",
+          "sandbox evidence",
+          "approval request when required"
+        ],
+        "sensitivity": "standard_business_data",
+        "sensitive_domains": [],
+        "storage_policy": "store useful project artifacts only; raw credentials are forbidden; raw biometric media remains local or in an encrypted owner vault",
+        "retention": "owner-configurable with deletion and revocation support"
+      },
+      "approvals": {
+        "default_mode": "sandbox",
+        "approval_required": true,
+        "high_impact_profile": true,
+        "triggers": [
+          "contract",
+          "email"
+        ],
+        "channels_supported": [
+          "in_app",
+          "email",
+          "sms",
+          "voice_call"
+        ],
+        "contact_requirement": "verified user-owned destination and explicit channel opt-in",
+        "execution_rule": "approval authorizes one scoped action; it never exposes credentials to the bot or browser"
+      },
+      "sandbox": {
+        "sandbox_id": "sandbox-contract-admin",
+        "network_default": "off",
+        "fixture_mode": "synthetic_or_owner_supplied",
+        "seed": 1273734591,
+        "checks": [
+          "profile_schema_valid",
+          "runtime_slug_resolves",
+          "capability_output_matches_brief",
+          "no_secret_in_output",
+          "no_live_external_write",
+          "approval_gate_for_high_impact_action",
+          "failure_and_retry_state_recorded"
+        ],
+        "api_tests": [],
+        "release_gate": "all applicable checks pass and owner approves any live action"
+      },
+      "readiness": {
+        "profile_schema": "verified",
+        "buddy_chat_route": "verified",
+        "executable_runtime_instance": "verified",
+        "standalone_native_runtime": "shared_worker_not_standalone",
+        "external_integrations": "no_division_api_catalog",
+        "production_ready": false,
+        "production_gate": "implement or configure adapters, pass sandbox checks, add authentication, and verify deployment telemetry"
+      },
+      "evidence": {
+        "catalog_source": "App_bots/DreamAdmin.json",
+        "runtime_sources": [
+          "server/seed-bots.ts"
+        ],
+        "runtime_seed_duplicates": 0
+      },
+      "sample_test_prompt": "Test Contract Administration Tool in sandbox mode. Use synthetic data, demonstrate Contract repository management, record evidence, and stop before any live external action."
+    },
+    {
+      "identity": {
+        "slug": "employee-directory",
+        "display_name": "Employee Directory Manager",
+        "division": "DreamAdmin",
+        "category": "directory",
+        "tier": "enterprise",
+        "catalog_status": "active"
+      },
+      "logo": {
+        "logo_id": "logo-employee-directory",
+        "emoji": "🌐",
+        "monogram": "ED",
+        "call_sign": "Royal Tower A40FB6F8",
+        "shape": "hex",
+        "colors": {
+          "primary": "#176B5B",
+          "accent": "#D7A73B",
+          "surface": "#F5F7F3"
+        },
+        "accessibility_label": "Employee Directory Manager logo"
+      },
+      "prospectus": {
+        "mission": "Manages employee directory with org chart visualization and skills tracking.",
+        "target_users": "HR teams, IT administrators",
+        "catalog_business_model": "Enterprise license",
+        "catalog_price_range": "$499/mo",
+        "pricing_evidence": "catalog_claim_not_verified_revenue",
+        "inputs": [
+          "user brief",
+          "user-selected files or records",
+          "approved connector references"
+        ],
+        "outputs": [
+          "draft",
+          "analysis",
+          "task packet",
+          "sandbox evidence",
+          "approval request when required"
+        ],
+        "limitations": [
+          "This profile has an executable governed runtime instance backed by shared hardened code, not a separate always-running operating-system process.",
+          "External APIs require owner configuration, provider terms, sandbox tests, and scoped approval.",
+          "Published pricing and revenue models are catalog plans, not evidence of sales or earnings."
+        ]
+      },
+      "capabilities": [
+        {
+          "name": "Org chart visualization",
+          "source": "App_bots/DreamAdmin.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Skills inventory database",
+          "source": "App_bots/DreamAdmin.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Contact information management",
+          "source": "App_bots/DreamAdmin.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Reporting structure tracking",
+          "source": "App_bots/DreamAdmin.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Department analytics tools",
+          "source": "App_bots/DreamAdmin.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Integration with HR systems",
+          "source": "App_bots/DreamAdmin.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Advanced analytics dashboard",
+          "source": "App_bots/DreamAdmin.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Priority email support",
+          "source": "App_bots/DreamAdmin.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        }
+      ],
+      "tools": [
+        {
+          "id": "buddy_fleet_runtime",
+          "name": "Executable fleet runtime",
+          "status": "runtime_instance_ready",
+          "evidence": "server/fleet-runtime.ts"
+        },
+        {
+          "id": "buddy_chat_router",
+          "name": "Buddy shared chat router",
+          "status": "runtime_routed",
+          "evidence": "server/routes.ts"
+        },
+        {
+          "id": "buddy_approval_gateway",
+          "name": "Buddy approval gateway",
+          "status": "policy_available",
+          "evidence": "server/approval-notifications.ts"
+        },
+        {
+          "id": "buddy_bot_sandbox",
+          "name": "Per-bot sandbox blueprint",
+          "status": "generated",
+          "evidence": "config/generated/bots.catalog.json"
+        },
+        {
+          "id": "buddy_platform_registry",
+          "name": "Governed platform capability registry",
+          "status": "runtime_routed",
+          "evidence": "config/generated/buddy_platform_expansion.json"
+        },
+        {
+          "id": "buddy_bot_calculator",
+          "name": "Per-bot planning calculator",
+          "status": "local_interactive_ready",
+          "evidence": "config/generated/bot_calculators.json"
+        },
+        {
+          "id": "buddy_connection_broker",
+          "name": "Buddy Connection Broker",
+          "status": "backend_broker_available",
+          "evidence": "dreamco_platform/connections/broker.py"
+        }
+      ],
+      "api_candidates": [],
+      "data_contract": {
+        "accepted_inputs": [
+          "user brief",
+          "user-selected files or records",
+          "approved connector references"
+        ],
+        "produced_outputs": [
+          "draft",
+          "analysis",
+          "task packet",
+          "sandbox evidence",
+          "approval request when required"
+        ],
+        "sensitivity": "potentially_sensitive",
+        "sensitive_domains": [
+          "employee"
+        ],
+        "storage_policy": "store useful project artifacts only; raw credentials are forbidden; raw biometric media remains local or in an encrypted owner vault",
+        "retention": "owner-configurable with deletion and revocation support"
+      },
+      "approvals": {
+        "default_mode": "sandbox",
+        "approval_required": true,
+        "high_impact_profile": true,
+        "triggers": [
+          "email"
+        ],
+        "channels_supported": [
+          "in_app",
+          "email",
+          "sms",
+          "voice_call"
+        ],
+        "contact_requirement": "verified user-owned destination and explicit channel opt-in",
+        "execution_rule": "approval authorizes one scoped action; it never exposes credentials to the bot or browser"
+      },
+      "sandbox": {
+        "sandbox_id": "sandbox-employee-directory",
+        "network_default": "off",
+        "fixture_mode": "synthetic_or_owner_supplied",
+        "seed": 2752493304,
+        "checks": [
+          "profile_schema_valid",
+          "runtime_slug_resolves",
+          "capability_output_matches_brief",
+          "no_secret_in_output",
+          "no_live_external_write",
+          "approval_gate_for_high_impact_action",
+          "failure_and_retry_state_recorded"
+        ],
+        "api_tests": [],
+        "release_gate": "all applicable checks pass and owner approves any live action"
+      },
+      "readiness": {
+        "profile_schema": "verified",
+        "buddy_chat_route": "verified",
+        "executable_runtime_instance": "verified",
+        "standalone_native_runtime": "shared_worker_not_standalone",
+        "external_integrations": "no_division_api_catalog",
+        "production_ready": false,
+        "production_gate": "implement or configure adapters, pass sandbox checks, add authentication, and verify deployment telemetry"
+      },
+      "evidence": {
+        "catalog_source": "App_bots/DreamAdmin.json",
+        "runtime_sources": [
+          "server/seed-bots.ts"
+        ],
+        "runtime_seed_duplicates": 0
+      },
+      "sample_test_prompt": "Test Employee Directory Manager in sandbox mode. Use synthetic data, demonstrate Org chart visualization, record evidence, and stop before any live external action."
+    },
+    {
+      "identity": {
+        "slug": "print-mgr",
+        "display_name": "Print & Copy Manager",
+        "division": "DreamAdmin",
+        "category": "printing",
+        "tier": "pro",
+        "catalog_status": "active"
+      },
+      "logo": {
+        "logo_id": "logo-print-mgr",
+        "emoji": "🚀",
+        "monogram": "P&",
+        "call_sign": "Noble Forge 8592F126",
+        "shape": "shield",
+        "colors": {
+          "primary": "#3D4C8D",
+          "accent": "#D56638",
+          "surface": "#F4F6FF"
+        },
+        "accessibility_label": "Print & Copy Manager logo"
+      },
+      "prospectus": {
+        "mission": "Manages office printing with cost tracking and environmental impact reporting.",
+        "target_users": "Office managers, IT administrators",
+        "catalog_business_model": "SaaS subscription",
+        "catalog_price_range": "$49/mo",
+        "pricing_evidence": "catalog_claim_not_verified_revenue",
+        "inputs": [
+          "user brief",
+          "user-selected files or records",
+          "approved connector references"
+        ],
+        "outputs": [
+          "draft",
+          "analysis",
+          "task packet",
+          "sandbox evidence",
+          "approval request when required"
+        ],
+        "limitations": [
+          "This profile has an executable governed runtime instance backed by shared hardened code, not a separate always-running operating-system process.",
+          "External APIs require owner configuration, provider terms, sandbox tests, and scoped approval.",
+          "Published pricing and revenue models are catalog plans, not evidence of sales or earnings."
+        ]
+      },
+      "capabilities": [
+        {
+          "name": "Print job management",
+          "source": "App_bots/DreamAdmin.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Cost allocation tracking",
+          "source": "App_bots/DreamAdmin.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "User print quotas",
+          "source": "App_bots/DreamAdmin.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Environmental impact reporting",
+          "source": "App_bots/DreamAdmin.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Device status monitoring",
+          "source": "App_bots/DreamAdmin.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Toner and supply ordering",
+          "source": "App_bots/DreamAdmin.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Advanced analytics dashboard",
+          "source": "App_bots/DreamAdmin.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Priority email support",
+          "source": "App_bots/DreamAdmin.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        }
+      ],
+      "tools": [
+        {
+          "id": "buddy_fleet_runtime",
+          "name": "Executable fleet runtime",
+          "status": "runtime_instance_ready",
+          "evidence": "server/fleet-runtime.ts"
+        },
+        {
+          "id": "buddy_chat_router",
+          "name": "Buddy shared chat router",
+          "status": "runtime_routed",
+          "evidence": "server/routes.ts"
+        },
+        {
+          "id": "buddy_approval_gateway",
+          "name": "Buddy approval gateway",
+          "status": "policy_available",
+          "evidence": "server/approval-notifications.ts"
+        },
+        {
+          "id": "buddy_bot_sandbox",
+          "name": "Per-bot sandbox blueprint",
+          "status": "generated",
+          "evidence": "config/generated/bots.catalog.json"
+        },
+        {
+          "id": "buddy_platform_registry",
+          "name": "Governed platform capability registry",
+          "status": "runtime_routed",
+          "evidence": "config/generated/buddy_platform_expansion.json"
+        },
+        {
+          "id": "buddy_bot_calculator",
+          "name": "Per-bot planning calculator",
+          "status": "local_interactive_ready",
+          "evidence": "config/generated/bot_calculators.json"
+        }
+      ],
+      "api_candidates": [],
+      "data_contract": {
+        "accepted_inputs": [
+          "user brief",
+          "user-selected files or records",
+          "approved connector references"
+        ],
+        "produced_outputs": [
+          "draft",
+          "analysis",
+          "task packet",
+          "sandbox evidence",
+          "approval request when required"
+        ],
+        "sensitivity": "standard_business_data",
+        "sensitive_domains": [],
+        "storage_policy": "store useful project artifacts only; raw credentials are forbidden; raw biometric media remains local or in an encrypted owner vault",
+        "retention": "owner-configurable with deletion and revocation support"
+      },
+      "approvals": {
+        "default_mode": "sandbox",
+        "approval_required": true,
+        "high_impact_profile": true,
+        "triggers": [
+          "email"
+        ],
+        "channels_supported": [
+          "in_app",
+          "email",
+          "sms",
+          "voice_call"
+        ],
+        "contact_requirement": "verified user-owned destination and explicit channel opt-in",
+        "execution_rule": "approval authorizes one scoped action; it never exposes credentials to the bot or browser"
+      },
+      "sandbox": {
+        "sandbox_id": "sandbox-print-mgr",
+        "network_default": "off",
+        "fixture_mode": "synthetic_or_owner_supplied",
+        "seed": 2240999718,
+        "checks": [
+          "profile_schema_valid",
+          "runtime_slug_resolves",
+          "capability_output_matches_brief",
+          "no_secret_in_output",
+          "no_live_external_write",
+          "approval_gate_for_high_impact_action",
+          "failure_and_retry_state_recorded"
+        ],
+        "api_tests": [],
+        "release_gate": "all applicable checks pass and owner approves any live action"
+      },
+      "readiness": {
+        "profile_schema": "verified",
+        "buddy_chat_route": "verified",
+        "executable_runtime_instance": "verified",
+        "standalone_native_runtime": "shared_worker_not_standalone",
+        "external_integrations": "no_division_api_catalog",
+        "production_ready": false,
+        "production_gate": "implement or configure adapters, pass sandbox checks, add authentication, and verify deployment telemetry"
+      },
+      "evidence": {
+        "catalog_source": "App_bots/DreamAdmin.json",
+        "runtime_sources": [
+          "server/seed-bots.ts"
+        ],
+        "runtime_seed_duplicates": 0
+      },
+      "sample_test_prompt": "Test Print & Copy Manager in sandbox mode. Use synthetic data, demonstrate Print job management, record evidence, and stop before any live external action."
+    },
+    {
+      "identity": {
+        "slug": "productivity-app-bot",
+        "display_name": "Productivity App Bot",
+        "division": "DreamAdmin",
+        "category": "productivity",
+        "tier": "pro",
+        "catalog_status": "active"
+      },
+      "logo": {
+        "logo_id": "logo-productivity-app-bot",
+        "emoji": "📊",
+        "monogram": "PA",
+        "call_sign": "True Beacon 04C4924D",
+        "shape": "circle",
+        "colors": {
+          "primary": "#334E3C",
+          "accent": "#B96332",
+          "surface": "#F7F4ED"
+        },
+        "accessibility_label": "Productivity App Bot logo"
+      },
+      "prospectus": {
+        "mission": "Powers productivity apps with task prioritization, calendar optimization, focus time scheduling, and workflow automation.",
+        "target_users": "Enterprise, freelancers, teams",
+        "catalog_business_model": "SaaS subscription",
+        "catalog_price_range": "$149/mo",
+        "pricing_evidence": "catalog_claim_not_verified_revenue",
+        "inputs": [
+          "user brief",
+          "user-selected files or records",
+          "approved connector references"
+        ],
+        "outputs": [
+          "draft",
+          "analysis",
+          "task packet",
+          "sandbox evidence",
+          "approval request when required"
+        ],
+        "limitations": [
+          "This profile has an executable governed runtime instance backed by shared hardened code, not a separate always-running operating-system process.",
+          "External APIs require owner configuration, provider terms, sandbox tests, and scoped approval.",
+          "Published pricing and revenue models are catalog plans, not evidence of sales or earnings."
+        ]
+      },
+      "capabilities": [
+        {
+          "name": "AI task prioritization",
+          "source": "App_bots/DreamAdmin.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Calendar conflict detection",
+          "source": "App_bots/DreamAdmin.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Focus time blocker",
+          "source": "App_bots/DreamAdmin.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Workflow automation builder",
+          "source": "App_bots/DreamAdmin.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Meeting agenda generator",
+          "source": "App_bots/DreamAdmin.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Time-tracking integration",
+          "source": "App_bots/DreamAdmin.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Goal progress tracking",
+          "source": "App_bots/DreamAdmin.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Notion/Asana/Trello integration",
+          "source": "App_bots/DreamAdmin.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        }
+      ],
+      "tools": [
+        {
+          "id": "buddy_fleet_runtime",
+          "name": "Executable fleet runtime",
+          "status": "runtime_instance_ready",
+          "evidence": "server/fleet-runtime.ts"
+        },
+        {
+          "id": "buddy_chat_router",
+          "name": "Buddy shared chat router",
+          "status": "runtime_routed",
+          "evidence": "server/routes.ts"
+        },
+        {
+          "id": "buddy_approval_gateway",
+          "name": "Buddy approval gateway",
+          "status": "policy_available",
+          "evidence": "server/approval-notifications.ts"
+        },
+        {
+          "id": "buddy_bot_sandbox",
+          "name": "Per-bot sandbox blueprint",
+          "status": "generated",
+          "evidence": "config/generated/bots.catalog.json"
+        },
+        {
+          "id": "buddy_platform_registry",
+          "name": "Governed platform capability registry",
+          "status": "runtime_routed",
+          "evidence": "config/generated/buddy_platform_expansion.json"
+        },
+        {
+          "id": "buddy_bot_calculator",
+          "name": "Per-bot planning calculator",
+          "status": "local_interactive_ready",
+          "evidence": "config/generated/bot_calculators.json"
+        },
+        {
+          "id": "buddy_connection_broker",
+          "name": "Buddy Connection Broker",
+          "status": "backend_broker_available",
+          "evidence": "dreamco_platform/connections/broker.py"
+        },
+        {
+          "id": "buddy_code_workspace",
+          "name": "Buddy Code Workspace",
+          "status": "shared_runtime_route",
+          "evidence": "server/seed-buddy-bot.ts"
+        }
+      ],
+      "api_candidates": [],
+      "data_contract": {
+        "accepted_inputs": [
+          "user brief",
+          "user-selected files or records",
+          "approved connector references"
+        ],
+        "produced_outputs": [
+          "draft",
+          "analysis",
+          "task packet",
+          "sandbox evidence",
+          "approval request when required"
+        ],
+        "sensitivity": "standard_business_data",
+        "sensitive_domains": [],
+        "storage_policy": "store useful project artifacts only; raw credentials are forbidden; raw biometric media remains local or in an encrypted owner vault",
+        "retention": "owner-configurable with deletion and revocation support"
+      },
+      "approvals": {
+        "default_mode": "sandbox",
+        "approval_required": true,
+        "high_impact_profile": false,
+        "triggers": [
+          "any live external write or publish action"
+        ],
+        "channels_supported": [
+          "in_app",
+          "email",
+          "sms",
+          "voice_call"
+        ],
+        "contact_requirement": "verified user-owned destination and explicit channel opt-in",
+        "execution_rule": "approval authorizes one scoped action; it never exposes credentials to the bot or browser"
+      },
+      "sandbox": {
+        "sandbox_id": "sandbox-productivity-app-bot",
+        "network_default": "off",
+        "fixture_mode": "synthetic_or_owner_supplied",
+        "seed": 79991373,
+        "checks": [
+          "profile_schema_valid",
+          "runtime_slug_resolves",
+          "capability_output_matches_brief",
+          "no_secret_in_output",
+          "no_live_external_write",
+          "approval_gate_for_high_impact_action",
+          "failure_and_retry_state_recorded"
+        ],
+        "api_tests": [],
+        "release_gate": "all applicable checks pass and owner approves any live action"
+      },
+      "readiness": {
+        "profile_schema": "verified",
+        "buddy_chat_route": "verified",
+        "executable_runtime_instance": "verified",
+        "standalone_native_runtime": "shared_worker_not_standalone",
+        "external_integrations": "no_division_api_catalog",
+        "production_ready": false,
+        "production_gate": "implement or configure adapters, pass sandbox checks, add authentication, and verify deployment telemetry"
+      },
+      "evidence": {
+        "catalog_source": "App_bots/DreamAdmin.json",
+        "runtime_sources": [
+          "server/seed-github-bots.ts"
+        ],
+        "runtime_seed_duplicates": 0
+      },
+      "sample_test_prompt": "Test Productivity App Bot in sandbox mode. Use synthetic data, demonstrate AI task prioritization, record evidence, and stop before any live external action."
+    },
+    {
+      "identity": {
+        "slug": "gov-contract-bot",
+        "display_name": "Government Contract Automation Bot",
+        "division": "DreamAdmin",
+        "category": "government",
+        "tier": "enterprise",
+        "catalog_status": "active"
+      },
+      "logo": {
+        "logo_id": "logo-gov-contract-bot",
+        "emoji": "🧪",
+        "monogram": "GC",
+        "call_sign": "Brave Canvas 6A5EBB41",
+        "shape": "hex",
+        "colors": {
+          "primary": "#275DAD",
+          "accent": "#E38B3C",
+          "surface": "#F7F9FC"
+        },
+        "accessibility_label": "Government Contract Automation Bot logo"
+      },
+      "prospectus": {
+        "mission": "Automates SAM.gov contract searches, bid matching, proposal generation, and compliance documentation for government contracting.",
+        "target_users": "Government contractors, federal consultants",
+        "catalog_business_model": "Enterprise license",
+        "catalog_price_range": "$499/mo",
+        "pricing_evidence": "catalog_claim_not_verified_revenue",
+        "inputs": [
+          "user brief",
+          "user-selected files or records",
+          "approved connector references"
+        ],
+        "outputs": [
+          "draft",
+          "analysis",
+          "task packet",
+          "sandbox evidence",
+          "approval request when required"
+        ],
+        "limitations": [
+          "This profile has an executable governed runtime instance backed by shared hardened code, not a separate always-running operating-system process.",
+          "External APIs require owner configuration, provider terms, sandbox tests, and scoped approval.",
+          "Published pricing and revenue models are catalog plans, not evidence of sales or earnings."
+        ]
+      },
+      "capabilities": [
+        {
+          "name": "SAM.gov contract search",
+          "source": "App_bots/DreamAdmin.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Bid opportunity matching",
+          "source": "App_bots/DreamAdmin.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Proposal auto-generation",
+          "source": "App_bots/DreamAdmin.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "NAICS code classifier",
+          "source": "App_bots/DreamAdmin.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Past performance builder",
+          "source": "App_bots/DreamAdmin.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Compliance documentation",
+          "source": "App_bots/DreamAdmin.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "GSA schedule optimizer",
+          "source": "App_bots/DreamAdmin.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Set-aside opportunity finder",
+          "source": "App_bots/DreamAdmin.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        }
+      ],
+      "tools": [
+        {
+          "id": "buddy_fleet_runtime",
+          "name": "Executable fleet runtime",
+          "status": "runtime_instance_ready",
+          "evidence": "server/fleet-runtime.ts"
+        },
+        {
+          "id": "buddy_chat_router",
+          "name": "Buddy shared chat router",
+          "status": "runtime_routed",
+          "evidence": "server/routes.ts"
+        },
+        {
+          "id": "buddy_approval_gateway",
+          "name": "Buddy approval gateway",
+          "status": "policy_available",
+          "evidence": "server/approval-notifications.ts"
+        },
+        {
+          "id": "buddy_bot_sandbox",
+          "name": "Per-bot sandbox blueprint",
+          "status": "generated",
+          "evidence": "config/generated/bots.catalog.json"
+        },
+        {
+          "id": "buddy_platform_registry",
+          "name": "Governed platform capability registry",
+          "status": "runtime_routed",
+          "evidence": "config/generated/buddy_platform_expansion.json"
+        },
+        {
+          "id": "buddy_bot_calculator",
+          "name": "Per-bot planning calculator",
+          "status": "local_interactive_ready",
+          "evidence": "config/generated/bot_calculators.json"
+        },
+        {
+          "id": "buddy_code_workspace",
+          "name": "Buddy Code Workspace",
+          "status": "shared_runtime_route",
+          "evidence": "server/seed-buddy-bot.ts"
+        }
+      ],
+      "api_candidates": [],
+      "data_contract": {
+        "accepted_inputs": [
+          "user brief",
+          "user-selected files or records",
+          "approved connector references"
+        ],
+        "produced_outputs": [
+          "draft",
+          "analysis",
+          "task packet",
+          "sandbox evidence",
+          "approval request when required"
+        ],
+        "sensitivity": "standard_business_data",
+        "sensitive_domains": [],
+        "storage_policy": "store useful project artifacts only; raw credentials are forbidden; raw biometric media remains local or in an encrypted owner vault",
+        "retention": "owner-configurable with deletion and revocation support"
+      },
+      "approvals": {
+        "default_mode": "sandbox",
+        "approval_required": true,
+        "high_impact_profile": true,
+        "triggers": [
+          "contract"
+        ],
+        "channels_supported": [
+          "in_app",
+          "email",
+          "sms",
+          "voice_call"
+        ],
+        "contact_requirement": "verified user-owned destination and explicit channel opt-in",
+        "execution_rule": "approval authorizes one scoped action; it never exposes credentials to the bot or browser"
+      },
+      "sandbox": {
+        "sandbox_id": "sandbox-gov-contract-bot",
+        "network_default": "off",
+        "fixture_mode": "synthetic_or_owner_supplied",
+        "seed": 1784593217,
+        "checks": [
+          "profile_schema_valid",
+          "runtime_slug_resolves",
+          "capability_output_matches_brief",
+          "no_secret_in_output",
+          "no_live_external_write",
+          "approval_gate_for_high_impact_action",
+          "failure_and_retry_state_recorded"
+        ],
+        "api_tests": [],
+        "release_gate": "all applicable checks pass and owner approves any live action"
+      },
+      "readiness": {
+        "profile_schema": "verified",
+        "buddy_chat_route": "verified",
+        "executable_runtime_instance": "verified",
+        "standalone_native_runtime": "shared_worker_not_standalone",
+        "external_integrations": "no_division_api_catalog",
+        "production_ready": false,
+        "production_gate": "implement or configure adapters, pass sandbox checks, add authentication, and verify deployment telemetry"
+      },
+      "evidence": {
+        "catalog_source": "App_bots/DreamAdmin.json",
+        "runtime_sources": [
+          "server/seed-github-bots.ts"
+        ],
+        "runtime_seed_duplicates": 0
+      },
+      "sample_test_prompt": "Test Government Contract Automation Bot in sandbox mode. Use synthetic data, demonstrate SAM.gov contract search, record evidence, and stop before any live external action."
+    }
+  ]
+}

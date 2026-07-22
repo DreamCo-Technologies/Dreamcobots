@@ -1,0 +1,3289 @@
+{
+  "schema": "dreamco.bot_fleet_division.v2",
+  "division": "DreamTrade",
+  "bots": [
+    {
+      "identity": {
+        "slug": "commodity-trader",
+        "display_name": "Commodity Trading Bot",
+        "division": "DreamTrade",
+        "category": "commodity-trading",
+        "tier": "elite",
+        "catalog_status": "active"
+      },
+      "logo": {
+        "logo_id": "logo-commodity-trader",
+        "emoji": "🎙️",
+        "monogram": "CT",
+        "call_sign": "Royal Workshop 13E7B142",
+        "shape": "shield",
+        "colors": {
+          "primary": "#7A2E3A",
+          "accent": "#2D8C7C",
+          "surface": "#FFF8EE"
+        },
+        "accessibility_label": "Commodity Trading Bot logo"
+      },
+      "prospectus": {
+        "mission": "AI-powered commodity trading with fundamental and technical analysis.",
+        "target_users": "Commodity traders, trading desks",
+        "catalog_business_model": "Performance fee + SaaS",
+        "catalog_price_range": "$999/mo",
+        "pricing_evidence": "catalog_claim_not_verified_revenue",
+        "inputs": [
+          "user brief",
+          "user-selected files or records",
+          "approved connector references"
+        ],
+        "outputs": [
+          "draft",
+          "analysis",
+          "task packet",
+          "sandbox evidence",
+          "approval request when required"
+        ],
+        "limitations": [
+          "This profile has an executable governed runtime instance backed by shared hardened code, not a separate always-running operating-system process.",
+          "External APIs require owner configuration, provider terms, sandbox tests, and scoped approval.",
+          "Published pricing and revenue models are catalog plans, not evidence of sales or earnings."
+        ]
+      },
+      "capabilities": [
+        {
+          "name": "Commodity price forecasting",
+          "source": "App_bots/DreamTrade.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Supply/demand modeling",
+          "source": "App_bots/DreamTrade.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Weather impact analysis",
+          "source": "App_bots/DreamTrade.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Futures curve analysis",
+          "source": "App_bots/DreamTrade.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Spread trade identification",
+          "source": "App_bots/DreamTrade.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Position management",
+          "source": "App_bots/DreamTrade.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Advanced analytics dashboard",
+          "source": "App_bots/DreamTrade.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Priority email support",
+          "source": "App_bots/DreamTrade.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        }
+      ],
+      "tools": [
+        {
+          "id": "buddy_fleet_runtime",
+          "name": "Executable fleet runtime",
+          "status": "runtime_instance_ready",
+          "evidence": "server/fleet-runtime.ts"
+        },
+        {
+          "id": "buddy_chat_router",
+          "name": "Buddy shared chat router",
+          "status": "runtime_routed",
+          "evidence": "server/routes.ts"
+        },
+        {
+          "id": "buddy_approval_gateway",
+          "name": "Buddy approval gateway",
+          "status": "policy_available",
+          "evidence": "server/approval-notifications.ts"
+        },
+        {
+          "id": "buddy_bot_sandbox",
+          "name": "Per-bot sandbox blueprint",
+          "status": "generated",
+          "evidence": "config/generated/bots.catalog.json"
+        },
+        {
+          "id": "buddy_platform_registry",
+          "name": "Governed platform capability registry",
+          "status": "runtime_routed",
+          "evidence": "config/generated/buddy_platform_expansion.json"
+        },
+        {
+          "id": "buddy_bot_calculator",
+          "name": "Per-bot planning calculator",
+          "status": "local_interactive_ready",
+          "evidence": "config/generated/bot_calculators.json"
+        }
+      ],
+      "api_candidates": [
+        {
+          "name": "TradingView",
+          "category": "charting",
+          "description": "Trading charts & analysis",
+          "tier": "pro",
+          "status": "configuration_required",
+          "sandbox_required": true,
+          "secret_policy": "backend_secret_reference_only"
+        },
+        {
+          "name": "Alpaca",
+          "category": "trading",
+          "description": "Commission-free trading API",
+          "tier": "pro",
+          "status": "configuration_required",
+          "sandbox_required": true,
+          "secret_policy": "backend_secret_reference_only"
+        },
+        {
+          "name": "Binance",
+          "category": "crypto",
+          "description": "Crypto exchange",
+          "tier": "pro",
+          "status": "configuration_required",
+          "sandbox_required": true,
+          "secret_policy": "backend_secret_reference_only"
+        },
+        {
+          "name": "Coinbase Pro",
+          "category": "crypto",
+          "description": "Crypto trading",
+          "tier": "pro",
+          "status": "configuration_required",
+          "sandbox_required": true,
+          "secret_policy": "backend_secret_reference_only"
+        },
+        {
+          "name": "Interactive Brokers",
+          "category": "trading",
+          "description": "Professional trading",
+          "tier": "enterprise",
+          "status": "configuration_required",
+          "sandbox_required": true,
+          "secret_policy": "backend_secret_reference_only"
+        }
+      ],
+      "data_contract": {
+        "accepted_inputs": [
+          "user brief",
+          "user-selected files or records",
+          "approved connector references"
+        ],
+        "produced_outputs": [
+          "draft",
+          "analysis",
+          "task packet",
+          "sandbox evidence",
+          "approval request when required"
+        ],
+        "sensitivity": "standard_business_data",
+        "sensitive_domains": [],
+        "storage_policy": "store useful project artifacts only; raw credentials are forbidden; raw biometric media remains local or in an encrypted owner vault",
+        "retention": "owner-configurable with deletion and revocation support"
+      },
+      "approvals": {
+        "default_mode": "sandbox",
+        "approval_required": true,
+        "high_impact_profile": true,
+        "triggers": [
+          "trade",
+          "email"
+        ],
+        "channels_supported": [
+          "in_app",
+          "email",
+          "sms",
+          "voice_call"
+        ],
+        "contact_requirement": "verified user-owned destination and explicit channel opt-in",
+        "execution_rule": "approval authorizes one scoped action; it never exposes credentials to the bot or browser"
+      },
+      "sandbox": {
+        "sandbox_id": "sandbox-commodity-trader",
+        "network_default": "off",
+        "fixture_mode": "synthetic_or_owner_supplied",
+        "seed": 333951298,
+        "checks": [
+          "profile_schema_valid",
+          "runtime_slug_resolves",
+          "capability_output_matches_brief",
+          "no_secret_in_output",
+          "no_live_external_write",
+          "approval_gate_for_high_impact_action",
+          "failure_and_retry_state_recorded"
+        ],
+        "api_tests": [
+          {
+            "api": "TradingView",
+            "mode": "mock_contract_test",
+            "live_test_status": "blocked_until_owner_configures_secret_and_approves"
+          },
+          {
+            "api": "Alpaca",
+            "mode": "mock_contract_test",
+            "live_test_status": "blocked_until_owner_configures_secret_and_approves"
+          },
+          {
+            "api": "Binance",
+            "mode": "mock_contract_test",
+            "live_test_status": "blocked_until_owner_configures_secret_and_approves"
+          },
+          {
+            "api": "Coinbase Pro",
+            "mode": "mock_contract_test",
+            "live_test_status": "blocked_until_owner_configures_secret_and_approves"
+          },
+          {
+            "api": "Interactive Brokers",
+            "mode": "mock_contract_test",
+            "live_test_status": "blocked_until_owner_configures_secret_and_approves"
+          }
+        ],
+        "release_gate": "all applicable checks pass and owner approves any live action"
+      },
+      "readiness": {
+        "profile_schema": "verified",
+        "buddy_chat_route": "verified",
+        "executable_runtime_instance": "verified",
+        "standalone_native_runtime": "shared_worker_not_standalone",
+        "external_integrations": "configuration_required",
+        "production_ready": false,
+        "production_gate": "implement or configure adapters, pass sandbox checks, add authentication, and verify deployment telemetry"
+      },
+      "evidence": {
+        "catalog_source": "App_bots/DreamTrade.json",
+        "runtime_sources": [
+          "server/seed-bots.ts"
+        ],
+        "runtime_seed_duplicates": 0
+      },
+      "sample_test_prompt": "Test Commodity Trading Bot in sandbox mode. Use synthetic data, demonstrate Commodity price forecasting, record evidence, and stop before any live external action."
+    },
+    {
+      "identity": {
+        "slug": "trade-compliance-engine",
+        "display_name": "Trade Compliance Engine",
+        "division": "DreamTrade",
+        "category": "trade-compliance",
+        "tier": "elite",
+        "catalog_status": "active"
+      },
+      "logo": {
+        "logo_id": "logo-trade-compliance-engine",
+        "emoji": "🛠️",
+        "monogram": "TC",
+        "call_sign": "Grand Engine 97B0CB04",
+        "shape": "hex",
+        "colors": {
+          "primary": "#0F6F88",
+          "accent": "#C94D63",
+          "surface": "#F4FBFC"
+        },
+        "accessibility_label": "Trade Compliance Engine logo"
+      },
+      "prospectus": {
+        "mission": "Manages trade compliance with sanctions screening and export control.",
+        "target_users": "Trade compliance officers, legal teams",
+        "catalog_business_model": "Enterprise license",
+        "catalog_price_range": "$999/mo",
+        "pricing_evidence": "catalog_claim_not_verified_revenue",
+        "inputs": [
+          "user brief",
+          "user-selected files or records",
+          "approved connector references"
+        ],
+        "outputs": [
+          "draft",
+          "analysis",
+          "task packet",
+          "sandbox evidence",
+          "approval request when required"
+        ],
+        "limitations": [
+          "This profile has an executable governed runtime instance backed by shared hardened code, not a separate always-running operating-system process.",
+          "External APIs require owner configuration, provider terms, sandbox tests, and scoped approval.",
+          "Published pricing and revenue models are catalog plans, not evidence of sales or earnings."
+        ]
+      },
+      "capabilities": [
+        {
+          "name": "Sanctions list screening",
+          "source": "App_bots/DreamTrade.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Export control classification",
+          "source": "App_bots/DreamTrade.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Denied party screening",
+          "source": "App_bots/DreamTrade.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "License management",
+          "source": "App_bots/DreamTrade.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Compliance audit trail",
+          "source": "App_bots/DreamTrade.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Regulatory change tracking",
+          "source": "App_bots/DreamTrade.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Advanced analytics dashboard",
+          "source": "App_bots/DreamTrade.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Priority email support",
+          "source": "App_bots/DreamTrade.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        }
+      ],
+      "tools": [
+        {
+          "id": "buddy_fleet_runtime",
+          "name": "Executable fleet runtime",
+          "status": "runtime_instance_ready",
+          "evidence": "server/fleet-runtime.ts"
+        },
+        {
+          "id": "buddy_chat_router",
+          "name": "Buddy shared chat router",
+          "status": "runtime_routed",
+          "evidence": "server/routes.ts"
+        },
+        {
+          "id": "buddy_approval_gateway",
+          "name": "Buddy approval gateway",
+          "status": "policy_available",
+          "evidence": "server/approval-notifications.ts"
+        },
+        {
+          "id": "buddy_bot_sandbox",
+          "name": "Per-bot sandbox blueprint",
+          "status": "generated",
+          "evidence": "config/generated/bots.catalog.json"
+        },
+        {
+          "id": "buddy_platform_registry",
+          "name": "Governed platform capability registry",
+          "status": "runtime_routed",
+          "evidence": "config/generated/buddy_platform_expansion.json"
+        },
+        {
+          "id": "buddy_bot_calculator",
+          "name": "Per-bot planning calculator",
+          "status": "local_interactive_ready",
+          "evidence": "config/generated/bot_calculators.json"
+        }
+      ],
+      "api_candidates": [
+        {
+          "name": "Binance",
+          "category": "crypto",
+          "description": "Crypto exchange",
+          "tier": "pro",
+          "status": "configuration_required",
+          "sandbox_required": true,
+          "secret_policy": "backend_secret_reference_only"
+        }
+      ],
+      "data_contract": {
+        "accepted_inputs": [
+          "user brief",
+          "user-selected files or records",
+          "approved connector references"
+        ],
+        "produced_outputs": [
+          "draft",
+          "analysis",
+          "task packet",
+          "sandbox evidence",
+          "approval request when required"
+        ],
+        "sensitivity": "standard_business_data",
+        "sensitive_domains": [],
+        "storage_policy": "store useful project artifacts only; raw credentials are forbidden; raw biometric media remains local or in an encrypted owner vault",
+        "retention": "owner-configurable with deletion and revocation support"
+      },
+      "approvals": {
+        "default_mode": "sandbox",
+        "approval_required": true,
+        "high_impact_profile": true,
+        "triggers": [
+          "trade",
+          "email"
+        ],
+        "channels_supported": [
+          "in_app",
+          "email",
+          "sms",
+          "voice_call"
+        ],
+        "contact_requirement": "verified user-owned destination and explicit channel opt-in",
+        "execution_rule": "approval authorizes one scoped action; it never exposes credentials to the bot or browser"
+      },
+      "sandbox": {
+        "sandbox_id": "sandbox-trade-compliance-engine",
+        "network_default": "off",
+        "fixture_mode": "synthetic_or_owner_supplied",
+        "seed": 2544945924,
+        "checks": [
+          "profile_schema_valid",
+          "runtime_slug_resolves",
+          "capability_output_matches_brief",
+          "no_secret_in_output",
+          "no_live_external_write",
+          "approval_gate_for_high_impact_action",
+          "failure_and_retry_state_recorded"
+        ],
+        "api_tests": [
+          {
+            "api": "Binance",
+            "mode": "mock_contract_test",
+            "live_test_status": "blocked_until_owner_configures_secret_and_approves"
+          }
+        ],
+        "release_gate": "all applicable checks pass and owner approves any live action"
+      },
+      "readiness": {
+        "profile_schema": "verified",
+        "buddy_chat_route": "verified",
+        "executable_runtime_instance": "verified",
+        "standalone_native_runtime": "shared_worker_not_standalone",
+        "external_integrations": "configuration_required",
+        "production_ready": false,
+        "production_gate": "implement or configure adapters, pass sandbox checks, add authentication, and verify deployment telemetry"
+      },
+      "evidence": {
+        "catalog_source": "App_bots/DreamTrade.json",
+        "runtime_sources": [
+          "server/seed-bots.ts"
+        ],
+        "runtime_seed_duplicates": 0
+      },
+      "sample_test_prompt": "Test Trade Compliance Engine in sandbox mode. Use synthetic data, demonstrate Sanctions list screening, record evidence, and stop before any live external action."
+    },
+    {
+      "identity": {
+        "slug": "supply-chain-optimizer",
+        "display_name": "Supply Chain Optimizer",
+        "division": "DreamTrade",
+        "category": "supply-chain",
+        "tier": "enterprise",
+        "catalog_status": "active"
+      },
+      "logo": {
+        "logo_id": "logo-supply-chain-optimizer",
+        "emoji": "🎨",
+        "monogram": "SC",
+        "call_sign": "Clever Launchpad A0C14766",
+        "shape": "shield",
+        "colors": {
+          "primary": "#3D4C8D",
+          "accent": "#D56638",
+          "surface": "#F4F6FF"
+        },
+        "accessibility_label": "Supply Chain Optimizer logo"
+      },
+      "prospectus": {
+        "mission": "End-to-end supply chain optimization with network design and risk management.",
+        "target_users": "Supply chain directors, COOs",
+        "catalog_business_model": "Enterprise license",
+        "catalog_price_range": "$499/mo",
+        "pricing_evidence": "catalog_claim_not_verified_revenue",
+        "inputs": [
+          "user brief",
+          "user-selected files or records",
+          "approved connector references"
+        ],
+        "outputs": [
+          "draft",
+          "analysis",
+          "task packet",
+          "sandbox evidence",
+          "approval request when required"
+        ],
+        "limitations": [
+          "This profile has an executable governed runtime instance backed by shared hardened code, not a separate always-running operating-system process.",
+          "External APIs require owner configuration, provider terms, sandbox tests, and scoped approval.",
+          "Published pricing and revenue models are catalog plans, not evidence of sales or earnings."
+        ]
+      },
+      "capabilities": [
+        {
+          "name": "Network design optimization",
+          "source": "App_bots/DreamTrade.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Multi-tier supplier mapping",
+          "source": "App_bots/DreamTrade.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Disruption risk scoring",
+          "source": "App_bots/DreamTrade.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Cost-to-serve analysis",
+          "source": "App_bots/DreamTrade.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Lead time reduction engine",
+          "source": "App_bots/DreamTrade.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Advanced analytics dashboard",
+          "source": "App_bots/DreamTrade.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Priority email support",
+          "source": "App_bots/DreamTrade.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "API access",
+          "source": "App_bots/DreamTrade.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        }
+      ],
+      "tools": [
+        {
+          "id": "buddy_fleet_runtime",
+          "name": "Executable fleet runtime",
+          "status": "runtime_instance_ready",
+          "evidence": "server/fleet-runtime.ts"
+        },
+        {
+          "id": "buddy_chat_router",
+          "name": "Buddy shared chat router",
+          "status": "runtime_routed",
+          "evidence": "server/routes.ts"
+        },
+        {
+          "id": "buddy_approval_gateway",
+          "name": "Buddy approval gateway",
+          "status": "policy_available",
+          "evidence": "server/approval-notifications.ts"
+        },
+        {
+          "id": "buddy_bot_sandbox",
+          "name": "Per-bot sandbox blueprint",
+          "status": "generated",
+          "evidence": "config/generated/bots.catalog.json"
+        },
+        {
+          "id": "buddy_platform_registry",
+          "name": "Governed platform capability registry",
+          "status": "runtime_routed",
+          "evidence": "config/generated/buddy_platform_expansion.json"
+        },
+        {
+          "id": "buddy_bot_calculator",
+          "name": "Per-bot planning calculator",
+          "status": "local_interactive_ready",
+          "evidence": "config/generated/bot_calculators.json"
+        },
+        {
+          "id": "buddy_connection_broker",
+          "name": "Buddy Connection Broker",
+          "status": "backend_broker_available",
+          "evidence": "dreamco_platform/connections/broker.py"
+        },
+        {
+          "id": "buddy_code_workspace",
+          "name": "Buddy Code Workspace",
+          "status": "shared_runtime_route",
+          "evidence": "server/seed-buddy-bot.ts"
+        }
+      ],
+      "api_candidates": [
+        {
+          "name": "TradingView",
+          "category": "charting",
+          "description": "Trading charts & analysis",
+          "tier": "pro",
+          "status": "configuration_required",
+          "sandbox_required": true,
+          "secret_policy": "backend_secret_reference_only"
+        }
+      ],
+      "data_contract": {
+        "accepted_inputs": [
+          "user brief",
+          "user-selected files or records",
+          "approved connector references"
+        ],
+        "produced_outputs": [
+          "draft",
+          "analysis",
+          "task packet",
+          "sandbox evidence",
+          "approval request when required"
+        ],
+        "sensitivity": "standard_business_data",
+        "sensitive_domains": [],
+        "storage_policy": "store useful project artifacts only; raw credentials are forbidden; raw biometric media remains local or in an encrypted owner vault",
+        "retention": "owner-configurable with deletion and revocation support"
+      },
+      "approvals": {
+        "default_mode": "sandbox",
+        "approval_required": true,
+        "high_impact_profile": true,
+        "triggers": [
+          "trade",
+          "email"
+        ],
+        "channels_supported": [
+          "in_app",
+          "email",
+          "sms",
+          "voice_call"
+        ],
+        "contact_requirement": "verified user-owned destination and explicit channel opt-in",
+        "execution_rule": "approval authorizes one scoped action; it never exposes credentials to the bot or browser"
+      },
+      "sandbox": {
+        "sandbox_id": "sandbox-supply-chain-optimizer",
+        "network_default": "off",
+        "fixture_mode": "synthetic_or_owner_supplied",
+        "seed": 2697021286,
+        "checks": [
+          "profile_schema_valid",
+          "runtime_slug_resolves",
+          "capability_output_matches_brief",
+          "no_secret_in_output",
+          "no_live_external_write",
+          "approval_gate_for_high_impact_action",
+          "failure_and_retry_state_recorded"
+        ],
+        "api_tests": [
+          {
+            "api": "TradingView",
+            "mode": "mock_contract_test",
+            "live_test_status": "blocked_until_owner_configures_secret_and_approves"
+          }
+        ],
+        "release_gate": "all applicable checks pass and owner approves any live action"
+      },
+      "readiness": {
+        "profile_schema": "verified",
+        "buddy_chat_route": "verified",
+        "executable_runtime_instance": "verified",
+        "standalone_native_runtime": "shared_worker_not_standalone",
+        "external_integrations": "configuration_required",
+        "production_ready": false,
+        "production_gate": "implement or configure adapters, pass sandbox checks, add authentication, and verify deployment telemetry"
+      },
+      "evidence": {
+        "catalog_source": "App_bots/DreamTrade.json",
+        "runtime_sources": [
+          "server/seed-bots.ts"
+        ],
+        "runtime_seed_duplicates": 0
+      },
+      "sample_test_prompt": "Test Supply Chain Optimizer in sandbox mode. Use synthetic data, demonstrate Network design optimization, record evidence, and stop before any live external action."
+    },
+    {
+      "identity": {
+        "slug": "procurement-auto",
+        "display_name": "Procurement Automation Bot",
+        "division": "DreamTrade",
+        "category": "procurement",
+        "tier": "enterprise",
+        "catalog_status": "active"
+      },
+      "logo": {
+        "logo_id": "logo-procurement-auto",
+        "emoji": "🎯",
+        "monogram": "P",
+        "call_sign": "Grand Atlas 9BC87D9B",
+        "shape": "tile",
+        "colors": {
+          "primary": "#5B3A8A",
+          "accent": "#D89B2B",
+          "surface": "#F8F5FF"
+        },
+        "accessibility_label": "Procurement Automation Bot logo"
+      },
+      "prospectus": {
+        "mission": "Automates procurement workflows from requisition to payment.",
+        "target_users": "Procurement managers, buyers",
+        "catalog_business_model": "SaaS subscription",
+        "catalog_price_range": "$499/mo",
+        "pricing_evidence": "catalog_claim_not_verified_revenue",
+        "inputs": [
+          "user brief",
+          "user-selected files or records",
+          "approved connector references"
+        ],
+        "outputs": [
+          "draft",
+          "analysis",
+          "task packet",
+          "sandbox evidence",
+          "approval request when required"
+        ],
+        "limitations": [
+          "This profile has an executable governed runtime instance backed by shared hardened code, not a separate always-running operating-system process.",
+          "External APIs require owner configuration, provider terms, sandbox tests, and scoped approval.",
+          "Published pricing and revenue models are catalog plans, not evidence of sales or earnings."
+        ]
+      },
+      "capabilities": [
+        {
+          "name": "Requisition automation",
+          "source": "App_bots/DreamTrade.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Vendor selection scoring",
+          "source": "App_bots/DreamTrade.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "PO generation engine",
+          "source": "App_bots/DreamTrade.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Receipt matching",
+          "source": "App_bots/DreamTrade.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Spend analytics dashboard",
+          "source": "App_bots/DreamTrade.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Advanced analytics dashboard",
+          "source": "App_bots/DreamTrade.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Priority email support",
+          "source": "App_bots/DreamTrade.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "API access",
+          "source": "App_bots/DreamTrade.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        }
+      ],
+      "tools": [
+        {
+          "id": "buddy_fleet_runtime",
+          "name": "Executable fleet runtime",
+          "status": "runtime_instance_ready",
+          "evidence": "server/fleet-runtime.ts"
+        },
+        {
+          "id": "buddy_chat_router",
+          "name": "Buddy shared chat router",
+          "status": "runtime_routed",
+          "evidence": "server/routes.ts"
+        },
+        {
+          "id": "buddy_approval_gateway",
+          "name": "Buddy approval gateway",
+          "status": "policy_available",
+          "evidence": "server/approval-notifications.ts"
+        },
+        {
+          "id": "buddy_bot_sandbox",
+          "name": "Per-bot sandbox blueprint",
+          "status": "generated",
+          "evidence": "config/generated/bots.catalog.json"
+        },
+        {
+          "id": "buddy_platform_registry",
+          "name": "Governed platform capability registry",
+          "status": "runtime_routed",
+          "evidence": "config/generated/buddy_platform_expansion.json"
+        },
+        {
+          "id": "buddy_bot_calculator",
+          "name": "Per-bot planning calculator",
+          "status": "local_interactive_ready",
+          "evidence": "config/generated/bot_calculators.json"
+        },
+        {
+          "id": "buddy_connection_broker",
+          "name": "Buddy Connection Broker",
+          "status": "backend_broker_available",
+          "evidence": "dreamco_platform/connections/broker.py"
+        }
+      ],
+      "api_candidates": [
+        {
+          "name": "Alpaca",
+          "category": "trading",
+          "description": "Commission-free trading API",
+          "tier": "pro",
+          "status": "configuration_required",
+          "sandbox_required": true,
+          "secret_policy": "backend_secret_reference_only"
+        },
+        {
+          "name": "Binance",
+          "category": "crypto",
+          "description": "Crypto exchange",
+          "tier": "pro",
+          "status": "configuration_required",
+          "sandbox_required": true,
+          "secret_policy": "backend_secret_reference_only"
+        },
+        {
+          "name": "Coinbase Pro",
+          "category": "crypto",
+          "description": "Crypto trading",
+          "tier": "pro",
+          "status": "configuration_required",
+          "sandbox_required": true,
+          "secret_policy": "backend_secret_reference_only"
+        },
+        {
+          "name": "Interactive Brokers",
+          "category": "trading",
+          "description": "Professional trading",
+          "tier": "enterprise",
+          "status": "configuration_required",
+          "sandbox_required": true,
+          "secret_policy": "backend_secret_reference_only"
+        },
+        {
+          "name": "TradingView",
+          "category": "charting",
+          "description": "Trading charts & analysis",
+          "tier": "pro",
+          "status": "configuration_required",
+          "sandbox_required": true,
+          "secret_policy": "backend_secret_reference_only"
+        }
+      ],
+      "data_contract": {
+        "accepted_inputs": [
+          "user brief",
+          "user-selected files or records",
+          "approved connector references"
+        ],
+        "produced_outputs": [
+          "draft",
+          "analysis",
+          "task packet",
+          "sandbox evidence",
+          "approval request when required"
+        ],
+        "sensitivity": "potentially_sensitive",
+        "sensitive_domains": [
+          "payment"
+        ],
+        "storage_policy": "store useful project artifacts only; raw credentials are forbidden; raw biometric media remains local or in an encrypted owner vault",
+        "retention": "owner-configurable with deletion and revocation support"
+      },
+      "approvals": {
+        "default_mode": "sandbox",
+        "approval_required": true,
+        "high_impact_profile": true,
+        "triggers": [
+          "payment",
+          "trade",
+          "email"
+        ],
+        "channels_supported": [
+          "in_app",
+          "email",
+          "sms",
+          "voice_call"
+        ],
+        "contact_requirement": "verified user-owned destination and explicit channel opt-in",
+        "execution_rule": "approval authorizes one scoped action; it never exposes credentials to the bot or browser"
+      },
+      "sandbox": {
+        "sandbox_id": "sandbox-procurement-auto",
+        "network_default": "off",
+        "fixture_mode": "synthetic_or_owner_supplied",
+        "seed": 2613607835,
+        "checks": [
+          "profile_schema_valid",
+          "runtime_slug_resolves",
+          "capability_output_matches_brief",
+          "no_secret_in_output",
+          "no_live_external_write",
+          "approval_gate_for_high_impact_action",
+          "failure_and_retry_state_recorded"
+        ],
+        "api_tests": [
+          {
+            "api": "Alpaca",
+            "mode": "mock_contract_test",
+            "live_test_status": "blocked_until_owner_configures_secret_and_approves"
+          },
+          {
+            "api": "Binance",
+            "mode": "mock_contract_test",
+            "live_test_status": "blocked_until_owner_configures_secret_and_approves"
+          },
+          {
+            "api": "Coinbase Pro",
+            "mode": "mock_contract_test",
+            "live_test_status": "blocked_until_owner_configures_secret_and_approves"
+          },
+          {
+            "api": "Interactive Brokers",
+            "mode": "mock_contract_test",
+            "live_test_status": "blocked_until_owner_configures_secret_and_approves"
+          },
+          {
+            "api": "TradingView",
+            "mode": "mock_contract_test",
+            "live_test_status": "blocked_until_owner_configures_secret_and_approves"
+          }
+        ],
+        "release_gate": "all applicable checks pass and owner approves any live action"
+      },
+      "readiness": {
+        "profile_schema": "verified",
+        "buddy_chat_route": "verified",
+        "executable_runtime_instance": "verified",
+        "standalone_native_runtime": "shared_worker_not_standalone",
+        "external_integrations": "configuration_required",
+        "production_ready": false,
+        "production_gate": "implement or configure adapters, pass sandbox checks, add authentication, and verify deployment telemetry"
+      },
+      "evidence": {
+        "catalog_source": "App_bots/DreamTrade.json",
+        "runtime_sources": [
+          "server/seed-bots.ts"
+        ],
+        "runtime_seed_duplicates": 0
+      },
+      "sample_test_prompt": "Test Procurement Automation Bot in sandbox mode. Use synthetic data, demonstrate Requisition automation, record evidence, and stop before any live external action."
+    },
+    {
+      "identity": {
+        "slug": "warehouse-manager",
+        "display_name": "Warehouse Management Bot",
+        "division": "DreamTrade",
+        "category": "warehouse",
+        "tier": "enterprise",
+        "catalog_status": "active"
+      },
+      "logo": {
+        "logo_id": "logo-warehouse-manager",
+        "emoji": "📚",
+        "monogram": "WM",
+        "call_sign": "Clever Launchpad A2A9471E",
+        "shape": "circle",
+        "colors": {
+          "primary": "#3D4C8D",
+          "accent": "#D56638",
+          "surface": "#F4F6FF"
+        },
+        "accessibility_label": "Warehouse Management Bot logo"
+      },
+      "prospectus": {
+        "mission": "Optimizes warehouse operations with slotting, picking, and labor management.",
+        "target_users": "Warehouse managers, 3PL operators",
+        "catalog_business_model": "SaaS subscription",
+        "catalog_price_range": "$499/mo",
+        "pricing_evidence": "catalog_claim_not_verified_revenue",
+        "inputs": [
+          "user brief",
+          "user-selected files or records",
+          "approved connector references"
+        ],
+        "outputs": [
+          "draft",
+          "analysis",
+          "task packet",
+          "sandbox evidence",
+          "approval request when required"
+        ],
+        "limitations": [
+          "This profile has an executable governed runtime instance backed by shared hardened code, not a separate always-running operating-system process.",
+          "External APIs require owner configuration, provider terms, sandbox tests, and scoped approval.",
+          "Published pricing and revenue models are catalog plans, not evidence of sales or earnings."
+        ]
+      },
+      "capabilities": [
+        {
+          "name": "Slotting optimization engine",
+          "source": "App_bots/DreamTrade.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Pick wave planning",
+          "source": "App_bots/DreamTrade.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Labor scheduling automation",
+          "source": "App_bots/DreamTrade.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Inventory cycle counting",
+          "source": "App_bots/DreamTrade.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Receiving and putaway optimization",
+          "source": "App_bots/DreamTrade.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Advanced analytics dashboard",
+          "source": "App_bots/DreamTrade.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Priority email support",
+          "source": "App_bots/DreamTrade.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "API access",
+          "source": "App_bots/DreamTrade.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        }
+      ],
+      "tools": [
+        {
+          "id": "buddy_fleet_runtime",
+          "name": "Executable fleet runtime",
+          "status": "runtime_instance_ready",
+          "evidence": "server/fleet-runtime.ts"
+        },
+        {
+          "id": "buddy_chat_router",
+          "name": "Buddy shared chat router",
+          "status": "runtime_routed",
+          "evidence": "server/routes.ts"
+        },
+        {
+          "id": "buddy_approval_gateway",
+          "name": "Buddy approval gateway",
+          "status": "policy_available",
+          "evidence": "server/approval-notifications.ts"
+        },
+        {
+          "id": "buddy_bot_sandbox",
+          "name": "Per-bot sandbox blueprint",
+          "status": "generated",
+          "evidence": "config/generated/bots.catalog.json"
+        },
+        {
+          "id": "buddy_platform_registry",
+          "name": "Governed platform capability registry",
+          "status": "runtime_routed",
+          "evidence": "config/generated/buddy_platform_expansion.json"
+        },
+        {
+          "id": "buddy_bot_calculator",
+          "name": "Per-bot planning calculator",
+          "status": "local_interactive_ready",
+          "evidence": "config/generated/bot_calculators.json"
+        },
+        {
+          "id": "buddy_connection_broker",
+          "name": "Buddy Connection Broker",
+          "status": "backend_broker_available",
+          "evidence": "dreamco_platform/connections/broker.py"
+        }
+      ],
+      "api_candidates": [
+        {
+          "name": "Alpaca",
+          "category": "trading",
+          "description": "Commission-free trading API",
+          "tier": "pro",
+          "status": "configuration_required",
+          "sandbox_required": true,
+          "secret_policy": "backend_secret_reference_only"
+        },
+        {
+          "name": "Binance",
+          "category": "crypto",
+          "description": "Crypto exchange",
+          "tier": "pro",
+          "status": "configuration_required",
+          "sandbox_required": true,
+          "secret_policy": "backend_secret_reference_only"
+        },
+        {
+          "name": "Coinbase Pro",
+          "category": "crypto",
+          "description": "Crypto trading",
+          "tier": "pro",
+          "status": "configuration_required",
+          "sandbox_required": true,
+          "secret_policy": "backend_secret_reference_only"
+        },
+        {
+          "name": "Interactive Brokers",
+          "category": "trading",
+          "description": "Professional trading",
+          "tier": "enterprise",
+          "status": "configuration_required",
+          "sandbox_required": true,
+          "secret_policy": "backend_secret_reference_only"
+        },
+        {
+          "name": "TradingView",
+          "category": "charting",
+          "description": "Trading charts & analysis",
+          "tier": "pro",
+          "status": "configuration_required",
+          "sandbox_required": true,
+          "secret_policy": "backend_secret_reference_only"
+        }
+      ],
+      "data_contract": {
+        "accepted_inputs": [
+          "user brief",
+          "user-selected files or records",
+          "approved connector references"
+        ],
+        "produced_outputs": [
+          "draft",
+          "analysis",
+          "task packet",
+          "sandbox evidence",
+          "approval request when required"
+        ],
+        "sensitivity": "standard_business_data",
+        "sensitive_domains": [],
+        "storage_policy": "store useful project artifacts only; raw credentials are forbidden; raw biometric media remains local or in an encrypted owner vault",
+        "retention": "owner-configurable with deletion and revocation support"
+      },
+      "approvals": {
+        "default_mode": "sandbox",
+        "approval_required": true,
+        "high_impact_profile": true,
+        "triggers": [
+          "trade",
+          "email"
+        ],
+        "channels_supported": [
+          "in_app",
+          "email",
+          "sms",
+          "voice_call"
+        ],
+        "contact_requirement": "verified user-owned destination and explicit channel opt-in",
+        "execution_rule": "approval authorizes one scoped action; it never exposes credentials to the bot or browser"
+      },
+      "sandbox": {
+        "sandbox_id": "sandbox-warehouse-manager",
+        "network_default": "off",
+        "fixture_mode": "synthetic_or_owner_supplied",
+        "seed": 2729002782,
+        "checks": [
+          "profile_schema_valid",
+          "runtime_slug_resolves",
+          "capability_output_matches_brief",
+          "no_secret_in_output",
+          "no_live_external_write",
+          "approval_gate_for_high_impact_action",
+          "failure_and_retry_state_recorded"
+        ],
+        "api_tests": [
+          {
+            "api": "Alpaca",
+            "mode": "mock_contract_test",
+            "live_test_status": "blocked_until_owner_configures_secret_and_approves"
+          },
+          {
+            "api": "Binance",
+            "mode": "mock_contract_test",
+            "live_test_status": "blocked_until_owner_configures_secret_and_approves"
+          },
+          {
+            "api": "Coinbase Pro",
+            "mode": "mock_contract_test",
+            "live_test_status": "blocked_until_owner_configures_secret_and_approves"
+          },
+          {
+            "api": "Interactive Brokers",
+            "mode": "mock_contract_test",
+            "live_test_status": "blocked_until_owner_configures_secret_and_approves"
+          },
+          {
+            "api": "TradingView",
+            "mode": "mock_contract_test",
+            "live_test_status": "blocked_until_owner_configures_secret_and_approves"
+          }
+        ],
+        "release_gate": "all applicable checks pass and owner approves any live action"
+      },
+      "readiness": {
+        "profile_schema": "verified",
+        "buddy_chat_route": "verified",
+        "executable_runtime_instance": "verified",
+        "standalone_native_runtime": "shared_worker_not_standalone",
+        "external_integrations": "configuration_required",
+        "production_ready": false,
+        "production_gate": "implement or configure adapters, pass sandbox checks, add authentication, and verify deployment telemetry"
+      },
+      "evidence": {
+        "catalog_source": "App_bots/DreamTrade.json",
+        "runtime_sources": [
+          "server/seed-bots.ts"
+        ],
+        "runtime_seed_duplicates": 0
+      },
+      "sample_test_prompt": "Test Warehouse Management Bot in sandbox mode. Use synthetic data, demonstrate Slotting optimization engine, record evidence, and stop before any live external action."
+    },
+    {
+      "identity": {
+        "slug": "inventory-forecaster",
+        "display_name": "Inventory Forecasting Bot",
+        "division": "DreamTrade",
+        "category": "inventory-forecasting",
+        "tier": "pro",
+        "catalog_status": "active"
+      },
+      "logo": {
+        "logo_id": "logo-inventory-forecaster",
+        "emoji": "🎨",
+        "monogram": "IF",
+        "call_sign": "Calm Signal FAA736C7",
+        "shape": "tile",
+        "colors": {
+          "primary": "#77521F",
+          "accent": "#287878",
+          "surface": "#FFF9ED"
+        },
+        "accessibility_label": "Inventory Forecasting Bot logo"
+      },
+      "prospectus": {
+        "mission": "ML-powered inventory forecasting with safety stock optimization.",
+        "target_users": "Inventory planners, supply chain teams",
+        "catalog_business_model": "SaaS subscription",
+        "catalog_price_range": "$299/mo",
+        "pricing_evidence": "catalog_claim_not_verified_revenue",
+        "inputs": [
+          "user brief",
+          "user-selected files or records",
+          "approved connector references"
+        ],
+        "outputs": [
+          "draft",
+          "analysis",
+          "task packet",
+          "sandbox evidence",
+          "approval request when required"
+        ],
+        "limitations": [
+          "This profile has an executable governed runtime instance backed by shared hardened code, not a separate always-running operating-system process.",
+          "External APIs require owner configuration, provider terms, sandbox tests, and scoped approval.",
+          "Published pricing and revenue models are catalog plans, not evidence of sales or earnings."
+        ]
+      },
+      "capabilities": [
+        {
+          "name": "SKU demand forecasting",
+          "source": "App_bots/DreamTrade.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Safety stock calculator",
+          "source": "App_bots/DreamTrade.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Seasonal adjustment engine",
+          "source": "App_bots/DreamTrade.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Promotion impact modeling",
+          "source": "App_bots/DreamTrade.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Stockout prediction",
+          "source": "App_bots/DreamTrade.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Advanced analytics dashboard",
+          "source": "App_bots/DreamTrade.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Priority email support",
+          "source": "App_bots/DreamTrade.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "API access",
+          "source": "App_bots/DreamTrade.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        }
+      ],
+      "tools": [
+        {
+          "id": "buddy_fleet_runtime",
+          "name": "Executable fleet runtime",
+          "status": "runtime_instance_ready",
+          "evidence": "server/fleet-runtime.ts"
+        },
+        {
+          "id": "buddy_chat_router",
+          "name": "Buddy shared chat router",
+          "status": "runtime_routed",
+          "evidence": "server/routes.ts"
+        },
+        {
+          "id": "buddy_approval_gateway",
+          "name": "Buddy approval gateway",
+          "status": "policy_available",
+          "evidence": "server/approval-notifications.ts"
+        },
+        {
+          "id": "buddy_bot_sandbox",
+          "name": "Per-bot sandbox blueprint",
+          "status": "generated",
+          "evidence": "config/generated/bots.catalog.json"
+        },
+        {
+          "id": "buddy_platform_registry",
+          "name": "Governed platform capability registry",
+          "status": "runtime_routed",
+          "evidence": "config/generated/buddy_platform_expansion.json"
+        },
+        {
+          "id": "buddy_bot_calculator",
+          "name": "Per-bot planning calculator",
+          "status": "local_interactive_ready",
+          "evidence": "config/generated/bot_calculators.json"
+        },
+        {
+          "id": "buddy_connection_broker",
+          "name": "Buddy Connection Broker",
+          "status": "backend_broker_available",
+          "evidence": "dreamco_platform/connections/broker.py"
+        }
+      ],
+      "api_candidates": [
+        {
+          "name": "Alpaca",
+          "category": "trading",
+          "description": "Commission-free trading API",
+          "tier": "pro",
+          "status": "configuration_required",
+          "sandbox_required": true,
+          "secret_policy": "backend_secret_reference_only"
+        },
+        {
+          "name": "Binance",
+          "category": "crypto",
+          "description": "Crypto exchange",
+          "tier": "pro",
+          "status": "configuration_required",
+          "sandbox_required": true,
+          "secret_policy": "backend_secret_reference_only"
+        },
+        {
+          "name": "Coinbase Pro",
+          "category": "crypto",
+          "description": "Crypto trading",
+          "tier": "pro",
+          "status": "configuration_required",
+          "sandbox_required": true,
+          "secret_policy": "backend_secret_reference_only"
+        },
+        {
+          "name": "Interactive Brokers",
+          "category": "trading",
+          "description": "Professional trading",
+          "tier": "enterprise",
+          "status": "configuration_required",
+          "sandbox_required": true,
+          "secret_policy": "backend_secret_reference_only"
+        },
+        {
+          "name": "TradingView",
+          "category": "charting",
+          "description": "Trading charts & analysis",
+          "tier": "pro",
+          "status": "configuration_required",
+          "sandbox_required": true,
+          "secret_policy": "backend_secret_reference_only"
+        }
+      ],
+      "data_contract": {
+        "accepted_inputs": [
+          "user brief",
+          "user-selected files or records",
+          "approved connector references"
+        ],
+        "produced_outputs": [
+          "draft",
+          "analysis",
+          "task packet",
+          "sandbox evidence",
+          "approval request when required"
+        ],
+        "sensitivity": "standard_business_data",
+        "sensitive_domains": [],
+        "storage_policy": "store useful project artifacts only; raw credentials are forbidden; raw biometric media remains local or in an encrypted owner vault",
+        "retention": "owner-configurable with deletion and revocation support"
+      },
+      "approvals": {
+        "default_mode": "sandbox",
+        "approval_required": true,
+        "high_impact_profile": true,
+        "triggers": [
+          "trade",
+          "email"
+        ],
+        "channels_supported": [
+          "in_app",
+          "email",
+          "sms",
+          "voice_call"
+        ],
+        "contact_requirement": "verified user-owned destination and explicit channel opt-in",
+        "execution_rule": "approval authorizes one scoped action; it never exposes credentials to the bot or browser"
+      },
+      "sandbox": {
+        "sandbox_id": "sandbox-inventory-forecaster",
+        "network_default": "off",
+        "fixture_mode": "synthetic_or_owner_supplied",
+        "seed": 4205262535,
+        "checks": [
+          "profile_schema_valid",
+          "runtime_slug_resolves",
+          "capability_output_matches_brief",
+          "no_secret_in_output",
+          "no_live_external_write",
+          "approval_gate_for_high_impact_action",
+          "failure_and_retry_state_recorded"
+        ],
+        "api_tests": [
+          {
+            "api": "Alpaca",
+            "mode": "mock_contract_test",
+            "live_test_status": "blocked_until_owner_configures_secret_and_approves"
+          },
+          {
+            "api": "Binance",
+            "mode": "mock_contract_test",
+            "live_test_status": "blocked_until_owner_configures_secret_and_approves"
+          },
+          {
+            "api": "Coinbase Pro",
+            "mode": "mock_contract_test",
+            "live_test_status": "blocked_until_owner_configures_secret_and_approves"
+          },
+          {
+            "api": "Interactive Brokers",
+            "mode": "mock_contract_test",
+            "live_test_status": "blocked_until_owner_configures_secret_and_approves"
+          },
+          {
+            "api": "TradingView",
+            "mode": "mock_contract_test",
+            "live_test_status": "blocked_until_owner_configures_secret_and_approves"
+          }
+        ],
+        "release_gate": "all applicable checks pass and owner approves any live action"
+      },
+      "readiness": {
+        "profile_schema": "verified",
+        "buddy_chat_route": "verified",
+        "executable_runtime_instance": "verified",
+        "standalone_native_runtime": "shared_worker_not_standalone",
+        "external_integrations": "configuration_required",
+        "production_ready": false,
+        "production_gate": "implement or configure adapters, pass sandbox checks, add authentication, and verify deployment telemetry"
+      },
+      "evidence": {
+        "catalog_source": "App_bots/DreamTrade.json",
+        "runtime_sources": [
+          "server/seed-bots.ts"
+        ],
+        "runtime_seed_duplicates": 0
+      },
+      "sample_test_prompt": "Test Inventory Forecasting Bot in sandbox mode. Use synthetic data, demonstrate SKU demand forecasting, record evidence, and stop before any live external action."
+    },
+    {
+      "identity": {
+        "slug": "logistics-router",
+        "display_name": "Logistics Routing Bot",
+        "division": "DreamTrade",
+        "category": "logistics",
+        "tier": "pro",
+        "catalog_status": "active"
+      },
+      "logo": {
+        "logo_id": "logo-logistics-router",
+        "emoji": "🎨",
+        "monogram": "LR",
+        "call_sign": "Vivid Tower 6469867E",
+        "shape": "shield",
+        "colors": {
+          "primary": "#3D4C8D",
+          "accent": "#D56638",
+          "surface": "#F4F6FF"
+        },
+        "accessibility_label": "Logistics Routing Bot logo"
+      },
+      "prospectus": {
+        "mission": "Optimizes shipping routes and carrier selection for cost and speed.",
+        "target_users": "Logistics managers, shipping teams",
+        "catalog_business_model": "SaaS subscription",
+        "catalog_price_range": "$299/mo",
+        "pricing_evidence": "catalog_claim_not_verified_revenue",
+        "inputs": [
+          "user brief",
+          "user-selected files or records",
+          "approved connector references"
+        ],
+        "outputs": [
+          "draft",
+          "analysis",
+          "task packet",
+          "sandbox evidence",
+          "approval request when required"
+        ],
+        "limitations": [
+          "This profile has an executable governed runtime instance backed by shared hardened code, not a separate always-running operating-system process.",
+          "External APIs require owner configuration, provider terms, sandbox tests, and scoped approval.",
+          "Published pricing and revenue models are catalog plans, not evidence of sales or earnings."
+        ]
+      },
+      "capabilities": [
+        {
+          "name": "Multi-modal route optimization",
+          "source": "App_bots/DreamTrade.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Carrier rate comparison",
+          "source": "App_bots/DreamTrade.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Delivery time estimation",
+          "source": "App_bots/DreamTrade.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Consolidation planning",
+          "source": "App_bots/DreamTrade.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Last-mile optimization",
+          "source": "App_bots/DreamTrade.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Advanced analytics dashboard",
+          "source": "App_bots/DreamTrade.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Priority email support",
+          "source": "App_bots/DreamTrade.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "API access",
+          "source": "App_bots/DreamTrade.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        }
+      ],
+      "tools": [
+        {
+          "id": "buddy_fleet_runtime",
+          "name": "Executable fleet runtime",
+          "status": "runtime_instance_ready",
+          "evidence": "server/fleet-runtime.ts"
+        },
+        {
+          "id": "buddy_chat_router",
+          "name": "Buddy shared chat router",
+          "status": "runtime_routed",
+          "evidence": "server/routes.ts"
+        },
+        {
+          "id": "buddy_approval_gateway",
+          "name": "Buddy approval gateway",
+          "status": "policy_available",
+          "evidence": "server/approval-notifications.ts"
+        },
+        {
+          "id": "buddy_bot_sandbox",
+          "name": "Per-bot sandbox blueprint",
+          "status": "generated",
+          "evidence": "config/generated/bots.catalog.json"
+        },
+        {
+          "id": "buddy_platform_registry",
+          "name": "Governed platform capability registry",
+          "status": "runtime_routed",
+          "evidence": "config/generated/buddy_platform_expansion.json"
+        },
+        {
+          "id": "buddy_bot_calculator",
+          "name": "Per-bot planning calculator",
+          "status": "local_interactive_ready",
+          "evidence": "config/generated/bot_calculators.json"
+        },
+        {
+          "id": "buddy_connection_broker",
+          "name": "Buddy Connection Broker",
+          "status": "backend_broker_available",
+          "evidence": "dreamco_platform/connections/broker.py"
+        }
+      ],
+      "api_candidates": [
+        {
+          "name": "Alpaca",
+          "category": "trading",
+          "description": "Commission-free trading API",
+          "tier": "pro",
+          "status": "configuration_required",
+          "sandbox_required": true,
+          "secret_policy": "backend_secret_reference_only"
+        },
+        {
+          "name": "Binance",
+          "category": "crypto",
+          "description": "Crypto exchange",
+          "tier": "pro",
+          "status": "configuration_required",
+          "sandbox_required": true,
+          "secret_policy": "backend_secret_reference_only"
+        },
+        {
+          "name": "Coinbase Pro",
+          "category": "crypto",
+          "description": "Crypto trading",
+          "tier": "pro",
+          "status": "configuration_required",
+          "sandbox_required": true,
+          "secret_policy": "backend_secret_reference_only"
+        },
+        {
+          "name": "Interactive Brokers",
+          "category": "trading",
+          "description": "Professional trading",
+          "tier": "enterprise",
+          "status": "configuration_required",
+          "sandbox_required": true,
+          "secret_policy": "backend_secret_reference_only"
+        },
+        {
+          "name": "TradingView",
+          "category": "charting",
+          "description": "Trading charts & analysis",
+          "tier": "pro",
+          "status": "configuration_required",
+          "sandbox_required": true,
+          "secret_policy": "backend_secret_reference_only"
+        }
+      ],
+      "data_contract": {
+        "accepted_inputs": [
+          "user brief",
+          "user-selected files or records",
+          "approved connector references"
+        ],
+        "produced_outputs": [
+          "draft",
+          "analysis",
+          "task packet",
+          "sandbox evidence",
+          "approval request when required"
+        ],
+        "sensitivity": "standard_business_data",
+        "sensitive_domains": [],
+        "storage_policy": "store useful project artifacts only; raw credentials are forbidden; raw biometric media remains local or in an encrypted owner vault",
+        "retention": "owner-configurable with deletion and revocation support"
+      },
+      "approvals": {
+        "default_mode": "sandbox",
+        "approval_required": true,
+        "high_impact_profile": true,
+        "triggers": [
+          "trade",
+          "email"
+        ],
+        "channels_supported": [
+          "in_app",
+          "email",
+          "sms",
+          "voice_call"
+        ],
+        "contact_requirement": "verified user-owned destination and explicit channel opt-in",
+        "execution_rule": "approval authorizes one scoped action; it never exposes credentials to the bot or browser"
+      },
+      "sandbox": {
+        "sandbox_id": "sandbox-logistics-router",
+        "network_default": "off",
+        "fixture_mode": "synthetic_or_owner_supplied",
+        "seed": 1684637310,
+        "checks": [
+          "profile_schema_valid",
+          "runtime_slug_resolves",
+          "capability_output_matches_brief",
+          "no_secret_in_output",
+          "no_live_external_write",
+          "approval_gate_for_high_impact_action",
+          "failure_and_retry_state_recorded"
+        ],
+        "api_tests": [
+          {
+            "api": "Alpaca",
+            "mode": "mock_contract_test",
+            "live_test_status": "blocked_until_owner_configures_secret_and_approves"
+          },
+          {
+            "api": "Binance",
+            "mode": "mock_contract_test",
+            "live_test_status": "blocked_until_owner_configures_secret_and_approves"
+          },
+          {
+            "api": "Coinbase Pro",
+            "mode": "mock_contract_test",
+            "live_test_status": "blocked_until_owner_configures_secret_and_approves"
+          },
+          {
+            "api": "Interactive Brokers",
+            "mode": "mock_contract_test",
+            "live_test_status": "blocked_until_owner_configures_secret_and_approves"
+          },
+          {
+            "api": "TradingView",
+            "mode": "mock_contract_test",
+            "live_test_status": "blocked_until_owner_configures_secret_and_approves"
+          }
+        ],
+        "release_gate": "all applicable checks pass and owner approves any live action"
+      },
+      "readiness": {
+        "profile_schema": "verified",
+        "buddy_chat_route": "verified",
+        "executable_runtime_instance": "verified",
+        "standalone_native_runtime": "shared_worker_not_standalone",
+        "external_integrations": "configuration_required",
+        "production_ready": false,
+        "production_gate": "implement or configure adapters, pass sandbox checks, add authentication, and verify deployment telemetry"
+      },
+      "evidence": {
+        "catalog_source": "App_bots/DreamTrade.json",
+        "runtime_sources": [
+          "server/seed-bots.ts"
+        ],
+        "runtime_seed_duplicates": 0
+      },
+      "sample_test_prompt": "Test Logistics Routing Bot in sandbox mode. Use synthetic data, demonstrate Multi-modal route optimization, record evidence, and stop before any live external action."
+    },
+    {
+      "identity": {
+        "slug": "vendor-manager",
+        "display_name": "Vendor Management Bot",
+        "division": "DreamTrade",
+        "category": "vendor-management",
+        "tier": "pro",
+        "catalog_status": "active"
+      },
+      "logo": {
+        "logo_id": "logo-vendor-manager",
+        "emoji": "🔎",
+        "monogram": "VM",
+        "call_sign": "Vivid Ledger 3FF99703",
+        "shape": "tile",
+        "colors": {
+          "primary": "#5B3A8A",
+          "accent": "#D89B2B",
+          "surface": "#F8F5FF"
+        },
+        "accessibility_label": "Vendor Management Bot logo"
+      },
+      "prospectus": {
+        "mission": "Manages vendor relationships, performance, and risk assessment.",
+        "target_users": "Vendor managers, procurement teams",
+        "catalog_business_model": "SaaS subscription",
+        "catalog_price_range": "$199/mo",
+        "pricing_evidence": "catalog_claim_not_verified_revenue",
+        "inputs": [
+          "user brief",
+          "user-selected files or records",
+          "approved connector references"
+        ],
+        "outputs": [
+          "draft",
+          "analysis",
+          "task packet",
+          "sandbox evidence",
+          "approval request when required"
+        ],
+        "limitations": [
+          "This profile has an executable governed runtime instance backed by shared hardened code, not a separate always-running operating-system process.",
+          "External APIs require owner configuration, provider terms, sandbox tests, and scoped approval.",
+          "Published pricing and revenue models are catalog plans, not evidence of sales or earnings."
+        ]
+      },
+      "capabilities": [
+        {
+          "name": "Vendor scorecard engine",
+          "source": "App_bots/DreamTrade.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Performance benchmarking",
+          "source": "App_bots/DreamTrade.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Risk assessment automation",
+          "source": "App_bots/DreamTrade.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Contract compliance tracking",
+          "source": "App_bots/DreamTrade.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Diversity spend tracking",
+          "source": "App_bots/DreamTrade.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Advanced analytics dashboard",
+          "source": "App_bots/DreamTrade.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Priority email support",
+          "source": "App_bots/DreamTrade.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "API access",
+          "source": "App_bots/DreamTrade.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        }
+      ],
+      "tools": [
+        {
+          "id": "buddy_fleet_runtime",
+          "name": "Executable fleet runtime",
+          "status": "runtime_instance_ready",
+          "evidence": "server/fleet-runtime.ts"
+        },
+        {
+          "id": "buddy_chat_router",
+          "name": "Buddy shared chat router",
+          "status": "runtime_routed",
+          "evidence": "server/routes.ts"
+        },
+        {
+          "id": "buddy_approval_gateway",
+          "name": "Buddy approval gateway",
+          "status": "policy_available",
+          "evidence": "server/approval-notifications.ts"
+        },
+        {
+          "id": "buddy_bot_sandbox",
+          "name": "Per-bot sandbox blueprint",
+          "status": "generated",
+          "evidence": "config/generated/bots.catalog.json"
+        },
+        {
+          "id": "buddy_platform_registry",
+          "name": "Governed platform capability registry",
+          "status": "runtime_routed",
+          "evidence": "config/generated/buddy_platform_expansion.json"
+        },
+        {
+          "id": "buddy_bot_calculator",
+          "name": "Per-bot planning calculator",
+          "status": "local_interactive_ready",
+          "evidence": "config/generated/bot_calculators.json"
+        },
+        {
+          "id": "buddy_connection_broker",
+          "name": "Buddy Connection Broker",
+          "status": "backend_broker_available",
+          "evidence": "dreamco_platform/connections/broker.py"
+        }
+      ],
+      "api_candidates": [
+        {
+          "name": "Alpaca",
+          "category": "trading",
+          "description": "Commission-free trading API",
+          "tier": "pro",
+          "status": "configuration_required",
+          "sandbox_required": true,
+          "secret_policy": "backend_secret_reference_only"
+        },
+        {
+          "name": "Binance",
+          "category": "crypto",
+          "description": "Crypto exchange",
+          "tier": "pro",
+          "status": "configuration_required",
+          "sandbox_required": true,
+          "secret_policy": "backend_secret_reference_only"
+        },
+        {
+          "name": "Coinbase Pro",
+          "category": "crypto",
+          "description": "Crypto trading",
+          "tier": "pro",
+          "status": "configuration_required",
+          "sandbox_required": true,
+          "secret_policy": "backend_secret_reference_only"
+        },
+        {
+          "name": "Interactive Brokers",
+          "category": "trading",
+          "description": "Professional trading",
+          "tier": "enterprise",
+          "status": "configuration_required",
+          "sandbox_required": true,
+          "secret_policy": "backend_secret_reference_only"
+        },
+        {
+          "name": "TradingView",
+          "category": "charting",
+          "description": "Trading charts & analysis",
+          "tier": "pro",
+          "status": "configuration_required",
+          "sandbox_required": true,
+          "secret_policy": "backend_secret_reference_only"
+        }
+      ],
+      "data_contract": {
+        "accepted_inputs": [
+          "user brief",
+          "user-selected files or records",
+          "approved connector references"
+        ],
+        "produced_outputs": [
+          "draft",
+          "analysis",
+          "task packet",
+          "sandbox evidence",
+          "approval request when required"
+        ],
+        "sensitivity": "standard_business_data",
+        "sensitive_domains": [],
+        "storage_policy": "store useful project artifacts only; raw credentials are forbidden; raw biometric media remains local or in an encrypted owner vault",
+        "retention": "owner-configurable with deletion and revocation support"
+      },
+      "approvals": {
+        "default_mode": "sandbox",
+        "approval_required": true,
+        "high_impact_profile": true,
+        "triggers": [
+          "trade",
+          "contract",
+          "email"
+        ],
+        "channels_supported": [
+          "in_app",
+          "email",
+          "sms",
+          "voice_call"
+        ],
+        "contact_requirement": "verified user-owned destination and explicit channel opt-in",
+        "execution_rule": "approval authorizes one scoped action; it never exposes credentials to the bot or browser"
+      },
+      "sandbox": {
+        "sandbox_id": "sandbox-vendor-manager",
+        "network_default": "off",
+        "fixture_mode": "synthetic_or_owner_supplied",
+        "seed": 1073321731,
+        "checks": [
+          "profile_schema_valid",
+          "runtime_slug_resolves",
+          "capability_output_matches_brief",
+          "no_secret_in_output",
+          "no_live_external_write",
+          "approval_gate_for_high_impact_action",
+          "failure_and_retry_state_recorded"
+        ],
+        "api_tests": [
+          {
+            "api": "Alpaca",
+            "mode": "mock_contract_test",
+            "live_test_status": "blocked_until_owner_configures_secret_and_approves"
+          },
+          {
+            "api": "Binance",
+            "mode": "mock_contract_test",
+            "live_test_status": "blocked_until_owner_configures_secret_and_approves"
+          },
+          {
+            "api": "Coinbase Pro",
+            "mode": "mock_contract_test",
+            "live_test_status": "blocked_until_owner_configures_secret_and_approves"
+          },
+          {
+            "api": "Interactive Brokers",
+            "mode": "mock_contract_test",
+            "live_test_status": "blocked_until_owner_configures_secret_and_approves"
+          },
+          {
+            "api": "TradingView",
+            "mode": "mock_contract_test",
+            "live_test_status": "blocked_until_owner_configures_secret_and_approves"
+          }
+        ],
+        "release_gate": "all applicable checks pass and owner approves any live action"
+      },
+      "readiness": {
+        "profile_schema": "verified",
+        "buddy_chat_route": "verified",
+        "executable_runtime_instance": "verified",
+        "standalone_native_runtime": "shared_worker_not_standalone",
+        "external_integrations": "configuration_required",
+        "production_ready": false,
+        "production_gate": "implement or configure adapters, pass sandbox checks, add authentication, and verify deployment telemetry"
+      },
+      "evidence": {
+        "catalog_source": "App_bots/DreamTrade.json",
+        "runtime_sources": [
+          "server/seed-bots.ts"
+        ],
+        "runtime_seed_duplicates": 0
+      },
+      "sample_test_prompt": "Test Vendor Management Bot in sandbox mode. Use synthetic data, demonstrate Vendor scorecard engine, record evidence, and stop before any live external action."
+    },
+    {
+      "identity": {
+        "slug": "demand-planner",
+        "display_name": "Demand Planning Bot",
+        "division": "DreamTrade",
+        "category": "demand-planning",
+        "tier": "pro",
+        "catalog_status": "active"
+      },
+      "logo": {
+        "logo_id": "logo-demand-planner",
+        "emoji": "📊",
+        "monogram": "DP",
+        "call_sign": "Bold Tower 40C6B6A4",
+        "shape": "shield",
+        "colors": {
+          "primary": "#0F6F88",
+          "accent": "#C94D63",
+          "surface": "#F4FBFC"
+        },
+        "accessibility_label": "Demand Planning Bot logo"
+      },
+      "prospectus": {
+        "mission": "Collaborative demand planning with consensus forecasting and S&OP integration.",
+        "target_users": "Demand planners, S&OP teams",
+        "catalog_business_model": "SaaS subscription",
+        "catalog_price_range": "$199/mo",
+        "pricing_evidence": "catalog_claim_not_verified_revenue",
+        "inputs": [
+          "user brief",
+          "user-selected files or records",
+          "approved connector references"
+        ],
+        "outputs": [
+          "draft",
+          "analysis",
+          "task packet",
+          "sandbox evidence",
+          "approval request when required"
+        ],
+        "limitations": [
+          "This profile has an executable governed runtime instance backed by shared hardened code, not a separate always-running operating-system process.",
+          "External APIs require owner configuration, provider terms, sandbox tests, and scoped approval.",
+          "Published pricing and revenue models are catalog plans, not evidence of sales or earnings."
+        ]
+      },
+      "capabilities": [
+        {
+          "name": "Consensus forecast builder",
+          "source": "App_bots/DreamTrade.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "S&OP integration",
+          "source": "App_bots/DreamTrade.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Promotional planning",
+          "source": "App_bots/DreamTrade.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "New product forecasting",
+          "source": "App_bots/DreamTrade.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Forecast accuracy tracking",
+          "source": "App_bots/DreamTrade.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Advanced analytics dashboard",
+          "source": "App_bots/DreamTrade.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Priority email support",
+          "source": "App_bots/DreamTrade.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "API access",
+          "source": "App_bots/DreamTrade.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        }
+      ],
+      "tools": [
+        {
+          "id": "buddy_fleet_runtime",
+          "name": "Executable fleet runtime",
+          "status": "runtime_instance_ready",
+          "evidence": "server/fleet-runtime.ts"
+        },
+        {
+          "id": "buddy_chat_router",
+          "name": "Buddy shared chat router",
+          "status": "runtime_routed",
+          "evidence": "server/routes.ts"
+        },
+        {
+          "id": "buddy_approval_gateway",
+          "name": "Buddy approval gateway",
+          "status": "policy_available",
+          "evidence": "server/approval-notifications.ts"
+        },
+        {
+          "id": "buddy_bot_sandbox",
+          "name": "Per-bot sandbox blueprint",
+          "status": "generated",
+          "evidence": "config/generated/bots.catalog.json"
+        },
+        {
+          "id": "buddy_platform_registry",
+          "name": "Governed platform capability registry",
+          "status": "runtime_routed",
+          "evidence": "config/generated/buddy_platform_expansion.json"
+        },
+        {
+          "id": "buddy_bot_calculator",
+          "name": "Per-bot planning calculator",
+          "status": "local_interactive_ready",
+          "evidence": "config/generated/bot_calculators.json"
+        },
+        {
+          "id": "buddy_connection_broker",
+          "name": "Buddy Connection Broker",
+          "status": "backend_broker_available",
+          "evidence": "dreamco_platform/connections/broker.py"
+        }
+      ],
+      "api_candidates": [
+        {
+          "name": "Alpaca",
+          "category": "trading",
+          "description": "Commission-free trading API",
+          "tier": "pro",
+          "status": "configuration_required",
+          "sandbox_required": true,
+          "secret_policy": "backend_secret_reference_only"
+        },
+        {
+          "name": "Binance",
+          "category": "crypto",
+          "description": "Crypto exchange",
+          "tier": "pro",
+          "status": "configuration_required",
+          "sandbox_required": true,
+          "secret_policy": "backend_secret_reference_only"
+        },
+        {
+          "name": "Coinbase Pro",
+          "category": "crypto",
+          "description": "Crypto trading",
+          "tier": "pro",
+          "status": "configuration_required",
+          "sandbox_required": true,
+          "secret_policy": "backend_secret_reference_only"
+        },
+        {
+          "name": "Interactive Brokers",
+          "category": "trading",
+          "description": "Professional trading",
+          "tier": "enterprise",
+          "status": "configuration_required",
+          "sandbox_required": true,
+          "secret_policy": "backend_secret_reference_only"
+        },
+        {
+          "name": "TradingView",
+          "category": "charting",
+          "description": "Trading charts & analysis",
+          "tier": "pro",
+          "status": "configuration_required",
+          "sandbox_required": true,
+          "secret_policy": "backend_secret_reference_only"
+        }
+      ],
+      "data_contract": {
+        "accepted_inputs": [
+          "user brief",
+          "user-selected files or records",
+          "approved connector references"
+        ],
+        "produced_outputs": [
+          "draft",
+          "analysis",
+          "task packet",
+          "sandbox evidence",
+          "approval request when required"
+        ],
+        "sensitivity": "standard_business_data",
+        "sensitive_domains": [],
+        "storage_policy": "store useful project artifacts only; raw credentials are forbidden; raw biometric media remains local or in an encrypted owner vault",
+        "retention": "owner-configurable with deletion and revocation support"
+      },
+      "approvals": {
+        "default_mode": "sandbox",
+        "approval_required": true,
+        "high_impact_profile": true,
+        "triggers": [
+          "trade",
+          "email"
+        ],
+        "channels_supported": [
+          "in_app",
+          "email",
+          "sms",
+          "voice_call"
+        ],
+        "contact_requirement": "verified user-owned destination and explicit channel opt-in",
+        "execution_rule": "approval authorizes one scoped action; it never exposes credentials to the bot or browser"
+      },
+      "sandbox": {
+        "sandbox_id": "sandbox-demand-planner",
+        "network_default": "off",
+        "fixture_mode": "synthetic_or_owner_supplied",
+        "seed": 1086764708,
+        "checks": [
+          "profile_schema_valid",
+          "runtime_slug_resolves",
+          "capability_output_matches_brief",
+          "no_secret_in_output",
+          "no_live_external_write",
+          "approval_gate_for_high_impact_action",
+          "failure_and_retry_state_recorded"
+        ],
+        "api_tests": [
+          {
+            "api": "Alpaca",
+            "mode": "mock_contract_test",
+            "live_test_status": "blocked_until_owner_configures_secret_and_approves"
+          },
+          {
+            "api": "Binance",
+            "mode": "mock_contract_test",
+            "live_test_status": "blocked_until_owner_configures_secret_and_approves"
+          },
+          {
+            "api": "Coinbase Pro",
+            "mode": "mock_contract_test",
+            "live_test_status": "blocked_until_owner_configures_secret_and_approves"
+          },
+          {
+            "api": "Interactive Brokers",
+            "mode": "mock_contract_test",
+            "live_test_status": "blocked_until_owner_configures_secret_and_approves"
+          },
+          {
+            "api": "TradingView",
+            "mode": "mock_contract_test",
+            "live_test_status": "blocked_until_owner_configures_secret_and_approves"
+          }
+        ],
+        "release_gate": "all applicable checks pass and owner approves any live action"
+      },
+      "readiness": {
+        "profile_schema": "verified",
+        "buddy_chat_route": "verified",
+        "executable_runtime_instance": "verified",
+        "standalone_native_runtime": "shared_worker_not_standalone",
+        "external_integrations": "configuration_required",
+        "production_ready": false,
+        "production_gate": "implement or configure adapters, pass sandbox checks, add authentication, and verify deployment telemetry"
+      },
+      "evidence": {
+        "catalog_source": "App_bots/DreamTrade.json",
+        "runtime_sources": [
+          "server/seed-bots.ts"
+        ],
+        "runtime_seed_duplicates": 0
+      },
+      "sample_test_prompt": "Test Demand Planning Bot in sandbox mode. Use synthetic data, demonstrate Consensus forecast builder, record evidence, and stop before any live external action."
+    },
+    {
+      "identity": {
+        "slug": "quality-inspector",
+        "display_name": "Quality Inspection Bot",
+        "division": "DreamTrade",
+        "category": "quality-inspection",
+        "tier": "pro",
+        "catalog_status": "active"
+      },
+      "logo": {
+        "logo_id": "logo-quality-inspector",
+        "emoji": "🎨",
+        "monogram": "QI",
+        "call_sign": "Clever Path 0AC1412B",
+        "shape": "shield",
+        "colors": {
+          "primary": "#5B3A8A",
+          "accent": "#D89B2B",
+          "surface": "#F8F5FF"
+        },
+        "accessibility_label": "Quality Inspection Bot logo"
+      },
+      "prospectus": {
+        "mission": "Automates quality inspection with visual AI and defect classification.",
+        "target_users": "Quality managers, inspectors",
+        "catalog_business_model": "SaaS subscription",
+        "catalog_price_range": "$199/mo",
+        "pricing_evidence": "catalog_claim_not_verified_revenue",
+        "inputs": [
+          "user brief",
+          "user-selected files or records",
+          "approved connector references"
+        ],
+        "outputs": [
+          "draft",
+          "analysis",
+          "task packet",
+          "sandbox evidence",
+          "approval request when required"
+        ],
+        "limitations": [
+          "This profile has an executable governed runtime instance backed by shared hardened code, not a separate always-running operating-system process.",
+          "External APIs require owner configuration, provider terms, sandbox tests, and scoped approval.",
+          "Published pricing and revenue models are catalog plans, not evidence of sales or earnings."
+        ]
+      },
+      "capabilities": [
+        {
+          "name": "Visual defect detection",
+          "source": "App_bots/DreamTrade.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "AQL sampling plans",
+          "source": "App_bots/DreamTrade.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Inspection report generation",
+          "source": "App_bots/DreamTrade.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Supplier quality trending",
+          "source": "App_bots/DreamTrade.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Corrective action tracking",
+          "source": "App_bots/DreamTrade.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Advanced analytics dashboard",
+          "source": "App_bots/DreamTrade.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Priority email support",
+          "source": "App_bots/DreamTrade.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "API access",
+          "source": "App_bots/DreamTrade.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        }
+      ],
+      "tools": [
+        {
+          "id": "buddy_fleet_runtime",
+          "name": "Executable fleet runtime",
+          "status": "runtime_instance_ready",
+          "evidence": "server/fleet-runtime.ts"
+        },
+        {
+          "id": "buddy_chat_router",
+          "name": "Buddy shared chat router",
+          "status": "runtime_routed",
+          "evidence": "server/routes.ts"
+        },
+        {
+          "id": "buddy_approval_gateway",
+          "name": "Buddy approval gateway",
+          "status": "policy_available",
+          "evidence": "server/approval-notifications.ts"
+        },
+        {
+          "id": "buddy_bot_sandbox",
+          "name": "Per-bot sandbox blueprint",
+          "status": "generated",
+          "evidence": "config/generated/bots.catalog.json"
+        },
+        {
+          "id": "buddy_platform_registry",
+          "name": "Governed platform capability registry",
+          "status": "runtime_routed",
+          "evidence": "config/generated/buddy_platform_expansion.json"
+        },
+        {
+          "id": "buddy_bot_calculator",
+          "name": "Per-bot planning calculator",
+          "status": "local_interactive_ready",
+          "evidence": "config/generated/bot_calculators.json"
+        },
+        {
+          "id": "buddy_connection_broker",
+          "name": "Buddy Connection Broker",
+          "status": "backend_broker_available",
+          "evidence": "dreamco_platform/connections/broker.py"
+        }
+      ],
+      "api_candidates": [
+        {
+          "name": "Alpaca",
+          "category": "trading",
+          "description": "Commission-free trading API",
+          "tier": "pro",
+          "status": "configuration_required",
+          "sandbox_required": true,
+          "secret_policy": "backend_secret_reference_only"
+        },
+        {
+          "name": "Binance",
+          "category": "crypto",
+          "description": "Crypto exchange",
+          "tier": "pro",
+          "status": "configuration_required",
+          "sandbox_required": true,
+          "secret_policy": "backend_secret_reference_only"
+        },
+        {
+          "name": "Coinbase Pro",
+          "category": "crypto",
+          "description": "Crypto trading",
+          "tier": "pro",
+          "status": "configuration_required",
+          "sandbox_required": true,
+          "secret_policy": "backend_secret_reference_only"
+        },
+        {
+          "name": "Interactive Brokers",
+          "category": "trading",
+          "description": "Professional trading",
+          "tier": "enterprise",
+          "status": "configuration_required",
+          "sandbox_required": true,
+          "secret_policy": "backend_secret_reference_only"
+        },
+        {
+          "name": "TradingView",
+          "category": "charting",
+          "description": "Trading charts & analysis",
+          "tier": "pro",
+          "status": "configuration_required",
+          "sandbox_required": true,
+          "secret_policy": "backend_secret_reference_only"
+        }
+      ],
+      "data_contract": {
+        "accepted_inputs": [
+          "user brief",
+          "user-selected files or records",
+          "approved connector references"
+        ],
+        "produced_outputs": [
+          "draft",
+          "analysis",
+          "task packet",
+          "sandbox evidence",
+          "approval request when required"
+        ],
+        "sensitivity": "standard_business_data",
+        "sensitive_domains": [],
+        "storage_policy": "store useful project artifacts only; raw credentials are forbidden; raw biometric media remains local or in an encrypted owner vault",
+        "retention": "owner-configurable with deletion and revocation support"
+      },
+      "approvals": {
+        "default_mode": "sandbox",
+        "approval_required": true,
+        "high_impact_profile": true,
+        "triggers": [
+          "trade",
+          "email"
+        ],
+        "channels_supported": [
+          "in_app",
+          "email",
+          "sms",
+          "voice_call"
+        ],
+        "contact_requirement": "verified user-owned destination and explicit channel opt-in",
+        "execution_rule": "approval authorizes one scoped action; it never exposes credentials to the bot or browser"
+      },
+      "sandbox": {
+        "sandbox_id": "sandbox-quality-inspector",
+        "network_default": "off",
+        "fixture_mode": "synthetic_or_owner_supplied",
+        "seed": 180437291,
+        "checks": [
+          "profile_schema_valid",
+          "runtime_slug_resolves",
+          "capability_output_matches_brief",
+          "no_secret_in_output",
+          "no_live_external_write",
+          "approval_gate_for_high_impact_action",
+          "failure_and_retry_state_recorded"
+        ],
+        "api_tests": [
+          {
+            "api": "Alpaca",
+            "mode": "mock_contract_test",
+            "live_test_status": "blocked_until_owner_configures_secret_and_approves"
+          },
+          {
+            "api": "Binance",
+            "mode": "mock_contract_test",
+            "live_test_status": "blocked_until_owner_configures_secret_and_approves"
+          },
+          {
+            "api": "Coinbase Pro",
+            "mode": "mock_contract_test",
+            "live_test_status": "blocked_until_owner_configures_secret_and_approves"
+          },
+          {
+            "api": "Interactive Brokers",
+            "mode": "mock_contract_test",
+            "live_test_status": "blocked_until_owner_configures_secret_and_approves"
+          },
+          {
+            "api": "TradingView",
+            "mode": "mock_contract_test",
+            "live_test_status": "blocked_until_owner_configures_secret_and_approves"
+          }
+        ],
+        "release_gate": "all applicable checks pass and owner approves any live action"
+      },
+      "readiness": {
+        "profile_schema": "verified",
+        "buddy_chat_route": "verified",
+        "executable_runtime_instance": "verified",
+        "standalone_native_runtime": "shared_worker_not_standalone",
+        "external_integrations": "configuration_required",
+        "production_ready": false,
+        "production_gate": "implement or configure adapters, pass sandbox checks, add authentication, and verify deployment telemetry"
+      },
+      "evidence": {
+        "catalog_source": "App_bots/DreamTrade.json",
+        "runtime_sources": [
+          "server/seed-bots.ts",
+          "server/seed-bots.ts"
+        ],
+        "runtime_seed_duplicates": 1
+      },
+      "sample_test_prompt": "Test Quality Inspection Bot in sandbox mode. Use synthetic data, demonstrate Visual defect detection, record evidence, and stop before any live external action."
+    },
+    {
+      "identity": {
+        "slug": "trade-master",
+        "display_name": "DreamTrade Master AI",
+        "division": "DreamTrade",
+        "category": "trading",
+        "tier": "enterprise",
+        "catalog_status": "active"
+      },
+      "logo": {
+        "logo_id": "logo-trade-master",
+        "emoji": "🧰",
+        "monogram": "DM",
+        "call_sign": "Vivid Compass 8C51008E",
+        "shape": "tile",
+        "colors": {
+          "primary": "#3D4C8D",
+          "accent": "#D56638",
+          "surface": "#F4F6FF"
+        },
+        "accessibility_label": "DreamTrade Master AI logo"
+      },
+      "prospectus": {
+        "mission": "International trade intelligence for import/export operations, customs compliance, supply chain optimization, and commodity trading.",
+        "target_users": "Import/export businesses, trade companies",
+        "catalog_business_model": "Enterprise license",
+        "catalog_price_range": "$699/mo",
+        "pricing_evidence": "catalog_claim_not_verified_revenue",
+        "inputs": [
+          "user brief",
+          "user-selected files or records",
+          "approved connector references"
+        ],
+        "outputs": [
+          "draft",
+          "analysis",
+          "task packet",
+          "sandbox evidence",
+          "approval request when required"
+        ],
+        "limitations": [
+          "This profile has an executable governed runtime instance backed by shared hardened code, not a separate always-running operating-system process.",
+          "External APIs require owner configuration, provider terms, sandbox tests, and scoped approval.",
+          "Published pricing and revenue models are catalog plans, not evidence of sales or earnings."
+        ]
+      },
+      "capabilities": [
+        {
+          "name": "Import/export documentation",
+          "source": "App_bots/DreamTrade.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Customs compliance checking",
+          "source": "App_bots/DreamTrade.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Tariff calculation",
+          "source": "App_bots/DreamTrade.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Supply chain tracking",
+          "source": "App_bots/DreamTrade.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Commodity price monitoring",
+          "source": "App_bots/DreamTrade.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Trade finance assistance",
+          "source": "App_bots/DreamTrade.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Logistics coordination",
+          "source": "App_bots/DreamTrade.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Currency risk management",
+          "source": "App_bots/DreamTrade.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        }
+      ],
+      "tools": [
+        {
+          "id": "buddy_fleet_runtime",
+          "name": "Executable fleet runtime",
+          "status": "runtime_instance_ready",
+          "evidence": "server/fleet-runtime.ts"
+        },
+        {
+          "id": "buddy_chat_router",
+          "name": "Buddy shared chat router",
+          "status": "runtime_routed",
+          "evidence": "server/routes.ts"
+        },
+        {
+          "id": "buddy_approval_gateway",
+          "name": "Buddy approval gateway",
+          "status": "policy_available",
+          "evidence": "server/approval-notifications.ts"
+        },
+        {
+          "id": "buddy_bot_sandbox",
+          "name": "Per-bot sandbox blueprint",
+          "status": "generated",
+          "evidence": "config/generated/bots.catalog.json"
+        },
+        {
+          "id": "buddy_platform_registry",
+          "name": "Governed platform capability registry",
+          "status": "runtime_routed",
+          "evidence": "config/generated/buddy_platform_expansion.json"
+        },
+        {
+          "id": "buddy_bot_calculator",
+          "name": "Per-bot planning calculator",
+          "status": "local_interactive_ready",
+          "evidence": "config/generated/bot_calculators.json"
+        }
+      ],
+      "api_candidates": [
+        {
+          "name": "Alpaca",
+          "category": "trading",
+          "description": "Commission-free trading API",
+          "tier": "pro",
+          "status": "configuration_required",
+          "sandbox_required": true,
+          "secret_policy": "backend_secret_reference_only"
+        },
+        {
+          "name": "Binance",
+          "category": "crypto",
+          "description": "Crypto exchange",
+          "tier": "pro",
+          "status": "configuration_required",
+          "sandbox_required": true,
+          "secret_policy": "backend_secret_reference_only"
+        },
+        {
+          "name": "Coinbase Pro",
+          "category": "crypto",
+          "description": "Crypto trading",
+          "tier": "pro",
+          "status": "configuration_required",
+          "sandbox_required": true,
+          "secret_policy": "backend_secret_reference_only"
+        },
+        {
+          "name": "Interactive Brokers",
+          "category": "trading",
+          "description": "Professional trading",
+          "tier": "enterprise",
+          "status": "configuration_required",
+          "sandbox_required": true,
+          "secret_policy": "backend_secret_reference_only"
+        },
+        {
+          "name": "TradingView",
+          "category": "charting",
+          "description": "Trading charts & analysis",
+          "tier": "pro",
+          "status": "configuration_required",
+          "sandbox_required": true,
+          "secret_policy": "backend_secret_reference_only"
+        }
+      ],
+      "data_contract": {
+        "accepted_inputs": [
+          "user brief",
+          "user-selected files or records",
+          "approved connector references"
+        ],
+        "produced_outputs": [
+          "draft",
+          "analysis",
+          "task packet",
+          "sandbox evidence",
+          "approval request when required"
+        ],
+        "sensitivity": "potentially_sensitive",
+        "sensitive_domains": [
+          "finance"
+        ],
+        "storage_policy": "store useful project artifacts only; raw credentials are forbidden; raw biometric media remains local or in an encrypted owner vault",
+        "retention": "owner-configurable with deletion and revocation support"
+      },
+      "approvals": {
+        "default_mode": "sandbox",
+        "approval_required": true,
+        "high_impact_profile": true,
+        "triggers": [
+          "trade"
+        ],
+        "channels_supported": [
+          "in_app",
+          "email",
+          "sms",
+          "voice_call"
+        ],
+        "contact_requirement": "verified user-owned destination and explicit channel opt-in",
+        "execution_rule": "approval authorizes one scoped action; it never exposes credentials to the bot or browser"
+      },
+      "sandbox": {
+        "sandbox_id": "sandbox-trade-master",
+        "network_default": "off",
+        "fixture_mode": "synthetic_or_owner_supplied",
+        "seed": 2354118798,
+        "checks": [
+          "profile_schema_valid",
+          "runtime_slug_resolves",
+          "capability_output_matches_brief",
+          "no_secret_in_output",
+          "no_live_external_write",
+          "approval_gate_for_high_impact_action",
+          "failure_and_retry_state_recorded"
+        ],
+        "api_tests": [
+          {
+            "api": "Alpaca",
+            "mode": "mock_contract_test",
+            "live_test_status": "blocked_until_owner_configures_secret_and_approves"
+          },
+          {
+            "api": "Binance",
+            "mode": "mock_contract_test",
+            "live_test_status": "blocked_until_owner_configures_secret_and_approves"
+          },
+          {
+            "api": "Coinbase Pro",
+            "mode": "mock_contract_test",
+            "live_test_status": "blocked_until_owner_configures_secret_and_approves"
+          },
+          {
+            "api": "Interactive Brokers",
+            "mode": "mock_contract_test",
+            "live_test_status": "blocked_until_owner_configures_secret_and_approves"
+          },
+          {
+            "api": "TradingView",
+            "mode": "mock_contract_test",
+            "live_test_status": "blocked_until_owner_configures_secret_and_approves"
+          }
+        ],
+        "release_gate": "all applicable checks pass and owner approves any live action"
+      },
+      "readiness": {
+        "profile_schema": "verified",
+        "buddy_chat_route": "verified",
+        "executable_runtime_instance": "verified",
+        "standalone_native_runtime": "shared_worker_not_standalone",
+        "external_integrations": "configuration_required",
+        "production_ready": false,
+        "production_gate": "implement or configure adapters, pass sandbox checks, add authentication, and verify deployment telemetry"
+      },
+      "evidence": {
+        "catalog_source": "App_bots/DreamTrade.json",
+        "runtime_sources": [
+          "server/seed-bots.ts"
+        ],
+        "runtime_seed_duplicates": 0
+      },
+      "sample_test_prompt": "Test DreamTrade Master AI in sandbox mode. Use synthetic data, demonstrate Import/export documentation, record evidence, and stop before any live external action."
+    },
+    {
+      "identity": {
+        "slug": "import-export",
+        "display_name": "Import/Export Intelligence Bot",
+        "division": "DreamTrade",
+        "category": "trading",
+        "tier": "pro",
+        "catalog_status": "active"
+      },
+      "logo": {
+        "logo_id": "logo-import-export",
+        "emoji": "🗂️",
+        "monogram": "II",
+        "call_sign": "Expert Scope 35D082A4",
+        "shape": "tile",
+        "colors": {
+          "primary": "#0F6F88",
+          "accent": "#C94D63",
+          "surface": "#F4FBFC"
+        },
+        "accessibility_label": "Import/Export Intelligence Bot logo"
+      },
+      "prospectus": {
+        "mission": "Handles all import/export operations including documentation, compliance, shipping logistics, and international market analysis.",
+        "target_users": "Import/export businesses, freight forwarders",
+        "catalog_business_model": "SaaS subscription",
+        "catalog_price_range": "$199/mo",
+        "pricing_evidence": "catalog_claim_not_verified_revenue",
+        "inputs": [
+          "user brief",
+          "user-selected files or records",
+          "approved connector references"
+        ],
+        "outputs": [
+          "draft",
+          "analysis",
+          "task packet",
+          "sandbox evidence",
+          "approval request when required"
+        ],
+        "limitations": [
+          "This profile has an executable governed runtime instance backed by shared hardened code, not a separate always-running operating-system process.",
+          "External APIs require owner configuration, provider terms, sandbox tests, and scoped approval.",
+          "Published pricing and revenue models are catalog plans, not evidence of sales or earnings."
+        ]
+      },
+      "capabilities": [
+        {
+          "name": "Bill of lading generation",
+          "source": "App_bots/DreamTrade.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Commercial invoice creation",
+          "source": "App_bots/DreamTrade.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Packing list automation",
+          "source": "App_bots/DreamTrade.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Certificate of origin",
+          "source": "App_bots/DreamTrade.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "HS code lookup",
+          "source": "App_bots/DreamTrade.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Freight rate comparison",
+          "source": "App_bots/DreamTrade.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Shipping route optimization",
+          "source": "App_bots/DreamTrade.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Customs broker coordination",
+          "source": "App_bots/DreamTrade.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        }
+      ],
+      "tools": [
+        {
+          "id": "buddy_fleet_runtime",
+          "name": "Executable fleet runtime",
+          "status": "runtime_instance_ready",
+          "evidence": "server/fleet-runtime.ts"
+        },
+        {
+          "id": "buddy_chat_router",
+          "name": "Buddy shared chat router",
+          "status": "runtime_routed",
+          "evidence": "server/routes.ts"
+        },
+        {
+          "id": "buddy_approval_gateway",
+          "name": "Buddy approval gateway",
+          "status": "policy_available",
+          "evidence": "server/approval-notifications.ts"
+        },
+        {
+          "id": "buddy_bot_sandbox",
+          "name": "Per-bot sandbox blueprint",
+          "status": "generated",
+          "evidence": "config/generated/bots.catalog.json"
+        },
+        {
+          "id": "buddy_platform_registry",
+          "name": "Governed platform capability registry",
+          "status": "runtime_routed",
+          "evidence": "config/generated/buddy_platform_expansion.json"
+        },
+        {
+          "id": "buddy_bot_calculator",
+          "name": "Per-bot planning calculator",
+          "status": "local_interactive_ready",
+          "evidence": "config/generated/bot_calculators.json"
+        },
+        {
+          "id": "buddy_creative_studio",
+          "name": "Buddy Creative Studio",
+          "status": "local_prototype_available",
+          "evidence": "dreamco_platform/creative/studio.py"
+        },
+        {
+          "id": "buddy_code_workspace",
+          "name": "Buddy Code Workspace",
+          "status": "shared_runtime_route",
+          "evidence": "server/seed-buddy-bot.ts"
+        }
+      ],
+      "api_candidates": [
+        {
+          "name": "Interactive Brokers",
+          "category": "trading",
+          "description": "Professional trading",
+          "tier": "enterprise",
+          "status": "configuration_required",
+          "sandbox_required": true,
+          "secret_policy": "backend_secret_reference_only"
+        },
+        {
+          "name": "TradingView",
+          "category": "charting",
+          "description": "Trading charts & analysis",
+          "tier": "pro",
+          "status": "configuration_required",
+          "sandbox_required": true,
+          "secret_policy": "backend_secret_reference_only"
+        },
+        {
+          "name": "Alpaca",
+          "category": "trading",
+          "description": "Commission-free trading API",
+          "tier": "pro",
+          "status": "configuration_required",
+          "sandbox_required": true,
+          "secret_policy": "backend_secret_reference_only"
+        },
+        {
+          "name": "Binance",
+          "category": "crypto",
+          "description": "Crypto exchange",
+          "tier": "pro",
+          "status": "configuration_required",
+          "sandbox_required": true,
+          "secret_policy": "backend_secret_reference_only"
+        },
+        {
+          "name": "Coinbase Pro",
+          "category": "crypto",
+          "description": "Crypto trading",
+          "tier": "pro",
+          "status": "configuration_required",
+          "sandbox_required": true,
+          "secret_policy": "backend_secret_reference_only"
+        }
+      ],
+      "data_contract": {
+        "accepted_inputs": [
+          "user brief",
+          "user-selected files or records",
+          "approved connector references"
+        ],
+        "produced_outputs": [
+          "draft",
+          "analysis",
+          "task packet",
+          "sandbox evidence",
+          "approval request when required"
+        ],
+        "sensitivity": "standard_business_data",
+        "sensitive_domains": [],
+        "storage_policy": "store useful project artifacts only; raw credentials are forbidden; raw biometric media remains local or in an encrypted owner vault",
+        "retention": "owner-configurable with deletion and revocation support"
+      },
+      "approvals": {
+        "default_mode": "sandbox",
+        "approval_required": true,
+        "high_impact_profile": true,
+        "triggers": [
+          "trade"
+        ],
+        "channels_supported": [
+          "in_app",
+          "email",
+          "sms",
+          "voice_call"
+        ],
+        "contact_requirement": "verified user-owned destination and explicit channel opt-in",
+        "execution_rule": "approval authorizes one scoped action; it never exposes credentials to the bot or browser"
+      },
+      "sandbox": {
+        "sandbox_id": "sandbox-import-export",
+        "network_default": "off",
+        "fixture_mode": "synthetic_or_owner_supplied",
+        "seed": 902857380,
+        "checks": [
+          "profile_schema_valid",
+          "runtime_slug_resolves",
+          "capability_output_matches_brief",
+          "no_secret_in_output",
+          "no_live_external_write",
+          "approval_gate_for_high_impact_action",
+          "failure_and_retry_state_recorded"
+        ],
+        "api_tests": [
+          {
+            "api": "Interactive Brokers",
+            "mode": "mock_contract_test",
+            "live_test_status": "blocked_until_owner_configures_secret_and_approves"
+          },
+          {
+            "api": "TradingView",
+            "mode": "mock_contract_test",
+            "live_test_status": "blocked_until_owner_configures_secret_and_approves"
+          },
+          {
+            "api": "Alpaca",
+            "mode": "mock_contract_test",
+            "live_test_status": "blocked_until_owner_configures_secret_and_approves"
+          },
+          {
+            "api": "Binance",
+            "mode": "mock_contract_test",
+            "live_test_status": "blocked_until_owner_configures_secret_and_approves"
+          },
+          {
+            "api": "Coinbase Pro",
+            "mode": "mock_contract_test",
+            "live_test_status": "blocked_until_owner_configures_secret_and_approves"
+          }
+        ],
+        "release_gate": "all applicable checks pass and owner approves any live action"
+      },
+      "readiness": {
+        "profile_schema": "verified",
+        "buddy_chat_route": "verified",
+        "executable_runtime_instance": "verified",
+        "standalone_native_runtime": "shared_worker_not_standalone",
+        "external_integrations": "configuration_required",
+        "production_ready": false,
+        "production_gate": "implement or configure adapters, pass sandbox checks, add authentication, and verify deployment telemetry"
+      },
+      "evidence": {
+        "catalog_source": "App_bots/DreamTrade.json",
+        "runtime_sources": [
+          "server/seed-bots.ts"
+        ],
+        "runtime_seed_duplicates": 0
+      },
+      "sample_test_prompt": "Test Import/Export Intelligence Bot in sandbox mode. Use synthetic data, demonstrate Bill of lading generation, record evidence, and stop before any live external action."
+    }
+  ]
+}

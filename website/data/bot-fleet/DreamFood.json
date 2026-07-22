@@ -1,0 +1,4142 @@
+{
+  "schema": "dreamco.bot_fleet_division.v2",
+  "division": "DreamFood",
+  "bots": [
+    {
+      "identity": {
+        "slug": "kitchen-order",
+        "display_name": "Kitchen Order Management",
+        "division": "DreamFood",
+        "category": "kitchen-ops",
+        "tier": "pro",
+        "catalog_status": "active"
+      },
+      "logo": {
+        "logo_id": "logo-kitchen-order",
+        "emoji": "🧩",
+        "monogram": "KO",
+        "call_sign": "Noble Harbor 9CDA5CB8",
+        "shape": "hex",
+        "colors": {
+          "primary": "#176B5B",
+          "accent": "#D7A73B",
+          "surface": "#F5F7F3"
+        },
+        "accessibility_label": "Kitchen Order Management logo"
+      },
+      "prospectus": {
+        "mission": "Manages kitchen order flow with ticket prioritization and cooking time optimization.",
+        "target_users": "Kitchen managers, head chefs",
+        "catalog_business_model": "SaaS subscription",
+        "catalog_price_range": "$129/mo",
+        "pricing_evidence": "catalog_claim_not_verified_revenue",
+        "inputs": [
+          "user brief",
+          "user-selected files or records",
+          "approved connector references"
+        ],
+        "outputs": [
+          "draft",
+          "analysis",
+          "task packet",
+          "sandbox evidence",
+          "approval request when required"
+        ],
+        "limitations": [
+          "This profile has an executable governed runtime instance backed by shared hardened code, not a separate always-running operating-system process.",
+          "External APIs require owner configuration, provider terms, sandbox tests, and scoped approval.",
+          "Published pricing and revenue models are catalog plans, not evidence of sales or earnings."
+        ]
+      },
+      "capabilities": [
+        {
+          "name": "Order ticket management",
+          "source": "App_bots/DreamFood.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Cooking time optimization",
+          "source": "App_bots/DreamFood.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Station assignment automation",
+          "source": "App_bots/DreamFood.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Rush period preparation",
+          "source": "App_bots/DreamFood.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Allergen flagging system",
+          "source": "App_bots/DreamFood.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Order accuracy tracking",
+          "source": "App_bots/DreamFood.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Advanced analytics dashboard",
+          "source": "App_bots/DreamFood.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Priority email support",
+          "source": "App_bots/DreamFood.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        }
+      ],
+      "tools": [
+        {
+          "id": "buddy_fleet_runtime",
+          "name": "Executable fleet runtime",
+          "status": "runtime_instance_ready",
+          "evidence": "server/fleet-runtime.ts"
+        },
+        {
+          "id": "buddy_chat_router",
+          "name": "Buddy shared chat router",
+          "status": "runtime_routed",
+          "evidence": "server/routes.ts"
+        },
+        {
+          "id": "buddy_approval_gateway",
+          "name": "Buddy approval gateway",
+          "status": "policy_available",
+          "evidence": "server/approval-notifications.ts"
+        },
+        {
+          "id": "buddy_bot_sandbox",
+          "name": "Per-bot sandbox blueprint",
+          "status": "generated",
+          "evidence": "config/generated/bots.catalog.json"
+        },
+        {
+          "id": "buddy_platform_registry",
+          "name": "Governed platform capability registry",
+          "status": "runtime_routed",
+          "evidence": "config/generated/buddy_platform_expansion.json"
+        },
+        {
+          "id": "buddy_bot_calculator",
+          "name": "Per-bot planning calculator",
+          "status": "local_interactive_ready",
+          "evidence": "config/generated/bot_calculators.json"
+        }
+      ],
+      "api_candidates": [],
+      "data_contract": {
+        "accepted_inputs": [
+          "user brief",
+          "user-selected files or records",
+          "approved connector references"
+        ],
+        "produced_outputs": [
+          "draft",
+          "analysis",
+          "task packet",
+          "sandbox evidence",
+          "approval request when required"
+        ],
+        "sensitivity": "standard_business_data",
+        "sensitive_domains": [],
+        "storage_policy": "store useful project artifacts only; raw credentials are forbidden; raw biometric media remains local or in an encrypted owner vault",
+        "retention": "owner-configurable with deletion and revocation support"
+      },
+      "approvals": {
+        "default_mode": "sandbox",
+        "approval_required": true,
+        "high_impact_profile": true,
+        "triggers": [
+          "email"
+        ],
+        "channels_supported": [
+          "in_app",
+          "email",
+          "sms",
+          "voice_call"
+        ],
+        "contact_requirement": "verified user-owned destination and explicit channel opt-in",
+        "execution_rule": "approval authorizes one scoped action; it never exposes credentials to the bot or browser"
+      },
+      "sandbox": {
+        "sandbox_id": "sandbox-kitchen-order",
+        "network_default": "off",
+        "fixture_mode": "synthetic_or_owner_supplied",
+        "seed": 2631556280,
+        "checks": [
+          "profile_schema_valid",
+          "runtime_slug_resolves",
+          "capability_output_matches_brief",
+          "no_secret_in_output",
+          "no_live_external_write",
+          "approval_gate_for_high_impact_action",
+          "failure_and_retry_state_recorded"
+        ],
+        "api_tests": [],
+        "release_gate": "all applicable checks pass and owner approves any live action"
+      },
+      "readiness": {
+        "profile_schema": "verified",
+        "buddy_chat_route": "verified",
+        "executable_runtime_instance": "verified",
+        "standalone_native_runtime": "shared_worker_not_standalone",
+        "external_integrations": "no_division_api_catalog",
+        "production_ready": false,
+        "production_gate": "implement or configure adapters, pass sandbox checks, add authentication, and verify deployment telemetry"
+      },
+      "evidence": {
+        "catalog_source": "App_bots/DreamFood.json",
+        "runtime_sources": [
+          "server/seed-bots.ts"
+        ],
+        "runtime_seed_duplicates": 0
+      },
+      "sample_test_prompt": "Test Kitchen Order Management in sandbox mode. Use synthetic data, demonstrate Order ticket management, record evidence, and stop before any live external action."
+    },
+    {
+      "identity": {
+        "slug": "food-inventory",
+        "display_name": "Food Inventory Manager",
+        "division": "DreamFood",
+        "category": "inventory",
+        "tier": "pro",
+        "catalog_status": "active"
+      },
+      "logo": {
+        "logo_id": "logo-food-inventory",
+        "emoji": "🧪",
+        "monogram": "FI",
+        "call_sign": "Trusted Workshop 885AF9E8",
+        "shape": "shield",
+        "colors": {
+          "primary": "#176B5B",
+          "accent": "#D7A73B",
+          "surface": "#F5F7F3"
+        },
+        "accessibility_label": "Food Inventory Manager logo"
+      },
+      "prospectus": {
+        "mission": "Manages food inventory with spoilage prediction and automated ordering.",
+        "target_users": "Kitchen managers, purchasing directors",
+        "catalog_business_model": "SaaS subscription",
+        "catalog_price_range": "$149/mo",
+        "pricing_evidence": "catalog_claim_not_verified_revenue",
+        "inputs": [
+          "user brief",
+          "user-selected files or records",
+          "approved connector references"
+        ],
+        "outputs": [
+          "draft",
+          "analysis",
+          "task packet",
+          "sandbox evidence",
+          "approval request when required"
+        ],
+        "limitations": [
+          "This profile has an executable governed runtime instance backed by shared hardened code, not a separate always-running operating-system process.",
+          "External APIs require owner configuration, provider terms, sandbox tests, and scoped approval.",
+          "Published pricing and revenue models are catalog plans, not evidence of sales or earnings."
+        ]
+      },
+      "capabilities": [
+        {
+          "name": "Ingredient stock tracking",
+          "source": "App_bots/DreamFood.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Spoilage prediction engine",
+          "source": "App_bots/DreamFood.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Automated reorder triggers",
+          "source": "App_bots/DreamFood.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Vendor price comparison",
+          "source": "App_bots/DreamFood.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Waste reduction analytics",
+          "source": "App_bots/DreamFood.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Par level management",
+          "source": "App_bots/DreamFood.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Advanced analytics dashboard",
+          "source": "App_bots/DreamFood.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Priority email support",
+          "source": "App_bots/DreamFood.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        }
+      ],
+      "tools": [
+        {
+          "id": "buddy_fleet_runtime",
+          "name": "Executable fleet runtime",
+          "status": "runtime_instance_ready",
+          "evidence": "server/fleet-runtime.ts"
+        },
+        {
+          "id": "buddy_chat_router",
+          "name": "Buddy shared chat router",
+          "status": "runtime_routed",
+          "evidence": "server/routes.ts"
+        },
+        {
+          "id": "buddy_approval_gateway",
+          "name": "Buddy approval gateway",
+          "status": "policy_available",
+          "evidence": "server/approval-notifications.ts"
+        },
+        {
+          "id": "buddy_bot_sandbox",
+          "name": "Per-bot sandbox blueprint",
+          "status": "generated",
+          "evidence": "config/generated/bots.catalog.json"
+        },
+        {
+          "id": "buddy_platform_registry",
+          "name": "Governed platform capability registry",
+          "status": "runtime_routed",
+          "evidence": "config/generated/buddy_platform_expansion.json"
+        },
+        {
+          "id": "buddy_bot_calculator",
+          "name": "Per-bot planning calculator",
+          "status": "local_interactive_ready",
+          "evidence": "config/generated/bot_calculators.json"
+        },
+        {
+          "id": "buddy_game_lab",
+          "name": "Buddy Game Lab",
+          "status": "adapter_contract_available",
+          "evidence": "dreamco_platform/games/harness.py"
+        }
+      ],
+      "api_candidates": [],
+      "data_contract": {
+        "accepted_inputs": [
+          "user brief",
+          "user-selected files or records",
+          "approved connector references"
+        ],
+        "produced_outputs": [
+          "draft",
+          "analysis",
+          "task packet",
+          "sandbox evidence",
+          "approval request when required"
+        ],
+        "sensitivity": "standard_business_data",
+        "sensitive_domains": [],
+        "storage_policy": "store useful project artifacts only; raw credentials are forbidden; raw biometric media remains local or in an encrypted owner vault",
+        "retention": "owner-configurable with deletion and revocation support"
+      },
+      "approvals": {
+        "default_mode": "sandbox",
+        "approval_required": true,
+        "high_impact_profile": true,
+        "triggers": [
+          "email"
+        ],
+        "channels_supported": [
+          "in_app",
+          "email",
+          "sms",
+          "voice_call"
+        ],
+        "contact_requirement": "verified user-owned destination and explicit channel opt-in",
+        "execution_rule": "approval authorizes one scoped action; it never exposes credentials to the bot or browser"
+      },
+      "sandbox": {
+        "sandbox_id": "sandbox-food-inventory",
+        "network_default": "off",
+        "fixture_mode": "synthetic_or_owner_supplied",
+        "seed": 2287663592,
+        "checks": [
+          "profile_schema_valid",
+          "runtime_slug_resolves",
+          "capability_output_matches_brief",
+          "no_secret_in_output",
+          "no_live_external_write",
+          "approval_gate_for_high_impact_action",
+          "failure_and_retry_state_recorded"
+        ],
+        "api_tests": [],
+        "release_gate": "all applicable checks pass and owner approves any live action"
+      },
+      "readiness": {
+        "profile_schema": "verified",
+        "buddy_chat_route": "verified",
+        "executable_runtime_instance": "verified",
+        "standalone_native_runtime": "shared_worker_not_standalone",
+        "external_integrations": "no_division_api_catalog",
+        "production_ready": false,
+        "production_gate": "implement or configure adapters, pass sandbox checks, add authentication, and verify deployment telemetry"
+      },
+      "evidence": {
+        "catalog_source": "App_bots/DreamFood.json",
+        "runtime_sources": [
+          "server/seed-bots.ts"
+        ],
+        "runtime_seed_duplicates": 0
+      },
+      "sample_test_prompt": "Test Food Inventory Manager in sandbox mode. Use synthetic data, demonstrate Ingredient stock tracking, record evidence, and stop before any live external action."
+    },
+    {
+      "identity": {
+        "slug": "reservation-ai",
+        "display_name": "Reservation & Table Manager",
+        "division": "DreamFood",
+        "category": "reservations",
+        "tier": "pro",
+        "catalog_status": "active"
+      },
+      "logo": {
+        "logo_id": "logo-reservation-ai",
+        "emoji": "🌐",
+        "monogram": "R&",
+        "call_sign": "Bright Scope E0A822D2",
+        "shape": "circle",
+        "colors": {
+          "primary": "#7A2E3A",
+          "accent": "#2D8C7C",
+          "surface": "#FFF8EE"
+        },
+        "accessibility_label": "Reservation & Table Manager logo"
+      },
+      "prospectus": {
+        "mission": "Manages reservations with table optimization and waitlist management.",
+        "target_users": "Restaurant managers, hosts",
+        "catalog_business_model": "SaaS subscription",
+        "catalog_price_range": "$99/mo",
+        "pricing_evidence": "catalog_claim_not_verified_revenue",
+        "inputs": [
+          "user brief",
+          "user-selected files or records",
+          "approved connector references"
+        ],
+        "outputs": [
+          "draft",
+          "analysis",
+          "task packet",
+          "sandbox evidence",
+          "approval request when required"
+        ],
+        "limitations": [
+          "This profile has an executable governed runtime instance backed by shared hardened code, not a separate always-running operating-system process.",
+          "External APIs require owner configuration, provider terms, sandbox tests, and scoped approval.",
+          "Published pricing and revenue models are catalog plans, not evidence of sales or earnings."
+        ]
+      },
+      "capabilities": [
+        {
+          "name": "Online reservation engine",
+          "source": "App_bots/DreamFood.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Table assignment optimization",
+          "source": "App_bots/DreamFood.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Waitlist management tools",
+          "source": "App_bots/DreamFood.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Guest preference tracking",
+          "source": "App_bots/DreamFood.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Turn time analytics",
+          "source": "App_bots/DreamFood.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "No-show prediction scoring",
+          "source": "App_bots/DreamFood.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Advanced analytics dashboard",
+          "source": "App_bots/DreamFood.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Priority email support",
+          "source": "App_bots/DreamFood.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        }
+      ],
+      "tools": [
+        {
+          "id": "buddy_fleet_runtime",
+          "name": "Executable fleet runtime",
+          "status": "runtime_instance_ready",
+          "evidence": "server/fleet-runtime.ts"
+        },
+        {
+          "id": "buddy_chat_router",
+          "name": "Buddy shared chat router",
+          "status": "runtime_routed",
+          "evidence": "server/routes.ts"
+        },
+        {
+          "id": "buddy_approval_gateway",
+          "name": "Buddy approval gateway",
+          "status": "policy_available",
+          "evidence": "server/approval-notifications.ts"
+        },
+        {
+          "id": "buddy_bot_sandbox",
+          "name": "Per-bot sandbox blueprint",
+          "status": "generated",
+          "evidence": "config/generated/bots.catalog.json"
+        },
+        {
+          "id": "buddy_platform_registry",
+          "name": "Governed platform capability registry",
+          "status": "runtime_routed",
+          "evidence": "config/generated/buddy_platform_expansion.json"
+        },
+        {
+          "id": "buddy_bot_calculator",
+          "name": "Per-bot planning calculator",
+          "status": "local_interactive_ready",
+          "evidence": "config/generated/bot_calculators.json"
+        }
+      ],
+      "api_candidates": [],
+      "data_contract": {
+        "accepted_inputs": [
+          "user brief",
+          "user-selected files or records",
+          "approved connector references"
+        ],
+        "produced_outputs": [
+          "draft",
+          "analysis",
+          "task packet",
+          "sandbox evidence",
+          "approval request when required"
+        ],
+        "sensitivity": "standard_business_data",
+        "sensitive_domains": [],
+        "storage_policy": "store useful project artifacts only; raw credentials are forbidden; raw biometric media remains local or in an encrypted owner vault",
+        "retention": "owner-configurable with deletion and revocation support"
+      },
+      "approvals": {
+        "default_mode": "sandbox",
+        "approval_required": true,
+        "high_impact_profile": true,
+        "triggers": [
+          "email"
+        ],
+        "channels_supported": [
+          "in_app",
+          "email",
+          "sms",
+          "voice_call"
+        ],
+        "contact_requirement": "verified user-owned destination and explicit channel opt-in",
+        "execution_rule": "approval authorizes one scoped action; it never exposes credentials to the bot or browser"
+      },
+      "sandbox": {
+        "sandbox_id": "sandbox-reservation-ai",
+        "network_default": "off",
+        "fixture_mode": "synthetic_or_owner_supplied",
+        "seed": 3769115346,
+        "checks": [
+          "profile_schema_valid",
+          "runtime_slug_resolves",
+          "capability_output_matches_brief",
+          "no_secret_in_output",
+          "no_live_external_write",
+          "approval_gate_for_high_impact_action",
+          "failure_and_retry_state_recorded"
+        ],
+        "api_tests": [],
+        "release_gate": "all applicable checks pass and owner approves any live action"
+      },
+      "readiness": {
+        "profile_schema": "verified",
+        "buddy_chat_route": "verified",
+        "executable_runtime_instance": "verified",
+        "standalone_native_runtime": "shared_worker_not_standalone",
+        "external_integrations": "no_division_api_catalog",
+        "production_ready": false,
+        "production_gate": "implement or configure adapters, pass sandbox checks, add authentication, and verify deployment telemetry"
+      },
+      "evidence": {
+        "catalog_source": "App_bots/DreamFood.json",
+        "runtime_sources": [
+          "server/seed-bots.ts"
+        ],
+        "runtime_seed_duplicates": 0
+      },
+      "sample_test_prompt": "Test Reservation & Table Manager in sandbox mode. Use synthetic data, demonstrate Online reservation engine, record evidence, and stop before any live external action."
+    },
+    {
+      "identity": {
+        "slug": "pos-analytics",
+        "display_name": "POS Analytics Dashboard",
+        "division": "DreamFood",
+        "category": "pos",
+        "tier": "pro",
+        "catalog_status": "active"
+      },
+      "logo": {
+        "logo_id": "logo-pos-analytics",
+        "emoji": "🗂️",
+        "monogram": "PA",
+        "call_sign": "Prime Path 1765E93C",
+        "shape": "shield",
+        "colors": {
+          "primary": "#0F6F88",
+          "accent": "#C94D63",
+          "surface": "#F4FBFC"
+        },
+        "accessibility_label": "POS Analytics Dashboard logo"
+      },
+      "prospectus": {
+        "mission": "Analyzes point-of-sale data with sales trends and menu performance insights.",
+        "target_users": "Restaurant owners, general managers",
+        "catalog_business_model": "SaaS subscription",
+        "catalog_price_range": "$99/mo",
+        "pricing_evidence": "catalog_claim_not_verified_revenue",
+        "inputs": [
+          "user brief",
+          "user-selected files or records",
+          "approved connector references"
+        ],
+        "outputs": [
+          "draft",
+          "analysis",
+          "task packet",
+          "sandbox evidence",
+          "approval request when required"
+        ],
+        "limitations": [
+          "This profile has an executable governed runtime instance backed by shared hardened code, not a separate always-running operating-system process.",
+          "External APIs require owner configuration, provider terms, sandbox tests, and scoped approval.",
+          "Published pricing and revenue models are catalog plans, not evidence of sales or earnings."
+        ]
+      },
+      "capabilities": [
+        {
+          "name": "Sales trend visualization",
+          "source": "App_bots/DreamFood.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Menu item performance scoring",
+          "source": "App_bots/DreamFood.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Peak hour analysis",
+          "source": "App_bots/DreamFood.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Server performance tracking",
+          "source": "App_bots/DreamFood.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Payment method analytics",
+          "source": "App_bots/DreamFood.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Discount impact reporting",
+          "source": "App_bots/DreamFood.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Advanced analytics dashboard",
+          "source": "App_bots/DreamFood.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Priority email support",
+          "source": "App_bots/DreamFood.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        }
+      ],
+      "tools": [
+        {
+          "id": "buddy_fleet_runtime",
+          "name": "Executable fleet runtime",
+          "status": "runtime_instance_ready",
+          "evidence": "server/fleet-runtime.ts"
+        },
+        {
+          "id": "buddy_chat_router",
+          "name": "Buddy shared chat router",
+          "status": "runtime_routed",
+          "evidence": "server/routes.ts"
+        },
+        {
+          "id": "buddy_approval_gateway",
+          "name": "Buddy approval gateway",
+          "status": "policy_available",
+          "evidence": "server/approval-notifications.ts"
+        },
+        {
+          "id": "buddy_bot_sandbox",
+          "name": "Per-bot sandbox blueprint",
+          "status": "generated",
+          "evidence": "config/generated/bots.catalog.json"
+        },
+        {
+          "id": "buddy_platform_registry",
+          "name": "Governed platform capability registry",
+          "status": "runtime_routed",
+          "evidence": "config/generated/buddy_platform_expansion.json"
+        },
+        {
+          "id": "buddy_bot_calculator",
+          "name": "Per-bot planning calculator",
+          "status": "local_interactive_ready",
+          "evidence": "config/generated/bot_calculators.json"
+        }
+      ],
+      "api_candidates": [],
+      "data_contract": {
+        "accepted_inputs": [
+          "user brief",
+          "user-selected files or records",
+          "approved connector references"
+        ],
+        "produced_outputs": [
+          "draft",
+          "analysis",
+          "task packet",
+          "sandbox evidence",
+          "approval request when required"
+        ],
+        "sensitivity": "potentially_sensitive",
+        "sensitive_domains": [
+          "payment"
+        ],
+        "storage_policy": "store useful project artifacts only; raw credentials are forbidden; raw biometric media remains local or in an encrypted owner vault",
+        "retention": "owner-configurable with deletion and revocation support"
+      },
+      "approvals": {
+        "default_mode": "sandbox",
+        "approval_required": true,
+        "high_impact_profile": true,
+        "triggers": [
+          "payment",
+          "email"
+        ],
+        "channels_supported": [
+          "in_app",
+          "email",
+          "sms",
+          "voice_call"
+        ],
+        "contact_requirement": "verified user-owned destination and explicit channel opt-in",
+        "execution_rule": "approval authorizes one scoped action; it never exposes credentials to the bot or browser"
+      },
+      "sandbox": {
+        "sandbox_id": "sandbox-pos-analytics",
+        "network_default": "off",
+        "fixture_mode": "synthetic_or_owner_supplied",
+        "seed": 392554812,
+        "checks": [
+          "profile_schema_valid",
+          "runtime_slug_resolves",
+          "capability_output_matches_brief",
+          "no_secret_in_output",
+          "no_live_external_write",
+          "approval_gate_for_high_impact_action",
+          "failure_and_retry_state_recorded"
+        ],
+        "api_tests": [],
+        "release_gate": "all applicable checks pass and owner approves any live action"
+      },
+      "readiness": {
+        "profile_schema": "verified",
+        "buddy_chat_route": "verified",
+        "executable_runtime_instance": "verified",
+        "standalone_native_runtime": "shared_worker_not_standalone",
+        "external_integrations": "no_division_api_catalog",
+        "production_ready": false,
+        "production_gate": "implement or configure adapters, pass sandbox checks, add authentication, and verify deployment telemetry"
+      },
+      "evidence": {
+        "catalog_source": "App_bots/DreamFood.json",
+        "runtime_sources": [
+          "server/seed-bots.ts"
+        ],
+        "runtime_seed_duplicates": 0
+      },
+      "sample_test_prompt": "Test POS Analytics Dashboard in sandbox mode. Use synthetic data, demonstrate Sales trend visualization, record evidence, and stop before any live external action."
+    },
+    {
+      "identity": {
+        "slug": "menu-engineer",
+        "display_name": "Menu Engineering AI",
+        "division": "DreamFood",
+        "category": "menu-design",
+        "tier": "pro",
+        "catalog_status": "active"
+      },
+      "logo": {
+        "logo_id": "logo-menu-engineer",
+        "emoji": "🎨",
+        "monogram": "ME",
+        "call_sign": "Expert Atlas DC10F5EF",
+        "shape": "circle",
+        "colors": {
+          "primary": "#77521F",
+          "accent": "#287878",
+          "surface": "#FFF9ED"
+        },
+        "accessibility_label": "Menu Engineering AI logo"
+      },
+      "prospectus": {
+        "mission": "Optimizes menu design with profitability analysis and pricing strategy.",
+        "target_users": "Chefs, restaurant owners, F&B directors",
+        "catalog_business_model": "SaaS subscription",
+        "catalog_price_range": "$149/mo",
+        "pricing_evidence": "catalog_claim_not_verified_revenue",
+        "inputs": [
+          "user brief",
+          "user-selected files or records",
+          "approved connector references"
+        ],
+        "outputs": [
+          "draft",
+          "analysis",
+          "task packet",
+          "sandbox evidence",
+          "approval request when required"
+        ],
+        "limitations": [
+          "This profile has an executable governed runtime instance backed by shared hardened code, not a separate always-running operating-system process.",
+          "External APIs require owner configuration, provider terms, sandbox tests, and scoped approval.",
+          "Published pricing and revenue models are catalog plans, not evidence of sales or earnings."
+        ]
+      },
+      "capabilities": [
+        {
+          "name": "Menu item cost analysis",
+          "source": "App_bots/DreamFood.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Profitability matrix scoring",
+          "source": "App_bots/DreamFood.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Price elasticity modeling",
+          "source": "App_bots/DreamFood.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Menu layout optimization",
+          "source": "App_bots/DreamFood.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Seasonal item recommendations",
+          "source": "App_bots/DreamFood.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Competitor pricing comparison",
+          "source": "App_bots/DreamFood.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Advanced analytics dashboard",
+          "source": "App_bots/DreamFood.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Priority email support",
+          "source": "App_bots/DreamFood.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        }
+      ],
+      "tools": [
+        {
+          "id": "buddy_fleet_runtime",
+          "name": "Executable fleet runtime",
+          "status": "runtime_instance_ready",
+          "evidence": "server/fleet-runtime.ts"
+        },
+        {
+          "id": "buddy_chat_router",
+          "name": "Buddy shared chat router",
+          "status": "runtime_routed",
+          "evidence": "server/routes.ts"
+        },
+        {
+          "id": "buddy_approval_gateway",
+          "name": "Buddy approval gateway",
+          "status": "policy_available",
+          "evidence": "server/approval-notifications.ts"
+        },
+        {
+          "id": "buddy_bot_sandbox",
+          "name": "Per-bot sandbox blueprint",
+          "status": "generated",
+          "evidence": "config/generated/bots.catalog.json"
+        },
+        {
+          "id": "buddy_platform_registry",
+          "name": "Governed platform capability registry",
+          "status": "runtime_routed",
+          "evidence": "config/generated/buddy_platform_expansion.json"
+        },
+        {
+          "id": "buddy_bot_calculator",
+          "name": "Per-bot planning calculator",
+          "status": "local_interactive_ready",
+          "evidence": "config/generated/bot_calculators.json"
+        }
+      ],
+      "api_candidates": [],
+      "data_contract": {
+        "accepted_inputs": [
+          "user brief",
+          "user-selected files or records",
+          "approved connector references"
+        ],
+        "produced_outputs": [
+          "draft",
+          "analysis",
+          "task packet",
+          "sandbox evidence",
+          "approval request when required"
+        ],
+        "sensitivity": "standard_business_data",
+        "sensitive_domains": [],
+        "storage_policy": "store useful project artifacts only; raw credentials are forbidden; raw biometric media remains local or in an encrypted owner vault",
+        "retention": "owner-configurable with deletion and revocation support"
+      },
+      "approvals": {
+        "default_mode": "sandbox",
+        "approval_required": true,
+        "high_impact_profile": true,
+        "triggers": [
+          "email"
+        ],
+        "channels_supported": [
+          "in_app",
+          "email",
+          "sms",
+          "voice_call"
+        ],
+        "contact_requirement": "verified user-owned destination and explicit channel opt-in",
+        "execution_rule": "approval authorizes one scoped action; it never exposes credentials to the bot or browser"
+      },
+      "sandbox": {
+        "sandbox_id": "sandbox-menu-engineer",
+        "network_default": "off",
+        "fixture_mode": "synthetic_or_owner_supplied",
+        "seed": 3692099055,
+        "checks": [
+          "profile_schema_valid",
+          "runtime_slug_resolves",
+          "capability_output_matches_brief",
+          "no_secret_in_output",
+          "no_live_external_write",
+          "approval_gate_for_high_impact_action",
+          "failure_and_retry_state_recorded"
+        ],
+        "api_tests": [],
+        "release_gate": "all applicable checks pass and owner approves any live action"
+      },
+      "readiness": {
+        "profile_schema": "verified",
+        "buddy_chat_route": "verified",
+        "executable_runtime_instance": "verified",
+        "standalone_native_runtime": "shared_worker_not_standalone",
+        "external_integrations": "no_division_api_catalog",
+        "production_ready": false,
+        "production_gate": "implement or configure adapters, pass sandbox checks, add authentication, and verify deployment telemetry"
+      },
+      "evidence": {
+        "catalog_source": "App_bots/DreamFood.json",
+        "runtime_sources": [
+          "server/seed-bots.ts"
+        ],
+        "runtime_seed_duplicates": 0
+      },
+      "sample_test_prompt": "Test Menu Engineering AI in sandbox mode. Use synthetic data, demonstrate Menu item cost analysis, record evidence, and stop before any live external action."
+    },
+    {
+      "identity": {
+        "slug": "food-cost-ctrl",
+        "display_name": "Food Cost Controller",
+        "division": "DreamFood",
+        "category": "cost-control",
+        "tier": "enterprise",
+        "catalog_status": "active"
+      },
+      "logo": {
+        "logo_id": "logo-food-cost-ctrl",
+        "emoji": "🔎",
+        "monogram": "FC",
+        "call_sign": "Swift Spark 7B9340E1",
+        "shape": "shield",
+        "colors": {
+          "primary": "#275DAD",
+          "accent": "#E38B3C",
+          "surface": "#F7F9FC"
+        },
+        "accessibility_label": "Food Cost Controller logo"
+      },
+      "prospectus": {
+        "mission": "Controls food costs with recipe costing and variance analysis.",
+        "target_users": "Controllers, F&B directors, owners",
+        "catalog_business_model": "Enterprise license",
+        "catalog_price_range": "$599/mo",
+        "pricing_evidence": "catalog_claim_not_verified_revenue",
+        "inputs": [
+          "user brief",
+          "user-selected files or records",
+          "approved connector references"
+        ],
+        "outputs": [
+          "draft",
+          "analysis",
+          "task packet",
+          "sandbox evidence",
+          "approval request when required"
+        ],
+        "limitations": [
+          "This profile has an executable governed runtime instance backed by shared hardened code, not a separate always-running operating-system process.",
+          "External APIs require owner configuration, provider terms, sandbox tests, and scoped approval.",
+          "Published pricing and revenue models are catalog plans, not evidence of sales or earnings."
+        ]
+      },
+      "capabilities": [
+        {
+          "name": "Recipe cost calculation",
+          "source": "App_bots/DreamFood.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Actual vs theoretical food cost",
+          "source": "App_bots/DreamFood.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Waste tracking automation",
+          "source": "App_bots/DreamFood.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Portion control monitoring",
+          "source": "App_bots/DreamFood.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Vendor invoice verification",
+          "source": "App_bots/DreamFood.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Cost trend alerting system",
+          "source": "App_bots/DreamFood.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Advanced analytics dashboard",
+          "source": "App_bots/DreamFood.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Priority email support",
+          "source": "App_bots/DreamFood.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        }
+      ],
+      "tools": [
+        {
+          "id": "buddy_fleet_runtime",
+          "name": "Executable fleet runtime",
+          "status": "runtime_instance_ready",
+          "evidence": "server/fleet-runtime.ts"
+        },
+        {
+          "id": "buddy_chat_router",
+          "name": "Buddy shared chat router",
+          "status": "runtime_routed",
+          "evidence": "server/routes.ts"
+        },
+        {
+          "id": "buddy_approval_gateway",
+          "name": "Buddy approval gateway",
+          "status": "policy_available",
+          "evidence": "server/approval-notifications.ts"
+        },
+        {
+          "id": "buddy_bot_sandbox",
+          "name": "Per-bot sandbox blueprint",
+          "status": "generated",
+          "evidence": "config/generated/bots.catalog.json"
+        },
+        {
+          "id": "buddy_platform_registry",
+          "name": "Governed platform capability registry",
+          "status": "runtime_routed",
+          "evidence": "config/generated/buddy_platform_expansion.json"
+        },
+        {
+          "id": "buddy_bot_calculator",
+          "name": "Per-bot planning calculator",
+          "status": "local_interactive_ready",
+          "evidence": "config/generated/bot_calculators.json"
+        },
+        {
+          "id": "buddy_creative_studio",
+          "name": "Buddy Creative Studio",
+          "status": "local_prototype_available",
+          "evidence": "dreamco_platform/creative/studio.py"
+        }
+      ],
+      "api_candidates": [],
+      "data_contract": {
+        "accepted_inputs": [
+          "user brief",
+          "user-selected files or records",
+          "approved connector references"
+        ],
+        "produced_outputs": [
+          "draft",
+          "analysis",
+          "task packet",
+          "sandbox evidence",
+          "approval request when required"
+        ],
+        "sensitivity": "standard_business_data",
+        "sensitive_domains": [],
+        "storage_policy": "store useful project artifacts only; raw credentials are forbidden; raw biometric media remains local or in an encrypted owner vault",
+        "retention": "owner-configurable with deletion and revocation support"
+      },
+      "approvals": {
+        "default_mode": "sandbox",
+        "approval_required": true,
+        "high_impact_profile": true,
+        "triggers": [
+          "email"
+        ],
+        "channels_supported": [
+          "in_app",
+          "email",
+          "sms",
+          "voice_call"
+        ],
+        "contact_requirement": "verified user-owned destination and explicit channel opt-in",
+        "execution_rule": "approval authorizes one scoped action; it never exposes credentials to the bot or browser"
+      },
+      "sandbox": {
+        "sandbox_id": "sandbox-food-cost-ctrl",
+        "network_default": "off",
+        "fixture_mode": "synthetic_or_owner_supplied",
+        "seed": 2073247969,
+        "checks": [
+          "profile_schema_valid",
+          "runtime_slug_resolves",
+          "capability_output_matches_brief",
+          "no_secret_in_output",
+          "no_live_external_write",
+          "approval_gate_for_high_impact_action",
+          "failure_and_retry_state_recorded"
+        ],
+        "api_tests": [],
+        "release_gate": "all applicable checks pass and owner approves any live action"
+      },
+      "readiness": {
+        "profile_schema": "verified",
+        "buddy_chat_route": "verified",
+        "executable_runtime_instance": "verified",
+        "standalone_native_runtime": "shared_worker_not_standalone",
+        "external_integrations": "no_division_api_catalog",
+        "production_ready": false,
+        "production_gate": "implement or configure adapters, pass sandbox checks, add authentication, and verify deployment telemetry"
+      },
+      "evidence": {
+        "catalog_source": "App_bots/DreamFood.json",
+        "runtime_sources": [
+          "server/seed-bots.ts"
+        ],
+        "runtime_seed_duplicates": 0
+      },
+      "sample_test_prompt": "Test Food Cost Controller in sandbox mode. Use synthetic data, demonstrate Recipe cost calculation, record evidence, and stop before any live external action."
+    },
+    {
+      "identity": {
+        "slug": "health-inspection",
+        "display_name": "Health Inspection Prep",
+        "division": "DreamFood",
+        "category": "compliance",
+        "tier": "pro",
+        "catalog_status": "active"
+      },
+      "logo": {
+        "logo_id": "logo-health-inspection",
+        "emoji": "💼",
+        "monogram": "HI",
+        "call_sign": "Civic Atlas 949C1D89",
+        "shape": "shield",
+        "colors": {
+          "primary": "#275DAD",
+          "accent": "#E38B3C",
+          "surface": "#F7F9FC"
+        },
+        "accessibility_label": "Health Inspection Prep logo"
+      },
+      "prospectus": {
+        "mission": "Prepares for health inspections with checklist automation and temperature logging.",
+        "target_users": "Kitchen managers, food safety directors",
+        "catalog_business_model": "SaaS subscription",
+        "catalog_price_range": "$79/mo",
+        "pricing_evidence": "catalog_claim_not_verified_revenue",
+        "inputs": [
+          "user brief",
+          "user-selected files or records",
+          "approved connector references"
+        ],
+        "outputs": [
+          "draft",
+          "analysis",
+          "task packet",
+          "sandbox evidence",
+          "approval request when required"
+        ],
+        "limitations": [
+          "This profile has an executable governed runtime instance backed by shared hardened code, not a separate always-running operating-system process.",
+          "External APIs require owner configuration, provider terms, sandbox tests, and scoped approval.",
+          "Published pricing and revenue models are catalog plans, not evidence of sales or earnings."
+        ]
+      },
+      "capabilities": [
+        {
+          "name": "Inspection checklist automation",
+          "source": "App_bots/DreamFood.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Temperature log management",
+          "source": "App_bots/DreamFood.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "HACCP plan maintenance",
+          "source": "App_bots/DreamFood.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Corrective action tracking",
+          "source": "App_bots/DreamFood.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Staff hygiene monitoring",
+          "source": "App_bots/DreamFood.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Documentation archive system",
+          "source": "App_bots/DreamFood.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Advanced analytics dashboard",
+          "source": "App_bots/DreamFood.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Priority email support",
+          "source": "App_bots/DreamFood.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        }
+      ],
+      "tools": [
+        {
+          "id": "buddy_fleet_runtime",
+          "name": "Executable fleet runtime",
+          "status": "runtime_instance_ready",
+          "evidence": "server/fleet-runtime.ts"
+        },
+        {
+          "id": "buddy_chat_router",
+          "name": "Buddy shared chat router",
+          "status": "runtime_routed",
+          "evidence": "server/routes.ts"
+        },
+        {
+          "id": "buddy_approval_gateway",
+          "name": "Buddy approval gateway",
+          "status": "policy_available",
+          "evidence": "server/approval-notifications.ts"
+        },
+        {
+          "id": "buddy_bot_sandbox",
+          "name": "Per-bot sandbox blueprint",
+          "status": "generated",
+          "evidence": "config/generated/bots.catalog.json"
+        },
+        {
+          "id": "buddy_platform_registry",
+          "name": "Governed platform capability registry",
+          "status": "runtime_routed",
+          "evidence": "config/generated/buddy_platform_expansion.json"
+        },
+        {
+          "id": "buddy_bot_calculator",
+          "name": "Per-bot planning calculator",
+          "status": "local_interactive_ready",
+          "evidence": "config/generated/bot_calculators.json"
+        }
+      ],
+      "api_candidates": [],
+      "data_contract": {
+        "accepted_inputs": [
+          "user brief",
+          "user-selected files or records",
+          "approved connector references"
+        ],
+        "produced_outputs": [
+          "draft",
+          "analysis",
+          "task packet",
+          "sandbox evidence",
+          "approval request when required"
+        ],
+        "sensitivity": "potentially_sensitive",
+        "sensitive_domains": [
+          "health"
+        ],
+        "storage_policy": "store useful project artifacts only; raw credentials are forbidden; raw biometric media remains local or in an encrypted owner vault",
+        "retention": "owner-configurable with deletion and revocation support"
+      },
+      "approvals": {
+        "default_mode": "sandbox",
+        "approval_required": true,
+        "high_impact_profile": true,
+        "triggers": [
+          "health",
+          "email"
+        ],
+        "channels_supported": [
+          "in_app",
+          "email",
+          "sms",
+          "voice_call"
+        ],
+        "contact_requirement": "verified user-owned destination and explicit channel opt-in",
+        "execution_rule": "approval authorizes one scoped action; it never exposes credentials to the bot or browser"
+      },
+      "sandbox": {
+        "sandbox_id": "sandbox-health-inspection",
+        "network_default": "off",
+        "fixture_mode": "synthetic_or_owner_supplied",
+        "seed": 2493259145,
+        "checks": [
+          "profile_schema_valid",
+          "runtime_slug_resolves",
+          "capability_output_matches_brief",
+          "no_secret_in_output",
+          "no_live_external_write",
+          "approval_gate_for_high_impact_action",
+          "failure_and_retry_state_recorded"
+        ],
+        "api_tests": [],
+        "release_gate": "all applicable checks pass and owner approves any live action"
+      },
+      "readiness": {
+        "profile_schema": "verified",
+        "buddy_chat_route": "verified",
+        "executable_runtime_instance": "verified",
+        "standalone_native_runtime": "shared_worker_not_standalone",
+        "external_integrations": "no_division_api_catalog",
+        "production_ready": false,
+        "production_gate": "implement or configure adapters, pass sandbox checks, add authentication, and verify deployment telemetry"
+      },
+      "evidence": {
+        "catalog_source": "App_bots/DreamFood.json",
+        "runtime_sources": [
+          "server/seed-bots.ts"
+        ],
+        "runtime_seed_duplicates": 0
+      },
+      "sample_test_prompt": "Test Health Inspection Prep in sandbox mode. Use synthetic data, demonstrate Inspection checklist automation, record evidence, and stop before any live external action."
+    },
+    {
+      "identity": {
+        "slug": "catering-coordinator",
+        "display_name": "Catering Event Coordinator",
+        "division": "DreamFood",
+        "category": "catering",
+        "tier": "pro",
+        "catalog_status": "active"
+      },
+      "logo": {
+        "logo_id": "logo-catering-coordinator",
+        "emoji": "🌐",
+        "monogram": "CE",
+        "call_sign": "Solar Vault 68B32A98",
+        "shape": "hex",
+        "colors": {
+          "primary": "#176B5B",
+          "accent": "#D7A73B",
+          "surface": "#F5F7F3"
+        },
+        "accessibility_label": "Catering Event Coordinator logo"
+      },
+      "prospectus": {
+        "mission": "Coordinates catering events with menu planning and logistics management.",
+        "target_users": "Catering managers, event coordinators",
+        "catalog_business_model": "SaaS subscription",
+        "catalog_price_range": "$129/mo",
+        "pricing_evidence": "catalog_claim_not_verified_revenue",
+        "inputs": [
+          "user brief",
+          "user-selected files or records",
+          "approved connector references"
+        ],
+        "outputs": [
+          "draft",
+          "analysis",
+          "task packet",
+          "sandbox evidence",
+          "approval request when required"
+        ],
+        "limitations": [
+          "This profile has an executable governed runtime instance backed by shared hardened code, not a separate always-running operating-system process.",
+          "External APIs require owner configuration, provider terms, sandbox tests, and scoped approval.",
+          "Published pricing and revenue models are catalog plans, not evidence of sales or earnings."
+        ]
+      },
+      "capabilities": [
+        {
+          "name": "Event menu planning tools",
+          "source": "App_bots/DreamFood.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Guest count management",
+          "source": "App_bots/DreamFood.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Equipment rental tracking",
+          "source": "App_bots/DreamFood.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Delivery logistics coordination",
+          "source": "App_bots/DreamFood.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Staff scheduling integration",
+          "source": "App_bots/DreamFood.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Post-event billing automation",
+          "source": "App_bots/DreamFood.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Advanced analytics dashboard",
+          "source": "App_bots/DreamFood.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Priority email support",
+          "source": "App_bots/DreamFood.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        }
+      ],
+      "tools": [
+        {
+          "id": "buddy_fleet_runtime",
+          "name": "Executable fleet runtime",
+          "status": "runtime_instance_ready",
+          "evidence": "server/fleet-runtime.ts"
+        },
+        {
+          "id": "buddy_chat_router",
+          "name": "Buddy shared chat router",
+          "status": "runtime_routed",
+          "evidence": "server/routes.ts"
+        },
+        {
+          "id": "buddy_approval_gateway",
+          "name": "Buddy approval gateway",
+          "status": "policy_available",
+          "evidence": "server/approval-notifications.ts"
+        },
+        {
+          "id": "buddy_bot_sandbox",
+          "name": "Per-bot sandbox blueprint",
+          "status": "generated",
+          "evidence": "config/generated/bots.catalog.json"
+        },
+        {
+          "id": "buddy_platform_registry",
+          "name": "Governed platform capability registry",
+          "status": "runtime_routed",
+          "evidence": "config/generated/buddy_platform_expansion.json"
+        },
+        {
+          "id": "buddy_bot_calculator",
+          "name": "Per-bot planning calculator",
+          "status": "local_interactive_ready",
+          "evidence": "config/generated/bot_calculators.json"
+        },
+        {
+          "id": "buddy_social_manager",
+          "name": "Buddy Social Manager",
+          "status": "approval_gated_adapter_contract",
+          "evidence": "dreamco_platform/social/manager.py"
+        },
+        {
+          "id": "buddy_connection_broker",
+          "name": "Buddy Connection Broker",
+          "status": "backend_broker_available",
+          "evidence": "dreamco_platform/connections/broker.py"
+        }
+      ],
+      "api_candidates": [],
+      "data_contract": {
+        "accepted_inputs": [
+          "user brief",
+          "user-selected files or records",
+          "approved connector references"
+        ],
+        "produced_outputs": [
+          "draft",
+          "analysis",
+          "task packet",
+          "sandbox evidence",
+          "approval request when required"
+        ],
+        "sensitivity": "standard_business_data",
+        "sensitive_domains": [],
+        "storage_policy": "store useful project artifacts only; raw credentials are forbidden; raw biometric media remains local or in an encrypted owner vault",
+        "retention": "owner-configurable with deletion and revocation support"
+      },
+      "approvals": {
+        "default_mode": "sandbox",
+        "approval_required": true,
+        "high_impact_profile": true,
+        "triggers": [
+          "email"
+        ],
+        "channels_supported": [
+          "in_app",
+          "email",
+          "sms",
+          "voice_call"
+        ],
+        "contact_requirement": "verified user-owned destination and explicit channel opt-in",
+        "execution_rule": "approval authorizes one scoped action; it never exposes credentials to the bot or browser"
+      },
+      "sandbox": {
+        "sandbox_id": "sandbox-catering-coordinator",
+        "network_default": "off",
+        "fixture_mode": "synthetic_or_owner_supplied",
+        "seed": 1756572312,
+        "checks": [
+          "profile_schema_valid",
+          "runtime_slug_resolves",
+          "capability_output_matches_brief",
+          "no_secret_in_output",
+          "no_live_external_write",
+          "approval_gate_for_high_impact_action",
+          "failure_and_retry_state_recorded"
+        ],
+        "api_tests": [],
+        "release_gate": "all applicable checks pass and owner approves any live action"
+      },
+      "readiness": {
+        "profile_schema": "verified",
+        "buddy_chat_route": "verified",
+        "executable_runtime_instance": "verified",
+        "standalone_native_runtime": "shared_worker_not_standalone",
+        "external_integrations": "no_division_api_catalog",
+        "production_ready": false,
+        "production_gate": "implement or configure adapters, pass sandbox checks, add authentication, and verify deployment telemetry"
+      },
+      "evidence": {
+        "catalog_source": "App_bots/DreamFood.json",
+        "runtime_sources": [
+          "server/seed-bots.ts"
+        ],
+        "runtime_seed_duplicates": 0
+      },
+      "sample_test_prompt": "Test Catering Event Coordinator in sandbox mode. Use synthetic data, demonstrate Event menu planning tools, record evidence, and stop before any live external action."
+    },
+    {
+      "identity": {
+        "slug": "bartender-ai",
+        "display_name": "Bar Inventory & Recipe Bot",
+        "division": "DreamFood",
+        "category": "bar",
+        "tier": "pro",
+        "catalog_status": "active"
+      },
+      "logo": {
+        "logo_id": "logo-bartender-ai",
+        "emoji": "📚",
+        "monogram": "BI",
+        "call_sign": "Grand Engine A2088314",
+        "shape": "hex",
+        "colors": {
+          "primary": "#0F6F88",
+          "accent": "#C94D63",
+          "surface": "#F4FBFC"
+        },
+        "accessibility_label": "Bar Inventory & Recipe Bot logo"
+      },
+      "prospectus": {
+        "mission": "Manages bar inventory with cocktail recipe database and pour cost tracking.",
+        "target_users": "Bar managers, beverage directors",
+        "catalog_business_model": "SaaS subscription",
+        "catalog_price_range": "$99/mo",
+        "pricing_evidence": "catalog_claim_not_verified_revenue",
+        "inputs": [
+          "user brief",
+          "user-selected files or records",
+          "approved connector references"
+        ],
+        "outputs": [
+          "draft",
+          "analysis",
+          "task packet",
+          "sandbox evidence",
+          "approval request when required"
+        ],
+        "limitations": [
+          "This profile has an executable governed runtime instance backed by shared hardened code, not a separate always-running operating-system process.",
+          "External APIs require owner configuration, provider terms, sandbox tests, and scoped approval.",
+          "Published pricing and revenue models are catalog plans, not evidence of sales or earnings."
+        ]
+      },
+      "capabilities": [
+        {
+          "name": "Liquor inventory tracking",
+          "source": "App_bots/DreamFood.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Pour cost calculation",
+          "source": "App_bots/DreamFood.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Cocktail recipe database",
+          "source": "App_bots/DreamFood.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Variance analysis tools",
+          "source": "App_bots/DreamFood.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Reorder automation engine",
+          "source": "App_bots/DreamFood.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Sales mix analytics",
+          "source": "App_bots/DreamFood.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Advanced analytics dashboard",
+          "source": "App_bots/DreamFood.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Priority email support",
+          "source": "App_bots/DreamFood.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        }
+      ],
+      "tools": [
+        {
+          "id": "buddy_fleet_runtime",
+          "name": "Executable fleet runtime",
+          "status": "runtime_instance_ready",
+          "evidence": "server/fleet-runtime.ts"
+        },
+        {
+          "id": "buddy_chat_router",
+          "name": "Buddy shared chat router",
+          "status": "runtime_routed",
+          "evidence": "server/routes.ts"
+        },
+        {
+          "id": "buddy_approval_gateway",
+          "name": "Buddy approval gateway",
+          "status": "policy_available",
+          "evidence": "server/approval-notifications.ts"
+        },
+        {
+          "id": "buddy_bot_sandbox",
+          "name": "Per-bot sandbox blueprint",
+          "status": "generated",
+          "evidence": "config/generated/bots.catalog.json"
+        },
+        {
+          "id": "buddy_platform_registry",
+          "name": "Governed platform capability registry",
+          "status": "runtime_routed",
+          "evidence": "config/generated/buddy_platform_expansion.json"
+        },
+        {
+          "id": "buddy_bot_calculator",
+          "name": "Per-bot planning calculator",
+          "status": "local_interactive_ready",
+          "evidence": "config/generated/bot_calculators.json"
+        }
+      ],
+      "api_candidates": [],
+      "data_contract": {
+        "accepted_inputs": [
+          "user brief",
+          "user-selected files or records",
+          "approved connector references"
+        ],
+        "produced_outputs": [
+          "draft",
+          "analysis",
+          "task packet",
+          "sandbox evidence",
+          "approval request when required"
+        ],
+        "sensitivity": "standard_business_data",
+        "sensitive_domains": [],
+        "storage_policy": "store useful project artifacts only; raw credentials are forbidden; raw biometric media remains local or in an encrypted owner vault",
+        "retention": "owner-configurable with deletion and revocation support"
+      },
+      "approvals": {
+        "default_mode": "sandbox",
+        "approval_required": true,
+        "high_impact_profile": true,
+        "triggers": [
+          "email"
+        ],
+        "channels_supported": [
+          "in_app",
+          "email",
+          "sms",
+          "voice_call"
+        ],
+        "contact_requirement": "verified user-owned destination and explicit channel opt-in",
+        "execution_rule": "approval authorizes one scoped action; it never exposes credentials to the bot or browser"
+      },
+      "sandbox": {
+        "sandbox_id": "sandbox-bartender-ai",
+        "network_default": "off",
+        "fixture_mode": "synthetic_or_owner_supplied",
+        "seed": 2718466836,
+        "checks": [
+          "profile_schema_valid",
+          "runtime_slug_resolves",
+          "capability_output_matches_brief",
+          "no_secret_in_output",
+          "no_live_external_write",
+          "approval_gate_for_high_impact_action",
+          "failure_and_retry_state_recorded"
+        ],
+        "api_tests": [],
+        "release_gate": "all applicable checks pass and owner approves any live action"
+      },
+      "readiness": {
+        "profile_schema": "verified",
+        "buddy_chat_route": "verified",
+        "executable_runtime_instance": "verified",
+        "standalone_native_runtime": "shared_worker_not_standalone",
+        "external_integrations": "no_division_api_catalog",
+        "production_ready": false,
+        "production_gate": "implement or configure adapters, pass sandbox checks, add authentication, and verify deployment telemetry"
+      },
+      "evidence": {
+        "catalog_source": "App_bots/DreamFood.json",
+        "runtime_sources": [
+          "server/seed-bots.ts"
+        ],
+        "runtime_seed_duplicates": 0
+      },
+      "sample_test_prompt": "Test Bar Inventory & Recipe Bot in sandbox mode. Use synthetic data, demonstrate Liquor inventory tracking, record evidence, and stop before any live external action."
+    },
+    {
+      "identity": {
+        "slug": "delivery-integration",
+        "display_name": "Delivery Platform Integrator",
+        "division": "DreamFood",
+        "category": "delivery",
+        "tier": "enterprise",
+        "catalog_status": "active"
+      },
+      "logo": {
+        "logo_id": "logo-delivery-integration",
+        "emoji": "⚙️",
+        "monogram": "DP",
+        "call_sign": "Agile Launchpad 430E778B",
+        "shape": "circle",
+        "colors": {
+          "primary": "#5B3A8A",
+          "accent": "#D89B2B",
+          "surface": "#F8F5FF"
+        },
+        "accessibility_label": "Delivery Platform Integrator logo"
+      },
+      "prospectus": {
+        "mission": "Integrates multiple delivery platforms with unified order management.",
+        "target_users": "Restaurant operators, virtual kitchen managers",
+        "catalog_business_model": "Enterprise license",
+        "catalog_price_range": "$499/mo",
+        "pricing_evidence": "catalog_claim_not_verified_revenue",
+        "inputs": [
+          "user brief",
+          "user-selected files or records",
+          "approved connector references"
+        ],
+        "outputs": [
+          "draft",
+          "analysis",
+          "task packet",
+          "sandbox evidence",
+          "approval request when required"
+        ],
+        "limitations": [
+          "This profile has an executable governed runtime instance backed by shared hardened code, not a separate always-running operating-system process.",
+          "External APIs require owner configuration, provider terms, sandbox tests, and scoped approval.",
+          "Published pricing and revenue models are catalog plans, not evidence of sales or earnings."
+        ]
+      },
+      "capabilities": [
+        {
+          "name": "Multi-platform order aggregation",
+          "source": "App_bots/DreamFood.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Menu sync automation",
+          "source": "App_bots/DreamFood.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Delivery zone optimization",
+          "source": "App_bots/DreamFood.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Commission tracking dashboard",
+          "source": "App_bots/DreamFood.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Customer data unification",
+          "source": "App_bots/DreamFood.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Rating management tools",
+          "source": "App_bots/DreamFood.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Advanced analytics dashboard",
+          "source": "App_bots/DreamFood.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Priority email support",
+          "source": "App_bots/DreamFood.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        }
+      ],
+      "tools": [
+        {
+          "id": "buddy_fleet_runtime",
+          "name": "Executable fleet runtime",
+          "status": "runtime_instance_ready",
+          "evidence": "server/fleet-runtime.ts"
+        },
+        {
+          "id": "buddy_chat_router",
+          "name": "Buddy shared chat router",
+          "status": "runtime_routed",
+          "evidence": "server/routes.ts"
+        },
+        {
+          "id": "buddy_approval_gateway",
+          "name": "Buddy approval gateway",
+          "status": "policy_available",
+          "evidence": "server/approval-notifications.ts"
+        },
+        {
+          "id": "buddy_bot_sandbox",
+          "name": "Per-bot sandbox blueprint",
+          "status": "generated",
+          "evidence": "config/generated/bots.catalog.json"
+        },
+        {
+          "id": "buddy_platform_registry",
+          "name": "Governed platform capability registry",
+          "status": "runtime_routed",
+          "evidence": "config/generated/buddy_platform_expansion.json"
+        },
+        {
+          "id": "buddy_bot_calculator",
+          "name": "Per-bot planning calculator",
+          "status": "local_interactive_ready",
+          "evidence": "config/generated/bot_calculators.json"
+        },
+        {
+          "id": "buddy_connection_broker",
+          "name": "Buddy Connection Broker",
+          "status": "backend_broker_available",
+          "evidence": "dreamco_platform/connections/broker.py"
+        }
+      ],
+      "api_candidates": [],
+      "data_contract": {
+        "accepted_inputs": [
+          "user brief",
+          "user-selected files or records",
+          "approved connector references"
+        ],
+        "produced_outputs": [
+          "draft",
+          "analysis",
+          "task packet",
+          "sandbox evidence",
+          "approval request when required"
+        ],
+        "sensitivity": "standard_business_data",
+        "sensitive_domains": [],
+        "storage_policy": "store useful project artifacts only; raw credentials are forbidden; raw biometric media remains local or in an encrypted owner vault",
+        "retention": "owner-configurable with deletion and revocation support"
+      },
+      "approvals": {
+        "default_mode": "sandbox",
+        "approval_required": true,
+        "high_impact_profile": true,
+        "triggers": [
+          "email"
+        ],
+        "channels_supported": [
+          "in_app",
+          "email",
+          "sms",
+          "voice_call"
+        ],
+        "contact_requirement": "verified user-owned destination and explicit channel opt-in",
+        "execution_rule": "approval authorizes one scoped action; it never exposes credentials to the bot or browser"
+      },
+      "sandbox": {
+        "sandbox_id": "sandbox-delivery-integration",
+        "network_default": "off",
+        "fixture_mode": "synthetic_or_owner_supplied",
+        "seed": 1125021579,
+        "checks": [
+          "profile_schema_valid",
+          "runtime_slug_resolves",
+          "capability_output_matches_brief",
+          "no_secret_in_output",
+          "no_live_external_write",
+          "approval_gate_for_high_impact_action",
+          "failure_and_retry_state_recorded"
+        ],
+        "api_tests": [],
+        "release_gate": "all applicable checks pass and owner approves any live action"
+      },
+      "readiness": {
+        "profile_schema": "verified",
+        "buddy_chat_route": "verified",
+        "executable_runtime_instance": "verified",
+        "standalone_native_runtime": "shared_worker_not_standalone",
+        "external_integrations": "no_division_api_catalog",
+        "production_ready": false,
+        "production_gate": "implement or configure adapters, pass sandbox checks, add authentication, and verify deployment telemetry"
+      },
+      "evidence": {
+        "catalog_source": "App_bots/DreamFood.json",
+        "runtime_sources": [
+          "server/seed-bots.ts"
+        ],
+        "runtime_seed_duplicates": 0
+      },
+      "sample_test_prompt": "Test Delivery Platform Integrator in sandbox mode. Use synthetic data, demonstrate Multi-platform order aggregation, record evidence, and stop before any live external action."
+    },
+    {
+      "identity": {
+        "slug": "staff-scheduler-food",
+        "display_name": "Restaurant Staff Scheduler",
+        "division": "DreamFood",
+        "category": "staffing",
+        "tier": "pro",
+        "catalog_status": "active"
+      },
+      "logo": {
+        "logo_id": "logo-staff-scheduler-food",
+        "emoji": "📊",
+        "monogram": "RS",
+        "call_sign": "Golden Path 22B5594F",
+        "shape": "hex",
+        "colors": {
+          "primary": "#77521F",
+          "accent": "#287878",
+          "surface": "#FFF9ED"
+        },
+        "accessibility_label": "Restaurant Staff Scheduler logo"
+      },
+      "prospectus": {
+        "mission": "Schedules restaurant staff with labor cost optimization and compliance tracking.",
+        "target_users": "Restaurant managers, HR coordinators",
+        "catalog_business_model": "SaaS subscription",
+        "catalog_price_range": "$99/mo",
+        "pricing_evidence": "catalog_claim_not_verified_revenue",
+        "inputs": [
+          "user brief",
+          "user-selected files or records",
+          "approved connector references"
+        ],
+        "outputs": [
+          "draft",
+          "analysis",
+          "task packet",
+          "sandbox evidence",
+          "approval request when required"
+        ],
+        "limitations": [
+          "This profile has an executable governed runtime instance backed by shared hardened code, not a separate always-running operating-system process.",
+          "External APIs require owner configuration, provider terms, sandbox tests, and scoped approval.",
+          "Published pricing and revenue models are catalog plans, not evidence of sales or earnings."
+        ]
+      },
+      "capabilities": [
+        {
+          "name": "Shift scheduling automation",
+          "source": "App_bots/DreamFood.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Labor cost forecasting",
+          "source": "App_bots/DreamFood.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Overtime alert system",
+          "source": "App_bots/DreamFood.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Availability management",
+          "source": "App_bots/DreamFood.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Tip pool calculation",
+          "source": "App_bots/DreamFood.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Break compliance tracking",
+          "source": "App_bots/DreamFood.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Advanced analytics dashboard",
+          "source": "App_bots/DreamFood.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Priority email support",
+          "source": "App_bots/DreamFood.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        }
+      ],
+      "tools": [
+        {
+          "id": "buddy_fleet_runtime",
+          "name": "Executable fleet runtime",
+          "status": "runtime_instance_ready",
+          "evidence": "server/fleet-runtime.ts"
+        },
+        {
+          "id": "buddy_chat_router",
+          "name": "Buddy shared chat router",
+          "status": "runtime_routed",
+          "evidence": "server/routes.ts"
+        },
+        {
+          "id": "buddy_approval_gateway",
+          "name": "Buddy approval gateway",
+          "status": "policy_available",
+          "evidence": "server/approval-notifications.ts"
+        },
+        {
+          "id": "buddy_bot_sandbox",
+          "name": "Per-bot sandbox blueprint",
+          "status": "generated",
+          "evidence": "config/generated/bots.catalog.json"
+        },
+        {
+          "id": "buddy_platform_registry",
+          "name": "Governed platform capability registry",
+          "status": "runtime_routed",
+          "evidence": "config/generated/buddy_platform_expansion.json"
+        },
+        {
+          "id": "buddy_bot_calculator",
+          "name": "Per-bot planning calculator",
+          "status": "local_interactive_ready",
+          "evidence": "config/generated/bot_calculators.json"
+        }
+      ],
+      "api_candidates": [],
+      "data_contract": {
+        "accepted_inputs": [
+          "user brief",
+          "user-selected files or records",
+          "approved connector references"
+        ],
+        "produced_outputs": [
+          "draft",
+          "analysis",
+          "task packet",
+          "sandbox evidence",
+          "approval request when required"
+        ],
+        "sensitivity": "standard_business_data",
+        "sensitive_domains": [],
+        "storage_policy": "store useful project artifacts only; raw credentials are forbidden; raw biometric media remains local or in an encrypted owner vault",
+        "retention": "owner-configurable with deletion and revocation support"
+      },
+      "approvals": {
+        "default_mode": "sandbox",
+        "approval_required": true,
+        "high_impact_profile": true,
+        "triggers": [
+          "email"
+        ],
+        "channels_supported": [
+          "in_app",
+          "email",
+          "sms",
+          "voice_call"
+        ],
+        "contact_requirement": "verified user-owned destination and explicit channel opt-in",
+        "execution_rule": "approval authorizes one scoped action; it never exposes credentials to the bot or browser"
+      },
+      "sandbox": {
+        "sandbox_id": "sandbox-staff-scheduler-food",
+        "network_default": "off",
+        "fixture_mode": "synthetic_or_owner_supplied",
+        "seed": 582310223,
+        "checks": [
+          "profile_schema_valid",
+          "runtime_slug_resolves",
+          "capability_output_matches_brief",
+          "no_secret_in_output",
+          "no_live_external_write",
+          "approval_gate_for_high_impact_action",
+          "failure_and_retry_state_recorded"
+        ],
+        "api_tests": [],
+        "release_gate": "all applicable checks pass and owner approves any live action"
+      },
+      "readiness": {
+        "profile_schema": "verified",
+        "buddy_chat_route": "verified",
+        "executable_runtime_instance": "verified",
+        "standalone_native_runtime": "shared_worker_not_standalone",
+        "external_integrations": "no_division_api_catalog",
+        "production_ready": false,
+        "production_gate": "implement or configure adapters, pass sandbox checks, add authentication, and verify deployment telemetry"
+      },
+      "evidence": {
+        "catalog_source": "App_bots/DreamFood.json",
+        "runtime_sources": [
+          "server/seed-bots.ts"
+        ],
+        "runtime_seed_duplicates": 0
+      },
+      "sample_test_prompt": "Test Restaurant Staff Scheduler in sandbox mode. Use synthetic data, demonstrate Shift scheduling automation, record evidence, and stop before any live external action."
+    },
+    {
+      "identity": {
+        "slug": "franchise-ops",
+        "display_name": "Franchise Operations Manager",
+        "division": "DreamFood",
+        "category": "franchise",
+        "tier": "enterprise",
+        "catalog_status": "active"
+      },
+      "logo": {
+        "logo_id": "logo-franchise-ops",
+        "emoji": "📣",
+        "monogram": "FO",
+        "call_sign": "Dynamic Compass AFD36095",
+        "shape": "hex",
+        "colors": {
+          "primary": "#334E3C",
+          "accent": "#B96332",
+          "surface": "#F7F4ED"
+        },
+        "accessibility_label": "Franchise Operations Manager logo"
+      },
+      "prospectus": {
+        "mission": "Manages franchise operations with brand standards compliance and performance benchmarking.",
+        "target_users": "Franchise directors, regional managers",
+        "catalog_business_model": "Enterprise license",
+        "catalog_price_range": "$899/mo",
+        "pricing_evidence": "catalog_claim_not_verified_revenue",
+        "inputs": [
+          "user brief",
+          "user-selected files or records",
+          "approved connector references"
+        ],
+        "outputs": [
+          "draft",
+          "analysis",
+          "task packet",
+          "sandbox evidence",
+          "approval request when required"
+        ],
+        "limitations": [
+          "This profile has an executable governed runtime instance backed by shared hardened code, not a separate always-running operating-system process.",
+          "External APIs require owner configuration, provider terms, sandbox tests, and scoped approval.",
+          "Published pricing and revenue models are catalog plans, not evidence of sales or earnings."
+        ]
+      },
+      "capabilities": [
+        {
+          "name": "Brand standards auditing",
+          "source": "App_bots/DreamFood.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Franchisee performance scoring",
+          "source": "App_bots/DreamFood.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Menu compliance monitoring",
+          "source": "App_bots/DreamFood.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Training program management",
+          "source": "App_bots/DreamFood.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Royalty calculation engine",
+          "source": "App_bots/DreamFood.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Multi-location benchmarking",
+          "source": "App_bots/DreamFood.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Advanced analytics dashboard",
+          "source": "App_bots/DreamFood.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Priority email support",
+          "source": "App_bots/DreamFood.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        }
+      ],
+      "tools": [
+        {
+          "id": "buddy_fleet_runtime",
+          "name": "Executable fleet runtime",
+          "status": "runtime_instance_ready",
+          "evidence": "server/fleet-runtime.ts"
+        },
+        {
+          "id": "buddy_chat_router",
+          "name": "Buddy shared chat router",
+          "status": "runtime_routed",
+          "evidence": "server/routes.ts"
+        },
+        {
+          "id": "buddy_approval_gateway",
+          "name": "Buddy approval gateway",
+          "status": "policy_available",
+          "evidence": "server/approval-notifications.ts"
+        },
+        {
+          "id": "buddy_bot_sandbox",
+          "name": "Per-bot sandbox blueprint",
+          "status": "generated",
+          "evidence": "config/generated/bots.catalog.json"
+        },
+        {
+          "id": "buddy_platform_registry",
+          "name": "Governed platform capability registry",
+          "status": "runtime_routed",
+          "evidence": "config/generated/buddy_platform_expansion.json"
+        },
+        {
+          "id": "buddy_bot_calculator",
+          "name": "Per-bot planning calculator",
+          "status": "local_interactive_ready",
+          "evidence": "config/generated/bot_calculators.json"
+        }
+      ],
+      "api_candidates": [],
+      "data_contract": {
+        "accepted_inputs": [
+          "user brief",
+          "user-selected files or records",
+          "approved connector references"
+        ],
+        "produced_outputs": [
+          "draft",
+          "analysis",
+          "task packet",
+          "sandbox evidence",
+          "approval request when required"
+        ],
+        "sensitivity": "standard_business_data",
+        "sensitive_domains": [],
+        "storage_policy": "store useful project artifacts only; raw credentials are forbidden; raw biometric media remains local or in an encrypted owner vault",
+        "retention": "owner-configurable with deletion and revocation support"
+      },
+      "approvals": {
+        "default_mode": "sandbox",
+        "approval_required": true,
+        "high_impact_profile": true,
+        "triggers": [
+          "email"
+        ],
+        "channels_supported": [
+          "in_app",
+          "email",
+          "sms",
+          "voice_call"
+        ],
+        "contact_requirement": "verified user-owned destination and explicit channel opt-in",
+        "execution_rule": "approval authorizes one scoped action; it never exposes credentials to the bot or browser"
+      },
+      "sandbox": {
+        "sandbox_id": "sandbox-franchise-ops",
+        "network_default": "off",
+        "fixture_mode": "synthetic_or_owner_supplied",
+        "seed": 2949865621,
+        "checks": [
+          "profile_schema_valid",
+          "runtime_slug_resolves",
+          "capability_output_matches_brief",
+          "no_secret_in_output",
+          "no_live_external_write",
+          "approval_gate_for_high_impact_action",
+          "failure_and_retry_state_recorded"
+        ],
+        "api_tests": [],
+        "release_gate": "all applicable checks pass and owner approves any live action"
+      },
+      "readiness": {
+        "profile_schema": "verified",
+        "buddy_chat_route": "verified",
+        "executable_runtime_instance": "verified",
+        "standalone_native_runtime": "shared_worker_not_standalone",
+        "external_integrations": "no_division_api_catalog",
+        "production_ready": false,
+        "production_gate": "implement or configure adapters, pass sandbox checks, add authentication, and verify deployment telemetry"
+      },
+      "evidence": {
+        "catalog_source": "App_bots/DreamFood.json",
+        "runtime_sources": [
+          "server/seed-bots.ts"
+        ],
+        "runtime_seed_duplicates": 0
+      },
+      "sample_test_prompt": "Test Franchise Operations Manager in sandbox mode. Use synthetic data, demonstrate Brand standards auditing, record evidence, and stop before any live external action."
+    },
+    {
+      "identity": {
+        "slug": "food-analytics-elite",
+        "display_name": "F&B Analytics Suite",
+        "division": "DreamFood",
+        "category": "analytics",
+        "tier": "elite",
+        "catalog_status": "active"
+      },
+      "logo": {
+        "logo_id": "logo-food-analytics-elite",
+        "emoji": "🧪",
+        "monogram": "FA",
+        "call_sign": "Expert Compass A68830A3",
+        "shape": "tile",
+        "colors": {
+          "primary": "#5B3A8A",
+          "accent": "#D89B2B",
+          "surface": "#F8F5FF"
+        },
+        "accessibility_label": "F&B Analytics Suite logo"
+      },
+      "prospectus": {
+        "mission": "Enterprise food and beverage analytics with multi-location intelligence and forecasting.",
+        "target_users": "Restaurant group executives, hospitality VPs",
+        "catalog_business_model": "Enterprise license",
+        "catalog_price_range": "$1,499/mo",
+        "pricing_evidence": "catalog_claim_not_verified_revenue",
+        "inputs": [
+          "user brief",
+          "user-selected files or records",
+          "approved connector references"
+        ],
+        "outputs": [
+          "draft",
+          "analysis",
+          "task packet",
+          "sandbox evidence",
+          "approval request when required"
+        ],
+        "limitations": [
+          "This profile has an executable governed runtime instance backed by shared hardened code, not a separate always-running operating-system process.",
+          "External APIs require owner configuration, provider terms, sandbox tests, and scoped approval.",
+          "Published pricing and revenue models are catalog plans, not evidence of sales or earnings."
+        ]
+      },
+      "capabilities": [
+        {
+          "name": "Multi-location dashboard",
+          "source": "App_bots/DreamFood.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Demand forecasting engine",
+          "source": "App_bots/DreamFood.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Revenue per seat analytics",
+          "source": "App_bots/DreamFood.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Customer lifetime value",
+          "source": "App_bots/DreamFood.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Market basket analysis",
+          "source": "App_bots/DreamFood.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Strategic planning tools",
+          "source": "App_bots/DreamFood.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Advanced analytics dashboard",
+          "source": "App_bots/DreamFood.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Priority email support",
+          "source": "App_bots/DreamFood.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        }
+      ],
+      "tools": [
+        {
+          "id": "buddy_fleet_runtime",
+          "name": "Executable fleet runtime",
+          "status": "runtime_instance_ready",
+          "evidence": "server/fleet-runtime.ts"
+        },
+        {
+          "id": "buddy_chat_router",
+          "name": "Buddy shared chat router",
+          "status": "runtime_routed",
+          "evidence": "server/routes.ts"
+        },
+        {
+          "id": "buddy_approval_gateway",
+          "name": "Buddy approval gateway",
+          "status": "policy_available",
+          "evidence": "server/approval-notifications.ts"
+        },
+        {
+          "id": "buddy_bot_sandbox",
+          "name": "Per-bot sandbox blueprint",
+          "status": "generated",
+          "evidence": "config/generated/bots.catalog.json"
+        },
+        {
+          "id": "buddy_platform_registry",
+          "name": "Governed platform capability registry",
+          "status": "runtime_routed",
+          "evidence": "config/generated/buddy_platform_expansion.json"
+        },
+        {
+          "id": "buddy_bot_calculator",
+          "name": "Per-bot planning calculator",
+          "status": "local_interactive_ready",
+          "evidence": "config/generated/bot_calculators.json"
+        }
+      ],
+      "api_candidates": [],
+      "data_contract": {
+        "accepted_inputs": [
+          "user brief",
+          "user-selected files or records",
+          "approved connector references"
+        ],
+        "produced_outputs": [
+          "draft",
+          "analysis",
+          "task packet",
+          "sandbox evidence",
+          "approval request when required"
+        ],
+        "sensitivity": "standard_business_data",
+        "sensitive_domains": [],
+        "storage_policy": "store useful project artifacts only; raw credentials are forbidden; raw biometric media remains local or in an encrypted owner vault",
+        "retention": "owner-configurable with deletion and revocation support"
+      },
+      "approvals": {
+        "default_mode": "sandbox",
+        "approval_required": true,
+        "high_impact_profile": true,
+        "triggers": [
+          "email"
+        ],
+        "channels_supported": [
+          "in_app",
+          "email",
+          "sms",
+          "voice_call"
+        ],
+        "contact_requirement": "verified user-owned destination and explicit channel opt-in",
+        "execution_rule": "approval authorizes one scoped action; it never exposes credentials to the bot or browser"
+      },
+      "sandbox": {
+        "sandbox_id": "sandbox-food-analytics-elite",
+        "network_default": "off",
+        "fixture_mode": "synthetic_or_owner_supplied",
+        "seed": 2793943203,
+        "checks": [
+          "profile_schema_valid",
+          "runtime_slug_resolves",
+          "capability_output_matches_brief",
+          "no_secret_in_output",
+          "no_live_external_write",
+          "approval_gate_for_high_impact_action",
+          "failure_and_retry_state_recorded"
+        ],
+        "api_tests": [],
+        "release_gate": "all applicable checks pass and owner approves any live action"
+      },
+      "readiness": {
+        "profile_schema": "verified",
+        "buddy_chat_route": "verified",
+        "executable_runtime_instance": "verified",
+        "standalone_native_runtime": "shared_worker_not_standalone",
+        "external_integrations": "no_division_api_catalog",
+        "production_ready": false,
+        "production_gate": "implement or configure adapters, pass sandbox checks, add authentication, and verify deployment telemetry"
+      },
+      "evidence": {
+        "catalog_source": "App_bots/DreamFood.json",
+        "runtime_sources": [
+          "server/seed-bots.ts"
+        ],
+        "runtime_seed_duplicates": 0
+      },
+      "sample_test_prompt": "Test F&B Analytics Suite in sandbox mode. Use synthetic data, demonstrate Multi-location dashboard, record evidence, and stop before any live external action."
+    },
+    {
+      "identity": {
+        "slug": "ghost-kitchen",
+        "display_name": "Ghost Kitchen Optimizer",
+        "division": "DreamFood",
+        "category": "virtual-kitchen",
+        "tier": "elite",
+        "catalog_status": "active"
+      },
+      "logo": {
+        "logo_id": "logo-ghost-kitchen",
+        "emoji": "🧩",
+        "monogram": "GK",
+        "call_sign": "Royal Atlas BA0F9560",
+        "shape": "hex",
+        "colors": {
+          "primary": "#176B5B",
+          "accent": "#D7A73B",
+          "surface": "#F5F7F3"
+        },
+        "accessibility_label": "Ghost Kitchen Optimizer logo"
+      },
+      "prospectus": {
+        "mission": "Optimizes ghost kitchen operations with brand management and capacity planning.",
+        "target_users": "Virtual kitchen operators, cloud kitchen investors",
+        "catalog_business_model": "Enterprise license",
+        "catalog_price_range": "$1,999/mo",
+        "pricing_evidence": "catalog_claim_not_verified_revenue",
+        "inputs": [
+          "user brief",
+          "user-selected files or records",
+          "approved connector references"
+        ],
+        "outputs": [
+          "draft",
+          "analysis",
+          "task packet",
+          "sandbox evidence",
+          "approval request when required"
+        ],
+        "limitations": [
+          "This profile has an executable governed runtime instance backed by shared hardened code, not a separate always-running operating-system process.",
+          "External APIs require owner configuration, provider terms, sandbox tests, and scoped approval.",
+          "Published pricing and revenue models are catalog plans, not evidence of sales or earnings."
+        ]
+      },
+      "capabilities": [
+        {
+          "name": "Multi-brand order management",
+          "source": "App_bots/DreamFood.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Kitchen capacity optimization",
+          "source": "App_bots/DreamFood.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Brand performance analytics",
+          "source": "App_bots/DreamFood.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Menu overlap analysis",
+          "source": "App_bots/DreamFood.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Delivery radius optimization",
+          "source": "App_bots/DreamFood.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Peak capacity forecasting",
+          "source": "App_bots/DreamFood.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Advanced analytics dashboard",
+          "source": "App_bots/DreamFood.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Priority email support",
+          "source": "App_bots/DreamFood.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        }
+      ],
+      "tools": [
+        {
+          "id": "buddy_fleet_runtime",
+          "name": "Executable fleet runtime",
+          "status": "runtime_instance_ready",
+          "evidence": "server/fleet-runtime.ts"
+        },
+        {
+          "id": "buddy_chat_router",
+          "name": "Buddy shared chat router",
+          "status": "runtime_routed",
+          "evidence": "server/routes.ts"
+        },
+        {
+          "id": "buddy_approval_gateway",
+          "name": "Buddy approval gateway",
+          "status": "policy_available",
+          "evidence": "server/approval-notifications.ts"
+        },
+        {
+          "id": "buddy_bot_sandbox",
+          "name": "Per-bot sandbox blueprint",
+          "status": "generated",
+          "evidence": "config/generated/bots.catalog.json"
+        },
+        {
+          "id": "buddy_platform_registry",
+          "name": "Governed platform capability registry",
+          "status": "runtime_routed",
+          "evidence": "config/generated/buddy_platform_expansion.json"
+        },
+        {
+          "id": "buddy_bot_calculator",
+          "name": "Per-bot planning calculator",
+          "status": "local_interactive_ready",
+          "evidence": "config/generated/bot_calculators.json"
+        }
+      ],
+      "api_candidates": [],
+      "data_contract": {
+        "accepted_inputs": [
+          "user brief",
+          "user-selected files or records",
+          "approved connector references"
+        ],
+        "produced_outputs": [
+          "draft",
+          "analysis",
+          "task packet",
+          "sandbox evidence",
+          "approval request when required"
+        ],
+        "sensitivity": "standard_business_data",
+        "sensitive_domains": [],
+        "storage_policy": "store useful project artifacts only; raw credentials are forbidden; raw biometric media remains local or in an encrypted owner vault",
+        "retention": "owner-configurable with deletion and revocation support"
+      },
+      "approvals": {
+        "default_mode": "sandbox",
+        "approval_required": true,
+        "high_impact_profile": true,
+        "triggers": [
+          "email"
+        ],
+        "channels_supported": [
+          "in_app",
+          "email",
+          "sms",
+          "voice_call"
+        ],
+        "contact_requirement": "verified user-owned destination and explicit channel opt-in",
+        "execution_rule": "approval authorizes one scoped action; it never exposes credentials to the bot or browser"
+      },
+      "sandbox": {
+        "sandbox_id": "sandbox-ghost-kitchen",
+        "network_default": "off",
+        "fixture_mode": "synthetic_or_owner_supplied",
+        "seed": 3121583456,
+        "checks": [
+          "profile_schema_valid",
+          "runtime_slug_resolves",
+          "capability_output_matches_brief",
+          "no_secret_in_output",
+          "no_live_external_write",
+          "approval_gate_for_high_impact_action",
+          "failure_and_retry_state_recorded"
+        ],
+        "api_tests": [],
+        "release_gate": "all applicable checks pass and owner approves any live action"
+      },
+      "readiness": {
+        "profile_schema": "verified",
+        "buddy_chat_route": "verified",
+        "executable_runtime_instance": "verified",
+        "standalone_native_runtime": "shared_worker_not_standalone",
+        "external_integrations": "no_division_api_catalog",
+        "production_ready": false,
+        "production_gate": "implement or configure adapters, pass sandbox checks, add authentication, and verify deployment telemetry"
+      },
+      "evidence": {
+        "catalog_source": "App_bots/DreamFood.json",
+        "runtime_sources": [
+          "server/seed-bots.ts"
+        ],
+        "runtime_seed_duplicates": 0
+      },
+      "sample_test_prompt": "Test Ghost Kitchen Optimizer in sandbox mode. Use synthetic data, demonstrate Multi-brand order management, record evidence, and stop before any live external action."
+    },
+    {
+      "identity": {
+        "slug": "tip-calculator",
+        "display_name": "Tip Distribution Calculator",
+        "division": "DreamFood",
+        "category": "payroll",
+        "tier": "free",
+        "catalog_status": "active"
+      },
+      "logo": {
+        "logo_id": "logo-tip-calculator",
+        "emoji": "🧮",
+        "monogram": "TD",
+        "call_sign": "Bright Tower 92786EAC",
+        "shape": "tile",
+        "colors": {
+          "primary": "#0F6F88",
+          "accent": "#C94D63",
+          "surface": "#F4FBFC"
+        },
+        "accessibility_label": "Tip Distribution Calculator logo"
+      },
+      "prospectus": {
+        "mission": "Calculates tip distribution with pool management and compliance tracking.",
+        "target_users": "Restaurant managers, payroll staff",
+        "catalog_business_model": "SaaS subscription",
+        "catalog_price_range": "$0",
+        "pricing_evidence": "catalog_claim_not_verified_revenue",
+        "inputs": [
+          "user brief",
+          "user-selected files or records",
+          "approved connector references"
+        ],
+        "outputs": [
+          "draft",
+          "analysis",
+          "task packet",
+          "sandbox evidence",
+          "approval request when required"
+        ],
+        "limitations": [
+          "This profile has an executable governed runtime instance backed by shared hardened code, not a separate always-running operating-system process.",
+          "External APIs require owner configuration, provider terms, sandbox tests, and scoped approval.",
+          "Published pricing and revenue models are catalog plans, not evidence of sales or earnings."
+        ]
+      },
+      "capabilities": [
+        {
+          "name": "Tip pool calculation",
+          "source": "App_bots/DreamFood.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Distribution rule management",
+          "source": "App_bots/DreamFood.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Shift-based tip splitting",
+          "source": "App_bots/DreamFood.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Compliance reporting tools",
+          "source": "App_bots/DreamFood.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Employee earning summaries",
+          "source": "App_bots/DreamFood.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Basic analytics",
+          "source": "App_bots/DreamFood.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Email support",
+          "source": "App_bots/DreamFood.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Community access",
+          "source": "App_bots/DreamFood.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        }
+      ],
+      "tools": [
+        {
+          "id": "buddy_fleet_runtime",
+          "name": "Executable fleet runtime",
+          "status": "runtime_instance_ready",
+          "evidence": "server/fleet-runtime.ts"
+        },
+        {
+          "id": "buddy_chat_router",
+          "name": "Buddy shared chat router",
+          "status": "runtime_routed",
+          "evidence": "server/routes.ts"
+        },
+        {
+          "id": "buddy_approval_gateway",
+          "name": "Buddy approval gateway",
+          "status": "policy_available",
+          "evidence": "server/approval-notifications.ts"
+        },
+        {
+          "id": "buddy_bot_sandbox",
+          "name": "Per-bot sandbox blueprint",
+          "status": "generated",
+          "evidence": "config/generated/bots.catalog.json"
+        },
+        {
+          "id": "buddy_platform_registry",
+          "name": "Governed platform capability registry",
+          "status": "runtime_routed",
+          "evidence": "config/generated/buddy_platform_expansion.json"
+        },
+        {
+          "id": "buddy_bot_calculator",
+          "name": "Per-bot planning calculator",
+          "status": "local_interactive_ready",
+          "evidence": "config/generated/bot_calculators.json"
+        }
+      ],
+      "api_candidates": [],
+      "data_contract": {
+        "accepted_inputs": [
+          "user brief",
+          "user-selected files or records",
+          "approved connector references"
+        ],
+        "produced_outputs": [
+          "draft",
+          "analysis",
+          "task packet",
+          "sandbox evidence",
+          "approval request when required"
+        ],
+        "sensitivity": "potentially_sensitive",
+        "sensitive_domains": [
+          "employee"
+        ],
+        "storage_policy": "store useful project artifacts only; raw credentials are forbidden; raw biometric media remains local or in an encrypted owner vault",
+        "retention": "owner-configurable with deletion and revocation support"
+      },
+      "approvals": {
+        "default_mode": "sandbox",
+        "approval_required": true,
+        "high_impact_profile": true,
+        "triggers": [
+          "email"
+        ],
+        "channels_supported": [
+          "in_app",
+          "email",
+          "sms",
+          "voice_call"
+        ],
+        "contact_requirement": "verified user-owned destination and explicit channel opt-in",
+        "execution_rule": "approval authorizes one scoped action; it never exposes credentials to the bot or browser"
+      },
+      "sandbox": {
+        "sandbox_id": "sandbox-tip-calculator",
+        "network_default": "off",
+        "fixture_mode": "synthetic_or_owner_supplied",
+        "seed": 2457366188,
+        "checks": [
+          "profile_schema_valid",
+          "runtime_slug_resolves",
+          "capability_output_matches_brief",
+          "no_secret_in_output",
+          "no_live_external_write",
+          "approval_gate_for_high_impact_action",
+          "failure_and_retry_state_recorded"
+        ],
+        "api_tests": [],
+        "release_gate": "all applicable checks pass and owner approves any live action"
+      },
+      "readiness": {
+        "profile_schema": "verified",
+        "buddy_chat_route": "verified",
+        "executable_runtime_instance": "verified",
+        "standalone_native_runtime": "shared_worker_not_standalone",
+        "external_integrations": "no_division_api_catalog",
+        "production_ready": false,
+        "production_gate": "implement or configure adapters, pass sandbox checks, add authentication, and verify deployment telemetry"
+      },
+      "evidence": {
+        "catalog_source": "App_bots/DreamFood.json",
+        "runtime_sources": [
+          "server/seed-bots.ts"
+        ],
+        "runtime_seed_duplicates": 0
+      },
+      "sample_test_prompt": "Test Tip Distribution Calculator in sandbox mode. Use synthetic data, demonstrate Tip pool calculation, record evidence, and stop before any live external action."
+    },
+    {
+      "identity": {
+        "slug": "recipe-scaler",
+        "display_name": "Recipe Scaling Tool",
+        "division": "DreamFood",
+        "category": "recipe-management",
+        "tier": "free",
+        "catalog_status": "active"
+      },
+      "logo": {
+        "logo_id": "logo-recipe-scaler",
+        "emoji": "💼",
+        "monogram": "RS",
+        "call_sign": "Grand Engine 94B0E387",
+        "shape": "hex",
+        "colors": {
+          "primary": "#77521F",
+          "accent": "#287878",
+          "surface": "#FFF9ED"
+        },
+        "accessibility_label": "Recipe Scaling Tool logo"
+      },
+      "prospectus": {
+        "mission": "Scales recipes for different batch sizes with unit conversion and yield calculation.",
+        "target_users": "Chefs, kitchen managers, bakers",
+        "catalog_business_model": "SaaS subscription",
+        "catalog_price_range": "$0",
+        "pricing_evidence": "catalog_claim_not_verified_revenue",
+        "inputs": [
+          "user brief",
+          "user-selected files or records",
+          "approved connector references"
+        ],
+        "outputs": [
+          "draft",
+          "analysis",
+          "task packet",
+          "sandbox evidence",
+          "approval request when required"
+        ],
+        "limitations": [
+          "This profile has an executable governed runtime instance backed by shared hardened code, not a separate always-running operating-system process.",
+          "External APIs require owner configuration, provider terms, sandbox tests, and scoped approval.",
+          "Published pricing and revenue models are catalog plans, not evidence of sales or earnings."
+        ]
+      },
+      "capabilities": [
+        {
+          "name": "Batch size scaling engine",
+          "source": "App_bots/DreamFood.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Unit conversion calculator",
+          "source": "App_bots/DreamFood.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Yield percentage adjustment",
+          "source": "App_bots/DreamFood.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Ingredient substitution suggestions",
+          "source": "App_bots/DreamFood.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Nutrition calculation tools",
+          "source": "App_bots/DreamFood.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Basic analytics",
+          "source": "App_bots/DreamFood.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Email support",
+          "source": "App_bots/DreamFood.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Community access",
+          "source": "App_bots/DreamFood.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        }
+      ],
+      "tools": [
+        {
+          "id": "buddy_fleet_runtime",
+          "name": "Executable fleet runtime",
+          "status": "runtime_instance_ready",
+          "evidence": "server/fleet-runtime.ts"
+        },
+        {
+          "id": "buddy_chat_router",
+          "name": "Buddy shared chat router",
+          "status": "runtime_routed",
+          "evidence": "server/routes.ts"
+        },
+        {
+          "id": "buddy_approval_gateway",
+          "name": "Buddy approval gateway",
+          "status": "policy_available",
+          "evidence": "server/approval-notifications.ts"
+        },
+        {
+          "id": "buddy_bot_sandbox",
+          "name": "Per-bot sandbox blueprint",
+          "status": "generated",
+          "evidence": "config/generated/bots.catalog.json"
+        },
+        {
+          "id": "buddy_platform_registry",
+          "name": "Governed platform capability registry",
+          "status": "runtime_routed",
+          "evidence": "config/generated/buddy_platform_expansion.json"
+        },
+        {
+          "id": "buddy_bot_calculator",
+          "name": "Per-bot planning calculator",
+          "status": "local_interactive_ready",
+          "evidence": "config/generated/bot_calculators.json"
+        }
+      ],
+      "api_candidates": [],
+      "data_contract": {
+        "accepted_inputs": [
+          "user brief",
+          "user-selected files or records",
+          "approved connector references"
+        ],
+        "produced_outputs": [
+          "draft",
+          "analysis",
+          "task packet",
+          "sandbox evidence",
+          "approval request when required"
+        ],
+        "sensitivity": "standard_business_data",
+        "sensitive_domains": [],
+        "storage_policy": "store useful project artifacts only; raw credentials are forbidden; raw biometric media remains local or in an encrypted owner vault",
+        "retention": "owner-configurable with deletion and revocation support"
+      },
+      "approvals": {
+        "default_mode": "sandbox",
+        "approval_required": true,
+        "high_impact_profile": true,
+        "triggers": [
+          "email"
+        ],
+        "channels_supported": [
+          "in_app",
+          "email",
+          "sms",
+          "voice_call"
+        ],
+        "contact_requirement": "verified user-owned destination and explicit channel opt-in",
+        "execution_rule": "approval authorizes one scoped action; it never exposes credentials to the bot or browser"
+      },
+      "sandbox": {
+        "sandbox_id": "sandbox-recipe-scaler",
+        "network_default": "off",
+        "fixture_mode": "synthetic_or_owner_supplied",
+        "seed": 2494620551,
+        "checks": [
+          "profile_schema_valid",
+          "runtime_slug_resolves",
+          "capability_output_matches_brief",
+          "no_secret_in_output",
+          "no_live_external_write",
+          "approval_gate_for_high_impact_action",
+          "failure_and_retry_state_recorded"
+        ],
+        "api_tests": [],
+        "release_gate": "all applicable checks pass and owner approves any live action"
+      },
+      "readiness": {
+        "profile_schema": "verified",
+        "buddy_chat_route": "verified",
+        "executable_runtime_instance": "verified",
+        "standalone_native_runtime": "shared_worker_not_standalone",
+        "external_integrations": "no_division_api_catalog",
+        "production_ready": false,
+        "production_gate": "implement or configure adapters, pass sandbox checks, add authentication, and verify deployment telemetry"
+      },
+      "evidence": {
+        "catalog_source": "App_bots/DreamFood.json",
+        "runtime_sources": [
+          "server/seed-bots.ts"
+        ],
+        "runtime_seed_duplicates": 0
+      },
+      "sample_test_prompt": "Test Recipe Scaling Tool in sandbox mode. Use synthetic data, demonstrate Batch size scaling engine, record evidence, and stop before any live external action."
+    },
+    {
+      "identity": {
+        "slug": "wine-sommelier",
+        "display_name": "Digital Sommelier",
+        "division": "DreamFood",
+        "category": "beverage",
+        "tier": "pro",
+        "catalog_status": "active"
+      },
+      "logo": {
+        "logo_id": "logo-wine-sommelier",
+        "emoji": "🛠️",
+        "monogram": "DS",
+        "call_sign": "Solar Beacon 3D234A19",
+        "shape": "shield",
+        "colors": {
+          "primary": "#275DAD",
+          "accent": "#E38B3C",
+          "surface": "#F7F9FC"
+        },
+        "accessibility_label": "Digital Sommelier logo"
+      },
+      "prospectus": {
+        "mission": "Provides wine pairing recommendations with cellar management and cost optimization.",
+        "target_users": "Sommeliers, beverage directors, wine bars",
+        "catalog_business_model": "SaaS subscription",
+        "catalog_price_range": "$129/mo",
+        "pricing_evidence": "catalog_claim_not_verified_revenue",
+        "inputs": [
+          "user brief",
+          "user-selected files or records",
+          "approved connector references"
+        ],
+        "outputs": [
+          "draft",
+          "analysis",
+          "task packet",
+          "sandbox evidence",
+          "approval request when required"
+        ],
+        "limitations": [
+          "This profile has an executable governed runtime instance backed by shared hardened code, not a separate always-running operating-system process.",
+          "External APIs require owner configuration, provider terms, sandbox tests, and scoped approval.",
+          "Published pricing and revenue models are catalog plans, not evidence of sales or earnings."
+        ]
+      },
+      "capabilities": [
+        {
+          "name": "Wine pairing algorithm",
+          "source": "App_bots/DreamFood.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Cellar inventory management",
+          "source": "App_bots/DreamFood.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Cost per glass calculation",
+          "source": "App_bots/DreamFood.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Tasting note generation",
+          "source": "App_bots/DreamFood.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Vintage tracking tools",
+          "source": "App_bots/DreamFood.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Supplier order management",
+          "source": "App_bots/DreamFood.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Advanced analytics dashboard",
+          "source": "App_bots/DreamFood.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Priority email support",
+          "source": "App_bots/DreamFood.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        }
+      ],
+      "tools": [
+        {
+          "id": "buddy_fleet_runtime",
+          "name": "Executable fleet runtime",
+          "status": "runtime_instance_ready",
+          "evidence": "server/fleet-runtime.ts"
+        },
+        {
+          "id": "buddy_chat_router",
+          "name": "Buddy shared chat router",
+          "status": "runtime_routed",
+          "evidence": "server/routes.ts"
+        },
+        {
+          "id": "buddy_approval_gateway",
+          "name": "Buddy approval gateway",
+          "status": "policy_available",
+          "evidence": "server/approval-notifications.ts"
+        },
+        {
+          "id": "buddy_bot_sandbox",
+          "name": "Per-bot sandbox blueprint",
+          "status": "generated",
+          "evidence": "config/generated/bots.catalog.json"
+        },
+        {
+          "id": "buddy_platform_registry",
+          "name": "Governed platform capability registry",
+          "status": "runtime_routed",
+          "evidence": "config/generated/buddy_platform_expansion.json"
+        },
+        {
+          "id": "buddy_bot_calculator",
+          "name": "Per-bot planning calculator",
+          "status": "local_interactive_ready",
+          "evidence": "config/generated/bot_calculators.json"
+        }
+      ],
+      "api_candidates": [],
+      "data_contract": {
+        "accepted_inputs": [
+          "user brief",
+          "user-selected files or records",
+          "approved connector references"
+        ],
+        "produced_outputs": [
+          "draft",
+          "analysis",
+          "task packet",
+          "sandbox evidence",
+          "approval request when required"
+        ],
+        "sensitivity": "standard_business_data",
+        "sensitive_domains": [],
+        "storage_policy": "store useful project artifacts only; raw credentials are forbidden; raw biometric media remains local or in an encrypted owner vault",
+        "retention": "owner-configurable with deletion and revocation support"
+      },
+      "approvals": {
+        "default_mode": "sandbox",
+        "approval_required": true,
+        "high_impact_profile": true,
+        "triggers": [
+          "email"
+        ],
+        "channels_supported": [
+          "in_app",
+          "email",
+          "sms",
+          "voice_call"
+        ],
+        "contact_requirement": "verified user-owned destination and explicit channel opt-in",
+        "execution_rule": "approval authorizes one scoped action; it never exposes credentials to the bot or browser"
+      },
+      "sandbox": {
+        "sandbox_id": "sandbox-wine-sommelier",
+        "network_default": "off",
+        "fixture_mode": "synthetic_or_owner_supplied",
+        "seed": 1025722905,
+        "checks": [
+          "profile_schema_valid",
+          "runtime_slug_resolves",
+          "capability_output_matches_brief",
+          "no_secret_in_output",
+          "no_live_external_write",
+          "approval_gate_for_high_impact_action",
+          "failure_and_retry_state_recorded"
+        ],
+        "api_tests": [],
+        "release_gate": "all applicable checks pass and owner approves any live action"
+      },
+      "readiness": {
+        "profile_schema": "verified",
+        "buddy_chat_route": "verified",
+        "executable_runtime_instance": "verified",
+        "standalone_native_runtime": "shared_worker_not_standalone",
+        "external_integrations": "no_division_api_catalog",
+        "production_ready": false,
+        "production_gate": "implement or configure adapters, pass sandbox checks, add authentication, and verify deployment telemetry"
+      },
+      "evidence": {
+        "catalog_source": "App_bots/DreamFood.json",
+        "runtime_sources": [
+          "server/seed-bots.ts"
+        ],
+        "runtime_seed_duplicates": 0
+      },
+      "sample_test_prompt": "Test Digital Sommelier in sandbox mode. Use synthetic data, demonstrate Wine pairing algorithm, record evidence, and stop before any live external action."
+    },
+    {
+      "identity": {
+        "slug": "food-truck-ops",
+        "display_name": "Food Truck Operations AI",
+        "division": "DreamFood",
+        "category": "mobile-food",
+        "tier": "pro",
+        "catalog_status": "active"
+      },
+      "logo": {
+        "logo_id": "logo-food-truck-ops",
+        "emoji": "📈",
+        "monogram": "FT",
+        "call_sign": "Bold Path A59689D4",
+        "shape": "hex",
+        "colors": {
+          "primary": "#0F6F88",
+          "accent": "#C94D63",
+          "surface": "#F4FBFC"
+        },
+        "accessibility_label": "Food Truck Operations AI logo"
+      },
+      "prospectus": {
+        "mission": "Manages food truck operations with location analytics and route planning.",
+        "target_users": "Food truck owners, mobile food operators",
+        "catalog_business_model": "SaaS subscription",
+        "catalog_price_range": "$79/mo",
+        "pricing_evidence": "catalog_claim_not_verified_revenue",
+        "inputs": [
+          "user brief",
+          "user-selected files or records",
+          "approved connector references"
+        ],
+        "outputs": [
+          "draft",
+          "analysis",
+          "task packet",
+          "sandbox evidence",
+          "approval request when required"
+        ],
+        "limitations": [
+          "This profile has an executable governed runtime instance backed by shared hardened code, not a separate always-running operating-system process.",
+          "External APIs require owner configuration, provider terms, sandbox tests, and scoped approval.",
+          "Published pricing and revenue models are catalog plans, not evidence of sales or earnings."
+        ]
+      },
+      "capabilities": [
+        {
+          "name": "Location performance analytics",
+          "source": "App_bots/DreamFood.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Route planning optimization",
+          "source": "App_bots/DreamFood.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Inventory for mobile units",
+          "source": "App_bots/DreamFood.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Weather impact prediction",
+          "source": "App_bots/DreamFood.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Social media event tracking",
+          "source": "App_bots/DreamFood.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Permit compliance management",
+          "source": "App_bots/DreamFood.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Advanced analytics dashboard",
+          "source": "App_bots/DreamFood.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Priority email support",
+          "source": "App_bots/DreamFood.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        }
+      ],
+      "tools": [
+        {
+          "id": "buddy_fleet_runtime",
+          "name": "Executable fleet runtime",
+          "status": "runtime_instance_ready",
+          "evidence": "server/fleet-runtime.ts"
+        },
+        {
+          "id": "buddy_chat_router",
+          "name": "Buddy shared chat router",
+          "status": "runtime_routed",
+          "evidence": "server/routes.ts"
+        },
+        {
+          "id": "buddy_approval_gateway",
+          "name": "Buddy approval gateway",
+          "status": "policy_available",
+          "evidence": "server/approval-notifications.ts"
+        },
+        {
+          "id": "buddy_bot_sandbox",
+          "name": "Per-bot sandbox blueprint",
+          "status": "generated",
+          "evidence": "config/generated/bots.catalog.json"
+        },
+        {
+          "id": "buddy_platform_registry",
+          "name": "Governed platform capability registry",
+          "status": "runtime_routed",
+          "evidence": "config/generated/buddy_platform_expansion.json"
+        },
+        {
+          "id": "buddy_bot_calculator",
+          "name": "Per-bot planning calculator",
+          "status": "local_interactive_ready",
+          "evidence": "config/generated/bot_calculators.json"
+        },
+        {
+          "id": "buddy_creative_studio",
+          "name": "Buddy Creative Studio",
+          "status": "local_prototype_available",
+          "evidence": "dreamco_platform/creative/studio.py"
+        },
+        {
+          "id": "buddy_social_manager",
+          "name": "Buddy Social Manager",
+          "status": "approval_gated_adapter_contract",
+          "evidence": "dreamco_platform/social/manager.py"
+        }
+      ],
+      "api_candidates": [],
+      "data_contract": {
+        "accepted_inputs": [
+          "user brief",
+          "user-selected files or records",
+          "approved connector references"
+        ],
+        "produced_outputs": [
+          "draft",
+          "analysis",
+          "task packet",
+          "sandbox evidence",
+          "approval request when required"
+        ],
+        "sensitivity": "standard_business_data",
+        "sensitive_domains": [],
+        "storage_policy": "store useful project artifacts only; raw credentials are forbidden; raw biometric media remains local or in an encrypted owner vault",
+        "retention": "owner-configurable with deletion and revocation support"
+      },
+      "approvals": {
+        "default_mode": "sandbox",
+        "approval_required": true,
+        "high_impact_profile": true,
+        "triggers": [
+          "email"
+        ],
+        "channels_supported": [
+          "in_app",
+          "email",
+          "sms",
+          "voice_call"
+        ],
+        "contact_requirement": "verified user-owned destination and explicit channel opt-in",
+        "execution_rule": "approval authorizes one scoped action; it never exposes credentials to the bot or browser"
+      },
+      "sandbox": {
+        "sandbox_id": "sandbox-food-truck-ops",
+        "network_default": "off",
+        "fixture_mode": "synthetic_or_owner_supplied",
+        "seed": 2778106324,
+        "checks": [
+          "profile_schema_valid",
+          "runtime_slug_resolves",
+          "capability_output_matches_brief",
+          "no_secret_in_output",
+          "no_live_external_write",
+          "approval_gate_for_high_impact_action",
+          "failure_and_retry_state_recorded"
+        ],
+        "api_tests": [],
+        "release_gate": "all applicable checks pass and owner approves any live action"
+      },
+      "readiness": {
+        "profile_schema": "verified",
+        "buddy_chat_route": "verified",
+        "executable_runtime_instance": "verified",
+        "standalone_native_runtime": "shared_worker_not_standalone",
+        "external_integrations": "no_division_api_catalog",
+        "production_ready": false,
+        "production_gate": "implement or configure adapters, pass sandbox checks, add authentication, and verify deployment telemetry"
+      },
+      "evidence": {
+        "catalog_source": "App_bots/DreamFood.json",
+        "runtime_sources": [
+          "server/seed-bots.ts"
+        ],
+        "runtime_seed_duplicates": 0
+      },
+      "sample_test_prompt": "Test Food Truck Operations AI in sandbox mode. Use synthetic data, demonstrate Location performance analytics, record evidence, and stop before any live external action."
+    },
+    {
+      "identity": {
+        "slug": "hotel-room-service",
+        "display_name": "Room Service Management",
+        "division": "DreamFood",
+        "category": "hospitality",
+        "tier": "enterprise",
+        "catalog_status": "active"
+      },
+      "logo": {
+        "logo_id": "logo-hotel-room-service",
+        "emoji": "🛠️",
+        "monogram": "RS",
+        "call_sign": "Expert Forge 5BA0315B",
+        "shape": "tile",
+        "colors": {
+          "primary": "#5B3A8A",
+          "accent": "#D89B2B",
+          "surface": "#F8F5FF"
+        },
+        "accessibility_label": "Room Service Management logo"
+      },
+      "prospectus": {
+        "mission": "Manages hotel room service operations with order routing and guest preference tracking.",
+        "target_users": "Hotel F&B directors, room service managers",
+        "catalog_business_model": "Enterprise license",
+        "catalog_price_range": "$599/mo",
+        "pricing_evidence": "catalog_claim_not_verified_revenue",
+        "inputs": [
+          "user brief",
+          "user-selected files or records",
+          "approved connector references"
+        ],
+        "outputs": [
+          "draft",
+          "analysis",
+          "task packet",
+          "sandbox evidence",
+          "approval request when required"
+        ],
+        "limitations": [
+          "This profile has an executable governed runtime instance backed by shared hardened code, not a separate always-running operating-system process.",
+          "External APIs require owner configuration, provider terms, sandbox tests, and scoped approval.",
+          "Published pricing and revenue models are catalog plans, not evidence of sales or earnings."
+        ]
+      },
+      "capabilities": [
+        {
+          "name": "Order routing automation",
+          "source": "App_bots/DreamFood.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Guest preference profiling",
+          "source": "App_bots/DreamFood.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Tray tracking system",
+          "source": "App_bots/DreamFood.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Minibar inventory management",
+          "source": "App_bots/DreamFood.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Guest satisfaction scoring",
+          "source": "App_bots/DreamFood.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Revenue per room analytics",
+          "source": "App_bots/DreamFood.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Advanced analytics dashboard",
+          "source": "App_bots/DreamFood.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Priority email support",
+          "source": "App_bots/DreamFood.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        }
+      ],
+      "tools": [
+        {
+          "id": "buddy_fleet_runtime",
+          "name": "Executable fleet runtime",
+          "status": "runtime_instance_ready",
+          "evidence": "server/fleet-runtime.ts"
+        },
+        {
+          "id": "buddy_chat_router",
+          "name": "Buddy shared chat router",
+          "status": "runtime_routed",
+          "evidence": "server/routes.ts"
+        },
+        {
+          "id": "buddy_approval_gateway",
+          "name": "Buddy approval gateway",
+          "status": "policy_available",
+          "evidence": "server/approval-notifications.ts"
+        },
+        {
+          "id": "buddy_bot_sandbox",
+          "name": "Per-bot sandbox blueprint",
+          "status": "generated",
+          "evidence": "config/generated/bots.catalog.json"
+        },
+        {
+          "id": "buddy_platform_registry",
+          "name": "Governed platform capability registry",
+          "status": "runtime_routed",
+          "evidence": "config/generated/buddy_platform_expansion.json"
+        },
+        {
+          "id": "buddy_bot_calculator",
+          "name": "Per-bot planning calculator",
+          "status": "local_interactive_ready",
+          "evidence": "config/generated/bot_calculators.json"
+        }
+      ],
+      "api_candidates": [],
+      "data_contract": {
+        "accepted_inputs": [
+          "user brief",
+          "user-selected files or records",
+          "approved connector references"
+        ],
+        "produced_outputs": [
+          "draft",
+          "analysis",
+          "task packet",
+          "sandbox evidence",
+          "approval request when required"
+        ],
+        "sensitivity": "standard_business_data",
+        "sensitive_domains": [],
+        "storage_policy": "store useful project artifacts only; raw credentials are forbidden; raw biometric media remains local or in an encrypted owner vault",
+        "retention": "owner-configurable with deletion and revocation support"
+      },
+      "approvals": {
+        "default_mode": "sandbox",
+        "approval_required": true,
+        "high_impact_profile": true,
+        "triggers": [
+          "email"
+        ],
+        "channels_supported": [
+          "in_app",
+          "email",
+          "sms",
+          "voice_call"
+        ],
+        "contact_requirement": "verified user-owned destination and explicit channel opt-in",
+        "execution_rule": "approval authorizes one scoped action; it never exposes credentials to the bot or browser"
+      },
+      "sandbox": {
+        "sandbox_id": "sandbox-hotel-room-service",
+        "network_default": "off",
+        "fixture_mode": "synthetic_or_owner_supplied",
+        "seed": 1537225051,
+        "checks": [
+          "profile_schema_valid",
+          "runtime_slug_resolves",
+          "capability_output_matches_brief",
+          "no_secret_in_output",
+          "no_live_external_write",
+          "approval_gate_for_high_impact_action",
+          "failure_and_retry_state_recorded"
+        ],
+        "api_tests": [],
+        "release_gate": "all applicable checks pass and owner approves any live action"
+      },
+      "readiness": {
+        "profile_schema": "verified",
+        "buddy_chat_route": "verified",
+        "executable_runtime_instance": "verified",
+        "standalone_native_runtime": "shared_worker_not_standalone",
+        "external_integrations": "no_division_api_catalog",
+        "production_ready": false,
+        "production_gate": "implement or configure adapters, pass sandbox checks, add authentication, and verify deployment telemetry"
+      },
+      "evidence": {
+        "catalog_source": "App_bots/DreamFood.json",
+        "runtime_sources": [
+          "server/seed-bots.ts"
+        ],
+        "runtime_seed_duplicates": 0
+      },
+      "sample_test_prompt": "Test Room Service Management in sandbox mode. Use synthetic data, demonstrate Order routing automation, record evidence, and stop before any live external action."
+    },
+    {
+      "identity": {
+        "slug": "sustainability-food",
+        "display_name": "Food Sustainability Tracker",
+        "division": "DreamFood",
+        "category": "sustainability",
+        "tier": "enterprise",
+        "catalog_status": "active"
+      },
+      "logo": {
+        "logo_id": "logo-sustainability-food",
+        "emoji": "🎮",
+        "monogram": "FS",
+        "call_sign": "Swift Orbit A11B76F8",
+        "shape": "shield",
+        "colors": {
+          "primary": "#176B5B",
+          "accent": "#D7A73B",
+          "surface": "#F5F7F3"
+        },
+        "accessibility_label": "Food Sustainability Tracker logo"
+      },
+      "prospectus": {
+        "mission": "Tracks food sustainability metrics with waste reduction and sourcing analysis.",
+        "target_users": "Sustainability directors, CSR managers",
+        "catalog_business_model": "Enterprise license",
+        "catalog_price_range": "$499/mo",
+        "pricing_evidence": "catalog_claim_not_verified_revenue",
+        "inputs": [
+          "user brief",
+          "user-selected files or records",
+          "approved connector references"
+        ],
+        "outputs": [
+          "draft",
+          "analysis",
+          "task packet",
+          "sandbox evidence",
+          "approval request when required"
+        ],
+        "limitations": [
+          "This profile has an executable governed runtime instance backed by shared hardened code, not a separate always-running operating-system process.",
+          "External APIs require owner configuration, provider terms, sandbox tests, and scoped approval.",
+          "Published pricing and revenue models are catalog plans, not evidence of sales or earnings."
+        ]
+      },
+      "capabilities": [
+        {
+          "name": "Carbon footprint calculation",
+          "source": "App_bots/DreamFood.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Local sourcing percentage tracking",
+          "source": "App_bots/DreamFood.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Food waste audit automation",
+          "source": "App_bots/DreamFood.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Sustainable packaging scoring",
+          "source": "App_bots/DreamFood.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Supply chain transparency mapping",
+          "source": "App_bots/DreamFood.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Certification compliance tracking",
+          "source": "App_bots/DreamFood.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Advanced analytics dashboard",
+          "source": "App_bots/DreamFood.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Priority email support",
+          "source": "App_bots/DreamFood.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        }
+      ],
+      "tools": [
+        {
+          "id": "buddy_fleet_runtime",
+          "name": "Executable fleet runtime",
+          "status": "runtime_instance_ready",
+          "evidence": "server/fleet-runtime.ts"
+        },
+        {
+          "id": "buddy_chat_router",
+          "name": "Buddy shared chat router",
+          "status": "runtime_routed",
+          "evidence": "server/routes.ts"
+        },
+        {
+          "id": "buddy_approval_gateway",
+          "name": "Buddy approval gateway",
+          "status": "policy_available",
+          "evidence": "server/approval-notifications.ts"
+        },
+        {
+          "id": "buddy_bot_sandbox",
+          "name": "Per-bot sandbox blueprint",
+          "status": "generated",
+          "evidence": "config/generated/bots.catalog.json"
+        },
+        {
+          "id": "buddy_platform_registry",
+          "name": "Governed platform capability registry",
+          "status": "runtime_routed",
+          "evidence": "config/generated/buddy_platform_expansion.json"
+        },
+        {
+          "id": "buddy_bot_calculator",
+          "name": "Per-bot planning calculator",
+          "status": "local_interactive_ready",
+          "evidence": "config/generated/bot_calculators.json"
+        },
+        {
+          "id": "buddy_code_workspace",
+          "name": "Buddy Code Workspace",
+          "status": "shared_runtime_route",
+          "evidence": "server/seed-buddy-bot.ts"
+        }
+      ],
+      "api_candidates": [],
+      "data_contract": {
+        "accepted_inputs": [
+          "user brief",
+          "user-selected files or records",
+          "approved connector references"
+        ],
+        "produced_outputs": [
+          "draft",
+          "analysis",
+          "task packet",
+          "sandbox evidence",
+          "approval request when required"
+        ],
+        "sensitivity": "standard_business_data",
+        "sensitive_domains": [],
+        "storage_policy": "store useful project artifacts only; raw credentials are forbidden; raw biometric media remains local or in an encrypted owner vault",
+        "retention": "owner-configurable with deletion and revocation support"
+      },
+      "approvals": {
+        "default_mode": "sandbox",
+        "approval_required": true,
+        "high_impact_profile": true,
+        "triggers": [
+          "email"
+        ],
+        "channels_supported": [
+          "in_app",
+          "email",
+          "sms",
+          "voice_call"
+        ],
+        "contact_requirement": "verified user-owned destination and explicit channel opt-in",
+        "execution_rule": "approval authorizes one scoped action; it never exposes credentials to the bot or browser"
+      },
+      "sandbox": {
+        "sandbox_id": "sandbox-sustainability-food",
+        "network_default": "off",
+        "fixture_mode": "synthetic_or_owner_supplied",
+        "seed": 2702931704,
+        "checks": [
+          "profile_schema_valid",
+          "runtime_slug_resolves",
+          "capability_output_matches_brief",
+          "no_secret_in_output",
+          "no_live_external_write",
+          "approval_gate_for_high_impact_action",
+          "failure_and_retry_state_recorded"
+        ],
+        "api_tests": [],
+        "release_gate": "all applicable checks pass and owner approves any live action"
+      },
+      "readiness": {
+        "profile_schema": "verified",
+        "buddy_chat_route": "verified",
+        "executable_runtime_instance": "verified",
+        "standalone_native_runtime": "shared_worker_not_standalone",
+        "external_integrations": "no_division_api_catalog",
+        "production_ready": false,
+        "production_gate": "implement or configure adapters, pass sandbox checks, add authentication, and verify deployment telemetry"
+      },
+      "evidence": {
+        "catalog_source": "App_bots/DreamFood.json",
+        "runtime_sources": [
+          "server/seed-bots.ts"
+        ],
+        "runtime_seed_duplicates": 0
+      },
+      "sample_test_prompt": "Test Food Sustainability Tracker in sandbox mode. Use synthetic data, demonstrate Carbon footprint calculation, record evidence, and stop before any live external action."
+    }
+  ]
+}

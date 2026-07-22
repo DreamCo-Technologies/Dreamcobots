@@ -1,6 +1,9 @@
 import type { Express, Request, Response } from "express";
 import type { Server } from "http";
+import { readFileSync } from "node:fs";
+import { resolve } from "node:path";
 import OpenAI from "openai";
+import type { ChatCompletionMessageParam } from "openai/resources/chat/completions";
 import { z } from "zod";
 import { sql } from "drizzle-orm";
 import multer from "multer";
@@ -32,6 +35,13 @@ import {
   tokenTransferPlanRequestSchema,
   toPublicTokenTransferPlan,
 } from "./token-transfer";
+import {
+  approvalNotificationRequestSchema,
+  createApprovalNotificationPlan,
+  notificationPreferencesSchema,
+} from "./approval-notifications";
+import { fleetExecutionRequestSchema, getFleetRuntimeRegistry } from "./fleet-runtime";
+import { outboundAdapterReadiness } from "./outbound-adapters";
 
 const CORE_SLUGS = new Set(CORE_BOTS.map(b => b.slug));
 const GITHUB_SLUGS = new Set(GITHUB_BOTS.map(b => b.slug));
@@ -68,7 +78,7 @@ function toCache(key: string, result: unknown): void {
 }
 
 // Trim conversation history to stay within token budget
-function trimHistory(messages: Array<{ role: string; content: string }>, max = MAX_HISTORY_MSG) {
+function trimHistory(messages: ChatCompletionMessageParam[], max = MAX_HISTORY_MSG) {
   if (messages.length <= max) return messages;
   // Always keep first message (context) + last (max-1) messages
   return [messages[0], ...messages.slice(-(max - 1))];
@@ -413,6 +423,60 @@ export async function registerRoutes(
       res.json({ query, results: data.items ?? [], total: data.total_count ?? 0 });
     } catch (e: any) {
       res.status(500).json({ error: e.message || "GitHub search failed" });
+    }
+  });
+
+  // ===== APPROVAL NOTIFICATION PLANNING =====
+  app.get("/api/approval-notifications/capabilities", (_req, res) => {
+    const adapters = outboundAdapterReadiness();
+    res.json({
+      schema: "dreamco.approval_notification_capabilities.v1",
+      channels: {
+        in_app: { status: adapters.channels.in_app.status, adapter: adapters.channels.in_app.adapter },
+        email: { status: adapters.channels.email.status, adapter: adapters.channels.email.adapter },
+        sms: { status: adapters.channels.sms.status, adapter: adapters.channels.sms.adapter, explicitOptInRequired: true },
+        voice_call: { status: adapters.channels.voice_call.status, adapter: adapters.channels.voice_call.adapter, explicitOptInRequired: true },
+      },
+      verifiedDestinationRequired: true,
+      rawContactDetailsAccepted: false,
+      liveDispatchAvailableFromThisRoute: false,
+    });
+  });
+
+  app.post("/api/approval-notifications/plan", (req, res) => {
+    try {
+      const request = approvalNotificationRequestSchema.parse(req.body?.request);
+      const preferences = notificationPreferencesSchema.parse(req.body?.preferences);
+      res.status(201).json(createApprovalNotificationPlan(request, preferences));
+    } catch (error) {
+      if (error instanceof z.ZodError) return res.status(400).json(zodValidationError(error));
+      throw error;
+    }
+  });
+
+  // ===== EXECUTABLE BOT FLEET =====
+  app.get("/api/fleet/runtime/health", (_req, res) => {
+    res.setHeader("Cache-Control", "no-store");
+    res.json(getFleetRuntimeRegistry().summary());
+  });
+
+  app.get("/api/fleet/runtime/:slug/health", (req, res) => {
+    const runtime = getFleetRuntimeRegistry().get(req.params.slug);
+    if (!runtime) return res.status(404).json({ message: "Bot runtime not found" });
+    res.setHeader("Cache-Control", "no-store");
+    res.json(runtime.health());
+  });
+
+  app.post("/api/fleet/runtime/:slug/execute", (req, res) => {
+    try {
+      const runtime = getFleetRuntimeRegistry().get(req.params.slug);
+      if (!runtime) return res.status(404).json({ message: "Bot runtime not found" });
+      const request = fleetExecutionRequestSchema.parse(req.body);
+      const result = runtime.execute(request);
+      res.status(result.status === "approval_required" ? 202 : 201).json(result);
+    } catch (error) {
+      if (error instanceof z.ZodError) return res.status(400).json(zodValidationError(error));
+      throw error;
     }
   });
 
@@ -821,7 +885,7 @@ export async function registerRoutes(
         Buffer: { from: (s: string) => ({ toString: () => s }) },
       };
       try {
-        const script = new vm.Script(code, { timeout: 5000 });
+        const script = new vm.Script(code);
         const result = script.runInNewContext(sandbox, { timeout: 5000 } as any);
         if (result !== undefined && result !== null) logs.push(String(result));
         res.json({ output: logs.join("\n") || "(no output)", error: errs.length ? errs.join("\n") : null, executionTimeMs: Date.now() - start, language: lang });
@@ -1142,12 +1206,36 @@ export async function registerRoutes(
   });
 
   // ===== BUDDY FEATURES STATUS (UPDATED) =====
+  app.get("/api/buddy/platform-expansion", (_req, res) => {
+    try {
+      const path = resolve(process.cwd(), "config", "generated", "buddy_platform_expansion.json");
+      res.json(JSON.parse(readFileSync(path, "utf8")));
+    } catch (error) {
+      res.status(503).json({
+        error: "Buddy platform registry is unavailable.",
+        detail: error instanceof Error ? error.message : "unknown error",
+      });
+    }
+  });
+
+  app.get("/api/buddy/calculators", (_req, res) => {
+    try {
+      const path = resolve(process.cwd(), "config", "generated", "bot_calculators.json");
+      res.json(JSON.parse(readFileSync(path, "utf8")));
+    } catch (error) {
+      res.status(503).json({
+        error: "Buddy calculator registry is unavailable.",
+        detail: error instanceof Error ? error.message : "unknown error",
+      });
+    }
+  });
+
   app.get("/api/buddy/features", async (_req, res) => {
     res.json({
       features: [
         { name: "Vibe Coding", route: "POST /api/buddy/vibe-code", status: "live", description: "Generate full projects from description" },
         { name: "Image Generation", route: "POST /api/generate-image", status: "live", description: "AI image generation via gpt-image-1" },
-        { name: "Voice Cloning", route: "POST /api/voice/clone", status: process.env.ELEVENLABS_API_KEY ? "live" : "needs-key", description: "Text-to-speech + voice cloning via ElevenLabs", setup: "Add ELEVENLABS_API_KEY" },
+        { name: "Voice and Likeness", route: "POST /api/voice/clone", status: process.env.ELEVENLABS_API_KEY ? "optional-provider-configured" : "local-adapter-ready", description: "Self-owned adult media with consent, labeling, and local or optional provider adapters" },
         { name: "Web Search", route: "POST /api/search/web", status: "live", description: "GitHub + OpenAI synthesis search" },
         { name: "GitHub Intelligence", route: "GET /api/github-intel/trending", status: "live", description: "Hourly GitHub trending + search" },
         { name: "Council Governance", route: "GET /api/council/proposals", status: "live", description: "Bot proposal submission and approval" },
@@ -1156,7 +1244,9 @@ export async function registerRoutes(
         { name: "Game Builder", route: "POST /api/buddy/build-game", status: "live", description: "Build browser-playable games from description" },
         { name: "Course Simulator", route: "POST /api/buddy/simulate-course", status: "live", description: "Simulate full college courses" },
         { name: "Competitive Intel", route: "POST /api/intel/competitive", status: "live", description: "Analyze any competitor" },
-        { name: "Data Packages", route: "GET /api/data-packages", status: "live", description: "Sell training data to other AI models" },
+        { name: "Data Packages", route: "GET /api/data-packages", status: "consent-gated", description: "Package only user-owned, licensed, nonsensitive data with separate opt-in and opt-out controls" },
+        { name: "Governed Platform Registry", route: "GET /api/buddy/platform-expansion", status: "live", description: "Launch, privacy, finance, creative, IP, open-source, customization, and roadmap contracts" },
+        { name: "Bot Calculator Registry", route: "GET /api/buddy/calculators", status: "live", description: "One bounded local planning calculator contract for every Buddy bot profile" },
         { name: "Code Execution", route: "POST /api/buddy/execute-code", status: "live", description: "Run JS/TS natively; simulate Python, Rust, Go, Java" },
         { name: "Image Analysis", route: "POST /api/buddy/analyze-image", status: "live", description: "GPT-4o vision: screenshots → code, diagrams → schema" },
         { name: "Agent Pipeline", route: "POST /api/buddy/agent-run", status: "live", description: "Multi-step autonomous Plan → Execute → Ship pipeline" },
@@ -1492,7 +1582,10 @@ export async function registerRoutes(
 
     const history = await storage.getMessages(conversationId);
     // Trim history to MAX_HISTORY_MSG — prevents unbounded token growth on long conversations
-    const historyMsgs = history.map((m) => ({ role: m.role as "user" | "assistant", content: m.content }));
+    const historyMsgs: ChatCompletionMessageParam[] = history.map((m) => ({
+      role: m.role === "assistant" ? "assistant" : "user",
+      content: m.content,
+    }));
     const trimmedHistory = trimHistory(historyMsgs);
     const messagesForModel = [
       { role: "system" as const, content: system },
@@ -2129,111 +2222,109 @@ export async function registerRoutes(
   });
 
   app.get("/api/stripe/products", async (_req, res) => {
+    const inferTierFromName = (name: string | null | undefined): string | null => {
+      if (!name) return null;
+      const lower = name.toLowerCase();
+      if (lower.includes("elite")) return "elite";
+      if (lower.includes("enterprise")) return "enterprise";
+      if (lower.includes("pro")) return "pro";
+      if (lower.includes("free")) return "free";
+      return null;
+    };
+
     try {
-      const result = await db.execute(sql`
-        SELECT 
-          p.id as product_id,
-          p.name as product_name,
-          p.description as product_description,
-          p.active as product_active,
-          p.metadata as product_metadata,
-          pr.id as price_id,
-          pr.unit_amount,
-          pr.currency,
-          pr.recurring,
-          pr.active as price_active
-        FROM stripe.products p
-        LEFT JOIN stripe.prices pr ON pr.product = p.id AND pr.active = true
-        WHERE p.active = true
-        ORDER BY p.name, pr.unit_amount
-      `);
-
-      const inferTierFromName = (name: string | null | undefined): string | null => {
-        if (!name) return null;
-        const lower = name.toLowerCase();
-        if (lower.includes("elite")) return "elite";
-        if (lower.includes("enterprise")) return "enterprise";
-        if (lower.includes("pro")) return "pro";
-        if (lower.includes("free")) return "free";
-        return null;
-      };
-
-      const productsMap = new Map<string, any>();
-      for (const row of result.rows) {
-        const r = row as any;
-        if (!productsMap.has(r.product_id)) {
-          const meta = r.product_metadata ?? {};
-          if (!meta.tier) {
-            const inferred = inferTierFromName(r.product_name);
-            if (inferred) meta.tier = inferred;
-          }
-          productsMap.set(r.product_id, {
-            id: r.product_id,
-            name: r.product_name,
-            description: r.product_description,
-            metadata: meta,
-            prices: [],
-          });
-        }
-        if (r.price_id) {
-          productsMap.get(r.product_id).prices.push({
-            id: r.price_id,
-            unit_amount: r.unit_amount,
-            currency: r.currency,
-            recurring: r.recurring,
-          });
-        }
-      }
-
-      const dbProducts = Array.from(productsMap.values());
-
-      if (dbProducts.length > 0) {
-        return res.json({ products: dbProducts });
-      }
-
-      // DB is empty — sync hasn't finished yet. Fall back to a live Stripe API call.
       try {
-        const stripe = await getUncachableStripeClient();
-        const [stripeProducts, stripePrices] = await Promise.all([
-          stripe.products.list({ active: true, limit: 100 }),
-          stripe.prices.list({ active: true, limit: 100 }),
-        ]);
+        const result = await db.execute(sql`
+          SELECT
+            p.id as product_id,
+            p.name as product_name,
+            p.description as product_description,
+            p.active as product_active,
+            p.metadata as product_metadata,
+            pr.id as price_id,
+            pr.unit_amount,
+            pr.currency,
+            pr.recurring,
+            pr.active as price_active
+          FROM stripe.products p
+          LEFT JOIN stripe.prices pr ON pr.product = p.id AND pr.active = true
+          WHERE p.active = true
+          ORDER BY p.name, pr.unit_amount
+        `);
 
-        const livePricesByProduct = new Map<string, any[]>();
-        for (const price of stripePrices.data) {
-          const pid = typeof price.product === "string" ? price.product : (price.product as any).id;
-          if (!livePricesByProduct.has(pid)) livePricesByProduct.set(pid, []);
-          livePricesByProduct.get(pid)!.push({
-            id: price.id,
-            unit_amount: price.unit_amount,
-            currency: price.currency,
-            recurring: price.recurring,
-          });
+        const productsMap = new Map<string, any>();
+        for (const row of result.rows) {
+          const r = row as any;
+          if (!productsMap.has(r.product_id)) {
+            const metadata = { ...(r.product_metadata ?? {}) };
+            if (!metadata.tier) {
+              const inferred = inferTierFromName(r.product_name);
+              if (inferred) metadata.tier = inferred;
+            }
+            productsMap.set(r.product_id, {
+              id: r.product_id,
+              name: r.product_name,
+              description: r.product_description,
+              metadata,
+              prices: [],
+            });
+          }
+          if (r.price_id) {
+            productsMap.get(r.product_id).prices.push({
+              id: r.price_id,
+              unit_amount: r.unit_amount,
+              currency: r.currency,
+              recurring: r.recurring,
+            });
+          }
         }
 
-        const liveProducts = stripeProducts.data.map((p) => {
-          const meta: Record<string, string> = { ...(p.metadata as Record<string, string>) };
-          if (!meta.tier) {
-            const inferred = inferTierFromName(p.name);
-            if (inferred) meta.tier = inferred;
-          }
-          return {
-            id: p.id,
-            name: p.name,
-            description: p.description,
-            metadata: meta,
-            prices: livePricesByProduct.get(p.id) ?? [],
-          };
-        });
-
-        return res.json({ products: liveProducts, source: "live" });
-      } catch (liveError: any) {
-        console.warn("Live Stripe fallback also failed:", liveError.message);
-        return res.json({ products: [], syncing: true });
+        const databaseProducts = Array.from(productsMap.values());
+        if (databaseProducts.length > 0) return res.json({ products: databaseProducts, source: "database" });
+      } catch (databaseError: any) {
+        console.warn("Stripe product cache unavailable; using the live API:", databaseError.message);
       }
+
+      const stripe = await getUncachableStripeClient();
+      const [stripeProducts, stripePrices] = await Promise.all([
+        stripe.products.list({ active: true, limit: 100 }),
+        stripe.prices.list({ active: true, limit: 100 }),
+      ]);
+      const livePricesByProduct = new Map<string, any[]>();
+      for (const price of stripePrices.data) {
+        const productId = typeof price.product === "string" ? price.product : price.product.id;
+        const prices = livePricesByProduct.get(productId) ?? [];
+        prices.push({
+          id: price.id,
+          unit_amount: price.unit_amount,
+          currency: price.currency,
+          recurring: price.recurring,
+        });
+        livePricesByProduct.set(productId, prices);
+      }
+
+      const liveProducts = stripeProducts.data.map((product) => {
+        const metadata: Record<string, string> = { ...product.metadata };
+        if (!metadata.tier) {
+          const inferred = inferTierFromName(product.name);
+          if (inferred) metadata.tier = inferred;
+        }
+        return {
+          id: product.id,
+          name: product.name,
+          description: product.description,
+          metadata,
+          prices: livePricesByProduct.get(product.id) ?? [],
+        };
+      });
+      return res.json({ products: liveProducts, source: "live" });
     } catch (error: any) {
-      console.error("Failed to list products:", error.message);
-      res.json({ products: [], syncing: true });
+      console.error("Failed to list Stripe products:", error.message);
+      return res.status(503).json({
+        products: [],
+        source: "unavailable",
+        error: "Billing catalog is not configured on this server.",
+      });
     }
   });
 
@@ -2933,31 +3024,19 @@ Any improvements or fixes (optional, 1-2 bullet points max)`;
 
   app.post("/api/github/sync", async (_req, res) => {
     try {
-      const { exec } = await import("child_process");
-      const { promisify } = await import("util");
-      const execAsync = promisify(exec);
-      const token = process.env.REPLIT_ACCESS_TOLKEN || "";
-      if (!token) {
-        return res.status(400).json({ success: false, error: "REPLIT_ACCESS_TOLKEN secret not set" });
-      }
-      const remote = `https://${token}@github.com/DreamCo-Technologies/Dreamcobots.git`;
-      const { stdout, stderr } = await execAsync(
-        `git --no-optional-locks push "${remote}" main --force 2>&1 || true`,
-        { env: process.env, timeout: 60000 }
-      );
-      const localSha = (await execAsync("git --no-optional-locks rev-parse HEAD")).stdout.trim();
-      const localMsg = (await execAsync("git --no-optional-locks log -1 --pretty=format:%s")).stdout.trim();
-      const success = !stderr.includes("error:") && !stdout.includes("error:");
+      const { getSyncBranch, runAutoSync } = await import("./github-sync");
+      const result = await runAutoSync();
       res.json({
-        success,
-        status: success ? "connected" : "error",
-        sha: localSha,
-        message: localMsg,
+        success: true,
+        status: result.skipped ? "unchanged" : "updated",
+        branch: getSyncBranch(),
+        sha: result.sha,
+        pushed: result.pushed,
+        errors: result.errors.slice(0, 10),
         lastSync: new Date().toISOString(),
-        output: (stdout + stderr).replace(token, "***").trim(),
       });
     } catch (e: any) {
-      res.status(500).json({ success: false, error: e.message?.replace(process.env.REPLIT_ACCESS_TOLKEN || "TOKEN", "***") });
+      res.status(403).json({ success: false, error: String(e.message || "GitHub sync failed").slice(0, 300) });
     }
   });
 

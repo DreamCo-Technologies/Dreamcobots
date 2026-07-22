@@ -1,0 +1,4207 @@
+{
+  "schema": "dreamco.bot_fleet_division.v2",
+  "division": "DreamAgents",
+  "bots": [
+    {
+      "identity": {
+        "slug": "autogpt-agent",
+        "display_name": "AutoGPT Autonomous Agent",
+        "division": "DreamAgents",
+        "category": "autonomous-agent",
+        "tier": "pro",
+        "catalog_status": "active"
+      },
+      "logo": {
+        "logo_id": "logo-autogpt-agent",
+        "emoji": "🎬",
+        "monogram": "AA",
+        "call_sign": "Noble Harbor 8A62EC28",
+        "shape": "tile",
+        "colors": {
+          "primary": "#176B5B",
+          "accent": "#D7A73B",
+          "surface": "#F5F7F3"
+        },
+        "accessibility_label": "AutoGPT Autonomous Agent logo"
+      },
+      "prospectus": {
+        "mission": "Goal-driven autonomous agent inspired by AutoGPT. Given a high-level objective, breaks it into tasks, executes them, self-corrects, and iterates until the goal is achieved. Uses web browsing, code execution, and file management.",
+        "target_users": "Entrepreneurs, automation enthusiasts",
+        "catalog_business_model": "SaaS subscription",
+        "catalog_price_range": "$99/mo",
+        "pricing_evidence": "catalog_claim_not_verified_revenue",
+        "inputs": [
+          "user brief",
+          "user-selected files or records",
+          "approved connector references"
+        ],
+        "outputs": [
+          "draft",
+          "analysis",
+          "task packet",
+          "sandbox evidence",
+          "approval request when required"
+        ],
+        "limitations": [
+          "This profile has an executable governed runtime instance backed by shared hardened code, not a separate always-running operating-system process.",
+          "External APIs require owner configuration, provider terms, sandbox tests, and scoped approval.",
+          "Published pricing and revenue models are catalog plans, not evidence of sales or earnings."
+        ]
+      },
+      "capabilities": [
+        {
+          "name": "Goal decomposition",
+          "source": "App_bots/DreamAgents.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Task creation loop",
+          "source": "App_bots/DreamAgents.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Self-correction",
+          "source": "App_bots/DreamAgents.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Web browsing",
+          "source": "App_bots/DreamAgents.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Code execution",
+          "source": "App_bots/DreamAgents.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "File management",
+          "source": "App_bots/DreamAgents.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Memory persistence",
+          "source": "App_bots/DreamAgents.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Plugin system",
+          "source": "App_bots/DreamAgents.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        }
+      ],
+      "tools": [
+        {
+          "id": "buddy_fleet_runtime",
+          "name": "Executable fleet runtime",
+          "status": "runtime_instance_ready",
+          "evidence": "server/fleet-runtime.ts"
+        },
+        {
+          "id": "buddy_chat_router",
+          "name": "Buddy shared chat router",
+          "status": "runtime_routed",
+          "evidence": "server/routes.ts"
+        },
+        {
+          "id": "buddy_approval_gateway",
+          "name": "Buddy approval gateway",
+          "status": "policy_available",
+          "evidence": "server/approval-notifications.ts"
+        },
+        {
+          "id": "buddy_bot_sandbox",
+          "name": "Per-bot sandbox blueprint",
+          "status": "generated",
+          "evidence": "config/generated/bots.catalog.json"
+        },
+        {
+          "id": "buddy_platform_registry",
+          "name": "Governed platform capability registry",
+          "status": "runtime_routed",
+          "evidence": "config/generated/buddy_platform_expansion.json"
+        },
+        {
+          "id": "buddy_bot_calculator",
+          "name": "Per-bot planning calculator",
+          "status": "local_interactive_ready",
+          "evidence": "config/generated/bot_calculators.json"
+        },
+        {
+          "id": "buddy_game_lab",
+          "name": "Buddy Game Lab",
+          "status": "adapter_contract_available",
+          "evidence": "dreamco_platform/games/harness.py"
+        },
+        {
+          "id": "buddy_code_workspace",
+          "name": "Buddy Code Workspace",
+          "status": "shared_runtime_route",
+          "evidence": "server/seed-buddy-bot.ts"
+        }
+      ],
+      "api_candidates": [],
+      "data_contract": {
+        "accepted_inputs": [
+          "user brief",
+          "user-selected files or records",
+          "approved connector references"
+        ],
+        "produced_outputs": [
+          "draft",
+          "analysis",
+          "task packet",
+          "sandbox evidence",
+          "approval request when required"
+        ],
+        "sensitivity": "standard_business_data",
+        "sensitive_domains": [],
+        "storage_policy": "store useful project artifacts only; raw credentials are forbidden; raw biometric media remains local or in an encrypted owner vault",
+        "retention": "owner-configurable with deletion and revocation support"
+      },
+      "approvals": {
+        "default_mode": "sandbox",
+        "approval_required": true,
+        "high_impact_profile": false,
+        "triggers": [
+          "any live external write or publish action"
+        ],
+        "channels_supported": [
+          "in_app",
+          "email",
+          "sms",
+          "voice_call"
+        ],
+        "contact_requirement": "verified user-owned destination and explicit channel opt-in",
+        "execution_rule": "approval authorizes one scoped action; it never exposes credentials to the bot or browser"
+      },
+      "sandbox": {
+        "sandbox_id": "sandbox-autogpt-agent",
+        "network_default": "off",
+        "fixture_mode": "synthetic_or_owner_supplied",
+        "seed": 2321738792,
+        "checks": [
+          "profile_schema_valid",
+          "runtime_slug_resolves",
+          "capability_output_matches_brief",
+          "no_secret_in_output",
+          "no_live_external_write",
+          "approval_gate_for_high_impact_action",
+          "failure_and_retry_state_recorded"
+        ],
+        "api_tests": [],
+        "release_gate": "all applicable checks pass and owner approves any live action"
+      },
+      "readiness": {
+        "profile_schema": "verified",
+        "buddy_chat_route": "verified",
+        "executable_runtime_instance": "verified",
+        "standalone_native_runtime": "shared_worker_not_standalone",
+        "external_integrations": "no_division_api_catalog",
+        "production_ready": false,
+        "production_gate": "implement or configure adapters, pass sandbox checks, add authentication, and verify deployment telemetry"
+      },
+      "evidence": {
+        "catalog_source": "App_bots/DreamAgents.json",
+        "runtime_sources": [
+          "server/seed-bots.ts"
+        ],
+        "runtime_seed_duplicates": 0
+      },
+      "sample_test_prompt": "Test AutoGPT Autonomous Agent in sandbox mode. Use synthetic data, demonstrate Goal decomposition, record evidence, and stop before any live external action."
+    },
+    {
+      "identity": {
+        "slug": "babyagi-agent",
+        "display_name": "BabyAGI Task Agent",
+        "division": "DreamAgents",
+        "category": "autonomous-agent",
+        "tier": "free",
+        "catalog_status": "active"
+      },
+      "logo": {
+        "logo_id": "logo-babyagi-agent",
+        "emoji": "🧮",
+        "monogram": "BT",
+        "call_sign": "Bright Pilot B090F42C",
+        "shape": "hex",
+        "colors": {
+          "primary": "#0F6F88",
+          "accent": "#C94D63",
+          "surface": "#F4FBFC"
+        },
+        "accessibility_label": "BabyAGI Task Agent logo"
+      },
+      "prospectus": {
+        "mission": "Lightweight autonomous task agent inspired by BabyAGI. Creates, prioritizes, and executes tasks in a continuous loop. Perfect for learning autonomous agent concepts and simple automation.",
+        "target_users": "Students, AI learners, hobbyists",
+        "catalog_business_model": "Free tier",
+        "catalog_price_range": "Free",
+        "pricing_evidence": "catalog_claim_not_verified_revenue",
+        "inputs": [
+          "user brief",
+          "user-selected files or records",
+          "approved connector references"
+        ],
+        "outputs": [
+          "draft",
+          "analysis",
+          "task packet",
+          "sandbox evidence",
+          "approval request when required"
+        ],
+        "limitations": [
+          "This profile has an executable governed runtime instance backed by shared hardened code, not a separate always-running operating-system process.",
+          "External APIs require owner configuration, provider terms, sandbox tests, and scoped approval.",
+          "Published pricing and revenue models are catalog plans, not evidence of sales or earnings."
+        ]
+      },
+      "capabilities": [
+        {
+          "name": "Task creation",
+          "source": "App_bots/DreamAgents.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Task prioritization",
+          "source": "App_bots/DreamAgents.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Task execution loop",
+          "source": "App_bots/DreamAgents.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Context retention",
+          "source": "App_bots/DreamAgents.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Objective tracking",
+          "source": "App_bots/DreamAgents.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Simple automation",
+          "source": "App_bots/DreamAgents.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Learning mode",
+          "source": "App_bots/DreamAgents.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Lightweight design",
+          "source": "App_bots/DreamAgents.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        }
+      ],
+      "tools": [
+        {
+          "id": "buddy_fleet_runtime",
+          "name": "Executable fleet runtime",
+          "status": "runtime_instance_ready",
+          "evidence": "server/fleet-runtime.ts"
+        },
+        {
+          "id": "buddy_chat_router",
+          "name": "Buddy shared chat router",
+          "status": "runtime_routed",
+          "evidence": "server/routes.ts"
+        },
+        {
+          "id": "buddy_approval_gateway",
+          "name": "Buddy approval gateway",
+          "status": "policy_available",
+          "evidence": "server/approval-notifications.ts"
+        },
+        {
+          "id": "buddy_bot_sandbox",
+          "name": "Per-bot sandbox blueprint",
+          "status": "generated",
+          "evidence": "config/generated/bots.catalog.json"
+        },
+        {
+          "id": "buddy_platform_registry",
+          "name": "Governed platform capability registry",
+          "status": "runtime_routed",
+          "evidence": "config/generated/buddy_platform_expansion.json"
+        },
+        {
+          "id": "buddy_bot_calculator",
+          "name": "Per-bot planning calculator",
+          "status": "local_interactive_ready",
+          "evidence": "config/generated/bot_calculators.json"
+        },
+        {
+          "id": "buddy_creative_studio",
+          "name": "Buddy Creative Studio",
+          "status": "local_prototype_available",
+          "evidence": "dreamco_platform/creative/studio.py"
+        }
+      ],
+      "api_candidates": [],
+      "data_contract": {
+        "accepted_inputs": [
+          "user brief",
+          "user-selected files or records",
+          "approved connector references"
+        ],
+        "produced_outputs": [
+          "draft",
+          "analysis",
+          "task packet",
+          "sandbox evidence",
+          "approval request when required"
+        ],
+        "sensitivity": "standard_business_data",
+        "sensitive_domains": [],
+        "storage_policy": "store useful project artifacts only; raw credentials are forbidden; raw biometric media remains local or in an encrypted owner vault",
+        "retention": "owner-configurable with deletion and revocation support"
+      },
+      "approvals": {
+        "default_mode": "sandbox",
+        "approval_required": true,
+        "high_impact_profile": false,
+        "triggers": [
+          "any live external write or publish action"
+        ],
+        "channels_supported": [
+          "in_app",
+          "email",
+          "sms",
+          "voice_call"
+        ],
+        "contact_requirement": "verified user-owned destination and explicit channel opt-in",
+        "execution_rule": "approval authorizes one scoped action; it never exposes credentials to the bot or browser"
+      },
+      "sandbox": {
+        "sandbox_id": "sandbox-babyagi-agent",
+        "network_default": "off",
+        "fixture_mode": "synthetic_or_owner_supplied",
+        "seed": 2962289708,
+        "checks": [
+          "profile_schema_valid",
+          "runtime_slug_resolves",
+          "capability_output_matches_brief",
+          "no_secret_in_output",
+          "no_live_external_write",
+          "approval_gate_for_high_impact_action",
+          "failure_and_retry_state_recorded"
+        ],
+        "api_tests": [],
+        "release_gate": "all applicable checks pass and owner approves any live action"
+      },
+      "readiness": {
+        "profile_schema": "verified",
+        "buddy_chat_route": "verified",
+        "executable_runtime_instance": "verified",
+        "standalone_native_runtime": "shared_worker_not_standalone",
+        "external_integrations": "no_division_api_catalog",
+        "production_ready": false,
+        "production_gate": "implement or configure adapters, pass sandbox checks, add authentication, and verify deployment telemetry"
+      },
+      "evidence": {
+        "catalog_source": "App_bots/DreamAgents.json",
+        "runtime_sources": [
+          "server/seed-bots.ts"
+        ],
+        "runtime_seed_duplicates": 0
+      },
+      "sample_test_prompt": "Test BabyAGI Task Agent in sandbox mode. Use synthetic data, demonstrate Task creation, record evidence, and stop before any live external action."
+    },
+    {
+      "identity": {
+        "slug": "metagpt-agent",
+        "display_name": "MetaGPT Software Team",
+        "division": "DreamAgents",
+        "category": "autonomous-agent",
+        "tier": "enterprise",
+        "catalog_status": "active"
+      },
+      "logo": {
+        "logo_id": "logo-metagpt-agent",
+        "emoji": "🎬",
+        "monogram": "MS",
+        "call_sign": "Open Tower A8D13EA4",
+        "shape": "circle",
+        "colors": {
+          "primary": "#0F6F88",
+          "accent": "#C94D63",
+          "surface": "#F4FBFC"
+        },
+        "accessibility_label": "MetaGPT Software Team logo"
+      },
+      "prospectus": {
+        "mission": "Multi-agent software team inspired by MetaGPT. Simulates an entire software company with PM, Architect, Developer, and QA roles collaborating autonomously to build software from a single requirement.",
+        "target_users": "Software teams, CTOs, product managers",
+        "catalog_business_model": "Enterprise license",
+        "catalog_price_range": "$499/mo",
+        "pricing_evidence": "catalog_claim_not_verified_revenue",
+        "inputs": [
+          "user brief",
+          "user-selected files or records",
+          "approved connector references"
+        ],
+        "outputs": [
+          "draft",
+          "analysis",
+          "task packet",
+          "sandbox evidence",
+          "approval request when required"
+        ],
+        "limitations": [
+          "This profile has an executable governed runtime instance backed by shared hardened code, not a separate always-running operating-system process.",
+          "External APIs require owner configuration, provider terms, sandbox tests, and scoped approval.",
+          "Published pricing and revenue models are catalog plans, not evidence of sales or earnings."
+        ]
+      },
+      "capabilities": [
+        {
+          "name": "Product management",
+          "source": "App_bots/DreamAgents.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Architecture design",
+          "source": "App_bots/DreamAgents.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Code generation",
+          "source": "App_bots/DreamAgents.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Quality assurance",
+          "source": "App_bots/DreamAgents.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Documentation generation",
+          "source": "App_bots/DreamAgents.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Role-based collaboration",
+          "source": "App_bots/DreamAgents.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Design review",
+          "source": "App_bots/DreamAgents.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Test generation",
+          "source": "App_bots/DreamAgents.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        }
+      ],
+      "tools": [
+        {
+          "id": "buddy_fleet_runtime",
+          "name": "Executable fleet runtime",
+          "status": "runtime_instance_ready",
+          "evidence": "server/fleet-runtime.ts"
+        },
+        {
+          "id": "buddy_chat_router",
+          "name": "Buddy shared chat router",
+          "status": "runtime_routed",
+          "evidence": "server/routes.ts"
+        },
+        {
+          "id": "buddy_approval_gateway",
+          "name": "Buddy approval gateway",
+          "status": "policy_available",
+          "evidence": "server/approval-notifications.ts"
+        },
+        {
+          "id": "buddy_bot_sandbox",
+          "name": "Per-bot sandbox blueprint",
+          "status": "generated",
+          "evidence": "config/generated/bots.catalog.json"
+        },
+        {
+          "id": "buddy_platform_registry",
+          "name": "Governed platform capability registry",
+          "status": "runtime_routed",
+          "evidence": "config/generated/buddy_platform_expansion.json"
+        },
+        {
+          "id": "buddy_bot_calculator",
+          "name": "Per-bot planning calculator",
+          "status": "local_interactive_ready",
+          "evidence": "config/generated/bot_calculators.json"
+        },
+        {
+          "id": "buddy_code_workspace",
+          "name": "Buddy Code Workspace",
+          "status": "shared_runtime_route",
+          "evidence": "server/seed-buddy-bot.ts"
+        }
+      ],
+      "api_candidates": [],
+      "data_contract": {
+        "accepted_inputs": [
+          "user brief",
+          "user-selected files or records",
+          "approved connector references"
+        ],
+        "produced_outputs": [
+          "draft",
+          "analysis",
+          "task packet",
+          "sandbox evidence",
+          "approval request when required"
+        ],
+        "sensitivity": "standard_business_data",
+        "sensitive_domains": [],
+        "storage_policy": "store useful project artifacts only; raw credentials are forbidden; raw biometric media remains local or in an encrypted owner vault",
+        "retention": "owner-configurable with deletion and revocation support"
+      },
+      "approvals": {
+        "default_mode": "sandbox",
+        "approval_required": true,
+        "high_impact_profile": false,
+        "triggers": [
+          "any live external write or publish action"
+        ],
+        "channels_supported": [
+          "in_app",
+          "email",
+          "sms",
+          "voice_call"
+        ],
+        "contact_requirement": "verified user-owned destination and explicit channel opt-in",
+        "execution_rule": "approval authorizes one scoped action; it never exposes credentials to the bot or browser"
+      },
+      "sandbox": {
+        "sandbox_id": "sandbox-metagpt-agent",
+        "network_default": "off",
+        "fixture_mode": "synthetic_or_owner_supplied",
+        "seed": 2832285348,
+        "checks": [
+          "profile_schema_valid",
+          "runtime_slug_resolves",
+          "capability_output_matches_brief",
+          "no_secret_in_output",
+          "no_live_external_write",
+          "approval_gate_for_high_impact_action",
+          "failure_and_retry_state_recorded"
+        ],
+        "api_tests": [],
+        "release_gate": "all applicable checks pass and owner approves any live action"
+      },
+      "readiness": {
+        "profile_schema": "verified",
+        "buddy_chat_route": "verified",
+        "executable_runtime_instance": "verified",
+        "standalone_native_runtime": "shared_worker_not_standalone",
+        "external_integrations": "no_division_api_catalog",
+        "production_ready": false,
+        "production_gate": "implement or configure adapters, pass sandbox checks, add authentication, and verify deployment telemetry"
+      },
+      "evidence": {
+        "catalog_source": "App_bots/DreamAgents.json",
+        "runtime_sources": [
+          "server/seed-bots.ts"
+        ],
+        "runtime_seed_duplicates": 0
+      },
+      "sample_test_prompt": "Test MetaGPT Software Team in sandbox mode. Use synthetic data, demonstrate Product management, record evidence, and stop before any live external action."
+    },
+    {
+      "identity": {
+        "slug": "crewai-agent",
+        "display_name": "CrewAI Team Orchestrator",
+        "division": "DreamAgents",
+        "category": "autonomous-agent",
+        "tier": "pro",
+        "catalog_status": "active"
+      },
+      "logo": {
+        "logo_id": "logo-crewai-agent",
+        "emoji": "🤝",
+        "monogram": "CT",
+        "call_sign": "Bold Scope 367EB23D",
+        "shape": "hex",
+        "colors": {
+          "primary": "#334E3C",
+          "accent": "#B96332",
+          "surface": "#F7F4ED"
+        },
+        "accessibility_label": "CrewAI Team Orchestrator logo"
+      },
+      "prospectus": {
+        "mission": "Multi-agent team orchestrator inspired by CrewAI. Creates teams of specialized agents with roles, goals, and backstories that collaborate like a real team to complete complex projects.",
+        "target_users": "Project managers, team leads",
+        "catalog_business_model": "SaaS subscription",
+        "catalog_price_range": "$199/mo",
+        "pricing_evidence": "catalog_claim_not_verified_revenue",
+        "inputs": [
+          "user brief",
+          "user-selected files or records",
+          "approved connector references"
+        ],
+        "outputs": [
+          "draft",
+          "analysis",
+          "task packet",
+          "sandbox evidence",
+          "approval request when required"
+        ],
+        "limitations": [
+          "This profile has an executable governed runtime instance backed by shared hardened code, not a separate always-running operating-system process.",
+          "External APIs require owner configuration, provider terms, sandbox tests, and scoped approval.",
+          "Published pricing and revenue models are catalog plans, not evidence of sales or earnings."
+        ]
+      },
+      "capabilities": [
+        {
+          "name": "Agent role definition",
+          "source": "App_bots/DreamAgents.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Goal assignment",
+          "source": "App_bots/DreamAgents.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Backstory creation",
+          "source": "App_bots/DreamAgents.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Team collaboration",
+          "source": "App_bots/DreamAgents.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Task delegation",
+          "source": "App_bots/DreamAgents.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Sequential processing",
+          "source": "App_bots/DreamAgents.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Hierarchical teams",
+          "source": "App_bots/DreamAgents.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Tool sharing",
+          "source": "App_bots/DreamAgents.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        }
+      ],
+      "tools": [
+        {
+          "id": "buddy_fleet_runtime",
+          "name": "Executable fleet runtime",
+          "status": "runtime_instance_ready",
+          "evidence": "server/fleet-runtime.ts"
+        },
+        {
+          "id": "buddy_chat_router",
+          "name": "Buddy shared chat router",
+          "status": "runtime_routed",
+          "evidence": "server/routes.ts"
+        },
+        {
+          "id": "buddy_approval_gateway",
+          "name": "Buddy approval gateway",
+          "status": "policy_available",
+          "evidence": "server/approval-notifications.ts"
+        },
+        {
+          "id": "buddy_bot_sandbox",
+          "name": "Per-bot sandbox blueprint",
+          "status": "generated",
+          "evidence": "config/generated/bots.catalog.json"
+        },
+        {
+          "id": "buddy_platform_registry",
+          "name": "Governed platform capability registry",
+          "status": "runtime_routed",
+          "evidence": "config/generated/buddy_platform_expansion.json"
+        },
+        {
+          "id": "buddy_bot_calculator",
+          "name": "Per-bot planning calculator",
+          "status": "local_interactive_ready",
+          "evidence": "config/generated/bot_calculators.json"
+        }
+      ],
+      "api_candidates": [],
+      "data_contract": {
+        "accepted_inputs": [
+          "user brief",
+          "user-selected files or records",
+          "approved connector references"
+        ],
+        "produced_outputs": [
+          "draft",
+          "analysis",
+          "task packet",
+          "sandbox evidence",
+          "approval request when required"
+        ],
+        "sensitivity": "standard_business_data",
+        "sensitive_domains": [],
+        "storage_policy": "store useful project artifacts only; raw credentials are forbidden; raw biometric media remains local or in an encrypted owner vault",
+        "retention": "owner-configurable with deletion and revocation support"
+      },
+      "approvals": {
+        "default_mode": "sandbox",
+        "approval_required": true,
+        "high_impact_profile": false,
+        "triggers": [
+          "any live external write or publish action"
+        ],
+        "channels_supported": [
+          "in_app",
+          "email",
+          "sms",
+          "voice_call"
+        ],
+        "contact_requirement": "verified user-owned destination and explicit channel opt-in",
+        "execution_rule": "approval authorizes one scoped action; it never exposes credentials to the bot or browser"
+      },
+      "sandbox": {
+        "sandbox_id": "sandbox-crewai-agent",
+        "network_default": "off",
+        "fixture_mode": "synthetic_or_owner_supplied",
+        "seed": 914272829,
+        "checks": [
+          "profile_schema_valid",
+          "runtime_slug_resolves",
+          "capability_output_matches_brief",
+          "no_secret_in_output",
+          "no_live_external_write",
+          "approval_gate_for_high_impact_action",
+          "failure_and_retry_state_recorded"
+        ],
+        "api_tests": [],
+        "release_gate": "all applicable checks pass and owner approves any live action"
+      },
+      "readiness": {
+        "profile_schema": "verified",
+        "buddy_chat_route": "verified",
+        "executable_runtime_instance": "verified",
+        "standalone_native_runtime": "shared_worker_not_standalone",
+        "external_integrations": "no_division_api_catalog",
+        "production_ready": false,
+        "production_gate": "implement or configure adapters, pass sandbox checks, add authentication, and verify deployment telemetry"
+      },
+      "evidence": {
+        "catalog_source": "App_bots/DreamAgents.json",
+        "runtime_sources": [
+          "server/seed-bots.ts"
+        ],
+        "runtime_seed_duplicates": 0
+      },
+      "sample_test_prompt": "Test CrewAI Team Orchestrator in sandbox mode. Use synthetic data, demonstrate Agent role definition, record evidence, and stop before any live external action."
+    },
+    {
+      "identity": {
+        "slug": "autogen-agent",
+        "display_name": "AutoGen Conversational Agent",
+        "division": "DreamAgents",
+        "category": "autonomous-agent",
+        "tier": "pro",
+        "catalog_status": "active"
+      },
+      "logo": {
+        "logo_id": "logo-autogen-agent",
+        "emoji": "📊",
+        "monogram": "AC",
+        "call_sign": "Expert Vault D6885ADD",
+        "shape": "circle",
+        "colors": {
+          "primary": "#334E3C",
+          "accent": "#B96332",
+          "surface": "#F7F4ED"
+        },
+        "accessibility_label": "AutoGen Conversational Agent logo"
+      },
+      "prospectus": {
+        "mission": "Conversational multi-agent system inspired by Microsoft AutoGen. Multiple agents engage in structured conversations to solve problems, with optional human-in-the-loop approval.",
+        "target_users": "Research teams, developers",
+        "catalog_business_model": "SaaS subscription",
+        "catalog_price_range": "$149/mo",
+        "pricing_evidence": "catalog_claim_not_verified_revenue",
+        "inputs": [
+          "user brief",
+          "user-selected files or records",
+          "approved connector references"
+        ],
+        "outputs": [
+          "draft",
+          "analysis",
+          "task packet",
+          "sandbox evidence",
+          "approval request when required"
+        ],
+        "limitations": [
+          "This profile has an executable governed runtime instance backed by shared hardened code, not a separate always-running operating-system process.",
+          "External APIs require owner configuration, provider terms, sandbox tests, and scoped approval.",
+          "Published pricing and revenue models are catalog plans, not evidence of sales or earnings."
+        ]
+      },
+      "capabilities": [
+        {
+          "name": "Multi-agent conversation",
+          "source": "App_bots/DreamAgents.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Human-in-the-loop",
+          "source": "App_bots/DreamAgents.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Code execution sandbox",
+          "source": "App_bots/DreamAgents.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Structured dialogue",
+          "source": "App_bots/DreamAgents.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Function calling",
+          "source": "App_bots/DreamAgents.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Group chat management",
+          "source": "App_bots/DreamAgents.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Agent handoffs",
+          "source": "App_bots/DreamAgents.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Consensus building",
+          "source": "App_bots/DreamAgents.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        }
+      ],
+      "tools": [
+        {
+          "id": "buddy_fleet_runtime",
+          "name": "Executable fleet runtime",
+          "status": "runtime_instance_ready",
+          "evidence": "server/fleet-runtime.ts"
+        },
+        {
+          "id": "buddy_chat_router",
+          "name": "Buddy shared chat router",
+          "status": "runtime_routed",
+          "evidence": "server/routes.ts"
+        },
+        {
+          "id": "buddy_approval_gateway",
+          "name": "Buddy approval gateway",
+          "status": "policy_available",
+          "evidence": "server/approval-notifications.ts"
+        },
+        {
+          "id": "buddy_bot_sandbox",
+          "name": "Per-bot sandbox blueprint",
+          "status": "generated",
+          "evidence": "config/generated/bots.catalog.json"
+        },
+        {
+          "id": "buddy_platform_registry",
+          "name": "Governed platform capability registry",
+          "status": "runtime_routed",
+          "evidence": "config/generated/buddy_platform_expansion.json"
+        },
+        {
+          "id": "buddy_bot_calculator",
+          "name": "Per-bot planning calculator",
+          "status": "local_interactive_ready",
+          "evidence": "config/generated/bot_calculators.json"
+        },
+        {
+          "id": "buddy_code_workspace",
+          "name": "Buddy Code Workspace",
+          "status": "shared_runtime_route",
+          "evidence": "server/seed-buddy-bot.ts"
+        }
+      ],
+      "api_candidates": [],
+      "data_contract": {
+        "accepted_inputs": [
+          "user brief",
+          "user-selected files or records",
+          "approved connector references"
+        ],
+        "produced_outputs": [
+          "draft",
+          "analysis",
+          "task packet",
+          "sandbox evidence",
+          "approval request when required"
+        ],
+        "sensitivity": "standard_business_data",
+        "sensitive_domains": [],
+        "storage_policy": "store useful project artifacts only; raw credentials are forbidden; raw biometric media remains local or in an encrypted owner vault",
+        "retention": "owner-configurable with deletion and revocation support"
+      },
+      "approvals": {
+        "default_mode": "sandbox",
+        "approval_required": true,
+        "high_impact_profile": true,
+        "triggers": [
+          "call"
+        ],
+        "channels_supported": [
+          "in_app",
+          "email",
+          "sms",
+          "voice_call"
+        ],
+        "contact_requirement": "verified user-owned destination and explicit channel opt-in",
+        "execution_rule": "approval authorizes one scoped action; it never exposes credentials to the bot or browser"
+      },
+      "sandbox": {
+        "sandbox_id": "sandbox-autogen-agent",
+        "network_default": "off",
+        "fixture_mode": "synthetic_or_owner_supplied",
+        "seed": 3599260381,
+        "checks": [
+          "profile_schema_valid",
+          "runtime_slug_resolves",
+          "capability_output_matches_brief",
+          "no_secret_in_output",
+          "no_live_external_write",
+          "approval_gate_for_high_impact_action",
+          "failure_and_retry_state_recorded"
+        ],
+        "api_tests": [],
+        "release_gate": "all applicable checks pass and owner approves any live action"
+      },
+      "readiness": {
+        "profile_schema": "verified",
+        "buddy_chat_route": "verified",
+        "executable_runtime_instance": "verified",
+        "standalone_native_runtime": "shared_worker_not_standalone",
+        "external_integrations": "no_division_api_catalog",
+        "production_ready": false,
+        "production_gate": "implement or configure adapters, pass sandbox checks, add authentication, and verify deployment telemetry"
+      },
+      "evidence": {
+        "catalog_source": "App_bots/DreamAgents.json",
+        "runtime_sources": [
+          "server/seed-bots.ts"
+        ],
+        "runtime_seed_duplicates": 0
+      },
+      "sample_test_prompt": "Test AutoGen Conversational Agent in sandbox mode. Use synthetic data, demonstrate Multi-agent conversation, record evidence, and stop before any live external action."
+    },
+    {
+      "identity": {
+        "slug": "swarm-agent",
+        "display_name": "Swarm Orchestrator Agent",
+        "division": "DreamAgents",
+        "category": "autonomous-agent",
+        "tier": "pro",
+        "catalog_status": "active"
+      },
+      "logo": {
+        "logo_id": "logo-swarm-agent",
+        "emoji": "🧭",
+        "monogram": "SO",
+        "call_sign": "Noble Ledger F0026759",
+        "shape": "hex",
+        "colors": {
+          "primary": "#275DAD",
+          "accent": "#E38B3C",
+          "surface": "#F7F9FC"
+        },
+        "accessibility_label": "Swarm Orchestrator Agent logo"
+      },
+      "prospectus": {
+        "mission": "Lightweight multi-agent orchestrator inspired by OpenAI Swarm. Manages agent handoffs and routing with a simple, elegant design. Perfect for building multi-step workflows.",
+        "target_users": "Developers, automation engineers",
+        "catalog_business_model": "SaaS subscription",
+        "catalog_price_range": "$99/mo",
+        "pricing_evidence": "catalog_claim_not_verified_revenue",
+        "inputs": [
+          "user brief",
+          "user-selected files or records",
+          "approved connector references"
+        ],
+        "outputs": [
+          "draft",
+          "analysis",
+          "task packet",
+          "sandbox evidence",
+          "approval request when required"
+        ],
+        "limitations": [
+          "This profile has an executable governed runtime instance backed by shared hardened code, not a separate always-running operating-system process.",
+          "External APIs require owner configuration, provider terms, sandbox tests, and scoped approval.",
+          "Published pricing and revenue models are catalog plans, not evidence of sales or earnings."
+        ]
+      },
+      "capabilities": [
+        {
+          "name": "Agent handoffs",
+          "source": "App_bots/DreamAgents.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Routing logic",
+          "source": "App_bots/DreamAgents.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Stateless design",
+          "source": "App_bots/DreamAgents.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Tool calling",
+          "source": "App_bots/DreamAgents.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Context transfer",
+          "source": "App_bots/DreamAgents.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Workflow chaining",
+          "source": "App_bots/DreamAgents.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Error handling",
+          "source": "App_bots/DreamAgents.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Lightweight orchestration",
+          "source": "App_bots/DreamAgents.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        }
+      ],
+      "tools": [
+        {
+          "id": "buddy_fleet_runtime",
+          "name": "Executable fleet runtime",
+          "status": "runtime_instance_ready",
+          "evidence": "server/fleet-runtime.ts"
+        },
+        {
+          "id": "buddy_chat_router",
+          "name": "Buddy shared chat router",
+          "status": "runtime_routed",
+          "evidence": "server/routes.ts"
+        },
+        {
+          "id": "buddy_approval_gateway",
+          "name": "Buddy approval gateway",
+          "status": "policy_available",
+          "evidence": "server/approval-notifications.ts"
+        },
+        {
+          "id": "buddy_bot_sandbox",
+          "name": "Per-bot sandbox blueprint",
+          "status": "generated",
+          "evidence": "config/generated/bots.catalog.json"
+        },
+        {
+          "id": "buddy_platform_registry",
+          "name": "Governed platform capability registry",
+          "status": "runtime_routed",
+          "evidence": "config/generated/buddy_platform_expansion.json"
+        },
+        {
+          "id": "buddy_bot_calculator",
+          "name": "Per-bot planning calculator",
+          "status": "local_interactive_ready",
+          "evidence": "config/generated/bot_calculators.json"
+        }
+      ],
+      "api_candidates": [],
+      "data_contract": {
+        "accepted_inputs": [
+          "user brief",
+          "user-selected files or records",
+          "approved connector references"
+        ],
+        "produced_outputs": [
+          "draft",
+          "analysis",
+          "task packet",
+          "sandbox evidence",
+          "approval request when required"
+        ],
+        "sensitivity": "standard_business_data",
+        "sensitive_domains": [],
+        "storage_policy": "store useful project artifacts only; raw credentials are forbidden; raw biometric media remains local or in an encrypted owner vault",
+        "retention": "owner-configurable with deletion and revocation support"
+      },
+      "approvals": {
+        "default_mode": "sandbox",
+        "approval_required": true,
+        "high_impact_profile": true,
+        "triggers": [
+          "call"
+        ],
+        "channels_supported": [
+          "in_app",
+          "email",
+          "sms",
+          "voice_call"
+        ],
+        "contact_requirement": "verified user-owned destination and explicit channel opt-in",
+        "execution_rule": "approval authorizes one scoped action; it never exposes credentials to the bot or browser"
+      },
+      "sandbox": {
+        "sandbox_id": "sandbox-swarm-agent",
+        "network_default": "off",
+        "fixture_mode": "synthetic_or_owner_supplied",
+        "seed": 4026689369,
+        "checks": [
+          "profile_schema_valid",
+          "runtime_slug_resolves",
+          "capability_output_matches_brief",
+          "no_secret_in_output",
+          "no_live_external_write",
+          "approval_gate_for_high_impact_action",
+          "failure_and_retry_state_recorded"
+        ],
+        "api_tests": [],
+        "release_gate": "all applicable checks pass and owner approves any live action"
+      },
+      "readiness": {
+        "profile_schema": "verified",
+        "buddy_chat_route": "verified",
+        "executable_runtime_instance": "verified",
+        "standalone_native_runtime": "shared_worker_not_standalone",
+        "external_integrations": "no_division_api_catalog",
+        "production_ready": false,
+        "production_gate": "implement or configure adapters, pass sandbox checks, add authentication, and verify deployment telemetry"
+      },
+      "evidence": {
+        "catalog_source": "App_bots/DreamAgents.json",
+        "runtime_sources": [
+          "server/seed-bots.ts"
+        ],
+        "runtime_seed_duplicates": 0
+      },
+      "sample_test_prompt": "Test Swarm Orchestrator Agent in sandbox mode. Use synthetic data, demonstrate Agent handoffs, record evidence, and stop before any live external action."
+    },
+    {
+      "identity": {
+        "slug": "superagi-agent",
+        "display_name": "SuperAGI Marketplace Agent",
+        "division": "DreamAgents",
+        "category": "autonomous-agent",
+        "tier": "pro",
+        "catalog_status": "active"
+      },
+      "logo": {
+        "logo_id": "logo-superagi-agent",
+        "emoji": "🎮",
+        "monogram": "SM",
+        "call_sign": "Expert Tower 65E8E6D0",
+        "shape": "circle",
+        "colors": {
+          "primary": "#176B5B",
+          "accent": "#D7A73B",
+          "surface": "#F5F7F3"
+        },
+        "accessibility_label": "SuperAGI Marketplace Agent logo"
+      },
+      "prospectus": {
+        "mission": "Autonomous agent with marketplace capabilities inspired by SuperAGI. Browse, install, and run pre-built agent skills. Includes GUI dashboard and tool management.",
+        "target_users": "Non-technical users, entrepreneurs",
+        "catalog_business_model": "SaaS subscription",
+        "catalog_price_range": "$99/mo",
+        "pricing_evidence": "catalog_claim_not_verified_revenue",
+        "inputs": [
+          "user brief",
+          "user-selected files or records",
+          "approved connector references"
+        ],
+        "outputs": [
+          "draft",
+          "analysis",
+          "task packet",
+          "sandbox evidence",
+          "approval request when required"
+        ],
+        "limitations": [
+          "This profile has an executable governed runtime instance backed by shared hardened code, not a separate always-running operating-system process.",
+          "External APIs require owner configuration, provider terms, sandbox tests, and scoped approval.",
+          "Published pricing and revenue models are catalog plans, not evidence of sales or earnings."
+        ]
+      },
+      "capabilities": [
+        {
+          "name": "Agent marketplace",
+          "source": "App_bots/DreamAgents.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Skill installation",
+          "source": "App_bots/DreamAgents.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Tool management",
+          "source": "App_bots/DreamAgents.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "GUI dashboard",
+          "source": "App_bots/DreamAgents.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Memory management",
+          "source": "App_bots/DreamAgents.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Concurrent agents",
+          "source": "App_bots/DreamAgents.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Resource management",
+          "source": "App_bots/DreamAgents.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Performance tracking",
+          "source": "App_bots/DreamAgents.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        }
+      ],
+      "tools": [
+        {
+          "id": "buddy_fleet_runtime",
+          "name": "Executable fleet runtime",
+          "status": "runtime_instance_ready",
+          "evidence": "server/fleet-runtime.ts"
+        },
+        {
+          "id": "buddy_chat_router",
+          "name": "Buddy shared chat router",
+          "status": "runtime_routed",
+          "evidence": "server/routes.ts"
+        },
+        {
+          "id": "buddy_approval_gateway",
+          "name": "Buddy approval gateway",
+          "status": "policy_available",
+          "evidence": "server/approval-notifications.ts"
+        },
+        {
+          "id": "buddy_bot_sandbox",
+          "name": "Per-bot sandbox blueprint",
+          "status": "generated",
+          "evidence": "config/generated/bots.catalog.json"
+        },
+        {
+          "id": "buddy_platform_registry",
+          "name": "Governed platform capability registry",
+          "status": "runtime_routed",
+          "evidence": "config/generated/buddy_platform_expansion.json"
+        },
+        {
+          "id": "buddy_bot_calculator",
+          "name": "Per-bot planning calculator",
+          "status": "local_interactive_ready",
+          "evidence": "config/generated/bot_calculators.json"
+        }
+      ],
+      "api_candidates": [],
+      "data_contract": {
+        "accepted_inputs": [
+          "user brief",
+          "user-selected files or records",
+          "approved connector references"
+        ],
+        "produced_outputs": [
+          "draft",
+          "analysis",
+          "task packet",
+          "sandbox evidence",
+          "approval request when required"
+        ],
+        "sensitivity": "standard_business_data",
+        "sensitive_domains": [],
+        "storage_policy": "store useful project artifacts only; raw credentials are forbidden; raw biometric media remains local or in an encrypted owner vault",
+        "retention": "owner-configurable with deletion and revocation support"
+      },
+      "approvals": {
+        "default_mode": "sandbox",
+        "approval_required": true,
+        "high_impact_profile": false,
+        "triggers": [
+          "any live external write or publish action"
+        ],
+        "channels_supported": [
+          "in_app",
+          "email",
+          "sms",
+          "voice_call"
+        ],
+        "contact_requirement": "verified user-owned destination and explicit channel opt-in",
+        "execution_rule": "approval authorizes one scoped action; it never exposes credentials to the bot or browser"
+      },
+      "sandbox": {
+        "sandbox_id": "sandbox-superagi-agent",
+        "network_default": "off",
+        "fixture_mode": "synthetic_or_owner_supplied",
+        "seed": 1709762256,
+        "checks": [
+          "profile_schema_valid",
+          "runtime_slug_resolves",
+          "capability_output_matches_brief",
+          "no_secret_in_output",
+          "no_live_external_write",
+          "approval_gate_for_high_impact_action",
+          "failure_and_retry_state_recorded"
+        ],
+        "api_tests": [],
+        "release_gate": "all applicable checks pass and owner approves any live action"
+      },
+      "readiness": {
+        "profile_schema": "verified",
+        "buddy_chat_route": "verified",
+        "executable_runtime_instance": "verified",
+        "standalone_native_runtime": "shared_worker_not_standalone",
+        "external_integrations": "no_division_api_catalog",
+        "production_ready": false,
+        "production_gate": "implement or configure adapters, pass sandbox checks, add authentication, and verify deployment telemetry"
+      },
+      "evidence": {
+        "catalog_source": "App_bots/DreamAgents.json",
+        "runtime_sources": [
+          "server/seed-bots.ts"
+        ],
+        "runtime_seed_duplicates": 0
+      },
+      "sample_test_prompt": "Test SuperAGI Marketplace Agent in sandbox mode. Use synthetic data, demonstrate Agent marketplace, record evidence, and stop before any live external action."
+    },
+    {
+      "identity": {
+        "slug": "gpt-engineer-agent",
+        "display_name": "GPT-Engineer Codebase Generator",
+        "division": "DreamAgents",
+        "category": "autonomous-agent",
+        "tier": "pro",
+        "catalog_status": "active"
+      },
+      "logo": {
+        "logo_id": "logo-gpt-engineer-agent",
+        "emoji": "🎙️",
+        "monogram": "GC",
+        "call_sign": "Prime Launchpad 317D77DD",
+        "shape": "hex",
+        "colors": {
+          "primary": "#334E3C",
+          "accent": "#B96332",
+          "surface": "#F7F4ED"
+        },
+        "accessibility_label": "GPT-Engineer Codebase Generator logo"
+      },
+      "prospectus": {
+        "mission": "Autonomous code generation agent inspired by GPT-Engineer. Generates entire codebases from natural language project descriptions with proper file structure and dependencies.",
+        "target_users": "Solo developers, entrepreneurs",
+        "catalog_business_model": "SaaS subscription",
+        "catalog_price_range": "$99/mo",
+        "pricing_evidence": "catalog_claim_not_verified_revenue",
+        "inputs": [
+          "user brief",
+          "user-selected files or records",
+          "approved connector references"
+        ],
+        "outputs": [
+          "draft",
+          "analysis",
+          "task packet",
+          "sandbox evidence",
+          "approval request when required"
+        ],
+        "limitations": [
+          "This profile has an executable governed runtime instance backed by shared hardened code, not a separate always-running operating-system process.",
+          "External APIs require owner configuration, provider terms, sandbox tests, and scoped approval.",
+          "Published pricing and revenue models are catalog plans, not evidence of sales or earnings."
+        ]
+      },
+      "capabilities": [
+        {
+          "name": "Full codebase generation",
+          "source": "App_bots/DreamAgents.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Multi-file creation",
+          "source": "App_bots/DreamAgents.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Dependency management",
+          "source": "App_bots/DreamAgents.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Project scaffolding",
+          "source": "App_bots/DreamAgents.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Interactive clarification",
+          "source": "App_bots/DreamAgents.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Code review",
+          "source": "App_bots/DreamAgents.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Iterative refinement",
+          "source": "App_bots/DreamAgents.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Language detection",
+          "source": "App_bots/DreamAgents.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        }
+      ],
+      "tools": [
+        {
+          "id": "buddy_fleet_runtime",
+          "name": "Executable fleet runtime",
+          "status": "runtime_instance_ready",
+          "evidence": "server/fleet-runtime.ts"
+        },
+        {
+          "id": "buddy_chat_router",
+          "name": "Buddy shared chat router",
+          "status": "runtime_routed",
+          "evidence": "server/routes.ts"
+        },
+        {
+          "id": "buddy_approval_gateway",
+          "name": "Buddy approval gateway",
+          "status": "policy_available",
+          "evidence": "server/approval-notifications.ts"
+        },
+        {
+          "id": "buddy_bot_sandbox",
+          "name": "Per-bot sandbox blueprint",
+          "status": "generated",
+          "evidence": "config/generated/bots.catalog.json"
+        },
+        {
+          "id": "buddy_platform_registry",
+          "name": "Governed platform capability registry",
+          "status": "runtime_routed",
+          "evidence": "config/generated/buddy_platform_expansion.json"
+        },
+        {
+          "id": "buddy_bot_calculator",
+          "name": "Per-bot planning calculator",
+          "status": "local_interactive_ready",
+          "evidence": "config/generated/bot_calculators.json"
+        },
+        {
+          "id": "buddy_code_workspace",
+          "name": "Buddy Code Workspace",
+          "status": "shared_runtime_route",
+          "evidence": "server/seed-buddy-bot.ts"
+        }
+      ],
+      "api_candidates": [],
+      "data_contract": {
+        "accepted_inputs": [
+          "user brief",
+          "user-selected files or records",
+          "approved connector references"
+        ],
+        "produced_outputs": [
+          "draft",
+          "analysis",
+          "task packet",
+          "sandbox evidence",
+          "approval request when required"
+        ],
+        "sensitivity": "standard_business_data",
+        "sensitive_domains": [],
+        "storage_policy": "store useful project artifacts only; raw credentials are forbidden; raw biometric media remains local or in an encrypted owner vault",
+        "retention": "owner-configurable with deletion and revocation support"
+      },
+      "approvals": {
+        "default_mode": "sandbox",
+        "approval_required": true,
+        "high_impact_profile": false,
+        "triggers": [
+          "any live external write or publish action"
+        ],
+        "channels_supported": [
+          "in_app",
+          "email",
+          "sms",
+          "voice_call"
+        ],
+        "contact_requirement": "verified user-owned destination and explicit channel opt-in",
+        "execution_rule": "approval authorizes one scoped action; it never exposes credentials to the bot or browser"
+      },
+      "sandbox": {
+        "sandbox_id": "sandbox-gpt-engineer-agent",
+        "network_default": "off",
+        "fixture_mode": "synthetic_or_owner_supplied",
+        "seed": 830306269,
+        "checks": [
+          "profile_schema_valid",
+          "runtime_slug_resolves",
+          "capability_output_matches_brief",
+          "no_secret_in_output",
+          "no_live_external_write",
+          "approval_gate_for_high_impact_action",
+          "failure_and_retry_state_recorded"
+        ],
+        "api_tests": [],
+        "release_gate": "all applicable checks pass and owner approves any live action"
+      },
+      "readiness": {
+        "profile_schema": "verified",
+        "buddy_chat_route": "verified",
+        "executable_runtime_instance": "verified",
+        "standalone_native_runtime": "shared_worker_not_standalone",
+        "external_integrations": "no_division_api_catalog",
+        "production_ready": false,
+        "production_gate": "implement or configure adapters, pass sandbox checks, add authentication, and verify deployment telemetry"
+      },
+      "evidence": {
+        "catalog_source": "App_bots/DreamAgents.json",
+        "runtime_sources": [
+          "server/seed-bots.ts"
+        ],
+        "runtime_seed_duplicates": 0
+      },
+      "sample_test_prompt": "Test GPT-Engineer Codebase Generator in sandbox mode. Use synthetic data, demonstrate Full codebase generation, record evidence, and stop before any live external action."
+    },
+    {
+      "identity": {
+        "slug": "devin-agent",
+        "display_name": "Devin Software Engineer Agent",
+        "division": "DreamAgents",
+        "category": "autonomous-agent",
+        "tier": "elite",
+        "catalog_status": "active"
+      },
+      "logo": {
+        "logo_id": "logo-devin-agent",
+        "emoji": "📚",
+        "monogram": "DS",
+        "call_sign": "Calm Guide 485F246A",
+        "shape": "shield",
+        "colors": {
+          "primary": "#7A2E3A",
+          "accent": "#2D8C7C",
+          "surface": "#FFF8EE"
+        },
+        "accessibility_label": "Devin Software Engineer Agent logo"
+      },
+      "prospectus": {
+        "mission": "Fully autonomous software engineer agent inspired by Cognition's Devin. Takes task descriptions and autonomously writes code, runs tests, debugs issues, and creates pull requests.",
+        "target_users": "Engineering teams, startups",
+        "catalog_business_model": "Enterprise license",
+        "catalog_price_range": "$999/mo",
+        "pricing_evidence": "catalog_claim_not_verified_revenue",
+        "inputs": [
+          "user brief",
+          "user-selected files or records",
+          "approved connector references"
+        ],
+        "outputs": [
+          "draft",
+          "analysis",
+          "task packet",
+          "sandbox evidence",
+          "approval request when required"
+        ],
+        "limitations": [
+          "This profile has an executable governed runtime instance backed by shared hardened code, not a separate always-running operating-system process.",
+          "External APIs require owner configuration, provider terms, sandbox tests, and scoped approval.",
+          "Published pricing and revenue models are catalog plans, not evidence of sales or earnings."
+        ]
+      },
+      "capabilities": [
+        {
+          "name": "Autonomous coding",
+          "source": "App_bots/DreamAgents.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Test writing",
+          "source": "App_bots/DreamAgents.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Bug fixing",
+          "source": "App_bots/DreamAgents.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "PR creation",
+          "source": "App_bots/DreamAgents.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Full IDE access",
+          "source": "App_bots/DreamAgents.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Terminal commands",
+          "source": "App_bots/DreamAgents.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Browser debugging",
+          "source": "App_bots/DreamAgents.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "API integration",
+          "source": "App_bots/DreamAgents.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        }
+      ],
+      "tools": [
+        {
+          "id": "buddy_fleet_runtime",
+          "name": "Executable fleet runtime",
+          "status": "runtime_instance_ready",
+          "evidence": "server/fleet-runtime.ts"
+        },
+        {
+          "id": "buddy_chat_router",
+          "name": "Buddy shared chat router",
+          "status": "runtime_routed",
+          "evidence": "server/routes.ts"
+        },
+        {
+          "id": "buddy_approval_gateway",
+          "name": "Buddy approval gateway",
+          "status": "policy_available",
+          "evidence": "server/approval-notifications.ts"
+        },
+        {
+          "id": "buddy_bot_sandbox",
+          "name": "Per-bot sandbox blueprint",
+          "status": "generated",
+          "evidence": "config/generated/bots.catalog.json"
+        },
+        {
+          "id": "buddy_platform_registry",
+          "name": "Governed platform capability registry",
+          "status": "runtime_routed",
+          "evidence": "config/generated/buddy_platform_expansion.json"
+        },
+        {
+          "id": "buddy_bot_calculator",
+          "name": "Per-bot planning calculator",
+          "status": "local_interactive_ready",
+          "evidence": "config/generated/bot_calculators.json"
+        },
+        {
+          "id": "buddy_connection_broker",
+          "name": "Buddy Connection Broker",
+          "status": "backend_broker_available",
+          "evidence": "dreamco_platform/connections/broker.py"
+        },
+        {
+          "id": "buddy_code_workspace",
+          "name": "Buddy Code Workspace",
+          "status": "shared_runtime_route",
+          "evidence": "server/seed-buddy-bot.ts"
+        }
+      ],
+      "api_candidates": [],
+      "data_contract": {
+        "accepted_inputs": [
+          "user brief",
+          "user-selected files or records",
+          "approved connector references"
+        ],
+        "produced_outputs": [
+          "draft",
+          "analysis",
+          "task packet",
+          "sandbox evidence",
+          "approval request when required"
+        ],
+        "sensitivity": "standard_business_data",
+        "sensitive_domains": [],
+        "storage_policy": "store useful project artifacts only; raw credentials are forbidden; raw biometric media remains local or in an encrypted owner vault",
+        "retention": "owner-configurable with deletion and revocation support"
+      },
+      "approvals": {
+        "default_mode": "sandbox",
+        "approval_required": true,
+        "high_impact_profile": false,
+        "triggers": [
+          "any live external write or publish action"
+        ],
+        "channels_supported": [
+          "in_app",
+          "email",
+          "sms",
+          "voice_call"
+        ],
+        "contact_requirement": "verified user-owned destination and explicit channel opt-in",
+        "execution_rule": "approval authorizes one scoped action; it never exposes credentials to the bot or browser"
+      },
+      "sandbox": {
+        "sandbox_id": "sandbox-devin-agent",
+        "network_default": "off",
+        "fixture_mode": "synthetic_or_owner_supplied",
+        "seed": 1214194794,
+        "checks": [
+          "profile_schema_valid",
+          "runtime_slug_resolves",
+          "capability_output_matches_brief",
+          "no_secret_in_output",
+          "no_live_external_write",
+          "approval_gate_for_high_impact_action",
+          "failure_and_retry_state_recorded"
+        ],
+        "api_tests": [],
+        "release_gate": "all applicable checks pass and owner approves any live action"
+      },
+      "readiness": {
+        "profile_schema": "verified",
+        "buddy_chat_route": "verified",
+        "executable_runtime_instance": "verified",
+        "standalone_native_runtime": "shared_worker_not_standalone",
+        "external_integrations": "no_division_api_catalog",
+        "production_ready": false,
+        "production_gate": "implement or configure adapters, pass sandbox checks, add authentication, and verify deployment telemetry"
+      },
+      "evidence": {
+        "catalog_source": "App_bots/DreamAgents.json",
+        "runtime_sources": [
+          "server/seed-bots.ts"
+        ],
+        "runtime_seed_duplicates": 0
+      },
+      "sample_test_prompt": "Test Devin Software Engineer Agent in sandbox mode. Use synthetic data, demonstrate Autonomous coding, record evidence, and stop before any live external action."
+    },
+    {
+      "identity": {
+        "slug": "manus-agent",
+        "display_name": "Manus Task Completion Agent",
+        "division": "DreamAgents",
+        "category": "autonomous-agent",
+        "tier": "pro",
+        "catalog_status": "active"
+      },
+      "logo": {
+        "logo_id": "logo-manus-agent",
+        "emoji": "🧠",
+        "monogram": "MT",
+        "call_sign": "Prime Craft 7A95CFB6",
+        "shape": "circle",
+        "colors": {
+          "primary": "#3D4C8D",
+          "accent": "#D56638",
+          "surface": "#F4F6FF"
+        },
+        "accessibility_label": "Manus Task Completion Agent logo"
+      },
+      "prospectus": {
+        "mission": "End-to-end task completion agent inspired by Manus AI. Completes entire real-world tasks autonomously: books trips, builds websites, compares products, fills forms.",
+        "target_users": "General users, busy professionals",
+        "catalog_business_model": "SaaS subscription",
+        "catalog_price_range": "$149/mo",
+        "pricing_evidence": "catalog_claim_not_verified_revenue",
+        "inputs": [
+          "user brief",
+          "user-selected files or records",
+          "approved connector references"
+        ],
+        "outputs": [
+          "draft",
+          "analysis",
+          "task packet",
+          "sandbox evidence",
+          "approval request when required"
+        ],
+        "limitations": [
+          "This profile has an executable governed runtime instance backed by shared hardened code, not a separate always-running operating-system process.",
+          "External APIs require owner configuration, provider terms, sandbox tests, and scoped approval.",
+          "Published pricing and revenue models are catalog plans, not evidence of sales or earnings."
+        ]
+      },
+      "capabilities": [
+        {
+          "name": "End-to-end task completion",
+          "source": "App_bots/DreamAgents.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Web browsing",
+          "source": "App_bots/DreamAgents.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Form filling",
+          "source": "App_bots/DreamAgents.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Price comparison",
+          "source": "App_bots/DreamAgents.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Trip planning",
+          "source": "App_bots/DreamAgents.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Website building",
+          "source": "App_bots/DreamAgents.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Document creation",
+          "source": "App_bots/DreamAgents.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Multi-step reasoning",
+          "source": "App_bots/DreamAgents.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        }
+      ],
+      "tools": [
+        {
+          "id": "buddy_fleet_runtime",
+          "name": "Executable fleet runtime",
+          "status": "runtime_instance_ready",
+          "evidence": "server/fleet-runtime.ts"
+        },
+        {
+          "id": "buddy_chat_router",
+          "name": "Buddy shared chat router",
+          "status": "runtime_routed",
+          "evidence": "server/routes.ts"
+        },
+        {
+          "id": "buddy_approval_gateway",
+          "name": "Buddy approval gateway",
+          "status": "policy_available",
+          "evidence": "server/approval-notifications.ts"
+        },
+        {
+          "id": "buddy_bot_sandbox",
+          "name": "Per-bot sandbox blueprint",
+          "status": "generated",
+          "evidence": "config/generated/bots.catalog.json"
+        },
+        {
+          "id": "buddy_platform_registry",
+          "name": "Governed platform capability registry",
+          "status": "runtime_routed",
+          "evidence": "config/generated/buddy_platform_expansion.json"
+        },
+        {
+          "id": "buddy_bot_calculator",
+          "name": "Per-bot planning calculator",
+          "status": "local_interactive_ready",
+          "evidence": "config/generated/bot_calculators.json"
+        },
+        {
+          "id": "buddy_code_workspace",
+          "name": "Buddy Code Workspace",
+          "status": "shared_runtime_route",
+          "evidence": "server/seed-buddy-bot.ts"
+        }
+      ],
+      "api_candidates": [],
+      "data_contract": {
+        "accepted_inputs": [
+          "user brief",
+          "user-selected files or records",
+          "approved connector references"
+        ],
+        "produced_outputs": [
+          "draft",
+          "analysis",
+          "task packet",
+          "sandbox evidence",
+          "approval request when required"
+        ],
+        "sensitivity": "standard_business_data",
+        "sensitive_domains": [],
+        "storage_policy": "store useful project artifacts only; raw credentials are forbidden; raw biometric media remains local or in an encrypted owner vault",
+        "retention": "owner-configurable with deletion and revocation support"
+      },
+      "approvals": {
+        "default_mode": "sandbox",
+        "approval_required": true,
+        "high_impact_profile": false,
+        "triggers": [
+          "any live external write or publish action"
+        ],
+        "channels_supported": [
+          "in_app",
+          "email",
+          "sms",
+          "voice_call"
+        ],
+        "contact_requirement": "verified user-owned destination and explicit channel opt-in",
+        "execution_rule": "approval authorizes one scoped action; it never exposes credentials to the bot or browser"
+      },
+      "sandbox": {
+        "sandbox_id": "sandbox-manus-agent",
+        "network_default": "off",
+        "fixture_mode": "synthetic_or_owner_supplied",
+        "seed": 2056638390,
+        "checks": [
+          "profile_schema_valid",
+          "runtime_slug_resolves",
+          "capability_output_matches_brief",
+          "no_secret_in_output",
+          "no_live_external_write",
+          "approval_gate_for_high_impact_action",
+          "failure_and_retry_state_recorded"
+        ],
+        "api_tests": [],
+        "release_gate": "all applicable checks pass and owner approves any live action"
+      },
+      "readiness": {
+        "profile_schema": "verified",
+        "buddy_chat_route": "verified",
+        "executable_runtime_instance": "verified",
+        "standalone_native_runtime": "shared_worker_not_standalone",
+        "external_integrations": "no_division_api_catalog",
+        "production_ready": false,
+        "production_gate": "implement or configure adapters, pass sandbox checks, add authentication, and verify deployment telemetry"
+      },
+      "evidence": {
+        "catalog_source": "App_bots/DreamAgents.json",
+        "runtime_sources": [
+          "server/seed-bots.ts"
+        ],
+        "runtime_seed_duplicates": 0
+      },
+      "sample_test_prompt": "Test Manus Task Completion Agent in sandbox mode. Use synthetic data, demonstrate End-to-end task completion, record evidence, and stop before any live external action."
+    },
+    {
+      "identity": {
+        "slug": "operator-agent",
+        "display_name": "Web Operator Agent",
+        "division": "DreamAgents",
+        "category": "autonomous-agent",
+        "tier": "enterprise",
+        "catalog_status": "active"
+      },
+      "logo": {
+        "logo_id": "logo-operator-agent",
+        "emoji": "🖥️",
+        "monogram": "WO",
+        "call_sign": "Solar Vault 3923EAC7",
+        "shape": "circle",
+        "colors": {
+          "primary": "#77521F",
+          "accent": "#287878",
+          "surface": "#FFF9ED"
+        },
+        "accessibility_label": "Web Operator Agent logo"
+      },
+      "prospectus": {
+        "mission": "Autonomous web browsing agent inspired by OpenAI Operator. Navigates websites, fills forms, makes purchases, and completes online transactions on your behalf.",
+        "target_users": "E-commerce, business operations",
+        "catalog_business_model": "Enterprise license",
+        "catalog_price_range": "$499/mo",
+        "pricing_evidence": "catalog_claim_not_verified_revenue",
+        "inputs": [
+          "user brief",
+          "user-selected files or records",
+          "approved connector references"
+        ],
+        "outputs": [
+          "draft",
+          "analysis",
+          "task packet",
+          "sandbox evidence",
+          "approval request when required"
+        ],
+        "limitations": [
+          "This profile has an executable governed runtime instance backed by shared hardened code, not a separate always-running operating-system process.",
+          "External APIs require owner configuration, provider terms, sandbox tests, and scoped approval.",
+          "Published pricing and revenue models are catalog plans, not evidence of sales or earnings."
+        ]
+      },
+      "capabilities": [
+        {
+          "name": "Autonomous browsing",
+          "source": "App_bots/DreamAgents.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Form filling",
+          "source": "App_bots/DreamAgents.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Transaction execution",
+          "source": "App_bots/DreamAgents.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Multi-site navigation",
+          "source": "App_bots/DreamAgents.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Shopping automation",
+          "source": "App_bots/DreamAgents.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Booking systems",
+          "source": "App_bots/DreamAgents.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Data extraction",
+          "source": "App_bots/DreamAgents.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Account management",
+          "source": "App_bots/DreamAgents.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        }
+      ],
+      "tools": [
+        {
+          "id": "buddy_fleet_runtime",
+          "name": "Executable fleet runtime",
+          "status": "runtime_instance_ready",
+          "evidence": "server/fleet-runtime.ts"
+        },
+        {
+          "id": "buddy_chat_router",
+          "name": "Buddy shared chat router",
+          "status": "runtime_routed",
+          "evidence": "server/routes.ts"
+        },
+        {
+          "id": "buddy_approval_gateway",
+          "name": "Buddy approval gateway",
+          "status": "policy_available",
+          "evidence": "server/approval-notifications.ts"
+        },
+        {
+          "id": "buddy_bot_sandbox",
+          "name": "Per-bot sandbox blueprint",
+          "status": "generated",
+          "evidence": "config/generated/bots.catalog.json"
+        },
+        {
+          "id": "buddy_platform_registry",
+          "name": "Governed platform capability registry",
+          "status": "runtime_routed",
+          "evidence": "config/generated/buddy_platform_expansion.json"
+        },
+        {
+          "id": "buddy_bot_calculator",
+          "name": "Per-bot planning calculator",
+          "status": "local_interactive_ready",
+          "evidence": "config/generated/bot_calculators.json"
+        },
+        {
+          "id": "buddy_connection_broker",
+          "name": "Buddy Connection Broker",
+          "status": "backend_broker_available",
+          "evidence": "dreamco_platform/connections/broker.py"
+        },
+        {
+          "id": "buddy_code_workspace",
+          "name": "Buddy Code Workspace",
+          "status": "shared_runtime_route",
+          "evidence": "server/seed-buddy-bot.ts"
+        }
+      ],
+      "api_candidates": [],
+      "data_contract": {
+        "accepted_inputs": [
+          "user brief",
+          "user-selected files or records",
+          "approved connector references"
+        ],
+        "produced_outputs": [
+          "draft",
+          "analysis",
+          "task packet",
+          "sandbox evidence",
+          "approval request when required"
+        ],
+        "sensitivity": "standard_business_data",
+        "sensitive_domains": [],
+        "storage_policy": "store useful project artifacts only; raw credentials are forbidden; raw biometric media remains local or in an encrypted owner vault",
+        "retention": "owner-configurable with deletion and revocation support"
+      },
+      "approvals": {
+        "default_mode": "sandbox",
+        "approval_required": true,
+        "high_impact_profile": true,
+        "triggers": [
+          "account"
+        ],
+        "channels_supported": [
+          "in_app",
+          "email",
+          "sms",
+          "voice_call"
+        ],
+        "contact_requirement": "verified user-owned destination and explicit channel opt-in",
+        "execution_rule": "approval authorizes one scoped action; it never exposes credentials to the bot or browser"
+      },
+      "sandbox": {
+        "sandbox_id": "sandbox-operator-agent",
+        "network_default": "off",
+        "fixture_mode": "synthetic_or_owner_supplied",
+        "seed": 958655175,
+        "checks": [
+          "profile_schema_valid",
+          "runtime_slug_resolves",
+          "capability_output_matches_brief",
+          "no_secret_in_output",
+          "no_live_external_write",
+          "approval_gate_for_high_impact_action",
+          "failure_and_retry_state_recorded"
+        ],
+        "api_tests": [],
+        "release_gate": "all applicable checks pass and owner approves any live action"
+      },
+      "readiness": {
+        "profile_schema": "verified",
+        "buddy_chat_route": "verified",
+        "executable_runtime_instance": "verified",
+        "standalone_native_runtime": "shared_worker_not_standalone",
+        "external_integrations": "no_division_api_catalog",
+        "production_ready": false,
+        "production_gate": "implement or configure adapters, pass sandbox checks, add authentication, and verify deployment telemetry"
+      },
+      "evidence": {
+        "catalog_source": "App_bots/DreamAgents.json",
+        "runtime_sources": [
+          "server/seed-bots.ts"
+        ],
+        "runtime_seed_duplicates": 0
+      },
+      "sample_test_prompt": "Test Web Operator Agent in sandbox mode. Use synthetic data, demonstrate Autonomous browsing, record evidence, and stop before any live external action."
+    },
+    {
+      "identity": {
+        "slug": "langchain-agent",
+        "display_name": "LangChain Agent Builder",
+        "division": "DreamAgents",
+        "category": "autonomous-agent",
+        "tier": "pro",
+        "catalog_status": "active"
+      },
+      "logo": {
+        "logo_id": "logo-langchain-agent",
+        "emoji": "🔐",
+        "monogram": "LA",
+        "call_sign": "Vivid Pulse 6FE1D53D",
+        "shape": "hex",
+        "colors": {
+          "primary": "#334E3C",
+          "accent": "#B96332",
+          "surface": "#F7F4ED"
+        },
+        "accessibility_label": "LangChain Agent Builder logo"
+      },
+      "prospectus": {
+        "mission": "Custom agent builder powered by LangChain framework. Build agents with memory, tools, and reasoning capabilities using the most popular AI agent framework.",
+        "target_users": "Developers, AI engineers",
+        "catalog_business_model": "SaaS subscription",
+        "catalog_price_range": "$149/mo",
+        "pricing_evidence": "catalog_claim_not_verified_revenue",
+        "inputs": [
+          "user brief",
+          "user-selected files or records",
+          "approved connector references"
+        ],
+        "outputs": [
+          "draft",
+          "analysis",
+          "task packet",
+          "sandbox evidence",
+          "approval request when required"
+        ],
+        "limitations": [
+          "This profile has an executable governed runtime instance backed by shared hardened code, not a separate always-running operating-system process.",
+          "External APIs require owner configuration, provider terms, sandbox tests, and scoped approval.",
+          "Published pricing and revenue models are catalog plans, not evidence of sales or earnings."
+        ]
+      },
+      "capabilities": [
+        {
+          "name": "Chain building",
+          "source": "App_bots/DreamAgents.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Agent creation",
+          "source": "App_bots/DreamAgents.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "RAG pipelines",
+          "source": "App_bots/DreamAgents.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Memory management",
+          "source": "App_bots/DreamAgents.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Tool integration",
+          "source": "App_bots/DreamAgents.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Prompt engineering",
+          "source": "App_bots/DreamAgents.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Output parsing",
+          "source": "App_bots/DreamAgents.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Streaming responses",
+          "source": "App_bots/DreamAgents.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        }
+      ],
+      "tools": [
+        {
+          "id": "buddy_fleet_runtime",
+          "name": "Executable fleet runtime",
+          "status": "runtime_instance_ready",
+          "evidence": "server/fleet-runtime.ts"
+        },
+        {
+          "id": "buddy_chat_router",
+          "name": "Buddy shared chat router",
+          "status": "runtime_routed",
+          "evidence": "server/routes.ts"
+        },
+        {
+          "id": "buddy_approval_gateway",
+          "name": "Buddy approval gateway",
+          "status": "policy_available",
+          "evidence": "server/approval-notifications.ts"
+        },
+        {
+          "id": "buddy_bot_sandbox",
+          "name": "Per-bot sandbox blueprint",
+          "status": "generated",
+          "evidence": "config/generated/bots.catalog.json"
+        },
+        {
+          "id": "buddy_platform_registry",
+          "name": "Governed platform capability registry",
+          "status": "runtime_routed",
+          "evidence": "config/generated/buddy_platform_expansion.json"
+        },
+        {
+          "id": "buddy_bot_calculator",
+          "name": "Per-bot planning calculator",
+          "status": "local_interactive_ready",
+          "evidence": "config/generated/bot_calculators.json"
+        },
+        {
+          "id": "buddy_connection_broker",
+          "name": "Buddy Connection Broker",
+          "status": "backend_broker_available",
+          "evidence": "dreamco_platform/connections/broker.py"
+        }
+      ],
+      "api_candidates": [],
+      "data_contract": {
+        "accepted_inputs": [
+          "user brief",
+          "user-selected files or records",
+          "approved connector references"
+        ],
+        "produced_outputs": [
+          "draft",
+          "analysis",
+          "task packet",
+          "sandbox evidence",
+          "approval request when required"
+        ],
+        "sensitivity": "standard_business_data",
+        "sensitive_domains": [],
+        "storage_policy": "store useful project artifacts only; raw credentials are forbidden; raw biometric media remains local or in an encrypted owner vault",
+        "retention": "owner-configurable with deletion and revocation support"
+      },
+      "approvals": {
+        "default_mode": "sandbox",
+        "approval_required": true,
+        "high_impact_profile": false,
+        "triggers": [
+          "any live external write or publish action"
+        ],
+        "channels_supported": [
+          "in_app",
+          "email",
+          "sms",
+          "voice_call"
+        ],
+        "contact_requirement": "verified user-owned destination and explicit channel opt-in",
+        "execution_rule": "approval authorizes one scoped action; it never exposes credentials to the bot or browser"
+      },
+      "sandbox": {
+        "sandbox_id": "sandbox-langchain-agent",
+        "network_default": "off",
+        "fixture_mode": "synthetic_or_owner_supplied",
+        "seed": 1877071165,
+        "checks": [
+          "profile_schema_valid",
+          "runtime_slug_resolves",
+          "capability_output_matches_brief",
+          "no_secret_in_output",
+          "no_live_external_write",
+          "approval_gate_for_high_impact_action",
+          "failure_and_retry_state_recorded"
+        ],
+        "api_tests": [],
+        "release_gate": "all applicable checks pass and owner approves any live action"
+      },
+      "readiness": {
+        "profile_schema": "verified",
+        "buddy_chat_route": "verified",
+        "executable_runtime_instance": "verified",
+        "standalone_native_runtime": "shared_worker_not_standalone",
+        "external_integrations": "no_division_api_catalog",
+        "production_ready": false,
+        "production_gate": "implement or configure adapters, pass sandbox checks, add authentication, and verify deployment telemetry"
+      },
+      "evidence": {
+        "catalog_source": "App_bots/DreamAgents.json",
+        "runtime_sources": [
+          "server/seed-bots.ts"
+        ],
+        "runtime_seed_duplicates": 0
+      },
+      "sample_test_prompt": "Test LangChain Agent Builder in sandbox mode. Use synthetic data, demonstrate Chain building, record evidence, and stop before any live external action."
+    },
+    {
+      "identity": {
+        "slug": "openagents-web3",
+        "display_name": "OpenAgents Web3 Agent",
+        "division": "DreamAgents",
+        "category": "autonomous-agent",
+        "tier": "enterprise",
+        "catalog_status": "active"
+      },
+      "logo": {
+        "logo_id": "logo-openagents-web3",
+        "emoji": "📊",
+        "monogram": "OW",
+        "call_sign": "True Spark 9A4C580A",
+        "shape": "hex",
+        "colors": {
+          "primary": "#7A2E3A",
+          "accent": "#2D8C7C",
+          "surface": "#FFF8EE"
+        },
+        "accessibility_label": "OpenAgents Web3 Agent logo"
+      },
+      "prospectus": {
+        "mission": "Autonomous Web3 agent inspired by OpenAgents. Executes crypto transactions, manages DeFi positions, interacts with smart contracts, and monitors blockchain activity.",
+        "target_users": "Crypto traders, DeFi users",
+        "catalog_business_model": "Enterprise license",
+        "catalog_price_range": "$699/mo",
+        "pricing_evidence": "catalog_claim_not_verified_revenue",
+        "inputs": [
+          "user brief",
+          "user-selected files or records",
+          "approved connector references"
+        ],
+        "outputs": [
+          "draft",
+          "analysis",
+          "task packet",
+          "sandbox evidence",
+          "approval request when required"
+        ],
+        "limitations": [
+          "This profile has an executable governed runtime instance backed by shared hardened code, not a separate always-running operating-system process.",
+          "External APIs require owner configuration, provider terms, sandbox tests, and scoped approval.",
+          "Published pricing and revenue models are catalog plans, not evidence of sales or earnings."
+        ]
+      },
+      "capabilities": [
+        {
+          "name": "Crypto wallet management",
+          "source": "App_bots/DreamAgents.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "DeFi position management",
+          "source": "App_bots/DreamAgents.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Smart contract interaction",
+          "source": "App_bots/DreamAgents.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Transaction execution",
+          "source": "App_bots/DreamAgents.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Portfolio tracking",
+          "source": "App_bots/DreamAgents.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Yield farming",
+          "source": "App_bots/DreamAgents.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Token swaps",
+          "source": "App_bots/DreamAgents.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Gas optimization",
+          "source": "App_bots/DreamAgents.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        }
+      ],
+      "tools": [
+        {
+          "id": "buddy_fleet_runtime",
+          "name": "Executable fleet runtime",
+          "status": "runtime_instance_ready",
+          "evidence": "server/fleet-runtime.ts"
+        },
+        {
+          "id": "buddy_chat_router",
+          "name": "Buddy shared chat router",
+          "status": "runtime_routed",
+          "evidence": "server/routes.ts"
+        },
+        {
+          "id": "buddy_approval_gateway",
+          "name": "Buddy approval gateway",
+          "status": "policy_available",
+          "evidence": "server/approval-notifications.ts"
+        },
+        {
+          "id": "buddy_bot_sandbox",
+          "name": "Per-bot sandbox blueprint",
+          "status": "generated",
+          "evidence": "config/generated/bots.catalog.json"
+        },
+        {
+          "id": "buddy_platform_registry",
+          "name": "Governed platform capability registry",
+          "status": "runtime_routed",
+          "evidence": "config/generated/buddy_platform_expansion.json"
+        },
+        {
+          "id": "buddy_bot_calculator",
+          "name": "Per-bot planning calculator",
+          "status": "local_interactive_ready",
+          "evidence": "config/generated/bot_calculators.json"
+        }
+      ],
+      "api_candidates": [],
+      "data_contract": {
+        "accepted_inputs": [
+          "user brief",
+          "user-selected files or records",
+          "approved connector references"
+        ],
+        "produced_outputs": [
+          "draft",
+          "analysis",
+          "task packet",
+          "sandbox evidence",
+          "approval request when required"
+        ],
+        "sensitivity": "standard_business_data",
+        "sensitive_domains": [],
+        "storage_policy": "store useful project artifacts only; raw credentials are forbidden; raw biometric media remains local or in an encrypted owner vault",
+        "retention": "owner-configurable with deletion and revocation support"
+      },
+      "approvals": {
+        "default_mode": "sandbox",
+        "approval_required": true,
+        "high_impact_profile": true,
+        "triggers": [
+          "wallet",
+          "contract"
+        ],
+        "channels_supported": [
+          "in_app",
+          "email",
+          "sms",
+          "voice_call"
+        ],
+        "contact_requirement": "verified user-owned destination and explicit channel opt-in",
+        "execution_rule": "approval authorizes one scoped action; it never exposes credentials to the bot or browser"
+      },
+      "sandbox": {
+        "sandbox_id": "sandbox-openagents-web3",
+        "network_default": "off",
+        "fixture_mode": "synthetic_or_owner_supplied",
+        "seed": 2588694538,
+        "checks": [
+          "profile_schema_valid",
+          "runtime_slug_resolves",
+          "capability_output_matches_brief",
+          "no_secret_in_output",
+          "no_live_external_write",
+          "approval_gate_for_high_impact_action",
+          "failure_and_retry_state_recorded"
+        ],
+        "api_tests": [],
+        "release_gate": "all applicable checks pass and owner approves any live action"
+      },
+      "readiness": {
+        "profile_schema": "verified",
+        "buddy_chat_route": "verified",
+        "executable_runtime_instance": "verified",
+        "standalone_native_runtime": "shared_worker_not_standalone",
+        "external_integrations": "no_division_api_catalog",
+        "production_ready": false,
+        "production_gate": "implement or configure adapters, pass sandbox checks, add authentication, and verify deployment telemetry"
+      },
+      "evidence": {
+        "catalog_source": "App_bots/DreamAgents.json",
+        "runtime_sources": [
+          "server/seed-bots.ts"
+        ],
+        "runtime_seed_duplicates": 0
+      },
+      "sample_test_prompt": "Test OpenAgents Web3 Agent in sandbox mode. Use synthetic data, demonstrate Crypto wallet management, record evidence, and stop before any live external action."
+    },
+    {
+      "identity": {
+        "slug": "coze-agent",
+        "display_name": "Coze Multi-Platform Agent",
+        "division": "DreamAgents",
+        "category": "autonomous-agent",
+        "tier": "free",
+        "catalog_status": "active"
+      },
+      "logo": {
+        "logo_id": "logo-coze-agent",
+        "emoji": "📊",
+        "monogram": "CM",
+        "call_sign": "Noble Tower 5E020E3D",
+        "shape": "tile",
+        "colors": {
+          "primary": "#334E3C",
+          "accent": "#B96332",
+          "surface": "#F7F4ED"
+        },
+        "accessibility_label": "Coze Multi-Platform Agent logo"
+      },
+      "prospectus": {
+        "mission": "Multi-platform deployment agent inspired by ByteDance's Coze. Build and deploy AI agents across Telegram, Discord, Slack, and websites with visual tools and plugin marketplace.",
+        "target_users": "Content creators, community managers",
+        "catalog_business_model": "Free tier",
+        "catalog_price_range": "Free",
+        "pricing_evidence": "catalog_claim_not_verified_revenue",
+        "inputs": [
+          "user brief",
+          "user-selected files or records",
+          "approved connector references"
+        ],
+        "outputs": [
+          "draft",
+          "analysis",
+          "task packet",
+          "sandbox evidence",
+          "approval request when required"
+        ],
+        "limitations": [
+          "This profile has an executable governed runtime instance backed by shared hardened code, not a separate always-running operating-system process.",
+          "External APIs require owner configuration, provider terms, sandbox tests, and scoped approval.",
+          "Published pricing and revenue models are catalog plans, not evidence of sales or earnings."
+        ]
+      },
+      "capabilities": [
+        {
+          "name": "Multi-platform deployment",
+          "source": "App_bots/DreamAgents.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Visual agent builder",
+          "source": "App_bots/DreamAgents.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Plugin marketplace",
+          "source": "App_bots/DreamAgents.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Knowledge base",
+          "source": "App_bots/DreamAgents.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Conversation flow design",
+          "source": "App_bots/DreamAgents.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "API integration",
+          "source": "App_bots/DreamAgents.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Scheduled tasks",
+          "source": "App_bots/DreamAgents.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "User analytics",
+          "source": "App_bots/DreamAgents.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        }
+      ],
+      "tools": [
+        {
+          "id": "buddy_fleet_runtime",
+          "name": "Executable fleet runtime",
+          "status": "runtime_instance_ready",
+          "evidence": "server/fleet-runtime.ts"
+        },
+        {
+          "id": "buddy_chat_router",
+          "name": "Buddy shared chat router",
+          "status": "runtime_routed",
+          "evidence": "server/routes.ts"
+        },
+        {
+          "id": "buddy_approval_gateway",
+          "name": "Buddy approval gateway",
+          "status": "policy_available",
+          "evidence": "server/approval-notifications.ts"
+        },
+        {
+          "id": "buddy_bot_sandbox",
+          "name": "Per-bot sandbox blueprint",
+          "status": "generated",
+          "evidence": "config/generated/bots.catalog.json"
+        },
+        {
+          "id": "buddy_platform_registry",
+          "name": "Governed platform capability registry",
+          "status": "runtime_routed",
+          "evidence": "config/generated/buddy_platform_expansion.json"
+        },
+        {
+          "id": "buddy_bot_calculator",
+          "name": "Per-bot planning calculator",
+          "status": "local_interactive_ready",
+          "evidence": "config/generated/bot_calculators.json"
+        },
+        {
+          "id": "buddy_connection_broker",
+          "name": "Buddy Connection Broker",
+          "status": "backend_broker_available",
+          "evidence": "dreamco_platform/connections/broker.py"
+        },
+        {
+          "id": "buddy_code_workspace",
+          "name": "Buddy Code Workspace",
+          "status": "shared_runtime_route",
+          "evidence": "server/seed-buddy-bot.ts"
+        }
+      ],
+      "api_candidates": [],
+      "data_contract": {
+        "accepted_inputs": [
+          "user brief",
+          "user-selected files or records",
+          "approved connector references"
+        ],
+        "produced_outputs": [
+          "draft",
+          "analysis",
+          "task packet",
+          "sandbox evidence",
+          "approval request when required"
+        ],
+        "sensitivity": "standard_business_data",
+        "sensitive_domains": [],
+        "storage_policy": "store useful project artifacts only; raw credentials are forbidden; raw biometric media remains local or in an encrypted owner vault",
+        "retention": "owner-configurable with deletion and revocation support"
+      },
+      "approvals": {
+        "default_mode": "sandbox",
+        "approval_required": true,
+        "high_impact_profile": true,
+        "triggers": [
+          "deploy"
+        ],
+        "channels_supported": [
+          "in_app",
+          "email",
+          "sms",
+          "voice_call"
+        ],
+        "contact_requirement": "verified user-owned destination and explicit channel opt-in",
+        "execution_rule": "approval authorizes one scoped action; it never exposes credentials to the bot or browser"
+      },
+      "sandbox": {
+        "sandbox_id": "sandbox-coze-agent",
+        "network_default": "off",
+        "fixture_mode": "synthetic_or_owner_supplied",
+        "seed": 1577193021,
+        "checks": [
+          "profile_schema_valid",
+          "runtime_slug_resolves",
+          "capability_output_matches_brief",
+          "no_secret_in_output",
+          "no_live_external_write",
+          "approval_gate_for_high_impact_action",
+          "failure_and_retry_state_recorded"
+        ],
+        "api_tests": [],
+        "release_gate": "all applicable checks pass and owner approves any live action"
+      },
+      "readiness": {
+        "profile_schema": "verified",
+        "buddy_chat_route": "verified",
+        "executable_runtime_instance": "verified",
+        "standalone_native_runtime": "shared_worker_not_standalone",
+        "external_integrations": "no_division_api_catalog",
+        "production_ready": false,
+        "production_gate": "implement or configure adapters, pass sandbox checks, add authentication, and verify deployment telemetry"
+      },
+      "evidence": {
+        "catalog_source": "App_bots/DreamAgents.json",
+        "runtime_sources": [
+          "server/seed-bots.ts"
+        ],
+        "runtime_seed_duplicates": 0
+      },
+      "sample_test_prompt": "Test Coze Multi-Platform Agent in sandbox mode. Use synthetic data, demonstrate Multi-platform deployment, record evidence, and stop before any live external action."
+    },
+    {
+      "identity": {
+        "slug": "agentgpt-browser",
+        "display_name": "AgentGPT Browser Agent",
+        "division": "DreamAgents",
+        "category": "autonomous-agent",
+        "tier": "free",
+        "catalog_status": "active"
+      },
+      "logo": {
+        "logo_id": "logo-agentgpt-browser",
+        "emoji": "🧠",
+        "monogram": "AB",
+        "call_sign": "Vivid Vault B6E172FF",
+        "shape": "hex",
+        "colors": {
+          "primary": "#77521F",
+          "accent": "#287878",
+          "surface": "#FFF9ED"
+        },
+        "accessibility_label": "AgentGPT Browser Agent logo"
+      },
+      "prospectus": {
+        "mission": "Browser-based autonomous agent inspired by AgentGPT. Deploy autonomous agents directly from the browser with no coding required. Just type a goal and watch it work.",
+        "target_users": "Non-technical users, beginners",
+        "catalog_business_model": "Free tier",
+        "catalog_price_range": "Free",
+        "pricing_evidence": "catalog_claim_not_verified_revenue",
+        "inputs": [
+          "user brief",
+          "user-selected files or records",
+          "approved connector references"
+        ],
+        "outputs": [
+          "draft",
+          "analysis",
+          "task packet",
+          "sandbox evidence",
+          "approval request when required"
+        ],
+        "limitations": [
+          "This profile has an executable governed runtime instance backed by shared hardened code, not a separate always-running operating-system process.",
+          "External APIs require owner configuration, provider terms, sandbox tests, and scoped approval.",
+          "Published pricing and revenue models are catalog plans, not evidence of sales or earnings."
+        ]
+      },
+      "capabilities": [
+        {
+          "name": "Browser-based execution",
+          "source": "App_bots/DreamAgents.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "No-code setup",
+          "source": "App_bots/DreamAgents.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Goal-driven automation",
+          "source": "App_bots/DreamAgents.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Web search integration",
+          "source": "App_bots/DreamAgents.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Task breakdown",
+          "source": "App_bots/DreamAgents.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Progress visualization",
+          "source": "App_bots/DreamAgents.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Result compilation",
+          "source": "App_bots/DreamAgents.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Simple interface",
+          "source": "App_bots/DreamAgents.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        }
+      ],
+      "tools": [
+        {
+          "id": "buddy_fleet_runtime",
+          "name": "Executable fleet runtime",
+          "status": "runtime_instance_ready",
+          "evidence": "server/fleet-runtime.ts"
+        },
+        {
+          "id": "buddy_chat_router",
+          "name": "Buddy shared chat router",
+          "status": "runtime_routed",
+          "evidence": "server/routes.ts"
+        },
+        {
+          "id": "buddy_approval_gateway",
+          "name": "Buddy approval gateway",
+          "status": "policy_available",
+          "evidence": "server/approval-notifications.ts"
+        },
+        {
+          "id": "buddy_bot_sandbox",
+          "name": "Per-bot sandbox blueprint",
+          "status": "generated",
+          "evidence": "config/generated/bots.catalog.json"
+        },
+        {
+          "id": "buddy_platform_registry",
+          "name": "Governed platform capability registry",
+          "status": "runtime_routed",
+          "evidence": "config/generated/buddy_platform_expansion.json"
+        },
+        {
+          "id": "buddy_bot_calculator",
+          "name": "Per-bot planning calculator",
+          "status": "local_interactive_ready",
+          "evidence": "config/generated/bot_calculators.json"
+        },
+        {
+          "id": "buddy_connection_broker",
+          "name": "Buddy Connection Broker",
+          "status": "backend_broker_available",
+          "evidence": "dreamco_platform/connections/broker.py"
+        },
+        {
+          "id": "buddy_code_workspace",
+          "name": "Buddy Code Workspace",
+          "status": "shared_runtime_route",
+          "evidence": "server/seed-buddy-bot.ts"
+        }
+      ],
+      "api_candidates": [],
+      "data_contract": {
+        "accepted_inputs": [
+          "user brief",
+          "user-selected files or records",
+          "approved connector references"
+        ],
+        "produced_outputs": [
+          "draft",
+          "analysis",
+          "task packet",
+          "sandbox evidence",
+          "approval request when required"
+        ],
+        "sensitivity": "standard_business_data",
+        "sensitive_domains": [],
+        "storage_policy": "store useful project artifacts only; raw credentials are forbidden; raw biometric media remains local or in an encrypted owner vault",
+        "retention": "owner-configurable with deletion and revocation support"
+      },
+      "approvals": {
+        "default_mode": "sandbox",
+        "approval_required": true,
+        "high_impact_profile": true,
+        "triggers": [
+          "deploy"
+        ],
+        "channels_supported": [
+          "in_app",
+          "email",
+          "sms",
+          "voice_call"
+        ],
+        "contact_requirement": "verified user-owned destination and explicit channel opt-in",
+        "execution_rule": "approval authorizes one scoped action; it never exposes credentials to the bot or browser"
+      },
+      "sandbox": {
+        "sandbox_id": "sandbox-agentgpt-browser",
+        "network_default": "off",
+        "fixture_mode": "synthetic_or_owner_supplied",
+        "seed": 3068228351,
+        "checks": [
+          "profile_schema_valid",
+          "runtime_slug_resolves",
+          "capability_output_matches_brief",
+          "no_secret_in_output",
+          "no_live_external_write",
+          "approval_gate_for_high_impact_action",
+          "failure_and_retry_state_recorded"
+        ],
+        "api_tests": [],
+        "release_gate": "all applicable checks pass and owner approves any live action"
+      },
+      "readiness": {
+        "profile_schema": "verified",
+        "buddy_chat_route": "verified",
+        "executable_runtime_instance": "verified",
+        "standalone_native_runtime": "shared_worker_not_standalone",
+        "external_integrations": "no_division_api_catalog",
+        "production_ready": false,
+        "production_gate": "implement or configure adapters, pass sandbox checks, add authentication, and verify deployment telemetry"
+      },
+      "evidence": {
+        "catalog_source": "App_bots/DreamAgents.json",
+        "runtime_sources": [
+          "server/seed-bots.ts"
+        ],
+        "runtime_seed_duplicates": 0
+      },
+      "sample_test_prompt": "Test AgentGPT Browser Agent in sandbox mode. Use synthetic data, demonstrate Browser-based execution, record evidence, and stop before any live external action."
+    },
+    {
+      "identity": {
+        "slug": "relevance-agent",
+        "display_name": "Relevance AI Workflow Agent",
+        "division": "DreamAgents",
+        "category": "autonomous-agent",
+        "tier": "pro",
+        "catalog_status": "active"
+      },
+      "logo": {
+        "logo_id": "logo-relevance-agent",
+        "emoji": "🔎",
+        "monogram": "RW",
+        "call_sign": "Expert Atlas 5DE895EC",
+        "shape": "hex",
+        "colors": {
+          "primary": "#0F6F88",
+          "accent": "#C94D63",
+          "surface": "#F4FBFC"
+        },
+        "accessibility_label": "Relevance AI Workflow Agent logo"
+      },
+      "prospectus": {
+        "mission": "No-code AI agent builder inspired by Relevance AI. Drag-and-drop interface to create agents that automate business workflows with custom tools and integrations.",
+        "target_users": "Business analysts, operations teams",
+        "catalog_business_model": "SaaS subscription",
+        "catalog_price_range": "$149/mo",
+        "pricing_evidence": "catalog_claim_not_verified_revenue",
+        "inputs": [
+          "user brief",
+          "user-selected files or records",
+          "approved connector references"
+        ],
+        "outputs": [
+          "draft",
+          "analysis",
+          "task packet",
+          "sandbox evidence",
+          "approval request when required"
+        ],
+        "limitations": [
+          "This profile has an executable governed runtime instance backed by shared hardened code, not a separate always-running operating-system process.",
+          "External APIs require owner configuration, provider terms, sandbox tests, and scoped approval.",
+          "Published pricing and revenue models are catalog plans, not evidence of sales or earnings."
+        ]
+      },
+      "capabilities": [
+        {
+          "name": "No-code builder",
+          "source": "App_bots/DreamAgents.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Drag-and-drop design",
+          "source": "App_bots/DreamAgents.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Custom tools",
+          "source": "App_bots/DreamAgents.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "API connectors",
+          "source": "App_bots/DreamAgents.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Workflow automation",
+          "source": "App_bots/DreamAgents.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Data processing",
+          "source": "App_bots/DreamAgents.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Decision logic",
+          "source": "App_bots/DreamAgents.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Team collaboration",
+          "source": "App_bots/DreamAgents.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        }
+      ],
+      "tools": [
+        {
+          "id": "buddy_fleet_runtime",
+          "name": "Executable fleet runtime",
+          "status": "runtime_instance_ready",
+          "evidence": "server/fleet-runtime.ts"
+        },
+        {
+          "id": "buddy_chat_router",
+          "name": "Buddy shared chat router",
+          "status": "runtime_routed",
+          "evidence": "server/routes.ts"
+        },
+        {
+          "id": "buddy_approval_gateway",
+          "name": "Buddy approval gateway",
+          "status": "policy_available",
+          "evidence": "server/approval-notifications.ts"
+        },
+        {
+          "id": "buddy_bot_sandbox",
+          "name": "Per-bot sandbox blueprint",
+          "status": "generated",
+          "evidence": "config/generated/bots.catalog.json"
+        },
+        {
+          "id": "buddy_platform_registry",
+          "name": "Governed platform capability registry",
+          "status": "runtime_routed",
+          "evidence": "config/generated/buddy_platform_expansion.json"
+        },
+        {
+          "id": "buddy_bot_calculator",
+          "name": "Per-bot planning calculator",
+          "status": "local_interactive_ready",
+          "evidence": "config/generated/bot_calculators.json"
+        },
+        {
+          "id": "buddy_connection_broker",
+          "name": "Buddy Connection Broker",
+          "status": "backend_broker_available",
+          "evidence": "dreamco_platform/connections/broker.py"
+        },
+        {
+          "id": "buddy_code_workspace",
+          "name": "Buddy Code Workspace",
+          "status": "shared_runtime_route",
+          "evidence": "server/seed-buddy-bot.ts"
+        }
+      ],
+      "api_candidates": [],
+      "data_contract": {
+        "accepted_inputs": [
+          "user brief",
+          "user-selected files or records",
+          "approved connector references"
+        ],
+        "produced_outputs": [
+          "draft",
+          "analysis",
+          "task packet",
+          "sandbox evidence",
+          "approval request when required"
+        ],
+        "sensitivity": "standard_business_data",
+        "sensitive_domains": [],
+        "storage_policy": "store useful project artifacts only; raw credentials are forbidden; raw biometric media remains local or in an encrypted owner vault",
+        "retention": "owner-configurable with deletion and revocation support"
+      },
+      "approvals": {
+        "default_mode": "sandbox",
+        "approval_required": true,
+        "high_impact_profile": false,
+        "triggers": [
+          "any live external write or publish action"
+        ],
+        "channels_supported": [
+          "in_app",
+          "email",
+          "sms",
+          "voice_call"
+        ],
+        "contact_requirement": "verified user-owned destination and explicit channel opt-in",
+        "execution_rule": "approval authorizes one scoped action; it never exposes credentials to the bot or browser"
+      },
+      "sandbox": {
+        "sandbox_id": "sandbox-relevance-agent",
+        "network_default": "off",
+        "fixture_mode": "synthetic_or_owner_supplied",
+        "seed": 1575523820,
+        "checks": [
+          "profile_schema_valid",
+          "runtime_slug_resolves",
+          "capability_output_matches_brief",
+          "no_secret_in_output",
+          "no_live_external_write",
+          "approval_gate_for_high_impact_action",
+          "failure_and_retry_state_recorded"
+        ],
+        "api_tests": [],
+        "release_gate": "all applicable checks pass and owner approves any live action"
+      },
+      "readiness": {
+        "profile_schema": "verified",
+        "buddy_chat_route": "verified",
+        "executable_runtime_instance": "verified",
+        "standalone_native_runtime": "shared_worker_not_standalone",
+        "external_integrations": "no_division_api_catalog",
+        "production_ready": false,
+        "production_gate": "implement or configure adapters, pass sandbox checks, add authentication, and verify deployment telemetry"
+      },
+      "evidence": {
+        "catalog_source": "App_bots/DreamAgents.json",
+        "runtime_sources": [
+          "server/seed-bots.ts"
+        ],
+        "runtime_seed_duplicates": 0
+      },
+      "sample_test_prompt": "Test Relevance AI Workflow Agent in sandbox mode. Use synthetic data, demonstrate No-code builder, record evidence, and stop before any live external action."
+    },
+    {
+      "identity": {
+        "slug": "beam-agent",
+        "display_name": "Beam Self-Learning Agent",
+        "division": "DreamAgents",
+        "category": "autonomous-agent",
+        "tier": "enterprise",
+        "catalog_status": "active"
+      },
+      "logo": {
+        "logo_id": "logo-beam-agent",
+        "emoji": "✨",
+        "monogram": "BS",
+        "call_sign": "Civic Craft 3BCCCFF5",
+        "shape": "shield",
+        "colors": {
+          "primary": "#334E3C",
+          "accent": "#B96332",
+          "surface": "#F7F4ED"
+        },
+        "accessibility_label": "Beam Self-Learning Agent logo"
+      },
+      "prospectus": {
+        "mission": "Self-learning autonomous agent inspired by Beam AI. Follows your SOPs and continuously improves. Automates 40+ hours/week of repetitive work while ensuring compliance.",
+        "target_users": "Enterprise operations, compliance teams",
+        "catalog_business_model": "Enterprise license",
+        "catalog_price_range": "$499/mo",
+        "pricing_evidence": "catalog_claim_not_verified_revenue",
+        "inputs": [
+          "user brief",
+          "user-selected files or records",
+          "approved connector references"
+        ],
+        "outputs": [
+          "draft",
+          "analysis",
+          "task packet",
+          "sandbox evidence",
+          "approval request when required"
+        ],
+        "limitations": [
+          "This profile has an executable governed runtime instance backed by shared hardened code, not a separate always-running operating-system process.",
+          "External APIs require owner configuration, provider terms, sandbox tests, and scoped approval.",
+          "Published pricing and revenue models are catalog plans, not evidence of sales or earnings."
+        ]
+      },
+      "capabilities": [
+        {
+          "name": "SOP automation",
+          "source": "App_bots/DreamAgents.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Self-learning",
+          "source": "App_bots/DreamAgents.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Process mining",
+          "source": "App_bots/DreamAgents.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Compliance tracking",
+          "source": "App_bots/DreamAgents.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Human escalation",
+          "source": "App_bots/DreamAgents.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Performance improvement",
+          "source": "App_bots/DreamAgents.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Error recovery",
+          "source": "App_bots/DreamAgents.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Audit trail",
+          "source": "App_bots/DreamAgents.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        }
+      ],
+      "tools": [
+        {
+          "id": "buddy_fleet_runtime",
+          "name": "Executable fleet runtime",
+          "status": "runtime_instance_ready",
+          "evidence": "server/fleet-runtime.ts"
+        },
+        {
+          "id": "buddy_chat_router",
+          "name": "Buddy shared chat router",
+          "status": "runtime_routed",
+          "evidence": "server/routes.ts"
+        },
+        {
+          "id": "buddy_approval_gateway",
+          "name": "Buddy approval gateway",
+          "status": "policy_available",
+          "evidence": "server/approval-notifications.ts"
+        },
+        {
+          "id": "buddy_bot_sandbox",
+          "name": "Per-bot sandbox blueprint",
+          "status": "generated",
+          "evidence": "config/generated/bots.catalog.json"
+        },
+        {
+          "id": "buddy_platform_registry",
+          "name": "Governed platform capability registry",
+          "status": "runtime_routed",
+          "evidence": "config/generated/buddy_platform_expansion.json"
+        },
+        {
+          "id": "buddy_bot_calculator",
+          "name": "Per-bot planning calculator",
+          "status": "local_interactive_ready",
+          "evidence": "config/generated/bot_calculators.json"
+        },
+        {
+          "id": "buddy_creative_studio",
+          "name": "Buddy Creative Studio",
+          "status": "local_prototype_available",
+          "evidence": "dreamco_platform/creative/studio.py"
+        }
+      ],
+      "api_candidates": [],
+      "data_contract": {
+        "accepted_inputs": [
+          "user brief",
+          "user-selected files or records",
+          "approved connector references"
+        ],
+        "produced_outputs": [
+          "draft",
+          "analysis",
+          "task packet",
+          "sandbox evidence",
+          "approval request when required"
+        ],
+        "sensitivity": "standard_business_data",
+        "sensitive_domains": [],
+        "storage_policy": "store useful project artifacts only; raw credentials are forbidden; raw biometric media remains local or in an encrypted owner vault",
+        "retention": "owner-configurable with deletion and revocation support"
+      },
+      "approvals": {
+        "default_mode": "sandbox",
+        "approval_required": true,
+        "high_impact_profile": false,
+        "triggers": [
+          "any live external write or publish action"
+        ],
+        "channels_supported": [
+          "in_app",
+          "email",
+          "sms",
+          "voice_call"
+        ],
+        "contact_requirement": "verified user-owned destination and explicit channel opt-in",
+        "execution_rule": "approval authorizes one scoped action; it never exposes credentials to the bot or browser"
+      },
+      "sandbox": {
+        "sandbox_id": "sandbox-beam-agent",
+        "network_default": "off",
+        "fixture_mode": "synthetic_or_owner_supplied",
+        "seed": 1003278325,
+        "checks": [
+          "profile_schema_valid",
+          "runtime_slug_resolves",
+          "capability_output_matches_brief",
+          "no_secret_in_output",
+          "no_live_external_write",
+          "approval_gate_for_high_impact_action",
+          "failure_and_retry_state_recorded"
+        ],
+        "api_tests": [],
+        "release_gate": "all applicable checks pass and owner approves any live action"
+      },
+      "readiness": {
+        "profile_schema": "verified",
+        "buddy_chat_route": "verified",
+        "executable_runtime_instance": "verified",
+        "standalone_native_runtime": "shared_worker_not_standalone",
+        "external_integrations": "no_division_api_catalog",
+        "production_ready": false,
+        "production_gate": "implement or configure adapters, pass sandbox checks, add authentication, and verify deployment telemetry"
+      },
+      "evidence": {
+        "catalog_source": "App_bots/DreamAgents.json",
+        "runtime_sources": [
+          "server/seed-bots.ts"
+        ],
+        "runtime_seed_duplicates": 0
+      },
+      "sample_test_prompt": "Test Beam Self-Learning Agent in sandbox mode. Use synthetic data, demonstrate SOP automation, record evidence, and stop before any live external action."
+    },
+    {
+      "identity": {
+        "slug": "deep-research-agent",
+        "display_name": "Deep Research Agent",
+        "division": "DreamAgents",
+        "category": "autonomous-agent",
+        "tier": "pro",
+        "catalog_status": "active"
+      },
+      "logo": {
+        "logo_id": "logo-deep-research-agent",
+        "emoji": "🏗️",
+        "monogram": "DR",
+        "call_sign": "Modern Launchpad 2FA4471E",
+        "shape": "hex",
+        "colors": {
+          "primary": "#3D4C8D",
+          "accent": "#D56638",
+          "surface": "#F4F6FF"
+        },
+        "accessibility_label": "Deep Research Agent logo"
+      },
+      "prospectus": {
+        "mission": "Autonomous research agent inspired by ChatGPT Deep Research. Synthesizes hundreds of sources into comprehensive reports with citations, analysis, and actionable insights.",
+        "target_users": "Researchers, analysts, consultants",
+        "catalog_business_model": "SaaS subscription",
+        "catalog_price_range": "$149/mo",
+        "pricing_evidence": "catalog_claim_not_verified_revenue",
+        "inputs": [
+          "user brief",
+          "user-selected files or records",
+          "approved connector references"
+        ],
+        "outputs": [
+          "draft",
+          "analysis",
+          "task packet",
+          "sandbox evidence",
+          "approval request when required"
+        ],
+        "limitations": [
+          "This profile has an executable governed runtime instance backed by shared hardened code, not a separate always-running operating-system process.",
+          "External APIs require owner configuration, provider terms, sandbox tests, and scoped approval.",
+          "Published pricing and revenue models are catalog plans, not evidence of sales or earnings."
+        ]
+      },
+      "capabilities": [
+        {
+          "name": "Multi-source synthesis",
+          "source": "App_bots/DreamAgents.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Citation tracking",
+          "source": "App_bots/DreamAgents.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Report generation",
+          "source": "App_bots/DreamAgents.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Source verification",
+          "source": "App_bots/DreamAgents.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Trend identification",
+          "source": "App_bots/DreamAgents.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Competitive analysis",
+          "source": "App_bots/DreamAgents.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Academic research",
+          "source": "App_bots/DreamAgents.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Market research",
+          "source": "App_bots/DreamAgents.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        }
+      ],
+      "tools": [
+        {
+          "id": "buddy_fleet_runtime",
+          "name": "Executable fleet runtime",
+          "status": "runtime_instance_ready",
+          "evidence": "server/fleet-runtime.ts"
+        },
+        {
+          "id": "buddy_chat_router",
+          "name": "Buddy shared chat router",
+          "status": "runtime_routed",
+          "evidence": "server/routes.ts"
+        },
+        {
+          "id": "buddy_approval_gateway",
+          "name": "Buddy approval gateway",
+          "status": "policy_available",
+          "evidence": "server/approval-notifications.ts"
+        },
+        {
+          "id": "buddy_bot_sandbox",
+          "name": "Per-bot sandbox blueprint",
+          "status": "generated",
+          "evidence": "config/generated/bots.catalog.json"
+        },
+        {
+          "id": "buddy_platform_registry",
+          "name": "Governed platform capability registry",
+          "status": "runtime_routed",
+          "evidence": "config/generated/buddy_platform_expansion.json"
+        },
+        {
+          "id": "buddy_bot_calculator",
+          "name": "Per-bot planning calculator",
+          "status": "local_interactive_ready",
+          "evidence": "config/generated/bot_calculators.json"
+        }
+      ],
+      "api_candidates": [],
+      "data_contract": {
+        "accepted_inputs": [
+          "user brief",
+          "user-selected files or records",
+          "approved connector references"
+        ],
+        "produced_outputs": [
+          "draft",
+          "analysis",
+          "task packet",
+          "sandbox evidence",
+          "approval request when required"
+        ],
+        "sensitivity": "standard_business_data",
+        "sensitive_domains": [],
+        "storage_policy": "store useful project artifacts only; raw credentials are forbidden; raw biometric media remains local or in an encrypted owner vault",
+        "retention": "owner-configurable with deletion and revocation support"
+      },
+      "approvals": {
+        "default_mode": "sandbox",
+        "approval_required": true,
+        "high_impact_profile": false,
+        "triggers": [
+          "any live external write or publish action"
+        ],
+        "channels_supported": [
+          "in_app",
+          "email",
+          "sms",
+          "voice_call"
+        ],
+        "contact_requirement": "verified user-owned destination and explicit channel opt-in",
+        "execution_rule": "approval authorizes one scoped action; it never exposes credentials to the bot or browser"
+      },
+      "sandbox": {
+        "sandbox_id": "sandbox-deep-research-agent",
+        "network_default": "off",
+        "fixture_mode": "synthetic_or_owner_supplied",
+        "seed": 799295262,
+        "checks": [
+          "profile_schema_valid",
+          "runtime_slug_resolves",
+          "capability_output_matches_brief",
+          "no_secret_in_output",
+          "no_live_external_write",
+          "approval_gate_for_high_impact_action",
+          "failure_and_retry_state_recorded"
+        ],
+        "api_tests": [],
+        "release_gate": "all applicable checks pass and owner approves any live action"
+      },
+      "readiness": {
+        "profile_schema": "verified",
+        "buddy_chat_route": "verified",
+        "executable_runtime_instance": "verified",
+        "standalone_native_runtime": "shared_worker_not_standalone",
+        "external_integrations": "no_division_api_catalog",
+        "production_ready": false,
+        "production_gate": "implement or configure adapters, pass sandbox checks, add authentication, and verify deployment telemetry"
+      },
+      "evidence": {
+        "catalog_source": "App_bots/DreamAgents.json",
+        "runtime_sources": [
+          "server/seed-bots.ts"
+        ],
+        "runtime_seed_duplicates": 0
+      },
+      "sample_test_prompt": "Test Deep Research Agent in sandbox mode. Use synthetic data, demonstrate Multi-source synthesis, record evidence, and stop before any live external action."
+    },
+    {
+      "identity": {
+        "slug": "mariner-agent",
+        "display_name": "Project Mariner Shopping Agent",
+        "division": "DreamAgents",
+        "category": "autonomous-agent",
+        "tier": "pro",
+        "catalog_status": "active"
+      },
+      "logo": {
+        "logo_id": "logo-mariner-agent",
+        "emoji": "🌐",
+        "monogram": "PM",
+        "call_sign": "Bright Signal FE48068F",
+        "shape": "shield",
+        "colors": {
+          "primary": "#77521F",
+          "accent": "#287878",
+          "surface": "#FFF9ED"
+        },
+        "accessibility_label": "Project Mariner Shopping Agent logo"
+      },
+      "prospectus": {
+        "mission": "Web shopping automation agent inspired by Google's Project Mariner. Finds deals, compares prices, applies coupons, and completes purchases across multiple shopping sites.",
+        "target_users": "Shoppers, e-commerce businesses",
+        "catalog_business_model": "SaaS subscription",
+        "catalog_price_range": "$99/mo",
+        "pricing_evidence": "catalog_claim_not_verified_revenue",
+        "inputs": [
+          "user brief",
+          "user-selected files or records",
+          "approved connector references"
+        ],
+        "outputs": [
+          "draft",
+          "analysis",
+          "task packet",
+          "sandbox evidence",
+          "approval request when required"
+        ],
+        "limitations": [
+          "This profile has an executable governed runtime instance backed by shared hardened code, not a separate always-running operating-system process.",
+          "External APIs require owner configuration, provider terms, sandbox tests, and scoped approval.",
+          "Published pricing and revenue models are catalog plans, not evidence of sales or earnings."
+        ]
+      },
+      "capabilities": [
+        {
+          "name": "Deal finding",
+          "source": "App_bots/DreamAgents.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Price comparison",
+          "source": "App_bots/DreamAgents.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Coupon discovery",
+          "source": "App_bots/DreamAgents.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Purchase automation",
+          "source": "App_bots/DreamAgents.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Cart optimization",
+          "source": "App_bots/DreamAgents.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Price tracking",
+          "source": "App_bots/DreamAgents.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Wishlist management",
+          "source": "App_bots/DreamAgents.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Review analysis",
+          "source": "App_bots/DreamAgents.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        }
+      ],
+      "tools": [
+        {
+          "id": "buddy_fleet_runtime",
+          "name": "Executable fleet runtime",
+          "status": "runtime_instance_ready",
+          "evidence": "server/fleet-runtime.ts"
+        },
+        {
+          "id": "buddy_chat_router",
+          "name": "Buddy shared chat router",
+          "status": "runtime_routed",
+          "evidence": "server/routes.ts"
+        },
+        {
+          "id": "buddy_approval_gateway",
+          "name": "Buddy approval gateway",
+          "status": "policy_available",
+          "evidence": "server/approval-notifications.ts"
+        },
+        {
+          "id": "buddy_bot_sandbox",
+          "name": "Per-bot sandbox blueprint",
+          "status": "generated",
+          "evidence": "config/generated/bots.catalog.json"
+        },
+        {
+          "id": "buddy_platform_registry",
+          "name": "Governed platform capability registry",
+          "status": "runtime_routed",
+          "evidence": "config/generated/buddy_platform_expansion.json"
+        },
+        {
+          "id": "buddy_bot_calculator",
+          "name": "Per-bot planning calculator",
+          "status": "local_interactive_ready",
+          "evidence": "config/generated/bot_calculators.json"
+        },
+        {
+          "id": "buddy_code_workspace",
+          "name": "Buddy Code Workspace",
+          "status": "shared_runtime_route",
+          "evidence": "server/seed-buddy-bot.ts"
+        }
+      ],
+      "api_candidates": [],
+      "data_contract": {
+        "accepted_inputs": [
+          "user brief",
+          "user-selected files or records",
+          "approved connector references"
+        ],
+        "produced_outputs": [
+          "draft",
+          "analysis",
+          "task packet",
+          "sandbox evidence",
+          "approval request when required"
+        ],
+        "sensitivity": "standard_business_data",
+        "sensitive_domains": [],
+        "storage_policy": "store useful project artifacts only; raw credentials are forbidden; raw biometric media remains local or in an encrypted owner vault",
+        "retention": "owner-configurable with deletion and revocation support"
+      },
+      "approvals": {
+        "default_mode": "sandbox",
+        "approval_required": true,
+        "high_impact_profile": false,
+        "triggers": [
+          "any live external write or publish action"
+        ],
+        "channels_supported": [
+          "in_app",
+          "email",
+          "sms",
+          "voice_call"
+        ],
+        "contact_requirement": "verified user-owned destination and explicit channel opt-in",
+        "execution_rule": "approval authorizes one scoped action; it never exposes credentials to the bot or browser"
+      },
+      "sandbox": {
+        "sandbox_id": "sandbox-mariner-agent",
+        "network_default": "off",
+        "fixture_mode": "synthetic_or_owner_supplied",
+        "seed": 4266133135,
+        "checks": [
+          "profile_schema_valid",
+          "runtime_slug_resolves",
+          "capability_output_matches_brief",
+          "no_secret_in_output",
+          "no_live_external_write",
+          "approval_gate_for_high_impact_action",
+          "failure_and_retry_state_recorded"
+        ],
+        "api_tests": [],
+        "release_gate": "all applicable checks pass and owner approves any live action"
+      },
+      "readiness": {
+        "profile_schema": "verified",
+        "buddy_chat_route": "verified",
+        "executable_runtime_instance": "verified",
+        "standalone_native_runtime": "shared_worker_not_standalone",
+        "external_integrations": "no_division_api_catalog",
+        "production_ready": false,
+        "production_gate": "implement or configure adapters, pass sandbox checks, add authentication, and verify deployment telemetry"
+      },
+      "evidence": {
+        "catalog_source": "App_bots/DreamAgents.json",
+        "runtime_sources": [
+          "server/seed-bots.ts"
+        ],
+        "runtime_seed_duplicates": 0
+      },
+      "sample_test_prompt": "Test Project Mariner Shopping Agent in sandbox mode. Use synthetic data, demonstrate Deal finding, record evidence, and stop before any live external action."
+    },
+    {
+      "identity": {
+        "slug": "perplexity-agent",
+        "display_name": "Perplexity Search Agent",
+        "division": "DreamAgents",
+        "category": "autonomous-agent",
+        "tier": "pro",
+        "catalog_status": "active"
+      },
+      "logo": {
+        "logo_id": "logo-perplexity-agent",
+        "emoji": "🖥️",
+        "monogram": "PS",
+        "call_sign": "Solar Pulse 75CBD5FE",
+        "shape": "tile",
+        "colors": {
+          "primary": "#3D4C8D",
+          "accent": "#D56638",
+          "surface": "#F4F6FF"
+        },
+        "accessibility_label": "Perplexity Search Agent logo"
+      },
+      "prospectus": {
+        "mission": "AI search agent inspired by Perplexity Comet. Actively searches, browses, and synthesizes web information to complete research tasks with cited, verified answers.",
+        "target_users": "Researchers, content creators",
+        "catalog_business_model": "SaaS subscription",
+        "catalog_price_range": "$99/mo",
+        "pricing_evidence": "catalog_claim_not_verified_revenue",
+        "inputs": [
+          "user brief",
+          "user-selected files or records",
+          "approved connector references"
+        ],
+        "outputs": [
+          "draft",
+          "analysis",
+          "task packet",
+          "sandbox evidence",
+          "approval request when required"
+        ],
+        "limitations": [
+          "This profile has an executable governed runtime instance backed by shared hardened code, not a separate always-running operating-system process.",
+          "External APIs require owner configuration, provider terms, sandbox tests, and scoped approval.",
+          "Published pricing and revenue models are catalog plans, not evidence of sales or earnings."
+        ]
+      },
+      "capabilities": [
+        {
+          "name": "Active web search",
+          "source": "App_bots/DreamAgents.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Source verification",
+          "source": "App_bots/DreamAgents.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Citation generation",
+          "source": "App_bots/DreamAgents.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Multi-hop reasoning",
+          "source": "App_bots/DreamAgents.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Real-time data",
+          "source": "App_bots/DreamAgents.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Answer synthesis",
+          "source": "App_bots/DreamAgents.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Follow-up questions",
+          "source": "App_bots/DreamAgents.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Topic exploration",
+          "source": "App_bots/DreamAgents.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        }
+      ],
+      "tools": [
+        {
+          "id": "buddy_fleet_runtime",
+          "name": "Executable fleet runtime",
+          "status": "runtime_instance_ready",
+          "evidence": "server/fleet-runtime.ts"
+        },
+        {
+          "id": "buddy_chat_router",
+          "name": "Buddy shared chat router",
+          "status": "runtime_routed",
+          "evidence": "server/routes.ts"
+        },
+        {
+          "id": "buddy_approval_gateway",
+          "name": "Buddy approval gateway",
+          "status": "policy_available",
+          "evidence": "server/approval-notifications.ts"
+        },
+        {
+          "id": "buddy_bot_sandbox",
+          "name": "Per-bot sandbox blueprint",
+          "status": "generated",
+          "evidence": "config/generated/bots.catalog.json"
+        },
+        {
+          "id": "buddy_platform_registry",
+          "name": "Governed platform capability registry",
+          "status": "runtime_routed",
+          "evidence": "config/generated/buddy_platform_expansion.json"
+        },
+        {
+          "id": "buddy_bot_calculator",
+          "name": "Per-bot planning calculator",
+          "status": "local_interactive_ready",
+          "evidence": "config/generated/bot_calculators.json"
+        }
+      ],
+      "api_candidates": [],
+      "data_contract": {
+        "accepted_inputs": [
+          "user brief",
+          "user-selected files or records",
+          "approved connector references"
+        ],
+        "produced_outputs": [
+          "draft",
+          "analysis",
+          "task packet",
+          "sandbox evidence",
+          "approval request when required"
+        ],
+        "sensitivity": "standard_business_data",
+        "sensitive_domains": [],
+        "storage_policy": "store useful project artifacts only; raw credentials are forbidden; raw biometric media remains local or in an encrypted owner vault",
+        "retention": "owner-configurable with deletion and revocation support"
+      },
+      "approvals": {
+        "default_mode": "sandbox",
+        "approval_required": true,
+        "high_impact_profile": false,
+        "triggers": [
+          "any live external write or publish action"
+        ],
+        "channels_supported": [
+          "in_app",
+          "email",
+          "sms",
+          "voice_call"
+        ],
+        "contact_requirement": "verified user-owned destination and explicit channel opt-in",
+        "execution_rule": "approval authorizes one scoped action; it never exposes credentials to the bot or browser"
+      },
+      "sandbox": {
+        "sandbox_id": "sandbox-perplexity-agent",
+        "network_default": "off",
+        "fixture_mode": "synthetic_or_owner_supplied",
+        "seed": 1976292862,
+        "checks": [
+          "profile_schema_valid",
+          "runtime_slug_resolves",
+          "capability_output_matches_brief",
+          "no_secret_in_output",
+          "no_live_external_write",
+          "approval_gate_for_high_impact_action",
+          "failure_and_retry_state_recorded"
+        ],
+        "api_tests": [],
+        "release_gate": "all applicable checks pass and owner approves any live action"
+      },
+      "readiness": {
+        "profile_schema": "verified",
+        "buddy_chat_route": "verified",
+        "executable_runtime_instance": "verified",
+        "standalone_native_runtime": "shared_worker_not_standalone",
+        "external_integrations": "no_division_api_catalog",
+        "production_ready": false,
+        "production_gate": "implement or configure adapters, pass sandbox checks, add authentication, and verify deployment telemetry"
+      },
+      "evidence": {
+        "catalog_source": "App_bots/DreamAgents.json",
+        "runtime_sources": [
+          "server/seed-bots.ts"
+        ],
+        "runtime_seed_duplicates": 0
+      },
+      "sample_test_prompt": "Test Perplexity Search Agent in sandbox mode. Use synthetic data, demonstrate Active web search, record evidence, and stop before any live external action."
+    }
+  ]
+}

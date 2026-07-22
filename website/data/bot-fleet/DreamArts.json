@@ -1,0 +1,3762 @@
+{
+  "schema": "dreamco.bot_fleet_division.v2",
+  "division": "DreamArts",
+  "bots": [
+    {
+      "identity": {
+        "slug": "creative-brief-gen",
+        "display_name": "Creative Brief Generator",
+        "division": "DreamArts",
+        "category": "creative-ops",
+        "tier": "pro",
+        "catalog_status": "active"
+      },
+      "logo": {
+        "logo_id": "logo-creative-brief-gen",
+        "emoji": "🛡️",
+        "monogram": "CB",
+        "call_sign": "Grand Bridge DAC820CF",
+        "shape": "shield",
+        "colors": {
+          "primary": "#77521F",
+          "accent": "#287878",
+          "surface": "#FFF9ED"
+        },
+        "accessibility_label": "Creative Brief Generator logo"
+      },
+      "prospectus": {
+        "mission": "Generates creative briefs with brand guideline integration and stakeholder input management.",
+        "target_users": "Creative directors, marketing managers",
+        "catalog_business_model": "SaaS subscription",
+        "catalog_price_range": "$99/mo",
+        "pricing_evidence": "catalog_claim_not_verified_revenue",
+        "inputs": [
+          "user brief",
+          "user-selected files or records",
+          "approved connector references"
+        ],
+        "outputs": [
+          "draft",
+          "analysis",
+          "task packet",
+          "sandbox evidence",
+          "approval request when required"
+        ],
+        "limitations": [
+          "This profile has an executable governed runtime instance backed by shared hardened code, not a separate always-running operating-system process.",
+          "External APIs require owner configuration, provider terms, sandbox tests, and scoped approval.",
+          "Published pricing and revenue models are catalog plans, not evidence of sales or earnings."
+        ]
+      },
+      "capabilities": [
+        {
+          "name": "Brief template library",
+          "source": "App_bots/DreamArts.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Brand guideline integration",
+          "source": "App_bots/DreamArts.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Stakeholder feedback collection",
+          "source": "App_bots/DreamArts.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Deadline management system",
+          "source": "App_bots/DreamArts.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Asset requirement listing",
+          "source": "App_bots/DreamArts.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Approval workflow automation",
+          "source": "App_bots/DreamArts.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Advanced analytics dashboard",
+          "source": "App_bots/DreamArts.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Priority email support",
+          "source": "App_bots/DreamArts.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        }
+      ],
+      "tools": [
+        {
+          "id": "buddy_fleet_runtime",
+          "name": "Executable fleet runtime",
+          "status": "runtime_instance_ready",
+          "evidence": "server/fleet-runtime.ts"
+        },
+        {
+          "id": "buddy_chat_router",
+          "name": "Buddy shared chat router",
+          "status": "runtime_routed",
+          "evidence": "server/routes.ts"
+        },
+        {
+          "id": "buddy_approval_gateway",
+          "name": "Buddy approval gateway",
+          "status": "policy_available",
+          "evidence": "server/approval-notifications.ts"
+        },
+        {
+          "id": "buddy_bot_sandbox",
+          "name": "Per-bot sandbox blueprint",
+          "status": "generated",
+          "evidence": "config/generated/bots.catalog.json"
+        },
+        {
+          "id": "buddy_platform_registry",
+          "name": "Governed platform capability registry",
+          "status": "runtime_routed",
+          "evidence": "config/generated/buddy_platform_expansion.json"
+        },
+        {
+          "id": "buddy_bot_calculator",
+          "name": "Per-bot planning calculator",
+          "status": "local_interactive_ready",
+          "evidence": "config/generated/bot_calculators.json"
+        },
+        {
+          "id": "buddy_connection_broker",
+          "name": "Buddy Connection Broker",
+          "status": "backend_broker_available",
+          "evidence": "dreamco_platform/connections/broker.py"
+        },
+        {
+          "id": "buddy_code_workspace",
+          "name": "Buddy Code Workspace",
+          "status": "shared_runtime_route",
+          "evidence": "server/seed-buddy-bot.ts"
+        }
+      ],
+      "api_candidates": [],
+      "data_contract": {
+        "accepted_inputs": [
+          "user brief",
+          "user-selected files or records",
+          "approved connector references"
+        ],
+        "produced_outputs": [
+          "draft",
+          "analysis",
+          "task packet",
+          "sandbox evidence",
+          "approval request when required"
+        ],
+        "sensitivity": "standard_business_data",
+        "sensitive_domains": [],
+        "storage_policy": "store useful project artifacts only; raw credentials are forbidden; raw biometric media remains local or in an encrypted owner vault",
+        "retention": "owner-configurable with deletion and revocation support"
+      },
+      "approvals": {
+        "default_mode": "sandbox",
+        "approval_required": true,
+        "high_impact_profile": true,
+        "triggers": [
+          "email"
+        ],
+        "channels_supported": [
+          "in_app",
+          "email",
+          "sms",
+          "voice_call"
+        ],
+        "contact_requirement": "verified user-owned destination and explicit channel opt-in",
+        "execution_rule": "approval authorizes one scoped action; it never exposes credentials to the bot or browser"
+      },
+      "sandbox": {
+        "sandbox_id": "sandbox-creative-brief-gen",
+        "network_default": "off",
+        "fixture_mode": "synthetic_or_owner_supplied",
+        "seed": 3670548687,
+        "checks": [
+          "profile_schema_valid",
+          "runtime_slug_resolves",
+          "capability_output_matches_brief",
+          "no_secret_in_output",
+          "no_live_external_write",
+          "approval_gate_for_high_impact_action",
+          "failure_and_retry_state_recorded"
+        ],
+        "api_tests": [],
+        "release_gate": "all applicable checks pass and owner approves any live action"
+      },
+      "readiness": {
+        "profile_schema": "verified",
+        "buddy_chat_route": "verified",
+        "executable_runtime_instance": "verified",
+        "standalone_native_runtime": "shared_worker_not_standalone",
+        "external_integrations": "no_division_api_catalog",
+        "production_ready": false,
+        "production_gate": "implement or configure adapters, pass sandbox checks, add authentication, and verify deployment telemetry"
+      },
+      "evidence": {
+        "catalog_source": "App_bots/DreamArts.json",
+        "runtime_sources": [
+          "server/seed-bots.ts"
+        ],
+        "runtime_seed_duplicates": 0
+      },
+      "sample_test_prompt": "Test Creative Brief Generator in sandbox mode. Use synthetic data, demonstrate Brief template library, record evidence, and stop before any live external action."
+    },
+    {
+      "identity": {
+        "slug": "music-production",
+        "display_name": "Music Production Assistant",
+        "division": "DreamArts",
+        "category": "music",
+        "tier": "pro",
+        "catalog_status": "active"
+      },
+      "logo": {
+        "logo_id": "logo-music-production",
+        "emoji": "📊",
+        "monogram": "MP",
+        "call_sign": "Ready Studio B8529336",
+        "shape": "tile",
+        "colors": {
+          "primary": "#3D4C8D",
+          "accent": "#D56638",
+          "surface": "#F4F6FF"
+        },
+        "accessibility_label": "Music Production Assistant logo"
+      },
+      "prospectus": {
+        "mission": "Assists music production with arrangement suggestions and mixing recommendations.",
+        "target_users": "Music producers, audio engineers, artists",
+        "catalog_business_model": "SaaS subscription",
+        "catalog_price_range": "$149/mo",
+        "pricing_evidence": "catalog_claim_not_verified_revenue",
+        "inputs": [
+          "user brief",
+          "user-selected files or records",
+          "approved connector references"
+        ],
+        "outputs": [
+          "draft",
+          "analysis",
+          "task packet",
+          "sandbox evidence",
+          "approval request when required"
+        ],
+        "limitations": [
+          "This profile has an executable governed runtime instance backed by shared hardened code, not a separate always-running operating-system process.",
+          "External APIs require owner configuration, provider terms, sandbox tests, and scoped approval.",
+          "Published pricing and revenue models are catalog plans, not evidence of sales or earnings."
+        ]
+      },
+      "capabilities": [
+        {
+          "name": "Arrangement structure analysis",
+          "source": "App_bots/DreamArts.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Mix balance recommendations",
+          "source": "App_bots/DreamArts.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Tempo and key detection",
+          "source": "App_bots/DreamArts.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Sample library organization",
+          "source": "App_bots/DreamArts.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Collaboration file management",
+          "source": "App_bots/DreamArts.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Release checklist automation",
+          "source": "App_bots/DreamArts.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Advanced analytics dashboard",
+          "source": "App_bots/DreamArts.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Priority email support",
+          "source": "App_bots/DreamArts.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        }
+      ],
+      "tools": [
+        {
+          "id": "buddy_fleet_runtime",
+          "name": "Executable fleet runtime",
+          "status": "runtime_instance_ready",
+          "evidence": "server/fleet-runtime.ts"
+        },
+        {
+          "id": "buddy_chat_router",
+          "name": "Buddy shared chat router",
+          "status": "runtime_routed",
+          "evidence": "server/routes.ts"
+        },
+        {
+          "id": "buddy_approval_gateway",
+          "name": "Buddy approval gateway",
+          "status": "policy_available",
+          "evidence": "server/approval-notifications.ts"
+        },
+        {
+          "id": "buddy_bot_sandbox",
+          "name": "Per-bot sandbox blueprint",
+          "status": "generated",
+          "evidence": "config/generated/bots.catalog.json"
+        },
+        {
+          "id": "buddy_platform_registry",
+          "name": "Governed platform capability registry",
+          "status": "runtime_routed",
+          "evidence": "config/generated/buddy_platform_expansion.json"
+        },
+        {
+          "id": "buddy_bot_calculator",
+          "name": "Per-bot planning calculator",
+          "status": "local_interactive_ready",
+          "evidence": "config/generated/bot_calculators.json"
+        }
+      ],
+      "api_candidates": [],
+      "data_contract": {
+        "accepted_inputs": [
+          "user brief",
+          "user-selected files or records",
+          "approved connector references"
+        ],
+        "produced_outputs": [
+          "draft",
+          "analysis",
+          "task packet",
+          "sandbox evidence",
+          "approval request when required"
+        ],
+        "sensitivity": "standard_business_data",
+        "sensitive_domains": [],
+        "storage_policy": "store useful project artifacts only; raw credentials are forbidden; raw biometric media remains local or in an encrypted owner vault",
+        "retention": "owner-configurable with deletion and revocation support"
+      },
+      "approvals": {
+        "default_mode": "sandbox",
+        "approval_required": true,
+        "high_impact_profile": true,
+        "triggers": [
+          "email"
+        ],
+        "channels_supported": [
+          "in_app",
+          "email",
+          "sms",
+          "voice_call"
+        ],
+        "contact_requirement": "verified user-owned destination and explicit channel opt-in",
+        "execution_rule": "approval authorizes one scoped action; it never exposes credentials to the bot or browser"
+      },
+      "sandbox": {
+        "sandbox_id": "sandbox-music-production",
+        "network_default": "off",
+        "fixture_mode": "synthetic_or_owner_supplied",
+        "seed": 3092419382,
+        "checks": [
+          "profile_schema_valid",
+          "runtime_slug_resolves",
+          "capability_output_matches_brief",
+          "no_secret_in_output",
+          "no_live_external_write",
+          "approval_gate_for_high_impact_action",
+          "failure_and_retry_state_recorded"
+        ],
+        "api_tests": [],
+        "release_gate": "all applicable checks pass and owner approves any live action"
+      },
+      "readiness": {
+        "profile_schema": "verified",
+        "buddy_chat_route": "verified",
+        "executable_runtime_instance": "verified",
+        "standalone_native_runtime": "shared_worker_not_standalone",
+        "external_integrations": "no_division_api_catalog",
+        "production_ready": false,
+        "production_gate": "implement or configure adapters, pass sandbox checks, add authentication, and verify deployment telemetry"
+      },
+      "evidence": {
+        "catalog_source": "App_bots/DreamArts.json",
+        "runtime_sources": [
+          "server/seed-bots.ts"
+        ],
+        "runtime_seed_duplicates": 0
+      },
+      "sample_test_prompt": "Test Music Production Assistant in sandbox mode. Use synthetic data, demonstrate Arrangement structure analysis, record evidence, and stop before any live external action."
+    },
+    {
+      "identity": {
+        "slug": "video-editor-ai",
+        "display_name": "Video Editing Assistant",
+        "division": "DreamArts",
+        "category": "video",
+        "tier": "pro",
+        "catalog_status": "active"
+      },
+      "logo": {
+        "logo_id": "logo-video-editor-ai",
+        "emoji": "📚",
+        "monogram": "VE",
+        "call_sign": "True Forge 4834793E",
+        "shape": "tile",
+        "colors": {
+          "primary": "#3D4C8D",
+          "accent": "#D56638",
+          "surface": "#F4F6FF"
+        },
+        "accessibility_label": "Video Editing Assistant logo"
+      },
+      "prospectus": {
+        "mission": "Assists video editing with scene detection and automated highlight generation.",
+        "target_users": "Video editors, content creators, filmmakers",
+        "catalog_business_model": "SaaS subscription",
+        "catalog_price_range": "$179/mo",
+        "pricing_evidence": "catalog_claim_not_verified_revenue",
+        "inputs": [
+          "user brief",
+          "user-selected files or records",
+          "approved connector references"
+        ],
+        "outputs": [
+          "draft",
+          "analysis",
+          "task packet",
+          "sandbox evidence",
+          "approval request when required"
+        ],
+        "limitations": [
+          "This profile has an executable governed runtime instance backed by shared hardened code, not a separate always-running operating-system process.",
+          "External APIs require owner configuration, provider terms, sandbox tests, and scoped approval.",
+          "Published pricing and revenue models are catalog plans, not evidence of sales or earnings."
+        ]
+      },
+      "capabilities": [
+        {
+          "name": "Scene detection engine",
+          "source": "App_bots/DreamArts.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Highlight reel generation",
+          "source": "App_bots/DreamArts.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Color grading suggestions",
+          "source": "App_bots/DreamArts.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Audio sync automation",
+          "source": "App_bots/DreamArts.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Caption generation tools",
+          "source": "App_bots/DreamArts.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Export preset management",
+          "source": "App_bots/DreamArts.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Advanced analytics dashboard",
+          "source": "App_bots/DreamArts.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Priority email support",
+          "source": "App_bots/DreamArts.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        }
+      ],
+      "tools": [
+        {
+          "id": "buddy_fleet_runtime",
+          "name": "Executable fleet runtime",
+          "status": "runtime_instance_ready",
+          "evidence": "server/fleet-runtime.ts"
+        },
+        {
+          "id": "buddy_chat_router",
+          "name": "Buddy shared chat router",
+          "status": "runtime_routed",
+          "evidence": "server/routes.ts"
+        },
+        {
+          "id": "buddy_approval_gateway",
+          "name": "Buddy approval gateway",
+          "status": "policy_available",
+          "evidence": "server/approval-notifications.ts"
+        },
+        {
+          "id": "buddy_bot_sandbox",
+          "name": "Per-bot sandbox blueprint",
+          "status": "generated",
+          "evidence": "config/generated/bots.catalog.json"
+        },
+        {
+          "id": "buddy_platform_registry",
+          "name": "Governed platform capability registry",
+          "status": "runtime_routed",
+          "evidence": "config/generated/buddy_platform_expansion.json"
+        },
+        {
+          "id": "buddy_bot_calculator",
+          "name": "Per-bot planning calculator",
+          "status": "local_interactive_ready",
+          "evidence": "config/generated/bot_calculators.json"
+        },
+        {
+          "id": "buddy_creative_studio",
+          "name": "Buddy Creative Studio",
+          "status": "local_prototype_available",
+          "evidence": "dreamco_platform/creative/studio.py"
+        }
+      ],
+      "api_candidates": [],
+      "data_contract": {
+        "accepted_inputs": [
+          "user brief",
+          "user-selected files or records",
+          "approved connector references"
+        ],
+        "produced_outputs": [
+          "draft",
+          "analysis",
+          "task packet",
+          "sandbox evidence",
+          "approval request when required"
+        ],
+        "sensitivity": "standard_business_data",
+        "sensitive_domains": [],
+        "storage_policy": "store useful project artifacts only; raw credentials are forbidden; raw biometric media remains local or in an encrypted owner vault",
+        "retention": "owner-configurable with deletion and revocation support"
+      },
+      "approvals": {
+        "default_mode": "sandbox",
+        "approval_required": true,
+        "high_impact_profile": true,
+        "triggers": [
+          "email"
+        ],
+        "channels_supported": [
+          "in_app",
+          "email",
+          "sms",
+          "voice_call"
+        ],
+        "contact_requirement": "verified user-owned destination and explicit channel opt-in",
+        "execution_rule": "approval authorizes one scoped action; it never exposes credentials to the bot or browser"
+      },
+      "sandbox": {
+        "sandbox_id": "sandbox-video-editor-ai",
+        "network_default": "off",
+        "fixture_mode": "synthetic_or_owner_supplied",
+        "seed": 1211398462,
+        "checks": [
+          "profile_schema_valid",
+          "runtime_slug_resolves",
+          "capability_output_matches_brief",
+          "no_secret_in_output",
+          "no_live_external_write",
+          "approval_gate_for_high_impact_action",
+          "failure_and_retry_state_recorded"
+        ],
+        "api_tests": [],
+        "release_gate": "all applicable checks pass and owner approves any live action"
+      },
+      "readiness": {
+        "profile_schema": "verified",
+        "buddy_chat_route": "verified",
+        "executable_runtime_instance": "verified",
+        "standalone_native_runtime": "shared_worker_not_standalone",
+        "external_integrations": "no_division_api_catalog",
+        "production_ready": false,
+        "production_gate": "implement or configure adapters, pass sandbox checks, add authentication, and verify deployment telemetry"
+      },
+      "evidence": {
+        "catalog_source": "App_bots/DreamArts.json",
+        "runtime_sources": [
+          "server/seed-bots.ts"
+        ],
+        "runtime_seed_duplicates": 0
+      },
+      "sample_test_prompt": "Test Video Editing Assistant in sandbox mode. Use synthetic data, demonstrate Scene detection engine, record evidence, and stop before any live external action."
+    },
+    {
+      "identity": {
+        "slug": "photography-workflow",
+        "display_name": "Photography Workflow Manager",
+        "division": "DreamArts",
+        "category": "photography",
+        "tier": "pro",
+        "catalog_status": "active"
+      },
+      "logo": {
+        "logo_id": "logo-photography-workflow",
+        "emoji": "🎮",
+        "monogram": "PW",
+        "call_sign": "Noble Pulse A1AAED84",
+        "shape": "hex",
+        "colors": {
+          "primary": "#0F6F88",
+          "accent": "#C94D63",
+          "surface": "#F4FBFC"
+        },
+        "accessibility_label": "Photography Workflow Manager logo"
+      },
+      "prospectus": {
+        "mission": "Manages photography workflows with shoot planning and image culling.",
+        "target_users": "Professional photographers, studio managers",
+        "catalog_business_model": "SaaS subscription",
+        "catalog_price_range": "$99/mo",
+        "pricing_evidence": "catalog_claim_not_verified_revenue",
+        "inputs": [
+          "user brief",
+          "user-selected files or records",
+          "approved connector references"
+        ],
+        "outputs": [
+          "draft",
+          "analysis",
+          "task packet",
+          "sandbox evidence",
+          "approval request when required"
+        ],
+        "limitations": [
+          "This profile has an executable governed runtime instance backed by shared hardened code, not a separate always-running operating-system process.",
+          "External APIs require owner configuration, provider terms, sandbox tests, and scoped approval.",
+          "Published pricing and revenue models are catalog plans, not evidence of sales or earnings."
+        ]
+      },
+      "capabilities": [
+        {
+          "name": "Shoot planning checklist",
+          "source": "App_bots/DreamArts.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Image culling automation",
+          "source": "App_bots/DreamArts.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Metadata management tools",
+          "source": "App_bots/DreamArts.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Client gallery delivery",
+          "source": "App_bots/DreamArts.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Print order processing",
+          "source": "App_bots/DreamArts.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Copyright registration automation",
+          "source": "App_bots/DreamArts.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Advanced analytics dashboard",
+          "source": "App_bots/DreamArts.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Priority email support",
+          "source": "App_bots/DreamArts.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        }
+      ],
+      "tools": [
+        {
+          "id": "buddy_fleet_runtime",
+          "name": "Executable fleet runtime",
+          "status": "runtime_instance_ready",
+          "evidence": "server/fleet-runtime.ts"
+        },
+        {
+          "id": "buddy_chat_router",
+          "name": "Buddy shared chat router",
+          "status": "runtime_routed",
+          "evidence": "server/routes.ts"
+        },
+        {
+          "id": "buddy_approval_gateway",
+          "name": "Buddy approval gateway",
+          "status": "policy_available",
+          "evidence": "server/approval-notifications.ts"
+        },
+        {
+          "id": "buddy_bot_sandbox",
+          "name": "Per-bot sandbox blueprint",
+          "status": "generated",
+          "evidence": "config/generated/bots.catalog.json"
+        },
+        {
+          "id": "buddy_platform_registry",
+          "name": "Governed platform capability registry",
+          "status": "runtime_routed",
+          "evidence": "config/generated/buddy_platform_expansion.json"
+        },
+        {
+          "id": "buddy_bot_calculator",
+          "name": "Per-bot planning calculator",
+          "status": "local_interactive_ready",
+          "evidence": "config/generated/bot_calculators.json"
+        },
+        {
+          "id": "buddy_creative_studio",
+          "name": "Buddy Creative Studio",
+          "status": "local_prototype_available",
+          "evidence": "dreamco_platform/creative/studio.py"
+        }
+      ],
+      "api_candidates": [],
+      "data_contract": {
+        "accepted_inputs": [
+          "user brief",
+          "user-selected files or records",
+          "approved connector references"
+        ],
+        "produced_outputs": [
+          "draft",
+          "analysis",
+          "task packet",
+          "sandbox evidence",
+          "approval request when required"
+        ],
+        "sensitivity": "standard_business_data",
+        "sensitive_domains": [],
+        "storage_policy": "store useful project artifacts only; raw credentials are forbidden; raw biometric media remains local or in an encrypted owner vault",
+        "retention": "owner-configurable with deletion and revocation support"
+      },
+      "approvals": {
+        "default_mode": "sandbox",
+        "approval_required": true,
+        "high_impact_profile": true,
+        "triggers": [
+          "email"
+        ],
+        "channels_supported": [
+          "in_app",
+          "email",
+          "sms",
+          "voice_call"
+        ],
+        "contact_requirement": "verified user-owned destination and explicit channel opt-in",
+        "execution_rule": "approval authorizes one scoped action; it never exposes credentials to the bot or browser"
+      },
+      "sandbox": {
+        "sandbox_id": "sandbox-photography-workflow",
+        "network_default": "off",
+        "fixture_mode": "synthetic_or_owner_supplied",
+        "seed": 2712333700,
+        "checks": [
+          "profile_schema_valid",
+          "runtime_slug_resolves",
+          "capability_output_matches_brief",
+          "no_secret_in_output",
+          "no_live_external_write",
+          "approval_gate_for_high_impact_action",
+          "failure_and_retry_state_recorded"
+        ],
+        "api_tests": [],
+        "release_gate": "all applicable checks pass and owner approves any live action"
+      },
+      "readiness": {
+        "profile_schema": "verified",
+        "buddy_chat_route": "verified",
+        "executable_runtime_instance": "verified",
+        "standalone_native_runtime": "shared_worker_not_standalone",
+        "external_integrations": "no_division_api_catalog",
+        "production_ready": false,
+        "production_gate": "implement or configure adapters, pass sandbox checks, add authentication, and verify deployment telemetry"
+      },
+      "evidence": {
+        "catalog_source": "App_bots/DreamArts.json",
+        "runtime_sources": [
+          "server/seed-bots.ts"
+        ],
+        "runtime_seed_duplicates": 0
+      },
+      "sample_test_prompt": "Test Photography Workflow Manager in sandbox mode. Use synthetic data, demonstrate Shoot planning checklist, record evidence, and stop before any live external action."
+    },
+    {
+      "identity": {
+        "slug": "graphic-design-mgr",
+        "display_name": "Design Project Manager",
+        "division": "DreamArts",
+        "category": "design",
+        "tier": "pro",
+        "catalog_status": "active"
+      },
+      "logo": {
+        "logo_id": "logo-graphic-design-mgr",
+        "emoji": "🧭",
+        "monogram": "DP",
+        "call_sign": "Noble Lab 3C625564",
+        "shape": "shield",
+        "colors": {
+          "primary": "#0F6F88",
+          "accent": "#C94D63",
+          "surface": "#F4FBFC"
+        },
+        "accessibility_label": "Design Project Manager logo"
+      },
+      "prospectus": {
+        "mission": "Manages graphic design projects with asset tracking and version control.",
+        "target_users": "Graphic designers, design team leads",
+        "catalog_business_model": "SaaS subscription",
+        "catalog_price_range": "$129/mo",
+        "pricing_evidence": "catalog_claim_not_verified_revenue",
+        "inputs": [
+          "user brief",
+          "user-selected files or records",
+          "approved connector references"
+        ],
+        "outputs": [
+          "draft",
+          "analysis",
+          "task packet",
+          "sandbox evidence",
+          "approval request when required"
+        ],
+        "limitations": [
+          "This profile has an executable governed runtime instance backed by shared hardened code, not a separate always-running operating-system process.",
+          "External APIs require owner configuration, provider terms, sandbox tests, and scoped approval.",
+          "Published pricing and revenue models are catalog plans, not evidence of sales or earnings."
+        ]
+      },
+      "capabilities": [
+        {
+          "name": "Design asset library",
+          "source": "App_bots/DreamArts.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Version control system",
+          "source": "App_bots/DreamArts.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Client feedback management",
+          "source": "App_bots/DreamArts.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Brand consistency checking",
+          "source": "App_bots/DreamArts.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "File format conversion",
+          "source": "App_bots/DreamArts.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Proof approval workflow",
+          "source": "App_bots/DreamArts.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Advanced analytics dashboard",
+          "source": "App_bots/DreamArts.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Priority email support",
+          "source": "App_bots/DreamArts.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        }
+      ],
+      "tools": [
+        {
+          "id": "buddy_fleet_runtime",
+          "name": "Executable fleet runtime",
+          "status": "runtime_instance_ready",
+          "evidence": "server/fleet-runtime.ts"
+        },
+        {
+          "id": "buddy_chat_router",
+          "name": "Buddy shared chat router",
+          "status": "runtime_routed",
+          "evidence": "server/routes.ts"
+        },
+        {
+          "id": "buddy_approval_gateway",
+          "name": "Buddy approval gateway",
+          "status": "policy_available",
+          "evidence": "server/approval-notifications.ts"
+        },
+        {
+          "id": "buddy_bot_sandbox",
+          "name": "Per-bot sandbox blueprint",
+          "status": "generated",
+          "evidence": "config/generated/bots.catalog.json"
+        },
+        {
+          "id": "buddy_platform_registry",
+          "name": "Governed platform capability registry",
+          "status": "runtime_routed",
+          "evidence": "config/generated/buddy_platform_expansion.json"
+        },
+        {
+          "id": "buddy_bot_calculator",
+          "name": "Per-bot planning calculator",
+          "status": "local_interactive_ready",
+          "evidence": "config/generated/bot_calculators.json"
+        },
+        {
+          "id": "buddy_code_workspace",
+          "name": "Buddy Code Workspace",
+          "status": "shared_runtime_route",
+          "evidence": "server/seed-buddy-bot.ts"
+        }
+      ],
+      "api_candidates": [],
+      "data_contract": {
+        "accepted_inputs": [
+          "user brief",
+          "user-selected files or records",
+          "approved connector references"
+        ],
+        "produced_outputs": [
+          "draft",
+          "analysis",
+          "task packet",
+          "sandbox evidence",
+          "approval request when required"
+        ],
+        "sensitivity": "standard_business_data",
+        "sensitive_domains": [],
+        "storage_policy": "store useful project artifacts only; raw credentials are forbidden; raw biometric media remains local or in an encrypted owner vault",
+        "retention": "owner-configurable with deletion and revocation support"
+      },
+      "approvals": {
+        "default_mode": "sandbox",
+        "approval_required": true,
+        "high_impact_profile": true,
+        "triggers": [
+          "email"
+        ],
+        "channels_supported": [
+          "in_app",
+          "email",
+          "sms",
+          "voice_call"
+        ],
+        "contact_requirement": "verified user-owned destination and explicit channel opt-in",
+        "execution_rule": "approval authorizes one scoped action; it never exposes credentials to the bot or browser"
+      },
+      "sandbox": {
+        "sandbox_id": "sandbox-graphic-design-mgr",
+        "network_default": "off",
+        "fixture_mode": "synthetic_or_owner_supplied",
+        "seed": 1013077348,
+        "checks": [
+          "profile_schema_valid",
+          "runtime_slug_resolves",
+          "capability_output_matches_brief",
+          "no_secret_in_output",
+          "no_live_external_write",
+          "approval_gate_for_high_impact_action",
+          "failure_and_retry_state_recorded"
+        ],
+        "api_tests": [],
+        "release_gate": "all applicable checks pass and owner approves any live action"
+      },
+      "readiness": {
+        "profile_schema": "verified",
+        "buddy_chat_route": "verified",
+        "executable_runtime_instance": "verified",
+        "standalone_native_runtime": "shared_worker_not_standalone",
+        "external_integrations": "no_division_api_catalog",
+        "production_ready": false,
+        "production_gate": "implement or configure adapters, pass sandbox checks, add authentication, and verify deployment telemetry"
+      },
+      "evidence": {
+        "catalog_source": "App_bots/DreamArts.json",
+        "runtime_sources": [
+          "server/seed-bots.ts"
+        ],
+        "runtime_seed_duplicates": 0
+      },
+      "sample_test_prompt": "Test Design Project Manager in sandbox mode. Use synthetic data, demonstrate Design asset library, record evidence, and stop before any live external action."
+    },
+    {
+      "identity": {
+        "slug": "animation-pipeline",
+        "display_name": "Animation Pipeline Manager",
+        "division": "DreamArts",
+        "category": "animation",
+        "tier": "enterprise",
+        "catalog_status": "active"
+      },
+      "logo": {
+        "logo_id": "logo-animation-pipeline",
+        "emoji": "💼",
+        "monogram": "AP",
+        "call_sign": "Focused Craft 76D50FB3",
+        "shape": "tile",
+        "colors": {
+          "primary": "#5B3A8A",
+          "accent": "#D89B2B",
+          "surface": "#F8F5FF"
+        },
+        "accessibility_label": "Animation Pipeline Manager logo"
+      },
+      "prospectus": {
+        "mission": "Manages animation production pipelines with shot tracking and render farm coordination.",
+        "target_users": "Animation directors, production managers",
+        "catalog_business_model": "Enterprise license",
+        "catalog_price_range": "$799/mo",
+        "pricing_evidence": "catalog_claim_not_verified_revenue",
+        "inputs": [
+          "user brief",
+          "user-selected files or records",
+          "approved connector references"
+        ],
+        "outputs": [
+          "draft",
+          "analysis",
+          "task packet",
+          "sandbox evidence",
+          "approval request when required"
+        ],
+        "limitations": [
+          "This profile has an executable governed runtime instance backed by shared hardened code, not a separate always-running operating-system process.",
+          "External APIs require owner configuration, provider terms, sandbox tests, and scoped approval.",
+          "Published pricing and revenue models are catalog plans, not evidence of sales or earnings."
+        ]
+      },
+      "capabilities": [
+        {
+          "name": "Shot tracking dashboard",
+          "source": "App_bots/DreamArts.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Render farm scheduling",
+          "source": "App_bots/DreamArts.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Asset versioning system",
+          "source": "App_bots/DreamArts.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Review and approval workflow",
+          "source": "App_bots/DreamArts.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Storyboard management tools",
+          "source": "App_bots/DreamArts.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Production timeline tracking",
+          "source": "App_bots/DreamArts.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Advanced analytics dashboard",
+          "source": "App_bots/DreamArts.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Priority email support",
+          "source": "App_bots/DreamArts.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        }
+      ],
+      "tools": [
+        {
+          "id": "buddy_fleet_runtime",
+          "name": "Executable fleet runtime",
+          "status": "runtime_instance_ready",
+          "evidence": "server/fleet-runtime.ts"
+        },
+        {
+          "id": "buddy_chat_router",
+          "name": "Buddy shared chat router",
+          "status": "runtime_routed",
+          "evidence": "server/routes.ts"
+        },
+        {
+          "id": "buddy_approval_gateway",
+          "name": "Buddy approval gateway",
+          "status": "policy_available",
+          "evidence": "server/approval-notifications.ts"
+        },
+        {
+          "id": "buddy_bot_sandbox",
+          "name": "Per-bot sandbox blueprint",
+          "status": "generated",
+          "evidence": "config/generated/bots.catalog.json"
+        },
+        {
+          "id": "buddy_platform_registry",
+          "name": "Governed platform capability registry",
+          "status": "runtime_routed",
+          "evidence": "config/generated/buddy_platform_expansion.json"
+        },
+        {
+          "id": "buddy_bot_calculator",
+          "name": "Per-bot planning calculator",
+          "status": "local_interactive_ready",
+          "evidence": "config/generated/bot_calculators.json"
+        },
+        {
+          "id": "buddy_code_workspace",
+          "name": "Buddy Code Workspace",
+          "status": "shared_runtime_route",
+          "evidence": "server/seed-buddy-bot.ts"
+        }
+      ],
+      "api_candidates": [],
+      "data_contract": {
+        "accepted_inputs": [
+          "user brief",
+          "user-selected files or records",
+          "approved connector references"
+        ],
+        "produced_outputs": [
+          "draft",
+          "analysis",
+          "task packet",
+          "sandbox evidence",
+          "approval request when required"
+        ],
+        "sensitivity": "standard_business_data",
+        "sensitive_domains": [],
+        "storage_policy": "store useful project artifacts only; raw credentials are forbidden; raw biometric media remains local or in an encrypted owner vault",
+        "retention": "owner-configurable with deletion and revocation support"
+      },
+      "approvals": {
+        "default_mode": "sandbox",
+        "approval_required": true,
+        "high_impact_profile": true,
+        "triggers": [
+          "email"
+        ],
+        "channels_supported": [
+          "in_app",
+          "email",
+          "sms",
+          "voice_call"
+        ],
+        "contact_requirement": "verified user-owned destination and explicit channel opt-in",
+        "execution_rule": "approval authorizes one scoped action; it never exposes credentials to the bot or browser"
+      },
+      "sandbox": {
+        "sandbox_id": "sandbox-animation-pipeline",
+        "network_default": "off",
+        "fixture_mode": "synthetic_or_owner_supplied",
+        "seed": 1993674675,
+        "checks": [
+          "profile_schema_valid",
+          "runtime_slug_resolves",
+          "capability_output_matches_brief",
+          "no_secret_in_output",
+          "no_live_external_write",
+          "approval_gate_for_high_impact_action",
+          "failure_and_retry_state_recorded"
+        ],
+        "api_tests": [],
+        "release_gate": "all applicable checks pass and owner approves any live action"
+      },
+      "readiness": {
+        "profile_schema": "verified",
+        "buddy_chat_route": "verified",
+        "executable_runtime_instance": "verified",
+        "standalone_native_runtime": "shared_worker_not_standalone",
+        "external_integrations": "no_division_api_catalog",
+        "production_ready": false,
+        "production_gate": "implement or configure adapters, pass sandbox checks, add authentication, and verify deployment telemetry"
+      },
+      "evidence": {
+        "catalog_source": "App_bots/DreamArts.json",
+        "runtime_sources": [
+          "server/seed-bots.ts"
+        ],
+        "runtime_seed_duplicates": 0
+      },
+      "sample_test_prompt": "Test Animation Pipeline Manager in sandbox mode. Use synthetic data, demonstrate Shot tracking dashboard, record evidence, and stop before any live external action."
+    },
+    {
+      "identity": {
+        "slug": "font-manager",
+        "display_name": "Typography & Font Manager",
+        "division": "DreamArts",
+        "category": "typography",
+        "tier": "pro",
+        "catalog_status": "active"
+      },
+      "logo": {
+        "logo_id": "logo-font-manager",
+        "emoji": "🛰️",
+        "monogram": "T&",
+        "call_sign": "Grand Atlas E8500531",
+        "shape": "circle",
+        "colors": {
+          "primary": "#275DAD",
+          "accent": "#E38B3C",
+          "surface": "#F7F9FC"
+        },
+        "accessibility_label": "Typography & Font Manager logo"
+      },
+      "prospectus": {
+        "mission": "Manages font libraries with licensing compliance and pairing recommendations.",
+        "target_users": "Designers, brand managers, web developers",
+        "catalog_business_model": "SaaS subscription",
+        "catalog_price_range": "$79/mo",
+        "pricing_evidence": "catalog_claim_not_verified_revenue",
+        "inputs": [
+          "user brief",
+          "user-selected files or records",
+          "approved connector references"
+        ],
+        "outputs": [
+          "draft",
+          "analysis",
+          "task packet",
+          "sandbox evidence",
+          "approval request when required"
+        ],
+        "limitations": [
+          "This profile has an executable governed runtime instance backed by shared hardened code, not a separate always-running operating-system process.",
+          "External APIs require owner configuration, provider terms, sandbox tests, and scoped approval.",
+          "Published pricing and revenue models are catalog plans, not evidence of sales or earnings."
+        ]
+      },
+      "capabilities": [
+        {
+          "name": "Font library organization",
+          "source": "App_bots/DreamArts.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "License tracking engine",
+          "source": "App_bots/DreamArts.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Font pairing suggestions",
+          "source": "App_bots/DreamArts.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Web font optimization",
+          "source": "App_bots/DreamArts.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Brand typography guidelines",
+          "source": "App_bots/DreamArts.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Usage analytics dashboard",
+          "source": "App_bots/DreamArts.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Advanced analytics dashboard",
+          "source": "App_bots/DreamArts.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Priority email support",
+          "source": "App_bots/DreamArts.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        }
+      ],
+      "tools": [
+        {
+          "id": "buddy_fleet_runtime",
+          "name": "Executable fleet runtime",
+          "status": "runtime_instance_ready",
+          "evidence": "server/fleet-runtime.ts"
+        },
+        {
+          "id": "buddy_chat_router",
+          "name": "Buddy shared chat router",
+          "status": "runtime_routed",
+          "evidence": "server/routes.ts"
+        },
+        {
+          "id": "buddy_approval_gateway",
+          "name": "Buddy approval gateway",
+          "status": "policy_available",
+          "evidence": "server/approval-notifications.ts"
+        },
+        {
+          "id": "buddy_bot_sandbox",
+          "name": "Per-bot sandbox blueprint",
+          "status": "generated",
+          "evidence": "config/generated/bots.catalog.json"
+        },
+        {
+          "id": "buddy_platform_registry",
+          "name": "Governed platform capability registry",
+          "status": "runtime_routed",
+          "evidence": "config/generated/buddy_platform_expansion.json"
+        },
+        {
+          "id": "buddy_bot_calculator",
+          "name": "Per-bot planning calculator",
+          "status": "local_interactive_ready",
+          "evidence": "config/generated/bot_calculators.json"
+        }
+      ],
+      "api_candidates": [],
+      "data_contract": {
+        "accepted_inputs": [
+          "user brief",
+          "user-selected files or records",
+          "approved connector references"
+        ],
+        "produced_outputs": [
+          "draft",
+          "analysis",
+          "task packet",
+          "sandbox evidence",
+          "approval request when required"
+        ],
+        "sensitivity": "standard_business_data",
+        "sensitive_domains": [],
+        "storage_policy": "store useful project artifacts only; raw credentials are forbidden; raw biometric media remains local or in an encrypted owner vault",
+        "retention": "owner-configurable with deletion and revocation support"
+      },
+      "approvals": {
+        "default_mode": "sandbox",
+        "approval_required": true,
+        "high_impact_profile": true,
+        "triggers": [
+          "email"
+        ],
+        "channels_supported": [
+          "in_app",
+          "email",
+          "sms",
+          "voice_call"
+        ],
+        "contact_requirement": "verified user-owned destination and explicit channel opt-in",
+        "execution_rule": "approval authorizes one scoped action; it never exposes credentials to the bot or browser"
+      },
+      "sandbox": {
+        "sandbox_id": "sandbox-font-manager",
+        "network_default": "off",
+        "fixture_mode": "synthetic_or_owner_supplied",
+        "seed": 3897558321,
+        "checks": [
+          "profile_schema_valid",
+          "runtime_slug_resolves",
+          "capability_output_matches_brief",
+          "no_secret_in_output",
+          "no_live_external_write",
+          "approval_gate_for_high_impact_action",
+          "failure_and_retry_state_recorded"
+        ],
+        "api_tests": [],
+        "release_gate": "all applicable checks pass and owner approves any live action"
+      },
+      "readiness": {
+        "profile_schema": "verified",
+        "buddy_chat_route": "verified",
+        "executable_runtime_instance": "verified",
+        "standalone_native_runtime": "shared_worker_not_standalone",
+        "external_integrations": "no_division_api_catalog",
+        "production_ready": false,
+        "production_gate": "implement or configure adapters, pass sandbox checks, add authentication, and verify deployment telemetry"
+      },
+      "evidence": {
+        "catalog_source": "App_bots/DreamArts.json",
+        "runtime_sources": [
+          "server/seed-bots.ts"
+        ],
+        "runtime_seed_duplicates": 0
+      },
+      "sample_test_prompt": "Test Typography & Font Manager in sandbox mode. Use synthetic data, demonstrate Font library organization, record evidence, and stop before any live external action."
+    },
+    {
+      "identity": {
+        "slug": "3d-asset-mgr",
+        "display_name": "3D Asset Manager",
+        "division": "DreamArts",
+        "category": "3d-design",
+        "tier": "enterprise",
+        "catalog_status": "active"
+      },
+      "logo": {
+        "logo_id": "logo-3d-asset-mgr",
+        "emoji": "🛠️",
+        "monogram": "3A",
+        "call_sign": "Modern Launchpad D3BC47E3",
+        "shape": "shield",
+        "colors": {
+          "primary": "#5B3A8A",
+          "accent": "#D89B2B",
+          "surface": "#F8F5FF"
+        },
+        "accessibility_label": "3D Asset Manager logo"
+      },
+      "prospectus": {
+        "mission": "Manages 3D assets with texture library and model versioning.",
+        "target_users": "3D artists, game studios, VFX houses",
+        "catalog_business_model": "Enterprise license",
+        "catalog_price_range": "$599/mo",
+        "pricing_evidence": "catalog_claim_not_verified_revenue",
+        "inputs": [
+          "user brief",
+          "user-selected files or records",
+          "approved connector references"
+        ],
+        "outputs": [
+          "draft",
+          "analysis",
+          "task packet",
+          "sandbox evidence",
+          "approval request when required"
+        ],
+        "limitations": [
+          "This profile has an executable governed runtime instance backed by shared hardened code, not a separate always-running operating-system process.",
+          "External APIs require owner configuration, provider terms, sandbox tests, and scoped approval.",
+          "Published pricing and revenue models are catalog plans, not evidence of sales or earnings."
+        ]
+      },
+      "capabilities": [
+        {
+          "name": "3D model catalog system",
+          "source": "App_bots/DreamArts.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Texture library management",
+          "source": "App_bots/DreamArts.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "LOD optimization tools",
+          "source": "App_bots/DreamArts.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Format conversion engine",
+          "source": "App_bots/DreamArts.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Render preview generation",
+          "source": "App_bots/DreamArts.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Team collaboration features",
+          "source": "App_bots/DreamArts.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Advanced analytics dashboard",
+          "source": "App_bots/DreamArts.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Priority email support",
+          "source": "App_bots/DreamArts.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        }
+      ],
+      "tools": [
+        {
+          "id": "buddy_fleet_runtime",
+          "name": "Executable fleet runtime",
+          "status": "runtime_instance_ready",
+          "evidence": "server/fleet-runtime.ts"
+        },
+        {
+          "id": "buddy_chat_router",
+          "name": "Buddy shared chat router",
+          "status": "runtime_routed",
+          "evidence": "server/routes.ts"
+        },
+        {
+          "id": "buddy_approval_gateway",
+          "name": "Buddy approval gateway",
+          "status": "policy_available",
+          "evidence": "server/approval-notifications.ts"
+        },
+        {
+          "id": "buddy_bot_sandbox",
+          "name": "Per-bot sandbox blueprint",
+          "status": "generated",
+          "evidence": "config/generated/bots.catalog.json"
+        },
+        {
+          "id": "buddy_platform_registry",
+          "name": "Governed platform capability registry",
+          "status": "runtime_routed",
+          "evidence": "config/generated/buddy_platform_expansion.json"
+        },
+        {
+          "id": "buddy_bot_calculator",
+          "name": "Per-bot planning calculator",
+          "status": "local_interactive_ready",
+          "evidence": "config/generated/bot_calculators.json"
+        }
+      ],
+      "api_candidates": [],
+      "data_contract": {
+        "accepted_inputs": [
+          "user brief",
+          "user-selected files or records",
+          "approved connector references"
+        ],
+        "produced_outputs": [
+          "draft",
+          "analysis",
+          "task packet",
+          "sandbox evidence",
+          "approval request when required"
+        ],
+        "sensitivity": "standard_business_data",
+        "sensitive_domains": [],
+        "storage_policy": "store useful project artifacts only; raw credentials are forbidden; raw biometric media remains local or in an encrypted owner vault",
+        "retention": "owner-configurable with deletion and revocation support"
+      },
+      "approvals": {
+        "default_mode": "sandbox",
+        "approval_required": true,
+        "high_impact_profile": true,
+        "triggers": [
+          "email"
+        ],
+        "channels_supported": [
+          "in_app",
+          "email",
+          "sms",
+          "voice_call"
+        ],
+        "contact_requirement": "verified user-owned destination and explicit channel opt-in",
+        "execution_rule": "approval authorizes one scoped action; it never exposes credentials to the bot or browser"
+      },
+      "sandbox": {
+        "sandbox_id": "sandbox-3d-asset-mgr",
+        "network_default": "off",
+        "fixture_mode": "synthetic_or_owner_supplied",
+        "seed": 3552331747,
+        "checks": [
+          "profile_schema_valid",
+          "runtime_slug_resolves",
+          "capability_output_matches_brief",
+          "no_secret_in_output",
+          "no_live_external_write",
+          "approval_gate_for_high_impact_action",
+          "failure_and_retry_state_recorded"
+        ],
+        "api_tests": [],
+        "release_gate": "all applicable checks pass and owner approves any live action"
+      },
+      "readiness": {
+        "profile_schema": "verified",
+        "buddy_chat_route": "verified",
+        "executable_runtime_instance": "verified",
+        "standalone_native_runtime": "shared_worker_not_standalone",
+        "external_integrations": "no_division_api_catalog",
+        "production_ready": false,
+        "production_gate": "implement or configure adapters, pass sandbox checks, add authentication, and verify deployment telemetry"
+      },
+      "evidence": {
+        "catalog_source": "App_bots/DreamArts.json",
+        "runtime_sources": [
+          "server/seed-bots.ts"
+        ],
+        "runtime_seed_duplicates": 0
+      },
+      "sample_test_prompt": "Test 3D Asset Manager in sandbox mode. Use synthetic data, demonstrate 3D model catalog system, record evidence, and stop before any live external action."
+    },
+    {
+      "identity": {
+        "slug": "color-palette",
+        "display_name": "Color Palette Generator",
+        "division": "DreamArts",
+        "category": "color-theory",
+        "tier": "free",
+        "catalog_status": "active"
+      },
+      "logo": {
+        "logo_id": "logo-color-palette",
+        "emoji": "✨",
+        "monogram": "CP",
+        "call_sign": "Dynamic Bridge 1D73E006",
+        "shape": "hex",
+        "colors": {
+          "primary": "#3D4C8D",
+          "accent": "#D56638",
+          "surface": "#F4F6FF"
+        },
+        "accessibility_label": "Color Palette Generator logo"
+      },
+      "prospectus": {
+        "mission": "Generates color palettes with accessibility checking and brand alignment.",
+        "target_users": "Designers, brand managers, developers",
+        "catalog_business_model": "SaaS subscription",
+        "catalog_price_range": "$0",
+        "pricing_evidence": "catalog_claim_not_verified_revenue",
+        "inputs": [
+          "user brief",
+          "user-selected files or records",
+          "approved connector references"
+        ],
+        "outputs": [
+          "draft",
+          "analysis",
+          "task packet",
+          "sandbox evidence",
+          "approval request when required"
+        ],
+        "limitations": [
+          "This profile has an executable governed runtime instance backed by shared hardened code, not a separate always-running operating-system process.",
+          "External APIs require owner configuration, provider terms, sandbox tests, and scoped approval.",
+          "Published pricing and revenue models are catalog plans, not evidence of sales or earnings."
+        ]
+      },
+      "capabilities": [
+        {
+          "name": "Palette generation algorithm",
+          "source": "App_bots/DreamArts.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Accessibility contrast checking",
+          "source": "App_bots/DreamArts.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Brand color extraction tools",
+          "source": "App_bots/DreamArts.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Trend color analysis",
+          "source": "App_bots/DreamArts.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Export for design tools",
+          "source": "App_bots/DreamArts.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Basic analytics",
+          "source": "App_bots/DreamArts.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Email support",
+          "source": "App_bots/DreamArts.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Community access",
+          "source": "App_bots/DreamArts.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        }
+      ],
+      "tools": [
+        {
+          "id": "buddy_fleet_runtime",
+          "name": "Executable fleet runtime",
+          "status": "runtime_instance_ready",
+          "evidence": "server/fleet-runtime.ts"
+        },
+        {
+          "id": "buddy_chat_router",
+          "name": "Buddy shared chat router",
+          "status": "runtime_routed",
+          "evidence": "server/routes.ts"
+        },
+        {
+          "id": "buddy_approval_gateway",
+          "name": "Buddy approval gateway",
+          "status": "policy_available",
+          "evidence": "server/approval-notifications.ts"
+        },
+        {
+          "id": "buddy_bot_sandbox",
+          "name": "Per-bot sandbox blueprint",
+          "status": "generated",
+          "evidence": "config/generated/bots.catalog.json"
+        },
+        {
+          "id": "buddy_platform_registry",
+          "name": "Governed platform capability registry",
+          "status": "runtime_routed",
+          "evidence": "config/generated/buddy_platform_expansion.json"
+        },
+        {
+          "id": "buddy_bot_calculator",
+          "name": "Per-bot planning calculator",
+          "status": "local_interactive_ready",
+          "evidence": "config/generated/bot_calculators.json"
+        }
+      ],
+      "api_candidates": [],
+      "data_contract": {
+        "accepted_inputs": [
+          "user brief",
+          "user-selected files or records",
+          "approved connector references"
+        ],
+        "produced_outputs": [
+          "draft",
+          "analysis",
+          "task packet",
+          "sandbox evidence",
+          "approval request when required"
+        ],
+        "sensitivity": "standard_business_data",
+        "sensitive_domains": [],
+        "storage_policy": "store useful project artifacts only; raw credentials are forbidden; raw biometric media remains local or in an encrypted owner vault",
+        "retention": "owner-configurable with deletion and revocation support"
+      },
+      "approvals": {
+        "default_mode": "sandbox",
+        "approval_required": true,
+        "high_impact_profile": true,
+        "triggers": [
+          "email"
+        ],
+        "channels_supported": [
+          "in_app",
+          "email",
+          "sms",
+          "voice_call"
+        ],
+        "contact_requirement": "verified user-owned destination and explicit channel opt-in",
+        "execution_rule": "approval authorizes one scoped action; it never exposes credentials to the bot or browser"
+      },
+      "sandbox": {
+        "sandbox_id": "sandbox-color-palette",
+        "network_default": "off",
+        "fixture_mode": "synthetic_or_owner_supplied",
+        "seed": 494133254,
+        "checks": [
+          "profile_schema_valid",
+          "runtime_slug_resolves",
+          "capability_output_matches_brief",
+          "no_secret_in_output",
+          "no_live_external_write",
+          "approval_gate_for_high_impact_action",
+          "failure_and_retry_state_recorded"
+        ],
+        "api_tests": [],
+        "release_gate": "all applicable checks pass and owner approves any live action"
+      },
+      "readiness": {
+        "profile_schema": "verified",
+        "buddy_chat_route": "verified",
+        "executable_runtime_instance": "verified",
+        "standalone_native_runtime": "shared_worker_not_standalone",
+        "external_integrations": "no_division_api_catalog",
+        "production_ready": false,
+        "production_gate": "implement or configure adapters, pass sandbox checks, add authentication, and verify deployment telemetry"
+      },
+      "evidence": {
+        "catalog_source": "App_bots/DreamArts.json",
+        "runtime_sources": [
+          "server/seed-bots.ts"
+        ],
+        "runtime_seed_duplicates": 0
+      },
+      "sample_test_prompt": "Test Color Palette Generator in sandbox mode. Use synthetic data, demonstrate Palette generation algorithm, record evidence, and stop before any live external action."
+    },
+    {
+      "identity": {
+        "slug": "stock-asset-finder",
+        "display_name": "Stock Asset Finder",
+        "division": "DreamArts",
+        "category": "asset-sourcing",
+        "tier": "free",
+        "catalog_status": "active"
+      },
+      "logo": {
+        "logo_id": "logo-stock-asset-finder",
+        "emoji": "💡",
+        "monogram": "SA",
+        "call_sign": "Bright Craft 0918CF8B",
+        "shape": "tile",
+        "colors": {
+          "primary": "#5B3A8A",
+          "accent": "#D89B2B",
+          "surface": "#F8F5FF"
+        },
+        "accessibility_label": "Stock Asset Finder logo"
+      },
+      "prospectus": {
+        "mission": "Finds stock assets across multiple libraries with licensing comparison.",
+        "target_users": "Designers, marketers, content creators",
+        "catalog_business_model": "SaaS subscription",
+        "catalog_price_range": "$0",
+        "pricing_evidence": "catalog_claim_not_verified_revenue",
+        "inputs": [
+          "user brief",
+          "user-selected files or records",
+          "approved connector references"
+        ],
+        "outputs": [
+          "draft",
+          "analysis",
+          "task packet",
+          "sandbox evidence",
+          "approval request when required"
+        ],
+        "limitations": [
+          "This profile has an executable governed runtime instance backed by shared hardened code, not a separate always-running operating-system process.",
+          "External APIs require owner configuration, provider terms, sandbox tests, and scoped approval.",
+          "Published pricing and revenue models are catalog plans, not evidence of sales or earnings."
+        ]
+      },
+      "capabilities": [
+        {
+          "name": "Multi-library search engine",
+          "source": "App_bots/DreamArts.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "License comparison tools",
+          "source": "App_bots/DreamArts.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Similar image finding",
+          "source": "App_bots/DreamArts.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Collection organization",
+          "source": "App_bots/DreamArts.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Download history tracking",
+          "source": "App_bots/DreamArts.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Basic analytics",
+          "source": "App_bots/DreamArts.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Email support",
+          "source": "App_bots/DreamArts.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Community access",
+          "source": "App_bots/DreamArts.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        }
+      ],
+      "tools": [
+        {
+          "id": "buddy_fleet_runtime",
+          "name": "Executable fleet runtime",
+          "status": "runtime_instance_ready",
+          "evidence": "server/fleet-runtime.ts"
+        },
+        {
+          "id": "buddy_chat_router",
+          "name": "Buddy shared chat router",
+          "status": "runtime_routed",
+          "evidence": "server/routes.ts"
+        },
+        {
+          "id": "buddy_approval_gateway",
+          "name": "Buddy approval gateway",
+          "status": "policy_available",
+          "evidence": "server/approval-notifications.ts"
+        },
+        {
+          "id": "buddy_bot_sandbox",
+          "name": "Per-bot sandbox blueprint",
+          "status": "generated",
+          "evidence": "config/generated/bots.catalog.json"
+        },
+        {
+          "id": "buddy_platform_registry",
+          "name": "Governed platform capability registry",
+          "status": "runtime_routed",
+          "evidence": "config/generated/buddy_platform_expansion.json"
+        },
+        {
+          "id": "buddy_bot_calculator",
+          "name": "Per-bot planning calculator",
+          "status": "local_interactive_ready",
+          "evidence": "config/generated/bot_calculators.json"
+        },
+        {
+          "id": "buddy_creative_studio",
+          "name": "Buddy Creative Studio",
+          "status": "local_prototype_available",
+          "evidence": "dreamco_platform/creative/studio.py"
+        }
+      ],
+      "api_candidates": [],
+      "data_contract": {
+        "accepted_inputs": [
+          "user brief",
+          "user-selected files or records",
+          "approved connector references"
+        ],
+        "produced_outputs": [
+          "draft",
+          "analysis",
+          "task packet",
+          "sandbox evidence",
+          "approval request when required"
+        ],
+        "sensitivity": "standard_business_data",
+        "sensitive_domains": [],
+        "storage_policy": "store useful project artifacts only; raw credentials are forbidden; raw biometric media remains local or in an encrypted owner vault",
+        "retention": "owner-configurable with deletion and revocation support"
+      },
+      "approvals": {
+        "default_mode": "sandbox",
+        "approval_required": true,
+        "high_impact_profile": true,
+        "triggers": [
+          "email"
+        ],
+        "channels_supported": [
+          "in_app",
+          "email",
+          "sms",
+          "voice_call"
+        ],
+        "contact_requirement": "verified user-owned destination and explicit channel opt-in",
+        "execution_rule": "approval authorizes one scoped action; it never exposes credentials to the bot or browser"
+      },
+      "sandbox": {
+        "sandbox_id": "sandbox-stock-asset-finder",
+        "network_default": "off",
+        "fixture_mode": "synthetic_or_owner_supplied",
+        "seed": 152620939,
+        "checks": [
+          "profile_schema_valid",
+          "runtime_slug_resolves",
+          "capability_output_matches_brief",
+          "no_secret_in_output",
+          "no_live_external_write",
+          "approval_gate_for_high_impact_action",
+          "failure_and_retry_state_recorded"
+        ],
+        "api_tests": [],
+        "release_gate": "all applicable checks pass and owner approves any live action"
+      },
+      "readiness": {
+        "profile_schema": "verified",
+        "buddy_chat_route": "verified",
+        "executable_runtime_instance": "verified",
+        "standalone_native_runtime": "shared_worker_not_standalone",
+        "external_integrations": "no_division_api_catalog",
+        "production_ready": false,
+        "production_gate": "implement or configure adapters, pass sandbox checks, add authentication, and verify deployment telemetry"
+      },
+      "evidence": {
+        "catalog_source": "App_bots/DreamArts.json",
+        "runtime_sources": [
+          "server/seed-bots.ts"
+        ],
+        "runtime_seed_duplicates": 0
+      },
+      "sample_test_prompt": "Test Stock Asset Finder in sandbox mode. Use synthetic data, demonstrate Multi-library search engine, record evidence, and stop before any live external action."
+    },
+    {
+      "identity": {
+        "slug": "vfx-supervisor",
+        "display_name": "VFX Supervision Platform",
+        "division": "DreamArts",
+        "category": "vfx",
+        "tier": "enterprise",
+        "catalog_status": "active"
+      },
+      "logo": {
+        "logo_id": "logo-vfx-supervisor",
+        "emoji": "💡",
+        "monogram": "VS",
+        "call_sign": "Bold Bridge 4536F827",
+        "shape": "hex",
+        "colors": {
+          "primary": "#77521F",
+          "accent": "#287878",
+          "surface": "#FFF9ED"
+        },
+        "accessibility_label": "VFX Supervision Platform logo"
+      },
+      "prospectus": {
+        "mission": "Supervises VFX production with shot breakdown and compositor task management.",
+        "target_users": "VFX supervisors, post-production houses",
+        "catalog_business_model": "Enterprise license",
+        "catalog_price_range": "$899/mo",
+        "pricing_evidence": "catalog_claim_not_verified_revenue",
+        "inputs": [
+          "user brief",
+          "user-selected files or records",
+          "approved connector references"
+        ],
+        "outputs": [
+          "draft",
+          "analysis",
+          "task packet",
+          "sandbox evidence",
+          "approval request when required"
+        ],
+        "limitations": [
+          "This profile has an executable governed runtime instance backed by shared hardened code, not a separate always-running operating-system process.",
+          "External APIs require owner configuration, provider terms, sandbox tests, and scoped approval.",
+          "Published pricing and revenue models are catalog plans, not evidence of sales or earnings."
+        ]
+      },
+      "capabilities": [
+        {
+          "name": "Shot breakdown automation",
+          "source": "App_bots/DreamArts.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Compositor task assignment",
+          "source": "App_bots/DreamArts.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Reference material management",
+          "source": "App_bots/DreamArts.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Client review portal",
+          "source": "App_bots/DreamArts.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Budget tracking engine",
+          "source": "App_bots/DreamArts.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Render queue management",
+          "source": "App_bots/DreamArts.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Advanced analytics dashboard",
+          "source": "App_bots/DreamArts.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Priority email support",
+          "source": "App_bots/DreamArts.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        }
+      ],
+      "tools": [
+        {
+          "id": "buddy_fleet_runtime",
+          "name": "Executable fleet runtime",
+          "status": "runtime_instance_ready",
+          "evidence": "server/fleet-runtime.ts"
+        },
+        {
+          "id": "buddy_chat_router",
+          "name": "Buddy shared chat router",
+          "status": "runtime_routed",
+          "evidence": "server/routes.ts"
+        },
+        {
+          "id": "buddy_approval_gateway",
+          "name": "Buddy approval gateway",
+          "status": "policy_available",
+          "evidence": "server/approval-notifications.ts"
+        },
+        {
+          "id": "buddy_bot_sandbox",
+          "name": "Per-bot sandbox blueprint",
+          "status": "generated",
+          "evidence": "config/generated/bots.catalog.json"
+        },
+        {
+          "id": "buddy_platform_registry",
+          "name": "Governed platform capability registry",
+          "status": "runtime_routed",
+          "evidence": "config/generated/buddy_platform_expansion.json"
+        },
+        {
+          "id": "buddy_bot_calculator",
+          "name": "Per-bot planning calculator",
+          "status": "local_interactive_ready",
+          "evidence": "config/generated/bot_calculators.json"
+        }
+      ],
+      "api_candidates": [],
+      "data_contract": {
+        "accepted_inputs": [
+          "user brief",
+          "user-selected files or records",
+          "approved connector references"
+        ],
+        "produced_outputs": [
+          "draft",
+          "analysis",
+          "task packet",
+          "sandbox evidence",
+          "approval request when required"
+        ],
+        "sensitivity": "standard_business_data",
+        "sensitive_domains": [],
+        "storage_policy": "store useful project artifacts only; raw credentials are forbidden; raw biometric media remains local or in an encrypted owner vault",
+        "retention": "owner-configurable with deletion and revocation support"
+      },
+      "approvals": {
+        "default_mode": "sandbox",
+        "approval_required": true,
+        "high_impact_profile": true,
+        "triggers": [
+          "email"
+        ],
+        "channels_supported": [
+          "in_app",
+          "email",
+          "sms",
+          "voice_call"
+        ],
+        "contact_requirement": "verified user-owned destination and explicit channel opt-in",
+        "execution_rule": "approval authorizes one scoped action; it never exposes credentials to the bot or browser"
+      },
+      "sandbox": {
+        "sandbox_id": "sandbox-vfx-supervisor",
+        "network_default": "off",
+        "fixture_mode": "synthetic_or_owner_supplied",
+        "seed": 1161230375,
+        "checks": [
+          "profile_schema_valid",
+          "runtime_slug_resolves",
+          "capability_output_matches_brief",
+          "no_secret_in_output",
+          "no_live_external_write",
+          "approval_gate_for_high_impact_action",
+          "failure_and_retry_state_recorded"
+        ],
+        "api_tests": [],
+        "release_gate": "all applicable checks pass and owner approves any live action"
+      },
+      "readiness": {
+        "profile_schema": "verified",
+        "buddy_chat_route": "verified",
+        "executable_runtime_instance": "verified",
+        "standalone_native_runtime": "shared_worker_not_standalone",
+        "external_integrations": "no_division_api_catalog",
+        "production_ready": false,
+        "production_gate": "implement or configure adapters, pass sandbox checks, add authentication, and verify deployment telemetry"
+      },
+      "evidence": {
+        "catalog_source": "App_bots/DreamArts.json",
+        "runtime_sources": [
+          "server/seed-bots.ts"
+        ],
+        "runtime_seed_duplicates": 0
+      },
+      "sample_test_prompt": "Test VFX Supervision Platform in sandbox mode. Use synthetic data, demonstrate Shot breakdown automation, record evidence, and stop before any live external action."
+    },
+    {
+      "identity": {
+        "slug": "art-portfolio",
+        "display_name": "Artist Portfolio Builder",
+        "division": "DreamArts",
+        "category": "portfolio",
+        "tier": "pro",
+        "catalog_status": "active"
+      },
+      "logo": {
+        "logo_id": "logo-art-portfolio",
+        "emoji": "🤝",
+        "monogram": "AP",
+        "call_sign": "Bold Ledger 36AE7F9F",
+        "shape": "circle",
+        "colors": {
+          "primary": "#77521F",
+          "accent": "#287878",
+          "surface": "#FFF9ED"
+        },
+        "accessibility_label": "Artist Portfolio Builder logo"
+      },
+      "prospectus": {
+        "mission": "Builds and manages artist portfolios with custom gallery and client proofing.",
+        "target_users": "Artists, designers, photographers",
+        "catalog_business_model": "SaaS subscription",
+        "catalog_price_range": "$49/mo",
+        "pricing_evidence": "catalog_claim_not_verified_revenue",
+        "inputs": [
+          "user brief",
+          "user-selected files or records",
+          "approved connector references"
+        ],
+        "outputs": [
+          "draft",
+          "analysis",
+          "task packet",
+          "sandbox evidence",
+          "approval request when required"
+        ],
+        "limitations": [
+          "This profile has an executable governed runtime instance backed by shared hardened code, not a separate always-running operating-system process.",
+          "External APIs require owner configuration, provider terms, sandbox tests, and scoped approval.",
+          "Published pricing and revenue models are catalog plans, not evidence of sales or earnings."
+        ]
+      },
+      "capabilities": [
+        {
+          "name": "Portfolio gallery builder",
+          "source": "App_bots/DreamArts.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Client proofing workflow",
+          "source": "App_bots/DreamArts.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "SEO optimization tools",
+          "source": "App_bots/DreamArts.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Contact form integration",
+          "source": "App_bots/DreamArts.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Analytics tracking dashboard",
+          "source": "App_bots/DreamArts.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Custom domain management",
+          "source": "App_bots/DreamArts.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Advanced analytics dashboard",
+          "source": "App_bots/DreamArts.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Priority email support",
+          "source": "App_bots/DreamArts.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        }
+      ],
+      "tools": [
+        {
+          "id": "buddy_fleet_runtime",
+          "name": "Executable fleet runtime",
+          "status": "runtime_instance_ready",
+          "evidence": "server/fleet-runtime.ts"
+        },
+        {
+          "id": "buddy_chat_router",
+          "name": "Buddy shared chat router",
+          "status": "runtime_routed",
+          "evidence": "server/routes.ts"
+        },
+        {
+          "id": "buddy_approval_gateway",
+          "name": "Buddy approval gateway",
+          "status": "policy_available",
+          "evidence": "server/approval-notifications.ts"
+        },
+        {
+          "id": "buddy_bot_sandbox",
+          "name": "Per-bot sandbox blueprint",
+          "status": "generated",
+          "evidence": "config/generated/bots.catalog.json"
+        },
+        {
+          "id": "buddy_platform_registry",
+          "name": "Governed platform capability registry",
+          "status": "runtime_routed",
+          "evidence": "config/generated/buddy_platform_expansion.json"
+        },
+        {
+          "id": "buddy_bot_calculator",
+          "name": "Per-bot planning calculator",
+          "status": "local_interactive_ready",
+          "evidence": "config/generated/bot_calculators.json"
+        },
+        {
+          "id": "buddy_connection_broker",
+          "name": "Buddy Connection Broker",
+          "status": "backend_broker_available",
+          "evidence": "dreamco_platform/connections/broker.py"
+        }
+      ],
+      "api_candidates": [],
+      "data_contract": {
+        "accepted_inputs": [
+          "user brief",
+          "user-selected files or records",
+          "approved connector references"
+        ],
+        "produced_outputs": [
+          "draft",
+          "analysis",
+          "task packet",
+          "sandbox evidence",
+          "approval request when required"
+        ],
+        "sensitivity": "standard_business_data",
+        "sensitive_domains": [],
+        "storage_policy": "store useful project artifacts only; raw credentials are forbidden; raw biometric media remains local or in an encrypted owner vault",
+        "retention": "owner-configurable with deletion and revocation support"
+      },
+      "approvals": {
+        "default_mode": "sandbox",
+        "approval_required": true,
+        "high_impact_profile": true,
+        "triggers": [
+          "email"
+        ],
+        "channels_supported": [
+          "in_app",
+          "email",
+          "sms",
+          "voice_call"
+        ],
+        "contact_requirement": "verified user-owned destination and explicit channel opt-in",
+        "execution_rule": "approval authorizes one scoped action; it never exposes credentials to the bot or browser"
+      },
+      "sandbox": {
+        "sandbox_id": "sandbox-art-portfolio",
+        "network_default": "off",
+        "fixture_mode": "synthetic_or_owner_supplied",
+        "seed": 917405599,
+        "checks": [
+          "profile_schema_valid",
+          "runtime_slug_resolves",
+          "capability_output_matches_brief",
+          "no_secret_in_output",
+          "no_live_external_write",
+          "approval_gate_for_high_impact_action",
+          "failure_and_retry_state_recorded"
+        ],
+        "api_tests": [],
+        "release_gate": "all applicable checks pass and owner approves any live action"
+      },
+      "readiness": {
+        "profile_schema": "verified",
+        "buddy_chat_route": "verified",
+        "executable_runtime_instance": "verified",
+        "standalone_native_runtime": "shared_worker_not_standalone",
+        "external_integrations": "no_division_api_catalog",
+        "production_ready": false,
+        "production_gate": "implement or configure adapters, pass sandbox checks, add authentication, and verify deployment telemetry"
+      },
+      "evidence": {
+        "catalog_source": "App_bots/DreamArts.json",
+        "runtime_sources": [
+          "server/seed-bots.ts"
+        ],
+        "runtime_seed_duplicates": 0
+      },
+      "sample_test_prompt": "Test Artist Portfolio Builder in sandbox mode. Use synthetic data, demonstrate Portfolio gallery builder, record evidence, and stop before any live external action."
+    },
+    {
+      "identity": {
+        "slug": "creative-analytics-elite",
+        "display_name": "Creative Performance Analytics",
+        "division": "DreamArts",
+        "category": "analytics",
+        "tier": "elite",
+        "catalog_status": "active"
+      },
+      "logo": {
+        "logo_id": "logo-creative-analytics-elite",
+        "emoji": "🔐",
+        "monogram": "CP",
+        "call_sign": "Focused Bridge 33A5E0FB",
+        "shape": "tile",
+        "colors": {
+          "primary": "#5B3A8A",
+          "accent": "#D89B2B",
+          "surface": "#F8F5FF"
+        },
+        "accessibility_label": "Creative Performance Analytics logo"
+      },
+      "prospectus": {
+        "mission": "Enterprise creative analytics with campaign performance and audience insight modeling.",
+        "target_users": "CMOs, creative agency directors",
+        "catalog_business_model": "Enterprise license",
+        "catalog_price_range": "$1,499/mo",
+        "pricing_evidence": "catalog_claim_not_verified_revenue",
+        "inputs": [
+          "user brief",
+          "user-selected files or records",
+          "approved connector references"
+        ],
+        "outputs": [
+          "draft",
+          "analysis",
+          "task packet",
+          "sandbox evidence",
+          "approval request when required"
+        ],
+        "limitations": [
+          "This profile has an executable governed runtime instance backed by shared hardened code, not a separate always-running operating-system process.",
+          "External APIs require owner configuration, provider terms, sandbox tests, and scoped approval.",
+          "Published pricing and revenue models are catalog plans, not evidence of sales or earnings."
+        ]
+      },
+      "capabilities": [
+        {
+          "name": "Campaign performance scoring",
+          "source": "App_bots/DreamArts.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Audience insight modeling",
+          "source": "App_bots/DreamArts.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Creative fatigue detection",
+          "source": "App_bots/DreamArts.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Cross-channel attribution",
+          "source": "App_bots/DreamArts.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "A/B test result analysis",
+          "source": "App_bots/DreamArts.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "ROI per creative asset",
+          "source": "App_bots/DreamArts.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Advanced analytics dashboard",
+          "source": "App_bots/DreamArts.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Priority email support",
+          "source": "App_bots/DreamArts.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        }
+      ],
+      "tools": [
+        {
+          "id": "buddy_fleet_runtime",
+          "name": "Executable fleet runtime",
+          "status": "runtime_instance_ready",
+          "evidence": "server/fleet-runtime.ts"
+        },
+        {
+          "id": "buddy_chat_router",
+          "name": "Buddy shared chat router",
+          "status": "runtime_routed",
+          "evidence": "server/routes.ts"
+        },
+        {
+          "id": "buddy_approval_gateway",
+          "name": "Buddy approval gateway",
+          "status": "policy_available",
+          "evidence": "server/approval-notifications.ts"
+        },
+        {
+          "id": "buddy_bot_sandbox",
+          "name": "Per-bot sandbox blueprint",
+          "status": "generated",
+          "evidence": "config/generated/bots.catalog.json"
+        },
+        {
+          "id": "buddy_platform_registry",
+          "name": "Governed platform capability registry",
+          "status": "runtime_routed",
+          "evidence": "config/generated/buddy_platform_expansion.json"
+        },
+        {
+          "id": "buddy_bot_calculator",
+          "name": "Per-bot planning calculator",
+          "status": "local_interactive_ready",
+          "evidence": "config/generated/bot_calculators.json"
+        },
+        {
+          "id": "buddy_social_manager",
+          "name": "Buddy Social Manager",
+          "status": "approval_gated_adapter_contract",
+          "evidence": "dreamco_platform/social/manager.py"
+        }
+      ],
+      "api_candidates": [],
+      "data_contract": {
+        "accepted_inputs": [
+          "user brief",
+          "user-selected files or records",
+          "approved connector references"
+        ],
+        "produced_outputs": [
+          "draft",
+          "analysis",
+          "task packet",
+          "sandbox evidence",
+          "approval request when required"
+        ],
+        "sensitivity": "standard_business_data",
+        "sensitive_domains": [],
+        "storage_policy": "store useful project artifacts only; raw credentials are forbidden; raw biometric media remains local or in an encrypted owner vault",
+        "retention": "owner-configurable with deletion and revocation support"
+      },
+      "approvals": {
+        "default_mode": "sandbox",
+        "approval_required": true,
+        "high_impact_profile": true,
+        "triggers": [
+          "email"
+        ],
+        "channels_supported": [
+          "in_app",
+          "email",
+          "sms",
+          "voice_call"
+        ],
+        "contact_requirement": "verified user-owned destination and explicit channel opt-in",
+        "execution_rule": "approval authorizes one scoped action; it never exposes credentials to the bot or browser"
+      },
+      "sandbox": {
+        "sandbox_id": "sandbox-creative-analytics-elite",
+        "network_default": "off",
+        "fixture_mode": "synthetic_or_owner_supplied",
+        "seed": 866509051,
+        "checks": [
+          "profile_schema_valid",
+          "runtime_slug_resolves",
+          "capability_output_matches_brief",
+          "no_secret_in_output",
+          "no_live_external_write",
+          "approval_gate_for_high_impact_action",
+          "failure_and_retry_state_recorded"
+        ],
+        "api_tests": [],
+        "release_gate": "all applicable checks pass and owner approves any live action"
+      },
+      "readiness": {
+        "profile_schema": "verified",
+        "buddy_chat_route": "verified",
+        "executable_runtime_instance": "verified",
+        "standalone_native_runtime": "shared_worker_not_standalone",
+        "external_integrations": "no_division_api_catalog",
+        "production_ready": false,
+        "production_gate": "implement or configure adapters, pass sandbox checks, add authentication, and verify deployment telemetry"
+      },
+      "evidence": {
+        "catalog_source": "App_bots/DreamArts.json",
+        "runtime_sources": [
+          "server/seed-bots.ts"
+        ],
+        "runtime_seed_duplicates": 0
+      },
+      "sample_test_prompt": "Test Creative Performance Analytics in sandbox mode. Use synthetic data, demonstrate Campaign performance scoring, record evidence, and stop before any live external action."
+    },
+    {
+      "identity": {
+        "slug": "immersive-xr",
+        "display_name": "Immersive XR Content Engine",
+        "division": "DreamArts",
+        "category": "xr",
+        "tier": "elite",
+        "catalog_status": "active"
+      },
+      "logo": {
+        "logo_id": "logo-immersive-xr",
+        "emoji": "💡",
+        "monogram": "IX",
+        "call_sign": "Vivid Ledger 27810765",
+        "shape": "circle",
+        "colors": {
+          "primary": "#334E3C",
+          "accent": "#B96332",
+          "surface": "#F7F4ED"
+        },
+        "accessibility_label": "Immersive XR Content Engine logo"
+      },
+      "prospectus": {
+        "mission": "Creates and manages immersive XR content with spatial audio and interaction design.",
+        "target_users": "XR studios, immersive experience designers",
+        "catalog_business_model": "Enterprise license",
+        "catalog_price_range": "$1,999/mo",
+        "pricing_evidence": "catalog_claim_not_verified_revenue",
+        "inputs": [
+          "user brief",
+          "user-selected files or records",
+          "approved connector references"
+        ],
+        "outputs": [
+          "draft",
+          "analysis",
+          "task packet",
+          "sandbox evidence",
+          "approval request when required"
+        ],
+        "limitations": [
+          "This profile has an executable governed runtime instance backed by shared hardened code, not a separate always-running operating-system process.",
+          "External APIs require owner configuration, provider terms, sandbox tests, and scoped approval.",
+          "Published pricing and revenue models are catalog plans, not evidence of sales or earnings."
+        ]
+      },
+      "capabilities": [
+        {
+          "name": "Spatial experience builder",
+          "source": "App_bots/DreamArts.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "360 content management",
+          "source": "App_bots/DreamArts.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Interaction design tools",
+          "source": "App_bots/DreamArts.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Spatial audio integration",
+          "source": "App_bots/DreamArts.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Device compatibility testing",
+          "source": "App_bots/DreamArts.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "User analytics dashboard",
+          "source": "App_bots/DreamArts.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Advanced analytics dashboard",
+          "source": "App_bots/DreamArts.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Priority email support",
+          "source": "App_bots/DreamArts.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        }
+      ],
+      "tools": [
+        {
+          "id": "buddy_fleet_runtime",
+          "name": "Executable fleet runtime",
+          "status": "runtime_instance_ready",
+          "evidence": "server/fleet-runtime.ts"
+        },
+        {
+          "id": "buddy_chat_router",
+          "name": "Buddy shared chat router",
+          "status": "runtime_routed",
+          "evidence": "server/routes.ts"
+        },
+        {
+          "id": "buddy_approval_gateway",
+          "name": "Buddy approval gateway",
+          "status": "policy_available",
+          "evidence": "server/approval-notifications.ts"
+        },
+        {
+          "id": "buddy_bot_sandbox",
+          "name": "Per-bot sandbox blueprint",
+          "status": "generated",
+          "evidence": "config/generated/bots.catalog.json"
+        },
+        {
+          "id": "buddy_platform_registry",
+          "name": "Governed platform capability registry",
+          "status": "runtime_routed",
+          "evidence": "config/generated/buddy_platform_expansion.json"
+        },
+        {
+          "id": "buddy_bot_calculator",
+          "name": "Per-bot planning calculator",
+          "status": "local_interactive_ready",
+          "evidence": "config/generated/bot_calculators.json"
+        },
+        {
+          "id": "buddy_social_manager",
+          "name": "Buddy Social Manager",
+          "status": "approval_gated_adapter_contract",
+          "evidence": "dreamco_platform/social/manager.py"
+        },
+        {
+          "id": "buddy_connection_broker",
+          "name": "Buddy Connection Broker",
+          "status": "backend_broker_available",
+          "evidence": "dreamco_platform/connections/broker.py"
+        }
+      ],
+      "api_candidates": [],
+      "data_contract": {
+        "accepted_inputs": [
+          "user brief",
+          "user-selected files or records",
+          "approved connector references"
+        ],
+        "produced_outputs": [
+          "draft",
+          "analysis",
+          "task packet",
+          "sandbox evidence",
+          "approval request when required"
+        ],
+        "sensitivity": "standard_business_data",
+        "sensitive_domains": [],
+        "storage_policy": "store useful project artifacts only; raw credentials are forbidden; raw biometric media remains local or in an encrypted owner vault",
+        "retention": "owner-configurable with deletion and revocation support"
+      },
+      "approvals": {
+        "default_mode": "sandbox",
+        "approval_required": true,
+        "high_impact_profile": true,
+        "triggers": [
+          "email"
+        ],
+        "channels_supported": [
+          "in_app",
+          "email",
+          "sms",
+          "voice_call"
+        ],
+        "contact_requirement": "verified user-owned destination and explicit channel opt-in",
+        "execution_rule": "approval authorizes one scoped action; it never exposes credentials to the bot or browser"
+      },
+      "sandbox": {
+        "sandbox_id": "sandbox-immersive-xr",
+        "network_default": "off",
+        "fixture_mode": "synthetic_or_owner_supplied",
+        "seed": 662767461,
+        "checks": [
+          "profile_schema_valid",
+          "runtime_slug_resolves",
+          "capability_output_matches_brief",
+          "no_secret_in_output",
+          "no_live_external_write",
+          "approval_gate_for_high_impact_action",
+          "failure_and_retry_state_recorded"
+        ],
+        "api_tests": [],
+        "release_gate": "all applicable checks pass and owner approves any live action"
+      },
+      "readiness": {
+        "profile_schema": "verified",
+        "buddy_chat_route": "verified",
+        "executable_runtime_instance": "verified",
+        "standalone_native_runtime": "shared_worker_not_standalone",
+        "external_integrations": "no_division_api_catalog",
+        "production_ready": false,
+        "production_gate": "implement or configure adapters, pass sandbox checks, add authentication, and verify deployment telemetry"
+      },
+      "evidence": {
+        "catalog_source": "App_bots/DreamArts.json",
+        "runtime_sources": [
+          "server/seed-bots.ts"
+        ],
+        "runtime_seed_duplicates": 0
+      },
+      "sample_test_prompt": "Test Immersive XR Content Engine in sandbox mode. Use synthetic data, demonstrate Spatial experience builder, record evidence, and stop before any live external action."
+    },
+    {
+      "identity": {
+        "slug": "brand-guidelines",
+        "display_name": "Brand Guidelines Manager",
+        "division": "DreamArts",
+        "category": "branding",
+        "tier": "enterprise",
+        "catalog_status": "active"
+      },
+      "logo": {
+        "logo_id": "logo-brand-guidelines",
+        "emoji": "🚀",
+        "monogram": "BG",
+        "call_sign": "Dynamic Vault 67137286",
+        "shape": "tile",
+        "colors": {
+          "primary": "#3D4C8D",
+          "accent": "#D56638",
+          "surface": "#F4F6FF"
+        },
+        "accessibility_label": "Brand Guidelines Manager logo"
+      },
+      "prospectus": {
+        "mission": "Manages brand guidelines with asset distribution and compliance monitoring.",
+        "target_users": "Brand managers, marketing directors",
+        "catalog_business_model": "Enterprise license",
+        "catalog_price_range": "$599/mo",
+        "pricing_evidence": "catalog_claim_not_verified_revenue",
+        "inputs": [
+          "user brief",
+          "user-selected files or records",
+          "approved connector references"
+        ],
+        "outputs": [
+          "draft",
+          "analysis",
+          "task packet",
+          "sandbox evidence",
+          "approval request when required"
+        ],
+        "limitations": [
+          "This profile has an executable governed runtime instance backed by shared hardened code, not a separate always-running operating-system process.",
+          "External APIs require owner configuration, provider terms, sandbox tests, and scoped approval.",
+          "Published pricing and revenue models are catalog plans, not evidence of sales or earnings."
+        ]
+      },
+      "capabilities": [
+        {
+          "name": "Digital brand book builder",
+          "source": "App_bots/DreamArts.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Asset download portal",
+          "source": "App_bots/DreamArts.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Usage guideline enforcement",
+          "source": "App_bots/DreamArts.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Template management system",
+          "source": "App_bots/DreamArts.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Brand audit tools",
+          "source": "App_bots/DreamArts.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Multi-brand support",
+          "source": "App_bots/DreamArts.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Advanced analytics dashboard",
+          "source": "App_bots/DreamArts.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Priority email support",
+          "source": "App_bots/DreamArts.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        }
+      ],
+      "tools": [
+        {
+          "id": "buddy_fleet_runtime",
+          "name": "Executable fleet runtime",
+          "status": "runtime_instance_ready",
+          "evidence": "server/fleet-runtime.ts"
+        },
+        {
+          "id": "buddy_chat_router",
+          "name": "Buddy shared chat router",
+          "status": "runtime_routed",
+          "evidence": "server/routes.ts"
+        },
+        {
+          "id": "buddy_approval_gateway",
+          "name": "Buddy approval gateway",
+          "status": "policy_available",
+          "evidence": "server/approval-notifications.ts"
+        },
+        {
+          "id": "buddy_bot_sandbox",
+          "name": "Per-bot sandbox blueprint",
+          "status": "generated",
+          "evidence": "config/generated/bots.catalog.json"
+        },
+        {
+          "id": "buddy_platform_registry",
+          "name": "Governed platform capability registry",
+          "status": "runtime_routed",
+          "evidence": "config/generated/buddy_platform_expansion.json"
+        },
+        {
+          "id": "buddy_bot_calculator",
+          "name": "Per-bot planning calculator",
+          "status": "local_interactive_ready",
+          "evidence": "config/generated/bot_calculators.json"
+        }
+      ],
+      "api_candidates": [],
+      "data_contract": {
+        "accepted_inputs": [
+          "user brief",
+          "user-selected files or records",
+          "approved connector references"
+        ],
+        "produced_outputs": [
+          "draft",
+          "analysis",
+          "task packet",
+          "sandbox evidence",
+          "approval request when required"
+        ],
+        "sensitivity": "standard_business_data",
+        "sensitive_domains": [],
+        "storage_policy": "store useful project artifacts only; raw credentials are forbidden; raw biometric media remains local or in an encrypted owner vault",
+        "retention": "owner-configurable with deletion and revocation support"
+      },
+      "approvals": {
+        "default_mode": "sandbox",
+        "approval_required": true,
+        "high_impact_profile": true,
+        "triggers": [
+          "email"
+        ],
+        "channels_supported": [
+          "in_app",
+          "email",
+          "sms",
+          "voice_call"
+        ],
+        "contact_requirement": "verified user-owned destination and explicit channel opt-in",
+        "execution_rule": "approval authorizes one scoped action; it never exposes credentials to the bot or browser"
+      },
+      "sandbox": {
+        "sandbox_id": "sandbox-brand-guidelines",
+        "network_default": "off",
+        "fixture_mode": "synthetic_or_owner_supplied",
+        "seed": 1729327750,
+        "checks": [
+          "profile_schema_valid",
+          "runtime_slug_resolves",
+          "capability_output_matches_brief",
+          "no_secret_in_output",
+          "no_live_external_write",
+          "approval_gate_for_high_impact_action",
+          "failure_and_retry_state_recorded"
+        ],
+        "api_tests": [],
+        "release_gate": "all applicable checks pass and owner approves any live action"
+      },
+      "readiness": {
+        "profile_schema": "verified",
+        "buddy_chat_route": "verified",
+        "executable_runtime_instance": "verified",
+        "standalone_native_runtime": "shared_worker_not_standalone",
+        "external_integrations": "no_division_api_catalog",
+        "production_ready": false,
+        "production_gate": "implement or configure adapters, pass sandbox checks, add authentication, and verify deployment telemetry"
+      },
+      "evidence": {
+        "catalog_source": "App_bots/DreamArts.json",
+        "runtime_sources": [
+          "server/seed-bots.ts"
+        ],
+        "runtime_seed_duplicates": 0
+      },
+      "sample_test_prompt": "Test Brand Guidelines Manager in sandbox mode. Use synthetic data, demonstrate Digital brand book builder, record evidence, and stop before any live external action."
+    },
+    {
+      "identity": {
+        "slug": "event-production",
+        "display_name": "Event Production Planner",
+        "division": "DreamArts",
+        "category": "events",
+        "tier": "enterprise",
+        "catalog_status": "active"
+      },
+      "logo": {
+        "logo_id": "logo-event-production",
+        "emoji": "⚙️",
+        "monogram": "EP",
+        "call_sign": "Solar Pilot 612334F9",
+        "shape": "hex",
+        "colors": {
+          "primary": "#275DAD",
+          "accent": "#E38B3C",
+          "surface": "#F7F9FC"
+        },
+        "accessibility_label": "Event Production Planner logo"
+      },
+      "prospectus": {
+        "mission": "Plans event productions with technical rider management and crew coordination.",
+        "target_users": "Event producers, production managers",
+        "catalog_business_model": "Enterprise license",
+        "catalog_price_range": "$699/mo",
+        "pricing_evidence": "catalog_claim_not_verified_revenue",
+        "inputs": [
+          "user brief",
+          "user-selected files or records",
+          "approved connector references"
+        ],
+        "outputs": [
+          "draft",
+          "analysis",
+          "task packet",
+          "sandbox evidence",
+          "approval request when required"
+        ],
+        "limitations": [
+          "This profile has an executable governed runtime instance backed by shared hardened code, not a separate always-running operating-system process.",
+          "External APIs require owner configuration, provider terms, sandbox tests, and scoped approval.",
+          "Published pricing and revenue models are catalog plans, not evidence of sales or earnings."
+        ]
+      },
+      "capabilities": [
+        {
+          "name": "Technical rider processing",
+          "source": "App_bots/DreamArts.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Crew scheduling tools",
+          "source": "App_bots/DreamArts.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Equipment checklist builder",
+          "source": "App_bots/DreamArts.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Stage plot management",
+          "source": "App_bots/DreamArts.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Budget tracking engine",
+          "source": "App_bots/DreamArts.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Post-event report generation",
+          "source": "App_bots/DreamArts.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Advanced analytics dashboard",
+          "source": "App_bots/DreamArts.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Priority email support",
+          "source": "App_bots/DreamArts.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        }
+      ],
+      "tools": [
+        {
+          "id": "buddy_fleet_runtime",
+          "name": "Executable fleet runtime",
+          "status": "runtime_instance_ready",
+          "evidence": "server/fleet-runtime.ts"
+        },
+        {
+          "id": "buddy_chat_router",
+          "name": "Buddy shared chat router",
+          "status": "runtime_routed",
+          "evidence": "server/routes.ts"
+        },
+        {
+          "id": "buddy_approval_gateway",
+          "name": "Buddy approval gateway",
+          "status": "policy_available",
+          "evidence": "server/approval-notifications.ts"
+        },
+        {
+          "id": "buddy_bot_sandbox",
+          "name": "Per-bot sandbox blueprint",
+          "status": "generated",
+          "evidence": "config/generated/bots.catalog.json"
+        },
+        {
+          "id": "buddy_platform_registry",
+          "name": "Governed platform capability registry",
+          "status": "runtime_routed",
+          "evidence": "config/generated/buddy_platform_expansion.json"
+        },
+        {
+          "id": "buddy_bot_calculator",
+          "name": "Per-bot planning calculator",
+          "status": "local_interactive_ready",
+          "evidence": "config/generated/bot_calculators.json"
+        },
+        {
+          "id": "buddy_social_manager",
+          "name": "Buddy Social Manager",
+          "status": "approval_gated_adapter_contract",
+          "evidence": "dreamco_platform/social/manager.py"
+        }
+      ],
+      "api_candidates": [],
+      "data_contract": {
+        "accepted_inputs": [
+          "user brief",
+          "user-selected files or records",
+          "approved connector references"
+        ],
+        "produced_outputs": [
+          "draft",
+          "analysis",
+          "task packet",
+          "sandbox evidence",
+          "approval request when required"
+        ],
+        "sensitivity": "standard_business_data",
+        "sensitive_domains": [],
+        "storage_policy": "store useful project artifacts only; raw credentials are forbidden; raw biometric media remains local or in an encrypted owner vault",
+        "retention": "owner-configurable with deletion and revocation support"
+      },
+      "approvals": {
+        "default_mode": "sandbox",
+        "approval_required": true,
+        "high_impact_profile": true,
+        "triggers": [
+          "email"
+        ],
+        "channels_supported": [
+          "in_app",
+          "email",
+          "sms",
+          "voice_call"
+        ],
+        "contact_requirement": "verified user-owned destination and explicit channel opt-in",
+        "execution_rule": "approval authorizes one scoped action; it never exposes credentials to the bot or browser"
+      },
+      "sandbox": {
+        "sandbox_id": "sandbox-event-production",
+        "network_default": "off",
+        "fixture_mode": "synthetic_or_owner_supplied",
+        "seed": 1629697273,
+        "checks": [
+          "profile_schema_valid",
+          "runtime_slug_resolves",
+          "capability_output_matches_brief",
+          "no_secret_in_output",
+          "no_live_external_write",
+          "approval_gate_for_high_impact_action",
+          "failure_and_retry_state_recorded"
+        ],
+        "api_tests": [],
+        "release_gate": "all applicable checks pass and owner approves any live action"
+      },
+      "readiness": {
+        "profile_schema": "verified",
+        "buddy_chat_route": "verified",
+        "executable_runtime_instance": "verified",
+        "standalone_native_runtime": "shared_worker_not_standalone",
+        "external_integrations": "no_division_api_catalog",
+        "production_ready": false,
+        "production_gate": "implement or configure adapters, pass sandbox checks, add authentication, and verify deployment telemetry"
+      },
+      "evidence": {
+        "catalog_source": "App_bots/DreamArts.json",
+        "runtime_sources": [
+          "server/seed-bots.ts"
+        ],
+        "runtime_seed_duplicates": 0
+      },
+      "sample_test_prompt": "Test Event Production Planner in sandbox mode. Use synthetic data, demonstrate Technical rider processing, record evidence, and stop before any live external action."
+    },
+    {
+      "identity": {
+        "slug": "copywriting-ai",
+        "display_name": "AI Copywriting Assistant",
+        "division": "DreamArts",
+        "category": "copywriting",
+        "tier": "pro",
+        "catalog_status": "active"
+      },
+      "logo": {
+        "logo_id": "logo-copywriting-ai",
+        "emoji": "🚀",
+        "monogram": "CA",
+        "call_sign": "Ready Launchpad C13A5F44",
+        "shape": "tile",
+        "colors": {
+          "primary": "#0F6F88",
+          "accent": "#C94D63",
+          "surface": "#F4FBFC"
+        },
+        "accessibility_label": "AI Copywriting Assistant logo"
+      },
+      "prospectus": {
+        "mission": "Assists copywriting with tone matching and SEO optimization.",
+        "target_users": "Copywriters, content marketers, agencies",
+        "catalog_business_model": "SaaS subscription",
+        "catalog_price_range": "$129/mo",
+        "pricing_evidence": "catalog_claim_not_verified_revenue",
+        "inputs": [
+          "user brief",
+          "user-selected files or records",
+          "approved connector references"
+        ],
+        "outputs": [
+          "draft",
+          "analysis",
+          "task packet",
+          "sandbox evidence",
+          "approval request when required"
+        ],
+        "limitations": [
+          "This profile has an executable governed runtime instance backed by shared hardened code, not a separate always-running operating-system process.",
+          "External APIs require owner configuration, provider terms, sandbox tests, and scoped approval.",
+          "Published pricing and revenue models are catalog plans, not evidence of sales or earnings."
+        ]
+      },
+      "capabilities": [
+        {
+          "name": "Tone and voice matching",
+          "source": "App_bots/DreamArts.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "SEO keyword integration",
+          "source": "App_bots/DreamArts.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Headline variation generation",
+          "source": "App_bots/DreamArts.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Copy length optimization",
+          "source": "App_bots/DreamArts.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Brand voice consistency",
+          "source": "App_bots/DreamArts.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Performance prediction scoring",
+          "source": "App_bots/DreamArts.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Advanced analytics dashboard",
+          "source": "App_bots/DreamArts.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Priority email support",
+          "source": "App_bots/DreamArts.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        }
+      ],
+      "tools": [
+        {
+          "id": "buddy_fleet_runtime",
+          "name": "Executable fleet runtime",
+          "status": "runtime_instance_ready",
+          "evidence": "server/fleet-runtime.ts"
+        },
+        {
+          "id": "buddy_chat_router",
+          "name": "Buddy shared chat router",
+          "status": "runtime_routed",
+          "evidence": "server/routes.ts"
+        },
+        {
+          "id": "buddy_approval_gateway",
+          "name": "Buddy approval gateway",
+          "status": "policy_available",
+          "evidence": "server/approval-notifications.ts"
+        },
+        {
+          "id": "buddy_bot_sandbox",
+          "name": "Per-bot sandbox blueprint",
+          "status": "generated",
+          "evidence": "config/generated/bots.catalog.json"
+        },
+        {
+          "id": "buddy_platform_registry",
+          "name": "Governed platform capability registry",
+          "status": "runtime_routed",
+          "evidence": "config/generated/buddy_platform_expansion.json"
+        },
+        {
+          "id": "buddy_bot_calculator",
+          "name": "Per-bot planning calculator",
+          "status": "local_interactive_ready",
+          "evidence": "config/generated/bot_calculators.json"
+        },
+        {
+          "id": "buddy_creative_studio",
+          "name": "Buddy Creative Studio",
+          "status": "local_prototype_available",
+          "evidence": "dreamco_platform/creative/studio.py"
+        },
+        {
+          "id": "buddy_connection_broker",
+          "name": "Buddy Connection Broker",
+          "status": "backend_broker_available",
+          "evidence": "dreamco_platform/connections/broker.py"
+        }
+      ],
+      "api_candidates": [],
+      "data_contract": {
+        "accepted_inputs": [
+          "user brief",
+          "user-selected files or records",
+          "approved connector references"
+        ],
+        "produced_outputs": [
+          "draft",
+          "analysis",
+          "task packet",
+          "sandbox evidence",
+          "approval request when required"
+        ],
+        "sensitivity": "standard_business_data",
+        "sensitive_domains": [],
+        "storage_policy": "store useful project artifacts only; raw credentials are forbidden; raw biometric media remains local or in an encrypted owner vault",
+        "retention": "owner-configurable with deletion and revocation support"
+      },
+      "approvals": {
+        "default_mode": "sandbox",
+        "approval_required": true,
+        "high_impact_profile": true,
+        "triggers": [
+          "email"
+        ],
+        "channels_supported": [
+          "in_app",
+          "email",
+          "sms",
+          "voice_call"
+        ],
+        "contact_requirement": "verified user-owned destination and explicit channel opt-in",
+        "execution_rule": "approval authorizes one scoped action; it never exposes credentials to the bot or browser"
+      },
+      "sandbox": {
+        "sandbox_id": "sandbox-copywriting-ai",
+        "network_default": "off",
+        "fixture_mode": "synthetic_or_owner_supplied",
+        "seed": 3241828164,
+        "checks": [
+          "profile_schema_valid",
+          "runtime_slug_resolves",
+          "capability_output_matches_brief",
+          "no_secret_in_output",
+          "no_live_external_write",
+          "approval_gate_for_high_impact_action",
+          "failure_and_retry_state_recorded"
+        ],
+        "api_tests": [],
+        "release_gate": "all applicable checks pass and owner approves any live action"
+      },
+      "readiness": {
+        "profile_schema": "verified",
+        "buddy_chat_route": "verified",
+        "executable_runtime_instance": "verified",
+        "standalone_native_runtime": "shared_worker_not_standalone",
+        "external_integrations": "no_division_api_catalog",
+        "production_ready": false,
+        "production_gate": "implement or configure adapters, pass sandbox checks, add authentication, and verify deployment telemetry"
+      },
+      "evidence": {
+        "catalog_source": "App_bots/DreamArts.json",
+        "runtime_sources": [
+          "server/seed-bots.ts"
+        ],
+        "runtime_seed_duplicates": 0
+      },
+      "sample_test_prompt": "Test AI Copywriting Assistant in sandbox mode. Use synthetic data, demonstrate Tone and voice matching, record evidence, and stop before any live external action."
+    },
+    {
+      "identity": {
+        "slug": "illustration-mgr",
+        "display_name": "Illustration Project Manager",
+        "division": "DreamArts",
+        "category": "illustration",
+        "tier": "pro",
+        "catalog_status": "active"
+      },
+      "logo": {
+        "logo_id": "logo-illustration-mgr",
+        "emoji": "🎨",
+        "monogram": "IP",
+        "call_sign": "Bold Studio 0A363380",
+        "shape": "shield",
+        "colors": {
+          "primary": "#176B5B",
+          "accent": "#D7A73B",
+          "surface": "#F5F7F3"
+        },
+        "accessibility_label": "Illustration Project Manager logo"
+      },
+      "prospectus": {
+        "mission": "Manages illustration projects with style guide enforcement and revision tracking.",
+        "target_users": "Illustrators, art directors, publishers",
+        "catalog_business_model": "SaaS subscription",
+        "catalog_price_range": "$99/mo",
+        "pricing_evidence": "catalog_claim_not_verified_revenue",
+        "inputs": [
+          "user brief",
+          "user-selected files or records",
+          "approved connector references"
+        ],
+        "outputs": [
+          "draft",
+          "analysis",
+          "task packet",
+          "sandbox evidence",
+          "approval request when required"
+        ],
+        "limitations": [
+          "This profile has an executable governed runtime instance backed by shared hardened code, not a separate always-running operating-system process.",
+          "External APIs require owner configuration, provider terms, sandbox tests, and scoped approval.",
+          "Published pricing and revenue models are catalog plans, not evidence of sales or earnings."
+        ]
+      },
+      "capabilities": [
+        {
+          "name": "Style guide reference tools",
+          "source": "App_bots/DreamArts.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Revision tracking system",
+          "source": "App_bots/DreamArts.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Client feedback portal",
+          "source": "App_bots/DreamArts.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "File format management",
+          "source": "App_bots/DreamArts.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Usage rights documentation",
+          "source": "App_bots/DreamArts.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Artist collaboration tools",
+          "source": "App_bots/DreamArts.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Advanced analytics dashboard",
+          "source": "App_bots/DreamArts.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Priority email support",
+          "source": "App_bots/DreamArts.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        }
+      ],
+      "tools": [
+        {
+          "id": "buddy_fleet_runtime",
+          "name": "Executable fleet runtime",
+          "status": "runtime_instance_ready",
+          "evidence": "server/fleet-runtime.ts"
+        },
+        {
+          "id": "buddy_chat_router",
+          "name": "Buddy shared chat router",
+          "status": "runtime_routed",
+          "evidence": "server/routes.ts"
+        },
+        {
+          "id": "buddy_approval_gateway",
+          "name": "Buddy approval gateway",
+          "status": "policy_available",
+          "evidence": "server/approval-notifications.ts"
+        },
+        {
+          "id": "buddy_bot_sandbox",
+          "name": "Per-bot sandbox blueprint",
+          "status": "generated",
+          "evidence": "config/generated/bots.catalog.json"
+        },
+        {
+          "id": "buddy_platform_registry",
+          "name": "Governed platform capability registry",
+          "status": "runtime_routed",
+          "evidence": "config/generated/buddy_platform_expansion.json"
+        },
+        {
+          "id": "buddy_bot_calculator",
+          "name": "Per-bot planning calculator",
+          "status": "local_interactive_ready",
+          "evidence": "config/generated/bot_calculators.json"
+        }
+      ],
+      "api_candidates": [],
+      "data_contract": {
+        "accepted_inputs": [
+          "user brief",
+          "user-selected files or records",
+          "approved connector references"
+        ],
+        "produced_outputs": [
+          "draft",
+          "analysis",
+          "task packet",
+          "sandbox evidence",
+          "approval request when required"
+        ],
+        "sensitivity": "standard_business_data",
+        "sensitive_domains": [],
+        "storage_policy": "store useful project artifacts only; raw credentials are forbidden; raw biometric media remains local or in an encrypted owner vault",
+        "retention": "owner-configurable with deletion and revocation support"
+      },
+      "approvals": {
+        "default_mode": "sandbox",
+        "approval_required": true,
+        "high_impact_profile": true,
+        "triggers": [
+          "email"
+        ],
+        "channels_supported": [
+          "in_app",
+          "email",
+          "sms",
+          "voice_call"
+        ],
+        "contact_requirement": "verified user-owned destination and explicit channel opt-in",
+        "execution_rule": "approval authorizes one scoped action; it never exposes credentials to the bot or browser"
+      },
+      "sandbox": {
+        "sandbox_id": "sandbox-illustration-mgr",
+        "network_default": "off",
+        "fixture_mode": "synthetic_or_owner_supplied",
+        "seed": 171324288,
+        "checks": [
+          "profile_schema_valid",
+          "runtime_slug_resolves",
+          "capability_output_matches_brief",
+          "no_secret_in_output",
+          "no_live_external_write",
+          "approval_gate_for_high_impact_action",
+          "failure_and_retry_state_recorded"
+        ],
+        "api_tests": [],
+        "release_gate": "all applicable checks pass and owner approves any live action"
+      },
+      "readiness": {
+        "profile_schema": "verified",
+        "buddy_chat_route": "verified",
+        "executable_runtime_instance": "verified",
+        "standalone_native_runtime": "shared_worker_not_standalone",
+        "external_integrations": "no_division_api_catalog",
+        "production_ready": false,
+        "production_gate": "implement or configure adapters, pass sandbox checks, add authentication, and verify deployment telemetry"
+      },
+      "evidence": {
+        "catalog_source": "App_bots/DreamArts.json",
+        "runtime_sources": [
+          "server/seed-bots.ts"
+        ],
+        "runtime_seed_duplicates": 0
+      },
+      "sample_test_prompt": "Test Illustration Project Manager in sandbox mode. Use synthetic data, demonstrate Style guide reference tools, record evidence, and stop before any live external action."
+    }
+  ]
+}

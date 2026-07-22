@@ -9,6 +9,9 @@ from .studio import (
     ProjectType,
     StudioProject,
 )
+from .local_renderer import LocalCommandMediaRenderer, LocalRendererCommand
+from .branding import BrandingError, BuddyLogoGenerator, LogoBrief
+from .music import ArtistBrief, BuddyMusicArtistStudio, MusicStudioError, ReferenceTrack
 
 __all__ = [
     "BuddyCreativeStudio",
@@ -18,4 +21,13 @@ __all__ = [
     "MediaRenderer",
     "ProjectType",
     "StudioProject",
+    "LocalCommandMediaRenderer",
+    "LocalRendererCommand",
+    "ArtistBrief",
+    "BrandingError",
+    "BuddyLogoGenerator",
+    "BuddyMusicArtistStudio",
+    "LogoBrief",
+    "MusicStudioError",
+    "ReferenceTrack",
 ]

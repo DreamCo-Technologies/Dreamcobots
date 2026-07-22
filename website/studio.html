@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Buddy Creative Studio — DreamCo Empire OS</title>
-  <meta name="description" content="Build games, school simulations, and family learning videos with Buddy's local-first, consent-gated creative workflow." />
+  <meta name="description" content="Build games, simulations, courses, films, artist projects, brands, and family learning media with Buddy's local-first, consent-gated workflow." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="styles.css" />
@@ -17,7 +17,7 @@
     <div>
       <div class="hero-badge buddy-status-pill"><span></span> Local-first creative runtime</div>
       <h1>Build with your story, voice, and image.</h1>
-      <p>Game code, school simulations, and family learning media in one governed production workspace.</p>
+      <p>Games, courses, simulations, films, artist projects, brands, and family learning media in one governed production workspace.</p>
     </div>
     <a class="btn btn-outline btn-sm" href="buddy.html">Back to Buddy</a>
   </header>
@@ -26,11 +26,19 @@
     <form id="studio-form" class="studio-controls">
       <fieldset class="studio-fieldset">
         <legend>Project</legend>
-        <div class="studio-type-picker" role="radiogroup" aria-label="Project type">
-          <label><input type="radio" name="projectType" value="game" checked /><span>Game</span></label>
-          <label><input type="radio" name="projectType" value="school_simulation" /><span>School simulation</span></label>
-          <label><input type="radio" name="projectType" value="parent_learning_video" /><span>Learning video</span></label>
-        </div>
+        <label class="studio-label" for="project-type">Project type</label>
+        <select id="project-type" class="studio-input" name="projectType">
+          <option value="game">Game</option>
+          <option value="school_simulation">School simulation</option>
+          <option value="parent_learning_video">Family learning video</option>
+          <option value="music_video">Music video</option>
+          <option value="biography">Biography</option>
+          <option value="commercial">Commercial</option>
+          <option value="college_course">College course</option>
+          <option value="feature_film">Feature film</option>
+          <option value="music_artist">Music artist development</option>
+          <option value="logo_brand">Logo and brand system</option>
+        </select>
         <label class="studio-label" for="project-title">Title</label>
         <input class="studio-input" id="project-title" required minlength="3" value="Fraction Quest" />
         <label class="studio-label" for="project-objective">Goal</label>

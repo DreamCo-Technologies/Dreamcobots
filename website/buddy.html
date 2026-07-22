@@ -21,17 +21,23 @@
       <button class="buddy-rail-item" onclick="loadPrompt('Debug my latest failed build and explain the root cause.')">Debug Center</button>
       <button class="buddy-rail-item" onclick="loadPrompt('Create a game or simulation from this idea.')">Game + Simulation</button>
       <a class="buddy-rail-item" href="studio.html">Creative Studio</a>
+      <a class="buddy-rail-item" href="platform.html">Platform Registry</a>
+      <a class="buddy-rail-item" href="calculator.html">Bot Calculator Lab</a>
       <button class="buddy-rail-item" onclick="loadPrompt('Find the best native bot route and cheapest model fallback for this task.')">Model Router</button>
       <button class="buddy-rail-item" onclick="loadPrompt('Show the bot completion sprint and what needs coding next.')">Bot Sprint</button>
     </div>
     <div class="buddy-rail-section">
-      <div class="buddy-rail-label">Live Repo Sync</div>
-      <div class="buddy-rail-stat"><span>Product bots</span><strong data-buddy-stat="product-bots">1,470</strong></div>
-      <div class="buddy-rail-stat"><span>Native-ready</span><strong data-buddy-stat="ready-bots">1,236</strong></div>
-      <div class="buddy-rail-stat"><span>Finish queue</span><strong data-buddy-stat="completion-queue">232</strong></div>
-      <div class="buddy-rail-stat"><span>Free resources</span><strong data-buddy-stat="free-models">100</strong></div>
-      <div class="buddy-rail-stat"><span>Studio tracks</span><strong data-buddy-stat="studio-tracks">3</strong></div>
+      <div class="buddy-rail-label">Repository Evidence</div>
+      <div class="buddy-rail-stat"><span>Profiles</span><strong data-fleet-stat="profiles">1,051</strong></div>
+      <div class="buddy-rail-stat"><span>Buddy routes</span><strong data-fleet-stat="routes">1,051</strong></div>
+      <div class="buddy-rail-stat"><span>Runtime instances</span><strong data-fleet-stat="runtime">1,051</strong></div>
+      <div class="buddy-rail-stat"><span>E2E sandbox certified</span><strong data-fleet-stat="e2e">1,051</strong></div>
+      <div class="buddy-rail-stat"><span>Connected APIs</span><strong data-fleet-stat="apis">0</strong></div>
+      <div class="buddy-rail-stat"><span>Studio tracks</span><strong data-fleet-stat="studio">10</strong></div>
+      <div class="buddy-rail-stat"><span>Calculators</span><strong data-fleet-stat="calculators">1,051</strong></div>
     </div>
+
+    <div id="selected-bot-route" class="studio-guardrail" hidden></div>
   </aside>
 
   <section class="buddy-chat-home">
@@ -94,6 +100,7 @@
         <button onclick="openStudio('parent_learning_video')">Learning video</button>
         <button onclick="loadPrompt('Route this task through native DreamCo bots first, then cheapest free model fallback.')">Route task</button>
         <button onclick="loadPrompt('Finish the next bot in the completion sprint and add a smoke test.')">Finish bot</button>
+        <button onclick="location.href='calculator.html'">Open calculators</button>
       </div>
     </section>
 
@@ -114,6 +121,7 @@
 
 <script>
 let buddyMode = 'Build';
+let selectedBotName = '';
 
 function selectBuddyMode(button) {
   document.querySelectorAll('.buddy-mode').forEach((item) => item.classList.remove('active'));
@@ -148,13 +156,14 @@ function sendBuddyPrompt() {
     <div class="buddy-avatar">B</div>
     <div class="buddy-bubble">
       <strong>Buddy task packet ready</strong>
-      <p>I will handle this as a ${buddyMode} task: native repo code first, free/local resources second, approval gates for live actions. In the deployed app this prompt can be sent directly into Buddy's execution workflow.</p>
+      <p></p>
       <div class="buddy-inline-actions">
         <a class="btn btn-primary btn-sm" href="studio.html">Open Creative Studio</a>
         <a class="btn btn-outline btn-sm" href="dashboard.html">View dashboard</a>
         <a class="btn btn-outline btn-sm" href="bots.html">Pick bot</a>
       </div>
     </div>`;
+  bot.querySelector('p').textContent = `I prepared this as a ${buddyMode} task${selectedBotName ? ` routed to ${selectedBotName}` : ''}: repository profile first, configured tools second, and approval gates for live actions. This public page creates a task packet; authenticated backend execution must still be deployed and configured.`;
   thread.appendChild(user);
   thread.appendChild(bot);
   input.value = '';
@@ -163,6 +172,39 @@ function sendBuddyPrompt() {
 
 const params = new URLSearchParams(location.search);
 if (params.get('prompt')) loadPrompt(decodeURIComponent(params.get('prompt')));
+
+fetch('data/bot-fleet-catalog.json', { cache: 'no-store' })
+  .then(response => response.ok ? response.json() : Promise.reject(new Error('catalog unavailable')))
+  .then(catalog => {
+    const summary = catalog.summary;
+    document.querySelector('[data-fleet-stat="profiles"]').textContent = summary.profiles.toLocaleString();
+    document.querySelector('[data-fleet-stat="routes"]').textContent = summary.runtime_routed_profiles.toLocaleString();
+    document.querySelector('[data-fleet-stat="runtime"]').textContent = summary.executable_runtime_instances_evidenced.toLocaleString();
+    document.querySelector('[data-fleet-stat="apis"]').textContent = summary.configured_external_apis_evidenced.toLocaleString();
+    const slug = params.get('bot');
+    if (!slug) return;
+    const selected = catalog.bots.find(bot => bot.identity.slug === slug);
+    if (!selected) return;
+    selectedBotName = selected.identity.display_name;
+    const route = document.getElementById('selected-bot-route');
+    route.hidden = false;
+    route.textContent = `Selected route: ${selected.identity.display_name} (${selected.identity.division}). Sandbox blueprint and Buddy route are verified; live adapters remain approval-gated.`;
+  })
+  .catch(() => {});
+
+fetch('data/bot-fleet-e2e.json', { cache: 'no-store' })
+  .then(response => response.ok ? response.json() : Promise.reject(new Error('certification unavailable')))
+  .then(report => {
+    document.querySelector('[data-fleet-stat="e2e"]').textContent = report.summary.sandboxCertified.toLocaleString();
+  })
+  .catch(() => {});
+
+fetch('data/bot-calculators.json', { cache: 'no-store' })
+  .then(response => response.ok ? response.json() : Promise.reject(new Error('calculator registry unavailable')))
+  .then(registry => {
+    document.querySelector('[data-fleet-stat="calculators"]').textContent = registry.summary.calculators.toLocaleString();
+  })
+  .catch(() => {});
 </script>
 </body>
 </html>

@@ -15,6 +15,8 @@ from dreamco_platform.creative import (
     CreativeBrief,
     CreativeStudioError,
     ProjectType,
+    LocalCommandMediaRenderer,
+    LocalRendererCommand,
 )
 
 
@@ -45,11 +47,60 @@ def brief(project_type: ProjectType = ProjectType.SCHOOL_SIMULATION, **overrides
 
 
 class BuddyCreativeStudioTests(unittest.TestCase):
-    def test_supports_game_simulation_and_learning_video_tracks(self):
+    def test_every_creative_route_is_a_real_fleet_profile(self):
+        fleet_slugs = {
+            bot["slug"]
+            for path in (ROOT / "App_bots").glob("*.json")
+            for bot in json.loads(path.read_text(encoding="utf-8"))["bots"]
+        }
+        routes = [
+            *BuddyCreativeStudio.COMMON_ROUTES,
+            *(route for group in BuddyCreativeStudio.TYPE_ROUTES.values() for route in group),
+            {"bot": "adaptive-learning"},
+        ]
+        missing = sorted({route["bot"] for route in routes} - fleet_slugs)
+        self.assertEqual(missing, [])
+
+    def test_supports_governed_game_learning_and_media_tracks(self):
         self.assertEqual(
             {item.value for item in ProjectType},
-            {"game", "school_simulation", "parent_learning_video"},
+            {
+                "game",
+                "school_simulation",
+                "parent_learning_video",
+                "music_video",
+                "biography",
+                "commercial",
+                "college_course",
+                "feature_film",
+                "music_artist",
+                "logo_brand",
+            },
         )
+
+    def test_creates_feature_film_artist_and_brand_packets(self):
+        film = BuddyCreativeStudio().create_project(
+            brief(ProjectType.FEATURE_FILM, title="Crossing Tomorrow", objective="Develop an original feature film production package.")
+        )
+        artist = BuddyCreativeStudio().create_project(
+            brief(ProjectType.MUSIC_ARTIST, title="First Light", objective="Develop an original artist and release plan with rights evidence.")
+        )
+        brand = BuddyCreativeStudio().create_project(
+            brief(ProjectType.LOGO_BRAND, title="Signal Brand", objective="Create an original accessible identity and clearance plan.")
+        )
+        self.assertIn("screenplay", film.deliverables)
+        self.assertIn("rights_manifest", artist.deliverables)
+        self.assertIn("editable_logo_concepts", brand.deliverables)
+
+    def test_creates_biography_and_commercial_rights_workflows(self):
+        biography = BuddyCreativeStudio().create_project(
+            brief(ProjectType.BIOGRAPHY, title="My Story", objective="Create a sourced personal history for my family.")
+        )
+        commercial = BuddyCreativeStudio().create_project(
+            brief(ProjectType.COMMERCIAL, title="Launch Story", objective="Create a truthful product commercial with approved claims.")
+        )
+        self.assertIn("source_log", biography.deliverables)
+        self.assertIn("claim_substantiation", commercial.deliverables)
 
     def test_creates_local_first_school_simulation_packet(self):
         project = BuddyCreativeStudio().create_project(brief())
@@ -163,6 +214,39 @@ class BuddyCreativeStudioTests(unittest.TestCase):
             self.assertNotIn("owner_user_id", manifest["brief"]["consent"])
             self.assertEqual(manifest["brief"]["voice_sample_ref"], "redacted")
             self.assertIn("AI-assisted media", (output / "index.html").read_text(encoding="utf-8"))
+
+    def test_credential_free_local_media_command_adapter(self):
+        writer = (
+            sys.executable,
+            "-c",
+            "from pathlib import Path; import sys; Path(sys.argv[1]).write_bytes(b'local-media')",
+            "{output}",
+        )
+        with tempfile.TemporaryDirectory() as temp_dir:
+            renderer = LocalCommandMediaRenderer(
+                Path(temp_dir),
+                voice=LocalRendererCommand(writer, ".wav"),
+                avatar=LocalRendererCommand(writer, ".png"),
+            )
+            project = BuddyCreativeStudio().create_project(
+                brief(
+                    use_voice_clone=True,
+                    use_image_avatar=True,
+                    voice_sample_ref="local:voice-sample",
+                    image_sample_ref="local:image-sample",
+                    consent=consent(),
+                )
+            )
+            BuddyCreativeStudio().render_media(
+                project,
+                narration="Approved narration.",
+                avatar_prompt="Approved creator portrait.",
+                renderer=renderer,
+            )
+            self.assertEqual(project.status, "ready_for_sandbox")
+            self.assertTrue(project.media["renderer"]["assets"]["voice_asset_ref"].startswith("local-asset:"))
+            self.assertTrue(project.media["renderer"]["assets"]["avatar_asset_ref"].startswith("local-asset:"))
+            self.assertFalse(renderer.readiness()["credentials_required"])
 
 
 if __name__ == "__main__":

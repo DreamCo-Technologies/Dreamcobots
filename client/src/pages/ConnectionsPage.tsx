@@ -230,6 +230,9 @@ export default function ConnectionsPage() {
 
   const gitHubSyncQuery = useQuery<{
     enabled: boolean;
+    policyEnabled: boolean;
+    scheduled: boolean;
+    targetBranch: string | null;
     lastSyncAt: string | null;
     lastSyncSha: string | null;
     lastSyncError: string | null;
@@ -603,7 +606,7 @@ export default function ConnectionsPage() {
               <CardContent className="p-4 flex items-center gap-3">
                 <Shield className="h-4 w-4 text-primary flex-shrink-0" />
                 <p className="text-sm text-muted-foreground">
-                  Syncs push source code to <strong>DreamCo-Technologies/Dreamcobots</strong> on GitHub. Auto-sync requires a GitHub token set in Replit Secrets (<code className="text-xs bg-muted px-1 rounded">REPLIT_ACCESS_TOLKEN</code>).
+                  Syncs send approved source updates to a review branch in <strong>DreamCo-Technologies/Dreamcobots</strong>. Configure <code className="text-xs bg-muted px-1 rounded">GITHUB_TOKEN</code>, <code className="text-xs bg-muted px-1 rounded">BUDDY_GITHUB_SYNC_ENABLED</code>, and a non-default target branch in deployment secrets.
                 </p>
               </CardContent>
             </Card>

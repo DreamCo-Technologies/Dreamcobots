@@ -11,8 +11,13 @@
     "db:push": "drizzle-kit push",
     "buddy:site:check": "python3 tools/build_buddy_public_site.py --check",
     "buddy:creative-studio": "python3 tools/generate_buddy_multimodal_studio.py --check",
+    "buddy:platform": "python3 tools/generate_buddy_platform_expansion.py --check",
+    "buddy:calculators": "python3 tools/generate_buddy_bot_calculators.py --check",
+    "buddy:fleet": "tsx tools/generate_bot_fleet_catalog.ts --check",
+    "buddy:fleet:e2e": "node --import tsx tools/run_bot_fleet_e2e.ts --check",
     "buddy:connections": "python3 tools/generate_buddy_connection_catalog.py --check",
-    "buddy:cli": "python3 tools/buddy_cli.py"
+    "buddy:cli": "python3 tools/buddy_cli.py",
+    "test:governed": "node --import tsx --test tests/bot-fleet-catalog.test.ts tests/fleet-runtime.test.ts tests/bot-calculator-engine.test.mjs tests/approval-notifications.test.ts tests/outbound-adapters.test.ts tests/github-sync-policy.test.ts && python3 -m unittest tests.test_buddy_bot_calculators tests.test_buddy_creative_studio tests.test_buddy_game_lab tests.test_buddy_social_manager tests.test_buddy_platform_expansion"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",
@@ -78,7 +83,6 @@
     "react-resizable-panels": "^2.1.7",
     "recharts": "^2.15.2",
     "stripe": "^20.0.0",
-    "stripe-replit-sync": "^1.0.0",
     "tailwind-merge": "^2.6.0",
     "tailwindcss-animate": "^1.0.7",
     "tw-animate-css": "^1.2.5",
@@ -89,9 +93,6 @@
     "zod-validation-error": "^3.5.4"
   },
   "devDependencies": {
-    "@replit/vite-plugin-cartographer": "^0.4.4",
-    "@replit/vite-plugin-dev-banner": "^0.1.1",
-    "@replit/vite-plugin-runtime-error-modal": "^0.0.3",
     "@tailwindcss/typography": "^0.5.15",
     "@tailwindcss/vite": "^4.1.18",
     "@types/connect-pg-simple": "^7.0.3",

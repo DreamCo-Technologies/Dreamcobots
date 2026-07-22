@@ -2,8 +2,7 @@ import express, { type Request, Response, NextFunction } from "express";
 import { registerRoutes } from "./routes";
 import { serveStatic } from "./static";
 import { createServer } from "http";
-import { runMigrations } from 'stripe-replit-sync';
-import { getStripeSync } from './stripeClient';
+import { getUncachableStripeClient } from './stripeClient';
 import { WebhookHandlers } from './webhookHandlers';
 import { seedStripeProducts } from './seed-stripe-products';
 
@@ -17,36 +16,15 @@ declare module "http" {
 }
 
 async function initStripe() {
-  const databaseUrl = process.env.DATABASE_URL;
-  if (!databaseUrl) {
-    console.error('DATABASE_URL not set, skipping Stripe initialization');
+  if (!process.env.STRIPE_SECRET_KEY && !process.env.STRIPE_LIVE_SECRET_KEY) {
+    console.warn('Stripe secrets are not configured; billing routes will remain unavailable.');
     return;
   }
 
   try {
-    console.log('Initializing Stripe schema...');
-    await runMigrations({ databaseUrl });
-    console.log('Stripe schema ready');
+    await getUncachableStripeClient();
+    console.log('Stripe client configured.');
 
-    const stripeSync = await getStripeSync();
-
-    console.log('Setting up managed webhook...');
-    const webhookBaseUrl = `https://${process.env.REPLIT_DOMAINS?.split(',')[0]}`;
-    try {
-      const result = await stripeSync.findOrCreateManagedWebhook(
-        `${webhookBaseUrl}/api/stripe/webhook`
-      );
-      console.log(`Webhook configured: ${result?.webhook?.url ?? 'managed'}`);
-    } catch (webhookErr: any) {
-      console.warn('Webhook setup skipped (will work in production):', webhookErr.message);
-    }
-
-    console.log('Syncing Stripe data...');
-    stripeSync.syncBackfill()
-      .then(() => console.log('Stripe data synced'))
-      .catch((err: any) => console.error('Error syncing Stripe data:', err));
-
-    // Seed Empire tier products (idempotent — skips if already exist)
     seedStripeProducts()
       .then(() => console.log('Stripe products ready'))
       .catch((err: any) => console.warn('Stripe product seeding skipped:', err.message));
@@ -54,8 +32,6 @@ async function initStripe() {
     console.error('Failed to initialize Stripe:', error);
   }
 }
-
-await initStripe();
 
 app.post(
   '/api/stripe/webhook',
@@ -73,8 +49,8 @@ app.post(
         return res.status(500).json({ error: 'Webhook processing error' });
       }
 
-      await WebhookHandlers.processWebhook(req.body as Buffer, sig);
-      res.status(200).json({ received: true });
+      const event = await WebhookHandlers.processWebhook(req.body as Buffer, sig);
+      res.status(200).json({ received: true, eventId: event.id, eventType: event.type });
     } catch (error: any) {
       console.error('Webhook error:', error.message);
       res.status(400).json({ error: 'Webhook processing error' });
@@ -130,6 +106,7 @@ app.use((req, res, next) => {
 });
 
 (async () => {
+  await initStripe();
   await registerRoutes(httpServer, app);
 
   app.use((err: any, _req: Request, res: Response, next: NextFunction) => {

@@ -21,8 +21,100 @@ let voiceObjectUrl = '';
 let imageObjectUrl = '';
 let latestPacket = null;
 
+const TYPE_PRESETS = {
+  game: {
+    title: 'Fraction Quest',
+    objective: 'Teach learners to compare fractions through a playable kitchen challenge.',
+    subject: 'Fraction comparison',
+    audience: 'Ages 9 to 11',
+  },
+  school_simulation: {
+    title: 'Ecosystem Lab',
+    objective: 'Let students test how resource changes affect a balanced virtual ecosystem.',
+    subject: 'Food webs and ecosystem balance',
+    audience: 'Grades 6 to 8',
+  },
+  parent_learning_video: {
+    title: 'Family Science Night',
+    objective: 'Create a short family lesson with a safe hands-on activity and discussion prompts.',
+    subject: 'Everyday states of matter',
+    audience: 'Families with children ages 7 to 10',
+  },
+  music_video: {
+    title: 'City Lights',
+    objective: 'Create a rights-aware music video treatment with a visual story and edit plan.',
+    subject: 'An original song about finding confidence',
+    audience: 'Independent music audiences',
+  },
+  biography: {
+    title: 'My Story',
+    objective: 'Create a sourced personal biography with a clear chronology and archive plan.',
+    subject: 'A life story built from approved memories and records',
+    audience: 'Family, friends, and future generations',
+  },
+  commercial: {
+    title: 'Launch Story',
+    objective: 'Create a truthful product commercial with substantiated claims and platform variants.',
+    subject: 'A customer-focused product introduction',
+    audience: 'Prospective customers',
+  },
+  college_course: {
+    title: 'Applied AI Foundations',
+    objective: 'Build a college course with measurable outcomes, labs, assessments, and rubrics.',
+    subject: 'Responsible applied artificial intelligence',
+    audience: 'First-year college learners',
+  },
+  feature_film: {
+    title: 'Crossing Tomorrow',
+    objective: 'Develop an original feature film package with a screenplay, continuity plan, production breakdown, and delivery specification.',
+    subject: 'An original human story designed for responsible production',
+    audience: 'Film audiences and production partners',
+  },
+  music_artist: {
+    title: 'First Light Artist Plan',
+    objective: 'Build an original artist identity, repertoire plan, rights manifest, release calendar, and audience test program.',
+    subject: 'Original songs and a distinct artist identity',
+    audience: 'Independent music listeners and collaborators',
+  },
+  logo_brand: {
+    title: 'Signal Brand System',
+    objective: 'Create editable original logo concepts, brand guidelines, a rights manifest, and a trademark search plan.',
+    subject: 'A clear and accessible original brand identity',
+    audience: 'Customers, partners, and product users',
+  },
+};
+
 function selectedType() {
   return form.elements.projectType.value;
+}
+
+function renderEmptyState(type) {
+  const preset = TYPE_PRESETS[type];
+  if (!preset) return;
+  stage.innerHTML = `
+    <div class="studio-stage-empty">
+      <span>B</span>
+      <h2>${escapeHtml(preset.title)}</h2>
+      <p>Build the local ${escapeHtml(type.replaceAll('_', ' '))} prototype to open its governed preview.</p>
+    </div>`;
+  latestPacket = null;
+  readiness.textContent = 'Ready to build';
+  readiness.className = 'badge badge-green';
+  document.getElementById('result-code').textContent = 'Waiting';
+  document.getElementById('result-voice').textContent = 'Not requested';
+  document.getElementById('result-image').textContent = 'Not requested';
+  document.getElementById('result-tests').textContent = 'Waiting';
+  outputActions.hidden = true;
+}
+
+function applyPreset(type) {
+  const preset = TYPE_PRESETS[type];
+  if (!preset) return;
+  document.getElementById('project-title').value = preset.title;
+  document.getElementById('project-objective').value = preset.objective;
+  document.getElementById('project-subject').value = preset.subject;
+  document.getElementById('project-audience').value = preset.audience;
+  renderEmptyState(type);
 }
 
 function updateMediaControls() {
@@ -33,8 +125,11 @@ function updateMediaControls() {
 
 function setTypeFromQuery() {
   const type = new URLSearchParams(location.search).get('type');
-  const input = form.querySelector(`input[name="projectType"][value="${CSS.escape(type || '')}"]`);
-  if (input) input.checked = true;
+  const select = document.getElementById('project-type');
+  if (type && Array.from(select.options).some(option => option.value === type)) {
+    select.value = type;
+  }
+  applyPreset(select.value);
 }
 
 function replaceObjectUrl(currentUrl, blob) {
@@ -44,6 +139,7 @@ function replaceObjectUrl(currentUrl, blob) {
 
 useVoice.addEventListener('change', updateMediaControls);
 useImage.addEventListener('change', updateMediaControls);
+document.getElementById('project-type').addEventListener('change', event => applyPreset(event.target.value));
 
 voiceFile.addEventListener('change', () => {
   const file = voiceFile.files && voiceFile.files[0];
@@ -123,11 +219,53 @@ function projectCopy(type, subject, audience) {
       action: 'Run scenario',
     };
   }
-  return {
+  if (type === 'parent_learning_video') return {
     eyebrow: 'Family learning video',
     title: `Learn together: ${subject}`,
     body: `A captioned lesson, guided pause, family activity, and discussion prompt prepared for ${audience}.`,
     action: 'Preview lesson',
+  };
+  if (type === 'music_video') return {
+    eyebrow: 'Music video production',
+    title: `Treatment: ${subject}`,
+    body: `A rights-aware treatment, scene plan, shot list, edit timeline, and labeled creator-media workflow for ${audience}.`,
+    action: 'Preview treatment',
+  };
+  if (type === 'biography') return {
+    eyebrow: 'Sourced biography',
+    title: `Life story: ${subject}`,
+    body: `A source log, chronology, narrative structure, fact review, and archive-rights plan prepared for ${audience}.`,
+    action: 'Preview chapter',
+  };
+  if (type === 'commercial') return {
+    eyebrow: 'Commercial production',
+    title: `Campaign: ${subject}`,
+    body: `A truthful concept, substantiated claims, script, shot list, format variants, and measurement plan for ${audience}.`,
+    action: 'Preview campaign',
+  };
+  if (type === 'feature_film') return {
+    eyebrow: 'Feature film development',
+    title: `Production: ${subject}`,
+    body: `An original screenplay, continuity bible, production breakdown, rights log, edit plan, and delivery specification for ${audience}.`,
+    action: 'Preview sequence',
+  };
+  if (type === 'music_artist') return {
+    eyebrow: 'Artist development',
+    title: `Artist plan: ${subject}`,
+    body: `An original repertoire, production workflow, rights and split manifest, release calendar, and audience test plan for ${audience}.`,
+    action: 'Preview release plan',
+  };
+  if (type === 'logo_brand') return {
+    eyebrow: 'Logo and brand system',
+    title: `Identity: ${subject}`,
+    body: `Editable original concepts, brand guidelines, accessibility checks, rights records, and a clearance search plan for ${audience}.`,
+    action: 'Preview identity',
+  };
+  return {
+    eyebrow: 'College course production',
+    title: `Course: ${subject}`,
+    body: `A syllabus, outcomes, modules, labs, assessments, rubrics, and accessible lecture plan prepared for ${audience}.`,
+    action: 'Preview module',
   };
 }
 

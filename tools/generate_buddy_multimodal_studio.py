@@ -22,22 +22,43 @@ def build_registry() -> dict:
     return {
         "schema": "dreamco.buddy_multimodal_studio.v1",
         "name": "Buddy Creative Studio",
-        "status": "production_packet_and_local_prototype_ready",
+        "status": "production_packet_local_prototype_and_local_adapter_ready",
         "project_types": [
             {
                 "id": project_type.value,
-                "native_routes": BuddyCreativeStudio.TYPE_ROUTES[project_type],
+                "native_routes": [
+                    *BuddyCreativeStudio.TYPE_ROUTES[project_type],
+                    *BuddyCreativeStudio.COMMON_ROUTES,
+                    *(
+                        [{"bot": "adaptive-learning", "role": "learning objectives and difficulty tuning"}]
+                        if project_type in {
+                            ProjectType.SCHOOL_SIMULATION,
+                            ProjectType.PARENT_LEARNING_VIDEO,
+                            ProjectType.COLLEGE_COURSE,
+                        }
+                        else []
+                    ),
+                ],
             }
             for project_type in ProjectType
         ],
         "shared_routes": BuddyCreativeStudio.COMMON_ROUTES,
         "capabilities": [
-            "code responsive browser games",
+            "plan games from prototypes through milestone-gated epic productions",
+            "play-test supported owner-authorized games through sandbox adapters",
             "build curriculum-aligned school simulations",
             "build parent and family learning videos",
+            "build music video treatments and production packets",
+            "build sourced biographies and autobiographies",
+            "build truthful commercial production packets",
+            "build college courses with modules, labs, assessments, and rubrics",
+            "build original feature-film production packets and delivery plans",
+            "build rights-aware artist-development and original music production packets",
+            "build editable logo concepts, brand systems, and clearance plans",
             "capture adult user voice and image locally",
             "enforce voice and likeness consent",
             "prepare local or optional model rendering",
+            "run installed local voice and image engines without cloud credentials",
             "generate captions, lesson checks, and accessibility tests",
             "generate portable project code and production manifests",
         ],
@@ -57,6 +78,10 @@ def build_registry() -> dict:
             "outside models are optional",
         ],
         "website": "website/studio.html",
+        "game_lab": "dreamco_platform/games/harness.py",
+        "social_manager": "dreamco_platform/social/manager.py",
+        "approval_notifications": "server/approval-notifications.ts",
+        "local_media_renderer": "dreamco_platform/creative/local_renderer.py",
         "cli": ["buddy studio-refresh", "buddy studio-report", "buddy open-studio"],
     }
 
@@ -65,7 +90,7 @@ def write_report(registry: dict) -> None:
     lines = [
         "# Buddy Multimodal Creative Studio",
         "",
-        "Buddy now has one governed production path for games, school simulations, and parent/family learning videos.",
+        "Buddy now has one governed production path for games, school simulations, learning videos, music videos, biographies, commercials, college courses, feature films, artist development, and brand systems.",
         "",
         "## Production Tracks",
         "",

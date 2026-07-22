@@ -96,7 +96,7 @@ export default function SandboxPage() {
       toast({ title: "✅ GitHub Synced", description: `Pushed ${data?.sha?.slice(0,7) || "latest"} — ${data?.message || "all commits pushed"}` });
       githubStatus.refetch();
     },
-    onError: () => toast({ title: "Sync failed", description: "Check REPLIT_ACCESS_TOLKEN in Replit Secrets.", variant: "destructive" }),
+    onError: () => toast({ title: "Sync failed", description: "Check the GitHub token and approved sync-branch settings in deployment secrets.", variant: "destructive" }),
   });
 
   const runTest = async (test: typeof SANDBOX_TESTS[number]) => {
@@ -226,7 +226,7 @@ export default function SandboxPage() {
                   <Activity className="h-4 w-4 text-primary" />
                   Sync Status
                 </CardTitle>
-                <CardDescription>Push all commits from this Replit to GitHub instantly</CardDescription>
+                <CardDescription>Send approved workspace updates to a review branch</CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
                 {githubStatus.isLoading ? (
@@ -253,7 +253,7 @@ export default function SandboxPage() {
                 <div className="flex flex-wrap gap-2 pt-2">
                   <Button onClick={() => syncMutation.mutate()} disabled={syncMutation.isPending} data-testid="button-force-sync">
                     {syncMutation.isPending ? <RefreshCw className="h-4 w-4 animate-spin mr-2" /> : <Github className="h-4 w-4 mr-2" />}
-                    {syncMutation.isPending ? "Pushing..." : "Force Push to GitHub"}
+                    {syncMutation.isPending ? "Syncing..." : "Sync Review Branch"}
                   </Button>
                   <Button variant="outline" onClick={() => githubStatus.refetch()} data-testid="button-refresh-status">
                     <RefreshCw className="h-4 w-4 mr-2" />Refresh Status
@@ -274,11 +274,11 @@ export default function SandboxPage() {
               </CardHeader>
               <CardContent>
                 <div className="space-y-3 text-sm">
-                  <p className="text-muted-foreground">Every change made in the AI agent is automatically committed. To keep GitHub in sync, click <strong>Force Push</strong> above or run this from the Shell tab:</p>
+                  <p className="text-muted-foreground">Approved workspace changes can be sent to the configured review branch from this screen or the local shell:</p>
                   <div className="bg-muted/40 rounded-lg p-3 font-mono text-xs">
                     bash scripts/sync-github.sh
                   </div>
-                  <p className="text-muted-foreground text-xs">The sync script reads your <code>REPLIT_ACCESS_TOLKEN</code> secret at runtime — it never stores the token in any file.</p>
+                  <p className="text-muted-foreground text-xs">The sync script reads <code>GITHUB_TOKEN</code> or <code>GITHUB_PERSONAL_ACCESS_TOKEN</code> at runtime. It never writes directly to the default branch.</p>
                 </div>
               </CardContent>
             </Card>
@@ -304,7 +304,7 @@ export default function SandboxPage() {
                     <Key className="h-5 w-5 text-blue-400 mt-0.5 shrink-0" />
                     <div className="space-y-1">
                       <p className="font-semibold text-sm">API Keys Setup</p>
-                      <p className="text-xs text-muted-foreground">Add <code className="bg-muted px-1 rounded">STRIPE_SECRET_KEY</code> and <code className="bg-muted px-1 rounded">STRIPE_PUBLISHABLE_KEY</code> to Replit Secrets to activate checkout.</p>
+                      <p className="text-xs text-muted-foreground">Add <code className="bg-muted px-1 rounded">STRIPE_SECRET_KEY</code> and <code className="bg-muted px-1 rounded">STRIPE_PUBLISHABLE_KEY</code> to deployment secrets to activate checkout.</p>
                     </div>
                   </div>
                 </CardContent>

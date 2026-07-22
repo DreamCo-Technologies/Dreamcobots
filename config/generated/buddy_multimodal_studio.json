@@ -1,11 +1,21 @@
 {
+  "approval_notifications": "server/approval-notifications.ts",
   "capabilities": [
-    "code responsive browser games",
+    "plan games from prototypes through milestone-gated epic productions",
+    "play-test supported owner-authorized games through sandbox adapters",
     "build curriculum-aligned school simulations",
     "build parent and family learning videos",
+    "build music video treatments and production packets",
+    "build sourced biographies and autobiographies",
+    "build truthful commercial production packets",
+    "build college courses with modules, labs, assessments, and rubrics",
+    "build original feature-film production packets and delivery plans",
+    "build rights-aware artist-development and original music production packets",
+    "build editable logo concepts, brand systems, and clearance plans",
     "capture adult user voice and image locally",
     "enforce voice and likeness consent",
     "prepare local or optional model rendering",
+    "run installed local voice and image engines without cloud credentials",
     "generate captions, lesson checks, and accessibility tests",
     "generate portable project code and production manifests"
   ],
@@ -14,6 +24,8 @@
     "buddy studio-report",
     "buddy open-studio"
   ],
+  "game_lab": "dreamco_platform/games/harness.py",
+  "local_media_renderer": "dreamco_platform/creative/local_renderer.py",
   "media_truth_states": [
     "not_requested",
     "consent_verified_pending_render",
@@ -36,6 +48,10 @@
         {
           "bot": "game-analytics",
           "role": "completion, retention, and balance metrics"
+        },
+        {
+          "bot": "governance-dashboard",
+          "role": "consent, revocation, audit, and synthetic-media labeling"
         }
       ]
     },
@@ -47,12 +63,20 @@
           "role": "interactive learning game runtime"
         },
         {
-          "bot": "simulation-world-builder",
+          "bot": "dr-simulation",
           "role": "deterministic scenario engine"
         },
         {
           "bot": "video-script",
           "role": "lesson narration and scene script"
+        },
+        {
+          "bot": "governance-dashboard",
+          "role": "consent, revocation, audit, and synthetic-media labeling"
+        },
+        {
+          "bot": "adaptive-learning",
+          "role": "learning objectives and difficulty tuning"
         }
       ]
     },
@@ -64,12 +88,171 @@
           "role": "age-aware lesson script and pacing"
         },
         {
-          "bot": "professional-video-editing-bot",
+          "bot": "video-editor-ai",
           "role": "timeline and export plan"
         },
         {
           "bot": "photo-video-app-bot",
           "role": "captions, moderation, and asset checks"
+        },
+        {
+          "bot": "governance-dashboard",
+          "role": "consent, revocation, audit, and synthetic-media labeling"
+        },
+        {
+          "bot": "adaptive-learning",
+          "role": "learning objectives and difficulty tuning"
+        }
+      ]
+    },
+    {
+      "id": "music_video",
+      "native_routes": [
+        {
+          "bot": "music-app-bot",
+          "role": "rights-aware music and timing plan"
+        },
+        {
+          "bot": "video-script",
+          "role": "treatment, scenes, and shot list"
+        },
+        {
+          "bot": "video-editor-ai",
+          "role": "timeline, effects, and export plan"
+        },
+        {
+          "bot": "governance-dashboard",
+          "role": "consent, revocation, audit, and synthetic-media labeling"
+        }
+      ]
+    },
+    {
+      "id": "biography",
+      "native_routes": [
+        {
+          "bot": "research-bot",
+          "role": "source log, chronology, and claim review"
+        },
+        {
+          "bot": "video-script",
+          "role": "narrative structure and script"
+        },
+        {
+          "bot": "video-editor-ai",
+          "role": "archive timeline and export plan"
+        },
+        {
+          "bot": "governance-dashboard",
+          "role": "consent, revocation, audit, and synthetic-media labeling"
+        }
+      ]
+    },
+    {
+      "id": "commercial",
+      "native_routes": [
+        {
+          "bot": "brand-voice",
+          "role": "brand claims and voice consistency"
+        },
+        {
+          "bot": "video-script",
+          "role": "concept, script, shot list, and calls to action"
+        },
+        {
+          "bot": "photo-video-app-bot",
+          "role": "asset rights, captions, and moderation"
+        },
+        {
+          "bot": "governance-dashboard",
+          "role": "consent, revocation, audit, and synthetic-media labeling"
+        }
+      ]
+    },
+    {
+      "id": "college_course",
+      "native_routes": [
+        {
+          "bot": "curriculum-mapper",
+          "role": "outcomes, modules, lessons, and assessments"
+        },
+        {
+          "bot": "dr-simulation",
+          "role": "labs and interactive scenarios"
+        },
+        {
+          "bot": "video-script",
+          "role": "lecture and demonstration scripts"
+        },
+        {
+          "bot": "governance-dashboard",
+          "role": "consent, revocation, audit, and synthetic-media labeling"
+        },
+        {
+          "bot": "adaptive-learning",
+          "role": "learning objectives and difficulty tuning"
+        }
+      ]
+    },
+    {
+      "id": "feature_film",
+      "native_routes": [
+        {
+          "bot": "video-script",
+          "role": "screenplay, continuity, and production breakdown"
+        },
+        {
+          "bot": "video-editor-ai",
+          "role": "edit plan, conform, captions, and delivery masters"
+        },
+        {
+          "bot": "photo-video-app-bot",
+          "role": "asset provenance, moderation, and media packaging"
+        },
+        {
+          "bot": "governance-dashboard",
+          "role": "consent, revocation, audit, and synthetic-media labeling"
+        }
+      ]
+    },
+    {
+      "id": "music_artist",
+      "native_routes": [
+        {
+          "bot": "music-production",
+          "role": "original-song development and production workflow"
+        },
+        {
+          "bot": "music-app-bot",
+          "role": "rights manifest, release packet, and audience plan"
+        },
+        {
+          "bot": "brand-voice",
+          "role": "artist identity and truthful public messaging"
+        },
+        {
+          "bot": "governance-dashboard",
+          "role": "consent, revocation, audit, and synthetic-media labeling"
+        }
+      ]
+    },
+    {
+      "id": "logo_brand",
+      "native_routes": [
+        {
+          "bot": "brand-builder",
+          "role": "brand positioning and identity system"
+        },
+        {
+          "bot": "brand-guidelines",
+          "role": "logo usage, typography, color, and accessibility rules"
+        },
+        {
+          "bot": "brand-protector",
+          "role": "clearance checklist and misuse monitoring plan"
+        },
+        {
+          "bot": "governance-dashboard",
+          "role": "consent, revocation, audit, and synthetic-media labeling"
         }
       ]
     }
@@ -86,14 +269,11 @@
   "schema": "dreamco.buddy_multimodal_studio.v1",
   "shared_routes": [
     {
-      "bot": "buddy-trust-bot",
+      "bot": "governance-dashboard",
       "role": "consent, revocation, audit, and synthetic-media labeling"
-    },
-    {
-      "bot": "adaptive-learning",
-      "role": "learning objectives and difficulty tuning"
     }
   ],
-  "status": "production_packet_and_local_prototype_ready",
+  "social_manager": "dreamco_platform/social/manager.py",
+  "status": "production_packet_local_prototype_and_local_adapter_ready",
   "website": "website/studio.html"
 }

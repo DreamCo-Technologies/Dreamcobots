@@ -1,0 +1,1142 @@
+{
+  "schema": "dreamco.bot_fleet_division.v2",
+  "division": "GameTitan",
+  "bots": [
+    {
+      "identity": {
+        "slug": "game-ai-player",
+        "display_name": "Game AI Player Bot",
+        "division": "GameTitan",
+        "category": "game-ai",
+        "tier": "pro",
+        "catalog_status": "active"
+      },
+      "logo": {
+        "logo_id": "logo-game-ai-player",
+        "emoji": "🔎",
+        "monogram": "GP",
+        "call_sign": "Golden Guide 036D6CC4",
+        "shape": "hex",
+        "colors": {
+          "primary": "#0F6F88",
+          "accent": "#C94D63",
+          "surface": "#F4FBFC"
+        },
+        "accessibility_label": "Game AI Player Bot logo"
+      },
+      "prospectus": {
+        "mission": "Autonomous game-playing AI that learns strategies across multiple game genres.",
+        "target_users": "Gamers, esports teams",
+        "catalog_business_model": "SaaS subscription",
+        "catalog_price_range": "$99/mo",
+        "pricing_evidence": "catalog_claim_not_verified_revenue",
+        "inputs": [
+          "user brief",
+          "user-selected files or records",
+          "approved connector references"
+        ],
+        "outputs": [
+          "draft",
+          "analysis",
+          "task packet",
+          "sandbox evidence",
+          "approval request when required"
+        ],
+        "limitations": [
+          "This profile has an executable governed runtime instance backed by shared hardened code, not a separate always-running operating-system process.",
+          "External APIs require owner configuration, provider terms, sandbox tests, and scoped approval.",
+          "Published pricing and revenue models are catalog plans, not evidence of sales or earnings."
+        ]
+      },
+      "capabilities": [
+        {
+          "name": "Multi-game strategy engine",
+          "source": "App_bots/GameTitan.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Real-time decision making",
+          "source": "App_bots/GameTitan.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Pattern recognition from replays",
+          "source": "App_bots/GameTitan.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Difficulty adaptation",
+          "source": "App_bots/GameTitan.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Performance replay analysis",
+          "source": "App_bots/GameTitan.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Meta-game optimization",
+          "source": "App_bots/GameTitan.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Advanced analytics dashboard",
+          "source": "App_bots/GameTitan.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Priority email support",
+          "source": "App_bots/GameTitan.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        }
+      ],
+      "tools": [
+        {
+          "id": "buddy_fleet_runtime",
+          "name": "Executable fleet runtime",
+          "status": "runtime_instance_ready",
+          "evidence": "server/fleet-runtime.ts"
+        },
+        {
+          "id": "buddy_chat_router",
+          "name": "Buddy shared chat router",
+          "status": "runtime_routed",
+          "evidence": "server/routes.ts"
+        },
+        {
+          "id": "buddy_approval_gateway",
+          "name": "Buddy approval gateway",
+          "status": "policy_available",
+          "evidence": "server/approval-notifications.ts"
+        },
+        {
+          "id": "buddy_bot_sandbox",
+          "name": "Per-bot sandbox blueprint",
+          "status": "generated",
+          "evidence": "config/generated/bots.catalog.json"
+        },
+        {
+          "id": "buddy_platform_registry",
+          "name": "Governed platform capability registry",
+          "status": "runtime_routed",
+          "evidence": "config/generated/buddy_platform_expansion.json"
+        },
+        {
+          "id": "buddy_bot_calculator",
+          "name": "Per-bot planning calculator",
+          "status": "local_interactive_ready",
+          "evidence": "config/generated/bot_calculators.json"
+        },
+        {
+          "id": "buddy_game_lab",
+          "name": "Buddy Game Lab",
+          "status": "adapter_contract_available",
+          "evidence": "dreamco_platform/games/harness.py"
+        }
+      ],
+      "api_candidates": [
+        {
+          "name": "Riot Games",
+          "category": "gaming",
+          "description": "League of Legends API",
+          "tier": "pro",
+          "status": "configuration_required",
+          "sandbox_required": true,
+          "secret_policy": "backend_secret_reference_only"
+        },
+        {
+          "name": "Unity Analytics",
+          "category": "game-dev",
+          "description": "Game analytics",
+          "tier": "pro",
+          "status": "configuration_required",
+          "sandbox_required": true,
+          "secret_policy": "backend_secret_reference_only"
+        },
+        {
+          "name": "Discord",
+          "category": "community",
+          "description": "Gaming community platform",
+          "tier": "free",
+          "status": "configuration_required",
+          "sandbox_required": true,
+          "secret_policy": "backend_secret_reference_only"
+        },
+        {
+          "name": "Steam Web",
+          "category": "gaming",
+          "description": "Steam platform API",
+          "tier": "pro",
+          "status": "configuration_required",
+          "sandbox_required": true,
+          "secret_policy": "backend_secret_reference_only"
+        },
+        {
+          "name": "Twitch",
+          "category": "streaming",
+          "description": "Live streaming platform",
+          "tier": "pro",
+          "status": "configuration_required",
+          "sandbox_required": true,
+          "secret_policy": "backend_secret_reference_only"
+        }
+      ],
+      "data_contract": {
+        "accepted_inputs": [
+          "user brief",
+          "user-selected files or records",
+          "approved connector references"
+        ],
+        "produced_outputs": [
+          "draft",
+          "analysis",
+          "task packet",
+          "sandbox evidence",
+          "approval request when required"
+        ],
+        "sensitivity": "standard_business_data",
+        "sensitive_domains": [],
+        "storage_policy": "store useful project artifacts only; raw credentials are forbidden; raw biometric media remains local or in an encrypted owner vault",
+        "retention": "owner-configurable with deletion and revocation support"
+      },
+      "approvals": {
+        "default_mode": "sandbox",
+        "approval_required": true,
+        "high_impact_profile": true,
+        "triggers": [
+          "email"
+        ],
+        "channels_supported": [
+          "in_app",
+          "email",
+          "sms",
+          "voice_call"
+        ],
+        "contact_requirement": "verified user-owned destination and explicit channel opt-in",
+        "execution_rule": "approval authorizes one scoped action; it never exposes credentials to the bot or browser"
+      },
+      "sandbox": {
+        "sandbox_id": "sandbox-game-ai-player",
+        "network_default": "off",
+        "fixture_mode": "synthetic_or_owner_supplied",
+        "seed": 57502916,
+        "checks": [
+          "profile_schema_valid",
+          "runtime_slug_resolves",
+          "capability_output_matches_brief",
+          "no_secret_in_output",
+          "no_live_external_write",
+          "approval_gate_for_high_impact_action",
+          "failure_and_retry_state_recorded"
+        ],
+        "api_tests": [
+          {
+            "api": "Riot Games",
+            "mode": "mock_contract_test",
+            "live_test_status": "blocked_until_owner_configures_secret_and_approves"
+          },
+          {
+            "api": "Unity Analytics",
+            "mode": "mock_contract_test",
+            "live_test_status": "blocked_until_owner_configures_secret_and_approves"
+          },
+          {
+            "api": "Discord",
+            "mode": "mock_contract_test",
+            "live_test_status": "blocked_until_owner_configures_secret_and_approves"
+          },
+          {
+            "api": "Steam Web",
+            "mode": "mock_contract_test",
+            "live_test_status": "blocked_until_owner_configures_secret_and_approves"
+          },
+          {
+            "api": "Twitch",
+            "mode": "mock_contract_test",
+            "live_test_status": "blocked_until_owner_configures_secret_and_approves"
+          }
+        ],
+        "release_gate": "all applicable checks pass and owner approves any live action"
+      },
+      "readiness": {
+        "profile_schema": "verified",
+        "buddy_chat_route": "verified",
+        "executable_runtime_instance": "verified",
+        "standalone_native_runtime": "shared_worker_not_standalone",
+        "external_integrations": "configuration_required",
+        "production_ready": false,
+        "production_gate": "implement or configure adapters, pass sandbox checks, add authentication, and verify deployment telemetry"
+      },
+      "evidence": {
+        "catalog_source": "App_bots/GameTitan.json",
+        "runtime_sources": [
+          "server/seed-bots.ts"
+        ],
+        "runtime_seed_duplicates": 0
+      },
+      "sample_test_prompt": "Test Game AI Player Bot in sandbox mode. Use synthetic data, demonstrate Multi-game strategy engine, record evidence, and stop before any live external action."
+    },
+    {
+      "identity": {
+        "slug": "game-coach",
+        "display_name": "Game Coaching Bot",
+        "division": "GameTitan",
+        "category": "game-coaching",
+        "tier": "pro",
+        "catalog_status": "active"
+      },
+      "logo": {
+        "logo_id": "logo-game-coach",
+        "emoji": "🔎",
+        "monogram": "GC",
+        "call_sign": "Open Atlas 7B89F522",
+        "shape": "shield",
+        "colors": {
+          "primary": "#7A2E3A",
+          "accent": "#2D8C7C",
+          "surface": "#FFF8EE"
+        },
+        "accessibility_label": "Game Coaching Bot logo"
+      },
+      "prospectus": {
+        "mission": "AI-powered coaching that analyzes gameplay and provides improvement suggestions.",
+        "target_users": "Competitive gamers, coaches",
+        "catalog_business_model": "SaaS subscription",
+        "catalog_price_range": "$99/mo",
+        "pricing_evidence": "catalog_claim_not_verified_revenue",
+        "inputs": [
+          "user brief",
+          "user-selected files or records",
+          "approved connector references"
+        ],
+        "outputs": [
+          "draft",
+          "analysis",
+          "task packet",
+          "sandbox evidence",
+          "approval request when required"
+        ],
+        "limitations": [
+          "This profile has an executable governed runtime instance backed by shared hardened code, not a separate always-running operating-system process.",
+          "External APIs require owner configuration, provider terms, sandbox tests, and scoped approval.",
+          "Published pricing and revenue models are catalog plans, not evidence of sales or earnings."
+        ]
+      },
+      "capabilities": [
+        {
+          "name": "Gameplay replay analysis",
+          "source": "App_bots/GameTitan.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Mistake identification engine",
+          "source": "App_bots/GameTitan.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Skill progression tracking",
+          "source": "App_bots/GameTitan.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Personalized drill suggestions",
+          "source": "App_bots/GameTitan.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Rank prediction model",
+          "source": "App_bots/GameTitan.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Pro player strategy comparison",
+          "source": "App_bots/GameTitan.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Advanced analytics dashboard",
+          "source": "App_bots/GameTitan.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Priority email support",
+          "source": "App_bots/GameTitan.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        }
+      ],
+      "tools": [
+        {
+          "id": "buddy_fleet_runtime",
+          "name": "Executable fleet runtime",
+          "status": "runtime_instance_ready",
+          "evidence": "server/fleet-runtime.ts"
+        },
+        {
+          "id": "buddy_chat_router",
+          "name": "Buddy shared chat router",
+          "status": "runtime_routed",
+          "evidence": "server/routes.ts"
+        },
+        {
+          "id": "buddy_approval_gateway",
+          "name": "Buddy approval gateway",
+          "status": "policy_available",
+          "evidence": "server/approval-notifications.ts"
+        },
+        {
+          "id": "buddy_bot_sandbox",
+          "name": "Per-bot sandbox blueprint",
+          "status": "generated",
+          "evidence": "config/generated/bots.catalog.json"
+        },
+        {
+          "id": "buddy_platform_registry",
+          "name": "Governed platform capability registry",
+          "status": "runtime_routed",
+          "evidence": "config/generated/buddy_platform_expansion.json"
+        },
+        {
+          "id": "buddy_bot_calculator",
+          "name": "Per-bot planning calculator",
+          "status": "local_interactive_ready",
+          "evidence": "config/generated/bot_calculators.json"
+        },
+        {
+          "id": "buddy_game_lab",
+          "name": "Buddy Game Lab",
+          "status": "adapter_contract_available",
+          "evidence": "dreamco_platform/games/harness.py"
+        }
+      ],
+      "api_candidates": [
+        {
+          "name": "Riot Games",
+          "category": "gaming",
+          "description": "League of Legends API",
+          "tier": "pro",
+          "status": "configuration_required",
+          "sandbox_required": true,
+          "secret_policy": "backend_secret_reference_only"
+        },
+        {
+          "name": "Unity Analytics",
+          "category": "game-dev",
+          "description": "Game analytics",
+          "tier": "pro",
+          "status": "configuration_required",
+          "sandbox_required": true,
+          "secret_policy": "backend_secret_reference_only"
+        },
+        {
+          "name": "Discord",
+          "category": "community",
+          "description": "Gaming community platform",
+          "tier": "free",
+          "status": "configuration_required",
+          "sandbox_required": true,
+          "secret_policy": "backend_secret_reference_only"
+        },
+        {
+          "name": "Steam Web",
+          "category": "gaming",
+          "description": "Steam platform API",
+          "tier": "pro",
+          "status": "configuration_required",
+          "sandbox_required": true,
+          "secret_policy": "backend_secret_reference_only"
+        },
+        {
+          "name": "Twitch",
+          "category": "streaming",
+          "description": "Live streaming platform",
+          "tier": "pro",
+          "status": "configuration_required",
+          "sandbox_required": true,
+          "secret_policy": "backend_secret_reference_only"
+        }
+      ],
+      "data_contract": {
+        "accepted_inputs": [
+          "user brief",
+          "user-selected files or records",
+          "approved connector references"
+        ],
+        "produced_outputs": [
+          "draft",
+          "analysis",
+          "task packet",
+          "sandbox evidence",
+          "approval request when required"
+        ],
+        "sensitivity": "potentially_sensitive",
+        "sensitive_domains": [
+          "personal"
+        ],
+        "storage_policy": "store useful project artifacts only; raw credentials are forbidden; raw biometric media remains local or in an encrypted owner vault",
+        "retention": "owner-configurable with deletion and revocation support"
+      },
+      "approvals": {
+        "default_mode": "sandbox",
+        "approval_required": true,
+        "high_impact_profile": true,
+        "triggers": [
+          "email"
+        ],
+        "channels_supported": [
+          "in_app",
+          "email",
+          "sms",
+          "voice_call"
+        ],
+        "contact_requirement": "verified user-owned destination and explicit channel opt-in",
+        "execution_rule": "approval authorizes one scoped action; it never exposes credentials to the bot or browser"
+      },
+      "sandbox": {
+        "sandbox_id": "sandbox-game-coach",
+        "network_default": "off",
+        "fixture_mode": "synthetic_or_owner_supplied",
+        "seed": 2072638754,
+        "checks": [
+          "profile_schema_valid",
+          "runtime_slug_resolves",
+          "capability_output_matches_brief",
+          "no_secret_in_output",
+          "no_live_external_write",
+          "approval_gate_for_high_impact_action",
+          "failure_and_retry_state_recorded"
+        ],
+        "api_tests": [
+          {
+            "api": "Riot Games",
+            "mode": "mock_contract_test",
+            "live_test_status": "blocked_until_owner_configures_secret_and_approves"
+          },
+          {
+            "api": "Unity Analytics",
+            "mode": "mock_contract_test",
+            "live_test_status": "blocked_until_owner_configures_secret_and_approves"
+          },
+          {
+            "api": "Discord",
+            "mode": "mock_contract_test",
+            "live_test_status": "blocked_until_owner_configures_secret_and_approves"
+          },
+          {
+            "api": "Steam Web",
+            "mode": "mock_contract_test",
+            "live_test_status": "blocked_until_owner_configures_secret_and_approves"
+          },
+          {
+            "api": "Twitch",
+            "mode": "mock_contract_test",
+            "live_test_status": "blocked_until_owner_configures_secret_and_approves"
+          }
+        ],
+        "release_gate": "all applicable checks pass and owner approves any live action"
+      },
+      "readiness": {
+        "profile_schema": "verified",
+        "buddy_chat_route": "verified",
+        "executable_runtime_instance": "verified",
+        "standalone_native_runtime": "shared_worker_not_standalone",
+        "external_integrations": "configuration_required",
+        "production_ready": false,
+        "production_gate": "implement or configure adapters, pass sandbox checks, add authentication, and verify deployment telemetry"
+      },
+      "evidence": {
+        "catalog_source": "App_bots/GameTitan.json",
+        "runtime_sources": [
+          "server/seed-bots.ts"
+        ],
+        "runtime_seed_duplicates": 0
+      },
+      "sample_test_prompt": "Test Game Coaching Bot in sandbox mode. Use synthetic data, demonstrate Gameplay replay analysis, record evidence, and stop before any live external action."
+    },
+    {
+      "identity": {
+        "slug": "game-analytics",
+        "display_name": "Game Analytics Bot",
+        "division": "GameTitan",
+        "category": "game-analytics",
+        "tier": "pro",
+        "catalog_status": "active"
+      },
+      "logo": {
+        "logo_id": "logo-game-analytics",
+        "emoji": "🧰",
+        "monogram": "GA",
+        "call_sign": "Agile Orbit E626162C",
+        "shape": "shield",
+        "colors": {
+          "primary": "#0F6F88",
+          "accent": "#C94D63",
+          "surface": "#F4FBFC"
+        },
+        "accessibility_label": "Game Analytics Bot logo"
+      },
+      "prospectus": {
+        "mission": "Deep analytics for game performance, meta tracking, and win-rate optimization.",
+        "target_users": "Gamers, content creators, esports analysts",
+        "catalog_business_model": "SaaS subscription",
+        "catalog_price_range": "$99/mo",
+        "pricing_evidence": "catalog_claim_not_verified_revenue",
+        "inputs": [
+          "user brief",
+          "user-selected files or records",
+          "approved connector references"
+        ],
+        "outputs": [
+          "draft",
+          "analysis",
+          "task packet",
+          "sandbox evidence",
+          "approval request when required"
+        ],
+        "limitations": [
+          "This profile has an executable governed runtime instance backed by shared hardened code, not a separate always-running operating-system process.",
+          "External APIs require owner configuration, provider terms, sandbox tests, and scoped approval.",
+          "Published pricing and revenue models are catalog plans, not evidence of sales or earnings."
+        ]
+      },
+      "capabilities": [
+        {
+          "name": "Win-rate statistical analysis",
+          "source": "App_bots/GameTitan.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Meta composition tracking",
+          "source": "App_bots/GameTitan.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Champion/hero tier lists",
+          "source": "App_bots/GameTitan.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Matchup probability engine",
+          "source": "App_bots/GameTitan.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Session performance trends",
+          "source": "App_bots/GameTitan.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Optimal build path suggestions",
+          "source": "App_bots/GameTitan.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Advanced analytics dashboard",
+          "source": "App_bots/GameTitan.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Priority email support",
+          "source": "App_bots/GameTitan.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        }
+      ],
+      "tools": [
+        {
+          "id": "buddy_fleet_runtime",
+          "name": "Executable fleet runtime",
+          "status": "runtime_instance_ready",
+          "evidence": "server/fleet-runtime.ts"
+        },
+        {
+          "id": "buddy_chat_router",
+          "name": "Buddy shared chat router",
+          "status": "runtime_routed",
+          "evidence": "server/routes.ts"
+        },
+        {
+          "id": "buddy_approval_gateway",
+          "name": "Buddy approval gateway",
+          "status": "policy_available",
+          "evidence": "server/approval-notifications.ts"
+        },
+        {
+          "id": "buddy_bot_sandbox",
+          "name": "Per-bot sandbox blueprint",
+          "status": "generated",
+          "evidence": "config/generated/bots.catalog.json"
+        },
+        {
+          "id": "buddy_platform_registry",
+          "name": "Governed platform capability registry",
+          "status": "runtime_routed",
+          "evidence": "config/generated/buddy_platform_expansion.json"
+        },
+        {
+          "id": "buddy_bot_calculator",
+          "name": "Per-bot planning calculator",
+          "status": "local_interactive_ready",
+          "evidence": "config/generated/bot_calculators.json"
+        },
+        {
+          "id": "buddy_game_lab",
+          "name": "Buddy Game Lab",
+          "status": "adapter_contract_available",
+          "evidence": "dreamco_platform/games/harness.py"
+        }
+      ],
+      "api_candidates": [
+        {
+          "name": "Riot Games",
+          "category": "gaming",
+          "description": "League of Legends API",
+          "tier": "pro",
+          "status": "configuration_required",
+          "sandbox_required": true,
+          "secret_policy": "backend_secret_reference_only"
+        },
+        {
+          "name": "Unity Analytics",
+          "category": "game-dev",
+          "description": "Game analytics",
+          "tier": "pro",
+          "status": "configuration_required",
+          "sandbox_required": true,
+          "secret_policy": "backend_secret_reference_only"
+        },
+        {
+          "name": "Discord",
+          "category": "community",
+          "description": "Gaming community platform",
+          "tier": "free",
+          "status": "configuration_required",
+          "sandbox_required": true,
+          "secret_policy": "backend_secret_reference_only"
+        },
+        {
+          "name": "Steam Web",
+          "category": "gaming",
+          "description": "Steam platform API",
+          "tier": "pro",
+          "status": "configuration_required",
+          "sandbox_required": true,
+          "secret_policy": "backend_secret_reference_only"
+        },
+        {
+          "name": "Twitch",
+          "category": "streaming",
+          "description": "Live streaming platform",
+          "tier": "pro",
+          "status": "configuration_required",
+          "sandbox_required": true,
+          "secret_policy": "backend_secret_reference_only"
+        }
+      ],
+      "data_contract": {
+        "accepted_inputs": [
+          "user brief",
+          "user-selected files or records",
+          "approved connector references"
+        ],
+        "produced_outputs": [
+          "draft",
+          "analysis",
+          "task packet",
+          "sandbox evidence",
+          "approval request when required"
+        ],
+        "sensitivity": "standard_business_data",
+        "sensitive_domains": [],
+        "storage_policy": "store useful project artifacts only; raw credentials are forbidden; raw biometric media remains local or in an encrypted owner vault",
+        "retention": "owner-configurable with deletion and revocation support"
+      },
+      "approvals": {
+        "default_mode": "sandbox",
+        "approval_required": true,
+        "high_impact_profile": true,
+        "triggers": [
+          "email"
+        ],
+        "channels_supported": [
+          "in_app",
+          "email",
+          "sms",
+          "voice_call"
+        ],
+        "contact_requirement": "verified user-owned destination and explicit channel opt-in",
+        "execution_rule": "approval authorizes one scoped action; it never exposes credentials to the bot or browser"
+      },
+      "sandbox": {
+        "sandbox_id": "sandbox-game-analytics",
+        "network_default": "off",
+        "fixture_mode": "synthetic_or_owner_supplied",
+        "seed": 3861255724,
+        "checks": [
+          "profile_schema_valid",
+          "runtime_slug_resolves",
+          "capability_output_matches_brief",
+          "no_secret_in_output",
+          "no_live_external_write",
+          "approval_gate_for_high_impact_action",
+          "failure_and_retry_state_recorded"
+        ],
+        "api_tests": [
+          {
+            "api": "Riot Games",
+            "mode": "mock_contract_test",
+            "live_test_status": "blocked_until_owner_configures_secret_and_approves"
+          },
+          {
+            "api": "Unity Analytics",
+            "mode": "mock_contract_test",
+            "live_test_status": "blocked_until_owner_configures_secret_and_approves"
+          },
+          {
+            "api": "Discord",
+            "mode": "mock_contract_test",
+            "live_test_status": "blocked_until_owner_configures_secret_and_approves"
+          },
+          {
+            "api": "Steam Web",
+            "mode": "mock_contract_test",
+            "live_test_status": "blocked_until_owner_configures_secret_and_approves"
+          },
+          {
+            "api": "Twitch",
+            "mode": "mock_contract_test",
+            "live_test_status": "blocked_until_owner_configures_secret_and_approves"
+          }
+        ],
+        "release_gate": "all applicable checks pass and owner approves any live action"
+      },
+      "readiness": {
+        "profile_schema": "verified",
+        "buddy_chat_route": "verified",
+        "executable_runtime_instance": "verified",
+        "standalone_native_runtime": "shared_worker_not_standalone",
+        "external_integrations": "configuration_required",
+        "production_ready": false,
+        "production_gate": "implement or configure adapters, pass sandbox checks, add authentication, and verify deployment telemetry"
+      },
+      "evidence": {
+        "catalog_source": "App_bots/GameTitan.json",
+        "runtime_sources": [
+          "server/seed-bots.ts"
+        ],
+        "runtime_seed_duplicates": 0
+      },
+      "sample_test_prompt": "Test Game Analytics Bot in sandbox mode. Use synthetic data, demonstrate Win-rate statistical analysis, record evidence, and stop before any live external action."
+    },
+    {
+      "identity": {
+        "slug": "gaming-titan",
+        "display_name": "Gaming Titan AI",
+        "division": "GameTitan",
+        "category": "gaming",
+        "tier": "pro",
+        "catalog_status": "active"
+      },
+      "logo": {
+        "logo_id": "logo-gaming-titan",
+        "emoji": "🗂️",
+        "monogram": "GT",
+        "call_sign": "Grand Studio 5320ABD6",
+        "shape": "hex",
+        "colors": {
+          "primary": "#3D4C8D",
+          "accent": "#D56638",
+          "surface": "#F4F6FF"
+        },
+        "accessibility_label": "Gaming Titan AI logo"
+      },
+      "prospectus": {
+        "mission": "Plays, builds, and trains on any video game or simulator. Can learn game mechanics, develop strategies, build custom games, and create game mods. Full gaming intelligence engine.",
+        "target_users": "Gamers, game developers, e-sports teams",
+        "catalog_business_model": "SaaS subscription",
+        "catalog_price_range": "$149/mo",
+        "pricing_evidence": "catalog_claim_not_verified_revenue",
+        "inputs": [
+          "user brief",
+          "user-selected files or records",
+          "approved connector references"
+        ],
+        "outputs": [
+          "draft",
+          "analysis",
+          "task packet",
+          "sandbox evidence",
+          "approval request when required"
+        ],
+        "limitations": [
+          "This profile has an executable governed runtime instance backed by shared hardened code, not a separate always-running operating-system process.",
+          "External APIs require owner configuration, provider terms, sandbox tests, and scoped approval.",
+          "Published pricing and revenue models are catalog plans, not evidence of sales or earnings."
+        ]
+      },
+      "capabilities": [
+        {
+          "name": "Game AI training",
+          "source": "App_bots/GameTitan.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Strategy optimization",
+          "source": "App_bots/GameTitan.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Game building and modding",
+          "source": "App_bots/GameTitan.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Simulator creation",
+          "source": "App_bots/GameTitan.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Speedrun analysis",
+          "source": "App_bots/GameTitan.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Multiplayer coordination",
+          "source": "App_bots/GameTitan.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Game testing automation",
+          "source": "App_bots/GameTitan.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Procedural generation",
+          "source": "App_bots/GameTitan.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        }
+      ],
+      "tools": [
+        {
+          "id": "buddy_fleet_runtime",
+          "name": "Executable fleet runtime",
+          "status": "runtime_instance_ready",
+          "evidence": "server/fleet-runtime.ts"
+        },
+        {
+          "id": "buddy_chat_router",
+          "name": "Buddy shared chat router",
+          "status": "runtime_routed",
+          "evidence": "server/routes.ts"
+        },
+        {
+          "id": "buddy_approval_gateway",
+          "name": "Buddy approval gateway",
+          "status": "policy_available",
+          "evidence": "server/approval-notifications.ts"
+        },
+        {
+          "id": "buddy_bot_sandbox",
+          "name": "Per-bot sandbox blueprint",
+          "status": "generated",
+          "evidence": "config/generated/bots.catalog.json"
+        },
+        {
+          "id": "buddy_platform_registry",
+          "name": "Governed platform capability registry",
+          "status": "runtime_routed",
+          "evidence": "config/generated/buddy_platform_expansion.json"
+        },
+        {
+          "id": "buddy_bot_calculator",
+          "name": "Per-bot planning calculator",
+          "status": "local_interactive_ready",
+          "evidence": "config/generated/bot_calculators.json"
+        },
+        {
+          "id": "buddy_game_lab",
+          "name": "Buddy Game Lab",
+          "status": "adapter_contract_available",
+          "evidence": "dreamco_platform/games/harness.py"
+        },
+        {
+          "id": "buddy_creative_studio",
+          "name": "Buddy Creative Studio",
+          "status": "local_prototype_available",
+          "evidence": "dreamco_platform/creative/studio.py"
+        }
+      ],
+      "api_candidates": [
+        {
+          "name": "Riot Games",
+          "category": "gaming",
+          "description": "League of Legends API",
+          "tier": "pro",
+          "status": "configuration_required",
+          "sandbox_required": true,
+          "secret_policy": "backend_secret_reference_only"
+        },
+        {
+          "name": "Unity Analytics",
+          "category": "game-dev",
+          "description": "Game analytics",
+          "tier": "pro",
+          "status": "configuration_required",
+          "sandbox_required": true,
+          "secret_policy": "backend_secret_reference_only"
+        },
+        {
+          "name": "Discord",
+          "category": "community",
+          "description": "Gaming community platform",
+          "tier": "free",
+          "status": "configuration_required",
+          "sandbox_required": true,
+          "secret_policy": "backend_secret_reference_only"
+        },
+        {
+          "name": "Steam Web",
+          "category": "gaming",
+          "description": "Steam platform API",
+          "tier": "pro",
+          "status": "configuration_required",
+          "sandbox_required": true,
+          "secret_policy": "backend_secret_reference_only"
+        },
+        {
+          "name": "Twitch",
+          "category": "streaming",
+          "description": "Live streaming platform",
+          "tier": "pro",
+          "status": "configuration_required",
+          "sandbox_required": true,
+          "secret_policy": "backend_secret_reference_only"
+        }
+      ],
+      "data_contract": {
+        "accepted_inputs": [
+          "user brief",
+          "user-selected files or records",
+          "approved connector references"
+        ],
+        "produced_outputs": [
+          "draft",
+          "analysis",
+          "task packet",
+          "sandbox evidence",
+          "approval request when required"
+        ],
+        "sensitivity": "standard_business_data",
+        "sensitive_domains": [],
+        "storage_policy": "store useful project artifacts only; raw credentials are forbidden; raw biometric media remains local or in an encrypted owner vault",
+        "retention": "owner-configurable with deletion and revocation support"
+      },
+      "approvals": {
+        "default_mode": "sandbox",
+        "approval_required": true,
+        "high_impact_profile": false,
+        "triggers": [
+          "any live external write or publish action"
+        ],
+        "channels_supported": [
+          "in_app",
+          "email",
+          "sms",
+          "voice_call"
+        ],
+        "contact_requirement": "verified user-owned destination and explicit channel opt-in",
+        "execution_rule": "approval authorizes one scoped action; it never exposes credentials to the bot or browser"
+      },
+      "sandbox": {
+        "sandbox_id": "sandbox-gaming-titan",
+        "network_default": "off",
+        "fixture_mode": "synthetic_or_owner_supplied",
+        "seed": 1394650070,
+        "checks": [
+          "profile_schema_valid",
+          "runtime_slug_resolves",
+          "capability_output_matches_brief",
+          "no_secret_in_output",
+          "no_live_external_write",
+          "approval_gate_for_high_impact_action",
+          "failure_and_retry_state_recorded"
+        ],
+        "api_tests": [
+          {
+            "api": "Riot Games",
+            "mode": "mock_contract_test",
+            "live_test_status": "blocked_until_owner_configures_secret_and_approves"
+          },
+          {
+            "api": "Unity Analytics",
+            "mode": "mock_contract_test",
+            "live_test_status": "blocked_until_owner_configures_secret_and_approves"
+          },
+          {
+            "api": "Discord",
+            "mode": "mock_contract_test",
+            "live_test_status": "blocked_until_owner_configures_secret_and_approves"
+          },
+          {
+            "api": "Steam Web",
+            "mode": "mock_contract_test",
+            "live_test_status": "blocked_until_owner_configures_secret_and_approves"
+          },
+          {
+            "api": "Twitch",
+            "mode": "mock_contract_test",
+            "live_test_status": "blocked_until_owner_configures_secret_and_approves"
+          }
+        ],
+        "release_gate": "all applicable checks pass and owner approves any live action"
+      },
+      "readiness": {
+        "profile_schema": "verified",
+        "buddy_chat_route": "verified",
+        "executable_runtime_instance": "verified",
+        "standalone_native_runtime": "shared_worker_not_standalone",
+        "external_integrations": "configuration_required",
+        "production_ready": false,
+        "production_gate": "implement or configure adapters, pass sandbox checks, add authentication, and verify deployment telemetry"
+      },
+      "evidence": {
+        "catalog_source": "App_bots/GameTitan.json",
+        "runtime_sources": [
+          "server/seed-bots.ts"
+        ],
+        "runtime_seed_duplicates": 0
+      },
+      "sample_test_prompt": "Test Gaming Titan AI in sandbox mode. Use synthetic data, demonstrate Game AI training, record evidence, and stop before any live external action."
+    }
+  ]
+}

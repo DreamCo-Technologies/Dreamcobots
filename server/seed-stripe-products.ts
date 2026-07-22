@@ -102,9 +102,9 @@ export async function seedStripeProducts() {
     }
   }
 
-  console.log("\nDone! Products will sync to database via webhooks.");
+  console.log("\nDone! Products are available through the live billing API.");
 }
 
-if (process.argv[1] === import.meta.url?.replace('file://', '') || process.argv[1]?.endsWith('seed-stripe-products.ts')) {
+if (process.argv[1]?.endsWith('seed-stripe-products.ts')) {
   seedStripeProducts().catch(console.error);
 }

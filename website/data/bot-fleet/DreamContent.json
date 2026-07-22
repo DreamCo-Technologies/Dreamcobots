@@ -1,0 +1,5297 @@
+{
+  "schema": "dreamco.bot_fleet_division.v2",
+  "division": "DreamContent",
+  "bots": [
+    {
+      "identity": {
+        "slug": "blog-writer",
+        "display_name": "Blog & Article Writer",
+        "division": "DreamContent",
+        "category": "blog-writing",
+        "tier": "enterprise",
+        "catalog_status": "active"
+      },
+      "logo": {
+        "logo_id": "logo-blog-writer",
+        "emoji": "🛠️",
+        "monogram": "B&",
+        "call_sign": "Civic Signal B5CC4E94",
+        "shape": "shield",
+        "colors": {
+          "primary": "#0F6F88",
+          "accent": "#C94D63",
+          "surface": "#F4FBFC"
+        },
+        "accessibility_label": "Blog & Article Writer logo"
+      },
+      "prospectus": {
+        "mission": "Generates long-form blog posts and articles with SEO optimization and brand voice.",
+        "target_users": "Content marketers, editorial teams",
+        "catalog_business_model": "SaaS subscription",
+        "catalog_price_range": "$499/mo",
+        "pricing_evidence": "catalog_claim_not_verified_revenue",
+        "inputs": [
+          "user brief",
+          "user-selected files or records",
+          "approved connector references"
+        ],
+        "outputs": [
+          "draft",
+          "analysis",
+          "task packet",
+          "sandbox evidence",
+          "approval request when required"
+        ],
+        "limitations": [
+          "This profile has an executable governed runtime instance backed by shared hardened code, not a separate always-running operating-system process.",
+          "External APIs require owner configuration, provider terms, sandbox tests, and scoped approval.",
+          "Published pricing and revenue models are catalog plans, not evidence of sales or earnings."
+        ]
+      },
+      "capabilities": [
+        {
+          "name": "Long-form content generation",
+          "source": "App_bots/DreamContent.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "SEO keyword integration",
+          "source": "App_bots/DreamContent.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Internal linking suggestions",
+          "source": "App_bots/DreamContent.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Content outline builder",
+          "source": "App_bots/DreamContent.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Plagiarism checking",
+          "source": "App_bots/DreamContent.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Readability scoring",
+          "source": "App_bots/DreamContent.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Advanced analytics dashboard",
+          "source": "App_bots/DreamContent.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Priority email support",
+          "source": "App_bots/DreamContent.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        }
+      ],
+      "tools": [
+        {
+          "id": "buddy_fleet_runtime",
+          "name": "Executable fleet runtime",
+          "status": "runtime_instance_ready",
+          "evidence": "server/fleet-runtime.ts"
+        },
+        {
+          "id": "buddy_chat_router",
+          "name": "Buddy shared chat router",
+          "status": "runtime_routed",
+          "evidence": "server/routes.ts"
+        },
+        {
+          "id": "buddy_approval_gateway",
+          "name": "Buddy approval gateway",
+          "status": "policy_available",
+          "evidence": "server/approval-notifications.ts"
+        },
+        {
+          "id": "buddy_bot_sandbox",
+          "name": "Per-bot sandbox blueprint",
+          "status": "generated",
+          "evidence": "config/generated/bots.catalog.json"
+        },
+        {
+          "id": "buddy_platform_registry",
+          "name": "Governed platform capability registry",
+          "status": "runtime_routed",
+          "evidence": "config/generated/buddy_platform_expansion.json"
+        },
+        {
+          "id": "buddy_bot_calculator",
+          "name": "Per-bot planning calculator",
+          "status": "local_interactive_ready",
+          "evidence": "config/generated/bot_calculators.json"
+        },
+        {
+          "id": "buddy_creative_studio",
+          "name": "Buddy Creative Studio",
+          "status": "local_prototype_available",
+          "evidence": "dreamco_platform/creative/studio.py"
+        },
+        {
+          "id": "buddy_social_manager",
+          "name": "Buddy Social Manager",
+          "status": "approval_gated_adapter_contract",
+          "evidence": "dreamco_platform/social/manager.py"
+        },
+        {
+          "id": "buddy_connection_broker",
+          "name": "Buddy Connection Broker",
+          "status": "backend_broker_available",
+          "evidence": "dreamco_platform/connections/broker.py"
+        }
+      ],
+      "api_candidates": [
+        {
+          "name": "Instagram Graph",
+          "category": "social",
+          "description": "Instagram content & analytics",
+          "tier": "pro",
+          "status": "configuration_required",
+          "sandbox_required": true,
+          "secret_policy": "backend_secret_reference_only"
+        },
+        {
+          "name": "Ko-fi",
+          "category": "tipping",
+          "description": "Creator support platform",
+          "tier": "free",
+          "status": "configuration_required",
+          "sandbox_required": true,
+          "secret_policy": "backend_secret_reference_only"
+        },
+        {
+          "name": "Pinterest",
+          "category": "social",
+          "description": "Visual discovery platform",
+          "tier": "pro",
+          "status": "configuration_required",
+          "sandbox_required": true,
+          "secret_policy": "backend_secret_reference_only"
+        },
+        {
+          "name": "Buffer",
+          "category": "scheduling",
+          "description": "Social media scheduling",
+          "tier": "pro",
+          "status": "configuration_required",
+          "sandbox_required": true,
+          "secret_policy": "backend_secret_reference_only"
+        },
+        {
+          "name": "Canva",
+          "category": "design",
+          "description": "Design & content creation",
+          "tier": "pro",
+          "status": "configuration_required",
+          "sandbox_required": true,
+          "secret_policy": "backend_secret_reference_only"
+        },
+        {
+          "name": "Hootsuite",
+          "category": "management",
+          "description": "Social media management",
+          "tier": "pro",
+          "status": "configuration_required",
+          "sandbox_required": true,
+          "secret_policy": "backend_secret_reference_only"
+        },
+        {
+          "name": "Kajabi",
+          "category": "education",
+          "description": "All-in-one creator platform",
+          "tier": "enterprise",
+          "status": "configuration_required",
+          "sandbox_required": true,
+          "secret_policy": "backend_secret_reference_only"
+        },
+        {
+          "name": "Medium",
+          "category": "publishing",
+          "description": "Online publishing platform",
+          "tier": "pro",
+          "status": "configuration_required",
+          "sandbox_required": true,
+          "secret_policy": "backend_secret_reference_only"
+        }
+      ],
+      "data_contract": {
+        "accepted_inputs": [
+          "user brief",
+          "user-selected files or records",
+          "approved connector references"
+        ],
+        "produced_outputs": [
+          "draft",
+          "analysis",
+          "task packet",
+          "sandbox evidence",
+          "approval request when required"
+        ],
+        "sensitivity": "standard_business_data",
+        "sensitive_domains": [],
+        "storage_policy": "store useful project artifacts only; raw credentials are forbidden; raw biometric media remains local or in an encrypted owner vault",
+        "retention": "owner-configurable with deletion and revocation support"
+      },
+      "approvals": {
+        "default_mode": "sandbox",
+        "approval_required": true,
+        "high_impact_profile": true,
+        "triggers": [
+          "email"
+        ],
+        "channels_supported": [
+          "in_app",
+          "email",
+          "sms",
+          "voice_call"
+        ],
+        "contact_requirement": "verified user-owned destination and explicit channel opt-in",
+        "execution_rule": "approval authorizes one scoped action; it never exposes credentials to the bot or browser"
+      },
+      "sandbox": {
+        "sandbox_id": "sandbox-blog-writer",
+        "network_default": "off",
+        "fixture_mode": "synthetic_or_owner_supplied",
+        "seed": 3050065556,
+        "checks": [
+          "profile_schema_valid",
+          "runtime_slug_resolves",
+          "capability_output_matches_brief",
+          "no_secret_in_output",
+          "no_live_external_write",
+          "approval_gate_for_high_impact_action",
+          "failure_and_retry_state_recorded"
+        ],
+        "api_tests": [
+          {
+            "api": "Instagram Graph",
+            "mode": "mock_contract_test",
+            "live_test_status": "blocked_until_owner_configures_secret_and_approves"
+          },
+          {
+            "api": "Ko-fi",
+            "mode": "mock_contract_test",
+            "live_test_status": "blocked_until_owner_configures_secret_and_approves"
+          },
+          {
+            "api": "Pinterest",
+            "mode": "mock_contract_test",
+            "live_test_status": "blocked_until_owner_configures_secret_and_approves"
+          },
+          {
+            "api": "Buffer",
+            "mode": "mock_contract_test",
+            "live_test_status": "blocked_until_owner_configures_secret_and_approves"
+          },
+          {
+            "api": "Canva",
+            "mode": "mock_contract_test",
+            "live_test_status": "blocked_until_owner_configures_secret_and_approves"
+          },
+          {
+            "api": "Hootsuite",
+            "mode": "mock_contract_test",
+            "live_test_status": "blocked_until_owner_configures_secret_and_approves"
+          },
+          {
+            "api": "Kajabi",
+            "mode": "mock_contract_test",
+            "live_test_status": "blocked_until_owner_configures_secret_and_approves"
+          },
+          {
+            "api": "Medium",
+            "mode": "mock_contract_test",
+            "live_test_status": "blocked_until_owner_configures_secret_and_approves"
+          }
+        ],
+        "release_gate": "all applicable checks pass and owner approves any live action"
+      },
+      "readiness": {
+        "profile_schema": "verified",
+        "buddy_chat_route": "verified",
+        "executable_runtime_instance": "verified",
+        "standalone_native_runtime": "shared_worker_not_standalone",
+        "external_integrations": "configuration_required",
+        "production_ready": false,
+        "production_gate": "implement or configure adapters, pass sandbox checks, add authentication, and verify deployment telemetry"
+      },
+      "evidence": {
+        "catalog_source": "App_bots/DreamContent.json",
+        "runtime_sources": [
+          "server/seed-bots.ts"
+        ],
+        "runtime_seed_duplicates": 0
+      },
+      "sample_test_prompt": "Test Blog & Article Writer in sandbox mode. Use synthetic data, demonstrate Long-form content generation, record evidence, and stop before any live external action."
+    },
+    {
+      "identity": {
+        "slug": "brand-voice",
+        "display_name": "Brand Voice AI",
+        "division": "DreamContent",
+        "category": "brand-voice",
+        "tier": "enterprise",
+        "catalog_status": "active"
+      },
+      "logo": {
+        "logo_id": "logo-brand-voice",
+        "emoji": "🛡️",
+        "monogram": "BV",
+        "call_sign": "Bold Bridge 624EB005",
+        "shape": "shield",
+        "colors": {
+          "primary": "#334E3C",
+          "accent": "#B96332",
+          "surface": "#F7F4ED"
+        },
+        "accessibility_label": "Brand Voice AI logo"
+      },
+      "prospectus": {
+        "mission": "Maintains consistent brand voice across all content with style guide enforcement.",
+        "target_users": "Brand managers, marketing directors",
+        "catalog_business_model": "Enterprise license",
+        "catalog_price_range": "$499/mo",
+        "pricing_evidence": "catalog_claim_not_verified_revenue",
+        "inputs": [
+          "user brief",
+          "user-selected files or records",
+          "approved connector references"
+        ],
+        "outputs": [
+          "draft",
+          "analysis",
+          "task packet",
+          "sandbox evidence",
+          "approval request when required"
+        ],
+        "limitations": [
+          "This profile has an executable governed runtime instance backed by shared hardened code, not a separate always-running operating-system process.",
+          "External APIs require owner configuration, provider terms, sandbox tests, and scoped approval.",
+          "Published pricing and revenue models are catalog plans, not evidence of sales or earnings."
+        ]
+      },
+      "capabilities": [
+        {
+          "name": "Brand voice training engine",
+          "source": "App_bots/DreamContent.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Style guide enforcement",
+          "source": "App_bots/DreamContent.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Tone consistency scoring",
+          "source": "App_bots/DreamContent.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Multi-brand management",
+          "source": "App_bots/DreamContent.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Voice adaptation by channel",
+          "source": "App_bots/DreamContent.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Content approval workflows",
+          "source": "App_bots/DreamContent.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Advanced analytics dashboard",
+          "source": "App_bots/DreamContent.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Priority email support",
+          "source": "App_bots/DreamContent.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        }
+      ],
+      "tools": [
+        {
+          "id": "buddy_fleet_runtime",
+          "name": "Executable fleet runtime",
+          "status": "runtime_instance_ready",
+          "evidence": "server/fleet-runtime.ts"
+        },
+        {
+          "id": "buddy_chat_router",
+          "name": "Buddy shared chat router",
+          "status": "runtime_routed",
+          "evidence": "server/routes.ts"
+        },
+        {
+          "id": "buddy_approval_gateway",
+          "name": "Buddy approval gateway",
+          "status": "policy_available",
+          "evidence": "server/approval-notifications.ts"
+        },
+        {
+          "id": "buddy_bot_sandbox",
+          "name": "Per-bot sandbox blueprint",
+          "status": "generated",
+          "evidence": "config/generated/bots.catalog.json"
+        },
+        {
+          "id": "buddy_platform_registry",
+          "name": "Governed platform capability registry",
+          "status": "runtime_routed",
+          "evidence": "config/generated/buddy_platform_expansion.json"
+        },
+        {
+          "id": "buddy_bot_calculator",
+          "name": "Per-bot planning calculator",
+          "status": "local_interactive_ready",
+          "evidence": "config/generated/bot_calculators.json"
+        },
+        {
+          "id": "buddy_creative_studio",
+          "name": "Buddy Creative Studio",
+          "status": "local_prototype_available",
+          "evidence": "dreamco_platform/creative/studio.py"
+        },
+        {
+          "id": "buddy_social_manager",
+          "name": "Buddy Social Manager",
+          "status": "approval_gated_adapter_contract",
+          "evidence": "dreamco_platform/social/manager.py"
+        },
+        {
+          "id": "buddy_code_workspace",
+          "name": "Buddy Code Workspace",
+          "status": "shared_runtime_route",
+          "evidence": "server/seed-buddy-bot.ts"
+        }
+      ],
+      "api_candidates": [
+        {
+          "name": "Hootsuite",
+          "category": "management",
+          "description": "Social media management",
+          "tier": "pro",
+          "status": "configuration_required",
+          "sandbox_required": true,
+          "secret_policy": "backend_secret_reference_only"
+        },
+        {
+          "name": "Instagram Graph",
+          "category": "social",
+          "description": "Instagram content & analytics",
+          "tier": "pro",
+          "status": "configuration_required",
+          "sandbox_required": true,
+          "secret_policy": "backend_secret_reference_only"
+        },
+        {
+          "name": "WordPress",
+          "category": "cms",
+          "description": "Content management system",
+          "tier": "pro",
+          "status": "configuration_required",
+          "sandbox_required": true,
+          "secret_policy": "backend_secret_reference_only"
+        },
+        {
+          "name": "YouTube Data",
+          "category": "video",
+          "description": "YouTube channel & video management",
+          "tier": "pro",
+          "status": "configuration_required",
+          "sandbox_required": true,
+          "secret_policy": "backend_secret_reference_only"
+        },
+        {
+          "name": "Buffer",
+          "category": "scheduling",
+          "description": "Social media scheduling",
+          "tier": "pro",
+          "status": "configuration_required",
+          "sandbox_required": true,
+          "secret_policy": "backend_secret_reference_only"
+        },
+        {
+          "name": "Canva",
+          "category": "design",
+          "description": "Design & content creation",
+          "tier": "pro",
+          "status": "configuration_required",
+          "sandbox_required": true,
+          "secret_policy": "backend_secret_reference_only"
+        },
+        {
+          "name": "Ko-fi",
+          "category": "tipping",
+          "description": "Creator support platform",
+          "tier": "free",
+          "status": "configuration_required",
+          "sandbox_required": true,
+          "secret_policy": "backend_secret_reference_only"
+        },
+        {
+          "name": "Pexels",
+          "category": "media",
+          "description": "Free stock photos & videos",
+          "tier": "free",
+          "status": "configuration_required",
+          "sandbox_required": true,
+          "secret_policy": "backend_secret_reference_only"
+        }
+      ],
+      "data_contract": {
+        "accepted_inputs": [
+          "user brief",
+          "user-selected files or records",
+          "approved connector references"
+        ],
+        "produced_outputs": [
+          "draft",
+          "analysis",
+          "task packet",
+          "sandbox evidence",
+          "approval request when required"
+        ],
+        "sensitivity": "standard_business_data",
+        "sensitive_domains": [],
+        "storage_policy": "store useful project artifacts only; raw credentials are forbidden; raw biometric media remains local or in an encrypted owner vault",
+        "retention": "owner-configurable with deletion and revocation support"
+      },
+      "approvals": {
+        "default_mode": "sandbox",
+        "approval_required": true,
+        "high_impact_profile": true,
+        "triggers": [
+          "email"
+        ],
+        "channels_supported": [
+          "in_app",
+          "email",
+          "sms",
+          "voice_call"
+        ],
+        "contact_requirement": "verified user-owned destination and explicit channel opt-in",
+        "execution_rule": "approval authorizes one scoped action; it never exposes credentials to the bot or browser"
+      },
+      "sandbox": {
+        "sandbox_id": "sandbox-brand-voice",
+        "network_default": "off",
+        "fixture_mode": "synthetic_or_owner_supplied",
+        "seed": 1649324037,
+        "checks": [
+          "profile_schema_valid",
+          "runtime_slug_resolves",
+          "capability_output_matches_brief",
+          "no_secret_in_output",
+          "no_live_external_write",
+          "approval_gate_for_high_impact_action",
+          "failure_and_retry_state_recorded"
+        ],
+        "api_tests": [
+          {
+            "api": "Hootsuite",
+            "mode": "mock_contract_test",
+            "live_test_status": "blocked_until_owner_configures_secret_and_approves"
+          },
+          {
+            "api": "Instagram Graph",
+            "mode": "mock_contract_test",
+            "live_test_status": "blocked_until_owner_configures_secret_and_approves"
+          },
+          {
+            "api": "WordPress",
+            "mode": "mock_contract_test",
+            "live_test_status": "blocked_until_owner_configures_secret_and_approves"
+          },
+          {
+            "api": "YouTube Data",
+            "mode": "mock_contract_test",
+            "live_test_status": "blocked_until_owner_configures_secret_and_approves"
+          },
+          {
+            "api": "Buffer",
+            "mode": "mock_contract_test",
+            "live_test_status": "blocked_until_owner_configures_secret_and_approves"
+          },
+          {
+            "api": "Canva",
+            "mode": "mock_contract_test",
+            "live_test_status": "blocked_until_owner_configures_secret_and_approves"
+          },
+          {
+            "api": "Ko-fi",
+            "mode": "mock_contract_test",
+            "live_test_status": "blocked_until_owner_configures_secret_and_approves"
+          },
+          {
+            "api": "Pexels",
+            "mode": "mock_contract_test",
+            "live_test_status": "blocked_until_owner_configures_secret_and_approves"
+          }
+        ],
+        "release_gate": "all applicable checks pass and owner approves any live action"
+      },
+      "readiness": {
+        "profile_schema": "verified",
+        "buddy_chat_route": "verified",
+        "executable_runtime_instance": "verified",
+        "standalone_native_runtime": "shared_worker_not_standalone",
+        "external_integrations": "configuration_required",
+        "production_ready": false,
+        "production_gate": "implement or configure adapters, pass sandbox checks, add authentication, and verify deployment telemetry"
+      },
+      "evidence": {
+        "catalog_source": "App_bots/DreamContent.json",
+        "runtime_sources": [
+          "server/seed-bots.ts"
+        ],
+        "runtime_seed_duplicates": 0
+      },
+      "sample_test_prompt": "Test Brand Voice AI in sandbox mode. Use synthetic data, demonstrate Brand voice training engine, record evidence, and stop before any live external action."
+    },
+    {
+      "identity": {
+        "slug": "content-analytics",
+        "display_name": "Content Performance Analytics",
+        "division": "DreamContent",
+        "category": "content-analytics",
+        "tier": "enterprise",
+        "catalog_status": "active"
+      },
+      "logo": {
+        "logo_id": "logo-content-analytics",
+        "emoji": "⚙️",
+        "monogram": "CP",
+        "call_sign": "Noble Path F77AD18D",
+        "shape": "circle",
+        "colors": {
+          "primary": "#334E3C",
+          "accent": "#B96332",
+          "surface": "#F7F4ED"
+        },
+        "accessibility_label": "Content Performance Analytics logo"
+      },
+      "prospectus": {
+        "mission": "Measures content ROI with attribution modeling and performance optimization.",
+        "target_users": "Content strategists, CMOs",
+        "catalog_business_model": "SaaS subscription",
+        "catalog_price_range": "$499/mo",
+        "pricing_evidence": "catalog_claim_not_verified_revenue",
+        "inputs": [
+          "user brief",
+          "user-selected files or records",
+          "approved connector references"
+        ],
+        "outputs": [
+          "draft",
+          "analysis",
+          "task packet",
+          "sandbox evidence",
+          "approval request when required"
+        ],
+        "limitations": [
+          "This profile has an executable governed runtime instance backed by shared hardened code, not a separate always-running operating-system process.",
+          "External APIs require owner configuration, provider terms, sandbox tests, and scoped approval.",
+          "Published pricing and revenue models are catalog plans, not evidence of sales or earnings."
+        ]
+      },
+      "capabilities": [
+        {
+          "name": "Content attribution modeling",
+          "source": "App_bots/DreamContent.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Engagement scoring engine",
+          "source": "App_bots/DreamContent.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Conversion path analysis",
+          "source": "App_bots/DreamContent.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Content decay detection",
+          "source": "App_bots/DreamContent.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "A/B test analysis",
+          "source": "App_bots/DreamContent.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "ROI dashboard",
+          "source": "App_bots/DreamContent.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Advanced analytics dashboard",
+          "source": "App_bots/DreamContent.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Priority email support",
+          "source": "App_bots/DreamContent.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        }
+      ],
+      "tools": [
+        {
+          "id": "buddy_fleet_runtime",
+          "name": "Executable fleet runtime",
+          "status": "runtime_instance_ready",
+          "evidence": "server/fleet-runtime.ts"
+        },
+        {
+          "id": "buddy_chat_router",
+          "name": "Buddy shared chat router",
+          "status": "runtime_routed",
+          "evidence": "server/routes.ts"
+        },
+        {
+          "id": "buddy_approval_gateway",
+          "name": "Buddy approval gateway",
+          "status": "policy_available",
+          "evidence": "server/approval-notifications.ts"
+        },
+        {
+          "id": "buddy_bot_sandbox",
+          "name": "Per-bot sandbox blueprint",
+          "status": "generated",
+          "evidence": "config/generated/bots.catalog.json"
+        },
+        {
+          "id": "buddy_platform_registry",
+          "name": "Governed platform capability registry",
+          "status": "runtime_routed",
+          "evidence": "config/generated/buddy_platform_expansion.json"
+        },
+        {
+          "id": "buddy_bot_calculator",
+          "name": "Per-bot planning calculator",
+          "status": "local_interactive_ready",
+          "evidence": "config/generated/bot_calculators.json"
+        },
+        {
+          "id": "buddy_social_manager",
+          "name": "Buddy Social Manager",
+          "status": "approval_gated_adapter_contract",
+          "evidence": "dreamco_platform/social/manager.py"
+        }
+      ],
+      "api_candidates": [
+        {
+          "name": "Instagram Graph",
+          "category": "social",
+          "description": "Instagram content & analytics",
+          "tier": "pro",
+          "status": "configuration_required",
+          "sandbox_required": true,
+          "secret_policy": "backend_secret_reference_only"
+        },
+        {
+          "name": "Buffer",
+          "category": "scheduling",
+          "description": "Social media scheduling",
+          "tier": "pro",
+          "status": "configuration_required",
+          "sandbox_required": true,
+          "secret_policy": "backend_secret_reference_only"
+        },
+        {
+          "name": "Canva",
+          "category": "design",
+          "description": "Design & content creation",
+          "tier": "pro",
+          "status": "configuration_required",
+          "sandbox_required": true,
+          "secret_policy": "backend_secret_reference_only"
+        },
+        {
+          "name": "Hootsuite",
+          "category": "management",
+          "description": "Social media management",
+          "tier": "pro",
+          "status": "configuration_required",
+          "sandbox_required": true,
+          "secret_policy": "backend_secret_reference_only"
+        },
+        {
+          "name": "Ko-fi",
+          "category": "tipping",
+          "description": "Creator support platform",
+          "tier": "free",
+          "status": "configuration_required",
+          "sandbox_required": true,
+          "secret_policy": "backend_secret_reference_only"
+        },
+        {
+          "name": "Pexels",
+          "category": "media",
+          "description": "Free stock photos & videos",
+          "tier": "free",
+          "status": "configuration_required",
+          "sandbox_required": true,
+          "secret_policy": "backend_secret_reference_only"
+        },
+        {
+          "name": "Pinterest",
+          "category": "social",
+          "description": "Visual discovery platform",
+          "tier": "pro",
+          "status": "configuration_required",
+          "sandbox_required": true,
+          "secret_policy": "backend_secret_reference_only"
+        },
+        {
+          "name": "Unsplash",
+          "category": "media",
+          "description": "Stock photography",
+          "tier": "free",
+          "status": "configuration_required",
+          "sandbox_required": true,
+          "secret_policy": "backend_secret_reference_only"
+        }
+      ],
+      "data_contract": {
+        "accepted_inputs": [
+          "user brief",
+          "user-selected files or records",
+          "approved connector references"
+        ],
+        "produced_outputs": [
+          "draft",
+          "analysis",
+          "task packet",
+          "sandbox evidence",
+          "approval request when required"
+        ],
+        "sensitivity": "standard_business_data",
+        "sensitive_domains": [],
+        "storage_policy": "store useful project artifacts only; raw credentials are forbidden; raw biometric media remains local or in an encrypted owner vault",
+        "retention": "owner-configurable with deletion and revocation support"
+      },
+      "approvals": {
+        "default_mode": "sandbox",
+        "approval_required": true,
+        "high_impact_profile": true,
+        "triggers": [
+          "email"
+        ],
+        "channels_supported": [
+          "in_app",
+          "email",
+          "sms",
+          "voice_call"
+        ],
+        "contact_requirement": "verified user-owned destination and explicit channel opt-in",
+        "execution_rule": "approval authorizes one scoped action; it never exposes credentials to the bot or browser"
+      },
+      "sandbox": {
+        "sandbox_id": "sandbox-content-analytics",
+        "network_default": "off",
+        "fixture_mode": "synthetic_or_owner_supplied",
+        "seed": 4152021389,
+        "checks": [
+          "profile_schema_valid",
+          "runtime_slug_resolves",
+          "capability_output_matches_brief",
+          "no_secret_in_output",
+          "no_live_external_write",
+          "approval_gate_for_high_impact_action",
+          "failure_and_retry_state_recorded"
+        ],
+        "api_tests": [
+          {
+            "api": "Instagram Graph",
+            "mode": "mock_contract_test",
+            "live_test_status": "blocked_until_owner_configures_secret_and_approves"
+          },
+          {
+            "api": "Buffer",
+            "mode": "mock_contract_test",
+            "live_test_status": "blocked_until_owner_configures_secret_and_approves"
+          },
+          {
+            "api": "Canva",
+            "mode": "mock_contract_test",
+            "live_test_status": "blocked_until_owner_configures_secret_and_approves"
+          },
+          {
+            "api": "Hootsuite",
+            "mode": "mock_contract_test",
+            "live_test_status": "blocked_until_owner_configures_secret_and_approves"
+          },
+          {
+            "api": "Ko-fi",
+            "mode": "mock_contract_test",
+            "live_test_status": "blocked_until_owner_configures_secret_and_approves"
+          },
+          {
+            "api": "Pexels",
+            "mode": "mock_contract_test",
+            "live_test_status": "blocked_until_owner_configures_secret_and_approves"
+          },
+          {
+            "api": "Pinterest",
+            "mode": "mock_contract_test",
+            "live_test_status": "blocked_until_owner_configures_secret_and_approves"
+          },
+          {
+            "api": "Unsplash",
+            "mode": "mock_contract_test",
+            "live_test_status": "blocked_until_owner_configures_secret_and_approves"
+          }
+        ],
+        "release_gate": "all applicable checks pass and owner approves any live action"
+      },
+      "readiness": {
+        "profile_schema": "verified",
+        "buddy_chat_route": "verified",
+        "executable_runtime_instance": "verified",
+        "standalone_native_runtime": "shared_worker_not_standalone",
+        "external_integrations": "configuration_required",
+        "production_ready": false,
+        "production_gate": "implement or configure adapters, pass sandbox checks, add authentication, and verify deployment telemetry"
+      },
+      "evidence": {
+        "catalog_source": "App_bots/DreamContent.json",
+        "runtime_sources": [
+          "server/seed-bots.ts"
+        ],
+        "runtime_seed_duplicates": 0
+      },
+      "sample_test_prompt": "Test Content Performance Analytics in sandbox mode. Use synthetic data, demonstrate Content attribution modeling, record evidence, and stop before any live external action."
+    },
+    {
+      "identity": {
+        "slug": "social-content",
+        "display_name": "Social Media Content Bot",
+        "division": "DreamContent",
+        "category": "social-media",
+        "tier": "pro",
+        "catalog_status": "active"
+      },
+      "logo": {
+        "logo_id": "logo-social-content",
+        "emoji": "🎙️",
+        "monogram": "SM",
+        "call_sign": "Ready Spark 8B6A101C",
+        "shape": "circle",
+        "colors": {
+          "primary": "#0F6F88",
+          "accent": "#C94D63",
+          "surface": "#F4FBFC"
+        },
+        "accessibility_label": "Social Media Content Bot logo"
+      },
+      "prospectus": {
+        "mission": "Generates platform-optimized social media content with trending topic integration.",
+        "target_users": "Social media managers",
+        "catalog_business_model": "SaaS subscription",
+        "catalog_price_range": "$199/mo",
+        "pricing_evidence": "catalog_claim_not_verified_revenue",
+        "inputs": [
+          "user brief",
+          "user-selected files or records",
+          "approved connector references"
+        ],
+        "outputs": [
+          "draft",
+          "analysis",
+          "task packet",
+          "sandbox evidence",
+          "approval request when required"
+        ],
+        "limitations": [
+          "This profile has an executable governed runtime instance backed by shared hardened code, not a separate always-running operating-system process.",
+          "External APIs require owner configuration, provider terms, sandbox tests, and scoped approval.",
+          "Published pricing and revenue models are catalog plans, not evidence of sales or earnings."
+        ]
+      },
+      "capabilities": [
+        {
+          "name": "Platform-specific formatting",
+          "source": "App_bots/DreamContent.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Trending topic integration",
+          "source": "App_bots/DreamContent.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Hashtag strategy engine",
+          "source": "App_bots/DreamContent.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Visual content suggestions",
+          "source": "App_bots/DreamContent.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Engagement prediction scoring",
+          "source": "App_bots/DreamContent.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Advanced analytics dashboard",
+          "source": "App_bots/DreamContent.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Priority email support",
+          "source": "App_bots/DreamContent.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "API access",
+          "source": "App_bots/DreamContent.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        }
+      ],
+      "tools": [
+        {
+          "id": "buddy_fleet_runtime",
+          "name": "Executable fleet runtime",
+          "status": "runtime_instance_ready",
+          "evidence": "server/fleet-runtime.ts"
+        },
+        {
+          "id": "buddy_chat_router",
+          "name": "Buddy shared chat router",
+          "status": "runtime_routed",
+          "evidence": "server/routes.ts"
+        },
+        {
+          "id": "buddy_approval_gateway",
+          "name": "Buddy approval gateway",
+          "status": "policy_available",
+          "evidence": "server/approval-notifications.ts"
+        },
+        {
+          "id": "buddy_bot_sandbox",
+          "name": "Per-bot sandbox blueprint",
+          "status": "generated",
+          "evidence": "config/generated/bots.catalog.json"
+        },
+        {
+          "id": "buddy_platform_registry",
+          "name": "Governed platform capability registry",
+          "status": "runtime_routed",
+          "evidence": "config/generated/buddy_platform_expansion.json"
+        },
+        {
+          "id": "buddy_bot_calculator",
+          "name": "Per-bot planning calculator",
+          "status": "local_interactive_ready",
+          "evidence": "config/generated/bot_calculators.json"
+        },
+        {
+          "id": "buddy_creative_studio",
+          "name": "Buddy Creative Studio",
+          "status": "local_prototype_available",
+          "evidence": "dreamco_platform/creative/studio.py"
+        },
+        {
+          "id": "buddy_social_manager",
+          "name": "Buddy Social Manager",
+          "status": "approval_gated_adapter_contract",
+          "evidence": "dreamco_platform/social/manager.py"
+        },
+        {
+          "id": "buddy_connection_broker",
+          "name": "Buddy Connection Broker",
+          "status": "backend_broker_available",
+          "evidence": "dreamco_platform/connections/broker.py"
+        }
+      ],
+      "api_candidates": [
+        {
+          "name": "Instagram Graph",
+          "category": "social",
+          "description": "Instagram content & analytics",
+          "tier": "pro",
+          "status": "configuration_required",
+          "sandbox_required": true,
+          "secret_policy": "backend_secret_reference_only"
+        },
+        {
+          "name": "Pinterest",
+          "category": "social",
+          "description": "Visual discovery platform",
+          "tier": "pro",
+          "status": "configuration_required",
+          "sandbox_required": true,
+          "secret_policy": "backend_secret_reference_only"
+        },
+        {
+          "name": "Buffer",
+          "category": "scheduling",
+          "description": "Social media scheduling",
+          "tier": "pro",
+          "status": "configuration_required",
+          "sandbox_required": true,
+          "secret_policy": "backend_secret_reference_only"
+        },
+        {
+          "name": "Hootsuite",
+          "category": "management",
+          "description": "Social media management",
+          "tier": "pro",
+          "status": "configuration_required",
+          "sandbox_required": true,
+          "secret_policy": "backend_secret_reference_only"
+        },
+        {
+          "name": "Canva",
+          "category": "design",
+          "description": "Design & content creation",
+          "tier": "pro",
+          "status": "configuration_required",
+          "sandbox_required": true,
+          "secret_policy": "backend_secret_reference_only"
+        },
+        {
+          "name": "Ko-fi",
+          "category": "tipping",
+          "description": "Creator support platform",
+          "tier": "free",
+          "status": "configuration_required",
+          "sandbox_required": true,
+          "secret_policy": "backend_secret_reference_only"
+        },
+        {
+          "name": "Pexels",
+          "category": "media",
+          "description": "Free stock photos & videos",
+          "tier": "free",
+          "status": "configuration_required",
+          "sandbox_required": true,
+          "secret_policy": "backend_secret_reference_only"
+        },
+        {
+          "name": "Shutterstock Contributor",
+          "category": "stock",
+          "description": "Stock media marketplace",
+          "tier": "pro",
+          "status": "configuration_required",
+          "sandbox_required": true,
+          "secret_policy": "backend_secret_reference_only"
+        }
+      ],
+      "data_contract": {
+        "accepted_inputs": [
+          "user brief",
+          "user-selected files or records",
+          "approved connector references"
+        ],
+        "produced_outputs": [
+          "draft",
+          "analysis",
+          "task packet",
+          "sandbox evidence",
+          "approval request when required"
+        ],
+        "sensitivity": "standard_business_data",
+        "sensitive_domains": [],
+        "storage_policy": "store useful project artifacts only; raw credentials are forbidden; raw biometric media remains local or in an encrypted owner vault",
+        "retention": "owner-configurable with deletion and revocation support"
+      },
+      "approvals": {
+        "default_mode": "sandbox",
+        "approval_required": true,
+        "high_impact_profile": true,
+        "triggers": [
+          "email"
+        ],
+        "channels_supported": [
+          "in_app",
+          "email",
+          "sms",
+          "voice_call"
+        ],
+        "contact_requirement": "verified user-owned destination and explicit channel opt-in",
+        "execution_rule": "approval authorizes one scoped action; it never exposes credentials to the bot or browser"
+      },
+      "sandbox": {
+        "sandbox_id": "sandbox-social-content",
+        "network_default": "off",
+        "fixture_mode": "synthetic_or_owner_supplied",
+        "seed": 2338983964,
+        "checks": [
+          "profile_schema_valid",
+          "runtime_slug_resolves",
+          "capability_output_matches_brief",
+          "no_secret_in_output",
+          "no_live_external_write",
+          "approval_gate_for_high_impact_action",
+          "failure_and_retry_state_recorded"
+        ],
+        "api_tests": [
+          {
+            "api": "Instagram Graph",
+            "mode": "mock_contract_test",
+            "live_test_status": "blocked_until_owner_configures_secret_and_approves"
+          },
+          {
+            "api": "Pinterest",
+            "mode": "mock_contract_test",
+            "live_test_status": "blocked_until_owner_configures_secret_and_approves"
+          },
+          {
+            "api": "Buffer",
+            "mode": "mock_contract_test",
+            "live_test_status": "blocked_until_owner_configures_secret_and_approves"
+          },
+          {
+            "api": "Hootsuite",
+            "mode": "mock_contract_test",
+            "live_test_status": "blocked_until_owner_configures_secret_and_approves"
+          },
+          {
+            "api": "Canva",
+            "mode": "mock_contract_test",
+            "live_test_status": "blocked_until_owner_configures_secret_and_approves"
+          },
+          {
+            "api": "Ko-fi",
+            "mode": "mock_contract_test",
+            "live_test_status": "blocked_until_owner_configures_secret_and_approves"
+          },
+          {
+            "api": "Pexels",
+            "mode": "mock_contract_test",
+            "live_test_status": "blocked_until_owner_configures_secret_and_approves"
+          },
+          {
+            "api": "Shutterstock Contributor",
+            "mode": "mock_contract_test",
+            "live_test_status": "blocked_until_owner_configures_secret_and_approves"
+          }
+        ],
+        "release_gate": "all applicable checks pass and owner approves any live action"
+      },
+      "readiness": {
+        "profile_schema": "verified",
+        "buddy_chat_route": "verified",
+        "executable_runtime_instance": "verified",
+        "standalone_native_runtime": "shared_worker_not_standalone",
+        "external_integrations": "configuration_required",
+        "production_ready": false,
+        "production_gate": "implement or configure adapters, pass sandbox checks, add authentication, and verify deployment telemetry"
+      },
+      "evidence": {
+        "catalog_source": "App_bots/DreamContent.json",
+        "runtime_sources": [
+          "server/seed-bots.ts",
+          "server/seed-bots.ts"
+        ],
+        "runtime_seed_duplicates": 1
+      },
+      "sample_test_prompt": "Test Social Media Content Bot in sandbox mode. Use synthetic data, demonstrate Platform-specific formatting, record evidence, and stop before any live external action."
+    },
+    {
+      "identity": {
+        "slug": "video-script",
+        "display_name": "Video Script Generator",
+        "division": "DreamContent",
+        "category": "video-scripts",
+        "tier": "pro",
+        "catalog_status": "active"
+      },
+      "logo": {
+        "logo_id": "logo-video-script",
+        "emoji": "🧩",
+        "monogram": "VS",
+        "call_sign": "Royal Guide BA9F84A2",
+        "shape": "hex",
+        "colors": {
+          "primary": "#7A2E3A",
+          "accent": "#2D8C7C",
+          "surface": "#FFF8EE"
+        },
+        "accessibility_label": "Video Script Generator logo"
+      },
+      "prospectus": {
+        "mission": "Creates video scripts with hooks, transitions, and call-to-action optimization.",
+        "target_users": "Video producers, YouTubers",
+        "catalog_business_model": "SaaS subscription",
+        "catalog_price_range": "$199/mo",
+        "pricing_evidence": "catalog_claim_not_verified_revenue",
+        "inputs": [
+          "user brief",
+          "user-selected files or records",
+          "approved connector references"
+        ],
+        "outputs": [
+          "draft",
+          "analysis",
+          "task packet",
+          "sandbox evidence",
+          "approval request when required"
+        ],
+        "limitations": [
+          "This profile has an executable governed runtime instance backed by shared hardened code, not a separate always-running operating-system process.",
+          "External APIs require owner configuration, provider terms, sandbox tests, and scoped approval.",
+          "Published pricing and revenue models are catalog plans, not evidence of sales or earnings."
+        ]
+      },
+      "capabilities": [
+        {
+          "name": "Script structure templates",
+          "source": "App_bots/DreamContent.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Hook generator engine",
+          "source": "App_bots/DreamContent.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "B-roll suggestion engine",
+          "source": "App_bots/DreamContent.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "CTA optimization",
+          "source": "App_bots/DreamContent.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Script timing estimator",
+          "source": "App_bots/DreamContent.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Advanced analytics dashboard",
+          "source": "App_bots/DreamContent.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Priority email support",
+          "source": "App_bots/DreamContent.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "API access",
+          "source": "App_bots/DreamContent.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        }
+      ],
+      "tools": [
+        {
+          "id": "buddy_fleet_runtime",
+          "name": "Executable fleet runtime",
+          "status": "runtime_instance_ready",
+          "evidence": "server/fleet-runtime.ts"
+        },
+        {
+          "id": "buddy_chat_router",
+          "name": "Buddy shared chat router",
+          "status": "runtime_routed",
+          "evidence": "server/routes.ts"
+        },
+        {
+          "id": "buddy_approval_gateway",
+          "name": "Buddy approval gateway",
+          "status": "policy_available",
+          "evidence": "server/approval-notifications.ts"
+        },
+        {
+          "id": "buddy_bot_sandbox",
+          "name": "Per-bot sandbox blueprint",
+          "status": "generated",
+          "evidence": "config/generated/bots.catalog.json"
+        },
+        {
+          "id": "buddy_platform_registry",
+          "name": "Governed platform capability registry",
+          "status": "runtime_routed",
+          "evidence": "config/generated/buddy_platform_expansion.json"
+        },
+        {
+          "id": "buddy_bot_calculator",
+          "name": "Per-bot planning calculator",
+          "status": "local_interactive_ready",
+          "evidence": "config/generated/bot_calculators.json"
+        },
+        {
+          "id": "buddy_creative_studio",
+          "name": "Buddy Creative Studio",
+          "status": "local_prototype_available",
+          "evidence": "dreamco_platform/creative/studio.py"
+        },
+        {
+          "id": "buddy_social_manager",
+          "name": "Buddy Social Manager",
+          "status": "approval_gated_adapter_contract",
+          "evidence": "dreamco_platform/social/manager.py"
+        },
+        {
+          "id": "buddy_connection_broker",
+          "name": "Buddy Connection Broker",
+          "status": "backend_broker_available",
+          "evidence": "dreamco_platform/connections/broker.py"
+        }
+      ],
+      "api_candidates": [
+        {
+          "name": "Instagram Graph",
+          "category": "social",
+          "description": "Instagram content & analytics",
+          "tier": "pro",
+          "status": "configuration_required",
+          "sandbox_required": true,
+          "secret_policy": "backend_secret_reference_only"
+        },
+        {
+          "name": "Pexels",
+          "category": "media",
+          "description": "Free stock photos & videos",
+          "tier": "free",
+          "status": "configuration_required",
+          "sandbox_required": true,
+          "secret_policy": "backend_secret_reference_only"
+        },
+        {
+          "name": "Adobe Creative Cloud",
+          "category": "design",
+          "description": "Professional creative tools",
+          "tier": "enterprise",
+          "status": "configuration_required",
+          "sandbox_required": true,
+          "secret_policy": "backend_secret_reference_only"
+        },
+        {
+          "name": "Buffer",
+          "category": "scheduling",
+          "description": "Social media scheduling",
+          "tier": "pro",
+          "status": "configuration_required",
+          "sandbox_required": true,
+          "secret_policy": "backend_secret_reference_only"
+        },
+        {
+          "name": "Canva",
+          "category": "design",
+          "description": "Design & content creation",
+          "tier": "pro",
+          "status": "configuration_required",
+          "sandbox_required": true,
+          "secret_policy": "backend_secret_reference_only"
+        },
+        {
+          "name": "Hootsuite",
+          "category": "management",
+          "description": "Social media management",
+          "tier": "pro",
+          "status": "configuration_required",
+          "sandbox_required": true,
+          "secret_policy": "backend_secret_reference_only"
+        },
+        {
+          "name": "Ko-fi",
+          "category": "tipping",
+          "description": "Creator support platform",
+          "tier": "free",
+          "status": "configuration_required",
+          "sandbox_required": true,
+          "secret_policy": "backend_secret_reference_only"
+        },
+        {
+          "name": "Pinterest",
+          "category": "social",
+          "description": "Visual discovery platform",
+          "tier": "pro",
+          "status": "configuration_required",
+          "sandbox_required": true,
+          "secret_policy": "backend_secret_reference_only"
+        }
+      ],
+      "data_contract": {
+        "accepted_inputs": [
+          "user brief",
+          "user-selected files or records",
+          "approved connector references"
+        ],
+        "produced_outputs": [
+          "draft",
+          "analysis",
+          "task packet",
+          "sandbox evidence",
+          "approval request when required"
+        ],
+        "sensitivity": "standard_business_data",
+        "sensitive_domains": [],
+        "storage_policy": "store useful project artifacts only; raw credentials are forbidden; raw biometric media remains local or in an encrypted owner vault",
+        "retention": "owner-configurable with deletion and revocation support"
+      },
+      "approvals": {
+        "default_mode": "sandbox",
+        "approval_required": true,
+        "high_impact_profile": true,
+        "triggers": [
+          "email",
+          "call"
+        ],
+        "channels_supported": [
+          "in_app",
+          "email",
+          "sms",
+          "voice_call"
+        ],
+        "contact_requirement": "verified user-owned destination and explicit channel opt-in",
+        "execution_rule": "approval authorizes one scoped action; it never exposes credentials to the bot or browser"
+      },
+      "sandbox": {
+        "sandbox_id": "sandbox-video-script",
+        "network_default": "off",
+        "fixture_mode": "synthetic_or_owner_supplied",
+        "seed": 3131016354,
+        "checks": [
+          "profile_schema_valid",
+          "runtime_slug_resolves",
+          "capability_output_matches_brief",
+          "no_secret_in_output",
+          "no_live_external_write",
+          "approval_gate_for_high_impact_action",
+          "failure_and_retry_state_recorded"
+        ],
+        "api_tests": [
+          {
+            "api": "Instagram Graph",
+            "mode": "mock_contract_test",
+            "live_test_status": "blocked_until_owner_configures_secret_and_approves"
+          },
+          {
+            "api": "Pexels",
+            "mode": "mock_contract_test",
+            "live_test_status": "blocked_until_owner_configures_secret_and_approves"
+          },
+          {
+            "api": "Adobe Creative Cloud",
+            "mode": "mock_contract_test",
+            "live_test_status": "blocked_until_owner_configures_secret_and_approves"
+          },
+          {
+            "api": "Buffer",
+            "mode": "mock_contract_test",
+            "live_test_status": "blocked_until_owner_configures_secret_and_approves"
+          },
+          {
+            "api": "Canva",
+            "mode": "mock_contract_test",
+            "live_test_status": "blocked_until_owner_configures_secret_and_approves"
+          },
+          {
+            "api": "Hootsuite",
+            "mode": "mock_contract_test",
+            "live_test_status": "blocked_until_owner_configures_secret_and_approves"
+          },
+          {
+            "api": "Ko-fi",
+            "mode": "mock_contract_test",
+            "live_test_status": "blocked_until_owner_configures_secret_and_approves"
+          },
+          {
+            "api": "Pinterest",
+            "mode": "mock_contract_test",
+            "live_test_status": "blocked_until_owner_configures_secret_and_approves"
+          }
+        ],
+        "release_gate": "all applicable checks pass and owner approves any live action"
+      },
+      "readiness": {
+        "profile_schema": "verified",
+        "buddy_chat_route": "verified",
+        "executable_runtime_instance": "verified",
+        "standalone_native_runtime": "shared_worker_not_standalone",
+        "external_integrations": "configuration_required",
+        "production_ready": false,
+        "production_gate": "implement or configure adapters, pass sandbox checks, add authentication, and verify deployment telemetry"
+      },
+      "evidence": {
+        "catalog_source": "App_bots/DreamContent.json",
+        "runtime_sources": [
+          "server/seed-bots.ts"
+        ],
+        "runtime_seed_duplicates": 0
+      },
+      "sample_test_prompt": "Test Video Script Generator in sandbox mode. Use synthetic data, demonstrate Script structure templates, record evidence, and stop before any live external action."
+    },
+    {
+      "identity": {
+        "slug": "seo-optimizer",
+        "display_name": "SEO Content Optimizer",
+        "division": "DreamContent",
+        "category": "seo",
+        "tier": "pro",
+        "catalog_status": "active"
+      },
+      "logo": {
+        "logo_id": "logo-seo-optimizer",
+        "emoji": "🔎",
+        "monogram": "SC",
+        "call_sign": "Swift Studio F34B3307",
+        "shape": "shield",
+        "colors": {
+          "primary": "#77521F",
+          "accent": "#287878",
+          "surface": "#FFF9ED"
+        },
+        "accessibility_label": "SEO Content Optimizer logo"
+      },
+      "prospectus": {
+        "mission": "Optimizes content for search engines with keyword research and SERP analysis.",
+        "target_users": "SEO specialists, content teams",
+        "catalog_business_model": "SaaS subscription",
+        "catalog_price_range": "$199/mo",
+        "pricing_evidence": "catalog_claim_not_verified_revenue",
+        "inputs": [
+          "user brief",
+          "user-selected files or records",
+          "approved connector references"
+        ],
+        "outputs": [
+          "draft",
+          "analysis",
+          "task packet",
+          "sandbox evidence",
+          "approval request when required"
+        ],
+        "limitations": [
+          "This profile has an executable governed runtime instance backed by shared hardened code, not a separate always-running operating-system process.",
+          "External APIs require owner configuration, provider terms, sandbox tests, and scoped approval.",
+          "Published pricing and revenue models are catalog plans, not evidence of sales or earnings."
+        ]
+      },
+      "capabilities": [
+        {
+          "name": "Keyword research engine",
+          "source": "App_bots/DreamContent.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "SERP competitor analysis",
+          "source": "App_bots/DreamContent.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Content gap identification",
+          "source": "App_bots/DreamContent.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Schema markup generator",
+          "source": "App_bots/DreamContent.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Rank tracking integration",
+          "source": "App_bots/DreamContent.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Advanced analytics dashboard",
+          "source": "App_bots/DreamContent.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Priority email support",
+          "source": "App_bots/DreamContent.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "API access",
+          "source": "App_bots/DreamContent.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        }
+      ],
+      "tools": [
+        {
+          "id": "buddy_fleet_runtime",
+          "name": "Executable fleet runtime",
+          "status": "runtime_instance_ready",
+          "evidence": "server/fleet-runtime.ts"
+        },
+        {
+          "id": "buddy_chat_router",
+          "name": "Buddy shared chat router",
+          "status": "runtime_routed",
+          "evidence": "server/routes.ts"
+        },
+        {
+          "id": "buddy_approval_gateway",
+          "name": "Buddy approval gateway",
+          "status": "policy_available",
+          "evidence": "server/approval-notifications.ts"
+        },
+        {
+          "id": "buddy_bot_sandbox",
+          "name": "Per-bot sandbox blueprint",
+          "status": "generated",
+          "evidence": "config/generated/bots.catalog.json"
+        },
+        {
+          "id": "buddy_platform_registry",
+          "name": "Governed platform capability registry",
+          "status": "runtime_routed",
+          "evidence": "config/generated/buddy_platform_expansion.json"
+        },
+        {
+          "id": "buddy_bot_calculator",
+          "name": "Per-bot planning calculator",
+          "status": "local_interactive_ready",
+          "evidence": "config/generated/bot_calculators.json"
+        },
+        {
+          "id": "buddy_social_manager",
+          "name": "Buddy Social Manager",
+          "status": "approval_gated_adapter_contract",
+          "evidence": "dreamco_platform/social/manager.py"
+        },
+        {
+          "id": "buddy_connection_broker",
+          "name": "Buddy Connection Broker",
+          "status": "backend_broker_available",
+          "evidence": "dreamco_platform/connections/broker.py"
+        }
+      ],
+      "api_candidates": [
+        {
+          "name": "Instagram Graph",
+          "category": "social",
+          "description": "Instagram content & analytics",
+          "tier": "pro",
+          "status": "configuration_required",
+          "sandbox_required": true,
+          "secret_policy": "backend_secret_reference_only"
+        },
+        {
+          "name": "Buffer",
+          "category": "scheduling",
+          "description": "Social media scheduling",
+          "tier": "pro",
+          "status": "configuration_required",
+          "sandbox_required": true,
+          "secret_policy": "backend_secret_reference_only"
+        },
+        {
+          "name": "Canva",
+          "category": "design",
+          "description": "Design & content creation",
+          "tier": "pro",
+          "status": "configuration_required",
+          "sandbox_required": true,
+          "secret_policy": "backend_secret_reference_only"
+        },
+        {
+          "name": "Hootsuite",
+          "category": "management",
+          "description": "Social media management",
+          "tier": "pro",
+          "status": "configuration_required",
+          "sandbox_required": true,
+          "secret_policy": "backend_secret_reference_only"
+        },
+        {
+          "name": "Ko-fi",
+          "category": "tipping",
+          "description": "Creator support platform",
+          "tier": "free",
+          "status": "configuration_required",
+          "sandbox_required": true,
+          "secret_policy": "backend_secret_reference_only"
+        },
+        {
+          "name": "Pexels",
+          "category": "media",
+          "description": "Free stock photos & videos",
+          "tier": "free",
+          "status": "configuration_required",
+          "sandbox_required": true,
+          "secret_policy": "backend_secret_reference_only"
+        },
+        {
+          "name": "Pinterest",
+          "category": "social",
+          "description": "Visual discovery platform",
+          "tier": "pro",
+          "status": "configuration_required",
+          "sandbox_required": true,
+          "secret_policy": "backend_secret_reference_only"
+        },
+        {
+          "name": "Unsplash",
+          "category": "media",
+          "description": "Stock photography",
+          "tier": "free",
+          "status": "configuration_required",
+          "sandbox_required": true,
+          "secret_policy": "backend_secret_reference_only"
+        }
+      ],
+      "data_contract": {
+        "accepted_inputs": [
+          "user brief",
+          "user-selected files or records",
+          "approved connector references"
+        ],
+        "produced_outputs": [
+          "draft",
+          "analysis",
+          "task packet",
+          "sandbox evidence",
+          "approval request when required"
+        ],
+        "sensitivity": "standard_business_data",
+        "sensitive_domains": [],
+        "storage_policy": "store useful project artifacts only; raw credentials are forbidden; raw biometric media remains local or in an encrypted owner vault",
+        "retention": "owner-configurable with deletion and revocation support"
+      },
+      "approvals": {
+        "default_mode": "sandbox",
+        "approval_required": true,
+        "high_impact_profile": true,
+        "triggers": [
+          "email"
+        ],
+        "channels_supported": [
+          "in_app",
+          "email",
+          "sms",
+          "voice_call"
+        ],
+        "contact_requirement": "verified user-owned destination and explicit channel opt-in",
+        "execution_rule": "approval authorizes one scoped action; it never exposes credentials to the bot or browser"
+      },
+      "sandbox": {
+        "sandbox_id": "sandbox-seo-optimizer",
+        "network_default": "off",
+        "fixture_mode": "synthetic_or_owner_supplied",
+        "seed": 4081791751,
+        "checks": [
+          "profile_schema_valid",
+          "runtime_slug_resolves",
+          "capability_output_matches_brief",
+          "no_secret_in_output",
+          "no_live_external_write",
+          "approval_gate_for_high_impact_action",
+          "failure_and_retry_state_recorded"
+        ],
+        "api_tests": [
+          {
+            "api": "Instagram Graph",
+            "mode": "mock_contract_test",
+            "live_test_status": "blocked_until_owner_configures_secret_and_approves"
+          },
+          {
+            "api": "Buffer",
+            "mode": "mock_contract_test",
+            "live_test_status": "blocked_until_owner_configures_secret_and_approves"
+          },
+          {
+            "api": "Canva",
+            "mode": "mock_contract_test",
+            "live_test_status": "blocked_until_owner_configures_secret_and_approves"
+          },
+          {
+            "api": "Hootsuite",
+            "mode": "mock_contract_test",
+            "live_test_status": "blocked_until_owner_configures_secret_and_approves"
+          },
+          {
+            "api": "Ko-fi",
+            "mode": "mock_contract_test",
+            "live_test_status": "blocked_until_owner_configures_secret_and_approves"
+          },
+          {
+            "api": "Pexels",
+            "mode": "mock_contract_test",
+            "live_test_status": "blocked_until_owner_configures_secret_and_approves"
+          },
+          {
+            "api": "Pinterest",
+            "mode": "mock_contract_test",
+            "live_test_status": "blocked_until_owner_configures_secret_and_approves"
+          },
+          {
+            "api": "Unsplash",
+            "mode": "mock_contract_test",
+            "live_test_status": "blocked_until_owner_configures_secret_and_approves"
+          }
+        ],
+        "release_gate": "all applicable checks pass and owner approves any live action"
+      },
+      "readiness": {
+        "profile_schema": "verified",
+        "buddy_chat_route": "verified",
+        "executable_runtime_instance": "verified",
+        "standalone_native_runtime": "shared_worker_not_standalone",
+        "external_integrations": "configuration_required",
+        "production_ready": false,
+        "production_gate": "implement or configure adapters, pass sandbox checks, add authentication, and verify deployment telemetry"
+      },
+      "evidence": {
+        "catalog_source": "App_bots/DreamContent.json",
+        "runtime_sources": [
+          "server/seed-bots.ts"
+        ],
+        "runtime_seed_duplicates": 0
+      },
+      "sample_test_prompt": "Test SEO Content Optimizer in sandbox mode. Use synthetic data, demonstrate Keyword research engine, record evidence, and stop before any live external action."
+    },
+    {
+      "identity": {
+        "slug": "ad-copy",
+        "display_name": "Ad Copy Generator",
+        "division": "DreamContent",
+        "category": "ad-copy",
+        "tier": "pro",
+        "catalog_status": "active"
+      },
+      "logo": {
+        "logo_id": "logo-ad-copy",
+        "emoji": "🛰️",
+        "monogram": "AC",
+        "call_sign": "Prime Atlas AC1DF5E2",
+        "shape": "tile",
+        "colors": {
+          "primary": "#7A2E3A",
+          "accent": "#2D8C7C",
+          "surface": "#FFF8EE"
+        },
+        "accessibility_label": "Ad Copy Generator logo"
+      },
+      "prospectus": {
+        "mission": "Generates high-converting ad copy for Google, Meta, and LinkedIn campaigns.",
+        "target_users": "PPC managers, performance marketers",
+        "catalog_business_model": "SaaS subscription",
+        "catalog_price_range": "$199/mo",
+        "pricing_evidence": "catalog_claim_not_verified_revenue",
+        "inputs": [
+          "user brief",
+          "user-selected files or records",
+          "approved connector references"
+        ],
+        "outputs": [
+          "draft",
+          "analysis",
+          "task packet",
+          "sandbox evidence",
+          "approval request when required"
+        ],
+        "limitations": [
+          "This profile has an executable governed runtime instance backed by shared hardened code, not a separate always-running operating-system process.",
+          "External APIs require owner configuration, provider terms, sandbox tests, and scoped approval.",
+          "Published pricing and revenue models are catalog plans, not evidence of sales or earnings."
+        ]
+      },
+      "capabilities": [
+        {
+          "name": "Multi-platform ad formats",
+          "source": "App_bots/DreamContent.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Headline variation generator",
+          "source": "App_bots/DreamContent.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "CTA optimization engine",
+          "source": "App_bots/DreamContent.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Audience-matched messaging",
+          "source": "App_bots/DreamContent.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Performance-based learning",
+          "source": "App_bots/DreamContent.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Advanced analytics dashboard",
+          "source": "App_bots/DreamContent.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Priority email support",
+          "source": "App_bots/DreamContent.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "API access",
+          "source": "App_bots/DreamContent.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        }
+      ],
+      "tools": [
+        {
+          "id": "buddy_fleet_runtime",
+          "name": "Executable fleet runtime",
+          "status": "runtime_instance_ready",
+          "evidence": "server/fleet-runtime.ts"
+        },
+        {
+          "id": "buddy_chat_router",
+          "name": "Buddy shared chat router",
+          "status": "runtime_routed",
+          "evidence": "server/routes.ts"
+        },
+        {
+          "id": "buddy_approval_gateway",
+          "name": "Buddy approval gateway",
+          "status": "policy_available",
+          "evidence": "server/approval-notifications.ts"
+        },
+        {
+          "id": "buddy_bot_sandbox",
+          "name": "Per-bot sandbox blueprint",
+          "status": "generated",
+          "evidence": "config/generated/bots.catalog.json"
+        },
+        {
+          "id": "buddy_platform_registry",
+          "name": "Governed platform capability registry",
+          "status": "runtime_routed",
+          "evidence": "config/generated/buddy_platform_expansion.json"
+        },
+        {
+          "id": "buddy_bot_calculator",
+          "name": "Per-bot planning calculator",
+          "status": "local_interactive_ready",
+          "evidence": "config/generated/bot_calculators.json"
+        },
+        {
+          "id": "buddy_creative_studio",
+          "name": "Buddy Creative Studio",
+          "status": "local_prototype_available",
+          "evidence": "dreamco_platform/creative/studio.py"
+        },
+        {
+          "id": "buddy_social_manager",
+          "name": "Buddy Social Manager",
+          "status": "approval_gated_adapter_contract",
+          "evidence": "dreamco_platform/social/manager.py"
+        },
+        {
+          "id": "buddy_connection_broker",
+          "name": "Buddy Connection Broker",
+          "status": "backend_broker_available",
+          "evidence": "dreamco_platform/connections/broker.py"
+        }
+      ],
+      "api_candidates": [
+        {
+          "name": "Ko-fi",
+          "category": "tipping",
+          "description": "Creator support platform",
+          "tier": "free",
+          "status": "configuration_required",
+          "sandbox_required": true,
+          "secret_policy": "backend_secret_reference_only"
+        },
+        {
+          "name": "Pinterest",
+          "category": "social",
+          "description": "Visual discovery platform",
+          "tier": "pro",
+          "status": "configuration_required",
+          "sandbox_required": true,
+          "secret_policy": "backend_secret_reference_only"
+        },
+        {
+          "name": "Buffer",
+          "category": "scheduling",
+          "description": "Social media scheduling",
+          "tier": "pro",
+          "status": "configuration_required",
+          "sandbox_required": true,
+          "secret_policy": "backend_secret_reference_only"
+        },
+        {
+          "name": "Hootsuite",
+          "category": "management",
+          "description": "Social media management",
+          "tier": "pro",
+          "status": "configuration_required",
+          "sandbox_required": true,
+          "secret_policy": "backend_secret_reference_only"
+        },
+        {
+          "name": "Instagram Graph",
+          "category": "social",
+          "description": "Instagram content & analytics",
+          "tier": "pro",
+          "status": "configuration_required",
+          "sandbox_required": true,
+          "secret_policy": "backend_secret_reference_only"
+        },
+        {
+          "name": "Kajabi",
+          "category": "education",
+          "description": "All-in-one creator platform",
+          "tier": "enterprise",
+          "status": "configuration_required",
+          "sandbox_required": true,
+          "secret_policy": "backend_secret_reference_only"
+        },
+        {
+          "name": "Medium",
+          "category": "publishing",
+          "description": "Online publishing platform",
+          "tier": "pro",
+          "status": "configuration_required",
+          "sandbox_required": true,
+          "secret_policy": "backend_secret_reference_only"
+        },
+        {
+          "name": "Patreon",
+          "category": "membership",
+          "description": "Creator membership platform",
+          "tier": "pro",
+          "status": "configuration_required",
+          "sandbox_required": true,
+          "secret_policy": "backend_secret_reference_only"
+        }
+      ],
+      "data_contract": {
+        "accepted_inputs": [
+          "user brief",
+          "user-selected files or records",
+          "approved connector references"
+        ],
+        "produced_outputs": [
+          "draft",
+          "analysis",
+          "task packet",
+          "sandbox evidence",
+          "approval request when required"
+        ],
+        "sensitivity": "standard_business_data",
+        "sensitive_domains": [],
+        "storage_policy": "store useful project artifacts only; raw credentials are forbidden; raw biometric media remains local or in an encrypted owner vault",
+        "retention": "owner-configurable with deletion and revocation support"
+      },
+      "approvals": {
+        "default_mode": "sandbox",
+        "approval_required": true,
+        "high_impact_profile": true,
+        "triggers": [
+          "email"
+        ],
+        "channels_supported": [
+          "in_app",
+          "email",
+          "sms",
+          "voice_call"
+        ],
+        "contact_requirement": "verified user-owned destination and explicit channel opt-in",
+        "execution_rule": "approval authorizes one scoped action; it never exposes credentials to the bot or browser"
+      },
+      "sandbox": {
+        "sandbox_id": "sandbox-ad-copy",
+        "network_default": "off",
+        "fixture_mode": "synthetic_or_owner_supplied",
+        "seed": 2887644642,
+        "checks": [
+          "profile_schema_valid",
+          "runtime_slug_resolves",
+          "capability_output_matches_brief",
+          "no_secret_in_output",
+          "no_live_external_write",
+          "approval_gate_for_high_impact_action",
+          "failure_and_retry_state_recorded"
+        ],
+        "api_tests": [
+          {
+            "api": "Ko-fi",
+            "mode": "mock_contract_test",
+            "live_test_status": "blocked_until_owner_configures_secret_and_approves"
+          },
+          {
+            "api": "Pinterest",
+            "mode": "mock_contract_test",
+            "live_test_status": "blocked_until_owner_configures_secret_and_approves"
+          },
+          {
+            "api": "Buffer",
+            "mode": "mock_contract_test",
+            "live_test_status": "blocked_until_owner_configures_secret_and_approves"
+          },
+          {
+            "api": "Hootsuite",
+            "mode": "mock_contract_test",
+            "live_test_status": "blocked_until_owner_configures_secret_and_approves"
+          },
+          {
+            "api": "Instagram Graph",
+            "mode": "mock_contract_test",
+            "live_test_status": "blocked_until_owner_configures_secret_and_approves"
+          },
+          {
+            "api": "Kajabi",
+            "mode": "mock_contract_test",
+            "live_test_status": "blocked_until_owner_configures_secret_and_approves"
+          },
+          {
+            "api": "Medium",
+            "mode": "mock_contract_test",
+            "live_test_status": "blocked_until_owner_configures_secret_and_approves"
+          },
+          {
+            "api": "Patreon",
+            "mode": "mock_contract_test",
+            "live_test_status": "blocked_until_owner_configures_secret_and_approves"
+          }
+        ],
+        "release_gate": "all applicable checks pass and owner approves any live action"
+      },
+      "readiness": {
+        "profile_schema": "verified",
+        "buddy_chat_route": "verified",
+        "executable_runtime_instance": "verified",
+        "standalone_native_runtime": "shared_worker_not_standalone",
+        "external_integrations": "configuration_required",
+        "production_ready": false,
+        "production_gate": "implement or configure adapters, pass sandbox checks, add authentication, and verify deployment telemetry"
+      },
+      "evidence": {
+        "catalog_source": "App_bots/DreamContent.json",
+        "runtime_sources": [
+          "server/seed-bots.ts"
+        ],
+        "runtime_seed_duplicates": 0
+      },
+      "sample_test_prompt": "Test Ad Copy Generator in sandbox mode. Use synthetic data, demonstrate Multi-platform ad formats, record evidence, and stop before any live external action."
+    },
+    {
+      "identity": {
+        "slug": "email-newsletter",
+        "display_name": "Email Newsletter Bot",
+        "division": "DreamContent",
+        "category": "email-newsletter",
+        "tier": "pro",
+        "catalog_status": "active"
+      },
+      "logo": {
+        "logo_id": "logo-email-newsletter",
+        "emoji": "🛡️",
+        "monogram": "EN",
+        "call_sign": "Ready Canvas 626A7327",
+        "shape": "hex",
+        "colors": {
+          "primary": "#77521F",
+          "accent": "#287878",
+          "surface": "#FFF9ED"
+        },
+        "accessibility_label": "Email Newsletter Bot logo"
+      },
+      "prospectus": {
+        "mission": "Creates engaging email newsletters with personalization and performance tracking.",
+        "target_users": "Email marketers, newsletter creators",
+        "catalog_business_model": "SaaS subscription",
+        "catalog_price_range": "$199/mo",
+        "pricing_evidence": "catalog_claim_not_verified_revenue",
+        "inputs": [
+          "user brief",
+          "user-selected files or records",
+          "approved connector references"
+        ],
+        "outputs": [
+          "draft",
+          "analysis",
+          "task packet",
+          "sandbox evidence",
+          "approval request when required"
+        ],
+        "limitations": [
+          "This profile has an executable governed runtime instance backed by shared hardened code, not a separate always-running operating-system process.",
+          "External APIs require owner configuration, provider terms, sandbox tests, and scoped approval.",
+          "Published pricing and revenue models are catalog plans, not evidence of sales or earnings."
+        ]
+      },
+      "capabilities": [
+        {
+          "name": "Newsletter template engine",
+          "source": "App_bots/DreamContent.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Subject line optimizer",
+          "source": "App_bots/DreamContent.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Content curation automation",
+          "source": "App_bots/DreamContent.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Personalization tokens",
+          "source": "App_bots/DreamContent.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Open rate prediction",
+          "source": "App_bots/DreamContent.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Advanced analytics dashboard",
+          "source": "App_bots/DreamContent.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Priority email support",
+          "source": "App_bots/DreamContent.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "API access",
+          "source": "App_bots/DreamContent.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        }
+      ],
+      "tools": [
+        {
+          "id": "buddy_fleet_runtime",
+          "name": "Executable fleet runtime",
+          "status": "runtime_instance_ready",
+          "evidence": "server/fleet-runtime.ts"
+        },
+        {
+          "id": "buddy_chat_router",
+          "name": "Buddy shared chat router",
+          "status": "runtime_routed",
+          "evidence": "server/routes.ts"
+        },
+        {
+          "id": "buddy_approval_gateway",
+          "name": "Buddy approval gateway",
+          "status": "policy_available",
+          "evidence": "server/approval-notifications.ts"
+        },
+        {
+          "id": "buddy_bot_sandbox",
+          "name": "Per-bot sandbox blueprint",
+          "status": "generated",
+          "evidence": "config/generated/bots.catalog.json"
+        },
+        {
+          "id": "buddy_platform_registry",
+          "name": "Governed platform capability registry",
+          "status": "runtime_routed",
+          "evidence": "config/generated/buddy_platform_expansion.json"
+        },
+        {
+          "id": "buddy_bot_calculator",
+          "name": "Per-bot planning calculator",
+          "status": "local_interactive_ready",
+          "evidence": "config/generated/bot_calculators.json"
+        },
+        {
+          "id": "buddy_social_manager",
+          "name": "Buddy Social Manager",
+          "status": "approval_gated_adapter_contract",
+          "evidence": "dreamco_platform/social/manager.py"
+        },
+        {
+          "id": "buddy_connection_broker",
+          "name": "Buddy Connection Broker",
+          "status": "backend_broker_available",
+          "evidence": "dreamco_platform/connections/broker.py"
+        }
+      ],
+      "api_candidates": [
+        {
+          "name": "Instagram Graph",
+          "category": "social",
+          "description": "Instagram content & analytics",
+          "tier": "pro",
+          "status": "configuration_required",
+          "sandbox_required": true,
+          "secret_policy": "backend_secret_reference_only"
+        },
+        {
+          "name": "Buffer",
+          "category": "scheduling",
+          "description": "Social media scheduling",
+          "tier": "pro",
+          "status": "configuration_required",
+          "sandbox_required": true,
+          "secret_policy": "backend_secret_reference_only"
+        },
+        {
+          "name": "Canva",
+          "category": "design",
+          "description": "Design & content creation",
+          "tier": "pro",
+          "status": "configuration_required",
+          "sandbox_required": true,
+          "secret_policy": "backend_secret_reference_only"
+        },
+        {
+          "name": "Hootsuite",
+          "category": "management",
+          "description": "Social media management",
+          "tier": "pro",
+          "status": "configuration_required",
+          "sandbox_required": true,
+          "secret_policy": "backend_secret_reference_only"
+        },
+        {
+          "name": "Ko-fi",
+          "category": "tipping",
+          "description": "Creator support platform",
+          "tier": "free",
+          "status": "configuration_required",
+          "sandbox_required": true,
+          "secret_policy": "backend_secret_reference_only"
+        },
+        {
+          "name": "Medium",
+          "category": "publishing",
+          "description": "Online publishing platform",
+          "tier": "pro",
+          "status": "configuration_required",
+          "sandbox_required": true,
+          "secret_policy": "backend_secret_reference_only"
+        },
+        {
+          "name": "Pexels",
+          "category": "media",
+          "description": "Free stock photos & videos",
+          "tier": "free",
+          "status": "configuration_required",
+          "sandbox_required": true,
+          "secret_policy": "backend_secret_reference_only"
+        },
+        {
+          "name": "Pinterest",
+          "category": "social",
+          "description": "Visual discovery platform",
+          "tier": "pro",
+          "status": "configuration_required",
+          "sandbox_required": true,
+          "secret_policy": "backend_secret_reference_only"
+        }
+      ],
+      "data_contract": {
+        "accepted_inputs": [
+          "user brief",
+          "user-selected files or records",
+          "approved connector references"
+        ],
+        "produced_outputs": [
+          "draft",
+          "analysis",
+          "task packet",
+          "sandbox evidence",
+          "approval request when required"
+        ],
+        "sensitivity": "potentially_sensitive",
+        "sensitive_domains": [
+          "personal"
+        ],
+        "storage_policy": "store useful project artifacts only; raw credentials are forbidden; raw biometric media remains local or in an encrypted owner vault",
+        "retention": "owner-configurable with deletion and revocation support"
+      },
+      "approvals": {
+        "default_mode": "sandbox",
+        "approval_required": true,
+        "high_impact_profile": true,
+        "triggers": [
+          "email"
+        ],
+        "channels_supported": [
+          "in_app",
+          "email",
+          "sms",
+          "voice_call"
+        ],
+        "contact_requirement": "verified user-owned destination and explicit channel opt-in",
+        "execution_rule": "approval authorizes one scoped action; it never exposes credentials to the bot or browser"
+      },
+      "sandbox": {
+        "sandbox_id": "sandbox-email-newsletter",
+        "network_default": "off",
+        "fixture_mode": "synthetic_or_owner_supplied",
+        "seed": 1651143463,
+        "checks": [
+          "profile_schema_valid",
+          "runtime_slug_resolves",
+          "capability_output_matches_brief",
+          "no_secret_in_output",
+          "no_live_external_write",
+          "approval_gate_for_high_impact_action",
+          "failure_and_retry_state_recorded"
+        ],
+        "api_tests": [
+          {
+            "api": "Instagram Graph",
+            "mode": "mock_contract_test",
+            "live_test_status": "blocked_until_owner_configures_secret_and_approves"
+          },
+          {
+            "api": "Buffer",
+            "mode": "mock_contract_test",
+            "live_test_status": "blocked_until_owner_configures_secret_and_approves"
+          },
+          {
+            "api": "Canva",
+            "mode": "mock_contract_test",
+            "live_test_status": "blocked_until_owner_configures_secret_and_approves"
+          },
+          {
+            "api": "Hootsuite",
+            "mode": "mock_contract_test",
+            "live_test_status": "blocked_until_owner_configures_secret_and_approves"
+          },
+          {
+            "api": "Ko-fi",
+            "mode": "mock_contract_test",
+            "live_test_status": "blocked_until_owner_configures_secret_and_approves"
+          },
+          {
+            "api": "Medium",
+            "mode": "mock_contract_test",
+            "live_test_status": "blocked_until_owner_configures_secret_and_approves"
+          },
+          {
+            "api": "Pexels",
+            "mode": "mock_contract_test",
+            "live_test_status": "blocked_until_owner_configures_secret_and_approves"
+          },
+          {
+            "api": "Pinterest",
+            "mode": "mock_contract_test",
+            "live_test_status": "blocked_until_owner_configures_secret_and_approves"
+          }
+        ],
+        "release_gate": "all applicable checks pass and owner approves any live action"
+      },
+      "readiness": {
+        "profile_schema": "verified",
+        "buddy_chat_route": "verified",
+        "executable_runtime_instance": "verified",
+        "standalone_native_runtime": "shared_worker_not_standalone",
+        "external_integrations": "configuration_required",
+        "production_ready": false,
+        "production_gate": "implement or configure adapters, pass sandbox checks, add authentication, and verify deployment telemetry"
+      },
+      "evidence": {
+        "catalog_source": "App_bots/DreamContent.json",
+        "runtime_sources": [
+          "server/seed-bots.ts"
+        ],
+        "runtime_seed_duplicates": 0
+      },
+      "sample_test_prompt": "Test Email Newsletter Bot in sandbox mode. Use synthetic data, demonstrate Newsletter template engine, record evidence, and stop before any live external action."
+    },
+    {
+      "identity": {
+        "slug": "whitepaper-ebook",
+        "display_name": "Whitepaper & Ebook Bot",
+        "division": "DreamContent",
+        "category": "whitepaper",
+        "tier": "pro",
+        "catalog_status": "active"
+      },
+      "logo": {
+        "logo_id": "logo-whitepaper-ebook",
+        "emoji": "🎙️",
+        "monogram": "W&",
+        "call_sign": "Golden Orbit A96DA6C6",
+        "shape": "hex",
+        "colors": {
+          "primary": "#3D4C8D",
+          "accent": "#D56638",
+          "surface": "#F4F6FF"
+        },
+        "accessibility_label": "Whitepaper & Ebook Bot logo"
+      },
+      "prospectus": {
+        "mission": "Generates long-form whitepapers and ebooks with research integration.",
+        "target_users": "Content strategists, demand gen teams",
+        "catalog_business_model": "SaaS subscription",
+        "catalog_price_range": "$199/mo",
+        "pricing_evidence": "catalog_claim_not_verified_revenue",
+        "inputs": [
+          "user brief",
+          "user-selected files or records",
+          "approved connector references"
+        ],
+        "outputs": [
+          "draft",
+          "analysis",
+          "task packet",
+          "sandbox evidence",
+          "approval request when required"
+        ],
+        "limitations": [
+          "This profile has an executable governed runtime instance backed by shared hardened code, not a separate always-running operating-system process.",
+          "External APIs require owner configuration, provider terms, sandbox tests, and scoped approval.",
+          "Published pricing and revenue models are catalog plans, not evidence of sales or earnings."
+        ]
+      },
+      "capabilities": [
+        {
+          "name": "Research synthesis engine",
+          "source": "App_bots/DreamContent.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Chapter structure planner",
+          "source": "App_bots/DreamContent.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Citation management",
+          "source": "App_bots/DreamContent.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Design layout suggestions",
+          "source": "App_bots/DreamContent.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Lead magnet optimization",
+          "source": "App_bots/DreamContent.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Advanced analytics dashboard",
+          "source": "App_bots/DreamContent.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Priority email support",
+          "source": "App_bots/DreamContent.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "API access",
+          "source": "App_bots/DreamContent.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        }
+      ],
+      "tools": [
+        {
+          "id": "buddy_fleet_runtime",
+          "name": "Executable fleet runtime",
+          "status": "runtime_instance_ready",
+          "evidence": "server/fleet-runtime.ts"
+        },
+        {
+          "id": "buddy_chat_router",
+          "name": "Buddy shared chat router",
+          "status": "runtime_routed",
+          "evidence": "server/routes.ts"
+        },
+        {
+          "id": "buddy_approval_gateway",
+          "name": "Buddy approval gateway",
+          "status": "policy_available",
+          "evidence": "server/approval-notifications.ts"
+        },
+        {
+          "id": "buddy_bot_sandbox",
+          "name": "Per-bot sandbox blueprint",
+          "status": "generated",
+          "evidence": "config/generated/bots.catalog.json"
+        },
+        {
+          "id": "buddy_platform_registry",
+          "name": "Governed platform capability registry",
+          "status": "runtime_routed",
+          "evidence": "config/generated/buddy_platform_expansion.json"
+        },
+        {
+          "id": "buddy_bot_calculator",
+          "name": "Per-bot planning calculator",
+          "status": "local_interactive_ready",
+          "evidence": "config/generated/bot_calculators.json"
+        },
+        {
+          "id": "buddy_social_manager",
+          "name": "Buddy Social Manager",
+          "status": "approval_gated_adapter_contract",
+          "evidence": "dreamco_platform/social/manager.py"
+        },
+        {
+          "id": "buddy_connection_broker",
+          "name": "Buddy Connection Broker",
+          "status": "backend_broker_available",
+          "evidence": "dreamco_platform/connections/broker.py"
+        }
+      ],
+      "api_candidates": [
+        {
+          "name": "Hootsuite",
+          "category": "management",
+          "description": "Social media management",
+          "tier": "pro",
+          "status": "configuration_required",
+          "sandbox_required": true,
+          "secret_policy": "backend_secret_reference_only"
+        },
+        {
+          "name": "Ko-fi",
+          "category": "tipping",
+          "description": "Creator support platform",
+          "tier": "free",
+          "status": "configuration_required",
+          "sandbox_required": true,
+          "secret_policy": "backend_secret_reference_only"
+        },
+        {
+          "name": "Pinterest",
+          "category": "social",
+          "description": "Visual discovery platform",
+          "tier": "pro",
+          "status": "configuration_required",
+          "sandbox_required": true,
+          "secret_policy": "backend_secret_reference_only"
+        },
+        {
+          "name": "Adobe Creative Cloud",
+          "category": "design",
+          "description": "Professional creative tools",
+          "tier": "enterprise",
+          "status": "configuration_required",
+          "sandbox_required": true,
+          "secret_policy": "backend_secret_reference_only"
+        },
+        {
+          "name": "Buffer",
+          "category": "scheduling",
+          "description": "Social media scheduling",
+          "tier": "pro",
+          "status": "configuration_required",
+          "sandbox_required": true,
+          "secret_policy": "backend_secret_reference_only"
+        },
+        {
+          "name": "Canva",
+          "category": "design",
+          "description": "Design & content creation",
+          "tier": "pro",
+          "status": "configuration_required",
+          "sandbox_required": true,
+          "secret_policy": "backend_secret_reference_only"
+        },
+        {
+          "name": "Instagram Graph",
+          "category": "social",
+          "description": "Instagram content & analytics",
+          "tier": "pro",
+          "status": "configuration_required",
+          "sandbox_required": true,
+          "secret_policy": "backend_secret_reference_only"
+        },
+        {
+          "name": "Kajabi",
+          "category": "education",
+          "description": "All-in-one creator platform",
+          "tier": "enterprise",
+          "status": "configuration_required",
+          "sandbox_required": true,
+          "secret_policy": "backend_secret_reference_only"
+        }
+      ],
+      "data_contract": {
+        "accepted_inputs": [
+          "user brief",
+          "user-selected files or records",
+          "approved connector references"
+        ],
+        "produced_outputs": [
+          "draft",
+          "analysis",
+          "task packet",
+          "sandbox evidence",
+          "approval request when required"
+        ],
+        "sensitivity": "standard_business_data",
+        "sensitive_domains": [],
+        "storage_policy": "store useful project artifacts only; raw credentials are forbidden; raw biometric media remains local or in an encrypted owner vault",
+        "retention": "owner-configurable with deletion and revocation support"
+      },
+      "approvals": {
+        "default_mode": "sandbox",
+        "approval_required": true,
+        "high_impact_profile": true,
+        "triggers": [
+          "email"
+        ],
+        "channels_supported": [
+          "in_app",
+          "email",
+          "sms",
+          "voice_call"
+        ],
+        "contact_requirement": "verified user-owned destination and explicit channel opt-in",
+        "execution_rule": "approval authorizes one scoped action; it never exposes credentials to the bot or browser"
+      },
+      "sandbox": {
+        "sandbox_id": "sandbox-whitepaper-ebook",
+        "network_default": "off",
+        "fixture_mode": "synthetic_or_owner_supplied",
+        "seed": 2842535622,
+        "checks": [
+          "profile_schema_valid",
+          "runtime_slug_resolves",
+          "capability_output_matches_brief",
+          "no_secret_in_output",
+          "no_live_external_write",
+          "approval_gate_for_high_impact_action",
+          "failure_and_retry_state_recorded"
+        ],
+        "api_tests": [
+          {
+            "api": "Hootsuite",
+            "mode": "mock_contract_test",
+            "live_test_status": "blocked_until_owner_configures_secret_and_approves"
+          },
+          {
+            "api": "Ko-fi",
+            "mode": "mock_contract_test",
+            "live_test_status": "blocked_until_owner_configures_secret_and_approves"
+          },
+          {
+            "api": "Pinterest",
+            "mode": "mock_contract_test",
+            "live_test_status": "blocked_until_owner_configures_secret_and_approves"
+          },
+          {
+            "api": "Adobe Creative Cloud",
+            "mode": "mock_contract_test",
+            "live_test_status": "blocked_until_owner_configures_secret_and_approves"
+          },
+          {
+            "api": "Buffer",
+            "mode": "mock_contract_test",
+            "live_test_status": "blocked_until_owner_configures_secret_and_approves"
+          },
+          {
+            "api": "Canva",
+            "mode": "mock_contract_test",
+            "live_test_status": "blocked_until_owner_configures_secret_and_approves"
+          },
+          {
+            "api": "Instagram Graph",
+            "mode": "mock_contract_test",
+            "live_test_status": "blocked_until_owner_configures_secret_and_approves"
+          },
+          {
+            "api": "Kajabi",
+            "mode": "mock_contract_test",
+            "live_test_status": "blocked_until_owner_configures_secret_and_approves"
+          }
+        ],
+        "release_gate": "all applicable checks pass and owner approves any live action"
+      },
+      "readiness": {
+        "profile_schema": "verified",
+        "buddy_chat_route": "verified",
+        "executable_runtime_instance": "verified",
+        "standalone_native_runtime": "shared_worker_not_standalone",
+        "external_integrations": "configuration_required",
+        "production_ready": false,
+        "production_gate": "implement or configure adapters, pass sandbox checks, add authentication, and verify deployment telemetry"
+      },
+      "evidence": {
+        "catalog_source": "App_bots/DreamContent.json",
+        "runtime_sources": [
+          "server/seed-bots.ts"
+        ],
+        "runtime_seed_duplicates": 0
+      },
+      "sample_test_prompt": "Test Whitepaper & Ebook Bot in sandbox mode. Use synthetic data, demonstrate Research synthesis engine, record evidence, and stop before any live external action."
+    },
+    {
+      "identity": {
+        "slug": "pr-press",
+        "display_name": "PR & Press Release Bot",
+        "division": "DreamContent",
+        "category": "pr",
+        "tier": "pro",
+        "catalog_status": "active"
+      },
+      "logo": {
+        "logo_id": "logo-pr-press",
+        "emoji": "🧩",
+        "monogram": "P&",
+        "call_sign": "Clear Atlas 0667C556",
+        "shape": "tile",
+        "colors": {
+          "primary": "#3D4C8D",
+          "accent": "#D56638",
+          "surface": "#F4F6FF"
+        },
+        "accessibility_label": "PR & Press Release Bot logo"
+      },
+      "prospectus": {
+        "mission": "Writes and distributes press releases with media targeting.",
+        "target_users": "PR teams, communications directors",
+        "catalog_business_model": "SaaS subscription",
+        "catalog_price_range": "$199/mo",
+        "pricing_evidence": "catalog_claim_not_verified_revenue",
+        "inputs": [
+          "user brief",
+          "user-selected files or records",
+          "approved connector references"
+        ],
+        "outputs": [
+          "draft",
+          "analysis",
+          "task packet",
+          "sandbox evidence",
+          "approval request when required"
+        ],
+        "limitations": [
+          "This profile has an executable governed runtime instance backed by shared hardened code, not a separate always-running operating-system process.",
+          "External APIs require owner configuration, provider terms, sandbox tests, and scoped approval.",
+          "Published pricing and revenue models are catalog plans, not evidence of sales or earnings."
+        ]
+      },
+      "capabilities": [
+        {
+          "name": "Press release templates",
+          "source": "App_bots/DreamContent.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "News angle finder",
+          "source": "App_bots/DreamContent.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Media list targeting",
+          "source": "App_bots/DreamContent.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Distribution scheduling",
+          "source": "App_bots/DreamContent.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Coverage tracking dashboard",
+          "source": "App_bots/DreamContent.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Advanced analytics dashboard",
+          "source": "App_bots/DreamContent.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Priority email support",
+          "source": "App_bots/DreamContent.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "API access",
+          "source": "App_bots/DreamContent.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        }
+      ],
+      "tools": [
+        {
+          "id": "buddy_fleet_runtime",
+          "name": "Executable fleet runtime",
+          "status": "runtime_instance_ready",
+          "evidence": "server/fleet-runtime.ts"
+        },
+        {
+          "id": "buddy_chat_router",
+          "name": "Buddy shared chat router",
+          "status": "runtime_routed",
+          "evidence": "server/routes.ts"
+        },
+        {
+          "id": "buddy_approval_gateway",
+          "name": "Buddy approval gateway",
+          "status": "policy_available",
+          "evidence": "server/approval-notifications.ts"
+        },
+        {
+          "id": "buddy_bot_sandbox",
+          "name": "Per-bot sandbox blueprint",
+          "status": "generated",
+          "evidence": "config/generated/bots.catalog.json"
+        },
+        {
+          "id": "buddy_platform_registry",
+          "name": "Governed platform capability registry",
+          "status": "runtime_routed",
+          "evidence": "config/generated/buddy_platform_expansion.json"
+        },
+        {
+          "id": "buddy_bot_calculator",
+          "name": "Per-bot planning calculator",
+          "status": "local_interactive_ready",
+          "evidence": "config/generated/bot_calculators.json"
+        },
+        {
+          "id": "buddy_creative_studio",
+          "name": "Buddy Creative Studio",
+          "status": "local_prototype_available",
+          "evidence": "dreamco_platform/creative/studio.py"
+        },
+        {
+          "id": "buddy_social_manager",
+          "name": "Buddy Social Manager",
+          "status": "approval_gated_adapter_contract",
+          "evidence": "dreamco_platform/social/manager.py"
+        },
+        {
+          "id": "buddy_connection_broker",
+          "name": "Buddy Connection Broker",
+          "status": "backend_broker_available",
+          "evidence": "dreamco_platform/connections/broker.py"
+        }
+      ],
+      "api_candidates": [
+        {
+          "name": "Buffer",
+          "category": "scheduling",
+          "description": "Social media scheduling",
+          "tier": "pro",
+          "status": "configuration_required",
+          "sandbox_required": true,
+          "secret_policy": "backend_secret_reference_only"
+        },
+        {
+          "name": "Hootsuite",
+          "category": "management",
+          "description": "Social media management",
+          "tier": "pro",
+          "status": "configuration_required",
+          "sandbox_required": true,
+          "secret_policy": "backend_secret_reference_only"
+        },
+        {
+          "name": "Pexels",
+          "category": "media",
+          "description": "Free stock photos & videos",
+          "tier": "free",
+          "status": "configuration_required",
+          "sandbox_required": true,
+          "secret_policy": "backend_secret_reference_only"
+        },
+        {
+          "name": "Unsplash",
+          "category": "media",
+          "description": "Stock photography",
+          "tier": "free",
+          "status": "configuration_required",
+          "sandbox_required": true,
+          "secret_policy": "backend_secret_reference_only"
+        },
+        {
+          "name": "Instagram Graph",
+          "category": "social",
+          "description": "Instagram content & analytics",
+          "tier": "pro",
+          "status": "configuration_required",
+          "sandbox_required": true,
+          "secret_policy": "backend_secret_reference_only"
+        },
+        {
+          "name": "Pinterest",
+          "category": "social",
+          "description": "Visual discovery platform",
+          "tier": "pro",
+          "status": "configuration_required",
+          "sandbox_required": true,
+          "secret_policy": "backend_secret_reference_only"
+        },
+        {
+          "name": "Adobe Creative Cloud",
+          "category": "design",
+          "description": "Professional creative tools",
+          "tier": "enterprise",
+          "status": "configuration_required",
+          "sandbox_required": true,
+          "secret_policy": "backend_secret_reference_only"
+        },
+        {
+          "name": "Canva",
+          "category": "design",
+          "description": "Design & content creation",
+          "tier": "pro",
+          "status": "configuration_required",
+          "sandbox_required": true,
+          "secret_policy": "backend_secret_reference_only"
+        }
+      ],
+      "data_contract": {
+        "accepted_inputs": [
+          "user brief",
+          "user-selected files or records",
+          "approved connector references"
+        ],
+        "produced_outputs": [
+          "draft",
+          "analysis",
+          "task packet",
+          "sandbox evidence",
+          "approval request when required"
+        ],
+        "sensitivity": "standard_business_data",
+        "sensitive_domains": [],
+        "storage_policy": "store useful project artifacts only; raw credentials are forbidden; raw biometric media remains local or in an encrypted owner vault",
+        "retention": "owner-configurable with deletion and revocation support"
+      },
+      "approvals": {
+        "default_mode": "sandbox",
+        "approval_required": true,
+        "high_impact_profile": true,
+        "triggers": [
+          "email"
+        ],
+        "channels_supported": [
+          "in_app",
+          "email",
+          "sms",
+          "voice_call"
+        ],
+        "contact_requirement": "verified user-owned destination and explicit channel opt-in",
+        "execution_rule": "approval authorizes one scoped action; it never exposes credentials to the bot or browser"
+      },
+      "sandbox": {
+        "sandbox_id": "sandbox-pr-press",
+        "network_default": "off",
+        "fixture_mode": "synthetic_or_owner_supplied",
+        "seed": 107464022,
+        "checks": [
+          "profile_schema_valid",
+          "runtime_slug_resolves",
+          "capability_output_matches_brief",
+          "no_secret_in_output",
+          "no_live_external_write",
+          "approval_gate_for_high_impact_action",
+          "failure_and_retry_state_recorded"
+        ],
+        "api_tests": [
+          {
+            "api": "Buffer",
+            "mode": "mock_contract_test",
+            "live_test_status": "blocked_until_owner_configures_secret_and_approves"
+          },
+          {
+            "api": "Hootsuite",
+            "mode": "mock_contract_test",
+            "live_test_status": "blocked_until_owner_configures_secret_and_approves"
+          },
+          {
+            "api": "Pexels",
+            "mode": "mock_contract_test",
+            "live_test_status": "blocked_until_owner_configures_secret_and_approves"
+          },
+          {
+            "api": "Unsplash",
+            "mode": "mock_contract_test",
+            "live_test_status": "blocked_until_owner_configures_secret_and_approves"
+          },
+          {
+            "api": "Instagram Graph",
+            "mode": "mock_contract_test",
+            "live_test_status": "blocked_until_owner_configures_secret_and_approves"
+          },
+          {
+            "api": "Pinterest",
+            "mode": "mock_contract_test",
+            "live_test_status": "blocked_until_owner_configures_secret_and_approves"
+          },
+          {
+            "api": "Adobe Creative Cloud",
+            "mode": "mock_contract_test",
+            "live_test_status": "blocked_until_owner_configures_secret_and_approves"
+          },
+          {
+            "api": "Canva",
+            "mode": "mock_contract_test",
+            "live_test_status": "blocked_until_owner_configures_secret_and_approves"
+          }
+        ],
+        "release_gate": "all applicable checks pass and owner approves any live action"
+      },
+      "readiness": {
+        "profile_schema": "verified",
+        "buddy_chat_route": "verified",
+        "executable_runtime_instance": "verified",
+        "standalone_native_runtime": "shared_worker_not_standalone",
+        "external_integrations": "configuration_required",
+        "production_ready": false,
+        "production_gate": "implement or configure adapters, pass sandbox checks, add authentication, and verify deployment telemetry"
+      },
+      "evidence": {
+        "catalog_source": "App_bots/DreamContent.json",
+        "runtime_sources": [
+          "server/seed-bots.ts"
+        ],
+        "runtime_seed_duplicates": 0
+      },
+      "sample_test_prompt": "Test PR & Press Release Bot in sandbox mode. Use synthetic data, demonstrate Press release templates, record evidence, and stop before any live external action."
+    },
+    {
+      "identity": {
+        "slug": "content-calendar",
+        "display_name": "Content Calendar Bot",
+        "division": "DreamContent",
+        "category": "content-calendar",
+        "tier": "pro",
+        "catalog_status": "active"
+      },
+      "logo": {
+        "logo_id": "logo-content-calendar",
+        "emoji": "🧰",
+        "monogram": "CC",
+        "call_sign": "Dynamic Bridge 8C13F822",
+        "shape": "circle",
+        "colors": {
+          "primary": "#7A2E3A",
+          "accent": "#2D8C7C",
+          "surface": "#FFF8EE"
+        },
+        "accessibility_label": "Content Calendar Bot logo"
+      },
+      "prospectus": {
+        "mission": "AI-powered content calendar with topic clustering and scheduling optimization.",
+        "target_users": "Content managers, editorial teams",
+        "catalog_business_model": "SaaS subscription",
+        "catalog_price_range": "$99/mo",
+        "pricing_evidence": "catalog_claim_not_verified_revenue",
+        "inputs": [
+          "user brief",
+          "user-selected files or records",
+          "approved connector references"
+        ],
+        "outputs": [
+          "draft",
+          "analysis",
+          "task packet",
+          "sandbox evidence",
+          "approval request when required"
+        ],
+        "limitations": [
+          "This profile has an executable governed runtime instance backed by shared hardened code, not a separate always-running operating-system process.",
+          "External APIs require owner configuration, provider terms, sandbox tests, and scoped approval.",
+          "Published pricing and revenue models are catalog plans, not evidence of sales or earnings."
+        ]
+      },
+      "capabilities": [
+        {
+          "name": "Topic cluster planning",
+          "source": "App_bots/DreamContent.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Publishing schedule optimization",
+          "source": "App_bots/DreamContent.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Content pipeline tracking",
+          "source": "App_bots/DreamContent.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Team assignment automation",
+          "source": "App_bots/DreamContent.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Deadline management",
+          "source": "App_bots/DreamContent.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Advanced analytics dashboard",
+          "source": "App_bots/DreamContent.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Priority email support",
+          "source": "App_bots/DreamContent.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "API access",
+          "source": "App_bots/DreamContent.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        }
+      ],
+      "tools": [
+        {
+          "id": "buddy_fleet_runtime",
+          "name": "Executable fleet runtime",
+          "status": "runtime_instance_ready",
+          "evidence": "server/fleet-runtime.ts"
+        },
+        {
+          "id": "buddy_chat_router",
+          "name": "Buddy shared chat router",
+          "status": "runtime_routed",
+          "evidence": "server/routes.ts"
+        },
+        {
+          "id": "buddy_approval_gateway",
+          "name": "Buddy approval gateway",
+          "status": "policy_available",
+          "evidence": "server/approval-notifications.ts"
+        },
+        {
+          "id": "buddy_bot_sandbox",
+          "name": "Per-bot sandbox blueprint",
+          "status": "generated",
+          "evidence": "config/generated/bots.catalog.json"
+        },
+        {
+          "id": "buddy_platform_registry",
+          "name": "Governed platform capability registry",
+          "status": "runtime_routed",
+          "evidence": "config/generated/buddy_platform_expansion.json"
+        },
+        {
+          "id": "buddy_bot_calculator",
+          "name": "Per-bot planning calculator",
+          "status": "local_interactive_ready",
+          "evidence": "config/generated/bot_calculators.json"
+        },
+        {
+          "id": "buddy_social_manager",
+          "name": "Buddy Social Manager",
+          "status": "approval_gated_adapter_contract",
+          "evidence": "dreamco_platform/social/manager.py"
+        },
+        {
+          "id": "buddy_connection_broker",
+          "name": "Buddy Connection Broker",
+          "status": "backend_broker_available",
+          "evidence": "dreamco_platform/connections/broker.py"
+        }
+      ],
+      "api_candidates": [
+        {
+          "name": "WordPress",
+          "category": "cms",
+          "description": "Content management system",
+          "tier": "pro",
+          "status": "configuration_required",
+          "sandbox_required": true,
+          "secret_policy": "backend_secret_reference_only"
+        },
+        {
+          "name": "Buffer",
+          "category": "scheduling",
+          "description": "Social media scheduling",
+          "tier": "pro",
+          "status": "configuration_required",
+          "sandbox_required": true,
+          "secret_policy": "backend_secret_reference_only"
+        },
+        {
+          "name": "Hootsuite",
+          "category": "management",
+          "description": "Social media management",
+          "tier": "pro",
+          "status": "configuration_required",
+          "sandbox_required": true,
+          "secret_policy": "backend_secret_reference_only"
+        },
+        {
+          "name": "Instagram Graph",
+          "category": "social",
+          "description": "Instagram content & analytics",
+          "tier": "pro",
+          "status": "configuration_required",
+          "sandbox_required": true,
+          "secret_policy": "backend_secret_reference_only"
+        },
+        {
+          "name": "Canva",
+          "category": "design",
+          "description": "Design & content creation",
+          "tier": "pro",
+          "status": "configuration_required",
+          "sandbox_required": true,
+          "secret_policy": "backend_secret_reference_only"
+        },
+        {
+          "name": "Gumroad",
+          "category": "commerce",
+          "description": "Digital product sales",
+          "tier": "pro",
+          "status": "configuration_required",
+          "sandbox_required": true,
+          "secret_policy": "backend_secret_reference_only"
+        },
+        {
+          "name": "Ko-fi",
+          "category": "tipping",
+          "description": "Creator support platform",
+          "tier": "free",
+          "status": "configuration_required",
+          "sandbox_required": true,
+          "secret_policy": "backend_secret_reference_only"
+        },
+        {
+          "name": "Medium",
+          "category": "publishing",
+          "description": "Online publishing platform",
+          "tier": "pro",
+          "status": "configuration_required",
+          "sandbox_required": true,
+          "secret_policy": "backend_secret_reference_only"
+        }
+      ],
+      "data_contract": {
+        "accepted_inputs": [
+          "user brief",
+          "user-selected files or records",
+          "approved connector references"
+        ],
+        "produced_outputs": [
+          "draft",
+          "analysis",
+          "task packet",
+          "sandbox evidence",
+          "approval request when required"
+        ],
+        "sensitivity": "standard_business_data",
+        "sensitive_domains": [],
+        "storage_policy": "store useful project artifacts only; raw credentials are forbidden; raw biometric media remains local or in an encrypted owner vault",
+        "retention": "owner-configurable with deletion and revocation support"
+      },
+      "approvals": {
+        "default_mode": "sandbox",
+        "approval_required": true,
+        "high_impact_profile": true,
+        "triggers": [
+          "email",
+          "publish"
+        ],
+        "channels_supported": [
+          "in_app",
+          "email",
+          "sms",
+          "voice_call"
+        ],
+        "contact_requirement": "verified user-owned destination and explicit channel opt-in",
+        "execution_rule": "approval authorizes one scoped action; it never exposes credentials to the bot or browser"
+      },
+      "sandbox": {
+        "sandbox_id": "sandbox-content-calendar",
+        "network_default": "off",
+        "fixture_mode": "synthetic_or_owner_supplied",
+        "seed": 2350118946,
+        "checks": [
+          "profile_schema_valid",
+          "runtime_slug_resolves",
+          "capability_output_matches_brief",
+          "no_secret_in_output",
+          "no_live_external_write",
+          "approval_gate_for_high_impact_action",
+          "failure_and_retry_state_recorded"
+        ],
+        "api_tests": [
+          {
+            "api": "WordPress",
+            "mode": "mock_contract_test",
+            "live_test_status": "blocked_until_owner_configures_secret_and_approves"
+          },
+          {
+            "api": "Buffer",
+            "mode": "mock_contract_test",
+            "live_test_status": "blocked_until_owner_configures_secret_and_approves"
+          },
+          {
+            "api": "Hootsuite",
+            "mode": "mock_contract_test",
+            "live_test_status": "blocked_until_owner_configures_secret_and_approves"
+          },
+          {
+            "api": "Instagram Graph",
+            "mode": "mock_contract_test",
+            "live_test_status": "blocked_until_owner_configures_secret_and_approves"
+          },
+          {
+            "api": "Canva",
+            "mode": "mock_contract_test",
+            "live_test_status": "blocked_until_owner_configures_secret_and_approves"
+          },
+          {
+            "api": "Gumroad",
+            "mode": "mock_contract_test",
+            "live_test_status": "blocked_until_owner_configures_secret_and_approves"
+          },
+          {
+            "api": "Ko-fi",
+            "mode": "mock_contract_test",
+            "live_test_status": "blocked_until_owner_configures_secret_and_approves"
+          },
+          {
+            "api": "Medium",
+            "mode": "mock_contract_test",
+            "live_test_status": "blocked_until_owner_configures_secret_and_approves"
+          }
+        ],
+        "release_gate": "all applicable checks pass and owner approves any live action"
+      },
+      "readiness": {
+        "profile_schema": "verified",
+        "buddy_chat_route": "verified",
+        "executable_runtime_instance": "verified",
+        "standalone_native_runtime": "shared_worker_not_standalone",
+        "external_integrations": "configuration_required",
+        "production_ready": false,
+        "production_gate": "implement or configure adapters, pass sandbox checks, add authentication, and verify deployment telemetry"
+      },
+      "evidence": {
+        "catalog_source": "App_bots/DreamContent.json",
+        "runtime_sources": [
+          "server/seed-bots.ts"
+        ],
+        "runtime_seed_duplicates": 0
+      },
+      "sample_test_prompt": "Test Content Calendar Bot in sandbox mode. Use synthetic data, demonstrate Topic cluster planning, record evidence, and stop before any live external action."
+    },
+    {
+      "identity": {
+        "slug": "influencer-outreach",
+        "display_name": "Influencer Outreach Bot",
+        "division": "DreamContent",
+        "category": "influencer",
+        "tier": "pro",
+        "catalog_status": "active"
+      },
+      "logo": {
+        "logo_id": "logo-influencer-outreach",
+        "emoji": "🎬",
+        "monogram": "IO",
+        "call_sign": "Calm Tower 6CD7FE9E",
+        "shape": "shield",
+        "colors": {
+          "primary": "#3D4C8D",
+          "accent": "#D56638",
+          "surface": "#F4F6FF"
+        },
+        "accessibility_label": "Influencer Outreach Bot logo"
+      },
+      "prospectus": {
+        "mission": "Identifies and manages influencer partnerships for content amplification.",
+        "target_users": "Influencer marketing teams",
+        "catalog_business_model": "SaaS subscription",
+        "catalog_price_range": "$99/mo",
+        "pricing_evidence": "catalog_claim_not_verified_revenue",
+        "inputs": [
+          "user brief",
+          "user-selected files or records",
+          "approved connector references"
+        ],
+        "outputs": [
+          "draft",
+          "analysis",
+          "task packet",
+          "sandbox evidence",
+          "approval request when required"
+        ],
+        "limitations": [
+          "This profile has an executable governed runtime instance backed by shared hardened code, not a separate always-running operating-system process.",
+          "External APIs require owner configuration, provider terms, sandbox tests, and scoped approval.",
+          "Published pricing and revenue models are catalog plans, not evidence of sales or earnings."
+        ]
+      },
+      "capabilities": [
+        {
+          "name": "Influencer discovery engine",
+          "source": "App_bots/DreamContent.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Engagement rate analysis",
+          "source": "App_bots/DreamContent.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Outreach template automation",
+          "source": "App_bots/DreamContent.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Campaign ROI tracking",
+          "source": "App_bots/DreamContent.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Collaboration management",
+          "source": "App_bots/DreamContent.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Advanced analytics dashboard",
+          "source": "App_bots/DreamContent.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Priority email support",
+          "source": "App_bots/DreamContent.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "API access",
+          "source": "App_bots/DreamContent.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        }
+      ],
+      "tools": [
+        {
+          "id": "buddy_fleet_runtime",
+          "name": "Executable fleet runtime",
+          "status": "runtime_instance_ready",
+          "evidence": "server/fleet-runtime.ts"
+        },
+        {
+          "id": "buddy_chat_router",
+          "name": "Buddy shared chat router",
+          "status": "runtime_routed",
+          "evidence": "server/routes.ts"
+        },
+        {
+          "id": "buddy_approval_gateway",
+          "name": "Buddy approval gateway",
+          "status": "policy_available",
+          "evidence": "server/approval-notifications.ts"
+        },
+        {
+          "id": "buddy_bot_sandbox",
+          "name": "Per-bot sandbox blueprint",
+          "status": "generated",
+          "evidence": "config/generated/bots.catalog.json"
+        },
+        {
+          "id": "buddy_platform_registry",
+          "name": "Governed platform capability registry",
+          "status": "runtime_routed",
+          "evidence": "config/generated/buddy_platform_expansion.json"
+        },
+        {
+          "id": "buddy_bot_calculator",
+          "name": "Per-bot planning calculator",
+          "status": "local_interactive_ready",
+          "evidence": "config/generated/bot_calculators.json"
+        },
+        {
+          "id": "buddy_social_manager",
+          "name": "Buddy Social Manager",
+          "status": "approval_gated_adapter_contract",
+          "evidence": "dreamco_platform/social/manager.py"
+        },
+        {
+          "id": "buddy_connection_broker",
+          "name": "Buddy Connection Broker",
+          "status": "backend_broker_available",
+          "evidence": "dreamco_platform/connections/broker.py"
+        }
+      ],
+      "api_candidates": [
+        {
+          "name": "Hootsuite",
+          "category": "management",
+          "description": "Social media management",
+          "tier": "pro",
+          "status": "configuration_required",
+          "sandbox_required": true,
+          "secret_policy": "backend_secret_reference_only"
+        },
+        {
+          "name": "Instagram Graph",
+          "category": "social",
+          "description": "Instagram content & analytics",
+          "tier": "pro",
+          "status": "configuration_required",
+          "sandbox_required": true,
+          "secret_policy": "backend_secret_reference_only"
+        },
+        {
+          "name": "Pinterest",
+          "category": "social",
+          "description": "Visual discovery platform",
+          "tier": "pro",
+          "status": "configuration_required",
+          "sandbox_required": true,
+          "secret_policy": "backend_secret_reference_only"
+        },
+        {
+          "name": "WordPress",
+          "category": "cms",
+          "description": "Content management system",
+          "tier": "pro",
+          "status": "configuration_required",
+          "sandbox_required": true,
+          "secret_policy": "backend_secret_reference_only"
+        },
+        {
+          "name": "Buffer",
+          "category": "scheduling",
+          "description": "Social media scheduling",
+          "tier": "pro",
+          "status": "configuration_required",
+          "sandbox_required": true,
+          "secret_policy": "backend_secret_reference_only"
+        },
+        {
+          "name": "Canva",
+          "category": "design",
+          "description": "Design & content creation",
+          "tier": "pro",
+          "status": "configuration_required",
+          "sandbox_required": true,
+          "secret_policy": "backend_secret_reference_only"
+        },
+        {
+          "name": "Ko-fi",
+          "category": "tipping",
+          "description": "Creator support platform",
+          "tier": "free",
+          "status": "configuration_required",
+          "sandbox_required": true,
+          "secret_policy": "backend_secret_reference_only"
+        },
+        {
+          "name": "Pexels",
+          "category": "media",
+          "description": "Free stock photos & videos",
+          "tier": "free",
+          "status": "configuration_required",
+          "sandbox_required": true,
+          "secret_policy": "backend_secret_reference_only"
+        }
+      ],
+      "data_contract": {
+        "accepted_inputs": [
+          "user brief",
+          "user-selected files or records",
+          "approved connector references"
+        ],
+        "produced_outputs": [
+          "draft",
+          "analysis",
+          "task packet",
+          "sandbox evidence",
+          "approval request when required"
+        ],
+        "sensitivity": "standard_business_data",
+        "sensitive_domains": [],
+        "storage_policy": "store useful project artifacts only; raw credentials are forbidden; raw biometric media remains local or in an encrypted owner vault",
+        "retention": "owner-configurable with deletion and revocation support"
+      },
+      "approvals": {
+        "default_mode": "sandbox",
+        "approval_required": true,
+        "high_impact_profile": true,
+        "triggers": [
+          "outreach",
+          "email"
+        ],
+        "channels_supported": [
+          "in_app",
+          "email",
+          "sms",
+          "voice_call"
+        ],
+        "contact_requirement": "verified user-owned destination and explicit channel opt-in",
+        "execution_rule": "approval authorizes one scoped action; it never exposes credentials to the bot or browser"
+      },
+      "sandbox": {
+        "sandbox_id": "sandbox-influencer-outreach",
+        "network_default": "off",
+        "fixture_mode": "synthetic_or_owner_supplied",
+        "seed": 1826094750,
+        "checks": [
+          "profile_schema_valid",
+          "runtime_slug_resolves",
+          "capability_output_matches_brief",
+          "no_secret_in_output",
+          "no_live_external_write",
+          "approval_gate_for_high_impact_action",
+          "failure_and_retry_state_recorded"
+        ],
+        "api_tests": [
+          {
+            "api": "Hootsuite",
+            "mode": "mock_contract_test",
+            "live_test_status": "blocked_until_owner_configures_secret_and_approves"
+          },
+          {
+            "api": "Instagram Graph",
+            "mode": "mock_contract_test",
+            "live_test_status": "blocked_until_owner_configures_secret_and_approves"
+          },
+          {
+            "api": "Pinterest",
+            "mode": "mock_contract_test",
+            "live_test_status": "blocked_until_owner_configures_secret_and_approves"
+          },
+          {
+            "api": "WordPress",
+            "mode": "mock_contract_test",
+            "live_test_status": "blocked_until_owner_configures_secret_and_approves"
+          },
+          {
+            "api": "Buffer",
+            "mode": "mock_contract_test",
+            "live_test_status": "blocked_until_owner_configures_secret_and_approves"
+          },
+          {
+            "api": "Canva",
+            "mode": "mock_contract_test",
+            "live_test_status": "blocked_until_owner_configures_secret_and_approves"
+          },
+          {
+            "api": "Ko-fi",
+            "mode": "mock_contract_test",
+            "live_test_status": "blocked_until_owner_configures_secret_and_approves"
+          },
+          {
+            "api": "Pexels",
+            "mode": "mock_contract_test",
+            "live_test_status": "blocked_until_owner_configures_secret_and_approves"
+          }
+        ],
+        "release_gate": "all applicable checks pass and owner approves any live action"
+      },
+      "readiness": {
+        "profile_schema": "verified",
+        "buddy_chat_route": "verified",
+        "executable_runtime_instance": "verified",
+        "standalone_native_runtime": "shared_worker_not_standalone",
+        "external_integrations": "configuration_required",
+        "production_ready": false,
+        "production_gate": "implement or configure adapters, pass sandbox checks, add authentication, and verify deployment telemetry"
+      },
+      "evidence": {
+        "catalog_source": "App_bots/DreamContent.json",
+        "runtime_sources": [
+          "server/seed-bots.ts"
+        ],
+        "runtime_seed_duplicates": 0
+      },
+      "sample_test_prompt": "Test Influencer Outreach Bot in sandbox mode. Use synthetic data, demonstrate Influencer discovery engine, record evidence, and stop before any live external action."
+    },
+    {
+      "identity": {
+        "slug": "product-description",
+        "display_name": "Product Description Writer",
+        "division": "DreamContent",
+        "category": "product-descriptions",
+        "tier": "pro",
+        "catalog_status": "active"
+      },
+      "logo": {
+        "logo_id": "logo-product-description",
+        "emoji": "🔐",
+        "monogram": "PD",
+        "call_sign": "Calm Lab 33479D91",
+        "shape": "shield",
+        "colors": {
+          "primary": "#275DAD",
+          "accent": "#E38B3C",
+          "surface": "#F7F9FC"
+        },
+        "accessibility_label": "Product Description Writer logo"
+      },
+      "prospectus": {
+        "mission": "Generates SEO-optimized product descriptions at scale for e-commerce.",
+        "target_users": "E-commerce teams, copywriters",
+        "catalog_business_model": "SaaS subscription",
+        "catalog_price_range": "$99/mo",
+        "pricing_evidence": "catalog_claim_not_verified_revenue",
+        "inputs": [
+          "user brief",
+          "user-selected files or records",
+          "approved connector references"
+        ],
+        "outputs": [
+          "draft",
+          "analysis",
+          "task packet",
+          "sandbox evidence",
+          "approval request when required"
+        ],
+        "limitations": [
+          "This profile has an executable governed runtime instance backed by shared hardened code, not a separate always-running operating-system process.",
+          "External APIs require owner configuration, provider terms, sandbox tests, and scoped approval.",
+          "Published pricing and revenue models are catalog plans, not evidence of sales or earnings."
+        ]
+      },
+      "capabilities": [
+        {
+          "name": "Bulk description generation",
+          "source": "App_bots/DreamContent.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Feature-to-benefit conversion",
+          "source": "App_bots/DreamContent.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "SEO keyword injection",
+          "source": "App_bots/DreamContent.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Tone customization",
+          "source": "App_bots/DreamContent.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Multi-language support",
+          "source": "App_bots/DreamContent.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Advanced analytics dashboard",
+          "source": "App_bots/DreamContent.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Priority email support",
+          "source": "App_bots/DreamContent.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "API access",
+          "source": "App_bots/DreamContent.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        }
+      ],
+      "tools": [
+        {
+          "id": "buddy_fleet_runtime",
+          "name": "Executable fleet runtime",
+          "status": "runtime_instance_ready",
+          "evidence": "server/fleet-runtime.ts"
+        },
+        {
+          "id": "buddy_chat_router",
+          "name": "Buddy shared chat router",
+          "status": "runtime_routed",
+          "evidence": "server/routes.ts"
+        },
+        {
+          "id": "buddy_approval_gateway",
+          "name": "Buddy approval gateway",
+          "status": "policy_available",
+          "evidence": "server/approval-notifications.ts"
+        },
+        {
+          "id": "buddy_bot_sandbox",
+          "name": "Per-bot sandbox blueprint",
+          "status": "generated",
+          "evidence": "config/generated/bots.catalog.json"
+        },
+        {
+          "id": "buddy_platform_registry",
+          "name": "Governed platform capability registry",
+          "status": "runtime_routed",
+          "evidence": "config/generated/buddy_platform_expansion.json"
+        },
+        {
+          "id": "buddy_bot_calculator",
+          "name": "Per-bot planning calculator",
+          "status": "local_interactive_ready",
+          "evidence": "config/generated/bot_calculators.json"
+        },
+        {
+          "id": "buddy_social_manager",
+          "name": "Buddy Social Manager",
+          "status": "approval_gated_adapter_contract",
+          "evidence": "dreamco_platform/social/manager.py"
+        },
+        {
+          "id": "buddy_connection_broker",
+          "name": "Buddy Connection Broker",
+          "status": "backend_broker_available",
+          "evidence": "dreamco_platform/connections/broker.py"
+        }
+      ],
+      "api_candidates": [
+        {
+          "name": "Gumroad",
+          "category": "commerce",
+          "description": "Digital product sales",
+          "tier": "pro",
+          "status": "configuration_required",
+          "sandbox_required": true,
+          "secret_policy": "backend_secret_reference_only"
+        },
+        {
+          "name": "Buffer",
+          "category": "scheduling",
+          "description": "Social media scheduling",
+          "tier": "pro",
+          "status": "configuration_required",
+          "sandbox_required": true,
+          "secret_policy": "backend_secret_reference_only"
+        },
+        {
+          "name": "Hootsuite",
+          "category": "management",
+          "description": "Social media management",
+          "tier": "pro",
+          "status": "configuration_required",
+          "sandbox_required": true,
+          "secret_policy": "backend_secret_reference_only"
+        },
+        {
+          "name": "Instagram Graph",
+          "category": "social",
+          "description": "Instagram content & analytics",
+          "tier": "pro",
+          "status": "configuration_required",
+          "sandbox_required": true,
+          "secret_policy": "backend_secret_reference_only"
+        },
+        {
+          "name": "Ko-fi",
+          "category": "tipping",
+          "description": "Creator support platform",
+          "tier": "free",
+          "status": "configuration_required",
+          "sandbox_required": true,
+          "secret_policy": "backend_secret_reference_only"
+        },
+        {
+          "name": "Pexels",
+          "category": "media",
+          "description": "Free stock photos & videos",
+          "tier": "free",
+          "status": "configuration_required",
+          "sandbox_required": true,
+          "secret_policy": "backend_secret_reference_only"
+        },
+        {
+          "name": "Pinterest",
+          "category": "social",
+          "description": "Visual discovery platform",
+          "tier": "pro",
+          "status": "configuration_required",
+          "sandbox_required": true,
+          "secret_policy": "backend_secret_reference_only"
+        },
+        {
+          "name": "Unsplash",
+          "category": "media",
+          "description": "Stock photography",
+          "tier": "free",
+          "status": "configuration_required",
+          "sandbox_required": true,
+          "secret_policy": "backend_secret_reference_only"
+        }
+      ],
+      "data_contract": {
+        "accepted_inputs": [
+          "user brief",
+          "user-selected files or records",
+          "approved connector references"
+        ],
+        "produced_outputs": [
+          "draft",
+          "analysis",
+          "task packet",
+          "sandbox evidence",
+          "approval request when required"
+        ],
+        "sensitivity": "standard_business_data",
+        "sensitive_domains": [],
+        "storage_policy": "store useful project artifacts only; raw credentials are forbidden; raw biometric media remains local or in an encrypted owner vault",
+        "retention": "owner-configurable with deletion and revocation support"
+      },
+      "approvals": {
+        "default_mode": "sandbox",
+        "approval_required": true,
+        "high_impact_profile": true,
+        "triggers": [
+          "email"
+        ],
+        "channels_supported": [
+          "in_app",
+          "email",
+          "sms",
+          "voice_call"
+        ],
+        "contact_requirement": "verified user-owned destination and explicit channel opt-in",
+        "execution_rule": "approval authorizes one scoped action; it never exposes credentials to the bot or browser"
+      },
+      "sandbox": {
+        "sandbox_id": "sandbox-product-description",
+        "network_default": "off",
+        "fixture_mode": "synthetic_or_owner_supplied",
+        "seed": 860331409,
+        "checks": [
+          "profile_schema_valid",
+          "runtime_slug_resolves",
+          "capability_output_matches_brief",
+          "no_secret_in_output",
+          "no_live_external_write",
+          "approval_gate_for_high_impact_action",
+          "failure_and_retry_state_recorded"
+        ],
+        "api_tests": [
+          {
+            "api": "Gumroad",
+            "mode": "mock_contract_test",
+            "live_test_status": "blocked_until_owner_configures_secret_and_approves"
+          },
+          {
+            "api": "Buffer",
+            "mode": "mock_contract_test",
+            "live_test_status": "blocked_until_owner_configures_secret_and_approves"
+          },
+          {
+            "api": "Hootsuite",
+            "mode": "mock_contract_test",
+            "live_test_status": "blocked_until_owner_configures_secret_and_approves"
+          },
+          {
+            "api": "Instagram Graph",
+            "mode": "mock_contract_test",
+            "live_test_status": "blocked_until_owner_configures_secret_and_approves"
+          },
+          {
+            "api": "Ko-fi",
+            "mode": "mock_contract_test",
+            "live_test_status": "blocked_until_owner_configures_secret_and_approves"
+          },
+          {
+            "api": "Pexels",
+            "mode": "mock_contract_test",
+            "live_test_status": "blocked_until_owner_configures_secret_and_approves"
+          },
+          {
+            "api": "Pinterest",
+            "mode": "mock_contract_test",
+            "live_test_status": "blocked_until_owner_configures_secret_and_approves"
+          },
+          {
+            "api": "Unsplash",
+            "mode": "mock_contract_test",
+            "live_test_status": "blocked_until_owner_configures_secret_and_approves"
+          }
+        ],
+        "release_gate": "all applicable checks pass and owner approves any live action"
+      },
+      "readiness": {
+        "profile_schema": "verified",
+        "buddy_chat_route": "verified",
+        "executable_runtime_instance": "verified",
+        "standalone_native_runtime": "shared_worker_not_standalone",
+        "external_integrations": "configuration_required",
+        "production_ready": false,
+        "production_gate": "implement or configure adapters, pass sandbox checks, add authentication, and verify deployment telemetry"
+      },
+      "evidence": {
+        "catalog_source": "App_bots/DreamContent.json",
+        "runtime_sources": [
+          "server/seed-bots.ts"
+        ],
+        "runtime_seed_duplicates": 0
+      },
+      "sample_test_prompt": "Test Product Description Writer in sandbox mode. Use synthetic data, demonstrate Bulk description generation, record evidence, and stop before any live external action."
+    },
+    {
+      "identity": {
+        "slug": "podcast-producer",
+        "display_name": "Podcast Production Bot",
+        "division": "DreamContent",
+        "category": "podcast",
+        "tier": "free",
+        "catalog_status": "active"
+      },
+      "logo": {
+        "logo_id": "logo-podcast-producer",
+        "emoji": "🎙️",
+        "monogram": "PP",
+        "call_sign": "Open Tower C7892692",
+        "shape": "tile",
+        "colors": {
+          "primary": "#7A2E3A",
+          "accent": "#2D8C7C",
+          "surface": "#FFF8EE"
+        },
+        "accessibility_label": "Podcast Production Bot logo"
+      },
+      "prospectus": {
+        "mission": "Assists with podcast planning, show notes, and transcript generation.",
+        "target_users": "Podcasters, content creators",
+        "catalog_business_model": "Freemium",
+        "catalog_price_range": "Free",
+        "pricing_evidence": "catalog_claim_not_verified_revenue",
+        "inputs": [
+          "user brief",
+          "user-selected files or records",
+          "approved connector references"
+        ],
+        "outputs": [
+          "draft",
+          "analysis",
+          "task packet",
+          "sandbox evidence",
+          "approval request when required"
+        ],
+        "limitations": [
+          "This profile has an executable governed runtime instance backed by shared hardened code, not a separate always-running operating-system process.",
+          "External APIs require owner configuration, provider terms, sandbox tests, and scoped approval.",
+          "Published pricing and revenue models are catalog plans, not evidence of sales or earnings."
+        ]
+      },
+      "capabilities": [
+        {
+          "name": "Episode outline generator",
+          "source": "App_bots/DreamContent.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Show notes automation",
+          "source": "App_bots/DreamContent.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Transcript generation",
+          "source": "App_bots/DreamContent.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Guest research briefs",
+          "source": "App_bots/DreamContent.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Distribution scheduling",
+          "source": "App_bots/DreamContent.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Basic analytics",
+          "source": "App_bots/DreamContent.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Email support",
+          "source": "App_bots/DreamContent.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Community access",
+          "source": "App_bots/DreamContent.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        }
+      ],
+      "tools": [
+        {
+          "id": "buddy_fleet_runtime",
+          "name": "Executable fleet runtime",
+          "status": "runtime_instance_ready",
+          "evidence": "server/fleet-runtime.ts"
+        },
+        {
+          "id": "buddy_chat_router",
+          "name": "Buddy shared chat router",
+          "status": "runtime_routed",
+          "evidence": "server/routes.ts"
+        },
+        {
+          "id": "buddy_approval_gateway",
+          "name": "Buddy approval gateway",
+          "status": "policy_available",
+          "evidence": "server/approval-notifications.ts"
+        },
+        {
+          "id": "buddy_bot_sandbox",
+          "name": "Per-bot sandbox blueprint",
+          "status": "generated",
+          "evidence": "config/generated/bots.catalog.json"
+        },
+        {
+          "id": "buddy_platform_registry",
+          "name": "Governed platform capability registry",
+          "status": "runtime_routed",
+          "evidence": "config/generated/buddy_platform_expansion.json"
+        },
+        {
+          "id": "buddy_bot_calculator",
+          "name": "Per-bot planning calculator",
+          "status": "local_interactive_ready",
+          "evidence": "config/generated/bot_calculators.json"
+        },
+        {
+          "id": "buddy_social_manager",
+          "name": "Buddy Social Manager",
+          "status": "approval_gated_adapter_contract",
+          "evidence": "dreamco_platform/social/manager.py"
+        }
+      ],
+      "api_candidates": [
+        {
+          "name": "Buffer",
+          "category": "scheduling",
+          "description": "Social media scheduling",
+          "tier": "pro",
+          "status": "configuration_required",
+          "sandbox_required": true,
+          "secret_policy": "backend_secret_reference_only"
+        },
+        {
+          "name": "Hootsuite",
+          "category": "management",
+          "description": "Social media management",
+          "tier": "pro",
+          "status": "configuration_required",
+          "sandbox_required": true,
+          "secret_policy": "backend_secret_reference_only"
+        },
+        {
+          "name": "Pexels",
+          "category": "media",
+          "description": "Free stock photos & videos",
+          "tier": "free",
+          "status": "configuration_required",
+          "sandbox_required": true,
+          "secret_policy": "backend_secret_reference_only"
+        },
+        {
+          "name": "Pinterest",
+          "category": "social",
+          "description": "Visual discovery platform",
+          "tier": "pro",
+          "status": "configuration_required",
+          "sandbox_required": true,
+          "secret_policy": "backend_secret_reference_only"
+        },
+        {
+          "name": "Unsplash",
+          "category": "media",
+          "description": "Stock photography",
+          "tier": "free",
+          "status": "configuration_required",
+          "sandbox_required": true,
+          "secret_policy": "backend_secret_reference_only"
+        },
+        {
+          "name": "Instagram Graph",
+          "category": "social",
+          "description": "Instagram content & analytics",
+          "tier": "pro",
+          "status": "configuration_required",
+          "sandbox_required": true,
+          "secret_policy": "backend_secret_reference_only"
+        },
+        {
+          "name": "Ko-fi",
+          "category": "tipping",
+          "description": "Creator support platform",
+          "tier": "free",
+          "status": "configuration_required",
+          "sandbox_required": true,
+          "secret_policy": "backend_secret_reference_only"
+        }
+      ],
+      "data_contract": {
+        "accepted_inputs": [
+          "user brief",
+          "user-selected files or records",
+          "approved connector references"
+        ],
+        "produced_outputs": [
+          "draft",
+          "analysis",
+          "task packet",
+          "sandbox evidence",
+          "approval request when required"
+        ],
+        "sensitivity": "standard_business_data",
+        "sensitive_domains": [],
+        "storage_policy": "store useful project artifacts only; raw credentials are forbidden; raw biometric media remains local or in an encrypted owner vault",
+        "retention": "owner-configurable with deletion and revocation support"
+      },
+      "approvals": {
+        "default_mode": "sandbox",
+        "approval_required": true,
+        "high_impact_profile": true,
+        "triggers": [
+          "email"
+        ],
+        "channels_supported": [
+          "in_app",
+          "email",
+          "sms",
+          "voice_call"
+        ],
+        "contact_requirement": "verified user-owned destination and explicit channel opt-in",
+        "execution_rule": "approval authorizes one scoped action; it never exposes credentials to the bot or browser"
+      },
+      "sandbox": {
+        "sandbox_id": "sandbox-podcast-producer",
+        "network_default": "off",
+        "fixture_mode": "synthetic_or_owner_supplied",
+        "seed": 3347654290,
+        "checks": [
+          "profile_schema_valid",
+          "runtime_slug_resolves",
+          "capability_output_matches_brief",
+          "no_secret_in_output",
+          "no_live_external_write",
+          "approval_gate_for_high_impact_action",
+          "failure_and_retry_state_recorded"
+        ],
+        "api_tests": [
+          {
+            "api": "Buffer",
+            "mode": "mock_contract_test",
+            "live_test_status": "blocked_until_owner_configures_secret_and_approves"
+          },
+          {
+            "api": "Hootsuite",
+            "mode": "mock_contract_test",
+            "live_test_status": "blocked_until_owner_configures_secret_and_approves"
+          },
+          {
+            "api": "Pexels",
+            "mode": "mock_contract_test",
+            "live_test_status": "blocked_until_owner_configures_secret_and_approves"
+          },
+          {
+            "api": "Pinterest",
+            "mode": "mock_contract_test",
+            "live_test_status": "blocked_until_owner_configures_secret_and_approves"
+          },
+          {
+            "api": "Unsplash",
+            "mode": "mock_contract_test",
+            "live_test_status": "blocked_until_owner_configures_secret_and_approves"
+          },
+          {
+            "api": "Instagram Graph",
+            "mode": "mock_contract_test",
+            "live_test_status": "blocked_until_owner_configures_secret_and_approves"
+          },
+          {
+            "api": "Ko-fi",
+            "mode": "mock_contract_test",
+            "live_test_status": "blocked_until_owner_configures_secret_and_approves"
+          }
+        ],
+        "release_gate": "all applicable checks pass and owner approves any live action"
+      },
+      "readiness": {
+        "profile_schema": "verified",
+        "buddy_chat_route": "verified",
+        "executable_runtime_instance": "verified",
+        "standalone_native_runtime": "shared_worker_not_standalone",
+        "external_integrations": "configuration_required",
+        "production_ready": false,
+        "production_gate": "implement or configure adapters, pass sandbox checks, add authentication, and verify deployment telemetry"
+      },
+      "evidence": {
+        "catalog_source": "App_bots/DreamContent.json",
+        "runtime_sources": [
+          "server/seed-bots.ts",
+          "server/seed-bots.ts"
+        ],
+        "runtime_seed_duplicates": 1
+      },
+      "sample_test_prompt": "Test Podcast Production Bot in sandbox mode. Use synthetic data, demonstrate Episode outline generator, record evidence, and stop before any live external action."
+    },
+    {
+      "identity": {
+        "slug": "visual-planner",
+        "display_name": "Visual Content Planner",
+        "division": "DreamContent",
+        "category": "visual-content",
+        "tier": "free",
+        "catalog_status": "active"
+      },
+      "logo": {
+        "logo_id": "logo-visual-planner",
+        "emoji": "🌐",
+        "monogram": "VC",
+        "call_sign": "Agile Harbor C2564443",
+        "shape": "hex",
+        "colors": {
+          "primary": "#5B3A8A",
+          "accent": "#D89B2B",
+          "surface": "#F8F5FF"
+        },
+        "accessibility_label": "Visual Content Planner logo"
+      },
+      "prospectus": {
+        "mission": "Plans visual content strategy with mood boards and design briefs.",
+        "target_users": "Designers, social media teams",
+        "catalog_business_model": "Freemium",
+        "catalog_price_range": "Free",
+        "pricing_evidence": "catalog_claim_not_verified_revenue",
+        "inputs": [
+          "user brief",
+          "user-selected files or records",
+          "approved connector references"
+        ],
+        "outputs": [
+          "draft",
+          "analysis",
+          "task packet",
+          "sandbox evidence",
+          "approval request when required"
+        ],
+        "limitations": [
+          "This profile has an executable governed runtime instance backed by shared hardened code, not a separate always-running operating-system process.",
+          "External APIs require owner configuration, provider terms, sandbox tests, and scoped approval.",
+          "Published pricing and revenue models are catalog plans, not evidence of sales or earnings."
+        ]
+      },
+      "capabilities": [
+        {
+          "name": "Mood board generator",
+          "source": "App_bots/DreamContent.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Design brief templates",
+          "source": "App_bots/DreamContent.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Brand asset library",
+          "source": "App_bots/DreamContent.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Visual trend tracking",
+          "source": "App_bots/DreamContent.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Platform sizing automation",
+          "source": "App_bots/DreamContent.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Basic analytics",
+          "source": "App_bots/DreamContent.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Email support",
+          "source": "App_bots/DreamContent.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Community access",
+          "source": "App_bots/DreamContent.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        }
+      ],
+      "tools": [
+        {
+          "id": "buddy_fleet_runtime",
+          "name": "Executable fleet runtime",
+          "status": "runtime_instance_ready",
+          "evidence": "server/fleet-runtime.ts"
+        },
+        {
+          "id": "buddy_chat_router",
+          "name": "Buddy shared chat router",
+          "status": "runtime_routed",
+          "evidence": "server/routes.ts"
+        },
+        {
+          "id": "buddy_approval_gateway",
+          "name": "Buddy approval gateway",
+          "status": "policy_available",
+          "evidence": "server/approval-notifications.ts"
+        },
+        {
+          "id": "buddy_bot_sandbox",
+          "name": "Per-bot sandbox blueprint",
+          "status": "generated",
+          "evidence": "config/generated/bots.catalog.json"
+        },
+        {
+          "id": "buddy_platform_registry",
+          "name": "Governed platform capability registry",
+          "status": "runtime_routed",
+          "evidence": "config/generated/buddy_platform_expansion.json"
+        },
+        {
+          "id": "buddy_bot_calculator",
+          "name": "Per-bot planning calculator",
+          "status": "local_interactive_ready",
+          "evidence": "config/generated/bot_calculators.json"
+        },
+        {
+          "id": "buddy_social_manager",
+          "name": "Buddy Social Manager",
+          "status": "approval_gated_adapter_contract",
+          "evidence": "dreamco_platform/social/manager.py"
+        }
+      ],
+      "api_candidates": [
+        {
+          "name": "Pinterest",
+          "category": "social",
+          "description": "Visual discovery platform",
+          "tier": "pro",
+          "status": "configuration_required",
+          "sandbox_required": true,
+          "secret_policy": "backend_secret_reference_only"
+        },
+        {
+          "name": "Canva",
+          "category": "design",
+          "description": "Design & content creation",
+          "tier": "pro",
+          "status": "configuration_required",
+          "sandbox_required": true,
+          "secret_policy": "backend_secret_reference_only"
+        },
+        {
+          "name": "Instagram Graph",
+          "category": "social",
+          "description": "Instagram content & analytics",
+          "tier": "pro",
+          "status": "configuration_required",
+          "sandbox_required": true,
+          "secret_policy": "backend_secret_reference_only"
+        },
+        {
+          "name": "Ko-fi",
+          "category": "tipping",
+          "description": "Creator support platform",
+          "tier": "free",
+          "status": "configuration_required",
+          "sandbox_required": true,
+          "secret_policy": "backend_secret_reference_only"
+        },
+        {
+          "name": "Adobe Creative Cloud",
+          "category": "design",
+          "description": "Professional creative tools",
+          "tier": "enterprise",
+          "status": "configuration_required",
+          "sandbox_required": true,
+          "secret_policy": "backend_secret_reference_only"
+        },
+        {
+          "name": "Buffer",
+          "category": "scheduling",
+          "description": "Social media scheduling",
+          "tier": "pro",
+          "status": "configuration_required",
+          "sandbox_required": true,
+          "secret_policy": "backend_secret_reference_only"
+        },
+        {
+          "name": "Hootsuite",
+          "category": "management",
+          "description": "Social media management",
+          "tier": "pro",
+          "status": "configuration_required",
+          "sandbox_required": true,
+          "secret_policy": "backend_secret_reference_only"
+        },
+        {
+          "name": "Kajabi",
+          "category": "education",
+          "description": "All-in-one creator platform",
+          "tier": "enterprise",
+          "status": "configuration_required",
+          "sandbox_required": true,
+          "secret_policy": "backend_secret_reference_only"
+        }
+      ],
+      "data_contract": {
+        "accepted_inputs": [
+          "user brief",
+          "user-selected files or records",
+          "approved connector references"
+        ],
+        "produced_outputs": [
+          "draft",
+          "analysis",
+          "task packet",
+          "sandbox evidence",
+          "approval request when required"
+        ],
+        "sensitivity": "standard_business_data",
+        "sensitive_domains": [],
+        "storage_policy": "store useful project artifacts only; raw credentials are forbidden; raw biometric media remains local or in an encrypted owner vault",
+        "retention": "owner-configurable with deletion and revocation support"
+      },
+      "approvals": {
+        "default_mode": "sandbox",
+        "approval_required": true,
+        "high_impact_profile": true,
+        "triggers": [
+          "email"
+        ],
+        "channels_supported": [
+          "in_app",
+          "email",
+          "sms",
+          "voice_call"
+        ],
+        "contact_requirement": "verified user-owned destination and explicit channel opt-in",
+        "execution_rule": "approval authorizes one scoped action; it never exposes credentials to the bot or browser"
+      },
+      "sandbox": {
+        "sandbox_id": "sandbox-visual-planner",
+        "network_default": "off",
+        "fixture_mode": "synthetic_or_owner_supplied",
+        "seed": 3260433475,
+        "checks": [
+          "profile_schema_valid",
+          "runtime_slug_resolves",
+          "capability_output_matches_brief",
+          "no_secret_in_output",
+          "no_live_external_write",
+          "approval_gate_for_high_impact_action",
+          "failure_and_retry_state_recorded"
+        ],
+        "api_tests": [
+          {
+            "api": "Pinterest",
+            "mode": "mock_contract_test",
+            "live_test_status": "blocked_until_owner_configures_secret_and_approves"
+          },
+          {
+            "api": "Canva",
+            "mode": "mock_contract_test",
+            "live_test_status": "blocked_until_owner_configures_secret_and_approves"
+          },
+          {
+            "api": "Instagram Graph",
+            "mode": "mock_contract_test",
+            "live_test_status": "blocked_until_owner_configures_secret_and_approves"
+          },
+          {
+            "api": "Ko-fi",
+            "mode": "mock_contract_test",
+            "live_test_status": "blocked_until_owner_configures_secret_and_approves"
+          },
+          {
+            "api": "Adobe Creative Cloud",
+            "mode": "mock_contract_test",
+            "live_test_status": "blocked_until_owner_configures_secret_and_approves"
+          },
+          {
+            "api": "Buffer",
+            "mode": "mock_contract_test",
+            "live_test_status": "blocked_until_owner_configures_secret_and_approves"
+          },
+          {
+            "api": "Hootsuite",
+            "mode": "mock_contract_test",
+            "live_test_status": "blocked_until_owner_configures_secret_and_approves"
+          },
+          {
+            "api": "Kajabi",
+            "mode": "mock_contract_test",
+            "live_test_status": "blocked_until_owner_configures_secret_and_approves"
+          }
+        ],
+        "release_gate": "all applicable checks pass and owner approves any live action"
+      },
+      "readiness": {
+        "profile_schema": "verified",
+        "buddy_chat_route": "verified",
+        "executable_runtime_instance": "verified",
+        "standalone_native_runtime": "shared_worker_not_standalone",
+        "external_integrations": "configuration_required",
+        "production_ready": false,
+        "production_gate": "implement or configure adapters, pass sandbox checks, add authentication, and verify deployment telemetry"
+      },
+      "evidence": {
+        "catalog_source": "App_bots/DreamContent.json",
+        "runtime_sources": [
+          "server/seed-bots.ts"
+        ],
+        "runtime_seed_duplicates": 0
+      },
+      "sample_test_prompt": "Test Visual Content Planner in sandbox mode. Use synthetic data, demonstrate Mood board generator, record evidence, and stop before any live external action."
+    },
+    {
+      "identity": {
+        "slug": "creative-writer",
+        "display_name": "Creative Writer Agent",
+        "division": "DreamContent",
+        "category": "content",
+        "tier": "pro",
+        "catalog_status": "active"
+      },
+      "logo": {
+        "logo_id": "logo-creative-writer",
+        "emoji": "🛡️",
+        "monogram": "CW",
+        "call_sign": "Ready Vault F80A8A3F",
+        "shape": "hex",
+        "colors": {
+          "primary": "#77521F",
+          "accent": "#287878",
+          "surface": "#FFF9ED"
+        },
+        "accessibility_label": "Creative Writer Agent logo"
+      },
+      "prospectus": {
+        "mission": "Creative content agent that writes articles, stories, marketing copy, scripts, and any form of written content.",
+        "target_users": "Content teams, marketers, authors",
+        "catalog_business_model": "SaaS subscription",
+        "catalog_price_range": "$79/mo",
+        "pricing_evidence": "catalog_claim_not_verified_revenue",
+        "inputs": [
+          "user brief",
+          "user-selected files or records",
+          "approved connector references"
+        ],
+        "outputs": [
+          "draft",
+          "analysis",
+          "task packet",
+          "sandbox evidence",
+          "approval request when required"
+        ],
+        "limitations": [
+          "This profile has an executable governed runtime instance backed by shared hardened code, not a separate always-running operating-system process.",
+          "External APIs require owner configuration, provider terms, sandbox tests, and scoped approval.",
+          "Published pricing and revenue models are catalog plans, not evidence of sales or earnings."
+        ]
+      },
+      "capabilities": [
+        {
+          "name": "Article writing",
+          "source": "App_bots/DreamContent.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Story creation",
+          "source": "App_bots/DreamContent.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Marketing copy",
+          "source": "App_bots/DreamContent.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Script writing",
+          "source": "App_bots/DreamContent.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "SEO content",
+          "source": "App_bots/DreamContent.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Social media posts",
+          "source": "App_bots/DreamContent.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Email campaigns",
+          "source": "App_bots/DreamContent.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        },
+        {
+          "name": "Brand voice matching",
+          "source": "App_bots/DreamContent.json",
+          "evidence_level": "catalog_declared",
+          "test_status": "sandbox_blueprint_generated"
+        }
+      ],
+      "tools": [
+        {
+          "id": "buddy_fleet_runtime",
+          "name": "Executable fleet runtime",
+          "status": "runtime_instance_ready",
+          "evidence": "server/fleet-runtime.ts"
+        },
+        {
+          "id": "buddy_chat_router",
+          "name": "Buddy shared chat router",
+          "status": "runtime_routed",
+          "evidence": "server/routes.ts"
+        },
+        {
+          "id": "buddy_approval_gateway",
+          "name": "Buddy approval gateway",
+          "status": "policy_available",
+          "evidence": "server/approval-notifications.ts"
+        },
+        {
+          "id": "buddy_bot_sandbox",
+          "name": "Per-bot sandbox blueprint",
+          "status": "generated",
+          "evidence": "config/generated/bots.catalog.json"
+        },
+        {
+          "id": "buddy_platform_registry",
+          "name": "Governed platform capability registry",
+          "status": "runtime_routed",
+          "evidence": "config/generated/buddy_platform_expansion.json"
+        },
+        {
+          "id": "buddy_bot_calculator",
+          "name": "Per-bot planning calculator",
+          "status": "local_interactive_ready",
+          "evidence": "config/generated/bot_calculators.json"
+        },
+        {
+          "id": "buddy_creative_studio",
+          "name": "Buddy Creative Studio",
+          "status": "local_prototype_available",
+          "evidence": "dreamco_platform/creative/studio.py"
+        },
+        {
+          "id": "buddy_social_manager",
+          "name": "Buddy Social Manager",
+          "status": "approval_gated_adapter_contract",
+          "evidence": "dreamco_platform/social/manager.py"
+        }
+      ],
+      "api_candidates": [
+        {
+          "name": "Canva",
+          "category": "design",
+          "description": "Design & content creation",
+          "tier": "pro",
+          "status": "configuration_required",
+          "sandbox_required": true,
+          "secret_policy": "backend_secret_reference_only"
+        },
+        {
+          "name": "Instagram Graph",
+          "category": "social",
+          "description": "Instagram content & analytics",
+          "tier": "pro",
+          "status": "configuration_required",
+          "sandbox_required": true,
+          "secret_policy": "backend_secret_reference_only"
+        },
+        {
+          "name": "Adobe Creative Cloud",
+          "category": "design",
+          "description": "Professional creative tools",
+          "tier": "enterprise",
+          "status": "configuration_required",
+          "sandbox_required": true,
+          "secret_policy": "backend_secret_reference_only"
+        },
+        {
+          "name": "Buffer",
+          "category": "scheduling",
+          "description": "Social media scheduling",
+          "tier": "pro",
+          "status": "configuration_required",
+          "sandbox_required": true,
+          "secret_policy": "backend_secret_reference_only"
+        },
+        {
+          "name": "Hootsuite",
+          "category": "management",
+          "description": "Social media management",
+          "tier": "pro",
+          "status": "configuration_required",
+          "sandbox_required": true,
+          "secret_policy": "backend_secret_reference_only"
+        },
+        {
+          "name": "Pinterest",
+          "category": "social",
+          "description": "Visual discovery platform",
+          "tier": "pro",
+          "status": "configuration_required",
+          "sandbox_required": true,
+          "secret_policy": "backend_secret_reference_only"
+        },
+        {
+          "name": "Shutterstock Contributor",
+          "category": "stock",
+          "description": "Stock media marketplace",
+          "tier": "pro",
+          "status": "configuration_required",
+          "sandbox_required": true,
+          "secret_policy": "backend_secret_reference_only"
+        },
+        {
+          "name": "Thinkific",
+          "category": "education",
+          "description": "Course creation platform",
+          "tier": "pro",
+          "status": "configuration_required",
+          "sandbox_required": true,
+          "secret_policy": "backend_secret_reference_only"
+        }
+      ],
+      "data_contract": {
+        "accepted_inputs": [
+          "user brief",
+          "user-selected files or records",
+          "approved connector references"
+        ],
+        "produced_outputs": [
+          "draft",
+          "analysis",
+          "task packet",
+          "sandbox evidence",
+          "approval request when required"
+        ],
+        "sensitivity": "standard_business_data",
+        "sensitive_domains": [],
+        "storage_policy": "store useful project artifacts only; raw credentials are forbidden; raw biometric media remains local or in an encrypted owner vault",
+        "retention": "owner-configurable with deletion and revocation support"
+      },
+      "approvals": {
+        "default_mode": "sandbox",
+        "approval_required": true,
+        "high_impact_profile": true,
+        "triggers": [
+          "email"
+        ],
+        "channels_supported": [
+          "in_app",
+          "email",
+          "sms",
+          "voice_call"
+        ],
+        "contact_requirement": "verified user-owned destination and explicit channel opt-in",
+        "execution_rule": "approval authorizes one scoped action; it never exposes credentials to the bot or browser"
+      },
+      "sandbox": {
+        "sandbox_id": "sandbox-creative-writer",
+        "network_default": "off",
+        "fixture_mode": "synthetic_or_owner_supplied",
+        "seed": 4161440319,
+        "checks": [
+          "profile_schema_valid",
+          "runtime_slug_resolves",
+          "capability_output_matches_brief",
+          "no_secret_in_output",
+          "no_live_external_write",
+          "approval_gate_for_high_impact_action",
+          "failure_and_retry_state_recorded"
+        ],
+        "api_tests": [
+          {
+            "api": "Canva",
+            "mode": "mock_contract_test",
+            "live_test_status": "blocked_until_owner_configures_secret_and_approves"
+          },
+          {
+            "api": "Instagram Graph",
+            "mode": "mock_contract_test",
+            "live_test_status": "blocked_until_owner_configures_secret_and_approves"
+          },
+          {
+            "api": "Adobe Creative Cloud",
+            "mode": "mock_contract_test",
+            "live_test_status": "blocked_until_owner_configures_secret_and_approves"
+          },
+          {
+            "api": "Buffer",
+            "mode": "mock_contract_test",
+            "live_test_status": "blocked_until_owner_configures_secret_and_approves"
+          },
+          {
+            "api": "Hootsuite",
+            "mode": "mock_contract_test",
+            "live_test_status": "blocked_until_owner_configures_secret_and_approves"
+          },
+          {
+            "api": "Pinterest",
+            "mode": "mock_contract_test",
+            "live_test_status": "blocked_until_owner_configures_secret_and_approves"
+          },
+          {
+            "api": "Shutterstock Contributor",
+            "mode": "mock_contract_test",
+            "live_test_status": "blocked_until_owner_configures_secret_and_approves"
+          },
+          {
+            "api": "Thinkific",
+            "mode": "mock_contract_test",
+            "live_test_status": "blocked_until_owner_configures_secret_and_approves"
+          }
+        ],
+        "release_gate": "all applicable checks pass and owner approves any live action"
+      },
+      "readiness": {
+        "profile_schema": "verified",
+        "buddy_chat_route": "verified",
+        "executable_runtime_instance": "verified",
+        "standalone_native_runtime": "shared_worker_not_standalone",
+        "external_integrations": "configuration_required",
+        "production_ready": false,
+        "production_gate": "implement or configure adapters, pass sandbox checks, add authentication, and verify deployment telemetry"
+      },
+      "evidence": {
+        "catalog_source": "App_bots/DreamContent.json",
+        "runtime_sources": [
+          "server/seed-bots.ts"
+        ],
+        "runtime_seed_duplicates": 0
+      },
+      "sample_test_prompt": "Test Creative Writer Agent in sandbox mode. Use synthetic data, demonstrate Article writing, record evidence, and stop before any live external action."
+    }
+  ]
+}
