@@ -42,6 +42,10 @@ import {
 } from "./approval-notifications";
 import { fleetExecutionRequestSchema, getFleetRuntimeRegistry } from "./fleet-runtime";
 import { outboundAdapterReadiness } from "./outbound-adapters";
+import {
+  buildGovernedLeadPlan,
+  leadCampaignRequestSchema,
+} from "./governed-leads";
 
 const CORE_SLUGS = new Set(CORE_BOTS.map(b => b.slug));
 const GITHUB_SLUGS = new Set(GITHUB_BOTS.map(b => b.slug));
@@ -1242,6 +1246,66 @@ export async function registerRoutes(
     }
   });
 
+  app.get("/api/buddy/lead-system", (_req, res) => {
+    try {
+      const path = resolve(process.cwd(), "config", "master_bot_registry.json");
+      const catalog = JSON.parse(readFileSync(path, "utf8"));
+      res.json({
+        schema: "dreamco.governed_lead_capabilities.v1",
+        botProfiles: catalog.summary?.per_bot_governed_lead_systems ?? 0,
+        engine: "server/governed-leads.ts",
+        workflow: ["research", "deduplicate", "qualify", "verify permission", "draft", "owner approval", "configured adapter", "follow-up", "stop and report"],
+        guardrails: {
+          recipientPermissionRequired: true,
+          exactOwnerApprovalPerMessage: true,
+          optOutReplyBounceAndComplaintStop: true,
+          purchasedOrStolenListsForbidden: true,
+          privateOrTermsBypassingCollectionForbidden: true,
+          sensitiveTargetingForbidden: true,
+          minorsExcluded: true,
+          rawContactDetailsAccepted: false,
+          liveDispatchAvailableFromPlanningRoute: false,
+        },
+        adapterReadiness: outboundAdapterReadiness().channels,
+      });
+    } catch (error) {
+      res.status(503).json({
+        error: "Buddy lead system catalog is unavailable.",
+        detail: error instanceof Error ? error.message : "unknown error",
+      });
+    }
+  });
+
+  app.get("/api/buddy/lead-system/:slug", (req, res) => {
+    try {
+      const path = resolve(process.cwd(), "config", "master_bot_registry.json");
+      const catalog = JSON.parse(readFileSync(path, "utf8"));
+      const bot = catalog.bots?.find((candidate: any) => candidate.identity?.slug === req.params.slug);
+      if (!bot) return res.status(404).json({ error: "Bot lead system not found." });
+      res.json({
+        identity: bot.identity,
+        businessSystem: bot.business_system,
+        approvals: bot.approvals,
+        readiness: bot.readiness,
+      });
+    } catch (error) {
+      res.status(503).json({
+        error: "Buddy bot lead system is unavailable.",
+        detail: error instanceof Error ? error.message : "unknown error",
+      });
+    }
+  });
+
+  app.post("/api/buddy/lead-plan", (req, res) => {
+    try {
+      const campaign = leadCampaignRequestSchema.parse(req.body);
+      res.status(201).json(buildGovernedLeadPlan(campaign));
+    } catch (error) {
+      if (error instanceof z.ZodError) return res.status(400).json(zodValidationError(error));
+      throw error;
+    }
+  });
+
   app.get("/api/buddy/features", async (_req, res) => {
     res.json({
       features: [
@@ -1260,6 +1324,7 @@ export async function registerRoutes(
         { name: "Governed Platform Registry", route: "GET /api/buddy/platform-expansion", status: "live", description: "Launch, privacy, finance, creative, IP, open-source, customization, and roadmap contracts" },
         { name: "Bot Calculator Registry", route: "GET /api/buddy/calculators", status: "live", description: "One bounded local planning calculator contract for every Buddy bot profile" },
         { name: "Install and Distribution Catalog", route: "GET /api/buddy/distribution", status: "live", description: "PWA installation plus governed packaging and publishing plans for 26 device and store targets" },
+        { name: "Governed Lead Systems", route: "POST /api/buddy/lead-plan", status: "permission-gated", description: "Per-bot lead research, qualification, drafting, one-message approval, suppression, and bounded follow-up planning" },
         { name: "Code Execution", route: "POST /api/buddy/execute-code", status: "live", description: "Run JS/TS natively; simulate Python, Rust, Go, Java" },
         { name: "Image Analysis", route: "POST /api/buddy/analyze-image", status: "live", description: "GPT-4o vision: screenshots → code, diagrams → schema" },
         { name: "Agent Pipeline", route: "POST /api/buddy/agent-run", status: "live", description: "Multi-step autonomous Plan → Execute → Ship pipeline" },

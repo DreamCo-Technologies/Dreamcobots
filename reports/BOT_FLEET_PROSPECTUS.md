@@ -12,6 +12,8 @@ This report is generated from repository evidence. A catalog profile is not coun
 - Configured external APIs evidenced: 0
 - Per-bot sandbox blueprints: 1051
 - Per-bot logo identities: 1051
+- Per-bot business blueprints: 1051
+- Permission-gated lead systems: 1051
 
 ## Production Gate
 

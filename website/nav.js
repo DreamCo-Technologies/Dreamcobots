@@ -12,6 +12,7 @@
     { href: 'system-map.html', label: '🗺️ Repository Map' },
     { href: 'chat.html', label: '💬 Chat' },
     { href: 'install.html', label: '📲 Install & Launch' },
+    { href: 'leads.html', label: '🎯 Lead Systems' },
     { href: 'autonomy.html', label: '⚡ Autonomy' },
     { href: 'ecosystem.html', label: '🌐 Ecosystem' },
     { href: 'orchestration.html', label: '🎛️ Orchestration' },

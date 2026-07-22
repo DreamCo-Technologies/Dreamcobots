@@ -8,6 +8,7 @@ This registry distinguishes repository-controlled capability cores from official
 - `prototype_factory`: Prompt-to-prototype build plan (`local_build_ready`)
 - `app_release_council`: Web and app-store release evidence council (`owner_submission_required`)
 - `distribution_service`: Multi-device packaging and publishing service (`web_ready_native_review_required`)
+- `governed_lead_system`: Permission-gated lead discovery and follow-up (`sandbox_ready_external_adapters_required`)
 - `data_wallet`: Consent, portability, opt-out, and licensed-data controls (`local_core_ready`)
 - `bill_subscription_manager`: Bill and subscription tracking (`owner_payment_required`)
 - `task_runner`: Concurrent and timed tasks up to 24 hours (`adapter_ready`)

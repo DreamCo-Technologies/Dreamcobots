@@ -270,6 +270,8 @@ class BuddyPlatformExpansionTests(unittest.TestCase):
 
     def test_generated_registry_has_200_explicitly_unimplemented_ideas(self):
         registry = build_registry()
+        lead_system = next(item for item in registry["implemented_capabilities"] if item["id"] == "governed_lead_system")
+        self.assertEqual(lead_system["status"], "sandbox_ready_external_adapters_required")
         self.assertEqual(len(registry["revolutionary_ideas"]), 100)
         self.assertEqual(len(registry["companion_ideas"]), 100)
         ideas = registry["revolutionary_ideas"] + registry["companion_ideas"]

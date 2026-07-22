@@ -211,11 +211,153 @@ function inferTools(profile: BotProfile) {
       status: "web_ready_native_review_required",
       evidence: "config/generated/buddy_distribution_catalog.json",
     },
+    {
+      id: "buddy_governed_lead_system",
+      name: "Permission-gated lead discovery and follow-up system",
+      status: "sandbox_ready_external_adapters_required",
+      evidence: "server/governed-leads.ts",
+    },
   ];
   for (const rule of TOOL_RULES) {
     if (rule.words.some((word) => text.includes(word))) tools.push(rule.tool);
   }
   return tools;
+}
+
+function businessBlueprint(profile: BotProfile) {
+  const segments = profile.targetUsers
+    .split(/,|\band\b|&/i)
+    .map((segment) => segment.trim())
+    .filter(Boolean);
+  const primaryCapabilities = profile.capabilities.slice(0, 5);
+  const primaryOutcome = primaryCapabilities[0] || profile.category;
+  return {
+    business_id: `business-${profile.slug}`,
+    operating_model: "owner_governed_service_business",
+    specialization: {
+      division: profile.division,
+      category: profile.category,
+      mission: profile.description,
+      ideal_customer_segments: segments.length ? segments : [profile.targetUsers],
+      core_offer: `${profile.displayName}: ${profile.description}`,
+      promised_outputs: primaryCapabilities,
+      catalog_revenue_model: profile.revenueModel,
+      catalog_price_range: profile.priceRange,
+      earnings_status: "no_revenue_or_customer_result_guaranteed",
+    },
+    operating_workflow: [
+      "capture_owner_goal_and_offer",
+      "define_ideal_customer_profile",
+      "select_owner_authorized_sources",
+      "confirm_source_terms_and_collection_scope",
+      "research_and_deduplicate_candidates",
+      "qualify_need_fit_timing_and_permission",
+      "draft_one_relevant_message",
+      "request_exact_owner_approval",
+      "dispatch_through_configured_adapter_only",
+      "wait_for_required_follow_up_interval",
+      "stop_on_reply_opt_out_bounce_or_complaint",
+      "report_outcomes_without_claiming_guaranteed_revenue",
+    ],
+    lead_system: {
+      system_id: `lead-system-${profile.slug}`,
+      engine: "server/governed-leads.ts",
+      status: "sandbox_ready_external_adapters_required",
+      ideal_customer_profile: {
+        segments: segments.length ? segments : [profile.targetUsers],
+        need_signals: primaryCapabilities.map((capability) => `Needs help with ${capability}`),
+        exclusion_rules: [
+          "no minors",
+          "no protected or sensitive trait targeting",
+          "no deceptive identity or impersonation",
+          "no lead without traceable source evidence",
+        ],
+      },
+      discovery: {
+        query_templates: [
+          `${profile.targetUsers} requesting ${primaryOutcome}`,
+          `organizations seeking ${profile.category} support`,
+          `inbound requests matching ${profile.displayName}`,
+          `existing customers who opted in to ${primaryOutcome} updates`,
+        ],
+        authorized_source_types: [
+          "owner supplied records",
+          "consent based inbound requests",
+          "existing customer records with documented relationship",
+          "public business directories whose terms permit research",
+          "owner authorized provider APIs",
+        ],
+        forbidden_collection: [
+          "private accounts or access-controlled pages",
+          "terms bypassing scraping",
+          "purchased, stolen, or unverifiable contact lists",
+          "raw credentials or secret tokens",
+          "sensitive personal data",
+        ],
+      },
+      qualification: {
+        required_fields: [
+          "source reference",
+          "organization or customer need",
+          "fit to the bot specialization",
+          "contact permission basis and channel scope",
+          "qualification evidence",
+        ],
+        score_dimensions: {
+          demonstrated_need: 30,
+          capability_fit: 25,
+          decision_readiness: 15,
+          voluntarily_supplied_timing: 10,
+          documented_contact_permission: 20,
+        },
+        minimum_score_for_owner_review: 65,
+        permission_is_mandatory_even_above_threshold: true,
+      },
+      outreach: {
+        supported_channels: ["email", "sms", "voice_call", "social_dm"],
+        recipient_channel_permission_required: true,
+        raw_contact_details_in_browser_forbidden: true,
+        exact_owner_approval_per_message: true,
+        maximum_daily_sends: 20,
+        adapter_status: "configuration_required_for_live_dispatch",
+      },
+      follow_up: {
+        maximum_follow_ups: 2,
+        minimum_interval_hours: 48,
+        approval_required_for_each_follow_up: true,
+        stop_conditions: ["reply", "opt out", "bounce", "complaint", "permission expiry", "owner stop", "sequence complete"],
+        suppression_ledger_required: true,
+      },
+      owner_controls: {
+        default_mode: "research_and_draft_only",
+        pause_and_kill_switch_required: true,
+        one_action_approval_expiry_hours: 24,
+        quiet_hours_supported: true,
+        export_and_delete_supported: true,
+      },
+      metrics: [
+        "candidates researched",
+        "source evidence coverage",
+        "qualified leads",
+        "recipient permission coverage",
+        "owner approval rate",
+        "reply rate",
+        "positive reply rate",
+        "opt-out rate",
+        "bounce rate",
+        "complaint rate",
+        "conversion evidence",
+      ],
+    },
+    readiness: {
+      local_research_plan: "ready",
+      qualification_and_drafts: "ready",
+      exact_action_approval_packet: "ready",
+      live_contact_discovery: "provider_and_terms_configuration_required",
+      live_message_dispatch: "verified_adapter_recipient_permission_and_owner_approval_required",
+      independent_production_business: false,
+    },
+  };
 }
 
 function apiCandidatesFor(profile: BotProfile): ApiCandidate[] {
@@ -328,6 +470,7 @@ export function buildFleetCatalog() {
       seen.add(profile.slug);
       const runtimeEvidence = runtime.get(profile.slug) || [];
       const apiCandidates = apiCandidatesFor(profile);
+      const business = businessBlueprint(profile);
       return {
         identity: {
           slug: profile.slug,
@@ -352,6 +495,7 @@ export function buildFleetCatalog() {
             "Published pricing and revenue models are catalog plans, not evidence of sales or earnings.",
           ],
         },
+        business_system: business,
         capabilities: profile.capabilities.map((name) => ({
           name,
           source: `App_bots/${content.division}.json`,
@@ -416,6 +560,8 @@ export function buildFleetCatalog() {
       configured_external_apis_evidenced: configuredApiCount,
       per_bot_sandbox_blueprints: bots.length,
       per_bot_logo_identities: bots.length,
+      per_bot_business_blueprints: bots.length,
+      per_bot_governed_lead_systems: bots.length,
       production_ready_profiles: 0,
     },
     divisions,
@@ -470,6 +616,8 @@ function buildReport(catalog: ReturnType<typeof buildFleetCatalog>) {
     `- Configured external APIs evidenced: ${catalog.summary.configured_external_apis_evidenced}`,
     `- Per-bot sandbox blueprints: ${catalog.summary.per_bot_sandbox_blueprints}`,
     `- Per-bot logo identities: ${catalog.summary.per_bot_logo_identities}`,
+    `- Per-bot business blueprints: ${catalog.summary.per_bot_business_blueprints}`,
+    `- Permission-gated lead systems: ${catalog.summary.per_bot_governed_lead_systems}`,
     "",
     "## Production Gate",
     "",

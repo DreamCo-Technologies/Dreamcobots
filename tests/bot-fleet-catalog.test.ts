@@ -10,6 +10,8 @@ test("maps every division profile to a verified Buddy route and sandbox blueprin
   assert.equal(catalog.summary.runtime_routed_profiles, 1051);
   assert.equal(catalog.summary.executable_runtime_instances_evidenced, 1051);
   assert.equal(catalog.summary.per_bot_sandbox_blueprints, 1051);
+  assert.equal(catalog.summary.per_bot_business_blueprints, 1051);
+  assert.equal(catalog.summary.per_bot_governed_lead_systems, 1051);
   assert.ok(catalog.bots.every((bot) => bot.readiness.buddy_chat_route === "verified"));
   assert.ok(catalog.bots.every((bot) => bot.readiness.executable_runtime_instance === "verified"));
   assert.ok(catalog.bots.every((bot) => bot.sandbox.sandbox_id === `sandbox-${bot.identity.slug}`));
@@ -22,6 +24,26 @@ test("maps every division profile to a verified Buddy route and sandbox blueprin
   assert.ok(catalog.bots.every((bot) => bot.tools.some((tool) => (
     tool.id === "buddy_distribution_service" && tool.status === "web_ready_native_review_required"
   ))));
+  assert.ok(catalog.bots.every((bot) => bot.tools.some((tool) => (
+    tool.id === "buddy_governed_lead_system" && tool.status === "sandbox_ready_external_adapters_required"
+  ))));
+});
+
+test("gives every bot a detailed permission-gated business and lead blueprint", () => {
+  const catalog = buildFleetCatalog();
+  assert.ok(catalog.bots.every((bot) => bot.business_system.operating_workflow.length >= 10));
+  assert.ok(catalog.bots.every((bot) => bot.business_system.lead_system.discovery.query_templates.length >= 4));
+  assert.ok(catalog.bots.every((bot) => bot.business_system.lead_system.qualification.minimum_score_for_owner_review === 65));
+  assert.ok(catalog.bots.every((bot) => bot.business_system.lead_system.outreach.recipient_channel_permission_required));
+  assert.ok(catalog.bots.every((bot) => bot.business_system.lead_system.outreach.exact_owner_approval_per_message));
+  assert.ok(catalog.bots.every((bot) => bot.business_system.lead_system.follow_up.approval_required_for_each_follow_up));
+  assert.ok(catalog.bots.every((bot) => bot.business_system.lead_system.follow_up.stop_conditions.includes("opt out")));
+  assert.ok(catalog.bots.every((bot) => bot.business_system.readiness.independent_production_business === false));
+
+  const realEstate = catalog.bots.find((bot) => bot.identity.slug === "commercial-scanner");
+  const freelance = catalog.bots.find((bot) => bot.identity.slug === "hustle-finder-bot");
+  assert.ok(realEstate?.business_system.specialization.promised_outputs.includes("Off-market deal sourcing"));
+  assert.ok(freelance?.business_system.specialization.promised_outputs.includes("Skill-to-hustle matching"));
 });
 
 test("gives every bot a deterministic unique logo identity", () => {
