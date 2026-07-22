@@ -45,7 +45,21 @@ import {
   Loader2,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import type { PlatformConnection } from "@shared/schema";
+
+type PublicPlatformConnection = {
+  id: number;
+  platform: string;
+  name: string;
+  status: string;
+  createdAt: string;
+  officialOrigin: string | null;
+  authMethod: string;
+  requestedScopes: string[];
+  secretReferenceConfigured: boolean;
+  credentialStorage: "reference_only";
+  rawCredentialsExposed: false;
+  requiresUserApproval: boolean;
+};
 
 const PLATFORMS = [
   { id: "telegram", label: "Telegram", icon: Send, description: "Text-based control via Telegram bot. Send commands, receive alerts, manage bots.", color: "text-blue-400" },
@@ -59,16 +73,6 @@ const PLATFORMS = [
   { id: "mobile", label: "Mobile App", icon: Smartphone, description: "Progressive web app optimized for phones and tablets.", color: "text-green-500" },
   { id: "gaming", label: "Gaming Console", icon: Gamepad2, description: "Game console browser access for Xbox, PlayStation, Switch.", color: "text-red-400" },
 ];
-
-function generateApiKey() {
-  return "dco_" + Array.from(crypto.getRandomValues(new Uint8Array(24)))
-    .map(b => b.toString(16).padStart(2, "0")).join("");
-}
-
-function generateWebhookUrl(platform: string) {
-  const host = window.location.origin;
-  return `${host}/api/webhooks/${platform}/${crypto.randomUUID().slice(0, 8)}`;
-}
 
 const INSTALL_DEVICES = [
   {
@@ -191,6 +195,10 @@ export default function ConnectionsPage() {
   const [selectedPlatform, setSelectedPlatform] = useState<typeof PLATFORMS[0] | null>(null);
   const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
   const [pwaInstalled, setPwaInstalled] = useState(false);
+  const [officialUrl, setOfficialUrl] = useState("");
+  const [authMethod, setAuthMethod] = useState("oauth_pkce");
+  const [secretProvider, setSecretProvider] = useState("environment");
+  const [secretReference, setSecretReference] = useState("");
 
   useEffect(() => {
     const handler = (e: any) => {
@@ -216,7 +224,7 @@ export default function ConnectionsPage() {
     setDeferredPrompt(null);
   };
 
-  const connectionsQuery = useQuery<PlatformConnection[]>({
+  const connectionsQuery = useQuery<PublicPlatformConnection[]>({
     queryKey: ["/api/platform-connections"],
   });
 
@@ -264,7 +272,10 @@ export default function ConnectionsPage() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/platform-connections"] });
       setConnectDialogOpen(false);
-      toast({ title: "Platform connected", description: "Connection created successfully." });
+      toast({ title: "Connection plan saved", description: "User authorization and sandbox validation are still required." });
+    },
+    onError: (error: Error) => {
+      toast({ title: "Connection plan rejected", description: error.message, variant: "destructive" });
     },
   });
 
@@ -272,10 +283,6 @@ export default function ConnectionsPage() {
     mutationFn: async (enabled: boolean) => {
       const res = await apiRequest("POST", "/api/kill-switch", { enabled });
       if (enabled) {
-        // Task says kill switch should disconnect all platforms? 
-        // "Make the Kill Switch work - it should call a mutation to disconnect all platforms"
-        // Let's assume the backend handles this or we should call deletes here.
-        // Actually, let's just make sure it does what's asked.
         await apiRequest("POST", "/api/platform-connections/disconnect-all", {});
       }
       return res.json();
@@ -284,8 +291,10 @@ export default function ConnectionsPage() {
       queryClient.invalidateQueries({ queryKey: ["/api/kill-switch"] });
       queryClient.invalidateQueries({ queryKey: ["/api/platform-connections"] });
       toast({
-        title: data.enabled ? "KILL SWITCH ACTIVATED" : "Kill switch deactivated",
-        description: data.enabled ? "All bot operations have been paused and platforms disconnected." : "Bot operations resumed.",
+        title: data.enabled ? "CONNECTION LOCK ACTIVATED" : "Connection lock deactivated",
+        description: data.enabled
+          ? "New plans are blocked and local connection records were removed. Revoke provider grants separately."
+          : "Connection planning is available again.",
         variant: data.enabled ? "destructive" : "default",
       });
     },
@@ -306,18 +315,23 @@ export default function ConnectionsPage() {
 
   const handleConnect = (platform: typeof PLATFORMS[0]) => {
     setSelectedPlatform(platform);
+    setOfficialUrl("");
+    setAuthMethod(platform.id === "webhook" ? "webhook_hmac" : platform.id === "api" ? "api_key" : "oauth_pkce");
+    setSecretProvider("environment");
+    setSecretReference("");
     setConnectDialogOpen(true);
   };
 
   const handleConfirmConnect = () => {
     if (!selectedPlatform) return;
+    const secretMethod = ["api_key", "webhook_hmac", "custom_rest"].includes(authMethod);
     createConnection.mutate({
       platform: selectedPlatform.id,
       name: selectedPlatform.label,
-      webhookUrl: generateWebhookUrl(selectedPlatform.id),
-      apiKey: generateApiKey(),
-      status: "connected",
-      config: {},
+      officialUrl,
+      authMethod,
+      requestedScopes: [],
+      ...(secretMethod ? { secretProvider, secretReference } : {}),
     });
   };
 
@@ -329,6 +343,7 @@ export default function ConnectionsPage() {
   const getConnectionForPlatform = (platformId: string) => {
     return connections.find(c => c.platform === platformId);
   };
+  const secretMethodSelected = ["api_key", "webhook_hmac", "custom_rest"].includes(authMethod);
 
   return (
     <AppShell>
@@ -350,8 +365,8 @@ export default function ConnectionsPage() {
             <CardContent className="p-4 flex items-center gap-3">
               <AlertTriangle className="h-5 w-5 text-destructive" />
               <div className="flex-1">
-                <p className="font-semibold text-destructive" data-testid="text-kill-switch-warning">KILL SWITCH ACTIVE - All bot operations paused</p>
-                <p className="text-sm text-muted-foreground">Deactivate the kill switch to resume operations.</p>
+                <p className="font-semibold text-destructive" data-testid="text-kill-switch-warning">CONNECTION LOCK ACTIVE</p>
+                <p className="text-sm text-muted-foreground">New connection plans and signup handoffs are blocked.</p>
               </div>
               <Button
                 variant="destructive"
@@ -372,7 +387,7 @@ export default function ConnectionsPage() {
             <TabsTrigger value="github-sync" data-testid="tab-github-sync">GitHub Sync</TabsTrigger>
             <TabsTrigger value="install" data-testid="tab-install">Install App</TabsTrigger>
             <TabsTrigger value="kill-switch" data-testid="tab-kill-switch">Kill Switch</TabsTrigger>
-            <TabsTrigger value="api-keys" data-testid="tab-api-keys">API Keys</TabsTrigger>
+            <TabsTrigger value="api-keys" data-testid="tab-api-keys">Access Registry</TabsTrigger>
           </TabsList>
 
           <TabsContent value="platforms" className="space-y-4 mt-6">
@@ -393,30 +408,17 @@ export default function ConnectionsPage() {
                             <p className="text-sm text-muted-foreground mt-1">{platform.description}</p>
                           </div>
                         </div>
-                        <Badge variant={conn ? "default" : "outline"} className={cn(conn ? "bg-green-500/15 text-green-500 border-green-500/20" : "")}>
-                          {conn ? "Connected" : "Available"}
+                        <Badge variant="outline" className={cn(conn ? "bg-yellow-500/15 text-yellow-500 border-yellow-500/20" : "")}>
+                          {conn ? conn.status.replaceAll("_", " ") : "Available"}
                         </Badge>
                       </div>
 
                       <div className="mt-4 flex gap-2">
                         {conn ? (
                           <>
-                            <Button
-                              size="sm"
-                              variant="outline"
-                              onClick={() => copyToClipboard(conn.webhookUrl)}
-                              data-testid={`button-copy-webhook-${platform.id}`}
-                            >
-                              <Copy className="h-3 w-3 mr-1" /> Webhook URL
-                            </Button>
-                            <Button
-                              size="sm"
-                              variant="outline"
-                              onClick={() => copyToClipboard(conn.apiKey)}
-                              data-testid={`button-copy-key-${platform.id}`}
-                            >
-                              <Key className="h-3 w-3 mr-1" /> API Key
-                            </Button>
+                            <Badge variant="outline" className="gap-1">
+                              <Shield className="h-3 w-3" /> {conn.authMethod.replaceAll("_", " ")}
+                            </Badge>
                             <Button
                               size="sm"
                               variant="ghost"
@@ -433,7 +435,7 @@ export default function ConnectionsPage() {
                             onClick={() => handleConnect(platform)}
                             data-testid={`button-connect-${platform.id}`}
                           >
-                            <Plug className="h-3 w-3 mr-1" /> Connect
+                            <Plug className="h-3 w-3 mr-1" /> Plan
                           </Button>
                         )}
                       </div>
@@ -701,13 +703,13 @@ export default function ConnectionsPage() {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <PowerOff className="h-5 w-5 text-destructive" />
-                  Emergency Kill Switch
+                  Connection Kill Switch
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-6">
                 <p className="text-muted-foreground">
-                  The kill switch immediately pauses all bot operations, task execution, and automated workflows. 
-                  Use this for emergency situations. Accessible from any device including phones.
+                  The switch blocks new connection plans and account handoffs, then removes local connection records.
+                  Revoke existing provider grants from each application's official security settings.
                 </p>
 
                 <div className="flex items-center justify-between p-6 rounded-lg border-2 border-dashed">
@@ -721,12 +723,12 @@ export default function ConnectionsPage() {
                     </div>
                     <div>
                       <h3 className="text-lg font-bold" data-testid="text-kill-switch-status">
-                        {killSwitchEnabled ? "SYSTEM PAUSED" : "System Active"}
+                        {killSwitchEnabled ? "CONNECTIONS LOCKED" : "Connections Available"}
                       </h3>
                       <p className="text-sm text-muted-foreground">
                         {killSwitchEnabled 
-                          ? "All operations are currently paused" 
-                          : "All bots and workflows are running normally"}
+                          ? "New connection and signup requests are blocked"
+                          : "No connection stop flag is set"}
                       </p>
                     </div>
                   </div>
@@ -776,13 +778,13 @@ export default function ConnectionsPage() {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <Key className="h-5 w-5" />
-                  Active API Keys & Webhooks
+                  Governed Connection Records
                 </CardTitle>
               </CardHeader>
               <CardContent>
                 {connections.length === 0 ? (
                   <p className="text-muted-foreground text-center py-8" data-testid="text-no-connections">
-                    No active connections. Connect a platform to get API keys.
+                    No connection plans. Add a platform to prepare scoped authentication.
                   </p>
                 ) : (
                   <div className="space-y-3">
@@ -794,14 +796,16 @@ export default function ConnectionsPage() {
                           <Icon className={cn("h-4 w-4", platform?.color)} />
                           <div className="flex-1 min-w-0">
                             <p className="font-medium text-sm">{conn.name}</p>
-                            <p className="text-xs text-muted-foreground truncate font-mono">{conn.webhookUrl}</p>
+                            <p className="text-xs text-muted-foreground truncate font-mono">
+                              {conn.officialOrigin ?? "Legacy record"} · {conn.authMethod.replaceAll("_", " ")}
+                            </p>
                           </div>
                           <Badge variant="outline" className="text-xs">
                             {conn.status}
                           </Badge>
-                          <Button size="sm" variant="ghost" onClick={() => copyToClipboard(conn.apiKey)}>
-                            <Copy className="h-3 w-3" />
-                          </Button>
+                          <Badge variant="outline" className="text-xs">
+                            {conn.secretReferenceConfigured ? "Vault reference" : "User handoff"}
+                          </Badge>
                         </div>
                       );
                     })}
@@ -814,7 +818,7 @@ export default function ConnectionsPage() {
               <CardContent className="p-4 flex items-center gap-3">
                 <Shield className="h-4 w-4 text-primary flex-shrink-0" />
                 <p className="text-sm text-muted-foreground">
-                  All API keys are encrypted. Low to zero API costs - you'll be notified before any charges apply. Same pricing as Replit.
+                  Raw passwords, API keys, tokens, passkeys, and recovery codes are not returned by this API. Secret-backed connectors store only an approved vault reference.
                 </p>
               </CardContent>
             </Card>
@@ -827,34 +831,87 @@ export default function ConnectionsPage() {
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
               {selectedPlatform && <selectedPlatform.icon className={cn("h-5 w-5", selectedPlatform.color)} />}
-              Connect {selectedPlatform?.label}
+              Plan {selectedPlatform?.label} Connection
             </DialogTitle>
           </DialogHeader>
           <div className="grid gap-4 py-4">
             <div className="space-y-2">
-              <Label>Setup Instructions</Label>
+              <Label>Connection policy</Label>
               <div className="text-sm text-muted-foreground p-3 bg-muted rounded-md space-y-2">
-                <p>1. Copy your {selectedPlatform?.label} API Token from your platform settings.</p>
-                <p>2. Paste the token below to verify the connection.</p>
-                <p>3. Click 'Confirm Connection' to finalize the integration.</p>
+                <p>Raw passwords, tokens, and API keys are never entered here.</p>
+                <p>User presence is required for consent, MFA, passkeys, identity, and payment.</p>
+                <p>Write, publish, account, and money-moving actions stay approval-gated.</p>
               </div>
             </div>
             <div className="space-y-2">
-              <Label htmlFor="api-key">Generated Empire API Key</Label>
-              <div className="flex gap-2">
-                <Input id="api-key" value={generateApiKey()} readOnly className="font-mono text-xs" />
-                <Button size="icon" variant="outline" onClick={() => copyToClipboard(generateApiKey())} data-testid="button-copy-key-gen">
-                  <Copy className="h-4 w-4" />
-                </Button>
-              </div>
-              <p className="text-[10px] text-muted-foreground">Use this key to authenticate DreamCo requests on {selectedPlatform?.label}.</p>
+              <Label htmlFor="official-url">Official app URL</Label>
+              <Input
+                id="official-url"
+                type="url"
+                value={officialUrl}
+                onChange={(event) => setOfficialUrl(event.target.value)}
+                placeholder="https://app.example.com"
+                data-testid="input-official-url"
+              />
             </div>
+            <div className="space-y-2">
+              <Label htmlFor="auth-method">Authentication method</Label>
+              <select
+                id="auth-method"
+                value={authMethod}
+                onChange={(event) => setAuthMethod(event.target.value)}
+                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+                data-testid="select-auth-method"
+              >
+                <option value="oauth_pkce">OAuth 2.1 + PKCE</option>
+                <option value="oauth_device">OAuth Device Code</option>
+                <option value="api_key">API Key Reference</option>
+                <option value="webhook_hmac">Signed Webhook</option>
+                <option value="passkey_webauthn">Passkey / WebAuthn</option>
+                <option value="browser_session_handoff">Browser Session Handoff</option>
+                <option value="oidc_saml">OIDC / SAML SSO</option>
+                <option value="custom_rest">Custom REST Adapter</option>
+              </select>
+            </div>
+            {secretMethodSelected && (
+              <>
+                <div className="space-y-2">
+                  <Label htmlFor="secret-provider">Secret storage</Label>
+                  <select
+                    id="secret-provider"
+                    value={secretProvider}
+                    onChange={(event) => setSecretProvider(event.target.value)}
+                    className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+                    data-testid="select-secret-provider"
+                  >
+                    <option value="environment">Environment variable</option>
+                    <option value="os_keychain">OS keychain</option>
+                    <option value="managed_vault">Managed vault</option>
+                  </select>
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="secret-reference">Secret reference name</Label>
+                  <Input
+                    id="secret-reference"
+                    value={secretReference}
+                    onChange={(event) => setSecretReference(event.target.value)}
+                    placeholder="CLIENT_APP_API_KEY"
+                    autoComplete="off"
+                    data-testid="input-secret-reference"
+                  />
+                </div>
+              </>
+            )}
           </div>
           <div className="flex justify-end gap-3">
             <Button variant="outline" onClick={() => setConnectDialogOpen(false)}>Cancel</Button>
-            <Button onClick={handleConfirmConnect} disabled={createConnection.isPending} data-testid="button-confirm-connect">
+            <Button
+              onClick={handleConfirmConnect}
+              disabled={createConnection.isPending || !officialUrl || (secretMethodSelected && !secretReference)}
+              data-testid="button-confirm-connect"
+            >
               {createConnection.isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-              <Plug className="h-4 w-4 mr-1" /> Connect
+              <Plug className="h-4 w-4 mr-1" /> Save Plan
             </Button>
           </div>
         </DialogContent>

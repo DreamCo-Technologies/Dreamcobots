@@ -1,0 +1,92 @@
+{
+  "schema": "dreamco.buddy_connector_registry.v1",
+  "summary": {
+    "default_mode": "guided",
+    "secret_storage": "reference_only",
+    "signup_mode": "assisted_handoff",
+    "raw_credentials_accepted": false
+  },
+  "auth_methods": [
+    {
+      "id": "oauth_pkce",
+      "label": "OAuth 2.1 + PKCE",
+      "status": "adapter_ready",
+      "secret_reference_required": false,
+      "user_presence": true,
+      "description": "Browser authorization with state, scoped consent, and a backend-only PKCE verifier."
+    },
+    {
+      "id": "oauth_device",
+      "label": "OAuth Device Code",
+      "status": "adapter_ready",
+      "secret_reference_required": false,
+      "user_presence": true,
+      "description": "Short-lived code handoff for televisions, terminals, and devices without a full browser."
+    },
+    {
+      "id": "api_key",
+      "label": "API Key Reference",
+      "status": "adapter_ready",
+      "secret_reference_required": true,
+      "user_presence": false,
+      "description": "Backend resolves a named environment, keychain, or managed-vault entry."
+    },
+    {
+      "id": "webhook_hmac",
+      "label": "Signed Webhook",
+      "status": "adapter_ready",
+      "secret_reference_required": true,
+      "user_presence": false,
+      "description": "Timestamped webhook verification with replay protection and secret rotation."
+    },
+    {
+      "id": "passkey_webauthn",
+      "label": "Passkey / WebAuthn",
+      "status": "user_handoff",
+      "secret_reference_required": false,
+      "user_presence": true,
+      "description": "Passkey creation and use remain on the user's trusted device."
+    },
+    {
+      "id": "browser_session_handoff",
+      "label": "Browser Session Handoff",
+      "status": "user_handoff",
+      "secret_reference_required": false,
+      "user_presence": true,
+      "description": "Buddy opens the official sign-in route and receives only connection status."
+    },
+    {
+      "id": "oidc_saml",
+      "label": "OIDC / SAML SSO",
+      "status": "configuration_required",
+      "secret_reference_required": false,
+      "user_presence": true,
+      "description": "Organization-managed identity with metadata, callback, role, and group mapping."
+    },
+    {
+      "id": "custom_rest",
+      "label": "Custom REST Adapter",
+      "status": "adapter_ready",
+      "secret_reference_required": true,
+      "user_presence": false,
+      "description": "Schema-driven adapter for documented APIs with sandbox checks and least privilege."
+    }
+  ],
+  "user_presence_gates": [
+    {"id": "terms_and_privacy", "label": "Legal consent"},
+    {"id": "captcha", "label": "Human verification"},
+    {"id": "identity_or_business_check", "label": "Identity or business proof"},
+    {"id": "contact_verification", "label": "Email or phone verification"},
+    {"id": "mfa_or_passkey", "label": "MFA or passkey"},
+    {"id": "payment", "label": "Payment or subscription"},
+    {"id": "account_recovery", "label": "Recovery ownership"}
+  ],
+  "connector_contracts": [
+    {"id": "productivity", "label": "Productivity and files", "minimum_scope": "read selected resources"},
+    {"id": "communications", "label": "Email, chat, and calendar", "minimum_scope": "draft before send"},
+    {"id": "developer", "label": "Code and deployment", "minimum_scope": "selected project or repository"},
+    {"id": "commerce", "label": "Commerce and payments", "minimum_scope": "read-only until transaction approval"},
+    {"id": "media", "label": "Media and publishing", "minimum_scope": "draft and preview before publish"},
+    {"id": "custom", "label": "Documented custom application", "minimum_scope": "sandbox before live access"}
+  ]
+}
