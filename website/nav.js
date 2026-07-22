@@ -11,6 +11,7 @@
     { href: 'bots.html', label: '🤖 Bot Fleet' },
     { href: 'system-map.html', label: '🗺️ Repository Map' },
     { href: 'chat.html', label: '💬 Chat' },
+    { href: 'install.html', label: '📲 Install & Launch' },
     { href: 'autonomy.html', label: '⚡ Autonomy' },
     { href: 'ecosystem.html', label: '🌐 Ecosystem' },
     { href: 'orchestration.html', label: '🎛️ Orchestration' },
@@ -45,7 +46,7 @@
         </div>
       </div>
       <div class="nav-cta">
-        <a href="pricing.html" class="btn btn-outline btn-sm">Plans</a>
+        <a href="install.html" class="btn btn-outline btn-sm">Install</a>
         <a href="buddy.html" class="btn btn-primary btn-sm">Open Buddy</a>
       </div>
     </div>
@@ -73,6 +74,18 @@
     manifest.rel = 'manifest';
     manifest.href = 'manifest.webmanifest';
     document.head.appendChild(manifest);
+  }
+  if (!document.querySelector('link[rel="apple-touch-icon"]')) {
+    const touchIcon = document.createElement('link');
+    touchIcon.rel = 'apple-touch-icon';
+    touchIcon.href = 'assets/images/buddy-icon-192.png';
+    document.head.appendChild(touchIcon);
+  }
+
+  if ('serviceWorker' in navigator && location.protocol !== 'file:') {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('service-worker.js', { scope: './' }).catch(() => {});
+    });
   }
 
   const style = document.createElement('style');

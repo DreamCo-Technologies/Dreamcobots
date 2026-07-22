@@ -19,6 +19,9 @@ test("maps every division profile to a verified Buddy route and sandbox blueprin
   assert.ok(catalog.bots.every((bot) => bot.tools.some((tool) => (
     tool.id === "buddy_bot_calculator" && tool.status === "local_interactive_ready"
   ))));
+  assert.ok(catalog.bots.every((bot) => bot.tools.some((tool) => (
+    tool.id === "buddy_distribution_service" && tool.status === "web_ready_native_review_required"
+  ))));
 });
 
 test("gives every bot a deterministic unique logo identity", () => {

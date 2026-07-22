@@ -17,6 +17,7 @@
     <button class="settings-tab" onclick="switchTab('skill-packs',this)">🎒 Skill Packs</button>
     <button class="settings-tab" onclick="switchTab('plugins',this)">🔌 Plugins</button>
     <button class="settings-tab" onclick="switchTab('verticals',this)">🏭 Industry Verticals</button>
+    <button class="settings-tab" onclick="switchTab('launch-services',this)">🚀 Launch Services</button>
   </div>
 
   <div id="plans">
@@ -60,10 +61,21 @@
       <div class="card card-lg"><div style="font-size:2rem;margin-bottom:12px">🏦</div><h3>Fintech</h3><p style="margin:8px 0 16px;font-size:.875rem">Banking API integrations, fraud detection, loan underwriting, and financial reporting automation.</p><span class="badge badge-amber">Elite</span></div>
     </div>
   </div>
+
+  <div id="launch-services" style="display:none">
+    <section style="display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:24px;padding:26px;border:1px solid var(--border);background:var(--card)">
+      <div>
+        <span class="badge badge-green">Free scope assessment</span>
+        <h2 style="margin:10px 0 8px;font-size:1.25rem">Build, package, and publish client projects</h2>
+        <p style="max-width:780px">Website and PWA launches, phone and tablet stores, desktop packages, TV platforms, game stores, VR, simulations, and school-course delivery. Every plan identifies the real package, account, fee, review, and approval requirements.</p>
+      </div>
+      <a class="btn btn-primary" href="install.html">Open Launch Center</a>
+    </section>
+  </div>
 </div>
 <script>
 function switchTab(id, btn) {
-  ['plans','skill-packs','plugins','verticals'].forEach(t => document.getElementById(t).style.display='none');
+  ['plans','skill-packs','plugins','verticals','launch-services'].forEach(t => document.getElementById(t).style.display='none');
   document.querySelectorAll('.settings-tab').forEach(b => b.classList.remove('active'));
   document.getElementById(id).style.display=''; btn.classList.add('active');
 }

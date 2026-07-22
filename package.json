@@ -13,11 +13,12 @@
     "buddy:creative-studio": "python3 tools/generate_buddy_multimodal_studio.py --check",
     "buddy:platform": "python3 tools/generate_buddy_platform_expansion.py --check",
     "buddy:calculators": "python3 tools/generate_buddy_bot_calculators.py --check",
+    "buddy:distribution": "python3 tools/generate_buddy_distribution_catalog.py --check",
     "buddy:fleet": "tsx tools/generate_bot_fleet_catalog.ts --check",
     "buddy:fleet:e2e": "node --import tsx tools/run_bot_fleet_e2e.ts --check",
     "buddy:connections": "python3 tools/generate_buddy_connection_catalog.py --check",
     "buddy:cli": "python3 tools/buddy_cli.py",
-    "test:governed": "node --import tsx --test tests/bot-fleet-catalog.test.ts tests/fleet-runtime.test.ts tests/bot-calculator-engine.test.mjs tests/approval-notifications.test.ts tests/outbound-adapters.test.ts tests/github-sync-policy.test.ts && python3 -m unittest tests.test_buddy_bot_calculators tests.test_buddy_creative_studio tests.test_buddy_game_lab tests.test_buddy_social_manager tests.test_buddy_platform_expansion"
+    "test:governed": "node --import tsx --test tests/bot-fleet-catalog.test.ts tests/fleet-runtime.test.ts tests/bot-calculator-engine.test.mjs tests/approval-notifications.test.ts tests/outbound-adapters.test.ts tests/github-sync-policy.test.ts && python3 -m unittest tests.test_buddy_bot_calculators tests.test_buddy_distribution tests.test_buddy_creative_studio tests.test_buddy_game_lab tests.test_buddy_social_manager tests.test_buddy_platform_expansion"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",

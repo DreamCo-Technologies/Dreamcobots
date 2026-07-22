@@ -1,0 +1,448 @@
+{
+  "schema": "dreamco.distribution_catalog.v1",
+  "service_packages": [
+    {
+      "commercial_model": "scoped_quote_after_free_assessment",
+      "deliverables": [
+        "production build",
+        "HTTPS deployment",
+        "installable PWA",
+        "offline fallback",
+        "analytics-ready handoff",
+        "rollback plan"
+      ],
+      "name": "Website and PWA Go-Live",
+      "project_types": [
+        "website",
+        "web_app",
+        "creative_tool",
+        "bot_system"
+      ],
+      "service_id": "website_pwa_launch",
+      "target_families": [
+        "web"
+      ]
+    },
+    {
+      "commercial_model": "scoped_quote_per_platform",
+      "deliverables": [
+        "signed build plan",
+        "store metadata",
+        "privacy declarations",
+        "screenshots",
+        "test-track packet",
+        "owner submission session"
+      ],
+      "name": "Phone and Tablet Store Release",
+      "project_types": [
+        "mobile_app",
+        "web_app",
+        "game",
+        "course"
+      ],
+      "service_id": "mobile_tablet_release",
+      "target_families": [
+        "mobile_tablet"
+      ]
+    },
+    {
+      "commercial_model": "scoped_quote_per_store_family",
+      "deliverables": [
+        "store-ready build matrix",
+        "controller and performance tests",
+        "ratings checklist",
+        "store assets",
+        "depot or package plan",
+        "certification evidence"
+      ],
+      "name": "Game Store Publishing",
+      "project_types": [
+        "game",
+        "simulation"
+      ],
+      "service_id": "game_store_release",
+      "target_families": [
+        "game",
+        "vr_xr"
+      ]
+    },
+    {
+      "commercial_model": "scoped_quote_per_tv_family",
+      "deliverables": [
+        "remote-control UX review",
+        "ten-foot accessibility",
+        "TV package matrix",
+        "device testing plan",
+        "store metadata",
+        "certification handoff"
+      ],
+      "name": "TV and Living-Room Distribution",
+      "project_types": [
+        "web_app",
+        "game",
+        "simulation",
+        "course",
+        "creative_tool"
+      ],
+      "service_id": "tv_living_room_release",
+      "target_families": [
+        "tv",
+        "embedded_display"
+      ]
+    },
+    {
+      "commercial_model": "scoped_quote_per_learning_environment",
+      "deliverables": [
+        "SCORM or xAPI package plan",
+        "LTI integration plan",
+        "accessibility evidence",
+        "assessment validation",
+        "teacher guide",
+        "LMS import handoff"
+      ],
+      "name": "Course and LMS Delivery",
+      "project_types": [
+        "course",
+        "simulation",
+        "game"
+      ],
+      "service_id": "course_lms_delivery",
+      "target_families": [
+        "education",
+        "web"
+      ]
+    },
+    {
+      "commercial_model": "scoped_quote_per_operating_system",
+      "deliverables": [
+        "platform build matrix",
+        "code-signing plan",
+        "installer packages",
+        "update channel",
+        "security checks",
+        "download or store handoff"
+      ],
+      "name": "Desktop Packaging and Distribution",
+      "project_types": [
+        "desktop_app",
+        "web_app",
+        "game",
+        "simulation",
+        "creative_tool",
+        "bot_system"
+      ],
+      "service_id": "desktop_distribution",
+      "target_families": [
+        "desktop"
+      ]
+    },
+    {
+      "commercial_model": "custom_scoped_quote",
+      "deliverables": [
+        "release architecture",
+        "shared evidence vault",
+        "target-specific packages",
+        "submission calendar",
+        "approval ledger",
+        "launch and rollback coordination"
+      ],
+      "name": "Multi-Platform Launch Management",
+      "project_types": [
+        "website",
+        "web_app",
+        "mobile_app",
+        "desktop_app",
+        "game",
+        "simulation",
+        "course",
+        "creative_tool",
+        "bot_system"
+      ],
+      "service_id": "multi_platform_launch",
+      "target_families": [
+        "web",
+        "mobile_tablet",
+        "desktop",
+        "tv",
+        "game",
+        "vr_xr",
+        "education",
+        "embedded_display"
+      ]
+    }
+  ],
+  "summary": {
+    "available_now": 2,
+    "families": 8,
+    "services": 7,
+    "targets": 26
+  },
+  "targets": [
+    {
+      "account_requirement": "hosting account",
+      "artifact": "HTTPS web build",
+      "family": "web",
+      "install_mode": "open_url",
+      "name": "Any modern web browser",
+      "public_status": "available_now",
+      "release_gate": "deployment checks",
+      "target_id": "web_browser"
+    },
+    {
+      "account_requirement": "hosting account",
+      "artifact": "manifest, service worker, icons, and HTTPS build",
+      "family": "web",
+      "install_mode": "browser_install_prompt",
+      "name": "Installable web app",
+      "public_status": "available_now_supported_browser",
+      "release_gate": "installability checks",
+      "target_id": "pwa"
+    },
+    {
+      "account_requirement": "Apple Developer and App Store Connect accounts",
+      "artifact": "signed iOS/iPadOS archive",
+      "family": "mobile_tablet",
+      "install_mode": "apple_app_store",
+      "name": "iPhone and iPad",
+      "public_status": "package_and_review_required",
+      "release_gate": "Apple review",
+      "target_id": "ios_ipados"
+    },
+    {
+      "account_requirement": "verified Play Console account",
+      "artifact": "signed Android App Bundle",
+      "family": "mobile_tablet",
+      "install_mode": "google_play",
+      "name": "Android phones and tablets",
+      "public_status": "package_and_review_required",
+      "release_gate": "Google Play review",
+      "target_id": "android"
+    },
+    {
+      "account_requirement": "owner-controlled HTTPS hosting",
+      "artifact": "signed Android APK",
+      "family": "mobile_tablet",
+      "install_mode": "owner_hosted_download",
+      "name": "Direct Android download",
+      "public_status": "package_build_required",
+      "release_gate": "signature and sideload safety review",
+      "target_id": "android_direct"
+    },
+    {
+      "account_requirement": "Amazon Developer account",
+      "artifact": "signed Android-compatible package",
+      "family": "mobile_tablet",
+      "install_mode": "amazon_appstore",
+      "name": "Amazon Fire tablets",
+      "public_status": "package_and_review_required",
+      "release_gate": "Amazon Appstore review",
+      "target_id": "fire_tablet"
+    },
+    {
+      "account_requirement": "Microsoft Partner Center or signing identity",
+      "artifact": "signed MSIX or desktop installer",
+      "family": "desktop",
+      "install_mode": "microsoft_store_or_signed_download",
+      "name": "Windows",
+      "public_status": "package_and_review_required",
+      "release_gate": "package certification",
+      "target_id": "windows"
+    },
+    {
+      "account_requirement": "Apple Developer account",
+      "artifact": "signed and notarized macOS app",
+      "family": "desktop",
+      "install_mode": "mac_app_store_or_notarized_download",
+      "name": "macOS",
+      "public_status": "package_and_review_required",
+      "release_gate": "notarization or App Store review",
+      "target_id": "macos"
+    },
+    {
+      "account_requirement": "owner distribution account as applicable",
+      "artifact": "AppImage, Flatpak, Snap, deb, or rpm",
+      "family": "desktop",
+      "install_mode": "repository_or_direct_download",
+      "name": "Linux",
+      "public_status": "package_build_required",
+      "release_gate": "package and dependency tests",
+      "target_id": "linux"
+    },
+    {
+      "account_requirement": "hosting or Play Console account",
+      "artifact": "PWA or compatible Android bundle",
+      "family": "desktop",
+      "install_mode": "pwa_or_google_play",
+      "name": "ChromeOS",
+      "public_status": "package_route_selection_required",
+      "release_gate": "installability or Play review",
+      "target_id": "chromeos"
+    },
+    {
+      "account_requirement": "Apple Developer and App Store Connect accounts",
+      "artifact": "signed tvOS archive",
+      "family": "tv",
+      "install_mode": "apple_app_store",
+      "name": "Apple TV",
+      "public_status": "package_and_review_required",
+      "release_gate": "Apple tvOS review",
+      "target_id": "apple_tv"
+    },
+    {
+      "account_requirement": "verified Play Console account",
+      "artifact": "TV-compatible Android App Bundle",
+      "family": "tv",
+      "install_mode": "google_play",
+      "name": "Android TV",
+      "public_status": "package_and_review_required",
+      "release_gate": "TV quality and Play review",
+      "target_id": "android_tv"
+    },
+    {
+      "account_requirement": "verified Play Console account",
+      "artifact": "TV-compatible Android App Bundle",
+      "family": "tv",
+      "install_mode": "google_play",
+      "name": "Google TV",
+      "public_status": "package_and_review_required",
+      "release_gate": "TV quality and Play review",
+      "target_id": "google_tv"
+    },
+    {
+      "account_requirement": "Amazon Developer account",
+      "artifact": "Fire TV-compatible Android package",
+      "family": "tv",
+      "install_mode": "amazon_appstore",
+      "name": "Amazon Fire TV",
+      "public_status": "package_and_review_required",
+      "release_gate": "Amazon Fire TV review",
+      "target_id": "fire_tv"
+    },
+    {
+      "account_requirement": "Samsung Seller Office account",
+      "artifact": "signed Tizen widget package",
+      "family": "tv",
+      "install_mode": "samsung_tv_store",
+      "name": "Samsung Smart TV",
+      "public_status": "package_and_review_required",
+      "release_gate": "Samsung TV certification",
+      "target_id": "samsung_tv"
+    },
+    {
+      "account_requirement": "LG Seller Lounge account",
+      "artifact": "signed webOS package",
+      "family": "tv",
+      "install_mode": "lg_content_store",
+      "name": "LG Smart TV",
+      "public_status": "package_and_review_required",
+      "release_gate": "LG content review",
+      "target_id": "lg_tv"
+    },
+    {
+      "account_requirement": "Roku Developer account",
+      "artifact": "Roku channel package",
+      "family": "tv",
+      "install_mode": "roku_channel_store",
+      "name": "Roku",
+      "public_status": "package_and_review_required",
+      "release_gate": "Roku certification",
+      "target_id": "roku"
+    },
+    {
+      "account_requirement": "Steamworks partner account",
+      "artifact": "tested depot builds",
+      "family": "game",
+      "install_mode": "steam_store",
+      "name": "Steam",
+      "public_status": "package_and_review_required",
+      "release_gate": "Steam store and build review",
+      "target_id": "steam"
+    },
+    {
+      "account_requirement": "Epic publisher account",
+      "artifact": "tested game builds",
+      "family": "game",
+      "install_mode": "epic_games_store",
+      "name": "Epic Games Store",
+      "public_status": "package_and_review_required",
+      "release_gate": "Epic product review",
+      "target_id": "epic"
+    },
+    {
+      "account_requirement": "authorized Microsoft game-publishing account",
+      "artifact": "approved Xbox package",
+      "family": "game",
+      "install_mode": "microsoft_store",
+      "name": "Xbox",
+      "public_status": "publisher_program_required",
+      "release_gate": "Xbox certification",
+      "target_id": "xbox"
+    },
+    {
+      "account_requirement": "authorized PlayStation partner account",
+      "artifact": "approved PlayStation package",
+      "family": "game",
+      "install_mode": "playstation_store",
+      "name": "PlayStation",
+      "public_status": "publisher_program_required",
+      "release_gate": "PlayStation certification",
+      "target_id": "playstation"
+    },
+    {
+      "account_requirement": "authorized Nintendo developer account",
+      "artifact": "approved Nintendo package",
+      "family": "game",
+      "install_mode": "nintendo_eshop",
+      "name": "Nintendo",
+      "public_status": "publisher_program_required",
+      "release_gate": "Nintendo certification",
+      "target_id": "nintendo"
+    },
+    {
+      "account_requirement": "itch.io creator account",
+      "artifact": "HTML5 or downloadable game bundle",
+      "family": "game",
+      "install_mode": "itch_store",
+      "name": "itch.io",
+      "public_status": "package_build_required",
+      "release_gate": "rights and package review",
+      "target_id": "itch"
+    },
+    {
+      "account_requirement": "Meta developer account",
+      "artifact": "signed Quest Android bundle",
+      "family": "vr_xr",
+      "install_mode": "meta_horizon_store",
+      "name": "Meta Quest",
+      "public_status": "package_and_review_required",
+      "release_gate": "Meta store review",
+      "target_id": "meta_quest"
+    },
+    {
+      "account_requirement": "institution-authorized LMS account",
+      "artifact": "SCORM, xAPI, Common Cartridge, or LTI package",
+      "family": "education",
+      "install_mode": "lms_import_or_lti",
+      "name": "School and college LMS",
+      "public_status": "package_and_review_required",
+      "release_gate": "accessibility and institutional review",
+      "target_id": "lms"
+    },
+    {
+      "account_requirement": "owner-managed device fleet",
+      "artifact": "kiosk web build or device-specific package",
+      "family": "embedded_display",
+      "install_mode": "managed_web_or_device_package",
+      "name": "Kiosks and smart displays",
+      "public_status": "package_build_required",
+      "release_gate": "device and security validation",
+      "target_id": "smart_display"
+    }
+  ],
+  "truth_policy": {
+    "commercial_service": "A service listing is an offer to scope work, not evidence of checkout, store acceptance, or completed delivery.",
+    "install_now": "Only the website and supported-browser PWA paths are immediately available.",
+    "native_release": "Native device and store releases require target packages, owner accounts, provider terms, review, and fees where applicable.",
+    "universal_access": "The HTTPS web app works on compatible browsers; no single native binary runs on every device."
+  }
+}

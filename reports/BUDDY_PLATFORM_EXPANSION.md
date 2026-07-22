@@ -7,6 +7,7 @@ This registry distinguishes repository-controlled capability cores from official
 - `business_launchpad`: Business formation planning (`official_handoff_required`)
 - `prototype_factory`: Prompt-to-prototype build plan (`local_build_ready`)
 - `app_release_council`: Web and app-store release evidence council (`owner_submission_required`)
+- `distribution_service`: Multi-device packaging and publishing service (`web_ready_native_review_required`)
 - `data_wallet`: Consent, portability, opt-out, and licensed-data controls (`local_core_ready`)
 - `bill_subscription_manager`: Bill and subscription tracking (`owner_payment_required`)
 - `task_runner`: Concurrent and timed tasks up to 24 hours (`adapter_ready`)

@@ -9,6 +9,14 @@ from .launchpad import (
     ReleaseCouncil,
     StoreTarget,
 )
+from .distribution import (
+    BuddyDistributionService,
+    DistributionBrief,
+    DistributionError,
+    DistributionTarget,
+    SERVICE_PACKAGES,
+    TARGETS,
+)
 
 __all__ = [
     "AppReleaseBrief",
@@ -18,4 +26,10 @@ __all__ = [
     "PrototypeBrief",
     "ReleaseCouncil",
     "StoreTarget",
+    "BuddyDistributionService",
+    "DistributionBrief",
+    "DistributionError",
+    "DistributionTarget",
+    "SERVICE_PACKAGES",
+    "TARGETS",
 ]
