@@ -259,12 +259,15 @@ def validate_site() -> dict[str, Any]:
         WEBSITE / "index.html",
         WEBSITE / "buddy.html",
         WEBSITE / "buddy-site-sync.js",
+        WEBSITE / "connections.html",
+        WEBSITE / "connections.js",
         WEBSITE / "nav.js",
         WEBSITE / "studio.html",
         WEBSITE / "studio.js",
         WEBSITE / "styles.css",
         WEBSITE / "system-map.html",
         WEBSITE / "data" / "buddy-site-status.json",
+        WEBSITE / "data" / "buddy-connection-catalog.json",
         PUBLIC_MAP,
     ]
     for path in required_files:

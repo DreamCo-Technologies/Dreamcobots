@@ -1,73 +1,147 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Connections — DreamCo Empire OS</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Buddy App Connections - DreamCo Empire OS</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
 <div id="nav-placeholder"></div><script src="nav.js"></script>
-<div class="container" style="padding:48px 0">
-  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:32px">
-    <div><h1 style="font-size:1.75rem;margin-bottom:6px">Connections</h1><p>Multi-platform access, API keys, and the global kill switch</p></div>
-    <button class="btn btn-sm" style="background:var(--red);color:#fff;border:none" onclick="killSwitch()">⛔ Kill Switch</button>
-  </div>
 
-  <div style="display:flex;gap:8px;margin-bottom:28px">
-    <button class="settings-tab active" onclick="switchTab('platforms',this)">🔗 Platforms</button>
-    <button class="settings-tab" onclick="switchTab('apis',this)">🔌 APIs</button>
-    <button class="settings-tab" onclick="switchTab('install',this)">📱 Install App</button>
-  </div>
-
-  <div id="platforms">
-    <div class="grid-3" style="margin-bottom:28px">
-      <div class="card"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px"><h4>🤖 OpenAI</h4><span class="badge badge-green">● Connected</span></div><p style="font-size:.83rem;color:var(--text2)">GPT-4.1-mini powers all 1,051 bots. Token usage tracked in real-time.</p><div style="margin-top:12px;font-family:var(--mono);font-size:.75rem;color:var(--text3)">Model: gpt-4.1-mini · Max: 2,000 tokens</div></div>
-      <div class="card"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px"><h4>🐙 GitHub</h4><span class="badge badge-green">● Connected</span></div><p style="font-size:.83rem;color:var(--text2)">Repository access for DreamCo-Technologies. Buddy Bot has full read/write access.</p><div style="margin-top:12px;font-size:.8rem"><a href="https://github.com/DreamCo-Technologies/Dreamcobots" target="_blank" style="color:var(--primary)">DreamCo-Technologies/Dreamcobots →</a></div></div>
-      <div class="card"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px"><h4>💳 Stripe</h4><span class="badge badge-amber">⚠ Partial</span></div><p style="font-size:.83rem;color:var(--text2)">Stripe integration installed. Add STRIPE_SECRET_KEY and STRIPE_PUBLISHABLE_KEY to activate live checkout.</p><a href="settings.html" class="btn btn-outline btn-sm" style="margin-top:12px">Add Keys →</a></div>
-      <div class="card"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px"><h4>🔊 ElevenLabs</h4><span class="badge badge-gray">○ Not Connected</span></div><p style="font-size:.83rem;color:var(--text2)">Voice synthesis for Buddy Bot. Add ELEVENLABS_API_KEY to enable text-to-speech responses.</p><a href="settings.html" class="btn btn-outline btn-sm" style="margin-top:12px">Connect →</a></div>
-      <div class="card"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px"><h4>🔍 Serper</h4><span class="badge badge-gray">○ Not Connected</span></div><p style="font-size:.83rem;color:var(--text2)">Real-time web search. Add SERPER_API_KEY to give all bots live internet access.</p><a href="settings.html" class="btn btn-outline btn-sm" style="margin-top:12px">Connect →</a></div>
-      <div class="card"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px"><h4>🗄️ PostgreSQL</h4><span class="badge badge-green">● Connected</span></div><p style="font-size:.83rem;color:var(--text2)">Neon-backed PostgreSQL. 17 tables, all schemas applied. Zero downtime.</p><div style="margin-top:12px;font-family:var(--mono);font-size:.75rem;color:var(--text3)">17 tables · Drizzle ORM · Neon</div></div>
+<main class="connections-shell">
+  <header class="connections-header">
+    <div>
+      <div class="connections-kicker">Buddy access broker</div>
+      <h1>App Connections</h1>
+      <p>Scoped authentication, account handoffs, and connection governance.</p>
     </div>
-  </div>
+    <button id="planner-lock" class="btn btn-outline btn-sm" type="button">Lock planner</button>
+  </header>
 
-  <div id="apis" style="display:none">
-    <div class="card card-lg" style="margin-bottom:24px">
-      <h3 style="margin-bottom:16px">API Integration Registry</h3>
-      <p style="margin-bottom:20px">200+ API integrations available across all 45 divisions.</p>
-      <div style="display:flex;flex-direction:column;gap:0">
-        <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 0;border-bottom:1px solid var(--border)"><div><strong>Apollo.io</strong> <span style="color:var(--text3);font-size:.8rem">· DreamSalesPro</span></div><span class="badge badge-green">Active</span></div>
-        <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 0;border-bottom:1px solid var(--border)"><div><strong>Hunter.io</strong> <span style="color:var(--text3);font-size:.8rem">· DreamSalesPro</span></div><span class="badge badge-green">Active</span></div>
-        <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 0;border-bottom:1px solid var(--border)"><div><strong>Uniswap API</strong> <span style="color:var(--text3);font-size:.8rem">· DreamCrypto</span></div><span class="badge badge-green">Active</span></div>
-        <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 0;border-bottom:1px solid var(--border)"><div><strong>Aave Protocol</strong> <span style="color:var(--text3);font-size:.8rem">· DreamFinance</span></div><span class="badge badge-green">Active</span></div>
-        <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 0;border-bottom:1px solid var(--border)"><div><strong>Smartlead</strong> <span style="color:var(--text3);font-size:.8rem">· DreamSalesPro</span></div><span class="badge badge-amber">Config needed</span></div>
-        <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 0"><div><strong>Instantly.ai</strong> <span style="color:var(--text3);font-size:.8rem">· DreamSalesPro</span></div><span class="badge badge-amber">Config needed</span></div>
+  <section class="connection-metrics" aria-label="Connection policy summary">
+    <div><strong id="auth-method-count">8</strong><span>Auth methods</span></div>
+    <div><strong id="gate-count">7</strong><span>User gates</span></div>
+    <div><strong>0</strong><span>Secrets in browser</span></div>
+    <div><strong>Guided</strong><span>Default mode</span></div>
+  </section>
+
+  <nav class="connection-tabs" aria-label="Connection views">
+    <button class="settings-tab active" type="button" data-panel="catalog-panel">Catalog</button>
+    <button class="settings-tab" type="button" data-panel="connect-panel">Connect app</button>
+    <button class="settings-tab" type="button" data-panel="signup-panel">Sign-up queue</button>
+    <button class="settings-tab" type="button" data-panel="audit-panel">Audit</button>
+  </nav>
+
+  <section id="catalog-panel" class="connection-panel">
+    <div class="connection-section-heading">
+      <div><span class="status-dot status-dot-ready"></span><strong>Authentication adapters</strong></div>
+      <span id="catalog-status" class="badge badge-gray">Loading</span>
+    </div>
+    <div id="auth-method-grid" class="auth-method-grid" aria-live="polite"></div>
+
+    <div class="connections-two-column">
+      <section class="connection-surface">
+        <h2>User-presence gates</h2>
+        <div id="gate-list" class="connection-list"></div>
+      </section>
+      <section class="connection-surface">
+        <h2>Connector contracts</h2>
+        <div id="contract-list" class="connection-list"></div>
+      </section>
+    </div>
+  </section>
+
+  <section id="connect-panel" class="connection-panel" hidden>
+    <div class="connections-workbench">
+      <form id="connection-form" class="connection-surface connection-form">
+        <div class="connection-section-heading">
+          <div><span class="status-dot status-dot-ready"></span><strong>New connection plan</strong></div>
+          <span class="badge badge-green">No raw credentials</span>
+        </div>
+
+        <label for="connection-app">App label</label>
+        <input id="connection-app" name="app" type="text" minlength="2" maxlength="80" placeholder="Client workspace" required />
+
+        <label for="connection-url">Official app URL</label>
+        <input id="connection-url" name="url" type="url" placeholder="https://app.example.com" required />
+
+        <label for="connection-method">Authentication method</label>
+        <select id="connection-method" name="method" required></select>
+
+        <label for="connection-scopes">Requested scopes</label>
+        <input id="connection-scopes" name="scopes" type="text" placeholder="profile.read, projects.read" />
+
+        <div id="secret-reference-fields" hidden>
+          <label for="secret-provider">Secret storage</label>
+          <select id="secret-provider" name="secretProvider">
+            <option value="environment">Environment variable</option>
+            <option value="os_keychain">OS keychain</option>
+            <option value="managed_vault">Managed vault</option>
+          </select>
+
+          <label for="secret-reference">Secret reference name</label>
+          <input id="secret-reference" name="secretReference" type="text" placeholder="CLIENT_APP_API_KEY" autocomplete="off" />
+          <small>Enter a name or vault locator, never the credential value.</small>
+        </div>
+
+        <button class="btn btn-primary" type="submit">Prepare connection</button>
+        <p id="connection-error" class="connection-error" role="alert" hidden></p>
+      </form>
+
+      <section id="connection-result" class="connection-surface connection-result" aria-live="polite">
+        <div class="empty-connection-state">
+          <strong>No active plan</strong>
+          <span>Connection plans appear here before backend execution.</span>
+        </div>
+      </section>
+    </div>
+  </section>
+
+  <section id="signup-panel" class="connection-panel" hidden>
+    <div class="connections-workbench">
+      <form id="signup-form" class="connection-surface connection-form">
+        <div class="connection-section-heading">
+          <div><span class="status-dot status-dot-warn"></span><strong>Account handoff</strong></div>
+          <span class="badge badge-amber">User completes signup</span>
+        </div>
+
+        <label for="signup-app">App label</label>
+        <input id="signup-app" name="app" type="text" minlength="2" maxlength="80" placeholder="Project management app" required />
+
+        <label for="signup-url">Official signup URL</label>
+        <input id="signup-url" name="url" type="url" placeholder="https://app.example.com/signup" required />
+
+        <label for="signup-purpose">Account purpose</label>
+        <textarea id="signup-purpose" name="purpose" minlength="5" maxlength="240" placeholder="Manage an approved client project" required></textarea>
+
+        <button class="btn btn-primary" type="submit">Prepare sign-up handoff</button>
+        <p id="signup-error" class="connection-error" role="alert" hidden></p>
+      </form>
+
+      <section id="signup-result" class="connection-surface connection-result" aria-live="polite">
+        <div class="empty-connection-state">
+          <strong>No queued signup</strong>
+          <span>Buddy prepares the handoff; the user completes protected steps.</span>
+        </div>
+      </section>
+    </div>
+  </section>
+
+  <section id="audit-panel" class="connection-panel" hidden>
+    <section class="connection-surface">
+      <div class="connection-section-heading">
+        <div><span class="status-dot status-dot-ready"></span><strong>Browser-local audit</strong></div>
+        <button id="clear-connection-audit" class="btn btn-outline btn-sm" type="button">Clear</button>
       </div>
-      <p style="font-size:.8rem;color:var(--text3);margin-top:16px">+ 194 more APIs across all 45 divisions. Manage in the live app.</p>
-    </div>
-  </div>
+      <p class="connection-muted">Only plan status, app label, official host, auth method, and timestamp are retained.</p>
+      <div id="connection-audit" class="audit-list" aria-live="polite"></div>
+    </section>
+  </section>
+</main>
 
-  <div id="install" style="display:none">
-    <div class="grid-2" style="gap:24px">
-      <div class="card card-lg"><h3 style="margin-bottom:16px">📱 Android</h3><ol style="padding-left:20px;display:flex;flex-direction:column;gap:8px;font-size:.875rem;color:var(--text2)"><li>Open Empire OS in Chrome</li><li>Tap the three-dot menu (⋮)</li><li>Select "Add to Home Screen"</li><li>Tap "Add" to confirm</li></ol></div>
-      <div class="card card-lg"><h3 style="margin-bottom:16px">🍎 iPhone / iPad</h3><ol style="padding-left:20px;display:flex;flex-direction:column;gap:8px;font-size:.875rem;color:var(--text2)"><li>Open Empire OS in Safari</li><li>Tap the Share button (□↑)</li><li>Scroll down, tap "Add to Home Screen"</li><li>Tap "Add" to confirm</li></ol></div>
-      <div class="card card-lg"><h3 style="margin-bottom:16px">🪟 Windows</h3><ol style="padding-left:20px;display:flex;flex-direction:column;gap:8px;font-size:.875rem;color:var(--text2)"><li>Open Empire OS in Chrome or Edge</li><li>Click the install icon (⊕) in the address bar</li><li>Click "Install"</li></ol></div>
-      <div class="card card-lg"><h3 style="margin-bottom:16px">🍎 Mac</h3><ol style="padding-left:20px;display:flex;flex-direction:column;gap:8px;font-size:.875rem;color:var(--text2)"><li>Open Empire OS in Chrome</li><li>Click the install icon in address bar</li><li>Click "Install" to add to Dock</li></ol></div>
-      <div class="card card-lg" style="grid-column:1/-1"><h3 style="margin-bottom:12px">Install Now</h3><p style="font-size:.875rem;margin-bottom:16px">Your browser may show an install prompt below. Click to install Empire OS as a standalone app.</p><button class="btn btn-primary" onclick="installApp()">📲 Install Empire OS</button></div>
-    </div>
-  </div>
-</div>
-<script>
-function switchTab(id, btn) {
-  ['platforms','apis','install'].forEach(t => document.getElementById(t).style.display='none');
-  document.querySelectorAll('.settings-tab').forEach(b => b.classList.remove('active'));
-  document.getElementById(id).style.display=''; btn.classList.add('active');
-}
-function killSwitch() { if(confirm('Kill Switch: This disconnects ALL bots and APIs immediately. Are you sure?')) alert('In the live app, this would immediately terminate all bot connections and API calls.'); }
-let deferredPrompt;
-window.addEventListener('beforeinstallprompt', e => { e.preventDefault(); deferredPrompt = e; });
-function installApp() { if(deferredPrompt) { deferredPrompt.prompt(); } else { alert('Open this page in Chrome or Edge on desktop, or Safari on iOS to install as an app.'); } }
-</script>
+<script src="connections.js" defer></script>
 </body>
 </html>

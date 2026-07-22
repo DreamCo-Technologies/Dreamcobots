@@ -1,0 +1,158 @@
+{
+  "auth_methods": [
+    {
+      "description": "Browser authorization with state, scoped consent, and a backend-only PKCE verifier.",
+      "id": "oauth_pkce",
+      "label": "OAuth 2.1 + PKCE",
+      "secret_reference_required": false,
+      "status": "adapter_ready",
+      "user_presence": true
+    },
+    {
+      "description": "Short-lived code handoff for televisions, terminals, and devices without a full browser.",
+      "id": "oauth_device",
+      "label": "OAuth Device Code",
+      "secret_reference_required": false,
+      "status": "adapter_ready",
+      "user_presence": true
+    },
+    {
+      "description": "Backend resolves a named environment, keychain, or managed-vault entry.",
+      "id": "api_key",
+      "label": "API Key Reference",
+      "secret_reference_required": true,
+      "status": "adapter_ready",
+      "user_presence": false
+    },
+    {
+      "description": "Timestamped webhook verification with replay protection and secret rotation.",
+      "id": "webhook_hmac",
+      "label": "Signed Webhook",
+      "secret_reference_required": true,
+      "status": "adapter_ready",
+      "user_presence": false
+    },
+    {
+      "description": "Passkey creation and use remain on the user's trusted device.",
+      "id": "passkey_webauthn",
+      "label": "Passkey / WebAuthn",
+      "secret_reference_required": false,
+      "status": "user_handoff",
+      "user_presence": true
+    },
+    {
+      "description": "Buddy opens the official sign-in route and receives only connection status.",
+      "id": "browser_session_handoff",
+      "label": "Browser Session Handoff",
+      "secret_reference_required": false,
+      "status": "user_handoff",
+      "user_presence": true
+    },
+    {
+      "description": "Organization-managed identity with metadata, callback, role, and group mapping.",
+      "id": "oidc_saml",
+      "label": "OIDC / SAML SSO",
+      "secret_reference_required": false,
+      "status": "configuration_required",
+      "user_presence": true
+    },
+    {
+      "description": "Schema-driven adapter for documented APIs with sandbox checks and least privilege.",
+      "id": "custom_rest",
+      "label": "Custom REST Adapter",
+      "secret_reference_required": true,
+      "status": "adapter_ready",
+      "user_presence": false
+    }
+  ],
+  "connector_contracts": [
+    {
+      "id": "productivity",
+      "label": "Productivity and files",
+      "minimum_scope": "read selected resources"
+    },
+    {
+      "id": "communications",
+      "label": "Email, chat, and calendar",
+      "minimum_scope": "draft before send"
+    },
+    {
+      "id": "developer",
+      "label": "Code and deployment",
+      "minimum_scope": "selected project or repository"
+    },
+    {
+      "id": "commerce",
+      "label": "Commerce and payments",
+      "minimum_scope": "read-only until transaction approval"
+    },
+    {
+      "id": "media",
+      "label": "Media and publishing",
+      "minimum_scope": "draft and preview before publish"
+    },
+    {
+      "id": "custom",
+      "label": "Documented custom application",
+      "minimum_scope": "sandbox before live access"
+    }
+  ],
+  "public_contract": {
+    "backend_required_for": [
+      "token exchange",
+      "secret resolution",
+      "live API calls",
+      "connection revocation"
+    ],
+    "live_account_creation": false,
+    "live_authentication": false,
+    "mode": "connection_planner",
+    "raw_secrets_collected": false,
+    "stored_browser_data": [
+      "plan status",
+      "app label",
+      "official host",
+      "timestamp"
+    ]
+  },
+  "schema": "dreamco.public_buddy_connection_catalog.v1",
+  "summary": {
+    "auth_method_count": 8,
+    "connector_contract_count": 6,
+    "default_mode": "guided",
+    "raw_credentials_accepted": false,
+    "secret_storage": "reference_only",
+    "signup_mode": "assisted_handoff",
+    "user_presence_gate_count": 7
+  },
+  "user_presence_gates": [
+    {
+      "id": "terms_and_privacy",
+      "label": "Legal consent"
+    },
+    {
+      "id": "captcha",
+      "label": "Human verification"
+    },
+    {
+      "id": "identity_or_business_check",
+      "label": "Identity or business proof"
+    },
+    {
+      "id": "contact_verification",
+      "label": "Email or phone verification"
+    },
+    {
+      "id": "mfa_or_passkey",
+      "label": "MFA or passkey"
+    },
+    {
+      "id": "payment",
+      "label": "Payment or subscription"
+    },
+    {
+      "id": "account_recovery",
+      "label": "Recovery ownership"
+    }
+  ]
+}

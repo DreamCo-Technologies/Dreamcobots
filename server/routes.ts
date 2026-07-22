@@ -1,4 +1,4 @@
-import type { Express } from "express";
+import type { Express, Request, Response } from "express";
 import type { Server } from "http";
 import OpenAI from "openai";
 import { z } from "zod";
@@ -10,7 +10,7 @@ import { ALL_BOTS as CORE_BOTS } from "./seed-bots";
 import { GITHUB_BOTS } from "./seed-github-bots";
 import { CODELAB_BOTS } from "./seed-codelabs";
 import { BUDDY_BOT } from "./seed-buddy-bot";
-import { DIVISIONS, insertBotMetricSchema, insertBotErrorSchema, insertBotFinancialSchema, insertAlertRuleSchema, insertDealSchema, insertDebugEventSchema, insertAutoFixSchema, insertRevenueLeakSchema, insertSecurityScanSchema, insertFormulaSchema, insertPlatformConnectionSchema, insertPluginSchema, insertBotMemorySchema, insertSystemSnapshotSchema, insertCostEventSchema } from "@shared/schema";
+import { DIVISIONS, insertBotMetricSchema, insertBotErrorSchema, insertBotFinancialSchema, insertAlertRuleSchema, insertDealSchema, insertDebugEventSchema, insertAutoFixSchema, insertRevenueLeakSchema, insertSecurityScanSchema, insertFormulaSchema, insertPluginSchema, insertBotMemorySchema, insertSystemSnapshotSchema, insertCostEventSchema } from "@shared/schema";
 import type { BotActivityResponse } from "@shared/schema";
 import { calculateRealEstate, calculateCarFlip, type RealEstateInputs, type CarFlipInputs } from "@shared/deal-calculations";
 import { FORMULA_LIBRARY } from "@shared/formula-library";
@@ -19,6 +19,14 @@ import { getUncachableStripeClient, getStripePublishableKey } from "./stripeClie
 import { db } from "./db";
 import { batchProcessWithSSE } from "./replit_integrations/batch";
 import { registerAudioRoutes } from "./replit_integrations/audio";
+import {
+  connectionPlanRequestSchema,
+  connectionStatusUpdateSchema,
+  createSignupHandoff,
+  signupHandoffRequestSchema,
+  toPublicConnection,
+  toStoredConnection,
+} from "./connection-policy";
 
 const CORE_SLUGS = new Set(CORE_BOTS.map(b => b.slug));
 const GITHUB_SLUGS = new Set(GITHUB_BOTS.map(b => b.slug));
@@ -2697,27 +2705,38 @@ Any improvements or fixes (optional, 1-2 bullet points max)`;
   // ===== PLATFORM CONNECTIONS =====
   app.get("/api/platform-connections", async (_req, res) => {
     const connections = await storage.listPlatformConnections();
-    res.json(connections);
+    res.json(connections.map(toPublicConnection));
   });
 
-  app.post("/api/platform-connections", async (req, res) => {
-    const parsed = insertPlatformConnectionSchema.safeParse(req.body);
+  const createConnectionPlan = async (req: Request, res: Response) => {
+    const killSwitch = await storage.getSetting("kill_switch");
+    if ((killSwitch?.value as { enabled?: boolean } | undefined)?.enabled) {
+      return res.status(423).json({ message: "Connection planning is locked by the kill switch" });
+    }
+    const parsed = connectionPlanRequestSchema.safeParse(req.body);
     if (!parsed.success) return res.status(400).json(zodValidationError(parsed.error));
-    const conn = await storage.createPlatformConnection(parsed.data);
-    res.json(conn);
-  });
+    const connection = await storage.createPlatformConnection(toStoredConnection(parsed.data));
+    return res.status(201).json(toPublicConnection(connection));
+  };
+
+  app.post("/api/platform-connections", createConnectionPlan);
+  app.post("/api/connections", createConnectionPlan);
 
   app.patch("/api/platform-connections/:id", async (req, res) => {
     const id = parseInt(req.params.id);
-    const conn = await storage.updatePlatformConnection(id, req.body);
+    if (!Number.isInteger(id) || id < 1) return res.status(400).json({ error: "Invalid connection id" });
+    const parsed = connectionStatusUpdateSchema.safeParse(req.body);
+    if (!parsed.success) return res.status(400).json(zodValidationError(parsed.error));
+    const conn = await storage.updatePlatformConnection(id, parsed.data);
     if (!conn) return res.status(404).json({ error: "Connection not found" });
-    res.json(conn);
+    res.json(toPublicConnection(conn));
   });
 
   app.delete("/api/platform-connections/:id", async (req, res) => {
     const id = parseInt(req.params.id);
+    if (!Number.isInteger(id) || id < 1) return res.status(400).json({ error: "Invalid connection id" });
     await storage.deletePlatformConnection(id);
-    res.json({ success: true });
+    res.json({ success: true, providerRevocationRequired: true });
   });
 
   app.post("/api/platform-connections/disconnect-all", async (_req, res) => {
@@ -2725,13 +2744,21 @@ Any improvements or fixes (optional, 1-2 bullet points max)`;
     for (const conn of connections) {
       await storage.deletePlatformConnection(conn.id);
     }
-    res.json({ success: true });
+    res.json({
+      success: true,
+      localRecordsDeleted: connections.length,
+      providerRevocationRequired: connections.length > 0,
+    });
   });
 
-  // Alias for connections as requested in the task
-  app.post("/api/connections", async (req, res) => {
-    const conn = await storage.createPlatformConnection(req.body);
-    res.json(conn);
+  app.post("/api/signup-handoffs", async (req, res) => {
+    const killSwitch = await storage.getSetting("kill_switch");
+    if ((killSwitch?.value as { enabled?: boolean } | undefined)?.enabled) {
+      return res.status(423).json({ message: "Signup handoffs are locked by the kill switch" });
+    }
+    const parsed = signupHandoffRequestSchema.safeParse(req.body);
+    if (!parsed.success) return res.status(400).json(zodValidationError(parsed.error));
+    res.status(201).json(createSignupHandoff(parsed.data));
   });
 
   // ===== KILL SWITCH =====
