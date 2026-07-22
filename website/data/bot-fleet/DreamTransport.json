@@ -48,6 +48,164 @@
           "Published pricing and revenue models are catalog plans, not evidence of sales or earnings."
         ]
       },
+      "business_system": {
+        "business_id": "business-fleet-tracker",
+        "operating_model": "owner_governed_service_business",
+        "specialization": {
+          "division": "DreamTransport",
+          "category": "fleet-management",
+          "mission": "Tracks fleet vehicles in real-time with route history and driver behavior monitoring.",
+          "ideal_customer_segments": [
+            "Fleet managers",
+            "logistics coordinators"
+          ],
+          "core_offer": "Fleet GPS Tracker: Tracks fleet vehicles in real-time with route history and driver behavior monitoring.",
+          "promised_outputs": [
+            "Real-time GPS tracking",
+            "Route history playback",
+            "Driver behavior scoring",
+            "Geofence alert management",
+            "Fuel consumption monitoring"
+          ],
+          "catalog_revenue_model": "SaaS subscription",
+          "catalog_price_range": "$149/mo",
+          "earnings_status": "no_revenue_or_customer_result_guaranteed"
+        },
+        "operating_workflow": [
+          "capture_owner_goal_and_offer",
+          "define_ideal_customer_profile",
+          "select_owner_authorized_sources",
+          "confirm_source_terms_and_collection_scope",
+          "research_and_deduplicate_candidates",
+          "qualify_need_fit_timing_and_permission",
+          "draft_one_relevant_message",
+          "request_exact_owner_approval",
+          "dispatch_through_configured_adapter_only",
+          "wait_for_required_follow_up_interval",
+          "stop_on_reply_opt_out_bounce_or_complaint",
+          "report_outcomes_without_claiming_guaranteed_revenue"
+        ],
+        "lead_system": {
+          "system_id": "lead-system-fleet-tracker",
+          "engine": "server/governed-leads.ts",
+          "status": "sandbox_ready_external_adapters_required",
+          "ideal_customer_profile": {
+            "segments": [
+              "Fleet managers",
+              "logistics coordinators"
+            ],
+            "need_signals": [
+              "Needs help with Real-time GPS tracking",
+              "Needs help with Route history playback",
+              "Needs help with Driver behavior scoring",
+              "Needs help with Geofence alert management",
+              "Needs help with Fuel consumption monitoring"
+            ],
+            "exclusion_rules": [
+              "no minors",
+              "no protected or sensitive trait targeting",
+              "no deceptive identity or impersonation",
+              "no lead without traceable source evidence"
+            ]
+          },
+          "discovery": {
+            "query_templates": [
+              "Fleet managers, logistics coordinators requesting Real-time GPS tracking",
+              "organizations seeking fleet-management support",
+              "inbound requests matching Fleet GPS Tracker",
+              "existing customers who opted in to Real-time GPS tracking updates"
+            ],
+            "authorized_source_types": [
+              "owner supplied records",
+              "consent based inbound requests",
+              "existing customer records with documented relationship",
+              "public business directories whose terms permit research",
+              "owner authorized provider APIs"
+            ],
+            "forbidden_collection": [
+              "private accounts or access-controlled pages",
+              "terms bypassing scraping",
+              "purchased, stolen, or unverifiable contact lists",
+              "raw credentials or secret tokens",
+              "sensitive personal data"
+            ]
+          },
+          "qualification": {
+            "required_fields": [
+              "source reference",
+              "organization or customer need",
+              "fit to the bot specialization",
+              "contact permission basis and channel scope",
+              "qualification evidence"
+            ],
+            "score_dimensions": {
+              "demonstrated_need": 30,
+              "capability_fit": 25,
+              "decision_readiness": 15,
+              "voluntarily_supplied_timing": 10,
+              "documented_contact_permission": 20
+            },
+            "minimum_score_for_owner_review": 65,
+            "permission_is_mandatory_even_above_threshold": true
+          },
+          "outreach": {
+            "supported_channels": [
+              "email",
+              "sms",
+              "voice_call",
+              "social_dm"
+            ],
+            "recipient_channel_permission_required": true,
+            "raw_contact_details_in_browser_forbidden": true,
+            "exact_owner_approval_per_message": true,
+            "maximum_daily_sends": 20,
+            "adapter_status": "configuration_required_for_live_dispatch"
+          },
+          "follow_up": {
+            "maximum_follow_ups": 2,
+            "minimum_interval_hours": 48,
+            "approval_required_for_each_follow_up": true,
+            "stop_conditions": [
+              "reply",
+              "opt out",
+              "bounce",
+              "complaint",
+              "permission expiry",
+              "owner stop",
+              "sequence complete"
+            ],
+            "suppression_ledger_required": true
+          },
+          "owner_controls": {
+            "default_mode": "research_and_draft_only",
+            "pause_and_kill_switch_required": true,
+            "one_action_approval_expiry_hours": 24,
+            "quiet_hours_supported": true,
+            "export_and_delete_supported": true
+          },
+          "metrics": [
+            "candidates researched",
+            "source evidence coverage",
+            "qualified leads",
+            "recipient permission coverage",
+            "owner approval rate",
+            "reply rate",
+            "positive reply rate",
+            "opt-out rate",
+            "bounce rate",
+            "complaint rate",
+            "conversion evidence"
+          ]
+        },
+        "readiness": {
+          "local_research_plan": "ready",
+          "qualification_and_drafts": "ready",
+          "exact_action_approval_packet": "ready",
+          "live_contact_discovery": "provider_and_terms_configuration_required",
+          "live_message_dispatch": "verified_adapter_recipient_permission_and_owner_approval_required",
+          "independent_production_business": false
+        }
+      },
       "capabilities": [
         {
           "name": "Real-time GPS tracking",
@@ -140,6 +298,12 @@
           "name": "Install and multi-platform distribution planner",
           "status": "web_ready_native_review_required",
           "evidence": "config/generated/buddy_distribution_catalog.json"
+        },
+        {
+          "id": "buddy_governed_lead_system",
+          "name": "Permission-gated lead discovery and follow-up system",
+          "status": "sandbox_ready_external_adapters_required",
+          "evidence": "server/governed-leads.ts"
         }
       ],
       "api_candidates": [],
@@ -258,6 +422,164 @@
           "Published pricing and revenue models are catalog plans, not evidence of sales or earnings."
         ]
       },
+      "business_system": {
+        "business_id": "business-route-optimizer",
+        "operating_model": "owner_governed_service_business",
+        "specialization": {
+          "division": "DreamTransport",
+          "category": "routing",
+          "mission": "Optimizes delivery routes with traffic prediction and multi-stop sequencing.",
+          "ideal_customer_segments": [
+            "Dispatchers",
+            "delivery managers"
+          ],
+          "core_offer": "Route Optimization Engine: Optimizes delivery routes with traffic prediction and multi-stop sequencing.",
+          "promised_outputs": [
+            "Multi-stop route optimization",
+            "Traffic pattern prediction",
+            "Time window constraint handling",
+            "Vehicle capacity optimization",
+            "Real-time rerouting engine"
+          ],
+          "catalog_revenue_model": "SaaS subscription",
+          "catalog_price_range": "$199/mo",
+          "earnings_status": "no_revenue_or_customer_result_guaranteed"
+        },
+        "operating_workflow": [
+          "capture_owner_goal_and_offer",
+          "define_ideal_customer_profile",
+          "select_owner_authorized_sources",
+          "confirm_source_terms_and_collection_scope",
+          "research_and_deduplicate_candidates",
+          "qualify_need_fit_timing_and_permission",
+          "draft_one_relevant_message",
+          "request_exact_owner_approval",
+          "dispatch_through_configured_adapter_only",
+          "wait_for_required_follow_up_interval",
+          "stop_on_reply_opt_out_bounce_or_complaint",
+          "report_outcomes_without_claiming_guaranteed_revenue"
+        ],
+        "lead_system": {
+          "system_id": "lead-system-route-optimizer",
+          "engine": "server/governed-leads.ts",
+          "status": "sandbox_ready_external_adapters_required",
+          "ideal_customer_profile": {
+            "segments": [
+              "Dispatchers",
+              "delivery managers"
+            ],
+            "need_signals": [
+              "Needs help with Multi-stop route optimization",
+              "Needs help with Traffic pattern prediction",
+              "Needs help with Time window constraint handling",
+              "Needs help with Vehicle capacity optimization",
+              "Needs help with Real-time rerouting engine"
+            ],
+            "exclusion_rules": [
+              "no minors",
+              "no protected or sensitive trait targeting",
+              "no deceptive identity or impersonation",
+              "no lead without traceable source evidence"
+            ]
+          },
+          "discovery": {
+            "query_templates": [
+              "Dispatchers, delivery managers requesting Multi-stop route optimization",
+              "organizations seeking routing support",
+              "inbound requests matching Route Optimization Engine",
+              "existing customers who opted in to Multi-stop route optimization updates"
+            ],
+            "authorized_source_types": [
+              "owner supplied records",
+              "consent based inbound requests",
+              "existing customer records with documented relationship",
+              "public business directories whose terms permit research",
+              "owner authorized provider APIs"
+            ],
+            "forbidden_collection": [
+              "private accounts or access-controlled pages",
+              "terms bypassing scraping",
+              "purchased, stolen, or unverifiable contact lists",
+              "raw credentials or secret tokens",
+              "sensitive personal data"
+            ]
+          },
+          "qualification": {
+            "required_fields": [
+              "source reference",
+              "organization or customer need",
+              "fit to the bot specialization",
+              "contact permission basis and channel scope",
+              "qualification evidence"
+            ],
+            "score_dimensions": {
+              "demonstrated_need": 30,
+              "capability_fit": 25,
+              "decision_readiness": 15,
+              "voluntarily_supplied_timing": 10,
+              "documented_contact_permission": 20
+            },
+            "minimum_score_for_owner_review": 65,
+            "permission_is_mandatory_even_above_threshold": true
+          },
+          "outreach": {
+            "supported_channels": [
+              "email",
+              "sms",
+              "voice_call",
+              "social_dm"
+            ],
+            "recipient_channel_permission_required": true,
+            "raw_contact_details_in_browser_forbidden": true,
+            "exact_owner_approval_per_message": true,
+            "maximum_daily_sends": 20,
+            "adapter_status": "configuration_required_for_live_dispatch"
+          },
+          "follow_up": {
+            "maximum_follow_ups": 2,
+            "minimum_interval_hours": 48,
+            "approval_required_for_each_follow_up": true,
+            "stop_conditions": [
+              "reply",
+              "opt out",
+              "bounce",
+              "complaint",
+              "permission expiry",
+              "owner stop",
+              "sequence complete"
+            ],
+            "suppression_ledger_required": true
+          },
+          "owner_controls": {
+            "default_mode": "research_and_draft_only",
+            "pause_and_kill_switch_required": true,
+            "one_action_approval_expiry_hours": 24,
+            "quiet_hours_supported": true,
+            "export_and_delete_supported": true
+          },
+          "metrics": [
+            "candidates researched",
+            "source evidence coverage",
+            "qualified leads",
+            "recipient permission coverage",
+            "owner approval rate",
+            "reply rate",
+            "positive reply rate",
+            "opt-out rate",
+            "bounce rate",
+            "complaint rate",
+            "conversion evidence"
+          ]
+        },
+        "readiness": {
+          "local_research_plan": "ready",
+          "qualification_and_drafts": "ready",
+          "exact_action_approval_packet": "ready",
+          "live_contact_discovery": "provider_and_terms_configuration_required",
+          "live_message_dispatch": "verified_adapter_recipient_permission_and_owner_approval_required",
+          "independent_production_business": false
+        }
+      },
       "capabilities": [
         {
           "name": "Multi-stop route optimization",
@@ -350,6 +672,12 @@
           "name": "Install and multi-platform distribution planner",
           "status": "web_ready_native_review_required",
           "evidence": "config/generated/buddy_distribution_catalog.json"
+        },
+        {
+          "id": "buddy_governed_lead_system",
+          "name": "Permission-gated lead discovery and follow-up system",
+          "status": "sandbox_ready_external_adapters_required",
+          "evidence": "server/governed-leads.ts"
         }
       ],
       "api_candidates": [],
@@ -468,6 +796,164 @@
           "Published pricing and revenue models are catalog plans, not evidence of sales or earnings."
         ]
       },
+      "business_system": {
+        "business_id": "business-freight-broker",
+        "operating_model": "owner_governed_service_business",
+        "specialization": {
+          "division": "DreamTransport",
+          "category": "freight",
+          "mission": "Automates freight brokerage with carrier matching and rate negotiation.",
+          "ideal_customer_segments": [
+            "Freight brokers",
+            "logistics companies"
+          ],
+          "core_offer": "Freight Brokerage AI: Automates freight brokerage with carrier matching and rate negotiation.",
+          "promised_outputs": [
+            "Carrier matching algorithm",
+            "Rate comparison engine",
+            "Load board integration",
+            "Document management automation",
+            "Margin optimization tools"
+          ],
+          "catalog_revenue_model": "Enterprise license",
+          "catalog_price_range": "$799/mo",
+          "earnings_status": "no_revenue_or_customer_result_guaranteed"
+        },
+        "operating_workflow": [
+          "capture_owner_goal_and_offer",
+          "define_ideal_customer_profile",
+          "select_owner_authorized_sources",
+          "confirm_source_terms_and_collection_scope",
+          "research_and_deduplicate_candidates",
+          "qualify_need_fit_timing_and_permission",
+          "draft_one_relevant_message",
+          "request_exact_owner_approval",
+          "dispatch_through_configured_adapter_only",
+          "wait_for_required_follow_up_interval",
+          "stop_on_reply_opt_out_bounce_or_complaint",
+          "report_outcomes_without_claiming_guaranteed_revenue"
+        ],
+        "lead_system": {
+          "system_id": "lead-system-freight-broker",
+          "engine": "server/governed-leads.ts",
+          "status": "sandbox_ready_external_adapters_required",
+          "ideal_customer_profile": {
+            "segments": [
+              "Freight brokers",
+              "logistics companies"
+            ],
+            "need_signals": [
+              "Needs help with Carrier matching algorithm",
+              "Needs help with Rate comparison engine",
+              "Needs help with Load board integration",
+              "Needs help with Document management automation",
+              "Needs help with Margin optimization tools"
+            ],
+            "exclusion_rules": [
+              "no minors",
+              "no protected or sensitive trait targeting",
+              "no deceptive identity or impersonation",
+              "no lead without traceable source evidence"
+            ]
+          },
+          "discovery": {
+            "query_templates": [
+              "Freight brokers, logistics companies requesting Carrier matching algorithm",
+              "organizations seeking freight support",
+              "inbound requests matching Freight Brokerage AI",
+              "existing customers who opted in to Carrier matching algorithm updates"
+            ],
+            "authorized_source_types": [
+              "owner supplied records",
+              "consent based inbound requests",
+              "existing customer records with documented relationship",
+              "public business directories whose terms permit research",
+              "owner authorized provider APIs"
+            ],
+            "forbidden_collection": [
+              "private accounts or access-controlled pages",
+              "terms bypassing scraping",
+              "purchased, stolen, or unverifiable contact lists",
+              "raw credentials or secret tokens",
+              "sensitive personal data"
+            ]
+          },
+          "qualification": {
+            "required_fields": [
+              "source reference",
+              "organization or customer need",
+              "fit to the bot specialization",
+              "contact permission basis and channel scope",
+              "qualification evidence"
+            ],
+            "score_dimensions": {
+              "demonstrated_need": 30,
+              "capability_fit": 25,
+              "decision_readiness": 15,
+              "voluntarily_supplied_timing": 10,
+              "documented_contact_permission": 20
+            },
+            "minimum_score_for_owner_review": 65,
+            "permission_is_mandatory_even_above_threshold": true
+          },
+          "outreach": {
+            "supported_channels": [
+              "email",
+              "sms",
+              "voice_call",
+              "social_dm"
+            ],
+            "recipient_channel_permission_required": true,
+            "raw_contact_details_in_browser_forbidden": true,
+            "exact_owner_approval_per_message": true,
+            "maximum_daily_sends": 20,
+            "adapter_status": "configuration_required_for_live_dispatch"
+          },
+          "follow_up": {
+            "maximum_follow_ups": 2,
+            "minimum_interval_hours": 48,
+            "approval_required_for_each_follow_up": true,
+            "stop_conditions": [
+              "reply",
+              "opt out",
+              "bounce",
+              "complaint",
+              "permission expiry",
+              "owner stop",
+              "sequence complete"
+            ],
+            "suppression_ledger_required": true
+          },
+          "owner_controls": {
+            "default_mode": "research_and_draft_only",
+            "pause_and_kill_switch_required": true,
+            "one_action_approval_expiry_hours": 24,
+            "quiet_hours_supported": true,
+            "export_and_delete_supported": true
+          },
+          "metrics": [
+            "candidates researched",
+            "source evidence coverage",
+            "qualified leads",
+            "recipient permission coverage",
+            "owner approval rate",
+            "reply rate",
+            "positive reply rate",
+            "opt-out rate",
+            "bounce rate",
+            "complaint rate",
+            "conversion evidence"
+          ]
+        },
+        "readiness": {
+          "local_research_plan": "ready",
+          "qualification_and_drafts": "ready",
+          "exact_action_approval_packet": "ready",
+          "live_contact_discovery": "provider_and_terms_configuration_required",
+          "live_message_dispatch": "verified_adapter_recipient_permission_and_owner_approval_required",
+          "independent_production_business": false
+        }
+      },
       "capabilities": [
         {
           "name": "Carrier matching algorithm",
@@ -560,6 +1046,12 @@
           "name": "Install and multi-platform distribution planner",
           "status": "web_ready_native_review_required",
           "evidence": "config/generated/buddy_distribution_catalog.json"
+        },
+        {
+          "id": "buddy_governed_lead_system",
+          "name": "Permission-gated lead discovery and follow-up system",
+          "status": "sandbox_ready_external_adapters_required",
+          "evidence": "server/governed-leads.ts"
         },
         {
           "id": "buddy_connection_broker",
@@ -684,6 +1176,164 @@
           "Published pricing and revenue models are catalog plans, not evidence of sales or earnings."
         ]
       },
+      "business_system": {
+        "business_id": "business-last-mile-ai",
+        "operating_model": "owner_governed_service_business",
+        "specialization": {
+          "division": "DreamTransport",
+          "category": "last-mile",
+          "mission": "Optimizes last-mile delivery with dynamic routing and proof of delivery capture.",
+          "ideal_customer_segments": [
+            "Delivery companies",
+            "e-commerce fulfillment"
+          ],
+          "core_offer": "Last-Mile Delivery Optimizer: Optimizes last-mile delivery with dynamic routing and proof of delivery capture.",
+          "promised_outputs": [
+            "Dynamic delivery routing",
+            "Proof of delivery capture",
+            "Customer notification automation",
+            "Delivery window management",
+            "Driver assignment optimization"
+          ],
+          "catalog_revenue_model": "SaaS subscription",
+          "catalog_price_range": "$179/mo",
+          "earnings_status": "no_revenue_or_customer_result_guaranteed"
+        },
+        "operating_workflow": [
+          "capture_owner_goal_and_offer",
+          "define_ideal_customer_profile",
+          "select_owner_authorized_sources",
+          "confirm_source_terms_and_collection_scope",
+          "research_and_deduplicate_candidates",
+          "qualify_need_fit_timing_and_permission",
+          "draft_one_relevant_message",
+          "request_exact_owner_approval",
+          "dispatch_through_configured_adapter_only",
+          "wait_for_required_follow_up_interval",
+          "stop_on_reply_opt_out_bounce_or_complaint",
+          "report_outcomes_without_claiming_guaranteed_revenue"
+        ],
+        "lead_system": {
+          "system_id": "lead-system-last-mile-ai",
+          "engine": "server/governed-leads.ts",
+          "status": "sandbox_ready_external_adapters_required",
+          "ideal_customer_profile": {
+            "segments": [
+              "Delivery companies",
+              "e-commerce fulfillment"
+            ],
+            "need_signals": [
+              "Needs help with Dynamic delivery routing",
+              "Needs help with Proof of delivery capture",
+              "Needs help with Customer notification automation",
+              "Needs help with Delivery window management",
+              "Needs help with Driver assignment optimization"
+            ],
+            "exclusion_rules": [
+              "no minors",
+              "no protected or sensitive trait targeting",
+              "no deceptive identity or impersonation",
+              "no lead without traceable source evidence"
+            ]
+          },
+          "discovery": {
+            "query_templates": [
+              "Delivery companies, e-commerce fulfillment requesting Dynamic delivery routing",
+              "organizations seeking last-mile support",
+              "inbound requests matching Last-Mile Delivery Optimizer",
+              "existing customers who opted in to Dynamic delivery routing updates"
+            ],
+            "authorized_source_types": [
+              "owner supplied records",
+              "consent based inbound requests",
+              "existing customer records with documented relationship",
+              "public business directories whose terms permit research",
+              "owner authorized provider APIs"
+            ],
+            "forbidden_collection": [
+              "private accounts or access-controlled pages",
+              "terms bypassing scraping",
+              "purchased, stolen, or unverifiable contact lists",
+              "raw credentials or secret tokens",
+              "sensitive personal data"
+            ]
+          },
+          "qualification": {
+            "required_fields": [
+              "source reference",
+              "organization or customer need",
+              "fit to the bot specialization",
+              "contact permission basis and channel scope",
+              "qualification evidence"
+            ],
+            "score_dimensions": {
+              "demonstrated_need": 30,
+              "capability_fit": 25,
+              "decision_readiness": 15,
+              "voluntarily_supplied_timing": 10,
+              "documented_contact_permission": 20
+            },
+            "minimum_score_for_owner_review": 65,
+            "permission_is_mandatory_even_above_threshold": true
+          },
+          "outreach": {
+            "supported_channels": [
+              "email",
+              "sms",
+              "voice_call",
+              "social_dm"
+            ],
+            "recipient_channel_permission_required": true,
+            "raw_contact_details_in_browser_forbidden": true,
+            "exact_owner_approval_per_message": true,
+            "maximum_daily_sends": 20,
+            "adapter_status": "configuration_required_for_live_dispatch"
+          },
+          "follow_up": {
+            "maximum_follow_ups": 2,
+            "minimum_interval_hours": 48,
+            "approval_required_for_each_follow_up": true,
+            "stop_conditions": [
+              "reply",
+              "opt out",
+              "bounce",
+              "complaint",
+              "permission expiry",
+              "owner stop",
+              "sequence complete"
+            ],
+            "suppression_ledger_required": true
+          },
+          "owner_controls": {
+            "default_mode": "research_and_draft_only",
+            "pause_and_kill_switch_required": true,
+            "one_action_approval_expiry_hours": 24,
+            "quiet_hours_supported": true,
+            "export_and_delete_supported": true
+          },
+          "metrics": [
+            "candidates researched",
+            "source evidence coverage",
+            "qualified leads",
+            "recipient permission coverage",
+            "owner approval rate",
+            "reply rate",
+            "positive reply rate",
+            "opt-out rate",
+            "bounce rate",
+            "complaint rate",
+            "conversion evidence"
+          ]
+        },
+        "readiness": {
+          "local_research_plan": "ready",
+          "qualification_and_drafts": "ready",
+          "exact_action_approval_packet": "ready",
+          "live_contact_discovery": "provider_and_terms_configuration_required",
+          "live_message_dispatch": "verified_adapter_recipient_permission_and_owner_approval_required",
+          "independent_production_business": false
+        }
+      },
       "capabilities": [
         {
           "name": "Dynamic delivery routing",
@@ -776,6 +1426,12 @@
           "name": "Install and multi-platform distribution planner",
           "status": "web_ready_native_review_required",
           "evidence": "config/generated/buddy_distribution_catalog.json"
+        },
+        {
+          "id": "buddy_governed_lead_system",
+          "name": "Permission-gated lead discovery and follow-up system",
+          "status": "sandbox_ready_external_adapters_required",
+          "evidence": "server/governed-leads.ts"
         }
       ],
       "api_candidates": [],
@@ -894,6 +1550,164 @@
           "Published pricing and revenue models are catalog plans, not evidence of sales or earnings."
         ]
       },
+      "business_system": {
+        "business_id": "business-dispatch-center",
+        "operating_model": "owner_governed_service_business",
+        "specialization": {
+          "division": "DreamTransport",
+          "category": "dispatch",
+          "mission": "Manages dispatch operations with automated assignment and priority scheduling.",
+          "ideal_customer_segments": [
+            "Dispatch managers",
+            "transportation directors"
+          ],
+          "core_offer": "AI Dispatch Center: Manages dispatch operations with automated assignment and priority scheduling.",
+          "promised_outputs": [
+            "Automated dispatch assignment",
+            "Priority-based scheduling",
+            "Driver availability tracking",
+            "Load consolidation engine",
+            "Real-time communication hub"
+          ],
+          "catalog_revenue_model": "Enterprise license",
+          "catalog_price_range": "$699/mo",
+          "earnings_status": "no_revenue_or_customer_result_guaranteed"
+        },
+        "operating_workflow": [
+          "capture_owner_goal_and_offer",
+          "define_ideal_customer_profile",
+          "select_owner_authorized_sources",
+          "confirm_source_terms_and_collection_scope",
+          "research_and_deduplicate_candidates",
+          "qualify_need_fit_timing_and_permission",
+          "draft_one_relevant_message",
+          "request_exact_owner_approval",
+          "dispatch_through_configured_adapter_only",
+          "wait_for_required_follow_up_interval",
+          "stop_on_reply_opt_out_bounce_or_complaint",
+          "report_outcomes_without_claiming_guaranteed_revenue"
+        ],
+        "lead_system": {
+          "system_id": "lead-system-dispatch-center",
+          "engine": "server/governed-leads.ts",
+          "status": "sandbox_ready_external_adapters_required",
+          "ideal_customer_profile": {
+            "segments": [
+              "Dispatch managers",
+              "transportation directors"
+            ],
+            "need_signals": [
+              "Needs help with Automated dispatch assignment",
+              "Needs help with Priority-based scheduling",
+              "Needs help with Driver availability tracking",
+              "Needs help with Load consolidation engine",
+              "Needs help with Real-time communication hub"
+            ],
+            "exclusion_rules": [
+              "no minors",
+              "no protected or sensitive trait targeting",
+              "no deceptive identity or impersonation",
+              "no lead without traceable source evidence"
+            ]
+          },
+          "discovery": {
+            "query_templates": [
+              "Dispatch managers, transportation directors requesting Automated dispatch assignment",
+              "organizations seeking dispatch support",
+              "inbound requests matching AI Dispatch Center",
+              "existing customers who opted in to Automated dispatch assignment updates"
+            ],
+            "authorized_source_types": [
+              "owner supplied records",
+              "consent based inbound requests",
+              "existing customer records with documented relationship",
+              "public business directories whose terms permit research",
+              "owner authorized provider APIs"
+            ],
+            "forbidden_collection": [
+              "private accounts or access-controlled pages",
+              "terms bypassing scraping",
+              "purchased, stolen, or unverifiable contact lists",
+              "raw credentials or secret tokens",
+              "sensitive personal data"
+            ]
+          },
+          "qualification": {
+            "required_fields": [
+              "source reference",
+              "organization or customer need",
+              "fit to the bot specialization",
+              "contact permission basis and channel scope",
+              "qualification evidence"
+            ],
+            "score_dimensions": {
+              "demonstrated_need": 30,
+              "capability_fit": 25,
+              "decision_readiness": 15,
+              "voluntarily_supplied_timing": 10,
+              "documented_contact_permission": 20
+            },
+            "minimum_score_for_owner_review": 65,
+            "permission_is_mandatory_even_above_threshold": true
+          },
+          "outreach": {
+            "supported_channels": [
+              "email",
+              "sms",
+              "voice_call",
+              "social_dm"
+            ],
+            "recipient_channel_permission_required": true,
+            "raw_contact_details_in_browser_forbidden": true,
+            "exact_owner_approval_per_message": true,
+            "maximum_daily_sends": 20,
+            "adapter_status": "configuration_required_for_live_dispatch"
+          },
+          "follow_up": {
+            "maximum_follow_ups": 2,
+            "minimum_interval_hours": 48,
+            "approval_required_for_each_follow_up": true,
+            "stop_conditions": [
+              "reply",
+              "opt out",
+              "bounce",
+              "complaint",
+              "permission expiry",
+              "owner stop",
+              "sequence complete"
+            ],
+            "suppression_ledger_required": true
+          },
+          "owner_controls": {
+            "default_mode": "research_and_draft_only",
+            "pause_and_kill_switch_required": true,
+            "one_action_approval_expiry_hours": 24,
+            "quiet_hours_supported": true,
+            "export_and_delete_supported": true
+          },
+          "metrics": [
+            "candidates researched",
+            "source evidence coverage",
+            "qualified leads",
+            "recipient permission coverage",
+            "owner approval rate",
+            "reply rate",
+            "positive reply rate",
+            "opt-out rate",
+            "bounce rate",
+            "complaint rate",
+            "conversion evidence"
+          ]
+        },
+        "readiness": {
+          "local_research_plan": "ready",
+          "qualification_and_drafts": "ready",
+          "exact_action_approval_packet": "ready",
+          "live_contact_discovery": "provider_and_terms_configuration_required",
+          "live_message_dispatch": "verified_adapter_recipient_permission_and_owner_approval_required",
+          "independent_production_business": false
+        }
+      },
       "capabilities": [
         {
           "name": "Automated dispatch assignment",
@@ -986,6 +1800,12 @@
           "name": "Install and multi-platform distribution planner",
           "status": "web_ready_native_review_required",
           "evidence": "config/generated/buddy_distribution_catalog.json"
+        },
+        {
+          "id": "buddy_governed_lead_system",
+          "name": "Permission-gated lead discovery and follow-up system",
+          "status": "sandbox_ready_external_adapters_required",
+          "evidence": "server/governed-leads.ts"
         }
       ],
       "api_candidates": [],
@@ -1104,6 +1924,164 @@
           "Published pricing and revenue models are catalog plans, not evidence of sales or earnings."
         ]
       },
+      "business_system": {
+        "business_id": "business-driver-compliance",
+        "operating_model": "owner_governed_service_business",
+        "specialization": {
+          "division": "DreamTransport",
+          "category": "compliance",
+          "mission": "Monitors driver compliance with HOS regulations and CDL tracking.",
+          "ideal_customer_segments": [
+            "Safety managers",
+            "compliance officers"
+          ],
+          "core_offer": "Driver Compliance Monitor: Monitors driver compliance with HOS regulations and CDL tracking.",
+          "promised_outputs": [
+            "HOS tracking automation",
+            "ELD integration engine",
+            "CDL expiry monitoring",
+            "Drug test scheduling",
+            "MVR record tracking"
+          ],
+          "catalog_revenue_model": "SaaS subscription",
+          "catalog_price_range": "$129/mo",
+          "earnings_status": "no_revenue_or_customer_result_guaranteed"
+        },
+        "operating_workflow": [
+          "capture_owner_goal_and_offer",
+          "define_ideal_customer_profile",
+          "select_owner_authorized_sources",
+          "confirm_source_terms_and_collection_scope",
+          "research_and_deduplicate_candidates",
+          "qualify_need_fit_timing_and_permission",
+          "draft_one_relevant_message",
+          "request_exact_owner_approval",
+          "dispatch_through_configured_adapter_only",
+          "wait_for_required_follow_up_interval",
+          "stop_on_reply_opt_out_bounce_or_complaint",
+          "report_outcomes_without_claiming_guaranteed_revenue"
+        ],
+        "lead_system": {
+          "system_id": "lead-system-driver-compliance",
+          "engine": "server/governed-leads.ts",
+          "status": "sandbox_ready_external_adapters_required",
+          "ideal_customer_profile": {
+            "segments": [
+              "Safety managers",
+              "compliance officers"
+            ],
+            "need_signals": [
+              "Needs help with HOS tracking automation",
+              "Needs help with ELD integration engine",
+              "Needs help with CDL expiry monitoring",
+              "Needs help with Drug test scheduling",
+              "Needs help with MVR record tracking"
+            ],
+            "exclusion_rules": [
+              "no minors",
+              "no protected or sensitive trait targeting",
+              "no deceptive identity or impersonation",
+              "no lead without traceable source evidence"
+            ]
+          },
+          "discovery": {
+            "query_templates": [
+              "Safety managers, compliance officers requesting HOS tracking automation",
+              "organizations seeking compliance support",
+              "inbound requests matching Driver Compliance Monitor",
+              "existing customers who opted in to HOS tracking automation updates"
+            ],
+            "authorized_source_types": [
+              "owner supplied records",
+              "consent based inbound requests",
+              "existing customer records with documented relationship",
+              "public business directories whose terms permit research",
+              "owner authorized provider APIs"
+            ],
+            "forbidden_collection": [
+              "private accounts or access-controlled pages",
+              "terms bypassing scraping",
+              "purchased, stolen, or unverifiable contact lists",
+              "raw credentials or secret tokens",
+              "sensitive personal data"
+            ]
+          },
+          "qualification": {
+            "required_fields": [
+              "source reference",
+              "organization or customer need",
+              "fit to the bot specialization",
+              "contact permission basis and channel scope",
+              "qualification evidence"
+            ],
+            "score_dimensions": {
+              "demonstrated_need": 30,
+              "capability_fit": 25,
+              "decision_readiness": 15,
+              "voluntarily_supplied_timing": 10,
+              "documented_contact_permission": 20
+            },
+            "minimum_score_for_owner_review": 65,
+            "permission_is_mandatory_even_above_threshold": true
+          },
+          "outreach": {
+            "supported_channels": [
+              "email",
+              "sms",
+              "voice_call",
+              "social_dm"
+            ],
+            "recipient_channel_permission_required": true,
+            "raw_contact_details_in_browser_forbidden": true,
+            "exact_owner_approval_per_message": true,
+            "maximum_daily_sends": 20,
+            "adapter_status": "configuration_required_for_live_dispatch"
+          },
+          "follow_up": {
+            "maximum_follow_ups": 2,
+            "minimum_interval_hours": 48,
+            "approval_required_for_each_follow_up": true,
+            "stop_conditions": [
+              "reply",
+              "opt out",
+              "bounce",
+              "complaint",
+              "permission expiry",
+              "owner stop",
+              "sequence complete"
+            ],
+            "suppression_ledger_required": true
+          },
+          "owner_controls": {
+            "default_mode": "research_and_draft_only",
+            "pause_and_kill_switch_required": true,
+            "one_action_approval_expiry_hours": 24,
+            "quiet_hours_supported": true,
+            "export_and_delete_supported": true
+          },
+          "metrics": [
+            "candidates researched",
+            "source evidence coverage",
+            "qualified leads",
+            "recipient permission coverage",
+            "owner approval rate",
+            "reply rate",
+            "positive reply rate",
+            "opt-out rate",
+            "bounce rate",
+            "complaint rate",
+            "conversion evidence"
+          ]
+        },
+        "readiness": {
+          "local_research_plan": "ready",
+          "qualification_and_drafts": "ready",
+          "exact_action_approval_packet": "ready",
+          "live_contact_discovery": "provider_and_terms_configuration_required",
+          "live_message_dispatch": "verified_adapter_recipient_permission_and_owner_approval_required",
+          "independent_production_business": false
+        }
+      },
       "capabilities": [
         {
           "name": "HOS tracking automation",
@@ -1196,6 +2174,12 @@
           "name": "Install and multi-platform distribution planner",
           "status": "web_ready_native_review_required",
           "evidence": "config/generated/buddy_distribution_catalog.json"
+        },
+        {
+          "id": "buddy_governed_lead_system",
+          "name": "Permission-gated lead discovery and follow-up system",
+          "status": "sandbox_ready_external_adapters_required",
+          "evidence": "server/governed-leads.ts"
         },
         {
           "id": "buddy_connection_broker",
@@ -1320,6 +2304,164 @@
           "Published pricing and revenue models are catalog plans, not evidence of sales or earnings."
         ]
       },
+      "business_system": {
+        "business_id": "business-tms-integrator",
+        "operating_model": "owner_governed_service_business",
+        "specialization": {
+          "division": "DreamTransport",
+          "category": "tms",
+          "mission": "Integrates transportation management systems with unified visibility and analytics.",
+          "ideal_customer_segments": [
+            "VP logistics",
+            "supply chain directors"
+          ],
+          "core_offer": "TMS Integration Platform: Integrates transportation management systems with unified visibility and analytics.",
+          "promised_outputs": [
+            "Multi-TMS data aggregation",
+            "Shipment visibility dashboard",
+            "Rate management engine",
+            "Carrier performance analytics",
+            "Exception management automation"
+          ],
+          "catalog_revenue_model": "Enterprise license",
+          "catalog_price_range": "$899/mo",
+          "earnings_status": "no_revenue_or_customer_result_guaranteed"
+        },
+        "operating_workflow": [
+          "capture_owner_goal_and_offer",
+          "define_ideal_customer_profile",
+          "select_owner_authorized_sources",
+          "confirm_source_terms_and_collection_scope",
+          "research_and_deduplicate_candidates",
+          "qualify_need_fit_timing_and_permission",
+          "draft_one_relevant_message",
+          "request_exact_owner_approval",
+          "dispatch_through_configured_adapter_only",
+          "wait_for_required_follow_up_interval",
+          "stop_on_reply_opt_out_bounce_or_complaint",
+          "report_outcomes_without_claiming_guaranteed_revenue"
+        ],
+        "lead_system": {
+          "system_id": "lead-system-tms-integrator",
+          "engine": "server/governed-leads.ts",
+          "status": "sandbox_ready_external_adapters_required",
+          "ideal_customer_profile": {
+            "segments": [
+              "VP logistics",
+              "supply chain directors"
+            ],
+            "need_signals": [
+              "Needs help with Multi-TMS data aggregation",
+              "Needs help with Shipment visibility dashboard",
+              "Needs help with Rate management engine",
+              "Needs help with Carrier performance analytics",
+              "Needs help with Exception management automation"
+            ],
+            "exclusion_rules": [
+              "no minors",
+              "no protected or sensitive trait targeting",
+              "no deceptive identity or impersonation",
+              "no lead without traceable source evidence"
+            ]
+          },
+          "discovery": {
+            "query_templates": [
+              "VP logistics, supply chain directors requesting Multi-TMS data aggregation",
+              "organizations seeking tms support",
+              "inbound requests matching TMS Integration Platform",
+              "existing customers who opted in to Multi-TMS data aggregation updates"
+            ],
+            "authorized_source_types": [
+              "owner supplied records",
+              "consent based inbound requests",
+              "existing customer records with documented relationship",
+              "public business directories whose terms permit research",
+              "owner authorized provider APIs"
+            ],
+            "forbidden_collection": [
+              "private accounts or access-controlled pages",
+              "terms bypassing scraping",
+              "purchased, stolen, or unverifiable contact lists",
+              "raw credentials or secret tokens",
+              "sensitive personal data"
+            ]
+          },
+          "qualification": {
+            "required_fields": [
+              "source reference",
+              "organization or customer need",
+              "fit to the bot specialization",
+              "contact permission basis and channel scope",
+              "qualification evidence"
+            ],
+            "score_dimensions": {
+              "demonstrated_need": 30,
+              "capability_fit": 25,
+              "decision_readiness": 15,
+              "voluntarily_supplied_timing": 10,
+              "documented_contact_permission": 20
+            },
+            "minimum_score_for_owner_review": 65,
+            "permission_is_mandatory_even_above_threshold": true
+          },
+          "outreach": {
+            "supported_channels": [
+              "email",
+              "sms",
+              "voice_call",
+              "social_dm"
+            ],
+            "recipient_channel_permission_required": true,
+            "raw_contact_details_in_browser_forbidden": true,
+            "exact_owner_approval_per_message": true,
+            "maximum_daily_sends": 20,
+            "adapter_status": "configuration_required_for_live_dispatch"
+          },
+          "follow_up": {
+            "maximum_follow_ups": 2,
+            "minimum_interval_hours": 48,
+            "approval_required_for_each_follow_up": true,
+            "stop_conditions": [
+              "reply",
+              "opt out",
+              "bounce",
+              "complaint",
+              "permission expiry",
+              "owner stop",
+              "sequence complete"
+            ],
+            "suppression_ledger_required": true
+          },
+          "owner_controls": {
+            "default_mode": "research_and_draft_only",
+            "pause_and_kill_switch_required": true,
+            "one_action_approval_expiry_hours": 24,
+            "quiet_hours_supported": true,
+            "export_and_delete_supported": true
+          },
+          "metrics": [
+            "candidates researched",
+            "source evidence coverage",
+            "qualified leads",
+            "recipient permission coverage",
+            "owner approval rate",
+            "reply rate",
+            "positive reply rate",
+            "opt-out rate",
+            "bounce rate",
+            "complaint rate",
+            "conversion evidence"
+          ]
+        },
+        "readiness": {
+          "local_research_plan": "ready",
+          "qualification_and_drafts": "ready",
+          "exact_action_approval_packet": "ready",
+          "live_contact_discovery": "provider_and_terms_configuration_required",
+          "live_message_dispatch": "verified_adapter_recipient_permission_and_owner_approval_required",
+          "independent_production_business": false
+        }
+      },
       "capabilities": [
         {
           "name": "Multi-TMS data aggregation",
@@ -1412,6 +2554,12 @@
           "name": "Install and multi-platform distribution planner",
           "status": "web_ready_native_review_required",
           "evidence": "config/generated/buddy_distribution_catalog.json"
+        },
+        {
+          "id": "buddy_governed_lead_system",
+          "name": "Permission-gated lead discovery and follow-up system",
+          "status": "sandbox_ready_external_adapters_required",
+          "evidence": "server/governed-leads.ts"
         },
         {
           "id": "buddy_creative_studio",
@@ -1542,6 +2690,164 @@
           "Published pricing and revenue models are catalog plans, not evidence of sales or earnings."
         ]
       },
+      "business_system": {
+        "business_id": "business-cold-chain-monitor",
+        "operating_model": "owner_governed_service_business",
+        "specialization": {
+          "division": "DreamTransport",
+          "category": "cold-chain",
+          "mission": "Monitors cold chain compliance with temperature tracking and alert management.",
+          "ideal_customer_segments": [
+            "Cold chain managers",
+            "pharmaceutical logistics"
+          ],
+          "core_offer": "Cold Chain Monitor: Monitors cold chain compliance with temperature tracking and alert management.",
+          "promised_outputs": [
+            "Temperature sensor integration",
+            "Compliance threshold alerting",
+            "Chain of custody documentation",
+            "Deviation incident reporting",
+            "Regulatory audit trail"
+          ],
+          "catalog_revenue_model": "Enterprise license",
+          "catalog_price_range": "$699/mo",
+          "earnings_status": "no_revenue_or_customer_result_guaranteed"
+        },
+        "operating_workflow": [
+          "capture_owner_goal_and_offer",
+          "define_ideal_customer_profile",
+          "select_owner_authorized_sources",
+          "confirm_source_terms_and_collection_scope",
+          "research_and_deduplicate_candidates",
+          "qualify_need_fit_timing_and_permission",
+          "draft_one_relevant_message",
+          "request_exact_owner_approval",
+          "dispatch_through_configured_adapter_only",
+          "wait_for_required_follow_up_interval",
+          "stop_on_reply_opt_out_bounce_or_complaint",
+          "report_outcomes_without_claiming_guaranteed_revenue"
+        ],
+        "lead_system": {
+          "system_id": "lead-system-cold-chain-monitor",
+          "engine": "server/governed-leads.ts",
+          "status": "sandbox_ready_external_adapters_required",
+          "ideal_customer_profile": {
+            "segments": [
+              "Cold chain managers",
+              "pharmaceutical logistics"
+            ],
+            "need_signals": [
+              "Needs help with Temperature sensor integration",
+              "Needs help with Compliance threshold alerting",
+              "Needs help with Chain of custody documentation",
+              "Needs help with Deviation incident reporting",
+              "Needs help with Regulatory audit trail"
+            ],
+            "exclusion_rules": [
+              "no minors",
+              "no protected or sensitive trait targeting",
+              "no deceptive identity or impersonation",
+              "no lead without traceable source evidence"
+            ]
+          },
+          "discovery": {
+            "query_templates": [
+              "Cold chain managers, pharmaceutical logistics requesting Temperature sensor integration",
+              "organizations seeking cold-chain support",
+              "inbound requests matching Cold Chain Monitor",
+              "existing customers who opted in to Temperature sensor integration updates"
+            ],
+            "authorized_source_types": [
+              "owner supplied records",
+              "consent based inbound requests",
+              "existing customer records with documented relationship",
+              "public business directories whose terms permit research",
+              "owner authorized provider APIs"
+            ],
+            "forbidden_collection": [
+              "private accounts or access-controlled pages",
+              "terms bypassing scraping",
+              "purchased, stolen, or unverifiable contact lists",
+              "raw credentials or secret tokens",
+              "sensitive personal data"
+            ]
+          },
+          "qualification": {
+            "required_fields": [
+              "source reference",
+              "organization or customer need",
+              "fit to the bot specialization",
+              "contact permission basis and channel scope",
+              "qualification evidence"
+            ],
+            "score_dimensions": {
+              "demonstrated_need": 30,
+              "capability_fit": 25,
+              "decision_readiness": 15,
+              "voluntarily_supplied_timing": 10,
+              "documented_contact_permission": 20
+            },
+            "minimum_score_for_owner_review": 65,
+            "permission_is_mandatory_even_above_threshold": true
+          },
+          "outreach": {
+            "supported_channels": [
+              "email",
+              "sms",
+              "voice_call",
+              "social_dm"
+            ],
+            "recipient_channel_permission_required": true,
+            "raw_contact_details_in_browser_forbidden": true,
+            "exact_owner_approval_per_message": true,
+            "maximum_daily_sends": 20,
+            "adapter_status": "configuration_required_for_live_dispatch"
+          },
+          "follow_up": {
+            "maximum_follow_ups": 2,
+            "minimum_interval_hours": 48,
+            "approval_required_for_each_follow_up": true,
+            "stop_conditions": [
+              "reply",
+              "opt out",
+              "bounce",
+              "complaint",
+              "permission expiry",
+              "owner stop",
+              "sequence complete"
+            ],
+            "suppression_ledger_required": true
+          },
+          "owner_controls": {
+            "default_mode": "research_and_draft_only",
+            "pause_and_kill_switch_required": true,
+            "one_action_approval_expiry_hours": 24,
+            "quiet_hours_supported": true,
+            "export_and_delete_supported": true
+          },
+          "metrics": [
+            "candidates researched",
+            "source evidence coverage",
+            "qualified leads",
+            "recipient permission coverage",
+            "owner approval rate",
+            "reply rate",
+            "positive reply rate",
+            "opt-out rate",
+            "bounce rate",
+            "complaint rate",
+            "conversion evidence"
+          ]
+        },
+        "readiness": {
+          "local_research_plan": "ready",
+          "qualification_and_drafts": "ready",
+          "exact_action_approval_packet": "ready",
+          "live_contact_discovery": "provider_and_terms_configuration_required",
+          "live_message_dispatch": "verified_adapter_recipient_permission_and_owner_approval_required",
+          "independent_production_business": false
+        }
+      },
       "capabilities": [
         {
           "name": "Temperature sensor integration",
@@ -1634,6 +2940,12 @@
           "name": "Install and multi-platform distribution planner",
           "status": "web_ready_native_review_required",
           "evidence": "config/generated/buddy_distribution_catalog.json"
+        },
+        {
+          "id": "buddy_governed_lead_system",
+          "name": "Permission-gated lead discovery and follow-up system",
+          "status": "sandbox_ready_external_adapters_required",
+          "evidence": "server/governed-leads.ts"
         },
         {
           "id": "buddy_connection_broker",
@@ -1758,6 +3070,164 @@
           "Published pricing and revenue models are catalog plans, not evidence of sales or earnings."
         ]
       },
+      "business_system": {
+        "business_id": "business-fuel-optimizer",
+        "operating_model": "owner_governed_service_business",
+        "specialization": {
+          "division": "DreamTransport",
+          "category": "fuel-management",
+          "mission": "Optimizes fuel costs with station pricing analysis and consumption tracking.",
+          "ideal_customer_segments": [
+            "Fleet managers",
+            "finance departments"
+          ],
+          "core_offer": "Fuel Cost Optimizer: Optimizes fuel costs with station pricing analysis and consumption tracking.",
+          "promised_outputs": [
+            "Fuel station price comparison",
+            "Consumption trend analysis",
+            "Fuel card management",
+            "Theft detection algorithms",
+            "Carbon emission reporting"
+          ],
+          "catalog_revenue_model": "SaaS subscription",
+          "catalog_price_range": "$99/mo",
+          "earnings_status": "no_revenue_or_customer_result_guaranteed"
+        },
+        "operating_workflow": [
+          "capture_owner_goal_and_offer",
+          "define_ideal_customer_profile",
+          "select_owner_authorized_sources",
+          "confirm_source_terms_and_collection_scope",
+          "research_and_deduplicate_candidates",
+          "qualify_need_fit_timing_and_permission",
+          "draft_one_relevant_message",
+          "request_exact_owner_approval",
+          "dispatch_through_configured_adapter_only",
+          "wait_for_required_follow_up_interval",
+          "stop_on_reply_opt_out_bounce_or_complaint",
+          "report_outcomes_without_claiming_guaranteed_revenue"
+        ],
+        "lead_system": {
+          "system_id": "lead-system-fuel-optimizer",
+          "engine": "server/governed-leads.ts",
+          "status": "sandbox_ready_external_adapters_required",
+          "ideal_customer_profile": {
+            "segments": [
+              "Fleet managers",
+              "finance departments"
+            ],
+            "need_signals": [
+              "Needs help with Fuel station price comparison",
+              "Needs help with Consumption trend analysis",
+              "Needs help with Fuel card management",
+              "Needs help with Theft detection algorithms",
+              "Needs help with Carbon emission reporting"
+            ],
+            "exclusion_rules": [
+              "no minors",
+              "no protected or sensitive trait targeting",
+              "no deceptive identity or impersonation",
+              "no lead without traceable source evidence"
+            ]
+          },
+          "discovery": {
+            "query_templates": [
+              "Fleet managers, finance departments requesting Fuel station price comparison",
+              "organizations seeking fuel-management support",
+              "inbound requests matching Fuel Cost Optimizer",
+              "existing customers who opted in to Fuel station price comparison updates"
+            ],
+            "authorized_source_types": [
+              "owner supplied records",
+              "consent based inbound requests",
+              "existing customer records with documented relationship",
+              "public business directories whose terms permit research",
+              "owner authorized provider APIs"
+            ],
+            "forbidden_collection": [
+              "private accounts or access-controlled pages",
+              "terms bypassing scraping",
+              "purchased, stolen, or unverifiable contact lists",
+              "raw credentials or secret tokens",
+              "sensitive personal data"
+            ]
+          },
+          "qualification": {
+            "required_fields": [
+              "source reference",
+              "organization or customer need",
+              "fit to the bot specialization",
+              "contact permission basis and channel scope",
+              "qualification evidence"
+            ],
+            "score_dimensions": {
+              "demonstrated_need": 30,
+              "capability_fit": 25,
+              "decision_readiness": 15,
+              "voluntarily_supplied_timing": 10,
+              "documented_contact_permission": 20
+            },
+            "minimum_score_for_owner_review": 65,
+            "permission_is_mandatory_even_above_threshold": true
+          },
+          "outreach": {
+            "supported_channels": [
+              "email",
+              "sms",
+              "voice_call",
+              "social_dm"
+            ],
+            "recipient_channel_permission_required": true,
+            "raw_contact_details_in_browser_forbidden": true,
+            "exact_owner_approval_per_message": true,
+            "maximum_daily_sends": 20,
+            "adapter_status": "configuration_required_for_live_dispatch"
+          },
+          "follow_up": {
+            "maximum_follow_ups": 2,
+            "minimum_interval_hours": 48,
+            "approval_required_for_each_follow_up": true,
+            "stop_conditions": [
+              "reply",
+              "opt out",
+              "bounce",
+              "complaint",
+              "permission expiry",
+              "owner stop",
+              "sequence complete"
+            ],
+            "suppression_ledger_required": true
+          },
+          "owner_controls": {
+            "default_mode": "research_and_draft_only",
+            "pause_and_kill_switch_required": true,
+            "one_action_approval_expiry_hours": 24,
+            "quiet_hours_supported": true,
+            "export_and_delete_supported": true
+          },
+          "metrics": [
+            "candidates researched",
+            "source evidence coverage",
+            "qualified leads",
+            "recipient permission coverage",
+            "owner approval rate",
+            "reply rate",
+            "positive reply rate",
+            "opt-out rate",
+            "bounce rate",
+            "complaint rate",
+            "conversion evidence"
+          ]
+        },
+        "readiness": {
+          "local_research_plan": "ready",
+          "qualification_and_drafts": "ready",
+          "exact_action_approval_packet": "ready",
+          "live_contact_discovery": "provider_and_terms_configuration_required",
+          "live_message_dispatch": "verified_adapter_recipient_permission_and_owner_approval_required",
+          "independent_production_business": false
+        }
+      },
       "capabilities": [
         {
           "name": "Fuel station price comparison",
@@ -1850,6 +3320,12 @@
           "name": "Install and multi-platform distribution planner",
           "status": "web_ready_native_review_required",
           "evidence": "config/generated/buddy_distribution_catalog.json"
+        },
+        {
+          "id": "buddy_governed_lead_system",
+          "name": "Permission-gated lead discovery and follow-up system",
+          "status": "sandbox_ready_external_adapters_required",
+          "evidence": "server/governed-leads.ts"
         }
       ],
       "api_candidates": [],
@@ -1968,6 +3444,164 @@
           "Published pricing and revenue models are catalog plans, not evidence of sales or earnings."
         ]
       },
+      "business_system": {
+        "business_id": "business-trailer-tracker",
+        "operating_model": "owner_governed_service_business",
+        "specialization": {
+          "division": "DreamTransport",
+          "category": "asset-tracking",
+          "mission": "Tracks trailers and transportation assets with utilization analytics.",
+          "ideal_customer_segments": [
+            "Asset managers",
+            "fleet coordinators"
+          ],
+          "core_offer": "Trailer & Asset Tracker: Tracks trailers and transportation assets with utilization analytics.",
+          "promised_outputs": [
+            "Trailer GPS tracking",
+            "Utilization rate analytics",
+            "Detention time monitoring",
+            "Maintenance alert scheduling",
+            "Asset lifecycle management"
+          ],
+          "catalog_revenue_model": "SaaS subscription",
+          "catalog_price_range": "$99/mo",
+          "earnings_status": "no_revenue_or_customer_result_guaranteed"
+        },
+        "operating_workflow": [
+          "capture_owner_goal_and_offer",
+          "define_ideal_customer_profile",
+          "select_owner_authorized_sources",
+          "confirm_source_terms_and_collection_scope",
+          "research_and_deduplicate_candidates",
+          "qualify_need_fit_timing_and_permission",
+          "draft_one_relevant_message",
+          "request_exact_owner_approval",
+          "dispatch_through_configured_adapter_only",
+          "wait_for_required_follow_up_interval",
+          "stop_on_reply_opt_out_bounce_or_complaint",
+          "report_outcomes_without_claiming_guaranteed_revenue"
+        ],
+        "lead_system": {
+          "system_id": "lead-system-trailer-tracker",
+          "engine": "server/governed-leads.ts",
+          "status": "sandbox_ready_external_adapters_required",
+          "ideal_customer_profile": {
+            "segments": [
+              "Asset managers",
+              "fleet coordinators"
+            ],
+            "need_signals": [
+              "Needs help with Trailer GPS tracking",
+              "Needs help with Utilization rate analytics",
+              "Needs help with Detention time monitoring",
+              "Needs help with Maintenance alert scheduling",
+              "Needs help with Asset lifecycle management"
+            ],
+            "exclusion_rules": [
+              "no minors",
+              "no protected or sensitive trait targeting",
+              "no deceptive identity or impersonation",
+              "no lead without traceable source evidence"
+            ]
+          },
+          "discovery": {
+            "query_templates": [
+              "Asset managers, fleet coordinators requesting Trailer GPS tracking",
+              "organizations seeking asset-tracking support",
+              "inbound requests matching Trailer & Asset Tracker",
+              "existing customers who opted in to Trailer GPS tracking updates"
+            ],
+            "authorized_source_types": [
+              "owner supplied records",
+              "consent based inbound requests",
+              "existing customer records with documented relationship",
+              "public business directories whose terms permit research",
+              "owner authorized provider APIs"
+            ],
+            "forbidden_collection": [
+              "private accounts or access-controlled pages",
+              "terms bypassing scraping",
+              "purchased, stolen, or unverifiable contact lists",
+              "raw credentials or secret tokens",
+              "sensitive personal data"
+            ]
+          },
+          "qualification": {
+            "required_fields": [
+              "source reference",
+              "organization or customer need",
+              "fit to the bot specialization",
+              "contact permission basis and channel scope",
+              "qualification evidence"
+            ],
+            "score_dimensions": {
+              "demonstrated_need": 30,
+              "capability_fit": 25,
+              "decision_readiness": 15,
+              "voluntarily_supplied_timing": 10,
+              "documented_contact_permission": 20
+            },
+            "minimum_score_for_owner_review": 65,
+            "permission_is_mandatory_even_above_threshold": true
+          },
+          "outreach": {
+            "supported_channels": [
+              "email",
+              "sms",
+              "voice_call",
+              "social_dm"
+            ],
+            "recipient_channel_permission_required": true,
+            "raw_contact_details_in_browser_forbidden": true,
+            "exact_owner_approval_per_message": true,
+            "maximum_daily_sends": 20,
+            "adapter_status": "configuration_required_for_live_dispatch"
+          },
+          "follow_up": {
+            "maximum_follow_ups": 2,
+            "minimum_interval_hours": 48,
+            "approval_required_for_each_follow_up": true,
+            "stop_conditions": [
+              "reply",
+              "opt out",
+              "bounce",
+              "complaint",
+              "permission expiry",
+              "owner stop",
+              "sequence complete"
+            ],
+            "suppression_ledger_required": true
+          },
+          "owner_controls": {
+            "default_mode": "research_and_draft_only",
+            "pause_and_kill_switch_required": true,
+            "one_action_approval_expiry_hours": 24,
+            "quiet_hours_supported": true,
+            "export_and_delete_supported": true
+          },
+          "metrics": [
+            "candidates researched",
+            "source evidence coverage",
+            "qualified leads",
+            "recipient permission coverage",
+            "owner approval rate",
+            "reply rate",
+            "positive reply rate",
+            "opt-out rate",
+            "bounce rate",
+            "complaint rate",
+            "conversion evidence"
+          ]
+        },
+        "readiness": {
+          "local_research_plan": "ready",
+          "qualification_and_drafts": "ready",
+          "exact_action_approval_packet": "ready",
+          "live_contact_discovery": "provider_and_terms_configuration_required",
+          "live_message_dispatch": "verified_adapter_recipient_permission_and_owner_approval_required",
+          "independent_production_business": false
+        }
+      },
       "capabilities": [
         {
           "name": "Trailer GPS tracking",
@@ -2060,6 +3694,12 @@
           "name": "Install and multi-platform distribution planner",
           "status": "web_ready_native_review_required",
           "evidence": "config/generated/buddy_distribution_catalog.json"
+        },
+        {
+          "id": "buddy_governed_lead_system",
+          "name": "Permission-gated lead discovery and follow-up system",
+          "status": "sandbox_ready_external_adapters_required",
+          "evidence": "server/governed-leads.ts"
         }
       ],
       "api_candidates": [],
@@ -2178,6 +3818,164 @@
           "Published pricing and revenue models are catalog plans, not evidence of sales or earnings."
         ]
       },
+      "business_system": {
+        "business_id": "business-customs-clearance",
+        "operating_model": "owner_governed_service_business",
+        "specialization": {
+          "division": "DreamTransport",
+          "category": "customs",
+          "mission": "Automates customs clearance with document preparation and duty calculation.",
+          "ideal_customer_segments": [
+            "Import/export managers",
+            "customs brokers"
+          ],
+          "core_offer": "Customs Clearance Automator: Automates customs clearance with document preparation and duty calculation.",
+          "promised_outputs": [
+            "HS code classification",
+            "Customs document generation",
+            "Duty and tax calculation",
+            "Trade compliance screening",
+            "Broker communication automation"
+          ],
+          "catalog_revenue_model": "Enterprise license",
+          "catalog_price_range": "$599/mo",
+          "earnings_status": "no_revenue_or_customer_result_guaranteed"
+        },
+        "operating_workflow": [
+          "capture_owner_goal_and_offer",
+          "define_ideal_customer_profile",
+          "select_owner_authorized_sources",
+          "confirm_source_terms_and_collection_scope",
+          "research_and_deduplicate_candidates",
+          "qualify_need_fit_timing_and_permission",
+          "draft_one_relevant_message",
+          "request_exact_owner_approval",
+          "dispatch_through_configured_adapter_only",
+          "wait_for_required_follow_up_interval",
+          "stop_on_reply_opt_out_bounce_or_complaint",
+          "report_outcomes_without_claiming_guaranteed_revenue"
+        ],
+        "lead_system": {
+          "system_id": "lead-system-customs-clearance",
+          "engine": "server/governed-leads.ts",
+          "status": "sandbox_ready_external_adapters_required",
+          "ideal_customer_profile": {
+            "segments": [
+              "Import/export managers",
+              "customs brokers"
+            ],
+            "need_signals": [
+              "Needs help with HS code classification",
+              "Needs help with Customs document generation",
+              "Needs help with Duty and tax calculation",
+              "Needs help with Trade compliance screening",
+              "Needs help with Broker communication automation"
+            ],
+            "exclusion_rules": [
+              "no minors",
+              "no protected or sensitive trait targeting",
+              "no deceptive identity or impersonation",
+              "no lead without traceable source evidence"
+            ]
+          },
+          "discovery": {
+            "query_templates": [
+              "Import/export managers, customs brokers requesting HS code classification",
+              "organizations seeking customs support",
+              "inbound requests matching Customs Clearance Automator",
+              "existing customers who opted in to HS code classification updates"
+            ],
+            "authorized_source_types": [
+              "owner supplied records",
+              "consent based inbound requests",
+              "existing customer records with documented relationship",
+              "public business directories whose terms permit research",
+              "owner authorized provider APIs"
+            ],
+            "forbidden_collection": [
+              "private accounts or access-controlled pages",
+              "terms bypassing scraping",
+              "purchased, stolen, or unverifiable contact lists",
+              "raw credentials or secret tokens",
+              "sensitive personal data"
+            ]
+          },
+          "qualification": {
+            "required_fields": [
+              "source reference",
+              "organization or customer need",
+              "fit to the bot specialization",
+              "contact permission basis and channel scope",
+              "qualification evidence"
+            ],
+            "score_dimensions": {
+              "demonstrated_need": 30,
+              "capability_fit": 25,
+              "decision_readiness": 15,
+              "voluntarily_supplied_timing": 10,
+              "documented_contact_permission": 20
+            },
+            "minimum_score_for_owner_review": 65,
+            "permission_is_mandatory_even_above_threshold": true
+          },
+          "outreach": {
+            "supported_channels": [
+              "email",
+              "sms",
+              "voice_call",
+              "social_dm"
+            ],
+            "recipient_channel_permission_required": true,
+            "raw_contact_details_in_browser_forbidden": true,
+            "exact_owner_approval_per_message": true,
+            "maximum_daily_sends": 20,
+            "adapter_status": "configuration_required_for_live_dispatch"
+          },
+          "follow_up": {
+            "maximum_follow_ups": 2,
+            "minimum_interval_hours": 48,
+            "approval_required_for_each_follow_up": true,
+            "stop_conditions": [
+              "reply",
+              "opt out",
+              "bounce",
+              "complaint",
+              "permission expiry",
+              "owner stop",
+              "sequence complete"
+            ],
+            "suppression_ledger_required": true
+          },
+          "owner_controls": {
+            "default_mode": "research_and_draft_only",
+            "pause_and_kill_switch_required": true,
+            "one_action_approval_expiry_hours": 24,
+            "quiet_hours_supported": true,
+            "export_and_delete_supported": true
+          },
+          "metrics": [
+            "candidates researched",
+            "source evidence coverage",
+            "qualified leads",
+            "recipient permission coverage",
+            "owner approval rate",
+            "reply rate",
+            "positive reply rate",
+            "opt-out rate",
+            "bounce rate",
+            "complaint rate",
+            "conversion evidence"
+          ]
+        },
+        "readiness": {
+          "local_research_plan": "ready",
+          "qualification_and_drafts": "ready",
+          "exact_action_approval_packet": "ready",
+          "live_contact_discovery": "provider_and_terms_configuration_required",
+          "live_message_dispatch": "verified_adapter_recipient_permission_and_owner_approval_required",
+          "independent_production_business": false
+        }
+      },
       "capabilities": [
         {
           "name": "HS code classification",
@@ -2270,6 +4068,12 @@
           "name": "Install and multi-platform distribution planner",
           "status": "web_ready_native_review_required",
           "evidence": "config/generated/buddy_distribution_catalog.json"
+        },
+        {
+          "id": "buddy_governed_lead_system",
+          "name": "Permission-gated lead discovery and follow-up system",
+          "status": "sandbox_ready_external_adapters_required",
+          "evidence": "server/governed-leads.ts"
         },
         {
           "id": "buddy_code_workspace",
@@ -2395,6 +4199,164 @@
           "Published pricing and revenue models are catalog plans, not evidence of sales or earnings."
         ]
       },
+      "business_system": {
+        "business_id": "business-transport-analytics-elite",
+        "operating_model": "owner_governed_service_business",
+        "specialization": {
+          "division": "DreamTransport",
+          "category": "analytics",
+          "mission": "Enterprise transportation analytics with network optimization and predictive modeling.",
+          "ideal_customer_segments": [
+            "C-suite logistics",
+            "supply chain VPs"
+          ],
+          "core_offer": "Transport Analytics Platform: Enterprise transportation analytics with network optimization and predictive modeling.",
+          "promised_outputs": [
+            "Network flow optimization",
+            "Predictive demand modeling",
+            "Cost per mile analytics",
+            "Service level monitoring",
+            "Mode optimization analysis"
+          ],
+          "catalog_revenue_model": "Enterprise license",
+          "catalog_price_range": "$1,999/mo",
+          "earnings_status": "no_revenue_or_customer_result_guaranteed"
+        },
+        "operating_workflow": [
+          "capture_owner_goal_and_offer",
+          "define_ideal_customer_profile",
+          "select_owner_authorized_sources",
+          "confirm_source_terms_and_collection_scope",
+          "research_and_deduplicate_candidates",
+          "qualify_need_fit_timing_and_permission",
+          "draft_one_relevant_message",
+          "request_exact_owner_approval",
+          "dispatch_through_configured_adapter_only",
+          "wait_for_required_follow_up_interval",
+          "stop_on_reply_opt_out_bounce_or_complaint",
+          "report_outcomes_without_claiming_guaranteed_revenue"
+        ],
+        "lead_system": {
+          "system_id": "lead-system-transport-analytics-elite",
+          "engine": "server/governed-leads.ts",
+          "status": "sandbox_ready_external_adapters_required",
+          "ideal_customer_profile": {
+            "segments": [
+              "C-suite logistics",
+              "supply chain VPs"
+            ],
+            "need_signals": [
+              "Needs help with Network flow optimization",
+              "Needs help with Predictive demand modeling",
+              "Needs help with Cost per mile analytics",
+              "Needs help with Service level monitoring",
+              "Needs help with Mode optimization analysis"
+            ],
+            "exclusion_rules": [
+              "no minors",
+              "no protected or sensitive trait targeting",
+              "no deceptive identity or impersonation",
+              "no lead without traceable source evidence"
+            ]
+          },
+          "discovery": {
+            "query_templates": [
+              "C-suite logistics, supply chain VPs requesting Network flow optimization",
+              "organizations seeking analytics support",
+              "inbound requests matching Transport Analytics Platform",
+              "existing customers who opted in to Network flow optimization updates"
+            ],
+            "authorized_source_types": [
+              "owner supplied records",
+              "consent based inbound requests",
+              "existing customer records with documented relationship",
+              "public business directories whose terms permit research",
+              "owner authorized provider APIs"
+            ],
+            "forbidden_collection": [
+              "private accounts or access-controlled pages",
+              "terms bypassing scraping",
+              "purchased, stolen, or unverifiable contact lists",
+              "raw credentials or secret tokens",
+              "sensitive personal data"
+            ]
+          },
+          "qualification": {
+            "required_fields": [
+              "source reference",
+              "organization or customer need",
+              "fit to the bot specialization",
+              "contact permission basis and channel scope",
+              "qualification evidence"
+            ],
+            "score_dimensions": {
+              "demonstrated_need": 30,
+              "capability_fit": 25,
+              "decision_readiness": 15,
+              "voluntarily_supplied_timing": 10,
+              "documented_contact_permission": 20
+            },
+            "minimum_score_for_owner_review": 65,
+            "permission_is_mandatory_even_above_threshold": true
+          },
+          "outreach": {
+            "supported_channels": [
+              "email",
+              "sms",
+              "voice_call",
+              "social_dm"
+            ],
+            "recipient_channel_permission_required": true,
+            "raw_contact_details_in_browser_forbidden": true,
+            "exact_owner_approval_per_message": true,
+            "maximum_daily_sends": 20,
+            "adapter_status": "configuration_required_for_live_dispatch"
+          },
+          "follow_up": {
+            "maximum_follow_ups": 2,
+            "minimum_interval_hours": 48,
+            "approval_required_for_each_follow_up": true,
+            "stop_conditions": [
+              "reply",
+              "opt out",
+              "bounce",
+              "complaint",
+              "permission expiry",
+              "owner stop",
+              "sequence complete"
+            ],
+            "suppression_ledger_required": true
+          },
+          "owner_controls": {
+            "default_mode": "research_and_draft_only",
+            "pause_and_kill_switch_required": true,
+            "one_action_approval_expiry_hours": 24,
+            "quiet_hours_supported": true,
+            "export_and_delete_supported": true
+          },
+          "metrics": [
+            "candidates researched",
+            "source evidence coverage",
+            "qualified leads",
+            "recipient permission coverage",
+            "owner approval rate",
+            "reply rate",
+            "positive reply rate",
+            "opt-out rate",
+            "bounce rate",
+            "complaint rate",
+            "conversion evidence"
+          ]
+        },
+        "readiness": {
+          "local_research_plan": "ready",
+          "qualification_and_drafts": "ready",
+          "exact_action_approval_packet": "ready",
+          "live_contact_discovery": "provider_and_terms_configuration_required",
+          "live_message_dispatch": "verified_adapter_recipient_permission_and_owner_approval_required",
+          "independent_production_business": false
+        }
+      },
       "capabilities": [
         {
           "name": "Network flow optimization",
@@ -2487,6 +4449,12 @@
           "name": "Install and multi-platform distribution planner",
           "status": "web_ready_native_review_required",
           "evidence": "config/generated/buddy_distribution_catalog.json"
+        },
+        {
+          "id": "buddy_governed_lead_system",
+          "name": "Permission-gated lead discovery and follow-up system",
+          "status": "sandbox_ready_external_adapters_required",
+          "evidence": "server/governed-leads.ts"
         },
         {
           "id": "buddy_game_lab",
@@ -2611,6 +4579,164 @@
           "Published pricing and revenue models are catalog plans, not evidence of sales or earnings."
         ]
       },
+      "business_system": {
+        "business_id": "business-autonomous-fleet",
+        "operating_model": "owner_governed_service_business",
+        "specialization": {
+          "division": "DreamTransport",
+          "category": "autonomous",
+          "mission": "Manages autonomous vehicle fleet operations with safety monitoring and integration.",
+          "ideal_customer_segments": [
+            "AV fleet operators",
+            "technology directors"
+          ],
+          "core_offer": "Autonomous Fleet Command: Manages autonomous vehicle fleet operations with safety monitoring and integration.",
+          "promised_outputs": [
+            "AV fleet coordination",
+            "Safety event monitoring",
+            "Remote intervention system",
+            "Regulatory compliance tracking",
+            "Passenger experience management"
+          ],
+          "catalog_revenue_model": "Enterprise license",
+          "catalog_price_range": "$2,499/mo",
+          "earnings_status": "no_revenue_or_customer_result_guaranteed"
+        },
+        "operating_workflow": [
+          "capture_owner_goal_and_offer",
+          "define_ideal_customer_profile",
+          "select_owner_authorized_sources",
+          "confirm_source_terms_and_collection_scope",
+          "research_and_deduplicate_candidates",
+          "qualify_need_fit_timing_and_permission",
+          "draft_one_relevant_message",
+          "request_exact_owner_approval",
+          "dispatch_through_configured_adapter_only",
+          "wait_for_required_follow_up_interval",
+          "stop_on_reply_opt_out_bounce_or_complaint",
+          "report_outcomes_without_claiming_guaranteed_revenue"
+        ],
+        "lead_system": {
+          "system_id": "lead-system-autonomous-fleet",
+          "engine": "server/governed-leads.ts",
+          "status": "sandbox_ready_external_adapters_required",
+          "ideal_customer_profile": {
+            "segments": [
+              "AV fleet operators",
+              "technology directors"
+            ],
+            "need_signals": [
+              "Needs help with AV fleet coordination",
+              "Needs help with Safety event monitoring",
+              "Needs help with Remote intervention system",
+              "Needs help with Regulatory compliance tracking",
+              "Needs help with Passenger experience management"
+            ],
+            "exclusion_rules": [
+              "no minors",
+              "no protected or sensitive trait targeting",
+              "no deceptive identity or impersonation",
+              "no lead without traceable source evidence"
+            ]
+          },
+          "discovery": {
+            "query_templates": [
+              "AV fleet operators, technology directors requesting AV fleet coordination",
+              "organizations seeking autonomous support",
+              "inbound requests matching Autonomous Fleet Command",
+              "existing customers who opted in to AV fleet coordination updates"
+            ],
+            "authorized_source_types": [
+              "owner supplied records",
+              "consent based inbound requests",
+              "existing customer records with documented relationship",
+              "public business directories whose terms permit research",
+              "owner authorized provider APIs"
+            ],
+            "forbidden_collection": [
+              "private accounts or access-controlled pages",
+              "terms bypassing scraping",
+              "purchased, stolen, or unverifiable contact lists",
+              "raw credentials or secret tokens",
+              "sensitive personal data"
+            ]
+          },
+          "qualification": {
+            "required_fields": [
+              "source reference",
+              "organization or customer need",
+              "fit to the bot specialization",
+              "contact permission basis and channel scope",
+              "qualification evidence"
+            ],
+            "score_dimensions": {
+              "demonstrated_need": 30,
+              "capability_fit": 25,
+              "decision_readiness": 15,
+              "voluntarily_supplied_timing": 10,
+              "documented_contact_permission": 20
+            },
+            "minimum_score_for_owner_review": 65,
+            "permission_is_mandatory_even_above_threshold": true
+          },
+          "outreach": {
+            "supported_channels": [
+              "email",
+              "sms",
+              "voice_call",
+              "social_dm"
+            ],
+            "recipient_channel_permission_required": true,
+            "raw_contact_details_in_browser_forbidden": true,
+            "exact_owner_approval_per_message": true,
+            "maximum_daily_sends": 20,
+            "adapter_status": "configuration_required_for_live_dispatch"
+          },
+          "follow_up": {
+            "maximum_follow_ups": 2,
+            "minimum_interval_hours": 48,
+            "approval_required_for_each_follow_up": true,
+            "stop_conditions": [
+              "reply",
+              "opt out",
+              "bounce",
+              "complaint",
+              "permission expiry",
+              "owner stop",
+              "sequence complete"
+            ],
+            "suppression_ledger_required": true
+          },
+          "owner_controls": {
+            "default_mode": "research_and_draft_only",
+            "pause_and_kill_switch_required": true,
+            "one_action_approval_expiry_hours": 24,
+            "quiet_hours_supported": true,
+            "export_and_delete_supported": true
+          },
+          "metrics": [
+            "candidates researched",
+            "source evidence coverage",
+            "qualified leads",
+            "recipient permission coverage",
+            "owner approval rate",
+            "reply rate",
+            "positive reply rate",
+            "opt-out rate",
+            "bounce rate",
+            "complaint rate",
+            "conversion evidence"
+          ]
+        },
+        "readiness": {
+          "local_research_plan": "ready",
+          "qualification_and_drafts": "ready",
+          "exact_action_approval_packet": "ready",
+          "live_contact_discovery": "provider_and_terms_configuration_required",
+          "live_message_dispatch": "verified_adapter_recipient_permission_and_owner_approval_required",
+          "independent_production_business": false
+        }
+      },
       "capabilities": [
         {
           "name": "AV fleet coordination",
@@ -2703,6 +4829,12 @@
           "name": "Install and multi-platform distribution planner",
           "status": "web_ready_native_review_required",
           "evidence": "config/generated/buddy_distribution_catalog.json"
+        },
+        {
+          "id": "buddy_governed_lead_system",
+          "name": "Permission-gated lead discovery and follow-up system",
+          "status": "sandbox_ready_external_adapters_required",
+          "evidence": "server/governed-leads.ts"
         },
         {
           "id": "buddy_connection_broker",
@@ -2827,6 +4959,164 @@
           "Published pricing and revenue models are catalog plans, not evidence of sales or earnings."
         ]
       },
+      "business_system": {
+        "business_id": "business-delivery-rating",
+        "operating_model": "owner_governed_service_business",
+        "specialization": {
+          "division": "DreamTransport",
+          "category": "performance",
+          "mission": "Rates delivery performance with on-time metrics and customer satisfaction scoring.",
+          "ideal_customer_segments": [
+            "Operations managers",
+            "customer service teams"
+          ],
+          "core_offer": "Delivery Performance Rater: Rates delivery performance with on-time metrics and customer satisfaction scoring.",
+          "promised_outputs": [
+            "On-time delivery tracking",
+            "Customer satisfaction surveys",
+            "Driver performance scoring",
+            "Exception categorization",
+            "Trend visualization dashboards"
+          ],
+          "catalog_revenue_model": "SaaS subscription",
+          "catalog_price_range": "$0",
+          "earnings_status": "no_revenue_or_customer_result_guaranteed"
+        },
+        "operating_workflow": [
+          "capture_owner_goal_and_offer",
+          "define_ideal_customer_profile",
+          "select_owner_authorized_sources",
+          "confirm_source_terms_and_collection_scope",
+          "research_and_deduplicate_candidates",
+          "qualify_need_fit_timing_and_permission",
+          "draft_one_relevant_message",
+          "request_exact_owner_approval",
+          "dispatch_through_configured_adapter_only",
+          "wait_for_required_follow_up_interval",
+          "stop_on_reply_opt_out_bounce_or_complaint",
+          "report_outcomes_without_claiming_guaranteed_revenue"
+        ],
+        "lead_system": {
+          "system_id": "lead-system-delivery-rating",
+          "engine": "server/governed-leads.ts",
+          "status": "sandbox_ready_external_adapters_required",
+          "ideal_customer_profile": {
+            "segments": [
+              "Operations managers",
+              "customer service teams"
+            ],
+            "need_signals": [
+              "Needs help with On-time delivery tracking",
+              "Needs help with Customer satisfaction surveys",
+              "Needs help with Driver performance scoring",
+              "Needs help with Exception categorization",
+              "Needs help with Trend visualization dashboards"
+            ],
+            "exclusion_rules": [
+              "no minors",
+              "no protected or sensitive trait targeting",
+              "no deceptive identity or impersonation",
+              "no lead without traceable source evidence"
+            ]
+          },
+          "discovery": {
+            "query_templates": [
+              "Operations managers, customer service teams requesting On-time delivery tracking",
+              "organizations seeking performance support",
+              "inbound requests matching Delivery Performance Rater",
+              "existing customers who opted in to On-time delivery tracking updates"
+            ],
+            "authorized_source_types": [
+              "owner supplied records",
+              "consent based inbound requests",
+              "existing customer records with documented relationship",
+              "public business directories whose terms permit research",
+              "owner authorized provider APIs"
+            ],
+            "forbidden_collection": [
+              "private accounts or access-controlled pages",
+              "terms bypassing scraping",
+              "purchased, stolen, or unverifiable contact lists",
+              "raw credentials or secret tokens",
+              "sensitive personal data"
+            ]
+          },
+          "qualification": {
+            "required_fields": [
+              "source reference",
+              "organization or customer need",
+              "fit to the bot specialization",
+              "contact permission basis and channel scope",
+              "qualification evidence"
+            ],
+            "score_dimensions": {
+              "demonstrated_need": 30,
+              "capability_fit": 25,
+              "decision_readiness": 15,
+              "voluntarily_supplied_timing": 10,
+              "documented_contact_permission": 20
+            },
+            "minimum_score_for_owner_review": 65,
+            "permission_is_mandatory_even_above_threshold": true
+          },
+          "outreach": {
+            "supported_channels": [
+              "email",
+              "sms",
+              "voice_call",
+              "social_dm"
+            ],
+            "recipient_channel_permission_required": true,
+            "raw_contact_details_in_browser_forbidden": true,
+            "exact_owner_approval_per_message": true,
+            "maximum_daily_sends": 20,
+            "adapter_status": "configuration_required_for_live_dispatch"
+          },
+          "follow_up": {
+            "maximum_follow_ups": 2,
+            "minimum_interval_hours": 48,
+            "approval_required_for_each_follow_up": true,
+            "stop_conditions": [
+              "reply",
+              "opt out",
+              "bounce",
+              "complaint",
+              "permission expiry",
+              "owner stop",
+              "sequence complete"
+            ],
+            "suppression_ledger_required": true
+          },
+          "owner_controls": {
+            "default_mode": "research_and_draft_only",
+            "pause_and_kill_switch_required": true,
+            "one_action_approval_expiry_hours": 24,
+            "quiet_hours_supported": true,
+            "export_and_delete_supported": true
+          },
+          "metrics": [
+            "candidates researched",
+            "source evidence coverage",
+            "qualified leads",
+            "recipient permission coverage",
+            "owner approval rate",
+            "reply rate",
+            "positive reply rate",
+            "opt-out rate",
+            "bounce rate",
+            "complaint rate",
+            "conversion evidence"
+          ]
+        },
+        "readiness": {
+          "local_research_plan": "ready",
+          "qualification_and_drafts": "ready",
+          "exact_action_approval_packet": "ready",
+          "live_contact_discovery": "provider_and_terms_configuration_required",
+          "live_message_dispatch": "verified_adapter_recipient_permission_and_owner_approval_required",
+          "independent_production_business": false
+        }
+      },
       "capabilities": [
         {
           "name": "On-time delivery tracking",
@@ -2919,6 +5209,12 @@
           "name": "Install and multi-platform distribution planner",
           "status": "web_ready_native_review_required",
           "evidence": "config/generated/buddy_distribution_catalog.json"
+        },
+        {
+          "id": "buddy_governed_lead_system",
+          "name": "Permission-gated lead discovery and follow-up system",
+          "status": "sandbox_ready_external_adapters_required",
+          "evidence": "server/governed-leads.ts"
         }
       ],
       "api_candidates": [],
@@ -3037,6 +5333,166 @@
           "Published pricing and revenue models are catalog plans, not evidence of sales or earnings."
         ]
       },
+      "business_system": {
+        "business_id": "business-load-calculator",
+        "operating_model": "owner_governed_service_business",
+        "specialization": {
+          "division": "DreamTransport",
+          "category": "load-planning",
+          "mission": "Calculates optimal load configurations with weight distribution and space utilization.",
+          "ideal_customer_segments": [
+            "Drivers",
+            "dock workers",
+            "load planners"
+          ],
+          "core_offer": "Load Planning Calculator: Calculates optimal load configurations with weight distribution and space utilization.",
+          "promised_outputs": [
+            "Weight distribution calculator",
+            "Space utilization optimizer",
+            "Axle weight compliance",
+            "Load diagram generation",
+            "Commodity compatibility checking"
+          ],
+          "catalog_revenue_model": "SaaS subscription",
+          "catalog_price_range": "$0",
+          "earnings_status": "no_revenue_or_customer_result_guaranteed"
+        },
+        "operating_workflow": [
+          "capture_owner_goal_and_offer",
+          "define_ideal_customer_profile",
+          "select_owner_authorized_sources",
+          "confirm_source_terms_and_collection_scope",
+          "research_and_deduplicate_candidates",
+          "qualify_need_fit_timing_and_permission",
+          "draft_one_relevant_message",
+          "request_exact_owner_approval",
+          "dispatch_through_configured_adapter_only",
+          "wait_for_required_follow_up_interval",
+          "stop_on_reply_opt_out_bounce_or_complaint",
+          "report_outcomes_without_claiming_guaranteed_revenue"
+        ],
+        "lead_system": {
+          "system_id": "lead-system-load-calculator",
+          "engine": "server/governed-leads.ts",
+          "status": "sandbox_ready_external_adapters_required",
+          "ideal_customer_profile": {
+            "segments": [
+              "Drivers",
+              "dock workers",
+              "load planners"
+            ],
+            "need_signals": [
+              "Needs help with Weight distribution calculator",
+              "Needs help with Space utilization optimizer",
+              "Needs help with Axle weight compliance",
+              "Needs help with Load diagram generation",
+              "Needs help with Commodity compatibility checking"
+            ],
+            "exclusion_rules": [
+              "no minors",
+              "no protected or sensitive trait targeting",
+              "no deceptive identity or impersonation",
+              "no lead without traceable source evidence"
+            ]
+          },
+          "discovery": {
+            "query_templates": [
+              "Drivers, dock workers, load planners requesting Weight distribution calculator",
+              "organizations seeking load-planning support",
+              "inbound requests matching Load Planning Calculator",
+              "existing customers who opted in to Weight distribution calculator updates"
+            ],
+            "authorized_source_types": [
+              "owner supplied records",
+              "consent based inbound requests",
+              "existing customer records with documented relationship",
+              "public business directories whose terms permit research",
+              "owner authorized provider APIs"
+            ],
+            "forbidden_collection": [
+              "private accounts or access-controlled pages",
+              "terms bypassing scraping",
+              "purchased, stolen, or unverifiable contact lists",
+              "raw credentials or secret tokens",
+              "sensitive personal data"
+            ]
+          },
+          "qualification": {
+            "required_fields": [
+              "source reference",
+              "organization or customer need",
+              "fit to the bot specialization",
+              "contact permission basis and channel scope",
+              "qualification evidence"
+            ],
+            "score_dimensions": {
+              "demonstrated_need": 30,
+              "capability_fit": 25,
+              "decision_readiness": 15,
+              "voluntarily_supplied_timing": 10,
+              "documented_contact_permission": 20
+            },
+            "minimum_score_for_owner_review": 65,
+            "permission_is_mandatory_even_above_threshold": true
+          },
+          "outreach": {
+            "supported_channels": [
+              "email",
+              "sms",
+              "voice_call",
+              "social_dm"
+            ],
+            "recipient_channel_permission_required": true,
+            "raw_contact_details_in_browser_forbidden": true,
+            "exact_owner_approval_per_message": true,
+            "maximum_daily_sends": 20,
+            "adapter_status": "configuration_required_for_live_dispatch"
+          },
+          "follow_up": {
+            "maximum_follow_ups": 2,
+            "minimum_interval_hours": 48,
+            "approval_required_for_each_follow_up": true,
+            "stop_conditions": [
+              "reply",
+              "opt out",
+              "bounce",
+              "complaint",
+              "permission expiry",
+              "owner stop",
+              "sequence complete"
+            ],
+            "suppression_ledger_required": true
+          },
+          "owner_controls": {
+            "default_mode": "research_and_draft_only",
+            "pause_and_kill_switch_required": true,
+            "one_action_approval_expiry_hours": 24,
+            "quiet_hours_supported": true,
+            "export_and_delete_supported": true
+          },
+          "metrics": [
+            "candidates researched",
+            "source evidence coverage",
+            "qualified leads",
+            "recipient permission coverage",
+            "owner approval rate",
+            "reply rate",
+            "positive reply rate",
+            "opt-out rate",
+            "bounce rate",
+            "complaint rate",
+            "conversion evidence"
+          ]
+        },
+        "readiness": {
+          "local_research_plan": "ready",
+          "qualification_and_drafts": "ready",
+          "exact_action_approval_packet": "ready",
+          "live_contact_discovery": "provider_and_terms_configuration_required",
+          "live_message_dispatch": "verified_adapter_recipient_permission_and_owner_approval_required",
+          "independent_production_business": false
+        }
+      },
       "capabilities": [
         {
           "name": "Weight distribution calculator",
@@ -3129,6 +5585,12 @@
           "name": "Install and multi-platform distribution planner",
           "status": "web_ready_native_review_required",
           "evidence": "config/generated/buddy_distribution_catalog.json"
+        },
+        {
+          "id": "buddy_governed_lead_system",
+          "name": "Permission-gated lead discovery and follow-up system",
+          "status": "sandbox_ready_external_adapters_required",
+          "evidence": "server/governed-leads.ts"
         }
       ],
       "api_candidates": [],
@@ -3247,6 +5709,164 @@
           "Published pricing and revenue models are catalog plans, not evidence of sales or earnings."
         ]
       },
+      "business_system": {
+        "business_id": "business-shipment-visibility",
+        "operating_model": "owner_governed_service_business",
+        "specialization": {
+          "division": "DreamTransport",
+          "category": "visibility",
+          "mission": "Provides end-to-end shipment visibility with milestone tracking and ETA prediction.",
+          "ideal_customer_segments": [
+            "Shippers",
+            "customer service teams"
+          ],
+          "core_offer": "Shipment Visibility Hub: Provides end-to-end shipment visibility with milestone tracking and ETA prediction.",
+          "promised_outputs": [
+            "Multi-carrier tracking",
+            "Milestone event logging",
+            "ETA prediction engine",
+            "Exception alerting automation",
+            "Customer portal access"
+          ],
+          "catalog_revenue_model": "SaaS subscription",
+          "catalog_price_range": "$149/mo",
+          "earnings_status": "no_revenue_or_customer_result_guaranteed"
+        },
+        "operating_workflow": [
+          "capture_owner_goal_and_offer",
+          "define_ideal_customer_profile",
+          "select_owner_authorized_sources",
+          "confirm_source_terms_and_collection_scope",
+          "research_and_deduplicate_candidates",
+          "qualify_need_fit_timing_and_permission",
+          "draft_one_relevant_message",
+          "request_exact_owner_approval",
+          "dispatch_through_configured_adapter_only",
+          "wait_for_required_follow_up_interval",
+          "stop_on_reply_opt_out_bounce_or_complaint",
+          "report_outcomes_without_claiming_guaranteed_revenue"
+        ],
+        "lead_system": {
+          "system_id": "lead-system-shipment-visibility",
+          "engine": "server/governed-leads.ts",
+          "status": "sandbox_ready_external_adapters_required",
+          "ideal_customer_profile": {
+            "segments": [
+              "Shippers",
+              "customer service teams"
+            ],
+            "need_signals": [
+              "Needs help with Multi-carrier tracking",
+              "Needs help with Milestone event logging",
+              "Needs help with ETA prediction engine",
+              "Needs help with Exception alerting automation",
+              "Needs help with Customer portal access"
+            ],
+            "exclusion_rules": [
+              "no minors",
+              "no protected or sensitive trait targeting",
+              "no deceptive identity or impersonation",
+              "no lead without traceable source evidence"
+            ]
+          },
+          "discovery": {
+            "query_templates": [
+              "Shippers, customer service teams requesting Multi-carrier tracking",
+              "organizations seeking visibility support",
+              "inbound requests matching Shipment Visibility Hub",
+              "existing customers who opted in to Multi-carrier tracking updates"
+            ],
+            "authorized_source_types": [
+              "owner supplied records",
+              "consent based inbound requests",
+              "existing customer records with documented relationship",
+              "public business directories whose terms permit research",
+              "owner authorized provider APIs"
+            ],
+            "forbidden_collection": [
+              "private accounts or access-controlled pages",
+              "terms bypassing scraping",
+              "purchased, stolen, or unverifiable contact lists",
+              "raw credentials or secret tokens",
+              "sensitive personal data"
+            ]
+          },
+          "qualification": {
+            "required_fields": [
+              "source reference",
+              "organization or customer need",
+              "fit to the bot specialization",
+              "contact permission basis and channel scope",
+              "qualification evidence"
+            ],
+            "score_dimensions": {
+              "demonstrated_need": 30,
+              "capability_fit": 25,
+              "decision_readiness": 15,
+              "voluntarily_supplied_timing": 10,
+              "documented_contact_permission": 20
+            },
+            "minimum_score_for_owner_review": 65,
+            "permission_is_mandatory_even_above_threshold": true
+          },
+          "outreach": {
+            "supported_channels": [
+              "email",
+              "sms",
+              "voice_call",
+              "social_dm"
+            ],
+            "recipient_channel_permission_required": true,
+            "raw_contact_details_in_browser_forbidden": true,
+            "exact_owner_approval_per_message": true,
+            "maximum_daily_sends": 20,
+            "adapter_status": "configuration_required_for_live_dispatch"
+          },
+          "follow_up": {
+            "maximum_follow_ups": 2,
+            "minimum_interval_hours": 48,
+            "approval_required_for_each_follow_up": true,
+            "stop_conditions": [
+              "reply",
+              "opt out",
+              "bounce",
+              "complaint",
+              "permission expiry",
+              "owner stop",
+              "sequence complete"
+            ],
+            "suppression_ledger_required": true
+          },
+          "owner_controls": {
+            "default_mode": "research_and_draft_only",
+            "pause_and_kill_switch_required": true,
+            "one_action_approval_expiry_hours": 24,
+            "quiet_hours_supported": true,
+            "export_and_delete_supported": true
+          },
+          "metrics": [
+            "candidates researched",
+            "source evidence coverage",
+            "qualified leads",
+            "recipient permission coverage",
+            "owner approval rate",
+            "reply rate",
+            "positive reply rate",
+            "opt-out rate",
+            "bounce rate",
+            "complaint rate",
+            "conversion evidence"
+          ]
+        },
+        "readiness": {
+          "local_research_plan": "ready",
+          "qualification_and_drafts": "ready",
+          "exact_action_approval_packet": "ready",
+          "live_contact_discovery": "provider_and_terms_configuration_required",
+          "live_message_dispatch": "verified_adapter_recipient_permission_and_owner_approval_required",
+          "independent_production_business": false
+        }
+      },
       "capabilities": [
         {
           "name": "Multi-carrier tracking",
@@ -3339,6 +5959,12 @@
           "name": "Install and multi-platform distribution planner",
           "status": "web_ready_native_review_required",
           "evidence": "config/generated/buddy_distribution_catalog.json"
+        },
+        {
+          "id": "buddy_governed_lead_system",
+          "name": "Permission-gated lead discovery and follow-up system",
+          "status": "sandbox_ready_external_adapters_required",
+          "evidence": "server/governed-leads.ts"
         },
         {
           "id": "buddy_connection_broker",
@@ -3463,6 +6089,164 @@
           "Published pricing and revenue models are catalog plans, not evidence of sales or earnings."
         ]
       },
+      "business_system": {
+        "business_id": "business-driver-training-ai",
+        "operating_model": "owner_governed_service_business",
+        "specialization": {
+          "division": "DreamTransport",
+          "category": "training",
+          "mission": "Provides AI-driven driver training with performance feedback and safety coaching.",
+          "ideal_customer_segments": [
+            "Training managers",
+            "safety directors"
+          ],
+          "core_offer": "Driver Training AI: Provides AI-driven driver training with performance feedback and safety coaching.",
+          "promised_outputs": [
+            "Driving behavior analysis",
+            "Training module assignment",
+            "Safety coaching recommendations",
+            "Certification tracking tools",
+            "Simulation scenario generation"
+          ],
+          "catalog_revenue_model": "SaaS subscription",
+          "catalog_price_range": "$99/mo",
+          "earnings_status": "no_revenue_or_customer_result_guaranteed"
+        },
+        "operating_workflow": [
+          "capture_owner_goal_and_offer",
+          "define_ideal_customer_profile",
+          "select_owner_authorized_sources",
+          "confirm_source_terms_and_collection_scope",
+          "research_and_deduplicate_candidates",
+          "qualify_need_fit_timing_and_permission",
+          "draft_one_relevant_message",
+          "request_exact_owner_approval",
+          "dispatch_through_configured_adapter_only",
+          "wait_for_required_follow_up_interval",
+          "stop_on_reply_opt_out_bounce_or_complaint",
+          "report_outcomes_without_claiming_guaranteed_revenue"
+        ],
+        "lead_system": {
+          "system_id": "lead-system-driver-training-ai",
+          "engine": "server/governed-leads.ts",
+          "status": "sandbox_ready_external_adapters_required",
+          "ideal_customer_profile": {
+            "segments": [
+              "Training managers",
+              "safety directors"
+            ],
+            "need_signals": [
+              "Needs help with Driving behavior analysis",
+              "Needs help with Training module assignment",
+              "Needs help with Safety coaching recommendations",
+              "Needs help with Certification tracking tools",
+              "Needs help with Simulation scenario generation"
+            ],
+            "exclusion_rules": [
+              "no minors",
+              "no protected or sensitive trait targeting",
+              "no deceptive identity or impersonation",
+              "no lead without traceable source evidence"
+            ]
+          },
+          "discovery": {
+            "query_templates": [
+              "Training managers, safety directors requesting Driving behavior analysis",
+              "organizations seeking training support",
+              "inbound requests matching Driver Training AI",
+              "existing customers who opted in to Driving behavior analysis updates"
+            ],
+            "authorized_source_types": [
+              "owner supplied records",
+              "consent based inbound requests",
+              "existing customer records with documented relationship",
+              "public business directories whose terms permit research",
+              "owner authorized provider APIs"
+            ],
+            "forbidden_collection": [
+              "private accounts or access-controlled pages",
+              "terms bypassing scraping",
+              "purchased, stolen, or unverifiable contact lists",
+              "raw credentials or secret tokens",
+              "sensitive personal data"
+            ]
+          },
+          "qualification": {
+            "required_fields": [
+              "source reference",
+              "organization or customer need",
+              "fit to the bot specialization",
+              "contact permission basis and channel scope",
+              "qualification evidence"
+            ],
+            "score_dimensions": {
+              "demonstrated_need": 30,
+              "capability_fit": 25,
+              "decision_readiness": 15,
+              "voluntarily_supplied_timing": 10,
+              "documented_contact_permission": 20
+            },
+            "minimum_score_for_owner_review": 65,
+            "permission_is_mandatory_even_above_threshold": true
+          },
+          "outreach": {
+            "supported_channels": [
+              "email",
+              "sms",
+              "voice_call",
+              "social_dm"
+            ],
+            "recipient_channel_permission_required": true,
+            "raw_contact_details_in_browser_forbidden": true,
+            "exact_owner_approval_per_message": true,
+            "maximum_daily_sends": 20,
+            "adapter_status": "configuration_required_for_live_dispatch"
+          },
+          "follow_up": {
+            "maximum_follow_ups": 2,
+            "minimum_interval_hours": 48,
+            "approval_required_for_each_follow_up": true,
+            "stop_conditions": [
+              "reply",
+              "opt out",
+              "bounce",
+              "complaint",
+              "permission expiry",
+              "owner stop",
+              "sequence complete"
+            ],
+            "suppression_ledger_required": true
+          },
+          "owner_controls": {
+            "default_mode": "research_and_draft_only",
+            "pause_and_kill_switch_required": true,
+            "one_action_approval_expiry_hours": 24,
+            "quiet_hours_supported": true,
+            "export_and_delete_supported": true
+          },
+          "metrics": [
+            "candidates researched",
+            "source evidence coverage",
+            "qualified leads",
+            "recipient permission coverage",
+            "owner approval rate",
+            "reply rate",
+            "positive reply rate",
+            "opt-out rate",
+            "bounce rate",
+            "complaint rate",
+            "conversion evidence"
+          ]
+        },
+        "readiness": {
+          "local_research_plan": "ready",
+          "qualification_and_drafts": "ready",
+          "exact_action_approval_packet": "ready",
+          "live_contact_discovery": "provider_and_terms_configuration_required",
+          "live_message_dispatch": "verified_adapter_recipient_permission_and_owner_approval_required",
+          "independent_production_business": false
+        }
+      },
       "capabilities": [
         {
           "name": "Driving behavior analysis",
@@ -3555,6 +6339,12 @@
           "name": "Install and multi-platform distribution planner",
           "status": "web_ready_native_review_required",
           "evidence": "config/generated/buddy_distribution_catalog.json"
+        },
+        {
+          "id": "buddy_governed_lead_system",
+          "name": "Permission-gated lead discovery and follow-up system",
+          "status": "sandbox_ready_external_adapters_required",
+          "evidence": "server/governed-leads.ts"
         },
         {
           "id": "buddy_game_lab",
@@ -3679,6 +6469,164 @@
           "Published pricing and revenue models are catalog plans, not evidence of sales or earnings."
         ]
       },
+      "business_system": {
+        "business_id": "business-vehicle-maintenance",
+        "operating_model": "owner_governed_service_business",
+        "specialization": {
+          "division": "DreamTransport",
+          "category": "maintenance",
+          "mission": "Schedules vehicle maintenance with predictive analytics and cost tracking.",
+          "ideal_customer_segments": [
+            "Fleet maintenance managers",
+            "mechanics"
+          ],
+          "core_offer": "Vehicle Maintenance Scheduler: Schedules vehicle maintenance with predictive analytics and cost tracking.",
+          "promised_outputs": [
+            "Predictive maintenance alerts",
+            "Service history tracking",
+            "Parts inventory management",
+            "Vendor management tools",
+            "Warranty claim tracking"
+          ],
+          "catalog_revenue_model": "SaaS subscription",
+          "catalog_price_range": "$129/mo",
+          "earnings_status": "no_revenue_or_customer_result_guaranteed"
+        },
+        "operating_workflow": [
+          "capture_owner_goal_and_offer",
+          "define_ideal_customer_profile",
+          "select_owner_authorized_sources",
+          "confirm_source_terms_and_collection_scope",
+          "research_and_deduplicate_candidates",
+          "qualify_need_fit_timing_and_permission",
+          "draft_one_relevant_message",
+          "request_exact_owner_approval",
+          "dispatch_through_configured_adapter_only",
+          "wait_for_required_follow_up_interval",
+          "stop_on_reply_opt_out_bounce_or_complaint",
+          "report_outcomes_without_claiming_guaranteed_revenue"
+        ],
+        "lead_system": {
+          "system_id": "lead-system-vehicle-maintenance",
+          "engine": "server/governed-leads.ts",
+          "status": "sandbox_ready_external_adapters_required",
+          "ideal_customer_profile": {
+            "segments": [
+              "Fleet maintenance managers",
+              "mechanics"
+            ],
+            "need_signals": [
+              "Needs help with Predictive maintenance alerts",
+              "Needs help with Service history tracking",
+              "Needs help with Parts inventory management",
+              "Needs help with Vendor management tools",
+              "Needs help with Warranty claim tracking"
+            ],
+            "exclusion_rules": [
+              "no minors",
+              "no protected or sensitive trait targeting",
+              "no deceptive identity or impersonation",
+              "no lead without traceable source evidence"
+            ]
+          },
+          "discovery": {
+            "query_templates": [
+              "Fleet maintenance managers, mechanics requesting Predictive maintenance alerts",
+              "organizations seeking maintenance support",
+              "inbound requests matching Vehicle Maintenance Scheduler",
+              "existing customers who opted in to Predictive maintenance alerts updates"
+            ],
+            "authorized_source_types": [
+              "owner supplied records",
+              "consent based inbound requests",
+              "existing customer records with documented relationship",
+              "public business directories whose terms permit research",
+              "owner authorized provider APIs"
+            ],
+            "forbidden_collection": [
+              "private accounts or access-controlled pages",
+              "terms bypassing scraping",
+              "purchased, stolen, or unverifiable contact lists",
+              "raw credentials or secret tokens",
+              "sensitive personal data"
+            ]
+          },
+          "qualification": {
+            "required_fields": [
+              "source reference",
+              "organization or customer need",
+              "fit to the bot specialization",
+              "contact permission basis and channel scope",
+              "qualification evidence"
+            ],
+            "score_dimensions": {
+              "demonstrated_need": 30,
+              "capability_fit": 25,
+              "decision_readiness": 15,
+              "voluntarily_supplied_timing": 10,
+              "documented_contact_permission": 20
+            },
+            "minimum_score_for_owner_review": 65,
+            "permission_is_mandatory_even_above_threshold": true
+          },
+          "outreach": {
+            "supported_channels": [
+              "email",
+              "sms",
+              "voice_call",
+              "social_dm"
+            ],
+            "recipient_channel_permission_required": true,
+            "raw_contact_details_in_browser_forbidden": true,
+            "exact_owner_approval_per_message": true,
+            "maximum_daily_sends": 20,
+            "adapter_status": "configuration_required_for_live_dispatch"
+          },
+          "follow_up": {
+            "maximum_follow_ups": 2,
+            "minimum_interval_hours": 48,
+            "approval_required_for_each_follow_up": true,
+            "stop_conditions": [
+              "reply",
+              "opt out",
+              "bounce",
+              "complaint",
+              "permission expiry",
+              "owner stop",
+              "sequence complete"
+            ],
+            "suppression_ledger_required": true
+          },
+          "owner_controls": {
+            "default_mode": "research_and_draft_only",
+            "pause_and_kill_switch_required": true,
+            "one_action_approval_expiry_hours": 24,
+            "quiet_hours_supported": true,
+            "export_and_delete_supported": true
+          },
+          "metrics": [
+            "candidates researched",
+            "source evidence coverage",
+            "qualified leads",
+            "recipient permission coverage",
+            "owner approval rate",
+            "reply rate",
+            "positive reply rate",
+            "opt-out rate",
+            "bounce rate",
+            "complaint rate",
+            "conversion evidence"
+          ]
+        },
+        "readiness": {
+          "local_research_plan": "ready",
+          "qualification_and_drafts": "ready",
+          "exact_action_approval_packet": "ready",
+          "live_contact_discovery": "provider_and_terms_configuration_required",
+          "live_message_dispatch": "verified_adapter_recipient_permission_and_owner_approval_required",
+          "independent_production_business": false
+        }
+      },
       "capabilities": [
         {
           "name": "Predictive maintenance alerts",
@@ -3771,6 +6719,12 @@
           "name": "Install and multi-platform distribution planner",
           "status": "web_ready_native_review_required",
           "evidence": "config/generated/buddy_distribution_catalog.json"
+        },
+        {
+          "id": "buddy_governed_lead_system",
+          "name": "Permission-gated lead discovery and follow-up system",
+          "status": "sandbox_ready_external_adapters_required",
+          "evidence": "server/governed-leads.ts"
         }
       ],
       "api_candidates": [],
@@ -3889,6 +6843,164 @@
           "Published pricing and revenue models are catalog plans, not evidence of sales or earnings."
         ]
       },
+      "business_system": {
+        "business_id": "business-intermodal-coordinator",
+        "operating_model": "owner_governed_service_business",
+        "specialization": {
+          "division": "DreamTransport",
+          "category": "intermodal",
+          "mission": "Coordinates intermodal transportation with mode selection and terminal management.",
+          "ideal_customer_segments": [
+            "Intermodal planners",
+            "logistics directors"
+          ],
+          "core_offer": "Intermodal Coordination AI: Coordinates intermodal transportation with mode selection and terminal management.",
+          "promised_outputs": [
+            "Mode selection optimization",
+            "Terminal appointment scheduling",
+            "Container tracking integration",
+            "Drayage coordination engine",
+            "Chassis management tools"
+          ],
+          "catalog_revenue_model": "Enterprise license",
+          "catalog_price_range": "$699/mo",
+          "earnings_status": "no_revenue_or_customer_result_guaranteed"
+        },
+        "operating_workflow": [
+          "capture_owner_goal_and_offer",
+          "define_ideal_customer_profile",
+          "select_owner_authorized_sources",
+          "confirm_source_terms_and_collection_scope",
+          "research_and_deduplicate_candidates",
+          "qualify_need_fit_timing_and_permission",
+          "draft_one_relevant_message",
+          "request_exact_owner_approval",
+          "dispatch_through_configured_adapter_only",
+          "wait_for_required_follow_up_interval",
+          "stop_on_reply_opt_out_bounce_or_complaint",
+          "report_outcomes_without_claiming_guaranteed_revenue"
+        ],
+        "lead_system": {
+          "system_id": "lead-system-intermodal-coordinator",
+          "engine": "server/governed-leads.ts",
+          "status": "sandbox_ready_external_adapters_required",
+          "ideal_customer_profile": {
+            "segments": [
+              "Intermodal planners",
+              "logistics directors"
+            ],
+            "need_signals": [
+              "Needs help with Mode selection optimization",
+              "Needs help with Terminal appointment scheduling",
+              "Needs help with Container tracking integration",
+              "Needs help with Drayage coordination engine",
+              "Needs help with Chassis management tools"
+            ],
+            "exclusion_rules": [
+              "no minors",
+              "no protected or sensitive trait targeting",
+              "no deceptive identity or impersonation",
+              "no lead without traceable source evidence"
+            ]
+          },
+          "discovery": {
+            "query_templates": [
+              "Intermodal planners, logistics directors requesting Mode selection optimization",
+              "organizations seeking intermodal support",
+              "inbound requests matching Intermodal Coordination AI",
+              "existing customers who opted in to Mode selection optimization updates"
+            ],
+            "authorized_source_types": [
+              "owner supplied records",
+              "consent based inbound requests",
+              "existing customer records with documented relationship",
+              "public business directories whose terms permit research",
+              "owner authorized provider APIs"
+            ],
+            "forbidden_collection": [
+              "private accounts or access-controlled pages",
+              "terms bypassing scraping",
+              "purchased, stolen, or unverifiable contact lists",
+              "raw credentials or secret tokens",
+              "sensitive personal data"
+            ]
+          },
+          "qualification": {
+            "required_fields": [
+              "source reference",
+              "organization or customer need",
+              "fit to the bot specialization",
+              "contact permission basis and channel scope",
+              "qualification evidence"
+            ],
+            "score_dimensions": {
+              "demonstrated_need": 30,
+              "capability_fit": 25,
+              "decision_readiness": 15,
+              "voluntarily_supplied_timing": 10,
+              "documented_contact_permission": 20
+            },
+            "minimum_score_for_owner_review": 65,
+            "permission_is_mandatory_even_above_threshold": true
+          },
+          "outreach": {
+            "supported_channels": [
+              "email",
+              "sms",
+              "voice_call",
+              "social_dm"
+            ],
+            "recipient_channel_permission_required": true,
+            "raw_contact_details_in_browser_forbidden": true,
+            "exact_owner_approval_per_message": true,
+            "maximum_daily_sends": 20,
+            "adapter_status": "configuration_required_for_live_dispatch"
+          },
+          "follow_up": {
+            "maximum_follow_ups": 2,
+            "minimum_interval_hours": 48,
+            "approval_required_for_each_follow_up": true,
+            "stop_conditions": [
+              "reply",
+              "opt out",
+              "bounce",
+              "complaint",
+              "permission expiry",
+              "owner stop",
+              "sequence complete"
+            ],
+            "suppression_ledger_required": true
+          },
+          "owner_controls": {
+            "default_mode": "research_and_draft_only",
+            "pause_and_kill_switch_required": true,
+            "one_action_approval_expiry_hours": 24,
+            "quiet_hours_supported": true,
+            "export_and_delete_supported": true
+          },
+          "metrics": [
+            "candidates researched",
+            "source evidence coverage",
+            "qualified leads",
+            "recipient permission coverage",
+            "owner approval rate",
+            "reply rate",
+            "positive reply rate",
+            "opt-out rate",
+            "bounce rate",
+            "complaint rate",
+            "conversion evidence"
+          ]
+        },
+        "readiness": {
+          "local_research_plan": "ready",
+          "qualification_and_drafts": "ready",
+          "exact_action_approval_packet": "ready",
+          "live_contact_discovery": "provider_and_terms_configuration_required",
+          "live_message_dispatch": "verified_adapter_recipient_permission_and_owner_approval_required",
+          "independent_production_business": false
+        }
+      },
       "capabilities": [
         {
           "name": "Mode selection optimization",
@@ -3981,6 +7093,12 @@
           "name": "Install and multi-platform distribution planner",
           "status": "web_ready_native_review_required",
           "evidence": "config/generated/buddy_distribution_catalog.json"
+        },
+        {
+          "id": "buddy_governed_lead_system",
+          "name": "Permission-gated lead discovery and follow-up system",
+          "status": "sandbox_ready_external_adapters_required",
+          "evidence": "server/governed-leads.ts"
         },
         {
           "id": "buddy_connection_broker",

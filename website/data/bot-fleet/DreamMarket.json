@@ -48,6 +48,164 @@
           "Published pricing and revenue models are catalog plans, not evidence of sales or earnings."
         ]
       },
+      "business_system": {
+        "business_id": "business-marketplace-manager",
+        "operating_model": "owner_governed_service_business",
+        "specialization": {
+          "division": "DreamMarket",
+          "category": "marketplace-management",
+          "mission": "Unified marketplace management across Amazon, eBay, Walmart, and Etsy.",
+          "ideal_customer_segments": [
+            "E-commerce directors",
+            "marketplace sellers"
+          ],
+          "core_offer": "Marketplace Manager Bot: Unified marketplace management across Amazon, eBay, Walmart, and Etsy.",
+          "promised_outputs": [
+            "Multi-marketplace listing sync",
+            "Order consolidation engine",
+            "Performance analytics dashboard",
+            "Policy compliance monitoring",
+            "Inventory allocation optimizer"
+          ],
+          "catalog_revenue_model": "SaaS subscription",
+          "catalog_price_range": "$499/mo",
+          "earnings_status": "no_revenue_or_customer_result_guaranteed"
+        },
+        "operating_workflow": [
+          "capture_owner_goal_and_offer",
+          "define_ideal_customer_profile",
+          "select_owner_authorized_sources",
+          "confirm_source_terms_and_collection_scope",
+          "research_and_deduplicate_candidates",
+          "qualify_need_fit_timing_and_permission",
+          "draft_one_relevant_message",
+          "request_exact_owner_approval",
+          "dispatch_through_configured_adapter_only",
+          "wait_for_required_follow_up_interval",
+          "stop_on_reply_opt_out_bounce_or_complaint",
+          "report_outcomes_without_claiming_guaranteed_revenue"
+        ],
+        "lead_system": {
+          "system_id": "lead-system-marketplace-manager",
+          "engine": "server/governed-leads.ts",
+          "status": "sandbox_ready_external_adapters_required",
+          "ideal_customer_profile": {
+            "segments": [
+              "E-commerce directors",
+              "marketplace sellers"
+            ],
+            "need_signals": [
+              "Needs help with Multi-marketplace listing sync",
+              "Needs help with Order consolidation engine",
+              "Needs help with Performance analytics dashboard",
+              "Needs help with Policy compliance monitoring",
+              "Needs help with Inventory allocation optimizer"
+            ],
+            "exclusion_rules": [
+              "no minors",
+              "no protected or sensitive trait targeting",
+              "no deceptive identity or impersonation",
+              "no lead without traceable source evidence"
+            ]
+          },
+          "discovery": {
+            "query_templates": [
+              "E-commerce directors, marketplace sellers requesting Multi-marketplace listing sync",
+              "organizations seeking marketplace-management support",
+              "inbound requests matching Marketplace Manager Bot",
+              "existing customers who opted in to Multi-marketplace listing sync updates"
+            ],
+            "authorized_source_types": [
+              "owner supplied records",
+              "consent based inbound requests",
+              "existing customer records with documented relationship",
+              "public business directories whose terms permit research",
+              "owner authorized provider APIs"
+            ],
+            "forbidden_collection": [
+              "private accounts or access-controlled pages",
+              "terms bypassing scraping",
+              "purchased, stolen, or unverifiable contact lists",
+              "raw credentials or secret tokens",
+              "sensitive personal data"
+            ]
+          },
+          "qualification": {
+            "required_fields": [
+              "source reference",
+              "organization or customer need",
+              "fit to the bot specialization",
+              "contact permission basis and channel scope",
+              "qualification evidence"
+            ],
+            "score_dimensions": {
+              "demonstrated_need": 30,
+              "capability_fit": 25,
+              "decision_readiness": 15,
+              "voluntarily_supplied_timing": 10,
+              "documented_contact_permission": 20
+            },
+            "minimum_score_for_owner_review": 65,
+            "permission_is_mandatory_even_above_threshold": true
+          },
+          "outreach": {
+            "supported_channels": [
+              "email",
+              "sms",
+              "voice_call",
+              "social_dm"
+            ],
+            "recipient_channel_permission_required": true,
+            "raw_contact_details_in_browser_forbidden": true,
+            "exact_owner_approval_per_message": true,
+            "maximum_daily_sends": 20,
+            "adapter_status": "configuration_required_for_live_dispatch"
+          },
+          "follow_up": {
+            "maximum_follow_ups": 2,
+            "minimum_interval_hours": 48,
+            "approval_required_for_each_follow_up": true,
+            "stop_conditions": [
+              "reply",
+              "opt out",
+              "bounce",
+              "complaint",
+              "permission expiry",
+              "owner stop",
+              "sequence complete"
+            ],
+            "suppression_ledger_required": true
+          },
+          "owner_controls": {
+            "default_mode": "research_and_draft_only",
+            "pause_and_kill_switch_required": true,
+            "one_action_approval_expiry_hours": 24,
+            "quiet_hours_supported": true,
+            "export_and_delete_supported": true
+          },
+          "metrics": [
+            "candidates researched",
+            "source evidence coverage",
+            "qualified leads",
+            "recipient permission coverage",
+            "owner approval rate",
+            "reply rate",
+            "positive reply rate",
+            "opt-out rate",
+            "bounce rate",
+            "complaint rate",
+            "conversion evidence"
+          ]
+        },
+        "readiness": {
+          "local_research_plan": "ready",
+          "qualification_and_drafts": "ready",
+          "exact_action_approval_packet": "ready",
+          "live_contact_discovery": "provider_and_terms_configuration_required",
+          "live_message_dispatch": "verified_adapter_recipient_permission_and_owner_approval_required",
+          "independent_production_business": false
+        }
+      },
       "capabilities": [
         {
           "name": "Multi-marketplace listing sync",
@@ -140,6 +298,12 @@
           "name": "Install and multi-platform distribution planner",
           "status": "web_ready_native_review_required",
           "evidence": "config/generated/buddy_distribution_catalog.json"
+        },
+        {
+          "id": "buddy_governed_lead_system",
+          "name": "Permission-gated lead discovery and follow-up system",
+          "status": "sandbox_ready_external_adapters_required",
+          "evidence": "server/governed-leads.ts"
         },
         {
           "id": "buddy_social_manager",
@@ -336,6 +500,164 @@
           "Published pricing and revenue models are catalog plans, not evidence of sales or earnings."
         ]
       },
+      "business_system": {
+        "business_id": "business-arbitrage-finder",
+        "operating_model": "owner_governed_service_business",
+        "specialization": {
+          "division": "DreamMarket",
+          "category": "arbitrage",
+          "mission": "Finds price arbitrage opportunities across online marketplaces.",
+          "ideal_customer_segments": [
+            "Online arbitrage sellers",
+            "resellers"
+          ],
+          "core_offer": "Arbitrage Finder Bot: Finds price arbitrage opportunities across online marketplaces.",
+          "promised_outputs": [
+            "Cross-marketplace price scanning",
+            "Profit margin calculator",
+            "Sourcing cost estimation",
+            "Opportunity ranking engine",
+            "Deal alert notifications"
+          ],
+          "catalog_revenue_model": "SaaS subscription",
+          "catalog_price_range": "$199/mo",
+          "earnings_status": "no_revenue_or_customer_result_guaranteed"
+        },
+        "operating_workflow": [
+          "capture_owner_goal_and_offer",
+          "define_ideal_customer_profile",
+          "select_owner_authorized_sources",
+          "confirm_source_terms_and_collection_scope",
+          "research_and_deduplicate_candidates",
+          "qualify_need_fit_timing_and_permission",
+          "draft_one_relevant_message",
+          "request_exact_owner_approval",
+          "dispatch_through_configured_adapter_only",
+          "wait_for_required_follow_up_interval",
+          "stop_on_reply_opt_out_bounce_or_complaint",
+          "report_outcomes_without_claiming_guaranteed_revenue"
+        ],
+        "lead_system": {
+          "system_id": "lead-system-arbitrage-finder",
+          "engine": "server/governed-leads.ts",
+          "status": "sandbox_ready_external_adapters_required",
+          "ideal_customer_profile": {
+            "segments": [
+              "Online arbitrage sellers",
+              "resellers"
+            ],
+            "need_signals": [
+              "Needs help with Cross-marketplace price scanning",
+              "Needs help with Profit margin calculator",
+              "Needs help with Sourcing cost estimation",
+              "Needs help with Opportunity ranking engine",
+              "Needs help with Deal alert notifications"
+            ],
+            "exclusion_rules": [
+              "no minors",
+              "no protected or sensitive trait targeting",
+              "no deceptive identity or impersonation",
+              "no lead without traceable source evidence"
+            ]
+          },
+          "discovery": {
+            "query_templates": [
+              "Online arbitrage sellers, resellers requesting Cross-marketplace price scanning",
+              "organizations seeking arbitrage support",
+              "inbound requests matching Arbitrage Finder Bot",
+              "existing customers who opted in to Cross-marketplace price scanning updates"
+            ],
+            "authorized_source_types": [
+              "owner supplied records",
+              "consent based inbound requests",
+              "existing customer records with documented relationship",
+              "public business directories whose terms permit research",
+              "owner authorized provider APIs"
+            ],
+            "forbidden_collection": [
+              "private accounts or access-controlled pages",
+              "terms bypassing scraping",
+              "purchased, stolen, or unverifiable contact lists",
+              "raw credentials or secret tokens",
+              "sensitive personal data"
+            ]
+          },
+          "qualification": {
+            "required_fields": [
+              "source reference",
+              "organization or customer need",
+              "fit to the bot specialization",
+              "contact permission basis and channel scope",
+              "qualification evidence"
+            ],
+            "score_dimensions": {
+              "demonstrated_need": 30,
+              "capability_fit": 25,
+              "decision_readiness": 15,
+              "voluntarily_supplied_timing": 10,
+              "documented_contact_permission": 20
+            },
+            "minimum_score_for_owner_review": 65,
+            "permission_is_mandatory_even_above_threshold": true
+          },
+          "outreach": {
+            "supported_channels": [
+              "email",
+              "sms",
+              "voice_call",
+              "social_dm"
+            ],
+            "recipient_channel_permission_required": true,
+            "raw_contact_details_in_browser_forbidden": true,
+            "exact_owner_approval_per_message": true,
+            "maximum_daily_sends": 20,
+            "adapter_status": "configuration_required_for_live_dispatch"
+          },
+          "follow_up": {
+            "maximum_follow_ups": 2,
+            "minimum_interval_hours": 48,
+            "approval_required_for_each_follow_up": true,
+            "stop_conditions": [
+              "reply",
+              "opt out",
+              "bounce",
+              "complaint",
+              "permission expiry",
+              "owner stop",
+              "sequence complete"
+            ],
+            "suppression_ledger_required": true
+          },
+          "owner_controls": {
+            "default_mode": "research_and_draft_only",
+            "pause_and_kill_switch_required": true,
+            "one_action_approval_expiry_hours": 24,
+            "quiet_hours_supported": true,
+            "export_and_delete_supported": true
+          },
+          "metrics": [
+            "candidates researched",
+            "source evidence coverage",
+            "qualified leads",
+            "recipient permission coverage",
+            "owner approval rate",
+            "reply rate",
+            "positive reply rate",
+            "opt-out rate",
+            "bounce rate",
+            "complaint rate",
+            "conversion evidence"
+          ]
+        },
+        "readiness": {
+          "local_research_plan": "ready",
+          "qualification_and_drafts": "ready",
+          "exact_action_approval_packet": "ready",
+          "live_contact_discovery": "provider_and_terms_configuration_required",
+          "live_message_dispatch": "verified_adapter_recipient_permission_and_owner_approval_required",
+          "independent_production_business": false
+        }
+      },
       "capabilities": [
         {
           "name": "Cross-marketplace price scanning",
@@ -428,6 +750,12 @@
           "name": "Install and multi-platform distribution planner",
           "status": "web_ready_native_review_required",
           "evidence": "config/generated/buddy_distribution_catalog.json"
+        },
+        {
+          "id": "buddy_governed_lead_system",
+          "name": "Permission-gated lead discovery and follow-up system",
+          "status": "sandbox_ready_external_adapters_required",
+          "evidence": "server/governed-leads.ts"
         },
         {
           "id": "buddy_connection_broker",
@@ -624,6 +952,164 @@
           "Published pricing and revenue models are catalog plans, not evidence of sales or earnings."
         ]
       },
+      "business_system": {
+        "business_id": "business-dropshipping-engine",
+        "operating_model": "owner_governed_service_business",
+        "specialization": {
+          "division": "DreamMarket",
+          "category": "dropshipping",
+          "mission": "Automates dropshipping operations from product research to fulfillment.",
+          "ideal_customer_segments": [
+            "Dropshippers",
+            "e-commerce entrepreneurs"
+          ],
+          "core_offer": "Dropshipping Engine: Automates dropshipping operations from product research to fulfillment.",
+          "promised_outputs": [
+            "Winning product finder",
+            "Supplier auto-sourcing",
+            "Order routing automation",
+            "Margin tracking dashboard",
+            "Customer service templates"
+          ],
+          "catalog_revenue_model": "SaaS subscription",
+          "catalog_price_range": "$199/mo",
+          "earnings_status": "no_revenue_or_customer_result_guaranteed"
+        },
+        "operating_workflow": [
+          "capture_owner_goal_and_offer",
+          "define_ideal_customer_profile",
+          "select_owner_authorized_sources",
+          "confirm_source_terms_and_collection_scope",
+          "research_and_deduplicate_candidates",
+          "qualify_need_fit_timing_and_permission",
+          "draft_one_relevant_message",
+          "request_exact_owner_approval",
+          "dispatch_through_configured_adapter_only",
+          "wait_for_required_follow_up_interval",
+          "stop_on_reply_opt_out_bounce_or_complaint",
+          "report_outcomes_without_claiming_guaranteed_revenue"
+        ],
+        "lead_system": {
+          "system_id": "lead-system-dropshipping-engine",
+          "engine": "server/governed-leads.ts",
+          "status": "sandbox_ready_external_adapters_required",
+          "ideal_customer_profile": {
+            "segments": [
+              "Dropshippers",
+              "e-commerce entrepreneurs"
+            ],
+            "need_signals": [
+              "Needs help with Winning product finder",
+              "Needs help with Supplier auto-sourcing",
+              "Needs help with Order routing automation",
+              "Needs help with Margin tracking dashboard",
+              "Needs help with Customer service templates"
+            ],
+            "exclusion_rules": [
+              "no minors",
+              "no protected or sensitive trait targeting",
+              "no deceptive identity or impersonation",
+              "no lead without traceable source evidence"
+            ]
+          },
+          "discovery": {
+            "query_templates": [
+              "Dropshippers, e-commerce entrepreneurs requesting Winning product finder",
+              "organizations seeking dropshipping support",
+              "inbound requests matching Dropshipping Engine",
+              "existing customers who opted in to Winning product finder updates"
+            ],
+            "authorized_source_types": [
+              "owner supplied records",
+              "consent based inbound requests",
+              "existing customer records with documented relationship",
+              "public business directories whose terms permit research",
+              "owner authorized provider APIs"
+            ],
+            "forbidden_collection": [
+              "private accounts or access-controlled pages",
+              "terms bypassing scraping",
+              "purchased, stolen, or unverifiable contact lists",
+              "raw credentials or secret tokens",
+              "sensitive personal data"
+            ]
+          },
+          "qualification": {
+            "required_fields": [
+              "source reference",
+              "organization or customer need",
+              "fit to the bot specialization",
+              "contact permission basis and channel scope",
+              "qualification evidence"
+            ],
+            "score_dimensions": {
+              "demonstrated_need": 30,
+              "capability_fit": 25,
+              "decision_readiness": 15,
+              "voluntarily_supplied_timing": 10,
+              "documented_contact_permission": 20
+            },
+            "minimum_score_for_owner_review": 65,
+            "permission_is_mandatory_even_above_threshold": true
+          },
+          "outreach": {
+            "supported_channels": [
+              "email",
+              "sms",
+              "voice_call",
+              "social_dm"
+            ],
+            "recipient_channel_permission_required": true,
+            "raw_contact_details_in_browser_forbidden": true,
+            "exact_owner_approval_per_message": true,
+            "maximum_daily_sends": 20,
+            "adapter_status": "configuration_required_for_live_dispatch"
+          },
+          "follow_up": {
+            "maximum_follow_ups": 2,
+            "minimum_interval_hours": 48,
+            "approval_required_for_each_follow_up": true,
+            "stop_conditions": [
+              "reply",
+              "opt out",
+              "bounce",
+              "complaint",
+              "permission expiry",
+              "owner stop",
+              "sequence complete"
+            ],
+            "suppression_ledger_required": true
+          },
+          "owner_controls": {
+            "default_mode": "research_and_draft_only",
+            "pause_and_kill_switch_required": true,
+            "one_action_approval_expiry_hours": 24,
+            "quiet_hours_supported": true,
+            "export_and_delete_supported": true
+          },
+          "metrics": [
+            "candidates researched",
+            "source evidence coverage",
+            "qualified leads",
+            "recipient permission coverage",
+            "owner approval rate",
+            "reply rate",
+            "positive reply rate",
+            "opt-out rate",
+            "bounce rate",
+            "complaint rate",
+            "conversion evidence"
+          ]
+        },
+        "readiness": {
+          "local_research_plan": "ready",
+          "qualification_and_drafts": "ready",
+          "exact_action_approval_packet": "ready",
+          "live_contact_discovery": "provider_and_terms_configuration_required",
+          "live_message_dispatch": "verified_adapter_recipient_permission_and_owner_approval_required",
+          "independent_production_business": false
+        }
+      },
       "capabilities": [
         {
           "name": "Winning product finder",
@@ -716,6 +1202,12 @@
           "name": "Install and multi-platform distribution planner",
           "status": "web_ready_native_review_required",
           "evidence": "config/generated/buddy_distribution_catalog.json"
+        },
+        {
+          "id": "buddy_governed_lead_system",
+          "name": "Permission-gated lead discovery and follow-up system",
+          "status": "sandbox_ready_external_adapters_required",
+          "evidence": "server/governed-leads.ts"
         },
         {
           "id": "buddy_connection_broker",
@@ -912,6 +1404,164 @@
           "Published pricing and revenue models are catalog plans, not evidence of sales or earnings."
         ]
       },
+      "business_system": {
+        "business_id": "business-affiliate-marketing",
+        "operating_model": "owner_governed_service_business",
+        "specialization": {
+          "division": "DreamMarket",
+          "category": "affiliate-marketing",
+          "mission": "Manages affiliate campaigns with link tracking and commission optimization.",
+          "ideal_customer_segments": [
+            "Affiliate marketers",
+            "content creators"
+          ],
+          "core_offer": "Affiliate Marketing Bot: Manages affiliate campaigns with link tracking and commission optimization.",
+          "promised_outputs": [
+            "Affiliate link management",
+            "Commission tracking engine",
+            "Content placement optimizer",
+            "Performance attribution",
+            "Payout automation"
+          ],
+          "catalog_revenue_model": "SaaS subscription",
+          "catalog_price_range": "$99/mo",
+          "earnings_status": "no_revenue_or_customer_result_guaranteed"
+        },
+        "operating_workflow": [
+          "capture_owner_goal_and_offer",
+          "define_ideal_customer_profile",
+          "select_owner_authorized_sources",
+          "confirm_source_terms_and_collection_scope",
+          "research_and_deduplicate_candidates",
+          "qualify_need_fit_timing_and_permission",
+          "draft_one_relevant_message",
+          "request_exact_owner_approval",
+          "dispatch_through_configured_adapter_only",
+          "wait_for_required_follow_up_interval",
+          "stop_on_reply_opt_out_bounce_or_complaint",
+          "report_outcomes_without_claiming_guaranteed_revenue"
+        ],
+        "lead_system": {
+          "system_id": "lead-system-affiliate-marketing",
+          "engine": "server/governed-leads.ts",
+          "status": "sandbox_ready_external_adapters_required",
+          "ideal_customer_profile": {
+            "segments": [
+              "Affiliate marketers",
+              "content creators"
+            ],
+            "need_signals": [
+              "Needs help with Affiliate link management",
+              "Needs help with Commission tracking engine",
+              "Needs help with Content placement optimizer",
+              "Needs help with Performance attribution",
+              "Needs help with Payout automation"
+            ],
+            "exclusion_rules": [
+              "no minors",
+              "no protected or sensitive trait targeting",
+              "no deceptive identity or impersonation",
+              "no lead without traceable source evidence"
+            ]
+          },
+          "discovery": {
+            "query_templates": [
+              "Affiliate marketers, content creators requesting Affiliate link management",
+              "organizations seeking affiliate-marketing support",
+              "inbound requests matching Affiliate Marketing Bot",
+              "existing customers who opted in to Affiliate link management updates"
+            ],
+            "authorized_source_types": [
+              "owner supplied records",
+              "consent based inbound requests",
+              "existing customer records with documented relationship",
+              "public business directories whose terms permit research",
+              "owner authorized provider APIs"
+            ],
+            "forbidden_collection": [
+              "private accounts or access-controlled pages",
+              "terms bypassing scraping",
+              "purchased, stolen, or unverifiable contact lists",
+              "raw credentials or secret tokens",
+              "sensitive personal data"
+            ]
+          },
+          "qualification": {
+            "required_fields": [
+              "source reference",
+              "organization or customer need",
+              "fit to the bot specialization",
+              "contact permission basis and channel scope",
+              "qualification evidence"
+            ],
+            "score_dimensions": {
+              "demonstrated_need": 30,
+              "capability_fit": 25,
+              "decision_readiness": 15,
+              "voluntarily_supplied_timing": 10,
+              "documented_contact_permission": 20
+            },
+            "minimum_score_for_owner_review": 65,
+            "permission_is_mandatory_even_above_threshold": true
+          },
+          "outreach": {
+            "supported_channels": [
+              "email",
+              "sms",
+              "voice_call",
+              "social_dm"
+            ],
+            "recipient_channel_permission_required": true,
+            "raw_contact_details_in_browser_forbidden": true,
+            "exact_owner_approval_per_message": true,
+            "maximum_daily_sends": 20,
+            "adapter_status": "configuration_required_for_live_dispatch"
+          },
+          "follow_up": {
+            "maximum_follow_ups": 2,
+            "minimum_interval_hours": 48,
+            "approval_required_for_each_follow_up": true,
+            "stop_conditions": [
+              "reply",
+              "opt out",
+              "bounce",
+              "complaint",
+              "permission expiry",
+              "owner stop",
+              "sequence complete"
+            ],
+            "suppression_ledger_required": true
+          },
+          "owner_controls": {
+            "default_mode": "research_and_draft_only",
+            "pause_and_kill_switch_required": true,
+            "one_action_approval_expiry_hours": 24,
+            "quiet_hours_supported": true,
+            "export_and_delete_supported": true
+          },
+          "metrics": [
+            "candidates researched",
+            "source evidence coverage",
+            "qualified leads",
+            "recipient permission coverage",
+            "owner approval rate",
+            "reply rate",
+            "positive reply rate",
+            "opt-out rate",
+            "bounce rate",
+            "complaint rate",
+            "conversion evidence"
+          ]
+        },
+        "readiness": {
+          "local_research_plan": "ready",
+          "qualification_and_drafts": "ready",
+          "exact_action_approval_packet": "ready",
+          "live_contact_discovery": "provider_and_terms_configuration_required",
+          "live_message_dispatch": "verified_adapter_recipient_permission_and_owner_approval_required",
+          "independent_production_business": false
+        }
+      },
       "capabilities": [
         {
           "name": "Affiliate link management",
@@ -1004,6 +1654,12 @@
           "name": "Install and multi-platform distribution planner",
           "status": "web_ready_native_review_required",
           "evidence": "config/generated/buddy_distribution_catalog.json"
+        },
+        {
+          "id": "buddy_governed_lead_system",
+          "name": "Permission-gated lead discovery and follow-up system",
+          "status": "sandbox_ready_external_adapters_required",
+          "evidence": "server/governed-leads.ts"
         },
         {
           "id": "buddy_social_manager",
@@ -1206,6 +1862,164 @@
           "Published pricing and revenue models are catalog plans, not evidence of sales or earnings."
         ]
       },
+      "business_system": {
+        "business_id": "business-digital-franchise",
+        "operating_model": "owner_governed_service_business",
+        "specialization": {
+          "division": "DreamMarket",
+          "category": "digital-franchise",
+          "mission": "Manages digital franchise operations with territory and brand compliance.",
+          "ideal_customer_segments": [
+            "Digital franchise operators",
+            "brand owners"
+          ],
+          "core_offer": "Digital Franchise Bot: Manages digital franchise operations with territory and brand compliance.",
+          "promised_outputs": [
+            "Franchise playbook distribution",
+            "Territory performance tracking",
+            "Brand compliance monitoring",
+            "Revenue share calculation",
+            "Onboarding automation"
+          ],
+          "catalog_revenue_model": "SaaS subscription",
+          "catalog_price_range": "$99/mo",
+          "earnings_status": "no_revenue_or_customer_result_guaranteed"
+        },
+        "operating_workflow": [
+          "capture_owner_goal_and_offer",
+          "define_ideal_customer_profile",
+          "select_owner_authorized_sources",
+          "confirm_source_terms_and_collection_scope",
+          "research_and_deduplicate_candidates",
+          "qualify_need_fit_timing_and_permission",
+          "draft_one_relevant_message",
+          "request_exact_owner_approval",
+          "dispatch_through_configured_adapter_only",
+          "wait_for_required_follow_up_interval",
+          "stop_on_reply_opt_out_bounce_or_complaint",
+          "report_outcomes_without_claiming_guaranteed_revenue"
+        ],
+        "lead_system": {
+          "system_id": "lead-system-digital-franchise",
+          "engine": "server/governed-leads.ts",
+          "status": "sandbox_ready_external_adapters_required",
+          "ideal_customer_profile": {
+            "segments": [
+              "Digital franchise operators",
+              "brand owners"
+            ],
+            "need_signals": [
+              "Needs help with Franchise playbook distribution",
+              "Needs help with Territory performance tracking",
+              "Needs help with Brand compliance monitoring",
+              "Needs help with Revenue share calculation",
+              "Needs help with Onboarding automation"
+            ],
+            "exclusion_rules": [
+              "no minors",
+              "no protected or sensitive trait targeting",
+              "no deceptive identity or impersonation",
+              "no lead without traceable source evidence"
+            ]
+          },
+          "discovery": {
+            "query_templates": [
+              "Digital franchise operators, brand owners requesting Franchise playbook distribution",
+              "organizations seeking digital-franchise support",
+              "inbound requests matching Digital Franchise Bot",
+              "existing customers who opted in to Franchise playbook distribution updates"
+            ],
+            "authorized_source_types": [
+              "owner supplied records",
+              "consent based inbound requests",
+              "existing customer records with documented relationship",
+              "public business directories whose terms permit research",
+              "owner authorized provider APIs"
+            ],
+            "forbidden_collection": [
+              "private accounts or access-controlled pages",
+              "terms bypassing scraping",
+              "purchased, stolen, or unverifiable contact lists",
+              "raw credentials or secret tokens",
+              "sensitive personal data"
+            ]
+          },
+          "qualification": {
+            "required_fields": [
+              "source reference",
+              "organization or customer need",
+              "fit to the bot specialization",
+              "contact permission basis and channel scope",
+              "qualification evidence"
+            ],
+            "score_dimensions": {
+              "demonstrated_need": 30,
+              "capability_fit": 25,
+              "decision_readiness": 15,
+              "voluntarily_supplied_timing": 10,
+              "documented_contact_permission": 20
+            },
+            "minimum_score_for_owner_review": 65,
+            "permission_is_mandatory_even_above_threshold": true
+          },
+          "outreach": {
+            "supported_channels": [
+              "email",
+              "sms",
+              "voice_call",
+              "social_dm"
+            ],
+            "recipient_channel_permission_required": true,
+            "raw_contact_details_in_browser_forbidden": true,
+            "exact_owner_approval_per_message": true,
+            "maximum_daily_sends": 20,
+            "adapter_status": "configuration_required_for_live_dispatch"
+          },
+          "follow_up": {
+            "maximum_follow_ups": 2,
+            "minimum_interval_hours": 48,
+            "approval_required_for_each_follow_up": true,
+            "stop_conditions": [
+              "reply",
+              "opt out",
+              "bounce",
+              "complaint",
+              "permission expiry",
+              "owner stop",
+              "sequence complete"
+            ],
+            "suppression_ledger_required": true
+          },
+          "owner_controls": {
+            "default_mode": "research_and_draft_only",
+            "pause_and_kill_switch_required": true,
+            "one_action_approval_expiry_hours": 24,
+            "quiet_hours_supported": true,
+            "export_and_delete_supported": true
+          },
+          "metrics": [
+            "candidates researched",
+            "source evidence coverage",
+            "qualified leads",
+            "recipient permission coverage",
+            "owner approval rate",
+            "reply rate",
+            "positive reply rate",
+            "opt-out rate",
+            "bounce rate",
+            "complaint rate",
+            "conversion evidence"
+          ]
+        },
+        "readiness": {
+          "local_research_plan": "ready",
+          "qualification_and_drafts": "ready",
+          "exact_action_approval_packet": "ready",
+          "live_contact_discovery": "provider_and_terms_configuration_required",
+          "live_message_dispatch": "verified_adapter_recipient_permission_and_owner_approval_required",
+          "independent_production_business": false
+        }
+      },
       "capabilities": [
         {
           "name": "Franchise playbook distribution",
@@ -1298,6 +2112,12 @@
           "name": "Install and multi-platform distribution planner",
           "status": "web_ready_native_review_required",
           "evidence": "config/generated/buddy_distribution_catalog.json"
+        },
+        {
+          "id": "buddy_governed_lead_system",
+          "name": "Permission-gated lead discovery and follow-up system",
+          "status": "sandbox_ready_external_adapters_required",
+          "evidence": "server/governed-leads.ts"
         },
         {
           "id": "buddy_connection_broker",

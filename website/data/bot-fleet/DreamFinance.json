@@ -48,6 +48,164 @@
           "Published pricing and revenue models are catalog plans, not evidence of sales or earnings."
         ]
       },
+      "business_system": {
+        "business_id": "business-algo-trading",
+        "operating_model": "owner_governed_service_business",
+        "specialization": {
+          "division": "DreamFinance",
+          "category": "trading",
+          "mission": "Institutional-grade algorithmic trading with AI-driven strategy generation and execution.",
+          "ideal_customer_segments": [
+            "Institutional traders",
+            "hedge funds"
+          ],
+          "core_offer": "Algorithmic Trading Bot: Institutional-grade algorithmic trading with AI-driven strategy generation and execution.",
+          "promised_outputs": [
+            "High-frequency order execution",
+            "Strategy backtesting engine",
+            "Risk-adjusted position sizing",
+            "Portfolio heat mapping",
+            "Slippage minimization"
+          ],
+          "catalog_revenue_model": "Performance fee + SaaS",
+          "catalog_price_range": "$2,500/mo",
+          "earnings_status": "no_revenue_or_customer_result_guaranteed"
+        },
+        "operating_workflow": [
+          "capture_owner_goal_and_offer",
+          "define_ideal_customer_profile",
+          "select_owner_authorized_sources",
+          "confirm_source_terms_and_collection_scope",
+          "research_and_deduplicate_candidates",
+          "qualify_need_fit_timing_and_permission",
+          "draft_one_relevant_message",
+          "request_exact_owner_approval",
+          "dispatch_through_configured_adapter_only",
+          "wait_for_required_follow_up_interval",
+          "stop_on_reply_opt_out_bounce_or_complaint",
+          "report_outcomes_without_claiming_guaranteed_revenue"
+        ],
+        "lead_system": {
+          "system_id": "lead-system-algo-trading",
+          "engine": "server/governed-leads.ts",
+          "status": "sandbox_ready_external_adapters_required",
+          "ideal_customer_profile": {
+            "segments": [
+              "Institutional traders",
+              "hedge funds"
+            ],
+            "need_signals": [
+              "Needs help with High-frequency order execution",
+              "Needs help with Strategy backtesting engine",
+              "Needs help with Risk-adjusted position sizing",
+              "Needs help with Portfolio heat mapping",
+              "Needs help with Slippage minimization"
+            ],
+            "exclusion_rules": [
+              "no minors",
+              "no protected or sensitive trait targeting",
+              "no deceptive identity or impersonation",
+              "no lead without traceable source evidence"
+            ]
+          },
+          "discovery": {
+            "query_templates": [
+              "Institutional traders, hedge funds requesting High-frequency order execution",
+              "organizations seeking trading support",
+              "inbound requests matching Algorithmic Trading Bot",
+              "existing customers who opted in to High-frequency order execution updates"
+            ],
+            "authorized_source_types": [
+              "owner supplied records",
+              "consent based inbound requests",
+              "existing customer records with documented relationship",
+              "public business directories whose terms permit research",
+              "owner authorized provider APIs"
+            ],
+            "forbidden_collection": [
+              "private accounts or access-controlled pages",
+              "terms bypassing scraping",
+              "purchased, stolen, or unverifiable contact lists",
+              "raw credentials or secret tokens",
+              "sensitive personal data"
+            ]
+          },
+          "qualification": {
+            "required_fields": [
+              "source reference",
+              "organization or customer need",
+              "fit to the bot specialization",
+              "contact permission basis and channel scope",
+              "qualification evidence"
+            ],
+            "score_dimensions": {
+              "demonstrated_need": 30,
+              "capability_fit": 25,
+              "decision_readiness": 15,
+              "voluntarily_supplied_timing": 10,
+              "documented_contact_permission": 20
+            },
+            "minimum_score_for_owner_review": 65,
+            "permission_is_mandatory_even_above_threshold": true
+          },
+          "outreach": {
+            "supported_channels": [
+              "email",
+              "sms",
+              "voice_call",
+              "social_dm"
+            ],
+            "recipient_channel_permission_required": true,
+            "raw_contact_details_in_browser_forbidden": true,
+            "exact_owner_approval_per_message": true,
+            "maximum_daily_sends": 20,
+            "adapter_status": "configuration_required_for_live_dispatch"
+          },
+          "follow_up": {
+            "maximum_follow_ups": 2,
+            "minimum_interval_hours": 48,
+            "approval_required_for_each_follow_up": true,
+            "stop_conditions": [
+              "reply",
+              "opt out",
+              "bounce",
+              "complaint",
+              "permission expiry",
+              "owner stop",
+              "sequence complete"
+            ],
+            "suppression_ledger_required": true
+          },
+          "owner_controls": {
+            "default_mode": "research_and_draft_only",
+            "pause_and_kill_switch_required": true,
+            "one_action_approval_expiry_hours": 24,
+            "quiet_hours_supported": true,
+            "export_and_delete_supported": true
+          },
+          "metrics": [
+            "candidates researched",
+            "source evidence coverage",
+            "qualified leads",
+            "recipient permission coverage",
+            "owner approval rate",
+            "reply rate",
+            "positive reply rate",
+            "opt-out rate",
+            "bounce rate",
+            "complaint rate",
+            "conversion evidence"
+          ]
+        },
+        "readiness": {
+          "local_research_plan": "ready",
+          "qualification_and_drafts": "ready",
+          "exact_action_approval_packet": "ready",
+          "live_contact_discovery": "provider_and_terms_configuration_required",
+          "live_message_dispatch": "verified_adapter_recipient_permission_and_owner_approval_required",
+          "independent_production_business": false
+        }
+      },
       "capabilities": [
         {
           "name": "High-frequency order execution",
@@ -140,6 +298,12 @@
           "name": "Install and multi-platform distribution planner",
           "status": "web_ready_native_review_required",
           "evidence": "config/generated/buddy_distribution_catalog.json"
+        },
+        {
+          "id": "buddy_governed_lead_system",
+          "name": "Permission-gated lead discovery and follow-up system",
+          "status": "sandbox_ready_external_adapters_required",
+          "evidence": "server/governed-leads.ts"
         },
         {
           "id": "buddy_code_workspace",
@@ -338,6 +502,162 @@
           "Published pricing and revenue models are catalog plans, not evidence of sales or earnings."
         ]
       },
+      "business_system": {
+        "business_id": "business-hedge-fund-strategy",
+        "operating_model": "owner_governed_service_business",
+        "specialization": {
+          "division": "DreamFinance",
+          "category": "trading",
+          "mission": "Generates and optimizes hedge fund strategies using multi-factor AI models.",
+          "ideal_customer_segments": [
+            "Hedge fund managers"
+          ],
+          "core_offer": "Hedge Fund Strategy Generator: Generates and optimizes hedge fund strategies using multi-factor AI models.",
+          "promised_outputs": [
+            "Long/short equity strategies",
+            "Event-driven alpha signals",
+            "Factor exposure analysis",
+            "Drawdown protection triggers",
+            "Strategy blending optimizer"
+          ],
+          "catalog_revenue_model": "Performance fee",
+          "catalog_price_range": "$2,500/mo",
+          "earnings_status": "no_revenue_or_customer_result_guaranteed"
+        },
+        "operating_workflow": [
+          "capture_owner_goal_and_offer",
+          "define_ideal_customer_profile",
+          "select_owner_authorized_sources",
+          "confirm_source_terms_and_collection_scope",
+          "research_and_deduplicate_candidates",
+          "qualify_need_fit_timing_and_permission",
+          "draft_one_relevant_message",
+          "request_exact_owner_approval",
+          "dispatch_through_configured_adapter_only",
+          "wait_for_required_follow_up_interval",
+          "stop_on_reply_opt_out_bounce_or_complaint",
+          "report_outcomes_without_claiming_guaranteed_revenue"
+        ],
+        "lead_system": {
+          "system_id": "lead-system-hedge-fund-strategy",
+          "engine": "server/governed-leads.ts",
+          "status": "sandbox_ready_external_adapters_required",
+          "ideal_customer_profile": {
+            "segments": [
+              "Hedge fund managers"
+            ],
+            "need_signals": [
+              "Needs help with Long/short equity strategies",
+              "Needs help with Event-driven alpha signals",
+              "Needs help with Factor exposure analysis",
+              "Needs help with Drawdown protection triggers",
+              "Needs help with Strategy blending optimizer"
+            ],
+            "exclusion_rules": [
+              "no minors",
+              "no protected or sensitive trait targeting",
+              "no deceptive identity or impersonation",
+              "no lead without traceable source evidence"
+            ]
+          },
+          "discovery": {
+            "query_templates": [
+              "Hedge fund managers requesting Long/short equity strategies",
+              "organizations seeking trading support",
+              "inbound requests matching Hedge Fund Strategy Generator",
+              "existing customers who opted in to Long/short equity strategies updates"
+            ],
+            "authorized_source_types": [
+              "owner supplied records",
+              "consent based inbound requests",
+              "existing customer records with documented relationship",
+              "public business directories whose terms permit research",
+              "owner authorized provider APIs"
+            ],
+            "forbidden_collection": [
+              "private accounts or access-controlled pages",
+              "terms bypassing scraping",
+              "purchased, stolen, or unverifiable contact lists",
+              "raw credentials or secret tokens",
+              "sensitive personal data"
+            ]
+          },
+          "qualification": {
+            "required_fields": [
+              "source reference",
+              "organization or customer need",
+              "fit to the bot specialization",
+              "contact permission basis and channel scope",
+              "qualification evidence"
+            ],
+            "score_dimensions": {
+              "demonstrated_need": 30,
+              "capability_fit": 25,
+              "decision_readiness": 15,
+              "voluntarily_supplied_timing": 10,
+              "documented_contact_permission": 20
+            },
+            "minimum_score_for_owner_review": 65,
+            "permission_is_mandatory_even_above_threshold": true
+          },
+          "outreach": {
+            "supported_channels": [
+              "email",
+              "sms",
+              "voice_call",
+              "social_dm"
+            ],
+            "recipient_channel_permission_required": true,
+            "raw_contact_details_in_browser_forbidden": true,
+            "exact_owner_approval_per_message": true,
+            "maximum_daily_sends": 20,
+            "adapter_status": "configuration_required_for_live_dispatch"
+          },
+          "follow_up": {
+            "maximum_follow_ups": 2,
+            "minimum_interval_hours": 48,
+            "approval_required_for_each_follow_up": true,
+            "stop_conditions": [
+              "reply",
+              "opt out",
+              "bounce",
+              "complaint",
+              "permission expiry",
+              "owner stop",
+              "sequence complete"
+            ],
+            "suppression_ledger_required": true
+          },
+          "owner_controls": {
+            "default_mode": "research_and_draft_only",
+            "pause_and_kill_switch_required": true,
+            "one_action_approval_expiry_hours": 24,
+            "quiet_hours_supported": true,
+            "export_and_delete_supported": true
+          },
+          "metrics": [
+            "candidates researched",
+            "source evidence coverage",
+            "qualified leads",
+            "recipient permission coverage",
+            "owner approval rate",
+            "reply rate",
+            "positive reply rate",
+            "opt-out rate",
+            "bounce rate",
+            "complaint rate",
+            "conversion evidence"
+          ]
+        },
+        "readiness": {
+          "local_research_plan": "ready",
+          "qualification_and_drafts": "ready",
+          "exact_action_approval_packet": "ready",
+          "live_contact_discovery": "provider_and_terms_configuration_required",
+          "live_message_dispatch": "verified_adapter_recipient_permission_and_owner_approval_required",
+          "independent_production_business": false
+        }
+      },
       "capabilities": [
         {
           "name": "Long/short equity strategies",
@@ -430,6 +750,12 @@
           "name": "Install and multi-platform distribution planner",
           "status": "web_ready_native_review_required",
           "evidence": "config/generated/buddy_distribution_catalog.json"
+        },
+        {
+          "id": "buddy_governed_lead_system",
+          "name": "Permission-gated lead discovery and follow-up system",
+          "status": "sandbox_ready_external_adapters_required",
+          "evidence": "server/governed-leads.ts"
         },
         {
           "id": "buddy_connection_broker",
@@ -614,6 +940,164 @@
           "Published pricing and revenue models are catalog plans, not evidence of sales or earnings."
         ]
       },
+      "business_system": {
+        "business_id": "business-hft-market-maker",
+        "operating_model": "owner_governed_service_business",
+        "specialization": {
+          "division": "DreamFinance",
+          "category": "trading",
+          "mission": "Executes sub-millisecond market-making strategies across multiple venues.",
+          "ideal_customer_segments": [
+            "HFT firms",
+            "proprietary desks"
+          ],
+          "core_offer": "High-Frequency Market Maker: Executes sub-millisecond market-making strategies across multiple venues.",
+          "promised_outputs": [
+            "Market making algorithms",
+            "Spread optimization engine",
+            "Latency arbitrage detection",
+            "Order flow toxicity analysis",
+            "Queue position management"
+          ],
+          "catalog_revenue_model": "Trading fees",
+          "catalog_price_range": "$2,500/mo",
+          "earnings_status": "no_revenue_or_customer_result_guaranteed"
+        },
+        "operating_workflow": [
+          "capture_owner_goal_and_offer",
+          "define_ideal_customer_profile",
+          "select_owner_authorized_sources",
+          "confirm_source_terms_and_collection_scope",
+          "research_and_deduplicate_candidates",
+          "qualify_need_fit_timing_and_permission",
+          "draft_one_relevant_message",
+          "request_exact_owner_approval",
+          "dispatch_through_configured_adapter_only",
+          "wait_for_required_follow_up_interval",
+          "stop_on_reply_opt_out_bounce_or_complaint",
+          "report_outcomes_without_claiming_guaranteed_revenue"
+        ],
+        "lead_system": {
+          "system_id": "lead-system-hft-market-maker",
+          "engine": "server/governed-leads.ts",
+          "status": "sandbox_ready_external_adapters_required",
+          "ideal_customer_profile": {
+            "segments": [
+              "HFT firms",
+              "proprietary desks"
+            ],
+            "need_signals": [
+              "Needs help with Market making algorithms",
+              "Needs help with Spread optimization engine",
+              "Needs help with Latency arbitrage detection",
+              "Needs help with Order flow toxicity analysis",
+              "Needs help with Queue position management"
+            ],
+            "exclusion_rules": [
+              "no minors",
+              "no protected or sensitive trait targeting",
+              "no deceptive identity or impersonation",
+              "no lead without traceable source evidence"
+            ]
+          },
+          "discovery": {
+            "query_templates": [
+              "HFT firms, proprietary desks requesting Market making algorithms",
+              "organizations seeking trading support",
+              "inbound requests matching High-Frequency Market Maker",
+              "existing customers who opted in to Market making algorithms updates"
+            ],
+            "authorized_source_types": [
+              "owner supplied records",
+              "consent based inbound requests",
+              "existing customer records with documented relationship",
+              "public business directories whose terms permit research",
+              "owner authorized provider APIs"
+            ],
+            "forbidden_collection": [
+              "private accounts or access-controlled pages",
+              "terms bypassing scraping",
+              "purchased, stolen, or unverifiable contact lists",
+              "raw credentials or secret tokens",
+              "sensitive personal data"
+            ]
+          },
+          "qualification": {
+            "required_fields": [
+              "source reference",
+              "organization or customer need",
+              "fit to the bot specialization",
+              "contact permission basis and channel scope",
+              "qualification evidence"
+            ],
+            "score_dimensions": {
+              "demonstrated_need": 30,
+              "capability_fit": 25,
+              "decision_readiness": 15,
+              "voluntarily_supplied_timing": 10,
+              "documented_contact_permission": 20
+            },
+            "minimum_score_for_owner_review": 65,
+            "permission_is_mandatory_even_above_threshold": true
+          },
+          "outreach": {
+            "supported_channels": [
+              "email",
+              "sms",
+              "voice_call",
+              "social_dm"
+            ],
+            "recipient_channel_permission_required": true,
+            "raw_contact_details_in_browser_forbidden": true,
+            "exact_owner_approval_per_message": true,
+            "maximum_daily_sends": 20,
+            "adapter_status": "configuration_required_for_live_dispatch"
+          },
+          "follow_up": {
+            "maximum_follow_ups": 2,
+            "minimum_interval_hours": 48,
+            "approval_required_for_each_follow_up": true,
+            "stop_conditions": [
+              "reply",
+              "opt out",
+              "bounce",
+              "complaint",
+              "permission expiry",
+              "owner stop",
+              "sequence complete"
+            ],
+            "suppression_ledger_required": true
+          },
+          "owner_controls": {
+            "default_mode": "research_and_draft_only",
+            "pause_and_kill_switch_required": true,
+            "one_action_approval_expiry_hours": 24,
+            "quiet_hours_supported": true,
+            "export_and_delete_supported": true
+          },
+          "metrics": [
+            "candidates researched",
+            "source evidence coverage",
+            "qualified leads",
+            "recipient permission coverage",
+            "owner approval rate",
+            "reply rate",
+            "positive reply rate",
+            "opt-out rate",
+            "bounce rate",
+            "complaint rate",
+            "conversion evidence"
+          ]
+        },
+        "readiness": {
+          "local_research_plan": "ready",
+          "qualification_and_drafts": "ready",
+          "exact_action_approval_packet": "ready",
+          "live_contact_discovery": "provider_and_terms_configuration_required",
+          "live_message_dispatch": "verified_adapter_recipient_permission_and_owner_approval_required",
+          "independent_production_business": false
+        }
+      },
       "capabilities": [
         {
           "name": "Market making algorithms",
@@ -706,6 +1190,12 @@
           "name": "Install and multi-platform distribution planner",
           "status": "web_ready_native_review_required",
           "evidence": "config/generated/buddy_distribution_catalog.json"
+        },
+        {
+          "id": "buddy_governed_lead_system",
+          "name": "Permission-gated lead discovery and follow-up system",
+          "status": "sandbox_ready_external_adapters_required",
+          "evidence": "server/governed-leads.ts"
         },
         {
           "id": "buddy_connection_broker",
@@ -918,6 +1408,164 @@
           "Published pricing and revenue models are catalog plans, not evidence of sales or earnings."
         ]
       },
+      "business_system": {
+        "business_id": "business-derivatives-strategy",
+        "operating_model": "owner_governed_service_business",
+        "specialization": {
+          "division": "DreamFinance",
+          "category": "trading",
+          "mission": "Complex derivatives strategy generation with real-time Greeks and risk analysis.",
+          "ideal_customer_segments": [
+            "Derivatives traders",
+            "structured products desks"
+          ],
+          "core_offer": "Derivatives Strategy AI: Complex derivatives strategy generation with real-time Greeks and risk analysis.",
+          "promised_outputs": [
+            "Options pricing models",
+            "Greeks calculation engine",
+            "Volatility surface modeling",
+            "Exotic derivatives structuring",
+            "Hedging strategy optimizer"
+          ],
+          "catalog_revenue_model": "Performance fee",
+          "catalog_price_range": "$1,500/mo",
+          "earnings_status": "no_revenue_or_customer_result_guaranteed"
+        },
+        "operating_workflow": [
+          "capture_owner_goal_and_offer",
+          "define_ideal_customer_profile",
+          "select_owner_authorized_sources",
+          "confirm_source_terms_and_collection_scope",
+          "research_and_deduplicate_candidates",
+          "qualify_need_fit_timing_and_permission",
+          "draft_one_relevant_message",
+          "request_exact_owner_approval",
+          "dispatch_through_configured_adapter_only",
+          "wait_for_required_follow_up_interval",
+          "stop_on_reply_opt_out_bounce_or_complaint",
+          "report_outcomes_without_claiming_guaranteed_revenue"
+        ],
+        "lead_system": {
+          "system_id": "lead-system-derivatives-strategy",
+          "engine": "server/governed-leads.ts",
+          "status": "sandbox_ready_external_adapters_required",
+          "ideal_customer_profile": {
+            "segments": [
+              "Derivatives traders",
+              "structured products desks"
+            ],
+            "need_signals": [
+              "Needs help with Options pricing models",
+              "Needs help with Greeks calculation engine",
+              "Needs help with Volatility surface modeling",
+              "Needs help with Exotic derivatives structuring",
+              "Needs help with Hedging strategy optimizer"
+            ],
+            "exclusion_rules": [
+              "no minors",
+              "no protected or sensitive trait targeting",
+              "no deceptive identity or impersonation",
+              "no lead without traceable source evidence"
+            ]
+          },
+          "discovery": {
+            "query_templates": [
+              "Derivatives traders, structured products desks requesting Options pricing models",
+              "organizations seeking trading support",
+              "inbound requests matching Derivatives Strategy AI",
+              "existing customers who opted in to Options pricing models updates"
+            ],
+            "authorized_source_types": [
+              "owner supplied records",
+              "consent based inbound requests",
+              "existing customer records with documented relationship",
+              "public business directories whose terms permit research",
+              "owner authorized provider APIs"
+            ],
+            "forbidden_collection": [
+              "private accounts or access-controlled pages",
+              "terms bypassing scraping",
+              "purchased, stolen, or unverifiable contact lists",
+              "raw credentials or secret tokens",
+              "sensitive personal data"
+            ]
+          },
+          "qualification": {
+            "required_fields": [
+              "source reference",
+              "organization or customer need",
+              "fit to the bot specialization",
+              "contact permission basis and channel scope",
+              "qualification evidence"
+            ],
+            "score_dimensions": {
+              "demonstrated_need": 30,
+              "capability_fit": 25,
+              "decision_readiness": 15,
+              "voluntarily_supplied_timing": 10,
+              "documented_contact_permission": 20
+            },
+            "minimum_score_for_owner_review": 65,
+            "permission_is_mandatory_even_above_threshold": true
+          },
+          "outreach": {
+            "supported_channels": [
+              "email",
+              "sms",
+              "voice_call",
+              "social_dm"
+            ],
+            "recipient_channel_permission_required": true,
+            "raw_contact_details_in_browser_forbidden": true,
+            "exact_owner_approval_per_message": true,
+            "maximum_daily_sends": 20,
+            "adapter_status": "configuration_required_for_live_dispatch"
+          },
+          "follow_up": {
+            "maximum_follow_ups": 2,
+            "minimum_interval_hours": 48,
+            "approval_required_for_each_follow_up": true,
+            "stop_conditions": [
+              "reply",
+              "opt out",
+              "bounce",
+              "complaint",
+              "permission expiry",
+              "owner stop",
+              "sequence complete"
+            ],
+            "suppression_ledger_required": true
+          },
+          "owner_controls": {
+            "default_mode": "research_and_draft_only",
+            "pause_and_kill_switch_required": true,
+            "one_action_approval_expiry_hours": 24,
+            "quiet_hours_supported": true,
+            "export_and_delete_supported": true
+          },
+          "metrics": [
+            "candidates researched",
+            "source evidence coverage",
+            "qualified leads",
+            "recipient permission coverage",
+            "owner approval rate",
+            "reply rate",
+            "positive reply rate",
+            "opt-out rate",
+            "bounce rate",
+            "complaint rate",
+            "conversion evidence"
+          ]
+        },
+        "readiness": {
+          "local_research_plan": "ready",
+          "qualification_and_drafts": "ready",
+          "exact_action_approval_packet": "ready",
+          "live_contact_discovery": "provider_and_terms_configuration_required",
+          "live_message_dispatch": "verified_adapter_recipient_permission_and_owner_approval_required",
+          "independent_production_business": false
+        }
+      },
       "capabilities": [
         {
           "name": "Options pricing models",
@@ -1010,6 +1658,12 @@
           "name": "Install and multi-platform distribution planner",
           "status": "web_ready_native_review_required",
           "evidence": "config/generated/buddy_distribution_catalog.json"
+        },
+        {
+          "id": "buddy_governed_lead_system",
+          "name": "Permission-gated lead discovery and follow-up system",
+          "status": "sandbox_ready_external_adapters_required",
+          "evidence": "server/governed-leads.ts"
         },
         {
           "id": "buddy_connection_broker",
@@ -1194,6 +1848,164 @@
           "Published pricing and revenue models are catalog plans, not evidence of sales or earnings."
         ]
       },
+      "business_system": {
+        "business_id": "business-fx-arbitrage",
+        "operating_model": "owner_governed_service_business",
+        "specialization": {
+          "division": "DreamFinance",
+          "category": "trading",
+          "mission": "Finds and executes triangular and cross-platform foreign exchange arbitrage.",
+          "ideal_customer_segments": [
+            "FX desks",
+            "proprietary traders"
+          ],
+          "core_offer": "FX Arbitrage Bot: Finds and executes triangular and cross-platform foreign exchange arbitrage.",
+          "promised_outputs": [
+            "Triangular arbitrage detection",
+            "Cross-rate discrepancy scanning",
+            "Latency-optimized execution",
+            "Spread capture automation",
+            "Multi-broker routing"
+          ],
+          "catalog_revenue_model": "Trading fees",
+          "catalog_price_range": "$1,500/mo",
+          "earnings_status": "no_revenue_or_customer_result_guaranteed"
+        },
+        "operating_workflow": [
+          "capture_owner_goal_and_offer",
+          "define_ideal_customer_profile",
+          "select_owner_authorized_sources",
+          "confirm_source_terms_and_collection_scope",
+          "research_and_deduplicate_candidates",
+          "qualify_need_fit_timing_and_permission",
+          "draft_one_relevant_message",
+          "request_exact_owner_approval",
+          "dispatch_through_configured_adapter_only",
+          "wait_for_required_follow_up_interval",
+          "stop_on_reply_opt_out_bounce_or_complaint",
+          "report_outcomes_without_claiming_guaranteed_revenue"
+        ],
+        "lead_system": {
+          "system_id": "lead-system-fx-arbitrage",
+          "engine": "server/governed-leads.ts",
+          "status": "sandbox_ready_external_adapters_required",
+          "ideal_customer_profile": {
+            "segments": [
+              "FX desks",
+              "proprietary traders"
+            ],
+            "need_signals": [
+              "Needs help with Triangular arbitrage detection",
+              "Needs help with Cross-rate discrepancy scanning",
+              "Needs help with Latency-optimized execution",
+              "Needs help with Spread capture automation",
+              "Needs help with Multi-broker routing"
+            ],
+            "exclusion_rules": [
+              "no minors",
+              "no protected or sensitive trait targeting",
+              "no deceptive identity or impersonation",
+              "no lead without traceable source evidence"
+            ]
+          },
+          "discovery": {
+            "query_templates": [
+              "FX desks, proprietary traders requesting Triangular arbitrage detection",
+              "organizations seeking trading support",
+              "inbound requests matching FX Arbitrage Bot",
+              "existing customers who opted in to Triangular arbitrage detection updates"
+            ],
+            "authorized_source_types": [
+              "owner supplied records",
+              "consent based inbound requests",
+              "existing customer records with documented relationship",
+              "public business directories whose terms permit research",
+              "owner authorized provider APIs"
+            ],
+            "forbidden_collection": [
+              "private accounts or access-controlled pages",
+              "terms bypassing scraping",
+              "purchased, stolen, or unverifiable contact lists",
+              "raw credentials or secret tokens",
+              "sensitive personal data"
+            ]
+          },
+          "qualification": {
+            "required_fields": [
+              "source reference",
+              "organization or customer need",
+              "fit to the bot specialization",
+              "contact permission basis and channel scope",
+              "qualification evidence"
+            ],
+            "score_dimensions": {
+              "demonstrated_need": 30,
+              "capability_fit": 25,
+              "decision_readiness": 15,
+              "voluntarily_supplied_timing": 10,
+              "documented_contact_permission": 20
+            },
+            "minimum_score_for_owner_review": 65,
+            "permission_is_mandatory_even_above_threshold": true
+          },
+          "outreach": {
+            "supported_channels": [
+              "email",
+              "sms",
+              "voice_call",
+              "social_dm"
+            ],
+            "recipient_channel_permission_required": true,
+            "raw_contact_details_in_browser_forbidden": true,
+            "exact_owner_approval_per_message": true,
+            "maximum_daily_sends": 20,
+            "adapter_status": "configuration_required_for_live_dispatch"
+          },
+          "follow_up": {
+            "maximum_follow_ups": 2,
+            "minimum_interval_hours": 48,
+            "approval_required_for_each_follow_up": true,
+            "stop_conditions": [
+              "reply",
+              "opt out",
+              "bounce",
+              "complaint",
+              "permission expiry",
+              "owner stop",
+              "sequence complete"
+            ],
+            "suppression_ledger_required": true
+          },
+          "owner_controls": {
+            "default_mode": "research_and_draft_only",
+            "pause_and_kill_switch_required": true,
+            "one_action_approval_expiry_hours": 24,
+            "quiet_hours_supported": true,
+            "export_and_delete_supported": true
+          },
+          "metrics": [
+            "candidates researched",
+            "source evidence coverage",
+            "qualified leads",
+            "recipient permission coverage",
+            "owner approval rate",
+            "reply rate",
+            "positive reply rate",
+            "opt-out rate",
+            "bounce rate",
+            "complaint rate",
+            "conversion evidence"
+          ]
+        },
+        "readiness": {
+          "local_research_plan": "ready",
+          "qualification_and_drafts": "ready",
+          "exact_action_approval_packet": "ready",
+          "live_contact_discovery": "provider_and_terms_configuration_required",
+          "live_message_dispatch": "verified_adapter_recipient_permission_and_owner_approval_required",
+          "independent_production_business": false
+        }
+      },
       "capabilities": [
         {
           "name": "Triangular arbitrage detection",
@@ -1286,6 +2098,12 @@
           "name": "Install and multi-platform distribution planner",
           "status": "web_ready_native_review_required",
           "evidence": "config/generated/buddy_distribution_catalog.json"
+        },
+        {
+          "id": "buddy_governed_lead_system",
+          "name": "Permission-gated lead discovery and follow-up system",
+          "status": "sandbox_ready_external_adapters_required",
+          "evidence": "server/governed-leads.ts"
         },
         {
           "id": "buddy_connection_broker",
@@ -1526,6 +2344,164 @@
           "Published pricing and revenue models are catalog plans, not evidence of sales or earnings."
         ]
       },
+      "business_system": {
+        "business_id": "business-treasury-analyzer",
+        "operating_model": "owner_governed_service_business",
+        "specialization": {
+          "division": "DreamFinance",
+          "category": "treasury",
+          "mission": "AI-driven corporate treasury management and cash flow optimization.",
+          "ideal_customer_segments": [
+            "CFOs",
+            "treasury managers"
+          ],
+          "core_offer": "Corporate Treasury Analyzer: AI-driven corporate treasury management and cash flow optimization.",
+          "promised_outputs": [
+            "Cash position forecasting",
+            "Liquidity gap analysis",
+            "FX exposure management",
+            "Working capital optimization",
+            "Bank relationship scoring"
+          ],
+          "catalog_revenue_model": "Enterprise license",
+          "catalog_price_range": "$999/mo",
+          "earnings_status": "no_revenue_or_customer_result_guaranteed"
+        },
+        "operating_workflow": [
+          "capture_owner_goal_and_offer",
+          "define_ideal_customer_profile",
+          "select_owner_authorized_sources",
+          "confirm_source_terms_and_collection_scope",
+          "research_and_deduplicate_candidates",
+          "qualify_need_fit_timing_and_permission",
+          "draft_one_relevant_message",
+          "request_exact_owner_approval",
+          "dispatch_through_configured_adapter_only",
+          "wait_for_required_follow_up_interval",
+          "stop_on_reply_opt_out_bounce_or_complaint",
+          "report_outcomes_without_claiming_guaranteed_revenue"
+        ],
+        "lead_system": {
+          "system_id": "lead-system-treasury-analyzer",
+          "engine": "server/governed-leads.ts",
+          "status": "sandbox_ready_external_adapters_required",
+          "ideal_customer_profile": {
+            "segments": [
+              "CFOs",
+              "treasury managers"
+            ],
+            "need_signals": [
+              "Needs help with Cash position forecasting",
+              "Needs help with Liquidity gap analysis",
+              "Needs help with FX exposure management",
+              "Needs help with Working capital optimization",
+              "Needs help with Bank relationship scoring"
+            ],
+            "exclusion_rules": [
+              "no minors",
+              "no protected or sensitive trait targeting",
+              "no deceptive identity or impersonation",
+              "no lead without traceable source evidence"
+            ]
+          },
+          "discovery": {
+            "query_templates": [
+              "CFOs, treasury managers requesting Cash position forecasting",
+              "organizations seeking treasury support",
+              "inbound requests matching Corporate Treasury Analyzer",
+              "existing customers who opted in to Cash position forecasting updates"
+            ],
+            "authorized_source_types": [
+              "owner supplied records",
+              "consent based inbound requests",
+              "existing customer records with documented relationship",
+              "public business directories whose terms permit research",
+              "owner authorized provider APIs"
+            ],
+            "forbidden_collection": [
+              "private accounts or access-controlled pages",
+              "terms bypassing scraping",
+              "purchased, stolen, or unverifiable contact lists",
+              "raw credentials or secret tokens",
+              "sensitive personal data"
+            ]
+          },
+          "qualification": {
+            "required_fields": [
+              "source reference",
+              "organization or customer need",
+              "fit to the bot specialization",
+              "contact permission basis and channel scope",
+              "qualification evidence"
+            ],
+            "score_dimensions": {
+              "demonstrated_need": 30,
+              "capability_fit": 25,
+              "decision_readiness": 15,
+              "voluntarily_supplied_timing": 10,
+              "documented_contact_permission": 20
+            },
+            "minimum_score_for_owner_review": 65,
+            "permission_is_mandatory_even_above_threshold": true
+          },
+          "outreach": {
+            "supported_channels": [
+              "email",
+              "sms",
+              "voice_call",
+              "social_dm"
+            ],
+            "recipient_channel_permission_required": true,
+            "raw_contact_details_in_browser_forbidden": true,
+            "exact_owner_approval_per_message": true,
+            "maximum_daily_sends": 20,
+            "adapter_status": "configuration_required_for_live_dispatch"
+          },
+          "follow_up": {
+            "maximum_follow_ups": 2,
+            "minimum_interval_hours": 48,
+            "approval_required_for_each_follow_up": true,
+            "stop_conditions": [
+              "reply",
+              "opt out",
+              "bounce",
+              "complaint",
+              "permission expiry",
+              "owner stop",
+              "sequence complete"
+            ],
+            "suppression_ledger_required": true
+          },
+          "owner_controls": {
+            "default_mode": "research_and_draft_only",
+            "pause_and_kill_switch_required": true,
+            "one_action_approval_expiry_hours": 24,
+            "quiet_hours_supported": true,
+            "export_and_delete_supported": true
+          },
+          "metrics": [
+            "candidates researched",
+            "source evidence coverage",
+            "qualified leads",
+            "recipient permission coverage",
+            "owner approval rate",
+            "reply rate",
+            "positive reply rate",
+            "opt-out rate",
+            "bounce rate",
+            "complaint rate",
+            "conversion evidence"
+          ]
+        },
+        "readiness": {
+          "local_research_plan": "ready",
+          "qualification_and_drafts": "ready",
+          "exact_action_approval_packet": "ready",
+          "live_contact_discovery": "provider_and_terms_configuration_required",
+          "live_message_dispatch": "verified_adapter_recipient_permission_and_owner_approval_required",
+          "independent_production_business": false
+        }
+      },
       "capabilities": [
         {
           "name": "Cash position forecasting",
@@ -1618,6 +2594,12 @@
           "name": "Install and multi-platform distribution planner",
           "status": "web_ready_native_review_required",
           "evidence": "config/generated/buddy_distribution_catalog.json"
+        },
+        {
+          "id": "buddy_governed_lead_system",
+          "name": "Permission-gated lead discovery and follow-up system",
+          "status": "sandbox_ready_external_adapters_required",
+          "evidence": "server/governed-leads.ts"
         },
         {
           "id": "buddy_connection_broker",
@@ -1858,6 +2840,166 @@
           "Published pricing and revenue models are catalog plans, not evidence of sales or earnings."
         ]
       },
+      "business_system": {
+        "business_id": "business-credit-underwriter",
+        "operating_model": "owner_governed_service_business",
+        "specialization": {
+          "division": "DreamFinance",
+          "category": "credit",
+          "mission": "Automated credit risk assessment and underwriting with explainable AI decisions.",
+          "ideal_customer_segments": [
+            "Banks",
+            "lenders",
+            "fintechs"
+          ],
+          "core_offer": "AI Credit Risk Underwriter: Automated credit risk assessment and underwriting with explainable AI decisions.",
+          "promised_outputs": [
+            "Credit scoring models",
+            "Default probability estimation",
+            "Fraud pattern detection",
+            "Regulatory compliance checks",
+            "Portfolio stress testing"
+          ],
+          "catalog_revenue_model": "Per-decision fee",
+          "catalog_price_range": "$999/mo",
+          "earnings_status": "no_revenue_or_customer_result_guaranteed"
+        },
+        "operating_workflow": [
+          "capture_owner_goal_and_offer",
+          "define_ideal_customer_profile",
+          "select_owner_authorized_sources",
+          "confirm_source_terms_and_collection_scope",
+          "research_and_deduplicate_candidates",
+          "qualify_need_fit_timing_and_permission",
+          "draft_one_relevant_message",
+          "request_exact_owner_approval",
+          "dispatch_through_configured_adapter_only",
+          "wait_for_required_follow_up_interval",
+          "stop_on_reply_opt_out_bounce_or_complaint",
+          "report_outcomes_without_claiming_guaranteed_revenue"
+        ],
+        "lead_system": {
+          "system_id": "lead-system-credit-underwriter",
+          "engine": "server/governed-leads.ts",
+          "status": "sandbox_ready_external_adapters_required",
+          "ideal_customer_profile": {
+            "segments": [
+              "Banks",
+              "lenders",
+              "fintechs"
+            ],
+            "need_signals": [
+              "Needs help with Credit scoring models",
+              "Needs help with Default probability estimation",
+              "Needs help with Fraud pattern detection",
+              "Needs help with Regulatory compliance checks",
+              "Needs help with Portfolio stress testing"
+            ],
+            "exclusion_rules": [
+              "no minors",
+              "no protected or sensitive trait targeting",
+              "no deceptive identity or impersonation",
+              "no lead without traceable source evidence"
+            ]
+          },
+          "discovery": {
+            "query_templates": [
+              "Banks, lenders, fintechs requesting Credit scoring models",
+              "organizations seeking credit support",
+              "inbound requests matching AI Credit Risk Underwriter",
+              "existing customers who opted in to Credit scoring models updates"
+            ],
+            "authorized_source_types": [
+              "owner supplied records",
+              "consent based inbound requests",
+              "existing customer records with documented relationship",
+              "public business directories whose terms permit research",
+              "owner authorized provider APIs"
+            ],
+            "forbidden_collection": [
+              "private accounts or access-controlled pages",
+              "terms bypassing scraping",
+              "purchased, stolen, or unverifiable contact lists",
+              "raw credentials or secret tokens",
+              "sensitive personal data"
+            ]
+          },
+          "qualification": {
+            "required_fields": [
+              "source reference",
+              "organization or customer need",
+              "fit to the bot specialization",
+              "contact permission basis and channel scope",
+              "qualification evidence"
+            ],
+            "score_dimensions": {
+              "demonstrated_need": 30,
+              "capability_fit": 25,
+              "decision_readiness": 15,
+              "voluntarily_supplied_timing": 10,
+              "documented_contact_permission": 20
+            },
+            "minimum_score_for_owner_review": 65,
+            "permission_is_mandatory_even_above_threshold": true
+          },
+          "outreach": {
+            "supported_channels": [
+              "email",
+              "sms",
+              "voice_call",
+              "social_dm"
+            ],
+            "recipient_channel_permission_required": true,
+            "raw_contact_details_in_browser_forbidden": true,
+            "exact_owner_approval_per_message": true,
+            "maximum_daily_sends": 20,
+            "adapter_status": "configuration_required_for_live_dispatch"
+          },
+          "follow_up": {
+            "maximum_follow_ups": 2,
+            "minimum_interval_hours": 48,
+            "approval_required_for_each_follow_up": true,
+            "stop_conditions": [
+              "reply",
+              "opt out",
+              "bounce",
+              "complaint",
+              "permission expiry",
+              "owner stop",
+              "sequence complete"
+            ],
+            "suppression_ledger_required": true
+          },
+          "owner_controls": {
+            "default_mode": "research_and_draft_only",
+            "pause_and_kill_switch_required": true,
+            "one_action_approval_expiry_hours": 24,
+            "quiet_hours_supported": true,
+            "export_and_delete_supported": true
+          },
+          "metrics": [
+            "candidates researched",
+            "source evidence coverage",
+            "qualified leads",
+            "recipient permission coverage",
+            "owner approval rate",
+            "reply rate",
+            "positive reply rate",
+            "opt-out rate",
+            "bounce rate",
+            "complaint rate",
+            "conversion evidence"
+          ]
+        },
+        "readiness": {
+          "local_research_plan": "ready",
+          "qualification_and_drafts": "ready",
+          "exact_action_approval_packet": "ready",
+          "live_contact_discovery": "provider_and_terms_configuration_required",
+          "live_message_dispatch": "verified_adapter_recipient_permission_and_owner_approval_required",
+          "independent_production_business": false
+        }
+      },
       "capabilities": [
         {
           "name": "Credit scoring models",
@@ -1950,6 +3092,12 @@
           "name": "Install and multi-platform distribution planner",
           "status": "web_ready_native_review_required",
           "evidence": "config/generated/buddy_distribution_catalog.json"
+        },
+        {
+          "id": "buddy_governed_lead_system",
+          "name": "Permission-gated lead discovery and follow-up system",
+          "status": "sandbox_ready_external_adapters_required",
+          "evidence": "server/governed-leads.ts"
         },
         {
           "id": "buddy_connection_broker",
@@ -2093,6 +3241,164 @@
           "Published pricing and revenue models are catalog plans, not evidence of sales or earnings."
         ]
       },
+      "business_system": {
+        "business_id": "business-insurance-fraud",
+        "operating_model": "owner_governed_service_business",
+        "specialization": {
+          "division": "DreamFinance",
+          "category": "insurance",
+          "mission": "AI-powered fraud detection and claims triage for insurance carriers.",
+          "ideal_customer_segments": [
+            "Insurance companies",
+            "adjusters"
+          ],
+          "core_offer": "Insurance Claim Fraud Detector: AI-powered fraud detection and claims triage for insurance carriers.",
+          "promised_outputs": [
+            "Claim anomaly scoring",
+            "Network fraud analysis",
+            "Document verification AI",
+            "Subrogation identification",
+            "Loss reserve estimation"
+          ],
+          "catalog_revenue_model": "Per-claim fee",
+          "catalog_price_range": "$999/mo",
+          "earnings_status": "no_revenue_or_customer_result_guaranteed"
+        },
+        "operating_workflow": [
+          "capture_owner_goal_and_offer",
+          "define_ideal_customer_profile",
+          "select_owner_authorized_sources",
+          "confirm_source_terms_and_collection_scope",
+          "research_and_deduplicate_candidates",
+          "qualify_need_fit_timing_and_permission",
+          "draft_one_relevant_message",
+          "request_exact_owner_approval",
+          "dispatch_through_configured_adapter_only",
+          "wait_for_required_follow_up_interval",
+          "stop_on_reply_opt_out_bounce_or_complaint",
+          "report_outcomes_without_claiming_guaranteed_revenue"
+        ],
+        "lead_system": {
+          "system_id": "lead-system-insurance-fraud",
+          "engine": "server/governed-leads.ts",
+          "status": "sandbox_ready_external_adapters_required",
+          "ideal_customer_profile": {
+            "segments": [
+              "Insurance companies",
+              "adjusters"
+            ],
+            "need_signals": [
+              "Needs help with Claim anomaly scoring",
+              "Needs help with Network fraud analysis",
+              "Needs help with Document verification AI",
+              "Needs help with Subrogation identification",
+              "Needs help with Loss reserve estimation"
+            ],
+            "exclusion_rules": [
+              "no minors",
+              "no protected or sensitive trait targeting",
+              "no deceptive identity or impersonation",
+              "no lead without traceable source evidence"
+            ]
+          },
+          "discovery": {
+            "query_templates": [
+              "Insurance companies, adjusters requesting Claim anomaly scoring",
+              "organizations seeking insurance support",
+              "inbound requests matching Insurance Claim Fraud Detector",
+              "existing customers who opted in to Claim anomaly scoring updates"
+            ],
+            "authorized_source_types": [
+              "owner supplied records",
+              "consent based inbound requests",
+              "existing customer records with documented relationship",
+              "public business directories whose terms permit research",
+              "owner authorized provider APIs"
+            ],
+            "forbidden_collection": [
+              "private accounts or access-controlled pages",
+              "terms bypassing scraping",
+              "purchased, stolen, or unverifiable contact lists",
+              "raw credentials or secret tokens",
+              "sensitive personal data"
+            ]
+          },
+          "qualification": {
+            "required_fields": [
+              "source reference",
+              "organization or customer need",
+              "fit to the bot specialization",
+              "contact permission basis and channel scope",
+              "qualification evidence"
+            ],
+            "score_dimensions": {
+              "demonstrated_need": 30,
+              "capability_fit": 25,
+              "decision_readiness": 15,
+              "voluntarily_supplied_timing": 10,
+              "documented_contact_permission": 20
+            },
+            "minimum_score_for_owner_review": 65,
+            "permission_is_mandatory_even_above_threshold": true
+          },
+          "outreach": {
+            "supported_channels": [
+              "email",
+              "sms",
+              "voice_call",
+              "social_dm"
+            ],
+            "recipient_channel_permission_required": true,
+            "raw_contact_details_in_browser_forbidden": true,
+            "exact_owner_approval_per_message": true,
+            "maximum_daily_sends": 20,
+            "adapter_status": "configuration_required_for_live_dispatch"
+          },
+          "follow_up": {
+            "maximum_follow_ups": 2,
+            "minimum_interval_hours": 48,
+            "approval_required_for_each_follow_up": true,
+            "stop_conditions": [
+              "reply",
+              "opt out",
+              "bounce",
+              "complaint",
+              "permission expiry",
+              "owner stop",
+              "sequence complete"
+            ],
+            "suppression_ledger_required": true
+          },
+          "owner_controls": {
+            "default_mode": "research_and_draft_only",
+            "pause_and_kill_switch_required": true,
+            "one_action_approval_expiry_hours": 24,
+            "quiet_hours_supported": true,
+            "export_and_delete_supported": true
+          },
+          "metrics": [
+            "candidates researched",
+            "source evidence coverage",
+            "qualified leads",
+            "recipient permission coverage",
+            "owner approval rate",
+            "reply rate",
+            "positive reply rate",
+            "opt-out rate",
+            "bounce rate",
+            "complaint rate",
+            "conversion evidence"
+          ]
+        },
+        "readiness": {
+          "local_research_plan": "ready",
+          "qualification_and_drafts": "ready",
+          "exact_action_approval_packet": "ready",
+          "live_contact_discovery": "provider_and_terms_configuration_required",
+          "live_message_dispatch": "verified_adapter_recipient_permission_and_owner_approval_required",
+          "independent_production_business": false
+        }
+      },
       "capabilities": [
         {
           "name": "Claim anomaly scoring",
@@ -2185,6 +3491,12 @@
           "name": "Install and multi-platform distribution planner",
           "status": "web_ready_native_review_required",
           "evidence": "config/generated/buddy_distribution_catalog.json"
+        },
+        {
+          "id": "buddy_governed_lead_system",
+          "name": "Permission-gated lead discovery and follow-up system",
+          "status": "sandbox_ready_external_adapters_required",
+          "evidence": "server/governed-leads.ts"
         },
         {
           "id": "buddy_connection_broker",
@@ -2327,6 +3639,164 @@
           "Published pricing and revenue models are catalog plans, not evidence of sales or earnings."
         ]
       },
+      "business_system": {
+        "business_id": "business-venture-dealflow",
+        "operating_model": "owner_governed_service_business",
+        "specialization": {
+          "division": "DreamFinance",
+          "category": "vc-dealflow",
+          "mission": "Automates VC deal sourcing, screening, and due diligence workflows.",
+          "ideal_customer_segments": [
+            "VCs",
+            "angel investors"
+          ],
+          "core_offer": "Venture Capital Deal Flow Bot: Automates VC deal sourcing, screening, and due diligence workflows.",
+          "promised_outputs": [
+            "Startup scoring engine",
+            "Market sizing automation",
+            "Founder background checks",
+            "Term sheet benchmarking",
+            "Portfolio company monitoring"
+          ],
+          "catalog_revenue_model": "Success fee + SaaS",
+          "catalog_price_range": "$999/mo",
+          "earnings_status": "no_revenue_or_customer_result_guaranteed"
+        },
+        "operating_workflow": [
+          "capture_owner_goal_and_offer",
+          "define_ideal_customer_profile",
+          "select_owner_authorized_sources",
+          "confirm_source_terms_and_collection_scope",
+          "research_and_deduplicate_candidates",
+          "qualify_need_fit_timing_and_permission",
+          "draft_one_relevant_message",
+          "request_exact_owner_approval",
+          "dispatch_through_configured_adapter_only",
+          "wait_for_required_follow_up_interval",
+          "stop_on_reply_opt_out_bounce_or_complaint",
+          "report_outcomes_without_claiming_guaranteed_revenue"
+        ],
+        "lead_system": {
+          "system_id": "lead-system-venture-dealflow",
+          "engine": "server/governed-leads.ts",
+          "status": "sandbox_ready_external_adapters_required",
+          "ideal_customer_profile": {
+            "segments": [
+              "VCs",
+              "angel investors"
+            ],
+            "need_signals": [
+              "Needs help with Startup scoring engine",
+              "Needs help with Market sizing automation",
+              "Needs help with Founder background checks",
+              "Needs help with Term sheet benchmarking",
+              "Needs help with Portfolio company monitoring"
+            ],
+            "exclusion_rules": [
+              "no minors",
+              "no protected or sensitive trait targeting",
+              "no deceptive identity or impersonation",
+              "no lead without traceable source evidence"
+            ]
+          },
+          "discovery": {
+            "query_templates": [
+              "VCs, angel investors requesting Startup scoring engine",
+              "organizations seeking vc-dealflow support",
+              "inbound requests matching Venture Capital Deal Flow Bot",
+              "existing customers who opted in to Startup scoring engine updates"
+            ],
+            "authorized_source_types": [
+              "owner supplied records",
+              "consent based inbound requests",
+              "existing customer records with documented relationship",
+              "public business directories whose terms permit research",
+              "owner authorized provider APIs"
+            ],
+            "forbidden_collection": [
+              "private accounts or access-controlled pages",
+              "terms bypassing scraping",
+              "purchased, stolen, or unverifiable contact lists",
+              "raw credentials or secret tokens",
+              "sensitive personal data"
+            ]
+          },
+          "qualification": {
+            "required_fields": [
+              "source reference",
+              "organization or customer need",
+              "fit to the bot specialization",
+              "contact permission basis and channel scope",
+              "qualification evidence"
+            ],
+            "score_dimensions": {
+              "demonstrated_need": 30,
+              "capability_fit": 25,
+              "decision_readiness": 15,
+              "voluntarily_supplied_timing": 10,
+              "documented_contact_permission": 20
+            },
+            "minimum_score_for_owner_review": 65,
+            "permission_is_mandatory_even_above_threshold": true
+          },
+          "outreach": {
+            "supported_channels": [
+              "email",
+              "sms",
+              "voice_call",
+              "social_dm"
+            ],
+            "recipient_channel_permission_required": true,
+            "raw_contact_details_in_browser_forbidden": true,
+            "exact_owner_approval_per_message": true,
+            "maximum_daily_sends": 20,
+            "adapter_status": "configuration_required_for_live_dispatch"
+          },
+          "follow_up": {
+            "maximum_follow_ups": 2,
+            "minimum_interval_hours": 48,
+            "approval_required_for_each_follow_up": true,
+            "stop_conditions": [
+              "reply",
+              "opt out",
+              "bounce",
+              "complaint",
+              "permission expiry",
+              "owner stop",
+              "sequence complete"
+            ],
+            "suppression_ledger_required": true
+          },
+          "owner_controls": {
+            "default_mode": "research_and_draft_only",
+            "pause_and_kill_switch_required": true,
+            "one_action_approval_expiry_hours": 24,
+            "quiet_hours_supported": true,
+            "export_and_delete_supported": true
+          },
+          "metrics": [
+            "candidates researched",
+            "source evidence coverage",
+            "qualified leads",
+            "recipient permission coverage",
+            "owner approval rate",
+            "reply rate",
+            "positive reply rate",
+            "opt-out rate",
+            "bounce rate",
+            "complaint rate",
+            "conversion evidence"
+          ]
+        },
+        "readiness": {
+          "local_research_plan": "ready",
+          "qualification_and_drafts": "ready",
+          "exact_action_approval_packet": "ready",
+          "live_contact_discovery": "provider_and_terms_configuration_required",
+          "live_message_dispatch": "verified_adapter_recipient_permission_and_owner_approval_required",
+          "independent_production_business": false
+        }
+      },
       "capabilities": [
         {
           "name": "Startup scoring engine",
@@ -2419,6 +3889,12 @@
           "name": "Install and multi-platform distribution planner",
           "status": "web_ready_native_review_required",
           "evidence": "config/generated/buddy_distribution_catalog.json"
+        },
+        {
+          "id": "buddy_governed_lead_system",
+          "name": "Permission-gated lead discovery and follow-up system",
+          "status": "sandbox_ready_external_adapters_required",
+          "evidence": "server/governed-leads.ts"
         },
         {
           "id": "buddy_connection_broker",
@@ -2589,6 +4065,164 @@
           "Published pricing and revenue models are catalog plans, not evidence of sales or earnings."
         ]
       },
+      "business_system": {
+        "business_id": "business-esg-optimizer",
+        "operating_model": "owner_governed_service_business",
+        "specialization": {
+          "division": "DreamFinance",
+          "category": "investing",
+          "mission": "Optimizes portfolios for ESG compliance while maximizing risk-adjusted returns.",
+          "ideal_customer_segments": [
+            "ESG fund managers",
+            "institutional investors"
+          ],
+          "core_offer": "ESG Investment Optimizer: Optimizes portfolios for ESG compliance while maximizing risk-adjusted returns.",
+          "promised_outputs": [
+            "ESG scoring framework",
+            "Carbon footprint tracking",
+            "Impact measurement dashboard",
+            "Green bond analysis",
+            "Sustainability reporting"
+          ],
+          "catalog_revenue_model": "Enterprise license",
+          "catalog_price_range": "$499/mo",
+          "earnings_status": "no_revenue_or_customer_result_guaranteed"
+        },
+        "operating_workflow": [
+          "capture_owner_goal_and_offer",
+          "define_ideal_customer_profile",
+          "select_owner_authorized_sources",
+          "confirm_source_terms_and_collection_scope",
+          "research_and_deduplicate_candidates",
+          "qualify_need_fit_timing_and_permission",
+          "draft_one_relevant_message",
+          "request_exact_owner_approval",
+          "dispatch_through_configured_adapter_only",
+          "wait_for_required_follow_up_interval",
+          "stop_on_reply_opt_out_bounce_or_complaint",
+          "report_outcomes_without_claiming_guaranteed_revenue"
+        ],
+        "lead_system": {
+          "system_id": "lead-system-esg-optimizer",
+          "engine": "server/governed-leads.ts",
+          "status": "sandbox_ready_external_adapters_required",
+          "ideal_customer_profile": {
+            "segments": [
+              "ESG fund managers",
+              "institutional investors"
+            ],
+            "need_signals": [
+              "Needs help with ESG scoring framework",
+              "Needs help with Carbon footprint tracking",
+              "Needs help with Impact measurement dashboard",
+              "Needs help with Green bond analysis",
+              "Needs help with Sustainability reporting"
+            ],
+            "exclusion_rules": [
+              "no minors",
+              "no protected or sensitive trait targeting",
+              "no deceptive identity or impersonation",
+              "no lead without traceable source evidence"
+            ]
+          },
+          "discovery": {
+            "query_templates": [
+              "ESG fund managers, institutional investors requesting ESG scoring framework",
+              "organizations seeking investing support",
+              "inbound requests matching ESG Investment Optimizer",
+              "existing customers who opted in to ESG scoring framework updates"
+            ],
+            "authorized_source_types": [
+              "owner supplied records",
+              "consent based inbound requests",
+              "existing customer records with documented relationship",
+              "public business directories whose terms permit research",
+              "owner authorized provider APIs"
+            ],
+            "forbidden_collection": [
+              "private accounts or access-controlled pages",
+              "terms bypassing scraping",
+              "purchased, stolen, or unverifiable contact lists",
+              "raw credentials or secret tokens",
+              "sensitive personal data"
+            ]
+          },
+          "qualification": {
+            "required_fields": [
+              "source reference",
+              "organization or customer need",
+              "fit to the bot specialization",
+              "contact permission basis and channel scope",
+              "qualification evidence"
+            ],
+            "score_dimensions": {
+              "demonstrated_need": 30,
+              "capability_fit": 25,
+              "decision_readiness": 15,
+              "voluntarily_supplied_timing": 10,
+              "documented_contact_permission": 20
+            },
+            "minimum_score_for_owner_review": 65,
+            "permission_is_mandatory_even_above_threshold": true
+          },
+          "outreach": {
+            "supported_channels": [
+              "email",
+              "sms",
+              "voice_call",
+              "social_dm"
+            ],
+            "recipient_channel_permission_required": true,
+            "raw_contact_details_in_browser_forbidden": true,
+            "exact_owner_approval_per_message": true,
+            "maximum_daily_sends": 20,
+            "adapter_status": "configuration_required_for_live_dispatch"
+          },
+          "follow_up": {
+            "maximum_follow_ups": 2,
+            "minimum_interval_hours": 48,
+            "approval_required_for_each_follow_up": true,
+            "stop_conditions": [
+              "reply",
+              "opt out",
+              "bounce",
+              "complaint",
+              "permission expiry",
+              "owner stop",
+              "sequence complete"
+            ],
+            "suppression_ledger_required": true
+          },
+          "owner_controls": {
+            "default_mode": "research_and_draft_only",
+            "pause_and_kill_switch_required": true,
+            "one_action_approval_expiry_hours": 24,
+            "quiet_hours_supported": true,
+            "export_and_delete_supported": true
+          },
+          "metrics": [
+            "candidates researched",
+            "source evidence coverage",
+            "qualified leads",
+            "recipient permission coverage",
+            "owner approval rate",
+            "reply rate",
+            "positive reply rate",
+            "opt-out rate",
+            "bounce rate",
+            "complaint rate",
+            "conversion evidence"
+          ]
+        },
+        "readiness": {
+          "local_research_plan": "ready",
+          "qualification_and_drafts": "ready",
+          "exact_action_approval_packet": "ready",
+          "live_contact_discovery": "provider_and_terms_configuration_required",
+          "live_message_dispatch": "verified_adapter_recipient_permission_and_owner_approval_required",
+          "independent_production_business": false
+        }
+      },
       "capabilities": [
         {
           "name": "ESG scoring framework",
@@ -2681,6 +4315,12 @@
           "name": "Install and multi-platform distribution planner",
           "status": "web_ready_native_review_required",
           "evidence": "config/generated/buddy_distribution_catalog.json"
+        },
+        {
+          "id": "buddy_governed_lead_system",
+          "name": "Permission-gated lead discovery and follow-up system",
+          "status": "sandbox_ready_external_adapters_required",
+          "evidence": "server/governed-leads.ts"
         },
         {
           "id": "buddy_connection_broker",
@@ -2823,6 +4463,164 @@
           "Published pricing and revenue models are catalog plans, not evidence of sales or earnings."
         ]
       },
+      "business_system": {
+        "business_id": "business-quant-backtester",
+        "operating_model": "owner_governed_service_business",
+        "specialization": {
+          "division": "DreamFinance",
+          "category": "trading",
+          "mission": "Advanced backtesting engine with walk-forward optimization and Monte Carlo simulation.",
+          "ideal_customer_segments": [
+            "Quant traders",
+            "research teams"
+          ],
+          "core_offer": "Quant Strategy Backtester: Advanced backtesting engine with walk-forward optimization and Monte Carlo simulation.",
+          "promised_outputs": [
+            "Walk-forward analysis",
+            "Monte Carlo simulation",
+            "Regime detection",
+            "Transaction cost modeling",
+            "Out-of-sample validation"
+          ],
+          "catalog_revenue_model": "SaaS subscription",
+          "catalog_price_range": "$499/mo",
+          "earnings_status": "no_revenue_or_customer_result_guaranteed"
+        },
+        "operating_workflow": [
+          "capture_owner_goal_and_offer",
+          "define_ideal_customer_profile",
+          "select_owner_authorized_sources",
+          "confirm_source_terms_and_collection_scope",
+          "research_and_deduplicate_candidates",
+          "qualify_need_fit_timing_and_permission",
+          "draft_one_relevant_message",
+          "request_exact_owner_approval",
+          "dispatch_through_configured_adapter_only",
+          "wait_for_required_follow_up_interval",
+          "stop_on_reply_opt_out_bounce_or_complaint",
+          "report_outcomes_without_claiming_guaranteed_revenue"
+        ],
+        "lead_system": {
+          "system_id": "lead-system-quant-backtester",
+          "engine": "server/governed-leads.ts",
+          "status": "sandbox_ready_external_adapters_required",
+          "ideal_customer_profile": {
+            "segments": [
+              "Quant traders",
+              "research teams"
+            ],
+            "need_signals": [
+              "Needs help with Walk-forward analysis",
+              "Needs help with Monte Carlo simulation",
+              "Needs help with Regime detection",
+              "Needs help with Transaction cost modeling",
+              "Needs help with Out-of-sample validation"
+            ],
+            "exclusion_rules": [
+              "no minors",
+              "no protected or sensitive trait targeting",
+              "no deceptive identity or impersonation",
+              "no lead without traceable source evidence"
+            ]
+          },
+          "discovery": {
+            "query_templates": [
+              "Quant traders, research teams requesting Walk-forward analysis",
+              "organizations seeking trading support",
+              "inbound requests matching Quant Strategy Backtester",
+              "existing customers who opted in to Walk-forward analysis updates"
+            ],
+            "authorized_source_types": [
+              "owner supplied records",
+              "consent based inbound requests",
+              "existing customer records with documented relationship",
+              "public business directories whose terms permit research",
+              "owner authorized provider APIs"
+            ],
+            "forbidden_collection": [
+              "private accounts or access-controlled pages",
+              "terms bypassing scraping",
+              "purchased, stolen, or unverifiable contact lists",
+              "raw credentials or secret tokens",
+              "sensitive personal data"
+            ]
+          },
+          "qualification": {
+            "required_fields": [
+              "source reference",
+              "organization or customer need",
+              "fit to the bot specialization",
+              "contact permission basis and channel scope",
+              "qualification evidence"
+            ],
+            "score_dimensions": {
+              "demonstrated_need": 30,
+              "capability_fit": 25,
+              "decision_readiness": 15,
+              "voluntarily_supplied_timing": 10,
+              "documented_contact_permission": 20
+            },
+            "minimum_score_for_owner_review": 65,
+            "permission_is_mandatory_even_above_threshold": true
+          },
+          "outreach": {
+            "supported_channels": [
+              "email",
+              "sms",
+              "voice_call",
+              "social_dm"
+            ],
+            "recipient_channel_permission_required": true,
+            "raw_contact_details_in_browser_forbidden": true,
+            "exact_owner_approval_per_message": true,
+            "maximum_daily_sends": 20,
+            "adapter_status": "configuration_required_for_live_dispatch"
+          },
+          "follow_up": {
+            "maximum_follow_ups": 2,
+            "minimum_interval_hours": 48,
+            "approval_required_for_each_follow_up": true,
+            "stop_conditions": [
+              "reply",
+              "opt out",
+              "bounce",
+              "complaint",
+              "permission expiry",
+              "owner stop",
+              "sequence complete"
+            ],
+            "suppression_ledger_required": true
+          },
+          "owner_controls": {
+            "default_mode": "research_and_draft_only",
+            "pause_and_kill_switch_required": true,
+            "one_action_approval_expiry_hours": 24,
+            "quiet_hours_supported": true,
+            "export_and_delete_supported": true
+          },
+          "metrics": [
+            "candidates researched",
+            "source evidence coverage",
+            "qualified leads",
+            "recipient permission coverage",
+            "owner approval rate",
+            "reply rate",
+            "positive reply rate",
+            "opt-out rate",
+            "bounce rate",
+            "complaint rate",
+            "conversion evidence"
+          ]
+        },
+        "readiness": {
+          "local_research_plan": "ready",
+          "qualification_and_drafts": "ready",
+          "exact_action_approval_packet": "ready",
+          "live_contact_discovery": "provider_and_terms_configuration_required",
+          "live_message_dispatch": "verified_adapter_recipient_permission_and_owner_approval_required",
+          "independent_production_business": false
+        }
+      },
       "capabilities": [
         {
           "name": "Walk-forward analysis",
@@ -2915,6 +4713,12 @@
           "name": "Install and multi-platform distribution planner",
           "status": "web_ready_native_review_required",
           "evidence": "config/generated/buddy_distribution_catalog.json"
+        },
+        {
+          "id": "buddy_governed_lead_system",
+          "name": "Permission-gated lead discovery and follow-up system",
+          "status": "sandbox_ready_external_adapters_required",
+          "evidence": "server/governed-leads.ts"
         },
         {
           "id": "buddy_game_lab",
@@ -3119,6 +4923,164 @@
           "Published pricing and revenue models are catalog plans, not evidence of sales or earnings."
         ]
       },
+      "business_system": {
+        "business_id": "business-robo-advisor",
+        "operating_model": "owner_governed_service_business",
+        "specialization": {
+          "division": "DreamFinance",
+          "category": "robo-advisory",
+          "mission": "White-label robo-advisory engine for automated portfolio management.",
+          "ideal_customer_segments": [
+            "Financial advisors",
+            "wealth managers"
+          ],
+          "core_offer": "Robo-Advisory Platform Bot: White-label robo-advisory engine for automated portfolio management.",
+          "promised_outputs": [
+            "Risk profiling questionnaires",
+            "Goal-based portfolio construction",
+            "Automatic rebalancing",
+            "Tax-loss harvesting",
+            "Client reporting portal"
+          ],
+          "catalog_revenue_model": "AUM fee + licensing",
+          "catalog_price_range": "$499/mo",
+          "earnings_status": "no_revenue_or_customer_result_guaranteed"
+        },
+        "operating_workflow": [
+          "capture_owner_goal_and_offer",
+          "define_ideal_customer_profile",
+          "select_owner_authorized_sources",
+          "confirm_source_terms_and_collection_scope",
+          "research_and_deduplicate_candidates",
+          "qualify_need_fit_timing_and_permission",
+          "draft_one_relevant_message",
+          "request_exact_owner_approval",
+          "dispatch_through_configured_adapter_only",
+          "wait_for_required_follow_up_interval",
+          "stop_on_reply_opt_out_bounce_or_complaint",
+          "report_outcomes_without_claiming_guaranteed_revenue"
+        ],
+        "lead_system": {
+          "system_id": "lead-system-robo-advisor",
+          "engine": "server/governed-leads.ts",
+          "status": "sandbox_ready_external_adapters_required",
+          "ideal_customer_profile": {
+            "segments": [
+              "Financial advisors",
+              "wealth managers"
+            ],
+            "need_signals": [
+              "Needs help with Risk profiling questionnaires",
+              "Needs help with Goal-based portfolio construction",
+              "Needs help with Automatic rebalancing",
+              "Needs help with Tax-loss harvesting",
+              "Needs help with Client reporting portal"
+            ],
+            "exclusion_rules": [
+              "no minors",
+              "no protected or sensitive trait targeting",
+              "no deceptive identity or impersonation",
+              "no lead without traceable source evidence"
+            ]
+          },
+          "discovery": {
+            "query_templates": [
+              "Financial advisors, wealth managers requesting Risk profiling questionnaires",
+              "organizations seeking robo-advisory support",
+              "inbound requests matching Robo-Advisory Platform Bot",
+              "existing customers who opted in to Risk profiling questionnaires updates"
+            ],
+            "authorized_source_types": [
+              "owner supplied records",
+              "consent based inbound requests",
+              "existing customer records with documented relationship",
+              "public business directories whose terms permit research",
+              "owner authorized provider APIs"
+            ],
+            "forbidden_collection": [
+              "private accounts or access-controlled pages",
+              "terms bypassing scraping",
+              "purchased, stolen, or unverifiable contact lists",
+              "raw credentials or secret tokens",
+              "sensitive personal data"
+            ]
+          },
+          "qualification": {
+            "required_fields": [
+              "source reference",
+              "organization or customer need",
+              "fit to the bot specialization",
+              "contact permission basis and channel scope",
+              "qualification evidence"
+            ],
+            "score_dimensions": {
+              "demonstrated_need": 30,
+              "capability_fit": 25,
+              "decision_readiness": 15,
+              "voluntarily_supplied_timing": 10,
+              "documented_contact_permission": 20
+            },
+            "minimum_score_for_owner_review": 65,
+            "permission_is_mandatory_even_above_threshold": true
+          },
+          "outreach": {
+            "supported_channels": [
+              "email",
+              "sms",
+              "voice_call",
+              "social_dm"
+            ],
+            "recipient_channel_permission_required": true,
+            "raw_contact_details_in_browser_forbidden": true,
+            "exact_owner_approval_per_message": true,
+            "maximum_daily_sends": 20,
+            "adapter_status": "configuration_required_for_live_dispatch"
+          },
+          "follow_up": {
+            "maximum_follow_ups": 2,
+            "minimum_interval_hours": 48,
+            "approval_required_for_each_follow_up": true,
+            "stop_conditions": [
+              "reply",
+              "opt out",
+              "bounce",
+              "complaint",
+              "permission expiry",
+              "owner stop",
+              "sequence complete"
+            ],
+            "suppression_ledger_required": true
+          },
+          "owner_controls": {
+            "default_mode": "research_and_draft_only",
+            "pause_and_kill_switch_required": true,
+            "one_action_approval_expiry_hours": 24,
+            "quiet_hours_supported": true,
+            "export_and_delete_supported": true
+          },
+          "metrics": [
+            "candidates researched",
+            "source evidence coverage",
+            "qualified leads",
+            "recipient permission coverage",
+            "owner approval rate",
+            "reply rate",
+            "positive reply rate",
+            "opt-out rate",
+            "bounce rate",
+            "complaint rate",
+            "conversion evidence"
+          ]
+        },
+        "readiness": {
+          "local_research_plan": "ready",
+          "qualification_and_drafts": "ready",
+          "exact_action_approval_packet": "ready",
+          "live_contact_discovery": "provider_and_terms_configuration_required",
+          "live_message_dispatch": "verified_adapter_recipient_permission_and_owner_approval_required",
+          "independent_production_business": false
+        }
+      },
       "capabilities": [
         {
           "name": "Risk profiling questionnaires",
@@ -3211,6 +5173,12 @@
           "name": "Install and multi-platform distribution planner",
           "status": "web_ready_native_review_required",
           "evidence": "config/generated/buddy_distribution_catalog.json"
+        },
+        {
+          "id": "buddy_governed_lead_system",
+          "name": "Permission-gated lead discovery and follow-up system",
+          "status": "sandbox_ready_external_adapters_required",
+          "evidence": "server/governed-leads.ts"
         }
       ],
       "api_candidates": [
@@ -3445,6 +5413,164 @@
           "Published pricing and revenue models are catalog plans, not evidence of sales or earnings."
         ]
       },
+      "business_system": {
+        "business_id": "business-market-anomaly",
+        "operating_model": "owner_governed_service_business",
+        "specialization": {
+          "division": "DreamFinance",
+          "category": "anomaly-detection",
+          "mission": "Detects unusual market activity, dark pool prints, and sentiment shifts in real-time.",
+          "ideal_customer_segments": [
+            "Active traders",
+            "compliance teams"
+          ],
+          "core_offer": "Real-Time Market Anomaly Finder: Detects unusual market activity, dark pool prints, and sentiment shifts in real-time.",
+          "promised_outputs": [
+            "Anomaly pattern recognition",
+            "Dark pool print alerts",
+            "Unusual options activity",
+            "Sentiment divergence tracking",
+            "Volume spike detection"
+          ],
+          "catalog_revenue_model": "SaaS subscription",
+          "catalog_price_range": "$499/mo",
+          "earnings_status": "no_revenue_or_customer_result_guaranteed"
+        },
+        "operating_workflow": [
+          "capture_owner_goal_and_offer",
+          "define_ideal_customer_profile",
+          "select_owner_authorized_sources",
+          "confirm_source_terms_and_collection_scope",
+          "research_and_deduplicate_candidates",
+          "qualify_need_fit_timing_and_permission",
+          "draft_one_relevant_message",
+          "request_exact_owner_approval",
+          "dispatch_through_configured_adapter_only",
+          "wait_for_required_follow_up_interval",
+          "stop_on_reply_opt_out_bounce_or_complaint",
+          "report_outcomes_without_claiming_guaranteed_revenue"
+        ],
+        "lead_system": {
+          "system_id": "lead-system-market-anomaly",
+          "engine": "server/governed-leads.ts",
+          "status": "sandbox_ready_external_adapters_required",
+          "ideal_customer_profile": {
+            "segments": [
+              "Active traders",
+              "compliance teams"
+            ],
+            "need_signals": [
+              "Needs help with Anomaly pattern recognition",
+              "Needs help with Dark pool print alerts",
+              "Needs help with Unusual options activity",
+              "Needs help with Sentiment divergence tracking",
+              "Needs help with Volume spike detection"
+            ],
+            "exclusion_rules": [
+              "no minors",
+              "no protected or sensitive trait targeting",
+              "no deceptive identity or impersonation",
+              "no lead without traceable source evidence"
+            ]
+          },
+          "discovery": {
+            "query_templates": [
+              "Active traders, compliance teams requesting Anomaly pattern recognition",
+              "organizations seeking anomaly-detection support",
+              "inbound requests matching Real-Time Market Anomaly Finder",
+              "existing customers who opted in to Anomaly pattern recognition updates"
+            ],
+            "authorized_source_types": [
+              "owner supplied records",
+              "consent based inbound requests",
+              "existing customer records with documented relationship",
+              "public business directories whose terms permit research",
+              "owner authorized provider APIs"
+            ],
+            "forbidden_collection": [
+              "private accounts or access-controlled pages",
+              "terms bypassing scraping",
+              "purchased, stolen, or unverifiable contact lists",
+              "raw credentials or secret tokens",
+              "sensitive personal data"
+            ]
+          },
+          "qualification": {
+            "required_fields": [
+              "source reference",
+              "organization or customer need",
+              "fit to the bot specialization",
+              "contact permission basis and channel scope",
+              "qualification evidence"
+            ],
+            "score_dimensions": {
+              "demonstrated_need": 30,
+              "capability_fit": 25,
+              "decision_readiness": 15,
+              "voluntarily_supplied_timing": 10,
+              "documented_contact_permission": 20
+            },
+            "minimum_score_for_owner_review": 65,
+            "permission_is_mandatory_even_above_threshold": true
+          },
+          "outreach": {
+            "supported_channels": [
+              "email",
+              "sms",
+              "voice_call",
+              "social_dm"
+            ],
+            "recipient_channel_permission_required": true,
+            "raw_contact_details_in_browser_forbidden": true,
+            "exact_owner_approval_per_message": true,
+            "maximum_daily_sends": 20,
+            "adapter_status": "configuration_required_for_live_dispatch"
+          },
+          "follow_up": {
+            "maximum_follow_ups": 2,
+            "minimum_interval_hours": 48,
+            "approval_required_for_each_follow_up": true,
+            "stop_conditions": [
+              "reply",
+              "opt out",
+              "bounce",
+              "complaint",
+              "permission expiry",
+              "owner stop",
+              "sequence complete"
+            ],
+            "suppression_ledger_required": true
+          },
+          "owner_controls": {
+            "default_mode": "research_and_draft_only",
+            "pause_and_kill_switch_required": true,
+            "one_action_approval_expiry_hours": 24,
+            "quiet_hours_supported": true,
+            "export_and_delete_supported": true
+          },
+          "metrics": [
+            "candidates researched",
+            "source evidence coverage",
+            "qualified leads",
+            "recipient permission coverage",
+            "owner approval rate",
+            "reply rate",
+            "positive reply rate",
+            "opt-out rate",
+            "bounce rate",
+            "complaint rate",
+            "conversion evidence"
+          ]
+        },
+        "readiness": {
+          "local_research_plan": "ready",
+          "qualification_and_drafts": "ready",
+          "exact_action_approval_packet": "ready",
+          "live_contact_discovery": "provider_and_terms_configuration_required",
+          "live_message_dispatch": "verified_adapter_recipient_permission_and_owner_approval_required",
+          "independent_production_business": false
+        }
+      },
       "capabilities": [
         {
           "name": "Anomaly pattern recognition",
@@ -3537,6 +5663,12 @@
           "name": "Install and multi-platform distribution planner",
           "status": "web_ready_native_review_required",
           "evidence": "config/generated/buddy_distribution_catalog.json"
+        },
+        {
+          "id": "buddy_governed_lead_system",
+          "name": "Permission-gated lead discovery and follow-up system",
+          "status": "sandbox_ready_external_adapters_required",
+          "evidence": "server/governed-leads.ts"
         },
         {
           "id": "buddy_connection_broker",
@@ -3777,6 +5909,164 @@
           "Published pricing and revenue models are catalog plans, not evidence of sales or earnings."
         ]
       },
+      "business_system": {
+        "business_id": "business-portfolio-rebalancer",
+        "operating_model": "owner_governed_service_business",
+        "specialization": {
+          "division": "DreamFinance",
+          "category": "portfolio",
+          "mission": "Automated portfolio rebalancing based on target allocations and drift thresholds.",
+          "ideal_customer_segments": [
+            "Financial advisors",
+            "investors"
+          ],
+          "core_offer": "Portfolio Rebalancing Bot: Automated portfolio rebalancing based on target allocations and drift thresholds.",
+          "promised_outputs": [
+            "Drift threshold monitoring",
+            "Tax-aware rebalancing",
+            "Multi-account coordination",
+            "Asset allocation optimizer",
+            "Transaction cost minimizer"
+          ],
+          "catalog_revenue_model": "SaaS subscription",
+          "catalog_price_range": "$299/mo",
+          "earnings_status": "no_revenue_or_customer_result_guaranteed"
+        },
+        "operating_workflow": [
+          "capture_owner_goal_and_offer",
+          "define_ideal_customer_profile",
+          "select_owner_authorized_sources",
+          "confirm_source_terms_and_collection_scope",
+          "research_and_deduplicate_candidates",
+          "qualify_need_fit_timing_and_permission",
+          "draft_one_relevant_message",
+          "request_exact_owner_approval",
+          "dispatch_through_configured_adapter_only",
+          "wait_for_required_follow_up_interval",
+          "stop_on_reply_opt_out_bounce_or_complaint",
+          "report_outcomes_without_claiming_guaranteed_revenue"
+        ],
+        "lead_system": {
+          "system_id": "lead-system-portfolio-rebalancer",
+          "engine": "server/governed-leads.ts",
+          "status": "sandbox_ready_external_adapters_required",
+          "ideal_customer_profile": {
+            "segments": [
+              "Financial advisors",
+              "investors"
+            ],
+            "need_signals": [
+              "Needs help with Drift threshold monitoring",
+              "Needs help with Tax-aware rebalancing",
+              "Needs help with Multi-account coordination",
+              "Needs help with Asset allocation optimizer",
+              "Needs help with Transaction cost minimizer"
+            ],
+            "exclusion_rules": [
+              "no minors",
+              "no protected or sensitive trait targeting",
+              "no deceptive identity or impersonation",
+              "no lead without traceable source evidence"
+            ]
+          },
+          "discovery": {
+            "query_templates": [
+              "Financial advisors, investors requesting Drift threshold monitoring",
+              "organizations seeking portfolio support",
+              "inbound requests matching Portfolio Rebalancing Bot",
+              "existing customers who opted in to Drift threshold monitoring updates"
+            ],
+            "authorized_source_types": [
+              "owner supplied records",
+              "consent based inbound requests",
+              "existing customer records with documented relationship",
+              "public business directories whose terms permit research",
+              "owner authorized provider APIs"
+            ],
+            "forbidden_collection": [
+              "private accounts or access-controlled pages",
+              "terms bypassing scraping",
+              "purchased, stolen, or unverifiable contact lists",
+              "raw credentials or secret tokens",
+              "sensitive personal data"
+            ]
+          },
+          "qualification": {
+            "required_fields": [
+              "source reference",
+              "organization or customer need",
+              "fit to the bot specialization",
+              "contact permission basis and channel scope",
+              "qualification evidence"
+            ],
+            "score_dimensions": {
+              "demonstrated_need": 30,
+              "capability_fit": 25,
+              "decision_readiness": 15,
+              "voluntarily_supplied_timing": 10,
+              "documented_contact_permission": 20
+            },
+            "minimum_score_for_owner_review": 65,
+            "permission_is_mandatory_even_above_threshold": true
+          },
+          "outreach": {
+            "supported_channels": [
+              "email",
+              "sms",
+              "voice_call",
+              "social_dm"
+            ],
+            "recipient_channel_permission_required": true,
+            "raw_contact_details_in_browser_forbidden": true,
+            "exact_owner_approval_per_message": true,
+            "maximum_daily_sends": 20,
+            "adapter_status": "configuration_required_for_live_dispatch"
+          },
+          "follow_up": {
+            "maximum_follow_ups": 2,
+            "minimum_interval_hours": 48,
+            "approval_required_for_each_follow_up": true,
+            "stop_conditions": [
+              "reply",
+              "opt out",
+              "bounce",
+              "complaint",
+              "permission expiry",
+              "owner stop",
+              "sequence complete"
+            ],
+            "suppression_ledger_required": true
+          },
+          "owner_controls": {
+            "default_mode": "research_and_draft_only",
+            "pause_and_kill_switch_required": true,
+            "one_action_approval_expiry_hours": 24,
+            "quiet_hours_supported": true,
+            "export_and_delete_supported": true
+          },
+          "metrics": [
+            "candidates researched",
+            "source evidence coverage",
+            "qualified leads",
+            "recipient permission coverage",
+            "owner approval rate",
+            "reply rate",
+            "positive reply rate",
+            "opt-out rate",
+            "bounce rate",
+            "complaint rate",
+            "conversion evidence"
+          ]
+        },
+        "readiness": {
+          "local_research_plan": "ready",
+          "qualification_and_drafts": "ready",
+          "exact_action_approval_packet": "ready",
+          "live_contact_discovery": "provider_and_terms_configuration_required",
+          "live_message_dispatch": "verified_adapter_recipient_permission_and_owner_approval_required",
+          "independent_production_business": false
+        }
+      },
       "capabilities": [
         {
           "name": "Drift threshold monitoring",
@@ -3869,6 +6159,12 @@
           "name": "Install and multi-platform distribution planner",
           "status": "web_ready_native_review_required",
           "evidence": "config/generated/buddy_distribution_catalog.json"
+        },
+        {
+          "id": "buddy_governed_lead_system",
+          "name": "Permission-gated lead discovery and follow-up system",
+          "status": "sandbox_ready_external_adapters_required",
+          "evidence": "server/governed-leads.ts"
         },
         {
           "id": "buddy_connection_broker",
@@ -4111,6 +6407,162 @@
           "Published pricing and revenue models are catalog plans, not evidence of sales or earnings."
         ]
       },
+      "business_system": {
+        "business_id": "business-options-trader",
+        "operating_model": "owner_governed_service_business",
+        "specialization": {
+          "division": "DreamFinance",
+          "category": "trading",
+          "mission": "Executes multi-leg options strategies with automated Greeks management.",
+          "ideal_customer_segments": [
+            "Options traders"
+          ],
+          "core_offer": "Options Trading Bot: Executes multi-leg options strategies with automated Greeks management.",
+          "promised_outputs": [
+            "Options chain scanner",
+            "Iron condor automation",
+            "Spread strategy builder",
+            "Expiry roll management",
+            "IV rank screening"
+          ],
+          "catalog_revenue_model": "SaaS + performance fee",
+          "catalog_price_range": "$299/mo",
+          "earnings_status": "no_revenue_or_customer_result_guaranteed"
+        },
+        "operating_workflow": [
+          "capture_owner_goal_and_offer",
+          "define_ideal_customer_profile",
+          "select_owner_authorized_sources",
+          "confirm_source_terms_and_collection_scope",
+          "research_and_deduplicate_candidates",
+          "qualify_need_fit_timing_and_permission",
+          "draft_one_relevant_message",
+          "request_exact_owner_approval",
+          "dispatch_through_configured_adapter_only",
+          "wait_for_required_follow_up_interval",
+          "stop_on_reply_opt_out_bounce_or_complaint",
+          "report_outcomes_without_claiming_guaranteed_revenue"
+        ],
+        "lead_system": {
+          "system_id": "lead-system-options-trader",
+          "engine": "server/governed-leads.ts",
+          "status": "sandbox_ready_external_adapters_required",
+          "ideal_customer_profile": {
+            "segments": [
+              "Options traders"
+            ],
+            "need_signals": [
+              "Needs help with Options chain scanner",
+              "Needs help with Iron condor automation",
+              "Needs help with Spread strategy builder",
+              "Needs help with Expiry roll management",
+              "Needs help with IV rank screening"
+            ],
+            "exclusion_rules": [
+              "no minors",
+              "no protected or sensitive trait targeting",
+              "no deceptive identity or impersonation",
+              "no lead without traceable source evidence"
+            ]
+          },
+          "discovery": {
+            "query_templates": [
+              "Options traders requesting Options chain scanner",
+              "organizations seeking trading support",
+              "inbound requests matching Options Trading Bot",
+              "existing customers who opted in to Options chain scanner updates"
+            ],
+            "authorized_source_types": [
+              "owner supplied records",
+              "consent based inbound requests",
+              "existing customer records with documented relationship",
+              "public business directories whose terms permit research",
+              "owner authorized provider APIs"
+            ],
+            "forbidden_collection": [
+              "private accounts or access-controlled pages",
+              "terms bypassing scraping",
+              "purchased, stolen, or unverifiable contact lists",
+              "raw credentials or secret tokens",
+              "sensitive personal data"
+            ]
+          },
+          "qualification": {
+            "required_fields": [
+              "source reference",
+              "organization or customer need",
+              "fit to the bot specialization",
+              "contact permission basis and channel scope",
+              "qualification evidence"
+            ],
+            "score_dimensions": {
+              "demonstrated_need": 30,
+              "capability_fit": 25,
+              "decision_readiness": 15,
+              "voluntarily_supplied_timing": 10,
+              "documented_contact_permission": 20
+            },
+            "minimum_score_for_owner_review": 65,
+            "permission_is_mandatory_even_above_threshold": true
+          },
+          "outreach": {
+            "supported_channels": [
+              "email",
+              "sms",
+              "voice_call",
+              "social_dm"
+            ],
+            "recipient_channel_permission_required": true,
+            "raw_contact_details_in_browser_forbidden": true,
+            "exact_owner_approval_per_message": true,
+            "maximum_daily_sends": 20,
+            "adapter_status": "configuration_required_for_live_dispatch"
+          },
+          "follow_up": {
+            "maximum_follow_ups": 2,
+            "minimum_interval_hours": 48,
+            "approval_required_for_each_follow_up": true,
+            "stop_conditions": [
+              "reply",
+              "opt out",
+              "bounce",
+              "complaint",
+              "permission expiry",
+              "owner stop",
+              "sequence complete"
+            ],
+            "suppression_ledger_required": true
+          },
+          "owner_controls": {
+            "default_mode": "research_and_draft_only",
+            "pause_and_kill_switch_required": true,
+            "one_action_approval_expiry_hours": 24,
+            "quiet_hours_supported": true,
+            "export_and_delete_supported": true
+          },
+          "metrics": [
+            "candidates researched",
+            "source evidence coverage",
+            "qualified leads",
+            "recipient permission coverage",
+            "owner approval rate",
+            "reply rate",
+            "positive reply rate",
+            "opt-out rate",
+            "bounce rate",
+            "complaint rate",
+            "conversion evidence"
+          ]
+        },
+        "readiness": {
+          "local_research_plan": "ready",
+          "qualification_and_drafts": "ready",
+          "exact_action_approval_packet": "ready",
+          "live_contact_discovery": "provider_and_terms_configuration_required",
+          "live_message_dispatch": "verified_adapter_recipient_permission_and_owner_approval_required",
+          "independent_production_business": false
+        }
+      },
       "capabilities": [
         {
           "name": "Options chain scanner",
@@ -4203,6 +6655,12 @@
           "name": "Install and multi-platform distribution planner",
           "status": "web_ready_native_review_required",
           "evidence": "config/generated/buddy_distribution_catalog.json"
+        },
+        {
+          "id": "buddy_governed_lead_system",
+          "name": "Permission-gated lead discovery and follow-up system",
+          "status": "sandbox_ready_external_adapters_required",
+          "evidence": "server/governed-leads.ts"
         },
         {
           "id": "buddy_connection_broker",
@@ -4444,6 +6902,166 @@
           "Published pricing and revenue models are catalog plans, not evidence of sales or earnings."
         ]
       },
+      "business_system": {
+        "business_id": "business-tax-optimizer",
+        "operating_model": "owner_governed_service_business",
+        "specialization": {
+          "division": "DreamFinance",
+          "category": "tax-optimization",
+          "mission": "Minimizes tax liability across investment portfolios with strategic harvesting.",
+          "ideal_customer_segments": [
+            "Investors",
+            "CPAs",
+            "financial planners"
+          ],
+          "core_offer": "Tax Efficiency Planner: Minimizes tax liability across investment portfolios with strategic harvesting.",
+          "promised_outputs": [
+            "Tax-loss harvesting engine",
+            "Capital gains deferral",
+            "Wash sale monitoring",
+            "Charitable giving optimizer",
+            "Tax projection reports"
+          ],
+          "catalog_revenue_model": "SaaS subscription",
+          "catalog_price_range": "$299/mo",
+          "earnings_status": "no_revenue_or_customer_result_guaranteed"
+        },
+        "operating_workflow": [
+          "capture_owner_goal_and_offer",
+          "define_ideal_customer_profile",
+          "select_owner_authorized_sources",
+          "confirm_source_terms_and_collection_scope",
+          "research_and_deduplicate_candidates",
+          "qualify_need_fit_timing_and_permission",
+          "draft_one_relevant_message",
+          "request_exact_owner_approval",
+          "dispatch_through_configured_adapter_only",
+          "wait_for_required_follow_up_interval",
+          "stop_on_reply_opt_out_bounce_or_complaint",
+          "report_outcomes_without_claiming_guaranteed_revenue"
+        ],
+        "lead_system": {
+          "system_id": "lead-system-tax-optimizer",
+          "engine": "server/governed-leads.ts",
+          "status": "sandbox_ready_external_adapters_required",
+          "ideal_customer_profile": {
+            "segments": [
+              "Investors",
+              "CPAs",
+              "financial planners"
+            ],
+            "need_signals": [
+              "Needs help with Tax-loss harvesting engine",
+              "Needs help with Capital gains deferral",
+              "Needs help with Wash sale monitoring",
+              "Needs help with Charitable giving optimizer",
+              "Needs help with Tax projection reports"
+            ],
+            "exclusion_rules": [
+              "no minors",
+              "no protected or sensitive trait targeting",
+              "no deceptive identity or impersonation",
+              "no lead without traceable source evidence"
+            ]
+          },
+          "discovery": {
+            "query_templates": [
+              "Investors, CPAs, financial planners requesting Tax-loss harvesting engine",
+              "organizations seeking tax-optimization support",
+              "inbound requests matching Tax Efficiency Planner",
+              "existing customers who opted in to Tax-loss harvesting engine updates"
+            ],
+            "authorized_source_types": [
+              "owner supplied records",
+              "consent based inbound requests",
+              "existing customer records with documented relationship",
+              "public business directories whose terms permit research",
+              "owner authorized provider APIs"
+            ],
+            "forbidden_collection": [
+              "private accounts or access-controlled pages",
+              "terms bypassing scraping",
+              "purchased, stolen, or unverifiable contact lists",
+              "raw credentials or secret tokens",
+              "sensitive personal data"
+            ]
+          },
+          "qualification": {
+            "required_fields": [
+              "source reference",
+              "organization or customer need",
+              "fit to the bot specialization",
+              "contact permission basis and channel scope",
+              "qualification evidence"
+            ],
+            "score_dimensions": {
+              "demonstrated_need": 30,
+              "capability_fit": 25,
+              "decision_readiness": 15,
+              "voluntarily_supplied_timing": 10,
+              "documented_contact_permission": 20
+            },
+            "minimum_score_for_owner_review": 65,
+            "permission_is_mandatory_even_above_threshold": true
+          },
+          "outreach": {
+            "supported_channels": [
+              "email",
+              "sms",
+              "voice_call",
+              "social_dm"
+            ],
+            "recipient_channel_permission_required": true,
+            "raw_contact_details_in_browser_forbidden": true,
+            "exact_owner_approval_per_message": true,
+            "maximum_daily_sends": 20,
+            "adapter_status": "configuration_required_for_live_dispatch"
+          },
+          "follow_up": {
+            "maximum_follow_ups": 2,
+            "minimum_interval_hours": 48,
+            "approval_required_for_each_follow_up": true,
+            "stop_conditions": [
+              "reply",
+              "opt out",
+              "bounce",
+              "complaint",
+              "permission expiry",
+              "owner stop",
+              "sequence complete"
+            ],
+            "suppression_ledger_required": true
+          },
+          "owner_controls": {
+            "default_mode": "research_and_draft_only",
+            "pause_and_kill_switch_required": true,
+            "one_action_approval_expiry_hours": 24,
+            "quiet_hours_supported": true,
+            "export_and_delete_supported": true
+          },
+          "metrics": [
+            "candidates researched",
+            "source evidence coverage",
+            "qualified leads",
+            "recipient permission coverage",
+            "owner approval rate",
+            "reply rate",
+            "positive reply rate",
+            "opt-out rate",
+            "bounce rate",
+            "complaint rate",
+            "conversion evidence"
+          ]
+        },
+        "readiness": {
+          "local_research_plan": "ready",
+          "qualification_and_drafts": "ready",
+          "exact_action_approval_packet": "ready",
+          "live_contact_discovery": "provider_and_terms_configuration_required",
+          "live_message_dispatch": "verified_adapter_recipient_permission_and_owner_approval_required",
+          "independent_production_business": false
+        }
+      },
       "capabilities": [
         {
           "name": "Tax-loss harvesting engine",
@@ -4536,6 +7154,12 @@
           "name": "Install and multi-platform distribution planner",
           "status": "web_ready_native_review_required",
           "evidence": "config/generated/buddy_distribution_catalog.json"
+        },
+        {
+          "id": "buddy_governed_lead_system",
+          "name": "Permission-gated lead discovery and follow-up system",
+          "status": "sandbox_ready_external_adapters_required",
+          "evidence": "server/governed-leads.ts"
         },
         {
           "id": "buddy_connection_broker",
@@ -4678,6 +7302,162 @@
           "Published pricing and revenue models are catalog plans, not evidence of sales or earnings."
         ]
       },
+      "business_system": {
+        "business_id": "business-forex-trader",
+        "operating_model": "owner_governed_service_business",
+        "specialization": {
+          "division": "DreamFinance",
+          "category": "trading",
+          "mission": "Trades major and exotic currency pairs autonomously with risk management.",
+          "ideal_customer_segments": [
+            "Forex traders"
+          ],
+          "core_offer": "Forex Trading Bot: Trades major and exotic currency pairs autonomously with risk management.",
+          "promised_outputs": [
+            "Currency pair correlation",
+            "Technical signal engine",
+            "Economic calendar integration",
+            "Position sizing calculator",
+            "Drawdown protection"
+          ],
+          "catalog_revenue_model": "SaaS subscription",
+          "catalog_price_range": "$199/mo",
+          "earnings_status": "no_revenue_or_customer_result_guaranteed"
+        },
+        "operating_workflow": [
+          "capture_owner_goal_and_offer",
+          "define_ideal_customer_profile",
+          "select_owner_authorized_sources",
+          "confirm_source_terms_and_collection_scope",
+          "research_and_deduplicate_candidates",
+          "qualify_need_fit_timing_and_permission",
+          "draft_one_relevant_message",
+          "request_exact_owner_approval",
+          "dispatch_through_configured_adapter_only",
+          "wait_for_required_follow_up_interval",
+          "stop_on_reply_opt_out_bounce_or_complaint",
+          "report_outcomes_without_claiming_guaranteed_revenue"
+        ],
+        "lead_system": {
+          "system_id": "lead-system-forex-trader",
+          "engine": "server/governed-leads.ts",
+          "status": "sandbox_ready_external_adapters_required",
+          "ideal_customer_profile": {
+            "segments": [
+              "Forex traders"
+            ],
+            "need_signals": [
+              "Needs help with Currency pair correlation",
+              "Needs help with Technical signal engine",
+              "Needs help with Economic calendar integration",
+              "Needs help with Position sizing calculator",
+              "Needs help with Drawdown protection"
+            ],
+            "exclusion_rules": [
+              "no minors",
+              "no protected or sensitive trait targeting",
+              "no deceptive identity or impersonation",
+              "no lead without traceable source evidence"
+            ]
+          },
+          "discovery": {
+            "query_templates": [
+              "Forex traders requesting Currency pair correlation",
+              "organizations seeking trading support",
+              "inbound requests matching Forex Trading Bot",
+              "existing customers who opted in to Currency pair correlation updates"
+            ],
+            "authorized_source_types": [
+              "owner supplied records",
+              "consent based inbound requests",
+              "existing customer records with documented relationship",
+              "public business directories whose terms permit research",
+              "owner authorized provider APIs"
+            ],
+            "forbidden_collection": [
+              "private accounts or access-controlled pages",
+              "terms bypassing scraping",
+              "purchased, stolen, or unverifiable contact lists",
+              "raw credentials or secret tokens",
+              "sensitive personal data"
+            ]
+          },
+          "qualification": {
+            "required_fields": [
+              "source reference",
+              "organization or customer need",
+              "fit to the bot specialization",
+              "contact permission basis and channel scope",
+              "qualification evidence"
+            ],
+            "score_dimensions": {
+              "demonstrated_need": 30,
+              "capability_fit": 25,
+              "decision_readiness": 15,
+              "voluntarily_supplied_timing": 10,
+              "documented_contact_permission": 20
+            },
+            "minimum_score_for_owner_review": 65,
+            "permission_is_mandatory_even_above_threshold": true
+          },
+          "outreach": {
+            "supported_channels": [
+              "email",
+              "sms",
+              "voice_call",
+              "social_dm"
+            ],
+            "recipient_channel_permission_required": true,
+            "raw_contact_details_in_browser_forbidden": true,
+            "exact_owner_approval_per_message": true,
+            "maximum_daily_sends": 20,
+            "adapter_status": "configuration_required_for_live_dispatch"
+          },
+          "follow_up": {
+            "maximum_follow_ups": 2,
+            "minimum_interval_hours": 48,
+            "approval_required_for_each_follow_up": true,
+            "stop_conditions": [
+              "reply",
+              "opt out",
+              "bounce",
+              "complaint",
+              "permission expiry",
+              "owner stop",
+              "sequence complete"
+            ],
+            "suppression_ledger_required": true
+          },
+          "owner_controls": {
+            "default_mode": "research_and_draft_only",
+            "pause_and_kill_switch_required": true,
+            "one_action_approval_expiry_hours": 24,
+            "quiet_hours_supported": true,
+            "export_and_delete_supported": true
+          },
+          "metrics": [
+            "candidates researched",
+            "source evidence coverage",
+            "qualified leads",
+            "recipient permission coverage",
+            "owner approval rate",
+            "reply rate",
+            "positive reply rate",
+            "opt-out rate",
+            "bounce rate",
+            "complaint rate",
+            "conversion evidence"
+          ]
+        },
+        "readiness": {
+          "local_research_plan": "ready",
+          "qualification_and_drafts": "ready",
+          "exact_action_approval_packet": "ready",
+          "live_contact_discovery": "provider_and_terms_configuration_required",
+          "live_message_dispatch": "verified_adapter_recipient_permission_and_owner_approval_required",
+          "independent_production_business": false
+        }
+      },
       "capabilities": [
         {
           "name": "Currency pair correlation",
@@ -4770,6 +7550,12 @@
           "name": "Install and multi-platform distribution planner",
           "status": "web_ready_native_review_required",
           "evidence": "config/generated/buddy_distribution_catalog.json"
+        },
+        {
+          "id": "buddy_governed_lead_system",
+          "name": "Permission-gated lead discovery and follow-up system",
+          "status": "sandbox_ready_external_adapters_required",
+          "evidence": "server/governed-leads.ts"
         },
         {
           "id": "buddy_connection_broker",
@@ -4997,6 +7783,164 @@
           "Published pricing and revenue models are catalog plans, not evidence of sales or earnings."
         ]
       },
+      "business_system": {
+        "business_id": "business-etf-rotator",
+        "operating_model": "owner_governed_service_business",
+        "specialization": {
+          "division": "DreamFinance",
+          "category": "investing",
+          "mission": "Implements momentum and factor-based ETF rotation strategies.",
+          "ideal_customer_segments": [
+            "ETF investors",
+            "RIAs"
+          ],
+          "core_offer": "ETF Rotation Strategy AI: Implements momentum and factor-based ETF rotation strategies.",
+          "promised_outputs": [
+            "Sector momentum scoring",
+            "Factor tilt optimization",
+            "Rebalancing signal generation",
+            "Expense ratio comparison",
+            "Tracking error analysis"
+          ],
+          "catalog_revenue_model": "SaaS subscription",
+          "catalog_price_range": "$199/mo",
+          "earnings_status": "no_revenue_or_customer_result_guaranteed"
+        },
+        "operating_workflow": [
+          "capture_owner_goal_and_offer",
+          "define_ideal_customer_profile",
+          "select_owner_authorized_sources",
+          "confirm_source_terms_and_collection_scope",
+          "research_and_deduplicate_candidates",
+          "qualify_need_fit_timing_and_permission",
+          "draft_one_relevant_message",
+          "request_exact_owner_approval",
+          "dispatch_through_configured_adapter_only",
+          "wait_for_required_follow_up_interval",
+          "stop_on_reply_opt_out_bounce_or_complaint",
+          "report_outcomes_without_claiming_guaranteed_revenue"
+        ],
+        "lead_system": {
+          "system_id": "lead-system-etf-rotator",
+          "engine": "server/governed-leads.ts",
+          "status": "sandbox_ready_external_adapters_required",
+          "ideal_customer_profile": {
+            "segments": [
+              "ETF investors",
+              "RIAs"
+            ],
+            "need_signals": [
+              "Needs help with Sector momentum scoring",
+              "Needs help with Factor tilt optimization",
+              "Needs help with Rebalancing signal generation",
+              "Needs help with Expense ratio comparison",
+              "Needs help with Tracking error analysis"
+            ],
+            "exclusion_rules": [
+              "no minors",
+              "no protected or sensitive trait targeting",
+              "no deceptive identity or impersonation",
+              "no lead without traceable source evidence"
+            ]
+          },
+          "discovery": {
+            "query_templates": [
+              "ETF investors, RIAs requesting Sector momentum scoring",
+              "organizations seeking investing support",
+              "inbound requests matching ETF Rotation Strategy AI",
+              "existing customers who opted in to Sector momentum scoring updates"
+            ],
+            "authorized_source_types": [
+              "owner supplied records",
+              "consent based inbound requests",
+              "existing customer records with documented relationship",
+              "public business directories whose terms permit research",
+              "owner authorized provider APIs"
+            ],
+            "forbidden_collection": [
+              "private accounts or access-controlled pages",
+              "terms bypassing scraping",
+              "purchased, stolen, or unverifiable contact lists",
+              "raw credentials or secret tokens",
+              "sensitive personal data"
+            ]
+          },
+          "qualification": {
+            "required_fields": [
+              "source reference",
+              "organization or customer need",
+              "fit to the bot specialization",
+              "contact permission basis and channel scope",
+              "qualification evidence"
+            ],
+            "score_dimensions": {
+              "demonstrated_need": 30,
+              "capability_fit": 25,
+              "decision_readiness": 15,
+              "voluntarily_supplied_timing": 10,
+              "documented_contact_permission": 20
+            },
+            "minimum_score_for_owner_review": 65,
+            "permission_is_mandatory_even_above_threshold": true
+          },
+          "outreach": {
+            "supported_channels": [
+              "email",
+              "sms",
+              "voice_call",
+              "social_dm"
+            ],
+            "recipient_channel_permission_required": true,
+            "raw_contact_details_in_browser_forbidden": true,
+            "exact_owner_approval_per_message": true,
+            "maximum_daily_sends": 20,
+            "adapter_status": "configuration_required_for_live_dispatch"
+          },
+          "follow_up": {
+            "maximum_follow_ups": 2,
+            "minimum_interval_hours": 48,
+            "approval_required_for_each_follow_up": true,
+            "stop_conditions": [
+              "reply",
+              "opt out",
+              "bounce",
+              "complaint",
+              "permission expiry",
+              "owner stop",
+              "sequence complete"
+            ],
+            "suppression_ledger_required": true
+          },
+          "owner_controls": {
+            "default_mode": "research_and_draft_only",
+            "pause_and_kill_switch_required": true,
+            "one_action_approval_expiry_hours": 24,
+            "quiet_hours_supported": true,
+            "export_and_delete_supported": true
+          },
+          "metrics": [
+            "candidates researched",
+            "source evidence coverage",
+            "qualified leads",
+            "recipient permission coverage",
+            "owner approval rate",
+            "reply rate",
+            "positive reply rate",
+            "opt-out rate",
+            "bounce rate",
+            "complaint rate",
+            "conversion evidence"
+          ]
+        },
+        "readiness": {
+          "local_research_plan": "ready",
+          "qualification_and_drafts": "ready",
+          "exact_action_approval_packet": "ready",
+          "live_contact_discovery": "provider_and_terms_configuration_required",
+          "live_message_dispatch": "verified_adapter_recipient_permission_and_owner_approval_required",
+          "independent_production_business": false
+        }
+      },
       "capabilities": [
         {
           "name": "Sector momentum scoring",
@@ -5089,6 +8033,12 @@
           "name": "Install and multi-platform distribution planner",
           "status": "web_ready_native_review_required",
           "evidence": "config/generated/buddy_distribution_catalog.json"
+        },
+        {
+          "id": "buddy_governed_lead_system",
+          "name": "Permission-gated lead discovery and follow-up system",
+          "status": "sandbox_ready_external_adapters_required",
+          "evidence": "server/governed-leads.ts"
         },
         {
           "id": "buddy_connection_broker",
@@ -5245,6 +8195,162 @@
           "Published pricing and revenue models are catalog plans, not evidence of sales or earnings."
         ]
       },
+      "business_system": {
+        "business_id": "business-bond-income",
+        "operating_model": "owner_governed_service_business",
+        "specialization": {
+          "division": "DreamFinance",
+          "category": "investing",
+          "mission": "Automated bond portfolio construction and yield optimization.",
+          "ideal_customer_segments": [
+            "Fixed income investors"
+          ],
+          "core_offer": "Bonds & Fixed Income Bot: Automated bond portfolio construction and yield optimization.",
+          "promised_outputs": [
+            "Bond screening filters",
+            "Yield curve analysis",
+            "Duration matching",
+            "Credit spread monitoring",
+            "Callable bond analysis"
+          ],
+          "catalog_revenue_model": "SaaS subscription",
+          "catalog_price_range": "$199/mo",
+          "earnings_status": "no_revenue_or_customer_result_guaranteed"
+        },
+        "operating_workflow": [
+          "capture_owner_goal_and_offer",
+          "define_ideal_customer_profile",
+          "select_owner_authorized_sources",
+          "confirm_source_terms_and_collection_scope",
+          "research_and_deduplicate_candidates",
+          "qualify_need_fit_timing_and_permission",
+          "draft_one_relevant_message",
+          "request_exact_owner_approval",
+          "dispatch_through_configured_adapter_only",
+          "wait_for_required_follow_up_interval",
+          "stop_on_reply_opt_out_bounce_or_complaint",
+          "report_outcomes_without_claiming_guaranteed_revenue"
+        ],
+        "lead_system": {
+          "system_id": "lead-system-bond-income",
+          "engine": "server/governed-leads.ts",
+          "status": "sandbox_ready_external_adapters_required",
+          "ideal_customer_profile": {
+            "segments": [
+              "Fixed income investors"
+            ],
+            "need_signals": [
+              "Needs help with Bond screening filters",
+              "Needs help with Yield curve analysis",
+              "Needs help with Duration matching",
+              "Needs help with Credit spread monitoring",
+              "Needs help with Callable bond analysis"
+            ],
+            "exclusion_rules": [
+              "no minors",
+              "no protected or sensitive trait targeting",
+              "no deceptive identity or impersonation",
+              "no lead without traceable source evidence"
+            ]
+          },
+          "discovery": {
+            "query_templates": [
+              "Fixed income investors requesting Bond screening filters",
+              "organizations seeking investing support",
+              "inbound requests matching Bonds & Fixed Income Bot",
+              "existing customers who opted in to Bond screening filters updates"
+            ],
+            "authorized_source_types": [
+              "owner supplied records",
+              "consent based inbound requests",
+              "existing customer records with documented relationship",
+              "public business directories whose terms permit research",
+              "owner authorized provider APIs"
+            ],
+            "forbidden_collection": [
+              "private accounts or access-controlled pages",
+              "terms bypassing scraping",
+              "purchased, stolen, or unverifiable contact lists",
+              "raw credentials or secret tokens",
+              "sensitive personal data"
+            ]
+          },
+          "qualification": {
+            "required_fields": [
+              "source reference",
+              "organization or customer need",
+              "fit to the bot specialization",
+              "contact permission basis and channel scope",
+              "qualification evidence"
+            ],
+            "score_dimensions": {
+              "demonstrated_need": 30,
+              "capability_fit": 25,
+              "decision_readiness": 15,
+              "voluntarily_supplied_timing": 10,
+              "documented_contact_permission": 20
+            },
+            "minimum_score_for_owner_review": 65,
+            "permission_is_mandatory_even_above_threshold": true
+          },
+          "outreach": {
+            "supported_channels": [
+              "email",
+              "sms",
+              "voice_call",
+              "social_dm"
+            ],
+            "recipient_channel_permission_required": true,
+            "raw_contact_details_in_browser_forbidden": true,
+            "exact_owner_approval_per_message": true,
+            "maximum_daily_sends": 20,
+            "adapter_status": "configuration_required_for_live_dispatch"
+          },
+          "follow_up": {
+            "maximum_follow_ups": 2,
+            "minimum_interval_hours": 48,
+            "approval_required_for_each_follow_up": true,
+            "stop_conditions": [
+              "reply",
+              "opt out",
+              "bounce",
+              "complaint",
+              "permission expiry",
+              "owner stop",
+              "sequence complete"
+            ],
+            "suppression_ledger_required": true
+          },
+          "owner_controls": {
+            "default_mode": "research_and_draft_only",
+            "pause_and_kill_switch_required": true,
+            "one_action_approval_expiry_hours": 24,
+            "quiet_hours_supported": true,
+            "export_and_delete_supported": true
+          },
+          "metrics": [
+            "candidates researched",
+            "source evidence coverage",
+            "qualified leads",
+            "recipient permission coverage",
+            "owner approval rate",
+            "reply rate",
+            "positive reply rate",
+            "opt-out rate",
+            "bounce rate",
+            "complaint rate",
+            "conversion evidence"
+          ]
+        },
+        "readiness": {
+          "local_research_plan": "ready",
+          "qualification_and_drafts": "ready",
+          "exact_action_approval_packet": "ready",
+          "live_contact_discovery": "provider_and_terms_configuration_required",
+          "live_message_dispatch": "verified_adapter_recipient_permission_and_owner_approval_required",
+          "independent_production_business": false
+        }
+      },
       "capabilities": [
         {
           "name": "Bond screening filters",
@@ -5337,6 +8443,12 @@
           "name": "Install and multi-platform distribution planner",
           "status": "web_ready_native_review_required",
           "evidence": "config/generated/buddy_distribution_catalog.json"
+        },
+        {
+          "id": "buddy_governed_lead_system",
+          "name": "Permission-gated lead discovery and follow-up system",
+          "status": "sandbox_ready_external_adapters_required",
+          "evidence": "server/governed-leads.ts"
         },
         {
           "id": "buddy_connection_broker",
@@ -5579,6 +8691,164 @@
           "Published pricing and revenue models are catalog plans, not evidence of sales or earnings."
         ]
       },
+      "business_system": {
+        "business_id": "business-market-sentiment",
+        "operating_model": "owner_governed_service_business",
+        "specialization": {
+          "division": "DreamFinance",
+          "category": "analytics",
+          "mission": "Aggregates and scores market sentiment from news, social media, and filings.",
+          "ideal_customer_segments": [
+            "Active traders",
+            "analysts"
+          ],
+          "core_offer": "Market Sentiment Analyzer: Aggregates and scores market sentiment from news, social media, and filings.",
+          "promised_outputs": [
+            "News sentiment NLP",
+            "Social media pulse tracking",
+            "SEC filing analysis",
+            "Fear & greed index",
+            "Sector sentiment heatmap"
+          ],
+          "catalog_revenue_model": "SaaS subscription",
+          "catalog_price_range": "$199/mo",
+          "earnings_status": "no_revenue_or_customer_result_guaranteed"
+        },
+        "operating_workflow": [
+          "capture_owner_goal_and_offer",
+          "define_ideal_customer_profile",
+          "select_owner_authorized_sources",
+          "confirm_source_terms_and_collection_scope",
+          "research_and_deduplicate_candidates",
+          "qualify_need_fit_timing_and_permission",
+          "draft_one_relevant_message",
+          "request_exact_owner_approval",
+          "dispatch_through_configured_adapter_only",
+          "wait_for_required_follow_up_interval",
+          "stop_on_reply_opt_out_bounce_or_complaint",
+          "report_outcomes_without_claiming_guaranteed_revenue"
+        ],
+        "lead_system": {
+          "system_id": "lead-system-market-sentiment",
+          "engine": "server/governed-leads.ts",
+          "status": "sandbox_ready_external_adapters_required",
+          "ideal_customer_profile": {
+            "segments": [
+              "Active traders",
+              "analysts"
+            ],
+            "need_signals": [
+              "Needs help with News sentiment NLP",
+              "Needs help with Social media pulse tracking",
+              "Needs help with SEC filing analysis",
+              "Needs help with Fear & greed index",
+              "Needs help with Sector sentiment heatmap"
+            ],
+            "exclusion_rules": [
+              "no minors",
+              "no protected or sensitive trait targeting",
+              "no deceptive identity or impersonation",
+              "no lead without traceable source evidence"
+            ]
+          },
+          "discovery": {
+            "query_templates": [
+              "Active traders, analysts requesting News sentiment NLP",
+              "organizations seeking analytics support",
+              "inbound requests matching Market Sentiment Analyzer",
+              "existing customers who opted in to News sentiment NLP updates"
+            ],
+            "authorized_source_types": [
+              "owner supplied records",
+              "consent based inbound requests",
+              "existing customer records with documented relationship",
+              "public business directories whose terms permit research",
+              "owner authorized provider APIs"
+            ],
+            "forbidden_collection": [
+              "private accounts or access-controlled pages",
+              "terms bypassing scraping",
+              "purchased, stolen, or unverifiable contact lists",
+              "raw credentials or secret tokens",
+              "sensitive personal data"
+            ]
+          },
+          "qualification": {
+            "required_fields": [
+              "source reference",
+              "organization or customer need",
+              "fit to the bot specialization",
+              "contact permission basis and channel scope",
+              "qualification evidence"
+            ],
+            "score_dimensions": {
+              "demonstrated_need": 30,
+              "capability_fit": 25,
+              "decision_readiness": 15,
+              "voluntarily_supplied_timing": 10,
+              "documented_contact_permission": 20
+            },
+            "minimum_score_for_owner_review": 65,
+            "permission_is_mandatory_even_above_threshold": true
+          },
+          "outreach": {
+            "supported_channels": [
+              "email",
+              "sms",
+              "voice_call",
+              "social_dm"
+            ],
+            "recipient_channel_permission_required": true,
+            "raw_contact_details_in_browser_forbidden": true,
+            "exact_owner_approval_per_message": true,
+            "maximum_daily_sends": 20,
+            "adapter_status": "configuration_required_for_live_dispatch"
+          },
+          "follow_up": {
+            "maximum_follow_ups": 2,
+            "minimum_interval_hours": 48,
+            "approval_required_for_each_follow_up": true,
+            "stop_conditions": [
+              "reply",
+              "opt out",
+              "bounce",
+              "complaint",
+              "permission expiry",
+              "owner stop",
+              "sequence complete"
+            ],
+            "suppression_ledger_required": true
+          },
+          "owner_controls": {
+            "default_mode": "research_and_draft_only",
+            "pause_and_kill_switch_required": true,
+            "one_action_approval_expiry_hours": 24,
+            "quiet_hours_supported": true,
+            "export_and_delete_supported": true
+          },
+          "metrics": [
+            "candidates researched",
+            "source evidence coverage",
+            "qualified leads",
+            "recipient permission coverage",
+            "owner approval rate",
+            "reply rate",
+            "positive reply rate",
+            "opt-out rate",
+            "bounce rate",
+            "complaint rate",
+            "conversion evidence"
+          ]
+        },
+        "readiness": {
+          "local_research_plan": "ready",
+          "qualification_and_drafts": "ready",
+          "exact_action_approval_packet": "ready",
+          "live_contact_discovery": "provider_and_terms_configuration_required",
+          "live_message_dispatch": "verified_adapter_recipient_permission_and_owner_approval_required",
+          "independent_production_business": false
+        }
+      },
       "capabilities": [
         {
           "name": "News sentiment NLP",
@@ -5671,6 +8941,12 @@
           "name": "Install and multi-platform distribution planner",
           "status": "web_ready_native_review_required",
           "evidence": "config/generated/buddy_distribution_catalog.json"
+        },
+        {
+          "id": "buddy_governed_lead_system",
+          "name": "Permission-gated lead discovery and follow-up system",
+          "status": "sandbox_ready_external_adapters_required",
+          "evidence": "server/governed-leads.ts"
         },
         {
           "id": "buddy_creative_studio",
@@ -5923,6 +9199,164 @@
           "Published pricing and revenue models are catalog plans, not evidence of sales or earnings."
         ]
       },
+      "business_system": {
+        "business_id": "business-dividend-investor",
+        "operating_model": "owner_governed_service_business",
+        "specialization": {
+          "division": "DreamFinance",
+          "category": "investing",
+          "mission": "Auto-invests in high-yield dividend stocks for compounding passive income.",
+          "ideal_customer_segments": [
+            "Income investors",
+            "retirees"
+          ],
+          "core_offer": "Dividend Investing Bot: Auto-invests in high-yield dividend stocks for compounding passive income.",
+          "promised_outputs": [
+            "Dividend aristocrat screening",
+            "Yield sustainability scoring",
+            "DRIP automation",
+            "Ex-date calendar tracking",
+            "Payout ratio analysis"
+          ],
+          "catalog_revenue_model": "SaaS subscription",
+          "catalog_price_range": "$99/mo",
+          "earnings_status": "no_revenue_or_customer_result_guaranteed"
+        },
+        "operating_workflow": [
+          "capture_owner_goal_and_offer",
+          "define_ideal_customer_profile",
+          "select_owner_authorized_sources",
+          "confirm_source_terms_and_collection_scope",
+          "research_and_deduplicate_candidates",
+          "qualify_need_fit_timing_and_permission",
+          "draft_one_relevant_message",
+          "request_exact_owner_approval",
+          "dispatch_through_configured_adapter_only",
+          "wait_for_required_follow_up_interval",
+          "stop_on_reply_opt_out_bounce_or_complaint",
+          "report_outcomes_without_claiming_guaranteed_revenue"
+        ],
+        "lead_system": {
+          "system_id": "lead-system-dividend-investor",
+          "engine": "server/governed-leads.ts",
+          "status": "sandbox_ready_external_adapters_required",
+          "ideal_customer_profile": {
+            "segments": [
+              "Income investors",
+              "retirees"
+            ],
+            "need_signals": [
+              "Needs help with Dividend aristocrat screening",
+              "Needs help with Yield sustainability scoring",
+              "Needs help with DRIP automation",
+              "Needs help with Ex-date calendar tracking",
+              "Needs help with Payout ratio analysis"
+            ],
+            "exclusion_rules": [
+              "no minors",
+              "no protected or sensitive trait targeting",
+              "no deceptive identity or impersonation",
+              "no lead without traceable source evidence"
+            ]
+          },
+          "discovery": {
+            "query_templates": [
+              "Income investors, retirees requesting Dividend aristocrat screening",
+              "organizations seeking investing support",
+              "inbound requests matching Dividend Investing Bot",
+              "existing customers who opted in to Dividend aristocrat screening updates"
+            ],
+            "authorized_source_types": [
+              "owner supplied records",
+              "consent based inbound requests",
+              "existing customer records with documented relationship",
+              "public business directories whose terms permit research",
+              "owner authorized provider APIs"
+            ],
+            "forbidden_collection": [
+              "private accounts or access-controlled pages",
+              "terms bypassing scraping",
+              "purchased, stolen, or unverifiable contact lists",
+              "raw credentials or secret tokens",
+              "sensitive personal data"
+            ]
+          },
+          "qualification": {
+            "required_fields": [
+              "source reference",
+              "organization or customer need",
+              "fit to the bot specialization",
+              "contact permission basis and channel scope",
+              "qualification evidence"
+            ],
+            "score_dimensions": {
+              "demonstrated_need": 30,
+              "capability_fit": 25,
+              "decision_readiness": 15,
+              "voluntarily_supplied_timing": 10,
+              "documented_contact_permission": 20
+            },
+            "minimum_score_for_owner_review": 65,
+            "permission_is_mandatory_even_above_threshold": true
+          },
+          "outreach": {
+            "supported_channels": [
+              "email",
+              "sms",
+              "voice_call",
+              "social_dm"
+            ],
+            "recipient_channel_permission_required": true,
+            "raw_contact_details_in_browser_forbidden": true,
+            "exact_owner_approval_per_message": true,
+            "maximum_daily_sends": 20,
+            "adapter_status": "configuration_required_for_live_dispatch"
+          },
+          "follow_up": {
+            "maximum_follow_ups": 2,
+            "minimum_interval_hours": 48,
+            "approval_required_for_each_follow_up": true,
+            "stop_conditions": [
+              "reply",
+              "opt out",
+              "bounce",
+              "complaint",
+              "permission expiry",
+              "owner stop",
+              "sequence complete"
+            ],
+            "suppression_ledger_required": true
+          },
+          "owner_controls": {
+            "default_mode": "research_and_draft_only",
+            "pause_and_kill_switch_required": true,
+            "one_action_approval_expiry_hours": 24,
+            "quiet_hours_supported": true,
+            "export_and_delete_supported": true
+          },
+          "metrics": [
+            "candidates researched",
+            "source evidence coverage",
+            "qualified leads",
+            "recipient permission coverage",
+            "owner approval rate",
+            "reply rate",
+            "positive reply rate",
+            "opt-out rate",
+            "bounce rate",
+            "complaint rate",
+            "conversion evidence"
+          ]
+        },
+        "readiness": {
+          "local_research_plan": "ready",
+          "qualification_and_drafts": "ready",
+          "exact_action_approval_packet": "ready",
+          "live_contact_discovery": "provider_and_terms_configuration_required",
+          "live_message_dispatch": "verified_adapter_recipient_permission_and_owner_approval_required",
+          "independent_production_business": false
+        }
+      },
       "capabilities": [
         {
           "name": "Dividend aristocrat screening",
@@ -6015,6 +9449,12 @@
           "name": "Install and multi-platform distribution planner",
           "status": "web_ready_native_review_required",
           "evidence": "config/generated/buddy_distribution_catalog.json"
+        },
+        {
+          "id": "buddy_governed_lead_system",
+          "name": "Permission-gated lead discovery and follow-up system",
+          "status": "sandbox_ready_external_adapters_required",
+          "evidence": "server/governed-leads.ts"
         },
         {
           "id": "buddy_connection_broker",
@@ -6185,6 +9625,164 @@
           "Published pricing and revenue models are catalog plans, not evidence of sales or earnings."
         ]
       },
+      "business_system": {
+        "business_id": "business-penny-stock",
+        "operating_model": "owner_governed_service_business",
+        "specialization": {
+          "division": "DreamFinance",
+          "category": "trading",
+          "mission": "Scans and ranks penny stocks using volume, momentum, and catalyst detection.",
+          "ideal_customer_segments": [
+            "Day traders",
+            "retail traders"
+          ],
+          "core_offer": "Penny Stock Scanner Bot: Scans and ranks penny stocks using volume, momentum, and catalyst detection.",
+          "promised_outputs": [
+            "Penny stock screener",
+            "Volume spike detection",
+            "SEC filing alerts",
+            "Pattern recognition",
+            "Risk scoring engine"
+          ],
+          "catalog_revenue_model": "SaaS + performance fee",
+          "catalog_price_range": "$99/mo",
+          "earnings_status": "no_revenue_or_customer_result_guaranteed"
+        },
+        "operating_workflow": [
+          "capture_owner_goal_and_offer",
+          "define_ideal_customer_profile",
+          "select_owner_authorized_sources",
+          "confirm_source_terms_and_collection_scope",
+          "research_and_deduplicate_candidates",
+          "qualify_need_fit_timing_and_permission",
+          "draft_one_relevant_message",
+          "request_exact_owner_approval",
+          "dispatch_through_configured_adapter_only",
+          "wait_for_required_follow_up_interval",
+          "stop_on_reply_opt_out_bounce_or_complaint",
+          "report_outcomes_without_claiming_guaranteed_revenue"
+        ],
+        "lead_system": {
+          "system_id": "lead-system-penny-stock",
+          "engine": "server/governed-leads.ts",
+          "status": "sandbox_ready_external_adapters_required",
+          "ideal_customer_profile": {
+            "segments": [
+              "Day traders",
+              "retail traders"
+            ],
+            "need_signals": [
+              "Needs help with Penny stock screener",
+              "Needs help with Volume spike detection",
+              "Needs help with SEC filing alerts",
+              "Needs help with Pattern recognition",
+              "Needs help with Risk scoring engine"
+            ],
+            "exclusion_rules": [
+              "no minors",
+              "no protected or sensitive trait targeting",
+              "no deceptive identity or impersonation",
+              "no lead without traceable source evidence"
+            ]
+          },
+          "discovery": {
+            "query_templates": [
+              "Day traders, retail traders requesting Penny stock screener",
+              "organizations seeking trading support",
+              "inbound requests matching Penny Stock Scanner Bot",
+              "existing customers who opted in to Penny stock screener updates"
+            ],
+            "authorized_source_types": [
+              "owner supplied records",
+              "consent based inbound requests",
+              "existing customer records with documented relationship",
+              "public business directories whose terms permit research",
+              "owner authorized provider APIs"
+            ],
+            "forbidden_collection": [
+              "private accounts or access-controlled pages",
+              "terms bypassing scraping",
+              "purchased, stolen, or unverifiable contact lists",
+              "raw credentials or secret tokens",
+              "sensitive personal data"
+            ]
+          },
+          "qualification": {
+            "required_fields": [
+              "source reference",
+              "organization or customer need",
+              "fit to the bot specialization",
+              "contact permission basis and channel scope",
+              "qualification evidence"
+            ],
+            "score_dimensions": {
+              "demonstrated_need": 30,
+              "capability_fit": 25,
+              "decision_readiness": 15,
+              "voluntarily_supplied_timing": 10,
+              "documented_contact_permission": 20
+            },
+            "minimum_score_for_owner_review": 65,
+            "permission_is_mandatory_even_above_threshold": true
+          },
+          "outreach": {
+            "supported_channels": [
+              "email",
+              "sms",
+              "voice_call",
+              "social_dm"
+            ],
+            "recipient_channel_permission_required": true,
+            "raw_contact_details_in_browser_forbidden": true,
+            "exact_owner_approval_per_message": true,
+            "maximum_daily_sends": 20,
+            "adapter_status": "configuration_required_for_live_dispatch"
+          },
+          "follow_up": {
+            "maximum_follow_ups": 2,
+            "minimum_interval_hours": 48,
+            "approval_required_for_each_follow_up": true,
+            "stop_conditions": [
+              "reply",
+              "opt out",
+              "bounce",
+              "complaint",
+              "permission expiry",
+              "owner stop",
+              "sequence complete"
+            ],
+            "suppression_ledger_required": true
+          },
+          "owner_controls": {
+            "default_mode": "research_and_draft_only",
+            "pause_and_kill_switch_required": true,
+            "one_action_approval_expiry_hours": 24,
+            "quiet_hours_supported": true,
+            "export_and_delete_supported": true
+          },
+          "metrics": [
+            "candidates researched",
+            "source evidence coverage",
+            "qualified leads",
+            "recipient permission coverage",
+            "owner approval rate",
+            "reply rate",
+            "positive reply rate",
+            "opt-out rate",
+            "bounce rate",
+            "complaint rate",
+            "conversion evidence"
+          ]
+        },
+        "readiness": {
+          "local_research_plan": "ready",
+          "qualification_and_drafts": "ready",
+          "exact_action_approval_packet": "ready",
+          "live_contact_discovery": "provider_and_terms_configuration_required",
+          "live_message_dispatch": "verified_adapter_recipient_permission_and_owner_approval_required",
+          "independent_production_business": false
+        }
+      },
       "capabilities": [
         {
           "name": "Penny stock screener",
@@ -6277,6 +9875,12 @@
           "name": "Install and multi-platform distribution planner",
           "status": "web_ready_native_review_required",
           "evidence": "config/generated/buddy_distribution_catalog.json"
+        },
+        {
+          "id": "buddy_governed_lead_system",
+          "name": "Permission-gated lead discovery and follow-up system",
+          "status": "sandbox_ready_external_adapters_required",
+          "evidence": "server/governed-leads.ts"
         },
         {
           "id": "buddy_connection_broker",
@@ -6461,6 +10065,162 @@
           "Published pricing and revenue models are catalog plans, not evidence of sales or earnings."
         ]
       },
+      "business_system": {
+        "business_id": "business-crypto-trading",
+        "operating_model": "owner_governed_service_business",
+        "specialization": {
+          "division": "DreamFinance",
+          "category": "trading",
+          "mission": "Autonomous cryptocurrency trading across CEX and DEX exchanges.",
+          "ideal_customer_segments": [
+            "Crypto traders"
+          ],
+          "core_offer": "Crypto Trading Bot: Autonomous cryptocurrency trading across CEX and DEX exchanges.",
+          "promised_outputs": [
+            "Multi-exchange execution",
+            "DCA strategy engine",
+            "Grid trading automation",
+            "Arbitrage scanning",
+            "Gas fee optimizer"
+          ],
+          "catalog_revenue_model": "SaaS subscription",
+          "catalog_price_range": "$99/mo",
+          "earnings_status": "no_revenue_or_customer_result_guaranteed"
+        },
+        "operating_workflow": [
+          "capture_owner_goal_and_offer",
+          "define_ideal_customer_profile",
+          "select_owner_authorized_sources",
+          "confirm_source_terms_and_collection_scope",
+          "research_and_deduplicate_candidates",
+          "qualify_need_fit_timing_and_permission",
+          "draft_one_relevant_message",
+          "request_exact_owner_approval",
+          "dispatch_through_configured_adapter_only",
+          "wait_for_required_follow_up_interval",
+          "stop_on_reply_opt_out_bounce_or_complaint",
+          "report_outcomes_without_claiming_guaranteed_revenue"
+        ],
+        "lead_system": {
+          "system_id": "lead-system-crypto-trading",
+          "engine": "server/governed-leads.ts",
+          "status": "sandbox_ready_external_adapters_required",
+          "ideal_customer_profile": {
+            "segments": [
+              "Crypto traders"
+            ],
+            "need_signals": [
+              "Needs help with Multi-exchange execution",
+              "Needs help with DCA strategy engine",
+              "Needs help with Grid trading automation",
+              "Needs help with Arbitrage scanning",
+              "Needs help with Gas fee optimizer"
+            ],
+            "exclusion_rules": [
+              "no minors",
+              "no protected or sensitive trait targeting",
+              "no deceptive identity or impersonation",
+              "no lead without traceable source evidence"
+            ]
+          },
+          "discovery": {
+            "query_templates": [
+              "Crypto traders requesting Multi-exchange execution",
+              "organizations seeking trading support",
+              "inbound requests matching Crypto Trading Bot",
+              "existing customers who opted in to Multi-exchange execution updates"
+            ],
+            "authorized_source_types": [
+              "owner supplied records",
+              "consent based inbound requests",
+              "existing customer records with documented relationship",
+              "public business directories whose terms permit research",
+              "owner authorized provider APIs"
+            ],
+            "forbidden_collection": [
+              "private accounts or access-controlled pages",
+              "terms bypassing scraping",
+              "purchased, stolen, or unverifiable contact lists",
+              "raw credentials or secret tokens",
+              "sensitive personal data"
+            ]
+          },
+          "qualification": {
+            "required_fields": [
+              "source reference",
+              "organization or customer need",
+              "fit to the bot specialization",
+              "contact permission basis and channel scope",
+              "qualification evidence"
+            ],
+            "score_dimensions": {
+              "demonstrated_need": 30,
+              "capability_fit": 25,
+              "decision_readiness": 15,
+              "voluntarily_supplied_timing": 10,
+              "documented_contact_permission": 20
+            },
+            "minimum_score_for_owner_review": 65,
+            "permission_is_mandatory_even_above_threshold": true
+          },
+          "outreach": {
+            "supported_channels": [
+              "email",
+              "sms",
+              "voice_call",
+              "social_dm"
+            ],
+            "recipient_channel_permission_required": true,
+            "raw_contact_details_in_browser_forbidden": true,
+            "exact_owner_approval_per_message": true,
+            "maximum_daily_sends": 20,
+            "adapter_status": "configuration_required_for_live_dispatch"
+          },
+          "follow_up": {
+            "maximum_follow_ups": 2,
+            "minimum_interval_hours": 48,
+            "approval_required_for_each_follow_up": true,
+            "stop_conditions": [
+              "reply",
+              "opt out",
+              "bounce",
+              "complaint",
+              "permission expiry",
+              "owner stop",
+              "sequence complete"
+            ],
+            "suppression_ledger_required": true
+          },
+          "owner_controls": {
+            "default_mode": "research_and_draft_only",
+            "pause_and_kill_switch_required": true,
+            "one_action_approval_expiry_hours": 24,
+            "quiet_hours_supported": true,
+            "export_and_delete_supported": true
+          },
+          "metrics": [
+            "candidates researched",
+            "source evidence coverage",
+            "qualified leads",
+            "recipient permission coverage",
+            "owner approval rate",
+            "reply rate",
+            "positive reply rate",
+            "opt-out rate",
+            "bounce rate",
+            "complaint rate",
+            "conversion evidence"
+          ]
+        },
+        "readiness": {
+          "local_research_plan": "ready",
+          "qualification_and_drafts": "ready",
+          "exact_action_approval_packet": "ready",
+          "live_contact_discovery": "provider_and_terms_configuration_required",
+          "live_message_dispatch": "verified_adapter_recipient_permission_and_owner_approval_required",
+          "independent_production_business": false
+        }
+      },
       "capabilities": [
         {
           "name": "Multi-exchange execution",
@@ -6553,6 +10313,12 @@
           "name": "Install and multi-platform distribution planner",
           "status": "web_ready_native_review_required",
           "evidence": "config/generated/buddy_distribution_catalog.json"
+        },
+        {
+          "id": "buddy_governed_lead_system",
+          "name": "Permission-gated lead discovery and follow-up system",
+          "status": "sandbox_ready_external_adapters_required",
+          "evidence": "server/governed-leads.ts"
         },
         {
           "id": "buddy_connection_broker",
@@ -6779,6 +10545,164 @@
           "Published pricing and revenue models are catalog plans, not evidence of sales or earnings."
         ]
       },
+      "business_system": {
+        "business_id": "business-crypto-staking",
+        "operating_model": "owner_governed_service_business",
+        "specialization": {
+          "division": "DreamFinance",
+          "category": "investing",
+          "mission": "Automated staking across proof-of-stake chains for yield maximization.",
+          "ideal_customer_segments": [
+            "DeFi investors",
+            "stakers"
+          ],
+          "core_offer": "Crypto Staking Optimizer: Automated staking across proof-of-stake chains for yield maximization.",
+          "promised_outputs": [
+            "Multi-chain staking",
+            "Validator selection AI",
+            "Auto-compound rewards",
+            "Unbonding period tracking",
+            "Slashing risk assessment"
+          ],
+          "catalog_revenue_model": "SaaS subscription",
+          "catalog_price_range": "$99/mo",
+          "earnings_status": "no_revenue_or_customer_result_guaranteed"
+        },
+        "operating_workflow": [
+          "capture_owner_goal_and_offer",
+          "define_ideal_customer_profile",
+          "select_owner_authorized_sources",
+          "confirm_source_terms_and_collection_scope",
+          "research_and_deduplicate_candidates",
+          "qualify_need_fit_timing_and_permission",
+          "draft_one_relevant_message",
+          "request_exact_owner_approval",
+          "dispatch_through_configured_adapter_only",
+          "wait_for_required_follow_up_interval",
+          "stop_on_reply_opt_out_bounce_or_complaint",
+          "report_outcomes_without_claiming_guaranteed_revenue"
+        ],
+        "lead_system": {
+          "system_id": "lead-system-crypto-staking",
+          "engine": "server/governed-leads.ts",
+          "status": "sandbox_ready_external_adapters_required",
+          "ideal_customer_profile": {
+            "segments": [
+              "DeFi investors",
+              "stakers"
+            ],
+            "need_signals": [
+              "Needs help with Multi-chain staking",
+              "Needs help with Validator selection AI",
+              "Needs help with Auto-compound rewards",
+              "Needs help with Unbonding period tracking",
+              "Needs help with Slashing risk assessment"
+            ],
+            "exclusion_rules": [
+              "no minors",
+              "no protected or sensitive trait targeting",
+              "no deceptive identity or impersonation",
+              "no lead without traceable source evidence"
+            ]
+          },
+          "discovery": {
+            "query_templates": [
+              "DeFi investors, stakers requesting Multi-chain staking",
+              "organizations seeking investing support",
+              "inbound requests matching Crypto Staking Optimizer",
+              "existing customers who opted in to Multi-chain staking updates"
+            ],
+            "authorized_source_types": [
+              "owner supplied records",
+              "consent based inbound requests",
+              "existing customer records with documented relationship",
+              "public business directories whose terms permit research",
+              "owner authorized provider APIs"
+            ],
+            "forbidden_collection": [
+              "private accounts or access-controlled pages",
+              "terms bypassing scraping",
+              "purchased, stolen, or unverifiable contact lists",
+              "raw credentials or secret tokens",
+              "sensitive personal data"
+            ]
+          },
+          "qualification": {
+            "required_fields": [
+              "source reference",
+              "organization or customer need",
+              "fit to the bot specialization",
+              "contact permission basis and channel scope",
+              "qualification evidence"
+            ],
+            "score_dimensions": {
+              "demonstrated_need": 30,
+              "capability_fit": 25,
+              "decision_readiness": 15,
+              "voluntarily_supplied_timing": 10,
+              "documented_contact_permission": 20
+            },
+            "minimum_score_for_owner_review": 65,
+            "permission_is_mandatory_even_above_threshold": true
+          },
+          "outreach": {
+            "supported_channels": [
+              "email",
+              "sms",
+              "voice_call",
+              "social_dm"
+            ],
+            "recipient_channel_permission_required": true,
+            "raw_contact_details_in_browser_forbidden": true,
+            "exact_owner_approval_per_message": true,
+            "maximum_daily_sends": 20,
+            "adapter_status": "configuration_required_for_live_dispatch"
+          },
+          "follow_up": {
+            "maximum_follow_ups": 2,
+            "minimum_interval_hours": 48,
+            "approval_required_for_each_follow_up": true,
+            "stop_conditions": [
+              "reply",
+              "opt out",
+              "bounce",
+              "complaint",
+              "permission expiry",
+              "owner stop",
+              "sequence complete"
+            ],
+            "suppression_ledger_required": true
+          },
+          "owner_controls": {
+            "default_mode": "research_and_draft_only",
+            "pause_and_kill_switch_required": true,
+            "one_action_approval_expiry_hours": 24,
+            "quiet_hours_supported": true,
+            "export_and_delete_supported": true
+          },
+          "metrics": [
+            "candidates researched",
+            "source evidence coverage",
+            "qualified leads",
+            "recipient permission coverage",
+            "owner approval rate",
+            "reply rate",
+            "positive reply rate",
+            "opt-out rate",
+            "bounce rate",
+            "complaint rate",
+            "conversion evidence"
+          ]
+        },
+        "readiness": {
+          "local_research_plan": "ready",
+          "qualification_and_drafts": "ready",
+          "exact_action_approval_packet": "ready",
+          "live_contact_discovery": "provider_and_terms_configuration_required",
+          "live_message_dispatch": "verified_adapter_recipient_permission_and_owner_approval_required",
+          "independent_production_business": false
+        }
+      },
       "capabilities": [
         {
           "name": "Multi-chain staking",
@@ -6871,6 +10795,12 @@
           "name": "Install and multi-platform distribution planner",
           "status": "web_ready_native_review_required",
           "evidence": "config/generated/buddy_distribution_catalog.json"
+        },
+        {
+          "id": "buddy_governed_lead_system",
+          "name": "Permission-gated lead discovery and follow-up system",
+          "status": "sandbox_ready_external_adapters_required",
+          "evidence": "server/governed-leads.ts"
         },
         {
           "id": "buddy_connection_broker",
@@ -7097,6 +11027,164 @@
           "Published pricing and revenue models are catalog plans, not evidence of sales or earnings."
         ]
       },
+      "business_system": {
+        "business_id": "business-yield-farmer",
+        "operating_model": "owner_governed_service_business",
+        "specialization": {
+          "division": "DreamFinance",
+          "category": "investing",
+          "mission": "Auto-routes liquidity across DeFi protocols for maximum yield farming returns.",
+          "ideal_customer_segments": [
+            "DeFi farmers",
+            "liquidity providers"
+          ],
+          "core_offer": "DeFi Yield Farming Bot: Auto-routes liquidity across DeFi protocols for maximum yield farming returns.",
+          "promised_outputs": [
+            "LP position management",
+            "Impermanent loss calculator",
+            "Auto-harvest scheduling",
+            "Multi-protocol routing",
+            "APY comparison engine"
+          ],
+          "catalog_revenue_model": "SaaS subscription",
+          "catalog_price_range": "$99/mo",
+          "earnings_status": "no_revenue_or_customer_result_guaranteed"
+        },
+        "operating_workflow": [
+          "capture_owner_goal_and_offer",
+          "define_ideal_customer_profile",
+          "select_owner_authorized_sources",
+          "confirm_source_terms_and_collection_scope",
+          "research_and_deduplicate_candidates",
+          "qualify_need_fit_timing_and_permission",
+          "draft_one_relevant_message",
+          "request_exact_owner_approval",
+          "dispatch_through_configured_adapter_only",
+          "wait_for_required_follow_up_interval",
+          "stop_on_reply_opt_out_bounce_or_complaint",
+          "report_outcomes_without_claiming_guaranteed_revenue"
+        ],
+        "lead_system": {
+          "system_id": "lead-system-yield-farmer",
+          "engine": "server/governed-leads.ts",
+          "status": "sandbox_ready_external_adapters_required",
+          "ideal_customer_profile": {
+            "segments": [
+              "DeFi farmers",
+              "liquidity providers"
+            ],
+            "need_signals": [
+              "Needs help with LP position management",
+              "Needs help with Impermanent loss calculator",
+              "Needs help with Auto-harvest scheduling",
+              "Needs help with Multi-protocol routing",
+              "Needs help with APY comparison engine"
+            ],
+            "exclusion_rules": [
+              "no minors",
+              "no protected or sensitive trait targeting",
+              "no deceptive identity or impersonation",
+              "no lead without traceable source evidence"
+            ]
+          },
+          "discovery": {
+            "query_templates": [
+              "DeFi farmers, liquidity providers requesting LP position management",
+              "organizations seeking investing support",
+              "inbound requests matching DeFi Yield Farming Bot",
+              "existing customers who opted in to LP position management updates"
+            ],
+            "authorized_source_types": [
+              "owner supplied records",
+              "consent based inbound requests",
+              "existing customer records with documented relationship",
+              "public business directories whose terms permit research",
+              "owner authorized provider APIs"
+            ],
+            "forbidden_collection": [
+              "private accounts or access-controlled pages",
+              "terms bypassing scraping",
+              "purchased, stolen, or unverifiable contact lists",
+              "raw credentials or secret tokens",
+              "sensitive personal data"
+            ]
+          },
+          "qualification": {
+            "required_fields": [
+              "source reference",
+              "organization or customer need",
+              "fit to the bot specialization",
+              "contact permission basis and channel scope",
+              "qualification evidence"
+            ],
+            "score_dimensions": {
+              "demonstrated_need": 30,
+              "capability_fit": 25,
+              "decision_readiness": 15,
+              "voluntarily_supplied_timing": 10,
+              "documented_contact_permission": 20
+            },
+            "minimum_score_for_owner_review": 65,
+            "permission_is_mandatory_even_above_threshold": true
+          },
+          "outreach": {
+            "supported_channels": [
+              "email",
+              "sms",
+              "voice_call",
+              "social_dm"
+            ],
+            "recipient_channel_permission_required": true,
+            "raw_contact_details_in_browser_forbidden": true,
+            "exact_owner_approval_per_message": true,
+            "maximum_daily_sends": 20,
+            "adapter_status": "configuration_required_for_live_dispatch"
+          },
+          "follow_up": {
+            "maximum_follow_ups": 2,
+            "minimum_interval_hours": 48,
+            "approval_required_for_each_follow_up": true,
+            "stop_conditions": [
+              "reply",
+              "opt out",
+              "bounce",
+              "complaint",
+              "permission expiry",
+              "owner stop",
+              "sequence complete"
+            ],
+            "suppression_ledger_required": true
+          },
+          "owner_controls": {
+            "default_mode": "research_and_draft_only",
+            "pause_and_kill_switch_required": true,
+            "one_action_approval_expiry_hours": 24,
+            "quiet_hours_supported": true,
+            "export_and_delete_supported": true
+          },
+          "metrics": [
+            "candidates researched",
+            "source evidence coverage",
+            "qualified leads",
+            "recipient permission coverage",
+            "owner approval rate",
+            "reply rate",
+            "positive reply rate",
+            "opt-out rate",
+            "bounce rate",
+            "complaint rate",
+            "conversion evidence"
+          ]
+        },
+        "readiness": {
+          "local_research_plan": "ready",
+          "qualification_and_drafts": "ready",
+          "exact_action_approval_packet": "ready",
+          "live_contact_discovery": "provider_and_terms_configuration_required",
+          "live_message_dispatch": "verified_adapter_recipient_permission_and_owner_approval_required",
+          "independent_production_business": false
+        }
+      },
       "capabilities": [
         {
           "name": "LP position management",
@@ -7189,6 +11277,12 @@
           "name": "Install and multi-platform distribution planner",
           "status": "web_ready_native_review_required",
           "evidence": "config/generated/buddy_distribution_catalog.json"
+        },
+        {
+          "id": "buddy_governed_lead_system",
+          "name": "Permission-gated lead discovery and follow-up system",
+          "status": "sandbox_ready_external_adapters_required",
+          "evidence": "server/governed-leads.ts"
         },
         {
           "id": "buddy_connection_broker",

@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Lead Systems | Buddy by DreamCo</title>
+  <meta name="description" content="Inspect and test permission-gated lead discovery, qualification, approval, and follow-up systems for every Buddy bot." />
+  <meta name="theme-color" content="#0a0e1a" />
+  <link rel="manifest" href="manifest.webmanifest" />
+  <link rel="apple-touch-icon" href="assets/images/buddy-icon-192.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="leads.css" />
+</head>
+<body class="leads-page">
+<div id="nav-placeholder"></div><script src="nav.js"></script>
+
+<main class="leads-shell">
+  <header class="leads-header">
+    <div>
+      <p class="leads-kicker">Permission-gated business development</p>
+      <h1>Find the right lead. Earn permission. Follow up responsibly.</h1>
+      <p>Every Buddy profile has a customized customer, offer, qualification, approval, and follow-up blueprint backed by one shared guardrail engine.</p>
+    </div>
+    <a class="btn btn-primary btn-sm" href="buddy.html?prompt=Help%20me%20build%20a%20permission-gated%20lead%20plan.%20Research%20and%20draft%20only.%20Do%20not%20contact%20anyone%20without%20documented%20recipient%20permission%20and%20my%20exact%20approval.">Plan with Buddy</a>
+  </header>
+
+  <section class="leads-metrics" aria-label="Lead system coverage">
+    <div><span>Bot lead systems</span><strong id="lead-profile-count">0</strong></div>
+    <div><span>Divisions</span><strong id="lead-division-count">0</strong></div>
+    <div><span>Follow-up cap</span><strong>2</strong></div>
+    <div><span>Approval scope</span><strong>1 message</strong></div>
+  </section>
+
+  <section class="lead-selector">
+    <div>
+      <h2>Bot business blueprint</h2>
+      <p>Select any profile to inspect its customized lead system.</p>
+    </div>
+    <label for="bot-selector">Bot
+      <select id="bot-selector" disabled><option>Loading fleet</option></select>
+    </label>
+  </section>
+
+  <section id="blueprint" class="blueprint" aria-live="polite">
+    <p class="blueprint-loading">Loading governed business systems.</p>
+  </section>
+
+  <section class="guardrail-lab">
+    <div class="guardrail-copy">
+      <p class="leads-kicker">Local guardrail test</p>
+      <h2>Check the next action before any outreach</h2>
+      <p>This simulator stores nothing and sends nothing. It demonstrates the same required stops used by the backend lead workflow.</p>
+      <ul>
+        <li>Research can continue from an authorized source without outreach.</li>
+        <li>Recipient permission must name the intended channel.</li>
+        <li>Every message and follow-up needs exact owner approval.</li>
+        <li>Replies, opt-outs, bounces, and complaints stop the sequence.</li>
+      </ul>
+    </div>
+    <form id="guardrail-form" class="guardrail-form">
+      <label>Lead source
+        <select id="test-source">
+          <option value="inbound">Consent-based inbound request</option>
+          <option value="customer">Existing customer record</option>
+          <option value="directory">Public business directory</option>
+          <option value="provider">Owner-authorized provider API</option>
+        </select>
+      </label>
+      <label>Channel
+        <select id="test-channel">
+          <option value="email">Email</option>
+          <option value="sms">SMS</option>
+          <option value="voice_call">Voice call</option>
+          <option value="social_dm">Social message</option>
+        </select>
+      </label>
+      <label>Engagement state
+        <select id="test-state">
+          <option value="never_contacted">Never contacted</option>
+          <option value="waiting">Waiting after first message</option>
+          <option value="replied">Replied</option>
+          <option value="unsubscribed">Opted out</option>
+          <option value="bounced">Bounced</option>
+          <option value="complaint">Complaint</option>
+        </select>
+      </label>
+      <label class="guardrail-check"><input id="test-permission" type="checkbox" /> <span>Documented recipient permission includes this channel</span></label>
+      <label class="guardrail-check"><input id="test-approval" type="checkbox" /> <span>Owner approved this exact message</span></label>
+      <button class="btn btn-primary" type="submit">Evaluate next action</button>
+      <div id="guardrail-result" class="guardrail-result" role="status">Choose the evidence available for this lead.</div>
+    </form>
+  </section>
+
+  <section class="lead-boundary">
+    <strong>Live outreach boundary</strong>
+    <p>The public site can inspect blueprints and test decisions. Live discovery and messaging still require an authenticated deployment, provider terms, an approved adapter, recipient channel permission, and one exact owner approval per message.</p>
+  </section>
+</main>
+
+<script type="module" src="leads.js"></script>
+</body>
+</html>

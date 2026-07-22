@@ -48,6 +48,164 @@
           "Published pricing and revenue models are catalog plans, not evidence of sales or earnings."
         ]
       },
+      "business_system": {
+        "business_id": "business-commercial-scanner",
+        "operating_model": "owner_governed_service_business",
+        "specialization": {
+          "division": "DreamRealEstate",
+          "category": "acquisition",
+          "mission": "Institutional-grade commercial property scanning with AI-powered deal analysis.",
+          "ideal_customer_segments": [
+            "Commercial RE investors",
+            "brokers"
+          ],
+          "core_offer": "Commercial Property Scanner: Institutional-grade commercial property scanning with AI-powered deal analysis.",
+          "promised_outputs": [
+            "Off-market deal sourcing",
+            "Cap rate calculator",
+            "Comparable sales analysis",
+            "Demographic overlay mapping",
+            "Investment memo generation"
+          ],
+          "catalog_revenue_model": "SaaS subscription",
+          "catalog_price_range": "$499/mo",
+          "earnings_status": "no_revenue_or_customer_result_guaranteed"
+        },
+        "operating_workflow": [
+          "capture_owner_goal_and_offer",
+          "define_ideal_customer_profile",
+          "select_owner_authorized_sources",
+          "confirm_source_terms_and_collection_scope",
+          "research_and_deduplicate_candidates",
+          "qualify_need_fit_timing_and_permission",
+          "draft_one_relevant_message",
+          "request_exact_owner_approval",
+          "dispatch_through_configured_adapter_only",
+          "wait_for_required_follow_up_interval",
+          "stop_on_reply_opt_out_bounce_or_complaint",
+          "report_outcomes_without_claiming_guaranteed_revenue"
+        ],
+        "lead_system": {
+          "system_id": "lead-system-commercial-scanner",
+          "engine": "server/governed-leads.ts",
+          "status": "sandbox_ready_external_adapters_required",
+          "ideal_customer_profile": {
+            "segments": [
+              "Commercial RE investors",
+              "brokers"
+            ],
+            "need_signals": [
+              "Needs help with Off-market deal sourcing",
+              "Needs help with Cap rate calculator",
+              "Needs help with Comparable sales analysis",
+              "Needs help with Demographic overlay mapping",
+              "Needs help with Investment memo generation"
+            ],
+            "exclusion_rules": [
+              "no minors",
+              "no protected or sensitive trait targeting",
+              "no deceptive identity or impersonation",
+              "no lead without traceable source evidence"
+            ]
+          },
+          "discovery": {
+            "query_templates": [
+              "Commercial RE investors, brokers requesting Off-market deal sourcing",
+              "organizations seeking acquisition support",
+              "inbound requests matching Commercial Property Scanner",
+              "existing customers who opted in to Off-market deal sourcing updates"
+            ],
+            "authorized_source_types": [
+              "owner supplied records",
+              "consent based inbound requests",
+              "existing customer records with documented relationship",
+              "public business directories whose terms permit research",
+              "owner authorized provider APIs"
+            ],
+            "forbidden_collection": [
+              "private accounts or access-controlled pages",
+              "terms bypassing scraping",
+              "purchased, stolen, or unverifiable contact lists",
+              "raw credentials or secret tokens",
+              "sensitive personal data"
+            ]
+          },
+          "qualification": {
+            "required_fields": [
+              "source reference",
+              "organization or customer need",
+              "fit to the bot specialization",
+              "contact permission basis and channel scope",
+              "qualification evidence"
+            ],
+            "score_dimensions": {
+              "demonstrated_need": 30,
+              "capability_fit": 25,
+              "decision_readiness": 15,
+              "voluntarily_supplied_timing": 10,
+              "documented_contact_permission": 20
+            },
+            "minimum_score_for_owner_review": 65,
+            "permission_is_mandatory_even_above_threshold": true
+          },
+          "outreach": {
+            "supported_channels": [
+              "email",
+              "sms",
+              "voice_call",
+              "social_dm"
+            ],
+            "recipient_channel_permission_required": true,
+            "raw_contact_details_in_browser_forbidden": true,
+            "exact_owner_approval_per_message": true,
+            "maximum_daily_sends": 20,
+            "adapter_status": "configuration_required_for_live_dispatch"
+          },
+          "follow_up": {
+            "maximum_follow_ups": 2,
+            "minimum_interval_hours": 48,
+            "approval_required_for_each_follow_up": true,
+            "stop_conditions": [
+              "reply",
+              "opt out",
+              "bounce",
+              "complaint",
+              "permission expiry",
+              "owner stop",
+              "sequence complete"
+            ],
+            "suppression_ledger_required": true
+          },
+          "owner_controls": {
+            "default_mode": "research_and_draft_only",
+            "pause_and_kill_switch_required": true,
+            "one_action_approval_expiry_hours": 24,
+            "quiet_hours_supported": true,
+            "export_and_delete_supported": true
+          },
+          "metrics": [
+            "candidates researched",
+            "source evidence coverage",
+            "qualified leads",
+            "recipient permission coverage",
+            "owner approval rate",
+            "reply rate",
+            "positive reply rate",
+            "opt-out rate",
+            "bounce rate",
+            "complaint rate",
+            "conversion evidence"
+          ]
+        },
+        "readiness": {
+          "local_research_plan": "ready",
+          "qualification_and_drafts": "ready",
+          "exact_action_approval_packet": "ready",
+          "live_contact_discovery": "provider_and_terms_configuration_required",
+          "live_message_dispatch": "verified_adapter_recipient_permission_and_owner_approval_required",
+          "independent_production_business": false
+        }
+      },
       "capabilities": [
         {
           "name": "Off-market deal sourcing",
@@ -140,6 +298,12 @@
           "name": "Install and multi-platform distribution planner",
           "status": "web_ready_native_review_required",
           "evidence": "config/generated/buddy_distribution_catalog.json"
+        },
+        {
+          "id": "buddy_governed_lead_system",
+          "name": "Permission-gated lead discovery and follow-up system",
+          "status": "sandbox_ready_external_adapters_required",
+          "evidence": "server/governed-leads.ts"
         },
         {
           "id": "buddy_connection_broker",
@@ -384,6 +548,164 @@
           "Published pricing and revenue models are catalog plans, not evidence of sales or earnings."
         ]
       },
+      "business_system": {
+        "business_id": "business-multifamily-acquisition",
+        "operating_model": "owner_governed_service_business",
+        "specialization": {
+          "division": "DreamRealEstate",
+          "category": "acquisition",
+          "mission": "Automated multi-family property acquisition analysis and underwriting.",
+          "ideal_customer_segments": [
+            "Multi-family investors",
+            "syndicators"
+          ],
+          "core_offer": "Multi-Family Acquisition Bot: Automated multi-family property acquisition analysis and underwriting.",
+          "promised_outputs": [
+            "NOI waterfall analysis",
+            "Rent comp scraping",
+            "Financing scenario modeling",
+            "Due diligence checklist",
+            "Pro forma generation"
+          ],
+          "catalog_revenue_model": "Success fee + SaaS",
+          "catalog_price_range": "$499/mo",
+          "earnings_status": "no_revenue_or_customer_result_guaranteed"
+        },
+        "operating_workflow": [
+          "capture_owner_goal_and_offer",
+          "define_ideal_customer_profile",
+          "select_owner_authorized_sources",
+          "confirm_source_terms_and_collection_scope",
+          "research_and_deduplicate_candidates",
+          "qualify_need_fit_timing_and_permission",
+          "draft_one_relevant_message",
+          "request_exact_owner_approval",
+          "dispatch_through_configured_adapter_only",
+          "wait_for_required_follow_up_interval",
+          "stop_on_reply_opt_out_bounce_or_complaint",
+          "report_outcomes_without_claiming_guaranteed_revenue"
+        ],
+        "lead_system": {
+          "system_id": "lead-system-multifamily-acquisition",
+          "engine": "server/governed-leads.ts",
+          "status": "sandbox_ready_external_adapters_required",
+          "ideal_customer_profile": {
+            "segments": [
+              "Multi-family investors",
+              "syndicators"
+            ],
+            "need_signals": [
+              "Needs help with NOI waterfall analysis",
+              "Needs help with Rent comp scraping",
+              "Needs help with Financing scenario modeling",
+              "Needs help with Due diligence checklist",
+              "Needs help with Pro forma generation"
+            ],
+            "exclusion_rules": [
+              "no minors",
+              "no protected or sensitive trait targeting",
+              "no deceptive identity or impersonation",
+              "no lead without traceable source evidence"
+            ]
+          },
+          "discovery": {
+            "query_templates": [
+              "Multi-family investors, syndicators requesting NOI waterfall analysis",
+              "organizations seeking acquisition support",
+              "inbound requests matching Multi-Family Acquisition Bot",
+              "existing customers who opted in to NOI waterfall analysis updates"
+            ],
+            "authorized_source_types": [
+              "owner supplied records",
+              "consent based inbound requests",
+              "existing customer records with documented relationship",
+              "public business directories whose terms permit research",
+              "owner authorized provider APIs"
+            ],
+            "forbidden_collection": [
+              "private accounts or access-controlled pages",
+              "terms bypassing scraping",
+              "purchased, stolen, or unverifiable contact lists",
+              "raw credentials or secret tokens",
+              "sensitive personal data"
+            ]
+          },
+          "qualification": {
+            "required_fields": [
+              "source reference",
+              "organization or customer need",
+              "fit to the bot specialization",
+              "contact permission basis and channel scope",
+              "qualification evidence"
+            ],
+            "score_dimensions": {
+              "demonstrated_need": 30,
+              "capability_fit": 25,
+              "decision_readiness": 15,
+              "voluntarily_supplied_timing": 10,
+              "documented_contact_permission": 20
+            },
+            "minimum_score_for_owner_review": 65,
+            "permission_is_mandatory_even_above_threshold": true
+          },
+          "outreach": {
+            "supported_channels": [
+              "email",
+              "sms",
+              "voice_call",
+              "social_dm"
+            ],
+            "recipient_channel_permission_required": true,
+            "raw_contact_details_in_browser_forbidden": true,
+            "exact_owner_approval_per_message": true,
+            "maximum_daily_sends": 20,
+            "adapter_status": "configuration_required_for_live_dispatch"
+          },
+          "follow_up": {
+            "maximum_follow_ups": 2,
+            "minimum_interval_hours": 48,
+            "approval_required_for_each_follow_up": true,
+            "stop_conditions": [
+              "reply",
+              "opt out",
+              "bounce",
+              "complaint",
+              "permission expiry",
+              "owner stop",
+              "sequence complete"
+            ],
+            "suppression_ledger_required": true
+          },
+          "owner_controls": {
+            "default_mode": "research_and_draft_only",
+            "pause_and_kill_switch_required": true,
+            "one_action_approval_expiry_hours": 24,
+            "quiet_hours_supported": true,
+            "export_and_delete_supported": true
+          },
+          "metrics": [
+            "candidates researched",
+            "source evidence coverage",
+            "qualified leads",
+            "recipient permission coverage",
+            "owner approval rate",
+            "reply rate",
+            "positive reply rate",
+            "opt-out rate",
+            "bounce rate",
+            "complaint rate",
+            "conversion evidence"
+          ]
+        },
+        "readiness": {
+          "local_research_plan": "ready",
+          "qualification_and_drafts": "ready",
+          "exact_action_approval_packet": "ready",
+          "live_contact_discovery": "provider_and_terms_configuration_required",
+          "live_message_dispatch": "verified_adapter_recipient_permission_and_owner_approval_required",
+          "independent_production_business": false
+        }
+      },
       "capabilities": [
         {
           "name": "NOI waterfall analysis",
@@ -476,6 +798,12 @@
           "name": "Install and multi-platform distribution planner",
           "status": "web_ready_native_review_required",
           "evidence": "config/generated/buddy_distribution_catalog.json"
+        },
+        {
+          "id": "buddy_governed_lead_system",
+          "name": "Permission-gated lead discovery and follow-up system",
+          "status": "sandbox_ready_external_adapters_required",
+          "evidence": "server/governed-leads.ts"
         },
         {
           "id": "buddy_connection_broker",
@@ -714,6 +1042,166 @@
           "Published pricing and revenue models are catalog plans, not evidence of sales or earnings."
         ]
       },
+      "business_system": {
+        "business_id": "business-property-value",
+        "operating_model": "owner_governed_service_business",
+        "specialization": {
+          "division": "DreamRealEstate",
+          "category": "valuation",
+          "mission": "AI-driven automated valuation model for residential and commercial properties.",
+          "ideal_customer_segments": [
+            "Appraisers",
+            "banks",
+            "lenders"
+          ],
+          "core_offer": "Property Valuation AI: AI-driven automated valuation model for residential and commercial properties.",
+          "promised_outputs": [
+            "AVM regression models",
+            "Comparable adjustment engine",
+            "Market condition adjustments",
+            "Confidence interval scoring",
+            "Bulk valuation processing"
+          ],
+          "catalog_revenue_model": "Per-valuation fee",
+          "catalog_price_range": "$499/mo",
+          "earnings_status": "no_revenue_or_customer_result_guaranteed"
+        },
+        "operating_workflow": [
+          "capture_owner_goal_and_offer",
+          "define_ideal_customer_profile",
+          "select_owner_authorized_sources",
+          "confirm_source_terms_and_collection_scope",
+          "research_and_deduplicate_candidates",
+          "qualify_need_fit_timing_and_permission",
+          "draft_one_relevant_message",
+          "request_exact_owner_approval",
+          "dispatch_through_configured_adapter_only",
+          "wait_for_required_follow_up_interval",
+          "stop_on_reply_opt_out_bounce_or_complaint",
+          "report_outcomes_without_claiming_guaranteed_revenue"
+        ],
+        "lead_system": {
+          "system_id": "lead-system-property-value",
+          "engine": "server/governed-leads.ts",
+          "status": "sandbox_ready_external_adapters_required",
+          "ideal_customer_profile": {
+            "segments": [
+              "Appraisers",
+              "banks",
+              "lenders"
+            ],
+            "need_signals": [
+              "Needs help with AVM regression models",
+              "Needs help with Comparable adjustment engine",
+              "Needs help with Market condition adjustments",
+              "Needs help with Confidence interval scoring",
+              "Needs help with Bulk valuation processing"
+            ],
+            "exclusion_rules": [
+              "no minors",
+              "no protected or sensitive trait targeting",
+              "no deceptive identity or impersonation",
+              "no lead without traceable source evidence"
+            ]
+          },
+          "discovery": {
+            "query_templates": [
+              "Appraisers, banks, lenders requesting AVM regression models",
+              "organizations seeking valuation support",
+              "inbound requests matching Property Valuation AI",
+              "existing customers who opted in to AVM regression models updates"
+            ],
+            "authorized_source_types": [
+              "owner supplied records",
+              "consent based inbound requests",
+              "existing customer records with documented relationship",
+              "public business directories whose terms permit research",
+              "owner authorized provider APIs"
+            ],
+            "forbidden_collection": [
+              "private accounts or access-controlled pages",
+              "terms bypassing scraping",
+              "purchased, stolen, or unverifiable contact lists",
+              "raw credentials or secret tokens",
+              "sensitive personal data"
+            ]
+          },
+          "qualification": {
+            "required_fields": [
+              "source reference",
+              "organization or customer need",
+              "fit to the bot specialization",
+              "contact permission basis and channel scope",
+              "qualification evidence"
+            ],
+            "score_dimensions": {
+              "demonstrated_need": 30,
+              "capability_fit": 25,
+              "decision_readiness": 15,
+              "voluntarily_supplied_timing": 10,
+              "documented_contact_permission": 20
+            },
+            "minimum_score_for_owner_review": 65,
+            "permission_is_mandatory_even_above_threshold": true
+          },
+          "outreach": {
+            "supported_channels": [
+              "email",
+              "sms",
+              "voice_call",
+              "social_dm"
+            ],
+            "recipient_channel_permission_required": true,
+            "raw_contact_details_in_browser_forbidden": true,
+            "exact_owner_approval_per_message": true,
+            "maximum_daily_sends": 20,
+            "adapter_status": "configuration_required_for_live_dispatch"
+          },
+          "follow_up": {
+            "maximum_follow_ups": 2,
+            "minimum_interval_hours": 48,
+            "approval_required_for_each_follow_up": true,
+            "stop_conditions": [
+              "reply",
+              "opt out",
+              "bounce",
+              "complaint",
+              "permission expiry",
+              "owner stop",
+              "sequence complete"
+            ],
+            "suppression_ledger_required": true
+          },
+          "owner_controls": {
+            "default_mode": "research_and_draft_only",
+            "pause_and_kill_switch_required": true,
+            "one_action_approval_expiry_hours": 24,
+            "quiet_hours_supported": true,
+            "export_and_delete_supported": true
+          },
+          "metrics": [
+            "candidates researched",
+            "source evidence coverage",
+            "qualified leads",
+            "recipient permission coverage",
+            "owner approval rate",
+            "reply rate",
+            "positive reply rate",
+            "opt-out rate",
+            "bounce rate",
+            "complaint rate",
+            "conversion evidence"
+          ]
+        },
+        "readiness": {
+          "local_research_plan": "ready",
+          "qualification_and_drafts": "ready",
+          "exact_action_approval_packet": "ready",
+          "live_contact_discovery": "provider_and_terms_configuration_required",
+          "live_message_dispatch": "verified_adapter_recipient_permission_and_owner_approval_required",
+          "independent_production_business": false
+        }
+      },
       "capabilities": [
         {
           "name": "AVM regression models",
@@ -806,6 +1294,12 @@
           "name": "Install and multi-platform distribution planner",
           "status": "web_ready_native_review_required",
           "evidence": "config/generated/buddy_distribution_catalog.json"
+        },
+        {
+          "id": "buddy_governed_lead_system",
+          "name": "Permission-gated lead discovery and follow-up system",
+          "status": "sandbox_ready_external_adapters_required",
+          "evidence": "server/governed-leads.ts"
         },
         {
           "id": "buddy_connection_broker",
@@ -1044,6 +1538,164 @@
           "Published pricing and revenue models are catalog plans, not evidence of sales or earnings."
         ]
       },
+      "business_system": {
+        "business_id": "business-smart-building",
+        "operating_model": "owner_governed_service_business",
+        "specialization": {
+          "division": "DreamRealEstate",
+          "category": "smart-buildings",
+          "mission": "AI-powered building systems integration and optimization.",
+          "ideal_customer_segments": [
+            "Commercial property managers",
+            "building operators"
+          ],
+          "core_offer": "Smart Building Automation Bot: AI-powered building systems integration and optimization.",
+          "promised_outputs": [
+            "HVAC optimization engine",
+            "Occupancy-based lighting",
+            "Access control AI",
+            "IoT sensor management",
+            "Predictive system diagnostics"
+          ],
+          "catalog_revenue_model": "Enterprise license",
+          "catalog_price_range": "$499/mo",
+          "earnings_status": "no_revenue_or_customer_result_guaranteed"
+        },
+        "operating_workflow": [
+          "capture_owner_goal_and_offer",
+          "define_ideal_customer_profile",
+          "select_owner_authorized_sources",
+          "confirm_source_terms_and_collection_scope",
+          "research_and_deduplicate_candidates",
+          "qualify_need_fit_timing_and_permission",
+          "draft_one_relevant_message",
+          "request_exact_owner_approval",
+          "dispatch_through_configured_adapter_only",
+          "wait_for_required_follow_up_interval",
+          "stop_on_reply_opt_out_bounce_or_complaint",
+          "report_outcomes_without_claiming_guaranteed_revenue"
+        ],
+        "lead_system": {
+          "system_id": "lead-system-smart-building",
+          "engine": "server/governed-leads.ts",
+          "status": "sandbox_ready_external_adapters_required",
+          "ideal_customer_profile": {
+            "segments": [
+              "Commercial property managers",
+              "building operators"
+            ],
+            "need_signals": [
+              "Needs help with HVAC optimization engine",
+              "Needs help with Occupancy-based lighting",
+              "Needs help with Access control AI",
+              "Needs help with IoT sensor management",
+              "Needs help with Predictive system diagnostics"
+            ],
+            "exclusion_rules": [
+              "no minors",
+              "no protected or sensitive trait targeting",
+              "no deceptive identity or impersonation",
+              "no lead without traceable source evidence"
+            ]
+          },
+          "discovery": {
+            "query_templates": [
+              "Commercial property managers, building operators requesting HVAC optimization engine",
+              "organizations seeking smart-buildings support",
+              "inbound requests matching Smart Building Automation Bot",
+              "existing customers who opted in to HVAC optimization engine updates"
+            ],
+            "authorized_source_types": [
+              "owner supplied records",
+              "consent based inbound requests",
+              "existing customer records with documented relationship",
+              "public business directories whose terms permit research",
+              "owner authorized provider APIs"
+            ],
+            "forbidden_collection": [
+              "private accounts or access-controlled pages",
+              "terms bypassing scraping",
+              "purchased, stolen, or unverifiable contact lists",
+              "raw credentials or secret tokens",
+              "sensitive personal data"
+            ]
+          },
+          "qualification": {
+            "required_fields": [
+              "source reference",
+              "organization or customer need",
+              "fit to the bot specialization",
+              "contact permission basis and channel scope",
+              "qualification evidence"
+            ],
+            "score_dimensions": {
+              "demonstrated_need": 30,
+              "capability_fit": 25,
+              "decision_readiness": 15,
+              "voluntarily_supplied_timing": 10,
+              "documented_contact_permission": 20
+            },
+            "minimum_score_for_owner_review": 65,
+            "permission_is_mandatory_even_above_threshold": true
+          },
+          "outreach": {
+            "supported_channels": [
+              "email",
+              "sms",
+              "voice_call",
+              "social_dm"
+            ],
+            "recipient_channel_permission_required": true,
+            "raw_contact_details_in_browser_forbidden": true,
+            "exact_owner_approval_per_message": true,
+            "maximum_daily_sends": 20,
+            "adapter_status": "configuration_required_for_live_dispatch"
+          },
+          "follow_up": {
+            "maximum_follow_ups": 2,
+            "minimum_interval_hours": 48,
+            "approval_required_for_each_follow_up": true,
+            "stop_conditions": [
+              "reply",
+              "opt out",
+              "bounce",
+              "complaint",
+              "permission expiry",
+              "owner stop",
+              "sequence complete"
+            ],
+            "suppression_ledger_required": true
+          },
+          "owner_controls": {
+            "default_mode": "research_and_draft_only",
+            "pause_and_kill_switch_required": true,
+            "one_action_approval_expiry_hours": 24,
+            "quiet_hours_supported": true,
+            "export_and_delete_supported": true
+          },
+          "metrics": [
+            "candidates researched",
+            "source evidence coverage",
+            "qualified leads",
+            "recipient permission coverage",
+            "owner approval rate",
+            "reply rate",
+            "positive reply rate",
+            "opt-out rate",
+            "bounce rate",
+            "complaint rate",
+            "conversion evidence"
+          ]
+        },
+        "readiness": {
+          "local_research_plan": "ready",
+          "qualification_and_drafts": "ready",
+          "exact_action_approval_packet": "ready",
+          "live_contact_discovery": "provider_and_terms_configuration_required",
+          "live_message_dispatch": "verified_adapter_recipient_permission_and_owner_approval_required",
+          "independent_production_business": false
+        }
+      },
       "capabilities": [
         {
           "name": "HVAC optimization engine",
@@ -1136,6 +1788,12 @@
           "name": "Install and multi-platform distribution planner",
           "status": "web_ready_native_review_required",
           "evidence": "config/generated/buddy_distribution_catalog.json"
+        },
+        {
+          "id": "buddy_governed_lead_system",
+          "name": "Permission-gated lead discovery and follow-up system",
+          "status": "sandbox_ready_external_adapters_required",
+          "evidence": "server/governed-leads.ts"
         },
         {
           "id": "buddy_connection_broker",
@@ -1304,6 +1962,164 @@
           "Published pricing and revenue models are catalog plans, not evidence of sales or earnings."
         ]
       },
+      "business_system": {
+        "business_id": "business-property-risk-sim",
+        "operating_model": "owner_governed_service_business",
+        "specialization": {
+          "division": "DreamRealEstate",
+          "category": "risk-simulation",
+          "mission": "Monte Carlo risk simulation for real estate portfolio stress testing.",
+          "ideal_customer_segments": [
+            "Institutional RE investors",
+            "REITs"
+          ],
+          "core_offer": "Property Risk Scenario Simulation: Monte Carlo risk simulation for real estate portfolio stress testing.",
+          "promised_outputs": [
+            "Monte Carlo scenario engine",
+            "Interest rate shock modeling",
+            "Vacancy rate simulation",
+            "Natural disaster risk scoring",
+            "Portfolio correlation analysis"
+          ],
+          "catalog_revenue_model": "Enterprise license",
+          "catalog_price_range": "$499/mo",
+          "earnings_status": "no_revenue_or_customer_result_guaranteed"
+        },
+        "operating_workflow": [
+          "capture_owner_goal_and_offer",
+          "define_ideal_customer_profile",
+          "select_owner_authorized_sources",
+          "confirm_source_terms_and_collection_scope",
+          "research_and_deduplicate_candidates",
+          "qualify_need_fit_timing_and_permission",
+          "draft_one_relevant_message",
+          "request_exact_owner_approval",
+          "dispatch_through_configured_adapter_only",
+          "wait_for_required_follow_up_interval",
+          "stop_on_reply_opt_out_bounce_or_complaint",
+          "report_outcomes_without_claiming_guaranteed_revenue"
+        ],
+        "lead_system": {
+          "system_id": "lead-system-property-risk-sim",
+          "engine": "server/governed-leads.ts",
+          "status": "sandbox_ready_external_adapters_required",
+          "ideal_customer_profile": {
+            "segments": [
+              "Institutional RE investors",
+              "REITs"
+            ],
+            "need_signals": [
+              "Needs help with Monte Carlo scenario engine",
+              "Needs help with Interest rate shock modeling",
+              "Needs help with Vacancy rate simulation",
+              "Needs help with Natural disaster risk scoring",
+              "Needs help with Portfolio correlation analysis"
+            ],
+            "exclusion_rules": [
+              "no minors",
+              "no protected or sensitive trait targeting",
+              "no deceptive identity or impersonation",
+              "no lead without traceable source evidence"
+            ]
+          },
+          "discovery": {
+            "query_templates": [
+              "Institutional RE investors, REITs requesting Monte Carlo scenario engine",
+              "organizations seeking risk-simulation support",
+              "inbound requests matching Property Risk Scenario Simulation",
+              "existing customers who opted in to Monte Carlo scenario engine updates"
+            ],
+            "authorized_source_types": [
+              "owner supplied records",
+              "consent based inbound requests",
+              "existing customer records with documented relationship",
+              "public business directories whose terms permit research",
+              "owner authorized provider APIs"
+            ],
+            "forbidden_collection": [
+              "private accounts or access-controlled pages",
+              "terms bypassing scraping",
+              "purchased, stolen, or unverifiable contact lists",
+              "raw credentials or secret tokens",
+              "sensitive personal data"
+            ]
+          },
+          "qualification": {
+            "required_fields": [
+              "source reference",
+              "organization or customer need",
+              "fit to the bot specialization",
+              "contact permission basis and channel scope",
+              "qualification evidence"
+            ],
+            "score_dimensions": {
+              "demonstrated_need": 30,
+              "capability_fit": 25,
+              "decision_readiness": 15,
+              "voluntarily_supplied_timing": 10,
+              "documented_contact_permission": 20
+            },
+            "minimum_score_for_owner_review": 65,
+            "permission_is_mandatory_even_above_threshold": true
+          },
+          "outreach": {
+            "supported_channels": [
+              "email",
+              "sms",
+              "voice_call",
+              "social_dm"
+            ],
+            "recipient_channel_permission_required": true,
+            "raw_contact_details_in_browser_forbidden": true,
+            "exact_owner_approval_per_message": true,
+            "maximum_daily_sends": 20,
+            "adapter_status": "configuration_required_for_live_dispatch"
+          },
+          "follow_up": {
+            "maximum_follow_ups": 2,
+            "minimum_interval_hours": 48,
+            "approval_required_for_each_follow_up": true,
+            "stop_conditions": [
+              "reply",
+              "opt out",
+              "bounce",
+              "complaint",
+              "permission expiry",
+              "owner stop",
+              "sequence complete"
+            ],
+            "suppression_ledger_required": true
+          },
+          "owner_controls": {
+            "default_mode": "research_and_draft_only",
+            "pause_and_kill_switch_required": true,
+            "one_action_approval_expiry_hours": 24,
+            "quiet_hours_supported": true,
+            "export_and_delete_supported": true
+          },
+          "metrics": [
+            "candidates researched",
+            "source evidence coverage",
+            "qualified leads",
+            "recipient permission coverage",
+            "owner approval rate",
+            "reply rate",
+            "positive reply rate",
+            "opt-out rate",
+            "bounce rate",
+            "complaint rate",
+            "conversion evidence"
+          ]
+        },
+        "readiness": {
+          "local_research_plan": "ready",
+          "qualification_and_drafts": "ready",
+          "exact_action_approval_packet": "ready",
+          "live_contact_discovery": "provider_and_terms_configuration_required",
+          "live_message_dispatch": "verified_adapter_recipient_permission_and_owner_approval_required",
+          "independent_production_business": false
+        }
+      },
       "capabilities": [
         {
           "name": "Monte Carlo scenario engine",
@@ -1396,6 +2212,12 @@
           "name": "Install and multi-platform distribution planner",
           "status": "web_ready_native_review_required",
           "evidence": "config/generated/buddy_distribution_catalog.json"
+        },
+        {
+          "id": "buddy_governed_lead_system",
+          "name": "Permission-gated lead discovery and follow-up system",
+          "status": "sandbox_ready_external_adapters_required",
+          "evidence": "server/governed-leads.ts"
         },
         {
           "id": "buddy_game_lab",
@@ -1640,6 +2462,164 @@
           "Published pricing and revenue models are catalog plans, not evidence of sales or earnings."
         ]
       },
+      "business_system": {
+        "business_id": "business-reit-predictor",
+        "operating_model": "owner_governed_service_business",
+        "specialization": {
+          "division": "DreamRealEstate",
+          "category": "reit-analysis",
+          "mission": "Predicts REIT performance using FFO modeling and sector analysis.",
+          "ideal_customer_segments": [
+            "REIT investors",
+            "analysts"
+          ],
+          "core_offer": "REIT Performance Predictor: Predicts REIT performance using FFO modeling and sector analysis.",
+          "promised_outputs": [
+            "FFO/AFFO forecasting",
+            "Dividend yield prediction",
+            "NAV discount analysis",
+            "Sector rotation signals",
+            "Peer comparison engine"
+          ],
+          "catalog_revenue_model": "SaaS subscription",
+          "catalog_price_range": "$299/mo",
+          "earnings_status": "no_revenue_or_customer_result_guaranteed"
+        },
+        "operating_workflow": [
+          "capture_owner_goal_and_offer",
+          "define_ideal_customer_profile",
+          "select_owner_authorized_sources",
+          "confirm_source_terms_and_collection_scope",
+          "research_and_deduplicate_candidates",
+          "qualify_need_fit_timing_and_permission",
+          "draft_one_relevant_message",
+          "request_exact_owner_approval",
+          "dispatch_through_configured_adapter_only",
+          "wait_for_required_follow_up_interval",
+          "stop_on_reply_opt_out_bounce_or_complaint",
+          "report_outcomes_without_claiming_guaranteed_revenue"
+        ],
+        "lead_system": {
+          "system_id": "lead-system-reit-predictor",
+          "engine": "server/governed-leads.ts",
+          "status": "sandbox_ready_external_adapters_required",
+          "ideal_customer_profile": {
+            "segments": [
+              "REIT investors",
+              "analysts"
+            ],
+            "need_signals": [
+              "Needs help with FFO/AFFO forecasting",
+              "Needs help with Dividend yield prediction",
+              "Needs help with NAV discount analysis",
+              "Needs help with Sector rotation signals",
+              "Needs help with Peer comparison engine"
+            ],
+            "exclusion_rules": [
+              "no minors",
+              "no protected or sensitive trait targeting",
+              "no deceptive identity or impersonation",
+              "no lead without traceable source evidence"
+            ]
+          },
+          "discovery": {
+            "query_templates": [
+              "REIT investors, analysts requesting FFO/AFFO forecasting",
+              "organizations seeking reit-analysis support",
+              "inbound requests matching REIT Performance Predictor",
+              "existing customers who opted in to FFO/AFFO forecasting updates"
+            ],
+            "authorized_source_types": [
+              "owner supplied records",
+              "consent based inbound requests",
+              "existing customer records with documented relationship",
+              "public business directories whose terms permit research",
+              "owner authorized provider APIs"
+            ],
+            "forbidden_collection": [
+              "private accounts or access-controlled pages",
+              "terms bypassing scraping",
+              "purchased, stolen, or unverifiable contact lists",
+              "raw credentials or secret tokens",
+              "sensitive personal data"
+            ]
+          },
+          "qualification": {
+            "required_fields": [
+              "source reference",
+              "organization or customer need",
+              "fit to the bot specialization",
+              "contact permission basis and channel scope",
+              "qualification evidence"
+            ],
+            "score_dimensions": {
+              "demonstrated_need": 30,
+              "capability_fit": 25,
+              "decision_readiness": 15,
+              "voluntarily_supplied_timing": 10,
+              "documented_contact_permission": 20
+            },
+            "minimum_score_for_owner_review": 65,
+            "permission_is_mandatory_even_above_threshold": true
+          },
+          "outreach": {
+            "supported_channels": [
+              "email",
+              "sms",
+              "voice_call",
+              "social_dm"
+            ],
+            "recipient_channel_permission_required": true,
+            "raw_contact_details_in_browser_forbidden": true,
+            "exact_owner_approval_per_message": true,
+            "maximum_daily_sends": 20,
+            "adapter_status": "configuration_required_for_live_dispatch"
+          },
+          "follow_up": {
+            "maximum_follow_ups": 2,
+            "minimum_interval_hours": 48,
+            "approval_required_for_each_follow_up": true,
+            "stop_conditions": [
+              "reply",
+              "opt out",
+              "bounce",
+              "complaint",
+              "permission expiry",
+              "owner stop",
+              "sequence complete"
+            ],
+            "suppression_ledger_required": true
+          },
+          "owner_controls": {
+            "default_mode": "research_and_draft_only",
+            "pause_and_kill_switch_required": true,
+            "one_action_approval_expiry_hours": 24,
+            "quiet_hours_supported": true,
+            "export_and_delete_supported": true
+          },
+          "metrics": [
+            "candidates researched",
+            "source evidence coverage",
+            "qualified leads",
+            "recipient permission coverage",
+            "owner approval rate",
+            "reply rate",
+            "positive reply rate",
+            "opt-out rate",
+            "bounce rate",
+            "complaint rate",
+            "conversion evidence"
+          ]
+        },
+        "readiness": {
+          "local_research_plan": "ready",
+          "qualification_and_drafts": "ready",
+          "exact_action_approval_packet": "ready",
+          "live_contact_discovery": "provider_and_terms_configuration_required",
+          "live_message_dispatch": "verified_adapter_recipient_permission_and_owner_approval_required",
+          "independent_production_business": false
+        }
+      },
       "capabilities": [
         {
           "name": "FFO/AFFO forecasting",
@@ -1732,6 +2712,12 @@
           "name": "Install and multi-platform distribution planner",
           "status": "web_ready_native_review_required",
           "evidence": "config/generated/buddy_distribution_catalog.json"
+        },
+        {
+          "id": "buddy_governed_lead_system",
+          "name": "Permission-gated lead discovery and follow-up system",
+          "status": "sandbox_ready_external_adapters_required",
+          "evidence": "server/governed-leads.ts"
         },
         {
           "id": "buddy_connection_broker",
@@ -1928,6 +2914,162 @@
           "Published pricing and revenue models are catalog plans, not evidence of sales or earnings."
         ]
       },
+      "business_system": {
+        "business_id": "business-re-rebalancer",
+        "operating_model": "owner_governed_service_business",
+        "specialization": {
+          "division": "DreamRealEstate",
+          "category": "portfolio",
+          "mission": "Optimizes real estate portfolio allocation across geographies and property types.",
+          "ideal_customer_segments": [
+            "RE portfolio managers"
+          ],
+          "core_offer": "Real Estate Portfolio Rebalancer: Optimizes real estate portfolio allocation across geographies and property types.",
+          "promised_outputs": [
+            "Allocation drift monitoring",
+            "Geographic diversification scoring",
+            "Property type weighting",
+            "Risk-adjusted return ranking",
+            "Rebalance recommendation engine"
+          ],
+          "catalog_revenue_model": "SaaS subscription",
+          "catalog_price_range": "$299/mo",
+          "earnings_status": "no_revenue_or_customer_result_guaranteed"
+        },
+        "operating_workflow": [
+          "capture_owner_goal_and_offer",
+          "define_ideal_customer_profile",
+          "select_owner_authorized_sources",
+          "confirm_source_terms_and_collection_scope",
+          "research_and_deduplicate_candidates",
+          "qualify_need_fit_timing_and_permission",
+          "draft_one_relevant_message",
+          "request_exact_owner_approval",
+          "dispatch_through_configured_adapter_only",
+          "wait_for_required_follow_up_interval",
+          "stop_on_reply_opt_out_bounce_or_complaint",
+          "report_outcomes_without_claiming_guaranteed_revenue"
+        ],
+        "lead_system": {
+          "system_id": "lead-system-re-rebalancer",
+          "engine": "server/governed-leads.ts",
+          "status": "sandbox_ready_external_adapters_required",
+          "ideal_customer_profile": {
+            "segments": [
+              "RE portfolio managers"
+            ],
+            "need_signals": [
+              "Needs help with Allocation drift monitoring",
+              "Needs help with Geographic diversification scoring",
+              "Needs help with Property type weighting",
+              "Needs help with Risk-adjusted return ranking",
+              "Needs help with Rebalance recommendation engine"
+            ],
+            "exclusion_rules": [
+              "no minors",
+              "no protected or sensitive trait targeting",
+              "no deceptive identity or impersonation",
+              "no lead without traceable source evidence"
+            ]
+          },
+          "discovery": {
+            "query_templates": [
+              "RE portfolio managers requesting Allocation drift monitoring",
+              "organizations seeking portfolio support",
+              "inbound requests matching Real Estate Portfolio Rebalancer",
+              "existing customers who opted in to Allocation drift monitoring updates"
+            ],
+            "authorized_source_types": [
+              "owner supplied records",
+              "consent based inbound requests",
+              "existing customer records with documented relationship",
+              "public business directories whose terms permit research",
+              "owner authorized provider APIs"
+            ],
+            "forbidden_collection": [
+              "private accounts or access-controlled pages",
+              "terms bypassing scraping",
+              "purchased, stolen, or unverifiable contact lists",
+              "raw credentials or secret tokens",
+              "sensitive personal data"
+            ]
+          },
+          "qualification": {
+            "required_fields": [
+              "source reference",
+              "organization or customer need",
+              "fit to the bot specialization",
+              "contact permission basis and channel scope",
+              "qualification evidence"
+            ],
+            "score_dimensions": {
+              "demonstrated_need": 30,
+              "capability_fit": 25,
+              "decision_readiness": 15,
+              "voluntarily_supplied_timing": 10,
+              "documented_contact_permission": 20
+            },
+            "minimum_score_for_owner_review": 65,
+            "permission_is_mandatory_even_above_threshold": true
+          },
+          "outreach": {
+            "supported_channels": [
+              "email",
+              "sms",
+              "voice_call",
+              "social_dm"
+            ],
+            "recipient_channel_permission_required": true,
+            "raw_contact_details_in_browser_forbidden": true,
+            "exact_owner_approval_per_message": true,
+            "maximum_daily_sends": 20,
+            "adapter_status": "configuration_required_for_live_dispatch"
+          },
+          "follow_up": {
+            "maximum_follow_ups": 2,
+            "minimum_interval_hours": 48,
+            "approval_required_for_each_follow_up": true,
+            "stop_conditions": [
+              "reply",
+              "opt out",
+              "bounce",
+              "complaint",
+              "permission expiry",
+              "owner stop",
+              "sequence complete"
+            ],
+            "suppression_ledger_required": true
+          },
+          "owner_controls": {
+            "default_mode": "research_and_draft_only",
+            "pause_and_kill_switch_required": true,
+            "one_action_approval_expiry_hours": 24,
+            "quiet_hours_supported": true,
+            "export_and_delete_supported": true
+          },
+          "metrics": [
+            "candidates researched",
+            "source evidence coverage",
+            "qualified leads",
+            "recipient permission coverage",
+            "owner approval rate",
+            "reply rate",
+            "positive reply rate",
+            "opt-out rate",
+            "bounce rate",
+            "complaint rate",
+            "conversion evidence"
+          ]
+        },
+        "readiness": {
+          "local_research_plan": "ready",
+          "qualification_and_drafts": "ready",
+          "exact_action_approval_packet": "ready",
+          "live_contact_discovery": "provider_and_terms_configuration_required",
+          "live_message_dispatch": "verified_adapter_recipient_permission_and_owner_approval_required",
+          "independent_production_business": false
+        }
+      },
       "capabilities": [
         {
           "name": "Allocation drift monitoring",
@@ -2020,6 +3162,12 @@
           "name": "Install and multi-platform distribution planner",
           "status": "web_ready_native_review_required",
           "evidence": "config/generated/buddy_distribution_catalog.json"
+        },
+        {
+          "id": "buddy_governed_lead_system",
+          "name": "Permission-gated lead discovery and follow-up system",
+          "status": "sandbox_ready_external_adapters_required",
+          "evidence": "server/governed-leads.ts"
         },
         {
           "id": "buddy_connection_broker",
@@ -2258,6 +3406,164 @@
           "Published pricing and revenue models are catalog plans, not evidence of sales or earnings."
         ]
       },
+      "business_system": {
+        "business_id": "business-syndication-mgr",
+        "operating_model": "owner_governed_service_business",
+        "specialization": {
+          "division": "DreamRealEstate",
+          "category": "syndication",
+          "mission": "Manages real estate syndication from capital raise through exit.",
+          "ideal_customer_segments": [
+            "Syndicators",
+            "GP sponsors"
+          ],
+          "core_offer": "Syndication Manager Bot: Manages real estate syndication from capital raise through exit.",
+          "promised_outputs": [
+            "Investor waterfall modeling",
+            "K-1 distribution automation",
+            "Capital call management",
+            "Investor portal reporting",
+            "Exit scenario analysis"
+          ],
+          "catalog_revenue_model": "SaaS subscription",
+          "catalog_price_range": "$299/mo",
+          "earnings_status": "no_revenue_or_customer_result_guaranteed"
+        },
+        "operating_workflow": [
+          "capture_owner_goal_and_offer",
+          "define_ideal_customer_profile",
+          "select_owner_authorized_sources",
+          "confirm_source_terms_and_collection_scope",
+          "research_and_deduplicate_candidates",
+          "qualify_need_fit_timing_and_permission",
+          "draft_one_relevant_message",
+          "request_exact_owner_approval",
+          "dispatch_through_configured_adapter_only",
+          "wait_for_required_follow_up_interval",
+          "stop_on_reply_opt_out_bounce_or_complaint",
+          "report_outcomes_without_claiming_guaranteed_revenue"
+        ],
+        "lead_system": {
+          "system_id": "lead-system-syndication-mgr",
+          "engine": "server/governed-leads.ts",
+          "status": "sandbox_ready_external_adapters_required",
+          "ideal_customer_profile": {
+            "segments": [
+              "Syndicators",
+              "GP sponsors"
+            ],
+            "need_signals": [
+              "Needs help with Investor waterfall modeling",
+              "Needs help with K-1 distribution automation",
+              "Needs help with Capital call management",
+              "Needs help with Investor portal reporting",
+              "Needs help with Exit scenario analysis"
+            ],
+            "exclusion_rules": [
+              "no minors",
+              "no protected or sensitive trait targeting",
+              "no deceptive identity or impersonation",
+              "no lead without traceable source evidence"
+            ]
+          },
+          "discovery": {
+            "query_templates": [
+              "Syndicators, GP sponsors requesting Investor waterfall modeling",
+              "organizations seeking syndication support",
+              "inbound requests matching Syndication Manager Bot",
+              "existing customers who opted in to Investor waterfall modeling updates"
+            ],
+            "authorized_source_types": [
+              "owner supplied records",
+              "consent based inbound requests",
+              "existing customer records with documented relationship",
+              "public business directories whose terms permit research",
+              "owner authorized provider APIs"
+            ],
+            "forbidden_collection": [
+              "private accounts or access-controlled pages",
+              "terms bypassing scraping",
+              "purchased, stolen, or unverifiable contact lists",
+              "raw credentials or secret tokens",
+              "sensitive personal data"
+            ]
+          },
+          "qualification": {
+            "required_fields": [
+              "source reference",
+              "organization or customer need",
+              "fit to the bot specialization",
+              "contact permission basis and channel scope",
+              "qualification evidence"
+            ],
+            "score_dimensions": {
+              "demonstrated_need": 30,
+              "capability_fit": 25,
+              "decision_readiness": 15,
+              "voluntarily_supplied_timing": 10,
+              "documented_contact_permission": 20
+            },
+            "minimum_score_for_owner_review": 65,
+            "permission_is_mandatory_even_above_threshold": true
+          },
+          "outreach": {
+            "supported_channels": [
+              "email",
+              "sms",
+              "voice_call",
+              "social_dm"
+            ],
+            "recipient_channel_permission_required": true,
+            "raw_contact_details_in_browser_forbidden": true,
+            "exact_owner_approval_per_message": true,
+            "maximum_daily_sends": 20,
+            "adapter_status": "configuration_required_for_live_dispatch"
+          },
+          "follow_up": {
+            "maximum_follow_ups": 2,
+            "minimum_interval_hours": 48,
+            "approval_required_for_each_follow_up": true,
+            "stop_conditions": [
+              "reply",
+              "opt out",
+              "bounce",
+              "complaint",
+              "permission expiry",
+              "owner stop",
+              "sequence complete"
+            ],
+            "suppression_ledger_required": true
+          },
+          "owner_controls": {
+            "default_mode": "research_and_draft_only",
+            "pause_and_kill_switch_required": true,
+            "one_action_approval_expiry_hours": 24,
+            "quiet_hours_supported": true,
+            "export_and_delete_supported": true
+          },
+          "metrics": [
+            "candidates researched",
+            "source evidence coverage",
+            "qualified leads",
+            "recipient permission coverage",
+            "owner approval rate",
+            "reply rate",
+            "positive reply rate",
+            "opt-out rate",
+            "bounce rate",
+            "complaint rate",
+            "conversion evidence"
+          ]
+        },
+        "readiness": {
+          "local_research_plan": "ready",
+          "qualification_and_drafts": "ready",
+          "exact_action_approval_packet": "ready",
+          "live_contact_discovery": "provider_and_terms_configuration_required",
+          "live_message_dispatch": "verified_adapter_recipient_permission_and_owner_approval_required",
+          "independent_production_business": false
+        }
+      },
       "capabilities": [
         {
           "name": "Investor waterfall modeling",
@@ -2350,6 +3656,12 @@
           "name": "Install and multi-platform distribution planner",
           "status": "web_ready_native_review_required",
           "evidence": "config/generated/buddy_distribution_catalog.json"
+        },
+        {
+          "id": "buddy_governed_lead_system",
+          "name": "Permission-gated lead discovery and follow-up system",
+          "status": "sandbox_ready_external_adapters_required",
+          "evidence": "server/governed-leads.ts"
         },
         {
           "id": "buddy_connection_broker",
@@ -2589,6 +3901,164 @@
           "Published pricing and revenue models are catalog plans, not evidence of sales or earnings."
         ]
       },
+      "business_system": {
+        "business_id": "business-investor-reporting",
+        "operating_model": "owner_governed_service_business",
+        "specialization": {
+          "division": "DreamRealEstate",
+          "category": "investor-reporting",
+          "mission": "Automated quarterly investor reports with performance attribution.",
+          "ideal_customer_segments": [
+            "Fund managers",
+            "syndicators"
+          ],
+          "core_offer": "Investor Reporting Automation: Automated quarterly investor reports with performance attribution.",
+          "promised_outputs": [
+            "Automated report generation",
+            "IRR/equity multiple tracking",
+            "Distribution waterfall charts",
+            "Market comparison benchmarks",
+            "Investor communication portal"
+          ],
+          "catalog_revenue_model": "SaaS subscription",
+          "catalog_price_range": "$299/mo",
+          "earnings_status": "no_revenue_or_customer_result_guaranteed"
+        },
+        "operating_workflow": [
+          "capture_owner_goal_and_offer",
+          "define_ideal_customer_profile",
+          "select_owner_authorized_sources",
+          "confirm_source_terms_and_collection_scope",
+          "research_and_deduplicate_candidates",
+          "qualify_need_fit_timing_and_permission",
+          "draft_one_relevant_message",
+          "request_exact_owner_approval",
+          "dispatch_through_configured_adapter_only",
+          "wait_for_required_follow_up_interval",
+          "stop_on_reply_opt_out_bounce_or_complaint",
+          "report_outcomes_without_claiming_guaranteed_revenue"
+        ],
+        "lead_system": {
+          "system_id": "lead-system-investor-reporting",
+          "engine": "server/governed-leads.ts",
+          "status": "sandbox_ready_external_adapters_required",
+          "ideal_customer_profile": {
+            "segments": [
+              "Fund managers",
+              "syndicators"
+            ],
+            "need_signals": [
+              "Needs help with Automated report generation",
+              "Needs help with IRR/equity multiple tracking",
+              "Needs help with Distribution waterfall charts",
+              "Needs help with Market comparison benchmarks",
+              "Needs help with Investor communication portal"
+            ],
+            "exclusion_rules": [
+              "no minors",
+              "no protected or sensitive trait targeting",
+              "no deceptive identity or impersonation",
+              "no lead without traceable source evidence"
+            ]
+          },
+          "discovery": {
+            "query_templates": [
+              "Fund managers, syndicators requesting Automated report generation",
+              "organizations seeking investor-reporting support",
+              "inbound requests matching Investor Reporting Automation",
+              "existing customers who opted in to Automated report generation updates"
+            ],
+            "authorized_source_types": [
+              "owner supplied records",
+              "consent based inbound requests",
+              "existing customer records with documented relationship",
+              "public business directories whose terms permit research",
+              "owner authorized provider APIs"
+            ],
+            "forbidden_collection": [
+              "private accounts or access-controlled pages",
+              "terms bypassing scraping",
+              "purchased, stolen, or unverifiable contact lists",
+              "raw credentials or secret tokens",
+              "sensitive personal data"
+            ]
+          },
+          "qualification": {
+            "required_fields": [
+              "source reference",
+              "organization or customer need",
+              "fit to the bot specialization",
+              "contact permission basis and channel scope",
+              "qualification evidence"
+            ],
+            "score_dimensions": {
+              "demonstrated_need": 30,
+              "capability_fit": 25,
+              "decision_readiness": 15,
+              "voluntarily_supplied_timing": 10,
+              "documented_contact_permission": 20
+            },
+            "minimum_score_for_owner_review": 65,
+            "permission_is_mandatory_even_above_threshold": true
+          },
+          "outreach": {
+            "supported_channels": [
+              "email",
+              "sms",
+              "voice_call",
+              "social_dm"
+            ],
+            "recipient_channel_permission_required": true,
+            "raw_contact_details_in_browser_forbidden": true,
+            "exact_owner_approval_per_message": true,
+            "maximum_daily_sends": 20,
+            "adapter_status": "configuration_required_for_live_dispatch"
+          },
+          "follow_up": {
+            "maximum_follow_ups": 2,
+            "minimum_interval_hours": 48,
+            "approval_required_for_each_follow_up": true,
+            "stop_conditions": [
+              "reply",
+              "opt out",
+              "bounce",
+              "complaint",
+              "permission expiry",
+              "owner stop",
+              "sequence complete"
+            ],
+            "suppression_ledger_required": true
+          },
+          "owner_controls": {
+            "default_mode": "research_and_draft_only",
+            "pause_and_kill_switch_required": true,
+            "one_action_approval_expiry_hours": 24,
+            "quiet_hours_supported": true,
+            "export_and_delete_supported": true
+          },
+          "metrics": [
+            "candidates researched",
+            "source evidence coverage",
+            "qualified leads",
+            "recipient permission coverage",
+            "owner approval rate",
+            "reply rate",
+            "positive reply rate",
+            "opt-out rate",
+            "bounce rate",
+            "complaint rate",
+            "conversion evidence"
+          ]
+        },
+        "readiness": {
+          "local_research_plan": "ready",
+          "qualification_and_drafts": "ready",
+          "exact_action_approval_packet": "ready",
+          "live_contact_discovery": "provider_and_terms_configuration_required",
+          "live_message_dispatch": "verified_adapter_recipient_permission_and_owner_approval_required",
+          "independent_production_business": false
+        }
+      },
       "capabilities": [
         {
           "name": "Automated report generation",
@@ -2681,6 +4151,12 @@
           "name": "Install and multi-platform distribution planner",
           "status": "web_ready_native_review_required",
           "evidence": "config/generated/buddy_distribution_catalog.json"
+        },
+        {
+          "id": "buddy_governed_lead_system",
+          "name": "Permission-gated lead discovery and follow-up system",
+          "status": "sandbox_ready_external_adapters_required",
+          "evidence": "server/governed-leads.ts"
         },
         {
           "id": "buddy_connection_broker",
@@ -2905,6 +4381,164 @@
           "Published pricing and revenue models are catalog plans, not evidence of sales or earnings."
         ]
       },
+      "business_system": {
+        "business_id": "business-distressed-asset",
+        "operating_model": "owner_governed_service_business",
+        "specialization": {
+          "division": "DreamRealEstate",
+          "category": "distressed-assets",
+          "mission": "Identifies and analyzes distressed properties and foreclosure opportunities.",
+          "ideal_customer_segments": [
+            "Distressed asset buyers",
+            "flippers"
+          ],
+          "core_offer": "Distressed Asset Analyzer: Identifies and analyzes distressed properties and foreclosure opportunities.",
+          "promised_outputs": [
+            "Foreclosure pipeline tracker",
+            "Pre-foreclosure outreach",
+            "Repair cost estimation",
+            "ARV calculation engine",
+            "Title issue detection"
+          ],
+          "catalog_revenue_model": "SaaS subscription",
+          "catalog_price_range": "$299/mo",
+          "earnings_status": "no_revenue_or_customer_result_guaranteed"
+        },
+        "operating_workflow": [
+          "capture_owner_goal_and_offer",
+          "define_ideal_customer_profile",
+          "select_owner_authorized_sources",
+          "confirm_source_terms_and_collection_scope",
+          "research_and_deduplicate_candidates",
+          "qualify_need_fit_timing_and_permission",
+          "draft_one_relevant_message",
+          "request_exact_owner_approval",
+          "dispatch_through_configured_adapter_only",
+          "wait_for_required_follow_up_interval",
+          "stop_on_reply_opt_out_bounce_or_complaint",
+          "report_outcomes_without_claiming_guaranteed_revenue"
+        ],
+        "lead_system": {
+          "system_id": "lead-system-distressed-asset",
+          "engine": "server/governed-leads.ts",
+          "status": "sandbox_ready_external_adapters_required",
+          "ideal_customer_profile": {
+            "segments": [
+              "Distressed asset buyers",
+              "flippers"
+            ],
+            "need_signals": [
+              "Needs help with Foreclosure pipeline tracker",
+              "Needs help with Pre-foreclosure outreach",
+              "Needs help with Repair cost estimation",
+              "Needs help with ARV calculation engine",
+              "Needs help with Title issue detection"
+            ],
+            "exclusion_rules": [
+              "no minors",
+              "no protected or sensitive trait targeting",
+              "no deceptive identity or impersonation",
+              "no lead without traceable source evidence"
+            ]
+          },
+          "discovery": {
+            "query_templates": [
+              "Distressed asset buyers, flippers requesting Foreclosure pipeline tracker",
+              "organizations seeking distressed-assets support",
+              "inbound requests matching Distressed Asset Analyzer",
+              "existing customers who opted in to Foreclosure pipeline tracker updates"
+            ],
+            "authorized_source_types": [
+              "owner supplied records",
+              "consent based inbound requests",
+              "existing customer records with documented relationship",
+              "public business directories whose terms permit research",
+              "owner authorized provider APIs"
+            ],
+            "forbidden_collection": [
+              "private accounts or access-controlled pages",
+              "terms bypassing scraping",
+              "purchased, stolen, or unverifiable contact lists",
+              "raw credentials or secret tokens",
+              "sensitive personal data"
+            ]
+          },
+          "qualification": {
+            "required_fields": [
+              "source reference",
+              "organization or customer need",
+              "fit to the bot specialization",
+              "contact permission basis and channel scope",
+              "qualification evidence"
+            ],
+            "score_dimensions": {
+              "demonstrated_need": 30,
+              "capability_fit": 25,
+              "decision_readiness": 15,
+              "voluntarily_supplied_timing": 10,
+              "documented_contact_permission": 20
+            },
+            "minimum_score_for_owner_review": 65,
+            "permission_is_mandatory_even_above_threshold": true
+          },
+          "outreach": {
+            "supported_channels": [
+              "email",
+              "sms",
+              "voice_call",
+              "social_dm"
+            ],
+            "recipient_channel_permission_required": true,
+            "raw_contact_details_in_browser_forbidden": true,
+            "exact_owner_approval_per_message": true,
+            "maximum_daily_sends": 20,
+            "adapter_status": "configuration_required_for_live_dispatch"
+          },
+          "follow_up": {
+            "maximum_follow_ups": 2,
+            "minimum_interval_hours": 48,
+            "approval_required_for_each_follow_up": true,
+            "stop_conditions": [
+              "reply",
+              "opt out",
+              "bounce",
+              "complaint",
+              "permission expiry",
+              "owner stop",
+              "sequence complete"
+            ],
+            "suppression_ledger_required": true
+          },
+          "owner_controls": {
+            "default_mode": "research_and_draft_only",
+            "pause_and_kill_switch_required": true,
+            "one_action_approval_expiry_hours": 24,
+            "quiet_hours_supported": true,
+            "export_and_delete_supported": true
+          },
+          "metrics": [
+            "candidates researched",
+            "source evidence coverage",
+            "qualified leads",
+            "recipient permission coverage",
+            "owner approval rate",
+            "reply rate",
+            "positive reply rate",
+            "opt-out rate",
+            "bounce rate",
+            "complaint rate",
+            "conversion evidence"
+          ]
+        },
+        "readiness": {
+          "local_research_plan": "ready",
+          "qualification_and_drafts": "ready",
+          "exact_action_approval_packet": "ready",
+          "live_contact_discovery": "provider_and_terms_configuration_required",
+          "live_message_dispatch": "verified_adapter_recipient_permission_and_owner_approval_required",
+          "independent_production_business": false
+        }
+      },
       "capabilities": [
         {
           "name": "Foreclosure pipeline tracker",
@@ -2997,6 +4631,12 @@
           "name": "Install and multi-platform distribution planner",
           "status": "web_ready_native_review_required",
           "evidence": "config/generated/buddy_distribution_catalog.json"
+        },
+        {
+          "id": "buddy_governed_lead_system",
+          "name": "Permission-gated lead discovery and follow-up system",
+          "status": "sandbox_ready_external_adapters_required",
+          "evidence": "server/governed-leads.ts"
         },
         {
           "id": "buddy_connection_broker",
@@ -3180,6 +4820,164 @@
           "Published pricing and revenue models are catalog plans, not evidence of sales or earnings."
         ]
       },
+      "business_system": {
+        "business_id": "business-exchange-1031",
+        "operating_model": "owner_governed_service_business",
+        "specialization": {
+          "division": "DreamRealEstate",
+          "category": "tax",
+          "mission": "Automated 1031 exchange identification, planning, and timeline management.",
+          "ideal_customer_segments": [
+            "RE investors",
+            "tax advisors"
+          ],
+          "core_offer": "1031 Exchange Planner AI: Automated 1031 exchange identification, planning, and timeline management.",
+          "promised_outputs": [
+            "Replacement property matching",
+            "45-day identification tracker",
+            "Boot calculation engine",
+            "QI coordination tools",
+            "Tax savings projection"
+          ],
+          "catalog_revenue_model": "Per-exchange fee",
+          "catalog_price_range": "$299/mo",
+          "earnings_status": "no_revenue_or_customer_result_guaranteed"
+        },
+        "operating_workflow": [
+          "capture_owner_goal_and_offer",
+          "define_ideal_customer_profile",
+          "select_owner_authorized_sources",
+          "confirm_source_terms_and_collection_scope",
+          "research_and_deduplicate_candidates",
+          "qualify_need_fit_timing_and_permission",
+          "draft_one_relevant_message",
+          "request_exact_owner_approval",
+          "dispatch_through_configured_adapter_only",
+          "wait_for_required_follow_up_interval",
+          "stop_on_reply_opt_out_bounce_or_complaint",
+          "report_outcomes_without_claiming_guaranteed_revenue"
+        ],
+        "lead_system": {
+          "system_id": "lead-system-exchange-1031",
+          "engine": "server/governed-leads.ts",
+          "status": "sandbox_ready_external_adapters_required",
+          "ideal_customer_profile": {
+            "segments": [
+              "RE investors",
+              "tax advisors"
+            ],
+            "need_signals": [
+              "Needs help with Replacement property matching",
+              "Needs help with 45-day identification tracker",
+              "Needs help with Boot calculation engine",
+              "Needs help with QI coordination tools",
+              "Needs help with Tax savings projection"
+            ],
+            "exclusion_rules": [
+              "no minors",
+              "no protected or sensitive trait targeting",
+              "no deceptive identity or impersonation",
+              "no lead without traceable source evidence"
+            ]
+          },
+          "discovery": {
+            "query_templates": [
+              "RE investors, tax advisors requesting Replacement property matching",
+              "organizations seeking tax support",
+              "inbound requests matching 1031 Exchange Planner AI",
+              "existing customers who opted in to Replacement property matching updates"
+            ],
+            "authorized_source_types": [
+              "owner supplied records",
+              "consent based inbound requests",
+              "existing customer records with documented relationship",
+              "public business directories whose terms permit research",
+              "owner authorized provider APIs"
+            ],
+            "forbidden_collection": [
+              "private accounts or access-controlled pages",
+              "terms bypassing scraping",
+              "purchased, stolen, or unverifiable contact lists",
+              "raw credentials or secret tokens",
+              "sensitive personal data"
+            ]
+          },
+          "qualification": {
+            "required_fields": [
+              "source reference",
+              "organization or customer need",
+              "fit to the bot specialization",
+              "contact permission basis and channel scope",
+              "qualification evidence"
+            ],
+            "score_dimensions": {
+              "demonstrated_need": 30,
+              "capability_fit": 25,
+              "decision_readiness": 15,
+              "voluntarily_supplied_timing": 10,
+              "documented_contact_permission": 20
+            },
+            "minimum_score_for_owner_review": 65,
+            "permission_is_mandatory_even_above_threshold": true
+          },
+          "outreach": {
+            "supported_channels": [
+              "email",
+              "sms",
+              "voice_call",
+              "social_dm"
+            ],
+            "recipient_channel_permission_required": true,
+            "raw_contact_details_in_browser_forbidden": true,
+            "exact_owner_approval_per_message": true,
+            "maximum_daily_sends": 20,
+            "adapter_status": "configuration_required_for_live_dispatch"
+          },
+          "follow_up": {
+            "maximum_follow_ups": 2,
+            "minimum_interval_hours": 48,
+            "approval_required_for_each_follow_up": true,
+            "stop_conditions": [
+              "reply",
+              "opt out",
+              "bounce",
+              "complaint",
+              "permission expiry",
+              "owner stop",
+              "sequence complete"
+            ],
+            "suppression_ledger_required": true
+          },
+          "owner_controls": {
+            "default_mode": "research_and_draft_only",
+            "pause_and_kill_switch_required": true,
+            "one_action_approval_expiry_hours": 24,
+            "quiet_hours_supported": true,
+            "export_and_delete_supported": true
+          },
+          "metrics": [
+            "candidates researched",
+            "source evidence coverage",
+            "qualified leads",
+            "recipient permission coverage",
+            "owner approval rate",
+            "reply rate",
+            "positive reply rate",
+            "opt-out rate",
+            "bounce rate",
+            "complaint rate",
+            "conversion evidence"
+          ]
+        },
+        "readiness": {
+          "local_research_plan": "ready",
+          "qualification_and_drafts": "ready",
+          "exact_action_approval_packet": "ready",
+          "live_contact_discovery": "provider_and_terms_configuration_required",
+          "live_message_dispatch": "verified_adapter_recipient_permission_and_owner_approval_required",
+          "independent_production_business": false
+        }
+      },
       "capabilities": [
         {
           "name": "Replacement property matching",
@@ -3272,6 +5070,12 @@
           "name": "Install and multi-platform distribution planner",
           "status": "web_ready_native_review_required",
           "evidence": "config/generated/buddy_distribution_catalog.json"
+        },
+        {
+          "id": "buddy_governed_lead_system",
+          "name": "Permission-gated lead discovery and follow-up system",
+          "status": "sandbox_ready_external_adapters_required",
+          "evidence": "server/governed-leads.ts"
         },
         {
           "id": "buddy_connection_broker",
@@ -3510,6 +5314,164 @@
           "Published pricing and revenue models are catalog plans, not evidence of sales or earnings."
         ]
       },
+      "business_system": {
+        "business_id": "business-construction-budget",
+        "operating_model": "owner_governed_service_business",
+        "specialization": {
+          "division": "DreamRealEstate",
+          "category": "construction",
+          "mission": "AI-powered construction budget management and cost variance tracking.",
+          "ideal_customer_segments": [
+            "RE developers",
+            "contractors"
+          ],
+          "core_offer": "Construction Budget Controller: AI-powered construction budget management and cost variance tracking.",
+          "promised_outputs": [
+            "Budget vs. actual tracking",
+            "Change order impact analysis",
+            "Vendor bid comparison",
+            "Draw schedule management",
+            "Cost overrun prediction"
+          ],
+          "catalog_revenue_model": "Per-project fee",
+          "catalog_price_range": "$299/mo",
+          "earnings_status": "no_revenue_or_customer_result_guaranteed"
+        },
+        "operating_workflow": [
+          "capture_owner_goal_and_offer",
+          "define_ideal_customer_profile",
+          "select_owner_authorized_sources",
+          "confirm_source_terms_and_collection_scope",
+          "research_and_deduplicate_candidates",
+          "qualify_need_fit_timing_and_permission",
+          "draft_one_relevant_message",
+          "request_exact_owner_approval",
+          "dispatch_through_configured_adapter_only",
+          "wait_for_required_follow_up_interval",
+          "stop_on_reply_opt_out_bounce_or_complaint",
+          "report_outcomes_without_claiming_guaranteed_revenue"
+        ],
+        "lead_system": {
+          "system_id": "lead-system-construction-budget",
+          "engine": "server/governed-leads.ts",
+          "status": "sandbox_ready_external_adapters_required",
+          "ideal_customer_profile": {
+            "segments": [
+              "RE developers",
+              "contractors"
+            ],
+            "need_signals": [
+              "Needs help with Budget vs. actual tracking",
+              "Needs help with Change order impact analysis",
+              "Needs help with Vendor bid comparison",
+              "Needs help with Draw schedule management",
+              "Needs help with Cost overrun prediction"
+            ],
+            "exclusion_rules": [
+              "no minors",
+              "no protected or sensitive trait targeting",
+              "no deceptive identity or impersonation",
+              "no lead without traceable source evidence"
+            ]
+          },
+          "discovery": {
+            "query_templates": [
+              "RE developers, contractors requesting Budget vs. actual tracking",
+              "organizations seeking construction support",
+              "inbound requests matching Construction Budget Controller",
+              "existing customers who opted in to Budget vs. actual tracking updates"
+            ],
+            "authorized_source_types": [
+              "owner supplied records",
+              "consent based inbound requests",
+              "existing customer records with documented relationship",
+              "public business directories whose terms permit research",
+              "owner authorized provider APIs"
+            ],
+            "forbidden_collection": [
+              "private accounts or access-controlled pages",
+              "terms bypassing scraping",
+              "purchased, stolen, or unverifiable contact lists",
+              "raw credentials or secret tokens",
+              "sensitive personal data"
+            ]
+          },
+          "qualification": {
+            "required_fields": [
+              "source reference",
+              "organization or customer need",
+              "fit to the bot specialization",
+              "contact permission basis and channel scope",
+              "qualification evidence"
+            ],
+            "score_dimensions": {
+              "demonstrated_need": 30,
+              "capability_fit": 25,
+              "decision_readiness": 15,
+              "voluntarily_supplied_timing": 10,
+              "documented_contact_permission": 20
+            },
+            "minimum_score_for_owner_review": 65,
+            "permission_is_mandatory_even_above_threshold": true
+          },
+          "outreach": {
+            "supported_channels": [
+              "email",
+              "sms",
+              "voice_call",
+              "social_dm"
+            ],
+            "recipient_channel_permission_required": true,
+            "raw_contact_details_in_browser_forbidden": true,
+            "exact_owner_approval_per_message": true,
+            "maximum_daily_sends": 20,
+            "adapter_status": "configuration_required_for_live_dispatch"
+          },
+          "follow_up": {
+            "maximum_follow_ups": 2,
+            "minimum_interval_hours": 48,
+            "approval_required_for_each_follow_up": true,
+            "stop_conditions": [
+              "reply",
+              "opt out",
+              "bounce",
+              "complaint",
+              "permission expiry",
+              "owner stop",
+              "sequence complete"
+            ],
+            "suppression_ledger_required": true
+          },
+          "owner_controls": {
+            "default_mode": "research_and_draft_only",
+            "pause_and_kill_switch_required": true,
+            "one_action_approval_expiry_hours": 24,
+            "quiet_hours_supported": true,
+            "export_and_delete_supported": true
+          },
+          "metrics": [
+            "candidates researched",
+            "source evidence coverage",
+            "qualified leads",
+            "recipient permission coverage",
+            "owner approval rate",
+            "reply rate",
+            "positive reply rate",
+            "opt-out rate",
+            "bounce rate",
+            "complaint rate",
+            "conversion evidence"
+          ]
+        },
+        "readiness": {
+          "local_research_plan": "ready",
+          "qualification_and_drafts": "ready",
+          "exact_action_approval_packet": "ready",
+          "live_contact_discovery": "provider_and_terms_configuration_required",
+          "live_message_dispatch": "verified_adapter_recipient_permission_and_owner_approval_required",
+          "independent_production_business": false
+        }
+      },
       "capabilities": [
         {
           "name": "Budget vs. actual tracking",
@@ -3602,6 +5564,12 @@
           "name": "Install and multi-platform distribution planner",
           "status": "web_ready_native_review_required",
           "evidence": "config/generated/buddy_distribution_catalog.json"
+        },
+        {
+          "id": "buddy_governed_lead_system",
+          "name": "Permission-gated lead discovery and follow-up system",
+          "status": "sandbox_ready_external_adapters_required",
+          "evidence": "server/governed-leads.ts"
         },
         {
           "id": "buddy_connection_broker",
@@ -3812,6 +5780,164 @@
           "Published pricing and revenue models are catalog plans, not evidence of sales or earnings."
         ]
       },
+      "business_system": {
+        "business_id": "business-urban-heatmap",
+        "operating_model": "owner_governed_service_business",
+        "specialization": {
+          "division": "DreamRealEstate",
+          "category": "analytics",
+          "mission": "Generates predictive urban growth heatmaps for investment targeting.",
+          "ideal_customer_segments": [
+            "RE developers",
+            "investors"
+          ],
+          "core_offer": "Urban Growth Heatmap Bot: Generates predictive urban growth heatmaps for investment targeting.",
+          "promised_outputs": [
+            "Population growth mapping",
+            "Infrastructure development tracking",
+            "Permit activity heatmaps",
+            "School rating overlays",
+            "Crime trend analysis"
+          ],
+          "catalog_revenue_model": "SaaS subscription",
+          "catalog_price_range": "$199/mo",
+          "earnings_status": "no_revenue_or_customer_result_guaranteed"
+        },
+        "operating_workflow": [
+          "capture_owner_goal_and_offer",
+          "define_ideal_customer_profile",
+          "select_owner_authorized_sources",
+          "confirm_source_terms_and_collection_scope",
+          "research_and_deduplicate_candidates",
+          "qualify_need_fit_timing_and_permission",
+          "draft_one_relevant_message",
+          "request_exact_owner_approval",
+          "dispatch_through_configured_adapter_only",
+          "wait_for_required_follow_up_interval",
+          "stop_on_reply_opt_out_bounce_or_complaint",
+          "report_outcomes_without_claiming_guaranteed_revenue"
+        ],
+        "lead_system": {
+          "system_id": "lead-system-urban-heatmap",
+          "engine": "server/governed-leads.ts",
+          "status": "sandbox_ready_external_adapters_required",
+          "ideal_customer_profile": {
+            "segments": [
+              "RE developers",
+              "investors"
+            ],
+            "need_signals": [
+              "Needs help with Population growth mapping",
+              "Needs help with Infrastructure development tracking",
+              "Needs help with Permit activity heatmaps",
+              "Needs help with School rating overlays",
+              "Needs help with Crime trend analysis"
+            ],
+            "exclusion_rules": [
+              "no minors",
+              "no protected or sensitive trait targeting",
+              "no deceptive identity or impersonation",
+              "no lead without traceable source evidence"
+            ]
+          },
+          "discovery": {
+            "query_templates": [
+              "RE developers, investors requesting Population growth mapping",
+              "organizations seeking analytics support",
+              "inbound requests matching Urban Growth Heatmap Bot",
+              "existing customers who opted in to Population growth mapping updates"
+            ],
+            "authorized_source_types": [
+              "owner supplied records",
+              "consent based inbound requests",
+              "existing customer records with documented relationship",
+              "public business directories whose terms permit research",
+              "owner authorized provider APIs"
+            ],
+            "forbidden_collection": [
+              "private accounts or access-controlled pages",
+              "terms bypassing scraping",
+              "purchased, stolen, or unverifiable contact lists",
+              "raw credentials or secret tokens",
+              "sensitive personal data"
+            ]
+          },
+          "qualification": {
+            "required_fields": [
+              "source reference",
+              "organization or customer need",
+              "fit to the bot specialization",
+              "contact permission basis and channel scope",
+              "qualification evidence"
+            ],
+            "score_dimensions": {
+              "demonstrated_need": 30,
+              "capability_fit": 25,
+              "decision_readiness": 15,
+              "voluntarily_supplied_timing": 10,
+              "documented_contact_permission": 20
+            },
+            "minimum_score_for_owner_review": 65,
+            "permission_is_mandatory_even_above_threshold": true
+          },
+          "outreach": {
+            "supported_channels": [
+              "email",
+              "sms",
+              "voice_call",
+              "social_dm"
+            ],
+            "recipient_channel_permission_required": true,
+            "raw_contact_details_in_browser_forbidden": true,
+            "exact_owner_approval_per_message": true,
+            "maximum_daily_sends": 20,
+            "adapter_status": "configuration_required_for_live_dispatch"
+          },
+          "follow_up": {
+            "maximum_follow_ups": 2,
+            "minimum_interval_hours": 48,
+            "approval_required_for_each_follow_up": true,
+            "stop_conditions": [
+              "reply",
+              "opt out",
+              "bounce",
+              "complaint",
+              "permission expiry",
+              "owner stop",
+              "sequence complete"
+            ],
+            "suppression_ledger_required": true
+          },
+          "owner_controls": {
+            "default_mode": "research_and_draft_only",
+            "pause_and_kill_switch_required": true,
+            "one_action_approval_expiry_hours": 24,
+            "quiet_hours_supported": true,
+            "export_and_delete_supported": true
+          },
+          "metrics": [
+            "candidates researched",
+            "source evidence coverage",
+            "qualified leads",
+            "recipient permission coverage",
+            "owner approval rate",
+            "reply rate",
+            "positive reply rate",
+            "opt-out rate",
+            "bounce rate",
+            "complaint rate",
+            "conversion evidence"
+          ]
+        },
+        "readiness": {
+          "local_research_plan": "ready",
+          "qualification_and_drafts": "ready",
+          "exact_action_approval_packet": "ready",
+          "live_contact_discovery": "provider_and_terms_configuration_required",
+          "live_message_dispatch": "verified_adapter_recipient_permission_and_owner_approval_required",
+          "independent_production_business": false
+        }
+      },
       "capabilities": [
         {
           "name": "Population growth mapping",
@@ -3904,6 +6030,12 @@
           "name": "Install and multi-platform distribution planner",
           "status": "web_ready_native_review_required",
           "evidence": "config/generated/buddy_distribution_catalog.json"
+        },
+        {
+          "id": "buddy_governed_lead_system",
+          "name": "Permission-gated lead discovery and follow-up system",
+          "status": "sandbox_ready_external_adapters_required",
+          "evidence": "server/governed-leads.ts"
         },
         {
           "id": "buddy_connection_broker",
@@ -4148,6 +6280,164 @@
           "Published pricing and revenue models are catalog plans, not evidence of sales or earnings."
         ]
       },
+      "business_system": {
+        "business_id": "business-lease-optimizer",
+        "operating_model": "owner_governed_service_business",
+        "specialization": {
+          "division": "DreamRealEstate",
+          "category": "lease-analysis",
+          "mission": "Optimizes lease pricing using real-time market data and demand signals.",
+          "ideal_customer_segments": [
+            "Property managers",
+            "landlords"
+          ],
+          "core_offer": "Lease Price Optimizer: Optimizes lease pricing using real-time market data and demand signals.",
+          "promised_outputs": [
+            "Dynamic rent pricing",
+            "Concession optimization",
+            "Lease renewal forecasting",
+            "Comparable rent analysis",
+            "Revenue maximization engine"
+          ],
+          "catalog_revenue_model": "SaaS subscription",
+          "catalog_price_range": "$199/mo",
+          "earnings_status": "no_revenue_or_customer_result_guaranteed"
+        },
+        "operating_workflow": [
+          "capture_owner_goal_and_offer",
+          "define_ideal_customer_profile",
+          "select_owner_authorized_sources",
+          "confirm_source_terms_and_collection_scope",
+          "research_and_deduplicate_candidates",
+          "qualify_need_fit_timing_and_permission",
+          "draft_one_relevant_message",
+          "request_exact_owner_approval",
+          "dispatch_through_configured_adapter_only",
+          "wait_for_required_follow_up_interval",
+          "stop_on_reply_opt_out_bounce_or_complaint",
+          "report_outcomes_without_claiming_guaranteed_revenue"
+        ],
+        "lead_system": {
+          "system_id": "lead-system-lease-optimizer",
+          "engine": "server/governed-leads.ts",
+          "status": "sandbox_ready_external_adapters_required",
+          "ideal_customer_profile": {
+            "segments": [
+              "Property managers",
+              "landlords"
+            ],
+            "need_signals": [
+              "Needs help with Dynamic rent pricing",
+              "Needs help with Concession optimization",
+              "Needs help with Lease renewal forecasting",
+              "Needs help with Comparable rent analysis",
+              "Needs help with Revenue maximization engine"
+            ],
+            "exclusion_rules": [
+              "no minors",
+              "no protected or sensitive trait targeting",
+              "no deceptive identity or impersonation",
+              "no lead without traceable source evidence"
+            ]
+          },
+          "discovery": {
+            "query_templates": [
+              "Property managers, landlords requesting Dynamic rent pricing",
+              "organizations seeking lease-analysis support",
+              "inbound requests matching Lease Price Optimizer",
+              "existing customers who opted in to Dynamic rent pricing updates"
+            ],
+            "authorized_source_types": [
+              "owner supplied records",
+              "consent based inbound requests",
+              "existing customer records with documented relationship",
+              "public business directories whose terms permit research",
+              "owner authorized provider APIs"
+            ],
+            "forbidden_collection": [
+              "private accounts or access-controlled pages",
+              "terms bypassing scraping",
+              "purchased, stolen, or unverifiable contact lists",
+              "raw credentials or secret tokens",
+              "sensitive personal data"
+            ]
+          },
+          "qualification": {
+            "required_fields": [
+              "source reference",
+              "organization or customer need",
+              "fit to the bot specialization",
+              "contact permission basis and channel scope",
+              "qualification evidence"
+            ],
+            "score_dimensions": {
+              "demonstrated_need": 30,
+              "capability_fit": 25,
+              "decision_readiness": 15,
+              "voluntarily_supplied_timing": 10,
+              "documented_contact_permission": 20
+            },
+            "minimum_score_for_owner_review": 65,
+            "permission_is_mandatory_even_above_threshold": true
+          },
+          "outreach": {
+            "supported_channels": [
+              "email",
+              "sms",
+              "voice_call",
+              "social_dm"
+            ],
+            "recipient_channel_permission_required": true,
+            "raw_contact_details_in_browser_forbidden": true,
+            "exact_owner_approval_per_message": true,
+            "maximum_daily_sends": 20,
+            "adapter_status": "configuration_required_for_live_dispatch"
+          },
+          "follow_up": {
+            "maximum_follow_ups": 2,
+            "minimum_interval_hours": 48,
+            "approval_required_for_each_follow_up": true,
+            "stop_conditions": [
+              "reply",
+              "opt out",
+              "bounce",
+              "complaint",
+              "permission expiry",
+              "owner stop",
+              "sequence complete"
+            ],
+            "suppression_ledger_required": true
+          },
+          "owner_controls": {
+            "default_mode": "research_and_draft_only",
+            "pause_and_kill_switch_required": true,
+            "one_action_approval_expiry_hours": 24,
+            "quiet_hours_supported": true,
+            "export_and_delete_supported": true
+          },
+          "metrics": [
+            "candidates researched",
+            "source evidence coverage",
+            "qualified leads",
+            "recipient permission coverage",
+            "owner approval rate",
+            "reply rate",
+            "positive reply rate",
+            "opt-out rate",
+            "bounce rate",
+            "complaint rate",
+            "conversion evidence"
+          ]
+        },
+        "readiness": {
+          "local_research_plan": "ready",
+          "qualification_and_drafts": "ready",
+          "exact_action_approval_packet": "ready",
+          "live_contact_discovery": "provider_and_terms_configuration_required",
+          "live_message_dispatch": "verified_adapter_recipient_permission_and_owner_approval_required",
+          "independent_production_business": false
+        }
+      },
       "capabilities": [
         {
           "name": "Dynamic rent pricing",
@@ -4240,6 +6530,12 @@
           "name": "Install and multi-platform distribution planner",
           "status": "web_ready_native_review_required",
           "evidence": "config/generated/buddy_distribution_catalog.json"
+        },
+        {
+          "id": "buddy_governed_lead_system",
+          "name": "Permission-gated lead discovery and follow-up system",
+          "status": "sandbox_ready_external_adapters_required",
+          "evidence": "server/governed-leads.ts"
         },
         {
           "id": "buddy_connection_broker",
@@ -4478,6 +6774,166 @@
           "Published pricing and revenue models are catalog plans, not evidence of sales or earnings."
         ]
       },
+      "business_system": {
+        "business_id": "business-lease-analyzer",
+        "operating_model": "owner_governed_service_business",
+        "specialization": {
+          "division": "DreamRealEstate",
+          "category": "lease-analysis",
+          "mission": "Abstracts and analyzes commercial leases for hidden costs and optimization.",
+          "ideal_customer_segments": [
+            "Tenants",
+            "landlords",
+            "brokers"
+          ],
+          "core_offer": "Commercial Lease Analyzer AI: Abstracts and analyzes commercial leases for hidden costs and optimization.",
+          "promised_outputs": [
+            "Lease abstraction NLP",
+            "Expense passthrough analysis",
+            "Rent escalation modeling",
+            "Renewal option tracking",
+            "Lease vs. buy comparison"
+          ],
+          "catalog_revenue_model": "Per-analysis fee",
+          "catalog_price_range": "$199/mo",
+          "earnings_status": "no_revenue_or_customer_result_guaranteed"
+        },
+        "operating_workflow": [
+          "capture_owner_goal_and_offer",
+          "define_ideal_customer_profile",
+          "select_owner_authorized_sources",
+          "confirm_source_terms_and_collection_scope",
+          "research_and_deduplicate_candidates",
+          "qualify_need_fit_timing_and_permission",
+          "draft_one_relevant_message",
+          "request_exact_owner_approval",
+          "dispatch_through_configured_adapter_only",
+          "wait_for_required_follow_up_interval",
+          "stop_on_reply_opt_out_bounce_or_complaint",
+          "report_outcomes_without_claiming_guaranteed_revenue"
+        ],
+        "lead_system": {
+          "system_id": "lead-system-lease-analyzer",
+          "engine": "server/governed-leads.ts",
+          "status": "sandbox_ready_external_adapters_required",
+          "ideal_customer_profile": {
+            "segments": [
+              "Tenants",
+              "landlords",
+              "brokers"
+            ],
+            "need_signals": [
+              "Needs help with Lease abstraction NLP",
+              "Needs help with Expense passthrough analysis",
+              "Needs help with Rent escalation modeling",
+              "Needs help with Renewal option tracking",
+              "Needs help with Lease vs. buy comparison"
+            ],
+            "exclusion_rules": [
+              "no minors",
+              "no protected or sensitive trait targeting",
+              "no deceptive identity or impersonation",
+              "no lead without traceable source evidence"
+            ]
+          },
+          "discovery": {
+            "query_templates": [
+              "Tenants, landlords, brokers requesting Lease abstraction NLP",
+              "organizations seeking lease-analysis support",
+              "inbound requests matching Commercial Lease Analyzer AI",
+              "existing customers who opted in to Lease abstraction NLP updates"
+            ],
+            "authorized_source_types": [
+              "owner supplied records",
+              "consent based inbound requests",
+              "existing customer records with documented relationship",
+              "public business directories whose terms permit research",
+              "owner authorized provider APIs"
+            ],
+            "forbidden_collection": [
+              "private accounts or access-controlled pages",
+              "terms bypassing scraping",
+              "purchased, stolen, or unverifiable contact lists",
+              "raw credentials or secret tokens",
+              "sensitive personal data"
+            ]
+          },
+          "qualification": {
+            "required_fields": [
+              "source reference",
+              "organization or customer need",
+              "fit to the bot specialization",
+              "contact permission basis and channel scope",
+              "qualification evidence"
+            ],
+            "score_dimensions": {
+              "demonstrated_need": 30,
+              "capability_fit": 25,
+              "decision_readiness": 15,
+              "voluntarily_supplied_timing": 10,
+              "documented_contact_permission": 20
+            },
+            "minimum_score_for_owner_review": 65,
+            "permission_is_mandatory_even_above_threshold": true
+          },
+          "outreach": {
+            "supported_channels": [
+              "email",
+              "sms",
+              "voice_call",
+              "social_dm"
+            ],
+            "recipient_channel_permission_required": true,
+            "raw_contact_details_in_browser_forbidden": true,
+            "exact_owner_approval_per_message": true,
+            "maximum_daily_sends": 20,
+            "adapter_status": "configuration_required_for_live_dispatch"
+          },
+          "follow_up": {
+            "maximum_follow_ups": 2,
+            "minimum_interval_hours": 48,
+            "approval_required_for_each_follow_up": true,
+            "stop_conditions": [
+              "reply",
+              "opt out",
+              "bounce",
+              "complaint",
+              "permission expiry",
+              "owner stop",
+              "sequence complete"
+            ],
+            "suppression_ledger_required": true
+          },
+          "owner_controls": {
+            "default_mode": "research_and_draft_only",
+            "pause_and_kill_switch_required": true,
+            "one_action_approval_expiry_hours": 24,
+            "quiet_hours_supported": true,
+            "export_and_delete_supported": true
+          },
+          "metrics": [
+            "candidates researched",
+            "source evidence coverage",
+            "qualified leads",
+            "recipient permission coverage",
+            "owner approval rate",
+            "reply rate",
+            "positive reply rate",
+            "opt-out rate",
+            "bounce rate",
+            "complaint rate",
+            "conversion evidence"
+          ]
+        },
+        "readiness": {
+          "local_research_plan": "ready",
+          "qualification_and_drafts": "ready",
+          "exact_action_approval_packet": "ready",
+          "live_contact_discovery": "provider_and_terms_configuration_required",
+          "live_message_dispatch": "verified_adapter_recipient_permission_and_owner_approval_required",
+          "independent_production_business": false
+        }
+      },
       "capabilities": [
         {
           "name": "Lease abstraction NLP",
@@ -4570,6 +7026,12 @@
           "name": "Install and multi-platform distribution planner",
           "status": "web_ready_native_review_required",
           "evidence": "config/generated/buddy_distribution_catalog.json"
+        },
+        {
+          "id": "buddy_governed_lead_system",
+          "name": "Permission-gated lead discovery and follow-up system",
+          "status": "sandbox_ready_external_adapters_required",
+          "evidence": "server/governed-leads.ts"
         },
         {
           "id": "buddy_connection_broker",
@@ -4780,6 +7242,164 @@
           "Published pricing and revenue models are catalog plans, not evidence of sales or earnings."
         ]
       },
+      "business_system": {
+        "business_id": "business-property-mgmt",
+        "operating_model": "owner_governed_service_business",
+        "specialization": {
+          "division": "DreamRealEstate",
+          "category": "property-management",
+          "mission": "End-to-end automated property management for residential portfolios.",
+          "ideal_customer_segments": [
+            "Property managers",
+            "landlords"
+          ],
+          "core_offer": "Automated Property Management Bot: End-to-end automated property management for residential portfolios.",
+          "promised_outputs": [
+            "Tenant screening automation",
+            "Rent collection engine",
+            "Maintenance request routing",
+            "Lease document generation",
+            "Vacancy marketing"
+          ],
+          "catalog_revenue_model": "SaaS subscription",
+          "catalog_price_range": "$199/mo",
+          "earnings_status": "no_revenue_or_customer_result_guaranteed"
+        },
+        "operating_workflow": [
+          "capture_owner_goal_and_offer",
+          "define_ideal_customer_profile",
+          "select_owner_authorized_sources",
+          "confirm_source_terms_and_collection_scope",
+          "research_and_deduplicate_candidates",
+          "qualify_need_fit_timing_and_permission",
+          "draft_one_relevant_message",
+          "request_exact_owner_approval",
+          "dispatch_through_configured_adapter_only",
+          "wait_for_required_follow_up_interval",
+          "stop_on_reply_opt_out_bounce_or_complaint",
+          "report_outcomes_without_claiming_guaranteed_revenue"
+        ],
+        "lead_system": {
+          "system_id": "lead-system-property-mgmt",
+          "engine": "server/governed-leads.ts",
+          "status": "sandbox_ready_external_adapters_required",
+          "ideal_customer_profile": {
+            "segments": [
+              "Property managers",
+              "landlords"
+            ],
+            "need_signals": [
+              "Needs help with Tenant screening automation",
+              "Needs help with Rent collection engine",
+              "Needs help with Maintenance request routing",
+              "Needs help with Lease document generation",
+              "Needs help with Vacancy marketing"
+            ],
+            "exclusion_rules": [
+              "no minors",
+              "no protected or sensitive trait targeting",
+              "no deceptive identity or impersonation",
+              "no lead without traceable source evidence"
+            ]
+          },
+          "discovery": {
+            "query_templates": [
+              "Property managers, landlords requesting Tenant screening automation",
+              "organizations seeking property-management support",
+              "inbound requests matching Automated Property Management Bot",
+              "existing customers who opted in to Tenant screening automation updates"
+            ],
+            "authorized_source_types": [
+              "owner supplied records",
+              "consent based inbound requests",
+              "existing customer records with documented relationship",
+              "public business directories whose terms permit research",
+              "owner authorized provider APIs"
+            ],
+            "forbidden_collection": [
+              "private accounts or access-controlled pages",
+              "terms bypassing scraping",
+              "purchased, stolen, or unverifiable contact lists",
+              "raw credentials or secret tokens",
+              "sensitive personal data"
+            ]
+          },
+          "qualification": {
+            "required_fields": [
+              "source reference",
+              "organization or customer need",
+              "fit to the bot specialization",
+              "contact permission basis and channel scope",
+              "qualification evidence"
+            ],
+            "score_dimensions": {
+              "demonstrated_need": 30,
+              "capability_fit": 25,
+              "decision_readiness": 15,
+              "voluntarily_supplied_timing": 10,
+              "documented_contact_permission": 20
+            },
+            "minimum_score_for_owner_review": 65,
+            "permission_is_mandatory_even_above_threshold": true
+          },
+          "outreach": {
+            "supported_channels": [
+              "email",
+              "sms",
+              "voice_call",
+              "social_dm"
+            ],
+            "recipient_channel_permission_required": true,
+            "raw_contact_details_in_browser_forbidden": true,
+            "exact_owner_approval_per_message": true,
+            "maximum_daily_sends": 20,
+            "adapter_status": "configuration_required_for_live_dispatch"
+          },
+          "follow_up": {
+            "maximum_follow_ups": 2,
+            "minimum_interval_hours": 48,
+            "approval_required_for_each_follow_up": true,
+            "stop_conditions": [
+              "reply",
+              "opt out",
+              "bounce",
+              "complaint",
+              "permission expiry",
+              "owner stop",
+              "sequence complete"
+            ],
+            "suppression_ledger_required": true
+          },
+          "owner_controls": {
+            "default_mode": "research_and_draft_only",
+            "pause_and_kill_switch_required": true,
+            "one_action_approval_expiry_hours": 24,
+            "quiet_hours_supported": true,
+            "export_and_delete_supported": true
+          },
+          "metrics": [
+            "candidates researched",
+            "source evidence coverage",
+            "qualified leads",
+            "recipient permission coverage",
+            "owner approval rate",
+            "reply rate",
+            "positive reply rate",
+            "opt-out rate",
+            "bounce rate",
+            "complaint rate",
+            "conversion evidence"
+          ]
+        },
+        "readiness": {
+          "local_research_plan": "ready",
+          "qualification_and_drafts": "ready",
+          "exact_action_approval_packet": "ready",
+          "live_contact_discovery": "provider_and_terms_configuration_required",
+          "live_message_dispatch": "verified_adapter_recipient_permission_and_owner_approval_required",
+          "independent_production_business": false
+        }
+      },
       "capabilities": [
         {
           "name": "Tenant screening automation",
@@ -4872,6 +7492,12 @@
           "name": "Install and multi-platform distribution planner",
           "status": "web_ready_native_review_required",
           "evidence": "config/generated/buddy_distribution_catalog.json"
+        },
+        {
+          "id": "buddy_governed_lead_system",
+          "name": "Permission-gated lead discovery and follow-up system",
+          "status": "sandbox_ready_external_adapters_required",
+          "evidence": "server/governed-leads.ts"
         },
         {
           "id": "buddy_connection_broker",
@@ -5110,6 +7736,164 @@
           "Published pricing and revenue models are catalog plans, not evidence of sales or earnings."
         ]
       },
+      "business_system": {
+        "business_id": "business-predictive-maintenance",
+        "operating_model": "owner_governed_service_business",
+        "specialization": {
+          "division": "DreamRealEstate",
+          "category": "predictive-maintenance",
+          "mission": "Predicts building equipment failures before they occur using IoT data.",
+          "ideal_customer_segments": [
+            "Building managers",
+            "maintenance teams"
+          ],
+          "core_offer": "Predictive Maintenance AI: Predicts building equipment failures before they occur using IoT data.",
+          "promised_outputs": [
+            "Equipment failure prediction",
+            "Maintenance schedule optimization",
+            "Parts inventory management",
+            "Vendor auto-dispatch",
+            "Cost avoidance tracking"
+          ],
+          "catalog_revenue_model": "SaaS subscription",
+          "catalog_price_range": "$199/mo",
+          "earnings_status": "no_revenue_or_customer_result_guaranteed"
+        },
+        "operating_workflow": [
+          "capture_owner_goal_and_offer",
+          "define_ideal_customer_profile",
+          "select_owner_authorized_sources",
+          "confirm_source_terms_and_collection_scope",
+          "research_and_deduplicate_candidates",
+          "qualify_need_fit_timing_and_permission",
+          "draft_one_relevant_message",
+          "request_exact_owner_approval",
+          "dispatch_through_configured_adapter_only",
+          "wait_for_required_follow_up_interval",
+          "stop_on_reply_opt_out_bounce_or_complaint",
+          "report_outcomes_without_claiming_guaranteed_revenue"
+        ],
+        "lead_system": {
+          "system_id": "lead-system-predictive-maintenance",
+          "engine": "server/governed-leads.ts",
+          "status": "sandbox_ready_external_adapters_required",
+          "ideal_customer_profile": {
+            "segments": [
+              "Building managers",
+              "maintenance teams"
+            ],
+            "need_signals": [
+              "Needs help with Equipment failure prediction",
+              "Needs help with Maintenance schedule optimization",
+              "Needs help with Parts inventory management",
+              "Needs help with Vendor auto-dispatch",
+              "Needs help with Cost avoidance tracking"
+            ],
+            "exclusion_rules": [
+              "no minors",
+              "no protected or sensitive trait targeting",
+              "no deceptive identity or impersonation",
+              "no lead without traceable source evidence"
+            ]
+          },
+          "discovery": {
+            "query_templates": [
+              "Building managers, maintenance teams requesting Equipment failure prediction",
+              "organizations seeking predictive-maintenance support",
+              "inbound requests matching Predictive Maintenance AI",
+              "existing customers who opted in to Equipment failure prediction updates"
+            ],
+            "authorized_source_types": [
+              "owner supplied records",
+              "consent based inbound requests",
+              "existing customer records with documented relationship",
+              "public business directories whose terms permit research",
+              "owner authorized provider APIs"
+            ],
+            "forbidden_collection": [
+              "private accounts or access-controlled pages",
+              "terms bypassing scraping",
+              "purchased, stolen, or unverifiable contact lists",
+              "raw credentials or secret tokens",
+              "sensitive personal data"
+            ]
+          },
+          "qualification": {
+            "required_fields": [
+              "source reference",
+              "organization or customer need",
+              "fit to the bot specialization",
+              "contact permission basis and channel scope",
+              "qualification evidence"
+            ],
+            "score_dimensions": {
+              "demonstrated_need": 30,
+              "capability_fit": 25,
+              "decision_readiness": 15,
+              "voluntarily_supplied_timing": 10,
+              "documented_contact_permission": 20
+            },
+            "minimum_score_for_owner_review": 65,
+            "permission_is_mandatory_even_above_threshold": true
+          },
+          "outreach": {
+            "supported_channels": [
+              "email",
+              "sms",
+              "voice_call",
+              "social_dm"
+            ],
+            "recipient_channel_permission_required": true,
+            "raw_contact_details_in_browser_forbidden": true,
+            "exact_owner_approval_per_message": true,
+            "maximum_daily_sends": 20,
+            "adapter_status": "configuration_required_for_live_dispatch"
+          },
+          "follow_up": {
+            "maximum_follow_ups": 2,
+            "minimum_interval_hours": 48,
+            "approval_required_for_each_follow_up": true,
+            "stop_conditions": [
+              "reply",
+              "opt out",
+              "bounce",
+              "complaint",
+              "permission expiry",
+              "owner stop",
+              "sequence complete"
+            ],
+            "suppression_ledger_required": true
+          },
+          "owner_controls": {
+            "default_mode": "research_and_draft_only",
+            "pause_and_kill_switch_required": true,
+            "one_action_approval_expiry_hours": 24,
+            "quiet_hours_supported": true,
+            "export_and_delete_supported": true
+          },
+          "metrics": [
+            "candidates researched",
+            "source evidence coverage",
+            "qualified leads",
+            "recipient permission coverage",
+            "owner approval rate",
+            "reply rate",
+            "positive reply rate",
+            "opt-out rate",
+            "bounce rate",
+            "complaint rate",
+            "conversion evidence"
+          ]
+        },
+        "readiness": {
+          "local_research_plan": "ready",
+          "qualification_and_drafts": "ready",
+          "exact_action_approval_packet": "ready",
+          "live_contact_discovery": "provider_and_terms_configuration_required",
+          "live_message_dispatch": "verified_adapter_recipient_permission_and_owner_approval_required",
+          "independent_production_business": false
+        }
+      },
       "capabilities": [
         {
           "name": "Equipment failure prediction",
@@ -5202,6 +7986,12 @@
           "name": "Install and multi-platform distribution planner",
           "status": "web_ready_native_review_required",
           "evidence": "config/generated/buddy_distribution_catalog.json"
+        },
+        {
+          "id": "buddy_governed_lead_system",
+          "name": "Permission-gated lead discovery and follow-up system",
+          "status": "sandbox_ready_external_adapters_required",
+          "evidence": "server/governed-leads.ts"
         },
         {
           "id": "buddy_connection_broker",
@@ -5440,6 +8230,164 @@
           "Published pricing and revenue models are catalog plans, not evidence of sales or earnings."
         ]
       },
+      "business_system": {
+        "business_id": "business-energy-optimizer",
+        "operating_model": "owner_governed_service_business",
+        "specialization": {
+          "division": "DreamRealEstate",
+          "category": "energy-optimization",
+          "mission": "Optimizes energy consumption and costs across real estate portfolios.",
+          "ideal_customer_segments": [
+            "Portfolio managers",
+            "building operators"
+          ],
+          "core_offer": "Energy Cost Optimizer: Optimizes energy consumption and costs across real estate portfolios.",
+          "promised_outputs": [
+            "Energy usage benchmarking",
+            "Rate plan comparison",
+            "Solar ROI calculator",
+            "LEED compliance tracking",
+            "Utility bill auditing"
+          ],
+          "catalog_revenue_model": "SaaS subscription",
+          "catalog_price_range": "$199/mo",
+          "earnings_status": "no_revenue_or_customer_result_guaranteed"
+        },
+        "operating_workflow": [
+          "capture_owner_goal_and_offer",
+          "define_ideal_customer_profile",
+          "select_owner_authorized_sources",
+          "confirm_source_terms_and_collection_scope",
+          "research_and_deduplicate_candidates",
+          "qualify_need_fit_timing_and_permission",
+          "draft_one_relevant_message",
+          "request_exact_owner_approval",
+          "dispatch_through_configured_adapter_only",
+          "wait_for_required_follow_up_interval",
+          "stop_on_reply_opt_out_bounce_or_complaint",
+          "report_outcomes_without_claiming_guaranteed_revenue"
+        ],
+        "lead_system": {
+          "system_id": "lead-system-energy-optimizer",
+          "engine": "server/governed-leads.ts",
+          "status": "sandbox_ready_external_adapters_required",
+          "ideal_customer_profile": {
+            "segments": [
+              "Portfolio managers",
+              "building operators"
+            ],
+            "need_signals": [
+              "Needs help with Energy usage benchmarking",
+              "Needs help with Rate plan comparison",
+              "Needs help with Solar ROI calculator",
+              "Needs help with LEED compliance tracking",
+              "Needs help with Utility bill auditing"
+            ],
+            "exclusion_rules": [
+              "no minors",
+              "no protected or sensitive trait targeting",
+              "no deceptive identity or impersonation",
+              "no lead without traceable source evidence"
+            ]
+          },
+          "discovery": {
+            "query_templates": [
+              "Portfolio managers, building operators requesting Energy usage benchmarking",
+              "organizations seeking energy-optimization support",
+              "inbound requests matching Energy Cost Optimizer",
+              "existing customers who opted in to Energy usage benchmarking updates"
+            ],
+            "authorized_source_types": [
+              "owner supplied records",
+              "consent based inbound requests",
+              "existing customer records with documented relationship",
+              "public business directories whose terms permit research",
+              "owner authorized provider APIs"
+            ],
+            "forbidden_collection": [
+              "private accounts or access-controlled pages",
+              "terms bypassing scraping",
+              "purchased, stolen, or unverifiable contact lists",
+              "raw credentials or secret tokens",
+              "sensitive personal data"
+            ]
+          },
+          "qualification": {
+            "required_fields": [
+              "source reference",
+              "organization or customer need",
+              "fit to the bot specialization",
+              "contact permission basis and channel scope",
+              "qualification evidence"
+            ],
+            "score_dimensions": {
+              "demonstrated_need": 30,
+              "capability_fit": 25,
+              "decision_readiness": 15,
+              "voluntarily_supplied_timing": 10,
+              "documented_contact_permission": 20
+            },
+            "minimum_score_for_owner_review": 65,
+            "permission_is_mandatory_even_above_threshold": true
+          },
+          "outreach": {
+            "supported_channels": [
+              "email",
+              "sms",
+              "voice_call",
+              "social_dm"
+            ],
+            "recipient_channel_permission_required": true,
+            "raw_contact_details_in_browser_forbidden": true,
+            "exact_owner_approval_per_message": true,
+            "maximum_daily_sends": 20,
+            "adapter_status": "configuration_required_for_live_dispatch"
+          },
+          "follow_up": {
+            "maximum_follow_ups": 2,
+            "minimum_interval_hours": 48,
+            "approval_required_for_each_follow_up": true,
+            "stop_conditions": [
+              "reply",
+              "opt out",
+              "bounce",
+              "complaint",
+              "permission expiry",
+              "owner stop",
+              "sequence complete"
+            ],
+            "suppression_ledger_required": true
+          },
+          "owner_controls": {
+            "default_mode": "research_and_draft_only",
+            "pause_and_kill_switch_required": true,
+            "one_action_approval_expiry_hours": 24,
+            "quiet_hours_supported": true,
+            "export_and_delete_supported": true
+          },
+          "metrics": [
+            "candidates researched",
+            "source evidence coverage",
+            "qualified leads",
+            "recipient permission coverage",
+            "owner approval rate",
+            "reply rate",
+            "positive reply rate",
+            "opt-out rate",
+            "bounce rate",
+            "complaint rate",
+            "conversion evidence"
+          ]
+        },
+        "readiness": {
+          "local_research_plan": "ready",
+          "qualification_and_drafts": "ready",
+          "exact_action_approval_packet": "ready",
+          "live_contact_discovery": "provider_and_terms_configuration_required",
+          "live_message_dispatch": "verified_adapter_recipient_permission_and_owner_approval_required",
+          "independent_production_business": false
+        }
+      },
       "capabilities": [
         {
           "name": "Energy usage benchmarking",
@@ -5532,6 +8480,12 @@
           "name": "Install and multi-platform distribution planner",
           "status": "web_ready_native_review_required",
           "evidence": "config/generated/buddy_distribution_catalog.json"
+        },
+        {
+          "id": "buddy_governed_lead_system",
+          "name": "Permission-gated lead discovery and follow-up system",
+          "status": "sandbox_ready_external_adapters_required",
+          "evidence": "server/governed-leads.ts"
         },
         {
           "id": "buddy_connection_broker",
@@ -5742,6 +8696,164 @@
           "Published pricing and revenue models are catalog plans, not evidence of sales or earnings."
         ]
       },
+      "business_system": {
+        "business_id": "business-land-bank",
+        "operating_model": "owner_governed_service_business",
+        "specialization": {
+          "division": "DreamRealEstate",
+          "category": "land-banking",
+          "mission": "Predicts land value appreciation and optimal development timing.",
+          "ideal_customer_segments": [
+            "Land investors",
+            "developers"
+          ],
+          "core_offer": "Land Bank Growth Predictor: Predicts land value appreciation and optimal development timing.",
+          "promised_outputs": [
+            "Parcel growth scoring",
+            "Zoning change prediction",
+            "Infrastructure pipeline tracking",
+            "Highest-and-best-use analysis",
+            "Hold period optimization"
+          ],
+          "catalog_revenue_model": "SaaS subscription",
+          "catalog_price_range": "$199/mo",
+          "earnings_status": "no_revenue_or_customer_result_guaranteed"
+        },
+        "operating_workflow": [
+          "capture_owner_goal_and_offer",
+          "define_ideal_customer_profile",
+          "select_owner_authorized_sources",
+          "confirm_source_terms_and_collection_scope",
+          "research_and_deduplicate_candidates",
+          "qualify_need_fit_timing_and_permission",
+          "draft_one_relevant_message",
+          "request_exact_owner_approval",
+          "dispatch_through_configured_adapter_only",
+          "wait_for_required_follow_up_interval",
+          "stop_on_reply_opt_out_bounce_or_complaint",
+          "report_outcomes_without_claiming_guaranteed_revenue"
+        ],
+        "lead_system": {
+          "system_id": "lead-system-land-bank",
+          "engine": "server/governed-leads.ts",
+          "status": "sandbox_ready_external_adapters_required",
+          "ideal_customer_profile": {
+            "segments": [
+              "Land investors",
+              "developers"
+            ],
+            "need_signals": [
+              "Needs help with Parcel growth scoring",
+              "Needs help with Zoning change prediction",
+              "Needs help with Infrastructure pipeline tracking",
+              "Needs help with Highest-and-best-use analysis",
+              "Needs help with Hold period optimization"
+            ],
+            "exclusion_rules": [
+              "no minors",
+              "no protected or sensitive trait targeting",
+              "no deceptive identity or impersonation",
+              "no lead without traceable source evidence"
+            ]
+          },
+          "discovery": {
+            "query_templates": [
+              "Land investors, developers requesting Parcel growth scoring",
+              "organizations seeking land-banking support",
+              "inbound requests matching Land Bank Growth Predictor",
+              "existing customers who opted in to Parcel growth scoring updates"
+            ],
+            "authorized_source_types": [
+              "owner supplied records",
+              "consent based inbound requests",
+              "existing customer records with documented relationship",
+              "public business directories whose terms permit research",
+              "owner authorized provider APIs"
+            ],
+            "forbidden_collection": [
+              "private accounts or access-controlled pages",
+              "terms bypassing scraping",
+              "purchased, stolen, or unverifiable contact lists",
+              "raw credentials or secret tokens",
+              "sensitive personal data"
+            ]
+          },
+          "qualification": {
+            "required_fields": [
+              "source reference",
+              "organization or customer need",
+              "fit to the bot specialization",
+              "contact permission basis and channel scope",
+              "qualification evidence"
+            ],
+            "score_dimensions": {
+              "demonstrated_need": 30,
+              "capability_fit": 25,
+              "decision_readiness": 15,
+              "voluntarily_supplied_timing": 10,
+              "documented_contact_permission": 20
+            },
+            "minimum_score_for_owner_review": 65,
+            "permission_is_mandatory_even_above_threshold": true
+          },
+          "outreach": {
+            "supported_channels": [
+              "email",
+              "sms",
+              "voice_call",
+              "social_dm"
+            ],
+            "recipient_channel_permission_required": true,
+            "raw_contact_details_in_browser_forbidden": true,
+            "exact_owner_approval_per_message": true,
+            "maximum_daily_sends": 20,
+            "adapter_status": "configuration_required_for_live_dispatch"
+          },
+          "follow_up": {
+            "maximum_follow_ups": 2,
+            "minimum_interval_hours": 48,
+            "approval_required_for_each_follow_up": true,
+            "stop_conditions": [
+              "reply",
+              "opt out",
+              "bounce",
+              "complaint",
+              "permission expiry",
+              "owner stop",
+              "sequence complete"
+            ],
+            "suppression_ledger_required": true
+          },
+          "owner_controls": {
+            "default_mode": "research_and_draft_only",
+            "pause_and_kill_switch_required": true,
+            "one_action_approval_expiry_hours": 24,
+            "quiet_hours_supported": true,
+            "export_and_delete_supported": true
+          },
+          "metrics": [
+            "candidates researched",
+            "source evidence coverage",
+            "qualified leads",
+            "recipient permission coverage",
+            "owner approval rate",
+            "reply rate",
+            "positive reply rate",
+            "opt-out rate",
+            "bounce rate",
+            "complaint rate",
+            "conversion evidence"
+          ]
+        },
+        "readiness": {
+          "local_research_plan": "ready",
+          "qualification_and_drafts": "ready",
+          "exact_action_approval_packet": "ready",
+          "live_contact_discovery": "provider_and_terms_configuration_required",
+          "live_message_dispatch": "verified_adapter_recipient_permission_and_owner_approval_required",
+          "independent_production_business": false
+        }
+      },
       "capabilities": [
         {
           "name": "Parcel growth scoring",
@@ -5834,6 +8946,12 @@
           "name": "Install and multi-platform distribution planner",
           "status": "web_ready_native_review_required",
           "evidence": "config/generated/buddy_distribution_catalog.json"
+        },
+        {
+          "id": "buddy_governed_lead_system",
+          "name": "Permission-gated lead discovery and follow-up system",
+          "status": "sandbox_ready_external_adapters_required",
+          "evidence": "server/governed-leads.ts"
         },
         {
           "id": "buddy_connection_broker",
@@ -6036,6 +9154,162 @@
           "Published pricing and revenue models are catalog plans, not evidence of sales or earnings."
         ]
       },
+      "business_system": {
+        "business_id": "business-tax-lien",
+        "operating_model": "owner_governed_service_business",
+        "specialization": {
+          "division": "DreamRealEstate",
+          "category": "tax",
+          "mission": "Scans and manages profitable tax lien and deed investments.",
+          "ideal_customer_segments": [
+            "Tax lien investors"
+          ],
+          "core_offer": "Tax Lien Arbitrage Bot: Scans and manages profitable tax lien and deed investments.",
+          "promised_outputs": [
+            "Tax lien auction scanner",
+            "Yield-to-maturity calculation",
+            "Redemption probability scoring",
+            "Due diligence automation",
+            "Portfolio tracking dashboard"
+          ],
+          "catalog_revenue_model": "SaaS subscription",
+          "catalog_price_range": "$199/mo",
+          "earnings_status": "no_revenue_or_customer_result_guaranteed"
+        },
+        "operating_workflow": [
+          "capture_owner_goal_and_offer",
+          "define_ideal_customer_profile",
+          "select_owner_authorized_sources",
+          "confirm_source_terms_and_collection_scope",
+          "research_and_deduplicate_candidates",
+          "qualify_need_fit_timing_and_permission",
+          "draft_one_relevant_message",
+          "request_exact_owner_approval",
+          "dispatch_through_configured_adapter_only",
+          "wait_for_required_follow_up_interval",
+          "stop_on_reply_opt_out_bounce_or_complaint",
+          "report_outcomes_without_claiming_guaranteed_revenue"
+        ],
+        "lead_system": {
+          "system_id": "lead-system-tax-lien",
+          "engine": "server/governed-leads.ts",
+          "status": "sandbox_ready_external_adapters_required",
+          "ideal_customer_profile": {
+            "segments": [
+              "Tax lien investors"
+            ],
+            "need_signals": [
+              "Needs help with Tax lien auction scanner",
+              "Needs help with Yield-to-maturity calculation",
+              "Needs help with Redemption probability scoring",
+              "Needs help with Due diligence automation",
+              "Needs help with Portfolio tracking dashboard"
+            ],
+            "exclusion_rules": [
+              "no minors",
+              "no protected or sensitive trait targeting",
+              "no deceptive identity or impersonation",
+              "no lead without traceable source evidence"
+            ]
+          },
+          "discovery": {
+            "query_templates": [
+              "Tax lien investors requesting Tax lien auction scanner",
+              "organizations seeking tax support",
+              "inbound requests matching Tax Lien Arbitrage Bot",
+              "existing customers who opted in to Tax lien auction scanner updates"
+            ],
+            "authorized_source_types": [
+              "owner supplied records",
+              "consent based inbound requests",
+              "existing customer records with documented relationship",
+              "public business directories whose terms permit research",
+              "owner authorized provider APIs"
+            ],
+            "forbidden_collection": [
+              "private accounts or access-controlled pages",
+              "terms bypassing scraping",
+              "purchased, stolen, or unverifiable contact lists",
+              "raw credentials or secret tokens",
+              "sensitive personal data"
+            ]
+          },
+          "qualification": {
+            "required_fields": [
+              "source reference",
+              "organization or customer need",
+              "fit to the bot specialization",
+              "contact permission basis and channel scope",
+              "qualification evidence"
+            ],
+            "score_dimensions": {
+              "demonstrated_need": 30,
+              "capability_fit": 25,
+              "decision_readiness": 15,
+              "voluntarily_supplied_timing": 10,
+              "documented_contact_permission": 20
+            },
+            "minimum_score_for_owner_review": 65,
+            "permission_is_mandatory_even_above_threshold": true
+          },
+          "outreach": {
+            "supported_channels": [
+              "email",
+              "sms",
+              "voice_call",
+              "social_dm"
+            ],
+            "recipient_channel_permission_required": true,
+            "raw_contact_details_in_browser_forbidden": true,
+            "exact_owner_approval_per_message": true,
+            "maximum_daily_sends": 20,
+            "adapter_status": "configuration_required_for_live_dispatch"
+          },
+          "follow_up": {
+            "maximum_follow_ups": 2,
+            "minimum_interval_hours": 48,
+            "approval_required_for_each_follow_up": true,
+            "stop_conditions": [
+              "reply",
+              "opt out",
+              "bounce",
+              "complaint",
+              "permission expiry",
+              "owner stop",
+              "sequence complete"
+            ],
+            "suppression_ledger_required": true
+          },
+          "owner_controls": {
+            "default_mode": "research_and_draft_only",
+            "pause_and_kill_switch_required": true,
+            "one_action_approval_expiry_hours": 24,
+            "quiet_hours_supported": true,
+            "export_and_delete_supported": true
+          },
+          "metrics": [
+            "candidates researched",
+            "source evidence coverage",
+            "qualified leads",
+            "recipient permission coverage",
+            "owner approval rate",
+            "reply rate",
+            "positive reply rate",
+            "opt-out rate",
+            "bounce rate",
+            "complaint rate",
+            "conversion evidence"
+          ]
+        },
+        "readiness": {
+          "local_research_plan": "ready",
+          "qualification_and_drafts": "ready",
+          "exact_action_approval_packet": "ready",
+          "live_contact_discovery": "provider_and_terms_configuration_required",
+          "live_message_dispatch": "verified_adapter_recipient_permission_and_owner_approval_required",
+          "independent_production_business": false
+        }
+      },
       "capabilities": [
         {
           "name": "Tax lien auction scanner",
@@ -6128,6 +9402,12 @@
           "name": "Install and multi-platform distribution planner",
           "status": "web_ready_native_review_required",
           "evidence": "config/generated/buddy_distribution_catalog.json"
+        },
+        {
+          "id": "buddy_governed_lead_system",
+          "name": "Permission-gated lead discovery and follow-up system",
+          "status": "sandbox_ready_external_adapters_required",
+          "evidence": "server/governed-leads.ts"
         },
         {
           "id": "buddy_connection_broker",
@@ -6296,6 +9576,166 @@
           "Published pricing and revenue models are catalog plans, not evidence of sales or earnings."
         ]
       },
+      "business_system": {
+        "business_id": "business-zoning-compliance",
+        "operating_model": "owner_governed_service_business",
+        "specialization": {
+          "division": "DreamRealEstate",
+          "category": "zoning-compliance",
+          "mission": "Tracks zoning regulations, permitting, and compliance requirements.",
+          "ideal_customer_segments": [
+            "Developers",
+            "investors",
+            "attorneys"
+          ],
+          "core_offer": "Zoning & Compliance Bot: Tracks zoning regulations, permitting, and compliance requirements.",
+          "promised_outputs": [
+            "Zoning code lookup",
+            "Permit requirement checker",
+            "Variance application tracker",
+            "Code violation alerts",
+            "Entitlement timeline estimator"
+          ],
+          "catalog_revenue_model": "SaaS subscription",
+          "catalog_price_range": "$199/mo",
+          "earnings_status": "no_revenue_or_customer_result_guaranteed"
+        },
+        "operating_workflow": [
+          "capture_owner_goal_and_offer",
+          "define_ideal_customer_profile",
+          "select_owner_authorized_sources",
+          "confirm_source_terms_and_collection_scope",
+          "research_and_deduplicate_candidates",
+          "qualify_need_fit_timing_and_permission",
+          "draft_one_relevant_message",
+          "request_exact_owner_approval",
+          "dispatch_through_configured_adapter_only",
+          "wait_for_required_follow_up_interval",
+          "stop_on_reply_opt_out_bounce_or_complaint",
+          "report_outcomes_without_claiming_guaranteed_revenue"
+        ],
+        "lead_system": {
+          "system_id": "lead-system-zoning-compliance",
+          "engine": "server/governed-leads.ts",
+          "status": "sandbox_ready_external_adapters_required",
+          "ideal_customer_profile": {
+            "segments": [
+              "Developers",
+              "investors",
+              "attorneys"
+            ],
+            "need_signals": [
+              "Needs help with Zoning code lookup",
+              "Needs help with Permit requirement checker",
+              "Needs help with Variance application tracker",
+              "Needs help with Code violation alerts",
+              "Needs help with Entitlement timeline estimator"
+            ],
+            "exclusion_rules": [
+              "no minors",
+              "no protected or sensitive trait targeting",
+              "no deceptive identity or impersonation",
+              "no lead without traceable source evidence"
+            ]
+          },
+          "discovery": {
+            "query_templates": [
+              "Developers, investors, attorneys requesting Zoning code lookup",
+              "organizations seeking zoning-compliance support",
+              "inbound requests matching Zoning & Compliance Bot",
+              "existing customers who opted in to Zoning code lookup updates"
+            ],
+            "authorized_source_types": [
+              "owner supplied records",
+              "consent based inbound requests",
+              "existing customer records with documented relationship",
+              "public business directories whose terms permit research",
+              "owner authorized provider APIs"
+            ],
+            "forbidden_collection": [
+              "private accounts or access-controlled pages",
+              "terms bypassing scraping",
+              "purchased, stolen, or unverifiable contact lists",
+              "raw credentials or secret tokens",
+              "sensitive personal data"
+            ]
+          },
+          "qualification": {
+            "required_fields": [
+              "source reference",
+              "organization or customer need",
+              "fit to the bot specialization",
+              "contact permission basis and channel scope",
+              "qualification evidence"
+            ],
+            "score_dimensions": {
+              "demonstrated_need": 30,
+              "capability_fit": 25,
+              "decision_readiness": 15,
+              "voluntarily_supplied_timing": 10,
+              "documented_contact_permission": 20
+            },
+            "minimum_score_for_owner_review": 65,
+            "permission_is_mandatory_even_above_threshold": true
+          },
+          "outreach": {
+            "supported_channels": [
+              "email",
+              "sms",
+              "voice_call",
+              "social_dm"
+            ],
+            "recipient_channel_permission_required": true,
+            "raw_contact_details_in_browser_forbidden": true,
+            "exact_owner_approval_per_message": true,
+            "maximum_daily_sends": 20,
+            "adapter_status": "configuration_required_for_live_dispatch"
+          },
+          "follow_up": {
+            "maximum_follow_ups": 2,
+            "minimum_interval_hours": 48,
+            "approval_required_for_each_follow_up": true,
+            "stop_conditions": [
+              "reply",
+              "opt out",
+              "bounce",
+              "complaint",
+              "permission expiry",
+              "owner stop",
+              "sequence complete"
+            ],
+            "suppression_ledger_required": true
+          },
+          "owner_controls": {
+            "default_mode": "research_and_draft_only",
+            "pause_and_kill_switch_required": true,
+            "one_action_approval_expiry_hours": 24,
+            "quiet_hours_supported": true,
+            "export_and_delete_supported": true
+          },
+          "metrics": [
+            "candidates researched",
+            "source evidence coverage",
+            "qualified leads",
+            "recipient permission coverage",
+            "owner approval rate",
+            "reply rate",
+            "positive reply rate",
+            "opt-out rate",
+            "bounce rate",
+            "complaint rate",
+            "conversion evidence"
+          ]
+        },
+        "readiness": {
+          "local_research_plan": "ready",
+          "qualification_and_drafts": "ready",
+          "exact_action_approval_packet": "ready",
+          "live_contact_discovery": "provider_and_terms_configuration_required",
+          "live_message_dispatch": "verified_adapter_recipient_permission_and_owner_approval_required",
+          "independent_production_business": false
+        }
+      },
       "capabilities": [
         {
           "name": "Zoning code lookup",
@@ -6388,6 +9828,12 @@
           "name": "Install and multi-platform distribution planner",
           "status": "web_ready_native_review_required",
           "evidence": "config/generated/buddy_distribution_catalog.json"
+        },
+        {
+          "id": "buddy_governed_lead_system",
+          "name": "Permission-gated lead discovery and follow-up system",
+          "status": "sandbox_ready_external_adapters_required",
+          "evidence": "server/governed-leads.ts"
         },
         {
           "id": "buddy_connection_broker",
@@ -6548,6 +9994,162 @@
           "Published pricing and revenue models are catalog plans, not evidence of sales or earnings."
         ]
       },
+      "business_system": {
+        "business_id": "business-re-crowdfunding",
+        "operating_model": "owner_governed_service_business",
+        "specialization": {
+          "division": "DreamRealEstate",
+          "category": "crowdfunding",
+          "mission": "Analyzes and ranks real estate crowdfunding deals across platforms.",
+          "ideal_customer_segments": [
+            "Crowdfunding investors"
+          ],
+          "core_offer": "RE Crowdfunding Analyzer: Analyzes and ranks real estate crowdfunding deals across platforms.",
+          "promised_outputs": [
+            "Platform comparison engine",
+            "Deal scoring algorithm",
+            "Diversification optimizer",
+            "Return tracking dashboard",
+            "Sponsor track record analysis"
+          ],
+          "catalog_revenue_model": "SaaS subscription",
+          "catalog_price_range": "$99/mo",
+          "earnings_status": "no_revenue_or_customer_result_guaranteed"
+        },
+        "operating_workflow": [
+          "capture_owner_goal_and_offer",
+          "define_ideal_customer_profile",
+          "select_owner_authorized_sources",
+          "confirm_source_terms_and_collection_scope",
+          "research_and_deduplicate_candidates",
+          "qualify_need_fit_timing_and_permission",
+          "draft_one_relevant_message",
+          "request_exact_owner_approval",
+          "dispatch_through_configured_adapter_only",
+          "wait_for_required_follow_up_interval",
+          "stop_on_reply_opt_out_bounce_or_complaint",
+          "report_outcomes_without_claiming_guaranteed_revenue"
+        ],
+        "lead_system": {
+          "system_id": "lead-system-re-crowdfunding",
+          "engine": "server/governed-leads.ts",
+          "status": "sandbox_ready_external_adapters_required",
+          "ideal_customer_profile": {
+            "segments": [
+              "Crowdfunding investors"
+            ],
+            "need_signals": [
+              "Needs help with Platform comparison engine",
+              "Needs help with Deal scoring algorithm",
+              "Needs help with Diversification optimizer",
+              "Needs help with Return tracking dashboard",
+              "Needs help with Sponsor track record analysis"
+            ],
+            "exclusion_rules": [
+              "no minors",
+              "no protected or sensitive trait targeting",
+              "no deceptive identity or impersonation",
+              "no lead without traceable source evidence"
+            ]
+          },
+          "discovery": {
+            "query_templates": [
+              "Crowdfunding investors requesting Platform comparison engine",
+              "organizations seeking crowdfunding support",
+              "inbound requests matching RE Crowdfunding Analyzer",
+              "existing customers who opted in to Platform comparison engine updates"
+            ],
+            "authorized_source_types": [
+              "owner supplied records",
+              "consent based inbound requests",
+              "existing customer records with documented relationship",
+              "public business directories whose terms permit research",
+              "owner authorized provider APIs"
+            ],
+            "forbidden_collection": [
+              "private accounts or access-controlled pages",
+              "terms bypassing scraping",
+              "purchased, stolen, or unverifiable contact lists",
+              "raw credentials or secret tokens",
+              "sensitive personal data"
+            ]
+          },
+          "qualification": {
+            "required_fields": [
+              "source reference",
+              "organization or customer need",
+              "fit to the bot specialization",
+              "contact permission basis and channel scope",
+              "qualification evidence"
+            ],
+            "score_dimensions": {
+              "demonstrated_need": 30,
+              "capability_fit": 25,
+              "decision_readiness": 15,
+              "voluntarily_supplied_timing": 10,
+              "documented_contact_permission": 20
+            },
+            "minimum_score_for_owner_review": 65,
+            "permission_is_mandatory_even_above_threshold": true
+          },
+          "outreach": {
+            "supported_channels": [
+              "email",
+              "sms",
+              "voice_call",
+              "social_dm"
+            ],
+            "recipient_channel_permission_required": true,
+            "raw_contact_details_in_browser_forbidden": true,
+            "exact_owner_approval_per_message": true,
+            "maximum_daily_sends": 20,
+            "adapter_status": "configuration_required_for_live_dispatch"
+          },
+          "follow_up": {
+            "maximum_follow_ups": 2,
+            "minimum_interval_hours": 48,
+            "approval_required_for_each_follow_up": true,
+            "stop_conditions": [
+              "reply",
+              "opt out",
+              "bounce",
+              "complaint",
+              "permission expiry",
+              "owner stop",
+              "sequence complete"
+            ],
+            "suppression_ledger_required": true
+          },
+          "owner_controls": {
+            "default_mode": "research_and_draft_only",
+            "pause_and_kill_switch_required": true,
+            "one_action_approval_expiry_hours": 24,
+            "quiet_hours_supported": true,
+            "export_and_delete_supported": true
+          },
+          "metrics": [
+            "candidates researched",
+            "source evidence coverage",
+            "qualified leads",
+            "recipient permission coverage",
+            "owner approval rate",
+            "reply rate",
+            "positive reply rate",
+            "opt-out rate",
+            "bounce rate",
+            "complaint rate",
+            "conversion evidence"
+          ]
+        },
+        "readiness": {
+          "local_research_plan": "ready",
+          "qualification_and_drafts": "ready",
+          "exact_action_approval_packet": "ready",
+          "live_contact_discovery": "provider_and_terms_configuration_required",
+          "live_message_dispatch": "verified_adapter_recipient_permission_and_owner_approval_required",
+          "independent_production_business": false
+        }
+      },
       "capabilities": [
         {
           "name": "Platform comparison engine",
@@ -6640,6 +10242,12 @@
           "name": "Install and multi-platform distribution planner",
           "status": "web_ready_native_review_required",
           "evidence": "config/generated/buddy_distribution_catalog.json"
+        },
+        {
+          "id": "buddy_governed_lead_system",
+          "name": "Permission-gated lead discovery and follow-up system",
+          "status": "sandbox_ready_external_adapters_required",
+          "evidence": "server/governed-leads.ts"
         },
         {
           "id": "buddy_connection_broker",
@@ -6878,6 +10486,166 @@
           "Published pricing and revenue models are catalog plans, not evidence of sales or earnings."
         ]
       },
+      "business_system": {
+        "business_id": "business-re-investment",
+        "operating_model": "owner_governed_service_business",
+        "specialization": {
+          "division": "DreamRealEstate",
+          "category": "residential-investing",
+          "mission": "Finds residential deals, estimates rehab costs, and models flip ROI.",
+          "ideal_customer_segments": [
+            "House flippers",
+            "buy-",
+            "-hold investors"
+          ],
+          "core_offer": "Residential Investment Finder: Finds residential deals, estimates rehab costs, and models flip ROI.",
+          "promised_outputs": [
+            "Deal finding engine",
+            "Rehab cost estimator",
+            "After-repair value calculator",
+            "Financing comparison tool",
+            "Flip timeline planner"
+          ],
+          "catalog_revenue_model": "SaaS subscription",
+          "catalog_price_range": "$99/mo",
+          "earnings_status": "no_revenue_or_customer_result_guaranteed"
+        },
+        "operating_workflow": [
+          "capture_owner_goal_and_offer",
+          "define_ideal_customer_profile",
+          "select_owner_authorized_sources",
+          "confirm_source_terms_and_collection_scope",
+          "research_and_deduplicate_candidates",
+          "qualify_need_fit_timing_and_permission",
+          "draft_one_relevant_message",
+          "request_exact_owner_approval",
+          "dispatch_through_configured_adapter_only",
+          "wait_for_required_follow_up_interval",
+          "stop_on_reply_opt_out_bounce_or_complaint",
+          "report_outcomes_without_claiming_guaranteed_revenue"
+        ],
+        "lead_system": {
+          "system_id": "lead-system-re-investment",
+          "engine": "server/governed-leads.ts",
+          "status": "sandbox_ready_external_adapters_required",
+          "ideal_customer_profile": {
+            "segments": [
+              "House flippers",
+              "buy-",
+              "-hold investors"
+            ],
+            "need_signals": [
+              "Needs help with Deal finding engine",
+              "Needs help with Rehab cost estimator",
+              "Needs help with After-repair value calculator",
+              "Needs help with Financing comparison tool",
+              "Needs help with Flip timeline planner"
+            ],
+            "exclusion_rules": [
+              "no minors",
+              "no protected or sensitive trait targeting",
+              "no deceptive identity or impersonation",
+              "no lead without traceable source evidence"
+            ]
+          },
+          "discovery": {
+            "query_templates": [
+              "House flippers, buy-and-hold investors requesting Deal finding engine",
+              "organizations seeking residential-investing support",
+              "inbound requests matching Residential Investment Finder",
+              "existing customers who opted in to Deal finding engine updates"
+            ],
+            "authorized_source_types": [
+              "owner supplied records",
+              "consent based inbound requests",
+              "existing customer records with documented relationship",
+              "public business directories whose terms permit research",
+              "owner authorized provider APIs"
+            ],
+            "forbidden_collection": [
+              "private accounts or access-controlled pages",
+              "terms bypassing scraping",
+              "purchased, stolen, or unverifiable contact lists",
+              "raw credentials or secret tokens",
+              "sensitive personal data"
+            ]
+          },
+          "qualification": {
+            "required_fields": [
+              "source reference",
+              "organization or customer need",
+              "fit to the bot specialization",
+              "contact permission basis and channel scope",
+              "qualification evidence"
+            ],
+            "score_dimensions": {
+              "demonstrated_need": 30,
+              "capability_fit": 25,
+              "decision_readiness": 15,
+              "voluntarily_supplied_timing": 10,
+              "documented_contact_permission": 20
+            },
+            "minimum_score_for_owner_review": 65,
+            "permission_is_mandatory_even_above_threshold": true
+          },
+          "outreach": {
+            "supported_channels": [
+              "email",
+              "sms",
+              "voice_call",
+              "social_dm"
+            ],
+            "recipient_channel_permission_required": true,
+            "raw_contact_details_in_browser_forbidden": true,
+            "exact_owner_approval_per_message": true,
+            "maximum_daily_sends": 20,
+            "adapter_status": "configuration_required_for_live_dispatch"
+          },
+          "follow_up": {
+            "maximum_follow_ups": 2,
+            "minimum_interval_hours": 48,
+            "approval_required_for_each_follow_up": true,
+            "stop_conditions": [
+              "reply",
+              "opt out",
+              "bounce",
+              "complaint",
+              "permission expiry",
+              "owner stop",
+              "sequence complete"
+            ],
+            "suppression_ledger_required": true
+          },
+          "owner_controls": {
+            "default_mode": "research_and_draft_only",
+            "pause_and_kill_switch_required": true,
+            "one_action_approval_expiry_hours": 24,
+            "quiet_hours_supported": true,
+            "export_and_delete_supported": true
+          },
+          "metrics": [
+            "candidates researched",
+            "source evidence coverage",
+            "qualified leads",
+            "recipient permission coverage",
+            "owner approval rate",
+            "reply rate",
+            "positive reply rate",
+            "opt-out rate",
+            "bounce rate",
+            "complaint rate",
+            "conversion evidence"
+          ]
+        },
+        "readiness": {
+          "local_research_plan": "ready",
+          "qualification_and_drafts": "ready",
+          "exact_action_approval_packet": "ready",
+          "live_contact_discovery": "provider_and_terms_configuration_required",
+          "live_message_dispatch": "verified_adapter_recipient_permission_and_owner_approval_required",
+          "independent_production_business": false
+        }
+      },
       "capabilities": [
         {
           "name": "Deal finding engine",
@@ -6970,6 +10738,12 @@
           "name": "Install and multi-platform distribution planner",
           "status": "web_ready_native_review_required",
           "evidence": "config/generated/buddy_distribution_catalog.json"
+        },
+        {
+          "id": "buddy_governed_lead_system",
+          "name": "Permission-gated lead discovery and follow-up system",
+          "status": "sandbox_ready_external_adapters_required",
+          "evidence": "server/governed-leads.ts"
         },
         {
           "id": "buddy_connection_broker",
@@ -7166,6 +10940,164 @@
           "Published pricing and revenue models are catalog plans, not evidence of sales or earnings."
         ]
       },
+      "business_system": {
+        "business_id": "business-property-liquidity",
+        "operating_model": "owner_governed_service_business",
+        "specialization": {
+          "division": "DreamRealEstate",
+          "category": "analytics",
+          "mission": "Forecasts property liquidity windows and optimal exit timing.",
+          "ideal_customer_segments": [
+            "RE investors",
+            "brokers"
+          ],
+          "core_offer": "Property Liquidity Forecast: Forecasts property liquidity windows and optimal exit timing.",
+          "promised_outputs": [
+            "Days-on-market prediction",
+            "Buyer demand scoring",
+            "Seasonal timing analysis",
+            "Price elasticity modeling",
+            "Exit strategy comparison"
+          ],
+          "catalog_revenue_model": "SaaS subscription",
+          "catalog_price_range": "$99/mo",
+          "earnings_status": "no_revenue_or_customer_result_guaranteed"
+        },
+        "operating_workflow": [
+          "capture_owner_goal_and_offer",
+          "define_ideal_customer_profile",
+          "select_owner_authorized_sources",
+          "confirm_source_terms_and_collection_scope",
+          "research_and_deduplicate_candidates",
+          "qualify_need_fit_timing_and_permission",
+          "draft_one_relevant_message",
+          "request_exact_owner_approval",
+          "dispatch_through_configured_adapter_only",
+          "wait_for_required_follow_up_interval",
+          "stop_on_reply_opt_out_bounce_or_complaint",
+          "report_outcomes_without_claiming_guaranteed_revenue"
+        ],
+        "lead_system": {
+          "system_id": "lead-system-property-liquidity",
+          "engine": "server/governed-leads.ts",
+          "status": "sandbox_ready_external_adapters_required",
+          "ideal_customer_profile": {
+            "segments": [
+              "RE investors",
+              "brokers"
+            ],
+            "need_signals": [
+              "Needs help with Days-on-market prediction",
+              "Needs help with Buyer demand scoring",
+              "Needs help with Seasonal timing analysis",
+              "Needs help with Price elasticity modeling",
+              "Needs help with Exit strategy comparison"
+            ],
+            "exclusion_rules": [
+              "no minors",
+              "no protected or sensitive trait targeting",
+              "no deceptive identity or impersonation",
+              "no lead without traceable source evidence"
+            ]
+          },
+          "discovery": {
+            "query_templates": [
+              "RE investors, brokers requesting Days-on-market prediction",
+              "organizations seeking analytics support",
+              "inbound requests matching Property Liquidity Forecast",
+              "existing customers who opted in to Days-on-market prediction updates"
+            ],
+            "authorized_source_types": [
+              "owner supplied records",
+              "consent based inbound requests",
+              "existing customer records with documented relationship",
+              "public business directories whose terms permit research",
+              "owner authorized provider APIs"
+            ],
+            "forbidden_collection": [
+              "private accounts or access-controlled pages",
+              "terms bypassing scraping",
+              "purchased, stolen, or unverifiable contact lists",
+              "raw credentials or secret tokens",
+              "sensitive personal data"
+            ]
+          },
+          "qualification": {
+            "required_fields": [
+              "source reference",
+              "organization or customer need",
+              "fit to the bot specialization",
+              "contact permission basis and channel scope",
+              "qualification evidence"
+            ],
+            "score_dimensions": {
+              "demonstrated_need": 30,
+              "capability_fit": 25,
+              "decision_readiness": 15,
+              "voluntarily_supplied_timing": 10,
+              "documented_contact_permission": 20
+            },
+            "minimum_score_for_owner_review": 65,
+            "permission_is_mandatory_even_above_threshold": true
+          },
+          "outreach": {
+            "supported_channels": [
+              "email",
+              "sms",
+              "voice_call",
+              "social_dm"
+            ],
+            "recipient_channel_permission_required": true,
+            "raw_contact_details_in_browser_forbidden": true,
+            "exact_owner_approval_per_message": true,
+            "maximum_daily_sends": 20,
+            "adapter_status": "configuration_required_for_live_dispatch"
+          },
+          "follow_up": {
+            "maximum_follow_ups": 2,
+            "minimum_interval_hours": 48,
+            "approval_required_for_each_follow_up": true,
+            "stop_conditions": [
+              "reply",
+              "opt out",
+              "bounce",
+              "complaint",
+              "permission expiry",
+              "owner stop",
+              "sequence complete"
+            ],
+            "suppression_ledger_required": true
+          },
+          "owner_controls": {
+            "default_mode": "research_and_draft_only",
+            "pause_and_kill_switch_required": true,
+            "one_action_approval_expiry_hours": 24,
+            "quiet_hours_supported": true,
+            "export_and_delete_supported": true
+          },
+          "metrics": [
+            "candidates researched",
+            "source evidence coverage",
+            "qualified leads",
+            "recipient permission coverage",
+            "owner approval rate",
+            "reply rate",
+            "positive reply rate",
+            "opt-out rate",
+            "bounce rate",
+            "complaint rate",
+            "conversion evidence"
+          ]
+        },
+        "readiness": {
+          "local_research_plan": "ready",
+          "qualification_and_drafts": "ready",
+          "exact_action_approval_packet": "ready",
+          "live_contact_discovery": "provider_and_terms_configuration_required",
+          "live_message_dispatch": "verified_adapter_recipient_permission_and_owner_approval_required",
+          "independent_production_business": false
+        }
+      },
       "capabilities": [
         {
           "name": "Days-on-market prediction",
@@ -7258,6 +11190,12 @@
           "name": "Install and multi-platform distribution planner",
           "status": "web_ready_native_review_required",
           "evidence": "config/generated/buddy_distribution_catalog.json"
+        },
+        {
+          "id": "buddy_governed_lead_system",
+          "name": "Permission-gated lead discovery and follow-up system",
+          "status": "sandbox_ready_external_adapters_required",
+          "evidence": "server/governed-leads.ts"
         },
         {
           "id": "buddy_connection_broker",
@@ -7496,6 +11434,166 @@
           "Published pricing and revenue models are catalog plans, not evidence of sales or earnings."
         ]
       },
+      "business_system": {
+        "business_id": "business-tax-incentive-finder",
+        "operating_model": "owner_governed_service_business",
+        "specialization": {
+          "division": "DreamRealEstate",
+          "category": "tax",
+          "mission": "Discovers tax incentives, opportunity zones, and abatements for RE projects.",
+          "ideal_customer_segments": [
+            "Developers",
+            "investors",
+            "CPAs"
+          ],
+          "core_offer": "Tax Incentive Finder Bot: Discovers tax incentives, opportunity zones, and abatements for RE projects.",
+          "promised_outputs": [
+            "Opportunity zone mapping",
+            "Tax abatement scanning",
+            "Historic credit eligibility",
+            "LIHTC analysis",
+            "Incentive application assistance"
+          ],
+          "catalog_revenue_model": "SaaS subscription",
+          "catalog_price_range": "$99/mo",
+          "earnings_status": "no_revenue_or_customer_result_guaranteed"
+        },
+        "operating_workflow": [
+          "capture_owner_goal_and_offer",
+          "define_ideal_customer_profile",
+          "select_owner_authorized_sources",
+          "confirm_source_terms_and_collection_scope",
+          "research_and_deduplicate_candidates",
+          "qualify_need_fit_timing_and_permission",
+          "draft_one_relevant_message",
+          "request_exact_owner_approval",
+          "dispatch_through_configured_adapter_only",
+          "wait_for_required_follow_up_interval",
+          "stop_on_reply_opt_out_bounce_or_complaint",
+          "report_outcomes_without_claiming_guaranteed_revenue"
+        ],
+        "lead_system": {
+          "system_id": "lead-system-tax-incentive-finder",
+          "engine": "server/governed-leads.ts",
+          "status": "sandbox_ready_external_adapters_required",
+          "ideal_customer_profile": {
+            "segments": [
+              "Developers",
+              "investors",
+              "CPAs"
+            ],
+            "need_signals": [
+              "Needs help with Opportunity zone mapping",
+              "Needs help with Tax abatement scanning",
+              "Needs help with Historic credit eligibility",
+              "Needs help with LIHTC analysis",
+              "Needs help with Incentive application assistance"
+            ],
+            "exclusion_rules": [
+              "no minors",
+              "no protected or sensitive trait targeting",
+              "no deceptive identity or impersonation",
+              "no lead without traceable source evidence"
+            ]
+          },
+          "discovery": {
+            "query_templates": [
+              "Developers, investors, CPAs requesting Opportunity zone mapping",
+              "organizations seeking tax support",
+              "inbound requests matching Tax Incentive Finder Bot",
+              "existing customers who opted in to Opportunity zone mapping updates"
+            ],
+            "authorized_source_types": [
+              "owner supplied records",
+              "consent based inbound requests",
+              "existing customer records with documented relationship",
+              "public business directories whose terms permit research",
+              "owner authorized provider APIs"
+            ],
+            "forbidden_collection": [
+              "private accounts or access-controlled pages",
+              "terms bypassing scraping",
+              "purchased, stolen, or unverifiable contact lists",
+              "raw credentials or secret tokens",
+              "sensitive personal data"
+            ]
+          },
+          "qualification": {
+            "required_fields": [
+              "source reference",
+              "organization or customer need",
+              "fit to the bot specialization",
+              "contact permission basis and channel scope",
+              "qualification evidence"
+            ],
+            "score_dimensions": {
+              "demonstrated_need": 30,
+              "capability_fit": 25,
+              "decision_readiness": 15,
+              "voluntarily_supplied_timing": 10,
+              "documented_contact_permission": 20
+            },
+            "minimum_score_for_owner_review": 65,
+            "permission_is_mandatory_even_above_threshold": true
+          },
+          "outreach": {
+            "supported_channels": [
+              "email",
+              "sms",
+              "voice_call",
+              "social_dm"
+            ],
+            "recipient_channel_permission_required": true,
+            "raw_contact_details_in_browser_forbidden": true,
+            "exact_owner_approval_per_message": true,
+            "maximum_daily_sends": 20,
+            "adapter_status": "configuration_required_for_live_dispatch"
+          },
+          "follow_up": {
+            "maximum_follow_ups": 2,
+            "minimum_interval_hours": 48,
+            "approval_required_for_each_follow_up": true,
+            "stop_conditions": [
+              "reply",
+              "opt out",
+              "bounce",
+              "complaint",
+              "permission expiry",
+              "owner stop",
+              "sequence complete"
+            ],
+            "suppression_ledger_required": true
+          },
+          "owner_controls": {
+            "default_mode": "research_and_draft_only",
+            "pause_and_kill_switch_required": true,
+            "one_action_approval_expiry_hours": 24,
+            "quiet_hours_supported": true,
+            "export_and_delete_supported": true
+          },
+          "metrics": [
+            "candidates researched",
+            "source evidence coverage",
+            "qualified leads",
+            "recipient permission coverage",
+            "owner approval rate",
+            "reply rate",
+            "positive reply rate",
+            "opt-out rate",
+            "bounce rate",
+            "complaint rate",
+            "conversion evidence"
+          ]
+        },
+        "readiness": {
+          "local_research_plan": "ready",
+          "qualification_and_drafts": "ready",
+          "exact_action_approval_packet": "ready",
+          "live_contact_discovery": "provider_and_terms_configuration_required",
+          "live_message_dispatch": "verified_adapter_recipient_permission_and_owner_approval_required",
+          "independent_production_business": false
+        }
+      },
       "capabilities": [
         {
           "name": "Opportunity zone mapping",
@@ -7588,6 +11686,12 @@
           "name": "Install and multi-platform distribution planner",
           "status": "web_ready_native_review_required",
           "evidence": "config/generated/buddy_distribution_catalog.json"
+        },
+        {
+          "id": "buddy_governed_lead_system",
+          "name": "Permission-gated lead discovery and follow-up system",
+          "status": "sandbox_ready_external_adapters_required",
+          "evidence": "server/governed-leads.ts"
         },
         {
           "id": "buddy_connection_broker",

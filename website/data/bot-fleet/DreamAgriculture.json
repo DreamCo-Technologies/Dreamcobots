@@ -48,6 +48,166 @@
           "Published pricing and revenue models are catalog plans, not evidence of sales or earnings."
         ]
       },
+      "business_system": {
+        "business_id": "business-crop-planner",
+        "operating_model": "owner_governed_service_business",
+        "specialization": {
+          "division": "DreamAgriculture",
+          "category": "crop-management",
+          "mission": "Plans crop rotations with soil compatibility analysis and yield forecasting.",
+          "ideal_customer_segments": [
+            "Farmers",
+            "agronomists",
+            "farm managers"
+          ],
+          "core_offer": "Crop Planning Advisor: Plans crop rotations with soil compatibility analysis and yield forecasting.",
+          "promised_outputs": [
+            "Crop rotation planning",
+            "Soil compatibility matching",
+            "Yield forecast modeling",
+            "Planting calendar generation",
+            "Seed variety comparison"
+          ],
+          "catalog_revenue_model": "SaaS subscription",
+          "catalog_price_range": "$149/mo",
+          "earnings_status": "no_revenue_or_customer_result_guaranteed"
+        },
+        "operating_workflow": [
+          "capture_owner_goal_and_offer",
+          "define_ideal_customer_profile",
+          "select_owner_authorized_sources",
+          "confirm_source_terms_and_collection_scope",
+          "research_and_deduplicate_candidates",
+          "qualify_need_fit_timing_and_permission",
+          "draft_one_relevant_message",
+          "request_exact_owner_approval",
+          "dispatch_through_configured_adapter_only",
+          "wait_for_required_follow_up_interval",
+          "stop_on_reply_opt_out_bounce_or_complaint",
+          "report_outcomes_without_claiming_guaranteed_revenue"
+        ],
+        "lead_system": {
+          "system_id": "lead-system-crop-planner",
+          "engine": "server/governed-leads.ts",
+          "status": "sandbox_ready_external_adapters_required",
+          "ideal_customer_profile": {
+            "segments": [
+              "Farmers",
+              "agronomists",
+              "farm managers"
+            ],
+            "need_signals": [
+              "Needs help with Crop rotation planning",
+              "Needs help with Soil compatibility matching",
+              "Needs help with Yield forecast modeling",
+              "Needs help with Planting calendar generation",
+              "Needs help with Seed variety comparison"
+            ],
+            "exclusion_rules": [
+              "no minors",
+              "no protected or sensitive trait targeting",
+              "no deceptive identity or impersonation",
+              "no lead without traceable source evidence"
+            ]
+          },
+          "discovery": {
+            "query_templates": [
+              "Farmers, agronomists, farm managers requesting Crop rotation planning",
+              "organizations seeking crop-management support",
+              "inbound requests matching Crop Planning Advisor",
+              "existing customers who opted in to Crop rotation planning updates"
+            ],
+            "authorized_source_types": [
+              "owner supplied records",
+              "consent based inbound requests",
+              "existing customer records with documented relationship",
+              "public business directories whose terms permit research",
+              "owner authorized provider APIs"
+            ],
+            "forbidden_collection": [
+              "private accounts or access-controlled pages",
+              "terms bypassing scraping",
+              "purchased, stolen, or unverifiable contact lists",
+              "raw credentials or secret tokens",
+              "sensitive personal data"
+            ]
+          },
+          "qualification": {
+            "required_fields": [
+              "source reference",
+              "organization or customer need",
+              "fit to the bot specialization",
+              "contact permission basis and channel scope",
+              "qualification evidence"
+            ],
+            "score_dimensions": {
+              "demonstrated_need": 30,
+              "capability_fit": 25,
+              "decision_readiness": 15,
+              "voluntarily_supplied_timing": 10,
+              "documented_contact_permission": 20
+            },
+            "minimum_score_for_owner_review": 65,
+            "permission_is_mandatory_even_above_threshold": true
+          },
+          "outreach": {
+            "supported_channels": [
+              "email",
+              "sms",
+              "voice_call",
+              "social_dm"
+            ],
+            "recipient_channel_permission_required": true,
+            "raw_contact_details_in_browser_forbidden": true,
+            "exact_owner_approval_per_message": true,
+            "maximum_daily_sends": 20,
+            "adapter_status": "configuration_required_for_live_dispatch"
+          },
+          "follow_up": {
+            "maximum_follow_ups": 2,
+            "minimum_interval_hours": 48,
+            "approval_required_for_each_follow_up": true,
+            "stop_conditions": [
+              "reply",
+              "opt out",
+              "bounce",
+              "complaint",
+              "permission expiry",
+              "owner stop",
+              "sequence complete"
+            ],
+            "suppression_ledger_required": true
+          },
+          "owner_controls": {
+            "default_mode": "research_and_draft_only",
+            "pause_and_kill_switch_required": true,
+            "one_action_approval_expiry_hours": 24,
+            "quiet_hours_supported": true,
+            "export_and_delete_supported": true
+          },
+          "metrics": [
+            "candidates researched",
+            "source evidence coverage",
+            "qualified leads",
+            "recipient permission coverage",
+            "owner approval rate",
+            "reply rate",
+            "positive reply rate",
+            "opt-out rate",
+            "bounce rate",
+            "complaint rate",
+            "conversion evidence"
+          ]
+        },
+        "readiness": {
+          "local_research_plan": "ready",
+          "qualification_and_drafts": "ready",
+          "exact_action_approval_packet": "ready",
+          "live_contact_discovery": "provider_and_terms_configuration_required",
+          "live_message_dispatch": "verified_adapter_recipient_permission_and_owner_approval_required",
+          "independent_production_business": false
+        }
+      },
       "capabilities": [
         {
           "name": "Crop rotation planning",
@@ -140,6 +300,12 @@
           "name": "Install and multi-platform distribution planner",
           "status": "web_ready_native_review_required",
           "evidence": "config/generated/buddy_distribution_catalog.json"
+        },
+        {
+          "id": "buddy_governed_lead_system",
+          "name": "Permission-gated lead discovery and follow-up system",
+          "status": "sandbox_ready_external_adapters_required",
+          "evidence": "server/governed-leads.ts"
         },
         {
           "id": "buddy_connection_broker",
@@ -264,6 +430,166 @@
           "Published pricing and revenue models are catalog plans, not evidence of sales or earnings."
         ]
       },
+      "business_system": {
+        "business_id": "business-livestock-tracker",
+        "operating_model": "owner_governed_service_business",
+        "specialization": {
+          "division": "DreamAgriculture",
+          "category": "livestock",
+          "mission": "Manages livestock with health tracking and breeding schedule optimization.",
+          "ideal_customer_segments": [
+            "Ranchers",
+            "dairy farmers",
+            "livestock managers"
+          ],
+          "core_offer": "Livestock Management System: Manages livestock with health tracking and breeding schedule optimization.",
+          "promised_outputs": [
+            "Animal identification tracking",
+            "Health record management",
+            "Breeding schedule optimization",
+            "Feed ration calculation",
+            "Weight gain monitoring"
+          ],
+          "catalog_revenue_model": "SaaS subscription",
+          "catalog_price_range": "$149/mo",
+          "earnings_status": "no_revenue_or_customer_result_guaranteed"
+        },
+        "operating_workflow": [
+          "capture_owner_goal_and_offer",
+          "define_ideal_customer_profile",
+          "select_owner_authorized_sources",
+          "confirm_source_terms_and_collection_scope",
+          "research_and_deduplicate_candidates",
+          "qualify_need_fit_timing_and_permission",
+          "draft_one_relevant_message",
+          "request_exact_owner_approval",
+          "dispatch_through_configured_adapter_only",
+          "wait_for_required_follow_up_interval",
+          "stop_on_reply_opt_out_bounce_or_complaint",
+          "report_outcomes_without_claiming_guaranteed_revenue"
+        ],
+        "lead_system": {
+          "system_id": "lead-system-livestock-tracker",
+          "engine": "server/governed-leads.ts",
+          "status": "sandbox_ready_external_adapters_required",
+          "ideal_customer_profile": {
+            "segments": [
+              "Ranchers",
+              "dairy farmers",
+              "livestock managers"
+            ],
+            "need_signals": [
+              "Needs help with Animal identification tracking",
+              "Needs help with Health record management",
+              "Needs help with Breeding schedule optimization",
+              "Needs help with Feed ration calculation",
+              "Needs help with Weight gain monitoring"
+            ],
+            "exclusion_rules": [
+              "no minors",
+              "no protected or sensitive trait targeting",
+              "no deceptive identity or impersonation",
+              "no lead without traceable source evidence"
+            ]
+          },
+          "discovery": {
+            "query_templates": [
+              "Ranchers, dairy farmers, livestock managers requesting Animal identification tracking",
+              "organizations seeking livestock support",
+              "inbound requests matching Livestock Management System",
+              "existing customers who opted in to Animal identification tracking updates"
+            ],
+            "authorized_source_types": [
+              "owner supplied records",
+              "consent based inbound requests",
+              "existing customer records with documented relationship",
+              "public business directories whose terms permit research",
+              "owner authorized provider APIs"
+            ],
+            "forbidden_collection": [
+              "private accounts or access-controlled pages",
+              "terms bypassing scraping",
+              "purchased, stolen, or unverifiable contact lists",
+              "raw credentials or secret tokens",
+              "sensitive personal data"
+            ]
+          },
+          "qualification": {
+            "required_fields": [
+              "source reference",
+              "organization or customer need",
+              "fit to the bot specialization",
+              "contact permission basis and channel scope",
+              "qualification evidence"
+            ],
+            "score_dimensions": {
+              "demonstrated_need": 30,
+              "capability_fit": 25,
+              "decision_readiness": 15,
+              "voluntarily_supplied_timing": 10,
+              "documented_contact_permission": 20
+            },
+            "minimum_score_for_owner_review": 65,
+            "permission_is_mandatory_even_above_threshold": true
+          },
+          "outreach": {
+            "supported_channels": [
+              "email",
+              "sms",
+              "voice_call",
+              "social_dm"
+            ],
+            "recipient_channel_permission_required": true,
+            "raw_contact_details_in_browser_forbidden": true,
+            "exact_owner_approval_per_message": true,
+            "maximum_daily_sends": 20,
+            "adapter_status": "configuration_required_for_live_dispatch"
+          },
+          "follow_up": {
+            "maximum_follow_ups": 2,
+            "minimum_interval_hours": 48,
+            "approval_required_for_each_follow_up": true,
+            "stop_conditions": [
+              "reply",
+              "opt out",
+              "bounce",
+              "complaint",
+              "permission expiry",
+              "owner stop",
+              "sequence complete"
+            ],
+            "suppression_ledger_required": true
+          },
+          "owner_controls": {
+            "default_mode": "research_and_draft_only",
+            "pause_and_kill_switch_required": true,
+            "one_action_approval_expiry_hours": 24,
+            "quiet_hours_supported": true,
+            "export_and_delete_supported": true
+          },
+          "metrics": [
+            "candidates researched",
+            "source evidence coverage",
+            "qualified leads",
+            "recipient permission coverage",
+            "owner approval rate",
+            "reply rate",
+            "positive reply rate",
+            "opt-out rate",
+            "bounce rate",
+            "complaint rate",
+            "conversion evidence"
+          ]
+        },
+        "readiness": {
+          "local_research_plan": "ready",
+          "qualification_and_drafts": "ready",
+          "exact_action_approval_packet": "ready",
+          "live_contact_discovery": "provider_and_terms_configuration_required",
+          "live_message_dispatch": "verified_adapter_recipient_permission_and_owner_approval_required",
+          "independent_production_business": false
+        }
+      },
       "capabilities": [
         {
           "name": "Animal identification tracking",
@@ -356,6 +682,12 @@
           "name": "Install and multi-platform distribution planner",
           "status": "web_ready_native_review_required",
           "evidence": "config/generated/buddy_distribution_catalog.json"
+        },
+        {
+          "id": "buddy_governed_lead_system",
+          "name": "Permission-gated lead discovery and follow-up system",
+          "status": "sandbox_ready_external_adapters_required",
+          "evidence": "server/governed-leads.ts"
         }
       ],
       "api_candidates": [],
@@ -477,6 +809,164 @@
           "Published pricing and revenue models are catalog plans, not evidence of sales or earnings."
         ]
       },
+      "business_system": {
+        "business_id": "business-supply-chain-ag",
+        "operating_model": "owner_governed_service_business",
+        "specialization": {
+          "division": "DreamAgriculture",
+          "category": "supply-chain",
+          "mission": "Manages agricultural supply chains with traceability and market connectivity.",
+          "ideal_customer_segments": [
+            "Agricultural cooperatives",
+            "commodity traders"
+          ],
+          "core_offer": "Agricultural Supply Chain: Manages agricultural supply chains with traceability and market connectivity.",
+          "promised_outputs": [
+            "Farm-to-market traceability",
+            "Buyer-seller marketplace",
+            "Quality grading automation",
+            "Transportation coordination",
+            "Storage facility management"
+          ],
+          "catalog_revenue_model": "Enterprise license",
+          "catalog_price_range": "$799/mo",
+          "earnings_status": "no_revenue_or_customer_result_guaranteed"
+        },
+        "operating_workflow": [
+          "capture_owner_goal_and_offer",
+          "define_ideal_customer_profile",
+          "select_owner_authorized_sources",
+          "confirm_source_terms_and_collection_scope",
+          "research_and_deduplicate_candidates",
+          "qualify_need_fit_timing_and_permission",
+          "draft_one_relevant_message",
+          "request_exact_owner_approval",
+          "dispatch_through_configured_adapter_only",
+          "wait_for_required_follow_up_interval",
+          "stop_on_reply_opt_out_bounce_or_complaint",
+          "report_outcomes_without_claiming_guaranteed_revenue"
+        ],
+        "lead_system": {
+          "system_id": "lead-system-supply-chain-ag",
+          "engine": "server/governed-leads.ts",
+          "status": "sandbox_ready_external_adapters_required",
+          "ideal_customer_profile": {
+            "segments": [
+              "Agricultural cooperatives",
+              "commodity traders"
+            ],
+            "need_signals": [
+              "Needs help with Farm-to-market traceability",
+              "Needs help with Buyer-seller marketplace",
+              "Needs help with Quality grading automation",
+              "Needs help with Transportation coordination",
+              "Needs help with Storage facility management"
+            ],
+            "exclusion_rules": [
+              "no minors",
+              "no protected or sensitive trait targeting",
+              "no deceptive identity or impersonation",
+              "no lead without traceable source evidence"
+            ]
+          },
+          "discovery": {
+            "query_templates": [
+              "Agricultural cooperatives, commodity traders requesting Farm-to-market traceability",
+              "organizations seeking supply-chain support",
+              "inbound requests matching Agricultural Supply Chain",
+              "existing customers who opted in to Farm-to-market traceability updates"
+            ],
+            "authorized_source_types": [
+              "owner supplied records",
+              "consent based inbound requests",
+              "existing customer records with documented relationship",
+              "public business directories whose terms permit research",
+              "owner authorized provider APIs"
+            ],
+            "forbidden_collection": [
+              "private accounts or access-controlled pages",
+              "terms bypassing scraping",
+              "purchased, stolen, or unverifiable contact lists",
+              "raw credentials or secret tokens",
+              "sensitive personal data"
+            ]
+          },
+          "qualification": {
+            "required_fields": [
+              "source reference",
+              "organization or customer need",
+              "fit to the bot specialization",
+              "contact permission basis and channel scope",
+              "qualification evidence"
+            ],
+            "score_dimensions": {
+              "demonstrated_need": 30,
+              "capability_fit": 25,
+              "decision_readiness": 15,
+              "voluntarily_supplied_timing": 10,
+              "documented_contact_permission": 20
+            },
+            "minimum_score_for_owner_review": 65,
+            "permission_is_mandatory_even_above_threshold": true
+          },
+          "outreach": {
+            "supported_channels": [
+              "email",
+              "sms",
+              "voice_call",
+              "social_dm"
+            ],
+            "recipient_channel_permission_required": true,
+            "raw_contact_details_in_browser_forbidden": true,
+            "exact_owner_approval_per_message": true,
+            "maximum_daily_sends": 20,
+            "adapter_status": "configuration_required_for_live_dispatch"
+          },
+          "follow_up": {
+            "maximum_follow_ups": 2,
+            "minimum_interval_hours": 48,
+            "approval_required_for_each_follow_up": true,
+            "stop_conditions": [
+              "reply",
+              "opt out",
+              "bounce",
+              "complaint",
+              "permission expiry",
+              "owner stop",
+              "sequence complete"
+            ],
+            "suppression_ledger_required": true
+          },
+          "owner_controls": {
+            "default_mode": "research_and_draft_only",
+            "pause_and_kill_switch_required": true,
+            "one_action_approval_expiry_hours": 24,
+            "quiet_hours_supported": true,
+            "export_and_delete_supported": true
+          },
+          "metrics": [
+            "candidates researched",
+            "source evidence coverage",
+            "qualified leads",
+            "recipient permission coverage",
+            "owner approval rate",
+            "reply rate",
+            "positive reply rate",
+            "opt-out rate",
+            "bounce rate",
+            "complaint rate",
+            "conversion evidence"
+          ]
+        },
+        "readiness": {
+          "local_research_plan": "ready",
+          "qualification_and_drafts": "ready",
+          "exact_action_approval_packet": "ready",
+          "live_contact_discovery": "provider_and_terms_configuration_required",
+          "live_message_dispatch": "verified_adapter_recipient_permission_and_owner_approval_required",
+          "independent_production_business": false
+        }
+      },
       "capabilities": [
         {
           "name": "Farm-to-market traceability",
@@ -569,6 +1059,12 @@
           "name": "Install and multi-platform distribution planner",
           "status": "web_ready_native_review_required",
           "evidence": "config/generated/buddy_distribution_catalog.json"
+        },
+        {
+          "id": "buddy_governed_lead_system",
+          "name": "Permission-gated lead discovery and follow-up system",
+          "status": "sandbox_ready_external_adapters_required",
+          "evidence": "server/governed-leads.ts"
         }
       ],
       "api_candidates": [],
@@ -687,6 +1183,166 @@
           "Published pricing and revenue models are catalog plans, not evidence of sales or earnings."
         ]
       },
+      "business_system": {
+        "business_id": "business-weather-farming",
+        "operating_model": "owner_governed_service_business",
+        "specialization": {
+          "division": "DreamAgriculture",
+          "category": "weather",
+          "mission": "Provides hyperlocal weather data with agricultural impact forecasting.",
+          "ideal_customer_segments": [
+            "Farmers",
+            "crop consultants",
+            "agronomists"
+          ],
+          "core_offer": "Farm Weather Station AI: Provides hyperlocal weather data with agricultural impact forecasting.",
+          "promised_outputs": [
+            "Hyperlocal weather monitoring",
+            "Frost warning alerts",
+            "Spray window calculation",
+            "Heat stress prediction",
+            "Precipitation forecasting"
+          ],
+          "catalog_revenue_model": "SaaS subscription",
+          "catalog_price_range": "$99/mo",
+          "earnings_status": "no_revenue_or_customer_result_guaranteed"
+        },
+        "operating_workflow": [
+          "capture_owner_goal_and_offer",
+          "define_ideal_customer_profile",
+          "select_owner_authorized_sources",
+          "confirm_source_terms_and_collection_scope",
+          "research_and_deduplicate_candidates",
+          "qualify_need_fit_timing_and_permission",
+          "draft_one_relevant_message",
+          "request_exact_owner_approval",
+          "dispatch_through_configured_adapter_only",
+          "wait_for_required_follow_up_interval",
+          "stop_on_reply_opt_out_bounce_or_complaint",
+          "report_outcomes_without_claiming_guaranteed_revenue"
+        ],
+        "lead_system": {
+          "system_id": "lead-system-weather-farming",
+          "engine": "server/governed-leads.ts",
+          "status": "sandbox_ready_external_adapters_required",
+          "ideal_customer_profile": {
+            "segments": [
+              "Farmers",
+              "crop consultants",
+              "agronomists"
+            ],
+            "need_signals": [
+              "Needs help with Hyperlocal weather monitoring",
+              "Needs help with Frost warning alerts",
+              "Needs help with Spray window calculation",
+              "Needs help with Heat stress prediction",
+              "Needs help with Precipitation forecasting"
+            ],
+            "exclusion_rules": [
+              "no minors",
+              "no protected or sensitive trait targeting",
+              "no deceptive identity or impersonation",
+              "no lead without traceable source evidence"
+            ]
+          },
+          "discovery": {
+            "query_templates": [
+              "Farmers, crop consultants, agronomists requesting Hyperlocal weather monitoring",
+              "organizations seeking weather support",
+              "inbound requests matching Farm Weather Station AI",
+              "existing customers who opted in to Hyperlocal weather monitoring updates"
+            ],
+            "authorized_source_types": [
+              "owner supplied records",
+              "consent based inbound requests",
+              "existing customer records with documented relationship",
+              "public business directories whose terms permit research",
+              "owner authorized provider APIs"
+            ],
+            "forbidden_collection": [
+              "private accounts or access-controlled pages",
+              "terms bypassing scraping",
+              "purchased, stolen, or unverifiable contact lists",
+              "raw credentials or secret tokens",
+              "sensitive personal data"
+            ]
+          },
+          "qualification": {
+            "required_fields": [
+              "source reference",
+              "organization or customer need",
+              "fit to the bot specialization",
+              "contact permission basis and channel scope",
+              "qualification evidence"
+            ],
+            "score_dimensions": {
+              "demonstrated_need": 30,
+              "capability_fit": 25,
+              "decision_readiness": 15,
+              "voluntarily_supplied_timing": 10,
+              "documented_contact_permission": 20
+            },
+            "minimum_score_for_owner_review": 65,
+            "permission_is_mandatory_even_above_threshold": true
+          },
+          "outreach": {
+            "supported_channels": [
+              "email",
+              "sms",
+              "voice_call",
+              "social_dm"
+            ],
+            "recipient_channel_permission_required": true,
+            "raw_contact_details_in_browser_forbidden": true,
+            "exact_owner_approval_per_message": true,
+            "maximum_daily_sends": 20,
+            "adapter_status": "configuration_required_for_live_dispatch"
+          },
+          "follow_up": {
+            "maximum_follow_ups": 2,
+            "minimum_interval_hours": 48,
+            "approval_required_for_each_follow_up": true,
+            "stop_conditions": [
+              "reply",
+              "opt out",
+              "bounce",
+              "complaint",
+              "permission expiry",
+              "owner stop",
+              "sequence complete"
+            ],
+            "suppression_ledger_required": true
+          },
+          "owner_controls": {
+            "default_mode": "research_and_draft_only",
+            "pause_and_kill_switch_required": true,
+            "one_action_approval_expiry_hours": 24,
+            "quiet_hours_supported": true,
+            "export_and_delete_supported": true
+          },
+          "metrics": [
+            "candidates researched",
+            "source evidence coverage",
+            "qualified leads",
+            "recipient permission coverage",
+            "owner approval rate",
+            "reply rate",
+            "positive reply rate",
+            "opt-out rate",
+            "bounce rate",
+            "complaint rate",
+            "conversion evidence"
+          ]
+        },
+        "readiness": {
+          "local_research_plan": "ready",
+          "qualification_and_drafts": "ready",
+          "exact_action_approval_packet": "ready",
+          "live_contact_discovery": "provider_and_terms_configuration_required",
+          "live_message_dispatch": "verified_adapter_recipient_permission_and_owner_approval_required",
+          "independent_production_business": false
+        }
+      },
       "capabilities": [
         {
           "name": "Hyperlocal weather monitoring",
@@ -779,6 +1435,12 @@
           "name": "Install and multi-platform distribution planner",
           "status": "web_ready_native_review_required",
           "evidence": "config/generated/buddy_distribution_catalog.json"
+        },
+        {
+          "id": "buddy_governed_lead_system",
+          "name": "Permission-gated lead discovery and follow-up system",
+          "status": "sandbox_ready_external_adapters_required",
+          "evidence": "server/governed-leads.ts"
         }
       ],
       "api_candidates": [],
@@ -897,6 +1559,166 @@
           "Published pricing and revenue models are catalog plans, not evidence of sales or earnings."
         ]
       },
+      "business_system": {
+        "business_id": "business-soil-analyzer",
+        "operating_model": "owner_governed_service_business",
+        "specialization": {
+          "division": "DreamAgriculture",
+          "category": "soil",
+          "mission": "Manages soil analysis data with nutrient recommendations and sampling schedules.",
+          "ideal_customer_segments": [
+            "Agronomists",
+            "soil scientists",
+            "farmers"
+          ],
+          "core_offer": "Soil Analysis Manager: Manages soil analysis data with nutrient recommendations and sampling schedules.",
+          "promised_outputs": [
+            "Soil test result management",
+            "Nutrient recommendation engine",
+            "Sampling schedule automation",
+            "pH trend tracking tools",
+            "Organic matter analysis"
+          ],
+          "catalog_revenue_model": "SaaS subscription",
+          "catalog_price_range": "$129/mo",
+          "earnings_status": "no_revenue_or_customer_result_guaranteed"
+        },
+        "operating_workflow": [
+          "capture_owner_goal_and_offer",
+          "define_ideal_customer_profile",
+          "select_owner_authorized_sources",
+          "confirm_source_terms_and_collection_scope",
+          "research_and_deduplicate_candidates",
+          "qualify_need_fit_timing_and_permission",
+          "draft_one_relevant_message",
+          "request_exact_owner_approval",
+          "dispatch_through_configured_adapter_only",
+          "wait_for_required_follow_up_interval",
+          "stop_on_reply_opt_out_bounce_or_complaint",
+          "report_outcomes_without_claiming_guaranteed_revenue"
+        ],
+        "lead_system": {
+          "system_id": "lead-system-soil-analyzer",
+          "engine": "server/governed-leads.ts",
+          "status": "sandbox_ready_external_adapters_required",
+          "ideal_customer_profile": {
+            "segments": [
+              "Agronomists",
+              "soil scientists",
+              "farmers"
+            ],
+            "need_signals": [
+              "Needs help with Soil test result management",
+              "Needs help with Nutrient recommendation engine",
+              "Needs help with Sampling schedule automation",
+              "Needs help with pH trend tracking tools",
+              "Needs help with Organic matter analysis"
+            ],
+            "exclusion_rules": [
+              "no minors",
+              "no protected or sensitive trait targeting",
+              "no deceptive identity or impersonation",
+              "no lead without traceable source evidence"
+            ]
+          },
+          "discovery": {
+            "query_templates": [
+              "Agronomists, soil scientists, farmers requesting Soil test result management",
+              "organizations seeking soil support",
+              "inbound requests matching Soil Analysis Manager",
+              "existing customers who opted in to Soil test result management updates"
+            ],
+            "authorized_source_types": [
+              "owner supplied records",
+              "consent based inbound requests",
+              "existing customer records with documented relationship",
+              "public business directories whose terms permit research",
+              "owner authorized provider APIs"
+            ],
+            "forbidden_collection": [
+              "private accounts or access-controlled pages",
+              "terms bypassing scraping",
+              "purchased, stolen, or unverifiable contact lists",
+              "raw credentials or secret tokens",
+              "sensitive personal data"
+            ]
+          },
+          "qualification": {
+            "required_fields": [
+              "source reference",
+              "organization or customer need",
+              "fit to the bot specialization",
+              "contact permission basis and channel scope",
+              "qualification evidence"
+            ],
+            "score_dimensions": {
+              "demonstrated_need": 30,
+              "capability_fit": 25,
+              "decision_readiness": 15,
+              "voluntarily_supplied_timing": 10,
+              "documented_contact_permission": 20
+            },
+            "minimum_score_for_owner_review": 65,
+            "permission_is_mandatory_even_above_threshold": true
+          },
+          "outreach": {
+            "supported_channels": [
+              "email",
+              "sms",
+              "voice_call",
+              "social_dm"
+            ],
+            "recipient_channel_permission_required": true,
+            "raw_contact_details_in_browser_forbidden": true,
+            "exact_owner_approval_per_message": true,
+            "maximum_daily_sends": 20,
+            "adapter_status": "configuration_required_for_live_dispatch"
+          },
+          "follow_up": {
+            "maximum_follow_ups": 2,
+            "minimum_interval_hours": 48,
+            "approval_required_for_each_follow_up": true,
+            "stop_conditions": [
+              "reply",
+              "opt out",
+              "bounce",
+              "complaint",
+              "permission expiry",
+              "owner stop",
+              "sequence complete"
+            ],
+            "suppression_ledger_required": true
+          },
+          "owner_controls": {
+            "default_mode": "research_and_draft_only",
+            "pause_and_kill_switch_required": true,
+            "one_action_approval_expiry_hours": 24,
+            "quiet_hours_supported": true,
+            "export_and_delete_supported": true
+          },
+          "metrics": [
+            "candidates researched",
+            "source evidence coverage",
+            "qualified leads",
+            "recipient permission coverage",
+            "owner approval rate",
+            "reply rate",
+            "positive reply rate",
+            "opt-out rate",
+            "bounce rate",
+            "complaint rate",
+            "conversion evidence"
+          ]
+        },
+        "readiness": {
+          "local_research_plan": "ready",
+          "qualification_and_drafts": "ready",
+          "exact_action_approval_packet": "ready",
+          "live_contact_discovery": "provider_and_terms_configuration_required",
+          "live_message_dispatch": "verified_adapter_recipient_permission_and_owner_approval_required",
+          "independent_production_business": false
+        }
+      },
       "capabilities": [
         {
           "name": "Soil test result management",
@@ -989,6 +1811,12 @@
           "name": "Install and multi-platform distribution planner",
           "status": "web_ready_native_review_required",
           "evidence": "config/generated/buddy_distribution_catalog.json"
+        },
+        {
+          "id": "buddy_governed_lead_system",
+          "name": "Permission-gated lead discovery and follow-up system",
+          "status": "sandbox_ready_external_adapters_required",
+          "evidence": "server/governed-leads.ts"
         },
         {
           "id": "buddy_code_workspace",
@@ -1113,6 +1941,164 @@
           "Published pricing and revenue models are catalog plans, not evidence of sales or earnings."
         ]
       },
+      "business_system": {
+        "business_id": "business-irrigation-ai",
+        "operating_model": "owner_governed_service_business",
+        "specialization": {
+          "division": "DreamAgriculture",
+          "category": "irrigation",
+          "mission": "Controls irrigation systems with soil moisture monitoring and water usage optimization.",
+          "ideal_customer_segments": [
+            "Farm managers",
+            "irrigation specialists"
+          ],
+          "core_offer": "Smart Irrigation Controller: Controls irrigation systems with soil moisture monitoring and water usage optimization.",
+          "promised_outputs": [
+            "Soil moisture sensor integration",
+            "Irrigation schedule optimization",
+            "Water usage analytics",
+            "Pump monitoring automation",
+            "Weather-based adjustment engine"
+          ],
+          "catalog_revenue_model": "Enterprise license",
+          "catalog_price_range": "$599/mo",
+          "earnings_status": "no_revenue_or_customer_result_guaranteed"
+        },
+        "operating_workflow": [
+          "capture_owner_goal_and_offer",
+          "define_ideal_customer_profile",
+          "select_owner_authorized_sources",
+          "confirm_source_terms_and_collection_scope",
+          "research_and_deduplicate_candidates",
+          "qualify_need_fit_timing_and_permission",
+          "draft_one_relevant_message",
+          "request_exact_owner_approval",
+          "dispatch_through_configured_adapter_only",
+          "wait_for_required_follow_up_interval",
+          "stop_on_reply_opt_out_bounce_or_complaint",
+          "report_outcomes_without_claiming_guaranteed_revenue"
+        ],
+        "lead_system": {
+          "system_id": "lead-system-irrigation-ai",
+          "engine": "server/governed-leads.ts",
+          "status": "sandbox_ready_external_adapters_required",
+          "ideal_customer_profile": {
+            "segments": [
+              "Farm managers",
+              "irrigation specialists"
+            ],
+            "need_signals": [
+              "Needs help with Soil moisture sensor integration",
+              "Needs help with Irrigation schedule optimization",
+              "Needs help with Water usage analytics",
+              "Needs help with Pump monitoring automation",
+              "Needs help with Weather-based adjustment engine"
+            ],
+            "exclusion_rules": [
+              "no minors",
+              "no protected or sensitive trait targeting",
+              "no deceptive identity or impersonation",
+              "no lead without traceable source evidence"
+            ]
+          },
+          "discovery": {
+            "query_templates": [
+              "Farm managers, irrigation specialists requesting Soil moisture sensor integration",
+              "organizations seeking irrigation support",
+              "inbound requests matching Smart Irrigation Controller",
+              "existing customers who opted in to Soil moisture sensor integration updates"
+            ],
+            "authorized_source_types": [
+              "owner supplied records",
+              "consent based inbound requests",
+              "existing customer records with documented relationship",
+              "public business directories whose terms permit research",
+              "owner authorized provider APIs"
+            ],
+            "forbidden_collection": [
+              "private accounts or access-controlled pages",
+              "terms bypassing scraping",
+              "purchased, stolen, or unverifiable contact lists",
+              "raw credentials or secret tokens",
+              "sensitive personal data"
+            ]
+          },
+          "qualification": {
+            "required_fields": [
+              "source reference",
+              "organization or customer need",
+              "fit to the bot specialization",
+              "contact permission basis and channel scope",
+              "qualification evidence"
+            ],
+            "score_dimensions": {
+              "demonstrated_need": 30,
+              "capability_fit": 25,
+              "decision_readiness": 15,
+              "voluntarily_supplied_timing": 10,
+              "documented_contact_permission": 20
+            },
+            "minimum_score_for_owner_review": 65,
+            "permission_is_mandatory_even_above_threshold": true
+          },
+          "outreach": {
+            "supported_channels": [
+              "email",
+              "sms",
+              "voice_call",
+              "social_dm"
+            ],
+            "recipient_channel_permission_required": true,
+            "raw_contact_details_in_browser_forbidden": true,
+            "exact_owner_approval_per_message": true,
+            "maximum_daily_sends": 20,
+            "adapter_status": "configuration_required_for_live_dispatch"
+          },
+          "follow_up": {
+            "maximum_follow_ups": 2,
+            "minimum_interval_hours": 48,
+            "approval_required_for_each_follow_up": true,
+            "stop_conditions": [
+              "reply",
+              "opt out",
+              "bounce",
+              "complaint",
+              "permission expiry",
+              "owner stop",
+              "sequence complete"
+            ],
+            "suppression_ledger_required": true
+          },
+          "owner_controls": {
+            "default_mode": "research_and_draft_only",
+            "pause_and_kill_switch_required": true,
+            "one_action_approval_expiry_hours": 24,
+            "quiet_hours_supported": true,
+            "export_and_delete_supported": true
+          },
+          "metrics": [
+            "candidates researched",
+            "source evidence coverage",
+            "qualified leads",
+            "recipient permission coverage",
+            "owner approval rate",
+            "reply rate",
+            "positive reply rate",
+            "opt-out rate",
+            "bounce rate",
+            "complaint rate",
+            "conversion evidence"
+          ]
+        },
+        "readiness": {
+          "local_research_plan": "ready",
+          "qualification_and_drafts": "ready",
+          "exact_action_approval_packet": "ready",
+          "live_contact_discovery": "provider_and_terms_configuration_required",
+          "live_message_dispatch": "verified_adapter_recipient_permission_and_owner_approval_required",
+          "independent_production_business": false
+        }
+      },
       "capabilities": [
         {
           "name": "Soil moisture sensor integration",
@@ -1205,6 +2191,12 @@
           "name": "Install and multi-platform distribution planner",
           "status": "web_ready_native_review_required",
           "evidence": "config/generated/buddy_distribution_catalog.json"
+        },
+        {
+          "id": "buddy_governed_lead_system",
+          "name": "Permission-gated lead discovery and follow-up system",
+          "status": "sandbox_ready_external_adapters_required",
+          "evidence": "server/governed-leads.ts"
         },
         {
           "id": "buddy_connection_broker",
@@ -1329,6 +2321,164 @@
           "Published pricing and revenue models are catalog plans, not evidence of sales or earnings."
         ]
       },
+      "business_system": {
+        "business_id": "business-pest-disease-scout",
+        "operating_model": "owner_governed_service_business",
+        "specialization": {
+          "division": "DreamAgriculture",
+          "category": "pest-management",
+          "mission": "Scouts for pests and diseases with image recognition and treatment recommendations.",
+          "ideal_customer_segments": [
+            "Crop scouts",
+            "pest management advisors"
+          ],
+          "core_offer": "Pest & Disease Scout AI: Scouts for pests and diseases with image recognition and treatment recommendations.",
+          "promised_outputs": [
+            "Pest identification engine",
+            "Disease symptom matching",
+            "Treatment recommendation tools",
+            "Scouting schedule management",
+            "Threshold-based alerting"
+          ],
+          "catalog_revenue_model": "SaaS subscription",
+          "catalog_price_range": "$129/mo",
+          "earnings_status": "no_revenue_or_customer_result_guaranteed"
+        },
+        "operating_workflow": [
+          "capture_owner_goal_and_offer",
+          "define_ideal_customer_profile",
+          "select_owner_authorized_sources",
+          "confirm_source_terms_and_collection_scope",
+          "research_and_deduplicate_candidates",
+          "qualify_need_fit_timing_and_permission",
+          "draft_one_relevant_message",
+          "request_exact_owner_approval",
+          "dispatch_through_configured_adapter_only",
+          "wait_for_required_follow_up_interval",
+          "stop_on_reply_opt_out_bounce_or_complaint",
+          "report_outcomes_without_claiming_guaranteed_revenue"
+        ],
+        "lead_system": {
+          "system_id": "lead-system-pest-disease-scout",
+          "engine": "server/governed-leads.ts",
+          "status": "sandbox_ready_external_adapters_required",
+          "ideal_customer_profile": {
+            "segments": [
+              "Crop scouts",
+              "pest management advisors"
+            ],
+            "need_signals": [
+              "Needs help with Pest identification engine",
+              "Needs help with Disease symptom matching",
+              "Needs help with Treatment recommendation tools",
+              "Needs help with Scouting schedule management",
+              "Needs help with Threshold-based alerting"
+            ],
+            "exclusion_rules": [
+              "no minors",
+              "no protected or sensitive trait targeting",
+              "no deceptive identity or impersonation",
+              "no lead without traceable source evidence"
+            ]
+          },
+          "discovery": {
+            "query_templates": [
+              "Crop scouts, pest management advisors requesting Pest identification engine",
+              "organizations seeking pest-management support",
+              "inbound requests matching Pest & Disease Scout AI",
+              "existing customers who opted in to Pest identification engine updates"
+            ],
+            "authorized_source_types": [
+              "owner supplied records",
+              "consent based inbound requests",
+              "existing customer records with documented relationship",
+              "public business directories whose terms permit research",
+              "owner authorized provider APIs"
+            ],
+            "forbidden_collection": [
+              "private accounts or access-controlled pages",
+              "terms bypassing scraping",
+              "purchased, stolen, or unverifiable contact lists",
+              "raw credentials or secret tokens",
+              "sensitive personal data"
+            ]
+          },
+          "qualification": {
+            "required_fields": [
+              "source reference",
+              "organization or customer need",
+              "fit to the bot specialization",
+              "contact permission basis and channel scope",
+              "qualification evidence"
+            ],
+            "score_dimensions": {
+              "demonstrated_need": 30,
+              "capability_fit": 25,
+              "decision_readiness": 15,
+              "voluntarily_supplied_timing": 10,
+              "documented_contact_permission": 20
+            },
+            "minimum_score_for_owner_review": 65,
+            "permission_is_mandatory_even_above_threshold": true
+          },
+          "outreach": {
+            "supported_channels": [
+              "email",
+              "sms",
+              "voice_call",
+              "social_dm"
+            ],
+            "recipient_channel_permission_required": true,
+            "raw_contact_details_in_browser_forbidden": true,
+            "exact_owner_approval_per_message": true,
+            "maximum_daily_sends": 20,
+            "adapter_status": "configuration_required_for_live_dispatch"
+          },
+          "follow_up": {
+            "maximum_follow_ups": 2,
+            "minimum_interval_hours": 48,
+            "approval_required_for_each_follow_up": true,
+            "stop_conditions": [
+              "reply",
+              "opt out",
+              "bounce",
+              "complaint",
+              "permission expiry",
+              "owner stop",
+              "sequence complete"
+            ],
+            "suppression_ledger_required": true
+          },
+          "owner_controls": {
+            "default_mode": "research_and_draft_only",
+            "pause_and_kill_switch_required": true,
+            "one_action_approval_expiry_hours": 24,
+            "quiet_hours_supported": true,
+            "export_and_delete_supported": true
+          },
+          "metrics": [
+            "candidates researched",
+            "source evidence coverage",
+            "qualified leads",
+            "recipient permission coverage",
+            "owner approval rate",
+            "reply rate",
+            "positive reply rate",
+            "opt-out rate",
+            "bounce rate",
+            "complaint rate",
+            "conversion evidence"
+          ]
+        },
+        "readiness": {
+          "local_research_plan": "ready",
+          "qualification_and_drafts": "ready",
+          "exact_action_approval_packet": "ready",
+          "live_contact_discovery": "provider_and_terms_configuration_required",
+          "live_message_dispatch": "verified_adapter_recipient_permission_and_owner_approval_required",
+          "independent_production_business": false
+        }
+      },
       "capabilities": [
         {
           "name": "Pest identification engine",
@@ -1421,6 +2571,12 @@
           "name": "Install and multi-platform distribution planner",
           "status": "web_ready_native_review_required",
           "evidence": "config/generated/buddy_distribution_catalog.json"
+        },
+        {
+          "id": "buddy_governed_lead_system",
+          "name": "Permission-gated lead discovery and follow-up system",
+          "status": "sandbox_ready_external_adapters_required",
+          "evidence": "server/governed-leads.ts"
         },
         {
           "id": "buddy_creative_studio",
@@ -1551,6 +2707,164 @@
           "Published pricing and revenue models are catalog plans, not evidence of sales or earnings."
         ]
       },
+      "business_system": {
+        "business_id": "business-harvest-planner",
+        "operating_model": "owner_governed_service_business",
+        "specialization": {
+          "division": "DreamAgriculture",
+          "category": "harvest",
+          "mission": "Plans harvest operations with equipment coordination and storage allocation.",
+          "ideal_customer_segments": [
+            "Farm operators",
+            "harvest coordinators"
+          ],
+          "core_offer": "Harvest Planning Optimizer: Plans harvest operations with equipment coordination and storage allocation.",
+          "promised_outputs": [
+            "Harvest timing optimization",
+            "Equipment scheduling tools",
+            "Storage capacity planning",
+            "Moisture content tracking",
+            "Logistics coordination engine"
+          ],
+          "catalog_revenue_model": "SaaS subscription",
+          "catalog_price_range": "$99/mo",
+          "earnings_status": "no_revenue_or_customer_result_guaranteed"
+        },
+        "operating_workflow": [
+          "capture_owner_goal_and_offer",
+          "define_ideal_customer_profile",
+          "select_owner_authorized_sources",
+          "confirm_source_terms_and_collection_scope",
+          "research_and_deduplicate_candidates",
+          "qualify_need_fit_timing_and_permission",
+          "draft_one_relevant_message",
+          "request_exact_owner_approval",
+          "dispatch_through_configured_adapter_only",
+          "wait_for_required_follow_up_interval",
+          "stop_on_reply_opt_out_bounce_or_complaint",
+          "report_outcomes_without_claiming_guaranteed_revenue"
+        ],
+        "lead_system": {
+          "system_id": "lead-system-harvest-planner",
+          "engine": "server/governed-leads.ts",
+          "status": "sandbox_ready_external_adapters_required",
+          "ideal_customer_profile": {
+            "segments": [
+              "Farm operators",
+              "harvest coordinators"
+            ],
+            "need_signals": [
+              "Needs help with Harvest timing optimization",
+              "Needs help with Equipment scheduling tools",
+              "Needs help with Storage capacity planning",
+              "Needs help with Moisture content tracking",
+              "Needs help with Logistics coordination engine"
+            ],
+            "exclusion_rules": [
+              "no minors",
+              "no protected or sensitive trait targeting",
+              "no deceptive identity or impersonation",
+              "no lead without traceable source evidence"
+            ]
+          },
+          "discovery": {
+            "query_templates": [
+              "Farm operators, harvest coordinators requesting Harvest timing optimization",
+              "organizations seeking harvest support",
+              "inbound requests matching Harvest Planning Optimizer",
+              "existing customers who opted in to Harvest timing optimization updates"
+            ],
+            "authorized_source_types": [
+              "owner supplied records",
+              "consent based inbound requests",
+              "existing customer records with documented relationship",
+              "public business directories whose terms permit research",
+              "owner authorized provider APIs"
+            ],
+            "forbidden_collection": [
+              "private accounts or access-controlled pages",
+              "terms bypassing scraping",
+              "purchased, stolen, or unverifiable contact lists",
+              "raw credentials or secret tokens",
+              "sensitive personal data"
+            ]
+          },
+          "qualification": {
+            "required_fields": [
+              "source reference",
+              "organization or customer need",
+              "fit to the bot specialization",
+              "contact permission basis and channel scope",
+              "qualification evidence"
+            ],
+            "score_dimensions": {
+              "demonstrated_need": 30,
+              "capability_fit": 25,
+              "decision_readiness": 15,
+              "voluntarily_supplied_timing": 10,
+              "documented_contact_permission": 20
+            },
+            "minimum_score_for_owner_review": 65,
+            "permission_is_mandatory_even_above_threshold": true
+          },
+          "outreach": {
+            "supported_channels": [
+              "email",
+              "sms",
+              "voice_call",
+              "social_dm"
+            ],
+            "recipient_channel_permission_required": true,
+            "raw_contact_details_in_browser_forbidden": true,
+            "exact_owner_approval_per_message": true,
+            "maximum_daily_sends": 20,
+            "adapter_status": "configuration_required_for_live_dispatch"
+          },
+          "follow_up": {
+            "maximum_follow_ups": 2,
+            "minimum_interval_hours": 48,
+            "approval_required_for_each_follow_up": true,
+            "stop_conditions": [
+              "reply",
+              "opt out",
+              "bounce",
+              "complaint",
+              "permission expiry",
+              "owner stop",
+              "sequence complete"
+            ],
+            "suppression_ledger_required": true
+          },
+          "owner_controls": {
+            "default_mode": "research_and_draft_only",
+            "pause_and_kill_switch_required": true,
+            "one_action_approval_expiry_hours": 24,
+            "quiet_hours_supported": true,
+            "export_and_delete_supported": true
+          },
+          "metrics": [
+            "candidates researched",
+            "source evidence coverage",
+            "qualified leads",
+            "recipient permission coverage",
+            "owner approval rate",
+            "reply rate",
+            "positive reply rate",
+            "opt-out rate",
+            "bounce rate",
+            "complaint rate",
+            "conversion evidence"
+          ]
+        },
+        "readiness": {
+          "local_research_plan": "ready",
+          "qualification_and_drafts": "ready",
+          "exact_action_approval_packet": "ready",
+          "live_contact_discovery": "provider_and_terms_configuration_required",
+          "live_message_dispatch": "verified_adapter_recipient_permission_and_owner_approval_required",
+          "independent_production_business": false
+        }
+      },
       "capabilities": [
         {
           "name": "Harvest timing optimization",
@@ -1643,6 +2957,12 @@
           "name": "Install and multi-platform distribution planner",
           "status": "web_ready_native_review_required",
           "evidence": "config/generated/buddy_distribution_catalog.json"
+        },
+        {
+          "id": "buddy_governed_lead_system",
+          "name": "Permission-gated lead discovery and follow-up system",
+          "status": "sandbox_ready_external_adapters_required",
+          "evidence": "server/governed-leads.ts"
         },
         {
           "id": "buddy_social_manager",
@@ -1767,6 +3087,164 @@
           "Published pricing and revenue models are catalog plans, not evidence of sales or earnings."
         ]
       },
+      "business_system": {
+        "business_id": "business-dairy-manager",
+        "operating_model": "owner_governed_service_business",
+        "specialization": {
+          "division": "DreamAgriculture",
+          "category": "dairy",
+          "mission": "Manages dairy farm operations with milk production tracking and herd health monitoring.",
+          "ideal_customer_segments": [
+            "Dairy farmers",
+            "herd managers"
+          ],
+          "core_offer": "Dairy Farm Manager: Manages dairy farm operations with milk production tracking and herd health monitoring.",
+          "promised_outputs": [
+            "Milk production tracking",
+            "Herd health monitoring",
+            "Feed efficiency analysis",
+            "Reproduction cycle management",
+            "Somatic cell count tracking"
+          ],
+          "catalog_revenue_model": "SaaS subscription",
+          "catalog_price_range": "$149/mo",
+          "earnings_status": "no_revenue_or_customer_result_guaranteed"
+        },
+        "operating_workflow": [
+          "capture_owner_goal_and_offer",
+          "define_ideal_customer_profile",
+          "select_owner_authorized_sources",
+          "confirm_source_terms_and_collection_scope",
+          "research_and_deduplicate_candidates",
+          "qualify_need_fit_timing_and_permission",
+          "draft_one_relevant_message",
+          "request_exact_owner_approval",
+          "dispatch_through_configured_adapter_only",
+          "wait_for_required_follow_up_interval",
+          "stop_on_reply_opt_out_bounce_or_complaint",
+          "report_outcomes_without_claiming_guaranteed_revenue"
+        ],
+        "lead_system": {
+          "system_id": "lead-system-dairy-manager",
+          "engine": "server/governed-leads.ts",
+          "status": "sandbox_ready_external_adapters_required",
+          "ideal_customer_profile": {
+            "segments": [
+              "Dairy farmers",
+              "herd managers"
+            ],
+            "need_signals": [
+              "Needs help with Milk production tracking",
+              "Needs help with Herd health monitoring",
+              "Needs help with Feed efficiency analysis",
+              "Needs help with Reproduction cycle management",
+              "Needs help with Somatic cell count tracking"
+            ],
+            "exclusion_rules": [
+              "no minors",
+              "no protected or sensitive trait targeting",
+              "no deceptive identity or impersonation",
+              "no lead without traceable source evidence"
+            ]
+          },
+          "discovery": {
+            "query_templates": [
+              "Dairy farmers, herd managers requesting Milk production tracking",
+              "organizations seeking dairy support",
+              "inbound requests matching Dairy Farm Manager",
+              "existing customers who opted in to Milk production tracking updates"
+            ],
+            "authorized_source_types": [
+              "owner supplied records",
+              "consent based inbound requests",
+              "existing customer records with documented relationship",
+              "public business directories whose terms permit research",
+              "owner authorized provider APIs"
+            ],
+            "forbidden_collection": [
+              "private accounts or access-controlled pages",
+              "terms bypassing scraping",
+              "purchased, stolen, or unverifiable contact lists",
+              "raw credentials or secret tokens",
+              "sensitive personal data"
+            ]
+          },
+          "qualification": {
+            "required_fields": [
+              "source reference",
+              "organization or customer need",
+              "fit to the bot specialization",
+              "contact permission basis and channel scope",
+              "qualification evidence"
+            ],
+            "score_dimensions": {
+              "demonstrated_need": 30,
+              "capability_fit": 25,
+              "decision_readiness": 15,
+              "voluntarily_supplied_timing": 10,
+              "documented_contact_permission": 20
+            },
+            "minimum_score_for_owner_review": 65,
+            "permission_is_mandatory_even_above_threshold": true
+          },
+          "outreach": {
+            "supported_channels": [
+              "email",
+              "sms",
+              "voice_call",
+              "social_dm"
+            ],
+            "recipient_channel_permission_required": true,
+            "raw_contact_details_in_browser_forbidden": true,
+            "exact_owner_approval_per_message": true,
+            "maximum_daily_sends": 20,
+            "adapter_status": "configuration_required_for_live_dispatch"
+          },
+          "follow_up": {
+            "maximum_follow_ups": 2,
+            "minimum_interval_hours": 48,
+            "approval_required_for_each_follow_up": true,
+            "stop_conditions": [
+              "reply",
+              "opt out",
+              "bounce",
+              "complaint",
+              "permission expiry",
+              "owner stop",
+              "sequence complete"
+            ],
+            "suppression_ledger_required": true
+          },
+          "owner_controls": {
+            "default_mode": "research_and_draft_only",
+            "pause_and_kill_switch_required": true,
+            "one_action_approval_expiry_hours": 24,
+            "quiet_hours_supported": true,
+            "export_and_delete_supported": true
+          },
+          "metrics": [
+            "candidates researched",
+            "source evidence coverage",
+            "qualified leads",
+            "recipient permission coverage",
+            "owner approval rate",
+            "reply rate",
+            "positive reply rate",
+            "opt-out rate",
+            "bounce rate",
+            "complaint rate",
+            "conversion evidence"
+          ]
+        },
+        "readiness": {
+          "local_research_plan": "ready",
+          "qualification_and_drafts": "ready",
+          "exact_action_approval_packet": "ready",
+          "live_contact_discovery": "provider_and_terms_configuration_required",
+          "live_message_dispatch": "verified_adapter_recipient_permission_and_owner_approval_required",
+          "independent_production_business": false
+        }
+      },
       "capabilities": [
         {
           "name": "Milk production tracking",
@@ -1859,6 +3337,12 @@
           "name": "Install and multi-platform distribution planner",
           "status": "web_ready_native_review_required",
           "evidence": "config/generated/buddy_distribution_catalog.json"
+        },
+        {
+          "id": "buddy_governed_lead_system",
+          "name": "Permission-gated lead discovery and follow-up system",
+          "status": "sandbox_ready_external_adapters_required",
+          "evidence": "server/governed-leads.ts"
         }
       ],
       "api_candidates": [],
@@ -1980,6 +3464,164 @@
           "Published pricing and revenue models are catalog plans, not evidence of sales or earnings."
         ]
       },
+      "business_system": {
+        "business_id": "business-grain-marketing",
+        "operating_model": "owner_governed_service_business",
+        "specialization": {
+          "division": "DreamAgriculture",
+          "category": "marketing",
+          "mission": "Advises on grain marketing strategies with basis tracking and contract management.",
+          "ideal_customer_segments": [
+            "Grain farmers",
+            "agricultural marketers"
+          ],
+          "core_offer": "Grain Marketing Advisor: Advises on grain marketing strategies with basis tracking and contract management.",
+          "promised_outputs": [
+            "Market price monitoring",
+            "Basis tracking analytics",
+            "Contract management tools",
+            "Hedging strategy advisor",
+            "Storage cost analysis"
+          ],
+          "catalog_revenue_model": "SaaS subscription",
+          "catalog_price_range": "$129/mo",
+          "earnings_status": "no_revenue_or_customer_result_guaranteed"
+        },
+        "operating_workflow": [
+          "capture_owner_goal_and_offer",
+          "define_ideal_customer_profile",
+          "select_owner_authorized_sources",
+          "confirm_source_terms_and_collection_scope",
+          "research_and_deduplicate_candidates",
+          "qualify_need_fit_timing_and_permission",
+          "draft_one_relevant_message",
+          "request_exact_owner_approval",
+          "dispatch_through_configured_adapter_only",
+          "wait_for_required_follow_up_interval",
+          "stop_on_reply_opt_out_bounce_or_complaint",
+          "report_outcomes_without_claiming_guaranteed_revenue"
+        ],
+        "lead_system": {
+          "system_id": "lead-system-grain-marketing",
+          "engine": "server/governed-leads.ts",
+          "status": "sandbox_ready_external_adapters_required",
+          "ideal_customer_profile": {
+            "segments": [
+              "Grain farmers",
+              "agricultural marketers"
+            ],
+            "need_signals": [
+              "Needs help with Market price monitoring",
+              "Needs help with Basis tracking analytics",
+              "Needs help with Contract management tools",
+              "Needs help with Hedging strategy advisor",
+              "Needs help with Storage cost analysis"
+            ],
+            "exclusion_rules": [
+              "no minors",
+              "no protected or sensitive trait targeting",
+              "no deceptive identity or impersonation",
+              "no lead without traceable source evidence"
+            ]
+          },
+          "discovery": {
+            "query_templates": [
+              "Grain farmers, agricultural marketers requesting Market price monitoring",
+              "organizations seeking marketing support",
+              "inbound requests matching Grain Marketing Advisor",
+              "existing customers who opted in to Market price monitoring updates"
+            ],
+            "authorized_source_types": [
+              "owner supplied records",
+              "consent based inbound requests",
+              "existing customer records with documented relationship",
+              "public business directories whose terms permit research",
+              "owner authorized provider APIs"
+            ],
+            "forbidden_collection": [
+              "private accounts or access-controlled pages",
+              "terms bypassing scraping",
+              "purchased, stolen, or unverifiable contact lists",
+              "raw credentials or secret tokens",
+              "sensitive personal data"
+            ]
+          },
+          "qualification": {
+            "required_fields": [
+              "source reference",
+              "organization or customer need",
+              "fit to the bot specialization",
+              "contact permission basis and channel scope",
+              "qualification evidence"
+            ],
+            "score_dimensions": {
+              "demonstrated_need": 30,
+              "capability_fit": 25,
+              "decision_readiness": 15,
+              "voluntarily_supplied_timing": 10,
+              "documented_contact_permission": 20
+            },
+            "minimum_score_for_owner_review": 65,
+            "permission_is_mandatory_even_above_threshold": true
+          },
+          "outreach": {
+            "supported_channels": [
+              "email",
+              "sms",
+              "voice_call",
+              "social_dm"
+            ],
+            "recipient_channel_permission_required": true,
+            "raw_contact_details_in_browser_forbidden": true,
+            "exact_owner_approval_per_message": true,
+            "maximum_daily_sends": 20,
+            "adapter_status": "configuration_required_for_live_dispatch"
+          },
+          "follow_up": {
+            "maximum_follow_ups": 2,
+            "minimum_interval_hours": 48,
+            "approval_required_for_each_follow_up": true,
+            "stop_conditions": [
+              "reply",
+              "opt out",
+              "bounce",
+              "complaint",
+              "permission expiry",
+              "owner stop",
+              "sequence complete"
+            ],
+            "suppression_ledger_required": true
+          },
+          "owner_controls": {
+            "default_mode": "research_and_draft_only",
+            "pause_and_kill_switch_required": true,
+            "one_action_approval_expiry_hours": 24,
+            "quiet_hours_supported": true,
+            "export_and_delete_supported": true
+          },
+          "metrics": [
+            "candidates researched",
+            "source evidence coverage",
+            "qualified leads",
+            "recipient permission coverage",
+            "owner approval rate",
+            "reply rate",
+            "positive reply rate",
+            "opt-out rate",
+            "bounce rate",
+            "complaint rate",
+            "conversion evidence"
+          ]
+        },
+        "readiness": {
+          "local_research_plan": "ready",
+          "qualification_and_drafts": "ready",
+          "exact_action_approval_packet": "ready",
+          "live_contact_discovery": "provider_and_terms_configuration_required",
+          "live_message_dispatch": "verified_adapter_recipient_permission_and_owner_approval_required",
+          "independent_production_business": false
+        }
+      },
       "capabilities": [
         {
           "name": "Market price monitoring",
@@ -2072,6 +3714,12 @@
           "name": "Install and multi-platform distribution planner",
           "status": "web_ready_native_review_required",
           "evidence": "config/generated/buddy_distribution_catalog.json"
+        },
+        {
+          "id": "buddy_governed_lead_system",
+          "name": "Permission-gated lead discovery and follow-up system",
+          "status": "sandbox_ready_external_adapters_required",
+          "evidence": "server/governed-leads.ts"
         }
       ],
       "api_candidates": [],
@@ -2191,6 +3839,164 @@
           "Published pricing and revenue models are catalog plans, not evidence of sales or earnings."
         ]
       },
+      "business_system": {
+        "business_id": "business-precision-ag",
+        "operating_model": "owner_governed_service_business",
+        "specialization": {
+          "division": "DreamAgriculture",
+          "category": "precision-ag",
+          "mission": "Enables precision agriculture with satellite imagery and variable rate technology.",
+          "ideal_customer_segments": [
+            "Large farm operations",
+            "precision ag consultants"
+          ],
+          "core_offer": "Precision Agriculture Platform: Enables precision agriculture with satellite imagery and variable rate technology.",
+          "promised_outputs": [
+            "Satellite imagery analysis",
+            "NDVI mapping tools",
+            "Variable rate prescription",
+            "Yield map analysis",
+            "As-applied data tracking"
+          ],
+          "catalog_revenue_model": "Enterprise license",
+          "catalog_price_range": "$899/mo",
+          "earnings_status": "no_revenue_or_customer_result_guaranteed"
+        },
+        "operating_workflow": [
+          "capture_owner_goal_and_offer",
+          "define_ideal_customer_profile",
+          "select_owner_authorized_sources",
+          "confirm_source_terms_and_collection_scope",
+          "research_and_deduplicate_candidates",
+          "qualify_need_fit_timing_and_permission",
+          "draft_one_relevant_message",
+          "request_exact_owner_approval",
+          "dispatch_through_configured_adapter_only",
+          "wait_for_required_follow_up_interval",
+          "stop_on_reply_opt_out_bounce_or_complaint",
+          "report_outcomes_without_claiming_guaranteed_revenue"
+        ],
+        "lead_system": {
+          "system_id": "lead-system-precision-ag",
+          "engine": "server/governed-leads.ts",
+          "status": "sandbox_ready_external_adapters_required",
+          "ideal_customer_profile": {
+            "segments": [
+              "Large farm operations",
+              "precision ag consultants"
+            ],
+            "need_signals": [
+              "Needs help with Satellite imagery analysis",
+              "Needs help with NDVI mapping tools",
+              "Needs help with Variable rate prescription",
+              "Needs help with Yield map analysis",
+              "Needs help with As-applied data tracking"
+            ],
+            "exclusion_rules": [
+              "no minors",
+              "no protected or sensitive trait targeting",
+              "no deceptive identity or impersonation",
+              "no lead without traceable source evidence"
+            ]
+          },
+          "discovery": {
+            "query_templates": [
+              "Large farm operations, precision ag consultants requesting Satellite imagery analysis",
+              "organizations seeking precision-ag support",
+              "inbound requests matching Precision Agriculture Platform",
+              "existing customers who opted in to Satellite imagery analysis updates"
+            ],
+            "authorized_source_types": [
+              "owner supplied records",
+              "consent based inbound requests",
+              "existing customer records with documented relationship",
+              "public business directories whose terms permit research",
+              "owner authorized provider APIs"
+            ],
+            "forbidden_collection": [
+              "private accounts or access-controlled pages",
+              "terms bypassing scraping",
+              "purchased, stolen, or unverifiable contact lists",
+              "raw credentials or secret tokens",
+              "sensitive personal data"
+            ]
+          },
+          "qualification": {
+            "required_fields": [
+              "source reference",
+              "organization or customer need",
+              "fit to the bot specialization",
+              "contact permission basis and channel scope",
+              "qualification evidence"
+            ],
+            "score_dimensions": {
+              "demonstrated_need": 30,
+              "capability_fit": 25,
+              "decision_readiness": 15,
+              "voluntarily_supplied_timing": 10,
+              "documented_contact_permission": 20
+            },
+            "minimum_score_for_owner_review": 65,
+            "permission_is_mandatory_even_above_threshold": true
+          },
+          "outreach": {
+            "supported_channels": [
+              "email",
+              "sms",
+              "voice_call",
+              "social_dm"
+            ],
+            "recipient_channel_permission_required": true,
+            "raw_contact_details_in_browser_forbidden": true,
+            "exact_owner_approval_per_message": true,
+            "maximum_daily_sends": 20,
+            "adapter_status": "configuration_required_for_live_dispatch"
+          },
+          "follow_up": {
+            "maximum_follow_ups": 2,
+            "minimum_interval_hours": 48,
+            "approval_required_for_each_follow_up": true,
+            "stop_conditions": [
+              "reply",
+              "opt out",
+              "bounce",
+              "complaint",
+              "permission expiry",
+              "owner stop",
+              "sequence complete"
+            ],
+            "suppression_ledger_required": true
+          },
+          "owner_controls": {
+            "default_mode": "research_and_draft_only",
+            "pause_and_kill_switch_required": true,
+            "one_action_approval_expiry_hours": 24,
+            "quiet_hours_supported": true,
+            "export_and_delete_supported": true
+          },
+          "metrics": [
+            "candidates researched",
+            "source evidence coverage",
+            "qualified leads",
+            "recipient permission coverage",
+            "owner approval rate",
+            "reply rate",
+            "positive reply rate",
+            "opt-out rate",
+            "bounce rate",
+            "complaint rate",
+            "conversion evidence"
+          ]
+        },
+        "readiness": {
+          "local_research_plan": "ready",
+          "qualification_and_drafts": "ready",
+          "exact_action_approval_packet": "ready",
+          "live_contact_discovery": "provider_and_terms_configuration_required",
+          "live_message_dispatch": "verified_adapter_recipient_permission_and_owner_approval_required",
+          "independent_production_business": false
+        }
+      },
       "capabilities": [
         {
           "name": "Satellite imagery analysis",
@@ -2283,6 +4089,12 @@
           "name": "Install and multi-platform distribution planner",
           "status": "web_ready_native_review_required",
           "evidence": "config/generated/buddy_distribution_catalog.json"
+        },
+        {
+          "id": "buddy_governed_lead_system",
+          "name": "Permission-gated lead discovery and follow-up system",
+          "status": "sandbox_ready_external_adapters_required",
+          "evidence": "server/governed-leads.ts"
         },
         {
           "id": "buddy_creative_studio",
@@ -2419,6 +4231,164 @@
           "Published pricing and revenue models are catalog plans, not evidence of sales or earnings."
         ]
       },
+      "business_system": {
+        "business_id": "business-farm-accounting",
+        "operating_model": "owner_governed_service_business",
+        "specialization": {
+          "division": "DreamAgriculture",
+          "category": "finance",
+          "mission": "Manages farm-specific accounting with enterprise allocation and tax planning.",
+          "ideal_customer_segments": [
+            "Farm accountants",
+            "large farm operators"
+          ],
+          "core_offer": "Farm Accounting Manager: Manages farm-specific accounting with enterprise allocation and tax planning.",
+          "promised_outputs": [
+            "Enterprise cost tracking",
+            "Crop insurance management",
+            "Tax planning tools",
+            "Depreciation schedule automation",
+            "Government program compliance"
+          ],
+          "catalog_revenue_model": "Enterprise license",
+          "catalog_price_range": "$499/mo",
+          "earnings_status": "no_revenue_or_customer_result_guaranteed"
+        },
+        "operating_workflow": [
+          "capture_owner_goal_and_offer",
+          "define_ideal_customer_profile",
+          "select_owner_authorized_sources",
+          "confirm_source_terms_and_collection_scope",
+          "research_and_deduplicate_candidates",
+          "qualify_need_fit_timing_and_permission",
+          "draft_one_relevant_message",
+          "request_exact_owner_approval",
+          "dispatch_through_configured_adapter_only",
+          "wait_for_required_follow_up_interval",
+          "stop_on_reply_opt_out_bounce_or_complaint",
+          "report_outcomes_without_claiming_guaranteed_revenue"
+        ],
+        "lead_system": {
+          "system_id": "lead-system-farm-accounting",
+          "engine": "server/governed-leads.ts",
+          "status": "sandbox_ready_external_adapters_required",
+          "ideal_customer_profile": {
+            "segments": [
+              "Farm accountants",
+              "large farm operators"
+            ],
+            "need_signals": [
+              "Needs help with Enterprise cost tracking",
+              "Needs help with Crop insurance management",
+              "Needs help with Tax planning tools",
+              "Needs help with Depreciation schedule automation",
+              "Needs help with Government program compliance"
+            ],
+            "exclusion_rules": [
+              "no minors",
+              "no protected or sensitive trait targeting",
+              "no deceptive identity or impersonation",
+              "no lead without traceable source evidence"
+            ]
+          },
+          "discovery": {
+            "query_templates": [
+              "Farm accountants, large farm operators requesting Enterprise cost tracking",
+              "organizations seeking finance support",
+              "inbound requests matching Farm Accounting Manager",
+              "existing customers who opted in to Enterprise cost tracking updates"
+            ],
+            "authorized_source_types": [
+              "owner supplied records",
+              "consent based inbound requests",
+              "existing customer records with documented relationship",
+              "public business directories whose terms permit research",
+              "owner authorized provider APIs"
+            ],
+            "forbidden_collection": [
+              "private accounts or access-controlled pages",
+              "terms bypassing scraping",
+              "purchased, stolen, or unverifiable contact lists",
+              "raw credentials or secret tokens",
+              "sensitive personal data"
+            ]
+          },
+          "qualification": {
+            "required_fields": [
+              "source reference",
+              "organization or customer need",
+              "fit to the bot specialization",
+              "contact permission basis and channel scope",
+              "qualification evidence"
+            ],
+            "score_dimensions": {
+              "demonstrated_need": 30,
+              "capability_fit": 25,
+              "decision_readiness": 15,
+              "voluntarily_supplied_timing": 10,
+              "documented_contact_permission": 20
+            },
+            "minimum_score_for_owner_review": 65,
+            "permission_is_mandatory_even_above_threshold": true
+          },
+          "outreach": {
+            "supported_channels": [
+              "email",
+              "sms",
+              "voice_call",
+              "social_dm"
+            ],
+            "recipient_channel_permission_required": true,
+            "raw_contact_details_in_browser_forbidden": true,
+            "exact_owner_approval_per_message": true,
+            "maximum_daily_sends": 20,
+            "adapter_status": "configuration_required_for_live_dispatch"
+          },
+          "follow_up": {
+            "maximum_follow_ups": 2,
+            "minimum_interval_hours": 48,
+            "approval_required_for_each_follow_up": true,
+            "stop_conditions": [
+              "reply",
+              "opt out",
+              "bounce",
+              "complaint",
+              "permission expiry",
+              "owner stop",
+              "sequence complete"
+            ],
+            "suppression_ledger_required": true
+          },
+          "owner_controls": {
+            "default_mode": "research_and_draft_only",
+            "pause_and_kill_switch_required": true,
+            "one_action_approval_expiry_hours": 24,
+            "quiet_hours_supported": true,
+            "export_and_delete_supported": true
+          },
+          "metrics": [
+            "candidates researched",
+            "source evidence coverage",
+            "qualified leads",
+            "recipient permission coverage",
+            "owner approval rate",
+            "reply rate",
+            "positive reply rate",
+            "opt-out rate",
+            "bounce rate",
+            "complaint rate",
+            "conversion evidence"
+          ]
+        },
+        "readiness": {
+          "local_research_plan": "ready",
+          "qualification_and_drafts": "ready",
+          "exact_action_approval_packet": "ready",
+          "live_contact_discovery": "provider_and_terms_configuration_required",
+          "live_message_dispatch": "verified_adapter_recipient_permission_and_owner_approval_required",
+          "independent_production_business": false
+        }
+      },
       "capabilities": [
         {
           "name": "Enterprise cost tracking",
@@ -2511,6 +4481,12 @@
           "name": "Install and multi-platform distribution planner",
           "status": "web_ready_native_review_required",
           "evidence": "config/generated/buddy_distribution_catalog.json"
+        },
+        {
+          "id": "buddy_governed_lead_system",
+          "name": "Permission-gated lead discovery and follow-up system",
+          "status": "sandbox_ready_external_adapters_required",
+          "evidence": "server/governed-leads.ts"
         },
         {
           "id": "buddy_connection_broker",
@@ -2638,6 +4614,164 @@
           "Published pricing and revenue models are catalog plans, not evidence of sales or earnings."
         ]
       },
+      "business_system": {
+        "business_id": "business-ag-analytics-elite",
+        "operating_model": "owner_governed_service_business",
+        "specialization": {
+          "division": "DreamAgriculture",
+          "category": "analytics",
+          "mission": "Enterprise agricultural analytics with predictive yield modeling and market intelligence.",
+          "ideal_customer_segments": [
+            "Agricultural investment firms",
+            "large agribusiness"
+          ],
+          "core_offer": "Agricultural Intelligence Suite: Enterprise agricultural analytics with predictive yield modeling and market intelligence.",
+          "promised_outputs": [
+            "Predictive yield modeling",
+            "Market intelligence dashboard",
+            "Risk quantification engine",
+            "Portfolio optimization tools",
+            "Sustainability scoring metrics"
+          ],
+          "catalog_revenue_model": "Enterprise license",
+          "catalog_price_range": "$1,999/mo",
+          "earnings_status": "no_revenue_or_customer_result_guaranteed"
+        },
+        "operating_workflow": [
+          "capture_owner_goal_and_offer",
+          "define_ideal_customer_profile",
+          "select_owner_authorized_sources",
+          "confirm_source_terms_and_collection_scope",
+          "research_and_deduplicate_candidates",
+          "qualify_need_fit_timing_and_permission",
+          "draft_one_relevant_message",
+          "request_exact_owner_approval",
+          "dispatch_through_configured_adapter_only",
+          "wait_for_required_follow_up_interval",
+          "stop_on_reply_opt_out_bounce_or_complaint",
+          "report_outcomes_without_claiming_guaranteed_revenue"
+        ],
+        "lead_system": {
+          "system_id": "lead-system-ag-analytics-elite",
+          "engine": "server/governed-leads.ts",
+          "status": "sandbox_ready_external_adapters_required",
+          "ideal_customer_profile": {
+            "segments": [
+              "Agricultural investment firms",
+              "large agribusiness"
+            ],
+            "need_signals": [
+              "Needs help with Predictive yield modeling",
+              "Needs help with Market intelligence dashboard",
+              "Needs help with Risk quantification engine",
+              "Needs help with Portfolio optimization tools",
+              "Needs help with Sustainability scoring metrics"
+            ],
+            "exclusion_rules": [
+              "no minors",
+              "no protected or sensitive trait targeting",
+              "no deceptive identity or impersonation",
+              "no lead without traceable source evidence"
+            ]
+          },
+          "discovery": {
+            "query_templates": [
+              "Agricultural investment firms, large agribusiness requesting Predictive yield modeling",
+              "organizations seeking analytics support",
+              "inbound requests matching Agricultural Intelligence Suite",
+              "existing customers who opted in to Predictive yield modeling updates"
+            ],
+            "authorized_source_types": [
+              "owner supplied records",
+              "consent based inbound requests",
+              "existing customer records with documented relationship",
+              "public business directories whose terms permit research",
+              "owner authorized provider APIs"
+            ],
+            "forbidden_collection": [
+              "private accounts or access-controlled pages",
+              "terms bypassing scraping",
+              "purchased, stolen, or unverifiable contact lists",
+              "raw credentials or secret tokens",
+              "sensitive personal data"
+            ]
+          },
+          "qualification": {
+            "required_fields": [
+              "source reference",
+              "organization or customer need",
+              "fit to the bot specialization",
+              "contact permission basis and channel scope",
+              "qualification evidence"
+            ],
+            "score_dimensions": {
+              "demonstrated_need": 30,
+              "capability_fit": 25,
+              "decision_readiness": 15,
+              "voluntarily_supplied_timing": 10,
+              "documented_contact_permission": 20
+            },
+            "minimum_score_for_owner_review": 65,
+            "permission_is_mandatory_even_above_threshold": true
+          },
+          "outreach": {
+            "supported_channels": [
+              "email",
+              "sms",
+              "voice_call",
+              "social_dm"
+            ],
+            "recipient_channel_permission_required": true,
+            "raw_contact_details_in_browser_forbidden": true,
+            "exact_owner_approval_per_message": true,
+            "maximum_daily_sends": 20,
+            "adapter_status": "configuration_required_for_live_dispatch"
+          },
+          "follow_up": {
+            "maximum_follow_ups": 2,
+            "minimum_interval_hours": 48,
+            "approval_required_for_each_follow_up": true,
+            "stop_conditions": [
+              "reply",
+              "opt out",
+              "bounce",
+              "complaint",
+              "permission expiry",
+              "owner stop",
+              "sequence complete"
+            ],
+            "suppression_ledger_required": true
+          },
+          "owner_controls": {
+            "default_mode": "research_and_draft_only",
+            "pause_and_kill_switch_required": true,
+            "one_action_approval_expiry_hours": 24,
+            "quiet_hours_supported": true,
+            "export_and_delete_supported": true
+          },
+          "metrics": [
+            "candidates researched",
+            "source evidence coverage",
+            "qualified leads",
+            "recipient permission coverage",
+            "owner approval rate",
+            "reply rate",
+            "positive reply rate",
+            "opt-out rate",
+            "bounce rate",
+            "complaint rate",
+            "conversion evidence"
+          ]
+        },
+        "readiness": {
+          "local_research_plan": "ready",
+          "qualification_and_drafts": "ready",
+          "exact_action_approval_packet": "ready",
+          "live_contact_discovery": "provider_and_terms_configuration_required",
+          "live_message_dispatch": "verified_adapter_recipient_permission_and_owner_approval_required",
+          "independent_production_business": false
+        }
+      },
       "capabilities": [
         {
           "name": "Predictive yield modeling",
@@ -2730,6 +4864,12 @@
           "name": "Install and multi-platform distribution planner",
           "status": "web_ready_native_review_required",
           "evidence": "config/generated/buddy_distribution_catalog.json"
+        },
+        {
+          "id": "buddy_governed_lead_system",
+          "name": "Permission-gated lead discovery and follow-up system",
+          "status": "sandbox_ready_external_adapters_required",
+          "evidence": "server/governed-leads.ts"
         }
       ],
       "api_candidates": [],
@@ -2848,6 +4988,164 @@
           "Published pricing and revenue models are catalog plans, not evidence of sales or earnings."
         ]
       },
+      "business_system": {
+        "business_id": "business-vertical-farm",
+        "operating_model": "owner_governed_service_business",
+        "specialization": {
+          "division": "DreamAgriculture",
+          "category": "vertical-farming",
+          "mission": "Optimizes vertical farming operations with climate control and nutrient management.",
+          "ideal_customer_segments": [
+            "Vertical farm operators",
+            "indoor agriculture companies"
+          ],
+          "core_offer": "Vertical Farming Optimizer: Optimizes vertical farming operations with climate control and nutrient management.",
+          "promised_outputs": [
+            "Climate control optimization",
+            "LED lighting schedule management",
+            "Nutrient solution monitoring",
+            "Harvest cycle planning",
+            "Energy cost optimization"
+          ],
+          "catalog_revenue_model": "Enterprise license",
+          "catalog_price_range": "$1,499/mo",
+          "earnings_status": "no_revenue_or_customer_result_guaranteed"
+        },
+        "operating_workflow": [
+          "capture_owner_goal_and_offer",
+          "define_ideal_customer_profile",
+          "select_owner_authorized_sources",
+          "confirm_source_terms_and_collection_scope",
+          "research_and_deduplicate_candidates",
+          "qualify_need_fit_timing_and_permission",
+          "draft_one_relevant_message",
+          "request_exact_owner_approval",
+          "dispatch_through_configured_adapter_only",
+          "wait_for_required_follow_up_interval",
+          "stop_on_reply_opt_out_bounce_or_complaint",
+          "report_outcomes_without_claiming_guaranteed_revenue"
+        ],
+        "lead_system": {
+          "system_id": "lead-system-vertical-farm",
+          "engine": "server/governed-leads.ts",
+          "status": "sandbox_ready_external_adapters_required",
+          "ideal_customer_profile": {
+            "segments": [
+              "Vertical farm operators",
+              "indoor agriculture companies"
+            ],
+            "need_signals": [
+              "Needs help with Climate control optimization",
+              "Needs help with LED lighting schedule management",
+              "Needs help with Nutrient solution monitoring",
+              "Needs help with Harvest cycle planning",
+              "Needs help with Energy cost optimization"
+            ],
+            "exclusion_rules": [
+              "no minors",
+              "no protected or sensitive trait targeting",
+              "no deceptive identity or impersonation",
+              "no lead without traceable source evidence"
+            ]
+          },
+          "discovery": {
+            "query_templates": [
+              "Vertical farm operators, indoor agriculture companies requesting Climate control optimization",
+              "organizations seeking vertical-farming support",
+              "inbound requests matching Vertical Farming Optimizer",
+              "existing customers who opted in to Climate control optimization updates"
+            ],
+            "authorized_source_types": [
+              "owner supplied records",
+              "consent based inbound requests",
+              "existing customer records with documented relationship",
+              "public business directories whose terms permit research",
+              "owner authorized provider APIs"
+            ],
+            "forbidden_collection": [
+              "private accounts or access-controlled pages",
+              "terms bypassing scraping",
+              "purchased, stolen, or unverifiable contact lists",
+              "raw credentials or secret tokens",
+              "sensitive personal data"
+            ]
+          },
+          "qualification": {
+            "required_fields": [
+              "source reference",
+              "organization or customer need",
+              "fit to the bot specialization",
+              "contact permission basis and channel scope",
+              "qualification evidence"
+            ],
+            "score_dimensions": {
+              "demonstrated_need": 30,
+              "capability_fit": 25,
+              "decision_readiness": 15,
+              "voluntarily_supplied_timing": 10,
+              "documented_contact_permission": 20
+            },
+            "minimum_score_for_owner_review": 65,
+            "permission_is_mandatory_even_above_threshold": true
+          },
+          "outreach": {
+            "supported_channels": [
+              "email",
+              "sms",
+              "voice_call",
+              "social_dm"
+            ],
+            "recipient_channel_permission_required": true,
+            "raw_contact_details_in_browser_forbidden": true,
+            "exact_owner_approval_per_message": true,
+            "maximum_daily_sends": 20,
+            "adapter_status": "configuration_required_for_live_dispatch"
+          },
+          "follow_up": {
+            "maximum_follow_ups": 2,
+            "minimum_interval_hours": 48,
+            "approval_required_for_each_follow_up": true,
+            "stop_conditions": [
+              "reply",
+              "opt out",
+              "bounce",
+              "complaint",
+              "permission expiry",
+              "owner stop",
+              "sequence complete"
+            ],
+            "suppression_ledger_required": true
+          },
+          "owner_controls": {
+            "default_mode": "research_and_draft_only",
+            "pause_and_kill_switch_required": true,
+            "one_action_approval_expiry_hours": 24,
+            "quiet_hours_supported": true,
+            "export_and_delete_supported": true
+          },
+          "metrics": [
+            "candidates researched",
+            "source evidence coverage",
+            "qualified leads",
+            "recipient permission coverage",
+            "owner approval rate",
+            "reply rate",
+            "positive reply rate",
+            "opt-out rate",
+            "bounce rate",
+            "complaint rate",
+            "conversion evidence"
+          ]
+        },
+        "readiness": {
+          "local_research_plan": "ready",
+          "qualification_and_drafts": "ready",
+          "exact_action_approval_packet": "ready",
+          "live_contact_discovery": "provider_and_terms_configuration_required",
+          "live_message_dispatch": "verified_adapter_recipient_permission_and_owner_approval_required",
+          "independent_production_business": false
+        }
+      },
       "capabilities": [
         {
           "name": "Climate control optimization",
@@ -2940,6 +5238,12 @@
           "name": "Install and multi-platform distribution planner",
           "status": "web_ready_native_review_required",
           "evidence": "config/generated/buddy_distribution_catalog.json"
+        },
+        {
+          "id": "buddy_governed_lead_system",
+          "name": "Permission-gated lead discovery and follow-up system",
+          "status": "sandbox_ready_external_adapters_required",
+          "evidence": "server/governed-leads.ts"
         }
       ],
       "api_candidates": [],
@@ -3058,6 +5362,164 @@
           "Published pricing and revenue models are catalog plans, not evidence of sales or earnings."
         ]
       },
+      "business_system": {
+        "business_id": "business-farm-safety-check",
+        "operating_model": "owner_governed_service_business",
+        "specialization": {
+          "division": "DreamAgriculture",
+          "category": "safety",
+          "mission": "Provides farm safety checklists with OSHA agricultural compliance tracking.",
+          "ideal_customer_segments": [
+            "Farm managers",
+            "safety officers"
+          ],
+          "core_offer": "Farm Safety Checklist: Provides farm safety checklists with OSHA agricultural compliance tracking.",
+          "promised_outputs": [
+            "Safety checklist templates",
+            "OSHA compliance tracking",
+            "Equipment safety inspection",
+            "Chemical handling documentation",
+            "Training record management"
+          ],
+          "catalog_revenue_model": "SaaS subscription",
+          "catalog_price_range": "$0",
+          "earnings_status": "no_revenue_or_customer_result_guaranteed"
+        },
+        "operating_workflow": [
+          "capture_owner_goal_and_offer",
+          "define_ideal_customer_profile",
+          "select_owner_authorized_sources",
+          "confirm_source_terms_and_collection_scope",
+          "research_and_deduplicate_candidates",
+          "qualify_need_fit_timing_and_permission",
+          "draft_one_relevant_message",
+          "request_exact_owner_approval",
+          "dispatch_through_configured_adapter_only",
+          "wait_for_required_follow_up_interval",
+          "stop_on_reply_opt_out_bounce_or_complaint",
+          "report_outcomes_without_claiming_guaranteed_revenue"
+        ],
+        "lead_system": {
+          "system_id": "lead-system-farm-safety-check",
+          "engine": "server/governed-leads.ts",
+          "status": "sandbox_ready_external_adapters_required",
+          "ideal_customer_profile": {
+            "segments": [
+              "Farm managers",
+              "safety officers"
+            ],
+            "need_signals": [
+              "Needs help with Safety checklist templates",
+              "Needs help with OSHA compliance tracking",
+              "Needs help with Equipment safety inspection",
+              "Needs help with Chemical handling documentation",
+              "Needs help with Training record management"
+            ],
+            "exclusion_rules": [
+              "no minors",
+              "no protected or sensitive trait targeting",
+              "no deceptive identity or impersonation",
+              "no lead without traceable source evidence"
+            ]
+          },
+          "discovery": {
+            "query_templates": [
+              "Farm managers, safety officers requesting Safety checklist templates",
+              "organizations seeking safety support",
+              "inbound requests matching Farm Safety Checklist",
+              "existing customers who opted in to Safety checklist templates updates"
+            ],
+            "authorized_source_types": [
+              "owner supplied records",
+              "consent based inbound requests",
+              "existing customer records with documented relationship",
+              "public business directories whose terms permit research",
+              "owner authorized provider APIs"
+            ],
+            "forbidden_collection": [
+              "private accounts or access-controlled pages",
+              "terms bypassing scraping",
+              "purchased, stolen, or unverifiable contact lists",
+              "raw credentials or secret tokens",
+              "sensitive personal data"
+            ]
+          },
+          "qualification": {
+            "required_fields": [
+              "source reference",
+              "organization or customer need",
+              "fit to the bot specialization",
+              "contact permission basis and channel scope",
+              "qualification evidence"
+            ],
+            "score_dimensions": {
+              "demonstrated_need": 30,
+              "capability_fit": 25,
+              "decision_readiness": 15,
+              "voluntarily_supplied_timing": 10,
+              "documented_contact_permission": 20
+            },
+            "minimum_score_for_owner_review": 65,
+            "permission_is_mandatory_even_above_threshold": true
+          },
+          "outreach": {
+            "supported_channels": [
+              "email",
+              "sms",
+              "voice_call",
+              "social_dm"
+            ],
+            "recipient_channel_permission_required": true,
+            "raw_contact_details_in_browser_forbidden": true,
+            "exact_owner_approval_per_message": true,
+            "maximum_daily_sends": 20,
+            "adapter_status": "configuration_required_for_live_dispatch"
+          },
+          "follow_up": {
+            "maximum_follow_ups": 2,
+            "minimum_interval_hours": 48,
+            "approval_required_for_each_follow_up": true,
+            "stop_conditions": [
+              "reply",
+              "opt out",
+              "bounce",
+              "complaint",
+              "permission expiry",
+              "owner stop",
+              "sequence complete"
+            ],
+            "suppression_ledger_required": true
+          },
+          "owner_controls": {
+            "default_mode": "research_and_draft_only",
+            "pause_and_kill_switch_required": true,
+            "one_action_approval_expiry_hours": 24,
+            "quiet_hours_supported": true,
+            "export_and_delete_supported": true
+          },
+          "metrics": [
+            "candidates researched",
+            "source evidence coverage",
+            "qualified leads",
+            "recipient permission coverage",
+            "owner approval rate",
+            "reply rate",
+            "positive reply rate",
+            "opt-out rate",
+            "bounce rate",
+            "complaint rate",
+            "conversion evidence"
+          ]
+        },
+        "readiness": {
+          "local_research_plan": "ready",
+          "qualification_and_drafts": "ready",
+          "exact_action_approval_packet": "ready",
+          "live_contact_discovery": "provider_and_terms_configuration_required",
+          "live_message_dispatch": "verified_adapter_recipient_permission_and_owner_approval_required",
+          "independent_production_business": false
+        }
+      },
       "capabilities": [
         {
           "name": "Safety checklist templates",
@@ -3150,6 +5612,12 @@
           "name": "Install and multi-platform distribution planner",
           "status": "web_ready_native_review_required",
           "evidence": "config/generated/buddy_distribution_catalog.json"
+        },
+        {
+          "id": "buddy_governed_lead_system",
+          "name": "Permission-gated lead discovery and follow-up system",
+          "status": "sandbox_ready_external_adapters_required",
+          "evidence": "server/governed-leads.ts"
         }
       ],
       "api_candidates": [],
@@ -3268,6 +5736,166 @@
           "Published pricing and revenue models are catalog plans, not evidence of sales or earnings."
         ]
       },
+      "business_system": {
+        "business_id": "business-market-price-alert",
+        "operating_model": "owner_governed_service_business",
+        "specialization": {
+          "division": "DreamAgriculture",
+          "category": "commodity-prices",
+          "mission": "Monitors commodity prices with customizable alerts and trend tracking.",
+          "ideal_customer_segments": [
+            "Farmers",
+            "grain elevators",
+            "commodity traders"
+          ],
+          "core_offer": "Commodity Price Alert: Monitors commodity prices with customizable alerts and trend tracking.",
+          "promised_outputs": [
+            "Price alert configuration",
+            "Historical trend charts",
+            "Multiple commodity tracking",
+            "Basis calculator tools",
+            "Market news aggregation"
+          ],
+          "catalog_revenue_model": "SaaS subscription",
+          "catalog_price_range": "$0",
+          "earnings_status": "no_revenue_or_customer_result_guaranteed"
+        },
+        "operating_workflow": [
+          "capture_owner_goal_and_offer",
+          "define_ideal_customer_profile",
+          "select_owner_authorized_sources",
+          "confirm_source_terms_and_collection_scope",
+          "research_and_deduplicate_candidates",
+          "qualify_need_fit_timing_and_permission",
+          "draft_one_relevant_message",
+          "request_exact_owner_approval",
+          "dispatch_through_configured_adapter_only",
+          "wait_for_required_follow_up_interval",
+          "stop_on_reply_opt_out_bounce_or_complaint",
+          "report_outcomes_without_claiming_guaranteed_revenue"
+        ],
+        "lead_system": {
+          "system_id": "lead-system-market-price-alert",
+          "engine": "server/governed-leads.ts",
+          "status": "sandbox_ready_external_adapters_required",
+          "ideal_customer_profile": {
+            "segments": [
+              "Farmers",
+              "grain elevators",
+              "commodity traders"
+            ],
+            "need_signals": [
+              "Needs help with Price alert configuration",
+              "Needs help with Historical trend charts",
+              "Needs help with Multiple commodity tracking",
+              "Needs help with Basis calculator tools",
+              "Needs help with Market news aggregation"
+            ],
+            "exclusion_rules": [
+              "no minors",
+              "no protected or sensitive trait targeting",
+              "no deceptive identity or impersonation",
+              "no lead without traceable source evidence"
+            ]
+          },
+          "discovery": {
+            "query_templates": [
+              "Farmers, grain elevators, commodity traders requesting Price alert configuration",
+              "organizations seeking commodity-prices support",
+              "inbound requests matching Commodity Price Alert",
+              "existing customers who opted in to Price alert configuration updates"
+            ],
+            "authorized_source_types": [
+              "owner supplied records",
+              "consent based inbound requests",
+              "existing customer records with documented relationship",
+              "public business directories whose terms permit research",
+              "owner authorized provider APIs"
+            ],
+            "forbidden_collection": [
+              "private accounts or access-controlled pages",
+              "terms bypassing scraping",
+              "purchased, stolen, or unverifiable contact lists",
+              "raw credentials or secret tokens",
+              "sensitive personal data"
+            ]
+          },
+          "qualification": {
+            "required_fields": [
+              "source reference",
+              "organization or customer need",
+              "fit to the bot specialization",
+              "contact permission basis and channel scope",
+              "qualification evidence"
+            ],
+            "score_dimensions": {
+              "demonstrated_need": 30,
+              "capability_fit": 25,
+              "decision_readiness": 15,
+              "voluntarily_supplied_timing": 10,
+              "documented_contact_permission": 20
+            },
+            "minimum_score_for_owner_review": 65,
+            "permission_is_mandatory_even_above_threshold": true
+          },
+          "outreach": {
+            "supported_channels": [
+              "email",
+              "sms",
+              "voice_call",
+              "social_dm"
+            ],
+            "recipient_channel_permission_required": true,
+            "raw_contact_details_in_browser_forbidden": true,
+            "exact_owner_approval_per_message": true,
+            "maximum_daily_sends": 20,
+            "adapter_status": "configuration_required_for_live_dispatch"
+          },
+          "follow_up": {
+            "maximum_follow_ups": 2,
+            "minimum_interval_hours": 48,
+            "approval_required_for_each_follow_up": true,
+            "stop_conditions": [
+              "reply",
+              "opt out",
+              "bounce",
+              "complaint",
+              "permission expiry",
+              "owner stop",
+              "sequence complete"
+            ],
+            "suppression_ledger_required": true
+          },
+          "owner_controls": {
+            "default_mode": "research_and_draft_only",
+            "pause_and_kill_switch_required": true,
+            "one_action_approval_expiry_hours": 24,
+            "quiet_hours_supported": true,
+            "export_and_delete_supported": true
+          },
+          "metrics": [
+            "candidates researched",
+            "source evidence coverage",
+            "qualified leads",
+            "recipient permission coverage",
+            "owner approval rate",
+            "reply rate",
+            "positive reply rate",
+            "opt-out rate",
+            "bounce rate",
+            "complaint rate",
+            "conversion evidence"
+          ]
+        },
+        "readiness": {
+          "local_research_plan": "ready",
+          "qualification_and_drafts": "ready",
+          "exact_action_approval_packet": "ready",
+          "live_contact_discovery": "provider_and_terms_configuration_required",
+          "live_message_dispatch": "verified_adapter_recipient_permission_and_owner_approval_required",
+          "independent_production_business": false
+        }
+      },
       "capabilities": [
         {
           "name": "Price alert configuration",
@@ -3360,6 +5988,12 @@
           "name": "Install and multi-platform distribution planner",
           "status": "web_ready_native_review_required",
           "evidence": "config/generated/buddy_distribution_catalog.json"
+        },
+        {
+          "id": "buddy_governed_lead_system",
+          "name": "Permission-gated lead discovery and follow-up system",
+          "status": "sandbox_ready_external_adapters_required",
+          "evidence": "server/governed-leads.ts"
         }
       ],
       "api_candidates": [],
@@ -3478,6 +6112,166 @@
           "Published pricing and revenue models are catalog plans, not evidence of sales or earnings."
         ]
       },
+      "business_system": {
+        "business_id": "business-fertilizer-calc",
+        "operating_model": "owner_governed_service_business",
+        "specialization": {
+          "division": "DreamAgriculture",
+          "category": "nutrients",
+          "mission": "Calculates fertilizer application rates with nutrient balance and cost analysis.",
+          "ideal_customer_segments": [
+            "Farmers",
+            "agronomists",
+            "applicators"
+          ],
+          "core_offer": "Fertilizer Application Calculator: Calculates fertilizer application rates with nutrient balance and cost analysis.",
+          "promised_outputs": [
+            "Application rate calculator",
+            "Nutrient balance analysis",
+            "Cost per acre calculation",
+            "Product comparison tools",
+            "Environmental compliance checking"
+          ],
+          "catalog_revenue_model": "SaaS subscription",
+          "catalog_price_range": "$0",
+          "earnings_status": "no_revenue_or_customer_result_guaranteed"
+        },
+        "operating_workflow": [
+          "capture_owner_goal_and_offer",
+          "define_ideal_customer_profile",
+          "select_owner_authorized_sources",
+          "confirm_source_terms_and_collection_scope",
+          "research_and_deduplicate_candidates",
+          "qualify_need_fit_timing_and_permission",
+          "draft_one_relevant_message",
+          "request_exact_owner_approval",
+          "dispatch_through_configured_adapter_only",
+          "wait_for_required_follow_up_interval",
+          "stop_on_reply_opt_out_bounce_or_complaint",
+          "report_outcomes_without_claiming_guaranteed_revenue"
+        ],
+        "lead_system": {
+          "system_id": "lead-system-fertilizer-calc",
+          "engine": "server/governed-leads.ts",
+          "status": "sandbox_ready_external_adapters_required",
+          "ideal_customer_profile": {
+            "segments": [
+              "Farmers",
+              "agronomists",
+              "applicators"
+            ],
+            "need_signals": [
+              "Needs help with Application rate calculator",
+              "Needs help with Nutrient balance analysis",
+              "Needs help with Cost per acre calculation",
+              "Needs help with Product comparison tools",
+              "Needs help with Environmental compliance checking"
+            ],
+            "exclusion_rules": [
+              "no minors",
+              "no protected or sensitive trait targeting",
+              "no deceptive identity or impersonation",
+              "no lead without traceable source evidence"
+            ]
+          },
+          "discovery": {
+            "query_templates": [
+              "Farmers, agronomists, applicators requesting Application rate calculator",
+              "organizations seeking nutrients support",
+              "inbound requests matching Fertilizer Application Calculator",
+              "existing customers who opted in to Application rate calculator updates"
+            ],
+            "authorized_source_types": [
+              "owner supplied records",
+              "consent based inbound requests",
+              "existing customer records with documented relationship",
+              "public business directories whose terms permit research",
+              "owner authorized provider APIs"
+            ],
+            "forbidden_collection": [
+              "private accounts or access-controlled pages",
+              "terms bypassing scraping",
+              "purchased, stolen, or unverifiable contact lists",
+              "raw credentials or secret tokens",
+              "sensitive personal data"
+            ]
+          },
+          "qualification": {
+            "required_fields": [
+              "source reference",
+              "organization or customer need",
+              "fit to the bot specialization",
+              "contact permission basis and channel scope",
+              "qualification evidence"
+            ],
+            "score_dimensions": {
+              "demonstrated_need": 30,
+              "capability_fit": 25,
+              "decision_readiness": 15,
+              "voluntarily_supplied_timing": 10,
+              "documented_contact_permission": 20
+            },
+            "minimum_score_for_owner_review": 65,
+            "permission_is_mandatory_even_above_threshold": true
+          },
+          "outreach": {
+            "supported_channels": [
+              "email",
+              "sms",
+              "voice_call",
+              "social_dm"
+            ],
+            "recipient_channel_permission_required": true,
+            "raw_contact_details_in_browser_forbidden": true,
+            "exact_owner_approval_per_message": true,
+            "maximum_daily_sends": 20,
+            "adapter_status": "configuration_required_for_live_dispatch"
+          },
+          "follow_up": {
+            "maximum_follow_ups": 2,
+            "minimum_interval_hours": 48,
+            "approval_required_for_each_follow_up": true,
+            "stop_conditions": [
+              "reply",
+              "opt out",
+              "bounce",
+              "complaint",
+              "permission expiry",
+              "owner stop",
+              "sequence complete"
+            ],
+            "suppression_ledger_required": true
+          },
+          "owner_controls": {
+            "default_mode": "research_and_draft_only",
+            "pause_and_kill_switch_required": true,
+            "one_action_approval_expiry_hours": 24,
+            "quiet_hours_supported": true,
+            "export_and_delete_supported": true
+          },
+          "metrics": [
+            "candidates researched",
+            "source evidence coverage",
+            "qualified leads",
+            "recipient permission coverage",
+            "owner approval rate",
+            "reply rate",
+            "positive reply rate",
+            "opt-out rate",
+            "bounce rate",
+            "complaint rate",
+            "conversion evidence"
+          ]
+        },
+        "readiness": {
+          "local_research_plan": "ready",
+          "qualification_and_drafts": "ready",
+          "exact_action_approval_packet": "ready",
+          "live_contact_discovery": "provider_and_terms_configuration_required",
+          "live_message_dispatch": "verified_adapter_recipient_permission_and_owner_approval_required",
+          "independent_production_business": false
+        }
+      },
       "capabilities": [
         {
           "name": "Application rate calculator",
@@ -3570,6 +6364,12 @@
           "name": "Install and multi-platform distribution planner",
           "status": "web_ready_native_review_required",
           "evidence": "config/generated/buddy_distribution_catalog.json"
+        },
+        {
+          "id": "buddy_governed_lead_system",
+          "name": "Permission-gated lead discovery and follow-up system",
+          "status": "sandbox_ready_external_adapters_required",
+          "evidence": "server/governed-leads.ts"
         },
         {
           "id": "buddy_code_workspace",
@@ -3694,6 +6494,164 @@
           "Published pricing and revenue models are catalog plans, not evidence of sales or earnings."
         ]
       },
+      "business_system": {
+        "business_id": "business-aquaculture-mgr",
+        "operating_model": "owner_governed_service_business",
+        "specialization": {
+          "division": "DreamAgriculture",
+          "category": "aquaculture",
+          "mission": "Manages aquaculture operations with water quality monitoring and feeding optimization.",
+          "ideal_customer_segments": [
+            "Fish farmers",
+            "aquaculture operators"
+          ],
+          "core_offer": "Aquaculture Farm Manager: Manages aquaculture operations with water quality monitoring and feeding optimization.",
+          "promised_outputs": [
+            "Water quality monitoring",
+            "Feed conversion tracking",
+            "Stocking density management",
+            "Disease monitoring tools",
+            "Harvest scheduling engine"
+          ],
+          "catalog_revenue_model": "SaaS subscription",
+          "catalog_price_range": "$149/mo",
+          "earnings_status": "no_revenue_or_customer_result_guaranteed"
+        },
+        "operating_workflow": [
+          "capture_owner_goal_and_offer",
+          "define_ideal_customer_profile",
+          "select_owner_authorized_sources",
+          "confirm_source_terms_and_collection_scope",
+          "research_and_deduplicate_candidates",
+          "qualify_need_fit_timing_and_permission",
+          "draft_one_relevant_message",
+          "request_exact_owner_approval",
+          "dispatch_through_configured_adapter_only",
+          "wait_for_required_follow_up_interval",
+          "stop_on_reply_opt_out_bounce_or_complaint",
+          "report_outcomes_without_claiming_guaranteed_revenue"
+        ],
+        "lead_system": {
+          "system_id": "lead-system-aquaculture-mgr",
+          "engine": "server/governed-leads.ts",
+          "status": "sandbox_ready_external_adapters_required",
+          "ideal_customer_profile": {
+            "segments": [
+              "Fish farmers",
+              "aquaculture operators"
+            ],
+            "need_signals": [
+              "Needs help with Water quality monitoring",
+              "Needs help with Feed conversion tracking",
+              "Needs help with Stocking density management",
+              "Needs help with Disease monitoring tools",
+              "Needs help with Harvest scheduling engine"
+            ],
+            "exclusion_rules": [
+              "no minors",
+              "no protected or sensitive trait targeting",
+              "no deceptive identity or impersonation",
+              "no lead without traceable source evidence"
+            ]
+          },
+          "discovery": {
+            "query_templates": [
+              "Fish farmers, aquaculture operators requesting Water quality monitoring",
+              "organizations seeking aquaculture support",
+              "inbound requests matching Aquaculture Farm Manager",
+              "existing customers who opted in to Water quality monitoring updates"
+            ],
+            "authorized_source_types": [
+              "owner supplied records",
+              "consent based inbound requests",
+              "existing customer records with documented relationship",
+              "public business directories whose terms permit research",
+              "owner authorized provider APIs"
+            ],
+            "forbidden_collection": [
+              "private accounts or access-controlled pages",
+              "terms bypassing scraping",
+              "purchased, stolen, or unverifiable contact lists",
+              "raw credentials or secret tokens",
+              "sensitive personal data"
+            ]
+          },
+          "qualification": {
+            "required_fields": [
+              "source reference",
+              "organization or customer need",
+              "fit to the bot specialization",
+              "contact permission basis and channel scope",
+              "qualification evidence"
+            ],
+            "score_dimensions": {
+              "demonstrated_need": 30,
+              "capability_fit": 25,
+              "decision_readiness": 15,
+              "voluntarily_supplied_timing": 10,
+              "documented_contact_permission": 20
+            },
+            "minimum_score_for_owner_review": 65,
+            "permission_is_mandatory_even_above_threshold": true
+          },
+          "outreach": {
+            "supported_channels": [
+              "email",
+              "sms",
+              "voice_call",
+              "social_dm"
+            ],
+            "recipient_channel_permission_required": true,
+            "raw_contact_details_in_browser_forbidden": true,
+            "exact_owner_approval_per_message": true,
+            "maximum_daily_sends": 20,
+            "adapter_status": "configuration_required_for_live_dispatch"
+          },
+          "follow_up": {
+            "maximum_follow_ups": 2,
+            "minimum_interval_hours": 48,
+            "approval_required_for_each_follow_up": true,
+            "stop_conditions": [
+              "reply",
+              "opt out",
+              "bounce",
+              "complaint",
+              "permission expiry",
+              "owner stop",
+              "sequence complete"
+            ],
+            "suppression_ledger_required": true
+          },
+          "owner_controls": {
+            "default_mode": "research_and_draft_only",
+            "pause_and_kill_switch_required": true,
+            "one_action_approval_expiry_hours": 24,
+            "quiet_hours_supported": true,
+            "export_and_delete_supported": true
+          },
+          "metrics": [
+            "candidates researched",
+            "source evidence coverage",
+            "qualified leads",
+            "recipient permission coverage",
+            "owner approval rate",
+            "reply rate",
+            "positive reply rate",
+            "opt-out rate",
+            "bounce rate",
+            "complaint rate",
+            "conversion evidence"
+          ]
+        },
+        "readiness": {
+          "local_research_plan": "ready",
+          "qualification_and_drafts": "ready",
+          "exact_action_approval_packet": "ready",
+          "live_contact_discovery": "provider_and_terms_configuration_required",
+          "live_message_dispatch": "verified_adapter_recipient_permission_and_owner_approval_required",
+          "independent_production_business": false
+        }
+      },
       "capabilities": [
         {
           "name": "Water quality monitoring",
@@ -3786,6 +6744,12 @@
           "name": "Install and multi-platform distribution planner",
           "status": "web_ready_native_review_required",
           "evidence": "config/generated/buddy_distribution_catalog.json"
+        },
+        {
+          "id": "buddy_governed_lead_system",
+          "name": "Permission-gated lead discovery and follow-up system",
+          "status": "sandbox_ready_external_adapters_required",
+          "evidence": "server/governed-leads.ts"
         }
       ],
       "api_candidates": [],
@@ -3904,6 +6868,164 @@
           "Published pricing and revenue models are catalog plans, not evidence of sales or earnings."
         ]
       },
+      "business_system": {
+        "business_id": "business-drone-scouting",
+        "operating_model": "owner_governed_service_business",
+        "specialization": {
+          "division": "DreamAgriculture",
+          "category": "drone-ag",
+          "mission": "Manages agricultural drone operations with imagery analysis and prescription generation.",
+          "ideal_customer_segments": [
+            "Precision ag consultants",
+            "large farm operators"
+          ],
+          "core_offer": "Agricultural Drone Scout: Manages agricultural drone operations with imagery analysis and prescription generation.",
+          "promised_outputs": [
+            "Flight mission planning",
+            "Multispectral imagery analysis",
+            "Stand count estimation",
+            "Weed mapping tools",
+            "Drainage assessment engine"
+          ],
+          "catalog_revenue_model": "Enterprise license",
+          "catalog_price_range": "$699/mo",
+          "earnings_status": "no_revenue_or_customer_result_guaranteed"
+        },
+        "operating_workflow": [
+          "capture_owner_goal_and_offer",
+          "define_ideal_customer_profile",
+          "select_owner_authorized_sources",
+          "confirm_source_terms_and_collection_scope",
+          "research_and_deduplicate_candidates",
+          "qualify_need_fit_timing_and_permission",
+          "draft_one_relevant_message",
+          "request_exact_owner_approval",
+          "dispatch_through_configured_adapter_only",
+          "wait_for_required_follow_up_interval",
+          "stop_on_reply_opt_out_bounce_or_complaint",
+          "report_outcomes_without_claiming_guaranteed_revenue"
+        ],
+        "lead_system": {
+          "system_id": "lead-system-drone-scouting",
+          "engine": "server/governed-leads.ts",
+          "status": "sandbox_ready_external_adapters_required",
+          "ideal_customer_profile": {
+            "segments": [
+              "Precision ag consultants",
+              "large farm operators"
+            ],
+            "need_signals": [
+              "Needs help with Flight mission planning",
+              "Needs help with Multispectral imagery analysis",
+              "Needs help with Stand count estimation",
+              "Needs help with Weed mapping tools",
+              "Needs help with Drainage assessment engine"
+            ],
+            "exclusion_rules": [
+              "no minors",
+              "no protected or sensitive trait targeting",
+              "no deceptive identity or impersonation",
+              "no lead without traceable source evidence"
+            ]
+          },
+          "discovery": {
+            "query_templates": [
+              "Precision ag consultants, large farm operators requesting Flight mission planning",
+              "organizations seeking drone-ag support",
+              "inbound requests matching Agricultural Drone Scout",
+              "existing customers who opted in to Flight mission planning updates"
+            ],
+            "authorized_source_types": [
+              "owner supplied records",
+              "consent based inbound requests",
+              "existing customer records with documented relationship",
+              "public business directories whose terms permit research",
+              "owner authorized provider APIs"
+            ],
+            "forbidden_collection": [
+              "private accounts or access-controlled pages",
+              "terms bypassing scraping",
+              "purchased, stolen, or unverifiable contact lists",
+              "raw credentials or secret tokens",
+              "sensitive personal data"
+            ]
+          },
+          "qualification": {
+            "required_fields": [
+              "source reference",
+              "organization or customer need",
+              "fit to the bot specialization",
+              "contact permission basis and channel scope",
+              "qualification evidence"
+            ],
+            "score_dimensions": {
+              "demonstrated_need": 30,
+              "capability_fit": 25,
+              "decision_readiness": 15,
+              "voluntarily_supplied_timing": 10,
+              "documented_contact_permission": 20
+            },
+            "minimum_score_for_owner_review": 65,
+            "permission_is_mandatory_even_above_threshold": true
+          },
+          "outreach": {
+            "supported_channels": [
+              "email",
+              "sms",
+              "voice_call",
+              "social_dm"
+            ],
+            "recipient_channel_permission_required": true,
+            "raw_contact_details_in_browser_forbidden": true,
+            "exact_owner_approval_per_message": true,
+            "maximum_daily_sends": 20,
+            "adapter_status": "configuration_required_for_live_dispatch"
+          },
+          "follow_up": {
+            "maximum_follow_ups": 2,
+            "minimum_interval_hours": 48,
+            "approval_required_for_each_follow_up": true,
+            "stop_conditions": [
+              "reply",
+              "opt out",
+              "bounce",
+              "complaint",
+              "permission expiry",
+              "owner stop",
+              "sequence complete"
+            ],
+            "suppression_ledger_required": true
+          },
+          "owner_controls": {
+            "default_mode": "research_and_draft_only",
+            "pause_and_kill_switch_required": true,
+            "one_action_approval_expiry_hours": 24,
+            "quiet_hours_supported": true,
+            "export_and_delete_supported": true
+          },
+          "metrics": [
+            "candidates researched",
+            "source evidence coverage",
+            "qualified leads",
+            "recipient permission coverage",
+            "owner approval rate",
+            "reply rate",
+            "positive reply rate",
+            "opt-out rate",
+            "bounce rate",
+            "complaint rate",
+            "conversion evidence"
+          ]
+        },
+        "readiness": {
+          "local_research_plan": "ready",
+          "qualification_and_drafts": "ready",
+          "exact_action_approval_packet": "ready",
+          "live_contact_discovery": "provider_and_terms_configuration_required",
+          "live_message_dispatch": "verified_adapter_recipient_permission_and_owner_approval_required",
+          "independent_production_business": false
+        }
+      },
       "capabilities": [
         {
           "name": "Flight mission planning",
@@ -3996,6 +7118,12 @@
           "name": "Install and multi-platform distribution planner",
           "status": "web_ready_native_review_required",
           "evidence": "config/generated/buddy_distribution_catalog.json"
+        },
+        {
+          "id": "buddy_governed_lead_system",
+          "name": "Permission-gated lead discovery and follow-up system",
+          "status": "sandbox_ready_external_adapters_required",
+          "evidence": "server/governed-leads.ts"
         },
         {
           "id": "buddy_creative_studio",
@@ -4126,6 +7254,164 @@
           "Published pricing and revenue models are catalog plans, not evidence of sales or earnings."
         ]
       },
+      "business_system": {
+        "business_id": "business-greenhouse-controller",
+        "operating_model": "owner_governed_service_business",
+        "specialization": {
+          "division": "DreamAgriculture",
+          "category": "greenhouse",
+          "mission": "Controls greenhouse climate with automated ventilation and humidity management.",
+          "ideal_customer_segments": [
+            "Greenhouse operators",
+            "nursery managers"
+          ],
+          "core_offer": "Greenhouse Climate Controller: Controls greenhouse climate with automated ventilation and humidity management.",
+          "promised_outputs": [
+            "Temperature control automation",
+            "Humidity management engine",
+            "CO2 supplementation control",
+            "Shade system management",
+            "Irrigation integration tools"
+          ],
+          "catalog_revenue_model": "Enterprise license",
+          "catalog_price_range": "$599/mo",
+          "earnings_status": "no_revenue_or_customer_result_guaranteed"
+        },
+        "operating_workflow": [
+          "capture_owner_goal_and_offer",
+          "define_ideal_customer_profile",
+          "select_owner_authorized_sources",
+          "confirm_source_terms_and_collection_scope",
+          "research_and_deduplicate_candidates",
+          "qualify_need_fit_timing_and_permission",
+          "draft_one_relevant_message",
+          "request_exact_owner_approval",
+          "dispatch_through_configured_adapter_only",
+          "wait_for_required_follow_up_interval",
+          "stop_on_reply_opt_out_bounce_or_complaint",
+          "report_outcomes_without_claiming_guaranteed_revenue"
+        ],
+        "lead_system": {
+          "system_id": "lead-system-greenhouse-controller",
+          "engine": "server/governed-leads.ts",
+          "status": "sandbox_ready_external_adapters_required",
+          "ideal_customer_profile": {
+            "segments": [
+              "Greenhouse operators",
+              "nursery managers"
+            ],
+            "need_signals": [
+              "Needs help with Temperature control automation",
+              "Needs help with Humidity management engine",
+              "Needs help with CO2 supplementation control",
+              "Needs help with Shade system management",
+              "Needs help with Irrigation integration tools"
+            ],
+            "exclusion_rules": [
+              "no minors",
+              "no protected or sensitive trait targeting",
+              "no deceptive identity or impersonation",
+              "no lead without traceable source evidence"
+            ]
+          },
+          "discovery": {
+            "query_templates": [
+              "Greenhouse operators, nursery managers requesting Temperature control automation",
+              "organizations seeking greenhouse support",
+              "inbound requests matching Greenhouse Climate Controller",
+              "existing customers who opted in to Temperature control automation updates"
+            ],
+            "authorized_source_types": [
+              "owner supplied records",
+              "consent based inbound requests",
+              "existing customer records with documented relationship",
+              "public business directories whose terms permit research",
+              "owner authorized provider APIs"
+            ],
+            "forbidden_collection": [
+              "private accounts or access-controlled pages",
+              "terms bypassing scraping",
+              "purchased, stolen, or unverifiable contact lists",
+              "raw credentials or secret tokens",
+              "sensitive personal data"
+            ]
+          },
+          "qualification": {
+            "required_fields": [
+              "source reference",
+              "organization or customer need",
+              "fit to the bot specialization",
+              "contact permission basis and channel scope",
+              "qualification evidence"
+            ],
+            "score_dimensions": {
+              "demonstrated_need": 30,
+              "capability_fit": 25,
+              "decision_readiness": 15,
+              "voluntarily_supplied_timing": 10,
+              "documented_contact_permission": 20
+            },
+            "minimum_score_for_owner_review": 65,
+            "permission_is_mandatory_even_above_threshold": true
+          },
+          "outreach": {
+            "supported_channels": [
+              "email",
+              "sms",
+              "voice_call",
+              "social_dm"
+            ],
+            "recipient_channel_permission_required": true,
+            "raw_contact_details_in_browser_forbidden": true,
+            "exact_owner_approval_per_message": true,
+            "maximum_daily_sends": 20,
+            "adapter_status": "configuration_required_for_live_dispatch"
+          },
+          "follow_up": {
+            "maximum_follow_ups": 2,
+            "minimum_interval_hours": 48,
+            "approval_required_for_each_follow_up": true,
+            "stop_conditions": [
+              "reply",
+              "opt out",
+              "bounce",
+              "complaint",
+              "permission expiry",
+              "owner stop",
+              "sequence complete"
+            ],
+            "suppression_ledger_required": true
+          },
+          "owner_controls": {
+            "default_mode": "research_and_draft_only",
+            "pause_and_kill_switch_required": true,
+            "one_action_approval_expiry_hours": 24,
+            "quiet_hours_supported": true,
+            "export_and_delete_supported": true
+          },
+          "metrics": [
+            "candidates researched",
+            "source evidence coverage",
+            "qualified leads",
+            "recipient permission coverage",
+            "owner approval rate",
+            "reply rate",
+            "positive reply rate",
+            "opt-out rate",
+            "bounce rate",
+            "complaint rate",
+            "conversion evidence"
+          ]
+        },
+        "readiness": {
+          "local_research_plan": "ready",
+          "qualification_and_drafts": "ready",
+          "exact_action_approval_packet": "ready",
+          "live_contact_discovery": "provider_and_terms_configuration_required",
+          "live_message_dispatch": "verified_adapter_recipient_permission_and_owner_approval_required",
+          "independent_production_business": false
+        }
+      },
       "capabilities": [
         {
           "name": "Temperature control automation",
@@ -4218,6 +7504,12 @@
           "name": "Install and multi-platform distribution planner",
           "status": "web_ready_native_review_required",
           "evidence": "config/generated/buddy_distribution_catalog.json"
+        },
+        {
+          "id": "buddy_governed_lead_system",
+          "name": "Permission-gated lead discovery and follow-up system",
+          "status": "sandbox_ready_external_adapters_required",
+          "evidence": "server/governed-leads.ts"
         },
         {
           "id": "buddy_connection_broker",

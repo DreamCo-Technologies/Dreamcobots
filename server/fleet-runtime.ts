@@ -59,6 +59,7 @@ export type BotEndToEndCertification = {
     platformCapabilityRegistryVerified: boolean;
     calculatorBindingVerified: boolean;
     distributionBindingVerified: boolean;
+    leadSystemBindingVerified: boolean;
     samplePromptVerified: boolean;
     sandboxExecutionVerified: boolean;
     sandboxEvidenceVerified: boolean;
@@ -204,6 +205,12 @@ export class BotRuntimeInstance {
         (tool) => (
           tool.id === "buddy_distribution_service" &&
           tool.status === "web_ready_native_review_required"
+        ),
+      ),
+      leadSystemBindingVerified: this.profile.tool_summary.some(
+        (tool) => (
+          tool.id === "buddy_governed_lead_system" &&
+          tool.status === "sandbox_ready_external_adapters_required"
         ),
       ),
       samplePromptVerified: this.profile.sample_test_prompt.trim().length >= 10,
