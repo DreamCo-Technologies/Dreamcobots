@@ -45,11 +45,43 @@ def brief(project_type: ProjectType = ProjectType.SCHOOL_SIMULATION, **overrides
 
 
 class BuddyCreativeStudioTests(unittest.TestCase):
-    def test_supports_game_simulation_and_learning_video_tracks(self):
+    def test_every_creative_route_is_a_real_fleet_profile(self):
+        fleet_slugs = {
+            bot["slug"]
+            for path in (ROOT / "App_bots").glob("*.json")
+            for bot in json.loads(path.read_text(encoding="utf-8"))["bots"]
+        }
+        routes = [
+            *BuddyCreativeStudio.COMMON_ROUTES,
+            *(route for group in BuddyCreativeStudio.TYPE_ROUTES.values() for route in group),
+            {"bot": "adaptive-learning"},
+        ]
+        missing = sorted({route["bot"] for route in routes} - fleet_slugs)
+        self.assertEqual(missing, [])
+
+    def test_supports_governed_game_learning_and_media_tracks(self):
         self.assertEqual(
             {item.value for item in ProjectType},
-            {"game", "school_simulation", "parent_learning_video"},
+            {
+                "game",
+                "school_simulation",
+                "parent_learning_video",
+                "music_video",
+                "biography",
+                "commercial",
+                "college_course",
+            },
         )
+
+    def test_creates_biography_and_commercial_rights_workflows(self):
+        biography = BuddyCreativeStudio().create_project(
+            brief(ProjectType.BIOGRAPHY, title="My Story", objective="Create a sourced personal history for my family.")
+        )
+        commercial = BuddyCreativeStudio().create_project(
+            brief(ProjectType.COMMERCIAL, title="Launch Story", objective="Create a truthful product commercial with approved claims.")
+        )
+        self.assertIn("source_log", biography.deliverables)
+        self.assertIn("claim_substantiation", commercial.deliverables)
 
     def test_creates_local_first_school_simulation_packet(self):
         project = BuddyCreativeStudio().create_project(brief())

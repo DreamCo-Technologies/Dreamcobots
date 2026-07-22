@@ -109,13 +109,22 @@
 
       <!-- Notifications -->
       <div id="notifications" class="card card-lg" style="display:none">
-        <h3 style="margin-bottom:20px">ðŸ”” Notification Preferences</h3>
-        <div style="display:flex;flex-direction:column;gap:0">
-          <div style="display:flex;align-items:center;justify-content:space-between;padding:16px 0;border-bottom:1px solid var(--border)"><div><strong>Revenue Alerts</strong><div style="font-size:.8rem;color:var(--text3)">New revenue events and milestones</div></div><div class="toggle on"></div></div>
-          <div style="display:flex;align-items:center;justify-content:space-between;padding:16px 0;border-bottom:1px solid var(--border)"><div><strong>Error Alerts</strong><div style="font-size:.8rem;color:var(--text3)">System errors and auto-fix events</div></div><div class="toggle on"></div></div>
-          <div style="display:flex;align-items:center;justify-content:space-between;padding:16px 0;border-bottom:1px solid var(--border)"><div><strong>Task Completions</strong><div style="font-size:.8rem;color:var(--text3)">When bot tasks finish</div></div><div class="toggle on"></div></div>
-          <div style="display:flex;align-items:center;justify-content:space-between;padding:16px 0"><div><strong>System Updates</strong><div style="font-size:.8rem;color:var(--text3)">New features and bot additions</div></div><div class="toggle off"></div></div>
+        <h3 style="margin-bottom:8px">Approval Notifications</h3>
+        <p style="margin-bottom:20px;font-size:.82rem">Choose how Buddy requests permission for live publishing, money, account, personal-data, deployment, and other high-impact actions.</p>
+        <div class="notification-choice-list">
+          <label class="notification-choice"><span><strong>In-app</strong><small>Native approval inbox</small></span><input id="notify-in-app" type="checkbox" checked disabled /></label>
+          <label class="notification-choice"><span><strong>Email</strong><small>Requires a verified account email and email adapter</small></span><input id="notify-email" type="checkbox" /></label>
+          <label class="notification-choice"><span><strong>Text message</strong><small>Requires a verified mobile number, SMS adapter, and opt-in</small></span><input id="notify-sms" type="checkbox" /></label>
+          <label class="notification-choice"><span><strong>Voice call</strong><small>Requires a verified mobile number, call adapter, and opt-in</small></span><input id="notify-call" type="checkbox" /></label>
         </div>
+        <label class="studio-check" style="margin-top:16px"><input id="notify-contact-opt-in" type="checkbox" /> I opt in to approval texts or calls I select. I can turn them off at any time.</label>
+        <label class="studio-check"><input id="notify-quiet-hours" type="checkbox" checked /> Respect quiet hours for non-critical approval requests.</label>
+        <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:18px">
+          <button class="btn btn-primary btn-sm" type="button" onclick="saveApprovalPreferences()">Save choices</button>
+          <span class="badge badge-green">In-app native</span>
+          <span class="badge badge-amber">Email / SMS / call adapter required</span>
+        </div>
+        <p id="approval-notification-status" class="studio-form-status" aria-live="polite"></p>
       </div>
 
       <!-- Privacy -->
@@ -161,6 +170,37 @@ function copyInfo() { navigator.clipboard?.writeText('DreamCo Empire OS v1.0.0 Â
 function exportData() { exportAlert('all data'); }
 function selectMode(el) { document.querySelectorAll('label[onclick]').forEach(l => { l.style.borderColor='var(--border)'; l.style.background=''; }); el.style.borderColor='var(--green)'; el.style.background='rgba(34,197,94,.06)'; }
 function setTheme(t, el) { document.querySelectorAll('[onclick^="setTheme"]').forEach(c => { c.style.borderColor='var(--border)'; c.style.background=''; c.style.borderWidth='1px'; }); el.style.borderColor='var(--primary)'; el.style.background='rgba(79,142,247,.06)'; el.style.borderWidth='2px'; }
+function saveApprovalPreferences() {
+  const sms = document.getElementById('notify-sms').checked;
+  const call = document.getElementById('notify-call').checked;
+  const optIn = document.getElementById('notify-contact-opt-in').checked;
+  const status = document.getElementById('approval-notification-status');
+  if ((sms || call) && !optIn) {
+    status.textContent = 'Text and call notifications require explicit opt-in.';
+    return;
+  }
+  const preferences = {
+    in_app: true,
+    email: document.getElementById('notify-email').checked,
+    sms,
+    voice_call: call,
+    contact_opt_in: optIn,
+    quiet_hours: document.getElementById('notify-quiet-hours').checked,
+  };
+  localStorage.setItem('dreamco-approval-notification-preferences', JSON.stringify(preferences));
+  status.textContent = 'Choices saved in this browser. External channels activate only after the deployed account verifies a destination and configures its adapter.';
+}
+(function restoreApprovalPreferences() {
+  try {
+    const saved = JSON.parse(localStorage.getItem('dreamco-approval-notification-preferences') || 'null');
+    if (!saved) return;
+    document.getElementById('notify-email').checked = Boolean(saved.email);
+    document.getElementById('notify-sms').checked = Boolean(saved.sms);
+    document.getElementById('notify-call').checked = Boolean(saved.voice_call);
+    document.getElementById('notify-contact-opt-in').checked = Boolean(saved.contact_opt_in);
+    document.getElementById('notify-quiet-hours').checked = saved.quiet_hours !== false;
+  } catch (error) {}
+})();
 </script>
 </body>
 </html>

@@ -11,8 +11,10 @@
     "db:push": "drizzle-kit push",
     "buddy:site:check": "python3 tools/build_buddy_public_site.py --check",
     "buddy:creative-studio": "python3 tools/generate_buddy_multimodal_studio.py --check",
+    "buddy:fleet": "tsx tools/generate_bot_fleet_catalog.ts --check",
     "buddy:connections": "python3 tools/generate_buddy_connection_catalog.py --check",
-    "buddy:cli": "python3 tools/buddy_cli.py"
+    "buddy:cli": "python3 tools/buddy_cli.py",
+    "test:governed": "node --import tsx --test tests/bot-fleet-catalog.test.ts tests/approval-notifications.test.ts && python3 -m unittest tests.test_buddy_creative_studio tests.test_buddy_game_lab tests.test_buddy_social_manager"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",

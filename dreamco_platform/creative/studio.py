@@ -21,6 +21,10 @@ class ProjectType(str, Enum):
     GAME = "game"
     SCHOOL_SIMULATION = "school_simulation"
     PARENT_LEARNING_VIDEO = "parent_learning_video"
+    MUSIC_VIDEO = "music_video"
+    BIOGRAPHY = "biography"
+    COMMERCIAL = "commercial"
+    COLLEGE_COURSE = "college_course"
 
 
 class CreativeStudioError(ValueError):
@@ -100,7 +104,7 @@ class CreativeBrief:
         if len(self.title.strip()) < 3:
             raise CreativeStudioError("A project title of at least three characters is required.")
         if len(self.objective.strip()) < 10:
-            raise CreativeStudioError("Describe a clear learning or gameplay objective.")
+            raise CreativeStudioError("Describe a clear creative, learning, or gameplay objective.")
         if not self.subject.strip() or not self.audience.strip():
             raise CreativeStudioError("Subject and audience are required.")
         if self.use_voice_clone and not self.voice_sample_ref:
@@ -169,10 +173,9 @@ class BuddyCreativeStudio:
 
     COMMON_ROUTES = [
         {
-            "bot": "buddy-trust-bot",
+            "bot": "governance-dashboard",
             "role": "consent, revocation, audit, and synthetic-media labeling",
         },
-        {"bot": "adaptive-learning", "role": "learning objectives and difficulty tuning"},
     ]
 
     TYPE_ROUTES: dict[ProjectType, list[dict[str, str]]] = {
@@ -183,13 +186,33 @@ class BuddyCreativeStudio:
         ],
         ProjectType.SCHOOL_SIMULATION: [
             {"bot": "games-app-bot", "role": "interactive learning game runtime"},
-            {"bot": "simulation-world-builder", "role": "deterministic scenario engine"},
+            {"bot": "dr-simulation", "role": "deterministic scenario engine"},
             {"bot": "video-script", "role": "lesson narration and scene script"},
         ],
         ProjectType.PARENT_LEARNING_VIDEO: [
             {"bot": "video-script", "role": "age-aware lesson script and pacing"},
-            {"bot": "professional-video-editing-bot", "role": "timeline and export plan"},
+            {"bot": "video-editor-ai", "role": "timeline and export plan"},
             {"bot": "photo-video-app-bot", "role": "captions, moderation, and asset checks"},
+        ],
+        ProjectType.MUSIC_VIDEO: [
+            {"bot": "music-app-bot", "role": "rights-aware music and timing plan"},
+            {"bot": "video-script", "role": "treatment, scenes, and shot list"},
+            {"bot": "video-editor-ai", "role": "timeline, effects, and export plan"},
+        ],
+        ProjectType.BIOGRAPHY: [
+            {"bot": "research-bot", "role": "source log, chronology, and claim review"},
+            {"bot": "video-script", "role": "narrative structure and script"},
+            {"bot": "video-editor-ai", "role": "archive timeline and export plan"},
+        ],
+        ProjectType.COMMERCIAL: [
+            {"bot": "brand-voice", "role": "brand claims and voice consistency"},
+            {"bot": "video-script", "role": "concept, script, shot list, and calls to action"},
+            {"bot": "photo-video-app-bot", "role": "asset rights, captions, and moderation"},
+        ],
+        ProjectType.COLLEGE_COURSE: [
+            {"bot": "curriculum-mapper", "role": "outcomes, modules, lessons, and assessments"},
+            {"bot": "dr-simulation", "role": "labs and interactive scenarios"},
+            {"bot": "video-script", "role": "lecture and demonstration scripts"},
         ],
     }
 
@@ -197,6 +220,12 @@ class BuddyCreativeStudio:
         brief.validate()
         project_id = f"studio-{uuid.uuid4().hex[:12]}"
         routes = [*self.TYPE_ROUTES[brief.project_type], *self.COMMON_ROUTES]
+        if brief.project_type in {
+            ProjectType.SCHOOL_SIMULATION,
+            ProjectType.PARENT_LEARNING_VIDEO,
+            ProjectType.COLLEGE_COURSE,
+        }:
+            routes.append({"bot": "adaptive-learning", "role": "learning objectives and difficulty tuning"})
         media = self._media_plan(brief)
         return StudioProject(
             project_id=project_id,
@@ -324,11 +353,19 @@ class BuddyCreativeStudio:
             {"phase": "package", "outputs": ["project manifest", "deployment checklist", "rights record"]},
         ]
         if brief.project_type == ProjectType.GAME:
-            shared[2]["outputs"].extend(["game loop", "levels", "score and restart system"])
+            shared[2]["outputs"].extend(["vertical slice", "game loop", "levels", "score and restart system", "milestone checkpoints"])
         elif brief.project_type == ProjectType.SCHOOL_SIMULATION:
             shared[2]["outputs"].extend(["scenario state", "student decisions", "teacher rubric"])
-        else:
+        elif brief.project_type == ProjectType.PARENT_LEARNING_VIDEO:
             shared[2]["outputs"].extend(["lesson timeline", "narration script", "family activity"])
+        elif brief.project_type == ProjectType.MUSIC_VIDEO:
+            shared[2]["outputs"].extend(["music rights record", "treatment", "shot list", "edit timeline"])
+        elif brief.project_type == ProjectType.BIOGRAPHY:
+            shared[2]["outputs"].extend(["source log", "chronology", "fact review", "narrative timeline"])
+        elif brief.project_type == ProjectType.COMMERCIAL:
+            shared[2]["outputs"].extend(["claim substantiation", "brand review", "shot list", "format variants"])
+        else:
+            shared[2]["outputs"].extend(["syllabus", "modules", "assessments", "labs", "rubrics"])
         return shared
 
     @staticmethod
@@ -373,8 +410,16 @@ class BuddyCreativeStudio:
             base.extend(["teacher_guide", "student_rubric", "learning_outcome_report"])
         elif brief.project_type == ProjectType.PARENT_LEARNING_VIDEO:
             base.extend(["parent_guide", "family_activity", "discussion_prompts"])
-        else:
+        elif brief.project_type == ProjectType.GAME:
             base.extend(["game_design_document", "level_progression", "playtest_report"])
+        elif brief.project_type == ProjectType.MUSIC_VIDEO:
+            base.extend(["music_rights_record", "creative_treatment", "shot_list", "edit_decision_list"])
+        elif brief.project_type == ProjectType.BIOGRAPHY:
+            base.extend(["source_log", "fact_check_report", "chronology", "archive_rights_record"])
+        elif brief.project_type == ProjectType.COMMERCIAL:
+            base.extend(["claim_substantiation", "brand_review", "platform_variants", "campaign_measurement_plan"])
+        else:
+            base.extend(["syllabus", "module_lessons", "assessment_bank", "instructor_guide"])
         return base
 
     @staticmethod

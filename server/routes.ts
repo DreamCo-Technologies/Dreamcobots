@@ -32,6 +32,11 @@ import {
   tokenTransferPlanRequestSchema,
   toPublicTokenTransferPlan,
 } from "./token-transfer";
+import {
+  approvalNotificationRequestSchema,
+  createApprovalNotificationPlan,
+  notificationPreferencesSchema,
+} from "./approval-notifications";
 
 const CORE_SLUGS = new Set(CORE_BOTS.map(b => b.slug));
 const GITHUB_SLUGS = new Set(GITHUB_BOTS.map(b => b.slug));
@@ -413,6 +418,33 @@ export async function registerRoutes(
       res.json({ query, results: data.items ?? [], total: data.total_count ?? 0 });
     } catch (e: any) {
       res.status(500).json({ error: e.message || "GitHub search failed" });
+    }
+  });
+
+  // ===== APPROVAL NOTIFICATION PLANNING =====
+  app.get("/api/approval-notifications/capabilities", (_req, res) => {
+    res.json({
+      schema: "dreamco.approval_notification_capabilities.v1",
+      channels: {
+        in_app: { status: "native" },
+        email: { status: "adapter_required" },
+        sms: { status: "adapter_required", explicitOptInRequired: true },
+        voice_call: { status: "adapter_required", explicitOptInRequired: true },
+      },
+      verifiedDestinationRequired: true,
+      rawContactDetailsAccepted: false,
+      liveDispatchAvailableFromThisRoute: false,
+    });
+  });
+
+  app.post("/api/approval-notifications/plan", (req, res) => {
+    try {
+      const request = approvalNotificationRequestSchema.parse(req.body?.request);
+      const preferences = notificationPreferencesSchema.parse(req.body?.preferences);
+      res.status(201).json(createApprovalNotificationPlan(request, preferences));
+    } catch (error) {
+      if (error instanceof z.ZodError) return res.status(400).json(zodValidationError(error));
+      throw error;
     }
   });
 
