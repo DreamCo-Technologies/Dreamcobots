@@ -6,6 +6,7 @@
     { href: 'buddy.html', label: '🧠 Buddy Bot' },
     { href: 'studio.html', label: '🎮 Creative Studio' },
     { href: 'platform.html', label: '🧩 Platform Registry' },
+    { href: 'calculator.html', label: '🧮 Calculator Lab' },
     { href: 'divisions.html', label: '🏛️ Divisions' },
     { href: 'bots.html', label: '🤖 Bot Fleet' },
     { href: 'system-map.html', label: '🗺️ Repository Map' },

@@ -199,6 +199,12 @@ function inferTools(profile: BotProfile) {
       status: "runtime_routed",
       evidence: "config/generated/buddy_platform_expansion.json",
     },
+    {
+      id: "buddy_bot_calculator",
+      name: "Per-bot planning calculator",
+      status: "local_interactive_ready",
+      evidence: "config/generated/bot_calculators.json",
+    },
   ];
   for (const rule of TOOL_RULES) {
     if (rule.words.some((word) => text.includes(word))) tools.push(rule.tool);

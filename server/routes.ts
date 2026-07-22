@@ -1218,6 +1218,18 @@ export async function registerRoutes(
     }
   });
 
+  app.get("/api/buddy/calculators", (_req, res) => {
+    try {
+      const path = resolve(process.cwd(), "config", "generated", "bot_calculators.json");
+      res.json(JSON.parse(readFileSync(path, "utf8")));
+    } catch (error) {
+      res.status(503).json({
+        error: "Buddy calculator registry is unavailable.",
+        detail: error instanceof Error ? error.message : "unknown error",
+      });
+    }
+  });
+
   app.get("/api/buddy/features", async (_req, res) => {
     res.json({
       features: [
@@ -1234,6 +1246,7 @@ export async function registerRoutes(
         { name: "Competitive Intel", route: "POST /api/intel/competitive", status: "live", description: "Analyze any competitor" },
         { name: "Data Packages", route: "GET /api/data-packages", status: "consent-gated", description: "Package only user-owned, licensed, nonsensitive data with separate opt-in and opt-out controls" },
         { name: "Governed Platform Registry", route: "GET /api/buddy/platform-expansion", status: "live", description: "Launch, privacy, finance, creative, IP, open-source, customization, and roadmap contracts" },
+        { name: "Bot Calculator Registry", route: "GET /api/buddy/calculators", status: "live", description: "One bounded local planning calculator contract for every Buddy bot profile" },
         { name: "Code Execution", route: "POST /api/buddy/execute-code", status: "live", description: "Run JS/TS natively; simulate Python, Rust, Go, Java" },
         { name: "Image Analysis", route: "POST /api/buddy/analyze-image", status: "live", description: "GPT-4o vision: screenshots → code, diagrams → schema" },
         { name: "Agent Pipeline", route: "POST /api/buddy/agent-run", status: "live", description: "Multi-step autonomous Plan → Execute → Ship pipeline" },

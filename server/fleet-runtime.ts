@@ -57,6 +57,7 @@ export type BotEndToEndCertification = {
     declaredCapabilitiesVerified: boolean;
     runtimeToolBindingVerified: boolean;
     platformCapabilityRegistryVerified: boolean;
+    calculatorBindingVerified: boolean;
     samplePromptVerified: boolean;
     sandboxExecutionVerified: boolean;
     sandboxEvidenceVerified: boolean;
@@ -194,6 +195,9 @@ export class BotRuntimeInstance {
       ),
       platformCapabilityRegistryVerified: this.profile.tool_summary.some(
         (tool) => tool.id === "buddy_platform_registry" && tool.status === "runtime_routed",
+      ),
+      calculatorBindingVerified: this.profile.tool_summary.some(
+        (tool) => tool.id === "buddy_bot_calculator" && tool.status === "local_interactive_ready",
       ),
       samplePromptVerified: this.profile.sample_test_prompt.trim().length >= 10,
       sandboxExecutionVerified: false,

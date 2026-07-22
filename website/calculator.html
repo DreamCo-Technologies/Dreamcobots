@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Bot Calculator Lab | DreamCo</title>
+  <meta name="description" content="Open the dedicated planning calculator for any of DreamCo's 1,051 Buddy-routed bot profiles." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="calculator.css" />
+</head>
+<body class="calculator-page">
+<div id="nav-placeholder"></div><script src="nav.js"></script>
+
+<main class="calculator-shell">
+  <header class="calculator-header">
+    <div>
+      <p class="calculator-kicker">Deterministic planning tools</p>
+      <h1>Bot Calculator Lab</h1>
+      <p>Choose any Buddy profile, enter your assumptions, and inspect a local estimate without sending data to an outside service.</p>
+    </div>
+    <a class="btn btn-primary btn-sm" href="buddy.html">Open Buddy</a>
+  </header>
+
+  <section class="calculator-metrics" aria-label="Calculator registry summary">
+    <div><span>Bot calculators</span><strong id="calculator-count">0</strong></div>
+    <div><span>Divisions</span><strong id="calculator-divisions">0</strong></div>
+    <div><span>Math engines</span><strong id="calculator-templates">0</strong></div>
+    <div><span>Network required</span><strong>None</strong></div>
+  </section>
+
+  <section class="calculator-workbench">
+    <aside class="calculator-directory" aria-label="Calculator directory">
+      <div class="calculator-directory-head">
+        <label for="calculator-search">Find a bot calculator</label>
+        <input id="calculator-search" type="search" placeholder="Name, division, or category" autocomplete="off" />
+        <label for="calculator-division">Division</label>
+        <select id="calculator-division"><option value="all">All divisions</option></select>
+      </div>
+      <p id="calculator-match-count" class="calculator-match-count">Loading registry...</p>
+      <div id="calculator-list" class="calculator-list" role="listbox" aria-label="Bot calculators"></div>
+    </aside>
+
+    <div id="calculator-stage" class="calculator-stage" aria-live="polite">
+      <div class="calculator-loading">Loading local calculator contracts...</div>
+    </div>
+  </section>
+
+  <section class="calculator-boundary">
+    <strong>Planning boundary</strong>
+    <p>Calculator results are estimates from your assumptions. They do not guarantee profit, approval, safety, or outcomes and are not legal, tax, lending, investment, medical, or safety advice.</p>
+  </section>
+</main>
+
+<script type="module" src="calculator.js"></script>
+</body>
+</html>

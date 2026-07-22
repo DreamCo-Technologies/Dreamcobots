@@ -31,6 +31,10 @@ function testUrl(bot) {
   return `buddy.html?bot=${encodeURIComponent(bot.identity.slug)}&prompt=${encodeURIComponent(bot.sample_test_prompt)}`;
 }
 
+function calculatorUrl(bot) {
+  return `calculator.html?bot=${encodeURIComponent(bot.identity.slug)}`;
+}
+
 function renderCard(bot) {
   const apiLabel = bot.api_candidate_count ? `${bot.api_candidate_count} candidates` : 'No API catalog';
   return `<article class="fleet-card" data-slug="${escapeHtml(bot.identity.slug)}">
@@ -49,6 +53,7 @@ function renderCard(bot) {
     <div class="fleet-readiness"><span></span> Buddy route verified · sandbox first</div>
     <div class="fleet-card-actions">
       <button class="btn btn-outline btn-sm" type="button" data-action="prospectus" data-slug="${escapeHtml(bot.identity.slug)}">Prospectus</button>
+      <a class="btn btn-outline btn-sm" href="${calculatorUrl(bot)}">Calculator</a>
       <a class="btn btn-primary btn-sm" href="${testUrl(bot)}">Test with Buddy</a>
     </div>
   </article>`;
@@ -188,6 +193,7 @@ function renderProspectus(bot) {
     </div>
     <div class="prospectus-actions">
       <a class="btn btn-outline" href="${testUrl(bot)}">Load test prompt</a>
+      <a class="btn btn-outline" href="${calculatorUrl(bot)}">Open calculator</a>
       <a class="btn btn-primary" href="${testUrl(bot)}">Test with Buddy</a>
     </div>`;
 }
@@ -222,6 +228,8 @@ async function initialize() {
     divisionFilter.insertAdjacentHTML('beforeend', state.catalog.divisions.map((division) => `<option value="${escapeHtml(division.name)}">${escapeHtml(division.name)} (${division.profile_count})</option>`).join(''));
     state.filtered = [...state.catalog.bots];
     renderPage();
+    const requestedProspectus = new URLSearchParams(location.search).get('prospectus');
+    if (requestedProspectus) openProspectus(requestedProspectus);
   } catch (error) {
     results.textContent = `Fleet catalog unavailable: ${error.message}`;
     empty.hidden = false;

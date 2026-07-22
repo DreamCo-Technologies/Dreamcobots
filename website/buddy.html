@@ -22,6 +22,7 @@
       <button class="buddy-rail-item" onclick="loadPrompt('Create a game or simulation from this idea.')">Game + Simulation</button>
       <a class="buddy-rail-item" href="studio.html">Creative Studio</a>
       <a class="buddy-rail-item" href="platform.html">Platform Registry</a>
+      <a class="buddy-rail-item" href="calculator.html">Bot Calculator Lab</a>
       <button class="buddy-rail-item" onclick="loadPrompt('Find the best native bot route and cheapest model fallback for this task.')">Model Router</button>
       <button class="buddy-rail-item" onclick="loadPrompt('Show the bot completion sprint and what needs coding next.')">Bot Sprint</button>
     </div>
@@ -33,6 +34,7 @@
       <div class="buddy-rail-stat"><span>E2E sandbox certified</span><strong data-fleet-stat="e2e">1,051</strong></div>
       <div class="buddy-rail-stat"><span>Connected APIs</span><strong data-fleet-stat="apis">0</strong></div>
       <div class="buddy-rail-stat"><span>Studio tracks</span><strong data-fleet-stat="studio">10</strong></div>
+      <div class="buddy-rail-stat"><span>Calculators</span><strong data-fleet-stat="calculators">1,051</strong></div>
     </div>
 
     <div id="selected-bot-route" class="studio-guardrail" hidden></div>
@@ -98,6 +100,7 @@
         <button onclick="openStudio('parent_learning_video')">Learning video</button>
         <button onclick="loadPrompt('Route this task through native DreamCo bots first, then cheapest free model fallback.')">Route task</button>
         <button onclick="loadPrompt('Finish the next bot in the completion sprint and add a smoke test.')">Finish bot</button>
+        <button onclick="location.href='calculator.html'">Open calculators</button>
       </div>
     </section>
 
@@ -193,6 +196,13 @@ fetch('data/bot-fleet-e2e.json', { cache: 'no-store' })
   .then(response => response.ok ? response.json() : Promise.reject(new Error('certification unavailable')))
   .then(report => {
     document.querySelector('[data-fleet-stat="e2e"]').textContent = report.summary.sandboxCertified.toLocaleString();
+  })
+  .catch(() => {});
+
+fetch('data/bot-calculators.json', { cache: 'no-store' })
+  .then(response => response.ok ? response.json() : Promise.reject(new Error('calculator registry unavailable')))
+  .then(registry => {
+    document.querySelector('[data-fleet-stat="calculators"]').textContent = registry.summary.calculators.toLocaleString();
   })
   .catch(() => {});
 </script>

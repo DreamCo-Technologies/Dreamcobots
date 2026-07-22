@@ -51,6 +51,7 @@ test("certifies the repository-controlled end-to-end flow for every bot", () => 
   assert.equal(report.summary.liveExternalFlowComplete, false);
   assert.equal(report.profiles.every((profile) => profile.status === "sandbox_certified"), true);
   assert.equal(report.profiles.every((profile) => profile.checks.platformCapabilityRegistryVerified), true);
+  assert.equal(report.profiles.every((profile) => profile.checks.calculatorBindingVerified), true);
   assert.equal(
     report.profiles.every((profile) => Object.values(profile.checks).every(Boolean)),
     true,
