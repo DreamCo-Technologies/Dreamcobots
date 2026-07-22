@@ -205,6 +205,12 @@ function inferTools(profile: BotProfile) {
       status: "local_interactive_ready",
       evidence: "config/generated/bot_calculators.json",
     },
+    {
+      id: "buddy_distribution_service",
+      name: "Install and multi-platform distribution planner",
+      status: "web_ready_native_review_required",
+      evidence: "config/generated/buddy_distribution_catalog.json",
+    },
   ];
   for (const rule of TOOL_RULES) {
     if (rule.words.some((word) => text.includes(word))) tools.push(rule.tool);

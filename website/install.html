@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Install and Launch Center | Buddy by DreamCo</title>
+  <meta name="description" content="Install Buddy as a web app or prepare governed publishing plans for websites, apps, games, simulations, courses, TVs, phones, tablets, desktops, and stores." />
+  <meta name="theme-color" content="#0a0e1a" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-title" content="Buddy" />
+  <link rel="manifest" href="manifest.webmanifest" />
+  <link rel="apple-touch-icon" href="assets/images/buddy-icon-192.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="install.css" />
+</head>
+<body class="install-page">
+<div id="nav-placeholder"></div><script src="nav.js"></script>
+
+<main class="install-shell">
+  <header class="install-header">
+    <div>
+      <p class="install-kicker">Device installation and distribution</p>
+      <h1>Install Buddy. Launch what you build.</h1>
+      <p>Use Buddy from any compatible browser, install it as a web app where supported, or prepare target-specific release packages for native devices and stores.</p>
+    </div>
+    <a class="btn btn-primary btn-sm" href="buddy.html">Open Buddy</a>
+  </header>
+
+  <section class="install-now" aria-labelledby="install-now-title">
+    <div class="install-app-identity">
+      <img src="assets/images/buddy-icon-192.png" alt="Buddy app icon" width="76" height="76" />
+      <div>
+        <span id="device-label" class="install-device-label">Checking this device</span>
+        <h2 id="install-now-title">Buddy by DreamCo</h2>
+        <p id="install-state">Preparing the best available installation route.</p>
+      </div>
+    </div>
+    <div class="install-actions">
+      <button id="install-button" class="btn btn-primary" type="button">Install Buddy</button>
+      <button id="share-button" class="btn btn-outline" type="button">Share app link</button>
+      <a class="btn btn-outline" href="buddy.html">Use in browser</a>
+    </div>
+    <div id="install-guidance" class="install-guidance" hidden></div>
+  </section>
+
+  <section class="install-metrics" aria-label="Distribution coverage">
+    <div><span>Distribution targets</span><strong id="target-count">0</strong></div>
+    <div><span>Device families</span><strong id="family-count">0</strong></div>
+    <div><span>Launch services</span><strong id="service-count">0</strong></div>
+    <div><span>Available now</span><strong>Web + PWA</strong></div>
+  </section>
+
+  <section class="distribution-workbench">
+    <div class="distribution-tabs" role="tablist" aria-label="Install and distribution views">
+      <button class="active" type="button" data-view="targets">Device targets</button>
+      <button type="button" data-view="services">Launch services</button>
+      <button type="button" data-view="planner">Planner</button>
+    </div>
+
+    <div id="targets-view" class="distribution-view active">
+      <div class="distribution-toolbar">
+        <div>
+          <h2>Device and store routes</h2>
+          <p>Each target names the package, account, and review gate needed for a real release.</p>
+        </div>
+        <label for="family-filter">Family
+          <select id="family-filter"><option value="all">All device families</option></select>
+        </label>
+      </div>
+      <div id="target-results" class="target-results"></div>
+    </div>
+
+    <div id="services-view" class="distribution-view">
+      <div class="distribution-toolbar">
+        <div>
+          <h2>Build and publishing services</h2>
+          <p>Start with a free scope assessment. Store fees, accounts, signing, provider review, and paid work require owner approval.</p>
+        </div>
+      </div>
+      <div id="service-results" class="service-results"></div>
+    </div>
+
+    <div id="planner-view" class="distribution-view">
+      <div class="distribution-toolbar">
+        <div>
+          <h2>Release planner</h2>
+          <p>Create a local release brief, download it, or send it to Buddy for a scoped assessment.</p>
+        </div>
+      </div>
+      <form id="release-form" class="release-form">
+        <div class="release-fields">
+          <label>Project name
+            <input id="project-name" required minlength="3" placeholder="My project" />
+          </label>
+          <label>Project type
+            <select id="project-type">
+              <option value="website">Website</option>
+              <option value="web_app">Web app</option>
+              <option value="mobile_app">Mobile app</option>
+              <option value="desktop_app">Desktop app</option>
+              <option value="game">Video game</option>
+              <option value="simulation">Simulation</option>
+              <option value="course">School or college course</option>
+              <option value="creative_tool">Creative tool</option>
+              <option value="bot_system">Bot system</option>
+            </select>
+          </label>
+          <label>Audience
+            <input id="project-audience" required placeholder="Who will use it" />
+          </label>
+          <label>Source or build reference
+            <input id="source-reference" required value="DreamCo repository project" />
+          </label>
+        </div>
+        <fieldset class="release-targets">
+          <legend>Release targets</legend>
+          <div id="release-target-options"></div>
+        </fieldset>
+        <label class="release-confirmation">
+          <input id="rights-confirmed" type="checkbox" required />
+          <span><strong>I confirm I own or can distribute this project.</strong><small>Store submissions and paid work still require an exact owner approval.</small></span>
+        </label>
+        <label class="release-confirmation">
+          <input id="targets-children" type="checkbox" />
+          <span><strong>This product is intended for children.</strong><small>Enables the additional child-safety and store-policy review gate.</small></span>
+        </label>
+        <div class="release-form-actions">
+          <button class="btn btn-primary" type="submit">Build release plan</button>
+          <span id="release-form-status" role="status"></span>
+        </div>
+      </form>
+      <div id="release-output" class="release-output" hidden></div>
+    </div>
+  </section>
+
+  <section class="distribution-boundary">
+    <strong>Universal-access boundary</strong>
+    <p>No single native file runs on every device. Buddy is available now through HTTPS and supported-browser PWA installation. Phones, tablets, TVs, game systems, desktops, VR devices, and school platforms need their own approved package and provider process.</p>
+  </section>
+</main>
+
+<script type="module" src="install.js"></script>
+</body>
+</html>

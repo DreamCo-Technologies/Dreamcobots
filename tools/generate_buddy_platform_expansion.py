@@ -24,6 +24,7 @@ IMPLEMENTED_CAPABILITIES = [
     ("business_launchpad", "Business formation planning", "official_handoff_required", "dreamco_platform/launch/launchpad.py"),
     ("prototype_factory", "Prompt-to-prototype build plan", "local_build_ready", "dreamco_platform/launch/launchpad.py"),
     ("app_release_council", "Web and app-store release evidence council", "owner_submission_required", "dreamco_platform/launch/launchpad.py"),
+    ("distribution_service", "Multi-device packaging and publishing service", "web_ready_native_review_required", "dreamco_platform/launch/distribution.py"),
     ("data_wallet", "Consent, portability, opt-out, and licensed-data controls", "local_core_ready", "dreamco_platform/privacy/data_wallet.py"),
     ("bill_subscription_manager", "Bill and subscription tracking", "owner_payment_required", "dreamco_platform/finance/subscriptions.py"),
     ("task_runner", "Concurrent and timed tasks up to 24 hours", "adapter_ready", "dreamco_platform/automation/task_runner.py"),
