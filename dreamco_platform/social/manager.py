@@ -71,7 +71,8 @@ class SocialPublisher(Protocol):
     name: str
     platform: str
 
-    def publish(self, *, account_ref: str, content: str, media_refs: tuple[str, ...]) -> str: ...
+    def publish(self, *, account_ref: str, content: str, media_refs: tuple[str, ...]) -> str:
+        raise NotImplementedError
 
 
 class BuddySocialManager:

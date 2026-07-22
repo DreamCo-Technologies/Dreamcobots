@@ -17,7 +17,8 @@ class TaskRunnerError(ValueError):
 class TaskAdapter(Protocol):
     name: str
 
-    def execute(self, task: "ScheduledTask") -> dict[str, Any]: ...
+    def execute(self, task: "ScheduledTask") -> dict[str, Any]:
+        raise NotImplementedError
 
 
 @dataclass(order=True)

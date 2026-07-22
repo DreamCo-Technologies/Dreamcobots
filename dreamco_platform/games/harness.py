@@ -59,11 +59,14 @@ class GameRuntimeAdapter(Protocol):
     owner_authorized: bool
     sandboxed: bool
 
-    def reset(self, seed: int) -> dict[str, Any]: ...
+    def reset(self, seed: int) -> dict[str, Any]:
+        raise NotImplementedError
 
-    def legal_actions(self, observation: dict[str, Any]) -> list[str]: ...
+    def legal_actions(self, observation: dict[str, Any]) -> list[str]:
+        raise NotImplementedError
 
-    def step(self, action: str) -> tuple[dict[str, Any], float, bool, dict[str, Any]]: ...
+    def step(self, action: str) -> tuple[dict[str, Any], float, bool, dict[str, Any]]:
+        raise NotImplementedError
 
 
 class BuddyGameLab:
