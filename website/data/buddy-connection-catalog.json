@@ -100,6 +100,7 @@
   "public_contract": {
     "backend_required_for": [
       "token exchange",
+      "token transfer execution",
       "secret resolution",
       "live API calls",
       "connection revocation"
@@ -124,6 +125,30 @@
     "secret_storage": "reference_only",
     "signup_mode": "assisted_handoff",
     "user_presence_gate_count": 7
+  },
+  "token_transfer": {
+    "allowed_token_kinds": [
+      "api_token",
+      "oauth_access_token",
+      "oauth_refresh_token"
+    ],
+    "blocked_token_kinds": [
+      "browser_session_cookie",
+      "identity_token",
+      "payment_token",
+      "recovery_code"
+    ],
+    "explicit_user_approval_required": true,
+    "max_plan_ttl_seconds": 300,
+    "mode": "reference_to_reference",
+    "one_time_execution": true,
+    "raw_tokens_accepted_in_public_clients": false,
+    "same_audience_required": true,
+    "status": "backend_vault_required",
+    "writable_destinations": [
+      "os_keychain",
+      "managed_vault"
+    ]
   },
   "user_presence_gates": [
     {

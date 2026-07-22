@@ -19,6 +19,8 @@ from dreamco_platform.connections import (
     ConnectorSpec,
     SecretReference,
     SignupRequest,
+    TokenKind,
+    TokenTransferRequest,
 )
 
 
@@ -137,6 +139,48 @@ class BuddyConnectionBrokerTests(unittest.TestCase):
         self.assertEqual(money.status, "approval_required")
         approved = self.broker.decide_action("transfer_funds", explicit_user_approval=True)
         self.assertTrue(approved.allowed)
+
+    def test_token_transfer_is_reference_only_same_audience_and_short_lived(self):
+        plan = self.broker.create_token_transfer_plan(
+            TokenTransferRequest(
+                user_id="owner-1",
+                connector_id="client-app",
+                token_kind=TokenKind.OAUTH_ACCESS_TOKEN,
+                source_ref=SecretReference("environment", "CLIENT_ACCESS_TOKEN"),
+                destination_ref=SecretReference("managed_vault", "clients/client-app/access-token"),
+                source_audience="https://app.example.com/oauth",
+                destination_audience="https://app.example.com/api",
+                reason="Move the approved connection into managed storage.",
+                scopes=("profile.read",),
+                ttl_seconds=60,
+                explicit_user_approval=True,
+            )
+        )
+        public = plan.to_public_dict()
+        self.assertEqual(public["status"], "backend_vault_execution_required")
+        self.assertTrue(public["one_time"])
+        self.assertFalse(public["raw_token_accepted"])
+        self.assertNotIn("source_locator", str(public))
+        self.assertNotIn("CLIENT_ACCESS_TOKEN", str(public))
+
+    def test_token_transfer_blocks_cross_app_and_unwritable_destinations(self):
+        base = dict(
+            user_id="owner-1",
+            connector_id="client-app",
+            token_kind=TokenKind.API_TOKEN,
+            source_ref=SecretReference("environment", "CLIENT_API_TOKEN"),
+            destination_ref=SecretReference("managed_vault", "clients/client-app/api-token"),
+            source_audience="https://app.example.com",
+            destination_audience="https://other.example.com",
+            reason="Move an approved API token.",
+        )
+        with self.assertRaisesRegex(ConnectionBrokerError, "between app audiences"):
+            self.broker.create_token_transfer_plan(TokenTransferRequest(**base))
+
+        base["destination_audience"] = "https://app.example.com"
+        base["destination_ref"] = SecretReference("environment", "DESTINATION_API_TOKEN")
+        with self.assertRaisesRegex(ConnectionBrokerError, "writable keychain"):
+            self.broker.create_token_transfer_plan(TokenTransferRequest(**base))
 
     def test_registry_generation_stays_in_sync(self):
         result = subprocess.run(

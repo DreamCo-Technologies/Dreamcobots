@@ -7,6 +7,14 @@ import {
   toPublicConnection,
   toStoredConnection,
 } from "../server/connection-policy";
+import {
+  createPrivateTokenTransferPlan,
+  executeTokenTransfer,
+  tokenTransferPlanRequestSchema,
+  toPublicTokenTransferPlan,
+  type SecretVaultAdapter,
+  type TransferReplayGuard,
+} from "../server/token-transfer";
 import type { PlatformConnection } from "../shared/schema";
 
 test("connection plans store references rather than credential values", () => {
@@ -95,4 +103,101 @@ test("signup handoffs cannot submit protected steps", () => {
   assert.ok(handoff.userPresenceGates.includes("terms_and_privacy"));
   assert.ok(handoff.userPresenceGates.includes("captcha"));
   assert.ok(handoff.userPresenceGates.includes("payment"));
+});
+
+test("token handoff accepts references only and blocks cross-app audiences", () => {
+  const rawToken = tokenTransferPlanRequestSchema.safeParse({
+    connectorId: "client-app",
+    tokenKind: "api_token",
+    source: { provider: "environment", locator: "CLIENT_API_TOKEN" },
+    destination: { provider: "managed_vault", locator: "clients/client-app/api-token" },
+    sourceAudience: "https://app.example.com",
+    destinationAudience: "https://app.example.com",
+    reason: "Move the approved token into managed storage.",
+    explicitUserApproval: true,
+    token: "sk_live_1234567890123456",
+  });
+  assert.equal(rawToken.success, false);
+
+  const crossApp = tokenTransferPlanRequestSchema.safeParse({
+    connectorId: "client-app",
+    tokenKind: "oauth_access_token",
+    source: { provider: "environment", locator: "CLIENT_ACCESS_TOKEN" },
+    destination: { provider: "managed_vault", locator: "clients/client-app/access-token" },
+    sourceAudience: "https://app.example.com",
+    destinationAudience: "https://other.example.com",
+    reason: "Move the approved token into managed storage.",
+    explicitUserApproval: true,
+  });
+  assert.equal(crossApp.success, false);
+
+  const tokenInReason = tokenTransferPlanRequestSchema.safeParse({
+    connectorId: "client-app",
+    tokenKind: "api_token",
+    source: { provider: "environment", locator: "CLIENT_API_TOKEN" },
+    destination: { provider: "managed_vault", locator: "clients/client-app/api-token" },
+    sourceAudience: "https://app.example.com",
+    destinationAudience: "https://app.example.com",
+    reason: "Move sk_live_1234567890123456 into storage.",
+    explicitUserApproval: true,
+  });
+  assert.equal(tokenInReason.success, false);
+});
+
+test("token handoff is one-time, clears source memory, and returns metadata only", async () => {
+  const input = tokenTransferPlanRequestSchema.parse({
+    connectorId: "client-app",
+    tokenKind: "oauth_access_token",
+    source: { provider: "environment", locator: "CLIENT_ACCESS_TOKEN" },
+    destination: { provider: "managed_vault", locator: "clients/client-app/access-token" },
+    sourceAudience: "https://app.example.com/oauth",
+    destinationAudience: "https://app.example.com/api",
+    scopes: ["profile.read"],
+    reason: "Move the approved token into managed storage.",
+    ttlSeconds: 60,
+    explicitUserApproval: true,
+  });
+  const now = new Date("2026-07-21T12:00:00Z");
+  const plan = createPrivateTokenTransferPlan(input, now);
+  const publicPlan = toPublicTokenTransferPlan(plan);
+  assert.equal(JSON.stringify(publicPlan).includes("CLIENT_ACCESS_TOKEN"), false);
+  assert.equal(JSON.stringify(publicPlan).includes("clients/client-app/access-token"), false);
+
+  const sourceBytes = new TextEncoder().encode("private-test-token");
+  let destinationCopy = new Uint8Array();
+  const sourceVault: SecretVaultAdapter = {
+    provider: "environment",
+    async read() { return sourceBytes; },
+    async write() { throw new Error("Source vault is read-only"); },
+  };
+  const destinationVault: SecretVaultAdapter = {
+    provider: "managed_vault",
+    async read() { throw new Error("Destination read is unused"); },
+    async write(_locator, value) { destinationCopy = Uint8Array.from(value); },
+  };
+  const claimed = new Set<string>();
+  const replayGuard: TransferReplayGuard = {
+    async claim(id) {
+      if (claimed.has(id)) return false;
+      claimed.add(id);
+      return true;
+    },
+  };
+
+  const receipt = await executeTokenTransfer(
+    plan,
+    sourceVault,
+    destinationVault,
+    replayGuard,
+    undefined,
+    new Date("2026-07-21T12:00:10Z"),
+  );
+  assert.equal(new TextDecoder().decode(destinationCopy), "private-test-token");
+  assert.ok(sourceBytes.every((value) => value === 0));
+  assert.equal(receipt.rawTokenReturned, false);
+  assert.equal(JSON.stringify(receipt).includes("private-test-token"), false);
+  await assert.rejects(
+    executeTokenTransfer(plan, sourceVault, destinationVault, replayGuard, undefined, new Date("2026-07-21T12:00:20Z")),
+    /already been used/,
+  );
 });

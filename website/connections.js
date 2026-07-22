@@ -51,6 +51,16 @@
     target.hidden = !message;
   }
 
+  function validatedSecretReference(raw, provider) {
+    const value = String(raw || '').trim();
+    const highEntropyValue = value.length >= 32 && /^[A-Za-z0-9_-]+$/.test(value);
+    const invalidEnvironmentName = provider === 'environment' && !/^[A-Z][A-Z0-9_]{2,127}$/.test(value);
+    if (!SECRET_NAME.test(value) || TOKEN_LIKE.test(value) || highEntropyValue || invalidEnvironmentName) {
+      throw new Error('Enter a secret reference name, not a key or token value.');
+    }
+    return value;
+  }
+
   function statusLabel(method) {
     if (method.status === 'adapter_ready') return 'Adapter ready';
     if (method.status === 'user_handoff') return 'User handoff';
@@ -208,17 +218,110 @@
       }
 
       const secretProvider = String(form.get('secretProvider') || '');
-      const secretReference = String(form.get('secretReference') || '').trim();
-      const highEntropyValue = secretReference.length >= 32 && /^[A-Za-z0-9_-]+$/.test(secretReference);
-      const invalidEnvironmentName = secretProvider === 'environment' && !/^[A-Z][A-Z0-9_]{2,127}$/.test(secretReference);
-      if (method.secret_reference_required && (!SECRET_NAME.test(secretReference) || TOKEN_LIKE.test(secretReference) || highEntropyValue || invalidEnvironmentName)) {
-        throw new Error('Enter a secret reference name, not a key or token value.');
-      }
+      const secretReference = method.secret_reference_required
+        ? validatedSecretReference(String(form.get('secretReference') || ''), secretProvider)
+        : '';
 
       renderConnectionPlan({ app, url, method, scopes, secretProvider, secretReference });
       addAudit({ type: 'connection_plan', app, host: url.hostname, method: method.id, status: 'user_action_required' });
     } catch (error) {
       setError('connection-error', error.message || 'Unable to prepare the connection plan.');
+    }
+  }
+
+  function renderTransferPlan({ connector, kind, sourceProvider, destinationProvider, audience, scopes, reason, ttl }) {
+    const target = byId('transfer-result');
+    target.replaceChildren();
+    appendPlanHeading(target, connector, 'Backend vault required', 'badge badge-amber');
+
+    const summary = element('dl', 'connection-plan-summary');
+    [
+      ['Token class', kind.replaceAll('_', ' ')],
+      ['App audience', audience.origin],
+      ['Scopes', scopes.length ? scopes.join(', ') : 'Provider minimum'],
+      ['Source', `${sourceProvider} reference configured`],
+      ['Destination', `${destinationProvider} reference configured`],
+      ['Expires', `${ttl} seconds after creation`],
+      ['Approval', 'Recorded for this handoff only'],
+      ['Reason', reason],
+    ].forEach(([label, value]) => {
+      summary.append(element('dt', '', label), element('dd', '', value));
+    });
+    target.append(summary);
+    appendPlanList(target, 'Secure transfer path', [
+      'Trusted backend resolves the source reference without returning the token.',
+      'Backend writes directly to the approved destination for the same app audience.',
+      'The one-time plan is consumed and source memory is cleared.',
+      'Only transfer metadata is retained; rotate the source token after a migration.',
+    ]);
+
+    const footer = element('div', 'connection-plan-footer');
+    footer.append(element('span', 'status-dot status-dot-warn'), element('span', '', 'Static preview: a configured backend vault performs the transfer.'));
+    target.append(footer);
+  }
+
+  function handleTransfer(event) {
+    event.preventDefault();
+    setError('transfer-error', '');
+    if (state.locked) {
+      setError('transfer-error', 'Unlock the planner before preparing a token handoff.');
+      return;
+    }
+    try {
+      const form = new FormData(event.currentTarget);
+      const connector = String(form.get('connector') || '').trim();
+      if (!/^[a-z][a-z0-9-]{2,63}$/.test(connector)) {
+        throw new Error('Connector id must be a lowercase app slug.');
+      }
+      const kind = String(form.get('kind') || '');
+      const allowedKinds = state.catalog.token_transfer.allowed_token_kinds;
+      if (!allowedKinds.includes(kind)) throw new Error('Choose an approved transferable token class.');
+
+      const sourceProvider = String(form.get('sourceProvider') || '');
+      const destinationProvider = String(form.get('destinationProvider') || '');
+      const sourceReference = validatedSecretReference(form.get('sourceReference'), sourceProvider);
+      const destinationReference = validatedSecretReference(form.get('destinationReference'), destinationProvider);
+      if (sourceProvider === destinationProvider && sourceReference === destinationReference) {
+        throw new Error('Source and destination references must be different.');
+      }
+      if (!state.catalog.token_transfer.writable_destinations.includes(destinationProvider)) {
+        throw new Error('Destination must be a writable keychain or managed vault.');
+      }
+
+      const sourceAudience = officialUrl(String(form.get('sourceAudience') || ''));
+      const destinationAudience = officialUrl(String(form.get('destinationAudience') || ''));
+      if (sourceAudience.origin !== destinationAudience.origin) {
+        throw new Error('Tokens cannot move between apps. Authorize the destination app separately.');
+      }
+      const scopes = String(form.get('scopes') || '')
+        .split(',')
+        .map((value) => value.trim())
+        .filter(Boolean);
+      if (scopes.some((scope) => !/^[A-Za-z0-9._:/-]{1,80}$/.test(scope))) {
+        throw new Error('Scopes may use letters, numbers, dots, slashes, colons, dashes, and underscores.');
+      }
+      const reason = String(form.get('reason') || '').trim();
+      const ttl = Number(form.get('ttl'));
+      if (reason.length < 5) throw new Error('A clear transfer reason is required.');
+      if (TOKEN_LIKE.test(reason) || /[A-Za-z0-9_-]{32,}/.test(reason)) {
+        throw new Error('Transfer reason must not contain a key or token value.');
+      }
+      if (sourceAudience.search || sourceAudience.hash || destinationAudience.search || destinationAudience.hash) {
+        throw new Error('App audiences must not contain query parameters or fragments.');
+      }
+      if (![60, 120, 300].includes(ttl)) throw new Error('Choose an approved short plan lifetime.');
+      if (form.get('approval') !== 'on') throw new Error('Explicit approval is required for this handoff.');
+
+      renderTransferPlan({ connector, kind, sourceProvider, destinationProvider, audience: sourceAudience, scopes, reason, ttl });
+      addAudit({
+        type: 'token_handoff',
+        app: connector,
+        host: sourceAudience.hostname,
+        method: kind,
+        status: 'backend_vault_execution_required',
+      });
+    } catch (error) {
+      setError('transfer-error', error.message || 'Unable to prepare the token handoff.');
     }
   }
 
@@ -317,6 +420,7 @@
     byId('planner-lock').addEventListener('click', toggleLock);
     byId('connection-method').addEventListener('change', updateSecretFields);
     byId('connection-form').addEventListener('submit', handleConnection);
+    byId('transfer-form').addEventListener('submit', handleTransfer);
     byId('signup-form').addEventListener('submit', handleSignup);
     byId('clear-connection-audit').addEventListener('click', () => {
       state.audit = [];
