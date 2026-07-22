@@ -27,6 +27,11 @@ import {
   toPublicConnection,
   toStoredConnection,
 } from "./connection-policy";
+import {
+  createPrivateTokenTransferPlan,
+  tokenTransferPlanRequestSchema,
+  toPublicTokenTransferPlan,
+} from "./token-transfer";
 
 const CORE_SLUGS = new Set(CORE_BOTS.map(b => b.slug));
 const GITHUB_SLUGS = new Set(GITHUB_BOTS.map(b => b.slug));
@@ -2759,6 +2764,17 @@ Any improvements or fixes (optional, 1-2 bullet points max)`;
     const parsed = signupHandoffRequestSchema.safeParse(req.body);
     if (!parsed.success) return res.status(400).json(zodValidationError(parsed.error));
     res.status(201).json(createSignupHandoff(parsed.data));
+  });
+
+  app.post("/api/token-transfer-plans", async (req, res) => {
+    const killSwitch = await storage.getSetting("kill_switch");
+    if ((killSwitch?.value as { enabled?: boolean } | undefined)?.enabled) {
+      return res.status(423).json({ message: "Token transfers are locked by the kill switch" });
+    }
+    const parsed = tokenTransferPlanRequestSchema.safeParse(req.body);
+    if (!parsed.success) return res.status(400).json(zodValidationError(parsed.error));
+    const plan = createPrivateTokenTransferPlan(parsed.data);
+    res.status(201).json(toPublicTokenTransferPlan(plan));
   });
 
   // ===== KILL SWITCH =====

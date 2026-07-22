@@ -88,5 +88,17 @@
     {"id": "commerce", "label": "Commerce and payments", "minimum_scope": "read-only until transaction approval"},
     {"id": "media", "label": "Media and publishing", "minimum_scope": "draft and preview before publish"},
     {"id": "custom", "label": "Documented custom application", "minimum_scope": "sandbox before live access"}
-  ]
+  ],
+  "token_transfer": {
+    "mode": "reference_to_reference",
+    "status": "backend_vault_required",
+    "allowed_token_kinds": ["api_token", "oauth_access_token", "oauth_refresh_token"],
+    "blocked_token_kinds": ["browser_session_cookie", "identity_token", "payment_token", "recovery_code"],
+    "writable_destinations": ["os_keychain", "managed_vault"],
+    "max_plan_ttl_seconds": 300,
+    "same_audience_required": true,
+    "explicit_user_approval_required": true,
+    "one_time_execution": true,
+    "raw_tokens_accepted_in_public_clients": false
+  }
 }

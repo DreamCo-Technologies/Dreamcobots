@@ -34,7 +34,14 @@ class AuthMethod(str, Enum):
     CUSTOM_REST = "custom_rest"
 
 
+class TokenKind(str, Enum):
+    API_TOKEN = "api_token"
+    OAUTH_ACCESS_TOKEN = "oauth_access_token"
+    OAUTH_REFRESH_TOKEN = "oauth_refresh_token"
+
+
 SECRET_PROVIDERS = {"environment", "os_keychain", "managed_vault"}
+WRITABLE_SECRET_PROVIDERS = {"os_keychain", "managed_vault"}
 SECRET_LOCATOR = re.compile(r"^[A-Za-z][A-Za-z0-9_.:/-]{2,127}$")
 TOKEN_LIKE = re.compile(
     r"(?:github_pat_|ghs_|(?:sk|rk)_(?:live|test)_|-----BEGIN .*PRIVATE KEY-----)",
@@ -194,6 +201,62 @@ class SignupPlan:
         }
 
 
+@dataclass(frozen=True)
+class TokenTransferRequest:
+    user_id: str
+    connector_id: str
+    token_kind: TokenKind
+    source_ref: SecretReference
+    destination_ref: SecretReference
+    source_audience: str
+    destination_audience: str
+    reason: str
+    scopes: tuple[str, ...] = ()
+    ttl_seconds: int = 120
+    explicit_user_approval: bool = False
+
+
+@dataclass
+class TokenTransferPlan:
+    transfer_id: str
+    connector_id: str
+    token_kind: str
+    status: str
+    audience: str
+    scopes: list[str]
+    reason: str
+    source_provider: str
+    destination_provider: str
+    created_at: float
+    expires_at: float
+    approval_gates: list[dict[str, Any]]
+    next_steps: list[str]
+    private_context: dict[str, str] = field(default_factory=dict, repr=False)
+
+    def to_public_dict(self) -> dict[str, Any]:
+        return {
+            "schema": "dreamco.buddy_token_transfer.v1",
+            "transfer_id": self.transfer_id,
+            "connector_id": self.connector_id,
+            "token_kind": self.token_kind,
+            "status": self.status,
+            "audience": self.audience,
+            "scopes": self.scopes,
+            "reason": self.reason,
+            "source_provider": self.source_provider,
+            "destination_provider": self.destination_provider,
+            "source_reference_configured": True,
+            "destination_reference_configured": True,
+            "created_at": self.created_at,
+            "expires_at": self.expires_at,
+            "approval_gates": self.approval_gates,
+            "next_steps": self.next_steps,
+            "one_time": True,
+            "same_audience_required": True,
+            "raw_token_accepted": False,
+        }
+
+
 class BuddyConnectionBroker:
     """Prepare scoped app access while preserving user control."""
 
@@ -345,6 +408,73 @@ class BuddyConnectionBroker:
                 "User completes every identity, legal, security, and payment gate.",
                 "Buddy connects the approved account through the least-privilege auth method.",
             ],
+        )
+
+    def create_token_transfer_plan(self, request: TokenTransferRequest) -> TokenTransferPlan:
+        if not request.user_id.strip():
+            raise ConnectionBrokerError("A user id is required for the audit trail.")
+        if not re.fullmatch(r"[a-z][a-z0-9-]{2,63}", request.connector_id):
+            raise ConnectionBrokerError("Connector id must be a stable lowercase slug.")
+        request.source_ref.validate()
+        request.destination_ref.validate()
+        if request.destination_ref.provider not in WRITABLE_SECRET_PROVIDERS:
+            raise ConnectionBrokerError("Destination must be a writable keychain or managed vault.")
+        if request.source_ref == request.destination_ref:
+            raise ConnectionBrokerError("Source and destination references must be different.")
+        if not 30 <= request.ttl_seconds <= 300:
+            raise ConnectionBrokerError("Transfer plans must expire in 30 to 300 seconds.")
+        if len(request.reason.strip()) < 5:
+            raise ConnectionBrokerError("A clear transfer reason is required.")
+        if TOKEN_LIKE.search(request.reason) or re.search(r"[A-Za-z0-9_-]{32,}", request.reason):
+            raise ConnectionBrokerError("Transfer reason must not contain a token or credential value.")
+
+        source = urlsplit(_https_url(request.source_audience, "Source audience"))
+        destination = urlsplit(_https_url(request.destination_audience, "Destination audience"))
+        if source.query or source.fragment or destination.query or destination.fragment:
+            raise ConnectionBrokerError("Token audiences must not contain query parameters or fragments.")
+        source_origin = f"{source.scheme}://{source.netloc}"
+        destination_origin = f"{destination.scheme}://{destination.netloc}"
+        if source_origin != destination_origin:
+            raise ConnectionBrokerError(
+                "Tokens cannot move between app audiences; authorize the destination app separately."
+            )
+
+        scopes = list(dict.fromkeys(scope.strip() for scope in request.scopes if scope.strip()))
+        if any(not re.fullmatch(r"[A-Za-z0-9._:/-]{1,80}", scope) for scope in scopes):
+            raise ConnectionBrokerError("Token scopes contain unsupported characters.")
+
+        now = time.time()
+        approved = request.explicit_user_approval
+        return TokenTransferPlan(
+            transfer_id=f"transfer-{uuid.uuid4().hex[:16]}",
+            connector_id=request.connector_id,
+            token_kind=request.token_kind.value,
+            status="backend_vault_execution_required" if approved else "approval_required",
+            audience=source_origin,
+            scopes=scopes,
+            reason=request.reason.strip(),
+            source_provider=request.source_ref.provider,
+            destination_provider=request.destination_ref.provider,
+            created_at=now,
+            expires_at=now + request.ttl_seconds,
+            approval_gates=[
+                {
+                    "id": "explicit_token_transfer_approval",
+                    "reason": "The user approves this exact audience, scope, and destination.",
+                    "blocking": not approved,
+                }
+            ],
+            next_steps=[
+                "Trusted backend resolves the source reference without returning the token.",
+                "Backend writes the token directly to the approved destination vault.",
+                "Source memory is cleared and only metadata is written to the audit trail.",
+                "Rotate or revoke the source token when this is a credential migration.",
+            ],
+            private_context={
+                "source_locator": request.source_ref.locator,
+                "destination_locator": request.destination_ref.locator,
+                "user_id": request.user_id,
+            },
         )
 
     def decide_action(self, action: str, *, explicit_user_approval: bool = False) -> ActionDecision:

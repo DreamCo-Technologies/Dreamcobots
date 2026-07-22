@@ -1058,6 +1058,32 @@ textarea.studio-input { min-height: 104px; resize: vertical; line-height: 1.55; 
 }
 .connection-form small { color: var(--text3); font-size: .7rem; line-height: 1.45; }
 .connection-form .btn { margin-top: 10px; }
+.connection-inline-fields {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+.connection-inline-fields > div { min-width: 0; }
+.connection-inline-fields label { display: block; margin-bottom: 8px; }
+.connection-approval {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 12px;
+  border: 1px solid var(--border2);
+  border-radius: 6px;
+  background: var(--card2);
+  cursor: pointer;
+}
+.connection-form .connection-approval input[type="checkbox"] {
+  width: 18px;
+  min-height: 18px;
+  height: 18px;
+  margin: 1px 0 0;
+  accent-color: var(--primary);
+  flex: 0 0 18px;
+}
+.connection-approval span { color: var(--text2); font-size: .76rem; line-height: 1.45; }
 .connection-error {
   color: #fca5a5;
   background: rgba(239,68,68,.08);
@@ -1258,6 +1284,7 @@ footer {
   .connection-metrics > div:nth-last-child(-n+2) { border-bottom: 0; }
   .auth-method-grid,
   .connections-two-column { grid-template-columns: 1fr; }
+  .connection-inline-fields { grid-template-columns: 1fr; }
   .connection-surface { padding: 16px; }
   .connection-plan-summary { grid-template-columns: 96px minmax(0, 1fr); }
   .audit-row { align-items: flex-start; flex-direction: column; padding: 12px 0; }

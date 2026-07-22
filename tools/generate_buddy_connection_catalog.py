@@ -32,6 +32,7 @@ def build_public_catalog(payload: dict[str, Any]) -> dict[str, Any]:
     methods = payload.get("auth_methods", [])
     gates = payload.get("user_presence_gates", [])
     contracts = payload.get("connector_contracts", [])
+    transfer = payload.get("token_transfer", {})
     expected_methods = {method.value for method in AuthMethod}
     method_ids = [str(item.get("id", "")) for item in methods]
     if set(method_ids) != expected_methods or len(method_ids) != len(set(method_ids)):
@@ -46,6 +47,16 @@ def build_public_catalog(payload: dict[str, Any]) -> dict[str, Any]:
     summary = payload.get("summary", {})
     if summary.get("raw_credentials_accepted") is not False:
         raise ValueError("Buddy connector registry must reject raw credentials.")
+    if transfer.get("mode") != "reference_to_reference":
+        raise ValueError("Token transfer must use reference-to-reference mode.")
+    if transfer.get("same_audience_required") is not True:
+        raise ValueError("Token transfer must remain bound to one app audience.")
+    if transfer.get("explicit_user_approval_required") is not True:
+        raise ValueError("Token transfer must require explicit user approval.")
+    if transfer.get("one_time_execution") is not True:
+        raise ValueError("Token transfer must be single use.")
+    if transfer.get("raw_tokens_accepted_in_public_clients") is not False:
+        raise ValueError("Public clients must reject raw token values.")
 
     return {
         "schema": "dreamco.public_buddy_connection_catalog.v1",
@@ -58,6 +69,7 @@ def build_public_catalog(payload: dict[str, Any]) -> dict[str, Any]:
         "auth_methods": methods,
         "user_presence_gates": gates,
         "connector_contracts": contracts,
+        "token_transfer": transfer,
         "public_contract": {
             "mode": "connection_planner",
             "live_authentication": False,
@@ -66,6 +78,7 @@ def build_public_catalog(payload: dict[str, Any]) -> dict[str, Any]:
             "stored_browser_data": ["plan status", "app label", "official host", "timestamp"],
             "backend_required_for": [
                 "token exchange",
+                "token transfer execution",
                 "secret resolution",
                 "live API calls",
                 "connection revocation",

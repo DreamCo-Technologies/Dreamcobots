@@ -31,6 +31,7 @@
   <nav class="connection-tabs" aria-label="Connection views">
     <button class="settings-tab active" type="button" data-panel="catalog-panel">Catalog</button>
     <button class="settings-tab" type="button" data-panel="connect-panel">Connect app</button>
+    <button class="settings-tab" type="button" data-panel="transfer-panel">Token handoff</button>
     <button class="settings-tab" type="button" data-panel="signup-panel">Sign-up queue</button>
     <button class="settings-tab" type="button" data-panel="audit-panel">Audit</button>
   </nav>
@@ -95,6 +96,91 @@
         <div class="empty-connection-state">
           <strong>No active plan</strong>
           <span>Connection plans appear here before backend execution.</span>
+        </div>
+      </section>
+    </div>
+  </section>
+
+  <section id="transfer-panel" class="connection-panel" hidden>
+    <div class="connections-workbench">
+      <form id="transfer-form" class="connection-surface connection-form">
+        <div class="connection-section-heading">
+          <div><span class="status-dot status-dot-warn"></span><strong>Vault-to-vault handoff</strong></div>
+          <span class="badge badge-green">References only</span>
+        </div>
+
+        <label for="transfer-connector">Connector id</label>
+        <input id="transfer-connector" name="connector" type="text" pattern="[a-z][a-z0-9-]{2,63}" placeholder="client-app" required />
+
+        <label for="transfer-kind">Token class</label>
+        <select id="transfer-kind" name="kind" required>
+          <option value="api_token">API token</option>
+          <option value="oauth_access_token">OAuth access token</option>
+          <option value="oauth_refresh_token">OAuth refresh token</option>
+        </select>
+
+        <div class="connection-inline-fields">
+          <div>
+            <label for="transfer-source-provider">Source storage</label>
+            <select id="transfer-source-provider" name="sourceProvider">
+              <option value="environment">Environment variable</option>
+              <option value="os_keychain">OS keychain</option>
+              <option value="managed_vault">Managed vault</option>
+            </select>
+          </div>
+          <div>
+            <label for="transfer-destination-provider">Destination storage</label>
+            <select id="transfer-destination-provider" name="destinationProvider">
+              <option value="managed_vault">Managed vault</option>
+              <option value="os_keychain">OS keychain</option>
+            </select>
+          </div>
+        </div>
+
+        <label for="transfer-source-reference">Source reference name</label>
+        <input id="transfer-source-reference" name="sourceReference" type="text" placeholder="CLIENT_APP_TOKEN" autocomplete="off" spellcheck="false" required />
+
+        <label for="transfer-destination-reference">Destination reference name</label>
+        <input id="transfer-destination-reference" name="destinationReference" type="text" placeholder="clients/client-app/token" autocomplete="off" spellcheck="false" required />
+        <small>Enter vault locators only. Tokens, cookies, passwords, and recovery codes are rejected.</small>
+
+        <label for="transfer-source-audience">Current app audience</label>
+        <input id="transfer-source-audience" name="sourceAudience" type="url" placeholder="https://app.example.com" required />
+
+        <label for="transfer-destination-audience">Destination app audience</label>
+        <input id="transfer-destination-audience" name="destinationAudience" type="url" placeholder="https://app.example.com" required />
+
+        <label for="transfer-scopes">Approved scopes</label>
+        <input id="transfer-scopes" name="scopes" type="text" placeholder="profile.read, projects.read" />
+
+        <div class="connection-inline-fields">
+          <div>
+            <label for="transfer-ttl">Plan lifetime</label>
+            <select id="transfer-ttl" name="ttl">
+              <option value="60">1 minute</option>
+              <option value="120" selected>2 minutes</option>
+              <option value="300">5 minutes</option>
+            </select>
+          </div>
+          <div>
+            <label for="transfer-reason">Reason</label>
+            <input id="transfer-reason" name="reason" type="text" minlength="5" maxlength="240" placeholder="Move approved token to managed storage" required />
+          </div>
+        </div>
+
+        <label class="connection-approval" for="transfer-approval">
+          <input id="transfer-approval" name="approval" type="checkbox" required />
+          <span>I approve this exact same-app token handoff.</span>
+        </label>
+
+        <button class="btn btn-primary" type="submit">Prepare secure handoff</button>
+        <p id="transfer-error" class="connection-error" role="alert" hidden></p>
+      </form>
+
+      <section id="transfer-result" class="connection-surface connection-result" aria-live="polite">
+        <div class="empty-connection-state">
+          <strong>No token handoff</strong>
+          <span>Buddy never asks for or displays the token value.</span>
         </div>
       </section>
     </div>
