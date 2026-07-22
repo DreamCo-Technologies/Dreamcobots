@@ -56,6 +56,7 @@ export type BotEndToEndCertification = {
     profileAndBuddyRouteVerified: boolean;
     declaredCapabilitiesVerified: boolean;
     runtimeToolBindingVerified: boolean;
+    platformCapabilityRegistryVerified: boolean;
     samplePromptVerified: boolean;
     sandboxExecutionVerified: boolean;
     sandboxEvidenceVerified: boolean;
@@ -190,6 +191,9 @@ export class BotRuntimeInstance {
         declaredCapabilities.length > 0 && declaredCapabilities.length === this.profile.capability_count,
       runtimeToolBindingVerified: this.profile.tool_summary.some(
         (tool) => tool.id === "buddy_fleet_runtime" && tool.status === "runtime_instance_ready",
+      ),
+      platformCapabilityRegistryVerified: this.profile.tool_summary.some(
+        (tool) => tool.id === "buddy_platform_registry" && tool.status === "runtime_routed",
       ),
       samplePromptVerified: this.profile.sample_test_prompt.trim().length >= 10,
       sandboxExecutionVerified: false,

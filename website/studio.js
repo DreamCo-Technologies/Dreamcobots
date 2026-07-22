@@ -64,6 +64,24 @@ const TYPE_PRESETS = {
     subject: 'Responsible applied artificial intelligence',
     audience: 'First-year college learners',
   },
+  feature_film: {
+    title: 'Crossing Tomorrow',
+    objective: 'Develop an original feature film package with a screenplay, continuity plan, production breakdown, and delivery specification.',
+    subject: 'An original human story designed for responsible production',
+    audience: 'Film audiences and production partners',
+  },
+  music_artist: {
+    title: 'First Light Artist Plan',
+    objective: 'Build an original artist identity, repertoire plan, rights manifest, release calendar, and audience test program.',
+    subject: 'Original songs and a distinct artist identity',
+    audience: 'Independent music listeners and collaborators',
+  },
+  logo_brand: {
+    title: 'Signal Brand System',
+    objective: 'Create editable original logo concepts, brand guidelines, a rights manifest, and a trademark search plan.',
+    subject: 'A clear and accessible original brand identity',
+    audience: 'Customers, partners, and product users',
+  },
 };
 
 function selectedType() {
@@ -224,6 +242,24 @@ function projectCopy(type, subject, audience) {
     title: `Campaign: ${subject}`,
     body: `A truthful concept, substantiated claims, script, shot list, format variants, and measurement plan for ${audience}.`,
     action: 'Preview campaign',
+  };
+  if (type === 'feature_film') return {
+    eyebrow: 'Feature film development',
+    title: `Production: ${subject}`,
+    body: `An original screenplay, continuity bible, production breakdown, rights log, edit plan, and delivery specification for ${audience}.`,
+    action: 'Preview sequence',
+  };
+  if (type === 'music_artist') return {
+    eyebrow: 'Artist development',
+    title: `Artist plan: ${subject}`,
+    body: `An original repertoire, production workflow, rights and split manifest, release calendar, and audience test plan for ${audience}.`,
+    action: 'Preview release plan',
+  };
+  if (type === 'logo_brand') return {
+    eyebrow: 'Logo and brand system',
+    title: `Identity: ${subject}`,
+    body: `Editable original concepts, brand guidelines, accessibility checks, rights records, and a clearance search plan for ${audience}.`,
+    action: 'Preview identity',
   };
   return {
     eyebrow: 'College course production',

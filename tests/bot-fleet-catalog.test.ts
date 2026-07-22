@@ -13,6 +13,9 @@ test("maps every division profile to a verified Buddy route and sandbox blueprin
   assert.ok(catalog.bots.every((bot) => bot.readiness.buddy_chat_route === "verified"));
   assert.ok(catalog.bots.every((bot) => bot.readiness.executable_runtime_instance === "verified"));
   assert.ok(catalog.bots.every((bot) => bot.sandbox.sandbox_id === `sandbox-${bot.identity.slug}`));
+  assert.ok(catalog.bots.every((bot) => bot.tools.some((tool) => (
+    tool.id === "buddy_platform_registry" && tool.status === "runtime_routed"
+  ))));
 });
 
 test("gives every bot a deterministic unique logo identity", () => {

@@ -25,6 +25,9 @@ class ProjectType(str, Enum):
     BIOGRAPHY = "biography"
     COMMERCIAL = "commercial"
     COLLEGE_COURSE = "college_course"
+    FEATURE_FILM = "feature_film"
+    MUSIC_ARTIST = "music_artist"
+    LOGO_BRAND = "logo_brand"
 
 
 class CreativeStudioError(ValueError):
@@ -214,6 +217,21 @@ class BuddyCreativeStudio:
             {"bot": "dr-simulation", "role": "labs and interactive scenarios"},
             {"bot": "video-script", "role": "lecture and demonstration scripts"},
         ],
+        ProjectType.FEATURE_FILM: [
+            {"bot": "video-script", "role": "screenplay, continuity, and production breakdown"},
+            {"bot": "video-editor-ai", "role": "edit plan, conform, captions, and delivery masters"},
+            {"bot": "photo-video-app-bot", "role": "asset provenance, moderation, and media packaging"},
+        ],
+        ProjectType.MUSIC_ARTIST: [
+            {"bot": "music-production", "role": "original-song development and production workflow"},
+            {"bot": "music-app-bot", "role": "rights manifest, release packet, and audience plan"},
+            {"bot": "brand-voice", "role": "artist identity and truthful public messaging"},
+        ],
+        ProjectType.LOGO_BRAND: [
+            {"bot": "brand-builder", "role": "brand positioning and identity system"},
+            {"bot": "brand-guidelines", "role": "logo usage, typography, color, and accessibility rules"},
+            {"bot": "brand-protector", "role": "clearance checklist and misuse monitoring plan"},
+        ],
     }
 
     def create_project(self, brief: CreativeBrief) -> StudioProject:
@@ -364,8 +382,14 @@ class BuddyCreativeStudio:
             shared[2]["outputs"].extend(["source log", "chronology", "fact review", "narrative timeline"])
         elif brief.project_type == ProjectType.COMMERCIAL:
             shared[2]["outputs"].extend(["claim substantiation", "brand review", "shot list", "format variants"])
-        else:
+        elif brief.project_type == ProjectType.COLLEGE_COURSE:
             shared[2]["outputs"].extend(["syllabus", "modules", "assessments", "labs", "rubrics"])
+        elif brief.project_type == ProjectType.FEATURE_FILM:
+            shared[2]["outputs"].extend(["screenplay", "continuity bible", "shot plan", "edit decision list", "delivery masters"])
+        elif brief.project_type == ProjectType.MUSIC_ARTIST:
+            shared[2]["outputs"].extend(["original repertoire plan", "rights log", "release calendar", "artist identity", "audience experiments"])
+        else:
+            shared[2]["outputs"].extend(["editable logo concepts", "brand system", "clearance search plan", "asset exports"])
         return shared
 
     @staticmethod
@@ -418,8 +442,14 @@ class BuddyCreativeStudio:
             base.extend(["source_log", "fact_check_report", "chronology", "archive_rights_record"])
         elif brief.project_type == ProjectType.COMMERCIAL:
             base.extend(["claim_substantiation", "brand_review", "platform_variants", "campaign_measurement_plan"])
-        else:
+        elif brief.project_type == ProjectType.COLLEGE_COURSE:
             base.extend(["syllabus", "module_lessons", "assessment_bank", "instructor_guide"])
+        elif brief.project_type == ProjectType.FEATURE_FILM:
+            base.extend(["screenplay", "continuity_bible", "production_breakdown", "edit_decision_list", "delivery_specification"])
+        elif brief.project_type == ProjectType.MUSIC_ARTIST:
+            base.extend(["artist_development_plan", "original_repertoire_plan", "rights_manifest", "release_calendar", "audience_test_plan"])
+        else:
+            base.extend(["editable_logo_concepts", "brand_guidelines", "rights_manifest", "trademark_search_plan"])
         return base
 
     @staticmethod

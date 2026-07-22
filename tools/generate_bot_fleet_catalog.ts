@@ -193,6 +193,12 @@ function inferTools(profile: BotProfile) {
       status: "generated",
       evidence: "config/generated/bots.catalog.json",
     },
+    {
+      id: "buddy_platform_registry",
+      name: "Governed platform capability registry",
+      status: "runtime_routed",
+      evidence: "config/generated/buddy_platform_expansion.json",
+    },
   ];
   for (const rule of TOOL_RULES) {
     if (rule.words.some((word) => text.includes(word))) tools.push(rule.tool);

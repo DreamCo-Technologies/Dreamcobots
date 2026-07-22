@@ -1,5 +1,7 @@
 import type { Express, Request, Response } from "express";
 import type { Server } from "http";
+import { readFileSync } from "node:fs";
+import { resolve } from "node:path";
 import OpenAI from "openai";
 import type { ChatCompletionMessageParam } from "openai/resources/chat/completions";
 import { z } from "zod";
@@ -1204,12 +1206,24 @@ export async function registerRoutes(
   });
 
   // ===== BUDDY FEATURES STATUS (UPDATED) =====
+  app.get("/api/buddy/platform-expansion", (_req, res) => {
+    try {
+      const path = resolve(process.cwd(), "config", "generated", "buddy_platform_expansion.json");
+      res.json(JSON.parse(readFileSync(path, "utf8")));
+    } catch (error) {
+      res.status(503).json({
+        error: "Buddy platform registry is unavailable.",
+        detail: error instanceof Error ? error.message : "unknown error",
+      });
+    }
+  });
+
   app.get("/api/buddy/features", async (_req, res) => {
     res.json({
       features: [
         { name: "Vibe Coding", route: "POST /api/buddy/vibe-code", status: "live", description: "Generate full projects from description" },
         { name: "Image Generation", route: "POST /api/generate-image", status: "live", description: "AI image generation via gpt-image-1" },
-        { name: "Voice Cloning", route: "POST /api/voice/clone", status: process.env.ELEVENLABS_API_KEY ? "live" : "needs-key", description: "Text-to-speech + voice cloning via ElevenLabs", setup: "Add ELEVENLABS_API_KEY" },
+        { name: "Voice and Likeness", route: "POST /api/voice/clone", status: process.env.ELEVENLABS_API_KEY ? "optional-provider-configured" : "local-adapter-ready", description: "Self-owned adult media with consent, labeling, and local or optional provider adapters" },
         { name: "Web Search", route: "POST /api/search/web", status: "live", description: "GitHub + OpenAI synthesis search" },
         { name: "GitHub Intelligence", route: "GET /api/github-intel/trending", status: "live", description: "Hourly GitHub trending + search" },
         { name: "Council Governance", route: "GET /api/council/proposals", status: "live", description: "Bot proposal submission and approval" },
@@ -1218,7 +1232,8 @@ export async function registerRoutes(
         { name: "Game Builder", route: "POST /api/buddy/build-game", status: "live", description: "Build browser-playable games from description" },
         { name: "Course Simulator", route: "POST /api/buddy/simulate-course", status: "live", description: "Simulate full college courses" },
         { name: "Competitive Intel", route: "POST /api/intel/competitive", status: "live", description: "Analyze any competitor" },
-        { name: "Data Packages", route: "GET /api/data-packages", status: "live", description: "Sell training data to other AI models" },
+        { name: "Data Packages", route: "GET /api/data-packages", status: "consent-gated", description: "Package only user-owned, licensed, nonsensitive data with separate opt-in and opt-out controls" },
+        { name: "Governed Platform Registry", route: "GET /api/buddy/platform-expansion", status: "live", description: "Launch, privacy, finance, creative, IP, open-source, customization, and roadmap contracts" },
         { name: "Code Execution", route: "POST /api/buddy/execute-code", status: "live", description: "Run JS/TS natively; simulate Python, Rust, Go, Java" },
         { name: "Image Analysis", route: "POST /api/buddy/analyze-image", status: "live", description: "GPT-4o vision: screenshots → code, diagrams → schema" },
         { name: "Agent Pipeline", route: "POST /api/buddy/agent-run", status: "live", description: "Multi-step autonomous Plan → Execute → Ship pipeline" },

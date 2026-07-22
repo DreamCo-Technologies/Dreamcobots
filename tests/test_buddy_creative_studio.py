@@ -72,8 +72,25 @@ class BuddyCreativeStudioTests(unittest.TestCase):
                 "biography",
                 "commercial",
                 "college_course",
+                "feature_film",
+                "music_artist",
+                "logo_brand",
             },
         )
+
+    def test_creates_feature_film_artist_and_brand_packets(self):
+        film = BuddyCreativeStudio().create_project(
+            brief(ProjectType.FEATURE_FILM, title="Crossing Tomorrow", objective="Develop an original feature film production package.")
+        )
+        artist = BuddyCreativeStudio().create_project(
+            brief(ProjectType.MUSIC_ARTIST, title="First Light", objective="Develop an original artist and release plan with rights evidence.")
+        )
+        brand = BuddyCreativeStudio().create_project(
+            brief(ProjectType.LOGO_BRAND, title="Signal Brand", objective="Create an original accessible identity and clearance plan.")
+        )
+        self.assertIn("screenplay", film.deliverables)
+        self.assertIn("rights_manifest", artist.deliverables)
+        self.assertIn("editable_logo_concepts", brand.deliverables)
 
     def test_creates_biography_and_commercial_rights_workflows(self):
         biography = BuddyCreativeStudio().create_project(

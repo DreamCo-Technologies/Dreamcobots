@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Buddy Platform Registry | DreamCo Empire OS</title>
+  <meta name="description" content="Inspect Buddy's implemented capability contracts, release targets, asset presets, and evaluated product roadmap." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="platform.css" />
+</head>
+<body>
+<div id="nav-placeholder"></div><script src="nav.js"></script>
+
+<main class="platform-shell">
+  <header class="platform-header">
+    <div>
+      <p class="platform-kicker">Governed capability registry</p>
+      <h1>Buddy Platform Registry</h1>
+      <p>Repository evidence, external-action boundaries, and evaluated product ideas in one searchable workspace.</p>
+    </div>
+    <a class="btn btn-primary btn-sm" href="buddy.html">Open Buddy</a>
+  </header>
+
+  <section class="platform-metrics" aria-label="Registry summary">
+    <div><span>Implemented contracts</span><strong id="metric-capabilities">0</strong></div>
+    <div><span>Release targets</span><strong id="metric-targets">0</strong></div>
+    <div><span>Roadmap ideas</span><strong id="metric-ideas">0</strong></div>
+    <div><span>Free presets</span><strong id="metric-assets">0</strong></div>
+  </section>
+
+  <section class="platform-workbench">
+    <div class="platform-toolbar">
+      <label class="platform-search" for="platform-search">
+        <span>Search</span>
+        <input id="platform-search" type="search" placeholder="Capability, status, theme, or idea" />
+      </label>
+      <div class="platform-tabs" role="tablist" aria-label="Registry views">
+        <button class="active" type="button" data-view="capabilities">Capabilities</button>
+        <button type="button" data-view="innovation">100 innovations</button>
+        <button type="button" data-view="companion">100 companion ideas</button>
+        <button type="button" data-view="assets">Free presets</button>
+      </div>
+    </div>
+
+    <div class="platform-result-bar">
+      <strong id="platform-view-title">Implemented capability contracts</strong>
+      <span id="platform-result-count">Loading</span>
+    </div>
+    <div id="platform-results" class="platform-results" aria-live="polite"></div>
+  </section>
+
+  <section class="platform-boundary">
+    <strong>External-action boundary</strong>
+    <p>Government filings, store submissions, payments, data licensing, publishing, calls, and account changes still require the owner, an approved account, a configured adapter, and the official provider workflow.</p>
+  </section>
+</main>
+
+<script src="platform.js"></script>
+</body>
+</html>
