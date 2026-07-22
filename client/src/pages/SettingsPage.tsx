@@ -19,6 +19,7 @@ import {
   Wifi, WifiOff, BrainCircuit, DollarSign, Languages,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import type { AutonomyMode } from "@shared/schema";
 
 const THEMES = [
   { id: "light", label: "Light", icon: Sun },
@@ -26,7 +27,7 @@ const THEMES = [
   { id: "system", label: "System", icon: Monitor },
 ];
 
-const AUTONOMY_OPTIONS = [
+const AUTONOMY_OPTIONS: Array<{ value: AutonomyMode; label: string; desc: string; color: string; badge: string }> = [
   { value: "guided", label: "Guided", desc: "All actions require your approval", color: "text-blue-500", badge: "Safe" },
   { value: "semi-autonomous", label: "Semi-Auto", desc: "Low-risk actions execute automatically", color: "text-amber-500", badge: "Balanced" },
   { value: "full-autonomy", label: "Full Auto", desc: "Bots operate independently", color: "text-green-500", badge: "Power" },
@@ -192,7 +193,7 @@ export default function SettingsPage() {
                   <button
                     key={opt.value}
                     onClick={async () => {
-                      await setMode.mutateAsync({ mode: opt.value as any });
+                      await setMode.mutateAsync(opt.value);
                       toast({ title: `Autonomy set to ${opt.label}` });
                     }}
                     className={cn(

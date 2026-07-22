@@ -9,6 +9,7 @@ from .studio import (
     ProjectType,
     StudioProject,
 )
+from .local_renderer import LocalCommandMediaRenderer, LocalRendererCommand
 
 __all__ = [
     "BuddyCreativeStudio",
@@ -18,4 +19,6 @@ __all__ = [
     "MediaRenderer",
     "ProjectType",
     "StudioProject",
+    "LocalCommandMediaRenderer",
+    "LocalRendererCommand",
 ]

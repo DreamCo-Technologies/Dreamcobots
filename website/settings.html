@@ -113,16 +113,16 @@
         <p style="margin-bottom:20px;font-size:.82rem">Choose how Buddy requests permission for live publishing, money, account, personal-data, deployment, and other high-impact actions.</p>
         <div class="notification-choice-list">
           <label class="notification-choice"><span><strong>In-app</strong><small>Native approval inbox</small></span><input id="notify-in-app" type="checkbox" checked disabled /></label>
-          <label class="notification-choice"><span><strong>Email</strong><small>Requires a verified account email and email adapter</small></span><input id="notify-email" type="checkbox" /></label>
-          <label class="notification-choice"><span><strong>Text message</strong><small>Requires a verified mobile number, SMS adapter, and opt-in</small></span><input id="notify-sms" type="checkbox" /></label>
-          <label class="notification-choice"><span><strong>Voice call</strong><small>Requires a verified mobile number, call adapter, and opt-in</small></span><input id="notify-call" type="checkbox" /></label>
+          <label class="notification-choice"><span><strong>Email</strong><small>Requires a verified account email and configured HTTPS webhook</small></span><input id="notify-email" type="checkbox" /></label>
+          <label class="notification-choice"><span><strong>Text message</strong><small>Requires a verified mobile number, configured HTTPS webhook, and opt-in</small></span><input id="notify-sms" type="checkbox" /></label>
+          <label class="notification-choice"><span><strong>Voice call</strong><small>Requires a verified mobile number, configured HTTPS webhook, and opt-in</small></span><input id="notify-call" type="checkbox" /></label>
         </div>
         <label class="studio-check" style="margin-top:16px"><input id="notify-contact-opt-in" type="checkbox" /> I opt in to approval texts or calls I select. I can turn them off at any time.</label>
         <label class="studio-check"><input id="notify-quiet-hours" type="checkbox" checked /> Respect quiet hours for non-critical approval requests.</label>
         <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:18px">
           <button class="btn btn-primary btn-sm" type="button" onclick="saveApprovalPreferences()">Save choices</button>
           <span class="badge badge-green">In-app native</span>
-          <span class="badge badge-amber">Email / SMS / call adapter required</span>
+          <span class="badge badge-amber">Email / SMS / call webhook setup required</span>
         </div>
         <p id="approval-notification-status" class="studio-form-status" aria-live="polite"></p>
       </div>
@@ -188,7 +188,7 @@ function saveApprovalPreferences() {
     quiet_hours: document.getElementById('notify-quiet-hours').checked,
   };
   localStorage.setItem('dreamco-approval-notification-preferences', JSON.stringify(preferences));
-  status.textContent = 'Choices saved in this browser. External channels activate only after the deployed account verifies a destination and configures its adapter.';
+  status.textContent = 'Choices saved in this browser. External channels activate after the deployed account verifies a destination and configures its HTTPS webhook.';
 }
 (function restoreApprovalPreferences() {
   try {

@@ -14,7 +14,7 @@
     "buddy:fleet": "tsx tools/generate_bot_fleet_catalog.ts --check",
     "buddy:connections": "python3 tools/generate_buddy_connection_catalog.py --check",
     "buddy:cli": "python3 tools/buddy_cli.py",
-    "test:governed": "node --import tsx --test tests/bot-fleet-catalog.test.ts tests/approval-notifications.test.ts && python3 -m unittest tests.test_buddy_creative_studio tests.test_buddy_game_lab tests.test_buddy_social_manager"
+    "test:governed": "node --import tsx --test tests/bot-fleet-catalog.test.ts tests/fleet-runtime.test.ts tests/approval-notifications.test.ts tests/outbound-adapters.test.ts tests/github-sync-policy.test.ts && python3 -m unittest tests.test_buddy_creative_studio tests.test_buddy_game_lab tests.test_buddy_social_manager"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",
@@ -80,7 +80,6 @@
     "react-resizable-panels": "^2.1.7",
     "recharts": "^2.15.2",
     "stripe": "^20.0.0",
-    "stripe-replit-sync": "^1.0.0",
     "tailwind-merge": "^2.6.0",
     "tailwindcss-animate": "^1.0.7",
     "tw-animate-css": "^1.2.5",
@@ -91,9 +90,6 @@
     "zod-validation-error": "^3.5.4"
   },
   "devDependencies": {
-    "@replit/vite-plugin-cartographer": "^0.4.4",
-    "@replit/vite-plugin-dev-banner": "^0.1.1",
-    "@replit/vite-plugin-runtime-error-modal": "^0.0.3",
     "@tailwindcss/typography": "^0.5.15",
     "@tailwindcss/vite": "^4.1.18",
     "@types/connect-pg-simple": "^7.0.3",

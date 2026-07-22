@@ -58,7 +58,7 @@ export default function TimeCapsulePage() {
   const snapshots = snapshotsQuery.data ?? [];
 
   function exportSnapshot(snap: SystemSnapshot) {
-    const data = JSON.stringify({ id: snap.id, name: snap.name, createdAt: snap.createdAt, data: snap.data }, null, 2);
+    const data = JSON.stringify({ id: snap.id, name: snap.name, createdAt: snap.createdAt, data: snap.snapshotData }, null, 2);
     const blob = new Blob([data], { type: "application/json" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
@@ -70,7 +70,7 @@ export default function TimeCapsulePage() {
   }
 
   function copySnapshot(snap: SystemSnapshot) {
-    navigator.clipboard.writeText(JSON.stringify(snap.data, null, 2));
+    navigator.clipboard.writeText(JSON.stringify(snap.snapshotData, null, 2));
     toast({ title: "Snapshot data copied", description: `${snap.name} copied to clipboard.` });
   }
 

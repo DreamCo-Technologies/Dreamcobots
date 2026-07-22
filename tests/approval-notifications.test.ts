@@ -101,3 +101,32 @@ test("dispatches once through the matching adapter", async () => {
     /already been dispatched/,
   );
 });
+
+test("releases a replay claim when the provider send fails", async () => {
+  const plan = createApprovalNotificationPlan(request, {
+    channels: [{ channel: "email", enabled: true, verified: true, destinationRef: "contact:owner:email-primary", explicitOptIn: true }],
+  }, new Date("2026-07-21T12:00:00Z"));
+  const claimed = new Set<string>();
+  const replay = {
+    async claim(id: string) {
+      if (claimed.has(id)) return false;
+      claimed.add(id);
+      return true;
+    },
+    async release(id: string) {
+      claimed.delete(id);
+    },
+  };
+  const failingAdapter: ApprovalNotificationAdapter = {
+    channel: "email",
+    async send() {
+      throw new Error("provider unavailable");
+    },
+  };
+  const envelope = plan.notifications[0];
+  await assert.rejects(
+    dispatchApprovalNotification(envelope, failingAdapter, replay, new Date("2026-07-21T12:01:00Z")),
+    /provider unavailable/,
+  );
+  assert.equal(claimed.has(envelope.notificationId), false);
+});

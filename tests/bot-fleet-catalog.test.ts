@@ -8,8 +8,10 @@ test("maps every division profile to a verified Buddy route and sandbox blueprin
   assert.equal(catalog.summary.profiles, 1051);
   assert.equal(catalog.summary.divisions, 45);
   assert.equal(catalog.summary.runtime_routed_profiles, 1051);
+  assert.equal(catalog.summary.executable_runtime_instances_evidenced, 1051);
   assert.equal(catalog.summary.per_bot_sandbox_blueprints, 1051);
   assert.ok(catalog.bots.every((bot) => bot.readiness.buddy_chat_route === "verified"));
+  assert.ok(catalog.bots.every((bot) => bot.readiness.executable_runtime_instance === "verified"));
   assert.ok(catalog.bots.every((bot) => bot.sandbox.sandbox_id === `sandbox-${bot.identity.slug}`));
 });
 

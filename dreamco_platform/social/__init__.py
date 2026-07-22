@@ -7,6 +7,7 @@ from .manager import (
     SocialManagerError,
     SocialPublisher,
 )
+from .adapters import LocalSocialOutboxPublisher, WebhookSocialPublisher
 
 __all__ = [
     "BuddySocialManager",
@@ -14,4 +15,6 @@ __all__ = [
     "SocialDraft",
     "SocialManagerError",
     "SocialPublisher",
+    "LocalSocialOutboxPublisher",
+    "WebhookSocialPublisher",
 ]

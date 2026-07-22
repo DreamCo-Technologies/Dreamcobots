@@ -22,7 +22,7 @@ def build_registry() -> dict:
     return {
         "schema": "dreamco.buddy_multimodal_studio.v1",
         "name": "Buddy Creative Studio",
-        "status": "production_packet_and_local_prototype_ready",
+        "status": "production_packet_local_prototype_and_local_adapter_ready",
         "project_types": [
             {
                 "id": project_type.value,
@@ -55,6 +55,7 @@ def build_registry() -> dict:
             "capture adult user voice and image locally",
             "enforce voice and likeness consent",
             "prepare local or optional model rendering",
+            "run installed local voice and image engines without cloud credentials",
             "generate captions, lesson checks, and accessibility tests",
             "generate portable project code and production manifests",
         ],
@@ -77,6 +78,7 @@ def build_registry() -> dict:
         "game_lab": "dreamco_platform/games/harness.py",
         "social_manager": "dreamco_platform/social/manager.py",
         "approval_notifications": "server/approval-notifications.ts",
+        "local_media_renderer": "dreamco_platform/creative/local_renderer.py",
         "cli": ["buddy studio-refresh", "buddy studio-report", "buddy open-studio"],
     }
 

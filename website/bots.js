@@ -147,7 +147,8 @@ function renderProspectus(bot) {
         ${keyValues([
           ['Profile schema', bot.readiness.profile_schema],
           ['Buddy chat route', bot.readiness.buddy_chat_route],
-          ['Native standalone runtime', bot.readiness.standalone_native_runtime],
+          ['Executable runtime instance', bot.readiness.executable_runtime_instance],
+          ['Runtime architecture', bot.readiness.standalone_native_runtime],
           ['External integrations', bot.readiness.external_integrations],
           ['Catalog source', bot.evidence.catalog_source],
         ])}

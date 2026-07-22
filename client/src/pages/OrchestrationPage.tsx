@@ -98,7 +98,7 @@ export default function OrchestrationPage() {
               size="sm"
               onClick={() => {
                 const text = MOE_ROUTING_RULES.map(r =>
-                  `${r.priority.toUpperCase()} | ${r.taskType} → ${r.preferredProvider} (${r.fallbackProvider})`
+                  `${r.priority.toUpperCase()} | ${r.taskType} → ${r.providers[0]} (${r.providers.slice(1).join(" / ")})`
                 ).join("\n");
                 navigator.clipboard.writeText(text);
                 toast({ title: `Copied ${MOE_ROUTING_RULES.length} routing rules` });
@@ -113,7 +113,7 @@ export default function OrchestrationPage() {
               size="sm"
               onClick={() => {
                 const csv = ["Task Type,Priority,Provider,Fallback",
-                  ...MOE_ROUTING_RULES.map(r => `${r.taskType},${r.priority},${r.preferredProvider},${r.fallbackProvider}`)
+                  ...MOE_ROUTING_RULES.map(r => `${r.taskType},${r.priority},${r.providers[0]},"${r.providers.slice(1).join(" | ")}"`)
                 ].join("\n");
                 const blob = new Blob([csv], { type: "text/csv" });
                 const url = URL.createObjectURL(blob);

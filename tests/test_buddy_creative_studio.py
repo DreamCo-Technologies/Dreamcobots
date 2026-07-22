@@ -15,6 +15,8 @@ from dreamco_platform.creative import (
     CreativeBrief,
     CreativeStudioError,
     ProjectType,
+    LocalCommandMediaRenderer,
+    LocalRendererCommand,
 )
 
 
@@ -195,6 +197,39 @@ class BuddyCreativeStudioTests(unittest.TestCase):
             self.assertNotIn("owner_user_id", manifest["brief"]["consent"])
             self.assertEqual(manifest["brief"]["voice_sample_ref"], "redacted")
             self.assertIn("AI-assisted media", (output / "index.html").read_text(encoding="utf-8"))
+
+    def test_credential_free_local_media_command_adapter(self):
+        writer = (
+            sys.executable,
+            "-c",
+            "from pathlib import Path; import sys; Path(sys.argv[1]).write_bytes(b'local-media')",
+            "{output}",
+        )
+        with tempfile.TemporaryDirectory() as temp_dir:
+            renderer = LocalCommandMediaRenderer(
+                Path(temp_dir),
+                voice=LocalRendererCommand(writer, ".wav"),
+                avatar=LocalRendererCommand(writer, ".png"),
+            )
+            project = BuddyCreativeStudio().create_project(
+                brief(
+                    use_voice_clone=True,
+                    use_image_avatar=True,
+                    voice_sample_ref="local:voice-sample",
+                    image_sample_ref="local:image-sample",
+                    consent=consent(),
+                )
+            )
+            BuddyCreativeStudio().render_media(
+                project,
+                narration="Approved narration.",
+                avatar_prompt="Approved creator portrait.",
+                renderer=renderer,
+            )
+            self.assertEqual(project.status, "ready_for_sandbox")
+            self.assertTrue(project.media["renderer"]["assets"]["voice_asset_ref"].startswith("local-asset:"))
+            self.assertTrue(project.media["renderer"]["assets"]["avatar_asset_ref"].startswith("local-asset:"))
+            self.assertFalse(renderer.readiness()["credentials_required"])
 
 
 if __name__ == "__main__":

@@ -58,14 +58,14 @@ const AUTONOMY_OPTIONS: Array<{
   {
     mode: "full-autonomy",
     label: "Full Auto",
-    sublabel: "Fully autonomous — bots run without asking",
-    description: "All 1,051+ bots operate independently. Tasks run end-to-end without interruption. Maximize throughput.",
+    sublabel: "Maximum throughput with protected actions gated",
+    description: "Routine sandbox and approved workflows run continuously. Money, publishing, outreach, account, deployment, and sensitive-data actions still require scoped owner approval.",
     icon: Zap,
     color: "text-green-500",
     ring: "ring-green-500/40",
     bg: "bg-green-500/10",
-    permissions: ["No approvals needed", "Bots self-coordinate", "Revenue flows fully automated"],
-    autoRuns: ["All task types", "Payments & outreach", "API integrations", "Bot-to-bot delegation", "24/7 background operation"],
+    permissions: ["Protected actions always pause", "Bots self-coordinate in approved scopes", "Every live action remains auditable"],
+    autoRuns: ["Research and analysis", "Sandbox tests", "Drafts and simulations", "Bot-to-bot delegation", "Local maintenance"],
   },
 ];
 

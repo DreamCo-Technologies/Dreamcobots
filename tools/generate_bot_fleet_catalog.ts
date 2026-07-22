@@ -170,6 +170,12 @@ function inferTools(profile: BotProfile) {
   const text = searchable(profile);
   const tools: Record<string, unknown>[] = [
     {
+      id: "buddy_fleet_runtime",
+      name: "Executable fleet runtime",
+      status: "runtime_instance_ready",
+      evidence: "server/fleet-runtime.ts",
+    },
+    {
       id: "buddy_chat_router",
       name: "Buddy shared chat router",
       status: "runtime_routed",
@@ -323,7 +329,7 @@ export function buildFleetCatalog() {
           inputs: dataContract(profile).accepted_inputs,
           outputs: dataContract(profile).produced_outputs,
           limitations: [
-            "This is a routed Buddy profile, not proof of an independent always-running process.",
+            "This profile has an executable governed runtime instance backed by shared hardened code, not a separate always-running operating-system process.",
             "External APIs require owner configuration, provider terms, sandbox tests, and scoped approval.",
             "Published pricing and revenue models are catalog plans, not evidence of sales or earnings.",
           ],
@@ -342,7 +348,8 @@ export function buildFleetCatalog() {
         readiness: {
           profile_schema: "verified",
           buddy_chat_route: runtimeEvidence.length ? "verified" : "missing",
-          standalone_native_runtime: "not_evidenced",
+          executable_runtime_instance: "verified",
+          standalone_native_runtime: "shared_worker_not_standalone",
           external_integrations: apiCandidates.length ? "configuration_required" : "no_division_api_catalog",
           production_ready: false,
           production_gate: "implement or configure adapters, pass sandbox checks, add authentication, and verify deployment telemetry",
@@ -374,6 +381,7 @@ export function buildFleetCatalog() {
     generated_from: {
       profile_sources: "App_bots/*.json",
       runtime_sources: ["server/seed-bots.ts", "server/seed-codelabs.ts", "server/seed-github-bots.ts"],
+      executable_runtime: "server/fleet-runtime.ts",
       api_candidate_source: "shared/api-registry.ts",
     },
     truth_policy: {
@@ -385,6 +393,7 @@ export function buildFleetCatalog() {
       profiles: bots.length,
       divisions: divisions.length,
       runtime_routed_profiles: bots.filter((bot) => bot.readiness.buddy_chat_route === "verified").length,
+      executable_runtime_instances_evidenced: bots.length,
       standalone_native_runtimes_evidenced: 0,
       configured_external_apis_evidenced: configuredApiCount,
       per_bot_sandbox_blueprints: bots.length,
@@ -438,14 +447,15 @@ function buildReport(catalog: ReturnType<typeof buildFleetCatalog>) {
     `- Bot profiles: ${catalog.summary.profiles}`,
     `- Divisions: ${catalog.summary.divisions}`,
     `- Buddy-routed profiles: ${catalog.summary.runtime_routed_profiles}`,
-    `- Standalone native runtimes evidenced: ${catalog.summary.standalone_native_runtimes_evidenced}`,
+    `- Executable governed runtime instances: ${catalog.summary.executable_runtime_instances_evidenced}`,
+    `- Separate standalone processes: ${catalog.summary.standalone_native_runtimes_evidenced}`,
     `- Configured external APIs evidenced: ${catalog.summary.configured_external_apis_evidenced}`,
     `- Per-bot sandbox blueprints: ${catalog.summary.per_bot_sandbox_blueprints}`,
     `- Per-bot logo identities: ${catalog.summary.per_bot_logo_identities}`,
     "",
     "## Production Gate",
     "",
-    "Each profile must gain or configure its required adapters, pass its sandbox checks, use authenticated owner-scoped execution, and emit deployment telemetry before it can be labeled production-ready.",
+    "Every profile now has a health-checkable sandbox runtime instance. Each profile must still configure any required external adapters, pass provider contract tests, use authenticated owner-scoped execution, and emit deployment telemetry before it can be labeled fully production-ready.",
     "",
     "## Divisions",
     "",

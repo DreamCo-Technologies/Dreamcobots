@@ -7,14 +7,15 @@ This report is generated from repository evidence. A catalog profile is not coun
 - Bot profiles: 1051
 - Divisions: 45
 - Buddy-routed profiles: 1051
-- Standalone native runtimes evidenced: 0
+- Executable governed runtime instances: 1051
+- Separate standalone processes: 0
 - Configured external APIs evidenced: 0
 - Per-bot sandbox blueprints: 1051
 - Per-bot logo identities: 1051
 
 ## Production Gate
 
-Each profile must gain or configure its required adapters, pass its sandbox checks, use authenticated owner-scoped execution, and emit deployment telemetry before it can be labeled production-ready.
+Every profile now has a health-checkable sandbox runtime instance. Each profile must still configure any required external adapters, pass provider contract tests, use authenticated owner-scoped execution, and emit deployment telemetry before it can be labeled fully production-ready.
 
 ## Divisions
 

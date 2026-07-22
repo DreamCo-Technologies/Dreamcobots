@@ -79,6 +79,7 @@ class BuddySocialManager:
 
     def __init__(self) -> None:
         self._used_approvals: set[str] = set()
+        self._publishing_approvals: set[str] = set()
 
     @staticmethod
     def _draft_fingerprint(
@@ -168,16 +169,22 @@ class BuddySocialManager:
             owner_user_id=owner_user_id,
             account_ref=packet["account_ref"],
         )
-        if approval.approval_id in self._used_approvals:
+        if approval.approval_id in self._used_approvals or approval.approval_id in self._publishing_approvals:
             raise SocialManagerError("Publish approval has already been used.")
+        self._publishing_approvals.add(approval.approval_id)
+        try:
+            post_ref = publisher.publish(
+                account_ref=packet["account_ref"],
+                content=packet["content"],
+                media_refs=tuple(packet["media_refs"]),
+            )
+            if not post_ref:
+                raise SocialManagerError("Publisher did not return a post reference.")
+        except Exception:
+            self._publishing_approvals.discard(approval.approval_id)
+            raise
+        self._publishing_approvals.discard(approval.approval_id)
         self._used_approvals.add(approval.approval_id)
-        post_ref = publisher.publish(
-            account_ref=packet["account_ref"],
-            content=packet["content"],
-            media_refs=tuple(packet["media_refs"]),
-        )
-        if not post_ref:
-            raise SocialManagerError("Publisher did not return a post reference.")
         return {
             "schema": "dreamco.social_publish_receipt.v1",
             "status": "published",

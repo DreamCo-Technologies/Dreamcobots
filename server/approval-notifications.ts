@@ -82,9 +82,9 @@ export interface ApprovalNotificationPlan {
   skipped: Array<{ channel: ApprovalChannel; reason: string }>;
   providerConfiguration: {
     in_app: "native";
-    email: "adapter_required";
-    sms: "adapter_required";
-    voice_call: "adapter_required";
+    email: "webhook_configuration_required";
+    sms: "webhook_configuration_required";
+    voice_call: "webhook_configuration_required";
   };
   policy: {
     verifiedDestinationRequired: true;
@@ -102,6 +102,7 @@ export interface ApprovalNotificationAdapter {
 
 export interface ApprovalNotificationReplayGuard {
   claim(notificationId: string, expiresAt: string): Promise<boolean>;
+  release?(notificationId: string): Promise<void>;
 }
 
 function quietHoursBlock(preferences: NotificationPreferences, request: ApprovalNotificationRequest, now: Date) {
@@ -180,9 +181,9 @@ export function createApprovalNotificationPlan(
     skipped,
     providerConfiguration: {
       in_app: "native",
-      email: "adapter_required",
-      sms: "adapter_required",
-      voice_call: "adapter_required",
+      email: "webhook_configuration_required",
+      sms: "webhook_configuration_required",
+      voice_call: "webhook_configuration_required",
     },
     policy: {
       verifiedDestinationRequired: true,
@@ -205,7 +206,13 @@ export async function dispatchApprovalNotification(
   if (!(await replayGuard.claim(envelope.notificationId, envelope.expiresAt))) {
     throw new Error("Approval notification has already been dispatched");
   }
-  const receipt = await adapter.send(envelope);
+  let receipt: Awaited<ReturnType<ApprovalNotificationAdapter["send"]>>;
+  try {
+    receipt = await adapter.send(envelope);
+  } catch (error) {
+    await replayGuard.release?.(envelope.notificationId);
+    throw error;
+  }
   return {
     schema: "dreamco.approval_notification_receipt.v1",
     notificationId: envelope.notificationId,

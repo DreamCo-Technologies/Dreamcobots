@@ -4,17 +4,37 @@ import * as crypto from "crypto";
 const REPO_OWNER = "DreamCo-Technologies";
 const REPO_NAME  = "Dreamcobots";
 const GITHUB_API = "https://api.github.com";
+const DEFAULT_SYNC_BRANCH = "buddy/automated-updates";
 
 // ─── auth ────────────────────────────────────────────────────────────────────
 export function getToken(): string {
-  // REPLIT_ACCESS_TOLKEN is the typo-named secret that has been verified working
   const t =
     process.env.GITHUB_PERSONAL_ACCESS_TOKEN ||
     process.env.GITHUB_TOKEN ||
-    process.env.REPLIT_ACCESS_TOLKEN ||
     "";
-  if (t.length < 10) throw new Error("GitHub token not set. Add GITHUB_PERSONAL_ACCESS_TOKEN or REPLIT_ACCESS_TOLKEN in Replit Secrets.");
+  if (t.length < 10) throw new Error("GitHub token not set. Add GITHUB_PERSONAL_ACCESS_TOKEN or GITHUB_TOKEN to deployment secrets.");
   return t;
+}
+
+export function githubWritesEnabled(): boolean {
+  return process.env.BUDDY_GITHUB_SYNC_ENABLED === "true";
+}
+
+export function getSyncBranch(): string {
+  const branch = process.env.BUDDY_GITHUB_SYNC_BRANCH || DEFAULT_SYNC_BRANCH;
+  if (!/^[A-Za-z0-9][A-Za-z0-9._/-]{0,127}$/.test(branch) || branch.includes("..") || branch.endsWith("/")) {
+    throw new Error("BUDDY_GITHUB_SYNC_BRANCH is not a valid Git branch name");
+  }
+  if (["main", "master"].includes(branch.toLowerCase())) {
+    throw new Error("Automated GitHub sync cannot write directly to a protected default branch");
+  }
+  return branch;
+}
+
+function assertGitHubWritesEnabled() {
+  if (!githubWritesEnabled()) {
+    throw new Error("GitHub writes are disabled. Set BUDDY_GITHUB_SYNC_ENABLED=true to enable an approved update branch.");
+  }
 }
 
 // ─── auto-sync state ─────────────────────────────────────────────────────────
@@ -40,6 +60,10 @@ const MAX_HISTORY = 20;
 export function getAutoSyncStatus() {
   return {
     enabled: _autoSyncTimer !== null,
+    policyEnabled: githubWritesEnabled(),
+    scheduled: _autoSyncTimer !== null,
+    targetBranch: githubWritesEnabled() ? getSyncBranch() : null,
+    protectedDefaultBranchWritesAllowed: false,
     lastSyncAt: _lastSyncAt?.toISOString() ?? null,
     lastSyncSha: _lastSyncSha,
     lastSyncError: _lastSyncError,
@@ -96,6 +120,11 @@ export function scheduleAutoSync(
 ): void {
   if (_autoSyncTimer) return; // already scheduled
 
+  if (!githubWritesEnabled()) {
+    console.log("[github-sync] Auto-sync disabled by deployment policy.");
+    return;
+  }
+
   // Check token is available before scheduling
   try {
     getToken();
@@ -137,8 +166,18 @@ async function gh(path: string, opts: RequestInit = {}): Promise<any> {
 }
 
 // ─── low-level tree helpers ──────────────────────────────────────────────────
-async function getRef(): Promise<{ sha: string; treeSha: string }> {
-  const ref = await gh(`/repos/${REPO_OWNER}/${REPO_NAME}/git/ref/heads/main`);
+async function getRef(branch: string): Promise<{ sha: string; treeSha: string }> {
+  let ref;
+  try {
+    ref = await gh(`/repos/${REPO_OWNER}/${REPO_NAME}/git/ref/heads/${branch}`);
+  } catch (error: any) {
+    if (!String(error?.message).includes("GitHub 404")) throw error;
+    const defaultRef = await gh(`/repos/${REPO_OWNER}/${REPO_NAME}/git/ref/heads/main`);
+    ref = await gh(`/repos/${REPO_OWNER}/${REPO_NAME}/git/refs`, {
+      method: "POST",
+      body: JSON.stringify({ ref: `refs/heads/${branch}`, sha: defaultRef.object.sha }),
+    });
+  }
   const commit = await gh(`/repos/${REPO_OWNER}/${REPO_NAME}/git/commits/${ref.object.sha}`);
   return { sha: ref.object.sha, treeSha: commit.tree.sha };
 }
@@ -149,8 +188,10 @@ export async function batchPush(
   message: string
 ): Promise<{ committed: number; sha: string }> {
   if (files.length === 0) return { committed: 0, sha: "" };
+  assertGitHubWritesEnabled();
+  const branch = getSyncBranch();
 
-  const { sha: headSha, treeSha: baseTreeSha } = await getRef();
+  const { sha: headSha, treeSha: baseTreeSha } = await getRef(branch);
 
   const tree = files.map(f => ({
     path: f.path,
@@ -169,7 +210,7 @@ export async function batchPush(
     body: JSON.stringify({ message, tree: newTree.sha, parents: [headSha] }),
   });
 
-  await gh(`/repos/${REPO_OWNER}/${REPO_NAME}/git/refs/heads/main`, {
+  await gh(`/repos/${REPO_OWNER}/${REPO_NAME}/git/refs/heads/${branch}`, {
     method: "PATCH",
     body: JSON.stringify({ sha: newCommit.sha }),
   });
@@ -258,7 +299,7 @@ export async function pushAllBotsToGitHub(
       const lang = classifyBotLanguage(bot);
       const slug = bot.slug.replace(/[^a-z0-9-]/g, "-");
       // JSON profile for every bot
-      files.push({ path: `bots/${slug}/replit_profile.json`, content: botJson(bot) });
+      files.push({ path: `bots/${slug}/profile.json`, content: botJson(bot) });
       // language-specific file
       if (lang === "python")     files.push({ path: `python_bots/${slug}.py`,   content: botPy(bot) });
       else if (lang === "java")  files.push({ path: `java_bots/${slug}.java`,   content: botJava(bot) });
@@ -272,7 +313,7 @@ export async function pushAllBotsToGitHub(
   return { pushed: committed, sha, byLang, errors };
 }
 
-// ─── source-code push: all Replit files in ONE commit ───────────────────────
+// ─── source-code push: selected workspace files in one commit ──────────────
 export async function pushSourceCode(): Promise<{ pushed: number; sha: string; errors: string[]; skipped?: boolean }> {
   const files: Array<{ path: string; content: string }> = [];
   const errors: string[] = [];
@@ -300,7 +341,6 @@ export async function pushSourceCode(): Promise<{ pushed: number; sha: string; e
     { local: "vite.config.ts",             remote: "empire-os/vite.config.ts" },
     { local: "tsconfig.json",              remote: "empire-os/tsconfig.json" },
     { local: "postcss.config.js",          remote: "empire-os/postcss.config.js" },
-    { local: "replit.md",                  remote: "empire-os/replit.md" },
     { local: "client/src/App.tsx",         remote: "empire-os/client/src/App.tsx" },
     { local: "client/index.html",          remote: "empire-os/client/index.html" },
   ];
@@ -349,7 +389,7 @@ export async function pushSourceCode(): Promise<{ pushed: number; sha: string; e
     return { pushed: 0, sha: _lastSyncSha ?? "", errors, skipped: true };
   }
 
-  const { committed, sha } = await batchPush(files, `feat: sync full Empire OS source (${files.length} files) from Replit`);
+  const { committed, sha } = await batchPush(files, `feat: sync full Empire OS source (${files.length} files) from local workspace`);
   _lastSyncFingerprint = fingerprint;
   return { pushed: committed, sha, errors, skipped: false };
 }
@@ -376,13 +416,13 @@ export function buildMasterReadme(bots: any[], byLang: Record<string, number>): 
   const tiers = bots.reduce((a: any, b) => { a[b.tier] = (a[b.tier] ?? 0) + 1; return a; }, {} as any);
   return `# 🤖 DreamCo Empire OS — Bot Repository
 
-> **${bots.length} AI bots · 45 divisions · Self-learning · Revenue-generating · Fully deployed on Replit**
+> **${bots.length} AI bot profiles · 45 divisions · Governed through Buddy**
 
 ## 📁 Repository Structure
 
 | Folder | Files | Description |
 |--------|-------|-------------|
-| \`bots/{slug}/replit_profile.json\` | ${bots.length} | Every bot profile synced from Empire OS |
+| \`bots/{slug}/profile.json\` | ${bots.length} | Every bot profile synced from Empire OS |
 | \`python_bots/\` | ${byLang.python ?? 0} | Python bots (FastAPI, PyTorch, LangChain, etc.) |
 | \`java_bots/\` | ${byLang.java ?? 0} | Java/Kotlin bots (Spring Boot, Android, etc.) |
 | \`empire-os/\` | 80+ | Full React + Express source code |
@@ -423,6 +463,6 @@ Every bot logs learnings after each conversation using the \`SELF_LEARNING_PROMP
 The master coding brain covering 500+ libraries. Every other bot routes coding tasks through Buddy Bot automatically.
 
 ---
-*Synced from DreamCo Empire OS on Replit — Autonomous wealth generation at scale*
+*Synced from DreamCo Empire OS through an owner-approved update branch.*
 `;
 }

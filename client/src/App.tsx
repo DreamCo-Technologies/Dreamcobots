@@ -1,51 +1,54 @@
 import { Switch, Route, Redirect } from "wouter";
+import { lazy, Suspense, type ComponentType } from "react";
 import { queryClient } from "./lib/queryClient";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 
-import NotFound from "@/pages/not-found";
-import ChatIndexPage from "@/pages/ChatIndexPage";
-import ConversationPage from "@/pages/ConversationPage";
-import AutonomyPage from "@/pages/AutonomyPage";
-import BotsPage from "@/pages/BotsPage";
-import DashboardPage from "@/pages/DashboardPage";
-import DivisionsPage from "@/pages/DivisionsPage";
-import BotDetailPage from "@/pages/BotDetailPage";
-import RevenuePage from "@/pages/RevenuePage";
-import PricingPage from "@/pages/PricingPage";
-import DealsPage from "@/pages/DealsPage";
-import DebugPage from "@/pages/DebugPage";
-import EcosystemPage from "@/pages/EcosystemPage";
-import OrchestrationPage from "@/pages/OrchestrationPage";
-import MarketplacePage from "@/pages/MarketplacePage";
-import FormulasPage from "@/pages/FormulasPage";
-import LearningMatrixPage from "@/pages/LearningMatrixPage";
-import BusinessPage from "@/pages/BusinessPage";
-import CodeLabPage from "@/pages/DreamCodeLabPage";
-import CryptoPage from "@/pages/CryptoCommandCenter";
-import PaymentsPage from "@/pages/PaymentsPage";
-import LoansPage from "@/pages/LoansPage";
-import ConnectionsPage from "@/pages/ConnectionsPage";
-import TimeCapsulePage from "@/pages/TimeCapsulePage";
-import CostTrackingPage from "@/pages/CostTrackingPage";
-import AILeadersPage from "@/pages/AILeadersPage";
-import AIModelsPage from "@/pages/AIModelsPage";
-import BotBuilderPage from "@/pages/BotBuilderPage";
-import BotActivityPage from "@/pages/BotActivityPage";
-import SandboxPage from "@/pages/SandboxPage";
-import ActionsPage from "@/pages/ActionsPage";
-import HarnessPage from "@/pages/HarnessPage";
-import GovernancePage from "@/pages/GovernancePage";
-import BuddyPage from "@/pages/BuddyPage";
-import SettingsPage from "@/pages/SettingsPage";
+const NotFound = lazy(() => import("@/pages/not-found"));
+const ChatIndexPage = lazy(() => import("@/pages/ChatIndexPage"));
+const ConversationPage = lazy(() => import("@/pages/ConversationPage"));
+const AutonomyPage = lazy(() => import("@/pages/AutonomyPage"));
+const BotsPage = lazy(() => import("@/pages/BotsPage"));
+const DashboardPage = lazy(() => import("@/pages/DashboardPage"));
+const DivisionsPage = lazy(() => import("@/pages/DivisionsPage"));
+const BotDetailPage = lazy(() => import("@/pages/BotDetailPage"));
+const RevenuePage = lazy(() => import("@/pages/RevenuePage"));
+const PricingPage = lazy(() => import("@/pages/PricingPage"));
+const DealsPage = lazy(() => import("@/pages/DealsPage"));
+const DebugPage = lazy(() => import("@/pages/DebugPage"));
+const EcosystemPage = lazy(() => import("@/pages/EcosystemPage"));
+const OrchestrationPage = lazy(() => import("@/pages/OrchestrationPage"));
+const MarketplacePage = lazy(() => import("@/pages/MarketplacePage"));
+const FormulasPage = lazy(() => import("@/pages/FormulasPage"));
+const LearningMatrixPage = lazy(() => import("@/pages/LearningMatrixPage"));
+const BusinessPage = lazy(() => import("@/pages/BusinessPage"));
+const CodeLabPage = lazy(() => import("@/pages/DreamCodeLabPage"));
+const CryptoPage = lazy(() => import("@/pages/CryptoCommandCenter"));
+const PaymentsPage = lazy(() => import("@/pages/PaymentsPage"));
+const LoansPage = lazy(() => import("@/pages/LoansPage"));
+const ConnectionsPage = lazy(() => import("@/pages/ConnectionsPage"));
+const TimeCapsulePage = lazy(() => import("@/pages/TimeCapsulePage"));
+const CostTrackingPage = lazy(() => import("@/pages/CostTrackingPage"));
+const AILeadersPage = lazy(() => import("@/pages/AILeadersPage"));
+const AIModelsPage = lazy(() => import("@/pages/AIModelsPage"));
+const BotBuilderPage = lazy(() => import("@/pages/BotBuilderPage"));
+const BotActivityPage = lazy(() => import("@/pages/BotActivityPage"));
+const SandboxPage = lazy(() => import("@/pages/SandboxPage"));
+const ActionsPage = lazy(() => import("@/pages/ActionsPage"));
+const HarnessPage = lazy(() => import("@/pages/HarnessPage"));
+const GovernancePage = lazy(() => import("@/pages/GovernancePage"));
+const BuddyPage = lazy(() => import("@/pages/BuddyPage"));
+const SettingsPage = lazy(() => import("@/pages/SettingsPage"));
 
-function wrap(Page: React.ComponentType, name: string) {
+function wrap(Page: ComponentType, name: string) {
   return function WrappedPage(props: any) {
     return (
       <ErrorBoundary pageName={name}>
-        <Page {...props} />
+        <Suspense fallback={<div className="min-h-screen bg-background" aria-label={`Loading ${name}`} />}>
+          <Page {...props} />
+        </Suspense>
       </ErrorBoundary>
     );
   };

@@ -28,7 +28,7 @@
       <div class="buddy-rail-label">Repository Evidence</div>
       <div class="buddy-rail-stat"><span>Profiles</span><strong data-fleet-stat="profiles">1,051</strong></div>
       <div class="buddy-rail-stat"><span>Buddy routes</span><strong data-fleet-stat="routes">1,051</strong></div>
-      <div class="buddy-rail-stat"><span>Native standalone</span><strong data-fleet-stat="native">0</strong></div>
+      <div class="buddy-rail-stat"><span>Runtime instances</span><strong data-fleet-stat="runtime">1,051</strong></div>
       <div class="buddy-rail-stat"><span>Connected APIs</span><strong data-fleet-stat="apis">0</strong></div>
       <div class="buddy-rail-stat"><span>Studio tracks</span><strong data-fleet-stat="studio">7</strong></div>
     </div>
@@ -174,7 +174,7 @@ fetch('data/bot-fleet-catalog.json', { cache: 'no-store' })
     const summary = catalog.summary;
     document.querySelector('[data-fleet-stat="profiles"]').textContent = summary.profiles.toLocaleString();
     document.querySelector('[data-fleet-stat="routes"]').textContent = summary.runtime_routed_profiles.toLocaleString();
-    document.querySelector('[data-fleet-stat="native"]').textContent = summary.standalone_native_runtimes_evidenced.toLocaleString();
+    document.querySelector('[data-fleet-stat="runtime"]').textContent = summary.executable_runtime_instances_evidenced.toLocaleString();
     document.querySelector('[data-fleet-stat="apis"]').textContent = summary.configured_external_apis_evidenced.toLocaleString();
     const slug = params.get('bot');
     if (!slug) return;
