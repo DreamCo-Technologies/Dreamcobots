@@ -1,0 +1,1654 @@
+{
+  "schema": "dreamco.bot_capability_test_division.v1",
+  "division": "DreamHealth",
+  "capabilityTestContract": {
+    "mode": "repository_controlled_sandbox",
+    "checks": [
+      {
+        "id": "declaredOnProfile",
+        "label": "Declared on profile"
+      },
+      {
+        "id": "runtimeReady",
+        "label": "Runtime ready"
+      },
+      {
+        "id": "routedAsDeclaredCapability",
+        "label": "Routed as declared capability"
+      },
+      {
+        "id": "evidenceRequired",
+        "label": "Evidence required"
+      },
+      {
+        "id": "requiredSandboxEvidencePresent",
+        "label": "Required sandbox evidence present"
+      },
+      {
+        "id": "noLiveSideEffect",
+        "label": "No live side effect"
+      }
+    ],
+    "requiredEvidence": [
+      "runtime_instance_resolved",
+      "profile_and_route_verified",
+      "network_default_off",
+      "no_live_external_write",
+      "approval_gate_available"
+    ],
+    "networkDefault": "off",
+    "liveExternalActions": "forbidden",
+    "externalProviderBehavior": "not_tested_requires_configured_adapter_and_provider_sandbox"
+  },
+  "summary": {
+    "division": "DreamHealth",
+    "profiles": 20,
+    "passed": 20,
+    "failed": 0,
+    "capabilityTests": 160,
+    "capabilityTestsPassed": 160,
+    "capabilityTestsFailed": 0
+  },
+  "profiles": [
+    {
+      "schema": "dreamco.bot_e2e_certification.v2",
+      "slug": "chronic-care-mgr",
+      "displayName": "Chronic Care Manager",
+      "division": "DreamHealth",
+      "category": "chronic-care",
+      "instanceId": "fleet-runtime-chronic-care-mgr",
+      "status": "sandbox_certified",
+      "checks": {
+        "runtimeReady": true,
+        "profileAndBuddyRouteVerified": true,
+        "declaredCapabilitiesVerified": true,
+        "allDeclaredCapabilityContractsTested": true,
+        "runtimeToolBindingVerified": true,
+        "platformCapabilityRegistryVerified": true,
+        "calculatorBindingVerified": true,
+        "distributionBindingVerified": true,
+        "leadSystemBindingVerified": true,
+        "samplePromptVerified": true,
+        "sandboxExecutionVerified": true,
+        "sandboxEvidenceVerified": true,
+        "liveApprovalGateVerified": true,
+        "noLiveSideEffectVerified": true
+      },
+      "declaredCapabilityCount": 8,
+      "capabilityTests": [
+        {
+          "testId": "capability-test-34f20cf121e05e8dc727",
+          "capability": "Care plan creation",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-4fe04066b5c9d144ffb8",
+          "capability": "Adherence monitoring",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-56a6639e85418feb862c",
+          "capability": "Outcome metric tracking",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-dcbd9c7c382a806dfeee",
+          "capability": "Remote patient monitoring integration",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-e236ccf225d052ac853d",
+          "capability": "Caregiver communication portal",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-a97f8f3faac5b516b031",
+          "capability": "Insurance documentation automation",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-49910a45d5338a95681f",
+          "capability": "Advanced analytics dashboard",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-55eb922a3d6e80f92813",
+          "capability": "Priority email support",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        }
+      ],
+      "toolBindingCount": 9,
+      "apiCandidateCount": 0,
+      "liveEndToEndStatus": "not_executed_requires_authenticated_deployment",
+      "failures": []
+    },
+    {
+      "schema": "dreamco.bot_e2e_certification.v2",
+      "slug": "clinical-decision",
+      "displayName": "Clinical Decision Support",
+      "division": "DreamHealth",
+      "category": "clinical-support",
+      "instanceId": "fleet-runtime-clinical-decision",
+      "status": "sandbox_certified",
+      "checks": {
+        "runtimeReady": true,
+        "profileAndBuddyRouteVerified": true,
+        "declaredCapabilitiesVerified": true,
+        "allDeclaredCapabilityContractsTested": true,
+        "runtimeToolBindingVerified": true,
+        "platformCapabilityRegistryVerified": true,
+        "calculatorBindingVerified": true,
+        "distributionBindingVerified": true,
+        "leadSystemBindingVerified": true,
+        "samplePromptVerified": true,
+        "sandboxExecutionVerified": true,
+        "sandboxEvidenceVerified": true,
+        "liveApprovalGateVerified": true,
+        "noLiveSideEffectVerified": true
+      },
+      "declaredCapabilityCount": 8,
+      "capabilityTests": [
+        {
+          "testId": "capability-test-01d80c35aed7afd56c54",
+          "capability": "Drug interaction alerts",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-9c6eed1e36612c1f1191",
+          "capability": "Evidence-based recommendations",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-ae612414c8490cf4e8b0",
+          "capability": "Lab result interpretation",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-3f6d0877e55c24915076",
+          "capability": "Allergy cross-reference engine",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-22d400d59a9843c00d34",
+          "capability": "Clinical pathway guidance",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-a827b7243de924258e6f",
+          "capability": "Diagnostic differential support",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-1c0a693ccefa1f343c60",
+          "capability": "Advanced analytics dashboard",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-f2192593656474a0e908",
+          "capability": "Priority email support",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        }
+      ],
+      "toolBindingCount": 8,
+      "apiCandidateCount": 0,
+      "liveEndToEndStatus": "not_executed_requires_authenticated_deployment",
+      "failures": []
+    },
+    {
+      "schema": "dreamco.bot_e2e_certification.v2",
+      "slug": "credentialing-ai",
+      "displayName": "Provider Credentialing AI",
+      "division": "DreamHealth",
+      "category": "credentialing",
+      "instanceId": "fleet-runtime-credentialing-ai",
+      "status": "sandbox_certified",
+      "checks": {
+        "runtimeReady": true,
+        "profileAndBuddyRouteVerified": true,
+        "declaredCapabilitiesVerified": true,
+        "allDeclaredCapabilityContractsTested": true,
+        "runtimeToolBindingVerified": true,
+        "platformCapabilityRegistryVerified": true,
+        "calculatorBindingVerified": true,
+        "distributionBindingVerified": true,
+        "leadSystemBindingVerified": true,
+        "samplePromptVerified": true,
+        "sandboxExecutionVerified": true,
+        "sandboxEvidenceVerified": true,
+        "liveApprovalGateVerified": true,
+        "noLiveSideEffectVerified": true
+      },
+      "declaredCapabilityCount": 8,
+      "capabilityTests": [
+        {
+          "testId": "capability-test-4bbfd1c409cf9906729d",
+          "capability": "Primary source verification",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-592c3b836b1e7bb245a1",
+          "capability": "License expiry tracking",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-01fa222fba6e424d5348",
+          "capability": "Privilege delineation management",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-aa6906b9424236e6d9c9",
+          "capability": "Board certification monitoring",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-3a8da68f5251a171108d",
+          "capability": "Payer enrollment automation",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-b3849f0dadef1f9026eb",
+          "capability": "NPDB query integration",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-bdf40cd95f9279ec3a2f",
+          "capability": "Advanced analytics dashboard",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-eb2d2f40a23cc20eb854",
+          "capability": "Priority email support",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        }
+      ],
+      "toolBindingCount": 9,
+      "apiCandidateCount": 0,
+      "liveEndToEndStatus": "not_executed_requires_authenticated_deployment",
+      "failures": []
+    },
+    {
+      "schema": "dreamco.bot_e2e_certification.v2",
+      "slug": "ehr-migration",
+      "displayName": "EHR Data Migration Tool",
+      "division": "DreamHealth",
+      "category": "health-it",
+      "instanceId": "fleet-runtime-ehr-migration",
+      "status": "sandbox_certified",
+      "checks": {
+        "runtimeReady": true,
+        "profileAndBuddyRouteVerified": true,
+        "declaredCapabilitiesVerified": true,
+        "allDeclaredCapabilityContractsTested": true,
+        "runtimeToolBindingVerified": true,
+        "platformCapabilityRegistryVerified": true,
+        "calculatorBindingVerified": true,
+        "distributionBindingVerified": true,
+        "leadSystemBindingVerified": true,
+        "samplePromptVerified": true,
+        "sandboxExecutionVerified": true,
+        "sandboxEvidenceVerified": true,
+        "liveApprovalGateVerified": true,
+        "noLiveSideEffectVerified": true
+      },
+      "declaredCapabilityCount": 8,
+      "capabilityTests": [
+        {
+          "testId": "capability-test-513ef0655a51940d2819",
+          "capability": "Data mapping engine",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-cc43fbf30c41f017b4b8",
+          "capability": "Validation rule processing",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-872c599aa9b5f8582f5b",
+          "capability": "Legacy system extraction",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-cbe46a15b91dbf7cd81d",
+          "capability": "FHIR conversion tools",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-049ee6a2ecef139ed611",
+          "capability": "Migration progress tracking",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-ba47f85e5209b69425ca",
+          "capability": "Data integrity verification",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-ed327fc0987eab29fd6b",
+          "capability": "Advanced analytics dashboard",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-ba6dbf894f6a885b5812",
+          "capability": "Priority email support",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        }
+      ],
+      "toolBindingCount": 9,
+      "apiCandidateCount": 0,
+      "liveEndToEndStatus": "not_executed_requires_authenticated_deployment",
+      "failures": []
+    },
+    {
+      "schema": "dreamco.bot_e2e_certification.v2",
+      "slug": "emergency-triage",
+      "displayName": "Emergency Triage AI",
+      "division": "DreamHealth",
+      "category": "emergency",
+      "instanceId": "fleet-runtime-emergency-triage",
+      "status": "sandbox_certified",
+      "checks": {
+        "runtimeReady": true,
+        "profileAndBuddyRouteVerified": true,
+        "declaredCapabilitiesVerified": true,
+        "allDeclaredCapabilityContractsTested": true,
+        "runtimeToolBindingVerified": true,
+        "platformCapabilityRegistryVerified": true,
+        "calculatorBindingVerified": true,
+        "distributionBindingVerified": true,
+        "leadSystemBindingVerified": true,
+        "samplePromptVerified": true,
+        "sandboxExecutionVerified": true,
+        "sandboxEvidenceVerified": true,
+        "liveApprovalGateVerified": true,
+        "noLiveSideEffectVerified": true
+      },
+      "declaredCapabilityCount": 8,
+      "capabilityTests": [
+        {
+          "testId": "capability-test-fb1459feae8d1680e734",
+          "capability": "ESI acuity prediction",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-78a3f2035c66d567ea0d",
+          "capability": "Wait time forecasting",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-ef9e88779a834c7b146a",
+          "capability": "Resource demand modeling",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-d0fc2308d34731f42541",
+          "capability": "Sepsis early warning",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-c1dcb8a4a5736fc8e58e",
+          "capability": "Boarding patient management",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-b42d398d33ed837e3587",
+          "capability": "ED throughput optimization",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-cd6c94890df0e7039233",
+          "capability": "Advanced analytics dashboard",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-6f79830d809543a9258c",
+          "capability": "Priority email support",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        }
+      ],
+      "toolBindingCount": 8,
+      "apiCandidateCount": 0,
+      "liveEndToEndStatus": "not_executed_requires_authenticated_deployment",
+      "failures": []
+    },
+    {
+      "schema": "dreamco.bot_e2e_certification.v2",
+      "slug": "health-analytics-elite",
+      "displayName": "Population Health Analytics",
+      "division": "DreamHealth",
+      "category": "analytics",
+      "instanceId": "fleet-runtime-health-analytics-elite",
+      "status": "sandbox_certified",
+      "checks": {
+        "runtimeReady": true,
+        "profileAndBuddyRouteVerified": true,
+        "declaredCapabilitiesVerified": true,
+        "allDeclaredCapabilityContractsTested": true,
+        "runtimeToolBindingVerified": true,
+        "platformCapabilityRegistryVerified": true,
+        "calculatorBindingVerified": true,
+        "distributionBindingVerified": true,
+        "leadSystemBindingVerified": true,
+        "samplePromptVerified": true,
+        "sandboxExecutionVerified": true,
+        "sandboxEvidenceVerified": true,
+        "liveApprovalGateVerified": true,
+        "noLiveSideEffectVerified": true
+      },
+      "declaredCapabilityCount": 8,
+      "capabilityTests": [
+        {
+          "testId": "capability-test-bb8cb7add72ce4b798cd",
+          "capability": "Risk stratification modeling",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-061496b01de668e6d5d4",
+          "capability": "Social determinants analysis",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-2d6bd6ad843bdc50f966",
+          "capability": "Care gap identification",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-e9d7723059581861a4ea",
+          "capability": "Readmission prediction",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-2278acada79b7cffb5da",
+          "capability": "Cost trend forecasting",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-c45b3a53c34d73ca94d0",
+          "capability": "Quality measure dashboards",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-d94cdcad5423c61cde0a",
+          "capability": "Advanced analytics dashboard",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-80d337fe16ea2c16e33a",
+          "capability": "Priority email support",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        }
+      ],
+      "toolBindingCount": 9,
+      "apiCandidateCount": 0,
+      "liveEndToEndStatus": "not_executed_requires_authenticated_deployment",
+      "failures": []
+    },
+    {
+      "schema": "dreamco.bot_e2e_certification.v2",
+      "slug": "health-compliance",
+      "displayName": "Healthcare Compliance Monitor",
+      "division": "DreamHealth",
+      "category": "compliance",
+      "instanceId": "fleet-runtime-health-compliance",
+      "status": "sandbox_certified",
+      "checks": {
+        "runtimeReady": true,
+        "profileAndBuddyRouteVerified": true,
+        "declaredCapabilitiesVerified": true,
+        "allDeclaredCapabilityContractsTested": true,
+        "runtimeToolBindingVerified": true,
+        "platformCapabilityRegistryVerified": true,
+        "calculatorBindingVerified": true,
+        "distributionBindingVerified": true,
+        "leadSystemBindingVerified": true,
+        "samplePromptVerified": true,
+        "sandboxExecutionVerified": true,
+        "sandboxEvidenceVerified": true,
+        "liveApprovalGateVerified": true,
+        "noLiveSideEffectVerified": true
+      },
+      "declaredCapabilityCount": 8,
+      "capabilityTests": [
+        {
+          "testId": "capability-test-e196d17ab8f9d39eac6a",
+          "capability": "HIPAA audit automation",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-471f581c46be82c1742c",
+          "capability": "CMS regulation tracking",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-5cb71b0011057477da44",
+          "capability": "Staff training compliance",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-159894962c115e178351",
+          "capability": "Incident reporting workflow",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-8ea1096470d28628026e",
+          "capability": "Policy update distribution",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-d00dc18dd6bd8f5e5a15",
+          "capability": "Risk assessment scoring",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-b630a89dcd4d5ab554cd",
+          "capability": "Advanced analytics dashboard",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-e67801ba08dee48b2705",
+          "capability": "Priority email support",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        }
+      ],
+      "toolBindingCount": 8,
+      "apiCandidateCount": 0,
+      "liveEndToEndStatus": "not_executed_requires_authenticated_deployment",
+      "failures": []
+    },
+    {
+      "schema": "dreamco.bot_e2e_certification.v2",
+      "slug": "lab-results-tracker",
+      "displayName": "Lab Results Tracker",
+      "division": "DreamHealth",
+      "category": "laboratory",
+      "instanceId": "fleet-runtime-lab-results-tracker",
+      "status": "sandbox_certified",
+      "checks": {
+        "runtimeReady": true,
+        "profileAndBuddyRouteVerified": true,
+        "declaredCapabilitiesVerified": true,
+        "allDeclaredCapabilityContractsTested": true,
+        "runtimeToolBindingVerified": true,
+        "platformCapabilityRegistryVerified": true,
+        "calculatorBindingVerified": true,
+        "distributionBindingVerified": true,
+        "leadSystemBindingVerified": true,
+        "samplePromptVerified": true,
+        "sandboxExecutionVerified": true,
+        "sandboxEvidenceVerified": true,
+        "liveApprovalGateVerified": true,
+        "noLiveSideEffectVerified": true
+      },
+      "declaredCapabilityCount": 8,
+      "capabilityTests": [
+        {
+          "testId": "capability-test-b84eaaad268dd3c0641f",
+          "capability": "Abnormal value alerting",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-861e3f33e3eb191782b8",
+          "capability": "Result trend visualization",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-2fe4ca6d5d4b16b2e2b4",
+          "capability": "Critical value escalation",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-89826f48b562568fb759",
+          "capability": "Panel completion tracking",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-83a9944df53218875fa1",
+          "capability": "Reference range management",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-c34a2423086474554d1b",
+          "capability": "Provider notification engine",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-79974301e6bbb17bf1fa",
+          "capability": "Advanced analytics dashboard",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-60fb9a7fb7d40e5be25d",
+          "capability": "Priority email support",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        }
+      ],
+      "toolBindingCount": 8,
+      "apiCandidateCount": 0,
+      "liveEndToEndStatus": "not_executed_requires_authenticated_deployment",
+      "failures": []
+    },
+    {
+      "schema": "dreamco.bot_e2e_certification.v2",
+      "slug": "medical-billing",
+      "displayName": "Medical Billing Optimizer",
+      "division": "DreamHealth",
+      "category": "billing",
+      "instanceId": "fleet-runtime-medical-billing",
+      "status": "sandbox_certified",
+      "checks": {
+        "runtimeReady": true,
+        "profileAndBuddyRouteVerified": true,
+        "declaredCapabilitiesVerified": true,
+        "allDeclaredCapabilityContractsTested": true,
+        "runtimeToolBindingVerified": true,
+        "platformCapabilityRegistryVerified": true,
+        "calculatorBindingVerified": true,
+        "distributionBindingVerified": true,
+        "leadSystemBindingVerified": true,
+        "samplePromptVerified": true,
+        "sandboxExecutionVerified": true,
+        "sandboxEvidenceVerified": true,
+        "liveApprovalGateVerified": true,
+        "noLiveSideEffectVerified": true
+      },
+      "declaredCapabilityCount": 8,
+      "capabilityTests": [
+        {
+          "testId": "capability-test-4a7aacd0ef999bebd3bb",
+          "capability": "Claim scrubbing engine",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-59d8e6da844f44ca0fbe",
+          "capability": "Denial pattern analysis",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-34da8d7d9ddfaf623374",
+          "capability": "Revenue cycle optimization",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-40f16812b941f55b0669",
+          "capability": "Payer contract analysis",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-def4542ce454d327e674",
+          "capability": "Underpayment detection",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-af6c11006e657ac6f84a",
+          "capability": "Appeals workflow automation",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-8bc81a6e47f7d041fcfe",
+          "capability": "Advanced analytics dashboard",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-8b643a84d9b2340f89ab",
+          "capability": "Priority email support",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        }
+      ],
+      "toolBindingCount": 9,
+      "apiCandidateCount": 0,
+      "liveEndToEndStatus": "not_executed_requires_authenticated_deployment",
+      "failures": []
+    },
+    {
+      "schema": "dreamco.bot_e2e_certification.v2",
+      "slug": "medical-device-tracker",
+      "displayName": "Medical Device Tracker",
+      "division": "DreamHealth",
+      "category": "biomedical",
+      "instanceId": "fleet-runtime-medical-device-tracker",
+      "status": "sandbox_certified",
+      "checks": {
+        "runtimeReady": true,
+        "profileAndBuddyRouteVerified": true,
+        "declaredCapabilitiesVerified": true,
+        "allDeclaredCapabilityContractsTested": true,
+        "runtimeToolBindingVerified": true,
+        "platformCapabilityRegistryVerified": true,
+        "calculatorBindingVerified": true,
+        "distributionBindingVerified": true,
+        "leadSystemBindingVerified": true,
+        "samplePromptVerified": true,
+        "sandboxExecutionVerified": true,
+        "sandboxEvidenceVerified": true,
+        "liveApprovalGateVerified": true,
+        "noLiveSideEffectVerified": true
+      },
+      "declaredCapabilityCount": 8,
+      "capabilityTests": [
+        {
+          "testId": "capability-test-f0cc0b17bd0ef39ff443",
+          "capability": "Device inventory management",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-f3c6860173e83161237c",
+          "capability": "Maintenance schedule automation",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-de50175517bfc232aaf5",
+          "capability": "Recall alert monitoring",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-2e98964f95decf1515db",
+          "capability": "Calibration tracking",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-d1561f84796771c476b0",
+          "capability": "Utilization analytics",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-42c33d066213b399a056",
+          "capability": "Regulatory compliance reporting",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-056cfb70c7dae40c51f4",
+          "capability": "Advanced analytics dashboard",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-78816dd9d810b96999bd",
+          "capability": "Priority email support",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        }
+      ],
+      "toolBindingCount": 8,
+      "apiCandidateCount": 0,
+      "liveEndToEndStatus": "not_executed_requires_authenticated_deployment",
+      "failures": []
+    },
+    {
+      "schema": "dreamco.bot_e2e_certification.v2",
+      "slug": "mental-health-screen",
+      "displayName": "Mental Health Screening Bot",
+      "division": "DreamHealth",
+      "category": "mental-health",
+      "instanceId": "fleet-runtime-mental-health-screen",
+      "status": "sandbox_certified",
+      "checks": {
+        "runtimeReady": true,
+        "profileAndBuddyRouteVerified": true,
+        "declaredCapabilitiesVerified": true,
+        "allDeclaredCapabilityContractsTested": true,
+        "runtimeToolBindingVerified": true,
+        "platformCapabilityRegistryVerified": true,
+        "calculatorBindingVerified": true,
+        "distributionBindingVerified": true,
+        "leadSystemBindingVerified": true,
+        "samplePromptVerified": true,
+        "sandboxExecutionVerified": true,
+        "sandboxEvidenceVerified": true,
+        "liveApprovalGateVerified": true,
+        "noLiveSideEffectVerified": true
+      },
+      "declaredCapabilityCount": 8,
+      "capabilityTests": [
+        {
+          "testId": "capability-test-fefe38274cd647f2066e",
+          "capability": "PHQ-9 depression screening",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-d8977ade812f03a45960",
+          "capability": "GAD-7 anxiety assessment",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-503a8468cff91347309d",
+          "capability": "Screening score tracking",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-a272cc27140d6245a833",
+          "capability": "Provider alert generation",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-24baa34079817400ceff",
+          "capability": "Resource recommendation engine",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-efb836459b64c1de94bb",
+          "capability": "Basic analytics",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-7c50af1e634acb0714ad",
+          "capability": "Email support",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-9e41724e0660d143edd1",
+          "capability": "Community access",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        }
+      ],
+      "toolBindingCount": 8,
+      "apiCandidateCount": 0,
+      "liveEndToEndStatus": "not_executed_requires_authenticated_deployment",
+      "failures": []
+    },
+    {
+      "schema": "dreamco.bot_e2e_certification.v2",
+      "slug": "nurse-scheduler",
+      "displayName": "Nurse Shift Scheduler",
+      "division": "DreamHealth",
+      "category": "nursing",
+      "instanceId": "fleet-runtime-nurse-scheduler",
+      "status": "sandbox_certified",
+      "checks": {
+        "runtimeReady": true,
+        "profileAndBuddyRouteVerified": true,
+        "declaredCapabilitiesVerified": true,
+        "allDeclaredCapabilityContractsTested": true,
+        "runtimeToolBindingVerified": true,
+        "platformCapabilityRegistryVerified": true,
+        "calculatorBindingVerified": true,
+        "distributionBindingVerified": true,
+        "leadSystemBindingVerified": true,
+        "samplePromptVerified": true,
+        "sandboxExecutionVerified": true,
+        "sandboxEvidenceVerified": true,
+        "liveApprovalGateVerified": true,
+        "noLiveSideEffectVerified": true
+      },
+      "declaredCapabilityCount": 8,
+      "capabilityTests": [
+        {
+          "testId": "capability-test-6795584a51af14104088",
+          "capability": "Shift pattern optimization",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-c4a102c367034cbc4dce",
+          "capability": "Fatigue risk scoring",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-195e454eef0a5d3be542",
+          "capability": "Overtime compliance alerts",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-d833708cbb1061440b4c",
+          "capability": "Staff preference matching",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-56447d2ca9fc7691420f",
+          "capability": "Census-based staffing",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-87044eca4887475a0abb",
+          "capability": "Credential expiry tracking",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-40fa4bfee8fc02ae7d74",
+          "capability": "Advanced analytics dashboard",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-1448592ca3e9354fdb1b",
+          "capability": "Priority email support",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        }
+      ],
+      "toolBindingCount": 8,
+      "apiCandidateCount": 0,
+      "liveEndToEndStatus": "not_executed_requires_authenticated_deployment",
+      "failures": []
+    },
+    {
+      "schema": "dreamco.bot_e2e_certification.v2",
+      "slug": "patient-engagement",
+      "displayName": "Patient Engagement Platform",
+      "division": "DreamHealth",
+      "category": "patient-engagement",
+      "instanceId": "fleet-runtime-patient-engagement",
+      "status": "sandbox_certified",
+      "checks": {
+        "runtimeReady": true,
+        "profileAndBuddyRouteVerified": true,
+        "declaredCapabilitiesVerified": true,
+        "allDeclaredCapabilityContractsTested": true,
+        "runtimeToolBindingVerified": true,
+        "platformCapabilityRegistryVerified": true,
+        "calculatorBindingVerified": true,
+        "distributionBindingVerified": true,
+        "leadSystemBindingVerified": true,
+        "samplePromptVerified": true,
+        "sandboxExecutionVerified": true,
+        "sandboxEvidenceVerified": true,
+        "liveApprovalGateVerified": true,
+        "noLiveSideEffectVerified": true
+      },
+      "declaredCapabilityCount": 8,
+      "capabilityTests": [
+        {
+          "testId": "capability-test-6c3a6c1102cccfae7d84",
+          "capability": "Appointment reminder automation",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-4bc3763693a4344bed7b",
+          "capability": "Health education delivery",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-525c3101ad7ae960b0cc",
+          "capability": "Satisfaction survey engine",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-8ea915a00291d1bd30e5",
+          "capability": "Care gap notifications",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-28fb02cb2eb929953f6c",
+          "capability": "Portal adoption tracking",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-e377600a35ae1da09ea2",
+          "capability": "Multilingual communication",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-4a008a10dfa1ebe05b7c",
+          "capability": "Advanced analytics dashboard",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-0412e5c7a6917bd9167a",
+          "capability": "Priority email support",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        }
+      ],
+      "toolBindingCount": 10,
+      "apiCandidateCount": 0,
+      "liveEndToEndStatus": "not_executed_requires_authenticated_deployment",
+      "failures": []
+    },
+    {
+      "schema": "dreamco.bot_e2e_certification.v2",
+      "slug": "patient-intake-ai",
+      "displayName": "Patient Intake Automator",
+      "division": "DreamHealth",
+      "category": "patient-management",
+      "instanceId": "fleet-runtime-patient-intake-ai",
+      "status": "sandbox_certified",
+      "checks": {
+        "runtimeReady": true,
+        "profileAndBuddyRouteVerified": true,
+        "declaredCapabilitiesVerified": true,
+        "allDeclaredCapabilityContractsTested": true,
+        "runtimeToolBindingVerified": true,
+        "platformCapabilityRegistryVerified": true,
+        "calculatorBindingVerified": true,
+        "distributionBindingVerified": true,
+        "leadSystemBindingVerified": true,
+        "samplePromptVerified": true,
+        "sandboxExecutionVerified": true,
+        "sandboxEvidenceVerified": true,
+        "liveApprovalGateVerified": true,
+        "noLiveSideEffectVerified": true
+      },
+      "declaredCapabilityCount": 8,
+      "capabilityTests": [
+        {
+          "testId": "capability-test-ef359bccad3ed4d2a0e8",
+          "capability": "Digital form processing",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-eec45ed32539c0cfd0a7",
+          "capability": "Insurance eligibility verification",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-b3d9b27df52697a87b67",
+          "capability": "Medical history extraction",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-36c92c980b5830482efd",
+          "capability": "Duplicate patient detection",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-086df881a817d94ba60d",
+          "capability": "Consent management",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-c6c067585e943dd4366a",
+          "capability": "Wait time prediction",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-a006c2b1ae9aa57375f8",
+          "capability": "Advanced analytics dashboard",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-2756b797a0bd2725f235",
+          "capability": "Priority email support",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        }
+      ],
+      "toolBindingCount": 8,
+      "apiCandidateCount": 0,
+      "liveEndToEndStatus": "not_executed_requires_authenticated_deployment",
+      "failures": []
+    },
+    {
+      "schema": "dreamco.bot_e2e_certification.v2",
+      "slug": "pharmacy-inventory",
+      "displayName": "Pharmacy Inventory Manager",
+      "division": "DreamHealth",
+      "category": "pharmacy",
+      "instanceId": "fleet-runtime-pharmacy-inventory",
+      "status": "sandbox_certified",
+      "checks": {
+        "runtimeReady": true,
+        "profileAndBuddyRouteVerified": true,
+        "declaredCapabilitiesVerified": true,
+        "allDeclaredCapabilityContractsTested": true,
+        "runtimeToolBindingVerified": true,
+        "platformCapabilityRegistryVerified": true,
+        "calculatorBindingVerified": true,
+        "distributionBindingVerified": true,
+        "leadSystemBindingVerified": true,
+        "samplePromptVerified": true,
+        "sandboxExecutionVerified": true,
+        "sandboxEvidenceVerified": true,
+        "liveApprovalGateVerified": true,
+        "noLiveSideEffectVerified": true
+      },
+      "declaredCapabilityCount": 8,
+      "capabilityTests": [
+        {
+          "testId": "capability-test-3ded47e967f849b23764",
+          "capability": "Medication stock tracking",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-13f35237c5ed63d3f962",
+          "capability": "Expiry date alerting",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-a5d3c31dc070d52a2e21",
+          "capability": "Automated reorder triggers",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-6eb8ff997fb37a6e2cfb",
+          "capability": "Controlled substance logging",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-813c277a873bbd2e59f9",
+          "capability": "Formulary compliance checks",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-322825d5ac7deafa8284",
+          "capability": "Cost optimization analysis",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-d0f531e3b1bb9d9e4884",
+          "capability": "Advanced analytics dashboard",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-8df5bf2b0be05c0a17ac",
+          "capability": "Priority email support",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        }
+      ],
+      "toolBindingCount": 8,
+      "apiCandidateCount": 0,
+      "liveEndToEndStatus": "not_executed_requires_authenticated_deployment",
+      "failures": []
+    },
+    {
+      "schema": "dreamco.bot_e2e_certification.v2",
+      "slug": "radiology-ai",
+      "displayName": "Radiology Report Assistant",
+      "division": "DreamHealth",
+      "category": "radiology",
+      "instanceId": "fleet-runtime-radiology-ai",
+      "status": "sandbox_certified",
+      "checks": {
+        "runtimeReady": true,
+        "profileAndBuddyRouteVerified": true,
+        "declaredCapabilitiesVerified": true,
+        "allDeclaredCapabilityContractsTested": true,
+        "runtimeToolBindingVerified": true,
+        "platformCapabilityRegistryVerified": true,
+        "calculatorBindingVerified": true,
+        "distributionBindingVerified": true,
+        "leadSystemBindingVerified": true,
+        "samplePromptVerified": true,
+        "sandboxExecutionVerified": true,
+        "sandboxEvidenceVerified": true,
+        "liveApprovalGateVerified": true,
+        "noLiveSideEffectVerified": true
+      },
+      "declaredCapabilityCount": 8,
+      "capabilityTests": [
+        {
+          "testId": "capability-test-f249e470776b4954a8df",
+          "capability": "Structured report generation",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-b4997fb5d18ed3f2aeed",
+          "capability": "Critical finding escalation",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-1d57fc388f6490453981",
+          "capability": "Prior study comparison",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-5a5633343714d8afcf0d",
+          "capability": "Measurement tracking",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-51c990e5bece820e348b",
+          "capability": "Report turnaround analytics",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-e0f22e21b6429d45418c",
+          "capability": "Quality assurance scoring",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-894f257ff4ea97e1d78f",
+          "capability": "Advanced analytics dashboard",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-a963e14dd49df8e9ebcc",
+          "capability": "Priority email support",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        }
+      ],
+      "toolBindingCount": 8,
+      "apiCandidateCount": 0,
+      "liveEndToEndStatus": "not_executed_requires_authenticated_deployment",
+      "failures": []
+    },
+    {
+      "schema": "dreamco.bot_e2e_certification.v2",
+      "slug": "surgical-scheduler",
+      "displayName": "Surgical Scheduling Coordinator",
+      "division": "DreamHealth",
+      "category": "surgery",
+      "instanceId": "fleet-runtime-surgical-scheduler",
+      "status": "sandbox_certified",
+      "checks": {
+        "runtimeReady": true,
+        "profileAndBuddyRouteVerified": true,
+        "declaredCapabilitiesVerified": true,
+        "allDeclaredCapabilityContractsTested": true,
+        "runtimeToolBindingVerified": true,
+        "platformCapabilityRegistryVerified": true,
+        "calculatorBindingVerified": true,
+        "distributionBindingVerified": true,
+        "leadSystemBindingVerified": true,
+        "samplePromptVerified": true,
+        "sandboxExecutionVerified": true,
+        "sandboxEvidenceVerified": true,
+        "liveApprovalGateVerified": true,
+        "noLiveSideEffectVerified": true
+      },
+      "declaredCapabilityCount": 8,
+      "capabilityTests": [
+        {
+          "testId": "capability-test-3b0257f80c5ca9a91bc2",
+          "capability": "OR block scheduling",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-35728d297f383456b2d8",
+          "capability": "Equipment availability checking",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-d48ddca7bccb495b0a04",
+          "capability": "Case duration prediction",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-37cda4a2399ac18346db",
+          "capability": "Surgeon preference cards",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-1e6f3966f68a6af8e650",
+          "capability": "Pre-op checklist automation",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-e79b96a078b91cbd9924",
+          "capability": "Post-op follow-up scheduling",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-3a9993b3220c7e816afc",
+          "capability": "Advanced analytics dashboard",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-2086c0d7e2dc08860e3f",
+          "capability": "Priority email support",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        }
+      ],
+      "toolBindingCount": 9,
+      "apiCandidateCount": 0,
+      "liveEndToEndStatus": "not_executed_requires_authenticated_deployment",
+      "failures": []
+    },
+    {
+      "schema": "dreamco.bot_e2e_certification.v2",
+      "slug": "telehealth-assistant",
+      "displayName": "Telehealth Visit Assistant",
+      "division": "DreamHealth",
+      "category": "telehealth",
+      "instanceId": "fleet-runtime-telehealth-assistant",
+      "status": "sandbox_certified",
+      "checks": {
+        "runtimeReady": true,
+        "profileAndBuddyRouteVerified": true,
+        "declaredCapabilitiesVerified": true,
+        "allDeclaredCapabilityContractsTested": true,
+        "runtimeToolBindingVerified": true,
+        "platformCapabilityRegistryVerified": true,
+        "calculatorBindingVerified": true,
+        "distributionBindingVerified": true,
+        "leadSystemBindingVerified": true,
+        "samplePromptVerified": true,
+        "sandboxExecutionVerified": true,
+        "sandboxEvidenceVerified": true,
+        "liveApprovalGateVerified": true,
+        "noLiveSideEffectVerified": true
+      },
+      "declaredCapabilityCount": 8,
+      "capabilityTests": [
+        {
+          "testId": "capability-test-aa833dc96e0fcb8fae0a",
+          "capability": "Virtual visit scheduling",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-92745616da7c546961c9",
+          "capability": "Pre-visit questionnaire automation",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-112b345f015a66712786",
+          "capability": "Consent capture workflow",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-7bb1571a0ffc9d9e4b3b",
+          "capability": "Visit summary generation",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-ab3e418d56c87f96e81b",
+          "capability": "Follow-up task creation",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-295d705520d467e4d4f2",
+          "capability": "Patient satisfaction scoring",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-324cf1d9667e6844c809",
+          "capability": "Advanced analytics dashboard",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-476da198a804814680cc",
+          "capability": "Priority email support",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        }
+      ],
+      "toolBindingCount": 8,
+      "apiCandidateCount": 0,
+      "liveEndToEndStatus": "not_executed_requires_authenticated_deployment",
+      "failures": []
+    },
+    {
+      "schema": "dreamco.bot_e2e_certification.v2",
+      "slug": "therapy-notes-ai",
+      "displayName": "Therapy Notes Generator",
+      "division": "DreamHealth",
+      "category": "therapy",
+      "instanceId": "fleet-runtime-therapy-notes-ai",
+      "status": "sandbox_certified",
+      "checks": {
+        "runtimeReady": true,
+        "profileAndBuddyRouteVerified": true,
+        "declaredCapabilitiesVerified": true,
+        "allDeclaredCapabilityContractsTested": true,
+        "runtimeToolBindingVerified": true,
+        "platformCapabilityRegistryVerified": true,
+        "calculatorBindingVerified": true,
+        "distributionBindingVerified": true,
+        "leadSystemBindingVerified": true,
+        "samplePromptVerified": true,
+        "sandboxExecutionVerified": true,
+        "sandboxEvidenceVerified": true,
+        "liveApprovalGateVerified": true,
+        "noLiveSideEffectVerified": true
+      },
+      "declaredCapabilityCount": 8,
+      "capabilityTests": [
+        {
+          "testId": "capability-test-cb64b250a31795aad01e",
+          "capability": "Session note templates",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-803e9c77855df7e84ff6",
+          "capability": "Treatment plan tracking",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-e4d00501a21aee23ea72",
+          "capability": "Progress measurement scoring",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-f0395a4f3e42468e533c",
+          "capability": "Insurance billing codes",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-bac1745ec02018bc022c",
+          "capability": "Outcome tracking dashboards",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-1bed806bf001df3b2ef0",
+          "capability": "HIPAA-compliant documentation",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-e16a189c1332e1cedbed",
+          "capability": "Advanced analytics dashboard",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-93ec782bd863b9ba5c5e",
+          "capability": "Priority email support",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        }
+      ],
+      "toolBindingCount": 9,
+      "apiCandidateCount": 0,
+      "liveEndToEndStatus": "not_executed_requires_authenticated_deployment",
+      "failures": []
+    },
+    {
+      "schema": "dreamco.bot_e2e_certification.v2",
+      "slug": "vaccine-tracker",
+      "displayName": "Vaccine Schedule Tracker",
+      "division": "DreamHealth",
+      "category": "immunization",
+      "instanceId": "fleet-runtime-vaccine-tracker",
+      "status": "sandbox_certified",
+      "checks": {
+        "runtimeReady": true,
+        "profileAndBuddyRouteVerified": true,
+        "declaredCapabilitiesVerified": true,
+        "allDeclaredCapabilityContractsTested": true,
+        "runtimeToolBindingVerified": true,
+        "platformCapabilityRegistryVerified": true,
+        "calculatorBindingVerified": true,
+        "distributionBindingVerified": true,
+        "leadSystemBindingVerified": true,
+        "samplePromptVerified": true,
+        "sandboxExecutionVerified": true,
+        "sandboxEvidenceVerified": true,
+        "liveApprovalGateVerified": true,
+        "noLiveSideEffectVerified": true
+      },
+      "declaredCapabilityCount": 8,
+      "capabilityTests": [
+        {
+          "testId": "capability-test-568284f81df1a438df46",
+          "capability": "CDC schedule tracking",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-b4f0346547924a4f18ab",
+          "capability": "Age-based recommendations",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-f3435f83284295f7a93e",
+          "capability": "Reminder notification engine",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-7d8d9116511a9f3aa1b6",
+          "capability": "Immunization record management",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-358f43688191fcde4776",
+          "capability": "Catch-up schedule calculation",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-4959fa4538758cff2ca8",
+          "capability": "Basic analytics",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-9580d6034cb6a01a49c4",
+          "capability": "Email support",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-efb8379bb91d7f2672f6",
+          "capability": "Community access",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        }
+      ],
+      "toolBindingCount": 8,
+      "apiCandidateCount": 0,
+      "liveEndToEndStatus": "not_executed_requires_authenticated_deployment",
+      "failures": []
+    }
+  ]
+}

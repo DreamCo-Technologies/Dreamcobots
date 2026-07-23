@@ -1,0 +1,2054 @@
+{
+  "schema": "dreamco.bot_capability_test_division.v1",
+  "division": "DreamAIInfra",
+  "capabilityTestContract": {
+    "mode": "repository_controlled_sandbox",
+    "checks": [
+      {
+        "id": "declaredOnProfile",
+        "label": "Declared on profile"
+      },
+      {
+        "id": "runtimeReady",
+        "label": "Runtime ready"
+      },
+      {
+        "id": "routedAsDeclaredCapability",
+        "label": "Routed as declared capability"
+      },
+      {
+        "id": "evidenceRequired",
+        "label": "Evidence required"
+      },
+      {
+        "id": "requiredSandboxEvidencePresent",
+        "label": "Required sandbox evidence present"
+      },
+      {
+        "id": "noLiveSideEffect",
+        "label": "No live side effect"
+      }
+    ],
+    "requiredEvidence": [
+      "runtime_instance_resolved",
+      "profile_and_route_verified",
+      "network_default_off",
+      "no_live_external_write",
+      "approval_gate_available"
+    ],
+    "networkDefault": "off",
+    "liveExternalActions": "forbidden",
+    "externalProviderBehavior": "not_tested_requires_configured_adapter_and_provider_sandbox"
+  },
+  "summary": {
+    "division": "DreamAIInfra",
+    "profiles": 25,
+    "passed": 25,
+    "failed": 0,
+    "capabilityTests": 200,
+    "capabilityTestsPassed": 200,
+    "capabilityTestsFailed": 0
+  },
+  "profiles": [
+    {
+      "schema": "dreamco.bot_e2e_certification.v2",
+      "slug": "ai-governance-hub",
+      "displayName": "AI Governance Hub",
+      "division": "DreamAIInfra",
+      "category": "governance",
+      "instanceId": "fleet-runtime-ai-governance-hub",
+      "status": "sandbox_certified",
+      "checks": {
+        "runtimeReady": true,
+        "profileAndBuddyRouteVerified": true,
+        "declaredCapabilitiesVerified": true,
+        "allDeclaredCapabilityContractsTested": true,
+        "runtimeToolBindingVerified": true,
+        "platformCapabilityRegistryVerified": true,
+        "calculatorBindingVerified": true,
+        "distributionBindingVerified": true,
+        "leadSystemBindingVerified": true,
+        "samplePromptVerified": true,
+        "sandboxExecutionVerified": true,
+        "sandboxEvidenceVerified": true,
+        "liveApprovalGateVerified": true,
+        "noLiveSideEffectVerified": true
+      },
+      "declaredCapabilityCount": 8,
+      "capabilityTests": [
+        {
+          "testId": "capability-test-da05e5593b23e5b7de81",
+          "capability": "Policy rule engine",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-e81c5b4d8ac5b22f70a3",
+          "capability": "Model risk scoring",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-5596b1fd2e5912064617",
+          "capability": "Audit trail logging",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-9eda00617231e03f6827",
+          "capability": "Explainability reports",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-5dfca1af0029dbd60a8a",
+          "capability": "Bias detection alerts",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-5715ab33058ae265c17f",
+          "capability": "Regulatory mapping",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-31ba95f95d367c49fab8",
+          "capability": "Advanced analytics dashboard",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-96f99b1fbc7ad061118e",
+          "capability": "Priority email support",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        }
+      ],
+      "toolBindingCount": 9,
+      "apiCandidateCount": 6,
+      "liveEndToEndStatus": "not_executed_requires_authenticated_deployment",
+      "failures": []
+    },
+    {
+      "schema": "dreamco.bot_e2e_certification.v2",
+      "slug": "ai-security-scanner",
+      "displayName": "AI Security Scanner",
+      "division": "DreamAIInfra",
+      "category": "security",
+      "instanceId": "fleet-runtime-ai-security-scanner",
+      "status": "sandbox_certified",
+      "checks": {
+        "runtimeReady": true,
+        "profileAndBuddyRouteVerified": true,
+        "declaredCapabilitiesVerified": true,
+        "allDeclaredCapabilityContractsTested": true,
+        "runtimeToolBindingVerified": true,
+        "platformCapabilityRegistryVerified": true,
+        "calculatorBindingVerified": true,
+        "distributionBindingVerified": true,
+        "leadSystemBindingVerified": true,
+        "samplePromptVerified": true,
+        "sandboxExecutionVerified": true,
+        "sandboxEvidenceVerified": true,
+        "liveApprovalGateVerified": true,
+        "noLiveSideEffectVerified": true
+      },
+      "declaredCapabilityCount": 8,
+      "capabilityTests": [
+        {
+          "testId": "capability-test-6fc59ba4198ac44749dc",
+          "capability": "Prompt injection detection",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-ff98d64379b0d87bf697",
+          "capability": "PII leakage prevention",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-0a30e61747a51492e609",
+          "capability": "Adversarial input filtering",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-041f6909bb8bdcc1dd5b",
+          "capability": "Output guardrail engine",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-ec93f61fed1336c37036",
+          "capability": "Jailbreak attempt logging",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-52bb6083b8c7dae810dc",
+          "capability": "Advanced analytics dashboard",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-5113a5e211f9bee88318",
+          "capability": "Priority email support",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-a0d6afb54b1be92c8530",
+          "capability": "API access",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        }
+      ],
+      "toolBindingCount": 9,
+      "apiCandidateCount": 8,
+      "liveEndToEndStatus": "not_executed_requires_authenticated_deployment",
+      "failures": []
+    },
+    {
+      "schema": "dreamco.bot_e2e_certification.v2",
+      "slug": "api-monetization",
+      "displayName": "API Monetization Engine",
+      "division": "DreamAIInfra",
+      "category": "api-monetization",
+      "instanceId": "fleet-runtime-api-monetization",
+      "status": "sandbox_certified",
+      "checks": {
+        "runtimeReady": true,
+        "profileAndBuddyRouteVerified": true,
+        "declaredCapabilitiesVerified": true,
+        "allDeclaredCapabilityContractsTested": true,
+        "runtimeToolBindingVerified": true,
+        "platformCapabilityRegistryVerified": true,
+        "calculatorBindingVerified": true,
+        "distributionBindingVerified": true,
+        "leadSystemBindingVerified": true,
+        "samplePromptVerified": true,
+        "sandboxExecutionVerified": true,
+        "sandboxEvidenceVerified": true,
+        "liveApprovalGateVerified": true,
+        "noLiveSideEffectVerified": true
+      },
+      "declaredCapabilityCount": 8,
+      "capabilityTests": [
+        {
+          "testId": "capability-test-d75f8bf478de0efe7e69",
+          "capability": "API gateway configuration",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-4805cc48dae3975baf70",
+          "capability": "Usage plan management",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-e2b4a2beb4a064148203",
+          "capability": "Developer portal generation",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-4e8c5f026768e540a07a",
+          "capability": "Revenue analytics dashboard",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-8d754382479a9f572daa",
+          "capability": "SDK auto-generation",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-520086b7a68d364067dd",
+          "capability": "Advanced analytics dashboard",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-59f2fe8475cfe699930e",
+          "capability": "Priority email support",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-b4839738093134c199db",
+          "capability": "API access",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        }
+      ],
+      "toolBindingCount": 9,
+      "apiCandidateCount": 5,
+      "liveEndToEndStatus": "not_executed_requires_authenticated_deployment",
+      "failures": []
+    },
+    {
+      "schema": "dreamco.bot_e2e_certification.v2",
+      "slug": "benchmark-runner",
+      "displayName": "AI Benchmark Runner",
+      "division": "DreamAIInfra",
+      "category": "benchmarking",
+      "instanceId": "fleet-runtime-benchmark-runner",
+      "status": "sandbox_certified",
+      "checks": {
+        "runtimeReady": true,
+        "profileAndBuddyRouteVerified": true,
+        "declaredCapabilitiesVerified": true,
+        "allDeclaredCapabilityContractsTested": true,
+        "runtimeToolBindingVerified": true,
+        "platformCapabilityRegistryVerified": true,
+        "calculatorBindingVerified": true,
+        "distributionBindingVerified": true,
+        "leadSystemBindingVerified": true,
+        "samplePromptVerified": true,
+        "sandboxExecutionVerified": true,
+        "sandboxEvidenceVerified": true,
+        "liveApprovalGateVerified": true,
+        "noLiveSideEffectVerified": true
+      },
+      "declaredCapabilityCount": 8,
+      "capabilityTests": [
+        {
+          "testId": "capability-test-fb526cdcc6b4d890cba8",
+          "capability": "Benchmark suite management",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-8fb0d64d343f63601eb0",
+          "capability": "Cross-model comparison",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-1bb2c87d4b57c9fcf9c7",
+          "capability": "Leaderboard generation",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-88023200f93922140ba6",
+          "capability": "Custom eval creation",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-d464e9912ab9176cafbe",
+          "capability": "Regression detection",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-3f76bdfb1df02e7a50e7",
+          "capability": "Advanced analytics dashboard",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-a65cd81e8f660d5b9eaa",
+          "capability": "Priority email support",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-4fe0736667e2e92f7bc1",
+          "capability": "API access",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        }
+      ],
+      "toolBindingCount": 9,
+      "apiCandidateCount": 6,
+      "liveEndToEndStatus": "not_executed_requires_authenticated_deployment",
+      "failures": []
+    },
+    {
+      "schema": "dreamco.bot_e2e_certification.v2",
+      "slug": "compliance-scanner",
+      "displayName": "AI Compliance Scanner",
+      "division": "DreamAIInfra",
+      "category": "compliance",
+      "instanceId": "fleet-runtime-compliance-scanner",
+      "status": "sandbox_certified",
+      "checks": {
+        "runtimeReady": true,
+        "profileAndBuddyRouteVerified": true,
+        "declaredCapabilitiesVerified": true,
+        "allDeclaredCapabilityContractsTested": true,
+        "runtimeToolBindingVerified": true,
+        "platformCapabilityRegistryVerified": true,
+        "calculatorBindingVerified": true,
+        "distributionBindingVerified": true,
+        "leadSystemBindingVerified": true,
+        "samplePromptVerified": true,
+        "sandboxExecutionVerified": true,
+        "sandboxEvidenceVerified": true,
+        "liveApprovalGateVerified": true,
+        "noLiveSideEffectVerified": true
+      },
+      "declaredCapabilityCount": 8,
+      "capabilityTests": [
+        {
+          "testId": "capability-test-ab275875fd9dc39e4e59",
+          "capability": "EU AI Act risk classification",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-0dbb75950a1daed1b3cc",
+          "capability": "NIST AI RMF mapping",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-2e6665709b229aa972c0",
+          "capability": "SOC 2 evidence collection",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-9fde57dff8b7eddb12f6",
+          "capability": "Compliance gap analysis",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-7d01721715273b56a202",
+          "capability": "Remediation tracking",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-d66e0da4e84c6ed7f2f6",
+          "capability": "Advanced analytics dashboard",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-452ed59e2dbde16eefe4",
+          "capability": "Priority email support",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-9b54483742cf5fbba023",
+          "capability": "API access",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        }
+      ],
+      "toolBindingCount": 11,
+      "apiCandidateCount": 8,
+      "liveEndToEndStatus": "not_executed_requires_authenticated_deployment",
+      "failures": []
+    },
+    {
+      "schema": "dreamco.bot_e2e_certification.v2",
+      "slug": "data-quality-engine",
+      "displayName": "Training Data Quality Engine",
+      "division": "DreamAIInfra",
+      "category": "data-quality",
+      "instanceId": "fleet-runtime-data-quality-engine",
+      "status": "sandbox_certified",
+      "checks": {
+        "runtimeReady": true,
+        "profileAndBuddyRouteVerified": true,
+        "declaredCapabilitiesVerified": true,
+        "allDeclaredCapabilityContractsTested": true,
+        "runtimeToolBindingVerified": true,
+        "platformCapabilityRegistryVerified": true,
+        "calculatorBindingVerified": true,
+        "distributionBindingVerified": true,
+        "leadSystemBindingVerified": true,
+        "samplePromptVerified": true,
+        "sandboxExecutionVerified": true,
+        "sandboxEvidenceVerified": true,
+        "liveApprovalGateVerified": true,
+        "noLiveSideEffectVerified": true
+      },
+      "declaredCapabilityCount": 8,
+      "capabilityTests": [
+        {
+          "testId": "capability-test-9733dff0f3f99106a206",
+          "capability": "Data deduplication",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-8d518333d0d6cae8a7d4",
+          "capability": "Label quality scoring",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-0178f5363cc0d5c8cb6a",
+          "capability": "Distribution analysis",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-e15d9084897dd29b1761",
+          "capability": "Synthetic data generation",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-95388ec5216b2f1dd545",
+          "capability": "Annotation pipeline management",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-7a3da8dfffe92c35f4fa",
+          "capability": "Advanced analytics dashboard",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-7af2fa65d1cde122b460",
+          "capability": "Priority email support",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-e634abd9d863c9d6018f",
+          "capability": "API access",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        }
+      ],
+      "toolBindingCount": 9,
+      "apiCandidateCount": 8,
+      "liveEndToEndStatus": "not_executed_requires_authenticated_deployment",
+      "failures": []
+    },
+    {
+      "schema": "dreamco.bot_e2e_certification.v2",
+      "slug": "deployment-manager",
+      "displayName": "Model Deployment Manager",
+      "division": "DreamAIInfra",
+      "category": "deployment",
+      "instanceId": "fleet-runtime-deployment-manager",
+      "status": "sandbox_certified",
+      "checks": {
+        "runtimeReady": true,
+        "profileAndBuddyRouteVerified": true,
+        "declaredCapabilitiesVerified": true,
+        "allDeclaredCapabilityContractsTested": true,
+        "runtimeToolBindingVerified": true,
+        "platformCapabilityRegistryVerified": true,
+        "calculatorBindingVerified": true,
+        "distributionBindingVerified": true,
+        "leadSystemBindingVerified": true,
+        "samplePromptVerified": true,
+        "sandboxExecutionVerified": true,
+        "sandboxEvidenceVerified": true,
+        "liveApprovalGateVerified": true,
+        "noLiveSideEffectVerified": true
+      },
+      "declaredCapabilityCount": 8,
+      "capabilityTests": [
+        {
+          "testId": "capability-test-0ec24dfd77e1b4808801",
+          "capability": "Blue-green deployments",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-d95f3159861e48b0ff6e",
+          "capability": "Canary release automation",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-ee2913b86136bd09cd3c",
+          "capability": "Health check monitoring",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-f4dce498b0851f6791ef",
+          "capability": "Rollback triggers",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-8b5dc745210e14d79271",
+          "capability": "A/B traffic splitting",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-321b1fdeec2e36543e29",
+          "capability": "Advanced analytics dashboard",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-b26d574f961907f94ec5",
+          "capability": "Priority email support",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-caea1f17a0ecaae8d656",
+          "capability": "API access",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        }
+      ],
+      "toolBindingCount": 10,
+      "apiCandidateCount": 6,
+      "liveEndToEndStatus": "not_executed_requires_authenticated_deployment",
+      "failures": []
+    },
+    {
+      "schema": "dreamco.bot_e2e_certification.v2",
+      "slug": "drift-detector",
+      "displayName": "Model Drift Detector",
+      "division": "DreamAIInfra",
+      "category": "drift-detection",
+      "instanceId": "fleet-runtime-drift-detector",
+      "status": "sandbox_certified",
+      "checks": {
+        "runtimeReady": true,
+        "profileAndBuddyRouteVerified": true,
+        "declaredCapabilitiesVerified": true,
+        "allDeclaredCapabilityContractsTested": true,
+        "runtimeToolBindingVerified": true,
+        "platformCapabilityRegistryVerified": true,
+        "calculatorBindingVerified": true,
+        "distributionBindingVerified": true,
+        "leadSystemBindingVerified": true,
+        "samplePromptVerified": true,
+        "sandboxExecutionVerified": true,
+        "sandboxEvidenceVerified": true,
+        "liveApprovalGateVerified": true,
+        "noLiveSideEffectVerified": true
+      },
+      "declaredCapabilityCount": 8,
+      "capabilityTests": [
+        {
+          "testId": "capability-test-a5ca1103b2f7886e5a9e",
+          "capability": "Feature drift monitoring",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-061de99307c837fbc381",
+          "capability": "Prediction distribution tracking",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-20208d58ba74d2054493",
+          "capability": "Performance decay alerts",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-f15de8f479b1f5fb5cf1",
+          "capability": "Retraining trigger automation",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-b8bc73299d62ca912276",
+          "capability": "Drift root cause analysis",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-4fe5f1427e87011e187c",
+          "capability": "Advanced analytics dashboard",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-c551a3aae645d6a9c7ef",
+          "capability": "Priority email support",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-3685702c5ae8aefd9c11",
+          "capability": "API access",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        }
+      ],
+      "toolBindingCount": 9,
+      "apiCandidateCount": 6,
+      "liveEndToEndStatus": "not_executed_requires_authenticated_deployment",
+      "failures": []
+    },
+    {
+      "schema": "dreamco.bot_e2e_certification.v2",
+      "slug": "experiment-tracker",
+      "displayName": "ML Experiment Tracker",
+      "division": "DreamAIInfra",
+      "category": "experiment-tracking",
+      "instanceId": "fleet-runtime-experiment-tracker",
+      "status": "sandbox_certified",
+      "checks": {
+        "runtimeReady": true,
+        "profileAndBuddyRouteVerified": true,
+        "declaredCapabilitiesVerified": true,
+        "allDeclaredCapabilityContractsTested": true,
+        "runtimeToolBindingVerified": true,
+        "platformCapabilityRegistryVerified": true,
+        "calculatorBindingVerified": true,
+        "distributionBindingVerified": true,
+        "leadSystemBindingVerified": true,
+        "samplePromptVerified": true,
+        "sandboxExecutionVerified": true,
+        "sandboxEvidenceVerified": true,
+        "liveApprovalGateVerified": true,
+        "noLiveSideEffectVerified": true
+      },
+      "declaredCapabilityCount": 8,
+      "capabilityTests": [
+        {
+          "testId": "capability-test-4cbaede96e70a131ea20",
+          "capability": "Experiment parameter logging",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-0f2ab508f71340ec012b",
+          "capability": "Metrics visualization",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-6311f1a1022b7b775b00",
+          "capability": "Artifact versioning",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-e59a276b18890328dab2",
+          "capability": "Hyperparameter comparison",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-2dc13a66edc7bba9c642",
+          "capability": "Reproducibility engine",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-9f59fc17c99f7be6ad6e",
+          "capability": "Advanced analytics dashboard",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-1a6e8ab69596784c98b5",
+          "capability": "Priority email support",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-b4d0167b672a42a6ab64",
+          "capability": "API access",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        }
+      ],
+      "toolBindingCount": 9,
+      "apiCandidateCount": 8,
+      "liveEndToEndStatus": "not_executed_requires_authenticated_deployment",
+      "failures": []
+    },
+    {
+      "schema": "dreamco.bot_e2e_certification.v2",
+      "slug": "fairness-auditor",
+      "displayName": "AI Fairness Auditor",
+      "division": "DreamAIInfra",
+      "category": "fairness",
+      "instanceId": "fleet-runtime-fairness-auditor",
+      "status": "sandbox_certified",
+      "checks": {
+        "runtimeReady": true,
+        "profileAndBuddyRouteVerified": true,
+        "declaredCapabilitiesVerified": true,
+        "allDeclaredCapabilityContractsTested": true,
+        "runtimeToolBindingVerified": true,
+        "platformCapabilityRegistryVerified": true,
+        "calculatorBindingVerified": true,
+        "distributionBindingVerified": true,
+        "leadSystemBindingVerified": true,
+        "samplePromptVerified": true,
+        "sandboxExecutionVerified": true,
+        "sandboxEvidenceVerified": true,
+        "liveApprovalGateVerified": true,
+        "noLiveSideEffectVerified": true
+      },
+      "declaredCapabilityCount": 8,
+      "capabilityTests": [
+        {
+          "testId": "capability-test-f004cfa650c616ac861f",
+          "capability": "Demographic parity testing",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-9b71ed618715fcb55cd4",
+          "capability": "Disparate impact analysis",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-dd76a357874f08cc1471",
+          "capability": "Fairness metric dashboard",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-6a80c313cdcde0730d29",
+          "capability": "Bias remediation recommendations",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-46a151746dcb5f74a182",
+          "capability": "Compliance certification",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-79e80da9a505b2e95a3e",
+          "capability": "Advanced analytics dashboard",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-a336dcd01567f1586cd3",
+          "capability": "Priority email support",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-d655a9a31a4ed6063187",
+          "capability": "API access",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        }
+      ],
+      "toolBindingCount": 10,
+      "apiCandidateCount": 5,
+      "liveEndToEndStatus": "not_executed_requires_authenticated_deployment",
+      "failures": []
+    },
+    {
+      "schema": "dreamco.bot_e2e_certification.v2",
+      "slug": "finetune-orchestrator",
+      "displayName": "Fine-Tuning Orchestrator",
+      "division": "DreamAIInfra",
+      "category": "fine-tuning",
+      "instanceId": "fleet-runtime-finetune-orchestrator",
+      "status": "sandbox_certified",
+      "checks": {
+        "runtimeReady": true,
+        "profileAndBuddyRouteVerified": true,
+        "declaredCapabilitiesVerified": true,
+        "allDeclaredCapabilityContractsTested": true,
+        "runtimeToolBindingVerified": true,
+        "platformCapabilityRegistryVerified": true,
+        "calculatorBindingVerified": true,
+        "distributionBindingVerified": true,
+        "leadSystemBindingVerified": true,
+        "samplePromptVerified": true,
+        "sandboxExecutionVerified": true,
+        "sandboxEvidenceVerified": true,
+        "liveApprovalGateVerified": true,
+        "noLiveSideEffectVerified": true
+      },
+      "declaredCapabilityCount": 8,
+      "capabilityTests": [
+        {
+          "testId": "capability-test-dca1f83b89c0061d153e",
+          "capability": "Training data curation",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-922151c1f558b1fbfbbb",
+          "capability": "Hyperparameter optimization",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-b1fb88cca78c87b065bf",
+          "capability": "Evaluation benchmark suite",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-be4ed1145cc7dd00c01e",
+          "capability": "Model comparison dashboard",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-f0476aec8fecfe7187bf",
+          "capability": "RLHF pipeline management",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-6746d82af4585d37ca59",
+          "capability": "LoRA adapter management",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-37bb701a008376ed5538",
+          "capability": "Advanced analytics dashboard",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-33303620a68507cbb72c",
+          "capability": "Priority email support",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        }
+      ],
+      "toolBindingCount": 8,
+      "apiCandidateCount": 6,
+      "liveEndToEndStatus": "not_executed_requires_authenticated_deployment",
+      "failures": []
+    },
+    {
+      "schema": "dreamco.bot_e2e_certification.v2",
+      "slug": "latency-optimizer",
+      "displayName": "Inference Latency Optimizer",
+      "division": "DreamAIInfra",
+      "category": "latency",
+      "instanceId": "fleet-runtime-latency-optimizer",
+      "status": "sandbox_certified",
+      "checks": {
+        "runtimeReady": true,
+        "profileAndBuddyRouteVerified": true,
+        "declaredCapabilitiesVerified": true,
+        "allDeclaredCapabilityContractsTested": true,
+        "runtimeToolBindingVerified": true,
+        "platformCapabilityRegistryVerified": true,
+        "calculatorBindingVerified": true,
+        "distributionBindingVerified": true,
+        "leadSystemBindingVerified": true,
+        "samplePromptVerified": true,
+        "sandboxExecutionVerified": true,
+        "sandboxEvidenceVerified": true,
+        "liveApprovalGateVerified": true,
+        "noLiveSideEffectVerified": true
+      },
+      "declaredCapabilityCount": 8,
+      "capabilityTests": [
+        {
+          "testId": "capability-test-e4f3e3e7c5a4b8e59999",
+          "capability": "Edge model deployment",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-a9039f39afcf3ec6701d",
+          "capability": "Quantization automation",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-13f40e442fda05402486",
+          "capability": "Streaming response optimization",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-a692e10c8f9622a5fe3f",
+          "capability": "Cold start elimination",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-6f07ae9804095dc2a6ac",
+          "capability": "Request prioritization queue",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-a8da7c5ffb8dae0a8713",
+          "capability": "Advanced analytics dashboard",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-162966af79fd9bc93058",
+          "capability": "Priority email support",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-cf4d16e3146e0db2c73f",
+          "capability": "API access",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        }
+      ],
+      "toolBindingCount": 10,
+      "apiCandidateCount": 6,
+      "liveEndToEndStatus": "not_executed_requires_authenticated_deployment",
+      "failures": []
+    },
+    {
+      "schema": "dreamco.bot_e2e_certification.v2",
+      "slug": "llm-cost-optimizer",
+      "displayName": "LLM Cost Optimizer",
+      "division": "DreamAIInfra",
+      "category": "cost-optimization",
+      "instanceId": "fleet-runtime-llm-cost-optimizer",
+      "status": "sandbox_certified",
+      "checks": {
+        "runtimeReady": true,
+        "profileAndBuddyRouteVerified": true,
+        "declaredCapabilitiesVerified": true,
+        "allDeclaredCapabilityContractsTested": true,
+        "runtimeToolBindingVerified": true,
+        "platformCapabilityRegistryVerified": true,
+        "calculatorBindingVerified": true,
+        "distributionBindingVerified": true,
+        "leadSystemBindingVerified": true,
+        "samplePromptVerified": true,
+        "sandboxExecutionVerified": true,
+        "sandboxEvidenceVerified": true,
+        "liveApprovalGateVerified": true,
+        "noLiveSideEffectVerified": true
+      },
+      "declaredCapabilityCount": 8,
+      "capabilityTests": [
+        {
+          "testId": "capability-test-13a9e563045768e0380b",
+          "capability": "Semantic cache engine",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-29c4539d03c1b41b6740",
+          "capability": "Prompt compression",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-d96f46db70c2473bbf99",
+          "capability": "Batch inference scheduler",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-a0345ad09e93e2040b0e",
+          "capability": "Cost attribution dashboard",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-f6e82142d0402a5518e8",
+          "capability": "Budget alert system",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-39e01c5ce331f6cc0b4c",
+          "capability": "Token usage analytics",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-a266b1ce79016b176d6c",
+          "capability": "Advanced analytics dashboard",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-07bca68dcd667f22f872",
+          "capability": "Priority email support",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        }
+      ],
+      "toolBindingCount": 8,
+      "apiCandidateCount": 6,
+      "liveEndToEndStatus": "not_executed_requires_authenticated_deployment",
+      "failures": []
+    },
+    {
+      "schema": "dreamco.bot_e2e_certification.v2",
+      "slug": "marketplace-sync",
+      "displayName": "AI Marketplace Sync Bot",
+      "division": "DreamAIInfra",
+      "category": "marketplace",
+      "instanceId": "fleet-runtime-marketplace-sync",
+      "status": "sandbox_certified",
+      "checks": {
+        "runtimeReady": true,
+        "profileAndBuddyRouteVerified": true,
+        "declaredCapabilitiesVerified": true,
+        "allDeclaredCapabilityContractsTested": true,
+        "runtimeToolBindingVerified": true,
+        "platformCapabilityRegistryVerified": true,
+        "calculatorBindingVerified": true,
+        "distributionBindingVerified": true,
+        "leadSystemBindingVerified": true,
+        "samplePromptVerified": true,
+        "sandboxExecutionVerified": true,
+        "sandboxEvidenceVerified": true,
+        "liveApprovalGateVerified": true,
+        "noLiveSideEffectVerified": true
+      },
+      "declaredCapabilityCount": 8,
+      "capabilityTests": [
+        {
+          "testId": "capability-test-989114cf412cf3a6a246",
+          "capability": "Multi-marketplace publishing",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-7afe66cc8dac099fc01b",
+          "capability": "Pricing synchronization",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-e7f96834a18d77bdd3a5",
+          "capability": "Review aggregation",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-61fc7569ef1fbcdbd991",
+          "capability": "Listing optimization",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-029e72a7d30eb2d06aac",
+          "capability": "Revenue consolidation",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-1ab147a6c2a95567b00d",
+          "capability": "Advanced analytics dashboard",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-e6896d11e7a505f18019",
+          "capability": "Priority email support",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-31ab90e5911a5d0e9dca",
+          "capability": "API access",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        }
+      ],
+      "toolBindingCount": 9,
+      "apiCandidateCount": 6,
+      "liveEndToEndStatus": "not_executed_requires_authenticated_deployment",
+      "failures": []
+    },
+    {
+      "schema": "dreamco.bot_e2e_certification.v2",
+      "slug": "ml-cicd",
+      "displayName": "ML CI/CD Pipeline Bot",
+      "division": "DreamAIInfra",
+      "category": "cicd",
+      "instanceId": "fleet-runtime-ml-cicd",
+      "status": "sandbox_certified",
+      "checks": {
+        "runtimeReady": true,
+        "profileAndBuddyRouteVerified": true,
+        "declaredCapabilitiesVerified": true,
+        "allDeclaredCapabilityContractsTested": true,
+        "runtimeToolBindingVerified": true,
+        "platformCapabilityRegistryVerified": true,
+        "calculatorBindingVerified": true,
+        "distributionBindingVerified": true,
+        "leadSystemBindingVerified": true,
+        "samplePromptVerified": true,
+        "sandboxExecutionVerified": true,
+        "sandboxEvidenceVerified": true,
+        "liveApprovalGateVerified": true,
+        "noLiveSideEffectVerified": true
+      },
+      "declaredCapabilityCount": 8,
+      "capabilityTests": [
+        {
+          "testId": "capability-test-3388a7ecca34616d3843",
+          "capability": "Model testing automation",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-f31f45ac2ef32031533e",
+          "capability": "Data validation checks",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-edf7f303e6dddabcc395",
+          "capability": "Experiment tracking integration",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-60bc8ad67250ef2c3e8f",
+          "capability": "Registry publishing",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-eca75559935e9dab22fe",
+          "capability": "Performance regression tests",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-31ed7447e337fd2e491a",
+          "capability": "Advanced analytics dashboard",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-e6bddaa7cb4bbc15c312",
+          "capability": "Priority email support",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-2dd34a4af7a4c5612d9f",
+          "capability": "API access",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        }
+      ],
+      "toolBindingCount": 10,
+      "apiCandidateCount": 6,
+      "liveEndToEndStatus": "not_executed_requires_authenticated_deployment",
+      "failures": []
+    },
+    {
+      "schema": "dreamco.bot_e2e_certification.v2",
+      "slug": "model-lifecycle",
+      "displayName": "Model Lifecycle Manager",
+      "division": "DreamAIInfra",
+      "category": "model-lifecycle",
+      "instanceId": "fleet-runtime-model-lifecycle",
+      "status": "sandbox_certified",
+      "checks": {
+        "runtimeReady": true,
+        "profileAndBuddyRouteVerified": true,
+        "declaredCapabilitiesVerified": true,
+        "allDeclaredCapabilityContractsTested": true,
+        "runtimeToolBindingVerified": true,
+        "platformCapabilityRegistryVerified": true,
+        "calculatorBindingVerified": true,
+        "distributionBindingVerified": true,
+        "leadSystemBindingVerified": true,
+        "samplePromptVerified": true,
+        "sandboxExecutionVerified": true,
+        "sandboxEvidenceVerified": true,
+        "liveApprovalGateVerified": true,
+        "noLiveSideEffectVerified": true
+      },
+      "declaredCapabilityCount": 8,
+      "capabilityTests": [
+        {
+          "testId": "capability-test-c692dddc9f11af485b85",
+          "capability": "Model registry management",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-3975231da5df7bdada51",
+          "capability": "Version control",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-74adf0a01ae94787fa56",
+          "capability": "Deprecation scheduling",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-367903fec558fd315fb9",
+          "capability": "Lineage tracking",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-f31e03af6e9f601dda73",
+          "capability": "Stakeholder notification",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-d3e9532f3e2ef1614f83",
+          "capability": "Advanced analytics dashboard",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-0af96fbfa5fba5e2da20",
+          "capability": "Priority email support",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-d5602da16da65d113af4",
+          "capability": "API access",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        }
+      ],
+      "toolBindingCount": 9,
+      "apiCandidateCount": 6,
+      "liveEndToEndStatus": "not_executed_requires_authenticated_deployment",
+      "failures": []
+    },
+    {
+      "schema": "dreamco.bot_e2e_certification.v2",
+      "slug": "model-routing-engine",
+      "displayName": "AI Model Routing Engine",
+      "division": "DreamAIInfra",
+      "category": "model-routing",
+      "instanceId": "fleet-runtime-model-routing-engine",
+      "status": "sandbox_certified",
+      "checks": {
+        "runtimeReady": true,
+        "profileAndBuddyRouteVerified": true,
+        "declaredCapabilitiesVerified": true,
+        "allDeclaredCapabilityContractsTested": true,
+        "runtimeToolBindingVerified": true,
+        "platformCapabilityRegistryVerified": true,
+        "calculatorBindingVerified": true,
+        "distributionBindingVerified": true,
+        "leadSystemBindingVerified": true,
+        "samplePromptVerified": true,
+        "sandboxExecutionVerified": true,
+        "sandboxEvidenceVerified": true,
+        "liveApprovalGateVerified": true,
+        "noLiveSideEffectVerified": true
+      },
+      "declaredCapabilityCount": 8,
+      "capabilityTests": [
+        {
+          "testId": "capability-test-f5082bb0de9ed5b1368a",
+          "capability": "Cost-quality routing matrix",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-17b5a75ad9141e0519bc",
+          "capability": "Latency-aware model selection",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-fcbb8f9ffd2a28406727",
+          "capability": "Fallback chain configuration",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-d731f72c65254b4b065f",
+          "capability": "A/B model testing",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-f82dbd233d4f70a27620",
+          "capability": "Request classification engine",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-b5652d7afb624531fd7e",
+          "capability": "Token budget enforcement",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-a0ba6f18cbf5dae8a2f2",
+          "capability": "Advanced analytics dashboard",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-95d038706345d9674f02",
+          "capability": "Priority email support",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        }
+      ],
+      "toolBindingCount": 8,
+      "apiCandidateCount": 6,
+      "liveEndToEndStatus": "not_executed_requires_authenticated_deployment",
+      "failures": []
+    },
+    {
+      "schema": "dreamco.bot_e2e_certification.v2",
+      "slug": "multi-tenant-scaler",
+      "displayName": "Multi-Tenant Scaling Bot",
+      "division": "DreamAIInfra",
+      "category": "multi-tenant",
+      "instanceId": "fleet-runtime-multi-tenant-scaler",
+      "status": "sandbox_certified",
+      "checks": {
+        "runtimeReady": true,
+        "profileAndBuddyRouteVerified": true,
+        "declaredCapabilitiesVerified": true,
+        "allDeclaredCapabilityContractsTested": true,
+        "runtimeToolBindingVerified": true,
+        "platformCapabilityRegistryVerified": true,
+        "calculatorBindingVerified": true,
+        "distributionBindingVerified": true,
+        "leadSystemBindingVerified": true,
+        "samplePromptVerified": true,
+        "sandboxExecutionVerified": true,
+        "sandboxEvidenceVerified": true,
+        "liveApprovalGateVerified": true,
+        "noLiveSideEffectVerified": true
+      },
+      "declaredCapabilityCount": 8,
+      "capabilityTests": [
+        {
+          "testId": "capability-test-7a8a9d51c280a5a69ab2",
+          "capability": "Tenant isolation management",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-075f127b15bc201bd052",
+          "capability": "Per-tenant rate limiting",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-e2ddcb51a40f4fc773a0",
+          "capability": "Resource quota enforcement",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-c65d0348db7d9615111a",
+          "capability": "Noisy neighbor detection",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-116ea610b2c4e82f42a1",
+          "capability": "Tenant onboarding automation",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-dd905f94abae367328a7",
+          "capability": "Advanced analytics dashboard",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-265c79c5b2cde7be4361",
+          "capability": "Priority email support",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-a7d081003ce6b247468f",
+          "capability": "API access",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        }
+      ],
+      "toolBindingCount": 9,
+      "apiCandidateCount": 5,
+      "liveEndToEndStatus": "not_executed_requires_authenticated_deployment",
+      "failures": []
+    },
+    {
+      "schema": "dreamco.bot_e2e_certification.v2",
+      "slug": "orchestration-engine",
+      "displayName": "AI Pipeline Orchestrator",
+      "division": "DreamAIInfra",
+      "category": "orchestration",
+      "instanceId": "fleet-runtime-orchestration-engine",
+      "status": "sandbox_certified",
+      "checks": {
+        "runtimeReady": true,
+        "profileAndBuddyRouteVerified": true,
+        "declaredCapabilitiesVerified": true,
+        "allDeclaredCapabilityContractsTested": true,
+        "runtimeToolBindingVerified": true,
+        "platformCapabilityRegistryVerified": true,
+        "calculatorBindingVerified": true,
+        "distributionBindingVerified": true,
+        "leadSystemBindingVerified": true,
+        "samplePromptVerified": true,
+        "sandboxExecutionVerified": true,
+        "sandboxEvidenceVerified": true,
+        "liveApprovalGateVerified": true,
+        "noLiveSideEffectVerified": true
+      },
+      "declaredCapabilityCount": 8,
+      "capabilityTests": [
+        {
+          "testId": "capability-test-8411b8a4e0d943910ff9",
+          "capability": "DAG pipeline builder",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-ff0fa8b8510247f8e98f",
+          "capability": "Conditional branching logic",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-3ab4a3bd8c13552da6f2",
+          "capability": "Error retry strategies",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-8284bcb446afaad0404c",
+          "capability": "Pipeline versioning",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-0191f9620d65a1e4aab8",
+          "capability": "Execution monitoring",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-e3f3ed55ce4b84b63f43",
+          "capability": "Advanced analytics dashboard",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-c62267aea91a78036fbb",
+          "capability": "Priority email support",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-dde07719af38852a6242",
+          "capability": "API access",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        }
+      ],
+      "toolBindingCount": 9,
+      "apiCandidateCount": 8,
+      "liveEndToEndStatus": "not_executed_requires_authenticated_deployment",
+      "failures": []
+    },
+    {
+      "schema": "dreamco.bot_e2e_certification.v2",
+      "slug": "prompt-engineer",
+      "displayName": "Prompt Engineering Studio",
+      "division": "DreamAIInfra",
+      "category": "orchestration",
+      "instanceId": "fleet-runtime-prompt-engineer",
+      "status": "sandbox_certified",
+      "checks": {
+        "runtimeReady": true,
+        "profileAndBuddyRouteVerified": true,
+        "declaredCapabilitiesVerified": true,
+        "allDeclaredCapabilityContractsTested": true,
+        "runtimeToolBindingVerified": true,
+        "platformCapabilityRegistryVerified": true,
+        "calculatorBindingVerified": true,
+        "distributionBindingVerified": true,
+        "leadSystemBindingVerified": true,
+        "samplePromptVerified": true,
+        "sandboxExecutionVerified": true,
+        "sandboxEvidenceVerified": true,
+        "liveApprovalGateVerified": true,
+        "noLiveSideEffectVerified": true
+      },
+      "declaredCapabilityCount": 8,
+      "capabilityTests": [
+        {
+          "testId": "capability-test-b1fa662a53ee101f5ebd",
+          "capability": "Prompt template library",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-7ca5eb6f24c6f042931f",
+          "capability": "A/B prompt testing",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-8269aaa5bb1faac03e66",
+          "capability": "Output quality scoring",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-8e6668d7276dc9c2edaf",
+          "capability": "Chain-of-thought builder",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-947cdfaf278f27b645bc",
+          "capability": "Variable injection engine",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-5795aa839f6ec7c3ddbd",
+          "capability": "Advanced analytics dashboard",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-d976bdd8b1e6fcf49341",
+          "capability": "Priority email support",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-f967fdbf09794375b4b3",
+          "capability": "API access",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        }
+      ],
+      "toolBindingCount": 9,
+      "apiCandidateCount": 8,
+      "liveEndToEndStatus": "not_executed_requires_authenticated_deployment",
+      "failures": []
+    },
+    {
+      "schema": "dreamco.bot_e2e_certification.v2",
+      "slug": "resource-forecaster",
+      "displayName": "AI Resource Forecaster",
+      "division": "DreamAIInfra",
+      "category": "resource-forecasting",
+      "instanceId": "fleet-runtime-resource-forecaster",
+      "status": "sandbox_certified",
+      "checks": {
+        "runtimeReady": true,
+        "profileAndBuddyRouteVerified": true,
+        "declaredCapabilitiesVerified": true,
+        "allDeclaredCapabilityContractsTested": true,
+        "runtimeToolBindingVerified": true,
+        "platformCapabilityRegistryVerified": true,
+        "calculatorBindingVerified": true,
+        "distributionBindingVerified": true,
+        "leadSystemBindingVerified": true,
+        "samplePromptVerified": true,
+        "sandboxExecutionVerified": true,
+        "sandboxEvidenceVerified": true,
+        "liveApprovalGateVerified": true,
+        "noLiveSideEffectVerified": true
+      },
+      "declaredCapabilityCount": 8,
+      "capabilityTests": [
+        {
+          "testId": "capability-test-37eda9dfc34746ab0541",
+          "capability": "GPU utilization prediction",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-bb302eeff376db435b15",
+          "capability": "Memory usage forecasting",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-acfd8c1b7ca38d258c25",
+          "capability": "Spot instance optimization",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-2bb94f4083442eb4f952",
+          "capability": "Capacity planning models",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-2665dd6f6b0e54891fab",
+          "capability": "Cost projection reports",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-c932fb115f4bff38bfe6",
+          "capability": "Advanced analytics dashboard",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-ed3cd8e1feb7cbc9cc62",
+          "capability": "Priority email support",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-590fc8e7385c7b53c955",
+          "capability": "API access",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        }
+      ],
+      "toolBindingCount": 9,
+      "apiCandidateCount": 6,
+      "liveEndToEndStatus": "not_executed_requires_authenticated_deployment",
+      "failures": []
+    },
+    {
+      "schema": "dreamco.bot_e2e_certification.v2",
+      "slug": "sla-monitor",
+      "displayName": "SLA Monitoring Bot",
+      "division": "DreamAIInfra",
+      "category": "sla-monitoring",
+      "instanceId": "fleet-runtime-sla-monitor",
+      "status": "sandbox_certified",
+      "checks": {
+        "runtimeReady": true,
+        "profileAndBuddyRouteVerified": true,
+        "declaredCapabilitiesVerified": true,
+        "allDeclaredCapabilityContractsTested": true,
+        "runtimeToolBindingVerified": true,
+        "platformCapabilityRegistryVerified": true,
+        "calculatorBindingVerified": true,
+        "distributionBindingVerified": true,
+        "leadSystemBindingVerified": true,
+        "samplePromptVerified": true,
+        "sandboxExecutionVerified": true,
+        "sandboxEvidenceVerified": true,
+        "liveApprovalGateVerified": true,
+        "noLiveSideEffectVerified": true
+      },
+      "declaredCapabilityCount": 8,
+      "capabilityTests": [
+        {
+          "testId": "capability-test-81e8994c08bae9b288c9",
+          "capability": "Uptime tracking",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-50bf2347db84ba11f940",
+          "capability": "Latency percentile monitoring",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-1320f53699bca002fcbe",
+          "capability": "Error rate alerting",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-e2f9acb97da8f9ee7af2",
+          "capability": "SLA breach escalation",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-7e28a3496b5af13cc778",
+          "capability": "Compliance report generation",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-15eeb9d4e70a15c27858",
+          "capability": "Advanced analytics dashboard",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-1df9ba9606187c887968",
+          "capability": "Priority email support",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-5391f4055f8f22390dd7",
+          "capability": "API access",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        }
+      ],
+      "toolBindingCount": 9,
+      "apiCandidateCount": 8,
+      "liveEndToEndStatus": "not_executed_requires_authenticated_deployment",
+      "failures": []
+    },
+    {
+      "schema": "dreamco.bot_e2e_certification.v2",
+      "slug": "token-billing",
+      "displayName": "Token Billing & Metering",
+      "division": "DreamAIInfra",
+      "category": "token-billing",
+      "instanceId": "fleet-runtime-token-billing",
+      "status": "sandbox_certified",
+      "checks": {
+        "runtimeReady": true,
+        "profileAndBuddyRouteVerified": true,
+        "declaredCapabilitiesVerified": true,
+        "allDeclaredCapabilityContractsTested": true,
+        "runtimeToolBindingVerified": true,
+        "platformCapabilityRegistryVerified": true,
+        "calculatorBindingVerified": true,
+        "distributionBindingVerified": true,
+        "leadSystemBindingVerified": true,
+        "samplePromptVerified": true,
+        "sandboxExecutionVerified": true,
+        "sandboxEvidenceVerified": true,
+        "liveApprovalGateVerified": true,
+        "noLiveSideEffectVerified": true
+      },
+      "declaredCapabilityCount": 8,
+      "capabilityTests": [
+        {
+          "testId": "capability-test-b92bc6a1039353c245c0",
+          "capability": "Per-token metering",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-da570da16e89d0f2f12f",
+          "capability": "Usage-based invoicing",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-eac560368567f23bf0f9",
+          "capability": "Rate limiting engine",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-206b3ac3cd90ce511c0b",
+          "capability": "Quota management",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-358b51ed8182413627a7",
+          "capability": "Revenue attribution",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-7872d1a3c67b1f7391bd",
+          "capability": "Billing API",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-fd2c640bf3552b35d5ef",
+          "capability": "Advanced analytics dashboard",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-2d68969fdf06a06ca340",
+          "capability": "Priority email support",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        }
+      ],
+      "toolBindingCount": 9,
+      "apiCandidateCount": 5,
+      "liveEndToEndStatus": "not_executed_requires_authenticated_deployment",
+      "failures": []
+    },
+    {
+      "schema": "dreamco.bot_e2e_certification.v2",
+      "slug": "vector-db-optimizer",
+      "displayName": "Vector DB Optimizer",
+      "division": "DreamAIInfra",
+      "category": "data-quality",
+      "instanceId": "fleet-runtime-vector-db-optimizer",
+      "status": "sandbox_certified",
+      "checks": {
+        "runtimeReady": true,
+        "profileAndBuddyRouteVerified": true,
+        "declaredCapabilitiesVerified": true,
+        "allDeclaredCapabilityContractsTested": true,
+        "runtimeToolBindingVerified": true,
+        "platformCapabilityRegistryVerified": true,
+        "calculatorBindingVerified": true,
+        "distributionBindingVerified": true,
+        "leadSystemBindingVerified": true,
+        "samplePromptVerified": true,
+        "sandboxExecutionVerified": true,
+        "sandboxEvidenceVerified": true,
+        "liveApprovalGateVerified": true,
+        "noLiveSideEffectVerified": true
+      },
+      "declaredCapabilityCount": 8,
+      "capabilityTests": [
+        {
+          "testId": "capability-test-00db26c9a443e1cc3ca3",
+          "capability": "Index tuning automation",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-81b9ab00916d3f05e7f0",
+          "capability": "Embedding model comparison",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-41da8d2b33ea6679207c",
+          "capability": "Chunk size optimization",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-3d5286a8f8aeab6fba35",
+          "capability": "Query latency profiling",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-7cb0b214f7ae1a62d612",
+          "capability": "Storage cost reduction",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-80af27e21450b11f20f0",
+          "capability": "Advanced analytics dashboard",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-c99c1a04a2d93477b06e",
+          "capability": "Priority email support",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-ce38ec78b70eb0cecbd2",
+          "capability": "API access",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        }
+      ],
+      "toolBindingCount": 9,
+      "apiCandidateCount": 6,
+      "liveEndToEndStatus": "not_executed_requires_authenticated_deployment",
+      "failures": []
+    },
+    {
+      "schema": "dreamco.bot_e2e_certification.v2",
+      "slug": "whitelabel-publisher",
+      "displayName": "White-Label AI Publisher",
+      "division": "DreamAIInfra",
+      "category": "white-label",
+      "instanceId": "fleet-runtime-whitelabel-publisher",
+      "status": "sandbox_certified",
+      "checks": {
+        "runtimeReady": true,
+        "profileAndBuddyRouteVerified": true,
+        "declaredCapabilitiesVerified": true,
+        "allDeclaredCapabilityContractsTested": true,
+        "runtimeToolBindingVerified": true,
+        "platformCapabilityRegistryVerified": true,
+        "calculatorBindingVerified": true,
+        "distributionBindingVerified": true,
+        "leadSystemBindingVerified": true,
+        "samplePromptVerified": true,
+        "sandboxExecutionVerified": true,
+        "sandboxEvidenceVerified": true,
+        "liveApprovalGateVerified": true,
+        "noLiveSideEffectVerified": true
+      },
+      "declaredCapabilityCount": 8,
+      "capabilityTests": [
+        {
+          "testId": "capability-test-78977016cbc5e73e8b4e",
+          "capability": "Brand customization engine",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-491a1fa23236529f24ba",
+          "capability": "Custom domain mapping",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-03ad710cb03c73f12ddd",
+          "capability": "Usage quota configuration",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-98496b242bb4ca904319",
+          "capability": "Client analytics portal",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-a8842c977ec369e76365",
+          "capability": "Multi-tenant isolation",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-528ac7cbc8381ef8d427",
+          "capability": "Advanced analytics dashboard",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-a60a62b8c4cbe1d15a7d",
+          "capability": "Priority email support",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-a4a912accda08584fb86",
+          "capability": "API access",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        }
+      ],
+      "toolBindingCount": 10,
+      "apiCandidateCount": 5,
+      "liveEndToEndStatus": "not_executed_requires_authenticated_deployment",
+      "failures": []
+    }
+  ]
+}

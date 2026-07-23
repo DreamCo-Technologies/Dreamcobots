@@ -1,0 +1,454 @@
+{
+  "schema": "dreamco.bot_capability_test_division.v1",
+  "division": "DreamFlow",
+  "capabilityTestContract": {
+    "mode": "repository_controlled_sandbox",
+    "checks": [
+      {
+        "id": "declaredOnProfile",
+        "label": "Declared on profile"
+      },
+      {
+        "id": "runtimeReady",
+        "label": "Runtime ready"
+      },
+      {
+        "id": "routedAsDeclaredCapability",
+        "label": "Routed as declared capability"
+      },
+      {
+        "id": "evidenceRequired",
+        "label": "Evidence required"
+      },
+      {
+        "id": "requiredSandboxEvidencePresent",
+        "label": "Required sandbox evidence present"
+      },
+      {
+        "id": "noLiveSideEffect",
+        "label": "No live side effect"
+      }
+    ],
+    "requiredEvidence": [
+      "runtime_instance_resolved",
+      "profile_and_route_verified",
+      "network_default_off",
+      "no_live_external_write",
+      "approval_gate_available"
+    ],
+    "networkDefault": "off",
+    "liveExternalActions": "forbidden",
+    "externalProviderBehavior": "not_tested_requires_configured_adapter_and_provider_sandbox"
+  },
+  "summary": {
+    "division": "DreamFlow",
+    "profiles": 5,
+    "passed": 5,
+    "failed": 0,
+    "capabilityTests": 40,
+    "capabilityTestsPassed": 40,
+    "capabilityTestsFailed": 0
+  },
+  "profiles": [
+    {
+      "schema": "dreamco.bot_e2e_certification.v2",
+      "slug": "captcha-handler",
+      "displayName": "CAPTCHA Handler Bot",
+      "division": "DreamFlow",
+      "category": "captcha-handling",
+      "instanceId": "fleet-runtime-captcha-handler",
+      "status": "sandbox_certified",
+      "checks": {
+        "runtimeReady": true,
+        "profileAndBuddyRouteVerified": true,
+        "declaredCapabilitiesVerified": true,
+        "allDeclaredCapabilityContractsTested": true,
+        "runtimeToolBindingVerified": true,
+        "platformCapabilityRegistryVerified": true,
+        "calculatorBindingVerified": true,
+        "distributionBindingVerified": true,
+        "leadSystemBindingVerified": true,
+        "samplePromptVerified": true,
+        "sandboxExecutionVerified": true,
+        "sandboxEvidenceVerified": true,
+        "liveApprovalGateVerified": true,
+        "noLiveSideEffectVerified": true
+      },
+      "declaredCapabilityCount": 8,
+      "capabilityTests": [
+        {
+          "testId": "capability-test-47e84115ea01ddc48995",
+          "capability": "reCAPTCHA solving",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-c0f633956cb347f07161",
+          "capability": "hCaptcha support",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-64e03ebd72727d8e7286",
+          "capability": "Image CAPTCHA recognition",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-2b4e5bf2e7400edb0baf",
+          "capability": "Cloudflare bypass strategies",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-dad121e6ca0820df5594",
+          "capability": "Challenge rotation handling",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-425cb69fc1716c99ccff",
+          "capability": "Advanced analytics dashboard",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-2eb67edc2fde2be050ac",
+          "capability": "Priority email support",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-a373f7e69775de2f07ad",
+          "capability": "API access",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        }
+      ],
+      "toolBindingCount": 10,
+      "apiCandidateCount": 5,
+      "liveEndToEndStatus": "not_executed_requires_authenticated_deployment",
+      "failures": []
+    },
+    {
+      "schema": "dreamco.bot_e2e_certification.v2",
+      "slug": "crm-exporter",
+      "displayName": "CRM Export Connector",
+      "division": "DreamFlow",
+      "category": "crm-export",
+      "instanceId": "fleet-runtime-crm-exporter",
+      "status": "sandbox_certified",
+      "checks": {
+        "runtimeReady": true,
+        "profileAndBuddyRouteVerified": true,
+        "declaredCapabilitiesVerified": true,
+        "allDeclaredCapabilityContractsTested": true,
+        "runtimeToolBindingVerified": true,
+        "platformCapabilityRegistryVerified": true,
+        "calculatorBindingVerified": true,
+        "distributionBindingVerified": true,
+        "leadSystemBindingVerified": true,
+        "samplePromptVerified": true,
+        "sandboxExecutionVerified": true,
+        "sandboxEvidenceVerified": true,
+        "liveApprovalGateVerified": true,
+        "noLiveSideEffectVerified": true
+      },
+      "declaredCapabilityCount": 8,
+      "capabilityTests": [
+        {
+          "testId": "capability-test-0460866b60a64b6850f7",
+          "capability": "Salesforce integration",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-0c8ca5329521d63766b1",
+          "capability": "HubSpot connector",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-6cd1c3b2ec5df267b09d",
+          "capability": "Custom field mapping",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-9f6c1cb154c52e5e700e",
+          "capability": "Duplicate prevention",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-dd4676351a8a7a6f8e60",
+          "capability": "Incremental sync engine",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-099a1519d929d46d5b87",
+          "capability": "Advanced analytics dashboard",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-05921fbb604157dd96aa",
+          "capability": "Priority email support",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-07e42a869b62aad3da12",
+          "capability": "API access",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        }
+      ],
+      "toolBindingCount": 10,
+      "apiCandidateCount": 5,
+      "liveEndToEndStatus": "not_executed_requires_authenticated_deployment",
+      "failures": []
+    },
+    {
+      "schema": "dreamco.bot_e2e_certification.v2",
+      "slug": "data-cleaner",
+      "displayName": "Data Cleaning Bot",
+      "division": "DreamFlow",
+      "category": "data-cleaning",
+      "instanceId": "fleet-runtime-data-cleaner",
+      "status": "sandbox_certified",
+      "checks": {
+        "runtimeReady": true,
+        "profileAndBuddyRouteVerified": true,
+        "declaredCapabilitiesVerified": true,
+        "allDeclaredCapabilityContractsTested": true,
+        "runtimeToolBindingVerified": true,
+        "platformCapabilityRegistryVerified": true,
+        "calculatorBindingVerified": true,
+        "distributionBindingVerified": true,
+        "leadSystemBindingVerified": true,
+        "samplePromptVerified": true,
+        "sandboxExecutionVerified": true,
+        "sandboxEvidenceVerified": true,
+        "liveApprovalGateVerified": true,
+        "noLiveSideEffectVerified": true
+      },
+      "declaredCapabilityCount": 8,
+      "capabilityTests": [
+        {
+          "testId": "capability-test-19fb4c84e5821e1dc3fc",
+          "capability": "Deduplication engine",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-90fc54ba480dd2f476bb",
+          "capability": "Format normalization",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-513856880501b69093fb",
+          "capability": "Missing value handling",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-9043cd1935ca9e876db6",
+          "capability": "Entity resolution",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-bc56883e00d67f9fa4ee",
+          "capability": "Schema validation",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-1175c6fb657dc5159f9c",
+          "capability": "Advanced analytics dashboard",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-8c26ccfdc217e00cdc2d",
+          "capability": "Priority email support",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-22b41173cd785ea46720",
+          "capability": "API access",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        }
+      ],
+      "toolBindingCount": 9,
+      "apiCandidateCount": 5,
+      "liveEndToEndStatus": "not_executed_requires_authenticated_deployment",
+      "failures": []
+    },
+    {
+      "schema": "dreamco.bot_e2e_certification.v2",
+      "slug": "proxy-rotator",
+      "displayName": "Proxy Rotation Bot",
+      "division": "DreamFlow",
+      "category": "proxy-rotation",
+      "instanceId": "fleet-runtime-proxy-rotator",
+      "status": "sandbox_certified",
+      "checks": {
+        "runtimeReady": true,
+        "profileAndBuddyRouteVerified": true,
+        "declaredCapabilitiesVerified": true,
+        "allDeclaredCapabilityContractsTested": true,
+        "runtimeToolBindingVerified": true,
+        "platformCapabilityRegistryVerified": true,
+        "calculatorBindingVerified": true,
+        "distributionBindingVerified": true,
+        "leadSystemBindingVerified": true,
+        "samplePromptVerified": true,
+        "sandboxExecutionVerified": true,
+        "sandboxEvidenceVerified": true,
+        "liveApprovalGateVerified": true,
+        "noLiveSideEffectVerified": true
+      },
+      "declaredCapabilityCount": 8,
+      "capabilityTests": [
+        {
+          "testId": "capability-test-86630187881e519064df",
+          "capability": "Residential proxy pool management",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-2ec7ec1eb2a787c8a818",
+          "capability": "Datacenter proxy rotation",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-5984f21c0e025f96a742",
+          "capability": "Geographic targeting",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-1576e63fc18f4681aff6",
+          "capability": "Session persistence",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-66995fb3c897d9f8efca",
+          "capability": "Ban detection and recovery",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-684f4f6037d8a6851178",
+          "capability": "Advanced analytics dashboard",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-cea08cad75226edce4fb",
+          "capability": "Priority email support",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-000a18ac66f8a93d40ab",
+          "capability": "API access",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        }
+      ],
+      "toolBindingCount": 9,
+      "apiCandidateCount": 2,
+      "liveEndToEndStatus": "not_executed_requires_authenticated_deployment",
+      "failures": []
+    },
+    {
+      "schema": "dreamco.bot_e2e_certification.v2",
+      "slug": "web-scraper",
+      "displayName": "Web Scraping Engine",
+      "division": "DreamFlow",
+      "category": "web-scraping",
+      "instanceId": "fleet-runtime-web-scraper",
+      "status": "sandbox_certified",
+      "checks": {
+        "runtimeReady": true,
+        "profileAndBuddyRouteVerified": true,
+        "declaredCapabilitiesVerified": true,
+        "allDeclaredCapabilityContractsTested": true,
+        "runtimeToolBindingVerified": true,
+        "platformCapabilityRegistryVerified": true,
+        "calculatorBindingVerified": true,
+        "distributionBindingVerified": true,
+        "leadSystemBindingVerified": true,
+        "samplePromptVerified": true,
+        "sandboxExecutionVerified": true,
+        "sandboxEvidenceVerified": true,
+        "liveApprovalGateVerified": true,
+        "noLiveSideEffectVerified": true
+      },
+      "declaredCapabilityCount": 8,
+      "capabilityTests": [
+        {
+          "testId": "capability-test-408f63d5b0e9413acc4a",
+          "capability": "JavaScript page rendering",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-b01ea6e63d64b9e1ee19",
+          "capability": "CSS/XPath selector engine",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-1f7bd5da097eadd596bc",
+          "capability": "Pagination handling",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-d150d03e7d76dc06af6e",
+          "capability": "Rate limiting and politeness",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-6b71e40ddd66d629af1e",
+          "capability": "Structured data output",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-301129f64845fac4e1bf",
+          "capability": "Scheduled scrape jobs",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-58be5b5a002cc8fb4dbe",
+          "capability": "Advanced analytics dashboard",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-16abddfb7f1d933ab7fc",
+          "capability": "Priority email support",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        }
+      ],
+      "toolBindingCount": 9,
+      "apiCandidateCount": 5,
+      "liveEndToEndStatus": "not_executed_requires_authenticated_deployment",
+      "failures": []
+    }
+  ]
+}

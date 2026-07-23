@@ -12,9 +12,16 @@ test("maps every division profile to a verified Buddy route and sandbox blueprin
   assert.equal(catalog.summary.per_bot_sandbox_blueprints, 1051);
   assert.equal(catalog.summary.per_bot_business_blueprints, 1051);
   assert.equal(catalog.summary.per_bot_governed_lead_systems, 1051);
+  assert.equal(catalog.summary.declared_capability_slots, 8408);
   assert.ok(catalog.bots.every((bot) => bot.readiness.buddy_chat_route === "verified"));
   assert.ok(catalog.bots.every((bot) => bot.readiness.executable_runtime_instance === "verified"));
   assert.ok(catalog.bots.every((bot) => bot.sandbox.sandbox_id === `sandbox-${bot.identity.slug}`));
+  assert.ok(catalog.bots.every((bot) => bot.capabilities.length === 8));
+  assert.equal(new Set(catalog.bots.flatMap((bot) => bot.capabilities.map((capability) => capability.test_id))).size, 8408);
+  assert.ok(catalog.bots.every((bot) => bot.capabilities.every((capability) => (
+    capability.test_status === "reported_by_fleet_e2e" &&
+    capability.test_evidence === `website/data/bot-capability-tests/${bot.identity.division}.json#${bot.identity.slug}`
+  ))));
   assert.ok(catalog.bots.every((bot) => bot.tools.some((tool) => (
     tool.id === "buddy_platform_registry" && tool.status === "runtime_routed"
   ))));

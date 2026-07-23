@@ -1,0 +1,1654 @@
+{
+  "schema": "dreamco.bot_capability_test_division.v1",
+  "division": "DreamAgents",
+  "capabilityTestContract": {
+    "mode": "repository_controlled_sandbox",
+    "checks": [
+      {
+        "id": "declaredOnProfile",
+        "label": "Declared on profile"
+      },
+      {
+        "id": "runtimeReady",
+        "label": "Runtime ready"
+      },
+      {
+        "id": "routedAsDeclaredCapability",
+        "label": "Routed as declared capability"
+      },
+      {
+        "id": "evidenceRequired",
+        "label": "Evidence required"
+      },
+      {
+        "id": "requiredSandboxEvidencePresent",
+        "label": "Required sandbox evidence present"
+      },
+      {
+        "id": "noLiveSideEffect",
+        "label": "No live side effect"
+      }
+    ],
+    "requiredEvidence": [
+      "runtime_instance_resolved",
+      "profile_and_route_verified",
+      "network_default_off",
+      "no_live_external_write",
+      "approval_gate_available"
+    ],
+    "networkDefault": "off",
+    "liveExternalActions": "forbidden",
+    "externalProviderBehavior": "not_tested_requires_configured_adapter_and_provider_sandbox"
+  },
+  "summary": {
+    "division": "DreamAgents",
+    "profiles": 20,
+    "passed": 20,
+    "failed": 0,
+    "capabilityTests": 160,
+    "capabilityTestsPassed": 160,
+    "capabilityTestsFailed": 0
+  },
+  "profiles": [
+    {
+      "schema": "dreamco.bot_e2e_certification.v2",
+      "slug": "agentgpt-browser",
+      "displayName": "AgentGPT Browser Agent",
+      "division": "DreamAgents",
+      "category": "autonomous-agent",
+      "instanceId": "fleet-runtime-agentgpt-browser",
+      "status": "sandbox_certified",
+      "checks": {
+        "runtimeReady": true,
+        "profileAndBuddyRouteVerified": true,
+        "declaredCapabilitiesVerified": true,
+        "allDeclaredCapabilityContractsTested": true,
+        "runtimeToolBindingVerified": true,
+        "platformCapabilityRegistryVerified": true,
+        "calculatorBindingVerified": true,
+        "distributionBindingVerified": true,
+        "leadSystemBindingVerified": true,
+        "samplePromptVerified": true,
+        "sandboxExecutionVerified": true,
+        "sandboxEvidenceVerified": true,
+        "liveApprovalGateVerified": true,
+        "noLiveSideEffectVerified": true
+      },
+      "declaredCapabilityCount": 8,
+      "capabilityTests": [
+        {
+          "testId": "capability-test-fde916192af837b3a2c9",
+          "capability": "Browser-based execution",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-06378176775c59e36a16",
+          "capability": "No-code setup",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-8e3ec46db24a469ab640",
+          "capability": "Goal-driven automation",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-c9edfaa3b976f509fc78",
+          "capability": "Web search integration",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-5b2c8a68f4dcd7744c81",
+          "capability": "Task breakdown",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-f0b34d302665e1d04bba",
+          "capability": "Progress visualization",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-bb56689f882fb0fd2cf7",
+          "capability": "Result compilation",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-813830e10d8a49e4c198",
+          "capability": "Simple interface",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        }
+      ],
+      "toolBindingCount": 10,
+      "apiCandidateCount": 0,
+      "liveEndToEndStatus": "not_executed_requires_authenticated_deployment",
+      "failures": []
+    },
+    {
+      "schema": "dreamco.bot_e2e_certification.v2",
+      "slug": "autogen-agent",
+      "displayName": "AutoGen Conversational Agent",
+      "division": "DreamAgents",
+      "category": "autonomous-agent",
+      "instanceId": "fleet-runtime-autogen-agent",
+      "status": "sandbox_certified",
+      "checks": {
+        "runtimeReady": true,
+        "profileAndBuddyRouteVerified": true,
+        "declaredCapabilitiesVerified": true,
+        "allDeclaredCapabilityContractsTested": true,
+        "runtimeToolBindingVerified": true,
+        "platformCapabilityRegistryVerified": true,
+        "calculatorBindingVerified": true,
+        "distributionBindingVerified": true,
+        "leadSystemBindingVerified": true,
+        "samplePromptVerified": true,
+        "sandboxExecutionVerified": true,
+        "sandboxEvidenceVerified": true,
+        "liveApprovalGateVerified": true,
+        "noLiveSideEffectVerified": true
+      },
+      "declaredCapabilityCount": 8,
+      "capabilityTests": [
+        {
+          "testId": "capability-test-e9951b241ad94e9e1389",
+          "capability": "Multi-agent conversation",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-5a5f42bbe0f2304ec5f9",
+          "capability": "Human-in-the-loop",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-2683307c60df042c4359",
+          "capability": "Code execution sandbox",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-f20e97b9a0f18df417dc",
+          "capability": "Structured dialogue",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-1c695a1255926d95a238",
+          "capability": "Function calling",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-d7bfb2d8cb063d727fc5",
+          "capability": "Group chat management",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-dbd3ef7fb85e850347c8",
+          "capability": "Agent handoffs",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-cd56c96286e2c08d38ab",
+          "capability": "Consensus building",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        }
+      ],
+      "toolBindingCount": 9,
+      "apiCandidateCount": 0,
+      "liveEndToEndStatus": "not_executed_requires_authenticated_deployment",
+      "failures": []
+    },
+    {
+      "schema": "dreamco.bot_e2e_certification.v2",
+      "slug": "autogpt-agent",
+      "displayName": "AutoGPT Autonomous Agent",
+      "division": "DreamAgents",
+      "category": "autonomous-agent",
+      "instanceId": "fleet-runtime-autogpt-agent",
+      "status": "sandbox_certified",
+      "checks": {
+        "runtimeReady": true,
+        "profileAndBuddyRouteVerified": true,
+        "declaredCapabilitiesVerified": true,
+        "allDeclaredCapabilityContractsTested": true,
+        "runtimeToolBindingVerified": true,
+        "platformCapabilityRegistryVerified": true,
+        "calculatorBindingVerified": true,
+        "distributionBindingVerified": true,
+        "leadSystemBindingVerified": true,
+        "samplePromptVerified": true,
+        "sandboxExecutionVerified": true,
+        "sandboxEvidenceVerified": true,
+        "liveApprovalGateVerified": true,
+        "noLiveSideEffectVerified": true
+      },
+      "declaredCapabilityCount": 8,
+      "capabilityTests": [
+        {
+          "testId": "capability-test-11174b223509ffbfe135",
+          "capability": "Goal decomposition",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-f9a6da7cf2ea95c6d992",
+          "capability": "Task creation loop",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-551f1f7b59af8e738920",
+          "capability": "Self-correction",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-9c0977376e88a61df794",
+          "capability": "Web browsing",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-87892aff0e8d7385bedb",
+          "capability": "Code execution",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-9a3804cbb522f321a5db",
+          "capability": "File management",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-9cb137b144ec79e01a4c",
+          "capability": "Memory persistence",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-df359661d7de5b403ea2",
+          "capability": "Plugin system",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        }
+      ],
+      "toolBindingCount": 10,
+      "apiCandidateCount": 0,
+      "liveEndToEndStatus": "not_executed_requires_authenticated_deployment",
+      "failures": []
+    },
+    {
+      "schema": "dreamco.bot_e2e_certification.v2",
+      "slug": "babyagi-agent",
+      "displayName": "BabyAGI Task Agent",
+      "division": "DreamAgents",
+      "category": "autonomous-agent",
+      "instanceId": "fleet-runtime-babyagi-agent",
+      "status": "sandbox_certified",
+      "checks": {
+        "runtimeReady": true,
+        "profileAndBuddyRouteVerified": true,
+        "declaredCapabilitiesVerified": true,
+        "allDeclaredCapabilityContractsTested": true,
+        "runtimeToolBindingVerified": true,
+        "platformCapabilityRegistryVerified": true,
+        "calculatorBindingVerified": true,
+        "distributionBindingVerified": true,
+        "leadSystemBindingVerified": true,
+        "samplePromptVerified": true,
+        "sandboxExecutionVerified": true,
+        "sandboxEvidenceVerified": true,
+        "liveApprovalGateVerified": true,
+        "noLiveSideEffectVerified": true
+      },
+      "declaredCapabilityCount": 8,
+      "capabilityTests": [
+        {
+          "testId": "capability-test-0d55377e2e66c4551ecd",
+          "capability": "Task creation",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-7f52e9357b38557b07a6",
+          "capability": "Task prioritization",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-2ce925b7450f5a1603c9",
+          "capability": "Task execution loop",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-10117f7f77f9998cf39d",
+          "capability": "Context retention",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-bc00a2f601480fe98dd1",
+          "capability": "Objective tracking",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-7a67c3dfba976d361dc7",
+          "capability": "Simple automation",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-2db4bf0870e633988d07",
+          "capability": "Learning mode",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-3719ab96749b320d9c37",
+          "capability": "Lightweight design",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        }
+      ],
+      "toolBindingCount": 9,
+      "apiCandidateCount": 0,
+      "liveEndToEndStatus": "not_executed_requires_authenticated_deployment",
+      "failures": []
+    },
+    {
+      "schema": "dreamco.bot_e2e_certification.v2",
+      "slug": "beam-agent",
+      "displayName": "Beam Self-Learning Agent",
+      "division": "DreamAgents",
+      "category": "autonomous-agent",
+      "instanceId": "fleet-runtime-beam-agent",
+      "status": "sandbox_certified",
+      "checks": {
+        "runtimeReady": true,
+        "profileAndBuddyRouteVerified": true,
+        "declaredCapabilitiesVerified": true,
+        "allDeclaredCapabilityContractsTested": true,
+        "runtimeToolBindingVerified": true,
+        "platformCapabilityRegistryVerified": true,
+        "calculatorBindingVerified": true,
+        "distributionBindingVerified": true,
+        "leadSystemBindingVerified": true,
+        "samplePromptVerified": true,
+        "sandboxExecutionVerified": true,
+        "sandboxEvidenceVerified": true,
+        "liveApprovalGateVerified": true,
+        "noLiveSideEffectVerified": true
+      },
+      "declaredCapabilityCount": 8,
+      "capabilityTests": [
+        {
+          "testId": "capability-test-3e99b609aff570fda8cb",
+          "capability": "SOP automation",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-de0103c5917b77cc9185",
+          "capability": "Self-learning",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-e4fe375d3720ec9ee063",
+          "capability": "Process mining",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-1bb8c8a67a5901aaad3a",
+          "capability": "Compliance tracking",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-6a66887b2dc5da27007d",
+          "capability": "Human escalation",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-2b5113f2637a8b53f909",
+          "capability": "Performance improvement",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-5751fa5faee084e14ba1",
+          "capability": "Error recovery",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-f3f76565ece80a312473",
+          "capability": "Audit trail",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        }
+      ],
+      "toolBindingCount": 9,
+      "apiCandidateCount": 0,
+      "liveEndToEndStatus": "not_executed_requires_authenticated_deployment",
+      "failures": []
+    },
+    {
+      "schema": "dreamco.bot_e2e_certification.v2",
+      "slug": "coze-agent",
+      "displayName": "Coze Multi-Platform Agent",
+      "division": "DreamAgents",
+      "category": "autonomous-agent",
+      "instanceId": "fleet-runtime-coze-agent",
+      "status": "sandbox_certified",
+      "checks": {
+        "runtimeReady": true,
+        "profileAndBuddyRouteVerified": true,
+        "declaredCapabilitiesVerified": true,
+        "allDeclaredCapabilityContractsTested": true,
+        "runtimeToolBindingVerified": true,
+        "platformCapabilityRegistryVerified": true,
+        "calculatorBindingVerified": true,
+        "distributionBindingVerified": true,
+        "leadSystemBindingVerified": true,
+        "samplePromptVerified": true,
+        "sandboxExecutionVerified": true,
+        "sandboxEvidenceVerified": true,
+        "liveApprovalGateVerified": true,
+        "noLiveSideEffectVerified": true
+      },
+      "declaredCapabilityCount": 8,
+      "capabilityTests": [
+        {
+          "testId": "capability-test-466838fe1e5d074f0d6c",
+          "capability": "Multi-platform deployment",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-d0999e2600d659212e22",
+          "capability": "Visual agent builder",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-8bcc66747c0d86d97189",
+          "capability": "Plugin marketplace",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-66a324ad288028df2730",
+          "capability": "Knowledge base",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-b2b29ac37a233aac4f2a",
+          "capability": "Conversation flow design",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-0e788cf266049fdc536f",
+          "capability": "API integration",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-5d18c8b3714115648bb6",
+          "capability": "Scheduled tasks",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-c5d94bb56f5ec65843ea",
+          "capability": "User analytics",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        }
+      ],
+      "toolBindingCount": 10,
+      "apiCandidateCount": 0,
+      "liveEndToEndStatus": "not_executed_requires_authenticated_deployment",
+      "failures": []
+    },
+    {
+      "schema": "dreamco.bot_e2e_certification.v2",
+      "slug": "crewai-agent",
+      "displayName": "CrewAI Team Orchestrator",
+      "division": "DreamAgents",
+      "category": "autonomous-agent",
+      "instanceId": "fleet-runtime-crewai-agent",
+      "status": "sandbox_certified",
+      "checks": {
+        "runtimeReady": true,
+        "profileAndBuddyRouteVerified": true,
+        "declaredCapabilitiesVerified": true,
+        "allDeclaredCapabilityContractsTested": true,
+        "runtimeToolBindingVerified": true,
+        "platformCapabilityRegistryVerified": true,
+        "calculatorBindingVerified": true,
+        "distributionBindingVerified": true,
+        "leadSystemBindingVerified": true,
+        "samplePromptVerified": true,
+        "sandboxExecutionVerified": true,
+        "sandboxEvidenceVerified": true,
+        "liveApprovalGateVerified": true,
+        "noLiveSideEffectVerified": true
+      },
+      "declaredCapabilityCount": 8,
+      "capabilityTests": [
+        {
+          "testId": "capability-test-88ef7bf4112c1a84430b",
+          "capability": "Agent role definition",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-a4e1d03f361fc9325ded",
+          "capability": "Goal assignment",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-501ce0f6d96b8f0a7e39",
+          "capability": "Backstory creation",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-7761c9a3600afbba650d",
+          "capability": "Team collaboration",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-401af66ab64db513881f",
+          "capability": "Task delegation",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-3df879d0811b7bff735e",
+          "capability": "Sequential processing",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-e1c09c60051cd8b18373",
+          "capability": "Hierarchical teams",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-de183141e816c3674e78",
+          "capability": "Tool sharing",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        }
+      ],
+      "toolBindingCount": 8,
+      "apiCandidateCount": 0,
+      "liveEndToEndStatus": "not_executed_requires_authenticated_deployment",
+      "failures": []
+    },
+    {
+      "schema": "dreamco.bot_e2e_certification.v2",
+      "slug": "deep-research-agent",
+      "displayName": "Deep Research Agent",
+      "division": "DreamAgents",
+      "category": "autonomous-agent",
+      "instanceId": "fleet-runtime-deep-research-agent",
+      "status": "sandbox_certified",
+      "checks": {
+        "runtimeReady": true,
+        "profileAndBuddyRouteVerified": true,
+        "declaredCapabilitiesVerified": true,
+        "allDeclaredCapabilityContractsTested": true,
+        "runtimeToolBindingVerified": true,
+        "platformCapabilityRegistryVerified": true,
+        "calculatorBindingVerified": true,
+        "distributionBindingVerified": true,
+        "leadSystemBindingVerified": true,
+        "samplePromptVerified": true,
+        "sandboxExecutionVerified": true,
+        "sandboxEvidenceVerified": true,
+        "liveApprovalGateVerified": true,
+        "noLiveSideEffectVerified": true
+      },
+      "declaredCapabilityCount": 8,
+      "capabilityTests": [
+        {
+          "testId": "capability-test-5fb7c22c295f5e42bf21",
+          "capability": "Multi-source synthesis",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-aabb59e8216d91515953",
+          "capability": "Citation tracking",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-43d0566e7b7b12f92e23",
+          "capability": "Report generation",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-3617131699e739f2bc94",
+          "capability": "Source verification",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-9f358b831a7b20ad1632",
+          "capability": "Trend identification",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-3fb60aca6391e5ec5a5b",
+          "capability": "Competitive analysis",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-2e78002097379618f48f",
+          "capability": "Academic research",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-c3adcafadb231c3d6232",
+          "capability": "Market research",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        }
+      ],
+      "toolBindingCount": 8,
+      "apiCandidateCount": 0,
+      "liveEndToEndStatus": "not_executed_requires_authenticated_deployment",
+      "failures": []
+    },
+    {
+      "schema": "dreamco.bot_e2e_certification.v2",
+      "slug": "devin-agent",
+      "displayName": "Devin Software Engineer Agent",
+      "division": "DreamAgents",
+      "category": "autonomous-agent",
+      "instanceId": "fleet-runtime-devin-agent",
+      "status": "sandbox_certified",
+      "checks": {
+        "runtimeReady": true,
+        "profileAndBuddyRouteVerified": true,
+        "declaredCapabilitiesVerified": true,
+        "allDeclaredCapabilityContractsTested": true,
+        "runtimeToolBindingVerified": true,
+        "platformCapabilityRegistryVerified": true,
+        "calculatorBindingVerified": true,
+        "distributionBindingVerified": true,
+        "leadSystemBindingVerified": true,
+        "samplePromptVerified": true,
+        "sandboxExecutionVerified": true,
+        "sandboxEvidenceVerified": true,
+        "liveApprovalGateVerified": true,
+        "noLiveSideEffectVerified": true
+      },
+      "declaredCapabilityCount": 8,
+      "capabilityTests": [
+        {
+          "testId": "capability-test-74971cfe6d42d9edb20e",
+          "capability": "Autonomous coding",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-f6e31afdc41b0d1cbe4a",
+          "capability": "Test writing",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-7f465192db90f57708ed",
+          "capability": "Bug fixing",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-a663f8f3a1a206313409",
+          "capability": "PR creation",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-2ad16c2dbc64779db677",
+          "capability": "Full IDE access",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-12b008c25c4a0b8f87f2",
+          "capability": "Terminal commands",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-cbbb8cde776be1bc0518",
+          "capability": "Browser debugging",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-97239e6ce0061be752c0",
+          "capability": "API integration",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        }
+      ],
+      "toolBindingCount": 10,
+      "apiCandidateCount": 0,
+      "liveEndToEndStatus": "not_executed_requires_authenticated_deployment",
+      "failures": []
+    },
+    {
+      "schema": "dreamco.bot_e2e_certification.v2",
+      "slug": "gpt-engineer-agent",
+      "displayName": "GPT-Engineer Codebase Generator",
+      "division": "DreamAgents",
+      "category": "autonomous-agent",
+      "instanceId": "fleet-runtime-gpt-engineer-agent",
+      "status": "sandbox_certified",
+      "checks": {
+        "runtimeReady": true,
+        "profileAndBuddyRouteVerified": true,
+        "declaredCapabilitiesVerified": true,
+        "allDeclaredCapabilityContractsTested": true,
+        "runtimeToolBindingVerified": true,
+        "platformCapabilityRegistryVerified": true,
+        "calculatorBindingVerified": true,
+        "distributionBindingVerified": true,
+        "leadSystemBindingVerified": true,
+        "samplePromptVerified": true,
+        "sandboxExecutionVerified": true,
+        "sandboxEvidenceVerified": true,
+        "liveApprovalGateVerified": true,
+        "noLiveSideEffectVerified": true
+      },
+      "declaredCapabilityCount": 8,
+      "capabilityTests": [
+        {
+          "testId": "capability-test-02e08f1d8a29592c16ec",
+          "capability": "Full codebase generation",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-74c4253adc57a2e4e4cc",
+          "capability": "Multi-file creation",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-936a8dd1e78d85b08e69",
+          "capability": "Dependency management",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-86b0bdfd7e753e710346",
+          "capability": "Project scaffolding",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-029526e252a454210dee",
+          "capability": "Interactive clarification",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-062a38925c3918825b8e",
+          "capability": "Code review",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-bf7c8823da25b770d8df",
+          "capability": "Iterative refinement",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-fab575bff6652a7d92bd",
+          "capability": "Language detection",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        }
+      ],
+      "toolBindingCount": 9,
+      "apiCandidateCount": 0,
+      "liveEndToEndStatus": "not_executed_requires_authenticated_deployment",
+      "failures": []
+    },
+    {
+      "schema": "dreamco.bot_e2e_certification.v2",
+      "slug": "langchain-agent",
+      "displayName": "LangChain Agent Builder",
+      "division": "DreamAgents",
+      "category": "autonomous-agent",
+      "instanceId": "fleet-runtime-langchain-agent",
+      "status": "sandbox_certified",
+      "checks": {
+        "runtimeReady": true,
+        "profileAndBuddyRouteVerified": true,
+        "declaredCapabilitiesVerified": true,
+        "allDeclaredCapabilityContractsTested": true,
+        "runtimeToolBindingVerified": true,
+        "platformCapabilityRegistryVerified": true,
+        "calculatorBindingVerified": true,
+        "distributionBindingVerified": true,
+        "leadSystemBindingVerified": true,
+        "samplePromptVerified": true,
+        "sandboxExecutionVerified": true,
+        "sandboxEvidenceVerified": true,
+        "liveApprovalGateVerified": true,
+        "noLiveSideEffectVerified": true
+      },
+      "declaredCapabilityCount": 8,
+      "capabilityTests": [
+        {
+          "testId": "capability-test-102fc6e3da9a70e21598",
+          "capability": "Chain building",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-3aa50c02de4877e47feb",
+          "capability": "Agent creation",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-66bf603798b980afa051",
+          "capability": "RAG pipelines",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-c52ffc9c9fda40d6199b",
+          "capability": "Memory management",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-43564a5952019109d260",
+          "capability": "Tool integration",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-f3e9eb524c366b3873a6",
+          "capability": "Prompt engineering",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-6036306c80d95436773e",
+          "capability": "Output parsing",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-5600584f4259ee3e0b83",
+          "capability": "Streaming responses",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        }
+      ],
+      "toolBindingCount": 9,
+      "apiCandidateCount": 0,
+      "liveEndToEndStatus": "not_executed_requires_authenticated_deployment",
+      "failures": []
+    },
+    {
+      "schema": "dreamco.bot_e2e_certification.v2",
+      "slug": "manus-agent",
+      "displayName": "Manus Task Completion Agent",
+      "division": "DreamAgents",
+      "category": "autonomous-agent",
+      "instanceId": "fleet-runtime-manus-agent",
+      "status": "sandbox_certified",
+      "checks": {
+        "runtimeReady": true,
+        "profileAndBuddyRouteVerified": true,
+        "declaredCapabilitiesVerified": true,
+        "allDeclaredCapabilityContractsTested": true,
+        "runtimeToolBindingVerified": true,
+        "platformCapabilityRegistryVerified": true,
+        "calculatorBindingVerified": true,
+        "distributionBindingVerified": true,
+        "leadSystemBindingVerified": true,
+        "samplePromptVerified": true,
+        "sandboxExecutionVerified": true,
+        "sandboxEvidenceVerified": true,
+        "liveApprovalGateVerified": true,
+        "noLiveSideEffectVerified": true
+      },
+      "declaredCapabilityCount": 8,
+      "capabilityTests": [
+        {
+          "testId": "capability-test-72ebefafe00cd21e6ce4",
+          "capability": "End-to-end task completion",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-8b3d59f3ce7e607b7326",
+          "capability": "Web browsing",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-08c681d581b36ce947b6",
+          "capability": "Form filling",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-3ad987b2013c6eeda926",
+          "capability": "Price comparison",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-e4f884a5f12af43fa6f5",
+          "capability": "Trip planning",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-e19aa4a887f13a198400",
+          "capability": "Website building",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-c7c5bd6f52d806a08dc6",
+          "capability": "Document creation",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-3c62103b7c96b2a9a1dc",
+          "capability": "Multi-step reasoning",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        }
+      ],
+      "toolBindingCount": 9,
+      "apiCandidateCount": 0,
+      "liveEndToEndStatus": "not_executed_requires_authenticated_deployment",
+      "failures": []
+    },
+    {
+      "schema": "dreamco.bot_e2e_certification.v2",
+      "slug": "mariner-agent",
+      "displayName": "Project Mariner Shopping Agent",
+      "division": "DreamAgents",
+      "category": "autonomous-agent",
+      "instanceId": "fleet-runtime-mariner-agent",
+      "status": "sandbox_certified",
+      "checks": {
+        "runtimeReady": true,
+        "profileAndBuddyRouteVerified": true,
+        "declaredCapabilitiesVerified": true,
+        "allDeclaredCapabilityContractsTested": true,
+        "runtimeToolBindingVerified": true,
+        "platformCapabilityRegistryVerified": true,
+        "calculatorBindingVerified": true,
+        "distributionBindingVerified": true,
+        "leadSystemBindingVerified": true,
+        "samplePromptVerified": true,
+        "sandboxExecutionVerified": true,
+        "sandboxEvidenceVerified": true,
+        "liveApprovalGateVerified": true,
+        "noLiveSideEffectVerified": true
+      },
+      "declaredCapabilityCount": 8,
+      "capabilityTests": [
+        {
+          "testId": "capability-test-189f83ab907cb3a76ead",
+          "capability": "Deal finding",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-4bdf8f81ac10ed7c5d30",
+          "capability": "Price comparison",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-806e8f07d15aeebf3ee7",
+          "capability": "Coupon discovery",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-00ea1fe9959937995e84",
+          "capability": "Purchase automation",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-664e7d387ad1eb2cdf23",
+          "capability": "Cart optimization",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-dd89394e6892de0ee694",
+          "capability": "Price tracking",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-26ed67021a1a1c8f4a19",
+          "capability": "Wishlist management",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-117e9682cd43a25e6649",
+          "capability": "Review analysis",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        }
+      ],
+      "toolBindingCount": 9,
+      "apiCandidateCount": 0,
+      "liveEndToEndStatus": "not_executed_requires_authenticated_deployment",
+      "failures": []
+    },
+    {
+      "schema": "dreamco.bot_e2e_certification.v2",
+      "slug": "metagpt-agent",
+      "displayName": "MetaGPT Software Team",
+      "division": "DreamAgents",
+      "category": "autonomous-agent",
+      "instanceId": "fleet-runtime-metagpt-agent",
+      "status": "sandbox_certified",
+      "checks": {
+        "runtimeReady": true,
+        "profileAndBuddyRouteVerified": true,
+        "declaredCapabilitiesVerified": true,
+        "allDeclaredCapabilityContractsTested": true,
+        "runtimeToolBindingVerified": true,
+        "platformCapabilityRegistryVerified": true,
+        "calculatorBindingVerified": true,
+        "distributionBindingVerified": true,
+        "leadSystemBindingVerified": true,
+        "samplePromptVerified": true,
+        "sandboxExecutionVerified": true,
+        "sandboxEvidenceVerified": true,
+        "liveApprovalGateVerified": true,
+        "noLiveSideEffectVerified": true
+      },
+      "declaredCapabilityCount": 8,
+      "capabilityTests": [
+        {
+          "testId": "capability-test-9a39352984dc7cf150e7",
+          "capability": "Product management",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-126f037d56fa9e08cf32",
+          "capability": "Architecture design",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-6692cb77b754b6728d98",
+          "capability": "Code generation",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-eb0126a85ba90cc0c097",
+          "capability": "Quality assurance",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-55c7d2927dec52dbf59b",
+          "capability": "Documentation generation",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-6e80a907ae26eb6272c8",
+          "capability": "Role-based collaboration",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-5f1f510cd7d5e1deb304",
+          "capability": "Design review",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-142c4ac72d6b0a5c4a8f",
+          "capability": "Test generation",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        }
+      ],
+      "toolBindingCount": 9,
+      "apiCandidateCount": 0,
+      "liveEndToEndStatus": "not_executed_requires_authenticated_deployment",
+      "failures": []
+    },
+    {
+      "schema": "dreamco.bot_e2e_certification.v2",
+      "slug": "openagents-web3",
+      "displayName": "OpenAgents Web3 Agent",
+      "division": "DreamAgents",
+      "category": "autonomous-agent",
+      "instanceId": "fleet-runtime-openagents-web3",
+      "status": "sandbox_certified",
+      "checks": {
+        "runtimeReady": true,
+        "profileAndBuddyRouteVerified": true,
+        "declaredCapabilitiesVerified": true,
+        "allDeclaredCapabilityContractsTested": true,
+        "runtimeToolBindingVerified": true,
+        "platformCapabilityRegistryVerified": true,
+        "calculatorBindingVerified": true,
+        "distributionBindingVerified": true,
+        "leadSystemBindingVerified": true,
+        "samplePromptVerified": true,
+        "sandboxExecutionVerified": true,
+        "sandboxEvidenceVerified": true,
+        "liveApprovalGateVerified": true,
+        "noLiveSideEffectVerified": true
+      },
+      "declaredCapabilityCount": 8,
+      "capabilityTests": [
+        {
+          "testId": "capability-test-178071cd1cd85ee58003",
+          "capability": "Crypto wallet management",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-09562ecb220e7fc984d0",
+          "capability": "DeFi position management",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-38d5864fe8e719e09b5c",
+          "capability": "Smart contract interaction",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-c592da6156d455c39616",
+          "capability": "Transaction execution",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-c03f1aa3cfb9b84cb1c3",
+          "capability": "Portfolio tracking",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-3cf87c9679d44afacc5a",
+          "capability": "Yield farming",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-b1065676ca7f83cbdee8",
+          "capability": "Token swaps",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-f048a1c2283cdc8be2d7",
+          "capability": "Gas optimization",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        }
+      ],
+      "toolBindingCount": 8,
+      "apiCandidateCount": 0,
+      "liveEndToEndStatus": "not_executed_requires_authenticated_deployment",
+      "failures": []
+    },
+    {
+      "schema": "dreamco.bot_e2e_certification.v2",
+      "slug": "operator-agent",
+      "displayName": "Web Operator Agent",
+      "division": "DreamAgents",
+      "category": "autonomous-agent",
+      "instanceId": "fleet-runtime-operator-agent",
+      "status": "sandbox_certified",
+      "checks": {
+        "runtimeReady": true,
+        "profileAndBuddyRouteVerified": true,
+        "declaredCapabilitiesVerified": true,
+        "allDeclaredCapabilityContractsTested": true,
+        "runtimeToolBindingVerified": true,
+        "platformCapabilityRegistryVerified": true,
+        "calculatorBindingVerified": true,
+        "distributionBindingVerified": true,
+        "leadSystemBindingVerified": true,
+        "samplePromptVerified": true,
+        "sandboxExecutionVerified": true,
+        "sandboxEvidenceVerified": true,
+        "liveApprovalGateVerified": true,
+        "noLiveSideEffectVerified": true
+      },
+      "declaredCapabilityCount": 8,
+      "capabilityTests": [
+        {
+          "testId": "capability-test-bab812f1f19e047e84d2",
+          "capability": "Autonomous browsing",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-356d6cb0ac9e76effd59",
+          "capability": "Form filling",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-c6732ba5babd47070e9a",
+          "capability": "Transaction execution",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-d28e9ce3bf34d4345128",
+          "capability": "Multi-site navigation",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-af1f231137fa26005191",
+          "capability": "Shopping automation",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-64807fae7c0222a4adb0",
+          "capability": "Booking systems",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-f178cbf4a9c63c69d257",
+          "capability": "Data extraction",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-805d9f740c77fea4d74c",
+          "capability": "Account management",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        }
+      ],
+      "toolBindingCount": 10,
+      "apiCandidateCount": 0,
+      "liveEndToEndStatus": "not_executed_requires_authenticated_deployment",
+      "failures": []
+    },
+    {
+      "schema": "dreamco.bot_e2e_certification.v2",
+      "slug": "perplexity-agent",
+      "displayName": "Perplexity Search Agent",
+      "division": "DreamAgents",
+      "category": "autonomous-agent",
+      "instanceId": "fleet-runtime-perplexity-agent",
+      "status": "sandbox_certified",
+      "checks": {
+        "runtimeReady": true,
+        "profileAndBuddyRouteVerified": true,
+        "declaredCapabilitiesVerified": true,
+        "allDeclaredCapabilityContractsTested": true,
+        "runtimeToolBindingVerified": true,
+        "platformCapabilityRegistryVerified": true,
+        "calculatorBindingVerified": true,
+        "distributionBindingVerified": true,
+        "leadSystemBindingVerified": true,
+        "samplePromptVerified": true,
+        "sandboxExecutionVerified": true,
+        "sandboxEvidenceVerified": true,
+        "liveApprovalGateVerified": true,
+        "noLiveSideEffectVerified": true
+      },
+      "declaredCapabilityCount": 8,
+      "capabilityTests": [
+        {
+          "testId": "capability-test-d5930b7862c274b2d69d",
+          "capability": "Active web search",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-ade822c665ab880c0908",
+          "capability": "Source verification",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-d051c7f98c3ca8e301cb",
+          "capability": "Citation generation",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-252279af7ec59aac308a",
+          "capability": "Multi-hop reasoning",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-48cfcf6ec24ecbe1ee94",
+          "capability": "Real-time data",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-8c15e08a64dc6474ead9",
+          "capability": "Answer synthesis",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-449f59b0e6f833951b99",
+          "capability": "Follow-up questions",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-0e8668af1577191854e1",
+          "capability": "Topic exploration",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        }
+      ],
+      "toolBindingCount": 8,
+      "apiCandidateCount": 0,
+      "liveEndToEndStatus": "not_executed_requires_authenticated_deployment",
+      "failures": []
+    },
+    {
+      "schema": "dreamco.bot_e2e_certification.v2",
+      "slug": "relevance-agent",
+      "displayName": "Relevance AI Workflow Agent",
+      "division": "DreamAgents",
+      "category": "autonomous-agent",
+      "instanceId": "fleet-runtime-relevance-agent",
+      "status": "sandbox_certified",
+      "checks": {
+        "runtimeReady": true,
+        "profileAndBuddyRouteVerified": true,
+        "declaredCapabilitiesVerified": true,
+        "allDeclaredCapabilityContractsTested": true,
+        "runtimeToolBindingVerified": true,
+        "platformCapabilityRegistryVerified": true,
+        "calculatorBindingVerified": true,
+        "distributionBindingVerified": true,
+        "leadSystemBindingVerified": true,
+        "samplePromptVerified": true,
+        "sandboxExecutionVerified": true,
+        "sandboxEvidenceVerified": true,
+        "liveApprovalGateVerified": true,
+        "noLiveSideEffectVerified": true
+      },
+      "declaredCapabilityCount": 8,
+      "capabilityTests": [
+        {
+          "testId": "capability-test-c3521fb9f44869ec712f",
+          "capability": "No-code builder",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-d102247ca51c3de7bb58",
+          "capability": "Drag-and-drop design",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-0456acfc97bff8123e7f",
+          "capability": "Custom tools",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-67e03db913a0baaa2384",
+          "capability": "API connectors",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-85a3afa3df24bd9efad2",
+          "capability": "Workflow automation",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-834e47c3171735b467bc",
+          "capability": "Data processing",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-5eebdaa7e78cf75a3a7c",
+          "capability": "Decision logic",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-5b78e51e77d53cee523f",
+          "capability": "Team collaboration",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        }
+      ],
+      "toolBindingCount": 10,
+      "apiCandidateCount": 0,
+      "liveEndToEndStatus": "not_executed_requires_authenticated_deployment",
+      "failures": []
+    },
+    {
+      "schema": "dreamco.bot_e2e_certification.v2",
+      "slug": "superagi-agent",
+      "displayName": "SuperAGI Marketplace Agent",
+      "division": "DreamAgents",
+      "category": "autonomous-agent",
+      "instanceId": "fleet-runtime-superagi-agent",
+      "status": "sandbox_certified",
+      "checks": {
+        "runtimeReady": true,
+        "profileAndBuddyRouteVerified": true,
+        "declaredCapabilitiesVerified": true,
+        "allDeclaredCapabilityContractsTested": true,
+        "runtimeToolBindingVerified": true,
+        "platformCapabilityRegistryVerified": true,
+        "calculatorBindingVerified": true,
+        "distributionBindingVerified": true,
+        "leadSystemBindingVerified": true,
+        "samplePromptVerified": true,
+        "sandboxExecutionVerified": true,
+        "sandboxEvidenceVerified": true,
+        "liveApprovalGateVerified": true,
+        "noLiveSideEffectVerified": true
+      },
+      "declaredCapabilityCount": 8,
+      "capabilityTests": [
+        {
+          "testId": "capability-test-02f56d9841e586409bc9",
+          "capability": "Agent marketplace",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-7ce5dbb7e6259e381cfb",
+          "capability": "Skill installation",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-fa708a25d7dccfb788d6",
+          "capability": "Tool management",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-b8d3163f7c53f2b7c57d",
+          "capability": "GUI dashboard",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-c93573b4cd8d5503f737",
+          "capability": "Memory management",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-21fc2c889acfe90339cd",
+          "capability": "Concurrent agents",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-83b46a9216e638224a0a",
+          "capability": "Resource management",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-ae374fed59b68625c6f5",
+          "capability": "Performance tracking",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        }
+      ],
+      "toolBindingCount": 8,
+      "apiCandidateCount": 0,
+      "liveEndToEndStatus": "not_executed_requires_authenticated_deployment",
+      "failures": []
+    },
+    {
+      "schema": "dreamco.bot_e2e_certification.v2",
+      "slug": "swarm-agent",
+      "displayName": "Swarm Orchestrator Agent",
+      "division": "DreamAgents",
+      "category": "autonomous-agent",
+      "instanceId": "fleet-runtime-swarm-agent",
+      "status": "sandbox_certified",
+      "checks": {
+        "runtimeReady": true,
+        "profileAndBuddyRouteVerified": true,
+        "declaredCapabilitiesVerified": true,
+        "allDeclaredCapabilityContractsTested": true,
+        "runtimeToolBindingVerified": true,
+        "platformCapabilityRegistryVerified": true,
+        "calculatorBindingVerified": true,
+        "distributionBindingVerified": true,
+        "leadSystemBindingVerified": true,
+        "samplePromptVerified": true,
+        "sandboxExecutionVerified": true,
+        "sandboxEvidenceVerified": true,
+        "liveApprovalGateVerified": true,
+        "noLiveSideEffectVerified": true
+      },
+      "declaredCapabilityCount": 8,
+      "capabilityTests": [
+        {
+          "testId": "capability-test-082e093437091fd9f1db",
+          "capability": "Agent handoffs",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-36b3c46985429f031f36",
+          "capability": "Routing logic",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-1f683424dea2c0ce9df9",
+          "capability": "Stateless design",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-f170e1830df44dfbfa9d",
+          "capability": "Tool calling",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-24ad8cc08d73f5f916e9",
+          "capability": "Context transfer",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-091f8bd7735f7845fb80",
+          "capability": "Workflow chaining",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-4a9ee2b7ed73a15f200c",
+          "capability": "Error handling",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-831bc0d5803ec58fa619",
+          "capability": "Lightweight orchestration",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        }
+      ],
+      "toolBindingCount": 8,
+      "apiCandidateCount": 0,
+      "liveEndToEndStatus": "not_executed_requires_authenticated_deployment",
+      "failures": []
+    }
+  ]
+}
