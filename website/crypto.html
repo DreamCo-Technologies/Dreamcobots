@@ -1,39 +1,87 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Crypto Command Center — DreamCo Empire OS</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Buddy Crypto Safety Lab — DreamCo</title>
+  <meta name="description" content="Build non-custodial wallet, mining-cost, and DreamCoin testnet plans without exposing private keys or moving live funds." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="crypto.css" />
 </head>
 <body>
 <div id="nav-placeholder"></div><script src="nav.js"></script>
-<div class="container" style="padding:48px 0">
-  <div style="margin-bottom:28px"><h1 style="font-size:1.75rem;margin-bottom:8px">Crypto Command Center</h1><p>DreamCrypto — 24 bots for wallets, DeFi, NFTs, arbitrage, and on-chain analytics</p></div>
-  <div class="grid-4" style="margin-bottom:32px">
-    <div class="card" style="text-align:center"><div style="font-size:1.75rem;font-weight:800;color:var(--amber)">$2.4M</div><div style="font-size:.8rem;color:var(--text3)">Portfolio Tracked</div></div>
-    <div class="card" style="text-align:center"><div style="font-size:1.75rem;font-weight:800;color:var(--green)">24</div><div style="font-size:.8rem;color:var(--text3)">Crypto Bots Active</div></div>
-    <div class="card" style="text-align:center"><div style="font-size:1.75rem;font-weight:800;color:var(--primary)">50+</div><div style="font-size:.8rem;color:var(--text3)">DeFi Protocols</div></div>
-    <div class="card" style="text-align:center"><div style="font-size:1.75rem;font-weight:800;color:var(--cyan)">$610</div><div style="font-size:.8rem;color:var(--text3)">Revenue Today</div></div>
-  </div>
-  <div class="grid-3">
-    <div class="bot-card"><div class="bot-header"><div><div class="bot-name">Crypto Wallet Manager</div><div class="bot-division">DreamCrypto</div></div><span class="badge badge-violet">Enterprise</span></div><div class="bot-desc">Safe multi-wallet management, hardware wallet best practices, seed phrase security, and cross-chain portfolio tracking across BTC, ETH, SOL, and 50+ chains.</div><a href="chat.html?bot=crypto-wallet-manager" class="btn btn-outline btn-sm" style="margin-top:10px;width:100%;text-align:center">Chat →</a></div>
-    <div class="bot-card"><div class="bot-header"><div><div class="bot-name">DeFi Yield Optimizer</div><div class="bot-division">DreamCrypto</div></div><span class="badge badge-violet">Enterprise</span></div><div class="bot-desc">Monitors Uniswap, Aave, Compound, Curve, and Yearn for highest yields. Calculates impermanent loss risk and compares net APY after fees.</div><a href="chat.html?bot=defi-yield-optimizer" class="btn btn-outline btn-sm" style="margin-top:10px;width:100%;text-align:center">Chat →</a></div>
-    <div class="bot-card"><div class="bot-header"><div><div class="bot-name">NFT Trend Analyzer</div><div class="bot-division">DreamCrypto</div></div><span class="badge badge-primary">Pro</span></div><div class="bot-desc">Tracks OpenSea, Blur, and Magic Eden floor prices. Identifies trending collections, whale movements, and mint opportunities in real time.</div><a href="chat.html?bot=nft-trend-analyzer" class="btn btn-outline btn-sm" style="margin-top:10px;width:100%;text-align:center">Chat →</a></div>
-    <div class="bot-card"><div class="bot-header"><div><div class="bot-name">Cross-Chain Arbitrage Bot</div><div class="bot-division">DreamCrypto</div></div><span class="badge badge-amber">Elite</span></div><div class="bot-desc">Identifies price discrepancies across DEXes and chains. Calculates spread after gas, bridge fees, and slippage. Flags executable arb opportunities.</div><a href="chat.html?bot=cross-chain-arbitrage" class="btn btn-outline btn-sm" style="margin-top:10px;width:100%;text-align:center">Chat →</a></div>
-    <div class="bot-card"><div class="bot-header"><div><div class="bot-name">On-Chain Analytics Bot</div><div class="bot-division">DreamCrypto</div></div><span class="badge badge-primary">Pro</span></div><div class="bot-desc">Whale wallet tracking, on-chain flow analysis, smart money detection, and transaction pattern recognition for any address or token.</div><a href="chat.html?bot=onchain-analytics" class="btn btn-outline btn-sm" style="margin-top:10px;width:100%;text-align:center">Chat →</a></div>
-    <div class="bot-card"><div class="bot-header"><div><div class="bot-name">Solidity Auditor</div><div class="bot-division">DreamCrypto</div></div><span class="badge badge-violet">Enterprise</span></div><div class="bot-desc">Audits Solidity smart contracts for reentrancy, overflow, access control, and oracle manipulation vulnerabilities. Generates audit report.</div><a href="chat.html?bot=solidity-auditor" class="btn btn-outline btn-sm" style="margin-top:10px;width:100%;text-align:center">Chat →</a></div>
-  </div>
-  <div style="margin-top:24px;text-align:center">
-    <div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap">
-      <span class="badge badge-amber">₿ BTC Tracked</span>
-      <span class="badge badge-cyan">Ξ ETH Tracked</span>
-      <span class="badge badge-green">◎ SOL Tracked</span>
-      <span class="badge badge-violet">BNB Tracked</span>
-      <span class="badge badge-gray">USDT · USDC · DAI</span>
+<main class="crypto-shell">
+  <header class="crypto-header">
+    <div>
+      <span class="crypto-kicker">Non-custodial by design</span>
+      <h1>Crypto Safety Lab</h1>
+      <p>Plan wallet connections, model mining costs, and design DreamCoin on a test network. Buddy never asks for a seed phrase or private key.</p>
     </div>
+    <a class="btn btn-outline btn-sm" href="buddy.html?prompt=Help%20me%20build%20a%20safe%20crypto%20plan.%20Do%20not%20accept%20private%20keys%20or%20move%20funds.">Ask Buddy</a>
+  </header>
+
+  <section class="crypto-trust-strip" aria-label="Crypto safety defaults">
+    <div><strong id="chain-family-count">10</strong><span>Network families</span></div>
+    <div><strong>0</strong><span>Signing secrets stored</span></div>
+    <div><strong>Off</strong><span>Live transactions</span></div>
+    <div><strong>Testnet</strong><span>DreamCoin status</span></div>
+  </section>
+
+  <nav class="crypto-tabs" aria-label="Crypto lab tools">
+    <button class="active" type="button" data-crypto-panel="wallet-panel">Wallet plan</button>
+    <button type="button" data-crypto-panel="mining-panel">Mining calculator</button>
+    <button type="button" data-crypto-panel="dreamcoin-panel">DreamCoin lab</button>
+  </nav>
+
+  <div class="crypto-workspace">
+    <section id="wallet-panel" class="crypto-panel">
+      <form id="wallet-plan-form" class="crypto-form">
+        <h2>Build a wallet connection plan</h2>
+        <label>Network family<select id="wallet-network" required></select></label>
+        <label>Custody mode<select id="wallet-custody"><option value="watch_only">Watch-only</option><option value="hardware_wallet">Hardware wallet</option><option value="multisig">Multisignature wallet</option><option value="smart_account">Smart account</option></select></label>
+        <label>Purpose<textarea id="wallet-purpose" minlength="5" required>Track a business treasury without giving Buddy spending access.</textarea></label>
+        <label class="crypto-check"><input id="wallet-approval" type="checkbox" required /> I approve creation of a plan only. No transaction or signature.</label>
+        <button class="btn btn-primary" type="submit">Create wallet plan</button>
+      </form>
+      <div id="wallet-result" class="crypto-result" aria-live="polite"><h2>Plan preview</h2><p>Choose a network and custody mode to see the safety workflow.</p></div>
+    </section>
+
+    <section id="mining-panel" class="crypto-panel" hidden>
+      <form id="mining-plan-form" class="crypto-form">
+        <h2>Model mining operating cost</h2>
+        <label>Network<input id="mining-network" value="Example proof-of-work network" required /></label>
+        <div class="crypto-form-grid">
+          <label>Devices<input id="mining-devices" type="number" min="1" max="10000" value="1" required /></label>
+          <label>Watts each<input id="mining-watts" type="number" min="1" value="1000" required /></label>
+          <label>Electricity $/kWh<input id="mining-electricity" type="number" min="0" max="10" step="0.001" value="0.12" required /></label>
+          <label>Estimated revenue/day<input id="mining-revenue" type="number" min="0" step="0.01" value="5" required /></label>
+        </div>
+        <label class="crypto-check"><input id="mining-approval" type="checkbox" required /> I approve a cost simulation only on owner-controlled hardware.</label>
+        <button class="btn btn-primary" type="submit">Calculate scenario</button>
+      </form>
+      <div id="mining-result" class="crypto-result" aria-live="polite"><h2>Scenario preview</h2><p>No mining software is installed or started by this page.</p></div>
+    </section>
+
+    <section id="dreamcoin-panel" class="crypto-panel" hidden>
+      <form id="dreamcoin-plan-form" class="crypto-form">
+        <h2>Design DreamCoin safely</h2>
+        <label>Purpose<textarea id="dreamcoin-purpose" minlength="10" required>Prototype a transparent reward unit for a closed DreamCo test environment.</textarea></label>
+        <label>Test environment<select id="dreamcoin-network"><option value="local_devnet">Local development network</option><option value="evm_testnet">EVM public testnet</option><option value="solana_devnet">Solana devnet</option><option value="undecided">Undecided</option></select></label>
+        <label class="crypto-check"><input id="dreamcoin-approval" type="checkbox" required /> I approve a design packet only. Do not create, mint, sell, or launch a token.</label>
+        <button class="btn btn-primary" type="submit">Create testnet plan</button>
+      </form>
+      <div id="dreamcoin-result" class="crypto-result" aria-live="polite"><h2>Launch gates</h2><p>DreamCoin has no verified mainnet contract or market value in this registry.</p></div>
+    </section>
   </div>
-</div>
+
+  <section class="crypto-networks">
+    <div class="crypto-section-heading"><div><span>Adapter registry</span><h2>Network families</h2></div><p>“Other” means a new adapter must pass chain-specific tests before use.</p></div>
+    <div id="crypto-network-grid" class="crypto-network-grid"></div>
+  </section>
+</main>
+<script src="data/buddy-specialized-hubs.js"></script>
+<script src="crypto.js"></script>
 </body>
 </html>

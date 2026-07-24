@@ -90,7 +90,12 @@ class BuddyCreativeStudioTests(unittest.TestCase):
             brief(ProjectType.LOGO_BRAND, title="Signal Brand", objective="Create an original accessible identity and clearance plan.")
         )
         self.assertIn("screenplay", film.deliverables)
+        self.assertEqual(film.production_academy["track"], "film")
+        self.assertGreaterEqual(len(film.production_academy["phases"]), 12)
         self.assertIn("rights_manifest", artist.deliverables)
+        self.assertEqual(artist.production_academy["track"], "music")
+        self.assertGreaterEqual(len(artist.production_academy["genre_families"]), 12)
+        self.assertIn("synthetic-media label", artist.production_academy["rights_gates"])
         self.assertIn("editable_logo_concepts", brand.deliverables)
 
     def test_creates_invention_packet_with_real_specialists_and_release_gates(self):

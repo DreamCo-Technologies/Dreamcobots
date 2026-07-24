@@ -16,6 +16,9 @@ const formStatus = document.getElementById('studio-form-status');
 const stage = document.getElementById('studio-stage');
 const readiness = document.getElementById('studio-readiness');
 const outputActions = document.getElementById('studio-output-actions');
+const academyTrack = document.getElementById('academy-track');
+const academyGrid = document.getElementById('academy-grid');
+const academySummary = document.getElementById('academy-summary');
 
 let mediaRecorder = null;
 let mediaStream = null;
@@ -28,6 +31,41 @@ let voiceObjectUrl = '';
 let imageObjectUrl = '';
 let latestPacket = null;
 let latestConsentReceipt = null;
+const academy = window.BUDDY_SPECIALIZED_HUBS?.creative;
+
+function academyCard(index, label, items, kind) {
+  const card = document.createElement('article');
+  card.className = 'studio-academy-card';
+  const step = document.createElement('small');
+  step.textContent = `${kind} ${index + 1}`;
+  const heading = document.createElement('h3');
+  heading.textContent = label;
+  const list = document.createElement('ul');
+  items.forEach(item => {
+    const row = document.createElement('li');
+    row.textContent = item;
+    list.append(row);
+  });
+  card.append(step, heading, list);
+  return card;
+}
+
+function renderAcademy() {
+  academyGrid.replaceChildren();
+  if (!academy) {
+    academySummary.textContent = 'Production academy catalog is unavailable.';
+    return;
+  }
+  if (academyTrack.value === 'film') {
+    const rows = academy.film_standard.phases;
+    rows.forEach((row, index) => academyGrid.append(academyCard(index, row.label, row.outputs, 'Phase')));
+    academySummary.textContent = `${rows.length} production phases · ${academy.film_standard.quality_gates.length} release gates · delivery specs verified for each target platform`;
+  } else {
+    const rows = academy.music_standard.genre_families;
+    rows.forEach((row, index) => academyGrid.append(academyCard(index, row.label, row.study, 'Family')));
+    academySummary.textContent = `${rows.length} genre families · original composition workflow · composition, recording, sample, performance, sync, voice, and likeness rights gates`;
+  }
+}
 
 const TYPE_PRESETS = {
   game: {
@@ -474,6 +512,11 @@ form.addEventListener('submit', async event => {
       tests: selectedType() === 'invention_prototype'
         ? ['core assumption', 'failure modes', 'electrical and mechanical safety', 'accessibility', 'repairability', 'no automatic ordering or manufacturing']
         : ['offline load', 'touch and keyboard', 'captions', 'restart and recovery', 'learning objective', 'no live external action'],
+      production_academy: selectedType() === 'feature_film'
+        ? { track: 'film', phases: academy?.film_standard?.phases?.map(item => item.id) || [], quality_gates: academy?.film_standard?.quality_gates || [] }
+        : ['music_video', 'music_artist'].includes(selectedType())
+          ? { track: 'music', genre_families: academy?.music_standard?.genre_families?.map(item => item.id) || [], rights_gates: academy?.music_standard?.rights_gates || [] }
+          : null,
       publish_requires_owner_approval: true,
     };
     renderPrototype(latestPacket);
@@ -546,5 +589,17 @@ document.getElementById('clear-media').addEventListener('click', () => {
   formStatus.textContent = 'Local media removed from this browser session.';
 });
 
+academyTrack.addEventListener('change', renderAcademy);
+document.getElementById('academy-use').addEventListener('click', () => {
+  const select = document.getElementById('project-type');
+  select.value = academyTrack.value === 'film' ? 'feature_film' : 'music_video';
+  applyPreset(select.value);
+  document.getElementById('project-title').focus();
+  formStatus.textContent = academyTrack.value === 'film'
+    ? 'Film production phases and quality gates will be included in this project packet.'
+    : 'Music genre study, production stages, and rights gates will be included in this project packet.';
+});
+
 setTypeFromQuery();
 updateMediaControls();
+renderAcademy();

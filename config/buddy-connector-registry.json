@@ -93,6 +93,41 @@
     {"id": "media", "label": "Media and publishing", "minimum_scope": "draft and preview before publish"},
     {"id": "custom", "label": "Documented custom application", "minimum_scope": "sandbox before live access"}
   ],
+  "platform_profiles": [
+    {
+      "id": "github",
+      "label": "GitHub",
+      "official_url": "https://github.com/settings/apps",
+      "contract": "developer",
+      "auth_method": "browser_session_handoff",
+      "initial_access": "read_only",
+      "recommended_identity": "GitHub App installed only on selected repositories",
+      "default_scopes": ["metadata:read", "contents:read", "pull_requests:read", "actions:read"],
+      "write_policy": "Request contents or pull-request write access only for an exact approved task; no administration scope by default."
+    },
+    {
+      "id": "local_device",
+      "label": "User-owned computer or mobile device",
+      "official_url": "https://localhost/",
+      "contract": "device",
+      "auth_method": "browser_session_handoff",
+      "initial_access": "observe",
+      "recommended_identity": "loopback-only local bridge with an ephemeral session token",
+      "default_scopes": ["status:read", "approved_app:open", "browser_search:open"],
+      "write_policy": "No arbitrary clicks, typing, credential entry, protected settings, or destructive commands."
+    },
+    {
+      "id": "custom_app",
+      "label": "Documented app or API",
+      "official_url": "https://example.com/",
+      "contract": "custom",
+      "auth_method": "custom_rest",
+      "initial_access": "read_only",
+      "recommended_identity": "restricted service identity with a vault reference",
+      "default_scopes": ["health:read"],
+      "write_policy": "Pass schema, timeout, retry, rate-limit, audit, and sandbox tests before any live write."
+    }
+  ],
   "token_transfer": {
     "mode": "reference_to_reference",
     "status": "backend_vault_required",

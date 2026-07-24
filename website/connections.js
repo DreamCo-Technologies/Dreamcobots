@@ -97,6 +97,21 @@
       methodGrid.append(card);
     });
 
+    const profiles = state.catalog.platform_profiles || [];
+    byId('platform-profile-count').textContent = `${profiles.length} profiles`;
+    const profileGrid = byId('platform-profile-grid');
+    profileGrid.replaceChildren();
+    profiles.forEach((profile) => {
+      const card = element('article', 'auth-method-card');
+      const heading = element('div', 'auth-method-heading');
+      heading.append(element('strong', '', profile.label), element('span', 'badge badge-green', profile.initial_access.replaceAll('_', ' ')));
+      const use = element('button', 'btn btn-outline btn-sm', 'Prepare connection');
+      use.type = 'button';
+      use.addEventListener('click', () => applyPlatformProfile(profile));
+      card.append(heading, element('p', '', profile.recommended_identity), element('p', '', profile.write_policy), use);
+      profileGrid.append(card);
+    });
+
     const methodSelect = byId('connection-method');
     methodSelect.replaceChildren();
     methods.forEach((method) => {
@@ -123,6 +138,21 @@
       row.append(copy);
       contractList.append(row);
     });
+  }
+
+  function applyPlatformProfile(profile) {
+    const method = state.catalog.auth_methods.find(item => item.id === profile.auth_method);
+    byId('connection-app').value = profile.label;
+    byId('connection-url').value = profile.official_url;
+    byId('connection-resource').value = profile.contract === 'developer' || profile.contract === 'device' ? 'application' : 'custom';
+    byId('connection-environment').value = 'staging';
+    byId('connection-access').value = profile.initial_access === 'read_only' ? 'read_only' : 'read_only';
+    if (method) byId('connection-method').value = method.id;
+    byId('connection-scopes').value = (profile.default_scopes || []).join(', ');
+    updateSecretFields();
+    document.querySelectorAll('[data-panel]').forEach(tab => tab.classList.toggle('active', tab.dataset.panel === 'connect-panel'));
+    document.querySelectorAll('.connection-panel').forEach(panel => { panel.hidden = panel.id !== 'connect-panel'; });
+    byId('connection-app').focus();
   }
 
   function updateSecretFields() {

@@ -274,12 +274,19 @@ def validate_site() -> dict[str, Any]:
         WEBSITE / "leads.js",
         WEBSITE / "connections.html",
         WEBSITE / "connections.js",
+        WEBSITE / "crypto.html",
+        WEBSITE / "crypto.css",
+        WEBSITE / "crypto.js",
+        WEBSITE / "government.html",
+        WEBSITE / "government.css",
+        WEBSITE / "government.js",
         WEBSITE / "nav.js",
         WEBSITE / "manifest.webmanifest",
         WEBSITE / "platform.html",
         WEBSITE / "platform.css",
         WEBSITE / "platform.js",
         WEBSITE / "studio.html",
+        WEBSITE / "studio.css",
         WEBSITE / "studio.js",
         WEBSITE / "models.html",
         WEBSITE / "models.css",
@@ -293,6 +300,7 @@ def validate_site() -> dict[str, Any]:
         WEBSITE / "data" / "buddy-model-benchmarks.js",
         WEBSITE / "data" / "buddy-capability-certifications.js",
         WEBSITE / "data" / "buddy-connection-catalog.json",
+        WEBSITE / "data" / "buddy-specialized-hubs.js",
         WEBSITE / "data" / "bot-calculators.json",
         WEBSITE / "data" / "buddy-distribution-catalog.json",
         WEBSITE / "assets" / "images" / "buddy-icon-192.png",
@@ -362,7 +370,7 @@ def validate_site() -> dict[str, Any]:
     studio_script = (WEBSITE / "studio.js").read_text(encoding="utf-8") if (WEBSITE / "studio.js").exists() else ""
     required_studio_controls = {
         "record-voice", "stop-voice", "download-voice", "start-camera", "take-photo",
-        "stop-camera", "download-image", "download-consent", "clear-media",
+        "stop-camera", "download-image", "download-consent", "clear-media", "academy-track", "academy-use",
     }
     if studio_parser:
         for control_id in sorted(required_studio_controls - studio_parser.ids):
@@ -370,6 +378,32 @@ def validate_site() -> dict[str, Any]:
         for control_id in sorted(required_studio_controls):
             if f"getElementById('{control_id}')" not in studio_script:
                 errors.append(f"Studio control is not bound in studio.js: #{control_id}")
+
+    crypto_parser = parsers.get(WEBSITE / "crypto.html")
+    crypto_script = (WEBSITE / "crypto.js").read_text(encoding="utf-8") if (WEBSITE / "crypto.js").exists() else ""
+    required_crypto_controls = {
+        "wallet-plan-form", "wallet-network", "wallet-approval", "mining-plan-form",
+        "mining-approval", "dreamcoin-plan-form", "dreamcoin-approval", "crypto-network-grid",
+    }
+    if crypto_parser:
+        for control_id in sorted(required_crypto_controls - crypto_parser.ids):
+            errors.append(f"Missing Crypto Lab interaction control: #{control_id}")
+        for control_id in sorted(required_crypto_controls):
+            if f"byId('{control_id}')" not in crypto_script:
+                errors.append(f"Crypto Lab control is not bound in crypto.js: #{control_id}")
+
+    government_parser = parsers.get(WEBSITE / "government.html")
+    government_script = (WEBSITE / "government.js").read_text(encoding="utf-8") if (WEBSITE / "government.js").exists() else ""
+    required_government_controls = {
+        "government-plan-form", "government-query", "government-category", "government-jurisdiction",
+        "government-approval", "government-source-search", "government-source-grid", "government-ask-buddy",
+    }
+    if government_parser:
+        for control_id in sorted(required_government_controls - government_parser.ids):
+            errors.append(f"Missing Government Hub interaction control: #{control_id}")
+        for control_id in sorted(required_government_controls):
+            if f"byId('{control_id}')" not in government_script:
+                errors.append(f"Government Hub control is not bound in government.js: #{control_id}")
 
     model_parser = parsers.get(WEBSITE / "models.html")
     model_script = (WEBSITE / "models.js").read_text(encoding="utf-8") if (WEBSITE / "models.js").exists() else ""

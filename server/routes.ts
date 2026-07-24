@@ -60,6 +60,19 @@ import {
   modelBenchmarkPlanRequestSchema,
   runModelCatalogAudit,
 } from "./model-benchmark-policy";
+import {
+  createCryptoMiningPlan,
+  createCryptoWalletPlan,
+  createDreamCoinPlan,
+  cryptoMiningPlanRequestSchema,
+  cryptoWalletPlanRequestSchema,
+  dreamCoinPlanRequestSchema,
+} from "./crypto-safety-policy";
+import {
+  createGovernmentResourcePlan,
+  GOVERNMENT_RESOURCES,
+  governmentResourcePlanRequestSchema,
+} from "./government-resource-policy";
 
 const CORE_SLUGS = new Set(CORE_BOTS.map(b => b.slug));
 const GITHUB_SLUGS = new Set(GITHUB_BOTS.map(b => b.slug));
@@ -2961,6 +2974,50 @@ Any improvements or fixes (optional, 1-2 bullet points max)`;
     } catch (error) {
       return res.status(400).json({ error: error instanceof Error ? error.message : "Invalid benchmark plan" });
     }
+  });
+
+  app.post("/api/buddy/crypto/wallet-plan", async (req, res) => {
+    const killSwitch = await storage.getSetting("kill_switch");
+    if ((killSwitch?.value as { enabled?: boolean } | undefined)?.enabled) {
+      return res.status(423).json({ message: "Crypto planning is locked by the kill switch" });
+    }
+    const parsed = cryptoWalletPlanRequestSchema.safeParse(req.body);
+    if (!parsed.success) return res.status(400).json(zodValidationError(parsed.error));
+    return res.status(201).json(createCryptoWalletPlan(parsed.data));
+  });
+
+  app.post("/api/buddy/crypto/mining-plan", async (req, res) => {
+    const killSwitch = await storage.getSetting("kill_switch");
+    if ((killSwitch?.value as { enabled?: boolean } | undefined)?.enabled) {
+      return res.status(423).json({ message: "Crypto planning is locked by the kill switch" });
+    }
+    const parsed = cryptoMiningPlanRequestSchema.safeParse(req.body);
+    if (!parsed.success) return res.status(400).json(zodValidationError(parsed.error));
+    return res.status(201).json(createCryptoMiningPlan(parsed.data));
+  });
+
+  app.post("/api/buddy/crypto/dreamcoin-plan", async (req, res) => {
+    const parsed = dreamCoinPlanRequestSchema.safeParse(req.body);
+    if (!parsed.success) return res.status(400).json(zodValidationError(parsed.error));
+    return res.status(201).json(createDreamCoinPlan(parsed.data));
+  });
+
+  app.get("/api/buddy/government/resources", (_req, res) => {
+    return res.json({
+      schema: "dreamco.buddy_government_resource_catalog.v1",
+      coverage: "US federal verified; other jurisdictions require official-source verification",
+      resources: GOVERNMENT_RESOURCES,
+    });
+  });
+
+  app.post("/api/buddy/government/plan", async (req, res) => {
+    const killSwitch = await storage.getSetting("kill_switch");
+    if ((killSwitch?.value as { enabled?: boolean } | undefined)?.enabled) {
+      return res.status(423).json({ message: "Government assistance planning is locked by the kill switch" });
+    }
+    const parsed = governmentResourcePlanRequestSchema.safeParse(req.body);
+    if (!parsed.success) return res.status(400).json(zodValidationError(parsed.error));
+    return res.status(201).json(createGovernmentResourcePlan(parsed.data));
   });
 
   app.patch("/api/platform-connections/:id", async (req, res) => {

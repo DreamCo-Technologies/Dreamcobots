@@ -8,6 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="studio.css" />
 </head>
 <body class="buddy-home studio-page">
 <div id="nav-placeholder"></div><script src="nav.js"></script>
@@ -126,8 +127,22 @@
       </div>
     </section>
   </div>
+
+  <section class="studio-academy" aria-labelledby="academy-title">
+    <div class="studio-academy-header">
+      <div><span>Versioned production knowledge</span><h2 id="academy-title">Film and music production academy</h2><p>Use a department-by-department film workflow or a culturally attributed music-study map in the current project.</p></div>
+      <div class="studio-academy-actions">
+        <label for="academy-track">Track</label>
+        <select id="academy-track" class="studio-input"><option value="film">Film production</option><option value="music">Music and music video</option></select>
+        <button id="academy-use" class="btn btn-outline btn-sm" type="button">Use in project</button>
+      </div>
+    </div>
+    <div id="academy-summary" class="studio-academy-summary" aria-live="polite"></div>
+    <div id="academy-grid" class="studio-academy-grid"></div>
+  </section>
 </main>
 
+<script src="data/buddy-specialized-hubs.js"></script>
 <script src="studio.js"></script>
 </body>
 </html>

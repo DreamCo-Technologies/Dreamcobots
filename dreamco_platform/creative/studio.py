@@ -143,6 +143,7 @@ class StudioProject:
     status: str
     native_routes: list[dict[str, Any]]
     production_plan: list[dict[str, Any]]
+    production_academy: dict[str, Any] | None
     media: dict[str, Any]
     sandbox: dict[str, Any]
     deliverables: list[str]
@@ -165,6 +166,7 @@ class StudioProject:
             "brief": brief,
             "native_routes": self.native_routes,
             "production_plan": self.production_plan,
+            "production_academy": self.production_academy,
             "media": self.media,
             "sandbox": self.sandbox,
             "deliverables": self.deliverables,
@@ -257,6 +259,7 @@ class BuddyCreativeStudio:
             status="planned",
             native_routes=routes,
             production_plan=self._production_plan(brief),
+            production_academy=self._academy_plan(brief),
             media=media,
             sandbox=self._sandbox_plan(brief),
             deliverables=self._deliverables(brief),
@@ -270,6 +273,28 @@ class BuddyCreativeStudio:
                 else None,
             },
         )
+
+    @staticmethod
+    def _academy_plan(brief: CreativeBrief) -> dict[str, Any] | None:
+        source = Path(__file__).resolve().parents[2] / "config" / "buddy-creative-academy.json"
+        catalog = json.loads(source.read_text(encoding="utf-8"))
+        if brief.project_type == ProjectType.FEATURE_FILM:
+            film = catalog["film_standard"]
+            return {
+                "track": "film",
+                "phases": film["phases"],
+                "quality_gates": film["quality_gates"],
+                "delivery_reference": film["delivery_reference"],
+            }
+        if brief.project_type in {ProjectType.MUSIC_VIDEO, ProjectType.MUSIC_ARTIST}:
+            music = catalog["music_standard"]
+            return {
+                "track": "music",
+                "genre_families": music["genre_families"],
+                "production_stages": music["production_stages"],
+                "rights_gates": music["rights_gates"],
+            }
+        return None
 
     def render_media(
         self,

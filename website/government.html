@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Buddy Government Resource Hub — DreamCo</title>
+  <meta name="description" content="Find official government contracts, grants, benefits, jobs, business help, regulations, spending, and open data with governed Buddy workflows." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="government.css" />
+</head>
+<body>
+<div id="nav-placeholder"></div><script src="nav.js"></script>
+<main class="gov-shell">
+  <header class="gov-header">
+    <span>Official-source navigation</span>
+    <h1>Government Resource Hub</h1>
+    <p>Tell Buddy what you need. It will build a sourced research and application-preparation plan while leaving identity checks, signatures, certifications, payments, and submissions with you.</p>
+  </header>
+
+  <section class="gov-workspace">
+    <form id="government-plan-form" class="gov-form">
+      <div class="gov-form-row">
+        <label>What do you need?<textarea id="government-query" required minlength="3">Find federal construction contract opportunities for a small business.</textarea></label>
+        <label>Category<select id="government-category"><option value="general">General services</option><option value="contracts" selected>Contracts</option><option value="grants">Grants</option><option value="business">Business help</option><option value="benefits">Benefits</option><option value="jobs">Jobs</option><option value="regulations">Regulations</option><option value="spending">Public spending</option><option value="data">Open data</option></select></label>
+        <label>Jurisdiction<input id="government-jurisdiction" value="US federal" required /></label>
+      </div>
+      <label>Facts Buddy may use<textarea id="government-facts" placeholder="One non-sensitive fact per line. Do not enter Social Security numbers, passwords, financial account numbers, or identity documents.">Small construction company</textarea></label>
+      <label class="gov-check"><input id="government-approval" type="checkbox" required /> I approve official-source research and a preparation plan only.</label>
+      <div class="gov-actions"><button class="btn btn-primary" type="submit">Build resource plan</button><a id="government-ask-buddy" class="btn btn-outline" href="buddy.html">Continue in Buddy</a></div>
+    </form>
+    <aside id="government-result" class="gov-result" aria-live="polite">
+      <span class="badge badge-green">Verified registry</span>
+      <h2>US federal sources are ready</h2>
+      <p>Other countries, states, tribes, territories, counties, and cities are supported through the same workflow after their official domains are verified.</p>
+    </aside>
+  </section>
+
+  <section class="gov-sources">
+    <div class="gov-heading"><div><span>Source registry</span><h2 id="government-source-count">Official resources</h2></div><input id="government-source-search" type="search" placeholder="Filter official resources" aria-label="Filter official government resources" /></div>
+    <div id="government-source-grid" class="gov-source-grid"></div>
+  </section>
+
+  <section class="gov-rules">
+    <h2>Buddy's government-assistance rules</h2>
+    <div id="government-guardrails" class="gov-rule-grid"></div>
+  </section>
+</main>
+<script src="data/buddy-specialized-hubs.js"></script>
+<script src="government.js"></script>
+</body>
+</html>
