@@ -25,12 +25,28 @@
   const specialistResults = document.getElementById('specialist-results');
   const specialistClose = document.getElementById('specialist-close');
   const specialistSummary = document.getElementById('specialist-summary');
+  const localOpen = document.getElementById('local-open');
+  const localDialog = document.getElementById('local-dialog');
+  const localClose = document.getElementById('local-close');
+  const localStatus = document.getElementById('local-status');
+  const localStatusDetail = document.getElementById('local-status-detail');
+  const localStatusDot = document.getElementById('local-status-dot');
+  const localPause = document.getElementById('local-pause');
+  const localAudit = document.getElementById('local-audit');
   const params = new URLSearchParams(location.search);
   const preferredSlug = params.get('bot') || '';
   let activeSlug = preferredSlug;
   let ownerSelectedSpecialist = Boolean(preferredSlug);
   let mode = 'Build';
   let modelMode = modelPolicy.defaultMode || 'free';
+  let localBridgePaused = false;
+
+  const localHash = new URLSearchParams(location.hash.slice(1));
+  if (localHash.has('buddy-local-token')) {
+    sessionStorage.setItem('buddy-local-token', localHash.get('buddy-local-token'));
+    history.replaceState(null, '', `${location.pathname}${location.search}`);
+  }
+  const localToken = sessionStorage.getItem('buddy-local-token') || '';
 
   const stopWords = new Set([
     'about', 'after', 'again', 'also', 'because', 'before', 'build', 'buddy', 'could', 'create',
@@ -293,7 +309,10 @@
     const launch = document.createElement('a');
     launch.href = 'install.html';
     launch.textContent = 'Launch or domain';
-    actions.append(testButton, prospectus, calculator, connections, launch);
+    const benchmark = document.createElement('a');
+    benchmark.href = 'models.html';
+    benchmark.textContent = 'Compare models';
+    actions.append(testButton, prospectus, calculator, connections, launch, benchmark);
     bubble.append(testResult, actions);
     row.append(avatar, bubble);
     thread.append(row);
@@ -377,6 +396,112 @@
     specialistSummary.textContent = `${matches.length.toLocaleString()} shown from ${bots.length.toLocaleString()} specialists. Select one, then tell Buddy the outcome you want.`;
   }
 
+  function setLocalStatus(label, detail, connected) {
+    localStatus.textContent = label;
+    localStatusDetail.textContent = detail;
+    localStatusDot.classList.toggle('connected', connected);
+  }
+
+  function renderLocalAudit(events) {
+    localAudit.replaceChildren();
+    if (!events?.length) {
+      localAudit.textContent = 'No local actions in this session.';
+      return;
+    }
+    events.slice(0, 12).forEach((event) => {
+      const row = document.createElement('div');
+      const copy = document.createElement('span');
+      copy.textContent = `${event.action.replaceAll('_', ' ')} · ${event.target}`;
+      const time = document.createElement('time');
+      time.dateTime = event.at;
+      time.textContent = new Date(event.at).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
+      row.append(copy, time);
+      localAudit.append(row);
+    });
+  }
+
+  async function localRequest(path, body) {
+    if (!localToken) throw new Error('Start the private local bridge from the repository first.');
+    const response = await fetch(path, {
+      method: body ? 'POST' : 'GET',
+      headers: {
+        Authorization: `Bearer ${localToken}`,
+        ...(body ? { 'Content-Type': 'application/json' } : {}),
+      },
+      ...(body ? { body: JSON.stringify(body) } : {}),
+    });
+    const result = await response.json().catch(() => ({ error: 'The local bridge returned an unreadable response.' }));
+    if (!response.ok) throw new Error(result.error || 'The local bridge rejected the action.');
+    return result;
+  }
+
+  async function checkLocalBridge() {
+    if (!localToken) {
+      setLocalStatus('Not connected', 'Run the command below from this repository to start a private session.', false);
+      return;
+    }
+    try {
+      const result = await localRequest('/api/local/health');
+      localBridgePaused = Boolean(result.paused);
+      localPause.textContent = localBridgePaused ? 'Resume' : 'Pause';
+      setLocalStatus(localBridgePaused ? 'Connected and paused' : 'Connected to this laptop', 'Loopback only, short-lived token, memory-only action log.', true);
+      renderLocalAudit(result.audit);
+    } catch (error) {
+      setLocalStatus('Local bridge unavailable', error.message, false);
+    }
+  }
+
+  async function runLocalSearch() {
+    const query = document.getElementById('local-query').value.trim();
+    const approval = document.getElementById('local-approval');
+    if (!query) {
+      setLocalStatus('Search needs a question', 'Describe what Buddy should search for.', Boolean(localToken));
+      return;
+    }
+    if (!approval.checked) {
+      setLocalStatus('Approval required', 'Approve this one visible browser search.', Boolean(localToken));
+      return;
+    }
+    try {
+      const result = await localRequest('/api/local/browser/search', {
+        query,
+        browser: document.getElementById('local-browser').value,
+        engine: document.getElementById('local-engine').value,
+        approved: true,
+      });
+      approval.checked = false;
+      setLocalStatus('Search opened', `${result.engine} opened in ${result.browser === 'system' ? 'the system browser' : result.browser}.`, true);
+      await checkLocalBridge();
+    } catch (error) {
+      setLocalStatus('Search was not opened', error.message, false);
+    }
+  }
+
+  async function openLocalApp() {
+    const app = document.getElementById('local-app');
+    const label = app.options[app.selectedIndex]?.textContent || 'this app';
+    if (!window.confirm(`Open ${label} once? This does not grant Buddy control of the app.`)) return;
+    try {
+      await localRequest('/api/local/apps/open', { app: app.value, approved: true });
+      setLocalStatus(`${label} opened`, 'Buddy did not read, type, click, sign in, or submit anything.', true);
+      await checkLocalBridge();
+    } catch (error) {
+      setLocalStatus(`${label} was not opened`, error.message, false);
+    }
+  }
+
+  async function toggleLocalPause() {
+    const nextPaused = !localBridgePaused;
+    if (!window.confirm(`${nextPaused ? 'Pause' : 'Resume'} local Buddy actions?`)) return;
+    try {
+      const result = await localRequest('/api/local/pause', { paused: nextPaused, approved: true });
+      localBridgePaused = result.paused;
+      await checkLocalBridge();
+    } catch (error) {
+      setLocalStatus('Pause control failed safely', error.message, false);
+    }
+  }
+
   document.querySelectorAll('[data-buddy-mode]').forEach((button) => {
     button.addEventListener('click', () => {
       document.querySelectorAll('[data-buddy-mode]').forEach((item) => {
@@ -416,6 +541,22 @@
   specialistDialog.addEventListener('click', (event) => {
     if (event.target === specialistDialog) specialistDialog.close();
   });
+  localOpen.addEventListener('click', () => {
+    localDialog.showModal();
+    checkLocalBridge();
+  });
+  document.querySelectorAll('[data-local-search-open]').forEach((button) => button.addEventListener('click', () => {
+    localDialog.showModal();
+    checkLocalBridge();
+    document.getElementById('local-query').focus();
+  }));
+  localClose.addEventListener('click', () => localDialog.close());
+  localDialog.addEventListener('click', (event) => {
+    if (event.target === localDialog) localDialog.close();
+  });
+  document.getElementById('local-search').addEventListener('click', runLocalSearch);
+  document.getElementById('local-app-open').addEventListener('click', openLocalApp);
+  localPause.addEventListener('click', toggleLocalPause);
   sendButton.addEventListener('click', send);
   input.addEventListener('keydown', (event) => {
     if (event.key === 'Enter' && (event.metaKey || event.ctrlKey)) {

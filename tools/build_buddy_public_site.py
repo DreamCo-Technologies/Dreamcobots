@@ -34,7 +34,7 @@ SECRET_VALUE_PATTERNS = {
     "Private key": re.compile(r"-----BEGIN (?:RSA |EC |OPENSSH )?PRIVATE KEY-----"),
 }
 LEGACY_PROVIDER_NAME = re.compile("r" + "eplit", re.IGNORECASE)
-FORBIDDEN_PUBLIC_NAMES = re.compile(r"(?:r[e]plit|\bibm\b|watson)", re.IGNORECASE)
+FORBIDDEN_PUBLIC_NAMES = re.compile(r"(?:r[e]plit|\bi[b]m\b|w[a]tson)", re.IGNORECASE)
 PUBLIC_EXTENSIONS = {
     ".css",
     ".gif",
@@ -281,12 +281,16 @@ def validate_site() -> dict[str, Any]:
         WEBSITE / "platform.js",
         WEBSITE / "studio.html",
         WEBSITE / "studio.js",
+        WEBSITE / "models.html",
+        WEBSITE / "models.css",
+        WEBSITE / "models.js",
         WEBSITE / "service-worker.js",
         WEBSITE / "styles.css",
         WEBSITE / "system-map.html",
         WEBSITE / "data" / "buddy-site-status.json",
         WEBSITE / "data" / "buddy-routing-index.js",
         WEBSITE / "data" / "buddy-model-router.js",
+        WEBSITE / "data" / "buddy-model-benchmarks.js",
         WEBSITE / "data" / "buddy-capability-certifications.js",
         WEBSITE / "data" / "buddy-connection-catalog.json",
         WEBSITE / "data" / "bot-calculators.json",
@@ -344,6 +348,8 @@ def validate_site() -> dict[str, Any]:
         "buddy-input", "buddy-send", "model-free", "model-premium", "premium-panel",
         "premium-provider", "premium-model-id", "premium-approval", "specialist-open",
         "specialist-dialog", "specialist-search", "specialist-results", "specialist-close",
+        "local-open", "local-dialog", "local-close", "local-status", "local-status-detail",
+        "local-status-dot", "local-pause", "local-audit", "local-search", "local-app-open",
     }
     if buddy_parser:
         for control_id in sorted(required_buddy_controls - buddy_parser.ids):
@@ -351,6 +357,33 @@ def validate_site() -> dict[str, Any]:
         for control_id in sorted(required_buddy_controls):
             if f"getElementById('{control_id}')" not in buddy_script:
                 errors.append(f"Buddy control is not bound in buddy.js: #{control_id}")
+
+    studio_parser = parsers.get(WEBSITE / "studio.html")
+    studio_script = (WEBSITE / "studio.js").read_text(encoding="utf-8") if (WEBSITE / "studio.js").exists() else ""
+    required_studio_controls = {
+        "record-voice", "stop-voice", "download-voice", "start-camera", "take-photo",
+        "stop-camera", "download-image", "download-consent", "clear-media",
+    }
+    if studio_parser:
+        for control_id in sorted(required_studio_controls - studio_parser.ids):
+            errors.append(f"Missing Studio interaction control: #{control_id}")
+        for control_id in sorted(required_studio_controls):
+            if f"getElementById('{control_id}')" not in studio_script:
+                errors.append(f"Studio control is not bound in studio.js: #{control_id}")
+
+    model_parser = parsers.get(WEBSITE / "models.html")
+    model_script = (WEBSITE / "models.js").read_text(encoding="utf-8") if (WEBSITE / "models.js").exists() else ""
+    required_model_controls = {
+        "model-search", "model-tier", "model-category", "select-visible", "clear-selection",
+        "run-catalog-audit", "prepare-live-plan", "benchmark-budget", "benchmark-network",
+        "benchmark-paid", "download-benchmark-plan", "model-detail", "model-detail-close",
+    }
+    if model_parser:
+        for control_id in sorted(required_model_controls - model_parser.ids):
+            errors.append(f"Missing Model Lab interaction control: #{control_id}")
+        for control_id in sorted(required_model_controls):
+            if f"byId('{control_id}')" not in model_script:
+                errors.append(f"Model Lab control is not bound in models.js: #{control_id}")
 
     skipped_roots = {".git", "node_modules", "dist", "logs"}
     branding_hits: list[str] = []

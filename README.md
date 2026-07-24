@@ -1,11 +1,10 @@
-# DreamCo Empire OS — Bot Registry
+# DreamCo Empire OS - Bot Registry
 
 [![Bots](https://img.shields.io/badge/bots-1051+-blue)](App_bots/)
 [![Divisions](https://img.shields.io/badge/divisions-45-purple)](App_bots/)
-[![Autonomy](https://img.shields.io/badge/autonomy-full-green)](docs/)
+[![Autonomy](https://img.shields.io/badge/autonomy-governed-green)](docs/)
 
-**The world's most powerful autonomous AI wealth-generation system.**
-1,051+ AI bots across 45 divisions — from crypto trading to real estate flipping, sales automation to code generation.
+DreamCo is a governed AI workbench with 1,051 specialist profiles across 45 divisions. Buddy routes requests, prepares testable task packets, and pauses before external writes, publishing, outreach, account changes, or spending.
 
 ## 🗂️ Directory Structure
 
@@ -105,9 +104,9 @@ Dreamcobots/
 
 | Mode | Description | Tier Required |
 |------|-------------|---------------|
-| **Guided** | You approve every action | Free |
-| **Semi-Autonomous** | Bots run, you review weekly | Pro |
-| **Full Autonomy** | 24/7 operation, zero human input | Enterprise+ |
+| **Guided** | Plan and preview work; approve each external action | Free |
+| **Scheduled** | Run approved read-only checks on a bounded schedule | Configured deployment |
+| **Governed execution** | Use scoped adapters, audit receipts, budgets, and pause controls | Configured deployment |
 
 ## 💰 Pricing
 
@@ -118,13 +117,28 @@ Dreamcobots/
 | Enterprise | 150 bots | $999/mo |
 | Elite | All 1051+ bots | Custom |
 
-## 🧠 Buddy Bot — Master Coding Brain
+## 🧠 Buddy Bot - Governed Task Router
 
-Buddy Bot ([profile](bots/buddy-bot.md)) is the empire's elite CommandCore AI:
-- Routes ALL coding tasks from all 1,051 bots
-- Knows 500+ libraries across every language and framework  
-- 8 modes: Plan, Build, Execute, Teach, Debug, Architect, Agent, Review
-- Voice chat, GitHub push, web search, security scan, council mode
+Buddy Bot ([profile](bots/buddy-bot.md)) provides one interface for the repository fleet:
+- Routes requests across all 1,051 cataloged specialist profiles
+- Shows repository-controlled capability certification evidence
+- Defaults to free local planning and supports optional approved provider routing
+- Creates previews and approval gates before external side effects
+- Connects to this computer through a loopback-only, short-lived local session
+
+## Local Owner Workspace
+
+Run Buddy from this computer with a private local bridge:
+
+```bash
+python3 tools/buddy_cli.py local-start
+```
+
+The bridge binds to `127.0.0.1`, creates an ephemeral session token, keeps a memory-only 50-event action log, and supports approved browser searches, HTTPS opens, safe app launches, and action planning. It does not provide arbitrary background clicking, typing, credential access, or device takeover.
+
+Creative Studio can record adult owner voice samples, capture owner camera images, preview them locally, export the source files, and create a portable consent receipt with SHA-256 media fingerprints. Raw media is not embedded in project packets.
+
+The Model Benchmark Lab audits exactly 100 repository targets across 12 capability suites. Catalog checks run locally. Live quality, latency, and cost scores remain empty until authenticated adapters return evidence under a per-run budget and approval.
 
 ## 🌐 Live Website
 
@@ -149,4 +163,4 @@ All bots are accessible via the Empire OS REST API:
 
 ---
 
-*Built with ❤️ by DreamCo Technologies · Powered by GPT-4.1-mini*
+*Built by DreamCo Technologies.*

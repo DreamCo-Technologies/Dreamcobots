@@ -55,6 +55,11 @@ import {
   createDeviceActionPlan,
   deviceActionPlanRequestSchema,
 } from "./device-action-policy";
+import {
+  createModelBenchmarkPlan,
+  modelBenchmarkPlanRequestSchema,
+  runModelCatalogAudit,
+} from "./model-benchmark-policy";
 
 const CORE_SLUGS = new Set(CORE_BOTS.map(b => b.slug));
 const GITHUB_SLUGS = new Set(GITHUB_BOTS.map(b => b.slug));
@@ -2938,6 +2943,24 @@ Any improvements or fixes (optional, 1-2 bullet points max)`;
     const parsed = deviceActionPlanRequestSchema.safeParse(req.body);
     if (!parsed.success) return res.status(400).json(zodValidationError(parsed.error));
     res.status(201).json(createDeviceActionPlan(parsed.data));
+  });
+
+  app.get("/api/buddy/model-benchmarks/catalog-audit", (_req, res) => {
+    res.json(runModelCatalogAudit());
+  });
+
+  app.post("/api/buddy/model-benchmarks/plan", async (req, res) => {
+    const killSwitch = await storage.getSetting("kill_switch");
+    if ((killSwitch?.value as { enabled?: boolean } | undefined)?.enabled) {
+      return res.status(423).json({ message: "Model benchmark planning is locked by the kill switch" });
+    }
+    const parsed = modelBenchmarkPlanRequestSchema.safeParse(req.body);
+    if (!parsed.success) return res.status(400).json(zodValidationError(parsed.error));
+    try {
+      return res.status(201).json(createModelBenchmarkPlan(parsed.data));
+    } catch (error) {
+      return res.status(400).json({ error: error instanceof Error ? error.message : "Invalid benchmark plan" });
+    }
   });
 
   app.patch("/api/platform-connections/:id", async (req, res) => {

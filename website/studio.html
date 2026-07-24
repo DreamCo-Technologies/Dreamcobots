@@ -61,9 +61,10 @@
           <div class="studio-button-row">
             <button id="record-voice" class="btn btn-outline btn-sm" type="button">Record voice</button>
             <button id="stop-voice" class="btn btn-outline btn-sm" type="button" disabled>Stop</button>
+            <button id="download-voice" class="btn btn-outline btn-sm" type="button" disabled>Save audio</button>
           </div>
           <audio id="voice-preview" controls></audio>
-          <p id="voice-status" class="studio-status">No sample selected.</p>
+          <p id="voice-status" class="studio-status">No sample selected. Recordings stop automatically after 60 seconds.</p>
         </div>
 
         <div class="studio-toggle-row">
@@ -72,7 +73,16 @@
         </div>
         <div id="image-controls" class="studio-media-controls" hidden>
           <input id="image-file" type="file" accept="image/*" />
+          <div class="studio-button-row">
+            <button id="start-camera" class="btn btn-outline btn-sm" type="button">Open camera</button>
+            <button id="take-photo" class="btn btn-outline btn-sm" type="button" disabled>Take photo</button>
+            <button id="stop-camera" class="btn btn-outline btn-sm" type="button" disabled>Close camera</button>
+            <button id="download-image" class="btn btn-outline btn-sm" type="button" disabled>Save image</button>
+          </div>
+          <video id="image-camera" class="studio-camera" autoplay muted playsinline hidden></video>
+          <canvas id="image-canvas" hidden></canvas>
           <div class="studio-image-frame"><img id="image-preview" alt="Local creator preview" hidden /></div>
+          <p id="image-status" class="studio-status">Choose an image or open the camera.</p>
         </div>
       </fieldset>
 
@@ -86,6 +96,7 @@
 
       <div class="studio-action-row">
         <button class="btn btn-primary" type="submit">Build prototype</button>
+        <button id="download-consent" class="btn btn-outline" type="button" disabled>Save consent receipt</button>
         <button id="clear-media" class="btn btn-outline" type="button">Delete local media</button>
       </div>
       <p id="studio-form-status" class="studio-form-status" aria-live="polite"></p>

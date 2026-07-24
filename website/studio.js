@@ -8,7 +8,10 @@ const voiceFile = document.getElementById('voice-file');
 const imageFile = document.getElementById('image-file');
 const voicePreview = document.getElementById('voice-preview');
 const imagePreview = document.getElementById('image-preview');
+const imageCamera = document.getElementById('image-camera');
+const imageCanvas = document.getElementById('image-canvas');
 const voiceStatus = document.getElementById('voice-status');
+const imageStatus = document.getElementById('image-status');
 const formStatus = document.getElementById('studio-form-status');
 const stage = document.getElementById('studio-stage');
 const readiness = document.getElementById('studio-readiness');
@@ -16,10 +19,15 @@ const outputActions = document.getElementById('studio-output-actions');
 
 let mediaRecorder = null;
 let mediaStream = null;
+let imageStream = null;
 let recordedChunks = [];
+let recordingTimer = null;
+let voiceBlob = null;
+let imageBlob = null;
 let voiceObjectUrl = '';
 let imageObjectUrl = '';
 let latestPacket = null;
+let latestConsentReceipt = null;
 
 const TYPE_PRESETS = {
   game: {
@@ -143,6 +151,37 @@ function replaceObjectUrl(currentUrl, blob) {
   return URL.createObjectURL(blob);
 }
 
+function mediaExtension(blob, fallback) {
+  const subtype = String(blob?.type || '').split('/')[1]?.split(';')[0]?.replace('jpeg', 'jpg');
+  return subtype && /^[a-z0-9.+-]+$/i.test(subtype) ? subtype : fallback;
+}
+
+function downloadBlob(blob, filename) {
+  if (!blob) return;
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = filename;
+  link.click();
+  URL.revokeObjectURL(url);
+}
+
+async function blobFingerprint(blob) {
+  if (!blob || !window.crypto?.subtle) return null;
+  const digest = await crypto.subtle.digest('SHA-256', await blob.arrayBuffer());
+  return [...new Uint8Array(digest)].map(value => value.toString(16).padStart(2, '0')).join('');
+}
+
+function stopImageCamera() {
+  if (imageStream) imageStream.getTracks().forEach(track => track.stop());
+  imageStream = null;
+  imageCamera.srcObject = null;
+  imageCamera.hidden = true;
+  document.getElementById('start-camera').disabled = false;
+  document.getElementById('take-photo').disabled = true;
+  document.getElementById('stop-camera').disabled = true;
+}
+
 useVoice.addEventListener('change', updateMediaControls);
 useImage.addEventListener('change', updateMediaControls);
 document.getElementById('project-type').addEventListener('change', event => applyPreset(event.target.value));
@@ -150,17 +189,32 @@ document.getElementById('project-type').addEventListener('change', event => appl
 voiceFile.addEventListener('change', () => {
   const file = voiceFile.files && voiceFile.files[0];
   if (!file) return;
+  if (!file.type.startsWith('audio/') || file.size > 50 * 1024 * 1024) {
+    voiceStatus.textContent = 'Choose an audio file no larger than 50 MB.';
+    voiceFile.value = '';
+    return;
+  }
+  voiceBlob = file;
   voiceObjectUrl = replaceObjectUrl(voiceObjectUrl, file);
   voicePreview.src = voiceObjectUrl;
+  document.getElementById('download-voice').disabled = false;
   voiceStatus.textContent = `Local sample ready: ${file.name}`;
 });
 
 imageFile.addEventListener('change', () => {
   const file = imageFile.files && imageFile.files[0];
   if (!file) return;
+  if (!file.type.startsWith('image/') || file.size > 20 * 1024 * 1024) {
+    imageStatus.textContent = 'Choose an image no larger than 20 MB.';
+    imageFile.value = '';
+    return;
+  }
+  imageBlob = file;
   imageObjectUrl = replaceObjectUrl(imageObjectUrl, file);
   imagePreview.src = imageObjectUrl;
   imagePreview.hidden = false;
+  document.getElementById('download-image').disabled = false;
+  imageStatus.textContent = `Local image ready: ${file.name}`;
 });
 
 document.getElementById('record-voice').addEventListener('click', async () => {
@@ -176,14 +230,21 @@ document.getElementById('record-voice').addEventListener('click', async () => {
       if (event.data.size) recordedChunks.push(event.data);
     });
     mediaRecorder.addEventListener('stop', () => {
-      const blob = new Blob(recordedChunks, { type: mediaRecorder.mimeType || 'audio/webm' });
-      voiceObjectUrl = replaceObjectUrl(voiceObjectUrl, blob);
+      if (recordingTimer) clearTimeout(recordingTimer);
+      voiceBlob = new Blob(recordedChunks, { type: mediaRecorder.mimeType || 'audio/webm' });
+      voiceObjectUrl = replaceObjectUrl(voiceObjectUrl, voiceBlob);
       voicePreview.src = voiceObjectUrl;
+      document.getElementById('download-voice').disabled = false;
       voiceStatus.textContent = 'Local recording ready for an approved media engine.';
-      mediaStream.getTracks().forEach(track => track.stop());
+      if (mediaStream) mediaStream.getTracks().forEach(track => track.stop());
       mediaStream = null;
+      document.getElementById('record-voice').disabled = false;
+      document.getElementById('stop-voice').disabled = true;
     });
     mediaRecorder.start();
+    recordingTimer = setTimeout(() => {
+      if (mediaRecorder && mediaRecorder.state !== 'inactive') mediaRecorder.stop();
+    }, 60_000);
     document.getElementById('record-voice').disabled = true;
     document.getElementById('stop-voice').disabled = false;
     voiceStatus.textContent = 'Recording locally...';
@@ -196,6 +257,64 @@ document.getElementById('stop-voice').addEventListener('click', () => {
   if (mediaRecorder && mediaRecorder.state !== 'inactive') mediaRecorder.stop();
   document.getElementById('record-voice').disabled = false;
   document.getElementById('stop-voice').disabled = true;
+});
+
+document.getElementById('start-camera').addEventListener('click', async () => {
+  if (!navigator.mediaDevices?.getUserMedia) {
+    imageStatus.textContent = 'Camera capture is not available in this browser.';
+    return;
+  }
+  try {
+    imageStream = await navigator.mediaDevices.getUserMedia({
+      video: { facingMode: 'user', width: { ideal: 1280 }, height: { ideal: 720 } },
+      audio: false,
+    });
+    imageCamera.srcObject = imageStream;
+    imageCamera.hidden = false;
+    document.getElementById('start-camera').disabled = true;
+    document.getElementById('take-photo').disabled = false;
+    document.getElementById('stop-camera').disabled = false;
+    imageStatus.textContent = 'Camera is on locally. Take a photo or close it.';
+  } catch (error) {
+    imageStatus.textContent = `Camera unavailable: ${error.message}`;
+  }
+});
+
+document.getElementById('take-photo').addEventListener('click', () => {
+  if (!imageStream || !imageCamera.videoWidth || !imageCamera.videoHeight) {
+    imageStatus.textContent = 'Wait for the camera preview before taking a photo.';
+    return;
+  }
+  const scale = Math.min(1, 1280 / imageCamera.videoWidth, 720 / imageCamera.videoHeight);
+  imageCanvas.width = Math.max(1, Math.round(imageCamera.videoWidth * scale));
+  imageCanvas.height = Math.max(1, Math.round(imageCamera.videoHeight * scale));
+  imageCanvas.getContext('2d').drawImage(imageCamera, 0, 0, imageCanvas.width, imageCanvas.height);
+  imageCanvas.toBlob((blob) => {
+    if (!blob) {
+      imageStatus.textContent = 'The camera image could not be created.';
+      return;
+    }
+    imageBlob = blob;
+    imageObjectUrl = replaceObjectUrl(imageObjectUrl, blob);
+    imagePreview.src = imageObjectUrl;
+    imagePreview.hidden = false;
+    document.getElementById('download-image').disabled = false;
+    imageStatus.textContent = 'Local camera image ready.';
+    stopImageCamera();
+  }, 'image/jpeg', 0.92);
+});
+
+document.getElementById('stop-camera').addEventListener('click', () => {
+  stopImageCamera();
+  imageStatus.textContent = imageBlob ? 'Camera closed. Local image is ready.' : 'Camera closed without saving an image.';
+});
+
+document.getElementById('download-voice').addEventListener('click', () => {
+  downloadBlob(voiceBlob, `buddy-owner-voice.${mediaExtension(voiceBlob, 'webm')}`);
+});
+
+document.getElementById('download-image').addEventListener('click', () => {
+  downloadBlob(imageBlob, `buddy-owner-image.${mediaExtension(imageBlob, 'jpg')}`);
 });
 
 function validateMedia() {
@@ -311,12 +430,25 @@ function renderPrototype(packet) {
   });
 }
 
-form.addEventListener('submit', event => {
+form.addEventListener('submit', async event => {
   event.preventDefault();
   formStatus.textContent = '';
   try {
     validateMedia();
     if (!form.reportValidity()) return;
+    latestConsentReceipt = useVoice.checked || useImage.checked ? {
+      schema: 'dreamco.creator_media_consent.v1',
+      created_at: new Date().toISOString(),
+      owner_is_subject: true,
+      adult_confirmed: true,
+      permitted_uses: ['Buddy owner projects', 'owner-approved export to another platform'],
+      prohibited_uses: ['minor cloning', 'another person impersonation', 'unapproved publishing', 'political or deceptive impersonation'],
+      synthetic_media_label_required: true,
+      revocable: true,
+      voice_sha256: useVoice.checked ? await blobFingerprint(voiceBlob) : null,
+      image_sha256: useImage.checked ? await blobFingerprint(imageBlob) : null,
+      raw_media_embedded: false,
+    } : null;
     latestPacket = {
       schema: 'dreamco.buddy_creative_studio_project.v1',
       project_type: selectedType(),
@@ -332,6 +464,9 @@ form.addEventListener('submit', event => {
         adult_confirmed: true,
         synthetic_media_label: true,
         raw_media_in_packet: false,
+        receipt_schema: latestConsentReceipt.schema,
+        voice_sha256: latestConsentReceipt.voice_sha256,
+        image_sha256: latestConsentReceipt.image_sha256,
       } : null,
       artifacts: selectedType() === 'invention_prototype'
         ? ['requirements', 'system block diagram', 'bill of materials', 'simulation plan', 'bench-test matrix', 'safety review', 'prior-art research plan', 'cost and ROI estimate']
@@ -349,6 +484,7 @@ form.addEventListener('submit', event => {
     document.getElementById('result-image').textContent = useImage.checked ? 'Consent verified' : 'Not requested';
     document.getElementById('result-tests').textContent = '6 planned';
     outputActions.hidden = false;
+    document.getElementById('download-consent').disabled = !latestConsentReceipt;
     formStatus.textContent = useVoice.checked || useImage.checked
       ? 'Prototype built. A configured local or selected media engine is still required to render cloned media.'
       : 'Prototype built locally.';
@@ -376,11 +512,25 @@ document.getElementById('send-buddy').addEventListener('click', () => {
   location.href = `buddy.html?prompt=${encodeURIComponent(prompt)}`;
 });
 
+document.getElementById('download-consent').addEventListener('click', () => {
+  if (!latestConsentReceipt) return;
+  downloadBlob(
+    new Blob([JSON.stringify(latestConsentReceipt, null, 2)], { type: 'application/json' }),
+    'buddy-creator-media-consent.json',
+  );
+});
+
 document.getElementById('clear-media').addEventListener('click', () => {
   if (mediaStream) mediaStream.getTracks().forEach(track => track.stop());
+  stopImageCamera();
+  if (recordingTimer) clearTimeout(recordingTimer);
   if (voiceObjectUrl) URL.revokeObjectURL(voiceObjectUrl);
   if (imageObjectUrl) URL.revokeObjectURL(imageObjectUrl);
   mediaStream = null;
+  mediaRecorder = null;
+  voiceBlob = null;
+  imageBlob = null;
+  latestConsentReceipt = null;
   voiceObjectUrl = '';
   imageObjectUrl = '';
   voiceFile.value = '';
@@ -388,7 +538,11 @@ document.getElementById('clear-media').addEventListener('click', () => {
   voicePreview.removeAttribute('src');
   imagePreview.removeAttribute('src');
   imagePreview.hidden = true;
+  document.getElementById('download-voice').disabled = true;
+  document.getElementById('download-image').disabled = true;
+  document.getElementById('download-consent').disabled = true;
   voiceStatus.textContent = 'No sample selected.';
+  imageStatus.textContent = 'Choose an image or open the camera.';
   formStatus.textContent = 'Local media removed from this browser session.';
 });
 

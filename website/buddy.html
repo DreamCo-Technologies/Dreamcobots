@@ -29,6 +29,7 @@
         <button id="model-premium" type="button" aria-pressed="false" title="Use a connected paid model for one approved request">Premium</button>
       </div>
       <button id="specialist-open" class="buddy-header-link" type="button">Specialists</button>
+      <button id="local-open" class="buddy-header-link" type="button">This laptop</button>
       <a class="buddy-header-link" href="buddy.html">New chat</a>
       <details class="buddy-explore-menu">
         <summary>Explore</summary>
@@ -37,6 +38,7 @@
           <a href="calculator.html">ROI calculators</a>
           <a href="studio.html">Creative studio</a>
           <a href="connections.html">Business connections</a>
+          <a href="models.html">Model benchmark lab</a>
           <a href="install.html">Install, launch, and domains</a>
           <a href="dashboard.html">Dashboard</a>
         </nav>
@@ -87,6 +89,7 @@
       <button type="button" data-buddy-prompt="Plan a safe connection to an app on my device. Start read-only, show every step, preview changes, and ask before each live action.">Connect an app</button>
       <button type="button" data-buddy-prompt="Launch my project on the free DreamCo web address first, then prepare domain name choices, DNS steps, availability checks, renewal costs, and a purchase approval gate.">Launch a domain</button>
       <button type="button" data-buddy-prompt="Find the best specialist for my task, show the matched capabilities, and prepare a safe sandbox task packet.">Choose a specialist</button>
+      <button type="button" data-local-search-open>Search the web</button>
     </div>
 
     <p class="buddy-trust-line">Repository preview. Buddy can prepare and route work locally. Account, payment, outreach, publishing, and external write actions require an authenticated backend and your exact approval.</p>
@@ -104,6 +107,44 @@
     <input id="specialist-search" type="search" placeholder="Try games, real estate, music, coding, or contracts" autocomplete="off" />
     <div id="specialist-results" class="buddy-specialist-results" aria-live="polite"></div>
     <footer id="specialist-summary">Loading verified specialists.</footer>
+  </dialog>
+
+  <dialog id="local-dialog" class="buddy-local-dialog" aria-labelledby="local-title">
+    <header>
+      <div>
+        <p>Permissioned local workspace</p>
+        <h2 id="local-title">Buddy on this laptop</h2>
+      </div>
+      <button id="local-close" type="button">Close</button>
+    </header>
+    <div class="buddy-local-status-row">
+      <span id="local-status-dot" class="buddy-local-dot"></span>
+      <div><strong id="local-status">Checking local bridge</strong><small id="local-status-detail">Buddy only opens visible, approved targets.</small></div>
+      <button id="local-pause" class="buddy-local-icon-button" type="button" title="Pause or resume local actions">Pause</button>
+    </div>
+    <section class="buddy-local-section">
+      <h3>Search in a browser</h3>
+      <div class="buddy-local-grid">
+        <label>Browser<select id="local-browser"><option value="system">System default</option><option value="safari">Safari</option><option value="chrome">Chrome</option><option value="firefox">Firefox</option><option value="edge">Edge</option><option value="brave">Brave</option><option value="arc">Arc</option></select></label>
+        <label>Search engine<select id="local-engine"><option value="duckduckgo">DuckDuckGo</option><option value="google">Google</option><option value="bing">Bing</option><option value="brave">Brave Search</option></select></label>
+      </div>
+      <label class="buddy-local-query">What should Buddy search for?<input id="local-query" type="search" maxlength="500" placeholder="Find official documentation for..." autocomplete="off" /></label>
+      <label class="buddy-local-approval"><input id="local-approval" type="checkbox" /> Open this one approved search. Do not type, click, sign in, or submit anything else.</label>
+      <button id="local-search" class="buddy-send-button" type="button">Search now</button>
+    </section>
+    <section class="buddy-local-section">
+      <h3>Open an app</h3>
+      <div class="buddy-local-app-row">
+        <select id="local-app" aria-label="Approved local app"><option value="finder">Finder</option><option value="notes">Notes</option><option value="calendar">Calendar</option><option value="mail">Mail</option><option value="safari">Safari</option><option value="chrome">Chrome</option><option value="firefox">Firefox</option><option value="edge">Edge</option><option value="brave">Brave</option><option value="arc">Arc</option></select>
+        <button id="local-app-open" class="buddy-header-link" type="button">Open once</button>
+      </div>
+      <p>Launching an app does not grant Buddy permission to read it, type in it, or control it.</p>
+    </section>
+    <section class="buddy-local-section buddy-local-audit-section">
+      <div class="buddy-local-audit-heading"><h3>Visible action log</h3><span>Memory only, last 50</span></div>
+      <div id="local-audit" class="buddy-local-audit">No local actions in this session.</div>
+    </section>
+    <footer><code>python3 tools/buddy_cli.py local-start</code><span>Run this from the repository to create a private laptop session.</span></footer>
   </dialog>
 
   <script src="data/buddy-routing-index.js"></script>

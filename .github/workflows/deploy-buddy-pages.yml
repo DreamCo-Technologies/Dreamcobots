@@ -10,9 +10,11 @@ on:
       - "config/master_bot_registry.json"
       - "config/buddy-mcp-tool-registry.json"
       - "config/buddy-model-router.json"
+      - "config/buddy-model-benchmarks.json"
       - "config/generated/**"
       - "tools/build_buddy_public_site.py"
       - "tools/generate_buddy_model_router.py"
+      - "tools/generate_buddy_model_benchmarks.ts"
       - "tools/generate_buddy_distribution_catalog.py"
       - "tools/sync_buddy_website_build.py"
       - "dreamco_platform/launch/distribution.py"
@@ -23,9 +25,11 @@ on:
       - "config/master_bot_registry.json"
       - "config/buddy-mcp-tool-registry.json"
       - "config/buddy-model-router.json"
+      - "config/buddy-model-benchmarks.json"
       - "config/generated/**"
       - "tools/build_buddy_public_site.py"
       - "tools/generate_buddy_model_router.py"
+      - "tools/generate_buddy_model_benchmarks.ts"
       - "tools/generate_buddy_distribution_catalog.py"
       - "tools/sync_buddy_website_build.py"
       - "dreamco_platform/launch/distribution.py"
@@ -55,6 +59,7 @@ jobs:
       - name: Run deployment preflight
         run: |
           python3 tools/generate_buddy_model_router.py --check
+          node tools/check_buddy_model_benchmarks.mjs
           python3 tools/generate_buddy_distribution_catalog.py --check
           python3 tools/build_buddy_public_site.py --check
 
@@ -62,6 +67,8 @@ jobs:
         run: |
           node --check website/buddy.js
           node --check website/install.js
+          node --check website/studio.js
+          node --check website/models.js
           node --check website/service-worker.js
 
       - name: Configure GitHub Pages
