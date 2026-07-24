@@ -1,0 +1,1014 @@
+{
+  "schema": "dreamco.bot_capability_test_division.v1",
+  "division": "DreamTrade",
+  "capabilityTestContract": {
+    "mode": "repository_controlled_sandbox",
+    "checks": [
+      {
+        "id": "declaredOnProfile",
+        "label": "Declared on profile"
+      },
+      {
+        "id": "runtimeReady",
+        "label": "Runtime ready"
+      },
+      {
+        "id": "routedAsDeclaredCapability",
+        "label": "Routed as declared capability"
+      },
+      {
+        "id": "evidenceRequired",
+        "label": "Evidence required"
+      },
+      {
+        "id": "requiredSandboxEvidencePresent",
+        "label": "Required sandbox evidence present"
+      },
+      {
+        "id": "noLiveSideEffect",
+        "label": "No live side effect"
+      }
+    ],
+    "requiredEvidence": [
+      "runtime_instance_resolved",
+      "profile_and_route_verified",
+      "network_default_off",
+      "no_live_external_write",
+      "approval_gate_available"
+    ],
+    "networkDefault": "off",
+    "liveExternalActions": "forbidden",
+    "externalProviderBehavior": "not_tested_requires_configured_adapter_and_provider_sandbox"
+  },
+  "summary": {
+    "division": "DreamTrade",
+    "profiles": 12,
+    "passed": 12,
+    "failed": 0,
+    "capabilityTests": 96,
+    "capabilityTestsPassed": 96,
+    "capabilityTestsFailed": 0
+  },
+  "profiles": [
+    {
+      "schema": "dreamco.bot_e2e_certification.v2",
+      "slug": "commodity-trader",
+      "displayName": "Commodity Trading Bot",
+      "division": "DreamTrade",
+      "category": "commodity-trading",
+      "instanceId": "fleet-runtime-commodity-trader",
+      "status": "sandbox_certified",
+      "checks": {
+        "runtimeReady": true,
+        "profileAndBuddyRouteVerified": true,
+        "declaredCapabilitiesVerified": true,
+        "allDeclaredCapabilityContractsTested": true,
+        "runtimeToolBindingVerified": true,
+        "platformCapabilityRegistryVerified": true,
+        "calculatorBindingVerified": true,
+        "distributionBindingVerified": true,
+        "leadSystemBindingVerified": true,
+        "samplePromptVerified": true,
+        "sandboxExecutionVerified": true,
+        "sandboxEvidenceVerified": true,
+        "liveApprovalGateVerified": true,
+        "noLiveSideEffectVerified": true
+      },
+      "declaredCapabilityCount": 8,
+      "capabilityTests": [
+        {
+          "testId": "capability-test-300f381a4a6c9818f5d2",
+          "capability": "Commodity price forecasting",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-c2662397addd3da4c5cc",
+          "capability": "Supply/demand modeling",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-b2806d7a3ce39f149395",
+          "capability": "Weather impact analysis",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-b1c3a9aa7f4fe1a2fe12",
+          "capability": "Futures curve analysis",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-d397b8f806b984833b87",
+          "capability": "Spread trade identification",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-c128b5b9daa2dd165ad0",
+          "capability": "Position management",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-016d02262cdb1fc86c61",
+          "capability": "Advanced analytics dashboard",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-4cd4ac577fb4855ac021",
+          "capability": "Priority email support",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        }
+      ],
+      "toolBindingCount": 8,
+      "apiCandidateCount": 5,
+      "liveEndToEndStatus": "not_executed_requires_authenticated_deployment",
+      "failures": []
+    },
+    {
+      "schema": "dreamco.bot_e2e_certification.v2",
+      "slug": "demand-planner",
+      "displayName": "Demand Planning Bot",
+      "division": "DreamTrade",
+      "category": "demand-planning",
+      "instanceId": "fleet-runtime-demand-planner",
+      "status": "sandbox_certified",
+      "checks": {
+        "runtimeReady": true,
+        "profileAndBuddyRouteVerified": true,
+        "declaredCapabilitiesVerified": true,
+        "allDeclaredCapabilityContractsTested": true,
+        "runtimeToolBindingVerified": true,
+        "platformCapabilityRegistryVerified": true,
+        "calculatorBindingVerified": true,
+        "distributionBindingVerified": true,
+        "leadSystemBindingVerified": true,
+        "samplePromptVerified": true,
+        "sandboxExecutionVerified": true,
+        "sandboxEvidenceVerified": true,
+        "liveApprovalGateVerified": true,
+        "noLiveSideEffectVerified": true
+      },
+      "declaredCapabilityCount": 8,
+      "capabilityTests": [
+        {
+          "testId": "capability-test-e7d1a8d85bdf2af49a8d",
+          "capability": "Consensus forecast builder",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-e505e32b426fec9259cc",
+          "capability": "S&OP integration",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-d81d8d015c9db04b7d59",
+          "capability": "Promotional planning",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-4455f78c29822de3112a",
+          "capability": "New product forecasting",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-6480b0059d7cf7dab728",
+          "capability": "Forecast accuracy tracking",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-cbb74184977ed561f1d2",
+          "capability": "Advanced analytics dashboard",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-88f379a2b1b6295dbf28",
+          "capability": "Priority email support",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-04bba09e5031b3efee21",
+          "capability": "API access",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        }
+      ],
+      "toolBindingCount": 9,
+      "apiCandidateCount": 5,
+      "liveEndToEndStatus": "not_executed_requires_authenticated_deployment",
+      "failures": []
+    },
+    {
+      "schema": "dreamco.bot_e2e_certification.v2",
+      "slug": "import-export",
+      "displayName": "Import/Export Intelligence Bot",
+      "division": "DreamTrade",
+      "category": "trading",
+      "instanceId": "fleet-runtime-import-export",
+      "status": "sandbox_certified",
+      "checks": {
+        "runtimeReady": true,
+        "profileAndBuddyRouteVerified": true,
+        "declaredCapabilitiesVerified": true,
+        "allDeclaredCapabilityContractsTested": true,
+        "runtimeToolBindingVerified": true,
+        "platformCapabilityRegistryVerified": true,
+        "calculatorBindingVerified": true,
+        "distributionBindingVerified": true,
+        "leadSystemBindingVerified": true,
+        "samplePromptVerified": true,
+        "sandboxExecutionVerified": true,
+        "sandboxEvidenceVerified": true,
+        "liveApprovalGateVerified": true,
+        "noLiveSideEffectVerified": true
+      },
+      "declaredCapabilityCount": 8,
+      "capabilityTests": [
+        {
+          "testId": "capability-test-cd5704d63a6ec6da25ec",
+          "capability": "Bill of lading generation",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-28c23cfcc23ec8f1b8b2",
+          "capability": "Commercial invoice creation",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-bad4d3cddaa2da5e08b5",
+          "capability": "Packing list automation",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-257051ad23c1b27f81bd",
+          "capability": "Certificate of origin",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-6d926548deb8489d91f2",
+          "capability": "HS code lookup",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-5e62d3347d91c618b488",
+          "capability": "Freight rate comparison",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-d1697b16554f1c022cd9",
+          "capability": "Shipping route optimization",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-ad558e36fc39dd248f66",
+          "capability": "Customs broker coordination",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        }
+      ],
+      "toolBindingCount": 10,
+      "apiCandidateCount": 5,
+      "liveEndToEndStatus": "not_executed_requires_authenticated_deployment",
+      "failures": []
+    },
+    {
+      "schema": "dreamco.bot_e2e_certification.v2",
+      "slug": "inventory-forecaster",
+      "displayName": "Inventory Forecasting Bot",
+      "division": "DreamTrade",
+      "category": "inventory-forecasting",
+      "instanceId": "fleet-runtime-inventory-forecaster",
+      "status": "sandbox_certified",
+      "checks": {
+        "runtimeReady": true,
+        "profileAndBuddyRouteVerified": true,
+        "declaredCapabilitiesVerified": true,
+        "allDeclaredCapabilityContractsTested": true,
+        "runtimeToolBindingVerified": true,
+        "platformCapabilityRegistryVerified": true,
+        "calculatorBindingVerified": true,
+        "distributionBindingVerified": true,
+        "leadSystemBindingVerified": true,
+        "samplePromptVerified": true,
+        "sandboxExecutionVerified": true,
+        "sandboxEvidenceVerified": true,
+        "liveApprovalGateVerified": true,
+        "noLiveSideEffectVerified": true
+      },
+      "declaredCapabilityCount": 8,
+      "capabilityTests": [
+        {
+          "testId": "capability-test-6838ea77e239758870b2",
+          "capability": "SKU demand forecasting",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-a5aea8223e6240b2d304",
+          "capability": "Safety stock calculator",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-344aa2f0b3135e980ea3",
+          "capability": "Seasonal adjustment engine",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-4a8a84ca1d3be5448d71",
+          "capability": "Promotion impact modeling",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-23df3665457828c3cba1",
+          "capability": "Stockout prediction",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-9a22c2f77afe0b9ffd51",
+          "capability": "Advanced analytics dashboard",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-f5220839db7a35b3e521",
+          "capability": "Priority email support",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-fc76463852dee7634aaf",
+          "capability": "API access",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        }
+      ],
+      "toolBindingCount": 9,
+      "apiCandidateCount": 5,
+      "liveEndToEndStatus": "not_executed_requires_authenticated_deployment",
+      "failures": []
+    },
+    {
+      "schema": "dreamco.bot_e2e_certification.v2",
+      "slug": "logistics-router",
+      "displayName": "Logistics Routing Bot",
+      "division": "DreamTrade",
+      "category": "logistics",
+      "instanceId": "fleet-runtime-logistics-router",
+      "status": "sandbox_certified",
+      "checks": {
+        "runtimeReady": true,
+        "profileAndBuddyRouteVerified": true,
+        "declaredCapabilitiesVerified": true,
+        "allDeclaredCapabilityContractsTested": true,
+        "runtimeToolBindingVerified": true,
+        "platformCapabilityRegistryVerified": true,
+        "calculatorBindingVerified": true,
+        "distributionBindingVerified": true,
+        "leadSystemBindingVerified": true,
+        "samplePromptVerified": true,
+        "sandboxExecutionVerified": true,
+        "sandboxEvidenceVerified": true,
+        "liveApprovalGateVerified": true,
+        "noLiveSideEffectVerified": true
+      },
+      "declaredCapabilityCount": 8,
+      "capabilityTests": [
+        {
+          "testId": "capability-test-61059d49772323f12cf4",
+          "capability": "Multi-modal route optimization",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-91f24c24897b8eca29e4",
+          "capability": "Carrier rate comparison",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-be2001aaee9f36ecb0d8",
+          "capability": "Delivery time estimation",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-f3f477b0b00cfaa1ea94",
+          "capability": "Consolidation planning",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-0c7dd1743b22bfb44bca",
+          "capability": "Last-mile optimization",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-9a7d6c34022306a2f433",
+          "capability": "Advanced analytics dashboard",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-7b4132894b51eb4fb5ed",
+          "capability": "Priority email support",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-d44f647e9ab199b31bd0",
+          "capability": "API access",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        }
+      ],
+      "toolBindingCount": 9,
+      "apiCandidateCount": 5,
+      "liveEndToEndStatus": "not_executed_requires_authenticated_deployment",
+      "failures": []
+    },
+    {
+      "schema": "dreamco.bot_e2e_certification.v2",
+      "slug": "procurement-auto",
+      "displayName": "Procurement Automation Bot",
+      "division": "DreamTrade",
+      "category": "procurement",
+      "instanceId": "fleet-runtime-procurement-auto",
+      "status": "sandbox_certified",
+      "checks": {
+        "runtimeReady": true,
+        "profileAndBuddyRouteVerified": true,
+        "declaredCapabilitiesVerified": true,
+        "allDeclaredCapabilityContractsTested": true,
+        "runtimeToolBindingVerified": true,
+        "platformCapabilityRegistryVerified": true,
+        "calculatorBindingVerified": true,
+        "distributionBindingVerified": true,
+        "leadSystemBindingVerified": true,
+        "samplePromptVerified": true,
+        "sandboxExecutionVerified": true,
+        "sandboxEvidenceVerified": true,
+        "liveApprovalGateVerified": true,
+        "noLiveSideEffectVerified": true
+      },
+      "declaredCapabilityCount": 8,
+      "capabilityTests": [
+        {
+          "testId": "capability-test-00f0e28e05b9a70b990f",
+          "capability": "Requisition automation",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-a62b24c91ca126544d87",
+          "capability": "Vendor selection scoring",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-d404b260dff4cca7833a",
+          "capability": "PO generation engine",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-b654d3600747dee4f4fe",
+          "capability": "Receipt matching",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-746eb65fc16552eb8726",
+          "capability": "Spend analytics dashboard",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-9c6c44fdea9b43568095",
+          "capability": "Advanced analytics dashboard",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-742234b9b9fe0065edea",
+          "capability": "Priority email support",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-3aa244ea7e2eb852c51b",
+          "capability": "API access",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        }
+      ],
+      "toolBindingCount": 9,
+      "apiCandidateCount": 5,
+      "liveEndToEndStatus": "not_executed_requires_authenticated_deployment",
+      "failures": []
+    },
+    {
+      "schema": "dreamco.bot_e2e_certification.v2",
+      "slug": "quality-inspector",
+      "displayName": "Quality Inspection Bot",
+      "division": "DreamTrade",
+      "category": "quality-inspection",
+      "instanceId": "fleet-runtime-quality-inspector",
+      "status": "sandbox_certified",
+      "checks": {
+        "runtimeReady": true,
+        "profileAndBuddyRouteVerified": true,
+        "declaredCapabilitiesVerified": true,
+        "allDeclaredCapabilityContractsTested": true,
+        "runtimeToolBindingVerified": true,
+        "platformCapabilityRegistryVerified": true,
+        "calculatorBindingVerified": true,
+        "distributionBindingVerified": true,
+        "leadSystemBindingVerified": true,
+        "samplePromptVerified": true,
+        "sandboxExecutionVerified": true,
+        "sandboxEvidenceVerified": true,
+        "liveApprovalGateVerified": true,
+        "noLiveSideEffectVerified": true
+      },
+      "declaredCapabilityCount": 8,
+      "capabilityTests": [
+        {
+          "testId": "capability-test-8c7803b08a7f24ec4449",
+          "capability": "Visual defect detection",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-41ee74eec46d39fda016",
+          "capability": "AQL sampling plans",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-b09a8f853955f243d538",
+          "capability": "Inspection report generation",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-6395199a05f16aa6fff9",
+          "capability": "Supplier quality trending",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-93b0a30dafa0397452c9",
+          "capability": "Corrective action tracking",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-b0de4b1dae96e09f4297",
+          "capability": "Advanced analytics dashboard",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-a135110341127d3a3208",
+          "capability": "Priority email support",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-5feeaa204e5d1e7ba5d5",
+          "capability": "API access",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        }
+      ],
+      "toolBindingCount": 9,
+      "apiCandidateCount": 5,
+      "liveEndToEndStatus": "not_executed_requires_authenticated_deployment",
+      "failures": []
+    },
+    {
+      "schema": "dreamco.bot_e2e_certification.v2",
+      "slug": "supply-chain-optimizer",
+      "displayName": "Supply Chain Optimizer",
+      "division": "DreamTrade",
+      "category": "supply-chain",
+      "instanceId": "fleet-runtime-supply-chain-optimizer",
+      "status": "sandbox_certified",
+      "checks": {
+        "runtimeReady": true,
+        "profileAndBuddyRouteVerified": true,
+        "declaredCapabilitiesVerified": true,
+        "allDeclaredCapabilityContractsTested": true,
+        "runtimeToolBindingVerified": true,
+        "platformCapabilityRegistryVerified": true,
+        "calculatorBindingVerified": true,
+        "distributionBindingVerified": true,
+        "leadSystemBindingVerified": true,
+        "samplePromptVerified": true,
+        "sandboxExecutionVerified": true,
+        "sandboxEvidenceVerified": true,
+        "liveApprovalGateVerified": true,
+        "noLiveSideEffectVerified": true
+      },
+      "declaredCapabilityCount": 8,
+      "capabilityTests": [
+        {
+          "testId": "capability-test-6c1c3a9265b4034f016f",
+          "capability": "Network design optimization",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-f852eedd4c13e64cee27",
+          "capability": "Multi-tier supplier mapping",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-276c725c297f8019de88",
+          "capability": "Disruption risk scoring",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-153ecdcb794a988118e4",
+          "capability": "Cost-to-serve analysis",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-0d89d8ce43dbaa5719e6",
+          "capability": "Lead time reduction engine",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-fc7b644352878be5b92a",
+          "capability": "Advanced analytics dashboard",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-a1a379ac5a8d6fa8c6ae",
+          "capability": "Priority email support",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-30de7302d08aadbc8990",
+          "capability": "API access",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        }
+      ],
+      "toolBindingCount": 10,
+      "apiCandidateCount": 1,
+      "liveEndToEndStatus": "not_executed_requires_authenticated_deployment",
+      "failures": []
+    },
+    {
+      "schema": "dreamco.bot_e2e_certification.v2",
+      "slug": "trade-compliance-engine",
+      "displayName": "Trade Compliance Engine",
+      "division": "DreamTrade",
+      "category": "trade-compliance",
+      "instanceId": "fleet-runtime-trade-compliance-engine",
+      "status": "sandbox_certified",
+      "checks": {
+        "runtimeReady": true,
+        "profileAndBuddyRouteVerified": true,
+        "declaredCapabilitiesVerified": true,
+        "allDeclaredCapabilityContractsTested": true,
+        "runtimeToolBindingVerified": true,
+        "platformCapabilityRegistryVerified": true,
+        "calculatorBindingVerified": true,
+        "distributionBindingVerified": true,
+        "leadSystemBindingVerified": true,
+        "samplePromptVerified": true,
+        "sandboxExecutionVerified": true,
+        "sandboxEvidenceVerified": true,
+        "liveApprovalGateVerified": true,
+        "noLiveSideEffectVerified": true
+      },
+      "declaredCapabilityCount": 8,
+      "capabilityTests": [
+        {
+          "testId": "capability-test-2f8bb4eacde1c670cd0e",
+          "capability": "Sanctions list screening",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-cfb4ad7abd152a1d08a3",
+          "capability": "Export control classification",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-1d5a5cdfde5a4be9dbec",
+          "capability": "Denied party screening",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-385af1c275a6daf1edeb",
+          "capability": "License management",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-d5a6ceb8507a0e984fc4",
+          "capability": "Compliance audit trail",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-005a363910c5352cb6b5",
+          "capability": "Regulatory change tracking",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-8e51cc8bbbd2d63f1e1d",
+          "capability": "Advanced analytics dashboard",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-82a48ba079d2076631e1",
+          "capability": "Priority email support",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        }
+      ],
+      "toolBindingCount": 8,
+      "apiCandidateCount": 1,
+      "liveEndToEndStatus": "not_executed_requires_authenticated_deployment",
+      "failures": []
+    },
+    {
+      "schema": "dreamco.bot_e2e_certification.v2",
+      "slug": "trade-master",
+      "displayName": "DreamTrade Master AI",
+      "division": "DreamTrade",
+      "category": "trading",
+      "instanceId": "fleet-runtime-trade-master",
+      "status": "sandbox_certified",
+      "checks": {
+        "runtimeReady": true,
+        "profileAndBuddyRouteVerified": true,
+        "declaredCapabilitiesVerified": true,
+        "allDeclaredCapabilityContractsTested": true,
+        "runtimeToolBindingVerified": true,
+        "platformCapabilityRegistryVerified": true,
+        "calculatorBindingVerified": true,
+        "distributionBindingVerified": true,
+        "leadSystemBindingVerified": true,
+        "samplePromptVerified": true,
+        "sandboxExecutionVerified": true,
+        "sandboxEvidenceVerified": true,
+        "liveApprovalGateVerified": true,
+        "noLiveSideEffectVerified": true
+      },
+      "declaredCapabilityCount": 8,
+      "capabilityTests": [
+        {
+          "testId": "capability-test-83a4dc3e9d29c8d1e1a9",
+          "capability": "Import/export documentation",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-c1a16e75f431ca05a281",
+          "capability": "Customs compliance checking",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-9dd14efd9850b79fc105",
+          "capability": "Tariff calculation",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-1201bd1e01c479a5d275",
+          "capability": "Supply chain tracking",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-ad6d78047489c884853c",
+          "capability": "Commodity price monitoring",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-a70109a94e950d38ad41",
+          "capability": "Trade finance assistance",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-5aaf917078baf8ea9cd2",
+          "capability": "Logistics coordination",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-c05c0c5bb3749533a562",
+          "capability": "Currency risk management",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        }
+      ],
+      "toolBindingCount": 8,
+      "apiCandidateCount": 5,
+      "liveEndToEndStatus": "not_executed_requires_authenticated_deployment",
+      "failures": []
+    },
+    {
+      "schema": "dreamco.bot_e2e_certification.v2",
+      "slug": "vendor-manager",
+      "displayName": "Vendor Management Bot",
+      "division": "DreamTrade",
+      "category": "vendor-management",
+      "instanceId": "fleet-runtime-vendor-manager",
+      "status": "sandbox_certified",
+      "checks": {
+        "runtimeReady": true,
+        "profileAndBuddyRouteVerified": true,
+        "declaredCapabilitiesVerified": true,
+        "allDeclaredCapabilityContractsTested": true,
+        "runtimeToolBindingVerified": true,
+        "platformCapabilityRegistryVerified": true,
+        "calculatorBindingVerified": true,
+        "distributionBindingVerified": true,
+        "leadSystemBindingVerified": true,
+        "samplePromptVerified": true,
+        "sandboxExecutionVerified": true,
+        "sandboxEvidenceVerified": true,
+        "liveApprovalGateVerified": true,
+        "noLiveSideEffectVerified": true
+      },
+      "declaredCapabilityCount": 8,
+      "capabilityTests": [
+        {
+          "testId": "capability-test-7694f494276caa81ddac",
+          "capability": "Vendor scorecard engine",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-53406b8446ad1ffcc2df",
+          "capability": "Performance benchmarking",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-ab6a3aeeba7d4ab864a1",
+          "capability": "Risk assessment automation",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-0b30fad8cb90d673c022",
+          "capability": "Contract compliance tracking",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-1836c59d2382e6d7f09f",
+          "capability": "Diversity spend tracking",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-bac01a3715b28d0ee4b8",
+          "capability": "Advanced analytics dashboard",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-5d831d9d7389bd011347",
+          "capability": "Priority email support",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-efabbb65862811e147ce",
+          "capability": "API access",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        }
+      ],
+      "toolBindingCount": 9,
+      "apiCandidateCount": 5,
+      "liveEndToEndStatus": "not_executed_requires_authenticated_deployment",
+      "failures": []
+    },
+    {
+      "schema": "dreamco.bot_e2e_certification.v2",
+      "slug": "warehouse-manager",
+      "displayName": "Warehouse Management Bot",
+      "division": "DreamTrade",
+      "category": "warehouse",
+      "instanceId": "fleet-runtime-warehouse-manager",
+      "status": "sandbox_certified",
+      "checks": {
+        "runtimeReady": true,
+        "profileAndBuddyRouteVerified": true,
+        "declaredCapabilitiesVerified": true,
+        "allDeclaredCapabilityContractsTested": true,
+        "runtimeToolBindingVerified": true,
+        "platformCapabilityRegistryVerified": true,
+        "calculatorBindingVerified": true,
+        "distributionBindingVerified": true,
+        "leadSystemBindingVerified": true,
+        "samplePromptVerified": true,
+        "sandboxExecutionVerified": true,
+        "sandboxEvidenceVerified": true,
+        "liveApprovalGateVerified": true,
+        "noLiveSideEffectVerified": true
+      },
+      "declaredCapabilityCount": 8,
+      "capabilityTests": [
+        {
+          "testId": "capability-test-9cbf7b9001de9d65c280",
+          "capability": "Slotting optimization engine",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-4845f49f8fd6bf1ea69f",
+          "capability": "Pick wave planning",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-6dbe872575ffb0936262",
+          "capability": "Labor scheduling automation",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-51cc9c49b22538769ae4",
+          "capability": "Inventory cycle counting",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-9a8c402acb06e85dac86",
+          "capability": "Receiving and putaway optimization",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-8fff2ee3e75f7c68c0e7",
+          "capability": "Advanced analytics dashboard",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-239d85b56a43e0ac38a1",
+          "capability": "Priority email support",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        },
+        {
+          "testId": "capability-test-b87e74fd7e5e814c6785",
+          "capability": "API access",
+          "status": "sandbox_contract_passed",
+          "liveExternalActionTaken": false
+        }
+      ],
+      "toolBindingCount": 9,
+      "apiCandidateCount": 5,
+      "liveEndToEndStatus": "not_executed_requires_authenticated_deployment",
+      "failures": []
+    }
+  ]
+}

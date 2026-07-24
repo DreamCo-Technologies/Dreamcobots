@@ -14,6 +14,7 @@ This report is generated from repository evidence. A catalog profile is not coun
 - Per-bot logo identities: 1051
 - Per-bot business blueprints: 1051
 - Permission-gated lead systems: 1051
+- Declared capability slots covered by fleet certification: 8408
 
 ## Production Gate
 

@@ -40,7 +40,11 @@ import {
   createApprovalNotificationPlan,
   notificationPreferencesSchema,
 } from "./approval-notifications";
-import { fleetExecutionRequestSchema, getFleetRuntimeRegistry } from "./fleet-runtime";
+import {
+  capabilityTestRequestSchema,
+  fleetExecutionRequestSchema,
+  getFleetRuntimeRegistry,
+} from "./fleet-runtime";
 import { outboundAdapterReadiness } from "./outbound-adapters";
 import {
   buildGovernedLeadPlan,
@@ -478,6 +482,20 @@ export async function registerRoutes(
       const request = fleetExecutionRequestSchema.parse(req.body);
       const result = runtime.execute(request);
       res.status(result.status === "approval_required" ? 202 : 201).json(result);
+    } catch (error) {
+      if (error instanceof z.ZodError) return res.status(400).json(zodValidationError(error));
+      throw error;
+    }
+  });
+
+  app.post("/api/fleet/runtime/:slug/test-capability", (req, res) => {
+    try {
+      const runtime = getFleetRuntimeRegistry().get(req.params.slug);
+      if (!runtime) return res.status(404).json({ message: "Bot runtime not found" });
+      const request = capabilityTestRequestSchema.parse(req.body);
+      const result = runtime.testCapability(request.capability);
+      res.setHeader("Cache-Control", "no-store");
+      res.status(result.status === "sandbox_contract_passed" ? 200 : 422).json(result);
     } catch (error) {
       if (error instanceof z.ZodError) return res.status(400).json(zodValidationError(error));
       throw error;

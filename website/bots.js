@@ -1,5 +1,15 @@
 const PAGE_SIZE = 36;
-const state = { catalog: null, filtered: [], page: 1, divisionCache: new Map() };
+const state = {
+  catalog: null,
+  filtered: [],
+  page: 1,
+  divisionCache: new Map(),
+  capabilityShardCache: new Map(),
+  certifications: new Map(),
+  capabilityContract: null,
+  activeBot: null,
+  activeCertification: null,
+};
 const numberFormat = new Intl.NumberFormat('en-US');
 
 const grid = document.getElementById('bots-grid');
@@ -31,12 +41,22 @@ function testUrl(bot) {
   return `buddy.html?bot=${encodeURIComponent(bot.identity.slug)}&prompt=${encodeURIComponent(bot.sample_test_prompt)}`;
 }
 
+function capabilityTestUrl(bot, capability) {
+  const prompt = `Test ${bot.identity.display_name} capability "${capability}" in sandbox mode. Use synthetic data, show inputs, execution steps, output, and test evidence. Stop before any live external action.`;
+  return `buddy.html?bot=${encodeURIComponent(bot.identity.slug)}&prompt=${encodeURIComponent(prompt)}`;
+}
+
 function calculatorUrl(bot) {
   return `calculator.html?bot=${encodeURIComponent(bot.identity.slug)}`;
 }
 
 function renderCard(bot) {
   const apiLabel = bot.api_candidate_count ? `${bot.api_candidate_count} candidates` : 'No API catalog';
+  const certification = state.certifications.get(bot.identity.slug);
+  const passedTests = certification?.capabilityTestsPassed ?? 0;
+  const expectedTests = certification?.declaredCapabilityCount ?? bot.capability_count;
+  const testLabel = certification ? `${passedTests}/${expectedTests}` : 'Unavailable';
+  const certificationReady = certification?.status === 'sandbox_certified' && passedTests === expectedTests;
   return `<article class="fleet-card" data-slug="${escapeHtml(bot.identity.slug)}">
     <div class="fleet-card-head">
       ${botLogo(bot)}
@@ -47,12 +67,13 @@ function renderCard(bot) {
     <p class="fleet-mission">${escapeHtml(bot.mission)}</p>
     <div class="fleet-evidence">
       <div><span>Capabilities</span><strong>${bot.capability_count}</strong></div>
+      <div><span>Tests passed</span><strong>${escapeHtml(testLabel)}</strong></div>
       <div><span>Tools</span><strong>${bot.tool_summary.length}</strong></div>
       <div><span>APIs</span><strong title="${escapeHtml(apiLabel)}">${escapeHtml(apiLabel)}</strong></div>
     </div>
-    <div class="fleet-readiness"><span></span> Buddy route verified · sandbox first</div>
+    <div class="fleet-readiness ${certificationReady ? '' : 'is-warning'}"><span></span> ${certificationReady ? 'Every capability contract passed' : 'Capability evidence unavailable or incomplete'}</div>
     <div class="fleet-card-actions">
-      <button class="btn btn-outline btn-sm" type="button" data-action="prospectus" data-slug="${escapeHtml(bot.identity.slug)}">Prospectus</button>
+      <button class="btn btn-outline btn-sm" type="button" data-action="prospectus" data-slug="${escapeHtml(bot.identity.slug)}">Capabilities</button>
       <a class="btn btn-outline btn-sm" href="${calculatorUrl(bot)}">Calculator</a>
       <a class="btn btn-primary btn-sm" href="${testUrl(bot)}">Test with Buddy</a>
     </div>
@@ -121,6 +142,17 @@ async function loadDivision(name) {
   return state.divisionCache.get(name);
 }
 
+async function loadCapabilityDivision(name) {
+  if (!state.capabilityShardCache.has(name)) {
+    state.capabilityShardCache.set(name, fetch(`data/bot-capability-tests/${encodeURIComponent(name)}.json`, { cache: 'no-store' })
+      .then((response) => {
+        if (!response.ok) throw new Error(`Capability certification data returned ${response.status}`);
+        return response.json();
+      }));
+  }
+  return state.capabilityShardCache.get(name);
+}
+
 function list(items) {
   return `<div class="prospectus-list">${items.map((item) => `<span>${escapeHtml(typeof item === 'string' ? item : item.name)}</span>`).join('')}</div>`;
 }
@@ -129,13 +161,37 @@ function keyValues(entries) {
   return `<dl class="prospectus-kv">${entries.map(([key, value]) => `<dt>${escapeHtml(key)}</dt><dd>${escapeHtml(value)}</dd>`).join('')}</dl>`;
 }
 
-function renderProspectus(bot) {
+function humanize(value) {
+  return String(value)
+    .replace(/([a-z])([A-Z])/g, '$1 $2')
+    .replaceAll('_', ' ')
+    .replace(/^./, (letter) => letter.toUpperCase());
+}
+
+function capabilityRows(bot, certification) {
+  const tests = new Map((certification?.capabilityTests ?? []).map((test) => [test.capability, test]));
+  return bot.capabilities.map((capability) => {
+    const test = tests.get(capability.name);
+    const passed = test?.status === 'sandbox_contract_passed';
+    return `<tr data-capability="${encodeURIComponent(capability.name)}">
+      <td class="capability-name"><strong>${escapeHtml(capability.name)}</strong><small>${escapeHtml(capability.source)}</small></td>
+      <td><span class="capability-test-state ${passed ? 'passed' : 'failed'}">${passed ? 'Sandbox contract passed' : 'Test evidence unavailable'}</span></td>
+      <td><button class="capability-test-button" type="button" data-action="test-capability" data-capability="${encodeURIComponent(capability.name)}">Run test</button></td>
+    </tr>`;
+  }).join('');
+}
+
+function renderProspectus(bot, certification) {
   const apiRows = bot.api_candidates.length ? bot.api_candidates.map((api) => `<tr><td>${escapeHtml(api.name)}</td><td>${escapeHtml(api.category)}</td><td>Configuration + sandbox required</td></tr>`).join('') : '<tr><td colspan="3">This division does not yet have an API candidate catalog.</td></tr>';
   const toolRows = bot.tools.map((tool) => `<tr><td>${escapeHtml(tool.name)}</td><td>${escapeHtml(tool.status.replaceAll('_', ' '))}</td><td>${escapeHtml(tool.evidence)}</td></tr>`).join('');
+  const passedTests = certification?.capabilityTests.filter((test) => test.status === 'sandbox_contract_passed').length ?? 0;
+  const totalTests = certification?.declaredCapabilityCount ?? bot.capabilities.length;
+  state.activeBot = bot;
+  state.activeCertification = certification ?? null;
   dialogContent.innerHTML = `<div class="prospectus-hero">
       ${botLogo(bot)}
       <div><h2>${escapeHtml(bot.identity.display_name)}</h2><p>${escapeHtml(bot.prospectus.mission)}</p><p class="fleet-call-sign">${escapeHtml(bot.logo.call_sign)} · ${escapeHtml(bot.identity.division)} / ${escapeHtml(bot.identity.category)}</p></div>
-      <span class="prospectus-status">Not yet production-evidenced</span>
+      <span class="prospectus-status ${passedTests === totalTests ? 'passed' : ''}">${passedTests}/${totalTests} sandbox contracts passed</span>
     </div>
     <div class="prospectus-sections">
       <section class="prospectus-section">
@@ -158,7 +214,17 @@ function renderProspectus(bot) {
           ['Catalog source', bot.evidence.catalog_source],
         ])}
       </section>
-      <section class="prospectus-section wide"><h3>Declared capabilities</h3>${list(bot.capabilities)}</section>
+      <section class="prospectus-section wide capability-lab">
+        <h3>Capabilities and sandbox contract tests</h3>
+        <p class="prospectus-note">These tests verify each declared capability is registered, routed through the governed runtime, evidence-gated, network-off by default, and unable to take a live external action. Provider behavior still requires a configured adapter and provider sandbox.</p>
+        <div class="capability-table-wrap">
+          <table class="prospectus-table capability-table"><thead><tr><th>Capability</th><th>Repository test</th><th>Action</th></tr></thead><tbody>${capabilityRows(bot, certification)}</tbody></table>
+        </div>
+        <div id="capability-test-result" class="capability-test-result" aria-live="polite">
+          <strong>Select a capability test</strong>
+          <p>Each result is checked against the generated fleet certificate. Nothing is sent or published.</p>
+        </div>
+      </section>
       <section class="prospectus-section wide">
         <h3>Platform tools</h3>
         <table class="prospectus-table"><thead><tr><th>Tool</th><th>State</th><th>Evidence</th></tr></thead><tbody>${toolRows}</tbody></table>
@@ -198,16 +264,54 @@ function renderProspectus(bot) {
     </div>`;
 }
 
+function runCapabilityTest(capability) {
+  const bot = state.activeBot;
+  const certification = state.activeCertification;
+  const result = document.getElementById('capability-test-result');
+  if (!bot || !result) return;
+  const declared = bot.capabilities.find((item) => item.name === capability);
+  const test = certification?.capabilityTests.find((item) => item.capability === capability);
+  const passed = Boolean(
+    declared &&
+    test &&
+    declared.test_id === test.testId &&
+    test.status === 'sandbox_contract_passed' &&
+    !test.failures?.length &&
+    test.liveExternalActionTaken === false &&
+    state.capabilityContract?.checks?.length > 0
+  );
+  const checks = test && state.capabilityContract
+    ? state.capabilityContract.checks.map((check) => {
+      const value = !test.failures?.includes(check.id);
+      return `<li><span class="${value ? 'passed' : 'failed'}">${value ? 'Passed' : 'Failed'}</span><strong>${escapeHtml(check.label ?? humanize(check.id))}</strong></li>`;
+    }).join('')
+    : '<li><span class="failed">Failed</span><strong>Certification record found</strong></li>';
+  result.className = `capability-test-result ${passed ? 'passed' : 'failed'}`;
+  result.innerHTML = `<div class="capability-result-head">
+      <div><span>${passed ? 'Sandbox contract passed' : 'Sandbox contract failed'}</span><strong>${escapeHtml(capability)}</strong></div>
+      <a class="btn btn-primary btn-sm" href="${capabilityTestUrl(bot, capability)}">Test with Buddy</a>
+    </div>
+    <ul class="capability-checks">${checks}</ul>
+    <p>Test ID: <code>${escapeHtml(test?.testId ?? declared?.test_id ?? 'missing')}</code>. Evidence contract: <code>${escapeHtml(state.capabilityContract?.requiredEvidence?.join(', ') ?? 'missing')}</code>. Live external action taken: <strong>${test?.liveExternalActionTaken === false ? 'No' : 'Unknown'}</strong>.</p>`;
+  const row = dialogContent.querySelector(`tr[data-capability="${CSS.escape(encodeURIComponent(capability))}"]`);
+  row?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
 async function openProspectus(slug) {
   const indexBot = state.catalog.bots.find((bot) => bot.identity.slug === slug);
   if (!indexBot) return;
   dialogContent.innerHTML = '<p>Loading repository prospectus...</p>';
   dialog.showModal();
   try {
-    const division = await loadDivision(indexBot.identity.division);
+    const [division, capabilityDivision] = await Promise.all([
+      loadDivision(indexBot.identity.division),
+      loadCapabilityDivision(indexBot.identity.division),
+    ]);
     const bot = division.bots.find((item) => item.identity.slug === slug);
+    const certification = capabilityDivision.profiles.find((item) => item.slug === slug);
     if (!bot) throw new Error('Bot prospectus was not found in its division shard.');
-    renderProspectus(bot);
+    if (!certification) throw new Error('Bot capability certification was not found in its division shard.');
+    renderProspectus(bot, certification);
   } catch (error) {
     dialogContent.innerHTML = `<p class="prospectus-note">${escapeHtml(error.message)}</p>`;
   }
@@ -215,15 +319,25 @@ async function openProspectus(slug) {
 
 async function initialize() {
   try {
-    const response = await fetch('data/bot-fleet-catalog.json', { cache: 'no-store' });
-    if (!response.ok) throw new Error(`Fleet catalog returned ${response.status}`);
-    state.catalog = await response.json();
+    const [catalogResponse, certificationResponse] = await Promise.all([
+      fetch('data/bot-fleet-catalog.json', { cache: 'no-store' }),
+      fetch('data/bot-fleet-e2e.json', { cache: 'no-store' }),
+    ]);
+    if (!catalogResponse.ok) throw new Error(`Fleet catalog returned ${catalogResponse.status}`);
+    if (!certificationResponse.ok) throw new Error(`Fleet certification returned ${certificationResponse.status}`);
+    state.catalog = await catalogResponse.json();
+    const certification = await certificationResponse.json();
+    state.certifications = new Map(certification.profiles.map((profile) => [profile.slug, profile]));
+    state.capabilityContract = certification.capabilityTestContract;
     const summary = state.catalog.summary;
+    if (summary.profiles !== certification.summary.profilesTested) throw new Error('Fleet catalog and certification profile counts do not match');
+    if (summary.declared_capability_slots !== certification.summary.declaredCapabilitiesTested) throw new Error('Fleet capability counts do not match certification evidence');
     document.getElementById('fleet-profile-count').textContent = numberFormat.format(summary.profiles);
     document.getElementById('fleet-division-count').textContent = numberFormat.format(summary.divisions);
+    document.getElementById('fleet-capability-count').textContent = numberFormat.format(summary.declared_capability_slots);
+    document.getElementById('fleet-capability-test-count').textContent = numberFormat.format(certification.summary.sandboxCapabilityTestsPassed);
     document.getElementById('fleet-route-count').textContent = numberFormat.format(summary.runtime_routed_profiles);
-    document.getElementById('fleet-sandbox-count').textContent = numberFormat.format(summary.per_bot_sandbox_blueprints);
-    document.getElementById('fleet-api-count').textContent = numberFormat.format(summary.configured_external_apis_evidenced);
+    document.getElementById('fleet-capability-failure-count').textContent = numberFormat.format(certification.summary.sandboxCapabilityTestsFailed);
     const divisionFilter = document.getElementById('division-filter');
     divisionFilter.insertAdjacentHTML('beforeend', state.catalog.divisions.map((division) => `<option value="${escapeHtml(division.name)}">${escapeHtml(division.name)} (${division.profile_count})</option>`).join(''));
     state.filtered = [...state.catalog.bots];
@@ -260,6 +374,11 @@ pagination.addEventListener('click', (event) => {
 document.getElementById('close-prospectus').addEventListener('click', () => dialog.close());
 dialog.addEventListener('click', (event) => {
   if (event.target === dialog) dialog.close();
+});
+dialogContent.addEventListener('click', (event) => {
+  const button = event.target.closest('[data-action="test-capability"]');
+  if (!button) return;
+  runCapabilityTest(decodeURIComponent(button.dataset.capability));
 });
 
 initialize();

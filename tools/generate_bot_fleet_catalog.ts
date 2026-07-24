@@ -496,12 +496,17 @@ export function buildFleetCatalog() {
           ],
         },
         business_system: business,
-        capabilities: profile.capabilities.map((name) => ({
-          name,
-          source: `App_bots/${content.division}.json`,
-          evidence_level: "catalog_declared",
-          test_status: "sandbox_blueprint_generated",
-        })),
+        capabilities: profile.capabilities.map((name) => {
+          const digest = createHash("sha256").update(`${profile.slug}:${name}`).digest("hex").slice(0, 20);
+          return {
+            name,
+            source: `App_bots/${content.division}.json`,
+            evidence_level: "catalog_declared",
+            test_id: `capability-test-${digest}`,
+            test_status: "reported_by_fleet_e2e",
+            test_evidence: `website/data/bot-capability-tests/${content.division}.json#${profile.slug}`,
+          };
+        }),
         tools: inferTools(profile),
         api_candidates: apiCandidates,
         data_contract: dataContract(profile),
@@ -521,7 +526,7 @@ export function buildFleetCatalog() {
           runtime_sources: runtimeEvidence,
           runtime_seed_duplicates: Math.max(runtimeEvidence.length - 1, 0),
         },
-        sample_test_prompt: `Test ${profile.displayName} in sandbox mode. Use synthetic data, demonstrate ${profile.capabilities[0] || profile.category}, record evidence, and stop before any live external action.`,
+        sample_test_prompt: `Test every declared capability for ${profile.displayName} in sandbox mode: ${profile.capabilities.join("; ")}. Use synthetic data, record separate evidence for each capability, and stop before any live external action.`,
       };
     });
   });
@@ -562,6 +567,7 @@ export function buildFleetCatalog() {
       per_bot_logo_identities: bots.length,
       per_bot_business_blueprints: bots.length,
       per_bot_governed_lead_systems: bots.length,
+      declared_capability_slots: bots.reduce((total, bot) => total + bot.capabilities.length, 0),
       production_ready_profiles: 0,
     },
     divisions,
@@ -618,6 +624,7 @@ function buildReport(catalog: ReturnType<typeof buildFleetCatalog>) {
     `- Per-bot logo identities: ${catalog.summary.per_bot_logo_identities}`,
     `- Per-bot business blueprints: ${catalog.summary.per_bot_business_blueprints}`,
     `- Permission-gated lead systems: ${catalog.summary.per_bot_governed_lead_systems}`,
+    `- Declared capability slots covered by fleet certification: ${catalog.summary.declared_capability_slots}`,
     "",
     "## Production Gate",
     "",

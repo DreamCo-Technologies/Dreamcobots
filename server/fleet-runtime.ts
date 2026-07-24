@@ -11,6 +11,10 @@ export const fleetExecutionRequestSchema = z.object({
   liveActionRequested: z.boolean().default(false),
 }).strict();
 
+export const capabilityTestRequestSchema = z.object({
+  capability: z.string().trim().min(2).max(160),
+}).strict();
+
 export type FleetExecutionRequest = z.infer<typeof fleetExecutionRequestSchema>;
 
 type CatalogBot = {
@@ -43,8 +47,42 @@ type FleetCatalog = {
 
 export type RuntimeState = "ready" | "offline" | "error";
 
+const REQUIRED_SANDBOX_EVIDENCE = [
+  "runtime_instance_resolved",
+  "profile_and_route_verified",
+  "network_default_off",
+  "no_live_external_write",
+  "approval_gate_available",
+] as const;
+
+const CAPABILITY_TEST_CHECKS = [
+  { id: "declaredOnProfile", label: "Declared on profile" },
+  { id: "runtimeReady", label: "Runtime ready" },
+  { id: "routedAsDeclaredCapability", label: "Routed as declared capability" },
+  { id: "evidenceRequired", label: "Evidence required" },
+  { id: "requiredSandboxEvidencePresent", label: "Required sandbox evidence present" },
+  { id: "noLiveSideEffect", label: "No live side effect" },
+] as const;
+
+export type CapabilityContractTest = {
+  testId: string;
+  capability: string;
+  status: "sandbox_contract_passed" | "failed";
+  checks: {
+    declaredOnProfile: boolean;
+    runtimeReady: boolean;
+    routedAsDeclaredCapability: boolean;
+    evidenceRequired: boolean;
+    requiredSandboxEvidencePresent: boolean;
+    noLiveSideEffect: boolean;
+  };
+  evidence: string[];
+  liveExternalActionTaken: false;
+  failures: string[];
+};
+
 export type BotEndToEndCertification = {
-  schema: "dreamco.bot_e2e_certification.v1";
+  schema: "dreamco.bot_e2e_certification.v2";
   slug: string;
   displayName: string;
   division: string;
@@ -55,6 +93,7 @@ export type BotEndToEndCertification = {
     runtimeReady: boolean;
     profileAndBuddyRouteVerified: boolean;
     declaredCapabilitiesVerified: boolean;
+    allDeclaredCapabilityContractsTested: boolean;
     runtimeToolBindingVerified: boolean;
     platformCapabilityRegistryVerified: boolean;
     calculatorBindingVerified: boolean;
@@ -67,6 +106,13 @@ export type BotEndToEndCertification = {
     noLiveSideEffectVerified: boolean;
   };
   declaredCapabilityCount: number;
+  capabilityTests: Array<{
+    testId: string;
+    capability: string;
+    status: "sandbox_contract_passed" | "failed";
+    liveExternalActionTaken: false;
+    failures?: string[];
+  }>;
   toolBindingCount: number;
   apiCandidateCount: number;
   liveEndToEndStatus: "not_executed_requires_authenticated_deployment";
@@ -170,11 +216,7 @@ export class BotRuntimeInstance {
         sandboxTestRequired: true,
       })),
       sandboxEvidence: [
-        "runtime_instance_resolved",
-        "profile_and_route_verified",
-        "network_default_off",
-        "no_live_external_write",
-        "approval_gate_available",
+        ...REQUIRED_SANDBOX_EVIDENCE,
       ],
       sampleTestPrompt: this.profile.sample_test_prompt,
       liveExternalActionTaken: false,
@@ -182,9 +224,79 @@ export class BotRuntimeInstance {
     } as const;
   }
 
+  testCapability(capabilityInput: string): CapabilityContractTest {
+    const capability = capabilityTestRequestSchema.parse({ capability: capabilityInput }).capability;
+    const declaredCapabilities = this.profile.capability_search.split(" | ").filter(Boolean);
+    const declaredOnProfile = declaredCapabilities.includes(capability);
+    const checks: CapabilityContractTest["checks"] = {
+      declaredOnProfile,
+      runtimeReady: this.state === "ready",
+      routedAsDeclaredCapability: false,
+      evidenceRequired: false,
+      requiredSandboxEvidencePresent: false,
+      noLiveSideEffect: false,
+    };
+    let evidence: string[] = [];
+
+    if (declaredOnProfile && checks.runtimeReady) {
+      try {
+        const result = this.execute({
+          objective: `Test ${capability} for ${this.profile.identity.display_name} in the governed sandbox.`,
+          input: {
+            capabilityContractTest: true,
+            botSlug: this.profile.identity.slug,
+            syntheticDataOnly: true,
+          },
+          requestedCapabilities: [capability],
+          liveActionRequested: false,
+        });
+        if (result.status === "sandbox_task_packet_ready") {
+          const step = result.capabilityPlan[0];
+          evidence = [...result.sandboxEvidence];
+          checks.routedAsDeclaredCapability =
+            result.instanceId === this.instanceId &&
+            result.capabilityPlan.length === 1 &&
+            step?.capability === capability &&
+            step.status === "declared_capability";
+          checks.evidenceRequired = step?.evidenceRequired === true;
+          const evidenceSet = new Set<string>(evidence);
+          checks.requiredSandboxEvidencePresent = REQUIRED_SANDBOX_EVIDENCE.every((item) => evidenceSet.has(item));
+          checks.noLiveSideEffect = result.liveExternalActionTaken === false;
+        }
+      } catch {
+        checks.routedAsDeclaredCapability = false;
+      }
+    }
+
+    const failures = Object.entries(checks)
+      .filter(([, passed]) => !passed)
+      .map(([check]) => check);
+    const digest = createHash("sha256")
+      .update(`${this.profile.identity.slug}:${capability}`)
+      .digest("hex")
+      .slice(0, 20);
+    return {
+      testId: `capability-test-${digest}`,
+      capability,
+      status: failures.length === 0 ? "sandbox_contract_passed" : "failed",
+      checks,
+      evidence,
+      liveExternalActionTaken: false,
+      failures,
+    };
+  }
+
   certifyEndToEnd(): BotEndToEndCertification {
     const declaredCapabilities = this.profile.capability_search.split(" | ").filter(Boolean);
     const health = this.health();
+    const capabilityTestResults = declaredCapabilities.map((capability) => this.testCapability(capability));
+    const capabilityTests: BotEndToEndCertification["capabilityTests"] = capabilityTestResults.map((test) => ({
+      testId: test.testId,
+      capability: test.capability,
+      status: test.status,
+      liveExternalActionTaken: false,
+      ...(test.failures.length ? { failures: test.failures } : {}),
+    }));
     const checks: BotEndToEndCertification["checks"] = {
       runtimeReady: health.state === "ready",
       profileAndBuddyRouteVerified:
@@ -192,6 +304,9 @@ export class BotRuntimeInstance {
         this.profile.readiness.buddy_chat_route === "verified",
       declaredCapabilitiesVerified:
         declaredCapabilities.length > 0 && declaredCapabilities.length === this.profile.capability_count,
+      allDeclaredCapabilityContractsTested:
+        capabilityTestResults.length === declaredCapabilities.length &&
+        capabilityTestResults.every((test) => test.status === "sandbox_contract_passed"),
       runtimeToolBindingVerified: this.profile.tool_summary.some(
         (tool) => tool.id === "buddy_fleet_runtime" && tool.status === "runtime_instance_ready",
       ),
@@ -214,34 +329,13 @@ export class BotRuntimeInstance {
         ),
       ),
       samplePromptVerified: this.profile.sample_test_prompt.trim().length >= 10,
-      sandboxExecutionVerified: false,
-      sandboxEvidenceVerified: false,
+      sandboxExecutionVerified: capabilityTestResults.every((test) => test.checks.routedAsDeclaredCapability),
+      sandboxEvidenceVerified: capabilityTestResults.every((test) => test.checks.requiredSandboxEvidencePresent),
       liveApprovalGateVerified: false,
       noLiveSideEffectVerified: false,
     };
 
     try {
-      const sandboxResult = this.execute({
-        objective: this.profile.sample_test_prompt,
-        input: { certification: true, botSlug: this.profile.identity.slug },
-        requestedCapabilities: declaredCapabilities.slice(0, 3),
-        liveActionRequested: false,
-      });
-      if (sandboxResult.status === "sandbox_task_packet_ready") {
-        checks.sandboxExecutionVerified =
-          sandboxResult.instanceId === this.instanceId &&
-          sandboxResult.capabilityPlan.length > 0 &&
-          sandboxResult.capabilityPlan.every((step) => step.status === "declared_capability");
-        const evidence = new Set<string>(sandboxResult.sandboxEvidence);
-        checks.sandboxEvidenceVerified = [
-          "runtime_instance_resolved",
-          "profile_and_route_verified",
-          "network_default_off",
-          "no_live_external_write",
-          "approval_gate_available",
-        ].every((item) => evidence.has(item));
-      }
-
       const liveResult = this.execute({
         objective: `Request one live external action for ${this.profile.identity.display_name}.`,
         input: { certification: true, botSlug: this.profile.identity.slug },
@@ -261,7 +355,7 @@ export class BotRuntimeInstance {
       .filter(([, passed]) => !passed)
       .map(([check]) => check);
     return {
-      schema: "dreamco.bot_e2e_certification.v1",
+      schema: "dreamco.bot_e2e_certification.v2",
       slug: this.profile.identity.slug,
       displayName: this.profile.identity.display_name,
       division: this.profile.identity.division,
@@ -270,6 +364,7 @@ export class BotRuntimeInstance {
       status: failures.length === 0 ? "sandbox_certified" : "failed",
       checks,
       declaredCapabilityCount: declaredCapabilities.length,
+      capabilityTests,
       toolBindingCount: this.profile.tool_summary.length,
       apiCandidateCount: this.profile.api_candidate_names.length,
       liveEndToEndStatus: "not_executed_requires_authenticated_deployment",
@@ -329,21 +424,52 @@ export class FleetRuntimeRegistry {
     const profiles = [...this.runtimes.values()]
       .map((runtime) => runtime.certifyEndToEnd())
       .sort((a, b) => a.slug.localeCompare(b.slug));
-    const divisionMap = new Map<string, { profiles: number; passed: number; failed: number }>();
+    const divisionMap = new Map<string, {
+      profiles: number;
+      passed: number;
+      failed: number;
+      capabilityTests: number;
+      capabilityTestsPassed: number;
+      capabilityTestsFailed: number;
+    }>();
     for (const profile of profiles) {
-      const division = divisionMap.get(profile.division) ?? { profiles: 0, passed: 0, failed: 0 };
+      const division = divisionMap.get(profile.division) ?? {
+        profiles: 0,
+        passed: 0,
+        failed: 0,
+        capabilityTests: 0,
+        capabilityTestsPassed: 0,
+        capabilityTestsFailed: 0,
+      };
       division.profiles += 1;
       if (profile.status === "sandbox_certified") division.passed += 1;
       else division.failed += 1;
+      division.capabilityTests += profile.capabilityTests.length;
+      division.capabilityTestsPassed += profile.capabilityTests.filter((test) => test.status === "sandbox_contract_passed").length;
+      division.capabilityTestsFailed += profile.capabilityTests.filter((test) => test.status === "failed").length;
       divisionMap.set(profile.division, division);
     }
+    const capabilityTests = profiles.flatMap((profile) => profile.capabilityTests);
     return {
-      schema: "dreamco.bot_fleet_e2e.v1",
+      schema: "dreamco.bot_fleet_e2e.v2",
+      capabilityTestContract: {
+        mode: "repository_controlled_sandbox",
+        checks: CAPABILITY_TEST_CHECKS,
+        requiredEvidence: REQUIRED_SANDBOX_EVIDENCE,
+        networkDefault: "off",
+        liveExternalActions: "forbidden",
+        externalProviderBehavior: "not_tested_requires_configured_adapter_and_provider_sandbox",
+      },
       summary: {
         profilesTested: profiles.length,
         sandboxCertified: profiles.filter((profile) => profile.status === "sandbox_certified").length,
         failed: profiles.filter((profile) => profile.status === "failed").length,
         divisionsTested: divisionMap.size,
+        declaredCapabilitiesTested: capabilityTests.length,
+        sandboxCapabilityTestsPassed: capabilityTests.filter((test) => test.status === "sandbox_contract_passed").length,
+        sandboxCapabilityTestsFailed: capabilityTests.filter((test) => test.status === "failed").length,
+        allDeclaredCapabilitiesTested:
+          capabilityTests.length > 0 && capabilityTests.every((test) => test.status === "sandbox_contract_passed"),
         repositoryControlledFlowComplete: profiles.every((profile) => profile.status === "sandbox_certified"),
         liveExternalFlowComplete: false,
         liveExternalBoundary: "an authenticated deployment, configured adapter, owner approval, and provider sandbox",
