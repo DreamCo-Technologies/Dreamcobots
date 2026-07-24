@@ -28,6 +28,7 @@ class ProjectType(str, Enum):
     FEATURE_FILM = "feature_film"
     MUSIC_ARTIST = "music_artist"
     LOGO_BRAND = "logo_brand"
+    INVENTION_PROTOTYPE = "invention_prototype"
 
 
 class CreativeStudioError(ValueError):
@@ -232,6 +233,11 @@ class BuddyCreativeStudio:
             {"bot": "brand-guidelines", "role": "logo usage, typography, color, and accessibility rules"},
             {"bot": "brand-protector", "role": "clearance checklist and misuse monitoring plan"},
         ],
+        ProjectType.INVENTION_PROTOTYPE: [
+            {"bot": "patent-research", "role": "prior-art search plan and novelty evidence"},
+            {"bot": "mfg-analytics-elite", "role": "digital-twin, production, cost, and feasibility modeling"},
+            {"bot": "safety-mfg", "role": "failure-mode, manufacturing-safety, and review gates"},
+        ],
     }
 
     def create_project(self, brief: CreativeBrief) -> StudioProject:
@@ -388,8 +394,12 @@ class BuddyCreativeStudio:
             shared[2]["outputs"].extend(["screenplay", "continuity bible", "shot plan", "edit decision list", "delivery masters"])
         elif brief.project_type == ProjectType.MUSIC_ARTIST:
             shared[2]["outputs"].extend(["original repertoire plan", "rights log", "release calendar", "artist identity", "audience experiments"])
-        else:
+        elif brief.project_type == ProjectType.LOGO_BRAND:
             shared[2]["outputs"].extend(["editable logo concepts", "brand system", "clearance search plan", "asset exports"])
+        else:
+            shared[1]["outputs"].extend(["requirements", "system block diagram", "component options", "bill of materials"])
+            shared[2]["outputs"].extend(["simulation", "CAD or enclosure brief", "firmware or software scaffold", "bench-test matrix"])
+            shared[3]["outputs"].extend(["failure-mode review", "safety review", "repairability check", "cost and ROI estimate"])
         return shared
 
     @staticmethod
@@ -410,6 +420,16 @@ class BuddyCreativeStudio:
                     "synthetic_media_label_visible",
                     "revocation_path_verified",
                     "raw_biometric_media_not_in_project_manifest",
+                ]
+            )
+        if brief.project_type == ProjectType.INVENTION_PROTOTYPE:
+            checks.extend(
+                [
+                    "core_assumption_is_testable",
+                    "bill_of_materials_is_bounded",
+                    "failure_modes_reviewed",
+                    "qualified_review_gate_for_high_risk_domains",
+                    "no_automatic_ordering_or_manufacturing",
                 ]
             )
         return {
@@ -448,8 +468,14 @@ class BuddyCreativeStudio:
             base.extend(["screenplay", "continuity_bible", "production_breakdown", "edit_decision_list", "delivery_specification"])
         elif brief.project_type == ProjectType.MUSIC_ARTIST:
             base.extend(["artist_development_plan", "original_repertoire_plan", "rights_manifest", "release_calendar", "audience_test_plan"])
-        else:
+        elif brief.project_type == ProjectType.LOGO_BRAND:
             base.extend(["editable_logo_concepts", "brand_guidelines", "rights_manifest", "trademark_search_plan"])
+        else:
+            base.extend([
+                "requirements_specification", "system_block_diagram", "bill_of_materials",
+                "simulation_plan", "cad_or_enclosure_brief", "bench_test_matrix",
+                "failure_mode_and_safety_review", "prior_art_research_plan", "cost_and_roi_estimate",
+            ])
         return base
 
     @staticmethod

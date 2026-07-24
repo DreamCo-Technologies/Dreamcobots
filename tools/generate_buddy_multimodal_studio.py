@@ -55,6 +55,7 @@ def build_registry() -> dict:
             "build original feature-film production packets and delivery plans",
             "build rights-aware artist-development and original music production packets",
             "build editable logo concepts, brand systems, and clearance plans",
+            "build invention packets with requirements, bills of materials, simulations, safety reviews, prior-art plans, and bench tests",
             "capture adult user voice and image locally",
             "enforce voice and likeness consent",
             "prepare local or optional model rendering",
@@ -90,7 +91,7 @@ def write_report(registry: dict) -> None:
     lines = [
         "# Buddy Multimodal Creative Studio",
         "",
-        "Buddy now has one governed production path for games, school simulations, learning videos, music videos, biographies, commercials, college courses, feature films, artist development, and brand systems.",
+        "Buddy now has one governed production path for games, school simulations, learning videos, music videos, biographies, commercials, college courses, feature films, artist development, brand systems, and invention prototypes.",
         "",
         "## Production Tracks",
         "",

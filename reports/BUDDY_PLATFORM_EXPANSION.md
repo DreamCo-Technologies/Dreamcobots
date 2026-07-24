@@ -6,6 +6,7 @@ This registry distinguishes repository-controlled capability cores from official
 
 - `business_launchpad`: Business formation planning (`official_handoff_required`)
 - `prototype_factory`: Prompt-to-prototype build plan (`local_build_ready`)
+- `invention_workbench`: Physical, electronics, robotics, connected-device, and industrial prototype planning (`local_plan_ready_qualified_review_required`)
 - `app_release_council`: Web and app-store release evidence council (`owner_submission_required`)
 - `distribution_service`: Multi-device packaging and publishing service (`web_ready_native_review_required`)
 - `governed_lead_system`: Permission-gated lead discovery and follow-up (`sandbox_ready_external_adapters_required`)

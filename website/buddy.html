@@ -3,218 +3,77 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Buddy — DreamCo Empire OS</title>
-  <meta name="description" content="Buddy is the DreamCo command chatbot: native-code-first routing, bot building, debugging, simulations, and safe autonomous work from one prompt." />
-  <meta name="theme-color" content="#0a0e1a" />
+  <title>Buddy | DreamCo</title>
+  <meta name="description" content="Talk to Buddy to plan, build, debug, create, and route work through DreamCo's governed specialist fleet." />
+  <meta name="theme-color" content="#101218" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <meta name="apple-mobile-web-app-title" content="Buddy" />
   <link rel="manifest" href="manifest.webmanifest" />
+  <link rel="icon" href="assets/images/favicon.svg" type="image/svg+xml" />
   <link rel="apple-touch-icon" href="assets/images/buddy-icon-192.png" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="buddy.css" />
 </head>
-<body class="buddy-home">
-<div id="nav-placeholder"></div><script src="nav.js"></script>
-
-<main class="buddy-shell">
-  <aside class="buddy-rail">
-    <a class="buddy-new-chat" href="buddy.html">+ New Buddy task</a>
-    <div class="buddy-rail-section">
-      <div class="buddy-rail-label">Pinned Workflows</div>
-      <button class="buddy-rail-item active" onclick="loadPrompt('Build me a full app from one prompt, then test and package it.')">App Builder</button>
-      <button class="buddy-rail-item" onclick="loadPrompt('Debug my latest failed build and explain the root cause.')">Debug Center</button>
-      <button class="buddy-rail-item" onclick="loadPrompt('Create a game or simulation from this idea.')">Game + Simulation</button>
-      <a class="buddy-rail-item" href="studio.html">Creative Studio</a>
-      <a class="buddy-rail-item" href="platform.html">Platform Registry</a>
-      <a class="buddy-rail-item" href="calculator.html">Bot Calculator Lab</a>
-      <a class="buddy-rail-item" href="install.html">Install and Launch</a>
-      <a class="buddy-rail-item" href="leads.html">Lead Systems</a>
-      <button class="buddy-rail-item" onclick="loadPrompt('Find the best native bot route and cheapest model fallback for this task.')">Model Router</button>
-      <button class="buddy-rail-item" onclick="loadPrompt('Show the bot completion sprint and what needs coding next.')">Bot Sprint</button>
+<body class="buddy-home buddy-simple-home">
+  <header class="buddy-simple-header">
+    <a class="buddy-wordmark" href="buddy.html" aria-label="Buddy home">
+      <img src="assets/images/buddy-icon-192.png" alt="" width="38" height="38" />
+      <span><strong>Buddy</strong><small>by DreamCo</small></span>
+    </a>
+    <div class="buddy-header-actions">
+      <a class="buddy-header-link" href="buddy.html">New chat</a>
+      <details class="buddy-explore-menu">
+        <summary>Explore</summary>
+        <nav aria-label="Buddy tools">
+          <a href="bots.html">Specialists</a>
+          <a href="calculator.html">ROI calculators</a>
+          <a href="studio.html">Creative studio</a>
+          <a href="connections.html">Business connections</a>
+          <a href="dashboard.html">Dashboard</a>
+        </nav>
+      </details>
     </div>
-    <div class="buddy-rail-section">
-      <div class="buddy-rail-label">Repository Evidence</div>
-      <div class="buddy-rail-stat"><span>Profiles</span><strong data-fleet-stat="profiles">1,051</strong></div>
-      <div class="buddy-rail-stat"><span>Buddy routes</span><strong data-fleet-stat="routes">1,051</strong></div>
-      <div class="buddy-rail-stat"><span>Runtime instances</span><strong data-fleet-stat="runtime">1,051</strong></div>
-      <div class="buddy-rail-stat"><span>E2E sandbox certified</span><strong data-fleet-stat="e2e">1,051</strong></div>
-      <div class="buddy-rail-stat"><span>Connected APIs</span><strong data-fleet-stat="apis">0</strong></div>
-      <div class="buddy-rail-stat"><span>Studio tracks</span><strong data-fleet-stat="studio">10</strong></div>
-      <div class="buddy-rail-stat"><span>Calculators</span><strong data-fleet-stat="calculators">1,051</strong></div>
-    </div>
+  </header>
 
-    <div id="selected-bot-route" class="studio-guardrail" hidden></div>
-  </aside>
+  <main class="buddy-simple-shell">
+    <section id="buddy-welcome" class="buddy-welcome" aria-labelledby="buddy-heading">
+      <img class="buddy-welcome-icon" src="assets/images/buddy-icon-192.png" alt="Buddy" width="72" height="72" />
+      <p class="buddy-eyebrow">Your DreamCo assistant</p>
+      <h1 id="buddy-heading">How can I help?</h1>
+      <p>Describe the outcome. Buddy will choose the right specialist, prepare the work, and ask before any live action.</p>
+    </section>
 
-  <section class="buddy-chat-home">
-    <div class="buddy-topbar">
-      <div>
-        <div class="hero-badge buddy-status-pill"><span></span> Buddy interface ready · repository preview</div>
-        <h1>What should Buddy build today?</h1>
-        <p>Code, debug, design bots, build simulations, compare models, and keep DreamCo moving from one command screen.</p>
-      </div>
-      <div class="buddy-top-actions">
-        <a href="dashboard.html" class="btn btn-outline btn-sm">Dashboard</a>
-        <a href="bots.html" class="btn btn-outline btn-sm">Bot Fleet</a>
-      </div>
-    </div>
+    <section id="buddy-thread" class="buddy-simple-thread" aria-live="polite" aria-label="Conversation"></section>
 
-    <div class="buddy-chat-stage">
-      <div class="buddy-message buddy-message-bot">
-        <div class="buddy-avatar">B</div>
-        <div class="buddy-bubble">
-          <strong>Buddy</strong>
-          <p>I can prepare and route task packets from this public preview. DreamCo's native bot code is the first route, with free/local model resources as optional backup. Live execution, money, account, outreach, deploy, and personal-data actions require an approved backend and human confirmation.</p>
-          <div data-buddy-status-badges>
-            <span class="badge badge-green">Native-first</span>
-            <span class="badge badge-primary">Free backup</span>
-            <span class="badge badge-amber">Approval gates</span>
-          </div>
-        </div>
+    <section class="buddy-simple-composer" aria-label="Message Buddy">
+      <div class="buddy-mode-tabs" role="tablist" aria-label="Task mode">
+        <button class="active" type="button" role="tab" aria-selected="true" data-buddy-mode="Build">Build</button>
+        <button type="button" role="tab" aria-selected="false" data-buddy-mode="Fix">Fix</button>
+        <button type="button" role="tab" aria-selected="false" data-buddy-mode="Create">Create</button>
+        <button type="button" role="tab" aria-selected="false" data-buddy-mode="Plan">Plan</button>
       </div>
-
-      <div id="buddy-thread" class="buddy-thread">
-        <div class="buddy-message buddy-message-user muted">
-          <div class="buddy-bubble">Try: "Buddy, build me a client-ready lead-gen dashboard and test it."</div>
-        </div>
-      </div>
-    </div>
-
-    <section class="buddy-composer-panel">
-      <div class="buddy-mode-row">
-        <button class="buddy-mode active" data-mode="Build" onclick="selectBuddyMode(this)">Build</button>
-        <button class="buddy-mode" data-mode="Debug" onclick="selectBuddyMode(this)">Debug</button>
-        <button class="buddy-mode" data-mode="Vibe Code" onclick="selectBuddyMode(this)">Vibe Code</button>
-        <button class="buddy-mode" data-mode="Simulation" onclick="selectBuddyMode(this)">Simulation</button>
-        <button class="buddy-mode" data-mode="Creative Studio" onclick="selectBuddyMode(this)">Media Studio</button>
-        <button class="buddy-mode" data-mode="Research" onclick="selectBuddyMode(this)">Research</button>
-        <button class="buddy-mode" data-mode="Agent" onclick="selectBuddyMode(this)">Agent</button>
-      </div>
-      <div class="buddy-composer">
-        <textarea id="buddy-input" rows="5" placeholder="Message Buddy... build an app, fix code, make a simulation, test a bot, compare models, or prepare a client demo." onkeydown="if(event.key==='Enter'&&(event.metaKey||event.ctrlKey)){sendBuddyPrompt();event.preventDefault()}"></textarea>
-        <div class="buddy-composer-footer">
-          <span>Mode: <strong id="current-mode">Build</strong> · Cmd+Enter to send · Safe actions first</span>
-          <button class="btn btn-primary" onclick="sendBuddyPrompt()">Send to Buddy</button>
-        </div>
-      </div>
-      <div class="buddy-prompt-chips">
-        <button onclick="loadPrompt('Build a full customer demo app with auth, dashboard, database plan, tests, and deployment checklist.')">Full app</button>
-        <button onclick="loadPrompt('Debug my Actions page and explain every failed workflow like a sellable debugging system.')">Debug actions</button>
-        <button onclick="loadPrompt('Create a 3D learning simulation and package it as a client-ready prototype.')">3D simulation</button>
-        <button onclick="openStudio('game')">Code a game</button>
-        <button onclick="openStudio('school_simulation')">School simulation</button>
-        <button onclick="openStudio('parent_learning_video')">Learning video</button>
-        <button onclick="loadPrompt('Route this task through native DreamCo bots first, then cheapest free model fallback.')">Route task</button>
-        <button onclick="loadPrompt('Finish the next bot in the completion sprint and add a smoke test.')">Finish bot</button>
-        <button onclick="location.href='calculator.html'">Open calculators</button>
-        <button onclick="location.href='install.html'">Install or publish</button>
-        <button onclick="location.href='leads.html'">Plan lead outreach</button>
+      <label class="sr-only" for="buddy-input">Message Buddy</label>
+      <textarea id="buddy-input" rows="5" placeholder="Ask Buddy to build, fix, create, research, or plan anything..." maxlength="4000"></textarea>
+      <div class="buddy-composer-actions">
+        <span id="buddy-route-status">Ready to route across every verified specialist.</span>
+        <button id="buddy-send" class="buddy-send-button" type="button">Send</button>
       </div>
     </section>
 
-    <section class="buddy-home-grid">
-      <div class="card">
-        <h3>Native Routes</h3>
-        <p style="font-size:.86rem;margin:6px 0 14px">Buddy chooses your local bot code before optional model help.</p>
-        <div data-buddy-native-routes></div>
-      </div>
-      <div class="card">
-        <h3>Completion Sprint</h3>
-        <p style="font-size:.86rem;margin:6px 0 14px">What still needs coding, tests, or interface cleanup.</p>
-        <div data-buddy-completion-queue></div>
-      </div>
-    </section>
-  </section>
-</main>
+    <div class="buddy-starters" aria-label="Starter prompts">
+      <button type="button" data-buddy-prompt="Build a working prototype from my idea, including acceptance criteria, a local preview, tests, an ROI estimate, and a reversible launch plan.">Build a prototype</button>
+      <button type="button" data-buddy-prompt="Help me design and test an invention. Prepare the concept, requirements, risk review, prototype path, intellectual-property research plan, cost estimate, and next experiment.">Develop an invention</button>
+      <button type="button" data-buddy-prompt="Plan a secure connection between Buddy and my business database or server using least privilege, read-only access first, a sandbox test, and secret references only.">Connect business data</button>
+      <button type="button" data-buddy-prompt="Find the best specialist for my task, show the matched capabilities, and prepare a safe sandbox task packet.">Choose a specialist</button>
+    </div>
 
-<script>
-let buddyMode = 'Build';
-let selectedBotName = '';
+    <p class="buddy-trust-line">Repository preview. Buddy can prepare and route work locally. Account, payment, outreach, publishing, and external write actions require an authenticated backend and your exact approval.</p>
+  </main>
 
-function selectBuddyMode(button) {
-  document.querySelectorAll('.buddy-mode').forEach((item) => item.classList.remove('active'));
-  button.classList.add('active');
-  buddyMode = button.dataset.mode || 'Build';
-  document.getElementById('current-mode').textContent = buddyMode;
-  document.getElementById('buddy-input').placeholder = 'Mode: ' + buddyMode + ' — tell Buddy exactly what you want done...';
-}
-
-function loadPrompt(prompt) {
-  const input = document.getElementById('buddy-input');
-  input.value = prompt;
-  input.focus();
-}
-
-function openStudio(type) {
-  location.href = 'studio.html?type=' + encodeURIComponent(type);
-}
-
-function sendBuddyPrompt() {
-  const input = document.getElementById('buddy-input');
-  const thread = document.getElementById('buddy-thread');
-  const value = input.value.trim();
-  if (!value) return;
-  const user = document.createElement('div');
-  user.className = 'buddy-message buddy-message-user';
-  user.innerHTML = '<div class="buddy-bubble"></div>';
-  user.querySelector('.buddy-bubble').textContent = value;
-  const bot = document.createElement('div');
-  bot.className = 'buddy-message buddy-message-bot';
-  bot.innerHTML = `
-    <div class="buddy-avatar">B</div>
-    <div class="buddy-bubble">
-      <strong>Buddy task packet ready</strong>
-      <p></p>
-      <div class="buddy-inline-actions">
-        <a class="btn btn-primary btn-sm" href="studio.html">Open Creative Studio</a>
-        <a class="btn btn-outline btn-sm" href="dashboard.html">View dashboard</a>
-        <a class="btn btn-outline btn-sm" href="bots.html">Pick bot</a>
-      </div>
-    </div>`;
-  bot.querySelector('p').textContent = `I prepared this as a ${buddyMode} task${selectedBotName ? ` routed to ${selectedBotName}` : ''}: repository profile first, configured tools second, and approval gates for live actions. This public page creates a task packet; authenticated backend execution must still be deployed and configured.`;
-  thread.appendChild(user);
-  thread.appendChild(bot);
-  input.value = '';
-  bot.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-}
-
-const params = new URLSearchParams(location.search);
-if (params.get('prompt')) loadPrompt(decodeURIComponent(params.get('prompt')));
-
-fetch('data/bot-fleet-catalog.json', { cache: 'no-store' })
-  .then(response => response.ok ? response.json() : Promise.reject(new Error('catalog unavailable')))
-  .then(catalog => {
-    const summary = catalog.summary;
-    document.querySelector('[data-fleet-stat="profiles"]').textContent = summary.profiles.toLocaleString();
-    document.querySelector('[data-fleet-stat="routes"]').textContent = summary.runtime_routed_profiles.toLocaleString();
-    document.querySelector('[data-fleet-stat="runtime"]').textContent = summary.executable_runtime_instances_evidenced.toLocaleString();
-    document.querySelector('[data-fleet-stat="apis"]').textContent = summary.configured_external_apis_evidenced.toLocaleString();
-    const slug = params.get('bot');
-    if (!slug) return;
-    const selected = catalog.bots.find(bot => bot.identity.slug === slug);
-    if (!selected) return;
-    selectedBotName = selected.identity.display_name;
-    const route = document.getElementById('selected-bot-route');
-    route.hidden = false;
-    route.textContent = `Selected route: ${selected.identity.display_name} (${selected.identity.division}). Sandbox blueprint and Buddy route are verified; live adapters remain approval-gated.`;
-  })
-  .catch(() => {});
-
-fetch('data/bot-fleet-e2e.json', { cache: 'no-store' })
-  .then(response => response.ok ? response.json() : Promise.reject(new Error('certification unavailable')))
-  .then(report => {
-    document.querySelector('[data-fleet-stat="e2e"]').textContent = report.summary.sandboxCertified.toLocaleString();
-  })
-  .catch(() => {});
-
-fetch('data/bot-calculators.json', { cache: 'no-store' })
-  .then(response => response.ok ? response.json() : Promise.reject(new Error('calculator registry unavailable')))
-  .then(registry => {
-    document.querySelector('[data-fleet-stat="calculators"]').textContent = registry.summary.calculators.toLocaleString();
-  })
-  .catch(() => {});
-</script>
+  <script src="data/buddy-routing-index.js"></script>
+  <script src="buddy.js" defer></script>
 </body>
 </html>

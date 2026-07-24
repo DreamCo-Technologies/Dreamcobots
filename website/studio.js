@@ -82,6 +82,12 @@ const TYPE_PRESETS = {
     subject: 'A clear and accessible original brand identity',
     audience: 'Customers, partners, and product users',
   },
+  invention_prototype: {
+    title: 'Accessible Garden Monitor',
+    objective: 'Design and test a low-power garden sensor with accessible alerts, replaceable parts, and a bounded prototype budget.',
+    subject: 'Sensor, enclosure, local dashboard, and alert workflow',
+    audience: 'Home gardeners with varied access needs',
+  },
 };
 
 function selectedType() {
@@ -261,6 +267,12 @@ function projectCopy(type, subject, audience) {
     body: `Editable original concepts, brand guidelines, accessibility checks, rights records, and a clearance search plan for ${audience}.`,
     action: 'Preview identity',
   };
+  if (type === 'invention_prototype') return {
+    eyebrow: 'Invention workbench',
+    title: `Prototype: ${subject}`,
+    body: `Requirements, system architecture, component options, bill of materials, prior-art research, safety review, simulation, and a bench-test matrix prepared for ${audience}.`,
+    action: 'Review test plan',
+  };
   return {
     eyebrow: 'College course production',
     title: `Course: ${subject}`,
@@ -321,7 +333,12 @@ form.addEventListener('submit', event => {
         synthetic_media_label: true,
         raw_media_in_packet: false,
       } : null,
-      tests: ['offline load', 'touch and keyboard', 'captions', 'restart and recovery', 'learning objective', 'no live external action'],
+      artifacts: selectedType() === 'invention_prototype'
+        ? ['requirements', 'system block diagram', 'bill of materials', 'simulation plan', 'bench-test matrix', 'safety review', 'prior-art research plan', 'cost and ROI estimate']
+        : ['source plan', 'test plan', 'rights manifest', 'release checklist'],
+      tests: selectedType() === 'invention_prototype'
+        ? ['core assumption', 'failure modes', 'electrical and mechanical safety', 'accessibility', 'repairability', 'no automatic ordering or manufacturing']
+        : ['offline load', 'touch and keyboard', 'captions', 'restart and recovery', 'learning objective', 'no live external action'],
       publish_requires_owner_approval: true,
     };
     renderPrototype(latestPacket);

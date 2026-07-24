@@ -1,6 +1,6 @@
 # Buddy Multimodal Creative Studio
 
-Buddy now has one governed production path for games, school simulations, learning videos, music videos, biographies, commercials, college courses, feature films, artist development, and brand systems.
+Buddy now has one governed production path for games, school simulations, learning videos, music videos, biographies, commercials, college courses, feature films, artist development, brand systems, and invention prototypes.
 
 ## Production Tracks
 
@@ -14,6 +14,7 @@ Buddy now has one governed production path for games, school simulations, learni
 - `feature_film`
 - `music_artist`
 - `logo_brand`
+- `invention_prototype`
 
 ## Honest Media Readiness
 

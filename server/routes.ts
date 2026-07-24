@@ -41,6 +41,7 @@ import {
   notificationPreferencesSchema,
 } from "./approval-notifications";
 import {
+  buddyCapabilityRouteRequestSchema,
   capabilityTestRequestSchema,
   fleetExecutionRequestSchema,
   getFleetRuntimeRegistry,
@@ -463,6 +464,17 @@ export async function registerRoutes(
   });
 
   // ===== EXECUTABLE BOT FLEET =====
+  app.post("/api/buddy/route-capability", (req, res) => {
+    try {
+      const request = buddyCapabilityRouteRequestSchema.parse(req.body);
+      const result = getFleetRuntimeRegistry().routeCapability(request);
+      res.status(result.execution.status === "approval_required" ? 202 : 201).json(result);
+    } catch (error) {
+      if (error instanceof z.ZodError) return res.status(400).json(zodValidationError(error));
+      throw error;
+    }
+  });
+
   app.get("/api/fleet/runtime/health", (_req, res) => {
     res.setHeader("Cache-Control", "no-store");
     res.json(getFleetRuntimeRegistry().summary());

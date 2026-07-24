@@ -81,6 +81,22 @@ class BuddyPlatformExpansionTests(unittest.TestCase):
         self.assertEqual(complete["status"], "approved_for_owner_submission")
         self.assertFalse(complete["automatic_external_submission"])
 
+    def test_invention_workbench_prepares_bom_tests_and_safety_review(self):
+        plan = BuddyLaunchpad().prototype_plan(PrototypeBrief(
+            owner_user_id="owner-1",
+            title="Accessible Garden Monitor",
+            product_type="iot_device",
+            objective="Prototype a low-power garden sensor with accessible alerts and replaceable parts.",
+            target_users="home gardeners with varied access needs",
+            preferred_stack=("microcontroller", "local web dashboard"),
+        ))
+        self.assertEqual(plan["prototype_class"], "physical_or_hybrid")
+        self.assertIn("bill of materials", plan["outputs"])
+        self.assertIn("bench-test matrix", plan["outputs"])
+        self.assertIn("cost and ROI estimate", plan["outputs"])
+        self.assertFalse(plan["automatic_manufacturing_or_ordering"])
+        self.assertTrue(plan["high_risk_release_requires_qualified_review"])
+
     def test_data_wallet_separates_use_training_sale_and_opt_out(self):
         wallet = BuddyDataWallet("owner-1")
         source = DataSource(

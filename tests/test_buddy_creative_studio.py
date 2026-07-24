@@ -75,6 +75,7 @@ class BuddyCreativeStudioTests(unittest.TestCase):
                 "feature_film",
                 "music_artist",
                 "logo_brand",
+                "invention_prototype",
             },
         )
 
@@ -91,6 +92,22 @@ class BuddyCreativeStudioTests(unittest.TestCase):
         self.assertIn("screenplay", film.deliverables)
         self.assertIn("rights_manifest", artist.deliverables)
         self.assertIn("editable_logo_concepts", brand.deliverables)
+
+    def test_creates_invention_packet_with_real_specialists_and_release_gates(self):
+        invention = BuddyCreativeStudio().create_project(
+            brief(
+                ProjectType.INVENTION_PROTOTYPE,
+                title="Accessible Garden Monitor",
+                objective="Design a testable connected garden monitor with repairable parts and accessible alerts.",
+            )
+        )
+        self.assertIn("bill_of_materials", invention.deliverables)
+        self.assertIn("bench_test_matrix", invention.deliverables)
+        self.assertIn("no_automatic_ordering_or_manufacturing", invention.sandbox["checks"])
+        self.assertEqual(
+            {route["bot"] for route in invention.native_routes if route["bot"] != "governance-dashboard"},
+            {"patent-research", "mfg-analytics-elite", "safety-mfg"},
+        )
 
     def test_creates_biography_and_commercial_rights_workflows(self):
         biography = BuddyCreativeStudio().create_project(

@@ -154,7 +154,7 @@
     target.append(link);
   }
 
-  function renderConnectionPlan({ app, url, method, scopes, secretProvider, secretReference }) {
+  function renderConnectionPlan({ app, url, resourceType, environment, accessMode, method, scopes, secretProvider, secretReference }) {
     const target = byId('connection-result');
     target.replaceChildren();
     appendPlanHeading(target, app, 'User approval required', 'badge badge-amber');
@@ -162,6 +162,9 @@
     const summary = element('dl', 'connection-plan-summary');
     [
       ['Official host', url.hostname],
+      ['Connection type', resourceType.replaceAll('_', ' ')],
+      ['Environment', environment],
+      ['Initial access', accessMode.replaceAll('_', ' ')],
       ['Method', method.label],
       ['Scopes', scopes.length ? scopes.join(', ') : 'Provider minimum'],
       ['Secret handling', method.secret_reference_required ? `${secretProvider}:${secretReference}` : 'No raw credential collected'],
@@ -188,6 +191,11 @@
       steps.push('Connector passes its sandbox health check.');
       steps.push('User approves write, publish, account, or money-moving actions when requested.');
     }
+    if (resourceType !== 'application') {
+      steps.unshift('Create a restricted service identity for only the selected resources.');
+      steps.push('Run schema, connectivity, query-limit, timeout, and audit-log checks in a sandbox.');
+      if (accessMode === 'read_write') steps.push('Keep every write disabled until the owner approves the exact operation.');
+    }
     appendPlanList(target, 'Connection path', steps);
     appendOfficialLink(target, url, 'Open official app');
 
@@ -207,6 +215,9 @@
       const form = new FormData(event.currentTarget);
       const app = String(form.get('app') || '').trim();
       const url = officialUrl(String(form.get('url') || ''));
+      const resourceType = String(form.get('resourceType') || 'application');
+      const environment = String(form.get('environment') || 'staging');
+      const accessMode = String(form.get('accessMode') || 'read_only');
       const method = state.catalog.auth_methods.find((item) => item.id === form.get('method'));
       if (!method) throw new Error('Choose a supported authentication method.');
       const scopes = String(form.get('scopes') || '')
@@ -222,8 +233,8 @@
         ? validatedSecretReference(String(form.get('secretReference') || ''), secretProvider)
         : '';
 
-      renderConnectionPlan({ app, url, method, scopes, secretProvider, secretReference });
-      addAudit({ type: 'connection_plan', app, host: url.hostname, method: method.id, status: 'user_action_required' });
+      renderConnectionPlan({ app, url, resourceType, environment, accessMode, method, scopes, secretProvider, secretReference });
+      addAudit({ type: 'connection_plan', app, host: url.hostname, method: `${resourceType}:${method.id}`, status: 'user_action_required' });
     } catch (error) {
       setError('connection-error', error.message || 'Unable to prepare the connection plan.');
     }

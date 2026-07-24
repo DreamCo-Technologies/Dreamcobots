@@ -23,6 +23,7 @@ REPORT_OUT = ROOT / "reports" / "BUDDY_PLATFORM_EXPANSION.md"
 IMPLEMENTED_CAPABILITIES = [
     ("business_launchpad", "Business formation planning", "official_handoff_required", "dreamco_platform/launch/launchpad.py"),
     ("prototype_factory", "Prompt-to-prototype build plan", "local_build_ready", "dreamco_platform/launch/launchpad.py"),
+    ("invention_workbench", "Physical, electronics, robotics, connected-device, and industrial prototype planning", "local_plan_ready_qualified_review_required", "dreamco_platform/launch/launchpad.py"),
     ("app_release_council", "Web and app-store release evidence council", "owner_submission_required", "dreamco_platform/launch/launchpad.py"),
     ("distribution_service", "Multi-device packaging and publishing service", "web_ready_native_review_required", "dreamco_platform/launch/distribution.py"),
     ("governed_lead_system", "Permission-gated lead discovery and follow-up", "sandbox_ready_external_adapters_required", "server/governed-leads.ts"),

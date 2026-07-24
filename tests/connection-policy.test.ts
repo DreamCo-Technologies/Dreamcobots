@@ -34,6 +34,27 @@ test("connection plans store references rather than credential values", () => {
   assert.equal((stored.config as Record<string, unknown>).officialOrigin, "https://api.example.com");
 });
 
+test("business database and server plans preserve least-privilege settings", () => {
+  const parsed = connectionPlanRequestSchema.parse({
+    platform: "business-database",
+    name: "Client reporting database",
+    officialUrl: "https://database.example.com/admin",
+    resourceType: "database",
+    environment: "production",
+    accessMode: "read_only",
+    authMethod: "api_key",
+    requestedScopes: ["reports.read"],
+    secretProvider: "managed_vault",
+    secretReference: "clients/reporting/database-key",
+  });
+  const stored = toStoredConnection(parsed);
+  const config = stored.config as Record<string, unknown>;
+  assert.equal(config.resourceType, "database");
+  assert.equal(config.environment, "production");
+  assert.equal(config.accessMode, "read_only");
+  assert.equal(config.rawCredentialsAccepted, false);
+});
+
 test("token-shaped values and credential-bearing URLs are rejected", () => {
   const token = connectionPlanRequestSchema.safeParse({
     platform: "custom-api",

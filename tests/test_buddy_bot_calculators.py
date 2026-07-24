@@ -24,6 +24,7 @@ class BuddyBotCalculatorTests(unittest.TestCase):
         self.assertEqual(summary["bots_covered"], 1051)
         self.assertEqual(summary["divisions_covered"], 45)
         self.assertEqual(summary["interactive_local_calculators"], 1051)
+        self.assertEqual(summary["roi_calculators"], 1051)
         self.assertEqual(len({item["bot"]["slug"] for item in self.calculators}), 1051)
         self.assertEqual(len({item["calculator_id"] for item in self.calculators}), 1051)
 
@@ -38,6 +39,7 @@ class BuddyBotCalculatorTests(unittest.TestCase):
             self.assertTrue(all(item["min"] <= item["default"] <= item["max"] for item in calculator["inputs"]))
             self.assertTrue(all(item["step"] > 0 for item in calculator["inputs"]))
             self.assertTrue(calculator["outputs"])
+            self.assertIn("roi", {output["key"] for output in calculator["outputs"]})
 
     def test_real_estate_and_vehicle_profiles_receive_specialized_math(self):
         by_slug = {item["bot"]["slug"]: item for item in self.calculators}

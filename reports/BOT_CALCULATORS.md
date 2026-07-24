@@ -7,6 +7,7 @@ Every cataloged Buddy bot has a unique local calculator contract and public calc
 - Calculators: 1,051
 - Unique calculator ids: 1,051
 - Bots covered: 1,051
+- Calculators with ROI output: 1,051
 - Divisions covered: 45
 - Safe interactive templates: 13
 - Legacy division formula references: 2,200

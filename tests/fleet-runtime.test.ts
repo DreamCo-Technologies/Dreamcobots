@@ -1,4 +1,6 @@
 import assert from "node:assert/strict";
+import { readFileSync } from "node:fs";
+import { resolve } from "node:path";
 import test from "node:test";
 
 import { FleetRuntimeRegistry } from "../server/fleet-runtime";
@@ -24,6 +26,49 @@ test("executes a bot-specific sandbox task packet", () => {
   assert.equal(result.status, "sandbox_task_packet_ready");
   assert.equal(result.bot.slug, "gaming-titan");
   assert.equal(result.liveExternalActionTaken, false);
+});
+
+test("Buddy chooses the strongest declared specialist for a natural-language task", () => {
+  const registry = FleetRuntimeRegistry.fromFile();
+  const result = registry.routeCapability({
+    objective: "Build and test a multiplayer video game with procedural levels.",
+    requestedCapabilities: [],
+    liveActionRequested: false,
+  });
+  assert.equal(result.selected.slug, "gaming-titan");
+  assert.ok(result.matchedCapabilities.includes("Game building and modding"));
+  assert.equal(result.coverage.profilesSearched, 1051);
+  assert.equal(result.coverage.declaredCapabilitiesSearched, 8408);
+  assert.equal(result.execution.status, "sandbox_task_packet_ready");
+});
+
+test("Buddy honors an explicitly selected bot and still gates live actions", () => {
+  const registry = FleetRuntimeRegistry.fromFile();
+  const result = registry.routeCapability({
+    objective: "Publish an approved cross-platform campaign update.",
+    preferredBotSlug: "social-sharing-bot",
+    requestedCapabilities: ["Cross-platform content adaptation"],
+    liveActionRequested: true,
+  });
+  assert.equal(result.selected.slug, "social-sharing-bot");
+  assert.equal(result.selectionReason, "owner_selected_specialist");
+  assert.equal(result.execution.status, "approval_required");
+  assert.equal(result.execution.liveExternalActionTaken, false);
+});
+
+test("Buddy can explicitly route every catalog profile", () => {
+  const registry = FleetRuntimeRegistry.fromFile();
+  const catalog = JSON.parse(readFileSync(resolve(process.cwd(), "config", "generated", "bots.catalog.json"), "utf8"));
+  for (const bot of catalog.bots) {
+    const result = registry.routeCapability({
+      objective: `Prepare a sandbox task for ${bot.identity.display_name}.`,
+      preferredBotSlug: bot.identity.slug,
+      requestedCapabilities: [],
+      liveActionRequested: false,
+    });
+    assert.equal(result.selected.slug, bot.identity.slug);
+    assert.equal(result.execution.status, "sandbox_task_packet_ready");
+  }
 });
 
 test("runs an individual declared capability contract without a live side effect", () => {
