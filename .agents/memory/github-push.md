@@ -1,10 +1,12 @@
 ---
 name: GitHub push method
-description: Only working push method for this repo — inline token in remote URL, REPLIT_ACCESS_TOLKEN (note typo).
+description: Push through the configured repository remote and GitHub Desktop credential helper.
 ---
-**Why:** git remote add / git config operations are blocked in the sandbox. Inline URL method bypasses this.
+**Why:** GitHub Desktop keeps credentials outside commands, shell history, logs, and committed files.
 
-**How to apply:** 
-git push "https://${REPLIT_ACCESS_TOLKEN}@github.com/DreamCo-Technologies/Dreamcobots.git" main --force
+**How to apply:**
+1. Confirm the branch and remote with `git status -sb` and `git remote -v`.
+2. Push the current branch with `git -c credential.helper=desktop push -u origin HEAD`.
+3. Open a pull request and merge only after checks pass.
 
-CRITICAL: The env var is REPLIT_ACCESS_TOLKEN (TOLKEN, not TOKEN) — this is not a typo in these notes, it is the actual variable name in the Replit environment.
+Never put a personal access token in a remote URL. Never force-push a shared branch unless the owner explicitly approves that exact operation.

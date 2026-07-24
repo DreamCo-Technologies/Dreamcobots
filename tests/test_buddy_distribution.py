@@ -21,10 +21,12 @@ class BuddyDistributionTests(unittest.TestCase):
         catalog = build_catalog()
         self.assertEqual(catalog["summary"]["targets"], 26)
         self.assertEqual(catalog["summary"]["families"], 8)
-        self.assertEqual(catalog["summary"]["services"], 7)
+        self.assertEqual(catalog["summary"]["services"], 8)
         self.assertEqual(catalog["summary"]["available_now"], 2)
         self.assertEqual(len({item["target_id"] for item in catalog["targets"]}), 26)
-        self.assertEqual(len({item["service_id"] for item in catalog["service_packages"]}), 7)
+        self.assertEqual(len({item["service_id"] for item in catalog["service_packages"]}), 8)
+        self.assertEqual(catalog["summary"]["free_hosted_addresses"], 1)
+        self.assertFalse(catalog["domain_service"]["custom_domain"]["automatic_purchase"])
 
     def test_builds_multi_platform_release_plan_without_external_action(self):
         plan = BuddyDistributionService().build_plan(DistributionBrief(

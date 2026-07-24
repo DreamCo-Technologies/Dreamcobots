@@ -6,7 +6,7 @@ Buddy can serve the HTTPS web app immediately and prepare governed packaging and
 
 - Distribution targets: 26
 - Target families: 8
-- Launch service packages: 7
+- Launch service packages: 8
 - Immediately available web/install routes: 2
 
 ## Boundaries

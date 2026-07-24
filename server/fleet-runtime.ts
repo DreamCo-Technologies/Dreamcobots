@@ -4,6 +4,11 @@ import { resolve } from "node:path";
 
 import { z } from "zod";
 
+import {
+  buddyModelRequestSchema,
+  resolveBuddyModelPlan,
+} from "./buddy-model-policy";
+
 export const fleetExecutionRequestSchema = z.object({
   objective: z.string().trim().min(10).max(4_000),
   input: z.record(z.unknown()).default({}),
@@ -20,6 +25,7 @@ export const buddyCapabilityRouteRequestSchema = z.object({
   preferredBotSlug: z.string().trim().min(2).max(160).optional(),
   requestedCapabilities: z.array(z.string().trim().min(2).max(160)).max(20).default([]),
   liveActionRequested: z.boolean().default(false),
+  ...buddyModelRequestSchema.shape,
 }).strict();
 
 export type FleetExecutionRequest = z.infer<typeof fleetExecutionRequestSchema>;
@@ -480,6 +486,12 @@ export class FleetRuntimeRegistry {
 
   routeCapability(requestInput: z.input<typeof buddyCapabilityRouteRequestSchema>) {
     const request = buddyCapabilityRouteRequestSchema.parse(requestInput);
+    const modelPlan = resolveBuddyModelPlan({
+      modelMode: request.modelMode,
+      modelConnectorId: request.modelConnectorId,
+      selectedModelId: request.selectedModelId,
+      approvePaidModelForThisRequest: request.approvePaidModelForThisRequest,
+    });
     const preferred = request.preferredBotSlug ? this.runtimes.get(request.preferredBotSlug) : undefined;
     const ranked = preferred
       ? []
@@ -511,7 +523,7 @@ export class FleetRuntimeRegistry {
       }));
 
     return {
-      schema: "dreamco.buddy_capability_route.v1",
+      schema: "dreamco.buddy_capability_route.v2",
       objective: request.objective,
       selected: selected.profile.identity,
       matchedCapabilities: matches.map((match) => match.capability),
@@ -531,6 +543,7 @@ export class FleetRuntimeRegistry {
         declaredCapabilitiesSearched: [...this.runtimes.values()]
           .reduce((total, runtime) => total + runtime.profile.capability_count, 0),
       },
+      modelPlan,
       execution,
     } as const;
   }

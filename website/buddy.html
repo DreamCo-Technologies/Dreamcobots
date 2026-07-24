@@ -24,6 +24,11 @@
       <span><strong>Buddy</strong><small>by DreamCo</small></span>
     </a>
     <div class="buddy-header-actions">
+      <div class="buddy-model-switch" role="group" aria-label="Model cost mode">
+        <button id="model-free" class="active" type="button" aria-pressed="true" title="Use Buddy without a paid model">Free</button>
+        <button id="model-premium" type="button" aria-pressed="false" title="Use a connected paid model for one approved request">Premium</button>
+      </div>
+      <button id="specialist-open" class="buddy-header-link" type="button">Specialists</button>
       <a class="buddy-header-link" href="buddy.html">New chat</a>
       <details class="buddy-explore-menu">
         <summary>Explore</summary>
@@ -32,6 +37,7 @@
           <a href="calculator.html">ROI calculators</a>
           <a href="studio.html">Creative studio</a>
           <a href="connections.html">Business connections</a>
+          <a href="install.html">Install, launch, and domains</a>
           <a href="dashboard.html">Dashboard</a>
         </nav>
       </details>
@@ -55,6 +61,19 @@
         <button type="button" role="tab" aria-selected="false" data-buddy-mode="Create">Create</button>
         <button type="button" role="tab" aria-selected="false" data-buddy-mode="Plan">Plan</button>
       </div>
+      <div id="premium-panel" class="buddy-premium-panel" hidden>
+        <label>Provider
+          <select id="premium-provider"></select>
+        </label>
+        <label>Model ID <span>(optional)</span>
+          <input id="premium-model-id" placeholder="Auto-pick for this task" autocomplete="off" />
+        </label>
+        <label class="buddy-premium-approval">
+          <input id="premium-approval" type="checkbox" />
+          <span>Allow this paid provider for this message only.</span>
+        </label>
+        <button id="premium-back" type="button">Back to free</button>
+      </div>
       <label class="sr-only" for="buddy-input">Message Buddy</label>
       <textarea id="buddy-input" rows="5" placeholder="Ask Buddy to build, fix, create, research, or plan anything..." maxlength="4000"></textarea>
       <div class="buddy-composer-actions">
@@ -65,15 +84,31 @@
 
     <div class="buddy-starters" aria-label="Starter prompts">
       <button type="button" data-buddy-prompt="Build a working prototype from my idea, including acceptance criteria, a local preview, tests, an ROI estimate, and a reversible launch plan.">Build a prototype</button>
-      <button type="button" data-buddy-prompt="Help me design and test an invention. Prepare the concept, requirements, risk review, prototype path, intellectual-property research plan, cost estimate, and next experiment.">Develop an invention</button>
-      <button type="button" data-buddy-prompt="Plan a secure connection between Buddy and my business database or server using least privilege, read-only access first, a sandbox test, and secret references only.">Connect business data</button>
+      <button type="button" data-buddy-prompt="Plan a safe connection to an app on my device. Start read-only, show every step, preview changes, and ask before each live action.">Connect an app</button>
+      <button type="button" data-buddy-prompt="Launch my project on the free DreamCo web address first, then prepare domain name choices, DNS steps, availability checks, renewal costs, and a purchase approval gate.">Launch a domain</button>
       <button type="button" data-buddy-prompt="Find the best specialist for my task, show the matched capabilities, and prepare a safe sandbox task packet.">Choose a specialist</button>
     </div>
 
     <p class="buddy-trust-line">Repository preview. Buddy can prepare and route work locally. Account, payment, outreach, publishing, and external write actions require an authenticated backend and your exact approval.</p>
   </main>
 
+  <dialog id="specialist-dialog" class="buddy-specialist-dialog" aria-labelledby="specialist-title">
+    <header>
+      <div>
+        <p>Buddy specialist fleet</p>
+        <h2 id="specialist-title">Choose or test a specialist</h2>
+      </div>
+      <button id="specialist-close" type="button">Close</button>
+    </header>
+    <label class="sr-only" for="specialist-search">Search specialists and capabilities</label>
+    <input id="specialist-search" type="search" placeholder="Try games, real estate, music, coding, or contracts" autocomplete="off" />
+    <div id="specialist-results" class="buddy-specialist-results" aria-live="polite"></div>
+    <footer id="specialist-summary">Loading verified specialists.</footer>
+  </dialog>
+
   <script src="data/buddy-routing-index.js"></script>
+  <script src="data/buddy-model-router.js"></script>
+  <script src="data/buddy-capability-certifications.js"></script>
   <script src="buddy.js" defer></script>
 </body>
 </html>

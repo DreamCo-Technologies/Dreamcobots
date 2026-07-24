@@ -1,6 +1,6 @@
 ---
 name: Stripe integration status
-description: Stripe code is fully wired; activation requires user to add STRIPE_SECRET_KEY + STRIPE_PUBLISHABLE_KEY as Replit secrets.
+description: Stripe code is wired; activation requires backend secret references and an owner-approved deployment.
 ---
 **Why:** stripeClient.ts uses env var fallback pattern; products are synced in DB. Checkout endpoint is live at /api/stripe/checkout.
 

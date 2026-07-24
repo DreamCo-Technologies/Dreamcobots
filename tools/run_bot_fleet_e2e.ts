@@ -5,6 +5,7 @@ import { FleetRuntimeRegistry } from "../server/fleet-runtime";
 
 const markdownPath = resolve(process.cwd(), "reports", "BOT_FLEET_E2E.md");
 const webJsonPath = resolve(process.cwd(), "website", "data", "bot-fleet-e2e.json");
+const webScriptPath = resolve(process.cwd(), "website", "data", "buddy-capability-certifications.js");
 const webShardDir = resolve(process.cwd(), "website", "data", "bot-capability-tests");
 const checkOnly = process.argv.includes("--check");
 
@@ -25,6 +26,17 @@ const webIndex = {
   })),
 };
 const json = `${JSON.stringify(webIndex, null, 2)}\n`;
+const browserCertification = {
+  summary: report.summary,
+  bots: Object.fromEntries(webIndex.profiles.map((profile) => [profile.slug, {
+    division: profile.division,
+    status: profile.status,
+    declaredCapabilityCount: profile.declaredCapabilityCount,
+    capabilityTestsPassed: profile.capabilityTestsPassed,
+    capabilityTestsFailed: profile.capabilityTestsFailed,
+  }])),
+};
+const browserScript = `window.BUDDY_CAPABILITY_CERTIFICATIONS=${JSON.stringify(browserCertification)};\n`;
 const divisionShards = report.divisions.map((division) => {
   const profiles = report.profiles.filter((profile) => profile.division === division.division);
   return {
@@ -76,11 +88,13 @@ function verify(path: string, expected: string) {
 if (checkOnly) {
   verify(markdownPath, markdown);
   verify(webJsonPath, json);
+  verify(webScriptPath, browserScript);
   divisionShards.forEach((shard) => verify(shard.path, shard.content));
 } else {
   mkdirSync(webShardDir, { recursive: true });
   writeFileSync(markdownPath, markdown);
   writeFileSync(webJsonPath, json);
+  writeFileSync(webScriptPath, browserScript);
   divisionShards.forEach((shard) => writeFileSync(shard.path, shard.content));
 }
 

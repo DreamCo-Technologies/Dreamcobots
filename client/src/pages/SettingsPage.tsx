@@ -272,7 +272,7 @@ export default function SettingsPage() {
                       <p className="text-xs text-muted-foreground mt-0.5">{int.desc}</p>
                     </div>
                     {int.status !== "connected" && (
-                      <Button variant="outline" size="sm" className="text-xs" onClick={() => toast({ title: `Configure ${int.name}`, description: "Add the API key as a Replit secret." })} data-testid={`button-configure-${int.name.toLowerCase()}`}>
+                      <Button variant="outline" size="sm" className="text-xs" onClick={() => toast({ title: `Configure ${int.name}`, description: "Add the API key as a backend secret reference." })} data-testid={`button-configure-${int.name.toLowerCase()}`}>
                         Configure
                       </Button>
                     )}

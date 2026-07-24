@@ -1,4 +1,33 @@
 {
+  "domain_service": {
+    "custom_domain": {
+      "automatic_purchase": false,
+      "automatic_renewal": false,
+      "availability_claimed": false,
+      "required_disclosures": [
+        "first-year price",
+        "renewal price",
+        "privacy price",
+        "transfer policy",
+        "redemption fee"
+      ],
+      "required_gates": [
+        "availability recheck",
+        "registrant details",
+        "exact total",
+        "owner approval",
+        "DNS preview",
+        "HTTPS verification"
+      ],
+      "status": "registrar_adapter_and_owner_purchase_required"
+    },
+    "free_hosted_address": {
+      "cost": "included with repository Pages hosting",
+      "ownership": "repository organization",
+      "status": "available_after_main_branch_deployment",
+      "url": "https://dreamco-technologies.github.io/Dreamcobots/"
+    }
+  },
   "schema": "dreamco.distribution_catalog.v1",
   "service_packages": [
     {
@@ -19,6 +48,29 @@
         "bot_system"
       ],
       "service_id": "website_pwa_launch",
+      "target_families": [
+        "web"
+      ]
+    },
+    {
+      "commercial_model": "free_plan_then_owner_approved_registration",
+      "deliverables": [
+        "name shortlist",
+        "availability check",
+        "registrar price comparison",
+        "renewal disclosure",
+        "DNS plan",
+        "HTTPS verification",
+        "owner purchase session"
+      ],
+      "name": "Domain Search, Purchase, and DNS Launch",
+      "project_types": [
+        "website",
+        "web_app",
+        "creative_tool",
+        "bot_system"
+      ],
+      "service_id": "domain_dns_launch",
       "target_families": [
         "web"
       ]
@@ -174,7 +226,8 @@
   "summary": {
     "available_now": 2,
     "families": 8,
-    "services": 7,
+    "free_hosted_addresses": 1,
+    "services": 8,
     "targets": 26
   },
   "targets": [

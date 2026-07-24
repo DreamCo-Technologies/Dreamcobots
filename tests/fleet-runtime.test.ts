@@ -39,7 +39,26 @@ test("Buddy chooses the strongest declared specialist for a natural-language tas
   assert.ok(result.matchedCapabilities.includes("Game building and modding"));
   assert.equal(result.coverage.profilesSearched, 1051);
   assert.equal(result.coverage.declaredCapabilitiesSearched, 8408);
+  assert.equal(result.modelPlan.mode, "free");
+  assert.equal(result.modelPlan.connector.id, "buddy_native");
   assert.equal(result.execution.status, "sandbox_task_packet_ready");
+});
+
+test("Buddy premium routing never upgrades or spends automatically", () => {
+  const registry = FleetRuntimeRegistry.fromFile();
+  const result = registry.routeCapability({
+    objective: "Prepare a careful architecture review for this application.",
+    requestedCapabilities: [],
+    liveActionRequested: false,
+    modelMode: "premium",
+    modelConnectorId: "anthropic",
+    approvePaidModelForThisRequest: false,
+  });
+  assert.equal(result.modelPlan.mode, "premium");
+  assert.equal(result.modelPlan.status, "paid_approval_required");
+  assert.equal(result.modelPlan.automaticPaidUpgrade, false);
+  assert.equal(result.modelPlan.providerCallExecuted, false);
+  assert.equal(result.execution.liveExternalActionTaken, false);
 });
 
 test("Buddy honors an explicitly selected bot and still gates live actions", () => {

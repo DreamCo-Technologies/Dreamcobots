@@ -20,8 +20,8 @@ import { FORMULA_LIBRARY } from "@shared/formula-library";
 import { buildEnhancedSystemPrompt } from "@shared/tool-belt";
 import { getUncachableStripeClient, getStripePublishableKey } from "./stripeClient";
 import { db } from "./db";
-import { batchProcessWithSSE } from "./replit_integrations/batch";
-import { registerAudioRoutes } from "./replit_integrations/audio";
+import { batchProcessWithSSE } from "./provider_integrations/batch";
+import { registerAudioRoutes } from "./provider_integrations/audio";
 import {
   connectionPlanRequestSchema,
   connectionStatusUpdateSchema,
@@ -51,6 +51,10 @@ import {
   buildGovernedLeadPlan,
   leadCampaignRequestSchema,
 } from "./governed-leads";
+import {
+  createDeviceActionPlan,
+  deviceActionPlanRequestSchema,
+} from "./device-action-policy";
 
 const CORE_SLUGS = new Set(CORE_BOTS.map(b => b.slug));
 const GITHUB_SLUGS = new Set(GITHUB_BOTS.map(b => b.slug));
@@ -302,7 +306,7 @@ export async function registerRoutes(
       if (!apiKey) {
         return res.status(503).json({
           error: "ELEVENLABS_API_KEY not configured",
-          setup: "Add ELEVENLABS_API_KEY to Replit Secrets — get a free key at elevenlabs.io",
+          setup: "Add ELEVENLABS_API_KEY as a backend secret reference after reviewing provider terms and costs",
           capability: "voice-cloning",
         });
       }
@@ -2925,6 +2929,16 @@ Any improvements or fixes (optional, 1-2 bullet points max)`;
 
   app.post("/api/platform-connections", createConnectionPlan);
   app.post("/api/connections", createConnectionPlan);
+
+  app.post("/api/buddy/device-actions/plan", async (req, res) => {
+    const killSwitch = await storage.getSetting("kill_switch");
+    if ((killSwitch?.value as { enabled?: boolean } | undefined)?.enabled) {
+      return res.status(423).json({ message: "Device action planning is locked by the kill switch" });
+    }
+    const parsed = deviceActionPlanRequestSchema.safeParse(req.body);
+    if (!parsed.success) return res.status(400).json(zodValidationError(parsed.error));
+    res.status(201).json(createDeviceActionPlan(parsed.data));
+  });
 
   app.patch("/api/platform-connections/:id", async (req, res) => {
     const id = parseInt(req.params.id);

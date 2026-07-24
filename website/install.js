@@ -188,6 +188,30 @@ function renderPlan(plan) {
   });
 }
 
+function domainSuggestions(brand, tld) {
+  const stem = brand.toLowerCase().replace(/[^a-z0-9]+/g, '').slice(0, 32) || 'dreamco';
+  const names = [stem, `${stem}app`, `get${stem}`, `${stem}ai`, `${stem}studio`, `${stem}works`, `${stem}online`, `try${stem}`];
+  return [...new Set(names)].map((name) => `${name}.${tld}`);
+}
+
+document.getElementById('domain-form').addEventListener('submit', (event) => {
+  event.preventDefault();
+  const brand = document.getElementById('domain-brand').value.trim();
+  const purpose = document.getElementById('domain-purpose').value.trim();
+  const tld = document.getElementById('domain-tld').value;
+  const budget = document.getElementById('domain-budget').value.trim() || '$0 until approved';
+  const suggestions = domainSuggestions(brand, tld);
+  const prompt = `Help me launch a domain for ${brand}. Purpose: ${purpose}. Preferred ending: .${tld}. First-year budget: ${budget}. Check current availability and exact first-year, renewal, privacy, transfer, and redemption costs through an approved registrar. Compare the options and prepare DNS. Do not register, charge, renew, transfer, or change DNS until I approve the exact domain and total.`;
+  const output = document.getElementById('domain-output');
+  output.innerHTML = `<h3>Domain plan ready</h3>
+    <p class="domain-free-route"><strong>Free starting address:</strong> ${escapeHtml(catalog.domain_service.free_hosted_address.url)} after the main branch deploys.</p>
+    <div class="domain-suggestions">${suggestions.map((name) => `<span>${escapeHtml(name)}</span>`).join('')}</div>
+    <p class="domain-disclaimer">These are name ideas, not availability claims. A registrar adapter must recheck each name and show the exact purchase and renewal total.</p>
+    <div class="release-output-actions"><a class="btn btn-primary" href="buddy.html?prompt=${encodeURIComponent(prompt)}">Ask Buddy to check and prepare purchase</a></div>`;
+  output.hidden = false;
+  document.getElementById('domain-form-status').textContent = 'No purchase or DNS change was made.';
+});
+
 document.getElementById('release-form').addEventListener('submit', (event) => {
   event.preventDefault();
   const status = document.getElementById('release-form-status');

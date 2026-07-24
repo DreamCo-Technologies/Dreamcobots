@@ -31,7 +31,7 @@ export const connectionPlanRequestSchema = z.object({
   platform: z.string().trim().min(2).max(64),
   name: z.string().trim().min(2).max(80),
   officialUrl: httpsUrl,
-  resourceType: z.enum(["application", "database", "server", "storage", "data_warehouse", "custom"]).default("application"),
+  resourceType: z.enum(["application", "device", "database", "server", "storage", "data_warehouse", "custom"]).default("application"),
   environment: z.enum(["development", "staging", "production"]).default("staging"),
   accessMode: z.enum(["read_only", "read_write"]).default("read_only"),
   authMethod: z.enum(AUTH_METHODS),

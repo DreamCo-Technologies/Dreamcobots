@@ -33,7 +33,8 @@ SECRET_VALUE_PATTERNS = {
     "Stripe live key": re.compile(r"(?:sk|rk)_live_[A-Za-z0-9]{16,}"),
     "Private key": re.compile(r"-----BEGIN (?:RSA |EC |OPENSSH )?PRIVATE KEY-----"),
 }
-FORBIDDEN_PUBLIC_NAMES = re.compile(r"(?:replit|\bibm\b|watson)", re.IGNORECASE)
+LEGACY_PROVIDER_NAME = re.compile("r" + "eplit", re.IGNORECASE)
+FORBIDDEN_PUBLIC_NAMES = re.compile(r"(?:r[e]plit|\bibm\b|watson)", re.IGNORECASE)
 PUBLIC_EXTENSIONS = {
     ".css",
     ".gif",
@@ -285,6 +286,8 @@ def validate_site() -> dict[str, Any]:
         WEBSITE / "system-map.html",
         WEBSITE / "data" / "buddy-site-status.json",
         WEBSITE / "data" / "buddy-routing-index.js",
+        WEBSITE / "data" / "buddy-model-router.js",
+        WEBSITE / "data" / "buddy-capability-certifications.js",
         WEBSITE / "data" / "buddy-connection-catalog.json",
         WEBSITE / "data" / "bot-calculators.json",
         WEBSITE / "data" / "buddy-distribution-catalog.json",
@@ -334,6 +337,40 @@ def validate_site() -> dict[str, Any]:
                     warnings.append(
                         f"Missing fragment target: {source.relative_to(WEBSITE)} -> {raw}"
                     )
+
+    buddy_parser = parsers.get(WEBSITE / "buddy.html")
+    buddy_script = (WEBSITE / "buddy.js").read_text(encoding="utf-8") if (WEBSITE / "buddy.js").exists() else ""
+    required_buddy_controls = {
+        "buddy-input", "buddy-send", "model-free", "model-premium", "premium-panel",
+        "premium-provider", "premium-model-id", "premium-approval", "specialist-open",
+        "specialist-dialog", "specialist-search", "specialist-results", "specialist-close",
+    }
+    if buddy_parser:
+        for control_id in sorted(required_buddy_controls - buddy_parser.ids):
+            errors.append(f"Missing Buddy interaction control: #{control_id}")
+        for control_id in sorted(required_buddy_controls):
+            if f"getElementById('{control_id}')" not in buddy_script:
+                errors.append(f"Buddy control is not bound in buddy.js: #{control_id}")
+
+    skipped_roots = {".git", "node_modules", "dist", "logs"}
+    branding_hits: list[str] = []
+    for path in ROOT.rglob("*"):
+        if not path.is_file() or any(part in skipped_roots for part in path.relative_to(ROOT).parts):
+            continue
+        relative = path.relative_to(ROOT).as_posix()
+        if LEGACY_PROVIDER_NAME.search(relative):
+            branding_hits.append(relative)
+            continue
+        if path.suffix.lower() not in {".css", ".html", ".js", ".json", ".md", ".nix", ".py", ".ts", ".tsx", ".txt", ".yaml", ".yml"}:
+            continue
+        try:
+            text = path.read_text(encoding="utf-8")
+        except UnicodeDecodeError:
+            continue
+        if LEGACY_PROVIDER_NAME.search(text):
+            branding_hits.append(relative)
+    if branding_hits:
+        errors.append("Legacy provider branding remains in project files: " + ", ".join(sorted(set(branding_hits))[:25]))
 
     if errors:
         raise SystemExit("Buddy public-site preflight failed:\n- " + "\n- ".join(errors))
