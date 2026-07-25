@@ -19,6 +19,14 @@ const outputActions = document.getElementById('studio-output-actions');
 const academyTrack = document.getElementById('academy-track');
 const academyGrid = document.getElementById('academy-grid');
 const academySummary = document.getElementById('academy-summary');
+const actorControls = document.getElementById('actor-controls');
+const actorMode = document.getElementById('actor-mode');
+const simulationControls = document.getElementById('simulation-controls');
+const simulationModelSource = document.getElementById('simulation-model-source');
+const simulationFidelity = document.getElementById('simulation-fidelity');
+const simulationPaint = document.getElementById('simulation-paint');
+const simulationAdditions = document.getElementById('simulation-additions');
+const simulationToGame = document.getElementById('simulation-to-game');
 
 let mediaRecorder = null;
 let mediaStream = null;
@@ -32,6 +40,9 @@ let imageObjectUrl = '';
 let latestPacket = null;
 let latestConsentReceipt = null;
 const academy = window.BUDDY_SPECIALIZED_HUBS?.creative;
+const productionRegistry = window.BUDDY_PRODUCTION_GROUP;
+const hollywoodGroup = productionRegistry?.hollywood_production_group;
+const simulationFoundry = productionRegistry?.simulation_foundry;
 
 function academyCard(index, label, items, kind) {
   const card = document.createElement('article');
@@ -57,13 +68,19 @@ function renderAcademy() {
     return;
   }
   if (academyTrack.value === 'film') {
-    const rows = academy.film_standard.phases;
-    rows.forEach((row, index) => academyGrid.append(academyCard(index, row.label, row.outputs, 'Phase')));
-    academySummary.textContent = `${rows.length} production phases · ${academy.film_standard.quality_gates.length} release gates · delivery specs verified for each target platform`;
-  } else {
+    const rows = hollywoodGroup?.departments || academy.film_standard.phases;
+    rows.forEach((row, index) => academyGrid.append(academyCard(index, row.label, row.outputs, row.lead_bot ? 'Department' : 'Phase')));
+    academySummary.textContent = hollywoodGroup
+      ? `${rows.length} production departments · ${hollywoodGroup.quality_gates.length} picture, sound, rights, accessibility, and master quality gates · rendered evidence required`
+      : `${rows.length} production phases · ${academy.film_standard.quality_gates.length} release gates · delivery specs verified for each target platform`;
+  } else if (academyTrack.value === 'music') {
     const rows = academy.music_standard.genre_families;
     rows.forEach((row, index) => academyGrid.append(academyCard(index, row.label, row.study, 'Family')));
     academySummary.textContent = `${rows.length} genre families · original composition workflow · composition, recording, sample, performance, sync, voice, and likeness rights gates`;
+  } else {
+    const rows = simulationFoundry?.domains || [];
+    rows.forEach((row, index) => academyGrid.append(academyCard(index, row.label, [row.review], 'Domain')));
+    academySummary.textContent = `${rows.length} simulation domains · ${simulationFoundry?.model_sources?.length || 0} governed model sources · every simulation can produce a deterministic practice-game plan`;
   }
 }
 
@@ -134,7 +151,39 @@ const TYPE_PRESETS = {
     subject: 'Sensor, enclosure, local dashboard, and alert workflow',
     audience: 'Home gardeners with varied access needs',
   },
+  vehicle_simulation: {
+    title: 'Garage Practice Lab',
+    objective: 'Build an owner-authorized vehicle inspection, repair-practice, paint, and addition simulation with measured limits and qualified-review gates.',
+    subject: 'Vehicle inspection, repair sequence, paint, parts, and accessory variants',
+    audience: 'Adult vehicle owners and qualified instructors',
+  },
+  building_simulation: {
+    title: 'Home Design Lab',
+    objective: 'Compare an owner-authorized home addition, materials, rooms, and construction sequence against measured site and building constraints.',
+    subject: 'Home design, room addition, materials, utilities, and construction practice',
+    audience: 'Property owners, learners, and qualified building professionals',
+  },
+  product_visualization: {
+    title: 'Product Variant Lab',
+    objective: 'Visualize an original product or invention with paint, material, component, and accessory variants plus a bench-test plan.',
+    subject: 'Product model, materials, components, additions, and before-and-after comparison',
+    audience: 'Inventors, customers, and product teams',
+  },
+  skills_training_simulation: {
+    title: 'Practice Workshop',
+    objective: 'Turn an approved procedure into a simulation game with legal actions, feedback, levels, safe failure, reset, and an after-action review.',
+    subject: 'Owner-authorized job, classroom, equipment, or life-skill practice',
+    audience: 'Learners and qualified instructors',
+  },
 };
+
+const SIMULATION_TYPES = new Set([
+  'vehicle_simulation',
+  'building_simulation',
+  'product_visualization',
+  'skills_training_simulation',
+]);
+const ACTOR_TYPES = new Set(['feature_film', 'music_video', 'commercial', 'parent_learning_video', 'biography']);
 
 function selectedType() {
   return form.elements.projectType.value;
@@ -166,7 +215,23 @@ function applyPreset(type) {
   document.getElementById('project-objective').value = preset.objective;
   document.getElementById('project-subject').value = preset.subject;
   document.getElementById('project-audience').value = preset.audience;
+  updateProjectControls(type);
   renderEmptyState(type);
+}
+
+function updateProjectControls(type = selectedType()) {
+  actorControls.hidden = !ACTOR_TYPES.has(type);
+  simulationControls.hidden = !SIMULATION_TYPES.has(type);
+  renderSimulationConcept();
+}
+
+function renderSimulationConcept() {
+  if (!simulationPaint) return;
+  document.getElementById('simulation-color-swatch').style.background = simulationPaint.value;
+  const sourceLabel = simulationModelSource.options[simulationModelSource.selectedIndex]?.text || 'Model';
+  const fidelityLabel = simulationFidelity.options[simulationFidelity.selectedIndex]?.text || 'Concept';
+  document.getElementById('simulation-preview-title').textContent = TYPE_PRESETS[selectedType()]?.title || 'Concept variant';
+  document.getElementById('simulation-preview-detail').textContent = `${sourceLabel} · ${fidelityLabel} · game conversion ${simulationToGame.checked ? 'on' : 'off'} · render engine not connected`;
 }
 
 function updateMediaControls() {
@@ -210,6 +275,13 @@ async function blobFingerprint(blob) {
   return [...new Uint8Array(digest)].map(value => value.toString(16).padStart(2, '0')).join('');
 }
 
+async function textFingerprint(value) {
+  const normalized = String(value || '').trim();
+  if (!normalized || !window.crypto?.subtle) return null;
+  const digest = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(normalized));
+  return [...new Uint8Array(digest)].map(item => item.toString(16).padStart(2, '0')).join('');
+}
+
 function stopImageCamera() {
   if (imageStream) imageStream.getTracks().forEach(track => track.stop());
   imageStream = null;
@@ -223,6 +295,15 @@ function stopImageCamera() {
 useVoice.addEventListener('change', updateMediaControls);
 useImage.addEventListener('change', updateMediaControls);
 document.getElementById('project-type').addEventListener('change', event => applyPreset(event.target.value));
+actorMode.addEventListener('change', () => {
+  if (actorMode.value === 'owner_digital_double') {
+    formStatus.textContent = 'Choose your voice, likeness, or both below and complete the adult owner consent controls.';
+  } else {
+    formStatus.textContent = 'Original actor mode cannot imitate or use source media from a real person.';
+  }
+});
+[simulationModelSource, simulationFidelity, simulationPaint, simulationAdditions, simulationToGame]
+  .forEach(control => control.addEventListener('input', renderSimulationConcept));
 
 voiceFile.addEventListener('change', () => {
   const file = voiceFile.files && voiceFile.files[0];
@@ -356,12 +437,25 @@ document.getElementById('download-image').addEventListener('click', () => {
 });
 
 function validateMedia() {
+  if (!actorControls.hidden && actorMode.value === 'owner_digital_double' && !useVoice.checked && !useImage.checked) {
+    throw new Error('Choose your own voice, likeness, or both for an owner digital double.');
+  }
   if (useVoice.checked && !voiceObjectUrl) throw new Error('Record or choose your own voice sample first.');
   if (useImage.checked && !imageObjectUrl) throw new Error('Choose your own image first.');
   if (useVoice.checked || useImage.checked) {
     if (!document.getElementById('consent-self').checked) throw new Error('Confirm that the media represents you and belongs to you.');
     if (!document.getElementById('consent-adult').checked) throw new Error('Adult confirmation is required. Minor cloning is blocked.');
     if (!document.getElementById('consent-label').checked) throw new Error('The AI-assisted media label must stay enabled.');
+  }
+}
+
+function validateSimulation() {
+  if (simulationControls.hidden) return;
+  const source = simulationModelSource.value;
+  const modelRef = document.getElementById('simulation-model-ref').value.trim();
+  const rightsRef = document.getElementById('simulation-rights-ref').value.trim();
+  if (source !== 'procedural_original' && (!modelRef || !rightsRef)) {
+    throw new Error('Imported or scanned models require both a model reference and an ownership or license receipt.');
   }
 }
 
@@ -430,6 +524,30 @@ function projectCopy(type, subject, audience) {
     body: `Requirements, system architecture, component options, bill of materials, prior-art research, safety review, simulation, and a bench-test matrix prepared for ${audience}.`,
     action: 'Review test plan',
   };
+  if (type === 'vehicle_simulation') return {
+    eyebrow: 'Vehicle simulation foundry',
+    title: `Garage lab: ${subject}`,
+    body: `An owner-authorized model, paint and addition variants, measured assumptions, repair-practice loop, fitment review, and qualified safety gates prepared for ${audience}.`,
+    action: 'Run concept scenario',
+  };
+  if (type === 'building_simulation') return {
+    eyebrow: 'Building simulation foundry',
+    title: `Design lab: ${subject}`,
+    body: `A site and building model plan, material and addition variants, walkthrough, construction sequence, and code, structure, utility, fire, and access review prepared for ${audience}.`,
+    action: 'Run concept walkthrough',
+  };
+  if (type === 'product_visualization') return {
+    eyebrow: 'Product simulation foundry',
+    title: `Variant lab: ${subject}`,
+    body: `A rights-aware model plan, paint, material, component, and accessory variants, comparison views, tolerances, failure modes, and bench-test evidence prepared for ${audience}.`,
+    action: 'Compare concept variants',
+  };
+  if (type === 'skills_training_simulation') return {
+    eyebrow: 'Simulation-to-game workshop',
+    title: `Practice game: ${subject}`,
+    body: `A bounded state model, legal actions, feedback, scoring, difficulty ladder, safe failure, reset, bot playtest, and instructor controls prepared for ${audience}.`,
+    action: 'Start practice loop',
+  };
   return {
     eyebrow: 'College course production',
     title: `Course: ${subject}`,
@@ -449,8 +567,19 @@ function escapeHtml(value) {
 
 function renderPrototype(packet) {
   const copy = projectCopy(packet.project_type, escapeHtml(packet.subject), escapeHtml(packet.audience));
-  const avatar = useImage.checked ? `<img class="studio-avatar-preview" src="${imageObjectUrl}" alt="Approved creator likeness preview" />` : '<div class="studio-generated-avatar">B</div>';
+  const simulation = SIMULATION_TYPES.has(packet.project_type);
+  const avatar = useImage.checked
+    ? `<img class="studio-avatar-preview" src="${imageObjectUrl}" alt="Approved creator likeness preview" />`
+    : simulation
+      ? `<div class="studio-generated-avatar" style="background:${escapeHtml(packet.simulation.paint)}">SIM</div>`
+      : '<div class="studio-generated-avatar">B</div>';
   const label = useVoice.checked || useImage.checked ? '<p class="studio-media-label">AI-assisted media using the adult creator\'s approved voice or likeness</p>' : '';
+  const manifest = [
+    packet.actor?.mode ? `Actor: ${packet.actor.mode.replaceAll('_', ' ')}` : null,
+    packet.simulation?.model_source ? `Model: ${packet.simulation.model_source.replaceAll('_', ' ')}` : null,
+    packet.simulation?.fidelity ? `Fidelity: ${packet.simulation.fidelity.replaceAll('_', ' ')}` : null,
+    packet.simulation?.convert_to_game ? 'Practice game included' : null,
+  ].filter(Boolean).map(item => `<span>${escapeHtml(item)}</span>`).join('');
   stage.innerHTML = `
     <article class="studio-built-project">
       ${avatar}
@@ -458,6 +587,7 @@ function renderPrototype(packet) {
         <p class="studio-project-eyebrow">${copy.eyebrow}</p>
         <h2>${copy.title}</h2>
         <p>${copy.body}</p>
+        <div class="studio-project-manifest">${manifest}</div>
         ${label}
         <button id="prototype-action" class="btn btn-primary btn-sm" type="button">${copy.action}</button>
       </div>
@@ -473,6 +603,7 @@ form.addEventListener('submit', async event => {
   formStatus.textContent = '';
   try {
     validateMedia();
+    validateSimulation();
     if (!form.reportValidity()) return;
     latestConsentReceipt = useVoice.checked || useImage.checked ? {
       schema: 'dreamco.creator_media_consent.v1',
@@ -487,9 +618,36 @@ form.addEventListener('submit', async event => {
       image_sha256: useImage.checked ? await blobFingerprint(imageBlob) : null,
       raw_media_embedded: false,
     } : null;
+    const type = selectedType();
+    const simulationModifications = simulationAdditions.value
+      .split(/[,\n]/)
+      .map(item => item.trim())
+      .filter(Boolean)
+      .slice(0, 50);
+    const modelRef = document.getElementById('simulation-model-ref').value.trim();
+    const rightsRef = document.getElementById('simulation-rights-ref').value.trim();
+    const simulationPacket = SIMULATION_TYPES.has(type) ? {
+      status: 'simulation_packet_ready',
+      model_source: simulationModelSource.value,
+      model_ref_sha256: await textFingerprint(modelRef),
+      rights_ref_sha256: await textFingerprint(rightsRef),
+      raw_references_stored: false,
+      fidelity: simulationFidelity.value,
+      paint: simulationPaint.value,
+      modifications: simulationModifications,
+      variant_controls: simulationFoundry?.variant_controls || [],
+      render_state: 'renderer_configuration_required',
+      convert_to_game: simulationToGame.checked,
+      game_conversion: simulationToGame.checked ? {
+        status: 'practice_game_plan_ready',
+        stages: simulationFoundry?.simulation_to_game?.stages || [],
+        required_evidence: simulationFoundry?.simulation_to_game?.required_evidence || [],
+      } : null,
+      truth_boundary: simulationFoundry?.truth_boundary || 'Measured evidence and qualified review remain required.',
+    } : null;
     latestPacket = {
       schema: 'dreamco.buddy_creative_studio_project.v1',
-      project_type: selectedType(),
+      project_type: type,
       title: document.getElementById('project-title').value.trim(),
       objective: document.getElementById('project-objective').value.trim(),
       subject: document.getElementById('project-subject').value.trim(),
@@ -506,30 +664,47 @@ form.addEventListener('submit', async event => {
         voice_sha256: latestConsentReceipt.voice_sha256,
         image_sha256: latestConsentReceipt.image_sha256,
       } : null,
-      artifacts: selectedType() === 'invention_prototype'
+      actor: ACTOR_TYPES.has(type) ? {
+        mode: actorMode.value,
+        character_description: document.getElementById('actor-description').value.trim(),
+        real_person_imitation_allowed: false,
+        render_state: 'renderer_configuration_required',
+        production_departments: hollywoodGroup?.departments?.map(item => item.id) || [],
+        quality_gates: hollywoodGroup?.quality_gates || [],
+        hard_blocks: hollywoodGroup?.actor_hard_blocks || [],
+      } : null,
+      simulation: simulationPacket,
+      artifacts: type === 'invention_prototype'
         ? ['requirements', 'system block diagram', 'bill of materials', 'simulation plan', 'bench-test matrix', 'safety review', 'prior-art research plan', 'cost and ROI estimate']
+        : SIMULATION_TYPES.has(type)
+          ? ['model and rights manifest', 'variant workbench', 'before-and-after comparison', 'simulation state model', 'known-limits report', 'qualified-review gate', 'simulation-to-game plan']
         : ['source plan', 'test plan', 'rights manifest', 'release checklist'],
-      tests: selectedType() === 'invention_prototype'
+      tests: type === 'invention_prototype'
         ? ['core assumption', 'failure modes', 'electrical and mechanical safety', 'accessibility', 'repairability', 'no automatic ordering or manufacturing']
+        : SIMULATION_TYPES.has(type)
+          ? ['model rights and provenance', 'units and scale', 'legal actions', 'safe failure and reset', 'deterministic replay', 'known limits', 'accessibility', 'qualified review', 'bot playtest', 'no live machine control']
         : ['offline load', 'touch and keyboard', 'captions', 'restart and recovery', 'learning objective', 'no live external action'],
-      production_academy: selectedType() === 'feature_film'
-        ? { track: 'film', phases: academy?.film_standard?.phases?.map(item => item.id) || [], quality_gates: academy?.film_standard?.quality_gates || [] }
-        : ['music_video', 'music_artist'].includes(selectedType())
+      production_academy: type === 'feature_film'
+        ? { track: 'film', phases: academy?.film_standard?.phases?.map(item => item.id) || [], departments: hollywoodGroup?.departments?.map(item => item.id) || [], quality_gates: hollywoodGroup?.quality_gates || [] }
+        : ['music_video', 'music_artist'].includes(type)
           ? { track: 'music', genre_families: academy?.music_standard?.genre_families?.map(item => item.id) || [], rights_gates: academy?.music_standard?.rights_gates || [] }
+          : SIMULATION_TYPES.has(type)
+            ? { track: 'simulation', domains: simulationFoundry?.domains?.map(item => item.id) || [], model_sources: simulationFoundry?.model_sources?.map(item => item.id) || [] }
           : null,
       publish_requires_owner_approval: true,
     };
     renderPrototype(latestPacket);
-    readiness.textContent = useVoice.checked || useImage.checked ? 'Prototype ready · media renderer needed' : 'Prototype ready';
-    readiness.className = useVoice.checked || useImage.checked ? 'badge badge-amber' : 'badge badge-green';
+    const rendererNeeded = useVoice.checked || useImage.checked || SIMULATION_TYPES.has(type) || ACTOR_TYPES.has(type);
+    readiness.textContent = rendererNeeded ? 'Packet ready · renderer needed' : 'Prototype ready';
+    readiness.className = rendererNeeded ? 'badge badge-amber' : 'badge badge-green';
     document.getElementById('result-code').textContent = 'Prototype ready';
     document.getElementById('result-voice').textContent = useVoice.checked ? 'Consent verified' : 'Not requested';
     document.getElementById('result-image').textContent = useImage.checked ? 'Consent verified' : 'Not requested';
-    document.getElementById('result-tests').textContent = '6 planned';
+    document.getElementById('result-tests').textContent = SIMULATION_TYPES.has(type) ? '10 planned' : '6 planned';
     outputActions.hidden = false;
     document.getElementById('download-consent').disabled = !latestConsentReceipt;
-    formStatus.textContent = useVoice.checked || useImage.checked
-      ? 'Prototype built. A configured local or selected media engine is still required to render cloned media.'
+    formStatus.textContent = rendererNeeded
+      ? 'Production packet built. A configured local or selected render engine must produce and pass review before this is called a finished visual or media asset.'
       : 'Prototype built locally.';
   } catch (error) {
     formStatus.textContent = error.message;
@@ -551,7 +726,11 @@ document.getElementById('download-packet').addEventListener('click', () => {
 
 document.getElementById('send-buddy').addEventListener('click', () => {
   if (!latestPacket) return;
-  const prompt = `Continue building ${latestPacket.title} as a ${latestPacket.project_type}. Goal: ${latestPacket.objective}`;
+  const simulationDetail = latestPacket.simulation
+    ? ` Use the ${latestPacket.simulation.model_source} model path, apply ${latestPacket.simulation.modifications.join(', ') || 'the approved variants'}, and ${latestPacket.simulation.convert_to_game ? 'turn it into a practice game' : 'keep it as a simulation'}.`
+    : '';
+  const actorDetail = latestPacket.actor ? ` Actor mode: ${latestPacket.actor.mode}.` : '';
+  const prompt = `Continue building ${latestPacket.title} as a ${latestPacket.project_type}. Goal: ${latestPacket.objective}.${actorDetail}${simulationDetail} Keep rights, evidence, quality, safety, and owner approval gates active.`;
   location.href = `buddy.html?prompt=${encodeURIComponent(prompt)}`;
 });
 
@@ -592,14 +771,22 @@ document.getElementById('clear-media').addEventListener('click', () => {
 academyTrack.addEventListener('change', renderAcademy);
 document.getElementById('academy-use').addEventListener('click', () => {
   const select = document.getElementById('project-type');
-  select.value = academyTrack.value === 'film' ? 'feature_film' : 'music_video';
+  select.value = academyTrack.value === 'film'
+    ? 'feature_film'
+    : academyTrack.value === 'music'
+      ? 'music_video'
+      : 'skills_training_simulation';
   applyPreset(select.value);
   document.getElementById('project-title').focus();
   formStatus.textContent = academyTrack.value === 'film'
-    ? 'Film production phases and quality gates will be included in this project packet.'
-    : 'Music genre study, production stages, and rights gates will be included in this project packet.';
+    ? 'The 12-department production group, synthetic-actor modes, and rendered quality gates will be included in this packet.'
+    : academyTrack.value === 'music'
+      ? 'Music genre study, production stages, rights gates, and music-video departments will be included in this packet.'
+      : 'Model provenance, variants, known limits, qualified review, and simulation-to-game stages will be included in this packet.';
 });
 
 setTypeFromQuery();
 updateMediaControls();
+updateProjectControls();
+renderSimulationConcept();
 renderAcademy();

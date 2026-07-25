@@ -29,6 +29,10 @@ class ProjectType(str, Enum):
     MUSIC_ARTIST = "music_artist"
     LOGO_BRAND = "logo_brand"
     INVENTION_PROTOTYPE = "invention_prototype"
+    VEHICLE_SIMULATION = "vehicle_simulation"
+    BUILDING_SIMULATION = "building_simulation"
+    PRODUCT_VISUALIZATION = "product_visualization"
+    SKILLS_TRAINING_SIMULATION = "skills_training_simulation"
 
 
 class CreativeStudioError(ValueError):
@@ -240,6 +244,26 @@ class BuddyCreativeStudio:
             {"bot": "mfg-analytics-elite", "role": "digital-twin, production, cost, and feasibility modeling"},
             {"bot": "safety-mfg", "role": "failure-mode, manufacturing-safety, and review gates"},
         ],
+        ProjectType.VEHICLE_SIMULATION: [
+            {"bot": "3d-asset-mgr", "role": "vehicle model ingestion, materials, variants, and provenance"},
+            {"bot": "immersive-xr", "role": "interactive inspection and repair-practice scene"},
+            {"bot": "safety-mfg", "role": "fitment, procedure, and safety-review gates"},
+        ],
+        ProjectType.BUILDING_SIMULATION: [
+            {"bot": "3d-asset-mgr", "role": "site, structure, room, material, and variant model"},
+            {"bot": "immersive-xr", "role": "walkthrough, construction sequence, and spatial interaction"},
+            {"bot": "safety-mfg", "role": "code, structure, fire, utility, and qualified-review gates"},
+        ],
+        ProjectType.PRODUCT_VISUALIZATION: [
+            {"bot": "3d-asset-mgr", "role": "product model, paint, material, addition, and comparison variants"},
+            {"bot": "mfg-analytics-elite", "role": "digital-twin assumptions, tolerances, and feasibility evidence"},
+            {"bot": "safety-mfg", "role": "failure-mode, materials, and bench-test review"},
+        ],
+        ProjectType.SKILLS_TRAINING_SIMULATION: [
+            {"bot": "immersive-xr", "role": "interactive practice environment and device controls"},
+            {"bot": "games-app-bot", "role": "practice loop, scoring, levels, and recovery"},
+            {"bot": "game-ai-player", "role": "deterministic bot playtesting and difficulty checks"},
+        ],
     }
 
     def create_project(self, brief: CreativeBrief) -> StudioProject:
@@ -278,6 +302,11 @@ class BuddyCreativeStudio:
     def _academy_plan(brief: CreativeBrief) -> dict[str, Any] | None:
         source = Path(__file__).resolve().parents[2] / "config" / "buddy-creative-academy.json"
         catalog = json.loads(source.read_text(encoding="utf-8"))
+        production_group = json.loads(
+            (Path(__file__).resolve().parents[2] / "config" / "buddy-hollywood-production-group.json").read_text(
+                encoding="utf-8"
+            )
+        )
         if brief.project_type == ProjectType.FEATURE_FILM:
             film = catalog["film_standard"]
             return {
@@ -285,6 +314,9 @@ class BuddyCreativeStudio:
                 "phases": film["phases"],
                 "quality_gates": film["quality_gates"],
                 "delivery_reference": film["delivery_reference"],
+                "production_group": production_group["departments"],
+                "actor_modes": production_group["actor_modes"],
+                "render_states": production_group["render_states"],
             }
         if brief.project_type in {ProjectType.MUSIC_VIDEO, ProjectType.MUSIC_ARTIST}:
             music = catalog["music_standard"]
@@ -293,6 +325,27 @@ class BuddyCreativeStudio:
                 "genre_families": music["genre_families"],
                 "production_stages": music["production_stages"],
                 "rights_gates": music["rights_gates"],
+                "production_group": production_group["departments"],
+                "actor_modes": production_group["actor_modes"],
+            }
+        if brief.project_type in {
+            ProjectType.VEHICLE_SIMULATION,
+            ProjectType.BUILDING_SIMULATION,
+            ProjectType.PRODUCT_VISUALIZATION,
+            ProjectType.SKILLS_TRAINING_SIMULATION,
+        }:
+            foundry = json.loads(
+                (Path(__file__).resolve().parents[2] / "config" / "buddy-simulation-foundry.json").read_text(
+                    encoding="utf-8"
+                )
+            )
+            return {
+                "track": "simulation",
+                "domains": foundry["domains"],
+                "model_sources": foundry["model_sources"],
+                "variant_controls": foundry["variant_controls"],
+                "simulation_to_game": foundry["simulation_to_game"],
+                "truth_boundary": foundry["truth_boundary"],
             }
         return None
 
@@ -421,10 +474,26 @@ class BuddyCreativeStudio:
             shared[2]["outputs"].extend(["original repertoire plan", "rights log", "release calendar", "artist identity", "audience experiments"])
         elif brief.project_type == ProjectType.LOGO_BRAND:
             shared[2]["outputs"].extend(["editable logo concepts", "brand system", "clearance search plan", "asset exports"])
-        else:
+        elif brief.project_type == ProjectType.INVENTION_PROTOTYPE:
             shared[1]["outputs"].extend(["requirements", "system block diagram", "component options", "bill of materials"])
             shared[2]["outputs"].extend(["simulation", "CAD or enclosure brief", "firmware or software scaffold", "bench-test matrix"])
             shared[3]["outputs"].extend(["failure-mode review", "safety review", "repairability check", "cost and ROI estimate"])
+        elif brief.project_type == ProjectType.VEHICLE_SIMULATION:
+            shared[1]["outputs"].extend(["vehicle model source", "measurements", "service or customization scenario", "parts and materials manifest"])
+            shared[2]["outputs"].extend(["interactive inspection", "paint and addition variants", "before and after comparison", "repair-practice loop"])
+            shared[3]["outputs"].extend(["fitment review", "procedure review", "road-safety limits", "qualified mechanic gate"])
+        elif brief.project_type == ProjectType.BUILDING_SIMULATION:
+            shared[1]["outputs"].extend(["site and building model", "room and structure plan", "materials", "construction sequence"])
+            shared[2]["outputs"].extend(["walkthrough", "addition variants", "before and after comparison", "construction-practice loop"])
+            shared[3]["outputs"].extend(["code assumptions", "structure and utility review", "fire and accessibility review", "licensed professional gate"])
+        elif brief.project_type == ProjectType.PRODUCT_VISUALIZATION:
+            shared[1]["outputs"].extend(["product model source", "measurements and tolerances", "materials", "variant requirements"])
+            shared[2]["outputs"].extend(["paint and material variants", "addition options", "turntable and exploded views", "before and after comparison"])
+            shared[3]["outputs"].extend(["failure modes", "manufacturing feasibility", "safety review", "bench-test matrix"])
+        elif brief.project_type == ProjectType.SKILLS_TRAINING_SIMULATION:
+            shared[1]["outputs"].extend(["practice objective", "scenario states", "legal actions", "known limits"])
+            shared[2]["outputs"].extend(["safe failure and reset", "feedback and scoring", "difficulty ladder", "instructor controls"])
+            shared[3]["outputs"].extend(["deterministic replay", "bot playtest", "misconception report", "qualified instructor gate"])
         return shared
 
     @staticmethod
@@ -447,14 +516,22 @@ class BuddyCreativeStudio:
                     "raw_biometric_media_not_in_project_manifest",
                 ]
             )
-        if brief.project_type == ProjectType.INVENTION_PROTOTYPE:
+        if brief.project_type in {
+            ProjectType.INVENTION_PROTOTYPE,
+            ProjectType.VEHICLE_SIMULATION,
+            ProjectType.BUILDING_SIMULATION,
+            ProjectType.PRODUCT_VISUALIZATION,
+            ProjectType.SKILLS_TRAINING_SIMULATION,
+        }:
             checks.extend(
                 [
                     "core_assumption_is_testable",
-                    "bill_of_materials_is_bounded",
+                    "model_source_rights_and_scale_verified",
                     "failure_modes_reviewed",
                     "qualified_review_gate_for_high_risk_domains",
                     "no_automatic_ordering_or_manufacturing",
+                    "simulation_limits_visible",
+                    "safe_failure_reset_and_recovery",
                 ]
             )
         return {
@@ -495,12 +572,20 @@ class BuddyCreativeStudio:
             base.extend(["artist_development_plan", "original_repertoire_plan", "rights_manifest", "release_calendar", "audience_test_plan"])
         elif brief.project_type == ProjectType.LOGO_BRAND:
             base.extend(["editable_logo_concepts", "brand_guidelines", "rights_manifest", "trademark_search_plan"])
-        else:
+        elif brief.project_type == ProjectType.INVENTION_PROTOTYPE:
             base.extend([
                 "requirements_specification", "system_block_diagram", "bill_of_materials",
                 "simulation_plan", "cad_or_enclosure_brief", "bench_test_matrix",
                 "failure_mode_and_safety_review", "prior_art_research_plan", "cost_and_roi_estimate",
             ])
+        elif brief.project_type == ProjectType.VEHICLE_SIMULATION:
+            base.extend(["vehicle_model_manifest", "paint_and_addition_variants", "repair_practice_scenario", "fitment_and_safety_review", "simulation_game_plan"])
+        elif brief.project_type == ProjectType.BUILDING_SIMULATION:
+            base.extend(["site_and_building_model_manifest", "addition_and_material_variants", "construction_sequence", "code_and_safety_review", "simulation_game_plan"])
+        elif brief.project_type == ProjectType.PRODUCT_VISUALIZATION:
+            base.extend(["product_model_manifest", "paint_material_and_addition_variants", "before_after_comparison", "bench_test_matrix", "simulation_game_plan"])
+        elif brief.project_type == ProjectType.SKILLS_TRAINING_SIMULATION:
+            base.extend(["scenario_state_machine", "legal_action_catalog", "feedback_and_scoring", "difficulty_ladder", "bot_playtest_report"])
         return base
 
     @staticmethod

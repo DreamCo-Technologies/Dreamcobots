@@ -16,9 +16,16 @@ from dreamco_platform.creative import BuddyCreativeStudio, ProjectType
 
 OUT_JSON = ROOT / "config" / "generated" / "buddy_multimodal_studio.json"
 OUT_MD = ROOT / "reports" / "BUDDY_MULTIMODAL_STUDIO.md"
+OUT_JS = ROOT / "website" / "data" / "buddy-production-group.js"
+
+
+def load_json(relative_path: str) -> dict:
+    return json.loads((ROOT / relative_path).read_text(encoding="utf-8"))
 
 
 def build_registry() -> dict:
+    production_group = load_json("config/buddy-hollywood-production-group.json")
+    simulation_foundry = load_json("config/buddy-simulation-foundry.json")
     return {
         "schema": "dreamco.buddy_multimodal_studio.v1",
         "name": "Buddy Creative Studio",
@@ -56,6 +63,12 @@ def build_registry() -> dict:
             "build rights-aware artist-development and original music production packets",
             "build editable logo concepts, brand systems, and clearance plans",
             "build invention packets with requirements, bills of materials, simulations, safety reviews, prior-art plans, and bench tests",
+            "coordinate a 12-department film and music-video production group",
+            "design original synthetic actors and consent-gated adult digital doubles",
+            "build vehicle service, vehicle customization, building, product, and skills-training simulation packets",
+            "ingest owner-authorized or licensed model references with provenance, scale, format, and safety checks",
+            "compare paint, material, part, room, structure, and accessory variants",
+            "turn approved simulations into deterministic practice games with feedback and safe reset",
             "capture adult user voice and image locally",
             "enforce voice and likeness consent",
             "prepare local or optional model rendering",
@@ -78,6 +91,8 @@ def build_registry() -> dict:
             "publishing requires owner approval",
             "outside models are optional",
         ],
+        "hollywood_production_group": production_group,
+        "simulation_foundry": simulation_foundry,
         "website": "website/studio.html",
         "game_lab": "dreamco_platform/games/harness.py",
         "social_manager": "dreamco_platform/social/manager.py",
@@ -100,6 +115,32 @@ def write_report(registry: dict) -> None:
     lines.extend(
         [
             "",
+            "## Hollywood Production Group",
+            "",
+            registry["hollywood_production_group"]["quality_claim"],
+            "",
+        ]
+    )
+    lines.extend(
+        f"- `{item['id']}`: {item['label']} (`{item['lead_bot']}`)"
+        for item in registry["hollywood_production_group"]["departments"]
+    )
+    lines.extend(
+        [
+            "",
+            "## Simulation Foundry",
+            "",
+            registry["simulation_foundry"]["truth_boundary"],
+            "",
+        ]
+    )
+    lines.extend(
+        f"- `{item['id']}`: {item['label']}"
+        for item in registry["simulation_foundry"]["domains"]
+    )
+    lines.extend(
+        [
+            "",
             "## Honest Media Readiness",
             "",
             "The studio never calls a voice or likeness asset rendered until a configured engine returns an asset reference. Capture, consent, and local previews work independently of a paid service.",
@@ -112,23 +153,37 @@ def write_report(registry: dict) -> None:
     OUT_MD.write_text("\n".join(lines) + "\n", encoding="utf-8")
 
 
+def browser_payload(registry: dict) -> str:
+    payload = {
+        "schema": registry["schema"],
+        "status": registry["status"],
+        "hollywood_production_group": registry["hollywood_production_group"],
+        "simulation_foundry": registry["simulation_foundry"],
+    }
+    return "window.BUDDY_PRODUCTION_GROUP = " + json.dumps(payload, sort_keys=True) + ";\n"
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--check", action="store_true")
     args = parser.parse_args()
     registry = build_registry()
     if args.check:
-        if not OUT_JSON.exists() or not OUT_MD.exists():
+        if not OUT_JSON.exists() or not OUT_MD.exists() or not OUT_JS.exists():
             raise SystemExit("Studio outputs are missing. Run without --check first.")
         current = json.loads(OUT_JSON.read_text(encoding="utf-8"))
         if current != registry:
             raise SystemExit("Studio registry is stale. Regenerate it.")
+        if OUT_JS.read_text(encoding="utf-8") != browser_payload(registry):
+            raise SystemExit("Studio browser registry is stale. Regenerate it.")
         print(json.dumps({"ok": True, "project_types": len(current["project_types"])}, indent=2))
         return 0
     OUT_JSON.parent.mkdir(parents=True, exist_ok=True)
     OUT_MD.parent.mkdir(parents=True, exist_ok=True)
     OUT_JSON.write_text(json.dumps(registry, indent=2, sort_keys=True) + "\n", encoding="utf-8")
     write_report(registry)
+    OUT_JS.parent.mkdir(parents=True, exist_ok=True)
+    OUT_JS.write_text(browser_payload(registry), encoding="utf-8")
     print(json.dumps({"ok": True, "output": str(OUT_JSON.relative_to(ROOT))}, indent=2))
     return 0
 

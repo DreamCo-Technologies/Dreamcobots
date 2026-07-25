@@ -1,0 +1,135 @@
+{
+  "schema": "dreamco.buddy_hollywood_production_group.v1",
+  "name": "Buddy Hollywood Production Group",
+  "quality_claim": "Cinema-production workflow and evidence gates. Final picture and sound quality must be demonstrated by rendered assets and master quality control; a plan or preview is not a finished film.",
+  "departments": [
+    {
+      "id": "showrunner",
+      "label": "Showrunner and producer",
+      "lead_bot": "creative-brief-gen",
+      "support_bots": ["governance-dashboard"],
+      "outputs": ["creative brief", "audience promise", "budget range", "schedule", "approval map"]
+    },
+    {
+      "id": "writing",
+      "label": "Story and screenplay",
+      "lead_bot": "video-script",
+      "support_bots": ["research-bot"],
+      "outputs": ["treatment", "screenplay", "character bible", "source and originality log"]
+    },
+    {
+      "id": "direction",
+      "label": "Direction and previs",
+      "lead_bot": "video-script",
+      "support_bots": ["immersive-xr"],
+      "outputs": ["director treatment", "storyboards", "animatic", "blocking and camera plan"]
+    },
+    {
+      "id": "casting",
+      "label": "Casting and synthetic actors",
+      "lead_bot": "photo-video-app-bot",
+      "support_bots": ["governance-dashboard", "brand-voice"],
+      "outputs": ["character designs", "performance brief", "consent or originality record", "voice and likeness manifest"]
+    },
+    {
+      "id": "cinematography",
+      "label": "Cinematography and virtual production",
+      "lead_bot": "immersive-xr",
+      "support_bots": ["photo-video-app-bot"],
+      "outputs": ["camera language", "lens and movement plan", "lighting design", "virtual-stage plan"]
+    },
+    {
+      "id": "production_design",
+      "label": "World and production design",
+      "lead_bot": "3d-asset-mgr",
+      "support_bots": ["brand-voice"],
+      "outputs": ["world bible", "sets", "props", "wardrobe", "asset provenance"]
+    },
+    {
+      "id": "performance_animation",
+      "label": "Performance and animation",
+      "lead_bot": "immersive-xr",
+      "support_bots": ["photo-video-app-bot"],
+      "outputs": ["performance beats", "rig and motion plan", "facial and lip-sync review", "continuity takes"]
+    },
+    {
+      "id": "vfx",
+      "label": "VFX and simulation",
+      "lead_bot": "3d-asset-mgr",
+      "support_bots": ["immersive-xr"],
+      "outputs": ["shot manifest", "physics and effects plan", "composite rounds", "artifact review"]
+    },
+    {
+      "id": "sound_music",
+      "label": "Sound, dialogue, and music",
+      "lead_bot": "music-production",
+      "support_bots": ["music-app-bot", "video-editor-ai"],
+      "outputs": ["dialogue edit", "sound design", "original score brief", "mix plan", "music cue and rights sheet"]
+    },
+    {
+      "id": "editorial_finish",
+      "label": "Editorial, color, and finish",
+      "lead_bot": "video-editor-ai",
+      "support_bots": ["photo-video-app-bot"],
+      "outputs": ["edit decision list", "version log", "color pipeline", "picture and sound master checks"]
+    },
+    {
+      "id": "accessibility_localization",
+      "label": "Accessibility and localization",
+      "lead_bot": "accessibility-auditor",
+      "support_bots": ["video-script"],
+      "outputs": ["captions", "audio description", "transcripts", "localization bible", "reading and flashing-light checks"]
+    },
+    {
+      "id": "rights_delivery",
+      "label": "Rights, safety, and delivery",
+      "lead_bot": "governance-dashboard",
+      "support_bots": ["photo-video-app-bot"],
+      "outputs": ["rights manifest", "synthetic-media labels", "content review", "delivery masters", "archive and revocation plan"]
+    }
+  ],
+  "actor_modes": [
+    {
+      "id": "original_synthetic",
+      "label": "Original synthetic actor",
+      "requirements": ["original character design", "no prompt to imitate a real person", "provenance record", "synthetic-media label"]
+    },
+    {
+      "id": "owner_digital_double",
+      "label": "Owner digital double",
+      "requirements": ["adult owner is the subject", "active voice and likeness consent", "owner-controlled source media", "revocation path", "synthetic-media label"]
+    },
+    {
+      "id": "licensed_adult_performer",
+      "label": "Licensed adult performer",
+      "requirements": ["verified written performer release", "allowed project and territory", "allowed duration", "compensation terms", "revocation and dispute route", "synthetic-media label"]
+    }
+  ],
+  "actor_hard_blocks": [
+    "minor voice or likeness cloning",
+    "real-person imitation without verified permission",
+    "deceptive political, election, financial, medical, legal, emergency, or public-safety impersonation",
+    "sexual or degrading synthetic media of a real person",
+    "fake endorsements, testimonials, founders, employees, or authority figures",
+    "removing required synthetic-media labels"
+  ],
+  "quality_gates": [
+    "story and originality review",
+    "continuity and character consistency",
+    "performance, facial motion, and lip-sync review",
+    "temporal, anatomy, geometry, cloth, hair, and physics artifact review",
+    "camera, lighting, composition, and production-design review",
+    "dialogue, sound design, music, loudness, and channel-layout review",
+    "color, captions, audio description, localization, and flashing-light review",
+    "voice, likeness, music, asset, location, and trademark rights review",
+    "target-platform master and archive quality control"
+  ],
+  "render_states": [
+    "production_packet_ready",
+    "storyboard_or_animatic_ready",
+    "renderer_configuration_required",
+    "review_proxy_rendered",
+    "quality_control_required",
+    "approved_master_rendered"
+  ]
+}

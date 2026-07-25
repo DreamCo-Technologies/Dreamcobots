@@ -113,9 +113,9 @@
       "area": "Media",
       "level": "adapter_optional",
       "scripts": ["buddy:creative-studio", "test:governed"],
-      "sources": ["dreamco_platform/creative", "server/provider_integrations/audio", "server/provider_integrations/image", "website/studio.js"],
-      "tests": ["tests/test_buddy_creative_studio.py", "tests/voice-chat.test.ts"],
-      "boundary": "Local recording, consent, packets, and fallback rendering are testable. Provider-quality rendering needs credentials."
+      "sources": ["dreamco_platform/creative", "config/buddy-hollywood-production-group.json", "config/buddy-simulation-foundry.json", "server/provider_integrations/audio", "server/provider_integrations/image", "website/studio.js"],
+      "tests": ["tests/test_buddy_creative_studio.py", "tests/test_buddy_production_group.py", "tests/voice-chat.test.ts"],
+      "boundary": "Local recording, consent, production packets, actor plans, model variants, and fallback rendering are testable. Finished picture and sound require a configured renderer and quality-control evidence."
     },
     {
       "id": "games-education",
@@ -123,9 +123,9 @@
       "area": "Creative",
       "level": "repository_sandbox",
       "scripts": ["test:governed"],
-      "sources": ["dreamco_platform/games", "dreamco_platform/creative/studio.py"],
-      "tests": ["tests/test_buddy_game_lab.py"],
-      "boundary": "Builds plans and local prototypes. Store submission and hosted multiplayer infrastructure are separate adapters."
+      "sources": ["dreamco_platform/games", "dreamco_platform/creative/studio.py", "dreamco_platform/creative/production_group.py"],
+      "tests": ["tests/test_buddy_game_lab.py", "tests/test_buddy_production_group.py"],
+      "boundary": "Builds plans, local prototypes, and deterministic simulation-to-game contracts. Physical safety, certification, store submission, hosted rendering, and multiplayer infrastructure remain separate evidence-gated adapters."
     },
     {
       "id": "calculators",

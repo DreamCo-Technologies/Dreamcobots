@@ -1,0 +1,28 @@
+{
+  "schema": "dreamco.buddy_simulation_foundry.v1",
+  "name": "Buddy Simulation Foundry",
+  "domains": [
+    {"id": "vehicle_service", "label": "Vehicle service and repair", "review": "manufacturer procedures, measured fitment, and qualified mechanic review for safety-critical work"},
+    {"id": "vehicle_customization", "label": "Vehicle design and customization", "review": "measured fitment, road legality, load, visibility, braking, electrical, and qualified installer review"},
+    {"id": "building_design", "label": "Home and building design", "review": "site conditions, code, structure, utilities, fire safety, accessibility, and licensed professional review where required"},
+    {"id": "construction_practice", "label": "Construction sequence practice", "review": "site-specific hazards, equipment limits, qualified instruction, and current safety procedures"},
+    {"id": "product_invention", "label": "Product and invention prototype", "review": "requirements, prior art, materials, tolerances, failure modes, safety, and bench verification"},
+    {"id": "equipment_training", "label": "Equipment and job training", "review": "authorized equipment manuals, instructor approval, emergency stops, and no replacement for supervised certification"},
+    {"id": "science_learning", "label": "Science and classroom lab", "review": "measurable learning objective, known-model limits, instructor controls, and safe classroom alternatives"},
+    {"id": "business_operations", "label": "Business and operations", "review": "source assumptions, sensitivity ranges, decision logs, and no unapproved live action"},
+    {"id": "custom", "label": "Custom simulation", "review": "domain classification, source verification, bounded assumptions, risk review, and owner approval"}
+  ],
+  "model_sources": [
+    {"id": "procedural_original", "label": "Original procedural model", "requirements": ["generated from project measurements", "provenance record"]},
+    {"id": "owner_upload", "label": "Owner-provided model", "requirements": ["ownership or authorized-use confirmation", "malware and format scan", "units and scale validation"]},
+    {"id": "licensed_catalog", "label": "Licensed model catalog", "requirements": ["license receipt", "allowed modification and distribution", "creator attribution where required"]},
+    {"id": "measured_scan", "label": "Owner-authorized measured scan", "requirements": ["property or object permission", "privacy review", "scale verification", "secure source handling"]}
+  ],
+  "supported_model_formats": ["glb", "gltf", "obj", "fbx", "stl", "usd", "usdz"],
+  "variant_controls": ["paint and material", "finish", "lighting", "camera", "part or accessory", "room or structure addition", "before and after comparison"],
+  "simulation_to_game": {
+    "stages": ["learning or practice objective", "scenario states", "legal actions", "feedback and scoring", "safe failure and reset", "difficulty ladder", "instructor or owner controls", "bot playtest", "accessibility", "package"],
+    "required_evidence": ["source assumptions", "deterministic seed", "expected outcomes", "known limits", "mistake feedback", "restart and recovery", "playtest trace", "qualified review when high stakes"]
+  },
+  "truth_boundary": "Visual and training simulations are decision aids. Physical fit, structural adequacy, safe repair, code compliance, equipment operation, and real-world outcomes require measured evidence and qualified review."
+}

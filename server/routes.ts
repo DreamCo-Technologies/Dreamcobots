@@ -1300,6 +1300,18 @@ export async function registerRoutes(
     }
   });
 
+  app.get("/api/buddy/creative-production-group", (_req, res) => {
+    try {
+      const path = resolve(process.cwd(), "config", "generated", "buddy_multimodal_studio.json");
+      res.json(JSON.parse(readFileSync(path, "utf8")));
+    } catch (error) {
+      res.status(503).json({
+        error: "Buddy creative production group is unavailable.",
+        detail: error instanceof Error ? error.message : "unknown error",
+      });
+    }
+  });
+
   app.get("/api/buddy/calculators", (_req, res) => {
     try {
       const path = resolve(process.cwd(), "config", "generated", "bot_calculators.json");
@@ -1404,6 +1416,7 @@ export async function registerRoutes(
         { name: "Open Source Tracker", route: "POST /api/buddy/open-source/tracking-plan", status: "scheduler-adapter-required", description: "Track pinned repository metadata, licenses, releases, security, tests, and contribution opportunities" },
         { name: "Repository Test Center", route: "GET /api/buddy/repository-test-registry", status: "live", description: "Inventory repository evidence and prepare bounded contract, sandbox, and adapter test plans" },
         { name: "Governed Platform Registry", route: "GET /api/buddy/platform-expansion", status: "live", description: "Launch, privacy, finance, creative, IP, open-source, customization, and roadmap contracts" },
+        { name: "Hollywood Production and Simulation Group", route: "GET /api/buddy/creative-production-group", status: "local-packet-ready", description: "Film, music-video, synthetic-actor, model-variant, simulation, and simulation-to-game contracts with renderer and qualified-review gates" },
         { name: "Bot Calculator Registry", route: "GET /api/buddy/calculators", status: "live", description: "One bounded local planning calculator contract for every Buddy bot profile" },
         { name: "Install and Distribution Catalog", route: "GET /api/buddy/distribution", status: "live", description: "PWA installation plus governed packaging and publishing plans for 26 device and store targets" },
         { name: "Governed Lead Systems", route: "POST /api/buddy/lead-plan", status: "permission-gated", description: "Per-bot lead research, qualification, drafting, one-message approval, suppression, and bounded follow-up planning" },

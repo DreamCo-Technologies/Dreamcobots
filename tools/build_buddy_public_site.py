@@ -383,6 +383,9 @@ def validate_site() -> dict[str, Any]:
     required_studio_controls = {
         "record-voice", "stop-voice", "download-voice", "start-camera", "take-photo",
         "stop-camera", "download-image", "download-consent", "clear-media", "academy-track", "academy-use",
+        "actor-controls", "actor-mode", "actor-description", "simulation-controls",
+        "simulation-model-source", "simulation-fidelity", "simulation-model-ref",
+        "simulation-rights-ref", "simulation-paint", "simulation-additions", "simulation-to-game",
     }
     if studio_parser:
         for control_id in sorted(required_studio_controls - studio_parser.ids):

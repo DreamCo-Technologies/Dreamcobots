@@ -76,6 +76,10 @@ class BuddyCreativeStudioTests(unittest.TestCase):
                 "music_artist",
                 "logo_brand",
                 "invention_prototype",
+                "vehicle_simulation",
+                "building_simulation",
+                "product_visualization",
+                "skills_training_simulation",
             },
         )
 
@@ -113,6 +117,27 @@ class BuddyCreativeStudioTests(unittest.TestCase):
             {route["bot"] for route in invention.native_routes if route["bot"] != "governance-dashboard"},
             {"patent-research", "mfg-analytics-elite", "safety-mfg"},
         )
+
+    def test_creates_vehicle_building_product_and_training_simulations(self):
+        studio = BuddyCreativeStudio()
+        vehicle = studio.create_project(
+            brief(ProjectType.VEHICLE_SIMULATION, title="Garage Lab", objective="Practice an owner-authorized brake inspection with measured fitment and safe reset states.")
+        )
+        building = studio.create_project(
+            brief(ProjectType.BUILDING_SIMULATION, title="Home Addition Lab", objective="Compare an owner-authorized room addition against site, structure, utility, and access constraints.")
+        )
+        product = studio.create_project(
+            brief(ProjectType.PRODUCT_VISUALIZATION, title="Product Variant Lab", objective="Compare original paint, material, and accessory options against measured product constraints.")
+        )
+        training = studio.create_project(
+            brief(ProjectType.SKILLS_TRAINING_SIMULATION, title="Practice Workshop", objective="Turn an approved work procedure into a safe practice game with feedback and recovery.")
+        )
+        self.assertIn("vehicle_model_manifest", vehicle.deliverables)
+        self.assertIn("code_and_safety_review", building.deliverables)
+        self.assertIn("before_after_comparison", product.deliverables)
+        self.assertIn("bot_playtest_report", training.deliverables)
+        self.assertEqual(vehicle.production_academy["track"], "simulation")
+        self.assertIn("qualified_review_gate_for_high_risk_domains", training.sandbox["checks"])
 
     def test_creates_biography_and_commercial_rights_workflows(self):
         biography = BuddyCreativeStudio().create_project(

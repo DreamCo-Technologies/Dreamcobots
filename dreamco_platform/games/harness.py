@@ -52,6 +52,30 @@ class GameBuildBrief:
             self.learning.validate()
 
 
+@dataclass(frozen=True)
+class SimulationGameBrief:
+    title: str
+    simulation_id: str
+    practice_objective: str
+    audience: str
+    legal_actions: tuple[str, ...]
+    success_evidence: str
+    difficulty_levels: int = 3
+    instructor_controls: bool = True
+
+    def validate(self) -> None:
+        if len(self.title.strip()) < 3 or not self.simulation_id.strip():
+            raise GameLabError("A title and source simulation ID are required.")
+        if len(self.practice_objective.strip()) < 15 or not self.success_evidence.strip():
+            raise GameLabError("A measurable practice objective and success evidence are required.")
+        if not self.audience.strip() or not self.legal_actions:
+            raise GameLabError("An audience and at least one legal action are required.")
+        if len(self.legal_actions) > 100 or any(not item.strip() for item in self.legal_actions):
+            raise GameLabError("Use between one and 100 named legal actions.")
+        if self.difficulty_levels < 1 or self.difficulty_levels > 20:
+            raise GameLabError("Difficulty levels must be between 1 and 20.")
+
+
 class GameRuntimeAdapter(Protocol):
     """A supported game or simulator exposed through legal actions."""
 
@@ -186,6 +210,51 @@ class BuddyGameLab:
                 "anti_cheat_bypass": False,
                 "account_takeover": False,
             },
+        }
+
+    def convert_simulation_to_game(self, brief: SimulationGameBrief) -> dict[str, Any]:
+        """Create a deterministic practice-game contract from an approved simulation."""
+        brief.validate()
+        seed = int(hashlib.sha256(brief.simulation_id.encode("utf-8")).hexdigest()[:8], 16)
+        return {
+            "schema": "dreamco.buddy_simulation_game.v1",
+            "status": "practice_game_plan_ready",
+            "source_simulation_id": brief.simulation_id,
+            "title": brief.title,
+            "audience": brief.audience,
+            "practice_objective": brief.practice_objective,
+            "legal_actions": list(brief.legal_actions),
+            "success_evidence": brief.success_evidence,
+            "game_loop": [
+                "observe the simulated state",
+                "choose a legal action",
+                "show the modeled consequence and uncertainty",
+                "give specific feedback",
+                "score evidence rather than speed alone",
+                "retry safely or advance difficulty",
+            ],
+            "difficulty_ladder": [
+                {"level": index + 1, "variation_seed": seed + index, "adds_new_hazard": index > 0}
+                for index in range(brief.difficulty_levels)
+            ],
+            "controls": {
+                "instructor_or_owner_controls": brief.instructor_controls,
+                "pause_reset_and_replay": True,
+                "show_assumptions": True,
+                "show_known_limits": True,
+                "exportable_after_action_review": True,
+            },
+            "tests": [
+                "deterministic replay",
+                "all legal actions reachable",
+                "unsafe actions rejected with explanation",
+                "feedback matches source simulation",
+                "keyboard, touch, and assistive input",
+                "save, reset, and rollback",
+                "bot playtest trace",
+            ],
+            "truth_boundary": "Practice games teach the approved simulation model; they do not replace supervised certification or prove real-world safety.",
+            "publish_requires_owner_approval": True,
         }
 
     @staticmethod
