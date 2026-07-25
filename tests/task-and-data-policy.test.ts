@@ -21,6 +21,32 @@ test("task discovery helps unclear users without pretending every role is unregu
   assert.equal(plan.role.id, "financial_education_assistant");
   assert.equal(plan.role.buddyIsLicensedProfessional, false);
   assert.equal(plan.externalActionTaken, false);
+  assert.equal(plan.hardBoundaries.userCanDisableTheseBoundaries, false);
+  assert.equal(plan.hardBoundaries.externalMoneyActionWithoutExactApprovalAllowed, false);
+});
+
+test("buyers can tune Buddy's working style without disabling professional boundaries", () => {
+  const plan = createTaskDiscoveryPlan({
+    objective: "Help me review a contract like a lawyer would",
+    context: "business",
+    knownSteps: [],
+    constraints: [],
+    preferredOutcome: "Prepare issues and questions for legal review",
+    boundaryPreferences: {
+      guidanceDepth: "teaching",
+      riskDisclosure: "detailed",
+      approvalMode: "review_every_step",
+      moneyActionMode: "prepare_for_exact_approval",
+      professionalSupport: "collaborate_with_professional",
+      communicationStyle: "coach",
+      voiceToneAdaptation: true,
+    },
+  });
+  assert.equal(plan.role.id, "legal_information_assistant");
+  assert.equal(plan.buyerPreferences.communicationStyle, "coach");
+  assert.equal(plan.voiceToneAdaptation.enabled, true);
+  assert.equal(plan.voiceToneAdaptation.emotionDiagnosisOrMentalHealthInference, false);
+  assert.equal(plan.hardBoundaries.legalRepresentationAllowed, false);
 });
 
 test("data import accepts authorized references but never credentials", () => {
@@ -62,6 +88,10 @@ test("data packages require rights and block sensitive or third-party personal d
   const base = {
     packageName: "Original synthetic workflow evaluations",
     sourceReference: "vault:owner/evaluations",
+    ownershipEvidenceReference: "receipt:owner/evaluations",
+    resaleRightsEvidenceReference: "rights:owner/evaluations",
+    consentReceiptReference: "consent:owner/evaluations",
+    provenanceReference: "provenance:owner/evaluations",
     categories: ["creative_work" as const],
     ownerCreatedData: true,
     resaleRightsConfirmed: true,
@@ -75,8 +105,14 @@ test("data packages require rights and block sensitive or third-party personal d
   const plan = createDataPackagePlan(base);
   assert.equal(plan.marketplaceListingCreated, false);
   assert.equal(plan.saleCompleted, false);
+  assert.equal(plan.evidence.rawReferencesStored, false);
+  assert.equal(plan.evidence.ownership.length, 20);
   assert.throws(() => createDataPackagePlan({ ...base, categories: ["health"] }), /Sensitive/);
   assert.throws(() => createDataPackagePlan({ ...base, categories: ["preferences"] }), /Only rights-cleared/);
+  assert.throws(() => createDataPackagePlan({
+    ...base,
+    resaleRightsEvidenceReference: base.ownershipEvidenceReference,
+  }), /distinct evidence reference/);
 });
 
 test("personality learning is selective and private training needs separate consent", () => {

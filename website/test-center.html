@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Buddy Repository Test Center | DreamCo</title>
+  <meta name="description" content="Inspect DreamCo repository evidence and prepare bounded contract, sandbox, and adapter test plans." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="test-center.css" />
+</head>
+<body class="test-center-page">
+<div id="nav-placeholder"></div><script src="nav.js"></script>
+
+<main class="test-center-shell">
+  <header class="test-center-header">
+    <div>
+      <p class="test-eyebrow">Generated repository evidence</p>
+      <h1>Buddy Test Center</h1>
+      <p>Choose verified suites, inspect their evidence, and prepare a bounded test handoff. This browser never executes repository commands.</p>
+    </div>
+    <a class="btn btn-primary" href="buddy.html?prompt=Review%20my%20latest%20repository%20test%20plan%2C%20explain%20the%20failures%2C%20and%20prepare%20safe%20fixes.">Ask Buddy</a>
+  </header>
+
+  <section class="test-metrics" aria-label="Repository test summary">
+    <div><span>Files scanned</span><strong id="test-files-count">--</strong></div>
+    <div><span>API routes</span><strong id="test-routes-count">--</strong></div>
+    <div><span>Web pages</span><strong id="test-pages-count">--</strong></div>
+    <div><span>Test files</span><strong id="test-tests-count">--</strong></div>
+    <div><span>Suites</span><strong id="test-suites-count">--</strong></div>
+    <div><span>Blocked</span><strong id="test-blocked-count">--</strong></div>
+  </section>
+
+  <section class="test-workspace" aria-labelledby="suite-heading">
+    <div class="test-workspace-heading">
+      <div><p>Evidence registry</p><h2 id="suite-heading">Test suites</h2></div>
+      <span id="test-scan-id" class="test-scan-id">Loading registry</span>
+    </div>
+    <div class="test-toolbar">
+      <label for="test-suite-search">Search<input id="test-suite-search" type="search" placeholder="Bots, data, payments, website" autocomplete="off" /></label>
+      <label for="test-level-filter">Runtime<select id="test-level-filter"><option value="all">All levels</option><option value="local_contract">Local contract</option><option value="repository_sandbox">Repository sandbox</option><option value="adapter_optional">Adapter optional</option><option value="credentials_required">Credentials required</option></select></label>
+      <div class="test-toolbar-actions">
+        <button id="select-local-tests" class="btn btn-outline btn-sm" type="button">Select local</button>
+        <button id="clear-test-selection" class="btn btn-outline btn-sm" type="button">Clear</button>
+      </div>
+    </div>
+    <div id="test-suite-list" class="test-suite-list" aria-live="polite"></div>
+  </section>
+
+  <section class="test-plan" aria-labelledby="test-plan-heading">
+    <div class="test-workspace-heading">
+      <div><p>Controlled handoff</p><h2 id="test-plan-heading">Prepare test plan</h2></div>
+      <strong id="selected-test-count">0 selected</strong>
+    </div>
+    <div class="test-plan-controls">
+      <fieldset id="test-mode-options">
+        <legend>Mode</legend>
+        <label><input type="radio" name="test-mode" value="contract" checked /><span>Contract</span></label>
+        <label><input type="radio" name="test-mode" value="sandbox" /><span>Sandbox</span></label>
+        <label><input type="radio" name="test-mode" value="adapter" /><span>Adapter</span></label>
+      </fieldset>
+      <label class="test-toggle"><input id="test-network" type="checkbox" /><span>Allow network in this plan</span></label>
+      <label class="test-toggle"><input id="test-external-approval" type="checkbox" /><span>Exact approval for external tests</span></label>
+      <label for="test-budget">Maximum budget<input id="test-budget" type="number" min="0" max="10000" step="0.01" value="0" /></label>
+      <button id="prepare-test-plan" class="btn btn-primary" type="button">Prepare plan</button>
+    </div>
+    <div id="test-plan-output" class="test-plan-output" aria-live="polite">
+      <p>Select one or more suites. The local all-in-one runner is <code>npm run test:repository</code>.</p>
+    </div>
+    <div class="test-plan-actions">
+      <button id="copy-test-command" class="btn btn-outline btn-sm" type="button">Copy local command</button>
+      <button id="download-test-plan" class="btn btn-outline btn-sm" type="button" disabled>Download plan</button>
+      <a id="send-test-plan-to-buddy" class="btn btn-outline btn-sm" href="buddy.html">Send to Buddy</a>
+    </div>
+  </section>
+
+  <section class="test-inventory" aria-labelledby="route-heading">
+    <div class="test-workspace-heading">
+      <div><p>Discovered interface</p><h2 id="route-heading">API route inventory</h2></div>
+      <label for="test-route-search">Filter routes<input id="test-route-search" type="search" placeholder="/api/buddy" autocomplete="off" /></label>
+    </div>
+    <div id="test-route-list" class="test-route-list"></div>
+  </section>
+</main>
+
+<script src="test-center.js" defer></script>
+</body>
+</html>

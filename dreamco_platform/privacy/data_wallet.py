@@ -26,6 +26,8 @@ class DataCategory(str, Enum):
     PREFERENCES = "preferences"
     APP_ACTIVITY = "app_activity"
     PURCHASES = "purchases"
+    CREATIVE_WORK = "creative_work"
+    BUSINESS_RECORDS = "business_records"
     FINANCIAL = "financial"
     VOICE = "voice"
     LIKENESS = "likeness"
@@ -51,6 +53,10 @@ SENSITIVE_CATEGORIES = {
     DataCategory.CHILD_DATA,
 }
 NON_TRANSFERABLE_CATEGORIES = SENSITIVE_CATEGORIES
+LICENSABLE_CATEGORIES = {
+    DataCategory.CREATIVE_WORK,
+    DataCategory.BUSINESS_RECORDS,
+}
 ALLOWED_PURPOSES = {
     "app_functionality",
     "personal_assistance",
@@ -72,6 +78,9 @@ class DataSource:
     acquisition: str
     user_owns_data: bool
     resale_license_confirmed: bool = False
+    ownership_evidence_reference: str = ""
+    resale_rights_evidence_reference: str = ""
+    provenance_reference: str = ""
     contains_minor_data: bool = False
 
     def validate(self) -> None:
@@ -85,6 +94,14 @@ class DataSource:
             raise DataWalletError("A readable data source name is required.")
         if self.acquisition not in {"user_upload", "official_export", "authorized_connector", "public_domain"}:
             raise DataWalletError("Data must come from an approved acquisition route.")
+        if self.resale_license_confirmed:
+            for label, reference in (
+                ("ownership evidence", self.ownership_evidence_reference),
+                ("resale-rights evidence", self.resale_rights_evidence_reference),
+                ("provenance", self.provenance_reference),
+            ):
+                if not re.fullmatch(r"[A-Za-z][A-Za-z0-9_.:/-]{2,127}", reference):
+                    raise DataWalletError(f"A valid {label} reference is required for licensing.")
 
 
 @dataclass(frozen=True)
@@ -96,6 +113,7 @@ class DataPermissionRequest:
     private_model_training_opt_in: bool = False
     third_party_license_opt_in: bool = False
     recipient_class: str = ""
+    consent_receipt_reference: str = ""
 
 
 @dataclass(frozen=True)
@@ -181,6 +199,14 @@ class BuddyDataWallet:
             "sale_or_share_opt_in": "licensed_data_package" in purposes,
             "raw_data_in_receipt": False,
         }
+        if "licensed_data_package" in purposes:
+            grant["evidence_fingerprints"] = {
+                "ownership": self._fingerprint(source.ownership_evidence_reference),
+                "resale_rights": self._fingerprint(source.resale_rights_evidence_reference),
+                "provenance": self._fingerprint(source.provenance_reference),
+                "consent_receipt": self._fingerprint(request.consent_receipt_reference),
+            }
+            grant["raw_evidence_references_stored"] = False
         self.grants[grant_id] = grant
         return dict(grant)
 
@@ -191,8 +217,18 @@ class BuddyDataWallet:
             raise DataWalletError("The user must own the data and have confirmed resale rights.")
         if set(source.categories) & NON_TRANSFERABLE_CATEGORIES:
             raise DataWalletError("Sensitive personal data cannot be sold or licensed through Buddy.")
+        if any(category not in LICENSABLE_CATEGORIES for category in source.categories):
+            raise DataWalletError(
+                "Only rights-cleared creative work and original business datasets may be licensed through Buddy."
+            )
         if len(request.recipient_class.strip()) < 3:
             raise DataWalletError("The user must approve the recipient class.")
+        if not re.fullmatch(r"[A-Za-z][A-Za-z0-9_.:/-]{2,127}", request.consent_receipt_reference):
+            raise DataWalletError("A separate consent receipt reference is required for licensing.")
+
+    @staticmethod
+    def _fingerprint(reference: str) -> str:
+        return hashlib.sha256(reference.encode("utf-8")).hexdigest()[:20]
 
     def opt_out(self, *, stop_collection: bool = True, stop_sale_or_share: bool = True) -> dict[str, Any]:
         now = time.time()

@@ -1,0 +1,261 @@
+{
+  "schema": "dreamco.repository_test_suites.v1",
+  "defaults": {
+    "network": "off",
+    "external_writes": "forbidden",
+    "data": "synthetic_or_owner_authorized",
+    "planner_executes_commands": false
+  },
+  "suites": [
+    {
+      "id": "repository-contracts",
+      "name": "Repository contracts",
+      "area": "Repository",
+      "level": "local_contract",
+      "scripts": ["buddy:repository-audit", "check"],
+      "sources": ["package.json", "server/routes.ts", "shared/routes.ts"],
+      "tests": ["tests/repository-test-registry.test.ts"],
+      "boundary": "Scans and classifies repository evidence. It does not execute discovered code."
+    },
+    {
+      "id": "public-site",
+      "name": "Public website",
+      "area": "Website",
+      "level": "local_contract",
+      "scripts": ["buddy:site:check"],
+      "sources": ["website", "tools/build_buddy_public_site.py"],
+      "tests": ["tools/build_buddy_public_site.py"],
+      "boundary": "Checks files, links, controls, public names, and secret patterns without publishing."
+    },
+    {
+      "id": "client-build",
+      "name": "Application client and server build",
+      "area": "Application",
+      "level": "local_contract",
+      "scripts": ["check", "build"],
+      "sources": ["client/src", "server", "shared"],
+      "tests": [],
+      "boundary": "Compilation and bundling only. No deployment or database migration is performed."
+    },
+    {
+      "id": "bot-fleet",
+      "name": "Bot fleet and capability contracts",
+      "area": "Bots",
+      "level": "repository_sandbox",
+      "scripts": ["buddy:fleet", "buddy:fleet:e2e"],
+      "sources": ["config/master_bot_registry.json", "server/fleet-runtime.ts"],
+      "tests": ["tests/bot-fleet-catalog.test.ts", "tests/fleet-runtime.test.ts"],
+      "boundary": "Verifies all declared capabilities through repository-controlled sandbox contracts, not live providers."
+    },
+    {
+      "id": "buddy-routing",
+      "name": "Buddy routing and task discovery",
+      "area": "Buddy",
+      "level": "local_contract",
+      "scripts": ["test:governed"],
+      "sources": ["server/fleet-runtime.ts", "server/task-discovery-policy.ts", "website/buddy.js"],
+      "tests": ["tests/fleet-runtime.test.ts", "tests/task-and-data-policy.test.ts"],
+      "boundary": "Creates task maps and routes. Outside actions remain approval- and adapter-gated."
+    },
+    {
+      "id": "harness",
+      "name": "Harness builder and runner",
+      "area": "Testing",
+      "level": "adapter_optional",
+      "scripts": ["test:governed"],
+      "sources": ["client/src/pages/HarnessPage.tsx", "server/routes.ts"],
+      "tests": ["tests/repository-test-registry.test.ts"],
+      "boundary": "Contract tests work locally. Model-response tests require a configured model adapter."
+    },
+    {
+      "id": "data-rights",
+      "name": "Data rights, memory, and licensing",
+      "area": "Privacy",
+      "level": "local_contract",
+      "scripts": ["test:governed"],
+      "sources": ["server/data-rights-policy.ts", "dreamco_platform/privacy/data_wallet.py", "website/data-control.js"],
+      "tests": ["tests/task-and-data-policy.test.ts", "tests/test_buddy_platform_expansion.py"],
+      "boundary": "Prepares and tracks plans. It cannot force outside deletion or sell data from the planner."
+    },
+    {
+      "id": "open-source-lab",
+      "name": "Open source and repository sandbox",
+      "area": "Open Source",
+      "level": "repository_sandbox",
+      "scripts": ["buddy:open-model-lab", "test:governed"],
+      "sources": ["server/open-model-lab-policy.ts", "website/open-model-lab.js"],
+      "tests": ["tests/open-model-lab-policy.test.ts"],
+      "boundary": "Exact revisions and licenses are required. Network, execution, training, and contribution submission stay off by default."
+    },
+    {
+      "id": "model-routing",
+      "name": "Model routing and benchmarks",
+      "area": "Models",
+      "level": "adapter_optional",
+      "scripts": ["buddy:models", "buddy:model-benchmarks", "test:governed"],
+      "sources": ["server/buddy-model-policy.ts", "server/model-benchmark-policy.ts"],
+      "tests": ["tests/buddy-model-policy.test.ts", "tests/model-benchmark-policy.test.ts"],
+      "boundary": "Catalog and benchmark plans work locally. Live inference needs the selected provider adapter and budget approval."
+    },
+    {
+      "id": "connections",
+      "name": "Connections, devices, and approval notices",
+      "area": "Connections",
+      "level": "adapter_optional",
+      "scripts": ["buddy:connections", "test:governed"],
+      "sources": ["server/connection-policy.ts", "server/device-action-policy.ts", "server/approval-notifications.ts"],
+      "tests": ["tests/connection-policy.test.ts", "tests/device-action-policy.test.ts", "tests/approval-notifications.test.ts", "tests/outbound-adapters.test.ts"],
+      "boundary": "Produces least-privilege plans. Device control, messages, calls, and signups require authenticated adapters and exact approval."
+    },
+    {
+      "id": "creative-media",
+      "name": "Creative Studio, voice, image, and music",
+      "area": "Media",
+      "level": "adapter_optional",
+      "scripts": ["buddy:creative-studio", "test:governed"],
+      "sources": ["dreamco_platform/creative", "server/provider_integrations/audio", "server/provider_integrations/image", "website/studio.js"],
+      "tests": ["tests/test_buddy_creative_studio.py", "tests/voice-chat.test.ts"],
+      "boundary": "Local recording, consent, packets, and fallback rendering are testable. Provider-quality rendering needs credentials."
+    },
+    {
+      "id": "games-education",
+      "name": "Games, courses, and simulations",
+      "area": "Creative",
+      "level": "repository_sandbox",
+      "scripts": ["test:governed"],
+      "sources": ["dreamco_platform/games", "dreamco_platform/creative/studio.py"],
+      "tests": ["tests/test_buddy_game_lab.py"],
+      "boundary": "Builds plans and local prototypes. Store submission and hosted multiplayer infrastructure are separate adapters."
+    },
+    {
+      "id": "calculators",
+      "name": "Per-bot calculators and ROI",
+      "area": "Calculators",
+      "level": "local_contract",
+      "scripts": ["buddy:calculators", "test:governed"],
+      "sources": ["website/calculator-engine.js", "shared/deal-calculations.ts"],
+      "tests": ["tests/bot-calculator-engine.test.mjs", "tests/test_buddy_bot_calculators.py"],
+      "boundary": "Calculations are estimates and do not make financial decisions or transactions."
+    },
+    {
+      "id": "distribution",
+      "name": "Distribution and launch planning",
+      "area": "Launch",
+      "level": "adapter_optional",
+      "scripts": ["buddy:distribution", "test:governed"],
+      "sources": ["dreamco_platform/launch/distribution.py", "website/install.js"],
+      "tests": ["tests/test_buddy_distribution.py"],
+      "boundary": "Creates launch packets. Publishing, domain purchases, and store submissions require account owners and approval."
+    },
+    {
+      "id": "social",
+      "name": "Social media planning",
+      "area": "Social",
+      "level": "adapter_optional",
+      "scripts": ["test:governed"],
+      "sources": ["dreamco_platform/social"],
+      "tests": ["tests/test_buddy_social_manager.py"],
+      "boundary": "Drafting and scheduling plans are local. Posting and engagement actions require each platform's official adapter."
+    },
+    {
+      "id": "leads",
+      "name": "Lead generation and follow-up",
+      "area": "Sales",
+      "level": "adapter_optional",
+      "scripts": ["test:governed"],
+      "sources": ["server/governed-leads.ts", "website/leads.js"],
+      "tests": ["tests/governed-leads.test.ts"],
+      "boundary": "Uses permission-aware lead plans. Scraping, contact enrichment, and outreach require lawful sources, consent, and adapters."
+    },
+    {
+      "id": "government",
+      "name": "Government resource planning",
+      "area": "Government",
+      "level": "adapter_optional",
+      "scripts": ["test:governed"],
+      "sources": ["server/government-resource-policy.ts", "website/government.js"],
+      "tests": ["tests/government-resource-policy.test.ts"],
+      "boundary": "Finds and organizes official resources. Applications, filings, eligibility decisions, and legal conclusions are not automated."
+    },
+    {
+      "id": "crypto",
+      "name": "Crypto safety planning",
+      "area": "Crypto",
+      "level": "local_contract",
+      "scripts": ["test:governed"],
+      "sources": ["server/crypto-safety-policy.ts", "website/crypto.js"],
+      "tests": ["tests/crypto-safety-policy.test.ts"],
+      "boundary": "No private keys, mining, token issuance, transfer, custody, or guaranteed-return claims are executed."
+    },
+    {
+      "id": "github",
+      "name": "Repository synchronization",
+      "area": "Repository",
+      "level": "credentials_required",
+      "scripts": ["test:governed"],
+      "sources": ["server/github-sync.ts", ".github/workflows"],
+      "tests": ["tests/github-sync-policy.test.ts"],
+      "boundary": "Read-only checks can run without writes. Pushes target a review branch and require an explicit deployment opt-in and credentials."
+    },
+    {
+      "id": "payments",
+      "name": "Payments and subscriptions",
+      "area": "Payments",
+      "level": "credentials_required",
+      "scripts": ["build"],
+      "sources": ["server/stripeClient.ts", "server/webhookHandlers.ts", "server/routes.ts"],
+      "tests": ["tests/stripe-checkout.test.ts", "tests/stripe-checkout.spec.ts"],
+      "boundary": "Shape and failure paths are testable locally. Checkout, portal, webhook, and subscription tests require provider test credentials."
+    },
+    {
+      "id": "observability",
+      "name": "Metrics, errors, costs, and debug records",
+      "area": "Operations",
+      "level": "local_contract",
+      "scripts": ["check", "build"],
+      "sources": ["server/routes.ts", "client/src/pages/DebugPage.tsx"],
+      "tests": ["tests/repository-test-registry.test.ts"],
+      "boundary": "Route contracts compile locally. Durable history requires the configured database."
+    },
+    {
+      "id": "task-automation",
+      "name": "Tasks, autonomy, and kill switch",
+      "area": "Automation",
+      "level": "local_contract",
+      "scripts": ["test:governed"],
+      "sources": ["dreamco_platform/automation", "server/device-action-policy.ts"],
+      "tests": ["tests/test_buddy_platform_expansion.py", "tests/device-action-policy.test.ts"],
+      "boundary": "Local scheduling and approval contracts are testable. Long-running workers need a deployed queue and authenticated adapters."
+    },
+    {
+      "id": "code-lab",
+      "name": "Code, bot building, and sandbox packets",
+      "area": "Coding",
+      "level": "repository_sandbox",
+      "scripts": ["check", "build", "test:governed"],
+      "sources": ["server/routes.ts", "client/src/pages/CodeLabPage.tsx", "dreamco_platform/opensource"],
+      "tests": ["tests/open-model-lab-policy.test.ts", "tests/repository-test-registry.test.ts"],
+      "boundary": "Generation and contract checks are local. Untrusted code must run in an isolated sandbox with network off."
+    },
+    {
+      "id": "python-platform",
+      "name": "Python platform modules",
+      "area": "Platform",
+      "level": "local_contract",
+      "scripts": ["test:governed"],
+      "sources": ["dreamco_platform"],
+      "tests": ["tests/test_buddy_platform_expansion.py", "tests/test_buddy_connection_broker.py", "tests/test_buddy_local_bridge.py"],
+      "boundary": "Unit and contract tests run locally. Provider adapters remain optional."
+    },
+    {
+      "id": "security",
+      "name": "Public-file and secret safety",
+      "area": "Security",
+      "level": "local_contract",
+      "scripts": ["buddy:site:check", "test:governed"],
+      "sources": ["tools/build_buddy_public_site.py", "server/outbound-adapters.ts"],
+      "tests": ["tests/outbound-adapters.test.ts", "tools/build_buddy_public_site.py"],
+      "boundary": "Scans public artifacts and adapter contracts. It does not replace deployment hardening or independent security review."
+    }
+  ]
+}

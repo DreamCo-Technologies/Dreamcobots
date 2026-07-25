@@ -33,6 +33,10 @@
   const localStatusDot = document.getElementById('local-status-dot');
   const localPause = document.getElementById('local-pause');
   const localAudit = document.getElementById('local-audit');
+  const boundaryOpen = document.getElementById('boundary-open');
+  const boundaryDialog = document.getElementById('boundary-dialog');
+  const boundaryClose = document.getElementById('boundary-close');
+  const boundaryForm = document.getElementById('boundary-form');
   const params = new URLSearchParams(location.search);
   const preferredSlug = params.get('bot') || '';
   let activeSlug = preferredSlug;
@@ -40,6 +44,24 @@
   let mode = 'Build';
   let modelMode = modelPolicy.defaultMode || 'free';
   let localBridgePaused = false;
+  let boundaryPreferences = loadBoundaryPreferences();
+
+  function loadBoundaryPreferences() {
+    const defaults = {
+      guidanceDepth: 'standard',
+      riskDisclosure: 'detailed',
+      approvalMode: 'confirm_each_external_action',
+      moneyActionMode: 'plan_only',
+      professionalSupport: 'draft_and_prepare',
+      communicationStyle: 'conversational',
+      voiceToneAdaptation: false,
+    };
+    try {
+      return { ...defaults, ...JSON.parse(localStorage.getItem('buddy-boundary-preferences-v1') || '{}') };
+    } catch (_error) {
+      return defaults;
+    }
+  }
 
   const localHash = new URLSearchParams(location.hash.slice(1));
   if (localHash.has('buddy-local-token')) {
@@ -148,17 +170,18 @@
   function localDiscovery(objective, topScore) {
     const uncertain = topScore < 20 || /\b(not sure|do not know|don't know|figure out|where do i start|anything)\b/i.test(objective);
     const normalized = objective.toLowerCase();
-    const role = normalized.match(/invest|investment|stock|portfolio|financial advisor|retirement|loan|credit/)
-      ? { id: 'financial education assistant', boundary: 'I can explain options, run calculators, verify sources, and prepare questions. Personalized investment advice and regulated transactions require a properly licensed professional.' }
-      : normalized.match(/medical|diagnose|symptom|medicine|health|therapy/)
-        ? { id: 'health information assistant', boundary: 'I can organize information and help prepare for care. I do not diagnose, prescribe, or replace a qualified clinician.' }
-        : normalized.match(/legal advice|lawsuit|court|contract|patent|trademark|immigration/)
-          ? { id: 'legal information assistant', boundary: 'I can organize documents, explain general information, and prepare questions. Legal conclusions and representation require a qualified professional.' }
+    const role = normalized.match(/invest|investment|stock|portfolio|financial advisor|retirement|loan|credit|tax|accountant/)
+      ? { id: 'financial education assistant', boundary: 'I can explain, calculate, organize, draft, and prepare questions. Regulated advice and transactions still require the appropriate licensed person or institution.' }
+      : normalized.match(/medical|diagnose|symptom|medicine|health|therapy|doctor|nurse|psychiatrist|psychologist/)
+        ? { id: 'health information assistant', boundary: 'I can explain general information, organize records, draft questions, and help prepare for care. I do not diagnose, prescribe, claim a clinical role, or replace a qualified clinician.' }
+        : normalized.match(/legal advice|lawsuit|court|contract|patent|trademark|immigration|lawyer|attorney/)
+          ? { id: 'legal information assistant', boundary: 'I can explain general information, organize evidence, compare official sources, and prepare drafts and questions. I do not claim to be a lawyer, represent anyone, or replace qualified legal review.' }
           : { id: 'task partner', boundary: 'I can teach, plan, draft, test, and coordinate. Live account changes, purchases, filings, messages, or publications require a configured adapter and exact approval.' };
     return {
       needsQuestion: uncertain,
       question: 'What would a successful result let you do, even if you do not know the steps yet?',
       role,
+      boundaryPreferences,
     };
   }
 
@@ -296,6 +319,13 @@
       boundary.className = 'buddy-role-boundary';
       boundary.textContent = `${result.discovery.role.id}: ${result.discovery.role.boundary}`;
       bubble.append(boundary);
+    }
+    if (result.discovery?.boundaryPreferences) {
+      const preferences = result.discovery.boundaryPreferences;
+      const preferenceNote = document.createElement('p');
+      preferenceNote.className = 'buddy-role-boundary';
+      preferenceNote.textContent = `Your settings: ${preferences.communicationStyle.replaceAll('_', ' ')} style, ${preferences.riskDisclosure} risk detail, ${preferences.moneyActionMode.replaceAll('_', ' ')} for money actions. Exact approval remains required for every outside action.`;
+      bubble.append(preferenceNote);
     }
 
     if (result.matchedCapabilities?.length) {
@@ -601,6 +631,34 @@
   document.getElementById('local-search').addEventListener('click', runLocalSearch);
   document.getElementById('local-app-open').addEventListener('click', openLocalApp);
   localPause.addEventListener('click', toggleLocalPause);
+  boundaryOpen.addEventListener('click', () => {
+    document.getElementById('boundary-support').value = boundaryPreferences.professionalSupport;
+    document.getElementById('boundary-risk').value = boundaryPreferences.riskDisclosure;
+    document.getElementById('boundary-approval').value = boundaryPreferences.approvalMode;
+    document.getElementById('boundary-money').value = boundaryPreferences.moneyActionMode;
+    document.getElementById('boundary-communication').value = boundaryPreferences.communicationStyle;
+    document.getElementById('boundary-depth').value = boundaryPreferences.guidanceDepth;
+    document.getElementById('boundary-tone').checked = boundaryPreferences.voiceToneAdaptation;
+    boundaryDialog.showModal();
+  });
+  boundaryClose.addEventListener('click', () => boundaryDialog.close());
+  boundaryDialog.addEventListener('click', (event) => {
+    if (event.target === boundaryDialog) boundaryDialog.close();
+  });
+  boundaryForm.addEventListener('submit', (event) => {
+    event.preventDefault();
+    boundaryPreferences = {
+      professionalSupport: document.getElementById('boundary-support').value,
+      riskDisclosure: document.getElementById('boundary-risk').value,
+      approvalMode: document.getElementById('boundary-approval').value,
+      moneyActionMode: document.getElementById('boundary-money').value,
+      communicationStyle: document.getElementById('boundary-communication').value,
+      guidanceDepth: document.getElementById('boundary-depth').value,
+      voiceToneAdaptation: document.getElementById('boundary-tone').checked,
+    };
+    localStorage.setItem('buddy-boundary-preferences-v1', JSON.stringify(boundaryPreferences));
+    document.getElementById('boundary-status').textContent = 'Saved. Hard professional and transaction boundaries remain on.';
+  });
   sendButton.addEventListener('click', send);
   input.addEventListener('keydown', (event) => {
     if (event.key === 'Enter' && (event.metaKey || event.ctrlKey)) {
@@ -611,6 +669,7 @@
 
   const prompt = params.get('prompt');
   if (prompt) input.value = prompt;
+  if (params.get('preferences') === '1') boundaryOpen.click();
   if (index.summary.profiles) {
     routeStatus.textContent = `Ready to route across ${Number(index.summary.profiles).toLocaleString()} verified specialists in free mode.`;
   }

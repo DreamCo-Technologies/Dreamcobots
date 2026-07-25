@@ -106,6 +106,10 @@
     <form id="data-package-form" class="data-form-grid">
       <label for="package-name">Package name<input id="package-name" required minlength="3" placeholder="Original synthetic coding evaluations" /></label>
       <label for="package-source">Vault reference<input id="package-source" required pattern="[A-Za-z][A-Za-z0-9_.:/-]{2,127}" placeholder="vault:owner/evaluations" /></label>
+      <label for="package-ownership-evidence">Ownership receipt<input id="package-ownership-evidence" required pattern="[A-Za-z][A-Za-z0-9_.:/-]{2,127}" placeholder="receipt:owner/evaluations" /></label>
+      <label for="package-resale-evidence">Resale-rights receipt<input id="package-resale-evidence" required pattern="[A-Za-z][A-Za-z0-9_.:/-]{2,127}" placeholder="rights:owner/evaluations" /></label>
+      <label for="package-consent-receipt">Consent receipt<input id="package-consent-receipt" required pattern="[A-Za-z][A-Za-z0-9_.:/-]{2,127}" placeholder="consent:owner/evaluations" /></label>
+      <label for="package-provenance">Provenance record<input id="package-provenance" required pattern="[A-Za-z][A-Za-z0-9_.:/-]{2,127}" placeholder="provenance:owner/evaluations" /></label>
       <label for="package-category">Category<select id="package-category"><option value="creative_work">Original creative work</option><option value="business_records">Original business datasets</option></select></label>
       <label for="package-recipient">Recipient class<input id="package-recipient" required minlength="3" placeholder="Approved research organizations" /></label>
       <label class="data-wide" for="package-terms">Compensation and license terms<textarea id="package-terms" required minlength="3" rows="3" placeholder="One-year non-exclusive license with revocation before execution."></textarea></label>
@@ -116,7 +120,7 @@
       </div>
       <button id="prepare-data-package" class="btn btn-primary" type="submit">Prepare manifest</button>
     </form>
-    <p id="data-package-status" class="data-status">No marketplace listing or sale is created from this page.</p>
+    <p id="data-package-status" class="data-status">Keep evidence in your own vault. This page stores fingerprints only and creates no listing or sale.</p>
   </section>
 </main>
 

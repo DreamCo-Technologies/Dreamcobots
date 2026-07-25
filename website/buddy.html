@@ -29,6 +29,7 @@
         <button id="model-premium" type="button" aria-pressed="false" title="Use a connected paid model for one approved request">Premium</button>
       </div>
       <button id="specialist-open" class="buddy-header-link" type="button">Specialists</button>
+      <button id="boundary-open" class="buddy-header-link" type="button">Preferences</button>
       <button id="local-open" class="buddy-header-link" type="button">This laptop</button>
       <a class="buddy-header-link" href="buddy.html">New chat</a>
       <details class="buddy-explore-menu">
@@ -39,6 +40,8 @@
           <a href="studio.html">Creative studio</a>
           <a href="connections.html">Business connections</a>
           <a href="data-control.html">Data and memory controls</a>
+          <a href="buddy.html?preferences=1">Buddy preferences</a>
+          <a href="test-center.html">Repository test center</a>
           <a href="government.html">Government resources</a>
           <a href="crypto.html">Crypto safety lab</a>
           <a href="models.html">Model benchmark lab</a>
@@ -153,6 +156,51 @@
       <div id="local-audit" class="buddy-local-audit">No local actions in this session.</div>
     </section>
     <footer><code>python3 tools/buddy_cli.py local-start</code><span>Run this from the repository to create a private laptop session.</span></footer>
+  </dialog>
+
+  <dialog id="boundary-dialog" class="buddy-boundary-dialog" aria-labelledby="boundary-title">
+    <header>
+      <div>
+        <p>Your Buddy, your working style</p>
+        <h2 id="boundary-title">Buddy preferences</h2>
+      </div>
+      <button id="boundary-close" type="button">Close</button>
+    </header>
+    <form id="boundary-form">
+      <div class="buddy-boundary-grid">
+        <label for="boundary-support">Professional support
+          <select id="boundary-support">
+            <option value="education_only">Explain and teach</option>
+            <option value="draft_and_prepare" selected>Draft and prepare</option>
+            <option value="collaborate_with_professional">Prepare for professional review</option>
+          </select>
+        </label>
+        <label for="boundary-risk">Risk detail
+          <select id="boundary-risk"><option value="summary">Summary</option><option value="detailed" selected>Detailed</option></select>
+        </label>
+        <label for="boundary-approval">Approval style
+          <select id="boundary-approval"><option value="review_every_step">Review every step</option><option value="confirm_each_external_action" selected>Confirm each outside action</option></select>
+        </label>
+        <label for="boundary-money">Money actions
+          <select id="boundary-money"><option value="plan_only" selected>Plan only</option><option value="prepare_for_exact_approval">Prepare for exact approval</option></select>
+        </label>
+        <label for="boundary-communication">Conversation style
+          <select id="boundary-communication"><option value="concise">Concise</option><option value="conversational" selected>Conversational</option><option value="coach">Coach me</option></select>
+        </label>
+        <label for="boundary-depth">Learning depth
+          <select id="boundary-depth"><option value="brief">Brief</option><option value="standard" selected>Standard</option><option value="teaching">Teach every step</option></select>
+        </label>
+      </div>
+      <label class="buddy-boundary-check"><input id="boundary-tone" type="checkbox" /> Adapt pace and warmth from my voice cues with consent. Do not diagnose emotion or mental health.</label>
+      <div class="buddy-boundary-floor">
+        <strong>Always on</strong>
+        <p>Buddy never claims a licensed role, hides material risk, diagnoses or prescribes, represents a user in court, or moves money and changes accounts without exact approval.</p>
+      </div>
+      <div class="buddy-boundary-actions">
+        <button id="boundary-save" class="buddy-send-button" type="submit">Save preferences</button>
+        <span id="boundary-status" aria-live="polite">Stored only in this browser.</span>
+      </div>
+    </form>
   </dialog>
 
   <script src="data/buddy-routing-index.js"></script>

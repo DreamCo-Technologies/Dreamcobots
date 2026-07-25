@@ -105,10 +105,13 @@ class BuddyPlatformExpansionTests(unittest.TestCase):
             owner_user_id="owner-1",
             display_name="My work notes",
             encrypted_reference="vault:owner/work-notes",
-            categories=(DataCategory.PROFILE, DataCategory.PREFERENCES),
+            categories=(DataCategory.CREATIVE_WORK,),
             acquisition="user_upload",
             user_owns_data=True,
             resale_license_confirmed=True,
+            ownership_evidence_reference="receipt:owner/work-notes",
+            resale_rights_evidence_reference="rights:owner/work-notes",
+            provenance_reference="provenance:owner/work-notes",
         )
         receipt = wallet.register_source(source)
         self.assertFalse(receipt["raw_data_stored_here"])
@@ -120,6 +123,7 @@ class BuddyPlatformExpansionTests(unittest.TestCase):
             explicit_collection_consent=True,
             third_party_license_opt_in=True,
             recipient_class="approved research organizations",
+            consent_receipt_reference="consent:owner/work-notes",
         ))
         self.assertTrue(grant["sale_or_share_opt_in"])
         opt_out = wallet.opt_out()
@@ -137,6 +141,9 @@ class BuddyPlatformExpansionTests(unittest.TestCase):
             acquisition="user_upload",
             user_owns_data=True,
             resale_license_confirmed=True,
+            ownership_evidence_reference="receipt:owner/voice",
+            resale_rights_evidence_reference="rights:owner/voice",
+            provenance_reference="provenance:owner/voice",
         ))
         wallet.choices.third_party_sale_or_share_enabled = True
         with self.assertRaisesRegex(DataWalletError, "Sensitive personal data"):
@@ -147,6 +154,7 @@ class BuddyPlatformExpansionTests(unittest.TestCase):
                 explicit_collection_consent=True,
                 third_party_license_opt_in=True,
                 recipient_class="media partners",
+                consent_receipt_reference="consent:owner/voice",
             ))
 
     def test_data_wallet_builds_rights_and_package_plans_without_claiming_external_action(self):
@@ -156,10 +164,13 @@ class BuddyPlatformExpansionTests(unittest.TestCase):
             owner_user_id="owner-1",
             display_name="My synthetic evaluations",
             encrypted_reference="vault:owner/synthetic-evals",
-            categories=(DataCategory.PROFILE,),
+            categories=(DataCategory.BUSINESS_RECORDS,),
             acquisition="user_upload",
             user_owns_data=True,
             resale_license_confirmed=True,
+            ownership_evidence_reference="receipt:owner/synthetic-evals",
+            resale_rights_evidence_reference="rights:owner/synthetic-evals",
+            provenance_reference="provenance:owner/synthetic-evals",
         ))
         wallet.choices.third_party_sale_or_share_enabled = True
         grant = wallet.authorize(DataPermissionRequest(
@@ -169,6 +180,7 @@ class BuddyPlatformExpansionTests(unittest.TestCase):
             explicit_collection_consent=True,
             third_party_license_opt_in=True,
             recipient_class="approved research organizations",
+            consent_receipt_reference="consent:owner/synthetic-evals",
         ))
         package = wallet.licensed_package_plan(
             grant["grant_id"],

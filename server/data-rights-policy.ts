@@ -13,6 +13,7 @@ export const SENSITIVE_DATA_CATEGORIES = new Set<string>([
   "government_id", "credentials", "child_data",
 ]);
 const LICENSABLE_DATA_CATEGORIES = new Set<string>(["creative_work", "business_records"]);
+const evidenceReferenceSchema = z.string().trim().regex(/^[A-Za-z][A-Za-z0-9_.:/-]{2,127}$/);
 
 export const dataImportPlanRequestSchema = z.object({
   sourceName: z.string().trim().min(2).max(120),
@@ -35,7 +36,11 @@ export const privacyRightsPlanRequestSchema = z.object({
 
 export const dataPackagePlanRequestSchema = z.object({
   packageName: z.string().trim().min(3).max(160),
-  sourceReference: z.string().trim().regex(/^[A-Za-z][A-Za-z0-9_.:/-]{2,127}$/),
+  sourceReference: evidenceReferenceSchema,
+  ownershipEvidenceReference: evidenceReferenceSchema,
+  resaleRightsEvidenceReference: evidenceReferenceSchema,
+  consentReceiptReference: evidenceReferenceSchema,
+  provenanceReference: evidenceReferenceSchema,
   categories: z.array(z.enum(DATA_CATEGORIES)).min(1).max(DATA_CATEGORIES.length),
   ownerCreatedData: z.boolean(),
   resaleRightsConfirmed: z.boolean(),
@@ -45,7 +50,21 @@ export const dataPackagePlanRequestSchema = z.object({
   recipientClass: z.string().trim().min(3).max(160),
   compensationTerms: z.string().trim().min(3).max(500),
   explicitLicenseOptIn: z.boolean(),
-}).strict();
+}).strict().superRefine((request, context) => {
+  const references = [
+    request.sourceReference,
+    request.ownershipEvidenceReference,
+    request.resaleRightsEvidenceReference,
+    request.consentReceiptReference,
+    request.provenanceReference,
+  ];
+  if (new Set(references).size !== references.length) {
+    context.addIssue({
+      code: z.ZodIssueCode.custom,
+      message: "Use a distinct evidence reference for the source, ownership, resale rights, consent receipt, and provenance.",
+    });
+  }
+});
 
 export const memoryPreferencePlanRequestSchema = z.object({
   memoryCategories: z.array(z.enum(["preferences", "projects", "decisions", "learning_progress", "accessibility", "language_style"])).max(6),
@@ -68,6 +87,10 @@ function safeExternalUrl(raw: string) {
     throw new Error("Use a credential-free official HTTPS URL.");
   }
   return url;
+}
+
+function fingerprintReference(reference: string) {
+  return createHash("sha256").update(reference).digest("hex").slice(0, 20);
 }
 
 export function createDataImportPlan(input: z.infer<typeof dataImportPlanRequestSchema>) {
@@ -141,7 +164,14 @@ export function createDataPackagePlan(input: z.infer<typeof dataPackagePlanReque
     packageId: `data-package-${randomUUID()}`,
     status: "manifest_ready_owner_review_required",
     packageName: request.packageName,
-    sourceReferenceFingerprint: createHash("sha256").update(request.sourceReference).digest("hex").slice(0, 20),
+    sourceReferenceFingerprint: fingerprintReference(request.sourceReference),
+    evidence: {
+      ownership: fingerprintReference(request.ownershipEvidenceReference),
+      resaleRights: fingerprintReference(request.resaleRightsEvidenceReference),
+      consentReceipt: fingerprintReference(request.consentReceiptReference),
+      provenance: fingerprintReference(request.provenanceReference),
+      rawReferencesStored: false,
+    },
     categories,
     deidentified: request.deidentified,
     recipientClass: request.recipientClass,

@@ -47,17 +47,43 @@
     }
   }
 
+  async function fingerprintReference(reference) {
+    if (!window.crypto?.subtle) throw new Error('Secure browser fingerprinting is unavailable.');
+    const bytes = new TextEncoder().encode(reference);
+    const digest = await window.crypto.subtle.digest('SHA-256', bytes);
+    return [...new Uint8Array(digest)].map((byte) => byte.toString(16).padStart(2, '0')).join('').slice(0, 20);
+  }
+
   function renderLedger(targetId, rows, kind) {
     const target = byId(targetId);
     if (!rows.length) {
       target.innerHTML = '<p class="data-status">No local plans yet.</p>';
       return;
     }
-    target.innerHTML = rows.map((row, index) => `
+    target.innerHTML = rows.map((row, index) => {
+      const requestStatus = kind === 'requests' ? `
+        <label class="data-request-status">Status
+          <select data-request-status-index="${index}">
+            ${[
+              ['draft_ready_for_user_review', 'Draft ready'],
+              ['submitted_by_user', 'Submitted by user'],
+              ['company_confirmed', 'Company confirmed'],
+              ['fulfilled', 'Fulfilled'],
+              ['partially_fulfilled', 'Partially fulfilled'],
+              ['denied', 'Denied'],
+              ['no_response', 'No response'],
+            ].map(([value, label]) => `<option value="${value}"${row.status === value ? ' selected' : ''}>${label}</option>`).join('')}
+          </select>
+        </label>` : '';
+      return `
       <article class="data-ledger-item">
         <div><strong>${escapeHtml(row.label)}</strong><span>${escapeHtml(row.detail)}</span></div>
-        <button type="button" data-remove-kind="${kind}" data-remove-index="${index}">Remove</button>
-      </article>`).join('');
+        <div class="data-ledger-actions">
+          ${requestStatus}
+          <button type="button" data-remove-kind="${kind}" data-remove-index="${index}">Remove</button>
+        </div>
+      </article>`;
+    }).join('');
   }
 
   function escapeHtml(value) {
@@ -74,6 +100,15 @@
     document.querySelectorAll('[data-remove-kind]').forEach((button) => button.addEventListener('click', () => {
       const key = button.dataset.removeKind;
       state[key].splice(Number(button.dataset.removeIndex), 1);
+      saveState();
+    }));
+    document.querySelectorAll('[data-request-status-index]').forEach((select) => select.addEventListener('change', () => {
+      const row = state.requests[Number(select.dataset.requestStatusIndex)];
+      if (!row) return;
+      const rights = Array.isArray(row.rights) && row.rights.length ? row.rights : ['privacy request'];
+      row.status = select.value;
+      row.updatedAt = new Date().toISOString();
+      row.detail = `${rights.join(', ')} · ${select.options[select.selectedIndex].text.toLowerCase()} · outside result recorded by user`;
       saveState();
     }));
   }
@@ -163,6 +198,7 @@
       jurisdiction: byId('privacy-jurisdiction').value.trim(),
       rights,
       verification: byId('privacy-verification').value,
+      status: 'draft_ready_for_user_review',
       requestSubmitted: false,
       companyComplianceGuaranteed: false,
       createdAt: new Date().toISOString(),
@@ -171,16 +207,40 @@
     event.currentTarget.reset();
   });
 
-  byId('data-package-form').addEventListener('submit', (event) => {
+  byId('data-package-form').addEventListener('submit', async (event) => {
     event.preventDefault();
     if (!event.currentTarget.reportValidity()) return;
-    const sourceReference = byId('package-source').value.trim();
+    const references = {
+      source: byId('package-source').value.trim(),
+      ownership: byId('package-ownership-evidence').value.trim(),
+      resaleRights: byId('package-resale-evidence').value.trim(),
+      consentReceipt: byId('package-consent-receipt').value.trim(),
+      provenance: byId('package-provenance').value.trim(),
+    };
+    const validReference = /^[A-Za-z][A-Za-z0-9_.:/-]{2,127}$/;
+    if (Object.values(references).some((reference) => !validReference.test(reference))) {
+      byId('data-package-status').textContent = 'Use valid encrypted-vault or receipt references. Do not enter raw data.';
+      return;
+    }
+    if (new Set(Object.values(references)).size !== Object.keys(references).length) {
+      byId('data-package-status').textContent = 'Use a distinct reference for the source, ownership, resale rights, consent, and provenance.';
+      return;
+    }
+    let evidence;
+    try {
+      const fingerprints = await Promise.all(Object.values(references).map(fingerprintReference));
+      evidence = Object.fromEntries(Object.keys(references).map((key, index) => [key, fingerprints[index]]));
+    } catch (error) {
+      byId('data-package-status').textContent = error instanceof Error ? error.message : 'Evidence fingerprinting failed.';
+      return;
+    }
     const plan = {
       schema: 'dreamco.buddy_data_package_plan.v1',
       packageName: byId('package-name').value.trim(),
       sourceReference: 'redacted',
       sourceReferenceStored: false,
-      sourceReferenceFormatChecked: /^[A-Za-z][A-Za-z0-9_.:/-]{2,127}$/.test(sourceReference),
+      evidenceFingerprints: evidence,
+      rawEvidenceReferencesStored: false,
       category: byId('package-category').value,
       recipientClass: byId('package-recipient').value.trim(),
       compensationTerms: byId('package-terms').value.trim(),
@@ -196,7 +256,7 @@
     state.packages = state.packages.slice(0, 20);
     saveState();
     downloadJson(plan, 'buddy-data-package-plan.json');
-    byId('data-package-status').textContent = 'Rights-cleared manifest prepared. No marketplace listing or sale was created.';
+    byId('data-package-status').textContent = 'Manifest prepared with evidence fingerprints. No marketplace listing or sale was created.';
     event.currentTarget.reset();
   });
 

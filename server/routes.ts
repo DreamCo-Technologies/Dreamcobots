@@ -22,6 +22,7 @@ import { getUncachableStripeClient, getStripePublishableKey } from "./stripeClie
 import { db } from "./db";
 import { batchProcessWithSSE } from "./provider_integrations/batch";
 import { registerAudioRoutes } from "./provider_integrations/audio";
+import { registerImageRoutes } from "./provider_integrations/image";
 import {
   connectionPlanRequestSchema,
   connectionStatusUpdateSchema,
@@ -96,6 +97,11 @@ import {
   GOVERNMENT_RESOURCES,
   governmentResourcePlanRequestSchema,
 } from "./government-resource-policy";
+import {
+  createRepositoryTestPlan,
+  repositoryTestPlanRequestSchema,
+  type RepositoryTestRegistry,
+} from "./repository-test-policy";
 
 const CORE_SLUGS = new Set(CORE_BOTS.map(b => b.slug));
 const GITHUB_SLUGS = new Set(GITHUB_BOTS.map(b => b.slug));
@@ -148,6 +154,11 @@ function zodValidationError(err: z.ZodError) {
     message: err.errors[0]?.message ?? "Invalid request",
     field: err.errors[0]?.path?.join("."),
   };
+}
+
+function loadRepositoryTestRegistry(): RepositoryTestRegistry {
+  const path = resolve(process.cwd(), "config", "generated", "repository_test_registry.json");
+  return JSON.parse(readFileSync(path, "utf8")) as RepositoryTestRegistry;
 }
 
 async function ensureSeeded() {
@@ -313,30 +324,6 @@ export async function registerRoutes(
   app: Express,
 ): Promise<Server> {
   await ensureSeeded();
-
-  // ===== IMAGE GENERATION =====
-  app.post("/api/generate-image", async (req, res) => {
-    try {
-      const { prompt, size = "1024x1024" } = req.body ?? {};
-      if (!prompt || !String(prompt).trim()) {
-        return res.status(400).json({ error: "Prompt is required" });
-      }
-      const response = await openai.images.generate({
-        model: "gpt-image-1",
-        prompt: String(prompt).trim(),
-        n: 1,
-        size: size as "1024x1024" | "512x512" | "256x256",
-      });
-      const imageData = (response.data ?? [])[0];
-      if (!imageData || (!imageData.url && !(imageData as any).b64_json)) {
-        return res.status(502).json({ error: "Image generation returned no data. The AI provider may be unavailable or the prompt was rejected." });
-      }
-      res.json({ url: imageData.url, b64_json: (imageData as any).b64_json });
-    } catch (e: any) {
-      console.error("[image] generation error:", e.message);
-      res.status(500).json({ error: e.message || "Failed to generate image" });
-    }
-  });
 
   // ===== VOICE CLONING =====
   app.post("/api/voice/clone", async (req, res) => {
@@ -745,7 +732,7 @@ export async function registerRoutes(
     }
   });
 
-  // ===== DATA PACKAGES (for selling training data) =====
+  // ===== RIGHTS-CLEARED DATA PACKAGE TEMPLATES =====
   app.get("/api/data-packages", async (_req, res) => {
     res.json({
       schema: "dreamco.safe_data_package_templates.v1",
@@ -755,6 +742,20 @@ export async function registerRoutes(
         { id: "open-source-test-evidence", name: "Licensed open-source test evidence", allowed: "Original compatibility results with source revision, license, and provenance", blocked: "Repository code redistributed outside its license" },
         { id: "public-domain-annotations", name: "Public-domain annotations", allowed: "Owner-created annotations over verified public-domain material", blocked: "Copyrighted or unclear-rights source material" },
         { id: "original-workflows", name: "Original workflow templates", allowed: "Owner-authored, secret-free workflow schemas and documentation", blocked: "Customer records, credentials, or third-party confidential processes" },
+      ],
+      requiredEvidence: [
+        "distinct encrypted source reference",
+        "ownership evidence receipt",
+        "resale-rights evidence receipt",
+        "separate consent receipt",
+        "provenance record",
+      ],
+      blockedCategories: [
+        "conversations and messages",
+        "prompts or provider outputs without resale rights",
+        "sensitive personal data",
+        "minor data",
+        "third-party personal or confidential data",
       ],
       requiredGate: "POST /api/buddy/data/package-plan",
     });
@@ -1401,6 +1402,7 @@ export async function registerRoutes(
         { name: "Task Discovery", route: "POST /api/buddy/task-discovery/plan", status: "live", description: "Turn unfamiliar goals into guided, testable, approval-aware task maps" },
         { name: "Personal Data Controls", route: "POST /api/buddy/data/privacy-request-plan", status: "permission-gated", description: "Plan imports, access, portability, deletion, opt-out, selective memory, and lawful data packages" },
         { name: "Open Source Tracker", route: "POST /api/buddy/open-source/tracking-plan", status: "scheduler-adapter-required", description: "Track pinned repository metadata, licenses, releases, security, tests, and contribution opportunities" },
+        { name: "Repository Test Center", route: "GET /api/buddy/repository-test-registry", status: "live", description: "Inventory repository evidence and prepare bounded contract, sandbox, and adapter test plans" },
         { name: "Governed Platform Registry", route: "GET /api/buddy/platform-expansion", status: "live", description: "Launch, privacy, finance, creative, IP, open-source, customization, and roadmap contracts" },
         { name: "Bot Calculator Registry", route: "GET /api/buddy/calculators", status: "live", description: "One bounded local planning calculator contract for every Buddy bot profile" },
         { name: "Install and Distribution Catalog", route: "GET /api/buddy/distribution", status: "live", description: "PWA installation plus governed packaging and publishing plans for 26 device and store targets" },
@@ -3050,6 +3052,29 @@ Any improvements or fixes (optional, 1-2 bullet points max)`;
     }
   });
 
+  app.get("/api/buddy/repository-test-registry", (_req, res) => {
+    try {
+      return res.json(loadRepositoryTestRegistry());
+    } catch (error) {
+      return res.status(503).json({
+        error: "Repository test registry is unavailable.",
+        detail: error instanceof Error ? error.message : "unknown error",
+      });
+    }
+  });
+
+  app.post("/api/buddy/repository-test-plan", (req, res) => {
+    const parsed = repositoryTestPlanRequestSchema.safeParse(req.body);
+    if (!parsed.success) return res.status(400).json(zodValidationError(parsed.error));
+    try {
+      return res.status(201).json(createRepositoryTestPlan(parsed.data, loadRepositoryTestRegistry()));
+    } catch (error) {
+      return res.status(400).json({
+        error: error instanceof Error ? error.message : "Invalid repository test plan",
+      });
+    }
+  });
+
   app.post("/api/buddy/task-discovery/plan", (req, res) => {
     const parsed = taskDiscoveryRequestSchema.safeParse(req.body);
     if (!parsed.success) return res.status(400).json(zodValidationError(parsed.error));
@@ -3754,7 +3779,8 @@ Return ONLY valid JSON with this exact shape:
     res.json({ context, matchedCategory: bestCategory, recommendations: recommended });
   });
 
-  // Register voice chat routes (distinct path: /api/conversations/:id/voice)
+  // Register media provider routes after core policies are installed.
+  registerImageRoutes(app);
   registerAudioRoutes(app);
 
   return httpServer;

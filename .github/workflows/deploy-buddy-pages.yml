@@ -11,8 +11,10 @@ on:
       - "config/buddy-mcp-tool-registry.json"
       - "config/buddy-model-router.json"
       - "config/buddy-model-benchmarks.json"
+      - "config/repository-test-suites.json"
       - "config/generated/**"
       - "tools/build_buddy_public_site.py"
+      - "tools/generate_repository_test_registry.py"
       - "tools/generate_buddy_model_router.py"
       - "tools/generate_buddy_model_benchmarks.ts"
       - "tools/generate_buddy_distribution_catalog.py"
@@ -26,8 +28,10 @@ on:
       - "config/buddy-mcp-tool-registry.json"
       - "config/buddy-model-router.json"
       - "config/buddy-model-benchmarks.json"
+      - "config/repository-test-suites.json"
       - "config/generated/**"
       - "tools/build_buddy_public_site.py"
+      - "tools/generate_repository_test_registry.py"
       - "tools/generate_buddy_model_router.py"
       - "tools/generate_buddy_model_benchmarks.ts"
       - "tools/generate_buddy_distribution_catalog.py"
@@ -61,6 +65,7 @@ jobs:
           python3 tools/generate_buddy_model_router.py --check
           node tools/check_buddy_model_benchmarks.mjs
           python3 tools/generate_buddy_distribution_catalog.py --check
+          python3 tools/generate_repository_test_registry.py --check
           python3 tools/build_buddy_public_site.py --check
 
       - name: Check browser JavaScript syntax
@@ -69,6 +74,9 @@ jobs:
           node --check website/install.js
           node --check website/studio.js
           node --check website/models.js
+          node --check website/data-control.js
+          node --check website/open-model-lab.js
+          node --check website/test-center.js
           node --check website/service-worker.js
 
       - name: Configure GitHub Pages

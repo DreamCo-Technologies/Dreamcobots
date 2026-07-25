@@ -2,12 +2,31 @@ import { createHash, randomUUID } from "node:crypto";
 
 import { z } from "zod";
 
+export const buddyBoundaryPreferencesSchema = z.object({
+  guidanceDepth: z.enum(["brief", "standard", "teaching"]).default("standard"),
+  riskDisclosure: z.enum(["summary", "detailed"]).default("detailed"),
+  approvalMode: z.enum(["review_every_step", "confirm_each_external_action"]).default("confirm_each_external_action"),
+  moneyActionMode: z.enum(["plan_only", "prepare_for_exact_approval"]).default("plan_only"),
+  professionalSupport: z.enum(["education_only", "draft_and_prepare", "collaborate_with_professional"]).default("draft_and_prepare"),
+  communicationStyle: z.enum(["concise", "conversational", "coach"]).default("conversational"),
+  voiceToneAdaptation: z.boolean().default(false),
+}).strict();
+
 export const taskDiscoveryRequestSchema = z.object({
   objective: z.string().trim().min(3).max(4_000),
   context: z.enum(["personal", "work", "business", "learning", "creative", "technical"]).default("personal"),
   knownSteps: z.array(z.string().trim().min(2).max(240)).max(20).default([]),
   constraints: z.array(z.string().trim().min(2).max(240)).max(20).default([]),
   preferredOutcome: z.string().trim().max(1_000).default(""),
+  boundaryPreferences: buddyBoundaryPreferencesSchema.default({
+    guidanceDepth: "standard",
+    riskDisclosure: "detailed",
+    approvalMode: "confirm_each_external_action",
+    moneyActionMode: "plan_only",
+    professionalSupport: "draft_and_prepare",
+    communicationStyle: "conversational",
+    voiceToneAdaptation: false,
+  }),
 }).strict();
 
 export type TaskDiscoveryRequest = z.infer<typeof taskDiscoveryRequestSchema>;
@@ -20,18 +39,23 @@ const ROLE_RULES = [
   },
   {
     id: "financial_education_assistant",
-    terms: ["invest", "investment", "stock", "retirement", "financial advisor", "portfolio", "loan", "credit"],
-    boundary: "Education, calculators, source checks, and question preparation only. Personalized investment advice and regulated transactions require a properly licensed professional.",
+    terms: ["invest", "investment", "stock", "retirement", "financial advisor", "portfolio", "loan", "credit", "tax", "accountant"],
+    boundary: "Buddy can explain, calculate, organize, draft, and prepare questions. Personalized regulated advice, professional attestation, and transactions still require the appropriate licensed person or institution.",
   },
   {
     id: "health_information_assistant",
-    terms: ["medical", "diagnose", "symptom", "medicine", "health", "therapy"],
-    boundary: "General information, appointment preparation, and record organization only. Buddy does not diagnose, prescribe, or replace a qualified clinician.",
+    terms: ["medical", "diagnose", "symptom", "medicine", "health", "therapy", "doctor", "nurse", "psychiatrist", "psychologist"],
+    boundary: "Buddy can explain general information, organize records, draft questions, and help prepare for care. Buddy does not diagnose, prescribe, claim a clinical role, or replace a qualified clinician.",
   },
   {
     id: "legal_information_assistant",
-    terms: ["legal advice", "lawsuit", "court", "contract", "patent", "trademark", "immigration"],
-    boundary: "General legal information, document organization, and question preparation only. Legal conclusions and representation require a qualified professional.",
+    terms: ["legal advice", "lawsuit", "court", "contract", "patent", "trademark", "immigration", "lawyer", "attorney"],
+    boundary: "Buddy can explain general information, organize evidence, compare official sources, and prepare drafts and questions. Buddy does not claim to be a lawyer, represent a person, or replace qualified legal review.",
+  },
+  {
+    id: "employment_and_people_operations_assistant",
+    terms: ["hire", "fire employee", "background check", "human resources", "employment law", "job qualification"],
+    boundary: "Buddy can organize job requirements and permissioned, job-relevant evidence. Protected traits, undisclosed surveillance, unlawful discrimination, and final employment decisions are outside Buddy's role.",
   },
 ] as const;
 
@@ -80,6 +104,23 @@ export function createTaskDiscoveryPlan(input: TaskDiscoveryRequest) {
       boundary: role.boundary,
       buddyIsLicensedProfessional: false,
       buddyIsHuman: false,
+    },
+    buyerPreferences: request.boundaryPreferences,
+    hardBoundaries: {
+      professionalImpersonationAllowed: false,
+      diagnosisOrPrescriptionAllowed: false,
+      legalRepresentationAllowed: false,
+      hiddenRiskAllowed: false,
+      externalMoneyActionWithoutExactApprovalAllowed: false,
+      accountOrIdentityActionWithoutExactApprovalAllowed: false,
+      userCanDisableTheseBoundaries: false,
+    },
+    voiceToneAdaptation: {
+      enabled: request.boundaryPreferences.voiceToneAdaptation,
+      consentRequired: true,
+      purpose: "Adjust pace, warmth, and explanation style from conversational cues.",
+      emotionDiagnosisOrMentalHealthInference: false,
+      rawVoiceStoredByPlanner: false,
     },
     userCanSay: ["explain that more simply", "show me an example", "practice it with me", "do the safe parts", "stop and undo"],
     externalActionTaken: false,

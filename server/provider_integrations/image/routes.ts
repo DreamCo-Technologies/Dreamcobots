@@ -4,15 +4,15 @@ import { openai } from "./client";
 export function registerImageRoutes(app: Express): void {
   app.post("/api/generate-image", async (req: Request, res: Response) => {
     try {
-      const { prompt, size = "1024x1024" } = req.body;
+      const { prompt, size = "1024x1024" } = req.body ?? {};
 
-      if (!prompt) {
+      if (!prompt || !String(prompt).trim()) {
         return res.status(400).json({ error: "Prompt is required" });
       }
 
       const response = await openai.images.generate({
         model: "gpt-image-1",
-        prompt,
+        prompt: String(prompt).trim(),
         n: 1,
         size: size as "1024x1024" | "512x512" | "256x256",
       });
@@ -30,9 +30,8 @@ export function registerImageRoutes(app: Express): void {
         b64_json: imageData.b64_json,
       });
     } catch (error) {
-      console.error("Error generating image:", error);
-      res.status(500).json({ error: "Failed to generate image" });
+      console.error("[image] generation error:", error instanceof Error ? error.message : "unknown error");
+      res.status(500).json({ error: error instanceof Error ? error.message : "Failed to generate image" });
     }
   });
 }
-
