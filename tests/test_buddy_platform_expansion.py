@@ -235,6 +235,8 @@ class BuddyPlatformExpansionTests(unittest.TestCase):
             self.assertFalse(inspection["source_executed"])
             self.assertEqual(plan["status"], "execution_permission_required")
             self.assertFalse(plan["automatic_merge"])
+            self.assertFalse(plan["sandbox"]["live_execution_performed"])
+            self.assertEqual(plan["sandbox"]["source_mount"], "read_only")
 
     def test_open_source_lab_blocks_secret_bearing_upgrade_package(self):
         with tempfile.TemporaryDirectory() as temp_dir:
@@ -246,6 +248,32 @@ class BuddyPlatformExpansionTests(unittest.TestCase):
             with self.assertRaisesRegex(OpenSourceError, "secret"):
                 lab.upgrade_plan(UpgradeRequest(
                     "owner-1", "buddy-1", "Evaluate the repository safely", str(root), "MIT"
+                ), inspection)
+
+    def test_open_source_lab_rejects_remote_code_and_unbounded_resources(self):
+        with tempfile.TemporaryDirectory() as temp_dir:
+            root = Path(temp_dir)
+            (root / "LICENSE").write_text("MIT License\n", encoding="utf-8")
+            (root / "main.py").write_text("print('sample')\n", encoding="utf-8")
+            lab = BuddyOpenSourceLab()
+            inspection = lab.inspect(root)
+            with self.assertRaisesRegex(OpenSourceError, "Remote model"):
+                lab.upgrade_plan(UpgradeRequest(
+                    "owner-1",
+                    "buddy-1",
+                    "Evaluate a licensed model adapter",
+                    str(root),
+                    "MIT",
+                    trust_remote_code=True,
+                ), inspection)
+            with self.assertRaisesRegex(OpenSourceError, "timeout"):
+                lab.upgrade_plan(UpgradeRequest(
+                    "owner-1",
+                    "buddy-1",
+                    "Evaluate a licensed repository safely",
+                    str(root),
+                    "MIT",
+                    timeout_seconds=100_000,
                 ), inspection)
 
     def test_custom_buddy_id_is_stable_and_business_tone_disables_slang(self):

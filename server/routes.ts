@@ -61,6 +61,13 @@ import {
   runModelCatalogAudit,
 } from "./model-benchmark-policy";
 import {
+  createOpenModelComparisonPlan,
+  createOpenSourceSandboxPlan,
+  OPEN_MODEL_CATALOG,
+  openModelComparisonRequestSchema,
+  openSourceSandboxPlanRequestSchema,
+} from "./open-model-lab-policy";
+import {
   createCryptoMiningPlan,
   createCryptoWalletPlan,
   createDreamCoinPlan,
@@ -2973,6 +2980,42 @@ Any improvements or fixes (optional, 1-2 bullet points max)`;
       return res.status(201).json(createModelBenchmarkPlan(parsed.data));
     } catch (error) {
       return res.status(400).json({ error: error instanceof Error ? error.message : "Invalid benchmark plan" });
+    }
+  });
+
+  app.get("/api/buddy/open-model-lab/catalog", (_req, res) => {
+    res.json({
+      ...OPEN_MODEL_CATALOG,
+      liveModelsCalled: 0,
+      sourceProjectsExecuted: 0,
+    });
+  });
+
+  app.post("/api/buddy/open-model-lab/comparison-plan", async (req, res) => {
+    const killSwitch = await storage.getSetting("kill_switch");
+    if ((killSwitch?.value as { enabled?: boolean } | undefined)?.enabled) {
+      return res.status(423).json({ message: "Open-model comparison planning is locked by the kill switch" });
+    }
+    const parsed = openModelComparisonRequestSchema.safeParse(req.body);
+    if (!parsed.success) return res.status(400).json(zodValidationError(parsed.error));
+    try {
+      return res.status(201).json(createOpenModelComparisonPlan(parsed.data));
+    } catch (error) {
+      return res.status(400).json({ error: error instanceof Error ? error.message : "Invalid comparison plan" });
+    }
+  });
+
+  app.post("/api/buddy/open-source/sandbox-plan", async (req, res) => {
+    const killSwitch = await storage.getSetting("kill_switch");
+    if ((killSwitch?.value as { enabled?: boolean } | undefined)?.enabled) {
+      return res.status(423).json({ message: "Open-source sandbox planning is locked by the kill switch" });
+    }
+    const parsed = openSourceSandboxPlanRequestSchema.safeParse(req.body);
+    if (!parsed.success) return res.status(400).json(zodValidationError(parsed.error));
+    try {
+      return res.status(201).json(createOpenSourceSandboxPlan(parsed.data));
+    } catch (error) {
+      return res.status(400).json({ error: error instanceof Error ? error.message : "Invalid sandbox plan" });
     }
   });
 

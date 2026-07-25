@@ -312,7 +312,10 @@
     const benchmark = document.createElement('a');
     benchmark.href = 'models.html';
     benchmark.textContent = 'Compare models';
-    actions.append(testButton, prospectus, calculator, connections, launch, benchmark);
+    const sourceLab = document.createElement('a');
+    sourceLab.href = 'open-model-lab.html';
+    sourceLab.textContent = 'Open-source lab';
+    actions.append(testButton, prospectus, calculator, connections, launch, benchmark, sourceLab);
     bubble.append(testResult, actions);
     row.append(avatar, bubble);
     thread.append(row);

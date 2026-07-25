@@ -4,6 +4,7 @@
 .model-lab-header { display: flex; align-items: flex-end; justify-content: space-between; gap: 24px; margin-bottom: 24px; }
 .model-lab-header h1 { margin: 4px 0 8px; font-size: 2.15rem; }
 .model-lab-header > div > p:last-child { max-width: 760px; color: var(--text2); }
+.model-header-actions { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 8px; }
 .model-lab-eyebrow { color: var(--green); font-size: .72rem; font-weight: 800; text-transform: uppercase; }
 .model-metrics { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); border-block: 1px solid var(--border); margin-bottom: 24px; }
 .model-metrics div { min-width: 0; padding: 18px; border-right: 1px solid var(--border); }
@@ -74,6 +75,7 @@
 @media (max-width: 720px) {
   .model-lab-shell { width: min(100% - 24px, 1460px); padding-top: 26px; }
   .model-lab-header { align-items: stretch; flex-direction: column; }
+  .model-header-actions { justify-content: flex-start; }
   .model-metrics { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .model-metrics div { border-bottom: 1px solid var(--border); }
   .model-metrics div:nth-child(even) { border-right: 0; }

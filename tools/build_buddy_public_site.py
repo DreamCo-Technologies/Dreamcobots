@@ -291,6 +291,9 @@ def validate_site() -> dict[str, Any]:
         WEBSITE / "models.html",
         WEBSITE / "models.css",
         WEBSITE / "models.js",
+        WEBSITE / "open-model-lab.html",
+        WEBSITE / "open-model-lab.css",
+        WEBSITE / "open-model-lab.js",
         WEBSITE / "service-worker.js",
         WEBSITE / "styles.css",
         WEBSITE / "system-map.html",
@@ -298,6 +301,7 @@ def validate_site() -> dict[str, Any]:
         WEBSITE / "data" / "buddy-routing-index.js",
         WEBSITE / "data" / "buddy-model-router.js",
         WEBSITE / "data" / "buddy-model-benchmarks.js",
+        WEBSITE / "data" / "buddy-open-model-coding-lab.js",
         WEBSITE / "data" / "buddy-capability-certifications.js",
         WEBSITE / "data" / "buddy-connection-catalog.json",
         WEBSITE / "data" / "buddy-specialized-hubs.js",
@@ -418,6 +422,23 @@ def validate_site() -> dict[str, Any]:
         for control_id in sorted(required_model_controls):
             if f"byId('{control_id}')" not in model_script:
                 errors.append(f"Model Lab control is not bound in models.js: #{control_id}")
+
+    open_lab_parser = parsers.get(WEBSITE / "open-model-lab.html")
+    open_lab_script = (WEBSITE / "open-model-lab.js").read_text(encoding="utf-8") if (WEBSITE / "open-model-lab.js").exists() else ""
+    required_open_lab_controls = {
+        "open-model-search", "open-region-filter", "open-access-filter", "open-model-grid",
+        "open-task-options", "open-runtime", "open-repetitions", "open-network", "open-budget",
+        "open-paid-approval", "prepare-open-comparison", "download-open-comparison",
+        "open-source-form", "source-kind", "source-url", "source-revision", "source-license",
+        "source-objective", "source-rights", "source-network", "prepare-source-plan",
+        "download-source-plan",
+    }
+    if open_lab_parser:
+        for control_id in sorted(required_open_lab_controls - open_lab_parser.ids):
+            errors.append(f"Missing Open Model Lab interaction control: #{control_id}")
+        for control_id in sorted(required_open_lab_controls):
+            if f"byId('{control_id}')" not in open_lab_script:
+                errors.append(f"Open Model Lab control is not bound in open-model-lab.js: #{control_id}")
 
     skipped_roots = {".git", "node_modules", "dist", "logs"}
     branding_hits: list[str] = []

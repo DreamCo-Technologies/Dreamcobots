@@ -45,6 +45,11 @@ class UpgradeRequest:
     repository_path: str
     license_id: str
     allow_sandbox_execution: bool = False
+    source_revision: str = ""
+    allow_network_during_build: bool = False
+    trust_remote_code: bool = False
+    timeout_seconds: int = 900
+    memory_mb: int = 4096
 
 
 class BuddyOpenSourceLab:
@@ -111,8 +116,14 @@ class BuddyOpenSourceLab:
             raise OpenSourceError("The license is unknown or not approved for this evaluation.")
         if inspection.get("potential_secret_files"):
             raise OpenSourceError("Potential secret files must be removed from the sandbox package.")
+        if request.trust_remote_code:
+            raise OpenSourceError("Remote model or repository code is disabled in Buddy sandboxes.")
+        if request.timeout_seconds < 30 or request.timeout_seconds > 7_200:
+            raise OpenSourceError("Sandbox timeout must be between 30 and 7,200 seconds.")
+        if request.memory_mb < 512 or request.memory_mb > 131_072:
+            raise OpenSourceError("Sandbox memory must be between 512 and 131,072 MB.")
         return {
-            "schema": "dreamco.buddy_open_source_upgrade.v1",
+            "schema": "dreamco.buddy_open_source_upgrade.v2",
             "status": "sandbox_plan_ready" if request.allow_sandbox_execution else "execution_permission_required",
             "buddy_instance_id": request.buddy_instance_id,
             "repository_id": inspection["repository_id"],
@@ -123,21 +134,38 @@ class BuddyOpenSourceLab:
                 "attribution_required": True,
             },
             "sandbox": {
-                "network_default": "off",
-                "filesystem": "temporary_copy",
+                "adapter_required": True,
+                "live_execution_performed": False,
+                "network_default": "one_run_approval_required" if request.allow_network_during_build else "off",
+                "source_mount": "read_only",
+                "filesystem": "ephemeral_work_directory",
+                "run_as": "non_root",
+                "host_sockets": "none",
                 "secrets": "none",
-                "resource_limits": True,
+                "resource_limits": {
+                    "timeout_seconds": request.timeout_seconds,
+                    "memory_mb": request.memory_mb,
+                    "cpu": "capped_by_adapter",
+                    "disk": "capped_by_adapter",
+                    "processes": "capped_by_adapter",
+                },
+                "trust_remote_code": False,
                 "source_execution_approved": request.allow_sandbox_execution,
+                "outputs": "quarantined_until_tests_and_owner_review",
             },
             "stages": [
+                "pin and verify the exact source revision",
                 "lock dependencies and verify checksums",
-                "scan licenses, secrets, vulnerabilities, and generated files",
+                "scan licenses, secrets, unsafe serialization, vulnerabilities, and generated files",
+                "generate an SBOM and open-source security scorecard evidence",
                 "build in an isolated disposable sandbox",
                 "run upstream tests",
-                "run Buddy compatibility and adversarial tests",
+                "run Buddy compatibility, mutation, security, and adversarial tests",
+                "record failures, resource use, logs, and artifact hashes",
                 "show visual or behavioral diff",
                 "generate attribution and source-obligation report",
                 "owner approves a reversible upgrade checkpoint",
             ],
             "automatic_merge": False,
+            "automatic_publish": False,
         }

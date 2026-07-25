@@ -1,5 +1,5 @@
-const SHELL_CACHE = 'buddy-shell-v9';
-const RUNTIME_CACHE = 'buddy-runtime-v9';
+const SHELL_CACHE = 'buddy-shell-v12';
+const RUNTIME_CACHE = 'buddy-runtime-v12';
 const APP_SHELL = [
   './',
   './buddy.html',
@@ -24,12 +24,16 @@ const APP_SHELL = [
   './models.html',
   './models.css',
   './models.js',
+  './open-model-lab.html',
+  './open-model-lab.css',
+  './open-model-lab.js',
   './styles.css',
   './nav.js',
   './manifest.webmanifest',
   './data/buddy-routing-index.js',
   './data/buddy-model-router.js',
   './data/buddy-model-benchmarks.js',
+  './data/buddy-open-model-coding-lab.js',
   './data/buddy-capability-certifications.js',
   './data/buddy-distribution-catalog.json',
   './data/buddy-specialized-hubs.js',
