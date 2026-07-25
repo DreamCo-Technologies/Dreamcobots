@@ -10,6 +10,7 @@
     "check": "tsc",
     "db:push": "drizzle-kit push",
     "buddy:site:check": "python3 tools/build_buddy_public_site.py --check",
+    "buddy:deployment-cost-check": "python3 tools/check_deployment_cost_policy.py",
     "buddy:repository-audit": "python3 tools/generate_repository_test_registry.py --check",
     "buddy:creative-studio": "python3 tools/generate_buddy_multimodal_studio.py --check",
     "buddy:platform": "python3 tools/generate_buddy_platform_expansion.py --check",
@@ -24,7 +25,7 @@
     "buddy:specialized-hubs": "python3 tools/generate_buddy_specialized_hubs.py --check",
     "buddy:cli": "python3 tools/buddy_cli.py",
     "test:governed": "node --import tsx --test tests/bot-fleet-catalog.test.ts tests/fleet-runtime.test.ts tests/bot-calculator-engine.test.mjs tests/approval-notifications.test.ts tests/connection-policy.test.ts tests/device-action-policy.test.ts tests/buddy-model-policy.test.ts tests/model-benchmark-policy.test.ts tests/open-model-lab-policy.test.ts tests/task-and-data-policy.test.ts tests/repository-test-registry.test.ts tests/crypto-safety-policy.test.ts tests/government-resource-policy.test.ts tests/governed-leads.test.ts tests/outbound-adapters.test.ts tests/github-sync-policy.test.ts && python3 -m unittest tests.test_buddy_bot_calculators tests.test_buddy_distribution tests.test_buddy_creative_studio tests.test_buddy_production_group tests.test_buddy_game_lab tests.test_buddy_social_manager tests.test_buddy_platform_expansion tests.test_buddy_local_bridge",
-    "test:repository": "npm run buddy:repository-audit && npm run check && npm run test:governed && npm run buddy:site:check && npm run build"
+    "test:repository": "npm run buddy:repository-audit && npm run check && npm run test:governed && npm run buddy:site:check && npm run buddy:deployment-cost-check && npm run build"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",

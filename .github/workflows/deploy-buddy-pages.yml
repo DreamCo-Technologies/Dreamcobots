@@ -1,42 +1,6 @@
 name: Deploy Buddy Website
 
 on:
-  push:
-    branches:
-      - main
-    paths:
-      - ".github/workflows/deploy-buddy-pages.yml"
-      - "website/**"
-      - "config/master_bot_registry.json"
-      - "config/buddy-mcp-tool-registry.json"
-      - "config/buddy-model-router.json"
-      - "config/buddy-model-benchmarks.json"
-      - "config/repository-test-suites.json"
-      - "config/generated/**"
-      - "tools/build_buddy_public_site.py"
-      - "tools/generate_repository_test_registry.py"
-      - "tools/generate_buddy_model_router.py"
-      - "tools/generate_buddy_model_benchmarks.ts"
-      - "tools/generate_buddy_distribution_catalog.py"
-      - "tools/sync_buddy_website_build.py"
-      - "dreamco_platform/launch/distribution.py"
-  pull_request:
-    paths:
-      - ".github/workflows/deploy-buddy-pages.yml"
-      - "website/**"
-      - "config/master_bot_registry.json"
-      - "config/buddy-mcp-tool-registry.json"
-      - "config/buddy-model-router.json"
-      - "config/buddy-model-benchmarks.json"
-      - "config/repository-test-suites.json"
-      - "config/generated/**"
-      - "tools/build_buddy_public_site.py"
-      - "tools/generate_repository_test_registry.py"
-      - "tools/generate_buddy_model_router.py"
-      - "tools/generate_buddy_model_benchmarks.ts"
-      - "tools/generate_buddy_distribution_catalog.py"
-      - "tools/sync_buddy_website_build.py"
-      - "dreamco_platform/launch/distribution.py"
   workflow_dispatch:
 
 permissions:
@@ -62,6 +26,7 @@ jobs:
 
       - name: Run deployment preflight
         run: |
+          python3 tools/check_deployment_cost_policy.py
           python3 tools/generate_buddy_model_router.py --check
           node tools/check_buddy_model_benchmarks.mjs
           python3 tools/generate_buddy_distribution_catalog.py --check

@@ -13,9 +13,6 @@ on:
     paths:
       - 'bots/**'
       - 'shared/**'
-  schedule:
-    - cron: '0 6 * * *'
-
 jobs:
   fleet-scan:
     runs-on: ubuntu-latest
@@ -56,6 +53,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
+          retention-days: 1
           name: fleet-scan
           path: fleet-scan.json
 
@@ -104,6 +102,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
+          retention-days: 1
           name: buddy-deep-test
           path: buddy-deep-test.json
 
@@ -136,6 +135,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
+          retention-days: 1
           name: global-ai-sources
           path: global-ai-sources.json
 
@@ -168,6 +168,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
+          retention-days: 1
           name: deal-analyzer
           path: deal-analyzer.json
 
@@ -203,6 +204,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
+          retention-days: 1
           name: formula-vault
           path: formula-vault.json
 
@@ -239,6 +241,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
+          retention-days: 1
           name: code-lab
           path: code-lab.json
 
@@ -269,6 +272,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
+          retention-days: 1
           name: autonomy-modes
           path: autonomy-modes.json
 
@@ -296,6 +300,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
+          retention-days: 1
           name: ai-ecosystem
           path: ai-ecosystem.json
 
@@ -325,6 +330,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
+          retention-days: 1
           name: marketplace
           path: marketplace.json
 
@@ -354,6 +360,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
+          retention-days: 1
           name: connections
           path: connections.json
 
@@ -381,6 +388,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
+          retention-days: 1
           name: crypto
           path: crypto.json
 
@@ -415,6 +423,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
+          retention-days: 1
           name: payments
           path: payments.json
 
@@ -441,6 +450,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
+          retention-days: 1
           name: biz-launch
           path: biz-launch.json
 
@@ -470,6 +480,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
+          retention-days: 1
           name: debug-intel
           path: debug-intel.json
 
@@ -499,6 +510,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
+          retention-days: 1
           name: revenue-tracking
           path: revenue-tracking.json
 
@@ -528,6 +540,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
+          retention-days: 1
           name: cost-tracking
           path: cost-tracking.json
 
@@ -557,6 +570,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
+          retention-days: 1
           name: learning-matrix
           path: learning-matrix.json
 
@@ -584,6 +598,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
+          retention-days: 1
           name: ai-models-hub
           path: ai-models-hub.json
 
@@ -613,6 +628,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
+          retention-days: 1
           name: ai-leaders
           path: ai-leaders.json
 
@@ -647,6 +663,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
+          retention-days: 1
           name: orchestration
           path: orchestration.json
 
@@ -675,6 +692,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
+          retention-days: 1
           name: time-capsule
           path: time-capsule.json
 
@@ -705,6 +723,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
+          retention-days: 1
           name: pricing
           path: pricing.json
 
@@ -726,6 +745,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
+          retention-days: 1
           name: era-testing
           path: era-testing.json
 
@@ -747,6 +767,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
+          retention-days: 1
           name: core-test-suite
           path: core-test-suite.json
 
@@ -812,6 +833,7 @@ jobs:
       - name: Upload Master Dashboard
         uses: actions/upload-artifact@v4
         with:
+          retention-days: 1
           name: dreamco-master-dashboard
           path: |
             dashboard.html
