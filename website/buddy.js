@@ -141,6 +141,24 @@
       topScore: ranked[0]?.score || 0,
       modelPlan: localModelPlan(),
       execution: { status: 'sandbox_task_packet_ready' },
+      discovery: localDiscovery(objective, ranked[0]?.score || 0),
+    };
+  }
+
+  function localDiscovery(objective, topScore) {
+    const uncertain = topScore < 20 || /\b(not sure|do not know|don't know|figure out|where do i start|anything)\b/i.test(objective);
+    const normalized = objective.toLowerCase();
+    const role = normalized.match(/invest|investment|stock|portfolio|financial advisor|retirement|loan|credit/)
+      ? { id: 'financial education assistant', boundary: 'I can explain options, run calculators, verify sources, and prepare questions. Personalized investment advice and regulated transactions require a properly licensed professional.' }
+      : normalized.match(/medical|diagnose|symptom|medicine|health|therapy/)
+        ? { id: 'health information assistant', boundary: 'I can organize information and help prepare for care. I do not diagnose, prescribe, or replace a qualified clinician.' }
+        : normalized.match(/legal advice|lawsuit|court|contract|patent|trademark|immigration/)
+          ? { id: 'legal information assistant', boundary: 'I can organize documents, explain general information, and prepare questions. Legal conclusions and representation require a qualified professional.' }
+          : { id: 'task partner', boundary: 'I can teach, plan, draft, test, and coordinate. Live account changes, purchases, filings, messages, or publications require a configured adapter and exact approval.' };
+    return {
+      needsQuestion: uncertain,
+      question: 'What would a successful result let you do, even if you do not know the steps yet?',
+      role,
     };
   }
 
@@ -166,6 +184,7 @@
       const result = await response.json();
       return {
         ...result,
+        discovery: fallback.discovery,
         selected: {
           slug: result.selected.slug,
           name: result.selected.display_name,
@@ -195,6 +214,7 @@
       Fix: 'Got it. I will reproduce the problem, isolate the cause, and keep each repair reversible.',
       Create: 'I understand the direction. I will shape it into a clear creative brief, prototype, and review loop.',
       Plan: 'I can help with that. I will organize the decisions, costs, risks, evidence, and next actions.',
+      Discover: 'You do not need to know the steps. I will help define the result, teach unfamiliar parts, and begin with a safe practice task.',
     };
     return leads[taskMode] || leads.Build;
   }
@@ -205,6 +225,7 @@
       Fix: ['Reproduce the failure.', 'Repair the smallest responsible area.', 'Rerun the affected checks and keep rollback ready.'],
       Create: ['Set the audience, rights, and creative goal.', 'Build a reviewable draft or prototype.', 'Test quality, safety, and export requirements.'],
       Plan: ['Clarify the decision and constraints.', 'Compare practical routes, costs, and risks.', 'Prepare an approval-ready next action.'],
+      Discover: ['Describe what success should feel or look like.', 'Map the missing knowledge, tools, specialists, permissions, and costs.', 'Practice each unfamiliar step in a sandbox before doing anything live.'],
     };
     return steps[taskMode] || steps.Build;
   }
@@ -259,6 +280,23 @@
       planList.append(item);
     });
     bubble.append(planList);
+
+    if (result.discovery?.needsQuestion || mode === 'Discover') {
+      const discovery = document.createElement('div');
+      discovery.className = 'buddy-discovery-question';
+      const label = document.createElement('strong');
+      label.textContent = 'One question to aim us';
+      const question = document.createElement('p');
+      question.textContent = result.discovery?.question || 'What would a successful result let you do?';
+      discovery.append(label, question);
+      bubble.append(discovery);
+    }
+    if (result.discovery?.role?.boundary) {
+      const boundary = document.createElement('p');
+      boundary.className = 'buddy-role-boundary';
+      boundary.textContent = `${result.discovery.role.id}: ${result.discovery.role.boundary}`;
+      bubble.append(boundary);
+    }
 
     if (result.matchedCapabilities?.length) {
       const list = document.createElement('div');
@@ -315,7 +353,10 @@
     const sourceLab = document.createElement('a');
     sourceLab.href = 'open-model-lab.html';
     sourceLab.textContent = 'Open-source lab';
-    actions.append(testButton, prospectus, calculator, connections, launch, benchmark, sourceLab);
+    const dataControl = document.createElement('a');
+    dataControl.href = 'data-control.html';
+    dataControl.textContent = 'Data & memory';
+    actions.append(testButton, prospectus, calculator, connections, launch, benchmark, sourceLab, dataControl);
     bubble.append(testResult, actions);
     row.append(avatar, bubble);
     thread.append(row);

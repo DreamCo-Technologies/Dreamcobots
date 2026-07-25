@@ -280,6 +280,9 @@ def validate_site() -> dict[str, Any]:
         WEBSITE / "government.html",
         WEBSITE / "government.css",
         WEBSITE / "government.js",
+        WEBSITE / "data-control.html",
+        WEBSITE / "data-control.css",
+        WEBSITE / "data-control.js",
         WEBSITE / "nav.js",
         WEBSITE / "manifest.webmanifest",
         WEBSITE / "platform.html",
@@ -431,7 +434,10 @@ def validate_site() -> dict[str, Any]:
         "open-paid-approval", "prepare-open-comparison", "download-open-comparison",
         "open-source-form", "source-kind", "source-url", "source-revision", "source-license",
         "source-objective", "source-rights", "source-network", "prepare-source-plan",
-        "download-source-plan",
+        "download-source-plan", "frontier-target-options", "sandbox-learner-level",
+        "sandbox-contribution-mode", "repository-tracker-form", "tracker-url",
+        "tracker-revision", "tracker-license", "tracker-cadence", "tracker-rights",
+        "add-repository-tracker", "repository-tracker-list", "browser-support-status",
     }
     if open_lab_parser:
         for control_id in sorted(required_open_lab_controls - open_lab_parser.ids):
@@ -439,6 +445,24 @@ def validate_site() -> dict[str, Any]:
         for control_id in sorted(required_open_lab_controls):
             if f"byId('{control_id}')" not in open_lab_script:
                 errors.append(f"Open Model Lab control is not bound in open-model-lab.js: #{control_id}")
+
+    data_control_parser = parsers.get(WEBSITE / "data-control.html")
+    data_control_script = (WEBSITE / "data-control.js").read_text(encoding="utf-8") if (WEBSITE / "data-control.js").exists() else ""
+    required_data_control_controls = {
+        "export-data-center", "delete-buddy-memory", "clear-data-center", "memory-form", "memory-retention",
+        "memory-personalization", "memory-style", "memory-training", "data-source-form",
+        "data-source-name", "data-source-url", "data-acquisition", "data-source-category",
+        "data-source-retention", "data-source-rights", "privacy-request-form", "privacy-company",
+        "privacy-url", "privacy-jurisdiction", "privacy-verification", "data-package-form",
+        "package-name", "package-source", "package-category", "package-recipient", "package-terms",
+        "package-owner-created", "package-resale-rights", "package-opt-in",
+    }
+    if data_control_parser:
+        for control_id in sorted(required_data_control_controls - data_control_parser.ids):
+            errors.append(f"Missing Data Control interaction control: #{control_id}")
+        for control_id in sorted(required_data_control_controls):
+            if f"byId('{control_id}')" not in data_control_script:
+                errors.append(f"Data Control is not bound in data-control.js: #{control_id}")
 
     skipped_roots = {".git", "node_modules", "dist", "logs"}
     branding_hits: list[str] = []

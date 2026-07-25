@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="styles.css" />
-  <link rel="stylesheet" href="open-model-lab.css?v=12" />
+  <link rel="stylesheet" href="open-model-lab.css?v=14" />
 </head>
 <body class="open-lab-page">
 <div id="nav-placeholder"></div><script src="nav.js"></script>
@@ -25,6 +25,7 @@
 
   <section class="open-lab-metrics" aria-label="Catalog summary">
     <div><span>Open model families</span><strong id="open-model-count">0</strong></div>
+    <div><span>Frontier references</span><strong id="frontier-reference-count">0</strong></div>
     <div><span>Developer regions</span><strong id="open-region-count">0</strong></div>
     <div><span>Coding tests</span><strong id="open-task-count">0</strong></div>
     <div><span>Live calls</span><strong id="open-live-count">0</strong></div>
@@ -60,6 +61,10 @@
         <p>Comparison control</p>
         <h3 id="comparison-plan-heading">Prepare a signed test plan</h3>
         <div class="open-selected-count"><strong id="open-selected-count">0</strong><span>families selected</span></div>
+        <fieldset class="frontier-reference-options">
+          <legend>Frontier reference targets</legend>
+          <div id="frontier-target-options"></div>
+        </fieldset>
         <fieldset>
           <legend>Coding fixtures</legend>
           <div id="open-task-options" class="open-task-options"></div>
@@ -122,6 +127,12 @@
           <option value="tflite">TFLite</option>
         </select>
       </label>
+      <label for="sandbox-learner-level">Learning level
+        <select id="sandbox-learner-level"><option value="guided">Guided learner</option><option value="builder" selected>Independent builder</option><option value="contributor">Open-source contributor</option></select>
+      </label>
+      <label for="sandbox-contribution-mode">Contribution output
+        <select id="sandbox-contribution-mode"><option value="evidence_only">Evidence only</option><option value="issue_draft">Upstream issue draft</option><option value="patch_packet">Reviewed patch packet</option><option value="evaluation_dataset">Rights-cleared evaluation dataset</option></select>
+      </label>
       <label class="source-objective-field" for="source-objective">What should Buddy build or test?
         <textarea id="source-objective" required minlength="10" maxlength="2000" rows="4" placeholder="Build the project from its lockfile, run upstream and security tests, then produce a compatibility report."></textarea>
       </label>
@@ -148,6 +159,31 @@
       <ol id="open-source-stages"></ol>
       <button id="download-source-plan" class="btn btn-outline btn-sm" type="button">Save plan</button>
     </section>
+  </section>
+
+  <section class="open-lab-section repository-tracker-section" aria-labelledby="tracker-heading">
+    <div class="open-lab-section-heading">
+      <div><p>Repository watchlist</p><h2 id="tracker-heading">Track licensed open source</h2></div>
+      <span id="browser-support-status" class="open-lab-state">Checking browser support</span>
+    </div>
+    <form id="repository-tracker-form" class="repository-tracker-form">
+      <label for="tracker-url">Repository or model URL<input id="tracker-url" type="url" required placeholder="https://github.com/owner/project" /></label>
+      <label for="tracker-revision">Starting revision<input id="tracker-revision" required minlength="4" placeholder="Commit SHA or immutable tag" /></label>
+      <label for="tracker-license">Declared license<input id="tracker-license" required minlength="2" placeholder="Apache-2.0" /></label>
+      <label for="tracker-cadence">Check cadence<select id="tracker-cadence"><option value="manual">Manual</option><option value="daily">Daily</option><option value="weekly" selected>Weekly</option></select></label>
+      <fieldset class="tracker-interests"><legend>Track</legend>
+        <label><input type="checkbox" name="tracker-interest" value="releases" checked /> Releases</label>
+        <label><input type="checkbox" name="tracker-interest" value="license" checked /> License</label>
+        <label><input type="checkbox" name="tracker-interest" value="security" checked /> Security</label>
+        <label><input type="checkbox" name="tracker-interest" value="tests" checked /> Tests</label>
+        <label><input type="checkbox" name="tracker-interest" value="issues" /> Issues</label>
+        <label><input type="checkbox" name="tracker-interest" value="models" /> Model cards</label>
+      </fieldset>
+      <label class="open-check tracker-rights"><input id="tracker-rights" type="checkbox" required /><span>I confirmed the source and license may be evaluated.</span></label>
+      <button id="add-repository-tracker" class="btn btn-primary" type="submit">Add tracker</button>
+    </form>
+    <p id="repository-tracker-status" class="open-lab-note">The browser ledger stores metadata only. Daily or weekly background checks require a deployed scheduler.</p>
+    <div id="repository-tracker-list" class="repository-tracker-list" aria-live="polite"></div>
   </section>
 
   <section class="open-safety-band" aria-label="Open model and source protections">

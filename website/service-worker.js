@@ -1,5 +1,5 @@
-const SHELL_CACHE = 'buddy-shell-v12';
-const RUNTIME_CACHE = 'buddy-runtime-v12';
+const SHELL_CACHE = 'buddy-shell-v14';
+const RUNTIME_CACHE = 'buddy-runtime-v14';
 const APP_SHELL = [
   './',
   './buddy.html',
@@ -21,6 +21,9 @@ const APP_SHELL = [
   './government.html',
   './government.css',
   './government.js',
+  './data-control.html',
+  './data-control.css',
+  './data-control.js',
   './models.html',
   './models.css',
   './models.js',

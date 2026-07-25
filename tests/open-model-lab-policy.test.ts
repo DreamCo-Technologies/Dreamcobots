@@ -3,6 +3,7 @@ import test from "node:test";
 
 import {
   createOpenModelComparisonPlan,
+  createRepositoryTrackingPlan,
   createOpenSourceSandboxPlan,
 } from "../server/open-model-lab-policy";
 
@@ -18,6 +19,23 @@ test("global model comparison uses evidence and never scores developer region", 
   assert.equal(plan.modelCount, 3);
   assert.equal(plan.totalCases, 12);
   assert.equal(plan.scoring.developerRegionUsedForScoring, false);
+  assert.equal(plan.liveExecutionPerformed, false);
+});
+
+test("open and frontier targets share fixtures without invented live results", () => {
+  const plan = createOpenModelComparisonPlan({
+    modelFamilyIds: ["gpt-oss"],
+    frontierTargets: [{ referenceId: "frontier-openai-api", exactModelId: "frontier-code-model-2026-07" }],
+    taskIds: ["bug_repair", "reproducibility"],
+    repetitions: 1,
+    maxBudgetUsd: 0,
+    allowExternalNetwork: false,
+    approvePaidAdaptersForThisRun: false,
+  });
+  assert.equal(plan.openModelCount, 1);
+  assert.equal(plan.frontierTargetCount, 1);
+  assert.equal(plan.scoring.openAndFrontierComparedOnSameFixtures, true);
+  assert.equal(plan.status, "frontier_network_approval_required");
   assert.equal(plan.liveExecutionPerformed, false);
 });
 
@@ -48,6 +66,8 @@ test("sandbox plan requires immutable revisions and performs no live execution",
   assert.equal(plan.liveExecutionPerformed, false);
   assert.equal(plan.controls.network, "off");
   assert.equal(plan.automaticMerge, false);
+  assert.equal(plan.academy.automaticModelTraining, false);
+  assert.equal(plan.contribution.automaticUpstreamSubmission, false);
 });
 
 test("model-weight plans block credentials, remote code, and unsafe formats", () => {
@@ -70,4 +90,20 @@ test("model-weight plans block credentials, remote code, and unsafe formats", ()
   }), /credentials/);
   const plan = createOpenSourceSandboxPlan({ ...base, trustRemoteCode: false, weightFormat: "gguf" });
   assert.equal(plan.source.weightFormat, "gguf");
+});
+
+test("repository tracking stores metadata and requires a scheduler for background checks", () => {
+  const plan = createRepositoryTrackingPlan({
+    sourceUrl: "https://github.com/example/project",
+    revision: "v2.0.0",
+    declaredLicense: "Apache-2.0",
+    cadence: "daily",
+    interests: ["releases", "license", "security", "tests"],
+    notificationChannels: ["in_app"],
+    ownerConfirmsRights: true,
+  });
+  assert.equal(plan.storage.metadataOnly, true);
+  assert.equal(plan.deployedSchedulerRequired, true);
+  assert.equal(plan.nextCheckScheduled, false);
+  assert.equal(plan.automaticPullOrExecution, false);
 });

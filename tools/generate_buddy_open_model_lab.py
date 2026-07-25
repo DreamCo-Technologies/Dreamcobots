@@ -20,9 +20,10 @@ def validate(payload: dict[str, Any]) -> dict[str, Any]:
     if payload.get("schema") != "dreamco.buddy_open_model_coding_lab.v1":
         raise ValueError("Unsupported open-model coding lab schema.")
     models = payload.get("model_families", [])
+    frontier = payload.get("frontier_references", [])
     tasks = payload.get("coding_tasks", [])
     runtimes = payload.get("local_runtimes", [])
-    if len(models) < 6 or len(tasks) < 8 or len(runtimes) < 3:
+    if len(models) < 6 or len(frontier) < 3 or len(tasks) < 8 or len(runtimes) < 3:
         raise ValueError("The catalog needs global model, coding-task, and runtime coverage.")
 
     def unique_ids(rows: list[dict[str, Any]], label: str) -> None:
@@ -31,6 +32,7 @@ def validate(payload: dict[str, Any]) -> dict[str, Any]:
             raise ValueError(f"{label} ids must be present and unique.")
 
     unique_ids(models, "Model family")
+    unique_ids(frontier, "Frontier reference")
     unique_ids(tasks, "Coding task")
     unique_ids(runtimes, "Runtime")
     regions = {str(model.get("developer_region", "")).strip() for model in models}
@@ -42,6 +44,16 @@ def validate(payload: dict[str, Any]) -> dict[str, Any]:
             raise ValueError(f"Model source must be an official HTTPS URL: {model.get('id')}")
         if not str(model.get("license", "")).strip() or not model.get("exact_checkpoint_review_required"):
             raise ValueError(f"Model license and exact-checkpoint review are required: {model.get('id')}")
+    for target in frontier:
+        source = urlsplit(str(target.get("official_source", "")))
+        if source.scheme != "https" or not source.netloc or not target.get("exact_model_id_required_at_run"):
+            raise ValueError(f"Frontier references require an official source and exact model id: {target.get('id')}")
+    academy = payload.get("sandbox_academy", {})
+    tracking = payload.get("repository_tracking", {})
+    if len(academy.get("levels", [])) < 3 or len(academy.get("lesson_stages", [])) < 6:
+        raise ValueError("Sandbox Academy needs guided, builder, and contributor curricula.")
+    if tracking.get("automatic_pull_or_execution") is not False:
+        raise ValueError("Repository tracking must not pull or execute source automatically.")
     policy = payload.get("comparison_policy", {})
     required_policy = {
         "developer_region_is_informational_only",
@@ -56,6 +68,7 @@ def validate(payload: dict[str, Any]) -> dict[str, Any]:
         **payload,
         "summary": {
             "model_families": len(models),
+            "frontier_references": len(frontier),
             "developer_regions": len(regions),
             "coding_tasks": len(tasks),
             "local_runtimes": len(runtimes),

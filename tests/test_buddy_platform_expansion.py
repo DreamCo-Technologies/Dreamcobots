@@ -36,6 +36,7 @@ from dreamco_platform.privacy import (
     DataPermissionRequest,
     DataSource,
     DataWalletError,
+    PrivacyRightsRequest,
 )
 from tools.generate_buddy_platform_expansion import build_registry
 
@@ -147,6 +148,45 @@ class BuddyPlatformExpansionTests(unittest.TestCase):
                 third_party_license_opt_in=True,
                 recipient_class="media partners",
             ))
+
+    def test_data_wallet_builds_rights_and_package_plans_without_claiming_external_action(self):
+        wallet = BuddyDataWallet("owner-1")
+        wallet.register_source(DataSource(
+            source_id="synthetic-evals",
+            owner_user_id="owner-1",
+            display_name="My synthetic evaluations",
+            encrypted_reference="vault:owner/synthetic-evals",
+            categories=(DataCategory.PROFILE,),
+            acquisition="user_upload",
+            user_owns_data=True,
+            resale_license_confirmed=True,
+        ))
+        wallet.choices.third_party_sale_or_share_enabled = True
+        grant = wallet.authorize(DataPermissionRequest(
+            source_id="synthetic-evals",
+            purposes=("licensed_data_package",),
+            retention_days=30,
+            explicit_collection_consent=True,
+            third_party_license_opt_in=True,
+            recipient_class="approved research organizations",
+        ))
+        package = wallet.licensed_package_plan(
+            grant["grant_id"],
+            package_name="Synthetic coding evaluations",
+            fields=("fixture", "expected_result", "grader"),
+            compensation_terms="one-year non-exclusive license",
+        )
+        rights = wallet.privacy_rights_plan(PrivacyRightsRequest(
+            company_name="Example Service",
+            privacy_request_url="https://example.com/privacy/request",
+            jurisdiction="California, United States",
+            rights=("access", "portability", "delete", "opt_out_sale_share"),
+            identity_verification_method="company_form",
+        ))
+        self.assertFalse(package["marketplace_listing_created"])
+        self.assertFalse(package["sale_completed"])
+        self.assertFalse(rights["request_submitted"])
+        self.assertFalse(rights["outside_company_compliance_guaranteed"])
 
     def test_subscription_manager_finds_duplicates_and_stops_before_payment(self):
         manager = BuddySubscriptionManager()

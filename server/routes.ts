@@ -62,11 +62,27 @@ import {
 } from "./model-benchmark-policy";
 import {
   createOpenModelComparisonPlan,
+  createRepositoryTrackingPlan,
   createOpenSourceSandboxPlan,
   OPEN_MODEL_CATALOG,
   openModelComparisonRequestSchema,
   openSourceSandboxPlanRequestSchema,
+  repositoryTrackingPlanRequestSchema,
 } from "./open-model-lab-policy";
+import {
+  createDataImportPlan,
+  createDataPackagePlan,
+  createMemoryPreferencePlan,
+  createPrivacyRightsPlan,
+  dataImportPlanRequestSchema,
+  dataPackagePlanRequestSchema,
+  memoryPreferencePlanRequestSchema,
+  privacyRightsPlanRequestSchema,
+} from "./data-rights-policy";
+import {
+  createTaskDiscoveryPlan,
+  taskDiscoveryRequestSchema,
+} from "./task-discovery-policy";
 import {
   createCryptoMiningPlan,
   createCryptoWalletPlan,
@@ -732,13 +748,15 @@ export async function registerRoutes(
   // ===== DATA PACKAGES (for selling training data) =====
   app.get("/api/data-packages", async (_req, res) => {
     res.json({
-      packages: [
-        { id: "dp-conversations", name: "Empire OS Conversation Dataset", size: "~50K conversations", price: "$299/mo", description: "High-quality AI conversations across 45 business domains for fine-tuning", tier: "pro" },
-        { id: "dp-bot-prompts", name: "1,051 Bot System Prompts", size: "~2MB", price: "$499 one-time", description: "Complete system prompt library covering every industry vertical", tier: "enterprise" },
-        { id: "dp-revenue-flows", name: "Revenue Automation Flows", size: "~500 workflows", price: "$199/mo", description: "n8n/workflow templates for autonomous revenue generation", tier: "pro" },
-        { id: "dp-code-snippets", name: "DreamCode Snippet Library", size: "~10K snippets", price: "$149/mo", description: "Production-ready code snippets across 50+ languages and frameworks", tier: "pro" },
-        { id: "dp-formulas", name: "High-Profit Formula Library", size: "~300 formulas", price: "$999 one-time", description: "Business formulas, deal calculators, and financial models", tier: "elite" },
+      schema: "dreamco.safe_data_package_templates.v1",
+      claim: "Planning templates only. No dataset is listed, licensed, or sold by this endpoint.",
+      templates: [
+        { id: "synthetic-evals", name: "Owner-generated synthetic evaluations", allowed: "Synthetic prompts, expected results, and grader evidence created by the owner", blocked: "Private conversations, provider outputs without rights, personal data" },
+        { id: "open-source-test-evidence", name: "Licensed open-source test evidence", allowed: "Original compatibility results with source revision, license, and provenance", blocked: "Repository code redistributed outside its license" },
+        { id: "public-domain-annotations", name: "Public-domain annotations", allowed: "Owner-created annotations over verified public-domain material", blocked: "Copyrighted or unclear-rights source material" },
+        { id: "original-workflows", name: "Original workflow templates", allowed: "Owner-authored, secret-free workflow schemas and documentation", blocked: "Customer records, credentials, or third-party confidential processes" },
       ],
+      requiredGate: "POST /api/buddy/data/package-plan",
     });
   });
 
@@ -1380,6 +1398,9 @@ export async function registerRoutes(
         { name: "Course Simulator", route: "POST /api/buddy/simulate-course", status: "live", description: "Simulate full college courses" },
         { name: "Competitive Intel", route: "POST /api/intel/competitive", status: "live", description: "Analyze any competitor" },
         { name: "Data Packages", route: "GET /api/data-packages", status: "consent-gated", description: "Package only user-owned, licensed, nonsensitive data with separate opt-in and opt-out controls" },
+        { name: "Task Discovery", route: "POST /api/buddy/task-discovery/plan", status: "live", description: "Turn unfamiliar goals into guided, testable, approval-aware task maps" },
+        { name: "Personal Data Controls", route: "POST /api/buddy/data/privacy-request-plan", status: "permission-gated", description: "Plan imports, access, portability, deletion, opt-out, selective memory, and lawful data packages" },
+        { name: "Open Source Tracker", route: "POST /api/buddy/open-source/tracking-plan", status: "scheduler-adapter-required", description: "Track pinned repository metadata, licenses, releases, security, tests, and contribution opportunities" },
         { name: "Governed Platform Registry", route: "GET /api/buddy/platform-expansion", status: "live", description: "Launch, privacy, finance, creative, IP, open-source, customization, and roadmap contracts" },
         { name: "Bot Calculator Registry", route: "GET /api/buddy/calculators", status: "live", description: "One bounded local planning calculator contract for every Buddy bot profile" },
         { name: "Install and Distribution Catalog", route: "GET /api/buddy/distribution", status: "live", description: "PWA installation plus governed packaging and publishing plans for 26 device and store targets" },
@@ -3005,6 +3026,16 @@ Any improvements or fixes (optional, 1-2 bullet points max)`;
     }
   });
 
+  app.post("/api/buddy/open-source/tracking-plan", async (req, res) => {
+    const parsed = repositoryTrackingPlanRequestSchema.safeParse(req.body);
+    if (!parsed.success) return res.status(400).json(zodValidationError(parsed.error));
+    try {
+      return res.status(201).json(createRepositoryTrackingPlan(parsed.data));
+    } catch (error) {
+      return res.status(400).json({ error: error instanceof Error ? error.message : "Invalid repository tracking plan" });
+    }
+  });
+
   app.post("/api/buddy/open-source/sandbox-plan", async (req, res) => {
     const killSwitch = await storage.getSetting("kill_switch");
     if ((killSwitch?.value as { enabled?: boolean } | undefined)?.enabled) {
@@ -3016,6 +3047,52 @@ Any improvements or fixes (optional, 1-2 bullet points max)`;
       return res.status(201).json(createOpenSourceSandboxPlan(parsed.data));
     } catch (error) {
       return res.status(400).json({ error: error instanceof Error ? error.message : "Invalid sandbox plan" });
+    }
+  });
+
+  app.post("/api/buddy/task-discovery/plan", (req, res) => {
+    const parsed = taskDiscoveryRequestSchema.safeParse(req.body);
+    if (!parsed.success) return res.status(400).json(zodValidationError(parsed.error));
+    return res.status(201).json(createTaskDiscoveryPlan(parsed.data));
+  });
+
+  app.post("/api/buddy/data/import-plan", (req, res) => {
+    const parsed = dataImportPlanRequestSchema.safeParse(req.body);
+    if (!parsed.success) return res.status(400).json(zodValidationError(parsed.error));
+    try {
+      return res.status(201).json(createDataImportPlan(parsed.data));
+    } catch (error) {
+      return res.status(400).json({ error: error instanceof Error ? error.message : "Invalid data import plan" });
+    }
+  });
+
+  app.post("/api/buddy/data/privacy-request-plan", (req, res) => {
+    const parsed = privacyRightsPlanRequestSchema.safeParse(req.body);
+    if (!parsed.success) return res.status(400).json(zodValidationError(parsed.error));
+    try {
+      return res.status(201).json(createPrivacyRightsPlan(parsed.data));
+    } catch (error) {
+      return res.status(400).json({ error: error instanceof Error ? error.message : "Invalid privacy rights plan" });
+    }
+  });
+
+  app.post("/api/buddy/data/package-plan", (req, res) => {
+    const parsed = dataPackagePlanRequestSchema.safeParse(req.body);
+    if (!parsed.success) return res.status(400).json(zodValidationError(parsed.error));
+    try {
+      return res.status(201).json(createDataPackagePlan(parsed.data));
+    } catch (error) {
+      return res.status(400).json({ error: error instanceof Error ? error.message : "Invalid data package plan" });
+    }
+  });
+
+  app.post("/api/buddy/memory/preferences-plan", (req, res) => {
+    const parsed = memoryPreferencePlanRequestSchema.safeParse(req.body);
+    if (!parsed.success) return res.status(400).json(zodValidationError(parsed.error));
+    try {
+      return res.status(201).json(createMemoryPreferencePlan(parsed.data));
+    } catch (error) {
+      return res.status(400).json({ error: error instanceof Error ? error.message : "Invalid memory preference plan" });
     }
   });
 

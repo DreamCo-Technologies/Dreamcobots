@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Buddy Data and Memory Center | DreamCo</title>
+  <meta name="description" content="Control Buddy memory, data connections, privacy-rights requests, exports, deletion plans, and rights-cleared data packages." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="data-control.css" />
+</head>
+<body class="data-control-page">
+<div id="nav-placeholder"></div><script src="nav.js"></script>
+
+<main class="data-control-shell">
+  <header class="data-control-header">
+    <div>
+      <p class="data-eyebrow">User-owned memory and rights</p>
+      <h1>Data and Memory Center</h1>
+      <p>Choose what Buddy may learn, connect owner-authorized data, track privacy requests, and prepare rights-cleared packages.</p>
+    </div>
+    <button id="export-data-center" class="btn btn-outline btn-sm" type="button">Export my control plans</button>
+  </header>
+
+  <section class="data-metrics" aria-label="Data control summary">
+    <div><span>Memory categories</span><strong id="data-memory-count">0</strong></div>
+    <div><span>Connected-source plans</span><strong id="data-source-count">0</strong></div>
+    <div><span>Privacy requests</span><strong id="data-request-count">0</strong></div>
+    <div><span>External actions</span><strong>0</strong></div>
+  </section>
+
+  <section class="data-section" aria-labelledby="memory-heading">
+    <div class="data-section-heading">
+      <div><p>Selective learning</p><h2 id="memory-heading">Buddy personality and memory</h2></div>
+      <div class="data-heading-actions">
+        <button id="delete-buddy-memory" class="btn btn-outline btn-sm" type="button">Delete saved preferences</button>
+        <button id="clear-data-center" class="btn btn-outline btn-sm" type="button">Clear local records</button>
+      </div>
+    </div>
+    <form id="memory-form" class="memory-form">
+      <fieldset class="memory-categories">
+        <legend>Buddy may remember</legend>
+        <label><input type="checkbox" name="memory-category" value="preferences" checked /> Preferences</label>
+        <label><input type="checkbox" name="memory-category" value="projects" checked /> Projects</label>
+        <label><input type="checkbox" name="memory-category" value="decisions" /> Decisions</label>
+        <label><input type="checkbox" name="memory-category" value="learning_progress" checked /> Learning progress</label>
+        <label><input type="checkbox" name="memory-category" value="accessibility" /> Accessibility</label>
+        <label><input type="checkbox" name="memory-category" value="language_style" checked /> Language style</label>
+      </fieldset>
+      <div class="trait-grid">
+        <label for="trait-warmth">Warmth <output id="trait-warmth-value">80%</output><input id="trait-warmth" type="range" min="0" max="100" value="80" /></label>
+        <label for="trait-directness">Directness <output id="trait-directness-value">65%</output><input id="trait-directness" type="range" min="0" max="100" value="65" /></label>
+        <label for="trait-patience">Patience <output id="trait-patience-value">90%</output><input id="trait-patience" type="range" min="0" max="100" value="90" /></label>
+        <label for="trait-curiosity">Curiosity <output id="trait-curiosity-value">85%</output><input id="trait-curiosity" type="range" min="0" max="100" value="85" /></label>
+      </div>
+      <div class="memory-controls">
+        <label for="memory-retention">Retention
+          <select id="memory-retention"><option value="7">7 days</option><option value="30" selected>30 days</option><option value="90">90 days</option><option value="365">1 year</option></select>
+        </label>
+        <label class="data-check"><input id="memory-personalization" type="checkbox" checked /><span>Use selected memory for personalization.</span></label>
+        <label class="data-check"><input id="memory-style" type="checkbox" checked /><span>Adapt language style outside professional contexts.</span></label>
+        <label class="data-check"><input id="memory-training" type="checkbox" /><span>Separately opt in to private model training.</span></label>
+      </div>
+      <button id="save-memory-preferences" class="btn btn-primary" type="submit">Save memory choices</button>
+    </form>
+    <p id="memory-status" class="data-status" aria-live="polite">Sensitive memory is off. Professional contexts always use a professional tone.</p>
+  </section>
+
+  <section class="data-section" aria-labelledby="source-heading">
+    <div class="data-section-heading"><div><p>Owner-authorized sources</p><h2 id="source-heading">Prepare a data connection</h2></div><span class="data-state">No credentials accepted</span></div>
+    <form id="data-source-form" class="data-form-grid">
+      <label for="data-source-name">Source name<input id="data-source-name" required minlength="2" placeholder="My project export" /></label>
+      <label for="data-source-url">Official URL<input id="data-source-url" type="url" placeholder="https://service.example/privacy/export" /></label>
+      <label for="data-acquisition">Connection route<select id="data-acquisition"><option value="official_export">Official export</option><option value="authorized_connector">Authorized connector</option><option value="user_upload">User upload</option><option value="public_domain">Verified public domain</option></select></label>
+      <label for="data-source-category">Data category<select id="data-source-category"><option value="preferences">Preferences</option><option value="projects">Project records</option><option value="creative_work">Creative work</option><option value="business_records">Business records</option><option value="app_activity">App activity</option><option value="purchases">Purchases</option></select></label>
+      <label for="data-source-retention">Retention<select id="data-source-retention"><option value="7">7 days</option><option value="30" selected>30 days</option><option value="90">90 days</option></select></label>
+      <label class="data-check data-wide"><input id="data-source-rights" type="checkbox" required /><span>I own or am authorized to connect this data for the selected purpose.</span></label>
+      <button id="prepare-data-source" class="btn btn-primary" type="submit">Prepare connection</button>
+    </form>
+    <div id="data-source-list" class="data-ledger" aria-live="polite"></div>
+  </section>
+
+  <section class="data-section" aria-labelledby="rights-heading">
+    <div class="data-section-heading"><div><p>Access, export, delete, and opt out</p><h2 id="rights-heading">Privacy request tracker</h2></div><span class="data-state amber">Outside compliance is not guaranteed</span></div>
+    <form id="privacy-request-form" class="data-form-grid">
+      <label for="privacy-company">Company<input id="privacy-company" required minlength="2" placeholder="Service or data broker" /></label>
+      <label for="privacy-url">Official privacy form<input id="privacy-url" type="url" required placeholder="https://service.example/privacy/request" /></label>
+      <label for="privacy-jurisdiction">Jurisdiction<input id="privacy-jurisdiction" required minlength="2" placeholder="California, United States" /></label>
+      <label for="privacy-verification">Verification route<select id="privacy-verification"><option value="company_form">Company form</option><option value="verified_email">Verified email</option><option value="postal_mail">Postal mail</option><option value="other">Other official route</option></select></label>
+      <fieldset class="privacy-rights data-wide"><legend>Request</legend>
+        <label><input type="checkbox" name="privacy-right" value="access" checked /> Access</label>
+        <label><input type="checkbox" name="privacy-right" value="portability" checked /> Export</label>
+        <label><input type="checkbox" name="privacy-right" value="delete" checked /> Delete</label>
+        <label><input type="checkbox" name="privacy-right" value="correct" /> Correct</label>
+        <label><input type="checkbox" name="privacy-right" value="opt_out_sale_share" checked /> Stop sale/share</label>
+        <label><input type="checkbox" name="privacy-right" value="limit_sensitive_use" /> Limit sensitive use</label>
+      </fieldset>
+      <button id="prepare-privacy-request" class="btn btn-primary" type="submit">Prepare request</button>
+    </form>
+    <div id="privacy-request-list" class="data-ledger" aria-live="polite"></div>
+  </section>
+
+  <section class="data-section" aria-labelledby="package-heading">
+    <div class="data-section-heading"><div><p>Rights-cleared data licensing</p><h2 id="package-heading">Prepare a data package</h2></div><span class="data-state red">Sensitive and third-party personal data blocked</span></div>
+    <form id="data-package-form" class="data-form-grid">
+      <label for="package-name">Package name<input id="package-name" required minlength="3" placeholder="Original synthetic coding evaluations" /></label>
+      <label for="package-source">Vault reference<input id="package-source" required pattern="[A-Za-z][A-Za-z0-9_.:/-]{2,127}" placeholder="vault:owner/evaluations" /></label>
+      <label for="package-category">Category<select id="package-category"><option value="creative_work">Original creative work</option><option value="business_records">Original business datasets</option></select></label>
+      <label for="package-recipient">Recipient class<input id="package-recipient" required minlength="3" placeholder="Approved research organizations" /></label>
+      <label class="data-wide" for="package-terms">Compensation and license terms<textarea id="package-terms" required minlength="3" rows="3" placeholder="One-year non-exclusive license with revocation before execution."></textarea></label>
+      <div class="package-checks data-wide">
+        <label class="data-check"><input id="package-owner-created" type="checkbox" required /><span>I created this data.</span></label>
+        <label class="data-check"><input id="package-resale-rights" type="checkbox" required /><span>I confirmed resale and licensing rights.</span></label>
+        <label class="data-check"><input id="package-opt-in" type="checkbox" required /><span>I separately opt in to this package plan.</span></label>
+      </div>
+      <button id="prepare-data-package" class="btn btn-primary" type="submit">Prepare manifest</button>
+    </form>
+    <p id="data-package-status" class="data-status">No marketplace listing or sale is created from this page.</p>
+  </section>
+</main>
+
+<script src="data-control.js" defer></script>
+</body>
+</html>

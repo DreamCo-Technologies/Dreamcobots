@@ -21,6 +21,7 @@
     { href: 'deals.html', label: '🏠 Deals' },
     { href: 'debug.html', label: '🛠️ Debug' },
     { href: 'connections.html', label: '🔗 Connections' },
+    { href: 'data-control.html', label: '🔒 Data & Memory' },
     { href: 'government.html', label: '🏛️ Government Resources' },
     { href: 'crypto.html', label: '🔐 Crypto Safety Lab' },
     { href: 'models.html', label: '🤖 AI Models' },
