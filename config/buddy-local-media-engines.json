@@ -1,0 +1,179 @@
+{
+  "schema": "dreamco.buddy_local_media_engines.v1",
+  "reviewed_on": "2026-07-31",
+  "policy": {
+    "default_mode": "local_first",
+    "paid_provider_required": false,
+    "raw_biometrics_leave_device_by_default": false,
+    "commercial_release_requires_full_dependency_license_review": true,
+    "real_person_media_requires_active_scoped_consent": true,
+    "minor_voice_or_likeness_replication": false,
+    "synthetic_media_label_required": true,
+    "watermark_or_provenance_manifest_required": true,
+    "quality_claims_require_measured_evidence": true
+  },
+  "engines": [
+    {
+      "id": "buddy-browser-voice",
+      "label": "Buddy Browser Voice",
+      "modalities": ["speech_synthesis"],
+      "runtime": "browser",
+      "source": "dreamco_native",
+      "license_status": "dreamco_owned",
+      "commercial_status": "eligible",
+      "identity_replication": false,
+      "watermark": "provenance_manifest",
+      "readiness": "available_when_browser_supports_speech_synthesis",
+      "best_for": ["free previews", "accessibility", "preset Buddy voices"],
+      "limitations": ["not voice cloning", "voice availability differs by device"]
+    },
+    {
+      "id": "openvoice-v2-local",
+      "label": "OpenVoice V2 Local Adapter",
+      "modalities": ["voice_replication", "cross_lingual_speech", "voice_style"],
+      "runtime": "local_python",
+      "source": "https://github.com/myshell-ai/OpenVoice",
+      "license_status": "mit_code_and_published_v1_v2_models",
+      "commercial_status": "eligible_after_installed_artifact_review",
+      "identity_replication": true,
+      "watermark": "buddy_provenance_manifest",
+      "readiness": "adapter_contract_ready_model_install_required",
+      "best_for": ["commercial local voice replication", "cross-language voice", "style control"],
+      "limitations": ["quality varies by reference recording", "local compute and model files required"]
+    },
+    {
+      "id": "chatterbox-local",
+      "label": "Chatterbox Local Adapter",
+      "modalities": ["voice_replication", "multilingual_speech", "expressive_speech"],
+      "runtime": "local_python",
+      "source": "https://github.com/resemble-ai/chatterbox",
+      "license_status": "mit_repository_license",
+      "commercial_status": "eligible_after_installed_artifact_review",
+      "identity_replication": true,
+      "watermark": "perth_audio_watermark_and_buddy_provenance_manifest",
+      "readiness": "adapter_contract_ready_model_install_required",
+      "best_for": ["high-quality local voice", "low-compute voice previews", "multilingual character speech"],
+      "limitations": ["hardware-dependent latency", "installed weights and transitive licenses must be recorded"]
+    },
+    {
+      "id": "musetalk-local",
+      "label": "MuseTalk Local Adapter",
+      "modalities": ["lip_sync", "video_dubbing"],
+      "runtime": "local_python",
+      "source": "https://github.com/TMElyralab/MuseTalk",
+      "license_status": "mit_code_commercial_model_dependency_review_required",
+      "commercial_status": "eligible_after_dependency_review",
+      "identity_replication": true,
+      "watermark": "buddy_visible_label_and_provenance_manifest",
+      "readiness": "adapter_contract_ready_model_install_required",
+      "best_for": ["talking character video", "dubbing", "lip synchronization"],
+      "limitations": ["published identity and jitter limitations", "every transitive model license must pass review"]
+    },
+    {
+      "id": "liveportrait-local",
+      "label": "LivePortrait Local Adapter",
+      "modalities": ["portrait_animation", "expression_control"],
+      "runtime": "local_python",
+      "source": "https://github.com/KlingAIResearch/LivePortrait",
+      "license_status": "dependency_review_required",
+      "commercial_status": "blocked_until_full_license_review",
+      "identity_replication": true,
+      "watermark": "buddy_visible_label_and_provenance_manifest",
+      "readiness": "research_benchmark_only",
+      "best_for": ["portrait animation research", "expression evaluation"],
+      "limitations": ["commercial release blocked until full license review", "Apple Silicon may be much slower than a high-end GPU"]
+    },
+    {
+      "id": "pulid-local",
+      "label": "PuLID Local Adapter",
+      "modalities": ["identity_preserving_image", "character_variation"],
+      "runtime": "local_python",
+      "source": "https://github.com/ToTheBeginning/PuLID",
+      "license_status": "apache_code_model_and_dependency_review_required",
+      "commercial_status": "blocked_until_full_license_review",
+      "identity_replication": true,
+      "watermark": "buddy_visible_label_and_provenance_manifest",
+      "readiness": "research_benchmark_only",
+      "best_for": ["identity consistency research", "character look development"],
+      "limitations": ["model and dependency licenses must be separately verified", "GPU memory requirements vary by pipeline"]
+    },
+    {
+      "id": "instantid-local",
+      "label": "InstantID Local Adapter",
+      "modalities": ["identity_preserving_image", "character_variation"],
+      "runtime": "local_python",
+      "source": "https://github.com/instantX-research/InstantID",
+      "license_status": "apache_code_research_only_checkpoint_dependencies",
+      "commercial_status": "research_only",
+      "identity_replication": true,
+      "watermark": "buddy_visible_label_and_provenance_manifest",
+      "readiness": "research_benchmark_only",
+      "best_for": ["identity preservation research", "single-image character studies"],
+      "limitations": ["published checkpoints and face dependencies are not cleared for commercial release", "single-person workflow"]
+    },
+    {
+      "id": "buddy-original-avatar",
+      "label": "Buddy Original Avatar Renderer",
+      "modalities": ["original_avatar", "brand_mascot", "character_card"],
+      "runtime": "browser_or_local",
+      "source": "dreamco_native",
+      "license_status": "dreamco_owned",
+      "commercial_status": "eligible",
+      "identity_replication": false,
+      "watermark": "provenance_manifest",
+      "readiness": "local_prototype_ready",
+      "best_for": ["original Buddy identities", "company mascots", "safe character prototypes"],
+      "limitations": ["does not reproduce a real person's likeness"]
+    }
+  ],
+  "benchmark_suites": [
+    {
+      "id": "voice_identity",
+      "modality": "voice",
+      "metrics": ["speaker_embedding_similarity", "human_identity_preference"],
+      "release_gate": "consented_subject_review"
+    },
+    {
+      "id": "voice_intelligibility",
+      "modality": "voice",
+      "metrics": ["word_error_rate", "character_error_rate", "unwanted_speech_rate"],
+      "release_gate": "signed_transcript_fixture"
+    },
+    {
+      "id": "voice_naturalness",
+      "modality": "voice",
+      "metrics": ["mean_opinion_score", "pairwise_preference", "prosody_control_accuracy"],
+      "release_gate": "blinded_human_review"
+    },
+    {
+      "id": "image_identity",
+      "modality": "image",
+      "metrics": ["consented_identity_similarity", "prompt_adherence", "face_artifact_rate"],
+      "release_gate": "consented_subject_review"
+    },
+    {
+      "id": "image_quality",
+      "modality": "image",
+      "metrics": ["resolution", "artifact_rate", "text_legibility", "demographic_consistency"],
+      "release_gate": "human_and_deterministic_review"
+    },
+    {
+      "id": "video_identity_and_sync",
+      "modality": "video",
+      "metrics": ["lip_sync_error", "identity_drift", "temporal_jitter", "frame_artifact_rate"],
+      "release_gate": "frame_and_human_review"
+    },
+    {
+      "id": "runtime_efficiency",
+      "modality": "all",
+      "metrics": ["cold_start_seconds", "real_time_factor", "peak_memory_mb", "peak_vram_mb", "output_bytes"],
+      "release_gate": "reproducible_local_run"
+    },
+    {
+      "id": "rights_and_safety",
+      "modality": "all",
+      "metrics": ["consent_gate_pass", "revocation_gate_pass", "minor_block_pass", "label_present", "provenance_complete", "license_gate_pass"],
+      "release_gate": "all_required_checks_pass"
+    }
+  ]
+}

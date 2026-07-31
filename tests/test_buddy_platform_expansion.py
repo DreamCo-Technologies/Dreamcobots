@@ -18,7 +18,7 @@ from dreamco_platform.creative import (
     MusicStudioError,
     ReferenceTrack,
 )
-from dreamco_platform.customization import BuddyProfile, PersonalityProfile, build_asset_catalog
+from dreamco_platform.customization import BuddyProfile, CustomMediaIdentity, PersonalityProfile, build_asset_catalog
 from dreamco_platform.finance import Bill, BuddySubscriptionManager, Subscription
 from dreamco_platform.launch import (
     AppReleaseBrief,
@@ -385,6 +385,25 @@ class BuddyPlatformExpansionTests(unittest.TestCase):
         self.assertEqual(len(assets["voices"]), 12)
         self.assertEqual(len(assets["avatars"]), 12)
         self.assertTrue(all(not item["real_person_reference"] for item in assets["voices"] + assets["avatars"]))
+
+    def test_custom_buddy_media_stores_references_not_raw_biometrics(self):
+        identity = CustomMediaIdentity(
+            source_type="adult_owner",
+            subject_reference="owner-1",
+            source_reference_sha256="a" * 64,
+            consent_receipt_reference="consent:owner-1",
+            adult_confirmed=True,
+            voice_use_approved=True,
+            likeness_use_approved=True,
+        )
+        profile = BuddyProfile(
+            "owner-1",
+            "Studio Buddy",
+            PersonalityProfile({"warmth": 0.9, "creativity": 0.9}),
+            custom_media_identity=identity,
+        ).to_public_dict()
+        self.assertFalse(profile["custom_media_identity"]["raw_media_stored_in_profile"])
+        self.assertEqual(profile["custom_media_identity"]["source_reference_sha256"], "a" * 64)
 
     def test_music_and_logo_systems_preserve_rights_boundaries(self):
         music = BuddyMusicArtistStudio().create_plan(

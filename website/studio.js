@@ -21,6 +21,10 @@ const academyGrid = document.getElementById('academy-grid');
 const academySummary = document.getElementById('academy-summary');
 const actorControls = document.getElementById('actor-controls');
 const actorMode = document.getElementById('actor-mode');
+const actorRole = document.getElementById('actor-role');
+const voiceEngine = document.getElementById('voice-engine');
+const imageEngine = document.getElementById('image-engine');
+const mediaSourceType = document.getElementById('media-source-type');
 const simulationControls = document.getElementById('simulation-controls');
 const simulationModelSource = document.getElementById('simulation-model-source');
 const simulationFidelity = document.getElementById('simulation-fidelity');
@@ -43,6 +47,37 @@ const academy = window.BUDDY_SPECIALIZED_HUBS?.creative;
 const productionRegistry = window.BUDDY_PRODUCTION_GROUP;
 const hollywoodGroup = productionRegistry?.hollywood_production_group;
 const simulationFoundry = productionRegistry?.simulation_foundry;
+const mediaRegistry = window.BUDDY_LOCAL_MEDIA_ENGINES || { engines: [], benchmark_suites: [], policy: {} };
+
+function mediaEngineById(id) {
+  return mediaRegistry.engines.find(engine => engine.id === id) || null;
+}
+
+function populateEngineSelect(select, modalities, preferredId) {
+  select.replaceChildren();
+  mediaRegistry.engines
+    .filter(engine => engine.modalities.some(modality => modalities.includes(modality)))
+    .forEach(engine => {
+      const option = document.createElement('option');
+      option.value = engine.id;
+      option.textContent = `${engine.label} · ${engine.readiness.replaceAll('_', ' ')}`;
+      select.append(option);
+    });
+  if (Array.from(select.options).some(option => option.value === preferredId)) select.value = preferredId;
+}
+
+function personalityTraits() {
+  return Object.fromEntries(
+    Array.from(document.querySelectorAll('[data-trait]')).map(input => [input.dataset.trait, Number(input.value) / 100]),
+  );
+}
+
+populateEngineSelect(voiceEngine, ['voice_replication', 'speech_synthesis', 'cross_lingual_speech', 'expressive_speech'], 'chatterbox-local');
+populateEngineSelect(imageEngine, ['identity_preserving_image', 'portrait_animation', 'lip_sync'], 'pulid-local');
+document.querySelectorAll('[data-trait]').forEach(input => input.addEventListener('input', () => {
+  const output = document.querySelector(`[data-trait-output="${input.dataset.trait}"]`);
+  if (output) output.value = input.value;
+}));
 
 function academyCard(index, label, items, kind) {
   const card = document.createElement('article');
@@ -298,6 +333,10 @@ document.getElementById('project-type').addEventListener('change', event => appl
 actorMode.addEventListener('change', () => {
   if (actorMode.value === 'owner_digital_double') {
     formStatus.textContent = 'Choose your voice, likeness, or both below and complete the adult owner consent controls.';
+    mediaSourceType.value = 'adult_owner';
+  } else if (actorMode.value === 'licensed_adult_performer') {
+    formStatus.textContent = 'Add the adult performer media, scoped consent receipt, written usage rights, role, and personality direction.';
+    mediaSourceType.value = 'licensed_adult_performer';
   } else {
     formStatus.textContent = 'Original actor mode cannot imitate or use source media from a real person.';
   }
@@ -437,15 +476,21 @@ document.getElementById('download-image').addEventListener('click', () => {
 });
 
 function validateMedia() {
-  if (!actorControls.hidden && actorMode.value === 'owner_digital_double' && !useVoice.checked && !useImage.checked) {
-    throw new Error('Choose your own voice, likeness, or both for an owner digital double.');
+  if (!actorControls.hidden && ['owner_digital_double', 'licensed_adult_performer'].includes(actorMode.value) && !useVoice.checked && !useImage.checked) {
+    throw new Error('Choose an approved voice, likeness, or both for this real-person character mode.');
   }
-  if (useVoice.checked && !voiceObjectUrl) throw new Error('Record or choose your own voice sample first.');
-  if (useImage.checked && !imageObjectUrl) throw new Error('Choose your own image first.');
+  if (useVoice.checked && !voiceObjectUrl) throw new Error('Record or choose the approved voice sample first.');
+  if (useImage.checked && !imageObjectUrl) throw new Error('Choose the approved image first.');
   if (useVoice.checked || useImage.checked) {
-    if (!document.getElementById('consent-self').checked) throw new Error('Confirm that the media represents you and belongs to you.');
-    if (!document.getElementById('consent-adult').checked) throw new Error('Adult confirmation is required. Minor cloning is blocked.');
+    if (!document.getElementById('consent-authorized').checked) throw new Error('Confirm that the adult subject authorized this exact media use.');
+    if (!document.getElementById('consent-adult').checked) throw new Error('Adult subject confirmation is required. Minor replication is blocked.');
     if (!document.getElementById('consent-label').checked) throw new Error('The AI-assisted media label must stay enabled.');
+    if (!document.getElementById('media-subject-ref').value.trim()) throw new Error('A subject reference is required for revocation and audit checks.');
+    if (mediaSourceType.value === 'licensed_adult_performer' && !document.getElementById('media-rights-ref').value.trim()) {
+      throw new Error('A licensed performer requires a written rights receipt reference.');
+    }
+    if (!voiceEngine.value && useVoice.checked) throw new Error('Choose a local voice engine.');
+    if (!imageEngine.value && useImage.checked) throw new Error('Choose a local image or portrait engine.');
   }
 }
 
@@ -573,9 +618,12 @@ function renderPrototype(packet) {
     : simulation
       ? `<div class="studio-generated-avatar" style="background:${escapeHtml(packet.simulation.paint)}">SIM</div>`
       : '<div class="studio-generated-avatar">B</div>';
-  const label = useVoice.checked || useImage.checked ? '<p class="studio-media-label">AI-assisted media using the adult creator\'s approved voice or likeness</p>' : '';
+  const label = useVoice.checked || useImage.checked ? '<p class="studio-media-label">AI-assisted media using an approved adult voice or likeness</p>' : '';
   const manifest = [
     packet.actor?.mode ? `Actor: ${packet.actor.mode.replaceAll('_', ' ')}` : null,
+    packet.actor?.role ? `Role: ${packet.actor.role}` : null,
+    packet.voice?.engine?.label ? `Voice: ${packet.voice.engine.label}` : null,
+    packet.likeness?.engine?.label ? `Image: ${packet.likeness.engine.label}` : null,
     packet.simulation?.model_source ? `Model: ${packet.simulation.model_source.replaceAll('_', ' ')}` : null,
     packet.simulation?.fidelity ? `Fidelity: ${packet.simulation.fidelity.replaceAll('_', ' ')}` : null,
     packet.simulation?.convert_to_game ? 'Practice game included' : null,
@@ -608,12 +656,20 @@ form.addEventListener('submit', async event => {
     latestConsentReceipt = useVoice.checked || useImage.checked ? {
       schema: 'dreamco.creator_media_consent.v1',
       created_at: new Date().toISOString(),
-      owner_is_subject: true,
+      source_type: mediaSourceType.value,
+      owner_is_subject: mediaSourceType.value === 'adult_owner',
       adult_confirmed: true,
-      permitted_uses: ['Buddy owner projects', 'owner-approved export to another platform'],
+      subject_reference_sha256: await textFingerprint(document.getElementById('media-subject-ref').value),
+      rights_reference_sha256: await textFingerprint(document.getElementById('media-rights-ref').value),
+      permitted_uses: ['this Buddy project', 'separately approved export after license and quality review'],
       prohibited_uses: ['minor cloning', 'another person impersonation', 'unapproved publishing', 'political or deceptive impersonation'],
       synthetic_media_label_required: true,
       revocable: true,
+      commercial_use_requested: document.getElementById('commercial-media-use').checked,
+      selected_engines: {
+        voice: useVoice.checked ? voiceEngine.value : null,
+        image: useImage.checked ? imageEngine.value : null,
+      },
       voice_sha256: useVoice.checked ? await blobFingerprint(voiceBlob) : null,
       image_sha256: useImage.checked ? await blobFingerprint(imageBlob) : null,
       raw_media_embedded: false,
@@ -653,19 +709,32 @@ form.addEventListener('submit', async event => {
       subject: document.getElementById('project-subject').value.trim(),
       audience: document.getElementById('project-audience').value.trim(),
       code: { status: 'local_prototype_ready', network_default: 'off' },
-      voice: { requested: useVoice.checked, status: useVoice.checked ? 'consent_verified_pending_render' : 'not_requested' },
-      likeness: { requested: useImage.checked, status: useImage.checked ? 'consent_verified_pending_render' : 'not_requested' },
+      voice: {
+        requested: useVoice.checked,
+        status: useVoice.checked ? 'consent_verified_local_model_install_and_benchmark_required' : 'not_requested',
+        engine: useVoice.checked ? mediaEngineById(voiceEngine.value) : null,
+      },
+      likeness: {
+        requested: useImage.checked,
+        status: useImage.checked ? 'consent_verified_local_model_install_and_benchmark_required' : 'not_requested',
+        engine: useImage.checked ? mediaEngineById(imageEngine.value) : null,
+      },
       consent: useVoice.checked || useImage.checked ? {
-        owner_is_subject: true,
+        source_type: mediaSourceType.value,
+        owner_is_subject: mediaSourceType.value === 'adult_owner',
         adult_confirmed: true,
         synthetic_media_label: true,
         raw_media_in_packet: false,
         receipt_schema: latestConsentReceipt.schema,
+        subject_reference_sha256: latestConsentReceipt.subject_reference_sha256,
+        rights_reference_sha256: latestConsentReceipt.rights_reference_sha256,
         voice_sha256: latestConsentReceipt.voice_sha256,
         image_sha256: latestConsentReceipt.image_sha256,
       } : null,
       actor: ACTOR_TYPES.has(type) ? {
         mode: actorMode.value,
+        role: actorRole.value.trim(),
+        personality_traits: personalityTraits(),
         character_description: document.getElementById('actor-description').value.trim(),
         real_person_imitation_allowed: false,
         render_state: 'renderer_configuration_required',
@@ -684,6 +753,18 @@ form.addEventListener('submit', async event => {
         : SIMULATION_TYPES.has(type)
           ? ['model rights and provenance', 'units and scale', 'legal actions', 'safe failure and reset', 'deterministic replay', 'known limits', 'accessibility', 'qualified review', 'bot playtest', 'no live machine control']
         : ['offline load', 'touch and keyboard', 'captions', 'restart and recovery', 'learning objective', 'no live external action'],
+      media_benchmarks: mediaRegistry.benchmark_suites,
+      media_policy: {
+        paid_provider_required: false,
+        raw_biometrics_leave_device_by_default: false,
+        quality_claims_require_measured_evidence: true,
+        commercial_use_requested: document.getElementById('commercial-media-use').checked,
+        commercial_release_state: [useVoice.checked ? mediaEngineById(voiceEngine.value) : null, useImage.checked ? mediaEngineById(imageEngine.value) : null]
+          .filter(Boolean)
+          .every(engine => engine.commercial_status.startsWith('eligible'))
+            ? 'eligible_after_installed_artifact_review'
+            : 'blocked_until_full_license_review',
+      },
       production_academy: type === 'feature_film'
         ? { track: 'film', phases: academy?.film_standard?.phases?.map(item => item.id) || [], departments: hollywoodGroup?.departments?.map(item => item.id) || [], quality_gates: hollywoodGroup?.quality_gates || [] }
         : ['music_video', 'music_artist'].includes(type)
@@ -698,8 +779,8 @@ form.addEventListener('submit', async event => {
     readiness.textContent = rendererNeeded ? 'Packet ready · renderer needed' : 'Prototype ready';
     readiness.className = rendererNeeded ? 'badge badge-amber' : 'badge badge-green';
     document.getElementById('result-code').textContent = 'Prototype ready';
-    document.getElementById('result-voice').textContent = useVoice.checked ? 'Consent verified' : 'Not requested';
-    document.getElementById('result-image').textContent = useImage.checked ? 'Consent verified' : 'Not requested';
+    document.getElementById('result-voice').textContent = useVoice.checked ? 'Consent ready · engine needed' : 'Not requested';
+    document.getElementById('result-image').textContent = useImage.checked ? 'Consent ready · license review needed' : 'Not requested';
     document.getElementById('result-tests').textContent = SIMULATION_TYPES.has(type) ? '10 planned' : '6 planned';
     outputActions.hidden = false;
     document.getElementById('download-consent').disabled = !latestConsentReceipt;
@@ -729,7 +810,7 @@ document.getElementById('send-buddy').addEventListener('click', () => {
   const simulationDetail = latestPacket.simulation
     ? ` Use the ${latestPacket.simulation.model_source} model path, apply ${latestPacket.simulation.modifications.join(', ') || 'the approved variants'}, and ${latestPacket.simulation.convert_to_game ? 'turn it into a practice game' : 'keep it as a simulation'}.`
     : '';
-  const actorDetail = latestPacket.actor ? ` Actor mode: ${latestPacket.actor.mode}.` : '';
+  const actorDetail = latestPacket.actor ? ` Actor mode: ${latestPacket.actor.mode}; role: ${latestPacket.actor.role}; personality: ${JSON.stringify(latestPacket.actor.personality_traits)}.` : '';
   const prompt = `Continue building ${latestPacket.title} as a ${latestPacket.project_type}. Goal: ${latestPacket.objective}.${actorDetail}${simulationDetail} Keep rights, evidence, quality, safety, and owner approval gates active.`;
   location.href = `buddy.html?prompt=${encodeURIComponent(prompt)}`;
 });

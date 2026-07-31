@@ -14,6 +14,7 @@
   const thread = document.getElementById('buddy-thread');
   const welcome = document.getElementById('buddy-welcome');
   const routeStatus = document.getElementById('buddy-route-status');
+  const starters = document.getElementById('buddy-starters');
   const freeButton = document.getElementById('model-free');
   const premiumButton = document.getElementById('model-premium');
   const premiumPanel = document.getElementById('premium-panel');
@@ -83,6 +84,10 @@
     } catch (_error) {
       return defaults;
     }
+  }
+
+  function updatePlanSetupVisibility() {
+    starters.hidden = mode !== 'Plan';
   }
 
   const localHash = new URLSearchParams(location.hash.slice(1));
@@ -600,6 +605,37 @@
     }
   }
 
+  async function openLocalWorkspace() {
+    const title = document.getElementById('local-workspace-title').value.trim();
+    const apps = Array.from(document.getElementById('local-workspace-apps').selectedOptions).map(option => option.value);
+    const urls = document.getElementById('local-workspace-urls').value.split(/\r?\n/).map(value => value.trim()).filter(Boolean);
+    const approval = document.getElementById('local-workspace-approval');
+    const targetCount = apps.length + urls.length;
+    if (!title || !targetCount || targetCount > 6) {
+      setLocalStatus('Workspace needs review', 'Name it and choose between one and six apps or pages.', Boolean(localToken));
+      return;
+    }
+    if (!approval.checked || !window.confirm(`Open ${targetCount} visible target${targetCount === 1 ? '' : 's'} for “${title}” once?`)) return;
+    try {
+      const result = await localRequest('/api/local/workspaces/open', {
+        title,
+        apps,
+        urls,
+        browser: document.getElementById('local-browser').value,
+        approved: true,
+      });
+      approval.checked = false;
+      setLocalStatus(
+        result.status === 'opened' ? 'Workspace opened' : 'Workspace partly opened',
+        `${result.opened.length} target${result.opened.length === 1 ? '' : 's'} opened. Buddy received no read, type, click, sign-in, or submit control.`,
+        true,
+      );
+      await checkLocalBridge();
+    } catch (error) {
+      setLocalStatus('Workspace was not opened', error.message, false);
+    }
+  }
+
   async function toggleLocalPause() {
     const nextPaused = !localBridgePaused;
     if (!window.confirm(`${nextPaused ? 'Pause' : 'Resume'} local Buddy actions?`)) return;
@@ -954,6 +990,7 @@
         item.setAttribute('aria-selected', String(selected));
       });
       mode = button.dataset.buddyMode || 'Build';
+      updatePlanSetupVisibility();
       input.focus();
     });
   });
@@ -968,6 +1005,7 @@
   document.querySelectorAll('[data-buddy-launcher]').forEach((button) => {
     button.addEventListener('click', () => openSetup(button.dataset.buddyLauncher));
   });
+  updatePlanSetupVisibility();
   document.querySelectorAll('[data-execution-mode]').forEach((button) => {
     button.addEventListener('click', () => setExecutionMode(button.dataset.executionMode));
   });
@@ -1022,6 +1060,7 @@
   });
   document.getElementById('local-search').addEventListener('click', runLocalSearch);
   document.getElementById('local-app-open').addEventListener('click', openLocalApp);
+  document.getElementById('local-workspace-open').addEventListener('click', openLocalWorkspace);
   localPause.addEventListener('click', toggleLocalPause);
   boundaryOpen.addEventListener('click', () => {
     document.getElementById('boundary-support').value = boundaryPreferences.professionalSupport;

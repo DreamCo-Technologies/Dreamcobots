@@ -113,6 +113,20 @@ def launch_app(app_id: str) -> str:
     return app
 
 
+def workspace_targets(apps: Any, urls: Any) -> tuple[list[str], list[str]]:
+    if not isinstance(apps, list) or not isinstance(urls, list):
+        raise LocalBridgeError("Workspace apps and addresses must be lists.")
+    app_ids = list(dict.fromkeys(str(item) for item in apps))
+    safe_urls = list(dict.fromkeys(safe_url(str(item)) for item in urls))
+    if not app_ids and not safe_urls:
+        raise LocalBridgeError("Choose at least one app or approved web address.")
+    if len(app_ids) + len(safe_urls) > 6:
+        raise LocalBridgeError("A local workspace can open at most six visible targets at once.")
+    if any(app_id not in SAFE_APPS for app_id in app_ids):
+        raise LocalBridgeError("Every workspace app must be on the approved local app list.")
+    return app_ids, safe_urls
+
+
 @dataclass
 class BridgeState:
     token: str
@@ -185,7 +199,7 @@ class BuddyLocalHandler(SimpleHTTPRequestHandler):
                 "paused": self.state.paused,
                 "host": "127.0.0.1",
                 "retention": "memory_only_last_50_events",
-                "capabilities": ["browser_search", "https_open", "approved_app_launch", "action_planning"],
+                "capabilities": ["browser_search", "https_open", "approved_app_launch", "approved_workspace_launch", "action_planning"],
                 "limits": ["no arbitrary clicking or typing", "no credential collection", "no background takeover"],
                 "audit": self.state.audit,
             })
@@ -232,6 +246,38 @@ class BuddyLocalHandler(SimpleHTTPRequestHandler):
                 app = launch_app(app_id)
                 self.state.add_audit("app_open", app_id)
                 self._json(HTTPStatus.OK, {"ok": True, "opened": True, "app": app})
+                return
+            if path == "/api/local/workspaces/open":
+                require_approval(payload)
+                title = " ".join(str(payload.get("title", "")).split())
+                if not 2 <= len(title) <= 120:
+                    raise LocalBridgeError("Name the workspace in 2 to 120 characters.")
+                browser = str(payload.get("browser", "system"))
+                if browser not in BROWSERS:
+                    raise LocalBridgeError("Choose a supported browser.")
+                app_ids, urls = workspace_targets(payload.get("apps", []), payload.get("urls", []))
+                opened: list[dict[str, str]] = []
+                errors: list[dict[str, str]] = []
+                for app_id in app_ids:
+                    try:
+                        opened.append({"type": "app", "target": launch_app(app_id)})
+                    except LocalBridgeError as error:
+                        errors.append({"type": "app", "target": app_id, "error": str(error)})
+                for url in urls:
+                    try:
+                        launch_url(url, browser)
+                        opened.append({"type": "url", "target": urlparse(url).hostname or "loopback"})
+                    except LocalBridgeError as error:
+                        errors.append({"type": "url", "target": urlparse(url).hostname or "unknown", "error": str(error)})
+                self.state.add_audit("workspace_open", f"{title}:{len(opened)}_opened", "partial" if errors else "approved")
+                self._json(HTTPStatus.OK, {
+                    "ok": not errors,
+                    "status": "opened_with_errors" if errors else "opened",
+                    "title": title,
+                    "opened": opened,
+                    "errors": errors,
+                    "controlGranted": False,
+                })
                 return
             if path == "/api/local/actions/plan":
                 objective = " ".join(str(payload.get("objective", "")).split())

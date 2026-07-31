@@ -14,6 +14,7 @@ class BuddyCustomizationError(ValueError):
 
 TRAITS = {"warmth", "directness", "curiosity", "humor", "patience", "energy", "formality", "creativity"}
 PROFESSIONAL_CONTEXTS = {"business_deal", "sales_call", "legal", "medical", "financial", "emergency", "government_filing"}
+MEDIA_SOURCE_TYPES = {"adult_owner", "licensed_adult_performer", "company_brand_asset"}
 
 
 @dataclass(frozen=True)
@@ -41,12 +42,62 @@ class PersonalityProfile:
 
 
 @dataclass(frozen=True)
+class CustomMediaIdentity:
+    source_type: str
+    subject_reference: str
+    source_reference_sha256: str
+    consent_receipt_reference: str
+    rights_receipt_reference: str = ""
+    adult_confirmed: bool = False
+    voice_use_approved: bool = False
+    likeness_use_approved: bool = False
+    synthetic_media_label_required: bool = True
+    revoked: bool = False
+
+    def validate(self) -> None:
+        if self.source_type not in MEDIA_SOURCE_TYPES:
+            raise BuddyCustomizationError("Use an approved custom media source type.")
+        if not re.fullmatch(r"[A-Fa-f0-9]{64}", self.source_reference_sha256):
+            raise BuddyCustomizationError("Store a SHA-256 media reference, not raw media, in the Buddy profile.")
+        if len(self.subject_reference.strip()) < 2 or len(self.consent_receipt_reference.strip()) < 3:
+            raise BuddyCustomizationError("A subject reference and consent receipt are required.")
+        if self.revoked:
+            raise BuddyCustomizationError("Revoked media cannot be attached to a Buddy profile.")
+        if not self.synthetic_media_label_required:
+            raise BuddyCustomizationError("The synthetic-media label cannot be disabled.")
+        if self.source_type == "company_brand_asset":
+            if self.voice_use_approved or not self.rights_receipt_reference:
+                raise BuddyCustomizationError("Company assets require rights evidence and cannot authorize a human voice.")
+            return
+        if not self.adult_confirmed:
+            raise BuddyCustomizationError("Custom real-person media is not available for minors.")
+        if self.source_type == "licensed_adult_performer" and not self.rights_receipt_reference:
+            raise BuddyCustomizationError("Licensed performer media requires written rights evidence.")
+
+    def to_public_dict(self) -> dict[str, Any]:
+        self.validate()
+        return {
+            "source_type": self.source_type,
+            "subject_reference": self.subject_reference,
+            "source_reference_sha256": self.source_reference_sha256,
+            "consent_receipt_reference": self.consent_receipt_reference,
+            "rights_receipt_reference": self.rights_receipt_reference or None,
+            "adult_confirmed": self.adult_confirmed,
+            "voice_use_approved": self.voice_use_approved,
+            "likeness_use_approved": self.likeness_use_approved,
+            "synthetic_media_label_required": True,
+            "raw_media_stored_in_profile": False,
+        }
+
+
+@dataclass(frozen=True)
 class BuddyProfile:
     owner_user_id: str
     label: str
     personality: PersonalityProfile
     voice_preset_id: str = "voice-neutral-guide"
     avatar_preset_id: str = "avatar-signal-cobalt"
+    custom_media_identity: CustomMediaIdentity | None = None
 
     def validate(self) -> None:
         if not re.fullmatch(r"[A-Za-z0-9_.:-]{2,80}", self.owner_user_id) or len(self.label.strip()) < 2:
@@ -57,6 +108,8 @@ class BuddyProfile:
             raise BuddyCustomizationError("Unknown voice preset.")
         if self.avatar_preset_id not in {item["id"] for item in catalog["avatars"]}:
             raise BuddyCustomizationError("Unknown avatar preset.")
+        if self.custom_media_identity:
+            self.custom_media_identity.validate()
 
     def to_public_dict(self) -> dict[str, Any]:
         self.validate()
@@ -68,6 +121,9 @@ class BuddyProfile:
             "personality": asdict(self.personality),
             "voice_preset_id": self.voice_preset_id,
             "avatar_preset_id": self.avatar_preset_id,
+            "custom_media_identity": self.custom_media_identity.to_public_dict()
+            if self.custom_media_identity
+            else None,
             "owner_user_id": self.owner_user_id,
             "traceable": True,
             "transferable_ownership": False,
@@ -129,4 +185,11 @@ def build_asset_catalog() -> dict[str, Any]:
             for slug, primary, accent in palettes
         ],
         "license": "DreamCo original parameter presets; local rendering engine required",
+        "custom_media_policy": {
+            "paid_provider_required": False,
+            "raw_media_in_profile": False,
+            "adult_owner_or_licensed_performer_consent_required": True,
+            "company_assets_need_rights_receipt": True,
+            "minor_replication": False,
+        },
     }

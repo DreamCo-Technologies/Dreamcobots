@@ -61,7 +61,7 @@ const INTEGRATIONS = [
   { name: "OpenAI", status: "connected", desc: "GPT-4.1-mini · Chat, code, and AI features" },
   { name: "Stripe", status: "partial", desc: "Add STRIPE_SECRET_KEY to enable billing" },
   { name: "GitHub", status: "connected", desc: "Repo access and trending intelligence" },
-  { name: "ElevenLabs", status: "disconnected", desc: "Add ELEVENLABS_API_KEY for voice cloning" },
+  { name: "Buddy Local Media", status: "connected", desc: "Local-first voice and likeness adapters · no paid provider required" },
   { name: "Serper", status: "disconnected", desc: "Add SERPER_API_KEY for premium web search" },
 ];
 

@@ -102,6 +102,25 @@ import {
   repositoryTestPlanRequestSchema,
   type RepositoryTestRegistry,
 } from "./repository-test-policy";
+import {
+  buildMediaBenchmarkPlan,
+  buildMediaRenderPlan,
+  getLocalMediaCatalog,
+  mediaBenchmarkPlanRequestSchema,
+  mediaRenderPlanRequestSchema,
+} from "./media-engine";
+import {
+  analyzeJobOpportunity,
+  buildWorkforceRegistry,
+  createPaymentRoutingPlan,
+  createProfessionalReviewPacket,
+  createServiceOpportunity,
+  createVoiceSandboxPlan,
+  jobOpportunityRequestSchema,
+  paymentRoutingRequestSchema,
+  professionalReviewRequestSchema,
+  voiceSandboxRequestSchema,
+} from "./workforce-engine";
 
 const CORE_SLUGS = new Set(CORE_BOTS.map(b => b.slug));
 const GITHUB_SLUGS = new Set(GITHUB_BOTS.map(b => b.slug));
@@ -325,47 +344,104 @@ export async function registerRoutes(
 ): Promise<Server> {
   await ensureSeeded();
 
-  // ===== VOICE CLONING =====
+  // ===== LOCAL-FIRST VOICE AND LIKENESS =====
   app.post("/api/voice/clone", async (req, res) => {
     try {
-      const { text, voiceId = "21m00Tcm4TlvDq8ikWAM", stability = 0.5, similarityBoost = 0.75 } = req.body ?? {};
-      if (!text || !String(text).trim()) return res.status(400).json({ error: "Text is required" });
-      const apiKey = process.env.ELEVENLABS_API_KEY;
-      if (!apiKey) {
-        return res.status(503).json({
-          error: "ELEVENLABS_API_KEY not configured",
-          setup: "Add ELEVENLABS_API_KEY as a backend secret reference after reviewing provider terms and costs",
-          capability: "voice-cloning",
-        });
+      const request = mediaRenderPlanRequestSchema.parse(req.body);
+      if (request.mediaType !== "voice_replication") {
+        return res.status(400).json({ error: "The compatibility route accepts voice_replication plans only." });
       }
-      const response = await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${voiceId}`, {
-        method: "POST",
-        headers: { "xi-api-key": apiKey, "Content-Type": "application/json", "Accept": "audio/mpeg" },
-        body: JSON.stringify({ text: String(text).trim(), model_id: "eleven_monolingual_v1", voice_settings: { stability, similarity_boost: similarityBoost } }),
-      });
-      if (!response.ok) {
-        const err = await response.text();
-        return res.status(response.status).json({ error: `ElevenLabs error: ${err}` });
-      }
-      const audioBuffer = Buffer.from(await response.arrayBuffer());
-      res.set({ "Content-Type": "audio/mpeg", "Content-Length": audioBuffer.length });
-      res.send(audioBuffer);
-    } catch (e: any) {
-      console.error("[voice] clone error:", e.message);
-      res.status(500).json({ error: e.message || "Voice cloning failed" });
+      res.status(202).json(buildMediaRenderPlan(request));
+    } catch (error) {
+      if (error instanceof z.ZodError) return res.status(400).json(zodValidationError(error));
+      res.status(400).json({ error: error instanceof Error ? error.message : "Voice plan failed." });
     }
   });
 
-  // List available voices
-  app.get("/api/voice/voices", async (req, res) => {
-    const apiKey = process.env.ELEVENLABS_API_KEY;
-    if (!apiKey) return res.status(503).json({ error: "ELEVENLABS_API_KEY not configured", voices: [] });
+  app.get("/api/voice/voices", (_req, res) => {
+    const media = getLocalMediaCatalog();
+    res.json({
+      schema: media.schema,
+      voices: media.engines.filter((engine) => engine.modalities.some((modality) => modality.includes("speech") || modality.includes("voice"))),
+      paidProviderRequired: false,
+    });
+  });
+
+  app.get("/api/buddy/media/engines", (_req, res) => {
+    res.json(getLocalMediaCatalog());
+  });
+
+  app.post("/api/buddy/media/render-plan", (req, res) => {
     try {
-      const r = await fetch("https://api.elevenlabs.io/v1/voices", { headers: { "xi-api-key": apiKey } });
-      const data = await r.json() as any;
-      res.json({ voices: (data.voices ?? []).map((v: any) => ({ id: v.voice_id, name: v.name, category: v.category })) });
-    } catch (e: any) {
-      res.status(500).json({ error: e.message, voices: [] });
+      const request = mediaRenderPlanRequestSchema.parse(req.body);
+      res.status(202).json(buildMediaRenderPlan(request));
+    } catch (error) {
+      if (error instanceof z.ZodError) return res.status(400).json(zodValidationError(error));
+      res.status(400).json({ error: error instanceof Error ? error.message : "Media plan failed." });
+    }
+  });
+
+  app.post("/api/buddy/media/benchmark-plan", (req, res) => {
+    try {
+      const request = mediaBenchmarkPlanRequestSchema.parse(req.body);
+      res.status(202).json(buildMediaBenchmarkPlan(request));
+    } catch (error) {
+      if (error instanceof z.ZodError) return res.status(400).json(zodValidationError(error));
+      res.status(400).json({ error: error instanceof Error ? error.message : "Media benchmark plan failed." });
+    }
+  });
+
+  app.get("/api/buddy/workforce", (_req, res) => {
+    res.json(buildWorkforceRegistry());
+  });
+
+  app.post("/api/buddy/workforce/job-analysis", (req, res) => {
+    try {
+      const request = jobOpportunityRequestSchema.parse(req.body);
+      res.status(201).json(analyzeJobOpportunity(request));
+    } catch (error) {
+      if (error instanceof z.ZodError) return res.status(400).json(zodValidationError(error));
+      res.status(400).json({ error: error instanceof Error ? error.message : "Job analysis failed." });
+    }
+  });
+
+  app.post("/api/buddy/workforce/service-opportunity", (req, res) => {
+    try {
+      const request = jobOpportunityRequestSchema.parse(req.body);
+      res.status(201).json(createServiceOpportunity(request));
+    } catch (error) {
+      if (error instanceof z.ZodError) return res.status(400).json(zodValidationError(error));
+      res.status(400).json({ error: error instanceof Error ? error.message : "Service opportunity failed." });
+    }
+  });
+
+  app.post("/api/buddy/workforce/payment-plan", (req, res) => {
+    try {
+      const request = paymentRoutingRequestSchema.parse(req.body);
+      res.status(201).json(createPaymentRoutingPlan(request));
+    } catch (error) {
+      if (error instanceof z.ZodError) return res.status(400).json(zodValidationError(error));
+      res.status(400).json({ error: error instanceof Error ? error.message : "Payment plan failed." });
+    }
+  });
+
+  app.post("/api/buddy/workforce/professional-review", (req, res) => {
+    try {
+      const request = professionalReviewRequestSchema.parse(req.body);
+      res.status(201).json(createProfessionalReviewPacket(request));
+    } catch (error) {
+      if (error instanceof z.ZodError) return res.status(400).json(zodValidationError(error));
+      res.status(400).json({ error: error instanceof Error ? error.message : "Professional review packet failed." });
+    }
+  });
+
+  app.post("/api/buddy/workforce/voice-sandbox", (req, res) => {
+    try {
+      const request = voiceSandboxRequestSchema.parse(req.body);
+      res.status(201).json(createVoiceSandboxPlan(request));
+    } catch (error) {
+      if (error instanceof z.ZodError) return res.status(400).json(zodValidationError(error));
+      res.status(400).json({ error: error instanceof Error ? error.message : "Voice sandbox plan failed." });
     }
   });
 
@@ -1401,7 +1477,8 @@ export async function registerRoutes(
       features: [
         { name: "Vibe Coding", route: "POST /api/buddy/vibe-code", status: "live", description: "Generate full projects from description" },
         { name: "Image Generation", route: "POST /api/generate-image", status: "live", description: "AI image generation via gpt-image-1" },
-        { name: "Voice and Likeness", route: "POST /api/voice/clone", status: process.env.ELEVENLABS_API_KEY ? "optional-provider-configured" : "local-adapter-ready", description: "Self-owned adult media with consent, labeling, and local or optional provider adapters" },
+        { name: "Voice and Likeness", route: "POST /api/buddy/media/render-plan", status: "local-adapter-contract-ready", description: "Local-first adult owner or licensed-performer media with consent, provenance, labeling, license review, and measured quality gates" },
+        { name: "Opportunity and Workforce Engine", route: "POST /api/buddy/workforce/job-analysis", status: "shadow-ready", description: "Classify work A-F, match real Buddy bots, simulate services and economics, and stop at professional, external-action, payment, and owner-approval gates" },
         { name: "Web Search", route: "POST /api/search/web", status: "live", description: "GitHub + OpenAI synthesis search" },
         { name: "GitHub Intelligence", route: "GET /api/github-intel/trending", status: "live", description: "Hourly GitHub trending + search" },
         { name: "Council Governance", route: "GET /api/council/proposals", status: "live", description: "Bot proposal submission and approval" },

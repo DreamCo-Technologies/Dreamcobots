@@ -173,7 +173,7 @@ class BuddyCreativeStudioTests(unittest.TestCase):
                     consent=consent(adult_confirmed=False),
                 )
             )
-        with self.assertRaisesRegex(CreativeStudioError, "self-owned"):
+        with self.assertRaisesRegex(CreativeStudioError, "signed-in owner"):
             BuddyCreativeStudio().create_project(
                 brief(
                     use_image_avatar=True,
@@ -181,6 +181,33 @@ class BuddyCreativeStudioTests(unittest.TestCase):
                     consent=consent(subject_user_id="someone-else", owner_is_subject=False),
                 )
             )
+
+    def test_licensed_adult_performer_requires_written_rights(self):
+        with self.assertRaisesRegex(CreativeStudioError, "rights receipt"):
+            BuddyCreativeStudio().create_project(
+                brief(
+                    use_voice_clone=True,
+                    voice_sample_ref="local:performer-voice",
+                    consent=consent(
+                        source_type="licensed_adult_performer",
+                        subject_user_id="performer-1",
+                        owner_is_subject=False,
+                    ),
+                )
+            )
+        project = BuddyCreativeStudio().create_project(
+            brief(
+                use_voice_clone=True,
+                voice_sample_ref="local:performer-voice",
+                consent=consent(
+                    source_type="licensed_adult_performer",
+                    subject_user_id="performer-1",
+                    owner_is_subject=False,
+                    rights_receipt_reference="rights:performer-1",
+                ),
+            )
+        )
+        self.assertEqual(project.media["character"]["source_type"], "licensed_adult_performer")
 
     def test_approved_media_is_pending_until_an_engine_returns_assets(self):
         project = BuddyCreativeStudio().create_project(

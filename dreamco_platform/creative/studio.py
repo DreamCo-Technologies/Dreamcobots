@@ -50,6 +50,8 @@ class ConsentEvidence:
     voice_use_approved: bool
     likeness_use_approved: bool
     synthetic_media_label_approved: bool
+    source_type: str = "adult_owner"
+    rights_receipt_reference: str = ""
     recorded_at: float = field(default_factory=time.time)
     expires_at: float | None = None
     revoked_at: float | None = None
@@ -78,10 +80,14 @@ class ConsentEvidence:
     def validate(self, *, needs_voice: bool, needs_likeness: bool) -> None:
         if not self.owner_user_id or not self.subject_user_id:
             raise CreativeStudioError("Consent must identify both the owner and subject.")
-        if not self.owner_is_subject or self.owner_user_id != self.subject_user_id:
-            raise CreativeStudioError(
-                "Buddy Studio only accepts self-owned voice and likeness media in this workflow."
-            )
+        if self.source_type not in {"adult_owner", "licensed_adult_performer"}:
+            raise CreativeStudioError("Use an adult owner or licensed adult performer media source.")
+        if self.source_type == "adult_owner" and (
+            not self.owner_is_subject or self.owner_user_id != self.subject_user_id
+        ):
+            raise CreativeStudioError("Adult owner media must belong to the signed-in owner.")
+        if self.source_type == "licensed_adult_performer" and not self.rights_receipt_reference:
+            raise CreativeStudioError("Licensed performer media requires a written rights receipt.")
         if not self.adult_confirmed:
             raise CreativeStudioError("Voice or likeness cloning is not available for minors.")
         if not self.is_active():
@@ -107,6 +113,11 @@ class CreativeBrief:
     voice_sample_ref: str = ""
     image_sample_ref: str = ""
     consent: ConsentEvidence | None = None
+    character_role: str = "Buddy guide"
+    personality_traits: dict[str, float] = field(
+        default_factory=lambda: {"warmth": 0.8, "clarity": 0.9, "energy": 0.6}
+    )
+    preferred_media_engine_id: str = ""
 
     def validate(self) -> None:
         if len(self.title.strip()) < 3:
@@ -115,6 +126,13 @@ class CreativeBrief:
             raise CreativeStudioError("Describe a clear creative, learning, or gameplay objective.")
         if not self.subject.strip() or not self.audience.strip():
             raise CreativeStudioError("Subject and audience are required.")
+        if len(self.character_role.strip()) < 2:
+            raise CreativeStudioError("A character role is required.")
+        if not self.personality_traits or any(
+            not isinstance(value, (int, float)) or value < 0 or value > 1
+            for value in self.personality_traits.values()
+        ):
+            raise CreativeStudioError("Personality trait values must be between 0 and 1.")
         if self.use_voice_clone and not self.voice_sample_ref:
             raise CreativeStudioError("A local or encrypted voice sample reference is required.")
         if self.use_image_avatar and not self.image_sample_ref:
@@ -289,6 +307,7 @@ class BuddyCreativeStudio:
             deliverables=self._deliverables(brief),
             audit={
                 "local_first": True,
+                "paid_provider_required": False,
                 "live_external_action_taken": False,
                 "stores_raw_biometrics": False,
                 "consent_evidence_id": brief.consent.evidence_id if brief.consent else None,
@@ -421,9 +440,21 @@ class BuddyCreativeStudio:
     @staticmethod
     def _media_plan(brief: CreativeBrief) -> dict[str, Any]:
         requested = brief.use_voice_clone or brief.use_image_avatar
+        catalog_path = Path(__file__).resolve().parents[2] / "config" / "buddy-local-media-engines.json"
+        catalog = json.loads(catalog_path.read_text(encoding="utf-8"))
+        preferred = next(
+            (engine for engine in catalog["engines"] if engine["id"] == brief.preferred_media_engine_id),
+            None,
+        )
         return {
             "mode": "local_first",
+            "paid_provider_required": False,
             "raw_media_storage": "browser_session_or_encrypted_owner_vault",
+            "character": {
+                "role": brief.character_role,
+                "personality_traits": brief.personality_traits,
+                "source_type": brief.consent.source_type if brief.consent else "original_synthetic",
+            },
             "voice": {
                 "requested": brief.use_voice_clone,
                 "status": "consent_verified_pending_render" if brief.use_voice_clone else "not_requested",
@@ -438,7 +469,10 @@ class BuddyCreativeStudio:
                 "status": "not_configured" if requested else "not_needed",
                 "native_adapter_contract": "MediaRenderer",
                 "outside_models_optional": True,
+                "preferred_engine": preferred,
+                "catalog_reviewed_on": catalog["reviewed_on"],
             },
+            "quality_gates": [suite["id"] for suite in catalog["benchmark_suites"]],
             "revocation": {
                 "required": requested,
                 "effect": "stop future renders and remove owner-controlled profiles/assets",

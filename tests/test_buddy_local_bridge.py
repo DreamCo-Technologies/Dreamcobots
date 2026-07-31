@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import unittest
 
-from tools.buddy_local_bridge import LocalBridgeError, require_approval, safe_url, search_url
+from tools.buddy_local_bridge import LocalBridgeError, require_approval, safe_url, search_url, workspace_targets
 
 
 class BuddyLocalBridgePolicyTests(unittest.TestCase):
@@ -26,6 +26,20 @@ class BuddyLocalBridgePolicyTests(unittest.TestCase):
         with self.assertRaisesRegex(LocalBridgeError, "Approve this one"):
             require_approval({"approved": False})
         require_approval({"approved": True})
+
+    def test_workspace_targets_are_bounded_allowlisted_and_credential_free(self):
+        apps, urls = workspace_targets(
+            ["finder", "notes", "finder"],
+            ["https://github.com/DreamCo-Technologies/Dreamcobots", "http://127.0.0.1:8765/buddy.html"],
+        )
+        self.assertEqual(apps, ["finder", "notes"])
+        self.assertEqual(len(urls), 2)
+        with self.assertRaisesRegex(LocalBridgeError, "at most six"):
+            workspace_targets(["finder", "notes", "calendar", "mail"], ["https://example.com/1", "https://example.com/2", "https://example.com/3"])
+        with self.assertRaisesRegex(LocalBridgeError, "approved local app"):
+            workspace_targets(["terminal"], [])
+        with self.assertRaisesRegex(LocalBridgeError, "embedded credentials"):
+            workspace_targets([], ["https://user:secret@example.com"])
 
 
 if __name__ == "__main__":

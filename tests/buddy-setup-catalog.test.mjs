@@ -13,8 +13,8 @@ const catalog = context.window.BUDDY_SETUP_CATALOG;
 
 test('every Buddy launcher has exactly 30 unique setup choices', () => {
   assert.equal(catalog.schema, 'dreamco.buddy_setup_catalog.v1');
-  assert.equal(catalog.launchers.length, 10);
-  assert.equal(catalog.summary.setupOptionCount, 300);
+  assert.equal(catalog.launchers.length, 16);
+  assert.equal(catalog.summary.setupOptionCount, 480);
   const launcherIds = new Set();
   const optionIds = new Set();
   for (const launcher of catalog.launchers) {
@@ -28,6 +28,12 @@ test('every Buddy launcher has exactly 30 unique setup choices', () => {
     }
     assert.match(html, new RegExp(`data-buddy-launcher=["']${launcher.id}["']`));
   }
+});
+
+test('guided setup launchers are visible only in Plan mode', () => {
+  assert.match(html, /id="buddy-starters"[^>]+hidden/);
+  assert.match(buddySource, /starters\.hidden = mode !== 'Plan'/);
+  assert.match(buddySource, /mode = button\.dataset\.buddyMode[^;]+;\s+updatePlanSetupVisibility\(\)/);
 });
 
 test('Buddy setup catalog and page link to the owned GitHub repository', () => {

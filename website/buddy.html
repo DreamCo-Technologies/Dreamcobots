@@ -94,7 +94,7 @@
       </div>
     </section>
 
-    <div class="buddy-starters" aria-label="Starter prompts">
+    <div id="buddy-starters" class="buddy-starters" aria-label="Plan setup choices" hidden>
       <button type="button" data-buddy-launcher="prototype">Build a prototype</button>
       <button type="button" data-buddy-launcher="movie">Make a movie</button>
       <button type="button" data-buddy-launcher="simulation">Build a simulation game</button>
@@ -105,6 +105,12 @@
       <button type="button" data-buddy-launcher="models">Compare coding models</button>
       <button type="button" data-buddy-launcher="discover">Help me figure it out</button>
       <button type="button" data-buddy-launcher="search">Search the web</button>
+      <button type="button" data-buddy-launcher="customize">Customize Buddy</button>
+      <button type="button" data-buddy-launcher="workspace">Group apps and tasks</button>
+      <button type="button" data-buddy-launcher="sales-team">Build a sales department</button>
+      <button type="button" data-buddy-launcher="opportunity">Find paid work</button>
+      <button type="button" data-buddy-launcher="payments">Set up payments</button>
+      <button type="button" data-buddy-launcher="benchmark">Benchmark a bot</button>
     </div>
 
     <p class="buddy-trust-line">Repository preview linked to <a href="https://github.com/DreamCo-Technologies/Dreamcobots" target="_blank" rel="noopener">DreamCo-Technologies/Dreamcobots</a>. Buddy can prepare and route work locally. Account, payment, outreach, publishing, and external write actions require an authenticated backend and your exact approval.</p>
@@ -238,6 +244,19 @@
       </div>
       <p>Launching an app does not grant Buddy permission to read it, type in it, or control it.</p>
     </section>
+    <section class="buddy-local-section">
+      <h3>Open a grouped workspace</h3>
+      <label class="buddy-local-query">Workspace name<input id="local-workspace-title" maxlength="120" value="DreamCo work session" /></label>
+      <label class="buddy-local-query">Approved apps
+        <select id="local-workspace-apps" multiple size="4">
+          <option value="finder">Finder</option><option value="notes">Notes</option><option value="calendar">Calendar</option><option value="mail">Mail</option><option value="safari">Safari</option><option value="chrome">Chrome</option><option value="firefox">Firefox</option><option value="edge">Edge</option><option value="brave">Brave</option><option value="arc">Arc</option>
+        </select>
+      </label>
+      <label class="buddy-local-query">Approved HTTPS or loopback pages<textarea id="local-workspace-urls" rows="3" maxlength="8192" placeholder="https://github.com/DreamCo-Technologies/Dreamcobots&#10;http://127.0.0.1:8765/buddy.html"></textarea></label>
+      <label class="buddy-local-approval"><input id="local-workspace-approval" type="checkbox" /> Open only these visible targets once. Do not read, type, click, sign in, or submit.</label>
+      <button id="local-workspace-open" class="buddy-send-button" type="button">Open workspace</button>
+      <p>Maximum six apps and pages together. Each target is validated before anything opens.</p>
+    </section>
     <section class="buddy-local-section buddy-local-audit-section">
       <div class="buddy-local-audit-heading"><h3>Visible action log</h3><span>Memory only, last 50</span></div>
       <div id="local-audit" class="buddy-local-audit">No local actions in this session.</div>
@@ -293,7 +312,8 @@
   <script src="data/buddy-routing-index.js"></script>
   <script src="data/buddy-model-router.js"></script>
   <script src="data/buddy-capability-certifications.js"></script>
-  <script src="data/buddy-setup-catalog.js?v=22"></script>
-  <script src="buddy.js?v=22" defer></script>
+  <script src="data/buddy-workforce-system.js?v=23"></script>
+  <script src="data/buddy-setup-catalog.js?v=23"></script>
+  <script src="buddy.js?v=23" defer></script>
 </body>
 </html>

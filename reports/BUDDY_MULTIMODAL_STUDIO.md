@@ -57,10 +57,11 @@ The studio never calls a voice or likeness asset rendered until a configured eng
 
 ## Guardrails
 
-- self-owned adult voice and likeness only
+- adult owner or licensed adult performer voice and likeness with scoped consent and rights evidence
 - no voice or likeness cloning of minors
 - synthetic-media label cannot be disabled
 - raw biometric media stays local or in an encrypted owner vault
 - consent can be revoked
 - publishing requires owner approval
 - outside models are optional
+- paid media providers are not required
