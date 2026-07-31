@@ -4,8 +4,10 @@
   const index = window.BUDDY_ROUTING_INDEX || { summary: { profiles: 0, capabilities: 0 }, bots: [] };
   const modelPolicy = window.BUDDY_MODEL_ROUTER || { defaultMode: 'free', connectors: [] };
   const certifications = window.BUDDY_CAPABILITY_CERTIFICATIONS || { summary: {}, bots: {} };
+  const setupCatalog = window.BUDDY_SETUP_CATALOG || { repository: {}, summary: {}, launchers: [] };
   const bots = index.bots.map(unpack);
   const botBySlug = new Map(bots.map((bot) => [bot.slug, bot]));
+  const launcherById = new Map(setupCatalog.launchers.map((launcher) => [launcher.id, launcher]));
 
   const input = document.getElementById('buddy-input');
   const sendButton = document.getElementById('buddy-send');
@@ -37,6 +39,21 @@
   const boundaryDialog = document.getElementById('boundary-dialog');
   const boundaryClose = document.getElementById('boundary-close');
   const boundaryForm = document.getElementById('boundary-form');
+  const setupDialog = document.getElementById('setup-dialog');
+  const setupClose = document.getElementById('setup-close');
+  const setupTitle = document.getElementById('setup-title');
+  const setupEyebrow = document.getElementById('setup-eyebrow');
+  const setupOptions = document.getElementById('setup-options');
+  const setupCount = document.getElementById('setup-count');
+  const setupStatus = document.getElementById('setup-status');
+  const setupRun = document.getElementById('setup-run');
+  const setupWorkspace = document.getElementById('setup-workspace');
+  const scheduleControls = document.getElementById('schedule-controls');
+  const scheduleOpen = document.getElementById('schedule-open');
+  const scheduleDialog = document.getElementById('schedule-dialog');
+  const scheduleClose = document.getElementById('schedule-close');
+  const scheduleList = document.getElementById('schedule-list');
+  const scheduleSummary = document.getElementById('schedule-summary');
   const params = new URLSearchParams(location.search);
   const preferredSlug = params.get('bot') || '';
   let activeSlug = preferredSlug;
@@ -45,6 +62,11 @@
   let modelMode = modelPolicy.defaultMode || 'free';
   let localBridgePaused = false;
   let boundaryPreferences = loadBoundaryPreferences();
+  let activeLauncher = null;
+  let executionMode = 'now';
+  let selectedSetupOptions = new Set();
+  let scheduledTaskRunning = false;
+  const scheduleStorageKey = 'buddy-scheduled-tasks-v2';
 
   function loadBoundaryPreferences() {
     const defaults = {
@@ -190,7 +212,8 @@
 
   async function routePrompt(objective) {
     const fallback = localRoute(objective);
-    if (!location.protocol.startsWith('http')) return fallback;
+    const staticPreview = location.hostname.endsWith('github.io') || location.hostname.endsWith('vercel.app');
+    if (!location.protocol.startsWith('http') || staticPreview) return fallback;
     try {
       const response = await fetch('/api/buddy/route-capability', {
         method: 'POST',
@@ -389,7 +412,17 @@
     const dataControl = document.createElement('a');
     dataControl.href = 'data-control.html';
     dataControl.textContent = 'Data & memory';
-    actions.append(testButton, prospectus, calculator, connections, launch, benchmark, sourceLab, dataControl);
+    const repository = document.createElement('a');
+    repository.href = setupCatalog.repository.url || 'https://github.com/DreamCo-Technologies/Dreamcobots';
+    repository.target = '_blank';
+    repository.rel = 'noopener';
+    repository.textContent = 'GitHub repository';
+    const githubActions = document.createElement('a');
+    githubActions.href = setupCatalog.repository.actions || 'https://github.com/DreamCo-Technologies/Dreamcobots/actions';
+    githubActions.target = '_blank';
+    githubActions.rel = 'noopener';
+    githubActions.textContent = 'GitHub Actions';
+    actions.append(testButton, prospectus, calculator, connections, launch, benchmark, sourceLab, dataControl, repository, githubActions);
     bubble.append(testResult, actions);
     row.append(avatar, bubble);
     thread.append(row);
@@ -579,6 +612,340 @@
     }
   }
 
+  function localDateTimeValue(date) {
+    const local = new Date(date.getTime() - date.getTimezoneOffset() * 60_000);
+    return local.toISOString().slice(0, 16);
+  }
+
+  function loadScheduledTasks() {
+    try {
+      const rows = JSON.parse(localStorage.getItem(scheduleStorageKey) || '[]');
+      return Array.isArray(rows) ? rows.filter((row) => row && typeof row.id === 'string') : [];
+    } catch (_error) {
+      return [];
+    }
+  }
+
+  function saveScheduledTasks(tasks) {
+    localStorage.setItem(scheduleStorageKey, JSON.stringify(tasks.slice(-100)));
+  }
+
+  function selectedOptionLabels() {
+    if (!activeLauncher) return [];
+    return activeLauncher.options
+      .filter((option) => selectedSetupOptions.has(option.id))
+      .map((option) => option.label);
+  }
+
+  function updateSetupCount() {
+    const count = selectedSetupOptions.size;
+    setupCount.textContent = `${count} of 30 selected`;
+    setupStatus.textContent = count
+      ? `${count} setup choice${count === 1 ? '' : 's'} ready. No outside action is approved.`
+      : 'Choose one or more setup options.';
+  }
+
+  function renderSetupOptions() {
+    setupOptions.replaceChildren();
+    if (!activeLauncher) return;
+    activeLauncher.options.forEach((option) => {
+      const button = document.createElement('button');
+      button.type = 'button';
+      button.className = 'buddy-setup-option';
+      button.textContent = option.label;
+      button.dataset.optionId = option.id;
+      button.setAttribute('aria-pressed', String(selectedSetupOptions.has(option.id)));
+      button.addEventListener('click', () => {
+        if (selectedSetupOptions.has(option.id)) selectedSetupOptions.delete(option.id);
+        else selectedSetupOptions.add(option.id);
+        button.classList.toggle('selected', selectedSetupOptions.has(option.id));
+        button.setAttribute('aria-pressed', String(selectedSetupOptions.has(option.id)));
+        updateSetupCount();
+      });
+      setupOptions.append(button);
+    });
+    updateSetupCount();
+  }
+
+  function setExecutionMode(nextMode) {
+    executionMode = nextMode;
+    document.querySelectorAll('[data-execution-mode]').forEach((button) => {
+      const selected = button.dataset.executionMode === nextMode;
+      button.classList.toggle('active', selected);
+      button.setAttribute('aria-pressed', String(selected));
+    });
+    scheduleControls.hidden = nextMode !== 'schedule';
+    setupRun.textContent = nextMode === 'schedule' ? 'Save timed task' : 'Call specialist now';
+  }
+
+  function updateScheduleFields() {
+    const cadence = document.getElementById('schedule-cadence').value;
+    const endMode = document.getElementById('schedule-end-mode');
+    const once = cadence === 'once';
+    const returningFromOneTime = endMode.disabled;
+    document.getElementById('schedule-custom-label').hidden = cadence !== 'custom';
+    endMode.disabled = once;
+    if (once) endMode.value = 'after_runs';
+    else if (returningFromOneTime) endMode.value = 'until_stopped';
+    document.getElementById('schedule-end-date-label').hidden = once || endMode.value !== 'on_date';
+    document.getElementById('schedule-run-count-label').hidden = once || endMode.value !== 'after_runs';
+  }
+
+  function openSetup(launcherId) {
+    const launcher = launcherById.get(launcherId);
+    if (!launcher) {
+      routeStatus.textContent = 'That setup catalog entry is unavailable.';
+      return;
+    }
+    activeLauncher = launcher;
+    selectedSetupOptions = new Set();
+    setupEyebrow.textContent = `${launcher.options.length} guided setup choices`;
+    setupTitle.textContent = launcher.label;
+    setupWorkspace.href = launcher.workspace;
+    setupWorkspace.textContent = 'Open full workspace';
+    document.getElementById('schedule-start').value = localDateTimeValue(new Date(Date.now() + 5 * 60_000));
+    document.getElementById('schedule-end-date').value = localDateTimeValue(new Date(Date.now() + 30 * 86_400_000)).slice(0, 10);
+    document.getElementById('schedule-cadence').value = 'once';
+    document.getElementById('schedule-end-mode').value = 'after_runs';
+    document.getElementById('schedule-run-count').value = '10';
+    document.getElementById('schedule-interval').value = '60';
+    document.getElementById('schedule-unit').value = 'minutes';
+    document.getElementById('schedule-run-limit').value = '3600';
+    setExecutionMode('now');
+    updateScheduleFields();
+    renderSetupOptions();
+    setupDialog.showModal();
+    setupOptions.querySelector('button')?.focus();
+  }
+
+  function customIntervalSeconds() {
+    const amount = Number(document.getElementById('schedule-interval').value);
+    const unit = document.getElementById('schedule-unit').value;
+    const multiplier = unit === 'days' ? 86_400 : unit === 'hours' ? 3_600 : 60;
+    return Math.round(amount * multiplier);
+  }
+
+  function cadenceLabel(schedule) {
+    const labels = {
+      once: 'one time', hourly: 'every hour', daily: 'every day', weekdays: 'every weekday',
+      weekly: 'every week', monthly: 'every month', custom: `every ${schedule.intervalSeconds / 60} minutes`,
+    };
+    return labels[schedule.cadence] || schedule.cadence;
+  }
+
+  function readScheduleDefinition() {
+    const start = new Date(document.getElementById('schedule-start').value);
+    if (Number.isNaN(start.getTime()) || start.getTime() < Date.now() - 60_000) {
+      throw new Error('Choose a valid first run time that is not in the past.');
+    }
+    const cadence = document.getElementById('schedule-cadence').value;
+    const intervalSeconds = cadence === 'custom' ? customIntervalSeconds() : null;
+    if (cadence === 'custom' && (!Number.isFinite(intervalSeconds) || intervalSeconds < 900)) {
+      throw new Error('Custom recurring tasks must wait at least 15 minutes between runs.');
+    }
+    const requestedEndMode = document.getElementById('schedule-end-mode').value;
+    const endMode = cadence === 'once' ? 'after_runs' : requestedEndMode;
+    const endDateValue = document.getElementById('schedule-end-date').value;
+    const endAt = endMode === 'on_date' && endDateValue ? new Date(`${endDateValue}T23:59:59`).toISOString() : null;
+    const maxRuns = cadence === 'once' ? 1 : endMode === 'after_runs' ? Number(document.getElementById('schedule-run-count').value) : null;
+    if (endMode === 'after_runs' && (!Number.isInteger(maxRuns) || maxRuns < 1 || maxRuns > 10_000)) {
+      throw new Error('Maximum runs must be between 1 and 10,000.');
+    }
+    if (endMode === 'on_date' && (!endAt || new Date(endAt).getTime() <= start.getTime())) {
+      throw new Error('The end date must be after the first run.');
+    }
+    return {
+      cadence,
+      intervalSeconds,
+      endMode,
+      endAt,
+      maxRuns,
+      maxRuntimeSeconds: Number(document.getElementById('schedule-run-limit').value),
+    };
+  }
+
+  function nextRunAt(task, from = new Date()) {
+    const next = new Date(from);
+    if (task.schedule.cadence === 'once') return null;
+    if (task.schedule.cadence === 'hourly') next.setHours(next.getHours() + 1);
+    if (task.schedule.cadence === 'daily') next.setDate(next.getDate() + 1);
+    if (task.schedule.cadence === 'weekly') next.setDate(next.getDate() + 7);
+    if (task.schedule.cadence === 'monthly') next.setMonth(next.getMonth() + 1);
+    if (task.schedule.cadence === 'custom') next.setSeconds(next.getSeconds() + task.schedule.intervalSeconds);
+    if (task.schedule.cadence === 'weekdays') {
+      next.setDate(next.getDate() + 1);
+      while (next.getDay() === 0 || next.getDay() === 6) next.setDate(next.getDate() + 1);
+    }
+    return next.toISOString();
+  }
+
+  function taskPrompt(launcher, options, schedule = null) {
+    const choices = options.length ? options.map((option) => `- ${option}`).join('\n') : '- Start with Buddy\'s recommended setup.';
+    const timing = schedule
+      ? `\nTiming: ${cadenceLabel(schedule)} beginning ${new Date(document.getElementById('schedule-start').value).toLocaleString()}. ${schedule.endMode === 'until_stopped' ? 'Continue until I pause or cancel it.' : schedule.endMode === 'after_runs' ? `Stop after ${schedule.maxRuns} runs.` : `Stop after ${new Date(schedule.endAt).toLocaleDateString()}.`} Each run may use at most ${schedule.maxRuntimeSeconds / 3600} hour(s).`
+      : '';
+    return `${launcher.prompt}\n\nRequested setup:\n${choices}${timing}\n\nUse repository DreamCo-Technologies/Dreamcobots as the code source. Work in a sandbox first. Do not spend money, contact anyone, publish, sign, submit, change an account, or perform another external write without exact approval for that one action.`;
+  }
+
+  function newTaskId() {
+    return globalThis.crypto?.randomUUID ? `buddy-task-${globalThis.crypto.randomUUID()}` : `buddy-task-${Date.now()}-${Math.random().toString(16).slice(2)}`;
+  }
+
+  function formatTaskTime(value) {
+    if (!value) return 'No next run';
+    const date = new Date(value);
+    return Number.isNaN(date.getTime()) ? 'Invalid time' : date.toLocaleString();
+  }
+
+  function renderSchedules() {
+    const tasks = loadScheduledTasks().sort((a, b) => String(a.nextRunAt || '').localeCompare(String(b.nextRunAt || '')));
+    const active = tasks.filter((task) => task.status === 'active').length;
+    scheduleSummary.textContent = tasks.length
+      ? `${active} active and ${tasks.length - active} paused or completed on this device`
+      : 'No schedules on this device';
+    scheduleList.replaceChildren();
+    if (!tasks.length) {
+      const empty = document.createElement('p');
+      empty.className = 'buddy-schedule-empty';
+      empty.textContent = 'Use any Buddy starter and choose Schedule to create a timed task.';
+      scheduleList.append(empty);
+      return;
+    }
+    tasks.forEach((task) => {
+      const row = document.createElement('article');
+      row.className = 'buddy-schedule-item';
+      const title = document.createElement('strong');
+      title.textContent = task.label;
+      const detail = document.createElement('p');
+      detail.textContent = `${cadenceLabel(task.schedule)} · ${task.status} · ${task.runCount} run${task.runCount === 1 ? '' : 's'}`;
+      const next = document.createElement('small');
+      next.textContent = task.status === 'active' ? `Next: ${formatTaskTime(task.nextRunAt)}` : task.status === 'completed' ? 'Schedule completed' : 'Paused by owner';
+      detail.append(next);
+      const actions = document.createElement('div');
+      actions.className = 'buddy-schedule-actions';
+      const run = document.createElement('button');
+      run.type = 'button';
+      run.textContent = 'Run now';
+      run.disabled = task.status === 'completed';
+      run.addEventListener('click', () => executeScheduledTask(task.id, true));
+      const pause = document.createElement('button');
+      pause.type = 'button';
+      pause.textContent = task.status === 'paused' ? 'Resume' : 'Pause';
+      pause.disabled = task.status === 'completed';
+      pause.addEventListener('click', () => {
+        const current = loadScheduledTasks();
+        const selected = current.find((item) => item.id === task.id);
+        if (!selected) return;
+        selected.status = selected.status === 'paused' ? 'active' : 'paused';
+        if (selected.status === 'active' && new Date(selected.nextRunAt).getTime() < Date.now()) {
+          selected.nextRunAt = new Date(Date.now() + 60_000).toISOString();
+        }
+        saveScheduledTasks(current);
+        renderSchedules();
+      });
+      const remove = document.createElement('button');
+      remove.type = 'button';
+      remove.textContent = 'Delete';
+      remove.addEventListener('click', () => {
+        if (!window.confirm(`Delete the ${task.label} schedule from this device?`)) return;
+        saveScheduledTasks(loadScheduledTasks().filter((item) => item.id !== task.id));
+        renderSchedules();
+      });
+      actions.append(run, pause, remove);
+      row.append(title, detail, actions);
+      scheduleList.append(row);
+    });
+  }
+
+  async function executeScheduledTask(taskId, manual = false) {
+    if (scheduledTaskRunning) return;
+    const tasks = loadScheduledTasks();
+    const task = tasks.find((item) => item.id === taskId);
+    if (!task || (!manual && task.status !== 'active') || task.status === 'completed') return;
+    scheduledTaskRunning = true;
+    try {
+      if (scheduleDialog.open) scheduleDialog.close();
+      welcome.hidden = true;
+      addUserMessage(`[Timed task: ${task.label}]\n${task.prompt}`);
+      routeStatus.textContent = `Calling the scheduled ${task.label} specialist in the local sandbox...`;
+      const result = await routePrompt(task.prompt);
+      addBuddyMessage(result);
+      activeSlug = result.selected?.slug || activeSlug;
+      task.runCount += 1;
+      task.lastRunAt = new Date().toISOString();
+      const proposedNext = nextRunAt(task, new Date());
+      const reachedRuns = task.schedule.endMode === 'after_runs' && task.runCount >= task.schedule.maxRuns;
+      const reachedDate = task.schedule.endMode === 'on_date' && proposedNext && new Date(proposedNext).getTime() > new Date(task.schedule.endAt).getTime();
+      if (!proposedNext || reachedRuns || reachedDate) {
+        task.status = 'completed';
+        task.nextRunAt = null;
+      } else {
+        task.status = 'active';
+        task.nextRunAt = proposedNext;
+      }
+      saveScheduledTasks(tasks);
+      routeStatus.textContent = task.status === 'completed'
+        ? `${task.label} completed its schedule.`
+        : `${task.label} ran safely. Next run: ${formatTaskTime(task.nextRunAt)}.`;
+      renderSchedules();
+      thread.lastElementChild?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    } finally {
+      scheduledTaskRunning = false;
+    }
+  }
+
+  async function checkDueSchedules() {
+    if (scheduledTaskRunning || document.hidden) return;
+    const due = loadScheduledTasks().find((task) => task.status === 'active' && task.nextRunAt && new Date(task.nextRunAt).getTime() <= Date.now());
+    if (due) await executeScheduledTask(due.id);
+  }
+
+  async function runSetup() {
+    if (!activeLauncher) return;
+    const choices = selectedOptionLabels();
+    if (!choices.length) {
+      setupStatus.textContent = 'Choose at least one of the 30 setup options.';
+      setupOptions.querySelector('button')?.focus();
+      return;
+    }
+    if (executionMode === 'now') {
+      input.value = taskPrompt(activeLauncher, choices);
+      setupDialog.close();
+      await send();
+      return;
+    }
+    try {
+      const schedule = readScheduleDefinition();
+      const tasks = loadScheduledTasks();
+      if (tasks.length >= 100) throw new Error('This device already has 100 task plans. Delete an old plan before adding another.');
+      const task = {
+        schema: 'dreamco.buddy_local_schedule.v2',
+        id: newTaskId(),
+        launcherId: activeLauncher.id,
+        label: activeLauncher.label,
+        prompt: taskPrompt(activeLauncher, choices, schedule),
+        selectedOptions: choices,
+        schedule,
+        status: 'active',
+        runCount: 0,
+        nextRunAt: new Date(document.getElementById('schedule-start').value).toISOString(),
+        lastRunAt: null,
+        createdAt: new Date().toISOString(),
+        executionBoundary: 'local_sandbox_routing_only_external_actions_require_fresh_approval',
+      };
+      tasks.push(task);
+      saveScheduledTasks(tasks);
+      setupDialog.close();
+      renderSchedules();
+      scheduleDialog.showModal();
+      routeStatus.textContent = schedule.endMode === 'until_stopped'
+        ? `${activeLauncher.label} will recur until you pause or cancel it while an approved runner is available.`
+        : `${activeLauncher.label} schedule saved on this device.`;
+    } catch (error) {
+      setupStatus.textContent = error.message;
+    }
+  }
+
   document.querySelectorAll('[data-buddy-mode]').forEach((button) => {
     button.addEventListener('click', () => {
       document.querySelectorAll('[data-buddy-mode]').forEach((item) => {
@@ -596,6 +963,28 @@
       input.value = button.dataset.buddyPrompt || '';
       input.focus();
     });
+  });
+
+  document.querySelectorAll('[data-buddy-launcher]').forEach((button) => {
+    button.addEventListener('click', () => openSetup(button.dataset.buddyLauncher));
+  });
+  document.querySelectorAll('[data-execution-mode]').forEach((button) => {
+    button.addEventListener('click', () => setExecutionMode(button.dataset.executionMode));
+  });
+  document.getElementById('schedule-cadence').addEventListener('change', updateScheduleFields);
+  document.getElementById('schedule-end-mode').addEventListener('change', updateScheduleFields);
+  setupRun.addEventListener('click', runSetup);
+  setupClose.addEventListener('click', () => setupDialog.close());
+  setupDialog.addEventListener('click', (event) => {
+    if (event.target === setupDialog) setupDialog.close();
+  });
+  scheduleOpen.addEventListener('click', () => {
+    renderSchedules();
+    scheduleDialog.showModal();
+  });
+  scheduleClose.addEventListener('click', () => scheduleDialog.close());
+  scheduleDialog.addEventListener('click', (event) => {
+    if (event.target === scheduleDialog) scheduleDialog.close();
   });
 
   modelPolicy.connectors.filter((connector) => connector.mode === 'premium').forEach((connector) => {
@@ -676,6 +1065,9 @@
   if (index.summary.profiles) {
     routeStatus.textContent = `Ready to route across ${Number(index.summary.profiles).toLocaleString()} verified specialists in free mode.`;
   }
+  renderSchedules();
+  window.setInterval(checkDueSchedules, 30_000);
+  window.setTimeout(checkDueSchedules, 1_500);
   if ('serviceWorker' in navigator && location.protocol !== 'file:') {
     window.addEventListener('load', () => navigator.serviceWorker.register('service-worker.js', { scope: './' }).catch(() => {}));
   }

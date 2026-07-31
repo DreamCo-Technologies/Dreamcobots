@@ -214,7 +214,7 @@ class BuddyPlatformExpansionTests(unittest.TestCase):
         self.assertFalse(approval["payment_executed"])
         self.assertTrue(approval["one_action_only"])
 
-    def test_task_runner_supports_multiple_tasks_and_caps_each_at_24_hours(self):
+    def test_task_runner_supports_multiple_tasks_and_indefinite_recurrence(self):
         class Adapter:
             name = "test-adapter"
 
@@ -230,12 +230,59 @@ class BuddyPlatformExpansionTests(unittest.TestCase):
                 max_runtime_seconds=86_400,
             )
         self.assertEqual(len(runner.run_due(Adapter(), now=time.time() + 1)), 2)
+        recurring_runner = BuddyTaskRunner()
+        recurring = recurring_runner.schedule(
+            owner_user_id="owner-1",
+            bot_slug="research-bot",
+            objective="Prepare a new governed research packet on every scheduled run.",
+            recurrence="interval",
+            interval_seconds=60,
+        )
+        first = recurring_runner.run_due(Adapter(), now=time.time() + 1)
+        self.assertEqual(first[0]["status"], "completed_and_rescheduled")
+        self.assertEqual(recurring.run_count, 1)
+        self.assertEqual(recurring.status, "scheduled")
+        second = recurring_runner.run_due(Adapter(), now=recurring.run_at + 1)
+        self.assertEqual(second[0]["status"], "completed_and_rescheduled")
+        self.assertEqual(recurring.run_count, 2)
+        dashboard = recurring_runner.dashboard()
+        self.assertEqual(dashboard["indefinite_recurring_tasks"], 1)
+        self.assertEqual(dashboard["schedule_duration"], "indefinite_until_paused_or_end_condition")
+
+        resumed_runner = BuddyTaskRunner()
+        resumed = resumed_runner.schedule(
+            owner_user_id="owner-1",
+            bot_slug="research-bot",
+            objective="Prepare one governed research packet after the owner resumes this task.",
+            run_at=time.time() + 60,
+            recurrence="interval",
+            interval_seconds=60,
+        )
+        self.assertTrue(resumed_runner.pause(resumed.task_id))
+        self.assertTrue(resumed_runner.resume(resumed.task_id, run_at=time.time() + 1))
+        resumed_results = resumed_runner.run_due(Adapter(), now=time.time() + 2)
+        self.assertEqual(len(resumed_results), 1)
+        self.assertEqual(resumed.run_count, 1)
+
         with self.assertRaisesRegex(TaskRunnerError, "24 hours"):
             runner.schedule(
                 owner_user_id="owner-1",
                 bot_slug="research-bot",
                 objective="Run a task for longer than the approved maximum.",
                 max_runtime_seconds=86_401,
+            )
+
+    def test_recurring_external_actions_require_fresh_approval_per_run(self):
+        runner = BuddyTaskRunner()
+        with self.assertRaisesRegex(TaskRunnerError, "fresh approval"):
+            runner.schedule(
+                owner_user_id="owner-1",
+                bot_slug="research-bot",
+                objective="Send an approved external update on a recurring schedule.",
+                recurrence="interval",
+                interval_seconds=3600,
+                live_external_action=True,
+                approval_id="approval-recurring",
             )
 
     def test_live_task_approval_is_one_action_only(self):

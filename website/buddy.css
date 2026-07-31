@@ -77,7 +77,9 @@
   padding: 7px 12px;
   border: 1px solid transparent;
   border-radius: 7px;
+  background: transparent;
   color: #c8ccd4;
+  font: inherit;
   font-size: .82rem;
   font-weight: 600;
   cursor: pointer;
@@ -146,7 +148,7 @@
 
 .buddy-welcome h1 {
   margin-top: 4px;
-  font-size: clamp(2rem, 5vw, 3.25rem);
+  font-size: 3.25rem;
   line-height: 1.12;
 }
 
@@ -541,6 +543,187 @@
 .buddy-boundary-floor p { margin: 4px 0 0; color: #9299a5; font-size: .68rem; line-height: 1.5; }
 .buddy-boundary-actions { display: flex; align-items: center; gap: 12px; margin-top: 16px; }
 .buddy-boundary-actions span { color: #858d9a; font-size: .68rem; }
+.buddy-trust-line a { color: #9ebaf0; }
+
+.buddy-setup-dialog,
+.buddy-schedule-dialog {
+  width: min(1080px, calc(100% - 28px));
+  max-height: min(900px, calc(100vh - 28px));
+  padding: 0;
+  overflow: auto;
+  border: 1px solid #3c414b;
+  border-radius: 8px;
+  background: #171a20;
+  color: #eef0f4;
+  box-shadow: 0 30px 90px rgba(0, 0, 0, .65);
+}
+.buddy-setup-dialog::backdrop,
+.buddy-schedule-dialog::backdrop { background: rgba(5, 7, 11, .78); }
+.buddy-setup-dialog > header,
+.buddy-schedule-dialog > header {
+  position: sticky;
+  top: 0;
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 17px 20px;
+  border-bottom: 1px solid #30343d;
+  background: #171a20;
+}
+.buddy-setup-dialog > header p,
+.buddy-schedule-dialog > header p,
+.buddy-setup-section-heading p { margin: 0 0 3px; color: #d4af37; font-size: .64rem; font-weight: 800; text-transform: uppercase; }
+.buddy-setup-dialog h2,
+.buddy-schedule-dialog h2 { margin: 0; font-size: 1.08rem; }
+.buddy-setup-dialog h3 { margin: 0; font-size: .9rem; }
+.buddy-setup-dialog > header button,
+.buddy-schedule-dialog > header button {
+  min-height: 34px;
+  padding: 6px 10px;
+  border: 1px solid #414650;
+  border-radius: 6px;
+  background: transparent;
+  color: #cbd0d8;
+  font: inherit;
+  font-size: .72rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.buddy-repository-strip {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  padding: 12px 20px;
+  border-bottom: 1px solid #30343d;
+  background: #11141a;
+}
+.buddy-repository-strip span { display: grid; gap: 2px; }
+.buddy-repository-strip strong { color: #83d7ad; font-size: .75rem; }
+.buddy-repository-strip small { color: #858d99; font-size: .66rem; }
+.buddy-repository-strip nav { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 6px; }
+.buddy-repository-strip a,
+.buddy-setup-section-heading > a {
+  min-height: 30px;
+  display: inline-flex;
+  align-items: center;
+  padding: 5px 9px;
+  border: 1px solid #363c47;
+  border-radius: 5px;
+  color: #a9c4fa;
+  font-size: .68rem;
+  font-weight: 700;
+}
+.buddy-repository-strip a:hover,
+.buddy-setup-section-heading > a:hover { border-color: #5c79ae; background: #1d2430; color: #fff; }
+
+.buddy-setup-section { padding: 18px 20px; border-bottom: 1px solid #30343d; }
+.buddy-setup-section-heading { display: flex; align-items: flex-end; justify-content: space-between; gap: 18px; margin-bottom: 12px; }
+.buddy-setup-section-heading > span { color: #8e96a3; font-size: .68rem; font-weight: 700; }
+.buddy-setup-options { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); border-top: 1px solid #30343d; border-left: 1px solid #30343d; }
+.buddy-setup-option {
+  min-height: 48px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 10px;
+  border: 0;
+  border-right: 1px solid #30343d;
+  border-bottom: 1px solid #30343d;
+  background: #14171d;
+  color: #bac0ca;
+  font: inherit;
+  font-size: .71rem;
+  line-height: 1.35;
+  text-align: left;
+  cursor: pointer;
+}
+.buddy-setup-option::before {
+  content: '';
+  width: 14px;
+  height: 14px;
+  flex: 0 0 14px;
+  border: 1px solid #515966;
+  border-radius: 3px;
+  background: #0e1116;
+}
+.buddy-setup-option:hover { background: #1b2028; color: #eef0f4; }
+.buddy-setup-option.selected { background: #1d2c47; color: #fff; }
+.buddy-setup-option.selected::before { border-color: #80a8f3; background: #4f7ed8; box-shadow: inset 0 0 0 3px #1d2c47; }
+
+.buddy-execution-tabs { display: inline-flex; padding: 3px; border: 1px solid #363c47; border-radius: 7px; background: #101318; }
+.buddy-execution-tabs button {
+  min-height: 34px;
+  padding: 6px 14px;
+  border: 0;
+  border-radius: 5px;
+  background: transparent;
+  color: #8f97a4;
+  font: inherit;
+  font-size: .72rem;
+  font-weight: 800;
+  cursor: pointer;
+}
+.buddy-execution-tabs button.active { background: #2b4f91; color: #fff; }
+.buddy-schedule-controls { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; margin-top: 13px; }
+.buddy-schedule-controls label { color: #8d95a2; font-size: .67rem; font-weight: 700; }
+.buddy-schedule-controls input,
+.buddy-schedule-controls select {
+  width: 100%;
+  min-height: 40px;
+  margin-top: 5px;
+  padding: 8px 9px;
+  border: 1px solid #3a404a;
+  border-radius: 6px;
+  background: #0f1218;
+  color: #edf0f4;
+  font: inherit;
+}
+.buddy-interval-input { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+.buddy-schedule-boundary { margin: 12px 0 0; padding: 10px 12px; border-left: 3px solid #d4af37; background: #11141a; color: #aeb5c0; font-size: .69rem; line-height: 1.5; }
+.buddy-setup-footer {
+  position: sticky;
+  bottom: 0;
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 14px 20px;
+  background: #171a20;
+  border-top: 1px solid #30343d;
+}
+.buddy-setup-footer span { color: #8e96a3; font-size: .7rem; }
+.buddy-setup-footer .buddy-send-button { width: auto; min-width: 170px; }
+
+.buddy-schedule-dialog { width: min(760px, calc(100% - 28px)); }
+.buddy-schedule-summary { display: grid; gap: 3px; padding: 14px 20px; border-bottom: 1px solid #30343d; background: #11141a; }
+.buddy-schedule-summary strong { font-size: .8rem; }
+.buddy-schedule-summary span { color: #858d99; font-size: .68rem; }
+.buddy-schedule-list { min-height: 180px; max-height: 560px; overflow: auto; padding: 6px 20px 18px; }
+.buddy-schedule-empty { padding: 48px 0; color: #7f8794; text-align: center; font-size: .76rem; }
+.buddy-schedule-item { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 8px 14px; padding: 14px 0; border-bottom: 1px solid #2c3038; }
+.buddy-schedule-item strong { min-width: 0; overflow-wrap: anywhere; font-size: .78rem; }
+.buddy-schedule-item p { grid-column: 1; margin: 0; color: #8d95a2; font-size: .68rem; line-height: 1.45; }
+.buddy-schedule-item small { display: block; margin-top: 3px; color: #727b88; }
+.buddy-schedule-actions { grid-column: 2; grid-row: 1 / span 2; display: flex; align-items: center; gap: 5px; }
+.buddy-schedule-actions button {
+  min-height: 30px;
+  padding: 5px 8px;
+  border: 1px solid #3d4450;
+  border-radius: 5px;
+  background: transparent;
+  color: #c0c7d1;
+  font: inherit;
+  font-size: .66rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+.buddy-schedule-actions button:hover { border-color: #5d79ad; background: #1d2430; color: #fff; }
+.buddy-schedule-dialog > footer { padding: 12px 20px; border-top: 1px solid #30343d; color: #858d99; font-size: .68rem; line-height: 1.45; }
 .sr-only {
   position: absolute;
   width: 1px;
@@ -557,6 +740,7 @@
   .buddy-simple-header { padding: 9px 14px; }
   .buddy-simple-shell { width: min(100% - 24px, 860px); padding-top: 44px; }
   .buddy-welcome { margin-bottom: 26px; }
+  .buddy-welcome h1 { font-size: 2.5rem; }
   .buddy-welcome-icon { width: 60px; height: 60px; }
   .buddy-starters { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .buddy-composer-actions { align-items: stretch; flex-direction: column; gap: 8px; }
@@ -564,18 +748,30 @@
   .buddy-premium-panel { grid-template-columns: 1fr 1fr; }
   .buddy-local-grid { grid-template-columns: 1fr; }
   .buddy-boundary-grid { grid-template-columns: 1fr; }
+  .buddy-setup-options { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .buddy-schedule-controls { grid-template-columns: 1fr 1fr; }
+  .buddy-repository-strip { align-items: flex-start; flex-direction: column; }
+  .buddy-repository-strip nav { justify-content: flex-start; }
 }
 
 @media (max-width: 430px) {
-  .buddy-wordmark small { display: none; }
+  .buddy-simple-header { gap: 6px; padding-inline: 8px; }
+  .buddy-wordmark span { display: none; }
+  .buddy-header-actions { min-width: 0; gap: 4px; }
   .buddy-header-link { display: none; }
-  #specialist-open { display: inline-flex; }
-  #local-open { display: inline-flex; }
+  #schedule-open { display: inline-flex; }
   .buddy-model-switch button { padding-inline: 7px; }
+  .buddy-explore-menu summary { padding-inline: 7px; }
   .buddy-simple-shell { padding-top: 34px; }
   .buddy-welcome h1 { font-size: 2rem; }
   .buddy-mode-tabs button { flex: 1; padding-inline: 5px; }
   .buddy-starters { grid-template-columns: 1fr; }
   .buddy-chat-bubble { max-width: calc(100% - 40px); }
   .buddy-premium-panel { grid-template-columns: 1fr; }
+  .buddy-setup-options { grid-template-columns: 1fr; }
+  .buddy-schedule-controls { grid-template-columns: 1fr; }
+  .buddy-setup-section-heading, .buddy-setup-footer { align-items: stretch; flex-direction: column; }
+  .buddy-setup-footer .buddy-send-button { width: 100%; }
+  .buddy-schedule-item { grid-template-columns: 1fr; }
+  .buddy-schedule-actions { grid-column: 1; grid-row: auto; }
 }

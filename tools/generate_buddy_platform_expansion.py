@@ -29,7 +29,7 @@ IMPLEMENTED_CAPABILITIES = [
     ("governed_lead_system", "Permission-gated lead discovery and follow-up", "sandbox_ready_external_adapters_required", "server/governed-leads.ts"),
     ("data_wallet", "Consent, portability, opt-out, and licensed-data controls", "local_core_ready", "dreamco_platform/privacy/data_wallet.py"),
     ("bill_subscription_manager", "Bill and subscription tracking", "owner_payment_required", "dreamco_platform/finance/subscriptions.py"),
-    ("task_runner", "Concurrent and timed tasks up to 24 hours", "adapter_ready", "dreamco_platform/automation/task_runner.py"),
+    ("task_runner", "One-time and indefinitely recurring checkpointed tasks", "adapter_ready", "dreamco_platform/automation/task_runner.py"),
     ("creative_studio", "Games, courses, films, music, brands, and learning media", "local_prototype_ready", "dreamco_platform/creative/studio.py"),
     ("music_artist_studio", "Rights-aware artist development and original music packets", "local_core_ready", "dreamco_platform/creative/music.py"),
     ("logo_generator", "Editable original SVG logo concepts", "local_core_ready", "dreamco_platform/creative/branding.py"),

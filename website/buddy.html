@@ -15,7 +15,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="styles.css" />
-  <link rel="stylesheet" href="buddy.css" />
+  <link rel="stylesheet" href="buddy.css?v=22" />
 </head>
 <body class="buddy-home buddy-simple-home">
   <header class="buddy-simple-header">
@@ -29,8 +29,10 @@
         <button id="model-premium" type="button" aria-pressed="false" title="Use a connected paid model for one approved request">Premium</button>
       </div>
       <button id="specialist-open" class="buddy-header-link" type="button">Specialists</button>
+      <button id="schedule-open" class="buddy-header-link" type="button">Schedules</button>
       <button id="boundary-open" class="buddy-header-link" type="button">Preferences</button>
       <button id="local-open" class="buddy-header-link" type="button">This laptop</button>
+      <a class="buddy-header-link" href="https://github.com/DreamCo-Technologies/Dreamcobots" target="_blank" rel="noopener">GitHub</a>
       <a class="buddy-header-link" href="buddy.html">New chat</a>
       <details class="buddy-explore-menu">
         <summary>Explore</summary>
@@ -93,20 +95,103 @@
     </section>
 
     <div class="buddy-starters" aria-label="Starter prompts">
-      <button type="button" data-buddy-prompt="Build a working prototype from my idea, including acceptance criteria, a local preview, tests, an ROI estimate, and a reversible launch plan.">Build a prototype</button>
-      <button type="button" data-buddy-prompt="Build an original movie or music video production packet. Coordinate the full production group, actor choices, storyboards, sound, VFX, rights, accessibility, quality gates, and a renderer plan. Never imitate a real person without verified permission.">Make a movie</button>
-      <button type="button" data-buddy-prompt="Turn my vehicle, home, product, job, classroom, or custom idea into a rights-aware simulation with model provenance, variants, known limits, safe practice, tests, and an optional practice game.">Build a simulation game</button>
-      <button type="button" data-buddy-prompt="Plan a safe connection to an app on my device. Start read-only, show every step, preview changes, and ask before each live action.">Connect an app</button>
-      <button type="button" data-buddy-prompt="Launch my project on the free DreamCo web address first, then prepare domain name choices, DNS steps, availability checks, renewal costs, and a purchase approval gate.">Launch a domain</button>
-      <button type="button" data-buddy-prompt="Find the best specialist for my task, show the matched capabilities, and prepare a safe sandbox task packet.">Choose a specialist</button>
-      <button type="button" data-buddy-prompt="Find official government resources for my goal, verify the jurisdiction and deadlines, and prepare a checklist without submitting anything.">Find government help</button>
-      <button type="button" data-buddy-prompt="Compare licensed open-weight coding models on exact checkpoints using signed tests, hardware limits, cost, and reproducible evidence. Do not score models by country.">Compare coding models</button>
-      <button type="button" data-buddy-prompt="I do not know the steps yet. Help me define a successful result, teach me what I need, choose the right specialists, and start with a safe practice task.">Help me figure it out</button>
-      <button type="button" data-local-search-open>Search the web</button>
+      <button type="button" data-buddy-launcher="prototype">Build a prototype</button>
+      <button type="button" data-buddy-launcher="movie">Make a movie</button>
+      <button type="button" data-buddy-launcher="simulation">Build a simulation game</button>
+      <button type="button" data-buddy-launcher="connection">Connect an app</button>
+      <button type="button" data-buddy-launcher="domain">Launch a domain</button>
+      <button type="button" data-buddy-launcher="specialist">Choose a specialist</button>
+      <button type="button" data-buddy-launcher="government">Find government help</button>
+      <button type="button" data-buddy-launcher="models">Compare coding models</button>
+      <button type="button" data-buddy-launcher="discover">Help me figure it out</button>
+      <button type="button" data-buddy-launcher="search">Search the web</button>
     </div>
 
-    <p class="buddy-trust-line">Repository preview. Buddy can prepare and route work locally. Account, payment, outreach, publishing, and external write actions require an authenticated backend and your exact approval.</p>
+    <p class="buddy-trust-line">Repository preview linked to <a href="https://github.com/DreamCo-Technologies/Dreamcobots" target="_blank" rel="noopener">DreamCo-Technologies/Dreamcobots</a>. Buddy can prepare and route work locally. Account, payment, outreach, publishing, and external write actions require an authenticated backend and your exact approval.</p>
   </main>
+
+  <dialog id="setup-dialog" class="buddy-setup-dialog" aria-labelledby="setup-title">
+    <header>
+      <div>
+        <p id="setup-eyebrow">Buddy setup workspace</p>
+        <h2 id="setup-title">Configure a task</h2>
+      </div>
+      <button id="setup-close" type="button">Close</button>
+    </header>
+    <div class="buddy-repository-strip">
+      <span><strong>GitHub connected</strong><small>DreamCo-Technologies/Dreamcobots</small></span>
+      <nav aria-label="Repository links">
+        <a id="setup-repository" href="https://github.com/DreamCo-Technologies/Dreamcobots" target="_blank" rel="noopener">Repository</a>
+        <a href="https://github.com/DreamCo-Technologies/Dreamcobots/actions" target="_blank" rel="noopener">Actions</a>
+        <a href="https://github.com/DreamCo-Technologies/Dreamcobots/issues" target="_blank" rel="noopener">Issues</a>
+        <a href="https://github.com/DreamCo-Technologies/Dreamcobots/pulls" target="_blank" rel="noopener">Pull requests</a>
+      </nav>
+    </div>
+    <section class="buddy-setup-section" aria-labelledby="setup-options-title">
+      <div class="buddy-setup-section-heading">
+        <div><p>Top setup choices</p><h3 id="setup-options-title">Choose what Buddy should prepare</h3></div>
+        <span id="setup-count">0 of 30 selected</span>
+      </div>
+      <div id="setup-options" class="buddy-setup-options"></div>
+    </section>
+    <section class="buddy-setup-section buddy-execution-section" aria-labelledby="setup-execution-title">
+      <div class="buddy-setup-section-heading">
+        <div><p>Execution</p><h3 id="setup-execution-title">Call the bot now or time the task</h3></div>
+        <a id="setup-workspace" href="buddy.html">Open full workspace</a>
+      </div>
+      <div class="buddy-execution-tabs" role="group" aria-label="Execution timing">
+        <button class="active" type="button" data-execution-mode="now" aria-pressed="true">Call now</button>
+        <button type="button" data-execution-mode="schedule" aria-pressed="false">Schedule</button>
+      </div>
+      <div id="schedule-controls" class="buddy-schedule-controls" hidden>
+        <label>First run<input id="schedule-start" type="datetime-local" /></label>
+        <label>Repeat
+          <select id="schedule-cadence">
+            <option value="once">One time</option>
+            <option value="hourly">Every hour</option>
+            <option value="daily">Every day</option>
+            <option value="weekdays">Every weekday</option>
+            <option value="weekly">Every week</option>
+            <option value="monthly">Every month</option>
+            <option value="custom">Custom interval</option>
+          </select>
+        </label>
+        <label id="schedule-custom-label" hidden>Custom interval
+          <span class="buddy-interval-input"><input id="schedule-interval" type="number" min="15" max="525600" value="60" /><select id="schedule-unit"><option value="minutes">Minutes</option><option value="hours">Hours</option><option value="days">Days</option></select></span>
+        </label>
+        <label>End
+          <select id="schedule-end-mode">
+            <option value="until_stopped">Continue until I stop it</option>
+            <option value="on_date">On a date</option>
+            <option value="after_runs">After a number of runs</option>
+          </select>
+        </label>
+        <label id="schedule-end-date-label" hidden>End date<input id="schedule-end-date" type="date" /></label>
+        <label id="schedule-run-count-label" hidden>Maximum runs<input id="schedule-run-count" type="number" min="1" max="10000" value="10" /></label>
+        <label>Maximum per run
+          <select id="schedule-run-limit"><option value="900">15 minutes</option><option value="3600" selected>1 hour</option><option value="21600">6 hours</option><option value="86400">24 hours</option></select>
+        </label>
+      </div>
+      <p class="buddy-schedule-boundary">Forever means recurring until paused or cancelled, not one unbounded process. GitHub Pages can run safe local routing while this page is open. Running after the browser closes requires the owner-controlled local runner or authenticated scheduler.</p>
+    </section>
+    <footer class="buddy-setup-footer">
+      <span id="setup-status" aria-live="polite">Choose one or more setup options.</span>
+      <button id="setup-run" class="buddy-send-button" type="button">Call specialist now</button>
+    </footer>
+  </dialog>
+
+  <dialog id="schedule-dialog" class="buddy-schedule-dialog" aria-labelledby="schedule-title">
+    <header>
+      <div><p>Owner-controlled task queue</p><h2 id="schedule-title">Buddy schedules</h2></div>
+      <button id="schedule-close" type="button">Close</button>
+    </header>
+    <div class="buddy-schedule-summary">
+      <strong id="schedule-summary">No schedules on this device</strong>
+      <span>Stored locally. External actions are never pre-approved.</span>
+    </div>
+    <div id="schedule-list" class="buddy-schedule-list"></div>
+    <footer>Recurring tasks can continue without an end date when a local or hosted scheduler is running. Each run remains bounded and reviewable.</footer>
+  </dialog>
 
   <dialog id="specialist-dialog" class="buddy-specialist-dialog" aria-labelledby="specialist-title">
     <header>
@@ -208,6 +293,7 @@
   <script src="data/buddy-routing-index.js"></script>
   <script src="data/buddy-model-router.js"></script>
   <script src="data/buddy-capability-certifications.js"></script>
-  <script src="buddy.js" defer></script>
+  <script src="data/buddy-setup-catalog.js?v=22"></script>
+  <script src="buddy.js?v=22" defer></script>
 </body>
 </html>

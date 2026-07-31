@@ -54,7 +54,7 @@ jobs:
           include-hidden-files: true
 
   deploy:
-    if: github.ref == 'refs/heads/main'
+    if: github.event_name == 'workflow_dispatch'
     needs: build
     runs-on: ubuntu-latest
     permissions:

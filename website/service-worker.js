@@ -1,10 +1,10 @@
-const SHELL_CACHE = 'buddy-shell-v16';
-const RUNTIME_CACHE = 'buddy-runtime-v16';
+const SHELL_CACHE = 'buddy-shell-v22';
+const RUNTIME_CACHE = 'buddy-runtime-v22';
 const APP_SHELL = [
   './',
   './buddy.html',
-  './buddy.css',
-  './buddy.js',
+  './buddy.css?v=22',
+  './buddy.js?v=22',
   './install.html',
   './install.css',
   './install.js',
@@ -45,6 +45,7 @@ const APP_SHELL = [
   './data/buddy-distribution-catalog.json',
   './data/buddy-specialized-hubs.js',
   './data/buddy-production-group.js',
+  './data/buddy-setup-catalog.js?v=22',
   './assets/images/favicon.svg',
   './assets/images/buddy-icon-192.png',
   './assets/images/buddy-icon-512.png'
@@ -78,7 +79,7 @@ async function networkFirst(request) {
 }
 
 async function cacheFirst(request) {
-  const cached = await caches.match(request, { ignoreSearch: true });
+  const cached = await caches.match(request);
   if (cached) return cached;
   const response = await fetch(request);
   if (response.ok) {

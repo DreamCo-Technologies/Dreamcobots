@@ -12,7 +12,7 @@ This registry distinguishes repository-controlled capability cores from official
 - `governed_lead_system`: Permission-gated lead discovery and follow-up (`sandbox_ready_external_adapters_required`)
 - `data_wallet`: Consent, portability, opt-out, and licensed-data controls (`local_core_ready`)
 - `bill_subscription_manager`: Bill and subscription tracking (`owner_payment_required`)
-- `task_runner`: Concurrent and timed tasks up to 24 hours (`adapter_ready`)
+- `task_runner`: One-time and indefinitely recurring checkpointed tasks (`adapter_ready`)
 - `creative_studio`: Games, courses, films, music, brands, and learning media (`local_prototype_ready`)
 - `music_artist_studio`: Rights-aware artist development and original music packets (`local_core_ready`)
 - `logo_generator`: Editable original SVG logo concepts (`local_core_ready`)
