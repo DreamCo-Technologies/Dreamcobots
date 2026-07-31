@@ -19,6 +19,7 @@ PUBLIC = ROOT / "website" / "data" / "repository-test-registry.json"
 
 SKIPPED_ROOTS = {
     ".git",
+    ".vercel",
     ".wrangler",
     "__pycache__",
     "dist",
