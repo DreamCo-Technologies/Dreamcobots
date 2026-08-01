@@ -124,6 +124,20 @@
 .quality-worker-list { display: grid; gap: 6px; padding-left: 18px; color: #aeb3be; font-size: .72rem; line-height: 1.45; }
 .quality-phase-list.complete { color: #8dd9b8; }
 .quality-phase-list.remaining { color: #e3c879; }
+.quality-learning-goal { color: #c9ced7; font-size: .74rem; line-height: 1.55; }
+.quality-learning-stages { display: grid; gap: 8px; }
+.quality-learning-stage { padding: 11px 12px; border: 1px solid #30333a; border-radius: 7px; background: #111318; }
+.quality-learning-stage > div { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.quality-learning-stage strong { font-size: .72rem; }
+.quality-learning-stage p { margin-top: 6px; color: #b9bec8; font-size: .68rem; line-height: 1.45; }
+.quality-learning-stage small { display: block; margin-top: 6px; color: #858c98; font-size: .62rem; line-height: 1.4; }
+.quality-benchmark-summary { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); border-block: 1px solid #30333a; }
+.quality-benchmark-summary div { min-width: 0; padding: 11px; border-right: 1px solid #30333a; }
+.quality-benchmark-summary div:nth-child(3n) { border-right: 0; }
+.quality-benchmark-summary small,
+.quality-benchmark-summary strong { display: block; }
+.quality-benchmark-summary small { color: #858c98; font-size: .6rem; text-transform: uppercase; }
+.quality-benchmark-summary strong { margin-top: 4px; font-size: .68rem; overflow-wrap: anywhere; }
 .quality-capability-list { border: 1px solid #30333a; border-radius: 7px; overflow: hidden; }
 .quality-capability-row { display: grid; grid-template-columns: minmax(210px, 1.2fr) repeat(3, minmax(120px, .7fr)); gap: 10px; align-items: center; padding: 10px; border-bottom: 1px solid #292c33; font-size: .65rem; }
 .quality-capability-row:last-child { border-bottom: 0; }
@@ -166,4 +180,7 @@
   .quality-detail-summary div:nth-child(3n) { border-right: 1px solid #30333a; }
   .quality-detail-summary div:nth-child(even) { border-right: 0; }
   .quality-capability-row { grid-template-columns: 1fr; }
+  .quality-benchmark-summary { grid-template-columns: 1fr 1fr; }
+  .quality-benchmark-summary div:nth-child(3n) { border-right: 1px solid #30333a; }
+  .quality-benchmark-summary div:nth-child(even) { border-right: 0; }
 }

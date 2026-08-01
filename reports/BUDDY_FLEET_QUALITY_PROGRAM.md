@@ -5,6 +5,8 @@ This report separates repository contract evidence from live end-to-end and comp
 ## Coverage
 
 - Bot build plans: 1051
+- Unique bot learning paths: 1051
+- Unique competitor benchmark suites: 1051
 - Capability benchmark plans: 8408
 - Repository capability contracts passed: 8408
 - Live competitor benchmarks completed: 0

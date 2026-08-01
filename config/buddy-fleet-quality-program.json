@@ -97,6 +97,28 @@
     "forbidden_outputs": ["self merge", "protected-branch write", "silent model change", "unapproved paid run", "unapproved production action"],
     "required_controls": ["pause", "kill switch", "budget cap", "source allowlist", "retention limit", "rollback", "human review"]
   },
+  "learning_path_policy": {
+    "curriculum_version": "2026.08",
+    "maximum_parallel_modules": 2,
+    "stages": [
+      { "id": "mission_orientation", "label": "Mission and boundary orientation", "evidence_gate": "The bot's stable identity, users, mission, limits, Buddy route, and approval boundary are recorded." },
+      { "id": "capability_practice", "label": "Capability contract practice", "evidence_gate": "Every declared capability passes its deterministic repository fixture with synthetic data." },
+      { "id": "dependency_adapter_lab", "label": "Dependency and adapter lab", "evidence_gate": "Required imports, licenses, mocks, failure paths, secrets, timeouts, retries, and sandbox adapters pass." },
+      { "id": "competitor_discovery", "label": "Current competitor discovery", "evidence_gate": "Task-specific candidates are identified from current approved sources with exact product, version, terms, and price metadata." },
+      { "id": "head_to_head_benchmark", "label": "Controlled head-to-head benchmark", "evidence_gate": "DreamCo and competitor candidates run identical signed fixtures with the same grader, environment, budget, and failure reporting." },
+      { "id": "measured_gap_sprint", "label": "Measured gap-closing sprint", "evidence_gate": "A review branch addresses measured gaps and passes capability, regression, security, accessibility, efficiency, and rollback checks." },
+      { "id": "owner_release_review", "label": "Owner release review", "evidence_gate": "The owner reviews evidence, scope, cost, permissions, data handling, and rollback before merge or deployment." },
+      { "id": "production_observation", "label": "Production observation", "evidence_gate": "A deployed release proves health, cost, failure recovery, and user value without hiding regressions." }
+    ],
+    "progression_rules": [
+      "A module advances only when its evidence gate passes; time spent is not proof of mastery.",
+      "Failed and skipped fixtures stay visible and become the next bounded practice assignment.",
+      "Competitor marketing claims never count as benchmark evidence.",
+      "A bot may prepare source updates, tests, issues, review branches, and draft pull requests but may not self-release.",
+      "Live network, paid, outreach, account, publishing, and production actions require their configured approval gates."
+    ],
+    "graduation_rule": "All capability modules, dependency gates, staging flows, current competitor baselines, release checks, owner review, and production observation must have evidence before a bot is labeled production ready."
+  },
   "efficiency_budgets": {
     "measurement_required": ["wall time", "p50 latency", "p95 latency", "CPU", "peak memory", "storage delta", "network calls", "retries", "tokens", "actual cost"],
     "failure_rules": [

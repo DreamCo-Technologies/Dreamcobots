@@ -16,6 +16,13 @@ type QualitySource = {
   release_pipeline: Array<{ id: string; gate: string }>;
   dependency_gates: string[];
   continuous_learning: Record<string, unknown>;
+  learning_path_policy: {
+    curriculum_version: string;
+    maximum_parallel_modules: number;
+    stages: Array<{ id: string; label: string; evidence_gate: string }>;
+    progression_rules: string[];
+    graduation_rule: string;
+  };
   efficiency_budgets: Record<string, unknown>;
 };
 
@@ -43,22 +50,50 @@ export function buildFleetQualityProgram() {
   if (new Set(phaseIds).size !== phaseIds.length || phaseIds.length < 8) {
     throw new Error("Fleet quality release phases must be unique and comprehensive.");
   }
+  const learningStageIds = source.learning_path_policy.stages.map((stage) => stage.id);
+  if (new Set(learningStageIds).size !== learningStageIds.length || learningStageIds.length < 8) {
+    throw new Error("Fleet learning stages must be unique and comprehensive.");
+  }
+  if (source.learning_path_policy.maximum_parallel_modules < 1) {
+    throw new Error("Fleet learning paths must allow at least one active module.");
+  }
   for (const slug of workerSlugs) {
     if (!fleetSlugs.has(slug)) throw new Error(`Fleet quality worker does not resolve: ${slug}`);
   }
 
   const bots = fleet.bots.map((bot) => {
     const apiNames = bot.api_candidates.map((api) => api.name);
-    const capabilities = bot.capabilities.map((capability) => ({
+    const capabilities = bot.capabilities.map((capability, index) => ({
       capability_test_id: capability.test_id,
       name: capability.name,
       fixture_id: `quality-fixture-${digest(`${bot.identity.slug}:${capability.name}:v1`)}`,
+      learning_module_id: `learning-module-${digest(`${bot.identity.slug}:${capability.name}:learning:v1`)}`,
+      learning_order: index + 1,
+      competitor_benchmark_id: `competitor-benchmark-${digest(`${bot.identity.slug}:${capability.name}:benchmark:v1`)}`,
       repository_contract_status: capability.test_status === "reported_by_fleet_e2e" ? "passed" : "missing",
       repository_evidence: capability.test_evidence,
       benchmark_dimensions: dimensionIds,
       competitor_discovery_status: "current_sources_required",
       live_competitor_benchmark_status: "not_run",
       live_end_to_end_status: "not_run",
+    }));
+    const learningPathId = `learning-path-${digest(`${bot.identity.slug}:${source.learning_path_policy.curriculum_version}`)}`;
+    const competitorSuiteId = `competitor-suite-${digest(`${bot.identity.slug}:competitors:v1`)}`;
+    const stageStatus: Record<string, string> = {
+      mission_orientation: "passed_repository_evidence",
+      capability_practice: capabilities.every((item) => item.repository_contract_status === "passed")
+        ? "passed_repository_evidence"
+        : "gaps_detected",
+      dependency_adapter_lab: "planned",
+      competitor_discovery: "current_sources_required",
+      head_to_head_benchmark: "held_live_evidence_required",
+      measured_gap_sprint: "waiting_for_benchmark_evidence",
+      owner_release_review: "waiting_for_release_candidate",
+      production_observation: "deployment_required",
+    };
+    const learningStages = source.learning_path_policy.stages.map((stage) => ({
+      stage_id: stage.id,
+      status: stageStatus[stage.id] || "planned",
     }));
     const completedPhases = ["catalog_and_route", "repository_contract"];
     const nextActions = [
@@ -95,6 +130,30 @@ export function buildFleetQualityProgram() {
         release_pipeline_reference: "config/buddy-fleet-quality-program.json#release_pipeline",
         learning_policy_reference: "config/buddy-fleet-quality-program.json#continuous_learning",
       },
+      learning_path: {
+        path_id: learningPathId,
+        curriculum_version: source.learning_path_policy.curriculum_version,
+        specialization_signature: digest(`${bot.identity.division}:${bot.identity.category}:${capabilities.map((item) => item.name).join("|")}`),
+        training_goal: `Build measurable mastery of ${bot.identity.display_name}'s ${capabilities.length} declared capabilities for ${bot.prospectus.target_users}.`,
+        maximum_parallel_modules: source.learning_path_policy.maximum_parallel_modules,
+        module_count: capabilities.length,
+        stages: learningStages,
+        progression_policy_reference: "config/buddy-fleet-quality-program.json#learning_path_policy",
+        graduation_status: "gates_remaining",
+      },
+      competitor_benchmark: {
+        suite_id: competitorSuiteId,
+        scope: "task_specific_per_capability",
+        baseline: `${bot.identity.slug}:repository-contract`,
+        benchmark_count: capabilities.length,
+        candidate_limit_per_capability: Number(source.competitor_discovery.maximum_candidates_per_capability || 5),
+        dimension_reference: "config/buddy-fleet-quality-program.json#benchmark_dimensions",
+        discovery_policy_reference: "config/buddy-fleet-quality-program.json#competitor_discovery",
+        current_candidates_verified: 0,
+        live_results_completed: 0,
+        current_ranking_claimed: false,
+        status: "current_sources_and_live_runs_required",
+      },
       benchmark_plan: {
         current_competitor_ranking_claimed: false,
         candidate_limit_per_capability: Number(source.competitor_discovery.maximum_candidates_per_capability || 5),
@@ -126,6 +185,8 @@ export function buildFleetQualityProgram() {
       per_bot_dependency_plans: bots.length,
       per_bot_release_plans: bots.length,
       per_bot_learning_plans: bots.length,
+      unique_learning_paths: new Set(bots.map((bot) => bot.learning_path.path_id)).size,
+      unique_competitor_benchmark_suites: new Set(bots.map((bot) => bot.competitor_benchmark.suite_id)).size,
       per_capability_benchmark_plans: capabilityPlans,
       repository_capability_contracts_passed: repositoryContractsPassed,
       live_competitor_benchmarks_completed: 0,
@@ -138,6 +199,7 @@ export function buildFleetQualityProgram() {
     release_pipeline: source.release_pipeline,
     dependency_gates: source.dependency_gates,
     continuous_learning: source.continuous_learning,
+    learning_path_policy: source.learning_path_policy,
     efficiency_budgets: source.efficiency_budgets,
     bots,
   };
@@ -160,6 +222,7 @@ function publicProgram(program: ReturnType<typeof buildFleetQualityProgram>) {
     release_pipeline: program.release_pipeline,
     dependency_gates: program.dependency_gates,
     continuous_learning: program.continuous_learning,
+    learning_path_policy: program.learning_path_policy,
     efficiency_budgets: program.efficiency_budgets,
     bots: program.bots.map((bot) => ({
       bot_id: bot.bot_id,
@@ -174,6 +237,24 @@ function publicProgram(program: ReturnType<typeof buildFleetQualityProgram>) {
         remaining_phases: bot.build_plan.remaining_phases,
         next_actions: bot.build_plan.next_actions,
       },
+      learning_path: {
+        path_id: bot.learning_path.path_id,
+        curriculum_version: bot.learning_path.curriculum_version,
+        training_goal: bot.learning_path.training_goal,
+        module_count: bot.learning_path.module_count,
+        stages: bot.learning_path.stages,
+        graduation_status: bot.learning_path.graduation_status,
+      },
+      competitor_benchmark: {
+        suite_id: bot.competitor_benchmark.suite_id,
+        baseline: bot.competitor_benchmark.baseline,
+        benchmark_count: bot.competitor_benchmark.benchmark_count,
+        candidate_limit_per_capability: bot.competitor_benchmark.candidate_limit_per_capability,
+        current_candidates_verified: bot.competitor_benchmark.current_candidates_verified,
+        live_results_completed: bot.competitor_benchmark.live_results_completed,
+        current_ranking_claimed: bot.competitor_benchmark.current_ranking_claimed,
+        status: bot.competitor_benchmark.status,
+      },
       benchmark_plan: {
         current_competitor_ranking_claimed: bot.benchmark_plan.current_competitor_ranking_claimed,
         candidate_limit_per_capability: bot.benchmark_plan.candidate_limit_per_capability,
@@ -183,6 +264,9 @@ function publicProgram(program: ReturnType<typeof buildFleetQualityProgram>) {
           capability_test_id: capability.capability_test_id,
           name: capability.name,
           fixture_id: capability.fixture_id,
+          module_id: capability.learning_module_id,
+          learning_order: capability.learning_order,
+          benchmark_id: capability.competitor_benchmark_id,
           repository_contract_status: capability.repository_contract_status,
           repository_evidence: capability.repository_evidence,
           competitor_discovery_status: capability.competitor_discovery_status,
@@ -204,6 +288,8 @@ function report(program: ReturnType<typeof buildFleetQualityProgram>) {
     "## Coverage",
     "",
     `- Bot build plans: ${program.summary.per_bot_build_plans}`,
+    `- Unique bot learning paths: ${program.summary.unique_learning_paths}`,
+    `- Unique competitor benchmark suites: ${program.summary.unique_competitor_benchmark_suites}`,
     `- Capability benchmark plans: ${program.summary.per_capability_benchmark_plans}`,
     `- Repository capability contracts passed: ${program.summary.repository_capability_contracts_passed}`,
     `- Live competitor benchmarks completed: ${program.summary.live_competitor_benchmarks_completed}`,

@@ -36,7 +36,7 @@
 
   function renderQualityMetrics() {
     const summary = quality.summary || {};
-    byId('quality-profile-count').textContent = formatter.format(summary.per_bot_build_plans || 0);
+    byId('quality-profile-count').textContent = formatter.format(summary.unique_learning_paths || summary.per_bot_learning_plans || 0);
     byId('quality-capability-count').textContent = formatter.format(summary.per_capability_benchmark_plans || 0);
     byId('quality-contract-count').textContent = formatter.format(summary.repository_capability_contracts_passed || 0);
     byId('quality-live-count').textContent = formatter.format(summary.live_competitor_benchmarks_completed || 0);
@@ -62,7 +62,8 @@
     const status = byId('quality-status-filter').value;
     const matched = (quality.bots || []).filter((bot) => {
       const capabilities = bot.benchmark_plan.capabilities.map((capability) => capability.name).join(' ');
-      const text = `${bot.display_name} ${bot.bot_id} ${bot.division} ${bot.category} ${capabilities}`.toLowerCase();
+      const learningGoal = bot.learning_path?.training_goal || '';
+      const text = `${bot.display_name} ${bot.bot_id} ${bot.division} ${bot.category} ${capabilities} ${learningGoal}`.toLowerCase();
       return (!query || text.includes(query)) && qualityBotMatchesStatus(bot, status);
     });
     target.replaceChildren();
@@ -103,6 +104,9 @@
       ['Repository contracts', `${bot.evidence.repository_capability_contracts_passed}/${bot.evidence.repository_capability_contracts_total} passed`],
       ['Live end-to-end', `${bot.evidence.live_end_to_end_flows_passed} passed`],
       ['Live competitor benchmarks', `${bot.evidence.live_competitor_benchmarks_passed} completed`],
+      ['Learning path', bot.learning_path.path_id],
+      ['Curriculum modules', `${bot.learning_path.module_count} ordered`],
+      ['Competitor suite', bot.competitor_benchmark.suite_id],
       ['Production status', bot.production_status],
     ].forEach(([label, value]) => {
       const item = make('div');
@@ -116,18 +120,57 @@
     body.append(make('h3', 'Next build actions'));
     appendList(body, bot.build_plan.next_actions, 'quality-action-list');
 
+    body.append(make('h3', 'Separate learning path'));
+    const learningSummary = make('p', bot.learning_path.training_goal, 'quality-learning-goal');
+    const learningStages = make('div', undefined, 'quality-learning-stages');
+    bot.learning_path.stages.forEach((stage, index) => {
+      const definition = (quality.learning_path_policy?.stages || []).find((item) => item.id === stage.stage_id) || {};
+      const label = definition.label || readable(stage.stage_id);
+      const row = make('article', undefined, 'quality-learning-stage');
+      const heading = make('div');
+      heading.append(make('strong', `${index + 1}. ${label}`), make('span', readable(stage.status), 'test-status'));
+      row.append(
+        heading,
+        make('p', `${label} for ${bot.display_name}'s ${bot.category} specialization and ordered capability curriculum.`),
+        make('small', `Gate: ${definition.evidence_gate || 'Evidence required before progression.'}`),
+      );
+      learningStages.append(row);
+    });
+    body.append(learningSummary, learningStages);
+
+    body.append(make('h3', 'Competitor benchmark suite'));
+    const benchmarkSummary = make('div', undefined, 'quality-benchmark-summary');
+    [
+      ['Suite', bot.competitor_benchmark.suite_id],
+      ['Baseline', bot.competitor_benchmark.baseline],
+      ['Capability benchmarks', String(bot.competitor_benchmark.benchmark_count)],
+      ['Candidates verified', String(bot.competitor_benchmark.current_candidates_verified)],
+      ['Live results', String(bot.competitor_benchmark.live_results_completed)],
+      ['State', readable(bot.competitor_benchmark.status)],
+    ].forEach(([label, value]) => {
+      const item = make('div');
+      item.append(make('small', label), make('strong', value));
+      benchmarkSummary.append(item);
+    });
+    body.append(benchmarkSummary);
+
     body.append(make('h3', 'Capability benchmark fixtures'));
     const capabilityList = make('div', undefined, 'quality-capability-list');
     bot.benchmark_plan.capabilities.forEach((capability) => {
       const row = make('div', undefined, 'quality-capability-row');
       const copy = make('span');
-      copy.append(make('strong', capability.name), make('code', capability.fixture_id));
+      copy.append(
+        make('strong', `${capability.learning_order}. ${capability.name}`),
+        make('code', capability.module_id),
+        make('code', capability.benchmark_id),
+      );
       row.append(
         copy,
         make('span', `Repository: ${readable(capability.repository_contract_status)}`),
         make('span', `Competitor: ${readable(capability.live_competitor_benchmark_status)}`),
         make('span', `Live E2E: ${readable(capability.live_end_to_end_status)}`),
       );
+      row.title = `Benchmark ${capability.name} against current task-specific competitors using identical signed fixtures.`;
       capabilityList.append(row);
     });
     body.append(capabilityList, make('h3', 'Assigned quality team'));
@@ -148,6 +191,7 @@
       releasePipeline: quality.release_pipeline,
       dependencyGates: quality.dependency_gates,
       continuousLearning: quality.continuous_learning,
+      learningPathPolicy: quality.learning_path_policy,
       externalActionTaken: false,
       liveBenchmarkExecuted: false,
     }, `${selectedQualityBot.bot_id}-quality-plan.json`);
