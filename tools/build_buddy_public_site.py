@@ -263,6 +263,9 @@ def validate_site() -> dict[str, Any]:
         WEBSITE / "buddy.css",
         WEBSITE / "buddy.js",
         WEBSITE / "buddy-site-sync.js",
+        WEBSITE / "search.html",
+        WEBSITE / "dream-search.css",
+        WEBSITE / "dream-search.js",
         WEBSITE / "calculator.html",
         WEBSITE / "calculator.css",
         WEBSITE / "calculator-engine.js",
@@ -306,6 +309,7 @@ def validate_site() -> dict[str, Any]:
         WEBSITE / "system-map.html",
         WEBSITE / "data" / "buddy-site-status.json",
         WEBSITE / "data" / "buddy-routing-index.js",
+        WEBSITE / "data" / "dreamco-search-index.js",
         WEBSITE / "data" / "buddy-model-router.js",
         WEBSITE / "data" / "buddy-model-benchmarks.js",
         WEBSITE / "data" / "buddy-open-model-coding-lab.js",
@@ -378,6 +382,26 @@ def validate_site() -> dict[str, Any]:
         for control_id in sorted(required_buddy_controls):
             if f"getElementById('{control_id}')" not in buddy_script:
                 errors.append(f"Buddy control is not bound in buddy.js: #{control_id}")
+
+    search_parser = parsers.get(WEBSITE / "search.html")
+    search_script = (WEBSITE / "dream-search.js").read_text(encoding="utf-8") if (WEBSITE / "dream-search.js").exists() else ""
+    required_search_controls = {
+        "dream-search-form", "dream-search-input", "dream-search-submit",
+        "search-mode-dreamco", "search-mode-web", "search-mode-note",
+        "search-type-filter", "search-division-filter", "search-evidence-filter",
+        "search-sort", "search-clear-filters", "search-index-count",
+        "search-index-detail", "search-result-label", "search-result-count",
+        "search-results", "search-empty", "search-load-more", "search-ask-buddy",
+        "dreamco-results-view", "web-results-view", "web-title", "web-provider-links",
+        "web-ask-buddy", "web-local-provider", "web-local-approval",
+        "web-local-open", "web-local-status",
+    }
+    if search_parser:
+        for control_id in sorted(required_search_controls - search_parser.ids):
+            errors.append(f"Missing DreamSearch interaction control: #{control_id}")
+        for control_id in sorted(required_search_controls):
+            if f"byId('{control_id}')" not in search_script:
+                errors.append(f"DreamSearch control is not bound in dream-search.js: #{control_id}")
 
     studio_parser = parsers.get(WEBSITE / "studio.html")
     studio_script = (WEBSITE / "studio.js").read_text(encoding="utf-8") if (WEBSITE / "studio.js").exists() else ""

@@ -28,6 +28,16 @@
       "boundary": "Checks files, links, controls, public names, and secret patterns without publishing."
     },
     {
+      "id": "dream-search",
+      "name": "DreamSearch index and ranking",
+      "area": "Search",
+      "level": "local_contract",
+      "scripts": ["buddy:search", "test:governed"],
+      "sources": ["config/dreamco-search-engine.json", "shared/dreamco-search.ts", "tools/generate_dreamco_search_index.ts", "website/search.html", "website/dream-search.js"],
+      "tests": ["tests/dreamco-search.test.ts", "tests/dream-search-page.test.mjs"],
+      "boundary": "Searches the generated repository index locally. Web mode opens only a user-selected allowlisted provider or prepares a citation-first Buddy research task; it does not claim live web results."
+    },
+    {
       "id": "client-build",
       "name": "Application client and server build",
       "area": "Application",

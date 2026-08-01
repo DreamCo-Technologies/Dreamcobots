@@ -1,0 +1,92 @@
+{
+  "schema": "dreamco.search_engine.v1",
+  "name": "DreamSearch",
+  "description": "DreamCo's local-first discovery engine for Buddy specialists, capabilities, divisions, models, providers, systems, libraries, and public pages.",
+  "query_policy": {
+    "max_length": 240,
+    "minimum_length": 1,
+    "stop_words": [
+      "a",
+      "an",
+      "and",
+      "are",
+      "for",
+      "from",
+      "in",
+      "is",
+      "of",
+      "on",
+      "or",
+      "please",
+      "the",
+      "to",
+      "with"
+    ],
+    "synonym_groups": [
+      { "id": "applications", "terms": ["app", "application", "software", "website", "prototype"] },
+      { "id": "coding", "terms": ["code", "coding", "developer", "debug", "programming", "repository"] },
+      { "id": "games", "terms": ["game", "gaming", "simulation", "level", "interactive"] },
+      { "id": "movies", "terms": ["movie", "film", "video", "cinema", "storyboard", "production"] },
+      { "id": "audio", "terms": ["audio", "music", "song", "sing", "rap", "voice"] },
+      { "id": "education", "terms": ["education", "school", "course", "class", "learning", "teacher", "student"] },
+      { "id": "business", "terms": ["business", "company", "startup", "launch", "entrepreneur", "customer"] },
+      { "id": "opportunities", "terms": ["opportunity", "grant", "contract", "procurement", "lead", "revenue"] },
+      { "id": "property", "terms": ["real estate", "property", "home", "house", "rental"] },
+      { "id": "government", "terms": ["government", "federal", "state", "local", "public resource"] },
+      { "id": "creative-media", "terms": ["image", "photo", "design", "avatar", "character", "creative"] },
+      { "id": "connections", "terms": ["api", "webhook", "integration", "connect", "authentication", "database"] },
+      { "id": "models", "terms": ["model", "ai model", "llm", "provider", "benchmark", "inference"] },
+      { "id": "money", "terms": ["money", "payment", "finance", "roi", "cost", "income"] },
+      { "id": "safety", "terms": ["safety", "guardrail", "approval", "consent", "privacy", "security"] }
+    ]
+  },
+  "ranking": {
+    "exact_title": 220,
+    "title_phrase": 120,
+    "summary_phrase": 62,
+    "keyword_phrase": 54,
+    "title_token": 30,
+    "keyword_token": 18,
+    "summary_token": 10,
+    "category_token": 12,
+    "evidence_bonus": 8,
+    "status_bonus": 5,
+    "type_boosts": {
+      "bot": 14,
+      "capability": 12,
+      "division": 9,
+      "system": 8,
+      "library": 7,
+      "page": 6,
+      "model": 3,
+      "provider": 1,
+      "roadmap": -8
+    }
+  },
+  "result_policy": {
+    "default_limit": 30,
+    "maximum_limit": 100,
+    "default_sort": "relevance",
+    "show_evidence": true,
+    "show_status": true,
+    "roadmap_is_not_implemented": true,
+    "reference_catalog_is_not_connected": true
+  },
+  "web_search": {
+    "mode": "user_initiated_outbound_links",
+    "automatic_crawling": false,
+    "automatic_scraping": false,
+    "providers": [
+      { "id": "duckduckgo", "name": "DuckDuckGo", "url_template": "https://duckduckgo.com/?q={query}" },
+      { "id": "google", "name": "Google", "url_template": "https://www.google.com/search?q={query}" },
+      { "id": "bing", "name": "Bing", "url_template": "https://www.bing.com/search?q={query}" },
+      { "id": "brave", "name": "Brave Search", "url_template": "https://search.brave.com/search?q={query}" }
+    ],
+    "rules": [
+      "Never present outbound links as DreamCo-indexed web results.",
+      "A user must choose a provider before a browser search opens.",
+      "Buddy research prompts must request current sources and citations.",
+      "Do not transmit repository content, personal data, credentials, or stored memory as part of a web query."
+    ]
+  }
+}
