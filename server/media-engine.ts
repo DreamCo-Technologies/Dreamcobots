@@ -41,6 +41,8 @@ type LocalMediaCatalog = {
     metrics: string[];
     release_gate: string;
   }>;
+  performance_modes?: Array<{ id: string; label: string; targets: string[] }>;
+  performance_fixtures?: Array<{ id: string; mode: string; label: string; prompt: string; recommended_seconds: number }>;
 };
 
 const catalog = JSON.parse(
@@ -67,12 +69,15 @@ export const mediaRightsSchema = z.object({
 
 export const mediaRenderPlanRequestSchema = z.object({
   projectId: z.string().trim().regex(/^[A-Za-z0-9_-]{3,80}$/),
-  mediaType: z.enum(["speech_synthesis", "voice_replication", "original_avatar", "identity_preserving_image", "portrait_animation", "lip_sync"]),
+  mediaType: z.enum(["speech_synthesis", "voice_replication", "rap_performance", "melodic_rap", "singing_voice_synthesis", "original_avatar", "identity_preserving_image", "portrait_animation", "lip_sync"]),
   objective: z.string().trim().min(10).max(4000),
   script: z.string().trim().max(12000).default(""),
   characterRole: z.string().trim().min(2).max(160).default("Buddy guide"),
   personalityTraits: z.record(z.number().min(0).max(1)).default({ warmth: 0.8, clarity: 0.9 }),
   preferredEngineId: z.string().trim().max(80).optional(),
+  performanceMode: z.enum(["spoken_conversation", "narration", "rap", "melodic_rap", "singing", "character_acting", "commercial_delivery", "multilingual_delivery"]).optional(),
+  tempoBpm: z.number().int().min(40).max(240).optional(),
+  musicalMaterialRightsConfirmed: z.boolean().default(false),
   commercialUse: z.boolean().default(false),
   rights: mediaRightsSchema,
 }).strict();
@@ -95,6 +100,10 @@ export type MediaRenderPlanRequest = z.infer<typeof mediaRenderPlanRequestSchema
 
 function validateRights(request: MediaRenderPlanRequest): void {
   const { rights, mediaType } = request;
+  const musicalVoice = ["rap_performance", "melodic_rap", "singing_voice_synthesis"].includes(mediaType);
+  if (musicalVoice && !request.musicalMaterialRightsConfirmed) {
+    throw new Error("Rap and singing plans require original or licensed lyrics, melody, and backing-track confirmation.");
+  }
   if (rights.revoked) throw new Error("Consent or media rights have been revoked.");
   if (request.commercialUse && (!rights.commercialUseApproved || !rights.commercialScope)) {
     throw new Error("Commercial media requires explicit approval and a written usage scope.");
@@ -121,7 +130,7 @@ function validateRights(request: MediaRenderPlanRequest): void {
   if (rights.sourceType === "licensed_adult_performer" && !rights.rightsReceiptReference) {
     throw new Error("Licensed performer media requires a written rights receipt.");
   }
-  if (["voice_replication", "speech_synthesis"].includes(mediaType) && !rights.voiceUseApproved) {
+  if (["voice_replication", "speech_synthesis", "rap_performance", "melodic_rap", "singing_voice_synthesis"].includes(mediaType) && !rights.voiceUseApproved) {
     throw new Error("Explicit voice-use consent is required.");
   }
   if (["identity_preserving_image", "portrait_animation", "lip_sync"].includes(mediaType) && !rights.likenessUseApproved) {
@@ -155,6 +164,9 @@ export function buildMediaRenderPlan(request: MediaRenderPlanRequest) {
       role: request.characterRole,
       personalityTraits: request.personalityTraits,
       identityMode: request.rights.sourceType,
+      performanceMode: request.performanceMode ?? null,
+      tempoBpm: request.tempoBpm ?? null,
+      musicalMaterialRightsConfirmed: request.musicalMaterialRightsConfirmed,
     },
     rights: {
       sourceType: request.rights.sourceType,

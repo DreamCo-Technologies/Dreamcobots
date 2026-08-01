@@ -32,6 +32,106 @@
       "owner review and release evidence"
     ]
   },
+  "performance_modes": [
+    {
+      "id": "spoken_conversation",
+      "label": "Natural conversation",
+      "targets": ["turn-taking", "clarity", "natural pacing", "breath control"]
+    },
+    {
+      "id": "narration",
+      "label": "Narration and biography",
+      "targets": ["long-form stability", "pronunciation", "warmth", "chapter continuity"]
+    },
+    {
+      "id": "rap",
+      "label": "Rap performance",
+      "targets": ["rhythmic timing", "diction", "breath placement", "energy control"]
+    },
+    {
+      "id": "melodic_rap",
+      "label": "Melodic rap",
+      "targets": ["rhythm-to-pitch transitions", "timing", "vowel continuity", "expressive control"]
+    },
+    {
+      "id": "singing",
+      "label": "Singing performance",
+      "targets": ["pitch contour", "note transitions", "sustained vowels", "timing", "breath control"]
+    },
+    {
+      "id": "character_acting",
+      "label": "Character acting",
+      "targets": ["emotion range", "character consistency", "dialogue timing", "safe vocal effort"]
+    },
+    {
+      "id": "commercial_delivery",
+      "label": "Commercial delivery",
+      "targets": ["claim clarity", "brand tone", "timing", "call-to-action intelligibility"]
+    },
+    {
+      "id": "multilingual_delivery",
+      "label": "Multilingual delivery",
+      "targets": ["pronunciation", "identity stability", "language-specific rhythm", "review by a fluent speaker"]
+    }
+  ],
+  "performance_fixtures": [
+    {
+      "id": "speech-clarity",
+      "mode": "spoken_conversation",
+      "label": "Speech clarity",
+      "prompt": "Introduce yourself, describe one goal, and explain why it matters in three clear sentences.",
+      "recommended_seconds": 20
+    },
+    {
+      "id": "narration-stability",
+      "mode": "narration",
+      "label": "Narration stability",
+      "prompt": "Read an original paragraph with names, dates, numbers, quiet detail, and one emotional change.",
+      "recommended_seconds": 35
+    },
+    {
+      "id": "rap-pocket",
+      "mode": "rap",
+      "label": "Rap timing and diction",
+      "prompt": "Perform eight original bars at a comfortable tempo. Do not use copyrighted lyrics or a protected beat.",
+      "recommended_seconds": 30
+    },
+    {
+      "id": "melodic-transition",
+      "mode": "melodic_rap",
+      "label": "Melodic transition",
+      "prompt": "Perform an original four-bar rhythmic phrase and transition into a short original melody.",
+      "recommended_seconds": 25
+    },
+    {
+      "id": "singing-range",
+      "mode": "singing",
+      "label": "Singing range and control",
+      "prompt": "Sing an original short melody using comfortable low, middle, and high notes plus one sustained vowel.",
+      "recommended_seconds": 30
+    },
+    {
+      "id": "emotion-range",
+      "mode": "character_acting",
+      "label": "Character emotion range",
+      "prompt": "Say the same original line with calm, excitement, concern, and relief while keeping one character identity.",
+      "recommended_seconds": 30
+    },
+    {
+      "id": "commercial-read",
+      "mode": "commercial_delivery",
+      "label": "Commercial timing",
+      "prompt": "Read a truthful original fifteen-second product message with a clear benefit and call to action.",
+      "recommended_seconds": 15
+    },
+    {
+      "id": "multilingual-review",
+      "mode": "multilingual_delivery",
+      "label": "Multilingual review",
+      "prompt": "Record an approved original sentence in each chosen language and keep a fluent-review transcript.",
+      "recommended_seconds": 30
+    }
+  ],
   "benchmark_targets": [
     {
       "id": "buddy-media-core",
@@ -116,6 +216,20 @@
       "readiness": "adapter_contract_ready_model_install_required",
       "best_for": ["high-quality local voice", "low-compute voice previews", "multilingual character speech"],
       "limitations": ["hardware-dependent latency", "installed weights and transitive licenses must be recorded"]
+    },
+    {
+      "id": "buddy-vocal-performance-lab",
+      "label": "Buddy Vocal Performance Lab",
+      "modalities": ["speech_synthesis", "expressive_speech", "rap_performance", "melodic_rap", "singing_voice_synthesis", "melody_conditioning", "voice_style"],
+      "runtime": "local_python",
+      "source": "dreamco_native",
+      "license_status": "dreamco_owned_adapter_contract_model_artifact_review_required",
+      "commercial_status": "blocked_until_trained_artifact_and_dependency_review",
+      "identity_replication": true,
+      "watermark": "buddy_provenance_manifest",
+      "readiness": "recording_analysis_and_adapter_contract_ready_render_model_required",
+      "best_for": ["original synthetic singing voices", "owner-approved rap and melody test plans", "performance fixture evaluation"],
+      "limitations": ["does not yet include a trained singing render model", "singing quality requires installed model weights and measured audio evidence", "must not reproduce an unconsented artist or performer"]
     },
     {
       "id": "musetalk-local",
@@ -206,6 +320,12 @@
       "modality": "voice",
       "metrics": ["mean_opinion_score", "pairwise_preference", "prosody_control_accuracy"],
       "release_gate": "blinded_human_review"
+    },
+    {
+      "id": "voice_music_performance",
+      "modality": "voice",
+      "metrics": ["rhythmic_alignment", "pitch_contour_accuracy", "sustained_vowel_stability", "breath_artifact_rate", "style_control_accuracy"],
+      "release_gate": "original_fixture_and_consented_performer_review"
     },
     {
       "id": "image_identity",

@@ -43,7 +43,46 @@ test("local media catalog has no paid provider requirement and honest readiness"
   assert.equal(catalog.policy.paid_provider_required, false);
   assert.ok(catalog.engines.some((engine) => engine.id === "openvoice-v2-local"));
   assert.ok(catalog.engines.some((engine) => engine.id === "chatterbox-local"));
+  assert.ok(catalog.engines.some((engine) => engine.id === "buddy-vocal-performance-lab"));
   assert.ok(catalog.engines.every((engine) => !engine.readiness.includes("production_ready")));
+});
+
+test("rap and singing plans require rights and remain unrendered until a local model passes benchmarks", () => {
+  const originalRights = {
+    sourceType: "original_synthetic" as const,
+    subjectReference: "original-singer-one",
+    ownerIsSubject: false,
+    adultConfirmed: false,
+    voiceUseApproved: false,
+    likenessUseApproved: false,
+    commercialUseApproved: false,
+    syntheticMediaLabelApproved: true as const,
+    revoked: false,
+  };
+  assert.throws(() => buildMediaRenderPlan(mediaRenderPlanRequestSchema.parse({
+    projectId: "singing-test-1",
+    mediaType: "singing_voice_synthesis",
+    objective: "Create an original synthetic singing-voice benchmark fixture.",
+    script: "Original fixture lyrics written for this local test.",
+    characterRole: "Original synthetic singer",
+    preferredEngineId: "buddy-vocal-performance-lab",
+    rights: originalRights,
+  })), /original or licensed lyrics/);
+  const plan = buildMediaRenderPlan(mediaRenderPlanRequestSchema.parse({
+    projectId: "singing-test-2",
+    mediaType: "singing_voice_synthesis",
+    objective: "Create an original synthetic singing-voice benchmark fixture.",
+    script: "Original fixture lyrics written for this local test.",
+    characterRole: "Original synthetic singer",
+    performanceMode: "singing",
+    tempoBpm: 92,
+    musicalMaterialRightsConfirmed: true,
+    preferredEngineId: "buddy-vocal-performance-lab",
+    rights: originalRights,
+  }));
+  assert.equal(plan.selectedEngine.id, "buddy-vocal-performance-lab");
+  assert.equal(plan.execution.renderExecuted, false);
+  assert.equal(plan.status, "local_model_install_and_benchmark_required");
 });
 
 test("commercial owner voice selects an eligible local adapter without rendering", () => {

@@ -145,6 +145,14 @@
       'Configure tax record fields', 'Configure payment notifications', 'Configure reconciliation checks', 'Configure chargeback assistance', 'Create a financial forecast',
       'Create backend secret references', 'Run provider sandbox fixtures', 'Preview one transaction', 'Request one-transaction approval', 'Create the immutable audit record',
     ]),
+    launcher('practice', 'Practice a role', 'Build a private job-prep or role-play session with verified specialists, realistic rounds, voice practice, evidence review, and no real-world impersonation or external action.', 'practice.html', [
+      'Prepare for a job interview', 'Build a career evidence map', 'Review resume achievements', 'Create STAR answer stories', 'Practice role-specific questions',
+      'Practice a sales discovery call', 'Practice handling objections', 'Practice customer support', 'Practice a manager conversation', 'Practice giving feedback',
+      'Practice a negotiation', 'Practice a presentation', 'Practice investor questions', 'Practice an acting audition', 'Practice a creator introduction',
+      'Practice another language', 'Choose a supportive partner', 'Choose a realistic partner', 'Choose a challenging partner', 'Set the number of rounds',
+      'Answer by text', 'Answer by voice', 'Record an approved owner voice', 'Review answer structure', 'Review specific evidence',
+      'Review active listening', 'Review professional boundaries', 'Create a learning sprint', 'Prepare follow-up questions', 'Continue the role-play with Buddy',
+    ]),
     launcher('benchmark', 'Benchmark a bot', 'Build a reproducible competition and quality benchmark for a Buddy bot, model, voice, image, video, workflow, or release using signed fixtures and measured evidence.', 'test-center.html', [
       'Choose the benchmark subject', 'Choose the comparison baseline', 'Create a feature matrix', 'Create a capability inventory', 'Detect missing capabilities',
       'Detect duplicate capabilities', 'Compare workflow completion', 'Compare user experience', 'Compare API behavior', 'Compare automation behavior',

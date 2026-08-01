@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Buddy Job Prep and Role-Play Lab | DreamCo</title>
+  <meta name="description" content="Practice interviews, career conversations, sales, support, negotiation, presentations, auditions, and languages with Buddy specialists." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="practice.css?v=1" />
+</head>
+<body class="practice-page">
+<div id="nav-placeholder"></div><script src="nav.js"></script>
+
+<main class="practice-shell">
+  <header class="practice-header">
+    <div>
+      <p>Private practice with verified specialists</p>
+      <h1>Job prep and role-play lab</h1>
+      <span>Build a realistic practice session, answer by text or voice, review useful evidence, and continue the conversation with Buddy.</span>
+    </div>
+    <a class="btn btn-outline btn-sm" href="buddy.html">Back to Buddy</a>
+  </header>
+
+  <div class="practice-layout">
+    <form id="practice-form" class="practice-form">
+      <fieldset>
+        <legend>Practice setup</legend>
+        <label for="practice-mode">Scenario<select id="practice-mode"></select></label>
+        <label for="practice-role">Target role or outcome<input id="practice-role" required minlength="2" maxlength="160" value="Customer success specialist" /></label>
+        <label for="practice-context">Context<textarea id="practice-context" required minlength="10" maxlength="1500">Prepare for a private mock interview using my real experience and a realistic customer-service scenario.</textarea></label>
+        <label for="practice-goals">Goals, one per line<textarea id="practice-goals" required>Practice clear STAR answers
+Ask useful questions
+Improve concise delivery</textarea></label>
+        <div class="practice-two-col">
+          <label for="practice-difficulty">Difficulty<select id="practice-difficulty"></select></label>
+          <label for="practice-rounds">Rounds<input id="practice-rounds" type="number" min="1" max="12" value="6" /></label>
+        </div>
+        <label for="practice-answer-mode">Answer with<select id="practice-answer-mode"><option value="text_and_voice">Text and voice</option><option value="text">Text</option><option value="voice">Voice</option></select></label>
+        <label id="practice-voice-rights-row" class="practice-check"><input id="practice-voice-rights" type="checkbox" /><span>I am the adult voice subject or hold written permission for this private practice.</span></label>
+        <label class="practice-check"><input id="practice-candidate-only" type="checkbox" checked /><span>This is private preparation. Buddy will not answer a real interview or assessment in my place.</span></label>
+      </fieldset>
+      <button class="btn btn-primary" type="submit">Build practice session</button>
+      <p id="practice-status" class="practice-status" aria-live="polite"></p>
+    </form>
+
+    <aside class="practice-guide" aria-labelledby="practice-guide-title">
+      <p>Current route</p>
+      <h2 id="practice-guide-title">Job interview</h2>
+      <span id="practice-opening"></span>
+      <div id="practice-specialists" class="practice-specialists"></div>
+      <h3>Review dimensions</h3>
+      <ul id="practice-dimensions"></ul>
+      <p class="practice-boundary">Practice evidence helps the user improve. It is not an employment decision, clinical judgment, protected-trait score, or guarantee of a result.</p>
+    </aside>
+  </div>
+
+  <section id="practice-session" class="practice-session" hidden aria-labelledby="practice-session-title">
+    <div class="practice-session-head">
+      <div><p id="practice-progress">Round 1</p><h2 id="practice-session-title">Practice question</h2></div>
+      <span id="practice-session-state">Private sandbox</span>
+    </div>
+    <div class="practice-question"><p id="practice-question"></p></div>
+    <label for="practice-answer">Your answer<textarea id="practice-answer" maxlength="4000" placeholder="Type the answer you would give. Use your real experience and say when you do not know something."></textarea></label>
+    <div id="practice-voice-controls" class="practice-voice-controls">
+      <button id="practice-record" class="btn btn-outline btn-sm" type="button">Record answer</button>
+      <button id="practice-stop" class="btn btn-outline btn-sm" type="button" disabled>Stop</button>
+      <audio id="practice-audio" controls></audio>
+      <span id="practice-audio-status">Raw audio stays in this browser session.</span>
+    </div>
+    <div class="practice-session-actions">
+      <button id="practice-save-answer" class="btn btn-primary" type="button">Save and continue</button>
+      <button id="practice-skip" class="btn btn-outline" type="button">Skip question</button>
+    </div>
+    <div id="practice-answer-history" class="practice-answer-history" aria-live="polite"></div>
+    <div class="practice-export-actions">
+      <button id="practice-download" class="btn btn-outline btn-sm" type="button">Save practice packet</button>
+      <button id="practice-send-buddy" class="btn btn-outline btn-sm" type="button">Continue with Buddy</button>
+      <a class="btn btn-outline btn-sm" href="studio.html?type=music_video">Open voice and media bench</a>
+    </div>
+  </section>
+</main>
+
+<script src="data/buddy-practice-lab.js?v=1"></script>
+<script src="practice.js?v=1" defer></script>
+</body>
+</html>

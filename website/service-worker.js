@@ -1,5 +1,5 @@
-const SHELL_CACHE = 'buddy-shell-v29';
-const RUNTIME_CACHE = 'buddy-runtime-v29';
+const SHELL_CACHE = 'buddy-shell-v30';
+const RUNTIME_CACHE = 'buddy-runtime-v30';
 const APP_SHELL = [
   './',
   './buddy.html',
@@ -13,8 +13,11 @@ const APP_SHELL = [
   './leads.js',
   './calculator.html',
   './studio.html',
-  './studio.css?v=20',
-  './studio.js?v=20',
+  './studio.css?v=21',
+  './studio.js?v=21',
+  './practice.html',
+  './practice.css?v=1',
+  './practice.js?v=1',
   './crypto.html',
   './crypto.css',
   './crypto.js',
@@ -44,13 +47,14 @@ const APP_SHELL = [
   './data/buddy-capability-certifications.js',
   './data/buddy-distribution-catalog.json',
   './data/buddy-specialized-hubs.js',
-  './data/buddy-production-group.js?v=20',
-  './data/buddy-local-media-engines.js?v=20',
-  './data/buddy-media-quality-lab.js?v=20',
+  './data/buddy-production-group.js?v=21',
+  './data/buddy-local-media-engines.js?v=21',
+  './data/buddy-media-quality-lab.js?v=21',
+  './data/buddy-practice-lab.js?v=1',
   './data/buddy-connected-life.js?v=1',
   './data/buddy-communication-behavior.js?v=26',
   './data/buddy-workforce-system.js?v=23',
-  './data/buddy-setup-catalog.js?v=23',
+  './data/buddy-setup-catalog.js?v=24',
   './assets/images/favicon.svg',
   './assets/images/buddy-icon-192.png',
   './assets/images/buddy-icon-512.png'

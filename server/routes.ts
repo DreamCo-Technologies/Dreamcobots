@@ -91,6 +91,10 @@ import {
   socialWorkspacePlanRequestSchema,
 } from "./connected-life-policy";
 import {
+  createPracticeSessionPlan,
+  practiceSessionRequestSchema,
+} from "./practice-policy";
+import {
   createTaskDiscoveryPlan,
   taskDiscoveryRequestSchema,
 } from "./task-discovery-policy";
@@ -1568,6 +1572,7 @@ export async function registerRoutes(
         { name: "Connected App Portfolio", route: "POST /api/buddy/apps/connection-plan", status: "authentication-handoff-ready", description: "Catalog and group owner-authorized apps with read-only-first scopes and fresh approval for every high-impact action" },
         { name: "Social Workspace", route: "POST /api/buddy/social/workspace-plan", status: "adapter-and-approval-gated", description: "Draft, schedule, publish, rehearse, or plan moderated live shows for authenticated owner accounts" },
         { name: "Bill and Subscription Workspace", route: "POST /api/buddy/finance/workspace-plan", status: "review-ready", description: "Normalize costs, detect possible duplicate subscriptions, prepare cancellation handoffs, and stop before payment" },
+        { name: "Job Prep and Role-Play Lab", route: "POST /api/buddy/practice/session-plan", status: "private-sandbox-ready", description: "Prepare interviews, career work, sales, support, management, negotiation, presentations, auditions, and language practice with verified specialists" },
         { name: "Open Source Tracker", route: "POST /api/buddy/open-source/tracking-plan", status: "scheduler-adapter-required", description: "Track pinned repository metadata, licenses, releases, security, tests, and contribution opportunities" },
         { name: "Repository Test Center", route: "GET /api/buddy/repository-test-registry", status: "live", description: "Inventory repository evidence and prepare bounded contract, sandbox, and adapter test plans" },
         { name: "Governed Platform Registry", route: "GET /api/buddy/platform-expansion", status: "live", description: "Launch, privacy, finance, creative, IP, open-source, customization, and roadmap contracts" },
@@ -3335,6 +3340,25 @@ Any improvements or fixes (optional, 1-2 bullet points max)`;
       return res.status(201).json(createFinanceWorkspacePlan(parsed.data));
     } catch (error) {
       return res.status(400).json({ error: error instanceof Error ? error.message : "Invalid finance workspace plan" });
+    }
+  });
+
+  app.get("/api/buddy/practice/catalog", (_req, res) => {
+    try {
+      const path = resolve(process.cwd(), "config", "buddy-practice-lab.json");
+      return res.json(JSON.parse(readFileSync(path, "utf-8")));
+    } catch (_error) {
+      return res.status(503).json({ error: "Buddy practice catalog is unavailable." });
+    }
+  });
+
+  app.post("/api/buddy/practice/session-plan", (req, res) => {
+    const parsed = practiceSessionRequestSchema.safeParse(req.body);
+    if (!parsed.success) return res.status(400).json(zodValidationError(parsed.error));
+    try {
+      return res.status(201).json(createPracticeSessionPlan(parsed.data));
+    } catch (error) {
+      return res.status(400).json({ error: error instanceof Error ? error.message : "Invalid practice session" });
     }
   });
 

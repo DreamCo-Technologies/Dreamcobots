@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="styles.css" />
-  <link rel="stylesheet" href="studio.css?v=20" />
+  <link rel="stylesheet" href="studio.css?v=21" />
 </head>
 <body class="buddy-home studio-page">
 <div id="nav-placeholder"></div><script src="nav.js"></script>
@@ -166,14 +166,23 @@
         <div id="voice-controls" class="studio-media-controls" hidden>
           <label class="studio-label" for="voice-engine">Local voice engine</label>
           <select id="voice-engine" class="studio-input"></select>
+          <div class="studio-two-col">
+            <label>Performance<select id="voice-performance" class="studio-input"></select></label>
+            <label>Test fixture<select id="voice-fixture" class="studio-input"></select></label>
+          </div>
+          <div id="voice-fixture-prompt" class="studio-fixture-prompt" aria-live="polite"></div>
           <input id="voice-file" type="file" accept="audio/*" />
           <div class="studio-button-row">
-            <button id="record-voice" class="btn btn-outline btn-sm" type="button">Record voice</button>
+            <button id="record-voice" class="btn btn-outline btn-sm" type="button">Record test take</button>
             <button id="stop-voice" class="btn btn-outline btn-sm" type="button" disabled>Stop</button>
             <button id="download-voice" class="btn btn-outline btn-sm" type="button" disabled>Save audio</button>
+            <button id="add-voice-take" class="btn btn-outline btn-sm" type="button" disabled>Add test take</button>
           </div>
           <audio id="voice-preview" controls></audio>
-          <p id="voice-status" class="studio-status">No sample selected. Recordings stop automatically after 60 seconds.</p>
+          <p id="voice-status" class="studio-status">No sample selected. Recordings stop automatically after three minutes.</p>
+          <div id="voice-analysis" class="studio-analysis" aria-live="polite"></div>
+          <div class="studio-media-list-heading"><strong>Performance test takes</strong><button id="clear-voice-takes" type="button">Clear takes</button></div>
+          <div id="voice-take-list" class="studio-take-list" aria-live="polite"></div>
         </div>
 
         <div class="studio-toggle-row">
@@ -183,6 +192,10 @@
         <div id="image-controls" class="studio-media-controls" hidden>
           <label class="studio-label" for="image-engine">Local image or portrait engine</label>
           <select id="image-engine" class="studio-input"></select>
+          <div class="studio-two-col">
+            <label>Visual output<select id="visual-output" class="studio-input"><option value="talking_portrait">Talking portrait</option><option value="social_short">Social-media short</option><option value="music_video">Music video</option><option value="commercial">Commercial</option><option value="biography">Biography or documentary</option><option value="movie_scene">Movie scene</option><option value="original_character">Original AI character</option></select></label>
+            <label>Motion direction<select id="visual-motion" class="studio-input"><option value="natural_presenter">Natural presenter</option><option value="performance">Music performance</option><option value="cinematic">Cinematic acting</option><option value="animated">Animated or cartoon</option><option value="product_demo">Product demonstration</option></select></label>
+          </div>
           <input id="image-file" type="file" accept="image/*" />
           <div class="studio-button-row">
             <button id="start-camera" class="btn btn-outline btn-sm" type="button">Open camera</button>
@@ -277,9 +290,9 @@
 </main>
 
 <script src="data/buddy-specialized-hubs.js"></script>
-<script src="data/buddy-production-group.js?v=20"></script>
-<script src="data/buddy-local-media-engines.js?v=20"></script>
-<script src="data/buddy-media-quality-lab.js?v=20"></script>
-<script src="studio.js?v=20"></script>
+<script src="data/buddy-production-group.js?v=21"></script>
+<script src="data/buddy-local-media-engines.js?v=21"></script>
+<script src="data/buddy-media-quality-lab.js?v=21"></script>
+<script src="studio.js?v=21"></script>
 </body>
 </html>

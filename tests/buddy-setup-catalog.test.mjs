@@ -13,8 +13,8 @@ const catalog = context.window.BUDDY_SETUP_CATALOG;
 
 test('every Buddy launcher has exactly 30 unique setup choices', () => {
   assert.equal(catalog.schema, 'dreamco.buddy_setup_catalog.v1');
-  assert.equal(catalog.launchers.length, 16);
-  assert.equal(catalog.summary.setupOptionCount, 480);
+  assert.equal(catalog.launchers.length, 17);
+  assert.equal(catalog.summary.setupOptionCount, 510);
   const launcherIds = new Set();
   const optionIds = new Set();
   for (const launcher of catalog.launchers) {

@@ -28,6 +28,11 @@ const actorRoleTemplate = document.getElementById('actor-role-template');
 const actorRole = document.getElementById('actor-role');
 const voiceEngine = document.getElementById('voice-engine');
 const imageEngine = document.getElementById('image-engine');
+const voicePerformance = document.getElementById('voice-performance');
+const voiceFixture = document.getElementById('voice-fixture');
+const voiceFixturePrompt = document.getElementById('voice-fixture-prompt');
+const voiceAnalysisTarget = document.getElementById('voice-analysis');
+const voiceTakeList = document.getElementById('voice-take-list');
 const mediaSourceType = document.getElementById('media-source-type');
 const simulationControls = document.getElementById('simulation-controls');
 const simulationModelSource = document.getElementById('simulation-model-source');
@@ -47,6 +52,8 @@ let voiceBlob = null;
 let imageBlob = null;
 let voiceObjectUrl = '';
 let imageObjectUrl = '';
+let voiceAnalysis = null;
+let voiceTakes = [];
 let latestPacket = null;
 let latestConsentReceipt = null;
 let castRoles = [];
@@ -125,10 +132,48 @@ function personalityTraits() {
   );
 }
 
-populateEngineSelect(voiceEngine, ['voice_replication', 'speech_synthesis', 'cross_lingual_speech', 'expressive_speech'], 'chatterbox-local');
+populateEngineSelect(voiceEngine, ['voice_replication', 'speech_synthesis', 'cross_lingual_speech', 'expressive_speech', 'rap_performance', 'melodic_rap', 'singing_voice_synthesis'], 'chatterbox-local');
 populateEngineSelect(imageEngine, ['identity_preserving_image', 'portrait_animation', 'lip_sync'], 'pulid-local');
 populateRoleTemplates();
 productionToolSummary();
+
+function populateVoicePerformanceModes() {
+  voicePerformance.replaceChildren();
+  (mediaRegistry.performance_modes || []).forEach(mode => {
+    const option = document.createElement('option');
+    option.value = mode.id;
+    option.textContent = mode.label;
+    voicePerformance.append(option);
+  });
+}
+
+function populateVoiceFixtures() {
+  const fixtures = (mediaRegistry.performance_fixtures || [])
+    .filter(item => item.mode === voicePerformance.value);
+  voiceFixture.replaceChildren();
+  fixtures.forEach(fixture => {
+    const option = document.createElement('option');
+    option.value = fixture.id;
+    option.textContent = fixture.label;
+    voiceFixture.append(option);
+  });
+  renderVoiceFixture();
+}
+
+function currentVoiceFixture() {
+  return (mediaRegistry.performance_fixtures || []).find(item => item.id === voiceFixture.value) || null;
+}
+
+function renderVoiceFixture() {
+  const fixture = currentVoiceFixture();
+  const mode = (mediaRegistry.performance_modes || []).find(item => item.id === voicePerformance.value);
+  voiceFixturePrompt.textContent = fixture
+    ? `${fixture.prompt} Target about ${fixture.recommended_seconds} seconds. Review: ${(mode?.targets || []).join(', ')}.`
+    : 'Choose a performance fixture.';
+}
+
+populateVoicePerformanceModes();
+populateVoiceFixtures();
 
 function updateMediaQualitySummary() {
   const mode = mediaQualityRegistry.quality_modes?.[mediaQualityMode.value];
@@ -477,6 +522,112 @@ async function textFingerprint(value) {
   return [...new Uint8Array(digest)].map(item => item.toString(16).padStart(2, '0')).join('');
 }
 
+function decibels(value) {
+  return value > 0 ? Math.round(20 * Math.log10(value) * 10) / 10 : -120;
+}
+
+async function analyzeVoiceBlob(blob) {
+  if (!blob) throw new Error('Record or choose an audio sample first.');
+  const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+  if (!AudioContextClass) throw new Error('Audio analysis is not available in this browser.');
+  const context = new AudioContextClass();
+  try {
+    const buffer = await context.decodeAudioData((await blob.arrayBuffer()).slice(0));
+    const stride = Math.max(1, Math.ceil(buffer.length * buffer.numberOfChannels / 600000));
+    let peak = 0;
+    let sumSquares = 0;
+    let clipping = 0;
+    let silence = 0;
+    let count = 0;
+    for (let channel = 0; channel < buffer.numberOfChannels; channel += 1) {
+      const samples = buffer.getChannelData(channel);
+      for (let index = 0; index < samples.length; index += stride) {
+        const magnitude = Math.abs(samples[index]);
+        peak = Math.max(peak, magnitude);
+        sumSquares += magnitude * magnitude;
+        if (magnitude >= 0.99) clipping += 1;
+        if (magnitude < 0.003) silence += 1;
+        count += 1;
+      }
+    }
+    const rms = Math.sqrt(sumSquares / Math.max(1, count));
+    const clippingRatio = clipping / Math.max(1, count);
+    const silenceRatio = silence / Math.max(1, count);
+    const durationSeconds = Math.round(buffer.duration * 10) / 10;
+    const rmsDb = decibels(rms);
+    const checks = {
+      usable_duration: durationSeconds >= 3 && durationSeconds <= 180,
+      clipping_controlled: clippingRatio <= 0.005,
+      audible_signal: rmsDb >= -40 && rmsDb <= -3,
+      silence_bounded: silenceRatio <= 0.8,
+      decodable_audio: true,
+    };
+    return {
+      schema: 'dreamco.local_voice_capture_analysis.v1',
+      duration_seconds: durationSeconds,
+      sample_rate_hz: buffer.sampleRate,
+      channels: buffer.numberOfChannels,
+      peak_dbfs: decibels(peak),
+      rms_dbfs: rmsDb,
+      clipping_ratio: Math.round(clippingRatio * 100000) / 100000,
+      silence_ratio: Math.round(silenceRatio * 10000) / 10000,
+      capture_readiness: Object.values(checks).every(Boolean) ? 'ready_for_render_benchmark' : 'record_another_take_recommended',
+      checks,
+      content_or_identity_quality_claimed: false,
+    };
+  } finally {
+    await context.close();
+  }
+}
+
+function renderVoiceAnalysis() {
+  if (!voiceAnalysis) {
+    voiceAnalysisTarget.replaceChildren();
+    document.getElementById('add-voice-take').disabled = true;
+    return;
+  }
+  const metrics = [
+    ['Length', `${voiceAnalysis.duration_seconds}s`],
+    ['Sample rate', `${voiceAnalysis.sample_rate_hz} Hz`],
+    ['Channels', String(voiceAnalysis.channels)],
+    ['Average level', `${voiceAnalysis.rms_dbfs} dBFS`],
+    ['Peak', `${voiceAnalysis.peak_dbfs} dBFS`],
+    ['Capture check', voiceAnalysis.capture_readiness.replaceAll('_', ' ')],
+  ];
+  voiceAnalysisTarget.innerHTML = metrics.map(([label, value]) => `<div><span>${escapeHtml(label)}</span><strong>${escapeHtml(value)}</strong></div>`).join('');
+  document.getElementById('add-voice-take').disabled = false;
+}
+
+function renderVoiceTakes() {
+  if (!voiceTakes.length) {
+    voiceTakeList.innerHTML = '<p>No saved test-take metadata. Raw audio is not copied into the project packet.</p>';
+    return;
+  }
+  voiceTakeList.innerHTML = voiceTakes.map((take, index) => `
+    <article class="studio-take-item">
+      <div><strong>${escapeHtml(take.fixture_label)} · ${escapeHtml(take.performance_label)}</strong><span>${take.analysis.duration_seconds}s · ${take.analysis.rms_dbfs} dBFS · ${escapeHtml(take.analysis.capture_readiness.replaceAll('_', ' '))}</span></div>
+      <button type="button" data-remove-voice-take="${index}" aria-label="Remove ${escapeHtml(take.fixture_label)}">&times;</button>
+    </article>
+  `).join('');
+  voiceTakeList.querySelectorAll('[data-remove-voice-take]').forEach(button => button.addEventListener('click', () => {
+    voiceTakes.splice(Number(button.dataset.removeVoiceTake), 1);
+    renderVoiceTakes();
+  }));
+}
+
+async function analyzeCurrentVoice(label) {
+  voiceStatus.textContent = `Analyzing ${label} locally...`;
+  try {
+    voiceAnalysis = await analyzeVoiceBlob(voiceBlob);
+    renderVoiceAnalysis();
+    voiceStatus.textContent = `${label} analyzed locally. This checks recording readiness, not singing, identity, or artistic quality.`;
+  } catch (error) {
+    voiceAnalysis = null;
+    renderVoiceAnalysis();
+    voiceStatus.textContent = `Audio analysis unavailable: ${error.message}`;
+  }
+}
+
 function stopImageCamera() {
   if (imageStream) imageStream.getTracks().forEach(track => track.stop());
   imageStream = null;
@@ -489,6 +640,8 @@ function stopImageCamera() {
 
 useVoice.addEventListener('change', updateMediaControls);
 useImage.addEventListener('change', updateMediaControls);
+voicePerformance.addEventListener('change', populateVoiceFixtures);
+voiceFixture.addEventListener('change', renderVoiceFixture);
 document.getElementById('project-type').addEventListener('change', event => applyPreset(event.target.value));
 actorMode.addEventListener('change', () => {
   if (actorMode.value === 'owner_digital_double') {
@@ -542,7 +695,7 @@ document.getElementById('clear-cast').addEventListener('click', () => {
 [simulationModelSource, simulationFidelity, simulationPaint, simulationAdditions, simulationToGame]
   .forEach(control => control.addEventListener('input', renderSimulationConcept));
 
-voiceFile.addEventListener('change', () => {
+voiceFile.addEventListener('change', async () => {
   const file = voiceFile.files && voiceFile.files[0];
   if (!file) return;
   if (!file.type.startsWith('audio/') || file.size > 50 * 1024 * 1024) {
@@ -554,7 +707,7 @@ voiceFile.addEventListener('change', () => {
   voiceObjectUrl = replaceObjectUrl(voiceObjectUrl, file);
   voicePreview.src = voiceObjectUrl;
   document.getElementById('download-voice').disabled = false;
-  voiceStatus.textContent = `Local sample ready: ${file.name}`;
+  await analyzeCurrentVoice(file.name);
 });
 
 imageFile.addEventListener('change', () => {
@@ -585,25 +738,26 @@ document.getElementById('record-voice').addEventListener('click', async () => {
     mediaRecorder.addEventListener('dataavailable', event => {
       if (event.data.size) recordedChunks.push(event.data);
     });
-    mediaRecorder.addEventListener('stop', () => {
+    mediaRecorder.addEventListener('stop', async () => {
       if (recordingTimer) clearTimeout(recordingTimer);
       voiceBlob = new Blob(recordedChunks, { type: mediaRecorder.mimeType || 'audio/webm' });
       voiceObjectUrl = replaceObjectUrl(voiceObjectUrl, voiceBlob);
       voicePreview.src = voiceObjectUrl;
       document.getElementById('download-voice').disabled = false;
-      voiceStatus.textContent = 'Local recording ready for an approved media engine.';
       if (mediaStream) mediaStream.getTracks().forEach(track => track.stop());
       mediaStream = null;
       document.getElementById('record-voice').disabled = false;
       document.getElementById('stop-voice').disabled = true;
+      await analyzeCurrentVoice('recorded test take');
     });
     mediaRecorder.start();
     recordingTimer = setTimeout(() => {
       if (mediaRecorder && mediaRecorder.state !== 'inactive') mediaRecorder.stop();
-    }, 60_000);
+    }, 180_000);
     document.getElementById('record-voice').disabled = true;
     document.getElementById('stop-voice').disabled = false;
-    voiceStatus.textContent = 'Recording locally...';
+    const fixture = currentVoiceFixture();
+    voiceStatus.textContent = `Recording ${fixture?.label || 'test take'} locally...`;
   } catch (error) {
     voiceStatus.textContent = `Microphone unavailable: ${error.message}`;
   }
@@ -613,6 +767,38 @@ document.getElementById('stop-voice').addEventListener('click', () => {
   if (mediaRecorder && mediaRecorder.state !== 'inactive') mediaRecorder.stop();
   document.getElementById('record-voice').disabled = false;
   document.getElementById('stop-voice').disabled = true;
+});
+
+document.getElementById('add-voice-take').addEventListener('click', async () => {
+  const fixture = currentVoiceFixture();
+  const mode = (mediaRegistry.performance_modes || []).find(item => item.id === voicePerformance.value);
+  if (!voiceBlob || !voiceAnalysis || !fixture || !mode) {
+    voiceStatus.textContent = 'Record and analyze a performance fixture before adding the test take.';
+    return;
+  }
+  if (voiceTakes.length >= 12) {
+    voiceStatus.textContent = 'This browser packet keeps at most 12 useful test-take records. Remove one before adding another.';
+    return;
+  }
+  voiceTakes.push({
+    fixture_id: fixture.id,
+    fixture_label: fixture.label,
+    performance_mode: mode.id,
+    performance_label: mode.label,
+    prompt_sha256: await textFingerprint(fixture.prompt),
+    audio_sha256: await blobFingerprint(voiceBlob),
+    analysis: voiceAnalysis,
+    raw_audio_embedded: false,
+    added_at: new Date().toISOString(),
+  });
+  renderVoiceTakes();
+  voiceStatus.textContent = `${fixture.label} metadata added. Change the fixture and record another take to broaden the test set.`;
+});
+
+document.getElementById('clear-voice-takes').addEventListener('click', () => {
+  voiceTakes = [];
+  renderVoiceTakes();
+  voiceStatus.textContent = 'Performance test-take metadata cleared.';
 });
 
 document.getElementById('start-camera').addEventListener('click', async () => {
@@ -860,7 +1046,10 @@ function renderPrototype(packet) {
     packet.professional_production?.aspect_ratio ? `Frame: ${packet.professional_production.aspect_ratio}` : null,
     packet.professional_production?.editing_workspaces?.length ? `Edit rooms: ${packet.professional_production.editing_workspaces.length}` : null,
     packet.voice?.engine?.label ? `Voice: ${packet.voice.engine.label}` : null,
+    packet.voice?.performance_mode ? `Performance: ${packet.voice.performance_mode.replaceAll('_', ' ')}` : null,
+    packet.voice?.test_takes?.length ? `Voice takes: ${packet.voice.test_takes.length}` : null,
     packet.likeness?.engine?.label ? `Image: ${packet.likeness.engine.label}` : null,
+    packet.likeness?.visual_output ? `Visual: ${packet.likeness.visual_output.replaceAll('_', ' ')}` : null,
     packet.simulation?.model_source ? `Model: ${packet.simulation.model_source.replaceAll('_', ' ')}` : null,
     packet.simulation?.fidelity ? `Fidelity: ${packet.simulation.fidelity.replaceAll('_', ' ')}` : null,
     packet.simulation?.convert_to_game ? 'Practice game included' : null,
@@ -945,7 +1134,11 @@ form.addEventListener('submit', async event => {
       repetitions_per_fixture: 1,
       release_eligible: false,
     };
-    const requestedQualityModalities = [useVoice.checked ? 'voice' : null, useImage.checked ? 'image' : null].filter(Boolean);
+    const requestedQualityModalities = [
+      useVoice.checked ? 'voice' : null,
+      useImage.checked ? 'image' : null,
+      useImage.checked && (PRODUCTION_TYPES.has(type) || ACTOR_TYPES.has(type)) ? 'video' : null,
+    ].filter(Boolean);
     const plannedQualityEngines = qualityEngineIds();
     const mediaQualityPlan = requestedQualityModalities.length ? {
       schema: 'dreamco.buddy_media_candidate_plan.v1',
@@ -1020,11 +1213,19 @@ form.addEventListener('submit', async event => {
         requested: useVoice.checked,
         status: useVoice.checked ? 'consent_verified_local_model_install_and_benchmark_required' : 'not_requested',
         engine: useVoice.checked ? mediaEngineById(voiceEngine.value) : null,
+        performance_mode: useVoice.checked ? voicePerformance.value : null,
+        fixture: useVoice.checked ? currentVoiceFixture() : null,
+        capture_analysis: useVoice.checked ? voiceAnalysis : null,
+        test_takes: useVoice.checked ? voiceTakes : [],
+        raw_audio_embedded: false,
       },
       likeness: {
         requested: useImage.checked,
         status: useImage.checked ? 'consent_verified_local_model_install_and_benchmark_required' : 'not_requested',
         engine: useImage.checked ? mediaEngineById(imageEngine.value) : null,
+        visual_output: useImage.checked ? document.getElementById('visual-output').value : null,
+        motion_direction: useImage.checked ? document.getElementById('visual-motion').value : null,
+        raw_image_embedded: false,
       },
       consent: useVoice.checked || useImage.checked ? {
         source_type: mediaSourceType.value,
@@ -1128,7 +1329,10 @@ document.getElementById('send-buddy').addEventListener('click', () => {
   const productionDetail = latestPacket.professional_production
     ? ` Production: ${latestPacket.professional_production.duration_minutes} minutes at ${latestPacket.professional_production.aspect_ratio}; targets ${latestPacket.professional_production.target_platforms.join(', ')}; cast ${latestPacket.professional_production.cast.map(role => `${role.name} as ${role.role}`).join(', ')}; editing rooms ${latestPacket.professional_production.editing_workspaces.map(item => item.label).join(', ')}.`
     : '';
-  const prompt = `Continue building ${latestPacket.title} as a ${latestPacket.project_type}. Goal: ${latestPacket.objective}.${actorDetail}${productionDetail}${simulationDetail} Keep rights, evidence, quality, safety, and owner approval gates active.`;
+  const mediaDetail = latestPacket.voice?.requested || latestPacket.likeness?.requested
+    ? ` Media: ${latestPacket.voice?.performance_mode || 'no voice performance'} with ${latestPacket.voice?.test_takes?.length || 0} local test takes; visual output ${latestPacket.likeness?.visual_output || 'not requested'} and motion ${latestPacket.likeness?.motion_direction || 'not requested'}.`
+    : '';
+  const prompt = `Continue building ${latestPacket.title} as a ${latestPacket.project_type}. Goal: ${latestPacket.objective}.${actorDetail}${productionDetail}${mediaDetail}${simulationDetail} Keep rights, evidence, quality, safety, and owner approval gates active.`;
   location.href = `buddy.html?prompt=${encodeURIComponent(prompt)}`;
 });
 
@@ -1150,6 +1354,8 @@ document.getElementById('clear-media').addEventListener('click', () => {
   mediaRecorder = null;
   voiceBlob = null;
   imageBlob = null;
+  voiceAnalysis = null;
+  voiceTakes = [];
   latestConsentReceipt = null;
   voiceObjectUrl = '';
   imageObjectUrl = '';
@@ -1161,6 +1367,8 @@ document.getElementById('clear-media').addEventListener('click', () => {
   document.getElementById('download-voice').disabled = true;
   document.getElementById('download-image').disabled = true;
   document.getElementById('download-consent').disabled = true;
+  renderVoiceAnalysis();
+  renderVoiceTakes();
   voiceStatus.textContent = 'No sample selected.';
   imageStatus.textContent = 'Choose an image or open the camera.';
   formStatus.textContent = 'Local media removed from this browser session.';
@@ -1189,3 +1397,5 @@ updateProjectControls();
 renderSimulationConcept();
 renderAcademy();
 renderCastList();
+renderVoiceAnalysis();
+renderVoiceTakes();

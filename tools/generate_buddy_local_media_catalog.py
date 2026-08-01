@@ -19,12 +19,19 @@ def load_catalog() -> dict:
     if catalog.get("policy", {}).get("paid_provider_required") is not False:
         raise SystemExit("The local media core cannot require a paid provider.")
     engines = catalog.get("engines", [])
-    if len(engines) < 8 or len({item["id"] for item in engines}) != len(engines):
-        raise SystemExit("The media catalog needs at least eight unique engine records.")
+    if len(engines) < 9 or len({item["id"] for item in engines}) != len(engines):
+        raise SystemExit("The media catalog needs at least nine unique engine records.")
     if any(not item.get("license_status") or not item.get("commercial_status") for item in engines):
         raise SystemExit("Every media engine needs explicit license and commercial states.")
     if len(catalog.get("benchmark_suites", [])) < 8:
         raise SystemExit("The local media catalog needs the complete benchmark suite.")
+    performance_modes = catalog.get("performance_modes", [])
+    performance_fixtures = catalog.get("performance_fixtures", [])
+    if len(performance_modes) < 8 or len(performance_fixtures) < 8:
+        raise SystemExit("The media catalog needs complete spoken, rap, singing, and character fixtures.")
+    mode_ids = {item["id"] for item in performance_modes}
+    if any(item.get("mode") not in mode_ids for item in performance_fixtures):
+        raise SystemExit("Every media performance fixture must reference a registered mode.")
     targets = catalog.get("benchmark_targets", [])
     if len(targets) < 4 or not any(item.get("kind") == "optional_external_reference" for item in targets):
         raise SystemExit("The media catalog needs owned, local-reference, and external-reference benchmark targets.")

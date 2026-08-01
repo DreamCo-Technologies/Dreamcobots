@@ -49,6 +49,21 @@ window.BUDDY_MEDIA_QUALITY_LAB = {
     },
     {
       "cases": [
+        "natural conversation",
+        "long-form narration",
+        "rap timing and diction",
+        "melodic rap transition",
+        "original singing range and sustained vowel",
+        "character emotion range",
+        "commercial timing and claim clarity",
+        "multilingual delivery with fluent review"
+      ],
+      "id": "voice-performance-v1",
+      "minimum_release_fixtures": 8,
+      "modality": "voice"
+    },
+    {
+      "cases": [
         "front portrait",
         "profile and three-quarter view",
         "full-body consistency",
@@ -72,6 +87,20 @@ window.BUDDY_MEDIA_QUALITY_LAB = {
         "multilingual dubbing and lip sync"
       ],
       "id": "video-core-v1",
+      "minimum_release_fixtures": 7,
+      "modality": "video"
+    },
+    {
+      "cases": [
+        "talking portrait short",
+        "vertical social-media short",
+        "music performance video",
+        "truthful commercial",
+        "biography or documentary scene",
+        "multi-character movie scene",
+        "captioned and audio-described export"
+      ],
+      "id": "creator-production-v1",
       "minimum_release_fixtures": 7,
       "modality": "video"
     }
