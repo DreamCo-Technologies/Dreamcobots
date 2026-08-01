@@ -17,8 +17,19 @@ ROOT = Path(__file__).resolve().parents[2]
 
 class ActorMode(str, Enum):
     ORIGINAL_SYNTHETIC = "original_synthetic"
+    COMPANY_MASCOT = "company_mascot"
     OWNER_DIGITAL_DOUBLE = "owner_digital_double"
     LICENSED_ADULT_PERFORMER = "licensed_adult_performer"
+
+
+class ProductionFormat(str, Enum):
+    FEATURE_FILM = "feature_film"
+    DOCUMENTARY = "documentary"
+    ANIMATED_SERIES = "animated_series"
+    MUSIC_VIDEO = "music_video"
+    COMMERCIAL = "commercial"
+    FAMILY_LEARNING = "family_learning"
+    SOCIAL_LIVE_SHOW = "social_live_show"
 
 
 class SimulationDomain(str, Enum):
@@ -62,10 +73,10 @@ class SyntheticActorBrief:
             raise CreativeStudioError("Describe an original character and intended performance.")
         if self.deceptive_authority_impersonation:
             raise CreativeStudioError("Deceptive authority impersonation is blocked.")
-        if self.mode == ActorMode.ORIGINAL_SYNTHETIC:
+        if self.mode in {ActorMode.ORIGINAL_SYNTHETIC, ActorMode.COMPANY_MASCOT}:
             if self.real_person_reference or self.source_media_ref or self.performer_release_ref:
                 raise CreativeStudioError(
-                    "Original synthetic actors cannot be based on a real person's media or identity."
+                    "Original synthetic actors and company mascots cannot be based on a real person's media or identity."
                 )
             return
         if not self.adult_confirmed:
@@ -81,6 +92,55 @@ class SyntheticActorBrief:
             return
         if not self.performer_release_ref:
             raise CreativeStudioError("A verified written performer-release reference is required.")
+
+
+@dataclass(frozen=True)
+class ProductionBrief:
+    title: str
+    objective: str
+    audience: str
+    production_format: ProductionFormat
+    cast: tuple[SyntheticActorBrief, ...] = ()
+    duration_minutes: int = 3
+    aspect_ratio: str = "16:9"
+    target_platforms: tuple[str, ...] = ("web",)
+    selected_workspaces: tuple[str, ...] = (
+        "story",
+        "timeline",
+        "image",
+        "dialogue",
+        "music",
+        "sound",
+        "accessibility",
+        "delivery",
+    )
+    commercial_use: bool = False
+    live_mode: bool = False
+
+    def validate(self, production: dict[str, Any]) -> None:
+        if len(self.title.strip()) < 3 or len(self.objective.strip()) < 15:
+            raise CreativeStudioError("A title and detailed production objective are required.")
+        if not self.audience.strip():
+            raise CreativeStudioError("A production audience is required.")
+        if self.duration_minutes < 1 or self.duration_minutes > 600:
+            raise CreativeStudioError("Production duration must be between 1 and 600 minutes per master.")
+        if self.aspect_ratio not in {"16:9", "9:16", "1:1", "4:3", "2.39:1"}:
+            raise CreativeStudioError("Choose a supported master aspect ratio.")
+        platforms = tuple(dict.fromkeys(item.strip().lower() for item in self.target_platforms if item.strip()))
+        if not platforms or len(platforms) > 20:
+            raise CreativeStudioError("Choose between one and 20 target platforms.")
+        workspace_ids = {item["id"] for item in production["editing_workspaces"]}
+        if not self.selected_workspaces or set(self.selected_workspaces) - workspace_ids:
+            raise CreativeStudioError("Every selected editing workspace must exist in the production catalog.")
+        names = [actor.name.strip().casefold() for actor in self.cast]
+        if len(names) != len(set(names)):
+            raise CreativeStudioError("Each cast member needs a unique production name.")
+        if len(self.cast) > 100:
+            raise CreativeStudioError("Split casts larger than 100 roles into production units.")
+        for actor in self.cast:
+            actor.validate()
+        if self.live_mode and self.production_format != ProductionFormat.SOCIAL_LIVE_SHOW:
+            raise CreativeStudioError("Live mode is available only for a social live show plan.")
 
 
 @dataclass(frozen=True)
@@ -162,6 +222,74 @@ class BuddyProductionGroup:
             "render_state": "renderer_configuration_required",
             "hard_blocks": self.production["actor_hard_blocks"],
             "publish_requires_owner_approval": True,
+        }
+
+    def build_production_plan(self, brief: ProductionBrief) -> dict[str, Any]:
+        brief.validate(self.production)
+        format_profile = next(
+            item for item in self.production["production_formats"]
+            if item["id"] == brief.production_format.value
+        )
+        workspace_ids = set(brief.selected_workspaces)
+        workspaces = [
+            item for item in self.production["editing_workspaces"]
+            if item["id"] in workspace_ids
+        ]
+        cast = [self.build_actor_plan(actor) for actor in brief.cast]
+        live_plan = None
+        if brief.production_format == ProductionFormat.SOCIAL_LIVE_SHOW:
+            live_plan = {
+                "requested": brief.live_mode,
+                "status": "private_rehearsal_ready_live_adapter_required",
+                "controls": self.production["live_social_controls"],
+                "go_live_requires_fresh_owner_approval": True,
+                "autonomous_broadcast_started": False,
+                "credentials_stored": False,
+            }
+        return {
+            "schema": "dreamco.buddy_professional_production_plan.v1",
+            "status": "production_packet_ready",
+            "production": {
+                "title": brief.title,
+                "objective": brief.objective,
+                "audience": brief.audience,
+                "format": brief.production_format.value,
+                "duration_minutes": brief.duration_minutes,
+                "aspect_ratio": brief.aspect_ratio,
+                "target_platforms": list(dict.fromkeys(brief.target_platforms)),
+                "commercial_use_requested": brief.commercial_use,
+            },
+            "planning_units": format_profile["planning_units"],
+            "required_deliverables": format_profile["required_deliverables"],
+            "departments": self.production["departments"],
+            "cast": cast,
+            "editing_workspaces": workspaces,
+            "timeline": {
+                "interchange_contract": "OpenTimelineIO-compatible timeline manifest",
+                "tracks": ["picture", "dialogue", "music", "effects", "captions", "metadata"],
+                "media_embedded": False,
+                "rendered_timeline_created": False,
+            },
+            "toolchain": [
+                {
+                    **tool,
+                    "installed": False,
+                    "execution_taken": False,
+                    "license_review_required": True,
+                }
+                for tool in self.production["professional_toolchain"]
+            ],
+            "live": live_plan,
+            "quality_gates": self.production["quality_gates"],
+            "delivery_profiles": self.production["delivery_profiles"],
+            "release": {
+                "rendered_assets_exist": False,
+                "master_quality_control_passed": False,
+                "rights_review_passed": False,
+                "platform_submission_or_publish_taken": False,
+                "owner_approval_required": True,
+            },
+            "truth_boundary": self.production["quality_claim"],
         }
 
     def build_simulation_plan(self, brief: SimulationBrief) -> dict[str, Any]:

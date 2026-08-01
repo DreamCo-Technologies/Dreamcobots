@@ -25,5 +25,18 @@
 .studio-trait-grid label { min-width: 0; color: var(--text2); font-size: .72rem; font-weight: 700; }
 .studio-trait-grid output { float: right; color: var(--cyan); font-family: var(--mono); }
 .studio-trait-grid input[type="range"] { width: 100%; margin-top: 7px; accent-color: var(--cyan); }
+.studio-choice-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px 12px; margin: 14px 0 0; padding: 12px 0 0; border: 0; border-top: 1px solid var(--border); }
+.studio-choice-grid legend { padding: 0 8px 0 0; color: var(--text3); font-size: .7rem; font-weight: 800; text-transform: uppercase; }
+.studio-choice-grid label { display: flex; align-items: center; gap: 7px; min-height: 30px; color: var(--text2); font-size: .72rem; }
+.studio-choice-grid input { accent-color: var(--cyan); }
+.studio-tool-summary { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); margin-top: 14px; border-top: 1px solid var(--border); border-left: 1px solid var(--border); }
+.studio-tool-summary article { min-width: 0; padding: 11px; border-right: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+.studio-tool-summary strong { display: block; font-size: .74rem; }
+.studio-tool-summary span { display: block; margin-top: 4px; color: var(--text3); font-size: .66rem; line-height: 1.45; }
+.studio-cast-list { display: grid; gap: 7px; margin-top: 12px; }
+.studio-cast-item { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 10px; min-height: 54px; padding: 9px 10px; border: 1px solid var(--border); background: var(--bg2); }
+.studio-cast-item strong { display: block; font-size: .76rem; }
+.studio-cast-item span { display: block; margin-top: 3px; color: var(--text3); font-size: .67rem; }
+.studio-cast-item button { width: 30px; height: 30px; border: 1px solid var(--border); border-radius: 4px; background: transparent; color: var(--text2); cursor: pointer; }
 @media (max-width: 880px) { .studio-academy-header { display: block; } .studio-academy-actions { margin-top: 14px; } .studio-academy-grid { grid-template-columns: 1fr 1fr; } }
-@media (max-width: 560px) { .studio-academy-actions, .studio-academy-grid, .studio-concept-preview, .studio-trait-grid { grid-template-columns: 1fr; } }
+@media (max-width: 560px) { .studio-academy-actions, .studio-academy-grid, .studio-concept-preview, .studio-trait-grid, .studio-choice-grid, .studio-tool-summary { grid-template-columns: 1fr; } }

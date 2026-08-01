@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Buddy Data and Memory Center | DreamCo</title>
-  <meta name="description" content="Control Buddy memory, data connections, privacy-rights requests, exports, deletion plans, and rights-cleared data packages." />
+  <meta name="description" content="Control Buddy memory, connected apps, social accounts, subscriptions, bills, privacy-rights requests, and rights-cleared data packages." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="styles.css" />
@@ -18,7 +18,7 @@
     <div>
       <p class="data-eyebrow">User-owned memory and rights</p>
       <h1>Data and Memory Center</h1>
-      <p>Choose what Buddy may learn, connect owner-authorized data, track privacy requests, and prepare rights-cleared packages.</p>
+      <p>Choose what Buddy may learn, connect owner-authorized apps and accounts, review bills and subscriptions, track privacy requests, and prepare rights-cleared packages.</p>
     </div>
     <button id="export-data-center" class="btn btn-outline btn-sm" type="button">Export my control plans</button>
   </header>
@@ -27,7 +27,84 @@
     <div><span>Memory categories</span><strong id="data-memory-count">0</strong></div>
     <div><span>Connected-source plans</span><strong id="data-source-count">0</strong></div>
     <div><span>Privacy requests</span><strong id="data-request-count">0</strong></div>
-    <div><span>External actions</span><strong>0</strong></div>
+    <div><span>App plans</span><strong id="data-app-count">0</strong></div>
+  </section>
+
+  <section class="data-section" aria-labelledby="apps-heading">
+    <div class="data-section-heading"><div><p>Owner-authorized app map</p><h2 id="apps-heading">Connected apps and grouped work</h2></div><span class="data-state">Read-only first</span></div>
+    <form id="app-plan-form" class="data-form-grid">
+      <label for="app-name">App name<input id="app-name" required minlength="2" placeholder="My creator account" /></label>
+      <label for="app-url">Official app URL<input id="app-url" type="url" required placeholder="https://service.example/settings/apps" /></label>
+      <label for="app-category">Category<select id="app-category"></select></label>
+      <label for="app-group">Group<input id="app-group" required minlength="2" value="Creator workspace" /></label>
+      <label for="app-auth">Connection<select id="app-auth"><option value="oauth_pkce">OAuth with PKCE</option><option value="oauth_device">Device code</option><option value="browser_handoff">Browser handoff</option><option value="api_key_reference">Vault key reference</option><option value="custom_rest">Documented custom API</option></select></label>
+      <label for="app-access">Access<select id="app-access"><option value="catalog_only">Catalog only</option><option value="read_selected" selected>Read selected</option><option value="draft_only">Draft only</option><option value="approved_actions">Approved actions</option></select></label>
+      <fieldset class="privacy-rights data-wide"><legend>Requested work</legend>
+        <label><input type="checkbox" name="app-action" value="catalog" checked /> Organize</label>
+        <label><input type="checkbox" name="app-action" value="read" /> Read</label>
+        <label><input type="checkbox" name="app-action" value="compare" /> Compare</label>
+        <label><input type="checkbox" name="app-action" value="draft" /> Draft</label>
+        <label><input type="checkbox" name="app-action" value="schedule" /> Schedule</label>
+        <label><input type="checkbox" name="app-action" value="publish" /> Publish</label>
+      </fieldset>
+      <label class="data-check data-wide"><input id="app-owner-authorized" type="checkbox" required /><span>I own or am authorized to connect this app. High-impact actions still need exact approval.</span></label>
+      <button class="btn btn-primary" type="submit">Prepare app plan</button>
+    </form>
+    <form id="app-group-form" class="data-group-workflow">
+      <label for="app-group-objective">Group workflow<input id="app-group-objective" minlength="10" placeholder="Compare selected creator apps and prepare coordinated drafts" /></label>
+      <button class="btn btn-outline btn-sm" type="submit">Prepare grouped workflow</button>
+    </form>
+    <div id="app-plan-list" class="data-ledger" aria-live="polite"></div>
+  </section>
+
+  <section class="data-section" aria-labelledby="social-heading">
+    <div class="data-section-heading"><div><p>Draft, schedule, publish, or rehearse</p><h2 id="social-heading">Social account workspace</h2></div><span class="data-state amber">Publish and go-live approval required</span></div>
+    <form id="social-plan-form" class="data-form-grid">
+      <label for="social-platform">Platform<input id="social-platform" required minlength="2" placeholder="Owner social channel" /></label>
+      <label for="social-account-ref">Account reference<input id="social-account-ref" required pattern="social-account:[A-Za-z0-9_.:/-]{2,100}" placeholder="social-account:owner-channel" /></label>
+      <label for="social-mode">Mode<select id="social-mode"><option value="draft">Draft only</option><option value="schedule">Schedule after review</option><option value="publish_once">Publish one approved item</option><option value="live_rehearsal">Private live rehearsal</option><option value="live_show">Go live after approval</option></select></label>
+      <label for="social-objective">Objective<input id="social-objective" required minlength="10" placeholder="Prepare a weekly product workshop" /></label>
+      <fieldset class="privacy-rights data-wide"><legend>Media</legend>
+        <label><input type="checkbox" name="social-content" value="text" checked /> Text</label>
+        <label><input type="checkbox" name="social-content" value="image" /> Image</label>
+        <label><input type="checkbox" name="social-content" value="video" /> Video</label>
+        <label><input type="checkbox" name="social-content" value="music" /> Music</label>
+        <label><input type="checkbox" name="social-content" value="livestream" /> Livestream</label>
+      </fieldset>
+      <label class="data-check"><input id="social-owner-authorized" type="checkbox" required /><span>Owner-authorized account.</span></label>
+      <label class="data-check"><input id="social-moderation" type="checkbox" checked /><span>Moderation and emergency stop.</span></label>
+      <label class="data-check"><input id="social-synthetic" type="checkbox" /><span>Uses labeled synthetic media.</span></label>
+      <label class="data-check"><input id="social-rights" type="checkbox" /><span>Adult consent and media rights confirmed.</span></label>
+      <button class="btn btn-primary" type="submit">Prepare social workspace</button>
+    </form>
+    <div id="social-plan-list" class="data-ledger" aria-live="polite"></div>
+  </section>
+
+  <section class="data-section" aria-labelledby="finance-heading">
+    <div class="data-section-heading"><div><p>Costs, renewals, duplicates, and handoffs</p><h2 id="finance-heading">Bills and subscriptions</h2></div><span class="data-state">No money moved</span></div>
+    <div class="data-finance-summary" aria-live="polite">
+      <div><span>Monthly subscriptions</span><strong id="finance-monthly">$0.00</strong></div>
+      <div><span>Annualized</span><strong id="finance-annual">$0.00</strong></div>
+      <div><span>Possible duplicates</span><strong id="finance-duplicates">0</strong></div>
+    </div>
+    <form id="subscription-form" class="data-form-grid">
+      <label for="subscription-merchant">Subscription<input id="subscription-merchant" required minlength="2" placeholder="Design suite" /></label>
+      <label for="subscription-amount">Amount<input id="subscription-amount" type="number" min="0" step="0.01" required placeholder="12.00" /></label>
+      <label for="subscription-currency">Currency<input id="subscription-currency" value="USD" required pattern="[A-Za-z]{3}" /></label>
+      <label for="subscription-cadence">Cadence<select id="subscription-cadence"><option value="weekly">Weekly</option><option value="monthly" selected>Monthly</option><option value="quarterly">Quarterly</option><option value="annual">Annual</option></select></label>
+      <label for="subscription-renewal">Renewal<input id="subscription-renewal" type="date" required /></label>
+      <label for="subscription-cancel-url">Official cancellation URL<input id="subscription-cancel-url" type="url" placeholder="https://service.example/account/cancel" /></label>
+      <button class="btn btn-primary" type="submit">Add subscription</button>
+    </form>
+    <form id="bill-form" class="data-form-grid">
+      <label for="bill-payee">Bill or payee<input id="bill-payee" required minlength="2" placeholder="Power utility" /></label>
+      <label for="bill-amount">Amount<input id="bill-amount" type="number" min="0" step="0.01" required placeholder="98.20" /></label>
+      <label for="bill-currency">Currency<input id="bill-currency" value="USD" required pattern="[A-Za-z]{3}" /></label>
+      <label for="bill-due">Due date<input id="bill-due" type="date" required /></label>
+      <label for="bill-account-ref">Account reference<input id="bill-account-ref" required pattern="[A-Za-z][A-Za-z0-9_.:/-]{2,127}" placeholder="vault:utility-account" /></label>
+      <button class="btn btn-outline" type="submit">Add bill</button>
+    </form>
+    <div id="finance-plan-list" class="data-ledger" aria-live="polite"></div>
   </section>
 
   <section class="data-section" aria-labelledby="memory-heading">
@@ -124,6 +201,7 @@
   </section>
 </main>
 
-<script src="data-control.js" defer></script>
+<script src="data/buddy-connected-life.js?v=1"></script>
+<script src="data-control.js?v=3" defer></script>
 </body>
 </html>

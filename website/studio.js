@@ -20,7 +20,11 @@ const academyTrack = document.getElementById('academy-track');
 const academyGrid = document.getElementById('academy-grid');
 const academySummary = document.getElementById('academy-summary');
 const actorControls = document.getElementById('actor-controls');
+const productionControls = document.getElementById('production-controls');
+const liveShowControl = document.getElementById('live-show-control');
 const actorMode = document.getElementById('actor-mode');
+const actorName = document.getElementById('actor-name');
+const actorRoleTemplate = document.getElementById('actor-role-template');
 const actorRole = document.getElementById('actor-role');
 const voiceEngine = document.getElementById('voice-engine');
 const imageEngine = document.getElementById('image-engine');
@@ -45,12 +49,35 @@ let voiceObjectUrl = '';
 let imageObjectUrl = '';
 let latestPacket = null;
 let latestConsentReceipt = null;
+let castRoles = [];
 const academy = window.BUDDY_SPECIALIZED_HUBS?.creative;
 const productionRegistry = window.BUDDY_PRODUCTION_GROUP;
 const hollywoodGroup = productionRegistry?.hollywood_production_group;
 const simulationFoundry = productionRegistry?.simulation_foundry;
 const mediaRegistry = window.BUDDY_LOCAL_MEDIA_ENGINES || { engines: [], benchmark_suites: [], policy: {} };
 const mediaQualityRegistry = window.BUDDY_MEDIA_QUALITY_LAB || { quality_modes: {}, fixture_sets: [], hard_release_gates: [], scorecards: {} };
+
+function checkedValues(name) {
+  return Array.from(document.querySelectorAll(`input[name="${name}"]:checked`)).map(input => input.value);
+}
+
+function productionToolSummary() {
+  const target = document.getElementById('production-tool-summary');
+  const tools = hollywoodGroup?.professional_toolchain || [];
+  target.innerHTML = tools.map(tool => `
+    <article><strong>${escapeHtml(tool.label)}</strong><span>${escapeHtml(tool.reference)} · ${escapeHtml(tool.runtime_state.replaceAll('_', ' '))}</span></article>
+  `).join('');
+}
+
+function populateRoleTemplates() {
+  actorRoleTemplate.replaceChildren();
+  (hollywoodGroup?.role_templates || []).forEach(role => {
+    const option = document.createElement('option');
+    option.value = role.id;
+    option.textContent = role.label;
+    actorRoleTemplate.append(option);
+  });
+}
 
 function mediaEngineById(id) {
   return mediaRegistry.engines.find(engine => engine.id === id) || null;
@@ -100,6 +127,8 @@ function personalityTraits() {
 
 populateEngineSelect(voiceEngine, ['voice_replication', 'speech_synthesis', 'cross_lingual_speech', 'expressive_speech'], 'chatterbox-local');
 populateEngineSelect(imageEngine, ['identity_preserving_image', 'portrait_animation', 'lip_sync'], 'pulid-local');
+populateRoleTemplates();
+productionToolSummary();
 
 function updateMediaQualitySummary() {
   const mode = mediaQualityRegistry.quality_modes?.[mediaQualityMode.value];
@@ -193,6 +222,24 @@ const TYPE_PRESETS = {
     subject: 'A life story built from approved memories and records',
     audience: 'Family, friends, and future generations',
   },
+  documentary: {
+    title: 'The Work Behind the Story',
+    objective: 'Create a sourced documentary with interview releases, archive rights, a fact-check ledger, and professional delivery plan.',
+    subject: 'A verified true story supported by approved interviews and records',
+    audience: 'Documentary and educational audiences',
+  },
+  animated_series: {
+    title: 'Bright City Stories',
+    objective: 'Build an original animated series pilot with a reusable cast, character bible, boards, animatic, sound, and episode delivery plan.',
+    subject: 'Original characters learning to solve community problems together',
+    audience: 'Family streaming and television audiences',
+  },
+  social_live_show: {
+    title: 'Buddy Live Workshop',
+    objective: 'Prepare a moderated social live show with scenes, sources, a private rehearsal, stream-health checks, emergency stop, and reusable clips.',
+    subject: 'An owner-approved interactive workshop and audience question session',
+    audience: 'Followers on the owner-authorized social channel',
+  },
   commercial: {
     title: 'Launch Story',
     objective: 'Create a truthful product commercial with substantiated claims and platform variants.',
@@ -261,10 +308,73 @@ const SIMULATION_TYPES = new Set([
   'product_visualization',
   'skills_training_simulation',
 ]);
-const ACTOR_TYPES = new Set(['feature_film', 'music_video', 'commercial', 'parent_learning_video', 'biography']);
+const ACTOR_TYPES = new Set([
+  'feature_film',
+  'documentary',
+  'animated_series',
+  'social_live_show',
+  'music_video',
+  'commercial',
+  'parent_learning_video',
+  'biography',
+]);
+const PRODUCTION_TYPES = new Set([
+  'feature_film',
+  'documentary',
+  'animated_series',
+  'social_live_show',
+  'music_video',
+  'commercial',
+  'parent_learning_video',
+  'biography',
+]);
 
 function selectedType() {
   return form.elements.projectType.value;
+}
+
+function renderCastList() {
+  const target = document.getElementById('cast-list');
+  if (!castRoles.length) {
+    target.innerHTML = '<p class="studio-status">No saved roles. The current role will be included when the packet is built.</p>';
+    return;
+  }
+  target.innerHTML = castRoles.map((role, index) => `
+    <article class="studio-cast-item">
+      <div><strong>${escapeHtml(role.name)} · ${escapeHtml(role.role)}</strong><span>${escapeHtml(role.mode.replaceAll('_', ' '))} · ${escapeHtml(role.template.replaceAll('_', ' '))}</span></div>
+      <button type="button" data-remove-cast="${index}" aria-label="Remove ${escapeHtml(role.name)}">&times;</button>
+    </article>
+  `).join('');
+  target.querySelectorAll('[data-remove-cast]').forEach(button => button.addEventListener('click', () => {
+    castRoles.splice(Number(button.dataset.removeCast), 1);
+    renderCastList();
+  }));
+}
+
+function currentCastRole() {
+  return {
+    name: actorName.value.trim(),
+    mode: actorMode.value,
+    template: actorRoleTemplate.value || 'lead',
+    role: actorRole.value.trim(),
+    character_description: document.getElementById('actor-description').value.trim(),
+    personality_traits: personalityTraits(),
+    uses_project_voice: useVoice.checked,
+    uses_project_likeness: useImage.checked,
+  };
+}
+
+function productionDurationDefault(type) {
+  return ({
+    feature_film: 100,
+    documentary: 60,
+    animated_series: 24,
+    social_live_show: 45,
+    music_video: 4,
+    commercial: 1,
+    parent_learning_video: 8,
+    biography: 30,
+  })[type] || 3;
 }
 
 function renderEmptyState(type) {
@@ -293,12 +403,18 @@ function applyPreset(type) {
   document.getElementById('project-objective').value = preset.objective;
   document.getElementById('project-subject').value = preset.subject;
   document.getElementById('project-audience').value = preset.audience;
+  document.getElementById('production-duration').value = String(productionDurationDefault(type));
+  castRoles = [];
+  renderCastList();
   updateProjectControls(type);
   renderEmptyState(type);
 }
 
 function updateProjectControls(type = selectedType()) {
   actorControls.hidden = !ACTOR_TYPES.has(type);
+  productionControls.hidden = !PRODUCTION_TYPES.has(type);
+  liveShowControl.hidden = type !== 'social_live_show';
+  if (type !== 'social_live_show') document.getElementById('production-live').checked = false;
   simulationControls.hidden = !SIMULATION_TYPES.has(type);
   renderSimulationConcept();
 }
@@ -384,6 +500,44 @@ actorMode.addEventListener('change', () => {
   } else {
     formStatus.textContent = 'Original actor mode cannot imitate or use source media from a real person.';
   }
+});
+actorRoleTemplate.addEventListener('change', () => {
+  const template = hollywoodGroup?.role_templates?.find(item => item.id === actorRoleTemplate.value);
+  if (template) actorRole.value = template.label;
+});
+document.getElementById('add-cast-role').addEventListener('click', () => {
+  const role = currentCastRole();
+  if (role.name.length < 2 || role.role.length < 2 || role.character_description.length < 20) {
+    formStatus.textContent = 'Add a character name, role, and complete performance description.';
+    return;
+  }
+  if (castRoles.some(item => item.name.toLowerCase() === role.name.toLowerCase())) {
+    formStatus.textContent = 'Each cast member needs a unique production name.';
+    return;
+  }
+  if (castRoles.length >= 100) {
+    formStatus.textContent = 'Split casts larger than 100 roles into production units.';
+    return;
+  }
+  if (['owner_digital_double', 'licensed_adult_performer'].includes(role.mode) && !useVoice.checked && !useImage.checked) {
+    formStatus.textContent = 'Choose the approved project voice, likeness, or both before adding this real-person role.';
+    return;
+  }
+  if (['owner_digital_double', 'licensed_adult_performer'].includes(role.mode)
+      && castRoles.some(item => ['owner_digital_double', 'licensed_adult_performer'].includes(item.mode))) {
+    formStatus.textContent = 'This browser packet supports one approved real-person identity at a time. Add other licensed performers through separate consent receipts.';
+    return;
+  }
+  castRoles.push(role);
+  actorName.value = `Character ${castRoles.length + 1}`;
+  actorMode.value = 'original_synthetic';
+  renderCastList();
+  formStatus.textContent = `${role.name} was added to the production cast.`;
+});
+document.getElementById('clear-cast').addEventListener('click', () => {
+  castRoles = [];
+  renderCastList();
+  formStatus.textContent = 'The saved cast list was cleared.';
 });
 [simulationModelSource, simulationFidelity, simulationPaint, simulationAdditions, simulationToGame]
   .forEach(control => control.addEventListener('input', renderSimulationConcept));
@@ -551,6 +705,20 @@ function validateSimulation() {
   }
 }
 
+function validateProduction() {
+  if (productionControls.hidden) return;
+  const duration = Number(document.getElementById('production-duration').value);
+  if (!Number.isInteger(duration) || duration < 1 || duration > 600) {
+    throw new Error('Production duration must be between 1 and 600 minutes per master. Longer projects should use episodes or production units.');
+  }
+  if (!checkedValues('delivery-platform').length) throw new Error('Choose at least one delivery target.');
+  if (!checkedValues('editing-workspace').length) throw new Error('Choose at least one editing workspace.');
+  if (selectedType() === 'social_live_show' && document.getElementById('production-live').checked
+      && !document.querySelector('input[name="delivery-platform"][value="social"]').checked) {
+    throw new Error('A live social show needs Social selected as a delivery target.');
+  }
+}
+
 function projectCopy(type, subject, audience) {
   if (type === 'game') {
     return {
@@ -585,6 +753,24 @@ function projectCopy(type, subject, audience) {
     title: `Life story: ${subject}`,
     body: `A source log, chronology, narrative structure, fact review, and archive-rights plan prepared for ${audience}.`,
     action: 'Preview chapter',
+  };
+  if (type === 'documentary') return {
+    eyebrow: 'Documentary production',
+    title: `Documentary: ${subject}`,
+    body: `A sourced structure, interview plan, archive-rights ledger, fact review, professional timeline, sound, captions, and delivery plan for ${audience}.`,
+    action: 'Preview sequence',
+  };
+  if (type === 'animated_series') return {
+    eyebrow: 'Animation and cartoon production',
+    title: `Series: ${subject}`,
+    body: `An original series bible, reusable character cast, boards, animatic, voice plan, picture and sound timeline, and episode masters for ${audience}.`,
+    action: 'Preview animatic',
+  };
+  if (type === 'social_live_show') return {
+    eyebrow: 'Live social production',
+    title: `Live show: ${subject}`,
+    body: `A run of show, scene collection, private rehearsal, moderation, stream-health, emergency-stop, recording, and clips plan for ${audience}.`,
+    action: 'Run private rehearsal',
   };
   if (type === 'commercial') return {
     eyebrow: 'Commercial production',
@@ -669,6 +855,10 @@ function renderPrototype(packet) {
   const manifest = [
     packet.actor?.mode ? `Actor: ${packet.actor.mode.replaceAll('_', ' ')}` : null,
     packet.actor?.role ? `Role: ${packet.actor.role}` : null,
+    packet.professional_production?.cast?.length ? `Cast: ${packet.professional_production.cast.length}` : null,
+    packet.professional_production?.duration_minutes ? `Length: ${packet.professional_production.duration_minutes} min` : null,
+    packet.professional_production?.aspect_ratio ? `Frame: ${packet.professional_production.aspect_ratio}` : null,
+    packet.professional_production?.editing_workspaces?.length ? `Edit rooms: ${packet.professional_production.editing_workspaces.length}` : null,
     packet.voice?.engine?.label ? `Voice: ${packet.voice.engine.label}` : null,
     packet.likeness?.engine?.label ? `Image: ${packet.likeness.engine.label}` : null,
     packet.simulation?.model_source ? `Model: ${packet.simulation.model_source.replaceAll('_', ' ')}` : null,
@@ -699,6 +889,7 @@ form.addEventListener('submit', async event => {
   try {
     validateMedia();
     validateSimulation();
+    validateProduction();
     if (!form.reportValidity()) return;
     latestConsentReceipt = useVoice.checked || useImage.checked ? {
       schema: 'dreamco.creator_media_consent.v1',
@@ -774,6 +965,49 @@ form.addEventListener('submit', async event => {
       paid_provider_required: false,
       raw_media_uploaded: false,
     } : null;
+    const productionCast = ACTOR_TYPES.has(type)
+      ? (castRoles.length ? castRoles : [currentCastRole()])
+      : [];
+    const productionPacket = PRODUCTION_TYPES.has(type) ? {
+      schema: 'dreamco.buddy_professional_production_plan.v1',
+      status: 'production_packet_ready',
+      format: type,
+      duration_minutes: Number(document.getElementById('production-duration').value),
+      aspect_ratio: document.getElementById('production-aspect').value,
+      target_platforms: checkedValues('delivery-platform'),
+      cast: productionCast,
+      editing_workspaces: (hollywoodGroup?.editing_workspaces || [])
+        .filter(workspace => checkedValues('editing-workspace').includes(workspace.id)),
+      timeline: {
+        interchange_contract: 'OpenTimelineIO-compatible timeline manifest',
+        tracks: ['picture', 'dialogue', 'music', 'effects', 'captions', 'metadata'],
+        media_embedded: false,
+        rendered_timeline_created: false,
+      },
+      toolchain: (hollywoodGroup?.professional_toolchain || []).map(tool => ({
+        ...tool,
+        installed: false,
+        execution_taken: false,
+        license_review_required: true,
+      })),
+      delivery_profiles: hollywoodGroup?.delivery_profiles || [],
+      live: type === 'social_live_show' ? {
+        requested: document.getElementById('production-live').checked,
+        status: 'private_rehearsal_ready_live_adapter_required',
+        controls: hollywoodGroup?.live_social_controls || [],
+        owner_go_live_approval_required: true,
+        broadcast_started: false,
+        credentials_stored: false,
+      } : null,
+      quality_gates: hollywoodGroup?.quality_gates || [],
+      release: {
+        rendered_assets_exist: false,
+        master_quality_control_passed: false,
+        rights_review_passed: false,
+        platform_publish_taken: false,
+        owner_approval_required: true,
+      },
+    } : null;
     latestPacket = {
       schema: 'dreamco.buddy_creative_studio_project.v1',
       project_type: type,
@@ -807,16 +1041,18 @@ form.addEventListener('submit', async event => {
         commercial_scope: latestConsentReceipt.commercial_scope,
       } : null,
       actor: ACTOR_TYPES.has(type) ? {
-        mode: actorMode.value,
-        role: actorRole.value.trim(),
-        personality_traits: personalityTraits(),
-        character_description: document.getElementById('actor-description').value.trim(),
+        mode: productionCast[0].mode,
+        role: productionCast[0].role,
+        personality_traits: productionCast[0].personality_traits,
+        character_description: productionCast[0].character_description,
+        cast_count: productionCast.length,
         real_person_imitation_allowed: false,
         render_state: 'renderer_configuration_required',
         production_departments: hollywoodGroup?.departments?.map(item => item.id) || [],
         quality_gates: hollywoodGroup?.quality_gates || [],
         hard_blocks: hollywoodGroup?.actor_hard_blocks || [],
       } : null,
+      professional_production: productionPacket,
       simulation: simulationPacket,
       artifacts: type === 'invention_prototype'
         ? ['requirements', 'system block diagram', 'bill of materials', 'simulation plan', 'bench-test matrix', 'safety review', 'prior-art research plan', 'cost and ROI estimate']
@@ -841,7 +1077,7 @@ form.addEventListener('submit', async event => {
             ? 'eligible_after_installed_artifact_review'
             : 'blocked_until_full_license_review',
       },
-      production_academy: type === 'feature_film'
+      production_academy: ['feature_film', 'documentary', 'animated_series', 'social_live_show'].includes(type)
         ? { track: 'film', phases: academy?.film_standard?.phases?.map(item => item.id) || [], departments: hollywoodGroup?.departments?.map(item => item.id) || [], quality_gates: hollywoodGroup?.quality_gates || [] }
         : ['music_video', 'music_artist'].includes(type)
           ? { track: 'music', genre_families: academy?.music_standard?.genre_families?.map(item => item.id) || [], rights_gates: academy?.music_standard?.rights_gates || [] }
@@ -889,7 +1125,10 @@ document.getElementById('send-buddy').addEventListener('click', () => {
     ? ` Use the ${latestPacket.simulation.model_source} model path, apply ${latestPacket.simulation.modifications.join(', ') || 'the approved variants'}, and ${latestPacket.simulation.convert_to_game ? 'turn it into a practice game' : 'keep it as a simulation'}.`
     : '';
   const actorDetail = latestPacket.actor ? ` Actor mode: ${latestPacket.actor.mode}; role: ${latestPacket.actor.role}; personality: ${JSON.stringify(latestPacket.actor.personality_traits)}.` : '';
-  const prompt = `Continue building ${latestPacket.title} as a ${latestPacket.project_type}. Goal: ${latestPacket.objective}.${actorDetail}${simulationDetail} Keep rights, evidence, quality, safety, and owner approval gates active.`;
+  const productionDetail = latestPacket.professional_production
+    ? ` Production: ${latestPacket.professional_production.duration_minutes} minutes at ${latestPacket.professional_production.aspect_ratio}; targets ${latestPacket.professional_production.target_platforms.join(', ')}; cast ${latestPacket.professional_production.cast.map(role => `${role.name} as ${role.role}`).join(', ')}; editing rooms ${latestPacket.professional_production.editing_workspaces.map(item => item.label).join(', ')}.`
+    : '';
+  const prompt = `Continue building ${latestPacket.title} as a ${latestPacket.project_type}. Goal: ${latestPacket.objective}.${actorDetail}${productionDetail}${simulationDetail} Keep rights, evidence, quality, safety, and owner approval gates active.`;
   location.href = `buddy.html?prompt=${encodeURIComponent(prompt)}`;
 });
 
@@ -949,3 +1188,4 @@ updateMediaControls();
 updateProjectControls();
 renderSimulationConcept();
 renderAcademy();
+renderCastList();

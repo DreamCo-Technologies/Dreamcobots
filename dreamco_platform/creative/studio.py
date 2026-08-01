@@ -23,6 +23,9 @@ class ProjectType(str, Enum):
     PARENT_LEARNING_VIDEO = "parent_learning_video"
     MUSIC_VIDEO = "music_video"
     BIOGRAPHY = "biography"
+    DOCUMENTARY = "documentary"
+    ANIMATED_SERIES = "animated_series"
+    SOCIAL_LIVE_SHOW = "social_live_show"
     COMMERCIAL = "commercial"
     COLLEGE_COURSE = "college_course"
     FEATURE_FILM = "feature_film"
@@ -232,6 +235,21 @@ class BuddyCreativeStudio:
             {"bot": "video-script", "role": "narrative structure and script"},
             {"bot": "video-editor-ai", "role": "archive timeline and export plan"},
         ],
+        ProjectType.DOCUMENTARY: [
+            {"bot": "research-bot", "role": "source ledger, interviews, chronology, and claim review"},
+            {"bot": "video-script", "role": "documentary structure, narration, and interview plan"},
+            {"bot": "video-editor-ai", "role": "archive timeline, transcripts, conform, and delivery"},
+        ],
+        ProjectType.ANIMATED_SERIES: [
+            {"bot": "video-script", "role": "series bible, episode scripts, boards, and continuity"},
+            {"bot": "3d-asset-mgr", "role": "character, prop, environment, rig, and asset provenance"},
+            {"bot": "video-editor-ai", "role": "animatic, episode timeline, sound, captions, and delivery"},
+        ],
+        ProjectType.SOCIAL_LIVE_SHOW: [
+            {"bot": "social-net-app-bot", "role": "authorized channel plan, run of show, and platform policy"},
+            {"bot": "video-editor-ai", "role": "scenes, sources, rehearsal, recording, and clips"},
+            {"bot": "governance-dashboard", "role": "moderation, owner approval, emergency stop, and audit"},
+        ],
         ProjectType.COMMERCIAL: [
             {"bot": "brand-voice", "role": "brand claims and voice consistency"},
             {"bot": "video-script", "role": "concept, script, shot list, and calls to action"},
@@ -326,7 +344,12 @@ class BuddyCreativeStudio:
                 encoding="utf-8"
             )
         )
-        if brief.project_type == ProjectType.FEATURE_FILM:
+        if brief.project_type in {
+            ProjectType.FEATURE_FILM,
+            ProjectType.DOCUMENTARY,
+            ProjectType.ANIMATED_SERIES,
+            ProjectType.SOCIAL_LIVE_SHOW,
+        }:
             film = catalog["film_standard"]
             return {
                 "track": "film",
@@ -498,6 +521,12 @@ class BuddyCreativeStudio:
             shared[2]["outputs"].extend(["music rights record", "treatment", "shot list", "edit timeline"])
         elif brief.project_type == ProjectType.BIOGRAPHY:
             shared[2]["outputs"].extend(["source log", "chronology", "fact review", "narrative timeline"])
+        elif brief.project_type == ProjectType.DOCUMENTARY:
+            shared[2]["outputs"].extend(["source ledger", "interview plan", "archive rights", "fact-check report", "documentary timeline"])
+        elif brief.project_type == ProjectType.ANIMATED_SERIES:
+            shared[2]["outputs"].extend(["series bible", "character turnarounds", "storyboards", "animatic", "episode masters"])
+        elif brief.project_type == ProjectType.SOCIAL_LIVE_SHOW:
+            shared[2]["outputs"].extend(["run of show", "scene collection", "moderation plan", "private rehearsal", "recording and clips plan"])
         elif brief.project_type == ProjectType.COMMERCIAL:
             shared[2]["outputs"].extend(["claim substantiation", "brand review", "shot list", "format variants"])
         elif brief.project_type == ProjectType.COLLEGE_COURSE:
@@ -568,6 +597,17 @@ class BuddyCreativeStudio:
                     "safe_failure_reset_and_recovery",
                 ]
             )
+        if brief.project_type == ProjectType.SOCIAL_LIVE_SHOW:
+            checks.extend(
+                [
+                    "private_rehearsal_before_live",
+                    "authenticated_owner_account_adapter",
+                    "moderation_and_guest_controls",
+                    "delay_mute_hold_and_emergency_stop",
+                    "fresh_owner_approval_before_go_live",
+                    "stream_credentials_not_in_project_files",
+                ]
+            )
         return {
             "isolated": True,
             "network_default": "off",
@@ -596,6 +636,12 @@ class BuddyCreativeStudio:
             base.extend(["music_rights_record", "creative_treatment", "shot_list", "edit_decision_list"])
         elif brief.project_type == ProjectType.BIOGRAPHY:
             base.extend(["source_log", "fact_check_report", "chronology", "archive_rights_record"])
+        elif brief.project_type == ProjectType.DOCUMENTARY:
+            base.extend(["source_ledger", "interview_and_archive_rights", "fact_check_report", "documentary_timeline", "delivery_master_plan"])
+        elif brief.project_type == ProjectType.ANIMATED_SERIES:
+            base.extend(["series_bible", "character_turnarounds", "storyboards", "animatic", "voice_manifest", "episode_master_plan"])
+        elif brief.project_type == ProjectType.SOCIAL_LIVE_SHOW:
+            base.extend(["run_of_show", "scene_collection", "moderation_plan", "private_rehearsal", "stream_health_plan", "archive_and_clips_plan"])
         elif brief.project_type == ProjectType.COMMERCIAL:
             base.extend(["claim_substantiation", "brand_review", "platform_variants", "campaign_measurement_plan"])
         elif brief.project_type == ProjectType.COLLEGE_COURSE:

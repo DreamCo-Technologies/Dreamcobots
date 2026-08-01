@@ -14,6 +14,8 @@ from dreamco_platform.creative import (
     ConsentEvidence,
     CreativeStudioError,
     ModelSource,
+    ProductionBrief,
+    ProductionFormat,
     SimulationBrief,
     SimulationDomain,
     SyntheticActorBrief,
@@ -118,6 +120,69 @@ class BuddyProductionGroupTests(unittest.TestCase):
         self.assertEqual(plan["brief"]["model_ref"], "redacted")
         self.assertEqual(plan["game_conversion"]["status"], "game_design_ready")
         self.assertIn("licensed professional review", plan["domain_review"])
+
+    def test_professional_production_builds_cast_timeline_editing_and_delivery_plan(self):
+        plan = BuddyProductionGroup().build_production_plan(
+            ProductionBrief(
+                title="City of Tomorrow",
+                objective="Build an original animated series pilot with a reusable cast and professional delivery packet.",
+                audience="Family streaming audiences",
+                production_format=ProductionFormat.ANIMATED_SERIES,
+                duration_minutes=24,
+                target_platforms=("web", "streaming", "television"),
+                cast=(
+                    SyntheticActorBrief(
+                        name="Nova",
+                        project_title="City of Tomorrow",
+                        character_description="An original young-adult engineer with a fictional history, visual design, and performance arc.",
+                    ),
+                    SyntheticActorBrief(
+                        name="Beacon",
+                        project_title="City of Tomorrow",
+                        character_description="An original robotic guide with a distinct silhouette, movement language, and supporting role.",
+                    ),
+                ),
+                commercial_use=True,
+            )
+        )
+        self.assertEqual(plan["status"], "production_packet_ready")
+        self.assertEqual(len(plan["cast"]), 2)
+        self.assertEqual(plan["timeline"]["interchange_contract"], "OpenTimelineIO-compatible timeline manifest")
+        self.assertGreaterEqual(len(plan["editing_workspaces"]), 8)
+        self.assertEqual({tool["reference"] for tool in plan["toolchain"]}, {
+            "OpenTimelineIO", "FFmpeg", "Blender", "OBS Studio WebSocket"
+        })
+        self.assertFalse(plan["release"]["rendered_assets_exist"])
+        self.assertFalse(plan["release"]["platform_submission_or_publish_taken"])
+
+    def test_live_show_requires_rehearsal_adapter_and_fresh_go_live_approval(self):
+        plan = BuddyProductionGroup().build_production_plan(
+            ProductionBrief(
+                title="Buddy Live Workshop",
+                objective="Prepare a moderated live workshop with private rehearsal, safe scene controls, and clips.",
+                audience="Authorized social channel followers",
+                production_format=ProductionFormat.SOCIAL_LIVE_SHOW,
+                duration_minutes=45,
+                target_platforms=("owner_social_channel",),
+                live_mode=True,
+            )
+        )
+        self.assertTrue(plan["live"]["requested"])
+        self.assertTrue(plan["live"]["go_live_requires_fresh_owner_approval"])
+        self.assertFalse(plan["live"]["autonomous_broadcast_started"])
+        self.assertFalse(plan["live"]["credentials_stored"])
+
+    def test_live_mode_is_not_available_for_a_non_live_production(self):
+        with self.assertRaisesRegex(CreativeStudioError, "only for a social live show"):
+            BuddyProductionGroup().build_production_plan(
+                ProductionBrief(
+                    title="Feature Plan",
+                    objective="Prepare a feature film packet with a complete editorial and delivery workflow.",
+                    audience="Film audiences",
+                    production_format=ProductionFormat.FEATURE_FILM,
+                    live_mode=True,
+                )
+            )
 
 
 if __name__ == "__main__":

@@ -9,6 +9,9 @@ Buddy now has one governed production path for games, school simulations, learni
 - `parent_learning_video`
 - `music_video`
 - `biography`
+- `documentary`
+- `animated_series`
+- `social_live_show`
 - `commercial`
 - `college_course`
 - `feature_film`

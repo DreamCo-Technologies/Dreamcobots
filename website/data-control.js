@@ -13,9 +13,14 @@
         sources: Array.isArray(parsed.sources) ? parsed.sources.slice(0, 30) : [],
         requests: Array.isArray(parsed.requests) ? parsed.requests.slice(0, 50) : [],
         packages: Array.isArray(parsed.packages) ? parsed.packages.slice(0, 20) : [],
+        apps: Array.isArray(parsed.apps) ? parsed.apps.slice(0, 100) : [],
+        appWorkflows: Array.isArray(parsed.appWorkflows) ? parsed.appWorkflows.slice(0, 50) : [],
+        social: Array.isArray(parsed.social) ? parsed.social.slice(0, 50) : [],
+        subscriptions: Array.isArray(parsed.subscriptions) ? parsed.subscriptions.slice(0, 500) : [],
+        bills: Array.isArray(parsed.bills) ? parsed.bills.slice(0, 500) : [],
       };
     } catch (_error) {
-      return { memory: null, sources: [], requests: [], packages: [] };
+      return { memory: null, sources: [], requests: [], packages: [], apps: [], appWorkflows: [], social: [], subscriptions: [], bills: [] };
     }
   }
 
@@ -91,12 +96,81 @@
       .replaceAll('"', '&quot;').replaceAll("'", '&#39;');
   }
 
+  function monthlyAmount(amount, cadence) {
+    const value = Number(amount);
+    const monthly = cadence === 'weekly' ? value * 52 / 12
+      : cadence === 'quarterly' ? value / 3
+        : cadence === 'annual' ? value / 12
+          : value;
+    return Math.round(monthly * 100) / 100;
+  }
+
+  function renderFinance() {
+    const totals = state.subscriptions.reduce((result, item) => {
+      result[item.currency] = (result[item.currency] || 0) + monthlyAmount(item.amount, item.cadence);
+      return result;
+    }, {});
+    const groups = new Map();
+    state.subscriptions.forEach((item) => {
+      const key = `${item.merchant.toLowerCase()}:${item.amount}:${item.currency}`;
+      groups.set(key, [...(groups.get(key) || []), item]);
+    });
+    const duplicates = [...groups.values()].filter(items => items.length > 1);
+    const formatTotals = (multiplier) => Object.entries(totals).length
+      ? Object.entries(totals).map(([currency, value]) => `${currency} ${(value * multiplier).toFixed(2)}`).join(' · ')
+      : 'USD 0.00';
+    byId('finance-monthly').textContent = formatTotals(1);
+    byId('finance-annual').textContent = formatTotals(12);
+    byId('finance-duplicates').textContent = String(duplicates.length);
+    const rows = [
+      ...state.subscriptions.map((item, index) => ({
+        ...item,
+        key: 'subscriptions',
+        index,
+        label: item.merchant,
+        detail: `${item.currency} ${Number(item.amount).toFixed(2)} · ${item.cadence} · renews ${item.renewalAt} · cancellation not submitted`,
+      })),
+      ...state.bills.map((item, index) => ({
+        ...item,
+        key: 'bills',
+        index,
+        label: item.payee,
+        detail: `${item.currency} ${Number(item.amount).toFixed(2)} · due ${item.dueAt} · payment not executed`,
+      })),
+    ];
+    const target = byId('finance-plan-list');
+    target.innerHTML = rows.length ? rows.map(row => `
+      <article class="data-ledger-item">
+        <div><strong>${escapeHtml(row.label)}</strong><span>${escapeHtml(row.detail)}</span></div>
+        <div class="data-ledger-actions"><button type="button" data-remove-kind="${row.key}" data-remove-index="${row.index}">Remove</button></div>
+      </article>
+    `).join('') : '<p class="data-status">No local bill or subscription plans yet.</p>';
+  }
+
+  function renderAppPlans() {
+    const rows = [
+      ...state.apps.map((item, index) => ({ ...item, key: 'apps', index })),
+      ...state.appWorkflows.map((item, index) => ({ ...item, key: 'appWorkflows', index })),
+    ];
+    const target = byId('app-plan-list');
+    target.innerHTML = rows.length ? rows.map(row => `
+      <article class="data-ledger-item">
+        <div><strong>${escapeHtml(row.label)}</strong><span>${escapeHtml(row.detail)}</span></div>
+        <div class="data-ledger-actions"><button type="button" data-remove-kind="${row.key}" data-remove-index="${row.index}">Remove</button></div>
+      </article>
+    `).join('') : '<p class="data-status">No local app or grouped workflow plans yet.</p>';
+  }
+
   function render() {
     byId('data-memory-count').textContent = String(state.memory?.memoryCategories?.length || 0);
     byId('data-source-count').textContent = String(state.sources.length);
     byId('data-request-count').textContent = String(state.requests.length);
+    byId('data-app-count').textContent = String(state.apps.length);
     renderLedger('data-source-list', state.sources, 'sources');
     renderLedger('privacy-request-list', state.requests, 'requests');
+    renderAppPlans();
+    renderLedger('social-plan-list', state.social, 'social');
+    renderFinance();
     document.querySelectorAll('[data-remove-kind]').forEach((button) => button.addEventListener('click', () => {
       const key = button.dataset.removeKind;
       state[key].splice(Number(button.dataset.removeIndex), 1);
@@ -175,6 +249,162 @@
       rawCredentialsAccepted: false,
       createdAt: new Date().toISOString(),
     });
+    saveState();
+    event.currentTarget.reset();
+  });
+
+  const connectedLife = window.BUDDY_CONNECTED_LIFE || { app_categories: [] };
+  connectedLife.app_categories.forEach((category) => {
+    const option = document.createElement('option');
+    option.value = category.id;
+    option.textContent = category.label;
+    byId('app-category').append(option);
+  });
+
+  byId('app-plan-form').addEventListener('submit', (event) => {
+    event.preventDefault();
+    if (!event.currentTarget.reportValidity()) return;
+    const url = byId('app-url').value.trim();
+    const actions = selected('app-action');
+    const accessLevel = byId('app-access').value;
+    if (!safeOfficialUrl(url) || !actions.length) {
+      byId('app-plan-list').innerHTML = '<p class="data-status">Use an official HTTPS app URL and choose at least one requested action.</p>';
+      return;
+    }
+    if (accessLevel === 'catalog_only' && actions.some(action => action !== 'catalog')) {
+      byId('app-plan-list').innerHTML = '<p class="data-status">Catalog-only apps can organize metadata but cannot request data or action access.</p>';
+      return;
+    }
+    if (!byId('app-owner-authorized').checked) return;
+    const parsed = new URL(url);
+    const highImpact = actions.filter(action => ['schedule', 'publish', 'send', 'pay', 'transfer', 'license_data'].includes(action));
+    state.apps.unshift({
+      schema: 'dreamco.buddy_app_connection_plan.v1',
+      planId: `app-plan-${window.crypto?.randomUUID?.() || Date.now()}`,
+      label: byId('app-name').value.trim(),
+      detail: `${byId('app-category').value} · ${byId('app-group').value.trim()} · ${accessLevel.replaceAll('_', ' ')} · ${highImpact.length ? 'exact action approvals required' : 'read-only first'} · not connected`,
+      officialOrigin: parsed.origin,
+      officialPath: parsed.pathname,
+      category: byId('app-category').value,
+      groupName: byId('app-group').value.trim(),
+      authMethod: byId('app-auth').value,
+      accessLevel,
+      actions,
+      highImpactActions: highImpact,
+      rawCredentialsAccepted: false,
+      connected: false,
+      createdAt: new Date().toISOString(),
+    });
+    state.apps = state.apps.slice(0, 100);
+    saveState();
+    event.currentTarget.reset();
+  });
+
+  byId('app-group-form').addEventListener('submit', (event) => {
+    event.preventDefault();
+    const objective = byId('app-group-objective').value.trim();
+    if (state.apps.length < 2 || objective.length < 10) {
+      byId('app-plan-list').innerHTML = '<p class="data-status">Add at least two app plans and describe the grouped workflow.</p>';
+      return;
+    }
+    state.appWorkflows.unshift({
+      schema: 'dreamco.buddy_app_group_workflow_plan.v1',
+      label: 'Grouped app workflow',
+      detail: `${state.apps.length} selected app plans · sandbox first · no live actions taken`,
+      objective,
+      appPlanIds: state.apps.map(item => item.planId),
+      previewBeforeWrite: true,
+      freshApprovalPerHighImpactAction: true,
+      dataJoinRequiresCompatiblePurposeGrants: true,
+      liveActionsTaken: false,
+      createdAt: new Date().toISOString(),
+    });
+    state.appWorkflows = state.appWorkflows.slice(0, 50);
+    saveState();
+    event.currentTarget.reset();
+  });
+
+  byId('social-plan-form').addEventListener('submit', (event) => {
+    event.preventDefault();
+    if (!event.currentTarget.reportValidity()) return;
+    const mode = byId('social-mode').value;
+    const contentTypes = selected('social-content');
+    const synthetic = byId('social-synthetic').checked;
+    if (!contentTypes.length) {
+      byId('social-plan-list').innerHTML = '<p class="data-status">Choose at least one social content type.</p>';
+      return;
+    }
+    if (['live_rehearsal', 'live_show'].includes(mode) && !contentTypes.includes('livestream')) {
+      byId('social-plan-list').innerHTML = '<p class="data-status">Live modes require Livestream as a content type.</p>';
+      return;
+    }
+    if (mode === 'live_show' && !byId('social-moderation').checked) {
+      byId('social-plan-list').innerHTML = '<p class="data-status">Live shows require moderation and emergency-stop controls.</p>';
+      return;
+    }
+    if (synthetic && !byId('social-rights').checked) {
+      byId('social-plan-list').innerHTML = '<p class="data-status">Synthetic owner or performer media requires adult consent and confirmed rights.</p>';
+      return;
+    }
+    state.social.unshift({
+      schema: 'dreamco.buddy_social_workspace_plan.v1',
+      label: `${byId('social-platform').value.trim()} · ${mode.replaceAll('_', ' ')}`,
+      detail: `${contentTypes.join(', ')} · ${['schedule', 'publish_once', 'live_show'].includes(mode) ? 'owner action approval required' : 'draft or rehearsal ready'} · no external action taken`,
+      accountReference: byId('social-account-ref').value.trim(),
+      objective: byId('social-objective').value.trim(),
+      mode,
+      contentTypes,
+      syntheticMediaLabelRequired: synthetic,
+      moderationEnabled: byId('social-moderation').checked,
+      rawCredentialsAccepted: false,
+      liveExternalActionTaken: false,
+      createdAt: new Date().toISOString(),
+    });
+    state.social = state.social.slice(0, 50);
+    saveState();
+    event.currentTarget.reset();
+  });
+
+  byId('subscription-form').addEventListener('submit', (event) => {
+    event.preventDefault();
+    if (!event.currentTarget.reportValidity()) return;
+    const cancelUrl = byId('subscription-cancel-url').value.trim();
+    if (cancelUrl && !safeOfficialUrl(cancelUrl)) {
+      byId('finance-plan-list').innerHTML = '<p class="data-status">Use a credential-free official HTTPS cancellation URL.</p>';
+      return;
+    }
+    state.subscriptions.unshift({
+      schema: 'dreamco.buddy_subscription_record.v1',
+      merchant: byId('subscription-merchant').value.trim(),
+      amount: Number(byId('subscription-amount').value).toFixed(2),
+      currency: byId('subscription-currency').value.trim().toUpperCase(),
+      cadence: byId('subscription-cadence').value,
+      renewalAt: byId('subscription-renewal').value,
+      cancellationUrl: cancelUrl || null,
+      cancellationSubmitted: false,
+      paymentCredentialsStored: false,
+      createdAt: new Date().toISOString(),
+    });
+    state.subscriptions = state.subscriptions.slice(0, 500);
+    saveState();
+    event.currentTarget.reset();
+  });
+
+  byId('bill-form').addEventListener('submit', (event) => {
+    event.preventDefault();
+    if (!event.currentTarget.reportValidity()) return;
+    state.bills.unshift({
+      schema: 'dreamco.buddy_bill_record.v1',
+      payee: byId('bill-payee').value.trim(),
+      amount: Number(byId('bill-amount').value).toFixed(2),
+      currency: byId('bill-currency').value.trim().toUpperCase(),
+      dueAt: byId('bill-due').value,
+      accountReference: 'redacted',
+      accountReferenceStored: false,
+      paymentExecuted: false,
+      createdAt: new Date().toISOString(),
+    });
+    state.bills = state.bills.slice(0, 500);
     saveState();
     event.currentTarget.reset();
   });
@@ -267,7 +497,17 @@
   }, 'buddy-data-control-export.json'));
 
   byId('clear-data-center').addEventListener('click', () => {
-    state = { memory: null, sources: [], requests: [], packages: [] };
+    state = {
+      memory: null,
+      sources: [],
+      requests: [],
+      packages: [],
+      apps: [],
+      appWorkflows: [],
+      social: [],
+      subscriptions: [],
+      bills: [],
+    };
     try {
       localStorage.removeItem(STORAGE_KEY);
     } catch (_error) {

@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="styles.css" />
-  <link rel="stylesheet" href="studio.css?v=18" />
+  <link rel="stylesheet" href="studio.css?v=20" />
 </head>
 <body class="buddy-home studio-page">
 <div id="nav-placeholder"></div><script src="nav.js"></script>
@@ -34,6 +34,9 @@
           <option value="parent_learning_video">Family learning video</option>
           <option value="music_video">Music video</option>
           <option value="biography">Biography</option>
+          <option value="documentary">Documentary</option>
+          <option value="animated_series">Animation or cartoon series</option>
+          <option value="social_live_show">Live social show</option>
           <option value="commercial">Commercial</option>
           <option value="college_course">College course</option>
           <option value="feature_film">Feature film</option>
@@ -55,8 +58,39 @@
         </div>
       </fieldset>
 
+      <fieldset id="production-controls" class="studio-fieldset" hidden>
+        <legend>Production plan</legend>
+        <div class="studio-two-col">
+          <label>Length in minutes<input id="production-duration" class="studio-input" type="number" min="1" max="600" value="3" /></label>
+          <label>Master frame<select id="production-aspect" class="studio-input"><option value="16:9">16:9 landscape</option><option value="9:16">9:16 vertical</option><option value="1:1">1:1 square</option><option value="4:3">4:3 classic</option><option value="2.39:1">2.39:1 cinema</option></select></label>
+        </div>
+        <fieldset class="studio-choice-grid"><legend>Delivery</legend>
+          <label><input type="checkbox" name="delivery-platform" value="web" checked /> Web</label>
+          <label><input type="checkbox" name="delivery-platform" value="streaming" checked /> Streaming</label>
+          <label><input type="checkbox" name="delivery-platform" value="social" /> Social</label>
+          <label><input type="checkbox" name="delivery-platform" value="television" /> Television</label>
+          <label><input type="checkbox" name="delivery-platform" value="cinema" /> Cinema</label>
+          <label><input type="checkbox" name="delivery-platform" value="classroom" /> Classroom</label>
+        </fieldset>
+        <fieldset class="studio-choice-grid"><legend>Editing workspaces</legend>
+          <label><input type="checkbox" name="editing-workspace" value="story" checked /> Story</label>
+          <label><input type="checkbox" name="editing-workspace" value="timeline" checked /> Picture</label>
+          <label><input type="checkbox" name="editing-workspace" value="image" checked /> Image</label>
+          <label><input type="checkbox" name="editing-workspace" value="vfx" checked /> VFX</label>
+          <label><input type="checkbox" name="editing-workspace" value="dialogue" checked /> Dialogue</label>
+          <label><input type="checkbox" name="editing-workspace" value="music" checked /> Music</label>
+          <label><input type="checkbox" name="editing-workspace" value="sound" checked /> Sound</label>
+          <label><input type="checkbox" name="editing-workspace" value="accessibility" checked /> Accessibility</label>
+          <label><input type="checkbox" name="editing-workspace" value="delivery" checked /> Delivery</label>
+        </fieldset>
+        <label id="live-show-control" class="studio-check" hidden><input id="production-live" type="checkbox" /> Prepare a private rehearsal and owner-approved live show with moderation and emergency stop.</label>
+        <div id="production-tool-summary" class="studio-tool-summary" aria-live="polite"></div>
+      </fieldset>
+
       <fieldset id="actor-controls" class="studio-fieldset" hidden>
         <legend>Synthetic cast</legend>
+        <label class="studio-label" for="actor-name">Character or presenter name</label>
+        <input id="actor-name" class="studio-input" value="Buddy Guide" minlength="2" maxlength="120" />
         <label class="studio-label" for="actor-mode">Actor mode</label>
         <select id="actor-mode" class="studio-input">
           <option value="original_synthetic">Original synthetic character</option>
@@ -64,6 +98,8 @@
           <option value="licensed_adult_performer">Licensed adult performer</option>
           <option value="company_mascot">Company mascot or brand character</option>
         </select>
+        <label class="studio-label" for="actor-role-template">Role template</label>
+        <select id="actor-role-template" class="studio-input"></select>
         <label class="studio-label" for="actor-role">Role</label>
         <input id="actor-role" class="studio-input" value="Trusted guide" minlength="2" maxlength="160" />
         <label class="studio-label" for="actor-description">Character and performance</label>
@@ -78,6 +114,11 @@
           <label>Formality <output data-trait-output="formality">55</output><input data-trait="formality" type="range" min="0" max="100" value="55" /></label>
           <label>Creativity <output data-trait-output="creativity">90</output><input data-trait="creativity" type="range" min="0" max="100" value="90" /></label>
         </div>
+        <div class="studio-button-row">
+          <button id="add-cast-role" class="btn btn-outline btn-sm" type="button">Add role</button>
+          <button id="clear-cast" class="btn btn-outline btn-sm" type="button">Clear cast</button>
+        </div>
+        <div id="cast-list" class="studio-cast-list" aria-live="polite"></div>
         <p class="studio-guardrail">Original characters cannot imitate a real person. Adult owner and licensed-performer identities require active scoped consent, rights evidence, revocation checks, provenance, and a visible synthetic-media label.</p>
       </fieldset>
 
@@ -236,9 +277,9 @@
 </main>
 
 <script src="data/buddy-specialized-hubs.js"></script>
-<script src="data/buddy-production-group.js?v=16"></script>
-<script src="data/buddy-local-media-engines.js?v=19"></script>
-<script src="data/buddy-media-quality-lab.js?v=19"></script>
-<script src="studio.js?v=19"></script>
+<script src="data/buddy-production-group.js?v=20"></script>
+<script src="data/buddy-local-media-engines.js?v=20"></script>
+<script src="data/buddy-media-quality-lab.js?v=20"></script>
+<script src="studio.js?v=20"></script>
 </body>
 </html>

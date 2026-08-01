@@ -81,6 +81,16 @@ import {
   privacyRightsPlanRequestSchema,
 } from "./data-rights-policy";
 import {
+  appConnectionPlanRequestSchema,
+  appGroupWorkflowPlanRequestSchema,
+  createAppConnectionPlan,
+  createAppGroupWorkflowPlan,
+  createFinanceWorkspacePlan,
+  createSocialWorkspacePlan,
+  financeWorkspacePlanRequestSchema,
+  socialWorkspacePlanRequestSchema,
+} from "./connected-life-policy";
+import {
   createTaskDiscoveryPlan,
   taskDiscoveryRequestSchema,
 } from "./task-discovery-policy";
@@ -1555,10 +1565,13 @@ export async function registerRoutes(
         { name: "Data Packages", route: "GET /api/data-packages", status: "consent-gated", description: "Package only user-owned, licensed, nonsensitive data with separate opt-in and opt-out controls" },
         { name: "Task Discovery", route: "POST /api/buddy/task-discovery/plan", status: "live", description: "Turn unfamiliar goals into guided, testable, approval-aware task maps" },
         { name: "Personal Data Controls", route: "POST /api/buddy/data/privacy-request-plan", status: "permission-gated", description: "Plan imports, access, portability, deletion, opt-out, selective memory, and lawful data packages" },
+        { name: "Connected App Portfolio", route: "POST /api/buddy/apps/connection-plan", status: "authentication-handoff-ready", description: "Catalog and group owner-authorized apps with read-only-first scopes and fresh approval for every high-impact action" },
+        { name: "Social Workspace", route: "POST /api/buddy/social/workspace-plan", status: "adapter-and-approval-gated", description: "Draft, schedule, publish, rehearse, or plan moderated live shows for authenticated owner accounts" },
+        { name: "Bill and Subscription Workspace", route: "POST /api/buddy/finance/workspace-plan", status: "review-ready", description: "Normalize costs, detect possible duplicate subscriptions, prepare cancellation handoffs, and stop before payment" },
         { name: "Open Source Tracker", route: "POST /api/buddy/open-source/tracking-plan", status: "scheduler-adapter-required", description: "Track pinned repository metadata, licenses, releases, security, tests, and contribution opportunities" },
         { name: "Repository Test Center", route: "GET /api/buddy/repository-test-registry", status: "live", description: "Inventory repository evidence and prepare bounded contract, sandbox, and adapter test plans" },
         { name: "Governed Platform Registry", route: "GET /api/buddy/platform-expansion", status: "live", description: "Launch, privacy, finance, creative, IP, open-source, customization, and roadmap contracts" },
-        { name: "Hollywood Production and Simulation Group", route: "GET /api/buddy/creative-production-group", status: "local-packet-ready", description: "Film, music-video, synthetic-actor, model-variant, simulation, and simulation-to-game contracts with renderer and qualified-review gates" },
+        { name: "Hollywood Production and Simulation Group", route: "GET /api/buddy/creative-production-group", status: "local-packet-ready", description: "Film, documentary, animation, music-video, biography, commercial, live-show, synthetic-cast, professional editing, simulation, and delivery contracts" },
         { name: "Bot Calculator Registry", route: "GET /api/buddy/calculators", status: "live", description: "One bounded local planning calculator contract for every Buddy bot profile" },
         { name: "Install and Distribution Catalog", route: "GET /api/buddy/distribution", status: "live", description: "PWA installation plus governed packaging and publishing plans for 26 device and store targets" },
         { name: "Governed Lead Systems", route: "POST /api/buddy/lead-plan", status: "permission-gated", description: "Per-bot lead research, qualification, drafting, one-message approval, suppression, and bounded follow-up planning" },
@@ -3273,6 +3286,55 @@ Any improvements or fixes (optional, 1-2 bullet points max)`;
       return res.status(201).json(createMemoryPreferencePlan(parsed.data));
     } catch (error) {
       return res.status(400).json({ error: error instanceof Error ? error.message : "Invalid memory preference plan" });
+    }
+  });
+
+  app.get("/api/buddy/connected-life/catalog", (_req, res) => {
+    try {
+      const path = resolve(process.cwd(), "config", "buddy-connected-life.json");
+      return res.json(JSON.parse(readFileSync(path, "utf-8")));
+    } catch (_error) {
+      return res.status(503).json({ error: "Buddy Connected Life catalog is unavailable." });
+    }
+  });
+
+  app.post("/api/buddy/apps/connection-plan", (req, res) => {
+    const parsed = appConnectionPlanRequestSchema.safeParse(req.body);
+    if (!parsed.success) return res.status(400).json(zodValidationError(parsed.error));
+    try {
+      return res.status(201).json(createAppConnectionPlan(parsed.data));
+    } catch (error) {
+      return res.status(400).json({ error: error instanceof Error ? error.message : "Invalid app connection plan" });
+    }
+  });
+
+  app.post("/api/buddy/apps/group-workflow-plan", (req, res) => {
+    const parsed = appGroupWorkflowPlanRequestSchema.safeParse(req.body);
+    if (!parsed.success) return res.status(400).json(zodValidationError(parsed.error));
+    try {
+      return res.status(201).json(createAppGroupWorkflowPlan(parsed.data));
+    } catch (error) {
+      return res.status(400).json({ error: error instanceof Error ? error.message : "Invalid grouped app workflow" });
+    }
+  });
+
+  app.post("/api/buddy/social/workspace-plan", (req, res) => {
+    const parsed = socialWorkspacePlanRequestSchema.safeParse(req.body);
+    if (!parsed.success) return res.status(400).json(zodValidationError(parsed.error));
+    try {
+      return res.status(201).json(createSocialWorkspacePlan(parsed.data));
+    } catch (error) {
+      return res.status(400).json({ error: error instanceof Error ? error.message : "Invalid social workspace plan" });
+    }
+  });
+
+  app.post("/api/buddy/finance/workspace-plan", (req, res) => {
+    const parsed = financeWorkspacePlanRequestSchema.safeParse(req.body);
+    if (!parsed.success) return res.status(400).json(zodValidationError(parsed.error));
+    try {
+      return res.status(201).json(createFinanceWorkspacePlan(parsed.data));
+    } catch (error) {
+      return res.status(400).json({ error: error instanceof Error ? error.message : "Invalid finance workspace plan" });
     }
   });
 
