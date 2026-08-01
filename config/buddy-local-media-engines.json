@@ -1,5 +1,5 @@
 {
-  "schema": "dreamco.buddy_local_media_engines.v1",
+  "schema": "dreamco.buddy_local_media_engines.v2",
   "reviewed_on": "2026-07-31",
   "policy": {
     "default_mode": "local_first",
@@ -10,8 +10,66 @@
     "minor_voice_or_likeness_replication": false,
     "synthetic_media_label_required": true,
     "watermark_or_provenance_manifest_required": true,
-    "quality_claims_require_measured_evidence": true
+    "quality_claims_require_measured_evidence": true,
+    "external_services_are_optional_benchmark_targets": true,
+    "dreamco_owns_consent_personality_orchestration_and_evaluation": true
   },
+  "owned_stack": {
+    "identity": "Buddy Media Core",
+    "required_external_provider": null,
+    "components": [
+      "local media intake and SHA-256 references",
+      "owner and licensed-performer consent receipts",
+      "commercial-use scope and revocation records",
+      "personality and performance direction",
+      "replaceable render-adapter contract",
+      "provenance and synthetic-media labeling",
+      "quality, identity, latency, cost, and safety evaluation",
+      "owner review and release evidence"
+    ]
+  },
+  "benchmark_targets": [
+    {
+      "id": "buddy-media-core",
+      "label": "Buddy Media Core",
+      "kind": "owned_system",
+      "execution": "local",
+      "required": true,
+      "paid": false,
+      "raw_media_upload_default": false,
+      "purpose": "Measure DreamCo-owned orchestration, rights, personality, provenance, and local render quality."
+    },
+    {
+      "id": "openvoice-reference",
+      "label": "OpenVoice V2",
+      "kind": "optional_local_reference",
+      "execution": "local_adapter_when_installed",
+      "required": false,
+      "paid": false,
+      "raw_media_upload_default": false,
+      "purpose": "Compare local voice identity, multilingual delivery, style control, latency, and resource use."
+    },
+    {
+      "id": "chatterbox-reference",
+      "label": "Chatterbox",
+      "kind": "optional_local_reference",
+      "execution": "local_adapter_when_installed",
+      "required": false,
+      "paid": false,
+      "raw_media_upload_default": false,
+      "purpose": "Compare local naturalness, expressiveness, multilingual delivery, latency, and watermark evidence."
+    },
+    {
+      "id": "elevenlabs-reference",
+      "label": "ElevenLabs",
+      "kind": "optional_external_reference",
+      "execution": "authenticated_external_adapter_only",
+      "required": false,
+      "paid": true,
+      "raw_media_upload_default": false,
+      "purpose": "Compare voice identity, naturalness, expressiveness, stability, similarity, multilingual quality, latency, and cost with exact owner approval."
+    }
+  ],
   "engines": [
     {
       "id": "buddy-browser-voice",

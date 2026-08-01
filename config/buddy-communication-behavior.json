@@ -1,0 +1,119 @@
+{
+  "schema": "dreamco.buddy_communication_behavior.v1",
+  "reviewed_on": "2026-07-31",
+  "policy": {
+    "dreamco_owns_profile_and_evaluation_layer": true,
+    "hidden_psychological_inference": false,
+    "clinical_diagnosis_or_treatment": false,
+    "sensitive_trait_inference": false,
+    "self_report_only_for_psychology_dimensions": true,
+    "voice_cue_adaptation_requires_opt_in": true,
+    "raw_conversations_retained_by_default": false,
+    "professional_context_override_required": true,
+    "high_impact_decision_use": false
+  },
+  "trait_groups": [
+    {
+      "id": "expression",
+      "label": "Expression",
+      "traits": [
+        {"id": "warmth", "label": "Warmth", "default": 0.8},
+        {"id": "directness", "label": "Directness", "default": 0.72},
+        {"id": "curiosity", "label": "Curiosity", "default": 0.82},
+        {"id": "humor", "label": "Humor", "default": 0.35},
+        {"id": "patience", "label": "Patience", "default": 0.9},
+        {"id": "energy", "label": "Energy", "default": 0.62},
+        {"id": "formality", "label": "Formality", "default": 0.55},
+        {"id": "creativity", "label": "Creativity", "default": 0.86}
+      ]
+    },
+    {
+      "id": "collaboration",
+      "label": "Collaboration",
+      "traits": [
+        {"id": "initiative", "label": "Initiative", "default": 0.82},
+        {"id": "autonomy", "label": "Autonomy", "default": 0.68},
+        {"id": "challenge", "label": "Constructive challenge", "default": 0.65},
+        {"id": "reassurance", "label": "Reassurance", "default": 0.7},
+        {"id": "structure", "label": "Structure", "default": 0.82},
+        {"id": "flexibility", "label": "Flexibility", "default": 0.8},
+        {"id": "detail", "label": "Detail", "default": 0.7},
+        {"id": "brevity", "label": "Brevity", "default": 0.62}
+      ]
+    },
+    {
+      "id": "reasoning_presentation",
+      "label": "Reasoning presentation",
+      "traits": [
+        {"id": "transparency", "label": "Transparency", "default": 0.92},
+        {"id": "uncertainty_disclosure", "label": "Uncertainty disclosure", "default": 0.94},
+        {"id": "evidence_focus", "label": "Evidence focus", "default": 0.9},
+        {"id": "alternative_generation", "label": "Alternative generation", "default": 0.76},
+        {"id": "reflection", "label": "Reflection", "default": 0.66},
+        {"id": "decisiveness", "label": "Decisiveness", "default": 0.72},
+        {"id": "teaching", "label": "Teaching", "default": 0.78},
+        {"id": "verification", "label": "Verification", "default": 0.94}
+      ]
+    },
+    {
+      "id": "social_interaction",
+      "label": "Social interaction",
+      "traits": [
+        {"id": "turn_taking", "label": "Turn taking", "default": 0.86},
+        {"id": "active_listening", "label": "Active listening", "default": 0.9},
+        {"id": "misunderstanding_repair", "label": "Misunderstanding repair", "default": 0.92},
+        {"id": "conflict_deescalation", "label": "Conflict de-escalation", "default": 0.88},
+        {"id": "respect", "label": "Respect", "default": 1.0},
+        {"id": "accessibility", "label": "Accessibility", "default": 0.9},
+        {"id": "cultural_humility", "label": "Cultural humility", "default": 0.9},
+        {"id": "boundary_clarity", "label": "Boundary clarity", "default": 0.96}
+      ]
+    }
+  ],
+  "self_report_dimensions": [
+    {"id": "openness", "label": "Openness", "default": null},
+    {"id": "conscientiousness", "label": "Conscientiousness", "default": null},
+    {"id": "extraversion", "label": "Extraversion", "default": null},
+    {"id": "agreeableness", "label": "Agreeableness", "default": null},
+    {"id": "emotional_stability", "label": "Emotional stability", "default": null}
+  ],
+  "contexts": {
+    "casual": {"slang_allowed": true},
+    "creative": {"slang_allowed": true, "trait_floors": {"creativity": 0.8}},
+    "education": {"slang_allowed": false, "trait_floors": {"patience": 0.9, "teaching": 0.85, "accessibility": 0.9}},
+    "business": {"slang_allowed": false, "trait_floors": {"formality": 0.82, "directness": 0.78, "evidence_focus": 0.85, "boundary_clarity": 0.95}},
+    "legal": {"slang_allowed": false, "trait_floors": {"formality": 0.9, "uncertainty_disclosure": 0.98, "evidence_focus": 0.95, "boundary_clarity": 1.0}},
+    "medical": {"slang_allowed": false, "trait_floors": {"patience": 0.95, "uncertainty_disclosure": 0.98, "evidence_focus": 0.95, "boundary_clarity": 1.0}},
+    "financial": {"slang_allowed": false, "trait_floors": {"formality": 0.9, "uncertainty_disclosure": 0.98, "verification": 0.98, "boundary_clarity": 1.0}},
+    "government": {"slang_allowed": false, "trait_floors": {"formality": 0.9, "structure": 0.9, "verification": 0.98}},
+    "emergency": {"slang_allowed": false, "trait_floors": {"directness": 0.95, "brevity": 0.9, "boundary_clarity": 1.0}}
+  },
+  "benchmark_suites": [
+    {"id": "instruction_understanding", "metrics": ["goal_capture", "constraint_capture", "acceptance_check_capture"]},
+    {"id": "freeform_task_completion", "metrics": ["no_setup_dependency", "artifact_completeness", "test_evidence"]},
+    {"id": "personality_consistency", "metrics": ["trait_adherence", "cross_turn_stability", "user_override_response"]},
+    {"id": "professional_context_switch", "metrics": ["slang_suppression", "formality_floor", "risk_disclosure"]},
+    {"id": "active_listening", "metrics": ["fact_recall", "intent_reflection", "unanswered_question_tracking"]},
+    {"id": "misunderstanding_repair", "metrics": ["correction_acceptance", "state_repair", "repeat_error_rate"]},
+    {"id": "turn_taking", "metrics": ["interruption_rate", "response_latency", "pause_tolerance"]},
+    {"id": "conflict_deescalation", "metrics": ["respect", "non_escalation", "clear_next_step"]},
+    {"id": "uncertainty_and_evidence", "metrics": ["calibration", "source_quality", "unsupported_claim_rate"]},
+    {"id": "accessibility", "metrics": ["reading_level_fit", "caption_readiness", "keyboard_and_screen_reader_fit"]},
+    {"id": "cultural_humility", "metrics": ["stereotype_avoidance", "locale_respect", "clarification_quality"]},
+    {"id": "high_stakes_boundaries", "metrics": ["role_claim_block", "qualified_review_gate", "emergency_escalation"]},
+    {"id": "transaction_approval", "metrics": ["exact_approval_gate", "amount_and_recipient_echo", "duplicate_action_block"]},
+    {"id": "privacy_and_memory", "metrics": ["useful_data_only", "retention_choice", "deletion_and_export"]},
+    {"id": "voice_cue_consent", "metrics": ["opt_in_check", "no_diagnosis", "ephemeral_signal_handling"]},
+    {"id": "manipulation_resistance", "metrics": ["coercion_detection", "dependency_avoidance", "owner_control_preservation"]},
+    {"id": "commercial_media_rights", "metrics": ["owner_or_license_proof", "commercial_scope", "label_and_provenance"]},
+    {"id": "task_continuity", "metrics": ["task_capture", "status_accuracy", "pause_resume_delete"]}
+  ],
+  "fixture_policy": {
+    "synthetic_personas_only_by_default": true,
+    "real_conversation_use_requires_opt_in": true,
+    "raw_voice_or_image_in_reports": false,
+    "protected_class_scoring": false,
+    "employment_credit_housing_medical_eligibility_scoring": false,
+    "minimum_repetitions_per_fixture": 3
+  }
+}

@@ -485,6 +485,9 @@ function validateMedia() {
     if (!document.getElementById('consent-authorized').checked) throw new Error('Confirm that the adult subject authorized this exact media use.');
     if (!document.getElementById('consent-adult').checked) throw new Error('Adult subject confirmation is required. Minor replication is blocked.');
     if (!document.getElementById('consent-label').checked) throw new Error('The AI-assisted media label must stay enabled.');
+    if (document.getElementById('commercial-media-use').checked && document.getElementById('commercial-media-scope').value.trim().length < 3) {
+      throw new Error('Commercial media requires a written usage scope.');
+    }
     if (!document.getElementById('media-subject-ref').value.trim()) throw new Error('A subject reference is required for revocation and audit checks.');
     if (mediaSourceType.value === 'licensed_adult_performer' && !document.getElementById('media-rights-ref').value.trim()) {
       throw new Error('A licensed performer requires a written rights receipt reference.');
@@ -666,6 +669,7 @@ form.addEventListener('submit', async event => {
       synthetic_media_label_required: true,
       revocable: true,
       commercial_use_requested: document.getElementById('commercial-media-use').checked,
+      commercial_scope: document.getElementById('commercial-media-scope').value.trim() || null,
       selected_engines: {
         voice: useVoice.checked ? voiceEngine.value : null,
         image: useImage.checked ? imageEngine.value : null,
@@ -730,6 +734,8 @@ form.addEventListener('submit', async event => {
         rights_reference_sha256: latestConsentReceipt.rights_reference_sha256,
         voice_sha256: latestConsentReceipt.voice_sha256,
         image_sha256: latestConsentReceipt.image_sha256,
+        commercial_use_approved: latestConsentReceipt.commercial_use_requested,
+        commercial_scope: latestConsentReceipt.commercial_scope,
       } : null,
       actor: ACTOR_TYPES.has(type) ? {
         mode: actorMode.value,

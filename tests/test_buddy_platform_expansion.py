@@ -376,11 +376,18 @@ class BuddyPlatformExpansionTests(unittest.TestCase):
                 ), inspection)
 
     def test_custom_buddy_id_is_stable_and_business_tone_disables_slang(self):
-        personality = PersonalityProfile({"warmth": 0.9, "directness": 0.7}, adapt_slang=True)
+        personality = PersonalityProfile(
+            {"warmth": 0.9, "directness": 0.7},
+            self_report_dimensions={"openness": 0.8},
+            adapt_slang=True,
+        )
         profile = BuddyProfile("owner-1", "My Buddy", personality)
         self.assertEqual(profile.to_public_dict()["buddy_instance_id"], profile.to_public_dict()["buddy_instance_id"])
         self.assertTrue(personality.tone_for("casual")["slang_allowed"])
-        self.assertFalse(personality.tone_for("business_deal")["slang_allowed"])
+        professional_tone = personality.tone_for("business_deal")
+        self.assertFalse(professional_tone["slang_allowed"])
+        self.assertGreaterEqual(professional_tone["traits"]["formality"], 0.82)
+        self.assertFalse(professional_tone["hidden_psychological_inference"])
         assets = build_asset_catalog()
         self.assertEqual(len(assets["voices"]), 12)
         self.assertEqual(len(assets["avatars"]), 12)
@@ -395,6 +402,8 @@ class BuddyPlatformExpansionTests(unittest.TestCase):
             adult_confirmed=True,
             voice_use_approved=True,
             likeness_use_approved=True,
+            commercial_use_approved=True,
+            commercial_scope="Owner-approved commercial media for the Studio Buddy project.",
         )
         profile = BuddyProfile(
             "owner-1",
@@ -404,6 +413,7 @@ class BuddyPlatformExpansionTests(unittest.TestCase):
         ).to_public_dict()
         self.assertFalse(profile["custom_media_identity"]["raw_media_stored_in_profile"])
         self.assertEqual(profile["custom_media_identity"]["source_reference_sha256"], "a" * 64)
+        self.assertTrue(profile["custom_media_identity"]["commercial_use_approved"])
 
     def test_music_and_logo_systems_preserve_rights_boundaries(self):
         music = BuddyMusicArtistStudio().create_plan(

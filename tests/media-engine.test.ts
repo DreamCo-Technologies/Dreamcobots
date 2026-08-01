@@ -29,6 +29,8 @@ function ownerVoiceRequest(overrides: Record<string, unknown> = {}) {
       adultConfirmed: true,
       voiceUseApproved: true,
       likenessUseApproved: false,
+      commercialUseApproved: true,
+      commercialScope: "Owner-approved course narration and advertising for this project.",
       syntheticMediaLabelApproved: true,
       revoked: false,
     },
@@ -96,6 +98,8 @@ test("research-only image engines cannot be selected for commercial output", () 
       adultConfirmed: true,
       voiceUseApproved: false,
       likenessUseApproved: true,
+      commercialUseApproved: true,
+      commercialScope: "Owner-approved commercial character study for this project.",
       syntheticMediaLabelApproved: true,
       revoked: false,
     },
@@ -116,4 +120,41 @@ test("benchmark plans use synthetic fixtures and cannot claim results before a r
   assert.equal(plan.comparisonClaimAllowed, false);
   assert.equal(plan.limits.externalUploads, false);
   assert.ok(plan.suites.some((suite) => suite.id === "rights_and_safety"));
+});
+
+test("external paid references are optional and require comparison approvals", () => {
+  const base = {
+    engineIds: ["openvoice-v2-local", "chatterbox-local"],
+    targetIds: ["buddy-media-core", "elevenlabs-reference"],
+    modalities: ["voice"] as const,
+    commercialUse: false,
+    ownerApprovedSyntheticFixturesOnly: true as const,
+    maxRuntimeMinutes: 20,
+  };
+  assert.throws(
+    () => buildMediaBenchmarkPlan(mediaBenchmarkPlanRequestSchema.parse(base)),
+    /exact approval/,
+  );
+  const request = mediaBenchmarkPlanRequestSchema.parse({
+    ...base,
+    externalComparisonApproved: true,
+    paidComparisonApproved: true,
+  });
+  const plan = buildMediaBenchmarkPlan(request);
+  assert.equal(plan.ownedStack.required_external_provider, null);
+  assert.equal(plan.externalCallExecuted, false);
+  assert.equal(plan.limits.paidCalls, "requires_fresh_execution_approval");
+});
+
+test("commercial cloning requires an explicit usage scope", () => {
+  assert.throws(
+    () => buildMediaRenderPlan(ownerVoiceRequest({
+      rights: {
+        ...ownerVoiceRequest().rights,
+        commercialUseApproved: false,
+        commercialScope: undefined,
+      },
+    })),
+    /written usage scope/,
+  );
 });

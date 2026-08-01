@@ -12,14 +12,30 @@ class BuddyCustomizationError(ValueError):
     """Raised when a Buddy customization is unsafe or ambiguous."""
 
 
-TRAITS = {"warmth", "directness", "curiosity", "humor", "patience", "energy", "formality", "creativity"}
+TRAITS = {
+    "warmth", "directness", "curiosity", "humor", "patience", "energy", "formality", "creativity",
+    "initiative", "autonomy", "challenge", "reassurance", "structure", "flexibility", "detail", "brevity",
+    "transparency", "uncertainty_disclosure", "evidence_focus", "alternative_generation", "reflection",
+    "decisiveness", "teaching", "verification", "turn_taking", "active_listening", "misunderstanding_repair",
+    "conflict_deescalation", "respect", "accessibility", "cultural_humility", "boundary_clarity",
+}
+SELF_REPORT_DIMENSIONS = {"openness", "conscientiousness", "extraversion", "agreeableness", "emotional_stability"}
 PROFESSIONAL_CONTEXTS = {"business_deal", "sales_call", "legal", "medical", "financial", "emergency", "government_filing"}
 MEDIA_SOURCE_TYPES = {"adult_owner", "licensed_adult_performer", "company_brand_asset"}
+PROFESSIONAL_TRAIT_FLOORS = {
+    "formality": 0.82,
+    "directness": 0.78,
+    "uncertainty_disclosure": 0.94,
+    "evidence_focus": 0.85,
+    "verification": 0.9,
+    "boundary_clarity": 0.95,
+}
 
 
 @dataclass(frozen=True)
 class PersonalityProfile:
     traits: dict[str, float]
+    self_report_dimensions: dict[str, float] | None = None
     adapt_slang: bool = True
     professional_context_override: bool = True
 
@@ -28,15 +44,28 @@ class PersonalityProfile:
             raise BuddyCustomizationError("Use only supported personality traits.")
         if any(not isinstance(value, (int, float)) or value < 0 or value > 1 for value in self.traits.values()):
             raise BuddyCustomizationError("Personality trait values must be between 0 and 1.")
+        self_report = self.self_report_dimensions or {}
+        if set(self_report) - SELF_REPORT_DIMENSIONS:
+            raise BuddyCustomizationError("Use only supported self-report psychology dimensions.")
+        if any(not isinstance(value, (int, float)) or value < 0 or value > 1 for value in self_report.values()):
+            raise BuddyCustomizationError("Self-report values must be between 0 and 1.")
 
     def tone_for(self, context: str) -> dict[str, Any]:
         self.validate()
         professional = self.professional_context_override and context in PROFESSIONAL_CONTEXTS
+        traits = dict(self.traits)
+        if professional:
+            for trait, floor in PROFESSIONAL_TRAIT_FLOORS.items():
+                traits[trait] = max(traits.get(trait, 0), floor)
         return {
             "context": context,
-            "traits": self.traits,
+            "traits": traits,
+            "self_report_dimensions": self.self_report_dimensions or {},
+            "self_report_only": True,
             "slang_allowed": self.adapt_slang and not professional,
             "professional_override": professional,
+            "hidden_psychological_inference": False,
+            "clinical_diagnosis": False,
             "disclosure": "Buddy remains an AI assistant and does not impersonate the user.",
         }
 
@@ -51,6 +80,8 @@ class CustomMediaIdentity:
     adult_confirmed: bool = False
     voice_use_approved: bool = False
     likeness_use_approved: bool = False
+    commercial_use_approved: bool = False
+    commercial_scope: str = ""
     synthetic_media_label_required: bool = True
     revoked: bool = False
 
@@ -65,6 +96,8 @@ class CustomMediaIdentity:
             raise BuddyCustomizationError("Revoked media cannot be attached to a Buddy profile.")
         if not self.synthetic_media_label_required:
             raise BuddyCustomizationError("The synthetic-media label cannot be disabled.")
+        if self.commercial_use_approved and len(self.commercial_scope.strip()) < 3:
+            raise BuddyCustomizationError("Commercial media needs a written usage scope.")
         if self.source_type == "company_brand_asset":
             if self.voice_use_approved or not self.rights_receipt_reference:
                 raise BuddyCustomizationError("Company assets require rights evidence and cannot authorize a human voice.")
@@ -85,6 +118,8 @@ class CustomMediaIdentity:
             "adult_confirmed": self.adult_confirmed,
             "voice_use_approved": self.voice_use_approved,
             "likeness_use_approved": self.likeness_use_approved,
+            "commercial_use_approved": self.commercial_use_approved,
+            "commercial_scope": self.commercial_scope or None,
             "synthetic_media_label_required": True,
             "raw_media_stored_in_profile": False,
         }

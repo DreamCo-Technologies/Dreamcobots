@@ -14,7 +14,7 @@ OUTPUT = ROOT / "website" / "data" / "buddy-local-media-engines.js"
 
 def load_catalog() -> dict:
     catalog = json.loads(SOURCE.read_text(encoding="utf-8"))
-    if catalog.get("schema") != "dreamco.buddy_local_media_engines.v1":
+    if catalog.get("schema") != "dreamco.buddy_local_media_engines.v2":
         raise SystemExit("Unexpected local media catalog schema.")
     if catalog.get("policy", {}).get("paid_provider_required") is not False:
         raise SystemExit("The local media core cannot require a paid provider.")
@@ -25,6 +25,11 @@ def load_catalog() -> dict:
         raise SystemExit("Every media engine needs explicit license and commercial states.")
     if len(catalog.get("benchmark_suites", [])) < 8:
         raise SystemExit("The local media catalog needs the complete benchmark suite.")
+    targets = catalog.get("benchmark_targets", [])
+    if len(targets) < 4 or not any(item.get("kind") == "optional_external_reference" for item in targets):
+        raise SystemExit("The media catalog needs owned, local-reference, and external-reference benchmark targets.")
+    if any(item.get("required") for item in targets if item.get("id") != "buddy-media-core"):
+        raise SystemExit("External and third-party benchmark targets cannot be required by Buddy.")
     return catalog
 
 

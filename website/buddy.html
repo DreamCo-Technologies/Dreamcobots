@@ -15,7 +15,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="styles.css" />
-  <link rel="stylesheet" href="buddy.css?v=22" />
+  <link rel="stylesheet" href="buddy.css?v=26" />
 </head>
 <body class="buddy-home buddy-simple-home">
   <header class="buddy-simple-header">
@@ -29,6 +29,7 @@
         <button id="model-premium" type="button" aria-pressed="false" title="Use a connected paid model for one approved request">Premium</button>
       </div>
       <button id="specialist-open" class="buddy-header-link" type="button">Specialists</button>
+      <button id="task-open" class="buddy-header-link buddy-task-open" type="button">Tasks <span id="task-count" aria-label="0 current tasks">0</span></button>
       <button id="schedule-open" class="buddy-header-link" type="button">Schedules</button>
       <button id="boundary-open" class="buddy-header-link" type="button">Preferences</button>
       <button id="local-open" class="buddy-header-link" type="button">This laptop</button>
@@ -186,6 +187,31 @@
     </footer>
   </dialog>
 
+  <dialog id="task-dialog" class="buddy-task-dialog" aria-labelledby="task-title">
+    <header>
+      <div><p>Owner-controlled work</p><h2 id="task-title">Current tasks</h2></div>
+      <button id="task-close" type="button">Close</button>
+    </header>
+    <form id="task-create-form" class="buddy-task-create-form">
+      <label for="task-objective">Add a task</label>
+      <textarea id="task-objective" rows="3" maxlength="2000" required placeholder="Describe the result Buddy should produce..."></textarea>
+      <div>
+        <label for="task-mode">Mode
+          <select id="task-mode"><option>Build</option><option>Fix</option><option>Create</option><option>Plan</option><option>Discover</option></select>
+        </label>
+        <button class="buddy-send-button" type="submit">Add task</button>
+      </div>
+    </form>
+    <div class="buddy-task-toolbar">
+      <strong id="task-summary">No current tasks</strong>
+      <label for="task-filter">Status
+        <select id="task-filter"><option value="current">Current</option><option value="all">All</option><option value="queued">Queued</option><option value="working">Working</option><option value="ready_for_review">Ready for review</option><option value="paused">Paused</option><option value="completed">Completed</option></select>
+      </label>
+    </div>
+    <div id="task-list" class="buddy-task-list" aria-live="polite"></div>
+    <footer>Stored on this device. Completed history is bounded, and outside actions still require exact approval.</footer>
+  </dialog>
+
   <dialog id="schedule-dialog" class="buddy-schedule-dialog" aria-labelledby="schedule-title">
     <header>
       <div><p>Owner-controlled task queue</p><h2 id="schedule-title">Buddy schedules</h2></div>
@@ -298,6 +324,18 @@
         </label>
       </div>
       <label class="buddy-boundary-check"><input id="boundary-tone" type="checkbox" /> Adapt pace and warmth from my voice cues with consent. Do not diagnose emotion or mental health.</label>
+      <section class="buddy-behavior-profile" aria-labelledby="behavior-profile-title">
+        <div class="buddy-behavior-heading">
+          <div><p>Communication behavior</p><h3 id="behavior-profile-title">Personality and working style</h3></div>
+          <button id="behavior-reset" type="button">Reset</button>
+        </div>
+        <div id="behavior-trait-groups"></div>
+        <details class="buddy-self-report">
+          <summary>Optional self-report psychology dimensions</summary>
+          <p>Set only by you. Buddy does not infer, diagnose, or use these values for employment, credit, housing, medical, insurance, or other eligibility decisions.</p>
+          <div id="behavior-self-report"></div>
+        </details>
+      </section>
       <div class="buddy-boundary-floor">
         <strong>Always on</strong>
         <p>Buddy never claims a licensed role, hides material risk, diagnoses or prescribes, represents a user in court, or moves money and changes accounts without exact approval.</p>
@@ -314,6 +352,7 @@
   <script src="data/buddy-capability-certifications.js"></script>
   <script src="data/buddy-workforce-system.js?v=23"></script>
   <script src="data/buddy-setup-catalog.js?v=23"></script>
-  <script src="buddy.js?v=23" defer></script>
+  <script src="data/buddy-communication-behavior.js?v=26"></script>
+  <script src="buddy.js?v=26" defer></script>
 </body>
 </html>

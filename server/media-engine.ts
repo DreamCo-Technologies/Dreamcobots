@@ -6,6 +6,21 @@ type LocalMediaCatalog = {
   schema: string;
   reviewed_on: string;
   policy: Record<string, unknown>;
+  owned_stack: {
+    identity: string;
+    required_external_provider: null;
+    components: string[];
+  };
+  benchmark_targets: Array<{
+    id: string;
+    label: string;
+    kind: "owned_system" | "optional_local_reference" | "optional_external_reference";
+    execution: string;
+    required: boolean;
+    paid: boolean;
+    raw_media_upload_default: boolean;
+    purpose: string;
+  }>;
   engines: Array<{
     id: string;
     label: string;
@@ -44,6 +59,8 @@ export const mediaRightsSchema = z.object({
   adultConfirmed: z.boolean().default(false),
   voiceUseApproved: z.boolean().default(false),
   likenessUseApproved: z.boolean().default(false),
+  commercialUseApproved: z.boolean().default(false),
+  commercialScope: z.string().trim().min(3).max(500).optional(),
   syntheticMediaLabelApproved: z.literal(true),
   revoked: z.boolean().default(false),
 }).strict();
@@ -61,10 +78,16 @@ export const mediaRenderPlanRequestSchema = z.object({
 }).strict();
 
 export const mediaBenchmarkPlanRequestSchema = z.object({
-  engineIds: z.array(z.string().trim().max(80)).min(1).max(8),
+  engineIds: z.array(z.string().trim().max(80)).max(8).default([]),
+  targetIds: z.array(z.string().trim().max(80)).min(1).max(8).default(["buddy-media-core"]),
   modalities: z.array(z.enum(["voice", "image", "video", "all"])).min(1).max(4),
   commercialUse: z.boolean().default(false),
   ownerApprovedSyntheticFixturesOnly: z.literal(true),
+  fixtureClass: z.enum(["synthetic", "owner_consented_media"]).default("synthetic"),
+  ownerMediaComparisonConsentReceipt: z.string().trim().min(3).max(180).optional(),
+  externalComparisonApproved: z.boolean().default(false),
+  externalFixtureUploadApproved: z.boolean().default(false),
+  paidComparisonApproved: z.boolean().default(false),
   maxRuntimeMinutes: z.number().int().min(1).max(240).default(30),
 }).strict();
 
@@ -73,6 +96,9 @@ export type MediaRenderPlanRequest = z.infer<typeof mediaRenderPlanRequestSchema
 function validateRights(request: MediaRenderPlanRequest): void {
   const { rights, mediaType } = request;
   if (rights.revoked) throw new Error("Consent or media rights have been revoked.");
+  if (request.commercialUse && (!rights.commercialUseApproved || !rights.commercialScope)) {
+    throw new Error("Commercial media requires explicit approval and a written usage scope.");
+  }
   if (rights.sourceType === "original_synthetic") {
     if (["voice_replication", "identity_preserving_image", "portrait_animation", "lip_sync"].includes(mediaType)) {
       throw new Error("Real-person replication needs an adult owner or licensed adult performer source.");
@@ -138,6 +164,8 @@ export function buildMediaRenderPlan(request: MediaRenderPlanRequest) {
       rawMediaAcceptedByThisRoute: false,
       syntheticMediaLabelRequired: true,
       revocationCheckRequiredAtRenderAndExport: true,
+      commercialUseApproved: request.rights.commercialUseApproved,
+      commercialScope: request.rights.commercialScope ?? null,
     },
     execution: {
       renderExecuted: false,
@@ -159,6 +187,21 @@ export function buildMediaRenderPlan(request: MediaRenderPlanRequest) {
 export function buildMediaBenchmarkPlan(request: z.infer<typeof mediaBenchmarkPlanRequestSchema>) {
   const engines = request.engineIds.map((id) => catalog.engines.find((engine) => engine.id === id));
   if (engines.some((engine) => !engine)) throw new Error("Every benchmark engine must exist in the local media catalog.");
+  const targets = request.targetIds.map((id) => catalog.benchmark_targets.find((target) => target.id === id));
+  if (targets.some((target) => !target)) throw new Error("Every benchmark target must exist in the media comparison catalog.");
+  const externalTargets = targets.filter((target) => target!.kind === "optional_external_reference");
+  if (externalTargets.length && !request.externalComparisonApproved) {
+    throw new Error("External benchmark targets require exact approval for this comparison.");
+  }
+  if (externalTargets.some((target) => target!.paid) && !request.paidComparisonApproved) {
+    throw new Error("Paid benchmark targets require exact paid-use approval for this comparison.");
+  }
+  if (request.fixtureClass === "owner_consented_media") {
+    if (!request.ownerMediaComparisonConsentReceipt) throw new Error("Owner media comparisons require an active consent receipt.");
+    if (externalTargets.length && !request.externalFixtureUploadApproved) {
+      throw new Error("Uploading owner media to an external benchmark requires separate exact approval.");
+    }
+  }
   if (request.commercialUse) {
     const blocked = engines.filter((engine) => !engine!.commercial_status.startsWith("eligible"));
     if (blocked.length) throw new Error(`Commercial benchmark includes uncleared engines: ${blocked.map((engine) => engine!.id).join(", ")}`);
@@ -171,10 +214,13 @@ export function buildMediaBenchmarkPlan(request: z.infer<typeof mediaBenchmarkPl
   return {
     schema: "dreamco.buddy_media_benchmark_plan.v1",
     status: "sandbox_plan_ready",
+    ownedStack: catalog.owned_stack,
     engines,
+    targets,
     suites,
     fixtures: {
-      source: "synthetic_or_owner_generated_with_active_consent",
+      source: request.fixtureClass,
+      ownerMediaComparisonConsentReceipt: request.ownerMediaComparisonConsentReceipt ?? null,
       rawBiometricsInReport: false,
       signedTranscripts: true,
       deterministicSeedsWhereSupported: true,
@@ -183,11 +229,12 @@ export function buildMediaBenchmarkPlan(request: z.infer<typeof mediaBenchmarkPl
     limits: {
       maxRuntimeMinutes: request.maxRuntimeMinutes,
       networkDefault: "off",
-      externalUploads: false,
-      paidCalls: false,
+      externalUploads: externalTargets.length ? "requires_fresh_execution_approval" : false,
+      paidCalls: externalTargets.some((target) => target!.paid) ? "requires_fresh_execution_approval" : false,
     },
     resultState: "not_run",
     comparisonClaimAllowed: false,
+    externalCallExecuted: false,
   };
 }
 

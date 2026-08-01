@@ -5,6 +5,7 @@
   const modelPolicy = window.BUDDY_MODEL_ROUTER || { defaultMode: 'free', connectors: [] };
   const certifications = window.BUDDY_CAPABILITY_CERTIFICATIONS || { summary: {}, bots: {} };
   const setupCatalog = window.BUDDY_SETUP_CATALOG || { repository: {}, summary: {}, launchers: [] };
+  const behaviorCatalog = window.BUDDY_COMMUNICATION_BEHAVIOR || { trait_groups: [], self_report_dimensions: [], contexts: {} };
   const bots = index.bots.map(unpack);
   const botBySlug = new Map(bots.map((bot) => [bot.slug, bot]));
   const launcherById = new Map(setupCatalog.launchers.map((launcher) => [launcher.id, launcher]));
@@ -55,6 +56,16 @@
   const scheduleClose = document.getElementById('schedule-close');
   const scheduleList = document.getElementById('schedule-list');
   const scheduleSummary = document.getElementById('schedule-summary');
+  const taskOpen = document.getElementById('task-open');
+  const taskCount = document.getElementById('task-count');
+  const taskDialog = document.getElementById('task-dialog');
+  const taskClose = document.getElementById('task-close');
+  const taskCreateForm = document.getElementById('task-create-form');
+  const taskObjective = document.getElementById('task-objective');
+  const taskMode = document.getElementById('task-mode');
+  const taskFilter = document.getElementById('task-filter');
+  const taskSummary = document.getElementById('task-summary');
+  const taskList = document.getElementById('task-list');
   const params = new URLSearchParams(location.search);
   const preferredSlug = params.get('bot') || '';
   let activeSlug = preferredSlug;
@@ -68,6 +79,11 @@
   let selectedSetupOptions = new Set();
   let scheduledTaskRunning = false;
   const scheduleStorageKey = 'buddy-scheduled-tasks-v2';
+  const taskStorageKey = 'buddy-current-tasks-v1';
+
+  function defaultBehaviorTraits() {
+    return Object.fromEntries(behaviorCatalog.trait_groups.flatMap((group) => group.traits || []).map((trait) => [trait.id, trait.default]));
+  }
 
   function loadBoundaryPreferences() {
     const defaults = {
@@ -78,9 +94,17 @@
       professionalSupport: 'draft_and_prepare',
       communicationStyle: 'conversational',
       voiceToneAdaptation: false,
+      behaviorTraits: defaultBehaviorTraits(),
+      selfReportDimensions: {},
     };
     try {
-      return { ...defaults, ...JSON.parse(localStorage.getItem('buddy-boundary-preferences-v1') || '{}') };
+      const saved = JSON.parse(localStorage.getItem('buddy-boundary-preferences-v1') || '{}');
+      return {
+        ...defaults,
+        ...saved,
+        behaviorTraits: { ...defaults.behaviorTraits, ...(saved.behaviorTraits || {}) },
+        selfReportDimensions: saved.selfReportDimensions || {},
+      };
     } catch (_error) {
       return defaults;
     }
@@ -178,6 +202,48 @@
     };
   }
 
+  function communicationContext(objective) {
+    const value = normalize(objective);
+    if (/\b(emergency|urgent danger|call 911|crisis)\b/.test(value)) return 'emergency';
+    if (/\b(law|legal|court|contract|patent|trademark|attorney|lawyer)\b/.test(value)) return 'legal';
+    if (/\b(medical|health|doctor|nurse|medicine|symptom|therapy)\b/.test(value)) return 'medical';
+    if (/\b(finance|financial|money|loan|credit|tax|investment|payment)\b/.test(value)) return 'financial';
+    if (/\b(government|federal|state agency|grant|public benefit|procurement)\b/.test(value)) return 'government';
+    if (/\b(business|client|customer|sales|professional|company|employee)\b/.test(value)) return 'business';
+    if (/\b(teach|teacher|student|school|course|lesson|education)\b/.test(value)) return 'education';
+    if (/\b(movie|music|story|art|creative|video|game)\b/.test(value)) return 'creative';
+    return 'casual';
+  }
+
+  function communicationPlan(objective) {
+    const contextId = communicationContext(objective);
+    const context = behaviorCatalog.contexts?.[contextId] || { slang_allowed: true, trait_floors: {} };
+    const traits = { ...defaultBehaviorTraits(), ...boundaryPreferences.behaviorTraits };
+    Object.entries(context.trait_floors || {}).forEach(([id, floor]) => {
+      traits[id] = Math.max(Number(traits[id] || 0), Number(floor));
+    });
+    const professional = !['casual', 'creative'].includes(contextId);
+    return {
+      context: contextId,
+      traits,
+      selfReportDimensions: boundaryPreferences.selfReportDimensions || {},
+      slangAllowed: Boolean(context.slang_allowed) && !professional,
+      professionalOverride: professional,
+      voiceCueAdaptation: Boolean(boundaryPreferences.voiceToneAdaptation),
+      hiddenPsychologicalInference: false,
+      diagnosisPerformed: false,
+    };
+  }
+
+  function executionKind(objective) {
+    const value = normalize(objective);
+    if (/\b(game|simulation)\b/.test(value)) return 'interactive_project';
+    if (/\b(movie|music video|video|voice|image|creative)\b/.test(value)) return 'creative_project';
+    if (/\b(code|app|website|prototype|software|debug|repository)\b/.test(value)) return 'vibe_code_project';
+    if (/\b(search|research|compare|find)\b/.test(value)) return 'research_task';
+    return 'general_task';
+  }
+
   function localRoute(objective) {
     const preferred = ownerSelectedSpecialist ? botBySlug.get(activeSlug) : undefined;
     const ranked = bots.map((bot) => ({ bot, score: score(bot, objective) }))
@@ -192,7 +258,13 @@
       coverage: index.summary,
       topScore: ranked[0]?.score || 0,
       modelPlan: localModelPlan(),
-      execution: { status: 'sandbox_task_packet_ready' },
+      execution: {
+        status: 'sandbox_task_packet_ready',
+        kind: executionKind(objective),
+        freeformPromptAccepted: true,
+        guidedSetupRequired: false,
+      },
+      communicationPlan: communicationPlan(objective),
       discovery: localDiscovery(objective, ranked[0]?.score || 0),
     };
   }
@@ -239,6 +311,8 @@
       return {
         ...result,
         discovery: fallback.discovery,
+        execution: result.execution || fallback.execution,
+        communicationPlan: fallback.communicationPlan,
         selected: {
           slug: result.selected.slug,
           name: result.selected.display_name,
@@ -358,6 +432,14 @@
       preferenceNote.textContent = `Your settings: ${preferences.communicationStyle.replaceAll('_', ' ')} style, ${preferences.riskDisclosure} risk detail, ${preferences.moneyActionMode.replaceAll('_', ' ')} for money actions. Exact approval remains required for every outside action.`;
       bubble.append(preferenceNote);
     }
+    if (result.communicationPlan) {
+      const communicationNote = document.createElement('p');
+      communicationNote.className = 'buddy-role-boundary';
+      communicationNote.textContent = result.communicationPlan.professionalOverride
+        ? `${result.communicationPlan.context} context: professional language, evidence, uncertainty, and risk boundaries are enforced.`
+        : `${result.communicationPlan.context} context: your saved communication style is active. Buddy does not infer a diagnosis or hidden psychological profile.`;
+      bubble.append(communicationNote);
+    }
 
     if (result.matchedCapabilities?.length) {
       const list = document.createElement('div');
@@ -433,9 +515,119 @@
     thread.append(row);
   }
 
-  async function send() {
+  function loadCurrentTasks() {
+    try {
+      const rows = JSON.parse(localStorage.getItem(taskStorageKey) || '[]');
+      return Array.isArray(rows) ? rows.filter((row) => row && typeof row.id === 'string' && typeof row.objective === 'string') : [];
+    } catch (_error) {
+      return [];
+    }
+  }
+
+  function saveCurrentTasks(tasks) {
+    const current = tasks.filter((task) => task.status !== 'completed').slice(-150);
+    const completed = tasks.filter((task) => task.status === 'completed').slice(-50);
+    localStorage.setItem(taskStorageKey, JSON.stringify([...current, ...completed].slice(-200)));
+    renderCurrentTasks();
+  }
+
+  function createCurrentTask(objective, taskModeValue = mode, source = 'chat', extra = {}) {
+    const tasks = loadCurrentTasks();
+    const task = {
+      schema: 'dreamco.buddy_current_task.v1',
+      id: newTaskId(),
+      objective: objective.trim(),
+      mode: taskModeValue,
+      source,
+      status: 'queued',
+      specialist: null,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      ...extra,
+    };
+    tasks.push(task);
+    saveCurrentTasks(tasks);
+    return task;
+  }
+
+  function updateCurrentTask(taskId, updates) {
+    const tasks = loadCurrentTasks();
+    const selected = tasks.find((task) => task.id === taskId);
+    if (!selected) return;
+    Object.assign(selected, updates, { updatedAt: new Date().toISOString() });
+    saveCurrentTasks(tasks);
+  }
+
+  function renderCurrentTasks() {
+    const tasks = loadCurrentTasks().sort((a, b) => String(b.updatedAt || '').localeCompare(String(a.updatedAt || '')));
+    const current = tasks.filter((task) => task.status !== 'completed');
+    taskCount.textContent = String(current.length);
+    taskCount.setAttribute('aria-label', `${current.length} current task${current.length === 1 ? '' : 's'}`);
+    taskSummary.textContent = current.length
+      ? `${current.length} current task${current.length === 1 ? '' : 's'} · ${tasks.filter((task) => task.status === 'ready_for_review').length} ready for review`
+      : 'No current tasks';
+    const filter = taskFilter.value;
+    const visible = tasks.filter((task) => filter === 'all' || (filter === 'current' ? task.status !== 'completed' : task.status === filter));
+    taskList.replaceChildren();
+    if (!visible.length) {
+      const empty = document.createElement('p');
+      empty.className = 'buddy-task-empty';
+      empty.textContent = 'Add a task here or send Buddy a message. Every request appears in this workspace.';
+      taskList.append(empty);
+      return;
+    }
+    visible.forEach((task) => {
+      const row = document.createElement('article');
+      row.className = 'buddy-task-item';
+      const title = document.createElement('strong');
+      title.textContent = task.objective;
+      const meta = document.createElement('p');
+      meta.textContent = `${task.mode} · ${String(task.status).replaceAll('_', ' ')}${task.specialist ? ` · ${task.specialist}` : ''}`;
+      const time = document.createElement('small');
+      time.textContent = new Date(task.updatedAt || task.createdAt).toLocaleString();
+      meta.append(time);
+      const actions = document.createElement('div');
+      actions.className = 'buddy-task-actions';
+      const run = document.createElement('button');
+      run.type = 'button';
+      run.textContent = task.status === 'ready_for_review' ? 'Run again' : 'Run';
+      run.disabled = task.status === 'working';
+      run.addEventListener('click', async () => {
+        setBuddyMode(task.mode || 'Build');
+        input.value = task.objective;
+        taskDialog.close();
+        await send({ taskId: task.id });
+      });
+      const pause = document.createElement('button');
+      pause.type = 'button';
+      pause.textContent = task.status === 'paused' ? 'Resume' : 'Pause';
+      pause.disabled = ['completed', 'working'].includes(task.status);
+      pause.addEventListener('click', () => updateCurrentTask(task.id, { status: task.status === 'paused' ? 'queued' : 'paused' }));
+      const complete = document.createElement('button');
+      complete.type = 'button';
+      complete.textContent = task.status === 'completed' ? 'Reopen' : 'Complete';
+      complete.addEventListener('click', () => updateCurrentTask(task.id, { status: task.status === 'completed' ? 'queued' : 'completed' }));
+      const remove = document.createElement('button');
+      remove.type = 'button';
+      remove.textContent = 'Delete';
+      remove.addEventListener('click', () => {
+        if (!window.confirm('Delete this task from this device?')) return;
+        saveCurrentTasks(loadCurrentTasks().filter((item) => item.id !== task.id));
+      });
+      actions.append(run, pause, complete, remove);
+      row.append(title, meta, actions);
+      taskList.append(row);
+    });
+  }
+
+  async function send(options = {}) {
     const objective = input.value.trim();
     if (!objective) return;
+    const currentTask = typeof options.taskId === 'string'
+      ? loadCurrentTasks().find((task) => task.id === options.taskId)
+      : createCurrentTask(objective, mode);
+    const currentTaskId = currentTask?.id;
+    if (currentTaskId) updateCurrentTask(currentTaskId, { status: 'working', mode, objective });
     welcome.hidden = true;
     addUserMessage(objective);
     input.value = '';
@@ -445,6 +637,7 @@
     const result = await routePrompt(objective);
     addBuddyMessage(result);
     const selectedName = result.selected?.name || result.selected?.display_name || 'the best available specialist';
+    if (currentTaskId) updateCurrentTask(currentTaskId, { status: 'ready_for_review', specialist: selectedName });
     activeSlug = result.selected?.slug || activeSlug;
     routeStatus.textContent = `Routed through ${selectedName} in ${modelMode === 'free' ? 'free' : 'premium-requested'} mode.`;
     sendButton.disabled = false;
@@ -900,6 +1093,7 @@
     if (!task || (!manual && task.status !== 'active') || task.status === 'completed') return;
     scheduledTaskRunning = true;
     try {
+      if (task.currentTaskId) updateCurrentTask(task.currentTaskId, { status: 'working' });
       if (scheduleDialog.open) scheduleDialog.close();
       welcome.hidden = true;
       addUserMessage(`[Timed task: ${task.label}]\n${task.prompt}`);
@@ -920,6 +1114,12 @@
         task.nextRunAt = proposedNext;
       }
       saveScheduledTasks(tasks);
+      if (task.currentTaskId) {
+        updateCurrentTask(task.currentTaskId, {
+          status: task.status === 'completed' ? 'completed' : 'ready_for_review',
+          specialist: result.selected?.name || result.selected?.display_name || null,
+        });
+      }
       routeStatus.textContent = task.status === 'completed'
         ? `${task.label} completed its schedule.`
         : `${task.label} ran safely. Next run: ${formatTaskTime(task.nextRunAt)}.`;
@@ -969,6 +1169,8 @@
         createdAt: new Date().toISOString(),
         executionBoundary: 'local_sandbox_routing_only_external_actions_require_fresh_approval',
       };
+      const currentTask = createCurrentTask(task.prompt, 'Plan', 'schedule', { linkedScheduleId: task.id });
+      task.currentTaskId = currentTask.id;
       tasks.push(task);
       saveScheduledTasks(tasks);
       setupDialog.close();
@@ -982,17 +1184,19 @@
     }
   }
 
-  document.querySelectorAll('[data-buddy-mode]').forEach((button) => {
-    button.addEventListener('click', () => {
-      document.querySelectorAll('[data-buddy-mode]').forEach((item) => {
-        const selected = item === button;
-        item.classList.toggle('active', selected);
-        item.setAttribute('aria-selected', String(selected));
-      });
-      mode = button.dataset.buddyMode || 'Build';
-      updatePlanSetupVisibility();
-      input.focus();
+  function setBuddyMode(nextMode) {
+    mode = ['Build', 'Fix', 'Create', 'Plan', 'Discover'].includes(nextMode) ? nextMode : 'Build';
+    document.querySelectorAll('[data-buddy-mode]').forEach((item) => {
+      const selected = item.dataset.buddyMode === mode;
+      item.classList.toggle('active', selected);
+      item.setAttribute('aria-selected', String(selected));
     });
+    updatePlanSetupVisibility();
+    input.focus();
+  }
+
+  document.querySelectorAll('[data-buddy-mode]').forEach((button) => {
+    button.addEventListener('click', () => setBuddyMode(button.dataset.buddyMode));
   });
 
   document.querySelectorAll('[data-buddy-prompt]').forEach((button) => {
@@ -1023,6 +1227,97 @@
   scheduleClose.addEventListener('click', () => scheduleDialog.close());
   scheduleDialog.addEventListener('click', (event) => {
     if (event.target === scheduleDialog) scheduleDialog.close();
+  });
+
+  function renderBehaviorControls(traits = boundaryPreferences.behaviorTraits, selfReport = boundaryPreferences.selfReportDimensions) {
+    const groups = document.getElementById('behavior-trait-groups');
+    const selfReportContainer = document.getElementById('behavior-self-report');
+    groups.replaceChildren();
+    behaviorCatalog.trait_groups.forEach((group, groupIndex) => {
+      const section = document.createElement('details');
+      section.className = 'buddy-behavior-group';
+      section.open = groupIndex === 0;
+      const summary = document.createElement('summary');
+      summary.textContent = group.label;
+      const rows = document.createElement('div');
+      rows.className = 'buddy-behavior-rows';
+      group.traits.forEach((trait) => {
+        const label = document.createElement('label');
+        label.className = 'buddy-behavior-row';
+        const name = document.createElement('span');
+        name.textContent = trait.label;
+        const output = document.createElement('output');
+        const inputControl = document.createElement('input');
+        inputControl.type = 'range';
+        inputControl.min = '0';
+        inputControl.max = '1';
+        inputControl.step = '0.05';
+        inputControl.value = String(traits?.[trait.id] ?? trait.default);
+        inputControl.dataset.behaviorTrait = trait.id;
+        output.textContent = `${Math.round(Number(inputControl.value) * 100)}%`;
+        inputControl.addEventListener('input', () => { output.textContent = `${Math.round(Number(inputControl.value) * 100)}%`; });
+        label.append(name, output, inputControl);
+        rows.append(label);
+      });
+      section.append(summary, rows);
+      groups.append(section);
+    });
+    selfReportContainer.replaceChildren();
+    behaviorCatalog.self_report_dimensions.forEach((dimension) => {
+      const label = document.createElement('label');
+      label.textContent = dimension.label;
+      const select = document.createElement('select');
+      select.dataset.selfReportDimension = dimension.id;
+      [
+        ['', 'Prefer not to set'],
+        ['0.25', 'Lower'],
+        ['0.5', 'Balanced'],
+        ['0.75', 'Higher'],
+      ].forEach(([value, text]) => {
+        const option = document.createElement('option');
+        option.value = value;
+        option.textContent = text;
+        select.append(option);
+      });
+      const saved = selfReport?.[dimension.id];
+      select.value = Number.isFinite(Number(saved)) && saved !== null && saved !== '' ? String(saved) : '';
+      label.append(select);
+      selfReportContainer.append(label);
+    });
+  }
+
+  function readBehaviorControls() {
+    const traits = Object.fromEntries([...document.querySelectorAll('[data-behavior-trait]')].map((control) => [control.dataset.behaviorTrait, Number(control.value)]));
+    const selfReportDimensions = Object.fromEntries(
+      [...document.querySelectorAll('[data-self-report-dimension]')]
+        .filter((control) => control.value !== '')
+        .map((control) => [control.dataset.selfReportDimension, Number(control.value)]),
+    );
+    return { traits, selfReportDimensions };
+  }
+
+  document.getElementById('behavior-reset').addEventListener('click', () => {
+    renderBehaviorControls(defaultBehaviorTraits(), {});
+    document.getElementById('boundary-status').textContent = 'Defaults restored in this form. Save to keep them.';
+  });
+
+  taskOpen.addEventListener('click', () => {
+    renderCurrentTasks();
+    taskDialog.showModal();
+    taskObjective.focus();
+  });
+  taskClose.addEventListener('click', () => taskDialog.close());
+  taskDialog.addEventListener('click', (event) => {
+    if (event.target === taskDialog) taskDialog.close();
+  });
+  taskFilter.addEventListener('change', renderCurrentTasks);
+  taskCreateForm.addEventListener('submit', (event) => {
+    event.preventDefault();
+    const objective = taskObjective.value.trim();
+    if (!objective) return;
+    createCurrentTask(objective, taskMode.value, 'task_window');
+    taskObjective.value = '';
+    taskObjective.focus();
   });
 
   modelPolicy.connectors.filter((connector) => connector.mode === 'premium').forEach((connector) => {
@@ -1070,6 +1365,7 @@
     document.getElementById('boundary-communication').value = boundaryPreferences.communicationStyle;
     document.getElementById('boundary-depth').value = boundaryPreferences.guidanceDepth;
     document.getElementById('boundary-tone').checked = boundaryPreferences.voiceToneAdaptation;
+    renderBehaviorControls();
     boundaryDialog.showModal();
   });
   boundaryClose.addEventListener('click', () => boundaryDialog.close());
@@ -1078,6 +1374,7 @@
   });
   boundaryForm.addEventListener('submit', (event) => {
     event.preventDefault();
+    const behavior = readBehaviorControls();
     boundaryPreferences = {
       professionalSupport: document.getElementById('boundary-support').value,
       riskDisclosure: document.getElementById('boundary-risk').value,
@@ -1086,6 +1383,8 @@
       communicationStyle: document.getElementById('boundary-communication').value,
       guidanceDepth: document.getElementById('boundary-depth').value,
       voiceToneAdaptation: document.getElementById('boundary-tone').checked,
+      behaviorTraits: behavior.traits,
+      selfReportDimensions: behavior.selfReportDimensions,
     };
     localStorage.setItem('buddy-boundary-preferences-v1', JSON.stringify(boundaryPreferences));
     document.getElementById('boundary-status').textContent = 'Saved. Hard professional and transaction boundaries remain on.';
@@ -1104,6 +1403,8 @@
   if (index.summary.profiles) {
     routeStatus.textContent = `Ready to route across ${Number(index.summary.profiles).toLocaleString()} verified specialists in free mode.`;
   }
+  renderBehaviorControls();
+  renderCurrentTasks();
   renderSchedules();
   window.setInterval(checkDueSchedules, 30_000);
   window.setTimeout(checkDueSchedules, 1_500);

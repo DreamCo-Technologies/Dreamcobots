@@ -1,10 +1,10 @@
-const SHELL_CACHE = 'buddy-shell-v23';
-const RUNTIME_CACHE = 'buddy-runtime-v23';
+const SHELL_CACHE = 'buddy-shell-v26';
+const RUNTIME_CACHE = 'buddy-runtime-v26';
 const APP_SHELL = [
   './',
   './buddy.html',
-  './buddy.css?v=23',
-  './buddy.js?v=23',
+  './buddy.css?v=26',
+  './buddy.js?v=26',
   './install.html',
   './install.css',
   './install.js',
@@ -45,7 +45,8 @@ const APP_SHELL = [
   './data/buddy-distribution-catalog.json',
   './data/buddy-specialized-hubs.js',
   './data/buddy-production-group.js',
-  './data/buddy-local-media-engines.js?v=17',
+  './data/buddy-local-media-engines.js?v=18',
+  './data/buddy-communication-behavior.js?v=26',
   './data/buddy-workforce-system.js?v=23',
   './data/buddy-setup-catalog.js?v=23',
   './assets/images/favicon.svg',

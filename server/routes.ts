@@ -110,6 +110,13 @@ import {
   mediaRenderPlanRequestSchema,
 } from "./media-engine";
 import {
+  buildCommunicationBenchmarkPlan,
+  buildCommunicationPlan,
+  communicationBenchmarkRequestSchema,
+  communicationPlanRequestSchema,
+  getCommunicationBehaviorCatalog,
+} from "./communication-behavior";
+import {
   analyzeJobOpportunity,
   buildWorkforceRegistry,
   createPaymentRoutingPlan,
@@ -388,6 +395,30 @@ export async function registerRoutes(
     } catch (error) {
       if (error instanceof z.ZodError) return res.status(400).json(zodValidationError(error));
       res.status(400).json({ error: error instanceof Error ? error.message : "Media benchmark plan failed." });
+    }
+  });
+
+  app.get("/api/buddy/behavior/catalog", (_req, res) => {
+    res.json(getCommunicationBehaviorCatalog());
+  });
+
+  app.post("/api/buddy/behavior/profile", (req, res) => {
+    try {
+      const request = communicationPlanRequestSchema.parse(req.body);
+      res.status(202).json(buildCommunicationPlan(request));
+    } catch (error) {
+      if (error instanceof z.ZodError) return res.status(400).json(zodValidationError(error));
+      res.status(400).json({ error: error instanceof Error ? error.message : "Communication profile failed." });
+    }
+  });
+
+  app.post("/api/buddy/behavior/benchmark-plan", (req, res) => {
+    try {
+      const request = communicationBenchmarkRequestSchema.parse(req.body);
+      res.status(202).json(buildCommunicationBenchmarkPlan(request));
+    } catch (error) {
+      if (error instanceof z.ZodError) return res.status(400).json(zodValidationError(error));
+      res.status(400).json({ error: error instanceof Error ? error.message : "Communication benchmark plan failed." });
     }
   });
 
@@ -1478,6 +1509,8 @@ export async function registerRoutes(
         { name: "Vibe Coding", route: "POST /api/buddy/vibe-code", status: "live", description: "Generate full projects from description" },
         { name: "Image Generation", route: "POST /api/generate-image", status: "live", description: "AI image generation via gpt-image-1" },
         { name: "Voice and Likeness", route: "POST /api/buddy/media/render-plan", status: "local-adapter-contract-ready", description: "Local-first adult owner or licensed-performer media with consent, provenance, labeling, license review, and measured quality gates" },
+        { name: "Communication Behavior", route: "POST /api/buddy/behavior/profile", status: "sandbox-ready", description: "DreamCo-owned personality and communication adaptation with professional context overrides, opt-in voice cues, and no hidden psychological or clinical inference" },
+        { name: "Owned Task Board", route: "Buddy web task workspace", status: "live-local", description: "Capture every freeform request, add tasks at any time, and run, pause, complete, or remove locally stored work" },
         { name: "Opportunity and Workforce Engine", route: "POST /api/buddy/workforce/job-analysis", status: "shadow-ready", description: "Classify work A-F, match real Buddy bots, simulate services and economics, and stop at professional, external-action, payment, and owner-approval gates" },
         { name: "Web Search", route: "POST /api/search/web", status: "live", description: "GitHub + OpenAI synthesis search" },
         { name: "GitHub Intelligence", route: "GET /api/github-intel/trending", status: "live", description: "Hourly GitHub trending + search" },
