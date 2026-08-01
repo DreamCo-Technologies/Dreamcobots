@@ -74,17 +74,31 @@ test("growth plans measure experiments without guaranteeing or moving money", ()
   assert.equal(plan.outreachSent, false);
 });
 
-test("all 45 divisions receive 100 must-haves, 100 upgrades, robot identities, and benchmark systems", () => {
+test("all 45 divisions receive charters, 100 capabilities, production gates, and benchmark systems", () => {
   const program = buildBuddySuccessProgram();
   assert.equal(program.divisions.length, 45);
   assert.equal(program.summary.division_must_have_updates, 4500);
   assert.equal(program.summary.division_upgrades, 4500);
+  assert.equal(program.summary.division_capabilities, 4500);
+  assert.equal(program.summary.daily_logical_benchmark_slots, 360);
+  assert.equal(program.summary.production_ready_divisions, 0);
   assert.equal(program.summary.model_benchmark_targets, 200);
   assert.equal(program.summary.robot_division_archetypes, 45);
   assert.equal(program.improvement_templates.must_have_updates.length, 100);
   assert.equal(program.improvement_templates.upgrades.length, 100);
+  assert.equal(program.improvement_templates.division_capabilities.length, 100);
   assert.ok(program.divisions.every((division) => division.must_have_updates.count === 100));
   assert.ok(program.divisions.every((division) => division.upgrades.count === 100));
+  assert.ok(program.divisions.every((division) => division.capabilities.count === 100));
+  assert.ok(program.divisions.every((division) => division.capabilities.focuses.length === 10));
+  assert.ok(program.divisions.every((division) => division.charter.purpose.length >= 60));
+  assert.ok(program.divisions.every((division) => division.production_readiness.gates.length === 12));
+  assert.ok(program.divisions.every((division) => division.production_readiness.production_ready === false));
   assert.ok(program.divisions.every((division) => division.benchmark_system.dimensions.length >= 10));
+  assert.ok(program.divisions.every((division) => division.benchmark_system.daily_operations.logical_parallel_worker_slots === 8));
   assert.ok(program.divisions.every((division) => division.benchmark_system.live_competitors_tested === 0));
+  assert.equal(program.open_ai_alliance_watch.memberDirectory.membershipClaimedByDreamCo, false);
+  assert.equal(program.open_ai_alliance_watch.activeProjectWatch.length, 13);
+  assert.equal(program.safe_ai_training.productionSelfModificationAllowed, false);
+  assert.equal(program.trust_and_access.raw_credentials_accepted, false);
 });

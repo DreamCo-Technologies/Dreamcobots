@@ -140,7 +140,9 @@ Creative Studio can record adult owner voice samples, capture owner camera image
 
 The Model Benchmark Lab audits 200 targets across 12 capability suites: 100 curated catalog records plus 100 task-specific discovery lanes that refresh exact model IDs from official provider catalogs. Catalog checks run locally. Live quality, latency, and cost scores remain empty until authenticated adapters return evidence under a per-run budget and approval.
 
-The Buddy Success Center stores a 30-question, non-sensitive profile in the user's browser, shares only an opted-in summary with specialist routes, and keeps opportunity estimates separate from user-confirmed revenue. Its generated quality program covers all 45 divisions with 100 must-have records, 100 upgrade records, a deterministic robot identity, and an evidence-first competitor benchmark process per division.
+The Buddy Success Center stores a 30-question, non-sensitive profile in the user's browser, shares only an opted-in summary with specialist routes, and keeps opportunity estimates separate from user-confirmed revenue. Its generated production program covers all 45 divisions with a professional charter, 100 capability contracts, 100 must-have records, 100 upgrade records, 12 production gates, a deterministic robot identity, and an evidence-first competitor benchmark process. A local daily harness checks all 4,500 division capability contracts with bounded parallelism; external comparisons still require a scheduler, configured adapters, current terms, and run-specific approval.
+
+The open AI watch uses dated official directory and project sources, claims no membership or endorsement, and records zero live member benchmarks until evidence exists. Buddy's defensive security reviews require written owner authority and prohibit credential attacks, destructive payloads, denial of service, persistence, third-party targets, and access to real customer data. Connections accept vault references only, and the Sales Academy uses synthetic role-play before any permissioned outreach workflow.
 
 ## 🌐 Live Website
 

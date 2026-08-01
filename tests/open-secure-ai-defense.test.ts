@@ -3,6 +3,7 @@ import test from "node:test";
 
 import {
   createDefenseAssessment,
+  createDefensiveSecurityReviewPlan,
   createGitHubProfileConnectionPlan,
   createModelDiscoveryPlan,
   createOpenSourceUpgradePlan,
@@ -146,4 +147,46 @@ test("upgrade plans require allowlisted repositories, passed evidence, and exact
   assert.match(plan.repository.reviewBranch, /^buddy\/secure-upgrade-/);
   assert.throws(() => createOpenSourceUpgradePlan({ ...base, exactApproval: false }), /Exact owner approval/);
   assert.throws(() => createOpenSourceUpgradePlan({ ...base, targetRepository: "other/project" }), /outside this user's/);
+});
+
+test("authorized security reviews are scoped, non-destructive, and never guarantee protection", () => {
+  const plan = createDefensiveSecurityReviewPlan({
+    ownerProfileId: "owner-123",
+    organizationName: "Owner Test Company",
+    targetKind: "owned_web_app",
+    targetReference: "asset:owner-web-app",
+    scope: ["https://owner.example", "/login", "/api/health"],
+    mode: "passive_review",
+    ownerConfirmsAuthority: true,
+    authorizationReference: "authorization:security-review-2026-08",
+    productionTarget: true,
+    exactApprovalForSafeActiveChecks: false,
+    rateLimitRequestsPerMinute: 30,
+  });
+  assert.equal(plan.status, "passive_review_ready");
+  assert.equal(plan.controls.rawCredentialsAccepted, false);
+  assert.equal(plan.controls.stopOnUnexpectedAccess, true);
+  assert.equal(plan.zeroBreachGuaranteed, false);
+  assert.equal(plan.executionPerformed, false);
+  assert.ok(plan.prohibitedChecks.some((check) => check.includes("denial of service")));
+});
+
+test("safe active production reviews require authority, exact approval, and a maintenance window", () => {
+  const base = {
+    ownerProfileId: "owner-123",
+    organizationName: "Owner Test Company",
+    targetKind: "owned_api" as const,
+    targetReference: "asset:owner-api",
+    scope: ["https://api.owner.example"],
+    mode: "safe_active_validation" as const,
+    ownerConfirmsAuthority: true,
+    authorizationReference: "authorization:security-review-2026-08",
+    productionTarget: true,
+    exactApprovalForSafeActiveChecks: true,
+    rateLimitRequestsPerMinute: 15,
+  };
+  assert.throws(() => createDefensiveSecurityReviewPlan(base), /maintenance window/);
+  assert.throws(() => createDefensiveSecurityReviewPlan({ ...base, ownerConfirmsAuthority: false }), /must confirm testing authority/);
+  const plan = createDefensiveSecurityReviewPlan({ ...base, maintenanceWindowReference: "window:approved-2026-08-02" });
+  assert.equal(plan.status, "isolated_runner_and_monitoring_required");
 });

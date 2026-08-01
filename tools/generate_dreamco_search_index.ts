@@ -17,6 +17,7 @@ const GENERATED_PATH = join(ROOT, "config", "generated", "dreamco_search_index.j
 const WEBSITE_PATH = join(ROOT, "website", "data", "dreamco-search-index.js");
 const SYSTEM_MAP_PATH = join(ROOT, "website", "data", "repository-system-map.json");
 const PLATFORM_PATH = join(ROOT, "config", "generated", "buddy_platform_expansion.json");
+const SUCCESS_PROGRAM_PATH = join(ROOT, "config", "generated", "buddy_success_program.json");
 const REPORT_PATH = join(ROOT, "reports", "DREAMCO_SEARCH_INDEX.md");
 const WEBSITE_DIR = join(ROOT, "website");
 
@@ -30,6 +31,17 @@ type RepositorySystemMap = {
   systems: Array<{ label: string; detail: string; source: string; status: string }>;
   libraries: Array<{ id: string; name: string; description: string; count: number }>;
   divisions: Array<{ id: string; name: string; mission: string; registered_bots: number }>;
+};
+
+type SuccessProgram = {
+  divisions: Array<{
+    id: string;
+    name: string;
+    charter: { purpose: string; serves: string[]; intended_outcome: string; professional_boundary: string };
+    capabilities: { count: number; focuses: string[] };
+    benchmark_system: { daily_operations: { worker_roles: string[] } };
+    production_readiness: { production_ready: boolean };
+  }>;
 };
 
 const PAGE_DESCRIPTIONS: Record<string, string> = {
@@ -103,6 +115,7 @@ export function buildDreamSearchIndex() {
   const config = readJson<DreamSearchConfig & Record<string, unknown>>(CONFIG_PATH);
   const platform = readJson<PlatformExpansion>(PLATFORM_PATH);
   const systemMap = readJson<RepositorySystemMap>(SYSTEM_MAP_PATH);
+  const successProgram = readJson<SuccessProgram>(SUCCESS_PROGRAM_PATH);
   const fleet = buildFleetCatalog();
   const documents: DreamSearchDocument[] = [];
 
@@ -133,18 +146,25 @@ export function buildDreamSearchIndex() {
   }
 
   for (const division of systemMap.divisions) {
+    const production = successProgram.divisions.find((item) => item.name === division.name);
     documents.push(document({
       id: `division:${division.id}`,
       type: "division",
       title: division.name,
-      summary: division.mission,
-      url: `divisions.html#${division.id}`,
-      keywords: ["division", "specialists", "Buddy", `${division.registered_bots} bots`],
+      summary: production?.charter.purpose || division.mission,
+      url: `success.html#divisions`,
+      keywords: unique([
+        "division", "specialists", "Buddy", `${division.registered_bots} bots`,
+        production ? `${production.capabilities.count} capability contracts` : undefined,
+        ...(production?.charter.serves || []),
+        ...(production?.capabilities.focuses || []),
+        ...(production?.benchmark_system.daily_operations.worker_roles || []),
+      ]),
       category: "DreamCo division",
       division: division.name,
-      status: "registered",
+      status: production?.production_readiness.production_ready ? "production_evidence_passed" : "production_evidence_required",
       evidence_level: "repository_catalog",
-      evidence: "config/master_bot_registry.json",
+      evidence: production ? "config/generated/buddy_success_program.json" : "config/master_bot_registry.json",
     }));
   }
 

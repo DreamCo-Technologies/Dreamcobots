@@ -7,8 +7,8 @@
   <meta name="description" content="Build a private Buddy success profile, track opportunities and assets, tune weighted priorities, and inspect division benchmarks." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="styles.css" />
-  <link rel="stylesheet" href="success.css?v=1" />
+  <link rel="stylesheet" href="styles.css?v=39" />
+  <link rel="stylesheet" href="success.css?v=2" />
 </head>
 <body class="success-page">
 <div id="nav-placeholder"></div><script src="nav.js"></script>
@@ -36,6 +36,9 @@
     <a href="#tracker">Growth tracker</a>
     <a href="#ontology">Weighted ontology</a>
     <a href="#divisions">Division benchmarks</a>
+    <a href="#daily-operations">Daily operations</a>
+    <a href="#open-alliance">Open AI watch</a>
+    <a href="#trust">Trust and access</a>
     <a href="#models">Model 200</a>
     <a href="#resources">Resources</a>
   </nav>
@@ -95,12 +98,59 @@
     <div class="success-section-heading"><div><p>45 tested categories</p><h2 id="division-title">Division improvement and benchmark lab</h2></div><span id="division-program-count">...</span></div>
     <div class="division-controls">
       <label>Division<select id="division-program-select"></select></label>
-      <label>Program<select id="division-program-kind"><option value="must_have_updates">100 must-have updates</option><option value="upgrades">100 upgrades</option></select></label>
+      <label>Program<select id="division-program-kind"><option value="division_capabilities">100 capabilities</option><option value="must_have_updates">100 must-have updates</option><option value="upgrades">100 upgrades</option></select></label>
       <label>Filter<input id="division-program-search" type="search" placeholder="Security, workflow, release..." /></label>
     </div>
     <div class="division-summary"><div id="division-robot" class="division-robot" aria-hidden="true"></div><div><p id="division-meta"></p><h3 id="division-name">Loading...</h3><p id="division-benchmark-status"></p></div></div>
+    <div class="division-charter">
+      <div><span>Purpose</span><p id="division-purpose"></p></div>
+      <div><span>Who it serves</span><p id="division-serves"></p></div>
+      <div><span>Intended outcome</span><p id="division-outcome"></p></div>
+      <div><span>Professional boundary</span><p id="division-boundary"></p></div>
+    </div>
+    <div class="readiness-strip"><strong id="division-readiness">Evidence gated</strong><span id="division-readiness-detail"></span></div>
     <div id="division-benchmark-dimensions" class="benchmark-dimensions"></div>
     <div id="division-improvement-list" class="improvement-list"></div>
+  </section>
+
+  <section id="daily-operations" class="success-band" aria-labelledby="daily-title">
+    <div class="success-section-heading"><div><p>Bounded parallel improvement</p><h2 id="daily-title">Daily division benchmark operations</h2></div><a class="btn btn-outline" href="test-center.html">Open Test Center</a></div>
+    <p class="success-note">Every division has eight logical benchmark roles and ten daily signed-fixture targets. These are implemented work contracts, not claims that background processes are online. Daily operation requires a local or deployed scheduler; external and paid comparisons stay off by default.</p>
+    <div class="production-metrics">
+      <div><span>Capability contracts</span><strong id="daily-capabilities">...</strong></div>
+      <div><span>Logical worker slots</span><strong id="daily-worker-slots">...</strong></div>
+      <div><span>Daily local fixtures</span><strong id="daily-fixtures">...</strong></div>
+      <div><span>Production-ready divisions</span><strong id="daily-production-ready">...</strong></div>
+    </div>
+    <div id="daily-worker-roles" class="benchmark-dimensions"></div>
+    <div class="trust-grid">
+      <article><h3>Research</h3><p>Find current official sources, versions, competitors, and user-value gaps.</p></article>
+      <article><h3>Run</h3><p>Use identical signed fixtures in isolated local sandboxes with bounded concurrency.</p></article>
+      <article><h3>Judge</h3><p>Measure correctness, safety, latency, cost, accessibility, recovery, and value.</p></article>
+      <article><h3>Improve</h3><p>Prepare review-branch changes and release only after current production evidence passes.</p></article>
+    </div>
+  </section>
+
+  <section id="open-alliance" class="success-band" aria-labelledby="alliance-title">
+    <div class="success-section-heading"><div><p>Official-source comparison</p><h2 id="alliance-title">Open AI Alliance watch</h2></div><a id="alliance-members-link" class="btn btn-outline" href="https://thealliance.ai/members" target="_blank" rel="noopener">Official member directory</a></div>
+    <p id="alliance-summary" class="success-note"></p>
+    <div class="alliance-columns">
+      <div><h3>Active project watch</h3><div id="alliance-projects" class="alliance-list"></div></div>
+      <div><h3>Benchmark dimensions</h3><div id="alliance-dimensions" class="alliance-list"></div></div>
+    </div>
+  </section>
+
+  <section id="trust" class="success-band" aria-labelledby="trust-title">
+    <div class="success-section-heading"><div><p>Consent-first control plane</p><h2 id="trust-title">Safe training, security, access, and sales</h2></div><a class="btn btn-outline" href="security.html">Open Security Center</a></div>
+    <p class="success-note">Buddy reduces risk through isolation, least privilege, evidence, rotation, and recovery. No system can promise that a user will never be hacked or defrauded, so Buddy exposes limits and keeps emergency controls available.</p>
+    <div class="trust-grid">
+      <article><span>Safe AI training</span><h3>Consent before learning</h3><p>Rights, provenance, data minimization, holdouts, red teams, rollback, and owner review are required before promotion.</p><a href="open-model-lab.html">Open Model Lab</a></article>
+      <article><span>Authorized defense</span><h3>Non-destructive security reviews</h3><p>Buddy can prepare scoped assessments for owner-authorized assets. Credential attacks, destructive payloads, denial of service, and third-party targets are blocked.</p><a href="security.html">Review defenses</a></article>
+      <article><span>Keys and identity</span><h3>Vault references only</h3><p>Raw keys stay out of pages, APIs, logs, and profiles. Prefer passkeys, OAuth PKCE, short-lived identities, minimum scopes, rotation, and revocation.</p><a href="connections.html">Manage connections</a></article>
+      <article><span>Universal connectors</span><h3>Catalog, sandbox, then control</h3><p>Any new app follows the same 12-stage lifecycle from official cataloging through read-only health checks and separately approved writes.</p><a href="connections.html">Plan a connector</a></article>
+      <article><span>Sales Academy</span><h3>Practice before outreach</h3><p>Synthetic buyers, adaptive role-play, twelve-part scoring, objection practice, and regression checks help representatives improve safely.</p><a href="practice.html">Practice sales</a></article>
+      <article><span>Sales workforce</span><h3>Autonomous preparation</h3><p>Agents may research, deduplicate, score, draft, and update internal records. First contact, calls, proposals, contracts, and payments remain permissioned.</p><a href="leads.html">Open sales workspace</a></article>
+    </div>
   </section>
 
   <section id="models" class="success-band" aria-labelledby="models-title">
@@ -117,8 +167,8 @@
   </section>
 </main>
 
-<script src="data/buddy-success-program.js?v=1"></script>
+<script src="data/buddy-success-program.js?v=2"></script>
 <script src="robot-avatar.js?v=1"></script>
-<script src="success.js?v=1" defer></script>
+<script src="success.js?v=3" defer></script>
 </body>
 </html>

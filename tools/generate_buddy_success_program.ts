@@ -8,6 +8,15 @@ import {
   ONTOLOGY_PRESETS,
   SUCCESS_QUESTIONNAIRE,
 } from "../shared/buddy-success-contract";
+import {
+  DAILY_BENCHMARK_WORKER_ROLES,
+  DIVISION_CAPABILITY_OPERATIONS,
+  DIVISION_DOMAIN_PROFILES,
+  OFFICIAL_AI_ALLIANCE_WATCH,
+  PRODUCTION_READINESS_GATES,
+  SAFE_AI_TRAINING_CONTRACT,
+  UNIVERSAL_CONNECTOR_LIFECYCLE,
+} from "../shared/division-production-contract";
 import { MODEL_BENCHMARK_TARGETS, OFFICIAL_MODEL_DISCOVERY_SOURCES } from "../shared/model-benchmark-targets";
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), "..");
@@ -137,31 +146,94 @@ function improvementTemplates(kind: "must_have" | "upgrade") {
   })));
 }
 
+function capabilityTemplates() {
+  return Array.from({ length: 10 }, (_, focusIndex) => DIVISION_CAPABILITY_OPERATIONS.map((operation, operationIndex) => ({
+    id: `capability-${focusIndex + 1}-${operation.id}`,
+    number: focusIndex * DIVISION_CAPABILITY_OPERATIONS.length + operationIndex + 1,
+    focus_index: focusIndex,
+    operation: operation.id,
+    title: `{focus}: ${operation.title}`,
+    description: operation.description,
+    evidence_required: ["signed fixture", "expected output", "failure case", "quality score", "owner-visible result"],
+    production_claimed: false,
+  }))).flat();
+}
+
+function divisionFocuses(fleet: Fleet, divisionName: string) {
+  const profile = DIVISION_DOMAIN_PROFILES[divisionName];
+  if (!profile) throw new Error(`Missing professional domain profile for ${divisionName}`);
+  const categoryNames = categoryProfile(fleet, divisionName).map((category) => category.name.replaceAll("-", " "));
+  const fallbacks = ["user experience", "evidence management", "workflow reliability", "cost control", "continuous learning"];
+  return [...new Set([...profile.focusAreas, ...categoryNames, ...fallbacks])].slice(0, 10);
+}
+
 function divisionPrograms(fleet: Fleet) {
-  return fleet.divisions.map((division, index) => ({
-    id: division.name.toLowerCase(),
-    name: division.name,
-    profile_count: division.profile_count,
-    api_candidate_count: division.api_candidate_count,
-    top_categories: categoryProfile(fleet, division.name),
-    robot_identity: {
+  return fleet.divisions.map((division, index) => {
+    const domain = DIVISION_DOMAIN_PROFILES[division.name];
+    if (!domain) throw new Error(`Missing professional domain profile for ${division.name}`);
+    const focuses = divisionFocuses(fleet, division.name);
+    if (focuses.length !== 10) throw new Error(`${division.name} must resolve to exactly 10 capability focuses`);
+    return {
+      id: division.name.toLowerCase(),
+      name: division.name,
+      profile_count: division.profile_count,
+      api_candidate_count: division.api_candidate_count,
+      top_categories: categoryProfile(fleet, division.name),
+      charter: {
+      purpose: domain.purpose,
+      serves: domain.serves,
+      intended_outcome: domain.outcome,
+      professional_boundary: domain.boundary,
+      what_it_does: [
+        "discovers and defines authorized work",
+        "plans and builds reviewable artifacts",
+        "tests work in a bounded sandbox",
+        "routes specialized bot profiles",
+        "measures quality, cost, safety, and user value",
+      ],
+      what_it_does_not_do: [
+        "guarantee income or outcomes",
+        "claim professional authority it does not have",
+        "use credentials or personal data without authorization",
+        "take consequential external action without the required approval",
+      ],
+      },
+      robot_identity: {
       archetype: MOTIFS[index % MOTIFS.length],
       palette: PALETTES[index % PALETTES.length],
       deterministic_seed: digest(division.name),
       rendering: "browser_canvas",
       unique_per_bot: true,
-    },
-    must_have_updates: {
+      },
+      must_have_updates: {
       count: 100,
       template_set: "must_have_updates",
       id_prefix: `must-have-${digest(division.name)}`,
-    },
-    upgrades: {
+      },
+      upgrades: {
       count: 100,
       template_set: "upgrades",
       id_prefix: `upgrade-${digest(division.name)}`,
-    },
-    benchmark_system: {
+      },
+      capabilities: {
+      count: 100,
+      template_set: "division_capabilities",
+      id_prefix: `capability-${digest(division.name)}`,
+      focuses,
+      },
+      production_readiness: {
+      production_ready: false,
+      repository_contract_status: "implemented_and_tested",
+      external_runtime_status: "deployment_and_evidence_required",
+      gates: PRODUCTION_READINESS_GATES.map((name, gateIndex) => ({
+        id: `gate-${gateIndex + 1}`,
+        name,
+        status: "evidence_required",
+      })),
+      release_rule: "Every gate must have current evidence before this division may be labeled production ready.",
+      false_readiness_claims_blocked: true,
+      },
+      benchmark_system: {
       status: "fixtures_ready_competitor_runs_not_started",
       current_best_claimed: false,
       dimensions: BENCHMARK_DIMENSIONS,
@@ -179,8 +251,20 @@ function divisionPrograms(fleet: Fleet) {
       ],
       live_competitors_tested: 0,
       last_live_run: null,
-    },
-  }));
+      daily_operations: {
+        logical_parallel_worker_slots: DAILY_BENCHMARK_WORKER_ROLES.length,
+        worker_roles: DAILY_BENCHMARK_WORKER_ROLES,
+        division_profile_pool: division.profile_count,
+        daily_signed_fixture_target: 10,
+        scheduler_status: "local_or_deployed_scheduler_required",
+        live_runtime_processes_claimed: 0,
+        external_network_default: "off",
+        paid_runs_default: "off",
+        release_authority: "owner_review_required",
+      },
+      },
+    };
+  });
 }
 
 export function buildBuddySuccessProgram() {
@@ -189,11 +273,12 @@ export function buildBuddySuccessProgram() {
   const inventory = resourceInventory(connectorRegistry);
   const mustHaveTemplates = improvementTemplates("must_have");
   const upgradeTemplates = improvementTemplates("upgrade");
+  const divisionCapabilityTemplates = capabilityTemplates();
   const divisions = divisionPrograms(fleet);
   if (divisions.length !== 45) throw new Error(`Expected 45 divisions, found ${divisions.length}`);
-  if (mustHaveTemplates.length !== 100 || upgradeTemplates.length !== 100
-    || divisions.some((division) => division.must_have_updates.count !== 100 || division.upgrades.count !== 100)) {
-    throw new Error("Every division must have exactly 100 must-have updates and 100 upgrades.");
+  if (mustHaveTemplates.length !== 100 || upgradeTemplates.length !== 100 || divisionCapabilityTemplates.length !== 100
+    || divisions.some((division) => division.must_have_updates.count !== 100 || division.upgrades.count !== 100 || division.capabilities.count !== 100)) {
+    throw new Error("Every division must have exactly 100 must-have updates, 100 upgrades, and 100 capabilities.");
   }
   return {
     schema: "dreamco.buddy_success_program.v1",
@@ -212,6 +297,9 @@ export function buildBuddySuccessProgram() {
       questionnaire_questions: SUCCESS_QUESTIONNAIRE.length,
       division_must_have_updates: divisions.reduce((sum, division) => sum + division.must_have_updates.count, 0),
       division_upgrades: divisions.reduce((sum, division) => sum + division.upgrades.count, 0),
+      division_capabilities: divisions.reduce((sum, division) => sum + division.capabilities.count, 0),
+      daily_logical_benchmark_slots: divisions.reduce((sum, division) => sum + division.benchmark_system.daily_operations.logical_parallel_worker_slots, 0),
+      production_ready_divisions: divisions.filter((division) => division.production_readiness.production_ready).length,
       model_benchmark_targets: MODEL_BENCHMARK_TARGETS.length,
       dynamic_model_discovery_sources: OFFICIAL_MODEL_DISCOVERY_SOURCES.length,
       referenced_resource_hosts: inventory.resources.length,
@@ -243,6 +331,29 @@ export function buildBuddySuccessProgram() {
     improvement_templates: {
       must_have_updates: mustHaveTemplates,
       upgrades: upgradeTemplates,
+      division_capabilities: divisionCapabilityTemplates,
+    },
+    daily_benchmark_operations: {
+      divisions: divisions.length,
+      logical_parallel_worker_slots: divisions.reduce((sum, division) => sum + division.benchmark_system.daily_operations.logical_parallel_worker_slots, 0),
+      daily_signed_fixture_target: divisions.reduce((sum, division) => sum + division.benchmark_system.daily_operations.daily_signed_fixture_target, 0),
+      runtime_status: "scheduler_required",
+      worker_processes_online_claimed: 0,
+      local_first: true,
+      network_default: "off",
+      paid_runs_default: "off",
+      never_self_release: true,
+    },
+    open_ai_alliance_watch: OFFICIAL_AI_ALLIANCE_WATCH,
+    safe_ai_training: SAFE_AI_TRAINING_CONTRACT,
+    trust_and_access: {
+      zero_breach_or_fraud_guaranteed: false,
+      raw_credentials_accepted: false,
+      credential_handling: "vault_reference_only",
+      preferred_identity: ["passkey", "OAuth PKCE", "short-lived service identity"],
+      universal_connector_lifecycle: UNIVERSAL_CONNECTOR_LIFECYCLE,
+      universal_control_claimed: false,
+      connector_health_and_scope_evidence_required: true,
     },
     model_program: {
       target_count: MODEL_BENCHMARK_TARGETS.length,
@@ -272,11 +383,15 @@ function report(program: ReturnType<typeof buildBuddySuccessProgram>) {
     `- Divisions tested: ${program.summary.divisions}`,
     `- Must-have division records: ${program.summary.division_must_have_updates}`,
     `- Division upgrade records: ${program.summary.division_upgrades}`,
+    `- Division capability records: ${program.summary.division_capabilities}`,
+    `- Logical daily benchmark worker slots: ${program.summary.daily_logical_benchmark_slots}`,
+    `- Divisions with complete production evidence: ${program.summary.production_ready_divisions}`,
     `- Model benchmark targets: ${program.summary.model_benchmark_targets}`,
     `- Referenced resource hosts cataloged: ${program.summary.referenced_resource_hosts}`,
     `- Resource hosts verified live: ${program.summary.verified_live_resource_hosts}`,
     "",
     "A resource mention is not a connection. A connector becomes verified live only after authentication, a least-privilege scope review, a health check, and recorded evidence.",
+    "Logical benchmark workers are governed work slots, not claims that background processes are online. A scheduler and compute runtime must be deployed before daily runs occur.",
     "",
   ].join("\n");
 }

@@ -72,10 +72,12 @@ import {
 } from "./open-model-lab-policy";
 import {
   createDefenseAssessment,
+  createDefensiveSecurityReviewPlan,
   createGitHubProfileConnectionPlan,
   createModelDiscoveryPlan,
   createOpenSourceUpgradePlan,
   defenseAssessmentRequestSchema,
+  defensiveSecurityReviewRequestSchema,
   githubProfileConnectionPlanRequestSchema,
   modelDiscoveryPlanRequestSchema,
   OPEN_SECURE_AI_DEFENSE_CATALOG,
@@ -91,6 +93,13 @@ import {
   ontologyPlanRequestSchema,
   successProfileRequestSchema,
 } from "./buddy-success-policy";
+import {
+  buildDivisionProductionRegistry,
+  capabilityGapRequestSchema,
+  createCapabilityGapPlan,
+  createDailyDivisionBenchmarkPlan,
+  dailyDivisionBenchmarkRequestSchema,
+} from "./division-production-policy";
 import {
   createDataImportPlan,
   createDataPackagePlan,
@@ -160,14 +169,18 @@ import {
 } from "./communication-behavior";
 import {
   analyzeJobOpportunity,
+  autonomousSalesPlanRequestSchema,
   buildWorkforceRegistry,
+  createAutonomousSalesPlan,
   createPaymentRoutingPlan,
   createProfessionalReviewPacket,
+  createSalesAcademyPlan,
   createServiceOpportunity,
   createVoiceSandboxPlan,
   jobOpportunityRequestSchema,
   paymentRoutingRequestSchema,
   professionalReviewRequestSchema,
+  salesAcademyRequestSchema,
   voiceSandboxRequestSchema,
 } from "./workforce-engine";
 
@@ -539,6 +552,26 @@ export async function registerRoutes(
     } catch (error) {
       if (error instanceof z.ZodError) return res.status(400).json(zodValidationError(error));
       res.status(400).json({ error: error instanceof Error ? error.message : "Voice sandbox plan failed." });
+    }
+  });
+
+  app.post("/api/buddy/workforce/sales-academy", (req, res) => {
+    try {
+      const request = salesAcademyRequestSchema.parse(req.body);
+      res.status(201).json(createSalesAcademyPlan(request));
+    } catch (error) {
+      if (error instanceof z.ZodError) return res.status(400).json(zodValidationError(error));
+      res.status(400).json({ error: error instanceof Error ? error.message : "Sales Academy plan failed." });
+    }
+  });
+
+  app.post("/api/buddy/workforce/autonomous-sales-plan", (req, res) => {
+    try {
+      const request = autonomousSalesPlanRequestSchema.parse(req.body);
+      res.status(201).json(createAutonomousSalesPlan(request));
+    } catch (error) {
+      if (error instanceof z.ZodError) return res.status(400).json(zodValidationError(error));
+      res.status(400).json({ error: error instanceof Error ? error.message : "Autonomous sales plan failed." });
     }
   });
 
@@ -3281,6 +3314,20 @@ Any improvements or fixes (optional, 1-2 bullet points max)`;
     }
   });
 
+  app.post("/api/buddy/open-secure-ai-defense/authorized-security-review", async (req, res) => {
+    const killSwitch = await storage.getSetting("kill_switch");
+    if ((killSwitch?.value as { enabled?: boolean } | undefined)?.enabled) {
+      return res.status(423).json({ message: "Authorized security review planning is locked by the kill switch" });
+    }
+    const parsed = defensiveSecurityReviewRequestSchema.safeParse(req.body);
+    if (!parsed.success) return res.status(400).json(zodValidationError(parsed.error));
+    try {
+      return res.status(201).json(createDefensiveSecurityReviewPlan(parsed.data));
+    } catch (error) {
+      return res.status(400).json({ error: error instanceof Error ? error.message : "Invalid authorized security review" });
+    }
+  });
+
   app.post("/api/buddy/open-secure-ai-defense/github-profile-plan", async (req, res) => {
     const killSwitch = await storage.getSetting("kill_switch");
     if ((killSwitch?.value as { enabled?: boolean } | undefined)?.enabled) {
@@ -3357,6 +3404,30 @@ Any improvements or fixes (optional, 1-2 bullet points max)`;
     const parsed = intentRequestSchema.safeParse(req.body);
     if (!parsed.success) return res.status(400).json(zodValidationError(parsed.error));
     return res.status(200).json(createIntentResult(parsed.data));
+  });
+
+  app.get("/api/buddy/divisions/production-registry", (_req, res) => {
+    return res.json(buildDivisionProductionRegistry());
+  });
+
+  app.post("/api/buddy/divisions/daily-benchmark-plan", (req, res) => {
+    const parsed = dailyDivisionBenchmarkRequestSchema.safeParse(req.body);
+    if (!parsed.success) return res.status(400).json(zodValidationError(parsed.error));
+    try {
+      return res.status(201).json(createDailyDivisionBenchmarkPlan(parsed.data));
+    } catch (error) {
+      return res.status(400).json({ error: error instanceof Error ? error.message : "Invalid daily benchmark plan" });
+    }
+  });
+
+  app.post("/api/buddy/divisions/capability-gap-plan", (req, res) => {
+    const parsed = capabilityGapRequestSchema.safeParse(req.body);
+    if (!parsed.success) return res.status(400).json(zodValidationError(parsed.error));
+    try {
+      return res.status(201).json(createCapabilityGapPlan(parsed.data));
+    } catch (error) {
+      return res.status(400).json({ error: error instanceof Error ? error.message : "Invalid capability gap plan" });
+    }
   });
 
   app.get("/api/buddy/repository-test-registry", (_req, res) => {

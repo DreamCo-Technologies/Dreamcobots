@@ -6,6 +6,7 @@ from __future__ import annotations
 import ast
 import json
 import sys
+import sysconfig
 from pathlib import Path
 from typing import Any
 
@@ -54,6 +55,23 @@ def scan_python_imports(files: list[Path]) -> tuple[set[str], list[str]]:
     return imports, syntax_errors
 
 
+def standard_library_roots() -> set[str]:
+    roots = set(getattr(sys, "stdlib_module_names", ()))
+    roots.update(sys.builtin_module_names)
+    roots.add("__future__")
+    stdlib_path = Path(sysconfig.get_path("stdlib"))
+    if not stdlib_path.is_dir():
+        return roots
+    for path in stdlib_path.iterdir():
+        if path.name in {"__pycache__", "site-packages"}:
+            continue
+        if path.is_file() and path.suffix in {".py", ".so"}:
+            roots.add(path.stem.split(".")[0])
+        elif path.is_dir() and (path / "__init__.py").exists():
+            roots.add(path.name)
+    return roots
+
+
 def audit_dependencies() -> dict[str, Any]:
     package = read_object(ROOT / "package.json")
     lock = read_object(ROOT / "package-lock.json")
@@ -78,7 +96,7 @@ def audit_dependencies() -> dict[str, Any]:
     imports, syntax_errors = scan_python_imports(files)
     errors.extend(syntax_errors)
     local_roots = local_python_roots()
-    stdlib = set(getattr(sys, "stdlib_module_names", ())) | {"__future__"}
+    stdlib = standard_library_roots()
     undeclared_python = sorted(imports - stdlib - local_roots)
     if undeclared_python:
         errors.append(

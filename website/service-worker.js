@@ -1,13 +1,13 @@
-const SHELL_CACHE = 'buddy-shell-v37';
-const RUNTIME_CACHE = 'buddy-runtime-v37';
+const SHELL_CACHE = 'buddy-shell-v39';
+const RUNTIME_CACHE = 'buddy-runtime-v39';
 const APP_SHELL = [
   './',
   './buddy.html',
   './buddy.css?v=28',
   './buddy.js?v=28',
   './success.html',
-  './success.css?v=1',
-  './success.js?v=1',
+  './success.css?v=2',
+  './success.js?v=3',
   './robot-avatar.js?v=1',
   './search.html',
   './dream-search.css',
@@ -46,7 +46,7 @@ const APP_SHELL = [
   './test-center.html',
   './test-center.css',
   './test-center.js',
-  './styles.css',
+  './styles.css?v=39',
   './nav.js',
   './manifest.webmanifest',
   './data/buddy-routing-index.js',
@@ -55,7 +55,7 @@ const APP_SHELL = [
   './data/buddy-model-benchmarks.js',
   './data/buddy-open-model-coding-lab.js',
   './data/buddy-open-secure-ai-defense.js',
-  './data/buddy-success-program.js?v=1',
+  './data/buddy-success-program.js?v=2',
   './data/repository-test-registry.json',
   './data/buddy-fleet-quality-program.js',
   './data/buddy-capability-certifications.js',

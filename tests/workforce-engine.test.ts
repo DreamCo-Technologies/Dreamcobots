@@ -6,8 +6,10 @@ import {
   analyzeJobOpportunity,
   buildSyntheticJobFixtures,
   buildWorkforceRegistry,
+  createAutonomousSalesPlan,
   createPaymentRoutingPlan,
   createProfessionalReviewPacket,
+  createSalesAcademyPlan,
   createServiceOpportunity,
   createVoiceSandboxPlan,
   jobOpportunityRequestSchema,
@@ -115,4 +117,57 @@ test("outbound and recorded voice simulations require consent references", () =>
     script: "Identify Buddy as an AI and practice an internal recorded call flow.",
     recordingEnabled: true,
   }), /recording consent/);
+});
+
+test("Sales Academy uses synthetic buyers and an evidence-based coaching scorecard", () => {
+  const plan = createSalesAcademyPlan({
+    ownerUserId: "owner-1",
+    productOrService: "Owner-controlled website accessibility review",
+    targetCustomer: "Small business owner with an existing public website",
+    channel: "video_call",
+    experienceLevel: "new",
+    scenario: "discovery",
+    jurisdiction: "Illinois, US",
+    useSyntheticBuyer: true,
+    recordingEnabled: false,
+  });
+  assert.equal(plan.status, "synthetic_roleplay_ready");
+  assert.equal(plan.curriculum.length, 12);
+  assert.equal(plan.scorecard.length, 12);
+  assert.equal(plan.liveCustomerContacted, false);
+  assert.equal(plan.benchmark.permanentBestClaimed, false);
+});
+
+test("sales agents automate internal preparation but gate real outreach and calls", () => {
+  const researchOnly = createAutonomousSalesPlan({
+    ownerUserId: "owner-1",
+    offer: "A fixed-scope, evidence-backed website accessibility review.",
+    audience: "Owner-operated local businesses with a public website.",
+    leadSource: "public_business_directory",
+    channels: ["email", "voice"],
+    dailyContactCap: 20,
+    identityDisclosureEnabled: true,
+    suppressionLedgerEnabled: true,
+    externalOutreachRequested: true,
+    exactApprovalForFirstContact: true,
+  });
+  assert.equal(researchOnly.status, "recipient_permission_required");
+  assert.equal(researchOnly.executionPerformed, false);
+  assert.equal(researchOnly.externalStages.firstContactSent, false);
+  const consented = createAutonomousSalesPlan({
+    ownerUserId: "owner-1",
+    offer: "A fixed-scope, evidence-backed website accessibility review.",
+    audience: "Customers who explicitly requested a service consultation.",
+    leadSource: "recipient_opt_in",
+    channels: ["email", "voice"],
+    recipientPermissionReference: "consent:consultation-request-1",
+    dailyContactCap: 20,
+    identityDisclosureEnabled: true,
+    suppressionLedgerEnabled: true,
+    externalOutreachRequested: true,
+    exactApprovalForFirstContact: true,
+  });
+  assert.equal(consented.status, "configured_outbound_adapter_and_recipient_validation_required");
+  assert.equal(consented.controls.stopOnOptOut, true);
+  assert.equal(consented.earningsGuaranteed, false);
 });

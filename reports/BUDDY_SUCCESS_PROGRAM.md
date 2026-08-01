@@ -7,8 +7,12 @@ This program helps users define useful outcomes, inventory assets, validate oppo
 - Divisions tested: 45
 - Must-have division records: 4500
 - Division upgrade records: 4500
+- Division capability records: 4500
+- Logical daily benchmark worker slots: 360
+- Divisions with complete production evidence: 0
 - Model benchmark targets: 200
-- Referenced resource hosts cataloged: 231
+- Referenced resource hosts cataloged: 234
 - Resource hosts verified live: 0
 
 A resource mention is not a connection. A connector becomes verified live only after authentication, a least-privilege scope review, a health check, and recorded evidence.
+Logical benchmark workers are governed work slots, not claims that background processes are online. A scheduler and compute runtime must be deployed before daily runs occur.

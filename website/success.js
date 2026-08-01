@@ -1,7 +1,7 @@
 (function () {
   'use strict';
 
-  const program = window.BUDDY_SUCCESS_PROGRAM || { summary: {}, questionnaire: [], divisions: [], resource_inventory: { resources: [] }, model_program: { sources: [] }, weighted_ontology: { presets: {}, dimensions: [] } };
+  const program = window.BUDDY_SUCCESS_PROGRAM || { summary: {}, questionnaire: [], divisions: [], resource_inventory: { resources: [] }, model_program: { sources: [] }, weighted_ontology: { presets: {}, dimensions: [] }, daily_benchmark_operations: {}, open_ai_alliance_watch: { activeProjectWatch: [], benchmarkDimensions: [], memberDirectory: {} } };
   const byId = (id) => document.getElementById(id);
   const profileKey = 'buddy-success-profile-v1';
   const trackerKey = 'buddy-growth-tracker-v1';
@@ -229,15 +229,32 @@
     if (!division) return;
     const kind = byId('division-program-kind').value;
     const query = byId('division-program-search').value.trim().toLowerCase();
-    const definition = division[kind];
-    const rows = (program.improvement_templates[kind] || []).map((template) => ({
-      ...template,
-      id: `${definition.id_prefix}-${template.id}`,
-      objective: template.objective.replace('{division}', division.name),
-    })).filter((row) => !query || `${row.title} ${row.objective}`.toLowerCase().includes(query));
+    const definition = kind === 'division_capabilities' ? division.capabilities : division[kind];
+    const rows = (program.improvement_templates[kind] || []).map((template) => {
+      if (kind === 'division_capabilities') {
+        const focus = definition.focuses[template.focus_index];
+        return {
+          ...template,
+          id: `${definition.id_prefix}-${template.id}`,
+          title: template.title.replace('{focus}', focus),
+          objective: template.description.replace('{focus}', focus),
+        };
+      }
+      return {
+        ...template,
+        id: `${definition.id_prefix}-${template.id}`,
+        objective: template.objective.replace('{division}', division.name),
+      };
+    }).filter((row) => !query || `${row.title} ${row.objective}`.toLowerCase().includes(query));
     byId('division-name').textContent = division.name;
     byId('division-meta').textContent = `${division.profile_count} bot profiles · ${division.api_candidate_count} API candidates · ${division.top_categories.map((item) => item.name).join(', ')}`;
-    byId('division-benchmark-status').textContent = 'Benchmark fixtures are defined. Live competitor runs have not started and no permanent best-in-category claim is made.';
+    byId('division-purpose').textContent = division.charter.purpose;
+    byId('division-serves').textContent = division.charter.serves.join(', ');
+    byId('division-outcome').textContent = division.charter.intended_outcome;
+    byId('division-boundary').textContent = division.charter.professional_boundary;
+    byId('division-readiness').textContent = division.production_readiness.production_ready ? 'Production evidence passed' : 'Production evidence required';
+    byId('division-readiness-detail').textContent = `${division.production_readiness.gates.length} release gates · repository contract ${division.production_readiness.repository_contract_status.replaceAll('_', ' ')} · external runtime ${division.production_readiness.external_runtime_status.replaceAll('_', ' ')}`;
+    byId('division-benchmark-status').textContent = `${division.benchmark_system.daily_operations.logical_parallel_worker_slots} logical daily worker roles · ${division.benchmark_system.daily_operations.daily_signed_fixture_target} signed-fixture target · live competitor runs have not started.`;
     byId('division-program-count').textContent = `${rows.length} of 100 shown`;
     window.DREAMCO_ROBOT_AVATAR.renderInto(byId('division-robot'), { seed: division.robot_identity.deterministic_seed, division: division.name, category: division.top_categories[0]?.name || 'system' });
     const dimensions = byId('division-benchmark-dimensions'); dimensions.replaceChildren();
@@ -249,6 +266,28 @@
       const copy = document.createElement('div'); const heading = document.createElement('h4'); heading.textContent = row.title;
       const detail = document.createElement('p'); detail.textContent = row.objective; copy.append(heading, detail); article.append(number, copy); target.append(article);
     });
+  }
+
+  function renderDailyOperations() {
+    const daily = program.daily_benchmark_operations || {};
+    byId('daily-capabilities').textContent = Number(program.summary.division_capabilities || 0).toLocaleString();
+    byId('daily-worker-slots').textContent = Number(daily.logical_parallel_worker_slots || 0).toLocaleString();
+    byId('daily-fixtures').textContent = Number(daily.daily_signed_fixture_target || 0).toLocaleString();
+    byId('daily-production-ready').textContent = Number(program.summary.production_ready_divisions || 0).toLocaleString();
+    const roles = program.divisions[0]?.benchmark_system?.daily_operations?.worker_roles || [];
+    const target = byId('daily-worker-roles');
+    roles.forEach((role) => { const chip = document.createElement('span'); chip.textContent = role; target.append(chip); });
+  }
+
+  function renderAllianceWatch() {
+    const alliance = program.open_ai_alliance_watch;
+    if (!alliance) return;
+    byId('alliance-members-link').href = alliance.officialSources.members;
+    byId('alliance-summary').textContent = `${alliance.name} reports ${alliance.memberDirectory.reportedSize} members. Buddy discovers the exact current roster from the official directory at run time, benchmarks ${alliance.activeProjectWatch.length} active project lanes across ${alliance.benchmarkDimensions.length} dimensions, and claims no membership, endorsement, live connection, or completed live comparison.`;
+    const projects = byId('alliance-projects');
+    alliance.activeProjectWatch.forEach((name) => { const row = document.createElement('span'); row.textContent = name; projects.append(row); });
+    const dimensions = byId('alliance-dimensions');
+    alliance.benchmarkDimensions.forEach((name) => { const row = document.createElement('span'); row.textContent = name; dimensions.append(row); });
   }
 
   function renderModels() {
@@ -295,5 +334,5 @@
   byId('resource-search').addEventListener('input', renderResources);
   byId('resource-status').addEventListener('change', renderResources);
 
-  renderSummary(); renderQuestionnaire(); renderGrowthRecords(); renderOntology(); renderDivisionOptions(); renderModels(); renderResources();
+  renderSummary(); renderQuestionnaire(); renderGrowthRecords(); renderOntology(); renderDivisionOptions(); renderDailyOperations(); renderAllianceWatch(); renderModels(); renderResources();
 })();

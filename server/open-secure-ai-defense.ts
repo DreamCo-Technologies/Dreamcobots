@@ -94,10 +94,26 @@ export const openSourceUpgradePlanRequestSchema = z.object({
   exactApproval: z.boolean(),
 }).strict();
 
+export const defensiveSecurityReviewRequestSchema = z.object({
+  ownerProfileId: z.string().trim().min(3).max(96).regex(/^[A-Za-z0-9_.:-]+$/),
+  organizationName: z.string().trim().min(2).max(160),
+  targetKind: z.enum(["owned_web_app", "owned_api", "owned_repository", "owned_cloud_configuration", "owned_network"]),
+  targetReference: evidenceReference,
+  scope: z.array(z.string().trim().min(1).max(300)).min(1).max(100),
+  mode: z.enum(["passive_review", "safe_active_validation"]).default("passive_review"),
+  ownerConfirmsAuthority: z.boolean(),
+  authorizationReference: evidenceReference,
+  productionTarget: z.boolean().default(false),
+  maintenanceWindowReference: evidenceReference.optional(),
+  exactApprovalForSafeActiveChecks: z.boolean().default(false),
+  rateLimitRequestsPerMinute: z.number().int().min(1).max(120).default(30),
+}).strict();
+
 export type DefenseAssessmentRequest = z.infer<typeof defenseAssessmentRequestSchema>;
 export type GitHubProfileConnectionPlanRequest = z.infer<typeof githubProfileConnectionPlanRequestSchema>;
 export type ModelDiscoveryPlanRequest = z.infer<typeof modelDiscoveryPlanRequestSchema>;
 export type OpenSourceUpgradePlanRequest = z.infer<typeof openSourceUpgradePlanRequestSchema>;
+export type DefensiveSecurityReviewRequest = z.infer<typeof defensiveSecurityReviewRequestSchema>;
 
 function unique<T>(items: T[]) {
   return [...new Set(items)];
@@ -345,6 +361,71 @@ export function createOpenSourceUpgradePlan(input: OpenSourceUpgradePlanRequest)
     draftPullRequestOnly: true,
     automaticMerge: false,
     automaticPublish: false,
+    executionPerformed: false,
+  } as const;
+}
+
+export function createDefensiveSecurityReviewPlan(input: DefensiveSecurityReviewRequest) {
+  const request = defensiveSecurityReviewRequestSchema.parse(input);
+  if (!request.ownerConfirmsAuthority) {
+    throw new Error("The asset owner or authorized administrator must confirm testing authority.");
+  }
+  if (request.mode === "safe_active_validation" && !request.exactApprovalForSafeActiveChecks) {
+    throw new Error("Safe active checks require exact approval for this assessment.");
+  }
+  if (request.productionTarget && request.mode === "safe_active_validation" && !request.maintenanceWindowReference) {
+    throw new Error("Production safe-active checks require a documented maintenance window.");
+  }
+  const reviewId = `security-review-${createHash("sha256")
+    .update([request.ownerProfileId, request.organizationName, request.targetKind, request.targetReference, ...request.scope].join("|"))
+    .digest("hex")
+    .slice(0, 16)}`;
+  return {
+    schema: "dreamco.defensive_security_review_plan.v1",
+    reviewId,
+    status: request.mode === "passive_review" ? "passive_review_ready" : "isolated_runner_and_monitoring_required",
+    organizationName: request.organizationName,
+    target: {
+      kind: request.targetKind,
+      reference: request.targetReference,
+      scope: unique(request.scope),
+      production: request.productionTarget,
+    },
+    authorization: {
+      authorityConfirmed: true,
+      evidenceReference: request.authorizationReference,
+      exactSafeActiveApproval: request.exactApprovalForSafeActiveChecks,
+      maintenanceWindowReference: request.maintenanceWindowReference ?? null,
+    },
+    allowedChecks: [
+      "security headers, TLS, and public configuration",
+      "dependency, lockfile, SBOM, and known-vulnerability review",
+      "secret scanning against redacted repository material",
+      "authentication and authorization design review",
+      "synthetic-account access-control fixtures",
+      "rate-limit and abuse-control configuration review",
+      "logging, backup, recovery, and incident-readiness review",
+      "safe input-validation fixtures with no persistence",
+    ],
+    prohibitedChecks: [
+      "credential guessing, password spraying, or phishing",
+      "destructive payloads or data modification",
+      "denial of service or resource exhaustion",
+      "persistence, malware, evasion, or lateral movement",
+      "testing third-party assets outside written scope",
+      "accessing real customer data or private communications",
+    ],
+    controls: {
+      maximumRequestsPerMinute: request.rateLimitRequestsPerMinute,
+      rawCredentialsAccepted: false,
+      syntheticAccountsOnly: true,
+      stopOnUnexpectedAccess: true,
+      evidenceRedactionRequired: true,
+      ownerVisibleAuditLogRequired: true,
+      emergencyStopRequired: true,
+    },
+    reportPurpose: "Show verified security gaps and practical remediation priorities without fear-based or guaranteed-security claims.",
+    zeroBreachGuaranteed: false,
     executionPerformed: false,
   } as const;
 }

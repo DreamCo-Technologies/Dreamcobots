@@ -11,11 +11,12 @@ const context = { window: {} };
 vm.runInNewContext(dataSource, context);
 const program = context.window.BUDDY_SUCCESS_PROGRAM;
 
-test('Success Center exposes profile, tracker, ontology, division, model, and resource controls', () => {
+test('Success Center exposes profile, tracker, production, alliance, trust, model, and resource controls', () => {
   for (const id of [
     'success-profile-form', 'success-questionnaire', 'profile-share', 'growth-record-form', 'growth-title',
     'tracker-export', 'ontology-form', 'ontology-presets', 'division-program-select', 'division-improvement-list',
-    'model-source-list', 'resource-search', 'resource-list',
+    'division-purpose', 'division-readiness', 'daily-capabilities', 'daily-worker-roles',
+    'alliance-summary', 'alliance-projects', 'alliance-dimensions', 'model-source-list', 'resource-search', 'resource-list',
   ]) {
     assert.match(html, new RegExp(`id=["']${id}["']`), `missing #${id}`);
     assert.match(script, new RegExp(`byId\\(["']${id}["']\\)`), `unbound #${id}`);
@@ -32,10 +33,24 @@ test('generated success program is complete and honest', () => {
   assert.equal(program.divisions.length, 45);
   assert.equal(program.summary.division_must_have_updates, 4500);
   assert.equal(program.summary.division_upgrades, 4500);
+  assert.equal(program.summary.division_capabilities, 4500);
+  assert.equal(program.summary.daily_logical_benchmark_slots, 360);
+  assert.equal(program.summary.production_ready_divisions, 0);
   assert.equal(program.summary.model_benchmark_targets, 200);
   assert.equal(program.truth_contract.millionaire_outcome_guaranteed, false);
   assert.equal(program.truth_contract.external_resource_reference_means_connected, false);
   assert.equal(program.summary.verified_live_resource_hosts, 0);
+  assert.equal(program.open_ai_alliance_watch.memberDirectory.verifiedMemberConnections, 0);
+  assert.equal(program.open_ai_alliance_watch.endorsementClaimed, false);
+  assert.equal(program.trust_and_access.zero_breach_or_fraud_guaranteed, false);
+});
+
+test('capability program selector maps to each division capability contract', () => {
+  assert.match(script, /kind === 'division_capabilities' \? division\.capabilities : division\[kind\]/);
+  for (const division of program.divisions) {
+    assert.equal(division.capabilities.count, 100);
+    assert.equal(division.capabilities.focuses.length, 10);
+  }
 });
 
 test('Success Center uses stable responsive layouts', () => {

@@ -52,6 +52,13 @@
 .division-summary p { margin: 0; color: #9ea8b5; font-size: .8rem; }
 .division-robot { width: 76px; height: 76px; flex: 0 0 auto; }
 .division-robot canvas { width: 100%; height: 100%; display: block; }
+.division-charter { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1px; margin: 18px 0; background: #30343d; border: 1px solid #30343d; }
+.division-charter > div { min-width: 0; padding: 14px; background: #11141a; }
+.division-charter span, .trust-grid article > span { color: #68cfda; font-size: .68rem; font-weight: 800; text-transform: uppercase; }
+.division-charter p { margin: 6px 0 0; color: #c4ccd6; line-height: 1.5; font-size: .8rem; }
+.readiness-strip { display: flex; justify-content: space-between; gap: 14px; align-items: center; padding: 11px 13px; margin-bottom: 16px; border-left: 3px solid var(--success-gold); background: #171a20; }
+.readiness-strip strong { font-size: .78rem; }
+.readiness-strip span { color: #9ca6b2; font-size: .72rem; text-align: right; }
 .benchmark-dimensions { display: flex; flex-wrap: wrap; gap: 7px; margin-bottom: 18px; }
 .benchmark-dimensions span { border: 1px solid #39414b; border-radius: 999px; padding: 6px 9px; color: #c8d0d9; font-size: .7rem; }
 .improvement-list { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1px 18px; max-height: 640px; overflow: auto; border-top: 1px solid #30343d; }
@@ -65,14 +72,32 @@
 .model-source-row span, .resource-row span { color: #98a3af; font-size: .74rem; }
 .resource-list { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 24px; max-height: 620px; overflow: auto; }
 .resource-status { color: #d7ad58 !important; text-transform: uppercase; font: 600 .66rem "JetBrains Mono", monospace !important; }
+.production-metrics { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); margin: 22px 0; border: 1px solid #30343d; }
+.production-metrics > div { min-width: 0; padding: 16px; border-right: 1px solid #30343d; }
+.production-metrics > div:last-child { border-right: 0; }
+.production-metrics span { display: block; min-height: 30px; color: #98a3af; font-size: .72rem; }
+.production-metrics strong { display: block; margin-top: 5px; font-size: 1.35rem; }
+.trust-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; margin-top: 20px; }
+.trust-grid article { min-width: 0; padding: 16px; border: 1px solid #343a44; border-radius: 6px; background: #12151b; }
+.trust-grid h3 { margin: 6px 0 8px; font-size: .95rem; }
+.trust-grid p { margin: 0; color: #a7b0bc; font-size: .77rem; line-height: 1.55; }
+.trust-grid a { display: inline-block; margin-top: 13px; color: #72d3de; font-size: .76rem; font-weight: 700; }
+.alliance-columns { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 28px; margin-top: 22px; }
+.alliance-columns h3 { margin: 0 0 10px; font-size: .92rem; }
+.alliance-list { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1px; background: #30343d; border: 1px solid #30343d; }
+.alliance-list span { min-width: 0; padding: 10px; background: #12151b; color: #c1cad4; font-size: .72rem; line-height: 1.4; }
 @media (max-width: 800px) {
   .success-shell { width: min(100% - 22px, 1180px); padding-top: 18px; }
   .success-header { align-items: flex-start; flex-direction: column; }
   .success-header h1 { font-size: 2rem; }
   .success-metrics, .tracker-metrics { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .success-metrics div, .tracker-metrics div { border-bottom: 1px solid #30343d; }
-  .questionnaire-grid, .growth-form, .ontology-weights, .improvement-list, .model-source-list, .resource-list { grid-template-columns: 1fr; }
+  .questionnaire-grid, .growth-form, .ontology-weights, .improvement-list, .model-source-list, .resource-list, .division-charter, .alliance-columns, .alliance-list, .trust-grid { grid-template-columns: 1fr; }
   .division-controls, .resource-controls { grid-template-columns: 1fr; }
+  .production-metrics { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .production-metrics > div { border-bottom: 1px solid #30343d; }
+  .readiness-strip { align-items: flex-start; flex-direction: column; }
+  .readiness-strip span { text-align: left; }
   .ontology-weight { grid-template-columns: 110px minmax(0, 1fr) 42px; }
   .success-section-heading { align-items: flex-start; flex-direction: column; }
 }
