@@ -3,21 +3,22 @@ import test from "node:test";
 
 import {
   createModelBenchmarkPlan,
+  getModelBenchmarkEncyclopedia,
   gradeDeterministicBenchmarkOutput,
   MODEL_BENCHMARK_SUITE_IDS,
   runModelCatalogAudit,
 } from "../server/model-benchmark-policy";
 
-test("the benchmark catalog audits 200 curated and discovery targets without pretending to call them", () => {
+test("the benchmark catalog audits 500 curated and discovery targets without pretending to call them", () => {
   const audit = runModelCatalogAudit();
-  assert.equal(audit.targets, 200);
+  assert.equal(audit.targets, 500);
   assert.equal(audit.failed, 0);
   assert.equal(audit.liveModelsCalled, 0);
 });
 
 test("dynamic discovery targets stop at official catalog discovery", () => {
   const plan = createModelBenchmarkPlan({
-    targetIds: [101, 150, 200],
+    targetIds: [101, 300, 500],
     suiteIds: ["instruction_following"],
     repetitions: 1,
     maxBudgetUsd: 0,
@@ -28,6 +29,20 @@ test("dynamic discovery targets stop at official catalog discovery", () => {
   assert.equal(plan.discoveryTargetCount, 3);
   assert.ok(plan.targets.every((target) => target.discoveryTarget));
   assert.equal(plan.liveBenchmarkExecuted, false);
+});
+
+test("the encyclopedia exposes issue traceability, truth controls, and per-target prompt fixtures", () => {
+  const catalog = getModelBenchmarkEncyclopedia() as {
+    summary: { targets: number };
+    issueRefs: number[];
+    truthContract: { routingRankMeansPermanentBest: boolean };
+    targets: Array<{ promptLibrary: unknown[]; evidenceProfile: unknown }>;
+  };
+  assert.equal(catalog.summary.targets, 500);
+  assert.deepEqual(catalog.issueRefs, [363, 424, 427, 428]);
+  assert.equal(catalog.truthContract.routingRankMeansPermanentBest, false);
+  assert.ok(catalog.targets.every((target) => target.promptLibrary.length >= 4));
+  assert.ok(catalog.targets.every((target) => Boolean(target.evidenceProfile)));
 });
 
 test("paid live benchmark plans stop at budget and approval gates", () => {

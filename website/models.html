@@ -4,11 +4,11 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Buddy Model Benchmark Lab | DreamCo</title>
-  <meta name="description" content="Audit 200 curated and official-discovery AI targets and prepare evidence-based, budget-gated live model benchmarks with Buddy." />
+  <meta name="description" content="Route tasks across 500 curated and official-discovery AI targets and prepare evidence-based, budget-gated model benchmarks with Buddy." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="styles.css?v=40" />
-  <link rel="stylesheet" href="models.css?v=3" />
+  <link rel="stylesheet" href="models.css?v=4" />
 </head>
 <body class="model-lab-page">
 <div id="nav-placeholder"></div><script src="nav.js"></script>
@@ -18,20 +18,57 @@
     <div>
       <p class="model-lab-eyebrow">Evidence before rankings</p>
       <h1>Buddy Model Benchmark Lab</h1>
-      <p>Compare 100 curated targets plus 100 official-catalog discovery lanes with repeatable fixtures, visible costs, and no invented scores.</p>
+      <p>Compare 100 curated targets plus 400 official-catalog discovery lanes with repeatable fixtures, visible approval gates, and no invented scores.</p>
     </div>
     <div class="model-header-actions">
       <a class="btn btn-outline btn-sm" href="open-model-lab.html">Open weights and source</a>
       <a class="btn btn-outline btn-sm" href="buddy.html?prompt=Refresh%20the%20model%20benchmark%20catalog%20from%20official%20provider%20model%20lists.%20Show%20changes%2C%20deprecations%2C%20costs%2C%20and%20ask%20before%20any%20paid%20test.">Ask Buddy to refresh</a>
+      <button id="export-model-json" class="btn btn-outline btn-sm" type="button">Export JSON</button>
+      <button id="export-model-csv" class="btn btn-outline btn-sm" type="button">Export CSV</button>
     </div>
   </header>
 
   <section class="model-metrics" aria-label="Benchmark catalog summary">
-    <div><span>Targets</span><strong id="metric-targets">200</strong></div>
+    <div><span>Targets</span><strong id="metric-targets">500</strong></div>
     <div><span>Providers</span><strong id="metric-providers">0</strong></div>
     <div><span>Test suites</span><strong id="metric-suites">0</strong></div>
     <div><span>Live evidence</span><strong id="metric-live">0</strong></div>
     <div><span>Catalog review</span><strong id="metric-review">Loading</strong></div>
+  </section>
+
+  <section class="model-router-workspace" aria-labelledby="model-router-title">
+    <header>
+      <div>
+        <p class="model-lab-eyebrow">Task-aware routing</p>
+        <h2 id="model-router-title">Ask Buddy which systems fit the work</h2>
+        <p>Rank candidates from declared catalog metadata, then verify the shortlist with signed fixtures before production use.</p>
+      </div>
+      <span class="router-truth-badge">No provider calls</span>
+    </header>
+    <form id="model-route-form" class="model-route-form">
+      <label class="model-route-objective" for="model-route-objective">Task
+        <textarea id="model-route-objective" rows="3" maxlength="2000" required placeholder="Example: Debug a private TypeScript repository and produce tested fixes without sending source code to a paid provider."></textarea>
+      </label>
+      <label for="model-route-capabilities">Required capabilities
+        <input id="model-route-capabilities" type="text" maxlength="500" placeholder="coding, code repair, privacy" />
+      </label>
+      <label for="model-route-tier">Access preference
+        <select id="model-route-tier"><option value="free">Free first</option><option value="any">Any tier</option><option value="premium">Premium candidates</option></select>
+      </label>
+      <label for="model-route-count">Shortlist size
+        <select id="model-route-count"><option value="3">3</option><option value="5" selected>5</option><option value="8">8</option><option value="12">12</option></select>
+      </label>
+      <div class="model-priority-grid" aria-label="Routing priorities">
+        <label for="model-priority-quality">Quality evidence <input id="model-priority-quality" type="range" min="0" max="1" value="0.7" step="0.1" /></label>
+        <label for="model-priority-cost">Cost <input id="model-priority-cost" type="range" min="0" max="1" value="0.8" step="0.1" /></label>
+        <label for="model-priority-latency">Latency <input id="model-priority-latency" type="range" min="0" max="1" value="0.5" step="0.1" /></label>
+        <label for="model-priority-privacy">Privacy <input id="model-priority-privacy" type="range" min="0" max="1" value="0.7" step="0.1" /></label>
+      </div>
+      <label class="model-check"><input id="model-route-discovery" type="checkbox" checked /> Include official-catalog discovery lanes.</label>
+      <button class="btn btn-primary" type="submit">Build shortlist</button>
+    </form>
+    <p id="model-route-status" class="model-status" aria-live="polite">Describe a task to prepare a local routing comparison. A routing score measures metadata fit, not model quality.</p>
+    <div id="model-route-results" class="model-route-results" hidden></div>
   </section>
 
   <section class="model-lab-layout">
@@ -64,7 +101,7 @@
         <p>Benchmark control</p>
         <h2 id="runner-title">Prepare a fair run</h2>
       </div>
-      <div class="model-selection-summary"><strong id="selected-count">200</strong><span>targets selected</span></div>
+      <div class="model-selection-summary"><strong id="selected-count">500</strong><span>targets selected</span></div>
 
       <fieldset class="model-suite-list">
         <legend>Suites</legend>
@@ -109,13 +146,13 @@
       <div>
         <p class="model-lab-eyebrow">Organizations, tools, and user jobs</p>
         <h2 id="organization-title">AI Organization Intelligence</h2>
-        <p>Combine Buddy's existing 200 targets with the official Alliance directory. Membership, declared strengths, inferred research categories, connections, and live benchmark evidence remain visibly separate.</p>
+        <p>Combine Buddy's existing 500 targets with the official Alliance directory. Membership, declared strengths, inferred research categories, connections, and live benchmark evidence remain visibly separate.</p>
       </div>
       <a class="btn btn-outline btn-sm" href="https://thealliance.ai/members" target="_blank" rel="noopener">Official directory</a>
     </header>
 
     <div class="organization-metrics" aria-label="Organization catalog summary">
-      <div><span>Existing targets</span><strong id="org-existing-targets">200</strong></div>
+      <div><span>Existing targets</span><strong id="org-existing-targets">500</strong></div>
       <div><span>Existing providers</span><strong id="org-existing-providers">0</strong></div>
       <div><span>Alliance members</span><strong id="org-alliance-members">0</strong></div>
       <div><span>Organization records</span><strong id="org-records">0</strong></div>
@@ -179,8 +216,8 @@
   <div id="organization-detail-body"></div>
 </dialog>
 
-<script src="data/buddy-model-benchmarks.js?v=1"></script>
-<script src="data/ai-organization-intelligence.js?v=1"></script>
-<script src="models.js?v=2" defer></script>
+<script src="data/buddy-model-benchmarks.js?v=2"></script>
+<script src="data/ai-organization-intelligence.js?v=2"></script>
+<script src="models.js?v=4" defer></script>
 </body>
 </html>

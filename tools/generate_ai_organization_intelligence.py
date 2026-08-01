@@ -198,8 +198,9 @@ def apply_owner_branding_policy(member: dict[str, Any]) -> dict[str, Any]:
 
 def load_model_catalog() -> dict[str, Any]:
     value = json.loads(MODEL_CATALOG.read_text(encoding="utf-8"))
-    if value.get("summary", {}).get("targets") != 200 or len(value.get("targets", [])) != 200:
-        raise ValueError("The existing Buddy benchmark catalog must contain exactly 200 targets.")
+    declared_count = value.get("summary", {}).get("targets")
+    if not isinstance(declared_count, int) or declared_count < 100 or len(value.get("targets", [])) != declared_count:
+        raise ValueError("The Buddy benchmark catalog target count is missing or inconsistent.")
     return value
 
 
@@ -210,7 +211,7 @@ def group_existing_providers(model_catalog: dict[str, Any]) -> list[dict[str, An
         record = grouped.setdefault(key, {
             "id": f"provider-{slug(target['provider'])}",
             "name": target["provider"],
-            "source": "existing_200_target_catalog",
+            "source": "existing_model_target_catalog",
             "targetIds": [],
             "tools": [],
             "strengths": [],
@@ -283,7 +284,7 @@ def build_registry(members: list[dict[str, Any]], snapshot_date: str) -> dict[st
             "ownerBrandingRedactionsPreserveRecordCount": True,
         },
         "summary": {
-            "existingBenchmarkTargets": 200,
+            "existingBenchmarkTargets": model_catalog["summary"]["targets"],
             "existingProviders": len(providers),
             "allianceMembers": len(alliance_records),
             "allianceMembersMatchedToExistingProviders": matched,

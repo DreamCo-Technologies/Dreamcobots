@@ -6,9 +6,9 @@ import {
   loadOrganizationIntelligenceRegistry,
 } from "../server/organization-intelligence-policy";
 
-test("organization registry combines the existing 200 targets with the complete Alliance snapshot", () => {
+test("organization registry combines the existing 500 targets with the complete Alliance snapshot", () => {
   const registry = loadOrganizationIntelligenceRegistry();
-  assert.equal(registry.summary.existingBenchmarkTargets, 200);
+  assert.equal(registry.summary.existingBenchmarkTargets, 500);
   assert.ok(registry.summary.existingProviders >= 90);
   assert.ok(registry.summary.allianceMembers >= 190);
   assert.equal(registry.summary.organizationRecords, registry.existingProviders.length + registry.allianceMembers.length);

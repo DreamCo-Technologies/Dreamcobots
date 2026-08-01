@@ -491,6 +491,10 @@ def validate_site() -> dict[str, Any]:
         "model-search", "model-tier", "model-category", "select-visible", "clear-selection",
         "run-catalog-audit", "prepare-live-plan", "benchmark-budget", "benchmark-network",
         "benchmark-paid", "download-benchmark-plan", "model-detail", "model-detail-close",
+        "model-route-form", "model-route-objective", "model-route-capabilities", "model-route-tier",
+        "model-priority-quality", "model-priority-cost", "model-priority-latency", "model-priority-privacy",
+        "model-route-discovery", "model-route-status", "model-route-results",
+        "export-model-json", "export-model-csv",
     }
     if model_parser:
         for control_id in sorted(required_model_controls - model_parser.ids):

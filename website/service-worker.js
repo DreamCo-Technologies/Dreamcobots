@@ -1,5 +1,5 @@
-const SHELL_CACHE = 'buddy-shell-v43';
-const RUNTIME_CACHE = 'buddy-runtime-v43';
+const SHELL_CACHE = 'buddy-shell-v45';
+const RUNTIME_CACHE = 'buddy-runtime-v45';
 const APP_SHELL = [
   './',
   './buddy.html',
@@ -35,8 +35,8 @@ const APP_SHELL = [
   './data-control.css',
   './data-control.js?v=3',
   './models.html',
-  './models.css?v=3',
-  './models.js?v=2',
+  './models.css?v=4',
+  './models.js?v=4',
   './connections.html',
   './connections.js?v=4',
   './data/buddy-connection-catalog.json?v=2',
@@ -55,8 +55,8 @@ const APP_SHELL = [
   './data/buddy-routing-index.js',
   './data/dreamco-search-index.js',
   './data/buddy-model-router.js',
-  './data/buddy-model-benchmarks.js',
-  './data/ai-organization-intelligence.js?v=1',
+  './data/buddy-model-benchmarks.js?v=2',
+  './data/ai-organization-intelligence.js?v=2',
   './data/buddy-open-model-coding-lab.js',
   './data/buddy-open-secure-ai-defense.js',
   './data/buddy-success-program.js?v=2',

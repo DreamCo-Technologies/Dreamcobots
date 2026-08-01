@@ -58,9 +58,14 @@ import {
 } from "./device-action-policy";
 import {
   createModelBenchmarkPlan,
+  getModelBenchmarkEncyclopedia,
   modelBenchmarkPlanRequestSchema,
   runModelCatalogAudit,
 } from "./model-benchmark-policy";
+import {
+  buddyModelSelectionRequestSchema,
+  selectBuddyModelsForTask,
+} from "./buddy-model-policy";
 import {
   createOpenModelComparisonPlan,
   createRepositoryTrackingPlan,
@@ -3261,6 +3266,20 @@ Any improvements or fixes (optional, 1-2 bullet points max)`;
 
   app.get("/api/buddy/model-benchmarks/catalog-audit", (_req, res) => {
     res.json(runModelCatalogAudit());
+  });
+
+  app.get("/api/buddy/models/encyclopedia", (_req, res) => {
+    res.json(getModelBenchmarkEncyclopedia());
+  });
+
+  app.post("/api/buddy/models/select", async (req, res) => {
+    const killSwitch = await storage.getSetting("kill_switch");
+    if ((killSwitch?.value as { enabled?: boolean } | undefined)?.enabled) {
+      return res.status(423).json({ message: "Model selection planning is locked by the kill switch" });
+    }
+    const parsed = buddyModelSelectionRequestSchema.safeParse(req.body);
+    if (!parsed.success) return res.status(400).json(zodValidationError(parsed.error));
+    return res.status(201).json(selectBuddyModelsForTask(parsed.data));
   });
 
   app.post("/api/buddy/model-benchmarks/plan", async (req, res) => {

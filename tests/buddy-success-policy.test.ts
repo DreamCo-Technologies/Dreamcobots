@@ -82,8 +82,8 @@ test("all 45 divisions receive charters, 100 capabilities, production gates, and
   assert.equal(program.summary.division_capabilities, 4500);
   assert.equal(program.summary.daily_logical_benchmark_slots, 360);
   assert.equal(program.summary.production_ready_divisions, 0);
-  assert.equal(program.summary.model_benchmark_targets, 200);
-  assert.equal(program.summary.ai_organization_records, 290);
+  assert.equal(program.summary.model_benchmark_targets, 500);
+  assert.equal(program.summary.ai_organization_records, 296);
   assert.equal(program.summary.alliance_directory_members, 196);
   assert.equal(program.summary.robot_division_archetypes, 45);
   assert.equal(program.improvement_templates.must_have_updates.length, 100);

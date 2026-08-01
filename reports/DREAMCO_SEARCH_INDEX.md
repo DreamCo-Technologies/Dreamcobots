@@ -4,12 +4,12 @@ DreamSearch is a generated, local-first index. It does not claim live internet r
 
 ## Inventory
 
-- Search documents: 2,060
+- Search documents: 2,366
 - Bot profiles: 1,051
 - Searchable bot capability terms: 8,408
 - Divisions: 45
-- Model reference records: 200
-- Organization intelligence records: 290
+- Model reference records: 500
+- Organization intelligence records: 296
 - Provider reference records: 200
 - Public pages: 41
 - Live web results claimed: 0
@@ -20,8 +20,8 @@ DreamSearch is a generated, local-first index. It does not claim live internet r
 | capability | 17 |
 | division | 45 |
 | library | 6 |
-| model | 200 |
-| organization | 290 |
+| model | 500 |
+| organization | 296 |
 | page | 41 |
 | provider | 200 |
 | roadmap | 200 |

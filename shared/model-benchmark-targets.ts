@@ -15,6 +15,8 @@ export type ModelBenchmarkTarget = {
   developerRegion: string;
 };
 
+export const MODEL_BENCHMARK_TARGET_COUNT = 500;
+
 export const OFFICIAL_MODEL_DISCOVERY_SOURCES = [
   { provider: "OpenAI", catalog: "https://developers.openai.com/api/docs/models", region: "United States" },
   { provider: "Google", catalog: "https://ai.google.dev/gemini-api/docs/models", region: "United States" },
@@ -26,6 +28,16 @@ export const OFFICIAL_MODEL_DISCOVERY_SOURCES = [
   { provider: "Baidu", catalog: "https://cloud.baidu.com/doc/qianfan/index.html", region: "China" },
   { provider: "Mistral AI", catalog: "https://docs.mistral.ai/models/overview", region: "France" },
   { provider: "Ollama", catalog: "https://ollama.com/library", region: "Global" },
+  { provider: "NVIDIA", catalog: "https://docs.nvidia.com/nim/", region: "United States" },
+  { provider: "Cohere", catalog: "https://docs.cohere.com/v1/docs/models", region: "Canada" },
+  { provider: "xAI", catalog: "https://docs.x.ai/developers/models", region: "United States" },
+  { provider: "Groq", catalog: "https://console.groq.com/docs/models", region: "United States" },
+  { provider: "Together AI", catalog: "https://docs.together.ai/docs/serverless/models", region: "United States" },
+  { provider: "Fireworks AI", catalog: "https://docs.fireworks.ai/models/overview", region: "United States" },
+  { provider: "Cerebras", catalog: "https://inference-docs.cerebras.ai/models/overview", region: "United States" },
+  { provider: "Replicate", catalog: "https://replicate.com/docs/topics/models/official-models", region: "United States" },
+  { provider: "Stability AI", catalog: "https://platform.stability.ai/docs/", region: "United Kingdom" },
+  { provider: "Black Forest Labs", catalog: "https://docs.bfl.ai/release-notes", region: "Germany" },
 ] as const;
 
 export const MODEL_DISCOVERY_TASKS = [
@@ -35,10 +47,20 @@ export const MODEL_DISCOVERY_TASKS = [
   "Agents",
   "Vision",
   "Image Generation",
+  "Image Editing",
   "Video",
-  "Voice and Audio",
-  "Multilingual",
-  "Safety",
+  "Voice and Speech",
+  "Music and Audio",
+  "Multilingual and Translation",
+  "Safety and Moderation",
+  "OCR and Documents",
+  "Search and Retrieval",
+  "Data Analysis",
+  "Embeddings",
+  "Forecasting",
+  "Simulation",
+  "3D and Spatial",
+  "Accessibility",
 ] as const;
 
 const curatedTargets: ModelBenchmarkTarget[] = AI_MODELS.map((model) => ({
@@ -80,6 +102,6 @@ const discoveryTargets: ModelBenchmarkTarget[] = OFFICIAL_MODEL_DISCOVERY_SOURCE
 
 export const MODEL_BENCHMARK_TARGETS = [...curatedTargets, ...discoveryTargets];
 
-if (MODEL_BENCHMARK_TARGETS.length !== 200) {
-  throw new Error(`Expected 200 model benchmark targets, found ${MODEL_BENCHMARK_TARGETS.length}`);
+if (MODEL_BENCHMARK_TARGETS.length !== MODEL_BENCHMARK_TARGET_COUNT) {
+  throw new Error(`Expected ${MODEL_BENCHMARK_TARGET_COUNT} model benchmark targets, found ${MODEL_BENCHMARK_TARGETS.length}`);
 }

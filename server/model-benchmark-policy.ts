@@ -1,3 +1,6 @@
+import { readFileSync } from "node:fs";
+import { resolve } from "node:path";
+
 import { z } from "zod";
 
 import { MODEL_BENCHMARK_TARGETS } from "@shared/model-benchmark-targets";
@@ -18,7 +21,7 @@ export const MODEL_BENCHMARK_SUITE_IDS = [
 ] as const;
 
 export const modelBenchmarkPlanRequestSchema = z.object({
-  targetIds: z.array(z.number().int().min(1).max(10_000)).min(1).max(200),
+  targetIds: z.array(z.number().int().min(1).max(10_000)).min(1).max(500),
   suiteIds: z.array(z.enum(MODEL_BENCHMARK_SUITE_IDS)).min(1).max(MODEL_BENCHMARK_SUITE_IDS.length),
   repetitions: z.number().int().min(1).max(3).default(1),
   maxBudgetUsd: z.number().min(0).max(10_000).default(0),
@@ -27,6 +30,12 @@ export const modelBenchmarkPlanRequestSchema = z.object({
 }).strict();
 
 export type ModelBenchmarkPlanRequest = z.infer<typeof modelBenchmarkPlanRequestSchema>;
+
+export function getModelBenchmarkEncyclopedia(
+  path = resolve(process.cwd(), "config", "generated", "buddy_model_benchmarks.json"),
+) {
+  return JSON.parse(readFileSync(path, "utf8")) as Record<string, unknown>;
+}
 
 export function runModelCatalogAudit() {
   const targets = MODEL_BENCHMARK_TARGETS.map((model) => {

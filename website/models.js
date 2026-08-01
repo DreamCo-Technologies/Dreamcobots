@@ -15,6 +15,29 @@
   let latestPlan = null;
   let latestOrganizationPlan = null;
 
+  const routingSignals = [
+    ['coding', ['code', 'coding', 'debug', 'software', 'app', 'website', 'repository', 'test']],
+    ['reasoning', ['reason', 'math', 'logic', 'decide', 'compare', 'analyze']],
+    ['research', ['research', 'find sources', 'cite', 'citation', 'literature', 'fact check', 'evidence']],
+    ['agents', ['agent', 'tool', 'workflow', 'automate', 'autonomous']],
+    ['vision', ['vision', 'screenshot', 'inspect image']],
+    ['image generation', ['generate image', 'create image', 'illustration', 'logo', 'art']],
+    ['image editing', ['edit image', 'photo edit', 'retouch', 'inpaint', 'photoshop']],
+    ['video', ['video', 'movie', 'film', 'animation', 'short']],
+    ['voice and speech', ['voice', 'speech', 'transcribe', 'narrate', 'call']],
+    ['music and audio', ['music', 'song', 'audio', 'sing', 'rap']],
+    ['multilingual and translation', ['translate', 'translation', 'multilingual', 'localize', 'language']],
+    ['safety and moderation', ['safety', 'moderate', 'guardrail', 'risk', 'policy']],
+    ['ocr and documents', ['ocr', 'document', 'pdf', 'scan', 'extract']],
+    ['search and retrieval', ['retrieve', 'retrieval', 'knowledge base', 'search', 'rag']],
+    ['data analysis', ['data', 'analytics', 'spreadsheet', 'chart', 'sql']],
+    ['embeddings', ['embedding', 'vector', 'semantic']],
+    ['forecasting', ['forecast', 'predict', 'time series']],
+    ['simulation', ['simulation', 'simulate', 'game', 'digital twin']],
+    ['3d and spatial', ['3d', 'spatial', 'world', 'scene', 'modeling']],
+    ['accessibility', ['accessibility', 'accessible', 'caption', 'screen reader']],
+  ];
+
   const byId = (id) => document.getElementById(id);
   const escapeHtml = (value) => String(value)
     .replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;')
@@ -54,6 +77,80 @@
       label.append(input, document.createTextNode(suite.label));
       target.append(label);
     });
+  }
+
+  function targetText(target) {
+    return [target.name, target.provider, target.category, target.bestFor, ...target.declaredCapabilities].join(' ').toLowerCase();
+  }
+
+  function downloadFile(filename, content, type) {
+    const blob = new Blob([content], { type });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url; link.download = filename; link.click();
+    URL.revokeObjectURL(url);
+  }
+
+  function exportCatalogJson() {
+    downloadFile('buddy-ai-systems-encyclopedia.json', JSON.stringify(data, null, 2), 'application/json');
+  }
+
+  function exportCatalogCsv() {
+    const headers = ['id', 'name', 'provider', 'category', 'tier', 'discovery_target', 'official_catalog', 'declared_task_fit', 'live_score'];
+    const rows = targets.map((target) => [target.id, target.name, target.provider, target.category, target.tier, target.discoveryTarget, target.officialCatalog || '', target.bestFor, target.liveScore ?? '']);
+    const csv = [headers, ...rows].map((row) => row.map((value) => `"${String(value).replaceAll('"', '""')}"`).join(',')).join('\n');
+    downloadFile('buddy-ai-systems-encyclopedia.csv', `${csv}\n`, 'text/csv');
+  }
+
+  function prepareModelRoute(event) {
+    event.preventDefault();
+    const objective = byId('model-route-objective').value.trim();
+    if (objective.length < 3) return;
+    const capabilities = byId('model-route-capabilities').value.split(',').map((value) => value.trim().toLowerCase()).filter(Boolean);
+    const tier = byId('model-route-tier').value;
+    const maxCandidates = Number(byId('model-route-count').value);
+    const includeDiscovery = byId('model-route-discovery').checked;
+    const priorities = {
+      quality: Number(byId('model-priority-quality').value),
+      cost: Number(byId('model-priority-cost').value),
+      latency: Number(byId('model-priority-latency').value),
+      privacy: Number(byId('model-priority-privacy').value),
+    };
+    const requestText = `${objective} ${capabilities.join(' ')}`.toLowerCase();
+    const signals = routingSignals.filter(([, terms]) => terms.some((term) => requestText.includes(term))).map(([id]) => id);
+    if (!signals.length) signals.push('reasoning');
+    const scored = targets.filter((target) => includeDiscovery || !target.discoveryTarget).map((target) => {
+      const searchable = targetText(target);
+      const matchedSignals = signals.filter((signal) => searchable.includes(signal));
+      const matchedCapabilities = capabilities.filter((capability) => searchable.includes(capability));
+      const isFree = target.tier === 'free';
+      const isPremium = ['paid', 'freemium'].includes(target.tier);
+      const tierFit = tier === 'any' || (tier === 'free' && isFree) || (tier === 'premium' && isPremium);
+      const local = ['dreamco', 'ollama'].includes(target.provider.toLowerCase().replace(/[^a-z0-9]/g, ''));
+      const objectiveTerms = [...new Set(objective.toLowerCase().split(/\W+/).filter((term) => term.length >= 4))];
+      const objectiveMatches = objectiveTerms.filter((term) => searchable.includes(term)).length;
+      const score = matchedSignals.length * 26 + matchedCapabilities.length * 12 + Math.min(10, objectiveMatches)
+        + (tierFit ? 8 : -8) + (target.discoveryTarget ? 0 : 4)
+        + (isFree ? priorities.cost * 8 : -priorities.cost * 3)
+        + (local ? priorities.privacy * 10 + priorities.latency * 3 : 0);
+      const coverage = Math.min(1, 0.25 + (matchedSignals.length ? 0.3 : 0)
+        + (capabilities.length ? (matchedCapabilities.length / capabilities.length) * 0.3 : 0.15)
+        + (target.discoveryTarget ? 0 : 0.15));
+      return { target, score, coverage, matchedSignals, matchedCapabilities };
+    }).sort((left, right) => right.score - left.score || left.target.id - right.target.id);
+    const candidates = scored.filter((candidate, index, all) => all.findIndex((item) => item.target.provider.toLowerCase() === candidate.target.provider.toLowerCase()) === index).slice(0, maxCandidates);
+    const results = byId('model-route-results');
+    results.innerHTML = candidates.map((candidate, index) => `
+      <article class="model-route-candidate">
+        <div class="model-route-rank">${index + 1}</div>
+        <div class="model-route-copy"><span>${escapeHtml(candidate.target.provider)} · ${escapeHtml(candidate.target.tier)}</span><h3>${escapeHtml(candidate.target.name)}</h3><p>${escapeHtml(candidate.target.bestFor)}</p></div>
+        <dl><div><dt>Metadata fit</dt><dd>${candidate.score.toFixed(1)}</dd></div><div><dt>Coverage</dt><dd>${Math.round(candidate.coverage * 100)}%</dd></div><div><dt>Live score</dt><dd>Not run</dd></div></dl>
+        <div class="model-route-tags">${candidate.matchedSignals.map((value) => `<span>${escapeHtml(value)}</span>`).join('') || '<span>general reasoning</span>'}</div>
+        <button class="btn btn-outline btn-sm" type="button" data-route-detail="${candidate.target.id}">Inspect tests</button>
+      </article>`).join('');
+    results.hidden = false;
+    results.querySelectorAll('[data-route-detail]').forEach((button) => button.addEventListener('click', () => showDetail(Number(button.dataset.routeDetail))));
+    byId('model-route-status').textContent = `${candidates.length} provider-diverse candidates prepared for ${signals.join(', ')}. Quality contributed 0 points because no live signed benchmark evidence exists.`;
   }
 
   function filteredTargets() {
@@ -102,8 +199,14 @@
     byId('model-detail-body').innerHTML = `
       <p><strong>Declared task fit:</strong> ${escapeHtml(target.bestFor)}</p>
       <h3>Declared capabilities</h3><ul>${target.declaredCapabilities.map((item) => `<li>${escapeHtml(item)}</li>`).join('')}</ul>
-      <h3>Assigned benchmark suites</h3><ul>${target.benchmarkSuites.map((id) => `<li>${escapeHtml(data.suites.find((suite) => suite.id === id)?.label || id)}</li>`).join('')}</ul>
+      <h3>Prompt and test library</h3><div class="model-prompt-library">${(target.promptLibrary || target.benchmarkSuites || []).map((suiteId) => data.suites.find((suite) => suite.id === suiteId)).filter(Boolean).map((prompt) => `<article><div><strong>${escapeHtml(prompt.label)}</strong><span>${escapeHtml(prompt.grader)} · ${escapeHtml(prompt.modality)}</span></div><p>${escapeHtml(prompt.prompt_fixture)}</p><button class="btn btn-outline btn-sm" type="button" data-prepare-model-test="${escapeHtml(prompt.id)}">Load test</button></article>`).join('')}</div>
       <h3>Evidence status</h3><p>No live score exists yet. Availability, quality, latency, and cost must be recorded by an authenticated adapter using the exact provider model id.</p>`;
+    byId('model-detail-body').querySelectorAll('[data-prepare-model-test]').forEach((button) => button.addEventListener('click', () => {
+      selected.clear(); selected.add(target.id);
+      document.querySelectorAll('#suite-options input').forEach((input) => { input.checked = input.value === button.dataset.prepareModelTest; });
+      byId('benchmark-status').textContent = `${target.name} and ${button.dataset.prepareModelTest.replaceAll('_', ' ')} loaded. Review network and budget controls, then prepare the run plan.`;
+      byId('model-detail').close(); renderRows(); byId('runner-title').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }));
     byId('model-detail').showModal();
   }
 
@@ -232,7 +335,7 @@
       const nameCell = document.createElement('td'); const copy = document.createElement('div'); copy.className = 'organization-copy';
       const button = document.createElement('button'); button.className = 'model-name-button'; button.type = 'button'; button.textContent = item.name; button.addEventListener('click', () => showOrganizationDetail(item.id));
       const type = document.createElement('span'); type.textContent = String(item.organizationType || 'unclassified').replaceAll('_', ' '); copy.append(button, type); nameCell.append(copy);
-      const sourceCell = document.createElement('td'); const sourceTag = document.createElement('span'); sourceTag.className = 'organization-source-tag'; sourceTag.textContent = item.sourceKey === 'alliance' ? 'Alliance' : 'Existing 200'; sourceCell.append(sourceTag);
+      const sourceCell = document.createElement('td'); const sourceTag = document.createElement('span'); sourceTag.className = 'organization-source-tag'; sourceTag.textContent = item.sourceKey === 'alliance' ? 'Alliance' : `Existing ${Number(organizationData.summary?.existingBenchmarkTargets || 0).toLocaleString()}`; sourceCell.append(sourceTag);
       const strengthCell = document.createElement('td'); strengthCell.className = 'organization-cell-note'; strengthCell.textContent = (item.strengths || []).slice(0, 3).join(', ') || 'Research required';
       const jobCell = document.createElement('td'); jobCell.className = 'organization-cell-note'; jobCell.textContent = (item.commonUserJobs || []).slice(0, 2).join('; ') || 'Research required';
       const evidenceCell = document.createElement('td'); evidenceCell.className = 'organization-cell-note organization-evidence'; evidenceCell.textContent = organizationEvidence(item).replaceAll('_', ' ');
@@ -249,7 +352,7 @@
   function showOrganizationDetail(id) {
     const item = organizationRecords.find((record) => record.id === id);
     if (!item) return;
-    byId('organization-detail-source').textContent = item.sourceKey === 'alliance' ? `Official directory snapshot · ${organizationData.snapshotDate}` : 'Existing 200-target catalog';
+    byId('organization-detail-source').textContent = item.sourceKey === 'alliance' ? `Official directory snapshot · ${organizationData.snapshotDate}` : `Existing ${Number(organizationData.summary?.existingBenchmarkTargets || 0).toLocaleString()}-target catalog`;
     byId('organization-detail-title').textContent = item.name;
     const tools = (item.tools || []).length ? item.tools : ['No member-specific tool list is published in the directory; official-source research is required.'];
     const jobs = (item.commonUserJobs || []).length ? item.commonUserJobs : ['Official-source research required'];
@@ -334,6 +437,9 @@
   byId('run-catalog-audit').addEventListener('click', runCatalogAudit);
   byId('prepare-live-plan').addEventListener('click', preparePlan);
   byId('download-benchmark-plan').addEventListener('click', downloadPlan);
+  byId('export-model-json').addEventListener('click', exportCatalogJson);
+  byId('export-model-csv').addEventListener('click', exportCatalogCsv);
+  byId('model-route-form').addEventListener('submit', prepareModelRoute);
   byId('model-detail-close').addEventListener('click', () => byId('model-detail').close());
   ['organization-search', 'organization-source', 'organization-type'].forEach((id) => byId(id).addEventListener(id === 'organization-search' ? 'input' : 'change', renderOrganizationRows));
   byId('organization-select-visible').addEventListener('click', () => { visibleOrganizations.forEach((item) => selectedOrganizations.add(item.id)); renderOrganizationRows(); });

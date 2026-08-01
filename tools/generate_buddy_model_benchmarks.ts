@@ -9,6 +9,7 @@ type BenchmarkConfig = {
   catalog_reviewed_on: string;
   stale_after_days: number;
   target_count: number;
+  issue_refs: number[];
   policy: Record<string, boolean>;
   suites: Array<{
     id: string;
@@ -19,6 +20,22 @@ type BenchmarkConfig = {
     expected: string;
   }>;
 };
+
+const evidenceDimensions = {
+  reasoning: ["reason", "math", "analysis"],
+  coding: ["cod", "developer", "software"],
+  vision: ["vision", "image understanding", "visual"],
+  imageGeneration: ["image generation", "text-to-image"],
+  imageEditing: ["image editing", "inpainting", "photo"],
+  video: ["video"],
+  audio: ["audio", "music"],
+  speech: ["speech", "voice", "transcription"],
+  translation: ["translation", "multilingual", "language"],
+  research: ["research", "citation", "search"],
+  ocrAndDocuments: ["ocr", "document"],
+  agentsAndTools: ["agent", "tool", "workflow"],
+  retrieval: ["retrieval", "embedding", "search"],
+} as const;
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const sourcePath = resolve(root, "config", "buddy-model-benchmarks.json");
@@ -37,13 +54,35 @@ function suiteIdsFor(category: string) {
     return [...common, "long_context_retrieval", "grounded_research"];
   }
   if (normalized.includes("image")) return [...common, "vision_understanding"];
-  if (normalized.includes("video") || normalized.includes("voice")) {
+  if (normalized.includes("video") || normalized.includes("voice") || normalized.includes("audio") || normalized.includes("music")) {
     return [...common, "vision_understanding", "audio_understanding"];
   }
-  if (normalized.includes("translation") || normalized.includes("writing")) {
+  if (normalized.includes("translation") || normalized.includes("multilingual") || normalized.includes("writing")) {
     return [...common, "multilingual", "long_context_retrieval"];
   }
+  if (normalized.includes("document") || normalized.includes("retrieval") || normalized.includes("embedding")) {
+    return [...common, "long_context_retrieval", "grounded_research"];
+  }
   return [...common, "arithmetic_reasoning", "tool_selection"];
+}
+
+function buildEvidenceProfile(model: (typeof MODEL_BENCHMARK_TARGETS)[number]) {
+  const searchable = [model.category, model.bestFor, ...model.declaredCapabilities].join(" ").toLowerCase();
+  const declaredDimensions = Object.entries(evidenceDimensions)
+    .filter(([, keywords]) => keywords.some((keyword) => searchable.includes(keyword)))
+    .map(([dimension]) => dimension);
+  const verificationRequiredDimensions = Object.keys(evidenceDimensions)
+    .filter((dimension) => !declaredDimensions.includes(dimension));
+  return {
+    declaredDimensions,
+    verificationRequiredDimensions,
+    contextWindowTokens: null,
+    measuredSpeed: null,
+    normalizedPriceUsd: null,
+    license: null,
+    declaredAccessNote: model.accessNote,
+    metadataStatus: model.discoveryTarget ? "verification_required" : "refresh_required",
+  };
 }
 
 function buildCatalog() {
@@ -77,6 +116,8 @@ function buildCatalog() {
       officialCatalog: model.officialCatalog,
       developerRegion: model.developerRegion,
       benchmarkSuites,
+      promptLibrary: benchmarkSuites,
+      evidenceProfile: buildEvidenceProfile(model),
       catalogChecks: checks,
       catalogReady: Object.values(checks).every(Boolean),
       liveEvidenceStatus: model.discoveryTarget ? "discovery_required" : "not_run",
@@ -89,6 +130,25 @@ function buildCatalog() {
     catalogReviewedOn: config.catalog_reviewed_on,
     staleAfterDays: config.stale_after_days,
     policy: config.policy,
+    issueRefs: config.issue_refs,
+    truthContract: {
+      catalogTargetMeansLiveProviderConnection: false,
+      declaredCapabilityMeansBenchmarkPassed: false,
+      routingRankMeansPermanentBest: false,
+      promptLibraryExecutesFromStaticSite: false,
+      liveScoresRequireExactModelVersionAndAdapterEvidence: true,
+    },
+    evidenceSchema: {
+      capabilityDimensions: Object.keys(evidenceDimensions),
+      declaredDimensionsAreLiveScores: false,
+      unknownNumericValue: null,
+      fieldsRequiringExactVersionEvidence: ["contextWindowTokens", "measuredSpeed", "normalizedPriceUsd", "license", "liveScore"],
+    },
+    promptLibrarySchema: {
+      targetValuesReferenceSuiteIds: true,
+      fixturesStoredIn: "suites",
+      executionFromStaticSite: false,
+    },
     summary: {
       targets: targets.length,
       providers: new Set(targets.map((target) => target.provider)).size,

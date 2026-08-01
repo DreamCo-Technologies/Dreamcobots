@@ -21,7 +21,7 @@ test("DreamSearch indexes the complete routed fleet and reference catalogs", () 
   assert.equal(index.summary.indexed_bot_profiles, 1051);
   assert.equal(index.summary.searchable_capability_terms, 8408);
   assert.equal(index.summary.indexed_divisions, 45);
-  assert.equal(index.summary.indexed_models, 200);
+  assert.equal(index.summary.indexed_models, 500);
   assert.ok(index.summary.indexed_organizations >= 280);
   assert.equal(index.summary.indexed_providers, 200);
   assert.equal(index.summary.web_results_claimed, 0);
@@ -69,7 +69,7 @@ test("DreamSearch routes common DreamCo outcomes to usable public tools", () => 
 
 test("DreamSearch labels model and provider entries as reference-only", () => {
   const externalReferences = index.documents.filter((item) => item.type === "model" || item.type === "provider");
-  assert.equal(externalReferences.length, 400);
+  assert.equal(externalReferences.length, index.summary.indexed_models + index.summary.indexed_providers);
   assert.ok(externalReferences.every((item) => item.status === "reference_catalog_not_connection"));
   assert.ok(externalReferences.every((item) => item.evidence_level === "reference_catalog"));
 });

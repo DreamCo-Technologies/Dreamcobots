@@ -372,7 +372,7 @@ export function buildBuddySuccessProgram() {
       curated_catalog_targets: MODEL_BENCHMARK_TARGETS.filter((target) => !target.discoveryTarget).length,
       dynamic_discovery_targets: MODEL_BENCHMARK_TARGETS.filter((target) => target.discoveryTarget).length,
       sources: OFFICIAL_MODEL_DISCOVERY_SOURCES,
-      permanent_top_200_ranking_claimed: false,
+      permanent_best_model_ranking_claimed: false,
       exact_model_ids_discovered_at_run_time: true,
     },
     organization_intelligence: {
