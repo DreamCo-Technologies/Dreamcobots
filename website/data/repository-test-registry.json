@@ -1,21 +1,21 @@
 {
   "duplicate_route_registrations": [],
   "extensions": {
-    ".css": 18,
+    ".css": 19,
     ".example": 1,
-    ".html": 41,
-    ".js": 42,
-    ".json": 181,
+    ".html": 42,
+    ".js": 45,
+    ".json": 182,
     ".jsonc": 1,
     ".md": 105,
-    ".mjs": 7,
+    ".mjs": 9,
     ".nix": 1,
-    ".png": 6,
+    ".png": 7,
     ".py": 59,
     ".sh": 2,
     ".svg": 1,
     ".toml": 1,
-    ".ts": 111,
+    ".ts": 116,
     ".tsx": 96,
     ".txt": 152,
     ".webmanifest": 1,
@@ -27,19 +27,19 @@
   "file_kinds": {
     "bot_source": 134,
     "client_source": 105,
-    "configuration": 33,
+    "configuration": 34,
     "documentation": 17,
-    "generator_or_tool": 28,
+    "generator_or_tool": 29,
     "platform_module": 29,
-    "policy": 14,
+    "policy": 15,
     "project_file": 25,
     "provider_adapter": 17,
     "reference_asset": 153,
     "server_source": 22,
-    "shared_contract": 12,
-    "test": 43,
-    "web_asset": 162,
-    "web_page": 40,
+    "shared_contract": 14,
+    "test": 46,
+    "web_asset": 167,
+    "web_page": 41,
     "workflow": 3
   },
   "files": [
@@ -2594,7 +2594,7 @@
       "suite_id": "bot-fleet"
     },
     {
-      "bytes": 99057,
+      "bytes": 249917,
       "kind": "configuration",
       "path": "config/generated/buddy_model_benchmarks.json",
       "suite_id": "model-routing"
@@ -2630,13 +2630,19 @@
       "suite_id": "repository-contracts"
     },
     {
+      "bytes": 312536,
+      "kind": "configuration",
+      "path": "config/generated/buddy_success_program.json",
+      "suite_id": "repository-contracts"
+    },
+    {
       "bytes": 238453,
       "kind": "configuration",
       "path": "config/generated/buddy_workforce_system.json",
       "suite_id": "repository-contracts"
     },
     {
-      "bytes": 2882761,
+      "bytes": 2982335,
       "kind": "configuration",
       "path": "config/generated/dreamco_search_index.json",
       "suite_id": "repository-contracts"
@@ -2990,7 +2996,7 @@
       "suite_id": "repository-contracts"
     },
     {
-      "bytes": 7553,
+      "bytes": 7751,
       "kind": "project_file",
       "path": "package.json",
       "suite_id": "repository-contracts"
@@ -3008,7 +3014,7 @@
       "suite_id": "repository-contracts"
     },
     {
-      "bytes": 7895,
+      "bytes": 8424,
       "kind": "documentation",
       "path": "README.md",
       "suite_id": "repository-contracts"
@@ -3042,6 +3048,12 @@
       "kind": "policy",
       "path": "server/buddy-model-policy.ts",
       "suite_id": "model-routing"
+    },
+    {
+      "bytes": 6187,
+      "kind": "policy",
+      "path": "server/buddy-success-policy.ts",
+      "suite_id": "client-build"
     },
     {
       "bytes": 5965,
@@ -3086,7 +3098,7 @@
       "suite_id": "connections"
     },
     {
-      "bytes": 25102,
+      "bytes": 25237,
       "kind": "policy",
       "path": "server/fleet-runtime.ts",
       "suite_id": "bot-fleet"
@@ -3128,7 +3140,7 @@
       "suite_id": "client-build"
     },
     {
-      "bytes": 4957,
+      "bytes": 5383,
       "kind": "policy",
       "path": "server/model-benchmark-policy.ts",
       "suite_id": "model-routing"
@@ -3230,7 +3242,7 @@
       "suite_id": "open-source-lab"
     },
     {
-      "bytes": 197293,
+      "bytes": 199179,
       "kind": "server_source",
       "path": "server/routes.ts",
       "suite_id": "client-build"
@@ -3338,6 +3350,12 @@
       "suite_id": "client-build"
     },
     {
+      "bytes": 9135,
+      "kind": "shared_contract",
+      "path": "shared/buddy-success-contract.ts",
+      "suite_id": "client-build"
+    },
+    {
       "bytes": 13408,
       "kind": "shared_contract",
       "path": "shared/bundles.ts",
@@ -3366,6 +3384,12 @@
       "kind": "shared_contract",
       "path": "shared/formula-library.ts",
       "suite_id": "calculators"
+    },
+    {
+      "bytes": 3409,
+      "kind": "shared_contract",
+      "path": "shared/model-benchmark-targets.ts",
+      "suite_id": "model-routing"
     },
     {
       "bytes": 1229,
@@ -3428,9 +3452,21 @@
       "suite_id": "model-routing"
     },
     {
-      "bytes": 3397,
+      "bytes": 3571,
       "kind": "test",
       "path": "tests/buddy-setup-catalog.test.mjs",
+      "suite_id": "repository-contracts"
+    },
+    {
+      "bytes": 2133,
+      "kind": "test",
+      "path": "tests/buddy-success-page.test.mjs",
+      "suite_id": "repository-contracts"
+    },
+    {
+      "bytes": 4582,
+      "kind": "test",
+      "path": "tests/buddy-success-policy.test.ts",
       "suite_id": "repository-contracts"
     },
     {
@@ -3524,7 +3560,7 @@
       "suite_id": "repository-contracts"
     },
     {
-      "bytes": 2136,
+      "bytes": 2700,
       "kind": "test",
       "path": "tests/model-benchmark-policy.test.ts",
       "suite_id": "model-routing"
@@ -3564,6 +3600,12 @@
       "kind": "test",
       "path": "tests/repository-test-registry.test.ts",
       "suite_id": "open-source-lab"
+    },
+    {
+      "bytes": 2037,
+      "kind": "test",
+      "path": "tests/robot-avatar.test.mjs",
+      "suite_id": "bot-fleet"
     },
     {
       "bytes": 2633,
@@ -3674,7 +3716,7 @@
       "suite_id": "repository-contracts"
     },
     {
-      "bytes": 31523,
+      "bytes": 34217,
       "kind": "generator_or_tool",
       "path": "tools/build_buddy_public_site.py",
       "suite_id": "repository-contracts"
@@ -3752,7 +3794,7 @@
       "suite_id": "repository-contracts"
     },
     {
-      "bytes": 4515,
+      "bytes": 4861,
       "kind": "generator_or_tool",
       "path": "tools/generate_buddy_model_benchmarks.ts",
       "suite_id": "model-routing"
@@ -3800,13 +3842,19 @@
       "suite_id": "repository-contracts"
     },
     {
+      "bytes": 14268,
+      "kind": "generator_or_tool",
+      "path": "tools/generate_buddy_success_program.ts",
+      "suite_id": "repository-contracts"
+    },
+    {
       "bytes": 1410,
       "kind": "generator_or_tool",
       "path": "tools/generate_buddy_workforce_system.ts",
       "suite_id": "repository-contracts"
     },
     {
-      "bytes": 15694,
+      "bytes": 15801,
       "kind": "generator_or_tool",
       "path": "tools/generate_dreamco_search_index.ts",
       "suite_id": "repository-contracts"
@@ -3872,6 +3920,12 @@
       "suite_id": "public-site"
     },
     {
+      "bytes": 1866958,
+      "kind": "web_asset",
+      "path": "website/assets/images/buddy-futuristic-v1.png",
+      "suite_id": "creative-media"
+    },
+    {
       "bytes": 9843,
       "kind": "web_asset",
       "path": "website/assets/images/buddy-icon-192.png",
@@ -3896,19 +3950,19 @@
       "suite_id": "task-automation"
     },
     {
-      "bytes": 13448,
+      "bytes": 13672,
       "kind": "web_asset",
       "path": "website/bots.css",
       "suite_id": "bot-fleet"
     },
     {
-      "bytes": 3988,
+      "bytes": 4036,
       "kind": "web_page",
       "path": "website/bots.html",
       "suite_id": "bot-fleet"
     },
     {
-      "bytes": 21468,
+      "bytes": 22284,
       "kind": "web_asset",
       "path": "website/bots.js",
       "suite_id": "bot-fleet"
@@ -3920,19 +3974,19 @@
       "suite_id": "public-site"
     },
     {
-      "bytes": 32158,
+      "bytes": 32689,
       "kind": "web_asset",
       "path": "website/buddy.css",
       "suite_id": "public-site"
     },
     {
-      "bytes": 23874,
+      "bytes": 24334,
       "kind": "web_page",
       "path": "website/buddy.html",
       "suite_id": "public-site"
     },
     {
-      "bytes": 69556,
+      "bytes": 72374,
       "kind": "web_asset",
       "path": "website/buddy.js",
       "suite_id": "public-site"
@@ -4640,7 +4694,7 @@
       "suite_id": "public-site"
     },
     {
-      "bytes": 68358,
+      "bytes": 183148,
       "kind": "web_asset",
       "path": "website/data/buddy-model-benchmarks.js",
       "suite_id": "model-routing"
@@ -4706,13 +4760,19 @@
       "suite_id": "public-site"
     },
     {
+      "bytes": 223866,
+      "kind": "web_asset",
+      "path": "website/data/buddy-success-program.js",
+      "suite_id": "public-site"
+    },
+    {
       "bytes": 186830,
       "kind": "web_asset",
       "path": "website/data/buddy-workforce-system.js",
       "suite_id": "public-site"
     },
     {
-      "bytes": 2427460,
+      "bytes": 2508254,
       "kind": "web_asset",
       "path": "website/data/dreamco-search-index.js",
       "suite_id": "public-site"
@@ -4838,7 +4898,7 @@
       "suite_id": "public-site"
     },
     {
-      "bytes": 1493,
+      "bytes": 1603,
       "kind": "web_asset",
       "path": "website/manifest.webmanifest",
       "suite_id": "public-site"
@@ -4856,19 +4916,19 @@
       "suite_id": "model-routing"
     },
     {
-      "bytes": 6185,
+      "bytes": 6254,
       "kind": "web_page",
       "path": "website/models.html",
       "suite_id": "model-routing"
     },
     {
-      "bytes": 9432,
+      "bytes": 9793,
       "kind": "web_asset",
       "path": "website/models.js",
       "suite_id": "model-routing"
     },
     {
-      "bytes": 5662,
+      "bytes": 5722,
       "kind": "web_asset",
       "path": "website/nav.js",
       "suite_id": "public-site"
@@ -4952,6 +5012,12 @@
       "suite_id": "public-site"
     },
     {
+      "bytes": 5088,
+      "kind": "web_asset",
+      "path": "website/robot-avatar.js",
+      "suite_id": "bot-fleet"
+    },
+    {
       "bytes": 96,
       "kind": "web_asset",
       "path": "website/robots.txt",
@@ -4982,7 +5048,7 @@
       "suite_id": "public-site"
     },
     {
-      "bytes": 3456,
+      "bytes": 3634,
       "kind": "web_asset",
       "path": "website/service-worker.js",
       "suite_id": "public-site"
@@ -4994,7 +5060,7 @@
       "suite_id": "public-site"
     },
     {
-      "bytes": 1265,
+      "bytes": 1353,
       "kind": "web_asset",
       "path": "website/sitemap.xml",
       "suite_id": "public-site"
@@ -5021,6 +5087,24 @@
       "bytes": 48851,
       "kind": "web_asset",
       "path": "website/styles.css",
+      "suite_id": "public-site"
+    },
+    {
+      "bytes": 8118,
+      "kind": "web_asset",
+      "path": "website/success.css",
+      "suite_id": "public-site"
+    },
+    {
+      "bytes": 9239,
+      "kind": "web_page",
+      "path": "website/success.html",
+      "suite_id": "public-site"
+    },
+    {
+      "bytes": 18194,
+      "kind": "web_asset",
+      "path": "website/success.js",
       "suite_id": "public-site"
     },
     {
@@ -5071,13 +5155,13 @@
     "plan_or_readiness": 20,
     "read_only": 53,
     "shared_contract": 22,
-    "state_change": 108
+    "state_change": 112
   },
   "routes": [
     {
       "classification": "read_only",
-      "id": "4b2d176508fb619ba80f",
-      "line": 2182,
+      "id": "fc652389d953d7ddbb52",
+      "line": 2192,
       "method": "GET",
       "path": "/api/alerts",
       "runtime": "local_contract",
@@ -5086,8 +5170,8 @@
     },
     {
       "classification": "state_change",
-      "id": "906f311176796b93cae7",
-      "line": 2187,
+      "id": "111b7de50c8310bf3972",
+      "line": 2197,
       "method": "POST",
       "path": "/api/alerts",
       "runtime": "local_contract",
@@ -5096,8 +5180,8 @@
     },
     {
       "classification": "state_change",
-      "id": "20a4a170c544968cec62",
-      "line": 2198,
+      "id": "a58f8305d4d367180c02",
+      "line": 2208,
       "method": "PUT",
       "path": "/api/alerts/:id/toggle",
       "runtime": "local_contract",
@@ -5106,8 +5190,8 @@
     },
     {
       "classification": "read_only",
-      "id": "85d8e6be63fb4679b08c",
-      "line": 634,
+      "id": "bb7be09d656748cf3798",
+      "line": 644,
       "method": "GET",
       "path": "/api/approval-notifications/capabilities",
       "runtime": "adapter_optional",
@@ -5116,8 +5200,8 @@
     },
     {
       "classification": "plan_or_readiness",
-      "id": "c0863463fb1679aafc56",
-      "line": 650,
+      "id": "90a9be5ad5871081777c",
+      "line": 660,
       "method": "POST",
       "path": "/api/approval-notifications/plan",
       "runtime": "adapter_optional",
@@ -5126,8 +5210,8 @@
     },
     {
       "classification": "state_change",
-      "id": "fd7434d7920405941c32",
-      "line": 2981,
+      "id": "16a6ab5f25ac9038c589",
+      "line": 2991,
       "method": "POST",
       "path": "/api/batch/process",
       "runtime": "adapter_optional",
@@ -5136,8 +5220,8 @@
     },
     {
       "classification": "read_only",
-      "id": "8ddb5a31d3fce5ddad55",
-      "line": 4056,
+      "id": "48c35e14cc9bf42505ef",
+      "line": 4102,
       "method": "GET",
       "path": "/api/bot-activity",
       "runtime": "local_contract",
@@ -5146,8 +5230,8 @@
     },
     {
       "classification": "state_change",
-      "id": "05a9e39053c555197c6a",
-      "line": 3921,
+      "id": "5bdd9edccdb5e1214021",
+      "line": 3967,
       "method": "POST",
       "path": "/api/bot-builder/generate",
       "runtime": "local_contract",
@@ -5156,8 +5240,8 @@
     },
     {
       "classification": "state_change",
-      "id": "97e8aa4d32671cc27804",
-      "line": 3951,
+      "id": "3bf9143a6d603d193a03",
+      "line": 3997,
       "method": "POST",
       "path": "/api/bot-builder/save",
       "runtime": "local_contract",
@@ -5186,8 +5270,8 @@
     },
     {
       "classification": "read_only",
-      "id": "b8ceb7113be8fb054eaf",
-      "line": 3612,
+      "id": "b26c9665c15debd778b1",
+      "line": 3658,
       "method": "GET",
       "path": "/api/bots/:botId/memory",
       "runtime": "local_contract",
@@ -5196,8 +5280,8 @@
     },
     {
       "classification": "state_change",
-      "id": "70254bd6142150a11b53",
-      "line": 3618,
+      "id": "df6b81faab3ce9865c6b",
+      "line": 3664,
       "method": "POST",
       "path": "/api/bots/:botId/memory",
       "runtime": "local_contract",
@@ -5206,8 +5290,8 @@
     },
     {
       "classification": "external_or_destructive_gate",
-      "id": "5a7bcb6dc951324fedfd",
-      "line": 3626,
+      "id": "442ac2ff46384a82412a",
+      "line": 3672,
       "method": "DELETE",
       "path": "/api/bots/:botId/memory/:memId",
       "runtime": "credentials_and_exact_approval_required",
@@ -5236,8 +5320,8 @@
     },
     {
       "classification": "read_only",
-      "id": "1b07536fc6acc1138f99",
-      "line": 1640,
+      "id": "984491623b11d69fb925",
+      "line": 1650,
       "method": "GET",
       "path": "/api/bots/:id",
       "runtime": "local_contract",
@@ -5246,8 +5330,8 @@
     },
     {
       "classification": "state_change",
-      "id": "43ff4f4b535b2d843894",
-      "line": 1660,
+      "id": "5397db62a5f50035286e",
+      "line": 1670,
       "method": "PATCH",
       "path": "/api/bots/:id/controls",
       "runtime": "local_contract",
@@ -5276,8 +5360,8 @@
     },
     {
       "classification": "state_change",
-      "id": "13f0acbd3b7f74d774c1",
-      "line": 1722,
+      "id": "32c56ef3e8bee3bfba80",
+      "line": 1732,
       "method": "POST",
       "path": "/api/bots/normalize",
       "runtime": "local_contract",
@@ -5286,8 +5370,8 @@
     },
     {
       "classification": "read_only",
-      "id": "d64797136e503a839c1e",
-      "line": 4083,
+      "id": "e8cf07b75503f77fd6f4",
+      "line": 4129,
       "method": "GET",
       "path": "/api/bots/recommend",
       "runtime": "local_contract",
@@ -5296,8 +5380,8 @@
     },
     {
       "classification": "state_change",
-      "id": "2557db7c01588ab38631",
-      "line": 1184,
+      "id": "55027c0182db51d82dda",
+      "line": 1194,
       "method": "POST",
       "path": "/api/buddy/agent-run",
       "runtime": "local_contract",
@@ -5306,8 +5390,8 @@
     },
     {
       "classification": "state_change",
-      "id": "8108d59a94cf3028ee05",
-      "line": 1161,
+      "id": "6a2b53aa397345fa13a9",
+      "line": 1171,
       "method": "POST",
       "path": "/api/buddy/analyze-image",
       "runtime": "adapter_optional",
@@ -5316,8 +5400,8 @@
     },
     {
       "classification": "state_change",
-      "id": "800ea538ac41b6b06922",
-      "line": 3394,
+      "id": "ebe6d3a1b672f879daca",
+      "line": 3440,
       "method": "POST",
       "path": "/api/buddy/apps/connection-plan",
       "runtime": "adapter_optional",
@@ -5326,8 +5410,8 @@
     },
     {
       "classification": "state_change",
-      "id": "733de7b7fae310ea8917",
-      "line": 3404,
+      "id": "e321aea6f2cfaf829786",
+      "line": 3450,
       "method": "POST",
       "path": "/api/buddy/apps/group-workflow-plan",
       "runtime": "local_contract",
@@ -5336,8 +5420,8 @@
     },
     {
       "classification": "state_change",
-      "id": "7b390843d306fdfb288e",
-      "line": 1257,
+      "id": "c356e5f61e8bbf20ae9c",
+      "line": 1267,
       "method": "POST",
       "path": "/api/buddy/architect",
       "runtime": "local_contract",
@@ -5346,8 +5430,8 @@
     },
     {
       "classification": "state_change",
-      "id": "ae8c0d1034afe62a973f",
-      "line": 471,
+      "id": "fafdfb47c2b1d71e0605",
+      "line": 481,
       "method": "POST",
       "path": "/api/buddy/behavior/benchmark-plan",
       "runtime": "local_contract",
@@ -5356,8 +5440,8 @@
     },
     {
       "classification": "plan_or_readiness",
-      "id": "479406bd2613f28e371f",
-      "line": 457,
+      "id": "72a1c7436161cfe4793f",
+      "line": 467,
       "method": "GET",
       "path": "/api/buddy/behavior/catalog",
       "runtime": "local_contract",
@@ -5366,8 +5450,8 @@
     },
     {
       "classification": "state_change",
-      "id": "e2a6f68c02f5da74b9eb",
-      "line": 461,
+      "id": "0b0e9b558d2d1113d064",
+      "line": 471,
       "method": "POST",
       "path": "/api/buddy/behavior/profile",
       "runtime": "local_contract",
@@ -5376,8 +5460,8 @@
     },
     {
       "classification": "state_change",
-      "id": "a2421c34ca7c16063160",
-      "line": 824,
+      "id": "fd48a45fb1aa988d31a5",
+      "line": 834,
       "method": "POST",
       "path": "/api/buddy/build-game",
       "runtime": "local_contract",
@@ -5386,8 +5470,8 @@
     },
     {
       "classification": "read_only",
-      "id": "3c3126c7ae5830264189",
-      "line": 1490,
+      "id": "ed1e8303eac34c397671",
+      "line": 1500,
       "method": "GET",
       "path": "/api/buddy/calculators",
       "runtime": "local_contract",
@@ -5396,8 +5480,8 @@
     },
     {
       "classification": "state_change",
-      "id": "390e0b353b8bf7d69d49",
-      "line": 1306,
+      "id": "5705948f19f57ccae922",
+      "line": 1316,
       "method": "POST",
       "path": "/api/buddy/code-review",
       "runtime": "local_contract",
@@ -5406,8 +5490,8 @@
     },
     {
       "classification": "plan_or_readiness",
-      "id": "e0b452c573774e0c486a",
-      "line": 3385,
+      "id": "3b507cf08c539d91f9b4",
+      "line": 3431,
       "method": "GET",
       "path": "/api/buddy/connected-life/catalog",
       "runtime": "local_contract",
@@ -5416,8 +5500,8 @@
     },
     {
       "classification": "read_only",
-      "id": "3c7c2a09334668b63d88",
-      "line": 1466,
+      "id": "1abcf58d7d8694e87762",
+      "line": 1476,
       "method": "GET",
       "path": "/api/buddy/creative-production-group",
       "runtime": "local_contract",
@@ -5426,8 +5510,8 @@
     },
     {
       "classification": "read_only",
-      "id": "956284def60063556df4",
-      "line": 1478,
+      "id": "d111cb8863020a0d7c4a",
+      "line": 1488,
       "method": "GET",
       "path": "/api/buddy/creator-showrunner",
       "runtime": "local_contract",
@@ -5436,8 +5520,8 @@
     },
     {
       "classification": "state_change",
-      "id": "4006cbdb5b53b5395ff0",
-      "line": 3473,
+      "id": "a4251b9bd6c5c36a7229",
+      "line": 3519,
       "method": "POST",
       "path": "/api/buddy/crypto/dreamcoin-plan",
       "runtime": "local_contract",
@@ -5446,8 +5530,8 @@
     },
     {
       "classification": "state_change",
-      "id": "b8c20145986ba0985d33",
-      "line": 3463,
+      "id": "48ada19c2e88534fd248",
+      "line": 3509,
       "method": "POST",
       "path": "/api/buddy/crypto/mining-plan",
       "runtime": "local_contract",
@@ -5456,8 +5540,8 @@
     },
     {
       "classification": "state_change",
-      "id": "b11df8b7779b81650874",
-      "line": 3453,
+      "id": "0496a38864a4391640df",
+      "line": 3499,
       "method": "POST",
       "path": "/api/buddy/crypto/wallet-plan",
       "runtime": "local_contract",
@@ -5466,8 +5550,8 @@
     },
     {
       "classification": "state_change",
-      "id": "e3689a4179efa428b862",
-      "line": 3345,
+      "id": "8421d7209d0c688945a4",
+      "line": 3391,
       "method": "POST",
       "path": "/api/buddy/data/import-plan",
       "runtime": "local_contract",
@@ -5476,8 +5560,8 @@
     },
     {
       "classification": "state_change",
-      "id": "a6362f5b7d7001ee4b05",
-      "line": 3365,
+      "id": "26d2013ccb7e9783b7fe",
+      "line": 3411,
       "method": "POST",
       "path": "/api/buddy/data/package-plan",
       "runtime": "local_contract",
@@ -5486,8 +5570,8 @@
     },
     {
       "classification": "state_change",
-      "id": "524b5df77353d6bdcb27",
-      "line": 3355,
+      "id": "48693c8fd7fcc27addea",
+      "line": 3401,
       "method": "POST",
       "path": "/api/buddy/data/privacy-request-plan",
       "runtime": "local_contract",
@@ -5496,8 +5580,8 @@
     },
     {
       "classification": "state_change",
-      "id": "316403856da6a6ae6c5d",
-      "line": 1381,
+      "id": "e355f565851c31c7d682",
+      "line": 1391,
       "method": "POST",
       "path": "/api/buddy/debug-deep",
       "runtime": "local_contract",
@@ -5506,8 +5590,8 @@
     },
     {
       "classification": "state_change",
-      "id": "16c567a797bda683de5c",
-      "line": 1356,
+      "id": "183bbe4266fdc0315ffe",
+      "line": 1366,
       "method": "POST",
       "path": "/api/buddy/deploy-config",
       "runtime": "adapter_optional",
@@ -5516,8 +5600,8 @@
     },
     {
       "classification": "plan_or_readiness",
-      "id": "b9f17906b3cc2f82b13c",
-      "line": 3178,
+      "id": "1f1d638c3f5a0179c93c",
+      "line": 3188,
       "method": "POST",
       "path": "/api/buddy/device-actions/plan",
       "runtime": "adapter_optional",
@@ -5526,8 +5610,8 @@
     },
     {
       "classification": "read_only",
-      "id": "4d1cdf61aca175d77ad0",
-      "line": 1502,
+      "id": "088e55faed76059a3ae2",
+      "line": 1512,
       "method": "GET",
       "path": "/api/buddy/distribution",
       "runtime": "adapter_optional",
@@ -5536,8 +5620,8 @@
     },
     {
       "classification": "state_change",
-      "id": "f7d0688b4cf4cb601fea",
-      "line": 1106,
+      "id": "9268b63657d6e905eed8",
+      "line": 1116,
       "method": "POST",
       "path": "/api/buddy/execute-code",
       "runtime": "local_contract",
@@ -5546,8 +5630,8 @@
     },
     {
       "classification": "plan_or_readiness",
-      "id": "debc2b0698728c3eac45",
-      "line": 1574,
+      "id": "c9af2ad9671305aee0f5",
+      "line": 1584,
       "method": "GET",
       "path": "/api/buddy/features",
       "runtime": "local_contract",
@@ -5556,8 +5640,8 @@
     },
     {
       "classification": "state_change",
-      "id": "533b773fea7abb6b66a7",
-      "line": 3424,
+      "id": "0974fa9f71c945fd7ff0",
+      "line": 3470,
       "method": "POST",
       "path": "/api/buddy/finance/workspace-plan",
       "runtime": "local_contract",
@@ -5566,8 +5650,8 @@
     },
     {
       "classification": "state_change",
-      "id": "3a32d5558bf7eb8dd1c4",
-      "line": 1331,
+      "id": "2fcb72794ce856524789",
+      "line": 1341,
       "method": "POST",
       "path": "/api/buddy/generate-pr",
       "runtime": "local_contract",
@@ -5576,8 +5660,8 @@
     },
     {
       "classification": "plan_or_readiness",
-      "id": "2bdb91dbc49fe21b8b24",
-      "line": 3487,
+      "id": "36260d36bdcb66e71936",
+      "line": 3533,
       "method": "POST",
       "path": "/api/buddy/government/plan",
       "runtime": "adapter_optional",
@@ -5586,8 +5670,8 @@
     },
     {
       "classification": "plan_or_readiness",
-      "id": "bf5e930647a286eed935",
-      "line": 3479,
+      "id": "73a3408af3b1c999bb5d",
+      "line": 3525,
       "method": "GET",
       "path": "/api/buddy/government/resources",
       "runtime": "adapter_optional",
@@ -5596,8 +5680,8 @@
     },
     {
       "classification": "state_change",
-      "id": "3e4b370ae6c716b3f18e",
-      "line": 1564,
+      "id": "f4a84d8fe144f6e4b571",
+      "line": 1574,
       "method": "POST",
       "path": "/api/buddy/lead-plan",
       "runtime": "adapter_optional",
@@ -5606,8 +5690,8 @@
     },
     {
       "classification": "read_only",
-      "id": "0d74695077033391a5eb",
-      "line": 1514,
+      "id": "8f6bf0ed043b25b368e4",
+      "line": 1524,
       "method": "GET",
       "path": "/api/buddy/lead-system",
       "runtime": "adapter_optional",
@@ -5616,8 +5700,8 @@
     },
     {
       "classification": "read_only",
-      "id": "709065f3bbef273f28cd",
-      "line": 1544,
+      "id": "28117e2e1d65ea458fbc",
+      "line": 1554,
       "method": "GET",
       "path": "/api/buddy/lead-system/:slug",
       "runtime": "adapter_optional",
@@ -5626,8 +5710,8 @@
     },
     {
       "classification": "state_change",
-      "id": "34363dbb15127c107e2c",
-      "line": 423,
+      "id": "3d7ab34e8496b496b707",
+      "line": 433,
       "method": "POST",
       "path": "/api/buddy/media/benchmark-plan",
       "runtime": "local_contract",
@@ -5636,8 +5720,8 @@
     },
     {
       "classification": "read_only",
-      "id": "f54cc1c5112116a66dad",
-      "line": 409,
+      "id": "0c39dba7f708d1bdf522",
+      "line": 419,
       "method": "GET",
       "path": "/api/buddy/media/engines",
       "runtime": "local_contract",
@@ -5646,8 +5730,8 @@
     },
     {
       "classification": "state_change",
-      "id": "ebee92828ad8636bab5c",
-      "line": 437,
+      "id": "b0964e85e96cc580c95f",
+      "line": 447,
       "method": "POST",
       "path": "/api/buddy/media/quality/candidate-plan",
       "runtime": "local_contract",
@@ -5656,8 +5740,8 @@
     },
     {
       "classification": "plan_or_readiness",
-      "id": "fffbd2145c7e8328653c",
-      "line": 433,
+      "id": "9117d778900ee6bb81c7",
+      "line": 443,
       "method": "GET",
       "path": "/api/buddy/media/quality/catalog",
       "runtime": "local_contract",
@@ -5666,8 +5750,8 @@
     },
     {
       "classification": "state_change",
-      "id": "2a8a2ecb7fb154ef68a9",
-      "line": 447,
+      "id": "adf6a0cf259054bd965d",
+      "line": 457,
       "method": "POST",
       "path": "/api/buddy/media/quality/evaluate",
       "runtime": "local_contract",
@@ -5676,8 +5760,8 @@
     },
     {
       "classification": "state_change",
-      "id": "206cad10068157740027",
-      "line": 413,
+      "id": "a5cb3e3b801f8a2b9339",
+      "line": 423,
       "method": "POST",
       "path": "/api/buddy/media/render-plan",
       "runtime": "local_contract",
@@ -5686,8 +5770,8 @@
     },
     {
       "classification": "read_only",
-      "id": "f4a44db46a9946301978",
-      "line": 1418,
+      "id": "552ed81086e99d9dfa84",
+      "line": 1428,
       "method": "GET",
       "path": "/api/buddy/memory",
       "runtime": "local_contract",
@@ -5696,8 +5780,8 @@
     },
     {
       "classification": "external_or_destructive_gate",
-      "id": "a40a9c11eb1929399bce",
-      "line": 1422,
+      "id": "6f2c0703b9912237cd78",
+      "line": 1432,
       "method": "DELETE",
       "path": "/api/buddy/memory/:id",
       "runtime": "credentials_and_exact_approval_required",
@@ -5706,8 +5790,8 @@
     },
     {
       "classification": "state_change",
-      "id": "42a8368765d449b0e76c",
-      "line": 3375,
+      "id": "8f24b1239d518df38aa7",
+      "line": 3421,
       "method": "POST",
       "path": "/api/buddy/memory/preferences-plan",
       "runtime": "local_contract",
@@ -5716,8 +5800,8 @@
     },
     {
       "classification": "state_change",
-      "id": "8687e26241f5efb9cea5",
-      "line": 1408,
+      "id": "b2e6cd13db41592fb83f",
+      "line": 1418,
       "method": "POST",
       "path": "/api/buddy/memory/save",
       "runtime": "local_contract",
@@ -5726,8 +5810,8 @@
     },
     {
       "classification": "plan_or_readiness",
-      "id": "da99f3a9b156d8eb2b3a",
-      "line": 3188,
+      "id": "937509ad92cb5cfc8d25",
+      "line": 3198,
       "method": "GET",
       "path": "/api/buddy/model-benchmarks/catalog-audit",
       "runtime": "adapter_optional",
@@ -5736,8 +5820,8 @@
     },
     {
       "classification": "plan_or_readiness",
-      "id": "807c01dc3cc778e8aa8c",
-      "line": 3192,
+      "id": "657490fe45d42e9e847d",
+      "line": 3202,
       "method": "POST",
       "path": "/api/buddy/model-benchmarks/plan",
       "runtime": "adapter_optional",
@@ -5746,8 +5830,8 @@
     },
     {
       "classification": "plan_or_readiness",
-      "id": "dd37e272168918b35b60",
-      "line": 3206,
+      "id": "c8e6288ef929de3d49fa",
+      "line": 3216,
       "method": "GET",
       "path": "/api/buddy/open-model-lab/catalog",
       "runtime": "local_contract",
@@ -5756,8 +5840,8 @@
     },
     {
       "classification": "state_change",
-      "id": "80a4b0f1b8da90c34f92",
-      "line": 3214,
+      "id": "19cd37581af27af10fa5",
+      "line": 3224,
       "method": "POST",
       "path": "/api/buddy/open-model-lab/comparison-plan",
       "runtime": "local_contract",
@@ -5766,8 +5850,8 @@
     },
     {
       "classification": "state_change",
-      "id": "a838da50abefaca164b9",
-      "line": 3260,
+      "id": "c41579e724a631e13ed6",
+      "line": 3270,
       "method": "POST",
       "path": "/api/buddy/open-secure-ai-defense/assessment",
       "runtime": "local_contract",
@@ -5776,8 +5860,8 @@
     },
     {
       "classification": "plan_or_readiness",
-      "id": "d7e87aacf39828b99517",
-      "line": 3252,
+      "id": "ebc436901f008c967463",
+      "line": 3262,
       "method": "GET",
       "path": "/api/buddy/open-secure-ai-defense/catalog",
       "runtime": "local_contract",
@@ -5786,8 +5870,8 @@
     },
     {
       "classification": "state_change",
-      "id": "c966ec6b977d90ab994b",
-      "line": 3274,
+      "id": "f6c40a4152fa903542c1",
+      "line": 3284,
       "method": "POST",
       "path": "/api/buddy/open-secure-ai-defense/github-profile-plan",
       "runtime": "local_contract",
@@ -5796,8 +5880,8 @@
     },
     {
       "classification": "state_change",
-      "id": "911136132b9c3ed00689",
-      "line": 3292,
+      "id": "34bd3bc2fd1ca0994428",
+      "line": 3302,
       "method": "POST",
       "path": "/api/buddy/open-secure-ai-defense/model-discovery-plan",
       "runtime": "local_contract",
@@ -5806,8 +5890,8 @@
     },
     {
       "classification": "state_change",
-      "id": "c30458c10bc012b10393",
-      "line": 3302,
+      "id": "00cc27a4b04303787193",
+      "line": 3312,
       "method": "POST",
       "path": "/api/buddy/open-secure-ai-defense/upgrade-plan",
       "runtime": "local_contract",
@@ -5816,8 +5900,8 @@
     },
     {
       "classification": "state_change",
-      "id": "c4d9ea69005a6686ad79",
-      "line": 3238,
+      "id": "2a9320a65d8113e21c64",
+      "line": 3248,
       "method": "POST",
       "path": "/api/buddy/open-source/sandbox-plan",
       "runtime": "local_contract",
@@ -5826,8 +5910,8 @@
     },
     {
       "classification": "state_change",
-      "id": "e2406230ba201f8f1fe0",
-      "line": 3228,
+      "id": "71e5370982483bf15c8b",
+      "line": 3238,
       "method": "POST",
       "path": "/api/buddy/open-source/tracking-plan",
       "runtime": "local_contract",
@@ -5836,8 +5920,8 @@
     },
     {
       "classification": "read_only",
-      "id": "1303de06873d8c359509",
-      "line": 1454,
+      "id": "1d6f6afef9a78093c134",
+      "line": 1464,
       "method": "GET",
       "path": "/api/buddy/platform-expansion",
       "runtime": "local_contract",
@@ -5846,8 +5930,8 @@
     },
     {
       "classification": "plan_or_readiness",
-      "id": "8f3bf00cd56e99693934",
-      "line": 3434,
+      "id": "c481c9ea3b8ca2e38bfb",
+      "line": 3480,
       "method": "GET",
       "path": "/api/buddy/practice/catalog",
       "runtime": "local_contract",
@@ -5856,8 +5940,8 @@
     },
     {
       "classification": "state_change",
-      "id": "2f6d06763ffc468edea2",
-      "line": 3443,
+      "id": "800882ba64776800cb70",
+      "line": 3489,
       "method": "POST",
       "path": "/api/buddy/practice/session-plan",
       "runtime": "local_contract",
@@ -5866,8 +5950,8 @@
     },
     {
       "classification": "state_change",
-      "id": "14e17f3631f987ae7c74",
-      "line": 1430,
+      "id": "0d008835695bcd6d995a",
+      "line": 1440,
       "method": "POST",
       "path": "/api/buddy/refactor",
       "runtime": "local_contract",
@@ -5876,8 +5960,8 @@
     },
     {
       "classification": "state_change",
-      "id": "97994f9569d41bc6f833",
-      "line": 3327,
+      "id": "329da377d4d84126504b",
+      "line": 3373,
       "method": "POST",
       "path": "/api/buddy/repository-test-plan",
       "runtime": "local_contract",
@@ -5886,8 +5970,8 @@
     },
     {
       "classification": "read_only",
-      "id": "af10982682bfa32180eb",
-      "line": 3316,
+      "id": "fdc1be9762575353bbcc",
+      "line": 3362,
       "method": "GET",
       "path": "/api/buddy/repository-test-registry",
       "runtime": "local_contract",
@@ -5896,8 +5980,8 @@
     },
     {
       "classification": "state_change",
-      "id": "c5bbe195270c8c56f267",
-      "line": 662,
+      "id": "ac4c97907d32418af9d9",
+      "line": 672,
       "method": "POST",
       "path": "/api/buddy/route-capability",
       "runtime": "local_contract",
@@ -5906,8 +5990,8 @@
     },
     {
       "classification": "state_change",
-      "id": "c1d350d19dbe25f4292c",
-      "line": 1232,
+      "id": "7e2337ab458eb5eccbfc",
+      "line": 1242,
       "method": "POST",
       "path": "/api/buddy/security-scan",
       "runtime": "local_contract",
@@ -5916,8 +6000,8 @@
     },
     {
       "classification": "state_change",
-      "id": "69d298d6b02290cb1839",
-      "line": 847,
+      "id": "4435a5f4e9a18426a74b",
+      "line": 857,
       "method": "POST",
       "path": "/api/buddy/simulate-course",
       "runtime": "local_contract",
@@ -5926,8 +6010,8 @@
     },
     {
       "classification": "state_change",
-      "id": "6330f40cf60f001e2e90",
-      "line": 3414,
+      "id": "dcef200d808ccc0a8153",
+      "line": 3460,
       "method": "POST",
       "path": "/api/buddy/social/workspace-plan",
       "runtime": "adapter_optional",
@@ -5936,8 +6020,8 @@
     },
     {
       "classification": "state_change",
-      "id": "1bd9000d6bb868a16bad",
-      "line": 779,
+      "id": "62edd2fa66d8ccc2b54a",
+      "line": 789,
       "method": "POST",
       "path": "/api/buddy/study-book",
       "runtime": "local_contract",
@@ -5945,9 +6029,49 @@
       "suite_id": "buddy-routing"
     },
     {
+      "classification": "state_change",
+      "id": "26918a66d84ae5525383",
+      "line": 3336,
+      "method": "POST",
+      "path": "/api/buddy/success/growth-plan",
+      "runtime": "local_contract",
+      "source": "server/routes.ts",
+      "suite_id": "buddy-routing"
+    },
+    {
+      "classification": "state_change",
+      "id": "688fef10070aa02c9038",
+      "line": 3356,
+      "method": "POST",
+      "path": "/api/buddy/success/intent",
+      "runtime": "local_contract",
+      "source": "server/routes.ts",
+      "suite_id": "buddy-routing"
+    },
+    {
+      "classification": "state_change",
+      "id": "1b984a30093e42bc4aba",
+      "line": 3346,
+      "method": "POST",
+      "path": "/api/buddy/success/ontology-plan",
+      "runtime": "local_contract",
+      "source": "server/routes.ts",
+      "suite_id": "buddy-routing"
+    },
+    {
+      "classification": "state_change",
+      "id": "88980e1ca6105dbd6355",
+      "line": 3326,
+      "method": "POST",
+      "path": "/api/buddy/success/profile-plan",
+      "runtime": "local_contract",
+      "source": "server/routes.ts",
+      "suite_id": "buddy-routing"
+    },
+    {
       "classification": "plan_or_readiness",
-      "id": "efbc95133e67980b6c12",
-      "line": 3339,
+      "id": "df94dcbabd8807ac94f5",
+      "line": 3385,
       "method": "POST",
       "path": "/api/buddy/task-discovery/plan",
       "runtime": "local_contract",
@@ -5956,8 +6080,8 @@
     },
     {
       "classification": "state_change",
-      "id": "8570c4b25bcb8a35ccf6",
-      "line": 757,
+      "id": "f8e7c251aa949c2658bb",
+      "line": 767,
       "method": "POST",
       "path": "/api/buddy/train",
       "runtime": "local_contract",
@@ -5966,8 +6090,8 @@
     },
     {
       "classification": "state_change",
-      "id": "35ca7212d95d502755aa",
-      "line": 1282,
+      "id": "1e94b7925fa6249c7244",
+      "line": 1292,
       "method": "POST",
       "path": "/api/buddy/translate-code",
       "runtime": "local_contract",
@@ -5976,8 +6100,8 @@
     },
     {
       "classification": "state_change",
-      "id": "5ef6a8a11a1bfcbef112",
-      "line": 801,
+      "id": "d82be2f9f9d4bb3e8bfb",
+      "line": 811,
       "method": "POST",
       "path": "/api/buddy/vibe-code",
       "runtime": "local_contract",
@@ -5986,8 +6110,8 @@
     },
     {
       "classification": "read_only",
-      "id": "174778427dcac06bbf92",
-      "line": 481,
+      "id": "b003bee7a0cc7866f3fe",
+      "line": 491,
       "method": "GET",
       "path": "/api/buddy/workforce",
       "runtime": "local_contract",
@@ -5996,8 +6120,8 @@
     },
     {
       "classification": "state_change",
-      "id": "859d09beab9846c07246",
-      "line": 485,
+      "id": "b358abae6712da8da539",
+      "line": 495,
       "method": "POST",
       "path": "/api/buddy/workforce/job-analysis",
       "runtime": "local_contract",
@@ -6006,8 +6130,8 @@
     },
     {
       "classification": "state_change",
-      "id": "a23e1da845d42da188c1",
-      "line": 505,
+      "id": "2bfe4ac33a0171312754",
+      "line": 515,
       "method": "POST",
       "path": "/api/buddy/workforce/payment-plan",
       "runtime": "local_contract",
@@ -6016,8 +6140,8 @@
     },
     {
       "classification": "state_change",
-      "id": "ad8f4159012c4daeb72c",
-      "line": 515,
+      "id": "f7af2bb685ec055d24a7",
+      "line": 525,
       "method": "POST",
       "path": "/api/buddy/workforce/professional-review",
       "runtime": "local_contract",
@@ -6026,8 +6150,8 @@
     },
     {
       "classification": "state_change",
-      "id": "c1a61ee832e1b96889cf",
-      "line": 495,
+      "id": "cfdaf511154cf1f16fb6",
+      "line": 505,
       "method": "POST",
       "path": "/api/buddy/workforce/service-opportunity",
       "runtime": "local_contract",
@@ -6036,8 +6160,8 @@
     },
     {
       "classification": "state_change",
-      "id": "bd27a458617c2bcc003f",
-      "line": 525,
+      "id": "5d7cca5d36a9eee959f0",
+      "line": 535,
       "method": "POST",
       "path": "/api/buddy/workforce/voice-sandbox",
       "runtime": "adapter_optional",
@@ -6046,8 +6170,8 @@
     },
     {
       "classification": "state_change",
-      "id": "7e70f20dea371b00df76",
-      "line": 3090,
+      "id": "ce71966bf054f3c3d58e",
+      "line": 3100,
       "method": "POST",
       "path": "/api/code/run",
       "runtime": "local_contract",
@@ -6056,8 +6180,8 @@
     },
     {
       "classification": "state_change",
-      "id": "ca65d28761febb0e9d97",
-      "line": 3176,
+      "id": "cabb43694f8b41bca55c",
+      "line": 3186,
       "method": "POST",
       "path": "/api/connections",
       "runtime": "adapter_optional",
@@ -6186,8 +6310,8 @@
     },
     {
       "classification": "read_only",
-      "id": "3c7fcaff0ac1de4bb12c",
-      "line": 3668,
+      "id": "27ff962e09ff556f0bd4",
+      "line": 3714,
       "method": "GET",
       "path": "/api/costs",
       "runtime": "local_contract",
@@ -6196,8 +6320,8 @@
     },
     {
       "classification": "read_only",
-      "id": "3b61261523f164daad3c",
-      "line": 3673,
+      "id": "bce5f9ccefe84e049d32",
+      "line": 3719,
       "method": "GET",
       "path": "/api/costs/summary",
       "runtime": "local_contract",
@@ -6206,8 +6330,8 @@
     },
     {
       "classification": "read_only",
-      "id": "ee2e2f50599a36bfe762",
-      "line": 724,
+      "id": "740c56384f12c6cd3b09",
+      "line": 734,
       "method": "GET",
       "path": "/api/council/proposals",
       "runtime": "local_contract",
@@ -6216,8 +6340,8 @@
     },
     {
       "classification": "state_change",
-      "id": "308553d6e8a25a4b097b",
-      "line": 746,
+      "id": "6da8ff46a8a83a0353ba",
+      "line": 756,
       "method": "PATCH",
       "path": "/api/council/proposals/:id",
       "runtime": "local_contract",
@@ -6226,8 +6350,8 @@
     },
     {
       "classification": "state_change",
-      "id": "6915a1ca0aec3c6c4ee7",
-      "line": 728,
+      "id": "982b2c01ed2904fa212b",
+      "line": 738,
       "method": "POST",
       "path": "/api/council/report",
       "runtime": "local_contract",
@@ -6236,8 +6360,8 @@
     },
     {
       "classification": "read_only",
-      "id": "27e8d3955de72a55737b",
-      "line": 899,
+      "id": "ac6211b6693d1d4c10e8",
+      "line": 909,
       "method": "GET",
       "path": "/api/data-packages",
       "runtime": "local_contract",
@@ -6246,8 +6370,8 @@
     },
     {
       "classification": "read_only",
-      "id": "a345512c7187d065affd",
-      "line": 2225,
+      "id": "e6fd5e10d655d281e8e5",
+      "line": 2235,
       "method": "GET",
       "path": "/api/deals",
       "runtime": "credentials_required",
@@ -6256,8 +6380,8 @@
     },
     {
       "classification": "state_change",
-      "id": "c9a51ddbdb0da85de6b8",
-      "line": 2243,
+      "id": "0b6e6a5e5a7208b0c363",
+      "line": 2253,
       "method": "POST",
       "path": "/api/deals",
       "runtime": "credentials_required",
@@ -6266,8 +6390,8 @@
     },
     {
       "classification": "external_or_destructive_gate",
-      "id": "b2170ab6a190b578581e",
-      "line": 2296,
+      "id": "3e67374d9067f323b1ef",
+      "line": 2306,
       "method": "DELETE",
       "path": "/api/deals/:id",
       "runtime": "credentials_and_exact_approval_required",
@@ -6276,8 +6400,8 @@
     },
     {
       "classification": "read_only",
-      "id": "abc1bd29e694dc094546",
-      "line": 2235,
+      "id": "e484026283ca73851455",
+      "line": 2245,
       "method": "GET",
       "path": "/api/deals/:id",
       "runtime": "credentials_required",
@@ -6286,8 +6410,8 @@
     },
     {
       "classification": "read_only",
-      "id": "31680f3ccf051384d1c7",
-      "line": 2230,
+      "id": "6272a8306326589a0b7a",
+      "line": 2240,
       "method": "GET",
       "path": "/api/deals/kpis",
       "runtime": "credentials_required",
@@ -6296,8 +6420,8 @@
     },
     {
       "classification": "read_only",
-      "id": "e0de7c2a17cdf75e52fc",
-      "line": 2338,
+      "id": "ad4d5c5a602a2a9be8b7",
+      "line": 2348,
       "method": "GET",
       "path": "/api/debug/auto-fixes",
       "runtime": "local_contract",
@@ -6306,8 +6430,8 @@
     },
     {
       "classification": "state_change",
-      "id": "235f4fa56034d0ed19ff",
-      "line": 2344,
+      "id": "f2e5bbb5453b808d6e0a",
+      "line": 2354,
       "method": "POST",
       "path": "/api/debug/auto-fixes",
       "runtime": "local_contract",
@@ -6316,8 +6440,8 @@
     },
     {
       "classification": "state_change",
-      "id": "deec9eb79d4063e4d406",
-      "line": 2359,
+      "id": "e3fc7c0dced67f31679b",
+      "line": 2369,
       "method": "PATCH",
       "path": "/api/debug/auto-fixes/:id/apply",
       "runtime": "local_contract",
@@ -6326,8 +6450,8 @@
     },
     {
       "classification": "state_change",
-      "id": "d196687328b4b1c81ef5",
-      "line": 2366,
+      "id": "38477dd6f017351751fd",
+      "line": 2376,
       "method": "PATCH",
       "path": "/api/debug/auto-fixes/:id/reject",
       "runtime": "local_contract",
@@ -6336,8 +6460,8 @@
     },
     {
       "classification": "read_only",
-      "id": "e071da0e04a3247ce712",
-      "line": 2312,
+      "id": "e2245107fcce7d2a6831",
+      "line": 2322,
       "method": "GET",
       "path": "/api/debug/events",
       "runtime": "local_contract",
@@ -6346,8 +6470,8 @@
     },
     {
       "classification": "state_change",
-      "id": "a701216b360c3aeb5ed1",
-      "line": 2319,
+      "id": "1678918f6a82661232e7",
+      "line": 2329,
       "method": "POST",
       "path": "/api/debug/events",
       "runtime": "local_contract",
@@ -6356,8 +6480,8 @@
     },
     {
       "classification": "state_change",
-      "id": "1f1f7cc8255a2867cbb6",
-      "line": 2330,
+      "id": "7bea48afe5bbf1afa3c7",
+      "line": 2340,
       "method": "PATCH",
       "path": "/api/debug/events/:id/resolve",
       "runtime": "local_contract",
@@ -6366,8 +6490,8 @@
     },
     {
       "classification": "read_only",
-      "id": "f7586f8fa4fb57c84d67",
-      "line": 2307,
+      "id": "ca8433587539e47b340a",
+      "line": 2317,
       "method": "GET",
       "path": "/api/debug/overview",
       "runtime": "local_contract",
@@ -6376,8 +6500,8 @@
     },
     {
       "classification": "read_only",
-      "id": "79ade32edde824974d8d",
-      "line": 2373,
+      "id": "e0f7c578de6b7659558c",
+      "line": 2383,
       "method": "GET",
       "path": "/api/debug/revenue-leaks",
       "runtime": "local_contract",
@@ -6386,8 +6510,8 @@
     },
     {
       "classification": "state_change",
-      "id": "44fcfc2f4a43875c63eb",
-      "line": 2379,
+      "id": "1afb94e88f3a0cba45ee",
+      "line": 2389,
       "method": "POST",
       "path": "/api/debug/revenue-leaks",
       "runtime": "local_contract",
@@ -6396,8 +6520,8 @@
     },
     {
       "classification": "state_change",
-      "id": "bbd642408d10944b6b8b",
-      "line": 2390,
+      "id": "fc00b62a016b3e3144f4",
+      "line": 2400,
       "method": "PATCH",
       "path": "/api/debug/revenue-leaks/:id/resolve",
       "runtime": "local_contract",
@@ -6406,8 +6530,8 @@
     },
     {
       "classification": "read_only",
-      "id": "61ffe62b042c4c7c4e85",
-      "line": 2398,
+      "id": "aeed07aee5c3da366f4c",
+      "line": 2408,
       "method": "GET",
       "path": "/api/debug/security-scans",
       "runtime": "local_contract",
@@ -6416,8 +6540,8 @@
     },
     {
       "classification": "state_change",
-      "id": "a4c5fc2303f3177e98d0",
-      "line": 2404,
+      "id": "6c69c85310aa5fc8203b",
+      "line": 2414,
       "method": "POST",
       "path": "/api/debug/security-scans",
       "runtime": "local_contract",
@@ -6426,8 +6550,8 @@
     },
     {
       "classification": "state_change",
-      "id": "a773e13cbbaef9f635a4",
-      "line": 2415,
+      "id": "d7e8c19975a4b7cbc7f3",
+      "line": 2425,
       "method": "PATCH",
       "path": "/api/debug/security-scans/:id/remediate",
       "runtime": "local_contract",
@@ -6436,8 +6560,8 @@
     },
     {
       "classification": "state_change",
-      "id": "e846c170753d99f38179",
-      "line": 2423,
+      "id": "dd88e40db5073749ddd1",
+      "line": 2433,
       "method": "POST",
       "path": "/api/debug/seed",
       "runtime": "local_contract",
@@ -6486,8 +6610,8 @@
     },
     {
       "classification": "read_only",
-      "id": "af8c464e12ea5035fd06",
-      "line": 2134,
+      "id": "a5267d3016c0270f871a",
+      "line": 2144,
       "method": "GET",
       "path": "/api/errors",
       "runtime": "local_contract",
@@ -6496,8 +6620,8 @@
     },
     {
       "classification": "state_change",
-      "id": "223883817040ac9b6994",
-      "line": 2140,
+      "id": "15e96ecb8faa8c97f21c",
+      "line": 2150,
       "method": "POST",
       "path": "/api/errors",
       "runtime": "local_contract",
@@ -6506,8 +6630,8 @@
     },
     {
       "classification": "state_change",
-      "id": "6555defbc4d7e2443914",
-      "line": 2151,
+      "id": "47abe8b298d74a9f873d",
+      "line": 2161,
       "method": "PUT",
       "path": "/api/errors/:id/resolve",
       "runtime": "local_contract",
@@ -6516,8 +6640,8 @@
     },
     {
       "classification": "read_only",
-      "id": "abf20c73e0be74692a76",
-      "line": 2165,
+      "id": "eb9b7d1d7c378e98121f",
+      "line": 2175,
       "method": "GET",
       "path": "/api/financials",
       "runtime": "credentials_required",
@@ -6526,8 +6650,8 @@
     },
     {
       "classification": "state_change",
-      "id": "0f2cb328e6a173078391",
-      "line": 2171,
+      "id": "1dc89f6090a010fa4347",
+      "line": 2181,
       "method": "POST",
       "path": "/api/financials",
       "runtime": "credentials_required",
@@ -6536,8 +6660,8 @@
     },
     {
       "classification": "state_change",
-      "id": "7e747e379ba8aba72731",
-      "line": 685,
+      "id": "263eca57501915991c84",
+      "line": 695,
       "method": "POST",
       "path": "/api/fleet/runtime/:slug/execute",
       "runtime": "local_contract",
@@ -6546,8 +6670,8 @@
     },
     {
       "classification": "plan_or_readiness",
-      "id": "2038e8f196b9c3df7515",
-      "line": 678,
+      "id": "f8d2b7597aa1c268e818",
+      "line": 688,
       "method": "GET",
       "path": "/api/fleet/runtime/:slug/health",
       "runtime": "local_contract",
@@ -6556,8 +6680,8 @@
     },
     {
       "classification": "state_change",
-      "id": "9c1b4653ed0d185ad03e",
-      "line": 698,
+      "id": "563faaa2207b4119535a",
+      "line": 708,
       "method": "POST",
       "path": "/api/fleet/runtime/:slug/test-capability",
       "runtime": "local_contract",
@@ -6566,8 +6690,8 @@
     },
     {
       "classification": "plan_or_readiness",
-      "id": "f86ca864ab699b054e06",
-      "line": 673,
+      "id": "29a8c20b1733e99c2189",
+      "line": 683,
       "method": "GET",
       "path": "/api/fleet/runtime/health",
       "runtime": "local_contract",
@@ -6576,8 +6700,8 @@
     },
     {
       "classification": "read_only",
-      "id": "c27e707f1d6979c704ce",
-      "line": 2527,
+      "id": "5218955ea2ff3f669a89",
+      "line": 2537,
       "method": "GET",
       "path": "/api/formulas",
       "runtime": "local_contract",
@@ -6586,8 +6710,8 @@
     },
     {
       "classification": "state_change",
-      "id": "3f53f671c61feffb3ad1",
-      "line": 2540,
+      "id": "dc8dd6deb56c40018538",
+      "line": 2550,
       "method": "POST",
       "path": "/api/formulas",
       "runtime": "local_contract",
@@ -6596,8 +6720,8 @@
     },
     {
       "classification": "external_or_destructive_gate",
-      "id": "646be737dd9132b88536",
-      "line": 2560,
+      "id": "4b57711ba5c04f6d0c9f",
+      "line": 2570,
       "method": "DELETE",
       "path": "/api/formulas/:id",
       "runtime": "credentials_and_exact_approval_required",
@@ -6606,8 +6730,8 @@
     },
     {
       "classification": "read_only",
-      "id": "0d6aece9ea598119e087",
-      "line": 2532,
+      "id": "9c8e542904c000c470f9",
+      "line": 2542,
       "method": "GET",
       "path": "/api/formulas/:id",
       "runtime": "local_contract",
@@ -6616,8 +6740,8 @@
     },
     {
       "classification": "state_change",
-      "id": "03d0c057c4466e7f0bd8",
-      "line": 2551,
+      "id": "ac5ec65c6da29ad5c42b",
+      "line": 2561,
       "method": "PATCH",
       "path": "/api/formulas/:id",
       "runtime": "local_contract",
@@ -6636,8 +6760,8 @@
     },
     {
       "classification": "state_change",
-      "id": "52a3a5ba6aa6bffd6396",
-      "line": 619,
+      "id": "040feb3cacbf58d88cd9",
+      "line": 629,
       "method": "POST",
       "path": "/api/github-intel/search",
       "runtime": "credentials_required",
@@ -6646,8 +6770,8 @@
     },
     {
       "classification": "read_only",
-      "id": "699ae5b8ac2394e209f4",
-      "line": 597,
+      "id": "c6cda48a73421b8ce739",
+      "line": 607,
       "method": "GET",
       "path": "/api/github-intel/trending",
       "runtime": "credentials_required",
@@ -6656,8 +6780,8 @@
     },
     {
       "classification": "read_only",
-      "id": "b92d32ebea5386a146db",
-      "line": 3745,
+      "id": "caafc1a675fd11f3fd6d",
+      "line": 3791,
       "method": "GET",
       "path": "/api/github/auto-sync",
       "runtime": "credentials_required",
@@ -6666,8 +6790,8 @@
     },
     {
       "classification": "state_change",
-      "id": "17005de0cf7c8749bc1b",
-      "line": 3754,
+      "id": "519c75d009eef998a84e",
+      "line": 3800,
       "method": "POST",
       "path": "/api/github/auto-sync",
       "runtime": "credentials_required",
@@ -6676,8 +6800,8 @@
     },
     {
       "classification": "plan_or_readiness",
-      "id": "75059fd527987e683a10",
-      "line": 3775,
+      "id": "d4731cb345dd5bbd3c31",
+      "line": 3821,
       "method": "GET",
       "path": "/api/github/classify",
       "runtime": "credentials_required",
@@ -6686,8 +6810,8 @@
     },
     {
       "classification": "read_only",
-      "id": "e35bbfb00e67cecd344b",
-      "line": 3764,
+      "id": "781226eaaf4cdf649103",
+      "line": 3810,
       "method": "GET",
       "path": "/api/github/contents",
       "runtime": "credentials_required",
@@ -6696,8 +6820,8 @@
     },
     {
       "classification": "read_only",
-      "id": "5abd1c53ab8f1c66b316",
-      "line": 3805,
+      "id": "65d900480dc3b8bb4556",
+      "line": 3851,
       "method": "GET",
       "path": "/api/github/last-dashboard-run",
       "runtime": "credentials_required",
@@ -6706,8 +6830,8 @@
     },
     {
       "classification": "read_only",
-      "id": "a15dbac8a985362939d9",
-      "line": 3994,
+      "id": "287a987b339d9f4359b3",
+      "line": 4040,
       "method": "GET",
       "path": "/api/github/pulls",
       "runtime": "credentials_required",
@@ -6716,8 +6840,8 @@
     },
     {
       "classification": "external_or_destructive_gate",
-      "id": "e0fd858ba12bcb2d0463",
-      "line": 3719,
+      "id": "f15eca8249f1d460b16f",
+      "line": 3765,
       "method": "POST",
       "path": "/api/github/push-all",
       "runtime": "credentials_and_exact_approval_required",
@@ -6726,8 +6850,8 @@
     },
     {
       "classification": "external_or_destructive_gate",
-      "id": "d6c2913d2392d86e248d",
-      "line": 3734,
+      "id": "2fc44e0dd3acccca21be",
+      "line": 3780,
       "method": "POST",
       "path": "/api/github/push-source",
       "runtime": "credentials_and_exact_approval_required",
@@ -6736,8 +6860,8 @@
     },
     {
       "classification": "read_only",
-      "id": "2207b9a4bf58bc609370",
-      "line": 4024,
+      "id": "8e424e6ce7c87f0e54d3",
+      "line": 4070,
       "method": "GET",
       "path": "/api/github/repo-tree",
       "runtime": "credentials_required",
@@ -6746,8 +6870,8 @@
     },
     {
       "classification": "plan_or_readiness",
-      "id": "8b6b985f905bc0060187",
-      "line": 3679,
+      "id": "507e28885dc0496c3d8d",
+      "line": 3725,
       "method": "GET",
       "path": "/api/github/status",
       "runtime": "credentials_required",
@@ -6756,8 +6880,8 @@
     },
     {
       "classification": "external_or_destructive_gate",
-      "id": "7d4eeb6d028a9d428897",
-      "line": 3701,
+      "id": "d493d3dff9783d1b31fc",
+      "line": 3747,
       "method": "POST",
       "path": "/api/github/sync",
       "runtime": "credentials_and_exact_approval_required",
@@ -6766,8 +6890,8 @@
     },
     {
       "classification": "external_or_destructive_gate",
-      "id": "5b02fe02c560811c94de",
-      "line": 3835,
+      "id": "65ceb273eb3105dfb602",
+      "line": 3881,
       "method": "POST",
       "path": "/api/github/trigger-workflow",
       "runtime": "credentials_and_exact_approval_required",
@@ -6776,8 +6900,8 @@
     },
     {
       "classification": "read_only",
-      "id": "ab6e1e45ec26b91b8bd9",
-      "line": 3784,
+      "id": "17b4f4540ede8bc53abf",
+      "line": 3830,
       "method": "GET",
       "path": "/api/github/workflows",
       "runtime": "credentials_required",
@@ -6786,8 +6910,8 @@
     },
     {
       "classification": "read_only",
-      "id": "49f7d7ff269d557431f7",
-      "line": 1035,
+      "id": "bf375fc48ba93507a632",
+      "line": 1045,
       "method": "GET",
       "path": "/api/governance/rules",
       "runtime": "local_contract",
@@ -6796,8 +6920,8 @@
     },
     {
       "classification": "state_change",
-      "id": "f1043a6423f85ed4bdbf",
-      "line": 1039,
+      "id": "0da23eeb478651d488c7",
+      "line": 1049,
       "method": "POST",
       "path": "/api/governance/rules",
       "runtime": "local_contract",
@@ -6806,8 +6930,8 @@
     },
     {
       "classification": "external_or_destructive_gate",
-      "id": "b27b116866662ba92561",
-      "line": 1062,
+      "id": "aa5ea88e825c46fdbe99",
+      "line": 1072,
       "method": "DELETE",
       "path": "/api/governance/rules/:id",
       "runtime": "credentials_and_exact_approval_required",
@@ -6816,8 +6940,8 @@
     },
     {
       "classification": "state_change",
-      "id": "561f7027d33f2267e397",
-      "line": 1054,
+      "id": "a6e43225b877cbd67252",
+      "line": 1064,
       "method": "PATCH",
       "path": "/api/governance/rules/:id",
       "runtime": "local_contract",
@@ -6826,8 +6950,8 @@
     },
     {
       "classification": "state_change",
-      "id": "5c3496a8d91d62d48e7f",
-      "line": 1069,
+      "id": "feaac7ef3c50cdf81234",
+      "line": 1079,
       "method": "POST",
       "path": "/api/governance/test",
       "runtime": "local_contract",
@@ -6836,8 +6960,8 @@
     },
     {
       "classification": "state_change",
-      "id": "1720aa2fcad151a93aff",
-      "line": 955,
+      "id": "39e26a5099daee957296",
+      "line": 965,
       "method": "POST",
       "path": "/api/harness/run-suite",
       "runtime": "local_contract",
@@ -6846,8 +6970,8 @@
     },
     {
       "classification": "read_only",
-      "id": "59242c021baca7e6157b",
-      "line": 935,
+      "id": "68ab965f7dfae265c498",
+      "line": 945,
       "method": "GET",
       "path": "/api/harness/suites",
       "runtime": "local_contract",
@@ -6856,8 +6980,8 @@
     },
     {
       "classification": "state_change",
-      "id": "d6eb10716b76354626df",
-      "line": 939,
+      "id": "73007f97ae43a80b5a02",
+      "line": 949,
       "method": "POST",
       "path": "/api/harness/suites",
       "runtime": "local_contract",
@@ -6866,8 +6990,8 @@
     },
     {
       "classification": "external_or_destructive_gate",
-      "id": "c3f88e8e5747d72fa58b",
-      "line": 948,
+      "id": "b050e93ff5bea8c389f4",
+      "line": 958,
       "method": "DELETE",
       "path": "/api/harness/suites/:id",
       "runtime": "credentials_and_exact_approval_required",
@@ -6876,8 +7000,8 @@
     },
     {
       "classification": "state_change",
-      "id": "567a60f306215691a37b",
-      "line": 870,
+      "id": "3d28dfcc2d15ebe83d67",
+      "line": 880,
       "method": "POST",
       "path": "/api/intel/competitive",
       "runtime": "local_contract",
@@ -6886,8 +7010,8 @@
     },
     {
       "classification": "read_only",
-      "id": "2145568a5de546c56a53",
-      "line": 2158,
+      "id": "6e63b4ce7b36a3c13a9d",
+      "line": 2168,
       "method": "GET",
       "path": "/api/interactions",
       "runtime": "local_contract",
@@ -6896,8 +7020,8 @@
     },
     {
       "classification": "external_or_destructive_gate",
-      "id": "744ba88cf35aff5e07f5",
-      "line": 3548,
+      "id": "36ebd078953764321cfe",
+      "line": 3594,
       "method": "GET",
       "path": "/api/kill-switch",
       "runtime": "credentials_and_exact_approval_required",
@@ -6906,8 +7030,8 @@
     },
     {
       "classification": "external_or_destructive_gate",
-      "id": "d613f6ac09cc18d18c24",
-      "line": 3553,
+      "id": "a9c2a7af5caf93d4ab91",
+      "line": 3599,
       "method": "POST",
       "path": "/api/kill-switch",
       "runtime": "credentials_and_exact_approval_required",
@@ -6916,8 +7040,8 @@
     },
     {
       "classification": "state_change",
-      "id": "4eb7eea21d4dab0a7ce0",
-      "line": 2123,
+      "id": "122efb4f3bc47898f183",
+      "line": 2133,
       "method": "POST",
       "path": "/api/metrics",
       "runtime": "local_contract",
@@ -6926,8 +7050,8 @@
     },
     {
       "classification": "read_only",
-      "id": "1bbef9f7d8eacbb0675b",
-      "line": 2117,
+      "id": "0c44903917e25b043fad",
+      "line": 2127,
       "method": "GET",
       "path": "/api/metrics/bot/:botId",
       "runtime": "local_contract",
@@ -6936,8 +7060,8 @@
     },
     {
       "classification": "plan_or_readiness",
-      "id": "20aa283b9267da86ef01",
-      "line": 2112,
+      "id": "bc28fb89a456c36dd5e5",
+      "line": 2122,
       "method": "GET",
       "path": "/api/metrics/health",
       "runtime": "local_contract",
@@ -6946,8 +7070,8 @@
     },
     {
       "classification": "plan_or_readiness",
-      "id": "dd3af0ce2932689dbc34",
-      "line": 3861,
+      "id": "1f5d9df200fa25ca03d6",
+      "line": 3907,
       "method": "GET",
       "path": "/api/modules/status",
       "runtime": "local_contract",
@@ -6956,8 +7080,8 @@
     },
     {
       "classification": "read_only",
-      "id": "0aa1ff6046c2ee7e6fe0",
-      "line": 3159,
+      "id": "7c9191d979419638b776",
+      "line": 3169,
       "method": "GET",
       "path": "/api/platform-connections",
       "runtime": "local_contract",
@@ -6966,8 +7090,8 @@
     },
     {
       "classification": "state_change",
-      "id": "fda18db8593744b62241",
-      "line": 3175,
+      "id": "d248ed07a8ff9d37fd4a",
+      "line": 3185,
       "method": "POST",
       "path": "/api/platform-connections",
       "runtime": "local_contract",
@@ -6976,8 +7100,8 @@
     },
     {
       "classification": "external_or_destructive_gate",
-      "id": "62533f58f76862ef1656",
-      "line": 3507,
+      "id": "d97d5c92982a4927ffd0",
+      "line": 3553,
       "method": "DELETE",
       "path": "/api/platform-connections/:id",
       "runtime": "credentials_and_exact_approval_required",
@@ -6986,8 +7110,8 @@
     },
     {
       "classification": "state_change",
-      "id": "e3e00e8732ae2b08ca49",
-      "line": 3497,
+      "id": "b862c2da895ed58e10ea",
+      "line": 3543,
       "method": "PATCH",
       "path": "/api/platform-connections/:id",
       "runtime": "local_contract",
@@ -6996,8 +7120,8 @@
     },
     {
       "classification": "state_change",
-      "id": "aec8bd9cb4c9b015ace1",
-      "line": 3514,
+      "id": "f2e5b6ec80668a1fca24",
+      "line": 3560,
       "method": "POST",
       "path": "/api/platform-connections/disconnect-all",
       "runtime": "local_contract",
@@ -7006,8 +7130,8 @@
     },
     {
       "classification": "read_only",
-      "id": "3edfd80907a9555d1b36",
-      "line": 3560,
+      "id": "9c6cf2185aa152bfe23e",
+      "line": 3606,
       "method": "GET",
       "path": "/api/plugins",
       "runtime": "local_contract",
@@ -7016,8 +7140,8 @@
     },
     {
       "classification": "state_change",
-      "id": "f440a430a2f233be42c9",
-      "line": 3570,
+      "id": "e4938a9f29cfa23740a9",
+      "line": 3616,
       "method": "POST",
       "path": "/api/plugins",
       "runtime": "local_contract",
@@ -7026,8 +7150,8 @@
     },
     {
       "classification": "external_or_destructive_gate",
-      "id": "4a2425d01541fb239a54",
-      "line": 3605,
+      "id": "42b0c0b9043689468ae2",
+      "line": 3651,
       "method": "DELETE",
       "path": "/api/plugins/:id",
       "runtime": "credentials_and_exact_approval_required",
@@ -7036,8 +7160,8 @@
     },
     {
       "classification": "state_change",
-      "id": "f6bf47b2662dd3d25f03",
-      "line": 3577,
+      "id": "29420d2a731b923814a8",
+      "line": 3623,
       "method": "PATCH",
       "path": "/api/plugins/:id",
       "runtime": "local_contract",
@@ -7046,8 +7170,8 @@
     },
     {
       "classification": "state_change",
-      "id": "bbcfd0f134ac4a667007",
-      "line": 3584,
+      "id": "990c099d5fa888614018",
+      "line": 3630,
       "method": "POST",
       "path": "/api/plugins/:id/download",
       "runtime": "local_contract",
@@ -7056,8 +7180,8 @@
     },
     {
       "classification": "external_or_destructive_gate",
-      "id": "9756aea7ecbf93c952fb",
-      "line": 3591,
+      "id": "152fa806f43ca7619f32",
+      "line": 3637,
       "method": "POST",
       "path": "/api/plugins/:id/install",
       "runtime": "credentials_and_exact_approval_required",
@@ -7066,8 +7190,8 @@
     },
     {
       "classification": "external_or_destructive_gate",
-      "id": "a406e93e45cbf57f3e69",
-      "line": 3598,
+      "id": "93fb66bcc5c28cbab2b2",
+      "line": 3644,
       "method": "POST",
       "path": "/api/plugins/:id/uninstall",
       "runtime": "credentials_and_exact_approval_required",
@@ -7076,8 +7200,8 @@
     },
     {
       "classification": "state_change",
-      "id": "fd51b29c99ecbf4d4a16",
-      "line": 536,
+      "id": "905e847f13db64f8e68e",
+      "line": 546,
       "method": "POST",
       "path": "/api/search/web",
       "runtime": "local_contract",
@@ -7086,8 +7210,8 @@
     },
     {
       "classification": "state_change",
-      "id": "1c913c26f57086c24a4a",
-      "line": 3526,
+      "id": "8d0c6dfb90e0e5982d06",
+      "line": 3572,
       "method": "POST",
       "path": "/api/signup-handoffs",
       "runtime": "adapter_optional",
@@ -7096,8 +7220,8 @@
     },
     {
       "classification": "read_only",
-      "id": "a8a5e3dc4551d1b1ab64",
-      "line": 3633,
+      "id": "7cdb6f14c83855a70687",
+      "line": 3679,
       "method": "GET",
       "path": "/api/snapshots",
       "runtime": "local_contract",
@@ -7106,8 +7230,8 @@
     },
     {
       "classification": "state_change",
-      "id": "e794de229128fa4b6e06",
-      "line": 3638,
+      "id": "5cb49597ec15ad450332",
+      "line": 3684,
       "method": "POST",
       "path": "/api/snapshots",
       "runtime": "local_contract",
@@ -7116,8 +7240,8 @@
     },
     {
       "classification": "external_or_destructive_gate",
-      "id": "cfe154febe141e5ed505",
-      "line": 3661,
+      "id": "3b17cd3eb797e12307e1",
+      "line": 3707,
       "method": "DELETE",
       "path": "/api/snapshots/:id",
       "runtime": "credentials_and_exact_approval_required",
@@ -7126,8 +7250,8 @@
     },
     {
       "classification": "external_or_destructive_gate",
-      "id": "cd41d38ffa07d6ff4daf",
-      "line": 2688,
+      "id": "11bb16a52ef01ccaa372",
+      "line": 2698,
       "method": "POST",
       "path": "/api/stripe/checkout",
       "runtime": "credentials_and_exact_approval_required",
@@ -7136,8 +7260,8 @@
     },
     {
       "classification": "external_or_destructive_gate",
-      "id": "3ee365f50c0eb5d504f3",
-      "line": 2867,
+      "id": "5a0eb967c6df78a616a7",
+      "line": 2877,
       "method": "POST",
       "path": "/api/stripe/portal",
       "runtime": "credentials_and_exact_approval_required",
@@ -7146,8 +7270,8 @@
     },
     {
       "classification": "read_only",
-      "id": "a7f91bb449e34a59fb92",
-      "line": 2581,
+      "id": "23f2668478415a64075b",
+      "line": 2591,
       "method": "GET",
       "path": "/api/stripe/products",
       "runtime": "credentials_required",
@@ -7156,8 +7280,8 @@
     },
     {
       "classification": "read_only",
-      "id": "7193b05d3ae207414b77",
-      "line": 2571,
+      "id": "546f54abb00ebb4b1008",
+      "line": 2581,
       "method": "GET",
       "path": "/api/stripe/publishable-key",
       "runtime": "credentials_required",
@@ -7166,8 +7290,8 @@
     },
     {
       "classification": "state_change",
-      "id": "bd7a2b1603fb26cf4088",
-      "line": 2796,
+      "id": "c86c612dd19f368cede1",
+      "line": 2806,
       "method": "POST",
       "path": "/api/stripe/restore-subscription",
       "runtime": "credentials_required",
@@ -7176,8 +7300,8 @@
     },
     {
       "classification": "read_only",
-      "id": "1cc4442684140a1f99b0",
-      "line": 2713,
+      "id": "11d106a17877b60500e4",
+      "line": 2723,
       "method": "GET",
       "path": "/api/stripe/subscription-status",
       "runtime": "credentials_required",
@@ -7236,8 +7360,8 @@
     },
     {
       "classification": "state_change",
-      "id": "0d0b3b9a314ef18c518b",
-      "line": 3982,
+      "id": "518ac6bbe76e2fa3ddb6",
+      "line": 4028,
       "method": "POST",
       "path": "/api/tasks/:id/restart",
       "runtime": "local_contract",
@@ -7266,8 +7390,8 @@
     },
     {
       "classification": "state_change",
-      "id": "b95e6263cbb075bbe2bb",
-      "line": 3968,
+      "id": "a1c79e1e481c53b58a1d",
+      "line": 4014,
       "method": "POST",
       "path": "/api/tasks/restart-all",
       "runtime": "local_contract",
@@ -7276,8 +7400,8 @@
     },
     {
       "classification": "state_change",
-      "id": "6106f6634be21e7fbf40",
-      "line": 3536,
+      "id": "6f9f093875317b09cdef",
+      "line": 3582,
       "method": "POST",
       "path": "/api/token-transfer-plans",
       "runtime": "adapter_optional",
@@ -7286,8 +7410,8 @@
     },
     {
       "classification": "state_change",
-      "id": "8b11509254fdd37b6c03",
-      "line": 387,
+      "id": "038ea6808c19a75fb6dc",
+      "line": 397,
       "method": "POST",
       "path": "/api/voice/clone",
       "runtime": "adapter_optional",
@@ -7296,8 +7420,8 @@
     },
     {
       "classification": "read_only",
-      "id": "0c6916cb31ea036e505d",
-      "line": 400,
+      "id": "f0139465a77bdae019a3",
+      "line": 410,
       "method": "GET",
       "path": "/api/voice/voices",
       "runtime": "adapter_optional",
@@ -7314,7 +7438,7 @@
     "results_must_distinguish_contract_from_live_e2e": true,
     "test_data": "synthetic_or_owner_authorized"
   },
-  "scan_id": "f7ece36c9cba8a6863e05034",
+  "scan_id": "1be88e8a506847f57ab91ec5",
   "schema": "dreamco.repository_test_registry.v1",
   "suites": [
     {
@@ -7941,20 +8065,20 @@
     }
   ],
   "summary": {
-    "api_route_registrations": 223,
+    "api_route_registrations": 227,
     "blocked_suites": 0,
     "bot_sources": 134,
     "credential_required_suites": 2,
     "duplicate_route_keys": 0,
-    "files_scanned": 837,
-    "literal_api_routes": 201,
+    "files_scanned": 851,
+    "literal_api_routes": 205,
     "locally_testable_suites": 25,
     "platform_modules": 29,
     "provider_adapters": 17,
     "shared_route_contracts": 22,
-    "test_files": 43,
+    "test_files": 46,
     "test_suites": 27,
-    "web_pages": 40,
+    "web_pages": 41,
     "workflows": 3
   }
 }

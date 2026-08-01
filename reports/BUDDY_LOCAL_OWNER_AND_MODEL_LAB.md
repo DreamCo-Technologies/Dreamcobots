@@ -7,7 +7,7 @@
 - Pause and resume controls apply immediately and the last 50 redacted action events remain in memory only.
 - Creative Studio can record up to 60 seconds of owner audio, take a camera image, preview both locally, and export each source file.
 - Creative Studio generates a portable consent receipt containing SHA-256 fingerprints rather than raw biometric media.
-- The generated benchmark catalog contains exactly 100 targets, 89 providers, 17 categories, and 12 evaluation suites.
+- The generated benchmark catalog contains 200 targets across 94 providers, 24 categories, and 12 evaluation suites. The second 100 are official-catalog discovery lanes, not invented model records or live scores.
 - The local catalog audit validates identity, task-fit, access, capability, instruction, and suite metadata without calling a provider.
 
 ## Start the Laptop Workspace

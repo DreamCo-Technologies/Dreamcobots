@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Success Center | Buddy</title>
+  <meta name="description" content="Build a private Buddy success profile, track opportunities and assets, tune weighted priorities, and inspect division benchmarks." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="success.css?v=1" />
+</head>
+<body class="success-page">
+<div id="nav-placeholder"></div><script src="nav.js"></script>
+
+<main class="success-shell">
+  <header class="success-header">
+    <div>
+      <p class="success-eyebrow">Buddy Success Center</p>
+      <h1>Turn goals into measured progress.</h1>
+      <p>Give Buddy useful, non-sensitive context, track ideas and assets, and compare every division against evidence. Income is never guaranteed; results stay separated from estimates.</p>
+    </div>
+    <a class="btn btn-primary" href="buddy.html">Talk to Buddy</a>
+  </header>
+
+  <section class="success-metrics" aria-label="Success program coverage">
+    <div><span>Buddy profiles</span><strong id="success-profile-count">...</strong></div>
+    <div><span>Divisions</span><strong id="success-division-count">...</strong></div>
+    <div><span>Model targets</span><strong id="success-model-count">...</strong></div>
+    <div><span>Resource references</span><strong id="success-resource-count">...</strong></div>
+    <div><span>Verified live</span><strong id="success-live-count">...</strong></div>
+  </section>
+
+  <nav class="success-jump" aria-label="Success Center sections">
+    <a href="#profile">Success profile</a>
+    <a href="#tracker">Growth tracker</a>
+    <a href="#ontology">Weighted ontology</a>
+    <a href="#divisions">Division benchmarks</a>
+    <a href="#models">Model 200</a>
+    <a href="#resources">Resources</a>
+  </nav>
+
+  <section id="profile" class="success-band" aria-labelledby="profile-title">
+    <div class="success-section-heading">
+      <div><p>Private by default</p><h2 id="profile-title">Build your Success Profile</h2></div>
+      <span id="profile-progress">0 of 0 answered</span>
+    </div>
+    <p class="success-note">Stored only in this browser. Never enter passwords, tokens, government identifiers, bank details, private keys, or private records.</p>
+    <form id="success-profile-form">
+      <div id="success-questionnaire" class="questionnaire-grid"></div>
+      <label class="success-consent"><input id="profile-share" type="checkbox" /> Share this non-sensitive summary with every specialist Buddy routes for me.</label>
+      <label class="success-consent"><input id="profile-no-secrets" type="checkbox" required /> I confirm this profile contains no credentials, secret keys, account numbers, or government identifiers.</label>
+      <div class="success-actions">
+        <button class="btn btn-primary" type="submit">Save profile</button>
+        <button id="profile-clear" class="btn btn-outline" type="button">Delete profile</button>
+        <span id="profile-status" aria-live="polite">Nothing saved yet.</span>
+      </div>
+    </form>
+  </section>
+
+  <section id="tracker" class="success-band" aria-labelledby="tracker-title">
+    <div class="success-section-heading">
+      <div><p>Ideas, assets, experiments, results</p><h2 id="tracker-title">Growth Tracker</h2></div>
+      <button id="tracker-export" class="btn btn-outline" type="button">Export records</button>
+    </div>
+    <div class="tracker-metrics">
+      <div><span>Ideas</span><strong id="tracker-ideas">0</strong></div>
+      <div><span>Assets</span><strong id="tracker-assets">0</strong></div>
+      <div><span>Active tests</span><strong id="tracker-tests">0</strong></div>
+      <div><span>User-confirmed revenue</span><strong id="tracker-revenue">$0</strong></div>
+      <div><span>Time saved</span><strong id="tracker-time">0h</strong></div>
+    </div>
+    <form id="growth-record-form" class="growth-form">
+      <label>Record type<select id="growth-type"><option>opportunity idea</option><option>owned asset</option><option>validation experiment</option><option>user-confirmed revenue</option><option>time saved</option></select></label>
+      <label>Title<input id="growth-title" required maxlength="160" placeholder="What are you tracking?" /></label>
+      <label>Status<select id="growth-status"><option>idea</option><option>researching</option><option>testing</option><option>ready for review</option><option>paused</option><option>completed</option><option>rejected</option></select></label>
+      <label>Estimated value ($)<input id="growth-estimate" type="number" min="0" step="0.01" value="0" /></label>
+      <label>Confirmed value ($)<input id="growth-confirmed" type="number" min="0" step="0.01" value="0" /></label>
+      <label>Time saved (hours)<input id="growth-hours" type="number" min="0" step="0.25" value="0" /></label>
+      <label class="growth-wide">Evidence or source<textarea id="growth-evidence" rows="3" maxlength="1000" placeholder="What supports the estimate or confirmed result?"></textarea></label>
+      <label class="growth-wide">Next action<textarea id="growth-next" rows="2" maxlength="600" placeholder="What is the smallest useful next test?"></textarea></label>
+      <div class="success-actions growth-wide"><button class="btn btn-primary" type="submit">Add record</button><span id="growth-form-status" aria-live="polite"></span></div>
+    </form>
+    <div id="growth-record-list" class="growth-record-list" aria-live="polite"></div>
+  </section>
+
+  <section id="ontology" class="success-band" aria-labelledby="ontology-title">
+    <div class="success-section-heading"><div><p>User-controlled priorities</p><h2 id="ontology-title">Weighted ontology</h2></div><span id="ontology-total">100 total</span></div>
+    <p class="success-note">Weighted graph mode ranks routes and opportunities by your priorities. Model developer region is informational and never treated as a quality score. Evidence and safety each keep a minimum weight of 10.</p>
+    <div id="ontology-presets" class="ontology-presets" role="group" aria-label="Ontology presets"></div>
+    <form id="ontology-form"><div id="ontology-weights" class="ontology-weights"></div><div class="success-actions"><button class="btn btn-primary" type="submit">Save weights</button><span id="ontology-status" aria-live="polite"></span></div></form>
+  </section>
+
+  <section id="divisions" class="success-band" aria-labelledby="division-title">
+    <div class="success-section-heading"><div><p>45 tested categories</p><h2 id="division-title">Division improvement and benchmark lab</h2></div><span id="division-program-count">...</span></div>
+    <div class="division-controls">
+      <label>Division<select id="division-program-select"></select></label>
+      <label>Program<select id="division-program-kind"><option value="must_have_updates">100 must-have updates</option><option value="upgrades">100 upgrades</option></select></label>
+      <label>Filter<input id="division-program-search" type="search" placeholder="Security, workflow, release..." /></label>
+    </div>
+    <div class="division-summary"><div id="division-robot" class="division-robot" aria-hidden="true"></div><div><p id="division-meta"></p><h3 id="division-name">Loading...</h3><p id="division-benchmark-status"></p></div></div>
+    <div id="division-benchmark-dimensions" class="benchmark-dimensions"></div>
+    <div id="division-improvement-list" class="improvement-list"></div>
+  </section>
+
+  <section id="models" class="success-band" aria-labelledby="models-title">
+    <div class="success-section-heading"><div><p>Global, evidence-first routing</p><h2 id="models-title">200 model benchmark targets</h2></div><a class="btn btn-outline" href="models.html">Open Model Lab</a></div>
+    <p id="model-program-summary" class="success-note"></p>
+    <div id="model-source-list" class="model-source-list"></div>
+  </section>
+
+  <section id="resources" class="success-band" aria-labelledby="resources-title">
+    <div class="success-section-heading"><div><p>Repository-wide inventory</p><h2 id="resources-title">Resource connection ledger</h2></div><span id="resource-ledger-count">...</span></div>
+    <p class="success-note">A mention is not a connection. Buddy shows a resource as verified live only after credentials are configured through a vault reference and a health check is recorded.</p>
+    <div class="resource-controls"><input id="resource-search" type="search" placeholder="Search host" /><select id="resource-status"><option value="all">All statuses</option><option value="reference_only">Reference only</option><option value="configuration_required">Configuration required</option><option value="verified_live">Verified live</option></select></div>
+    <div id="resource-list" class="resource-list"></div>
+  </section>
+</main>
+
+<script src="data/buddy-success-program.js?v=1"></script>
+<script src="robot-avatar.js?v=1"></script>
+<script src="success.js?v=1" defer></script>
+</body>
+</html>

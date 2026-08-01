@@ -8,11 +8,26 @@ import {
   runModelCatalogAudit,
 } from "../server/model-benchmark-policy";
 
-test("the benchmark catalog audits exactly 100 targets without pretending to call them", () => {
+test("the benchmark catalog audits 200 curated and discovery targets without pretending to call them", () => {
   const audit = runModelCatalogAudit();
-  assert.equal(audit.targets, 100);
+  assert.equal(audit.targets, 200);
   assert.equal(audit.failed, 0);
   assert.equal(audit.liveModelsCalled, 0);
+});
+
+test("dynamic discovery targets stop at official catalog discovery", () => {
+  const plan = createModelBenchmarkPlan({
+    targetIds: [101, 150, 200],
+    suiteIds: ["instruction_following"],
+    repetitions: 1,
+    maxBudgetUsd: 0,
+    allowExternalNetwork: true,
+    approvePaidModelsForThisRun: false,
+  });
+  assert.equal(plan.status, "official_catalog_discovery_required");
+  assert.equal(plan.discoveryTargetCount, 3);
+  assert.ok(plan.targets.every((target) => target.discoveryTarget));
+  assert.equal(plan.liveBenchmarkExecuted, false);
 });
 
 test("paid live benchmark plans stop at budget and approval gates", () => {

@@ -34,7 +34,8 @@ test('guided setup launchers are visible only in Plan mode', () => {
   assert.match(html, /id="buddy-starters"[^>]+hidden/);
   assert.match(buddySource, /starters\.hidden = mode !== 'Plan'/);
   assert.match(buddySource, /function setBuddyMode\(nextMode\)/);
-  assert.match(buddySource, /button\.addEventListener\('click', \(\) => setBuddyMode\(button\.dataset\.buddyMode\)\)/);
+  assert.match(buddySource, /manualModeForNextMessage = true;[\s\S]+setBuddyMode\(button\.dataset\.buddyMode\)/);
+  assert.match(buddySource, /manualModeForNextMessage \? mode : inferIntent\(objective\)/);
   assert.match(buddySource, /freeformPromptAccepted: true/);
   assert.match(buddySource, /guidedSetupRequired: false/);
 });
@@ -43,7 +44,8 @@ test('freeform requests are captured in a bounded owner task workspace', () => {
   assert.match(html, /id="task-dialog"/);
   assert.match(html, /id="task-create-form"/);
   assert.match(buddySource, /const taskStorageKey = 'buddy-current-tasks-v1'/);
-  assert.match(buddySource, /createCurrentTask\(objective, mode\)/);
+  assert.match(buddySource, /createCurrentTask\(objective, mode, 'chat'/);
+  assert.match(buddySource, /successProfileAttached: Boolean\(profileContext\)/);
   assert.match(buddySource, /filter\(\(task\) => task\.status === 'completed'\)\.slice\(-50\)/);
   assert.match(buddySource, /status: 'ready_for_review'/);
 });

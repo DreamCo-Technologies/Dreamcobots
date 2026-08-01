@@ -6,9 +6,38 @@
   const certifications = window.BUDDY_CAPABILITY_CERTIFICATIONS || { summary: {}, bots: {} };
   const setupCatalog = window.BUDDY_SETUP_CATALOG || { repository: {}, summary: {}, launchers: [] };
   const behaviorCatalog = window.BUDDY_COMMUNICATION_BEHAVIOR || { trait_groups: [], self_report_dimensions: [], contexts: {} };
+  const successProgram = window.BUDDY_SUCCESS_PROGRAM || { questionnaire: [], intent_detection: { modes: [] } };
   const bots = index.bots.map(unpack);
   const botBySlug = new Map(bots.map((bot) => [bot.slug, bot]));
   const launcherById = new Map(setupCatalog.launchers.map((launcher) => [launcher.id, launcher]));
+
+  function inferIntent(objective) {
+    const rules = [
+      ['Fix', [/\bfix\b/i, /\bdebug\b/i, /\brepair\b/i, /\bfail(?:ed|ing|ure)?\b/i, /\berror\b/i, /\bbroken\b/i]],
+      ['Create', [/\bcreate\b/i, /\bmake (?:a|an|my)\b/i, /\bmovie\b/i, /\bmusic\b/i, /\bimage\b/i, /\bvideo\b/i, /\bstory\b/i, /\bdesign\b/i]],
+      ['Discover', [/\bfind\b/i, /\bsearch\b/i, /\bresearch\b/i, /\bdiscover\b/i, /\bcompare\b/i, /\bwhat (?:can|should|is|are)\b/i, /\bhelp me figure\b/i]],
+      ['Plan', [/\bplan\b/i, /\bstrategy\b/i, /\broadmap\b/i, /\bscope\b/i, /\bestimate\b/i, /\bprepare\b/i]],
+      ['Build', [/\bbuild\b/i, /\bcode\b/i, /\bimplement\b/i, /\bprototype\b/i, /\bdeploy\b/i, /\bconnect\b/i, /\bset up\b/i]],
+    ];
+    const ranked = rules.map(([intent, patterns]) => ({ intent, score: patterns.filter((pattern) => pattern.test(objective)).length }))
+      .sort((a, b) => b.score - a.score);
+    return ranked[0]?.score ? ranked[0].intent : 'Discover';
+  }
+
+  function successProfileContext() {
+    try {
+      const profile = JSON.parse(localStorage.getItem('buddy-success-profile-v1') || 'null');
+      if (!profile?.shareWithBots || !profile.answers) return '';
+      const labels = new Map((successProgram.questionnaire || []).map((question) => [question.id, question.label]));
+      const allowed = ['primary_outcome', 'success_measure', 'timeline', 'hours_available', 'skills', 'business_stage', 'offer', 'customers', 'industries', 'owned_assets', 'effort_preference', 'budget_range'];
+      return allowed.flatMap((id) => {
+        const value = profile.answers[id];
+        return value === undefined || value === '' ? [] : [`${labels.get(id) || id}: ${value}`];
+      }).join(' | ').slice(0, 1500);
+    } catch (_error) {
+      return '';
+    }
+  }
 
   const input = document.getElementById('buddy-input');
   const sendButton = document.getElementById('buddy-send');
@@ -71,6 +100,7 @@
   let activeSlug = preferredSlug;
   let ownerSelectedSpecialist = Boolean(preferredSlug);
   let mode = 'Build';
+  let manualModeForNextMessage = false;
   let modelMode = modelPolicy.defaultMode || 'free';
   let localBridgePaused = false;
   let boundaryPreferences = loadBoundaryPreferences();
@@ -289,7 +319,7 @@
 
   async function routePrompt(objective) {
     const fallback = localRoute(objective);
-    const staticPreview = location.hostname.endsWith('github.io') || location.hostname.endsWith('vercel.app');
+    const staticPreview = location.hostname.endsWith('github.io') || location.hostname.endsWith('vercel.app') || location.port === '8765';
     if (!location.protocol.startsWith('http') || staticPreview) return fallback;
     try {
       const response = await fetch('/api/buddy/route-capability', {
@@ -297,6 +327,7 @@
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           objective,
+          successContext: successProfileContext() || undefined,
           preferredBotSlug: ownerSelectedSpecialist ? activeSlug : (fallback.topScore < 20 ? activeSlug || undefined : undefined),
           requestedCapabilities: [],
           liveActionRequested: false,
@@ -399,6 +430,13 @@
     const route = document.createElement('p');
     route.textContent = `I matched this to ${selected.name} in ${selected.division}. I will prepare and test the work first, then pause before any outside account, purchase, signup, message, publication, or data change.`;
     bubble.append(heading, lead, route);
+
+    if (successProfileContext()) {
+      const profileNote = document.createElement('p');
+      profileNote.className = 'buddy-success-context-note';
+      profileNote.textContent = 'I included your opted-in Success Profile summary so this specialist can fit the plan to your goals, time, skills, assets, effort, and budget preferences.';
+      bubble.append(profileNote);
+    }
 
     const planList = document.createElement('ol');
     planList.className = 'buddy-plan-list';
@@ -593,6 +631,7 @@
       run.textContent = task.status === 'ready_for_review' ? 'Run again' : 'Run';
       run.disabled = task.status === 'working';
       run.addEventListener('click', async () => {
+        manualModeForNextMessage = true;
         setBuddyMode(task.mode || 'Build');
         input.value = task.objective;
         taskDialog.close();
@@ -623,9 +662,13 @@
   async function send(options = {}) {
     const objective = input.value.trim();
     if (!objective) return;
+    const inferredMode = manualModeForNextMessage ? mode : inferIntent(objective);
+    setBuddyMode(inferredMode);
+    manualModeForNextMessage = false;
+    const profileContext = successProfileContext();
     const currentTask = typeof options.taskId === 'string'
       ? loadCurrentTasks().find((task) => task.id === options.taskId)
-      : createCurrentTask(objective, mode);
+      : createCurrentTask(objective, mode, 'chat', { intentSource: 'prompt_inference', successProfileAttached: Boolean(profileContext) });
     const currentTaskId = currentTask?.id;
     if (currentTaskId) updateCurrentTask(currentTaskId, { status: 'working', mode, objective });
     welcome.hidden = true;
@@ -633,7 +676,7 @@
     input.value = '';
     sendButton.disabled = true;
     sendButton.textContent = 'Routing...';
-    routeStatus.textContent = `Checking ${Number(index.summary.profiles || 0).toLocaleString()} specialists...`;
+    routeStatus.textContent = `${inferredMode} intent detected. Checking ${Number(index.summary.profiles || 0).toLocaleString()} specialists...`;
     const result = await routePrompt(objective);
     addBuddyMessage(result);
     const selectedName = result.selected?.name || result.selected?.display_name || 'the best available specialist';
@@ -1196,7 +1239,10 @@
   }
 
   document.querySelectorAll('[data-buddy-mode]').forEach((button) => {
-    button.addEventListener('click', () => setBuddyMode(button.dataset.buddyMode));
+    button.addEventListener('click', () => {
+      manualModeForNextMessage = true;
+      setBuddyMode(button.dataset.buddyMode);
+    });
   });
 
   document.querySelectorAll('[data-buddy-prompt]').forEach((button) => {

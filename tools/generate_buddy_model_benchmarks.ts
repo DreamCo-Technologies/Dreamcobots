@@ -2,7 +2,7 @@ import { readFileSync, writeFileSync } from "node:fs";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
-import { AI_MODELS } from "../shared/ai-models";
+import { MODEL_BENCHMARK_TARGETS } from "../shared/model-benchmark-targets";
 
 type BenchmarkConfig = {
   schema: string;
@@ -47,19 +47,20 @@ function suiteIdsFor(category: string) {
 }
 
 function buildCatalog() {
-  if (AI_MODELS.length !== config.target_count) {
-    throw new Error(`Expected ${config.target_count} benchmark targets, found ${AI_MODELS.length}`);
+  if (MODEL_BENCHMARK_TARGETS.length !== config.target_count) {
+    throw new Error(`Expected ${config.target_count} benchmark targets, found ${MODEL_BENCHMARK_TARGETS.length}`);
   }
   const suites = new Set(config.suites.map((suite) => suite.id));
-  const targets = AI_MODELS.map((model) => {
+  const targets = MODEL_BENCHMARK_TARGETS.map((model) => {
     const benchmarkSuites = [...new Set(suiteIdsFor(model.category))];
     const unknownSuite = benchmarkSuites.find((suite) => !suites.has(suite));
     if (unknownSuite) throw new Error(`Unknown suite ${unknownSuite} for ${model.name}`);
     const checks = {
       identity: Boolean(model.name.trim() && model.provider.trim()),
       taskFit: Boolean(model.bestFor.trim() && model.category.trim()),
-      accessMetadata: Boolean(model.tier && model.paidPrice.trim()),
-      instructions: Boolean(model.instructions.trim()),
+      accessMetadata: Boolean(model.tier && model.accessNote.trim()),
+      capabilities: model.declaredCapabilities.length > 0,
+      discoveryTruth: !model.discoveryTarget || Boolean(model.officialCatalog),
       suitesAssigned: benchmarkSuites.length >= 4,
     };
     return {
@@ -69,12 +70,16 @@ function buildCatalog() {
       category: model.category,
       tier: model.tier,
       bestFor: model.bestFor,
-      declaredCapabilities: [...new Set([...model.freeFeatures, ...model.paidFeatures])],
-      accessNote: model.paidPrice,
+      declaredCapabilities: model.declaredCapabilities,
+      accessNote: model.accessNote,
+      discoveryTarget: model.discoveryTarget,
+      exactModelId: model.exactModelId,
+      officialCatalog: model.officialCatalog,
+      developerRegion: model.developerRegion,
       benchmarkSuites,
       catalogChecks: checks,
       catalogReady: Object.values(checks).every(Boolean),
-      liveEvidenceStatus: "not_run",
+      liveEvidenceStatus: model.discoveryTarget ? "discovery_required" : "not_run",
       liveScore: null,
       lastLiveBenchmarkAt: null,
     };

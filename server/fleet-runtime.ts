@@ -22,6 +22,7 @@ export const capabilityTestRequestSchema = z.object({
 
 export const buddyCapabilityRouteRequestSchema = z.object({
   objective: z.string().trim().min(3).max(4_000),
+  successContext: z.string().trim().max(1_500).optional(),
   preferredBotSlug: z.string().trim().min(2).max(160).optional(),
   requestedCapabilities: z.array(z.string().trim().min(2).max(160)).max(20).default([]),
   liveActionRequested: z.boolean().default(false),
@@ -508,7 +509,10 @@ export class FleetRuntimeRegistry {
       : matches.map((match) => match.capability);
     const execution = selected.execute({
       objective: request.objective,
-      input: { routedBy: "buddy_capability_router" },
+      input: {
+        routedBy: "buddy_capability_router",
+        successContext: request.successContext || undefined,
+      },
       requestedCapabilities,
       liveActionRequested: request.liveActionRequested,
     });

@@ -131,10 +131,13 @@
     const maxBudgetUsd = Number(byId('benchmark-budget').value);
     const allowExternalNetwork = byId('benchmark-network').checked;
     const paidApproved = byId('benchmark-paid').checked;
-    const hasPaidTargets = chosen.some((target) => target.tier !== 'free');
+    const hasPaidTargets = chosen.some((target) => !['free', 'discovery'].includes(target.tier));
+    const hasDiscoveryTargets = chosen.some((target) => target.discoveryTarget);
     const status = !allowExternalNetwork
       ? 'local_catalog_plan_ready'
-      : hasPaidTargets && (!paidApproved || maxBudgetUsd <= 0)
+      : hasDiscoveryTargets
+        ? 'official_catalog_discovery_required'
+        : hasPaidTargets && (!paidApproved || maxBudgetUsd <= 0)
         ? 'paid_budget_approval_required'
         : 'live_adapters_required';
     latestPlan = {
@@ -154,7 +157,9 @@
       evidenceRequired: ['exact provider model id', 'fixture hash', 'response hash', 'latency', 'token usage', 'actual cost', 'grader version', 'UTC timestamp'],
     };
     renderPlan(latestPlan);
-    byId('benchmark-status').textContent = status === 'paid_budget_approval_required'
+    byId('benchmark-status').textContent = status === 'official_catalog_discovery_required'
+      ? 'Plan paused at official-catalog discovery. Exact model IDs and terms must be recorded before any benchmark call.'
+      : status === 'paid_budget_approval_required'
       ? 'Plan paused. Paid targets require both a maximum spend and approval for this run.'
       : status === 'live_adapters_required'
         ? 'Plan ready for authenticated provider adapters. No model has been called from this static page.'

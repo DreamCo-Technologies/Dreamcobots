@@ -23,6 +23,7 @@ CALCULATORS = ROOT / "config" / "generated" / "bot_calculators.json"
 SITE_STATUS = WEBSITE / "data" / "buddy-site-status.json"
 TEST_REGISTRY = ROOT / "config" / "generated" / "repository_test_registry.json"
 DEFENSE_CATALOG = ROOT / "config" / "generated" / "buddy_open_secure_ai_defense.json"
+SUCCESS_PROGRAM = ROOT / "config" / "generated" / "buddy_success_program.json"
 
 SECRET_FILE_PATTERN = re.compile(
     r"(^|/)(\.env($|\.)|id_rsa|id_ed25519|.*\.(pem|p12|pfx|key|keystore)$)", re.IGNORECASE
@@ -79,6 +80,7 @@ def build_public_map() -> dict[str, Any]:
     site_status = read_json(SITE_STATUS)
     test_registry = read_json(TEST_REGISTRY)
     defense_catalog = read_json(DEFENSE_CATALOG)
+    success_program = read_json(SUCCESS_PROGRAM)
 
     registry_summary = master.get("summary", {})
     fleet_e2e_summary = fleet_e2e.get("summary", {})
@@ -86,6 +88,7 @@ def build_public_map() -> dict[str, Any]:
     site_summary = site_status.get("summary", {})
     test_summary = test_registry.get("summary", {})
     defense_summary = defense_catalog.get("summary", {})
+    success_summary = success_program.get("summary", {})
     enabled_tools = int(test_summary.get("locally_testable_suites", 0))
     approval_tools = int(test_registry.get("route_classifications", {}).get("external_or_destructive_gate", 0))
 
@@ -142,6 +145,11 @@ def build_public_map() -> dict[str, Any]:
             "defense_reference_projects": int(defense_summary.get("openssf_projects", 0))
             + int(defense_summary.get("alliance_reference_tools", 0)),
             "model_discovery_sources": int(defense_summary.get("model_discovery_sources", 0)),
+            "success_questionnaire_questions": int(success_summary.get("questionnaire_questions", 0)),
+            "division_improvement_records": int(success_summary.get("division_must_have_updates", 0))
+            + int(success_summary.get("division_upgrades", 0)),
+            "model_benchmark_targets": int(success_summary.get("model_benchmark_targets", 0)),
+            "resource_hosts_cataloged": int(success_summary.get("referenced_resource_hosts", 0)),
             "autonomous_cash_enabled": bool(registry_summary.get("autonomous_cash_enabled", False)),
         },
         "systems": [
@@ -197,6 +205,14 @@ def build_public_map() -> dict[str, Any]:
                 f"{int(defense_summary.get('openssf_projects', 0))} OpenSSF projects, and "
                 f"{int(defense_summary.get('model_discovery_sources', 0))} official model sources are governed by evidence and approval gates.",
                 "config/generated/buddy_open_secure_ai_defense.json",
+            ),
+            system_status(
+                "local_contract_ready",
+                "Buddy Success Center",
+                f"A {int(success_summary.get('questionnaire_questions', 0))}-question local profile, "
+                f"{int(success_summary.get('model_benchmark_targets', 0))} model benchmark targets, and "
+                f"{int(success_summary.get('division_must_have_updates', 0)) + int(success_summary.get('division_upgrades', 0)):,} division improvement records are generated and testable.",
+                "config/generated/buddy_success_program.json",
             ),
             system_status(
                 "approval_required",
@@ -318,6 +334,10 @@ def validate_site() -> dict[str, Any]:
         WEBSITE / "security.html",
         WEBSITE / "security.css",
         WEBSITE / "security.js",
+        WEBSITE / "success.html",
+        WEBSITE / "success.css",
+        WEBSITE / "success.js",
+        WEBSITE / "robot-avatar.js",
         WEBSITE / "test-center.html",
         WEBSITE / "test-center.css",
         WEBSITE / "test-center.js",
@@ -331,6 +351,7 @@ def validate_site() -> dict[str, Any]:
         WEBSITE / "data" / "buddy-model-benchmarks.js",
         WEBSITE / "data" / "buddy-open-model-coding-lab.js",
         WEBSITE / "data" / "buddy-open-secure-ai-defense.js",
+        WEBSITE / "data" / "buddy-success-program.js",
         WEBSITE / "data" / "repository-test-registry.json",
         WEBSITE / "data" / "buddy-fleet-quality-program.js",
         WEBSITE / "data" / "buddy-capability-certifications.js",
@@ -340,6 +361,7 @@ def validate_site() -> dict[str, Any]:
         WEBSITE / "data" / "buddy-distribution-catalog.json",
         WEBSITE / "assets" / "images" / "buddy-icon-192.png",
         WEBSITE / "assets" / "images" / "buddy-icon-512.png",
+        WEBSITE / "assets" / "images" / "buddy-futuristic-v1.png",
         PUBLIC_MAP,
     ]
     for path in required_files:
@@ -518,6 +540,23 @@ def validate_site() -> dict[str, Any]:
         for control_id in sorted(required_security_controls):
             if f"byId('{control_id}')" not in security_script:
                 errors.append(f"Defense Center control is not bound in security.js: #{control_id}")
+
+    success_parser = parsers.get(WEBSITE / "success.html")
+    success_script = (WEBSITE / "success.js").read_text(encoding="utf-8") if (WEBSITE / "success.js").exists() else ""
+    required_success_controls = {
+        "success-profile-form", "success-questionnaire", "profile-share", "profile-no-secrets",
+        "profile-clear", "growth-record-form", "growth-type", "growth-title", "growth-status",
+        "growth-estimate", "growth-confirmed", "growth-hours", "growth-evidence", "growth-next",
+        "tracker-export", "ontology-form", "ontology-presets", "ontology-weights",
+        "division-program-select", "division-program-kind", "division-program-search",
+        "division-improvement-list", "model-source-list", "resource-search", "resource-status", "resource-list",
+    }
+    if success_parser:
+        for control_id in sorted(required_success_controls - success_parser.ids):
+            errors.append(f"Missing Success Center interaction control: #{control_id}")
+        for control_id in sorted(required_success_controls):
+            if f"byId('{control_id}')" not in success_script:
+                errors.append(f"Success Center control is not bound in success.js: #{control_id}")
 
     data_control_parser = parsers.get(WEBSITE / "data-control.html")
     data_control_script = (WEBSITE / "data-control.js").read_text(encoding="utf-8") if (WEBSITE / "data-control.js").exists() else ""

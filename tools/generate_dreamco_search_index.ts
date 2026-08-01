@@ -6,7 +6,7 @@ import { dirname, join, relative, resolve } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 
 import { AI_PROVIDERS } from "../shared/ai-ecosystem.ts";
-import { AI_MODELS } from "../shared/ai-models.ts";
+import { MODEL_BENCHMARK_TARGETS } from "../shared/model-benchmark-targets.ts";
 import type { DreamSearchConfig, DreamSearchDocument } from "../shared/dreamco-search.ts";
 import { normalizeSearchText } from "../shared/dreamco-search.ts";
 import { buildFleetCatalog } from "./generate_bot_fleet_catalog.ts";
@@ -148,19 +148,19 @@ export function buildDreamSearchIndex() {
     }));
   }
 
-  for (const model of AI_MODELS) {
+  for (const model of MODEL_BENCHMARK_TARGETS) {
     documents.push(document({
       id: `model:${model.id}`,
       type: "model",
       title: model.name,
-      summary: `${model.bestFor}. ${model.benefit}`,
+      summary: model.bestFor,
       url: "models.html",
-      keywords: unique([model.provider, model.category, model.tier, model.country, ...model.freeFeatures, ...model.paidFeatures]),
+      keywords: unique([model.provider, model.category, model.tier, model.developerRegion, ...model.declaredCapabilities]),
       category: model.category,
       division: "DreamAIInfra",
       status: "reference_catalog_not_connection",
       evidence_level: "reference_catalog",
-      evidence: "shared/ai-models.ts",
+      evidence: model.discoveryTarget ? "shared/model-benchmark-targets.ts#official-discovery" : "shared/ai-models.ts",
     }));
   }
 
@@ -298,7 +298,7 @@ export function buildDreamSearchIndex() {
       indexed_bot_profiles: fleet.summary.profiles,
       searchable_capability_terms: fleet.summary.declared_capability_slots,
       indexed_divisions: fleet.summary.divisions,
-      indexed_models: AI_MODELS.length,
+      indexed_models: MODEL_BENCHMARK_TARGETS.length,
       indexed_providers: AI_PROVIDERS.length,
       indexed_public_pages: countsByType.page || 0,
       web_results_claimed: 0,

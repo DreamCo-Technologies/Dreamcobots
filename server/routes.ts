@@ -82,6 +82,16 @@ import {
   openSourceUpgradePlanRequestSchema,
 } from "./open-secure-ai-defense";
 import {
+  createGrowthExperimentPlan,
+  createIntentResult,
+  createOntologyPlan,
+  createSuccessProfilePlan,
+  growthExperimentRequestSchema,
+  intentRequestSchema,
+  ontologyPlanRequestSchema,
+  successProfileRequestSchema,
+} from "./buddy-success-policy";
+import {
   createDataImportPlan,
   createDataPackagePlan,
   createMemoryPreferencePlan,
@@ -3311,6 +3321,42 @@ Any improvements or fixes (optional, 1-2 bullet points max)`;
     } catch (error) {
       return res.status(400).json({ error: error instanceof Error ? error.message : "Invalid upgrade plan" });
     }
+  });
+
+  app.post("/api/buddy/success/profile-plan", (req, res) => {
+    const parsed = successProfileRequestSchema.safeParse(req.body);
+    if (!parsed.success) return res.status(400).json(zodValidationError(parsed.error));
+    try {
+      return res.status(201).json(createSuccessProfilePlan(parsed.data));
+    } catch (error) {
+      return res.status(400).json({ error: error instanceof Error ? error.message : "Invalid success profile" });
+    }
+  });
+
+  app.post("/api/buddy/success/growth-plan", (req, res) => {
+    const parsed = growthExperimentRequestSchema.safeParse(req.body);
+    if (!parsed.success) return res.status(400).json(zodValidationError(parsed.error));
+    try {
+      return res.status(201).json(createGrowthExperimentPlan(parsed.data));
+    } catch (error) {
+      return res.status(400).json({ error: error instanceof Error ? error.message : "Invalid growth experiment" });
+    }
+  });
+
+  app.post("/api/buddy/success/ontology-plan", (req, res) => {
+    const parsed = ontologyPlanRequestSchema.safeParse(req.body);
+    if (!parsed.success) return res.status(400).json(zodValidationError(parsed.error));
+    try {
+      return res.status(201).json(createOntologyPlan(parsed.data));
+    } catch (error) {
+      return res.status(400).json({ error: error instanceof Error ? error.message : "Invalid ontology plan" });
+    }
+  });
+
+  app.post("/api/buddy/success/intent", (req, res) => {
+    const parsed = intentRequestSchema.safeParse(req.body);
+    if (!parsed.success) return res.status(400).json(zodValidationError(parsed.error));
+    return res.status(200).json(createIntentResult(parsed.data));
   });
 
   app.get("/api/buddy/repository-test-registry", (_req, res) => {

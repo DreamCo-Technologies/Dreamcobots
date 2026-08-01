@@ -138,7 +138,9 @@ The bridge binds to `127.0.0.1`, creates an ephemeral session token, keeps a mem
 
 Creative Studio can record adult owner voice samples, capture owner camera images, preview them locally, export the source files, and create a portable consent receipt with SHA-256 media fingerprints. Raw media is not embedded in project packets.
 
-The Model Benchmark Lab audits exactly 100 repository targets across 12 capability suites. Catalog checks run locally. Live quality, latency, and cost scores remain empty until authenticated adapters return evidence under a per-run budget and approval.
+The Model Benchmark Lab audits 200 targets across 12 capability suites: 100 curated catalog records plus 100 task-specific discovery lanes that refresh exact model IDs from official provider catalogs. Catalog checks run locally. Live quality, latency, and cost scores remain empty until authenticated adapters return evidence under a per-run budget and approval.
+
+The Buddy Success Center stores a 30-question, non-sensitive profile in the user's browser, shares only an opted-in summary with specialist routes, and keeps opportunity estimates separate from user-confirmed revenue. Its generated quality program covers all 45 divisions with 100 must-have records, 100 upgrade records, a deterministic robot identity, and an evidence-first competitor benchmark process per division.
 
 ## 🌐 Live Website
 
