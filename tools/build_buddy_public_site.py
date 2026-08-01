@@ -310,6 +310,7 @@ def validate_site() -> dict[str, Any]:
         WEBSITE / "data" / "buddy-model-benchmarks.js",
         WEBSITE / "data" / "buddy-open-model-coding-lab.js",
         WEBSITE / "data" / "repository-test-registry.json",
+        WEBSITE / "data" / "buddy-fleet-quality-program.js",
         WEBSITE / "data" / "buddy-capability-certifications.js",
         WEBSITE / "data" / "buddy-connection-catalog.json",
         WEBSITE / "data" / "buddy-specialized-hubs.js",
@@ -482,6 +483,11 @@ def validate_site() -> dict[str, Any]:
         "selected-test-count", "test-mode-options", "test-network", "test-external-approval",
         "test-budget", "prepare-test-plan", "test-plan-output", "copy-test-command",
         "download-test-plan", "send-test-plan-to-buddy", "test-route-search", "test-route-list",
+        "quality-profile-count", "quality-capability-count", "quality-contract-count",
+        "quality-live-count", "quality-production-count", "quality-review-status",
+        "quality-search", "quality-status-filter", "quality-result-count", "quality-bot-list",
+        "quality-detail", "quality-detail-division", "quality-detail-title", "quality-detail-close",
+        "quality-detail-body", "quality-download-plan", "quality-send-buddy",
     }
     if test_center_parser:
         for control_id in sorted(required_test_center_controls - test_center_parser.ids):

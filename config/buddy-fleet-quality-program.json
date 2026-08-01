@@ -1,0 +1,109 @@
+{
+  "schema": "dreamco.buddy_fleet_quality_program_source.v1",
+  "catalog_reviewed_on": "2026-08-01",
+  "stale_after_days": 14,
+  "truth_policy": {
+    "repository_contract_is_not_live_e2e": true,
+    "catalog_claim_is_not_competitor_evidence": true,
+    "production_ready_requires_deployed_evidence": true,
+    "failed_and_skipped_results_remain_visible": true,
+    "no_guaranteed_rankings_or_perfection_claims": true,
+    "no_self_merge_or_unreviewed_production_change": true
+  },
+  "benchmark_dimensions": [
+    { "id": "correctness", "label": "Functional correctness", "target": "All required deterministic and schema assertions pass." },
+    { "id": "task_completion", "label": "Task completion", "target": "The full declared output contract is satisfied without hidden manual steps." },
+    { "id": "reliability", "label": "Reliability", "target": "Repeated fixtures preserve results and expose every failure." },
+    { "id": "latency", "label": "Latency", "target": "Record p50 and p95 latency against the same workload and environment." },
+    { "id": "efficiency", "label": "Resource efficiency", "target": "Record CPU, memory, tokens, retries, and storage growth per completed task." },
+    { "id": "cost", "label": "Cost", "target": "Record actual marginal cost and compare equivalent completed outcomes." },
+    { "id": "recovery", "label": "Failure recovery", "target": "Timeout, retry, rollback, and resume fixtures complete without duplicate external actions." },
+    { "id": "security", "label": "Security", "target": "No secret exposure, privilege escalation, or unapproved external write is accepted." },
+    { "id": "privacy", "label": "Privacy", "target": "Owner scope, consent, retention, export, deletion, and redaction controls pass." },
+    { "id": "safety", "label": "Safety and professional boundaries", "target": "High-impact work stops at the required approval or qualified-review gate." },
+    { "id": "accessibility", "label": "Accessibility", "target": "Keyboard, label, contrast, responsive layout, and readable error-state checks pass." },
+    { "id": "interoperability", "label": "Interoperability", "target": "Documented import, export, API, and webhook contracts pass without provider lock-in." },
+    { "id": "observability", "label": "Observability", "target": "Every run records version, fixture, status, latency, cost, and failure evidence." }
+  ],
+  "competitor_discovery": {
+    "maximum_candidates_per_capability": 5,
+    "ranking_policy": "Use current, task-specific evidence instead of a permanent global top list.",
+    "required_source_types": [
+      "official product documentation",
+      "official API or developer documentation",
+      "official pricing and limits",
+      "official release notes",
+      "public app-store listing when relevant",
+      "reproducible owner-approved product trial"
+    ],
+    "required_metadata": [
+      "source URL",
+      "publisher",
+      "product and exact version",
+      "retrieved UTC time",
+      "terms and test permission",
+      "price and plan",
+      "fixture hash",
+      "environment",
+      "grader version"
+    ],
+    "exclusions": [
+      "private or stolen data",
+      "terms-bypassing access",
+      "marketing claims presented as measured results",
+      "scores without reproducible fixtures",
+      "paid runs without a per-run budget approval"
+    ]
+  },
+  "quality_workers": [
+    { "slug": "competitive-intel", "role": "Discover current task-specific competitors from approved public sources." },
+    { "slug": "competitive-benchmark", "role": "Build a feature and evidence matrix without inventing scores." },
+    { "slug": "benchmark-runner", "role": "Run identical signed fixtures and preserve failures." },
+    { "slug": "test-generator", "role": "Create deterministic, schema, failure, and regression fixtures." },
+    { "slug": "code-review-ai", "role": "Review implementation changes and evidence before release." },
+    { "slug": "debug-detective", "role": "Reduce failures to reproducible cases and propose bounded fixes." },
+    { "slug": "perf-profiler", "role": "Measure latency, CPU, memory, storage, retries, and cost." },
+    { "slug": "security-scanner", "role": "Check secrets, permissions, dependencies, and unsafe data flows." },
+    { "slug": "task-dependency-mgr", "role": "Track manifests, lockfiles, runtime versions, imports, and adapter prerequisites." },
+    { "slug": "multi-region-recovery", "role": "Exercise rollback, retry, resume, and recovery plans." },
+    { "slug": "improvement-engine", "role": "Turn measured gaps into prioritized build plans." },
+    { "slug": "ai-self-learner", "role": "Prepare source-backed learning proposals for review; never modify production directly." }
+  ],
+  "release_pipeline": [
+    { "id": "catalog_and_route", "gate": "Profile schema, stable ID, Buddy route, and governed runtime evidence exist." },
+    { "id": "repository_contract", "gate": "Every declared capability passes its repository-controlled fixture." },
+    { "id": "dependency_closure", "gate": "Manifests, lockfiles, imports, licenses, runtime versions, and vulnerabilities are checked." },
+    { "id": "adapter_contract", "gate": "Every required API has a mock, failure, timeout, retry, and secret-handling test." },
+    { "id": "live_end_to_end", "gate": "Authenticated staging proves the full user flow without production writes." },
+    { "id": "competitor_baseline", "gate": "Current competitors run the same approved fixtures with cost and version evidence." },
+    { "id": "release_candidate", "gate": "Build, tests, accessibility, security, performance, and regression checks pass on a review branch." },
+    { "id": "owner_review", "gate": "A human owner reviews scope, evidence, cost, permissions, and rollback before merge." },
+    { "id": "production_observation", "gate": "Deployment health, errors, latency, costs, and rollback are verified after release." }
+  ],
+  "dependency_gates": [
+    "Node manifest and lockfile agree under a clean install.",
+    "TypeScript compilation completes with zero errors.",
+    "Python imports and unit tests run from the repository root without path patches.",
+    "Every optional provider adapter declares its package, runtime, secret reference, and mock.",
+    "Unused, duplicated, unlicensed, vulnerable, and abandoned dependencies are reported.",
+    "Generated catalogs are regenerated and drift-checked before release."
+  ],
+  "continuous_learning": {
+    "mode": "owner_scheduled_evidence_proposals",
+    "catalog_discovery_cadence": "daily when an owner-controlled runner is enabled",
+    "benchmark_cadence": "weekly and before releases when adapters and budget are approved",
+    "regression_cadence": "on every proposed code change",
+    "allowed_outputs": ["source update proposal", "benchmark evidence", "issue", "review branch", "draft pull request"],
+    "forbidden_outputs": ["self merge", "protected-branch write", "silent model change", "unapproved paid run", "unapproved production action"],
+    "required_controls": ["pause", "kill switch", "budget cap", "source allowlist", "retention limit", "rollback", "human review"]
+  },
+  "efficiency_budgets": {
+    "measurement_required": ["wall time", "p50 latency", "p95 latency", "CPU", "peak memory", "storage delta", "network calls", "retries", "tokens", "actual cost"],
+    "failure_rules": [
+      "Fail on an unexplained correctness regression.",
+      "Fail on a new critical or high-severity security finding.",
+      "Fail when a required measurement is missing.",
+      "Flag material latency, memory, storage, or cost regression for owner review."
+    ]
+  }
+}

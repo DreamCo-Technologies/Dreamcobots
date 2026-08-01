@@ -4,18 +4,18 @@
     ".css": 16,
     ".example": 1,
     ".html": 39,
-    ".js": 37,
-    ".json": 175,
+    ".js": 38,
+    ".json": 177,
     ".jsonc": 1,
     ".md": 105,
     ".mjs": 5,
     ".nix": 1,
     ".png": 6,
-    ".py": 58,
+    ".py": 59,
     ".sh": 2,
     ".svg": 1,
     ".toml": 1,
-    ".ts": 103,
+    ".ts": 105,
     ".tsx": 96,
     ".txt": 152,
     ".webmanifest": 1,
@@ -27,9 +27,9 @@
   "file_kinds": {
     "bot_source": 134,
     "client_source": 105,
-    "configuration": 27,
+    "configuration": 29,
     "documentation": 17,
-    "generator_or_tool": 24,
+    "generator_or_tool": 26,
     "platform_module": 29,
     "policy": 14,
     "project_file": 25,
@@ -37,8 +37,8 @@
     "reference_asset": 153,
     "server_source": 21,
     "shared_contract": 11,
-    "test": 38,
-    "web_asset": 155,
+    "test": 39,
+    "web_asset": 156,
     "web_page": 38,
     "workflow": 3
   },
@@ -2498,6 +2498,12 @@
       "suite_id": "observability"
     },
     {
+      "bytes": 7631,
+      "kind": "configuration",
+      "path": "config/buddy-fleet-quality-program.json",
+      "suite_id": "bot-fleet"
+    },
+    {
       "bytes": 3195,
       "kind": "configuration",
       "path": "config/buddy-government-resources.json",
@@ -2570,6 +2576,12 @@
       "suite_id": "distribution"
     },
     {
+      "bytes": 11665344,
+      "kind": "configuration",
+      "path": "config/generated/buddy_fleet_quality_program.json",
+      "suite_id": "bot-fleet"
+    },
+    {
       "bytes": 99057,
       "kind": "configuration",
       "path": "config/generated/buddy_model_benchmarks.json",
@@ -2612,7 +2624,7 @@
       "suite_id": "bot-fleet"
     },
     {
-      "bytes": 12563,
+      "bytes": 13300,
       "kind": "configuration",
       "path": "config/repository-test-suites.json",
       "suite_id": "open-source-lab"
@@ -2954,7 +2966,7 @@
       "suite_id": "repository-contracts"
     },
     {
-      "bytes": 6951,
+      "bytes": 7212,
       "kind": "project_file",
       "path": "package.json",
       "suite_id": "repository-contracts"
@@ -3422,6 +3434,12 @@
       "suite_id": "connections"
     },
     {
+      "bytes": 2705,
+      "kind": "test",
+      "path": "tests/fleet-quality-program.test.ts",
+      "suite_id": "bot-fleet"
+    },
+    {
       "bytes": 7624,
       "kind": "test",
       "path": "tests/fleet-runtime.test.ts",
@@ -3596,7 +3614,7 @@
       "suite_id": "repository-contracts"
     },
     {
-      "bytes": 26801,
+      "bytes": 27306,
       "kind": "generator_or_tool",
       "path": "tools/build_buddy_public_site.py",
       "suite_id": "repository-contracts"
@@ -3612,6 +3630,12 @@
       "kind": "generator_or_tool",
       "path": "tools/check_deployment_cost_policy.py",
       "suite_id": "observability"
+    },
+    {
+      "bytes": 4407,
+      "kind": "generator_or_tool",
+      "path": "tools/check_repository_dependencies.py",
+      "suite_id": "repository-contracts"
     },
     {
       "bytes": 27657,
@@ -3648,6 +3672,12 @@
       "kind": "generator_or_tool",
       "path": "tools/generate_buddy_distribution_catalog.py",
       "suite_id": "distribution"
+    },
+    {
+      "bytes": 11786,
+      "kind": "generator_or_tool",
+      "path": "tools/generate_buddy_fleet_quality_program.ts",
+      "suite_id": "bot-fleet"
     },
     {
       "bytes": 3199,
@@ -4520,6 +4550,12 @@
       "suite_id": "distribution"
     },
     {
+      "bytes": 5799116,
+      "kind": "web_asset",
+      "path": "website/data/buddy-fleet-quality-program.js",
+      "suite_id": "bot-fleet"
+    },
+    {
       "bytes": 13484,
       "kind": "web_asset",
       "path": "website/data/buddy-local-media-engines.js",
@@ -4826,7 +4862,7 @@
       "suite_id": "bot-fleet"
     },
     {
-      "bytes": 3203,
+      "bytes": 3246,
       "kind": "web_asset",
       "path": "website/service-worker.js",
       "suite_id": "public-site"
@@ -4880,19 +4916,19 @@
       "suite_id": "public-site"
     },
     {
-      "bytes": 6562,
+      "bytes": 12353,
       "kind": "web_asset",
       "path": "website/test-center.css",
       "suite_id": "public-site"
     },
     {
-      "bytes": 5359,
+      "bytes": 8234,
       "kind": "web_page",
       "path": "website/test-center.html",
       "suite_id": "public-site"
     },
     {
-      "bytes": 8879,
+      "bytes": 16287,
       "kind": "web_asset",
       "path": "website/test-center.js",
       "suite_id": "public-site"
@@ -7108,7 +7144,7 @@
     "results_must_distinguish_contract_from_live_e2e": true,
     "test_data": "synthetic_or_owner_authorized"
   },
-  "scan_id": "bfe3545fc617d53be1c9a376",
+  "scan_id": "a1d6a162559fca32064b8aad",
   "schema": "dreamco.repository_test_registry.v1",
   "suites": [
     {
@@ -7196,6 +7232,32 @@
       "tests": [
         "tests/bot-fleet-catalog.test.ts",
         "tests/fleet-runtime.test.ts"
+      ],
+      "tests_execute_from_browser": false
+    },
+    {
+      "area": "Quality",
+      "boundary": "Verifies that every bot and capability has a build, dependency, release, learning, and fair-benchmark plan. Live competitor and provider results require current sources, authenticated adapters, and per-run approval.",
+      "id": "fleet-quality",
+      "level": "repository_sandbox",
+      "missing_evidence": [],
+      "missing_scripts": [],
+      "name": "Fleet quality, dependencies, and competitor plans",
+      "scripts": [
+        "buddy:fleet-quality",
+        "buddy:dependencies",
+        "buddy:fleet:e2e",
+        "test:governed"
+      ],
+      "sources": [
+        "config/buddy-fleet-quality-program.json",
+        "tools/generate_buddy_fleet_quality_program.ts",
+        "tools/check_repository_dependencies.py",
+        "package-lock.json"
+      ],
+      "status": "repository_sandbox_ready",
+      "tests": [
+        "tests/fleet-quality-program.test.ts"
       ],
       "tests_execute_from_browser": false
     },
@@ -7682,14 +7744,14 @@
     "bot_sources": 134,
     "credential_required_suites": 2,
     "duplicate_route_keys": 0,
-    "files_scanned": 811,
+    "files_scanned": 817,
     "literal_api_routes": 196,
-    "locally_testable_suites": 23,
+    "locally_testable_suites": 24,
     "platform_modules": 29,
     "provider_adapters": 17,
     "shared_route_contracts": 22,
-    "test_files": 38,
-    "test_suites": 25,
+    "test_files": 39,
+    "test_suites": 26,
     "web_pages": 38,
     "workflows": 3
   }

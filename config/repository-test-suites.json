@@ -48,6 +48,16 @@
       "boundary": "Verifies all declared capabilities through repository-controlled sandbox contracts, not live providers."
     },
     {
+      "id": "fleet-quality",
+      "name": "Fleet quality, dependencies, and competitor plans",
+      "area": "Quality",
+      "level": "repository_sandbox",
+      "scripts": ["buddy:fleet-quality", "buddy:dependencies", "buddy:fleet:e2e", "test:governed"],
+      "sources": ["config/buddy-fleet-quality-program.json", "tools/generate_buddy_fleet_quality_program.ts", "tools/check_repository_dependencies.py", "package-lock.json"],
+      "tests": ["tests/fleet-quality-program.test.ts"],
+      "boundary": "Verifies that every bot and capability has a build, dependency, release, learning, and fair-benchmark plan. Live competitor and provider results require current sources, authenticated adapters, and per-run approval."
+    },
+    {
       "id": "buddy-routing",
       "name": "Buddy routing and task discovery",
       "area": "Buddy",
