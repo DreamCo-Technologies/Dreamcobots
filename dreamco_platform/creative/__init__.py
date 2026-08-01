@@ -22,6 +22,14 @@ from .production_group import (
     SimulationDomain,
     SyntheticActorBrief,
 )
+from .showrunner import (
+    BuddyCreatorShowrunner,
+    CharacterRightsMode,
+    CreatorFormat,
+    CreatorShowBrief,
+    EpisodeBrief,
+    ShowCharacter,
+)
 
 __all__ = [
     "BuddyCreativeStudio",
@@ -48,4 +56,10 @@ __all__ = [
     "SimulationBrief",
     "SimulationDomain",
     "SyntheticActorBrief",
+    "BuddyCreatorShowrunner",
+    "CharacterRightsMode",
+    "CreatorFormat",
+    "CreatorShowBrief",
+    "EpisodeBrief",
+    "ShowCharacter",
 ]

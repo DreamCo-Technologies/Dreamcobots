@@ -1464,6 +1464,18 @@ export async function registerRoutes(
     }
   });
 
+  app.get("/api/buddy/creator-showrunner", (_req, res) => {
+    try {
+      const path = resolve(process.cwd(), "config", "buddy-creator-showrunner.json");
+      res.json(JSON.parse(readFileSync(path, "utf8")));
+    } catch (error) {
+      res.status(503).json({
+        error: "Buddy creator showrunner registry is unavailable.",
+        detail: error instanceof Error ? error.message : "unknown error",
+      });
+    }
+  });
+
   app.get("/api/buddy/calculators", (_req, res) => {
     try {
       const path = resolve(process.cwd(), "config", "generated", "bot_calculators.json");
@@ -1577,6 +1589,7 @@ export async function registerRoutes(
         { name: "Repository Test Center", route: "GET /api/buddy/repository-test-registry", status: "live", description: "Inventory repository evidence and prepare bounded contract, sandbox, and adapter test plans" },
         { name: "Governed Platform Registry", route: "GET /api/buddy/platform-expansion", status: "live", description: "Launch, privacy, finance, creative, IP, open-source, customization, and roadmap contracts" },
         { name: "Hollywood Production and Simulation Group", route: "GET /api/buddy/creative-production-group", status: "local-packet-ready", description: "Film, documentary, animation, music-video, biography, commercial, live-show, synthetic-cast, professional editing, simulation, and delivery contracts" },
+        { name: "Creator and Showrunner System", route: "GET /api/buddy/creator-showrunner", status: "local-show-plan-ready", description: "YouTube, social, learning, simulation, music, fiction, cartoon, and variety-show bibles, character libraries, episode slates, platform variants, and owner-approved publishing contracts" },
         { name: "Bot Calculator Registry", route: "GET /api/buddy/calculators", status: "live", description: "One bounded local planning calculator contract for every Buddy bot profile" },
         { name: "Install and Distribution Catalog", route: "GET /api/buddy/distribution", status: "live", description: "PWA installation plus governed packaging and publishing plans for 26 device and store targets" },
         { name: "Governed Lead Systems", route: "POST /api/buddy/lead-plan", status: "permission-gated", description: "Per-bot lead research, qualification, drafting, one-message approval, suppression, and bounded follow-up planning" },

@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="styles.css" />
-  <link rel="stylesheet" href="studio.css?v=21" />
+  <link rel="stylesheet" href="studio.css?v=22" />
 </head>
 <body class="buddy-home studio-page">
 <div id="nav-placeholder"></div><script src="nav.js"></script>
@@ -37,6 +37,12 @@
           <option value="documentary">Documentary</option>
           <option value="animated_series">Animation or cartoon series</option>
           <option value="social_live_show">Live social show</option>
+          <option value="youtube_channel">YouTube channel or video show</option>
+          <option value="social_content_series">Social content series</option>
+          <option value="learning_series">Learning video series</option>
+          <option value="simulation_series">Simulation and practice-game series</option>
+          <option value="music_performance_series">Music and performance series</option>
+          <option value="fiction_or_variety_show">Fiction, cartoon, or variety show</option>
           <option value="commercial">Commercial</option>
           <option value="college_course">College course</option>
           <option value="feature_film">Feature film</option>
@@ -87,8 +93,44 @@
         <div id="production-tool-summary" class="studio-tool-summary" aria-live="polite"></div>
       </fieldset>
 
+      <fieldset id="show-controls" class="studio-fieldset" hidden>
+        <legend>Show and channel manager</legend>
+        <div class="studio-two-col">
+          <label>Release cadence
+            <select id="show-cadence" class="studio-input">
+              <option value="one-time">One-time special</option>
+              <option value="daily">Daily</option>
+              <option value="twice-weekly">Twice weekly</option>
+              <option value="weekly" selected>Weekly</option>
+              <option value="biweekly">Every two weeks</option>
+              <option value="monthly">Monthly</option>
+              <option value="seasonal">Seasonal</option>
+            </select>
+          </label>
+          <label>Planned episodes<input id="show-episode-count" class="studio-input" type="number" min="1" max="1000" value="8" /></label>
+        </div>
+        <label class="studio-label" for="show-pillars">Content pillars</label>
+        <textarea id="show-pillars" class="studio-input" placeholder="One pillar per line">Build something useful
+Learn one practical idea
+Practice with a safe challenge</textarea>
+        <label class="studio-label" for="show-learning-objectives">Learning objectives</label>
+        <textarea id="show-learning-objectives" class="studio-input" placeholder="Required for learning and simulation series; one measurable objective per line"></textarea>
+        <fieldset class="studio-choice-grid"><legend>Channel outputs</legend>
+          <label><input type="checkbox" name="show-platform" value="youtube_long" checked /> YouTube long-form</label>
+          <label><input type="checkbox" name="show-platform" value="youtube_short" checked /> YouTube Shorts</label>
+          <label><input type="checkbox" name="show-platform" value="social_vertical" /> Vertical social</label>
+          <label><input type="checkbox" name="show-platform" value="social_square" /> Square social</label>
+          <label><input type="checkbox" name="show-platform" value="podcast_video" /> Video podcast</label>
+          <label><input type="checkbox" name="show-platform" value="classroom" /> Classroom</label>
+          <label><input type="checkbox" name="show-platform" value="practice_game" /> Practice game</label>
+        </fieldset>
+        <label class="studio-check"><input id="show-made-for-children" type="checkbox" /> This show is designed for children and needs the stricter child-audience privacy, advertising, moderation, and learning review.</label>
+        <div id="show-manager-summary" class="studio-tool-summary" aria-live="polite"></div>
+        <p class="studio-guardrail">Buddy prepares show bibles, episodes, platform variants, and an approval-ready calendar. It cannot create an account, publish, spend, or read channel analytics until an authenticated owner adapter is connected and the owner approves that exact action.</p>
+      </fieldset>
+
       <fieldset id="actor-controls" class="studio-fieldset" hidden>
-        <legend>Synthetic cast</legend>
+        <legend>Reusable character library</legend>
         <label class="studio-label" for="actor-name">Character or presenter name</label>
         <input id="actor-name" class="studio-input" value="Buddy Guide" minlength="2" maxlength="120" />
         <label class="studio-label" for="actor-mode">Actor mode</label>
@@ -104,6 +146,14 @@
         <input id="actor-role" class="studio-input" value="Trusted guide" minlength="2" maxlength="160" />
         <label class="studio-label" for="actor-description">Character and performance</label>
         <textarea id="actor-description" class="studio-input" minlength="20">An original character with a distinct fictional identity, performance arc, wardrobe, movement, and voice direction.</textarea>
+        <label class="studio-label" for="actor-voice-direction">Voice direction</label>
+        <input id="actor-voice-direction" class="studio-input" value="Clear, expressive, consistent, and distinct from any unlicensed real person." />
+        <label class="studio-label" for="actor-visual-direction">Visual direction</label>
+        <input id="actor-visual-direction" class="studio-input" value="Consistent silhouette, palette, wardrobe, props, and animation language." />
+        <label class="studio-label" for="actor-continuity">Continuity facts</label>
+        <textarea id="actor-continuity" class="studio-input" placeholder="One fact per line">Keeps the same name and stable character id
+Maintains the approved voice and visual direction
+Preserves relationships and episode state</textarea>
         <div class="studio-trait-grid" aria-label="Character personality">
           <label>Warmth <output data-trait-output="warmth">80</output><input data-trait="warmth" type="range" min="0" max="100" value="80" /></label>
           <label>Directness <output data-trait-output="directness">70</output><input data-trait="directness" type="range" min="0" max="100" value="70" /></label>
@@ -117,9 +167,13 @@
         <div class="studio-button-row">
           <button id="add-cast-role" class="btn btn-outline btn-sm" type="button">Add role</button>
           <button id="clear-cast" class="btn btn-outline btn-sm" type="button">Clear cast</button>
+          <button id="save-cast-library" class="btn btn-outline btn-sm" type="button">Save library</button>
+          <button id="export-cast-library" class="btn btn-outline btn-sm" type="button">Export library</button>
+          <label class="btn btn-outline btn-sm studio-file-button" for="import-cast-library">Import library</label>
+          <input id="import-cast-library" type="file" accept="application/json" hidden />
         </div>
         <div id="cast-list" class="studio-cast-list" aria-live="polite"></div>
-        <p class="studio-guardrail">Original characters cannot imitate a real person. Adult owner and licensed-performer identities require active scoped consent, rights evidence, revocation checks, provenance, and a visible synthetic-media label.</p>
+        <p class="studio-guardrail">The reusable library has no application-level character-count cap. Each episode or production unit uses at most 100 active characters so continuity, rendering, and quality checks stay manageable. Original characters cannot imitate a real person. Adult owner and licensed-performer identities require active scoped consent, rights evidence, revocation checks, provenance, and a visible synthetic-media label.</p>
       </fieldset>
 
       <fieldset id="simulation-controls" class="studio-fieldset" hidden>
@@ -290,9 +344,9 @@
 </main>
 
 <script src="data/buddy-specialized-hubs.js"></script>
-<script src="data/buddy-production-group.js?v=21"></script>
-<script src="data/buddy-local-media-engines.js?v=21"></script>
-<script src="data/buddy-media-quality-lab.js?v=21"></script>
-<script src="studio.js?v=21"></script>
+<script src="data/buddy-production-group.js?v=22"></script>
+<script src="data/buddy-local-media-engines.js?v=22"></script>
+<script src="data/buddy-media-quality-lab.js?v=22"></script>
+<script src="studio.js?v=22"></script>
 </body>
 </html>

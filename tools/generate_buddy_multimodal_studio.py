@@ -26,6 +26,7 @@ def load_json(relative_path: str) -> dict:
 def build_registry() -> dict:
     production_group = load_json("config/buddy-hollywood-production-group.json")
     simulation_foundry = load_json("config/buddy-simulation-foundry.json")
+    creator_showrunner = load_json("config/buddy-creator-showrunner.json")
     return {
         "schema": "dreamco.buddy_multimodal_studio.v1",
         "name": "Buddy Creative Studio",
@@ -42,6 +43,7 @@ def build_registry() -> dict:
                             ProjectType.SCHOOL_SIMULATION,
                             ProjectType.PARENT_LEARNING_VIDEO,
                             ProjectType.COLLEGE_COURSE,
+                            ProjectType.SIMULATION_SERIES,
                         }
                         else []
                     ),
@@ -59,6 +61,9 @@ def build_registry() -> dict:
             "build sourced biographies and autobiographies",
             "build sourced documentaries with interview, archive-rights, and fact-check ledgers",
             "build animation and cartoon series with reusable cast roles, boards, animatics, and episode masters",
+            "build YouTube channels and recurring social, learning, simulation, music, fiction, cartoon, and variety shows",
+            "maintain an open-ended reusable character library with bounded episode production units",
+            "prepare show bibles, season arcs, episode slates, content calendars, platform variants, and analytics experiments",
             "build truthful commercial production packets",
             "build college courses with modules, labs, assessments, and rubrics",
             "build original feature-film production packets and delivery plans",
@@ -102,6 +107,7 @@ def build_registry() -> dict:
             "paid media providers are not required",
         ],
         "hollywood_production_group": production_group,
+        "creator_showrunner": creator_showrunner,
         "simulation_foundry": simulation_foundry,
         "website": "website/studio.html",
         "game_lab": "dreamco_platform/games/harness.py",
@@ -117,7 +123,7 @@ def write_report(registry: dict) -> None:
     lines = [
         "# Buddy Multimodal Creative Studio",
         "",
-        "Buddy now has one governed production path for games, school simulations, learning videos, music videos, biographies, commercials, college courses, feature films, artist development, brand systems, and invention prototypes.",
+        "Buddy now has one governed production path for games, school simulations, learning videos, music videos, biographies, commercials, college courses, feature films, creator channels, recurring shows, artist development, brand systems, and invention prototypes.",
         "",
         "## Production Tracks",
         "",
@@ -135,6 +141,19 @@ def write_report(registry: dict) -> None:
     lines.extend(
         f"- `{item['id']}`: {item['label']} (`{item['lead_bot']}`)"
         for item in registry["hollywood_production_group"]["departments"]
+    )
+    lines.extend(
+        [
+            "",
+            "## Creator and Showrunner System",
+            "",
+            registry["creator_showrunner"]["truth_boundary"],
+            "",
+        ]
+    )
+    lines.extend(
+        f"- `{item['id']}`: {item['label']}"
+        for item in registry["creator_showrunner"]["formats"]
     )
     lines.extend(
         [
@@ -169,6 +188,7 @@ def browser_payload(registry: dict) -> str:
         "schema": registry["schema"],
         "status": registry["status"],
         "hollywood_production_group": registry["hollywood_production_group"],
+        "creator_showrunner": registry["creator_showrunner"],
         "simulation_foundry": registry["simulation_foundry"],
     }
     return "window.BUDDY_PRODUCTION_GROUP = " + json.dumps(payload, sort_keys=True) + ";\n"

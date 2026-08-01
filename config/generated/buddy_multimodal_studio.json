@@ -9,6 +9,9 @@
     "build sourced biographies and autobiographies",
     "build sourced documentaries with interview, archive-rights, and fact-check ledgers",
     "build animation and cartoon series with reusable cast roles, boards, animatics, and episode masters",
+    "build YouTube channels and recurring social, learning, simulation, music, fiction, cartoon, and variety shows",
+    "maintain an open-ended reusable character library with bounded episode production units",
+    "prepare show bibles, season arcs, episode slates, content calendars, platform variants, and analytics experiments",
     "build truthful commercial production packets",
     "build college courses with modules, labs, assessments, and rubrics",
     "build original feature-film production packets and delivery plans",
@@ -40,6 +43,392 @@
     "buddy studio-report",
     "buddy open-studio"
   ],
+  "creator_showrunner": {
+    "character_library": {
+      "active_characters_per_production_unit": 100,
+      "application_character_limit": null,
+      "continuity_checks": [
+        "name and stable id",
+        "silhouette and visual anchors",
+        "voice and speech direction",
+        "personality range",
+        "relationships",
+        "knowledge boundaries",
+        "wardrobe and props",
+        "episode state",
+        "rights and consent state",
+        "synthetic-media label"
+      ],
+      "required_fields": [
+        "stable character id",
+        "unique production name",
+        "role",
+        "original description",
+        "personality traits",
+        "voice direction",
+        "visual direction",
+        "continuity facts",
+        "rights mode",
+        "status"
+      ],
+      "rights_modes": [
+        "original synthetic",
+        "company-owned mascot",
+        "adult owner digital double",
+        "licensed adult performer"
+      ],
+      "scale_strategy": "Keep reusable character metadata in the show library and schedule subsets into episodes, scenes, or production units. Paginate large libraries and export archives when device storage approaches its quota."
+    },
+    "content_calendar": {
+      "automation_default": "draft_and_prepare_only",
+      "cadences": [
+        "one-time",
+        "daily",
+        "twice-weekly",
+        "weekly",
+        "biweekly",
+        "monthly",
+        "seasonal"
+      ],
+      "publish_requires_exact_owner_approval": true,
+      "states": [
+        "idea",
+        "researched",
+        "scripted",
+        "assets_ready",
+        "in_production",
+        "review",
+        "approved",
+        "scheduled",
+        "published",
+        "measured",
+        "archived"
+      ]
+    },
+    "formats": [
+      {
+        "deliverables": [
+          "channel promise",
+          "show bible",
+          "episode slate",
+          "scripts",
+          "thumbnail briefs",
+          "titles and descriptions",
+          "long-form master plan",
+          "short-form cutdowns",
+          "caption package",
+          "analytics experiment"
+        ],
+        "id": "youtube_channel",
+        "label": "YouTube channel or video show",
+        "routes": [
+          "creative-brief-gen",
+          "video-script",
+          "video-editor-ai",
+          "content-calendar",
+          "seo-optimizer",
+          "content-analytics"
+        ]
+      },
+      {
+        "deliverables": [
+          "series bible",
+          "content pillars",
+          "hook library",
+          "platform variants",
+          "caption package",
+          "moderation plan",
+          "content calendar",
+          "measurement plan"
+        ],
+        "id": "social_content_series",
+        "label": "Social content series",
+        "routes": [
+          "social-content",
+          "video-script",
+          "visual-planner",
+          "social-scheduler",
+          "content-calendar",
+          "content-analytics"
+        ]
+      },
+      {
+        "deliverables": [
+          "learning map",
+          "episode lessons",
+          "worked examples",
+          "knowledge checks",
+          "practice activities",
+          "captions",
+          "teacher or family guide",
+          "learning evidence"
+        ],
+        "id": "learning_series",
+        "label": "Learning video series",
+        "routes": [
+          "curriculum-mapper",
+          "adaptive-learning",
+          "video-script",
+          "video-editor-ai",
+          "accessibility-auditor",
+          "games-app-bot"
+        ]
+      },
+      {
+        "deliverables": [
+          "scenario bible",
+          "state machines",
+          "legal actions",
+          "levels",
+          "safe failure and reset",
+          "feedback",
+          "bot playtests",
+          "instructor controls",
+          "known-limits report"
+        ],
+        "id": "simulation_series",
+        "label": "Simulation and practice-game series",
+        "routes": [
+          "dr-simulation",
+          "games-app-bot",
+          "game-ai-player",
+          "game-analytics",
+          "curriculum-mapper",
+          "immersive-xr"
+        ]
+      },
+      {
+        "deliverables": [
+          "original repertoire plan",
+          "lyrics and composition rights ledger",
+          "performance direction",
+          "music-video treatments",
+          "episode slate",
+          "social cutdowns",
+          "release calendar",
+          "audience tests"
+        ],
+        "id": "music_performance_series",
+        "label": "Music and performance series",
+        "routes": [
+          "music-production",
+          "music-app-bot",
+          "video-script",
+          "video-editor-ai",
+          "social-content",
+          "content-calendar"
+        ]
+      },
+      {
+        "deliverables": [
+          "series bible",
+          "world bible",
+          "character library",
+          "season arc",
+          "episode slate",
+          "continuity ledger",
+          "picture and sound plan",
+          "delivery masters plan"
+        ],
+        "id": "fiction_or_variety_show",
+        "label": "Fiction, cartoon, or variety show",
+        "routes": [
+          "creative-writer",
+          "video-script",
+          "3d-asset-mgr",
+          "video-editor-ai",
+          "music-production",
+          "content-calendar"
+        ]
+      }
+    ],
+    "hard_blocks": [
+      "unconsented real-person voice or likeness imitation",
+      "minor voice or likeness cloning",
+      "deceptive impersonation or fake endorsement",
+      "unlicensed music, scripts, footage, characters, or brand assets",
+      "hidden sponsorship, fabricated metrics, fake engagement, or spam",
+      "autonomous account signup, credential capture, publishing, or spending without exact owner approval",
+      "high-risk instruction presented as real-world qualification or proof"
+    ],
+    "name": "Buddy Creator and Showrunner System",
+    "platform_profiles": [
+      {
+        "id": "youtube_long",
+        "label": "YouTube long-form",
+        "outputs": [
+          "16:9 master",
+          "thumbnail",
+          "title",
+          "description",
+          "chapters",
+          "captions",
+          "end-screen plan"
+        ]
+      },
+      {
+        "id": "youtube_short",
+        "label": "YouTube Short",
+        "outputs": [
+          "9:16 cut",
+          "opening hook",
+          "captions",
+          "safe text",
+          "loop or close"
+        ]
+      },
+      {
+        "id": "social_vertical",
+        "label": "Vertical social video",
+        "outputs": [
+          "9:16 variants",
+          "platform-safe captions",
+          "cover frame",
+          "moderation notes"
+        ]
+      },
+      {
+        "id": "social_square",
+        "label": "Square social video",
+        "outputs": [
+          "1:1 variant",
+          "safe text",
+          "caption",
+          "cover frame"
+        ]
+      },
+      {
+        "id": "podcast_video",
+        "label": "Video podcast",
+        "outputs": [
+          "multicamera or scene plan",
+          "clean audio",
+          "chapters",
+          "transcript",
+          "clips"
+        ]
+      },
+      {
+        "id": "classroom",
+        "label": "Classroom and learning portal",
+        "outputs": [
+          "accessible master",
+          "transcript",
+          "knowledge checks",
+          "teacher guide",
+          "downloadable activity"
+        ]
+      },
+      {
+        "id": "practice_game",
+        "label": "Practice game",
+        "outputs": [
+          "deterministic build",
+          "learning objective",
+          "levels",
+          "feedback",
+          "safe reset",
+          "progress evidence"
+        ]
+      }
+    ],
+    "quality_and_safety_gates": [
+      "originality, source, copyright, music, trademark, and performer-rights review",
+      "character identity, voice, visual, relationship, and episode-state continuity",
+      "fact, claim, sponsor, affiliate, and endorsement substantiation",
+      "age-appropriate design, privacy, moderation, accessibility, and flashing-light review",
+      "learning objective, misconception, feedback, assessment, and instructor-review evidence",
+      "game determinism, safe failure, reset, recovery, difficulty, and bot playtest evidence",
+      "picture, sound, captions, aspect ratio, platform policy, and master quality control",
+      "authenticated destination preview and exact owner approval before publishing"
+    ],
+    "schema": "dreamco.buddy_creator_showrunner.v1",
+    "show_lifecycle": [
+      {
+        "id": "position",
+        "outputs": [
+          "audience",
+          "channel promise",
+          "content pillars",
+          "success measures"
+        ]
+      },
+      {
+        "id": "bible",
+        "outputs": [
+          "format rules",
+          "world",
+          "cast",
+          "tone",
+          "visual and sound language",
+          "rights"
+        ]
+      },
+      {
+        "id": "season",
+        "outputs": [
+          "season objective",
+          "arc",
+          "episode slate",
+          "release cadence",
+          "production units"
+        ]
+      },
+      {
+        "id": "episode",
+        "outputs": [
+          "brief",
+          "research",
+          "script",
+          "storyboard",
+          "asset manifest",
+          "learning or entertainment rubric"
+        ]
+      },
+      {
+        "id": "produce",
+        "outputs": [
+          "recording or render plan",
+          "timeline",
+          "captions",
+          "platform variants",
+          "provenance"
+        ]
+      },
+      {
+        "id": "review",
+        "outputs": [
+          "continuity",
+          "rights",
+          "safety",
+          "accessibility",
+          "quality control",
+          "owner approval"
+        ]
+      },
+      {
+        "id": "publish",
+        "outputs": [
+          "authenticated destination",
+          "final preview",
+          "exact owner approval",
+          "platform receipt"
+        ]
+      },
+      {
+        "id": "learn",
+        "outputs": [
+          "owner-authorized metrics",
+          "retention and completion",
+          "learning outcomes",
+          "comments and moderation summary",
+          "next experiment"
+        ]
+      }
+    ],
+    "status": "local_show_bible_episode_and_channel_planning_ready",
+    "truth_boundary": "Buddy can create and test show bibles, character libraries, episode packets, learning checks, simulation-game plans, platform variants, and approval-ready publishing packages. A channel is not connected, media is not rendered, and content is not published until an authenticated adapter completes the action with the owner's exact approval."
+  },
   "game_lab": "dreamco_platform/games/harness.py",
   "hollywood_production_group": {
     "actor_hard_blocks": [
@@ -968,6 +1357,164 @@
         {
           "bot": "governance-dashboard",
           "role": "moderation, owner approval, emergency stop, and audit"
+        },
+        {
+          "bot": "governance-dashboard",
+          "role": "consent, revocation, audit, and synthetic-media labeling"
+        }
+      ]
+    },
+    {
+      "id": "youtube_channel",
+      "native_routes": [
+        {
+          "bot": "video-script",
+          "role": "channel promise, episode research, scripts, and retention structure"
+        },
+        {
+          "bot": "video-editor-ai",
+          "role": "long-form masters, short-form cutdowns, captions, and delivery"
+        },
+        {
+          "bot": "content-calendar",
+          "role": "episode slate, production states, cadence, and release calendar"
+        },
+        {
+          "bot": "seo-optimizer",
+          "role": "truthful titles, descriptions, chapters, and discoverability plan"
+        },
+        {
+          "bot": "content-analytics",
+          "role": "owner-authorized retention, completion, and experiment analysis"
+        },
+        {
+          "bot": "governance-dashboard",
+          "role": "consent, revocation, audit, and synthetic-media labeling"
+        }
+      ]
+    },
+    {
+      "id": "social_content_series",
+      "native_routes": [
+        {
+          "bot": "social-content",
+          "role": "series concepts, hooks, captions, and platform variants"
+        },
+        {
+          "bot": "visual-planner",
+          "role": "visual language, shot patterns, covers, and reusable templates"
+        },
+        {
+          "bot": "social-scheduler",
+          "role": "approval-ready content calendar and authenticated scheduling plan"
+        },
+        {
+          "bot": "content-analytics",
+          "role": "owner-authorized performance evidence and next experiments"
+        },
+        {
+          "bot": "governance-dashboard",
+          "role": "consent, revocation, audit, and synthetic-media labeling"
+        }
+      ]
+    },
+    {
+      "id": "learning_series",
+      "native_routes": [
+        {
+          "bot": "curriculum-mapper",
+          "role": "learning progression, episode outcomes, and assessment map"
+        },
+        {
+          "bot": "adaptive-learning",
+          "role": "difficulty, misconceptions, feedback, and learner adaptation"
+        },
+        {
+          "bot": "video-script",
+          "role": "age-aware lesson scripts, examples, and knowledge checks"
+        },
+        {
+          "bot": "accessibility-auditor",
+          "role": "captions, reading level, sensory review, and accessible delivery"
+        },
+        {
+          "bot": "governance-dashboard",
+          "role": "consent, revocation, audit, and synthetic-media labeling"
+        }
+      ]
+    },
+    {
+      "id": "simulation_series",
+      "native_routes": [
+        {
+          "bot": "dr-simulation",
+          "role": "deterministic scenarios, state machines, and safe recovery"
+        },
+        {
+          "bot": "games-app-bot",
+          "role": "practice loop, levels, controls, feedback, and packaging"
+        },
+        {
+          "bot": "game-ai-player",
+          "role": "bot playtests, difficulty checks, and deterministic replay"
+        },
+        {
+          "bot": "game-analytics",
+          "role": "completion, misconception, balance, and learning evidence"
+        },
+        {
+          "bot": "governance-dashboard",
+          "role": "consent, revocation, audit, and synthetic-media labeling"
+        },
+        {
+          "bot": "adaptive-learning",
+          "role": "learning objectives and difficulty tuning"
+        }
+      ]
+    },
+    {
+      "id": "music_performance_series",
+      "native_routes": [
+        {
+          "bot": "music-production",
+          "role": "original repertoire, arrangement, recording, mix, and master plan"
+        },
+        {
+          "bot": "music-app-bot",
+          "role": "composition, lyric, sample, split, and release-rights ledger"
+        },
+        {
+          "bot": "video-script",
+          "role": "performance treatments, episode concepts, and shot plans"
+        },
+        {
+          "bot": "content-calendar",
+          "role": "performance-series slate, cutdowns, and release calendar"
+        },
+        {
+          "bot": "governance-dashboard",
+          "role": "consent, revocation, audit, and synthetic-media labeling"
+        }
+      ]
+    },
+    {
+      "id": "fiction_or_variety_show",
+      "native_routes": [
+        {
+          "bot": "creative-writer",
+          "role": "series bible, world, season arc, episodes, and character continuity"
+        },
+        {
+          "bot": "video-script",
+          "role": "scripts, storyboards, scene breakdowns, and performance direction"
+        },
+        {
+          "bot": "3d-asset-mgr",
+          "role": "reusable character, set, prop, rig, and asset provenance"
+        },
+        {
+          "bot": "video-editor-ai",
+          "role": "animatics, picture and sound timelines, captions, and episode masters"
         },
         {
           "bot": "governance-dashboard",
