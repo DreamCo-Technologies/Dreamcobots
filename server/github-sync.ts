@@ -457,7 +457,7 @@ npm run dev            # runs on http://localhost:5000
 \`\`\`
 
 ## 🧠 Self-Learning System
-Every bot logs learnings after each conversation using the \`SELF_LEARNING_PROMPT\` protocol. Memory is stored per-bot in PostgreSQL and injected at the start of every new session.
+Bots can prepare evidence-backed improvement proposals on review branches. Persistent memory is opt-in: only short, owner-approved, pinned summaries are supplied as untrusted reference data. Conversations are not automatically converted into training data or memory.
 
 ## 🤝 Buddy Bot
 The master coding brain covering 500+ libraries. Every other bot routes coding tasks through Buddy Bot automatically.

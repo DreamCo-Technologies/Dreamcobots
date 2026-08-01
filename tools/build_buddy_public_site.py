@@ -591,6 +591,8 @@ def validate_site() -> dict[str, Any]:
         "quality-search", "quality-status-filter", "quality-result-count", "quality-bot-list",
         "quality-detail", "quality-detail-division", "quality-detail-title", "quality-detail-close",
         "quality-detail-body", "quality-download-plan", "quality-send-buddy",
+        "improvement-mode", "improvement-stage-count", "grounding-control-count",
+        "improvement-live-changes", "improvement-loop-list", "grounding-control-list",
     }
     if test_center_parser:
         for control_id in sorted(required_test_center_controls - test_center_parser.ids):

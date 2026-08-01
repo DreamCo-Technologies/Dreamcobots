@@ -72,3 +72,14 @@ test("Test Center exposes and exports each bot learning path", () => {
   assert.match(script, /learningPathPolicy: quality\.learning_path_policy/);
   assert.match(script, /capability\.benchmark_id/);
 });
+
+test("Test Center exposes proposal-only recursive improvement evidence", () => {
+  const html = readFileSync(new URL("../website/test-center.html", import.meta.url), "utf8");
+  const script = readFileSync(new URL("../website/test-center.js", import.meta.url), "utf8");
+  assert.match(html, /Recursive improvement guardrails/);
+  assert.match(html, /cannot self-grant access, self-merge, silently train on conversations/);
+  assert.match(html, /buddy-self-improvement\.js\?v=1/);
+  assert.match(script, /window\.BUDDY_SELF_IMPROVEMENT/);
+  assert.match(script, /improvement\.hallucination_controls/);
+  assert.match(script, /improvement-live-changes'\)\.textContent = '0'/);
+});

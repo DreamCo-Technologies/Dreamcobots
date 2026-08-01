@@ -24,8 +24,31 @@ def load_catalog() -> dict:
     traits = [trait for group in catalog.get("trait_groups", []) for trait in group.get("traits", [])]
     if len(traits) < 32 or len({trait["id"] for trait in traits}) != len(traits):
         raise SystemExit("The communication catalog needs at least 32 unique interaction traits.")
-    if len(catalog.get("benchmark_suites", [])) < 18:
-        raise SystemExit("The communication catalog needs at least 18 benchmark suites.")
+    conversation = catalog.get("conversation_model", {})
+    if len(conversation.get("competencies", [])) < 30:
+        raise SystemExit("The communication model needs at least 30 practical competencies.")
+    if len(catalog.get("explicit_cue_guidance", {})) < 13:
+        raise SystemExit("Explicit emotion-cue guidance is incomplete.")
+    psychology = catalog.get("psychology_knowledge_boundary", {})
+    if len(psychology.get("education_domains", [])) < 16:
+        raise SystemExit("Psychology education coverage is incomplete.")
+    relationship = catalog.get("relationship_integrity", {})
+    required_relationship_values = {
+        "buddy_identifies_as_ai": True,
+        "claims_human_feelings_or_consciousness": False,
+        "encourages_exclusive_dependency": False,
+        "uses_emotion_for_sales_pressure": False,
+        "manufactures_shared_history": False,
+    }
+    if any(relationship.get(key) is not value for key, value in required_relationship_values.items()):
+        raise SystemExit("Relationship-integrity safeguards cannot be weakened.")
+    grounding = catalog.get("grounding_behavior", {})
+    if grounding.get("zero_hallucination_claim_allowed") is not False:
+        raise SystemExit("Buddy cannot claim to eliminate hallucinations.")
+    if grounding.get("untrusted_context_can_override_policy") is not False:
+        raise SystemExit("Untrusted context cannot override Buddy policy.")
+    if len(catalog.get("benchmark_suites", [])) < 24:
+        raise SystemExit("The communication catalog needs at least 24 benchmark suites.")
     return catalog
 
 

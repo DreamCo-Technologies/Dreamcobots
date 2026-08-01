@@ -8,6 +8,7 @@
   let selectedQualityBot = null;
   const selectedSuites = new Set();
   const quality = window.BUDDY_FLEET_QUALITY_PROGRAM || { summary: {}, bots: [], quality_workers: [], release_pipeline: [] };
+  const improvement = window.BUDDY_SELF_IMPROVEMENT || { mode: 'catalog_unavailable', improvement_loop: [], hallucination_controls: [] };
 
   function make(tag, text, className) {
     const node = document.createElement(tag);
@@ -32,6 +33,29 @@
 
   function readable(value) {
     return String(value || '').replaceAll('_', ' ');
+  }
+
+  function renderImprovementGuardrails() {
+    byId('improvement-mode').textContent = readable(improvement.mode);
+    byId('improvement-stage-count').textContent = formatter.format(improvement.improvement_loop.length);
+    byId('grounding-control-count').textContent = formatter.format(improvement.hallucination_controls.length);
+    byId('improvement-live-changes').textContent = '0';
+
+    const loop = byId('improvement-loop-list');
+    loop.replaceChildren();
+    improvement.improvement_loop.forEach((stage) => {
+      const item = make('li');
+      item.append(make('strong', readable(stage.id)), make('p', stage.gate));
+      loop.append(item);
+    });
+
+    const controls = byId('grounding-control-list');
+    controls.replaceChildren();
+    improvement.hallucination_controls.forEach((control) => {
+      const item = make('li');
+      item.append(make('strong', readable(control.id)), make('p', control.rule));
+      controls.append(item);
+    });
   }
 
   function renderQualityMetrics() {
@@ -332,7 +356,7 @@
   }
 
   async function init() {
-    const response = await fetch('data/repository-test-registry.json', { cache: 'no-store' });
+    const response = await fetch('data/repository-test-registry.json?v=3', { cache: 'no-store' });
     if (!response.ok) throw new Error(`Test registry request failed: ${response.status}`);
     registry = await response.json();
     renderMetrics();
@@ -373,6 +397,7 @@
 
   renderQualityMetrics();
   renderQualityBots();
+  renderImprovementGuardrails();
   init().catch((error) => {
     byId('test-suite-list').replaceChildren(make('p', 'Test registry could not load. Open this site through the local server or deployed site.', 'test-empty'));
     console.error(error);

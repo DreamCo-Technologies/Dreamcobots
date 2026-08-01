@@ -173,6 +173,13 @@ import {
   getCommunicationBehaviorCatalog,
 } from "./communication-behavior";
 import {
+  createGroundingReview,
+  createRecursiveImprovementPlan,
+  getSelfImprovementCatalog,
+  groundingReviewRequestSchema,
+  recursiveImprovementRequestSchema,
+} from "./buddy-self-improvement-policy";
+import {
   analyzeJobOpportunity,
   autonomousSalesPlanRequestSchema,
   buildWorkforceRegistry,
@@ -503,6 +510,30 @@ export async function registerRoutes(
     } catch (error) {
       if (error instanceof z.ZodError) return res.status(400).json(zodValidationError(error));
       res.status(400).json({ error: error instanceof Error ? error.message : "Communication benchmark plan failed." });
+    }
+  });
+
+  app.get("/api/buddy/self-improvement/catalog", (_req, res) => {
+    res.json(getSelfImprovementCatalog());
+  });
+
+  app.post("/api/buddy/self-improvement/plan", (req, res) => {
+    try {
+      const request = recursiveImprovementRequestSchema.parse(req.body);
+      res.status(202).json(createRecursiveImprovementPlan(request));
+    } catch (error) {
+      if (error instanceof z.ZodError) return res.status(400).json(zodValidationError(error));
+      res.status(400).json({ error: error instanceof Error ? error.message : "Improvement plan failed." });
+    }
+  });
+
+  app.post("/api/buddy/grounding/review", (req, res) => {
+    try {
+      const request = groundingReviewRequestSchema.parse(req.body);
+      res.status(200).json(createGroundingReview(request));
+    } catch (error) {
+      if (error instanceof z.ZodError) return res.status(400).json(zodValidationError(error));
+      res.status(400).json({ error: error instanceof Error ? error.message : "Grounding review failed." });
     }
   });
 
@@ -1913,17 +1944,22 @@ export async function registerRoutes(
         ? await storage.getBotProfileBySlug(input.botSlug)
         : await storage.getDefaultBotProfile();
 
-      const system = bot?.systemPrompt ?? "You are the central AI brain of DreamCo Empire OS.";
+      const basePrompt = bot?.systemPrompt ?? "You are the central AI brain of DreamCo Empire OS.";
+      const botName = bot?.displayName ?? "Buddy";
+      const division = bot?.division ?? "CommandCore";
+      const capabilities = Array.isArray(bot?.capabilities) ? (bot.capabilities as string[]) : [];
+      const system = buildEnhancedSystemPrompt(basePrompt, botName, division, capabilities, "build", [], bot?.slug ?? "buddy-bot");
 
       const userMsg = await storage.createMessage(conversationId, "user", input.content);
 
       const history = await storage.getMessages(conversationId);
+      const historyMsgs: ChatCompletionMessageParam[] = history.map((m) => ({
+        role: m.role === "assistant" ? "assistant" : "user",
+        content: m.content,
+      }));
       const messagesForModel = [
         { role: "system" as const, content: system },
-        ...history.map((m) => ({
-          role: m.role as "user" | "assistant",
-          content: m.content,
-        })),
+        ...trimHistory(historyMsgs),
       ];
 
       const completion = await openai.chat.completions.create({
@@ -1970,13 +2006,13 @@ export async function registerRoutes(
     const division = bot?.division ?? "CommandCore";
     const capabilities = Array.isArray(bot?.capabilities) ? (bot.capabilities as string[]) : [];
 
-    // Load bot's learned memories for self-learning context injection
+    // Load only user-approved, pinned memory summaries as untrusted reference data.
     const memories: string[] = [];
     if (bot?.id) {
       try {
         const memRecords = await storage.listBotMemory(bot.id);
-        memRecords.slice(0, 15).forEach((m: any) => {
-          if (m.content) memories.push(m.content);
+        memRecords.filter((m: any) => m.pinned === true).slice(0, 10).forEach((m: any) => {
+          if (m.value) memories.push(`[${m.category}] ${m.value}`);
         });
       } catch (_) {}
     }
@@ -2020,16 +2056,6 @@ export async function registerRoutes(
       const assistantMsg = await storage.createMessage(conversationId, "assistant", assistantText);
       res.write(`data: ${JSON.stringify({ type: "done", conversationId, messageId: assistantMsg.id })}\n\n`);
       res.end();
-
-      // Extract and persist learning log entries from the response (self-learning memory)
-      if (bot?.id) {
-        const learningMatch = assistantText.match(/🧠\s*LEARNING\s*LOG:\s*(.+?)(?:\n|$)/i);
-        if (learningMatch && learningMatch[1]?.trim()) {
-          try {
-            await storage.createBotMemory({ botId: bot.id, key: "learning", value: learningMatch[1].trim(), category: "learning" });
-          } catch (_) {}
-        }
-      }
     } catch (e) {
       res.write(`data: ${JSON.stringify({ type: "error", error: "Stream failed" })}\n\n`);
       res.end();
