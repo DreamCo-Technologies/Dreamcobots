@@ -4,6 +4,11 @@ import { resolve } from "node:path";
 
 import { z } from "zod";
 
+import {
+  buddyModelRequestSchema,
+  resolveBuddyModelPlan,
+} from "./buddy-model-policy";
+
 export const fleetExecutionRequestSchema = z.object({
   objective: z.string().trim().min(10).max(4_000),
   input: z.record(z.unknown()).default({}),
@@ -13,6 +18,14 @@ export const fleetExecutionRequestSchema = z.object({
 
 export const capabilityTestRequestSchema = z.object({
   capability: z.string().trim().min(2).max(160),
+}).strict();
+
+export const buddyCapabilityRouteRequestSchema = z.object({
+  objective: z.string().trim().min(3).max(4_000),
+  preferredBotSlug: z.string().trim().min(2).max(160).optional(),
+  requestedCapabilities: z.array(z.string().trim().min(2).max(160)).max(20).default([]),
+  liveActionRequested: z.boolean().default(false),
+  ...buddyModelRequestSchema.shape,
 }).strict();
 
 export type FleetExecutionRequest = z.infer<typeof fleetExecutionRequestSchema>;
@@ -41,7 +54,7 @@ type CatalogBot = {
 
 type FleetCatalog = {
   schema: string;
-  summary: { profiles: number; divisions: number };
+  summary: { profiles: number; divisions: number; declared_capability_slots?: number };
   bots: CatalogBot[];
 };
 
@@ -63,6 +76,78 @@ const CAPABILITY_TEST_CHECKS = [
   { id: "requiredSandboxEvidencePresent", label: "Required sandbox evidence present" },
   { id: "noLiveSideEffect", label: "No live side effect" },
 ] as const;
+
+const ROUTING_STOP_WORDS = new Set([
+  "about", "after", "again", "also", "because", "before", "build", "buddy", "could",
+  "create", "from", "have", "help", "into", "make", "need", "please", "should", "that",
+  "their", "then", "this", "through", "using", "want", "with", "would", "your",
+]);
+
+const ROUTING_SYNONYMS: Record<string, string[]> = {
+  app: ["application", "software", "code"],
+  application: ["app", "software", "code"],
+  bug: ["debug", "error", "failure"],
+  class: ["course", "education", "learning"],
+  code: ["coding", "software", "development"],
+  course: ["class", "education", "learning"],
+  game: ["gaming", "player", "simulation"],
+  job: ["career", "employment", "hiring"],
+  money: ["finance", "income", "revenue"],
+  property: ["real", "estate", "commercial"],
+  song: ["music", "audio", "production"],
+  video: ["media", "creative", "production"],
+  website: ["responsive", "web", "software"],
+};
+
+function normalizedText(value: string) {
+  return value.toLowerCase().replace(/[^a-z0-9]+/g, " ").trim();
+}
+
+function routingTokens(value: string) {
+  const tokens = normalizedText(value)
+    .split(/\s+/)
+    .filter((token) => token.length >= 3 && !ROUTING_STOP_WORDS.has(token));
+  const expanded = new Set(tokens);
+  for (const token of tokens) {
+    for (const synonym of ROUTING_SYNONYMS[token] || []) expanded.add(synonym);
+  }
+  return expanded;
+}
+
+function capabilityMatches(profile: CatalogBot, objective: string) {
+  const normalizedObjective = normalizedText(objective);
+  const objectiveTokens = routingTokens(objective);
+  return profile.capability_search
+    .split(" | ")
+    .filter(Boolean)
+    .map((capability) => {
+      const normalizedCapability = normalizedText(capability);
+      const capabilityTokens = routingTokens(capability);
+      const overlap = [...capabilityTokens].filter((token) => objectiveTokens.has(token)).length;
+      const score = (normalizedObjective.includes(normalizedCapability) ? 80 : 0) + overlap * 14;
+      return { capability, score };
+    })
+    .filter((match) => match.score > 0)
+    .sort((a, b) => b.score - a.score || a.capability.localeCompare(b.capability));
+}
+
+function routeScore(profile: CatalogBot, objective: string) {
+  const normalizedObjective = normalizedText(objective);
+  const objectiveTokens = routingTokens(objective);
+  const name = normalizedText(profile.identity.display_name);
+  const slug = normalizedText(profile.identity.slug);
+  const identityTokens = routingTokens(`${profile.identity.display_name} ${profile.identity.slug}`);
+  const contextTokens = routingTokens(`${profile.identity.division} ${profile.identity.category}`);
+  const missionTokens = routingTokens(profile.mission);
+  let score = 0;
+  if (normalizedObjective.includes(name)) score += 180;
+  if (normalizedObjective.includes(slug)) score += 220;
+  score += [...identityTokens].filter((token) => objectiveTokens.has(token)).length * 20;
+  score += [...contextTokens].filter((token) => objectiveTokens.has(token)).length * 8;
+  score += [...missionTokens].filter((token) => objectiveTokens.has(token)).length * 3;
+  score += capabilityMatches(profile, objective).reduce((total, match) => total + match.score, 0);
+  return score;
+}
 
 export type CapabilityContractTest = {
   testId: string;
@@ -397,6 +482,70 @@ export class FleetRuntimeRegistry {
 
   get(slug: string) {
     return this.runtimes.get(slug);
+  }
+
+  routeCapability(requestInput: z.input<typeof buddyCapabilityRouteRequestSchema>) {
+    const request = buddyCapabilityRouteRequestSchema.parse(requestInput);
+    const modelPlan = resolveBuddyModelPlan({
+      modelMode: request.modelMode,
+      modelConnectorId: request.modelConnectorId,
+      selectedModelId: request.selectedModelId,
+      approvePaidModelForThisRequest: request.approvePaidModelForThisRequest,
+    });
+    const preferred = request.preferredBotSlug ? this.runtimes.get(request.preferredBotSlug) : undefined;
+    const ranked = preferred
+      ? []
+      : [...this.runtimes.values()]
+        .map((runtime) => ({ runtime, score: routeScore(runtime.profile, request.objective) }))
+        .sort((a, b) => b.score - a.score || a.runtime.profile.identity.slug.localeCompare(b.runtime.profile.identity.slug));
+    const selected = preferred || ranked[0]?.runtime || this.runtimes.get("dreambot");
+    if (!selected) throw new Error("Buddy could not resolve a fleet runtime");
+
+    const selectedRank = ranked.find((candidate) => candidate.runtime === selected);
+    const matches = capabilityMatches(selected.profile, request.objective).slice(0, 5);
+    const requestedCapabilities = request.requestedCapabilities.length
+      ? request.requestedCapabilities
+      : matches.map((match) => match.capability);
+    const execution = selected.execute({
+      objective: request.objective,
+      input: { routedBy: "buddy_capability_router" },
+      requestedCapabilities,
+      liveActionRequested: request.liveActionRequested,
+    });
+    const alternatives = ranked
+      .filter((candidate) => candidate.runtime !== selected && candidate.score > 0)
+      .slice(0, 3)
+      .map((candidate) => ({
+        ...candidate.runtime.profile.identity,
+        matchedCapabilities: capabilityMatches(candidate.runtime.profile, request.objective)
+          .slice(0, 3)
+          .map((match) => match.capability),
+      }));
+
+    return {
+      schema: "dreamco.buddy_capability_route.v2",
+      objective: request.objective,
+      selected: selected.profile.identity,
+      matchedCapabilities: matches.map((match) => match.capability),
+      selectionReason: preferred
+        ? "owner_selected_specialist"
+        : matches.length
+          ? "best_declared_capability_match"
+          : "best_catalog_context_match",
+      confidence: preferred || (selectedRank?.score || 0) >= 100
+        ? "high"
+        : (selectedRank?.score || 0) >= 30
+          ? "medium"
+          : "low",
+      alternatives,
+      coverage: {
+        profilesSearched: this.runtimes.size,
+        declaredCapabilitiesSearched: [...this.runtimes.values()]
+          .reduce((total, runtime) => total + runtime.profile.capability_count, 0),
+      },
+      modelPlan,
+      execution,
+    } as const;
   }
 
   summary() {

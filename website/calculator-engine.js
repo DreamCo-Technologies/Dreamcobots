@@ -20,7 +20,7 @@ export function calculateBotTemplate(templateId, input) {
       const totalCost = (v.units * v.unit_cost) + v.fees + v.marketing_cost + returnLoss;
       const net = gross - totalCost;
       const contribution = (v.sale_price * (1 - v.return_rate / 100)) - v.unit_cost;
-      return { gross_value: gross, total_cost: totalCost, net_value: net, margin: ratio(net, gross) * 100, break_even_units: contribution > 0 ? (v.fees + v.marketing_cost) / contribution : 0 };
+      return { gross_value: gross, total_cost: totalCost, net_value: net, margin: ratio(net, gross) * 100, roi: ratio(net, totalCost) * 100, break_even_units: contribution > 0 ? (v.fees + v.marketing_cost) / contribution : 0 };
     }
     case 'sales_funnel': {
       const converted = v.leads * (v.conversion_rate / 100);
@@ -58,14 +58,17 @@ export function calculateBotTemplate(templateId, input) {
       const labor = hours * v.hourly_cost;
       const subtotal = labor + v.materials;
       const contingency = subtotal * (v.contingency_rate / 100);
-      return { labor_hours: hours, labor_cost: labor, subtotal, contingency, total_cost: subtotal + contingency };
+      const totalCost = subtotal + contingency;
+      const net = v.expected_project_value - totalCost;
+      return { labor_hours: hours, labor_cost: labor, subtotal, contingency, total_cost: totalCost, net_value: net, roi: ratio(net, totalCost) * 100 };
     }
     case 'operations_efficiency': {
       const baselineHours = (v.items * v.minutes_per_item) / 60;
       const savedHours = baselineHours * (v.time_reduction / 100);
       const laborValue = savedHours * v.hourly_value;
       const errorCost = v.items * (v.error_rate / 100) * v.cost_per_error;
-      return { baseline_hours: baselineHours, hours_saved: savedHours, labor_value: laborValue, error_cost: errorCost, net_value: laborValue + errorCost - v.tool_cost };
+      const net = laborValue + errorCost - v.tool_cost;
+      return { baseline_hours: baselineHours, hours_saved: savedHours, labor_value: laborValue, error_cost: errorCost, net_value: net, roi: ratio(net, v.tool_cost) * 100 };
     }
     case 'creative_project': {
       const hours = v.units * v.hours_per_unit;
@@ -75,9 +78,10 @@ export function calculateBotTemplate(templateId, input) {
     }
     case 'subscription': {
       const revenue = v.subscribers * v.monthly_price;
-      const monthlyNet = revenue - (v.subscribers * v.variable_cost) - v.fixed_cost;
+      const monthlyCost = (v.subscribers * v.variable_cost) + v.fixed_cost;
+      const monthlyNet = revenue - monthlyCost;
       const churnRate = v.monthly_churn / 100;
-      return { monthly_revenue: revenue, monthly_net: monthlyNet, annual_net: monthlyNet * 12, churned: v.subscribers * churnRate, contribution_ltv: churnRate > 0 ? Math.max(0, v.monthly_price - v.variable_cost) / churnRate : 0 };
+      return { monthly_revenue: revenue, monthly_net: monthlyNet, annual_net: monthlyNet * 12, churned: v.subscribers * churnRate, contribution_ltv: churnRate > 0 ? Math.max(0, v.monthly_price - v.variable_cost) / churnRate : 0, roi: ratio(monthlyNet * 12, monthlyCost * 12) * 100 };
     }
     case 'research_value': {
       const timeValue = v.hours_saved * v.hourly_value;

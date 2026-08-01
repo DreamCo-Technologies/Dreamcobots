@@ -1,49 +1,116 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>AI Models Hub — DreamCo Empire OS</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Buddy Model Benchmark Lab | DreamCo</title>
+  <meta name="description" content="Audit a 100-target AI catalog and prepare evidence-based, budget-gated live model benchmarks with Buddy." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="models.css" />
 </head>
-<body>
+<body class="model-lab-page">
 <div id="nav-placeholder"></div><script src="nav.js"></script>
-<div class="container" style="padding:48px 0">
-  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:28px">
-    <div><h1 style="font-size:1.75rem;margin-bottom:6px">AI Models Hub</h1><p>100+ models — free tiers, paid plans, and package deals with Stripe checkout</p></div>
-  </div>
 
-  <div style="display:flex;gap:10px;margin-bottom:24px;flex-wrap:wrap">
-    <input type="text" id="model-search" placeholder="Search models..." oninput="filterModels()" style="flex:1;min-width:200px;padding:10px 14px;background:var(--card);border:1px solid var(--border);border-radius:10px;color:var(--text);font-size:.875rem" />
-    <select id="model-filter" onchange="filterModels()" style="padding:10px 14px;background:var(--card);border:1px solid var(--border);border-radius:10px;color:var(--text);font-size:.875rem">
-      <option value="all">All Tiers</option><option value="free">Free</option><option value="paid">Paid</option>
-    </select>
-  </div>
+<main class="model-lab-shell">
+  <header class="model-lab-header">
+    <div>
+      <p class="model-lab-eyebrow">Evidence before rankings</p>
+      <h1>Buddy Model Benchmark Lab</h1>
+      <p>Compare 100 AI targets with repeatable fixtures, visible costs, and no invented scores.</p>
+    </div>
+    <div class="model-header-actions">
+      <a class="btn btn-outline btn-sm" href="open-model-lab.html">Open weights and source</a>
+      <a class="btn btn-outline btn-sm" href="buddy.html?prompt=Refresh%20the%20model%20benchmark%20catalog%20from%20official%20provider%20model%20lists.%20Show%20changes%2C%20deprecations%2C%20costs%2C%20and%20ask%20before%20any%20paid%20test.">Ask Buddy to refresh</a>
+    </div>
+  </header>
 
-  <div id="models-grid" class="grid-3">
-    <div class="card" data-tier="paid"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px"><h4>GPT-4.1-mini</h4><span class="badge badge-primary">Current Default</span></div><p style="font-size:.8rem;color:var(--text2);margin-bottom:10px">OpenAI's fast flagship. Powers all 1,051 bots. Best balance of speed, quality, and cost.</p><div style="font-size:.75rem;color:var(--text3);margin-bottom:12px">$0.15/1M input · $0.60/1M output</div><a href="marketplace.html" class="btn btn-outline btn-sm">Manage Plan</a></div>
-    <div class="card" data-tier="paid"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px"><h4>GPT-4o</h4><span class="badge badge-amber">Accuracy-First</span></div><p style="font-size:.8rem;color:var(--text2);margin-bottom:10px">OpenAI's best multimodal model. Handles images, audio, and complex reasoning chains.</p><div style="font-size:.75rem;color:var(--text3);margin-bottom:12px">$2.50/1M input · $10.00/1M output</div><a href="marketplace.html" class="btn btn-outline btn-sm">Add to Plan</a></div>
-    <div class="card" data-tier="free"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px"><h4>Llama 3.3 70B</h4><span class="badge badge-green">Open Source · Free</span></div><p style="font-size:.8rem;color:var(--text2);margin-bottom:10px">Meta's best open-weight model. Run via Groq for ultra-fast inference. No API fees.</p><div style="font-size:.75rem;color:var(--text3);margin-bottom:12px">Free via Groq · Self-hostable</div><a href="orchestration.html" class="btn btn-outline btn-sm">Configure Routing</a></div>
-    <div class="card" data-tier="paid"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px"><h4>Claude 3.5 Sonnet</h4><span class="badge badge-violet">Best for Analysis</span></div><p style="font-size:.8rem;color:var(--text2);margin-bottom:10px">Anthropic's flagship. Excellent at long documents, nuanced reasoning, and legal/financial tasks.</p><div style="font-size:.75rem;color:var(--text3);margin-bottom:12px">$3.00/1M input · $15.00/1M output</div><a href="marketplace.html" class="btn btn-outline btn-sm">Add to Plan</a></div>
-    <div class="card" data-tier="free"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px"><h4>Gemini 2.0 Flash</h4><span class="badge badge-green">Free Tier</span></div><p style="font-size:.8rem;color:var(--text2);margin-bottom:10px">Google's fastest model. 1M token context window. Free tier: 15 RPM, 1M tokens/day.</p><div style="font-size:.75rem;color:var(--text3);margin-bottom:12px">Free tier available · Google AI Studio</div><a href="orchestration.html" class="btn btn-outline btn-sm">Configure Routing</a></div>
-    <div class="card" data-tier="paid"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px"><h4>Grok-3</h4><span class="badge badge-cyan">Real-time Data</span></div><p style="font-size:.8rem;color:var(--text2);margin-bottom:10px">xAI's model with real-time X/Twitter data. Best for current events, trends, and social intelligence.</p><div style="font-size:.75rem;color:var(--text3);margin-bottom:12px">Via xAI API · Beta access</div><a href="marketplace.html" class="btn btn-outline btn-sm">Add to Plan</a></div>
-    <div class="card" data-tier="free"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px"><h4>Mistral 7B</h4><span class="badge badge-green">Open Source · Free</span></div><p style="font-size:.8rem;color:var(--text2);margin-bottom:10px">Efficient European open model. Great for bulk summarization and classification at zero cost.</p><div style="font-size:.75rem;color:var(--text3);margin-bottom:12px">Free · Open weights · Apache 2.0</div><a href="orchestration.html" class="btn btn-outline btn-sm">Configure Routing</a></div>
-    <div class="card" data-tier="paid"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px"><h4>DALL-E 3</h4><span class="badge badge-primary">Image Gen</span></div><p style="font-size:.8rem;color:var(--text2);margin-bottom:10px">OpenAI's best image model. Creates UI mockups, diagrams, marketing assets, and social media images.</p><div style="font-size:.75rem;color:var(--text3);margin-bottom:12px">$0.04–$0.12 per image</div><a href="marketplace.html" class="btn btn-outline btn-sm">Add to Plan</a></div>
-    <div class="card" data-tier="paid"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px"><h4>ElevenLabs Turbo</h4><span class="badge badge-amber">Voice</span></div><p style="font-size:.8rem;color:var(--text2);margin-bottom:10px">Ultra-low latency voice synthesis. Gives Buddy Bot a realistic voice. 29 languages.</p><div style="font-size:.75rem;color:var(--text3);margin-bottom:12px">$0.50 per 1K chars · Free tier: 10K chars</div><a href="connections.html" class="btn btn-outline btn-sm">Connect API Key</a></div>
-  </div>
-  <p style="text-align:center;margin-top:24px;color:var(--text3)">Showing 9 of 100+ models in the registry.</p>
-</div>
-<script>
-function filterModels() {
-  const q = document.getElementById('model-search').value.toLowerCase();
-  const f = document.getElementById('model-filter').value;
-  document.querySelectorAll('#models-grid .card').forEach(c => {
-    const text = c.textContent.toLowerCase();
-    const tier = c.getAttribute('data-tier');
-    c.style.display = ((!q||text.includes(q)) && (f==='all'||tier===f)) ? '' : 'none';
-  });
-}
-</script>
+  <section class="model-metrics" aria-label="Benchmark catalog summary">
+    <div><span>Targets</span><strong id="metric-targets">100</strong></div>
+    <div><span>Providers</span><strong id="metric-providers">0</strong></div>
+    <div><span>Test suites</span><strong id="metric-suites">0</strong></div>
+    <div><span>Live evidence</span><strong id="metric-live">0</strong></div>
+    <div><span>Catalog review</span><strong id="metric-review">Loading</strong></div>
+  </section>
+
+  <section class="model-lab-layout">
+    <div class="model-catalog-pane">
+      <div class="model-toolbar">
+        <label class="model-search-label" for="model-search">Search
+          <input id="model-search" type="search" placeholder="Model, provider, category, or capability" autocomplete="off" />
+        </label>
+        <label for="model-tier">Access
+          <select id="model-tier"><option value="all">All access types</option></select>
+        </label>
+        <label for="model-category">Category
+          <select id="model-category"><option value="all">All categories</option></select>
+        </label>
+        <button id="select-visible" class="btn btn-outline btn-sm" type="button">Select visible</button>
+        <button id="clear-selection" class="btn btn-outline btn-sm" type="button">Clear</button>
+      </div>
+
+      <div class="model-table-wrap" tabindex="0" aria-label="Benchmark targets">
+        <table class="model-table">
+          <thead><tr><th scope="col">Run</th><th scope="col">Target</th><th scope="col">Provider</th><th scope="col">Category</th><th scope="col">Catalog</th><th scope="col">Live result</th></tr></thead>
+          <tbody id="model-rows"></tbody>
+        </table>
+      </div>
+      <p id="model-count" class="model-count" aria-live="polite"></p>
+    </div>
+
+    <aside class="model-runner" aria-labelledby="runner-title">
+      <div class="model-runner-heading">
+        <p>Benchmark control</p>
+        <h2 id="runner-title">Prepare a fair run</h2>
+      </div>
+      <div class="model-selection-summary"><strong id="selected-count">100</strong><span>targets selected</span></div>
+
+      <fieldset class="model-suite-list">
+        <legend>Suites</legend>
+        <div id="suite-options"></div>
+      </fieldset>
+
+      <div class="model-run-settings">
+        <label for="benchmark-repetitions">Repetitions
+          <select id="benchmark-repetitions"><option value="1">1</option><option value="2">2</option><option value="3">3</option></select>
+        </label>
+        <label for="benchmark-budget">Maximum spend (USD)
+          <input id="benchmark-budget" type="number" min="0" max="10000" step="0.01" value="0" />
+        </label>
+      </div>
+
+      <label class="model-check"><input id="benchmark-network" type="checkbox" /> Allow configured adapters to contact providers for this run.</label>
+      <label class="model-check"><input id="benchmark-paid" type="checkbox" /> Approve paid models up to the maximum spend for this run only.</label>
+
+      <div class="model-run-actions">
+        <button id="run-catalog-audit" class="btn btn-primary" type="button">Run local catalog audit</button>
+        <button id="prepare-live-plan" class="btn btn-outline" type="button">Prepare live plan</button>
+      </div>
+      <p id="benchmark-status" class="model-status" aria-live="polite">No provider has been called. Catalog claims are not benchmark scores.</p>
+
+      <section id="benchmark-result" class="model-plan-result" hidden>
+        <h3>Run plan</h3>
+        <dl id="benchmark-plan-summary"></dl>
+        <button id="download-benchmark-plan" class="btn btn-outline btn-sm" type="button">Save plan</button>
+      </section>
+    </aside>
+  </section>
+
+  <section class="model-method-band">
+    <div><strong>Comparable</strong><span>Same signed fixture, shuffled target order, and declared grader version.</span></div>
+    <div><strong>Cost controlled</strong><span>No paid run without a dollar limit and approval for that run.</span></div>
+    <div><strong>Current by evidence</strong><span>Provider availability and model claims remain unverified until an adapter records them.</span></div>
+    <div><strong>Private by default</strong><span>Raw private prompts and responses are not retained in public reports.</span></div>
+  </section>
+</main>
+
+<dialog id="model-detail" class="model-detail-dialog" aria-labelledby="model-detail-title">
+  <header><div><p id="model-detail-provider"></p><h2 id="model-detail-title">Model details</h2></div><button id="model-detail-close" type="button">Close</button></header>
+  <div id="model-detail-body"></div>
+</dialog>
+
+<script src="data/buddy-model-benchmarks.js"></script>
+<script src="models.js" defer></script>
 </body>
 </html>

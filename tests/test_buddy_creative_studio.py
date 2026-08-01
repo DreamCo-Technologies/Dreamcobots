@@ -70,11 +70,19 @@ class BuddyCreativeStudioTests(unittest.TestCase):
                 "parent_learning_video",
                 "music_video",
                 "biography",
+                "documentary",
+                "animated_series",
+                "social_live_show",
                 "commercial",
                 "college_course",
                 "feature_film",
                 "music_artist",
                 "logo_brand",
+                "invention_prototype",
+                "vehicle_simulation",
+                "building_simulation",
+                "product_visualization",
+                "skills_training_simulation",
             },
         )
 
@@ -89,8 +97,50 @@ class BuddyCreativeStudioTests(unittest.TestCase):
             brief(ProjectType.LOGO_BRAND, title="Signal Brand", objective="Create an original accessible identity and clearance plan.")
         )
         self.assertIn("screenplay", film.deliverables)
+        self.assertEqual(film.production_academy["track"], "film")
+        self.assertGreaterEqual(len(film.production_academy["phases"]), 12)
         self.assertIn("rights_manifest", artist.deliverables)
+        self.assertEqual(artist.production_academy["track"], "music")
+        self.assertGreaterEqual(len(artist.production_academy["genre_families"]), 12)
+        self.assertIn("synthetic-media label", artist.production_academy["rights_gates"])
         self.assertIn("editable_logo_concepts", brand.deliverables)
+
+    def test_creates_invention_packet_with_real_specialists_and_release_gates(self):
+        invention = BuddyCreativeStudio().create_project(
+            brief(
+                ProjectType.INVENTION_PROTOTYPE,
+                title="Accessible Garden Monitor",
+                objective="Design a testable connected garden monitor with repairable parts and accessible alerts.",
+            )
+        )
+        self.assertIn("bill_of_materials", invention.deliverables)
+        self.assertIn("bench_test_matrix", invention.deliverables)
+        self.assertIn("no_automatic_ordering_or_manufacturing", invention.sandbox["checks"])
+        self.assertEqual(
+            {route["bot"] for route in invention.native_routes if route["bot"] != "governance-dashboard"},
+            {"patent-research", "mfg-analytics-elite", "safety-mfg"},
+        )
+
+    def test_creates_vehicle_building_product_and_training_simulations(self):
+        studio = BuddyCreativeStudio()
+        vehicle = studio.create_project(
+            brief(ProjectType.VEHICLE_SIMULATION, title="Garage Lab", objective="Practice an owner-authorized brake inspection with measured fitment and safe reset states.")
+        )
+        building = studio.create_project(
+            brief(ProjectType.BUILDING_SIMULATION, title="Home Addition Lab", objective="Compare an owner-authorized room addition against site, structure, utility, and access constraints.")
+        )
+        product = studio.create_project(
+            brief(ProjectType.PRODUCT_VISUALIZATION, title="Product Variant Lab", objective="Compare original paint, material, and accessory options against measured product constraints.")
+        )
+        training = studio.create_project(
+            brief(ProjectType.SKILLS_TRAINING_SIMULATION, title="Practice Workshop", objective="Turn an approved work procedure into a safe practice game with feedback and recovery.")
+        )
+        self.assertIn("vehicle_model_manifest", vehicle.deliverables)
+        self.assertIn("code_and_safety_review", building.deliverables)
+        self.assertIn("before_after_comparison", product.deliverables)
+        self.assertIn("bot_playtest_report", training.deliverables)
+        self.assertEqual(vehicle.production_academy["track"], "simulation")
+        self.assertIn("qualified_review_gate_for_high_risk_domains", training.sandbox["checks"])
 
     def test_creates_biography_and_commercial_rights_workflows(self):
         biography = BuddyCreativeStudio().create_project(
@@ -126,7 +176,7 @@ class BuddyCreativeStudioTests(unittest.TestCase):
                     consent=consent(adult_confirmed=False),
                 )
             )
-        with self.assertRaisesRegex(CreativeStudioError, "self-owned"):
+        with self.assertRaisesRegex(CreativeStudioError, "signed-in owner"):
             BuddyCreativeStudio().create_project(
                 brief(
                     use_image_avatar=True,
@@ -134,6 +184,33 @@ class BuddyCreativeStudioTests(unittest.TestCase):
                     consent=consent(subject_user_id="someone-else", owner_is_subject=False),
                 )
             )
+
+    def test_licensed_adult_performer_requires_written_rights(self):
+        with self.assertRaisesRegex(CreativeStudioError, "rights receipt"):
+            BuddyCreativeStudio().create_project(
+                brief(
+                    use_voice_clone=True,
+                    voice_sample_ref="local:performer-voice",
+                    consent=consent(
+                        source_type="licensed_adult_performer",
+                        subject_user_id="performer-1",
+                        owner_is_subject=False,
+                    ),
+                )
+            )
+        project = BuddyCreativeStudio().create_project(
+            brief(
+                use_voice_clone=True,
+                voice_sample_ref="local:performer-voice",
+                consent=consent(
+                    source_type="licensed_adult_performer",
+                    subject_user_id="performer-1",
+                    owner_is_subject=False,
+                    rights_receipt_reference="rights:performer-1",
+                ),
+            )
+        )
+        self.assertEqual(project.media["character"]["source_type"], "licensed_adult_performer")
 
     def test_approved_media_is_pending_until_an_engine_returns_assets(self):
         project = BuddyCreativeStudio().create_project(

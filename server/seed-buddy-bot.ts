@@ -74,7 +74,7 @@ export const BUDDY_BOT: InsertBotProfile = {
     "Performance benchmarking and optimization",
     "Cross-bot data sharing and orchestration",
     // ── CREATIVE & RESEARCH ──
-    "Voice cloning and text-to-speech via ElevenLabs",
+    "Local-first voice and likeness planning via consent-gated Buddy media adapters",
     "AI image generation via gpt-image-1",
     "Nonfiction book study and insight extraction",
     "Browser game generation (HTML5 Canvas, Phaser 3)",
@@ -662,7 +662,7 @@ FastAPI (Path/Query params, Pydantic v2, async routes, Background Tasks, WebSock
 NumPy (all array ops, broadcasting, linalg, fft, random), Pandas 2, Polars (lazy API, expressions, streaming), Scikit-learn (all estimators, pipelines, GridSearchCV, ColumnTransformer), PyTorch 2 (autograd, nn.Module, DataLoader, Lightning, TorchScript, ONNX), TensorFlow 2 / Keras 3, JAX (jit, grad, vmap, pmap, scan, Flax, Optax), FastAI, XGBoost, LightGBM, CatBoost, Statsmodels, spaCy, Hugging Face Transformers (all model types, pipelines, Trainer API, PEFT, LoRA), Diffusers (Stable Diffusion, ControlNet, SDXL), LangChain (chains, agents, tools, memory, RAG, LCEL), LlamaIndex (index types, query engines, agents), AutoGen, CrewAI, Semantic Kernel, Embedchain, ChromaDB, FAISS, Pinecone, Weaviate, Qdrant, Milvus, DSPy
 
 ── AI / LLM SDKs ──
-OpenAI SDK (chat completions, assistants, function calling, tool use, embeddings, streaming, vision, TTS, Whisper, DALL-E, fine-tuning), Anthropic SDK (messages, tool use, streaming, computer use, batches), Vercel AI SDK 4 (useChat, useCompletion, streamText, generateObject, structured outputs, all providers), Google Generative AI SDK (Gemini 1.5/2.0, function calling, multimodal), Mistral JS, Together AI, Groq SDK, Replicate JS, Stability AI SDK, ElevenLabs SDK, AssemblyAI, Deepgram, Ollama JS, LM Studio API, TensorFlow.js, ONNX Runtime Web, Transformers.js
+OpenAI SDK (chat completions, assistants, function calling, tool use, embeddings, streaming, vision, TTS, Whisper, DALL-E, fine-tuning), Anthropic SDK (messages, tool use, streaming, computer use, batches), Vercel AI SDK 4 (useChat, useCompletion, streamText, generateObject, structured outputs, all providers), Google Generative AI SDK (Gemini 1.5/2.0, function calling, multimodal), Mistral JS, Together AI, Groq SDK, Replicate JS, Stability AI SDK, Buddy Local Media adapters, AssemblyAI, Deepgram, Ollama JS, LM Studio API, TensorFlow.js, ONNX Runtime Web, Transformers.js
 
 ── DATABASES & ORMs ──
 Drizzle ORM (schema definition, relations, queries, migrations, Drizzle Kit, all dialects), Prisma 5 (schema, migrations, client, Prisma Accelerate, Pulse, Typed SQL), Sequelize 7, TypeORM (entities, repositories, migrations, data source), Mongoose 8 (schemas, models, middleware, populate, aggregation), Kysely (type-safe query builder, all dialects), MikroORM 6, Objection.js, Knex.js, raw SQL (PostgreSQL, MySQL, SQLite, MSSQL dialects)

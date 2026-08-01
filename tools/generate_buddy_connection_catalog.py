@@ -8,6 +8,7 @@ import json
 import sys
 from pathlib import Path
 from typing import Any
+from urllib.parse import urlsplit
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -32,6 +33,7 @@ def build_public_catalog(payload: dict[str, Any]) -> dict[str, Any]:
     methods = payload.get("auth_methods", [])
     gates = payload.get("user_presence_gates", [])
     contracts = payload.get("connector_contracts", [])
+    profiles = payload.get("platform_profiles", [])
     transfer = payload.get("token_transfer", {})
     expected_methods = {method.value for method in AuthMethod}
     method_ids = [str(item.get("id", "")) for item in methods]
@@ -43,6 +45,15 @@ def build_public_catalog(payload: dict[str, Any]) -> dict[str, Any]:
         raise ValueError("Connector registry must define unique user-presence gates.")
     if len(contracts) < 6 or len({item.get("id") for item in contracts}) != len(contracts):
         raise ValueError("Connector registry must define unique connector contracts.")
+    if len(profiles) < 3 or len({item.get("id") for item in profiles}) != len(profiles):
+        raise ValueError("Connector registry must define unique platform profiles.")
+    contract_ids = {item.get("id") for item in contracts}
+    for profile in profiles:
+        official = urlsplit(str(profile.get("official_url", "")))
+        if official.scheme != "https" or not official.hostname:
+            raise ValueError(f"Platform profile must use an official HTTPS URL: {profile.get('id')}")
+        if profile.get("auth_method") not in expected_methods or profile.get("contract") not in contract_ids:
+            raise ValueError(f"Platform profile references an unknown contract or auth method: {profile.get('id')}")
 
     summary = payload.get("summary", {})
     if summary.get("raw_credentials_accepted") is not False:
@@ -65,10 +76,12 @@ def build_public_catalog(payload: dict[str, Any]) -> dict[str, Any]:
             "auth_method_count": len(methods),
             "user_presence_gate_count": len(gates),
             "connector_contract_count": len(contracts),
+            "platform_profile_count": len(profiles),
         },
         "auth_methods": methods,
         "user_presence_gates": gates,
         "connector_contracts": contracts,
+        "platform_profiles": profiles,
         "token_transfer": transfer,
         "public_contract": {
             "mode": "connection_planner",

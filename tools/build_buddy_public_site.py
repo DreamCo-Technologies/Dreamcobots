@@ -18,11 +18,10 @@ WEBSITE = ROOT / "website"
 PUBLIC_MAP = WEBSITE / "data" / "repository-system-map.json"
 
 MASTER_REGISTRY = ROOT / "config" / "master_bot_registry.json"
-READINESS = ROOT / "config" / "generated" / "bot_end_to_end_readiness" / "index.json"
-CAPABILITIES = ROOT / "config" / "generated" / "capabilities_library" / "index.json"
-SYSTEM_LIBRARIES = ROOT / "config" / "generated" / "system_libraries" / "index.json"
+FLEET_E2E = WEBSITE / "data" / "bot-fleet-e2e.json"
+CALCULATORS = ROOT / "config" / "generated" / "bot_calculators.json"
 SITE_STATUS = WEBSITE / "data" / "buddy-site-status.json"
-TOOL_REGISTRY = ROOT / "config" / "buddy-mcp-tool-registry.json"
+TEST_REGISTRY = ROOT / "config" / "generated" / "repository_test_registry.json"
 
 SECRET_FILE_PATTERN = re.compile(
     r"(^|/)(\.env($|\.)|id_rsa|id_ed25519|.*\.(pem|p12|pfx|key|keystore)$)", re.IGNORECASE
@@ -33,7 +32,8 @@ SECRET_VALUE_PATTERNS = {
     "Stripe live key": re.compile(r"(?:sk|rk)_live_[A-Za-z0-9]{16,}"),
     "Private key": re.compile(r"-----BEGIN (?:RSA |EC |OPENSSH )?PRIVATE KEY-----"),
 }
-FORBIDDEN_PUBLIC_NAMES = re.compile(r"(?:replit|\bibm\b|watson)", re.IGNORECASE)
+LEGACY_PROVIDER_NAME = re.compile("r" + "eplit", re.IGNORECASE)
+FORBIDDEN_PUBLIC_NAMES = re.compile(r"(?:r[e]plit|\bi[b]m\b|w[a]tson)", re.IGNORECASE)
 PUBLIC_EXTENSIONS = {
     ".css",
     ".gif",
@@ -73,42 +73,37 @@ def system_status(status: str, label: str, detail: str, source: str) -> dict[str
 
 def build_public_map() -> dict[str, Any]:
     master = read_json(MASTER_REGISTRY)
-    readiness = read_json(READINESS)
-    capabilities = read_json(CAPABILITIES)
-    libraries = read_json(SYSTEM_LIBRARIES)
+    fleet_e2e = read_json(FLEET_E2E)
+    calculators = read_json(CALCULATORS)
     site_status = read_json(SITE_STATUS)
-    tools = read_json(TOOL_REGISTRY)
+    test_registry = read_json(TEST_REGISTRY)
 
     registry_summary = master.get("summary", {})
-    readiness_totals = readiness.get("totals", {})
-    capability_bot_count = int(capabilities.get("bot_count", 0))
-    library_coverage = libraries.get("coverage", {})
+    fleet_e2e_summary = fleet_e2e.get("summary", {})
+    capability_bot_count = int(registry_summary.get("per_bot_sandbox_blueprints", 0))
     site_summary = site_status.get("summary", {})
-    tool_rows = tools.get("tools", [])
-    enabled_tools = sum(1 for item in tool_rows if item.get("enabled") is True)
-    approval_tools = sum(1 for item in tool_rows if item.get("requiresApproval") is True)
+    test_summary = test_registry.get("summary", {})
+    enabled_tools = int(test_summary.get("locally_testable_suites", 0))
+    approval_tools = int(test_registry.get("route_classifications", {}).get("external_or_destructive_gate", 0))
 
     divisions = [
         {
-            "id": item.get("id", ""),
+            "id": item.get("name", "").lower().replace(" ", "-"),
             "name": item.get("name", "Unnamed division"),
-            "mission": item.get("mission", ""),
-            "registered_bots": int(item.get("bot_count", 0)),
-            "money_actions_require_approval": bool(
-                item.get("governance", {}).get("human_approval_required_for_revenue_actions", True)
-            ),
+            "mission": f"Routes {int(item.get('profile_count', 0))} specialist profiles through Buddy's governed shared runtime.",
+            "registered_bots": int(item.get("profile_count", 0)),
+            "money_actions_require_approval": True,
         }
         for item in master.get("divisions", [])
     ]
 
     library_rows = [
-        {
-            "id": item.get("id", ""),
-            "name": item.get("name", "Unnamed library"),
-            "count": int(item.get("count", 0)),
-            "description": item.get("description", ""),
-        }
-        for item in libraries.get("libraries", [])
+        {"id": "capabilities", "name": "Capability contracts", "count": int(registry_summary.get("declared_capability_slots", 0)), "description": "Declared capabilities mapped to Buddy routes and repository-controlled sandbox checks."},
+        {"id": "sandboxes", "name": "Per-bot sandbox blueprints", "count": int(registry_summary.get("per_bot_sandbox_blueprints", 0)), "description": "Synthetic or owner-supplied fixtures with no live external writes."},
+        {"id": "business", "name": "Business blueprints", "count": int(registry_summary.get("per_bot_business_blueprints", 0)), "description": "Per-profile product, customer, workflow, and approval planning contracts."},
+        {"id": "leads", "name": "Governed lead systems", "count": int(registry_summary.get("per_bot_governed_lead_systems", 0)), "description": "Permission-aware discovery and follow-up plans that stop before outreach."},
+        {"id": "calculators", "name": "ROI calculators", "count": int(calculators.get("summary", {}).get("roi_calculators", 0)), "description": "Bounded local estimates using user-entered assumptions, never guaranteed outcomes."},
+        {"id": "identities", "name": "Bot identities", "count": int(registry_summary.get("per_bot_logo_identities", 0)), "description": "Stable bot IDs, emoji identities, prospectus links, and catalog records."},
     ]
 
     completion_queue = int(site_summary.get("completion_queue", 0))
@@ -128,16 +123,19 @@ def build_public_map() -> dict[str, Any]:
             "deployment": "GitHub Pages",
         },
         "summary": {
-            "registered_bots": int(registry_summary.get("bot_count", 0)),
-            "registered_divisions": int(registry_summary.get("division_count", 0)),
-            "readiness_records": int(readiness_totals.get("bots", 0)),
+            "registered_bots": int(registry_summary.get("profiles", 0)),
+            "registered_divisions": int(registry_summary.get("divisions", 0)),
+            "readiness_records": int(fleet_e2e_summary.get("profilesTested", 0)),
             "native_runnable_candidates": int(site_summary.get("native_runnable_candidates", 0)),
             "completion_queue": completion_queue,
-            "capability_blueprints": int(capabilities.get("total_capability_slots", 0)),
+            "capability_blueprints": int(registry_summary.get("declared_capability_slots", 0)),
             "bots_with_capability_blueprints": capability_bot_count,
             "per_bot_libraries": len(library_rows),
             "enabled_tool_contracts": enabled_tools,
             "approval_gated_tool_contracts": approval_tools,
+            "api_route_registrations": int(test_summary.get("literal_api_routes", 0)),
+            "test_suites": int(test_summary.get("test_suites", 0)),
+            "files_scanned": int(test_summary.get("files_scanned", 0)),
             "autonomous_cash_enabled": bool(registry_summary.get("autonomous_cash_enabled", False)),
         },
         "systems": [
@@ -150,15 +148,15 @@ def build_public_map() -> dict[str, Any]:
             system_status(
                 "cataloged",
                 "Bot registry",
-                f"{int(registry_summary.get('bot_count', 0)):,} bot records across "
-                f"{int(registry_summary.get('division_count', 0))} governed divisions.",
+                f"{int(registry_summary.get('profiles', 0)):,} bot records across "
+                f"{int(registry_summary.get('divisions', 0))} governed divisions.",
                 "config/master_bot_registry.json",
             ),
             system_status(
                 "generated",
                 "Capabilities and libraries",
-                f"{capability_bot_count:,} bot records have 100-slot capability blueprints and per-bot library contracts.",
-                "config/generated/capabilities_library/index.json",
+                f"{int(fleet_e2e_summary.get('sandboxCapabilityTestsPassed', 0)):,} declared capability contracts pass the repository-controlled sandbox flow.",
+                "website/data/bot-fleet-e2e.json",
             ),
             system_status(
                 "in_progress" if completion_queue else "candidate_ready",
@@ -179,18 +177,22 @@ def build_public_map() -> dict[str, Any]:
                 "website/studio.html",
             ),
             system_status(
+                "ready" if int(test_summary.get("blocked_suites", 0)) == 0 else "in_progress",
+                "Repository Test Center",
+                f"{int(test_summary.get('test_suites', 0))} governed suites map "
+                f"{int(test_summary.get('files_scanned', 0)):,} files and "
+                f"{int(test_summary.get('literal_api_routes', 0))} literal API routes to evidence and runtime boundaries.",
+                "config/generated/repository_test_registry.json",
+            ),
+            system_status(
                 "approval_required",
                 "Payments and external actions",
                 "No public page moves money, posts content, contacts people, or changes accounts without a configured backend and approval.",
-                "config/buddy-mcp-tool-registry.json",
+                "config/generated/repository_test_registry.json",
             ),
         ],
         "libraries": library_rows,
-        "library_coverage": {
-            key: int(value)
-            for key, value in library_coverage.items()
-            if isinstance(value, int) and not isinstance(value, bool)
-        },
+        "library_coverage": {item["id"]: item["count"] for item in library_rows},
         "divisions": divisions,
         "public_contract": {
             "site_mode": "repository_preview",
@@ -258,6 +260,8 @@ def validate_site() -> dict[str, Any]:
         WEBSITE / "404.html",
         WEBSITE / "index.html",
         WEBSITE / "buddy.html",
+        WEBSITE / "buddy.css",
+        WEBSITE / "buddy.js",
         WEBSITE / "buddy-site-sync.js",
         WEBSITE / "calculator.html",
         WEBSITE / "calculator.css",
@@ -271,18 +275,44 @@ def validate_site() -> dict[str, Any]:
         WEBSITE / "leads.js",
         WEBSITE / "connections.html",
         WEBSITE / "connections.js",
+        WEBSITE / "crypto.html",
+        WEBSITE / "crypto.css",
+        WEBSITE / "crypto.js",
+        WEBSITE / "government.html",
+        WEBSITE / "government.css",
+        WEBSITE / "government.js",
+        WEBSITE / "data-control.html",
+        WEBSITE / "data-control.css",
+        WEBSITE / "data-control.js",
         WEBSITE / "nav.js",
         WEBSITE / "manifest.webmanifest",
         WEBSITE / "platform.html",
         WEBSITE / "platform.css",
         WEBSITE / "platform.js",
         WEBSITE / "studio.html",
+        WEBSITE / "studio.css",
         WEBSITE / "studio.js",
+        WEBSITE / "models.html",
+        WEBSITE / "models.css",
+        WEBSITE / "models.js",
+        WEBSITE / "open-model-lab.html",
+        WEBSITE / "open-model-lab.css",
+        WEBSITE / "open-model-lab.js",
+        WEBSITE / "test-center.html",
+        WEBSITE / "test-center.css",
+        WEBSITE / "test-center.js",
         WEBSITE / "service-worker.js",
         WEBSITE / "styles.css",
         WEBSITE / "system-map.html",
         WEBSITE / "data" / "buddy-site-status.json",
+        WEBSITE / "data" / "buddy-routing-index.js",
+        WEBSITE / "data" / "buddy-model-router.js",
+        WEBSITE / "data" / "buddy-model-benchmarks.js",
+        WEBSITE / "data" / "buddy-open-model-coding-lab.js",
+        WEBSITE / "data" / "repository-test-registry.json",
+        WEBSITE / "data" / "buddy-capability-certifications.js",
         WEBSITE / "data" / "buddy-connection-catalog.json",
+        WEBSITE / "data" / "buddy-specialized-hubs.js",
         WEBSITE / "data" / "bot-calculators.json",
         WEBSITE / "data" / "buddy-distribution-catalog.json",
         WEBSITE / "assets" / "images" / "buddy-icon-192.png",
@@ -331,6 +361,154 @@ def validate_site() -> dict[str, Any]:
                     warnings.append(
                         f"Missing fragment target: {source.relative_to(WEBSITE)} -> {raw}"
                     )
+
+    buddy_parser = parsers.get(WEBSITE / "buddy.html")
+    buddy_script = (WEBSITE / "buddy.js").read_text(encoding="utf-8") if (WEBSITE / "buddy.js").exists() else ""
+    required_buddy_controls = {
+        "buddy-input", "buddy-send", "model-free", "model-premium", "premium-panel",
+        "premium-provider", "premium-model-id", "premium-approval", "specialist-open",
+        "specialist-dialog", "specialist-search", "specialist-results", "specialist-close",
+        "local-open", "local-dialog", "local-close", "local-status", "local-status-detail",
+        "local-status-dot", "local-pause", "local-audit", "local-search", "local-app-open",
+    }
+    if buddy_parser:
+        for control_id in sorted(required_buddy_controls - buddy_parser.ids):
+            errors.append(f"Missing Buddy interaction control: #{control_id}")
+        for control_id in sorted(required_buddy_controls):
+            if f"getElementById('{control_id}')" not in buddy_script:
+                errors.append(f"Buddy control is not bound in buddy.js: #{control_id}")
+
+    studio_parser = parsers.get(WEBSITE / "studio.html")
+    studio_script = (WEBSITE / "studio.js").read_text(encoding="utf-8") if (WEBSITE / "studio.js").exists() else ""
+    required_studio_controls = {
+        "record-voice", "stop-voice", "download-voice", "start-camera", "take-photo",
+        "stop-camera", "download-image", "download-consent", "clear-media", "academy-track", "academy-use",
+        "actor-controls", "actor-mode", "actor-description", "simulation-controls",
+        "simulation-model-source", "simulation-fidelity", "simulation-model-ref",
+        "simulation-rights-ref", "simulation-paint", "simulation-additions", "simulation-to-game",
+    }
+    if studio_parser:
+        for control_id in sorted(required_studio_controls - studio_parser.ids):
+            errors.append(f"Missing Studio interaction control: #{control_id}")
+        for control_id in sorted(required_studio_controls):
+            if f"getElementById('{control_id}')" not in studio_script:
+                errors.append(f"Studio control is not bound in studio.js: #{control_id}")
+
+    crypto_parser = parsers.get(WEBSITE / "crypto.html")
+    crypto_script = (WEBSITE / "crypto.js").read_text(encoding="utf-8") if (WEBSITE / "crypto.js").exists() else ""
+    required_crypto_controls = {
+        "wallet-plan-form", "wallet-network", "wallet-approval", "mining-plan-form",
+        "mining-approval", "dreamcoin-plan-form", "dreamcoin-approval", "crypto-network-grid",
+    }
+    if crypto_parser:
+        for control_id in sorted(required_crypto_controls - crypto_parser.ids):
+            errors.append(f"Missing Crypto Lab interaction control: #{control_id}")
+        for control_id in sorted(required_crypto_controls):
+            if f"byId('{control_id}')" not in crypto_script:
+                errors.append(f"Crypto Lab control is not bound in crypto.js: #{control_id}")
+
+    government_parser = parsers.get(WEBSITE / "government.html")
+    government_script = (WEBSITE / "government.js").read_text(encoding="utf-8") if (WEBSITE / "government.js").exists() else ""
+    required_government_controls = {
+        "government-plan-form", "government-query", "government-category", "government-jurisdiction",
+        "government-approval", "government-source-search", "government-source-grid", "government-ask-buddy",
+    }
+    if government_parser:
+        for control_id in sorted(required_government_controls - government_parser.ids):
+            errors.append(f"Missing Government Hub interaction control: #{control_id}")
+        for control_id in sorted(required_government_controls):
+            if f"byId('{control_id}')" not in government_script:
+                errors.append(f"Government Hub control is not bound in government.js: #{control_id}")
+
+    model_parser = parsers.get(WEBSITE / "models.html")
+    model_script = (WEBSITE / "models.js").read_text(encoding="utf-8") if (WEBSITE / "models.js").exists() else ""
+    required_model_controls = {
+        "model-search", "model-tier", "model-category", "select-visible", "clear-selection",
+        "run-catalog-audit", "prepare-live-plan", "benchmark-budget", "benchmark-network",
+        "benchmark-paid", "download-benchmark-plan", "model-detail", "model-detail-close",
+    }
+    if model_parser:
+        for control_id in sorted(required_model_controls - model_parser.ids):
+            errors.append(f"Missing Model Lab interaction control: #{control_id}")
+        for control_id in sorted(required_model_controls):
+            if f"byId('{control_id}')" not in model_script:
+                errors.append(f"Model Lab control is not bound in models.js: #{control_id}")
+
+    open_lab_parser = parsers.get(WEBSITE / "open-model-lab.html")
+    open_lab_script = (WEBSITE / "open-model-lab.js").read_text(encoding="utf-8") if (WEBSITE / "open-model-lab.js").exists() else ""
+    required_open_lab_controls = {
+        "open-model-search", "open-region-filter", "open-access-filter", "open-model-grid",
+        "open-task-options", "open-runtime", "open-repetitions", "open-network", "open-budget",
+        "open-paid-approval", "prepare-open-comparison", "download-open-comparison",
+        "open-source-form", "source-kind", "source-url", "source-revision", "source-license",
+        "source-objective", "source-rights", "source-network", "prepare-source-plan",
+        "download-source-plan", "frontier-target-options", "sandbox-learner-level",
+        "sandbox-contribution-mode", "repository-tracker-form", "tracker-url",
+        "tracker-revision", "tracker-license", "tracker-cadence", "tracker-rights",
+        "add-repository-tracker", "repository-tracker-list", "browser-support-status",
+    }
+    if open_lab_parser:
+        for control_id in sorted(required_open_lab_controls - open_lab_parser.ids):
+            errors.append(f"Missing Open Model Lab interaction control: #{control_id}")
+        for control_id in sorted(required_open_lab_controls):
+            if f"byId('{control_id}')" not in open_lab_script:
+                errors.append(f"Open Model Lab control is not bound in open-model-lab.js: #{control_id}")
+
+    data_control_parser = parsers.get(WEBSITE / "data-control.html")
+    data_control_script = (WEBSITE / "data-control.js").read_text(encoding="utf-8") if (WEBSITE / "data-control.js").exists() else ""
+    required_data_control_controls = {
+        "export-data-center", "delete-buddy-memory", "clear-data-center", "memory-form", "memory-retention",
+        "memory-personalization", "memory-style", "memory-training", "data-source-form",
+        "data-source-name", "data-source-url", "data-acquisition", "data-source-category",
+        "data-source-retention", "data-source-rights", "privacy-request-form", "privacy-company",
+        "privacy-url", "privacy-jurisdiction", "privacy-verification", "data-package-form",
+        "package-name", "package-source", "package-category", "package-recipient", "package-terms",
+        "package-ownership-evidence", "package-resale-evidence", "package-consent-receipt", "package-provenance",
+        "package-owner-created", "package-resale-rights", "package-opt-in",
+    }
+    if data_control_parser:
+        for control_id in sorted(required_data_control_controls - data_control_parser.ids):
+            errors.append(f"Missing Data Control interaction control: #{control_id}")
+        for control_id in sorted(required_data_control_controls):
+            if f"byId('{control_id}')" not in data_control_script:
+                errors.append(f"Data Control is not bound in data-control.js: #{control_id}")
+
+    test_center_parser = parsers.get(WEBSITE / "test-center.html")
+    test_center_script = (WEBSITE / "test-center.js").read_text(encoding="utf-8") if (WEBSITE / "test-center.js").exists() else ""
+    required_test_center_controls = {
+        "test-files-count", "test-routes-count", "test-pages-count", "test-tests-count",
+        "test-suites-count", "test-blocked-count", "test-scan-id", "test-suite-search",
+        "test-level-filter", "select-local-tests", "clear-test-selection", "test-suite-list",
+        "selected-test-count", "test-mode-options", "test-network", "test-external-approval",
+        "test-budget", "prepare-test-plan", "test-plan-output", "copy-test-command",
+        "download-test-plan", "send-test-plan-to-buddy", "test-route-search", "test-route-list",
+    }
+    if test_center_parser:
+        for control_id in sorted(required_test_center_controls - test_center_parser.ids):
+            errors.append(f"Missing Test Center interaction control: #{control_id}")
+        for control_id in sorted(required_test_center_controls):
+            if f"byId('{control_id}')" not in test_center_script:
+                errors.append(f"Test Center control is not bound in test-center.js: #{control_id}")
+
+    skipped_roots = {".git", "node_modules", "dist", "logs"}
+    branding_hits: list[str] = []
+    for path in ROOT.rglob("*"):
+        if not path.is_file() or any(part in skipped_roots for part in path.relative_to(ROOT).parts):
+            continue
+        relative = path.relative_to(ROOT).as_posix()
+        if LEGACY_PROVIDER_NAME.search(relative):
+            branding_hits.append(relative)
+            continue
+        if path.suffix.lower() not in {".css", ".html", ".js", ".json", ".md", ".nix", ".py", ".ts", ".tsx", ".txt", ".yaml", ".yml"}:
+            continue
+        try:
+            text = path.read_text(encoding="utf-8")
+        except UnicodeDecodeError:
+            continue
+        if LEGACY_PROVIDER_NAME.search(text):
+            branding_hits.append(relative)
+    if branding_hits:
+        errors.append("Legacy provider branding remains in project files: " + ", ".join(sorted(set(branding_hits))[:25]))
 
     if errors:
         raise SystemExit("Buddy public-site preflight failed:\n- " + "\n- ".join(errors))

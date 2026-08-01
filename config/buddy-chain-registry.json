@@ -1,0 +1,30 @@
+{
+  "schema": "dreamco.buddy_chain_registry.v1",
+  "policy": {
+    "custody": "non_custodial_only",
+    "private_keys_accepted": false,
+    "seed_phrases_accepted": false,
+    "live_transactions_default": false,
+    "mining_default": "simulation_only",
+    "claims": "No claim of universal asset support or absolute security"
+  },
+  "families": [
+    {"id": "bitcoin", "label": "Bitcoin / UTXO", "integration": "watch-only descriptors or approved hardware wallet", "standards": ["BIP-32", "BIP-44", "output descriptors"]},
+    {"id": "evm", "label": "EVM networks", "integration": "EIP-1193 provider with explicit account permission", "standards": ["EIP-1193", "EIP-155"]},
+    {"id": "solana", "label": "Solana", "integration": "wallet adapter and transaction simulation", "standards": ["chain-native wallet adapter"]},
+    {"id": "cosmos", "label": "Cosmos SDK", "integration": "chain registry plus user wallet", "standards": ["chain-native signing"]},
+    {"id": "substrate", "label": "Polkadot / Substrate", "integration": "extension or hardware-backed signer", "standards": ["chain-native metadata"]},
+    {"id": "cardano", "label": "Cardano", "integration": "CIP-compatible user wallet", "standards": ["chain-native wallet API"]},
+    {"id": "xrpl", "label": "XRP Ledger", "integration": "read-only account plus external signer", "standards": ["chain-native transaction signing"]},
+    {"id": "stellar", "label": "Stellar", "integration": "read-only account plus external signer", "standards": ["SEP-compatible wallet flow"]},
+    {"id": "near", "label": "NEAR", "integration": "wallet selector and explicit transaction review", "standards": ["chain-native wallet flow"]},
+    {"id": "other", "label": "Additional verified networks", "integration": "add only after chain-specific adapter, threat model, and test vectors", "standards": ["network-specific"]}
+  ],
+  "dreamcoin": {
+    "status": "design_and_testnet_only",
+    "mainnet_contract_verified": false,
+    "market_value_claimed": false,
+    "automatic_minting": false,
+    "required_before_launch": ["written purpose", "legal review", "tokenomics review", "audited contract", "public testnet", "verified source", "multisig administration", "incident and recovery plan"]
+  }
+}

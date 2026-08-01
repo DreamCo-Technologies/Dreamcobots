@@ -57,6 +57,7 @@
       <button class="active" type="button" data-view="targets">Device targets</button>
       <button type="button" data-view="services">Launch services</button>
       <button type="button" data-view="planner">Planner</button>
+      <button type="button" data-view="domains">Domains</button>
     </div>
 
     <div id="targets-view" class="distribution-view active">
@@ -132,6 +133,44 @@
         </div>
       </form>
       <div id="release-output" class="release-output" hidden></div>
+    </div>
+
+    <div id="domains-view" class="distribution-view">
+      <div class="distribution-toolbar">
+        <div>
+          <h2>Domain launch desk</h2>
+          <p>Start on DreamCo's included web address, then prepare custom names. Availability, purchase, renewal, and DNS changes always stop for an exact owner approval.</p>
+        </div>
+        <a id="free-domain-link" class="btn btn-outline btn-sm" href="https://dreamco-technologies.github.io/Dreamcobots/">Open free address</a>
+      </div>
+      <form id="domain-form" class="release-form">
+        <div class="release-fields">
+          <label>Brand or project name
+            <input id="domain-brand" required minlength="2" placeholder="Buddy by DreamCo" />
+          </label>
+          <label>What it does
+            <input id="domain-purpose" required minlength="4" placeholder="AI task assistant" />
+          </label>
+          <label>Preferred ending
+            <select id="domain-tld">
+              <option value="com">.com</option>
+              <option value="ai">.ai</option>
+              <option value="app">.app</option>
+              <option value="co">.co</option>
+              <option value="dev">.dev</option>
+              <option value="studio">.studio</option>
+            </select>
+          </label>
+          <label>Maximum first-year budget
+            <input id="domain-budget" inputmode="decimal" placeholder="$0 until I approve" />
+          </label>
+        </div>
+        <div class="release-form-actions">
+          <button class="btn btn-primary" type="submit">Build domain plan</button>
+          <span id="domain-form-status" role="status"></span>
+        </div>
+      </form>
+      <div id="domain-output" class="release-output" hidden></div>
     </div>
   </section>
 

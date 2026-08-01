@@ -1,8 +1,10 @@
-const SHELL_CACHE = 'buddy-shell-v2';
-const RUNTIME_CACHE = 'buddy-runtime-v2';
+const SHELL_CACHE = 'buddy-shell-v30';
+const RUNTIME_CACHE = 'buddy-runtime-v30';
 const APP_SHELL = [
   './',
   './buddy.html',
+  './buddy.css?v=26',
+  './buddy.js?v=26',
   './install.html',
   './install.css',
   './install.js',
@@ -11,10 +13,48 @@ const APP_SHELL = [
   './leads.js',
   './calculator.html',
   './studio.html',
+  './studio.css?v=21',
+  './studio.js?v=21',
+  './practice.html',
+  './practice.css?v=1',
+  './practice.js?v=1',
+  './crypto.html',
+  './crypto.css',
+  './crypto.js',
+  './government.html',
+  './government.css',
+  './government.js',
+  './data-control.html',
+  './data-control.css',
+  './data-control.js?v=3',
+  './models.html',
+  './models.css',
+  './models.js',
+  './open-model-lab.html',
+  './open-model-lab.css',
+  './open-model-lab.js',
+  './test-center.html',
+  './test-center.css',
+  './test-center.js',
   './styles.css',
   './nav.js',
   './manifest.webmanifest',
+  './data/buddy-routing-index.js',
+  './data/buddy-model-router.js',
+  './data/buddy-model-benchmarks.js',
+  './data/buddy-open-model-coding-lab.js',
+  './data/repository-test-registry.json',
+  './data/buddy-capability-certifications.js',
   './data/buddy-distribution-catalog.json',
+  './data/buddy-specialized-hubs.js',
+  './data/buddy-production-group.js?v=21',
+  './data/buddy-local-media-engines.js?v=21',
+  './data/buddy-media-quality-lab.js?v=21',
+  './data/buddy-practice-lab.js?v=1',
+  './data/buddy-connected-life.js?v=1',
+  './data/buddy-communication-behavior.js?v=26',
+  './data/buddy-workforce-system.js?v=23',
+  './data/buddy-setup-catalog.js?v=24',
   './assets/images/favicon.svg',
   './assets/images/buddy-icon-192.png',
   './assets/images/buddy-icon-512.png'
@@ -48,7 +88,7 @@ async function networkFirst(request) {
 }
 
 async function cacheFirst(request) {
-  const cached = await caches.match(request, { ignoreSearch: true });
+  const cached = await caches.match(request);
   if (cached) return cached;
   const response = await fetch(request);
   if (response.ok) {

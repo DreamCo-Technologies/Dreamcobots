@@ -43,6 +43,12 @@
     </div>
     <div id="auth-method-grid" class="auth-method-grid" aria-live="polite"></div>
 
+    <div class="connection-section-heading" style="margin-top:24px">
+      <div><span class="status-dot status-dot-ready"></span><strong>Ready-start profiles</strong></div>
+      <span id="platform-profile-count" class="badge badge-gray">0 profiles</span>
+    </div>
+    <div id="platform-profile-grid" class="auth-method-grid"></div>
+
     <div class="connections-two-column">
       <section class="connection-surface">
         <h2>User-presence gates</h2>
@@ -68,6 +74,34 @@
 
         <label for="connection-url">Official app URL</label>
         <input id="connection-url" name="url" type="url" placeholder="https://app.example.com" required />
+
+        <div class="connection-inline-fields">
+          <div>
+            <label for="connection-resource">Connection type</label>
+            <select id="connection-resource" name="resourceType" required>
+              <option value="application">Application</option>
+              <option value="database">Database</option>
+              <option value="server">Server</option>
+              <option value="storage">File or object storage</option>
+              <option value="data_warehouse">Data warehouse</option>
+              <option value="custom">Custom system</option>
+            </select>
+          </div>
+          <div>
+            <label for="connection-environment">Environment</label>
+            <select id="connection-environment" name="environment" required>
+              <option value="development">Development</option>
+              <option value="staging" selected>Staging</option>
+              <option value="production">Production</option>
+            </select>
+          </div>
+        </div>
+
+        <label for="connection-access">Initial access</label>
+        <select id="connection-access" name="accessMode" required>
+          <option value="read_only" selected>Read-only</option>
+          <option value="read_write">Read and write (approval required)</option>
+        </select>
 
         <label for="connection-method">Authentication method</label>
         <select id="connection-method" name="method" required></select>

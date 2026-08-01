@@ -66,6 +66,14 @@ SERVICE_PACKAGES: tuple[dict[str, Any], ...] = (
         "commercial_model": "scoped_quote_after_free_assessment",
     },
     {
+        "service_id": "domain_dns_launch",
+        "name": "Domain Search, Purchase, and DNS Launch",
+        "project_types": ["website", "web_app", "creative_tool", "bot_system"],
+        "target_families": ["web"],
+        "deliverables": ["name shortlist", "availability check", "registrar price comparison", "renewal disclosure", "DNS plan", "HTTPS verification", "owner purchase session"],
+        "commercial_model": "free_plan_then_owner_approved_registration",
+    },
+    {
         "service_id": "mobile_tablet_release",
         "name": "Phone and Tablet Store Release",
         "project_types": ["mobile_app", "web_app", "game", "course"],
@@ -161,11 +169,28 @@ class BuddyDistributionService:
             },
             "targets": [asdict(target) for target in TARGETS],
             "service_packages": list(SERVICE_PACKAGES),
+            "domain_service": {
+                "free_hosted_address": {
+                    "url": "https://dreamco-technologies.github.io/Dreamcobots/",
+                    "cost": "included with repository Pages hosting",
+                    "status": "available_after_main_branch_deployment",
+                    "ownership": "repository organization",
+                },
+                "custom_domain": {
+                    "status": "registrar_adapter_and_owner_purchase_required",
+                    "availability_claimed": False,
+                    "automatic_purchase": False,
+                    "automatic_renewal": False,
+                    "required_disclosures": ["first-year price", "renewal price", "privacy price", "transfer policy", "redemption fee"],
+                    "required_gates": ["availability recheck", "registrant details", "exact total", "owner approval", "DNS preview", "HTTPS verification"],
+                },
+            },
             "summary": {
                 "targets": len(TARGETS),
                 "families": len({target.family for target in TARGETS}),
                 "services": len(SERVICE_PACKAGES),
                 "available_now": sum(target.public_status.startswith("available_now") for target in TARGETS),
+                "free_hosted_addresses": 1,
             },
         }
 

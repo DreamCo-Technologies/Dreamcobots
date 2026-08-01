@@ -121,6 +121,8 @@ class PrototypeBrief:
         if self.product_type not in {
             "website", "web_app", "mobile_app", "desktop_app", "game",
             "simulation", "course", "creative_tool", "bot_system",
+            "physical_invention", "electronics", "robotics", "iot_device",
+            "industrial_process",
         }:
             raise LaunchpadError("Unsupported prototype type.")
         if not self.target_users.strip():
@@ -203,6 +205,10 @@ class BuddyLaunchpad:
 
     def prototype_plan(self, brief: PrototypeBrief) -> dict[str, Any]:
         brief.validate()
+        physical_types = {
+            "physical_invention", "electronics", "robotics", "iot_device", "industrial_process",
+        }
+        is_physical = brief.product_type in physical_types
         fingerprint = hashlib.sha256(
             f"{brief.owner_user_id}:{brief.title}:{brief.objective}".encode("utf-8")
         ).hexdigest()[:20]
@@ -211,21 +217,30 @@ class BuddyLaunchpad:
             "prototype_id": f"prototype-{fingerprint}",
             "status": "ready_for_local_build",
             "brief": asdict(brief),
+            "prototype_class": "physical_or_hybrid" if is_physical else "digital",
             "build_loop": [
-                "turn the prompt into acceptance criteria",
-                "select the smallest licensed stack that fits",
-                "scaffold a runnable vertical slice",
-                "start a live preview",
-                "run unit, integration, accessibility, and security checks",
-                "show evidence and accept natural-language revisions",
-                "checkpoint and package the prototype",
+                "turn the prompt into measurable acceptance criteria",
+                "map users, constraints, interfaces, failure modes, and safety boundaries",
+                "research existing solutions, standards, licenses, and prior art without claiming clearance",
+                "prepare system architecture, component options, and a bounded bill of materials",
+                "create the smallest simulation, mockup, or runnable vertical slice that can test the core assumption",
+                "run functional, accessibility, privacy, security, safety, and misuse checks that apply",
+                "show evidence, estimated cost and ROI, and accept natural-language revisions",
+                "checkpoint and package the prototype for owner review",
             ],
-            "outputs": [
+            "outputs": ([
+                "requirements specification", "system block diagram", "bill of materials",
+                "CAD or enclosure brief", "firmware or software scaffold", "simulation plan",
+                "bench-test matrix", "failure-mode and safety review", "prior-art research plan",
+                "cost and ROI estimate", "rights manifest", "owner handoff",
+            ] if is_physical else [
                 "source code", "test suite", "local preview", "rights manifest",
-                "deployment manifest", "rollback checkpoint", "owner handoff",
-            ],
+                "deployment manifest", "rollback checkpoint", "cost and ROI estimate", "owner handoff",
+            ]),
             "network_default": "off",
             "external_spend_allowed": False,
+            "automatic_manufacturing_or_ordering": False,
+            "high_risk_release_requires_qualified_review": True,
         }
 
     def app_release_plan(self, brief: AppReleaseBrief) -> dict[str, Any]:

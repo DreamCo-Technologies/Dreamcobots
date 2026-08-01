@@ -6,6 +6,7 @@ from .harness import (
     GameLabError,
     GameRuntimeAdapter,
     LearningDesign,
+    SimulationGameBrief,
 )
 
 __all__ = [
@@ -14,4 +15,5 @@ __all__ = [
     "GameLabError",
     "GameRuntimeAdapter",
     "LearningDesign",
+    "SimulationGameBrief",
 ]

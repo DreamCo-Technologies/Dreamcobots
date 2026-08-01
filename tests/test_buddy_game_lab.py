@@ -7,7 +7,13 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
-from dreamco_platform.games import BuddyGameLab, GameBuildBrief, GameLabError, LearningDesign
+from dreamco_platform.games import (
+    BuddyGameLab,
+    GameBuildBrief,
+    GameLabError,
+    LearningDesign,
+    SimulationGameBrief,
+)
 
 
 class TinyGame:
@@ -67,6 +73,23 @@ class BuddyGameLabTests(unittest.TestCase):
         game.owner_authorized = False
         with self.assertRaisesRegex(GameLabError, "owner-authorized"):
             BuddyGameLab().play_test(game)
+
+    def test_converts_a_simulation_into_a_deterministic_practice_game(self):
+        plan = BuddyGameLab().convert_simulation_to_game(
+            SimulationGameBrief(
+                title="Brake Inspection Practice",
+                simulation_id="sim-owner-garage-1",
+                practice_objective="Identify inspection steps and explain when qualified service is required.",
+                audience="Adult vehicle owners",
+                legal_actions=("inspect", "measure", "compare specification", "stop and request review"),
+                success_evidence="All safety-critical checks identified with no skipped stop condition.",
+                difficulty_levels=4,
+            )
+        )
+        self.assertEqual(plan["status"], "practice_game_plan_ready")
+        self.assertEqual(len(plan["difficulty_ladder"]), 4)
+        self.assertIn("bot playtest trace", plan["tests"])
+        self.assertIn("do not replace", plan["truth_boundary"])
 
 
 if __name__ == "__main__":

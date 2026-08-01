@@ -6,6 +6,7 @@ from .data_wallet import (
     DataPermissionRequest,
     DataSource,
     DataWalletError,
+    PrivacyRightsRequest,
 )
 
 __all__ = [
@@ -14,4 +15,5 @@ __all__ = [
     "DataPermissionRequest",
     "DataSource",
     "DataWalletError",
+    "PrivacyRightsRequest",
 ]

@@ -1,0 +1,103 @@
+{
+  "schema": "dreamco.buddy_model_router.v1",
+  "default_mode": "free",
+  "policy": {
+    "automatic_paid_upgrade": false,
+    "paid_use_requires_per_request_approval": true,
+    "free_fallback_required": true,
+    "provider_call_from_static_site": false,
+    "custom_model_ids_allowed_for_connected_providers": true
+  },
+  "connectors": [
+    {
+      "id": "buddy_native",
+      "label": "Buddy Native",
+      "mode": "free",
+      "protocol": "local_planner",
+      "availability": "always",
+      "secret_references": [],
+      "task_types": ["planning", "routing", "capability testing", "sandbox task packets"]
+    },
+    {
+      "id": "local_open_model",
+      "label": "Local Open Model",
+      "mode": "free",
+      "protocol": "openai_compatible_local",
+      "availability": "configuration_required",
+      "secret_references": ["LOCAL_MODEL_BASE_URL"],
+      "task_types": ["private chat", "coding", "summarization", "offline workflows"]
+    },
+    {
+      "id": "openai",
+      "label": "OpenAI",
+      "mode": "premium",
+      "protocol": "provider_adapter",
+      "availability": "configuration_required",
+      "secret_references": ["OPENAI_API_KEY", "AI_INTEGRATIONS_OPENAI_API_KEY"],
+      "task_types": ["general chat", "coding", "reasoning", "image", "audio"]
+    },
+    {
+      "id": "anthropic",
+      "label": "Anthropic",
+      "mode": "premium",
+      "protocol": "provider_adapter",
+      "availability": "configuration_required",
+      "secret_references": ["ANTHROPIC_API_KEY"],
+      "task_types": ["long context", "coding", "analysis", "writing"]
+    },
+    {
+      "id": "google_gemini",
+      "label": "Google Gemini",
+      "mode": "premium",
+      "protocol": "provider_adapter",
+      "availability": "configuration_required",
+      "secret_references": ["GOOGLE_GENERATIVE_AI_API_KEY", "GEMINI_API_KEY"],
+      "task_types": ["multimodal", "long context", "research", "coding"]
+    },
+    {
+      "id": "xai",
+      "label": "xAI",
+      "mode": "premium",
+      "protocol": "provider_adapter",
+      "availability": "configuration_required",
+      "secret_references": ["XAI_API_KEY"],
+      "task_types": ["general chat", "reasoning", "coding"]
+    },
+    {
+      "id": "mistral",
+      "label": "Mistral AI",
+      "mode": "premium",
+      "protocol": "provider_adapter",
+      "availability": "configuration_required",
+      "secret_references": ["MISTRAL_API_KEY"],
+      "task_types": ["coding", "multilingual", "document analysis"]
+    },
+    {
+      "id": "cohere",
+      "label": "Cohere",
+      "mode": "premium",
+      "protocol": "provider_adapter",
+      "availability": "configuration_required",
+      "secret_references": ["COHERE_API_KEY"],
+      "task_types": ["enterprise search", "retrieval", "classification", "generation"]
+    },
+    {
+      "id": "deepseek",
+      "label": "DeepSeek",
+      "mode": "premium",
+      "protocol": "provider_adapter",
+      "availability": "configuration_required",
+      "secret_references": ["DEEPSEEK_API_KEY"],
+      "task_types": ["reasoning", "coding", "math"]
+    },
+    {
+      "id": "openrouter",
+      "label": "OpenRouter",
+      "mode": "premium",
+      "protocol": "provider_catalog_adapter",
+      "availability": "configuration_required",
+      "secret_references": ["OPENROUTER_API_KEY"],
+      "task_types": ["provider catalog", "model comparison", "fallback routing"]
+    }
+  ]
+}

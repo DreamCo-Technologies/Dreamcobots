@@ -23,11 +23,19 @@ class ProjectType(str, Enum):
     PARENT_LEARNING_VIDEO = "parent_learning_video"
     MUSIC_VIDEO = "music_video"
     BIOGRAPHY = "biography"
+    DOCUMENTARY = "documentary"
+    ANIMATED_SERIES = "animated_series"
+    SOCIAL_LIVE_SHOW = "social_live_show"
     COMMERCIAL = "commercial"
     COLLEGE_COURSE = "college_course"
     FEATURE_FILM = "feature_film"
     MUSIC_ARTIST = "music_artist"
     LOGO_BRAND = "logo_brand"
+    INVENTION_PROTOTYPE = "invention_prototype"
+    VEHICLE_SIMULATION = "vehicle_simulation"
+    BUILDING_SIMULATION = "building_simulation"
+    PRODUCT_VISUALIZATION = "product_visualization"
+    SKILLS_TRAINING_SIMULATION = "skills_training_simulation"
 
 
 class CreativeStudioError(ValueError):
@@ -45,6 +53,8 @@ class ConsentEvidence:
     voice_use_approved: bool
     likeness_use_approved: bool
     synthetic_media_label_approved: bool
+    source_type: str = "adult_owner"
+    rights_receipt_reference: str = ""
     recorded_at: float = field(default_factory=time.time)
     expires_at: float | None = None
     revoked_at: float | None = None
@@ -73,10 +83,14 @@ class ConsentEvidence:
     def validate(self, *, needs_voice: bool, needs_likeness: bool) -> None:
         if not self.owner_user_id or not self.subject_user_id:
             raise CreativeStudioError("Consent must identify both the owner and subject.")
-        if not self.owner_is_subject or self.owner_user_id != self.subject_user_id:
-            raise CreativeStudioError(
-                "Buddy Studio only accepts self-owned voice and likeness media in this workflow."
-            )
+        if self.source_type not in {"adult_owner", "licensed_adult_performer"}:
+            raise CreativeStudioError("Use an adult owner or licensed adult performer media source.")
+        if self.source_type == "adult_owner" and (
+            not self.owner_is_subject or self.owner_user_id != self.subject_user_id
+        ):
+            raise CreativeStudioError("Adult owner media must belong to the signed-in owner.")
+        if self.source_type == "licensed_adult_performer" and not self.rights_receipt_reference:
+            raise CreativeStudioError("Licensed performer media requires a written rights receipt.")
         if not self.adult_confirmed:
             raise CreativeStudioError("Voice or likeness cloning is not available for minors.")
         if not self.is_active():
@@ -102,6 +116,11 @@ class CreativeBrief:
     voice_sample_ref: str = ""
     image_sample_ref: str = ""
     consent: ConsentEvidence | None = None
+    character_role: str = "Buddy guide"
+    personality_traits: dict[str, float] = field(
+        default_factory=lambda: {"warmth": 0.8, "clarity": 0.9, "energy": 0.6}
+    )
+    preferred_media_engine_id: str = ""
 
     def validate(self) -> None:
         if len(self.title.strip()) < 3:
@@ -110,6 +129,13 @@ class CreativeBrief:
             raise CreativeStudioError("Describe a clear creative, learning, or gameplay objective.")
         if not self.subject.strip() or not self.audience.strip():
             raise CreativeStudioError("Subject and audience are required.")
+        if len(self.character_role.strip()) < 2:
+            raise CreativeStudioError("A character role is required.")
+        if not self.personality_traits or any(
+            not isinstance(value, (int, float)) or value < 0 or value > 1
+            for value in self.personality_traits.values()
+        ):
+            raise CreativeStudioError("Personality trait values must be between 0 and 1.")
         if self.use_voice_clone and not self.voice_sample_ref:
             raise CreativeStudioError("A local or encrypted voice sample reference is required.")
         if self.use_image_avatar and not self.image_sample_ref:
@@ -142,6 +168,7 @@ class StudioProject:
     status: str
     native_routes: list[dict[str, Any]]
     production_plan: list[dict[str, Any]]
+    production_academy: dict[str, Any] | None
     media: dict[str, Any]
     sandbox: dict[str, Any]
     deliverables: list[str]
@@ -164,6 +191,7 @@ class StudioProject:
             "brief": brief,
             "native_routes": self.native_routes,
             "production_plan": self.production_plan,
+            "production_academy": self.production_academy,
             "media": self.media,
             "sandbox": self.sandbox,
             "deliverables": self.deliverables,
@@ -207,6 +235,21 @@ class BuddyCreativeStudio:
             {"bot": "video-script", "role": "narrative structure and script"},
             {"bot": "video-editor-ai", "role": "archive timeline and export plan"},
         ],
+        ProjectType.DOCUMENTARY: [
+            {"bot": "research-bot", "role": "source ledger, interviews, chronology, and claim review"},
+            {"bot": "video-script", "role": "documentary structure, narration, and interview plan"},
+            {"bot": "video-editor-ai", "role": "archive timeline, transcripts, conform, and delivery"},
+        ],
+        ProjectType.ANIMATED_SERIES: [
+            {"bot": "video-script", "role": "series bible, episode scripts, boards, and continuity"},
+            {"bot": "3d-asset-mgr", "role": "character, prop, environment, rig, and asset provenance"},
+            {"bot": "video-editor-ai", "role": "animatic, episode timeline, sound, captions, and delivery"},
+        ],
+        ProjectType.SOCIAL_LIVE_SHOW: [
+            {"bot": "social-net-app-bot", "role": "authorized channel plan, run of show, and platform policy"},
+            {"bot": "video-editor-ai", "role": "scenes, sources, rehearsal, recording, and clips"},
+            {"bot": "governance-dashboard", "role": "moderation, owner approval, emergency stop, and audit"},
+        ],
         ProjectType.COMMERCIAL: [
             {"bot": "brand-voice", "role": "brand claims and voice consistency"},
             {"bot": "video-script", "role": "concept, script, shot list, and calls to action"},
@@ -232,6 +275,31 @@ class BuddyCreativeStudio:
             {"bot": "brand-guidelines", "role": "logo usage, typography, color, and accessibility rules"},
             {"bot": "brand-protector", "role": "clearance checklist and misuse monitoring plan"},
         ],
+        ProjectType.INVENTION_PROTOTYPE: [
+            {"bot": "patent-research", "role": "prior-art search plan and novelty evidence"},
+            {"bot": "mfg-analytics-elite", "role": "digital-twin, production, cost, and feasibility modeling"},
+            {"bot": "safety-mfg", "role": "failure-mode, manufacturing-safety, and review gates"},
+        ],
+        ProjectType.VEHICLE_SIMULATION: [
+            {"bot": "3d-asset-mgr", "role": "vehicle model ingestion, materials, variants, and provenance"},
+            {"bot": "immersive-xr", "role": "interactive inspection and repair-practice scene"},
+            {"bot": "safety-mfg", "role": "fitment, procedure, and safety-review gates"},
+        ],
+        ProjectType.BUILDING_SIMULATION: [
+            {"bot": "3d-asset-mgr", "role": "site, structure, room, material, and variant model"},
+            {"bot": "immersive-xr", "role": "walkthrough, construction sequence, and spatial interaction"},
+            {"bot": "safety-mfg", "role": "code, structure, fire, utility, and qualified-review gates"},
+        ],
+        ProjectType.PRODUCT_VISUALIZATION: [
+            {"bot": "3d-asset-mgr", "role": "product model, paint, material, addition, and comparison variants"},
+            {"bot": "mfg-analytics-elite", "role": "digital-twin assumptions, tolerances, and feasibility evidence"},
+            {"bot": "safety-mfg", "role": "failure-mode, materials, and bench-test review"},
+        ],
+        ProjectType.SKILLS_TRAINING_SIMULATION: [
+            {"bot": "immersive-xr", "role": "interactive practice environment and device controls"},
+            {"bot": "games-app-bot", "role": "practice loop, scoring, levels, and recovery"},
+            {"bot": "game-ai-player", "role": "deterministic bot playtesting and difficulty checks"},
+        ],
     }
 
     def create_project(self, brief: CreativeBrief) -> StudioProject:
@@ -251,11 +319,13 @@ class BuddyCreativeStudio:
             status="planned",
             native_routes=routes,
             production_plan=self._production_plan(brief),
+            production_academy=self._academy_plan(brief),
             media=media,
             sandbox=self._sandbox_plan(brief),
             deliverables=self._deliverables(brief),
             audit={
                 "local_first": True,
+                "paid_provider_required": False,
                 "live_external_action_taken": False,
                 "stores_raw_biometrics": False,
                 "consent_evidence_id": brief.consent.evidence_id if brief.consent else None,
@@ -264,6 +334,62 @@ class BuddyCreativeStudio:
                 else None,
             },
         )
+
+    @staticmethod
+    def _academy_plan(brief: CreativeBrief) -> dict[str, Any] | None:
+        source = Path(__file__).resolve().parents[2] / "config" / "buddy-creative-academy.json"
+        catalog = json.loads(source.read_text(encoding="utf-8"))
+        production_group = json.loads(
+            (Path(__file__).resolve().parents[2] / "config" / "buddy-hollywood-production-group.json").read_text(
+                encoding="utf-8"
+            )
+        )
+        if brief.project_type in {
+            ProjectType.FEATURE_FILM,
+            ProjectType.DOCUMENTARY,
+            ProjectType.ANIMATED_SERIES,
+            ProjectType.SOCIAL_LIVE_SHOW,
+        }:
+            film = catalog["film_standard"]
+            return {
+                "track": "film",
+                "phases": film["phases"],
+                "quality_gates": film["quality_gates"],
+                "delivery_reference": film["delivery_reference"],
+                "production_group": production_group["departments"],
+                "actor_modes": production_group["actor_modes"],
+                "render_states": production_group["render_states"],
+            }
+        if brief.project_type in {ProjectType.MUSIC_VIDEO, ProjectType.MUSIC_ARTIST}:
+            music = catalog["music_standard"]
+            return {
+                "track": "music",
+                "genre_families": music["genre_families"],
+                "production_stages": music["production_stages"],
+                "rights_gates": music["rights_gates"],
+                "production_group": production_group["departments"],
+                "actor_modes": production_group["actor_modes"],
+            }
+        if brief.project_type in {
+            ProjectType.VEHICLE_SIMULATION,
+            ProjectType.BUILDING_SIMULATION,
+            ProjectType.PRODUCT_VISUALIZATION,
+            ProjectType.SKILLS_TRAINING_SIMULATION,
+        }:
+            foundry = json.loads(
+                (Path(__file__).resolve().parents[2] / "config" / "buddy-simulation-foundry.json").read_text(
+                    encoding="utf-8"
+                )
+            )
+            return {
+                "track": "simulation",
+                "domains": foundry["domains"],
+                "model_sources": foundry["model_sources"],
+                "variant_controls": foundry["variant_controls"],
+                "simulation_to_game": foundry["simulation_to_game"],
+                "truth_boundary": foundry["truth_boundary"],
+            }
+        return None
 
     def render_media(
         self,
@@ -337,9 +463,21 @@ class BuddyCreativeStudio:
     @staticmethod
     def _media_plan(brief: CreativeBrief) -> dict[str, Any]:
         requested = brief.use_voice_clone or brief.use_image_avatar
+        catalog_path = Path(__file__).resolve().parents[2] / "config" / "buddy-local-media-engines.json"
+        catalog = json.loads(catalog_path.read_text(encoding="utf-8"))
+        preferred = next(
+            (engine for engine in catalog["engines"] if engine["id"] == brief.preferred_media_engine_id),
+            None,
+        )
         return {
             "mode": "local_first",
+            "paid_provider_required": False,
             "raw_media_storage": "browser_session_or_encrypted_owner_vault",
+            "character": {
+                "role": brief.character_role,
+                "personality_traits": brief.personality_traits,
+                "source_type": brief.consent.source_type if brief.consent else "original_synthetic",
+            },
             "voice": {
                 "requested": brief.use_voice_clone,
                 "status": "consent_verified_pending_render" if brief.use_voice_clone else "not_requested",
@@ -354,7 +492,10 @@ class BuddyCreativeStudio:
                 "status": "not_configured" if requested else "not_needed",
                 "native_adapter_contract": "MediaRenderer",
                 "outside_models_optional": True,
+                "preferred_engine": preferred,
+                "catalog_reviewed_on": catalog["reviewed_on"],
             },
+            "quality_gates": [suite["id"] for suite in catalog["benchmark_suites"]],
             "revocation": {
                 "required": requested,
                 "effect": "stop future renders and remove owner-controlled profiles/assets",
@@ -380,6 +521,12 @@ class BuddyCreativeStudio:
             shared[2]["outputs"].extend(["music rights record", "treatment", "shot list", "edit timeline"])
         elif brief.project_type == ProjectType.BIOGRAPHY:
             shared[2]["outputs"].extend(["source log", "chronology", "fact review", "narrative timeline"])
+        elif brief.project_type == ProjectType.DOCUMENTARY:
+            shared[2]["outputs"].extend(["source ledger", "interview plan", "archive rights", "fact-check report", "documentary timeline"])
+        elif brief.project_type == ProjectType.ANIMATED_SERIES:
+            shared[2]["outputs"].extend(["series bible", "character turnarounds", "storyboards", "animatic", "episode masters"])
+        elif brief.project_type == ProjectType.SOCIAL_LIVE_SHOW:
+            shared[2]["outputs"].extend(["run of show", "scene collection", "moderation plan", "private rehearsal", "recording and clips plan"])
         elif brief.project_type == ProjectType.COMMERCIAL:
             shared[2]["outputs"].extend(["claim substantiation", "brand review", "shot list", "format variants"])
         elif brief.project_type == ProjectType.COLLEGE_COURSE:
@@ -388,8 +535,28 @@ class BuddyCreativeStudio:
             shared[2]["outputs"].extend(["screenplay", "continuity bible", "shot plan", "edit decision list", "delivery masters"])
         elif brief.project_type == ProjectType.MUSIC_ARTIST:
             shared[2]["outputs"].extend(["original repertoire plan", "rights log", "release calendar", "artist identity", "audience experiments"])
-        else:
+        elif brief.project_type == ProjectType.LOGO_BRAND:
             shared[2]["outputs"].extend(["editable logo concepts", "brand system", "clearance search plan", "asset exports"])
+        elif brief.project_type == ProjectType.INVENTION_PROTOTYPE:
+            shared[1]["outputs"].extend(["requirements", "system block diagram", "component options", "bill of materials"])
+            shared[2]["outputs"].extend(["simulation", "CAD or enclosure brief", "firmware or software scaffold", "bench-test matrix"])
+            shared[3]["outputs"].extend(["failure-mode review", "safety review", "repairability check", "cost and ROI estimate"])
+        elif brief.project_type == ProjectType.VEHICLE_SIMULATION:
+            shared[1]["outputs"].extend(["vehicle model source", "measurements", "service or customization scenario", "parts and materials manifest"])
+            shared[2]["outputs"].extend(["interactive inspection", "paint and addition variants", "before and after comparison", "repair-practice loop"])
+            shared[3]["outputs"].extend(["fitment review", "procedure review", "road-safety limits", "qualified mechanic gate"])
+        elif brief.project_type == ProjectType.BUILDING_SIMULATION:
+            shared[1]["outputs"].extend(["site and building model", "room and structure plan", "materials", "construction sequence"])
+            shared[2]["outputs"].extend(["walkthrough", "addition variants", "before and after comparison", "construction-practice loop"])
+            shared[3]["outputs"].extend(["code assumptions", "structure and utility review", "fire and accessibility review", "licensed professional gate"])
+        elif brief.project_type == ProjectType.PRODUCT_VISUALIZATION:
+            shared[1]["outputs"].extend(["product model source", "measurements and tolerances", "materials", "variant requirements"])
+            shared[2]["outputs"].extend(["paint and material variants", "addition options", "turntable and exploded views", "before and after comparison"])
+            shared[3]["outputs"].extend(["failure modes", "manufacturing feasibility", "safety review", "bench-test matrix"])
+        elif brief.project_type == ProjectType.SKILLS_TRAINING_SIMULATION:
+            shared[1]["outputs"].extend(["practice objective", "scenario states", "legal actions", "known limits"])
+            shared[2]["outputs"].extend(["safe failure and reset", "feedback and scoring", "difficulty ladder", "instructor controls"])
+            shared[3]["outputs"].extend(["deterministic replay", "bot playtest", "misconception report", "qualified instructor gate"])
         return shared
 
     @staticmethod
@@ -410,6 +577,35 @@ class BuddyCreativeStudio:
                     "synthetic_media_label_visible",
                     "revocation_path_verified",
                     "raw_biometric_media_not_in_project_manifest",
+                ]
+            )
+        if brief.project_type in {
+            ProjectType.INVENTION_PROTOTYPE,
+            ProjectType.VEHICLE_SIMULATION,
+            ProjectType.BUILDING_SIMULATION,
+            ProjectType.PRODUCT_VISUALIZATION,
+            ProjectType.SKILLS_TRAINING_SIMULATION,
+        }:
+            checks.extend(
+                [
+                    "core_assumption_is_testable",
+                    "model_source_rights_and_scale_verified",
+                    "failure_modes_reviewed",
+                    "qualified_review_gate_for_high_risk_domains",
+                    "no_automatic_ordering_or_manufacturing",
+                    "simulation_limits_visible",
+                    "safe_failure_reset_and_recovery",
+                ]
+            )
+        if brief.project_type == ProjectType.SOCIAL_LIVE_SHOW:
+            checks.extend(
+                [
+                    "private_rehearsal_before_live",
+                    "authenticated_owner_account_adapter",
+                    "moderation_and_guest_controls",
+                    "delay_mute_hold_and_emergency_stop",
+                    "fresh_owner_approval_before_go_live",
+                    "stream_credentials_not_in_project_files",
                 ]
             )
         return {
@@ -440,6 +636,12 @@ class BuddyCreativeStudio:
             base.extend(["music_rights_record", "creative_treatment", "shot_list", "edit_decision_list"])
         elif brief.project_type == ProjectType.BIOGRAPHY:
             base.extend(["source_log", "fact_check_report", "chronology", "archive_rights_record"])
+        elif brief.project_type == ProjectType.DOCUMENTARY:
+            base.extend(["source_ledger", "interview_and_archive_rights", "fact_check_report", "documentary_timeline", "delivery_master_plan"])
+        elif brief.project_type == ProjectType.ANIMATED_SERIES:
+            base.extend(["series_bible", "character_turnarounds", "storyboards", "animatic", "voice_manifest", "episode_master_plan"])
+        elif brief.project_type == ProjectType.SOCIAL_LIVE_SHOW:
+            base.extend(["run_of_show", "scene_collection", "moderation_plan", "private_rehearsal", "stream_health_plan", "archive_and_clips_plan"])
         elif brief.project_type == ProjectType.COMMERCIAL:
             base.extend(["claim_substantiation", "brand_review", "platform_variants", "campaign_measurement_plan"])
         elif brief.project_type == ProjectType.COLLEGE_COURSE:
@@ -448,8 +650,22 @@ class BuddyCreativeStudio:
             base.extend(["screenplay", "continuity_bible", "production_breakdown", "edit_decision_list", "delivery_specification"])
         elif brief.project_type == ProjectType.MUSIC_ARTIST:
             base.extend(["artist_development_plan", "original_repertoire_plan", "rights_manifest", "release_calendar", "audience_test_plan"])
-        else:
+        elif brief.project_type == ProjectType.LOGO_BRAND:
             base.extend(["editable_logo_concepts", "brand_guidelines", "rights_manifest", "trademark_search_plan"])
+        elif brief.project_type == ProjectType.INVENTION_PROTOTYPE:
+            base.extend([
+                "requirements_specification", "system_block_diagram", "bill_of_materials",
+                "simulation_plan", "cad_or_enclosure_brief", "bench_test_matrix",
+                "failure_mode_and_safety_review", "prior_art_research_plan", "cost_and_roi_estimate",
+            ])
+        elif brief.project_type == ProjectType.VEHICLE_SIMULATION:
+            base.extend(["vehicle_model_manifest", "paint_and_addition_variants", "repair_practice_scenario", "fitment_and_safety_review", "simulation_game_plan"])
+        elif brief.project_type == ProjectType.BUILDING_SIMULATION:
+            base.extend(["site_and_building_model_manifest", "addition_and_material_variants", "construction_sequence", "code_and_safety_review", "simulation_game_plan"])
+        elif brief.project_type == ProjectType.PRODUCT_VISUALIZATION:
+            base.extend(["product_model_manifest", "paint_material_and_addition_variants", "before_after_comparison", "bench_test_matrix", "simulation_game_plan"])
+        elif brief.project_type == ProjectType.SKILLS_TRAINING_SIMULATION:
+            base.extend(["scenario_state_machine", "legal_action_catalog", "feedback_and_scoring", "difficulty_ladder", "bot_playtest_report"])
         return base
 
     @staticmethod

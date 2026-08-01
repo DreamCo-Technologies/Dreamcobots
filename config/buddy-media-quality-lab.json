@@ -1,0 +1,200 @@
+{
+  "schema": "dreamco.buddy_media_quality_lab.v1",
+  "reviewed_on": "2026-07-31",
+  "truth_boundary": "Buddy may target higher quality than any reference, but may claim an advantage only after a completed, blinded, repeatable comparison passes every evidence gate.",
+  "strategy": [
+    "generate multiple candidates across eligible local engines and deterministic seeds",
+    "measure every candidate on identical signed fixtures",
+    "reject candidates that fail consent, rights, provenance, labeling, or license gates",
+    "select the strongest evidence-backed candidate instead of trusting one model",
+    "prevent releases that regress below the last accepted local baseline",
+    "use optional paid providers only as separately approved comparison references"
+  ],
+  "quality_modes": {
+    "fast_preview": {
+      "candidate_count_per_engine": 1,
+      "repetitions_per_fixture": 1,
+      "release_eligible": false
+    },
+    "balanced": {
+      "candidate_count_per_engine": 3,
+      "repetitions_per_fixture": 2,
+      "release_eligible": true
+    },
+    "highest_quality": {
+      "candidate_count_per_engine": 6,
+      "repetitions_per_fixture": 3,
+      "release_eligible": true
+    }
+  },
+  "candidate_pipeline": [
+    "validate active consent and artifact licenses",
+    "hash the fixture, direction, source reference, engine version, and seed",
+    "normalize text, pronunciation hints, framing, and performance direction",
+    "render candidates locally with network access off",
+    "trim silence or borders without changing identity",
+    "normalize loudness, color space, and export metadata",
+    "run deterministic and blinded human evaluators",
+    "preserve only approved artifacts and useful aggregate evidence"
+  ],
+  "hard_release_gates": [
+    "active_consent",
+    "adult_or_original_subject",
+    "scoped_usage_rights",
+    "installed_artifact_license",
+    "provenance_manifest",
+    "synthetic_media_label",
+    "revocation_check",
+    "owner_release_review"
+  ],
+  "scorecards": {
+    "voice": {
+      "release_threshold": 0.82,
+      "regression_tolerance": 0.01,
+      "dimensions": {
+        "identity_similarity": 0.2,
+        "intelligibility": 0.18,
+        "naturalness": 0.18,
+        "pronunciation": 0.1,
+        "prosody_control": 0.1,
+        "expressiveness": 0.08,
+        "artifact_cleanliness": 0.07,
+        "stability": 0.05,
+        "latency_efficiency": 0.04
+      }
+    },
+    "image": {
+      "release_threshold": 0.82,
+      "regression_tolerance": 0.01,
+      "dimensions": {
+        "identity_similarity": 0.2,
+        "prompt_adherence": 0.18,
+        "visual_quality": 0.18,
+        "artifact_cleanliness": 0.12,
+        "anatomy_consistency": 0.1,
+        "text_legibility": 0.07,
+        "style_control": 0.06,
+        "demographic_consistency": 0.05,
+        "latency_efficiency": 0.04
+      }
+    },
+    "video": {
+      "release_threshold": 0.82,
+      "regression_tolerance": 0.01,
+      "dimensions": {
+        "identity_consistency": 0.18,
+        "lip_sync": 0.16,
+        "temporal_stability": 0.15,
+        "visual_quality": 0.13,
+        "expression_control": 0.1,
+        "audio_quality": 0.1,
+        "artifact_cleanliness": 0.08,
+        "prompt_adherence": 0.06,
+        "latency_efficiency": 0.04
+      }
+    }
+  },
+  "fixture_sets": [
+    {
+      "id": "voice-core-v1",
+      "modality": "voice",
+      "minimum_release_fixtures": 8,
+      "cases": [
+        "clean narration",
+        "natural conversation",
+        "emotional range",
+        "names, dates, currency, and difficult pronunciation",
+        "long-form stability",
+        "cross-language identity",
+        "quiet and high-energy delivery",
+        "noisy-reference robustness"
+      ]
+    },
+    {
+      "id": "voice-performance-v1",
+      "modality": "voice",
+      "minimum_release_fixtures": 8,
+      "cases": [
+        "natural conversation",
+        "long-form narration",
+        "rap timing and diction",
+        "melodic rap transition",
+        "original singing range and sustained vowel",
+        "character emotion range",
+        "commercial timing and claim clarity",
+        "multilingual delivery with fluent review"
+      ]
+    },
+    {
+      "id": "image-core-v1",
+      "modality": "image",
+      "minimum_release_fixtures": 7,
+      "cases": [
+        "front portrait",
+        "profile and three-quarter view",
+        "full-body consistency",
+        "lighting and color changes",
+        "style variation",
+        "legible in-scene text",
+        "multi-scene identity consistency"
+      ]
+    },
+    {
+      "id": "video-core-v1",
+      "modality": "video",
+      "minimum_release_fixtures": 7,
+      "cases": [
+        "short conversational speech",
+        "long-form identity stability",
+        "fast phoneme sequence",
+        "head and eye motion",
+        "lighting transition",
+        "emotional expression transition",
+        "multilingual dubbing and lip sync"
+      ]
+    },
+    {
+      "id": "creator-production-v1",
+      "modality": "video",
+      "minimum_release_fixtures": 7,
+      "cases": [
+        "talking portrait short",
+        "vertical social-media short",
+        "music performance video",
+        "truthful commercial",
+        "biography or documentary scene",
+        "multi-character movie scene",
+        "captioned and audio-described export"
+      ]
+    }
+  ],
+  "comparison_gate": {
+    "minimum_fixtures": 30,
+    "minimum_ratings_per_fixture": 3,
+    "confidence_level": 0.95,
+    "minimum_score_margin": 0.02,
+    "minimum_wilson_lower_bound": 0.5,
+    "requires_blind_review": true,
+    "requires_randomized_order": true,
+    "requires_identical_fixtures": true,
+    "superiority_language_before_gate": false
+  },
+  "evidence_required_per_candidate": [
+    "artifact SHA-256",
+    "engine and installed model version",
+    "signed fixture-set reference",
+    "deterministic seed where supported",
+    "evaluator and evaluator version",
+    "fixture and repetition counts",
+    "scorecard dimensions before rounding",
+    "latency and peak resource use",
+    "active rights and provenance references"
+  ],
+  "retention": {
+    "raw_biometrics_in_score_report": false,
+    "failed_candidate_default": "delete_after_review_window",
+    "winning_artifact_default": "owner_controlled_encrypted_storage",
+    "aggregate_metrics": "retain_while_useful",
+    "revocation_action": "block_export_and_schedule_owned_artifact_deletion"
+  }
+}

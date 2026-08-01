@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Open Model and Source Lab | DreamCo</title>
+  <meta name="description" content="Prepare evidence-based coding model comparisons and locked sandbox plans for licensed open-source projects with Buddy." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="open-model-lab.css?v=14" />
+</head>
+<body class="open-lab-page">
+<div id="nav-placeholder"></div><script src="nav.js"></script>
+
+<main class="open-lab-shell">
+  <header class="open-lab-header">
+    <div>
+      <p class="open-lab-eyebrow">Licensed sources. Measured results.</p>
+      <h1>Open Model and Source Lab</h1>
+      <p>Compare exact model checkpoints and prepare reproducible build or test plans without trusting geography, marketing claims, or unverified code.</p>
+    </div>
+    <a class="btn btn-outline btn-sm" href="models.html">View all 100 AI targets</a>
+  </header>
+
+  <section class="open-lab-metrics" aria-label="Catalog summary">
+    <div><span>Open model families</span><strong id="open-model-count">0</strong></div>
+    <div><span>Frontier references</span><strong id="frontier-reference-count">0</strong></div>
+    <div><span>Developer regions</span><strong id="open-region-count">0</strong></div>
+    <div><span>Coding tests</span><strong id="open-task-count">0</strong></div>
+    <div><span>Live calls</span><strong id="open-live-count">0</strong></div>
+  </section>
+
+  <section class="open-lab-section" aria-labelledby="comparison-heading">
+    <div class="open-lab-section-heading">
+      <div>
+        <p>Global comparison</p>
+        <h2 id="comparison-heading">Test checkpoints, not countries</h2>
+      </div>
+      <span class="open-lab-state">Region is informational only</span>
+    </div>
+
+    <div class="open-comparison-layout">
+      <div class="open-model-browser">
+        <div class="open-model-filters">
+          <label for="open-model-search">Search
+            <input id="open-model-search" type="search" placeholder="Model, developer, task, or license" autocomplete="off" />
+          </label>
+          <label for="open-region-filter">Developer region
+            <select id="open-region-filter"><option value="all">All regions</option></select>
+          </label>
+          <label for="open-access-filter">Weight access
+            <select id="open-access-filter"><option value="all">All access types</option></select>
+          </label>
+        </div>
+        <div id="open-model-grid" class="open-model-grid" aria-live="polite"></div>
+        <p id="open-model-status" class="open-lab-note">Loading the governed catalog.</p>
+      </div>
+
+      <aside class="open-plan-panel" aria-labelledby="comparison-plan-heading">
+        <p>Comparison control</p>
+        <h3 id="comparison-plan-heading">Prepare a signed test plan</h3>
+        <div class="open-selected-count"><strong id="open-selected-count">0</strong><span>families selected</span></div>
+        <fieldset class="frontier-reference-options">
+          <legend>Frontier reference targets</legend>
+          <div id="frontier-target-options"></div>
+        </fieldset>
+        <fieldset>
+          <legend>Coding fixtures</legend>
+          <div id="open-task-options" class="open-task-options"></div>
+        </fieldset>
+        <div class="open-setting-grid">
+          <label for="open-runtime">Local runtime
+            <select id="open-runtime"></select>
+          </label>
+          <label for="open-repetitions">Repetitions
+            <select id="open-repetitions"><option value="1">1</option><option value="2">2</option><option value="3">3</option></select>
+          </label>
+        </div>
+        <label class="open-check"><input id="open-network" type="checkbox" /> Allow configured adapters to use the network for this run.</label>
+        <label class="open-budget" for="open-budget">Maximum adapter spend (USD)
+          <input id="open-budget" type="number" min="0" max="10000" step="0.01" value="0" />
+        </label>
+        <label class="open-check"><input id="open-paid-approval" type="checkbox" /> Approve paid adapters up to this limit for this plan only.</label>
+        <button id="prepare-open-comparison" class="btn btn-primary" type="button">Prepare comparison</button>
+        <p id="open-comparison-status" class="open-lab-note">No model has been downloaded or called.</p>
+        <section id="open-comparison-result" class="open-result" hidden>
+          <h4>Comparison plan</h4>
+          <dl id="open-comparison-summary"></dl>
+          <button id="download-open-comparison" class="btn btn-outline btn-sm" type="button">Save plan</button>
+        </section>
+      </aside>
+    </div>
+  </section>
+
+  <section class="open-lab-section open-source-section" aria-labelledby="source-heading">
+    <div class="open-lab-section-heading">
+      <div>
+        <p>Disposable build plan</p>
+        <h2 id="source-heading">Inspect, build, and test licensed source</h2>
+      </div>
+      <span class="open-lab-state source-state">Execution adapter required</span>
+    </div>
+
+    <form id="open-source-form" class="open-source-form">
+      <label for="source-kind">Source type
+        <select id="source-kind">
+          <option value="repository">Code repository</option>
+          <option value="model_weights">Model weights</option>
+          <option value="package">Open-source package</option>
+        </select>
+      </label>
+      <label class="source-url-field" for="source-url">Official source URL
+        <input id="source-url" type="url" required placeholder="https://github.com/owner/project" autocomplete="url" />
+      </label>
+      <label for="source-revision">Exact revision
+        <input id="source-revision" required minlength="4" placeholder="Commit SHA or immutable tag" autocomplete="off" />
+      </label>
+      <label for="source-license">Declared license
+        <input id="source-license" required placeholder="MIT, Apache-2.0, or exact model terms" autocomplete="off" />
+      </label>
+      <label id="weight-format-field" for="weight-format" hidden>Weight format
+        <select id="weight-format">
+          <option value="safetensors">safetensors</option>
+          <option value="gguf">GGUF</option>
+          <option value="onnx">ONNX</option>
+          <option value="tflite">TFLite</option>
+        </select>
+      </label>
+      <label for="sandbox-learner-level">Learning level
+        <select id="sandbox-learner-level"><option value="guided">Guided learner</option><option value="builder" selected>Independent builder</option><option value="contributor">Open-source contributor</option></select>
+      </label>
+      <label for="sandbox-contribution-mode">Contribution output
+        <select id="sandbox-contribution-mode"><option value="evidence_only">Evidence only</option><option value="issue_draft">Upstream issue draft</option><option value="patch_packet">Reviewed patch packet</option><option value="evaluation_dataset">Rights-cleared evaluation dataset</option></select>
+      </label>
+      <label class="source-objective-field" for="source-objective">What should Buddy build or test?
+        <textarea id="source-objective" required minlength="10" maxlength="2000" rows="4" placeholder="Build the project from its lockfile, run upstream and security tests, then produce a compatibility report."></textarea>
+      </label>
+      <fieldset class="source-limits">
+        <legend>Sandbox limits</legend>
+        <label for="source-timeout">Time (seconds)<input id="source-timeout" type="number" min="30" max="7200" value="900" /></label>
+        <label for="source-cpu">CPU cores<input id="source-cpu" type="number" min="1" max="32" value="2" /></label>
+        <label for="source-memory">Memory (MB)<input id="source-memory" type="number" min="512" max="131072" value="4096" /></label>
+        <label for="source-disk">Disk (MB)<input id="source-disk" type="number" min="1024" max="524288" value="20480" /></label>
+      </fieldset>
+      <div class="source-approvals">
+        <label class="open-check"><input id="source-rights" type="checkbox" required /><span>I confirm the source and exact revision may be evaluated under its declared terms.</span></label>
+        <label class="open-check"><input id="source-network" type="checkbox" /><span>Request network access for dependency retrieval during this one build.</span></label>
+      </div>
+      <button id="prepare-source-plan" class="btn btn-primary" type="submit">Prepare sandbox plan</button>
+    </form>
+
+    <p id="open-source-status" class="open-lab-note">Nothing has been cloned, loaded, built, or executed from this page.</p>
+    <section id="open-source-result" class="open-source-result" hidden>
+      <div>
+        <p>Generated contract</p>
+        <h3 id="open-source-result-title">Sandbox adapter required</h3>
+      </div>
+      <ol id="open-source-stages"></ol>
+      <button id="download-source-plan" class="btn btn-outline btn-sm" type="button">Save plan</button>
+    </section>
+  </section>
+
+  <section class="open-lab-section repository-tracker-section" aria-labelledby="tracker-heading">
+    <div class="open-lab-section-heading">
+      <div><p>Repository watchlist</p><h2 id="tracker-heading">Track licensed open source</h2></div>
+      <span id="browser-support-status" class="open-lab-state">Checking browser support</span>
+    </div>
+    <form id="repository-tracker-form" class="repository-tracker-form">
+      <label for="tracker-url">Repository or model URL<input id="tracker-url" type="url" required placeholder="https://github.com/owner/project" /></label>
+      <label for="tracker-revision">Starting revision<input id="tracker-revision" required minlength="4" placeholder="Commit SHA or immutable tag" /></label>
+      <label for="tracker-license">Declared license<input id="tracker-license" required minlength="2" placeholder="Apache-2.0" /></label>
+      <label for="tracker-cadence">Check cadence<select id="tracker-cadence"><option value="manual">Manual</option><option value="daily">Daily</option><option value="weekly" selected>Weekly</option></select></label>
+      <fieldset class="tracker-interests"><legend>Track</legend>
+        <label><input type="checkbox" name="tracker-interest" value="releases" checked /> Releases</label>
+        <label><input type="checkbox" name="tracker-interest" value="license" checked /> License</label>
+        <label><input type="checkbox" name="tracker-interest" value="security" checked /> Security</label>
+        <label><input type="checkbox" name="tracker-interest" value="tests" checked /> Tests</label>
+        <label><input type="checkbox" name="tracker-interest" value="issues" /> Issues</label>
+        <label><input type="checkbox" name="tracker-interest" value="models" /> Model cards</label>
+      </fieldset>
+      <label class="open-check tracker-rights"><input id="tracker-rights" type="checkbox" required /><span>I confirmed the source and license may be evaluated.</span></label>
+      <button id="add-repository-tracker" class="btn btn-primary" type="submit">Add tracker</button>
+    </form>
+    <p id="repository-tracker-status" class="open-lab-note">The browser ledger stores metadata only. Daily or weekly background checks require a deployed scheduler.</p>
+    <div id="repository-tracker-list" class="repository-tracker-list" aria-live="polite"></div>
+  </section>
+
+  <section class="open-safety-band" aria-label="Open model and source protections">
+    <div><strong>Exact revisions</strong><span>Floating branches and latest aliases are rejected.</span></div>
+    <div><strong>Safe weights</strong><span>Remote code and pickle-based formats are blocked by default.</span></div>
+    <div><strong>Locked runtime</strong><span>Non-root, no host sockets, read-only source, capped resources.</span></div>
+    <div><strong>Owner control</strong><span>No automatic merge, publishing, purchase, or private-repository training.</span></div>
+  </section>
+</main>
+
+<script src="data/buddy-open-model-coding-lab.js"></script>
+<script src="open-model-lab.js" defer></script>
+</body>
+</html>

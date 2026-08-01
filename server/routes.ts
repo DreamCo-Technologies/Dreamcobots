@@ -20,8 +20,9 @@ import { FORMULA_LIBRARY } from "@shared/formula-library";
 import { buildEnhancedSystemPrompt } from "@shared/tool-belt";
 import { getUncachableStripeClient, getStripePublishableKey } from "./stripeClient";
 import { db } from "./db";
-import { batchProcessWithSSE } from "./replit_integrations/batch";
-import { registerAudioRoutes } from "./replit_integrations/audio";
+import { batchProcessWithSSE } from "./provider_integrations/batch";
+import { registerAudioRoutes } from "./provider_integrations/audio";
+import { registerImageRoutes } from "./provider_integrations/image";
 import {
   connectionPlanRequestSchema,
   connectionStatusUpdateSchema,
@@ -41,6 +42,7 @@ import {
   notificationPreferencesSchema,
 } from "./approval-notifications";
 import {
+  buddyCapabilityRouteRequestSchema,
   capabilityTestRequestSchema,
   fleetExecutionRequestSchema,
   getFleetRuntimeRegistry,
@@ -50,6 +52,103 @@ import {
   buildGovernedLeadPlan,
   leadCampaignRequestSchema,
 } from "./governed-leads";
+import {
+  createDeviceActionPlan,
+  deviceActionPlanRequestSchema,
+} from "./device-action-policy";
+import {
+  createModelBenchmarkPlan,
+  modelBenchmarkPlanRequestSchema,
+  runModelCatalogAudit,
+} from "./model-benchmark-policy";
+import {
+  createOpenModelComparisonPlan,
+  createRepositoryTrackingPlan,
+  createOpenSourceSandboxPlan,
+  OPEN_MODEL_CATALOG,
+  openModelComparisonRequestSchema,
+  openSourceSandboxPlanRequestSchema,
+  repositoryTrackingPlanRequestSchema,
+} from "./open-model-lab-policy";
+import {
+  createDataImportPlan,
+  createDataPackagePlan,
+  createMemoryPreferencePlan,
+  createPrivacyRightsPlan,
+  dataImportPlanRequestSchema,
+  dataPackagePlanRequestSchema,
+  memoryPreferencePlanRequestSchema,
+  privacyRightsPlanRequestSchema,
+} from "./data-rights-policy";
+import {
+  appConnectionPlanRequestSchema,
+  appGroupWorkflowPlanRequestSchema,
+  createAppConnectionPlan,
+  createAppGroupWorkflowPlan,
+  createFinanceWorkspacePlan,
+  createSocialWorkspacePlan,
+  financeWorkspacePlanRequestSchema,
+  socialWorkspacePlanRequestSchema,
+} from "./connected-life-policy";
+import {
+  createPracticeSessionPlan,
+  practiceSessionRequestSchema,
+} from "./practice-policy";
+import {
+  createTaskDiscoveryPlan,
+  taskDiscoveryRequestSchema,
+} from "./task-discovery-policy";
+import {
+  createCryptoMiningPlan,
+  createCryptoWalletPlan,
+  createDreamCoinPlan,
+  cryptoMiningPlanRequestSchema,
+  cryptoWalletPlanRequestSchema,
+  dreamCoinPlanRequestSchema,
+} from "./crypto-safety-policy";
+import {
+  createGovernmentResourcePlan,
+  GOVERNMENT_RESOURCES,
+  governmentResourcePlanRequestSchema,
+} from "./government-resource-policy";
+import {
+  createRepositoryTestPlan,
+  repositoryTestPlanRequestSchema,
+  type RepositoryTestRegistry,
+} from "./repository-test-policy";
+import {
+  buildMediaBenchmarkPlan,
+  buildMediaRenderPlan,
+  getLocalMediaCatalog,
+  mediaBenchmarkPlanRequestSchema,
+  mediaRenderPlanRequestSchema,
+} from "./media-engine";
+import {
+  buildMediaCandidatePlan,
+  evaluateMediaCandidates,
+  getMediaQualityLabCatalog,
+  mediaCandidatePlanRequestSchema,
+  mediaQualityEvaluationRequestSchema,
+} from "./media-quality-lab";
+import {
+  buildCommunicationBenchmarkPlan,
+  buildCommunicationPlan,
+  communicationBenchmarkRequestSchema,
+  communicationPlanRequestSchema,
+  getCommunicationBehaviorCatalog,
+} from "./communication-behavior";
+import {
+  analyzeJobOpportunity,
+  buildWorkforceRegistry,
+  createPaymentRoutingPlan,
+  createProfessionalReviewPacket,
+  createServiceOpportunity,
+  createVoiceSandboxPlan,
+  jobOpportunityRequestSchema,
+  paymentRoutingRequestSchema,
+  professionalReviewRequestSchema,
+  voiceSandboxRequestSchema,
+} from "./workforce-engine";
 
 const CORE_SLUGS = new Set(CORE_BOTS.map(b => b.slug));
 const GITHUB_SLUGS = new Set(GITHUB_BOTS.map(b => b.slug));
@@ -102,6 +201,11 @@ function zodValidationError(err: z.ZodError) {
     message: err.errors[0]?.message ?? "Invalid request",
     field: err.errors[0]?.path?.join("."),
   };
+}
+
+function loadRepositoryTestRegistry(): RepositoryTestRegistry {
+  const path = resolve(process.cwd(), "config", "generated", "repository_test_registry.json");
+  return JSON.parse(readFileSync(path, "utf8")) as RepositoryTestRegistry;
 }
 
 async function ensureSeeded() {
@@ -268,71 +372,152 @@ export async function registerRoutes(
 ): Promise<Server> {
   await ensureSeeded();
 
-  // ===== IMAGE GENERATION =====
-  app.post("/api/generate-image", async (req, res) => {
-    try {
-      const { prompt, size = "1024x1024" } = req.body ?? {};
-      if (!prompt || !String(prompt).trim()) {
-        return res.status(400).json({ error: "Prompt is required" });
-      }
-      const response = await openai.images.generate({
-        model: "gpt-image-1",
-        prompt: String(prompt).trim(),
-        n: 1,
-        size: size as "1024x1024" | "512x512" | "256x256",
-      });
-      const imageData = (response.data ?? [])[0];
-      if (!imageData || (!imageData.url && !(imageData as any).b64_json)) {
-        return res.status(502).json({ error: "Image generation returned no data. The AI provider may be unavailable or the prompt was rejected." });
-      }
-      res.json({ url: imageData.url, b64_json: (imageData as any).b64_json });
-    } catch (e: any) {
-      console.error("[image] generation error:", e.message);
-      res.status(500).json({ error: e.message || "Failed to generate image" });
-    }
-  });
-
-  // ===== VOICE CLONING =====
+  // ===== LOCAL-FIRST VOICE AND LIKENESS =====
   app.post("/api/voice/clone", async (req, res) => {
     try {
-      const { text, voiceId = "21m00Tcm4TlvDq8ikWAM", stability = 0.5, similarityBoost = 0.75 } = req.body ?? {};
-      if (!text || !String(text).trim()) return res.status(400).json({ error: "Text is required" });
-      const apiKey = process.env.ELEVENLABS_API_KEY;
-      if (!apiKey) {
-        return res.status(503).json({
-          error: "ELEVENLABS_API_KEY not configured",
-          setup: "Add ELEVENLABS_API_KEY to Replit Secrets — get a free key at elevenlabs.io",
-          capability: "voice-cloning",
-        });
+      const request = mediaRenderPlanRequestSchema.parse(req.body);
+      if (request.mediaType !== "voice_replication") {
+        return res.status(400).json({ error: "The compatibility route accepts voice_replication plans only." });
       }
-      const response = await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${voiceId}`, {
-        method: "POST",
-        headers: { "xi-api-key": apiKey, "Content-Type": "application/json", "Accept": "audio/mpeg" },
-        body: JSON.stringify({ text: String(text).trim(), model_id: "eleven_monolingual_v1", voice_settings: { stability, similarity_boost: similarityBoost } }),
-      });
-      if (!response.ok) {
-        const err = await response.text();
-        return res.status(response.status).json({ error: `ElevenLabs error: ${err}` });
-      }
-      const audioBuffer = Buffer.from(await response.arrayBuffer());
-      res.set({ "Content-Type": "audio/mpeg", "Content-Length": audioBuffer.length });
-      res.send(audioBuffer);
-    } catch (e: any) {
-      console.error("[voice] clone error:", e.message);
-      res.status(500).json({ error: e.message || "Voice cloning failed" });
+      res.status(202).json(buildMediaRenderPlan(request));
+    } catch (error) {
+      if (error instanceof z.ZodError) return res.status(400).json(zodValidationError(error));
+      res.status(400).json({ error: error instanceof Error ? error.message : "Voice plan failed." });
     }
   });
 
-  // List available voices
-  app.get("/api/voice/voices", async (req, res) => {
-    const apiKey = process.env.ELEVENLABS_API_KEY;
-    if (!apiKey) return res.status(503).json({ error: "ELEVENLABS_API_KEY not configured", voices: [] });
+  app.get("/api/voice/voices", (_req, res) => {
+    const media = getLocalMediaCatalog();
+    res.json({
+      schema: media.schema,
+      voices: media.engines.filter((engine) => engine.modalities.some((modality) => modality.includes("speech") || modality.includes("voice"))),
+      paidProviderRequired: false,
+    });
+  });
+
+  app.get("/api/buddy/media/engines", (_req, res) => {
+    res.json(getLocalMediaCatalog());
+  });
+
+  app.post("/api/buddy/media/render-plan", (req, res) => {
     try {
-      const r = await fetch("https://api.elevenlabs.io/v1/voices", { headers: { "xi-api-key": apiKey } });
-      const data = await r.json() as any;
-      res.json({ voices: (data.voices ?? []).map((v: any) => ({ id: v.voice_id, name: v.name, category: v.category })) });
-    } catch (e: any) {
-      res.status(500).json({ error: e.message, voices: [] });
+      const request = mediaRenderPlanRequestSchema.parse(req.body);
+      res.status(202).json(buildMediaRenderPlan(request));
+    } catch (error) {
+      if (error instanceof z.ZodError) return res.status(400).json(zodValidationError(error));
+      res.status(400).json({ error: error instanceof Error ? error.message : "Media plan failed." });
+    }
+  });
+
+  app.post("/api/buddy/media/benchmark-plan", (req, res) => {
+    try {
+      const request = mediaBenchmarkPlanRequestSchema.parse(req.body);
+      res.status(202).json(buildMediaBenchmarkPlan(request));
+    } catch (error) {
+      if (error instanceof z.ZodError) return res.status(400).json(zodValidationError(error));
+      res.status(400).json({ error: error instanceof Error ? error.message : "Media benchmark plan failed." });
+    }
+  });
+
+  app.get("/api/buddy/media/quality/catalog", (_req, res) => {
+    res.json(getMediaQualityLabCatalog());
+  });
+
+  app.post("/api/buddy/media/quality/candidate-plan", (req, res) => {
+    try {
+      const request = mediaCandidatePlanRequestSchema.parse(req.body);
+      res.status(202).json(buildMediaCandidatePlan(request));
+    } catch (error) {
+      if (error instanceof z.ZodError) return res.status(400).json(zodValidationError(error));
+      res.status(400).json({ error: error instanceof Error ? error.message : "Media candidate plan failed." });
+    }
+  });
+
+  app.post("/api/buddy/media/quality/evaluate", (req, res) => {
+    try {
+      const request = mediaQualityEvaluationRequestSchema.parse(req.body);
+      res.status(200).json(evaluateMediaCandidates(request));
+    } catch (error) {
+      if (error instanceof z.ZodError) return res.status(400).json(zodValidationError(error));
+      res.status(400).json({ error: error instanceof Error ? error.message : "Media quality evaluation failed." });
+    }
+  });
+
+  app.get("/api/buddy/behavior/catalog", (_req, res) => {
+    res.json(getCommunicationBehaviorCatalog());
+  });
+
+  app.post("/api/buddy/behavior/profile", (req, res) => {
+    try {
+      const request = communicationPlanRequestSchema.parse(req.body);
+      res.status(202).json(buildCommunicationPlan(request));
+    } catch (error) {
+      if (error instanceof z.ZodError) return res.status(400).json(zodValidationError(error));
+      res.status(400).json({ error: error instanceof Error ? error.message : "Communication profile failed." });
+    }
+  });
+
+  app.post("/api/buddy/behavior/benchmark-plan", (req, res) => {
+    try {
+      const request = communicationBenchmarkRequestSchema.parse(req.body);
+      res.status(202).json(buildCommunicationBenchmarkPlan(request));
+    } catch (error) {
+      if (error instanceof z.ZodError) return res.status(400).json(zodValidationError(error));
+      res.status(400).json({ error: error instanceof Error ? error.message : "Communication benchmark plan failed." });
+    }
+  });
+
+  app.get("/api/buddy/workforce", (_req, res) => {
+    res.json(buildWorkforceRegistry());
+  });
+
+  app.post("/api/buddy/workforce/job-analysis", (req, res) => {
+    try {
+      const request = jobOpportunityRequestSchema.parse(req.body);
+      res.status(201).json(analyzeJobOpportunity(request));
+    } catch (error) {
+      if (error instanceof z.ZodError) return res.status(400).json(zodValidationError(error));
+      res.status(400).json({ error: error instanceof Error ? error.message : "Job analysis failed." });
+    }
+  });
+
+  app.post("/api/buddy/workforce/service-opportunity", (req, res) => {
+    try {
+      const request = jobOpportunityRequestSchema.parse(req.body);
+      res.status(201).json(createServiceOpportunity(request));
+    } catch (error) {
+      if (error instanceof z.ZodError) return res.status(400).json(zodValidationError(error));
+      res.status(400).json({ error: error instanceof Error ? error.message : "Service opportunity failed." });
+    }
+  });
+
+  app.post("/api/buddy/workforce/payment-plan", (req, res) => {
+    try {
+      const request = paymentRoutingRequestSchema.parse(req.body);
+      res.status(201).json(createPaymentRoutingPlan(request));
+    } catch (error) {
+      if (error instanceof z.ZodError) return res.status(400).json(zodValidationError(error));
+      res.status(400).json({ error: error instanceof Error ? error.message : "Payment plan failed." });
+    }
+  });
+
+  app.post("/api/buddy/workforce/professional-review", (req, res) => {
+    try {
+      const request = professionalReviewRequestSchema.parse(req.body);
+      res.status(201).json(createProfessionalReviewPacket(request));
+    } catch (error) {
+      if (error instanceof z.ZodError) return res.status(400).json(zodValidationError(error));
+      res.status(400).json({ error: error instanceof Error ? error.message : "Professional review packet failed." });
+    }
+  });
+
+  app.post("/api/buddy/workforce/voice-sandbox", (req, res) => {
+    try {
+      const request = voiceSandboxRequestSchema.parse(req.body);
+      res.status(201).json(createVoiceSandboxPlan(request));
+    } catch (error) {
+      if (error instanceof z.ZodError) return res.status(400).json(zodValidationError(error));
+      res.status(400).json({ error: error instanceof Error ? error.message : "Voice sandbox plan failed." });
     }
   });
 
@@ -463,6 +648,17 @@ export async function registerRoutes(
   });
 
   // ===== EXECUTABLE BOT FLEET =====
+  app.post("/api/buddy/route-capability", (req, res) => {
+    try {
+      const request = buddyCapabilityRouteRequestSchema.parse(req.body);
+      const result = getFleetRuntimeRegistry().routeCapability(request);
+      res.status(result.execution.status === "approval_required" ? 202 : 201).json(result);
+    } catch (error) {
+      if (error instanceof z.ZodError) return res.status(400).json(zodValidationError(error));
+      throw error;
+    }
+  });
+
   app.get("/api/fleet/runtime/health", (_req, res) => {
     res.setHeader("Cache-Control", "no-store");
     res.json(getFleetRuntimeRegistry().summary());
@@ -688,16 +884,32 @@ export async function registerRoutes(
     }
   });
 
-  // ===== DATA PACKAGES (for selling training data) =====
+  // ===== RIGHTS-CLEARED DATA PACKAGE TEMPLATES =====
   app.get("/api/data-packages", async (_req, res) => {
     res.json({
-      packages: [
-        { id: "dp-conversations", name: "Empire OS Conversation Dataset", size: "~50K conversations", price: "$299/mo", description: "High-quality AI conversations across 45 business domains for fine-tuning", tier: "pro" },
-        { id: "dp-bot-prompts", name: "1,051 Bot System Prompts", size: "~2MB", price: "$499 one-time", description: "Complete system prompt library covering every industry vertical", tier: "enterprise" },
-        { id: "dp-revenue-flows", name: "Revenue Automation Flows", size: "~500 workflows", price: "$199/mo", description: "n8n/workflow templates for autonomous revenue generation", tier: "pro" },
-        { id: "dp-code-snippets", name: "DreamCode Snippet Library", size: "~10K snippets", price: "$149/mo", description: "Production-ready code snippets across 50+ languages and frameworks", tier: "pro" },
-        { id: "dp-formulas", name: "High-Profit Formula Library", size: "~300 formulas", price: "$999 one-time", description: "Business formulas, deal calculators, and financial models", tier: "elite" },
+      schema: "dreamco.safe_data_package_templates.v1",
+      claim: "Planning templates only. No dataset is listed, licensed, or sold by this endpoint.",
+      templates: [
+        { id: "synthetic-evals", name: "Owner-generated synthetic evaluations", allowed: "Synthetic prompts, expected results, and grader evidence created by the owner", blocked: "Private conversations, provider outputs without rights, personal data" },
+        { id: "open-source-test-evidence", name: "Licensed open-source test evidence", allowed: "Original compatibility results with source revision, license, and provenance", blocked: "Repository code redistributed outside its license" },
+        { id: "public-domain-annotations", name: "Public-domain annotations", allowed: "Owner-created annotations over verified public-domain material", blocked: "Copyrighted or unclear-rights source material" },
+        { id: "original-workflows", name: "Original workflow templates", allowed: "Owner-authored, secret-free workflow schemas and documentation", blocked: "Customer records, credentials, or third-party confidential processes" },
       ],
+      requiredEvidence: [
+        "distinct encrypted source reference",
+        "ownership evidence receipt",
+        "resale-rights evidence receipt",
+        "separate consent receipt",
+        "provenance record",
+      ],
+      blockedCategories: [
+        "conversations and messages",
+        "prompts or provider outputs without resale rights",
+        "sensitive personal data",
+        "minor data",
+        "third-party personal or confidential data",
+      ],
+      requiredGate: "POST /api/buddy/data/package-plan",
     });
   });
 
@@ -1240,6 +1452,18 @@ export async function registerRoutes(
     }
   });
 
+  app.get("/api/buddy/creative-production-group", (_req, res) => {
+    try {
+      const path = resolve(process.cwd(), "config", "generated", "buddy_multimodal_studio.json");
+      res.json(JSON.parse(readFileSync(path, "utf8")));
+    } catch (error) {
+      res.status(503).json({
+        error: "Buddy creative production group is unavailable.",
+        detail: error instanceof Error ? error.message : "unknown error",
+      });
+    }
+  });
+
   app.get("/api/buddy/calculators", (_req, res) => {
     try {
       const path = resolve(process.cwd(), "config", "generated", "bot_calculators.json");
@@ -1329,7 +1553,11 @@ export async function registerRoutes(
       features: [
         { name: "Vibe Coding", route: "POST /api/buddy/vibe-code", status: "live", description: "Generate full projects from description" },
         { name: "Image Generation", route: "POST /api/generate-image", status: "live", description: "AI image generation via gpt-image-1" },
-        { name: "Voice and Likeness", route: "POST /api/voice/clone", status: process.env.ELEVENLABS_API_KEY ? "optional-provider-configured" : "local-adapter-ready", description: "Self-owned adult media with consent, labeling, and local or optional provider adapters" },
+        { name: "Voice and Likeness", route: "POST /api/buddy/media/render-plan", status: "local-adapter-contract-ready", description: "Local-first adult owner or licensed-performer media with consent, provenance, labeling, license review, and measured quality gates" },
+        { name: "Media Quality Lab", route: "POST /api/buddy/media/quality/candidate-plan", status: "evaluation-runtime-ready", description: "Generate multiple local candidates, score voice, image, and video evidence, prevent regressions, and allow comparison claims only after blinded statistical proof" },
+        { name: "Communication Behavior", route: "POST /api/buddy/behavior/profile", status: "sandbox-ready", description: "DreamCo-owned personality and communication adaptation with professional context overrides, opt-in voice cues, and no hidden psychological or clinical inference" },
+        { name: "Owned Task Board", route: "Buddy web task workspace", status: "live-local", description: "Capture every freeform request, add tasks at any time, and run, pause, complete, or remove locally stored work" },
+        { name: "Opportunity and Workforce Engine", route: "POST /api/buddy/workforce/job-analysis", status: "shadow-ready", description: "Classify work A-F, match real Buddy bots, simulate services and economics, and stop at professional, external-action, payment, and owner-approval gates" },
         { name: "Web Search", route: "POST /api/search/web", status: "live", description: "GitHub + OpenAI synthesis search" },
         { name: "GitHub Intelligence", route: "GET /api/github-intel/trending", status: "live", description: "Hourly GitHub trending + search" },
         { name: "Council Governance", route: "GET /api/council/proposals", status: "live", description: "Bot proposal submission and approval" },
@@ -1339,7 +1567,16 @@ export async function registerRoutes(
         { name: "Course Simulator", route: "POST /api/buddy/simulate-course", status: "live", description: "Simulate full college courses" },
         { name: "Competitive Intel", route: "POST /api/intel/competitive", status: "live", description: "Analyze any competitor" },
         { name: "Data Packages", route: "GET /api/data-packages", status: "consent-gated", description: "Package only user-owned, licensed, nonsensitive data with separate opt-in and opt-out controls" },
+        { name: "Task Discovery", route: "POST /api/buddy/task-discovery/plan", status: "live", description: "Turn unfamiliar goals into guided, testable, approval-aware task maps" },
+        { name: "Personal Data Controls", route: "POST /api/buddy/data/privacy-request-plan", status: "permission-gated", description: "Plan imports, access, portability, deletion, opt-out, selective memory, and lawful data packages" },
+        { name: "Connected App Portfolio", route: "POST /api/buddy/apps/connection-plan", status: "authentication-handoff-ready", description: "Catalog and group owner-authorized apps with read-only-first scopes and fresh approval for every high-impact action" },
+        { name: "Social Workspace", route: "POST /api/buddy/social/workspace-plan", status: "adapter-and-approval-gated", description: "Draft, schedule, publish, rehearse, or plan moderated live shows for authenticated owner accounts" },
+        { name: "Bill and Subscription Workspace", route: "POST /api/buddy/finance/workspace-plan", status: "review-ready", description: "Normalize costs, detect possible duplicate subscriptions, prepare cancellation handoffs, and stop before payment" },
+        { name: "Job Prep and Role-Play Lab", route: "POST /api/buddy/practice/session-plan", status: "private-sandbox-ready", description: "Prepare interviews, career work, sales, support, management, negotiation, presentations, auditions, and language practice with verified specialists" },
+        { name: "Open Source Tracker", route: "POST /api/buddy/open-source/tracking-plan", status: "scheduler-adapter-required", description: "Track pinned repository metadata, licenses, releases, security, tests, and contribution opportunities" },
+        { name: "Repository Test Center", route: "GET /api/buddy/repository-test-registry", status: "live", description: "Inventory repository evidence and prepare bounded contract, sandbox, and adapter test plans" },
         { name: "Governed Platform Registry", route: "GET /api/buddy/platform-expansion", status: "live", description: "Launch, privacy, finance, creative, IP, open-source, customization, and roadmap contracts" },
+        { name: "Hollywood Production and Simulation Group", route: "GET /api/buddy/creative-production-group", status: "local-packet-ready", description: "Film, documentary, animation, music-video, biography, commercial, live-show, synthetic-cast, professional editing, simulation, and delivery contracts" },
         { name: "Bot Calculator Registry", route: "GET /api/buddy/calculators", status: "live", description: "One bounded local planning calculator contract for every Buddy bot profile" },
         { name: "Install and Distribution Catalog", route: "GET /api/buddy/distribution", status: "live", description: "PWA installation plus governed packaging and publishing plans for 26 device and store targets" },
         { name: "Governed Lead Systems", route: "POST /api/buddy/lead-plan", status: "permission-gated", description: "Per-bot lead research, qualification, drafting, one-message approval, suppression, and bounded follow-up planning" },
@@ -2914,6 +3151,261 @@ Any improvements or fixes (optional, 1-2 bullet points max)`;
   app.post("/api/platform-connections", createConnectionPlan);
   app.post("/api/connections", createConnectionPlan);
 
+  app.post("/api/buddy/device-actions/plan", async (req, res) => {
+    const killSwitch = await storage.getSetting("kill_switch");
+    if ((killSwitch?.value as { enabled?: boolean } | undefined)?.enabled) {
+      return res.status(423).json({ message: "Device action planning is locked by the kill switch" });
+    }
+    const parsed = deviceActionPlanRequestSchema.safeParse(req.body);
+    if (!parsed.success) return res.status(400).json(zodValidationError(parsed.error));
+    res.status(201).json(createDeviceActionPlan(parsed.data));
+  });
+
+  app.get("/api/buddy/model-benchmarks/catalog-audit", (_req, res) => {
+    res.json(runModelCatalogAudit());
+  });
+
+  app.post("/api/buddy/model-benchmarks/plan", async (req, res) => {
+    const killSwitch = await storage.getSetting("kill_switch");
+    if ((killSwitch?.value as { enabled?: boolean } | undefined)?.enabled) {
+      return res.status(423).json({ message: "Model benchmark planning is locked by the kill switch" });
+    }
+    const parsed = modelBenchmarkPlanRequestSchema.safeParse(req.body);
+    if (!parsed.success) return res.status(400).json(zodValidationError(parsed.error));
+    try {
+      return res.status(201).json(createModelBenchmarkPlan(parsed.data));
+    } catch (error) {
+      return res.status(400).json({ error: error instanceof Error ? error.message : "Invalid benchmark plan" });
+    }
+  });
+
+  app.get("/api/buddy/open-model-lab/catalog", (_req, res) => {
+    res.json({
+      ...OPEN_MODEL_CATALOG,
+      liveModelsCalled: 0,
+      sourceProjectsExecuted: 0,
+    });
+  });
+
+  app.post("/api/buddy/open-model-lab/comparison-plan", async (req, res) => {
+    const killSwitch = await storage.getSetting("kill_switch");
+    if ((killSwitch?.value as { enabled?: boolean } | undefined)?.enabled) {
+      return res.status(423).json({ message: "Open-model comparison planning is locked by the kill switch" });
+    }
+    const parsed = openModelComparisonRequestSchema.safeParse(req.body);
+    if (!parsed.success) return res.status(400).json(zodValidationError(parsed.error));
+    try {
+      return res.status(201).json(createOpenModelComparisonPlan(parsed.data));
+    } catch (error) {
+      return res.status(400).json({ error: error instanceof Error ? error.message : "Invalid comparison plan" });
+    }
+  });
+
+  app.post("/api/buddy/open-source/tracking-plan", async (req, res) => {
+    const parsed = repositoryTrackingPlanRequestSchema.safeParse(req.body);
+    if (!parsed.success) return res.status(400).json(zodValidationError(parsed.error));
+    try {
+      return res.status(201).json(createRepositoryTrackingPlan(parsed.data));
+    } catch (error) {
+      return res.status(400).json({ error: error instanceof Error ? error.message : "Invalid repository tracking plan" });
+    }
+  });
+
+  app.post("/api/buddy/open-source/sandbox-plan", async (req, res) => {
+    const killSwitch = await storage.getSetting("kill_switch");
+    if ((killSwitch?.value as { enabled?: boolean } | undefined)?.enabled) {
+      return res.status(423).json({ message: "Open-source sandbox planning is locked by the kill switch" });
+    }
+    const parsed = openSourceSandboxPlanRequestSchema.safeParse(req.body);
+    if (!parsed.success) return res.status(400).json(zodValidationError(parsed.error));
+    try {
+      return res.status(201).json(createOpenSourceSandboxPlan(parsed.data));
+    } catch (error) {
+      return res.status(400).json({ error: error instanceof Error ? error.message : "Invalid sandbox plan" });
+    }
+  });
+
+  app.get("/api/buddy/repository-test-registry", (_req, res) => {
+    try {
+      return res.json(loadRepositoryTestRegistry());
+    } catch (error) {
+      return res.status(503).json({
+        error: "Repository test registry is unavailable.",
+        detail: error instanceof Error ? error.message : "unknown error",
+      });
+    }
+  });
+
+  app.post("/api/buddy/repository-test-plan", (req, res) => {
+    const parsed = repositoryTestPlanRequestSchema.safeParse(req.body);
+    if (!parsed.success) return res.status(400).json(zodValidationError(parsed.error));
+    try {
+      return res.status(201).json(createRepositoryTestPlan(parsed.data, loadRepositoryTestRegistry()));
+    } catch (error) {
+      return res.status(400).json({
+        error: error instanceof Error ? error.message : "Invalid repository test plan",
+      });
+    }
+  });
+
+  app.post("/api/buddy/task-discovery/plan", (req, res) => {
+    const parsed = taskDiscoveryRequestSchema.safeParse(req.body);
+    if (!parsed.success) return res.status(400).json(zodValidationError(parsed.error));
+    return res.status(201).json(createTaskDiscoveryPlan(parsed.data));
+  });
+
+  app.post("/api/buddy/data/import-plan", (req, res) => {
+    const parsed = dataImportPlanRequestSchema.safeParse(req.body);
+    if (!parsed.success) return res.status(400).json(zodValidationError(parsed.error));
+    try {
+      return res.status(201).json(createDataImportPlan(parsed.data));
+    } catch (error) {
+      return res.status(400).json({ error: error instanceof Error ? error.message : "Invalid data import plan" });
+    }
+  });
+
+  app.post("/api/buddy/data/privacy-request-plan", (req, res) => {
+    const parsed = privacyRightsPlanRequestSchema.safeParse(req.body);
+    if (!parsed.success) return res.status(400).json(zodValidationError(parsed.error));
+    try {
+      return res.status(201).json(createPrivacyRightsPlan(parsed.data));
+    } catch (error) {
+      return res.status(400).json({ error: error instanceof Error ? error.message : "Invalid privacy rights plan" });
+    }
+  });
+
+  app.post("/api/buddy/data/package-plan", (req, res) => {
+    const parsed = dataPackagePlanRequestSchema.safeParse(req.body);
+    if (!parsed.success) return res.status(400).json(zodValidationError(parsed.error));
+    try {
+      return res.status(201).json(createDataPackagePlan(parsed.data));
+    } catch (error) {
+      return res.status(400).json({ error: error instanceof Error ? error.message : "Invalid data package plan" });
+    }
+  });
+
+  app.post("/api/buddy/memory/preferences-plan", (req, res) => {
+    const parsed = memoryPreferencePlanRequestSchema.safeParse(req.body);
+    if (!parsed.success) return res.status(400).json(zodValidationError(parsed.error));
+    try {
+      return res.status(201).json(createMemoryPreferencePlan(parsed.data));
+    } catch (error) {
+      return res.status(400).json({ error: error instanceof Error ? error.message : "Invalid memory preference plan" });
+    }
+  });
+
+  app.get("/api/buddy/connected-life/catalog", (_req, res) => {
+    try {
+      const path = resolve(process.cwd(), "config", "buddy-connected-life.json");
+      return res.json(JSON.parse(readFileSync(path, "utf-8")));
+    } catch (_error) {
+      return res.status(503).json({ error: "Buddy Connected Life catalog is unavailable." });
+    }
+  });
+
+  app.post("/api/buddy/apps/connection-plan", (req, res) => {
+    const parsed = appConnectionPlanRequestSchema.safeParse(req.body);
+    if (!parsed.success) return res.status(400).json(zodValidationError(parsed.error));
+    try {
+      return res.status(201).json(createAppConnectionPlan(parsed.data));
+    } catch (error) {
+      return res.status(400).json({ error: error instanceof Error ? error.message : "Invalid app connection plan" });
+    }
+  });
+
+  app.post("/api/buddy/apps/group-workflow-plan", (req, res) => {
+    const parsed = appGroupWorkflowPlanRequestSchema.safeParse(req.body);
+    if (!parsed.success) return res.status(400).json(zodValidationError(parsed.error));
+    try {
+      return res.status(201).json(createAppGroupWorkflowPlan(parsed.data));
+    } catch (error) {
+      return res.status(400).json({ error: error instanceof Error ? error.message : "Invalid grouped app workflow" });
+    }
+  });
+
+  app.post("/api/buddy/social/workspace-plan", (req, res) => {
+    const parsed = socialWorkspacePlanRequestSchema.safeParse(req.body);
+    if (!parsed.success) return res.status(400).json(zodValidationError(parsed.error));
+    try {
+      return res.status(201).json(createSocialWorkspacePlan(parsed.data));
+    } catch (error) {
+      return res.status(400).json({ error: error instanceof Error ? error.message : "Invalid social workspace plan" });
+    }
+  });
+
+  app.post("/api/buddy/finance/workspace-plan", (req, res) => {
+    const parsed = financeWorkspacePlanRequestSchema.safeParse(req.body);
+    if (!parsed.success) return res.status(400).json(zodValidationError(parsed.error));
+    try {
+      return res.status(201).json(createFinanceWorkspacePlan(parsed.data));
+    } catch (error) {
+      return res.status(400).json({ error: error instanceof Error ? error.message : "Invalid finance workspace plan" });
+    }
+  });
+
+  app.get("/api/buddy/practice/catalog", (_req, res) => {
+    try {
+      const path = resolve(process.cwd(), "config", "buddy-practice-lab.json");
+      return res.json(JSON.parse(readFileSync(path, "utf-8")));
+    } catch (_error) {
+      return res.status(503).json({ error: "Buddy practice catalog is unavailable." });
+    }
+  });
+
+  app.post("/api/buddy/practice/session-plan", (req, res) => {
+    const parsed = practiceSessionRequestSchema.safeParse(req.body);
+    if (!parsed.success) return res.status(400).json(zodValidationError(parsed.error));
+    try {
+      return res.status(201).json(createPracticeSessionPlan(parsed.data));
+    } catch (error) {
+      return res.status(400).json({ error: error instanceof Error ? error.message : "Invalid practice session" });
+    }
+  });
+
+  app.post("/api/buddy/crypto/wallet-plan", async (req, res) => {
+    const killSwitch = await storage.getSetting("kill_switch");
+    if ((killSwitch?.value as { enabled?: boolean } | undefined)?.enabled) {
+      return res.status(423).json({ message: "Crypto planning is locked by the kill switch" });
+    }
+    const parsed = cryptoWalletPlanRequestSchema.safeParse(req.body);
+    if (!parsed.success) return res.status(400).json(zodValidationError(parsed.error));
+    return res.status(201).json(createCryptoWalletPlan(parsed.data));
+  });
+
+  app.post("/api/buddy/crypto/mining-plan", async (req, res) => {
+    const killSwitch = await storage.getSetting("kill_switch");
+    if ((killSwitch?.value as { enabled?: boolean } | undefined)?.enabled) {
+      return res.status(423).json({ message: "Crypto planning is locked by the kill switch" });
+    }
+    const parsed = cryptoMiningPlanRequestSchema.safeParse(req.body);
+    if (!parsed.success) return res.status(400).json(zodValidationError(parsed.error));
+    return res.status(201).json(createCryptoMiningPlan(parsed.data));
+  });
+
+  app.post("/api/buddy/crypto/dreamcoin-plan", async (req, res) => {
+    const parsed = dreamCoinPlanRequestSchema.safeParse(req.body);
+    if (!parsed.success) return res.status(400).json(zodValidationError(parsed.error));
+    return res.status(201).json(createDreamCoinPlan(parsed.data));
+  });
+
+  app.get("/api/buddy/government/resources", (_req, res) => {
+    return res.json({
+      schema: "dreamco.buddy_government_resource_catalog.v1",
+      coverage: "US federal verified; other jurisdictions require official-source verification",
+      resources: GOVERNMENT_RESOURCES,
+    });
+  });
+
+  app.post("/api/buddy/government/plan", async (req, res) => {
+    const killSwitch = await storage.getSetting("kill_switch");
+    if ((killSwitch?.value as { enabled?: boolean } | undefined)?.enabled) {
+      return res.status(423).json({ message: "Government assistance planning is locked by the kill switch" });
+    }
+    const parsed = governmentResourcePlanRequestSchema.safeParse(req.body);
+    if (!parsed.success) return res.status(400).json(zodValidationError(parsed.error));
+    return res.status(201).json(createGovernmentResourcePlan(parsed.data));
+  });
+
   app.patch("/api/platform-connections/:id", async (req, res) => {
     const id = parseInt(req.params.id);
     if (!Number.isInteger(id) || id < 1) return res.status(400).json({ error: "Invalid connection id" });
@@ -3528,7 +4020,8 @@ Return ONLY valid JSON with this exact shape:
     res.json({ context, matchedCategory: bestCategory, recommendations: recommended });
   });
 
-  // Register voice chat routes (distinct path: /api/conversations/:id/voice)
+  // Register media provider routes after core policies are installed.
+  registerImageRoutes(app);
   registerAudioRoutes(app);
 
   return httpServer;

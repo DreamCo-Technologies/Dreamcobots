@@ -18,7 +18,7 @@ from dreamco_platform.creative import (
     MusicStudioError,
     ReferenceTrack,
 )
-from dreamco_platform.customization import BuddyProfile, PersonalityProfile, build_asset_catalog
+from dreamco_platform.customization import BuddyProfile, CustomMediaIdentity, PersonalityProfile, build_asset_catalog
 from dreamco_platform.finance import Bill, BuddySubscriptionManager, Subscription
 from dreamco_platform.launch import (
     AppReleaseBrief,
@@ -36,6 +36,7 @@ from dreamco_platform.privacy import (
     DataPermissionRequest,
     DataSource,
     DataWalletError,
+    PrivacyRightsRequest,
 )
 from tools.generate_buddy_platform_expansion import build_registry
 
@@ -81,6 +82,22 @@ class BuddyPlatformExpansionTests(unittest.TestCase):
         self.assertEqual(complete["status"], "approved_for_owner_submission")
         self.assertFalse(complete["automatic_external_submission"])
 
+    def test_invention_workbench_prepares_bom_tests_and_safety_review(self):
+        plan = BuddyLaunchpad().prototype_plan(PrototypeBrief(
+            owner_user_id="owner-1",
+            title="Accessible Garden Monitor",
+            product_type="iot_device",
+            objective="Prototype a low-power garden sensor with accessible alerts and replaceable parts.",
+            target_users="home gardeners with varied access needs",
+            preferred_stack=("microcontroller", "local web dashboard"),
+        ))
+        self.assertEqual(plan["prototype_class"], "physical_or_hybrid")
+        self.assertIn("bill of materials", plan["outputs"])
+        self.assertIn("bench-test matrix", plan["outputs"])
+        self.assertIn("cost and ROI estimate", plan["outputs"])
+        self.assertFalse(plan["automatic_manufacturing_or_ordering"])
+        self.assertTrue(plan["high_risk_release_requires_qualified_review"])
+
     def test_data_wallet_separates_use_training_sale_and_opt_out(self):
         wallet = BuddyDataWallet("owner-1")
         source = DataSource(
@@ -88,10 +105,13 @@ class BuddyPlatformExpansionTests(unittest.TestCase):
             owner_user_id="owner-1",
             display_name="My work notes",
             encrypted_reference="vault:owner/work-notes",
-            categories=(DataCategory.PROFILE, DataCategory.PREFERENCES),
+            categories=(DataCategory.CREATIVE_WORK,),
             acquisition="user_upload",
             user_owns_data=True,
             resale_license_confirmed=True,
+            ownership_evidence_reference="receipt:owner/work-notes",
+            resale_rights_evidence_reference="rights:owner/work-notes",
+            provenance_reference="provenance:owner/work-notes",
         )
         receipt = wallet.register_source(source)
         self.assertFalse(receipt["raw_data_stored_here"])
@@ -103,6 +123,7 @@ class BuddyPlatformExpansionTests(unittest.TestCase):
             explicit_collection_consent=True,
             third_party_license_opt_in=True,
             recipient_class="approved research organizations",
+            consent_receipt_reference="consent:owner/work-notes",
         ))
         self.assertTrue(grant["sale_or_share_opt_in"])
         opt_out = wallet.opt_out()
@@ -120,6 +141,9 @@ class BuddyPlatformExpansionTests(unittest.TestCase):
             acquisition="user_upload",
             user_owns_data=True,
             resale_license_confirmed=True,
+            ownership_evidence_reference="receipt:owner/voice",
+            resale_rights_evidence_reference="rights:owner/voice",
+            provenance_reference="provenance:owner/voice",
         ))
         wallet.choices.third_party_sale_or_share_enabled = True
         with self.assertRaisesRegex(DataWalletError, "Sensitive personal data"):
@@ -130,7 +154,51 @@ class BuddyPlatformExpansionTests(unittest.TestCase):
                 explicit_collection_consent=True,
                 third_party_license_opt_in=True,
                 recipient_class="media partners",
+                consent_receipt_reference="consent:owner/voice",
             ))
+
+    def test_data_wallet_builds_rights_and_package_plans_without_claiming_external_action(self):
+        wallet = BuddyDataWallet("owner-1")
+        wallet.register_source(DataSource(
+            source_id="synthetic-evals",
+            owner_user_id="owner-1",
+            display_name="My synthetic evaluations",
+            encrypted_reference="vault:owner/synthetic-evals",
+            categories=(DataCategory.BUSINESS_RECORDS,),
+            acquisition="user_upload",
+            user_owns_data=True,
+            resale_license_confirmed=True,
+            ownership_evidence_reference="receipt:owner/synthetic-evals",
+            resale_rights_evidence_reference="rights:owner/synthetic-evals",
+            provenance_reference="provenance:owner/synthetic-evals",
+        ))
+        wallet.choices.third_party_sale_or_share_enabled = True
+        grant = wallet.authorize(DataPermissionRequest(
+            source_id="synthetic-evals",
+            purposes=("licensed_data_package",),
+            retention_days=30,
+            explicit_collection_consent=True,
+            third_party_license_opt_in=True,
+            recipient_class="approved research organizations",
+            consent_receipt_reference="consent:owner/synthetic-evals",
+        ))
+        package = wallet.licensed_package_plan(
+            grant["grant_id"],
+            package_name="Synthetic coding evaluations",
+            fields=("fixture", "expected_result", "grader"),
+            compensation_terms="one-year non-exclusive license",
+        )
+        rights = wallet.privacy_rights_plan(PrivacyRightsRequest(
+            company_name="Example Service",
+            privacy_request_url="https://example.com/privacy/request",
+            jurisdiction="California, United States",
+            rights=("access", "portability", "delete", "opt_out_sale_share"),
+            identity_verification_method="company_form",
+        ))
+        self.assertFalse(package["marketplace_listing_created"])
+        self.assertFalse(package["sale_completed"])
+        self.assertFalse(rights["request_submitted"])
+        self.assertFalse(rights["outside_company_compliance_guaranteed"])
 
     def test_subscription_manager_finds_duplicates_and_stops_before_payment(self):
         manager = BuddySubscriptionManager()
@@ -146,7 +214,7 @@ class BuddyPlatformExpansionTests(unittest.TestCase):
         self.assertFalse(approval["payment_executed"])
         self.assertTrue(approval["one_action_only"])
 
-    def test_task_runner_supports_multiple_tasks_and_caps_each_at_24_hours(self):
+    def test_task_runner_supports_multiple_tasks_and_indefinite_recurrence(self):
         class Adapter:
             name = "test-adapter"
 
@@ -162,12 +230,59 @@ class BuddyPlatformExpansionTests(unittest.TestCase):
                 max_runtime_seconds=86_400,
             )
         self.assertEqual(len(runner.run_due(Adapter(), now=time.time() + 1)), 2)
+        recurring_runner = BuddyTaskRunner()
+        recurring = recurring_runner.schedule(
+            owner_user_id="owner-1",
+            bot_slug="research-bot",
+            objective="Prepare a new governed research packet on every scheduled run.",
+            recurrence="interval",
+            interval_seconds=60,
+        )
+        first = recurring_runner.run_due(Adapter(), now=time.time() + 1)
+        self.assertEqual(first[0]["status"], "completed_and_rescheduled")
+        self.assertEqual(recurring.run_count, 1)
+        self.assertEqual(recurring.status, "scheduled")
+        second = recurring_runner.run_due(Adapter(), now=recurring.run_at + 1)
+        self.assertEqual(second[0]["status"], "completed_and_rescheduled")
+        self.assertEqual(recurring.run_count, 2)
+        dashboard = recurring_runner.dashboard()
+        self.assertEqual(dashboard["indefinite_recurring_tasks"], 1)
+        self.assertEqual(dashboard["schedule_duration"], "indefinite_until_paused_or_end_condition")
+
+        resumed_runner = BuddyTaskRunner()
+        resumed = resumed_runner.schedule(
+            owner_user_id="owner-1",
+            bot_slug="research-bot",
+            objective="Prepare one governed research packet after the owner resumes this task.",
+            run_at=time.time() + 60,
+            recurrence="interval",
+            interval_seconds=60,
+        )
+        self.assertTrue(resumed_runner.pause(resumed.task_id))
+        self.assertTrue(resumed_runner.resume(resumed.task_id, run_at=time.time() + 1))
+        resumed_results = resumed_runner.run_due(Adapter(), now=time.time() + 2)
+        self.assertEqual(len(resumed_results), 1)
+        self.assertEqual(resumed.run_count, 1)
+
         with self.assertRaisesRegex(TaskRunnerError, "24 hours"):
             runner.schedule(
                 owner_user_id="owner-1",
                 bot_slug="research-bot",
                 objective="Run a task for longer than the approved maximum.",
                 max_runtime_seconds=86_401,
+            )
+
+    def test_recurring_external_actions_require_fresh_approval_per_run(self):
+        runner = BuddyTaskRunner()
+        with self.assertRaisesRegex(TaskRunnerError, "fresh approval"):
+            runner.schedule(
+                owner_user_id="owner-1",
+                bot_slug="research-bot",
+                objective="Send an approved external update on a recurring schedule.",
+                recurrence="interval",
+                interval_seconds=3600,
+                live_external_action=True,
+                approval_id="approval-recurring",
             )
 
     def test_live_task_approval_is_one_action_only(self):
@@ -219,6 +334,8 @@ class BuddyPlatformExpansionTests(unittest.TestCase):
             self.assertFalse(inspection["source_executed"])
             self.assertEqual(plan["status"], "execution_permission_required")
             self.assertFalse(plan["automatic_merge"])
+            self.assertFalse(plan["sandbox"]["live_execution_performed"])
+            self.assertEqual(plan["sandbox"]["source_mount"], "read_only")
 
     def test_open_source_lab_blocks_secret_bearing_upgrade_package(self):
         with tempfile.TemporaryDirectory() as temp_dir:
@@ -232,16 +349,71 @@ class BuddyPlatformExpansionTests(unittest.TestCase):
                     "owner-1", "buddy-1", "Evaluate the repository safely", str(root), "MIT"
                 ), inspection)
 
+    def test_open_source_lab_rejects_remote_code_and_unbounded_resources(self):
+        with tempfile.TemporaryDirectory() as temp_dir:
+            root = Path(temp_dir)
+            (root / "LICENSE").write_text("MIT License\n", encoding="utf-8")
+            (root / "main.py").write_text("print('sample')\n", encoding="utf-8")
+            lab = BuddyOpenSourceLab()
+            inspection = lab.inspect(root)
+            with self.assertRaisesRegex(OpenSourceError, "Remote model"):
+                lab.upgrade_plan(UpgradeRequest(
+                    "owner-1",
+                    "buddy-1",
+                    "Evaluate a licensed model adapter",
+                    str(root),
+                    "MIT",
+                    trust_remote_code=True,
+                ), inspection)
+            with self.assertRaisesRegex(OpenSourceError, "timeout"):
+                lab.upgrade_plan(UpgradeRequest(
+                    "owner-1",
+                    "buddy-1",
+                    "Evaluate a licensed repository safely",
+                    str(root),
+                    "MIT",
+                    timeout_seconds=100_000,
+                ), inspection)
+
     def test_custom_buddy_id_is_stable_and_business_tone_disables_slang(self):
-        personality = PersonalityProfile({"warmth": 0.9, "directness": 0.7}, adapt_slang=True)
+        personality = PersonalityProfile(
+            {"warmth": 0.9, "directness": 0.7},
+            self_report_dimensions={"openness": 0.8},
+            adapt_slang=True,
+        )
         profile = BuddyProfile("owner-1", "My Buddy", personality)
         self.assertEqual(profile.to_public_dict()["buddy_instance_id"], profile.to_public_dict()["buddy_instance_id"])
         self.assertTrue(personality.tone_for("casual")["slang_allowed"])
-        self.assertFalse(personality.tone_for("business_deal")["slang_allowed"])
+        professional_tone = personality.tone_for("business_deal")
+        self.assertFalse(professional_tone["slang_allowed"])
+        self.assertGreaterEqual(professional_tone["traits"]["formality"], 0.82)
+        self.assertFalse(professional_tone["hidden_psychological_inference"])
         assets = build_asset_catalog()
         self.assertEqual(len(assets["voices"]), 12)
         self.assertEqual(len(assets["avatars"]), 12)
         self.assertTrue(all(not item["real_person_reference"] for item in assets["voices"] + assets["avatars"]))
+
+    def test_custom_buddy_media_stores_references_not_raw_biometrics(self):
+        identity = CustomMediaIdentity(
+            source_type="adult_owner",
+            subject_reference="owner-1",
+            source_reference_sha256="a" * 64,
+            consent_receipt_reference="consent:owner-1",
+            adult_confirmed=True,
+            voice_use_approved=True,
+            likeness_use_approved=True,
+            commercial_use_approved=True,
+            commercial_scope="Owner-approved commercial media for the Studio Buddy project.",
+        )
+        profile = BuddyProfile(
+            "owner-1",
+            "Studio Buddy",
+            PersonalityProfile({"warmth": 0.9, "creativity": 0.9}),
+            custom_media_identity=identity,
+        ).to_public_dict()
+        self.assertFalse(profile["custom_media_identity"]["raw_media_stored_in_profile"])
+        self.assertEqual(profile["custom_media_identity"]["source_reference_sha256"], "a" * 64)
+        self.assertTrue(profile["custom_media_identity"]["commercial_use_approved"])
 
     def test_music_and_logo_systems_preserve_rights_boundaries(self):
         music = BuddyMusicArtistStudio().create_plan(

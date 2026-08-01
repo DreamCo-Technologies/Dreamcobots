@@ -16,6 +16,7 @@ const APP_BOTS_DIR = join(ROOT, "App_bots");
 const MASTER_PATH = join(ROOT, "config", "master_bot_registry.json");
 const GENERATED_PATH = join(ROOT, "config", "generated", "bots.catalog.json");
 const WEBSITE_PATH = join(ROOT, "website", "data", "bot-fleet-catalog.json");
+const WEBSITE_ROUTING_PATH = join(ROOT, "website", "data", "buddy-routing-index.js");
 const WEBSITE_SHARD_DIR = join(ROOT, "website", "data", "bot-fleet");
 const REPORT_PATH = join(ROOT, "reports", "BOT_FLEET_PROSPECTUS.md");
 
@@ -602,6 +603,26 @@ function compactCatalog(catalog: ReturnType<typeof buildFleetCatalog>) {
   };
 }
 
+function browserRoutingIndex(catalog: ReturnType<typeof buildFleetCatalog>) {
+  return {
+    schema: "dreamco.buddy_routing_index.v1",
+    summary: {
+      profiles: catalog.summary.profiles,
+      divisions: catalog.summary.divisions,
+      capabilities: catalog.summary.declared_capability_slots,
+    },
+    bots: catalog.bots.map((bot) => [
+      bot.identity.slug,
+      bot.identity.display_name,
+      bot.identity.division,
+      bot.identity.category,
+      bot.prospectus.mission,
+      bot.capabilities.map((capability) => capability.name).join(" | "),
+      bot.logo.emoji,
+    ]),
+  };
+}
+
 function stableJson(value: unknown) {
   return `${JSON.stringify(value, null, 2)}\n`;
 }
@@ -642,6 +663,7 @@ function buildReport(catalog: ReturnType<typeof buildFleetCatalog>) {
 export function writeFleetCatalog({ check = false } = {}) {
   const catalog = buildFleetCatalog();
   const compact = compactCatalog(catalog);
+  const routingIndex = browserRoutingIndex(catalog);
   const divisionShards = catalog.divisions.map((division) => [
     join(WEBSITE_SHARD_DIR, `${division.name}.json`),
     stableJson({
@@ -654,6 +676,7 @@ export function writeFleetCatalog({ check = false } = {}) {
     [MASTER_PATH, stableJson(catalog)],
     [GENERATED_PATH, stableJson(compact)],
     [WEBSITE_PATH, stableJson(compact)],
+    [WEBSITE_ROUTING_PATH, `window.BUDDY_ROUTING_INDEX=${JSON.stringify(routingIndex)};\n`],
     [REPORT_PATH, buildReport(catalog)],
     ...divisionShards,
   ] as const;

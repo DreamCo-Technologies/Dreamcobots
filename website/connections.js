@@ -97,6 +97,21 @@
       methodGrid.append(card);
     });
 
+    const profiles = state.catalog.platform_profiles || [];
+    byId('platform-profile-count').textContent = `${profiles.length} profiles`;
+    const profileGrid = byId('platform-profile-grid');
+    profileGrid.replaceChildren();
+    profiles.forEach((profile) => {
+      const card = element('article', 'auth-method-card');
+      const heading = element('div', 'auth-method-heading');
+      heading.append(element('strong', '', profile.label), element('span', 'badge badge-green', profile.initial_access.replaceAll('_', ' ')));
+      const use = element('button', 'btn btn-outline btn-sm', 'Prepare connection');
+      use.type = 'button';
+      use.addEventListener('click', () => applyPlatformProfile(profile));
+      card.append(heading, element('p', '', profile.recommended_identity), element('p', '', profile.write_policy), use);
+      profileGrid.append(card);
+    });
+
     const methodSelect = byId('connection-method');
     methodSelect.replaceChildren();
     methods.forEach((method) => {
@@ -123,6 +138,21 @@
       row.append(copy);
       contractList.append(row);
     });
+  }
+
+  function applyPlatformProfile(profile) {
+    const method = state.catalog.auth_methods.find(item => item.id === profile.auth_method);
+    byId('connection-app').value = profile.label;
+    byId('connection-url').value = profile.official_url;
+    byId('connection-resource').value = profile.contract === 'developer' || profile.contract === 'device' ? 'application' : 'custom';
+    byId('connection-environment').value = 'staging';
+    byId('connection-access').value = profile.initial_access === 'read_only' ? 'read_only' : 'read_only';
+    if (method) byId('connection-method').value = method.id;
+    byId('connection-scopes').value = (profile.default_scopes || []).join(', ');
+    updateSecretFields();
+    document.querySelectorAll('[data-panel]').forEach(tab => tab.classList.toggle('active', tab.dataset.panel === 'connect-panel'));
+    document.querySelectorAll('.connection-panel').forEach(panel => { panel.hidden = panel.id !== 'connect-panel'; });
+    byId('connection-app').focus();
   }
 
   function updateSecretFields() {
@@ -154,7 +184,7 @@
     target.append(link);
   }
 
-  function renderConnectionPlan({ app, url, method, scopes, secretProvider, secretReference }) {
+  function renderConnectionPlan({ app, url, resourceType, environment, accessMode, method, scopes, secretProvider, secretReference }) {
     const target = byId('connection-result');
     target.replaceChildren();
     appendPlanHeading(target, app, 'User approval required', 'badge badge-amber');
@@ -162,6 +192,9 @@
     const summary = element('dl', 'connection-plan-summary');
     [
       ['Official host', url.hostname],
+      ['Connection type', resourceType.replaceAll('_', ' ')],
+      ['Environment', environment],
+      ['Initial access', accessMode.replaceAll('_', ' ')],
       ['Method', method.label],
       ['Scopes', scopes.length ? scopes.join(', ') : 'Provider minimum'],
       ['Secret handling', method.secret_reference_required ? `${secretProvider}:${secretReference}` : 'No raw credential collected'],
@@ -188,6 +221,11 @@
       steps.push('Connector passes its sandbox health check.');
       steps.push('User approves write, publish, account, or money-moving actions when requested.');
     }
+    if (resourceType !== 'application') {
+      steps.unshift('Create a restricted service identity for only the selected resources.');
+      steps.push('Run schema, connectivity, query-limit, timeout, and audit-log checks in a sandbox.');
+      if (accessMode === 'read_write') steps.push('Keep every write disabled until the owner approves the exact operation.');
+    }
     appendPlanList(target, 'Connection path', steps);
     appendOfficialLink(target, url, 'Open official app');
 
@@ -207,6 +245,9 @@
       const form = new FormData(event.currentTarget);
       const app = String(form.get('app') || '').trim();
       const url = officialUrl(String(form.get('url') || ''));
+      const resourceType = String(form.get('resourceType') || 'application');
+      const environment = String(form.get('environment') || 'staging');
+      const accessMode = String(form.get('accessMode') || 'read_only');
       const method = state.catalog.auth_methods.find((item) => item.id === form.get('method'));
       if (!method) throw new Error('Choose a supported authentication method.');
       const scopes = String(form.get('scopes') || '')
@@ -222,8 +263,8 @@
         ? validatedSecretReference(String(form.get('secretReference') || ''), secretProvider)
         : '';
 
-      renderConnectionPlan({ app, url, method, scopes, secretProvider, secretReference });
-      addAudit({ type: 'connection_plan', app, host: url.hostname, method: method.id, status: 'user_action_required' });
+      renderConnectionPlan({ app, url, resourceType, environment, accessMode, method, scopes, secretProvider, secretReference });
+      addAudit({ type: 'connection_plan', app, host: url.hostname, method: `${resourceType}:${method.id}`, status: 'user_action_required' });
     } catch (error) {
       setError('connection-error', error.message || 'Unable to prepare the connection plan.');
     }

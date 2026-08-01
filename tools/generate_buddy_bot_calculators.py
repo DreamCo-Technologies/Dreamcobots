@@ -66,7 +66,7 @@ TEMPLATES: dict[str, dict[str, Any]] = {
             field("marketing_cost", "Marketing cost", "currency", 500, 100000000, 1),
             field("return_rate", "Return or waste rate", "percent", 5, 100, 0.1),
         ],
-        "outputs": [("gross_value", "Gross revenue", "currency"), ("total_cost", "Estimated total cost", "currency"), ("net_value", "Estimated net value", "currency"), ("margin", "Estimated margin", "percent"), ("break_even_units", "Break-even units", "number")],
+        "outputs": [("gross_value", "Gross revenue", "currency"), ("total_cost", "Estimated total cost", "currency"), ("net_value", "Estimated net value", "currency"), ("margin", "Estimated margin", "percent"), ("roi", "Estimated ROI", "percent"), ("break_even_units", "Break-even units", "number")],
     },
     "sales_funnel": {
         "name": "Sales Funnel",
@@ -131,8 +131,9 @@ TEMPLATES: dict[str, dict[str, Any]] = {
             field("hourly_cost", "Labor cost per hour", "currency", 45, 1000000, 0.01),
             field("materials", "Materials and direct costs", "currency", 4000, 1000000000, 1),
             field("contingency_rate", "Contingency", "percent", 12, 100, 0.1),
+            field("expected_project_value", "Expected project value", "currency", 15000, 1000000000, 100),
         ],
-        "outputs": [("labor_hours", "Estimated labor hours", "hours"), ("labor_cost", "Estimated labor cost", "currency"), ("subtotal", "Estimate subtotal", "currency"), ("contingency", "Contingency reserve", "currency"), ("total_cost", "Recommended project budget", "currency")],
+        "outputs": [("labor_hours", "Estimated labor hours", "hours"), ("labor_cost", "Estimated labor cost", "currency"), ("subtotal", "Estimate subtotal", "currency"), ("contingency", "Contingency reserve", "currency"), ("total_cost", "Recommended project budget", "currency"), ("net_value", "Estimated net value", "currency"), ("roi", "Estimated ROI", "percent")],
     },
     "operations_efficiency": {
         "name": "Operations Efficiency",
@@ -145,7 +146,7 @@ TEMPLATES: dict[str, dict[str, Any]] = {
             field("hourly_value", "Labor value per hour", "currency", 30, 1000000, 0.01),
             field("tool_cost", "Tool or process cost", "currency", 1500, 1000000000, 1),
         ],
-        "outputs": [("baseline_hours", "Baseline labor hours", "hours"), ("hours_saved", "Estimated hours saved", "hours"), ("labor_value", "Estimated labor value", "currency"), ("error_cost", "Current error-cost exposure", "currency"), ("net_value", "Estimated net value", "currency")],
+        "outputs": [("baseline_hours", "Baseline labor hours", "hours"), ("hours_saved", "Estimated hours saved", "hours"), ("labor_value", "Estimated labor value", "currency"), ("error_cost", "Current error-cost exposure", "currency"), ("net_value", "Estimated net value", "currency"), ("roi", "Estimated ROI", "percent")],
     },
     "creative_project": {
         "name": "Creative Production",
@@ -179,7 +180,7 @@ TEMPLATES: dict[str, dict[str, Any]] = {
             field("variable_cost", "Variable cost per subscriber", "currency", 3, 1000000, 0.01),
             field("fixed_cost", "Fixed monthly cost", "currency", 1200, 1000000000, 1),
         ],
-        "outputs": [("monthly_revenue", "Monthly recurring revenue", "currency"), ("monthly_net", "Monthly contribution", "currency"), ("annual_net", "Annualized contribution", "currency"), ("churned", "Estimated monthly churned users", "number"), ("contribution_ltv", "Estimated contribution LTV", "currency")],
+        "outputs": [("monthly_revenue", "Monthly recurring revenue", "currency"), ("monthly_net", "Monthly contribution", "currency"), ("annual_net", "Annualized contribution", "currency"), ("churned", "Estimated monthly churned users", "number"), ("contribution_ltv", "Estimated contribution LTV", "currency"), ("roi", "Estimated annual ROI", "percent")],
     },
 }
 
@@ -328,6 +329,7 @@ def build_registry() -> dict[str, Any]:
             "bots_covered": len({item["bot"]["slug"] for item in calculators}),
             "divisions_covered": len({item["bot"]["division"] for item in calculators}),
             "interactive_local_calculators": sum(item["engine"]["status"] == "local_interactive_ready" for item in calculators),
+            "roi_calculators": sum(any(output["key"] == "roi" for output in item["outputs"]) for item in calculators),
             "calculator_templates": len(TEMPLATES),
             "legacy_division_formula_references": sum(len(rows) for rows in references.values()),
         },
@@ -348,6 +350,7 @@ def build_report(registry: dict[str, Any]) -> str:
         f"- Calculators: {summary['calculators']:,}",
         f"- Unique calculator ids: {summary['unique_calculator_ids']:,}",
         f"- Bots covered: {summary['bots_covered']:,}",
+        f"- Calculators with ROI output: {summary['roi_calculators']:,}",
         f"- Divisions covered: {summary['divisions_covered']}",
         f"- Safe interactive templates: {summary['calculator_templates']}",
         f"- Legacy division formula references: {summary['legacy_division_formula_references']:,}",

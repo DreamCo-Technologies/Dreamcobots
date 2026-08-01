@@ -82,6 +82,26 @@
       "minimum_scope": "selected project or repository"
     },
     {
+      "id": "device",
+      "label": "User-owned devices and apps",
+      "minimum_scope": "observe or draft first; one approved action at a time"
+    },
+    {
+      "id": "database",
+      "label": "Business databases",
+      "minimum_scope": "read-only selected schemas and views first"
+    },
+    {
+      "id": "infrastructure",
+      "label": "Servers and infrastructure",
+      "minimum_scope": "health and telemetry read access first"
+    },
+    {
+      "id": "warehouse",
+      "label": "Analytics and data warehouses",
+      "minimum_scope": "approved datasets with query limits"
+    },
+    {
       "id": "commerce",
       "label": "Commerce and payments",
       "minimum_scope": "read-only until transaction approval"
@@ -95,6 +115,52 @@
       "id": "custom",
       "label": "Documented custom application",
       "minimum_scope": "sandbox before live access"
+    }
+  ],
+  "platform_profiles": [
+    {
+      "auth_method": "browser_session_handoff",
+      "contract": "developer",
+      "default_scopes": [
+        "metadata:read",
+        "contents:read",
+        "pull_requests:read",
+        "actions:read"
+      ],
+      "id": "github",
+      "initial_access": "read_only",
+      "label": "GitHub",
+      "official_url": "https://github.com/settings/apps",
+      "recommended_identity": "GitHub App installed only on selected repositories",
+      "write_policy": "Request contents or pull-request write access only for an exact approved task; no administration scope by default."
+    },
+    {
+      "auth_method": "browser_session_handoff",
+      "contract": "device",
+      "default_scopes": [
+        "status:read",
+        "approved_app:open",
+        "browser_search:open"
+      ],
+      "id": "local_device",
+      "initial_access": "observe",
+      "label": "User-owned computer or mobile device",
+      "official_url": "https://localhost/",
+      "recommended_identity": "loopback-only local bridge with an ephemeral session token",
+      "write_policy": "No arbitrary clicks, typing, credential entry, protected settings, or destructive commands."
+    },
+    {
+      "auth_method": "custom_rest",
+      "contract": "custom",
+      "default_scopes": [
+        "health:read"
+      ],
+      "id": "custom_app",
+      "initial_access": "read_only",
+      "label": "Documented app or API",
+      "official_url": "https://example.com/",
+      "recommended_identity": "restricted service identity with a vault reference",
+      "write_policy": "Pass schema, timeout, retry, rate-limit, audit, and sandbox tests before any live write."
     }
   ],
   "public_contract": {
@@ -119,8 +185,9 @@
   "schema": "dreamco.public_buddy_connection_catalog.v1",
   "summary": {
     "auth_method_count": 8,
-    "connector_contract_count": 6,
+    "connector_contract_count": 10,
     "default_mode": "guided",
+    "platform_profile_count": 3,
     "raw_credentials_accepted": false,
     "secret_storage": "reference_only",
     "signup_mode": "assisted_handoff",

@@ -1,0 +1,29 @@
+{
+  "schema": "dreamco.buddy_government_resources.v1",
+  "coverage": {
+    "verified_jurisdictions": ["US federal"],
+    "extensible_levels": ["country", "federal", "state", "territorial", "tribal", "county", "city"],
+    "eligibility_mode": "screening_not_determination",
+    "automatic_submission": false
+  },
+  "sources": [
+    {"id": "usa_services", "label": "USA.gov services", "category": "general", "jurisdiction": "US federal", "url": "https://www.usa.gov/", "capabilities": ["official service navigation", "benefits and life-event starting points"]},
+    {"id": "sam_opportunities", "label": "SAM.gov contract opportunities", "category": "contracts", "jurisdiction": "US federal", "url": "https://sam.gov/opportunities", "capabilities": ["public contract opportunity search", "entity and assistance navigation"]},
+    {"id": "grants", "label": "Grants.gov", "category": "grants", "jurisdiction": "US federal", "url": "https://www.grants.gov/search-grants", "capabilities": ["funding opportunity search", "application workspace handoff"]},
+    {"id": "simpler_grants", "label": "Simpler.Grants.gov API", "category": "grants", "jurisdiction": "US federal", "url": "https://simpler.grants.gov/developers", "capabilities": ["structured opportunity search", "read-only opportunity details"]},
+    {"id": "sba", "label": "U.S. Small Business Administration", "category": "business", "jurisdiction": "US federal", "url": "https://www.sba.gov/", "capabilities": ["business guidance", "lender and local assistance navigation"]},
+    {"id": "benefits", "label": "USA.gov benefits", "category": "benefits", "jurisdiction": "US federal", "url": "https://www.usa.gov/benefits", "capabilities": ["benefit category navigation", "official program handoff"]},
+    {"id": "jobs", "label": "USAJOBS", "category": "jobs", "jurisdiction": "US federal", "url": "https://www.usajobs.gov/", "capabilities": ["federal job search", "application guidance"]},
+    {"id": "regulations", "label": "Regulations.gov", "category": "regulations", "jurisdiction": "US federal", "url": "https://www.regulations.gov/", "capabilities": ["docket and document search", "public comment handoff"]},
+    {"id": "spending", "label": "USAspending.gov", "category": "spending", "jurisdiction": "US federal", "url": "https://www.usaspending.gov/", "capabilities": ["award and spending research", "recipient and agency analysis"]},
+    {"id": "data", "label": "Data.gov", "category": "data", "jurisdiction": "US federal", "url": "https://data.gov/", "capabilities": ["open government dataset discovery", "agency data handoff"]}
+  ],
+  "guardrails": [
+    "Use official sources and show source links and retrieval dates",
+    "Never guarantee eligibility, award, approval, legal status, or filing outcome",
+    "Do not submit, sign, certify, pay, or represent a user without exact approval and required human presence",
+    "Minimize personal data and never collect credentials, identity documents, or sensitive records in a public page",
+    "Route legal, tax, immigration, benefits, and regulated questions to qualified help when needed",
+    "Verify deadlines and program status at the official source before relying on them"
+  ]
+}

@@ -8,6 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="studio.css?v=21" />
 </head>
 <body class="buddy-home studio-page">
 <div id="nav-placeholder"></div><script src="nav.js"></script>
@@ -15,9 +16,9 @@
 <main class="studio-shell">
   <header class="studio-header">
     <div>
-      <div class="hero-badge buddy-status-pill"><span></span> Local-first creative runtime</div>
-      <h1>Build with your story, voice, and image.</h1>
-      <p>Games, courses, simulations, films, artist projects, brands, and family learning media in one governed production workspace.</p>
+      <div class="hero-badge buddy-status-pill"><span></span> Hollywood Production Group · Simulation Foundry</div>
+      <h1>Build stories, worlds, and practice.</h1>
+      <p>Movies, music videos, synthetic characters, games, courses, vehicles, buildings, products, and simulations in one governed production workspace.</p>
     </div>
     <a class="btn btn-outline btn-sm" href="buddy.html">Back to Buddy</a>
   </header>
@@ -33,11 +34,19 @@
           <option value="parent_learning_video">Family learning video</option>
           <option value="music_video">Music video</option>
           <option value="biography">Biography</option>
+          <option value="documentary">Documentary</option>
+          <option value="animated_series">Animation or cartoon series</option>
+          <option value="social_live_show">Live social show</option>
           <option value="commercial">Commercial</option>
           <option value="college_course">College course</option>
           <option value="feature_film">Feature film</option>
           <option value="music_artist">Music artist development</option>
           <option value="logo_brand">Logo and brand system</option>
+          <option value="invention_prototype">Invention prototype</option>
+          <option value="vehicle_simulation">Vehicle repair or customization simulation</option>
+          <option value="building_simulation">Home or building simulation</option>
+          <option value="product_visualization">Product or invention visualization</option>
+          <option value="skills_training_simulation">Skills training simulation and game</option>
         </select>
         <label class="studio-label" for="project-title">Title</label>
         <input class="studio-input" id="project-title" required minlength="3" value="Fraction Quest" />
@@ -49,6 +58,105 @@
         </div>
       </fieldset>
 
+      <fieldset id="production-controls" class="studio-fieldset" hidden>
+        <legend>Production plan</legend>
+        <div class="studio-two-col">
+          <label>Length in minutes<input id="production-duration" class="studio-input" type="number" min="1" max="600" value="3" /></label>
+          <label>Master frame<select id="production-aspect" class="studio-input"><option value="16:9">16:9 landscape</option><option value="9:16">9:16 vertical</option><option value="1:1">1:1 square</option><option value="4:3">4:3 classic</option><option value="2.39:1">2.39:1 cinema</option></select></label>
+        </div>
+        <fieldset class="studio-choice-grid"><legend>Delivery</legend>
+          <label><input type="checkbox" name="delivery-platform" value="web" checked /> Web</label>
+          <label><input type="checkbox" name="delivery-platform" value="streaming" checked /> Streaming</label>
+          <label><input type="checkbox" name="delivery-platform" value="social" /> Social</label>
+          <label><input type="checkbox" name="delivery-platform" value="television" /> Television</label>
+          <label><input type="checkbox" name="delivery-platform" value="cinema" /> Cinema</label>
+          <label><input type="checkbox" name="delivery-platform" value="classroom" /> Classroom</label>
+        </fieldset>
+        <fieldset class="studio-choice-grid"><legend>Editing workspaces</legend>
+          <label><input type="checkbox" name="editing-workspace" value="story" checked /> Story</label>
+          <label><input type="checkbox" name="editing-workspace" value="timeline" checked /> Picture</label>
+          <label><input type="checkbox" name="editing-workspace" value="image" checked /> Image</label>
+          <label><input type="checkbox" name="editing-workspace" value="vfx" checked /> VFX</label>
+          <label><input type="checkbox" name="editing-workspace" value="dialogue" checked /> Dialogue</label>
+          <label><input type="checkbox" name="editing-workspace" value="music" checked /> Music</label>
+          <label><input type="checkbox" name="editing-workspace" value="sound" checked /> Sound</label>
+          <label><input type="checkbox" name="editing-workspace" value="accessibility" checked /> Accessibility</label>
+          <label><input type="checkbox" name="editing-workspace" value="delivery" checked /> Delivery</label>
+        </fieldset>
+        <label id="live-show-control" class="studio-check" hidden><input id="production-live" type="checkbox" /> Prepare a private rehearsal and owner-approved live show with moderation and emergency stop.</label>
+        <div id="production-tool-summary" class="studio-tool-summary" aria-live="polite"></div>
+      </fieldset>
+
+      <fieldset id="actor-controls" class="studio-fieldset" hidden>
+        <legend>Synthetic cast</legend>
+        <label class="studio-label" for="actor-name">Character or presenter name</label>
+        <input id="actor-name" class="studio-input" value="Buddy Guide" minlength="2" maxlength="120" />
+        <label class="studio-label" for="actor-mode">Actor mode</label>
+        <select id="actor-mode" class="studio-input">
+          <option value="original_synthetic">Original synthetic character</option>
+          <option value="owner_digital_double">My adult digital double</option>
+          <option value="licensed_adult_performer">Licensed adult performer</option>
+          <option value="company_mascot">Company mascot or brand character</option>
+        </select>
+        <label class="studio-label" for="actor-role-template">Role template</label>
+        <select id="actor-role-template" class="studio-input"></select>
+        <label class="studio-label" for="actor-role">Role</label>
+        <input id="actor-role" class="studio-input" value="Trusted guide" minlength="2" maxlength="160" />
+        <label class="studio-label" for="actor-description">Character and performance</label>
+        <textarea id="actor-description" class="studio-input" minlength="20">An original character with a distinct fictional identity, performance arc, wardrobe, movement, and voice direction.</textarea>
+        <div class="studio-trait-grid" aria-label="Character personality">
+          <label>Warmth <output data-trait-output="warmth">80</output><input data-trait="warmth" type="range" min="0" max="100" value="80" /></label>
+          <label>Directness <output data-trait-output="directness">70</output><input data-trait="directness" type="range" min="0" max="100" value="70" /></label>
+          <label>Curiosity <output data-trait-output="curiosity">85</output><input data-trait="curiosity" type="range" min="0" max="100" value="85" /></label>
+          <label>Humor <output data-trait-output="humor">45</output><input data-trait="humor" type="range" min="0" max="100" value="45" /></label>
+          <label>Patience <output data-trait-output="patience">90</output><input data-trait="patience" type="range" min="0" max="100" value="90" /></label>
+          <label>Energy <output data-trait-output="energy">65</output><input data-trait="energy" type="range" min="0" max="100" value="65" /></label>
+          <label>Formality <output data-trait-output="formality">55</output><input data-trait="formality" type="range" min="0" max="100" value="55" /></label>
+          <label>Creativity <output data-trait-output="creativity">90</output><input data-trait="creativity" type="range" min="0" max="100" value="90" /></label>
+        </div>
+        <div class="studio-button-row">
+          <button id="add-cast-role" class="btn btn-outline btn-sm" type="button">Add role</button>
+          <button id="clear-cast" class="btn btn-outline btn-sm" type="button">Clear cast</button>
+        </div>
+        <div id="cast-list" class="studio-cast-list" aria-live="polite"></div>
+        <p class="studio-guardrail">Original characters cannot imitate a real person. Adult owner and licensed-performer identities require active scoped consent, rights evidence, revocation checks, provenance, and a visible synthetic-media label.</p>
+      </fieldset>
+
+      <fieldset id="simulation-controls" class="studio-fieldset" hidden>
+        <legend>Simulation foundry</legend>
+        <div class="studio-two-col">
+          <label>Model source
+            <select id="simulation-model-source" class="studio-input">
+              <option value="procedural_original">Original procedural model</option>
+              <option value="owner_upload">Owner-provided model</option>
+              <option value="licensed_catalog">Licensed model catalog</option>
+              <option value="measured_scan">Owner-authorized measured scan</option>
+            </select>
+          </label>
+          <label>Fidelity
+            <select id="simulation-fidelity" class="studio-input">
+              <option value="concept">Concept visualization</option>
+              <option value="training">Training simulation</option>
+              <option value="engineering_review">Engineering-review packet</option>
+            </select>
+          </label>
+        </div>
+        <label class="studio-label" for="simulation-model-ref">Model reference</label>
+        <input id="simulation-model-ref" class="studio-input" placeholder="owner-vault:model-id or approved catalog item" />
+        <label class="studio-label" for="simulation-rights-ref">Ownership or license receipt</label>
+        <input id="simulation-rights-ref" class="studio-input" placeholder="owner-vault:rights-receipt" />
+        <div class="studio-two-col">
+          <label>Paint or material<input id="simulation-paint" class="studio-color-input" type="color" value="#1f6f8b" /></label>
+          <label>Additions or changes<textarea id="simulation-additions" class="studio-input" placeholder="Wheels, room addition, finish, tools, steps, accessibility...">Accessible controls, before-and-after comparison</textarea></label>
+        </div>
+        <label class="studio-check"><input id="simulation-to-game" type="checkbox" checked /> Turn this simulation into a practice game with feedback, levels, safe failure, and reset.</label>
+        <div id="simulation-concept-preview" class="studio-concept-preview" aria-live="polite">
+          <span id="simulation-color-swatch" aria-hidden="true"></span>
+          <div><strong id="simulation-preview-title">Concept variant</strong><p id="simulation-preview-detail">Original model · concept visualization · game conversion on</p></div>
+        </div>
+        <p class="studio-guardrail">A concept preview is not proof of fit, structure, code compliance, repair safety, or real-world performance. Measured evidence and qualified review remain required.</p>
+      </fieldset>
+
       <fieldset class="studio-fieldset">
         <legend>Creator media</legend>
         <div class="studio-toggle-row">
@@ -56,13 +164,25 @@
           <label class="studio-switch"><input id="use-voice" type="checkbox" aria-label="Use my voice" /><span></span></label>
         </div>
         <div id="voice-controls" class="studio-media-controls" hidden>
+          <label class="studio-label" for="voice-engine">Local voice engine</label>
+          <select id="voice-engine" class="studio-input"></select>
+          <div class="studio-two-col">
+            <label>Performance<select id="voice-performance" class="studio-input"></select></label>
+            <label>Test fixture<select id="voice-fixture" class="studio-input"></select></label>
+          </div>
+          <div id="voice-fixture-prompt" class="studio-fixture-prompt" aria-live="polite"></div>
           <input id="voice-file" type="file" accept="audio/*" />
           <div class="studio-button-row">
-            <button id="record-voice" class="btn btn-outline btn-sm" type="button">Record voice</button>
+            <button id="record-voice" class="btn btn-outline btn-sm" type="button">Record test take</button>
             <button id="stop-voice" class="btn btn-outline btn-sm" type="button" disabled>Stop</button>
+            <button id="download-voice" class="btn btn-outline btn-sm" type="button" disabled>Save audio</button>
+            <button id="add-voice-take" class="btn btn-outline btn-sm" type="button" disabled>Add test take</button>
           </div>
           <audio id="voice-preview" controls></audio>
-          <p id="voice-status" class="studio-status">No sample selected.</p>
+          <p id="voice-status" class="studio-status">No sample selected. Recordings stop automatically after three minutes.</p>
+          <div id="voice-analysis" class="studio-analysis" aria-live="polite"></div>
+          <div class="studio-media-list-heading"><strong>Performance test takes</strong><button id="clear-voice-takes" type="button">Clear takes</button></div>
+          <div id="voice-take-list" class="studio-take-list" aria-live="polite"></div>
         </div>
 
         <div class="studio-toggle-row">
@@ -70,21 +190,61 @@
           <label class="studio-switch"><input id="use-image" type="checkbox" aria-label="Use my likeness" /><span></span></label>
         </div>
         <div id="image-controls" class="studio-media-controls" hidden>
+          <label class="studio-label" for="image-engine">Local image or portrait engine</label>
+          <select id="image-engine" class="studio-input"></select>
+          <div class="studio-two-col">
+            <label>Visual output<select id="visual-output" class="studio-input"><option value="talking_portrait">Talking portrait</option><option value="social_short">Social-media short</option><option value="music_video">Music video</option><option value="commercial">Commercial</option><option value="biography">Biography or documentary</option><option value="movie_scene">Movie scene</option><option value="original_character">Original AI character</option></select></label>
+            <label>Motion direction<select id="visual-motion" class="studio-input"><option value="natural_presenter">Natural presenter</option><option value="performance">Music performance</option><option value="cinematic">Cinematic acting</option><option value="animated">Animated or cartoon</option><option value="product_demo">Product demonstration</option></select></label>
+          </div>
           <input id="image-file" type="file" accept="image/*" />
+          <div class="studio-button-row">
+            <button id="start-camera" class="btn btn-outline btn-sm" type="button">Open camera</button>
+            <button id="take-photo" class="btn btn-outline btn-sm" type="button" disabled>Take photo</button>
+            <button id="stop-camera" class="btn btn-outline btn-sm" type="button" disabled>Close camera</button>
+            <button id="download-image" class="btn btn-outline btn-sm" type="button" disabled>Save image</button>
+          </div>
+          <video id="image-camera" class="studio-camera" autoplay muted playsinline hidden></video>
+          <canvas id="image-canvas" hidden></canvas>
           <div class="studio-image-frame"><img id="image-preview" alt="Local creator preview" hidden /></div>
+          <p id="image-status" class="studio-status">Choose an image or open the camera.</p>
         </div>
+      </fieldset>
+
+      <fieldset class="studio-fieldset">
+        <legend>Media quality lab</legend>
+        <label class="studio-label" for="media-quality-mode">Candidate strategy</label>
+        <select id="media-quality-mode" class="studio-input">
+          <option value="highest_quality">Highest quality</option>
+          <option value="balanced">Balanced</option>
+          <option value="fast_preview">Fast preview</option>
+        </select>
+        <p id="media-quality-summary" class="studio-status">Buddy will compare several local candidates and keep only an evidence-backed winner.</p>
+        <p class="studio-guardrail">A named provider comparison is a benchmark target, not a quality claim. Buddy must pass identical fixtures, blind review, statistical confidence, rights, and regression gates before it can claim an advantage.</p>
       </fieldset>
 
       <fieldset id="consent-controls" class="studio-fieldset" hidden>
         <legend>Consent</legend>
-        <label class="studio-check"><input id="consent-self" type="checkbox" /> I own this voice and image and they represent me.</label>
-        <label class="studio-check"><input id="consent-adult" type="checkbox" /> I confirm I am an adult.</label>
+        <label class="studio-label" for="media-source-type">Identity source</label>
+        <select id="media-source-type" class="studio-input">
+          <option value="adult_owner">Adult owner</option>
+          <option value="licensed_adult_performer">Licensed adult performer</option>
+        </select>
+        <label class="studio-label" for="media-subject-ref">Subject reference</label>
+        <input id="media-subject-ref" class="studio-input" placeholder="owner id or performer agreement subject id" />
+        <label class="studio-label" for="media-rights-ref">Written rights receipt</label>
+        <input id="media-rights-ref" class="studio-input" placeholder="required for a licensed performer" />
+        <label class="studio-check"><input id="consent-authorized" type="checkbox" /> I am the adult subject or I hold written, scoped permission from the adult subject.</label>
+        <label class="studio-check"><input id="consent-adult" type="checkbox" /> I confirm the media subject is an adult.</label>
         <label class="studio-check"><input id="consent-label" type="checkbox" /> Keep the AI-assisted media label on every output.</label>
-        <p class="studio-guardrail">Minor cloning and cloning another person are blocked. Raw media stays in this browser session unless the owner explicitly configures encrypted storage.</p>
+        <label class="studio-check"><input id="commercial-media-use" type="checkbox" /> This project may be released commercially after every installed model and dependency passes license review.</label>
+        <label class="studio-label" for="commercial-media-scope">Commercial usage scope</label>
+        <input id="commercial-media-scope" class="studio-input" maxlength="500" placeholder="Campaign, channels, territory, term, products, and approved owner or performer rights" />
+        <p class="studio-guardrail">Minor replication and unconsented real-person imitation are blocked. Raw media stays in this browser session unless the owner explicitly configures encrypted storage. A setup packet is not a finished clone; rendering and benchmark evidence are separate gates.</p>
       </fieldset>
 
       <div class="studio-action-row">
         <button class="btn btn-primary" type="submit">Build prototype</button>
+        <button id="download-consent" class="btn btn-outline" type="button" disabled>Save consent receipt</button>
         <button id="clear-media" class="btn btn-outline" type="button">Delete local media</button>
       </div>
       <p id="studio-form-status" class="studio-form-status" aria-live="polite"></p>
@@ -114,8 +274,25 @@
       </div>
     </section>
   </div>
+
+  <section class="studio-academy" aria-labelledby="academy-title">
+    <div class="studio-academy-header">
+      <div><span>Versioned production knowledge</span><h2 id="academy-title">Hollywood Production Group and Simulation Academy</h2><p>Use the 12-department movie group, culturally attributed music study, or the model-to-practice-game simulation foundry.</p></div>
+      <div class="studio-academy-actions">
+        <label for="academy-track">Track</label>
+        <select id="academy-track" class="studio-input"><option value="film">Film production</option><option value="music">Music and music video</option><option value="simulation">Simulation foundry</option></select>
+        <button id="academy-use" class="btn btn-outline btn-sm" type="button">Use in project</button>
+      </div>
+    </div>
+    <div id="academy-summary" class="studio-academy-summary" aria-live="polite"></div>
+    <div id="academy-grid" class="studio-academy-grid"></div>
+  </section>
 </main>
 
-<script src="studio.js"></script>
+<script src="data/buddy-specialized-hubs.js"></script>
+<script src="data/buddy-production-group.js?v=21"></script>
+<script src="data/buddy-local-media-engines.js?v=21"></script>
+<script src="data/buddy-media-quality-lab.js?v=21"></script>
+<script src="studio.js?v=21"></script>
 </body>
 </html>

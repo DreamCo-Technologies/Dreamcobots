@@ -12,6 +12,16 @@ from .studio import (
 from .local_renderer import LocalCommandMediaRenderer, LocalRendererCommand
 from .branding import BrandingError, BuddyLogoGenerator, LogoBrief
 from .music import ArtistBrief, BuddyMusicArtistStudio, MusicStudioError, ReferenceTrack
+from .production_group import (
+    ActorMode,
+    BuddyProductionGroup,
+    ModelSource,
+    ProductionBrief,
+    ProductionFormat,
+    SimulationBrief,
+    SimulationDomain,
+    SyntheticActorBrief,
+)
 
 __all__ = [
     "BuddyCreativeStudio",
@@ -30,4 +40,12 @@ __all__ = [
     "LogoBrief",
     "MusicStudioError",
     "ReferenceTrack",
+    "ActorMode",
+    "BuddyProductionGroup",
+    "ModelSource",
+    "ProductionBrief",
+    "ProductionFormat",
+    "SimulationBrief",
+    "SimulationDomain",
+    "SyntheticActorBrief",
 ]

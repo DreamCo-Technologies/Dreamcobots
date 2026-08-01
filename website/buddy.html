@@ -3,218 +3,358 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Buddy — DreamCo Empire OS</title>
-  <meta name="description" content="Buddy is the DreamCo command chatbot: native-code-first routing, bot building, debugging, simulations, and safe autonomous work from one prompt." />
-  <meta name="theme-color" content="#0a0e1a" />
+  <title>Buddy | DreamCo</title>
+  <meta name="description" content="Talk to Buddy to plan, build, debug, create, and route work through DreamCo's governed specialist fleet." />
+  <meta name="theme-color" content="#101218" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <meta name="apple-mobile-web-app-title" content="Buddy" />
   <link rel="manifest" href="manifest.webmanifest" />
+  <link rel="icon" href="assets/images/favicon.svg" type="image/svg+xml" />
   <link rel="apple-touch-icon" href="assets/images/buddy-icon-192.png" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="buddy.css?v=26" />
 </head>
-<body class="buddy-home">
-<div id="nav-placeholder"></div><script src="nav.js"></script>
-
-<main class="buddy-shell">
-  <aside class="buddy-rail">
-    <a class="buddy-new-chat" href="buddy.html">+ New Buddy task</a>
-    <div class="buddy-rail-section">
-      <div class="buddy-rail-label">Pinned Workflows</div>
-      <button class="buddy-rail-item active" onclick="loadPrompt('Build me a full app from one prompt, then test and package it.')">App Builder</button>
-      <button class="buddy-rail-item" onclick="loadPrompt('Debug my latest failed build and explain the root cause.')">Debug Center</button>
-      <button class="buddy-rail-item" onclick="loadPrompt('Create a game or simulation from this idea.')">Game + Simulation</button>
-      <a class="buddy-rail-item" href="studio.html">Creative Studio</a>
-      <a class="buddy-rail-item" href="platform.html">Platform Registry</a>
-      <a class="buddy-rail-item" href="calculator.html">Bot Calculator Lab</a>
-      <a class="buddy-rail-item" href="install.html">Install and Launch</a>
-      <a class="buddy-rail-item" href="leads.html">Lead Systems</a>
-      <button class="buddy-rail-item" onclick="loadPrompt('Find the best native bot route and cheapest model fallback for this task.')">Model Router</button>
-      <button class="buddy-rail-item" onclick="loadPrompt('Show the bot completion sprint and what needs coding next.')">Bot Sprint</button>
+<body class="buddy-home buddy-simple-home">
+  <header class="buddy-simple-header">
+    <a class="buddy-wordmark" href="buddy.html" aria-label="Buddy home">
+      <img src="assets/images/buddy-icon-192.png" alt="" width="38" height="38" />
+      <span><strong>Buddy</strong><small>by DreamCo</small></span>
+    </a>
+    <div class="buddy-header-actions">
+      <div class="buddy-model-switch" role="group" aria-label="Model cost mode">
+        <button id="model-free" class="active" type="button" aria-pressed="true" title="Use Buddy without a paid model">Free</button>
+        <button id="model-premium" type="button" aria-pressed="false" title="Use a connected paid model for one approved request">Premium</button>
+      </div>
+      <button id="specialist-open" class="buddy-header-link" type="button">Specialists</button>
+      <button id="task-open" class="buddy-header-link buddy-task-open" type="button">Tasks <span id="task-count" aria-label="0 current tasks">0</span></button>
+      <button id="schedule-open" class="buddy-header-link" type="button">Schedules</button>
+      <button id="boundary-open" class="buddy-header-link" type="button">Preferences</button>
+      <button id="local-open" class="buddy-header-link" type="button">This laptop</button>
+      <a class="buddy-header-link" href="https://github.com/DreamCo-Technologies/Dreamcobots" target="_blank" rel="noopener">GitHub</a>
+      <a class="buddy-header-link" href="buddy.html">New chat</a>
+      <details class="buddy-explore-menu">
+        <summary>Explore</summary>
+        <nav aria-label="Buddy tools">
+          <a href="bots.html">Specialists</a>
+          <a href="calculator.html">ROI calculators</a>
+          <a href="studio.html">Creative studio</a>
+          <a href="practice.html">Job prep and role-play</a>
+          <a href="connections.html">Business connections</a>
+          <a href="data-control.html">Data and memory controls</a>
+          <a href="buddy.html?preferences=1">Buddy preferences</a>
+          <a href="test-center.html">Repository test center</a>
+          <a href="government.html">Government resources</a>
+          <a href="crypto.html">Crypto safety lab</a>
+          <a href="models.html">Model benchmark lab</a>
+          <a href="open-model-lab.html">Open model and source lab</a>
+          <a href="install.html">Install, launch, and domains</a>
+          <a href="dashboard.html">Dashboard</a>
+        </nav>
+      </details>
     </div>
-    <div class="buddy-rail-section">
-      <div class="buddy-rail-label">Repository Evidence</div>
-      <div class="buddy-rail-stat"><span>Profiles</span><strong data-fleet-stat="profiles">1,051</strong></div>
-      <div class="buddy-rail-stat"><span>Buddy routes</span><strong data-fleet-stat="routes">1,051</strong></div>
-      <div class="buddy-rail-stat"><span>Runtime instances</span><strong data-fleet-stat="runtime">1,051</strong></div>
-      <div class="buddy-rail-stat"><span>E2E sandbox certified</span><strong data-fleet-stat="e2e">1,051</strong></div>
-      <div class="buddy-rail-stat"><span>Connected APIs</span><strong data-fleet-stat="apis">0</strong></div>
-      <div class="buddy-rail-stat"><span>Studio tracks</span><strong data-fleet-stat="studio">10</strong></div>
-      <div class="buddy-rail-stat"><span>Calculators</span><strong data-fleet-stat="calculators">1,051</strong></div>
+  </header>
+
+  <main class="buddy-simple-shell">
+    <section id="buddy-welcome" class="buddy-welcome" aria-labelledby="buddy-heading">
+      <img class="buddy-welcome-icon" src="assets/images/buddy-icon-192.png" alt="Buddy" width="72" height="72" />
+      <p class="buddy-eyebrow">Your DreamCo assistant</p>
+      <h1 id="buddy-heading">How can I help?</h1>
+      <p>Describe the outcome. Buddy will choose the right specialist, prepare the work, and ask before any live action.</p>
+    </section>
+
+    <section id="buddy-thread" class="buddy-simple-thread" aria-live="polite" aria-label="Conversation"></section>
+
+    <section class="buddy-simple-composer" aria-label="Message Buddy">
+      <div class="buddy-mode-tabs" role="tablist" aria-label="Task mode">
+        <button class="active" type="button" role="tab" aria-selected="true" data-buddy-mode="Build">Build</button>
+        <button type="button" role="tab" aria-selected="false" data-buddy-mode="Fix">Fix</button>
+        <button type="button" role="tab" aria-selected="false" data-buddy-mode="Create">Create</button>
+        <button type="button" role="tab" aria-selected="false" data-buddy-mode="Plan">Plan</button>
+        <button type="button" role="tab" aria-selected="false" data-buddy-mode="Discover">Discover</button>
+      </div>
+      <div id="premium-panel" class="buddy-premium-panel" hidden>
+        <label>Provider
+          <select id="premium-provider"></select>
+        </label>
+        <label>Model ID <span>(optional)</span>
+          <input id="premium-model-id" placeholder="Auto-pick for this task" autocomplete="off" />
+        </label>
+        <label class="buddy-premium-approval">
+          <input id="premium-approval" type="checkbox" />
+          <span>Allow this paid provider for this message only.</span>
+        </label>
+        <button id="premium-back" type="button">Back to free</button>
+      </div>
+      <label class="sr-only" for="buddy-input">Message Buddy</label>
+      <textarea id="buddy-input" rows="5" placeholder="Ask Buddy to build, fix, create, research, or plan anything..." maxlength="4000"></textarea>
+      <div class="buddy-composer-actions">
+        <span id="buddy-route-status">Ready to route across every verified specialist.</span>
+        <button id="buddy-send" class="buddy-send-button" type="button">Send</button>
+      </div>
+    </section>
+
+    <div id="buddy-starters" class="buddy-starters" aria-label="Plan setup choices" hidden>
+      <button type="button" data-buddy-launcher="prototype">Build a prototype</button>
+      <button type="button" data-buddy-launcher="movie">Make a movie</button>
+      <button type="button" data-buddy-launcher="simulation">Build a simulation game</button>
+      <button type="button" data-buddy-launcher="connection">Connect an app</button>
+      <button type="button" data-buddy-launcher="domain">Launch a domain</button>
+      <button type="button" data-buddy-launcher="specialist">Choose a specialist</button>
+      <button type="button" data-buddy-launcher="government">Find government help</button>
+      <button type="button" data-buddy-launcher="models">Compare coding models</button>
+      <button type="button" data-buddy-launcher="discover">Help me figure it out</button>
+      <button type="button" data-buddy-launcher="search">Search the web</button>
+      <button type="button" data-buddy-launcher="customize">Customize Buddy</button>
+      <button type="button" data-buddy-launcher="workspace">Group apps and tasks</button>
+      <button type="button" data-buddy-launcher="sales-team">Build a sales department</button>
+      <button type="button" data-buddy-launcher="opportunity">Find paid work</button>
+      <button type="button" data-buddy-launcher="payments">Set up payments</button>
+      <button type="button" data-buddy-launcher="practice">Practice a role</button>
+      <button type="button" data-buddy-launcher="benchmark">Benchmark a bot</button>
     </div>
 
-    <div id="selected-bot-route" class="studio-guardrail" hidden></div>
-  </aside>
+    <p class="buddy-trust-line">Repository preview linked to <a href="https://github.com/DreamCo-Technologies/Dreamcobots" target="_blank" rel="noopener">DreamCo-Technologies/Dreamcobots</a>. Buddy can prepare and route work locally. Account, payment, outreach, publishing, and external write actions require an authenticated backend and your exact approval.</p>
+  </main>
 
-  <section class="buddy-chat-home">
-    <div class="buddy-topbar">
+  <dialog id="setup-dialog" class="buddy-setup-dialog" aria-labelledby="setup-title">
+    <header>
       <div>
-        <div class="hero-badge buddy-status-pill"><span></span> Buddy interface ready · repository preview</div>
-        <h1>What should Buddy build today?</h1>
-        <p>Code, debug, design bots, build simulations, compare models, and keep DreamCo moving from one command screen.</p>
+        <p id="setup-eyebrow">Buddy setup workspace</p>
+        <h2 id="setup-title">Configure a task</h2>
       </div>
-      <div class="buddy-top-actions">
-        <a href="dashboard.html" class="btn btn-outline btn-sm">Dashboard</a>
-        <a href="bots.html" class="btn btn-outline btn-sm">Bot Fleet</a>
-      </div>
+      <button id="setup-close" type="button">Close</button>
+    </header>
+    <div class="buddy-repository-strip">
+      <span><strong>GitHub connected</strong><small>DreamCo-Technologies/Dreamcobots</small></span>
+      <nav aria-label="Repository links">
+        <a id="setup-repository" href="https://github.com/DreamCo-Technologies/Dreamcobots" target="_blank" rel="noopener">Repository</a>
+        <a href="https://github.com/DreamCo-Technologies/Dreamcobots/actions" target="_blank" rel="noopener">Actions</a>
+        <a href="https://github.com/DreamCo-Technologies/Dreamcobots/issues" target="_blank" rel="noopener">Issues</a>
+        <a href="https://github.com/DreamCo-Technologies/Dreamcobots/pulls" target="_blank" rel="noopener">Pull requests</a>
+      </nav>
     </div>
-
-    <div class="buddy-chat-stage">
-      <div class="buddy-message buddy-message-bot">
-        <div class="buddy-avatar">B</div>
-        <div class="buddy-bubble">
-          <strong>Buddy</strong>
-          <p>I can prepare and route task packets from this public preview. DreamCo's native bot code is the first route, with free/local model resources as optional backup. Live execution, money, account, outreach, deploy, and personal-data actions require an approved backend and human confirmation.</p>
-          <div data-buddy-status-badges>
-            <span class="badge badge-green">Native-first</span>
-            <span class="badge badge-primary">Free backup</span>
-            <span class="badge badge-amber">Approval gates</span>
-          </div>
-        </div>
+    <section class="buddy-setup-section" aria-labelledby="setup-options-title">
+      <div class="buddy-setup-section-heading">
+        <div><p>Top setup choices</p><h3 id="setup-options-title">Choose what Buddy should prepare</h3></div>
+        <span id="setup-count">0 of 30 selected</span>
       </div>
-
-      <div id="buddy-thread" class="buddy-thread">
-        <div class="buddy-message buddy-message-user muted">
-          <div class="buddy-bubble">Try: "Buddy, build me a client-ready lead-gen dashboard and test it."</div>
-        </div>
+      <div id="setup-options" class="buddy-setup-options"></div>
+    </section>
+    <section class="buddy-setup-section buddy-execution-section" aria-labelledby="setup-execution-title">
+      <div class="buddy-setup-section-heading">
+        <div><p>Execution</p><h3 id="setup-execution-title">Call the bot now or time the task</h3></div>
+        <a id="setup-workspace" href="buddy.html">Open full workspace</a>
       </div>
+      <div class="buddy-execution-tabs" role="group" aria-label="Execution timing">
+        <button class="active" type="button" data-execution-mode="now" aria-pressed="true">Call now</button>
+        <button type="button" data-execution-mode="schedule" aria-pressed="false">Schedule</button>
+      </div>
+      <div id="schedule-controls" class="buddy-schedule-controls" hidden>
+        <label>First run<input id="schedule-start" type="datetime-local" /></label>
+        <label>Repeat
+          <select id="schedule-cadence">
+            <option value="once">One time</option>
+            <option value="hourly">Every hour</option>
+            <option value="daily">Every day</option>
+            <option value="weekdays">Every weekday</option>
+            <option value="weekly">Every week</option>
+            <option value="monthly">Every month</option>
+            <option value="custom">Custom interval</option>
+          </select>
+        </label>
+        <label id="schedule-custom-label" hidden>Custom interval
+          <span class="buddy-interval-input"><input id="schedule-interval" type="number" min="15" max="525600" value="60" /><select id="schedule-unit"><option value="minutes">Minutes</option><option value="hours">Hours</option><option value="days">Days</option></select></span>
+        </label>
+        <label>End
+          <select id="schedule-end-mode">
+            <option value="until_stopped">Continue until I stop it</option>
+            <option value="on_date">On a date</option>
+            <option value="after_runs">After a number of runs</option>
+          </select>
+        </label>
+        <label id="schedule-end-date-label" hidden>End date<input id="schedule-end-date" type="date" /></label>
+        <label id="schedule-run-count-label" hidden>Maximum runs<input id="schedule-run-count" type="number" min="1" max="10000" value="10" /></label>
+        <label>Maximum per run
+          <select id="schedule-run-limit"><option value="900">15 minutes</option><option value="3600" selected>1 hour</option><option value="21600">6 hours</option><option value="86400">24 hours</option></select>
+        </label>
+      </div>
+      <p class="buddy-schedule-boundary">Forever means recurring until paused or cancelled, not one unbounded process. GitHub Pages can run safe local routing while this page is open. Running after the browser closes requires the owner-controlled local runner or authenticated scheduler.</p>
+    </section>
+    <footer class="buddy-setup-footer">
+      <span id="setup-status" aria-live="polite">Choose one or more setup options.</span>
+      <button id="setup-run" class="buddy-send-button" type="button">Call specialist now</button>
+    </footer>
+  </dialog>
+
+  <dialog id="task-dialog" class="buddy-task-dialog" aria-labelledby="task-title">
+    <header>
+      <div><p>Owner-controlled work</p><h2 id="task-title">Current tasks</h2></div>
+      <button id="task-close" type="button">Close</button>
+    </header>
+    <form id="task-create-form" class="buddy-task-create-form">
+      <label for="task-objective">Add a task</label>
+      <textarea id="task-objective" rows="3" maxlength="2000" required placeholder="Describe the result Buddy should produce..."></textarea>
+      <div>
+        <label for="task-mode">Mode
+          <select id="task-mode"><option>Build</option><option>Fix</option><option>Create</option><option>Plan</option><option>Discover</option></select>
+        </label>
+        <button class="buddy-send-button" type="submit">Add task</button>
+      </div>
+    </form>
+    <div class="buddy-task-toolbar">
+      <strong id="task-summary">No current tasks</strong>
+      <label for="task-filter">Status
+        <select id="task-filter"><option value="current">Current</option><option value="all">All</option><option value="queued">Queued</option><option value="working">Working</option><option value="ready_for_review">Ready for review</option><option value="paused">Paused</option><option value="completed">Completed</option></select>
+      </label>
     </div>
+    <div id="task-list" class="buddy-task-list" aria-live="polite"></div>
+    <footer>Stored on this device. Completed history is bounded, and outside actions still require exact approval.</footer>
+  </dialog>
 
-    <section class="buddy-composer-panel">
-      <div class="buddy-mode-row">
-        <button class="buddy-mode active" data-mode="Build" onclick="selectBuddyMode(this)">Build</button>
-        <button class="buddy-mode" data-mode="Debug" onclick="selectBuddyMode(this)">Debug</button>
-        <button class="buddy-mode" data-mode="Vibe Code" onclick="selectBuddyMode(this)">Vibe Code</button>
-        <button class="buddy-mode" data-mode="Simulation" onclick="selectBuddyMode(this)">Simulation</button>
-        <button class="buddy-mode" data-mode="Creative Studio" onclick="selectBuddyMode(this)">Media Studio</button>
-        <button class="buddy-mode" data-mode="Research" onclick="selectBuddyMode(this)">Research</button>
-        <button class="buddy-mode" data-mode="Agent" onclick="selectBuddyMode(this)">Agent</button>
+  <dialog id="schedule-dialog" class="buddy-schedule-dialog" aria-labelledby="schedule-title">
+    <header>
+      <div><p>Owner-controlled task queue</p><h2 id="schedule-title">Buddy schedules</h2></div>
+      <button id="schedule-close" type="button">Close</button>
+    </header>
+    <div class="buddy-schedule-summary">
+      <strong id="schedule-summary">No schedules on this device</strong>
+      <span>Stored locally. External actions are never pre-approved.</span>
+    </div>
+    <div id="schedule-list" class="buddy-schedule-list"></div>
+    <footer>Recurring tasks can continue without an end date when a local or hosted scheduler is running. Each run remains bounded and reviewable.</footer>
+  </dialog>
+
+  <dialog id="specialist-dialog" class="buddy-specialist-dialog" aria-labelledby="specialist-title">
+    <header>
+      <div>
+        <p>Buddy specialist fleet</p>
+        <h2 id="specialist-title">Choose or test a specialist</h2>
       </div>
-      <div class="buddy-composer">
-        <textarea id="buddy-input" rows="5" placeholder="Message Buddy... build an app, fix code, make a simulation, test a bot, compare models, or prepare a client demo." onkeydown="if(event.key==='Enter'&&(event.metaKey||event.ctrlKey)){sendBuddyPrompt();event.preventDefault()}"></textarea>
-        <div class="buddy-composer-footer">
-          <span>Mode: <strong id="current-mode">Build</strong> · Cmd+Enter to send · Safe actions first</span>
-          <button class="btn btn-primary" onclick="sendBuddyPrompt()">Send to Buddy</button>
+      <button id="specialist-close" type="button">Close</button>
+    </header>
+    <label class="sr-only" for="specialist-search">Search specialists and capabilities</label>
+    <input id="specialist-search" type="search" placeholder="Try games, real estate, music, coding, or contracts" autocomplete="off" />
+    <div id="specialist-results" class="buddy-specialist-results" aria-live="polite"></div>
+    <footer id="specialist-summary">Loading verified specialists.</footer>
+  </dialog>
+
+  <dialog id="local-dialog" class="buddy-local-dialog" aria-labelledby="local-title">
+    <header>
+      <div>
+        <p>Permissioned local workspace</p>
+        <h2 id="local-title">Buddy on this laptop</h2>
+      </div>
+      <button id="local-close" type="button">Close</button>
+    </header>
+    <div class="buddy-local-status-row">
+      <span id="local-status-dot" class="buddy-local-dot"></span>
+      <div><strong id="local-status">Checking local bridge</strong><small id="local-status-detail">Buddy only opens visible, approved targets.</small></div>
+      <button id="local-pause" class="buddy-local-icon-button" type="button" title="Pause or resume local actions">Pause</button>
+    </div>
+    <section class="buddy-local-section">
+      <h3>Search in a browser</h3>
+      <div class="buddy-local-grid">
+        <label>Browser<select id="local-browser"><option value="system">System default</option><option value="safari">Safari</option><option value="chrome">Chrome</option><option value="firefox">Firefox</option><option value="edge">Edge</option><option value="brave">Brave</option><option value="arc">Arc</option></select></label>
+        <label>Search engine<select id="local-engine"><option value="duckduckgo">DuckDuckGo</option><option value="google">Google</option><option value="bing">Bing</option><option value="brave">Brave Search</option></select></label>
+      </div>
+      <label class="buddy-local-query">What should Buddy search for?<input id="local-query" type="search" maxlength="500" placeholder="Find official documentation for..." autocomplete="off" /></label>
+      <label class="buddy-local-approval"><input id="local-approval" type="checkbox" /> Open this one approved search. Do not type, click, sign in, or submit anything else.</label>
+      <button id="local-search" class="buddy-send-button" type="button">Search now</button>
+    </section>
+    <section class="buddy-local-section">
+      <h3>Open an app</h3>
+      <div class="buddy-local-app-row">
+        <select id="local-app" aria-label="Approved local app"><option value="finder">Finder</option><option value="notes">Notes</option><option value="calendar">Calendar</option><option value="mail">Mail</option><option value="safari">Safari</option><option value="chrome">Chrome</option><option value="firefox">Firefox</option><option value="edge">Edge</option><option value="brave">Brave</option><option value="arc">Arc</option></select>
+        <button id="local-app-open" class="buddy-header-link" type="button">Open once</button>
+      </div>
+      <p>Launching an app does not grant Buddy permission to read it, type in it, or control it.</p>
+    </section>
+    <section class="buddy-local-section">
+      <h3>Open a grouped workspace</h3>
+      <label class="buddy-local-query">Workspace name<input id="local-workspace-title" maxlength="120" value="DreamCo work session" /></label>
+      <label class="buddy-local-query">Approved apps
+        <select id="local-workspace-apps" multiple size="4">
+          <option value="finder">Finder</option><option value="notes">Notes</option><option value="calendar">Calendar</option><option value="mail">Mail</option><option value="safari">Safari</option><option value="chrome">Chrome</option><option value="firefox">Firefox</option><option value="edge">Edge</option><option value="brave">Brave</option><option value="arc">Arc</option>
+        </select>
+      </label>
+      <label class="buddy-local-query">Approved HTTPS or loopback pages<textarea id="local-workspace-urls" rows="3" maxlength="8192" placeholder="https://github.com/DreamCo-Technologies/Dreamcobots&#10;http://127.0.0.1:8765/buddy.html"></textarea></label>
+      <label class="buddy-local-approval"><input id="local-workspace-approval" type="checkbox" /> Open only these visible targets once. Do not read, type, click, sign in, or submit.</label>
+      <button id="local-workspace-open" class="buddy-send-button" type="button">Open workspace</button>
+      <p>Maximum six apps and pages together. Each target is validated before anything opens.</p>
+    </section>
+    <section class="buddy-local-section buddy-local-audit-section">
+      <div class="buddy-local-audit-heading"><h3>Visible action log</h3><span>Memory only, last 50</span></div>
+      <div id="local-audit" class="buddy-local-audit">No local actions in this session.</div>
+    </section>
+    <footer><code>python3 tools/buddy_cli.py local-start</code><span>Run this from the repository to create a private laptop session.</span></footer>
+  </dialog>
+
+  <dialog id="boundary-dialog" class="buddy-boundary-dialog" aria-labelledby="boundary-title">
+    <header>
+      <div>
+        <p>Your Buddy, your working style</p>
+        <h2 id="boundary-title">Buddy preferences</h2>
+      </div>
+      <button id="boundary-close" type="button">Close</button>
+    </header>
+    <form id="boundary-form">
+      <div class="buddy-boundary-grid">
+        <label for="boundary-support">Professional support
+          <select id="boundary-support">
+            <option value="education_only">Explain and teach</option>
+            <option value="draft_and_prepare" selected>Draft and prepare</option>
+            <option value="collaborate_with_professional">Prepare for professional review</option>
+          </select>
+        </label>
+        <label for="boundary-risk">Risk detail
+          <select id="boundary-risk"><option value="summary">Summary</option><option value="detailed" selected>Detailed</option></select>
+        </label>
+        <label for="boundary-approval">Approval style
+          <select id="boundary-approval"><option value="review_every_step">Review every step</option><option value="confirm_each_external_action" selected>Confirm each outside action</option></select>
+        </label>
+        <label for="boundary-money">Money actions
+          <select id="boundary-money"><option value="plan_only" selected>Plan only</option><option value="prepare_for_exact_approval">Prepare for exact approval</option></select>
+        </label>
+        <label for="boundary-communication">Conversation style
+          <select id="boundary-communication"><option value="concise">Concise</option><option value="conversational" selected>Conversational</option><option value="coach">Coach me</option></select>
+        </label>
+        <label for="boundary-depth">Learning depth
+          <select id="boundary-depth"><option value="brief">Brief</option><option value="standard" selected>Standard</option><option value="teaching">Teach every step</option></select>
+        </label>
+      </div>
+      <label class="buddy-boundary-check"><input id="boundary-tone" type="checkbox" /> Adapt pace and warmth from my voice cues with consent. Do not diagnose emotion or mental health.</label>
+      <section class="buddy-behavior-profile" aria-labelledby="behavior-profile-title">
+        <div class="buddy-behavior-heading">
+          <div><p>Communication behavior</p><h3 id="behavior-profile-title">Personality and working style</h3></div>
+          <button id="behavior-reset" type="button">Reset</button>
         </div>
+        <div id="behavior-trait-groups"></div>
+        <details class="buddy-self-report">
+          <summary>Optional self-report psychology dimensions</summary>
+          <p>Set only by you. Buddy does not infer, diagnose, or use these values for employment, credit, housing, medical, insurance, or other eligibility decisions.</p>
+          <div id="behavior-self-report"></div>
+        </details>
+      </section>
+      <div class="buddy-boundary-floor">
+        <strong>Always on</strong>
+        <p>Buddy never claims a licensed role, hides material risk, diagnoses or prescribes, represents a user in court, or moves money and changes accounts without exact approval.</p>
       </div>
-      <div class="buddy-prompt-chips">
-        <button onclick="loadPrompt('Build a full customer demo app with auth, dashboard, database plan, tests, and deployment checklist.')">Full app</button>
-        <button onclick="loadPrompt('Debug my Actions page and explain every failed workflow like a sellable debugging system.')">Debug actions</button>
-        <button onclick="loadPrompt('Create a 3D learning simulation and package it as a client-ready prototype.')">3D simulation</button>
-        <button onclick="openStudio('game')">Code a game</button>
-        <button onclick="openStudio('school_simulation')">School simulation</button>
-        <button onclick="openStudio('parent_learning_video')">Learning video</button>
-        <button onclick="loadPrompt('Route this task through native DreamCo bots first, then cheapest free model fallback.')">Route task</button>
-        <button onclick="loadPrompt('Finish the next bot in the completion sprint and add a smoke test.')">Finish bot</button>
-        <button onclick="location.href='calculator.html'">Open calculators</button>
-        <button onclick="location.href='install.html'">Install or publish</button>
-        <button onclick="location.href='leads.html'">Plan lead outreach</button>
+      <div class="buddy-boundary-actions">
+        <button id="boundary-save" class="buddy-send-button" type="submit">Save preferences</button>
+        <span id="boundary-status" aria-live="polite">Stored only in this browser.</span>
       </div>
-    </section>
+    </form>
+  </dialog>
 
-    <section class="buddy-home-grid">
-      <div class="card">
-        <h3>Native Routes</h3>
-        <p style="font-size:.86rem;margin:6px 0 14px">Buddy chooses your local bot code before optional model help.</p>
-        <div data-buddy-native-routes></div>
-      </div>
-      <div class="card">
-        <h3>Completion Sprint</h3>
-        <p style="font-size:.86rem;margin:6px 0 14px">What still needs coding, tests, or interface cleanup.</p>
-        <div data-buddy-completion-queue></div>
-      </div>
-    </section>
-  </section>
-</main>
-
-<script>
-let buddyMode = 'Build';
-let selectedBotName = '';
-
-function selectBuddyMode(button) {
-  document.querySelectorAll('.buddy-mode').forEach((item) => item.classList.remove('active'));
-  button.classList.add('active');
-  buddyMode = button.dataset.mode || 'Build';
-  document.getElementById('current-mode').textContent = buddyMode;
-  document.getElementById('buddy-input').placeholder = 'Mode: ' + buddyMode + ' — tell Buddy exactly what you want done...';
-}
-
-function loadPrompt(prompt) {
-  const input = document.getElementById('buddy-input');
-  input.value = prompt;
-  input.focus();
-}
-
-function openStudio(type) {
-  location.href = 'studio.html?type=' + encodeURIComponent(type);
-}
-
-function sendBuddyPrompt() {
-  const input = document.getElementById('buddy-input');
-  const thread = document.getElementById('buddy-thread');
-  const value = input.value.trim();
-  if (!value) return;
-  const user = document.createElement('div');
-  user.className = 'buddy-message buddy-message-user';
-  user.innerHTML = '<div class="buddy-bubble"></div>';
-  user.querySelector('.buddy-bubble').textContent = value;
-  const bot = document.createElement('div');
-  bot.className = 'buddy-message buddy-message-bot';
-  bot.innerHTML = `
-    <div class="buddy-avatar">B</div>
-    <div class="buddy-bubble">
-      <strong>Buddy task packet ready</strong>
-      <p></p>
-      <div class="buddy-inline-actions">
-        <a class="btn btn-primary btn-sm" href="studio.html">Open Creative Studio</a>
-        <a class="btn btn-outline btn-sm" href="dashboard.html">View dashboard</a>
-        <a class="btn btn-outline btn-sm" href="bots.html">Pick bot</a>
-      </div>
-    </div>`;
-  bot.querySelector('p').textContent = `I prepared this as a ${buddyMode} task${selectedBotName ? ` routed to ${selectedBotName}` : ''}: repository profile first, configured tools second, and approval gates for live actions. This public page creates a task packet; authenticated backend execution must still be deployed and configured.`;
-  thread.appendChild(user);
-  thread.appendChild(bot);
-  input.value = '';
-  bot.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-}
-
-const params = new URLSearchParams(location.search);
-if (params.get('prompt')) loadPrompt(decodeURIComponent(params.get('prompt')));
-
-fetch('data/bot-fleet-catalog.json', { cache: 'no-store' })
-  .then(response => response.ok ? response.json() : Promise.reject(new Error('catalog unavailable')))
-  .then(catalog => {
-    const summary = catalog.summary;
-    document.querySelector('[data-fleet-stat="profiles"]').textContent = summary.profiles.toLocaleString();
-    document.querySelector('[data-fleet-stat="routes"]').textContent = summary.runtime_routed_profiles.toLocaleString();
-    document.querySelector('[data-fleet-stat="runtime"]').textContent = summary.executable_runtime_instances_evidenced.toLocaleString();
-    document.querySelector('[data-fleet-stat="apis"]').textContent = summary.configured_external_apis_evidenced.toLocaleString();
-    const slug = params.get('bot');
-    if (!slug) return;
-    const selected = catalog.bots.find(bot => bot.identity.slug === slug);
-    if (!selected) return;
-    selectedBotName = selected.identity.display_name;
-    const route = document.getElementById('selected-bot-route');
-    route.hidden = false;
-    route.textContent = `Selected route: ${selected.identity.display_name} (${selected.identity.division}). Sandbox blueprint and Buddy route are verified; live adapters remain approval-gated.`;
-  })
-  .catch(() => {});
-
-fetch('data/bot-fleet-e2e.json', { cache: 'no-store' })
-  .then(response => response.ok ? response.json() : Promise.reject(new Error('certification unavailable')))
-  .then(report => {
-    document.querySelector('[data-fleet-stat="e2e"]').textContent = report.summary.sandboxCertified.toLocaleString();
-  })
-  .catch(() => {});
-
-fetch('data/bot-calculators.json', { cache: 'no-store' })
-  .then(response => response.ok ? response.json() : Promise.reject(new Error('calculator registry unavailable')))
-  .then(registry => {
-    document.querySelector('[data-fleet-stat="calculators"]').textContent = registry.summary.calculators.toLocaleString();
-  })
-  .catch(() => {});
-</script>
+  <script src="data/buddy-routing-index.js"></script>
+  <script src="data/buddy-model-router.js"></script>
+  <script src="data/buddy-capability-certifications.js"></script>
+  <script src="data/buddy-workforce-system.js?v=23"></script>
+  <script src="data/buddy-setup-catalog.js?v=24"></script>
+  <script src="data/buddy-communication-behavior.js?v=26"></script>
+  <script src="buddy.js?v=26" defer></script>
 </body>
 </html>

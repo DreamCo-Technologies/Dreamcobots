@@ -202,10 +202,12 @@ function BuddySuperpowersPanel({ onInjectPrompt }: { onInjectPrompt: (p: string)
       return `✅ Council active! ${d.total} pending proposals\n\n${(d.proposals ?? []).slice(0, 2).map((p: any) => `• [${p.priority.toUpperCase()}] ${p.title}`).join("\n")}`;
     },
     "Voice Cloning": async () => {
-      const r = await fetch("/api/voice/clone", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ text: "Hello" }) });
+      const r = await fetch("/api/buddy/media/engines");
       const d = await r.json() as any;
-      if (r.status === 503) return `⚠️ Needs setup: ${d.setup}`;
-      if (r.ok) return "✅ Voice cloning live!";
+      if (r.ok) {
+        const voiceEngines = (d.engines ?? []).filter((engine: any) => engine.modalities?.some((item: string) => item.includes("voice")));
+        return `✅ ${voiceEngines.length} local voice adapters cataloged. Rendering remains consent-gated and requires an installed model plus benchmark evidence.`;
+      }
       return `❌ ${d.error}`;
     },
     "Image Generation": async () => {

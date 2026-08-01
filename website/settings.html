@@ -56,9 +56,9 @@
       <div id="autonomy" class="card card-lg" style="display:none">
         <h3 style="margin-bottom:20px">⚡ Autonomy Mode</h3>
         <div style="display:flex;flex-direction:column;gap:12px">
-          <label style="display:flex;align-items:center;gap:14px;padding:16px;border-radius:12px;border:2px solid var(--border);cursor:pointer" onclick="selectMode(this)"><input type="radio" name="autonomy" value="guided" /> <div><strong>🎮 Guided</strong><div style="font-size:.8rem;color:var(--text3)">Manual approval for all actions</div></div><span class="badge badge-gray" style="margin-left:auto">Free+</span></label>
+          <label style="display:flex;align-items:center;gap:14px;padding:16px;border-radius:12px;border:2px solid var(--green);background:rgba(34,197,94,.06);cursor:pointer" onclick="selectMode(this)"><input type="radio" name="autonomy" value="guided" checked /> <div><strong>🎮 Guided</strong><div style="font-size:.8rem;color:var(--text3)">Review every step and approve each outside action</div></div><span class="badge badge-green" style="margin-left:auto">DEFAULT</span></label>
           <label style="display:flex;align-items:center;gap:14px;padding:16px;border-radius:12px;border:2px solid var(--border);cursor:pointer" onclick="selectMode(this)"><input type="radio" name="autonomy" value="semi" /> <div><strong>⚡ Semi-Autonomous</strong><div style="font-size:.8rem;color:var(--text3)">Low-risk tasks auto-execute</div></div><span class="badge badge-amber" style="margin-left:auto">Pro+</span></label>
-          <label style="display:flex;align-items:center;gap:14px;padding:16px;border-radius:12px;border:2px solid var(--green);background:rgba(34,197,94,.06);cursor:pointer" onclick="selectMode(this)"><input type="radio" name="autonomy" value="full" checked /> <div><strong>🚀 Full Autonomy</strong><div style="font-size:.8rem;color:var(--text3)">24/7 autonomous operations</div></div><span class="badge badge-green" style="margin-left:auto">● ACTIVE</span></label>
+          <label style="display:flex;align-items:center;gap:14px;padding:16px;border-radius:12px;border:2px solid var(--border);cursor:pointer" onclick="selectMode(this)"><input type="radio" name="autonomy" value="full" /> <div><strong>🚀 Business Operations</strong><div style="font-size:.8rem;color:var(--text3)">Schedule reversible local work; money, outreach, publishing, and accounts still need exact approval</div></div><span class="badge badge-gray" style="margin-left:auto">Runner required</span></label>
         </div>
         <a href="autonomy.html" class="btn btn-outline btn-sm" style="margin-top:16px">Full Autonomy Settings →</a>
       </div>
@@ -166,7 +166,7 @@ function switchTab(id, btn) {
 }
 function exportAlert(type) { alert('In the live app, this exports your ' + type + ' as JSON. Launch the app to access real exports.'); }
 function deleteAlert() { if(confirm('This would delete all your Empire OS data. Are you sure?')) alert('Connect to the live app to manage data.'); }
-function copyInfo() { navigator.clipboard?.writeText('DreamCo Empire OS v1.0.0 · 1,051 bots · 45 divisions · Full Autonomy'); }
+function copyInfo() { navigator.clipboard?.writeText('DreamCo Empire OS v1.0.0 · 1,051 bots · 45 divisions · Guided mode'); }
 function exportData() { exportAlert('all data'); }
 function selectMode(el) { document.querySelectorAll('label[onclick]').forEach(l => { l.style.borderColor='var(--border)'; l.style.background=''; }); el.style.borderColor='var(--green)'; el.style.background='rgba(34,197,94,.06)'; }
 function setTheme(t, el) { document.querySelectorAll('[onclick^="setTheme"]').forEach(c => { c.style.borderColor='var(--border)'; c.style.background=''; c.style.borderWidth='1px'; }); el.style.borderColor='var(--primary)'; el.style.background='rgba(79,142,247,.06)'; el.style.borderWidth='2px'; }
