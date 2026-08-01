@@ -156,6 +156,18 @@
         </div>
       </fieldset>
 
+      <fieldset class="studio-fieldset">
+        <legend>Media quality lab</legend>
+        <label class="studio-label" for="media-quality-mode">Candidate strategy</label>
+        <select id="media-quality-mode" class="studio-input">
+          <option value="highest_quality">Highest quality</option>
+          <option value="balanced">Balanced</option>
+          <option value="fast_preview">Fast preview</option>
+        </select>
+        <p id="media-quality-summary" class="studio-status">Buddy will compare several local candidates and keep only an evidence-backed winner.</p>
+        <p class="studio-guardrail">A named provider comparison is a benchmark target, not a quality claim. Buddy must pass identical fixtures, blind review, statistical confidence, rights, and regression gates before it can claim an advantage.</p>
+      </fieldset>
+
       <fieldset id="consent-controls" class="studio-fieldset" hidden>
         <legend>Consent</legend>
         <label class="studio-label" for="media-source-type">Identity source</label>
@@ -225,7 +237,8 @@
 
 <script src="data/buddy-specialized-hubs.js"></script>
 <script src="data/buddy-production-group.js?v=16"></script>
-<script src="data/buddy-local-media-engines.js?v=18"></script>
-<script src="studio.js?v=18"></script>
+<script src="data/buddy-local-media-engines.js?v=19"></script>
+<script src="data/buddy-media-quality-lab.js?v=19"></script>
+<script src="studio.js?v=19"></script>
 </body>
 </html>

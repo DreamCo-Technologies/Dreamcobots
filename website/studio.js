@@ -31,6 +31,8 @@ const simulationFidelity = document.getElementById('simulation-fidelity');
 const simulationPaint = document.getElementById('simulation-paint');
 const simulationAdditions = document.getElementById('simulation-additions');
 const simulationToGame = document.getElementById('simulation-to-game');
+const mediaQualityMode = document.getElementById('media-quality-mode');
+const mediaQualitySummary = document.getElementById('media-quality-summary');
 
 let mediaRecorder = null;
 let mediaStream = null;
@@ -48,9 +50,33 @@ const productionRegistry = window.BUDDY_PRODUCTION_GROUP;
 const hollywoodGroup = productionRegistry?.hollywood_production_group;
 const simulationFoundry = productionRegistry?.simulation_foundry;
 const mediaRegistry = window.BUDDY_LOCAL_MEDIA_ENGINES || { engines: [], benchmark_suites: [], policy: {} };
+const mediaQualityRegistry = window.BUDDY_MEDIA_QUALITY_LAB || { quality_modes: {}, fixture_sets: [], hard_release_gates: [], scorecards: {} };
 
 function mediaEngineById(id) {
   return mediaRegistry.engines.find(engine => engine.id === id) || null;
+}
+
+function qualityEngineIds() {
+  const ids = [];
+  const commercial = document.getElementById('commercial-media-use').checked;
+  if (useVoice.checked) {
+    ids.push(...mediaRegistry.engines
+      .filter(engine => engine.identity_replication
+        && engine.modalities.some(modality => ['voice_replication', 'cross_lingual_speech', 'multilingual_speech', 'expressive_speech', 'voice_style'].includes(modality))
+        && engine.commercial_status.startsWith('eligible'))
+      .map(engine => engine.id));
+    const preferred = mediaEngineById(voiceEngine.value);
+    if (preferred && (!commercial || preferred.commercial_status.startsWith('eligible'))) ids.push(preferred.id);
+  }
+  if (useImage.checked) {
+    ids.push(...mediaRegistry.engines
+      .filter(engine => engine.modalities.some(modality => ['identity_preserving_image', 'character_variation', 'portrait_animation', 'lip_sync'].includes(modality))
+        && (!commercial || engine.commercial_status.startsWith('eligible')))
+      .map(engine => engine.id));
+    const preferred = mediaEngineById(imageEngine.value);
+    if (preferred && (!commercial || preferred.commercial_status.startsWith('eligible'))) ids.push(preferred.id);
+  }
+  return [...new Set(ids.filter(Boolean))];
 }
 
 function populateEngineSelect(select, modalities, preferredId) {
@@ -74,6 +100,23 @@ function personalityTraits() {
 
 populateEngineSelect(voiceEngine, ['voice_replication', 'speech_synthesis', 'cross_lingual_speech', 'expressive_speech'], 'chatterbox-local');
 populateEngineSelect(imageEngine, ['identity_preserving_image', 'portrait_animation', 'lip_sync'], 'pulid-local');
+
+function updateMediaQualitySummary() {
+  const mode = mediaQualityRegistry.quality_modes?.[mediaQualityMode.value];
+  if (!mode) {
+    mediaQualitySummary.textContent = 'Media quality catalog is unavailable.';
+    return;
+  }
+  const engineIds = qualityEngineIds();
+  const total = engineIds.length * mode.candidate_count_per_engine;
+  mediaQualitySummary.textContent = engineIds.length
+    ? `${total} local candidates across ${engineIds.length} engine${engineIds.length === 1 ? '' : 's'} · ${mode.repetitions_per_fixture} measurement runs per fixture · ${mode.release_eligible ? 'release evaluation enabled' : 'preview only'}`
+    : `${mode.candidate_count_per_engine} candidates per selected local engine · enable voice or likeness to create a quality plan`;
+}
+
+mediaQualityMode.addEventListener('change', updateMediaQualitySummary);
+[voiceEngine, imageEngine, document.getElementById('commercial-media-use')]
+  .forEach(control => control.addEventListener('change', updateMediaQualitySummary));
 document.querySelectorAll('[data-trait]').forEach(input => input.addEventListener('input', () => {
   const output = document.querySelector(`[data-trait-output="${input.dataset.trait}"]`);
   if (output) output.value = input.value;
@@ -273,6 +316,7 @@ function updateMediaControls() {
   voiceControls.hidden = !useVoice.checked;
   imageControls.hidden = !useImage.checked;
   consentControls.hidden = !useVoice.checked && !useImage.checked;
+  updateMediaQualitySummary();
 }
 
 function setTypeFromQuery() {
@@ -705,6 +749,31 @@ form.addEventListener('submit', async event => {
       } : null,
       truth_boundary: simulationFoundry?.truth_boundary || 'Measured evidence and qualified review remain required.',
     } : null;
+    const qualityMode = mediaQualityRegistry.quality_modes?.[mediaQualityMode.value] || {
+      candidate_count_per_engine: 1,
+      repetitions_per_fixture: 1,
+      release_eligible: false,
+    };
+    const requestedQualityModalities = [useVoice.checked ? 'voice' : null, useImage.checked ? 'image' : null].filter(Boolean);
+    const plannedQualityEngines = qualityEngineIds();
+    const mediaQualityPlan = requestedQualityModalities.length ? {
+      schema: 'dreamco.buddy_media_candidate_plan.v1',
+      status: 'local_candidate_plan_ready',
+      quality_mode: mediaQualityMode.value,
+      candidate_count_per_engine: qualityMode.candidate_count_per_engine,
+      repetitions_per_fixture: qualityMode.repetitions_per_fixture,
+      release_eligible_mode: qualityMode.release_eligible,
+      preferred_engines: [useVoice.checked ? voiceEngine.value : null, useImage.checked ? imageEngine.value : null].filter(Boolean),
+      candidate_engines: plannedQualityEngines,
+      total_candidates: plannedQualityEngines.length * qualityMode.candidate_count_per_engine,
+      fixture_sets: mediaQualityRegistry.fixture_sets.filter(item => requestedQualityModalities.includes(item.modality)),
+      scorecards: Object.fromEntries(requestedQualityModalities.map(modality => [modality, mediaQualityRegistry.scorecards[modality]])),
+      hard_release_gates: mediaQualityRegistry.hard_release_gates,
+      result_state: 'not_run',
+      comparison_claim_allowed: false,
+      paid_provider_required: false,
+      raw_media_uploaded: false,
+    } : null;
     latestPacket = {
       schema: 'dreamco.buddy_creative_studio_project.v1',
       project_type: type,
@@ -760,6 +829,7 @@ form.addEventListener('submit', async event => {
           ? ['model rights and provenance', 'units and scale', 'legal actions', 'safe failure and reset', 'deterministic replay', 'known limits', 'accessibility', 'qualified review', 'bot playtest', 'no live machine control']
         : ['offline load', 'touch and keyboard', 'captions', 'restart and recovery', 'learning objective', 'no live external action'],
       media_benchmarks: mediaRegistry.benchmark_suites,
+      media_quality_lab: mediaQualityPlan,
       media_policy: {
         paid_provider_required: false,
         raw_biometrics_leave_device_by_default: false,
@@ -787,7 +857,9 @@ form.addEventListener('submit', async event => {
     document.getElementById('result-code').textContent = 'Prototype ready';
     document.getElementById('result-voice').textContent = useVoice.checked ? 'Consent ready · engine needed' : 'Not requested';
     document.getElementById('result-image').textContent = useImage.checked ? 'Consent ready · license review needed' : 'Not requested';
-    document.getElementById('result-tests').textContent = SIMULATION_TYPES.has(type) ? '10 planned' : '6 planned';
+    document.getElementById('result-tests').textContent = mediaQualityPlan
+      ? `${mediaQualityPlan.total_candidates} candidates planned`
+      : SIMULATION_TYPES.has(type) ? '10 planned' : '6 planned';
     outputActions.hidden = false;
     document.getElementById('download-consent').disabled = !latestConsentReceipt;
     formStatus.textContent = rendererNeeded
