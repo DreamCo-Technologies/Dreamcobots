@@ -6,7 +6,7 @@
   <title>Buddy App Connections - DreamCo Empire OS</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="styles.css?v=40" />
+  <link rel="stylesheet" href="styles.css?v=41" />
 </head>
 <body>
 <div id="nav-placeholder"></div><script src="nav.js"></script>
@@ -22,21 +22,76 @@
   </header>
 
   <section class="connection-metrics" aria-label="Connection policy summary">
+    <div><strong id="access-connection-count">...</strong><span>Connection records</span></div>
     <div><strong id="auth-method-count">8</strong><span>Auth methods</span></div>
     <div><strong id="gate-count">7</strong><span>User gates</span></div>
-    <div><strong>0</strong><span>Secrets in browser</span></div>
-    <div><strong>Guided</strong><span>Default mode</span></div>
+    <div><strong id="access-secret-location-count">3</strong><span>Secret stores</span></div>
+    <div><strong id="access-live-count">0</strong><span>Verified live</span></div>
   </section>
 
   <nav class="connection-tabs" aria-label="Connection views">
-    <button class="settings-tab active" type="button" data-panel="catalog-panel">Catalog</button>
+    <button class="settings-tab active" type="button" data-panel="access-center-panel">Access center</button>
+    <button class="settings-tab" type="button" data-panel="catalog-panel">Catalog</button>
     <button class="settings-tab" type="button" data-panel="connect-panel">Connect app</button>
     <button class="settings-tab" type="button" data-panel="transfer-panel">Token handoff</button>
     <button class="settings-tab" type="button" data-panel="signup-panel">Sign-up queue</button>
     <button class="settings-tab" type="button" data-panel="audit-panel">Audit</button>
   </nav>
 
-  <section id="catalog-panel" class="connection-panel">
+  <section id="access-center-panel" class="connection-panel">
+    <header class="access-center-heading">
+      <div>
+        <div class="connections-kicker">Unified access inventory</div>
+        <h2>Connections, authentication &amp; secrets</h2>
+        <p id="access-center-summary">Loading the public-safe connection catalog.</p>
+      </div>
+      <div class="access-center-actions">
+        <button id="access-new-connection" class="btn btn-primary btn-sm" type="button">New connection</button>
+        <button id="access-store-secret" class="btn btn-outline btn-sm" type="button">Store a secret</button>
+        <button id="access-view-auth" class="btn btn-outline btn-sm" type="button">Authentication catalog</button>
+      </div>
+    </header>
+
+    <div class="access-toolbar">
+      <label for="access-search">Search
+        <input id="access-search" type="search" placeholder="App, method, storage, scope, or status" autocomplete="off" />
+      </label>
+      <label for="access-type">Record type
+        <select id="access-type">
+          <option value="all">All records</option>
+          <option value="connection">Connections</option>
+          <option value="authentication">Authentication</option>
+          <option value="secret">Secret storage</option>
+        </select>
+      </label>
+      <label for="access-status">Status
+        <select id="access-status">
+          <option value="all">All statuses</option>
+          <option value="ready">Ready</option>
+          <option value="planned">Planned</option>
+          <option value="action">User action</option>
+          <option value="configuration">Configuration required</option>
+        </select>
+      </label>
+      <span id="access-data-source" class="badge badge-gray">Static catalog</span>
+    </div>
+
+    <div class="access-table-wrap" tabindex="0" aria-label="Connections, authentication, and secret-reference inventory">
+      <table class="access-table">
+        <thead><tr><th scope="col">Type</th><th scope="col">Name</th><th scope="col">Method or storage</th><th scope="col">Access boundary</th><th scope="col">State</th></tr></thead>
+        <tbody id="access-registry"></tbody>
+      </table>
+    </div>
+    <p id="access-row-count" class="access-row-count" aria-live="polite"></p>
+
+    <div class="access-boundary-strip">
+      <div><strong>Connections</strong><span>Catalog profiles, local plans, and public backend records are labeled separately.</span></div>
+      <div><strong>Authentication</strong><span>User-presence and backend methods keep their exact approval and configuration state.</span></div>
+      <div><strong>Secrets</strong><span>Only storage classes and reference presence are shown. Credential values are never enumerated.</span></div>
+    </div>
+  </section>
+
+  <section id="catalog-panel" class="connection-panel" hidden>
     <div class="connection-section-heading">
       <div><span class="status-dot status-dot-ready"></span><strong>Authentication adapters</strong></div>
       <span id="catalog-status" class="badge badge-gray">Loading</span>
@@ -282,6 +337,6 @@
   </form>
 </dialog>
 
-<script src="connections.js?v=2" defer></script>
+<script src="connections.js?v=4" defer></script>
 </body>
 </html>

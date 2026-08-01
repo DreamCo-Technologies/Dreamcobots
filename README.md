@@ -144,6 +144,8 @@ The Buddy Success Center stores a 30-question, non-sensitive profile in the user
 
 The AI Organization Intelligence registry combines 94 normalized providers from the existing 200-target program with a dated 196-entry snapshot of the official AI Alliance directory. It maps declared strengths and common user jobs to 20 user-need categories and 15 benchmark dimensions while keeping membership, connectivity, and live evidence separate. Refresh with `python3 tools/generate_ai_organization_intelligence.py --refresh`; normal repository checks use the committed snapshot so builds do not depend on the network.
 
+App Connections includes an Access Center for connection profiles, public-safe backend records, browser-local setup plans, authentication methods, and governed secret-store metadata. It shows whether a secret reference exists but never reads, lists, or renders credential values. Raw secret intake remains limited to the approved loopback bridge and macOS Keychain workflow.
+
 The open AI watch claims no membership or endorsement and records zero live member benchmarks until evidence exists. Buddy's defensive security reviews require written owner authority and prohibit credential attacks, destructive payloads, denial of service, persistence, third-party targets, and access to real customer data. Public pages accept references only. The local Buddy bridge can place a user-approved key directly into macOS Keychain and returns only an `os_keychain:` reference; it never persists the raw value in browser storage, generated files, URLs, or audit logs. The Sales Academy uses synthetic role-play before any permissioned outreach workflow.
 
 ## 🌐 Live Website

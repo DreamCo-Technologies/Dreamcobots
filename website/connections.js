@@ -1,13 +1,19 @@
 (function () {
   'use strict';
 
-  const CATALOG_URL = 'data/buddy-connection-catalog.json';
+  const CATALOG_URL = 'data/buddy-connection-catalog.json?v=2';
   const AUDIT_KEY = 'dreamco.buddy.connection.audit.v1';
   const LOCK_KEY = 'dreamco.buddy.connection.locked.v1';
   const LOCAL_TOKEN_KEY = 'buddy-local-token';
   const SECRET_NAME = /^[A-Za-z][A-Za-z0-9_.:/-]{2,127}$/;
   const TOKEN_LIKE = /(?:github_pat_|gh[pousr]_|ghs_|(?:sk|rk)[-_](?:live|test)?|AIza[0-9A-Za-z_-]+|xox[baprs]-|Bearer\s+|BEGIN .*PRIVATE KEY)/i;
-  const state = { catalog: null, audit: loadAudit(), locked: localStorage.getItem(LOCK_KEY) === 'true' };
+  const state = {
+    catalog: null,
+    audit: loadAudit(),
+    locked: localStorage.getItem(LOCK_KEY) === 'true',
+    backendConnections: [],
+    backendReachable: false,
+  };
 
   const byId = (id) => document.getElementById(id);
 
@@ -24,6 +30,162 @@
     if (className) node.className = className;
     if (text !== undefined) node.textContent = text;
     return node;
+  }
+
+  function statusGroup(status) {
+    if (['adapter_ready', 'connected', 'sandbox_ready', 'ready'].includes(status)) return 'ready';
+    if (['planned', 'profile', 'reference_only'].includes(status)) return 'planned';
+    if (['user_handoff', 'user_action_required', 'local_bridge_required'].includes(status)) return 'action';
+    return 'configuration';
+  }
+
+  function statusBadgeClass(group) {
+    if (group === 'ready') return 'badge badge-green';
+    if (group === 'action') return 'badge badge-amber';
+    return 'badge badge-gray';
+  }
+
+  function authenticationLabel(id) {
+    return state.catalog?.auth_methods.find((method) => method.id === id)?.label || String(id || 'Not specified').replaceAll('_', ' ');
+  }
+
+  function accessRows() {
+    if (!state.catalog) return [];
+    const rows = [];
+    state.catalog.platform_profiles.forEach((profile) => {
+      rows.push({
+        id: `profile:${profile.id}`,
+        type: 'connection',
+        typeLabel: 'Connection',
+        name: profile.label,
+        source: 'Setup profile',
+        method: authenticationLabel(profile.auth_method),
+        boundary: `${profile.initial_access.replaceAll('_', ' ')} · ${(profile.default_scopes || []).join(', ') || 'provider minimum'}`,
+        status: 'profile',
+        statusLabel: 'Setup profile',
+      });
+    });
+    state.backendConnections.forEach((connection) => {
+      rows.push({
+        id: `backend:${connection.id}`,
+        type: 'connection',
+        typeLabel: 'Connection',
+        name: connection.name || connection.platform || 'Backend connection',
+        source: 'Backend record',
+        method: authenticationLabel(connection.authMethod),
+        boundary: `${String(connection.accessMode || 'read_only').replaceAll('_', ' ')} · ${String(connection.environment || 'staging')}`,
+        status: connection.status || 'planned',
+        statusLabel: String(connection.status || 'planned').replaceAll('_', ' '),
+      });
+    });
+    const localPlans = new Set();
+    state.audit.filter((event) => event.type === 'connection_plan').forEach((event) => {
+      const key = `${event.app}|${event.host}|${event.method}`;
+      if (localPlans.has(key)) return;
+      localPlans.add(key);
+      rows.push({
+        id: `local:${key}`,
+        type: 'connection',
+        typeLabel: 'Connection',
+        name: event.app || 'Local plan',
+        source: 'Browser-local plan',
+        method: String(event.method || 'planned').replaceAll('_', ' '),
+        boundary: event.host || 'Official host required',
+        status: 'planned',
+        statusLabel: 'Plan only',
+      });
+    });
+    state.catalog.auth_methods.forEach((method) => {
+      rows.push({
+        id: `authentication:${method.id}`,
+        type: 'authentication',
+        typeLabel: 'Authentication',
+        name: method.label,
+        source: method.user_presence ? 'User present' : 'Backend method',
+        method: method.secret_reference_required ? 'Secret reference required' : 'No secret reference',
+        boundary: method.description,
+        status: method.status,
+        statusLabel: statusLabel(method).replace('Adapter ready', 'Adapter contract ready'),
+      });
+    });
+    const localToken = sessionStorage.getItem(LOCAL_TOKEN_KEY) || '';
+    state.catalog.secret_stores.forEach((store) => {
+      const referenceCount = state.audit.filter((event) => event.secretStorage === store.id && event.secretReferenceConfigured === true).length;
+      const status = store.id === 'managed_vault' ? 'configuration_required' : store.id === 'os_keychain' && !localToken ? 'local_bridge_required' : 'reference_only';
+      rows.push({
+        id: `secret:${store.id}`,
+        type: 'secret',
+        typeLabel: 'Secret storage',
+        name: store.label,
+        source: `${referenceCount} browser-known reference${referenceCount === 1 ? '' : 's'}`,
+        method: 'Reference metadata only',
+        boundary: store.resolution_boundary,
+        status,
+        statusLabel: store.id === 'managed_vault' ? 'Backend required' : store.id === 'os_keychain' && !localToken ? 'Start local bridge' : 'Reference support ready',
+      });
+    });
+    return rows;
+  }
+
+  function renderAccessCenter() {
+    if (!state.catalog) return;
+    const allRows = accessRows();
+    const query = byId('access-search').value.trim().toLowerCase();
+    const type = byId('access-type').value;
+    const group = byId('access-status').value;
+    const filtered = allRows.filter((row) => {
+      const haystack = [row.typeLabel, row.name, row.source, row.method, row.boundary, row.statusLabel].join(' ').toLowerCase();
+      return (!query || haystack.includes(query)) && (type === 'all' || row.type === type) && (group === 'all' || statusGroup(row.status) === group);
+    });
+    const body = byId('access-registry');
+    body.replaceChildren();
+    filtered.forEach((row) => {
+      const tr = document.createElement('tr');
+      const typeCell = document.createElement('td');
+      typeCell.append(element('span', `access-type-tag access-type-${row.type}`, row.typeLabel));
+      const nameCell = document.createElement('td');
+      const nameCopy = element('div', 'access-name');
+      nameCopy.append(element('strong', '', row.name), element('span', '', row.source));
+      nameCell.append(nameCopy);
+      const methodCell = element('td', 'access-secondary', row.method);
+      const boundaryCell = element('td', 'access-secondary', row.boundary);
+      const stateCell = document.createElement('td');
+      stateCell.append(element('span', statusBadgeClass(statusGroup(row.status)), row.statusLabel));
+      tr.append(typeCell, nameCell, methodCell, boundaryCell, stateCell);
+      body.append(tr);
+    });
+    if (!filtered.length) {
+      const row = document.createElement('tr');
+      const cell = element('td', 'access-empty', 'No records match these filters.');
+      cell.colSpan = 5;
+      row.append(cell);
+      body.append(row);
+    }
+    const connectionRows = allRows.filter((row) => row.type === 'connection');
+    const liveConnections = state.backendConnections.filter((connection) => connection.status === 'connected').length;
+    byId('access-connection-count').textContent = connectionRows.length.toLocaleString();
+    byId('access-secret-location-count').textContent = state.catalog.secret_stores.length.toLocaleString();
+    byId('access-live-count').textContent = liveConnections.toLocaleString();
+    byId('access-row-count').textContent = `Showing ${filtered.length.toLocaleString()} of ${allRows.length.toLocaleString()} public-safe records.`;
+    byId('access-data-source').textContent = state.backendReachable ? 'Backend + catalog' : 'Static catalog + local plans';
+    byId('access-data-source').className = state.backendReachable ? 'badge badge-green' : 'badge badge-gray';
+    byId('access-center-summary').textContent = `${connectionRows.length.toLocaleString()} connection records, ${state.catalog.auth_methods.length} authentication methods, and ${state.catalog.secret_stores.length} secret-storage classes. ${liveConnections} backend connection${liveConnections === 1 ? '' : 's'} verified live. Credential values visible: 0.`;
+  }
+
+  async function loadBackendConnections() {
+    try {
+      const response = await fetch('/api/platform-connections', { cache: 'no-store', headers: { Accept: 'application/json' } });
+      if (!response.ok || !(response.headers.get('content-type') || '').includes('application/json')) return;
+      const payload = await response.json();
+      if (!Array.isArray(payload)) return;
+      state.backendConnections = payload.filter((item) => item && typeof item === 'object' && item.rawCredentialsExposed === false).slice(0, 250);
+      state.backendReachable = true;
+    } catch (_error) {
+      state.backendConnections = [];
+      state.backendReachable = false;
+    } finally {
+      renderAccessCenter();
+    }
   }
 
   function loadAudit() {
@@ -44,6 +206,7 @@
     state.audit = state.audit.slice(0, 40);
     saveAudit();
     renderAudit();
+    renderAccessCenter();
   }
 
   function officialUrl(raw) {
@@ -144,7 +307,15 @@
       byId('secret-provider').value = 'os_keychain';
       byId('secret-reference').value = validatedSecretReference(result.reference, 'os_keychain');
       setSecretIntakeStatus('Stored in macOS Keychain. Only the reference remains in this form.', true);
-      addAudit({ type: 'keychain_reference', app: byId('connection-app').value.trim() || 'Provider', host: 'local-keychain', method: 'os_keychain', status: 'stored' });
+      addAudit({
+        type: 'keychain_reference',
+        app: byId('connection-app').value.trim() || 'Provider',
+        host: 'local-keychain',
+        method: 'os_keychain',
+        status: 'stored',
+        secretStorage: 'os_keychain',
+        secretReferenceConfigured: true,
+      });
       window.setTimeout(closeSecretIntake, 650);
     } catch (error) {
       byId('secret-intake-value').value = '';
@@ -230,6 +401,12 @@
       row.append(copy);
       contractList.append(row);
     });
+    renderAccessCenter();
+  }
+
+  function activatePanel(panelId) {
+    document.querySelectorAll('[data-panel]').forEach((tab) => tab.classList.toggle('active', tab.dataset.panel === panelId));
+    document.querySelectorAll('.connection-panel').forEach((panel) => { panel.hidden = panel.id !== panelId; });
   }
 
   function applyPlatformProfile(profile) {
@@ -242,8 +419,7 @@
     if (method) byId('connection-method').value = method.id;
     byId('connection-scopes').value = (profile.default_scopes || []).join(', ');
     updateSecretFields();
-    document.querySelectorAll('[data-panel]').forEach(tab => tab.classList.toggle('active', tab.dataset.panel === 'connect-panel'));
-    document.querySelectorAll('.connection-panel').forEach(panel => { panel.hidden = panel.id !== 'connect-panel'; });
+    activatePanel('connect-panel');
     byId('connection-app').focus();
   }
 
@@ -267,8 +443,7 @@
     }
     if (state.catalog.auth_methods.some((item) => item.id === methodId)) byId('connection-method').value = methodId;
     updateSecretFields();
-    document.querySelectorAll('[data-panel]').forEach((tab) => tab.classList.toggle('active', tab.dataset.panel === 'connect-panel'));
-    document.querySelectorAll('.connection-panel').forEach((panel) => { panel.hidden = panel.id !== 'connect-panel'; });
+    activatePanel('connect-panel');
     byId('connection-app').focus();
   }
 
@@ -373,7 +548,15 @@
         : '';
 
       renderConnectionPlan({ app, url, resourceType, environment, accessMode, method, scopes, secretProvider, secretReference });
-      addAudit({ type: 'connection_plan', app, host: url.hostname, method: `${resourceType}:${method.id}`, status: 'user_action_required' });
+      addAudit({
+        type: 'connection_plan',
+        app,
+        host: url.hostname,
+        method: `${resourceType}:${method.id}`,
+        status: 'user_action_required',
+        secretStorage: method.secret_reference_required ? secretProvider : 'not_required',
+        secretReferenceConfigured: Boolean(secretReference),
+      });
     } catch (error) {
       setError('connection-error', error.message || 'Unable to prepare the connection plan.');
     }
@@ -538,6 +721,8 @@
     const button = byId('planner-lock');
     button.textContent = state.locked ? 'Unlock planner' : 'Lock planner';
     button.classList.toggle('connection-locked', state.locked);
+    byId('access-store-secret').disabled = state.locked;
+    byId('secret-intake-open').disabled = state.locked;
   }
 
   function toggleLock() {
@@ -556,10 +741,7 @@
 
   function wireTabs() {
     document.querySelectorAll('[data-panel]').forEach((button) => {
-      button.addEventListener('click', () => {
-        document.querySelectorAll('[data-panel]').forEach((tab) => tab.classList.toggle('active', tab === button));
-        document.querySelectorAll('.connection-panel').forEach((panel) => { panel.hidden = panel.id !== button.dataset.panel; });
-      });
+      button.addEventListener('click', () => activatePanel(button.dataset.panel));
     });
   }
 
@@ -569,6 +751,12 @@
     renderAudit();
     renderLock();
     byId('planner-lock').addEventListener('click', toggleLock);
+    byId('access-search').addEventListener('input', renderAccessCenter);
+    byId('access-type').addEventListener('change', renderAccessCenter);
+    byId('access-status').addEventListener('change', renderAccessCenter);
+    byId('access-new-connection').addEventListener('click', () => { activatePanel('connect-panel'); byId('connection-app').focus(); });
+    byId('access-store-secret').addEventListener('click', () => openSecretIntake());
+    byId('access-view-auth').addEventListener('click', () => activatePanel('catalog-panel'));
     byId('connection-method').addEventListener('change', updateSecretFields);
     byId('secret-intake-open').addEventListener('click', () => openSecretIntake());
     byId('secret-reference').addEventListener('input', (event) => {
@@ -596,6 +784,7 @@
       state.catalog = await response.json();
       renderCatalog();
       applyQueryPrefill();
+      await loadBackendConnections();
     } catch (error) {
       byId('catalog-status').textContent = 'Catalog unavailable';
       byId('catalog-status').className = 'badge badge-amber';

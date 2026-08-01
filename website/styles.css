@@ -953,7 +953,7 @@ textarea.studio-input { min-height: 104px; resize: vertical; line-height: 1.55; 
 .connection-locked { border-color: var(--amber) !important; color: var(--amber) !important; }
 .connection-metrics {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: repeat(5, minmax(0, 1fr));
   border: 1px solid var(--border);
   border-radius: 8px;
   background: var(--card);
@@ -970,6 +970,60 @@ textarea.studio-input { min-height: 104px; resize: vertical; line-height: 1.55; 
 .connection-metrics span { color: var(--text3); font-size: .75rem; }
 .connection-tabs { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 24px; }
 .connection-panel[hidden] { display: none; }
+.access-center-heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 24px;
+  margin-bottom: 22px;
+}
+.access-center-heading h2 { margin-bottom: 7px; font-size: 1.25rem; }
+.access-center-heading > div:first-child > p:last-child { max-width: 760px; color: var(--text2); font-size: .84rem; line-height: 1.55; }
+.access-center-actions { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 8px; }
+.access-toolbar {
+  display: grid;
+  grid-template-columns: minmax(260px, 1fr) 180px 200px auto;
+  align-items: end;
+  gap: 10px;
+  padding: 14px;
+  border: 1px solid var(--border);
+  border-bottom: 0;
+  border-radius: 8px 8px 0 0;
+  background: var(--card);
+}
+.access-toolbar label { color: var(--text3); font-size: .68rem; font-weight: 700; text-transform: uppercase; }
+.access-toolbar input, .access-toolbar select {
+  width: 100%;
+  min-height: 40px;
+  margin-top: 5px;
+  padding: 8px 10px;
+  border: 1px solid var(--border2);
+  border-radius: 6px;
+  background: var(--bg2);
+  color: var(--text);
+  font: inherit;
+  text-transform: none;
+}
+.access-toolbar .badge { min-height: 28px; align-items: center; justify-content: center; }
+.access-table-wrap { width: 100%; max-width: 100%; max-height: 620px; overflow: auto; border: 1px solid var(--border); background: var(--card); }
+.access-table { width: 100%; min-width: 900px; border-collapse: collapse; font-size: .76rem; }
+.access-table th { position: sticky; top: 0; z-index: 1; padding: 11px 13px; background: #171b24; color: var(--text3); text-align: left; text-transform: uppercase; font-size: .62rem; }
+.access-table td { max-width: 340px; padding: 12px 13px; border-top: 1px solid var(--border); vertical-align: top; }
+.access-table tbody tr:hover { background: rgba(255,255,255,.025); }
+.access-name { display: grid; gap: 4px; }
+.access-name strong { font-size: .8rem; }
+.access-name span, .access-secondary { color: var(--text3); font-size: .7rem; line-height: 1.45; }
+.access-type-tag { display: inline-flex; width: fit-content; padding: 3px 6px; border: 1px solid var(--border2); border-radius: 4px; color: var(--text2); font-size: .61rem; text-transform: uppercase; }
+.access-type-authentication { border-color: rgba(79,142,247,.35); color: #93c5fd; }
+.access-type-secret { border-color: rgba(245,158,11,.35); color: var(--amber); }
+.access-empty { padding: 28px !important; color: var(--text3); text-align: center; }
+.access-row-count { min-height: 42px; padding: 12px 14px; border: 1px solid var(--border); border-top: 0; border-radius: 0 0 8px 8px; color: var(--text3); background: var(--card); font-size: .73rem; }
+.access-boundary-strip { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); margin-top: 22px; border-block: 1px solid var(--border); }
+.access-boundary-strip div { min-width: 0; padding: 17px; border-right: 1px solid var(--border); }
+.access-boundary-strip div:last-child { border-right: 0; }
+.access-boundary-strip strong, .access-boundary-strip span { display: block; }
+.access-boundary-strip strong { margin-bottom: 5px; font-size: .78rem; }
+.access-boundary-strip span { color: var(--text3); font-size: .71rem; line-height: 1.45; }
 .connection-section-heading {
   display: flex;
   align-items: center;
@@ -1268,6 +1322,11 @@ footer {
   .studio-preview { position: static; }
   .division-map-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .connections-workbench { grid-template-columns: 1fr; }
+  .access-center-heading { align-items: stretch; flex-direction: column; }
+  .access-center-actions { justify-content: flex-start; }
+  .access-toolbar { grid-template-columns: 1fr 1fr; }
+  .access-toolbar label:first-child { grid-column: 1 / -1; }
+  .access-toolbar .badge { align-self: end; }
   .connection-result { min-height: 320px; }
   .empty-connection-state { min-height: 270px; }
 }
@@ -1315,7 +1374,12 @@ footer {
   .connection-metrics { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .connection-metrics > div { border-bottom: 1px solid var(--border); }
   .connection-metrics > div:nth-child(2n) { border-right: 0; }
-  .connection-metrics > div:nth-last-child(-n+2) { border-bottom: 0; }
+  .connection-metrics > div:last-child { grid-column: 1 / -1; border-right: 0; border-bottom: 0; }
+  .access-toolbar { grid-template-columns: 1fr; }
+  .access-toolbar label:first-child { grid-column: auto; }
+  .access-boundary-strip { grid-template-columns: 1fr; }
+  .access-boundary-strip div { border-right: 0; border-bottom: 1px solid var(--border); }
+  .access-boundary-strip div:last-child { border-bottom: 0; }
   .auth-method-grid,
   .connections-two-column { grid-template-columns: 1fr; }
   .connection-inline-fields { grid-template-columns: 1fr; }
