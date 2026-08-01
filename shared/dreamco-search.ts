@@ -4,6 +4,7 @@ export type DreamSearchDocumentType =
   | "division"
   | "library"
   | "model"
+  | "organization"
   | "page"
   | "provider"
   | "roadmap"

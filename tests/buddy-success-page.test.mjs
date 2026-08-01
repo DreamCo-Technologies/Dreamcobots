@@ -37,11 +37,16 @@ test('generated success program is complete and honest', () => {
   assert.equal(program.summary.daily_logical_benchmark_slots, 360);
   assert.equal(program.summary.production_ready_divisions, 0);
   assert.equal(program.summary.model_benchmark_targets, 200);
+  assert.equal(program.summary.ai_organization_records, 290);
+  assert.equal(program.summary.alliance_directory_members, 196);
   assert.equal(program.truth_contract.millionaire_outcome_guaranteed, false);
   assert.equal(program.truth_contract.external_resource_reference_means_connected, false);
   assert.equal(program.summary.verified_live_resource_hosts, 0);
   assert.equal(program.open_ai_alliance_watch.memberDirectory.verifiedMemberConnections, 0);
+  assert.equal(program.open_ai_alliance_watch.directorySnapshot.records, 196);
   assert.equal(program.open_ai_alliance_watch.endorsementClaimed, false);
+  assert.equal(program.organization_intelligence.live_benchmarks_completed, 0);
+  assert.equal(program.organization_intelligence.static_site_accepts_raw_keys, false);
   assert.equal(program.trust_and_access.zero_breach_or_fraud_guaranteed, false);
 });
 

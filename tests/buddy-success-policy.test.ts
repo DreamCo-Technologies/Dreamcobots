@@ -83,6 +83,8 @@ test("all 45 divisions receive charters, 100 capabilities, production gates, and
   assert.equal(program.summary.daily_logical_benchmark_slots, 360);
   assert.equal(program.summary.production_ready_divisions, 0);
   assert.equal(program.summary.model_benchmark_targets, 200);
+  assert.equal(program.summary.ai_organization_records, 290);
+  assert.equal(program.summary.alliance_directory_members, 196);
   assert.equal(program.summary.robot_division_archetypes, 45);
   assert.equal(program.improvement_templates.must_have_updates.length, 100);
   assert.equal(program.improvement_templates.upgrades.length, 100);
@@ -99,6 +101,9 @@ test("all 45 divisions receive charters, 100 capabilities, production gates, and
   assert.ok(program.divisions.every((division) => division.benchmark_system.live_competitors_tested === 0));
   assert.equal(program.open_ai_alliance_watch.memberDirectory.membershipClaimedByDreamCo, false);
   assert.equal(program.open_ai_alliance_watch.activeProjectWatch.length, 13);
+  assert.equal(program.open_ai_alliance_watch.directorySnapshot.records, 196);
+  assert.equal(program.organization_intelligence.live_benchmarks_completed, 0);
+  assert.equal(program.organization_intelligence.static_site_accepts_raw_keys, false);
   assert.equal(program.safe_ai_training.productionSelfModificationAllowed, false);
   assert.equal(program.trust_and_access.raw_credentials_accepted, false);
 });

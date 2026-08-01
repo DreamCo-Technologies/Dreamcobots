@@ -283,7 +283,8 @@
     const alliance = program.open_ai_alliance_watch;
     if (!alliance) return;
     byId('alliance-members-link').href = alliance.officialSources.members;
-    byId('alliance-summary').textContent = `${alliance.name} reports ${alliance.memberDirectory.reportedSize} members. Buddy discovers the exact current roster from the official directory at run time, benchmarks ${alliance.activeProjectWatch.length} active project lanes across ${alliance.benchmarkDimensions.length} dimensions, and claims no membership, endorsement, live connection, or completed live comparison.`;
+    const snapshot = alliance.directorySnapshot;
+    byId('alliance-summary').textContent = `${alliance.name} reports ${alliance.memberDirectory.reportedSize} members. Buddy's dated directory snapshot contains ${snapshot?.records || 0} records and ${snapshot?.matchedExistingProviders || 0} normalized matches to the existing provider catalog. The lab tracks ${alliance.activeProjectWatch.length} project lanes across ${alliance.benchmarkDimensions.length} dimensions and claims no membership, endorsement, live connection, or completed live comparison.`;
     const projects = byId('alliance-projects');
     alliance.activeProjectWatch.forEach((name) => { const row = document.createElement('span'); row.textContent = name; projects.append(row); });
     const dimensions = byId('alliance-dimensions');

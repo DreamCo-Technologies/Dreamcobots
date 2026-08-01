@@ -101,6 +101,11 @@ import {
   dailyDivisionBenchmarkRequestSchema,
 } from "./division-production-policy";
 import {
+  createOrganizationBenchmarkPlan,
+  loadOrganizationIntelligenceRegistry,
+  organizationBenchmarkPlanRequestSchema,
+} from "./organization-intelligence-policy";
+import {
   createDataImportPlan,
   createDataPackagePlan,
   createMemoryPreferencePlan,
@@ -3427,6 +3432,24 @@ Any improvements or fixes (optional, 1-2 bullet points max)`;
       return res.status(201).json(createCapabilityGapPlan(parsed.data));
     } catch (error) {
       return res.status(400).json({ error: error instanceof Error ? error.message : "Invalid capability gap plan" });
+    }
+  });
+
+  app.get("/api/buddy/ai-organizations", (_req, res) => {
+    try {
+      return res.json(loadOrganizationIntelligenceRegistry());
+    } catch (error) {
+      return res.status(503).json({ error: error instanceof Error ? error.message : "Organization registry unavailable" });
+    }
+  });
+
+  app.post("/api/buddy/ai-organizations/benchmark-plan", (req, res) => {
+    const parsed = organizationBenchmarkPlanRequestSchema.safeParse(req.body);
+    if (!parsed.success) return res.status(400).json(zodValidationError(parsed.error));
+    try {
+      return res.status(201).json(createOrganizationBenchmarkPlan(parsed.data));
+    } catch (error) {
+      return res.status(400).json({ error: error instanceof Error ? error.message : "Invalid organization benchmark plan" });
     }
   });
 

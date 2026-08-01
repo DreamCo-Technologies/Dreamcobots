@@ -4,11 +4,20 @@
   const CATALOG_URL = 'data/buddy-connection-catalog.json';
   const AUDIT_KEY = 'dreamco.buddy.connection.audit.v1';
   const LOCK_KEY = 'dreamco.buddy.connection.locked.v1';
+  const LOCAL_TOKEN_KEY = 'buddy-local-token';
   const SECRET_NAME = /^[A-Za-z][A-Za-z0-9_.:/-]{2,127}$/;
-  const TOKEN_LIKE = /(?:github_pat_|ghs_|(?:sk|rk)_(?:live|test)_|BEGIN .*PRIVATE KEY)/i;
+  const TOKEN_LIKE = /(?:github_pat_|gh[pousr]_|ghs_|(?:sk|rk)[-_](?:live|test)?|AIza[0-9A-Za-z_-]+|xox[baprs]-|Bearer\s+|BEGIN .*PRIVATE KEY)/i;
   const state = { catalog: null, audit: loadAudit(), locked: localStorage.getItem(LOCK_KEY) === 'true' };
 
   const byId = (id) => document.getElementById(id);
+
+  function captureLocalBridgeToken() {
+    const hash = new URLSearchParams(location.hash.replace(/^#/, ''));
+    const token = String(hash.get(LOCAL_TOKEN_KEY) || '');
+    if (!token) return;
+    if (/^[A-Za-z0-9_-]{32,256}$/.test(token)) sessionStorage.setItem(LOCAL_TOKEN_KEY, token);
+    history.replaceState(null, '', `${location.pathname}${location.search}`);
+  }
 
   function element(tag, className, text) {
     const node = document.createElement(tag);
@@ -59,6 +68,89 @@
       throw new Error('Enter a secret reference name, not a key or token value.');
     }
     return value;
+  }
+
+  function looksLikeRawSecret(raw) {
+    const value = String(raw || '').trim();
+    if (TOKEN_LIKE.test(value)) return true;
+    if (value.length < 24 || /[\s/:]/.test(value)) return false;
+    const classes = [/[a-z]/.test(value), /[A-Z]/.test(value), /\d/.test(value), /[^A-Za-z0-9]/.test(value)].filter(Boolean).length;
+    return classes >= 2;
+  }
+
+  function providerIdFromApp() {
+    return String(byId('connection-app').value || 'provider').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 64) || 'provider';
+  }
+
+  function suggestedSecretName() {
+    const app = String(byId('connection-app').value || 'PROVIDER').toUpperCase().replace(/[^A-Z0-9]+/g, '_').replace(/^_|_$/g, '').slice(0, 96) || 'PROVIDER';
+    return `${app}_API_KEY`;
+  }
+
+  function setSecretIntakeStatus(message, success = false) {
+    const target = byId('secret-intake-status');
+    target.textContent = message || '';
+    target.hidden = !message;
+    target.style.color = success ? 'var(--green)' : '';
+    target.style.borderColor = success ? 'rgba(34,197,94,.35)' : '';
+    target.style.background = success ? 'rgba(34,197,94,.08)' : '';
+  }
+
+  function closeSecretIntake() {
+    byId('secret-intake-value').value = '';
+    byId('secret-intake-approval').checked = false;
+    setSecretIntakeStatus('');
+    byId('secret-intake-dialog').close();
+  }
+
+  function openSecretIntake(prefill = '') {
+    setSecretIntakeStatus('');
+    byId('secret-intake-account').value = byId('secret-reference').value.trim() || suggestedSecretName();
+    byId('secret-intake-value').value = prefill;
+    byId('secret-intake-approval').checked = false;
+    const localToken = sessionStorage.getItem(LOCAL_TOKEN_KEY) || '';
+    byId('secret-intake-submit').disabled = !localToken;
+    byId('secret-intake-boundary').textContent = localToken
+      ? "The key goes directly to this Mac's Keychain through Buddy's authenticated loopback bridge. It is never written to browser storage, logs, generated files, or the connection plan."
+      : 'Secure key storage is available only from the local Buddy bridge. Start the Buddy CLI locally, then reopen App Connections from that session.';
+    byId('secret-intake-dialog').showModal();
+    byId('secret-intake-value').focus();
+  }
+
+  async function storeSecretInKeychain(event) {
+    event.preventDefault();
+    setSecretIntakeStatus('');
+    const localToken = sessionStorage.getItem(LOCAL_TOKEN_KEY) || '';
+    if (!localToken) {
+      setSecretIntakeStatus('Start the local Buddy bridge before storing a key. Public and file previews never accept raw credentials.');
+      return;
+    }
+    const account = byId('secret-intake-account').value.trim();
+    let secretValue = byId('secret-intake-value').value;
+    try {
+      validatedSecretReference(account, 'os_keychain');
+      if (secretValue.length < 8 || secretValue.length > 16384 || /[\0\r\n]/.test(secretValue)) throw new Error('Enter a key between 8 and 16,384 characters without line breaks.');
+      if (!byId('secret-intake-approval').checked) throw new Error('Approve this one Keychain write.');
+      const response = await fetch('/api/local/secrets/store', {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${localToken}`, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ provider: providerIdFromApp(), account, secret: secretValue, approved: true }),
+        cache: 'no-store',
+      });
+      byId('secret-intake-value').value = '';
+      secretValue = '';
+      const result = await response.json();
+      if (!response.ok || !result.ok || !result.reference) throw new Error(result.error || 'Local Keychain storage failed safely.');
+      byId('secret-provider').value = 'os_keychain';
+      byId('secret-reference').value = validatedSecretReference(result.reference, 'os_keychain');
+      setSecretIntakeStatus('Stored in macOS Keychain. Only the reference remains in this form.', true);
+      addAudit({ type: 'keychain_reference', app: byId('connection-app').value.trim() || 'Provider', host: 'local-keychain', method: 'os_keychain', status: 'stored' });
+      window.setTimeout(closeSecretIntake, 650);
+    } catch (error) {
+      byId('secret-intake-value').value = '';
+      secretValue = '';
+      setSecretIntakeStatus(error.message || 'Local Keychain storage failed safely.');
+    }
   }
 
   function statusLabel(method) {
@@ -161,6 +253,23 @@
     const visible = Boolean(method && method.secret_reference_required);
     byId('secret-reference-fields').hidden = !visible;
     byId('secret-reference').required = visible;
+  }
+
+  function applyQueryPrefill() {
+    const params = new URLSearchParams(location.search);
+    const app = String(params.get('app') || '').trim();
+    const rawUrl = String(params.get('url') || '').trim();
+    const methodId = String(params.get('method') || '').trim();
+    if (!app && !rawUrl && !methodId) return;
+    if (app) byId('connection-app').value = app.slice(0, 80);
+    if (rawUrl) {
+      try { byId('connection-url').value = officialUrl(rawUrl).href; } catch (_error) { /* Keep invalid URL out of the form. */ }
+    }
+    if (state.catalog.auth_methods.some((item) => item.id === methodId)) byId('connection-method').value = methodId;
+    updateSecretFields();
+    document.querySelectorAll('[data-panel]').forEach((tab) => tab.classList.toggle('active', tab.dataset.panel === 'connect-panel'));
+    document.querySelectorAll('.connection-panel').forEach((panel) => { panel.hidden = panel.id !== 'connect-panel'; });
+    byId('connection-app').focus();
   }
 
   function appendPlanHeading(target, label, status, badgeClass) {
@@ -455,11 +564,23 @@
   }
 
   async function start() {
+    captureLocalBridgeToken();
     wireTabs();
     renderAudit();
     renderLock();
     byId('planner-lock').addEventListener('click', toggleLock);
     byId('connection-method').addEventListener('change', updateSecretFields);
+    byId('secret-intake-open').addEventListener('click', () => openSecretIntake());
+    byId('secret-reference').addEventListener('input', (event) => {
+      const value = event.currentTarget.value;
+      if (!looksLikeRawSecret(value)) return;
+      event.currentTarget.value = '';
+      openSecretIntake(value);
+    });
+    byId('secret-intake-form').addEventListener('submit', storeSecretInKeychain);
+    byId('secret-intake-close').addEventListener('click', closeSecretIntake);
+    byId('secret-intake-cancel').addEventListener('click', closeSecretIntake);
+    byId('secret-intake-dialog').addEventListener('cancel', (event) => { event.preventDefault(); closeSecretIntake(); });
     byId('connection-form').addEventListener('submit', handleConnection);
     byId('transfer-form').addEventListener('submit', handleTransfer);
     byId('signup-form').addEventListener('submit', handleSignup);
@@ -474,6 +595,7 @@
       if (!response.ok) throw new Error(`Catalog request failed (${response.status}).`);
       state.catalog = await response.json();
       renderCatalog();
+      applyQueryPrefill();
     } catch (error) {
       byId('catalog-status').textContent = 'Catalog unavailable';
       byId('catalog-status').className = 'badge badge-amber';

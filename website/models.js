@@ -2,10 +2,18 @@
   'use strict';
 
   const data = window.BUDDY_MODEL_BENCHMARKS || { summary: {}, suites: [], targets: [] };
+  const organizationData = window.BUDDY_AI_ORGANIZATIONS || { summary: {}, existingProviders: [], allianceMembers: [], userNeedTaxonomy: [], benchmarkDimensions: [] };
   const targets = data.targets || [];
   const selected = new Set(targets.map((target) => target.id));
+  const organizationRecords = [
+    ...(organizationData.existingProviders || []).map((item) => ({ ...item, sourceKey: 'existing', organizationType: 'model_provider', website: item.officialCatalogs?.[0] || '' })),
+    ...(organizationData.allianceMembers || []).map((item) => ({ ...item, sourceKey: 'alliance' })),
+  ];
+  const selectedOrganizations = new Set();
   let visible = [...targets];
+  let visibleOrganizations = [...organizationRecords];
   let latestPlan = null;
+  let latestOrganizationPlan = null;
 
   const byId = (id) => document.getElementById(id);
   const escapeHtml = (value) => String(value)
@@ -175,6 +183,151 @@
     URL.revokeObjectURL(url);
   }
 
+  function renderOrganizationMetrics() {
+    const summary = organizationData.summary || {};
+    byId('org-existing-targets').textContent = Number(summary.existingBenchmarkTargets || 0).toLocaleString();
+    byId('org-existing-providers').textContent = Number(summary.existingProviders || 0).toLocaleString();
+    byId('org-alliance-members').textContent = Number(summary.allianceMembers || 0).toLocaleString();
+    byId('org-records').textContent = Number(summary.organizationRecords || 0).toLocaleString();
+    byId('org-live').textContent = Number(summary.liveOrganizationBenchmarks || 0).toLocaleString();
+  }
+
+  function renderOrganizationFilters() {
+    [...new Set(organizationRecords.map((item) => item.organizationType).filter(Boolean))].sort().forEach((type) => {
+      byId('organization-type').append(option(type, type.replaceAll('_', ' ')));
+    });
+    const needs = byId('organization-needs');
+    (organizationData.userNeedTaxonomy || []).forEach((need, index) => {
+      const label = document.createElement('label'); label.className = 'organization-need';
+      const input = document.createElement('input'); input.type = 'checkbox'; input.value = need.id; input.checked = index < 5;
+      const copy = document.createElement('span'); copy.textContent = need.description;
+      label.append(input, copy); needs.append(label);
+    });
+  }
+
+  function filteredOrganizations() {
+    const query = byId('organization-search').value.trim().toLowerCase();
+    const source = byId('organization-source').value;
+    const type = byId('organization-type').value;
+    return organizationRecords.filter((item) => {
+      const haystack = [item.name, item.organizationType, ...(item.strengths || []), ...(item.commonUserJobs || []), ...(item.tools || [])].join(' ').toLowerCase();
+      return (!query || haystack.includes(query)) && (source === 'all' || item.sourceKey === source) && (type === 'all' || item.organizationType === type);
+    });
+  }
+
+  function organizationEvidence(item) {
+    return item.capabilityEvidenceStatus || item.evidenceStatus || 'official_source_research_required';
+  }
+
+  function renderOrganizationRows() {
+    visibleOrganizations = filteredOrganizations();
+    const body = byId('organization-rows'); body.replaceChildren();
+    visibleOrganizations.forEach((item) => {
+      const row = document.createElement('tr');
+      const selectCell = document.createElement('td');
+      const checkbox = document.createElement('input'); checkbox.type = 'checkbox'; checkbox.checked = selectedOrganizations.has(item.id); checkbox.setAttribute('aria-label', `Include ${item.name}`);
+      checkbox.addEventListener('change', () => { if (checkbox.checked) selectedOrganizations.add(item.id); else selectedOrganizations.delete(item.id); updateOrganizationSelected(); });
+      selectCell.append(checkbox);
+
+      const nameCell = document.createElement('td'); const copy = document.createElement('div'); copy.className = 'organization-copy';
+      const button = document.createElement('button'); button.className = 'model-name-button'; button.type = 'button'; button.textContent = item.name; button.addEventListener('click', () => showOrganizationDetail(item.id));
+      const type = document.createElement('span'); type.textContent = String(item.organizationType || 'unclassified').replaceAll('_', ' '); copy.append(button, type); nameCell.append(copy);
+      const sourceCell = document.createElement('td'); const sourceTag = document.createElement('span'); sourceTag.className = 'organization-source-tag'; sourceTag.textContent = item.sourceKey === 'alliance' ? 'Alliance' : 'Existing 200'; sourceCell.append(sourceTag);
+      const strengthCell = document.createElement('td'); strengthCell.className = 'organization-cell-note'; strengthCell.textContent = (item.strengths || []).slice(0, 3).join(', ') || 'Research required';
+      const jobCell = document.createElement('td'); jobCell.className = 'organization-cell-note'; jobCell.textContent = (item.commonUserJobs || []).slice(0, 2).join('; ') || 'Research required';
+      const evidenceCell = document.createElement('td'); evidenceCell.className = 'organization-cell-note organization-evidence'; evidenceCell.textContent = organizationEvidence(item).replaceAll('_', ' ');
+      row.append(selectCell, nameCell, sourceCell, strengthCell, jobCell, evidenceCell); body.append(row);
+    });
+    byId('organization-count').textContent = `Showing ${visibleOrganizations.length.toLocaleString()} of ${organizationRecords.length.toLocaleString()} records. ${selectedOrganizations.size.toLocaleString()} selected.`;
+    updateOrganizationSelected();
+  }
+
+  function updateOrganizationSelected() {
+    byId('organization-selected-count').textContent = selectedOrganizations.size.toLocaleString();
+  }
+
+  function showOrganizationDetail(id) {
+    const item = organizationRecords.find((record) => record.id === id);
+    if (!item) return;
+    byId('organization-detail-source').textContent = item.sourceKey === 'alliance' ? `Official directory snapshot · ${organizationData.snapshotDate}` : 'Existing 200-target catalog';
+    byId('organization-detail-title').textContent = item.name;
+    const tools = (item.tools || []).length ? item.tools : ['No member-specific tool list is published in the directory; official-source research is required.'];
+    const jobs = (item.commonUserJobs || []).length ? item.commonUserJobs : ['Official-source research required'];
+    const strengths = (item.strengths || []).length ? item.strengths : ['Official-source research required'];
+    const officialUrl = item.website || item.officialCatalogs?.[0] || '';
+    const connectionUrl = officialUrl ? `connections.html?app=${encodeURIComponent(item.name)}&url=${encodeURIComponent(officialUrl)}&method=api_key` : 'connections.html';
+    byId('organization-detail-body').innerHTML = `
+      <p><strong>Evidence status:</strong> ${escapeHtml(organizationEvidence(item).replaceAll('_', ' '))}</p>
+      <h3>Strengths to verify</h3><ul>${strengths.map((value) => `<li>${escapeHtml(value)}</li>`).join('')}</ul>
+      <h3>Common user jobs</h3><ul>${jobs.map((value) => `<li>${escapeHtml(value)}</li>`).join('')}</ul>
+      <h3>Known tools or targets</h3><ul>${tools.slice(0, 20).map((value) => `<li>${escapeHtml(value)}</li>`).join('')}</ul>
+      <p>Membership does not prove capability, connection, access, price, or quality. Live comparison requires current official metadata and identical signed fixtures.</p>
+      <a class="btn btn-outline btn-sm" href="${escapeHtml(connectionUrl)}">Prepare secure connection</a>`;
+    byId('organization-detail').showModal();
+  }
+
+  function selectedOrganizationNeeds() {
+    return [...document.querySelectorAll('#organization-needs input:checked')].map((input) => input.value);
+  }
+
+  function runOrganizationAudit() {
+    const valid = organizationRecords.filter((item) => item.id && item.name && organizationEvidence(item) && Array.isArray(item.commonUserJobs)).length;
+    const missing = organizationRecords.length - valid;
+    byId('organization-status').textContent = `Catalog audit complete: ${valid} structurally ready, ${missing} invalid, ${organizationData.benchmarkDimensions?.length || 0} benchmark dimensions, and 0 live organization calls. Inferred categories remain research leads, not verified strengths.`;
+  }
+
+  function prepareOrganizationPlan() {
+    const organizations = organizationRecords.filter((item) => selectedOrganizations.has(item.id));
+    const needs = selectedOrganizationNeeds();
+    if (!organizations.length || !needs.length) {
+      byId('organization-status').textContent = 'Select at least one organization and one user need.';
+      return;
+    }
+    const fixtures = Math.max(1, Math.min(20, Number(byId('organization-fixtures').value) || 1));
+    const concurrency = Math.max(1, Math.min(32, Number(byId('organization-concurrency').value) || 1));
+    const budget = Math.max(0, Math.min(10000, Number(byId('organization-budget').value) || 0));
+    const allowNetwork = byId('organization-network').checked;
+    const networkApproved = byId('organization-network-approval').checked;
+    const paidApproved = byId('organization-paid').checked;
+    const requiresResearch = organizations.some((item) => organizationEvidence(item).includes('research_required'));
+    const status = allowNetwork && !networkApproved ? 'network_approval_required'
+      : budget > 0 && !paidApproved ? 'paid_budget_approval_required'
+      : allowNetwork && requiresResearch ? 'official_source_research_required'
+      : allowNetwork ? 'configured_adapters_and_exact_versions_required' : 'local_catalog_plan_ready';
+    const totalCases = organizations.length * needs.length * fixtures;
+    latestOrganizationPlan = {
+      schema: 'dreamco.organization_benchmark_plan.v1',
+      createdAt: new Date().toISOString(),
+      organizationIds: organizations.map((item) => item.id),
+      userNeedIds: needs,
+      organizationCount: organizations.length,
+      userNeedCount: needs.length,
+      signedFixturesPerNeed: fixtures,
+      totalCases,
+      maxConcurrency: concurrency,
+      plannedWaves: Math.ceil(totalCases / concurrency),
+      maximumPaidBudgetUsd: paidApproved ? budget : 0,
+      networkApprovedForThisRun: allowNetwork && networkApproved,
+      status,
+      benchmarkDimensions: organizationData.benchmarkDimensions || [],
+      rawCredentialsAccepted: false,
+      executionPerformed: false,
+      permanentBestClaimed: false,
+    };
+    const summary = byId('organization-plan-summary'); summary.replaceChildren();
+    [['Organizations', organizations.length], ['User needs', needs.length], ['Total cases', totalCases], ['Concurrency', concurrency], ['Waves', latestOrganizationPlan.plannedWaves], ['Budget cap', `$${latestOrganizationPlan.maximumPaidBudgetUsd.toFixed(2)}`], ['Status', status.replaceAll('_', ' ')]].forEach(([label, value]) => {
+      const dt = document.createElement('dt'); dt.textContent = String(label); const dd = document.createElement('dd'); dd.textContent = String(value); summary.append(dt, dd);
+    });
+    byId('organization-result').hidden = false;
+    byId('organization-status').textContent = status === 'local_catalog_plan_ready' ? 'Local catalog plan ready. No network, provider, or member site was contacted.' : `Plan paused at ${status.replaceAll('_', ' ')}. No external action was performed.`;
+  }
+
+  function downloadOrganizationPlan() {
+    if (!latestOrganizationPlan) return;
+    const blob = new Blob([JSON.stringify(latestOrganizationPlan, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob); const link = document.createElement('a'); link.href = url; link.download = 'buddy-organization-benchmark-plan.json'; link.click(); URL.revokeObjectURL(url);
+  }
+
   ['model-search', 'model-tier', 'model-category'].forEach((id) => byId(id).addEventListener(id === 'model-search' ? 'input' : 'change', renderRows));
   byId('select-visible').addEventListener('click', () => { visible.forEach((target) => selected.add(target.id)); renderRows(); });
   byId('clear-selection').addEventListener('click', () => { selected.clear(); renderRows(); });
@@ -182,9 +335,19 @@
   byId('prepare-live-plan').addEventListener('click', preparePlan);
   byId('download-benchmark-plan').addEventListener('click', downloadPlan);
   byId('model-detail-close').addEventListener('click', () => byId('model-detail').close());
+  ['organization-search', 'organization-source', 'organization-type'].forEach((id) => byId(id).addEventListener(id === 'organization-search' ? 'input' : 'change', renderOrganizationRows));
+  byId('organization-select-visible').addEventListener('click', () => { visibleOrganizations.forEach((item) => selectedOrganizations.add(item.id)); renderOrganizationRows(); });
+  byId('organization-clear').addEventListener('click', () => { selectedOrganizations.clear(); renderOrganizationRows(); });
+  byId('organization-audit').addEventListener('click', runOrganizationAudit);
+  byId('organization-plan').addEventListener('click', prepareOrganizationPlan);
+  byId('organization-download').addEventListener('click', downloadOrganizationPlan);
+  byId('organization-detail-close').addEventListener('click', () => byId('organization-detail').close());
 
   renderMetrics();
   renderFilters();
   renderSuites();
   renderRows();
+  renderOrganizationMetrics();
+  renderOrganizationFilters();
+  renderOrganizationRows();
 })();

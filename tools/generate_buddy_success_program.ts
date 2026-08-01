@@ -23,6 +23,7 @@ const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const FLEET_PATH = resolve(ROOT, "config", "generated", "bots.catalog.json");
 const CONNECTOR_PATH = resolve(ROOT, "config", "buddy-connector-registry.json");
 const GENERATED_PATH = resolve(ROOT, "config", "generated", "buddy_success_program.json");
+const ORGANIZATION_INTELLIGENCE_PATH = resolve(ROOT, "config", "generated", "ai_organization_intelligence.json");
 const PUBLIC_PATH = resolve(ROOT, "website", "data", "buddy-success-program.js");
 const REPORT_PATH = resolve(ROOT, "reports", "BUDDY_SUCCESS_PROGRAM.md");
 
@@ -270,6 +271,7 @@ function divisionPrograms(fleet: Fleet) {
 export function buildBuddySuccessProgram() {
   const fleet = JSON.parse(readFileSync(FLEET_PATH, "utf8")) as Fleet;
   const connectorRegistry = JSON.parse(readFileSync(CONNECTOR_PATH, "utf8"));
+  const organizationIntelligence = JSON.parse(readFileSync(ORGANIZATION_INTELLIGENCE_PATH, "utf8"));
   const inventory = resourceInventory(connectorRegistry);
   const mustHaveTemplates = improvementTemplates("must_have");
   const upgradeTemplates = improvementTemplates("upgrade");
@@ -301,6 +303,8 @@ export function buildBuddySuccessProgram() {
       daily_logical_benchmark_slots: divisions.reduce((sum, division) => sum + division.benchmark_system.daily_operations.logical_parallel_worker_slots, 0),
       production_ready_divisions: divisions.filter((division) => division.production_readiness.production_ready).length,
       model_benchmark_targets: MODEL_BENCHMARK_TARGETS.length,
+      ai_organization_records: organizationIntelligence.summary.organizationRecords,
+      alliance_directory_members: organizationIntelligence.summary.allianceMembers,
       dynamic_model_discovery_sources: OFFICIAL_MODEL_DISCOVERY_SOURCES.length,
       referenced_resource_hosts: inventory.resources.length,
       verified_live_resource_hosts: inventory.resources.filter((resource) => resource.verified_live).length,
@@ -344,7 +348,15 @@ export function buildBuddySuccessProgram() {
       paid_runs_default: "off",
       never_self_release: true,
     },
-    open_ai_alliance_watch: OFFICIAL_AI_ALLIANCE_WATCH,
+    open_ai_alliance_watch: {
+      ...OFFICIAL_AI_ALLIANCE_WATCH,
+      directorySnapshot: {
+        date: organizationIntelligence.snapshotDate,
+        records: organizationIntelligence.summary.allianceMembers,
+        matchedExistingProviders: organizationIntelligence.summary.allianceMembersMatchedToExistingProviders,
+        generatedRegistry: "config/generated/ai_organization_intelligence.json",
+      },
+    },
     safe_ai_training: SAFE_AI_TRAINING_CONTRACT,
     trust_and_access: {
       zero_breach_or_fraud_guaranteed: false,
@@ -362,6 +374,17 @@ export function buildBuddySuccessProgram() {
       sources: OFFICIAL_MODEL_DISCOVERY_SOURCES,
       permanent_top_200_ranking_claimed: false,
       exact_model_ids_discovered_at_run_time: true,
+    },
+    organization_intelligence: {
+      existing_benchmark_targets: organizationIntelligence.summary.existingBenchmarkTargets,
+      existing_providers: organizationIntelligence.summary.existingProviders,
+      alliance_members: organizationIntelligence.summary.allianceMembers,
+      organization_records: organizationIntelligence.summary.organizationRecords,
+      user_need_categories: organizationIntelligence.summary.userNeedCategories,
+      benchmark_dimensions: organizationIntelligence.summary.benchmarkDimensions,
+      live_benchmarks_completed: 0,
+      static_site_accepts_raw_keys: false,
+      secure_key_intake: "authenticated_loopback_to_macos_keychain",
     },
     resource_inventory: inventory,
     divisions,

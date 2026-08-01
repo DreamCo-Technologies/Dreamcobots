@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import re
 import secrets
 import subprocess
 import sys
@@ -23,6 +24,7 @@ ROOT = Path(__file__).resolve().parents[1]
 WEBSITE = ROOT / "website"
 MAX_BODY_BYTES = 32 * 1024
 MAX_AUDIT_EVENTS = 50
+MAX_SECRET_WRITES_PER_SESSION = 20
 
 SEARCH_ENGINES = {
     "duckduckgo": "https://duckduckgo.com/?q={query}",
@@ -90,6 +92,55 @@ def require_approval(payload: dict[str, Any]) -> None:
         raise LocalBridgeError("Approve this one local action before Buddy opens anything.")
 
 
+def validate_secret_locator(provider: Any, account: Any) -> tuple[str, str]:
+    provider_id = str(provider or "").strip().lower()
+    account_name = str(account or "").strip()
+    if not re.fullmatch(r"[a-z][a-z0-9-]{1,63}", provider_id):
+        raise LocalBridgeError("Use a short lowercase provider id.")
+    if not re.fullmatch(r"[A-Za-z][A-Za-z0-9_.:/-]{2,127}", account_name):
+        raise LocalBridgeError("Use a credential-free secret reference name.")
+    return provider_id, account_name
+
+
+def validate_secret_value(value: Any) -> str:
+    if not isinstance(value, str) or not 8 <= len(value) <= 16_384:
+        raise LocalBridgeError("The secret must be between 8 and 16,384 characters.")
+    if any(character in value for character in ("\x00", "\r", "\n")):
+        raise LocalBridgeError("Secrets cannot contain null bytes or line breaks.")
+    return value
+
+
+def store_macos_keychain_secret(provider: Any, account: Any, value: Any) -> str:
+    provider_id, account_name = validate_secret_locator(provider, account)
+    secret_value = validate_secret_value(value)
+    if sys.platform != "darwin":
+        raise LocalBridgeError("Secure local key intake currently requires the macOS Keychain bridge.")
+    service = f"dreamco.buddy.{provider_id}"
+    command = [
+        "/usr/bin/security", "add-generic-password", "-U",
+        "-a", account_name,
+        "-s", service,
+        "-D", "application password",
+        "-j", "Stored by the owner through Buddy's loopback-only key intake",
+        "-T", "",
+        "-w",
+    ]
+    try:
+        result = subprocess.run(
+            command,
+            input=f"{secret_value}\n",
+            text=True,
+            capture_output=True,
+            timeout=15,
+            check=False,
+        )
+    finally:
+        secret_value = ""
+    if result.returncode:
+        raise LocalBridgeError("macOS Keychain did not accept the secret. No browser copy was retained.")
+    return f"os_keychain:{service}/{account_name}"
+
+
 def launch_url(url: str, browser: str) -> None:
     if browser not in BROWSERS:
         raise LocalBridgeError("Choose a supported browser.")
@@ -132,6 +183,7 @@ class BridgeState:
     token: str
     paused: bool = False
     audit: list[dict[str, Any]] = field(default_factory=list)
+    secret_writes: int = 0
     lock: threading.Lock = field(default_factory=threading.Lock)
 
     def add_audit(self, action: str, target: str, status: str = "approved") -> None:
@@ -141,7 +193,7 @@ class BridgeState:
 
 
 class BuddyLocalHandler(SimpleHTTPRequestHandler):
-    server_version = "BuddyLocalBridge/1.0"
+    server_version = "BuddyLocalBridge/1.1"
 
     @property
     def state(self) -> BridgeState:
@@ -199,8 +251,8 @@ class BuddyLocalHandler(SimpleHTTPRequestHandler):
                 "paused": self.state.paused,
                 "host": "127.0.0.1",
                 "retention": "memory_only_last_50_events",
-                "capabilities": ["browser_search", "https_open", "approved_app_launch", "approved_workspace_launch", "action_planning"],
-                "limits": ["no arbitrary clicking or typing", "no credential collection", "no background takeover"],
+                "capabilities": ["browser_search", "https_open", "approved_app_launch", "approved_workspace_launch", "action_planning", "secure_keychain_intake"],
+                "limits": ["no arbitrary clicking or typing", "raw secrets accepted only by the explicit local keychain dialog", "no background takeover"],
                 "audit": self.state.audit,
             })
             return
@@ -222,6 +274,26 @@ class BuddyLocalHandler(SimpleHTTPRequestHandler):
                 return
             if self.state.paused:
                 self._json(HTTPStatus.LOCKED, {"ok": False, "error": "Local actions are paused."})
+                return
+            if path == "/api/local/secrets/store":
+                require_approval(payload)
+                if self.state.secret_writes >= MAX_SECRET_WRITES_PER_SESSION:
+                    raise LocalBridgeError("Secret write limit reached. Restart the local bridge before adding more keys.")
+                provider, account = validate_secret_locator(payload.get("provider"), payload.get("account"))
+                try:
+                    reference = store_macos_keychain_secret(provider, account, payload.get("secret"))
+                finally:
+                    payload["secret"] = ""
+                self.state.secret_writes += 1
+                self.state.add_audit("keychain_secret_store", f"{provider}:{account}", "stored")
+                self._json(HTTPStatus.CREATED, {
+                    "ok": True,
+                    "stored": True,
+                    "provider": "os_keychain",
+                    "reference": reference,
+                    "secretReturned": False,
+                    "browserRetention": "cleared_after_request",
+                })
                 return
             if path == "/api/local/browser/search":
                 require_approval(payload)

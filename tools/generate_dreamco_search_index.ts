@@ -18,6 +18,7 @@ const WEBSITE_PATH = join(ROOT, "website", "data", "dreamco-search-index.js");
 const SYSTEM_MAP_PATH = join(ROOT, "website", "data", "repository-system-map.json");
 const PLATFORM_PATH = join(ROOT, "config", "generated", "buddy_platform_expansion.json");
 const SUCCESS_PROGRAM_PATH = join(ROOT, "config", "generated", "buddy_success_program.json");
+const ORGANIZATION_INTELLIGENCE_PATH = join(ROOT, "config", "generated", "ai_organization_intelligence.json");
 const REPORT_PATH = join(ROOT, "reports", "DREAMCO_SEARCH_INDEX.md");
 const WEBSITE_DIR = join(ROOT, "website");
 
@@ -44,11 +45,16 @@ type SuccessProgram = {
   }>;
 };
 
+type OrganizationIntelligence = {
+  existingProviders: Array<{ id: string; name: string; strengths: string[]; commonUserJobs: string[]; tools: string[]; evidenceStatus: string }>;
+  allianceMembers: Array<{ id: string; name: string; organizationType: string; strengths: string[]; commonUserJobs: string[]; tools: string[]; capabilityEvidenceStatus: string }>;
+};
+
 const PAGE_DESCRIPTIONS: Record<string, string> = {
   "buddy.html": "Talk with Buddy, route work to DreamCo specialists, and prepare governed task plans.",
   "search.html": "Search DreamCo bots, capabilities, models, providers, divisions, systems, libraries, and public tools.",
   "bots.html": "Browse the complete Buddy specialist fleet and open evidence-backed bot prospectuses.",
-  "models.html": "Compare the DreamCo model reference catalog and prepare governed benchmark plans.",
+  "models.html": "Compare AI models, providers, official Alliance members, tools, user jobs, and governed benchmark plans.",
   "platform.html": "Inspect implemented capability contracts and clearly labeled roadmap ideas.",
   "system-map.html": "Review repository systems, libraries, divisions, and honest readiness evidence.",
   "studio.html": "Plan and test consent-first voice, image, music, movie, course, game, and simulation projects.",
@@ -64,7 +70,7 @@ const PAGE_KEYWORDS: Record<string, string[]> = {
   "studio.html": ["build a game", "make a movie", "movie", "film", "video", "storyboard", "production", "game", "simulation", "voice", "image", "music", "course", "character"],
   "government.html": ["find grants and contracts", "grant", "contract", "procurement", "federal", "state", "local", "official resource"],
   "test-center.html": ["debug my repository", "test", "debug", "failure", "repository", "quality", "capability certification"],
-  "models.html": ["compare AI models", "compare", "benchmark", "AI model", "LLM", "provider", "free model", "paid model"],
+  "models.html": ["compare AI models", "AI Alliance", "AI company", "organization", "what AI is good at", "what users use AI for", "compare", "benchmark", "AI model", "LLM", "provider", "free model", "paid model"],
   "calculator.html": ["real estate ROI", "ROI", "estimate", "cost", "revenue", "real estate", "deal", "finance"],
   "connections.html": ["API", "webhook", "integration", "authentication", "database", "server", "app connection"],
   "bots.html": ["bot", "specialist", "prospectus", "capability", "fleet", "test bot"],
@@ -116,6 +122,7 @@ export function buildDreamSearchIndex() {
   const platform = readJson<PlatformExpansion>(PLATFORM_PATH);
   const systemMap = readJson<RepositorySystemMap>(SYSTEM_MAP_PATH);
   const successProgram = readJson<SuccessProgram>(SUCCESS_PROGRAM_PATH);
+  const organizationIntelligence = readJson<OrganizationIntelligence>(ORGANIZATION_INTELLIGENCE_PATH);
   const fleet = buildFleetCatalog();
   const documents: DreamSearchDocument[] = [];
 
@@ -203,6 +210,38 @@ export function buildDreamSearchIndex() {
       status: "reference_catalog_not_connection",
       evidence_level: "reference_catalog",
       evidence: "shared/ai-ecosystem.ts",
+    }));
+  }
+
+  for (const organization of organizationIntelligence.existingProviders) {
+    documents.push(document({
+      id: `organization:${organization.id}`,
+      type: "organization",
+      title: organization.name,
+      summary: `Existing AI provider record. Common user jobs: ${organization.commonUserJobs.slice(0, 3).join("; ")}.`,
+      url: "models.html#organization-intelligence",
+      keywords: unique([...organization.strengths, ...organization.commonUserJobs, ...organization.tools]),
+      category: "Existing AI provider",
+      division: "DreamAIInfra",
+      status: organization.evidenceStatus,
+      evidence_level: "reference_catalog",
+      evidence: "config/generated/ai_organization_intelligence.json#existingProviders",
+    }));
+  }
+
+  for (const organization of organizationIntelligence.allianceMembers) {
+    documents.push(document({
+      id: `organization:${organization.id}`,
+      type: "organization",
+      title: organization.name,
+      summary: `Official directory member record. Candidate user jobs: ${organization.commonUserJobs.slice(0, 3).join("; ")}.`,
+      url: "models.html#organization-intelligence",
+      keywords: unique([organization.organizationType, "AI Alliance", ...organization.strengths, ...organization.commonUserJobs, ...organization.tools]),
+      category: "AI Alliance member",
+      division: "DreamAIInfra",
+      status: organization.capabilityEvidenceStatus,
+      evidence_level: "official_directory_membership",
+      evidence: "https://thealliance.ai/members",
     }));
   }
 
@@ -319,6 +358,7 @@ export function buildDreamSearchIndex() {
       searchable_capability_terms: fleet.summary.declared_capability_slots,
       indexed_divisions: fleet.summary.divisions,
       indexed_models: MODEL_BENCHMARK_TARGETS.length,
+      indexed_organizations: organizationIntelligence.existingProviders.length + organizationIntelligence.allianceMembers.length,
       indexed_providers: AI_PROVIDERS.length,
       indexed_public_pages: countsByType.page || 0,
       web_results_claimed: 0,
@@ -347,6 +387,7 @@ function report(index: ReturnType<typeof buildDreamSearchIndex>): string {
     `- Searchable bot capability terms: ${index.summary.searchable_capability_terms.toLocaleString()}`,
     `- Divisions: ${index.summary.indexed_divisions.toLocaleString()}`,
     `- Model reference records: ${index.summary.indexed_models.toLocaleString()}`,
+    `- Organization intelligence records: ${index.summary.indexed_organizations.toLocaleString()}`,
     `- Provider reference records: ${index.summary.indexed_providers.toLocaleString()}`,
     `- Public pages: ${index.summary.indexed_public_pages.toLocaleString()}`,
     `- Live web results claimed: ${index.summary.web_results_claimed}`,

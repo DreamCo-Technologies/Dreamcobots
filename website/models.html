@@ -7,8 +7,8 @@
   <meta name="description" content="Audit 200 curated and official-discovery AI targets and prepare evidence-based, budget-gated live model benchmarks with Buddy." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="styles.css" />
-  <link rel="stylesheet" href="models.css" />
+  <link rel="stylesheet" href="styles.css?v=40" />
+  <link rel="stylesheet" href="models.css?v=3" />
 </head>
 <body class="model-lab-page">
 <div id="nav-placeholder"></div><script src="nav.js"></script>
@@ -103,6 +103,70 @@
     <div><strong>Current by evidence</strong><span>Provider availability and model claims remain unverified until an adapter records them.</span></div>
     <div><strong>Private by default</strong><span>Raw private prompts and responses are not retained in public reports.</span></div>
   </section>
+
+  <section id="organization-intelligence" class="organization-lab" aria-labelledby="organization-title">
+    <header class="organization-header">
+      <div>
+        <p class="model-lab-eyebrow">Organizations, tools, and user jobs</p>
+        <h2 id="organization-title">AI Organization Intelligence</h2>
+        <p>Combine Buddy's existing 200 targets with the official Alliance directory. Membership, declared strengths, inferred research categories, connections, and live benchmark evidence remain visibly separate.</p>
+      </div>
+      <a class="btn btn-outline btn-sm" href="https://thealliance.ai/members" target="_blank" rel="noopener">Official directory</a>
+    </header>
+
+    <div class="organization-metrics" aria-label="Organization catalog summary">
+      <div><span>Existing targets</span><strong id="org-existing-targets">200</strong></div>
+      <div><span>Existing providers</span><strong id="org-existing-providers">0</strong></div>
+      <div><span>Alliance members</span><strong id="org-alliance-members">0</strong></div>
+      <div><span>Organization records</span><strong id="org-records">0</strong></div>
+      <div><span>Live benchmarks</span><strong id="org-live">0</strong></div>
+    </div>
+
+    <div class="organization-layout">
+      <div class="organization-catalog">
+        <div class="organization-toolbar">
+          <label for="organization-search">Search
+            <input id="organization-search" type="search" placeholder="Organization, strength, tool, or user task" autocomplete="off" />
+          </label>
+          <label for="organization-source">Source
+            <select id="organization-source"><option value="all">All sources</option><option value="existing">Existing providers</option><option value="alliance">Alliance directory</option></select>
+          </label>
+          <label for="organization-type">Organization type
+            <select id="organization-type"><option value="all">All types</option></select>
+          </label>
+          <button id="organization-select-visible" class="btn btn-outline btn-sm" type="button">Select visible</button>
+          <button id="organization-clear" class="btn btn-outline btn-sm" type="button">Clear</button>
+        </div>
+        <div class="organization-table-wrap" tabindex="0" aria-label="AI organizations">
+          <table class="organization-table">
+            <thead><tr><th scope="col">Run</th><th scope="col">Organization</th><th scope="col">Source</th><th scope="col">What it is good at</th><th scope="col">What users do</th><th scope="col">Evidence</th></tr></thead>
+            <tbody id="organization-rows"></tbody>
+          </table>
+        </div>
+        <p id="organization-count" class="model-count" aria-live="polite"></p>
+      </div>
+
+      <aside class="organization-runner" aria-labelledby="organization-runner-title">
+        <div class="model-runner-heading"><p>Organization benchmark</p><h3 id="organization-runner-title">Build a user-job comparison</h3></div>
+        <div class="model-selection-summary"><strong id="organization-selected-count">0</strong><span>organizations selected</span></div>
+        <fieldset class="organization-need-list"><legend>User needs</legend><div id="organization-needs"></div></fieldset>
+        <div class="model-run-settings">
+          <label for="organization-fixtures">Fixtures per need<input id="organization-fixtures" type="number" min="1" max="20" value="3" /></label>
+          <label for="organization-concurrency">Concurrency<input id="organization-concurrency" type="number" min="1" max="32" value="8" /></label>
+          <label for="organization-budget">Maximum spend (USD)<input id="organization-budget" type="number" min="0" max="10000" step="0.01" value="0" /></label>
+        </div>
+        <label class="model-check"><input id="organization-network" type="checkbox" /> Allow official-source and configured-adapter network access for this run.</label>
+        <label class="model-check"><input id="organization-network-approval" type="checkbox" /> Approve network access for this run only.</label>
+        <label class="model-check"><input id="organization-paid" type="checkbox" /> Approve paid tests up to the budget for this run only.</label>
+        <div class="model-run-actions">
+          <button id="organization-audit" class="btn btn-primary" type="button">Run catalog audit</button>
+          <button id="organization-plan" class="btn btn-outline" type="button">Prepare benchmark plan</button>
+        </div>
+        <p id="organization-status" class="model-status" aria-live="polite">No organization, member site, model, or provider has been contacted.</p>
+        <section id="organization-result" class="model-plan-result" hidden><h4>Run plan</h4><dl id="organization-plan-summary"></dl><button id="organization-download" class="btn btn-outline btn-sm" type="button">Save plan</button></section>
+      </aside>
+    </div>
+  </section>
 </main>
 
 <dialog id="model-detail" class="model-detail-dialog" aria-labelledby="model-detail-title">
@@ -110,7 +174,13 @@
   <div id="model-detail-body"></div>
 </dialog>
 
-<script src="data/buddy-model-benchmarks.js"></script>
-<script src="models.js" defer></script>
+<dialog id="organization-detail" class="model-detail-dialog" aria-labelledby="organization-detail-title">
+  <header><div><p id="organization-detail-source"></p><h2 id="organization-detail-title">Organization details</h2></div><button id="organization-detail-close" type="button">Close</button></header>
+  <div id="organization-detail-body"></div>
+</dialog>
+
+<script src="data/buddy-model-benchmarks.js?v=1"></script>
+<script src="data/ai-organization-intelligence.js?v=1"></script>
+<script src="models.js?v=2" defer></script>
 </body>
 </html>

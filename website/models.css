@@ -13,11 +13,11 @@
 .model-metrics span { color: var(--text3); font-size: .68rem; font-weight: 700; text-transform: uppercase; }
 .model-metrics strong { margin-top: 5px; font-size: 1.25rem; overflow-wrap: anywhere; }
 .model-lab-layout { display: grid; grid-template-columns: minmax(0, 1fr) 340px; align-items: start; gap: 18px; }
-.model-catalog-pane, .model-runner { border: 1px solid var(--border); border-radius: 8px; background: var(--card); }
+.model-catalog-pane, .model-runner { min-width: 0; border: 1px solid var(--border); border-radius: 8px; background: var(--card); }
 .model-toolbar { display: grid; grid-template-columns: minmax(230px, 1fr) 150px 180px auto auto; align-items: end; gap: 9px; padding: 14px; border-bottom: 1px solid var(--border); }
 .model-toolbar label, .model-run-settings label { color: var(--text3); font-size: .68rem; font-weight: 700; text-transform: uppercase; }
 .model-toolbar input, .model-toolbar select, .model-run-settings input, .model-run-settings select { width: 100%; min-height: 40px; margin-top: 5px; border: 1px solid var(--border); border-radius: 6px; padding: 8px 10px; background: var(--bg2); color: var(--text); font: inherit; text-transform: none; }
-.model-table-wrap { max-height: 720px; overflow: auto; }
+.model-table-wrap { width: 100%; max-width: 100%; max-height: 720px; overflow: auto; }
 .model-table { width: 100%; border-collapse: collapse; font-size: .79rem; }
 .model-table th { position: sticky; top: 0; z-index: 1; padding: 10px 12px; background: #171b24; color: var(--text3); text-align: left; text-transform: uppercase; font-size: .64rem; }
 .model-table td { padding: 11px 12px; border-top: 1px solid var(--border); vertical-align: middle; }
@@ -62,27 +62,63 @@
 .model-detail-dialog header p { color: var(--primary); font-size: .7rem; font-weight: 700; text-transform: uppercase; }
 .model-detail-dialog header h2 { margin-top: 3px; font-size: 1.2rem; }
 .model-detail-dialog header button { border: 0; background: transparent; color: var(--text2); cursor: pointer; }
-#model-detail-body { padding: 18px; }
-#model-detail-body h3 { margin: 16px 0 8px; font-size: .78rem; }
-#model-detail-body p, #model-detail-body li { color: var(--text2); font-size: .78rem; line-height: 1.55; }
-#model-detail-body ul { display: grid; grid-template-columns: 1fr 1fr; gap: 5px 18px; padding-left: 18px; }
+#model-detail-body, #organization-detail-body { padding: 18px; }
+#model-detail-body h3, #organization-detail-body h3 { margin: 16px 0 8px; font-size: .78rem; }
+#model-detail-body p, #model-detail-body li, #organization-detail-body p, #organization-detail-body li { color: var(--text2); font-size: .78rem; line-height: 1.55; }
+#model-detail-body ul, #organization-detail-body ul { display: grid; grid-template-columns: 1fr 1fr; gap: 5px 18px; padding-left: 18px; }
+.organization-lab { margin-top: 48px; padding-top: 34px; border-top: 1px solid var(--border); }
+.organization-header { display: flex; align-items: flex-end; justify-content: space-between; gap: 24px; }
+.organization-header h2 { margin: 4px 0 8px; font-size: 1.65rem; }
+.organization-header > div > p:last-child { max-width: 900px; color: var(--text2); }
+.organization-metrics { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); margin: 22px 0; border-block: 1px solid var(--border); }
+.organization-metrics div { min-width: 0; padding: 16px; border-right: 1px solid var(--border); }
+.organization-metrics div:last-child { border-right: 0; }
+.organization-metrics span, .organization-metrics strong { display: block; }
+.organization-metrics span { color: var(--text3); font-size: .66rem; font-weight: 700; text-transform: uppercase; }
+.organization-metrics strong { margin-top: 5px; font-size: 1.2rem; }
+.organization-layout { display: grid; grid-template-columns: minmax(0, 1fr) 360px; align-items: start; gap: 18px; }
+.organization-catalog, .organization-runner { min-width: 0; border: 1px solid var(--border); border-radius: 8px; background: var(--card); }
+.organization-toolbar { display: grid; grid-template-columns: minmax(240px, 1fr) 150px 180px auto auto; align-items: end; gap: 9px; padding: 14px; border-bottom: 1px solid var(--border); }
+.organization-toolbar label { color: var(--text3); font-size: .68rem; font-weight: 700; text-transform: uppercase; }
+.organization-toolbar input, .organization-toolbar select { width: 100%; min-height: 40px; margin-top: 5px; border: 1px solid var(--border); border-radius: 6px; padding: 8px 10px; background: var(--bg2); color: var(--text); font: inherit; text-transform: none; }
+.organization-table-wrap { width: 100%; max-width: 100%; max-height: 760px; overflow: auto; }
+.organization-table { width: 100%; min-width: 940px; border-collapse: collapse; font-size: .76rem; }
+.organization-table th { position: sticky; top: 0; z-index: 1; padding: 10px 12px; background: #171b24; color: var(--text3); text-align: left; text-transform: uppercase; font-size: .62rem; }
+.organization-table td { max-width: 260px; padding: 11px 12px; border-top: 1px solid var(--border); vertical-align: top; }
+.organization-table tbody tr:hover { background: rgba(255,255,255,.025); }
+.organization-table input { accent-color: var(--primary); }
+.organization-copy { display: grid; gap: 4px; }
+.organization-copy span, .organization-cell-note { color: var(--text3); font-size: .68rem; line-height: 1.4; }
+.organization-source-tag { display: inline-block; width: fit-content; padding: 2px 5px; border: 1px solid var(--border); border-radius: 4px; color: var(--text3); font-size: .58rem; text-transform: uppercase; }
+.organization-evidence { color: #fbbf24; }
+.organization-runner { position: sticky; top: 78px; padding: 18px; }
+.organization-need-list { max-height: 250px; overflow: auto; border: 0; padding: 0 5px 0 0; }
+.organization-need-list legend { margin-bottom: 8px; color: var(--text3); font-size: .68rem; font-weight: 800; text-transform: uppercase; }
+#organization-needs { display: grid; gap: 7px; }
+.organization-need { display: grid; grid-template-columns: auto 1fr; gap: 7px; color: var(--text2); font-size: .7rem; line-height: 1.35; }
+.organization-need input { margin-top: 2px; accent-color: var(--primary); }
+.organization-runner .model-run-settings { grid-template-columns: 1fr 1fr; }
+.organization-runner .model-run-settings label:last-child { grid-column: 1 / -1; }
 @media (max-width: 1100px) {
-  .model-lab-layout { grid-template-columns: 1fr; }
-  .model-runner { position: static; }
-  .model-toolbar { grid-template-columns: 1fr 1fr 1fr; }
+  .model-lab-layout, .organization-layout { grid-template-columns: 1fr; }
+  .model-runner, .organization-runner { position: static; }
+  .model-toolbar, .organization-toolbar { grid-template-columns: 1fr 1fr 1fr; }
   .model-search-label { grid-column: 1 / -1; }
+  .organization-toolbar label:first-child { grid-column: 1 / -1; }
 }
 @media (max-width: 720px) {
   .model-lab-shell { width: min(100% - 24px, 1460px); padding-top: 26px; }
   .model-lab-header { align-items: stretch; flex-direction: column; }
   .model-header-actions { justify-content: flex-start; }
-  .model-metrics { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .model-metrics div { border-bottom: 1px solid var(--border); }
-  .model-metrics div:nth-child(even) { border-right: 0; }
-  .model-toolbar { grid-template-columns: 1fr; }
+  .model-metrics, .organization-metrics { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .model-metrics div, .organization-metrics div { border-bottom: 1px solid var(--border); }
+  .model-metrics div:nth-child(even), .organization-metrics div:nth-child(even) { border-right: 0; }
+  .model-toolbar, .organization-toolbar { grid-template-columns: 1fr; }
   .model-search-label { grid-column: auto; }
+  .organization-toolbar label:first-child { grid-column: auto; }
   .model-table { min-width: 760px; }
   .model-method-band { grid-template-columns: 1fr; }
   .model-method-band div { border-right: 0; border-bottom: 1px solid var(--border); }
-  #model-detail-body ul { grid-template-columns: 1fr; }
+  .organization-header { align-items: stretch; flex-direction: column; }
+  #model-detail-body ul, #organization-detail-body ul { grid-template-columns: 1fr; }
 }

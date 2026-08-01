@@ -6,7 +6,7 @@
   <title>Buddy App Connections - DreamCo Empire OS</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="styles.css?v=40" />
 </head>
 <body>
 <div id="nav-placeholder"></div><script src="nav.js"></script>
@@ -120,6 +120,7 @@
           <label for="secret-reference">Secret reference name</label>
           <input id="secret-reference" name="secretReference" type="text" placeholder="CLIENT_APP_API_KEY" autocomplete="off" />
           <small>Enter a name or vault locator, never the credential value.</small>
+          <button id="secret-intake-open" class="btn btn-outline btn-sm secret-intake-open" type="button">Store a key in macOS Keychain</button>
         </div>
 
         <button class="btn btn-primary" type="submit">Prepare connection</button>
@@ -262,6 +263,25 @@
   </section>
 </main>
 
-<script src="connections.js" defer></script>
+<dialog id="secret-intake-dialog" class="secret-intake-dialog" aria-labelledby="secret-intake-title">
+  <form id="secret-intake-form">
+    <header>
+      <div><p>Local keychain intake</p><h2 id="secret-intake-title">Store a provider key</h2></div>
+      <button id="secret-intake-close" type="button" aria-label="Close key dialog">Close</button>
+    </header>
+    <div class="secret-intake-body">
+      <p id="secret-intake-boundary" class="connection-muted">The key goes directly to this Mac's Keychain through Buddy's authenticated loopback bridge. It is never written to browser storage, logs, generated files, or the connection plan.</p>
+      <label for="secret-intake-account">Reference name</label>
+      <input id="secret-intake-account" type="text" autocomplete="off" spellcheck="false" placeholder="GEMINI_API_KEY" required />
+      <label for="secret-intake-value">API key or secret</label>
+      <input id="secret-intake-value" type="password" autocomplete="new-password" spellcheck="false" minlength="8" maxlength="16384" required />
+      <label class="connection-approval" for="secret-intake-approval"><input id="secret-intake-approval" type="checkbox" required /><span>Store this one secret in my local macOS Keychain and clear the browser field immediately.</span></label>
+      <p id="secret-intake-status" class="connection-error" role="status" hidden></p>
+      <div class="secret-intake-actions"><button id="secret-intake-cancel" class="btn btn-outline" type="button">Cancel</button><button id="secret-intake-submit" class="btn btn-primary" type="submit">Store securely</button></div>
+    </div>
+  </form>
+</dialog>
+
+<script src="connections.js?v=2" defer></script>
 </body>
 </html>
