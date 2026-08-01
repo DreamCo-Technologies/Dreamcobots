@@ -1,7 +1,7 @@
 {
   "schema": "dreamco.buddy_open_model_coding_lab.v1",
-  "catalog_reviewed_on": "2026-07-25",
-  "stale_after_days": 14,
+  "catalog_reviewed_on": "2026-08-01",
+  "stale_after_days": 7,
   "comparison_policy": {
     "comparison_unit": "exact_model_checkpoint",
     "developer_region_is_informational_only": true,
@@ -106,6 +106,32 @@
       "weight_formats": ["safetensors"],
       "hardware_note": "License and resource needs must be checked for the exact release and parameter size.",
       "exact_checkpoint_review_required": true
+    },
+    {
+      "id": "olmo",
+      "label": "OLMo",
+      "developer": "Allen Institute for AI",
+      "developer_region": "United States",
+      "access": "open_weight_and_training_artifacts",
+      "license": "Varies by exact checkpoint and data artifact; verify the model card",
+      "official_source": "https://allenai.org/olmo",
+      "coding_fit": ["transparent research", "evaluation", "fine-tuning", "training studies"],
+      "weight_formats": ["safetensors"],
+      "hardware_note": "Select a checkpoint and quantization that fit the measured local compute budget.",
+      "exact_checkpoint_review_required": true
+    },
+    {
+      "id": "nemotron",
+      "label": "Nemotron",
+      "developer": "NVIDIA",
+      "developer_region": "United States",
+      "access": "mixed_by_checkpoint",
+      "license": "Verify the exact model card and release terms",
+      "official_source": "https://build.nvidia.com/explore/discover",
+      "coding_fit": ["agentic reasoning", "synthetic data", "tool use", "safety evaluation"],
+      "weight_formats": ["safetensors"],
+      "hardware_note": "Hardware requirements and redistribution terms depend on the exact checkpoint.",
+      "exact_checkpoint_review_required": true
     }
   ],
   "frontier_references": [
@@ -142,6 +168,15 @@
       "provider": "Mistral AI",
       "access": "hosted_api",
       "official_source": "https://docs.mistral.ai/models/",
+      "exact_model_id_required_at_run": true,
+      "adapter_status": "configuration_required"
+    },
+    {
+      "id": "frontier-xai-api",
+      "label": "xAI frontier API",
+      "provider": "xAI",
+      "access": "hosted_api",
+      "official_source": "https://docs.x.ai/developers/models",
       "exact_model_id_required_at_run": true,
       "adapter_status": "configuration_required"
     }

@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Buddy Defense Center | DreamCo</title>
+  <meta name="description" content="Assess AI artifacts, prepare secure GitHub connections, discover current models, and build evidence-backed defense plans with Buddy." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="security.css?v=1" />
+</head>
+<body class="defense-page">
+<div id="nav-placeholder"></div><script src="nav.js"></script>
+
+<main class="defense-shell">
+  <header class="defense-header">
+    <div>
+      <p class="defense-eyebrow">Open standards. Owner control. Verifiable evidence.</p>
+      <h1>Buddy Defense Center</h1>
+      <p>Inspect AI models, agents, packages, containers, and repository upgrades before they reach a user, business, or production system.</p>
+    </div>
+    <div class="defense-header-actions">
+      <a class="btn btn-outline btn-sm" href="open-model-lab.html">Open Model Lab</a>
+      <button id="defense-ask-buddy" class="btn btn-primary btn-sm" type="button">Ask Buddy</button>
+    </div>
+  </header>
+
+  <section class="defense-truth" aria-label="Connection and evidence boundary">
+    <strong>Verified catalog, not automatic access.</strong>
+    <span>Official projects and model sources are indexed below. A source is not connected until its owner completes authorization and Buddy records a successful health check.</span>
+  </section>
+
+  <section class="defense-metrics" aria-label="Defense catalog summary">
+    <div><span>Alliance references</span><strong id="defense-tool-count">0</strong></div>
+    <div><span>OpenSSF projects</span><strong id="defense-project-count">0</strong></div>
+    <div><span>Threat controls</span><strong id="defense-threat-count">0</strong></div>
+    <div><span>Model sources</span><strong id="defense-source-count">0</strong></div>
+    <div><span>Verified live connections</span><strong id="defense-live-count">0</strong></div>
+  </section>
+
+  <nav class="defense-tabs" aria-label="Defense Center sections">
+    <a href="#assess">Assess</a>
+    <a href="#github-profile">GitHub identity</a>
+    <a href="#models">Model discovery</a>
+    <a href="#catalog">Project catalog</a>
+    <a href="#products">Defense profiles</a>
+  </nav>
+
+  <section id="assess" class="defense-section" aria-labelledby="assess-heading">
+    <div class="defense-section-heading">
+      <div><p>Artifact intake</p><h2 id="assess-heading">Assess an open-source upgrade</h2></div>
+      <span id="defense-catalog-status" class="defense-state">Catalog loading</span>
+    </div>
+    <div class="defense-workspace">
+      <form id="defense-assessment-form" class="defense-form">
+        <label for="defense-profile">Buddy user profile ID
+          <input id="defense-profile" required value="owner-local" autocomplete="off" />
+        </label>
+        <label for="defense-source-kind">Artifact type
+          <select id="defense-source-kind">
+            <option value="repository">Repository</option>
+            <option value="package">Package</option>
+            <option value="container">Container</option>
+            <option value="model_weights">Model weights</option>
+            <option value="agent_tool">Agent tool</option>
+          </select>
+        </label>
+        <label class="wide-field" for="defense-source-url">Official source URL
+          <input id="defense-source-url" type="url" required placeholder="https://github.com/owner/project" autocomplete="url" />
+        </label>
+        <label for="defense-revision">Exact revision
+          <input id="defense-revision" required minlength="4" placeholder="Commit, immutable tag, or digest" autocomplete="off" />
+        </label>
+        <label for="defense-license">Declared license
+          <input id="defense-license" required minlength="2" placeholder="Apache-2.0" autocomplete="off" />
+        </label>
+        <label for="defense-purpose">Defensive purpose
+          <select id="defense-purpose">
+            <option value="defensive_evaluation">Defensive evaluation</option>
+            <option value="compatibility_testing">Compatibility testing</option>
+            <option value="owned_system_hardening">Harden my system</option>
+            <option value="security_education">Security education</option>
+          </select>
+        </label>
+        <label id="defense-format-field" for="defense-format" hidden>Model format
+          <select id="defense-format">
+            <option value="safetensors">Safetensors</option>
+            <option value="gguf">GGUF</option>
+            <option value="onnx">ONNX</option>
+            <option value="tflite">TFLite</option>
+            <option value="pickle">Pickle or checkpoint file</option>
+          </select>
+        </label>
+        <fieldset class="defense-evidence wide-field">
+          <legend>Supply-chain evidence</legend>
+          <label for="defense-checksum">SHA-256<input id="defense-checksum" placeholder="sha256:64 hexadecimal characters" autocomplete="off" /></label>
+          <label for="defense-signature">Signature evidence<input id="defense-signature" placeholder="Sigstore bundle or signed artifact reference" autocomplete="off" /></label>
+          <label for="defense-sbom">SBOM reference<input id="defense-sbom" placeholder="SPDX or CycloneDX artifact reference" autocomplete="off" /></label>
+          <label for="defense-provenance">Provenance reference<input id="defense-provenance" placeholder="SLSA or build attestation reference" autocomplete="off" /></label>
+          <label id="defense-model-card-field" for="defense-model-card" hidden>Model card<input id="defense-model-card" placeholder="Official model card URL or reference" autocomplete="off" /></label>
+        </fieldset>
+        <fieldset class="defense-flags wide-field">
+          <legend>Requested behavior</legend>
+          <label><input id="defense-rights" type="checkbox" required /> I confirm I may evaluate this exact artifact under its terms.</label>
+          <label><input id="defense-network" type="checkbox" /> Request one-run build network access.</label>
+          <label><input id="defense-remote-code" type="checkbox" /> Trust remote model code.</label>
+          <label><input id="defense-protected-write" type="checkbox" /> Write directly to a protected branch.</label>
+          <label><input id="defense-auto-merge" type="checkbox" /> Merge automatically after generation.</label>
+          <label><input id="defense-secrets" type="checkbox" /> The artifact contains unredacted secrets.</label>
+        </fieldset>
+        <button id="run-defense-assessment" class="btn btn-primary" type="submit">Run evidence assessment</button>
+      </form>
+
+      <aside class="defense-result-panel" aria-live="polite">
+        <p>Assessment result</p>
+        <h3 id="defense-assessment-title">Waiting for an artifact</h3>
+        <div class="defense-score-row"><span>Risk score</span><strong id="defense-risk-score">--</strong></div>
+        <p id="defense-assessment-detail">No source has been downloaded, installed, or executed.</p>
+        <ul id="defense-finding-list"></ul>
+        <div class="defense-result-actions">
+          <button id="defense-download-assessment" class="btn btn-outline btn-sm" type="button" disabled>Save report</button>
+          <button id="defense-prepare-upgrade" class="btn btn-outline btn-sm" type="button" disabled>Prepare upgrade task</button>
+        </div>
+      </aside>
+    </div>
+  </section>
+
+  <section id="github-profile" class="defense-section" aria-labelledby="github-heading">
+    <div class="defense-section-heading">
+      <div><p>Per-user authorization</p><h2 id="github-heading">Bind Buddy to the owner's GitHub account</h2></div>
+      <span class="defense-state state-review">OAuth and app setup required</span>
+    </div>
+    <div class="defense-workspace github-workspace">
+      <form id="github-profile-form" class="defense-form github-form">
+        <label for="github-user-profile">Buddy profile ID<input id="github-user-profile" required value="owner-local" /></label>
+        <label for="github-login">Expected GitHub login<input id="github-login" required placeholder="github-user" autocomplete="username" /></label>
+        <label class="wide-field" for="github-callback">Application callback URL<input id="github-callback" type="url" required value="http://127.0.0.1:5000/auth/github/callback" /></label>
+        <label class="wide-field" for="github-repositories">Approved repositories<input id="github-repositories" required value="DreamCo-Technologies/Dreamcobots" aria-describedby="github-repository-help" /></label>
+        <p id="github-repository-help" class="field-help wide-field">Use one owner/name repository per line. Buddy will not request organization-wide access.</p>
+        <fieldset class="github-permissions wide-field">
+          <legend>Repository permissions</legend>
+          <label><input type="checkbox" name="github-permission" value="metadata:read" checked disabled /> Metadata read</label>
+          <label><input type="checkbox" name="github-permission" value="contents:read" checked /> Contents read</label>
+          <label><input type="checkbox" name="github-permission" value="contents:write" /> Review-branch writes</label>
+          <label><input type="checkbox" name="github-permission" value="pull_requests:write" checked /> Pull request drafts</label>
+          <label><input type="checkbox" name="github-permission" value="checks:read" checked /> Check results</label>
+          <label><input type="checkbox" name="github-permission" value="issues:write" /> Issue drafts</label>
+        </fieldset>
+        <label class="defense-consent wide-field"><input id="github-connection-approval" type="checkbox" required /> I approve preparing this connection for these repositories only.</label>
+        <button id="prepare-github-profile" class="btn btn-primary" type="submit">Prepare secure connection</button>
+      </form>
+      <aside class="defense-result-panel">
+        <p>Connection plan</p>
+        <h3 id="github-plan-title">Not prepared</h3>
+        <p id="github-plan-detail">Buddy uses OAuth for identity and a repository app installation for scoped repository actions. Raw tokens never belong in this page.</p>
+        <ol id="github-plan-steps"></ol>
+        <button id="download-github-plan" class="btn btn-outline btn-sm" type="button" disabled>Save connection plan</button>
+      </aside>
+    </div>
+  </section>
+
+  <section id="models" class="defense-section" aria-labelledby="models-heading">
+    <div class="defense-section-heading">
+      <div><p>Current model routing</p><h2 id="models-heading">Discover first, benchmark second</h2></div>
+      <span class="defense-state">Official catalogs only</span>
+    </div>
+    <form id="model-discovery-form" class="model-discovery-form">
+      <fieldset><legend>Official discovery sources</legend><div id="model-source-options" class="option-grid"></div></fieldset>
+      <fieldset><legend>Task fit to measure</legend><div id="model-task-options" class="option-grid"></div></fieldset>
+      <label for="model-discovery-budget">Maximum paid discovery budget (USD)<input id="model-discovery-budget" type="number" min="0" max="10000" step="0.01" value="0" /></label>
+      <label class="defense-consent"><input id="model-discovery-network" type="checkbox" /> Allow official provider or hub network calls for this plan.</label>
+      <label class="defense-consent"><input id="model-discovery-paid" type="checkbox" /> Approve paid catalog calls up to the stated limit for this plan only.</label>
+      <button id="prepare-model-discovery" class="btn btn-primary" type="submit">Prepare discovery plan</button>
+    </form>
+    <div id="model-discovery-result" class="model-discovery-result" aria-live="polite">
+      <strong id="model-discovery-title">No discovery has run</strong>
+      <span id="model-discovery-detail">Buddy will preserve exact model IDs, observation times, costs, failures, and benchmark evidence.</span>
+      <button id="download-model-discovery" class="btn btn-outline btn-sm" type="button" disabled>Save model plan</button>
+    </div>
+  </section>
+
+  <section id="catalog" class="defense-section" aria-labelledby="catalog-heading">
+    <div class="defense-section-heading">
+      <div><p>Reference library</p><h2 id="catalog-heading">Alliance and OpenSSF project catalog</h2></div>
+      <span class="defense-state state-reference">Reference does not mean installed</span>
+    </div>
+    <div class="catalog-toolbar">
+      <label for="defense-catalog-search">Search projects<input id="defense-catalog-search" type="search" placeholder="Identity, signing, SBOM, models, provenance" autocomplete="off" /></label>
+      <label for="defense-catalog-filter">Catalog<select id="defense-catalog-filter"><option value="all">All references</option><option value="alliance">Alliance references</option><option value="openssf">OpenSSF projects</option><option value="models">Model sources</option></select></label>
+    </div>
+    <p id="defense-catalog-count" class="catalog-count">Loading catalog.</p>
+    <div id="defense-catalog-list" class="defense-catalog-list" aria-live="polite"></div>
+    <div class="threat-register">
+      <h3>Threat and control register</h3>
+      <div id="defense-threat-list"></div>
+    </div>
+  </section>
+
+  <section id="products" class="defense-section" aria-labelledby="products-heading">
+    <div class="defense-section-heading">
+      <div><p>Deployable policy packs</p><h2 id="products-heading">Defense profiles for owners and teams</h2></div>
+      <span class="defense-state state-review">Independent review still required</span>
+    </div>
+    <div id="defense-product-list" class="defense-product-list"></div>
+    <div class="defense-boundary-grid">
+      <div><strong>DreamCo-owned policy</strong><span>Risk rules, approval flows, evidence schema, user experience, and reports are implemented here.</span></div>
+      <div><strong>Compatible open standards</strong><span>External projects remain separately licensed and are used only after exact revision and license review.</span></div>
+      <div><strong>Measured claims</strong><span>Security and model quality claims require repeatable tests, failures, resource costs, and review evidence.</span></div>
+      <div><strong>Owner authority</strong><span>No silent install, account connection, protected-branch write, merge, publish, or spend.</span></div>
+    </div>
+  </section>
+</main>
+
+<script src="data/buddy-open-secure-ai-defense.js"></script>
+<script src="security.js" defer></script>
+</body>
+</html>

@@ -71,6 +71,17 @@ import {
   repositoryTrackingPlanRequestSchema,
 } from "./open-model-lab-policy";
 import {
+  createDefenseAssessment,
+  createGitHubProfileConnectionPlan,
+  createModelDiscoveryPlan,
+  createOpenSourceUpgradePlan,
+  defenseAssessmentRequestSchema,
+  githubProfileConnectionPlanRequestSchema,
+  modelDiscoveryPlanRequestSchema,
+  OPEN_SECURE_AI_DEFENSE_CATALOG,
+  openSourceUpgradePlanRequestSchema,
+} from "./open-secure-ai-defense";
+import {
   createDataImportPlan,
   createDataPackagePlan,
   createMemoryPreferencePlan,
@@ -3235,6 +3246,70 @@ Any improvements or fixes (optional, 1-2 bullet points max)`;
       return res.status(201).json(createOpenSourceSandboxPlan(parsed.data));
     } catch (error) {
       return res.status(400).json({ error: error instanceof Error ? error.message : "Invalid sandbox plan" });
+    }
+  });
+
+  app.get("/api/buddy/open-secure-ai-defense/catalog", (_req, res) => {
+    res.json({
+      ...OPEN_SECURE_AI_DEFENSE_CATALOG,
+      liveCompanyConnections: 0,
+      allianceMembershipClaimed: false,
+    });
+  });
+
+  app.post("/api/buddy/open-secure-ai-defense/assessment", async (req, res) => {
+    const killSwitch = await storage.getSetting("kill_switch");
+    if ((killSwitch?.value as { enabled?: boolean } | undefined)?.enabled) {
+      return res.status(423).json({ message: "Defense assessment planning is locked by the kill switch" });
+    }
+    const parsed = defenseAssessmentRequestSchema.safeParse(req.body);
+    if (!parsed.success) return res.status(400).json(zodValidationError(parsed.error));
+    try {
+      return res.status(201).json(createDefenseAssessment(parsed.data));
+    } catch (error) {
+      return res.status(400).json({ error: error instanceof Error ? error.message : "Invalid defense assessment" });
+    }
+  });
+
+  app.post("/api/buddy/open-secure-ai-defense/github-profile-plan", async (req, res) => {
+    const killSwitch = await storage.getSetting("kill_switch");
+    if ((killSwitch?.value as { enabled?: boolean } | undefined)?.enabled) {
+      return res.status(423).json({ message: "GitHub profile planning is locked by the kill switch" });
+    }
+    const parsed = githubProfileConnectionPlanRequestSchema.safeParse(req.body);
+    if (!parsed.success) return res.status(400).json(zodValidationError(parsed.error));
+    try {
+      return res.status(201).json(createGitHubProfileConnectionPlan(parsed.data, {
+        oauthClientIdConfigured: Boolean(process.env.GITHUB_OAUTH_CLIENT_ID),
+        githubAppConfigured: Boolean(process.env.GITHUB_APP_ID),
+        encryptedVaultConfigured: Boolean(process.env.BUDDY_SECRET_VAULT_URL),
+      }));
+    } catch (error) {
+      return res.status(400).json({ error: error instanceof Error ? error.message : "Invalid GitHub profile plan" });
+    }
+  });
+
+  app.post("/api/buddy/open-secure-ai-defense/model-discovery-plan", async (req, res) => {
+    const parsed = modelDiscoveryPlanRequestSchema.safeParse(req.body);
+    if (!parsed.success) return res.status(400).json(zodValidationError(parsed.error));
+    try {
+      return res.status(201).json(createModelDiscoveryPlan(parsed.data));
+    } catch (error) {
+      return res.status(400).json({ error: error instanceof Error ? error.message : "Invalid model discovery plan" });
+    }
+  });
+
+  app.post("/api/buddy/open-secure-ai-defense/upgrade-plan", async (req, res) => {
+    const killSwitch = await storage.getSetting("kill_switch");
+    if ((killSwitch?.value as { enabled?: boolean } | undefined)?.enabled) {
+      return res.status(423).json({ message: "Open-source upgrade planning is locked by the kill switch" });
+    }
+    const parsed = openSourceUpgradePlanRequestSchema.safeParse(req.body);
+    if (!parsed.success) return res.status(400).json(zodValidationError(parsed.error));
+    try {
+      return res.status(201).json(createOpenSourceUpgradePlan(parsed.data));
+    } catch (error) {
+      return res.status(400).json({ error: error instanceof Error ? error.message : "Invalid upgrade plan" });
     }
   });
 

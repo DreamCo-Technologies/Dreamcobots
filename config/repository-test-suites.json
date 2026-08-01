@@ -269,13 +269,13 @@
     },
     {
       "id": "security",
-      "name": "Public-file and secret safety",
+      "name": "AI, supply-chain, and public-file defense",
       "area": "Security",
       "level": "local_contract",
-      "scripts": ["buddy:site:check", "test:governed"],
-      "sources": ["tools/build_buddy_public_site.py", "server/outbound-adapters.ts"],
-      "tests": ["tests/outbound-adapters.test.ts", "tools/build_buddy_public_site.py"],
-      "boundary": "Scans public artifacts and adapter contracts. It does not replace deployment hardening or independent security review."
+      "scripts": ["buddy:defense", "buddy:site:check", "test:governed"],
+      "sources": ["config/buddy-open-secure-ai-defense.json", "server/open-secure-ai-defense.ts", "tools/build_buddy_public_site.py", "server/outbound-adapters.ts", "website/security.js"],
+      "tests": ["tests/open-secure-ai-defense.test.ts", "tests/security-center-page.test.mjs", "tests/outbound-adapters.test.ts", "tools/build_buddy_public_site.py"],
+      "boundary": "Assesses artifact evidence, secure GitHub connection plans, model discovery plans, public artifacts, and adapter contracts. It does not install code, execute untrusted artifacts, connect accounts, claim alliance membership, replace deployment hardening, or replace independent security review."
     }
   ]
 }

@@ -22,6 +22,7 @@ FLEET_E2E = WEBSITE / "data" / "bot-fleet-e2e.json"
 CALCULATORS = ROOT / "config" / "generated" / "bot_calculators.json"
 SITE_STATUS = WEBSITE / "data" / "buddy-site-status.json"
 TEST_REGISTRY = ROOT / "config" / "generated" / "repository_test_registry.json"
+DEFENSE_CATALOG = ROOT / "config" / "generated" / "buddy_open_secure_ai_defense.json"
 
 SECRET_FILE_PATTERN = re.compile(
     r"(^|/)(\.env($|\.)|id_rsa|id_ed25519|.*\.(pem|p12|pfx|key|keystore)$)", re.IGNORECASE
@@ -77,12 +78,14 @@ def build_public_map() -> dict[str, Any]:
     calculators = read_json(CALCULATORS)
     site_status = read_json(SITE_STATUS)
     test_registry = read_json(TEST_REGISTRY)
+    defense_catalog = read_json(DEFENSE_CATALOG)
 
     registry_summary = master.get("summary", {})
     fleet_e2e_summary = fleet_e2e.get("summary", {})
     capability_bot_count = int(registry_summary.get("per_bot_sandbox_blueprints", 0))
     site_summary = site_status.get("summary", {})
     test_summary = test_registry.get("summary", {})
+    defense_summary = defense_catalog.get("summary", {})
     enabled_tools = int(test_summary.get("locally_testable_suites", 0))
     approval_tools = int(test_registry.get("route_classifications", {}).get("external_or_destructive_gate", 0))
 
@@ -136,6 +139,9 @@ def build_public_map() -> dict[str, Any]:
             "api_route_registrations": int(test_summary.get("literal_api_routes", 0)),
             "test_suites": int(test_summary.get("test_suites", 0)),
             "files_scanned": int(test_summary.get("files_scanned", 0)),
+            "defense_reference_projects": int(defense_summary.get("openssf_projects", 0))
+            + int(defense_summary.get("alliance_reference_tools", 0)),
+            "model_discovery_sources": int(defense_summary.get("model_discovery_sources", 0)),
             "autonomous_cash_enabled": bool(registry_summary.get("autonomous_cash_enabled", False)),
         },
         "systems": [
@@ -183,6 +189,14 @@ def build_public_map() -> dict[str, Any]:
                 f"{int(test_summary.get('files_scanned', 0)):,} files and "
                 f"{int(test_summary.get('literal_api_routes', 0))} literal API routes to evidence and runtime boundaries.",
                 "config/generated/repository_test_registry.json",
+            ),
+            system_status(
+                "local_contract_ready",
+                "Buddy Defense Center",
+                f"{int(defense_summary.get('alliance_reference_tools', 0))} alliance references, "
+                f"{int(defense_summary.get('openssf_projects', 0))} OpenSSF projects, and "
+                f"{int(defense_summary.get('model_discovery_sources', 0))} official model sources are governed by evidence and approval gates.",
+                "config/generated/buddy_open_secure_ai_defense.json",
             ),
             system_status(
                 "approval_required",
@@ -301,6 +315,9 @@ def validate_site() -> dict[str, Any]:
         WEBSITE / "open-model-lab.html",
         WEBSITE / "open-model-lab.css",
         WEBSITE / "open-model-lab.js",
+        WEBSITE / "security.html",
+        WEBSITE / "security.css",
+        WEBSITE / "security.js",
         WEBSITE / "test-center.html",
         WEBSITE / "test-center.css",
         WEBSITE / "test-center.js",
@@ -313,6 +330,7 @@ def validate_site() -> dict[str, Any]:
         WEBSITE / "data" / "buddy-model-router.js",
         WEBSITE / "data" / "buddy-model-benchmarks.js",
         WEBSITE / "data" / "buddy-open-model-coding-lab.js",
+        WEBSITE / "data" / "buddy-open-secure-ai-defense.js",
         WEBSITE / "data" / "repository-test-registry.json",
         WEBSITE / "data" / "buddy-fleet-quality-program.js",
         WEBSITE / "data" / "buddy-capability-certifications.js",
@@ -478,6 +496,28 @@ def validate_site() -> dict[str, Any]:
         for control_id in sorted(required_open_lab_controls):
             if f"byId('{control_id}')" not in open_lab_script:
                 errors.append(f"Open Model Lab control is not bound in open-model-lab.js: #{control_id}")
+
+    security_parser = parsers.get(WEBSITE / "security.html")
+    security_script = (WEBSITE / "security.js").read_text(encoding="utf-8") if (WEBSITE / "security.js").exists() else ""
+    required_security_controls = {
+        "defense-assessment-form", "defense-profile", "defense-source-kind", "defense-source-url",
+        "defense-revision", "defense-license", "defense-purpose", "defense-rights",
+        "defense-network", "defense-remote-code", "defense-protected-write", "defense-auto-merge",
+        "defense-secrets", "run-defense-assessment", "defense-download-assessment",
+        "defense-prepare-upgrade", "github-profile-form", "github-user-profile", "github-login",
+        "github-callback", "github-repositories", "github-connection-approval", "prepare-github-profile",
+        "download-github-plan", "model-discovery-form", "model-source-options", "model-task-options",
+        "model-discovery-budget", "model-discovery-network", "model-discovery-paid",
+        "prepare-model-discovery", "download-model-discovery", "defense-catalog-search",
+        "defense-catalog-filter", "defense-catalog-list", "defense-threat-list",
+        "defense-product-list", "defense-ask-buddy",
+    }
+    if security_parser:
+        for control_id in sorted(required_security_controls - security_parser.ids):
+            errors.append(f"Missing Defense Center interaction control: #{control_id}")
+        for control_id in sorted(required_security_controls):
+            if f"byId('{control_id}')" not in security_script:
+                errors.append(f"Defense Center control is not bound in security.js: #{control_id}")
 
     data_control_parser = parsers.get(WEBSITE / "data-control.html")
     data_control_script = (WEBSITE / "data-control.js").read_text(encoding="utf-8") if (WEBSITE / "data-control.js").exists() else ""

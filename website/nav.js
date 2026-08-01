@@ -12,6 +12,7 @@
     { href: 'divisions.html', label: '🏛️ Divisions' },
     { href: 'bots.html', label: '🤖 Bot Fleet' },
     { href: 'test-center.html', label: '🧪 Test Center' },
+    { href: 'security.html', label: '🛡️ Defense Center' },
     { href: 'system-map.html', label: '🗺️ Repository Map' },
     { href: 'chat.html', label: '💬 Chat' },
     { href: 'install.html', label: '📲 Install & Launch' },
