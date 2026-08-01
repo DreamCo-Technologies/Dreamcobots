@@ -3,20 +3,539 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Buddy — DreamCo Empire OS</title>
-  <meta name="description" content="Buddy is the DreamCo chatbot home page for building apps, bots, games, simulations, debugging systems, and safe autonomous workflows." />
-  <meta http-equiv="refresh" content="0; url=buddy.html" />
-  <link rel="canonical" href="buddy.html" />
+  <title>DreamCo Empire OS — 1,051+ AI Bots Across 45 Divisions</title>
+  <meta name="description" content="DreamCo Empire OS: The world's most advanced AI bot empire. 1,051+ specialist bots across 45 divisions, governed by Buddy Bot. Free to start — enterprise-ready from day one." />
+  <meta name="keywords" content="AI bots, automation, DreamCo, Empire OS, Buddy Bot, enterprise AI, bot fleet, autonomous agents" />
+  <meta property="og:title" content="DreamCo Empire OS — 1,051+ AI Bots" />
+  <meta property="og:description" content="The world's most advanced AI bot empire. 1,051+ specialist bots across 45 divisions." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://dreamco-technologies.github.io/Dreamcobots/" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="DreamCo Empire OS — 1,051+ AI Bots" />
+  <meta name="twitter:description" content="The world's most advanced AI bot empire. 1,051+ specialist bots across 45 divisions, governed by Buddy Bot." />
+  <link rel="canonical" href="https://dreamco-technologies.github.io/Dreamcobots/" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="styles.css" />
-  <script>window.location.replace('buddy.html' + window.location.search + window.location.hash);</script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "name": "DreamCo Technologies",
+    "url": "https://dreamco-technologies.github.io/Dreamcobots/",
+    "description": "DreamCo Empire OS — 1,051+ AI bots across 45 specialist divisions",
+    "sameAs": ["https://github.com/DreamCo-Technologies/Dreamcobots"]
+  }
+  </script>
+  <style>
+    /* ── Landing-specific overrides ── */
+    .home-hero {
+      min-height: 100vh;
+      display: flex; align-items: center;
+      background:
+        radial-gradient(ellipse 80% 60% at 50% -10%, rgba(79,142,247,.18) 0%, transparent 60%),
+        radial-gradient(ellipse 50% 40% at 85% 80%, rgba(167,139,250,.12) 0%, transparent 50%),
+        var(--bg);
+      position: relative; overflow: hidden;
+    }
+    .home-hero::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: url("data:image/svg+xml,%3Csvg width='60' height='60' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='30' cy='30' r='.6' fill='rgba(99,115,155,.1)'/%3E%3C/svg%3E") repeat;
+    }
+    .hero-grid {
+      position: relative; z-index: 1;
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 72px; align-items: center;
+      padding: 120px 0 80px;
+    }
+    @media (max-width: 900px) {
+      .hero-grid { grid-template-columns: 1fr; gap: 48px; padding: 80px 0 60px; }
+      .hero-visual-col { display: none; }
+    }
+    .hero-eyebrow {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: rgba(79,142,247,.1); border: 1px solid rgba(79,142,247,.3);
+      color: var(--primary2); font-size: .78rem; font-weight: 600;
+      padding: 5px 14px; border-radius: 100px; margin-bottom: 24px;
+      letter-spacing: .05em; text-transform: uppercase;
+    }
+    .hero-eyebrow span { width: 6px; height: 6px; border-radius: 50%; background: var(--green); animation: pulse 2s infinite; }
+    .hero-title { font-size: clamp(2.4rem, 5vw, 4rem); font-weight: 800; line-height: 1.08; letter-spacing: -0.03em; margin-bottom: 20px; }
+    .hero-title .grad { background: linear-gradient(90deg, var(--primary), var(--accent)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+    .hero-sub { font-size: 1.15rem; color: var(--text2); line-height: 1.7; max-width: 480px; margin-bottom: 36px; }
+    .hero-ctas { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 52px; }
+    .hero-stats-row { display: flex; gap: 36px; padding-top: 36px; border-top: 1px solid var(--border); flex-wrap: wrap; }
+    .hstat { }
+    .hstat-num { font-size: 1.9rem; font-weight: 800; color: var(--text); letter-spacing: -0.03em; line-height: 1; }
+    .hstat-num .grad { background: linear-gradient(90deg, var(--primary), var(--accent)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+    .hstat-label { font-size: .78rem; color: var(--text3); margin-top: 4px; text-transform: uppercase; letter-spacing: .04em; }
+
+    /* Terminal card */
+    .terminal-card {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: var(--radius2); overflow: hidden;
+      box-shadow: var(--shadow2); position: relative;
+    }
+    .terminal-card::before {
+      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px;
+      background: linear-gradient(90deg, transparent, var(--primary), transparent);
+    }
+    .terminal-top {
+      display: flex; align-items: center; gap: 8px;
+      padding: 14px 18px; border-bottom: 1px solid var(--border);
+      background: var(--bg3);
+    }
+    .dot { width: 11px; height: 11px; border-radius: 50%; }
+    .terminal-title { font-family: var(--mono); font-size: .75rem; color: var(--text3); margin-left: auto; }
+    .terminal-body { padding: 20px; font-family: var(--mono); font-size: .8rem; line-height: 1.9; }
+    .ln { display: flex; gap: 14px; }
+    .lnum { color: var(--text3); min-width: 18px; user-select: none; }
+    .ck { color: var(--accent); }
+    .cs { color: var(--green); }
+    .cp { color: var(--primary2); }
+    .cn { color: var(--amber); }
+    .cc { color: var(--text3); }
+    .cm { color: var(--cyan); }
+
+    /* Floating badges */
+    .fbadge {
+      position: absolute;
+      background: var(--card2); border: 1px solid var(--border);
+      border-radius: 12px; padding: 10px 14px;
+      font-size: .78rem; font-weight: 600; color: var(--text);
+      box-shadow: var(--shadow);
+      display: flex; align-items: center; gap: 8px;
+      white-space: nowrap; animation: floatUpDown 3s ease-in-out infinite;
+    }
+    .fbadge-1 { top: -18px; right: 24px; animation-delay: 0s; }
+    .fbadge-2 { bottom: -16px; left: 16px; animation-delay: 1.5s; }
+    @keyframes floatUpDown { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-7px)} }
+
+    /* Features section */
+    .features-section { padding: 100px 0; }
+    .section-label {
+      text-align: center;
+      font-size: .8rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase;
+      color: var(--primary); margin-bottom: 16px;
+    }
+    .section-title { text-align: center; margin-bottom: 16px; }
+    .section-sub { text-align: center; color: var(--text2); font-size: 1.05rem; max-width: 560px; margin: 0 auto 60px; line-height: 1.7; }
+    .feature-card {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 28px;
+      transition: all .25s;
+    }
+    .feature-card:hover { border-color: var(--border2); transform: translateY(-3px); box-shadow: var(--shadow); }
+    .feature-icon { font-size: 2rem; margin-bottom: 16px; }
+    .feature-card h3 { margin-bottom: 10px; }
+    .feature-card p { font-size: .9rem; color: var(--text2); line-height: 1.65; }
+
+    /* Divisions strip */
+    .divisions-section { padding: 80px 0; background: var(--bg2); }
+    .div-pill {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 100px; padding: 6px 14px;
+      font-size: .8rem; color: var(--text2); font-weight: 500;
+      transition: all .2s; cursor: default; white-space: nowrap;
+    }
+    .div-pill:hover { border-color: var(--primary); color: var(--text); background: var(--card2); }
+    .div-pill strong { color: var(--primary2); font-size: .72rem; font-weight: 700; }
+    .div-cloud { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; }
+
+    /* Autonomy section */
+    .autonomy-section { padding: 80px 0; }
+    .mode-strip {
+      display: grid; grid-template-columns: repeat(3,1fr); gap: 20px;
+      margin-top: 48px;
+    }
+    @media (max-width:700px) { .mode-strip { grid-template-columns: 1fr; } }
+    .mode-tile {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 28px;
+      position: relative; overflow: hidden;
+    }
+    .mode-tile::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; }
+    .mode-tile.guided::before { background: var(--primary); }
+    .mode-tile.scheduled::before { background: var(--amber); }
+    .mode-tile.full::before { background: var(--green); }
+    .mode-tile .mode-icon { font-size: 2rem; margin-bottom: 14px; }
+    .mode-tile h3 { margin-bottom: 8px; }
+    .mode-tile p { font-size: .88rem; color: var(--text2); line-height: 1.6; }
+    .mode-plans { margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--border); display: flex; gap: 6px; flex-wrap: wrap; }
+
+    /* CTA section */
+    .cta-section {
+      padding: 100px 0; text-align: center;
+      background: radial-gradient(ellipse 60% 80% at 50% 0%, rgba(79,142,247,.1), transparent 70%);
+    }
+    .cta-section h2 { margin-bottom: 16px; }
+    .cta-section p { color: var(--text2); font-size: 1.05rem; max-width: 520px; margin: 0 auto 36px; line-height: 1.7; }
+    .cta-actions { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+
+    /* Footer */
+    .site-footer {
+      background: var(--bg2); border-top: 1px solid var(--border);
+      padding: 60px 0 32px;
+    }
+    .footer-grid {
+      display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 48px;
+      margin-bottom: 48px;
+    }
+    @media (max-width:800px) { .footer-grid { grid-template-columns: 1fr 1fr; gap: 32px; } }
+    @media (max-width:500px) { .footer-grid { grid-template-columns: 1fr; } }
+    .footer-brand p { font-size: .88rem; color: var(--text3); line-height: 1.65; margin: 12px 0 20px; max-width: 280px; }
+    .footer-social { display: flex; gap: 10px; }
+    .footer-social a {
+      width: 36px; height: 36px; border-radius: 10px;
+      background: var(--card); border: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: center;
+      font-size: .9rem; text-decoration: none; transition: all .2s;
+    }
+    .footer-social a:hover { border-color: var(--primary); background: var(--card2); }
+    .footer-col h4 { font-size: .85rem; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--text3); margin-bottom: 14px; }
+    .footer-col a { display: block; font-size: .875rem; color: var(--text2); padding: 4px 0; transition: color .2s; }
+    .footer-col a:hover { color: var(--text); }
+    .footer-bottom {
+      border-top: 1px solid var(--border); padding-top: 28px;
+      display: flex; align-items: center; justify-content: space-between;
+      flex-wrap: wrap; gap: 12px;
+    }
+    .footer-bottom p { font-size: .8rem; color: var(--text3); }
+    .footer-bottom .footer-badges { display: flex; gap: 8px; flex-wrap: wrap; }
+    .footer-bottom .footer-badges .badge { font-size: .68rem; }
+
+    /* Responsive grids */
+    @media (max-width: 900px) {
+      .grid-3 { grid-template-columns: repeat(2,1fr); }
+    }
+    @media (max-width: 600px) {
+      .grid-3 { grid-template-columns: 1fr; }
+    }
+  </style>
 </head>
 <body>
-  <main class="container" style="min-height:100vh;display:flex;align-items:center;justify-content:center;text-align:center">
-    <div class="card card-lg">
-      <h1>Opening Buddy</h1>
-      <p style="margin:12px 0 20px">DreamCo starts at the Buddy command screen now.</p>
-      <a class="btn btn-primary" href="buddy.html">Open Buddy</a>
+<div id="nav-placeholder"></div><script src="nav.js"></script>
+
+<!-- ══════════════════════════════════════ HERO ══════════════════════════════════════ -->
+<section class="home-hero" aria-label="Hero">
+  <div class="container">
+    <div class="hero-grid">
+      <div class="hero-copy">
+        <div class="hero-eyebrow"><span></span> Live Repository · 1,051 Profiles Evidenced</div>
+        <h1 class="hero-title">
+          The World's Most Advanced<br /><span class="grad">AI Bot Empire</span>
+        </h1>
+        <p class="hero-sub">
+          DreamCo Empire OS runs 1,051+ specialist bots across 45 divisions — governed by Buddy Bot, your single command interface. From finance and healthcare to creative and cyber, your empire operates on your schedule.
+        </p>
+        <div class="hero-ctas">
+          <a href="buddy.html" class="btn btn-primary btn-lg">Open Buddy Bot →</a>
+          <a href="docs.html" class="btn btn-outline btn-lg">Documentation</a>
+        </div>
+        <div class="hero-stats-row">
+          <div class="hstat">
+            <div class="hstat-num"><span class="grad">1,051+</span></div>
+            <div class="hstat-label">AI Bot Profiles</div>
+          </div>
+          <div class="hstat">
+            <div class="hstat-num">45</div>
+            <div class="hstat-label">Specialist Divisions</div>
+          </div>
+          <div class="hstat">
+            <div class="hstat-num">3</div>
+            <div class="hstat-label">Autonomy Modes</div>
+          </div>
+          <div class="hstat">
+            <div class="hstat-num"><span class="grad">$0</span></div>
+            <div class="hstat-label">To Start</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="hero-visual-col" style="position:relative">
+        <div class="terminal-card">
+          <div class="terminal-top">
+            <div class="dot" style="background:#ff5f57"></div>
+            <div class="dot" style="background:#ffbd2e"></div>
+            <div class="dot" style="background:#28c840"></div>
+            <div class="terminal-title">dreamco-empire-os.json</div>
+          </div>
+          <div class="terminal-body">
+            <div class="ln"><span class="lnum">1</span><span><span class="cc">{</span></span></div>
+            <div class="ln"><span class="lnum">2</span><span>&nbsp;&nbsp;<span class="ck">"empire"</span><span class="cc">:</span> <span class="cs">"DreamCo Empire OS"</span><span class="cc">,</span></span></div>
+            <div class="ln"><span class="lnum">3</span><span>&nbsp;&nbsp;<span class="ck">"bots"</span><span class="cc">:</span> <span class="cn">1051</span><span class="cc">,</span></span></div>
+            <div class="ln"><span class="lnum">4</span><span>&nbsp;&nbsp;<span class="ck">"divisions"</span><span class="cc">:</span> <span class="cn">45</span><span class="cc">,</span></span></div>
+            <div class="ln"><span class="lnum">5</span><span>&nbsp;&nbsp;<span class="ck">"commander"</span><span class="cc">:</span> <span class="cs">"Buddy Bot"</span><span class="cc">,</span></span></div>
+            <div class="ln"><span class="lnum">6</span><span>&nbsp;&nbsp;<span class="ck">"autonomy"</span><span class="cc">:</span> <span class="cs">"governed"</span><span class="cc">,</span></span></div>
+            <div class="ln"><span class="lnum">7</span><span>&nbsp;&nbsp;<span class="ck">"status"</span><span class="cc">:</span> <span class="cm">"operational"</span><span class="cc">,</span></span></div>
+            <div class="ln"><span class="lnum">8</span><span>&nbsp;&nbsp;<span class="ck">"capabilities"</span><span class="cc">:</span> <span class="cn">8408</span></span></div>
+            <div class="ln"><span class="lnum">9</span><span><span class="cc">}</span></span></div>
+          </div>
+        </div>
+        <div class="fbadge fbadge-1">🟢 All Systems Operational</div>
+        <div class="fbadge fbadge-2">⚡ 8,408 Capabilities Declared</div>
+      </div>
     </div>
-  </main>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════ FEATURES ══════════════════════════════════════ -->
+<section class="features-section" aria-label="Key Features">
+  <div class="container">
+    <div class="section-label">Why DreamCo</div>
+    <h2 class="section-title">One Platform.<br />Every Capability You Need.</h2>
+    <p class="section-sub">From a single chat interface, Buddy routes every request to the right specialist bot — and runs it with the autonomy level you set.</p>
+
+    <div class="grid-3">
+      <div class="feature-card">
+        <div class="feature-icon">🧠</div>
+        <h3>Buddy Bot Command Center</h3>
+        <p>Single natural-language interface for all 1,051 bots. Type your goal, Buddy routes, orchestrates, and reports back. No code required.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🏛️</div>
+        <h3>45 Specialist Divisions</h3>
+        <p>Finance, healthcare, legal, cyber, code, content, construction, agriculture and more — every industry covered by dedicated expert bots.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">⚡</div>
+        <h3>Three Autonomy Modes</h3>
+        <p>Guided (you approve everything), Scheduled (bots run on your timetable), or Governed Full Autonomy (24/7 with safety rails). You choose.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🔒</div>
+        <h3>Enterprise-Grade Governance</h3>
+        <p>Every bot action passes through Buddy's governed safety layer. Audit logs, approval gates, and data-control tools built in from day one.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🌐</div>
+        <h3>200+ API Integrations</h3>
+        <p>Pre-wired connectors for OpenAI, Anthropic, Google, Serper, Stripe, GitHub, and hundreds more. Activate with your own keys.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">📊</div>
+        <h3>Repository-Evidenced Fleet</h3>
+        <p>Every bot profile is backed by real source code, sandbox blueprints, capability tests, and business blueprints — not marketing promises.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════ DIVISIONS ══════════════════════════════════════ -->
+<section class="divisions-section" aria-label="Divisions">
+  <div class="container">
+    <div class="section-label">The Fleet</div>
+    <h2 class="section-title" style="margin-bottom:12px">45 Divisions. Every Industry.</h2>
+    <p class="section-sub">Click any division to explore its bots.</p>
+    <div class="div-cloud" id="div-cloud">
+      <a href="bots.html" class="div-pill">CommandCore <strong>13</strong></a>
+      <a href="bots.html" class="div-pill">DreamAIInfra <strong>25</strong></a>
+      <a href="bots.html" class="div-pill">DreamAdmin <strong>21</strong></a>
+      <a href="bots.html" class="div-pill">DreamAgents <strong>20</strong></a>
+      <a href="bots.html" class="div-pill">DreamAgriculture <strong>20</strong></a>
+      <a href="bots.html" class="div-pill">DreamArts <strong>18</strong></a>
+      <a href="bots.html" class="div-pill">DreamAutomation <strong>21</strong></a>
+      <a href="bots.html" class="div-pill">DreamBizLaunch <strong>21</strong></a>
+      <a href="bots.html" class="div-pill">DreamCodeLab <strong>146</strong></a>
+      <a href="bots.html" class="div-pill">DreamConstruction <strong>19</strong></a>
+      <a href="bots.html" class="div-pill">DreamContent <strong>16</strong></a>
+      <a href="bots.html" class="div-pill">DreamCrypto <strong>20</strong></a>
+      <a href="bots.html" class="div-pill">DreamCustIntel <strong>25</strong></a>
+      <a href="bots.html" class="div-pill">DreamCyber <strong>25</strong></a>
+      <a href="bots.html" class="div-pill">DreamData <strong>16</strong></a>
+      <a href="bots.html" class="div-pill">DreamDecision <strong>25</strong></a>
+      <a href="bots.html" class="div-pill">DreamEducation <strong>20</strong></a>
+      <a href="bots.html" class="div-pill">DreamEmpire <strong>5</strong></a>
+      <a href="bots.html" class="div-pill">DreamEntFinance <strong>25</strong></a>
+      <a href="bots.html" class="div-pill">DreamFinance <strong>25</strong></a>
+      <a href="bots.html" class="div-pill">DreamFlow <strong>5</strong></a>
+      <a href="bots.html" class="div-pill">DreamFood <strong>20</strong></a>
+      <a href="bots.html" class="div-pill">DreamGlobal <strong>16</strong></a>
+      <a href="bots.html" class="div-pill">DreamHealth <strong>20</strong></a>
+      <a href="bots.html" class="div-pill">DreamInfluence <strong>25</strong></a>
+      <a href="bots.html" class="div-pill">DreamLegal <strong>25</strong></a>
+      <a href="bots.html" class="div-pill">DreamLoans <strong>23</strong></a>
+      <a href="bots.html" class="div-pill">DreamMaintenance <strong>21</strong></a>
+      <a href="bots.html" class="div-pill">DreamMarketing <strong>25</strong></a>
+      <a href="bots.html" class="div-pill">DreamMedia <strong>20</strong></a>
+      <a href="bots.html" class="div-pill">DreamOps <strong>25</strong></a>
+      <a href="bots.html" class="div-pill">DreamRealty <strong>25</strong></a>
+      <a href="bots.html" class="div-pill">DreamResearch <strong>20</strong></a>
+      <a href="bots.html" class="div-pill">DreamRetail <strong>20</strong></a>
+      <a href="bots.html" class="div-pill">DreamSales <strong>25</strong></a>
+      <a href="bots.html" class="div-pill">DreamSearch <strong>10</strong></a>
+      <a href="bots.html" class="div-pill">DreamSecurity <strong>20</strong></a>
+      <a href="bots.html" class="div-pill">DreamSocial <strong>20</strong></a>
+      <a href="bots.html" class="div-pill">DreamStrategy <strong>20</strong></a>
+      <a href="bots.html" class="div-pill">DreamSupport <strong>20</strong></a>
+      <a href="bots.html" class="div-pill">DreamTech <strong>25</strong></a>
+      <a href="bots.html" class="div-pill">DreamTransport <strong>20</strong></a>
+      <a href="bots.html" class="div-pill">DreamTV <strong>14</strong></a>
+      <a href="bots.html" class="div-pill">DreamVentures <strong>20</strong></a>
+      <a href="bots.html" class="div-pill">DreamWellness <strong>20</strong></a>
+    </div>
+    <div style="text-align:center;margin-top:40px">
+      <a href="bots.html" class="btn btn-primary">Browse Full Bot Catalog →</a>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════ AUTONOMY ══════════════════════════════════════ -->
+<section class="autonomy-section" aria-label="Autonomy Modes">
+  <div class="container">
+    <div class="section-label">Autonomy</div>
+    <h2 class="section-title">You Choose How Much Control to Keep</h2>
+    <p class="section-sub">DreamCo never acts without your permission level. Ratchet autonomy up or down any time, for any bot, any division.</p>
+    <div class="mode-strip">
+      <div class="mode-tile guided">
+        <div class="mode-icon">🎮</div>
+        <h3>Guided Mode</h3>
+        <p>You approve every bot action before it executes. Maximum transparency, zero surprises. Ideal for learning the system or high-stakes decisions.</p>
+        <div class="mode-plans">
+          <span class="badge badge-gray">Free</span>
+          <span class="badge badge-primary">Pro</span>
+          <span class="badge badge-violet">Enterprise</span>
+          <span class="badge badge-amber">Elite</span>
+        </div>
+      </div>
+      <div class="mode-tile scheduled">
+        <div class="mode-icon">📅</div>
+        <h3>Scheduled Mode</h3>
+        <p>Bots execute at defined times — daily reports, weekly digests, monthly strategy runs. You set the clock; bots execute on cue.</p>
+        <div class="mode-plans">
+          <span class="badge badge-primary">Pro</span>
+          <span class="badge badge-violet">Enterprise</span>
+          <span class="badge badge-amber">Elite</span>
+        </div>
+      </div>
+      <div class="mode-tile full">
+        <div class="mode-icon">🚀</div>
+        <h3>Governed Autonomy</h3>
+        <p>Your empire runs 24/7. Bots operate, earn, handle tasks, and report. All actions pass through Buddy's governed safety layer — always.</p>
+        <div class="mode-plans">
+          <span class="badge badge-violet">Enterprise</span>
+          <span class="badge badge-amber">Elite</span>
+        </div>
+      </div>
+    </div>
+    <div style="text-align:center;margin-top:36px">
+      <a href="autonomy.html" class="btn btn-outline">Explore Autonomy Settings →</a>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════ PRICING PREVIEW ══════════════════════════════════════ -->
+<section style="padding:80px 0;background:var(--bg2)" aria-label="Pricing overview">
+  <div class="container">
+    <div class="section-label">Pricing</div>
+    <h2 class="section-title">Start Free. Scale to Elite.</h2>
+    <p class="section-sub">Every plan includes all 45 divisions. Higher tiers unlock more bots, more autonomy, and more revenue potential.</p>
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:32px" class="pricing-overview-grid">
+      <div class="card" style="text-align:center">
+        <div style="font-size:1.5rem;margin-bottom:8px">🆓</div>
+        <h4>Free</h4>
+        <div style="font-size:1.75rem;font-weight:800;color:var(--text);margin:8px 0">$0<span style="font-size:.9rem;font-weight:400;color:var(--text3)">/mo</span></div>
+        <div style="font-size:.82rem;color:var(--text3);margin-bottom:16px">5 bots · Guided only</div>
+        <a href="dashboard.html" class="btn btn-outline" style="width:100%;text-align:center;display:block">Start Free</a>
+      </div>
+      <div class="card" style="text-align:center;border-color:rgba(79,142,247,.4)">
+        <div style="font-size:1.5rem;margin-bottom:8px">⚡</div>
+        <h4>Pro</h4>
+        <div style="font-size:1.75rem;font-weight:800;color:var(--text);margin:8px 0">$299<span style="font-size:.9rem;font-weight:400;color:var(--text3)">/mo</span></div>
+        <div style="font-size:.82rem;color:var(--text3);margin-bottom:16px">50 bots · Scheduled</div>
+        <a href="pricing.html" class="btn btn-primary" style="width:100%;text-align:center;display:block">Get Pro →</a>
+      </div>
+      <div class="card" style="text-align:center">
+        <div style="font-size:1.5rem;margin-bottom:8px">🏢</div>
+        <h4>Enterprise</h4>
+        <div style="font-size:1.75rem;font-weight:800;color:var(--text);margin:8px 0">$999<span style="font-size:.9rem;font-weight:400;color:var(--text3)">/mo</span></div>
+        <div style="font-size:.82rem;color:var(--text3);margin-bottom:16px">150 bots · Full autonomy</div>
+        <a href="pricing.html" class="btn btn-outline" style="width:100%;text-align:center;display:block">Get Enterprise</a>
+      </div>
+      <div class="card" style="text-align:center;border-color:rgba(167,139,250,.4);background:linear-gradient(135deg,var(--card),rgba(139,92,246,.06))">
+        <div style="font-size:1.5rem;margin-bottom:8px">👑</div>
+        <h4 style="color:var(--accent)">Elite</h4>
+        <div style="font-size:1.75rem;font-weight:800;background:linear-gradient(90deg,var(--primary),var(--accent));-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin:8px 0">Custom</div>
+        <div style="font-size:.82rem;color:var(--text3);margin-bottom:16px">1,051+ bots · 24/7</div>
+        <a href="pricing.html" class="btn btn-outline" style="width:100%;text-align:center;display:block;border-color:rgba(167,139,250,.4)">Contact Sales</a>
+      </div>
+    </div>
+    <style>@media(max-width:700px){.pricing-overview-grid{grid-template-columns:1fr 1fr!important}}@media(max-width:460px){.pricing-overview-grid{grid-template-columns:1fr!important}}</style>
+    <div style="text-align:center">
+      <a href="pricing.html" class="btn btn-outline">View Full Pricing →</a>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════ CTA ══════════════════════════════════════ -->
+<section class="cta-section" aria-label="Get started">
+  <div class="container">
+    <div class="hero-eyebrow" style="margin:0 auto 24px"><span></span> Enterprise-Ready · No Credit Card Required</div>
+    <h2>Ready to Build Your<br /><span style="background:linear-gradient(90deg,var(--primary),var(--accent));-webkit-background-clip:text;-webkit-text-fill-color:transparent">AI Bot Empire?</span></h2>
+    <p>Open Buddy and give your first command. The entire 1,051-bot fleet is ready to work for you — starting right now, completely free.</p>
+    <div class="cta-actions">
+      <a href="buddy.html" class="btn btn-primary btn-lg">Open Buddy Bot — It's Free →</a>
+      <a href="docs.html" class="btn btn-outline btn-lg">Read the Docs</a>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════ FOOTER ══════════════════════════════════════ -->
+<footer class="site-footer" aria-label="Site footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <a href="index.html" class="nav-brand" style="margin-bottom:4px">
+          <div class="nav-logo">⚡</div>
+          <span>DreamCo <strong>Empire OS</strong></span>
+        </a>
+        <p>The world's most advanced AI bot empire. 1,051+ specialist bots across 45 divisions, commanded by Buddy Bot and governed at every level.</p>
+        <div class="footer-social">
+          <a href="https://github.com/DreamCo-Technologies/Dreamcobots" target="_blank" rel="noopener" aria-label="GitHub">⌥</a>
+          <a href="pricing.html" aria-label="Pricing">💳</a>
+          <a href="docs.html" aria-label="Docs">📖</a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Product</h4>
+        <a href="buddy.html">Buddy Bot</a>
+        <a href="bots.html">Bot Catalog</a>
+        <a href="divisions.html">Divisions</a>
+        <a href="autonomy.html">Autonomy</a>
+        <a href="pricing.html">Pricing</a>
+        <a href="marketplace.html">Marketplace</a>
+      </div>
+      <div class="footer-col">
+        <h4>Resources</h4>
+        <a href="docs.html">Documentation</a>
+        <a href="blog.html">Blog &amp; Updates</a>
+        <a href="install.html">Install Guide</a>
+        <a href="calculator.html">ROI Calculators</a>
+        <a href="system-map.html">System Map</a>
+        <a href="test-center.html">Test Center</a>
+      </div>
+      <div class="footer-col">
+        <h4>Company</h4>
+        <a href="https://github.com/DreamCo-Technologies/Dreamcobots" target="_blank" rel="noopener">GitHub</a>
+        <a href="docs.html#api">API Reference</a>
+        <a href="ecosystem.html">Ecosystem</a>
+        <a href="orchestration.html">Orchestration</a>
+        <a href="platform.html">Platform</a>
+        <a href="dashboard.html">Dashboard</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>© 2025 DreamCo Technologies. Built with the DreamCo Empire OS.</p>
+      <div class="footer-badges">
+        <span class="badge badge-green">● 1,051 Bots Active</span>
+        <span class="badge badge-primary">45 Divisions</span>
+        <span class="badge badge-violet">Enterprise Ready</span>
+      </div>
+    </div>
+  </div>
+</footer>
+
 </body>
 </html>

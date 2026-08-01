@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Documentation — DreamCo Empire OS</title>
+  <meta name="description" content="Full technical documentation for DreamCo Empire OS: API reference, Buddy Bot architecture, autonomy modes, deployment guides, and local development setup." />
+  <meta name="keywords" content="DreamCo documentation, API reference, Buddy Bot, deployment guide, autonomy modes, bot development" />
+  <link rel="canonical" href="https://dreamco-technologies.github.io/Dreamcobots/docs.html" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+  <style>
+    .docs-layout {
+      display: grid;
+      grid-template-columns: 260px 1fr;
+      gap: 0;
+      min-height: calc(100vh - 64px);
+    }
+    @media (max-width: 900px) {
+      .docs-layout { grid-template-columns: 1fr; }
+      .docs-sidebar { display: none; }
+    }
+
+    /* Sidebar */
+    .docs-sidebar {
+      position: sticky; top: 64px; height: calc(100vh - 64px);
+      overflow-y: auto; padding: 32px 0;
+      background: var(--bg2); border-right: 1px solid var(--border);
+    }
+    .docs-sidebar::-webkit-scrollbar { width: 4px; }
+    .docs-sidebar::-webkit-scrollbar-track { background: transparent; }
+    .docs-sidebar::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 4px; }
+    .sidebar-section { margin-bottom: 28px; }
+    .sidebar-section-title {
+      font-size: .7rem; font-weight: 700; text-transform: uppercase;
+      letter-spacing: .1em; color: var(--text3);
+      padding: 0 20px 8px; display: block;
+    }
+    .sidebar-link {
+      display: block; padding: 7px 20px;
+      font-size: .875rem; color: var(--text2);
+      transition: all .15s; text-decoration: none;
+      border-left: 2px solid transparent;
+    }
+    .sidebar-link:hover { color: var(--text); background: rgba(79,142,247,.06); border-left-color: var(--border2); }
+    .sidebar-link.active { color: var(--primary); background: rgba(79,142,247,.08); border-left-color: var(--primary); font-weight: 600; }
+
+    /* Content */
+    .docs-content {
+      padding: 48px 56px;
+      max-width: 860px;
+    }
+    @media (max-width: 700px) { .docs-content { padding: 32px 20px; } }
+    .docs-content h1 { font-size: 2rem; margin-bottom: 12px; }
+    .docs-content h2 { font-size: 1.4rem; margin: 48px 0 16px; padding-top: 48px; border-top: 1px solid var(--border); }
+    .docs-content h2:first-of-type { border-top: none; padding-top: 0; margin-top: 32px; }
+    .docs-content h3 { font-size: 1.1rem; margin: 28px 0 12px; color: var(--text); }
+    .docs-content p { color: var(--text2); line-height: 1.75; margin-bottom: 16px; }
+    .docs-content ul, .docs-content ol { color: var(--text2); padding-left: 20px; margin-bottom: 16px; line-height: 1.8; }
+    .docs-content li { margin-bottom: 4px; }
+    .docs-content strong { color: var(--text); font-weight: 600; }
+    .docs-content a { color: var(--primary); }
+    .docs-content a:hover { color: var(--primary2); }
+
+    /* Code blocks */
+    .code-block-wrapper {
+      background: var(--bg3); border: 1px solid var(--border);
+      border-radius: var(--radius); overflow: hidden;
+      margin: 20px 0;
+    }
+    .code-block-header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 10px 16px; background: var(--bg2);
+      border-bottom: 1px solid var(--border);
+      font-family: var(--mono); font-size: .75rem; color: var(--text3);
+    }
+    .code-block-body {
+      padding: 20px; overflow-x: auto;
+      font-family: var(--mono); font-size: .82rem; line-height: 1.75;
+      color: var(--text2);
+    }
+    .code-block-body .ck { color: var(--accent); }
+    .code-block-body .cs { color: var(--green); }
+    .code-block-body .cp { color: var(--primary2); }
+    .code-block-body .cn { color: var(--amber); }
+    .code-block-body .cm { color: var(--cyan); }
+    .code-block-body .cc { color: var(--text3); }
+
+    /* Method badges */
+    .method-badge {
+      display: inline-flex; align-items: center;
+      padding: 3px 10px; border-radius: 6px;
+      font-family: var(--mono); font-size: .75rem; font-weight: 700;
+      margin-right: 8px;
+    }
+    .method-get { background: rgba(34,197,94,.15); color: #4ade80; border: 1px solid rgba(34,197,94,.3); }
+    .method-post { background: rgba(79,142,247,.15); color: var(--primary2); border: 1px solid rgba(79,142,247,.3); }
+    .method-delete { background: rgba(239,68,68,.15); color: #f87171; border: 1px solid rgba(239,68,68,.3); }
+
+    .endpoint-row {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 10px; padding: 16px 20px;
+      margin-bottom: 10px;
+    }
+    .endpoint-path { font-family: var(--mono); font-size: .875rem; color: var(--text); }
+    .endpoint-desc { font-size: .85rem; color: var(--text2); margin-top: 4px; }
+
+    /* Callout boxes */
+    .callout {
+      border-radius: 10px; padding: 16px 20px;
+      margin: 20px 0; border-left: 3px solid;
+    }
+    .callout-info { background: rgba(79,142,247,.08); border-color: var(--primary); }
+    .callout-warn { background: rgba(245,158,11,.08); border-color: var(--amber); }
+    .callout-success { background: rgba(34,197,94,.08); border-color: var(--green); }
+    .callout p { margin: 0; font-size: .9rem; }
+
+    /* Table */
+    .docs-table { width: 100%; border-collapse: collapse; margin: 20px 0; font-size: .875rem; }
+    .docs-table th { text-align: left; padding: 10px 14px; background: var(--bg3); border: 1px solid var(--border); color: var(--text3); font-size: .78rem; text-transform: uppercase; letter-spacing: .06em; font-weight: 600; }
+    .docs-table td { padding: 10px 14px; border: 1px solid var(--border); color: var(--text2); }
+    .docs-table tr:nth-child(even) td { background: var(--bg3); }
+    .docs-table code { font-size: .8rem; }
+  </style>
+</head>
+<body>
+<div id="nav-placeholder"></div><script src="nav.js"></script>
+
+<div class="docs-layout">
+  <!-- ── Sidebar ── -->
+  <aside class="docs-sidebar" aria-label="Documentation navigation">
+    <div class="sidebar-section">
+      <span class="sidebar-section-title">Getting Started</span>
+      <a href="#overview" class="sidebar-link active">Overview</a>
+      <a href="#quickstart" class="sidebar-link">Quick Start</a>
+      <a href="#local-dev" class="sidebar-link">Local Development</a>
+    </div>
+    <div class="sidebar-section">
+      <span class="sidebar-section-title">Buddy Bot</span>
+      <a href="#buddy-architecture" class="sidebar-link">Architecture</a>
+      <a href="#buddy-commands" class="sidebar-link">Commands &amp; Routing</a>
+      <a href="#buddy-models" class="sidebar-link">Model Selection</a>
+    </div>
+    <div class="sidebar-section">
+      <span class="sidebar-section-title">Autonomy</span>
+      <a href="#autonomy-modes" class="sidebar-link">Autonomy Modes</a>
+      <a href="#guided" class="sidebar-link">Guided Mode</a>
+      <a href="#scheduled" class="sidebar-link">Scheduled Mode</a>
+      <a href="#governed" class="sidebar-link">Governed Autonomy</a>
+    </div>
+    <div class="sidebar-section">
+      <span class="sidebar-section-title">API Reference</span>
+      <a href="#api" class="sidebar-link">REST Endpoints</a>
+      <a href="#api-bots" class="sidebar-link">Bots API</a>
+      <a href="#api-tasks" class="sidebar-link">Tasks API</a>
+      <a href="#api-schedule" class="sidebar-link">Schedule API</a>
+    </div>
+    <div class="sidebar-section">
+      <span class="sidebar-section-title">Deployment</span>
+      <a href="#deploy-cloud-run" class="sidebar-link">Cloud Run</a>
+      <a href="#deploy-app-engine" class="sidebar-link">App Engine</a>
+      <a href="#deploy-firebase" class="sidebar-link">Firebase</a>
+      <a href="#deploy-github-pages" class="sidebar-link">GitHub Pages</a>
+    </div>
+    <div class="sidebar-section">
+      <span class="sidebar-section-title">Fleet</span>
+      <a href="#divisions" class="sidebar-link">45 Divisions</a>
+      <a href="#bot-profiles" class="sidebar-link">Bot Profiles</a>
+      <a href="#capabilities" class="sidebar-link">Capabilities</a>
+    </div>
+  </aside>
+
+  <!-- ── Main Content ── -->
+  <main class="docs-content" aria-label="Documentation">
+    <div class="hero-eyebrow" style="display:inline-flex;align-items:center;gap:8px;background:rgba(79,142,247,.1);border:1px solid rgba(79,142,247,.3);color:var(--primary2);font-size:.78rem;font-weight:600;padding:5px 14px;border-radius:100px;margin-bottom:20px;letter-spacing:.05em;text-transform:uppercase"><span style="width:6px;height:6px;border-radius:50%;background:var(--green)"></span>Live Documentation</div>
+    <h1 id="overview">DreamCo Empire OS Documentation</h1>
+    <p style="font-size:1.05rem;color:var(--text2);line-height:1.7;margin-bottom:32px">Everything you need to command 1,051+ AI bots across 45 specialist divisions. From your first Buddy command to full governed autonomy.</p>
+
+    <div class="callout callout-success">
+      <p><strong>Quick start:</strong> Open <a href="buddy.html">Buddy Bot</a> and type your first request. Buddy routes it to the right specialist bot automatically — no configuration required.</p>
+    </div>
+
+    <!-- ─────────────── QUICK START ─────────────── -->
+    <h2 id="quickstart">Quick Start</h2>
+    <p>DreamCo Empire OS runs entirely in your browser with no installation required. For advanced features and API integrations, follow the steps below.</p>
+
+    <h3>1. Open Buddy</h3>
+    <p>Navigate to <a href="buddy.html">buddy.html</a> (or the deployed GitHub Pages URL). Buddy is your single command interface for all 1,051 bots.</p>
+
+    <h3>2. Choose a Model Tier</h3>
+    <p>Buddy operates in two tiers out of the box:</p>
+    <ul>
+      <li><strong>Free tier</strong> — Uses Buddy's built-in routing and prompt engineering. No API key needed.</li>
+      <li><strong>Premium tier</strong> — Connects to OpenAI GPT-4.1-mini (or your chosen model). Requires your own API key stored locally.</li>
+    </ul>
+
+    <h3>3. Activate API Integrations</h3>
+    <p>For live data, payments, and third-party services, add your keys in <a href="data-control.html">Data &amp; Memory Controls</a>. Keys are stored only in your browser's local storage — never sent to our servers.</p>
+
+    <!-- ─────────────── LOCAL DEV ─────────────── -->
+    <h2 id="local-dev">Local Development</h2>
+    <p>Clone the repository and run the full stack locally with Node.js.</p>
+
+    <div class="code-block-wrapper">
+      <div class="code-block-header"><span>bash</span><span>Setup</span></div>
+      <div class="code-block-body"><span class="cc"># 1. Clone the repository</span>
+git clone https://github.com/DreamCo-Technologies/Dreamcobots.git
+cd Dreamcobots
+
+<span class="cc"># 2. Install dependencies</span>
+npm ci
+
+<span class="cc"># 3. Copy environment variables</span>
+cp .env.example .env
+
+<span class="cc"># 4. Start the development server</span>
+npm run dev</div>
+    </div>
+
+    <p>The local server starts at <code>http://localhost:5000</code>. The <code>website/</code> directory is served as static files.</p>
+
+    <h3>Environment Variables</h3>
+    <table class="docs-table">
+      <thead><tr><th>Variable</th><th>Description</th><th>Required</th></tr></thead>
+      <tbody>
+        <tr><td><code>OPENAI_API_KEY</code></td><td>OpenAI key for GPT-4.1-mini routing</td><td>For premium models</td></tr>
+        <tr><td><code>DATABASE_URL</code></td><td>PostgreSQL connection string</td><td>For task persistence</td></tr>
+        <tr><td><code>SESSION_SECRET</code></td><td>Session encryption key</td><td>Production</td></tr>
+        <tr><td><code>NODE_ENV</code></td><td><code>development</code> or <code>production</code></td><td>Yes</td></tr>
+      </tbody>
+    </table>
+
+    <h3>Running Tests</h3>
+    <div class="code-block-wrapper">
+      <div class="code-block-header"><span>bash</span><span>Tests</span></div>
+      <div class="code-block-body"><span class="cc"># Run the full repository test matrix</span>
+npm run test:repository
+
+<span class="cc"># Run Playwright browser tests</span>
+npm run test:playwright
+
+<span class="cc"># Check deployment policy</span>
+python3 tools/check_deployment_cost_policy.py</div>
+    </div>
+
+    <!-- ─────────────── BUDDY ARCHITECTURE ─────────────── -->
+    <h2 id="buddy-architecture">Buddy Bot Architecture</h2>
+    <p>Buddy is the central command interface for the entire DreamCo fleet. Every user request passes through Buddy's governed routing layer before reaching any specialist bot.</p>
+
+    <div class="code-block-wrapper">
+      <div class="code-block-header"><span>Architecture</span><span>Request flow</span></div>
+      <div class="code-block-body">User Input
+  ↓
+Buddy Router (config/buddy-model-router.json)
+  ↓
+Autonomy Gate (checks mode: guided / scheduled / governed)
+  ↓
+Specialist Bot (one of 1,051 in App_bots/)
+  ↓
+Capability Execution (server/fleet-runtime.ts)
+  ↓
+Response → Buddy → User</div>
+    </div>
+
+    <h3 id="buddy-commands">Commands &amp; Routing</h3>
+    <p>Buddy understands natural language. Common patterns:</p>
+    <ul>
+      <li><code>Analyze my real estate deal at [address]</code> → routes to DreamRealty division</li>
+      <li><code>Write a sales email for [product]</code> → routes to DreamContent or DreamSales</li>
+      <li><code>Check my portfolio performance</code> → routes to DreamFinance or DreamEntFinance</li>
+      <li><code>Debug my Python script</code> → routes to DreamCodeLab</li>
+      <li><code>Run my weekly report</code> → routes to DreamOps with Scheduled autonomy</li>
+    </ul>
+
+    <h3 id="buddy-models">Model Selection</h3>
+    <p>Buddy uses a <strong>Mixture-of-Experts (MOE)</strong> routing strategy. The <code>config/buddy-model-router.json</code> defines which model handles which task type:</p>
+    <table class="docs-table">
+      <thead><tr><th>Task Type</th><th>Default Model</th><th>Notes</th></tr></thead>
+      <tbody>
+        <tr><td>General routing</td><td>GPT-4.1-mini</td><td>Fast, cost-efficient</td></tr>
+        <tr><td>Code generation</td><td>GPT-4.1-mini</td><td>Strong code reasoning</td></tr>
+        <tr><td>Document analysis</td><td>Claude 3.5 Sonnet</td><td>Long context, when key present</td></tr>
+        <tr><td>Image generation</td><td>DALL-E 3</td><td>Requires API key</td></tr>
+        <tr><td>Local compute</td><td>Llama 3.3 70B</td><td>Via Groq or Ollama — free</td></tr>
+      </tbody>
+    </table>
+
+    <!-- ─────────────── AUTONOMY ─────────────── -->
+    <h2 id="autonomy-modes">Autonomy Modes</h2>
+    <p>DreamCo Empire OS supports three autonomy modes that control how independently bots operate. You can change the mode at any time from <a href="autonomy.html">Autonomy Settings</a>.</p>
+
+    <h3 id="guided">🎮 Guided Mode</h3>
+    <p>Every bot action requires your explicit approval before execution. Buddy presents a proposed action and waits for your <kbd>Approve</kbd> or <kbd>Reject</kbd> response.</p>
+    <div class="callout callout-info">
+      <p><strong>Best for:</strong> High-stakes decisions, learning the system, or any scenario where you want full transparency. Available on all plans including Free.</p>
+    </div>
+
+    <h3 id="scheduled">📅 Scheduled Mode</h3>
+    <p>Bots execute at defined times — daily, weekly, or monthly. You configure the schedule; Buddy ensures tasks run on time and reports results.</p>
+    <div class="callout callout-info">
+      <p><strong>Best for:</strong> Recurring reports, automated digests, and time-sensitive workflows. Available on Pro, Enterprise, and Elite.</p>
+    </div>
+
+    <h3 id="governed">🚀 Governed Autonomy</h3>
+    <p>Bots operate 24/7 within your defined safety boundaries. All actions still pass through Buddy's governed safety layer — external payments and destructive actions require an extra confirmation even in this mode.</p>
+    <div class="callout callout-warn">
+      <p><strong>Note:</strong> Governed Autonomy requires a connected payment method and is available on Enterprise and Elite plans only.</p>
+    </div>
+
+    <!-- ─────────────── API REFERENCE ─────────────── -->
+    <h2 id="api">REST API Reference</h2>
+    <p>The DreamCo REST API provides programmatic access to Buddy, the bot fleet, and task management. All endpoints require a valid <code>Authorization: ******;token&gt;</code> header.</p>
+
+    <div class="callout callout-info">
+      <p><strong>Base URL:</strong> <code>https://your-deployment-url.run.app/api/v1</code> — or <code>http://localhost:5000/api/v1</code> locally.</p>
+    </div>
+
+    <h3 id="api-bots">Bots API</h3>
+
+    <div class="endpoint-row">
+      <div><span class="method-badge method-get">GET</span><span class="endpoint-path">/bots</span></div>
+      <div class="endpoint-desc">List all 1,051 bot profiles with division, capabilities, and tier information.</div>
+    </div>
+    <div class="endpoint-row">
+      <div><span class="method-badge method-get">GET</span><span class="endpoint-path">/bots/:id</span></div>
+      <div class="endpoint-desc">Get detailed profile for a single bot including business blueprint and sandbox contract.</div>
+    </div>
+    <div class="endpoint-row">
+      <div><span class="method-badge method-get">GET</span><span class="endpoint-path">/bots/divisions</span></div>
+      <div class="endpoint-desc">List all 45 divisions with bot counts and API candidate counts.</div>
+    </div>
+    <div class="endpoint-row">
+      <div><span class="method-badge method-post">POST</span><span class="endpoint-path">/bots/:id/run</span></div>
+      <div class="endpoint-desc">Execute a bot capability. Respects current autonomy mode.</div>
+    </div>
+
+    <div class="code-block-wrapper">
+      <div class="code-block-header"><span>Example</span><span>GET /bots/1</span></div>
+      <div class="code-block-body">{
+  <span class="ck">"id"</span>: <span class="cn">1</span>,
+  <span class="ck">"name"</span>: <span class="cs">"DreamBot"</span>,
+  <span class="ck">"division"</span>: <span class="cs">"CommandCore"</span>,
+  <span class="ck">"tier"</span>: <span class="cs">"free"</span>,
+  <span class="ck">"capabilities"</span>: [<span class="cs">"task-routing"</span>, <span class="cs">"system-coordination"</span>],
+  <span class="ck">"autonomy_support"</span>: [<span class="cs">"guided"</span>, <span class="cs">"scheduled"</span>, <span class="cs">"governed"</span>],
+  <span class="ck">"buddy_route"</span>: <span class="cs">"dreambot"</span>
+}</div>
+    </div>
+
+    <h3 id="api-tasks">Tasks API</h3>
+    <div class="endpoint-row">
+      <div><span class="method-badge method-get">GET</span><span class="endpoint-path">/tasks</span></div>
+      <div class="endpoint-desc">List all tasks (pending, running, completed, failed).</div>
+    </div>
+    <div class="endpoint-row">
+      <div><span class="method-badge method-post">POST</span><span class="endpoint-path">/tasks</span></div>
+      <div class="endpoint-desc">Create a new task. Body: <code>{"bot_id", "input", "autonomy_mode"}</code>.</div>
+    </div>
+    <div class="endpoint-row">
+      <div><span class="method-badge method-get">GET</span><span class="endpoint-path">/tasks/:id</span></div>
+      <div class="endpoint-desc">Get task status and results.</div>
+    </div>
+    <div class="endpoint-row">
+      <div><span class="method-badge method-delete">DELETE</span><span class="endpoint-path">/tasks/:id</span></div>
+      <div class="endpoint-desc">Cancel a pending or running task.</div>
+    </div>
+
+    <h3 id="api-schedule">Schedule API</h3>
+    <div class="endpoint-row">
+      <div><span class="method-badge method-get">GET</span><span class="endpoint-path">/schedules</span></div>
+      <div class="endpoint-desc">List all configured scheduled tasks.</div>
+    </div>
+    <div class="endpoint-row">
+      <div><span class="method-badge method-post">POST</span><span class="endpoint-path">/schedules</span></div>
+      <div class="endpoint-desc">Create a new schedule. Body: <code>{"bot_id", "cron", "input", "label"}</code>.</div>
+    </div>
+    <div class="endpoint-row">
+      <div><span class="method-badge method-delete">DELETE</span><span class="endpoint-path">/schedules/:id</span></div>
+      <div class="endpoint-desc">Remove a scheduled task.</div>
+    </div>
+
+    <!-- ─────────────── DEPLOYMENT ─────────────── -->
+    <h2 id="deploy-cloud-run">Deployment: Cloud Run</h2>
+    <p>Google Cloud Run is the recommended production deployment target for the DreamCo backend API.</p>
+
+    <div class="code-block-wrapper">
+      <div class="code-block-header"><span>bash</span><span>Cloud Run deployment</span></div>
+      <div class="code-block-body"><span class="cc"># Authenticate and set project</span>
+gcloud auth login
+gcloud config set project YOUR_PROJECT_ID
+
+<span class="cc"># Build and deploy</span>
+gcloud run deploy dreamco-api \
+  --source . \
+  --region us-central1 \
+  --allow-unauthenticated \
+  --set-env-vars NODE_ENV=production,DATABASE_URL=$DATABASE_URL</div>
+    </div>
+
+    <p>The <code>cloudbuild.yaml</code> in the repository root configures automatic builds on push to <code>main</code>.</p>
+
+    <h2 id="deploy-app-engine">Deployment: App Engine</h2>
+    <p>For App Engine Standard with auto-scaling:</p>
+
+    <div class="code-block-wrapper">
+      <div class="code-block-header"><span>bash</span><span>App Engine deployment</span></div>
+      <div class="code-block-body"><span class="cc"># Deploy using app.yaml configuration</span>
+gcloud app deploy app.yaml --project YOUR_PROJECT_ID</div>
+    </div>
+
+    <p>The <code>app.yaml</code> in the repository root defines the Node.js 22 runtime, instance class, and environment variables.</p>
+
+    <h2 id="deploy-firebase">Deployment: Firebase</h2>
+    <p>For the static <code>website/</code> directory, Firebase Hosting offers instant global CDN deployment:</p>
+
+    <div class="code-block-wrapper">
+      <div class="code-block-header"><span>bash</span><span>Firebase Hosting</span></div>
+      <div class="code-block-body">npm install -g firebase-tools
+firebase login
+firebase init hosting
+<span class="cc"># Set public directory to "website" when prompted</span>
+firebase deploy --only hosting</div>
+    </div>
+
+    <h2 id="deploy-github-pages">Deployment: GitHub Pages</h2>
+    <p>The <code>website/</code> directory is automatically deployed to GitHub Pages via the <code>deploy-buddy-pages.yml</code> workflow. Trigger manually from the <a href="https://github.com/DreamCo-Technologies/Dreamcobots/actions" target="_blank" rel="noopener">Actions tab</a>.</p>
+
+    <div class="callout callout-success">
+      <p><strong>Live site:</strong> <a href="https://dreamco-technologies.github.io/Dreamcobots/" target="_blank" rel="noopener">dreamco-technologies.github.io/Dreamcobots/</a></p>
+    </div>
+
+    <!-- ─────────────── FLEET ─────────────── -->
+    <h2 id="divisions">45 Divisions</h2>
+    <p>Every bot belongs to exactly one division. Divisions group bots by domain expertise and allow Buddy to route requests efficiently.</p>
+    <p>Browse the full interactive catalog at <a href="bots.html">Bot Fleet →</a></p>
+
+    <h2 id="bot-profiles">Bot Profiles</h2>
+    <p>Each bot profile in <code>App_bots/&lt;Division&gt;.json</code> declares:</p>
+    <ul>
+      <li><strong>name</strong> — Unique identifier and display name</li>
+      <li><strong>capabilities</strong> — List of declared capability slots</li>
+      <li><strong>tier</strong> — Minimum plan required (free / pro / enterprise / elite)</li>
+      <li><strong>autonomy_support</strong> — Which autonomy modes this bot participates in</li>
+      <li><strong>sandbox_blueprint</strong> — Contract tests proving each capability</li>
+      <li><strong>business_blueprint</strong> — Revenue model and ROI projections</li>
+      <li><strong>governed_lead_system</strong> — CRM and lead-capture configuration</li>
+      <li><strong>buddy_route</strong> — The Buddy routing keyword for this bot</li>
+    </ul>
+
+    <h2 id="capabilities">Capabilities</h2>
+    <p>The full fleet declares <strong>8,408 capability slots</strong>. A capability is a discrete, testable action a bot can perform — for example <code>analyze-credit-report</code>, <code>generate-marketing-copy</code>, or <code>run-backtest</code>.</p>
+    <p>Inspect all capabilities per bot from <a href="bots.html">the bot catalog</a>, or query <code>GET /bots/:id</code> via the API.</p>
+
+    <div style="margin-top:48px;padding:28px;background:var(--card2);border:1px solid var(--border);border-radius:var(--radius);text-align:center">
+      <h3 style="margin-bottom:8px">Ready to start building?</h3>
+      <p style="margin-bottom:20px">Open Buddy and give your first command — free, no sign-up required.</p>
+      <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap">
+        <a href="buddy.html" class="btn btn-primary">Open Buddy Bot →</a>
+        <a href="bots.html" class="btn btn-outline">Browse Bot Catalog</a>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script>
+// Highlight active sidebar link on scroll
+const sections = document.querySelectorAll('[id]');
+const links = document.querySelectorAll('.sidebar-link');
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      links.forEach(l => l.classList.remove('active'));
+      const active = document.querySelector(`.sidebar-link[href="#${entry.target.id}"]`);
+      if (active) active.classList.add('active');
+    }
+  });
+}, { rootMargin: '-20% 0px -70% 0px' });
+sections.forEach(s => observer.observe(s));
+</script>
+</body>
+</html>

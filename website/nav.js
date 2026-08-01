@@ -2,14 +2,15 @@
 (function() {
   const current = location.pathname.split('/').pop() || 'index.html';
   const links = [
-    { href: 'dashboard.html', label: '📊 Dashboard' },
+    { href: 'index.html', label: '🏠 Home' },
     { href: 'buddy.html', label: '🧠 Buddy Bot' },
+    { href: 'bots.html', label: '🤖 Bot Catalog' },
+    { href: 'docs.html', label: '📖 Docs' },
+    { href: 'pricing.html', label: '💳 Pricing' },
+    { href: 'blog.html', label: '📝 Blog' },
+    { href: 'dashboard.html', label: '📊 Dashboard' },
     { href: 'studio.html', label: '🎮 Creative Studio' },
-    { href: 'practice.html', label: '🎤 Practice Lab' },
-    { href: 'platform.html', label: '🧩 Platform Registry' },
-    { href: 'calculator.html', label: '🧮 Calculator Lab' },
-    { href: 'divisions.html', label: '🏛️ Divisions' },
-    { href: 'bots.html', label: '🤖 Bot Fleet' },
+    { href: 'platform.html', label: '🧩 Platform' },
     { href: 'test-center.html', label: '🧪 Test Center' },
     { href: 'system-map.html', label: '🗺️ Repository Map' },
     { href: 'chat.html', label: '💬 Chat' },
@@ -39,7 +40,7 @@
 <nav>
   <div class="container">
     <div class="nav-inner">
-      <a href="buddy.html" class="nav-brand">
+      <a href="index.html" class="nav-brand">
         <div class="nav-logo">⚡</div>
         <span>DreamCo <strong>Empire OS</strong></span>
       </a>

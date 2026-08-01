@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Blog &amp; Updates — DreamCo Empire OS</title>
+  <meta name="description" content="Latest news, feature releases, and development updates from DreamCo Technologies. Follow the growth of the world's most advanced AI bot empire." />
+  <meta name="keywords" content="DreamCo blog, AI updates, bot releases, DreamCo news, Empire OS changelog" />
+  <link rel="canonical" href="https://dreamco-technologies.github.io/Dreamcobots/blog.html" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+  <style>
+    .blog-hero {
+      padding: 80px 0 60px;
+      background: radial-gradient(ellipse 70% 50% at 50% 0%, rgba(79,142,247,.12), transparent 60%);
+      text-align: center;
+      border-bottom: 1px solid var(--border);
+    }
+    .blog-hero h1 { margin-bottom: 14px; }
+    .blog-hero p { color: var(--text2); font-size: 1.05rem; max-width: 520px; margin: 0 auto; line-height: 1.7; }
+
+    .blog-layout {
+      display: grid;
+      grid-template-columns: 1fr 300px;
+      gap: 48px;
+      padding: 56px 0;
+      align-items: start;
+    }
+    @media (max-width: 900px) { .blog-layout { grid-template-columns: 1fr; } .blog-sidebar { display: none; } }
+
+    /* Post card */
+    .post-card {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: var(--radius); overflow: hidden;
+      transition: all .25s; margin-bottom: 24px;
+    }
+    .post-card:hover { border-color: var(--border2); transform: translateY(-2px); box-shadow: var(--shadow); }
+    .post-card.featured { border-color: rgba(79,142,247,.35); }
+    .post-card.featured::before { content: ''; display: block; height: 3px; background: linear-gradient(90deg, var(--primary), var(--accent)); }
+    .post-inner { padding: 28px; }
+    .post-meta { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; flex-wrap: wrap; }
+    .post-date { font-size: .8rem; color: var(--text3); }
+    .post-tag {
+      display: inline-flex; align-items: center; gap: 4px;
+      padding: 2px 10px; border-radius: 100px;
+      font-size: .7rem; font-weight: 700; letter-spacing: .05em; text-transform: uppercase;
+    }
+    .tag-release { background: rgba(34,197,94,.12); color: #4ade80; border: 1px solid rgba(34,197,94,.25); }
+    .tag-feature { background: rgba(79,142,247,.12); color: var(--primary2); border: 1px solid rgba(79,142,247,.25); }
+    .tag-milestone { background: rgba(245,158,11,.12); color: #fbbf24; border: 1px solid rgba(245,158,11,.25); }
+    .tag-tech { background: rgba(139,92,246,.12); color: #a78bfa; border: 1px solid rgba(139,92,246,.25); }
+    .tag-guide { background: rgba(34,211,238,.12); color: #22d3ee; border: 1px solid rgba(34,211,238,.25); }
+    .post-card h2 { font-size: 1.2rem; margin-bottom: 10px; color: var(--text); }
+    .post-card p { font-size: .9rem; color: var(--text2); line-height: 1.65; margin-bottom: 20px; }
+    .post-footer { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; }
+    .post-author { display: flex; align-items: center; gap: 8px; }
+    .post-author-avatar { width: 28px; height: 28px; border-radius: 50%; background: linear-gradient(135deg, var(--primary), var(--accent)); display: flex; align-items: center; justify-content: center; font-size: .75rem; font-weight: 700; color: #fff; }
+    .post-author-name { font-size: .8rem; color: var(--text3); }
+    .read-more { font-size: .82rem; color: var(--primary); font-weight: 600; }
+    .read-more:hover { color: var(--primary2); }
+
+    /* Sidebar */
+    .blog-sidebar { }
+    .sidebar-widget { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 24px; margin-bottom: 20px; }
+    .sidebar-widget h4 { font-size: .85rem; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; color: var(--text3); margin-bottom: 16px; }
+    .stat-row { display: flex; align-items: center; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid var(--border); font-size: .875rem; }
+    .stat-row:last-child { border-bottom: none; }
+    .stat-row span { color: var(--text2); }
+    .stat-row strong { color: var(--text); }
+    .tag-cloud { display: flex; flex-wrap: wrap; gap: 8px; }
+    .tag-cloud a {
+      padding: 4px 12px; border-radius: 100px; font-size: .76rem;
+      background: var(--card2); border: 1px solid var(--border);
+      color: var(--text2); transition: all .15s;
+    }
+    .tag-cloud a:hover { border-color: var(--primary); color: var(--primary); }
+    .changelog-item { padding: 10px 0; border-bottom: 1px solid var(--border); font-size: .85rem; }
+    .changelog-item:last-child { border-bottom: none; }
+    .changelog-item .ver { font-family: var(--mono); font-size: .75rem; color: var(--primary2); font-weight: 700; }
+    .changelog-item .date { font-size: .75rem; color: var(--text3); float: right; }
+    .changelog-item .desc { color: var(--text2); margin-top: 3px; }
+
+    /* Newsletter strip */
+    .newsletter-strip {
+      background: linear-gradient(135deg, rgba(79,142,247,.12), rgba(167,139,250,.1));
+      border: 1px solid rgba(79,142,247,.3);
+      border-radius: var(--radius); padding: 28px; text-align: center;
+      margin-bottom: 24px;
+    }
+    .newsletter-strip h4 { margin-bottom: 8px; }
+    .newsletter-strip p { font-size: .88rem; color: var(--text2); margin-bottom: 16px; line-height: 1.6; }
+    .newsletter-strip .btn { width: 100%; justify-content: center; }
+  </style>
+</head>
+<body>
+<div id="nav-placeholder"></div><script src="nav.js"></script>
+
+<!-- Hero -->
+<div class="blog-hero">
+  <div class="container">
+    <div class="hero-eyebrow" style="display:inline-flex;align-items:center;gap:8px;background:rgba(79,142,247,.1);border:1px solid rgba(79,142,247,.3);color:var(--primary2);font-size:.78rem;font-weight:600;padding:5px 14px;border-radius:100px;margin-bottom:20px;letter-spacing:.05em;text-transform:uppercase"><span style="width:6px;height:6px;border-radius:50%;background:var(--green);animation:pulse 2s infinite"></span>Latest Updates</div>
+    <h1>Blog &amp; Release Notes</h1>
+    <p>Feature releases, technical deep-dives, and empire-building milestones from DreamCo Technologies.</p>
+  </div>
+</div>
+
+<div class="container">
+  <div class="blog-layout">
+    <!-- ── Posts Feed ── -->
+    <main aria-label="Blog posts">
+
+      <!-- Featured post -->
+      <article class="post-card featured" aria-label="Featured post">
+        <div class="post-inner">
+          <div class="post-meta">
+            <span class="post-tag tag-milestone">🏆 Milestone</span>
+            <span class="post-tag tag-release">🚀 Release</span>
+            <span class="post-date">July 2025</span>
+          </div>
+          <h2>DreamCo Empire OS: 1,051 Bots Across 45 Divisions — Repository-Evidenced</h2>
+          <p>Every bot in the DreamCo fleet now has a repository-evidenced profile: a business blueprint, governed lead system, sandbox capability contract, and a Buddy routing keyword. This is not a marketing number — it's backed by source code you can inspect on GitHub.</p>
+          <p>The full fleet spans finance, healthcare, legal, cyber defense, creative production, agriculture, construction, real estate, and 37 more specialist domains. All 1,051 profiles are routed through Buddy and accessible from any device via the PWA.</p>
+          <div class="post-footer">
+            <div class="post-author">
+              <div class="post-author-avatar">DC</div>
+              <span class="post-author-name">DreamCo Technologies</span>
+            </div>
+            <a href="bots.html" class="read-more">Browse the fleet →</a>
+          </div>
+        </div>
+      </article>
+
+      <article class="post-card" aria-label="Blog post">
+        <div class="post-inner">
+          <div class="post-meta">
+            <span class="post-tag tag-feature">✨ Feature</span>
+            <span class="post-date">July 2025</span>
+          </div>
+          <h2>Governed Lead Systems: Every Bot Gets a CRM</h2>
+          <p>All 1,051 bots now ship with a governed lead system — a structured CRM blueprint defining how each bot identifies, qualifies, and converts leads. Lead systems include approval gates, communication templates, and Buddy-orchestrated follow-up sequences. No bot acts on a lead without your explicit go-ahead in Guided mode.</p>
+          <div class="post-footer">
+            <div class="post-author">
+              <div class="post-author-avatar">DC</div>
+              <span class="post-author-name">DreamCo Technologies</span>
+            </div>
+            <a href="leads.html" class="read-more">See lead systems →</a>
+          </div>
+        </div>
+      </article>
+
+      <article class="post-card" aria-label="Blog post">
+        <div class="post-inner">
+          <div class="post-meta">
+            <span class="post-tag tag-tech">🔬 Technical</span>
+            <span class="post-date">June 2025</span>
+          </div>
+          <h2>Buddy Showrunner: Fleet Quality Control at Scale</h2>
+          <p>The Buddy Showrunner is a new meta-orchestration layer that monitors fleet quality across all 45 divisions. It runs automated health checks, surfaces underperforming bots, and coordinates multi-bot workflows for complex multi-step tasks. Powered by the same governed routing infrastructure as Buddy itself.</p>
+          <div class="post-footer">
+            <div class="post-author">
+              <div class="post-author-avatar">DC</div>
+              <span class="post-author-name">DreamCo Engineering</span>
+            </div>
+            <a href="orchestration.html" class="read-more">View orchestration →</a>
+          </div>
+        </div>
+      </article>
+
+      <article class="post-card" aria-label="Blog post">
+        <div class="post-inner">
+          <div class="post-meta">
+            <span class="post-tag tag-feature">✨ Feature</span>
+            <span class="post-date">June 2025</span>
+          </div>
+          <h2>DreamSearch: Real-Time Intelligence for the Entire Fleet</h2>
+          <p>DreamSearch is a new division that gives every bot in the fleet access to real-time web intelligence. Powered by Serper (2,500 free searches/month), DreamSearch bots can ground any analysis, lead qualification, or market research task in live data — not just training knowledge.</p>
+          <div class="post-footer">
+            <div class="post-author">
+              <div class="post-author-avatar">DC</div>
+              <span class="post-author-name">DreamCo Technologies</span>
+            </div>
+            <a href="bots.html" class="read-more">Explore DreamSearch →</a>
+          </div>
+        </div>
+      </article>
+
+      <article class="post-card" aria-label="Blog post">
+        <div class="post-inner">
+          <div class="post-meta">
+            <span class="post-tag tag-release">🚀 Release</span>
+            <span class="post-date">May 2025</span>
+          </div>
+          <h2>Capability Test Matrix: 8,408 Tests, One Dashboard</h2>
+          <p>Every capability slot across all 1,051 bots now has a sandbox capability test. The <a href="test-center.html">Repository Test Center</a> aggregates all 8,408 test results into a single live dashboard, showing pass rates by division, tier, and autonomy mode. This is enterprise-grade quality assurance built into the repository itself.</p>
+          <div class="post-footer">
+            <div class="post-author">
+              <div class="post-author-avatar">DC</div>
+              <span class="post-author-name">DreamCo QA Team</span>
+            </div>
+            <a href="test-center.html" class="read-more">View test center →</a>
+          </div>
+        </div>
+      </article>
+
+      <article class="post-card" aria-label="Blog post">
+        <div class="post-inner">
+          <div class="post-meta">
+            <span class="post-tag tag-guide">📖 Guide</span>
+            <span class="post-date">April 2025</span>
+          </div>
+          <h2>Three Autonomy Modes: Which One is Right for You?</h2>
+          <p>A practical guide to choosing between Guided, Scheduled, and Governed Autonomy modes. Learn when to use each mode, how to switch between them, and how Buddy's safety layer works regardless of which mode you're in. Includes real-world scenarios for each tier of the DreamCo platform.</p>
+          <div class="post-footer">
+            <div class="post-author">
+              <div class="post-author-avatar">DC</div>
+              <span class="post-author-name">DreamCo Technologies</span>
+            </div>
+            <a href="autonomy.html" class="read-more">Explore autonomy →</a>
+          </div>
+        </div>
+      </article>
+
+      <article class="post-card" aria-label="Blog post">
+        <div class="post-inner">
+          <div class="post-meta">
+            <span class="post-tag tag-tech">🔬 Technical</span>
+            <span class="post-date">March 2025</span>
+          </div>
+          <h2>Open Model Lab: Self-Host Your AI for Zero Variable Cost</h2>
+          <p>The Open Model Lab is a dedicated environment for running open-weight models (Llama 3.3 70B, Mistral, Phi-3) locally via Ollama or through Groq's free API. For high-volume tasks, self-hosted models eliminate per-token costs entirely while keeping all data on your own hardware.</p>
+          <div class="post-footer">
+            <div class="post-author">
+              <div class="post-author-avatar">DC</div>
+              <span class="post-author-name">DreamCo Engineering</span>
+            </div>
+            <a href="open-model-lab.html" class="read-more">Open Model Lab →</a>
+          </div>
+        </div>
+      </article>
+
+      <article class="post-card" aria-label="Blog post">
+        <div class="post-inner">
+          <div class="post-meta">
+            <span class="post-tag tag-milestone">🏆 Milestone</span>
+            <span class="post-date">February 2025</span>
+          </div>
+          <h2>PWA Launch: DreamCo Empire OS on Every Device</h2>
+          <p>DreamCo Empire OS is now a fully installable Progressive Web App. Install it from your browser on iOS, Android, macOS, Windows, or Linux — no app store required. Offline support, push notifications, and home screen integration work out of the box across all platforms.</p>
+          <div class="post-footer">
+            <div class="post-author">
+              <div class="post-author-avatar">DC</div>
+              <span class="post-author-name">DreamCo Technologies</span>
+            </div>
+            <a href="install.html" class="read-more">Install now →</a>
+          </div>
+        </div>
+      </article>
+
+    </main>
+
+    <!-- ── Sidebar ── -->
+    <aside class="blog-sidebar" aria-label="Blog sidebar">
+
+      <!-- Newsletter -->
+      <div class="newsletter-strip">
+        <h4>Stay Updated</h4>
+        <p>Follow DreamCo's development on GitHub to get notified of every new release and feature.</p>
+        <a href="https://github.com/DreamCo-Technologies/Dreamcobots" target="_blank" rel="noopener" class="btn btn-primary">★ Star on GitHub</a>
+      </div>
+
+      <!-- Fleet Stats -->
+      <div class="sidebar-widget">
+        <h4>Fleet Stats</h4>
+        <div class="stat-row"><span>Total bots</span><strong>1,051</strong></div>
+        <div class="stat-row"><span>Divisions</span><strong>45</strong></div>
+        <div class="stat-row"><span>Capabilities</span><strong>8,408</strong></div>
+        <div class="stat-row"><span>Autonomy modes</span><strong>3</strong></div>
+        <div class="stat-row"><span>Integrations</span><strong>200+</strong></div>
+      </div>
+
+      <!-- Topics -->
+      <div class="sidebar-widget">
+        <h4>Topics</h4>
+        <div class="tag-cloud">
+          <a href="#">Releases</a>
+          <a href="#">Features</a>
+          <a href="#">Technical</a>
+          <a href="#">Milestones</a>
+          <a href="#">Guides</a>
+          <a href="#">API</a>
+          <a href="#">Autonomy</a>
+          <a href="#">Fleet</a>
+          <a href="#">Finance</a>
+          <a href="#">AI Models</a>
+        </div>
+      </div>
+
+      <!-- Changelog -->
+      <div class="sidebar-widget">
+        <h4>Version History</h4>
+        <div class="changelog-item">
+          <span class="ver">v2.x</span><span class="date">Jul 2025</span>
+          <div class="desc">1,051 bots · Buddy Showrunner · DreamSearch division</div>
+        </div>
+        <div class="changelog-item">
+          <span class="ver">v1.9</span><span class="date">May 2025</span>
+          <div class="desc">Governed lead systems · Capability test matrix</div>
+        </div>
+        <div class="changelog-item">
+          <span class="ver">v1.7</span><span class="date">Mar 2025</span>
+          <div class="desc">Open Model Lab · Self-hosted AI support</div>
+        </div>
+        <div class="changelog-item">
+          <span class="ver">v1.5</span><span class="date">Feb 2025</span>
+          <div class="desc">PWA launch · Offline support</div>
+        </div>
+        <div class="changelog-item">
+          <span class="ver">v1.0</span><span class="date">2024</span>
+          <div class="desc">Initial fleet · 45 divisions · Buddy Bot</div>
+        </div>
+      </div>
+
+      <!-- Links -->
+      <div class="sidebar-widget">
+        <h4>Quick Links</h4>
+        <div style="display:flex;flex-direction:column;gap:8px">
+          <a href="buddy.html" class="btn btn-primary btn-sm" style="text-align:center;justify-content:center">Open Buddy Bot →</a>
+          <a href="bots.html" class="btn btn-outline btn-sm" style="text-align:center;justify-content:center">Bot Catalog</a>
+          <a href="docs.html" class="btn btn-outline btn-sm" style="text-align:center;justify-content:center">Documentation</a>
+          <a href="pricing.html" class="btn btn-outline btn-sm" style="text-align:center;justify-content:center">Pricing</a>
+        </div>
+      </div>
+
+    </aside>
+  </div>
+</div>
+
+</body>
+</html>
