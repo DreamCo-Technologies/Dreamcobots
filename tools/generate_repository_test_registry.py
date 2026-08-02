@@ -116,6 +116,7 @@ def file_suite(relative: str) -> str:
     value = relative.lower()
     rules = [
         ("data-rights", ("privacy", "data-control", "data-rights", "memory")),
+        ("security", ("open-secure-ai-defense", "security-center")),
         ("open-source-lab", ("open-model", "opensource", "repository-test")),
         ("model-routing", ("model", "ai-model")),
         ("payments", ("stripe", "payment", "subscription", "webhookhandler")),
@@ -149,6 +150,7 @@ def route_suite(path: str) -> str:
     value = path.lower()
     rules = [
         ("data-rights", ("/data", "/memory")),
+        ("security", ("/open-secure-ai-defense",)),
         ("harness", ("/harness", "/governance")),
         ("payments", ("/stripe", "/payments", "/financial", "/deals")),
         ("github", ("/github",)),

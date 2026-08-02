@@ -2,10 +2,41 @@
   'use strict';
 
   const data = window.BUDDY_MODEL_BENCHMARKS || { summary: {}, suites: [], targets: [] };
+  const organizationData = window.BUDDY_AI_ORGANIZATIONS || { summary: {}, existingProviders: [], allianceMembers: [], userNeedTaxonomy: [], benchmarkDimensions: [] };
   const targets = data.targets || [];
   const selected = new Set(targets.map((target) => target.id));
+  const organizationRecords = [
+    ...(organizationData.existingProviders || []).map((item) => ({ ...item, sourceKey: 'existing', organizationType: 'model_provider', website: item.officialCatalogs?.[0] || '' })),
+    ...(organizationData.allianceMembers || []).map((item) => ({ ...item, sourceKey: 'alliance' })),
+  ];
+  const selectedOrganizations = new Set();
   let visible = [...targets];
+  let visibleOrganizations = [...organizationRecords];
   let latestPlan = null;
+  let latestOrganizationPlan = null;
+
+  const routingSignals = [
+    ['coding', ['code', 'coding', 'debug', 'software', 'app', 'website', 'repository', 'test']],
+    ['reasoning', ['reason', 'math', 'logic', 'decide', 'compare', 'analyze']],
+    ['research', ['research', 'find sources', 'cite', 'citation', 'literature', 'fact check', 'evidence']],
+    ['agents', ['agent', 'tool', 'workflow', 'automate', 'autonomous']],
+    ['vision', ['vision', 'screenshot', 'inspect image']],
+    ['image generation', ['generate image', 'create image', 'illustration', 'logo', 'art']],
+    ['image editing', ['edit image', 'photo edit', 'retouch', 'inpaint', 'photoshop']],
+    ['video', ['video', 'movie', 'film', 'animation', 'short']],
+    ['voice and speech', ['voice', 'speech', 'transcribe', 'narrate', 'call']],
+    ['music and audio', ['music', 'song', 'audio', 'sing', 'rap']],
+    ['multilingual and translation', ['translate', 'translation', 'multilingual', 'localize', 'language']],
+    ['safety and moderation', ['safety', 'moderate', 'guardrail', 'risk', 'policy']],
+    ['ocr and documents', ['ocr', 'document', 'pdf', 'scan', 'extract']],
+    ['search and retrieval', ['retrieve', 'retrieval', 'knowledge base', 'search', 'rag']],
+    ['data analysis', ['data', 'analytics', 'spreadsheet', 'chart', 'sql']],
+    ['embeddings', ['embedding', 'vector', 'semantic']],
+    ['forecasting', ['forecast', 'predict', 'time series']],
+    ['simulation', ['simulation', 'simulate', 'game', 'digital twin']],
+    ['3d and spatial', ['3d', 'spatial', 'world', 'scene', 'modeling']],
+    ['accessibility', ['accessibility', 'accessible', 'caption', 'screen reader']],
+  ];
 
   const byId = (id) => document.getElementById(id);
   const escapeHtml = (value) => String(value)
@@ -46,6 +77,80 @@
       label.append(input, document.createTextNode(suite.label));
       target.append(label);
     });
+  }
+
+  function targetText(target) {
+    return [target.name, target.provider, target.category, target.bestFor, ...target.declaredCapabilities].join(' ').toLowerCase();
+  }
+
+  function downloadFile(filename, content, type) {
+    const blob = new Blob([content], { type });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url; link.download = filename; link.click();
+    URL.revokeObjectURL(url);
+  }
+
+  function exportCatalogJson() {
+    downloadFile('buddy-ai-systems-encyclopedia.json', JSON.stringify(data, null, 2), 'application/json');
+  }
+
+  function exportCatalogCsv() {
+    const headers = ['id', 'name', 'provider', 'category', 'tier', 'discovery_target', 'official_catalog', 'declared_task_fit', 'live_score'];
+    const rows = targets.map((target) => [target.id, target.name, target.provider, target.category, target.tier, target.discoveryTarget, target.officialCatalog || '', target.bestFor, target.liveScore ?? '']);
+    const csv = [headers, ...rows].map((row) => row.map((value) => `"${String(value).replaceAll('"', '""')}"`).join(',')).join('\n');
+    downloadFile('buddy-ai-systems-encyclopedia.csv', `${csv}\n`, 'text/csv');
+  }
+
+  function prepareModelRoute(event) {
+    event.preventDefault();
+    const objective = byId('model-route-objective').value.trim();
+    if (objective.length < 3) return;
+    const capabilities = byId('model-route-capabilities').value.split(',').map((value) => value.trim().toLowerCase()).filter(Boolean);
+    const tier = byId('model-route-tier').value;
+    const maxCandidates = Number(byId('model-route-count').value);
+    const includeDiscovery = byId('model-route-discovery').checked;
+    const priorities = {
+      quality: Number(byId('model-priority-quality').value),
+      cost: Number(byId('model-priority-cost').value),
+      latency: Number(byId('model-priority-latency').value),
+      privacy: Number(byId('model-priority-privacy').value),
+    };
+    const requestText = `${objective} ${capabilities.join(' ')}`.toLowerCase();
+    const signals = routingSignals.filter(([, terms]) => terms.some((term) => requestText.includes(term))).map(([id]) => id);
+    if (!signals.length) signals.push('reasoning');
+    const scored = targets.filter((target) => includeDiscovery || !target.discoveryTarget).map((target) => {
+      const searchable = targetText(target);
+      const matchedSignals = signals.filter((signal) => searchable.includes(signal));
+      const matchedCapabilities = capabilities.filter((capability) => searchable.includes(capability));
+      const isFree = target.tier === 'free';
+      const isPremium = ['paid', 'freemium'].includes(target.tier);
+      const tierFit = tier === 'any' || (tier === 'free' && isFree) || (tier === 'premium' && isPremium);
+      const local = ['dreamco', 'ollama'].includes(target.provider.toLowerCase().replace(/[^a-z0-9]/g, ''));
+      const objectiveTerms = [...new Set(objective.toLowerCase().split(/\W+/).filter((term) => term.length >= 4))];
+      const objectiveMatches = objectiveTerms.filter((term) => searchable.includes(term)).length;
+      const score = matchedSignals.length * 26 + matchedCapabilities.length * 12 + Math.min(10, objectiveMatches)
+        + (tierFit ? 8 : -8) + (target.discoveryTarget ? 0 : 4)
+        + (isFree ? priorities.cost * 8 : -priorities.cost * 3)
+        + (local ? priorities.privacy * 10 + priorities.latency * 3 : 0);
+      const coverage = Math.min(1, 0.25 + (matchedSignals.length ? 0.3 : 0)
+        + (capabilities.length ? (matchedCapabilities.length / capabilities.length) * 0.3 : 0.15)
+        + (target.discoveryTarget ? 0 : 0.15));
+      return { target, score, coverage, matchedSignals, matchedCapabilities };
+    }).sort((left, right) => right.score - left.score || left.target.id - right.target.id);
+    const candidates = scored.filter((candidate, index, all) => all.findIndex((item) => item.target.provider.toLowerCase() === candidate.target.provider.toLowerCase()) === index).slice(0, maxCandidates);
+    const results = byId('model-route-results');
+    results.innerHTML = candidates.map((candidate, index) => `
+      <article class="model-route-candidate">
+        <div class="model-route-rank">${index + 1}</div>
+        <div class="model-route-copy"><span>${escapeHtml(candidate.target.provider)} · ${escapeHtml(candidate.target.tier)}</span><h3>${escapeHtml(candidate.target.name)}</h3><p>${escapeHtml(candidate.target.bestFor)}</p></div>
+        <dl><div><dt>Metadata fit</dt><dd>${candidate.score.toFixed(1)}</dd></div><div><dt>Coverage</dt><dd>${Math.round(candidate.coverage * 100)}%</dd></div><div><dt>Live score</dt><dd>Not run</dd></div></dl>
+        <div class="model-route-tags">${candidate.matchedSignals.map((value) => `<span>${escapeHtml(value)}</span>`).join('') || '<span>general reasoning</span>'}</div>
+        <button class="btn btn-outline btn-sm" type="button" data-route-detail="${candidate.target.id}">Inspect tests</button>
+      </article>`).join('');
+    results.hidden = false;
+    results.querySelectorAll('[data-route-detail]').forEach((button) => button.addEventListener('click', () => showDetail(Number(button.dataset.routeDetail))));
+    byId('model-route-status').textContent = `${candidates.length} provider-diverse candidates prepared for ${signals.join(', ')}. Quality contributed 0 points because no live signed benchmark evidence exists.`;
   }
 
   function filteredTargets() {
@@ -94,8 +199,14 @@
     byId('model-detail-body').innerHTML = `
       <p><strong>Declared task fit:</strong> ${escapeHtml(target.bestFor)}</p>
       <h3>Declared capabilities</h3><ul>${target.declaredCapabilities.map((item) => `<li>${escapeHtml(item)}</li>`).join('')}</ul>
-      <h3>Assigned benchmark suites</h3><ul>${target.benchmarkSuites.map((id) => `<li>${escapeHtml(data.suites.find((suite) => suite.id === id)?.label || id)}</li>`).join('')}</ul>
+      <h3>Prompt and test library</h3><div class="model-prompt-library">${(target.promptLibrary || target.benchmarkSuites || []).map((suiteId) => data.suites.find((suite) => suite.id === suiteId)).filter(Boolean).map((prompt) => `<article><div><strong>${escapeHtml(prompt.label)}</strong><span>${escapeHtml(prompt.grader)} · ${escapeHtml(prompt.modality)}</span></div><p>${escapeHtml(prompt.prompt_fixture)}</p><button class="btn btn-outline btn-sm" type="button" data-prepare-model-test="${escapeHtml(prompt.id)}">Load test</button></article>`).join('')}</div>
       <h3>Evidence status</h3><p>No live score exists yet. Availability, quality, latency, and cost must be recorded by an authenticated adapter using the exact provider model id.</p>`;
+    byId('model-detail-body').querySelectorAll('[data-prepare-model-test]').forEach((button) => button.addEventListener('click', () => {
+      selected.clear(); selected.add(target.id);
+      document.querySelectorAll('#suite-options input').forEach((input) => { input.checked = input.value === button.dataset.prepareModelTest; });
+      byId('benchmark-status').textContent = `${target.name} and ${button.dataset.prepareModelTest.replaceAll('_', ' ')} loaded. Review network and budget controls, then prepare the run plan.`;
+      byId('model-detail').close(); renderRows(); byId('runner-title').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }));
     byId('model-detail').showModal();
   }
 
@@ -131,10 +242,13 @@
     const maxBudgetUsd = Number(byId('benchmark-budget').value);
     const allowExternalNetwork = byId('benchmark-network').checked;
     const paidApproved = byId('benchmark-paid').checked;
-    const hasPaidTargets = chosen.some((target) => target.tier !== 'free');
+    const hasPaidTargets = chosen.some((target) => !['free', 'discovery'].includes(target.tier));
+    const hasDiscoveryTargets = chosen.some((target) => target.discoveryTarget);
     const status = !allowExternalNetwork
       ? 'local_catalog_plan_ready'
-      : hasPaidTargets && (!paidApproved || maxBudgetUsd <= 0)
+      : hasDiscoveryTargets
+        ? 'official_catalog_discovery_required'
+        : hasPaidTargets && (!paidApproved || maxBudgetUsd <= 0)
         ? 'paid_budget_approval_required'
         : 'live_adapters_required';
     latestPlan = {
@@ -154,7 +268,9 @@
       evidenceRequired: ['exact provider model id', 'fixture hash', 'response hash', 'latency', 'token usage', 'actual cost', 'grader version', 'UTC timestamp'],
     };
     renderPlan(latestPlan);
-    byId('benchmark-status').textContent = status === 'paid_budget_approval_required'
+    byId('benchmark-status').textContent = status === 'official_catalog_discovery_required'
+      ? 'Plan paused at official-catalog discovery. Exact model IDs and terms must be recorded before any benchmark call.'
+      : status === 'paid_budget_approval_required'
       ? 'Plan paused. Paid targets require both a maximum spend and approval for this run.'
       : status === 'live_adapters_required'
         ? 'Plan ready for authenticated provider adapters. No model has been called from this static page.'
@@ -170,16 +286,174 @@
     URL.revokeObjectURL(url);
   }
 
+  function renderOrganizationMetrics() {
+    const summary = organizationData.summary || {};
+    byId('org-existing-targets').textContent = Number(summary.existingBenchmarkTargets || 0).toLocaleString();
+    byId('org-existing-providers').textContent = Number(summary.existingProviders || 0).toLocaleString();
+    byId('org-alliance-members').textContent = Number(summary.allianceMembers || 0).toLocaleString();
+    byId('org-records').textContent = Number(summary.organizationRecords || 0).toLocaleString();
+    byId('org-live').textContent = Number(summary.liveOrganizationBenchmarks || 0).toLocaleString();
+  }
+
+  function renderOrganizationFilters() {
+    [...new Set(organizationRecords.map((item) => item.organizationType).filter(Boolean))].sort().forEach((type) => {
+      byId('organization-type').append(option(type, type.replaceAll('_', ' ')));
+    });
+    const needs = byId('organization-needs');
+    (organizationData.userNeedTaxonomy || []).forEach((need, index) => {
+      const label = document.createElement('label'); label.className = 'organization-need';
+      const input = document.createElement('input'); input.type = 'checkbox'; input.value = need.id; input.checked = index < 5;
+      const copy = document.createElement('span'); copy.textContent = need.description;
+      label.append(input, copy); needs.append(label);
+    });
+  }
+
+  function filteredOrganizations() {
+    const query = byId('organization-search').value.trim().toLowerCase();
+    const source = byId('organization-source').value;
+    const type = byId('organization-type').value;
+    return organizationRecords.filter((item) => {
+      const haystack = [item.name, item.organizationType, ...(item.strengths || []), ...(item.commonUserJobs || []), ...(item.tools || [])].join(' ').toLowerCase();
+      return (!query || haystack.includes(query)) && (source === 'all' || item.sourceKey === source) && (type === 'all' || item.organizationType === type);
+    });
+  }
+
+  function organizationEvidence(item) {
+    return item.capabilityEvidenceStatus || item.evidenceStatus || 'official_source_research_required';
+  }
+
+  function renderOrganizationRows() {
+    visibleOrganizations = filteredOrganizations();
+    const body = byId('organization-rows'); body.replaceChildren();
+    visibleOrganizations.forEach((item) => {
+      const row = document.createElement('tr');
+      const selectCell = document.createElement('td');
+      const checkbox = document.createElement('input'); checkbox.type = 'checkbox'; checkbox.checked = selectedOrganizations.has(item.id); checkbox.setAttribute('aria-label', `Include ${item.name}`);
+      checkbox.addEventListener('change', () => { if (checkbox.checked) selectedOrganizations.add(item.id); else selectedOrganizations.delete(item.id); updateOrganizationSelected(); });
+      selectCell.append(checkbox);
+
+      const nameCell = document.createElement('td'); const copy = document.createElement('div'); copy.className = 'organization-copy';
+      const button = document.createElement('button'); button.className = 'model-name-button'; button.type = 'button'; button.textContent = item.name; button.addEventListener('click', () => showOrganizationDetail(item.id));
+      const type = document.createElement('span'); type.textContent = String(item.organizationType || 'unclassified').replaceAll('_', ' '); copy.append(button, type); nameCell.append(copy);
+      const sourceCell = document.createElement('td'); const sourceTag = document.createElement('span'); sourceTag.className = 'organization-source-tag'; sourceTag.textContent = item.sourceKey === 'alliance' ? 'Alliance' : `Existing ${Number(organizationData.summary?.existingBenchmarkTargets || 0).toLocaleString()}`; sourceCell.append(sourceTag);
+      const strengthCell = document.createElement('td'); strengthCell.className = 'organization-cell-note'; strengthCell.textContent = (item.strengths || []).slice(0, 3).join(', ') || 'Research required';
+      const jobCell = document.createElement('td'); jobCell.className = 'organization-cell-note'; jobCell.textContent = (item.commonUserJobs || []).slice(0, 2).join('; ') || 'Research required';
+      const evidenceCell = document.createElement('td'); evidenceCell.className = 'organization-cell-note organization-evidence'; evidenceCell.textContent = organizationEvidence(item).replaceAll('_', ' ');
+      row.append(selectCell, nameCell, sourceCell, strengthCell, jobCell, evidenceCell); body.append(row);
+    });
+    byId('organization-count').textContent = `Showing ${visibleOrganizations.length.toLocaleString()} of ${organizationRecords.length.toLocaleString()} records. ${selectedOrganizations.size.toLocaleString()} selected.`;
+    updateOrganizationSelected();
+  }
+
+  function updateOrganizationSelected() {
+    byId('organization-selected-count').textContent = selectedOrganizations.size.toLocaleString();
+  }
+
+  function showOrganizationDetail(id) {
+    const item = organizationRecords.find((record) => record.id === id);
+    if (!item) return;
+    byId('organization-detail-source').textContent = item.sourceKey === 'alliance' ? `Official directory snapshot · ${organizationData.snapshotDate}` : `Existing ${Number(organizationData.summary?.existingBenchmarkTargets || 0).toLocaleString()}-target catalog`;
+    byId('organization-detail-title').textContent = item.name;
+    const tools = (item.tools || []).length ? item.tools : ['No member-specific tool list is published in the directory; official-source research is required.'];
+    const jobs = (item.commonUserJobs || []).length ? item.commonUserJobs : ['Official-source research required'];
+    const strengths = (item.strengths || []).length ? item.strengths : ['Official-source research required'];
+    const officialUrl = item.website || item.officialCatalogs?.[0] || '';
+    const connectionUrl = officialUrl ? `connections.html?app=${encodeURIComponent(item.name)}&url=${encodeURIComponent(officialUrl)}&method=api_key` : 'connections.html';
+    byId('organization-detail-body').innerHTML = `
+      <p><strong>Evidence status:</strong> ${escapeHtml(organizationEvidence(item).replaceAll('_', ' '))}</p>
+      <h3>Strengths to verify</h3><ul>${strengths.map((value) => `<li>${escapeHtml(value)}</li>`).join('')}</ul>
+      <h3>Common user jobs</h3><ul>${jobs.map((value) => `<li>${escapeHtml(value)}</li>`).join('')}</ul>
+      <h3>Known tools or targets</h3><ul>${tools.slice(0, 20).map((value) => `<li>${escapeHtml(value)}</li>`).join('')}</ul>
+      <p>Membership does not prove capability, connection, access, price, or quality. Live comparison requires current official metadata and identical signed fixtures.</p>
+      <a class="btn btn-outline btn-sm" href="${escapeHtml(connectionUrl)}">Prepare secure connection</a>`;
+    byId('organization-detail').showModal();
+  }
+
+  function selectedOrganizationNeeds() {
+    return [...document.querySelectorAll('#organization-needs input:checked')].map((input) => input.value);
+  }
+
+  function runOrganizationAudit() {
+    const valid = organizationRecords.filter((item) => item.id && item.name && organizationEvidence(item) && Array.isArray(item.commonUserJobs)).length;
+    const missing = organizationRecords.length - valid;
+    byId('organization-status').textContent = `Catalog audit complete: ${valid} structurally ready, ${missing} invalid, ${organizationData.benchmarkDimensions?.length || 0} benchmark dimensions, and 0 live organization calls. Inferred categories remain research leads, not verified strengths.`;
+  }
+
+  function prepareOrganizationPlan() {
+    const organizations = organizationRecords.filter((item) => selectedOrganizations.has(item.id));
+    const needs = selectedOrganizationNeeds();
+    if (!organizations.length || !needs.length) {
+      byId('organization-status').textContent = 'Select at least one organization and one user need.';
+      return;
+    }
+    const fixtures = Math.max(1, Math.min(20, Number(byId('organization-fixtures').value) || 1));
+    const concurrency = Math.max(1, Math.min(32, Number(byId('organization-concurrency').value) || 1));
+    const budget = Math.max(0, Math.min(10000, Number(byId('organization-budget').value) || 0));
+    const allowNetwork = byId('organization-network').checked;
+    const networkApproved = byId('organization-network-approval').checked;
+    const paidApproved = byId('organization-paid').checked;
+    const requiresResearch = organizations.some((item) => organizationEvidence(item).includes('research_required'));
+    const status = allowNetwork && !networkApproved ? 'network_approval_required'
+      : budget > 0 && !paidApproved ? 'paid_budget_approval_required'
+      : allowNetwork && requiresResearch ? 'official_source_research_required'
+      : allowNetwork ? 'configured_adapters_and_exact_versions_required' : 'local_catalog_plan_ready';
+    const totalCases = organizations.length * needs.length * fixtures;
+    latestOrganizationPlan = {
+      schema: 'dreamco.organization_benchmark_plan.v1',
+      createdAt: new Date().toISOString(),
+      organizationIds: organizations.map((item) => item.id),
+      userNeedIds: needs,
+      organizationCount: organizations.length,
+      userNeedCount: needs.length,
+      signedFixturesPerNeed: fixtures,
+      totalCases,
+      maxConcurrency: concurrency,
+      plannedWaves: Math.ceil(totalCases / concurrency),
+      maximumPaidBudgetUsd: paidApproved ? budget : 0,
+      networkApprovedForThisRun: allowNetwork && networkApproved,
+      status,
+      benchmarkDimensions: organizationData.benchmarkDimensions || [],
+      rawCredentialsAccepted: false,
+      executionPerformed: false,
+      permanentBestClaimed: false,
+    };
+    const summary = byId('organization-plan-summary'); summary.replaceChildren();
+    [['Organizations', organizations.length], ['User needs', needs.length], ['Total cases', totalCases], ['Concurrency', concurrency], ['Waves', latestOrganizationPlan.plannedWaves], ['Budget cap', `$${latestOrganizationPlan.maximumPaidBudgetUsd.toFixed(2)}`], ['Status', status.replaceAll('_', ' ')]].forEach(([label, value]) => {
+      const dt = document.createElement('dt'); dt.textContent = String(label); const dd = document.createElement('dd'); dd.textContent = String(value); summary.append(dt, dd);
+    });
+    byId('organization-result').hidden = false;
+    byId('organization-status').textContent = status === 'local_catalog_plan_ready' ? 'Local catalog plan ready. No network, provider, or member site was contacted.' : `Plan paused at ${status.replaceAll('_', ' ')}. No external action was performed.`;
+  }
+
+  function downloadOrganizationPlan() {
+    if (!latestOrganizationPlan) return;
+    const blob = new Blob([JSON.stringify(latestOrganizationPlan, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob); const link = document.createElement('a'); link.href = url; link.download = 'buddy-organization-benchmark-plan.json'; link.click(); URL.revokeObjectURL(url);
+  }
+
   ['model-search', 'model-tier', 'model-category'].forEach((id) => byId(id).addEventListener(id === 'model-search' ? 'input' : 'change', renderRows));
   byId('select-visible').addEventListener('click', () => { visible.forEach((target) => selected.add(target.id)); renderRows(); });
   byId('clear-selection').addEventListener('click', () => { selected.clear(); renderRows(); });
   byId('run-catalog-audit').addEventListener('click', runCatalogAudit);
   byId('prepare-live-plan').addEventListener('click', preparePlan);
   byId('download-benchmark-plan').addEventListener('click', downloadPlan);
+  byId('export-model-json').addEventListener('click', exportCatalogJson);
+  byId('export-model-csv').addEventListener('click', exportCatalogCsv);
+  byId('model-route-form').addEventListener('submit', prepareModelRoute);
   byId('model-detail-close').addEventListener('click', () => byId('model-detail').close());
+  ['organization-search', 'organization-source', 'organization-type'].forEach((id) => byId(id).addEventListener(id === 'organization-search' ? 'input' : 'change', renderOrganizationRows));
+  byId('organization-select-visible').addEventListener('click', () => { visibleOrganizations.forEach((item) => selectedOrganizations.add(item.id)); renderOrganizationRows(); });
+  byId('organization-clear').addEventListener('click', () => { selectedOrganizations.clear(); renderOrganizationRows(); });
+  byId('organization-audit').addEventListener('click', runOrganizationAudit);
+  byId('organization-plan').addEventListener('click', prepareOrganizationPlan);
+  byId('organization-download').addEventListener('click', downloadOrganizationPlan);
+  byId('organization-detail-close').addEventListener('click', () => byId('organization-detail').close());
 
   renderMetrics();
   renderFilters();
   renderSuites();
   renderRows();
+  renderOrganizationMetrics();
+  renderOrganizationFilters();
+  renderOrganizationRows();
 })();

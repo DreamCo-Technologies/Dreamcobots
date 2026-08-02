@@ -5,7 +5,10 @@
   const formatter = new Intl.NumberFormat('en-US');
   let registry = null;
   let latestPlan = null;
+  let selectedQualityBot = null;
   const selectedSuites = new Set();
+  const quality = window.BUDDY_FLEET_QUALITY_PROGRAM || { summary: {}, bots: [], quality_workers: [], release_pipeline: [] };
+  const improvement = window.BUDDY_SELF_IMPROVEMENT || { mode: 'catalog_unavailable', improvement_loop: [], hallucination_controls: [] };
 
   function make(tag, text, className) {
     const node = document.createElement(tag);
@@ -26,6 +29,196 @@
 
   function selectedMode() {
     return byId('test-mode-options').querySelector('input[name="test-mode"]:checked')?.value || 'contract';
+  }
+
+  function readable(value) {
+    return String(value || '').replaceAll('_', ' ');
+  }
+
+  function renderImprovementGuardrails() {
+    byId('improvement-mode').textContent = readable(improvement.mode);
+    byId('improvement-stage-count').textContent = formatter.format(improvement.improvement_loop.length);
+    byId('grounding-control-count').textContent = formatter.format(improvement.hallucination_controls.length);
+    byId('improvement-live-changes').textContent = '0';
+
+    const loop = byId('improvement-loop-list');
+    loop.replaceChildren();
+    improvement.improvement_loop.forEach((stage) => {
+      const item = make('li');
+      item.append(make('strong', readable(stage.id)), make('p', stage.gate));
+      loop.append(item);
+    });
+
+    const controls = byId('grounding-control-list');
+    controls.replaceChildren();
+    improvement.hallucination_controls.forEach((control) => {
+      const item = make('li');
+      item.append(make('strong', readable(control.id)), make('p', control.rule));
+      controls.append(item);
+    });
+  }
+
+  function renderQualityMetrics() {
+    const summary = quality.summary || {};
+    byId('quality-profile-count').textContent = formatter.format(summary.unique_learning_paths || summary.per_bot_learning_plans || 0);
+    byId('quality-capability-count').textContent = formatter.format(summary.per_capability_benchmark_plans || 0);
+    byId('quality-contract-count').textContent = formatter.format(summary.repository_capability_contracts_passed || 0);
+    byId('quality-live-count').textContent = formatter.format(summary.live_competitor_benchmarks_completed || 0);
+    byId('quality-production-count').textContent = formatter.format(summary.production_ready_profiles || 0);
+    const reviewed = new Date(`${quality.catalog_reviewed_on || '1970-01-01'}T00:00:00Z`);
+    const ageDays = Math.max(0, Math.floor((Date.now() - reviewed.getTime()) / 86_400_000));
+    byId('quality-review-status').textContent = ageDays > Number(quality.stale_after_days || 14) ? 'Refresh due' : `${ageDays}d ago`;
+  }
+
+  function qualityBotMatchesStatus(bot, status) {
+    if (status === 'all') return true;
+    if (status === 'repository_contract_passed') {
+      return bot.evidence.repository_capability_contracts_passed === bot.evidence.repository_capability_contracts_total;
+    }
+    if (status === 'live_end_to_end_passed') return bot.evidence.live_end_to_end_flows_passed > 0;
+    if (status === 'production_ready') return bot.production_status === 'production_ready';
+    return false;
+  }
+
+  function renderQualityBots() {
+    const target = byId('quality-bot-list');
+    const query = byId('quality-search').value.trim().toLowerCase();
+    const status = byId('quality-status-filter').value;
+    const matched = (quality.bots || []).filter((bot) => {
+      const capabilities = bot.benchmark_plan.capabilities.map((capability) => capability.name).join(' ');
+      const learningGoal = bot.learning_path?.training_goal || '';
+      const text = `${bot.display_name} ${bot.bot_id} ${bot.division} ${bot.category} ${capabilities} ${learningGoal}`.toLowerCase();
+      return (!query || text.includes(query)) && qualityBotMatchesStatus(bot, status);
+    });
+    target.replaceChildren();
+    matched.slice(0, 60).forEach((bot) => {
+      const row = make('button', undefined, 'quality-bot-row');
+      row.type = 'button';
+      const identity = make('span', undefined, 'quality-bot-name');
+      identity.append(make('strong', bot.display_name), make('small', `${bot.division} · ${bot.category}`));
+      const contracts = make('span', undefined, 'quality-evidence-cell');
+      contracts.append(make('small', 'Repository'), make('strong', `${bot.evidence.repository_capability_contracts_passed}/${bot.evidence.repository_capability_contracts_total} passed`));
+      const live = make('span', undefined, 'quality-evidence-cell');
+      live.append(make('small', 'Live evidence'), make('strong', `${bot.evidence.live_end_to_end_flows_passed} flows · ${bot.evidence.live_competitor_benchmarks_passed} benchmarks`));
+      row.append(identity, contracts, live, make('span', 'View plan', 'quality-view-label'));
+      row.addEventListener('click', () => showQualityDetail(bot));
+      target.append(row);
+    });
+    byId('quality-result-count').textContent = `${formatter.format(matched.length)} matching · showing ${formatter.format(Math.min(matched.length, 60))}`;
+    if (!matched.length) target.append(make('p', 'No bot has evidence for this filter yet.', 'test-empty'));
+  }
+
+  function appendList(target, values, className) {
+    const list = make('ul', undefined, className);
+    values.forEach((value) => list.append(make('li', value)));
+    target.append(list);
+  }
+
+  function showQualityDetail(bot) {
+    selectedQualityBot = bot;
+    byId('quality-detail-division').textContent = `${bot.division} · ${bot.bot_id}`;
+    byId('quality-detail-title').textContent = bot.display_name;
+    const body = byId('quality-detail-body');
+    body.replaceChildren();
+
+    const evidence = make('div', undefined, 'quality-detail-summary');
+    [
+      ['Buddy route', bot.evidence.buddy_route],
+      ['Governed runtime', bot.evidence.governed_runtime],
+      ['Repository contracts', `${bot.evidence.repository_capability_contracts_passed}/${bot.evidence.repository_capability_contracts_total} passed`],
+      ['Live end-to-end', `${bot.evidence.live_end_to_end_flows_passed} passed`],
+      ['Live competitor benchmarks', `${bot.evidence.live_competitor_benchmarks_passed} completed`],
+      ['Learning path', bot.learning_path.path_id],
+      ['Curriculum modules', `${bot.learning_path.module_count} ordered`],
+      ['Competitor suite', bot.competitor_benchmark.suite_id],
+      ['Production status', bot.production_status],
+    ].forEach(([label, value]) => {
+      const item = make('div');
+      item.append(make('small', label), make('strong', readable(value)));
+      evidence.append(item);
+    });
+    body.append(evidence, make('h3', 'Completed build phases'));
+    appendList(body, bot.build_plan.completed_phases.map(readable), 'quality-phase-list complete');
+    body.append(make('h3', 'Remaining evidence gates'));
+    appendList(body, bot.build_plan.remaining_phases.map(readable), 'quality-phase-list remaining');
+    body.append(make('h3', 'Next build actions'));
+    appendList(body, bot.build_plan.next_actions, 'quality-action-list');
+
+    body.append(make('h3', 'Separate learning path'));
+    const learningSummary = make('p', bot.learning_path.training_goal, 'quality-learning-goal');
+    const learningStages = make('div', undefined, 'quality-learning-stages');
+    bot.learning_path.stages.forEach((stage, index) => {
+      const definition = (quality.learning_path_policy?.stages || []).find((item) => item.id === stage.stage_id) || {};
+      const label = definition.label || readable(stage.stage_id);
+      const row = make('article', undefined, 'quality-learning-stage');
+      const heading = make('div');
+      heading.append(make('strong', `${index + 1}. ${label}`), make('span', readable(stage.status), 'test-status'));
+      row.append(
+        heading,
+        make('p', `${label} for ${bot.display_name}'s ${bot.category} specialization and ordered capability curriculum.`),
+        make('small', `Gate: ${definition.evidence_gate || 'Evidence required before progression.'}`),
+      );
+      learningStages.append(row);
+    });
+    body.append(learningSummary, learningStages);
+
+    body.append(make('h3', 'Competitor benchmark suite'));
+    const benchmarkSummary = make('div', undefined, 'quality-benchmark-summary');
+    [
+      ['Suite', bot.competitor_benchmark.suite_id],
+      ['Baseline', bot.competitor_benchmark.baseline],
+      ['Capability benchmarks', String(bot.competitor_benchmark.benchmark_count)],
+      ['Candidates verified', String(bot.competitor_benchmark.current_candidates_verified)],
+      ['Live results', String(bot.competitor_benchmark.live_results_completed)],
+      ['State', readable(bot.competitor_benchmark.status)],
+    ].forEach(([label, value]) => {
+      const item = make('div');
+      item.append(make('small', label), make('strong', value));
+      benchmarkSummary.append(item);
+    });
+    body.append(benchmarkSummary);
+
+    body.append(make('h3', 'Capability benchmark fixtures'));
+    const capabilityList = make('div', undefined, 'quality-capability-list');
+    bot.benchmark_plan.capabilities.forEach((capability) => {
+      const row = make('div', undefined, 'quality-capability-row');
+      const copy = make('span');
+      copy.append(
+        make('strong', `${capability.learning_order}. ${capability.name}`),
+        make('code', capability.module_id),
+        make('code', capability.benchmark_id),
+      );
+      row.append(
+        copy,
+        make('span', `Repository: ${readable(capability.repository_contract_status)}`),
+        make('span', `Competitor: ${readable(capability.live_competitor_benchmark_status)}`),
+        make('span', `Live E2E: ${readable(capability.live_end_to_end_status)}`),
+      );
+      row.title = `Benchmark ${capability.name} against current task-specific competitors using identical signed fixtures.`;
+      capabilityList.append(row);
+    });
+    body.append(capabilityList, make('h3', 'Assigned quality team'));
+    appendList(body, quality.quality_workers.map((worker) => `${worker.slug}: ${worker.role}`), 'quality-worker-list');
+    byId('quality-send-buddy').href = `buddy.html?prompt=${encodeURIComponent(bot.buddy_prompts.improvement)}`;
+    byId('quality-detail').showModal();
+  }
+
+  function downloadQualityPlan() {
+    if (!selectedQualityBot) return;
+    downloadJson({
+      schema: 'dreamco.buddy_fleet_quality_handoff.v1',
+      preparedAt: new Date().toISOString(),
+      bot: selectedQualityBot,
+      benchmarkDimensions: quality.benchmark_dimensions,
+      competitorDiscovery: quality.competitor_discovery,
+      qualityWorkers: quality.quality_workers,
+      releasePipeline: quality.release_pipeline,
+      dependencyGates: quality.dependency_gates,
+      continuousLearning: quality.continuous_learning,
+      learningPathPolicy: quality.learning_path_policy,
+      externalActionTaken: false,
+      liveBenchmarkExecuted: false,
+    }, `${selectedQualityBot.bot_id}-quality-plan.json`);
   }
 
   function renderMetrics() {
@@ -163,7 +356,7 @@
   }
 
   async function init() {
-    const response = await fetch('data/repository-test-registry.json', { cache: 'no-store' });
+    const response = await fetch('data/repository-test-registry.json?v=3', { cache: 'no-store' });
     if (!response.ok) throw new Error(`Test registry request failed: ${response.status}`);
     registry = await response.json();
     renderMetrics();
@@ -174,6 +367,10 @@
   byId('test-suite-search').addEventListener('input', renderSuites);
   byId('test-level-filter').addEventListener('change', renderSuites);
   byId('test-route-search').addEventListener('input', renderRoutes);
+  byId('quality-search').addEventListener('input', renderQualityBots);
+  byId('quality-status-filter').addEventListener('change', renderQualityBots);
+  byId('quality-detail-close').addEventListener('click', () => byId('quality-detail').close());
+  byId('quality-download-plan').addEventListener('click', downloadQualityPlan);
   byId('select-local-tests').addEventListener('click', () => {
     registry.suites.filter((suite) => ['local_contract', 'repository_sandbox'].includes(suite.level))
       .forEach((suite) => selectedSuites.add(suite.id));
@@ -198,6 +395,9 @@
     }
   });
 
+  renderQualityMetrics();
+  renderQualityBots();
+  renderImprovementGuardrails();
   init().catch((error) => {
     byId('test-suite-list').replaceChildren(make('p', 'Test registry could not load. Open this site through the local server or deployed site.', 'test-empty'));
     console.error(error);

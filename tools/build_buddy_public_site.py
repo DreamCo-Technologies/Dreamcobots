@@ -22,6 +22,8 @@ FLEET_E2E = WEBSITE / "data" / "bot-fleet-e2e.json"
 CALCULATORS = ROOT / "config" / "generated" / "bot_calculators.json"
 SITE_STATUS = WEBSITE / "data" / "buddy-site-status.json"
 TEST_REGISTRY = ROOT / "config" / "generated" / "repository_test_registry.json"
+DEFENSE_CATALOG = ROOT / "config" / "generated" / "buddy_open_secure_ai_defense.json"
+SUCCESS_PROGRAM = ROOT / "config" / "generated" / "buddy_success_program.json"
 
 SECRET_FILE_PATTERN = re.compile(
     r"(^|/)(\.env($|\.)|id_rsa|id_ed25519|.*\.(pem|p12|pfx|key|keystore)$)", re.IGNORECASE
@@ -77,12 +79,16 @@ def build_public_map() -> dict[str, Any]:
     calculators = read_json(CALCULATORS)
     site_status = read_json(SITE_STATUS)
     test_registry = read_json(TEST_REGISTRY)
+    defense_catalog = read_json(DEFENSE_CATALOG)
+    success_program = read_json(SUCCESS_PROGRAM)
 
     registry_summary = master.get("summary", {})
     fleet_e2e_summary = fleet_e2e.get("summary", {})
     capability_bot_count = int(registry_summary.get("per_bot_sandbox_blueprints", 0))
     site_summary = site_status.get("summary", {})
     test_summary = test_registry.get("summary", {})
+    defense_summary = defense_catalog.get("summary", {})
+    success_summary = success_program.get("summary", {})
     enabled_tools = int(test_summary.get("locally_testable_suites", 0))
     approval_tools = int(test_registry.get("route_classifications", {}).get("external_or_destructive_gate", 0))
 
@@ -136,6 +142,14 @@ def build_public_map() -> dict[str, Any]:
             "api_route_registrations": int(test_summary.get("literal_api_routes", 0)),
             "test_suites": int(test_summary.get("test_suites", 0)),
             "files_scanned": int(test_summary.get("files_scanned", 0)),
+            "defense_reference_projects": int(defense_summary.get("openssf_projects", 0))
+            + int(defense_summary.get("alliance_reference_tools", 0)),
+            "model_discovery_sources": int(defense_summary.get("model_discovery_sources", 0)),
+            "success_questionnaire_questions": int(success_summary.get("questionnaire_questions", 0)),
+            "division_improvement_records": int(success_summary.get("division_must_have_updates", 0))
+            + int(success_summary.get("division_upgrades", 0)),
+            "model_benchmark_targets": int(success_summary.get("model_benchmark_targets", 0)),
+            "resource_hosts_cataloged": int(success_summary.get("referenced_resource_hosts", 0)),
             "autonomous_cash_enabled": bool(registry_summary.get("autonomous_cash_enabled", False)),
         },
         "systems": [
@@ -183,6 +197,22 @@ def build_public_map() -> dict[str, Any]:
                 f"{int(test_summary.get('files_scanned', 0)):,} files and "
                 f"{int(test_summary.get('literal_api_routes', 0))} literal API routes to evidence and runtime boundaries.",
                 "config/generated/repository_test_registry.json",
+            ),
+            system_status(
+                "local_contract_ready",
+                "Buddy Defense Center",
+                f"{int(defense_summary.get('alliance_reference_tools', 0))} alliance references, "
+                f"{int(defense_summary.get('openssf_projects', 0))} OpenSSF projects, and "
+                f"{int(defense_summary.get('model_discovery_sources', 0))} official model sources are governed by evidence and approval gates.",
+                "config/generated/buddy_open_secure_ai_defense.json",
+            ),
+            system_status(
+                "local_contract_ready",
+                "Buddy Success Center",
+                f"A {int(success_summary.get('questionnaire_questions', 0))}-question local profile, "
+                f"{int(success_summary.get('model_benchmark_targets', 0))} model benchmark targets, and "
+                f"{int(success_summary.get('division_must_have_updates', 0)) + int(success_summary.get('division_upgrades', 0)):,} division improvement records are generated and testable.",
+                "config/generated/buddy_success_program.json",
             ),
             system_status(
                 "approval_required",
@@ -263,6 +293,9 @@ def validate_site() -> dict[str, Any]:
         WEBSITE / "buddy.css",
         WEBSITE / "buddy.js",
         WEBSITE / "buddy-site-sync.js",
+        WEBSITE / "search.html",
+        WEBSITE / "dream-search.css",
+        WEBSITE / "dream-search.js",
         WEBSITE / "calculator.html",
         WEBSITE / "calculator.css",
         WEBSITE / "calculator-engine.js",
@@ -298,6 +331,13 @@ def validate_site() -> dict[str, Any]:
         WEBSITE / "open-model-lab.html",
         WEBSITE / "open-model-lab.css",
         WEBSITE / "open-model-lab.js",
+        WEBSITE / "security.html",
+        WEBSITE / "security.css",
+        WEBSITE / "security.js",
+        WEBSITE / "success.html",
+        WEBSITE / "success.css",
+        WEBSITE / "success.js",
+        WEBSITE / "robot-avatar.js",
         WEBSITE / "test-center.html",
         WEBSITE / "test-center.css",
         WEBSITE / "test-center.js",
@@ -306,10 +346,14 @@ def validate_site() -> dict[str, Any]:
         WEBSITE / "system-map.html",
         WEBSITE / "data" / "buddy-site-status.json",
         WEBSITE / "data" / "buddy-routing-index.js",
+        WEBSITE / "data" / "dreamco-search-index.js",
         WEBSITE / "data" / "buddy-model-router.js",
         WEBSITE / "data" / "buddy-model-benchmarks.js",
         WEBSITE / "data" / "buddy-open-model-coding-lab.js",
+        WEBSITE / "data" / "buddy-open-secure-ai-defense.js",
+        WEBSITE / "data" / "buddy-success-program.js",
         WEBSITE / "data" / "repository-test-registry.json",
+        WEBSITE / "data" / "buddy-fleet-quality-program.js",
         WEBSITE / "data" / "buddy-capability-certifications.js",
         WEBSITE / "data" / "buddy-connection-catalog.json",
         WEBSITE / "data" / "buddy-specialized-hubs.js",
@@ -317,6 +361,7 @@ def validate_site() -> dict[str, Any]:
         WEBSITE / "data" / "buddy-distribution-catalog.json",
         WEBSITE / "assets" / "images" / "buddy-icon-192.png",
         WEBSITE / "assets" / "images" / "buddy-icon-512.png",
+        WEBSITE / "assets" / "images" / "buddy-futuristic-v1.png",
         PUBLIC_MAP,
     ]
     for path in required_files:
@@ -378,6 +423,26 @@ def validate_site() -> dict[str, Any]:
             if f"getElementById('{control_id}')" not in buddy_script:
                 errors.append(f"Buddy control is not bound in buddy.js: #{control_id}")
 
+    search_parser = parsers.get(WEBSITE / "search.html")
+    search_script = (WEBSITE / "dream-search.js").read_text(encoding="utf-8") if (WEBSITE / "dream-search.js").exists() else ""
+    required_search_controls = {
+        "dream-search-form", "dream-search-input", "dream-search-submit",
+        "search-mode-dreamco", "search-mode-web", "search-mode-note",
+        "search-type-filter", "search-division-filter", "search-evidence-filter",
+        "search-sort", "search-clear-filters", "search-index-count",
+        "search-index-detail", "search-result-label", "search-result-count",
+        "search-results", "search-empty", "search-load-more", "search-ask-buddy",
+        "dreamco-results-view", "web-results-view", "web-title", "web-provider-links",
+        "web-ask-buddy", "web-local-provider", "web-local-approval",
+        "web-local-open", "web-local-status",
+    }
+    if search_parser:
+        for control_id in sorted(required_search_controls - search_parser.ids):
+            errors.append(f"Missing DreamSearch interaction control: #{control_id}")
+        for control_id in sorted(required_search_controls):
+            if f"byId('{control_id}')" not in search_script:
+                errors.append(f"DreamSearch control is not bound in dream-search.js: #{control_id}")
+
     studio_parser = parsers.get(WEBSITE / "studio.html")
     studio_script = (WEBSITE / "studio.js").read_text(encoding="utf-8") if (WEBSITE / "studio.js").exists() else ""
     required_studio_controls = {
@@ -426,6 +491,10 @@ def validate_site() -> dict[str, Any]:
         "model-search", "model-tier", "model-category", "select-visible", "clear-selection",
         "run-catalog-audit", "prepare-live-plan", "benchmark-budget", "benchmark-network",
         "benchmark-paid", "download-benchmark-plan", "model-detail", "model-detail-close",
+        "model-route-form", "model-route-objective", "model-route-capabilities", "model-route-tier",
+        "model-priority-quality", "model-priority-cost", "model-priority-latency", "model-priority-privacy",
+        "model-route-discovery", "model-route-status", "model-route-results",
+        "export-model-json", "export-model-csv",
     }
     if model_parser:
         for control_id in sorted(required_model_controls - model_parser.ids):
@@ -453,6 +522,45 @@ def validate_site() -> dict[str, Any]:
         for control_id in sorted(required_open_lab_controls):
             if f"byId('{control_id}')" not in open_lab_script:
                 errors.append(f"Open Model Lab control is not bound in open-model-lab.js: #{control_id}")
+
+    security_parser = parsers.get(WEBSITE / "security.html")
+    security_script = (WEBSITE / "security.js").read_text(encoding="utf-8") if (WEBSITE / "security.js").exists() else ""
+    required_security_controls = {
+        "defense-assessment-form", "defense-profile", "defense-source-kind", "defense-source-url",
+        "defense-revision", "defense-license", "defense-purpose", "defense-rights",
+        "defense-network", "defense-remote-code", "defense-protected-write", "defense-auto-merge",
+        "defense-secrets", "run-defense-assessment", "defense-download-assessment",
+        "defense-prepare-upgrade", "github-profile-form", "github-user-profile", "github-login",
+        "github-callback", "github-repositories", "github-connection-approval", "prepare-github-profile",
+        "download-github-plan", "model-discovery-form", "model-source-options", "model-task-options",
+        "model-discovery-budget", "model-discovery-network", "model-discovery-paid",
+        "prepare-model-discovery", "download-model-discovery", "defense-catalog-search",
+        "defense-catalog-filter", "defense-catalog-list", "defense-threat-list",
+        "defense-product-list", "defense-ask-buddy",
+    }
+    if security_parser:
+        for control_id in sorted(required_security_controls - security_parser.ids):
+            errors.append(f"Missing Defense Center interaction control: #{control_id}")
+        for control_id in sorted(required_security_controls):
+            if f"byId('{control_id}')" not in security_script:
+                errors.append(f"Defense Center control is not bound in security.js: #{control_id}")
+
+    success_parser = parsers.get(WEBSITE / "success.html")
+    success_script = (WEBSITE / "success.js").read_text(encoding="utf-8") if (WEBSITE / "success.js").exists() else ""
+    required_success_controls = {
+        "success-profile-form", "success-questionnaire", "profile-share", "profile-no-secrets",
+        "profile-clear", "growth-record-form", "growth-type", "growth-title", "growth-status",
+        "growth-estimate", "growth-confirmed", "growth-hours", "growth-evidence", "growth-next",
+        "tracker-export", "ontology-form", "ontology-presets", "ontology-weights",
+        "division-program-select", "division-program-kind", "division-program-search",
+        "division-improvement-list", "model-source-list", "resource-search", "resource-status", "resource-list",
+    }
+    if success_parser:
+        for control_id in sorted(required_success_controls - success_parser.ids):
+            errors.append(f"Missing Success Center interaction control: #{control_id}")
+        for control_id in sorted(required_success_controls):
+            if f"byId('{control_id}')" not in success_script:
+                errors.append(f"Success Center control is not bound in success.js: #{control_id}")
 
     data_control_parser = parsers.get(WEBSITE / "data-control.html")
     data_control_script = (WEBSITE / "data-control.js").read_text(encoding="utf-8") if (WEBSITE / "data-control.js").exists() else ""
@@ -482,6 +590,13 @@ def validate_site() -> dict[str, Any]:
         "selected-test-count", "test-mode-options", "test-network", "test-external-approval",
         "test-budget", "prepare-test-plan", "test-plan-output", "copy-test-command",
         "download-test-plan", "send-test-plan-to-buddy", "test-route-search", "test-route-list",
+        "quality-profile-count", "quality-capability-count", "quality-contract-count",
+        "quality-live-count", "quality-production-count", "quality-review-status",
+        "quality-search", "quality-status-filter", "quality-result-count", "quality-bot-list",
+        "quality-detail", "quality-detail-division", "quality-detail-title", "quality-detail-close",
+        "quality-detail-body", "quality-download-plan", "quality-send-buddy",
+        "improvement-mode", "improvement-stage-count", "grounding-control-count",
+        "improvement-live-changes", "improvement-loop-list", "grounding-control-list",
     }
     if test_center_parser:
         for control_id in sorted(required_test_center_controls - test_center_parser.ids):

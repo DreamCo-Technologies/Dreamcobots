@@ -4,6 +4,8 @@ import { z } from "zod";
 
 type TraitDefinition = { id: string; label: string; default: number };
 type ContextDefinition = { slang_allowed: boolean; trait_floors?: Record<string, number> };
+type ConversationModel = { response_sequence: string[]; competencies: string[]; anti_patterns: string[] };
+type PsychologyKnowledgeBoundary = { education_domains: string[]; allowed_uses: string[]; forbidden_uses: string[] };
 type CommunicationCatalog = {
   schema: string;
   reviewed_on: string;
@@ -11,6 +13,11 @@ type CommunicationCatalog = {
   trait_groups: Array<{ id: string; label: string; traits: TraitDefinition[] }>;
   self_report_dimensions: Array<{ id: string; label: string; default: null }>;
   contexts: Record<string, ContextDefinition>;
+  conversation_model: ConversationModel;
+  explicit_cue_guidance: Record<string, string[]>;
+  psychology_knowledge_boundary: PsychologyKnowledgeBoundary;
+  relationship_integrity: Record<string, boolean>;
+  grounding_behavior: Record<string, boolean | string[]>;
   benchmark_suites: Array<{ id: string; metrics: string[] }>;
   fixture_policy: Record<string, boolean | number>;
 };
@@ -23,6 +30,7 @@ const traitDefinitions = catalog.trait_groups.flatMap((group) => group.traits);
 const traitIds = new Set(traitDefinitions.map((trait) => trait.id));
 const selfReportIds = new Set(catalog.self_report_dimensions.map((trait) => trait.id));
 const contextIds = Object.keys(catalog.contexts) as [string, ...string[]];
+const cueIds = Object.keys(catalog.explicit_cue_guidance) as [string, ...string[]];
 
 const unitRecordSchema = z.record(z.number().min(0).max(1));
 
@@ -49,11 +57,11 @@ export const communicationPlanRequestSchema = z.object({
   objective: z.string().trim().min(3).max(4000),
   context: z.enum(contextIds).default("casual"),
   profile: communicationProfileSchema.default({}),
-  ownerConfirmedCue: z.enum(["calm", "energized", "frustrated", "confused", "urgent", "neutral"]).optional(),
+  ownerConfirmedCue: z.enum(cueIds).optional(),
 }).strict();
 
 export const communicationBenchmarkRequestSchema = z.object({
-  suiteIds: z.array(z.string().trim().max(80)).min(1).max(18),
+  suiteIds: z.array(z.string().trim().max(80)).min(1).max(catalog.benchmark_suites.length),
   targetProfileIds: z.array(z.string().trim().max(80)).min(1).max(12),
   syntheticFixturesOnly: z.literal(true),
   repetitionsPerFixture: z.number().int().min(3).max(20).default(3),
@@ -92,6 +100,9 @@ export function buildCommunicationPlan(request: z.infer<typeof communicationPlan
     cueAdaptation: {
       enabled: request.profile.voiceCueAdaptation && request.profile.voiceCueConsent,
       ownerConfirmedCue: request.ownerConfirmedCue ?? null,
+      guidance: request.profile.voiceCueAdaptation && request.profile.voiceCueConsent && request.ownerConfirmedCue
+        ? catalog.explicit_cue_guidance[request.ownerConfirmedCue]
+        : [],
       inferredMentalState: false,
       diagnosisPerformed: false,
       rawVoiceStored: false,
@@ -108,6 +119,10 @@ export function buildCommunicationPlan(request: z.infer<typeof communicationPlan
       highImpactDecisionUse: false,
       userCanEditOrResetProfile: true,
     },
+    conversationModel: catalog.conversation_model,
+    psychologyKnowledgeBoundary: catalog.psychology_knowledge_boundary,
+    relationshipIntegrity: catalog.relationship_integrity,
+    groundingBehavior: catalog.grounding_behavior,
   };
 }
 

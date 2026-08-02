@@ -82,6 +82,33 @@ export const voiceSandboxRequestSchema = z.object({
   recordingConsentReference: z.string().trim().max(240).default(""),
 }).strict();
 
+export const salesAcademyRequestSchema = z.object({
+  ownerUserId: z.string().trim().min(2).max(80),
+  productOrService: z.string().trim().min(3).max(500),
+  targetCustomer: z.string().trim().min(3).max(500),
+  channel: z.enum(["in_person", "video_call", "phone", "email", "chat", "social"]),
+  experienceLevel: z.enum(["new", "developing", "experienced", "manager"]),
+  scenario: z.enum(["discovery", "qualification", "demo", "objection", "negotiation", "closing", "renewal"]),
+  jurisdiction: z.string().trim().min(2).max(120),
+  useSyntheticBuyer: z.boolean().default(true),
+  recordingEnabled: z.boolean().default(false),
+  recordingConsentReference: z.string().trim().max(240).default(""),
+}).strict();
+
+export const autonomousSalesPlanRequestSchema = z.object({
+  ownerUserId: z.string().trim().min(2).max(80),
+  offer: z.string().trim().min(10).max(2_000),
+  audience: z.string().trim().min(10).max(2_000),
+  leadSource: z.enum(["owner_crm", "recipient_opt_in", "public_business_directory", "authorized_partner_feed"]),
+  channels: z.array(z.enum(["email", "sms", "voice", "chat", "social"])).min(1).max(5),
+  recipientPermissionReference: z.string().trim().max(240).default(""),
+  dailyContactCap: z.number().int().min(1).max(100).default(20),
+  identityDisclosureEnabled: z.boolean().default(true),
+  suppressionLedgerEnabled: z.boolean().default(true),
+  externalOutreachRequested: z.boolean().default(false),
+  exactApprovalForFirstContact: z.boolean().default(false),
+}).strict();
+
 type WorkerTeam = {
   system: "payments" | "sales" | "competition" | "opportunity";
   team: string;
@@ -465,6 +492,119 @@ export function createVoiceSandboxPlan(input: z.input<typeof voiceSandboxRequest
     recordingEnabled: false,
     liveProviderConfigured: false,
     exactApprovalRequiredForEachLiveCampaign: true,
+  } as const;
+}
+
+export function createSalesAcademyPlan(input: z.input<typeof salesAcademyRequestSchema>) {
+  const request = salesAcademyRequestSchema.parse(input);
+  if (!request.useSyntheticBuyer) {
+    throw new Error("Sales Academy training uses a synthetic buyer unless a separate real-participant consent workflow is configured.");
+  }
+  if (request.recordingEnabled && !request.recordingConsentReference) {
+    throw new Error("Recorded practice requires a recording consent reference.");
+  }
+  const academyId = `sales-academy-${createHash("sha256")
+    .update([request.ownerUserId, request.productOrService, request.targetCustomer, request.channel, request.scenario].join("|"))
+    .digest("hex")
+    .slice(0, 16)}`;
+  return {
+    schema: "dreamco.sales_academy_plan.v1",
+    academyId,
+    status: "synthetic_roleplay_ready",
+    request,
+    curriculum: [
+      "truthful product and customer evidence",
+      "pre-call research and goal setting",
+      "permission, identity, and purpose disclosure",
+      "opening and agenda agreement",
+      "discovery questions and active listening",
+      "qualification without discriminatory profiling",
+      "demonstration tied to verified needs",
+      "objection handling without pressure or deception",
+      "pricing, risk, and uncertainty disclosure",
+      "next-step agreement and accurate CRM notes",
+      "respectful follow-up and opt-out handling",
+      "self-review from evidence and customer outcomes",
+    ],
+    syntheticBuyer: {
+      enabled: true,
+      persona: request.targetCustomer,
+      scenario: request.scenario,
+      difficulty: request.experienceLevel === "new" ? "guided" : request.experienceLevel === "manager" ? "adversarial_coaching" : "adaptive",
+      privateRealPersonImpersonation: false,
+    },
+    scorecard: [
+      "accuracy", "discovery depth", "listening", "relevance", "clarity", "objection quality",
+      "respect", "consent", "risk disclosure", "next-step quality", "record quality", "customer value",
+    ],
+    benchmark: {
+      permanentBestClaimed: false,
+      baselineRequired: true,
+      minimumPracticeRounds: 5,
+      blindFixtureSetRequired: true,
+      regressionReviewRequired: true,
+    },
+    liveCustomerContacted: false,
+    recordingPerformed: false,
+  } as const;
+}
+
+export function createAutonomousSalesPlan(input: z.input<typeof autonomousSalesPlanRequestSchema>) {
+  const request = autonomousSalesPlanRequestSchema.parse(input);
+  const consentedSource = ["owner_crm", "recipient_opt_in", "authorized_partner_feed"].includes(request.leadSource);
+  const realtimeChannel = request.channels.some((channel) => channel === "sms" || channel === "voice");
+  const permissionReady = consentedSource && Boolean(request.recipientPermissionReference);
+  let status = "shadow_research_and_drafting_ready";
+  if (!request.identityDisclosureEnabled || !request.suppressionLedgerEnabled) status = "required_sales_controls_missing";
+  else if (request.externalOutreachRequested && realtimeChannel && !permissionReady) status = "recipient_permission_required";
+  else if (request.externalOutreachRequested && !request.exactApprovalForFirstContact) status = "first_contact_approval_required";
+  else if (request.externalOutreachRequested) status = "configured_outbound_adapter_and_recipient_validation_required";
+
+  return {
+    schema: "dreamco.autonomous_sales_plan.v1",
+    planId: `sales-plan-${createHash("sha256")
+      .update([request.ownerUserId, request.offer, request.audience, request.leadSource, ...request.channels].join("|"))
+      .digest("hex")
+      .slice(0, 16)}`,
+    status,
+    offer: request.offer,
+    audience: request.audience,
+    leadSource: request.leadSource,
+    channels: [...new Set(request.channels)],
+    dailyContactCap: request.dailyContactCap,
+    autonomousInternalStages: [
+      "source-backed account research",
+      "permission-basis classification",
+      "duplicate and suppression checks",
+      "fit scoring with an explanation",
+      "message and call-script drafting",
+      "proposal and ROI-assumption preparation",
+      "CRM field preparation",
+      "response classification and owner reporting",
+    ],
+    externalStages: {
+      firstContactSent: false,
+      followUpSent: false,
+      callPlaced: false,
+      meetingBooked: false,
+      proposalSent: false,
+      contractAccepted: false,
+      paymentRequested: false,
+    },
+    controls: {
+      AIIdentityDisclosure: request.identityDisclosureEnabled,
+      recipientPermissionReferencePresent: permissionReady,
+      suppressionLedger: request.suppressionLedgerEnabled,
+      stopOnReply: true,
+      stopOnOptOut: true,
+      purchasedListsBlocked: true,
+      sensitiveTargetingBlocked: true,
+      minorsBlocked: true,
+      materialClaimsRequireEvidence: true,
+      exactApprovalForFirstContact: request.exactApprovalForFirstContact,
+    },
+    earningsGuaranteed: false,
+    executionPerformed: false,
   } as const;
 }
 

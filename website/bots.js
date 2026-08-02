@@ -34,7 +34,22 @@ function logoStyle(logo) {
 }
 
 function botLogo(bot) {
-  return `<div class="fleet-logo" style="${logoStyle(bot.logo)}" role="img" aria-label="${escapeHtml(bot.logo.accessibility_label)}">${escapeHtml(bot.logo.monogram)}<span aria-hidden="true">${bot.logo.emoji}</span></div>`;
+  return `<div class="fleet-logo fleet-robot-logo" style="${logoStyle(bot.logo)}" data-robot-seed="${escapeHtml(bot.identity.slug)}" data-robot-division="${escapeHtml(bot.identity.division)}" data-robot-category="${escapeHtml(bot.identity.category)}" data-robot-label="${escapeHtml(bot.logo.accessibility_label)}" data-robot-emoji="${escapeHtml(bot.logo.emoji)}"></div>`;
+}
+
+function hydrateRobotAvatars(root) {
+  root.querySelectorAll('[data-robot-seed]').forEach((target) => {
+    window.DREAMCO_ROBOT_AVATAR.renderInto(target, {
+      seed: target.dataset.robotSeed,
+      division: target.dataset.robotDivision,
+      category: target.dataset.robotCategory,
+    });
+    target.querySelector('canvas')?.setAttribute('aria-label', target.dataset.robotLabel || 'Bot robot identity');
+    const emoji = document.createElement('span');
+    emoji.setAttribute('aria-hidden', 'true');
+    emoji.textContent = target.dataset.robotEmoji || 'B';
+    target.append(emoji);
+  });
 }
 
 function testUrl(bot) {
@@ -106,6 +121,7 @@ function renderPage() {
   const start = (state.page - 1) * PAGE_SIZE;
   const visible = state.filtered.slice(start, start + PAGE_SIZE);
   grid.innerHTML = visible.map(renderCard).join('');
+  hydrateRobotAvatars(grid);
   empty.hidden = state.filtered.length !== 0;
   results.textContent = state.filtered.length
     ? `Showing ${numberFormat.format(start + 1)}-${numberFormat.format(start + visible.length)} of ${numberFormat.format(state.filtered.length)} matching profiles`
@@ -262,6 +278,7 @@ function renderProspectus(bot, certification) {
       <a class="btn btn-outline" href="${calculatorUrl(bot)}">Open calculator</a>
       <a class="btn btn-primary" href="${testUrl(bot)}">Test with Buddy</a>
     </div>`;
+  hydrateRobotAvatars(dialogContent);
 }
 
 function runCapabilityTest(capability) {

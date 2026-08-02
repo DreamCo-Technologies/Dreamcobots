@@ -1,0 +1,274 @@
+.defense-page {
+  --defense-bg: #0b0e12;
+  --defense-panel: #12171d;
+  --defense-panel-2: #171e25;
+  --defense-line: #2a3642;
+  --defense-text: #f2f5f7;
+  --defense-muted: #a8b2bc;
+  --defense-green: #38d39f;
+  --defense-blue: #62a8ff;
+  --defense-amber: #f4bd62;
+  --defense-red: #ff746c;
+  background: var(--defense-bg);
+  color: var(--defense-text);
+}
+
+.defense-page h1,
+.defense-page h2,
+.defense-page h3,
+.defense-page p,
+.defense-page a,
+.defense-page button,
+.defense-page input,
+.defense-page select,
+.defense-page label,
+.defense-page legend,
+.defense-page span,
+.defense-page strong {
+  letter-spacing: 0;
+}
+
+.defense-page .btn { border-radius: 6px; }
+.defense-page .btn-primary {
+  background: #2878db;
+  box-shadow: none;
+}
+.defense-page .btn-primary:hover { background: #3d8bea; box-shadow: none; }
+.defense-page .btn-outline { border-color: var(--defense-line); }
+.defense-page button:disabled { opacity: .48; cursor: not-allowed; transform: none; }
+
+.defense-shell { max-width: 1320px; margin: 0 auto; padding: 44px 24px 80px; }
+.defense-header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 32px;
+  padding: 20px 0 34px;
+  border-bottom: 1px solid var(--defense-line);
+}
+.defense-header > div:first-child { max-width: 780px; }
+.defense-header h1 { margin: 8px 0 12px; font-size: 2.65rem; line-height: 1.08; }
+.defense-header p { color: var(--defense-muted); }
+.defense-eyebrow { color: var(--defense-green) !important; font: 600 .74rem var(--mono); text-transform: uppercase; }
+.defense-header-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+
+.defense-truth {
+  display: grid;
+  grid-template-columns: 210px minmax(0, 1fr);
+  gap: 18px;
+  padding: 16px 18px;
+  margin-top: 18px;
+  border-left: 4px solid var(--defense-amber);
+  background: #19170f;
+  color: #f3dbab;
+}
+.defense-truth span { color: #d8c9a8; }
+
+.defense-metrics {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  border: 1px solid var(--defense-line);
+  margin: 24px 0 16px;
+}
+.defense-metrics div { min-height: 92px; padding: 18px; border-right: 1px solid var(--defense-line); background: var(--defense-panel); }
+.defense-metrics div:last-child { border-right: 0; }
+.defense-metrics span { display: block; color: var(--defense-muted); font-size: .76rem; }
+.defense-metrics strong { display: block; margin-top: 4px; font: 700 1.72rem var(--mono); }
+.defense-metrics div:last-child strong { color: var(--defense-green); }
+
+.defense-tabs {
+  position: sticky;
+  top: 64px;
+  z-index: 40;
+  display: flex;
+  gap: 4px;
+  padding: 8px;
+  background: #0e1217;
+  border: 1px solid var(--defense-line);
+  overflow-x: auto;
+}
+.defense-tabs a { flex: 0 0 auto; padding: 8px 12px; border-radius: 5px; color: var(--defense-muted); font-size: .8rem; }
+.defense-tabs a:hover { background: var(--defense-panel-2); color: var(--defense-text); }
+
+.defense-section { scroll-margin-top: 128px; padding: 50px 0; border-bottom: 1px solid var(--defense-line); }
+.defense-section-heading { display: flex; align-items: flex-end; justify-content: space-between; gap: 24px; margin-bottom: 22px; }
+.defense-section-heading > div > p { color: var(--defense-green); font: 600 .72rem var(--mono); text-transform: uppercase; }
+.defense-section-heading h2 { margin-top: 4px; font-size: 1.65rem; line-height: 1.2; }
+.defense-state {
+  flex: 0 0 auto;
+  padding: 5px 8px;
+  border: 1px solid #316654;
+  border-radius: 4px;
+  color: #8ce2c4;
+  background: #102019;
+  font: 600 .68rem var(--mono);
+  text-transform: uppercase;
+}
+.state-review { border-color: #6a5326; color: #f4d28e; background: #201a10; }
+.state-reference { border-color: #355c80; color: #a9d1ff; background: #101c27; }
+
+.defense-workspace { display: grid; grid-template-columns: minmax(0, 1.6fr) minmax(300px, .8fr); border: 1px solid var(--defense-line); }
+.defense-form {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+  padding: 22px;
+  background: var(--defense-panel);
+}
+.defense-form label,
+.model-discovery-form > label,
+.catalog-toolbar label { display: grid; gap: 7px; color: #dbe2e8; font-size: .78rem; font-weight: 600; }
+.defense-form input,
+.defense-form select,
+.model-discovery-form input,
+.catalog-toolbar input,
+.catalog-toolbar select {
+  width: 100%;
+  min-height: 43px;
+  padding: 9px 11px;
+  border: 1px solid var(--defense-line);
+  border-radius: 5px;
+  background: #0d1116;
+  color: var(--defense-text);
+  font: 500 .82rem var(--font);
+}
+.defense-form input:focus,
+.defense-form select:focus,
+.model-discovery-form input:focus,
+.catalog-toolbar input:focus,
+.catalog-toolbar select:focus { outline: 2px solid #3d8bea; outline-offset: 1px; }
+.wide-field { grid-column: 1 / -1; }
+.field-help { margin-top: -10px; font-size: .72rem; color: var(--defense-muted); }
+
+.defense-evidence,
+.defense-flags,
+.github-permissions,
+.model-discovery-form fieldset {
+  min-width: 0;
+  border: 1px solid var(--defense-line);
+  padding: 16px;
+  background: #10151a;
+}
+.defense-evidence legend,
+.defense-flags legend,
+.github-permissions legend,
+.model-discovery-form legend { padding: 0 6px; color: var(--defense-blue); font: 600 .72rem var(--mono); }
+.defense-evidence { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+.defense-flags,
+.github-permissions { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px 18px; }
+.defense-flags label,
+.github-permissions label,
+.defense-consent { display: flex !important; grid-template-columns: none !important; align-items: flex-start; gap: 9px !important; color: var(--defense-muted) !important; font-weight: 500 !important; }
+.defense-flags input,
+.github-permissions input,
+.defense-consent input,
+.option-grid input { width: 17px; min-width: 17px; height: 17px; min-height: 17px; margin-top: 2px; accent-color: #3d8bea; }
+.defense-form > .btn { justify-self: start; min-height: 42px; }
+
+.defense-result-panel { min-width: 0; padding: 24px; border-left: 1px solid var(--defense-line); background: #0f1419; }
+.defense-result-panel > p:first-child { color: var(--defense-green); font: 600 .72rem var(--mono); text-transform: uppercase; }
+.defense-result-panel h3 { margin: 7px 0 14px; font-size: 1.18rem; }
+.defense-result-panel > p { font-size: .82rem; }
+.defense-score-row { display: flex; align-items: baseline; justify-content: space-between; gap: 16px; margin: 20px 0; padding: 12px 0; border-block: 1px solid var(--defense-line); color: var(--defense-muted); }
+.defense-score-row strong { color: var(--defense-text); font: 700 1.8rem var(--mono); }
+.defense-result-panel ul,
+.defense-result-panel ol { margin: 18px 0 20px 19px; color: var(--defense-muted); font-size: .78rem; }
+.defense-result-panel li { margin: 8px 0; padding-left: 3px; }
+.defense-result-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+
+.github-workspace { grid-template-columns: minmax(0, 1.35fr) minmax(320px, .9fr); }
+.github-form { align-content: start; }
+
+.model-discovery-form {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) 240px;
+  gap: 16px;
+  padding: 22px;
+  border: 1px solid var(--defense-line);
+  background: var(--defense-panel);
+}
+.model-discovery-form fieldset { grid-row: span 4; }
+.option-grid { display: grid; gap: 8px; margin-top: 4px; }
+.option-grid label { display: flex; align-items: flex-start; gap: 9px; color: var(--defense-muted); font-size: .77rem; }
+.model-discovery-form > .btn { align-self: end; justify-self: start; }
+.model-discovery-result { display: grid; grid-template-columns: minmax(180px, .4fr) minmax(0, 1fr) auto; align-items: center; gap: 16px; padding: 16px 18px; border: 1px solid var(--defense-line); border-top: 0; background: #0f1419; }
+.model-discovery-result span { color: var(--defense-muted); font-size: .78rem; }
+
+.catalog-toolbar { display: grid; grid-template-columns: minmax(0, 1fr) 230px; gap: 14px; }
+.catalog-count { margin: 14px 0; font: 500 .75rem var(--mono); color: var(--defense-muted); }
+.defense-catalog-list { border: 1px solid var(--defense-line); }
+.catalog-row { display: grid; grid-template-columns: minmax(180px, .55fr) minmax(0, 1.2fr) 180px; gap: 16px; align-items: center; min-height: 72px; padding: 13px 16px; border-bottom: 1px solid var(--defense-line); background: var(--defense-panel); }
+.catalog-row:last-child { border-bottom: 0; }
+.catalog-row strong { font-size: .86rem; }
+.catalog-row p { font-size: .76rem; }
+.catalog-row a { justify-self: end; font-size: .72rem; }
+.catalog-tag { display: block; color: var(--defense-green); font: 600 .62rem var(--mono); text-transform: uppercase; }
+.empty-row { padding: 26px; color: var(--defense-muted); text-align: center; }
+
+.threat-register { margin-top: 28px; }
+.threat-register h3 { margin-bottom: 12px; }
+.threat-row { display: grid; grid-template-columns: minmax(170px, .42fr) minmax(0, 1fr); gap: 18px; padding: 12px 0; border-bottom: 1px solid var(--defense-line); }
+.threat-row strong { font-size: .78rem; }
+.threat-row span { color: var(--defense-muted); font-size: .76rem; }
+
+.defense-product-list { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); border: 1px solid var(--defense-line); }
+.product-row { min-height: 150px; padding: 20px; border-right: 1px solid var(--defense-line); background: var(--defense-panel); }
+.product-row:last-child { border-right: 0; }
+.product-row span { display: block; color: var(--defense-green); font: 600 .66rem var(--mono); text-transform: uppercase; }
+.product-row h3 { margin: 7px 0 10px; font-size: 1rem; }
+.product-row p { font-size: .78rem; }
+.defense-boundary-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); border-inline: 1px solid var(--defense-line); border-bottom: 1px solid var(--defense-line); }
+.defense-boundary-grid div { padding: 17px; border-right: 1px solid var(--defense-line); background: #0f1419; }
+.defense-boundary-grid div:last-child { border-right: 0; }
+.defense-boundary-grid strong,
+.defense-boundary-grid span { display: block; }
+.defense-boundary-grid strong { margin-bottom: 6px; font-size: .78rem; }
+.defense-boundary-grid span { color: var(--defense-muted); font-size: .72rem; }
+
+@media (max-width: 980px) {
+  .defense-metrics { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .defense-metrics div { border-bottom: 1px solid var(--defense-line); }
+  .defense-workspace,
+  .github-workspace { grid-template-columns: 1fr; }
+  .defense-result-panel { border-left: 0; border-top: 1px solid var(--defense-line); }
+  .model-discovery-form { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .model-discovery-form > label,
+  .model-discovery-form > .btn { grid-column: 1 / -1; }
+  .defense-boundary-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .defense-boundary-grid div:nth-child(2) { border-right: 0; }
+  .defense-boundary-grid div:nth-child(-n+2) { border-bottom: 1px solid var(--defense-line); }
+}
+
+@media (max-width: 640px) {
+  .defense-shell { padding: 24px 14px 56px; }
+  .defense-header { display: block; padding-top: 8px; }
+  .defense-header h1 { font-size: 2rem; }
+  .defense-header-actions { margin-top: 18px; }
+  .defense-truth { grid-template-columns: 1fr; gap: 4px; }
+  .defense-metrics { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .defense-metrics div { min-height: 82px; border-right: 1px solid var(--defense-line); }
+  .defense-tabs { top: 0; }
+  .defense-section { scroll-margin-top: 70px; padding: 38px 0; }
+  .defense-section-heading { display: block; }
+  .defense-section-heading .defense-state { display: inline-block; margin-top: 12px; }
+  .defense-form,
+  .defense-evidence,
+  .defense-flags,
+  .github-permissions,
+  .model-discovery-form,
+  .catalog-toolbar { grid-template-columns: 1fr; }
+  .wide-field,
+  .model-discovery-form > label,
+  .model-discovery-form > .btn { grid-column: 1; }
+  .model-discovery-form fieldset { grid-row: auto; }
+  .model-discovery-result { grid-template-columns: 1fr; }
+  .catalog-row { grid-template-columns: 1fr; gap: 6px; }
+  .catalog-row a { justify-self: start; }
+  .threat-row { grid-template-columns: 1fr; gap: 4px; }
+  .defense-product-list,
+  .defense-boundary-grid { grid-template-columns: 1fr; }
+  .product-row,
+  .defense-boundary-grid div { border-right: 0; border-bottom: 1px solid var(--defense-line); }
+  .product-row:last-child,
+  .defense-boundary-grid div:last-child { border-bottom: 0; }
+}

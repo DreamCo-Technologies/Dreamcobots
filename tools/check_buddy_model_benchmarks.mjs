@@ -14,7 +14,7 @@ const sourceTargets = [...source.matchAll(/\{ id: (\d+), name: "((?:[^"\\]|\\.)*
   name: JSON.parse(`"${match[2]}"`),
 }));
 
-if (sourceTargets.length !== config.target_count) throw new Error(`Expected ${config.target_count} source targets, found ${sourceTargets.length}`);
+if (sourceTargets.length !== 100) throw new Error(`Expected 100 curated source targets, found ${sourceTargets.length}`);
 if (catalog.targets.length !== config.target_count) throw new Error(`Expected ${config.target_count} generated targets, found ${catalog.targets.length}`);
 if (catalog.suites.length !== config.suites.length) throw new Error("Generated benchmark suites do not match the source config");
 if (publicScript !== `window.BUDDY_MODEL_BENCHMARKS = ${JSON.stringify(catalog)};\n`) throw new Error("Public benchmark script is stale");
@@ -24,8 +24,14 @@ sourceTargets.forEach((sourceTarget, index) => {
   if (target.id !== sourceTarget.id || target.name !== sourceTarget.name) {
     throw new Error(`Benchmark target drift at position ${index + 1}`);
   }
-  if (!target.catalogReady || target.liveEvidenceStatus !== "not_run" || target.liveScore !== null) {
+  if (!target.catalogReady || target.liveEvidenceStatus !== "not_run" || target.liveScore !== null || target.promptLibrary.length < 4) {
     throw new Error(`Invalid evidence state for ${target.name}`);
+  }
+});
+
+catalog.targets.slice(sourceTargets.length).forEach((target) => {
+  if (!target.discoveryTarget || !target.officialCatalog || target.liveEvidenceStatus !== "discovery_required" || target.liveScore !== null) {
+    throw new Error(`Invalid discovery evidence state for ${target.name}`);
   }
 });
 

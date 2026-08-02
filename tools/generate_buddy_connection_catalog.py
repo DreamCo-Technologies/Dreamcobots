@@ -34,6 +34,7 @@ def build_public_catalog(payload: dict[str, Any]) -> dict[str, Any]:
     gates = payload.get("user_presence_gates", [])
     contracts = payload.get("connector_contracts", [])
     profiles = payload.get("platform_profiles", [])
+    secret_stores = payload.get("secret_stores", [])
     transfer = payload.get("token_transfer", {})
     expected_methods = {method.value for method in AuthMethod}
     method_ids = [str(item.get("id", "")) for item in methods]
@@ -47,6 +48,10 @@ def build_public_catalog(payload: dict[str, Any]) -> dict[str, Any]:
         raise ValueError("Connector registry must define unique connector contracts.")
     if len(profiles) < 3 or len({item.get("id") for item in profiles}) != len(profiles):
         raise ValueError("Connector registry must define unique platform profiles.")
+    if {item.get("id") for item in secret_stores} != {"environment", "os_keychain", "managed_vault"}:
+        raise ValueError("Connector registry must define the three supported secret stores exactly once.")
+    if any(item.get("enumeration_allowed") is not False for item in secret_stores):
+        raise ValueError("Secret stores must prohibit value enumeration.")
     contract_ids = {item.get("id") for item in contracts}
     for profile in profiles:
         official = urlsplit(str(profile.get("official_url", "")))
@@ -77,18 +82,28 @@ def build_public_catalog(payload: dict[str, Any]) -> dict[str, Any]:
             "user_presence_gate_count": len(gates),
             "connector_contract_count": len(contracts),
             "platform_profile_count": len(profiles),
+            "secret_store_count": len(secret_stores),
         },
         "auth_methods": methods,
         "user_presence_gates": gates,
         "connector_contracts": contracts,
         "platform_profiles": profiles,
+        "secret_stores": secret_stores,
         "token_transfer": transfer,
         "public_contract": {
             "mode": "connection_planner",
             "live_authentication": False,
             "live_account_creation": False,
             "raw_secrets_collected": False,
-            "stored_browser_data": ["plan status", "app label", "official host", "timestamp"],
+            "stored_browser_data": [
+                "plan status",
+                "app label",
+                "official host",
+                "authentication method",
+                "secret storage class",
+                "secret-reference presence flag",
+                "timestamp",
+            ],
             "backend_required_for": [
                 "token exchange",
                 "token transfer execution",
@@ -121,6 +136,7 @@ def main() -> int:
                 "auth_methods": catalog["summary"]["auth_method_count"],
                 "user_presence_gates": catalog["summary"]["user_presence_gate_count"],
                 "connector_contracts": catalog["summary"]["connector_contract_count"],
+                "secret_stores": catalog["summary"]["secret_store_count"],
             },
             indent=2,
             sort_keys=True,

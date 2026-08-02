@@ -35,6 +35,7 @@ const voiceAnalysisTarget = document.getElementById('voice-analysis');
 const voiceTakeList = document.getElementById('voice-take-list');
 const mediaSourceType = document.getElementById('media-source-type');
 const simulationControls = document.getElementById('simulation-controls');
+const showControls = document.getElementById('show-controls');
 const simulationModelSource = document.getElementById('simulation-model-source');
 const simulationFidelity = document.getElementById('simulation-fidelity');
 const simulationPaint = document.getElementById('simulation-paint');
@@ -61,8 +62,10 @@ const academy = window.BUDDY_SPECIALIZED_HUBS?.creative;
 const productionRegistry = window.BUDDY_PRODUCTION_GROUP;
 const hollywoodGroup = productionRegistry?.hollywood_production_group;
 const simulationFoundry = productionRegistry?.simulation_foundry;
+const creatorShowrunner = productionRegistry?.creator_showrunner;
 const mediaRegistry = window.BUDDY_LOCAL_MEDIA_ENGINES || { engines: [], benchmark_suites: [], policy: {} };
 const mediaQualityRegistry = window.BUDDY_MEDIA_QUALITY_LAB || { quality_modes: {}, fixture_sets: [], hard_release_gates: [], scorecards: {} };
+const CAST_LIBRARY_KEY = 'dreamco.buddy.character-library.v1';
 
 function checkedValues(name) {
   return Array.from(document.querySelectorAll(`input[name="${name}"]:checked`)).map(input => input.value);
@@ -285,6 +288,42 @@ const TYPE_PRESETS = {
     subject: 'An owner-approved interactive workshop and audience question session',
     audience: 'Followers on the owner-authorized social channel',
   },
+  youtube_channel: {
+    title: 'Build It With Buddy',
+    objective: 'Build a recurring YouTube show with a channel promise, reusable cast, episode slate, long-form videos, Shorts, captions, and measured experiments.',
+    subject: 'Practical projects, learning, and safe challenges',
+    audience: 'First-time creators, families, students, and curious builders',
+  },
+  social_content_series: {
+    title: 'One Useful Thing',
+    objective: 'Build a recurring social series with recognizable characters, strong hooks, platform variants, moderation, and an approval-ready calendar.',
+    subject: 'Short practical demonstrations and stories',
+    audience: 'Owner-authorized social audiences',
+  },
+  learning_series: {
+    title: 'Learning Quest',
+    objective: 'Build a recurring learning-video series with reusable teachers and characters, measurable outcomes, examples, knowledge checks, and family or classroom activities.',
+    subject: 'A scaffolded learning journey with safe practice',
+    audience: 'Learners, families, and teachers',
+  },
+  simulation_series: {
+    title: 'Practice World',
+    objective: 'Build a recurring simulation-game series with scenarios, levels, feedback, safe failure, reset, deterministic playtests, and instructor controls.',
+    subject: 'Skills learned through interactive practice',
+    audience: 'Learners and qualified instructors',
+  },
+  music_performance_series: {
+    title: 'Original Sessions',
+    objective: 'Build an original music and performance series with reusable performers, rights-cleared songs, performance direction, music videos, social cutdowns, and a release calendar.',
+    subject: 'Original songs, performances, and artist stories',
+    audience: 'Music listeners and creator communities',
+  },
+  fiction_or_variety_show: {
+    title: 'Bright City Show',
+    objective: 'Build an original recurring fiction, cartoon, or variety show with a reusable character library, world bible, season arc, episodes, continuity, and delivery plan.',
+    subject: 'Original characters sharing stories, comedy, music, and useful ideas',
+    audience: 'Family and general entertainment audiences',
+  },
   commercial: {
     title: 'Launch Story',
     objective: 'Create a truthful product commercial with substantiated claims and platform variants.',
@@ -352,6 +391,15 @@ const SIMULATION_TYPES = new Set([
   'building_simulation',
   'product_visualization',
   'skills_training_simulation',
+  'simulation_series',
+]);
+const SHOW_TYPES = new Set([
+  'youtube_channel',
+  'social_content_series',
+  'learning_series',
+  'simulation_series',
+  'music_performance_series',
+  'fiction_or_variety_show',
 ]);
 const ACTOR_TYPES = new Set([
   'feature_film',
@@ -362,6 +410,7 @@ const ACTOR_TYPES = new Set([
   'commercial',
   'parent_learning_video',
   'biography',
+  ...SHOW_TYPES,
 ]);
 const PRODUCTION_TYPES = new Set([
   'feature_film',
@@ -372,6 +421,7 @@ const PRODUCTION_TYPES = new Set([
   'commercial',
   'parent_learning_video',
   'biography',
+  ...SHOW_TYPES,
 ]);
 
 function selectedType() {
@@ -386,26 +436,36 @@ function renderCastList() {
   }
   target.innerHTML = castRoles.map((role, index) => `
     <article class="studio-cast-item">
-      <div><strong>${escapeHtml(role.name)} · ${escapeHtml(role.role)}</strong><span>${escapeHtml(role.mode.replaceAll('_', ' '))} · ${escapeHtml(role.template.replaceAll('_', ' '))}</span></div>
+      <label class="studio-cast-active"><input type="checkbox" data-cast-active="${index}" ${role.active_in_production_unit !== false ? 'checked' : ''} /><span><strong>${escapeHtml(role.name)} · ${escapeHtml(role.role)}</strong><small>${escapeHtml(role.mode.replaceAll('_', ' '))} · ${escapeHtml(role.template.replaceAll('_', ' '))} · ${escapeHtml(role.character_id)}</small></span></label>
       <button type="button" data-remove-cast="${index}" aria-label="Remove ${escapeHtml(role.name)}">&times;</button>
     </article>
   `).join('');
+  target.querySelectorAll('[data-cast-active]').forEach(input => input.addEventListener('change', () => {
+    castRoles[Number(input.dataset.castActive)].active_in_production_unit = input.checked;
+    renderShowManagerSummary();
+  }));
   target.querySelectorAll('[data-remove-cast]').forEach(button => button.addEventListener('click', () => {
     castRoles.splice(Number(button.dataset.removeCast), 1);
     renderCastList();
+    renderShowManagerSummary();
   }));
 }
 
 function currentCastRole() {
   return {
+    character_id: `character-${crypto.randomUUID ? crypto.randomUUID() : `${Date.now()}-${Math.random().toString(16).slice(2)}`}`,
     name: actorName.value.trim(),
     mode: actorMode.value,
     template: actorRoleTemplate.value || 'lead',
     role: actorRole.value.trim(),
     character_description: document.getElementById('actor-description').value.trim(),
+    voice_direction: document.getElementById('actor-voice-direction').value.trim(),
+    visual_direction: document.getElementById('actor-visual-direction').value.trim(),
+    continuity_facts: document.getElementById('actor-continuity').value.split(/\n/).map(item => item.trim()).filter(Boolean).slice(0, 100),
     personality_traits: personalityTraits(),
     uses_project_voice: useVoice.checked,
     uses_project_likeness: useImage.checked,
+    active_in_production_unit: true,
   };
 }
 
@@ -415,6 +475,12 @@ function productionDurationDefault(type) {
     documentary: 60,
     animated_series: 24,
     social_live_show: 45,
+    youtube_channel: 12,
+    social_content_series: 1,
+    learning_series: 10,
+    simulation_series: 15,
+    music_performance_series: 5,
+    fiction_or_variety_show: 24,
     music_video: 4,
     commercial: 1,
     parent_learning_video: 8,
@@ -461,7 +527,51 @@ function updateProjectControls(type = selectedType()) {
   liveShowControl.hidden = type !== 'social_live_show';
   if (type !== 'social_live_show') document.getElementById('production-live').checked = false;
   simulationControls.hidden = !SIMULATION_TYPES.has(type);
+  showControls.hidden = !SHOW_TYPES.has(type);
+  renderShowManagerSummary();
   renderSimulationConcept();
+}
+
+function showLines(id, limit = 20) {
+  return document.getElementById(id).value
+    .split(/\n|,/)
+    .map(item => item.trim())
+    .filter(Boolean)
+    .slice(0, limit);
+}
+
+function activeProductionCast() {
+  return castRoles.filter(role => role.active_in_production_unit !== false);
+}
+
+function renderShowManagerSummary() {
+  const target = document.getElementById('show-manager-summary');
+  if (!target || !SHOW_TYPES.has(selectedType())) return;
+  const profile = creatorShowrunner?.formats?.find(item => item.id === selectedType());
+  const total = castRoles.length || 1;
+  const active = castRoles.length ? activeProductionCast().length : 1;
+  target.innerHTML = `
+    <article><strong>${escapeHtml(profile?.label || 'Creator show')}</strong><span>${Number(document.getElementById('show-episode-count').value || 0).toLocaleString()} planned episodes · ${escapeHtml(document.getElementById('show-cadence').value)}</span></article>
+    <article><strong>${total.toLocaleString()} library characters</strong><span>${active.toLocaleString()} active in this production unit · maximum 100 active per unit</span></article>
+  `;
+}
+
+function restoreCastLibrary() {
+  try {
+    const payload = JSON.parse(localStorage.getItem(CAST_LIBRARY_KEY) || 'null');
+    if (payload?.schema !== 'dreamco.buddy.character_library.v1' || !Array.isArray(payload.characters)) return;
+    const restored = payload.characters.filter(role => role
+      && typeof role.character_id === 'string'
+      && typeof role.name === 'string'
+      && typeof role.role === 'string'
+      && typeof role.character_description === 'string');
+    const ids = restored.map(role => role.character_id.toLowerCase());
+    const names = restored.map(role => role.name.toLowerCase());
+    if (new Set(ids).size !== ids.length || new Set(names).size !== names.length) return;
+    castRoles = restored;
+  } catch {
+    // A damaged optional browser cache must never block Studio startup.
+  }
 }
 
 function renderSimulationConcept() {
@@ -668,10 +778,6 @@ document.getElementById('add-cast-role').addEventListener('click', () => {
     formStatus.textContent = 'Each cast member needs a unique production name.';
     return;
   }
-  if (castRoles.length >= 100) {
-    formStatus.textContent = 'Split casts larger than 100 roles into production units.';
-    return;
-  }
   if (['owner_digital_double', 'licensed_adult_performer'].includes(role.mode) && !useVoice.checked && !useImage.checked) {
     formStatus.textContent = 'Choose the approved project voice, likeness, or both before adding this real-person role.';
     return;
@@ -685,13 +791,76 @@ document.getElementById('add-cast-role').addEventListener('click', () => {
   actorName.value = `Character ${castRoles.length + 1}`;
   actorMode.value = 'original_synthetic';
   renderCastList();
+  renderShowManagerSummary();
   formStatus.textContent = `${role.name} was added to the production cast.`;
 });
 document.getElementById('clear-cast').addEventListener('click', () => {
   castRoles = [];
   renderCastList();
+  renderShowManagerSummary();
   formStatus.textContent = 'The saved cast list was cleared.';
 });
+document.getElementById('save-cast-library').addEventListener('click', () => {
+  try {
+    localStorage.setItem(CAST_LIBRARY_KEY, JSON.stringify({ schema: 'dreamco.buddy.character_library.v1', characters: castRoles }));
+    formStatus.textContent = `${castRoles.length.toLocaleString()} character profiles were saved locally. Raw voice and image media were not stored.`;
+  } catch (error) {
+    formStatus.textContent = `The browser could not save this library: ${error.message}. Export it as a project file instead.`;
+  }
+});
+document.getElementById('export-cast-library').addEventListener('click', () => {
+  downloadBlob(
+    new Blob([JSON.stringify({ schema: 'dreamco.buddy.character_library.v1', exported_at: new Date().toISOString(), raw_media_embedded: false, characters: castRoles }, null, 2)], { type: 'application/json' }),
+    'buddy-character-library.json',
+  );
+});
+document.getElementById('import-cast-library').addEventListener('change', async event => {
+  const file = event.target.files?.[0];
+  if (!file || file.size > 5 * 1024 * 1024) {
+    formStatus.textContent = 'Choose a character-library JSON file no larger than 5 MB.';
+    event.target.value = '';
+    return;
+  }
+  try {
+    const payload = JSON.parse(await file.text());
+    if (payload.schema !== 'dreamco.buddy.character_library.v1' || !Array.isArray(payload.characters)) {
+      throw new Error('This is not a Buddy character-library file.');
+    }
+    const imported = payload.characters.map((role, index) => ({
+      character_id: String(role.character_id || `imported-character-${index + 1}`).slice(0, 160),
+      name: String(role.name || '').trim().slice(0, 120),
+      mode: ['original_synthetic', 'company_mascot'].includes(role.mode) ? role.mode : 'original_synthetic',
+      template: String(role.template || 'supporting').slice(0, 80),
+      role: String(role.role || '').trim().slice(0, 160),
+      character_description: String(role.character_description || '').trim().slice(0, 2000),
+      voice_direction: String(role.voice_direction || '').trim().slice(0, 1000),
+      visual_direction: String(role.visual_direction || '').trim().slice(0, 1000),
+      continuity_facts: Array.isArray(role.continuity_facts) ? role.continuity_facts.map(String).map(item => item.slice(0, 300)).slice(0, 100) : [],
+      personality_traits: Object.fromEntries(Object.entries(role.personality_traits || {}).filter(([, value]) => Number.isFinite(value) && value >= 0 && value <= 1).slice(0, 32)),
+      uses_project_voice: false,
+      uses_project_likeness: false,
+      active_in_production_unit: role.active_in_production_unit !== false,
+    }));
+    if (imported.some(role => role.name.length < 2 || role.role.length < 2 || role.character_description.length < 20)) {
+      throw new Error('Every imported character needs a name, role, and complete original description.');
+    }
+    const ids = imported.map(role => role.character_id.toLowerCase());
+    const names = imported.map(role => role.name.toLowerCase());
+    if (new Set(ids).size !== ids.length || new Set(names).size !== names.length) {
+      throw new Error('Imported character ids and names must be unique.');
+    }
+    castRoles = imported;
+    renderCastList();
+    renderShowManagerSummary();
+    formStatus.textContent = `${castRoles.length.toLocaleString()} original or mascot character profiles were imported. Real-person media rights must be added separately.`;
+  } catch (error) {
+    formStatus.textContent = `Character library import failed: ${error.message}`;
+  } finally {
+    event.target.value = '';
+  }
+});
+[document.getElementById('show-cadence'), document.getElementById('show-episode-count')]
+  .forEach(control => control.addEventListener('input', renderShowManagerSummary));
 [simulationModelSource, simulationFidelity, simulationPaint, simulationAdditions, simulationToGame]
   .forEach(control => control.addEventListener('input', renderSimulationConcept));
 
@@ -903,6 +1072,21 @@ function validateProduction() {
       && !document.querySelector('input[name="delivery-platform"][value="social"]').checked) {
     throw new Error('A live social show needs Social selected as a delivery target.');
   }
+  if (SHOW_TYPES.has(selectedType()) && activeProductionCast().length > 100) {
+    throw new Error('Choose at most 100 active characters for this episode or production unit. Keep the rest in the reusable show library.');
+  }
+}
+
+function validateShow() {
+  if (showControls.hidden) return;
+  const count = Number(document.getElementById('show-episode-count').value);
+  const pillars = showLines('show-pillars');
+  if (!Number.isInteger(count) || count < 1 || count > 1000) throw new Error('Plan between one and 1,000 episodes per season.');
+  if (!pillars.length) throw new Error('Add at least one show content pillar.');
+  if (!checkedValues('show-platform').length) throw new Error('Choose at least one channel output.');
+  if (['learning_series', 'simulation_series'].includes(selectedType()) && !showLines('show-learning-objectives').length) {
+    throw new Error('Learning and simulation series require at least one measurable learning objective.');
+  }
 }
 
 function projectCopy(type, subject, audience) {
@@ -928,6 +1112,15 @@ function projectCopy(type, subject, audience) {
     body: `A captioned lesson, guided pause, family activity, and discussion prompt prepared for ${audience}.`,
     action: 'Preview lesson',
   };
+  if (SHOW_TYPES.has(type)) {
+    const profile = creatorShowrunner?.formats?.find(item => item.id === type);
+    return {
+      eyebrow: profile?.label || 'Creator show',
+      title: `Series: ${subject}`,
+      body: `${document.getElementById('show-episode-count').value} ${document.getElementById('show-cadence').value} episodes with a reusable character library, platform variants, captions, continuity, review, and owner-approved publishing for ${audience}.`,
+      action: 'Preview show bible',
+    };
+  }
   if (type === 'music_video') return {
     eyebrow: 'Music video production',
     title: `Treatment: ${subject}`,
@@ -1079,6 +1272,7 @@ form.addEventListener('submit', async event => {
     validateMedia();
     validateSimulation();
     validateProduction();
+    validateShow();
     if (!form.reportValidity()) return;
     latestConsentReceipt = useVoice.checked || useImage.checked ? {
       schema: 'dreamco.creator_media_consent.v1',
@@ -1158,9 +1352,63 @@ form.addEventListener('submit', async event => {
       paid_provider_required: false,
       raw_media_uploaded: false,
     } : null;
-    const productionCast = ACTOR_TYPES.has(type)
+    const characterLibrary = ACTOR_TYPES.has(type)
       ? (castRoles.length ? castRoles : [currentCastRole()])
       : [];
+    const productionCast = SHOW_TYPES.has(type)
+      ? characterLibrary.filter(role => role.active_in_production_unit !== false).slice(0, 100)
+      : characterLibrary;
+    const showProfile = SHOW_TYPES.has(type)
+      ? creatorShowrunner?.formats?.find(item => item.id === type)
+      : null;
+    const showEpisodeCount = SHOW_TYPES.has(type) ? Number(document.getElementById('show-episode-count').value) : 0;
+    const showPillars = SHOW_TYPES.has(type) ? showLines('show-pillars') : [];
+    const showLearningObjectives = SHOW_TYPES.has(type) ? showLines('show-learning-objectives') : [];
+    const showPacket = SHOW_TYPES.has(type) ? {
+      schema: 'dreamco.buddy_creator_show_plan.v1',
+      status: 'show_bible_and_season_plan_ready',
+      format: type,
+      premise: document.getElementById('project-objective').value.trim(),
+      audience: document.getElementById('project-audience').value.trim(),
+      content_pillars: showPillars,
+      learning_objectives: showLearningObjectives,
+      cadence: document.getElementById('show-cadence').value,
+      season_episode_count: showEpisodeCount,
+      platforms: checkedValues('show-platform'),
+      made_for_children: document.getElementById('show-made-for-children').checked,
+      character_library: {
+        characters: characterLibrary,
+        character_count: characterLibrary.length,
+        application_character_limit: null,
+        active_characters_per_production_unit: creatorShowrunner?.character_library?.active_characters_per_production_unit || 100,
+        active_character_ids: productionCast.map(role => role.character_id),
+        scale_strategy: creatorShowrunner?.character_library?.scale_strategy,
+        raw_identity_media_stored: false,
+      },
+      routes: (showProfile?.routes || []).map(bot => ({ bot, mode: 'sandbox_and_draft' })),
+      deliverables: showProfile?.deliverables || [],
+      lifecycle: creatorShowrunner?.show_lifecycle || [],
+      calendar: {
+        states: creatorShowrunner?.content_calendar?.states || [],
+        automation_default: creatorShowrunner?.content_calendar?.automation_default || 'draft_and_prepare_only',
+        episodes: Array.from({ length: showEpisodeCount }, (_, index) => ({
+          episode_number: index + 1,
+          title: `Episode ${index + 1}`,
+          content_pillar: showPillars[index % showPillars.length],
+          status: 'idea',
+        })),
+      },
+      quality_and_safety_gates: creatorShowrunner?.quality_and_safety_gates || [],
+      hard_blocks: creatorShowrunner?.hard_blocks || [],
+      release: {
+        channel_connected: false,
+        rendered_assets_exist: false,
+        content_published: false,
+        analytics_connected: false,
+        publish_requires_exact_owner_approval: true,
+      },
+      truth_boundary: creatorShowrunner?.truth_boundary,
+    } : null;
     const productionPacket = PRODUCTION_TYPES.has(type) ? {
       schema: 'dreamco.buddy_professional_production_plan.v1',
       status: 'production_packet_ready',
@@ -1246,7 +1494,8 @@ form.addEventListener('submit', async event => {
         role: productionCast[0].role,
         personality_traits: productionCast[0].personality_traits,
         character_description: productionCast[0].character_description,
-        cast_count: productionCast.length,
+        cast_count: characterLibrary.length,
+        active_production_cast_count: productionCast.length,
         real_person_imitation_allowed: false,
         render_state: 'renderer_configuration_required',
         production_departments: hollywoodGroup?.departments?.map(item => item.id) || [],
@@ -1254,14 +1503,19 @@ form.addEventListener('submit', async event => {
         hard_blocks: hollywoodGroup?.actor_hard_blocks || [],
       } : null,
       professional_production: productionPacket,
+      creator_show: showPacket,
       simulation: simulationPacket,
       artifacts: type === 'invention_prototype'
         ? ['requirements', 'system block diagram', 'bill of materials', 'simulation plan', 'bench-test matrix', 'safety review', 'prior-art research plan', 'cost and ROI estimate']
+        : SHOW_TYPES.has(type)
+          ? ['show bible', 'character library', 'season arc', 'episode slate', 'content calendar', 'platform variants', 'continuity ledger', 'rights manifest', 'analytics experiment']
         : SIMULATION_TYPES.has(type)
           ? ['model and rights manifest', 'variant workbench', 'before-and-after comparison', 'simulation state model', 'known-limits report', 'qualified-review gate', 'simulation-to-game plan']
         : ['source plan', 'test plan', 'rights manifest', 'release checklist'],
       tests: type === 'invention_prototype'
         ? ['core assumption', 'failure modes', 'electrical and mechanical safety', 'accessibility', 'repairability', 'no automatic ordering or manufacturing']
+        : SHOW_TYPES.has(type)
+          ? ['character continuity', 'source and rights review', 'captions and accessibility', 'platform variants', 'child-audience safeguards when selected', 'quality control', 'authenticated publish preview', 'exact owner approval', 'no fake engagement']
         : SIMULATION_TYPES.has(type)
           ? ['model rights and provenance', 'units and scale', 'legal actions', 'safe failure and reset', 'deterministic replay', 'known limits', 'accessibility', 'qualified review', 'bot playtest', 'no live machine control']
         : ['offline load', 'touch and keyboard', 'captions', 'restart and recovery', 'learning objective', 'no live external action'],
@@ -1278,7 +1532,9 @@ form.addEventListener('submit', async event => {
             ? 'eligible_after_installed_artifact_review'
             : 'blocked_until_full_license_review',
       },
-      production_academy: ['feature_film', 'documentary', 'animated_series', 'social_live_show'].includes(type)
+      production_academy: SHOW_TYPES.has(type)
+        ? { track: 'creator_show', formats: creatorShowrunner?.formats?.map(item => item.id) || [], lifecycle: creatorShowrunner?.show_lifecycle?.map(item => item.id) || [], platform_profiles: creatorShowrunner?.platform_profiles?.map(item => item.id) || [], quality_and_safety_gates: creatorShowrunner?.quality_and_safety_gates || [] }
+        : ['feature_film', 'documentary', 'animated_series', 'social_live_show'].includes(type)
         ? { track: 'film', phases: academy?.film_standard?.phases?.map(item => item.id) || [], departments: hollywoodGroup?.departments?.map(item => item.id) || [], quality_gates: hollywoodGroup?.quality_gates || [] }
         : ['music_video', 'music_artist'].includes(type)
           ? { track: 'music', genre_families: academy?.music_standard?.genre_families?.map(item => item.id) || [], rights_gates: academy?.music_standard?.rights_gates || [] }
@@ -1296,7 +1552,7 @@ form.addEventListener('submit', async event => {
     document.getElementById('result-image').textContent = useImage.checked ? 'Consent ready · license review needed' : 'Not requested';
     document.getElementById('result-tests').textContent = mediaQualityPlan
       ? `${mediaQualityPlan.total_candidates} candidates planned`
-      : SIMULATION_TYPES.has(type) ? '10 planned' : '6 planned';
+      : `${latestPacket.tests.length} planned`;
     outputActions.hidden = false;
     document.getElementById('download-consent').disabled = !latestConsentReceipt;
     formStatus.textContent = rendererNeeded
@@ -1332,7 +1588,10 @@ document.getElementById('send-buddy').addEventListener('click', () => {
   const mediaDetail = latestPacket.voice?.requested || latestPacket.likeness?.requested
     ? ` Media: ${latestPacket.voice?.performance_mode || 'no voice performance'} with ${latestPacket.voice?.test_takes?.length || 0} local test takes; visual output ${latestPacket.likeness?.visual_output || 'not requested'} and motion ${latestPacket.likeness?.motion_direction || 'not requested'}.`
     : '';
-  const prompt = `Continue building ${latestPacket.title} as a ${latestPacket.project_type}. Goal: ${latestPacket.objective}.${actorDetail}${productionDetail}${mediaDetail}${simulationDetail} Keep rights, evidence, quality, safety, and owner approval gates active.`;
+  const showDetail = latestPacket.creator_show
+    ? ` Show: ${latestPacket.creator_show.season_episode_count} ${latestPacket.creator_show.cadence} episodes across ${latestPacket.creator_show.platforms.join(', ')} with ${latestPacket.creator_show.character_library.character_count} reusable characters and ${latestPacket.creator_show.character_library.active_character_ids.length} active in this production unit.`
+    : '';
+  const prompt = `Continue building ${latestPacket.title} as a ${latestPacket.project_type}. Goal: ${latestPacket.objective}.${actorDetail}${productionDetail}${mediaDetail}${simulationDetail}${showDetail} Keep rights, evidence, quality, safety, and owner approval gates active.`;
   location.href = `buddy.html?prompt=${encodeURIComponent(prompt)}`;
 });
 
@@ -1392,10 +1651,12 @@ document.getElementById('academy-use').addEventListener('click', () => {
 });
 
 setTypeFromQuery();
+restoreCastLibrary();
 updateMediaControls();
 updateProjectControls();
 renderSimulationConcept();
 renderAcademy();
 renderCastList();
+renderShowManagerSummary();
 renderVoiceAnalysis();
 renderVoiceTakes();

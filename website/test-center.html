@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="styles.css" />
-  <link rel="stylesheet" href="test-center.css" />
+  <link rel="stylesheet" href="test-center.css?v=3" />
 </head>
 <body class="test-center-page">
 <div id="nav-placeholder"></div><script src="nav.js"></script>
@@ -30,6 +30,46 @@
     <div><span>Test files</span><strong id="test-tests-count">--</strong></div>
     <div><span>Suites</span><strong id="test-suites-count">--</strong></div>
     <div><span>Blocked</span><strong id="test-blocked-count">--</strong></div>
+  </section>
+
+  <section class="improvement-guardrails" aria-labelledby="improvement-heading">
+    <div class="test-workspace-heading">
+      <div><p>Evidence-gated improvement</p><h2 id="improvement-heading">Recursive improvement guardrails</h2></div>
+      <a class="btn btn-outline btn-sm" href="buddy.html?prompt=Review%20Buddy%27s%20recursive-improvement%20guardrails%20and%20prepare%20one%20evidence-backed%20sandbox%20improvement%20proposal.%20Do%20not%20change%20permissions%2C%20guardrails%2C%20production%2C%20or%20protected%20branches.%20Do%20not%20claim%20zero%20hallucinations.">Prepare proposal</a>
+    </div>
+    <p class="quality-intro">Buddy can reproduce gaps, propose bounded changes, run reviewed sandbox evaluations, and prepare rollback-ready evidence. It cannot self-grant access, self-merge, silently train on conversations, change production guardrails, or promise zero hallucinations.</p>
+    <div class="improvement-metrics" aria-label="Recursive improvement controls">
+      <div><span>Mode</span><strong id="improvement-mode">--</strong></div>
+      <div><span>Gated stages</span><strong id="improvement-stage-count">--</strong></div>
+      <div><span>Grounding controls</span><strong id="grounding-control-count">--</strong></div>
+      <div><span>Live changes</span><strong id="improvement-live-changes">0</strong></div>
+    </div>
+    <div class="improvement-columns">
+      <article><h3>Improvement loop</h3><ol id="improvement-loop-list"></ol></article>
+      <article><h3>Hallucination controls</h3><ul id="grounding-control-list"></ul></article>
+    </div>
+  </section>
+
+  <section class="fleet-quality" aria-labelledby="fleet-quality-heading">
+    <div class="test-workspace-heading">
+      <div><p>Repository evidence versus live evidence</p><h2 id="fleet-quality-heading">Fleet quality program</h2></div>
+      <a class="btn btn-outline btn-sm" href="buddy.html?prompt=Review%20the%20fleet%20quality%20program%2C%20find%20the%20highest-impact%20unclosed%20production%20gate%2C%20and%20prepare%20a%20tested%20review-branch%20plan.%20Do%20not%20spend%2C%20publish%2C%20contact%20providers%2C%20or%20merge%20without%20my%20exact%20approval.">Improve with Buddy</a>
+    </div>
+    <p class="quality-intro">Every profile has its own ordered learning path and task-specific competitor benchmark suite. Repository contract passes are shown separately from live provider and competitor results.</p>
+    <div class="quality-metrics" aria-label="Fleet quality summary">
+      <div><span>Learning paths</span><strong id="quality-profile-count">--</strong></div>
+      <div><span>Capability plans</span><strong id="quality-capability-count">--</strong></div>
+      <div><span>Repository passes</span><strong id="quality-contract-count">--</strong></div>
+      <div><span>Live benchmarks</span><strong id="quality-live-count">--</strong></div>
+      <div><span>Production ready</span><strong id="quality-production-count">--</strong></div>
+      <div><span>Catalog review</span><strong id="quality-review-status">--</strong></div>
+    </div>
+    <div class="quality-toolbar">
+      <label for="quality-search">Find a bot or capability<input id="quality-search" type="search" placeholder="Real estate, coding, video, finance" autocomplete="off" /></label>
+      <label for="quality-status-filter">Evidence<select id="quality-status-filter"><option value="all">All plans</option><option value="repository_contract_passed">Repository contracts passed</option><option value="live_end_to_end_passed">Live end-to-end passed</option><option value="production_ready">Production ready</option></select></label>
+      <span id="quality-result-count" class="test-scan-id" aria-live="polite">Loading fleet</span>
+    </div>
+    <div id="quality-bot-list" class="quality-bot-list" aria-live="polite"></div>
   </section>
 
   <section class="test-workspace" aria-labelledby="suite-heading">
@@ -84,6 +124,20 @@
   </section>
 </main>
 
-<script src="test-center.js" defer></script>
+<dialog id="quality-detail" class="quality-detail-dialog" aria-labelledby="quality-detail-title">
+  <header>
+    <div><p id="quality-detail-division">Fleet quality plan</p><h2 id="quality-detail-title">Bot quality plan</h2></div>
+    <button id="quality-detail-close" type="button">Close</button>
+  </header>
+  <div id="quality-detail-body"></div>
+  <footer>
+    <button id="quality-download-plan" class="btn btn-outline btn-sm" type="button">Download plan</button>
+    <a id="quality-send-buddy" class="btn btn-primary btn-sm" href="buddy.html">Test and improve with Buddy</a>
+  </footer>
+</dialog>
+
+<script src="data/buddy-fleet-quality-program.js?v=2"></script>
+<script src="data/buddy-self-improvement.js?v=1"></script>
+<script src="test-center.js?v=3" defer></script>
 </body>
 </html>

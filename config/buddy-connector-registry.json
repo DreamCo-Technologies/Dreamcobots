@@ -128,6 +128,32 @@
       "write_policy": "Pass schema, timeout, retry, rate-limit, audit, and sandbox tests before any live write."
     }
   ],
+  "secret_stores": [
+    {
+      "id": "environment",
+      "label": "Environment variable",
+      "status": "reference_ready",
+      "locator_format": "UPPERCASE_VARIABLE_NAME",
+      "resolution_boundary": "A deployed backend resolves the named environment entry; public pages never receive the value.",
+      "enumeration_allowed": false
+    },
+    {
+      "id": "os_keychain",
+      "label": "macOS Keychain",
+      "status": "local_bridge_required",
+      "locator_format": "os_keychain:service/account",
+      "resolution_boundary": "The authenticated loopback bridge writes one owner-approved value and returns only its locator.",
+      "enumeration_allowed": false
+    },
+    {
+      "id": "managed_vault",
+      "label": "Managed vault",
+      "status": "backend_required",
+      "locator_format": "provider-specific vault locator",
+      "resolution_boundary": "A scoped backend identity resolves and rotates the entry without returning its value to public clients.",
+      "enumeration_allowed": false
+    }
+  ],
   "token_transfer": {
     "mode": "reference_to_reference",
     "status": "backend_vault_required",

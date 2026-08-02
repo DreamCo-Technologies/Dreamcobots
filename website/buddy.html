@@ -15,7 +15,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="styles.css" />
-  <link rel="stylesheet" href="buddy.css?v=26" />
+  <link rel="stylesheet" href="buddy.css?v=28" />
 </head>
 <body class="buddy-home buddy-simple-home">
   <header class="buddy-simple-header">
@@ -32,6 +32,7 @@
       <button id="task-open" class="buddy-header-link buddy-task-open" type="button">Tasks <span id="task-count" aria-label="0 current tasks">0</span></button>
       <button id="schedule-open" class="buddy-header-link" type="button">Schedules</button>
       <button id="boundary-open" class="buddy-header-link" type="button">Preferences</button>
+      <a class="buddy-header-link" href="success.html">Success</a>
       <button id="local-open" class="buddy-header-link" type="button">This laptop</button>
       <a class="buddy-header-link" href="https://github.com/DreamCo-Technologies/Dreamcobots" target="_blank" rel="noopener">GitHub</a>
       <a class="buddy-header-link" href="buddy.html">New chat</a>
@@ -44,6 +45,7 @@
           <a href="practice.html">Job prep and role-play</a>
           <a href="connections.html">Business connections</a>
           <a href="data-control.html">Data and memory controls</a>
+          <a href="success.html">Success profile and growth tracker</a>
           <a href="buddy.html?preferences=1">Buddy preferences</a>
           <a href="test-center.html">Repository test center</a>
           <a href="government.html">Government resources</a>
@@ -59,10 +61,11 @@
 
   <main class="buddy-simple-shell">
     <section id="buddy-welcome" class="buddy-welcome" aria-labelledby="buddy-heading">
-      <img class="buddy-welcome-icon" src="assets/images/buddy-icon-192.png" alt="Buddy" width="72" height="72" />
+      <img class="buddy-welcome-icon buddy-futuristic-portrait" src="assets/images/buddy-futuristic-v1.png" alt="Buddy, a friendly futuristic robot assistant" width="112" height="112" />
       <p class="buddy-eyebrow">Your DreamCo assistant</p>
       <h1 id="buddy-heading">How can I help?</h1>
-      <p>Describe the outcome. Buddy will choose the right specialist, prepare the work, and ask before any live action.</p>
+      <p class="buddy-welcome-copy">Describe the outcome. Buddy will choose the right specialist, prepare the work, and ask before any live action.</p>
+      <div class="buddy-success-links"><a href="success.html#profile">Build my Success Profile</a><a href="success.html#tracker">Track ideas and assets</a></div>
     </section>
 
     <section id="buddy-thread" class="buddy-simple-thread" aria-live="polite" aria-label="Conversation"></section>
@@ -113,6 +116,7 @@
       <button type="button" data-buddy-launcher="opportunity">Find paid work</button>
       <button type="button" data-buddy-launcher="payments">Set up payments</button>
       <button type="button" data-buddy-launcher="practice">Practice a role</button>
+      <button type="button" data-buddy-launcher="creator-show">Run a creator show</button>
       <button type="button" data-buddy-launcher="benchmark">Benchmark a bot</button>
     </div>
 
@@ -353,8 +357,9 @@
   <script src="data/buddy-model-router.js"></script>
   <script src="data/buddy-capability-certifications.js"></script>
   <script src="data/buddy-workforce-system.js?v=23"></script>
-  <script src="data/buddy-setup-catalog.js?v=24"></script>
+  <script src="data/buddy-setup-catalog.js?v=25"></script>
   <script src="data/buddy-communication-behavior.js?v=26"></script>
-  <script src="buddy.js?v=26" defer></script>
+  <script src="data/buddy-success-program.js?v=1"></script>
+  <script src="buddy.js?v=28" defer></script>
 </body>
 </html>

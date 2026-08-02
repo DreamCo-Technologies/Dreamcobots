@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DreamSearch | DreamCo</title>
+  <meta name="description" content="Search DreamCo bot specialists, capabilities, divisions, models, providers, systems, libraries, and public tools from one evidence-labeled index." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="dream-search.css" />
+</head>
+<body class="dream-search-page">
+<div id="nav-placeholder"></div><script src="nav.js"></script>
+
+<main class="search-shell">
+  <header class="search-heading">
+    <div class="search-brand" aria-hidden="true">DS</div>
+    <div>
+      <p class="search-eyebrow">DreamCo discovery</p>
+      <h1>DreamSearch</h1>
+      <p>Find the right Buddy specialist, capability, tool, model, division, or page without guessing where it lives.</p>
+    </div>
+  </header>
+
+  <section class="search-workspace" aria-labelledby="search-title">
+    <h2 id="search-title" class="sr-only">Search DreamCo</h2>
+    <form id="dream-search-form" class="search-form" role="search">
+      <label class="search-input-wrap" for="dream-search-input">
+        <span aria-hidden="true">⌕</span>
+        <input id="dream-search-input" type="search" maxlength="240" autocomplete="off" spellcheck="true" placeholder="What do you want Buddy to help you find or build?" />
+        <kbd>/</kbd>
+      </label>
+      <button id="dream-search-submit" class="search-submit" type="submit">Search</button>
+    </form>
+
+    <div class="search-mode-row">
+      <div class="search-segments" role="group" aria-label="Search location">
+        <button id="search-mode-dreamco" class="search-segment active" type="button" data-mode="dreamco" aria-pressed="true">DreamCo</button>
+        <button id="search-mode-web" class="search-segment" type="button" data-mode="web" aria-pressed="false">Web</button>
+      </div>
+      <p id="search-mode-note">Searches the generated repository index. No account, API key, or paid service is needed.</p>
+    </div>
+
+    <div id="search-suggestions" class="search-suggestions" aria-label="Suggested searches">
+      <button type="button" data-query="build a game">Build a game</button>
+      <button type="button" data-query="make a movie">Make a movie</button>
+      <button type="button" data-query="find grants and contracts">Find grants</button>
+      <button type="button" data-query="debug my repository">Debug code</button>
+      <button type="button" data-query="real estate ROI">Real estate ROI</button>
+      <button type="button" data-query="compare AI models">Compare models</button>
+    </div>
+  </section>
+
+  <section id="dreamco-results-view" class="results-view">
+    <aside class="search-filters" aria-labelledby="filter-title">
+      <div class="filter-heading">
+        <h2 id="filter-title">Refine</h2>
+        <button id="search-clear-filters" type="button">Clear</button>
+      </div>
+      <label for="search-type-filter">Result type
+        <select id="search-type-filter">
+          <option value="all">Everything</option>
+          <option value="bot">Bot specialists</option>
+          <option value="capability">Capabilities</option>
+          <option value="division">Divisions</option>
+          <option value="system">Systems</option>
+          <option value="library">Libraries</option>
+          <option value="page">Public pages</option>
+          <option value="model">Model references</option>
+          <option value="provider">Provider references</option>
+          <option value="roadmap">Roadmap ideas</option>
+        </select>
+      </label>
+      <label for="search-division-filter">Division
+        <select id="search-division-filter"><option value="all">All divisions</option></select>
+      </label>
+      <label for="search-evidence-filter">Evidence
+        <select id="search-evidence-filter"><option value="all">All evidence labels</option></select>
+      </label>
+      <label for="search-sort">Order
+        <select id="search-sort">
+          <option value="relevance">Most relevant</option>
+          <option value="title">Title A-Z</option>
+          <option value="type">Result type</option>
+        </select>
+      </label>
+      <div class="index-facts" aria-label="Search index facts">
+        <span>Indexed locally</span>
+        <strong id="search-index-count">0 records</strong>
+        <p id="search-index-detail">Loading the DreamCo catalog.</p>
+      </div>
+    </aside>
+
+    <div class="search-results-pane">
+      <header class="results-heading">
+        <div><p id="search-result-label">DreamCo index</p><h2 id="search-result-count">Ready to search</h2></div>
+        <a id="search-ask-buddy" class="btn btn-outline btn-sm" href="buddy.html">Ask Buddy</a>
+      </header>
+      <div id="search-empty" class="search-empty">
+        <strong>Start with an outcome.</strong>
+        <p>Try a task, industry, capability, bot name, division, model, API, or page. DreamSearch will show what is implemented, cataloged, or still planned.</p>
+      </div>
+      <div id="search-results" class="search-results" aria-live="polite"></div>
+      <button id="search-load-more" class="load-more" type="button" hidden>Show more results</button>
+    </div>
+  </section>
+
+  <section id="web-results-view" class="web-view" hidden aria-labelledby="web-title">
+    <div class="web-heading">
+      <p>Live internet handoff</p>
+      <h2 id="web-title">Choose where to search</h2>
+      <span>DreamSearch does not crawl or invent web results. The provider you choose receives only the visible query.</span>
+    </div>
+    <div id="web-provider-links" class="web-provider-links"></div>
+    <div class="web-research-grid">
+      <section>
+        <h3>Research with Buddy</h3>
+        <p>Send a citation-first research task to Buddy, including a reminder to use current sources and separate facts from inferences.</p>
+        <a id="web-ask-buddy" class="btn btn-primary" href="buddy.html">Prepare research task</a>
+      </section>
+      <section>
+        <h3>Private laptop bridge</h3>
+        <p>When this page is served by the optional local bridge, DreamSearch can open one approved browser search and record it in the memory-only audit log.</p>
+        <label for="web-local-provider">Provider
+          <select id="web-local-provider">
+            <option value="duckduckgo">DuckDuckGo</option>
+            <option value="google">Google</option>
+            <option value="bing">Bing</option>
+            <option value="brave">Brave Search</option>
+          </select>
+        </label>
+        <label class="web-approval"><input id="web-local-approval" type="checkbox" /> Open this one visible search.</label>
+        <button id="web-local-open" class="btn btn-outline" type="button">Open with local bridge</button>
+        <p id="web-local-status" class="web-local-status" aria-live="polite">The local bridge is optional.</p>
+      </section>
+    </div>
+  </section>
+
+  <section class="search-trust-band" aria-label="DreamSearch trust rules">
+    <div><strong>Evidence labeled</strong><span>Every internal result names its repository source and current status.</span></div>
+    <div><strong>Local first</strong><span>The generated index works on GitHub Pages with no search bill.</span></div>
+    <div><strong>Roadmaps stay honest</strong><span>Ideas and reference catalogs are never presented as working connections.</span></div>
+    <div><strong>Buddy connected</strong><span>Any result can become a reviewable task for the right specialist.</span></div>
+  </section>
+</main>
+
+<script src="data/dreamco-search-index.js"></script>
+<script src="dream-search.js" defer></script>
+</body>
+</html>

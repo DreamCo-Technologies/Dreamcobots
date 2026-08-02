@@ -28,6 +28,16 @@
       "boundary": "Checks files, links, controls, public names, and secret patterns without publishing."
     },
     {
+      "id": "dream-search",
+      "name": "DreamSearch index and ranking",
+      "area": "Search",
+      "level": "local_contract",
+      "scripts": ["buddy:search", "test:governed"],
+      "sources": ["config/dreamco-search-engine.json", "shared/dreamco-search.ts", "tools/generate_dreamco_search_index.ts", "website/search.html", "website/dream-search.js"],
+      "tests": ["tests/dreamco-search.test.ts", "tests/dream-search-page.test.mjs"],
+      "boundary": "Searches the generated repository index locally. Web mode opens only a user-selected allowlisted provider or prepares a citation-first Buddy research task; it does not claim live web results."
+    },
+    {
       "id": "client-build",
       "name": "Application client and server build",
       "area": "Application",
@@ -46,6 +56,16 @@
       "sources": ["config/master_bot_registry.json", "server/fleet-runtime.ts"],
       "tests": ["tests/bot-fleet-catalog.test.ts", "tests/fleet-runtime.test.ts"],
       "boundary": "Verifies all declared capabilities through repository-controlled sandbox contracts, not live providers."
+    },
+    {
+      "id": "fleet-quality",
+      "name": "Fleet quality, dependencies, and competitor plans",
+      "area": "Quality",
+      "level": "repository_sandbox",
+      "scripts": ["buddy:fleet-quality", "buddy:dependencies", "buddy:fleet:e2e", "test:governed"],
+      "sources": ["config/buddy-fleet-quality-program.json", "tools/generate_buddy_fleet_quality_program.ts", "tools/check_repository_dependencies.py", "package-lock.json"],
+      "tests": ["tests/fleet-quality-program.test.ts"],
+      "boundary": "Verifies that every bot and capability has a build, dependency, release, learning, and fair-benchmark plan. Live competitor and provider results require current sources, authenticated adapters, and per-run approval."
     },
     {
       "id": "buddy-routing",
@@ -249,13 +269,13 @@
     },
     {
       "id": "security",
-      "name": "Public-file and secret safety",
+      "name": "AI, supply-chain, and public-file defense",
       "area": "Security",
       "level": "local_contract",
-      "scripts": ["buddy:site:check", "test:governed"],
-      "sources": ["tools/build_buddy_public_site.py", "server/outbound-adapters.ts"],
-      "tests": ["tests/outbound-adapters.test.ts", "tools/build_buddy_public_site.py"],
-      "boundary": "Scans public artifacts and adapter contracts. It does not replace deployment hardening or independent security review."
+      "scripts": ["buddy:defense", "buddy:site:check", "test:governed"],
+      "sources": ["config/buddy-open-secure-ai-defense.json", "server/open-secure-ai-defense.ts", "tools/build_buddy_public_site.py", "server/outbound-adapters.ts", "website/security.js"],
+      "tests": ["tests/open-secure-ai-defense.test.ts", "tests/security-center-page.test.mjs", "tests/outbound-adapters.test.ts", "tools/build_buddy_public_site.py"],
+      "boundary": "Assesses artifact evidence, secure GitHub connection plans, model discovery plans, public artifacts, and adapter contracts. It does not install code, execute untrusted artifacts, connect accounts, claim alliance membership, replace deployment hardening, or replace independent security review."
     }
   ]
 }

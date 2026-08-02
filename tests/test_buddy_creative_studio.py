@@ -73,6 +73,12 @@ class BuddyCreativeStudioTests(unittest.TestCase):
                 "documentary",
                 "animated_series",
                 "social_live_show",
+                "youtube_channel",
+                "social_content_series",
+                "learning_series",
+                "simulation_series",
+                "music_performance_series",
+                "fiction_or_variety_show",
                 "commercial",
                 "college_course",
                 "feature_film",
@@ -104,6 +110,28 @@ class BuddyCreativeStudioTests(unittest.TestCase):
         self.assertGreaterEqual(len(artist.production_academy["genre_families"]), 12)
         self.assertIn("synthetic-media label", artist.production_academy["rights_gates"])
         self.assertIn("editable_logo_concepts", brand.deliverables)
+
+    def test_creates_channel_show_learning_and_simulation_series_packets(self):
+        studio = BuddyCreativeStudio()
+        youtube = studio.create_project(
+            brief(ProjectType.YOUTUBE_CHANNEL, title="Build It With Buddy", objective="Plan a recurring practical creator show with reusable characters and measurable audience experiments.")
+        )
+        learning = studio.create_project(
+            brief(ProjectType.LEARNING_SERIES, title="Fraction Kitchen", objective="Build a recurring learning-video series with knowledge checks and family practice activities.")
+        )
+        simulation = studio.create_project(
+            brief(ProjectType.SIMULATION_SERIES, title="Practice Lab", objective="Build a recurring simulation-game series with safe failure, reset, feedback, and deterministic playtests.")
+        )
+        fiction = studio.create_project(
+            brief(ProjectType.FICTION_OR_VARIETY_SHOW, title="Signal Street", objective="Build an original recurring show with a reusable cast, world bible, season arc, and episode continuity.")
+        )
+        self.assertIn("channel_promise", youtube.deliverables)
+        self.assertIn("reusable_teaching_cast", learning.deliverables)
+        self.assertIn("scenario_bible", simulation.deliverables)
+        self.assertIn("world_bible", fiction.deliverables)
+        self.assertEqual(youtube.production_academy["track"], "creator_show")
+        self.assertIsNone(youtube.production_academy["character_library"]["application_character_limit"])
+        self.assertIn("fresh_owner_approval_before_publish", youtube.sandbox["checks"])
 
     def test_creates_invention_packet_with_real_specialists_and_release_gates(self):
         invention = BuddyCreativeStudio().create_project(

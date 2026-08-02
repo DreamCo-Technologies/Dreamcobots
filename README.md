@@ -138,7 +138,15 @@ The bridge binds to `127.0.0.1`, creates an ephemeral session token, keeps a mem
 
 Creative Studio can record adult owner voice samples, capture owner camera images, preview them locally, export the source files, and create a portable consent receipt with SHA-256 media fingerprints. Raw media is not embedded in project packets.
 
-The Model Benchmark Lab audits exactly 100 repository targets across 12 capability suites. Catalog checks run locally. Live quality, latency, and cost scores remain empty until authenticated adapters return evidence under a per-run budget and approval.
+The Model Benchmark Lab audits 200 targets across 12 capability suites: 100 curated catalog records plus 100 task-specific discovery lanes that refresh exact model IDs from official provider catalogs. Catalog checks run locally. Live quality, latency, and cost scores remain empty until authenticated adapters return evidence under a per-run budget and approval.
+
+The Buddy Success Center stores a 30-question, non-sensitive profile in the user's browser, shares only an opted-in summary with specialist routes, and keeps opportunity estimates separate from user-confirmed revenue. Its generated production program covers all 45 divisions with a professional charter, 100 capability contracts, 100 must-have records, 100 upgrade records, 12 production gates, a deterministic robot identity, and an evidence-first competitor benchmark process. A local daily harness checks all 4,500 division capability contracts with bounded parallelism; external comparisons still require a scheduler, configured adapters, current terms, and run-specific approval.
+
+The AI Organization Intelligence registry combines 94 normalized providers from the existing 200-target program with a dated 196-entry snapshot of the official AI Alliance directory. It maps declared strengths and common user jobs to 20 user-need categories and 15 benchmark dimensions while keeping membership, connectivity, and live evidence separate. Refresh with `python3 tools/generate_ai_organization_intelligence.py --refresh`; normal repository checks use the committed snapshot so builds do not depend on the network.
+
+App Connections includes an Access Center for connection profiles, public-safe backend records, browser-local setup plans, authentication methods, and governed secret-store metadata. It shows whether a secret reference exists but never reads, lists, or renders credential values. Raw secret intake remains limited to the approved loopback bridge and macOS Keychain workflow.
+
+The open AI watch claims no membership or endorsement and records zero live member benchmarks until evidence exists. Buddy's defensive security reviews require written owner authority and prohibit credential attacks, destructive payloads, denial of service, persistence, third-party targets, and access to real customer data. Public pages accept references only. The local Buddy bridge can place a user-approved key directly into macOS Keychain and returns only an `os_keychain:` reference; it never persists the raw value in browser storage, generated files, URLs, or audit logs. The Sales Academy uses synthetic role-play before any permissioned outreach workflow.
 
 ## 🌐 Live Website
 

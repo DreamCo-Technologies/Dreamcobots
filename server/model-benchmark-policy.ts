@@ -1,6 +1,9 @@
+import { readFileSync } from "node:fs";
+import { resolve } from "node:path";
+
 import { z } from "zod";
 
-import { AI_MODELS } from "@shared/ai-models";
+import { MODEL_BENCHMARK_TARGETS } from "@shared/model-benchmark-targets";
 
 export const MODEL_BENCHMARK_SUITE_IDS = [
   "instruction_following",
@@ -18,7 +21,7 @@ export const MODEL_BENCHMARK_SUITE_IDS = [
 ] as const;
 
 export const modelBenchmarkPlanRequestSchema = z.object({
-  targetIds: z.array(z.number().int().min(1).max(10_000)).min(1).max(100),
+  targetIds: z.array(z.number().int().min(1).max(10_000)).min(1).max(500),
   suiteIds: z.array(z.enum(MODEL_BENCHMARK_SUITE_IDS)).min(1).max(MODEL_BENCHMARK_SUITE_IDS.length),
   repetitions: z.number().int().min(1).max(3).default(1),
   maxBudgetUsd: z.number().min(0).max(10_000).default(0),
@@ -28,14 +31,20 @@ export const modelBenchmarkPlanRequestSchema = z.object({
 
 export type ModelBenchmarkPlanRequest = z.infer<typeof modelBenchmarkPlanRequestSchema>;
 
+export function getModelBenchmarkEncyclopedia(
+  path = resolve(process.cwd(), "config", "generated", "buddy_model_benchmarks.json"),
+) {
+  return JSON.parse(readFileSync(path, "utf8")) as Record<string, unknown>;
+}
+
 export function runModelCatalogAudit() {
-  const targets = AI_MODELS.map((model) => {
+  const targets = MODEL_BENCHMARK_TARGETS.map((model) => {
     const checks = {
       identity: Boolean(model.name.trim() && model.provider.trim()),
       taskFit: Boolean(model.bestFor.trim() && model.category.trim()),
-      accessMetadata: Boolean(model.tier && model.paidPrice.trim()),
-      capabilities: model.freeFeatures.length + model.paidFeatures.length > 0,
-      instructions: Boolean(model.instructions.trim()),
+      accessMetadata: Boolean(model.tier && model.accessNote.trim()),
+      capabilities: model.declaredCapabilities.length > 0,
+      discoveryTruth: !model.discoveryTarget || Boolean(model.officialCatalog),
     };
     return {
       id: model.id,
@@ -61,17 +70,20 @@ export function createModelBenchmarkPlan(input: ModelBenchmarkPlanRequest) {
   const request = modelBenchmarkPlanRequestSchema.parse(input);
   const uniqueTargetIds = [...new Set(request.targetIds)];
   const uniqueSuiteIds = [...new Set(request.suiteIds)];
-  const targetMap = new Map(AI_MODELS.map((model) => [model.id, model]));
+  const targetMap = new Map(MODEL_BENCHMARK_TARGETS.map((model) => [model.id, model]));
   const targets = uniqueTargetIds.map((id) => {
     const model = targetMap.get(id);
     if (!model) throw new Error(`Unknown benchmark target: ${id}`);
     return model;
   });
-  const paidTargets = targets.filter((target) => target.tier !== "free");
+  const paidTargets = targets.filter((target) => !["free", "discovery"].includes(target.tier));
+  const discoveryTargets = targets.filter((target) => target.discoveryTarget);
   const totalCases = targets.length * uniqueSuiteIds.length * request.repetitions;
   const status = !request.allowExternalNetwork
     ? "local_catalog_plan_ready"
-    : paidTargets.length && (!request.approvePaidModelsForThisRun || request.maxBudgetUsd <= 0)
+    : discoveryTargets.length
+      ? "official_catalog_discovery_required"
+      : paidTargets.length && (!request.approvePaidModelsForThisRun || request.maxBudgetUsd <= 0)
       ? "paid_budget_approval_required"
       : "live_adapters_required";
 
@@ -80,6 +92,7 @@ export function createModelBenchmarkPlan(input: ModelBenchmarkPlanRequest) {
     status,
     targetCount: targets.length,
     paidTargetCount: paidTargets.length,
+    discoveryTargetCount: discoveryTargets.length,
     suiteCount: uniqueSuiteIds.length,
     repetitions: request.repetitions,
     totalCases,
@@ -92,6 +105,9 @@ export function createModelBenchmarkPlan(input: ModelBenchmarkPlanRequest) {
       name: target.name,
       provider: target.provider,
       tier: target.tier,
+      discoveryTarget: target.discoveryTarget,
+      exactModelId: target.exactModelId,
+      officialCatalog: target.officialCatalog,
     })),
     suites: uniqueSuiteIds,
     evidenceRequiredPerCase: [

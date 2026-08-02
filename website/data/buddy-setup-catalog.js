@@ -153,6 +153,14 @@
       'Answer by text', 'Answer by voice', 'Record an approved owner voice', 'Review answer structure', 'Review specific evidence',
       'Review active listening', 'Review professional boundaries', 'Create a learning sprint', 'Prepare follow-up questions', 'Continue the role-play with Buddy',
     ]),
+    launcher('creator-show', 'Run a creator show', 'Build a YouTube channel or recurring social, learning, simulation, music, fiction, cartoon, or variety show with a reusable character library and owner-approved publishing.', 'studio.html?type=youtube_channel', [
+      'Define the channel promise', 'Choose the target audience', 'Choose the show format', 'Define content pillars', 'Create the show bible',
+      'Create the world bible', 'Add original characters', 'Add a company mascot', 'Add an approved adult owner character', 'Set character personality traits',
+      'Set voice direction', 'Set visual direction', 'Create continuity facts', 'Choose the active episode cast', 'Plan the season arc',
+      'Build the episode slate', 'Write an episode script', 'Create a storyboard', 'Create a thumbnail brief', 'Create a YouTube long-form plan',
+      'Create YouTube Shorts', 'Create social video variants', 'Create a learning-video episode', 'Create a simulation-game episode', 'Create a music-performance episode',
+      'Add captions and accessibility', 'Run rights and continuity checks', 'Build the content calendar', 'Prepare the authenticated publish preview', 'Review channel analytics evidence',
+    ]),
     launcher('benchmark', 'Benchmark a bot', 'Build a reproducible competition and quality benchmark for a Buddy bot, model, voice, image, video, workflow, or release using signed fixtures and measured evidence.', 'test-center.html', [
       'Choose the benchmark subject', 'Choose the comparison baseline', 'Create a feature matrix', 'Create a capability inventory', 'Detect missing capabilities',
       'Detect duplicate capabilities', 'Compare workflow completion', 'Compare user experience', 'Compare API behavior', 'Compare automation behavior',

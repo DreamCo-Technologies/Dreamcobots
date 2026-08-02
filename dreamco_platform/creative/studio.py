@@ -26,6 +26,12 @@ class ProjectType(str, Enum):
     DOCUMENTARY = "documentary"
     ANIMATED_SERIES = "animated_series"
     SOCIAL_LIVE_SHOW = "social_live_show"
+    YOUTUBE_CHANNEL = "youtube_channel"
+    SOCIAL_CONTENT_SERIES = "social_content_series"
+    LEARNING_SERIES = "learning_series"
+    SIMULATION_SERIES = "simulation_series"
+    MUSIC_PERFORMANCE_SERIES = "music_performance_series"
+    FICTION_OR_VARIETY_SHOW = "fiction_or_variety_show"
     COMMERCIAL = "commercial"
     COLLEGE_COURSE = "college_course"
     FEATURE_FILM = "feature_film"
@@ -250,6 +256,43 @@ class BuddyCreativeStudio:
             {"bot": "video-editor-ai", "role": "scenes, sources, rehearsal, recording, and clips"},
             {"bot": "governance-dashboard", "role": "moderation, owner approval, emergency stop, and audit"},
         ],
+        ProjectType.YOUTUBE_CHANNEL: [
+            {"bot": "video-script", "role": "channel promise, episode research, scripts, and retention structure"},
+            {"bot": "video-editor-ai", "role": "long-form masters, short-form cutdowns, captions, and delivery"},
+            {"bot": "content-calendar", "role": "episode slate, production states, cadence, and release calendar"},
+            {"bot": "seo-optimizer", "role": "truthful titles, descriptions, chapters, and discoverability plan"},
+            {"bot": "content-analytics", "role": "owner-authorized retention, completion, and experiment analysis"},
+        ],
+        ProjectType.SOCIAL_CONTENT_SERIES: [
+            {"bot": "social-content", "role": "series concepts, hooks, captions, and platform variants"},
+            {"bot": "visual-planner", "role": "visual language, shot patterns, covers, and reusable templates"},
+            {"bot": "social-scheduler", "role": "approval-ready content calendar and authenticated scheduling plan"},
+            {"bot": "content-analytics", "role": "owner-authorized performance evidence and next experiments"},
+        ],
+        ProjectType.LEARNING_SERIES: [
+            {"bot": "curriculum-mapper", "role": "learning progression, episode outcomes, and assessment map"},
+            {"bot": "adaptive-learning", "role": "difficulty, misconceptions, feedback, and learner adaptation"},
+            {"bot": "video-script", "role": "age-aware lesson scripts, examples, and knowledge checks"},
+            {"bot": "accessibility-auditor", "role": "captions, reading level, sensory review, and accessible delivery"},
+        ],
+        ProjectType.SIMULATION_SERIES: [
+            {"bot": "dr-simulation", "role": "deterministic scenarios, state machines, and safe recovery"},
+            {"bot": "games-app-bot", "role": "practice loop, levels, controls, feedback, and packaging"},
+            {"bot": "game-ai-player", "role": "bot playtests, difficulty checks, and deterministic replay"},
+            {"bot": "game-analytics", "role": "completion, misconception, balance, and learning evidence"},
+        ],
+        ProjectType.MUSIC_PERFORMANCE_SERIES: [
+            {"bot": "music-production", "role": "original repertoire, arrangement, recording, mix, and master plan"},
+            {"bot": "music-app-bot", "role": "composition, lyric, sample, split, and release-rights ledger"},
+            {"bot": "video-script", "role": "performance treatments, episode concepts, and shot plans"},
+            {"bot": "content-calendar", "role": "performance-series slate, cutdowns, and release calendar"},
+        ],
+        ProjectType.FICTION_OR_VARIETY_SHOW: [
+            {"bot": "creative-writer", "role": "series bible, world, season arc, episodes, and character continuity"},
+            {"bot": "video-script", "role": "scripts, storyboards, scene breakdowns, and performance direction"},
+            {"bot": "3d-asset-mgr", "role": "reusable character, set, prop, rig, and asset provenance"},
+            {"bot": "video-editor-ai", "role": "animatics, picture and sound timelines, captions, and episode masters"},
+        ],
         ProjectType.COMMERCIAL: [
             {"bot": "brand-voice", "role": "brand claims and voice consistency"},
             {"bot": "video-script", "role": "concept, script, shot list, and calls to action"},
@@ -310,8 +353,11 @@ class BuddyCreativeStudio:
             ProjectType.SCHOOL_SIMULATION,
             ProjectType.PARENT_LEARNING_VIDEO,
             ProjectType.COLLEGE_COURSE,
+            ProjectType.LEARNING_SERIES,
+            ProjectType.SIMULATION_SERIES,
         }:
-            routes.append({"bot": "adaptive-learning", "role": "learning objectives and difficulty tuning"})
+            if not any(route["bot"] == "adaptive-learning" for route in routes):
+                routes.append({"bot": "adaptive-learning", "role": "learning objectives and difficulty tuning"})
         media = self._media_plan(brief)
         return StudioProject(
             project_id=project_id,
@@ -344,6 +390,29 @@ class BuddyCreativeStudio:
                 encoding="utf-8"
             )
         )
+        creator_showrunner = json.loads(
+            (Path(__file__).resolve().parents[2] / "config" / "buddy-creator-showrunner.json").read_text(
+                encoding="utf-8"
+            )
+        )
+        if brief.project_type in {
+            ProjectType.YOUTUBE_CHANNEL,
+            ProjectType.SOCIAL_CONTENT_SERIES,
+            ProjectType.LEARNING_SERIES,
+            ProjectType.SIMULATION_SERIES,
+            ProjectType.MUSIC_PERFORMANCE_SERIES,
+            ProjectType.FICTION_OR_VARIETY_SHOW,
+        }:
+            profile = next(item for item in creator_showrunner["formats"] if item["id"] == brief.project_type.value)
+            return {
+                "track": "creator_show",
+                "format": profile,
+                "show_lifecycle": creator_showrunner["show_lifecycle"],
+                "character_library": creator_showrunner["character_library"],
+                "platform_profiles": creator_showrunner["platform_profiles"],
+                "quality_and_safety_gates": creator_showrunner["quality_and_safety_gates"],
+                "truth_boundary": creator_showrunner["truth_boundary"],
+            }
         if brief.project_type in {
             ProjectType.FEATURE_FILM,
             ProjectType.DOCUMENTARY,
@@ -527,6 +596,26 @@ class BuddyCreativeStudio:
             shared[2]["outputs"].extend(["series bible", "character turnarounds", "storyboards", "animatic", "episode masters"])
         elif brief.project_type == ProjectType.SOCIAL_LIVE_SHOW:
             shared[2]["outputs"].extend(["run of show", "scene collection", "moderation plan", "private rehearsal", "recording and clips plan"])
+        elif brief.project_type == ProjectType.YOUTUBE_CHANNEL:
+            shared[1]["outputs"].extend(["channel promise", "content pillars", "show bible", "reusable character library"])
+            shared[2]["outputs"].extend(["episode slate", "scripts", "thumbnail briefs", "long-form masters", "short-form cutdowns", "captions"])
+            shared[3]["outputs"].extend(["retention review", "completion review", "discoverability experiment", "next episode evidence"])
+        elif brief.project_type == ProjectType.SOCIAL_CONTENT_SERIES:
+            shared[1]["outputs"].extend(["series bible", "content pillars", "hook library", "reusable character library"])
+            shared[2]["outputs"].extend(["platform variants", "covers", "captions", "moderation plan", "content calendar"])
+        elif brief.project_type == ProjectType.LEARNING_SERIES:
+            shared[1]["outputs"].extend(["learning map", "episode outcomes", "misconception map", "reusable teaching cast"])
+            shared[2]["outputs"].extend(["lesson episodes", "worked examples", "knowledge checks", "practice activities", "teacher or family guide"])
+        elif brief.project_type == ProjectType.SIMULATION_SERIES:
+            shared[1]["outputs"].extend(["scenario bible", "state machines", "legal actions", "difficulty and learning map"])
+            shared[2]["outputs"].extend(["practice episodes", "levels", "feedback", "safe failure and reset", "instructor controls"])
+            shared[3]["outputs"].extend(["deterministic replay", "bot playtests", "misconception report", "known-limits review"])
+        elif brief.project_type == ProjectType.MUSIC_PERFORMANCE_SERIES:
+            shared[1]["outputs"].extend(["artist and show bible", "original repertoire plan", "rights and splits ledger", "performance identity"])
+            shared[2]["outputs"].extend(["episode slate", "performance direction", "music-video treatments", "social cutdowns", "release calendar"])
+        elif brief.project_type == ProjectType.FICTION_OR_VARIETY_SHOW:
+            shared[1]["outputs"].extend(["series and world bible", "character library", "season arc", "continuity ledger"])
+            shared[2]["outputs"].extend(["episode slate", "scripts", "boards", "animatics", "picture and sound plan", "episode masters"])
         elif brief.project_type == ProjectType.COMMERCIAL:
             shared[2]["outputs"].extend(["claim substantiation", "brand review", "shot list", "format variants"])
         elif brief.project_type == ProjectType.COLLEGE_COURSE:
@@ -608,6 +697,24 @@ class BuddyCreativeStudio:
                     "stream_credentials_not_in_project_files",
                 ]
             )
+        if brief.project_type in {
+            ProjectType.YOUTUBE_CHANNEL,
+            ProjectType.SOCIAL_CONTENT_SERIES,
+            ProjectType.LEARNING_SERIES,
+            ProjectType.SIMULATION_SERIES,
+            ProjectType.MUSIC_PERFORMANCE_SERIES,
+            ProjectType.FICTION_OR_VARIETY_SHOW,
+        }:
+            checks.extend(
+                [
+                    "show_bible_and_character_continuity_review",
+                    "episode_production_unit_is_bounded",
+                    "platform_variant_and_caption_review",
+                    "authenticated_destination_preview_before_publish",
+                    "fresh_owner_approval_before_publish",
+                    "no_fake_engagement_or_fabricated_metrics",
+                ]
+            )
         return {
             "isolated": True,
             "network_default": "off",
@@ -642,6 +749,18 @@ class BuddyCreativeStudio:
             base.extend(["series_bible", "character_turnarounds", "storyboards", "animatic", "voice_manifest", "episode_master_plan"])
         elif brief.project_type == ProjectType.SOCIAL_LIVE_SHOW:
             base.extend(["run_of_show", "scene_collection", "moderation_plan", "private_rehearsal", "stream_health_plan", "archive_and_clips_plan"])
+        elif brief.project_type == ProjectType.YOUTUBE_CHANNEL:
+            base.extend(["channel_promise", "show_bible", "character_library", "episode_slate", "thumbnail_briefs", "long_and_short_form_delivery_plan", "analytics_experiment"])
+        elif brief.project_type == ProjectType.SOCIAL_CONTENT_SERIES:
+            base.extend(["series_bible", "character_library", "hook_library", "platform_variants", "content_calendar", "moderation_and_measurement_plan"])
+        elif brief.project_type == ProjectType.LEARNING_SERIES:
+            base.extend(["learning_map", "episode_lessons", "reusable_teaching_cast", "knowledge_checks", "practice_activities", "teacher_or_family_guide"])
+        elif brief.project_type == ProjectType.SIMULATION_SERIES:
+            base.extend(["scenario_bible", "state_machines", "episode_levels", "safe_failure_and_reset", "bot_playtest_report", "known_limits_report"])
+        elif brief.project_type == ProjectType.MUSIC_PERFORMANCE_SERIES:
+            base.extend(["artist_show_bible", "original_repertoire_plan", "rights_and_splits_ledger", "performance_episode_slate", "social_cutdown_plan", "release_calendar"])
+        elif brief.project_type == ProjectType.FICTION_OR_VARIETY_SHOW:
+            base.extend(["series_bible", "world_bible", "character_library", "season_arc", "episode_slate", "continuity_ledger", "episode_master_plan"])
         elif brief.project_type == ProjectType.COMMERCIAL:
             base.extend(["claim_substantiation", "brand_review", "platform_variants", "campaign_measurement_plan"])
         elif brief.project_type == ProjectType.COLLEGE_COURSE:

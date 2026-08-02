@@ -4,6 +4,8 @@
   const links = [
     { href: 'dashboard.html', label: '📊 Dashboard' },
     { href: 'buddy.html', label: '🧠 Buddy Bot' },
+    { href: 'success.html', label: '📈 Success Center' },
+    { href: 'search.html', label: '🔎 DreamSearch' },
     { href: 'studio.html', label: '🎮 Creative Studio' },
     { href: 'practice.html', label: '🎤 Practice Lab' },
     { href: 'platform.html', label: '🧩 Platform Registry' },
@@ -11,6 +13,7 @@
     { href: 'divisions.html', label: '🏛️ Divisions' },
     { href: 'bots.html', label: '🤖 Bot Fleet' },
     { href: 'test-center.html', label: '🧪 Test Center' },
+    { href: 'security.html', label: '🛡️ Defense Center' },
     { href: 'system-map.html', label: '🗺️ Repository Map' },
     { href: 'chat.html', label: '💬 Chat' },
     { href: 'install.html', label: '📲 Install & Launch' },

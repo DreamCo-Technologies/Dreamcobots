@@ -39,6 +39,7 @@ test("voice-cue adaptation requires explicit opt-in and never diagnoses", () => 
   });
   const plan = buildCommunicationPlan(request);
   assert.equal(plan.cueAdaptation.enabled, true);
+  assert.ok(plan.cueAdaptation.guidance.includes("use plain language"));
   assert.equal(plan.cueAdaptation.inferredMentalState, false);
   assert.equal(plan.cueAdaptation.diagnosisPerformed, false);
 });
@@ -61,7 +62,7 @@ test("communication benchmark uses synthetic fixtures and aggregate metrics", ()
     retainRawConversations: false,
   });
   const plan = buildCommunicationBenchmarkPlan(request);
-  assert.equal(plan.suites.length, 18);
+  assert.equal(plan.suites.length, 24);
   assert.equal(plan.storage.rawConversationsRetained, false);
   assert.equal(plan.resultState, "not_run");
   assert.equal(plan.superiorityClaimAllowed, false);
@@ -74,4 +75,31 @@ test("catalog covers broad interaction traits without hidden inference", () => {
   assert.equal(catalog.self_report_dimensions.length, 5);
   assert.equal(catalog.policy.hidden_psychological_inference, false);
   assert.equal(catalog.policy.self_report_only_for_psychology_dimensions, true);
+});
+
+test("conversation model is natural, grounded, and relationship-safe", () => {
+  const catalog = getCommunicationBehaviorCatalog();
+  assert.equal(catalog.conversation_model.competencies.length, 30);
+  assert.ok(catalog.conversation_model.response_sequence.includes("answer or act on the request before adding optional ideas"));
+  assert.equal(catalog.relationship_integrity.buddy_identifies_as_ai, true);
+  assert.equal(catalog.relationship_integrity.claims_human_feelings_or_consciousness, false);
+  assert.equal(catalog.relationship_integrity.encourages_exclusive_dependency, false);
+  assert.equal(catalog.grounding_behavior.zero_hallucination_claim_allowed, false);
+});
+
+test("explicit emotion guidance supports users without hidden inference", () => {
+  const request = communicationPlanRequestSchema.parse({
+    objective: "Help me break down a difficult project without adding pressure.",
+    context: "casual",
+    profile: { voiceCueAdaptation: true, voiceCueConsent: true },
+    ownerConfirmedCue: "overwhelmed",
+  });
+  const plan = buildCommunicationPlan(request);
+  assert.deepEqual(plan.cueAdaptation.guidance, [
+    "reduce the task to one next step",
+    "limit choices",
+    "preserve pause and resume",
+  ]);
+  assert.equal(plan.cueAdaptation.inferredMentalState, false);
+  assert.ok(plan.psychologyKnowledgeBoundary.forbidden_uses.includes("clinical diagnosis or treatment"));
 });

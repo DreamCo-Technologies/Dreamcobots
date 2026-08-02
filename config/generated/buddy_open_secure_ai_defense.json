@@ -1,0 +1,630 @@
+{
+  "schema": "dreamco.buddy_open_secure_ai_defense.v1",
+  "catalog_reviewed_on": "2026-08-01",
+  "stale_after_days": 7,
+  "truth_contract": {
+    "alliance_membership_claimed": false,
+    "catalog_entry_means_connected": false,
+    "configured_adapter_required_for_live_access": true,
+    "benchmark_evidence_required_for_quality_claims": true,
+    "defensive_use_only": true,
+    "automatic_install_or_execution": false,
+    "automatic_merge_or_publish": false
+  },
+  "official_sources": [
+    {
+      "id": "open-secure-ai-alliance",
+      "label": "Open Secure AI Alliance",
+      "url": "https://www.opensecureaialliance.org/",
+      "purpose": "Alliance identity and public updates"
+    },
+    {
+      "id": "alliance-launch",
+      "label": "Alliance launch announcement",
+      "url": "https://blogs.nvidia.com/blog/open-secure-ai-alliance/",
+      "purpose": "Launch architecture, contributed tools, and defense mission"
+    },
+    {
+      "id": "openssf-ai-ml-security",
+      "label": "OpenSSF AI and ML Security Working Group",
+      "url": "https://openssf.org/groups/ai-ml-security/",
+      "purpose": "AI and model supply-chain threat coverage"
+    },
+    {
+      "id": "openssf-projects",
+      "label": "OpenSSF projects",
+      "url": "https://openssf.org/projects/",
+      "purpose": "Official project catalog"
+    },
+    {
+      "id": "akrites",
+      "label": "Akrites",
+      "url": "https://akrites.org/",
+      "purpose": "Confidential vulnerability coordination and responsible disclosure"
+    }
+  ],
+  "alliance_reference_tools": [
+    {
+      "id": "nooa",
+      "label": "Object-Oriented Agent harness",
+      "category": "agent_harness",
+      "purpose": "Trace, test, audit, and govern agent harness behavior.",
+      "official_source": "https://blogs.nvidia.com/blog/open-secure-ai-alliance/",
+      "dreamco_integration": "harness evidence contract",
+      "connection_status": "reference_available"
+    },
+    {
+      "id": "spiffe-spire",
+      "label": "SPIFFE and SPIRE",
+      "category": "workload_identity",
+      "purpose": "Issue verifiable identities to workloads and agents under zero-trust rules.",
+      "official_source": "https://spiffe.io/",
+      "dreamco_integration": "agent identity adapter contract",
+      "connection_status": "configuration_required"
+    },
+    {
+      "id": "safetensors",
+      "label": "Safetensors",
+      "category": "model_format",
+      "purpose": "Load model weights from a format designed to avoid arbitrary code execution.",
+      "official_source": "https://github.com/huggingface/safetensors",
+      "dreamco_integration": "preferred model artifact format",
+      "connection_status": "format_supported"
+    },
+    {
+      "id": "lightwell",
+      "label": "Lightwell",
+      "category": "signed_patch",
+      "purpose": "Prepare digitally signed patch evidence for review.",
+      "official_source": "https://blogs.nvidia.com/blog/open-secure-ai-alliance/",
+      "dreamco_integration": "signed patch compatibility contract",
+      "connection_status": "reference_available"
+    },
+    {
+      "id": "mdash",
+      "label": "MDASH",
+      "category": "multi_model_scanning",
+      "purpose": "Compare security findings across multiple governed model targets.",
+      "official_source": "https://blogs.nvidia.com/blog/open-secure-ai-alliance/",
+      "dreamco_integration": "multi-model defensive scan plan",
+      "connection_status": "reference_available"
+    },
+    {
+      "id": "grok-build",
+      "label": "Grok Build",
+      "category": "coding_agent",
+      "purpose": "Provide a reference target for terminal coding-agent evaluations.",
+      "official_source": "https://blogs.nvidia.com/blog/open-secure-ai-alliance/",
+      "dreamco_integration": "benchmark reference only",
+      "connection_status": "provider_access_required"
+    },
+    {
+      "id": "akrites-coordination",
+      "label": "Akrites coordination",
+      "category": "vulnerability_disclosure",
+      "purpose": "Prepare confidential remediation and coordinated-disclosure packets.",
+      "official_source": "https://akrites.org/",
+      "dreamco_integration": "disclosure packet and escalation contract",
+      "connection_status": "membership_or_intake_required"
+    }
+  ],
+  "openssf_projects": [
+    {
+      "id": "best-practices-badge",
+      "label": "Best Practices Badge",
+      "purpose": "Secure project practice evidence",
+      "official_source": "https://openssf.org/projects/"
+    },
+    {
+      "id": "bomctl",
+      "label": "Bomctl",
+      "purpose": "Software bill of materials management",
+      "official_source": "https://openssf.org/projects/"
+    },
+    {
+      "id": "criticality-score",
+      "label": "Criticality Score",
+      "purpose": "Open-source dependency criticality signals",
+      "official_source": "https://openssf.org/projects/"
+    },
+    {
+      "id": "fuzz-introspector",
+      "label": "Fuzz Introspector",
+      "purpose": "Fuzz coverage and reachability evidence",
+      "official_source": "https://openssf.org/projects/"
+    },
+    {
+      "id": "gemara",
+      "label": "Gemara",
+      "purpose": "Security control and threat model mapping",
+      "official_source": "https://openssf.org/projects/"
+    },
+    {
+      "id": "gittuf",
+      "label": "Gittuf",
+      "purpose": "Policy-backed Git repository security",
+      "official_source": "https://openssf.org/projects/"
+    },
+    {
+      "id": "guac",
+      "label": "GUAC",
+      "purpose": "Aggregate and query software supply-chain metadata",
+      "official_source": "https://openssf.org/projects/guac/"
+    },
+    {
+      "id": "minder",
+      "label": "Minder",
+      "purpose": "Repository and artifact policy enforcement",
+      "official_source": "https://openssf.org/projects/"
+    },
+    {
+      "id": "openbao",
+      "label": "OpenBao",
+      "purpose": "Secrets and identity management",
+      "official_source": "https://openssf.org/projects/"
+    },
+    {
+      "id": "model-signing",
+      "label": "OpenSSF Model Signing",
+      "purpose": "Sign and verify model artifacts",
+      "official_source": "https://openssf.org/projects/model-signing/"
+    },
+    {
+      "id": "scorecard",
+      "label": "OpenSSF Scorecard",
+      "purpose": "Repository security posture checks",
+      "official_source": "https://openssf.org/projects/"
+    },
+    {
+      "id": "openvex",
+      "label": "OpenVEX",
+      "purpose": "Machine-readable vulnerability exploitability status",
+      "official_source": "https://openssf.org/projects/"
+    },
+    {
+      "id": "osps-baseline",
+      "label": "OSPS Baseline",
+      "purpose": "Minimum open-source project security controls",
+      "official_source": "https://openssf.org/projects/osps-baseline/"
+    },
+    {
+      "id": "oss-crs",
+      "label": "OSS CRS",
+      "purpose": "Automated vulnerability finding and remediation research",
+      "official_source": "https://openssf.org/projects/"
+    },
+    {
+      "id": "osv-schema",
+      "label": "OSV Schema",
+      "purpose": "Open vulnerability data exchange",
+      "official_source": "https://openssf.org/projects/"
+    },
+    {
+      "id": "package-analysis",
+      "label": "Package Analysis",
+      "purpose": "Behavioral analysis of open-source packages",
+      "official_source": "https://openssf.org/projects/"
+    },
+    {
+      "id": "protobom",
+      "label": "Protobom",
+      "purpose": "SBOM data model and tooling",
+      "official_source": "https://openssf.org/projects/"
+    },
+    {
+      "id": "rstuf",
+      "label": "Repository Service for TUF",
+      "purpose": "Tamper-resistant artifact distribution",
+      "official_source": "https://openssf.org/projects/repository-service-for-tuf/"
+    },
+    {
+      "id": "sbomit",
+      "label": "SBOMit",
+      "purpose": "SBOM attestations and accountability",
+      "official_source": "https://openssf.org/projects/"
+    },
+    {
+      "id": "security-insights",
+      "label": "Security Insights",
+      "purpose": "Repository security metadata",
+      "official_source": "https://openssf.org/projects/"
+    },
+    {
+      "id": "sigstore",
+      "label": "Sigstore",
+      "purpose": "Keyless artifact signing and verification",
+      "official_source": "https://openssf.org/projects/"
+    },
+    {
+      "id": "slsa",
+      "label": "SLSA",
+      "purpose": "Build provenance and supply-chain integrity",
+      "official_source": "https://openssf.org/projects/"
+    },
+    {
+      "id": "zarf",
+      "label": "Zarf",
+      "purpose": "Secure software delivery in disconnected environments",
+      "official_source": "https://openssf.org/projects/"
+    },
+    {
+      "id": "alpha-omega",
+      "label": "Alpha-Omega",
+      "purpose": "Affiliated investment and security work for critical open-source projects",
+      "official_source": "https://openssf.org/projects/"
+    },
+    {
+      "id": "core-toolchain-infrastructure",
+      "label": "Core Toolchain Infrastructure",
+      "purpose": "Affiliated support for security-critical development toolchains",
+      "official_source": "https://openssf.org/projects/"
+    }
+  ],
+  "threat_domains": [
+    {
+      "id": "prompt-injection",
+      "label": "Prompt injection",
+      "required_control": "Treat external content as untrusted data and constrain tool authority."
+    },
+    {
+      "id": "model-data-poisoning",
+      "label": "Model and data poisoning",
+      "required_control": "Verify source, provenance, dataset rights, signatures, and behavior changes."
+    },
+    {
+      "id": "secret-leakage",
+      "label": "Secret leakage",
+      "required_control": "Use vault references, redaction, least privilege, and isolated logs."
+    },
+    {
+      "id": "privacy-leakage",
+      "label": "Privacy leakage",
+      "required_control": "Minimize data, preserve owner boundaries, and enforce retention and deletion policy."
+    },
+    {
+      "id": "malicious-package",
+      "label": "Malicious package",
+      "required_control": "Pin dependencies, inspect package behavior, and build in quarantine."
+    },
+    {
+      "id": "dependency-confusion",
+      "label": "Dependency confusion and slopsquatting",
+      "required_control": "Resolve exact package identity, registry, namespace, hash, and lockfile."
+    },
+    {
+      "id": "unsafe-model-format",
+      "label": "Unsafe model serialization",
+      "required_control": "Prefer safe formats and disable remote model code."
+    },
+    {
+      "id": "artifact-tampering",
+      "label": "Artifact tampering",
+      "required_control": "Verify checksums, signatures, attestations, and trusted update metadata."
+    },
+    {
+      "id": "unauthorized-tools",
+      "label": "Unauthorized tool use",
+      "required_control": "Bind every agent to scoped identity, permissions, budgets, and approval gates."
+    },
+    {
+      "id": "cross-tenant-access",
+      "label": "Cross-tenant access",
+      "required_control": "Enforce owner isolation in identity, storage, logs, queues, and credentials."
+    },
+    {
+      "id": "output-integrity",
+      "label": "Unsafe generated changes",
+      "required_control": "Require tests, review branches, signed evidence, rollback, and owner review."
+    },
+    {
+      "id": "license-risk",
+      "label": "License and usage risk",
+      "required_control": "Review the exact code, model, data, and transitive dependency terms."
+    }
+  ],
+  "defense_pipeline": [
+    {
+      "id": "identity",
+      "label": "Establish owner and workload identity",
+      "evidence": [
+        "owner profile",
+        "workload identity",
+        "tenant boundary"
+      ]
+    },
+    {
+      "id": "intake",
+      "label": "Normalize source and intended use",
+      "evidence": [
+        "official URL",
+        "exact revision",
+        "defensive purpose"
+      ]
+    },
+    {
+      "id": "provenance",
+      "label": "Verify provenance and rights",
+      "evidence": [
+        "license",
+        "checksum",
+        "signature",
+        "model or data card"
+      ]
+    },
+    {
+      "id": "supply-chain",
+      "label": "Inspect the dependency chain",
+      "evidence": [
+        "SBOM",
+        "OSV findings",
+        "VEX status",
+        "SLSA provenance"
+      ]
+    },
+    {
+      "id": "sandbox",
+      "label": "Run in a disposable sandbox",
+      "evidence": [
+        "non-root runtime",
+        "network policy",
+        "resource limits",
+        "quarantined outputs"
+      ]
+    },
+    {
+      "id": "evaluation",
+      "label": "Run security and behavior evaluations",
+      "evidence": [
+        "signed fixtures",
+        "failures",
+        "false-positive rate",
+        "regressions"
+      ]
+    },
+    {
+      "id": "release",
+      "label": "Prepare a reversible review release",
+      "evidence": [
+        "review branch",
+        "draft pull request",
+        "rollback plan",
+        "owner approval"
+      ]
+    },
+    {
+      "id": "monitor",
+      "label": "Monitor the deployed adapter",
+      "evidence": [
+        "identity logs",
+        "cost limits",
+        "incident alerts",
+        "revocation path"
+      ]
+    }
+  ],
+  "model_discovery_sources": [
+    {
+      "id": "openai",
+      "label": "OpenAI model registry",
+      "access": "hosted_api",
+      "official_source": "https://platform.openai.com/docs/api-reference/models/list",
+      "discovery_method": "GET /v1/models",
+      "connection_status": "configuration_required"
+    },
+    {
+      "id": "anthropic",
+      "label": "Anthropic model catalog",
+      "access": "hosted_api",
+      "official_source": "https://docs.anthropic.com/en/docs/about-claude/models/overview",
+      "discovery_method": "official catalog plus configured adapter capability check",
+      "connection_status": "configuration_required"
+    },
+    {
+      "id": "gemini",
+      "label": "Gemini model registry",
+      "access": "hosted_api",
+      "official_source": "https://ai.google.dev/api/models",
+      "discovery_method": "models.list",
+      "connection_status": "configuration_required"
+    },
+    {
+      "id": "mistral",
+      "label": "Mistral model registry",
+      "access": "hosted_and_open_weight",
+      "official_source": "https://docs.mistral.ai/api/endpoint/models",
+      "discovery_method": "GET /v1/models",
+      "connection_status": "configuration_required"
+    },
+    {
+      "id": "xai",
+      "label": "xAI model catalog",
+      "access": "hosted_api",
+      "official_source": "https://docs.x.ai/developers/models",
+      "discovery_method": "official catalog plus configured adapter capability check",
+      "connection_status": "configuration_required"
+    },
+    {
+      "id": "hugging-face",
+      "label": "Hugging Face Hub",
+      "access": "open_model_hub",
+      "official_source": "https://huggingface.co/docs/hub/api",
+      "discovery_method": "Hub metadata and model cards; exact revision required before download",
+      "connection_status": "public_metadata_available"
+    },
+    {
+      "id": "ollama",
+      "label": "Ollama local registry",
+      "access": "local_runtime",
+      "official_source": "https://github.com/ollama/ollama/blob/main/docs/api.md",
+      "discovery_method": "GET /api/tags on an owner-approved loopback endpoint",
+      "connection_status": "local_runtime_required"
+    },
+    {
+      "id": "vllm",
+      "label": "vLLM local or private registry",
+      "access": "self_hosted_runtime",
+      "official_source": "https://docs.vllm.ai/en/latest/serving/openai_compatible_server.html",
+      "discovery_method": "OpenAI-compatible model listing on an owner-approved endpoint",
+      "connection_status": "local_runtime_required"
+    }
+  ],
+  "priority_open_model_watchlist_2026": [
+    {
+      "id": "gpt-oss",
+      "label": "gpt-oss",
+      "tasks": [
+        "reasoning",
+        "agentic coding",
+        "tool use"
+      ],
+      "official_source": "https://github.com/openai/gpt-oss"
+    },
+    {
+      "id": "gemma",
+      "label": "Gemma",
+      "tasks": [
+        "local inference",
+        "multimodal",
+        "on-device"
+      ],
+      "official_source": "https://ai.google.dev/gemma/docs"
+    },
+    {
+      "id": "qwen",
+      "label": "Qwen",
+      "tasks": [
+        "coding",
+        "multilingual",
+        "tool use"
+      ],
+      "official_source": "https://github.com/QwenLM/Qwen"
+    },
+    {
+      "id": "deepseek",
+      "label": "DeepSeek",
+      "tasks": [
+        "coding",
+        "reasoning",
+        "repository repair"
+      ],
+      "official_source": "https://github.com/deepseek-ai"
+    },
+    {
+      "id": "mistral-open",
+      "label": "Mistral open models",
+      "tasks": [
+        "general agents",
+        "coding",
+        "local deployment"
+      ],
+      "official_source": "https://docs.mistral.ai/models/"
+    },
+    {
+      "id": "llama",
+      "label": "Llama",
+      "tasks": [
+        "general agents",
+        "fine-tuning",
+        "local inference"
+      ],
+      "official_source": "https://www.llama.com/llama-downloads/"
+    },
+    {
+      "id": "olmo",
+      "label": "OLMo",
+      "tasks": [
+        "research",
+        "training transparency",
+        "evaluation"
+      ],
+      "official_source": "https://allenai.org/olmo"
+    },
+    {
+      "id": "nemotron",
+      "label": "Nemotron",
+      "tasks": [
+        "agentic reasoning",
+        "synthetic data",
+        "safety evaluation"
+      ],
+      "official_source": "https://build.nvidia.com/explore/discover"
+    },
+    {
+      "id": "starcoder",
+      "label": "StarCoder",
+      "tasks": [
+        "code completion",
+        "multilingual code",
+        "research"
+      ],
+      "official_source": "https://huggingface.co/bigcode"
+    }
+  ],
+  "github_profile_contract": {
+    "identity_protocol": "oauth_pkce",
+    "repository_authority": "github_app_installation",
+    "identity_scopes": [
+      "read:user"
+    ],
+    "repository_permissions": [
+      "metadata:read",
+      "contents:read",
+      "contents:write",
+      "pull_requests:write",
+      "checks:read",
+      "issues:write"
+    ],
+    "repository_allowlist_required": true,
+    "token_storage": "encrypted_vault_reference_only",
+    "raw_token_in_browser": false,
+    "raw_token_in_public_api": false,
+    "per_user_isolation": true,
+    "connection_health_evidence_required": true,
+    "connection_required_for_repository_upgrades": true,
+    "connection_required_for_basic_buddy_use": false
+  },
+  "open_source_upgrade_contract": {
+    "exact_revision_required": true,
+    "license_review_required": true,
+    "signature_or_manual_provenance_review_required": true,
+    "sbom_required": true,
+    "sandbox_required": true,
+    "network_default": "off",
+    "secrets_default": "none",
+    "remote_code_default": "blocked",
+    "protected_branch_write": false,
+    "draft_pull_request_only": true,
+    "automatic_merge": false,
+    "automatic_publish": false,
+    "rollback_checkpoint_required": true,
+    "owner_approval_required": true
+  },
+  "product_profiles": [
+    {
+      "id": "personal",
+      "label": "Personal Defense",
+      "scope": "One owner, local devices, selected repositories, and private evidence reports."
+    },
+    {
+      "id": "business",
+      "label": "Business Defense",
+      "scope": "Tenant-isolated teams, repository policies, approval roles, signed reports, and incident workflows."
+    },
+    {
+      "id": "enterprise",
+      "label": "Enterprise Defense",
+      "scope": "Workload identity, private deployment, policy packs, evidence export, and independent review support."
+    }
+  ],
+  "summary": {
+    "alliance_reference_tools": 7,
+    "openssf_projects": 25,
+    "threat_domains": 12,
+    "defense_pipeline_stages": 8,
+    "model_discovery_sources": 8,
+    "priority_open_model_families": 9,
+    "product_profiles": 3,
+    "live_company_connections": 0,
+    "alliance_membership_claimed": false
+  }
+}

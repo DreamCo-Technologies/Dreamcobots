@@ -1,8 +1,18 @@
 from __future__ import annotations
 
 import unittest
+from unittest.mock import patch
 
-from tools.buddy_local_bridge import LocalBridgeError, require_approval, safe_url, search_url, workspace_targets
+from tools.buddy_local_bridge import (
+    LocalBridgeError,
+    require_approval,
+    safe_url,
+    search_url,
+    store_macos_keychain_secret,
+    validate_secret_locator,
+    validate_secret_value,
+    workspace_targets,
+)
 
 
 class BuddyLocalBridgePolicyTests(unittest.TestCase):
@@ -40,6 +50,26 @@ class BuddyLocalBridgePolicyTests(unittest.TestCase):
             workspace_targets(["terminal"], [])
         with self.assertRaisesRegex(LocalBridgeError, "embedded credentials"):
             workspace_targets([], ["https://user:secret@example.com"])
+
+    def test_secret_intake_validates_locator_and_secret_without_logging_values(self):
+        self.assertEqual(validate_secret_locator("gemini", "GEMINI_API_KEY"), ("gemini", "GEMINI_API_KEY"))
+        self.assertEqual(validate_secret_value("test-secret-value"), "test-secret-value")
+        with self.assertRaisesRegex(LocalBridgeError, "provider id"):
+            validate_secret_locator("Gemini API", "GEMINI_API_KEY")
+        with self.assertRaisesRegex(LocalBridgeError, "line breaks"):
+            validate_secret_value("secret\nvalue")
+
+    @patch("tools.buddy_local_bridge.subprocess.run")
+    @patch("tools.buddy_local_bridge.sys.platform", "darwin")
+    def test_macos_keychain_intake_uses_stdin_and_returns_only_a_locator(self, run):
+        run.return_value.returncode = 0
+        reference = store_macos_keychain_secret("gemini", "GEMINI_API_KEY", "test-secret-value")
+        self.assertEqual(reference, "os_keychain:dreamco.buddy.gemini/GEMINI_API_KEY")
+        command = run.call_args.args[0]
+        self.assertNotIn("test-secret-value", command)
+        self.assertEqual(command[-1], "-w")
+        self.assertEqual(run.call_args.kwargs["input"], "test-secret-value\n")
+        self.assertTrue(run.call_args.kwargs["capture_output"])
 
 
 if __name__ == "__main__":

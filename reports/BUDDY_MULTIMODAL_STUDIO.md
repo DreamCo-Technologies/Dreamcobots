@@ -1,6 +1,6 @@
 # Buddy Multimodal Creative Studio
 
-Buddy now has one governed production path for games, school simulations, learning videos, music videos, biographies, commercials, college courses, feature films, artist development, brand systems, and invention prototypes.
+Buddy now has one governed production path for games, school simulations, learning videos, music videos, biographies, commercials, college courses, feature films, creator channels, recurring shows, artist development, brand systems, and invention prototypes.
 
 ## Production Tracks
 
@@ -12,6 +12,12 @@ Buddy now has one governed production path for games, school simulations, learni
 - `documentary`
 - `animated_series`
 - `social_live_show`
+- `youtube_channel`
+- `social_content_series`
+- `learning_series`
+- `simulation_series`
+- `music_performance_series`
+- `fiction_or_variety_show`
 - `commercial`
 - `college_course`
 - `feature_film`
@@ -39,6 +45,17 @@ Cinema-production workflow and evidence gates. Final picture and sound quality m
 - `editorial_finish`: Editorial, color, and finish (`video-editor-ai`)
 - `accessibility_localization`: Accessibility and localization (`accessibility-auditor`)
 - `rights_delivery`: Rights, safety, and delivery (`governance-dashboard`)
+
+## Creator and Showrunner System
+
+Buddy can create and test show bibles, character libraries, episode packets, learning checks, simulation-game plans, platform variants, and approval-ready publishing packages. A channel is not connected, media is not rendered, and content is not published until an authenticated adapter completes the action with the owner's exact approval.
+
+- `youtube_channel`: YouTube channel or video show
+- `social_content_series`: Social content series
+- `learning_series`: Learning video series
+- `simulation_series`: Simulation and practice-game series
+- `music_performance_series`: Music and performance series
+- `fiction_or_variety_show`: Fiction, cartoon, or variety show
 
 ## Simulation Foundry
 

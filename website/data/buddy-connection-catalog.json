@@ -179,10 +179,39 @@
       "plan status",
       "app label",
       "official host",
+      "authentication method",
+      "secret storage class",
+      "secret-reference presence flag",
       "timestamp"
     ]
   },
   "schema": "dreamco.public_buddy_connection_catalog.v1",
+  "secret_stores": [
+    {
+      "enumeration_allowed": false,
+      "id": "environment",
+      "label": "Environment variable",
+      "locator_format": "UPPERCASE_VARIABLE_NAME",
+      "resolution_boundary": "A deployed backend resolves the named environment entry; public pages never receive the value.",
+      "status": "reference_ready"
+    },
+    {
+      "enumeration_allowed": false,
+      "id": "os_keychain",
+      "label": "macOS Keychain",
+      "locator_format": "os_keychain:service/account",
+      "resolution_boundary": "The authenticated loopback bridge writes one owner-approved value and returns only its locator.",
+      "status": "local_bridge_required"
+    },
+    {
+      "enumeration_allowed": false,
+      "id": "managed_vault",
+      "label": "Managed vault",
+      "locator_format": "provider-specific vault locator",
+      "resolution_boundary": "A scoped backend identity resolves and rotates the entry without returning its value to public clients.",
+      "status": "backend_required"
+    }
+  ],
   "summary": {
     "auth_method_count": 8,
     "connector_contract_count": 10,
@@ -190,6 +219,7 @@
     "platform_profile_count": 3,
     "raw_credentials_accepted": false,
     "secret_storage": "reference_only",
+    "secret_store_count": 3,
     "signup_mode": "assisted_handoff",
     "user_presence_gate_count": 7
   },
