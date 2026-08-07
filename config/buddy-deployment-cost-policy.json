@@ -1,11 +1,13 @@
 {
-  "version": "1.0.0",
+  "version": "1.1.0",
   "default_mode": "static_prototype",
   "monthly_hosting_target_usd": 0,
   "deployment": {
     "public_directory": "website",
     "automatic_provider_deployments": false,
-    "manual_release_required": true,
+    "controlled_github_pages_deployments": true,
+    "manual_release_required": false,
+    "allowed_pages_branches": ["main", "buddy-rebuild-v2"],
     "serverless_functions": false,
     "scheduled_host_jobs": false,
     "provider_managed_database": false,
@@ -21,11 +23,13 @@
     "github_artifact_retention_days": 1,
     "maximum_public_site_mib": 50,
     "cache_static_assets": true,
-    "deploy_only_after_local_preflight": true
+    "deploy_only_after_local_preflight": true,
+    "pages_paths_must_be_scoped": true
   },
   "boundaries": [
     "The static site is a public prototype and does not run the private Buddy backend.",
     "Authentication, payments, private data, rendering, and model calls require separately approved services.",
-    "A free provider plan may restrict commercial use; the owner must verify plan terms before selling access."
+    "A free provider plan may restrict commercial use; the owner must verify plan terms before selling access.",
+    "Automatic GitHub Pages publishing is limited to approved branches and scoped website/config build inputs."
   ]
 }
