@@ -29,6 +29,8 @@ jobs:
       - run: npm ci
       - name: Check builder team readiness
         run: npx tsx tools/check_builder_team_readiness.ts
+      - name: Validate Buddy personality and acting program
+        run: python3 tools/check_buddy_personality_acting_program.py
       - name: Refresh Buddy search index
         run: npx tsx tools/generate_dreamco_search_index.ts
       - name: Refresh Buddy success program
