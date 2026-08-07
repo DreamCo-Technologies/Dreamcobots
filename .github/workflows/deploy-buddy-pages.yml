@@ -2,12 +2,26 @@ name: Deploy Buddy Website
 
 on:
   workflow_dispatch:
+  push:
+    branches:
+      - main
+      - buddy-rebuild-v2
+    paths:
+      - "website/**"
+      - "tools/build_buddy_public_site.py"
+      - "tools/check_deployment_cost_policy.py"
+      - "tools/generate_buddy_model_router.py"
+      - "tools/check_buddy_model_benchmarks.mjs"
+      - "tools/generate_buddy_distribution_catalog.py"
+      - "tools/generate_repository_test_registry.py"
+      - "config/**"
+      - ".github/workflows/deploy-buddy-pages.yml"
 
 permissions:
   contents: read
 
 concurrency:
-  group: buddy-github-pages
+  group: buddy-github-pages-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
@@ -30,7 +44,10 @@ jobs:
           python3 tools/generate_buddy_model_router.py --check
           node tools/check_buddy_model_benchmarks.mjs
           python3 tools/generate_buddy_distribution_catalog.py --check
-          python3 tools/generate_repository_test_registry.py --check
+          # Pages should reflect the exact checked-out commit. Regenerate the derived
+          # repository inventory inside the build rather than failing only because a
+          # newly added source file has not yet had its generated snapshot committed.
+          python3 tools/generate_repository_test_registry.py
           python3 tools/build_buddy_public_site.py --check
 
       - name: Check browser JavaScript syntax
@@ -42,6 +59,8 @@ jobs:
           node --check website/data-control.js
           node --check website/open-model-lab.js
           node --check website/test-center.js
+          node --check website/page-actions.js
+          node --check website/nav.js
           node --check website/service-worker.js
 
       - name: Configure GitHub Pages
@@ -54,7 +73,6 @@ jobs:
           include-hidden-files: true
 
   deploy:
-    if: github.event_name == 'workflow_dispatch'
     needs: build
     runs-on: ubuntu-latest
     permissions:

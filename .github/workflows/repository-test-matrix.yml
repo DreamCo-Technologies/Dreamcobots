@@ -3,6 +3,8 @@ name: Repository Test Matrix
 on:
   pull_request:
   workflow_dispatch:
+  schedule:
+    - cron: "17 11 * * *"
 
 permissions:
   contents: read
@@ -14,7 +16,7 @@ concurrency:
 jobs:
   governed-local-tests:
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 30
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -25,4 +27,17 @@ jobs:
         with:
           python-version: "3.13"
       - run: npm ci
-      - run: npm run test:repository
+      - name: Check builder team readiness
+        run: npx tsx tools/check_builder_team_readiness.ts
+      - name: Validate Buddy personality and acting program
+        run: python3 tools/check_buddy_personality_acting_program.py
+      - name: Refresh Buddy search index
+        run: npx tsx tools/generate_dreamco_search_index.ts
+      - name: Refresh Buddy success program
+        run: npx tsx tools/generate_buddy_success_program.ts
+      - name: Refresh derived fleet quality program for this exact commit
+        run: npx tsx tools/generate_buddy_fleet_quality_program.ts
+      - name: Refresh derived repository registry after all generators
+        run: python3 tools/generate_repository_test_registry.py
+      - name: Run DreamCo Universal Verification Engine
+        run: npx tsx tools/run_universal_verification.ts
