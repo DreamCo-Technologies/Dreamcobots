@@ -27,4 +27,6 @@ jobs:
       - run: npm ci
       - name: Refresh derived repository registry for this exact commit
         run: python3 tools/generate_repository_test_registry.py
+      - name: Refresh derived fleet quality program for this exact commit
+        run: npx tsx tools/generate_buddy_fleet_quality_program.ts
       - run: npm run test:repository
