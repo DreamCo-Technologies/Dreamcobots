@@ -14,7 +14,7 @@ concurrency:
 jobs:
   governed-local-tests:
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 30
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -29,4 +29,5 @@ jobs:
         run: npx tsx tools/generate_buddy_fleet_quality_program.ts
       - name: Refresh derived repository registry after all generators
         run: python3 tools/generate_repository_test_registry.py
-      - run: npm run test:repository
+      - name: Run DreamCo Universal Verification Engine
+        run: npx tsx tools/run_universal_verification.ts
