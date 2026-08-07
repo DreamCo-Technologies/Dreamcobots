@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Buddy on Your Phone | DreamCo</title>
+  <meta name="description" content="Install Buddy on your phone and immediately launch the Buddy test workspace." />
+  <meta name="theme-color" content="#0a0e1a" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Buddy" />
+  <link rel="manifest" href="manifest.webmanifest" />
+  <link rel="apple-touch-icon" href="assets/images/buddy-icon-192.png" />
+  <link rel="icon" href="assets/images/favicon.svg" type="image/svg+xml" />
+  <link rel="stylesheet" href="styles.css?v=41" />
+  <style>
+    body{margin:0;background:#0a0e1a;color:#f4f7ff;font-family:Inter,system-ui,-apple-system,sans-serif}.phone-shell{max-width:720px;margin:0 auto;padding:calc(24px + env(safe-area-inset-top)) 20px calc(32px + env(safe-area-inset-bottom))}.phone-card{background:#121827;border:1px solid #263047;border-radius:24px;padding:22px;margin:16px 0;box-shadow:0 16px 50px rgba(0,0,0,.24)}.phone-hero{text-align:center;padding-top:20px}.phone-hero img{border-radius:28px;box-shadow:0 14px 44px rgba(0,0,0,.32)}.phone-hero h1{font-size:clamp(2rem,9vw,3.3rem);margin:14px 0 8px}.phone-hero p{color:#b9c4db;line-height:1.55}.phone-actions{display:grid;gap:12px;margin-top:20px}.phone-button{display:block;text-align:center;text-decoration:none;padding:15px 18px;border-radius:14px;font-weight:800;background:#fff;color:#0a0e1a}.phone-button.secondary{background:#1b2436;color:#fff;border:1px solid #34405a}.phone-step{display:flex;gap:14px;align-items:flex-start;margin:15px 0}.phone-step strong{display:grid;place-items:center;flex:0 0 34px;height:34px;border-radius:50%;background:#202a40}.phone-step p{margin:4px 0;color:#c4cee2}.phone-status{font-size:.9rem;color:#9fb0ce}.installed .install-only{display:none}.installed #phone-state{color:#8ee4a8}
+  </style>
+</head>
+<body>
+  <main class="phone-shell">
+    <section class="phone-hero">
+      <img src="assets/images/buddy-icon-192.png" alt="Buddy app icon" width="104" height="104" />
+      <p class="phone-status" id="phone-state">Checking this phone…</p>
+      <h1>Put Buddy on your phone</h1>
+      <p>Buddy already supports an installable web-app mode. Install it to your Home Screen, then use the same Buddy workspace to test routing, specialists, tasks, schedules, preferences, and other connected DreamCo features.</p>
+      <div class="phone-actions">
+        <a class="phone-button" href="buddy.html?source=phone-test">Open & Test Buddy Now</a>
+        <a class="phone-button secondary" href="test-center.html">Open Test Center</a>
+        <a class="phone-button secondary" href="install.html">Full Install & Launch Center</a>
+      </div>
+    </section>
+
+    <section class="phone-card install-only" id="ios-card">
+      <h2>iPhone / iPad</h2>
+      <div class="phone-step"><strong>1</strong><p>Open this page in Safari.</p></div>
+      <div class="phone-step"><strong>2</strong><p>Tap Safari's <b>Share</b> button.</p></div>
+      <div class="phone-step"><strong>3</strong><p>Choose <b>Add to Home Screen</b>, then confirm <b>Add</b>.</p></div>
+      <div class="phone-step"><strong>4</strong><p>Open the new Buddy icon from your Home Screen. It launches in standalone app mode.</p></div>
+    </section>
+
+    <section class="phone-card install-only" id="android-card">
+      <h2>Android</h2>
+      <div class="phone-step"><strong>1</strong><p>Open this page in Chrome or another supported browser.</p></div>
+      <div class="phone-step"><strong>2</strong><p>Use the browser's <b>Install app</b> or <b>Add to Home screen</b> command.</p></div>
+      <div class="phone-step"><strong>3</strong><p>Open Buddy from the installed icon and start testing.</p></div>
+    </section>
+
+    <section class="phone-card">
+      <h2>First phone test</h2>
+      <p>After Buddy opens, try: <b>“Help me build a simple app prototype and tell me which specialists you are routing to.”</b></p>
+      <p>Then check Specialists, Tasks, Schedules, Preferences, Test Center, and Install/Launch. Features requiring authenticated external services may still stop at their permission or connection gate.</p>
+    </section>
+  </main>
+  <script>
+    const installed = matchMedia('(display-mode: standalone)').matches || navigator.standalone === true;
+    if (installed) document.body.classList.add('installed');
+    const ua = navigator.userAgent.toLowerCase();
+    const state = document.getElementById('phone-state');
+    if (installed) state.textContent = 'Buddy is installed on this device.';
+    else if (/iphone|ipad|ipod/.test(ua)) state.textContent = 'iPhone detected — install with Safari Share → Add to Home Screen.';
+    else if (/android/.test(ua)) state.textContent = 'Android detected — use your browser’s Install app command.';
+    else state.textContent = 'Open this address on your phone to install Buddy.';
+    if ('serviceWorker' in navigator) navigator.serviceWorker.register('./service-worker.js').catch(() => {});
+  </script>
+</body>
+</html>
