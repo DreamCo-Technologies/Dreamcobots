@@ -109,6 +109,15 @@
     .nav-more-menu.open { display: block; }
   `;
   document.head.appendChild(style);
+
+  // Rebuild V2: add contextual action buttons to the real Codex-built pages.
+  if (!document.querySelector('script[data-dreamco-page-actions]')) {
+    const pageActions = document.createElement('script');
+    pageActions.src = 'page-actions.js?v=1';
+    pageActions.defer = true;
+    pageActions.dataset.dreamcoPageActions = 'true';
+    document.head.appendChild(pageActions);
+  }
 })();
 
 function toggleMoreMenu(e) {
