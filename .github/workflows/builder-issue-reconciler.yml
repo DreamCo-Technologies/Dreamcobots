@@ -1,0 +1,48 @@
+name: Builder Issue Reconciler
+
+on:
+  issues:
+    types: [opened, edited, reopened, labeled]
+  workflow_dispatch:
+    inputs:
+      issue_number:
+        description: "Issue number to reconcile"
+        required: true
+        type: string
+
+permissions:
+  contents: read
+  issues: write
+
+concurrency:
+  group: builder-issue-${{ github.event.issue.number || inputs.issue_number }}
+  cancel-in-progress: true
+
+jobs:
+  reconcile:
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      contains(github.event.issue.labels.*.name, 'builder-backlog') ||
+      contains(github.event.issue.labels.*.name, 'builder-ready')
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+      - run: npm ci
+      - name: Refresh fleet quality before comparison
+        run: npx tsx tools/generate_buddy_fleet_quality_program.ts
+      - name: Refresh repository registry before comparison
+        run: python3 tools/generate_repository_test_registry.py
+      - name: Reconcile issue against current repository
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          ISSUE_NUMBER: ${{ github.event.issue.number || inputs.issue_number }}
+          VERIFY_BEFORE_CLOSE: "true"
+        run: node tools/reconcile_builder_issues.mjs
