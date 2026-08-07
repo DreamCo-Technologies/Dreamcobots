@@ -33,8 +33,20 @@ def main() -> int:
     retention_count = dashboard_workflow.count("retention-days: 1")
     if upload_count != retention_count:
         errors.append("Every dashboard artifact must expire after one day.")
-    if "  push:" in pages_workflow or "  pull_request:" in pages_workflow:
-        errors.append("The GitHub Pages fallback must be manually dispatched.")
+
+    deployment = policy["deployment"]
+    if deployment.get("controlled_github_pages_deployments"):
+        if "  push:" not in pages_workflow:
+            errors.append("Controlled GitHub Pages publishing requires a scoped push trigger.")
+        for branch in deployment.get("allowed_pages_branches", []):
+            if f"      - {branch}" not in pages_workflow:
+                errors.append(f"GitHub Pages workflow is missing approved branch {branch}.")
+        if policy.get("cost_controls", {}).get("pages_paths_must_be_scoped") and "    paths:" not in pages_workflow:
+            errors.append("GitHub Pages push publishing must use scoped paths.")
+    elif deployment.get("manual_release_required"):
+        if "  push:" in pages_workflow or "  pull_request:" in pages_workflow:
+            errors.append("The GitHub Pages fallback must be manually dispatched.")
+
     if not (website / "_headers").is_file() or not (website / "_redirects").is_file():
         errors.append("Provider-neutral static headers and redirects are required.")
     if (website / "api").exists() or (website / "functions").exists():
@@ -53,6 +65,7 @@ def main() -> int:
         "public_site_mib": site_mib,
         "public_files": sum(1 for path in website.rglob("*") if path.is_file()),
         "automatic_vercel_deployments": vercel["git"]["deploymentEnabled"],
+        "controlled_github_pages_deployments": bool(deployment.get("controlled_github_pages_deployments")),
         "scheduled_dashboard_runs": False,
         "artifact_retention_days": policy["cost_controls"]["github_artifact_retention_days"],
         "errors": errors,
