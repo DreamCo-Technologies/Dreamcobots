@@ -1,0 +1,43 @@
+{
+  "schema": "dreamco.chat_gap_registry.v1",
+  "purpose": "Track major DreamCo/Buddy capabilities repeatedly requested in project discussions and whether they have a canonical implementation path in the rebuild.",
+  "statusLegend": {
+    "implemented": "Canonical code exists on the rebuild branch.",
+    "partial": "Some supporting code exists, but the end-to-end capability is incomplete.",
+    "missing": "No canonical implementation was located during the current repo comparison.",
+    "planned": "A rebuild target has been defined but is not yet implemented."
+  },
+  "items": [
+    {"id":"company_buddy","name":"Company-trainable Buddy tenants","status":"implemented","implementation":["shared/company-buddy-contract.ts"],"priority":1},
+    {"id":"bot_contract_v2","name":"Canonical evidence-backed bot contract","status":"implemented","implementation":["shared/bot-contract-v2.ts"],"priority":1},
+    {"id":"contextual_page_actions","name":"Context-specific buttons on Codex-built pages","status":"implemented","implementation":["website/page-actions.js","website/nav.js"],"priority":1},
+    {"id":"workshop_contract","name":"Universal specialized workshop contract","status":"implemented","implementation":["shared/workshop-contract.ts"],"priority":1},
+    {"id":"capability_graph","name":"Bot-capability-tool-model-connector-evidence graph","status":"planned","implementation":[],"priority":1},
+    {"id":"core_ontology","name":"Stable DreamCo business/work ontology","status":"partial","implementation":["server/buddy-success-policy.ts"],"priority":1},
+    {"id":"event_schema","name":"Canonical event schema for all bot/workflow activity","status":"missing","implementation":[],"priority":1},
+    {"id":"enterprise_auth","name":"Enterprise tenant identity, roles, SSO and authorization","status":"missing","implementation":[],"priority":1},
+    {"id":"observability","name":"Unified traces, logs, metrics, cost and task receipts","status":"partial","implementation":["shared/schema.ts"],"priority":1},
+    {"id":"workflow_runtime","name":"Durable event-driven workflow executor","status":"partial","implementation":["server/fleet-runtime.ts","server/routes.ts"],"priority":1},
+    {"id":"app_factory","name":"Dedicated App Factory user workflow","status":"partial","implementation":["website/codelab.html","website/page-actions.js"],"priority":2},
+    {"id":"website_factory","name":"Dedicated Website Factory user workflow","status":"partial","implementation":["website/codelab.html","website/page-actions.js"],"priority":2},
+    {"id":"business_launch_pad","name":"Business Launch Pad from idea through operations","status":"partial","implementation":["website/success.html","server/buddy-success-policy.ts","website/page-actions.js"],"priority":2},
+    {"id":"marketing_hub","name":"Marketing campaign and distribution workspace","status":"partial","implementation":["server/workforce-engine.ts"],"priority":2},
+    {"id":"automation_center","name":"Cross-app automation center","status":"partial","implementation":["server/connected-life-policy.ts","website/orchestration.html"],"priority":2},
+    {"id":"creative_production_os","name":"Movie/series/actor/script/episode/distribution production OS","status":"partial","implementation":["website/studio.html","website/studio.js","config/buddy-creator-showrunner.json","website/page-actions.js"],"priority":2},
+    {"id":"paired_device_mesh","name":"Owner-approved Wi-Fi/Bluetooth/device mesh","status":"partial","implementation":["server/device-action-policy.ts","website/page-actions.js"],"priority":2},
+    {"id":"revenue_opportunity_engine","name":"Discover and validate lawful revenue opportunities","status":"partial","implementation":["server/workforce-engine.ts","server/buddy-success-policy.ts"],"priority":2},
+    {"id":"job_market_discovery","name":"Find automatable paid work from approved/public sources","status":"partial","implementation":["server/workforce-engine.ts"],"priority":2},
+    {"id":"continuous_learning","name":"Evidence-driven improvement from benchmarks, failures and outcomes","status":"partial","implementation":["server/buddy-self-improvement-policy.ts","App_bots/CommandCore.json"],"priority":2},
+    {"id":"company_sop_training","name":"Train Buddy from company SOPs, manuals, tickets, CRM and repos","status":"implemented","implementation":["shared/company-buddy-contract.ts"],"priority":2},
+    {"id":"device_permission_center","name":"Per-device enrollment, pairing, scopes, revocation and audit","status":"missing","implementation":[],"priority":2},
+    {"id":"enterprise_admin_console","name":"Company admin console for roles, workflows, knowledge, budgets and certifications","status":"missing","implementation":[],"priority":2},
+    {"id":"benchmark_evidence_ledger","name":"Signed reproducible benchmark evidence ledger","status":"planned","implementation":[],"priority":2},
+    {"id":"organization_taxonomy_v2","name":"Correct entity/source taxonomy for organization intelligence","status":"planned","implementation":[],"priority":2},
+    {"id":"bot_gap_report","name":"Automated gap/duplicate/certification report across all 1,051 bots","status":"planned","implementation":[],"priority":2},
+    {"id":"production_certification","name":"Production certification gates for every bot/workflow","status":"partial","implementation":["server/fleet-runtime.ts","shared/bot-contract-v2.ts"],"priority":2},
+    {"id":"deployment_distribution","name":"One release path across web, PWA, cloud and app distribution targets","status":"partial","implementation":["app.yaml","cloudbuild.yaml","firebase.json"],"priority":3},
+    {"id":"local_first_data","name":"User-controlled/local-first data where practical","status":"partial","implementation":["server/data-rights-policy.ts"],"priority":3},
+    {"id":"model_council","name":"Multi-model debate/consensus/council routing","status":"partial","implementation":["server/buddy-model-policy.ts"],"priority":3},
+    {"id":"enterprise_roi","name":"Per-workflow ROI, time saved, revenue and cost attribution","status":"partial","implementation":["shared/schema.ts","server/workforce-engine.ts"],"priority":3}
+  ]
+}
