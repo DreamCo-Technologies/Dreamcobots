@@ -3,6 +3,8 @@ name: Repository Test Matrix
 on:
   pull_request:
   workflow_dispatch:
+  schedule:
+    - cron: "17 11 * * *"
 
 permissions:
   contents: read
@@ -25,6 +27,8 @@ jobs:
         with:
           python-version: "3.13"
       - run: npm ci
+      - name: Check builder team readiness
+        run: npx tsx tools/check_builder_team_readiness.ts
       - name: Refresh derived fleet quality program for this exact commit
         run: npx tsx tools/generate_buddy_fleet_quality_program.ts
       - name: Refresh derived repository registry after all generators
