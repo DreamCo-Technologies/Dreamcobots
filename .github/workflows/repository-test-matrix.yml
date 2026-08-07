@@ -29,6 +29,10 @@ jobs:
       - run: npm ci
       - name: Check builder team readiness
         run: npx tsx tools/check_builder_team_readiness.ts
+      - name: Refresh Buddy search index
+        run: npx tsx tools/generate_dreamco_search_index.ts
+      - name: Refresh Buddy success program
+        run: npx tsx tools/generate_buddy_success_program.ts
       - name: Refresh derived fleet quality program for this exact commit
         run: npx tsx tools/generate_buddy_fleet_quality_program.ts
       - name: Refresh derived repository registry after all generators
