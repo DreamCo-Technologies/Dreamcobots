@@ -113,6 +113,8 @@ jobs:
               ;;
             resources)
               {
+                python3 tools/build_resource_sandbox_matrix.py
+                cp config/generated/resource-sandbox-test-matrix.json tmp/buddy-actions/resource-sandbox-test-matrix.json
                 node --import tsx --test tests/buddy-resource-sandbox.test.ts
                 npm run buddy:connections
                 npm run buddy:success
@@ -153,6 +155,19 @@ jobs:
               cat tmp/dreamco-verification/latest.json
               echo '```'
               cp tmp/dreamco-verification/latest.json tmp/buddy-actions/universal-verification.json
+            fi
+            if [ -f tmp/buddy-actions/resource-sandbox-test-matrix.json ]; then
+              echo
+              echo "### Resource sandbox matrix"
+              python3 - <<'PY'
+          import json
+          from pathlib import Path
+          p = Path('tmp/buddy-actions/resource-sandbox-test-matrix.json')
+          data = json.loads(p.read_text())
+          print(f"- Resource types: {data['resource_type_count']}")
+          print(f"- Shared families: {data['shared_family_count']}")
+          print(f"- Planned test instances: {data['planned_test_count']}")
+          PY
             fi
             echo
             echo "### Last test output"
