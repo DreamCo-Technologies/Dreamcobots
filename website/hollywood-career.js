@@ -1,0 +1,22 @@
+(() => {
+  'use strict';
+  const buddyUrl = (prompt) => `buddy.html?prompt=${encodeURIComponent(prompt)}`;
+  const lane = () => document.getElementById('career-lane').value;
+  const profile = () => ({
+    name: document.getElementById('stage-name').value.trim(),
+    goals: document.getElementById('goals').value.trim(),
+    strengths: document.getElementById('strengths').value.trim()
+  });
+  const go = (prompt) => { location.href = buddyUrl(prompt); };
+
+  document.getElementById('career-start').addEventListener('click', () => go(`Build a realistic entertainment-career plan for a ${lane()}. Start with skill assessment, positioning, portfolio gaps, training, showcase projects, networking, opportunity channels, content cadence, outreach, and measurable 30/60/90-day milestones. Do not promise fame or fabricate credentials.`));
+  document.getElementById('portfolio').addEventListener('click', () => go(`Build a professional portfolio package for a ${lane()}: bio, resume/credits template, headshot/portrait brief, demo reel or showcase reel plan, clips, EPK/media kit, website structure, social profiles, contact sheet, audition materials, and rights/provenance checklist. Never invent credits or press.`));
+  document.getElementById('training').addEventListener('click', () => go(`Create a practical training and rehearsal program for a ${lane()}. Include drills, scene/performance practice, camera work, improvisation, self-tapes, interviews, live performance, voice/body work where relevant, weekly exercises, benchmark rubrics, and progress tracking.`));
+  document.getElementById('opportunities').addEventListener('click', () => go(`Help me find and prepare for legitimate opportunities appropriate for a ${lane()}: auditions, casting calls, collaborations, festivals, contests, creator programs, agencies/managers, venues, production companies, and networking events. Verify current opportunities before recommending them and flag fees, scams, rights terms, exclusivity, and deadlines.`));
+  document.getElementById('showcase').addEventListener('click', () => go(`Design an original showcase project around my strengths as a ${lane()}. Offer short film, pilot scene, music video, channel episode, live performance, monologue, commercial-style sample, creator series, or other proof-of-concept options. Build script/treatment, production plan, performance direction, edit, thumbnail/trailer, and release package.`));
+  document.getElementById('promotion').addEventListener('click', () => go(`Build an ethical promotion team plan for a ${lane()}: positioning, content pillars, launch calendar, clips, behind-the-scenes, press pitch, creator collaborations, community plan, thumbnails, trailers, analytics, and next experiments. No fake followers, fake reviews, fabricated press, or deceptive engagement.`));
+  document.getElementById('full-plan').addEventListener('click', () => { const p = profile(); go(`Turn this into a complete entertainment-career operating system. Lane: ${lane()}. Professional/stage name: ${p.name || 'not chosen'}. Goals: ${p.goals || 'help me define them'}. Strengths/background: ${p.strengths || 'help me assess them'}. Build identity, skill plan, portfolio, showcase projects, opportunity pipeline, contact/CRM plan, outreach templates, training calendar, content plan, release plan, business setup checklist, and metrics. Keep all claims truthful.`); });
+  document.getElementById('camera-ready').addEventListener('click', () => go(`Build a camera-ready kit for a ${lane()}: wardrobe/style directions, grooming checklist, pose/expression drills, self-tape setup, lighting, framing, background, audio, phone-camera settings, shot checklist, headshot brief, and rehearsal plan. Adapt for low-budget phone-only use where possible.`));
+  document.getElementById('press-practice').addEventListener('click', () => go(`Run a press and interview practice program for a ${lane()}: podcast interview, livestream, panel, press junket, red-carpet style Q&A, difficult questions, concise story answers, project promotion, boundaries, and media-training feedback.`));
+  document.getElementById('dashboard').addEventListener('click', () => go(`Build my entertainment career dashboard for a ${lane()}. Track training, portfolio assets, projects, auditions/opportunities, submissions, callbacks, contacts, releases, content cadence, audience metrics, income/expenses if I choose, rights/contracts, portfolio gaps, and next highest-value actions.`));
+})();
