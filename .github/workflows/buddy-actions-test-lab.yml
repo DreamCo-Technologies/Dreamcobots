@@ -12,6 +12,7 @@ on:
           - quick
           - buddy
           - api
+          - resources
           - fleet
           - full
       keep_debug_artifacts:
@@ -107,6 +108,14 @@ jobs:
               {
                 node --import tsx --test tests/outbound-adapters.test.ts tests/github-sync-policy.test.ts tests/connection-policy.test.ts tests/device-action-policy.test.ts
                 npm run buddy:connections
+                npm run buddy:repository-audit
+              } 2>&1 | tee tmp/buddy-actions/test.log
+              ;;
+            resources)
+              {
+                node --import tsx --test tests/buddy-resource-sandbox.test.ts
+                npm run buddy:connections
+                npm run buddy:success
                 npm run buddy:repository-audit
               } 2>&1 | tee tmp/buddy-actions/test.log
               ;;
