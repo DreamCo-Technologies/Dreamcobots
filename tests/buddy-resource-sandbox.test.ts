@@ -27,6 +27,7 @@ const categoryArsenalCount = Object.values(ARSENAL.category_scenarios as Record<
   (sum, tests) => sum + tests.length,
   0,
 );
+const expandedMatrixCount = sharedArsenalCount * RESOURCE_TYPES.length + categoryArsenalCount;
 
 test("resource sandbox covers every canonical resource type", () => {
   assert.deepEqual([...PROGRAM.resource_types].sort(), [...RESOURCE_TYPES].sort());
@@ -46,7 +47,8 @@ test("resource sandbox maintains a large shared stress-test library", () => {
   assert.ok(Object.keys(ARSENAL.shared_test_families).length >= 15, "too few shared test families");
   assert.ok(sharedArsenalCount >= 200, `shared sandbox arsenal shrank to ${sharedArsenalCount} tests`);
   assert.ok(categoryArsenalCount >= 200, `category sandbox arsenal shrank to ${categoryArsenalCount} tests`);
-  assert.ok(sharedArsenalCount + categoryArsenalCount >= 400, "total resource sandbox coverage must remain at least 400 planned checks");
+  assert.ok(sharedArsenalCount + categoryArsenalCount >= 400, "raw resource sandbox arsenal must remain at least 400 planned checks");
+  assert.ok(expandedMatrixCount >= 6000, `expanded resource sandbox matrix shrank to ${expandedMatrixCount} test instances`);
 });
 
 test("shared sandbox template covers core connection safety", () => {
