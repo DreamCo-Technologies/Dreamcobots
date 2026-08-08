@@ -1,0 +1,105 @@
+{
+  "schema": "dreamco.bot_benchmark_competition_league.v1",
+  "version": "1.0.0",
+  "mission": "Make every canonical DreamCo bot participate in constructive benchmark competition: find measurable gaps, propose non-duplicate fixes, prove improvements, and share winning improvements across the fleet.",
+  "applies_to": "every canonical bot and declared capability",
+  "competition_is_for": [
+    "closing verified benchmark gaps",
+    "improving user outcomes",
+    "reducing time to goal and unnecessary human steps",
+    "improving correctness, reliability, security, privacy, accessibility, cost and performance",
+    "reaching or exceeding verified competitor and open-source parity",
+    "discovering reusable platform improvements"
+  ],
+  "competition_is_not_for": [
+    "gaming metrics",
+    "hiding failures",
+    "lowering valid benchmark targets",
+    "duplicating bots to inflate scores",
+    "unsafe shortcuts",
+    "bypassing approvals",
+    "self-merging production changes",
+    "claiming wins without reproducible evidence"
+  ],
+  "participation": {
+    "all_bots_enrolled": true,
+    "specialist_priority": "Bots closest to a gap domain compete first; unrelated bots may contribute reusable approaches, tests, research, or review without taking canonical ownership.",
+    "buddy_role": "Buddy is the user-facing orchestrator that explains gaps, routes work, surfaces progress, and applies verified fleet improvements through canonical owners.",
+    "builder_role": "Builder bots turn winning measured proposals into reviewable changes and retest them through the parallel benchmark-gap system."
+  },
+  "gap_challenge_cycle": [
+    "measure and publish a machine-readable gap with baseline, target and evidence",
+    "identify the canonical capability owner and relevant specialist bots",
+    "invite eligible bots to submit bounded improvement proposals",
+    "deduplicate proposals by root cause and affected canonical owner",
+    "score proposals before implementation on expected impact, risk, effort, reuse and guardrail fit",
+    "select one or more non-conflicting proposals for parallel builder lanes",
+    "implement on reviewable changes without overlapping canonical ownership",
+    "run identical benchmark fixtures plus regression and guardrail tests",
+    "rank only verified outcomes",
+    "promote reusable winning improvements into shared infrastructure when appropriate",
+    "retest affected bots and competitors/open-source baselines",
+    "close the gap only when the target and definition of done pass",
+    "reopen automatically on regression"
+  ],
+  "verified_scorecard": {
+    "rule": "No points or wins without reproducible evidence.",
+    "dimensions": [
+      {"id":"gap_closure","weight":30,"measure":"percentage of target gap actually closed"},
+      {"id":"correctness_quality","weight":20,"measure":"same-fixture correctness and domain quality improvement"},
+      {"id":"reliability_recovery","weight":10,"measure":"repeatability, failure handling, rollback and recovery"},
+      {"id":"efficiency","weight":10,"measure":"latency, throughput, CPU, memory, storage, network, tokens and cost"},
+      {"id":"user_effort","weight":10,"measure":"time to goal, user steps and safe autonomy"},
+      {"id":"security_privacy_guardrails","weight":10,"measure":"security, privacy, permissions, rights and guardrail preservation"},
+      {"id":"reuse","weight":5,"measure":"number of other canonical bots/capabilities that benefit without duplication"},
+      {"id":"maintainability","weight":5,"measure":"testability, documentation, dependency health and canonical ownership clarity"}
+    ],
+    "disqualifiers": [
+      "fabricated or stale evidence represented as current",
+      "new critical/high security regression",
+      "privacy or permission regression",
+      "rights/license violation",
+      "hidden failed/skipped tests",
+      "duplicate canonical implementation",
+      "unapproved production write",
+      "benchmark-specific hack that harms general capability"
+    ]
+  },
+  "team_modes": [
+    {"id":"specialist_duel","description":"Two or more relevant bots propose different ways to close the same measured gap."},
+    {"id":"cross_division_sprint","description":"Bots from different divisions solve independent portions of a shared benchmark gap in parallel."},
+    {"id":"red_blue_review","description":"One team proposes a fix while another attacks assumptions, edge cases, security, privacy and regressions."},
+    {"id":"open_source_parity_race","description":"Relevant bots compare Buddy against approved open-source capability and compete to reach verified parity through lawful integration or original implementation."},
+    {"id":"competitor_gap_race","description":"Relevant bots compete to close measured differences against selected top-30 competitor/substitute baselines."},
+    {"id":"fleet_reuse_challenge","description":"Reward fixes that improve many bots through shared canonical infrastructure instead of per-bot patches."}
+  ],
+  "parallel_rules": {
+    "use_existing_parallel_builder_program": true,
+    "maximum_parallel_lanes": 20,
+    "one_concurrent_change_per_canonical_owner": true,
+    "independent_gaps_run_in_parallel": true,
+    "same_owner_proposals_reconcile_before_code": true,
+    "winning_proposal_requires_retest": true
+  },
+  "learning_and_sharing": {
+    "winning_patterns_become_fleet_lessons": true,
+    "share_tests_and_fixtures": true,
+    "share_safe_reusable_components": true,
+    "share_failure_lessons": true,
+    "do_not_blindly_copy_domain_specific_behavior": true,
+    "retain_provenance_and_attribution": true
+  },
+  "league_outputs": [
+    "active gap leaderboard",
+    "verified gap closures",
+    "regressions",
+    "best reusable improvements",
+    "competitor parity changes",
+    "open-source parity changes",
+    "cost and performance improvements",
+    "user-effort improvements",
+    "blocked gaps and dependencies",
+    "next eligible challenges"
+  ],
+  "truth_rule": "Competition status is an engineering coordination signal, not proof that all bots are currently running autonomously. A bot participates only when its benchmark fixtures, routing, dependencies and execution environment are available."
+}
