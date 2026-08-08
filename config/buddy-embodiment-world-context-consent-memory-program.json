@@ -1,0 +1,125 @@
+{
+  "schema": "dreamco.buddy_embodiment_world_context_consent_memory.v1",
+  "version": "1.0.0",
+  "mission": "Teach every DreamCo bot to distinguish web, physical-world and game/simulation contexts; scout lawful embodiment/manufacturer opportunities for Buddy; and remember voice/image identities only within explicit user permission, provenance and usage scope.",
+  "world_context_model": {
+    "required_for_all_bots": true,
+    "contexts": [
+      {"id":"web","definition":"Information, services and actions occurring through websites, APIs, cloud apps, online accounts or remote digital services."},
+      {"id":"physical_world","definition":"Real devices, people, locations, objects, sensors, robots, stores, vehicles, homes and other real-world environments."},
+      {"id":"game_simulation","definition":"Video games, simulations, virtual worlds, test sandboxes, digital twins and fictional environments."}
+    ],
+    "required_task_fields": ["world_context","source_of_truth","permissions","physical_or_virtual_side_effects","safety_boundary","rollback_or_stop"],
+    "rules": [
+      "never treat a game/simulation event as proof that a real-world event happened",
+      "never treat online information as permission to act on a physical device",
+      "physical-world actions require supported hardware/API access and explicit authorization",
+      "game actions must follow game/platform rules and anti-cheat restrictions",
+      "when context is ambiguous, classify before acting"
+    ]
+  },
+  "embodiment_manufacturer_scout": {
+    "enabled": true,
+    "goal": "Continuously research manufacturers, robotics platforms, OEM/ODM partners, edge-compute hardware and device makers that could lawfully host or integrate Buddy in a physical body or dedicated appliance.",
+    "targets": [
+      "humanoid robots",
+      "service robots",
+      "mobile robots",
+      "desktop/social robots",
+      "robotic arms",
+      "telepresence robots",
+      "smart displays",
+      "TV/set-top devices",
+      "automotive infotainment/assistant platforms",
+      "wearables",
+      "embedded edge-AI devices",
+      "microcontroller/robotics kits",
+      "OEM/ODM electronics manufacturers",
+      "contract manufacturers",
+      "robotics integrators",
+      "sensor/camera/microphone vendors",
+      "motor/actuator vendors",
+      "battery/power suppliers",
+      "edge-compute/GPU/NPU modules"
+    ],
+    "manufacturer_record": [
+      "company",
+      "product/platform",
+      "country/region",
+      "official_source",
+      "hardware_type",
+      "compute",
+      "OS/runtime",
+      "SDK/API availability",
+      "networking",
+      "sensors",
+      "actuators",
+      "audio",
+      "display",
+      "battery/power",
+      "price/MOQ if public",
+      "OEM/ODM/white-label availability",
+      "integration/licensing terms",
+      "developer access",
+      "safety/certification notes",
+      "manufacturing lead time if public",
+      "last_verified",
+      "Buddy_fit_score",
+      "next_step"
+    ],
+    "scoring": ["technical fit","developer openness","cost","scalability","manufacturing maturity","privacy/local inference fit","repairability","safety","supply availability","customization","commercial terms","time to prototype"],
+    "output_states": ["discovered","technical_review","commercial_review","prototype_candidate","integration_candidate","blocked","rejected","verified_partner_candidate"],
+    "approval_boundary": "Bots may research, compare and draft outreach/partnership materials. Contacting manufacturers, signing NDAs/contracts, ordering hardware or spending money requires owner approval."
+  },
+  "physical_body_architecture": {
+    "goal": "Keep Buddy portable across bodies rather than locking intelligence to one robot manufacturer.",
+    "layers": ["Buddy identity/personality","planner/router","memory","perception adapters","speech/audio","vision","device/robot command adapter","safety supervisor","local/cloud model router","telemetry","update/rollback"],
+    "adapter_rule": "Each robot/device gets a versioned adapter exposing only supported sensors/actions; Buddy core remains hardware-agnostic.",
+    "safety": ["emergency stop","speed/force limits","geofencing where appropriate","collision/sensor checks","human-presence awareness","manual override","action audit log","safe-state on network/model failure"]
+  },
+  "voice_image_memory": {
+    "goal": "Let Buddy recognize and remember voice/image identities the user has permission to store and use, while preventing unauthorized imitation or use.",
+    "memory_types": ["voice identity reference","speaker preference profile","face/image identity reference","visual appearance notes","user-authorized avatar/likeness","media provenance"],
+    "required_permission_fields": ["subject_or_rights_holder","permission_basis","allowed_uses","prohibited_uses","storage_scope","sharing_scope","training_allowed","generation_allowed","voice_clone_allowed","likeness_generation_allowed","expiration_if_any","revocation_status","source/provenance"],
+    "default_policy": "remember_metadata_only_until_permission_is_explicit",
+    "allowed_uses_examples": ["recognition","personalization","search/organization","private playback","authorized avatar creation","authorized voice generation","creator workflow"],
+    "prohibited_without_permission": ["voice cloning","likeness generation","public impersonation","commercial endorsement","training redistribution","sharing with third parties"],
+    "rules": [
+      "a stored image or audio clip is not automatically permission to imitate the person",
+      "permission is scoped by person, purpose, duration and sharing context",
+      "revocation disables future use and triggers deletion/retention workflow according to user settings and legal requirements",
+      "minimize biometric/identity data and prefer local processing where practical",
+      "never use an unlicensed real person's voice or likeness for deceptive impersonation",
+      "keep provenance for generated media and source references"
+    ]
+  },
+  "cross_context_memory": {
+    "examples": [
+      "web: user prefers a certain streaming service",
+      "physical: user's authorized living-room TV device profile",
+      "game: user's favorite game, settings and play style"
+    ],
+    "rule": "Preferences may be linked across contexts only when useful and authorized, but permissions never automatically transfer between web accounts, physical devices and game platforms."
+  },
+  "bootcamp_tests": [
+    "classify web vs physical vs game scenarios",
+    "reject physical action from web-only permission",
+    "reject unauthorized voice cloning",
+    "allow recognition when permission permits recognition only",
+    "respect permission revocation",
+    "differentiate game NPC from real person",
+    "robot adapter capability boundary",
+    "emergency-stop behavior",
+    "network-loss safe state",
+    "manufacturer source/provenance freshness"
+  ],
+  "integration_targets": [
+    "config/buddy-trusted-life-network-resource-marketplace-program.json",
+    "config/buddy-capability-growth-business-memory-games-program.json",
+    "config/buddy-24x7-system-runtime-program.json",
+    "config/buddy-guardrails-benchmark-program.json",
+    "config/buddy-bootcamp-program.json",
+    "config/shared-fleet-improvement-inheritance.json"
+  ],
+  "truth_rule": "This program defines embodiment scouting, context classification and consent-scoped memory requirements. It does not mean Buddy currently has access to every robot, camera, microphone, device, voice or image source; runtime access requires real supported integrations and permission evidence."
+}
