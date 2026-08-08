@@ -1,0 +1,174 @@
+name: Buddy Actions Test Lab
+
+on:
+  workflow_dispatch:
+    inputs:
+      suite:
+        description: "Choose what to test"
+        required: true
+        default: "quick"
+        type: choice
+        options:
+          - quick
+          - buddy
+          - api
+          - fleet
+          - full
+      keep_debug_artifacts:
+        description: "Upload logs and verification evidence"
+        required: true
+        default: true
+        type: boolean
+  pull_request:
+    paths:
+      - "server/**"
+      - "shared/**"
+      - "client/**"
+      - "website/**"
+      - "tools/**"
+      - "tests/**"
+      - "config/**"
+      - "package.json"
+      - ".github/agents/**"
+      - "AGENTS.md"
+      - ".github/workflows/buddy-actions-test-lab.yml"
+
+permissions:
+  contents: read
+
+env:
+  CI: "true"
+
+concurrency:
+  group: buddy-actions-test-${{ github.ref }}-${{ inputs.suite || 'pr' }}
+  cancel-in-progress: true
+
+jobs:
+  test-buddy:
+    name: Buddy ${{ inputs.suite || 'quick' }} verification
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Record environment
+        run: |
+          mkdir -p tmp/buddy-actions
+          {
+            echo "# Buddy Actions Test Lab"
+            echo
+            echo "- Commit: $GITHUB_SHA"
+            echo "- Ref: $GITHUB_REF"
+            echo "- Event: $GITHUB_EVENT_NAME"
+            echo "- Suite: ${{ inputs.suite || 'quick' }}"
+            echo "- Node: $(node --version)"
+            echo "- npm: $(npm --version)"
+            echo "- Python: $(python3 --version)"
+          } | tee tmp/buddy-actions/environment.md
+
+      - name: Run selected Buddy suite
+        id: buddy-tests
+        shell: bash
+        run: |
+          set -o pipefail
+          suite="${{ inputs.suite || 'quick' }}"
+          case "$suite" in
+            quick)
+              npx tsx tools/run_universal_verification.ts --quick 2>&1 | tee tmp/buddy-actions/test.log
+              ;;
+            buddy)
+              {
+                npm run buddy:success
+                npm run buddy:fleet-quality
+                npm run buddy:search
+                npm run buddy:behavior
+                npm run buddy:self-improvement
+                npm run buddy:connected-life
+                npm run buddy:site:check
+                node --import tsx --test tests/buddy-success-policy.test.ts tests/buddy-success-page.test.mjs tests/fleet-quality-program.test.ts tests/fleet-runtime.test.ts
+              } 2>&1 | tee tmp/buddy-actions/test.log
+              ;;
+            api)
+              {
+                node --import tsx --test tests/outbound-adapters.test.ts tests/github-sync-policy.test.ts tests/connection-policy.test.ts tests/device-action-policy.test.ts
+                npm run buddy:connections
+                npm run buddy:repository-audit
+              } 2>&1 | tee tmp/buddy-actions/test.log
+              ;;
+            fleet)
+              {
+                npm run buddy:fleet
+                npm run buddy:fleet-quality
+                npm run buddy:fleet:e2e
+                npm run buddy:daily-division-benchmarks
+              } 2>&1 | tee tmp/buddy-actions/test.log
+              ;;
+            full)
+              npx tsx tools/run_universal_verification.ts --full 2>&1 | tee tmp/buddy-actions/test.log
+              ;;
+            *)
+              echo "Unknown suite: $suite" | tee tmp/buddy-actions/test.log
+              exit 2
+              ;;
+          esac
+
+      - name: Build debug summary
+        if: always()
+        shell: bash
+        run: |
+          {
+            echo "## Buddy Actions Test Lab"
+            echo
+            echo "**Suite:** ${{ inputs.suite || 'quick' }}"
+            echo "**Commit:** \`$GITHUB_SHA\`"
+            echo "**Result:** ${{ steps.buddy-tests.outcome }}"
+            echo
+            if [ -f tmp/dreamco-verification/latest.json ]; then
+              echo "### Universal verification"
+              echo '```json'
+              cat tmp/dreamco-verification/latest.json
+              echo '```'
+              cp tmp/dreamco-verification/latest.json tmp/buddy-actions/universal-verification.json
+            fi
+            echo
+            echo "### Last test output"
+            echo '```text'
+            tail -n 180 tmp/buddy-actions/test.log 2>/dev/null || true
+            echo '```'
+          } | tee tmp/buddy-actions/debug-summary.md >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Capture changed/generated files
+        if: always()
+        run: |
+          git status --short | tee tmp/buddy-actions/git-status.txt
+          git diff --stat | tee tmp/buddy-actions/git-diff-stat.txt
+          git diff > tmp/buddy-actions/generated-diff.patch || true
+
+      - name: Upload Buddy debug evidence
+        if: always() && (inputs.keep_debug_artifacts == true || github.event_name == 'pull_request')
+        uses: actions/upload-artifact@v4
+        with:
+          name: buddy-debug-${{ github.run_id }}-${{ github.run_attempt }}
+          path: tmp/buddy-actions/
+          retention-days: 7
+          if-no-files-found: warn
+
+      - name: Agent debugging handoff
+        if: failure()
+        run: |
+          echo "Buddy verification failed. Open GitHub Copilot Agents and select 'Buddy Debugger'. Give it this Actions run and ask it to diagnose the first root-cause failure, reproduce it with the smallest relevant test, fix it on a review branch, and rerun the affected suite." >> "$GITHUB_STEP_SUMMARY"
