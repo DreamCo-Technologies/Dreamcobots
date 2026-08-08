@@ -1,0 +1,98 @@
+{
+  "schema": "dreamco.api_test_arsenal.v1",
+  "version": "1.0.0",
+  "mission": "Give Buddy Bootcamp a large reusable API test arsenal that can be applied to internal APIs, provider sandboxes, public read-only APIs, webhooks, model APIs, payment test modes, data APIs, and future connectors with the same evidence standards.",
+  "extends": ["config/buddy-bootcamp-program.json", "config/repository-test-suites.json", "server/outbound-adapters.ts"],
+  "default_execution": {
+    "network": "off",
+    "external_writes": "forbidden",
+    "credentials": "test_or_sandbox_only",
+    "data": "synthetic_or_owner_authorized",
+    "live_provider_tests": "explicit_adapter_and_approval_required",
+    "destructive_tests": "mock_or_sandbox_only",
+    "parallelism": 20
+  },
+  "test_families": {
+    "discovery_and_contract": [
+      "DNS resolution", "TLS handshake", "HTTPS enforcement", "certificate validity", "base URL validation", "health endpoint", "version endpoint", "OpenAPI/schema availability", "documented route inventory", "HTTP method support", "content-type negotiation", "request schema", "response schema", "required headers", "unknown-field behavior", "deprecated-field behavior", "API-version header", "unsupported-version behavior"
+    ],
+    "authentication": [
+      "missing credential", "valid credential", "invalid credential", "expired credential", "revoked credential", "wrong credential type", "malformed authorization header", "token rotation", "least-privilege token", "overprivileged token warning", "OAuth state validation", "OAuth scope validation", "PKCE flow where applicable", "API-key placement", "credential redaction in logs"
+    ],
+    "authorization_and_permissions": [
+      "allowed resource", "forbidden resource", "cross-user isolation", "cross-tenant isolation", "role boundary", "scope boundary", "read-only token cannot write", "write token cannot exceed scope", "admin-only route", "object ownership", "permission change propagation", "revocation propagation"
+    ],
+    "request_validation": [
+      "empty body", "missing required field", "null required field", "wrong type", "oversized string", "oversized numeric", "negative numeric", "boundary numeric", "invalid enum", "invalid date", "invalid timezone", "invalid URL", "invalid email", "invalid Unicode", "invalid JSON", "duplicate JSON keys", "unexpected array", "empty array", "huge array", "nested-depth limit", "unsupported media type", "oversized request body"
+    ],
+    "response_quality": [
+      "status-code correctness", "response content type", "JSON parseability", "schema completeness", "stable field types", "error object schema", "error code consistency", "request/correlation ID", "pagination metadata", "timestamp format", "timezone consistency", "nullability consistency", "unexpected secret detection", "unexpected PII detection", "response-size limit"
+    ],
+    "pagination_filter_sort_search": [
+      "first page", "middle page", "last page", "empty page", "page size minimum", "page size maximum", "invalid cursor", "expired cursor", "duplicate item across pages", "missing item across pages", "stable pagination under repeat", "filter valid", "filter invalid", "combined filters", "sort ascending", "sort descending", "invalid sort field", "search exact", "search partial", "search no result", "special-character search"
+    ],
+    "idempotency_and_replay": [
+      "same idempotency key same request", "same idempotency key changed payload", "duplicate delivery", "retry after timeout", "retry after 5xx", "replayed webhook", "out-of-order webhook", "duplicate webhook event", "request replay window", "side-effect duplication check"
+    ],
+    "rate_limit_and_quota": [
+      "below limit", "at limit", "over limit", "burst traffic", "sustained traffic", "429 response", "Retry-After header", "quota metadata", "daily quota", "per-user quota", "per-token quota", "concurrent request limit", "rate-limit recovery", "backoff behavior"
+    ],
+    "timeouts_retries_resilience": [
+      "fast success", "slow success", "client timeout", "server timeout", "connection reset", "temporary DNS failure", "transient 500", "502", "503", "504", "retryable versus non-retryable classification", "bounded retry count", "exponential backoff", "jitter", "cancellation", "circuit-breaker behavior", "fallback behavior", "resume after interruption"
+    ],
+    "webhooks_events_streaming": [
+      "webhook signature valid", "signature invalid", "missing signature", "timestamp tolerance", "replay protection", "event schema", "unknown event", "event ordering", "duplicate event", "webhook retry", "receiver 2xx", "receiver 4xx", "receiver 5xx", "SSE connect", "SSE reconnect", "SSE event parse", "stream partial chunk", "stream cancellation", "WebSocket connect", "WebSocket reconnect", "WebSocket malformed message", "heartbeat/ping-pong"
+    ],
+    "file_and_media": [
+      "small upload", "maximum allowed upload", "oversized upload", "empty file", "wrong MIME type", "MIME spoof", "corrupt file", "truncated file", "Unicode filename", "very long filename", "duplicate upload", "download integrity hash", "range request", "streaming download", "metadata preservation", "unsafe archive detection", "path traversal filename defense"
+    ],
+    "security_defensive": [
+      "redirect blocking", "credential-in-URL rejection", "secret-in-response scan", "secret-in-log scan", "header injection defense", "CRLF defense", "path traversal defense", "SQL-injection-like input handling", "template-injection-like input handling", "command-string input handling", "SSRF-like URL input restriction", "unsafe redirect target", "CORS policy", "CSRF boundary where browser-authenticated", "clickjacking headers where web surface", "security headers", "mass-assignment defense", "excessive data exposure", "broken object-level authorization check", "sensitive error leakage"
+    ],
+    "performance": [
+      "single-request latency", "p50 latency", "p95 latency", "p99 latency", "cold-start latency", "warm latency", "sequential throughput", "parallel throughput", "connection reuse", "payload-size scaling", "CPU per request", "memory per request", "network bytes", "compression", "large-response handling", "resource leak under repeat", "soak test in sandbox", "spike test in sandbox", "load test within approved limits"
+    ],
+    "data_consistency": [
+      "create-read consistency in sandbox", "update-read consistency", "delete-read consistency in sandbox", "eventual-consistency window", "duplicate record prevention", "transaction rollback", "partial failure", "concurrent update conflict", "optimistic locking", "ETag/If-Match where supported", "cache invalidation", "stale cache", "time ordering", "round-trip serialization"
+    ],
+    "compatibility_and_versioning": [
+      "current version", "previous supported version", "future/unknown version rejection", "backward-compatible field addition", "deprecated endpoint", "SDK versus raw REST parity", "JSON encoding compatibility", "IPv4/IPv6 environment where relevant", "mobile network simulation", "proxy environment", "runtime-version matrix", "schema drift detection"
+    ],
+    "observability": [
+      "request ID", "trace correlation", "latency metric", "error metric", "rate-limit metric", "retry metric", "cost/usage metric", "provider status capture", "redacted audit receipt", "failure classification", "timeout classification", "dependency attribution", "no raw secret logging"
+    ],
+    "cost_and_usage": [
+      "request-count accounting", "token/compute accounting where relevant", "estimated versus actual provider cost", "free-tier boundary", "budget cap", "unexpected retry cost", "large-payload cost", "batch versus individual cost", "cache savings", "cost regression"
+    ],
+    "model_ai_api": [
+      "model ID validity", "model unavailable", "context limit", "empty prompt", "maximum prompt", "structured-output validity", "tool-call schema", "tool-call malformed arguments", "streaming tokens", "stop condition", "temperature/seed reproducibility where supported", "safety refusal handling", "timeout", "rate limit", "fallback model", "quality fixture", "hallucination/evidence fixture", "coding fixture", "multilingual fixture", "cost/latency fixture"
+    ],
+    "payment_api_sandbox": [
+      "successful test payment", "declined test payment", "insufficient-funds fixture", "authentication-required fixture", "expired-payment-method fixture", "incorrect-security-code fixture", "duplicate charge prevention", "idempotent checkout creation", "refund sandbox", "webhook signature", "duplicate webhook", "subscription create", "subscription update", "subscription cancel", "failed renewal fixture", "currency handling", "amount precision", "zero/negative amount rejection", "test/live key separation"
+    ],
+    "developer_api": [
+      "repository read", "missing repository", "rate limit", "pagination", "branch/ref resolution", "file read", "issue read", "PR read", "permission boundary", "write disabled without approval", "review-branch target", "conflict handling", "large diff behavior", "API version compatibility"
+    ]
+  },
+  "api_profiles": [
+    {"id":"dreamco-internal-rest","kind":"internal","mode":"local_or_staging","test_families":["discovery_and_contract","authentication","authorization_and_permissions","request_validation","response_quality","pagination_filter_sort_search","timeouts_retries_resilience","security_defensive","performance","data_consistency","compatibility_and_versioning","observability"]},
+    {"id":"secure-json-webhook","kind":"webhook","implementation":"server/outbound-adapters.ts","mode":"mock_then_staging","test_families":["discovery_and_contract","authentication","request_validation","idempotency_and_replay","timeouts_retries_resilience","webhooks_events_streaming","security_defensive","performance","observability"]},
+    {"id":"payments-test-mode","kind":"payments","mode":"provider_test_credentials_required","test_families":["discovery_and_contract","authentication","authorization_and_permissions","request_validation","idempotency_and_replay","rate_limit_and_quota","timeouts_retries_resilience","webhooks_events_streaming","security_defensive","performance","observability","cost_and_usage","payment_api_sandbox"]},
+    {"id":"model-provider-api","kind":"ai_model","mode":"adapter_budget_and_approval_required","test_families":["discovery_and_contract","authentication","request_validation","response_quality","rate_limit_and_quota","timeouts_retries_resilience","security_defensive","performance","observability","cost_and_usage","model_ai_api"]},
+    {"id":"github-developer-api","kind":"developer","mode":"read_only_by_default","test_families":["discovery_and_contract","authentication","authorization_and_permissions","request_validation","response_quality","pagination_filter_sort_search","rate_limit_and_quota","timeouts_retries_resilience","security_defensive","performance","observability","developer_api"]},
+    {"id":"public-read-data-api","kind":"public_data","mode":"read_only_allowlisted","test_families":["discovery_and_contract","request_validation","response_quality","pagination_filter_sort_search","rate_limit_and_quota","timeouts_retries_resilience","performance","compatibility_and_versioning","observability"]},
+    {"id":"file-media-api","kind":"media","mode":"mock_or_test_adapter","test_families":["discovery_and_contract","authentication","authorization_and_permissions","request_validation","response_quality","timeouts_retries_resilience","file_and_media","security_defensive","performance","observability","cost_and_usage"]},
+    {"id":"event-stream-api","kind":"stream","mode":"mock_then_staging","test_families":["authentication","authorization_and_permissions","request_validation","rate_limit_and_quota","timeouts_retries_resilience","webhooks_events_streaming","security_defensive","performance","observability"]}
+  ],
+  "application_rule": "For each API, select the applicable profile, expand every relevant family into fixtures, mark unsupported tests not_applicable with a reason, run mock/local tests first, then staging/provider-sandbox tests only when credentials, terms, budget and approval permit.",
+  "evidence_record": ["api_id","provider","base_url_reference","profile","api_version","environment","test_id","family","status","started_at","duration_ms","request_fixture_hash","response_fixture_hash_or_summary","http_status","retry_count","cost","failure_class","evidence","runner_version"],
+  "parallel_execution": {"enabled":true,"maximum_parallel_lanes":20,"group_by":"API plus non-conflicting test family","provider_rate_limits_override_parallelism":true,"writes_serialized_when_idempotency_cannot_be_proven":true},
+  "promotion_rules": [
+    "API adapter cannot graduate from Buddy Bootcamp with unresolved critical contract/security/permission failures",
+    "provider-specific workarounds belong in canonical adapter configuration/implementation, not copied across bots",
+    "new reusable API fixtures are promoted into this shared arsenal",
+    "failures found on one API should generate regression fixtures for all compatible API profiles",
+    "live tests never use production-destructive actions when a sandbox/test-mode equivalent exists"
+  ],
+  "truth_rule": "The catalog provides reusable tests and execution plans. Tests count as executed only when a runner records evidence against an actual mock, local service, staging environment, provider sandbox, or explicitly approved read-only endpoint."
+}
