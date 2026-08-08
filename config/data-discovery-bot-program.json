@@ -1,0 +1,106 @@
+{
+  "schema": "dreamco.data_discovery_bot.v1",
+  "version": "1.0.0",
+  "identity": {
+    "slug": "data-discovery-bot",
+    "display_name": "Data Discovery Bot",
+    "division": "DreamData",
+    "category": "training-data-discovery",
+    "role": "Find lawful, useful data of many kinds and turn approved sources into verified training/data-package candidates for the Universal Training Library."
+  },
+  "search_domains": [
+    "government/open data","scientific data","academic/open-access data","public standards","public-domain books","open-licensed books","open-access papers","open-source code and documentation","package registries","public benchmark datasets","public-domain images","open-licensed images","public-domain audio","open-licensed audio","public-domain film/video","open-licensed film/video","geospatial data","weather/climate data","transportation data","economic data","business/public-company filings","financial market reference data where redistribution permits","education/open-course materials","health/public-health aggregate datasets","legal/public court and statute data","patent/public technical data","manufacturing/engineering reference data","robotics/sensor datasets","speech/language corpora","multilingual corpora","computer-vision datasets","music theory/public-domain scores","game/simulation datasets","cybersecurity defensive datasets","user-owned/private data explicitly authorized for private training"
+  ],
+  "source_priority": [
+    "official government or institutional portals",
+    "official dataset repositories",
+    "official project/model/library repositories",
+    "package registries and standards bodies",
+    "university/research institution repositories",
+    "public-domain and open-license archives",
+    "publisher/creator sources with explicit training/redistribution rights",
+    "user-authorized private sources"
+  ],
+  "candidate_record": [
+    "candidate_id","title","description","category","subcategory","data_types","source_url","source_owner","source_type","retrieved_at","version_or_snapshot","license","rights_basis","commercial_use_allowed","redistribution_allowed","AI_training_allowed_or_unknown","attribution_required","geographic_scope","time_range","languages","format","estimated_size","record_count_if_known","freshness","update_frequency","quality_notes","schema_notes","PII_risk","secret_risk","sensitive_data_risk","copyright_risk","license_risk","contamination_risk","bias/coverage_notes","duplicates_or_overlap","compatible_bot_categories","compatible_training_modes","recommended_package_types","verification_plan","download_or_access_method","cost","status"
+  ],
+  "scoring": {
+    "dimensions": {
+      "rights_clarity": 20,
+      "training_relevance": 15,
+      "data_quality": 15,
+      "provenance": 10,
+      "freshness": 10,
+      "coverage/diversity": 10,
+      "format/usability": 5,
+      "benchmark_value": 5,
+      "commercial_package_potential": 5,
+      "maintenance/updateability": 5
+    },
+    "hard_failures": [
+      "stolen or leaked data",
+      "credentials/secrets",
+      "private data without authorization",
+      "redistribution forbidden when building a redistributable sellable package",
+      "license/terms cannot support intended use",
+      "unresolved high-risk PII or sensitive-data exposure",
+      "malware or hostile payloads",
+      "source/provenance cannot be traced"
+    ],
+    "states": ["discovered","rights_review","quality_review","security_privacy_review","approved_for_private_use","approved_for_package_build","reference_only","blocked","stale","deprecated"]
+  },
+  "package_builder_handoff": [
+    "normalize metadata and category tags",
+    "pin source snapshot/version where possible",
+    "verify rights for intended private, commercial and redistribution use separately",
+    "download only through authorized documented access",
+    "scan files for secrets, PII, sensitive data, malware and corruption",
+    "deduplicate exact and near-duplicate records",
+    "validate schemas and formats",
+    "measure completeness, imbalance, noise and coverage",
+    "create train/validation/test or reference/evaluation splits where appropriate",
+    "run contamination checks against benchmark/evaluation material",
+    "create a data card and provenance manifest",
+    "create sample records that are safe to expose",
+    "create bot-training and model-training recipes",
+    "create evaluation/benchmark pack",
+    "create update/refresh recipe",
+    "publish to Universal Training Library only after verification"
+  ],
+  "book_movie_media_handling": {
+    "public_domain_or_open_license": "May be packaged when license/rights and attribution permit.",
+    "licensed_content": "May be included only to the extent the license permits training and redistribution.",
+    "user_owned_or_user_licensed": "May be used in that user's authorized private workflow but is not automatically redistributable.",
+    "copyrighted_without_redistribution_rights": "Create a reference/required-reading-viewing manifest and exercises/metadata only where lawful; do not copy the underlying work into a sellable dataset.",
+    "movie_and_video_training": ["scene metadata","shot/style taxonomy","performance rubric","editing/cinematography labels","rights/provenance","evaluation prompts"],
+    "book_training": ["chapter/topic taxonomy","concept map","curriculum objectives","question/evaluation sets","citation/provenance","rights status"]
+  },
+  "automation": {
+    "continuous_discovery_supported": true,
+    "default_mode": "research_and_score_only",
+    "auto_package_without_review": false,
+    "refresh_policy": "Recheck stale or high-value sources on a scheduled or issue-driven basis.",
+    "parallel_search": true,
+    "parallel_builder_handoff": true,
+    "shared_fleet_learning": true
+  },
+  "guardrails": [
+    "search broadly but collect narrowly according to rights and user purpose",
+    "never bypass paywalls, logins, robots/terms restrictions, access controls, or rate limits",
+    "never infer redistribution rights from public accessibility alone",
+    "never put copyrighted books/movies or other protected works into sellable packages without rights",
+    "never put personal secrets, credentials, or unapproved private data into training packages",
+    "keep source URL, license, snapshot/version, retrieval time and transformations for provenance",
+    "separate private-use approval from redistribution/commercial approval",
+    "mark unknown rights as unknown, not allowed",
+    "do not call a package high-quality until benchmark/evaluation evidence exists"
+  ],
+  "integration_targets": [
+    "config/universal-model-training-library-data-pack-program.json",
+    "config/open-source-library-learning-and-invention-program.json",
+    "config/international-open-weight-model-study-program.json",
+    "config/buddy-guardrails-benchmark-program.json",
+    "config/shared-fleet-improvement-inheritance.json",
+    "DreamData fleet runtime"
+  ]
+}
