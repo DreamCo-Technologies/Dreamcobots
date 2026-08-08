@@ -1,0 +1,171 @@
+{
+  "schema": "dreamco.library_capability_verification_evolution.v1",
+  "version": "1.0.0",
+  "mission": "Keep Buddy continuously current on coding libraries and techniques by verifying exact versions, running capability fixtures, detecting upstream changes, and turning proven library capabilities into safer, easier tools for humans and AI agents.",
+  "applies_to": [
+    "all coding libraries indexed by DreamCo",
+    "all open-source library skill packs",
+    "all coding techniques in the world-coding mastery program",
+    "all coding bots and builder bots",
+    "all shared coding infrastructure"
+  ],
+  "freshness_policy": {
+    "track_exact_version_or_revision": true,
+    "track_release_date": true,
+    "track_last_verified_at": true,
+    "track_stale_after": true,
+    "recheck_on_new_release": true,
+    "recheck_on_security_advisory": true,
+    "recheck_on_license_change": true,
+    "recheck_on_major_runtime_change": true,
+    "recheck_on_failed_user_task": true,
+    "never_call_stale_evidence_current": true
+  },
+  "capability_test_cycle": [
+    "discover or refresh the library/version",
+    "resolve official docs/repository/license",
+    "sandbox exact revision",
+    "install with dependency and security checks",
+    "run official examples",
+    "generate DreamCo minimal capability fixtures",
+    "generate advanced fixtures",
+    "generate failure, timeout, invalid-input, concurrency and recovery fixtures where relevant",
+    "measure correctness, latency, memory, CPU, storage, network, cost and developer/user steps",
+    "compare with prior version and top alternatives",
+    "record regressions, improvements and deprecations",
+    "update skill cards, package recipes and routing metadata",
+    "retest affected bots that inherit the library capability"
+  ],
+  "technique_verification": {
+    "examples": [
+      "algorithms",
+      "design patterns",
+      "compiler optimizations",
+      "memory techniques",
+      "concurrency models",
+      "database patterns",
+      "testing techniques",
+      "security techniques",
+      "AI coding workflows",
+      "regional/public engineering techniques",
+      "binary/assembly/system optimizations"
+    ],
+    "rule": "Treat a technique as mastered only after Buddy can explain it, reproduce it, test it, compare alternatives, apply it in a representative task, and detect when not to use it."
+  },
+  "human_tool_evolution": {
+    "goal": "Turn proven library capabilities into simpler productive tools for people.",
+    "patterns": [
+      "wrap difficult APIs behind clear task-oriented interfaces",
+      "convert CLI-only workflows into web/mobile/desktop controls where useful",
+      "provide one-click setup and verified environment checks",
+      "create templates, wizards and safe defaults",
+      "translate technical errors into actionable user steps",
+      "add previews, dry runs, undo, backup and rollback",
+      "add accessibility and low-complexity modes",
+      "create visual builders for complex configuration or pipelines",
+      "create tutorials and interactive learning examples",
+      "minimize required credentials, dependencies and setup steps",
+      "support export and portability instead of lock-in"
+    ]
+  },
+  "ai_agent_tool_evolution": {
+    "goal": "Turn proven libraries into reliable tools that AI agents can call safely and efficiently.",
+    "patterns": [
+      "stable typed tool schemas",
+      "bounded inputs and outputs",
+      "idempotent actions where practical",
+      "deterministic dry-run mode",
+      "clear error taxonomy",
+      "timeouts, retries and cancellation",
+      "permission and approval metadata",
+      "structured provenance and audit receipts",
+      "small composable tool surfaces instead of giant ambiguous functions",
+      "machine-readable capability descriptions",
+      "versioned compatibility contracts",
+      "local-first execution when feasible",
+      "benchmark fixtures for every agent-callable action"
+    ]
+  },
+  "evolution_backlog": {
+    "create_for_each_verified_library": true,
+    "required_questions": [
+      "What can humans do faster or more safely if Buddy wraps this library?",
+      "What can AI agents do if this capability becomes a stable tool?",
+      "Can this replace a costly manual or cloud workflow?",
+      "Can this become a reusable shared fleet capability?",
+      "Can two or more verified libraries create a useful new product?",
+      "Can we reduce setup, latency, cost, memory, battery, storage or human steps?",
+      "Can we create a training/data/evaluation package from this knowledge lawfully?",
+      "Does the library expose a gap worth contributing upstream rather than forking locally?"
+    ],
+    "idea_states": ["idea","scored","benchmark_needed","prototype","verified_improvement","shared_candidate","product_candidate","blocked","rejected"]
+  },
+  "library_health_record": [
+    "library_id",
+    "exact_version_or_revision",
+    "category",
+    "source",
+    "license",
+    "maintainer_activity",
+    "security_status",
+    "dependency_health",
+    "runtime_compatibility",
+    "capabilities_verified",
+    "fixtures_passed",
+    "fixtures_failed",
+    "performance_results",
+    "alternatives",
+    "breaking_changes",
+    "deprecated_apis",
+    "last_verified_at",
+    "stale_after",
+    "human_tool_opportunities",
+    "agent_tool_opportunities",
+    "shared_fleet_opportunities",
+    "training_package_opportunities"
+  ],
+  "coverage_strategy": {
+    "broad_indexing": "Index as many relevant ecosystems and libraries as practical with metadata and freshness tracking.",
+    "deep_verification_priority": [
+      "libraries already in DreamCo dependencies",
+      "libraries required by active user tasks",
+      "libraries tied to benchmark gaps",
+      "top libraries for major tech job families",
+      "security/runtime-critical libraries",
+      "high-value open-source competitor capabilities",
+      "libraries needed for Universal Training Library packages",
+      "long-tail libraries on demand"
+    ],
+    "truth_rule": "Broad indexing is not the same as mastery; mastery requires executable verification evidence."
+  },
+  "shared_fleet_rules": [
+    "a broadly useful library improvement becomes shared infrastructure when verified",
+    "do not patch the same library integration separately across many bots",
+    "route all bots through canonical adapters where practical",
+    "new upstream releases trigger impact-based retesting of dependent bots",
+    "a regression can roll routing back to the prior verified library/version",
+    "keep old compatible recipes long enough for safe user upgrades and migrations"
+  ],
+  "guardrails": [
+    "do not blindly auto-upgrade production dependencies",
+    "do not run untrusted libraries outside isolation before review",
+    "do not call a library safe or current based only on popularity or stars",
+    "do not copy license-incompatible code",
+    "do not hide upstream regressions",
+    "do not remove working user upgrade paths without migration and rollback",
+    "do not create a human/agent wrapper that exposes unsafe library powers without permissions and boundaries",
+    "do not claim all libraries are tested when only metadata is indexed"
+  ],
+  "success_metrics": [
+    "percentage of active dependencies with fresh verification",
+    "time from upstream release to verified status",
+    "library regression detection time",
+    "verified capability fixture coverage",
+    "human steps removed",
+    "agent tool-call success rate",
+    "shared fleet reuse rate",
+    "upgrade success rate",
+    "rollback success rate",
+    "new verified human/AI tools created from library capabilities"
+  ]
+}
