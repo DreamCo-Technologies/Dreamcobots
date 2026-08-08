@@ -1,212 +1,95 @@
 {
   "schema": "dreamco.universal_model_training_library_data_pack.v1",
-  "version": "1.0.0",
-  "mission": "Turn verified open-source library knowledge, model-training techniques, datasets, evaluations, and reusable engineering skills into a universal DreamCo training library where users can choose lawful packages to teach and customize their own bots and open-weight models efficiently.",
+  "version": "1.1.0",
+  "mission": "Turn verified open-source library knowledge, model-training techniques, datasets, evaluations, books/media curricula, and reusable engineering skills into a universal DreamCo training library where users can choose lawful packages to teach and customize their own bots and open-weight models efficiently.",
+  "organization_standard": {
+    "categories_required": true,
+    "subcategory_required": true,
+    "difficulty_required": true,
+    "job_role_tags_required": true,
+    "domain_tags_required": true,
+    "platform_tags_required": true,
+    "training_use_tags_required": true,
+    "sort_order": ["category","subcategory","difficulty","job_role","task","library","version"],
+    "primary_categories": [
+      "Programming Languages","Web Development","Mobile Development","Desktop Apps","APIs and Integrations","Databases","Data Engineering","Analytics","AI and Machine Learning","LLMs and Agents","Computer Vision","Audio and Speech","Video and Media","Game Development","3D and Simulation","Robotics and Embedded","Cloud","DevOps and SRE","Cybersecurity","Networking","Testing and QA","Performance","Observability","Automation","Business Software","Finance and Payments","Education","Science and Engineering","Design and UI","Accessibility","Local-First and Privacy","Model Training","Evaluation and Benchmarks","Deployment","Developer Tools","Open Standards","Books and Curricula","Film and Media Curricula"
+    ],
+    "difficulty_levels": ["beginner","intermediate","advanced","expert","research"],
+    "training_use_tags": ["prompting","retrieval","tool-use","skill-pack","SFT","LoRA","QLoRA","preference optimization","continued pretraining","distillation","evaluation","benchmarking","from-scratch research"]
+  },
   "product_surfaces": [
-    "Buddy Training Studio",
-    "Universal Library Catalog",
-    "Model/Adapter Training Wizard",
-    "Bot Skill-Pack Builder",
-    "Dataset/Data-Pack Builder",
-    "Evaluation-Pack Builder",
-    "Library-to-Skill Converter",
-    "Shared Fleet Package Registry",
-    "Local Training/Inference Runner",
-    "Cloud Training Adapter",
-    "Export/Portability Center"
+    "Buddy Training Studio","Universal Library Catalog","Model/Adapter Training Wizard","Bot Skill-Pack Builder","Dataset/Data-Pack Builder","Evaluation-Pack Builder","Library-to-Skill Converter","Shared Fleet Package Registry","Local Training/Inference Runner","Cloud Training Adapter","Export/Portability Center"
   ],
   "training_modes": [
-    {"id":"prompt_and_policy","use":"behavior/instructions without changing weights"},
-    {"id":"retrieval_skill_training","use":"teach bots from versioned knowledge, tools, examples and executable skill cards"},
-    {"id":"supervised_fine_tuning","use":"fine-tune supported open-weight models on licensed/owned examples"},
-    {"id":"lora_qlora_adapters","use":"efficient user/domain specialization with small portable adapters"},
-    {"id":"preference_optimization","use":"improve preferred outputs from properly collected comparison/preference data"},
-    {"id":"continued_pretraining","use":"advanced domain adaptation only when data rights, compute, evaluation and model license support it"},
-    {"id":"distillation","use":"transfer verified task behavior into smaller models when licenses and rights permit"},
-    {"id":"from_scratch_research","use":"research/advanced users with explicit compute, dataset provenance, tokenizer, architecture, evaluation and safety plans"}
+    {"id":"prompt_and_policy","use":"behavior/instructions without changing weights"},{"id":"retrieval_skill_training","use":"teach bots from versioned knowledge, tools, examples and executable skill cards"},{"id":"supervised_fine_tuning","use":"fine-tune supported open-weight models on licensed/owned examples"},{"id":"lora_qlora_adapters","use":"efficient user/domain specialization with small portable adapters"},{"id":"preference_optimization","use":"improve preferred outputs from properly collected comparison/preference data"},{"id":"continued_pretraining","use":"advanced domain adaptation only when data rights, compute, evaluation and model license support it"},{"id":"distillation","use":"transfer verified task behavior into smaller models when licenses and rights permit"},{"id":"from_scratch_research","use":"research/advanced users with explicit compute, dataset provenance, tokenizer, architecture, evaluation and safety plans"}
   ],
+  "instruction_standard": {
+    "every_package_must_include": [
+      "what this package teaches","who it is for","prerequisites","supported models/bots","how to install/use the library","minimal working example","advanced example","how to train a bot with it","how to build a dataset/data-pack from it","how to evaluate whether training worked","common errors and recovery","performance/cost tips","upgrade/migration instructions","rollback/removal instructions","license/attribution instructions","security/privacy notes","known limitations"
+    ],
+    "user_paths": [
+      "Use Library Now","Teach My Bot","Build Data Package","Build Evaluation Pack","Create LoRA/Adapter Recipe","Create Skill Pack","Compare Alternatives","Optimize This Library","Export Package"
+    ]
+  },
   "user_training_wizard": [
-    "choose what the bot/model should learn",
-    "choose a compatible base model or no-weight-change skill mode",
-    "choose one or more verified library/skill/data packages",
-    "show license, privacy, hardware, storage, time and estimated cost before training",
-    "validate user rights to supplied data and consent for personal/private data",
-    "automatically select the least expensive training method likely to meet the target",
-    "create train/validation/test splits with contamination checks",
-    "run baseline evaluation before training",
-    "train in an isolated reproducible environment",
-    "checkpoint and expose progress, pause, resume and cancel controls",
-    "run post-training identical evaluations and regression/safety checks",
-    "compare baseline versus trained result",
-    "package model/adapters/skills with provenance, version, license and evaluation card",
-    "allow local export where license permits",
-    "provide rollback to previous bot/model version"
+    "choose what the bot/model should learn","choose a compatible base model or no-weight-change skill mode","choose one or more verified library/skill/data/curriculum packages","show license, privacy, hardware, storage, time and estimated cost before training","validate user rights to supplied data and consent for personal/private data","automatically select the least expensive training method likely to meet the target","create train/validation/test splits with contamination checks","run baseline evaluation before training","train in an isolated reproducible environment","checkpoint and expose progress, pause, resume and cancel controls","run post-training identical evaluations and regression/safety checks","compare baseline versus trained result","package model/adapters/skills with provenance, version, license and evaluation card","allow local export where license permits","provide rollback to previous bot/model version"
   ],
   "universal_library_package_types": [
-    "library-profile-pack",
-    "API-skill-pack",
-    "coding-pattern-pack",
-    "executable-example-pack",
-    "test-fixture-pack",
-    "debugging-pack",
-    "benchmark-pack",
-    "evaluation-pack",
-    "dataset-pack",
-    "synthetic-data-recipe-pack",
-    "tool-use-pack",
-    "workflow-pack",
-    "domain-knowledge-pack",
-    "model-routing-pack",
-    "LoRA/adapter-pack",
-    "quantization-pack",
-    "deployment-pack",
-    "upgrade/migration-pack",
-    "security-hardening-pack",
-    "accessibility-pack",
-    "local-first-pack"
+    "library-profile-pack","API-skill-pack","coding-pattern-pack","executable-example-pack","test-fixture-pack","debugging-pack","benchmark-pack","evaluation-pack","dataset-pack","synthetic-data-recipe-pack","tool-use-pack","workflow-pack","domain-knowledge-pack","model-routing-pack","LoRA/adapter-pack","quantization-pack","deployment-pack","upgrade/migration-pack","security-hardening-pack","accessibility-pack","local-first-pack","book-curriculum-pack","paper-curriculum-pack","film-curriculum-pack","lecture-curriculum-pack","multimedia-training-pack"
   ],
   "package_manifest_required": [
-    "package_id",
-    "name",
-    "version",
-    "package_type",
-    "source/provenance",
-    "source_revision",
-    "license",
-    "commercial_use_status",
-    "redistribution_status",
-    "attribution_requirements",
-    "languages/runtimes",
-    "compatible_models_or_bots",
-    "capabilities",
-    "inputs/outputs",
-    "dependencies",
-    "hardware_requirements",
-    "install/training recipe",
-    "verification fixtures",
-    "benchmark results",
-    "security status",
-    "privacy classification",
-    "data-rights status",
-    "known limitations",
-    "upgrade path",
-    "rollback/removal path",
-    "maintainer",
-    "created_at",
-    "last_verified_at",
-    "stale_after"
+    "package_id","name","version","package_type","category","subcategory","difficulty","job_role_tags","domain_tags","platform_tags","training_use_tags","source/provenance","source_revision","license","commercial_use_status","redistribution_status","attribution_requirements","languages/runtimes","compatible_models_or_bots","capabilities","inputs/outputs","dependencies","hardware_requirements","usage_instructions","bot_training_recipe","data_pack_build_recipe","evaluation_recipe","install/training recipe","verification fixtures","benchmark results","security status","privacy classification","data-rights status","known limitations","upgrade path","rollback/removal path","maintainer","created_at","last_verified_at","stale_after"
   ],
   "library_to_package_pipeline": [
-    "discover library from official repository/registry/docs",
-    "pin exact revision and record license/provenance",
-    "sandbox and security/dependency scan",
-    "extract capabilities and public interfaces",
-    "run official examples and build DreamCo micro-fixtures",
-    "measure performance, cost, compatibility and failure modes",
-    "convert reusable knowledge into one or more package types instead of copying the entire source tree",
-    "generate skill cards, examples, tests and integration recipes",
-    "create training/evaluation data only from content DreamCo has rights to transform and redistribute",
-    "benchmark package usefulness against no-package baseline and alternatives",
-    "publish to shared registry only after verification",
-    "reverify on upstream release/security/license change"
+    "discover library from official repository/registry/docs","pin exact revision and record license/provenance","sandbox and security/dependency scan","classify category/subcategory/difficulty/job roles/domains/platforms/training uses","extract capabilities and public interfaces","run official examples and build DreamCo micro-fixtures","measure performance, cost, compatibility and failure modes","convert reusable knowledge into one or more package types instead of copying the entire source tree","generate user instructions, bot-training recipes, data-pack recipes, skill cards, examples, tests and integration recipes","create training/evaluation data only from content DreamCo has rights to transform and redistribute","benchmark package usefulness against no-package baseline and alternatives","publish to shared registry only after verification","reverify on upstream release/security/license change"
   ],
   "shared_data_package_strategy": {
     "goal":"Create many small composable packages rather than one giant dataset.",
-    "dimensions":["language","framework","library","job role","task","difficulty","platform","domain","tool","failure mode","security","performance","accessibility","deployment target"],
-    "composition_rule":"Users may combine compatible packages into a training recipe; the system resolves duplicates, conflicts, licenses, versions, and sampling weights before training.",
-    "deduplication_required":true,
-    "contamination_checks_required":true,
-    "quality_scoring_required":true,
-    "provenance_required":true,
-    "PII_and_secret_scanning_required":true
+    "dimensions":["language","framework","library","job role","task","difficulty","platform","domain","tool","failure mode","security","performance","accessibility","deployment target","curriculum source type"],
+    "composition_rule":"Users may combine compatible packages into a training recipe; the system resolves duplicates, conflicts, licenses, versions, curriculum rights, and sampling weights before training.",
+    "deduplication_required":true,"contamination_checks_required":true,"quality_scoring_required":true,"provenance_required":true,"PII_and_secret_scanning_required":true
+  },
+  "books_and_media_curriculum": {
+    "enabled": true,
+    "purpose": "Allow a training package to reference or include lawful educational material needed to teach a specialized bot.",
+    "supported_sources": ["public-domain books","open-licensed books","user-owned or user-licensed books","publisher-licensed books","open-access papers","licensed course notes","public-domain films","open-licensed films/videos","user-owned or licensed videos","licensed lectures","original DreamCo-authored curricula"],
+    "bundle_examples": [
+      "mechanic bot: licensed repair manuals + public standards + verified diagrams + test fixtures",
+      "film-analysis bot: public-domain/open-licensed films + scripts user has rights to + cinematography curriculum",
+      "history bot: public-domain books + open archives + source-evaluation exercises",
+      "acting coach bot: licensed/public-domain scenes + performance rubrics + rehearsal datasets",
+      "music-theory bot: open-licensed theory texts + public-domain scores + generated exercises",
+      "coding bot: open-source library docs + permissively licensed books/tutorials + executable repositories + benchmark tasks"
+    ],
+    "rights_rules": [
+      "do not bundle copyrighted books, movies, scripts, courses, or datasets for redistribution unless the package license explicitly permits it",
+      "when redistribution is not allowed, store a reference/required-reading manifest rather than the copyrighted content itself",
+      "user-owned/private copies may be used only under the user's authorized private training workflow and are not automatically redistributable",
+      "record edition/version/source and rights basis for each curriculum item",
+      "derive summaries, annotations, exercises, or training examples only when legally permitted and with provenance"
+    ],
+    "curriculum_manifest_fields": ["title","creator/publisher","edition/version","source_type","source_location","rights_basis","redistribution_allowed","commercial_training_allowed","required_or_optional","learning_objectives","sections/scenes/chapters_used","evaluation_mapping"]
+  },
+  "sellable_data_package_standard": {
+    "goal": "Let DreamCo and users create lawful high-quality training packages for people building their own AI models.",
+    "required_contents": ["clear category and audience","data card","license card","provenance manifest","schema","train/validation/test guidance","quality score","deduplication report","contamination report","PII/secret scan result","training recipe","evaluation pack","benchmark baseline","sample records","known limitations","version history","update policy"],
+    "commercial_gate": ["redistribution rights verified","commercial-use rights verified","third-party attribution preserved","no restricted/private data","no secrets/PII unless explicitly lawful and necessary","evaluation demonstrates usefulness","package can be removed/upgraded cleanly"]
   },
   "efficiency_engine": {
     "objective":"Use each library and training technique with the lowest practical cost, latency, memory, storage, network traffic and user effort while preserving verified quality.",
-    "optimizations":[
-      "capability-based retrieval so only relevant package knowledge enters context",
-      "cache verified documentation summaries and compiled skill cards by exact version",
-      "reuse shared environments and dependency layers when safe",
-      "prefer adapters/LoRA over full fine-tuning when they meet the target",
-      "prefer retrieval/tool use over weight training when knowledge changes frequently",
-      "prefer smaller verified models for bounded tasks",
-      "quantize only after quality regression testing",
-      "batch compatible training/evaluation work",
-      "resume from checkpoints instead of restarting",
-      "deduplicate examples and near-duplicates",
-      "curriculum/sample difficult or informative examples instead of blindly training on everything",
-      "measure tokens/second, examples/second, GPU/CPU memory, energy-relevant runtime, storage, wall time and actual cost",
-      "auto-stop experiments that cannot beat baseline within approved budget",
-      "reuse benchmark/evaluation packs across compatible models",
-      "promote broadly useful optimizations into shared fleet infrastructure"
-    ]
+    "optimizations":["capability-based retrieval so only relevant package knowledge enters context","cache verified documentation summaries and compiled skill cards by exact version","reuse shared environments and dependency layers when safe","prefer adapters/LoRA over full fine-tuning when they meet the target","prefer retrieval/tool use over weight training when knowledge changes frequently","prefer smaller verified models for bounded tasks","quantize only after quality regression testing","batch compatible training/evaluation work","resume from checkpoints instead of restarting","deduplicate examples and near-duplicates","curriculum/sample difficult or informative examples instead of blindly training on everything","measure tokens/second, examples/second, GPU/CPU memory, energy-relevant runtime, storage, wall time and actual cost","auto-stop experiments that cannot beat baseline within approved budget","reuse benchmark/evaluation packs across compatible models","promote broadly useful optimizations into shared fleet infrastructure"]
   },
   "technique_mastery_and_commercialization": {
     "goal":"Turn lawful, independently verified engineering know-how into DreamCo products, services, training packages and U.S.-based technical capability.",
-    "allowed":[
-      "benchmark and learn from public papers, standards, model cards, open-source implementations and license-permitted code",
-      "develop original implementations and optimizations",
-      "sell DreamCo-authored tooling, training workflows, adapters, evaluation packs and services when underlying licenses permit",
-      "teach users reproducible techniques and engineering practices",
-      "publish benchmarks and interoperability standards with provenance"
-    ],
-    "forbidden":[
-      "selling third-party code/weights/data in violation of license or terms",
-      "removing required attribution",
-      "using stolen/leaked/restricted model weights or datasets",
-      "claiming ownership of techniques or code DreamCo did not create",
-      "training on private/copyrighted data without appropriate rights or lawful basis"
-    ]
+    "allowed":["benchmark and learn from public papers, standards, model cards, open-source implementations and license-permitted code","develop original implementations and optimizations","sell DreamCo-authored tooling, training workflows, adapters, evaluation packs and services when underlying licenses permit","teach users reproducible techniques and engineering practices","publish benchmarks and interoperability standards with provenance"],
+    "forbidden":["selling third-party code/weights/data in violation of license or terms","removing required attribution","using stolen/leaked/restricted model weights or datasets","claiming ownership of techniques or code DreamCo did not create","training on private/copyrighted data without appropriate rights or lawful basis"]
   },
   "model_training_research": {
-    "study":[
-      "tokenization",
-      "data collection/cleaning/deduplication",
-      "pretraining objectives",
-      "transformer and mixture-of-experts architectures",
-      "attention/context optimizations",
-      "distributed training",
-      "optimizer/scheduler choices",
-      "mixed precision",
-      "checkpointing",
-      "instruction tuning",
-      "LoRA/QLoRA and adapters",
-      "preference optimization",
-      "distillation",
-      "quantization",
-      "inference engines",
-      "tool use/agents",
-      "multimodal training",
-      "evaluation and contamination",
-      "safety/alignment testing",
-      "model/data licensing",
-      "reproducibility",
-      "hardware/compute efficiency"
-    ],
+    "study":["tokenization","data collection/cleaning/deduplication","pretraining objectives","transformer and mixture-of-experts architectures","attention/context optimizations","distributed training","optimizer/scheduler choices","mixed precision","checkpointing","instruction tuning","LoRA/QLoRA and adapters","preference optimization","distillation","quantization","inference engines","tool use/agents","multimodal training","evaluation and contamination","safety/alignment testing","model/data licensing","reproducibility","hardware/compute efficiency"],
     "international_learning_rule":"Study Chinese and other international open-weight model techniques from public lawful evidence, reproduce measurable ideas independently where appropriate, and benchmark them against DreamCo/U.S. implementations without copying restricted proprietary material."
   },
   "guardrails": [
-    "do not promise that every open-source library can legally become a redistributed training package",
-    "do not ingest entire ecosystems blindly; index broadly and deeply verify packages on demand/priority",
-    "do not train on user private data without explicit authorization and clear retention/export/deletion controls",
-    "do not include secrets, credentials or unintended PII in training packages",
-    "do not execute untrusted package install scripts outside isolation",
-    "do not treat generated/synthetic data as ground truth without validation",
-    "do not publish a package without provenance, license and reproducible verification",
-    "do not claim a trained model improved unless held-out evaluation demonstrates the improvement",
-    "do not let training overwrite the user's previous working model/bot without versioning and rollback"
+    "do not promise that every open-source library can legally become a redistributed training package","do not ingest entire ecosystems blindly; index broadly and deeply verify packages on demand/priority","do not train on user private data without explicit authorization and clear retention/export/deletion controls","do not include secrets, credentials or unintended PII in training packages","do not execute untrusted package install scripts outside isolation","do not treat generated/synthetic data as ground truth without validation","do not publish a package without provenance, license and reproducible verification","do not claim a trained model improved unless held-out evaluation demonstrates the improvement","do not let training overwrite the user's previous working model/bot without versioning and rollback","do not redistribute copyrighted books, films, scripts, lectures, manuals, or courses without explicit rights"
   ],
-  "success_metrics": [
-    "verified packages available",
-    "libraries/frameworks indexed",
-    "libraries deeply verified",
-    "package reuse across bots/users",
-    "time from library discovery to verified skill package",
-    "time from user goal to first trained adapter/skill",
-    "training cost per verified improvement",
-    "upgrade success rate",
-    "rollback success rate",
-    "benchmark improvement",
-    "package security/license incidents",
-    "new useful products/inventions created from package combinations"
-  ]
+  "success_metrics": ["verified packages available","libraries/frameworks indexed","libraries deeply verified","packages with complete categories/instructions","package reuse across bots/users","time from library discovery to verified skill package","time from user goal to first trained adapter/skill","training cost per verified improvement","upgrade success rate","rollback success rate","benchmark improvement","package security/license incidents","new useful products/inventions created from package combinations"]
 }
