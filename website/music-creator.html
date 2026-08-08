@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Music Creator | Buddy by DreamCo</title>
+  <meta name="description" content="Create original songs, beats, instrumentals, scores, mixes, performances, and release packages across a broad global music style catalog with Buddy." />
+  <meta name="theme-color" content="#0a0e1a" />
+  <link rel="manifest" href="manifest.webmanifest" />
+  <link rel="apple-touch-icon" href="assets/images/buddy-icon-192.png" />
+  <link rel="stylesheet" href="styles.css?v=41" />
+  <style>
+    body{margin:0;background:#0a0e1a;color:#f7f8ff;font-family:Inter,system-ui,-apple-system,sans-serif}.music-shell{max-width:1200px;margin:0 auto;padding:30px 20px 64px}.music-hero{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap;align-items:flex-end}.music-hero h1{font-size:clamp(2.2rem,7vw,4.5rem);margin:.2rem 0}.music-hero p{max-width:820px;color:#b6c2d9;line-height:1.6}.music-actions,.music-tabs{display:flex;gap:10px;flex-wrap:wrap}.music-link,.music-tabs button,.style-button,.build-button{border:1px solid #34415e;border-radius:999px;background:#151d2d;color:#fff;padding:10px 14px;font-weight:800;text-decoration:none;cursor:pointer}.music-tabs button.active,.style-button.active{background:#f4f7ff;color:#0a0e1a}.music-section{margin-top:30px}.music-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:12px}.music-card{background:#121827;border:1px solid #27324a;border-radius:20px;padding:18px}.music-card h3{margin:5px 0 8px}.music-card p{color:#aebbd3;line-height:1.45}.music-card .build-button{width:100%;border-radius:12px}.style-cloud{display:flex;gap:8px;flex-wrap:wrap}.style-button{font-size:.88rem}.music-form{background:#101625;border:1px solid #27324a;border-radius:22px;padding:18px}.music-form-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}.music-form label{display:grid;gap:6px;color:#c5cfe2;font-weight:700}.music-form input,.music-form select,.music-form textarea{background:#0b1020;color:#fff;border:1px solid #34405a;border-radius:12px;padding:11px}.music-form textarea{min-height:95px;resize:vertical}.music-note{margin-top:22px;padding:16px;border:1px solid #34415e;border-radius:16px;background:#101625;color:#bec9dd}.music-status{color:#9fe3b3;margin-top:12px}
+  </style>
+</head>
+<body>
+  <div id="nav-placeholder"></div><script src="nav.js"></script>
+  <main class="music-shell">
+    <header class="music-hero">
+      <div>
+        <p>Buddy Music Creator</p>
+        <h1>Build original music in any direction.</h1>
+        <p>Choose a music family, combine styles, describe the feeling, and Buddy prepares an original song or production package: concept, lyrics when requested, harmony, rhythm, arrangement, instrumentation, vocal direction, production notes, mix/master plan, artwork brief, metadata, clips, and release variants.</p>
+      </div>
+      <div class="music-actions"><a class="music-link" href="studio.html">Creative Studio</a><a class="music-link" href="creator-platforms.html">Creator Platform Hub</a><a class="music-link" href="connections.html">Connect Music Platforms</a></div>
+    </header>
+
+    <section class="music-section">
+      <h2>What do you want to make?</h2>
+      <div id="music-build-grid" class="music-grid"></div>
+    </section>
+
+    <section class="music-section">
+      <h2>Music styles</h2>
+      <p>These are broad musical traditions and production directions, not instructions to clone a specific living artist.</p>
+      <div class="music-tabs" id="family-tabs"></div>
+      <div class="style-cloud" id="style-cloud"></div>
+    </section>
+
+    <section class="music-section music-form">
+      <h2>Custom track builder</h2>
+      <form id="music-form">
+        <div class="music-form-grid">
+          <label>Project title<input id="music-title" value="My DreamCo Track" /></label>
+          <label>Primary style<input id="music-style" value="Hip-hop" /></label>
+          <label>BPM<input id="music-bpm" type="number" min="30" max="240" value="92" /></label>
+          <label>Key / mode<input id="music-key" value="Auto choose" /></label>
+          <label>Length<input id="music-length" value="3:00" /></label>
+          <label>Audience / use<input id="music-use" value="Streaming release" /></label>
+        </div>
+        <label>Mood / story<textarea id="music-mood">Confident, cinematic, uplifting, memorable.</textarea></label>
+        <label>Instrumentation / sound<textarea id="music-sound">Choose an original palette that fits the selected style and mood.</textarea></label>
+        <label>Lyrics / vocal direction<textarea id="music-vocals">Create original lyrics and a distinct fictional or user-owned vocal direction. Do not imitate an unlicensed real performer.</textarea></label>
+        <div class="music-actions" style="margin-top:14px"><button class="music-link" type="submit">Build Track in Buddy</button><button id="instrumental-only" class="music-link" type="button">Make Instrumental</button><button id="release-pack" class="music-link" type="button">Build Release Pack</button></div>
+        <p id="music-status" class="music-status" aria-live="polite"></p>
+      </form>
+    </section>
+
+    <div class="music-note"><strong>Originality and rights:</strong> Music Creator can study general genre traits, instrumentation, structure, production techniques, and musical history, but it should create original material rather than copying protected songs or mimicking an unlicensed real artist's voice or identity. User-owned or properly licensed performances can be used when the required rights and consent are present.</div>
+  </main>
+  <script src="music-creator.js?v=1"></script>
+</body>
+</html>
