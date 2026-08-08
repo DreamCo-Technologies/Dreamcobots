@@ -1,0 +1,34 @@
+{
+  "schema": "dreamco.api_test_targets.v1",
+  "version": "1.0.0",
+  "mission": "Apply Buddy Bootcamp's reusable API test arsenal across diverse API types while keeping live execution gated by current documentation, credentials, budgets, rate limits and test/sandbox rules.",
+  "targets": [
+    {"id":"dreamco-api","category":"internal","profile":"dreamco-internal-rest","endpoint_reference":"local DreamCo server","execution":"local/staging"},
+    {"id":"buddy-secure-webhook","category":"webhook","profile":"secure-json-webhook","implementation":"server/outbound-adapters.ts","execution":"mock/localhost first"},
+    {"id":"stripe-test","category":"payments","profile":"payments-test-mode","credential_reference":"STRIPE_TEST_SECRET_KEY","execution":"provider test mode only"},
+    {"id":"github-api","category":"developer","profile":"github-developer-api","credential_reference":"GitHub connection/token reference","execution":"public/read-only or approved review-branch workflow"},
+    {"id":"openai-compatible-model-api","category":"AI model","profile":"model-provider-api","credential_reference":"selected model-provider secret reference","execution":"approved adapter plus budget"},
+    {"id":"anthropic-compatible-model-api","category":"AI model","profile":"model-provider-api","credential_reference":"selected provider secret reference","execution":"approved adapter plus budget"},
+    {"id":"open-weight-inference-api","category":"AI model","profile":"model-provider-api","credential_reference":"provider-specific reference if required","execution":"approved adapter/local inference"},
+    {"id":"public-weather-data-api","category":"public data","profile":"public-read-data-api","execution":"current allowlisted read-only API after terms/rate-limit verification"},
+    {"id":"public-market-data-api","category":"public data","profile":"public-read-data-api","execution":"current allowlisted read-only API after license/terms verification"},
+    {"id":"public-government-data-api","category":"public data","profile":"public-read-data-api","execution":"official read-only endpoint after documentation verification"},
+    {"id":"public-geospatial-api","category":"public data","profile":"public-read-data-api","execution":"official/open read-only endpoint after documentation verification"},
+    {"id":"media-rendering-api","category":"media","profile":"file-media-api","credential_reference":"selected media provider reference","execution":"mock/test adapter before paid render"},
+    {"id":"speech-audio-api","category":"media/audio","profile":"file-media-api","credential_reference":"selected audio provider reference","execution":"local analyzer or provider test adapter"},
+    {"id":"email-sandbox-api","category":"communications","profile":"secure-json-webhook","credential_reference":"email test/sandbox provider reference","execution":"sandbox only before approved delivery"},
+    {"id":"sms-voice-sandbox-api","category":"communications","profile":"secure-json-webhook","credential_reference":"communications test provider reference","execution":"sandbox/verified test destination only"},
+    {"id":"event-stream-test-api","category":"streaming","profile":"event-stream-api","execution":"mock/local/staging stream"}
+  ],
+  "execution_order": [
+    "generate matrix for every target/profile",
+    "run static/contract fixtures",
+    "run mock/local failure injection",
+    "run provider sandbox or read-only staging only when configured",
+    "record evidence and cost",
+    "compare same test family across providers",
+    "turn reusable failures into regression tests",
+    "route measured gaps to parallel Bootcamp/builders"
+  ],
+  "truth_rule": "Target entries are test mappings, not proof that credentials are configured or that live tests have run. Current external documentation and terms must be verified at execution time."
+}
