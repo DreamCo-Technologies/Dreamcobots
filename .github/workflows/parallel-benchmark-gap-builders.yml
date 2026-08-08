@@ -1,0 +1,88 @@
+name: Parallel Benchmark Gap Builders
+
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - "config/**"
+      - "tools/**"
+      - "server/**"
+      - "client/**"
+      - "website/**"
+      - "dreamco_platform/**"
+      - "tests/**"
+      - ".github/workflows/parallel-benchmark-gap-builders.yml"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: benchmark-gap-builders-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  plan:
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.matrix.outputs.matrix }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+      - name: Generate parallel benchmark plan
+        run: python3 tools/plan_parallel_benchmark_gaps.py
+      - id: matrix
+        name: Build lane matrix
+        run: |
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          plan=json.loads(Path('config/generated/parallel-benchmark-gap-plan.json').read_text())
+          include=[]
+          for lane in plan['lanes']:
+              include.append({'lane':lane['lane'],'slot':lane['parallel_slot']})
+          with open(__import__('os').environ['GITHUB_OUTPUT'],'a') as f:
+              f.write('matrix='+json.dumps({'include':include},separators=(',',':'))+'\n')
+          PY
+
+  benchmark-lane:
+    needs: plan
+    strategy:
+      fail-fast: false
+      max-parallel: 20
+      matrix: ${{ fromJSON(needs.plan.outputs.matrix) }}
+    runs-on: ubuntu-latest
+    concurrency:
+      group: benchmark-owner-${{ github.ref }}-${{ matrix.lane }}
+      cancel-in-progress: false
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+      - run: npm ci
+      - name: Regenerate gap plan
+        run: python3 tools/plan_parallel_benchmark_gaps.py
+      - name: Run lane-owned suites through universal verification
+        env:
+          BENCHMARK_BUILDER_LANE: ${{ matrix.lane }}
+          BENCHMARK_PARALLEL_SLOT: ${{ matrix.slot }}
+        run: |
+          echo "Benchmark builder lane: $BENCHMARK_BUILDER_LANE (slot $BENCHMARK_PARALLEL_SLOT)"
+          npx tsx tools/run_universal_verification.ts
+      - name: Guardrail invariant
+        run: |
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          p=json.loads(Path('config/buddy-guardrails-benchmark-program.json').read_text())
+          assert len(p.get('global_guardrails',[])) >= 20
+          assert p['parallel_builder_team']['maximum_parallel_changes_per_owner'] == 1
+          assert p['parallel_builder_team']['maximum_parallel_lanes'] <= 20
+          print('Guardrail invariants pass')
+          PY
