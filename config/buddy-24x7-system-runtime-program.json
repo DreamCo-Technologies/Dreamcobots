@@ -1,0 +1,109 @@
+{
+  "schema": "dreamco.buddy_24x7_system_runtime.v1",
+  "version": "1.0.0",
+  "mission": "Keep Buddy and the DreamCo fleet available as a coordinated 24/7 system using one canonical runtime, durable queues, event-driven workers, schedules, health checks, restart/recovery policy, and explicit stop/runtime controls instead of wasting one permanent process per bot.",
+  "truth_boundary": "GitHub Actions is CI/orchestration, not a permanent application host. Public repositories can use standard GitHub-hosted Actions without minute charges, but jobs are ephemeral and subject to execution/concurrency limits. 24/7 runtime requires an always-on deployment target or self-hosted runtime.",
+  "default_runtime_model": {
+    "buddy_front_door": "always_on_service",
+    "bot_fleet": "logical_workers_loaded_on_demand",
+    "task_queue": "durable",
+    "scheduler": "always_on",
+    "event_bus": "always_on_or_managed",
+    "health_monitor": "always_on",
+    "bot_process_policy": "do_not_spawn_every_bot_permanently",
+    "reason": "Most bots should be callable capabilities behind Buddy, waking for work and returning resources when idle."
+  },
+  "runtime_classes": [
+    {"id":"always_on_service","default_runtime":"until_stopped","examples":["Buddy API/chat front door","routing/orchestration","queue/scheduler","health/telemetry","auth/permissions boundary"]},
+    {"id":"event_driven_worker","default_runtime":"until_task_complete","examples":["specialist bot work","builder bots","data discovery jobs","API tests","creator renders","model evaluations"]},
+    {"id":"scheduled_worker","default_runtime":"bounded_each_run","examples":["freshness scans","competitor scans","library/model refresh","benchmark reruns","backup verification","data refresh"]},
+    {"id":"batch_worker","default_runtime":"explicit_duration_or_until_batch_complete","examples":["large test matrices","data package builds","training jobs","fleet retests","migration jobs"]},
+    {"id":"interactive_session","default_runtime":"until_user_disconnects_or_idle_timeout","examples":["Buddy chat","coding session","Bootcamp training session","creator studio"]},
+    {"id":"manual_only","default_runtime":"explicit_user_start","examples":["high-cost training","paid external actions","destructive migrations","production publishing"]}
+  ],
+  "duration_controls": {
+    "allowed": ["until_stopped", "until_task_complete", "until_batch_complete", "until_user_disconnects", "idle_timeout", "fixed_seconds", "fixed_minutes", "fixed_hours", "schedule_window"],
+    "required_per_task": ["runtime_class", "start_condition", "stop_condition", "timeout", "retry_policy", "checkpoint_policy", "resource_budget", "approval_policy"],
+    "global_stop": true,
+    "per_bot_stop": true,
+    "per_task_stop": true,
+    "pause_resume": true,
+    "drain_queue_before_stop": true
+  },
+  "coordination": {
+    "buddy_is_orchestrator": true,
+    "single_canonical_task_envelope": true,
+    "task_envelope_fields": ["task_id","user_id_or_owner_scope","requested_capability","canonical_bot_owner","priority","created_at","deadline_if_any","runtime_class","max_runtime_seconds","retry_limit","approval_scope","cost_budget","data_scope","dependencies","checkpoint","status"],
+    "queue_priorities": ["critical_recovery","interactive_user","approved_external_action","normal_work","background_refresh","research_low_priority"],
+    "dependency_graph": true,
+    "parallel_independent_work": true,
+    "one_concurrent_change_per_canonical_owner": true,
+    "idempotency_required_for_retries": true
+  },
+  "24x7_health": {
+    "heartbeat_seconds": 30,
+    "service_health_check_seconds": 60,
+    "stuck_task_scan_seconds": 120,
+    "queue_depth_scan_seconds": 60,
+    "dependency_health_scan_minutes": 10,
+    "external_adapter_health_minutes": 15,
+    "full_system_verification_hours": 24,
+    "restart_on_crash": true,
+    "bounded_restart_backoff": true,
+    "circuit_breaker": true,
+    "dead_letter_queue": true,
+    "stuck_task_recovery": true,
+    "checkpoint_resume": true
+  },
+  "resource_policy": {
+    "max_parallel_default": 20,
+    "provider_rate_limits_override": true,
+    "per_task_cpu_memory_limits": true,
+    "per_task_storage_limits": true,
+    "per_task_network_limits": true,
+    "per_task_cost_budget": true,
+    "battery_aware_on_user_devices": true,
+    "thermal_aware_on_user_devices": true,
+    "bandwidth_aware": true,
+    "backpressure": true,
+    "do_not_run_idle_heavy_workers": true
+  },
+  "hosting_strategy": {
+    "recommended_primary": "always-on application/runtime host or managed container/service",
+    "github_actions_role": ["CI", "scheduled validation", "build/test", "release automation", "bounded research/benchmark jobs", "deployment triggers"],
+    "self_hosted_runner_role": "Optional for repository automation that needs your own always-available machine; secure it carefully and do not expose it to untrusted public PR execution.",
+    "public_github_actions_note": "Standard GitHub-hosted runners on public repositories are free for Actions minutes, but are still ephemeral jobs and are not a substitute for Buddy's always-on application runtime.",
+    "larger_runner_note": "Larger GitHub-hosted runners are billed even for public repositories."
+  },
+  "fleet_availability_rule": "Every verified bot should be logically available through Buddy 24/7. A bot does not need its own permanent process; Buddy routes a task to its canonical capability when requested or scheduled.",
+  "scheduling_defaults": {
+    "interactive_bots": "event-driven",
+    "builder_bots": "event-driven from verified gaps/issues",
+    "benchmark_bots": "on code changes plus scheduled refresh",
+    "competitor_intel": "scheduled freshness scan",
+    "open_source_scout": "scheduled and gap-triggered",
+    "library_refresh": "release/security-change triggered plus scheduled scan",
+    "model_refresh": "release/model-change triggered plus scheduled scan",
+    "data_discovery": "scheduled research windows plus explicit searches",
+    "data_package_testing": "on package build/change",
+    "backup_restore_verification": "scheduled",
+    "production_health": "continuous"
+  },
+  "shutdown_policy": [
+    "stop accepting new work for selected scope",
+    "allow critical in-flight writes to reach safe checkpoint",
+    "cancel safe-to-cancel tasks",
+    "persist checkpoints and queue state",
+    "release locks",
+    "record shutdown reason",
+    "support clean resume"
+  ],
+  "guardrails": [
+    "do not use infinite loops inside GitHub-hosted Actions to imitate permanent hosting",
+    "do not restart failing work forever without bounded backoff and dead-letter handling",
+    "do not let background work consume unlimited money, bandwidth, storage, battery or provider quota",
+    "do not keep expensive GPU/model workers alive while idle unless a measured latency requirement justifies it",
+    "do not execute paid/destructive/external actions merely because a bot is always available",
+    "do not mark a bot 24/7 operational until the deployed runtime and health checks provide evidence"
+  ]
+}
