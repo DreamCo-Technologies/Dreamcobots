@@ -1,22 +1,22 @@
 {
   "schema": "dreamco.buddy_24x7_system_runtime.v1",
-  "version": "1.0.0",
-  "mission": "Keep Buddy and the DreamCo fleet available as a coordinated 24/7 system using one canonical runtime, durable queues, event-driven workers, schedules, health checks, restart/recovery policy, and explicit stop/runtime controls instead of wasting one permanent process per bot.",
+  "version": "1.1.0",
+  "mission": "Keep Buddy and the DreamCo fleet available as a coordinated 24/7 system using one canonical runtime, durable queues, event-driven workers, schedules, health checks, restart/recovery policy, explicit stop/runtime controls, and a safe idle-improvement loop so every bot continuously looks for lawful revenue opportunities, human productivity improvements, and ways to make Buddy smarter.",
   "truth_boundary": "GitHub Actions is CI/orchestration, not a permanent application host. Public repositories can use standard GitHub-hosted Actions without minute charges, but jobs are ephemeral and subject to execution/concurrency limits. 24/7 runtime requires an always-on deployment target or self-hosted runtime.",
   "default_runtime_model": {
     "buddy_front_door": "always_on_service",
-    "bot_fleet": "logical_workers_loaded_on_demand",
+    "bot_fleet": "logical_workers_loaded_on_demand_with_idle_improvement_assignments",
     "task_queue": "durable",
     "scheduler": "always_on",
     "event_bus": "always_on_or_managed",
     "health_monitor": "always_on",
     "bot_process_policy": "do_not_spawn_every_bot_permanently",
-    "reason": "Most bots should be callable capabilities behind Buddy, waking for work and returning resources when idle."
+    "reason": "Every bot should be logically available 24/7. When no user or system task is assigned, the scheduler gives the bot bounded background-improvement work instead of wasting a permanent process."
   },
   "runtime_classes": [
     {"id":"always_on_service","default_runtime":"until_stopped","examples":["Buddy API/chat front door","routing/orchestration","queue/scheduler","health/telemetry","auth/permissions boundary"]},
     {"id":"event_driven_worker","default_runtime":"until_task_complete","examples":["specialist bot work","builder bots","data discovery jobs","API tests","creator renders","model evaluations"]},
-    {"id":"scheduled_worker","default_runtime":"bounded_each_run","examples":["freshness scans","competitor scans","library/model refresh","benchmark reruns","backup verification","data refresh"]},
+    {"id":"scheduled_worker","default_runtime":"bounded_each_run","examples":["freshness scans","competitor scans","library/model refresh","benchmark reruns","backup verification","data refresh","idle improvement assignments"]},
     {"id":"batch_worker","default_runtime":"explicit_duration_or_until_batch_complete","examples":["large test matrices","data package builds","training jobs","fleet retests","migration jobs"]},
     {"id":"interactive_session","default_runtime":"until_user_disconnects_or_idle_timeout","examples":["Buddy chat","coding session","Bootcamp training session","creator studio"]},
     {"id":"manual_only","default_runtime":"explicit_user_start","examples":["high-cost training","paid external actions","destructive migrations","production publishing"]}
@@ -34,11 +34,79 @@
     "buddy_is_orchestrator": true,
     "single_canonical_task_envelope": true,
     "task_envelope_fields": ["task_id","user_id_or_owner_scope","requested_capability","canonical_bot_owner","priority","created_at","deadline_if_any","runtime_class","max_runtime_seconds","retry_limit","approval_scope","cost_budget","data_scope","dependencies","checkpoint","status"],
-    "queue_priorities": ["critical_recovery","interactive_user","approved_external_action","normal_work","background_refresh","research_low_priority"],
+    "queue_priorities": ["critical_recovery","interactive_user","approved_external_action","normal_work","background_improvement","background_refresh","research_low_priority"],
     "dependency_graph": true,
     "parallel_independent_work": true,
     "one_concurrent_change_per_canonical_owner": true,
     "idempotency_required_for_retries": true
+  },
+  "idle_improvement_loop": {
+    "enabled": true,
+    "applies_to": "every verified canonical bot",
+    "mode": "bounded_background_research_and_proposal",
+    "preemptible_by_user_work": true,
+    "default_time_slice_minutes": 15,
+    "maximum_parallel_background_lanes": 20,
+    "tracks": [
+      {
+        "id": "lawful_revenue_opportunity",
+        "goal": "Find new lawful ways the bot's capability can create measurable economic value for users or DreamCo without making guarantees or taking unapproved financial/external actions.",
+        "examples": ["new service ideas","cost savings","lead-generation methods","sellable data/skill packs","automation products","marketplace opportunities","pricing experiments","new business-bot graduation opportunities"]
+      },
+      {
+        "id": "human_productivity",
+        "goal": "Find ways to reduce time, cost, clicks, errors, training burden, or repetitive work for humans.",
+        "examples": ["workflow automation","better UI/wizards","one-click setup","smarter defaults","tool integrations","templates","batching","error prevention","accessibility","task decomposition","faster onboarding"]
+      },
+      {
+        "id": "buddy_intelligence",
+        "goal": "Find verified ways to make Buddy and the fleet smarter, more reliable, easier to use, cheaper, safer, or more capable.",
+        "examples": ["routing improvements","model selection","memory/retrieval","new tests","better benchmarks","library/model research","open-source parity","data package improvements","shared infrastructure","failure recovery","performance optimization"]
+      }
+    ],
+    "cycle": [
+      "check for higher-priority user/system work",
+      "choose one track relevant to the bot's domain",
+      "inspect current benchmarks, gaps, issues, library/model/data freshness, and user-friction evidence",
+      "generate a bounded opportunity or improvement hypothesis",
+      "search existing canonical implementation to avoid duplicates",
+      "score expected user value, revenue/public value, effort, risk, reuse, cost, evidence strength and guardrail fit",
+      "if measurable, create or update a benchmark/gap proposal",
+      "if reusable, route through shared-fleet improvement inheritance",
+      "if implementation is justified, hand off to builder competition rather than self-modifying production",
+      "record result, evidence, status and next action",
+      "yield immediately when higher-priority work arrives"
+    ],
+    "allowed_without_owner_approval": [
+      "repository-local analysis",
+      "benchmark planning",
+      "public/open/licensed research through approved sources",
+      "draft issue/gap proposals",
+      "test generation",
+      "mock/sandbox experiments",
+      "cost-free local static analysis",
+      "data/package candidate scoring",
+      "non-destructive review-branch proposals when repository policy allows"
+    ],
+    "requires_approval": [
+      "spending money",
+      "placing trades or investments",
+      "borrowing/lending or applying for financial products",
+      "sending outreach/messages/calls to real people",
+      "publishing publicly",
+      "purchasing goods/services",
+      "changing production accounts/settings",
+      "deploying destructive changes",
+      "using paid provider runs beyond configured budget",
+      "signing agreements or accepting terms on the user's behalf"
+    ],
+    "opportunity_states": ["discovered","needs_evidence","benchmarked","builder_candidate","shared_improvement_candidate","product_candidate","blocked","rejected","verified_improvement"],
+    "truth_rules": [
+      "revenue opportunity is not revenue until money is actually earned and recorded",
+      "projected savings are estimates until measured",
+      "an idea is not a capability until implemented and verified",
+      "a background proposal cannot bypass normal guardrails or owner approval"
+    ]
   },
   "24x7_health": {
     "heartbeat_seconds": 30,
@@ -48,6 +116,7 @@
     "dependency_health_scan_minutes": 10,
     "external_adapter_health_minutes": 15,
     "full_system_verification_hours": 24,
+    "idle_improvement_assignment_minutes": 15,
     "restart_on_crash": true,
     "bounded_restart_backoff": true,
     "circuit_breaker": true,
@@ -66,7 +135,9 @@
     "thermal_aware_on_user_devices": true,
     "bandwidth_aware": true,
     "backpressure": true,
-    "do_not_run_idle_heavy_workers": true
+    "do_not_run_idle_heavy_workers": true,
+    "background_improvement_must_be_preemptible": true,
+    "background_improvement_default_cost_budget_usd": 0
   },
   "hosting_strategy": {
     "recommended_primary": "always-on application/runtime host or managed container/service",
@@ -75,10 +146,10 @@
     "public_github_actions_note": "Standard GitHub-hosted runners on public repositories are free for Actions minutes, but are still ephemeral jobs and are not a substitute for Buddy's always-on application runtime.",
     "larger_runner_note": "Larger GitHub-hosted runners are billed even for public repositories."
   },
-  "fleet_availability_rule": "Every verified bot should be logically available through Buddy 24/7. A bot does not need its own permanent process; Buddy routes a task to its canonical capability when requested or scheduled.",
+  "fleet_availability_rule": "Every verified bot should be logically available through Buddy 24/7. A bot does not need its own permanent process; Buddy routes a task to its canonical capability when requested or scheduled, and assigns safe bounded improvement work when the bot would otherwise be idle.",
   "scheduling_defaults": {
     "interactive_bots": "event-driven",
-    "builder_bots": "event-driven from verified gaps/issues",
+    "builder_bots": "event-driven from verified gaps/issues plus idle improvement review",
     "benchmark_bots": "on code changes plus scheduled refresh",
     "competitor_intel": "scheduled freshness scan",
     "open_source_scout": "scheduled and gap-triggered",
@@ -87,10 +158,12 @@
     "data_discovery": "scheduled research windows plus explicit searches",
     "data_package_testing": "on package build/change",
     "backup_restore_verification": "scheduled",
-    "production_health": "continuous"
+    "production_health": "continuous",
+    "all_verified_bots_idle_mode": "rotate through lawful revenue opportunity, human productivity, and Buddy intelligence tracks"
   },
   "shutdown_policy": [
     "stop accepting new work for selected scope",
+    "stop assigning new background-improvement work",
     "allow critical in-flight writes to reach safe checkpoint",
     "cancel safe-to-cancel tasks",
     "persist checkpoints and queue state",
@@ -104,6 +177,8 @@
     "do not let background work consume unlimited money, bandwidth, storage, battery or provider quota",
     "do not keep expensive GPU/model workers alive while idle unless a measured latency requirement justifies it",
     "do not execute paid/destructive/external actions merely because a bot is always available",
+    "do not let background revenue research place trades, spend funds, apply for credit, send outreach, publish, purchase, or change accounts without the required approval",
+    "do not create spammy, deceptive, exploitative, unlawful or guaranteed-income opportunity proposals",
     "do not mark a bot 24/7 operational until the deployed runtime and health checks provide evidence"
   ]
 }
