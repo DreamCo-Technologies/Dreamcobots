@@ -159,15 +159,7 @@ jobs:
             if [ -f tmp/buddy-actions/resource-sandbox-test-matrix.json ]; then
               echo
               echo "### Resource sandbox matrix"
-              python3 - <<'PY'
-          import json
-          from pathlib import Path
-          p = Path('tmp/buddy-actions/resource-sandbox-test-matrix.json')
-          data = json.loads(p.read_text())
-          print(f"- Resource types: {data['resource_type_count']}")
-          print(f"- Shared families: {data['shared_family_count']}")
-          print(f"- Planned test instances: {data['planned_test_count']}")
-          PY
+              python3 -c "import json; d=json.load(open('tmp/buddy-actions/resource-sandbox-test-matrix.json')); print(f'- Resource types: {d[\"resource_type_count\"]}'); print(f'- Shared families: {d[\"shared_family_count\"]}'); print(f'- Planned test instances: {d[\"planned_test_count\"]}')"
             fi
             echo
             echo "### Last test output"
