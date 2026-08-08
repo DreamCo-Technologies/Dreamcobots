@@ -1,0 +1,140 @@
+{
+  "schema": "dreamco.coding_tech_workforce_competition.v1",
+  "version": "1.0.0",
+  "mission": "Make DreamCo coding bots compete against the measurable workflows of major technology job families while enforcing clean code, zero known release-blocking bugs, strong tests, safe upgrades, and easy user migrations.",
+  "applies_to": ["DreamCodeLab", "coding bots", "builder bots", "debug bots", "architecture bots", "DevOps bots", "data bots", "security bots", "QA bots", "AI/ML coding bots", "all reusable engineering specialists"],
+  "job_families": [
+    "software engineer", "frontend engineer", "backend engineer", "full-stack engineer", "mobile engineer", "iOS engineer", "Android engineer", "desktop application engineer", "game engineer", "graphics engineer", "AR/VR engineer", "embedded engineer", "firmware engineer", "robotics software engineer", "systems engineer", "operating-systems engineer", "compiler engineer", "database engineer", "data engineer", "analytics engineer", "data scientist", "machine-learning engineer", "AI engineer", "LLM engineer", "MLOps engineer", "research engineer", "cloud engineer", "platform engineer", "DevOps engineer", "site reliability engineer", "infrastructure engineer", "network engineer", "security engineer", "application-security engineer", "cloud-security engineer", "security analyst automation engineer", "QA engineer", "test automation engineer", "performance engineer", "release engineer", "build engineer", "solutions architect", "software architect", "enterprise architect", "API engineer", "integration engineer", "automation engineer", "RPA engineer", "developer-experience engineer", "developer-tools engineer", "technical support engineer", "production engineer", "FinOps engineer", "blockchain engineer", "web3 engineer", "search engineer", "recommendation engineer", "audio software engineer", "video software engineer", "computer-vision engineer", "NLP engineer", "GIS engineer", "simulation engineer", "scientific-computing engineer", "HPC engineer", "quant developer", "e-commerce engineer", "payments engineer", "identity/access engineer", "observability engineer", "storage engineer", "distributed-systems engineer", "real-time systems engineer", "technical program engineering support", "technical documentation engineer"
+  ],
+  "professional_workflow_benchmarks": [
+    "requirements understanding",
+    "architecture and tradeoff analysis",
+    "implementation correctness",
+    "code readability",
+    "modularity",
+    "testability",
+    "documentation quality",
+    "debugging speed",
+    "root-cause accuracy",
+    "security posture",
+    "privacy handling",
+    "dependency health",
+    "build reliability",
+    "CI reliability",
+    "deployment safety",
+    "rollback quality",
+    "upgrade simplicity",
+    "backward compatibility",
+    "migration quality",
+    "performance",
+    "resource efficiency",
+    "cost efficiency",
+    "observability",
+    "accessibility where applicable",
+    "API quality",
+    "interoperability",
+    "failure recovery",
+    "maintainability",
+    "time to verified solution",
+    "human review burden"
+  ],
+  "clean_code_standard": {
+    "required": true,
+    "principles": [
+      "single canonical owner per shared capability",
+      "clear names and small understandable units",
+      "minimal duplication",
+      "explicit interfaces and contracts",
+      "separation of concerns",
+      "configuration before forks",
+      "documented public APIs",
+      "consistent formatting and linting",
+      "type safety where the language supports it",
+      "bounded complexity",
+      "no dead code or abandoned duplicate paths in release candidates",
+      "comments explain why, not obvious syntax",
+      "tests live near or clearly map to behavior",
+      "errors are actionable and user-safe",
+      "dependencies are justified and pinned appropriately"
+    ]
+  },
+  "bug_policy": {
+    "goal": "zero known release-blocking bugs",
+    "truth_boundary": "No software process can guarantee zero bugs. DreamCo must never claim bug-free unless the claim is narrowly scoped to verified known test conditions.",
+    "release_blockers": [
+      "known critical correctness failure",
+      "known critical/high security vulnerability introduced by the change",
+      "data loss or corruption risk",
+      "broken upgrade or migration path without rollback",
+      "failing required tests",
+      "unhandled crash in required core workflow",
+      "permission or privacy regression",
+      "known duplicate canonical implementation that can cause inconsistent behavior"
+    ],
+    "required_practices": [
+      "unit tests",
+      "integration tests",
+      "contract tests",
+      "regression tests",
+      "failure-path tests",
+      "security checks",
+      "dependency checks",
+      "static/type checks where applicable",
+      "build verification",
+      "targeted E2E for core workflows",
+      "post-release observation"
+    ]
+  },
+  "easy_upgrade_standard": {
+    "goal": "Users should be able to upgrade Buddy and DreamCo with minimal risk, minimal steps, and clear rollback.",
+    "required": [
+      "semantic or explicit versioning",
+      "machine-readable migration metadata",
+      "backward-compatible defaults where practical",
+      "automatic preflight checks",
+      "automatic backup before risky migrations where applicable",
+      "one-command or one-button upgrade path where practical",
+      "dry-run mode for destructive migrations",
+      "migration progress visibility",
+      "resume/retry support",
+      "rollback or restore path",
+      "clear release notes",
+      "deprecation warnings before removal",
+      "config migration helpers",
+      "data migration checksums/validation where applicable",
+      "plugin/adapter compatibility checks",
+      "mobile/PWA cache-version handling",
+      "no forced cloud lock-in for local-first user data"
+    ]
+  },
+  "competition_program": {
+    "top_competitor_target": 30,
+    "benchmarks_include": [
+      "commercial developer tools",
+      "open-source developer tools",
+      "AI coding agents",
+      "IDE assistants",
+      "CI/CD platforms",
+      "cloud-native engineering platforms",
+      "job-specific professional workflows",
+      "manual senior-engineer baseline where practical"
+    ],
+    "gap_rule": "Any verified coding-workforce gap becomes a benchmark gap routed to the parallel builder competition system and shared improvement inheritance layer.",
+    "shared_fix_rule": "If a fix benefits multiple coding roles or bots, promote it to shared coding/runtime/build infrastructure rather than patching specialists individually."
+  },
+  "release_definition_of_done": [
+    "requirements and acceptance criteria are explicit",
+    "canonical ownership confirmed",
+    "no unnecessary duplicate implementation introduced",
+    "clean-code checks pass",
+    "required tests pass",
+    "zero known release-blocking bugs remain",
+    "security/privacy checks pass",
+    "performance and cost regressions are measured",
+    "upgrade/migration path is verified",
+    "rollback or restore is verified when relevant",
+    "documentation/release notes are updated",
+    "affected shared-fleet bots are queued for parallel retest",
+    "benchmark evidence is updated"
+  ]
+}
