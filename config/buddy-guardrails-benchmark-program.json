@@ -1,0 +1,82 @@
+{
+  "schema": "dreamco.buddy_guardrails_benchmark_program.v1",
+  "version": "1.0.0",
+  "mission": "Make every Buddy capability measurable, guarded, and repairable by builder bots working benchmark gaps in parallel without duplicating ownership.",
+  "extends": [
+    "config/repository-test-suites.json",
+    "config/buddy-communication-behavior.json",
+    "config/buddy-personality-acting-program.json",
+    "config/buddy-music-career-program.json",
+    "config/buddy-portable-vault-program.json",
+    "config/buddy-open-secure-ai-defense.json"
+  ],
+  "global_guardrails": [
+    "never claim a feature is implemented or production-ready without repository and verification evidence",
+    "search for an existing canonical owner before creating a new bot, service, engine, workflow, policy, benchmark, or UI",
+    "extend existing systems instead of creating duplicate implementations whenever practical",
+    "generated plans, catalogs, buttons, routes, and filenames are not proof that runtime behavior works",
+    "keep failed, skipped, blocked, uncertain, and adapter-required verification visible",
+    "external writes require the correct authenticated adapter, permissions, and approval scope",
+    "paid actions require cost visibility and approval according to policy",
+    "user-owned and authorized data only; no silent private-app scraping or device-wide copying",
+    "local-first storage and processing where practical, with user-controlled export, delete, retention, and migration",
+    "high-impact or regulated decisions require appropriate human review and cannot be silently automated",
+    "never fabricate credentials, credits, reviews, awards, press, metrics, customers, followers, test results, or benchmark results",
+    "never guarantee income, fame, performance, approval, eligibility, rankings, business success, or investment results",
+    "do not imitate an unlicensed real person's voice or likeness or copy protected creative work",
+    "current-trend or competitor benchmarking measures observable characteristics and differentiated performance, not copying",
+    "untrusted repositories, models, files, and generated code must remain sandboxed until trust and security checks pass",
+    "secrets and credentials never belong in public files, logs, benchmark fixtures, or collection metadata",
+    "every destructive or irreversible action requires rollback, recovery, or explicit irreversible-action handling",
+    "every long-running or high-volume task must have resource, queue, retry, timeout, cancellation, and device-protection controls",
+    "phone/background execution must honor OS constraints, user permissions, thermal/network/battery policy, and kill switch",
+    "Buddy must remain transparent that it is AI and must not claim consciousness, human feelings, or fabricated shared history",
+    "personality adaptation must not become manipulation, dependency, coercion, deceptive persuasion, or hidden sensitive-trait inference",
+    "commercial media requires rights/provenance checks and synthetic-media labeling where required",
+    "builder bots may propose changes in parallel but must not merge conflicting ownership changes without reconciliation",
+    "issues close only after acceptance criteria and verification pass; history remains available for audit and learning"
+  ],
+  "benchmark_domains": [
+    "correctness","reliability","latency","throughput","resource_efficiency","battery_efficiency","memory_efficiency","cost_efficiency",
+    "security","privacy","permissions","data_portability","local_first_behavior","offline_behavior","accessibility","usability","time_to_goal",
+    "autonomy","human_step_reduction","rollback","recovery","observability","documentation","maintainability","deduplication","integration_quality",
+    "routing_accuracy","task_completion","tool_selection","model_selection","model_quality","freshness","evidence_quality","uncertainty_calibration",
+    "personality_consistency","natural_conversation","active_listening","relationship_integrity","teaching_quality","coaching_quality","sales_quality",
+    "lead_quality","revenue_value","business_value","customer_success","creator_quality","music_quality","acting_quality","video_quality","game_quality",
+    "learning_quality","simulation_quality","device_integration","enterprise_readiness","compliance_readiness","release_readiness","production_readiness"
+  ],
+  "gap_states": ["unknown","measured_gap","assigned","in_progress","fix_ready","retest_required","blocked","passed","regressed"],
+  "gap_record_required_fields": [
+    "gap_id","suite_id","benchmark_domain","capability_owner","baseline","target","evidence","severity","priority","builder_lane","status","files_or_services","tests","dependencies","rollback","retest_command"
+  ],
+  "parallel_builder_team": {
+    "enabled": true,
+    "strategy": "fan_out_by_non_overlapping_gap_owner_then_reconcile",
+    "maximum_parallel_lanes": 20,
+    "maximum_parallel_changes_per_owner": 1,
+    "builder_lanes": [
+      "architecture","backend","frontend","mobile_pwa","data_storage","privacy_permissions","security","testing","performance","cost",
+      "observability","documentation","deployment","integrations","models","creator_media","music_audio","games_simulation","business_sales","accessibility_ux"
+    ],
+    "assignment_rules": [
+      "group gaps that touch the same canonical owner or files into one lane",
+      "run independent lanes in parallel",
+      "do not allow two lanes to edit the same canonical owner concurrently unless a reconciliation owner is declared",
+      "prefer the smallest change that closes multiple related benchmark gaps",
+      "do not weaken a guardrail to make a benchmark pass",
+      "do not mark a gap closed from static text/file matching alone",
+      "every fix must produce a retest result and comparison against baseline and target",
+      "regressions reopen the gap automatically in the generated report"
+    ]
+  },
+  "close_conditions": [
+    "implementation exists in the canonical owner",
+    "required tests pass",
+    "benchmark target passes or an owner-approved documented exception exists",
+    "guardrails still pass",
+    "documentation and evidence are updated",
+    "no duplicate implementation was introduced",
+    "rollback/recovery is documented when applicable",
+    "the related issue or gap record links the verification evidence"
+  ]
+}
