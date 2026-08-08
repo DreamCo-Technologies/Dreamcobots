@@ -1,0 +1,20 @@
+{
+  "schema": "dreamco.buddy_portable_vault.v1",
+  "version": "1.0.0",
+  "mission": "Give each user a portable, user-controlled collection layer for files, photos, videos, audio, charts, notes, links, app exports, and Buddy outputs without silently copying private data.",
+  "principles": ["local-first", "user-owned", "explicit import", "least privilege", "portable export", "no silent scraping", "no duplicate systems"],
+  "storage_tiers": [
+    {"id":"catalog","purpose":"Metadata, folders, tags, provenance, permissions and searchable descriptions","default":"local device"},
+    {"id":"content","purpose":"Actual user-selected file bytes","default":"local encrypted store","requires":"explicit user selection"},
+    {"id":"sync","purpose":"Optional multi-device synchronization","default":"off","requires":"user-selected provider and encryption policy"}
+  ],
+  "supported_items": ["document","photo","image","video","audio","chart","note","link","receipt","spreadsheet","presentation","pdf","code","archive","app_export","creator_asset","business_record","Buddy_output","other_user_file"],
+  "features": ["folders","collections","tags","projects","favorites","search","semantic-search-ready index","previews","thumbnails","duplicate detection","hashing","provenance","source app","created/modified dates","rights metadata","per-item permissions","per-app permissions","export","import","backup manifest","restore manifest","device migration","retention controls","delete controls"],
+  "import_routes": ["user file picker","device share/open-in","authorized connector","official app export","camera capture","microphone capture","Buddy-generated output"],
+  "cross_app_rules": {"default":"deny","read":"selected items only","write":"selected collection only","publish":"separate approval","credentials":"never stored in collection metadata"},
+  "encryption": {"at_rest":"required for persisted content","key_model":"user/device controlled abstraction","cloud_sync":"encrypt before provider upload when implementation supports it","recovery":"must be designed before enabling irreversible user-key-only mode"},
+  "deduplication": {"strategy":["content hash","size","normalized filename","media fingerprint when available"],"behavior":"suggest duplicates; never delete automatically"},
+  "search": {"metadata":"local","full_text":"for explicitly indexed supported documents","semantic":"optional local or user-approved processing","private_content":"never sent externally without approval"},
+  "migration": {"export_formats":["portable manifest JSON","original selected files","collection metadata"],"goal":"move a Buddy library between devices without platform lock-in"},
+  "integration_targets": ["website/data-control.html","website/collection-vault.html","Buddy chat","Creator Studio","Music Career Studio","Hollywood Career Studio","future connected apps"]
+}
