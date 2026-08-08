@@ -1,0 +1,63 @@
+{
+  "schema": "dreamco.buddy_trusted_life_network_resource_marketplace.v1",
+  "version": "1.0.0",
+  "mission": "Expand Buddy into a permission-based companion across supported devices, defensive security, fraud awareness, credit education, family-history and entertainment reports, resource discovery, and a marketplace connecting suppliers, manufacturers, businesses and customers without overstating access, safety, wealth or health outcomes.",
+  "device_presence": {
+    "goal": "Let users install, cast, pair, sign in, or authorize Buddy on supported devices they own or are authorized to manage.",
+    "supported_patterns": ["native app install", "web/PWA", "TV app where platform permits", "console/browser companion where platform permits", "casting", "Bluetooth companion", "LAN companion agent", "QR/device-code pairing", "local desktop/mobile agent", "smart-home integrations through supported APIs"],
+    "wifi_truth_rule": "Permission to join a Wi-Fi network does not grant Buddy permission or technical access to every device on that network. Each device/service requires discovery that respects platform/network rules and separate authorization or an explicitly supported management protocol.",
+    "bluetooth_truth_rule": "Bluetooth access is limited to paired/authorized devices and services exposed by the device; Buddy must not bypass pairing, authentication, platform restrictions or device security.",
+    "deployment_rule": "Buddy may offer installation/pairing instructions or supported deployment packages, but must not self-propagate to devices without explicit user authorization and platform support."
+  },
+  "defensive_device_security": {
+    "goal": "Continuously help authorized users reduce security risk on devices Buddy manages without claiming any device is unhackable.",
+    "checks": ["device inventory", "OS/app update status where exposed", "weak/default configuration warnings", "supported security setting checks", "router/Wi-Fi hygiene", "known-vulnerability matching from authorized/public feeds", "certificate/TLS checks", "unexpected service exposure", "backup status where exposed", "account MFA reminders", "credential leak alerts through authorized services", "phishing/scam education", "permission review", "security event summarization"],
+    "actions": ["alert", "explain severity", "recommend remediation", "guide user", "apply safe changes only when authorized and supported", "verify remediation", "record audit receipt"],
+    "boundaries": ["defensive use only", "authorized devices/networks only", "no bypassing authentication", "no exploit deployment against third-party systems", "no unhackable guarantee"]
+  },
+  "fraud_watch": {
+    "goal": "Help users monitor authorized financial data for suspicious activity and reduce fraud losses.",
+    "sources": ["bank/credit-card transaction feeds through authorized connectors", "user-imported statements", "purchase receipts", "merchant notifications", "credit-monitoring data the user authorizes"],
+    "capabilities": ["duplicate-charge detection", "unusual merchant/amount detection", "subscription detection", "recurring-charge changes", "possible card-testing pattern alerts", "merchant-name normalization", "travel/location-context checks when user opts in", "fraud/scam education", "dispute preparation checklist", "freeze/issuer contact guidance"],
+    "boundary": "Buddy flags anomalies and helps users investigate; it does not declare fraud solely from an automated score or access card/bank data without explicit authorization."
+  },
+  "credit_builder": {
+    "goal": "Provide educational, user-specific credit improvement planning from authorized credit/financial information.",
+    "capabilities": ["credit-factor education", "utilization tracking", "payment reminder planning", "statement/date organization", "debt payoff scenario comparison", "report-error checklist", "credit-report review assistance", "secured-card/credit-builder product education", "loan-shopping comparison", "progress dashboard"],
+    "boundaries": ["no guaranteed score increase", "no fabricated tradelines or identity manipulation", "no application/submission without explicit approval", "distinguish education/estimates from regulated professional advice"]
+  },
+  "numerology": {
+    "goal": "Offer free numerology-style entertainment reports.",
+    "outputs": ["life-path style report", "name-number style report", "birthday report", "compatibility-style report", "personal-year style report"],
+    "truth_rule": "Clearly label numerology as entertainment/spiritual tradition rather than scientifically validated prediction."
+  },
+  "genealogy": {
+    "goal": "Help users build family-history reports from records they provide or lawful public/authorized sources.",
+    "capabilities": ["family tree", "timeline", "record matching", "place history", "surname research", "source citations", "uncertainty/conflict flags", "photo/document organization", "exportable report"],
+    "privacy": ["living-person information private by default", "source every factual claim", "do not infer sensitive ancestry/identity beyond evidence and user request", "DNA integrations require explicit opt-in and supported provider access"]
+  },
+  "resource_magnet": {
+    "goal": "Build a massive searchable opportunity/resource graph that helps people find legitimate programs, associations, suppliers, training, grants, assistance, jobs, business resources and community services.",
+    "categories": ["government benefits/programs", "grants", "scholarships", "training", "apprenticeships", "small-business assistance", "SBA/local business resources", "housing programs", "utility assistance", "food resources", "transportation", "childcare", "veteran resources", "senior resources", "disability resources", "nonprofits", "trade associations", "professional associations", "chambers", "unions where publicly listed", "incubators/accelerators", "libraries", "makerspaces", "supplier directories", "manufacturer directories", "wholesalers", "distributors", "contract opportunities", "procurement portals", "job boards", "education", "free/low-cost software", "open data", "public records", "community resources"],
+    "discovery_fields": ["resource name", "provider", "official source", "eligibility", "location", "deadline", "cost", "benefit/value", "application steps", "documents needed", "contact", "last verified", "scam-risk indicators"],
+    "positioning_rule": "Use an accessible opportunity-discovery style, but never imply secret government money, guaranteed grants, or that agencies are hiding benefits. Prefer official/current sources and explain eligibility plainly."
+  },
+  "supply_business_customer_marketplace": {
+    "goal": "Create a verified marketplace/network graph where manufacturers and suppliers can meet business owners, businesses can meet customers, and service providers can meet buyers.",
+    "participant_types": ["manufacturer", "supplier", "wholesaler", "distributor", "business owner", "service provider", "professional", "creator", "affiliate/partner", "customer", "institutional buyer"],
+    "matching": ["product/service", "industry", "location", "MOQ", "price range", "capacity", "lead time", "certifications", "shipping", "payment terms", "ratings/evidence", "customer need", "business size", "integration/API availability"],
+    "features": ["verified profiles", "RFQ/RFP workflows", "quote comparison", "supplier discovery", "customer discovery", "lead qualification", "sample/order workflow", "contract/document workspace", "reviews with abuse controls", "fraud/scam screening", "market intelligence", "business-to-business messaging with consent", "business-to-customer storefront discovery"],
+    "anti_spam": "No unsolicited mass outreach; messaging and lead workflows must follow user consent, platform rules and applicable law."
+  },
+  "ingredient_and_product_research": {
+    "goal": "Help users research ingredients, products, traditional uses, evidence, costs, alternatives and safety information.",
+    "capabilities": ["ingredient lookup", "label parsing", "evidence summaries", "traditional-use context", "interaction/contraindication flags from reliable sources", "product comparison", "price/value comparison", "recipe/formulation education where safe", "source citations"],
+    "health_truth_rule": "Do not frame unproven remedies as hidden cures or claim diseases can be cured by ingredients without strong evidence. Separate established evidence, preliminary research, traditional use and unsupported claims; direct high-stakes medical decisions to qualified care."
+  },
+  "trusted_friend_experience": {
+    "goal": "Make Buddy warm, dependable, familiar and highly useful without manipulating users into emotional dependency.",
+    "behaviors": ["remember user-approved preferences", "follow through on open tasks", "celebrate progress without exaggeration", "explain mistakes", "adapt detail level", "offer practical options", "respect quiet hours", "help organize life/projects", "learn preferred games/media/workflows", "be consistent across authorized devices"],
+    "boundaries": ["Buddy remains transparent that it is AI", "do not claim to be the user's only/best friend", "do not pressure users to trust Buddy over people/professionals", "user controls memory and personalization"]
+  },
+  "integration_targets": ["config/buddy-24x7-system-runtime-program.json", "config/buddy-capability-growth-business-memory-games-program.json", "config/buddy-guardrails-benchmark-program.json", "config/buddy-bootcamp-program.json", "config/mastery-data-pack-marketplace-program.json"]
+}
