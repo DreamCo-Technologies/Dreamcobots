@@ -19,6 +19,7 @@ MAX_STEPS=[
  ('legacy_capability_merge_proposals',[sys.executable,'tools/build_legacy_capability_merge_proposals.py']),
  ('legacy_promotion_backlog',[sys.executable,'tools/build_legacy_promotion_backlog.py']),
  ('unified_bot_system',[sys.executable,'tools/build_unified_bot_system.py']),
+ ('runtime_sync_plan',[sys.executable,'tools/build_runtime_sync_plan.py']),
  ('bot_accounting',[sys.executable,'tools/audit_all_bots_categories_and_agents.py']),
  ('work_platform_benchmarks',[sys.executable,'tools/build_work_platform_benchmarks.py']),
  ('manufacturing_productivity_benchmarks',[sys.executable,'tools/build_manufacturing_productivity_benchmarks.py']),
@@ -52,14 +53,14 @@ def run(name,command):
 def main()->int:
     ap=argparse.ArgumentParser(); ap.add_argument('--mode',choices=['quick','standard','maximum'],default='maximum'); args=ap.parse_args()
     steps=MAX_STEPS
-    if args.mode=='quick': steps=MAX_STEPS[:8]+MAX_STEPS[-3:]
-    elif args.mode=='standard': steps=MAX_STEPS[:17]+MAX_STEPS[-6:]
+    if args.mode=='quick': steps=MAX_STEPS[:9]+MAX_STEPS[-3:]
+    elif args.mode=='standard': steps=MAX_STEPS[:18]+MAX_STEPS[-6:]
     results=[]
     for name,command in steps:
         print(f'\n[run-everything] {name}: {" ".join(command)}',flush=True)
         results.append(run(name,command))
     failures=[r for r in results if r['exit_code']!=0]
-    payload={'schema':'dreamco.run_everything_now_result.v5','generated_at':datetime.now(timezone.utc).isoformat(),'mode':args.mode,'step_count':len(results),'passed':sum(r['exit_code']==0 for r in results),'failed':len(failures),'results':results,'first_failure':failures[0] if failures else None,'truth_boundary':CFG['truth_rule']}
+    payload={'schema':'dreamco.run_everything_now_result.v6','generated_at':datetime.now(timezone.utc).isoformat(),'mode':args.mode,'step_count':len(results),'passed':sum(r['exit_code']==0 for r in results),'failed':len(failures),'results':results,'first_failure':failures[0] if failures else None,'truth_boundary':CFG['truth_rule']}
     OUT.parent.mkdir(parents=True,exist_ok=True); REPORT.parent.mkdir(parents=True,exist_ok=True); OUT.write_text(json.dumps(payload,indent=2)+'\n')
     lines=['# Run Everything Now','',f"- Mode: **{args.mode}**",f"- Passed: **{payload['passed']}/{len(results)}**",f"- Failed: **{len(failures)}**",'', '| Step | Seconds | Result |','| --- | ---: | --- |']
     for r in results: lines.append(f"| {r['name']} | {r['duration_seconds']} | {'PASS' if r['exit_code']==0 else 'FAIL'} |")
