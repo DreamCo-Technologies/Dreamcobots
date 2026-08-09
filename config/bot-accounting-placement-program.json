@@ -1,0 +1,27 @@
+{
+  "schema": "dreamco.bot_accounting_placement.v1",
+  "version": "1.0.0",
+  "mission": "Account for every canonical fleet bot, category, division, and specialist agent; detect duplicates, missing metadata, category drift, placement mismatches, and unowned specialist capabilities without changing the fixed fleet blindly.",
+  "canonical_fleet": {"profiles":1051,"divisions":45,"source":"App_bots/*.json"},
+  "specialist_agents": {
+    "easy-updater.agent.md":"DreamCodeLab",
+    "buddy-debugger.agent.md":"DreamCodeLab",
+    "notes-to-code-builder.agent.md":"DreamCodeLab",
+    "manufacturer-marketplace-bot.agent.md":"DreamTrade",
+    "china-us-tech-manufacturing-scout.agent.md":"DreamTrade"
+  },
+  "required_bot_fields": ["slug","displayName","category","description","capabilities","status"],
+  "placement_rules": [
+    "Every canonical bot appears in exactly one App_bots division file.",
+    "Every canonical bot has one primary division and may use collaborator divisions instead of duplicate profiles.",
+    "Every bot category is inventoried and category counts are reported.",
+    "Declared total in each division file must equal the actual bot array length.",
+    "Duplicate slugs are release blockers.",
+    "Missing slug/category/capabilities/status metadata is a release blocker.",
+    "High-confidence placement move candidates are reviewed, not auto-moved.",
+    "Specialist GitHub agents are accounted separately from the fixed 1,051 profile fleet until formally onboarded through the fleet runtime/catalog generator.",
+    "New specialist agents must declare a primary DreamCo owner division."
+  ],
+  "outputs": ["config/generated/bot-accounting-placement-audit.json","reports/BOT_ACCOUNTING_PLACEMENT_AUDIT.md"],
+  "truth_rule": "Accounting completeness and placement scoring are separate. A bot is counted from canonical source; placement changes require canonical-owner review and regression tests."
+}
