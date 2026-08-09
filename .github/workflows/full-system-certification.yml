@@ -53,6 +53,7 @@ jobs:
             tests.test_full_system_operational_certification \
             tests.test_trusted_code_delivery \
             tests.test_change_impact_test_policy
+          node --import tsx --test tests/server-health-runtime-policy.test.ts
 
       - name: Refresh connection catalog and truth audit
         run: |
@@ -92,12 +93,16 @@ jobs:
       - name: Certification summary
         if: always()
         run: |
-          if [ -f config/generated/full-system-operational-certification.json ]; then
-            python3 - <<'PY' >> "$GITHUB_STEP_SUMMARY"
+          python3 - <<'PY' >> "$GITHUB_STEP_SUMMARY"
           import json
-          d=json.load(open('config/generated/full-system-operational-certification.json'))
+          from pathlib import Path
+          path=Path('config/generated/full-system-operational-certification.json')
           print('# Full System Certification')
           print()
+          if not path.exists():
+              print('Certification receipt was not generated because prerequisite evidence is missing.')
+              raise SystemExit(0)
+          d=json.loads(path.read_text())
           print(f"- Status: **{d['status']}**")
           print(f"- Core operationally certified: **{d['core_operational_certified']}**")
           print(f"- Fully operational + connected claim allowed: **{d['fully_operational_and_connected_claim_allowed']}**")
@@ -111,10 +116,6 @@ jobs:
               for blocker in d['release_blockers']:
                   print(f"  - {blocker}")
           PY
-          else
-            echo "# Full System Certification" >> "$GITHUB_STEP_SUMMARY"
-            echo "Certification receipt was not generated because an earlier prerequisite failed before evidence could be assembled." >> "$GITHUB_STEP_SUMMARY"
-          fi
 
       - name: Upload certification evidence
         if: always()
