@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 from __future__ import annotations
 
+import hashlib
 import json
 import re
 from collections import Counter
@@ -29,6 +30,14 @@ def slugify(value: str) -> str:
 
 def normalized_name(value: str) -> str:
     return re.sub(r"\b(bot|agent|assistant|ai|system|tool)\b", "", re.sub(r"[^a-z0-9]+", " ", value.lower())).strip()
+
+
+def file_hash(path: Path) -> str:
+    digest = hashlib.sha256()
+    with path.open("rb") as handle:
+        for chunk in iter(lambda: handle.read(1024 * 1024), b""):
+            digest.update(chunk)
+    return digest.hexdigest()
 
 
 def canonical_inventory() -> tuple[dict[str, dict], dict[str, str]]:
@@ -129,8 +138,9 @@ def scan_historical(program: dict) -> tuple[list[dict], list[dict]]:
         for path in sorted(p for p in source_root.rglob("*") if p.is_file()):
             rel = str(path.relative_to(ROOT))
             suffix = path.suffix.lower()
+            digest = file_hash(path)
             if suffix not in TEXT_SUFFIXES:
-                systems.append({"source": rel, "source_root": source_root.name, "source_role": source_role, "kind": "asset", "state": "unsupported_file", "size": path.stat().st_size})
+                systems.append({"source": rel, "source_root": source_root.name, "source_role": source_role, "kind": "asset", "state": "unsupported_file", "size": path.stat().st_size, "sha256": digest})
                 continue
             try:
                 text = path.read_text(encoding="utf-8", errors="replace")
@@ -147,13 +157,14 @@ def scan_historical(program: dict) -> tuple[list[dict], list[dict]]:
                         row["source"] = rel
                         row["source_root"] = source_root.name
                         row["source_role"] = source_role
+                        row["source_sha256"] = digest
                         row["division"] = infer_division(" ".join([row["display_name"], row["description"], " ".join(row["capabilities"]), rel]), program)
                         candidates.append(row)
                 else:
                     state = "system_asset" if SYSTEM_HINT.search(f"{path.stem} {text[:5000]}") else "system_asset"
-                    systems.append({"source": rel, "source_root": source_root.name, "source_role": source_role, "kind": suffix.lstrip(".") or "text", "state": state, "size": len(text)})
+                    systems.append({"source": rel, "source_root": source_root.name, "source_role": source_role, "kind": suffix.lstrip(".") or "text", "state": state, "size": len(text), "sha256": digest})
             except Exception as exc:
-                systems.append({"source": rel, "source_root": source_root.name, "source_role": source_role, "kind": suffix.lstrip("."), "state": "parse_error", "error": str(exc)[:500]})
+                systems.append({"source": rel, "source_root": source_root.name, "source_role": source_role, "kind": suffix.lstrip("."), "state": "parse_error", "error": str(exc)[:500], "sha256": digest})
     return candidates, systems
 
 
@@ -185,7 +196,7 @@ def runtime_profile(row: dict) -> dict:
         "approval_required": True,
         "sample_test_prompt": f"Test every recovered capability for {row['display_name']} in sandbox mode using synthetic data only. Record runtime evidence and do not perform live external actions.",
         "readiness": {"profile_schema": "verified", "buddy_chat_route": "verified"},
-        "evidence": {"recovered_source": row["source"], "source_root": row.get("source_root"), "recovery_state": "supplemental_recovered"},
+        "evidence": {"recovered_source": row["source"], "source_root": row.get("source_root"), "source_sha256": row.get("source_sha256"), "recovery_state": "supplemental_recovered"},
     }
 
 
@@ -223,7 +234,7 @@ def main() -> int:
         "truth_boundary": program["truth_rule"],
     }
     inventory = {
-        "schema": "dreamco.original_bot_recovery.generated.v2",
+        "schema": "dreamco.original_bot_recovery.generated.v3",
         "canonical_bot_count": len(canonical_by_slug),
         "historical_roots": [str(path.relative_to(ROOT)) for path in HISTORICAL_ROOTS],
         "original_candidate_count": len(candidates),
@@ -233,6 +244,7 @@ def main() -> int:
         "system_asset_count": len(systems),
         "source_file_count": len({row.get("source") for row in candidates + systems}),
         "source_root_counts": dict(Counter(row.get("source_root", "unknown") for row in candidates + systems)),
+        "duplicate_asset_hash_groups": sum(1 for count in Counter(row.get("sha256") for row in systems if row.get("sha256")).values() if count > 1),
         "state_counts": dict(Counter([row["state"] for row in already + recovered + review] + [row["state"] for row in systems])),
         "already_canonical": already,
         "supplemental_recovered": recovered,
@@ -254,6 +266,7 @@ def main() -> int:
         f"- Supplemental recovered workers: **{len(recovered)}**",
         f"- Merge/review candidates: **{len(review)}**",
         f"- Historical system/assets inventoried: **{len(systems)}**",
+        f"- Duplicate asset hash groups: **{inventory['duplicate_asset_hash_groups']}**",
         f"- Combined routable profiles when overlay is loaded: **{len(canonical_by_slug) + len(overlay_bots)}**",
         "",
         "## Source roots",
@@ -271,6 +284,7 @@ def main() -> int:
         "supplemental_recovered": len(recovered),
         "merge_review": len(review),
         "systems": len(systems),
+        "duplicate_asset_hash_groups": inventory["duplicate_asset_hash_groups"],
         "source_root_counts": inventory["source_root_counts"],
         "combined_when_loaded": len(canonical_by_slug) + len(overlay_bots),
     }, indent=2))
