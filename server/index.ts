@@ -8,6 +8,7 @@ import { seedStripeProducts } from './seed-stripe-products';
 
 const app = express();
 const httpServer = createServer(app);
+const processStartedAt = Date.now();
 
 declare module "http" {
   interface IncomingMessage {
@@ -32,6 +33,17 @@ async function initStripe() {
     console.error('Failed to initialize Stripe:', error);
   }
 }
+
+app.get('/api/health', (_req, res) => {
+  res.status(200).json({
+    ok: true,
+    service: 'dreamco-buddy',
+    environment: process.env.NODE_ENV || 'development',
+    uptimeSeconds: Math.floor((Date.now() - processStartedAt) / 1000),
+    stripeConfigured: Boolean(process.env.STRIPE_SECRET_KEY || process.env.STRIPE_LIVE_SECRET_KEY),
+    timestamp: new Date().toISOString(),
+  });
+});
 
 app.post(
   '/api/stripe/webhook',
@@ -141,9 +153,14 @@ app.use((req, res, next) => {
     },
   );
 
-  // Auto-sync source code to GitHub after every server start (30s delay so
-  // the server is fully up), then every 6 hours while running.
-  import("./github-sync").then(({ scheduleAutoSync }) => {
-    scheduleAutoSync();
-  }).catch(() => {});
+  if (process.env.DREAMCO_DISABLE_AUTO_SYNC !== "1") {
+    import("./github-sync")
+      .then(({ scheduleAutoSync }) => {
+        scheduleAutoSync();
+      })
+      .catch((error: unknown) => {
+        const message = error instanceof Error ? error.message : String(error);
+        console.warn(`GitHub auto-sync scheduler unavailable: ${message}`);
+      });
+  }
 })();
