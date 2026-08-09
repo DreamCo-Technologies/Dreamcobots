@@ -27,7 +27,7 @@ jobs:
           npm ci
           python3 -m pip install --disable-pip-version-check openpyxl
       - name: Verify architecture and benchmark policies
-        run: python3 -m unittest tests.test_recovery_ontology_workforce_runtime tests.test_universal_capability_benchmark_policy tests.test_global_government_system
+        run: python3 -m unittest tests.test_recovery_ontology_workforce_runtime tests.test_universal_capability_benchmark_policy tests.test_global_government_system tests.test_buddy_government_operating_system
       - name: Build O*NET work and AI specialist catalog
         continue-on-error: true
         run: python3 tools/build_universal_work_ai_catalog.py
@@ -63,6 +63,8 @@ jobs:
           if gd: print(f"- Discovered government departments/improvement cases: **{gd['discovered_department_count']}/{gd['case_count']}**")
           pf=load('config/generated/public-fiscal-latest.json')
           if pf: print(f"- Runtime-verified fiscal sources: **{pf.get('runtime_verified_source_count',0)}**")
+          gw=load('config/generated/government-needs-spending-watch.json')
+          if gw: print(f"- Government needs/spending/opportunity signals: **{gw.get('signal_count',0)}**")
           pm=load('config/generated/public-money-transparency-benchmarks.json')
           if pm: print(f"- Public money benchmark cases: **{pm['case_count']}**")
           m=load('config/generated/maximum-sandbox-matrix.json')
