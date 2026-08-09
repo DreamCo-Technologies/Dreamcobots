@@ -1,21 +1,48 @@
 {
-  "schema": "dreamco.change_impact_test_policy.v1",
-  "version": "1.0.0",
-  "mission": "Ensure changed executable code cannot be labeled release-ready solely because unrelated tests pass.",
+  "schema": "dreamco.change_impact_test_policy.v2",
+  "version": "2.0.0",
+  "mission": "Ensure changed executable code cannot be labeled release-ready solely because unrelated, deleted, or skipped tests exist.",
   "executable_extensions": [".py", ".ts", ".tsx", ".js", ".mjs", ".cjs"],
   "test_paths": ["tests/"],
   "high_risk_path_keywords": ["stripe", "payment", "billing", "auth", "security", "secret", "privacy", "webhook", "migration", "schema", "database", "deploy", "release", "permission", "tenant", "delete"],
+  "high_risk_test_aliases": {
+    "stripe": ["stripe", "payment", "revenue", "billing"],
+    "payment": ["payment", "stripe", "billing", "revenue"],
+    "billing": ["billing", "payment", "stripe", "revenue"],
+    "auth": ["auth", "permission", "security", "session", "login"],
+    "security": ["security", "auth", "permission", "secret"],
+    "secret": ["secret", "security", "credential", "connection"],
+    "privacy": ["privacy", "data", "permission"],
+    "webhook": ["webhook", "stripe", "integration"],
+    "migration": ["migration", "schema", "database"],
+    "schema": ["schema", "database", "contract"],
+    "database": ["database", "schema", "storage", "migration"],
+    "deploy": ["deploy", "runtime", "build", "smoke"],
+    "release": ["release", "deploy", "build", "trust"],
+    "permission": ["permission", "auth", "security"],
+    "tenant": ["tenant", "isolation", "auth", "security"],
+    "delete": ["delete", "data", "storage", "permission"]
+  },
+  "skip_markers": [".skip(", ".skip(", "skipTest(", "@unittest.skip", "pytest.mark.skip", "test.skip(", "describe.skip(", "it.skip("],
   "shared_core_prefixes": ["server/", "shared/", "tools/", "script/"],
+  "generic_source_tokens": ["index", "server", "shared", "client", "tools", "script", "build", "run", "generate", "main", "app"],
   "evidence_rules": {
-    "normal": ["at least one changed test file or focused verification mapping", "type/syntax check", "affected regression suite"],
-    "high": ["normal evidence", "negative/error-path test", "security/privacy/permission review", "integration/contract evidence", "rollback or safe-revert evidence when applicable"],
-    "shared_core": ["dependent-system regression evidence", "broad repository verification"]
+    "normal": ["at least one relevant changed test file or focused verification mapping", "type/syntax check", "affected regression suite"],
+    "high": ["normal evidence", "domain-relevant changed test", "negative/error-path test", "security/privacy/permission review", "integration/contract evidence", "rollback or safe-revert evidence when applicable"],
+    "shared_core": ["dependent-system regression evidence", "broad repository verification"],
+    "anti_bypass": ["changed test files cannot be deleted as the only evidence", "new skip markers are blockers when executable behavior changes", "unrelated changed tests do not satisfy high-risk evidence"]
   },
   "exemptions": {
     "file": "config/change-impact-test-exemptions.json",
     "required_fields": ["path", "reason", "owner", "expires"],
     "rule": "Exemptions are temporary, explicit, reviewable, and cannot be used for critical payment/auth/security/destructive behavior changes."
   },
-  "release_blockers": ["changed executable file has no verification evidence and no valid exemption", "high-risk change lacks stronger evidence", "shared-core change lacks dependent-system regression evidence"],
-  "truth_rule": "Relevant test mapping improves confidence but cannot prove absence of every defect."
+  "release_blockers": [
+    "changed executable file has no relevant verification evidence and no valid exemption",
+    "high-risk change lacks domain-relevant stronger evidence",
+    "shared-core change lacks dependent-system regression evidence",
+    "test file deleted while executable behavior changes without replacement evidence",
+    "new test skip marker added while executable behavior changes"
+  ],
+  "truth_rule": "Relevant test mapping and anti-bypass checks improve confidence but cannot prove absence of every defect."
 }
