@@ -1,6 +1,13 @@
 import Stripe from 'stripe';
+import { assertBotLiveCheckoutAllowed } from './live-revenue-policy';
 
 export async function getUncachableStripeClient() {
+  const secretKey = await getStripeSecretKey();
+  return new Stripe(secretKey);
+}
+
+export async function getGovernedBotStripeClient(botSlug: string) {
+  assertBotLiveCheckoutAllowed(botSlug);
   const secretKey = await getStripeSecretKey();
   return new Stripe(secretKey);
 }
