@@ -1,0 +1,74 @@
+name: Open Source Evolution
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "41 10 * * *"
+  push:
+    branches: [main]
+    paths:
+      - "config/buddy-full-potential-sandbox-open-source-evolution-program.json"
+      - "tools/build_full_potential_sandbox_catalog.py"
+      - "tests/test_full_potential_sandbox.py"
+      - "tools/generate_buddy_open_model_lab.py"
+      - "tools/generate_buddy_model_router.py"
+      - "tools/check_repository_dependencies.py"
+      - ".github/workflows/open-source-evolution.yml"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: open-source-evolution-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  evolve:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: npm
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.13"
+      - run: npm ci
+      - name: Build full-potential sandbox catalog
+        run: |
+          python3 tools/build_full_potential_sandbox_catalog.py
+          python3 -m unittest tests.test_full_potential_sandbox
+      - name: Check current open-model and model-routing knowledge
+        run: |
+          npm run buddy:open-model-lab
+          npm run buddy:models
+          npm run buddy:model-benchmarks
+      - name: Check repository dependencies and reusable libraries
+        run: npm run buddy:dependencies
+      - name: Check Buddy self-improvement governance
+        run: npm run buddy:self-improvement
+      - name: Summarize evolution readiness
+        if: always()
+        run: |
+          {
+            echo "# Open Source Evolution"
+            echo
+            if [ -f config/generated/full-potential-sandbox-catalog.json ]; then
+              python3 -c "import json; d=json.load(open('config/generated/full-potential-sandbox-catalog.json')); print('- Sandbox categories:', d['category_count']); print('- Test families:', d['test_family_count']); print('- Axes:', d['axis_count'])"
+            fi
+            echo "- Open-model lab, model router, model benchmarks, dependency health, and self-improvement governance are checked by this workflow."
+            echo "- This workflow verifies DreamCo's indexed/open-source readiness; it does not claim complete knowledge of every public model, dataset, repository, or release."
+          } >> "$GITHUB_STEP_SUMMARY"
+      - name: Save evolution evidence
+        if: always()
+        uses: actions/upload-artifact@v6
+        with:
+          name: open-source-evolution-${{ github.run_id }}
+          path: |
+            config/generated/full-potential-sandbox-catalog.json
+            config/generated/buddy_open_model_lab.json
+            config/generated/buddy_model_router.json
+          if-no-files-found: ignore
+          retention-days: 7
