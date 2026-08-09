@@ -16,9 +16,11 @@ REPORT=ROOT/'reports/RUN_EVERYTHING_NOW.md'
 
 MAX_STEPS=[
  ('legacy_recovery',[sys.executable,'tools/recover_legacy_bots.py']),
+ ('legacy_promotion_backlog',[sys.executable,'tools/build_legacy_promotion_backlog.py']),
  ('unified_bot_system',[sys.executable,'tools/build_unified_bot_system.py']),
  ('bot_accounting',[sys.executable,'tools/audit_all_bots_categories_and_agents.py']),
  ('work_platform_benchmarks',[sys.executable,'tools/build_work_platform_benchmarks.py']),
+ ('manufacturing_productivity_benchmarks',[sys.executable,'tools/build_manufacturing_productivity_benchmarks.py']),
  ('universal_task_sandbox',[sys.executable,'tools/build_universal_human_ai_task_sandbox.py']),
  ('full_potential_sandbox',[sys.executable,'tools/build_full_potential_sandbox_catalog.py']),
  ('bot_sandbox_curriculum',[sys.executable,'tools/build_bot_sandbox_curriculum.py']),
@@ -36,6 +38,7 @@ MAX_STEPS=[
  ('speed_accuracy',[sys.executable,'tools/run_system_speed_accuracy_benchmarks.py']),
  ('production_smoke',[sys.executable,'tools/smoke_production_runtime.py']),
  ('full_certification',[sys.executable,'tools/build_full_system_certification.py']),
+ ('live_user_readiness',[sys.executable,'tools/build_live_user_testing_readiness.py']),
  ('system_progress',[sys.executable,'tools/build_system_progress_status.py']),
 ]
 
@@ -47,14 +50,14 @@ def run(name,command):
 def main()->int:
     ap=argparse.ArgumentParser(); ap.add_argument('--mode',choices=['quick','standard','maximum'],default='maximum'); args=ap.parse_args()
     steps=MAX_STEPS
-    if args.mode=='quick': steps=MAX_STEPS[:6]+MAX_STEPS[-2:]
-    elif args.mode=='standard': steps=MAX_STEPS[:14]+MAX_STEPS[-4:]
+    if args.mode=='quick': steps=MAX_STEPS[:7]+MAX_STEPS[-3:]
+    elif args.mode=='standard': steps=MAX_STEPS[:16]+MAX_STEPS[-5:]
     results=[]
     for name,command in steps:
         print(f'\n[run-everything] {name}: {" ".join(command)}',flush=True)
         results.append(run(name,command))
     failures=[r for r in results if r['exit_code']!=0]
-    payload={'schema':'dreamco.run_everything_now_result.v2','generated_at':datetime.now(timezone.utc).isoformat(),'mode':args.mode,'step_count':len(results),'passed':sum(r['exit_code']==0 for r in results),'failed':len(failures),'results':results,'first_failure':failures[0] if failures else None,'truth_boundary':CFG['truth_rule']}
+    payload={'schema':'dreamco.run_everything_now_result.v3','generated_at':datetime.now(timezone.utc).isoformat(),'mode':args.mode,'step_count':len(results),'passed':sum(r['exit_code']==0 for r in results),'failed':len(failures),'results':results,'first_failure':failures[0] if failures else None,'truth_boundary':CFG['truth_rule']}
     OUT.parent.mkdir(parents=True,exist_ok=True); REPORT.parent.mkdir(parents=True,exist_ok=True); OUT.write_text(json.dumps(payload,indent=2)+'\n')
     lines=['# Run Everything Now','',f"- Mode: **{args.mode}**",f"- Passed: **{payload['passed']}/{len(results)}**",f"- Failed: **{len(failures)}**",'', '| Step | Seconds | Result |','| --- | ---: | --- |']
     for r in results: lines.append(f"| {r['name']} | {r['duration_seconds']} | {'PASS' if r['exit_code']==0 else 'FAIL'} |")
