@@ -1,0 +1,25 @@
+{
+  "schema": "dreamco.buddy_self_repair_controller.v1",
+  "version": "1.0.0",
+  "mission": "Continuously detect broken Buddy/bot/repository states, automatically apply deterministic low-risk repairs, route source-code repairs to evidence-driven builder agents, and refuse to declare success until focused and affected regression suites pass.",
+  "failure_sources": ["local checks","GitHub Actions","sandbox tests","fleet tests","runtime exceptions","dependency drift","generated artifact drift","benchmark regressions","user bug reports","security/privacy findings","deployment failures"],
+  "automatic_repair_classes": {
+    "generated_artifact_drift": ["rerun canonical generator","verify no hand-edited generated source"],
+    "missing_evidence_directory": ["create local evidence directory"],
+    "stale_local_reports": ["regenerate reports and indexes"],
+    "sandbox_curriculum_drift": ["regenerate sandbox catalog and bot curricula"],
+    "career_path_drift": ["regenerate Council career paths"],
+    "division_audit_drift": ["regenerate placement audit"],
+    "resource_matrix_drift": ["regenerate resource sandbox matrix"],
+    "generator_registry_drift": ["regenerate fleet-wide generator registry"]
+  },
+  "builder_repair_classes": ["source_code_failure","test_logic_failure","dependency_change","schema_or_database_change","security_permission_change","external_integration_change","performance_algorithm_change"],
+  "repair_competition": {
+    "enabled": true,
+    "maximum_parallel_candidates": 5,
+    "candidate_score": ["focused_test_pass","affected_suite_pass","no_new_regressions","smaller_diff","lower_runtime_cost","lower_latency","lower_risk","shared_fleet_benefit"],
+    "same_owner_changes_serialized": true
+  },
+  "repair_completion_gate": ["original failure reproduced or clearly classified","root cause recorded","fix applied at canonical owner","regression fixture added when applicable","focused test passes","affected suite passes","before/after evidence recorded","no guardrail weakened","Council/benchmark state refreshed when relevant"],
+  "truth_rule": "Buddy may automatically repair deterministic generated/local state. Source-code or dependency repairs require a verified patch path and must not be called fixed until executable evidence passes."
+}
