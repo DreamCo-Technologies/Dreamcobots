@@ -1,0 +1,156 @@
+name: Run Everything Now
+
+on:
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: "quick, standard, or maximum"
+        required: false
+        default: "maximum"
+  schedule:
+    - cron: "11 */6 * * *"
+  push:
+    branches: [main]
+    paths:
+      - "App_bots/**"
+      - "original-bots/**"
+      - "bots/**"
+      - "attached_assets/**"
+      - "config/**"
+      - "tools/**"
+      - "tests/**"
+      - "server/**"
+      - "shared/**"
+      - ".github/agents/**"
+      - ".github/workflows/run-everything-now.yml"
+
+permissions:
+  contents: read
+  issues: write
+  actions: read
+
+concurrency:
+  group: run-everything-now-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  run-all:
+    runs-on: ubuntu-latest
+    timeout-minutes: 300
+    env:
+      DREAMCO_DISABLE_AUTO_SYNC: "1"
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 2
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: npm
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.13"
+      - name: Install dependencies
+        run: |
+          npm ci
+          python3 -m pip install --disable-pip-version-check openpyxl
+      - name: Verify recovery ontology workforce and runtime contracts
+        run: python3 -m unittest tests.test_recovery_ontology_workforce_runtime
+      - name: Build O*NET work and AI specialist catalog
+        continue-on-error: true
+        run: python3 tools/build_universal_work_ai_catalog.py
+      - name: Run everything
+        id: runall
+        continue-on-error: true
+        env:
+          REQUESTED_MODE: ${{ github.event.inputs.mode }}
+        run: |
+          mode="${REQUESTED_MODE:-maximum}"
+          python3 tools/run_everything_now.py --mode "$mode"
+      - name: Rebuild final progress status
+        if: always()
+        run: python3 tools/build_system_progress_status.py
+      - name: Summarize run
+        if: always()
+        run: |
+          python3 - <<'PY' >> "$GITHUB_STEP_SUMMARY"
+          import json
+          from pathlib import Path
+          print('# Run Everything Now')
+          print()
+          p=Path('config/generated/run-everything-now-latest.json')
+          if p.exists():
+              d=json.loads(p.read_text())
+              print(f"- Mode: **{d['mode']}**")
+              print(f"- Passed: **{d['passed']}/{d['step_count']}**")
+              print(f"- Failed: **{d['failed']}**")
+              if d.get('first_failure'):
+                  print(f"- First root-cause candidate: **{d['first_failure']['name']}**")
+          r=Path('config/generated/legacy-bot-recovery-manifest.json')
+          if r.exists():
+              d=json.loads(r.read_text())
+              print(f"- Legacy files inventoried: **{d['file_count']}**")
+              print(f"- Recoverable legacy candidate files: **{d['recoverable_candidate_file_count']}**")
+          w=Path('config/generated/universal-work-ai-catalog.json')
+          if w.exists():
+              d=json.loads(w.read_text())
+              print(f"- O*NET occupations: **{d['occupation_count']}**")
+              print(f"- O*NET tasks: **{d['task_count']}**")
+          m=Path('config/generated/maximum-sandbox-matrix.json')
+          if m.exists():
+              d=json.loads(m.read_text())
+              print(f"- Maximum sandbox workers: **{d['worker_count']}**")
+              print(f"- Sandbox overlays per applicable case: **{d['minimum_test_dimensions_per_applicable_case']}**")
+          PY
+      - name: Open or update repair issue when failures exist
+        if: always()
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          python3 - <<'PY'
+          import json, os, subprocess
+          from pathlib import Path
+          p=Path('config/generated/run-everything-now-latest.json')
+          if not p.exists(): raise SystemExit(0)
+          d=json.loads(p.read_text())
+          if not d.get('failed'): raise SystemExit(0)
+          title='Run Everything Now: repair current main blockers'
+          body=['# Run Everything Now repair backlog','',f"Run: {os.environ.get('GITHUB_SERVER_URL')}/{os.environ.get('GITHUB_REPOSITORY')}/actions/runs/{os.environ.get('GITHUB_RUN_ID')}",f"Passed: {d['passed']}/{d['step_count']}",f"Failed: {d['failed']}",'']
+          for row in d['results']:
+              if row['exit_code']!=0:
+                  body += [f"## {row['name']}", '```text', (row['stderr_tail'] or row['stdout_tail'])[-2500:], '```','']
+          Path('tmp-run-all-issue.md').write_text('\n'.join(body))
+          q=subprocess.run(['gh','issue','list','--state','open','--search',title+' in:title','--json','number','--jq','.[0].number // empty'],capture_output=True,text=True)
+          number=q.stdout.strip()
+          if number:
+              subprocess.run(['gh','issue','comment',number,'--body-file','tmp-run-all-issue.md'],check=False)
+          else:
+              subprocess.run(['gh','issue','create','--title',title,'--body-file','tmp-run-all-issue.md'],check=False)
+          PY
+      - name: Upload all evidence
+        if: always()
+        uses: actions/upload-artifact@v6
+        with:
+          name: run-everything-now-${{ github.run_id }}
+          path: |
+            config/generated/run-everything-now-latest.json
+            config/generated/legacy-bot-recovery-manifest.json
+            config/generated/unified-bot-system.json
+            config/generated/universal-work-ai-catalog.json
+            config/generated/maximum-sandbox-matrix.json
+            config/generated/full-system-operational-certification.json
+            config/generated/system-progress-status.json
+            reports/RUN_EVERYTHING_NOW.md
+            reports/LEGACY_BOT_RECOVERY.md
+          if-no-files-found: warn
+          retention-days: 21
+      - name: Fail workflow when Run Everything found blockers
+        if: always()
+        run: |
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          p=Path('config/generated/run-everything-now-latest.json')
+          if not p.exists(): raise SystemExit(1)
+          raise SystemExit(1 if json.loads(p.read_text()).get('failed') else 0)
+          PY
