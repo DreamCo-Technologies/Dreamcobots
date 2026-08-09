@@ -8,14 +8,15 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 APP = ROOT / "App_bots"
-ORIGINAL = ROOT / "original-bots"
+HISTORICAL_ROOTS = [ROOT / "original-bots", ROOT / "bots", ROOT / "attached_assets"]
 PROGRAM = ROOT / "config" / "original-bot-recovery-program.json"
 OUT = ROOT / "config" / "generated" / "original-bot-recovery.json"
 OVERLAY = ROOT / "config" / "generated" / "recovered-original-bot-overlay.json"
 REPORT = ROOT / "reports" / "ORIGINAL_BOT_RECOVERY.md"
 
-TEXT_SUFFIXES = {".md", ".txt", ".py", ".js", ".ts", ".tsx", ".json", ".yaml", ".yml"}
+TEXT_SUFFIXES = {".md", ".txt", ".py", ".js", ".ts", ".tsx", ".json", ".yaml", ".yml", ".toml", ".ini", ".cfg"}
 BOT_HINT = re.compile(r"\b(bot|agent|assistant|copilot|ai|worker)\b", re.I)
+SYSTEM_HINT = re.compile(r"\b(system|engine|runtime|workflow|orchestrat|router|registry|service|platform|framework|pipeline|sandbox)\b", re.I)
 FRONTMATTER_FIELD = re.compile(r"^(name|title|slug|description|category|capabilities)\s*:\s*(.+)$", re.I | re.M)
 HEADING = re.compile(r"^#\s+(.+)$", re.M)
 
@@ -117,35 +118,42 @@ def text_candidate(path: Path, text: str) -> list[dict]:
     }]
 
 
-def scan_original(program: dict) -> tuple[list[dict], list[dict]]:
+def scan_historical(program: dict) -> tuple[list[dict], list[dict]]:
     candidates: list[dict] = []
     systems: list[dict] = []
-    if not ORIGINAL.exists():
-        return candidates, systems
-    for path in sorted(p for p in ORIGINAL.rglob("*") if p.is_file()):
-        rel = str(path.relative_to(ROOT))
-        if path.suffix.lower() not in TEXT_SUFFIXES:
-            systems.append({"source": rel, "kind": "asset", "state": "unsupported_file", "size": path.stat().st_size})
+    for source_root in HISTORICAL_ROOTS:
+        source_role = program.get("source_roles", {}).get(source_root.name, "historical source")
+        if not source_root.exists():
+            systems.append({"source": str(source_root.relative_to(ROOT)), "source_root": source_root.name, "source_role": source_role, "kind": "directory", "state": "parse_error", "error": "source directory not present in checkout"})
             continue
-        try:
-            text = path.read_text(encoding="utf-8", errors="replace")
-            found: list[dict] = []
-            if path.suffix.lower() == ".json":
-                try:
-                    found = json_candidates(path, json.loads(text))
-                except json.JSONDecodeError:
+        for path in sorted(p for p in source_root.rglob("*") if p.is_file()):
+            rel = str(path.relative_to(ROOT))
+            suffix = path.suffix.lower()
+            if suffix not in TEXT_SUFFIXES:
+                systems.append({"source": rel, "source_root": source_root.name, "source_role": source_role, "kind": "asset", "state": "unsupported_file", "size": path.stat().st_size})
+                continue
+            try:
+                text = path.read_text(encoding="utf-8", errors="replace")
+                found: list[dict] = []
+                if suffix == ".json":
+                    try:
+                        found = json_candidates(path, json.loads(text))
+                    except json.JSONDecodeError:
+                        found = text_candidate(path, text)
+                else:
                     found = text_candidate(path, text)
-            else:
-                found = text_candidate(path, text)
-            if found:
-                for row in found:
-                    row["source"] = rel
-                    row["division"] = infer_division(" ".join([row["display_name"], row["description"], " ".join(row["capabilities"]), rel]), program)
-                    candidates.append(row)
-            else:
-                systems.append({"source": rel, "kind": path.suffix.lower().lstrip(".") or "text", "state": "system_asset", "size": len(text)})
-        except Exception as exc:
-            systems.append({"source": rel, "kind": path.suffix.lower().lstrip("."), "state": "parse_error", "error": str(exc)[:500]})
+                if found:
+                    for row in found:
+                        row["source"] = rel
+                        row["source_root"] = source_root.name
+                        row["source_role"] = source_role
+                        row["division"] = infer_division(" ".join([row["display_name"], row["description"], " ".join(row["capabilities"]), rel]), program)
+                        candidates.append(row)
+                else:
+                    state = "system_asset" if SYSTEM_HINT.search(f"{path.stem} {text[:5000]}") else "system_asset"
+                    systems.append({"source": rel, "source_root": source_root.name, "source_role": source_role, "kind": suffix.lstrip(".") or "text", "state": state, "size": len(text)})
+            except Exception as exc:
+                systems.append({"source": rel, "source_root": source_root.name, "source_role": source_role, "kind": suffix.lstrip("."), "state": "parse_error", "error": str(exc)[:500]})
     return candidates, systems
 
 
@@ -177,14 +185,14 @@ def runtime_profile(row: dict) -> dict:
         "approval_required": True,
         "sample_test_prompt": f"Test every recovered capability for {row['display_name']} in sandbox mode using synthetic data only. Record runtime evidence and do not perform live external actions.",
         "readiness": {"profile_schema": "verified", "buddy_chat_route": "verified"},
-        "evidence": {"recovered_source": row["source"], "recovery_state": "supplemental_recovered"},
+        "evidence": {"recovered_source": row["source"], "source_root": row.get("source_root"), "recovery_state": "supplemental_recovered"},
     }
 
 
 def main() -> int:
     program = json.loads(PROGRAM.read_text(encoding="utf-8"))
     canonical_by_slug, canonical_by_name = canonical_inventory()
-    candidates, systems = scan_original(program)
+    candidates, systems = scan_historical(program)
 
     recovered = []
     already = []
@@ -198,14 +206,14 @@ def main() -> int:
         elif name_key and name_key in canonical_by_name:
             review.append({**row, "state": "merge_review", "canonical_slug": canonical_by_name[name_key]})
         elif slug in seen_supplemental:
-            review.append({**row, "state": "merge_review", "reason": "duplicate original supplemental slug"})
+            review.append({**row, "state": "merge_review", "reason": "duplicate historical supplemental slug"})
         else:
             seen_supplemental.add(slug)
             recovered.append({**row, "state": "supplemental_recovered"})
 
     overlay_bots = [runtime_profile(row) for row in recovered]
     overlay = {
-        "schema": "dreamco.recovered_original_bot_overlay.v1",
+        "schema": "dreamco.recovered_original_bot_overlay.v2",
         "summary": {
             "canonical_baseline": len(canonical_by_slug),
             "supplemental_profiles": len(overlay_bots),
@@ -215,14 +223,16 @@ def main() -> int:
         "truth_boundary": program["truth_rule"],
     }
     inventory = {
-        "schema": "dreamco.original_bot_recovery.generated.v1",
+        "schema": "dreamco.original_bot_recovery.generated.v2",
         "canonical_bot_count": len(canonical_by_slug),
+        "historical_roots": [str(path.relative_to(ROOT)) for path in HISTORICAL_ROOTS],
         "original_candidate_count": len(candidates),
         "already_canonical_count": len(already),
         "supplemental_recovered_count": len(recovered),
         "merge_review_count": len(review),
         "system_asset_count": len(systems),
         "source_file_count": len({row.get("source") for row in candidates + systems}),
+        "source_root_counts": dict(Counter(row.get("source_root", "unknown") for row in candidates + systems)),
         "state_counts": dict(Counter([row["state"] for row in already + recovered + review] + [row["state"] for row in systems])),
         "already_canonical": already,
         "supplemental_recovered": recovered,
@@ -236,27 +246,32 @@ def main() -> int:
     OVERLAY.write_text(json.dumps(overlay, indent=2) + "\n", encoding="utf-8")
 
     lines = [
-        "# Original Bot Recovery",
+        "# Historical Bot & System Recovery",
         "",
         f"- Canonical App_bots baseline: **{len(canonical_by_slug)}**",
-        f"- Original bot-like candidates found: **{len(candidates)}**",
+        f"- Historical bot-like candidates found: **{len(candidates)}**",
         f"- Already represented canonically: **{len(already)}**",
         f"- Supplemental recovered workers: **{len(recovered)}**",
         f"- Merge/review candidates: **{len(review)}**",
-        f"- Original system/assets inventoried: **{len(systems)}**",
+        f"- Historical system/assets inventoried: **{len(systems)}**",
         f"- Combined routable profiles when overlay is loaded: **{len(canonical_by_slug) + len(overlay_bots)}**",
         "",
-        "> The 1,051 canonical baseline is preserved. Recovered workers use Buddy's shared governed sandbox runtime and require runtime certification before production claims.",
+        "## Source roots",
+        "",
     ]
+    for source, count in sorted(inventory["source_root_counts"].items()):
+        lines.append(f"- {source}: {count} files/records inventoried")
+    lines += ["", "> The 1,051 canonical baseline is preserved. Recovered workers use Buddy's shared governed sandbox runtime and require runtime certification before production claims."]
     REPORT.write_text("\n".join(lines) + "\n", encoding="utf-8")
     print(json.dumps({
         "ok": True,
         "canonical": len(canonical_by_slug),
-        "original_candidates": len(candidates),
+        "historical_candidates": len(candidates),
         "already_canonical": len(already),
         "supplemental_recovered": len(recovered),
         "merge_review": len(review),
         "systems": len(systems),
+        "source_root_counts": inventory["source_root_counts"],
         "combined_when_loaded": len(canonical_by_slug) + len(overlay_bots),
     }, indent=2))
     return 0
