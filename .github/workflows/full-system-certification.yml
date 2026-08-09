@@ -55,11 +55,7 @@ jobs:
 
       - name: Validate certification policies
         run: |
-          python3 -m unittest \
-            tests.test_full_system_operational_certification \
-            tests.test_trusted_code_delivery \
-            tests.test_change_impact_test_policy \
-            tests.test_recovery_ontology_workforce_runtime
+          python3 -m unittest tests.test_full_system_operational_certification tests.test_trusted_code_delivery tests.test_change_impact_test_policy tests.test_recovery_ontology_workforce_runtime
           node --import tsx --test tests/server-health-runtime-policy.test.ts
 
       - name: Recover and unify legacy bot system
@@ -70,17 +66,24 @@ jobs:
           python3 tools/build_unified_bot_system.py
           python3 tools/build_runtime_sync_plan.py
 
-      - name: Build work manufacturing and ontology evidence
+      - name: Build work business creative government manufacturing and ontology evidence
         run: |
           python3 tools/build_universal_work_ai_catalog.py || python3 tools/build_universal_work_ai_catalog.py --offline
+          python3 tools/build_universal_capability_benchmark.py
+          python3 tools/build_business_lifecycle_benchmarks.py
+          python3 tools/build_creative_mastery_benchmarks.py
+          python3 tools/build_government_public_sector_benchmarks.py
           python3 tools/build_work_platform_benchmarks.py
           python3 tools/build_manufacturing_productivity_benchmarks.py
+          python3 tools/build_continuous_value_discovery_backlog.py
+          python3 tools/build_parallel_benchmark_gap_registry.py
           python3 tools/build_ontology_snapshot.py
 
-      - name: Refresh connection catalog and truth audit
+      - name: Refresh internal and external connection truth
         run: |
           npm run buddy:connections
           python3 tools/audit_runtime_connections.py
+          python3 tools/audit_repository_connections.py
 
       - name: Account for every bot division category and specialist agent
         run: python3 tools/audit_all_bots_categories_and_agents.py
@@ -134,31 +137,30 @@ jobs:
           import json
           from pathlib import Path
           def load(path):
-              p=Path(path)
-              return json.loads(p.read_text()) if p.exists() else {}
+              p=Path(path); return json.loads(p.read_text()) if p.exists() else {}
           d=load('config/generated/full-system-operational-certification.json')
-          print('# Full System Certification')
-          print()
+          print('# Full System Certification'); print()
           if not d:
-              print('Certification receipt was not generated because prerequisite evidence is missing.')
-              raise SystemExit(0)
+              print('Certification receipt was not generated because prerequisite evidence is missing.'); raise SystemExit(0)
           print(f"- Status: **{d['status']}**")
           print(f"- Core operationally certified: **{d['core_operational_certified']}**")
           print(f"- Fully operational + connected claim allowed: **{d['fully_operational_and_connected_claim_allowed']}**")
           print(f"- Speed: **{d['speed_summary']['passed']}/{d['speed_summary']['total']}**")
           print(f"- Accuracy: **{d['accuracy_summary']['passed']}/{d['accuracy_summary']['total']}**")
           print(f"- Runtime connections: **{d['connection_summary']['runtime_verified']}/{d['connection_summary']['declared']}**")
+          print(f"- Internal repository references/blockers: **{d['connection_summary']['internal_references']}/{d['connection_summary']['internal_blockers']}**")
           print(f"- Legacy files/candidates: **{d['recovery_summary']['legacy_files']}/{d['recovery_summary']['recoverable_candidates']}**")
+          print(f"- Sandbox overlays: **{d['sandbox_summary']['overlays']}**")
           print(f"- Canonical sandbox runtime coverage: **{d['sandbox_summary']['canonical_runtime_coverage_percent']}%**")
-          print(f"- Ontology objects/links: **{d['ontology_summary']['objects']}/{d['ontology_summary']['links']}**")
-          print(f"- Work benchmark cases: **{d['work_summary']['benchmark_cases']}**")
-          print(f"- Manufacturing benchmark cases: **{d['manufacturing_summary']['benchmark_cases']}**")
+          b=d['benchmark_summary']
+          print(f"- Universal/business/creative/government/manufacturing benchmark cases: **{b['universal']}/{b['business']}/{b['creative']}/{b['government']}/{b['manufacturing']}**")
+          print(f"- Parallel benchmark gap workers: **{b['parallel_gap_workers']}**")
+          print(f"- Continuous value candidates: **{b['value_candidates']}**")
           live=load('config/generated/live-user-testing-readiness.json')
           if live: print(f"- Live-user recommended stage: **{live['recommended_stage']}**")
           if d['release_blockers']:
               print('- Blockers:')
-              for blocker in d['release_blockers']:
-                  print(f"  - {blocker}")
+              for blocker in d['release_blockers']: print(f"  - {blocker}")
           PY
 
       - name: Upload certification evidence
@@ -171,6 +173,7 @@ jobs:
             config/generated/system-speed-accuracy-benchmarks.json
             config/generated/production-runtime-smoke.json
             config/generated/runtime-connection-readiness.json
+            config/generated/repository-system-connections.json
             config/generated/trusted-code-delivery-audit.json
             config/generated/bot-accounting-placement-audit.json
             config/generated/legacy-bot-recovery-manifest.json
@@ -179,20 +182,21 @@ jobs:
             config/generated/unified-bot-system.json
             config/generated/runtime-sync-plan.json
             config/generated/universal-work-ai-catalog.json
+            config/generated/universal-capability-benchmark.json
+            config/generated/business-lifecycle-benchmarks.json
+            config/generated/creative-studio-mastery-benchmarks.json
+            config/generated/government-public-sector-benchmarks.json
             config/generated/work-platform-benchmark-backlog.json
             config/generated/manufacturing-productivity-benchmarks.json
+            config/generated/parallel-benchmark-gap-registry.json
+            config/generated/continuous-value-discovery-backlog.json
             config/generated/dreamco-ontology-snapshot.json
             config/generated/maximum-sandbox-matrix.json
             config/generated/maximum-sandbox-runtime-audit.json
             config/generated/live-user-testing-readiness.json
             tmp/dreamco-verification/latest.json
             reports/FULL_SYSTEM_OPERATIONAL_CERTIFICATION.md
-            reports/SYSTEM_SPEED_ACCURACY_BENCHMARKS.md
-            reports/RUNTIME_CONNECTION_READINESS.md
-            reports/TRUSTED_CODE_DELIVERY_AUDIT.md
-            reports/BOT_ACCOUNTING_PLACEMENT_AUDIT.md
-            reports/LEGACY_BOT_RECOVERY.md
-            reports/LEGACY_CAPABILITY_MERGE_PROPOSALS.md
-            reports/LEGACY_BOT_PROMOTION_BACKLOG.md
+            reports/REPOSITORY_SYSTEM_CONNECTIONS.md
+            reports/PARALLEL_BENCHMARK_GAP_REGISTRY.md
           if-no-files-found: warn
           retention-days: 21
