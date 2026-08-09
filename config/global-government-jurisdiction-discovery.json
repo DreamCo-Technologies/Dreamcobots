@@ -1,0 +1,13 @@
+{
+  "schema": "dreamco.global_government_jurisdiction_discovery.v1",
+  "version": "1.0.0",
+  "seed_standard": "United Nations Statistics Division M49 countries or areas",
+  "mission": "Discover and maintain a source-grounded government map for every jurisdiction in scope, then enumerate departments/agencies, government levels, jobs, services, forms, fees, fiscal sources, procurement, grants and public data one jurisdiction at a time.",
+  "jurisdiction_discovery_fields": ["m49_code","iso_alpha2","iso_alpha3","country_or_area_name","region","subregion","official_government_portal","official_legislative_portal","official_judiciary_portal","official_finance_or_treasury","official_statistics_office","official_open_data_portal","official_service_directory","official_procurement_portal","official_grants_portal","official_civil_service_or_jobs_portal","official_local_government_directory","languages","currency","fiscal_year","last_verified"],
+  "department_discovery_fields": ["official_name","official_url","government_level","parent_government","functional_class","mandate_source","service_directory","jobs_or_careers","forms","fees","datasets","APIs","budget_source","spending_source","procurement_source","grants_source","performance_reports","contact_channels","last_verified"],
+  "discovery_states": ["seeded","official_portal_found","department_directory_found","sources_mapped","services_mapped","jobs_mapped","fiscal_sources_mapped","benchmark_ready","runtime_verified","needs_review"],
+  "department_iteration_rule": "For each discovered department, generate independent service, job/task, spending, procurement, data/API, accessibility and productivity benchmark cases and route every gap to parallel builders.",
+  "local_government_rule": "National jurisdiction discovery must also identify the authoritative directory or registry used to enumerate states/provinces/regions and local governments; do not assume every country uses U.S.-style state/county/city structures.",
+  "freshness_rule": "Department existence, names, programs, fees, links and authorities can change; each record requires last_verified and source provenance.",
+  "truth_rule": "A jurisdiction or department is not considered mapped because a search result exists. DreamCo requires an authoritative government source or a clearly marked unresolved discovery state."
+}
