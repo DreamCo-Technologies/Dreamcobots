@@ -1,17 +1,22 @@
 {
-  "schema": "dreamco.continuous_human_value_discovery.v1",
-  "version": "1.0.0",
-  "cadence": "daily discovery with weekly evidence review; external searches require current authorized sources and respect source/platform terms",
+  "schema": "dreamco.continuous_human_value_discovery.v2",
+  "version": "2.0.0",
+  "mission": "Continuously search for evidence-backed ways DreamCo can make humans more productive, make Buddy smarter, create software/tools/data products businesses will pay for, improve government/nonprofit workflows, and discover permitted revenue experiments.",
+  "cadence": "continuous local/sandbox discovery with scheduled evidence review; external searches require current authorized sources and respect source/platform terms",
   "loops": [
-    {"id":"productivity","question":"What recurring human work can be made faster, easier, safer or more accessible?","output":"benchmark cases and tool proposals"},
-    {"id":"intelligence","question":"What knowledge, reasoning, retrieval or decision-support gap can Buddy improve?","output":"evaluation cases and capability proposals"},
-    {"id":"software_products","question":"What repeated pain point can become reusable software a user or business would pay for?","output":"product hypothesis, buyer, MVP, benchmark and pricing experiment"},
-    {"id":"business_owner","question":"What step in starting, operating or expanding a business is costly or repetitive?","output":"business workflow/tool proposal"},
-    {"id":"autonomous_revenue","question":"What low-risk permitted work can be fulfilled autonomously with measurable customer value?","output":"sandbox revenue experiment; no unsolicited spam, deceptive activity or guaranteed income"},
-    {"id":"government","question":"What government/public-service workflow can save staff or residents time without automating consequential authority?","output":"public-sector benchmark/tool proposal"},
-    {"id":"contracts","question":"What current procurement need could DreamCo credibly support?","output":"opportunity-fit evidence and capability gap; never claim registration/certification not verified"},
-    {"id":"nonprofit","question":"What nonprofit mission or operating workflow can be improved?","output":"nonprofit benchmark/tool proposal"}
+    {"id":"productivity","questions":["What recurring human work can be made faster, easier, safer or more accessible?","What handoff or duplicate entry can be removed?","What error can be prevented before it happens?"],"output":"benchmark cases and reusable tool proposals"},
+    {"id":"intelligence","questions":["What failure pattern can become shared knowledge?","What routing/model/tool choice can improve?","What new benchmark exposes a blind spot?","What shared infrastructure improvement benefits many bots?"],"output":"evaluation cases and capability/shared-infrastructure proposals"},
+    {"id":"software_products","questions":["What repeated pain point can become reusable software?","What workflow requires several apps?","What internal DreamCo capability can become a customer product?","What data/skill package has measurable value?"],"output":"product hypothesis, buyer, MVP, benchmark and pricing experiment"},
+    {"id":"business_owner","questions":["What step in starting, operating or expanding a business is costly or repetitive?","What can increase revenue or reduce cost/risk?","What can free owner or employee time?"],"output":"business workflow/tool proposal"},
+    {"id":"autonomous_revenue","questions":["What low-risk permitted digital work can be fulfilled with measurable customer value?","What tested product/service can be prepared for owner-approved live use?"],"output":"sandbox revenue experiment; no unsolicited spam, deceptive activity or guaranteed income"},
+    {"id":"government","questions":["What public-service workflow can save staff or residents time without automating consequential authority?","What administrative government task can be safely assisted?"],"output":"public-sector benchmark/tool proposal"},
+    {"id":"contracts","questions":["What current procurement need could DreamCo credibly support?","What requirement reveals a capability gap worth building?"],"output":"opportunity-fit evidence and capability gap; never claim registration/certification not verified"},
+    {"id":"nonprofit","questions":["What nonprofit mission, fundraising, grant, volunteer, reporting or service-delivery workflow can be improved?"],"output":"nonprofit benchmark/tool proposal"}
   ],
+  "candidate_fields": ["idea_id","loop","problem","user_or_buyer","current_workflow","time_cost_baseline","money_cost_baseline","error_risk","proposed_solution","existing_dreamco_assets","required_build","sandbox_plan","business_model","evidence","risk","owner","status"],
+  "statuses": ["discovered","deduplicated","benchmark_needed","sandbox_building","tested","rejected","product_candidate","owner_review","live_experiment_approved"],
   "required_product_evidence": ["named user/buyer problem","frequency","current workaround","measurable value","competitive alternatives","MVP scope","security/privacy risk","delivery cost","pricing hypothesis","sandbox result","human feedback"],
-  "promotion_rule": "Ideas remain hypotheses until evidence exists. Autonomous revenue remains sandboxed until permissions, fulfillment quality, payment/tax/compliance boundaries and owner-defined live controls are satisfied."
+  "never_autonomous_without_approval": ["spending money","charging customers","real external outreach","contract signing","job applications","government submissions","publishing under user identity","destructive production changes"],
+  "promotion_rule": "Ideas remain hypotheses until evidence exists. Autonomous revenue remains sandboxed until permissions, fulfillment quality, payment/tax/compliance boundaries and owner-defined live controls are satisfied.",
+  "truth_rule": "Discovery may run continuously, but value/revenue claims require evidence and consequential external actions require applicable user/owner approval plus legal/platform permission."
 }
