@@ -9,6 +9,7 @@ on:
     paths:
       - "config/buddy-full-potential-sandbox-open-source-evolution-program.json"
       - "tools/build_full_potential_sandbox_catalog.py"
+      - "tools/scan_open_source_ai_ecosystem.py"
       - "tests/test_full_potential_sandbox.py"
       - "tools/generate_buddy_open_model_lab.py"
       - "tools/generate_buddy_model_router.py"
@@ -40,6 +41,10 @@ jobs:
         run: |
           python3 tools/build_full_potential_sandbox_catalog.py
           python3 -m unittest tests.test_full_potential_sandbox
+      - name: Discover current public open-source AI metadata
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: python3 tools/scan_open_source_ai_ecosystem.py
       - name: Check current open-model and model-routing knowledge
         run: |
           npm run buddy:open-model-lab
@@ -58,8 +63,11 @@ jobs:
             if [ -f config/generated/full-potential-sandbox-catalog.json ]; then
               python3 -c "import json; d=json.load(open('config/generated/full-potential-sandbox-catalog.json')); print('- Sandbox categories:', d['category_count']); print('- Test families:', d['test_family_count']); print('- Axes:', d['axis_count'])"
             fi
+            if [ -f config/generated/open-source-ai-ecosystem-scan.json ]; then
+              python3 -c "import json; d=json.load(open('config/generated/open-source-ai-ecosystem-scan.json')); print('- Newly scanned model metadata:', d['counts']['models']); print('- Newly scanned dataset metadata:', d['counts']['datasets']); print('- Newly scanned repository metadata:', d['counts']['repositories']); print('- Source errors:', d['counts']['errors'])"
+            fi
             echo "- Open-model lab, model router, model benchmarks, dependency health, and self-improvement governance are checked by this workflow."
-            echo "- This workflow verifies DreamCo's indexed/open-source readiness; it does not claim complete knowledge of every public model, dataset, repository, or release."
+            echo "- Discovery is metadata-only and every candidate still needs provenance, license, privacy, security and benchmark review before adoption."
           } >> "$GITHUB_STEP_SUMMARY"
       - name: Save evolution evidence
         if: always()
@@ -68,7 +76,8 @@ jobs:
           name: open-source-evolution-${{ github.run_id }}
           path: |
             config/generated/full-potential-sandbox-catalog.json
-            config/generated/buddy_open_model_lab.json
+            config/generated/open-source-ai-ecosystem-scan.json
+            config/generated/buddy_open_model_coding_lab.json
             config/generated/buddy_model_router.json
           if-no-files-found: ignore
           retention-days: 7
