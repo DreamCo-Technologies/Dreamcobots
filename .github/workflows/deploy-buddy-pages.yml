@@ -27,14 +27,15 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-latest
+    timeout-minutes: 45
     steps:
       - name: Check out repository
-        uses: actions/checkout@v7
+        uses: actions/checkout@v6
         with:
           persist-credentials: false
 
       - name: Set up Python
-        uses: actions/setup-python@v7
+        uses: actions/setup-python@v6
         with:
           python-version: "3.13"
 
@@ -44,9 +45,6 @@ jobs:
           python3 tools/generate_buddy_model_router.py --check
           node tools/check_buddy_model_benchmarks.mjs
           python3 tools/generate_buddy_distribution_catalog.py --check
-          # Pages should reflect the exact checked-out commit. Regenerate the derived
-          # repository inventory inside the build rather than failing only because a
-          # newly added source file has not yet had its generated snapshot committed.
           python3 tools/generate_repository_test_registry.py
           python3 tools/build_buddy_public_site.py --check
 
@@ -66,15 +64,15 @@ jobs:
       - name: Configure GitHub Pages
         uses: actions/configure-pages@v6
 
-      - name: Upload public website only
-        uses: actions/upload-pages-artifact@v5
+      - name: Upload public website
+        uses: actions/upload-pages-artifact@v4
         with:
           path: website
-          include-hidden-files: true
 
   deploy:
     needs: build
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     permissions:
       pages: write
       id-token: write
