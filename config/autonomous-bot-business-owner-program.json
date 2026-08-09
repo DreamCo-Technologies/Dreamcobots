@@ -1,0 +1,59 @@
+{
+  "schema": "dreamco.autonomous_bot_business_owner_program.v1",
+  "version": "1.0.0",
+  "mission": "Prepare every Buddy/DreamCo bot to operate as a sandbox business owner: identify a lawful customer problem, package a service/product, market it, sell it, fulfill it, support it, measure economics, and use Buddy's payment infrastructure only through approved payment flows.",
+  "revenue_experiment": {
+    "target_usd": 1000,
+    "mode": "sandbox_simulation_until_explicit_live_approval",
+    "target_is_guarantee": false,
+    "purpose": "Compare how bots would position, advertise, market, sell, fulfill and improve their own offerings.",
+    "required_math": ["price", "units_or_clients_needed", "gross_revenue", "estimated_cost", "estimated_margin", "conversion_rate_assumption", "leads_needed", "time_to_fulfill", "refund_risk"],
+    "examples": ["$100 x 10 clients", "$250 x 4 clients", "$50 x 20 sales", "$500 x 2 projects"]
+  },
+  "business_owner_curriculum": [
+    "customer_problem_discovery","market_research","competitor_benchmark","ideal_customer_profile","offer_design","pricing","unit_economics","brand_positioning","landing_page","portfolio_demo","lead_generation","content_marketing","search_marketing","social_marketing","email_outreach","sales_script","qualification","proposal","objection_handling","closing","payment_checkout","fulfillment","quality_assurance","customer_support","refund_handling","retention","upsell_cross_sell","referral_program","analytics","bookkeeping_export","tax_record_export","privacy","security","legal_compliance_review","accessibility","incident_response","business_continuity","continuous_improvement"
+  ],
+  "marketing_channels_to_simulate": [
+    "website","seo","local_search","content","email","social","community","marketplaces","partnerships","referrals","affiliate","events","direct_outreach","paid_search_sandbox","paid_social_sandbox","creator_partnerships","developer_ecosystems","app_marketplaces"
+  ],
+  "workflow_requirements": [
+    "choose offer from verified capabilities only",
+    "define target customer and measurable problem",
+    "create value proposition and proof/demo",
+    "choose pricing and $1000 target math",
+    "generate campaign assets",
+    "simulate channel-specific campaigns",
+    "score lead quality and expected conversion",
+    "simulate sales conversation and objections",
+    "simulate checkout/payment state transitions",
+    "simulate fulfillment and QA",
+    "simulate support/refund/retention",
+    "calculate economics and risks",
+    "benchmark alternative strategies",
+    "retain best-performing compliant strategy as a reusable playbook"
+  ],
+  "stripe_policy": {
+    "owner": "Buddy/DreamCo payment layer",
+    "bots_get_individual_secret_keys": false,
+    "bots_use_shared_payment_abstraction": true,
+    "test_mode_default": true,
+    "live_charges_require_explicit_authorization": true,
+    "never_store_raw_card_data": true,
+    "required_tests": ["test_checkout","successful_payment","declined_payment","duplicate_event","refund","cancellation","subscription_if_applicable","webhook_signature","idempotency","reconciliation","permission_gate"]
+  },
+  "autonomy": {
+    "automatic": ["research","planning","asset_generation","sandbox_campaigns","sandbox_sales","sandbox_checkout","analytics","benchmarking","playbook_improvement"],
+    "approval_gated": ["real_ad_spend","real_messages_to_people","live_publication_under_user_identity","live_payment_charge","refund","contract_acceptance","account_creation_with_external obligations","regulated_or_high-impact actions"]
+  },
+  "graduation": {
+    "requires_verified_capability_to_sell": true,
+    "requires_personal_and_business_task_sandbox_coverage": true,
+    "requires_1000_usd_simulation_plan": true,
+    "requires_marketing_and_sales_tests": true,
+    "requires_fulfillment_tests": true,
+    "requires_payment_tests_when_monetized": true,
+    "requires_safety_privacy_security_tests": true,
+    "requires_runtime_evidence": true
+  },
+  "truth_rule": "A $1000 plan is an experiment target, not a promise of earnings. No bot may claim revenue, customers, successful advertising, successful live payment, or business ownership from generated plans alone."
+}
