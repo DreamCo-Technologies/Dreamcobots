@@ -1,0 +1,43 @@
+name: New idea or capability
+
+description: Suggest a new Buddy, bot, resource, workflow, or platform capability.
+title: "[Idea] "
+labels: []
+body:
+  - type: textarea
+    id: goal
+    attributes:
+      label: What do you want DreamCo to do?
+      description: Say it in plain language.
+    validations:
+      required: true
+  - type: textarea
+    id: user_value
+    attributes:
+      label: Who does this help and how?
+    validations:
+      required: true
+  - type: dropdown
+    id: area
+    attributes:
+      label: Best area
+      options:
+        - Buddy
+        - Bot fleet/divisions
+        - Resources/scouts
+        - Money/business
+        - Website/Pages
+        - GitHub Actions/automation
+        - Data/models/open source
+        - Games/media/creator
+        - Devices/robotics
+        - Other
+    validations:
+      required: true
+  - type: textarea
+    id: success
+    attributes:
+      label: What would prove it works?
+      description: Describe a result or test Buddy can measure.
+    validations:
+      required: true
