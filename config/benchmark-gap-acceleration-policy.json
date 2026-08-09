@@ -1,0 +1,58 @@
+{
+  "schema": "dreamco.benchmark_gap_acceleration_policy.v1",
+  "version": "1.0.0",
+  "mission": "Prevent benchmark stagnation by continuously measuring, assigning, repairing and retesting every open gap with the maximum safe non-conflicting parallelism supported by the repository.",
+  "stagnation_policy": {
+    "unmeasured_warning_hours": 6,
+    "unassigned_warning_hours": 2,
+    "assigned_no_progress_warning_hours": 12,
+    "in_progress_no_evidence_warning_hours": 24,
+    "retest_required_warning_hours": 6,
+    "blocked_recheck_hours": 24,
+    "passed_freshness_days": 14,
+    "current_market_or_external_evidence_freshness_days": 7
+  },
+  "parallelism": {
+    "target": "all independent gaps concurrently",
+    "maximum_parallel_lanes": 32,
+    "same_canonical_owner_serialized": true,
+    "maximum_parallel_candidates_per_gap": 5,
+    "priority_preemption": true,
+    "priority_order": [
+      "security/privacy/permission release blocker", "broken build/test/deploy", "data-loss/destructive risk",
+      "shared infrastructure", "high-frequency human task", "revenue/customer value", "government/public service",
+      "accessibility", "integration", "performance/cost", "long-horizon research"
+    ]
+  },
+  "required_gap_state_machine": [
+    "unknown", "unmeasured", "measured_gap", "assigned", "in_progress", "fix_ready", "retest_required", "blocked", "passed", "regressed", "exception_approved"
+  ],
+  "anti_stagnation_actions": {
+    "unknown": "measure immediately",
+    "unmeasured": "assign benchmark runner",
+    "measured_gap": "assign canonical owner plus builder/integration/QA/security/value lanes",
+    "assigned": "start the highest-priority non-conflicting repair",
+    "in_progress": "require heartbeat/evidence update before threshold; otherwise requeue and escalate",
+    "fix_ready": "run focused and affected regression tests",
+    "retest_required": "retest at next available lane",
+    "blocked": "record blocker owner and recheck cadence; run all unblocked dependencies in parallel",
+    "regressed": "reopen immediately and raise priority",
+    "passed": "refresh before freshness expires or when dependencies/fixtures change"
+  },
+  "gap_team": [
+    "domain benchmark bot", "gap analyst bot", "builder bot", "integration bot", "sandbox QA bot",
+    "security/compliance bot", "performance/cost bot", "business-value bot", "human-review bot", "release reviewer"
+  ],
+  "closure_rule": "No gap closes because code exists or a bot reports success. Closure requires target evidence, required sandbox/regression/security checks, rollback where applicable and current runtime evidence.",
+  "estimate_model": {
+    "purpose": "Produce a planning estimate from the current evidence set without pretending unknown work is known.",
+    "wave_formula": "ceil(actionable_open_gaps / effective_parallel_lanes)",
+    "default_wave_hours": {"optimistic": 1.0, "expected": 4.0, "conservative": 12.0},
+    "integration_multiplier": 1.35,
+    "shared_owner_conflict_multiplier": 1.25,
+    "external_adapter_or_credential_multiplier": 2.0,
+    "blocked_gaps_have_no_completion_date_until_blocker_resolves": true,
+    "moving_target_rule": "Current-market, competitor and external-service benchmarks are continuous and can reach current-zero-open-gaps but are never permanently finished."
+  },
+  "truth_rule": "Aggressive parallelism means maximum safe independent concurrency, not conflicting edits, bypassed approvals, weakened tests or invented completion dates."
+}
