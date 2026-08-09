@@ -1,0 +1,49 @@
+name: Actions Health
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/**"
+      - "tools/audit_actions_health.py"
+      - "package.json"
+  pull_request:
+    paths:
+      - ".github/workflows/**"
+      - "tools/audit_actions_health.py"
+      - "package.json"
+  schedule:
+    - cron: "23 12 * * *"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: actions-health-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.13"
+      - name: Scan every workflow
+        run: python3 tools/audit_actions_health.py
+      - name: Add report to summary
+        if: always()
+        run: cat reports/ACTIONS_HEALTH_REPORT.md >> "$GITHUB_STEP_SUMMARY" 2>/dev/null || true
+      - name: Save health report
+        if: always()
+        uses: actions/upload-artifact@v6
+        with:
+          name: actions-health-${{ github.run_id }}
+          path: |
+            reports/ACTIONS_HEALTH_REPORT.md
+            config/generated/actions-health-report.json
+          if-no-files-found: warn
+          retention-days: 7
