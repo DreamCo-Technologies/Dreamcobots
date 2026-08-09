@@ -68,33 +68,41 @@ jobs:
         run: npm run build
       - name: Build release-quality receipt
         if: always()
+        env:
+          CODE_TRUST_JOB_STATUS: ${{ job.status }}
+          CODE_TRUST_COMMIT: ${{ github.sha }}
+          CODE_TRUST_RUN_ID: ${{ github.run_id }}
         run: |
           mkdir -p tmp/code-trust
           python3 - <<'PY'
-          import json
+          import json, os
           from datetime import datetime, timezone
           from pathlib import Path
           audit_path=Path('config/generated/trusted-code-delivery-audit.json')
           audit=json.loads(audit_path.read_text()) if audit_path.exists() else {}
+          status=os.environ.get('CODE_TRUST_JOB_STATUS','unknown')
           receipt={
             'schema':'dreamco.code_trust_receipt.v1',
-            'commit':'${{ github.sha }}',
-            'run_id':'${{ github.run_id }}',
+            'commit':os.environ.get('CODE_TRUST_COMMIT'),
+            'run_id':os.environ.get('CODE_TRUST_RUN_ID'),
             'generated_at':datetime.now(timezone.utc).isoformat(),
-            'job_status':'${{ job.status }}',
+            'job_status':status,
             'static_release_blockers':audit.get('release_blockers',[]),
+            'review_findings':audit.get('review_finding_count',0),
             'source_files':audit.get('source_file_count'),
             'test_files':audit.get('test_file_count'),
-            'release_status':'verified_candidate' if '${{ job.status }}' == 'success' and not audit.get('release_blockers') else 'blocked',
+            'release_status':'verified_candidate' if status == 'success' and not audit.get('release_blockers') else 'blocked',
             'truth_boundary':'A passing receipt means required configured checks passed for this commit; it is not proof that no possible bug exists.'
           }
           Path('tmp/code-trust/release-receipt.json').write_text(json.dumps(receipt,indent=2)+'\n')
-          print('## Code Trust Gate', file=open('${GITHUB_STEP_SUMMARY}','a'))
-          print('', file=open('${GITHUB_STEP_SUMMARY}','a'))
-          print(f"- Release status: **{receipt['release_status']}**", file=open('${GITHUB_STEP_SUMMARY}','a'))
-          print(f"- Source files inventoried: {receipt['source_files']}", file=open('${GITHUB_STEP_SUMMARY}','a'))
-          print(f"- Test files inventoried: {receipt['test_files']}", file=open('${GITHUB_STEP_SUMMARY}','a'))
-          print(f"- Static blockers: {len(receipt['static_release_blockers'])}", file=open('${GITHUB_STEP_SUMMARY}','a'))
+          summary=Path(os.environ['GITHUB_STEP_SUMMARY'])
+          with summary.open('a',encoding='utf-8') as f:
+              f.write('## Code Trust Gate\n\n')
+              f.write(f"- Release status: **{receipt['release_status']}**\n")
+              f.write(f"- Source files inventoried: {receipt['source_files']}\n")
+              f.write(f"- Test files inventoried: {receipt['test_files']}\n")
+              f.write(f"- Static blockers: {len(receipt['static_release_blockers'])}\n")
+              f.write(f"- Review findings: {receipt['review_findings']}\n")
           PY
       - name: Upload trust evidence
         if: always()
