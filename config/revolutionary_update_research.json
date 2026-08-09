@@ -1,0 +1,29 @@
+{
+  "schema": "dreamco.revolutionary_update_research.v1",
+  "researched_at": "2026-08-09",
+  "approval_meaning": "Reviewed as needed roadmap/build work based on current primary-source research and fit with DreamCo. This is not a claim that implementation or certification has already passed.",
+  "themes": [
+    {"id":"agent-observability","name":"Agent Observability","research_basis":"Production agents need traces, evaluations, monitoring, optimization, and business-value measurement because model/tool behavior can drift.","source":"https://devblogs.microsoft.com/foundry/build-2026-from-observability-to-roi-for-ai-agents-on-any-framework/"},
+    {"id":"agent-evals","name":"Agent Evaluation","research_basis":"Multi-turn, tool-using agents require rigorous evals to detect behavioral regressions before production.","source":"https://www.anthropic.com/engineering/demystifying-evals-for-ai-agents"},
+    {"id":"agent-interoperability","name":"Agent Interoperability","research_basis":"The agent ecosystem is converging around protocols including MCP, A2A, UCP, AP2, A2UI, and AG-UI, reducing bespoke integration work.","source":"https://developers.googleblog.com/developers-guide-to-ai-agent-protocols/"},
+    {"id":"supply-chain","name":"Software Supply Chain","research_basis":"Dependency provenance, SBOMs, attestations and immutable releases improve software supply-chain transparency and integrity.","source":"https://docs.github.com/en/code-security/concepts/supply-chain-security/supply-chain-security"},
+    {"id":"sandbox-governance","name":"Agent Sandbox Governance","research_basis":"Autonomous coding agents need clear access boundaries, approval gates and agent-native telemetry for safe deployment.","source":"https://openai.com/index/running-codex-safely/"},
+    {"id":"long-horizon","name":"Long-Horizon Agent Work","research_basis":"Agentic work is shifting toward delegated tasks lasting minutes or hours and parallel agent execution, requiring checkpoints and resumability.","source":"https://openai.com/index/how-agents-are-transforming-work/"},
+    {"id":"local-ai","name":"Local Multimodal AI","research_basis":"Developer-sized multimodal models can increasingly run locally, creating privacy, latency, offline and cost-routing opportunities.","source":"https://developers.googleblog.com/gemma-4-12b-the-developer-guide/"},
+    {"id":"asset-inventory","name":"Software Asset Intelligence","research_basis":"Modern software asset management emphasizes reuse, inventory, provenance and supply-chain security at scale.","source":"https://csrc.nist.gov/pubs/ir/8500/a/ipd"},
+    {"id":"business-roi","name":"Agent ROI","research_basis":"Leading AI adopters differentiate through deeper delegated workflows, governance, enablement and measurement rather than seat count alone.","source":"https://openai.com/index/introducing-b2b-signals/"},
+    {"id":"coding-agents","name":"Agentic Software Engineering","research_basis":"Coding agents increasingly understand repositories, use tools, modify code, run tests and prepare work for human review rather than only autocomplete.","source":"https://openai.com/index/gartner-2026-agentic-coding-leader/"}
+  ],
+  "update_patterns": [
+    {"id":"trace-ledger","change":"add an append-only evidence ledger"},
+    {"id":"regression-gate","change":"add a pre-merge regression gate"},
+    {"id":"capability-score","change":"add evidence-weighted capability scoring"},
+    {"id":"failure-taxonomy","change":"add structured failure classification"},
+    {"id":"cost-budget","change":"add per-task cost and token budgets"},
+    {"id":"compatibility-matrix","change":"add version and protocol compatibility matrices"},
+    {"id":"rollback-plan","change":"add automatic rollback-plan generation"},
+    {"id":"human-review","change":"add risk-tiered human review checkpoints"},
+    {"id":"benchmark-pack","change":"add repeatable benchmark packs"},
+    {"id":"innovation-loop","change":"feed verified production evidence into ranked improvement proposals"}
+  ]
+}
