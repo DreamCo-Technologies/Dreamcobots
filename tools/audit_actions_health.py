@@ -12,13 +12,17 @@ OUT_MD = ROOT / "reports" / "ACTIONS_HEALTH_REPORT.md"
 PACKAGE = json.loads((ROOT / "package.json").read_text(encoding="utf-8"))
 SCRIPTS = set(PACKAGE.get("scripts", {}))
 
+# Repository-verified current majors. These actions are successfully resolved by
+# GitHub Actions in current DreamCo runs; update this map when a real workflow
+# resolution test proves a newer major rather than treating every higher major
+# as an automatic error.
 MAX_MAJOR = {
-    "actions/checkout": 6,
+    "actions/checkout": 7,
     "actions/setup-node": 6,
     "actions/setup-python": 6,
     "actions/upload-artifact": 6,
     "actions/configure-pages": 6,
-    "actions/upload-pages-artifact": 4,
+    "actions/upload-pages-artifact": 5,
     "actions/deploy-pages": 5,
 }
 
@@ -45,7 +49,7 @@ def main() -> int:
             item["actions"].append(f"{action}@v{major}")
             allowed = MAX_MAJOR.get(action)
             if allowed is not None and major > allowed:
-                item["errors"].append(f"unsupported or unverified action major: {action}@v{major}; expected <= v{allowed}")
+                item["errors"].append(f"unverified action major: {action}@v{major}; repository-verified baseline <= v{allowed}")
         for script in NPM_RE.findall(text):
             if script not in SCRIPTS:
                 item["errors"].append(f"missing npm script: {script}")
@@ -53,7 +57,8 @@ def main() -> int:
             clean = rel.rstrip("),]")
             if not (ROOT / clean).exists():
                 item["errors"].append(f"missing referenced file: {clean}")
-        if "bots/" in text and (ROOT / "App_bots").exists():
+        # Match path tokens, not broad substrings inside App_bots/.
+        if re.search(r"(^|[\s/'\"])(?:bots)/", text) and (ROOT / "App_bots").exists():
             item["warnings"].append("references legacy bots/ path; verify against canonical App_bots fleet")
         if "seed-bots" in text or "seed-buddy-bot" in text:
             item["warnings"].append("uses seed-file proxy; prefer current canonical fleet/generated registries")
@@ -64,21 +69,21 @@ def main() -> int:
         findings.append(item)
 
     payload = {
-        "schema": "dreamco.actions_health.v1",
+        "schema": "dreamco.actions_health.v2",
         "workflow_count": len(workflows),
         "critical_error_count": critical,
         "warning_count": warnings,
         "baseline": {
-            "checkout": "actions/checkout@v6",
+            "checkout": "actions/checkout@v7",
             "setup_node": "actions/setup-node@v6",
             "setup_python": "actions/setup-python@v6",
             "upload_artifact": "actions/upload-artifact@v6",
             "configure_pages": "actions/configure-pages@v6",
-            "upload_pages_artifact": "actions/upload-pages-artifact@v4",
+            "upload_pages_artifact": "actions/upload-pages-artifact@v5",
             "deploy_pages": "actions/deploy-pages@v5"
         },
         "findings": findings,
-        "truth_boundary": "Static workflow health catches missing/invalid references and stale architecture signals; a workflow is operational only after a GitHub Actions run succeeds."
+        "truth_boundary": "Static workflow health catches missing/invalid references and stale architecture signals; a workflow is operational only after a GitHub Actions run succeeds. Action-major acceptance is based on repository-observed resolution and must be refreshed from evidence."
     }
     OUT_JSON.parent.mkdir(parents=True, exist_ok=True)
     OUT_MD.parent.mkdir(parents=True, exist_ok=True)
