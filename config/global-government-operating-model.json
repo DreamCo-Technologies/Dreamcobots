@@ -1,0 +1,18 @@
+{
+  "schema": "dreamco.global_government_operating_model.v1",
+  "version": "1.0.0",
+  "mission": "Model government worldwide as jurisdiction-specific institutions mapped to common functions, services, jobs, workflows, fiscal data and improvement benchmarks so Buddy can help citizens and public organizations without assuming every country works the same way.",
+  "reference_taxonomy": {
+    "name": "COFOG-aligned functional map",
+    "functions": ["general public services","defence","public order and safety","economic affairs","environmental protection","housing and community amenities","health","recreation culture and religion","education","social protection"]
+  },
+  "jurisdiction_object": ["country_code","country_name","government_system","currency","fiscal_year_definition","levels_of_government","official_portals","official_open_data","finance_sources","debt_sources","procurement_sources","grants_sources","statistics_sources","service_directories","last_verified"],
+  "department_object": ["jurisdiction_id","department_id","official_name","government_level","functional_class","mandate","legal_authority_source","jobs","services","forms","fees","service_channels","APIs","datasets","budgets","spending","contracts","grants","vendors","programs","performance_metrics","systems","improvement_gaps","last_verified"],
+  "service_object": ["service_id","department_id","audience","purpose","official_source","eligibility_source","application_steps","forms","documents","fees","processing_time_if_official","status_tracking","renewal","appeal_or_review_path","accessibility","languages","digital_channel","in_person_channel","contact_channel","last_verified"],
+  "job_object": ["job_id","department_id","title","job_family","tasks","tools","decision_authority","public_contact_level","risk_level","AI_assist_candidates","AI_automation_candidates","human_authority_boundary","benchmark_cases"],
+  "fiscal_object": ["jurisdiction_id","date_or_period","accounting_basis","currency","debt_measure","debt_value","revenue","spending","function","department","program","fund_or_account","vendor_or_recipient","contract_or_grant","source","freshness"],
+  "improvement_dimensions": ["citizen time saved","staff time saved","cost reduction","backlog reduction","error reduction","duplicate system reduction","form simplification","digital completion","accessibility","language coverage","fraud/waste anomaly detection","procurement cycle time","grant cycle time","permit cycle time","service satisfaction","fiscal transparency","cybersecurity","data quality","interoperability","auditability"],
+  "comparison_rules": ["compare equivalent functions before equivalent department names","normalize currency only with explicit conversion timestamp","preserve each jurisdiction's legal authority","separate official metric from DreamCo-calculated metric","never infer fees or eligibility across jurisdictions","mark unavailable data rather than fabricating completeness"],
+  "priority_improvement_lanes": ["citizen-service simplification","public workforce productivity","finance/spending transparency","procurement modernization","grant administration","economic development","housing/community development","public data/API modernization","IT system consolidation","records/document automation","accessibility/language","cybersecurity/privacy","performance management"],
+  "truth_rule": "Global comparison is functional and evidence-based. Department names, powers, fees, programs, debt definitions and service rules remain jurisdiction-specific and must come from current authoritative sources."
+}
