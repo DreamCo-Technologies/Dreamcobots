@@ -9,6 +9,7 @@ ROOT=Path(__file__).resolve().parents[1]
 SUP=json.loads((ROOT/'config/buddy-runtime-supervisor.json').read_text())
 UNIFIED=ROOT/'config/generated/unified-bot-system.json'
 WORK=ROOT/'config/generated/universal-work-ai-catalog.json'
+PUBLIC=ROOT/'config/generated/public-sector-ai-work-roles.json'
 OUT=ROOT/'config/generated/runtime-sync-plan.json'
 
 def load(path,default): return json.loads(path.read_text()) if path.exists() else default
@@ -19,6 +20,7 @@ def lane(worker_id:str,max_lanes:int)->int:
 def main()->int:
     unified=load(UNIFIED,{'canonical_bots':[],'legacy_candidates':[]})
     work=load(WORK,{'occupations':[],'tasks':[]})
+    public=load(PUBLIC,{'roles':[]})
     max_lanes=int(SUP['coordination']['maximum_parallel_lanes'])
     workers=[]
     for bot in unified.get('canonical_bots',[]):
@@ -29,9 +31,12 @@ def main()->int:
         wid=occ['worker_slug']; workers.append({'worker_id':wid,'worker_type':'occupation_specialist','owner_division':'DreamAgents','lane':lane(wid,max_lanes),'runtime_state':'sandbox_only','live_boundary':'not_live_until_task_evidence'})
     for task in work.get('tasks',[]):
         wid=task['worker_slug']; workers.append({'worker_id':wid,'worker_type':'task_specialist','owner_division':'DreamAgents','lane':lane(wid,max_lanes),'runtime_state':'sandbox_only','live_boundary':'not_live_until_task_evidence'})
+    for role in public.get('roles',[]):
+        wid=role['role_id']; workers.append({'worker_id':wid,'worker_type':'public_sector_ai_work_role','owner_division':'DreamAdmin','lane':lane(wid,max_lanes),'runtime_state':'sandbox_only','live_boundary':'human_authority_and_runtime_evidence_required'})
     lane_counts={str(i):0 for i in range(max_lanes)}
     for w in workers: lane_counts[str(w['lane'])]+=1
-    payload={'schema':'dreamco.runtime_sync_plan.v1','worker_count':len(workers),'parallel_lane_count':max_lanes,'lane_counts':lane_counts,'heartbeat_seconds':SUP['coordination']['heartbeat_seconds'],'lease_seconds':SUP['coordination']['lease_seconds'],'checkpoint_after_step':SUP['coordination']['checkpoint_after_step'],'idempotency_key_required':SUP['coordination']['idempotency_key_required'],'workers':workers,'truth_boundary':SUP['truth_rule']}
+    payload={'schema':'dreamco.runtime_sync_plan.v2','worker_count':len(workers),'parallel_lane_count':max_lanes,'lane_counts':lane_counts,'worker_type_counts':{},'heartbeat_seconds':SUP['coordination']['heartbeat_seconds'],'lease_seconds':SUP['coordination']['lease_seconds'],'checkpoint_after_step':SUP['coordination']['checkpoint_after_step'],'idempotency_key_required':SUP['coordination']['idempotency_key_required'],'workers':workers,'truth_boundary':SUP['truth_rule']}
+    for w in workers: payload['worker_type_counts'][w['worker_type']]=payload['worker_type_counts'].get(w['worker_type'],0)+1
     OUT.parent.mkdir(parents=True,exist_ok=True); OUT.write_text(json.dumps(payload,indent=2)+'\n')
-    print(json.dumps({'ok':True,'workers':len(workers),'lanes':max_lanes,'output':str(OUT.relative_to(ROOT))},indent=2)); return 0
+    print(json.dumps({'ok':True,'workers':len(workers),'lanes':max_lanes,'types':payload['worker_type_counts'],'output':str(OUT.relative_to(ROOT))},indent=2)); return 0
 if __name__=='__main__': raise SystemExit(main())
