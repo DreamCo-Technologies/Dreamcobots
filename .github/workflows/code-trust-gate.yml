@@ -35,6 +35,8 @@ jobs:
     timeout-minutes: 90
     steps:
       - uses: actions/checkout@v7
+        with:
+          fetch-depth: 2
       - uses: actions/setup-node@v6
         with:
           node-version: 22
@@ -46,6 +48,26 @@ jobs:
         run: npm ci
       - name: Validate trusted-code policy
         run: python3 -m unittest tests.test_trusted_code_delivery
+      - name: Determine change range
+        id: range
+        shell: bash
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          PUSH_BEFORE: ${{ github.event.before }}
+          PR_BASE: ${{ github.event.pull_request.base.sha }}
+        run: |
+          if [ "$EVENT_NAME" = "pull_request" ] && [ -n "$PR_BASE" ]; then
+            base="$PR_BASE"
+          elif [ "$EVENT_NAME" = "push" ] && [ -n "$PUSH_BEFORE" ] && [ "$PUSH_BEFORE" != "0000000000000000000000000000000000000000" ]; then
+            base="$PUSH_BEFORE"
+          else
+            base="$(git rev-parse HEAD^ 2>/dev/null || git rev-parse HEAD)"
+          fi
+          git fetch --no-tags --depth=1 origin "$base" || true
+          echo "base=$base" >> "$GITHUB_OUTPUT"
+          echo "head=$GITHUB_SHA" >> "$GITHUB_OUTPUT"
+      - name: Verify changed executable code has test evidence
+        run: python3 tools/audit_change_test_coverage.py --base "${{ steps.range.outputs.base }}" --head "${{ steps.range.outputs.head }}"
       - name: Static syntax and type audit
         run: python3 tools/audit_trusted_code_delivery.py
       - name: Full repository verification
@@ -78,30 +100,36 @@ jobs:
           import json, os
           from datetime import datetime, timezone
           from pathlib import Path
-          audit_path=Path('config/generated/trusted-code-delivery-audit.json')
-          audit=json.loads(audit_path.read_text()) if audit_path.exists() else {}
+          def load(path):
+              p=Path(path)
+              return json.loads(p.read_text()) if p.exists() else {}
+          audit=load('config/generated/trusted-code-delivery-audit.json')
+          impact=load('config/generated/change-impact-test-coverage.json')
           status=os.environ.get('CODE_TRUST_JOB_STATUS','unknown')
+          blockers=list(audit.get('release_blockers',[]))+list(impact.get('release_blockers',[]))
           receipt={
-            'schema':'dreamco.code_trust_receipt.v1',
+            'schema':'dreamco.code_trust_receipt.v2',
             'commit':os.environ.get('CODE_TRUST_COMMIT'),
             'run_id':os.environ.get('CODE_TRUST_RUN_ID'),
             'generated_at':datetime.now(timezone.utc).isoformat(),
             'job_status':status,
-            'static_release_blockers':audit.get('release_blockers',[]),
+            'changed_files':impact.get('changed_file_count'),
+            'changed_executable_files':impact.get('changed_executable_file_count'),
+            'changed_test_files':impact.get('changed_test_file_count'),
+            'release_blockers':blockers,
             'review_findings':audit.get('review_finding_count',0),
             'source_files':audit.get('source_file_count'),
             'test_files':audit.get('test_file_count'),
-            'release_status':'verified_candidate' if status == 'success' and not audit.get('release_blockers') else 'blocked',
-            'truth_boundary':'A passing receipt means required configured checks passed for this commit; it is not proof that no possible bug exists.'
+            'release_status':'verified_candidate' if status == 'success' and not blockers else 'blocked',
+            'truth_boundary':'A passing receipt means required configured checks passed for this commit and change range; it is not proof that no possible bug exists.'
           }
           Path('tmp/code-trust/release-receipt.json').write_text(json.dumps(receipt,indent=2)+'\n')
-          summary=Path(os.environ['GITHUB_STEP_SUMMARY'])
-          with summary.open('a',encoding='utf-8') as f:
+          with Path(os.environ['GITHUB_STEP_SUMMARY']).open('a',encoding='utf-8') as f:
               f.write('## Code Trust Gate\n\n')
               f.write(f"- Release status: **{receipt['release_status']}**\n")
-              f.write(f"- Source files inventoried: {receipt['source_files']}\n")
-              f.write(f"- Test files inventoried: {receipt['test_files']}\n")
-              f.write(f"- Static blockers: {len(receipt['static_release_blockers'])}\n")
+              f.write(f"- Changed executable files: {receipt['changed_executable_files']}\n")
+              f.write(f"- Changed test files: {receipt['changed_test_files']}\n")
+              f.write(f"- Release blockers: {len(receipt['release_blockers'])}\n")
               f.write(f"- Review findings: {receipt['review_findings']}\n")
           PY
       - name: Upload trust evidence
@@ -111,6 +139,7 @@ jobs:
           name: code-trust-${{ github.run_id }}
           path: |
             config/generated/trusted-code-delivery-audit.json
+            config/generated/change-impact-test-coverage.json
             reports/TRUSTED_CODE_DELIVERY_AUDIT.md
             tmp/code-trust/
             tmp/dreamco-verification/
