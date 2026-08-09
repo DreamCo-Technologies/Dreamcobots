@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>DreamCo Manufacturing Marketplace</title>
+  <meta name="description" content="Post RFQs, compare U.S. manufacturers, and use Buddy sourcing intelligence." />
+  <style>
+    :root{font-family:Inter,system-ui,sans-serif;color:#111;background:#f6f7f9}*{box-sizing:border-box}body{margin:0}header{padding:18px 20px;background:#111;color:#fff;position:sticky;top:0;z-index:5}.wrap{max-width:1120px;margin:auto;padding:20px}.hero{display:grid;gap:14px;padding:24px;border-radius:18px;background:#fff;margin-bottom:18px}.hero h1{margin:0;font-size:clamp(28px,6vw,52px)}.hero p{margin:0;color:#444;max-width:780px}.actions{display:flex;flex-wrap:wrap;gap:10px}.btn{border:0;border-radius:10px;padding:12px 16px;font-weight:700;cursor:pointer;background:#111;color:#fff}.btn.secondary{background:#e8e9ec;color:#111}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px}.card{background:#fff;border:1px solid #e3e5e8;border-radius:16px;padding:16px}.card h3{margin:0 0 8px}.muted{color:#666;font-size:14px}.pill{display:inline-block;padding:5px 8px;border-radius:999px;background:#eef0f3;font-size:12px;margin:3px}.section{margin:24px 0}.section h2{margin-bottom:10px}.status{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}.metric{background:#fff;border-radius:12px;padding:14px;border:1px solid #e3e5e8}.metric strong{display:block;font-size:24px}dialog{border:0;border-radius:16px;width:min(680px,94vw);padding:0;box-shadow:0 30px 80px #0004}dialog::backdrop{background:#0008}.dialog-body{padding:20px}.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.form-grid label{display:grid;gap:5px;font-size:13px;font-weight:700}.form-grid input,.form-grid textarea,.form-grid select{width:100%;padding:11px;border:1px solid #cfd2d8;border-radius:9px;font:inherit}.full{grid-column:1/-1}.notice{padding:12px;border-radius:10px;background:#fff6d8;font-size:13px}.table-wrap{overflow:auto;background:#fff;border-radius:14px;border:1px solid #e3e5e8}table{border-collapse:collapse;width:100%;min-width:720px}th,td{text-align:left;padding:12px;border-bottom:1px solid #eceef0;font-size:14px}footer{padding:30px 20px;color:#666;text-align:center}@media(max-width:620px){.form-grid{grid-template-columns:1fr}.full{grid-column:auto}.wrap{padding:12px}.hero{padding:18px}}
+  </style>
+</head>
+<body>
+<header><strong>DreamCo • Manufacturing Marketplace</strong></header>
+<main class="wrap">
+  <section class="hero">
+    <h1>Find manufacturers. Post a need. Compare the deal.</h1>
+    <p>Buddy helps buyers turn product ideas into RFQs, match U.S. manufacturers, compare quotes, and study authorized global sourcing options. Live supplier claims and payments require verification.</p>
+    <div class="actions"><button class="btn" id="postRfq">Post an RFQ</button><button class="btn secondary" id="loadDemo">Load demo quotes</button></div>
+    <div class="notice">Prototype mode: supplier records and quotes below are demo fixtures. Stripe stays in test mode until the live-revenue gate passes.</div>
+  </section>
+
+  <section class="section"><h2>Marketplace status</h2><div class="status">
+    <div class="metric"><span class="muted">RFQ drafts</span><strong id="rfqCount">0</strong></div>
+    <div class="metric"><span class="muted">Demo manufacturers</span><strong id="manufacturerCount">3</strong></div>
+    <div class="metric"><span class="muted">Quotes loaded</span><strong id="quoteCount">0</strong></div>
+    <div class="metric"><span class="muted">Payments</span><strong>Test</strong></div>
+  </div></section>
+
+  <section class="section"><h2>Manufacturer discovery</h2><div id="manufacturers" class="grid"></div></section>
+
+  <section class="section"><h2>Quote comparison</h2><div class="table-wrap"><table><thead><tr><th>Manufacturer</th><th>Unit</th><th>MOQ</th><th>Lead</th><th>Tooling</th><th>Fit</th></tr></thead><tbody id="quotes"><tr><td colspan="6" class="muted">Load demo quotes or connect an authorized supplier/RFQ adapter.</td></tr></tbody></table></div></section>
+
+  <section class="section"><h2>Buddy sourcing intelligence</h2><div class="grid">
+    <article class="card"><h3>China ↔ U.S. capability gap</h3><p class="muted">Compare technology, process, materials, capacity, MOQ, lead time, landed cost and domestic availability. “Not found” never equals “not available.”</p></article>
+    <article class="card"><h3>Commerce opportunity</h3><p class="muted">Score private-label, ODM, Amazon, Shopify, wholesale and U.S.-manufacturing alternatives with margin and risk estimates.</p></article>
+    <article class="card"><h3>Contract path</h3><p class="muted">RFQ → verification → quote → sample → QA → negotiation → contract draft → approved payment milestone → production → inspection → delivery.</p></article>
+  </div></section>
+</main>
+
+<dialog id="rfqDialog"><div class="dialog-body"><h2>Post an RFQ draft</h2><form id="rfqForm" class="form-grid">
+  <label>What do you need?<input name="title" required placeholder="Example: 5,000 aluminum brackets" /></label>
+  <label>Quantity<input name="quantity" required type="number" min="1" /></label>
+  <label>Material<input name="material" placeholder="6061 aluminum" /></label>
+  <label>Needed by<input name="neededBy" type="date" /></label>
+  <label class="full">Specifications<textarea name="spec" rows="4" required placeholder="Dimensions, tolerances, certifications, packaging, sample needs..."></textarea></label>
+  <label>Target location<input name="location" placeholder="Rockford, IL" /></label>
+  <label>NDA needed?<select name="nda"><option>No</option><option>Yes</option></select></label>
+  <div class="actions full"><button class="btn" type="submit">Save RFQ draft</button><button class="btn secondary" type="button" id="closeRfq">Cancel</button></div>
+</form></div></dialog>
+<script src="manufacturing-marketplace.js"></script>
+</body>
+</html>
