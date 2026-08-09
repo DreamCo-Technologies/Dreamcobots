@@ -94,13 +94,14 @@ test("canonical manufacturer catalog starts with verified-data truth instead of 
   assert.match(catalog.truth_boundary, /No supplier, RFQ, quote or opportunity is invented/i);
 });
 
-test("DreamTrade owns the China-US scout and U.S. manufacturer marketplace bots", () => {
+test("DreamTrade owns dedicated manufacturing marketplace and China-US scout agents without breaking fixed fleet count", () => {
   const trade = readJson("App_bots/DreamTrade.json");
   assert.equal(trade.division, "DreamTrade");
-  assert.ok(trade.total >= 14);
-  const slugs = new Set(trade.bots.map((bot: {slug:string}) => bot.slug));
-  assert.ok(slugs.has("china-us-tech-manufacturing-scout"));
-  assert.ok(slugs.has("us-manufacturer-rfq-marketplace"));
+  assert.equal(trade.total, 12);
+  const marketplaceAgent = fs.readFileSync(path.join(root, ".github/agents/manufacturer-marketplace-bot.agent.md"), "utf8");
+  const scoutAgent = fs.readFileSync(path.join(root, ".github/agents/china-us-tech-manufacturing-scout.agent.md"), "utf8");
+  assert.match(marketplaceAgent, /owned by DreamTrade/i);
+  assert.match(scoutAgent, /owned by DreamTrade/i);
 });
 
 test("manufacturer marketplace prototype exists and preserves local-draft boundary", () => {
