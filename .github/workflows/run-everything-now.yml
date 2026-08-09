@@ -27,7 +27,7 @@ jobs:
           npm ci
           python3 -m pip install --disable-pip-version-check openpyxl
       - name: Verify architecture and benchmark policies
-        run: python3 -m unittest tests.test_recovery_ontology_workforce_runtime tests.test_universal_capability_benchmark_policy
+        run: python3 -m unittest tests.test_recovery_ontology_workforce_runtime tests.test_universal_capability_benchmark_policy tests.test_global_government_system
       - name: Build O*NET work and AI specialist catalog
         continue-on-error: true
         run: python3 tools/build_universal_work_ai_catalog.py
@@ -57,6 +57,14 @@ jobs:
           if g: print(f"- Parallel gap workers: **{g['worker_count']}**")
           w=load('config/generated/universal-work-ai-catalog.json')
           if w: print(f"- O*NET occupations/tasks: **{w['occupation_count']}/{w['task_count']}**")
+          gg=load('config/generated/global-government-benchmarks.json')
+          if gg: print(f"- Global government benchmark cases: **{gg['case_count']}**")
+          gd=load('config/generated/government-department-improvement-benchmarks.json')
+          if gd: print(f"- Discovered government departments/improvement cases: **{gd['discovered_department_count']}/{gd['case_count']}**")
+          pf=load('config/generated/public-fiscal-latest.json')
+          if pf: print(f"- Runtime-verified fiscal sources: **{pf.get('runtime_verified_source_count',0)}**")
+          pm=load('config/generated/public-money-transparency-benchmarks.json')
+          if pm: print(f"- Public money benchmark cases: **{pm['case_count']}**")
           m=load('config/generated/maximum-sandbox-matrix.json')
           if m: print(f"- Maximum sandbox workers: **{m['worker_count']}**")
           live=load('config/generated/live-user-testing-readiness.json')
