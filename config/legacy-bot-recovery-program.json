@@ -1,0 +1,44 @@
+{
+  "schema": "dreamco.legacy_bot_recovery_program.v1",
+  "version": "1.0.0",
+  "mission": "Recover, normalize, deduplicate, classify, test and merge useful legacy DreamCo bots and supporting files into one governed system without breaking the canonical fleet.",
+  "source_roots": ["App_bots","original-bots","bots","attached_assets"],
+  "canonical_root": "App_bots",
+  "source_roles": {
+    "App_bots":"canonical bot profiles",
+    "original-bots":"legacy/recovery bot source",
+    "bots":"legacy/runtime/recovery bot source",
+    "attached_assets":"supporting specifications, exports, notes, media and generated artifacts; not automatically bots"
+  },
+  "identity_fields": ["slug","name","displayName","class_name","module_name"],
+  "similarity_fields": ["description","category","capabilities","division","imports","functions","classes","source_path"],
+  "merge_states": ["canonical_existing","legacy_duplicate","legacy_extension","recoverable_new_bot","supporting_asset","invalid_or_unreadable","needs_owner_review"],
+  "recovery_pipeline": [
+    "enumerate every file in every source root",
+    "parse JSON Python JavaScript TypeScript Markdown text and YAML metadata where possible",
+    "extract bot identities classes functions capabilities categories and dependencies",
+    "normalize names and slugs",
+    "compare exact identities against canonical fleet",
+    "compare fuzzy identity and capability similarity",
+    "link duplicates to canonical owner instead of cloning them",
+    "extract unique capabilities from legacy duplicates as extension candidates",
+    "classify truly unique bot candidates into the best primary division/category",
+    "attach universal sandbox curriculum and Code Trust requirements",
+    "require runtime route before canonical fleet promotion",
+    "preserve supporting legacy files with provenance",
+    "generate one recovery manifest and promotion backlog"
+  ],
+  "promotion_gate": [
+    "unique identity confirmed",
+    "canonical owner division confirmed",
+    "category and capabilities normalized",
+    "no conflicting existing bot",
+    "runtime implementation or route exists",
+    "sandbox curriculum generated",
+    "focused tests pass",
+    "fleet E2E/regression passes",
+    "bot accounting remains internally consistent",
+    "Code Trust has no release blocker"
+  ],
+  "truth_rule": "Legacy files are source evidence, not automatically production-ready bots. Recovery must preserve provenance and never inflate bot counts by duplicating equivalent identities."
+}
